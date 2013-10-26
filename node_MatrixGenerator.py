@@ -3,14 +3,13 @@ from node_s import *
 from mathutils import *
 from util import *
 
-class MatrixDeformNode(Node, SverchCustomTreeNode):
-    ''' MatrixDeform '''
-    bl_idname = 'MatrixDeformNode'
-    bl_label = 'Matrix Deform'
+class MatrixGenNode(Node, SverchCustomTreeNode):
+    ''' MatrixGenerator '''
+    bl_idname = 'MatrixGenNode'
+    bl_label = 'Matrix Generator'
     bl_icon = 'OUTLINER_OB_EMPTY'
     
     def init(self, context):
-        self.inputs.new('MatrixSocket', "Original", "Original")
         self.inputs.new('VerticesSocket', "Location", "Location")
         self.inputs.new('VerticesSocket', "Scale", "Scale")
         self.inputs.new('VerticesSocket', "Rotation", "Rotation")
@@ -20,16 +19,6 @@ class MatrixDeformNode(Node, SverchCustomTreeNode):
 
     def update(self):
         # inputs
-        if 'Matrix' in self.outputs and len(self.outputs['Matrix'].links)>0:
-            if self.inputs['Original'].links and \
-                type(self.inputs['Original'].links[0].from_socket) == MatrixSocket:
-                if not self.inputs['Original'].node.socket_value_update:
-                    self.inputs['Original'].node.update()
-                orig_ = eval(self.inputs['Original'].links[0].from_socket.MatrixProperty)
-                orig = Matrix_generate(orig_)
-            else:
-                return
-                
             if self.inputs['Location'].links and \
                 type(self.inputs['Location'].links[0].from_socket) == VerticesSocket:
                 if not self.inputs['Location'].node.socket_value_update:
@@ -71,6 +60,14 @@ class MatrixDeformNode(Node, SverchCustomTreeNode):
             if not self.outputs['Matrix'].node.socket_value_update:
                 self.outputs['Matrix'].node.update()
             
+            max_l = max(len(loc[0]), len(scale[0]), len(rot[0]), len(angle[0]))
+            orig = []
+            for l in range(max_l):
+                M = mathutils.Matrix()
+                orig.append(M)
+            if len(orig)==0:
+                return
+            
             matrixes_ = matrixdef(orig, loc, scale, rot, angle)
             matrixes = Matrix_listing(matrixes_)
             self.outputs['Matrix'].MatrixProperty = str(matrixes)
@@ -84,10 +81,10 @@ class MatrixDeformNode(Node, SverchCustomTreeNode):
     
 
 def register():
-    bpy.utils.register_class(MatrixDeformNode)
+    bpy.utils.register_class(MatrixGenNode)
     
 def unregister():
-    bpy.utils.unregister_class(MatrixDeformNode)
+    bpy.utils.unregister_class(MatrixGenNode)
 
 if __name__ == "__main__":
     register()

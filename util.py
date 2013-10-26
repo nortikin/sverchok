@@ -2,6 +2,8 @@ import bpy, bmesh, mathutils
 from mathutils import Vector, Matrix
 from node_s import *
 global bmesh_mapping, per_cache
+from functools import reduce
+from math import radians
 
 bmesh_mapping = {}
 per_cache = {}
@@ -118,215 +120,35 @@ def handle_check(handle, prop):
 
 
 
-def vec_pols(pol2,ver2,mw2):
-    vector_mediana = []
-    for p in pol2:
-        vs_idx = p.vertices
-
-        v0 = ver2[vs_idx[0]].co
-        v1 = ver2[vs_idx[1]].co
-        v2 = ver2[vs_idx[2]].co
-        v3 = ver2[vs_idx[3]].co
-        
-        point1 = (v0+v1)/2
-        point2 = (v2+v3)/2
-        vm = point2 - point1
-        
-        vector_mediana.append(vm)
-    return vector_mediana
-
-def cont_obj(ob):
-    (l,r,f,b,t,d) = (0,0,0,0,0,0)
-    for v in ob.data.vertices:
-        if v.co[0]<l: l = v.co[0]
-        if v.co[0]>r: r = v.co[0]
-        if v.co[1]<b: b = v.co[1]
-        if v.co[1]>f: f = v.co[1]
-        if v.co[2]>t: t = v.co[2]
-        if v.co[2]<d: d = v.co[2]
-   
-    length = abs(r-l)   
-    weidth = abs(f-b)
-    height = abs(t-d)
-    
-    return (length, weidth, height)
-
-def cont_pol(pol,ver2):
-        vs_idx = pol.vertices
-
-        v0 = ver2[vs_idx[0]].co
-        v1 = ver2[vs_idx[1]].co
-        v2 = ver2[vs_idx[2]].co
-        v3 = ver2[vs_idx[3]].co
-        
-        point1 = (v0+v1)/2
-        point2 = (v2+v3)/2
-        point3 = (v0+v3)/2
-        point4 = (v1+v2)/2
-        vmy = (point2 - point1).length
-        vmx = (point3 - point4).length
-   
-        return (vmx,vmy)
-
-def scale_pols(pols, ver, ob):
-    scale = []
-    gab_ob = cont_obj(ob)
-    for p in pols:
-        gab_pol = cont_pol(p, ver)
-        sc_length = gab_pol[0]/gab_ob[0]
-        sc_weidth = gab_pol[1]/gab_ob[1]
-        
-        scale.append((sc_length,sc_weidth))
-    return scale
-
-def distance(x,y):
-    vec = mathutils.Vector((x[0]-y[0], x[1]-y[1], x[2]-y[2]))
-    return vec.length
-
-def centres(pol2,ver2,mw2):
-    centrs = []
-    for p in pol2:
-        (i,x,y,z) = (0,0,0,0)
-        for v in p.vertices:
-            x += ver2[v].co[0]
-            y += ver2[v].co[1]
-            z += ver2[v].co[2]
-            i += 1
-        (x,y,z) = (x/i, y/i, z/i)
-        centrs.append(mw2 * mathutils.Vector((x, y, z)))
-    return centrs
-
-def normals(pol2,mw2):
-    nor2 = []
-    for p in pol2:
-        nor2.append(p.normal)
-    return nor2
-
-def distancia(obj1,centrs):
-    dist = []
-    i = 0
-    pt = obj1.matrix_world.translation
-    for c in centrs:
-        lent = distance(pt,c)
-        dist.append((lent))
-    return dist
-
-#////////////////////////////////////////////////////////////////////
-#/////////////////   main   ////////////////////////////////////////
-#//////////////////////////////////////////////////////////////////
-
-def main(cache):
-    global per_cache
-    tree_update()
-    tree_update()
-    rd_cache = cache_read(cache)
-    if not rd_cache[0]:
-        #print('rd_cache[0] is False')
-        return False
-    
-    if not ('spreads' in per_cache[cache]):
-        drawit(cache, redraw=False)
-    else:
-        if bpy.data.objects.find(per_cache[cache]['spreads'][0][0])==-1:
-            del per_cache[cache]['spreads']
-            drawit(cache, redraw=False)
-        else:
-            drawit(cache, redraw=True)
-
-
-def drawit(cache, redraw=False):
-    # cache
-    global per_cache
-    rd_cache = cache_read(cache)
-    # True, recipient, donor, centres, formula, diap_min, diap_max
-    
-    # get objects (достаём объекты)
-    recipient_name = rd_cache[1] # имя реципиента
-    recipient = bpy.data.objects[recipient_name] #bpy.data.objects[Реципиент]
-    donor_name = rd_cache[2] # имя донора
-    donor = bpy.data.objects[donor_name] #bpy.data.objects[Донор]
-    centres_empty = rd_cache[3].split() # центры полигонов
-    formula = rd_cache[5]
-    maximum = rd_cache[6]
-    minimum = rd_cache[7]
-    recipient_mw = recipient.matrix_world
-    recipient_mesh = recipient.data
-    recipient_mesh.name = recipient_name
-    recipient_mesh.update()
-    recipient_pol = recipient_mesh.polygons
-    recipient_ver = recipient_mesh.vertices
-    
-    # call needed definitions
-    sc_pols = scale_pols(recipient_pol, recipient_ver, donor)
-    centrs = centres(recipient_pol,recipient_ver,recipient_mw)
-    recipient_nor = normals(recipient_pol,recipient_mw)    
-    medians = vec_pols(recipient_pol,recipient_ver,recipient_mw)
-    
-    # main formula parser
-    code_formula = parser.expr("max(min("+formula+",minimum),maximum)").compile()
-    dist = []   # future distance list (main feature to scale)
-    
-    # fullfill distsnce list
-    for i, obj1_name in enumerate(centres_empty):
-        obj1 = bpy.data.objects[obj1_name]
-        loc = obj1.location
-        obj1.matrix_world.translation = loc
-        tmpdist = distancia(obj1,centrs)
-        if i == 0:
-            dist = tmpdist
-        else:
-            dist = list(map(lambda x,y: min(x,y),tmpdist, dist))
-    # if spread done and spread objects present in scene
-    spreads = []
-    for i,c in enumerate(centrs):
-        bpy.ops.object.select_all(action='DESELECT')
-        #bpy.data.objects[donor_name].select = True
-        #bpy.ops.object.duplicate(linked=True) 
-        #tempob = bpy.context.selected_objects[0]
-        #tempob.name = 'spread'
-        #tempob.matrix_world.translation = c
-        matrix_world = c
-        aa = mathutils.Vector((0,1e-6,1)) 
-        bb = mathutils.Vector((recipient_nor[i].x,recipient_nor[i].y,recipient_nor[i].z))
-        
-        vec = aa
-        q_rot = vec.rotation_difference(bb).to_matrix().to_4x4()
-    
-        vec2 = bb
-        q_rot2 = vec2.rotation_difference(aa).to_matrix().to_4x4()
-    
-        a = mathutils.Vector((1e-6,1,0))* q_rot2
-        b = medians[i] 
-        vec1 = a
-        q_rot1 = vec1.rotation_difference(b).to_matrix().to_4x4() 
-    
-        M = q_rot1*q_rot
-        tempob.matrix_local *= M
-        
-        x = dist[i]
-        mul = eval(code_formula)
-        mul = min(mul,sc_pols[i][0],sc_pols[i][1])
-        
-        #tempob.dimensions = tempob.dimensions * mul
-        locmat = tempob.matrix_local * mul
-        mydata = [i for i in locmat[0]] + [i for i in locmat[1]] + [i for i in locmat[2]] + [i for i in locmat[3]]
-        spreads.append(mydata)
-        
-    per_cache[cache]['spreads'] = spreads
-
-
-
 # for viewer_text node!!!! don't delete
 
-def readFORviewer_sockets_data(data):
+def readFORviewer_sockets_data(data, depth = 1):
     cache = ''
-    eva = eval(data)    # why it not work properly all the time?
-    for i, object in enumerate(eva):
-        cache += str('==' + str(i) + '==' + '\n')
-        for m in object:
-            cache += str(m) + '\n'
-    return cache
+    output = ''
+    if type(data) == str:
+        eva = eval(data)    # why it not work properly all the time?
+        deptl = levelsOflist(data)
+    else:
+        eva = data
+        deptl = depth - 1
+    if type(data[0]) == list:
+        if deptl:
+            for i, object in enumerate(eva):
+                cache += ('=' + str(i) + '=')
+                str(readFORviewer_sockets_data(object, depth=deptl))
+                return cache
+    else:
+        for k, val in enumerate(eva):
+            cache += '\n'
+            output += (str(val) + '\n')
+    return cache + output
 
+def levelsOflist(list):
+    level = 1
+    for n in list:
+        if type(n) == list:
+            level += self.levels(n)
+        return level
 
 # for viewer_draw node and object_out node!!!! don't delete
 
@@ -378,3 +200,124 @@ def Edg_pol_generate(prop):
         edg_pol_out.append(list)
     # [ [(n1,n2,n3), (n1,n7,n9), p, p, p, p...], [...],... ] n = vertexindex
     return type, edg_pol_out
+
+
+# Working with lists
+
+def create_list(x, y):
+    if type(y)==list:
+        return reduce(create_list,y,x)
+    else:
+        return x.append(y) or x 
+
+def preobrazovatel(list_a,levels,level2=1):
+    list_tmp = []
+    level = levels[0]
+
+    if level>level2:
+        if type(list_a)in [list, tuple]:
+            for l in list_a:
+                if type(l) in [list, tuple]:
+                    tmp = preobrazovatel(l,levels,level2+1)
+                    if type(tmp) in [list, tuple]:
+                        list_tmp.extend(tmp)
+                    else:
+                        list_tmp.append(tmp)
+                else:
+                    list_tmp.append(l)
+            
+    elif level==level2:
+        if type(list_a) in [list, tuple]:
+            for l in list_a:
+                if len(levels)==1:
+                    tmp = preobrazovatel(l,levels,level2+1)
+                else:
+                    tmp = preobrazovatel(l,levels[1:],level2+1)
+                list_tmp.append(tmp if tmp else l)
+
+    else:
+        if type(list_a) in [list, tuple]:
+            list_tmp = reduce(create_list,list_a,[])
+
+    return list_tmp 
+
+
+def myZip(list_all, level, level2=0):
+    if level==level2:
+        if type(list_all) in [list, tuple]:
+            list_lens = []
+            list_res = []
+            for l in list_all:
+                if type(l) in [list, tuple]:
+                    list_lens.append(len(l))
+                else:
+                    list_lens.append(0)
+            if list_lens==[]:return False
+            min_len=min(list_lens)
+            for value in range(min_len):
+                lt=[]
+                for l in list_all:
+                    lt.append(l[value])
+                t = tuple(lt)
+                list_res.append(t)
+            return list_res
+        else:
+            return False
+    elif level>level2:
+        if type(list_all) in [list, tuple]:
+            list_res = []
+            list_tr = myZip(list_all, level, level2+1)
+            if list_tr==False:
+                list_tr = list_all
+            t = []
+            for tr in list_tr:
+                if type(list_tr) in [list, tuple]:
+                    list_tl = myZip(tr, level, level2+1)
+                    if list_tl==False:
+                        list_tl=list_tr
+                    t.append(list_tl)
+            list_res.extend(tuple(t))
+            return list_res
+        else:
+            return False 
+
+def updateNode(self,context):
+    updated = [self.name]
+    self.update()
+    for output in self.outputs:
+        if output.is_linked:
+            for link in output.links:
+                nod = link.to_socket.node
+                if nod.name not in updated:
+                    nod.update()
+                    updated.append(nod.name)
+    del updated
+    
+    
+    
+def matrixdef(orig, loc, scale, rot, angle):
+    modif = []
+    for i, de in enumerate(orig):
+        ma = de.copy()
+        
+        if rot[0]:
+            k = min(len(rot[0])-1,i)
+            a = min(len(angle[0])-1,i)
+            mat_rot = de.Rotation(radians(angle[0][a]), 4, rot[0][k].normalized())
+            ma = ma * mat_rot
+            
+        if scale[0]:
+            k = min(len(scale[0])-1,i)
+            scale2=scale[0][k]
+            for j in range(4):
+                kk=min(j,2)
+                #if scale2[kk]==0:
+                    #scale2[kk]=1.0
+                ma[j][j] = ma[j][j] * scale2[kk]
+            
+        if loc[0]:
+            k = min(len(loc[0])-1,i)
+            mat_tran = de.Translation(loc[0][k])
+            ma *= mat_tran
+        modif.append(ma)
+    return modif

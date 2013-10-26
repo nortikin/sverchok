@@ -107,7 +107,7 @@ class DistancePPNode(Node, SverchCustomTreeNode):
                     obshdis.append(oblndis)
             dists.append(obshdis)
         #print(dists)
-        return dists
+        return dists[0]
     
     def distance(self, x, y):
         vec = Vector((x[0]-y[0], x[1]-y[1], x[2]-y[2]))

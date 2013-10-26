@@ -53,8 +53,9 @@ class GenVectorsNode(Node, SverchCustomTreeNode):
             
             series_vec = list(zip(X,Y,Z))
  
-            self.outputs['Vectors'].VerticesProperty = str([series_vec, ])
-    
+            self.outputs['Vectors'].VerticesProperty = str([series_vec])
+            #print (series_vec)
+            
     def fullList(self, l, count):
         d = count - len(l)
         if d > 0:

@@ -1,6 +1,7 @@
 import bpy
 from node_s import *
 from functools import reduce
+from util import *
 
 
 
@@ -10,9 +11,9 @@ class ListLevelsNode(Node, SverchCustomTreeNode):
     bl_label = 'List Levels Node'
     bl_icon = 'OUTLINER_OB_EMPTY'
     
-    Sverch_LisLevA = bpy.props.StringProperty(name='Sverch_LisLevA', description='User defined nesty levels. (i.e. 1,2)', default='[0,1]')
-    Sverch_LisLevB = bpy.props.StringProperty(name='Sverch_LisLevB', description='User defined nesty levels. (i.e. 1,2)', default='[0,1]')
-    Sverch_LisLevC = bpy.props.StringProperty(name='Sverch_LisLevC', description='User defined nesty levels. (i.e. 1,2)', default='[0,1]')
+    Sverch_LisLevA = bpy.props.StringProperty(name='Sverch_LisLevA', description='User defined nesty levels. (i.e. 1,2)', default='1,2,3', update=updateNode)
+    Sverch_LisLevB = bpy.props.StringProperty(name='Sverch_LisLevB', description='User defined nesty levels. (i.e. 1,2)', default='1,2,3', update=updateNode)
+    Sverch_LisLevC = bpy.props.StringProperty(name='Sverch_LisLevC', description='User defined nesty levels. (i.e. 1,2)', default='1,2,3', update=updateNode)
     def init(self, context):
         self.inputs.new('VerticesSocket', 'vertices', 'vertices')
         self.inputs.new('StringsSocket', 'edg_pol', 'edg_pol')
@@ -35,7 +36,7 @@ class ListLevelsNode(Node, SverchCustomTreeNode):
             if self.inputs['vertices'].links[0].from_socket.VerticesProperty:
                 list_a = eval(self.inputs['vertices'].links[0].from_socket.VerticesProperty)
                 if self.outputs['vertices'].links and len(self.outputs['vertices'].links)>0:
-                    userlevela = list(eval(self.Sverch_LisLevA))
+                    userlevela = eval('['+self.Sverch_LisLevA+']')
                     self.outputs['vertices'].links[0].from_socket.VerticesProperty = str(self.preobrazovatel(list_a, userlevela))
                         
         if self.inputs['edg_pol'].links and len(self.inputs['edg_pol'].links)>0:
@@ -44,7 +45,7 @@ class ListLevelsNode(Node, SverchCustomTreeNode):
             if self.inputs['edg_pol'].links[0].from_socket.StringsProperty:
                 list_b = eval(self.inputs['edg_pol'].links[0].from_socket.StringsProperty)
                 if self.outputs['edg_pol'].links and len(self.outputs['edg_pol'].links)>0:
-                    userlevelb = [eval(self.Sverch_LisLevB)]
+                    userlevelb = eval('['+self.Sverch_LisLevB+']')
                     self.outputs['edg_pol'].links[0].from_socket.StringsProperty = str(self.preobrazovatel(list_b, userlevelb))
                     #print (self.outputs['edg_pol'].links[0].from_socket.StringsProperty)
                 
@@ -54,11 +55,11 @@ class ListLevelsNode(Node, SverchCustomTreeNode):
             if self.inputs['matrix'].links[0].from_socket.MatrixProperty:
                 list_c = eval(self.inputs['matrix'].links[0].from_socket.MatrixProperty)
                 if self.outputs['matrix'].links and len(self.outputs['matrix'].links)>0:
-                    userlevelc = list(eval(self.Sverch_LisLevC))
+                    userlevelc = eval('['+self.Sverch_LisLevC+']')
                     self.outputs['matrix'].links[0].from_socket.MatrixProperty = str(self.preobrazovatel(list_c, userlevelc))
                     #print (self.outputs['matrix'].links[0].from_socket.MatrixProperty)
     
-    level=1
+    #level=1
     
     def create_list(self, x, y):
         if type(y)==list:
@@ -67,32 +68,36 @@ class ListLevelsNode(Node, SverchCustomTreeNode):
             return x.append(y) or x 
 
     def preobrazovatel(self, list_a, levels, level2=1):
+        print('self, list_a, levels', levels)
         list_tmp = []
-        self.level = levels[0]
+        level = levels[0]
     
-        if self.level>level2:
-            if type(list_a)==list:
+        if level>level2:
+            if type(list_a)==list or type(list_a)==tuple:
                 for l in list_a:
-                    if type(l)==list:
+                    if type(l)==list or type(l)==tuple:
                         tmp = self.preobrazovatel(l,levels,level2+1)
-                        if type(tmp)==list:
+                        if type(tmp)==list or type(tmp)==tuple:
                             list_tmp.extend(tmp)
                         else:
                             list_tmp.append(tmp)
                     else:
                         list_tmp.append(l)
+                if type(l)==tuple:
+                    list_tmp = tuple(list_tmp)
                 
-        elif self.level==level2:
-            if type(list_a)==list:
+        elif level==level2:
+            if type(list_a)==list or type(list_a)==tuple:
                 for l in list_a:
                     if len(levels)==1:
                         tmp = self.preobrazovatel(l,levels,level2+1)
                     else:
                         tmp = self.preobrazovatel(l,levels[1:],level2+1)
                     list_tmp.append(tmp if tmp else l)
-    
+                if type(l)==tuple:
+                    list_tmp = tuple(list_tmp)
         else:
-            if type(list_a)==list:
+            if type(list_a)==list or type(list_a)==tuple:
                 list_tmp = reduce(self.create_list,list_a,[])
     
         return list_tmp 
@@ -170,5 +175,31 @@ if __name__ == "__main__":
 # 2     1   2 3    4 [5] [6  7]     8
 # 3     1   2 3    4  5   6 [7]     8
 # 23    1   2 3    4 [5] [6 [7]]    8
-
-
+#
+#
+#
+# ListLevel working principle:
+#
+# *** level=  0 ***
+# listA= [1, [2, 3], [4, [5], [6, [7]]], [8]]
+# list result  [1, 2, 3, 4, 5, 6, 7, 8]
+# 
+# *** level=  1 ***
+# listA= [1, [2, 3], [4, [5], [6, [7]]], [8]]
+# list result  [1, [2, 3], [4, 5, 6, 7], [8]]
+#  
+# *** level=  2 ***
+# listA= [1, [2, 3], [4, [5], [6, [7]]], [8]]
+# list result  [1, 2, 3, 4, [5], [6, 7], 8]
+#  
+# *** level=  3 ***
+# listA= [1, [2, 3], [4, [5], [6, [7]]], [8]]
+# list result  [1, 2, 3, 4, 5, 6, [7], 8]
+#  
+# *** level=  4 ***
+# listA= [1, [2, 3], [4, [5], [6, [7]]], [8]]
+# list result  [1, 2, 3, 4, 5, 6, 7, 8]
+#  
+# *** level= [1, 3] ***
+# list result  [1, [2, 3], [4, 5, 6, [7]], [8]]
+# 

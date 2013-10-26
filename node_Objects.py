@@ -8,7 +8,7 @@ class ObjectsNode(Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
     
     def object_select(self, context):
-        return [tuple(3 * [ob.name]) for ob in context.scene.objects if ob.type == 'MESH']
+        return [tuple(3 * [ob.name]) for ob in context.scene.objects if ob.type == 'MESH' or ob.type == 'EMPTY']
             
     ObjectProperty = EnumProperty(items = object_select, name = 'ObjectProperty')
     
@@ -24,20 +24,24 @@ class ObjectsNode(Node, SverchCustomTreeNode):
     def update(self):
         if self.ObjectProperty:
             obj = bpy.data.objects[self.ObjectProperty]
-            obj_data = obj.data
             edgs = []
             vers = []
             pols = []
             mtrx = []
-            for m in obj.matrix_world:
-                mtrx.append(m[:])
-            for v in obj_data.vertices:
-                vers.append(v.co[:])
-            for edg in obj_data.edges:
-                edgs.append((edg.vertices[0],edg.vertices[1]))
-            for p in obj_data.polygons:
-                pols.append(p.vertices[:])
-            #print (vers, edgs, pols, mtrx)
+            if obj.type == 'EMPTY':
+                for m in obj.matrix_world:
+                    mtrx.append(m[:])
+            else:
+                obj_data = obj.data
+                for m in obj.matrix_world:
+                    mtrx.append(m[:])
+                for v in obj_data.vertices:
+                    vers.append(v.co[:])
+                for edg in obj_data.edges:
+                    edgs.append((edg.vertices[0],edg.vertices[1]))
+                for p in obj_data.polygons:
+                    pols.append(p.vertices[:])
+                #print (vers, edgs, pols, mtrx)
             
             if 'Vertices' in self.outputs and len(self.outputs['Vertices'].links)>0:
                 self.outputs['Vertices'].VerticesProperty = str([vers, ])

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import bpy
 from bpy.props import IntProperty, FloatProperty, StringProperty, FloatVectorProperty, CollectionProperty, EnumProperty
-from bpy_types import NodeTree, Node, NodeSocket
+from bpy.types import NodeTree, Node, NodeSocket
 import nodeitems_utils
 from nodeitems_utils import NodeCategory, NodeItem
 from mathutils import Matrix
@@ -103,7 +103,6 @@ class SverchNodeCategory(NodeCategory):
     def poll(cls, context):
         return context.space_data.tree_type == 'SverchCustomTreeType'
 
-
 def make_categories():
     node_categories = [
         SverchNodeCategory("SVERCHOK", "SVERCHOK Nodes", items=[
@@ -115,29 +114,35 @@ def make_categories():
             NodeItem("ViewerNode_text", label="Viewer text"),
             NodeItem("ListLevelsNode", label="List Levels"),
             NodeItem("ListJoinNode", label="List Join"),
-            NodeItem("DistancePPNode", label="DistancePP"),
-            NodeItem("GenSeriesNode", label="Range floats"),
-            NodeItem("GenVectorsNode", label="Vector"),
+            NodeItem("ZipNode", label="List Zip"),
+            NodeItem("DistancePPNode", label="Distances"),
+            NodeItem("GenSeriesNode", label="Series"),
+            NodeItem("GenVectorsNode", label="Vector in"),
             NodeItem("FloatNode", label="Float"),
-            NodeItem("IntegerNode", label="Integer"),
-            NodeItem("NumberNode", label="Number"),
-            NodeItem("MoveNode", label="Move"),
+            NodeItem("IntegerNode", label="Int"),
+            NodeItem("NumberNode", label="Float 2 Int"),
+            NodeItem("MoveNode", label="Move Vector"),
             NodeItem("MatrixDeformNode", label="Deform Matrix"),
+            NodeItem("MatrixGenNode", label="Matrix in"),
             NodeItem("FormulaNode", label="Formula"),
+            NodeItem("ToolsNode", label="Tools"),
             ]),
         ]
     return node_categories
 
-classes = [ SverchCustomTree, MatrixSocket, ObjectSocket,
-    StringsSocket, VerticesSocket ]
-
 def register():
-    for c in classes:
-        bpy.utils.register_class(c)   
+    bpy.utils.register_class(SverchCustomTree)
+    bpy.utils.register_class(MatrixSocket)
+    bpy.utils.register_class(ObjectSocket)
+    bpy.utils.register_class(StringsSocket)
+    bpy.utils.register_class(VerticesSocket)
     
 def unregister():
-    for c in reversed(classes):  
-        bpy.utils.unregister_class(c)
+    bpy.utils.unregister_class(VerticesSocket)
+    bpy.utils.register_class(StringsSocket)
+    bpy.utils.register_class(ObjectSocket)
+    bpy.utils.register_class(MatrixSocket)
+    bpy.utils.register_class(SverchCustomTree)
 
 if __name__ == "__main__":
     register()

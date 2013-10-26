@@ -98,13 +98,13 @@ class ObjectsNodeOut(Node, SverchCustomTreeNode):
             bpy.context.scene.objects.link(ob)
             
     def makemesh(self,i,v,e,p,m):
-        me = bpy.data.meshes.new('Sverchok-kus-za-bochok' + str(i))
+        me = bpy.data.meshes.new('Sv_' + str(i))
         me.from_pydata(v, e, p)
-        ob = bpy.data.objects.new('Sverchok-kus-za-bochok' + str(i), me)
+        ob = bpy.data.objects.new('Sv_' + str(i), me)
         ob.location = m.translation
         ob.scale = m.to_scale()
         ob.rotation_euler = m.to_euler()
-        ob.show_name = True
+        ob.show_name = False
         ob.hide_select = False
         #print ([ob,me])
         return [ob,me]

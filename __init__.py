@@ -40,6 +40,19 @@ bl_info = {
     "tracker_url": "http://www.blenderartists.org/forum/showthread.php?272679-Addon-WIP-Sverchok-parametric-tool-for-architects",
     "category": "Node"}
 
+
+import sys,os
+path = sys.path
+flag = False
+for item in path:
+    if "sverchok_nodes" in item:
+        flag = True
+if flag == False:
+    sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'sverchok_nodes'))
+    print("sverchok_nodes: added to phytonpath :-)")
+
+
+
 if "bpy" in locals():
     import imp
     imp.reload(node_s)
@@ -52,6 +65,7 @@ if "bpy" in locals():
     imp.reload(Viewer_draw)
     imp.reload(node_ListLevels)
     imp.reload(node_ListJoin)
+    imp.reload(node_Zip)
     imp.reload(node_DistancePP)
     imp.reload(node_Series)
     imp.reload(node_Vector)
@@ -60,7 +74,9 @@ if "bpy" in locals():
     imp.reload(node_Number)
     imp.reload(node_Move)
     imp.reload(node_MatrixDeform)
+    imp.reload(node_MatrixGenerator)
     imp.reload(node_Formula)
+    imp.reload(node_Tools)
 else:
     import node_s
     #import node_AnalitsPolsNode
@@ -75,6 +91,7 @@ else:
     import Viewer_draw
     import node_ListLevels
     import node_ListJoin
+    import node_Zip
     import node_DistancePP
     import node_Series
     import node_Vector
@@ -83,7 +100,9 @@ else:
     import node_Number
     import node_Move
     import node_MatrixDeform
+    import node_MatrixGenerator
     import node_Formula
+    import node_Tools
 
 def register():
     import bpy
@@ -100,6 +119,7 @@ def register():
     node_Viewer_text.register()
     node_ListLevels.register()
     node_ListJoin.register()
+    node_Zip.register()
     node_DistancePP.register()
     node_Series.register()
     node_Vector.register()
@@ -108,7 +128,9 @@ def register():
     node_Number.register()
     node_Move.register()
     node_MatrixDeform.register()
+    node_MatrixGenerator.register()
     node_Formula.register()
+    node_Tools.register()
     
         
     if 'SVERCHOK' not in nodeitems_utils._node_categories:
@@ -118,7 +140,9 @@ def register():
 def unregister():
     import bpy
     import nodeitems_utils
+    node_Tools.unregister()
     node_Formula.unregister()
+    node_MatrixGenerator.unregister()
     node_MatrixDeform.unregister()
     node_Move.unregister()
     node_Number.unregister()
@@ -127,6 +151,7 @@ def unregister():
     node_Vector.unregister()
     node_Series.unregister()
     node_DistancePP.unregister()
+    node_Zip.unregister()
     node_ListJoin.unregister()
     node_ListLevels.unregister()
     node_Viewer_text.unregister()

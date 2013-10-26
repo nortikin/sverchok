@@ -24,7 +24,8 @@ class ViewerNode(Node, SverchCustomTreeNode):
         
     def update(self):
         if self.inputs['vertices'].links:
-            if self.inputs['vertices'].links and len(self.inputs['vertices'].links)>0:
+            callback_disable(self.name)
+            if len(self.inputs['vertices'].links)>0:
                 if not self.inputs['vertices'].node.socket_value_update:
                     self.inputs['vertices'].node.update()
                 if self.inputs['vertices'].links[0].from_socket.VerticesProperty:

@@ -16,27 +16,26 @@ class CentersPolsNode(Node, SverchCustomTreeNode):
 
     def update(self):
         # достаём два слота - вершины и полики
-        if self.inputs['Poligons'].links and self.inputs['Vertices'].links:
-            if not self.inputs['Poligons'].node.socket_value_update:
-                self.inputs['Poligons'].node.update()
-            if type(self.inputs['Poligons'].links[0].from_socket) == StringsSocket:
+        if self.outputs['Centers'].links or self.outputs['Normals'].links:
+            if self.inputs['Poligons'].links and self.inputs['Vertices'].links:
+                if not self.inputs['Poligons'].node.socket_value_update:
+                    self.inputs['Poligons'].node.update()
+                #if type(self.inputs['Poligons'].links[0].from_socket) == StringsSocket:
                 pols = eval(self.inputs['Poligons'].links[0].from_socket.StringsProperty)[0]
-            else:
-                pols = []
-            
-            if not self.inputs['Vertices'].node.socket_value_update:
-                self.inputs['Vertices'].node.update()
-            if type(self.inputs['Vertices'].links[0].from_socket) == VerticesSocket:
-                vers = eval(self.inputs['Vertices'].links[0].from_socket.VerticesProperty)[0]
-            else:
-                vers = []
-                    
-            #print ('Центрист.  полики, верики: ', pols, vers)
-            
-            # output
-            
-            if self.outputs['Centers'].links or self.outputs['Normals'].links:
+                #else:
+                #    pols = []
                 
+                if not self.inputs['Vertices'].node.socket_value_update:
+                    self.inputs['Vertices'].node.update()
+                #if type(self.inputs['Vertices'].links[0].from_socket) == VerticesSocket:
+                vers = eval(self.inputs['Vertices'].links[0].from_socket.VerticesProperty)[0]
+                #else:
+                #    vers = []
+                        
+                #print ('Центрист.  полики, верики: ', pols, vers)
+                
+                # output
+            
                 # make mesh temp утилитарно - удалить в конце
                 mesh_temp = bpy.data.meshes.new('temp')
                 mesh_temp.from_pydata(vers,[],pols)
@@ -95,7 +94,7 @@ class CentersPolsNode(Node, SverchCustomTreeNode):
                 self.outputs['Centers'].MatrixProperty = str(mat_collect)
                 # удаляем временный мусор
                 bpy.data.meshes.remove(mesh_temp)
-                if len(self.outputs['Normals'].links)>0:
+                if 'Normals' in self.outputs and len(self.outputs['Normals'].links)>0:
                     if not self.outputs['Normals'].node.socket_value_update:
                         self.outputs['Normals'].node.update()
                     self.outputs['Normals'].VerticesProperty = str([normalsFORout]) 
