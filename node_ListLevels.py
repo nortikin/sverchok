@@ -37,7 +37,7 @@ class ListLevelsNode(Node, SverchCustomTreeNode):
                 list_a = eval(self.inputs['vertices'].links[0].from_socket.VerticesProperty)
                 if self.outputs['vertices'].links and len(self.outputs['vertices'].links)>0:
                     userlevela = eval('['+self.Sverch_LisLevA+']')
-                    self.outputs['vertices'].links[0].from_socket.VerticesProperty = str(self.preobrazovatel(list_a, userlevela))
+                    self.outputs['vertices'].links[0].from_socket.VerticesProperty = str(preobrazovatel(list_a, userlevela))
                         
         if self.inputs['edg_pol'].links and len(self.inputs['edg_pol'].links)>0:
             if not self.inputs['edg_pol'].node.socket_value_update:
@@ -46,7 +46,7 @@ class ListLevelsNode(Node, SverchCustomTreeNode):
                 list_b = eval(self.inputs['edg_pol'].links[0].from_socket.StringsProperty)
                 if self.outputs['edg_pol'].links and len(self.outputs['edg_pol'].links)>0:
                     userlevelb = eval('['+self.Sverch_LisLevB+']')
-                    self.outputs['edg_pol'].links[0].from_socket.StringsProperty = str(self.preobrazovatel(list_b, userlevelb))
+                    self.outputs['edg_pol'].links[0].from_socket.StringsProperty = str(preobrazovatel(list_b, userlevelb))
                     #print (self.outputs['edg_pol'].links[0].from_socket.StringsProperty)
                 
         if self.inputs['matrix'].links and len(self.inputs['matrix'].links)>0:
@@ -56,52 +56,8 @@ class ListLevelsNode(Node, SverchCustomTreeNode):
                 list_c = eval(self.inputs['matrix'].links[0].from_socket.MatrixProperty)
                 if self.outputs['matrix'].links and len(self.outputs['matrix'].links)>0:
                     userlevelc = eval('['+self.Sverch_LisLevC+']')
-                    self.outputs['matrix'].links[0].from_socket.MatrixProperty = str(self.preobrazovatel(list_c, userlevelc))
+                    self.outputs['matrix'].links[0].from_socket.MatrixProperty = str(preobrazovatel(list_c, userlevelc))
                     #print (self.outputs['matrix'].links[0].from_socket.MatrixProperty)
-    
-    #level=1
-    
-    def create_list(self, x, y):
-        if type(y)==list:
-            return reduce(self.create_list,y,x)
-        else:
-            return x.append(y) or x 
-
-    def preobrazovatel(self, list_a, levels, level2=1):
-        print('self, list_a, levels', levels)
-        list_tmp = []
-        level = levels[0]
-    
-        if level>level2:
-            if type(list_a)==list or type(list_a)==tuple:
-                for l in list_a:
-                    if type(l)==list or type(l)==tuple:
-                        tmp = self.preobrazovatel(l,levels,level2+1)
-                        if type(tmp)==list or type(tmp)==tuple:
-                            list_tmp.extend(tmp)
-                        else:
-                            list_tmp.append(tmp)
-                    else:
-                        list_tmp.append(l)
-                if type(l)==tuple:
-                    list_tmp = tuple(list_tmp)
-                
-        elif level==level2:
-            if type(list_a)==list or type(list_a)==tuple:
-                for l in list_a:
-                    if len(levels)==1:
-                        tmp = self.preobrazovatel(l,levels,level2+1)
-                    else:
-                        tmp = self.preobrazovatel(l,levels[1:],level2+1)
-                    list_tmp.append(tmp if tmp else l)
-                if type(l)==tuple:
-                    list_tmp = tuple(list_tmp)
-        else:
-            if type(list_a)==list or type(list_a)==tuple:
-                list_tmp = reduce(self.create_list,list_a,[])
-    
-        return list_tmp 
-    
     
         
     
