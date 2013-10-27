@@ -28,7 +28,7 @@ class NumberNode(Node, SverchCustomTreeNode):
             num = eval(Number)
             #level = self.levels(num)
             result = self.inte(num)
-            print (result)
+            #print (result)
             
             self.outputs['Number'].StringsProperty = str(result)
     
