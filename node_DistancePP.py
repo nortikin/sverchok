@@ -27,16 +27,15 @@ class DistancePPNode(Node, SverchCustomTreeNode):
                 if not self.inputs['vertices1'].node.socket_value_update:
                     self.inputs['vertices1'].node.update()
                 if self.inputs['vertices1'].links[0].from_socket.VerticesProperty:
-                    prop1 = eval(self.inputs['vertices1'].links[0].from_socket.VerticesProperty)
-                else:
-                    prop1 = []
+                    prop1_ = eval(self.inputs['vertices1'].links[0].from_socket.VerticesProperty)
+                    prop1 = Vector_generate(prop1_)
+                    
             if self.inputs['vertices2'].links and len(self.inputs['vertices2'].links)>0:
                 if not self.inputs['vertices2'].node.socket_value_update:
                     self.inputs['vertices2'].node.update()
                 if self.inputs['vertices2'].links[0].from_socket.VerticesProperty:
-                    prop2 = eval(self.inputs['vertices2'].links[0].from_socket.VerticesProperty)
-                else:
-                    prop2 = []
+                    prop2_ = eval(self.inputs['vertices2'].links[0].from_socket.VerticesProperty)
+                    prop2 = Vector_generate(prop2_)
                 
         elif self.inputs['matrix1'].links and self.inputs['matrix2'].links:
             if self.inputs['matrix1'].links and len(self.inputs['matrix1'].links)>0:
@@ -45,8 +44,6 @@ class DistancePPNode(Node, SverchCustomTreeNode):
                 if self.inputs['matrix1'].links[0].from_socket.MatrixProperty:
                     propa = eval(self.inputs['matrix1'].links[0].from_socket.MatrixProperty)
                     prop1 = Matrix_location(Matrix_generate(propa))
-                else:
-                    prop1 = []
                 
             if self.inputs['matrix2'].links and len(self.inputs['matrix2'].links)>0:
                 if not self.inputs['matrix2'].node.socket_value_update:
@@ -55,19 +52,20 @@ class DistancePPNode(Node, SverchCustomTreeNode):
                     propb = eval(self.inputs['matrix2'].links[0].from_socket.MatrixProperty)
                     prop2 = Matrix_location(Matrix_generate(propb))
                     
-                else:
-                    prop2 = []
-                    
+        else:
+            prop1, prop2 = [], []
+        if prop1 and prop2:
             if len(self.outputs['distances'].links)>0:
-                    if not self.outputs['distances'].node.socket_value_update:
-                        self.outputs['distances'].node.update()
-                    if self.Cross_dist:
-                        output = self.calcM(prop1, prop2)
-                    else:
-                        output = self.calcV(prop1, prop2)
-                    self.outputs['distances'].StringsProperty = str(output)
-                    #print ('distances input', str(prop1), str(prop2))
-                    #print ('distances out' , str(output))
+                if not self.outputs['distances'].node.socket_value_update:
+                    self.outputs['distances'].node.update()
+                #print ('distances input', str(prop1), str(prop2))
+                if self.Cross_dist:
+                    output = self.calcM(prop1, prop2)
+                else:
+                    output = self.calcV(prop1, prop2)
+                self.outputs['distances'].StringsProperty = str(output)
+                
+                #print ('distances out' , str(output))
         else:
             self.outputs['distances'].StringsProperty = ''
     
@@ -88,7 +86,6 @@ class DistancePPNode(Node, SverchCustomTreeNode):
         return dists
     
     def calcM(self, list1, list2):
-        
         ll1, ll2 = len(list1[0]), len(list2[0])
         if ll1 > ll2:
             short = list2
