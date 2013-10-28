@@ -69,7 +69,7 @@ class ViewerNode_text(Node, SverchCustomTreeNode):
         cache_viewer_slot2['veriable'] = 'None \n'
         cache_viewer_slot2['type'] = '\nunknown data: \n'
         cache_viewer_slot3['veriable'] = 'None \n'
-        if len(self.inputs['vertices'].links)>0:
+        if 'vertices' in self.inputs and len(self.inputs['vertices'].links)>0:
             if not self.inputs['vertices'].node.socket_value_update:
                 self.inputs['vertices'].node.update()
             if type(self.inputs['vertices'].links[0].from_socket) == bpy.types.VerticesSocket:
@@ -81,7 +81,7 @@ class ViewerNode_text(Node, SverchCustomTreeNode):
                 cache_viewer_slot1['veriable'] = a
                 print ('viewer text input1')
         # edges/faces socket
-        if len(self.inputs['edg_pol'].links)>0:
+        if 'edg_pol' in self.inputs and len(self.inputs['edg_pol'].links)>0:
             if not self.inputs['edg_pol'].node.socket_value_update:
                 self.inputs['edg_pol'].node.update()
             if type(self.inputs['edg_pol'].links[0].from_socket) == bpy.types.StringsSocket:
@@ -96,7 +96,7 @@ class ViewerNode_text(Node, SverchCustomTreeNode):
                 cache_viewer_slot2['veriable'] = str(b)
                 print ('viewer text input2')
         # matrix socket
-        if len(self.inputs['matrix'].links)>0:
+        if 'matrix' in self.inputs and len(self.inputs['matrix'].links)>0:
             if not self.inputs['matrix'].node.socket_value_update:
                 self.inputs['matrix'].node.update()
             if type(self.inputs['matrix'].links[0].from_socket) == bpy.types.MatrixSocket:

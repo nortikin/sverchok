@@ -295,12 +295,25 @@ def updateNode(self,context):
     
     
     
-def matrixdef(orig, loc, scale, rot, angle):
+def matrixdef(orig, loc, scale, rot, angle, vec_angle=[[]]):
     modif = []
     for i, de in enumerate(orig):
         ma = de.copy()
         
-        if rot[0]:
+        if loc[0]:
+            k = min(len(loc[0])-1,i)
+            mat_tran = de.Translation(loc[0][k])
+            ma *= mat_tran
+        
+        if vec_angle[0] and rot[0]:
+            k = min(len(rot[0])-1,i)
+            a = min(len(vec_angle[0])-1,i)
+            
+            vec_sum = vec_angle[0][a]+rot[0][k]
+            mat_rot = rot[0][k].rotation_difference(vec_sum).to_matrix().to_4x4()
+            ma = ma * mat_rot
+            
+        elif rot[0]:
             k = min(len(rot[0])-1,i)
             a = min(len(angle[0])-1,i)
             mat_rot = de.Rotation(radians(angle[0][a]), 4, rot[0][k].normalized())
@@ -311,13 +324,7 @@ def matrixdef(orig, loc, scale, rot, angle):
             scale2=scale[0][k]
             for j in range(4):
                 kk=min(j,2)
-                #if scale2[kk]==0:
-                    #scale2[kk]=1.0
                 ma[j][j] = ma[j][j] * scale2[kk]
             
-        if loc[0]:
-            k = min(len(loc[0])-1,i)
-            mat_tran = de.Translation(loc[0][k])
-            ma *= mat_tran
         modif.append(ma)
     return modif
