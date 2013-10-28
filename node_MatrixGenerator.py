@@ -47,20 +47,24 @@ class MatrixGenNode(Node, SverchCustomTreeNode):
             else:
                 rot = [[]]
             
-            if self.inputs['Angle'].links and \
-                type(self.inputs['Angle'].links[0].from_socket) == StringsSocket:
+            rotA=[[]]
+            angle = [[0.0]]
+            if self.inputs['Angle'].links:
                 if not self.inputs['Angle'].node.socket_value_update:
-                    self.inputs['Angle'].node.update()
-                angle = eval(self.inputs['Angle'].links[0].from_socket.StringsProperty)
-            else:
-                angle = [[0.0]]
+                        self.inputs['Angle'].node.update()
+                if type(self.inputs['Angle'].links[0].from_socket) == StringsSocket:
+                    angle = eval(self.inputs['Angle'].links[0].from_socket.StringsProperty)
+                    
+                elif type(self.inputs['Angle'].links[0].from_socket) == VerticesSocket:
+                    rotA_ = eval(self.inputs['Angle'].links[0].from_socket.VerticesProperty)
+                    rotA = Vector_generate(rotA_)
             
             # outputs
         
             if not self.outputs['Matrix'].node.socket_value_update:
                 self.outputs['Matrix'].node.update()
             
-            max_l = max(len(loc[0]), len(scale[0]), len(rot[0]), len(angle[0]))
+            max_l = max(len(loc[0]), len(scale[0]), len(rot[0]), len(angle[0]), len(rotA[0]))
             orig = []
             for l in range(max_l):
                 M = mathutils.Matrix()
@@ -68,7 +72,7 @@ class MatrixGenNode(Node, SverchCustomTreeNode):
             if len(orig)==0:
                 return
             
-            matrixes_ = matrixdef(orig, loc, scale, rot, angle)
+            matrixes_ = matrixdef(orig, loc, scale, rot, angle, rotA)
             matrixes = Matrix_listing(matrixes_)
             self.outputs['Matrix'].MatrixProperty = str(matrixes)
             #print ('matrix_def', str(matrixes))
