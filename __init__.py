@@ -66,6 +66,7 @@ if "bpy" in locals():
     imp.reload(node_ListLevels)
     imp.reload(node_ListJoin)
     imp.reload(node_Zip)
+    imp.reload(node_Shift)
     imp.reload(node_DistancePP)
     imp.reload(node_Series)
     imp.reload(node_Vector)
@@ -92,6 +93,7 @@ else:
     import node_ListLevels
     import node_ListJoin
     import node_Zip
+    import node_Shift
     import node_DistancePP
     import node_Series
     import node_Vector
@@ -120,6 +122,7 @@ def register():
     node_ListLevels.register()
     node_ListJoin.register()
     node_Zip.register()
+    node_Shift.register()
     node_DistancePP.register()
     node_Series.register()
     node_Vector.register()
@@ -151,6 +154,7 @@ def unregister():
     node_Vector.unregister()
     node_Series.unregister()
     node_DistancePP.unregister()
+    node_Shift.unregister()
     node_Zip.unregister()
     node_ListJoin.unregister()
     node_ListLevels.unregister()

@@ -1,6 +1,5 @@
 import bpy
 from node_s import *
-from functools import reduce
 from util import *
 
 

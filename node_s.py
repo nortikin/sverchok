@@ -115,6 +115,7 @@ def make_categories():
             NodeItem("ListLevelsNode", label="List Levels"),
             NodeItem("ListJoinNode", label="List Join"),
             NodeItem("ZipNode", label="List Zip"),
+            NodeItem("ShiftNode", label="List Shift"),
             NodeItem("DistancePPNode", label="Distances"),
             NodeItem("GenSeriesNode", label="Series"),
             NodeItem("GenVectorsNode", label="Vector in"),

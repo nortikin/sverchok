@@ -205,7 +205,7 @@ def Edg_pol_generate(prop):
 # Working with lists
 
 def create_list(x, y):
-    if type(y)==list:
+    if type(y) in [list, tuple]:
         return reduce(create_list,y,x)
     else:
         return x.append(y) or x 
@@ -309,11 +309,10 @@ def matrixdef(orig, loc, scale, rot, angle, vec_angle=[[]]):
             k = min(len(rot[0])-1,i)
             a = min(len(vec_angle[0])-1,i)
             
-            vec_sum = (vec_angle[0][a]+rot[0][k]).normalized()
             vec_a = vec_angle[0][a].normalized()
             vec_b = rot[0][k].normalized()
             
-            mat_rot = vec_b.rotation_difference(vec_sum).to_matrix().to_4x4()
+            mat_rot = vec_b.rotation_difference(vec_a).to_matrix().to_4x4()
             ma = ma * mat_rot
             
         elif rot[0]:
