@@ -79,7 +79,7 @@ class ViewerNode_text(Node, SverchCustomTreeNode):
                 #print(str(evaverti))
                 a = self.readFORviewer_sockets_data(evaverti, deptl) # from util
                 cache_viewer_slot1['veriable'] = a
-                print ('viewer text input1')
+                #print ('viewer text input1')
         # edges/faces socket
         if 'edg_pol' in self.inputs and len(self.inputs['edg_pol'].links)>0:
             if not self.inputs['edg_pol'].node.socket_value_update:
@@ -94,7 +94,7 @@ class ViewerNode_text(Node, SverchCustomTreeNode):
                 #print(str(evaline_str))
                 b = self.readFORviewer_sockets_data(evaline_str, deptl) # from util
                 cache_viewer_slot2['veriable'] = str(b)
-                print ('viewer text input2')
+                #print ('viewer text input2')
         # matrix socket
         if 'matrix' in self.inputs and len(self.inputs['matrix'].links)>0:
             if not self.inputs['matrix'].node.socket_value_update:
@@ -106,7 +106,7 @@ class ViewerNode_text(Node, SverchCustomTreeNode):
                 #print(str(eva))
                 c = self.readFORviewer_sockets_data(eva, deptl) # from util
                 cache_viewer_slot3['veriable'] = str(c)
-                print ('viewer text input3')
+                #print ('viewer text input3')
                 
     def update_socket(self, context):
         self.update()
