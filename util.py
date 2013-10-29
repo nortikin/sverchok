@@ -205,7 +205,7 @@ def Edg_pol_generate(prop):
 # Working with lists
 
 def create_list(x, y):
-    if type(y)==list:
+    if type(y) in [list, tuple]:
         return reduce(create_list,y,x)
     else:
         return x.append(y) or x 
