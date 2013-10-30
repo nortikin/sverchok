@@ -140,10 +140,10 @@ def register():
     
 def unregister():
     bpy.utils.unregister_class(VerticesSocket)
-    bpy.utils.register_class(StringsSocket)
-    bpy.utils.register_class(ObjectSocket)
-    bpy.utils.register_class(MatrixSocket)
-    bpy.utils.register_class(SverchCustomTree)
+    bpy.utils.unregister_class(StringsSocket)
+    bpy.utils.unregister_class(ObjectSocket)
+    bpy.utils.unregister_class(MatrixSocket)
+    bpy.utils.unregister_class(SverchCustomTree)
 
 if __name__ == "__main__":
     register()
