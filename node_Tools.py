@@ -75,10 +75,10 @@ def register():
     bpy.utils.register_class(ToolsNode)
     
 def unregister():
-    bpy.utils.register_class(ToolsNode)
-    bpy.utils.register_class(SverchokToolsMenu)
-    bpy.utils.register_class(SverchokHome)
-    bpy.utils.register_class(SverchokUpdateAll)
+    bpy.utils.unregister_class(ToolsNode)
+    bpy.utils.unregister_class(SverchokToolsMenu)
+    bpy.utils.unregister_class(SverchokHome)
+    bpy.utils.unregister_class(SverchokUpdateAll)
 
 if __name__ == "__main__":
     register()
