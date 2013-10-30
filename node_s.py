@@ -107,7 +107,6 @@ def make_categories():
     node_categories = [
         SverchNodeCategory("SVERCHOK", "SVERCHOK Nodes", items=[
             # our basic nodes
-            NodeItem("CentersPolsNode", label="Centers Polygons"),
             NodeItem("ObjectsNode", label="Objects in"),
             NodeItem("ObjectsNodeOut", label="Objects out"),
             NodeItem("ViewerNode", label="Viewer draw"),
@@ -116,15 +115,16 @@ def make_categories():
             NodeItem("ListJoinNode", label="List Join"),
             NodeItem("ZipNode", label="List Zip"),
             NodeItem("ShiftNode", label="List Shift"),
+            NodeItem("CentersPolsNode", label="Centers Polygons"),
             NodeItem("DistancePPNode", label="Distances"),
             NodeItem("GenSeriesNode", label="Series"),
-            NodeItem("GenVectorsNode", label="Vector in"),
             NodeItem("FloatNode", label="Float"),
             NodeItem("IntegerNode", label="Int"),
             NodeItem("NumberNode", label="Float 2 Int"),
-            NodeItem("MoveNode", label="Move Vector"),
-            NodeItem("MatrixDeformNode", label="Deform Matrix"),
+            NodeItem("GenVectorsNode", label="Vector in"),
+            NodeItem("MoveNode", label="Vector Move"),
             NodeItem("MatrixGenNode", label="Matrix in"),
+            NodeItem("MatrixDeformNode", label="Matrix Deform"),
             NodeItem("FormulaNode", label="Formula"),
             NodeItem("ToolsNode", label="Tools"),
             ]),
