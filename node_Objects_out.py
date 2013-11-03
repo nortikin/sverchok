@@ -22,7 +22,7 @@ class ObjectsNodeOut(Node, SverchCustomTreeNode):
         
     def update(self):
         
-        if self.inputs['vertices'].links and len(self.inputs['vertices'].links)>0:
+        if 'vertices' in self.inputs and self.inputs['vertices'].links and len(self.inputs['vertices'].links)>0:
             if not self.inputs['vertices'].node.socket_value_update:
                 self.inputs['vertices'].node.update()
             if self.inputs['vertices'].links[0].from_socket.VerticesProperty:
@@ -32,7 +32,7 @@ class ObjectsNodeOut(Node, SverchCustomTreeNode):
             if 'Vertices' in self.outputs and len(self.outputs['Vertices'].links)>0:
                 self.outputs['Vertices'].VerticesProperty = str(vers)
                         
-        if self.inputs['edg_pol'].links and len(self.inputs['edg_pol'].links)>0:
+        if 'edg_pol' in self.inputs and self.inputs['edg_pol'].links and len(self.inputs['edg_pol'].links)>0:
             if not self.inputs['edg_pol'].node.socket_value_update:
                 self.inputs['edg_pol'].node.update()
             if self.inputs['edg_pol'].links[0].from_socket.StringsProperty:
@@ -44,7 +44,7 @@ class ObjectsNodeOut(Node, SverchCustomTreeNode):
             if "Edges" in self.outputs and len(self.outputs["Edges"].links)>0:
                 self.outputs["Edges"].StringsProperty = str(edg_pol)
                 
-        if self.inputs['matrix'].links and len(self.inputs['matrix'].links)>0:
+        if 'matrix' in self.inputs and self.inputs['matrix'].links and len(self.inputs['matrix'].links)>0:
             if not self.inputs['matrix'].node.socket_value_update:
                 self.inputs['matrix'].node.update()
             if self.inputs['matrix'].links[0].from_socket.MatrixProperty:
@@ -54,7 +54,8 @@ class ObjectsNodeOut(Node, SverchCustomTreeNode):
             if 'Matrixes' in self.outputs and len(self.outputs['Matrixes'].links)>0:
                 self.outputs['Matrixes'].MatrixProperty = str(matrixes)
                 
-        if self.inputs['vertices'].links and self.inputs['edg_pol'].links and self.inputs['matrix'].links:
+        if 'vertices' in self.inputs and 'edg_pol' in self.inputs and 'matrix' in self.inputs and \
+            self.inputs['vertices'].links and self.inputs['edg_pol'].links and self.inputs['matrix'].links:
             self.makeobjects(vers, edg_pol, matrixes)
     
     def makeobjects(self, vers, edg_pol, mats):
@@ -122,5 +123,4 @@ def unregister():
 
 if __name__ == "__main__":
     register()
-
 

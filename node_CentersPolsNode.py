@@ -16,8 +16,8 @@ class CentersPolsNode(Node, SverchCustomTreeNode):
 
     def update(self):
         # достаём два слота - вершины и полики
-        if self.outputs['Centers'].links or self.outputs['Normals'].links:
-            if self.inputs['Poligons'].links and self.inputs['Vertices'].links:
+        if 'Centers' in self.outputs and self.outputs['Centers'].links or self.outputs['Normals'].links:
+            if 'Poligons' in self.inputs and 'Vertices' in self.inputs and self.inputs['Poligons'].links and self.inputs['Vertices'].links:
                 if not self.inputs['Poligons'].node.socket_value_update:
                     self.inputs['Poligons'].node.update()
                 #if type(self.inputs['Poligons'].links[0].from_socket) == StringsSocket:

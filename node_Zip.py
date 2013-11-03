@@ -67,7 +67,9 @@ class ZipNode(Node, SverchCustomTreeNode):
             self.inputs.new('StringsSocket', "data", "data")
         
         
-        if self.outputs['vertices'].links or self.outputs['data'].links or self.outputs['matrix'].links:
+        if 'vertices' in self.outputs and self.outputs['vertices'].links or \
+            'data' in self.outputs and self.outputs['data'].links or \
+            'matrix' in self.outputs and self.outputs['matrix'].links:
             output = self.myZip(slots,JoinLevel)  
 
             if len(self.outputs['vertices'].links)>0 and typ == 'v':
