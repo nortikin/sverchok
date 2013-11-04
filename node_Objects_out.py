@@ -63,11 +63,11 @@ class ObjectsNodeOut(Node, SverchCustomTreeNode):
         if len(edg_pol[0][0]) == 2:
             edgs = edg_pol
             pols = []
-            fht = len(edgs)
+            fht = max(a for a in max(edgs))
         elif len(edg_pol[0][0]) > 2:
             pols = edg_pol
             edgs = []
-            fht = len(pols)
+            fht = max(a for a in max(pols))
         vertices = Vector_generate(vers)
         matrixes = Matrix_generate(mats)
         #print('mats' + str(matrixes))
@@ -103,8 +103,8 @@ class ObjectsNodeOut(Node, SverchCustomTreeNode):
         me.from_pydata(v, e, p)
         ob = bpy.data.objects.new('Sv_' + str(i), me)
         ob.location = m.translation
-        ob.scale = m.to_scale()
         ob.rotation_euler = m.to_euler()
+        ob.scale = m.to_scale()
         ob.show_name = False
         ob.hide_select = False
         #print ([ob,me])
@@ -123,4 +123,3 @@ def unregister():
 
 if __name__ == "__main__":
     register()
-

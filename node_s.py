@@ -13,7 +13,7 @@ class MatrixSocket(NodeSocket):
     bl_idname = "MatrixSocket"
     bl_label = "Matrix Socket"
     
-    MatrixProperty = StringProperty(name='MatrixProperty') 
+    MatrixProperty = StringProperty(name='MatrixProperty')
     
     
     def draw(self, context, layout, node, text):
@@ -105,12 +105,16 @@ class SverchNodeCategory(NodeCategory):
 
 def make_categories():
     node_categories = [
-        SverchNodeCategory("SVERCHOK", "SVERCHOK Nodes", items=[
-            # our basic nodes
+        SverchNodeCategory("SVERCHOK", "SVERCHOK basic", items=[
+            # basic nodes
             NodeItem("ObjectsNode", label="Objects in"),
             NodeItem("ObjectsNodeOut", label="Objects out"),
             NodeItem("ViewerNode", label="Viewer draw"),
             NodeItem("ViewerNode_text", label="Viewer text"),
+            NodeItem("ToolsNode", label="Tools"),
+            ]),
+        SverchNodeCategory("SVERCHOK_L", "SVERCHOK list", items=[
+            # list,numbers, modifs nodes
             NodeItem("ListLevelsNode", label="List Levels"),
             NodeItem("ListJoinNode", label="List Join"),
             NodeItem("ZipNode", label="List Zip"),
@@ -121,12 +125,14 @@ def make_categories():
             NodeItem("FloatNode", label="Float"),
             NodeItem("IntegerNode", label="Int"),
             NodeItem("NumberNode", label="Float 2 Int"),
+            ]),
+        SverchNodeCategory("SVERCHOK_V", "SVERCHOK vector", items=[
+            # generators, degenerators nodes
             NodeItem("GenVectorsNode", label="Vector in"),
             NodeItem("MoveNode", label="Vector Move"),
             NodeItem("MatrixGenNode", label="Matrix in"),
             NodeItem("MatrixDeformNode", label="Matrix Deform"),
             NodeItem("FormulaNode", label="Formula"),
-            NodeItem("ToolsNode", label="Tools"),
             ]),
         ]
     return node_categories

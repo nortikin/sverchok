@@ -281,10 +281,10 @@ def myZip(list_all, level, level2=0):
         else:
             return False 
 
-def updateNode(self,context):
-    updated = [self.name]
-    self.update()
-    for output in self.outputs:
+def updateNode(self, context):
+    updated = [self.node.name]
+    #self.update()
+    for output in self.node.outputs:
         if output.is_linked:
             for link in output.links:
                 nod = link.to_socket.node
