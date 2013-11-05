@@ -17,7 +17,7 @@ class ShiftNode(Node, SverchCustomTreeNode):
     
     def init(self, context):
         self.inputs.new('StringsSocket', "data", "data")
-        self.inputs.new('StringsSocket', "number", "number")
+        self.inputs.new('StringsSocket', "shift", "shift")
         self.outputs.new('VerticesSocket', 'vertices', 'vertices')
         self.outputs.new('StringsSocket', 'data', 'data')
         self.outputs.new('MatrixSocket', 'matrix', 'matrix')
@@ -45,11 +45,11 @@ class ShiftNode(Node, SverchCustomTreeNode):
            
 
                     
-        if 'number' in self.inputs and self.inputs['number'].links and \
-            type(self.inputs['number'].links[0].from_socket) == StringsSocket:
-            if not self.inputs['number'].node.socket_value_update:
-                self.inputs['number'].node.update()
-            number = eval(self.inputs['number'].links[0].from_socket.StringsProperty)
+        if 'shift' in self.inputs and self.inputs['shift'].links and \
+            type(self.inputs['shift'].links[0].from_socket) == StringsSocket:
+            if not self.inputs['shift'].node.socket_value_update:
+                self.inputs['shift'].node.update()
+            number = eval(self.inputs['shift'].links[0].from_socket.StringsProperty)
             #print('>>> number >>>:', number)
             if type(number)!=list or type(number[0])!=list or type(number[0][0])!=int:
                 number = [[0]]

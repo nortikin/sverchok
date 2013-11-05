@@ -4,33 +4,33 @@ from node_s import *
 class NumberNode(Node, SverchCustomTreeNode):
     ''' Number '''
     bl_idname = 'NumberNode'
-    bl_label = 'Number'
+    bl_label = 'Float2int'
     bl_icon = 'OUTLINER_OB_EMPTY'
     
     def init(self, context):
-        self.inputs.new('StringsSocket', "Number", "Number")
-        self.outputs.new('StringsSocket', "Number", "Number")
+        self.inputs.new('StringsSocket', "float", "float")
+        self.outputs.new('StringsSocket', "int", "int")
         
 
     def update(self):
         # inputs
-        if len(self.inputs['Number'].links)>0 and type(self.inputs['Number'].links[0].from_socket) == bpy.types.StringsSocket:
-            if not self.inputs['Number'].node.socket_value_update:
-                self.inputs['Number'].node.update()
-            Number = self.inputs['Number'].links[0].from_socket.StringsProperty
+        if len(self.inputs['float'].links)>0 and type(self.inputs['float'].links[0].from_socket) == bpy.types.StringsSocket:
+            if not self.inputs['float'].node.socket_value_update:
+                self.inputs['float'].node.update()
+            Number = self.inputs['float'].links[0].from_socket.StringsProperty
         else:
             Number = []
         
         # outputs
-        if 'Number' in self.outputs and len(self.outputs['Number'].links)>0:
-            if not self.outputs['Number'].node.socket_value_update:
-                self.inputs['Number'].node.update()
+        if 'int' in self.outputs and len(self.outputs['int'].links)>0:
+            if not self.outputs['int'].node.socket_value_update:
+                self.inputs['int'].node.update()
             num = eval(Number)
             #level = self.levels(num)
             result = self.inte(num)
             #print (result)
             
-            self.outputs['Number'].StringsProperty = str(result)
+            self.outputs['int'].StringsProperty = str(result)
     
     def update_socket(self, context):
         self.update()
