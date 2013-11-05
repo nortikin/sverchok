@@ -5,6 +5,7 @@ from bpy.types import NodeTree, Node, NodeSocket
 import nodeitems_utils
 from nodeitems_utils import NodeCategory, NodeItem
 from mathutils import Matrix
+from util import updateSlot
 
 
 class MatrixSocket(NodeSocket):
@@ -13,7 +14,7 @@ class MatrixSocket(NodeSocket):
     bl_idname = "MatrixSocket"
     bl_label = "Matrix Socket"
     
-    MatrixProperty = StringProperty(name='MatrixProperty')
+    MatrixProperty = StringProperty(name='MatrixProperty', update=updateSlot)
     
     
     def draw(self, context, layout, node, text):
@@ -34,7 +35,7 @@ class ObjectSocket(NodeSocket):
         bl_idname = "ObjectSocket"
         bl_label = "Object Socket"
         
-        ObjectProperty = StringProperty(name= "ObjectProperty")
+        ObjectProperty = StringProperty(name= "ObjectProperty", update=updateSlot)
         
         def draw(self, context, layout, node, text):
             if self.is_linked:
@@ -52,7 +53,7 @@ class VerticesSocket(NodeSocket):
         bl_idname = "VerticesSocket"
         bl_label = "Vertices Socket"
         
-        VerticesProperty = StringProperty(name='VerticesProperty')
+        VerticesProperty = StringProperty(name='VerticesProperty', update=updateSlot)
 
         def draw(self, context, layout, node, text):
             if self.is_linked:
@@ -71,7 +72,7 @@ class StringsSocket(NodeSocket):
         bl_idname = "StringsSocket"
         bl_label = "Strings Socket"
         
-        StringsProperty = StringProperty(name='StringsProperty')
+        StringsProperty = StringProperty(name='StringsProperty', update=updateSlot)
 
         def draw(self, context, layout, node, text):
             if self.is_linked:
