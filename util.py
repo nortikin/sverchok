@@ -8,6 +8,64 @@ from math import radians
 bmesh_mapping = {}
 per_cache = {}
 temp_handle = {}
+cache_nodes={}
+
+
+def read_cnodes(cnode):
+    global cache_nodes
+    if cnode not in cache_nodes:
+        return None
+    return cache_nodes[cnode]
+
+def write_cnodes(cnode, number):
+    global cache_nodes
+    if cnode in cache_nodes:
+        del cache_nodes[cnode]
+    cache_nodes[cnode] = number
+
+def clear_cnodes(cnode='ALL'):
+    global cache_nodes
+    if cnode=='ALL':
+        for i in cache_nodes.items:
+            del cache_nodes[i]
+    else:
+        if read_cnodes(cnode)!=None:
+            del cache_nodes[cnode]
+
+def initialize_cnodes():
+    node_name = 'GLOBAL CNODE'
+    write_cnodes(node_name, 1)
+    write_cnodes('LOCK UPDATE CNODES', 1)
+            
+def check_update_node(node_name, write=False):
+    numb = read_cnodes(node_name) 
+    etalon = read_cnodes('GLOBAL CNODE')
+    if numb == etalon:
+        return False
+    else:
+        if write:
+            write_cnodes(node_name, etalon)
+        return True
+    
+def ini_update_cnode(node_name):
+    if read_cnodes('LOCK UPDATE CNODES')==1:
+        return False
+    
+    etalon = read_cnodes('GLOBAL CNODE')
+    if etalon == None:
+        initialize_cnodes()
+        etalon = 1
+    else:
+        etalon += 1
+    
+    write_cnodes(node_name, etalon)
+    return True
+    
+def is_updated_cnode():
+     write_cnodes('LOCK UPDATE CNODES', 0)   
+    
+        
+            
 
 def read_bmm(bm_ref):
     global bmesh_mapping
@@ -281,28 +339,32 @@ def myZip(list_all, level, level2=0):
         else:
             return False 
 
+
 def updateSlot(self, context):
-    updated = [self.node.name]
+    if not ini_update_cnode(self.node.name):
+        return
+
     for output in self.node.outputs:
         if output.is_linked:
             for link in output.links:
                 nod = link.to_socket.node
-                if nod.name not in updated:
+                if check_update_node(nod.name, True):
                     nod.update()
-                    updated.append(nod.name)
-    del updated
+    is_updated_cnode()
+    
     
 def updateNode(self, context):
-    updated = [self.name]
+    if not ini_update_cnode(self.node.name):
+        return
+    
     self.update()
     for output in self.outputs:
         if output.is_linked:
             for link in output.links:
                 nod = link.to_socket.node
-                if nod.name not in updated:
+                if check_update_node(nod.name, True):
                     nod.update()
-                    updated.append(nod.name)
-    del updated    
+    is_updated_cnode()
     
     
 def matrixdef(orig, loc, scale, rot, angle, vec_angle=[[]]):
