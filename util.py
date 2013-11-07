@@ -40,6 +40,7 @@ def initialize_cnodes():
 def check_update_node(node_name, write=False):
     numb = read_cnodes(node_name) 
     etalon = read_cnodes('GLOBAL CNODE')
+    #print('etalon',etalon)
     if numb == etalon:
         return False
     else:
@@ -65,6 +66,8 @@ def ini_update_cnode(node_name):
 def is_updated_cnode():
      write_cnodes('LOCK UPDATE CNODES', 0)   
     
+def lock_updated_cnode():
+     write_cnodes('LOCK UPDATE CNODES', 1)   
         
             
 
@@ -344,7 +347,7 @@ def myZip(list_all, level, level2=0):
 def updateAllOuts(self, update_self=True):
     if update_self:
         self.update()
-     
+    #print('update_node ', self.name) 
     for output in self.outputs:
         if output.is_linked:
             for link in output.links:
@@ -355,12 +358,7 @@ def updateAllOuts(self, update_self=True):
     
 
 def updateSlot(self, context):
-    if not ini_update_cnode(self.node.name):
-        return
-
-    updateAllOuts(self.node, False)
-    is_updated_cnode()
-    
+    return
     
 def updateNode(self, context):
     if not ini_update_cnode(self.name):
