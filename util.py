@@ -58,6 +58,7 @@ def ini_update_cnode(node_name):
     else:
         etalon += 1
     
+    write_cnodes('GLOBAL CNODE', etalon)
     write_cnodes(node_name, etalon)
     return True
     
@@ -340,30 +341,32 @@ def myZip(list_all, level, level2=0):
             return False 
 
 
-def updateSlot(self, context):
-    if not ini_update_cnode(self.node.name):
-        return
-
-    for output in self.node.outputs:
-        if output.is_linked:
-            for link in output.links:
-                nod = link.to_socket.node
-                if check_update_node(nod.name, True):
-                    nod.update()
-    is_updated_cnode()
-    
-    
-def updateNode(self, context):
-    if not ini_update_cnode(self.node.name):
-        return
-    
-    self.update()
+def updateAllOuts(self, update_self=True):
+    if update_self:
+        self.update()
+     
     for output in self.outputs:
         if output.is_linked:
             for link in output.links:
                 nod = link.to_socket.node
                 if check_update_node(nod.name, True):
-                    nod.update()
+                    updateAllOuts(nod)
+                    
+    
+
+def updateSlot(self, context):
+    if not ini_update_cnode(self.node.name):
+        return
+
+    updateAllOuts(self.node, False)
+    is_updated_cnode()
+    
+    
+def updateNode(self, context):
+    if not ini_update_cnode(self.name):
+        return
+    
+    updateAllOuts(self)
     is_updated_cnode()
     
     
