@@ -34,9 +34,14 @@ class SverchokViewer(bpy.types.Operator):
                     bpy.data.texts[t[0]].name = 'Sverchok_viewer'
         bpy.ops.text.select_all()
         podpis = '\n' + '\n' + '*************Sverchok parametric tools************' + '\n' + '****************http/nikitron.cc.ua***************' + '\n' + '**************************************************' + '\n' + '*************You can support Sverchok*************' + '\n' + '***Feel free to donate, to code, fill wiki page***' + '\n' + '**********or participate in another way.**********' + '\n'  + '\n'  +  'Huge thanks for Paul Kotelevets, our prime donator.' + '\n' + '\n' + '************************************Sverchok team.'
-        for_file = 'vertices: \n' + cache_viewer_slot1['veriable'] \
-            + cache_viewer_slot2['type'] + cache_viewer_slot2['veriable'] \
-            + '\nmatrixes: \n' + cache_viewer_slot3['veriable'] + podpis
+        if cache_viewer_slot1['veriable'] or cache_viewer_slot2['veriable'] or cache_viewer_slot3['veriable']:
+            for_file = 'vertices: \n' + cache_viewer_slot1['veriable'] \
+                        + cache_viewer_slot2['type'] + cache_viewer_slot2['veriable'] \
+                        + '\nmatrixes: \n' + cache_viewer_slot3['veriable'] + podpis
+        else:
+            for_file = 'vertices: \nNone' \
+                        + '\ndata: \nNone' \
+                        + '\nmatrixes: \nNone' + podpis
         bpy.data.texts['Sverchok_viewer'].from_string(for_file)
         bpy.context.area.type = 'NODE_EDITOR'
         #print (cache_viewer_slot1['veriable'], cache_viewer_slot2['veriable'], cache_viewer_slot3['veriable'])
@@ -87,9 +92,9 @@ class ViewerNode_text(Node, SverchCustomTreeNode):
             if type(self.inputs['edg_pol'].links[0].from_socket) == bpy.types.StringsSocket:
                 line_str = self.inputs['edg_pol'].links[0].from_socket.StringsProperty
                 #print (line_str)
-                #lin = eval(line_str)        # why????
-                cache_viewer_slot2['type'] = '\ndata:'#str(self.edgDef(lin))
+                
                 evaline_str = eval(line_str)
+                cache_viewer_slot2['type'] = str(self.edgDef(evaline_str))
                 deptl = self.levelsOflist(evaline_str)
                 #print(str(evaline_str))
                 b = self.readFORviewer_sockets_data(evaline_str, deptl) # from util
@@ -103,7 +108,7 @@ class ViewerNode_text(Node, SverchCustomTreeNode):
                 matrix = self.inputs['matrix'].links[0].from_socket.MatrixProperty
                 eva = eval(matrix)
                 deptl = self.levelsOflist(eva)
-                #print(str(eva))
+                #print(matrix)
                 c = self.readFORviewer_sockets_data(eva, deptl) # from util
                 cache_viewer_slot3['veriable'] = str(c)
                 #print ('viewer text input3')
@@ -112,7 +117,8 @@ class ViewerNode_text(Node, SverchCustomTreeNode):
         self.update()
     
     def edgDef(self, l):
-        if type(l[0]) == int or type(l[0]) == float:
+        t = '\ndata:'
+        if type(l[0]) in [int, float]:
             if len(l) > 2:
                 t = '\npolygons: \n'
             else:
@@ -125,10 +131,8 @@ class ViewerNode_text(Node, SverchCustomTreeNode):
     def readFORviewer_sockets_data(self, data, dept):
         cache = ''
         output = ''
-        #if dept <= 2:
-            #dept -= 1
         deptl = dept - 1
-        if deptl:
+        if deptl > 1:
             for i, object in enumerate(data):
                 cache += ('\n' + '=' + str(i) + '=   (' + str(len(object)) + ')')
                 cache += str(self.readFORviewer_sockets_data(object, deptl))
@@ -140,11 +144,12 @@ class ViewerNode_text(Node, SverchCustomTreeNode):
     def levelsOflist(self, list):
         level = 1
         for n in list:
-            if type(n) == type([]): #or type(n) == tuple:
+            #print (type(n), str(type(n) in [type([]), type(tuple()) ]))
+            if type(n) in [type([]), type(tuple())]: # why it not understands [list, tuple]??? strange behaviour
                 level += self.levelsOflist(n)
-            #print (level)
+                #print (level)
             return level
-
+    
 
 def register():
     bpy.utils.register_class(SverchokViewer)
