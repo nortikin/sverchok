@@ -21,8 +21,9 @@ class VectorsOutNode(Node, SverchCustomTreeNode):
             if not self.inputs['Vectors'].node.socket_value_update:
                 self.inputs['Vectors'].node.update()
             xyz = eval(self.inputs['Vectors'].links[0])
+            data = dataCorrect(xyz)
             X, Y, Z = [], [], []
-            for item in xyz:
+            for item in data:
                 Z.append(item[2])
                 Y.append(item[1])
                 X.append(item[0])

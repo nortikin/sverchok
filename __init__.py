@@ -70,6 +70,8 @@ if "bpy" in locals():
     imp.reload(node_DistancePP)
     imp.reload(node_Series)
     imp.reload(node_Vector)
+    imp.reload(node_Vector_out)
+    imp.reload(node_Random)
     imp.reload(node_Float)
     imp.reload(node_Integer)
     imp.reload(node_Number)
@@ -97,6 +99,8 @@ else:
     import node_DistancePP
     import node_Series
     import node_Vector
+    import node_Vector_out
+    import node_Random
     import node_Float
     import node_Integer
     import node_Number
@@ -110,13 +114,9 @@ def register():
     import bpy
     import nodeitems_utils
     node_s.register()
-    #node_AnalitsPolsNode.register()
     node_CentersPolsNode.register()
-    #node_ObjectProps.register()
-    #node_SpreadNode.register()
     node_Objects.register()
     node_Objects_out.register()
-    #Viewer_draw.register()
     node_Viewer.register()
     node_Viewer_text.register()
     node_ListLevels.register()
@@ -126,6 +126,8 @@ def register():
     node_DistancePP.register()
     node_Series.register()
     node_Vector.register()
+    node_Vector_out.register()
+    node_Random.register()
     node_Float.register()
     node_Integer.register()
     node_Number.register()
@@ -151,6 +153,8 @@ def unregister():
     node_Number.unregister()
     node_Integer.unregister()
     node_Float.unregister()
+    node_Random.unregister()
+    node_Vector_out.unregister()
     node_Vector.unregister()
     node_Series.unregister()
     node_DistancePP.unregister()
@@ -160,13 +164,9 @@ def unregister():
     node_ListLevels.unregister()
     node_Viewer_text.unregister()
     node_Viewer.unregister()
-    #Viewer_draw.unregister()
     node_Objects_out.unregister()
     node_Objects.unregister()
-    #node_SpreadNode.unregister()
-    #node_ObjectProps.unregister()
     node_CentersPolsNode.unregister()
-    #node_AnalitsPolsNode.unregister()
     node_s.unregister()
     
     if 'SVERCHOK' in nodeitems_utils._node_categories:

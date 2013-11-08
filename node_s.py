@@ -120,20 +120,22 @@ def make_categories():
             NodeItem("ListJoinNode", label="List Join"),
             NodeItem("ZipNode", label="List Zip"),
             NodeItem("ShiftNode", label="List Shift"),
-            NodeItem("CentersPolsNode", label="Centers Polygons"),
-            NodeItem("DistancePPNode", label="Distances"),
             NodeItem("GenSeriesNode", label="Series"),
+            NodeItem("RandomNode", label="Random"),
             NodeItem("FloatNode", label="Float"),
             NodeItem("IntegerNode", label="Int"),
             NodeItem("NumberNode", label="Float 2 Int"),
+            NodeItem("FormulaNode", label="Formula"),
             ]),
         SverchNodeCategory("SVERCHOK_V", "SVERCHOK vector", items=[
             # generators, degenerators nodes
             NodeItem("GenVectorsNode", label="Vector in"),
+            NodeItem("VectorsOutNode", label="Vector out"),
             NodeItem("MoveNode", label="Vector Move"),
             NodeItem("MatrixGenNode", label="Matrix in"),
             NodeItem("MatrixDeformNode", label="Matrix Deform"),
-            NodeItem("FormulaNode", label="Formula"),
+            NodeItem("CentersPolsNode", label="Centers Polygons"),
+            NodeItem("DistancePPNode", label="Distances"),
             ]),
         ]
     return node_categories
