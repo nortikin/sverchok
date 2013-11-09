@@ -199,35 +199,41 @@ def handle_check(handle, prop):
 ################ define data floor ##################
 #####################################################
 
-
 # data from nasting to standart: TO container( objects( lists( floats, ), ), )
 def dataCorrect(data):
     dept = levelsOflist(data)
     output = []
-    if dept < 4:
-        for i in range(dept):
-            output = [data]
-        return [dept, output]
+    if dept < 2:
+        #print ('DC, dep<3', dept)
+        #print ('correct', data)
+        return [dept, data]
     else:
+        #print ('DC, dep>2', dept)
         output = dataStandart(data, dept)
+        #print ('correct', output)
         return [dept, output]
+    
 # from standart data to initial levels: to nasting lists  container( objects( lists( nasty_lists( floats, ), ), ), )
 def dataSpoil(data, dept):
     pass
     
 # data from nasting to standart: TO container( objects( lists( floats, ), ), )
 def dataStandart(data, dept):
-    output = []
+    
     deptl = dept - 1
-    if deptl > 0: #and type(data) in [list, tuple]:
-        for object in data:
-            if deptl > 2 and type(object) in [list, tuple]:
-                output = dataStandart(object, deptl)
-            elif deptl > 2 and type(object) in [int, float]:
-                output_ += object
-    else:
-        output = data
-        output.append(object)
+    #and type(data) in [list, tuple]:
+    output = []
+    for object in data:
+        if deptl >0:
+            #print ('DS, dep>1', deptl)
+            output.extend(dataStandart(object, deptl))
+            #elif deptl > 2 and type(object) in [int, float]:
+            #output_ += object
+        else:
+            output.append(data)
+            #print ('DS, dep<2', deptl)
+            #print (output)
+            return output
     return output
 
 
