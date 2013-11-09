@@ -1,6 +1,7 @@
 import bpy
 from node_s import *
 import random
+from util import *
 
 class RandomNode(Node, SverchCustomTreeNode):
     ''' Random numbers 0-1'''
@@ -8,14 +9,14 @@ class RandomNode(Node, SverchCustomTreeNode):
     bl_label = 'Random'
     bl_icon = 'OUTLINER_OB_EMPTY'
     
-    Count_ = bpy.props.IntProperty(name='Count_', description='Random', default=1, min=1)
+    Count_inner = bpy.props.IntProperty(name='Count_inner', description='Random', default=1, min=1, step=1, options={'ANIMATABLE'}, update=updateNode)
     
     def init(self, context):
         self.inputs.new('StringsSocket', "Count", "Count")
         self.outputs.new('StringsSocket', "Random", "Random")
         
     def draw(self, context, layout):
-        layout.prop(self, "Count_", text="Random count")
+        layout.prop(self, "Count_inner", text="Random count")
 
     def update(self):
         # inputs
@@ -23,22 +24,22 @@ class RandomNode(Node, SverchCustomTreeNode):
             if not self.inputs['Count'].node.socket_value_update:
                 self.inputs['Count'].node.update()
                 
-            Count = eval(self.inputs['Count'].links[0].from_socket.StringsProperty)[0][0]
+            Coun = eval(self.inputs['Count'].links[0].from_socket.StringsProperty)[0][0]
         else:
-            Count = self.Count_
+            Coun = self.Count_inner
     
         
         # outputs
         if 'Random' in self.outputs and len(self.outputs['Random'].links)>0:
             if not self.outputs['Random'].node.socket_value_update:
                 self.inputs['Random'].node.update()
-            Random = [c for c in self.RandM(Count)]
+            Random = [c for c in self.RandM(Coun)]
             
             self.outputs['Random'].StringsProperty = str([Random, ])
 
     def RandM(self, Count):
         while Count:
-            yield random.random()
+            yield round(random.random(), 16) # it cannot take nonrounded float
             Count -= 1
     
     def update_socket(self, context):

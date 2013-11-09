@@ -220,21 +220,21 @@ def draw_callback_view(handle, sl1, sl2, sl3, vs):
         glColor3f(0.5, 1.0, 0.5)
         glLineWidth(1.0)
         glPointSize(1.75)
-        glEnable(GL_LINE_STIPPLE)
+        glEnable(GL_LINES)
         
         for i, matrix in enumerate(data_matrix):    # object
             k = i
             if i > verlen:
                 k = verlen
             for line in data_edges[k]:                 # line
-                glBegin(GL_LINE_STRIP)
+                glBegin(GL_LINES)
                 for point in line:              # point
                     vec_corrected = data_matrix[i]*data_vector[k][point]
                     glVertex3f(*vec_corrected)
                 glEnd()
                 glPointSize(1.75)
                 glLineWidth(1.0)
-        glDisable(GL_LINE_STIPPLE)
+        glDisable(GL_LINES)
     #######
     # polygons
     if data_polygons and data_vector:

@@ -17,10 +17,12 @@ class VectorsOutNode(Node, SverchCustomTreeNode):
 
     def update(self):
         # inputs
-        if 'Vectors' in self.inputs and len(self.inputs['Vectors'].links)>0:
+        if 'Vectors' in self.inputs and len(self.inputs['Vectors'].links)>0 and \
+                type(self.inputs['Vectors'].links[0].from_socket) == VerticesSocket:
             if not self.inputs['Vectors'].node.socket_value_update:
                 self.inputs['Vectors'].node.update()
-            xyz = eval(self.inputs['Vectors'].links[0])
+            xyz = eval(self.inputs['Vectors'].links[0].from_socket.VerticesProperty)
+            print (xyz)
             data = dataCorrect(xyz)
             X, Y, Z = [], [], []
             for item in data:
@@ -28,10 +30,10 @@ class VectorsOutNode(Node, SverchCustomTreeNode):
                 Y.append(item[1])
                 X.append(item[0])
             
-            #print (series_vec)
+            print ('data input vector out is ' + data)
             
         # outputs
-        if self.outputs['X'].links and \
+        if 'X' in self.outputs and len(self.outputs['X'].links)>0 and \
             type(self.outputs['X'].links[0].from_socket) == StringsSocket:
             if not self.outputs['X'].node.socket_value_update:
                 self.outputs['X'].node.update()
@@ -39,7 +41,7 @@ class VectorsOutNode(Node, SverchCustomTreeNode):
         else:
             X = [0.0]
         
-        if self.outputs['Y'].links and \
+        if 'Y' in self.outputs and len(self.outputs['Y'].links)>0 and \
             type(self.outputs['Y'].links[0].from_socket) == StringsSocket:
             if not self.outputs['Y'].node.socket_value_update:
                 self.outputs['Y'].node.update()
@@ -47,7 +49,7 @@ class VectorsOutNode(Node, SverchCustomTreeNode):
         else:
             Y = [0.0]
             
-        if self.outputs['Z'].links and \
+        if 'Z' in self.outputs and len(self.outputs['Z'].links)>0 and \
             type(self.outputs['Z'].links[0].from_socket) == StringsSocket:
             if not self.outputs['Z'].node.socket_value_update:
                 self.outputs['Z'].node.update()
