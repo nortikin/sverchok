@@ -126,8 +126,7 @@ class ViewerNode(Node, SverchCustomTreeNode):
                 cache_viewer_baker['m'] = []
             if cache_viewer_baker['v'] and cache_viewer_baker['ep'] or cache_viewer_baker['m']:
                 callback_enable(self.name, cache_viewer_baker['v'], cache_viewer_baker['ep'], cache_viewer_baker['m'], self.Vertex_show)
-        if not self.inputs['vertices'].links and not self.inputs['edg_pol'].links \
-                and not self.inputs['matrix'].links:
+        if not self.inputs['vertices'].links:
             callback_disable(self.name)
     
     def update_socket(self, context):

@@ -1,5 +1,6 @@
 import bpy
 from node_s import *
+from util import *
 
 class IntegerNode(Node, SverchCustomTreeNode):
     ''' Integer '''
@@ -7,19 +8,23 @@ class IntegerNode(Node, SverchCustomTreeNode):
     bl_label = 'Integer'
     bl_icon = 'OUTLINER_OB_EMPTY'
     
+    int_ = bpy.props.IntProperty(name = 'int_', description='integer number', default=1, options={'ANIMATABLE'}, update=updateNode)
+    
     def init(self, context):
-        self.inputs.new('NodeSocketInt', "Integer", "Integer").default_value = 10
+        self.inputs.new('StringsSocket', "Integer", "Integer")
         self.outputs.new('StringsSocket', "Integer", "Integer")
-        
+    
+    def draw_buttons(self, context, layout):
+        layout.prop(self, "int_", text="integer")
 
     def update(self):
         # inputs
-        if len(self.inputs['Integer'].links)>0 and type(self.inputs['Integer'].links[0].from_socket) == bpy.types.NodeSocketInteger:
+        if len(self.inputs['Integer'].links)>0:
             if not self.inputs['Integer'].node.socket_value_update:
                 self.inputs['Integer'].node.update()
-            Integer = self.inputs['Integer'].links[0].from_socket.default_value
+            Integer = self.inputs['Integer'].links[0].from_socket.StringsProperty
         else:
-            Integer = self.inputs['Integer'].default_value
+            Integer = self.int_
         
         # outputs
         if 'Integer' in self.outputs and len(self.outputs['Integer'].links)>0:

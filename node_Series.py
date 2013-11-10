@@ -1,5 +1,6 @@
 import bpy
 from node_s import *
+from util import *
 
 class GenSeriesNode(Node, SverchCustomTreeNode):
     ''' Generator series '''
@@ -7,35 +8,43 @@ class GenSeriesNode(Node, SverchCustomTreeNode):
     bl_label = 'List Series'
     bl_icon = 'OUTLINER_OB_EMPTY'
     
+    start_ = bpy.props.FloatProperty(name = 'start', description='start', default=0, options={'ANIMATABLE'}, update=updateNode)
+    stop_ = bpy.props.FloatProperty(name = 'stop', description='stop', default=10, options={'ANIMATABLE'}, update=updateNode)
+    step_ = bpy.props.FloatProperty(name = 'step', description='step', default=1, options={'ANIMATABLE'}, update=updateNode)
+    
     def init(self, context):
-        self.inputs.new('NodeSocketFloat', "Start", "Start").default_value = 0
-        self.inputs.new('NodeSocketFloat', "Stop", "Stop").default_value = 10
-        self.inputs.new('NodeSocketFloat', "Step", "Step").default_value = 2
+        self.inputs.new('StringsSocket', "Start", "Start")
+        self.inputs.new('StringsSocket', "Stop", "Stop")
+        self.inputs.new('StringsSocket', "Step", "Step")
         self.outputs.new('StringsSocket', "Series", "Series")
-        
+    
+    def draw_buttons(self, context, layout):
+        layout.prop(self, "start_", text="start")
+        layout.prop(self, "stop_", text="stop")
+        layout.prop(self, "step_", text="step")
 
     def update(self):
         # inputs
-        if 'Start' in self.inputs and len(self.inputs['Start'].links)>0 and type(self.inputs['Start'].links[0].from_socket) == bpy.types.NodeSocketFloat:
+        if 'Start' in self.inputs and len(self.inputs['Start'].links)>0:
             if not self.inputs['Start'].node.socket_value_update:
                 self.inputs['Start'].node.update()
-            Start = self.inputs['Start'].links[0].from_socket.default_value
+            Start = self.inputs['Start'].links[0].from_socket.StringsProperty
         else:
-            Start = self.inputs['Start'].default_value
+            Start = self.start_
     
-        if 'Stop' in self.inputs and len(self.inputs['Stop'].links)>0 and type(self.inputs['Stop'].links[0].from_socket) == bpy.types.NodeSocketFloat:
+        if 'Stop' in self.inputs and len(self.inputs['Stop'].links)>0:
             if not self.inputs['Stop'].node.socket_value_update:
                 self.inputs['Stop'].node.update()
-            Stop = self.inputs['Stop'].links[0].from_socket.default_value
+            Stop = self.inputs['Stop'].links[0].from_socket.StringsProperty
         else:
-            Stop = self.inputs['Stop'].default_value
+            Stop = self.stop_
         
-        if 'Step' in self.inputs and len(self.inputs['Step'].links)>0 and type(self.inputs['Step'].links[0].from_socket) == bpy.types.NodeSocketFloat:
+        if 'Step' in self.inputs and len(self.inputs['Step'].links)>0:
             if not self.inputs['Step'].node.socket_value_update:
                 self.inputs['Step'].node.update()
-            Step = self.inputs['Step'].links[0].from_socket.default_value
+            Step = self.inputs['Step'].links[0].from_socket.StringsProperty
         else:
-            Step = self.inputs['Step'].default_value
+            Step = self.step_
         
         # outputs
         if 'Series' in self.outputs and len(self.outputs['Series'].links)>0:

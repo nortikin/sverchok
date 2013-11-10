@@ -59,26 +59,20 @@ class ShiftNode(Node, SverchCustomTreeNode):
         output = self.shift(data, number, self.enclose)  
         #print('\nshift output',output, '\n --- ', typ, data, number, self.enclose)
         
-        if len(self.outputs['vertices'].links)>0 and typ == 'v':
+        if 'vertices' in self.outputs and len(self.outputs['vertices'].links)>0 and typ == 'v':
             if not self.outputs['vertices'].node.socket_value_update:
                 self.outputs['vertices'].node.update()
             self.outputs['vertices'].VerticesProperty =  str(output)
-        else:
-            self.outputs['vertices'].VerticesProperty =  str([[]])
             
-        if len(self.outputs['data'].links)>0 and typ == 's':
+        if 'data' in self.outputs and len(self.outputs['data'].links)>0 and typ == 's':
             if not self.outputs['data'].node.socket_value_update:
                 self.outputs['data'].node.update()
             self.outputs['data'].StringsProperty =  str(output)
-        else:
-            self.outputs['data'].StringsProperty =  str([[]])
             
-        if len(self.outputs['matrix'].links)>0 and typ == 'm':
+        if 'matrix' in self.outputs and len(self.outputs['matrix'].links)>0 and typ == 'm':
             if not self.outputs['matrix'].node.socket_value_update:
                 self.outputs['matrix'].node.update()
             self.outputs['matrix'].MatrixProperty = str(output)
-        else:
-            self.outputs['matrix'].MatrixProperty = str([])
 
 
     def shift(self, list_a, shift, check_enclose):
