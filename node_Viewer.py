@@ -24,44 +24,49 @@ class SvObjBake(bpy.types.Operator):
     
     def makeobjects(self, vers, edg_pol, mats):
         # inception
-        # пока работает только с одним объектом... надо решать.
+        # fht = предохранитель от перебора рёбер и полигонов.
+        fht = []
         if len(edg_pol[0][0]) == 2:
-            edgs = edg_pol
-            pols = []
-            fht = max(a for a in max(edgs[0]))
+            for edgs in edg_pol:
+                pols = []
+                fht.append(max(a for a in max(edgs)))
         elif len(edg_pol[0][0]) > 2:
-            pols = edg_pol
-            edgs = []
-            fht = max(a for a in max(pols[0]))
+            for pols in edg_pol:
+                edgs = []
+                fht.append(max(a for a in max(pols)))
+        #print (edg_pol, vers, fht)
         vertices = Vector_generate(vers)
         matrixes = Matrix_generate(mats)
         #print('mats' + str(matrixes))
         objects = {}
         # objects = matrixes + mesh
-        #print ( fht)
-        fhtagn = min(len(vertices[0]), fht) - 1
-        #print (fhtagn, vertices, matrixes, pols, edgs)
+        fhtagn = []
+        for u, f in enumerate(fht):
+            fhtagn.append(min(len(vertices[u]), fht[u]))
+        lenmesh = len(vertices) - 1
+        #print (fhtagn, vertices, matrixes, pols, edg_pol)
         for i, m in enumerate(matrixes):
             k = i
-            if i > fhtagn:
-                k = fhtagn
+            if i > lenmesh:
+                k = lenmesh
+            if (len(vertices[k])-1) > fhtagn[k]:
+                continue
             v = vertices[k]
-            #print (i)
             if edgs:
-                e = edgs[k]
+                e = edg_pol[k]
             else:
-                e = edgs
+                e = []
             if pols:
-                p = pols[k]
+                p = edg_pol[k]
             else:
-                p = pols
-            objects[i] = self.makemesh(i,v,e,p,m)
-        #print(objects)
+                p = []
+            objects[str(i)] = self.makemesh(i,v,e,p,m)
         for ite in objects.values():
-            #print ( ite )
             me = ite[1]
             ob = ite[0]
-            me.update(calc_edges=True)
+            calcedg = True
+            if edgs: calcedg = False
+            me.update(calc_edges=calcedg)
             bpy.context.scene.objects.link(ob)
             
     def makemesh(self,i,v,e,p,m):
@@ -72,6 +77,7 @@ class SvObjBake(bpy.types.Operator):
         ob.show_name = False
         ob.hide_select = False
         #print ([ob,me])
+        print (ob.name + ' baked')
         return [ob,me]
 
 class ViewerNode(Node, SverchCustomTreeNode):
@@ -113,6 +119,7 @@ class ViewerNode(Node, SverchCustomTreeNode):
                 if self.inputs['edg_pol'].links[0].from_socket.StringsProperty:
                     prope = eval(self.inputs['edg_pol'].links[0].from_socket.StringsProperty)
                     cache_viewer_baker['ep'] = prope
+                    #print (prope)
             else:
                 cache_viewer_baker['ep'] = []
                     
