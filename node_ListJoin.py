@@ -71,7 +71,7 @@ class ListJoinNode(Node, SverchCustomTreeNode):
             'matrix' in self.outputs and  self.outputs['matrix'].links:
             list_b=slots.copy()
             if self.Offset_check:
-                list_b = myZip(slots,self.JoinLevel)  
+                list_b = myZip(slots,self.JoinLevel)
                 
             if self.Inner_check:
                 result = preobrazovatel(list_b,[self.JoinLevel+2])

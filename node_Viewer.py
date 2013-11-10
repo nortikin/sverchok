@@ -15,14 +15,16 @@ class SvObjBake(bpy.types.Operator):
 
     def execute(self, context):
         global cache_viewer_baker
-        vers = dataCorrect(cache_viewer_baker['v'])[1]
-        edg_pol = dataCorrect(cache_viewer_baker['ep'])[1]
-        matrixes = dataCorrect(cache_viewer_baker['m'])[1]
+        vers = dataCorrect(cache_viewer_baker['v'])
+        edg_pol = dataCorrect(cache_viewer_baker['ep'])
+        matrixes = dataCorrect(cache_viewer_baker['m'])
         self.makeobjects(vers, edg_pol, matrixes)
+        cache_viewer_baker = {}
         return {'FINISHED'}
     
     def makeobjects(self, vers, edg_pol, mats):
         # inception
+        # пока работает только с одним объектом... надо решать.
         if len(edg_pol[0][0]) == 2:
             edgs = edg_pol
             pols = []
@@ -36,7 +38,7 @@ class SvObjBake(bpy.types.Operator):
         #print('mats' + str(matrixes))
         objects = {}
         # objects = matrixes + mesh
-        print ( fht)
+        #print ( fht)
         fhtagn = min(len(vertices[0]), fht) - 1
         #print (fhtagn, vertices, matrixes, pols, edgs)
         for i, m in enumerate(matrixes):
@@ -66,9 +68,7 @@ class SvObjBake(bpy.types.Operator):
         me = bpy.data.meshes.new('Sv_' + str(i))
         me.from_pydata(v, e, p)
         ob = bpy.data.objects.new('Sv_' + str(i), me)
-        ob.location = m.translation
-        ob.rotation_euler = m.to_euler()
-        ob.scale = m.to_scale()
+        ob.matrix_world = m
         ob.show_name = False
         ob.hide_select = False
         #print ([ob,me])

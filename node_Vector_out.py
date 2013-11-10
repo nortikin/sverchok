@@ -24,7 +24,7 @@ class VectorsOutNode(Node, SverchCustomTreeNode):
                 self.inputs['Vectors'].node.update()
             xyz = eval(self.inputs['Vectors'].links[0].from_socket.VerticesProperty)
             
-            data = dataCorrect(xyz)[1] # 
+            data = dataCorrect(xyz) # 
             #print (data)
             X, Y, Z = [], [], []
             for obj in data:

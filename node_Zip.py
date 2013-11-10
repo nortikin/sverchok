@@ -102,7 +102,7 @@ class ZipNode(Node, SverchCustomTreeNode):
                     lt=[]
                     for l in list_all:
                         lt.append(l[value])
-                    t = tuple(lt)
+                    t = list(lt)
                     list_res.append(t)
                 return list_res
             else:
@@ -120,7 +120,7 @@ class ZipNode(Node, SverchCustomTreeNode):
                         if list_tl==False:
                             list_tl=list_tr
                         t.append(list_tl)
-                list_res.extend(tuple(t))
+                list_res.extend(list(t))
                 return list_res
             else:
                 return False    

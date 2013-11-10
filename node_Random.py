@@ -9,14 +9,14 @@ class RandomNode(Node, SverchCustomTreeNode):
     bl_label = 'Random'
     bl_icon = 'OUTLINER_OB_EMPTY'
     
-    Count_inner = bpy.props.IntProperty(name='Count_inner', description='Random', default=1, min=1, step=1, options={'ANIMATABLE'}, update=updateNode)
+    count_inner = bpy.props.IntProperty(name = 'count_inner', description='random', default=1, min=1, options={'ANIMATABLE'}, update=updateNode)
     
     def init(self, context):
         self.inputs.new('StringsSocket', "Count", "Count")
         self.outputs.new('StringsSocket', "Random", "Random")
         
-    def draw(self, context, layout):
-        layout.prop(self, "Count_inner", text="Random count")
+    def draw_buttons(self, context, layout):
+        layout.prop(self, "count_inner", text="number")
 
     def update(self):
         # inputs
@@ -26,7 +26,7 @@ class RandomNode(Node, SverchCustomTreeNode):
                 
             Coun = eval(self.inputs['Count'].links[0].from_socket.StringsProperty)[0][0]
         else:
-            Coun = self.Count_inner
+            Coun = self.count_inner
     
         
         # outputs

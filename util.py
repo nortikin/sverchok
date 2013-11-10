@@ -211,15 +211,14 @@ def dataCorrect(data):
         #print ('DC, dep>2', dept)
         output = dataStandart(data, dept)
         #print ('correct', output)
-        return [dept, output]
+        return output
     
-# from standart data to initial levels: to nasting lists  container( objects( lists( nasty_lists( floats, ), ), ), )
+# from standart data to initial levels: to nasting lists  container( objects( lists( nasty_lists( floats, ), ), ), ) это невозможно!
 def dataSpoil(data, dept):
     pass
     
 # data from nasting to standart: TO container( objects( lists( floats, ), ), )
 def dataStandart(data, dept):
-    
     deptl = dept - 1
     #and type(data) in [list, tuple]:
     output = []
@@ -411,7 +410,7 @@ def myZip(list_all, level, level2=0):
                 lt=[]
                 for l in list_all:
                     lt.append(l[value])
-                t = tuple(lt)
+                t = list(lt)
                 list_res.append(t)
             return list_res
         else:
@@ -428,8 +427,8 @@ def myZip(list_all, level, level2=0):
                     list_tl = myZip(tr, level, level2+1)
                     if list_tl==False:
                         list_tl=list_tr
-                    t.append(list_tl)
-            list_res.extend(tuple(t))
+                    t.extend(list_tl)
+            list_res.append(list(t))
             return list_res
         else:
             return False 

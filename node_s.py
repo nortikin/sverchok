@@ -119,6 +119,7 @@ def make_categories():
             NodeItem("ListJoinNode", label="List Join"),
             NodeItem("ZipNode", label="List Zip"),
             NodeItem("ShiftNode", label="List Shift"),
+            NodeItem("ListReverseNode", label="List Reverse"),
             NodeItem("GenSeriesNode", label="Series"),
             NodeItem("RandomNode", label="Random"),
             NodeItem("FloatNode", label="Float"),
