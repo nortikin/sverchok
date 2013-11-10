@@ -28,21 +28,21 @@ class GenSeriesNode(Node, SverchCustomTreeNode):
         if 'Start' in self.inputs and len(self.inputs['Start'].links)>0:
             if not self.inputs['Start'].node.socket_value_update:
                 self.inputs['Start'].node.update()
-            Start = self.inputs['Start'].links[0].from_socket.StringsProperty
+            Start = eval(self.inputs['Start'].links[0].from_socket.StringsProperty)[0][0]
         else:
             Start = self.start_
     
         if 'Stop' in self.inputs and len(self.inputs['Stop'].links)>0:
             if not self.inputs['Stop'].node.socket_value_update:
                 self.inputs['Stop'].node.update()
-            Stop = self.inputs['Stop'].links[0].from_socket.StringsProperty
+            Stop = eval(self.inputs['Stop'].links[0].from_socket.StringsProperty)[0][0]
         else:
             Stop = self.stop_
         
         if 'Step' in self.inputs and len(self.inputs['Step'].links)>0:
             if not self.inputs['Step'].node.socket_value_update:
                 self.inputs['Step'].node.update()
-            Step = self.inputs['Step'].links[0].from_socket.StringsProperty
+            Step = eval(self.inputs['Step'].links[0].from_socket.StringsProperty)[0][0]
         else:
             Step = self.step_
         

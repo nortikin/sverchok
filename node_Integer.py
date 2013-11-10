@@ -22,7 +22,7 @@ class IntegerNode(Node, SverchCustomTreeNode):
         if len(self.inputs['Integer'].links)>0:
             if not self.inputs['Integer'].node.socket_value_update:
                 self.inputs['Integer'].node.update()
-            Integer = self.inputs['Integer'].links[0].from_socket.StringsProperty
+            Integer = eval(self.inputs['Integer'].links[0].from_socket.StringsProperty)[0][0]
         else:
             Integer = self.int_
         
