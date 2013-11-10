@@ -19,7 +19,7 @@ class MatrixGenNode(Node, SverchCustomTreeNode):
 
     def update(self):
         # inputs
-            if self.inputs['Location'].links and \
+            if 'Location' in self.inputs and self.inputs['Location'].links and \
                 type(self.inputs['Location'].links[0].from_socket) == VerticesSocket:
                 if not self.inputs['Location'].node.socket_value_update:
                     self.inputs['Location'].node.update()
@@ -28,7 +28,7 @@ class MatrixGenNode(Node, SverchCustomTreeNode):
             else:
                 loc = [[]]
             
-            if self.inputs['Scale'].links and \
+            if 'Scale' in self.inputs and self.inputs['Scale'].links and \
                 type(self.inputs['Scale'].links[0].from_socket) == VerticesSocket:
                 if not self.inputs['Scale'].node.socket_value_update:
                     self.inputs['Scale'].node.update()
@@ -37,7 +37,7 @@ class MatrixGenNode(Node, SverchCustomTreeNode):
             else:
                 scale = [[]]
                 
-            if self.inputs['Rotation'].links and \
+            if 'Rotation' in self.inputs and self.inputs['Rotation'].links and \
                 type(self.inputs['Rotation'].links[0].from_socket) == VerticesSocket:
                 if not self.inputs['Rotation'].node.socket_value_update:
                     self.inputs['Rotation'].node.update()
@@ -49,7 +49,7 @@ class MatrixGenNode(Node, SverchCustomTreeNode):
             
             rotA=[[]]
             angle = [[0.0]]
-            if self.inputs['Angle'].links:
+            if 'Angle' in self.inputs and self.inputs['Angle'].links:
                 if not self.inputs['Angle'].node.socket_value_update:
                         self.inputs['Angle'].node.update()
                 if type(self.inputs['Angle'].links[0].from_socket) == StringsSocket:

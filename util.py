@@ -8,6 +8,74 @@ from math import radians
 bmesh_mapping = {}
 per_cache = {}
 temp_handle = {}
+cache_nodes={}
+
+#####################################################
+################### update magic ####################
+#####################################################
+
+def read_cnodes(cnode):
+    global cache_nodes
+    if cnode not in cache_nodes:
+        return None
+    return cache_nodes[cnode]
+
+def write_cnodes(cnode, number):
+    global cache_nodes
+    if cnode in cache_nodes:
+        del cache_nodes[cnode]
+    cache_nodes[cnode] = number
+
+def clear_cnodes(cnode='ALL'):
+    global cache_nodes
+    if cnode=='ALL':
+        for i in cache_nodes.items:
+            del cache_nodes[i]
+    else:
+        if read_cnodes(cnode)!=None:
+            del cache_nodes[cnode]
+
+def initialize_cnodes():
+    node_name = 'GLOBAL CNODE'
+    write_cnodes(node_name, 1)
+    write_cnodes('LOCK UPDATE CNODES', 1)
+            
+def check_update_node(node_name, write=False):
+    numb = read_cnodes(node_name) 
+    etalon = read_cnodes('GLOBAL CNODE')
+    #print('etalon',etalon)
+    if numb == etalon:
+        return False
+    else:
+        if write:
+            write_cnodes(node_name, etalon)
+        return True
+    
+def ini_update_cnode(node_name):
+    if read_cnodes('LOCK UPDATE CNODES')==1:
+        return False
+    
+    etalon = read_cnodes('GLOBAL CNODE')
+    if etalon == None:
+        initialize_cnodes()
+        etalon = 1
+    else:
+        etalon += 1
+    
+    write_cnodes('GLOBAL CNODE', etalon)
+    write_cnodes(node_name, etalon)
+    return True
+    
+def is_updated_cnode():
+     write_cnodes('LOCK UPDATE CNODES', 0)   
+    
+def lock_updated_cnode():
+     write_cnodes('LOCK UPDATE CNODES', 1)   
+        
+
+#####################################################
+################### bmesh magic #####################
+#####################################################
 
 def read_bmm(bm_ref):
     global bmesh_mapping
@@ -32,7 +100,11 @@ def clear_bmm(bm_ref='ALL'):
         if read_bm(bm_ref)!=None:
             del bmesh_mapping[bm_ref]
 
-# force a full recalculation next time
+
+#####################################################
+################### cache magic #####################
+#####################################################
+
 def cache_delete(cache):
     if cache in per_cache:
        del per_cache[cache]
@@ -120,37 +192,71 @@ def handle_check(handle, prop):
 
 
 
-# for viewer_text node!!!! don't delete
 
-def readFORviewer_sockets_data(data, depth = 1):
-    cache = ''
-    output = ''
-    if type(data) == str:
-        eva = eval(data)    # why it not work properly all the time?
-        deptl = levelsOflist(data)
+#####################################################
+################# list levels magic #################
+########### working with nesting levels #############
+################ define data floor ##################
+#####################################################
+
+# data from nasting to standart: TO container( objects( lists( floats, ), ), )
+def dataCorrect(data):
+    dept = levelsOflist(data)
+    output = []
+    if dept < 2:
+        #print ('DC, dep<3', dept)
+        #print ('correct', data)
+        return [dept, data]
     else:
-        eva = data
-        deptl = depth - 1
-    if type(data[0]) == list:
-        if deptl:
-            for i, object in enumerate(eva):
-                cache += ('=' + str(i) + '=')
-                str(readFORviewer_sockets_data(object, depth=deptl))
-                return cache
-    else:
-        for k, val in enumerate(eva):
-            cache += '\n'
-            output += (str(val) + '\n')
-    return cache + output
+        #print ('DC, dep>2', dept)
+        output = dataStandart(data, dept)
+        #print ('correct', output)
+        return [dept, output]
+    
+# from standart data to initial levels: to nasting lists  container( objects( lists( nasty_lists( floats, ), ), ), )
+def dataSpoil(data, dept):
+    pass
+    
+# data from nasting to standart: TO container( objects( lists( floats, ), ), )
+def dataStandart(data, dept):
+    
+    deptl = dept - 1
+    #and type(data) in [list, tuple]:
+    output = []
+    for object in data:
+        if deptl >0:
+            #print ('DS, dep>1', deptl)
+            output.extend(dataStandart(object, deptl))
+            #elif deptl > 2 and type(object) in [int, float]:
+            #output_ += object
+        else:
+            output.append(data)
+            #print ('DS, dep<2', deptl)
+            #print (output)
+            return output
+    return output
+
+
+
+# calc list nesting only in countainment level integer
 
 def levelsOflist(list):
     level = 1
     for n in list:
-        if type(n) == list:
-            level += self.levels(n)
+        if type(n) in [type([]), type(tuple())]: # why it not understands [list, tuple]??? strange behaviour
+            level += levelsOflist(n)
+            #print (level)
         return level
 
-# for viewer_draw node and object_out node!!!! don't delete
+
+#####################################################
+################### matrix magic ####################
+##### tools that makes easier to convert data #######
+####### from string to matrixes, vertices, ##########
+######### lists, other and vise versa ###############
+#####################################################
+
+
 
 def Matrix_listing(prop):
     mat_out = []
@@ -162,6 +268,8 @@ def Matrix_listing(prop):
         mat_out.append((unit))
     return mat_out
 
+
+
 def Matrix_generate(prop):
     mat_out = []
     for i, matrix in enumerate(prop):
@@ -172,11 +280,15 @@ def Matrix_generate(prop):
         mat_out.append(unit)
     return mat_out
 
+
+
 def Matrix_location(prop):
     Vectors = []
     for p in prop:
         Vectors.append(p.translation)
     return [Vectors]
+
+
 
 def Vector_generate(prop):
     vec_out = []
@@ -186,6 +298,8 @@ def Vector_generate(prop):
             veclist.append(Vector(v[:]))
         vec_out.append(veclist)
     return vec_out
+    
+    
     
 def Edg_pol_generate(prop):
     edg_pol_out = []
@@ -202,7 +316,46 @@ def Edg_pol_generate(prop):
     return type, edg_pol_out
 
 
-# Working with lists
+
+def matrixdef(orig, loc, scale, rot, angle, vec_angle=[[]]):
+    modif = []
+    for i, de in enumerate(orig):
+        ma = de.copy()
+        
+        if loc[0]:
+            k = min(len(loc[0])-1,i)
+            mat_tran = de.Translation(loc[0][k])
+            ma *= mat_tran
+        
+        if vec_angle[0] and rot[0]:
+            k = min(len(rot[0])-1,i)
+            a = min(len(vec_angle[0])-1,i)
+            
+            vec_a = vec_angle[0][a].normalized()
+            vec_b = rot[0][k].normalized()
+            
+            mat_rot = vec_b.rotation_difference(vec_a).to_matrix().to_4x4()
+            ma = ma * mat_rot
+            
+        elif rot[0]:
+            k = min(len(rot[0])-1,i)
+            a = min(len(angle[0])-1,i)
+            mat_rot = de.Rotation(radians(angle[0][a]), 4, rot[0][k].normalized())
+            ma = ma * mat_rot
+            
+        if scale[0]:
+            k = min(len(scale[0])-1,i)
+            scale2=scale[0][k]
+            for j in range(4):
+                kk=min(j,2)
+                ma[j][j] = ma[j][j] * scale2[kk]
+            
+        modif.append(ma)
+    return modif
+
+#####################################################
+#################### lists magic ####################
+#####################################################
 
 def create_list(x, y):
     if type(y) in [list, tuple]:
@@ -281,52 +434,33 @@ def myZip(list_all, level, level2=0):
         else:
             return False 
 
-def updateNode(self,context):
-    updated = [self.name]
-    self.update()
+
+#####################################################
+############### update sockets magic ################
+#####################################################
+
+
+def updateAllOuts(self, update_self=True):
+    if update_self:
+        self.update()
+    #print('update_node ', self.name) 
     for output in self.outputs:
         if output.is_linked:
             for link in output.links:
                 nod = link.to_socket.node
-                if nod.name not in updated:
-                    nod.update()
-                    updated.append(nod.name)
-    del updated
+                if check_update_node(nod.name, True):
+                    updateAllOuts(nod)
+                    
+    
+
+def updateSlot(self, context):
+    return
+    
+def updateNode(self, context):
+    if not ini_update_cnode(self.name):
+        return
+    
+    updateAllOuts(self)
+    is_updated_cnode()
     
     
-    
-def matrixdef(orig, loc, scale, rot, angle, vec_angle=[[]]):
-    modif = []
-    for i, de in enumerate(orig):
-        ma = de.copy()
-        
-        if loc[0]:
-            k = min(len(loc[0])-1,i)
-            mat_tran = de.Translation(loc[0][k])
-            ma *= mat_tran
-        
-        if vec_angle[0] and rot[0]:
-            k = min(len(rot[0])-1,i)
-            a = min(len(vec_angle[0])-1,i)
-            
-            vec_a = vec_angle[0][a].normalized()
-            vec_b = rot[0][k].normalized()
-            
-            mat_rot = vec_b.rotation_difference(vec_a).to_matrix().to_4x4()
-            ma = ma * mat_rot
-            
-        elif rot[0]:
-            k = min(len(rot[0])-1,i)
-            a = min(len(angle[0])-1,i)
-            mat_rot = de.Rotation(radians(angle[0][a]), 4, rot[0][k].normalized())
-            ma = ma * mat_rot
-            
-        if scale[0]:
-            k = min(len(scale[0])-1,i)
-            scale2=scale[0][k]
-            for j in range(4):
-                kk=min(j,2)
-                ma[j][j] = ma[j][j] * scale2[kk]
-            
-        modif.append(ma)
-    return modif

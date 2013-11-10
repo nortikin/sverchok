@@ -11,8 +11,10 @@ class SverchokUpdateAll(bpy.types.Operator):
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
+        lock_updated_cnode()
         for ng in context.blend_data.node_groups:
             ng.interface_update(bpy.context)
+        is_updated_cnode()
         return {'FINISHED'}
     
 class SverchokHome(bpy.types.Operator):
@@ -43,6 +45,7 @@ class SverchokToolsMenu(bpy.types.Panel):
         layout.operator('wm.url_open', text='WWW: Go home!').url = 'http://nikitron.cc.ua/blend_scripts.html'
         #layout.operator(SverchokHome.bl_idname, text="WWW: Go home")
         layout.operator('wm.url_open', text='WWW: feedback').url = 'http://www.blenderartists.org/forum/showthread.php?272679-Addon-WIP-Sverchok-parametric-tool-for-architects/'
+        layout.operator('wm.url_open', text='WWW: bugtracking').url = 'https://docs.google.com/forms/d/1L2BIpDhjMgQEbVAc7pEq93432Qanu8UPbINhzJ5SryI/viewform'
         
 
 
@@ -61,6 +64,8 @@ class ToolsNode(Node, SverchCustomTreeNode):
         layout.operator('wm.url_open', text='WWW: Go home!').url = 'http://nikitron.cc.ua/blend_scripts.html'
         #layout.operator(SverchokHome.bl_idname, text="WWW: Go home")
         layout.operator('wm.url_open', text='WWW: feedback').url = 'http://www.blenderartists.org/forum/showthread.php?272679-Addon-WIP-Sverchok-parametric-tool-for-architects/'
+        layout.operator('wm.url_open', text='WWW: bugtracking').url = 'https://docs.google.com/forms/d/1L2BIpDhjMgQEbVAc7pEq93432Qanu8UPbINhzJ5SryI/viewform'
+        
     
     def update(self):
         pass

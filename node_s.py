@@ -5,6 +5,7 @@ from bpy.types import NodeTree, Node, NodeSocket
 import nodeitems_utils
 from nodeitems_utils import NodeCategory, NodeItem
 from mathutils import Matrix
+from util import updateSlot
 
 
 class MatrixSocket(NodeSocket):
@@ -13,7 +14,7 @@ class MatrixSocket(NodeSocket):
     bl_idname = "MatrixSocket"
     bl_label = "Matrix Socket"
     
-    MatrixProperty = StringProperty(name='MatrixProperty') 
+    MatrixProperty = StringProperty(name='MatrixProperty', update=updateSlot)
     
     
     def draw(self, context, layout, node, text):
@@ -34,7 +35,7 @@ class ObjectSocket(NodeSocket):
         bl_idname = "ObjectSocket"
         bl_label = "Object Socket"
         
-        ObjectProperty = StringProperty(name= "ObjectProperty")
+        ObjectProperty = StringProperty(name= "ObjectProperty", update=updateSlot)
         
         def draw(self, context, layout, node, text):
             if self.is_linked:
@@ -52,7 +53,7 @@ class VerticesSocket(NodeSocket):
         bl_idname = "VerticesSocket"
         bl_label = "Vertices Socket"
         
-        VerticesProperty = StringProperty(name='VerticesProperty')
+        VerticesProperty = StringProperty(name='VerticesProperty', update=updateSlot)
 
         def draw(self, context, layout, node, text):
             if self.is_linked:
@@ -71,7 +72,7 @@ class StringsSocket(NodeSocket):
         bl_idname = "StringsSocket"
         bl_label = "Strings Socket"
         
-        StringsProperty = StringProperty(name='StringsProperty')
+        StringsProperty = StringProperty(name='StringsProperty', update=updateSlot)
 
         def draw(self, context, layout, node, text):
             if self.is_linked:
@@ -105,28 +106,36 @@ class SverchNodeCategory(NodeCategory):
 
 def make_categories():
     node_categories = [
-        SverchNodeCategory("SVERCHOK", "SVERCHOK Nodes", items=[
-            # our basic nodes
+        SverchNodeCategory("SVERCHOK", "SVERCHOK basic", items=[
+            # basic nodes
             NodeItem("ObjectsNode", label="Objects in"),
             NodeItem("ObjectsNodeOut", label="Objects out"),
             NodeItem("ViewerNode", label="Viewer draw"),
             NodeItem("ViewerNode_text", label="Viewer text"),
+            NodeItem("ToolsNode", label="Tools"),
+            ]),
+        SverchNodeCategory("SVERCHOK_L", "SVERCHOK list", items=[
+            # list,numbers, modifs nodes
             NodeItem("ListLevelsNode", label="List Levels"),
             NodeItem("ListJoinNode", label="List Join"),
             NodeItem("ZipNode", label="List Zip"),
             NodeItem("ShiftNode", label="List Shift"),
-            NodeItem("CentersPolsNode", label="Centers Polygons"),
-            NodeItem("DistancePPNode", label="Distances"),
             NodeItem("GenSeriesNode", label="Series"),
+            NodeItem("RandomNode", label="Random"),
             NodeItem("FloatNode", label="Float"),
             NodeItem("IntegerNode", label="Int"),
             NodeItem("NumberNode", label="Float 2 Int"),
+            NodeItem("FormulaNode", label="Formula"),
+            ]),
+        SverchNodeCategory("SVERCHOK_V", "SVERCHOK vector", items=[
+            # generators, degenerators nodes
             NodeItem("GenVectorsNode", label="Vector in"),
+            NodeItem("VectorsOutNode", label="Vector out"),
             NodeItem("MoveNode", label="Vector Move"),
             NodeItem("MatrixGenNode", label="Matrix in"),
             NodeItem("MatrixDeformNode", label="Matrix Deform"),
-            NodeItem("FormulaNode", label="Formula"),
-            NodeItem("ToolsNode", label="Tools"),
+            NodeItem("CentersPolsNode", label="Centers Polygons"),
+            NodeItem("DistancePPNode", label="Distances"),
             ]),
         ]
     return node_categories

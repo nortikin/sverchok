@@ -22,7 +22,7 @@ class DistancePPNode(Node, SverchCustomTreeNode):
         layout.prop(self, "Cross_dist", text="CrossOver")
         
     def update(self):
-        if self.inputs['vertices1'].links and self.inputs['vertices2'].links:
+        if 'vertices1' in self.inputs and 'vertices2' in self.inputs and self.inputs['vertices1'].links and self.inputs['vertices2'].links:
             if self.inputs['vertices1'].links and len(self.inputs['vertices1'].links)>0:
                 if not self.inputs['vertices1'].node.socket_value_update:
                     self.inputs['vertices1'].node.update()
@@ -37,7 +37,7 @@ class DistancePPNode(Node, SverchCustomTreeNode):
                     prop2_ = eval(self.inputs['vertices2'].links[0].from_socket.VerticesProperty)
                     prop2 = Vector_generate(prop2_)
                 
-        elif self.inputs['matrix1'].links and self.inputs['matrix2'].links:
+        elif 'matrix1' in self.inputs and 'matrix2' in self.inputs and self.inputs['matrix1'].links and self.inputs['matrix2'].links:
             if self.inputs['matrix1'].links and len(self.inputs['matrix1'].links)>0:
                 if not self.inputs['matrix1'].node.socket_value_update:
                     self.inputs['matrix1'].node.update()

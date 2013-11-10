@@ -30,7 +30,7 @@ class ListLevelsNode(Node, SverchCustomTreeNode):
     
     def update(self):
         
-        if self.inputs['vertices'].links and len(self.inputs['vertices'].links)>0:
+        if 'vertices' in self.inputs and self.inputs['vertices'].links and len(self.inputs['vertices'].links)>0:
             if not self.inputs['vertices'].node.socket_value_update:
                 self.inputs['vertices'].node.update()
             if self.inputs['vertices'].links[0].from_socket.VerticesProperty:
@@ -39,7 +39,7 @@ class ListLevelsNode(Node, SverchCustomTreeNode):
                     userlevela = eval('['+self.Sverch_LisLevA+']')
                     self.outputs['vertices'].links[0].from_socket.VerticesProperty = str(preobrazovatel(list_a, userlevela))
                         
-        if self.inputs['edg_pol'].links and len(self.inputs['edg_pol'].links)>0:
+        if 'edg_pol' in self.inputs and self.inputs['edg_pol'].links and len(self.inputs['edg_pol'].links)>0:
             if not self.inputs['edg_pol'].node.socket_value_update:
                 self.inputs['edg_pol'].node.update()
             if self.inputs['edg_pol'].links[0].from_socket.StringsProperty:
@@ -49,7 +49,7 @@ class ListLevelsNode(Node, SverchCustomTreeNode):
                     self.outputs['edg_pol'].links[0].from_socket.StringsProperty = str(preobrazovatel(list_b, userlevelb))
                     #print (self.outputs['edg_pol'].links[0].from_socket.StringsProperty)
                 
-        if self.inputs['matrix'].links and len(self.inputs['matrix'].links)>0:
+        if 'matrix' in self.inputs and self.inputs['matrix'].links and len(self.inputs['matrix'].links)>0:
             if not self.inputs['matrix'].node.socket_value_update:
                 self.inputs['matrix'].node.update()
             if self.inputs['matrix'].links[0].from_socket.MatrixProperty:

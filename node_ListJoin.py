@@ -66,7 +66,9 @@ class ListJoinNode(Node, SverchCustomTreeNode):
             self.inputs.new('StringsSocket', "data", "data")
         
         
-        if self.outputs['vertices'].links or self.outputs['data'].links or self.outputs['matrix'].links:
+        if 'vertices' in self.outputs and self.outputs['vertices'].links or \
+            'data' in self.outputs and self.outputs['data'].links or \
+            'matrix' in self.outputs and  self.outputs['matrix'].links:
             list_b=slots.copy()
             if self.Offset_check:
                 list_b = myZip(slots,self.JoinLevel)  

@@ -23,7 +23,7 @@ class ViewerNode(Node, SverchCustomTreeNode):
         layout.prop(self, "Vertex_show", text="Vertex show")
         
     def update(self):
-        if self.inputs['vertices'].links:
+        if 'vertices' in self.inputs and self.inputs['vertices'].links:
             callback_disable(self.name)
             if len(self.inputs['vertices'].links)>0:
                 if not self.inputs['vertices'].node.socket_value_update:
@@ -34,7 +34,7 @@ class ViewerNode(Node, SverchCustomTreeNode):
             else:
                 cache_viewerdraw_slot1 = []
                             
-            if self.inputs['edg_pol'].links and len(self.inputs['edg_pol'].links)>0:
+            if 'edg_pol' in self.inputs and self.inputs['edg_pol'].links and len(self.inputs['edg_pol'].links)>0:
                 if not self.inputs['edg_pol'].node.socket_value_update:
                     self.inputs['edg_pol'].node.update()
                 if self.inputs['edg_pol'].links[0].from_socket.StringsProperty:
@@ -43,7 +43,7 @@ class ViewerNode(Node, SverchCustomTreeNode):
             else:
                 cache_viewerdraw_slot2 = []
                     
-            if self.inputs['matrix'].links and len(self.inputs['matrix'].links)>0:
+            if 'matrix' in self.inputs and self.inputs['matrix'].links and len(self.inputs['matrix'].links)>0:
                 if not self.inputs['matrix'].node.socket_value_update:
                     self.inputs['matrix'].node.update()
                 if self.inputs['matrix'].links[0].from_socket.MatrixProperty:

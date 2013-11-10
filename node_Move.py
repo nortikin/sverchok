@@ -18,7 +18,7 @@ class MoveNode(Node, SverchCustomTreeNode):
 
     def update(self):
         # inputs
-        if self.inputs['vertices'].links and \
+        if 'vertices' in self.inputs and self.inputs['vertices'].links and \
             type(self.inputs['vertices'].links[0].from_socket) == VerticesSocket:
             if not self.inputs['vertices'].node.socket_value_update:
                 self.inputs['vertices'].node.update()
@@ -27,7 +27,7 @@ class MoveNode(Node, SverchCustomTreeNode):
         else:
             vers = []
         
-        if self.inputs['vectors'].links and \
+        if 'vectors' in self.inputs and self.inputs['vectors'].links and \
             type(self.inputs['vectors'].links[0].from_socket) == VerticesSocket:
             if not self.inputs['vectors'].node.socket_value_update:
                 self.inputs['vectors'].node.update()
@@ -36,7 +36,7 @@ class MoveNode(Node, SverchCustomTreeNode):
         else:
             vecs = []
             
-        if self.inputs['multiplier'].links and \
+        if 'multiplier' in self.inputs and self.inputs['multiplier'].links and \
             type(self.inputs['multiplier'].links[0].from_socket) == StringsSocket:
             if not self.inputs['multiplier'].node.socket_value_update:
                 self.inputs['multiplier'].node.update()

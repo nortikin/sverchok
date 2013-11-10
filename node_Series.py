@@ -16,21 +16,21 @@ class GenSeriesNode(Node, SverchCustomTreeNode):
 
     def update(self):
         # inputs
-        if len(self.inputs['Start'].links)>0 and type(self.inputs['Start'].links[0].from_socket) == bpy.types.NodeSocketFloat:
+        if 'Start' in self.inputs and len(self.inputs['Start'].links)>0 and type(self.inputs['Start'].links[0].from_socket) == bpy.types.NodeSocketFloat:
             if not self.inputs['Start'].node.socket_value_update:
                 self.inputs['Start'].node.update()
             Start = self.inputs['Start'].links[0].from_socket.default_value
         else:
             Start = self.inputs['Start'].default_value
     
-        if len(self.inputs['Stop'].links)>0 and type(self.inputs['Stop'].links[0].from_socket) == bpy.types.NodeSocketFloat:
+        if 'Stop' in self.inputs and len(self.inputs['Stop'].links)>0 and type(self.inputs['Stop'].links[0].from_socket) == bpy.types.NodeSocketFloat:
             if not self.inputs['Stop'].node.socket_value_update:
                 self.inputs['Stop'].node.update()
             Stop = self.inputs['Stop'].links[0].from_socket.default_value
         else:
             Stop = self.inputs['Stop'].default_value
         
-        if len(self.inputs['Step'].links)>0 and type(self.inputs['Step'].links[0].from_socket) == bpy.types.NodeSocketFloat:
+        if 'Step' in self.inputs and len(self.inputs['Step'].links)>0 and type(self.inputs['Step'].links[0].from_socket) == bpy.types.NodeSocketFloat:
             if not self.inputs['Step'].node.socket_value_update:
                 self.inputs['Step'].node.update()
             Step = self.inputs['Step'].links[0].from_socket.default_value
