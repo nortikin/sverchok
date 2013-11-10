@@ -6,7 +6,7 @@ from util import *
 class ListJoinNode(Node, SverchCustomTreeNode):
     ''' ListJoin node '''
     bl_idname = 'ListJoinNode'
-    bl_label = 'List Join Node'
+    bl_label = 'List Join'
     bl_icon = 'OUTLINER_OB_EMPTY'
     
     JoinLevel = bpy.props.IntProperty(name='JoinLevel', description='Choose join level of data (see help)', default=1, min=1, update=updateNode)

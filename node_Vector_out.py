@@ -24,16 +24,14 @@ class VectorsOutNode(Node, SverchCustomTreeNode):
                 self.inputs['Vectors'].node.update()
             xyz = eval(self.inputs['Vectors'].links[0].from_socket.VerticesProperty)
             
-            data = dataCorrect(xyz)[1]
+            data = dataCorrect(xyz)[1] # 
             #print (data)
             X, Y, Z = [], [], []
-            for item in data:
-                Z.append(item[2])
-                Y.append(item[1])
-                X.append(item[0])
-            
-            
-            
+            for obj in data:
+                for item in obj:
+                    Z.append(item[2])
+                    Y.append(item[1])
+                    X.append(item[0])
             
         # outputs
         if 'X' in self.outputs and len(self.outputs['X'].links)>0:

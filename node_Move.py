@@ -6,7 +6,7 @@ from mathutils import Vector, Matrix
 class MoveNode(Node, SverchCustomTreeNode):
     ''' Move vectors '''
     bl_idname = 'MoveNode'
-    bl_label = 'Move Vectors'
+    bl_label = 'Vectors Move'
     bl_icon = 'OUTLINER_OB_EMPTY'
     
     def init(self, context):

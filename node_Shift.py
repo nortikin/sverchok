@@ -7,7 +7,7 @@ from util import *
 class ShiftNode(Node, SverchCustomTreeNode):
     ''' Shift node '''
     bl_idname = 'ShiftNode'
-    bl_label = 'Shift Node'
+    bl_label = 'List Shift'
     bl_icon = 'OUTLINER_OB_EMPTY'
     
     enclose = bpy.props.BoolProperty(name = 'check_tail', default=True, update=updateNode)

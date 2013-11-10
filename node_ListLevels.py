@@ -8,7 +8,7 @@ from util import *
 class ListLevelsNode(Node, SverchCustomTreeNode):
     ''' Lists Levels node '''
     bl_idname = 'ListLevelsNode'
-    bl_label = 'List Levels Node'
+    bl_label = 'List Levels'
     bl_icon = 'OUTLINER_OB_EMPTY'
     
     Sverch_LisLevA = bpy.props.StringProperty(name='Sverch_LisLevA', description='User defined nesty levels. (i.e. 1,2)', default='1,2,3', update=updateNode)

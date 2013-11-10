@@ -6,7 +6,7 @@ from util import *
 class MatrixGenNode(Node, SverchCustomTreeNode):
     ''' MatrixGenerator '''
     bl_idname = 'MatrixGenNode'
-    bl_label = 'Matrix Generator'
+    bl_label = 'Matrix in'
     bl_icon = 'OUTLINER_OB_EMPTY'
     
     def init(self, context):

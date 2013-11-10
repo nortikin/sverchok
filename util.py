@@ -224,7 +224,7 @@ def dataStandart(data, dept):
     #and type(data) in [list, tuple]:
     output = []
     for object in data:
-        if deptl >0:
+        if deptl > 1:
             #print ('DS, dep>1', deptl)
             output.extend(dataStandart(object, deptl))
             #elif deptl > 2 and type(object) in [int, float]:

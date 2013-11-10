@@ -4,7 +4,7 @@ from node_s import *
 class GenVectorsNode(Node, SverchCustomTreeNode):
     ''' Generator vectors '''
     bl_idname = 'GenVectorsNode'
-    bl_label = 'Gen Vectors'
+    bl_label = 'Vectors in'
     bl_icon = 'OUTLINER_OB_EMPTY'
     
     def init(self, context):

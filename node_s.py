@@ -109,7 +109,6 @@ def make_categories():
         SverchNodeCategory("SVERCHOK", "SVERCHOK basic", items=[
             # basic nodes
             NodeItem("ObjectsNode", label="Objects in"),
-            NodeItem("ObjectsNodeOut", label="Objects out"),
             NodeItem("ViewerNode", label="Viewer draw"),
             NodeItem("ViewerNode_text", label="Viewer text"),
             NodeItem("ToolsNode", label="Tools"),

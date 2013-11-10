@@ -65,11 +65,10 @@ class SverchokViewer(bpy.types.Operator):
 class ViewerNode_text(Node, SverchCustomTreeNode):
     ''' Viewer Node text '''
     bl_idname = 'ViewerNode_text'
-    bl_label = 'Viewer Node text'
+    bl_label = 'Viewer text'
     bl_icon = 'OUTLINER_OB_EMPTY'
     
     def init(self, context):
-        
         self.inputs.new('VerticesSocket', 'vertices', 'vertices')
         self.inputs.new('StringsSocket', 'edg_pol', 'edg_pol')
         self.inputs.new('MatrixSocket', 'matrix', 'matrix')

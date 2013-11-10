@@ -59,7 +59,7 @@ if "bpy" in locals():
     imp.reload(node_CentersPolsNode)
     imp.reload(util)
     imp.reload(node_Objects)
-    imp.reload(node_Objects_out)
+    #imp.reload(node_Objects_out)
     imp.reload(node_Viewer)
     imp.reload(node_Viewer_text)
     imp.reload(Viewer_draw)
@@ -82,13 +82,10 @@ if "bpy" in locals():
     imp.reload(node_Tools)
 else:
     import node_s
-    #import node_AnalitsPolsNode
     import node_CentersPolsNode
-    #import node_ObjectProps
-    #import node_SpreadNode
     import util
     import node_Objects
-    import node_Objects_out
+    #import node_Objects_out
     import node_Viewer
     import node_Viewer_text
     import Viewer_draw
@@ -116,7 +113,7 @@ def register():
     node_s.register()
     node_CentersPolsNode.register()
     node_Objects.register()
-    node_Objects_out.register()
+    #node_Objects_out.register()
     node_Viewer.register()
     node_Viewer_text.register()
     node_ListLevels.register()
@@ -164,7 +161,7 @@ def unregister():
     node_ListLevels.unregister()
     node_Viewer_text.unregister()
     node_Viewer.unregister()
-    node_Objects_out.unregister()
+    #node_Objects_out.unregister()
     node_Objects.unregister()
     node_CentersPolsNode.unregister()
     node_s.unregister()

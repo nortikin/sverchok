@@ -4,7 +4,7 @@ from node_s import *
 class GenSeriesNode(Node, SverchCustomTreeNode):
     ''' Generator series '''
     bl_idname = 'GenSeriesNode'
-    bl_label = 'Gen Series'
+    bl_label = 'List Series'
     bl_icon = 'OUTLINER_OB_EMPTY'
     
     def init(self, context):

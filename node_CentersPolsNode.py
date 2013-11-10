@@ -3,7 +3,7 @@ from mathutils import Vector, Matrix
 from node_s import *
 
 class CentersPolsNode(Node, SverchCustomTreeNode):
-    ''' Centers polygons '''
+    ''' Centers of polygons of mesh (not including matrixes, so apply scale-rot-loc ctrl+A) '''
     bl_idname = 'CentersPolsNode'
     bl_label = 'Centers polygons'
     bl_icon = 'OUTLINER_OB_EMPTY'

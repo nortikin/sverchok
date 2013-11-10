@@ -12,10 +12,6 @@ class ObjectsNodeOut(Node, SverchCustomTreeNode):
         self.inputs.new('VerticesSocket', 'vertices', 'vertices')
         self.inputs.new('StringsSocket', 'edg_pol', 'edg_pol')
         self.inputs.new('MatrixSocket', 'matrix', 'matrix')
-        self.outputs.new('VerticesSocket', "Vertices", "Vertices")
-        self.outputs.new('StringsSocket', "Edges", "Edges")
-        self.outputs.new('StringsSocket', "Polygons", "Polygons")
-        self.outputs.new('MatrixSocket', "Matrixes", "Matrixes")
         
     def draw_buttons(self, context, layout):
         pass
@@ -29,8 +25,6 @@ class ObjectsNodeOut(Node, SverchCustomTreeNode):
                 vers = eval(self.inputs['vertices'].links[0].from_socket.VerticesProperty)
             else:
                 vers = 0
-            if 'Vertices' in self.outputs and len(self.outputs['Vertices'].links)>0:
-                self.outputs['Vertices'].VerticesProperty = str(vers)
                         
         if 'edg_pol' in self.inputs and self.inputs['edg_pol'].links and len(self.inputs['edg_pol'].links)>0:
             if not self.inputs['edg_pol'].node.socket_value_update:
@@ -39,10 +33,6 @@ class ObjectsNodeOut(Node, SverchCustomTreeNode):
                 edg_pol = eval(self.inputs['edg_pol'].links[0].from_socket.StringsProperty)
             else:
                 edg_pol = 0
-            if 'Polygons' in self.outputs and len(self.outputs['Polygons'].links)>0:
-                self.outputs['Polygons'].StringsProperty = str(edg_pol)
-            if "Edges" in self.outputs and len(self.outputs["Edges"].links)>0:
-                self.outputs["Edges"].StringsProperty = str(edg_pol)
                 
         if 'matrix' in self.inputs and self.inputs['matrix'].links and len(self.inputs['matrix'].links)>0:
             if not self.inputs['matrix'].node.socket_value_update:
@@ -51,8 +41,6 @@ class ObjectsNodeOut(Node, SverchCustomTreeNode):
                 matrixes = eval(self.inputs['matrix'].links[0].from_socket.MatrixProperty)
             else:
                 matrixes = 0
-            if 'Matrixes' in self.outputs and len(self.outputs['Matrixes'].links)>0:
-                self.outputs['Matrixes'].MatrixProperty = str(matrixes)
                 
         if 'vertices' in self.inputs and 'edg_pol' in self.inputs and 'matrix' in self.inputs and \
             self.inputs['vertices'].links and self.inputs['edg_pol'].links and self.inputs['matrix'].links:
@@ -63,17 +51,18 @@ class ObjectsNodeOut(Node, SverchCustomTreeNode):
         if len(edg_pol[0][0]) == 2:
             edgs = edg_pol
             pols = []
-            fht = max(a for a in max(edgs))
+            fht = max(a for a in max(edgs[0]))
         elif len(edg_pol[0][0]) > 2:
             pols = edg_pol
             edgs = []
-            fht = max(a for a in max(pols))
+            fht = max(a for a in max(pols[0]))
         vertices = Vector_generate(vers)
         matrixes = Matrix_generate(mats)
         #print('mats' + str(matrixes))
         objects = {}
         # objects = matrixes + mesh
-        fhtagn = min(len(vertices), fht) - 1
+        print ( fht)
+        fhtagn = min(len(vertices[0]), fht) - 1
         #print (fhtagn, vertices, matrixes, pols, edgs)
         for i, m in enumerate(matrixes):
             k = i

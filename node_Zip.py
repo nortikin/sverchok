@@ -8,7 +8,7 @@ from util import *
 class ZipNode(Node, SverchCustomTreeNode):
     ''' Zip node '''
     bl_idname = 'ZipNode'
-    bl_label = 'Zip Node'
+    bl_label = 'List Zip'
     bl_icon = 'OUTLINER_OB_EMPTY'
     
     level = bpy.props.IntProperty(name = 'level', default=1, min=1)

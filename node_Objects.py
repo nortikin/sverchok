@@ -4,7 +4,7 @@ from node_s import *
 class ObjectsNode(Node, SverchCustomTreeNode):
     ''' Objects Input slot '''
     bl_idname = 'ObjectsNode'
-    bl_label = 'Objects input'
+    bl_label = 'Objects in'
     bl_icon = 'OUTLINER_OB_EMPTY'
     
     def object_select(self, context):

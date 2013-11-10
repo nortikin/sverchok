@@ -4,9 +4,9 @@ from node_s import *
 from util import *
 
 class DistancePPNode(Node, SverchCustomTreeNode):
-    ''' DistancePoint to Point Node '''
+    ''' Distance Point to Point '''
     bl_idname = 'DistancePPNode'
-    bl_label = 'DistancePP Node'
+    bl_label = 'Distances'
     bl_icon = 'OUTLINER_OB_EMPTY'
     
     Cross_dist = bpy.props.BoolProperty(name='Cross_dist', description='DANGEROUSE! If crossover dimension calculation, be sure', default=False)
