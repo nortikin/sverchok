@@ -45,10 +45,11 @@ import sys,os
 path = sys.path
 flag = False
 for item in path:
-    if "sverchok_nodes" in item:
+    if "sverchok" in item:
         flag = True
 if flag == False:
     sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'sverchok_nodes'))
+    sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'sverchok-master'))
     print("sverchok_nodes: added to phytonpath :-)")
 
 
