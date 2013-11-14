@@ -64,7 +64,7 @@ if "bpy" in locals():
     imp.reload(node_Viewer_text)
     imp.reload(Viewer_draw)
     imp.reload(node_ListLevels)
-    imp.reload(node_ListJoin)
+    imp.reload(node_ListJoin2)
     imp.reload(node_Zip)
     imp.reload(node_Shift)
     imp.reload(node_ListReverse)
@@ -90,7 +90,7 @@ else:
     import node_Viewer_text
     import Viewer_draw
     import node_ListLevels
-    import node_ListJoin
+    import node_ListJoin2
     import node_Zip
     import node_Shift
     import node_ListReverse
@@ -117,7 +117,7 @@ def register():
     node_Viewer.register()
     node_Viewer_text.register()
     node_ListLevels.register()
-    node_ListJoin.register()
+    node_ListJoin2.register()
     node_Zip.register()
     node_Shift.register()
     node_ListReverse.register()
@@ -159,7 +159,7 @@ def unregister():
     node_ListReverse.unregister()
     node_Shift.unregister()
     node_Zip.unregister()
-    node_ListJoin.unregister()
+    node_ListJoin2.unregister()
     node_ListLevels.unregister()
     node_Viewer_text.unregister()
     node_Viewer.unregister()

@@ -459,7 +459,7 @@ def myZip_2(list_all, level, level2=1):
             list_tmp = list_all
         return list_tmp
 
-    list_tmp = copy(list_all)
+    list_tmp = list_all.copy()
     for x in range(level-1):
         list_tmp = create_listDown(list_tmp, level)
 
@@ -543,7 +543,7 @@ def wrapper_2(l_etalon, list_a, level):
         
     
     def subWrap_2(l_etalon, len_l, level):
-        len_r = copy(len_l)
+        len_r = len_l
         if type(l_etalon) in [list, tuple]:
             len_r = len(l_etalon) * len_l
             if level>1:
