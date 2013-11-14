@@ -434,6 +434,133 @@ def myZip(list_all, level, level2=0):
             return False 
 
 
+################### update List join magic ##########
+
+def myZip_2(list_all, level, level2=1):
+    def create_listDown(list_all, level):
+        def subDown(list_a, level):
+            list_b = []
+            for l2 in list_a:
+                if type(l2) in [list, tuple]:
+                    list_b.extend(l2)
+                else:
+                    list_b.append(l2)
+            if level>1:
+                list_b = subDown(list_b, level-1)
+            return list_b
+    
+        
+        list_tmp = []
+        if type(list_all) in [list, tuple]:
+            for l in list_all:
+                list_b = subDown(l, level-1)
+                list_tmp.append(list_b)
+        else:
+            list_tmp = list_all
+        return list_tmp
+
+    list_tmp = copy(list_all)
+    for x in range(level-1):
+        list_tmp = create_listDown(list_tmp, level)
+
+    list_r = []
+    l_min = []
+    
+    for el in list_tmp:
+        if type(el) not in [list, tuple]:
+            break
+        
+        l_min.append(len(el))
+    
+    if l_min==[]: l_min=[0]
+    lm = min(l_min)   
+    for elm in range(lm): 
+        for el in list_tmp:
+            list_r.append(el[elm])
+            
+    list_tmp = list_r
+    
+    for lev in range(level-1):
+        list_tmp=[list_tmp]
+    
+    return list_tmp
+    
+
+def joiner(list_all, level, level2=1):
+    list_tmp = []
+    
+    if level>level2:
+        if type(list_all) in [list, tuple]:
+            for list_a in list_all:
+                if type(list_a) in [list, tuple]:
+                    list_tmp.extend(list_a)
+                else:
+                    list_tmp.append(list_a)
+        else:
+            list_tmp = list_all
+        
+        list_res = joiner(list_tmp, level, level2=level2+1)
+        list_tmp = [list_res]
+        
+    if level==level2:
+        if type(list_all) in [list, tuple]:
+            for list_a in list_all:
+                if type(list_a) in [list, tuple]:
+                    list_tmp.extend(list_a)
+                else:
+                    list_tmp.append(list_a)
+        else:
+            list_tmp.append(list_all)
+        
+    if level<level2:
+        if type(list_all) in [list, tuple]:
+            for l in list_all:
+                list_tmp.append(l)
+        else:
+            list_tmp.append(l)
+            
+    return list_tmp
+
+
+def wrapper_2(l_etalon, list_a, level):
+    def subWrap(list_a, level, count):
+        list_b = []
+        if level==1:
+            if len(list_a)==count:
+                for l in list_a:
+                    list_b.append([l])
+            else:
+                dc=len(list_a)//count
+                for l in range(count):
+                    list_c = []
+                    for j in range(dc):
+                        list_c.append(list_a[l*dc+j])
+                    list_b.append(list_c)
+        else:
+            for l in list_a:
+                list_b = subWrap(l, level-1, count)
+        return list_b     
+        
+    
+    def subWrap_2(l_etalon, len_l, level):
+        len_r = copy(len_l)
+        if type(l_etalon) in [list, tuple]:
+            len_r = len(l_etalon) * len_l
+            if level>1:
+                len_r = subWrap_2(l_etalon[0], len_r, level-1)
+            
+        return len_r
+    
+    len_l = len(l_etalon)
+    lens_l = subWrap_2(l_etalon, 1, level)
+    list_tmp = subWrap(list_a, level, lens_l)      
+    
+    for l in range(level-1):
+         list_tmp = [list_tmp]
+    return list_tmp
+
+
+
 #####################################################
 ############### update sockets magic ################
 #####################################################
