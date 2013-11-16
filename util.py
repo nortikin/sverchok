@@ -297,6 +297,15 @@ def Vector_generate(prop):
             veclist.append(Vector(v[:]))
         vec_out.append(veclist)
     return vec_out
+
+def Vector_degenerate(prop):
+    vec_out = []
+    for i, object in enumerate(prop):  # lists by objects
+        veclist = []
+        for v in object: # verts
+            veclist.append((v[:]))
+        vec_out.append(veclist)
+    return vec_out
     
     
     

@@ -136,6 +136,7 @@ def make_categories():
             NodeItem("MatrixDeformNode", label="Matrix Deform"),
             NodeItem("CentersPolsNode", label="Centers Polygons"),
             NodeItem("DistancePPNode", label="Distances"),
+            NodeItem("AdaptivePolsNode", label="Adaptive Polygons"),
             ]),
         ]
     return node_categories

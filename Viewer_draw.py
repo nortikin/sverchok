@@ -93,8 +93,8 @@ def draw_callback_view(handle, sl1, sl2, sl3, vs):
         data_matrix = Matrix_generate(sl3)
     else:
         data_matrix = []
-        for i in range(0,verlen+1):
-            data_matrix.append([Matrix()])
+        for i in range(0, verlen+1):
+            data_matrix.append(Matrix())
     
     if data_vector == 0 and data_polygons == 0 and data_matrix == 0 and data_edges == 0:
         callback_disable(handle)

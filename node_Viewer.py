@@ -17,7 +17,12 @@ class SvObjBake(bpy.types.Operator):
         global cache_viewer_baker
         vers = dataCorrect(cache_viewer_baker['v'])
         edg_pol = dataCorrect(cache_viewer_baker['ep'])
-        matrixes = dataCorrect(cache_viewer_baker['m'])
+        if cache_viewer_baker['m']:
+            matrixes = dataCorrect(cache_viewer_baker['m'])
+        else:
+            matrixes = []
+            for i in range((len(vers)-1)):
+                matrixes.append(Matrix())
         self.makeobjects(vers, edg_pol, matrixes)
         cache_viewer_baker = {}
         return {'FINISHED'}
@@ -131,10 +136,10 @@ class ViewerNode(Node, SverchCustomTreeNode):
                     cache_viewer_baker['m'] = propm
             else:
                 cache_viewer_baker['m'] = []
-            if cache_viewer_baker['v'] and cache_viewer_baker['ep'] or cache_viewer_baker['m']:
+            if (cache_viewer_baker['v'] and cache_viewer_baker['ep']) or cache_viewer_baker['m']:
                 callback_enable(self.name, cache_viewer_baker['v'], cache_viewer_baker['ep'], cache_viewer_baker['m'], self.Vertex_show)
-        if not self.inputs['vertices'].links:
-            callback_disable(self.name)
+            if not self.inputs['vertices'].links:
+                callback_disable(self.name)
     
     def update_socket(self, context):
         self.update()
