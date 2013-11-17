@@ -16,25 +16,27 @@ def section(cut_me_vertices, cut_me_edges, mx, pp, pno):
     
     verts = []
     ed_xsect = {}
+    ed_xsect_2 = {}
     x_me = {}
-    cut_me_polygons = cut_me_edges.copy() if len(cut_me_edges)>2 else []
-    
-    cut_me_edges = []
-    for elem_p in cut_me_polygons:
-        for idx,elem_v in enumerate(elem_p[:-1]):
-            cut_me_edges.append((elem_v, elem_p[idx+1]))
-    
-    print('\ncut_me_polygons, cut_me_edges\n',cut_me_polygons, cut_me_edges)
+
+    cut_me_polygons=[]
+    if len(cut_me_edges[0])>2:
+        cut_me_polygons = cut_me_edges.copy() 
+        cut_me_edges=[]
+
+    new_me = bpy.data.meshes.new('tempus')
+    new_me.from_pydata(cut_me_vertices, cut_me_edges, cut_me_polygons)
+    new_me.update(calc_edges=True)
         
-    for ed_idx,ed in enumerate(cut_me_edges):
+    for ed_idx,ed in enumerate(new_me.edges):
         # getting a vector from each edge vertices to a point on the plane  
         # first apply transformation matrix so we get the real section
         
-        vert1 = ed[0]
-        v1 = cut_me_vertices[vert1] * mx.transposed() 
+        vert1 = ed.vertices[0]
+        v1 = new_me.vertices[vert1].co * mx.transposed() 
         co1 = v1 - pp
-        vert2 = ed[1]
-        v2 = cut_me_vertices[vert2] * mx.transposed() 
+        vert2 = ed.vertices[1]
+        v2 = new_me.vertices[vert2].co * mx.transposed()
         co2 = v2 - pp
 
         # projecting them on the normal vector
@@ -58,32 +60,46 @@ def section(cut_me_vertices, cut_me_edges, mx, pp, pno):
             
             proj1 /= proj1+proj2
             co = ((v2-v1)*proj1)+v1
-
             verts.append(co)
-            ed_xsect[ed_idx] = (ed,len(verts)-1)
             
-            
+            ed_xsect[ed.key] = len(ed_xsect)
+            ed_xsect_2[ed_idx] = ((ed.vertices[0], ed.vertices[1]),len(verts)-1)
+
+    edges = []
+    print('new_me.polygons',len(new_me.polygons))
+    for f in new_me.polygons:
+        # get the edges that the intersecting points form
+        # to explain this better:
+        # If a face has an edge that is proven to be crossed then use the
+        # mapping we created earlier to connect the edges properly
+        ps = [ ed_xsect[key] for key in f.edge_keys if key in ed_xsect]
+
+        if len(ps) == 2:
+            edges.append(tuple(ps))
+    
+    if len(new_me.polygons)==0:
+        edges = set()
+        for f in cut_me_edges:
+            ps=set()
+            for v in f:
+                for ed in ed_xsect_2.keys():
+                    if v in ed_xsect_2[ed][0]:
+                        ps.add((ed, ed_xsect_2[ed][1]))
+        
+            lps=list(ps)
+            if len(lps)==2:
+                edges.add((lps[0][1], lps[1][1]))
+                
+        edges = list(edges)
+    
     x_me['Verts'] = verts
-    edges = set()
-    for f in cut_me_edges:
-        ps=set()
-        for v in f:
-            for ed in ed_xsect.keys():
-                if v in ed_xsect[ed][0]:
-                    ps.add((ed, ed_xsect[ed][1]))
-    
-        lps=list(ps)
-        if len(lps)==2:
-            print('bnbnbn',ps)    
-            edges.add((lps[0][1], lps[1][1]))
-            
-    x_me['Edges'] = list(edges)
-    
-    print('\nX-me',x_me)    
-    if verts:
+    x_me['Edges'] = edges
+    bpy.data.meshes.remove(new_me) 
+    if edges:
         return x_me
     else:
         return False
+    
 
 
 class CrossSectionNode(Node, SverchCustomTreeNode):
