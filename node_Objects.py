@@ -1,12 +1,15 @@
 import bpy, bmesh, mathutils
+from bpy.props import StringProperty
 from node_s import *
 from util import *
 
 class SvObjSelected(bpy.types.Operator):
-    """Sverchok object selector"""
+    """ Sverchok object selector """
     bl_idname = "node.sverchok_object_insertion"
     bl_label = "Sverchok object selector"
     bl_options = {'REGISTER', 'UNDO'}
+    
+    name_objectin = StringProperty(name='name object in', description='it is name of reality')
     
     def enable(self, name, handle):
         objects = []
@@ -20,8 +23,7 @@ class SvObjSelected(bpy.types.Operator):
         handle_delete(name)
     
     def execute(self, context):
-        print ('2', self.name)
-        name = ObjectsNode.update.name
+        name = self.name_objectin
         handle = handle_read(name)
         self.disable(name, handle)
         self.enable(name, handle)
@@ -33,8 +35,8 @@ class ObjectsNode(Node, SverchCustomTreeNode):
     bl_label = 'Objects in'
     bl_icon = 'OUTLINER_OB_EMPTY'
     
-    def object_select(self, context):
-        return [tuple(3 * [ob.name]) for ob in context.scene.objects if ob.type == 'MESH' or ob.type == 'EMPTY']
+    #def object_select(self, context):
+        #return [tuple(3 * [ob.name]) for ob in context.scene.objects if ob.type == 'MESH' or ob.type == 'EMPTY']
             
     #ObjectProperty = EnumProperty(items = object_select, name = 'ObjectProperty')
     
@@ -46,17 +48,17 @@ class ObjectsNode(Node, SverchCustomTreeNode):
         
     def draw_buttons(self, context, layout):
         #layout.prop(self, "ObjectProperty", text="Object", icon='OBJECT_DATA')
+        layout.operator('node.sverchok_object_insertion', text='get selected').name_objectin = self.name
         handle = handle_read(self.name)
-        
-        layout.operator('node.sverchok_object_insertion', text='get selected')
         if handle[0]:
             for o in handle[1]:
                 layout.label(o)
         else:
-            layout.label('No objects inserted')
+            layout.label('--None--')
 
     def update(self):
         name = self.name
+        
         handle = handle_read(name)
         #print (self.name)
         if handle[0]:
