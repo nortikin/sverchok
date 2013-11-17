@@ -8,7 +8,7 @@ from math import radians
 bmesh_mapping = {}
 per_cache = {}
 temp_handle = {}
-cache_nodes={}
+cache_nodes = {}
 
 #####################################################
 ################### update magic ####################

@@ -251,7 +251,7 @@ def draw_callback_view(handle, sl1, sl2, sl3, vs):
             for j, pol in enumerate(data_polygons[k]):
                 glBegin(GL_POLYGON)
                 rand = j / oblen
-                glColor3f(rand, 1 - rand, 0.5)
+                glColor3f(1-rand, 1-rand, rand)
                 for point in pol:
                     vec_corrected = data_matrix[i]*data_vector[k][point]
                     glVertex3f(*vec_corrected)
