@@ -82,6 +82,7 @@ if "bpy" in locals():
     imp.reload(node_Formula)
     imp.reload(node_Tools)
     imp.reload(node_AdaptivePolygons)
+    imp.reload(node_CrossSection)
 else:
     import node_s
     import node_CentersPolsNode
@@ -109,6 +110,7 @@ else:
     import node_Formula
     import node_Tools
     import node_AdaptivePolygons
+    import node_CrossSection
 
 def register():
     import bpy
@@ -137,6 +139,7 @@ def register():
     node_Formula.register()
     node_Tools.register()
     node_AdaptivePolygons.register()
+    node_CrossSection.register()
     
         
     if 'SVERCHOK' not in nodeitems_utils._node_categories:
@@ -146,6 +149,7 @@ def register():
 def unregister():
     import bpy
     import nodeitems_utils
+    node_CrossSection.unregister()
     node_AdaptivePolygons.unregister()
     node_Tools.unregister()
     node_Formula.unregister()
