@@ -170,7 +170,10 @@ class CrossSectionNode(Node, SverchCustomTreeNode):
                     self.outputs['edges'].node.update()
                 self.outputs['edges'].StringsProperty = str(edges_out) 
             
-           
+        else:
+            self.outputs['vertices'].VerticesProperty = str([[]])
+            self.outputs['edges'].StringsProperty = str([[]]) 
+        
 
     def update_socket(self, context):
         self.update()
