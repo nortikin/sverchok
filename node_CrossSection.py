@@ -74,7 +74,7 @@ def section(cut_me_vertices, cut_me_edges, mx, pp, pno):
         
         t0 = -(ep[0]*v1.x+ep[1]*v1.y+ep[2]*v1.z + ep[3]) / (ep[0]*vec.x + ep[1]*vec.y + ep[2]*vec.z)
         pq = vec*t0+v1
-        if (pq-v1).length <= vec.length:
+        if (pq-v1).length <= vec.length and (pq-v2).length <= vec.length :
             verts.append(pq)
             ed_xsect[ed.key] = len(ed_xsect)
             ed_xsect_2[ed_idx] = ((ed.vertices[0], ed.vertices[1]),len(verts)-1)
