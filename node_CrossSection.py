@@ -66,7 +66,7 @@ def section(cut_me_vertices, cut_me_edges, mx, pp, pno):
             ed_xsect_2[ed_idx] = ((ed.vertices[0], ed.vertices[1]),len(verts)-1)
 
     edges = []
-    print('new_me.polygons',len(new_me.polygons))
+    #print('new_me.polygons',len(new_me.polygons))
     for f in new_me.polygons:
         # get the edges that the intersecting points form
         # to explain this better:

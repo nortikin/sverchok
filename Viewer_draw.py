@@ -100,16 +100,16 @@ def draw_callback_view(handle, sl1, sl2, sl3, vs):
         callback_disable(handle)
     #print ('вход', sl1, sl2, sl3)
     #print ('преобраз', data_vector)
-    '''
+    
     # draw_matrix vars
     zero = Vector((0.0, 0.0, 0.0))
-    x_p = Vector((1.0, 0.0, 0.0))
-    x_n = Vector((-1.0, 0.0, 0.0))
-    y_p = Vector((0.0, 1.0, 0.0))
-    y_n = Vector((0.0, -1.0, 0.0))
-    z_p = Vector((0.0, 0.0, 1.0))
-    z_n = Vector((0.0, 0.0, -1.0))
-    bb = [Vector() for i in range(8)]
+    x_p = Vector((0.5, 0.0, 0.0))
+    x_n = Vector((-0.5, 0.0, 0.0))
+    y_p = Vector((0.0, 0.5, 0.0))
+    y_n = Vector((0.0, -0.5, 0.0))
+    z_p = Vector((0.0, 0.0, 0.5))
+    z_n = Vector((0.0, 0.0, -0.5))
+    bb = [Vector() for i in range(24)]
 
     def draw_matrix(mat):
         zero_tx = mat * zero
@@ -154,46 +154,35 @@ def draw_callback_view(handle, sl1, sl2, sl3, vs):
         glVertex3f(*(mat * z_n))
         glEnd()
     
-        # bounding box
+        # bounding box vertices
         i = 0
         glColor3f(1.0, 1.0, 1.0)
-        for x in (-1.0, 1.0):
-            for y in (-1.0, 1.0):
-                for z in (-1.0, 1.0):
-                    bb[i][:] = x, y, z
-                    bb[i] = mat * bb[i]
-                    i += 1
+        series1 = (-0.5, -0.3, -0.1, 0.1, 0.3, 0.5)
+        series2 = (-0.5, 0.5)
+        z = 0
+        for x in series1:
+            for y in series2:
+                bb[i][:] = x, y, z
+                bb[i] = mat * bb[i]
+                i += 1
+        for y in series1:
+            for x in series2:
+                bb[i][:] = x, y, z
+                bb[i] = mat * bb[i]
+                i += 1
     
-        # strip
+        # bounding box drawing
         glLineWidth(1.0)
         glLineStipple(1, 0xAAAA)
         glEnable(GL_LINE_STIPPLE)
     
-        glBegin(GL_LINE_STRIP)
-        for i in 0, 1, 3, 2, 0, 4, 5, 7, 6, 4:
+        for i in range(0,24,2):
+            glBegin(GL_LINE_STRIP)
             glVertex3f(*bb[i])
-        glEnd()
+            glVertex3f(*bb[i+1])
+            glEnd()
     
-        # not done by the strip
-        glBegin(GL_LINES)
-        glVertex3f(*bb[1])
-        glVertex3f(*bb[5])
-    
-        glVertex3f(*bb[2])
-        glVertex3f(*bb[6])
-    
-        glVertex3f(*bb[3])
-        glVertex3f(*bb[7])
-        glEnd()
-        glDisable(GL_LINE_STIPPLE)
-    '''
-    # dictionarys { 0:[v1,v2,v3,v4...], 1:[...],... } v= Vector((x,y,z)) or polygon (1,2,3,56)
-    # data levels:
-    #   [                           ]   data
-    #    [object1], [object2]       data[0]
-    #     [v1, v2, v3]              data[0][0]
-    # v = (x,y,z) or list of edges' vert.indexes or polygons' vert.indexes i.e. [1,5,2,9]
-    # 
+        
     
     ########
     # points
@@ -259,11 +248,11 @@ def draw_callback_view(handle, sl1, sl2, sl3, vs):
                 glPointSize(1.75)
                 glLineWidth(1.0)
         glDisable(GL_POLYGON)
-    '''
+    
     #######
     # matrix
     if data_matrix and not data_polygons and not data_edges and not data_vector:
         for mat in data_matrix:
             draw_matrix(mat)
-    '''
+    
     

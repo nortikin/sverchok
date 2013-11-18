@@ -37,7 +37,7 @@ class ObjectsNode(Node, SverchCustomTreeNode):
     
     #def object_select(self, context):
         #return [tuple(3 * [ob.name]) for ob in context.scene.objects if ob.type == 'MESH' or ob.type == 'EMPTY']
-            
+    objects_local = StringProperty(name='local objects in', description='objects, binded to current node', default='', update=updateNode)
     #ObjectProperty = EnumProperty(items = object_select, name = 'ObjectProperty')
     
     def init(self, context):
@@ -47,7 +47,7 @@ class ObjectsNode(Node, SverchCustomTreeNode):
         self.outputs.new('MatrixSocket', "Matrixes", "Matrixes")
         
     def draw_buttons(self, context, layout):
-        #layout.prop(self, "ObjectProperty", text="Object", icon='OBJECT_DATA')
+        #layout.prop(self, "objects_local", text="Objects", icon='OBJECT_DATA')
         layout.operator('node.sverchok_object_insertion', text='get selected').name_objectin = self.name
         handle = handle_read(self.name)
         if handle[0]:
@@ -58,10 +58,11 @@ class ObjectsNode(Node, SverchCustomTreeNode):
 
     def update(self):
         name = self.name
-        
         handle = handle_read(name)
-        #print (self.name)
-        if handle[0]:
+        if self.objects_local and not handle[0]:
+            handle_write(self.name, self.objects_local)
+        elif handle[0]:
+            self.objects_local = handle[1]
             objs = handle[1]
             edgs_out = []
             vers_out = []

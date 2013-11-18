@@ -21,9 +21,9 @@ class AdaptivePolsNode(Node, SverchCustomTreeNode):
         self.outputs.new('StringsSocket', "Poligons", "Poligons")
         
     def lerp(self, v1, v2, v3, v4, v):
-        v12 = v1 + (v2-v1)*v[0]
-        v43 = v4 + (v3-v4)*v[0]
-        return v12 + (v43-v12)*v[1]
+        v12 = v1 + (v2-v1)*v[0] + ((v2-v1)/2)
+        v43 = v4 + (v3-v4)*v[0] + ((v3-v4)/2)
+        return v12 + (v43-v12)*v[1] + ((v43-v12)/2)
         
     def lerp2(self, v1, v2, v3, v4, v, x, y):
         v12 = v1 + (v2-v1)*v[0]*x + ((v2-v1)/2)
