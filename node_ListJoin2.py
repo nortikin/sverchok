@@ -98,7 +98,7 @@ class ListJoinNode(Node, SverchCustomTreeNode):
             if len(self.outputs['matrix'].links)>0 and typ == 'm':
                 if not self.outputs['matrix'].node.socket_value_update:
                     self.outputs['matrix'].node.update()
-                self.outputs['matrix'].links[0].from_socket.MatrixProperty = str(output)
+                self.outputs['matrix'].links[0].from_socket.MatrixProperty = str(result)
 
 def register():
     bpy.utils.register_class(ListJoinNode)
