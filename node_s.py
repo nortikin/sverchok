@@ -54,6 +54,7 @@ class VerticesSocket(NodeSocket):
         bl_label = "Vertices Socket"
         
         VerticesProperty = StringProperty(name='VerticesProperty', update=updateSlot)
+        #V = list()
 
         def draw(self, context, layout, node, text):
             if self.is_linked:

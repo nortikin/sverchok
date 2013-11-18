@@ -10,7 +10,7 @@ class ShiftNode(Node, SverchCustomTreeNode):
     bl_label = 'List Shift'
     bl_icon = 'OUTLINER_OB_EMPTY'
     
-    enclose = bpy.props.BoolProperty(name = 'check_tail', default=True, update=updateNode)
+    enclose = bpy.props.BoolProperty(name='check_tail', default=True, update=updateNode)
     
     def draw_buttons(self, context, layout):
         layout.prop(self, "enclose", text="enclose")

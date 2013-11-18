@@ -23,7 +23,7 @@ class SvObjBake(bpy.types.Operator):
             matrixes = dataCorrect(cache_viewer_baker['m'])
         else:
             matrixes = []
-            for i in range((len(vers)-1)):
+            for i in range((len(vers))):
                 matrixes.append(Matrix())
         
         self.makeobjects(vers, edg_pol, matrixes)
@@ -52,7 +52,7 @@ class SvObjBake(bpy.types.Operator):
         for u, f in enumerate(fht):
             fhtagn.append(min(len(vertices[u]), fht[u]))
         lenmesh = len(vertices) - 1
-        #print (fhtagn, vertices, matrixes, pols, edg_pol)
+        print ('запекание вершин ', len(vertices), " матрицы запекашка ", len(matrixes), " полиглоты ", len(edg_pol))
         for i, m in enumerate(matrixes):
             k = i
             if i > lenmesh:
@@ -85,7 +85,7 @@ class SvObjBake(bpy.types.Operator):
         ob.show_name = False
         ob.hide_select = False
         #print ([ob,me])
-        print (ob.name + ' baked')
+        #print (ob.name + ' baked')
         return [ob,me]
 
 class ViewerNode(Node, SverchCustomTreeNode):
@@ -141,6 +141,7 @@ class ViewerNode(Node, SverchCustomTreeNode):
                 cache_viewer_baker['m'] = []
         if cache_viewer_baker['v'] or cache_viewer_baker['m']:
             callback_enable(self.name, cache_viewer_baker['v'], cache_viewer_baker['ep'], cache_viewer_baker['m'], self.Vertex_show)
+            print ('отражения вершин ',len(cache_viewer_baker['v']), " рёбёры ", len(cache_viewer_baker['ep']), "матрицы",len(cache_viewer_baker['m']))
         if not self.inputs['vertices'].links and not self.inputs['matrix'].links:
             callback_disable(self.name)
             cache_viewer_baker = {}
