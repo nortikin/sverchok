@@ -16,6 +16,10 @@ class SvObjSelected(bpy.types.Operator):
         for o in bpy.context.selected_objects:
             objects.append(o.name)
         handle_write(name, objects)
+        # временное решение с группой. надо решать, как достать имя группы узлов
+        if len(bpy.data.node_groups) == 1:
+            handle = handle_read(name)
+            bpy.data.node_groups[0].nodes[name].objects_local = str(handle[1])
     
     def disable(self, name, handle):
         if not handle[0]:
@@ -60,9 +64,8 @@ class ObjectsNode(Node, SverchCustomTreeNode):
         name = self.name
         handle = handle_read(name)
         if self.objects_local and not handle[0]:
-            handle_write(self.name, self.objects_local)
+            handle_write(self.name, eval(self.objects_local))
         elif handle[0]:
-            self.objects_local = handle[1]
             objs = handle[1]
             edgs_out = []
             vers_out = []
