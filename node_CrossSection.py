@@ -76,7 +76,7 @@ def section(cut_me_vertices, cut_me_edges, mx, pp, pno):
 
         if len(ps) == 2:
             edges.append(tuple(ps))
-    
+    '''
     if len(new_me.polygons)==0:
         edges = set()
         for f in cut_me_edges:
@@ -90,12 +90,12 @@ def section(cut_me_vertices, cut_me_edges, mx, pp, pno):
             if len(lps)==2:
                 edges.add((lps[0][1], lps[1][1]))
                 
-        edges = list(edges)
+        edges = list(edges)'''
     
     x_me['Verts'] = verts
     x_me['Edges'] = edges
     bpy.data.meshes.remove(new_me) 
-    if edges:
+    if x_me:
         return x_me
     else:
         return False
@@ -186,7 +186,6 @@ def unregister():
 
 if __name__ == "__main__":
     register()
-
 
 
 
