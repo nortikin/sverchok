@@ -93,7 +93,11 @@ class ViewerNode_text(Node, SverchCustomTreeNode):
                 evaverti = eval(verti)
                 deptl = levelsOflist(evaverti)
                 #print(str(evaverti))
-                a = self.readFORviewer_sockets_data(evaverti, deptl) # from util
+                print (deptl, ' text viewer')
+                if deptl > 2:
+                    a = self.readFORviewer_sockets_data(evaverti, deptl)
+                else:
+                    a = self.readFORviewer_sockets_data_small(evaverti, deptl)
                 cache_viewer_slot1['veriable'] = a
                 #print ('viewer text input1')
         # edges/faces socket
@@ -108,7 +112,11 @@ class ViewerNode_text(Node, SverchCustomTreeNode):
                 cache_viewer_slot2['type'] = str(self.edgDef(evaline_str))
                 deptl = levelsOflist(evaline_str)
                 #print(str(evaline_str))
-                b = self.readFORviewer_sockets_data(evaline_str, deptl) # from util
+                print (deptl, ' text viewer')
+                if deptl > 2:
+                    b = self.readFORviewer_sockets_data(evaline_str, deptl)
+                else:
+                    b = self.readFORviewer_sockets_data_small(evaline_str, deptl)
                 cache_viewer_slot2['veriable'] = str(b)
                 #print ('viewer text input2')
         # matrix socket
@@ -119,8 +127,11 @@ class ViewerNode_text(Node, SverchCustomTreeNode):
                 matrix = self.inputs['matrix'].links[0].from_socket.MatrixProperty
                 eva = eval(matrix)
                 deptl = levelsOflist(eva)
-                #print(matrix)
-                c = self.readFORviewer_sockets_data(eva, deptl) # from util
+                print (deptl, ' text viewer')
+                if deptl > 2:
+                    c = self.readFORviewer_sockets_data(eva, deptl)
+                else:
+                    c = self.readFORviewer_sockets_data_small(eva, deptl)
                 cache_viewer_slot3['veriable'] = str(c)
                 #print ('viewer text input3')
                 
@@ -144,6 +155,19 @@ class ViewerNode_text(Node, SverchCustomTreeNode):
         output = ''
         deptl = dept - 1
         if deptl > 1:
+            for i, object in enumerate(data):
+                cache += ('\n' + '=' + str(i) + '=   (' + str(len(object)) + ')')
+                cache += str(self.readFORviewer_sockets_data(object, deptl))
+        else:
+            for k, val in enumerate(data):
+                output += ('\n' + str(val))
+        return cache + output
+    
+    def readFORviewer_sockets_data_small(self, data, dept):
+        cache = ''
+        output = ''
+        deptl = dept - 1
+        if deptl > 0:
             for i, object in enumerate(data):
                 cache += ('\n' + '=' + str(i) + '=   (' + str(len(object)) + ')')
                 cache += str(self.readFORviewer_sockets_data(object, deptl))
