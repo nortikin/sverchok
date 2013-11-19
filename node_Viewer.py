@@ -35,31 +35,36 @@ class SvObjBake(bpy.types.Operator):
         # fht = предохранитель от перебора рёбер и полигонов.
         fht = []
         if len(edg_pol[0][0]) == 2:
+            pols = []
             for edgs in edg_pol:
-                pols = []
-                fht.append(max(a for a in max(edgs)))
+                maxi = max(max(a) for a in edgs)
+                fht.append(maxi)
+                print (maxi)
         elif len(edg_pol[0][0]) > 2:
+            edgs = []
             for pols in edg_pol:
-                edgs = []
-                fht.append(max(a for a in max(pols)))
-        #print (edg_pol, vers, fht)
+                maxi = max(max(a) for a in pols)
+                fht.append(maxi)
+                print (maxi)
+        #print (fht)
         vertices = Vector_generate(vers)
         matrixes = Matrix_generate(mats)
         #print('mats' + str(matrixes))
         objects = {}
-        # objects = matrixes + mesh
         fhtagn = []
         for u, f in enumerate(fht):
             fhtagn.append(min(len(vertices[u]), fht[u]))
-        lenmesh = len(vertices) - 1
-        print ('запекание вершин ', len(vertices), " матрицы запекашка ", len(matrixes), " полиглоты ", len(edg_pol))
-        for i, m in enumerate(matrixes):
+        #lenmesh = len(vertices) - 1
+        #print ('запекание вершин ', vertices, " матрицы запекашка ", matrixes, " полиглоты ", edg_pol)
+        #print (matrixes)
+        for i, v in enumerate(vertices):
             k = i
-            if i > lenmesh:
-                k = lenmesh
-            if (len(vertices[k])-1) > fhtagn[k]:
+            if i > len(matrixes) - 1:
+                m = matrixes[-1]
+            else:
+                m = matrixes[k]
+            if (len(v)-1) > fhtagn[k]:
                 continue
-            v = vertices[k]
             if edgs:
                 e = edg_pol[k]
             else:
@@ -78,9 +83,10 @@ class SvObjBake(bpy.types.Operator):
             bpy.context.scene.objects.link(ob)
             
     def makemesh(self,i,v,e,p,m):
-        me = bpy.data.meshes.new('Sv_' + str(i))
+        name = 'Sv_' + str(i)
+        me = bpy.data.meshes.new(name)
         me.from_pydata(v, e, p)
-        ob = bpy.data.objects.new('Sv_' + str(i), me)
+        ob = bpy.data.objects.new(name, me)
         ob.matrix_world = m
         ob.show_name = False
         ob.hide_select = False
@@ -141,7 +147,7 @@ class ViewerNode(Node, SverchCustomTreeNode):
                 cache_viewer_baker['m'] = []
         if cache_viewer_baker['v'] or cache_viewer_baker['m']:
             callback_enable(self.name, cache_viewer_baker['v'], cache_viewer_baker['ep'], cache_viewer_baker['m'], self.Vertex_show)
-            print ('отражения вершин ',len(cache_viewer_baker['v']), " рёбёры ", len(cache_viewer_baker['ep']), "матрицы",len(cache_viewer_baker['m']))
+            #print ('отражения вершин ',len(cache_viewer_baker['v']), " рёбёры ", len(cache_viewer_baker['ep']), "матрицы",len(cache_viewer_baker['m']))
         if not self.inputs['vertices'].links and not self.inputs['matrix'].links:
             callback_disable(self.name)
             cache_viewer_baker = {}
