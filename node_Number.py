@@ -14,7 +14,7 @@ class NumberNode(Node, SverchCustomTreeNode):
 
     def update(self):
         # inputs
-        if 'float' in self.inputs and len(self.inputs['float'].links)>0 and type(self.inputs['float'].links[0].from_socket) == bpy.types.StringsSocket:
+        if 'float' in self.inputs and len(self.inputs['float'].links)>0 and type(self.inputs['float'].links[0].from_socket) == StringsSocket:
             if not self.inputs['float'].node.socket_value_update:
                 self.inputs['float'].node.update()
             Number = self.inputs['float'].links[0].from_socket.StringsProperty

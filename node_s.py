@@ -134,6 +134,7 @@ def make_categories():
             NodeItem("VectorsOutNode", label="Vector out"),
             NodeItem("MoveNode", label="Vector Move"),
             NodeItem("MatrixGenNode", label="Matrix in"),
+            NodeItem("MatrixOutNode", label="Matrix out"),
             NodeItem("MatrixDeformNode", label="Matrix Deform"),
             NodeItem("CentersPolsNode", label="Centers Polygons"),
             NodeItem("DistancePPNode", label="Distances"),
