@@ -39,6 +39,8 @@ def section(cut_me_vertices, cut_me_edges, mx, pp, pno, FILL=False):
         else:
             return False
     
+    if not cut_me_edges or not cut_me_vertices:
+        return False
     
     verts = []
     ed_xsect = {}
