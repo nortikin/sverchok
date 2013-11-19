@@ -72,7 +72,12 @@ def section(cut_me_vertices, cut_me_edges, mx, pp, pno, FILL=False):
                 #parallel and not on plane
                 continue
         
-        t0 = -(ep[0]*v1.x+ep[1]*v1.y+ep[2]*v1.z + ep[3]) / (ep[0]*vec.x + ep[1]*vec.y + ep[2]*vec.z)
+        epv = ep[0]*vec.x + ep[1]*vec.y + ep[2]*vec.z
+        if epv==0: 
+            t0=0
+        else:
+            t0 = -(ep[0]*v1.x+ep[1]*v1.y+ep[2]*v1.z + ep[3]) / epv
+            
         pq = vec*t0+v1
         if (pq-v1).length <= vec.length and (pq-v2).length <= vec.length :
             verts.append(pq)
