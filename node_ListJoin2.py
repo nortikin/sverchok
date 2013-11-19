@@ -74,7 +74,7 @@ class ListJoinNode(Node, SverchCustomTreeNode):
             result = list_result.copy()
             
             if self.mix_check:
-                list_mix = myZip_2(list_result,self.JoinLevel)
+                list_mix = myZip_2(slots,self.JoinLevel)
                 result = list_mix.copy()
                 
             if self.wrap_check:
