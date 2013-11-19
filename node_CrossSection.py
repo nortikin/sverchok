@@ -133,8 +133,21 @@ def section(cut_me_vertices, cut_me_edges, mx, pp, pno, FILL=False):
             verts=[]
             for v in me.vertices:
                 verts.append(v.co)
+
+            if not pols:
+                bpy.ops.object.mode_set(mode='EDIT')
+                bpy.ops.mesh.select_mode(type="VERT", action="ENABLE")
+                bpy.ops.mesh.select_all(action="SELECT")
+                bpy.ops.mesh.edge_face_add()
+                bpy.ops.object.mode_set(mode='OBJECT')
+                
+                for p in me.polygons:
+                    vs=[]
+                    for v in p.vertices:
+                        vs.append(v)
+                    pols.append(vs)
             
-            x_me['Verts'] = verts
+            x_me['Verts'] = verts    
             x_me['Edges'] = pols
             
             #Cleanup
@@ -234,7 +247,6 @@ def unregister():
 
 if __name__ == "__main__":
     register()
-
 
 
 
