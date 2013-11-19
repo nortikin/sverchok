@@ -5,7 +5,7 @@ from util import *
 from math import *
 
 
-def section(cut_me_vertices, cut_me_edges, mx, pp, pno):
+def section(cut_me_vertices, cut_me_edges, mx, pp, pno, FILL=False):
     """Finds the section mesh between a mesh and a plane 
     cut_me: Blender Mesh - the mesh to be cut
     mx: Matrix - The matrix of object of the mesh for correct coordinates
@@ -94,6 +94,52 @@ def section(cut_me_vertices, cut_me_edges, mx, pp, pno):
     x_me['Edges'] = edges
     bpy.data.meshes.remove(new_me) 
     if x_me:
+        if edges and FILL:
+            me = bpy.data.meshes.new('Section')
+            me.from_pydata(verts,edges,[])
+            
+            #create a temp object and link it to the current scene to be able to 
+            #apply rem Doubles and fill 
+            tmp_ob = bpy.data.objects.new('Mesh', me)
+    
+            sce = bpy.context.scene
+            sce.objects.link(tmp_ob)
+            
+            # do a remove doubles to cleanup the mesh, this is needed when there
+            # is one or more edges coplanar to the plane.
+            bpy.context.scene.objects.active = tmp_ob
+    
+            bpy.ops.object.mode_set(mode="EDIT")
+            bpy.ops.mesh.select_mode(type="EDGE", action="ENABLE")
+            bpy.ops.mesh.select_all(action="SELECT")
+    
+            # remove doubles:
+            bpy.ops.mesh.remove_doubles()
+    
+            bpy.ops.mesh.fill()
+            bpy.ops.mesh.tris_convert_to_quads()
+
+            # recalculate outside normals:
+            bpy.ops.mesh.normals_make_consistent(inside=False)
+    
+            bpy.ops.object.mode_set(mode='OBJECT')
+            pols=[]
+            for p in me.polygons:
+                vs=[]
+                for v in p.vertices:
+                    vs.append(v)
+                pols.append(vs)
+            
+            verts=[]
+            for v in me.vertices:
+                verts.append(v.co)
+            
+            x_me['Verts'] = verts
+            x_me['Edges'] = pols
+            
+            #Cleanup
+            sce.objects.unlink(tmp_ob)
+            del tmp_ob
         return x_me
     else:
         return False
@@ -105,6 +151,8 @@ class CrossSectionNode(Node, SverchCustomTreeNode):
     bl_label = 'Cross Section'
     bl_icon = 'OUTLINER_OB_EMPTY'
     
+    fill_check = bpy.props.BoolProperty(name='fill', description='to fill section', default=False, update=updateNode)
+    
     def init(self, context):
         self.inputs.new('VerticesSocket', 'vertices', 'vertices')
         self.inputs.new('StringsSocket', 'edg_pol', 'edg_pol')
@@ -115,7 +163,9 @@ class CrossSectionNode(Node, SverchCustomTreeNode):
         self.outputs.new('StringsSocket', 'edges', 'edges')
         #self.outputs.new('MatrixSocket', 'matrix', 'matrix')
                 
-    
+    def draw_buttons(self, context, layout):
+        layout.prop(self, "fill_check", text="Fill section")
+        
     def update(self):
         if 'vertices' in self.inputs and self.inputs['vertices'].links \
             and self.inputs['edg_pol'].links and self.inputs['matrix'].links \
@@ -149,7 +199,7 @@ class CrossSectionNode(Node, SverchCustomTreeNode):
                     idx_epob = min(idx_mob, len(edg_pols_ob)-1)
                     matrix = Matrix(matrix)
                     
-                    x_me = section(verts_ob[idx_vob], edg_pols_ob[idx_epob], matrix, pp, pno)
+                    x_me = section(verts_ob[idx_vob], edg_pols_ob[idx_epob], matrix, pp, pno, self.fill_check)
                     if x_me:
                         verts_pre_out.append(x_me['Verts'])
                         edges_pre_out.append(x_me['Edges'])
