@@ -147,13 +147,15 @@ class ViewerNode_text(Node, SverchCustomTreeNode):
     
     def edgDef(self, l):
         t = '\ndata:'
-        if type(l[0]) in [int, float]:
+        if l[0] and type(l[0]) in [int, float]:
             if len(l) > 2:
                 t = '\npolygons: \n'
             else:
                 t = '\nedges: \n'
-        else:
+        elif l[0]:
             t = self.edgDef(l[0])
+        else:
+            pass
         return t
 
 

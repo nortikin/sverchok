@@ -242,7 +242,7 @@ def dataStandart(data, dept):
 def levelsOflist(list):
     level = 1
     for n in list:
-        if type(n) in [type([]), type(tuple())]: # why it not understands [list, tuple]??? strange behaviour
+        if type(n) in [type([]), type(tuple())] and len(n) > 0: # why it not understands [list, tuple]??? strange behaviour
             level += levelsOflist(n)
             #print (level)
         return level
@@ -560,7 +560,6 @@ def wrapper_2(l_etalon, list_a, level):
                 list_b = subWrap(l, level-1, count)
         return list_b     
         
-    
     def subWrap_2(l_etalon, len_l, level):
         len_r = len_l
         if type(l_etalon) in [list, tuple]:
