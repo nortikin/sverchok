@@ -281,13 +281,23 @@ def Matrix_generate(prop):
 
 
 
-def Matrix_location(prop):
+def Matrix_location(prop, list=False):
     Vectors = []
     for p in prop:
-        Vectors.append(p.translation)
+        if list:
+            Vectors.append(p.translation[:])
+        else:
+            Vectors.append(p.translation)
     return [Vectors]
 
-
+def Matrix_scale(prop, list=False):
+    Vectors = []
+    for p in prop:
+        if list:
+            Vectors.append(p.to_scale()[:])
+        else:
+            Vectors.append(p.to_scale())
+    return [Vectors]
 
 def Vector_generate(prop):
     vec_out = []
