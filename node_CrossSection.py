@@ -44,7 +44,6 @@ def section(cut_me_vertices, cut_me_edges, mx, pp, pno, FILL=False):
     
     verts = []
     ed_xsect = {}
-    ed_xsect_2 = {}
     x_me = {}
     
     ep = equation_plane(pp, pno)
@@ -84,7 +83,6 @@ def section(cut_me_vertices, cut_me_edges, mx, pp, pno, FILL=False):
         if (pq-v1).length <= vec.length and (pq-v2).length <= vec.length :
             verts.append(pq)
             ed_xsect[ed.key] = len(ed_xsect)
-            ed_xsect_2[ed_idx] = ((ed.vertices[0], ed.vertices[1]),len(verts)-1)
         
     edges = []
     for f in new_me.polygons:
