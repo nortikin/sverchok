@@ -123,7 +123,7 @@ class ViewerNode(Node, SverchCustomTreeNode):
                     self.inputs['vertices'].node.update()
                 if self.inputs['vertices'].links[0].from_socket.VerticesProperty:
                     propv = eval(self.inputs['vertices'].links[0].from_socket.VerticesProperty)
-                    cache_viewer_baker['v'] = propv
+                    cache_viewer_baker['v'] = dataCorrect(propv)
             else:
                 cache_viewer_baker['v'] = []
                             
@@ -132,7 +132,7 @@ class ViewerNode(Node, SverchCustomTreeNode):
                     self.inputs['edg_pol'].node.update()
                 if self.inputs['edg_pol'].links[0].from_socket.StringsProperty:
                     prope = eval(self.inputs['edg_pol'].links[0].from_socket.StringsProperty)
-                    cache_viewer_baker['ep'] = prope
+                    cache_viewer_baker['ep'] = dataCorrect(prope)
                     #print (prope)
             else:
                 cache_viewer_baker['ep'] = []
@@ -142,7 +142,7 @@ class ViewerNode(Node, SverchCustomTreeNode):
                     self.inputs['matrix'].node.update()
                 if self.inputs['matrix'].links[0].from_socket.MatrixProperty:
                     propm = eval(self.inputs['matrix'].links[0].from_socket.MatrixProperty)
-                    cache_viewer_baker['m'] = propm
+                    cache_viewer_baker['m'] = dataCorrect(propm)
             else:
                 cache_viewer_baker['m'] = []
         if cache_viewer_baker['v'] or cache_viewer_baker['m']:
