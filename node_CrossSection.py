@@ -224,8 +224,9 @@ class CrossSectionNode(Node, SverchCustomTreeNode):
                         verts_pre_out.append(x_me['Verts'])
                         edges_pre_out.append(x_me['Edges'])
                 
-                verts_out.extend(verts_pre_out)
-                edges_out.extend(edges_pre_out)
+                if verts_pre_out:
+                    verts_out.extend(verts_pre_out)
+                    edges_out.extend(edges_pre_out)
             
             if 'vertices' in self.outputs and len(self.outputs['vertices'].links)>0:
                 if not self.outputs['vertices'].node.socket_value_update:
@@ -254,7 +255,6 @@ def unregister():
 
 if __name__ == "__main__":
     register()
-
 
 
 
