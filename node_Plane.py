@@ -8,12 +8,16 @@ class PlaneNode(Node, SverchCustomTreeNode):
     bl_label = 'Plane'
     bl_icon = 'OUTLINER_OB_EMPTY'
     
-    int_X = bpy.props.IntProperty(name = 'int_X', description='plane', default=2, min=2, options={'ANIMATABLE'}, update=updateNode)
-    int_Y = bpy.props.IntProperty(name = 'int_Y', description='plane', default=2, min=2, options={'ANIMATABLE'}, update=updateNode)
+    int_X = bpy.props.IntProperty(name = 'int_X', description='Nº Vertices X', default=2, min=2, options={'ANIMATABLE'}, update=updateNode)
+    int_Y = bpy.props.IntProperty(name = 'int_Y', description='Nº Vertices Y', default=2, min=2, options={'ANIMATABLE'}, update=updateNode)
+    step_X = bpy.props.FloatProperty(name = 'step_X', description='Step length X', default=1.0, options={'ANIMATABLE'}, update=updateNode)
+    step_Y = bpy.props.FloatProperty(name = 'step_Y', description='Step length Y', default=1.0, options={'ANIMATABLE'}, update=updateNode)
     
     def init(self, context):
         self.inputs.new('StringsSocket', "Nº Vertices X", "Nº Vertices X")
         self.inputs.new('StringsSocket', "Nº Vertices Y", "Nº Vertices Y")
+        self.inputs.new('StringsSocket', "Step X", "Step length X")
+        self.inputs.new('StringsSocket', "Step Y", "Step length Y")
         self.outputs.new('VerticesSocket', "Vertices", "Vertices")
         self.outputs.new('StringsSocket', "Edges", "Edges")
         self.outputs.new('StringsSocket', "Polygons", "Polygons")
@@ -21,7 +25,8 @@ class PlaneNode(Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         layout.prop(self, "int_X", text="Nº Vert X")
         layout.prop(self, "int_Y", text="Nº Vert Y")
-
+        layout.prop(self, "step_X", text="Step X")
+        layout.prop(self, "step_Y", text="Step Y")
 
     def update(self):
         # inputs
@@ -38,6 +43,21 @@ class PlaneNode(Node, SverchCustomTreeNode):
             IntegerY = int(eval(self.inputs['Nº Vertices Y'].links[0].from_socket.StringsProperty)[0][0])
         else:
             IntegerY = self.int_Y
+
+        if len(self.inputs['Step X'].links)>0:
+            if not self.inputs['Step X'].node.socket_value_update:
+                self.inputs['Step X'].node.update()
+            StepX = float(eval(self.inputs['Step X'].links[0].from_socket.StringsProperty)[0][0])
+        else:
+            StepX = self.step_X
+
+        if len(self.inputs['Step Y'].links)>0:
+            if not self.inputs['Step Y'].node.socket_value_update:
+                self.inputs['Step Y'].node.update()
+            StepY = float(eval(self.inputs['Step Y'].links[0].from_socket.StringsProperty)[0][0])
+        else:
+            StepY = self.step_Y
+
         print('.....IntegerY.....',IntegerY, IntegerX)
         # outputs
         if 'Vertices' in self.outputs and len(self.outputs['Vertices'].links)>0:
@@ -52,6 +72,9 @@ class PlaneNode(Node, SverchCustomTreeNode):
             for i in range(IntegerY):
                 for j in range(IntegerX):
                     listVertY.append(0.0+i)
+
+            listVertX = [StepX*i for i in listVertX]
+            listVertY = [StepY*i for i in listVertY]
 
             X = listVertX
             Y = listVertY
