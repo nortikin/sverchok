@@ -20,40 +20,51 @@ class GenVectorsNode(Node, SverchCustomTreeNode):
             type(self.inputs['X'].links[0].from_socket) == StringsSocket:
             if not self.inputs['X'].node.socket_value_update:
                 self.inputs['X'].node.update()
-            X = eval(self.inputs['X'].links[0].from_socket.StringsProperty)[0]
+            X_ = eval(self.inputs['X'].links[0].from_socket.StringsProperty)
         else:
-            X = [0.0]
+            X_ = [[0.0]]
         
         if self.inputs['Y'].links and \
             type(self.inputs['Y'].links[0].from_socket) == StringsSocket:
             if not self.inputs['Y'].node.socket_value_update:
                 self.inputs['Y'].node.update()
-            Y = eval(self.inputs['Y'].links[0].from_socket.StringsProperty)[0]
+            Y_ = eval(self.inputs['Y'].links[0].from_socket.StringsProperty)
         else:
-            Y = [0.0]
+            Y_ = [[0.0]]
             
         if self.inputs['Z'].links and \
             type(self.inputs['Z'].links[0].from_socket) == StringsSocket:
             if not self.inputs['Z'].node.socket_value_update:
                 self.inputs['Z'].node.update()
-            Z = eval(self.inputs['Z'].links[0].from_socket.StringsProperty)[0]
+            Z_ = eval(self.inputs['Z'].links[0].from_socket.StringsProperty)
         else:
-            Z = [0.0]
+            Z_ = [[0.0]]
         
         # outputs
         if 'Vectors' in self.outputs and len(self.outputs['Vectors'].links)>0:
             if not self.outputs['Vectors'].node.socket_value_update:
                 self.outputs['Vectors'].node.update()
             
-            max_num = max(len(X), len(Y), len(Z))
+            max_obj = max(len(X_), len(Y_), len(Z_))
+            self.fullList(X_,max_obj)
+            self.fullList(Y_,max_obj)
+            self.fullList(Z_,max_obj)
             
-            self.fullList(X,max_num)
-            self.fullList(Y,max_num)
-            self.fullList(Z,max_num)
+            series_vec = []
+            for i in range(max_obj):
+                X = X_[i]
+                Y = Y_[i]
+                Z = Z_[i]
             
-            series_vec = list(zip(X,Y,Z))
+                max_num = max(len(X), len(Y), len(Z))
+                
+                self.fullList(X,max_num)
+                self.fullList(Y,max_num)
+                self.fullList(Z,max_num)
+            
+                series_vec.append(list(zip(X,Y,Z)))
  
-            self.outputs['Vectors'].VerticesProperty = str([series_vec])
+            self.outputs['Vectors'].VerticesProperty = str(series_vec)
             #print (series_vec)
             
     def fullList(self, l, count):
