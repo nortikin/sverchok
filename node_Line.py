@@ -8,27 +8,35 @@ class LineNode(Node, SverchCustomTreeNode):
     bl_label = 'Line'
     bl_icon = 'OUTLINER_OB_EMPTY'
     
-    int_ = bpy.props.IntProperty(name = 'int_', description='line', default=2, min=2, options={'ANIMATABLE'}, update=updateNode)
-    
+    int_ = bpy.props.IntProperty(name = 'int_', description='Nº Vertices', default=2, min=2, options={'ANIMATABLE'}, update=updateNode)
+    step_ = bpy.props.FloatProperty(name = 'step_', description='Step length', default=1.0, options={'ANIMATABLE'}, update=updateNode)
+
     def init(self, context):
         self.inputs.new('StringsSocket', "Nº Vertices", "Nº Vertices")
+        self.inputs.new('StringsSocket', "Step", "Step length")
         self.outputs.new('VerticesSocket', "Vertices", "Vertices")
         self.outputs.new('StringsSocket', "Edges", "Edges")
     
     def draw_buttons(self, context, layout):
         layout.prop(self, "int_", text="Nº Vert")
-
-
+        layout.prop(self, "step_", text="Step")
 
     def update(self):
         # inputs
         if len(self.inputs['Nº Vertices'].links)>0:
             if not self.inputs['Nº Vertices'].node.socket_value_update:
                 self.inputs['Nº Vertices'].node.update()
-            Integer = eval(self.inputs['Nº Vertices'].links[0].from_socket.StringsProperty)[0][0]
+            Integer = int(eval(self.inputs['Nº Vertices'].links[0].from_socket.StringsProperty)[0][0])
         else:
             Integer = self.int_
         
+        if len(self.inputs['Step'].links)>0:
+            if not self.inputs['Step'].node.socket_value_update:
+                self.inputs['Step'].node.update()
+            Step = float(eval(self.inputs['Step'].links[0].from_socket.StringsProperty)[0][0])
+        else:
+            Step = self.step_
+
         # outputs
         if 'Vertices' in self.outputs and len(self.outputs['Vertices'].links)>0:
             if not self.outputs['Vertices'].node.socket_value_update:
@@ -37,6 +45,9 @@ class LineNode(Node, SverchCustomTreeNode):
             listVert = []
             for i in range(Integer):
                 listVert.append(0.0+i)
+
+            listVert = [Step*i for i in listVert]
+
             X = listVert
             Y = [0.0]
             Z = [0.0]
