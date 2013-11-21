@@ -108,13 +108,11 @@ class FormulaNode(Node, SverchCustomTreeNode):
             N=n
 
             t = eval(formula)
-        else:
+        elif type(l) in [tuple, list]:
             t = []
             for idx,i in enumerate(l):
                 j = self.inte(i, formula, list_n, idx)
                 t.append(j)
-            if type(l)==tuple:
-                t = tuple(t)
         return t
         
 

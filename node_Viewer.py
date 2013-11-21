@@ -57,14 +57,21 @@ class SvObjBake(bpy.types.Operator):
         #lenmesh = len(vertices) - 1
         #print ('запекание вершин ', vertices, " матрицы запекашка ", matrixes, " полиглоты ", edg_pol)
         #print (matrixes)
-        for i, v in enumerate(vertices):
+        for i, m in enumerate(matrixes):
             k = i
             if i > len(matrixes) - 1:
-                m = matrixes[-1]
+                v = vertices[-1]
             else:
-                m = matrixes[k]
-            if (len(v)-1) > fhtagn[k]:
+                v = vertices[k]
+            #print (fhtagn, len(v)-1)
+            if (len(v)-1) < fhtagn[k]:
                 continue
+            # возможно такая сложность не нужна, но пусть лежит тут. Удалять лишние точки не обязательно.
+            elif fhtagn[k] < (len(v)-1):
+                nonneed = (len(v)-1) - fhtagn[k]
+                for q in range(nonneed):
+                    v.pop((fhtagn[k]+1))
+                #print (fhtagn[k], (len(v)-1))
             if edgs:
                 e = edg_pol[k]
             else:
