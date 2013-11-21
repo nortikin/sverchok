@@ -60,11 +60,11 @@ class ToolsNode(Node, SverchCustomTreeNode):
         
     def draw_buttons(self, context, layout):
         layout.operator(SverchokUpdateAll.bl_idname, text="Update")
-        layout.operator('wm.url_open', text='WWW: help!').url = 'http://wiki.blender.org/index.php/Extensions:2.6/Py/Scripts/Nodes/Sverchok'
-        layout.operator('wm.url_open', text='WWW: Go home!').url = 'http://nikitron.cc.ua/blend_scripts.html'
+        layout.operator('wm.url_open', text='Help!').url = 'http://wiki.blender.org/index.php/Extensions:2.6/Py/Scripts/Nodes/Sverchok'
+        layout.operator('wm.url_open', text='Home!').url = 'http://nikitron.cc.ua/blend_scripts.html'
         #layout.operator(SverchokHome.bl_idname, text="WWW: Go home")
-        layout.operator('wm.url_open', text='WWW: feedback').url = 'http://www.blenderartists.org/forum/showthread.php?272679-Addon-WIP-Sverchok-parametric-tool-for-architects/'
-        layout.operator('wm.url_open', text='WWW: bugtracking').url = 'https://docs.google.com/forms/d/1L2BIpDhjMgQEbVAc7pEq93432Qanu8UPbINhzJ5SryI/viewform'
+        layout.operator('wm.url_open', text='FBack').url = 'http://www.blenderartists.org/forum/showthread.php?272679-Addon-WIP-Sverchok-parametric-tool-for-architects/'
+        layout.operator('wm.url_open', text='Bugtr').url = 'https://docs.google.com/forms/d/1L2BIpDhjMgQEbVAc7pEq93432Qanu8UPbINhzJ5SryI/viewform'
         
     
     def update(self):

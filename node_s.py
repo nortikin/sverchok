@@ -130,9 +130,12 @@ def make_categories():
             ]),
         SverchNodeCategory("SVERCHOK_V", "SVERCHOK vector", items=[
             # generators, degenerators nodes
+            NodeItem("LineNode", label="Line"),
+            NodeItem("PlaneNode", label="Plane"),
             NodeItem("GenVectorsNode", label="Vector in"),
             NodeItem("VectorsOutNode", label="Vector out"),
-            NodeItem("MoveNode", label="Vector Move"),
+            NodeItem("VectorNormalNode", label="Vector' Normal"),
+            NodeItem("VectorMoveNode", label="Vector Move"),
             NodeItem("MatrixGenNode", label="Matrix in"),
             NodeItem("MatrixOutNode", label="Matrix out"),
             NodeItem("MatrixDeformNode", label="Matrix Deform"),
@@ -140,8 +143,6 @@ def make_categories():
             NodeItem("DistancePPNode", label="Distances"),
             NodeItem("AdaptivePolsNode", label="Adaptive Polygons"),
             NodeItem("CrossSectionNode", label="Cross Section"),
-            NodeItem("LineNode", label="Line"),
-            NodeItem("PlaneNode", label="Plane"),
             ]),
         ]
     return node_categories

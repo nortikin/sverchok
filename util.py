@@ -200,7 +200,7 @@ def handle_check(handle, prop):
 #####################################################
 
 # data from nasting to standart: TO container( objects( lists( floats, ), ), )
-def dataCorrect(data):
+def dataCorrect(data, nominal_dept=2):
     dept = levelsOflist(data)
     output = []
     if dept < 2:
@@ -209,23 +209,26 @@ def dataCorrect(data):
         return [dept, data]
     else:
         #print ('DC, dep>2', dept)
-        output = dataStandart(data, dept)
+        output = dataStandart(data, dept, nominal_dept)
         #print ('correct', output)
         return output
     
 # from standart data to initial levels: to nasting lists  container( objects( lists( nasty_lists( floats, ), ), ), ) это невозможно!
 def dataSpoil(data, dept):
-    pass
+    if dept:
+        return [dataSpoil(data, dept-1)]
+    else:
+        return data
     
 # data from nasting to standart: TO container( objects( lists( floats, ), ), )
-def dataStandart(data, dept):
+def dataStandart(data, dept, nominal_dept):
     deptl = dept - 1
     #and type(data) in [list, tuple]:
     output = []
     for object in data:
-        if deptl > 1:
+        if deptl >= nominal_dept:
             #print ('DS, dep>1', deptl)
-            output.extend(dataStandart(object, deptl))
+            output.extend(dataStandart(object, deptl, nominal_dept))
             #elif deptl > 2 and type(object) in [int, float]:
             #output_ += object
         else:

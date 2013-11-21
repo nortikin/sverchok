@@ -3,9 +3,9 @@ from node_s import *
 from util import *
 from mathutils import Vector, Matrix
 
-class MoveNode(Node, SverchCustomTreeNode):
-    ''' Move vectors '''
-    bl_idname = 'MoveNode'
+class VectorMoveNode(Node, SverchCustomTreeNode):
+    ''' Vector Move vectors '''
+    bl_idname = 'VectorMoveNode'
     bl_label = 'Vectors Move'
     bl_icon = 'OUTLINER_OB_EMPTY'
     
@@ -54,19 +54,24 @@ class MoveNode(Node, SverchCustomTreeNode):
     
     def moved(self, vers, vecs, mult):
         r = len(vers) - len(vecs)
+        rm = len(vers) - len(mult)
         moved = []
         if r > 0:
             vecs.extend([vecs[-1] for a in range(r)])
+        if rm > 0:
+            mult.extend([mult[-1] for a in range(rm)])
         for i, ob in enumerate(vers):       # object
             moved = []
             d = len(ob) - len(vecs[i])
+            dm = len(ob) - len(mult[i])
             if d > 0:
                 vecs[i].extend([vecs[i][-1] for a in range(d)])
+            if dm > 0:
+                mult[i].extend([mult[i][-1] for a in range(dm)])
             temp = []
             for k, vr in enumerate(ob):     # vectors
-                
                 #print('move',str(len(ob)), str(len(vecs[i])), str(vr), str(vecs[i][k]))
-                v = ((vr + vecs[i][k]))[:]
+                v = ((vr + vecs[i][k]*mult[i][k]))[:]
                 temp.append(v)   #[0]*mult[0], v[1]*mult[0], v[2]*mult[0]))
             moved.append(temp)
         #print ('move', str(moved))
@@ -79,10 +84,10 @@ class MoveNode(Node, SverchCustomTreeNode):
     
 
 def register():
-    bpy.utils.register_class(MoveNode)
+    bpy.utils.register_class(VectorMoveNode)
     
 def unregister():
-    bpy.utils.unregister_class(MoveNode)
+    bpy.utils.unregister_class(VectorMoveNode)
 
 if __name__ == "__main__":
     register()
