@@ -11,6 +11,8 @@ class AdaptivePolsNode(Node, SverchCustomTreeNode):
     bl_label = 'Adaptive Polygons'
     bl_icon = 'OUTLINER_OB_EMPTY'
     
+    width_coef = bpy.props.FloatProperty(name='width_coef', description='with coefficient for sverchok adaptivepols donors size', default=1.0, max=3.0, min=0.5, update=updateNode)
+    
     def init(self, context):
         self.inputs.new('VerticesSocket', "VersR", "VersR")
         self.inputs.new('StringsSocket', "PolsR", "PolsR")
@@ -19,7 +21,10 @@ class AdaptivePolsNode(Node, SverchCustomTreeNode):
         self.inputs.new('StringsSocket', "Z_Coef", "Z_Coef")
         self.outputs.new('VerticesSocket', "Vertices", "Vertices")
         self.outputs.new('StringsSocket', "Poligons", "Poligons")
-        
+    
+    def draw_buttons(self, context, layout):
+        layout.prop(self, "width_coef", text="donor width")
+    
     def lerp(self, v1, v2, v3, v4, v):
         v12 = v1 + (v2-v1)*v[0] + ((v2-v1)/2)
         v43 = v4 + (v3-v4)*v[0] + ((v3-v4)/2)
@@ -78,10 +83,9 @@ class AdaptivePolsNode(Node, SverchCustomTreeNode):
                     n_faces = len(pD)
                     
                     xx = [x[0] for x in vD]
-                    
-                    x0 = 1 / (max(xx)-min(xx))
+                    x0 = (self.width_coef) / (max(xx)-min(xx))
                     yy = [y[1] for y in vD]
-                    y0 = 1 / (max(yy)-min(yy))
+                    y0 = (self.width_coef) / (max(yy)-min(yy))
                     zz = [z[2] for z in vD]
                     z0 = 1 / (max(zz)-min(zz))
                     #print (x0, y0, z0)
