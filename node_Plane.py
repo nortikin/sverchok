@@ -28,17 +28,17 @@ class PlaneNode(Node, SverchCustomTreeNode):
         if len(self.inputs['Nº Vertices X'].links)>0:
             if not self.inputs['Nº Vertices X'].node.socket_value_update:
                 self.inputs['Nº Vertices X'].node.update()
-            IntegerX = eval(self.inputs['Nº Vertices X'].links[0].from_socket.StringsProperty)[0][0]
+            IntegerX = int(eval(self.inputs['Nº Vertices X'].links[0].from_socket.StringsProperty)[0][0])
         else:
             IntegerX = self.int_X
 
         if len(self.inputs['Nº Vertices Y'].links)>0:
             if not self.inputs['Nº Vertices Y'].node.socket_value_update:
                 self.inputs['Nº Vertices Y'].node.update()
-            IntegerY = eval(self.inputs['Nº Vertices Y'].links[0].from_socket.StringsProperty)[0][0]
+            IntegerY = int(eval(self.inputs['Nº Vertices Y'].links[0].from_socket.StringsProperty)[0][0])
         else:
             IntegerY = self.int_Y
-        
+        print('.....IntegerY.....',IntegerY, IntegerX)
         # outputs
         if 'Vertices' in self.outputs and len(self.outputs['Vertices'].links)>0:
             if not self.outputs['Vertices'].node.socket_value_update:

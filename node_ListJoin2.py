@@ -85,16 +85,16 @@ class ListJoinNode(Node, SverchCustomTreeNode):
                     list_wrap_mix = wrapper_2(slots, list_mix, self.JoinLevel)
                     result = list_wrap_mix.copy()
             
-            output = [result]
+            #output = [result]
 
             if len(self.outputs['vertices'].links)>0 and typ == 'v':
                 if not self.outputs['vertices'].node.socket_value_update:
                     self.outputs['vertices'].node.update()
-                self.outputs['vertices'].links[0].from_socket.VerticesProperty =  str(output)
+                self.outputs['vertices'].links[0].from_socket.VerticesProperty =  str(result)
             if len(self.outputs['data'].links)>0 and typ == 's':
                 if not self.outputs['data'].node.socket_value_update:
                     self.outputs['data'].node.update()
-                self.outputs['data'].links[0].from_socket.StringsProperty =  str(output)
+                self.outputs['data'].links[0].from_socket.StringsProperty =  str(result)
             if len(self.outputs['matrix'].links)>0 and typ == 'm':
                 if not self.outputs['matrix'].node.socket_value_update:
                     self.outputs['matrix'].node.update()
