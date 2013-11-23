@@ -55,12 +55,15 @@ class Formula2Node(Node, SverchCustomTreeNode):
         
         list_mult=[]
         for idx, multi in enumerate(self.inputs[1:]):   
-            if multi.links and \
-                type(multi.links[0].from_socket) == StringsSocket:
+            if multi.links:
                 if not multi.node.socket_value_update:
                     multi.node.update()
-                
-                mult = eval(multi.links[0].from_socket.StringsProperty)
+                if type(multi.links[0].from_socket) == StringsSocket:
+                    mult = eval(multi.links[0].from_socket.StringsProperty)
+                elif type(multi.links[0].from_socket) == VerticesSocket:
+                    mult = eval(multi.links[0].from_socket.VerticesProperty)
+                elif type(multi.links[0].from_socket) == MatrixSocket:
+                    mult = eval(multi.links[0].from_socket.MatrixProperty)
                 ch = self.check_slots(2)
                 if not ch:
                     self.inputs.new('StringsSocket', 'n[.]', "n[.]")
@@ -78,18 +81,19 @@ class Formula2Node(Node, SverchCustomTreeNode):
             # finding nasty levels, make equal nastyness (canonical 0,1,2,3)
             levels = [levelsOflist(vecs)]
             for n in list_mult:
-                levels.append(levelsOflist(n)+1)
+                levels.append(levelsOflist(n))
             maxlevel = max(max(levels), 3)
             diflevel = maxlevel - levels[0]
             if diflevel:
-                vecs_ = dataSpoil(vecs, maxlevel)
+                vecs_ = dataSpoil([vecs], diflevel-1)
                 vecs = dataCorrect(vecs_, nominal_dept=2)
             for i, lev in enumerate(levels):
                 if i==0: continue
                 diflevel = maxlevel-lev
                 if diflevel:
-                    list_temp = dataSpoil(list_mult[i-1], maxlevel)
-                    list_mult[i-1] = dataCorrect(list_temp, nominal_dept=1)
+                    list_temp = dataSpoil([list_mult[i-1]], diflevel-1)
+                    list_mult[i-1] = dataCorrect(list_temp, nominal_dept=2)
+            #print (list_mult, vecs)
             
             r = self.inte(vecs, code_formula, list_mult, 3)
             
@@ -99,41 +103,49 @@ class Formula2Node(Node, SverchCustomTreeNode):
     
     def inte(self, list_x, formula, list_n, levels, index=0):
         ''' calc lists in formula '''
-        if not levels:
-            
-            X = x = list_x
-            argumentslist = []
-            for exli in list_n:
-                argumentslist.append(exli[index])
-            #print (x, argumentslist)
-            N = n = argumentslist
-            t = eval(formula)
-        else:
-            t = []
-            Lennox = len(list_x)
-            new_list_n = []
-            for j, ne in enumerate(list_n):
-                #operate with external lists untill come to float level
+        out = []
+        new_list_n = self.normalize(list_n, list_x)
+        for j, x_obj in enumerate(list_x):
+            out1 = []
+            for k, x_lis in enumerate(x_obj):
+                out2 = []
+                for q, x in enumerate(x_lis):
+                    out2.append(self.calc_item(x, formula, new_list_n, j, k, q))
+                out1.append(out2)
+            out.append(out1)
+        return out
+    
+    def calc_item(self, x, formula, nlist, j, k, q):
+        X = x
+        n = []
+        for nitem in nlist:
+            n.append(nitem[j][k][q])
+        N = n
+        return eval(formula)
+    
+    def normalize(self, listN, listX):
+        Lennox = len(listX)
+        new_list_n = []
+        for ne in listN:
+            Lenin = len(ne)
+            equal = Lennox - Lenin
+            if equal > 0:
+                ne = self.enlarge(ne, equal)
+            for i, obj in enumerate(listX):
+                Lennox = len(obj)
+                Lenin = len(ne[i])
+                equal = Lennox - Lenin
+                if equal > 0:
+                    ne[i] = self.enlarge(ne[i], equal)
+                for j, list in enumerate(obj):
+                    Lennox = len(list)
+                    Lenin = len(ne[i][j])
+                    equal = Lennox - Lenin 
+                    if equal > 0:
+                        ne[i][j] = self.enlarge(ne[i][j], equal)
                 
-                if levels in [2,3]:
-                    Lenin = len(ne)
-                    equal = Lennox - Lenin
-                    if equal > 0:
-                        ne = self.enlarge(ne, equal)
-                elif levels == 1:
-                    Lenin = len(ne[0])
-                    equal = Lennox - Lenin
-                    #print (equal)
-                    if equal > 0:
-                        ne = self.enlarge(ne[0], equal)
-                    else:
-                        ne = ne[0]
-                new_list_n.append(ne)
-            print (new_list_n, list_x)
-            for i, item_x in enumerate(list_x):
-                pre_t = self.inte(item_x, formula, new_list_n, levels-1, index=i)
-                t.append(pre_t)
-        return t
+            new_list_n.append(ne)
+        return new_list_n
     
     def enlarge(self, list, equal):
         ''' enlarge minor n[i] list to size of x list '''
