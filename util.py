@@ -204,37 +204,30 @@ def dataCorrect(data, nominal_dept=2):
     dept = levelsOflist(data)
     output = []
     if dept < 2:
-        #print ('DC, dep<3', dept)
-        #print ('correct', data)
         return [dept, data]
     else:
-        #print ('DC, dep>2', dept)
         output = dataStandart(data, dept, nominal_dept)
-        #print ('correct', output)
         return output
     
 # from standart data to initial levels: to nasting lists  container( objects( lists( nasty_lists( floats, ), ), ), ) это невозможно!
 def dataSpoil(data, dept):
     if dept:
-        return [dataSpoil(data, dept-1)]
+        out = []
+        for d in data:
+            out.append([dataSpoil(d, dept-1)])
     else:
-        return data
+        out = data
+    return out
     
 # data from nasting to standart: TO container( objects( lists( floats, ), ), )
 def dataStandart(data, dept, nominal_dept):
     deptl = dept - 1
-    #and type(data) in [list, tuple]:
     output = []
     for object in data:
         if deptl >= nominal_dept:
-            #print ('DS, dep>1', deptl)
             output.extend(dataStandart(object, deptl, nominal_dept))
-            #elif deptl > 2 and type(object) in [int, float]:
-            #output_ += object
         else:
             output.append(data)
-            #print ('DS, dep<2', deptl)
-            #print (output)
             return output
     return output
 
@@ -247,7 +240,6 @@ def levelsOflist(list):
     for n in list:
         if type(n) in [type([]), type(tuple())] and len(n) > 0: # why it not understands [list, tuple]??? strange behaviour
             level += levelsOflist(n)
-            #print (level)
         return level
 
 

@@ -218,7 +218,7 @@ def draw_callback_view(handle, sl1, sl2, sl3, vs):
             for line in data_edges[k]:                 # line
                 glBegin(GL_LINES)
                 for point in line:              # point
-                    vec_corrected = data_matrix[i]*data_vector[k][point]
+                    vec_corrected = data_matrix[i]*data_vector[k][int(point)]
                     glVertex3f(*vec_corrected)
                 glEnd()
                 glPointSize(1.75)
@@ -242,7 +242,7 @@ def draw_callback_view(handle, sl1, sl2, sl3, vs):
                 rand = j / oblen
                 glColor3f(1-rand, 1-rand, rand)
                 for point in pol:
-                    vec_corrected = data_matrix[i]*data_vector[k][point]
+                    vec_corrected = data_matrix[i]*data_vector[k][int(point)]
                     glVertex3f(*vec_corrected)
                 glEnd()
                 glPointSize(1.75)

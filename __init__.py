@@ -82,6 +82,7 @@ if "bpy" in locals():
     imp.reload(node_MatrixGenerator)
     imp.reload(node_MatrixDestructor)
     imp.reload(node_Formula)
+    imp.reload(node_Formula2)
     imp.reload(node_Tools)
     imp.reload(node_AdaptivePolygons)
     imp.reload(node_CrossSection)
@@ -114,6 +115,7 @@ else:
     import node_MatrixGenerator
     import node_MatrixDestructor
     import node_Formula
+    import node_Formula2
     import node_Tools
     import node_AdaptivePolygons
     import node_CrossSection
@@ -147,6 +149,7 @@ def register():
     node_MatrixGenerator.register()
     node_MatrixDestructor.register()
     node_Formula.register()
+    node_Formula2.register()
     node_Tools.register()
     node_AdaptivePolygons.register()
     node_CrossSection.register()
@@ -165,6 +168,7 @@ def unregister():
     node_CrossSection.unregister()
     node_AdaptivePolygons.unregister()
     node_Tools.unregister()
+    node_Formula2.unregister()
     node_Formula.unregister()
     node_MatrixDestructor.unregister()
     node_MatrixGenerator.unregister()
