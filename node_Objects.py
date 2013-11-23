@@ -110,6 +110,11 @@ class ObjectsNode(Node, SverchCustomTreeNode):
             if 'Matrixes' in self.outputs and len(self.outputs['Matrixes'].links)>0:
                 self.outputs['Matrixes'].MatrixProperty = str(mtrx_out)
             #print ('матрёны: ', mtrx)
+        if self.objects_local:
+            self.use_custom_color=True
+            self.color = (0,0.5,0.2)
+        else:
+            self.use_custom_color=False
                 
     def update_socket(self, context):
         self.update()

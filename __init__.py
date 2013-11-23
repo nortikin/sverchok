@@ -31,7 +31,7 @@
 bl_info = {
     "name": "Sverchok",
     "author": "Nedovizin Alexander, Gorodetskiy Nikita",
-    "version": (0, 2, 0),
+    "version": (0, 2, 5),
     "blender": (2, 6, 8), 
     "location": "Nodes > CustomNodesTree > Add user nodes",
     "description": "Do parametric node-based geometry programming",
@@ -68,6 +68,8 @@ if "bpy" in locals():
     imp.reload(node_Zip)
     imp.reload(node_Shift)
     imp.reload(node_ListReverse)
+    imp.reload(node_ListLength)
+    imp.reload(node_ListSum)
     imp.reload(node_DistancePP)
     imp.reload(node_Series)
     imp.reload(node_Vector)
@@ -101,6 +103,8 @@ else:
     import node_Zip
     import node_Shift
     import node_ListReverse
+    import node_ListLength
+    import node_ListSum
     import node_DistancePP
     import node_Series
     import node_Vector
@@ -135,6 +139,8 @@ def register():
     node_Zip.register()
     node_Shift.register()
     node_ListReverse.register()
+    node_ListLength.register()
+    node_ListSum.register()
     node_DistancePP.register()
     node_Series.register()
     node_Vector.register()
@@ -183,6 +189,8 @@ def unregister():
     node_Vector.unregister()
     node_Series.unregister()
     node_DistancePP.unregister()
+    node_ListSum.unregister()
+    node_ListLength.unregister()
     node_ListReverse.unregister()
     node_Shift.unregister()
     node_Zip.unregister()

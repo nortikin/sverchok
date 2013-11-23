@@ -11,7 +11,7 @@ class Formula2Node(Node, SverchCustomTreeNode):
     bl_label = 'Formula2'
     bl_icon = 'OUTLINER_OB_EMPTY'
     
-    formula = bpy.props.StringProperty(name = 'formula', default='x*n[0]', update=updateNode)
+    formula = bpy.props.StringProperty(name = 'formula', default='x+n[0]', update=updateNode)
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "formula", text="formula")
@@ -19,14 +19,15 @@ class Formula2Node(Node, SverchCustomTreeNode):
     def init(self, context):
         self.inputs.new('StringsSocket', "X", "X")
         self.inputs.new('StringsSocket', "n[.]", "n[.]")
-        self.outputs.new('StringsSocket', "Result", "Result")
-   
+        self.outputs.new('VerticesSocket', "ResultV", "ResultV")
+        self.outputs.new('StringsSocket', "ResultD", "ResultD")
+        
     def check_slots(self, num):
         l = []
-        if len(self.inputs)<num+1:
+        if len(self.inputs) <= num:
             return False
         for i, sl in enumerate(self.inputs[num:]):   
-            if len(sl.links)==0:
+            if len(sl.links) == 0:
                  l.append(i+num)
         if l:
             return l
@@ -46,10 +47,16 @@ class Formula2Node(Node, SverchCustomTreeNode):
                 self.inputs['X'].node.update()
             if type(self.inputs['X'].links[0].from_socket) == StringsSocket:
                 vecs = eval(self.inputs['X'].links[0].from_socket.StringsProperty)
+                #typesock = 's'
+                #if self.outputs[0].links[0].from_socket.VerticesProperty:
+                    #self.outputs.remove(self.outputs[0])
+                    #self.outputs.new('StringsSocket', "Result", "Result")
             elif type(self.inputs['X'].links[0].from_socket) == VerticesSocket:
                 vecs = eval(self.inputs['X'].links[0].from_socket.VerticesProperty)
-            elif type(self.inputs['X'].links[0].from_socket) == MatrixSocket:
-                vecs = eval(self.inputs['X'].links[0].from_socket.MatrixProperty)
+                #typesock = 'v'
+                #if self.outputs[0].links[0].from_socket.StringsProperty:
+                    #self.outputs.remove(self.outputs[0])
+                    #self.outputs.new('VerticesSocket', "Result", "Result")
         else:
             vecs = [[0.0]]
         
@@ -73,9 +80,11 @@ class Formula2Node(Node, SverchCustomTreeNode):
             list_mult= [[0.0]]
             
         # outputs
-        if 'Result' in self.outputs and len(self.outputs['Result'].links)>0:
-            if not self.outputs['Result'].node.socket_value_update:
-               self.outputs['Result'].node.update()
+        if 'ResultD' in self.outputs and len(self.outputs['ResultD'].links)>0 or 'ResultV' in self.outputs and len(self.outputs['ResultV'].links)>0:
+            if not self.outputs['ResultD'].node.socket_value_update:
+               self.outputs['ResultD'].node.update()
+            if not self.outputs['ResultV'].node.socket_value_update:
+               self.outputs['ResultV'].node.update()
             code_formula = parser.expr(self.formula).compile()
             
             # finding nasty levels, make equal nastyness (canonical 0,1,2,3)
@@ -98,8 +107,8 @@ class Formula2Node(Node, SverchCustomTreeNode):
             r = self.inte(vecs, code_formula, list_mult, 3)
             
             result = dataCorrect(r, nominal_dept=min((levels[0]-1),2))
-            
-            self.outputs['Result'].StringsProperty = str(result)
+            self.outputs['ResultD'].StringsProperty = str(result)
+            self.outputs['ResultV'].VerticesProperty = str(result)
     
     def inte(self, list_x, formula, list_n, levels, index=0):
         ''' calc lists in formula '''

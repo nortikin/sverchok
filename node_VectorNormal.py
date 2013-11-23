@@ -38,7 +38,7 @@ class VectorNormalNode(Node, SverchCustomTreeNode):
                         tempobj.append(v.normal[:])
                     normalsFORout.append(tempobj)
                     bpy.data.meshes.remove(mesh_temp)
-                print (normalsFORout)
+                #print (normalsFORout)
                 
                 if 'Normals' in self.outputs and len(self.outputs['Normals'].links)>0:
                     if not self.outputs['Normals'].node.socket_value_update:

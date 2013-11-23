@@ -78,6 +78,7 @@ class ViewerNode_text(Node, SverchCustomTreeNode):
     
     def update(self):
         # vertices socket
+        
         global cache_viewer_slot1
         global cache_viewer_slot2
         global cache_viewer_slot3
@@ -106,6 +107,7 @@ class ViewerNode_text(Node, SverchCustomTreeNode):
         if 'edg_pol' in self.inputs and len(self.inputs['edg_pol'].links)>0:
             if not self.inputs['edg_pol'].node.socket_value_update:
                 self.inputs['edg_pol'].node.update()
+            
             if type(self.inputs['edg_pol'].links[0].from_socket) == bpy.types.StringsSocket:
                 line_str = self.inputs['edg_pol'].links[0].from_socket.StringsProperty
                 #print (line_str)
@@ -128,6 +130,7 @@ class ViewerNode_text(Node, SverchCustomTreeNode):
         if 'matrix' in self.inputs and len(self.inputs['matrix'].links)>0:
             if not self.inputs['matrix'].node.socket_value_update:
                 self.inputs['matrix'].node.update()
+            
             if type(self.inputs['matrix'].links[0].from_socket) == bpy.types.MatrixSocket:
                 matrix = self.inputs['matrix'].links[0].from_socket.MatrixProperty
                 eva = eval(matrix)
@@ -141,6 +144,13 @@ class ViewerNode_text(Node, SverchCustomTreeNode):
                     c = 'None \n'
                 cache_viewer_slot3['veriable'] = str(c)
                 #print ('viewer text input3')
+        
+        if len(self.inputs['matrix'].links)>0 or len(self.inputs['vertices'].links)>0 or \
+                len(self.inputs['edg_pol'].links)>0:
+            self.use_custom_color=True
+            self.color = (0.5,0.5,1)
+        else:
+            self.use_custom_color=False
                 
     def update_socket(self, context):
         self.update()

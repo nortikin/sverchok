@@ -39,13 +39,13 @@ class SvObjBake(bpy.types.Operator):
             for edgs in edg_pol:
                 maxi = max(max(a) for a in edgs)
                 fht.append(maxi)
-                print (maxi)
+                #print (maxi)
         elif len(edg_pol[0][0]) > 2:
             edgs = []
             for pols in edg_pol:
                 maxi = max(max(a) for a in pols)
                 fht.append(maxi)
-                print (maxi)
+                #print (maxi)
         #print (fht)
         vertices = Vector_generate(vers)
         matrixes = Matrix_generate(mats)
@@ -59,8 +59,10 @@ class SvObjBake(bpy.types.Operator):
         #print (matrixes)
         for i, m in enumerate(matrixes):
             k = i
-            if i > len(matrixes) - 1:
+            lenver = len(vertices) - 1
+            if i > lenver:
                 v = vertices[-1]
+                k = lenver
             else:
                 v = vertices[k]
             #print (fhtagn, len(v)-1)
@@ -153,7 +155,13 @@ class ViewerNode(Node, SverchCustomTreeNode):
             else:
                 cache_viewer_baker['m'] = []
         if cache_viewer_baker['v'] or cache_viewer_baker['m']:
-            callback_enable(self.name, cache_viewer_baker['v'], cache_viewer_baker['ep'], cache_viewer_baker['m'], self.Vertex_show)
+            callback_enable(self.name, cache_viewer_baker['v'], cache_viewer_baker['ep'], \
+                cache_viewer_baker['m'], self.Vertex_show)
+            
+            self.use_custom_color=True
+            self.color = (1,0.3,0)
+        else:
+            self.use_custom_color=False
             #print ('отражения вершин ',len(cache_viewer_baker['v']), " рёбёры ", len(cache_viewer_baker['ep']), "матрицы",len(cache_viewer_baker['m']))
         if not self.inputs['vertices'].links and not self.inputs['matrix'].links:
             callback_disable(self.name)
