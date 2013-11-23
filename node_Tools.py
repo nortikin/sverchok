@@ -40,13 +40,22 @@ class SverchokToolsMenu(bpy.types.Panel):
 
     def draw(self, context):
         layout = self.layout
-        layout.operator(SverchokUpdateAll.bl_idname, text="Update")
-        layout.operator('wm.url_open', text='Help!').url = 'http://wiki.blender.org/index.php/Extensions:2.6/Py/Scripts/Nodes/Sverchok'
-        layout.operator('wm.url_open', text='Home!').url = 'http://nikitron.cc.ua/blend_scripts.html'
-        #layout.operator(SverchokHome.bl_idname, text="WWW: Go home")
-        layout.operator('wm.url_open', text='FBack').url = 'http://www.blenderartists.org/forum/showthread.php?272679-Addon-WIP-Sverchok-parametric-tool-for-architects/'
-        layout.operator('wm.url_open', text='Bugtr').url = 'https://docs.google.com/forms/d/1L2BIpDhjMgQEbVAc7pEq93432Qanu8UPbINhzJ5SryI/viewform'
+        #layout.scale_y=1.1
+        layout.active = True
+        box = layout.box()
+        box.scale_y=3.0
         
+        box.operator(SverchokUpdateAll.bl_idname, text="UPDATE")
+        box = layout.box()
+        col = box.column_flow(columns=2,align=True)
+        col.operator('wm.url_open', text='Help!').url = 'http://wiki.blender.org/index.php/Extensions:2.6/Py/Scripts/Nodes/Sverchok'
+        col.operator('wm.url_open', text='Home!').url = 'http://nikitron.cc.ua/blend_scripts.html'
+        #layout.operator(SverchokHome.bl_idname, text="WWW: Go home")
+        col = box.column_flow(columns=2,align=True)
+        col.operator('wm.url_open', text='FBack').url = 'http://www.blenderartists.org/forum/showthread.php?272679-Addon-WIP-Sverchok-parametric-tool-for-architects/'
+        col.operator('wm.url_open', text='Bugtr').url = 'https://docs.google.com/forms/d/1L2BIpDhjMgQEbVAc7pEq93432Qanu8UPbINhzJ5SryI/viewform'
+        
+        layout.label(text="Sverchok v_0.2.5")
 
 
 class ToolsNode(Node, SverchCustomTreeNode):
@@ -55,20 +64,34 @@ class ToolsNode(Node, SverchCustomTreeNode):
     bl_label = 'Tools node'
     bl_icon = 'OUTLINER_OB_EMPTY'
     
+    color_ = bpy.types.ColorRamp
+    
     def init(self, context):
         pass
         
     def draw_buttons(self, context, layout):
-        layout.operator(SverchokUpdateAll.bl_idname, text="Update")
-        layout.operator('wm.url_open', text='Help!').url = 'http://wiki.blender.org/index.php/Extensions:2.6/Py/Scripts/Nodes/Sverchok'
-        layout.operator('wm.url_open', text='Home!').url = 'http://nikitron.cc.ua/blend_scripts.html'
-        #layout.operator(SverchokHome.bl_idname, text="WWW: Go home")
-        layout.operator('wm.url_open', text='FBack').url = 'http://www.blenderartists.org/forum/showthread.php?272679-Addon-WIP-Sverchok-parametric-tool-for-architects/'
-        layout.operator('wm.url_open', text='Bugtr').url = 'https://docs.google.com/forms/d/1L2BIpDhjMgQEbVAc7pEq93432Qanu8UPbINhzJ5SryI/viewform'
+        col = layout.column()
+        col.scale_y=5
+        layout.scale_y=1.05
+        col.template_color_picker
+        col.operator(SverchokUpdateAll.bl_idname, text="UPDATE")
+        box = layout.box()
         
+        col = box.column(align=True)
+        #col.template_node_socket(color=(0.0, 0.9, 0.7, 1.0))
+        col.operator('wm.url_open', text='Help!').url = 'http://wiki.blender.org/index.php/Extensions:2.6/Py/Scripts/Nodes/Sverchok'
+        col.operator('wm.url_open', text='Home!').url = 'http://nikitron.cc.ua/blend_scripts.html'
+        #layout.operator(SverchokHome.bl_idname, text="WWW: Go home")
+        col.operator('wm.url_open', text='FBack').url = 'http://www.blenderartists.org/forum/showthread.php?272679-Addon-WIP-Sverchok-parametric-tool-for-architects/'
+        col.operator('wm.url_open', text='Bugtr').url = 'https://docs.google.com/forms/d/1L2BIpDhjMgQEbVAc7pEq93432Qanu8UPbINhzJ5SryI/viewform'
+        
+        layout.label(text="Sv v_0.2.5")
+        #layout.template_color_ramp(self, 'color_', expand=True)
     
     def update(self):
-        pass
+        self.use_custom_color = True
+        self.color = (1,0,0.5)
+        
                 
     def update_socket(self, context):
         pass
