@@ -51,6 +51,10 @@ class GenSeriesNode(Node, SverchCustomTreeNode):
             if not self.outputs['Series'].node.socket_value_update:
                 self.inputs['Series'].node.update()
             #print (Start, Stop, Step)
+            if Step < 0:
+                Step = 1
+            if Stop < Start:
+                Stop = Start+1
             series = [c for c in self.xfrange(Start, Stop, Step)]
             
             self.outputs['Series'].StringsProperty = str([series, ])

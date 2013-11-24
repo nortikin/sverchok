@@ -123,6 +123,7 @@ def make_categories():
             NodeItem("ListReverseNode", label="List Reverse"),
             NodeItem("ListLengthNode", label="List Length"),
             NodeItem("ListSumNode", label="List Sum"),
+            NodeItem("ListFLNode", label="List First&Last"),
             NodeItem("GenSeriesNode", label="Series"),
             NodeItem("RandomNode", label="Random"),
             NodeItem("FloatNode", label="Float"),

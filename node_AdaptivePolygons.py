@@ -87,7 +87,11 @@ class AdaptivePolsNode(Node, SverchCustomTreeNode):
                     yy = [y[1] for y in vD]
                     y0 = (self.width_coef) / (max(yy)-min(yy))
                     zz = [z[2] for z in vD]
-                    z0 = 1 / (max(zz)-min(zz))
+                    zzz = (max(zz)-min(zz))
+                    if zzz:
+                        z0 = 1 / zzz
+                    else:
+                        z0 = 0
                     #print (x0, y0, z0)
                     
                     vers_out = []
