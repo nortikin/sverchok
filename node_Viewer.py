@@ -12,15 +12,17 @@ class SvObjBake(bpy.types.Operator):
     bl_idname = "node.sverchok_mesh_baker"
     bl_label = "Sverchok mesh baker"
     bl_options = {'REGISTER', 'UNDO'}
-
+    
+    ident = bpy.props.StringProperty(name='ident', default='', description='name of parent node')
+    
     def execute(self, context):
         global cache_viewer_baker
-        if cache_viewer_baker['m'] and not cache_viewer_baker['v']:
+        if cache_viewer_baker[self.ident+'m'] and not cache_viewer_baker[self.ident+'v']:
             return {'CANCELLED'}
-        vers = dataCorrect(cache_viewer_baker['v'])
-        edg_pol = dataCorrect(cache_viewer_baker['ep'])
-        if cache_viewer_baker['m']:
-            matrixes = dataCorrect(cache_viewer_baker['m'])
+        vers = dataCorrect(cache_viewer_baker[self.ident+'v'])
+        edg_pol = dataCorrect(cache_viewer_baker[self.ident+'ep'])
+        if cache_viewer_baker[self.ident+'m']:
+            matrixes = dataCorrect(cache_viewer_baker[self.ident+'m'])
         else:
             matrixes = []
             for i in range((len(vers))):
@@ -117,14 +119,14 @@ class ViewerNode(Node, SverchCustomTreeNode):
         self.inputs.new('MatrixSocket', 'matrix', 'matrix')
     
     def draw_buttons(self, context, layout):
-        layout.operator('node.sverchok_mesh_baker', text='bake')
+        layout.operator('node.sverchok_mesh_baker', text='bake').ident = self.name
         layout.prop(self, "Vertex_show", text="Vertex show")
         
     def update(self):
         global cache_viewer_baker
-        cache_viewer_baker['v'] = []
-        cache_viewer_baker['ep'] = []
-        cache_viewer_baker['m'] = []
+        cache_viewer_baker[self.name+'v'] = []
+        cache_viewer_baker[self.name+'ep'] = []
+        cache_viewer_baker[self.name+'m'] = []
         if self.inputs['vertices'].links or self.inputs['matrix'].links:
             callback_disable(self.name)
             if len(self.inputs['vertices'].links)>0:
@@ -132,31 +134,31 @@ class ViewerNode(Node, SverchCustomTreeNode):
                     self.inputs['vertices'].node.update()
                 if self.inputs['vertices'].links[0].from_socket.VerticesProperty:
                     propv = eval(self.inputs['vertices'].links[0].from_socket.VerticesProperty)
-                    cache_viewer_baker['v'] = dataCorrect(propv)
+                    cache_viewer_baker[self.name+'v'] = dataCorrect(propv)
             else:
-                cache_viewer_baker['v'] = []
+                cache_viewer_baker[self.name+'v'] = []
                             
             if 'edg_pol' in self.inputs and self.inputs['edg_pol'].links and len(self.inputs['edg_pol'].links)>0:
                 if not self.inputs['edg_pol'].node.socket_value_update:
                     self.inputs['edg_pol'].node.update()
                 if self.inputs['edg_pol'].links[0].from_socket.StringsProperty:
                     prope = eval(self.inputs['edg_pol'].links[0].from_socket.StringsProperty)
-                    cache_viewer_baker['ep'] = dataCorrect(prope)
+                    cache_viewer_baker[self.name+'ep'] = dataCorrect(prope)
                     #print (prope)
             else:
-                cache_viewer_baker['ep'] = []
+                cache_viewer_baker[self.name+'ep'] = []
                     
             if 'matrix' in self.inputs and self.inputs['matrix'].links and len(self.inputs['matrix'].links)>0:
                 if not self.inputs['matrix'].node.socket_value_update:
                     self.inputs['matrix'].node.update()
                 if self.inputs['matrix'].links[0].from_socket.MatrixProperty:
                     propm = eval(self.inputs['matrix'].links[0].from_socket.MatrixProperty)
-                    cache_viewer_baker['m'] = dataCorrect(propm)
+                    cache_viewer_baker[self.name+'m'] = dataCorrect(propm)
             else:
-                cache_viewer_baker['m'] = []
-        if cache_viewer_baker['v'] or cache_viewer_baker['m']:
-            callback_enable(self.name, cache_viewer_baker['v'], cache_viewer_baker['ep'], \
-                cache_viewer_baker['m'], self.Vertex_show)
+                cache_viewer_baker[self.name+'m'] = []
+        if cache_viewer_baker[self.name+'v'] or cache_viewer_baker[self.name+'m']:
+            callback_enable(self.name, cache_viewer_baker[self.name+'v'], cache_viewer_baker[self.name+'ep'], \
+                cache_viewer_baker[self.name+'m'], self.Vertex_show)
             
             self.use_custom_color=True
             self.color = (1,0.3,0)
