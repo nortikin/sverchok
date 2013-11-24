@@ -1,6 +1,7 @@
 import bpy
 from node_s import *
 from util import *
+from types import *
 
 class LineNode(Node, SverchCustomTreeNode):
     ''' Line '''
@@ -29,26 +30,36 @@ class LineNode(Node, SverchCustomTreeNode):
             Integer = int(eval(self.inputs['Nº Vertices'].links[0].from_socket.StringsProperty)[0][0])
         else:
             Integer = self.int_
-        
+
+        listVert = []
+        for i in range(Integer):
+            listVert.append(float(i))
+        listVert2 = []
+        listVert2.append(listVert[0])
+
         if len(self.inputs['Step'].links)>0:
             if not self.inputs['Step'].node.socket_value_update:
                 self.inputs['Step'].node.update()
-            Step = float(eval(self.inputs['Step'].links[0].from_socket.StringsProperty)[0][0])
+            Step = eval(self.inputs['Step'].links[0].from_socket.StringsProperty)[0]
+
+            if len(Step) < Integer:
+                self.fullList(Step, Integer)
+
+            for i in range(len(listVert[1:])):
+                listVert2.append(round(listVert2[i]+Step[i],2))
+            X = listVert2
+
         else:
             Step = self.step_
+            listVert = [Step*i for i in listVert]
+            X = listVert
 
         # outputs
         if 'Vertices' in self.outputs and len(self.outputs['Vertices'].links)>0:
             if not self.outputs['Vertices'].node.socket_value_update:
                 self.inputs['Nº Vertices'].node.update()
 
-            listVert = []
-            for i in range(Integer):
-                listVert.append(0.0+i)
 
-            listVert = [Step*i for i in listVert]
-
-            X = listVert
             Y = [0.0]
             Z = [0.0]
 
