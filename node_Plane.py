@@ -47,34 +47,47 @@ class PlaneNode(Node, SverchCustomTreeNode):
         if len(self.inputs['Step X'].links)>0:
             if not self.inputs['Step X'].node.socket_value_update:
                 self.inputs['Step X'].node.update()
-            StepX = float(eval(self.inputs['Step X'].links[0].from_socket.StringsProperty)[0][0])
+            StepX = eval(self.inputs['Step X'].links[0].from_socket.StringsProperty)[0]
+
+            listVertX = []
+            self.fullList(StepX, IntegerX)
+            for i in range(IntegerY):
+                listVertX.append(0.0)
+                for j in range(IntegerX-1):
+                    listVertX.append(round(listVertX[j]+StepX[j], 2))
         else:
             StepX = self.step_X
+            listVertX = []
+            for i in range(IntegerY):
+                for j in range(IntegerX):
+                    listVertX.append(0.0+j)
+            listVertX = [StepX*i for i in listVertX]
 
         if len(self.inputs['Step Y'].links)>0:
             if not self.inputs['Step Y'].node.socket_value_update:
                 self.inputs['Step Y'].node.update()
-            StepY = float(eval(self.inputs['Step Y'].links[0].from_socket.StringsProperty)[0][0])
+            StepY = eval(self.inputs['Step Y'].links[0].from_socket.StringsProperty)[0]
+
+            listVertY = []
+            self.fullList(StepY, IntegerY)
+            for i in range(IntegerX):
+                listVertY.append(0.0)
+            for i in range(IntegerY-1):
+                for j in range(IntegerX):
+                    listVertY.append(round(listVertY[IntegerX*i]+StepY[i], 2))
         else:
             StepY = self.step_Y
+            listVertY = []
+            for i in range(IntegerY):
+                for j in range(IntegerX):
+                    listVertY.append(0.0+i)
+            listVertY = [StepY*i for i in listVertY]
 
         #print('.....IntegerY.....',IntegerY, IntegerX)
         # outputs
         if 'Vertices' in self.outputs and len(self.outputs['Vertices'].links)>0:
             if not self.outputs['Vertices'].node.socket_value_update:
                 self.inputs['Nº Vertices'].node.update()
-
-            listVertX = []
-            for i in range(IntegerY):
-                for j in range(IntegerX):
-                    listVertX.append(0.0+j)
-            listVertY = []
-            for i in range(IntegerY):
-                for j in range(IntegerX):
-                    listVertY.append(0.0+i)
-
-            listVertX = [StepX*i for i in listVertX]
-            listVertY = [StepY*i for i in listVertY]
 
             X = listVertX
             Y = listVertY
