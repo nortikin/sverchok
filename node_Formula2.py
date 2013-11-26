@@ -3,7 +3,7 @@ from node_s import *
 from util import *
 from mathutils import Vector, Matrix
 import parser
-from math import sin, cos, tan, pi
+from math import *
 
 class Formula2Node(Node, SverchCustomTreeNode):
     ''' Formula2 '''
