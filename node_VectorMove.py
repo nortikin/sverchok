@@ -61,7 +61,6 @@ class VectorMoveNode(Node, SverchCustomTreeNode):
         if rm > 0:
             mult.extend([mult[-1] for a in range(rm)])
         for i, ob in enumerate(vers):       # object
-            moved = []
             d = len(ob) - len(vecs[i])
             dm = len(ob) - len(mult[i])
             if d > 0:
