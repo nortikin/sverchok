@@ -92,6 +92,8 @@ if "bpy" in locals():
     imp.reload(node_CrossSection)
     imp.reload(node_Line)
     imp.reload(node_Plane)
+    imp.reload(node_Circle)
+    imp.reload(node_EvaluateLine)
 else:
     import node_s
     import node_CentersPolsNode
@@ -129,6 +131,8 @@ else:
     import node_CrossSection
     import node_Line
     import node_Plane
+    import node_Circle
+    import node_EvaluateLine
 
 def register():
     import bpy
@@ -167,6 +171,8 @@ def register():
     node_CrossSection.register()
     node_Line.register()
     node_Plane.register()
+    node_Circle.register()
+    node_EvaluateLine.register()
         
     if 'SVERCHOK' not in nodeitems_utils._node_categories:
         nodeitems_utils.register_node_categories("SVERCHOK", node_s.make_categories())
@@ -175,6 +181,8 @@ def register():
 def unregister():
     import bpy
     import nodeitems_utils
+    node_EvaluateLine.unregister()
+    node_Circle.unregister()
     node_Plane.unregister()
     node_Line.unregister()
     node_CrossSection.unregister()
