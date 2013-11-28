@@ -102,7 +102,7 @@ class MaskListNode(Node, SverchCustomTreeNode):
                 return list_a
         else:
             mask = mask_l[0]
-            mask_0 = mask.copy()
+            mask_0 = copy(mask)
             while len(mask)<len(list_a):
                 if len(mask_0)==0:
                     mask_0 = [1,0]
