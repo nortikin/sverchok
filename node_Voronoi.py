@@ -86,9 +86,9 @@ class VoronoiNode(Node, SverchCustomTreeNode):
     				if d < dmin:
     					dmin = d
     					j = i
-    			putpixel((x, y), (nr[j], ng[j], nb[j]))
-    	image.save("VoronoiDiagram.png", "PNG")
-            image.show()
+    			#putpixel((x, y), (nr[j], ng[j], nb[j]))
+    	#image.save("VoronoiDiagram.png", "PNG")
+            #image.show()
 
     def fullList(self, l, count):
         d = count - len(l)

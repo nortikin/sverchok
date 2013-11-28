@@ -12,79 +12,122 @@ class MaskListNode(Node, SverchCustomTreeNode):
     
     Level = bpy.props.IntProperty(name='Level', description='Choose list level of data (see help)', default=1, min=1, max=10, update=updateNode)
     
+    typ = [False, 'None']
+    
     def init(self, context):
         self.inputs.new('StringsSocket', "data", "data")
         self.inputs.new('StringsSocket', "mask", "mask")
         self.outputs.new('StringsSocket', 'dataTrue', 'dataTrue')
         self.outputs.new('StringsSocket', 'dataFalse', 'dataFalse')
     
-    
     def draw_buttons(self, context, layout):
         layout.prop(self, "Level", text="Level lists")
     
+    # а не поменялся ли тип входных данных сокета?
+    def check_slots(self):
+        if type(self.inputs['data'].links[0].from_socket) == VerticesSocket:
+            if self.typ[1] != 'v':
+                self.typ = [False, 'v']
+            else:
+                self.typ = [True, 'v']
+        if type(self.inputs['data'].links[0].from_socket) == StringsSocket:
+            if self.typ[1] != 's':
+                self.typ = [False, 's']
+            else:
+                self.typ = [True, 's']
+        if type(self.inputs['data'].links[0].from_socket) == MatrixSocket:
+            if self.typ[1] != 'm':
+                
+                self.typ = [False, 'm']
+                print (self.typ[1])
+            else:
+                self.typ = [True, 'm']
+        return
+    
+    def clean_sockets(self):
+        self.typ[0] = False
+        if self.outputs['dataFalse']:
+            self.outputs.remove(self.outputs['dataFalse'])
+        if self.outputs['dataTrue']:
+            self.outputs.remove(self.outputs['dataTrue'])
+        return
     
     def update(self):
-        # inputs
+        # changable types sockets in output
+        if len(self.inputs['data'].links) > 0:
+            self.check_slots()
+        #print (self.typ)
+        if self.typ[0] == True:
+            self.clean_sockets()
+            if self.typ[1] == 'v':
+                self.outputs.new('VerticesSocket', 'dataFalse', "dataFalse")
+                self.outputs.new('VerticesSocket', 'dataTrue', "dataTrue")
+            if self.typ[1] == 's':
+                self.outputs.new('StringsSocket', 'dataFalse', "dataFalse")
+                self.outputs.new('StringsSocket', 'dataTrue', "dataTrue")
+            if self.typ[1] == 'm':
+                self.outputs.new('MatrixSocket', 'dataFalse', "dataFalse")
+                self.outputs.new('MatrixSocket', 'dataTrue', "dataTrue")
+        
+        # input sockets
         if 'data' not in self.inputs:
             return False
-        typ = 's'
         data = [[]]
         mask=[[1,0]]
         
         if not self.inputs['data'].node.socket_value_update:
             self.inputs['data'].node.update()
         if self.inputs['data'].links and \
-            type(self.inputs['data'].links[0].from_socket) == VerticesSocket:
+                type(self.inputs['data'].links[0].from_socket) == VerticesSocket:
             data = eval(self.inputs['data'].links[0].from_socket.VerticesProperty)
-            typ = 'v'
         if self.inputs['data'].links and \
-            type(self.inputs['data'].links[0].from_socket) == StringsSocket:
+                type(self.inputs['data'].links[0].from_socket) == StringsSocket:
             data = eval(self.inputs['data'].links[0].from_socket.StringsProperty)
-            typ = 's'
         if self.inputs['data'].links and \
-            type(self.inputs['data'].links[0].from_socket) == MatrixSocket:
+                type(self.inputs['data'].links[0].from_socket) == MatrixSocket:
             data = eval(self.inputs['data'].links[0].from_socket.MatrixProperty)
-            typ = 'm'
+            
         
         if not self.inputs['mask'].node.socket_value_update:
             multi.node.update()
         if self.inputs['mask'].links and \
-            type(self.inputs['mask'].links[0].from_socket) == StringsSocket:
+                type(self.inputs['mask'].links[0].from_socket) == StringsSocket:
             mask = eval(self.inputs['mask'].links[0].from_socket.StringsProperty)
         
         result =  self.getMask(data, mask, self.Level)
-        #print(result)
         
+        # outupy sockets data
         if 'dataTrue' in self.outputs and len(self.outputs['dataTrue'].links)>0:
+            if self.typ[1] == 'v':
+                self.outputs['dataTrue'].node.VerticesProperty =  str(result[0])
+            if self.typ[1] == 's':
+                self.outputs['dataTrue'].StringsProperty =  str(result[0])
+            if self.typ[1] == 'm':
+                self.outputs['dataTrue'].MatrixProperty = str(result[0])
             if not self.outputs['dataTrue'].node.socket_value_update:
                 self.outputs['dataTrue'].node.update()
-            if typ == 'v':
-                self.outputs['dataTrue'].links[0].from_socket.VerticesProperty =  str(result[0])
-            if typ == 's':
-                self.outputs['dataTrue'].links[0].from_socket.StringsProperty =  str(result[0])
-            if typ == 'm':
-                self.outputs['dataTrue'].links[0].from_socket.MatrixProperty = str(result[0])
         else:
             self.outputs['dataTrue'].StringsProperty='[[]]'
         
         if 'dataFalse' in self.outputs and len(self.outputs['dataFalse'].links)>0:
+            if self.typ[1] == 'v':
+                self.outputs['dataFalse'].VerticesProperty =  str(result[1])
+            if self.typ[1] == 's':
+                self.outputs['dataFalse'].StringsProperty =  str(result[1])
+            if self.typ[1] == 'm':
+                self.outputs['dataFalse'].MatrixProperty = str(result[1])
             if not self.outputs['dataFalse'].node.socket_value_update:
                 self.outputs['dataFalse'].node.update()
-            if typ == 'v':
-                self.outputs['dataFalse'].links[0].from_socket.VerticesProperty =  str(result[1])
-            if typ == 's':
-                self.outputs['dataFalse'].links[0].from_socket.StringsProperty =  str(result[1])
-            if typ == 'm':
-                self.outputs['dataFalse'].links[0].from_socket.MatrixProperty = str(result[1])
         else:
             self.outputs['dataFalse'].StringsProperty='[[]]'      
-        
+    
+    
+    # working horse
     def getMask(self, list_a, mask_l, level):
         list_b = self.getCurrentLevelList(list_a, level)
         res = list_b
         if list_b:
             res = self.putCurrentLevelList(list_a, list_b, mask_l, level)
-
         return res
     
 

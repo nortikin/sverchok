@@ -80,7 +80,7 @@ class ObjectsNode(Node, SverchCustomTreeNode):
                 if obj.type == 'EMPTY':
                     for m in obj.matrix_world:
                         mtrx.append(m[:])
-                elif obj.type == 'SPLINE':
+                elif obj.type == 'CURVE':
                     for m in obj.matrix_world:
                         mtrx.append(m[:])
                 else:
@@ -98,14 +98,15 @@ class ObjectsNode(Node, SverchCustomTreeNode):
                 vers_out.append(vers)
                 pols_out.append(pols)
                 mtrx_out.append(mtrx)
-            if 'Vertices' in self.outputs and len(self.outputs['Vertices'].links)>0:
-                self.outputs['Vertices'].VerticesProperty = str(vers_out)
-                
-            if 'Edges' in self.outputs and len(self.outputs['Edges'].links)>0:
-                self.outputs['Edges'].StringsProperty = str(edgs_out)
-                
-            if 'Polygons' in self.outputs and len(self.outputs['Polygons'].links)>0:
-                self.outputs['Polygons'].StringsProperty = str(pols_out)
+            if vers_out[0]:
+                if 'Vertices' in self.outputs and len(self.outputs['Vertices'].links)>0:
+                    self.outputs['Vertices'].VerticesProperty = str(vers_out)
+                    
+                if 'Edges' in self.outputs and len(self.outputs['Edges'].links)>0:
+                    self.outputs['Edges'].StringsProperty = str(edgs_out)
+                    
+                if 'Polygons' in self.outputs and len(self.outputs['Polygons'].links)>0:
+                    self.outputs['Polygons'].StringsProperty = str(pols_out)
             
             if 'Matrixes' in self.outputs and len(self.outputs['Matrixes'].links)>0:
                 self.outputs['Matrixes'].MatrixProperty = str(mtrx_out)

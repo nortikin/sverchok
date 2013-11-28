@@ -40,7 +40,7 @@ class Formula2Node(Node, SverchCustomTreeNode):
         ch = self.check_slots(1)
         if ch:
             for c in ch[:-1]:
-                self.inputs.remove(self.inputs[ch[0]])
+                self.inputs.remove(self.inputs[ch[-1]])
         
         if 'X' in self.inputs and self.inputs['X'].links: 
             if not self.inputs['X'].node.socket_value_update:

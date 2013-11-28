@@ -41,25 +41,26 @@ class HilbertNode(Node, SverchCustomTreeNode):
             
 
         # outputs
-        if 'Vertices' in self.outputs and len(self.outputs['Vertices'].links)>0:
-            if not self.outputs['Vertices'].node.socket_value_update:
-                self.outputs['Vertices'].node.update()
-            
-            verts = self.hilbert(0.0, 0.0, Step*1.0, 0.0, 0.0, Step*1.0, Integer)
-            
-            self.outputs['Vertices'].VerticesProperty = str([verts])
-
-        if 'Edges' in self.outputs and len(self.outputs['Edges'].links)>0:
-            if not self.outputs['Edges'].node.socket_value_update:
-                self.outputs['Edges'].node.update()
-
-            listEdg = []
-            r = len(verts)-1
-            for i in range(r):
-                listEdg.append((i, i+1))
-
-            edg = list(listEdg)
-            self.outputs['Edges'].StringsProperty = str([edg])
+        if len(self.outputs['Vertices'].links)>0:
+            if 'Vertices' in self.outputs and len(self.outputs['Vertices'].links)>0:
+                if not self.outputs['Vertices'].node.socket_value_update:
+                    self.outputs['Vertices'].node.update()
+                
+                verts = self.hilbert(0.0, 0.0, Step*1.0, 0.0, 0.0, Step*1.0, Integer)
+                
+                self.outputs['Vertices'].VerticesProperty = str([verts])
+    
+            if 'Edges' in self.outputs and len(self.outputs['Edges'].links)>0:
+                if not self.outputs['Edges'].node.socket_value_update:
+                    self.outputs['Edges'].node.update()
+    
+                listEdg = []
+                r = len(verts)-1
+                for i in range(r):
+                    listEdg.append((i, i+1))
+    
+                edg = list(listEdg)
+                self.outputs['Edges'].StringsProperty = str([edg])
 
     def hilbert(self, x0, y0, xi, xj, yi, yj, n):
         out = []
