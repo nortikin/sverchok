@@ -45,7 +45,7 @@ class HilbertNode(Node, SverchCustomTreeNode):
             if not self.outputs['Vertices'].node.socket_value_update:
                 self.outputs['Vertices'].node.update()
             
-            verts = self.hilbert(0.0, 0.0, 1.0, 0.0, 0.0, 1.0, a)
+            verts = self.hilbert(0.0, 0.0, Step*1.0, 0.0, 0.0, Step*1.0, Integer)
             
             self.outputs['Vertices'].VerticesProperty = str([verts])
 
