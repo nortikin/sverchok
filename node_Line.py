@@ -31,41 +31,36 @@ class LineNode(Node, SverchCustomTreeNode):
         else:
             Integer = self.int_
 
-        listVert = []
-        for i in range(Integer):
-            listVert.append(float(i))
-        listVert2 = []
-        listVert2.append(listVert[0])
-
         if len(self.inputs['Step'].links)>0:
             if not self.inputs['Step'].node.socket_value_update:
                 self.inputs['Step'].node.update()
             Step = eval(self.inputs['Step'].links[0].from_socket.StringsProperty)[0]
-
+            
             if len(Step) < Integer:
                 self.fullList(Step, Integer)
-
-            for i in range(len(listVert[1:])):
-                listVert2.append(round(listVert2[i]+Step[i],2))
-            X = listVert2
+            
+            listVert = []
+            for i in range(Integer):
+                if i==0:
+                    listVert.append(round(Step[0],4))
+                else:
+                    listVert.append(round(listVert[i-1]+Step[i],4))
+            X = listVert
 
         else:
             Step = self.step_
-            listVert = [Step*i for i in listVert]
+            listVert = [Step*(i+1) for i in range(Integer)]
             X = listVert
 
         # outputs
         if 'Vertices' in self.outputs and len(self.outputs['Vertices'].links)>0:
             if not self.outputs['Vertices'].node.socket_value_update:
-                self.inputs['Nº Vertices'].node.update()
+                self.outputs['Vertices'].node.update()
 
 
             Y = [0.0]
             Z = [0.0]
-
-            max_num = max(len(X), len(Y), len(Z))
-            
-            self.fullList(X,max_num)
+            max_num = len(X)
             self.fullList(Y,max_num)
             self.fullList(Z,max_num)
 
@@ -74,7 +69,7 @@ class LineNode(Node, SverchCustomTreeNode):
 
         if 'Edges' in self.outputs and len(self.outputs['Edges'].links)>0:
             if not self.outputs['Edges'].node.socket_value_update:
-                self.inputs['Edges'].node.update()
+                self.outputs['Edges'].node.update()
 
             listEdg = []
             r = Integer-1

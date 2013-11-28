@@ -135,6 +135,7 @@ def make_categories():
         SverchNodeCategory("SVERCHOK_V", "SVERCHOK vector", items=[
             # generators, degenerators nodes
             NodeItem("LineNode", label="Line"),
+            NodeItem("HilbertNode", label="Hilbert"),
             NodeItem("PlaneNode", label="Plane"),
             NodeItem("CircleNode", label="Circle"),
             NodeItem("EvaluateLineNode", label="Evaluate Line"),
