@@ -137,6 +137,7 @@ def make_categories():
             # generators, degenerators nodes
             NodeItem("LineNode", label="Line"),
             NodeItem("HilbertNode", label="Hilbert"),
+            NodeItem("VoronoiNode", label="Voronoi"),
             NodeItem("PlaneNode", label="Plane"),
             NodeItem("CircleNode", label="Circle"),
             NodeItem("EvaluateLineNode", label="Evaluate Line"),
