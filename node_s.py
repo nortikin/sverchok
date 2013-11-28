@@ -131,6 +131,7 @@ def make_categories():
             NodeItem("NumberNode", label="Float 2 Int"),
             NodeItem("FormulaNode", label="Formula"),
             NodeItem("Formula2Node", label="Formula2"),
+            NodeItem("MaskListNode", label="Mask branch"),
             ]),
         SverchNodeCategory("SVERCHOK_V", "SVERCHOK vector", items=[
             # generators, degenerators nodes
