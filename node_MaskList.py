@@ -12,7 +12,8 @@ class MaskListNode(Node, SverchCustomTreeNode):
     
     Level = bpy.props.IntProperty(name='Level', description='Choose list level of data (see help)', default=1, min=1, max=10, update=updateNode)
     
-    typ = [False, 'None']
+    typ = bpy.props.StringProperty(name='typ', default='')
+    newsock = bpy.props.BoolProperty(name='newsock', default=False)
     
     def init(self, context):
         self.inputs.new('StringsSocket', "data", "data")
@@ -24,50 +25,53 @@ class MaskListNode(Node, SverchCustomTreeNode):
         layout.prop(self, "Level", text="Level lists")
     
     # а не поменялся ли тип входных данных сокета?
-    def check_slots(self):
+    def check_sockets(self):
         if type(self.inputs['data'].links[0].from_socket) == VerticesSocket:
-            if self.typ[1] != 'v':
-                self.typ = [False, 'v']
+            if self.typ == 'v':
+                self.newsock = False
             else:
-                self.typ = [True, 'v']
+                self.typ = 'v'
+                self.newsock = True
         if type(self.inputs['data'].links[0].from_socket) == StringsSocket:
-            if self.typ[1] != 's':
-                self.typ = [False, 's']
+            if self.typ == 's':
+                self.newsock = False
             else:
-                self.typ = [True, 's']
+                self.typ = 's'
+                self.newsock = True
         if type(self.inputs['data'].links[0].from_socket) == MatrixSocket:
-            if self.typ[1] != 'm':
-                
-                self.typ = [False, 'm']
-                print (self.typ[1])
+            if self.typ == 'm':
+                self.newsock = False
             else:
-                self.typ = [True, 'm']
+                self.typ = 'm'
+                self.newsock = True
         return
     
     def clean_sockets(self):
-        self.typ[0] = False
-        if self.outputs['dataFalse']:
+        if 'dataFalse' in self.outputs:
             self.outputs.remove(self.outputs['dataFalse'])
-        if self.outputs['dataTrue']:
+        if 'dataTrue' in self.outputs:
             self.outputs.remove(self.outputs['dataTrue'])
         return
     
     def update(self):
         # changable types sockets in output
         if len(self.inputs['data'].links) > 0:
-            self.check_slots()
-        #print (self.typ)
-        if self.typ[0] == True:
-            self.clean_sockets()
-            if self.typ[1] == 'v':
-                self.outputs.new('VerticesSocket', 'dataFalse', "dataFalse")
-                self.outputs.new('VerticesSocket', 'dataTrue', "dataTrue")
-            if self.typ[1] == 's':
-                self.outputs.new('StringsSocket', 'dataFalse', "dataFalse")
-                self.outputs.new('StringsSocket', 'dataTrue', "dataTrue")
-            if self.typ[1] == 'm':
-                self.outputs.new('MatrixSocket', 'dataFalse', "dataFalse")
-                self.outputs.new('MatrixSocket', 'dataTrue', "dataTrue")
+            self.check_sockets()
+            #print (self.newsock, self.typ)
+            if self.newsock:
+                self.clean_sockets()
+                self.newsock = False
+                if self.typ == 'v':
+                    self.outputs.new('VerticesSocket', 'dataFalse', "dataFalse")
+                    self.outputs.new('VerticesSocket', 'dataTrue', "dataTrue")
+                if self.typ == 's':
+                    self.outputs.new('StringsSocket', 'dataFalse', "dataFalse")
+                    self.outputs.new('StringsSocket', 'dataTrue', "dataTrue")
+                if self.typ == 'm':
+                    self.outputs.new('MatrixSocket', 'dataFalse', "dataFalse")
+                    self.outputs.new('MatrixSocket', 'dataTrue', "dataTrue")
+            else:
+                self.newsock = False
         
         # input sockets
         if 'data' not in self.inputs:
@@ -98,26 +102,26 @@ class MaskListNode(Node, SverchCustomTreeNode):
         
         # outupy sockets data
         if 'dataTrue' in self.outputs and len(self.outputs['dataTrue'].links)>0:
-            if self.typ[1] == 'v':
-                self.outputs['dataTrue'].node.VerticesProperty =  str(result[0])
-            if self.typ[1] == 's':
-                self.outputs['dataTrue'].StringsProperty =  str(result[0])
-            if self.typ[1] == 'm':
-                self.outputs['dataTrue'].MatrixProperty = str(result[0])
             if not self.outputs['dataTrue'].node.socket_value_update:
                 self.outputs['dataTrue'].node.update()
+            if self.typ == 'v':
+                self.outputs['dataTrue'].VerticesProperty = str(result[0])
+            if self.typ == 's':
+                self.outputs['dataTrue'].StringsProperty = str(result[0])
+            if self.typ == 'm':
+                self.outputs['dataTrue'].MatrixProperty = str(result[0])
         else:
             self.outputs['dataTrue'].StringsProperty='[[]]'
-        
+        print ('всё',result)
         if 'dataFalse' in self.outputs and len(self.outputs['dataFalse'].links)>0:
-            if self.typ[1] == 'v':
-                self.outputs['dataFalse'].VerticesProperty =  str(result[1])
-            if self.typ[1] == 's':
-                self.outputs['dataFalse'].StringsProperty =  str(result[1])
-            if self.typ[1] == 'm':
-                self.outputs['dataFalse'].MatrixProperty = str(result[1])
             if not self.outputs['dataFalse'].node.socket_value_update:
                 self.outputs['dataFalse'].node.update()
+            if self.typ == 'v':
+                self.outputs['dataFalse'].VerticesProperty =  str(result[1])
+            if self.typ == 's':
+                self.outputs['dataFalse'].StringsProperty =  str(result[1])
+            if self.typ == 'm':
+                self.outputs['dataFalse'].MatrixProperty = str(result[1])
         else:
             self.outputs['dataFalse'].StringsProperty='[[]]'      
     
