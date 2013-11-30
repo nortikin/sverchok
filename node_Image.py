@@ -7,8 +7,8 @@ class ImageNode(Node, SverchCustomTreeNode):
     bl_idname = 'ImageNode'
     bl_label = 'Image'
     bl_icon = 'OUTLINER_OB_EMPTY'
-    Xvecs = bpy.props.IntProperty(name='Xvecs', description='Xvecs', default=10, min=2, max=1000, options={'ANIMATABLE'}, update=updateNode)
-    Yvecs = bpy.props.IntProperty(name='Yvecs', description='Yvecs', default=10, min=2, max=1000, options={'ANIMATABLE'}, update=updateNode)
+    Xvecs = bpy.props.IntProperty(name='Xvecs', description='Xvecs', default=10, min=2, max=30, options={'ANIMATABLE'}, update=updateNode)
+    Yvecs = bpy.props.IntProperty(name='Yvecs', description='Yvecs', default=10, min=2, max=30, options={'ANIMATABLE'}, update=updateNode)
     Xstep = bpy.props.FloatProperty(name='Xstep', description='Xstep', default=1.0, min=0.01, max=100, options={'ANIMATABLE'}, update=updateNode)
     Ystep = bpy.props.FloatProperty(name='Ystep', description='Ystep', default=1.0, min=0.01, max=100, options={'ANIMATABLE'}, update=updateNode)
     name_image = bpy.props.StringProperty(name='image_name', description='image name', default='', update=updateNode)
@@ -36,14 +36,14 @@ class ImageNode(Node, SverchCustomTreeNode):
                 self.inputs['vecs X'].node.update()
             IntegerX = int(eval(self.inputs['vecs X'].links[0].from_socket.StringsProperty)[0][0])
         else:
-            IntegerX = int(self.Xvecs)
+            IntegerX = max(int(self.Xvecs),30)
 
         if len(self.inputs['vecs Y'].links)>0:
             if not self.inputs['vecs Y'].node.socket_value_update:
                 self.inputs['vecs Y'].node.update()
             IntegerY = int(eval(self.inputs['vecs Y'].links[0].from_socket.StringsProperty)[0][0])
         else:
-            IntegerY = int(self.Yvecs)
+            IntegerY = max(int(self.Yvecs),30)
 
         if len(self.inputs['Step X'].links)>0:
             if not self.inputs['Step X'].node.socket_value_update:
@@ -131,13 +131,12 @@ class ImageNode(Node, SverchCustomTreeNode):
         addition = 0
         for y in range(delitely):
             pixx = []
-            addition = int(ycoef*y*4*leny)
+            addition = int(ycoef*y*4*lenx)
             for x in range(delitelx):
-                addition += int(xcoef*4)
-                
                 # каждый пиксель кодируется RGBA, и записан строкой, без разделения на строки и столбцы.
-                middle = sum(imag[addition:addition+4])/4
+                middle = (sum(imag[addition:addition+3])/3)*imag[addition+4]
                 pixx.append(middle)
+                addition += int(xcoef*4)
             pixy.append(pixx)
         #print ('img last addition ', addition)
         len_ver_x = len(pixy[0])
@@ -145,9 +144,8 @@ class ImageNode(Node, SverchCustomTreeNode):
         #print (pixy)
         overall_length = len_ver_x*len_ver_y
         vertices = []
-        y = 0
-        for i, y in enumerate(range(len_ver_y)):
-            for k, x in enumerate(range(len_ver_x)):
+        for y in range(len_ver_y):
+            for x in range(len_ver_x):
                 vertex = [x*stepx[x],y*stepy[y],pixy[y][x]]
                 vertices.append(vertex)
         return vertices
