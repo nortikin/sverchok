@@ -34,16 +34,16 @@ class ImageNode(Node, SverchCustomTreeNode):
         if len(self.inputs['vecs X'].links)>0:
             if not self.inputs['vecs X'].node.socket_value_update:
                 self.inputs['vecs X'].node.update()
-            IntegerX = int(eval(self.inputs['vecs X'].links[0].from_socket.StringsProperty)[0][0])
+            IntegerX = min(int(eval(self.inputs['vecs X'].links[0].from_socket.StringsProperty)[0][0]),30)
         else:
-            IntegerX = max(int(self.Xvecs),30)
+            IntegerX = int(self.Xvecs)
 
         if len(self.inputs['vecs Y'].links)>0:
             if not self.inputs['vecs Y'].node.socket_value_update:
                 self.inputs['vecs Y'].node.update()
-            IntegerY = int(eval(self.inputs['vecs Y'].links[0].from_socket.StringsProperty)[0][0])
+            IntegerY = min(int(eval(self.inputs['vecs Y'].links[0].from_socket.StringsProperty)[0][0]),30)
         else:
-            IntegerY = max(int(self.Yvecs),30)
+            IntegerY = int(self.Yvecs)
 
         if len(self.inputs['Step X'].links)>0:
             if not self.inputs['Step X'].node.socket_value_update:
