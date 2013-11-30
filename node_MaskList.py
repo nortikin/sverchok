@@ -112,7 +112,7 @@ class MaskListNode(Node, SverchCustomTreeNode):
                 self.outputs['dataTrue'].MatrixProperty = str(result[0])
         else:
             self.outputs['dataTrue'].StringsProperty='[[]]'
-        print ('всё',result)
+        #print ('всё',result)
         if 'dataFalse' in self.outputs and len(self.outputs['dataFalse'].links)>0:
             if not self.outputs['dataFalse'].node.socket_value_update:
                 self.outputs['dataFalse'].node.update()
