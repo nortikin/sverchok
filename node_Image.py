@@ -2,47 +2,45 @@ import bpy
 from node_s import *
 from util import *
 
-class PlaneNode(Node, SverchCustomTreeNode):
-    ''' Plane '''
-    bl_idname = 'PlaneNode'
-    bl_label = 'Plane'
+class ImageNode(Node, SverchCustomTreeNode):
+    ''' Image '''
+    bl_idname = 'ImageNode'
+    bl_label = 'Image'
     bl_icon = 'OUTLINER_OB_EMPTY'
     
-    int_X = bpy.props.IntProperty(name = 'int_X', description='Nº Vertices X', default=2, min=2, options={'ANIMATABLE'}, update=updateNode)
-    int_Y = bpy.props.IntProperty(name = 'int_Y', description='Nº Vertices Y', default=2, min=2, options={'ANIMATABLE'}, update=updateNode)
-    step_X = bpy.props.FloatProperty(name = 'step_X', description='Step length X', default=1.0, options={'ANIMATABLE'}, update=updateNode)
-    step_Y = bpy.props.FloatProperty(name = 'step_Y', description='Step length Y', default=1.0, options={'ANIMATABLE'}, update=updateNode)
+    Xvecs = bpy.props.IntProperty(name='Xvecs', description='Xvecs', default=10, min=2, max=1000, options={'ANIMATABLE'}, update=updateNode)
+    Yvecs = bpy.props.IntProperty(name='Yvecs', description='Yvecs', default=10, min=2, max=1000, options={'ANIMATABLE'}, update=updateNode)
+    name_image = bpy.props.StringProperty(name='image_name', description='image name', default='', update=updateNode)
     
     def init(self, context):
-        self.inputs.new('StringsSocket', "Nº Vertices X", "Nº Vertices X")
-        self.inputs.new('StringsSocket', "Nº Vertices Y", "Nº Vertices Y")
-        self.inputs.new('StringsSocket', "Step X", "Step length X")
-        self.inputs.new('StringsSocket', "Step Y", "Step length Y")
-        self.outputs.new('VerticesSocket', "Vertices", "Vertices")
-        self.outputs.new('StringsSocket', "Edges", "Edges")
-        self.outputs.new('StringsSocket', "Polygons", "Polygons")
+        self.inputs.new('StringsSocket', "vecs X", "vecs X")
+        self.inputs.new('StringsSocket', "vecs Y", "vecs Y")
+        self.inputs.new('StringsSocket', "Step X", "Step X")
+        self.inputs.new('StringsSocket', "Step Y", "Step Y")
+        self.outputs.new('VerticesSocket', "vecs", "vecs")
+        self.outputs.new('StringsSocket', "edgs", "edgs")
+        self.outputs.new('StringsSocket', "pols", "pols")
     
     def draw_buttons(self, context, layout):
-        layout.prop(self, "int_X", text="Nº Vert X")
-        layout.prop(self, "int_Y", text="Nº Vert Y")
-        layout.prop(self, "step_X", text="Step X")
-        layout.prop(self, "step_Y", text="Step Y")
+        layout.prop(self, "Xvecs", text="vectors X №")
+        layout.prop(self, "Yvecs", text="vectors Y №")
+        layout.prop(self, "name_image", text="image_name")
 
     def update(self):
         # inputs
-        if len(self.inputs['Nº Vertices X'].links)>0:
-            if not self.inputs['Nº Vertices X'].node.socket_value_update:
-                self.inputs['Nº Vertices X'].node.update()
-            IntegerX = int(eval(self.inputs['Nº Vertices X'].links[0].from_socket.StringsProperty)[0][0])
+        if len(self.inputs['vecs X'].links)>0:
+            if not self.inputs['vecs X'].node.socket_value_update:
+                self.inputs['vecs X'].node.update()
+            IntegerX = int(eval(self.inputs['vecs X'].links[0].from_socket.StringsProperty)[0][0])
         else:
-            IntegerX = self.int_X
+            IntegerX = self.Xvecs
 
-        if len(self.inputs['Nº Vertices Y'].links)>0:
-            if not self.inputs['Nº Vertices Y'].node.socket_value_update:
-                self.inputs['Nº Vertices Y'].node.update()
-            IntegerY = int(eval(self.inputs['Nº Vertices Y'].links[0].from_socket.StringsProperty)[0][0])
+        if len(self.inputs['vecs Y'].links)>0:
+            if not self.inputs['vecs Y'].node.socket_value_update:
+                self.inputs['vecs Y'].node.update()
+            IntegerY = int(eval(self.inputs['vecs Y'].links[0].from_socket.StringsProperty)[0][0])
         else:
-            IntegerY = self.int_Y
+            IntegerY = self.Yvecs
 
         if len(self.inputs['Step X'].links)>0:
             if not self.inputs['Step X'].node.socket_value_update:
@@ -56,7 +54,7 @@ class PlaneNode(Node, SverchCustomTreeNode):
                 for j in range(IntegerX-1):
                     listVertX.append(round(listVertX[j]+StepX[j], 2))
         else:
-            StepX = self.step_X
+            StepX = [[1]]
             listVertX = []
             for i in range(IntegerY):
                 for j in range(IntegerX):
@@ -76,7 +74,7 @@ class PlaneNode(Node, SverchCustomTreeNode):
                 for j in range(IntegerX):
                     listVertY.append(round(listVertY[IntegerX*i]+StepY[i], 2))
         else:
-            StepY = self.step_Y
+            StepY = [[1]]
             listVertY = []
             for i in range(IntegerY):
                 for j in range(IntegerX):
@@ -104,7 +102,7 @@ class PlaneNode(Node, SverchCustomTreeNode):
 
         if 'Edges' in self.outputs and len(self.outputs['Edges'].links)>0:
             if not self.outputs['Edges'].node.socket_value_update:
-                self.outputs['Edges'].node.update()
+                self.inputs['Edges'].node.update()
 
             listEdg = []
             for i in range(IntegerY):
@@ -119,7 +117,7 @@ class PlaneNode(Node, SverchCustomTreeNode):
 
         if 'Polygons' in self.outputs and len(self.outputs['Polygons'].links)>0:
             if not self.outputs['Polygons'].node.socket_value_update:
-                self.outputs['Polygons'].node.update()
+                self.inputs['Polygons'].node.update()
 
             listPlg = []
             for i in range(IntegerX-1):
@@ -127,22 +125,51 @@ class PlaneNode(Node, SverchCustomTreeNode):
                     listPlg.append((IntegerX*j+i, IntegerX*j+i+1, IntegerX*j+i+IntegerX+1, IntegerX*j+i+IntegerX))
             plg = list(listPlg)
             self.outputs['Polygons'].StringsProperty = str([plg])
-
+    
     def fullList(self, l, count):
         d = count - len(l)
         if d > 0:
             l.extend([l[-1] for a in range(d)])
         return
     
+    def make_vertices(self, delitelx, delitely, stepx, stepy, image_name):
+        lenx = bpy.data.images[image_name].size[0]
+        leny = bpy.data.images[image_name].size[1]
+        
+        xcoef = lenx/delitelx
+        ycoef = leny/delitely
+        
+        pixy = []
+        for y_ in range(delitely):
+            pixx = []
+            y = y_*ycoef
+            for x_ in range(delitelx):
+                x = int(4*x_*xcoef+y)
+                middle = sum(bpy.data.images[image_name].pixels[x:x+4])/4
+                pixx.append(middle)
+            pixy.append(pixx)
+        len_ver_x = len(pixy[0])
+        len_ver_y = len(pixy)
+        print (len_ver_x, len_ver_y)
+        overall_length = len_ver_x*len_ver_y
+        vertices = []
+        y = 0
+        for i, y in enumerate(range(len_ver_y)):
+            for k, x in enumerate(range(len_ver_y)):
+                
+                vertex = (x,y,pixy[y][x])
+                vertices.append(vertex)
+        return vertices
+    
     def update_socket(self, context):
         self.update()
 
 
 def register():
-    bpy.utils.register_class(PlaneNode)
+    bpy.utils.register_class(ImageNode)
     
 def unregister():
-    bpy.utils.unregister_class(PlaneNode)
+    bpy.utils.unregister_class(ImageNode)
 
 if __name__ == "__main__":
     register()
