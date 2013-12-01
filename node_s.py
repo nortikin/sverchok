@@ -142,6 +142,7 @@ def make_categories():
             NodeItem("PlaneNode", label="Plane"),
             NodeItem("CircleNode", label="Circle"),
             NodeItem("HilbertNode", label="Hilbert"),
+            NodeItem("HilbertImageNode", label="Hilbert image"),
             NodeItem("VoronoiNode", label="Voronoi"),
             NodeItem("ImageNode", label="Image"),
             ]),
