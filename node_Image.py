@@ -134,7 +134,7 @@ class ImageNode(Node, SverchCustomTreeNode):
             addition = int(ycoef*y*4*lenx)
             for x in range(delitelx):
                 # каждый пиксель кодируется RGBA, и записан строкой, без разделения на строки и столбцы.
-                middle = (sum(imag[addition:addition+3])/3)*imag[addition+4]
+                middle = (sum(imag[addition:addition+3])/3)*imag[addition+3]
                 pixx.append(middle)
                 addition += int(xcoef*4)
             pixy.append(pixx)
