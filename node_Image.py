@@ -7,8 +7,8 @@ class ImageNode(Node, SverchCustomTreeNode):
     bl_idname = 'ImageNode'
     bl_label = 'Image'
     bl_icon = 'OUTLINER_OB_EMPTY'
-    Xvecs = bpy.props.IntProperty(name='Xvecs', description='Xvecs', default=10, min=2, max=30, options={'ANIMATABLE'}, update=updateNode)
-    Yvecs = bpy.props.IntProperty(name='Yvecs', description='Yvecs', default=10, min=2, max=30, options={'ANIMATABLE'}, update=updateNode)
+    Xvecs = bpy.props.IntProperty(name='Xvecs', description='Xvecs', default=10, min=2, max=100, options={'ANIMATABLE'}, update=updateNode)
+    Yvecs = bpy.props.IntProperty(name='Yvecs', description='Yvecs', default=10, min=2, max=100, options={'ANIMATABLE'}, update=updateNode)
     Xstep = bpy.props.FloatProperty(name='Xstep', description='Xstep', default=1.0, min=0.01, max=100, options={'ANIMATABLE'}, update=updateNode)
     Ystep = bpy.props.FloatProperty(name='Ystep', description='Ystep', default=1.0, min=0.01, max=100, options={'ANIMATABLE'}, update=updateNode)
     name_image = bpy.props.StringProperty(name='image_name', description='image name', default='', update=updateNode)
