@@ -9,10 +9,12 @@ class HilbertImageNode(Node, SverchCustomTreeNode):
     bl_idname = 'HilbertImageNode'
     bl_label = 'HilbertImage'
     bl_icon = 'OUTLINER_OB_EMPTY'
-    
+    def images(self, context):
+        return [tuple(3 * [im.name]) for im in bpy.data.images]
+    name_image = EnumProperty(items=images, name='images')
     level_ = bpy.props.IntProperty(name = 'level', description='Level', default=2, min=1, max=20, options={'ANIMATABLE'}, update=updateNode)
     size_ = bpy.props.FloatProperty(name = 'size', description='Size', default=1.0, min=0.1, options={'ANIMATABLE'}, update=updateNode)
-    name_image = bpy.props.StringProperty(name='image_name', description='image name', default='', update=updateNode)
+    #name_image = bpy.props.StringProperty(name='image_name', description='image name', default='', update=updateNode)
     sensitivity_ = bpy.props.FloatProperty(name = 'sensitivity', description='sensitivity', default=1, min=0.1, max=1.0, options={'ANIMATABLE'}, update=updateNode)
     
     def init(self, context):
