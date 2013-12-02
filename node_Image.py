@@ -34,14 +34,14 @@ class ImageNode(Node, SverchCustomTreeNode):
         if len(self.inputs['vecs X'].links)>0:
             if not self.inputs['vecs X'].node.socket_value_update:
                 self.inputs['vecs X'].node.update()
-            IntegerX = min(int(eval(self.inputs['vecs X'].links[0].from_socket.StringsProperty)[0][0]),30)
+            IntegerX = int(eval(self.inputs['vecs X'].links[0].from_socket.StringsProperty)[0][0])
         else:
             IntegerX = int(self.Xvecs)
 
         if len(self.inputs['vecs Y'].links)>0:
             if not self.inputs['vecs Y'].node.socket_value_update:
                 self.inputs['vecs Y'].node.update()
-            IntegerY = min(int(eval(self.inputs['vecs Y'].links[0].from_socket.StringsProperty)[0][0]),30)
+            IntegerY = int(eval(self.inputs['vecs Y'].links[0].from_socket.StringsProperty)[0][0])
         else:
             IntegerY = int(self.Yvecs)
 
@@ -70,7 +70,7 @@ class ImageNode(Node, SverchCustomTreeNode):
             if not self.outputs['vecs'].node.socket_value_update:
                 self.outputs['vecs'].node.update()
             
-            out = self.make_vertices(IntegerX, IntegerY, StepX, StepY, self.name_image)
+            out = self.make_vertices(IntegerX-1, IntegerY-1, StepX, StepY, self.name_image)
             #print 
             self.outputs['vecs'].VerticesProperty = str([out])
         else:
@@ -123,18 +123,20 @@ class ImageNode(Node, SverchCustomTreeNode):
         x_ostatok = lenx%delitelx
         y_ostatok = leny%delitely
         #print ('img ostatok ', y_ostatok)
-        xcoef = (lenx-x_ostatok)/delitelx
-        ycoef = (leny-y_ostatok)/delitely
+        #xcoef = (lenx-x_ostatok)/delitelx
+        xcoef = lenx//delitelx
+        ycoef = leny//delitely
+        #ycoef = (leny-y_ostatok)/delitely
         #print ('img xy coefs ', xcoef,ycoef)
         imag = bpy.data.images[image_name].pixels
         pixy = []
         addition = 0
-        for y in range(delitely):
+        for y in range(delitely+1):
             pixx = []
             addition = int(ycoef*y*4*lenx)
-            for x in range(delitelx):
+            for x in range(delitelx+1):
                 # каждый пиксель кодируется RGBA, и записан строкой, без разделения на строки и столбцы.
-                middle = (sum(imag[addition:addition+3])/3)*imag[addition+3]
+                middle = (imag[addition]*0.3+imag[addition+1]*0.59+imag[addition+2]*0.11)*imag[addition+3]
                 pixx.append(middle)
                 addition += int(xcoef*4)
             pixy.append(pixx)
