@@ -13,7 +13,7 @@ class HilbertImageNode(Node, SverchCustomTreeNode):
     level_ = bpy.props.IntProperty(name = 'level', description='Level', default=2, min=1, max=20, options={'ANIMATABLE'}, update=updateNode)
     size_ = bpy.props.FloatProperty(name = 'size', description='Size', default=1.0, min=0.1, options={'ANIMATABLE'}, update=updateNode)
     name_image = bpy.props.StringProperty(name='image_name', description='image name', default='', update=updateNode)
-    sensitivity_ = bpy.props.FloatProperty(name = 'sensitivity', description='sensitivity', default=1, min=0.2, max=1.0, options={'ANIMATABLE'}, update=updateNode)
+    sensitivity_ = bpy.props.FloatProperty(name = 'sensitivity', description='sensitivity', default=1, min=0.1, max=1.0, options={'ANIMATABLE'}, update=updateNode)
     
     def init(self, context):
         self.inputs.new('StringsSocket', "Level", "Level")
@@ -60,7 +60,7 @@ class HilbertImageNode(Node, SverchCustomTreeNode):
                 
                 img = bpy.data.images[self.name_image]
                 pixels = list(img.pixels)
-                verts = self.hilbert(0.0, 0.0, 1*1.0, 0.0, 0.0, 1*1.0, Integer, img,pixels, Sensitivity)
+                verts = self.hilbert(0.0, 0.0, 1.0, 0.0, 0.0, 1.0, Integer, img,pixels, Sensitivity)
                 for iv, v in enumerate(verts):
                     for ip,p in enumerate(v):
                         verts[iv][ip]*=Step
@@ -90,7 +90,7 @@ class HilbertImageNode(Node, SverchCustomTreeNode):
         xy=int(int(px*w)+int(py*h)*(w+1))*4
         p = sum(pixels[xy:xy+3])/3*pixels[xy+3]
         if p>0:
-            n=n-Sensitivity*p
+            n=n-p**(1/Sensitivity)
         out = []
         if n<=0:
             X = x0 + (xi + yi)/2
