@@ -7,11 +7,18 @@ class ImageNode(Node, SverchCustomTreeNode):
     bl_idname = 'ImageNode'
     bl_label = 'Image'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    
+    def images(self, context):
+        return [tuple(3 * [im.name]) for im in bpy.data.images]
+    name_image = EnumProperty(items=images, name='images')
+    R = bpy.props.FloatProperty(name='R', description='R', default=0.30, min=0, max=1, options={'ANIMATABLE'}, update=updateNode)
+    G = bpy.props.FloatProperty(name='G', description='G', default=0.59, min=0, max=1, options={'ANIMATABLE'}, update=updateNode)
+    B = bpy.props.FloatProperty(name='B', description='B', default=0.11, min=0, max=1, options={'ANIMATABLE'}, update=updateNode)
     Xvecs = bpy.props.IntProperty(name='Xvecs', description='Xvecs', default=10, min=2, max=100, options={'ANIMATABLE'}, update=updateNode)
     Yvecs = bpy.props.IntProperty(name='Yvecs', description='Yvecs', default=10, min=2, max=100, options={'ANIMATABLE'}, update=updateNode)
     Xstep = bpy.props.FloatProperty(name='Xstep', description='Xstep', default=1.0, min=0.01, max=100, options={'ANIMATABLE'}, update=updateNode)
     Ystep = bpy.props.FloatProperty(name='Ystep', description='Ystep', default=1.0, min=0.01, max=100, options={'ANIMATABLE'}, update=updateNode)
-    name_image = bpy.props.StringProperty(name='image_name', description='image name', default='', update=updateNode)
+    #name_image = bpy.props.StringProperty(name='image_name', description='image name', default='', update=updateNode)
     
     def init(self, context):
         self.inputs.new('StringsSocket', "vecs X", "vecs X")
@@ -23,11 +30,18 @@ class ImageNode(Node, SverchCustomTreeNode):
         self.outputs.new('StringsSocket', "pols", "pols")
     
     def draw_buttons(self, context, layout):
-        layout.prop(self, "Xvecs", text="vectors X")
-        layout.prop(self, "Yvecs", text="vectors Y")
-        layout.prop(self, "Xstep", text="step X")
-        layout.prop(self, "Ystep", text="step Y")
-        layout.prop(self, "name_image", text="image_name")
+        row = layout.column_flow(columns=1,align=True)
+        row.prop(self, "Xvecs", text="vectors X")
+        row.prop(self, "Yvecs", text="vectors Y")
+        row = layout.column_flow(columns=1,align=True)
+        row.prop(self, "Xstep", text="step X")
+        row.prop(self, "Ystep", text="step Y")
+        row = layout.row(align=True)
+        row.scale_x=10.0
+        row.prop(self, "R", text="R")
+        row.prop(self, "G", text="G")
+        row.prop(self, "B", text="B")
+        layout.prop(self, "name_image", text="image")
 
     def update(self):
         # inputs
@@ -119,6 +133,7 @@ class ImageNode(Node, SverchCustomTreeNode):
             delitelx=lenx
         if delitely>leny:
             delitely=leny
+        R, G, B = self.R, self.G, self.B
         xcoef = lenx//delitelx
         ycoef = leny//delitely
         imag = bpy.data.images[image_name].pixels
@@ -128,7 +143,7 @@ class ImageNode(Node, SverchCustomTreeNode):
             addition = int(ycoef*y*4*lenx)
             for x in range(delitelx+1):
                  # каждый пиксель кодируется RGBA, и записан строкой, без разделения на строки и столбцы.
-                middle = (imag[addition]*0.3+imag[addition+1]*0.59+imag[addition+2]*0.11)*imag[addition+3]
+                middle = (imag[addition]*R+imag[addition+1]*G+imag[addition+2]*B)*imag[addition+3]
                 vertex = [x*stepx[x],y*stepy[y],middle]
                 vertices.append(vertex)
                 addition += int(xcoef*4)
