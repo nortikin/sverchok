@@ -34,14 +34,14 @@ class ImageNode(Node, SverchCustomTreeNode):
         if len(self.inputs['vecs X'].links)>0:
             if not self.inputs['vecs X'].node.socket_value_update:
                 self.inputs['vecs X'].node.update()
-            IntegerX = int(eval(self.inputs['vecs X'].links[0].from_socket.StringsProperty)[0][0])
+            IntegerX = min(int(eval(self.inputs['vecs X'].links[0].from_socket.StringsProperty)[0][0]),100)
         else:
             IntegerX = int(self.Xvecs)
 
         if len(self.inputs['vecs Y'].links)>0:
             if not self.inputs['vecs Y'].node.socket_value_update:
                 self.inputs['vecs Y'].node.update()
-            IntegerY = int(eval(self.inputs['vecs Y'].links[0].from_socket.StringsProperty)[0][0])
+            IntegerY = min(int(eval(self.inputs['vecs Y'].links[0].from_socket.StringsProperty)[0][0]),100)
         else:
             IntegerY = int(self.Yvecs)
 
@@ -115,41 +115,23 @@ class ImageNode(Node, SverchCustomTreeNode):
     def make_vertices(self, delitelx, delitely, stepx, stepy, image_name):
         lenx = bpy.data.images[image_name].size[0]
         leny = bpy.data.images[image_name].size[1]
-        #print ('image ', lenx, leny)
         if delitelx>lenx:
             delitelx=lenx
         if delitely>leny:
             delitely=leny
-        x_ostatok = lenx%delitelx
-        y_ostatok = leny%delitely
-        #print ('img ostatok ', y_ostatok)
-        #xcoef = (lenx-x_ostatok)/delitelx
         xcoef = lenx//delitelx
         ycoef = leny//delitely
-        #ycoef = (leny-y_ostatok)/delitely
-        #print ('img xy coefs ', xcoef,ycoef)
         imag = bpy.data.images[image_name].pixels
-        pixy = []
+        vertices = []
         addition = 0
         for y in range(delitely+1):
-            pixx = []
             addition = int(ycoef*y*4*lenx)
             for x in range(delitelx+1):
-                # каждый пиксель кодируется RGBA, и записан строкой, без разделения на строки и столбцы.
+                 # каждый пиксель кодируется RGBA, и записан строкой, без разделения на строки и столбцы.
                 middle = (imag[addition]*0.3+imag[addition+1]*0.59+imag[addition+2]*0.11)*imag[addition+3]
-                pixx.append(middle)
-                addition += int(xcoef*4)
-            pixy.append(pixx)
-        #print ('img last addition ', addition)
-        len_ver_x = len(pixy[0])
-        len_ver_y = len(pixy)
-        #print (pixy)
-        overall_length = len_ver_x*len_ver_y
-        vertices = []
-        for y in range(len_ver_y):
-            for x in range(len_ver_x):
-                vertex = [x*stepx[x],y*stepy[y],pixy[y][x]]
+                vertex = [x*stepx[x],y*stepy[y],middle]
                 vertices.append(vertex)
+                addition += int(xcoef*4)
         return vertices
     
     def update_socket(self, context):
