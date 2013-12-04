@@ -102,9 +102,10 @@ class SphereNode(Node, SverchCustomTreeNode):
             for i in range(U):
                 listEdg.append((0, i+1))
                 listEdg.append((len(points)-1, i+len(points)-U-1))
-
+                
+            listEdg.reverse()
             edg = [listEdg]
-            self.outputs['Edges'].StringsProperty = str([edg])
+            self.outputs['Edges'].StringsProperty = str(edg)
 
         if 'Polygons' in self.outputs and len(self.outputs['Polygons'].links)>0:
             if not self.outputs['Polygons'].node.socket_value_update:
@@ -112,17 +113,19 @@ class SphereNode(Node, SverchCustomTreeNode):
 
             listPln = []
             for i in range(V-3):
-                listPln.append((U*i+U, 1+U*i, 1+U*i+U, U*i+2*U))
+                listPln.append((U*i+2*U, 1+U*i+U, 1+U*i,  U*i+U))
                 for j in range(U-1):
-                    listPln.append((1+U*i+j, 2+U*i+j, 2+U*i+j+U, 1+U*i+j+U))
+                    listPln.append((1+U*i+j+U, 2+U*i+j+U, 2+U*i+j, 1+U*i+j))
 
             for i in range(U-1):
-                listPln.append((0, 2+i, 1+i))
-                listPln.append((len(points)-1, i+len(points)-1-U, i+len(points)-U))
-            listPln.append((0, 1, U))
-            listPln.append((len(points)-1, len(points)-2, len(points)-1-U))
+                listPln.append((1+i, 2+i, 0))
+                listPln.append((i+len(points)-U, i+len(points)-1-U, len(points)-1))
+            listPln.append((U, 1, 0))
+            listPln.append((len(points)-1-U, len(points)-2, len(points)-1))
+            
+            
             pln = [listPln]
-            self.outputs['Polygons'].StringsProperty = str([pln])
+            self.outputs['Polygons'].StringsProperty = str(pln)
 
     def fullList(self, l, count):
         d = count - len(l)
