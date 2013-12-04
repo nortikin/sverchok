@@ -141,6 +141,7 @@ def make_categories():
             NodeItem("LineNode", label="Line"),
             NodeItem("PlaneNode", label="Plane"),
             NodeItem("CircleNode", label="Circle"),
+            NodeItem("SphereNode", label="Sphere"),
             NodeItem("HilbertNode", label="Hilbert"),
             NodeItem("HilbertImageNode", label="Hilbert image"),
             NodeItem("VoronoiNode", label="Voronoi"),
