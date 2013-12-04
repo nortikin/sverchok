@@ -41,15 +41,12 @@ class LineNode(Node, SverchCustomTreeNode):
             
             listVert = []
             for i in range(Integer):
-                if i==0:
-                    listVert.append(round(Step[0],4))
-                else:
-                    listVert.append(round(listVert[i-1]+Step[i],4))
+                listVert.append(round((i*Step[i]),4))
             X = listVert
 
         else:
             Step = self.step_
-            listVert = [Step*(i+1) for i in range(Integer)]
+            listVert = [Step*(i) for i in range(Integer)]
             X = listVert
 
         # outputs
@@ -72,8 +69,7 @@ class LineNode(Node, SverchCustomTreeNode):
                 self.outputs['Edges'].node.update()
 
             listEdg = []
-            r = Integer-1
-            for i in range(r):
+            for i in range(Integer-1):
                 listEdg.append((i, i+1))
 
             edg = list(listEdg)
