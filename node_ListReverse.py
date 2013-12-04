@@ -28,7 +28,7 @@ class ListReverseNode(Node, SverchCustomTreeNode):
         data = [[]]
         
         if not self.inputs['data'].node.socket_value_update:
-            multi.node.update()
+            self.inputs['data'].node.update()
         if self.inputs['data'].links and \
             type(self.inputs['data'].links[0].from_socket) == VerticesSocket:
             data = eval(self.inputs['data'].links[0].from_socket.VerticesProperty)

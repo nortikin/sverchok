@@ -87,7 +87,7 @@ class PlaneNode(Node, SverchCustomTreeNode):
         # outputs
         if 'Vertices' in self.outputs and len(self.outputs['Vertices'].links)>0:
             if not self.outputs['Vertices'].node.socket_value_update:
-                self.inputs['Nº Vertices'].node.update()
+                self.outputs['Nº Vertices'].node.update()
 
             X = listVertX
             Y = listVertY
@@ -104,7 +104,7 @@ class PlaneNode(Node, SverchCustomTreeNode):
 
         if 'Edges' in self.outputs and len(self.outputs['Edges'].links)>0:
             if not self.outputs['Edges'].node.socket_value_update:
-                self.inputs['Edges'].node.update()
+                self.outputs['Edges'].node.update()
 
             listEdg = []
             for i in range(IntegerY):
@@ -119,7 +119,7 @@ class PlaneNode(Node, SverchCustomTreeNode):
 
         if 'Polygons' in self.outputs and len(self.outputs['Polygons'].links)>0:
             if not self.outputs['Polygons'].node.socket_value_update:
-                self.inputs['Polygons'].node.update()
+                self.outputs['Polygons'].node.update()
 
             listPlg = []
             for i in range(IntegerX-1):

@@ -107,7 +107,7 @@ class SverchNodeCategory(NodeCategory):
 
 def make_categories():
     node_categories = [
-        SverchNodeCategory("SVERCHOK", "SVERCHOK basic", items=[
+        SverchNodeCategory("SVERCHOK_B", "SVERCHOK basic", items=[
             # basic nodes
             NodeItem("ObjectsNode", label="Objects in"),
             NodeItem("ViewerNode", label="Viewer draw"),
@@ -115,7 +115,7 @@ def make_categories():
             NodeItem("ToolsNode", label="Tools"),
             ]),
         SverchNodeCategory("SVERCHOK_L", "SVERCHOK list", items=[
-            # list,numbers, modifs nodes
+            # lists nodes
             NodeItem("ListLevelsNode", label="List Levels"),
             NodeItem("ListJoinNode", label="List Join"),
             NodeItem("ZipNode", label="List Zip"),
@@ -124,6 +124,10 @@ def make_categories():
             NodeItem("ListLengthNode", label="List Length"),
             NodeItem("ListSumNode", label="List Sum"),
             NodeItem("ListFLNode", label="List First&Last"),
+            NodeItem("MaskListNode", label="List Mask"),
+            ]),
+        SverchNodeCategory("SVERCHOK_N", "SVERCHOK number", items=[
+            # numbers, formula nodes
             NodeItem("GenSeriesNode", label="Series"),
             NodeItem("RandomNode", label="Random"),
             NodeItem("FloatNode", label="Float"),
@@ -132,12 +136,18 @@ def make_categories():
             NodeItem("FormulaNode", label="Formula"),
             NodeItem("Formula2Node", label="Formula2"),
             ]),
-        SverchNodeCategory("SVERCHOK_V", "SVERCHOK vector", items=[
-            # generators, degenerators nodes
+        SverchNodeCategory("SVERCHOK_G", "SVERCHOK generator", items=[
+            # objects, new elements, line, plane
             NodeItem("LineNode", label="Line"),
             NodeItem("PlaneNode", label="Plane"),
             NodeItem("CircleNode", label="Circle"),
-            NodeItem("EvaluateLineNode", label="Evaluate Line"),
+            NodeItem("HilbertNode", label="Hilbert"),
+            NodeItem("HilbertImageNode", label="Hilbert image"),
+            NodeItem("VoronoiNode", label="Voronoi"),
+            NodeItem("ImageNode", label="Image"),
+            ]),
+        SverchNodeCategory("SVERCHOK_V", "SVERCHOK vector", items=[
+            # vectors and matrixes nodes
             NodeItem("GenVectorsNode", label="Vector in"),
             NodeItem("VectorsOutNode", label="Vector out"),
             NodeItem("VectorNormalNode", label="Vector' Normal"),
@@ -146,6 +156,10 @@ def make_categories():
             NodeItem("MatrixGenNode", label="Matrix in"),
             NodeItem("MatrixOutNode", label="Matrix out"),
             NodeItem("MatrixDeformNode", label="Matrix Deform"),
+            ]),
+        SverchNodeCategory("SVERCHOK_M", "SVERCHOK modifier", items=[
+            # modifiers that find data from another data
+            NodeItem("EvaluateLineNode", label="Evaluate Line"),
             NodeItem("CentersPolsNode", label="Centers Polygons"),
             NodeItem("DistancePPNode", label="Distances"),
             NodeItem("AdaptivePolsNode", label="Adaptive Polygons"),

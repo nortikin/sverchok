@@ -105,7 +105,7 @@ class CircleNode(Node, SverchCustomTreeNode):
             for i in range(Vertices):
                 listPlg.append(i)
 
-            plg = list(listPlg)
+            plg = [listPlg]
             self.outputs['Polygons'].StringsProperty = str([plg])
 
     def fullList(self, l, count):
