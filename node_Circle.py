@@ -39,7 +39,8 @@ class CircleNode(Node, SverchCustomTreeNode):
             if not self.inputs['Nº Vertices'].node.socket_value_update:
                 self.inputs['Nº Vertices'].node.update()
             Vertices = int(eval(self.inputs['Nº Vertices'].links[0].from_socket.StringsProperty)[0][0])
-
+            if Vertices < 3:
+                Vertices = 3
         else:
             Vertices = self.vert_
 
@@ -47,7 +48,10 @@ class CircleNode(Node, SverchCustomTreeNode):
             if not self.inputs['Degrees'].node.socket_value_update:
                 self.inputs['Degrees'].node.update()
             Angle = int(eval(self.inputs['Degrees'].links[0].from_socket.StringsProperty)[0][0])
-
+            if Angle < 0:
+                Angle = 0
+            elif Angle > 360:
+                Angle = 360
         else:
             Angle = self.degr_
 
