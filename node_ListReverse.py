@@ -65,13 +65,19 @@ class ListReverseNode(Node, SverchCustomTreeNode):
     def revers(self, list, level):
         level -= 1
         if level:
+            out = []
             for l in list:
-                l = self.revers(l, level)
-                
-        elif type(list) in [type([]), type(tuple())]:
+                out.append(self.revers(l, level))
+            return out
+        elif type(list) in [type([])]:
             #print (type(list))
             list.reverse()
-        return list
+            return list
+        elif type(list) in [type(tuple())]:
+            out = list[::-1]
+            return out
+            
+        
 
 
 def register():
