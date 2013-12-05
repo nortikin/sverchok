@@ -51,16 +51,14 @@ class EvaluateLine(Node, SverchCustomTreeNode):
         # outputs
         if 'EvPoint' in self.outputs and len(self.outputs['EvPoint'].links)>0:
             if not self.outputs['EvPoint'].node.socket_value_update:
-                self.inputs['EvPoint'].node.update()
+                self.outputs['EvPoint'].node.update()
             m = self.evaluate_
-            a = [X1[0]+(X2[0]-X1[0])*m]
-            b = [Y1[0]+(Y2[0]-Y1[0])*m]
-            c = [Z1[0]+(Z2[0]-Z1[0])*m]
-            max_num = max(len(a), len(b), len(c))
+            a,b,c = [],[],[]
+            for i, x in enumerate(X1):
+                a.append(x+(X2[i]-x)*m)
+                b.append(Y1[i]+(Y2[i]-Y1[i])*m)
+                c.append(Z1[i]+(Z2[i]-Z1[i])*m)
             
-            self.fullList(a,max_num)
-            self.fullList(b,max_num)
-            self.fullList(c,max_num)
 
             points = list(zip(a,b,c))
             self.outputs['EvPoint'].VerticesProperty = str([points])

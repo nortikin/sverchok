@@ -5,7 +5,7 @@ from util import *
 from math import *
 
 
-def section(cut_me_vertices, cut_me_edges, mx, pp, pno, FILL=False):
+def section(cut_me_vertices, cut_me_edges, mx, pp, pno, FILL=False, TRI=True):
     """Finds the section mesh between a mesh and a plane 
     cut_me: Blender Mesh - the mesh to be cut
     mx: Matrix - The matrix of object of the mesh for correct coordinates
@@ -112,7 +112,7 @@ def section(cut_me_vertices, cut_me_edges, mx, pp, pno, FILL=False):
             
             # do a remove doubles to cleanup the mesh, this is needed when there
             # is one or more edges coplanar to the plane.
-            bpy.context.scene.objects.active = tmp_ob
+            sce.objects.active = tmp_ob
     
             bpy.ops.object.mode_set(mode="EDIT")
             bpy.ops.mesh.select_mode(type="EDGE", action="ENABLE")
@@ -120,9 +120,13 @@ def section(cut_me_vertices, cut_me_edges, mx, pp, pno, FILL=False):
     
             # remove doubles:
             bpy.ops.mesh.remove_doubles()
-    
-            bpy.ops.mesh.fill()
-            bpy.ops.mesh.tris_convert_to_quads()
+            
+            #one or not one polygon? here is the answer!
+            if TRI:
+                bpy.ops.mesh.edge_face_add()
+            else:
+                bpy.ops.mesh.fill()
+                bpy.ops.mesh.tris_convert_to_quads()
 
             # recalculate outside normals:
             bpy.ops.mesh.normals_make_consistent(inside=False)
@@ -170,6 +174,7 @@ class CrossSectionNode(Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
     
     fill_check = bpy.props.BoolProperty(name='fill', description='to fill section', default=False, update=updateNode)
+    tri = bpy.props.BoolProperty(name='tri', description='triangle or polygon', default=True, update=updateNode)
     
     def init(self, context):
         self.inputs.new('VerticesSocket', 'vertices', 'vertices')
@@ -183,24 +188,29 @@ class CrossSectionNode(Node, SverchCustomTreeNode):
                 
     def draw_buttons(self, context, layout):
         layout.prop(self, "fill_check", text="Fill section")
+        layout.prop(self, "tri", text="alt+F / F")
         
     def update(self):
         if 'vertices' in self.inputs and self.inputs['vertices'].links \
-            and self.inputs['edg_pol'].links and self.inputs['matrix'].links \
+            and self.inputs['edg_pol'].links \
             and self.inputs['cut_matrix'].links:
                 
             if not self.inputs['vertices'].node.socket_value_update:
                 self.inputs['vertices'].node.update()
             if not self.inputs['edg_pol'].node.socket_value_update:
                 self.inputs['edg_pol'].node.update()
-            if not self.inputs['matrix'].node.socket_value_update:
-                self.inputs['matrix'].node.update()
             if not self.inputs['cut_matrix'].node.socket_value_update:
                 self.inputs['cut_matrix'].node.update()
         
             verts_ob = Vector_generate(eval(self.inputs['vertices'].links[0].from_socket.VerticesProperty))
             edg_pols_ob = eval(self.inputs['edg_pol'].links[0].from_socket.StringsProperty)
-            matrixs = eval(self.inputs['matrix'].links[0].from_socket.MatrixProperty)
+            
+            if self.inputs['matrix'].links:
+                if not self.inputs['matrix'].node.socket_value_update:
+                    self.inputs['matrix'].node.update()
+                matrixs = eval(self.inputs['matrix'].links[0].from_socket.MatrixProperty)
+            else:
+                matrixs = [Matrix()]
             cut_mats = eval(self.inputs['cut_matrix'].links[0].from_socket.MatrixProperty)
             
             verts_out = []
@@ -217,7 +227,7 @@ class CrossSectionNode(Node, SverchCustomTreeNode):
                     idx_epob = min(idx_mob, len(edg_pols_ob)-1)
                     matrix = Matrix(matrix)
                     
-                    x_me = section(verts_ob[idx_vob], edg_pols_ob[idx_epob], matrix, pp, pno, self.fill_check)
+                    x_me = section(verts_ob[idx_vob], edg_pols_ob[idx_epob], matrix, pp, pno, self.fill_check, self.tri)
                     if x_me:
                         verts_pre_out.append(x_me['Verts'])
                         edges_pre_out.append(x_me['Edges'])
