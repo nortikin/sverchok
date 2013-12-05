@@ -12,6 +12,7 @@ class CircleNode(Node, SverchCustomTreeNode):
     rad_ = bpy.props.FloatProperty(name = 'rad_', description='Radius', default=2, options={'ANIMATABLE'}, update=updateNode)
     vert_ = bpy.props.IntProperty(name = 'vert_', description='Vertices', default=32, min=3, options={'ANIMATABLE'}, update=updateNode)
     degr_ = bpy.props.IntProperty(name = 'degr_', description='Degrees', default=360, min=0, max=360, options={'ANIMATABLE'}, update=updateNode)
+    mode_ = bpy.props.BoolProperty(name = 'mode_', description='Mode', default=0, options={'ANIMATABLE'}, update=updateNode)
 
     def init(self, context):
         self.inputs.new('StringsSocket', "Radius", "Radius")
@@ -25,6 +26,7 @@ class CircleNode(Node, SverchCustomTreeNode):
         layout.prop(self, "rad_", text="Radius")
         layout.prop(self, "vert_", text="Nº Vert")
         layout.prop(self, "degr_", text="Degrees")
+        layout.prop(self, "mode_", text="Mode")
 
     def update(self):
         # inputs
@@ -65,12 +67,14 @@ class CircleNode(Node, SverchCustomTreeNode):
             listVertX.append(Radius*cos(radians(tetha*i)))
             listVertY.append(Radius*sin(radians(tetha*i)))
 
-        if Angle < 360:
+        if Angle < 360 and self.mode_ == 0:
             listVertX.pop()
             listVertY.pop()
             listVertX.insert(Vertices, (Radius*cos(radians(Angle))))
             listVertY.insert(Vertices, (Radius*sin(radians(Angle))))
-
+        else:
+            listVertX.append(0.0)
+            listVertY.append(0.0)
         # outputs
         if 'Vertices' in self.outputs and len(self.outputs['Vertices'].links)>0:
             if not self.outputs['Vertices'].node.socket_value_update:
@@ -87,7 +91,7 @@ class CircleNode(Node, SverchCustomTreeNode):
             self.fullList(Z,max_num)
 
             points = list(zip(X,Y,Z))
-            self.outputs['Vertices'].VerticesProperty = str([points])
+            self.outputs['Vertices'].VerticesProperty = str(points)
 
         if 'Edges' in self.outputs and len(self.outputs['Edges'].links)>0:
             if not self.outputs['Edges'].node.socket_value_update:
@@ -96,10 +100,13 @@ class CircleNode(Node, SverchCustomTreeNode):
             listEdg = []
             for i in range(Vertices-1):
                 listEdg.append((i, i+1))
-            listEdg.append((0, Vertices-1))
-
+            if Angle < 360 and self.mode_ == 1:
+                listEdg.append((0, Vertices))
+                listEdg.append((Vertices-1, Vertices))
+            else:
+                listEdg.append((0, Vertices-1))
             edg = list(listEdg)
-            self.outputs['Edges'].StringsProperty = str([edg])
+            self.outputs['Edges'].StringsProperty = str(edg)
 
         if 'Polygons' in self.outputs and len(self.outputs['Polygons'].links)>0:
             if not self.outputs['Polygons'].node.socket_value_update:
@@ -108,9 +115,11 @@ class CircleNode(Node, SverchCustomTreeNode):
             listPlg = []
             for i in range(Vertices):
                 listPlg.append(i)
+            if Angle < 360 and self.mode_ == 1:
+                listPlg.insert(0, Vertices)
 
             plg = [listPlg]
-            self.outputs['Polygons'].StringsProperty = str([plg])
+            self.outputs['Polygons'].StringsProperty = str(plg)
 
     def fullList(self, l, count):
         d = count - len(l)
