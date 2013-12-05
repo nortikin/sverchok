@@ -210,7 +210,9 @@ class CrossSectionNode(Node, SverchCustomTreeNode):
                     self.inputs['matrix'].node.update()
                 matrixs = eval(self.inputs['matrix'].links[0].from_socket.MatrixProperty)
             else:
-                matrixs = [Matrix()]
+                matrixs = []
+                for le in verts_ob:
+                    matrixs.append(Matrix())
             cut_mats = eval(self.inputs['cut_matrix'].links[0].from_socket.MatrixProperty)
             
             verts_out = []
