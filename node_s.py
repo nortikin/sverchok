@@ -124,6 +124,7 @@ def make_categories():
             NodeItem("ListLengthNode", label="List Length"),
             NodeItem("ListSumNode", label="List Sum"),
             NodeItem("ListFLNode", label="List First&Last"),
+            NodeItem("ListItemNode", label="List Item"),
             NodeItem("MaskListNode", label="List Mask"),
             ]),
         SverchNodeCategory("SVERCHOK_N", "SVERCHOK number", items=[

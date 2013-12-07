@@ -71,6 +71,7 @@ if "bpy" in locals():
     imp.reload(node_ListLength)
     imp.reload(node_ListSum)
     imp.reload(node_ListStartEnd)
+    imp.reload(node_ListItem)
     imp.reload(node_DistancePP)
     imp.reload(node_Series)
     imp.reload(node_Vector)
@@ -116,6 +117,7 @@ else:
     import node_ListLength
     import node_ListSum
     import node_ListStartEnd
+    import node_ListItem
     import node_DistancePP
     import node_Series
     import node_Vector
@@ -162,6 +164,7 @@ def register():
     node_ListLength.register()
     node_ListSum.register()
     node_ListStartEnd.register()
+    node_ListItem.register()
     node_DistancePP.register()
     node_Series.register()
     node_Vector.register()
@@ -228,6 +231,7 @@ def unregister():
     node_Vector.unregister()
     node_Series.unregister()
     node_DistancePP.unregister()
+    node_ListItem.unregister()
     node_ListStartEnd.unregister()
     node_ListSum.unregister()
     node_ListLength.unregister()
