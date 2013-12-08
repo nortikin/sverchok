@@ -170,6 +170,13 @@ def make_categories():
         ]
     return node_categories
 
+#def Sverchok_nodes_count():
+#    cats = make_categories()
+#    count = []
+#    for cnt in cats:
+#        count.append(len(cnt.items))
+#    return count
+
 def register():
     bpy.utils.register_class(SverchCustomTree)
     bpy.utils.register_class(MatrixSocket)

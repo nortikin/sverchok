@@ -163,7 +163,8 @@ class ViewerNode(Node, SverchCustomTreeNode):
             self.use_custom_color=True
             self.color = (1,0.3,0)
         else:
-            self.use_custom_color=False
+            self.use_custom_color=True
+            self.color = (0.1,0.05,0)
             #print ('отражения вершин ',len(cache_viewer_baker['v']), " рёбёры ", len(cache_viewer_baker['ep']), "матрицы",len(cache_viewer_baker['m']))
         if not self.inputs['vertices'].links and not self.inputs['matrix'].links:
             callback_disable(self.name)

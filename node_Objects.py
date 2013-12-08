@@ -11,7 +11,7 @@ class SvObjSelected(bpy.types.Operator):
     
     name_objectin = StringProperty(name='name object in', description='it is name of reality')
     
-    def enable(self, name, handle):
+    def enable(self, name_, name, handle):
         objects = []
         for o in bpy.context.selected_objects:
             objects.append(o.name)
@@ -19,7 +19,8 @@ class SvObjSelected(bpy.types.Operator):
         # временное решение с группой. надо решать, как достать имя группы узлов
         if len(bpy.data.node_groups) == 1:
             handle = handle_read(name)
-            bpy.data.node_groups[0].nodes[name].objects_local = str(handle[1])
+            #print ('exec',name)
+            bpy.data.node_groups[name_[1]].nodes[name_[0]].objects_local = str(handle[1])
     
     def disable(self, name, handle):
         if not handle[0]:
@@ -27,16 +28,17 @@ class SvObjSelected(bpy.types.Operator):
         handle_delete(name)
     
     def execute(self, context):
-        name = self.name_objectin
+        name_ = eval(self.name_objectin)
+        name = str(name_[0]+name_[1])
         handle = handle_read(name)
         self.disable(name, handle)
-        self.enable(name, handle)
+        self.enable(name_, name, handle)
         return {'FINISHED'}
     
 class ObjectsNode(Node, SverchCustomTreeNode):
     ''' Objects Input slot '''
     bl_idname = 'ObjectsNode'
-    bl_label = 'Objects in'
+    bl_label = 'Objects_in'
     bl_icon = 'OUTLINER_OB_EMPTY'
     
     #def object_select(self, context):
@@ -51,9 +53,10 @@ class ObjectsNode(Node, SverchCustomTreeNode):
         self.outputs.new('MatrixSocket', "Matrixes", "Matrixes")
         
     def draw_buttons(self, context, layout):
-        #layout.prop(self, "objects_local", text="Objects", icon='OBJECT_DATA')
-        layout.operator('node.sverchok_object_insertion', text='get selected').name_objectin = self.name
-        handle = handle_read(self.name)
+        name_ = [self.name] + [self.id_data.name]
+        name = str(name_[0]+name_[1])
+        layout.operator('node.sverchok_object_insertion', text='get selected').name_objectin = str(name_)
+        handle = handle_read(name)
         if handle[0]:
             for o in handle[1]:
                 layout.label(o)
@@ -61,10 +64,12 @@ class ObjectsNode(Node, SverchCustomTreeNode):
             layout.label('--None--')
 
     def update(self):
-        name = self.name
+        name_ = [self.name] + [self.id_data.name]
+        name = str(name_[0]+name_[1])
         handle = handle_read(name)
+        #print (handle)
         if self.objects_local and not handle[0]:
-            handle_write(self.name, eval(self.objects_local))
+            handle_write(name, eval(self.objects_local))
         elif handle[0]:
             objs = handle[1]
             edgs_out = []
@@ -111,11 +116,13 @@ class ObjectsNode(Node, SverchCustomTreeNode):
             if 'Matrixes' in self.outputs and len(self.outputs['Matrixes'].links)>0:
                 self.outputs['Matrixes'].MatrixProperty = str(mtrx_out)
             #print ('матрёны: ', mtrx)
+        #print (self.objects_local)
         if self.objects_local:
             self.use_custom_color=True
             self.color = (0,0.5,0.2)
         else:
-            self.use_custom_color=False
+            self.use_custom_color=True
+            self.color = (0,0.1,0.05)
                 
     def update_socket(self, context):
         self.update()
