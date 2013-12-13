@@ -166,6 +166,7 @@ def make_categories():
             NodeItem("DistancePPNode", label="Distances"),
             NodeItem("AdaptivePolsNode", label="Adaptive Polygons"),
             NodeItem("CrossSectionNode", label="Cross Section"),
+            NodeItem("LineConnectNode", label="Lines Connection"),
             ]),
         ]
     return node_categories
