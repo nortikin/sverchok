@@ -20,19 +20,16 @@
 
 
 # -*- coding: utf-8 -*-
-# Gorodetskiy Nikita - basic idea, first script versions
-# Nedovzin Alexander - nodes integration, all corrections and script rebuilding
-# 2013-09-03 some bugfixes, default max, errors in first start etc. version 0.1.3
-# 2013-09-29 complete rebuilding of addon huge work is going to version 0.2.0
-# 2013-10-10 viewer nodes addad, bugfixing go on
-# http://nikitron.cc.ua
+# Gorodetskiy Nikita
+# Nedovzin Alexander
+# http://nikitron.cc.ua/sverchok.html
 
 
 bl_info = {
     "name": "Sverchok",
     "author": "Nedovizin Alexander, Gorodetskiy Nikita",
-    "version": (0, 2, 5),
-    "blender": (2, 6, 8), 
+    "version": (0, 2, 6),
+    "blender": (2, 6, 9), 
     "location": "Nodes > CustomNodesTree > Add user nodes",
     "description": "Do parametric node-based geometry programming",
     "warning": "requires nodes window",
@@ -72,12 +69,14 @@ if "bpy" in locals():
     imp.reload(node_ListSum)
     imp.reload(node_ListStartEnd)
     imp.reload(node_ListItem)
+    imp.reload(node_ListBoom)
     imp.reload(node_DistancePP)
     imp.reload(node_Series)
     imp.reload(node_Vector)
     imp.reload(node_Vector_out)
     imp.reload(node_VectorNormal)
     imp.reload(node_VectorMatrix)
+    imp.reload(node_VectorDrop)
     imp.reload(node_Random)
     imp.reload(node_Float)
     imp.reload(node_Integer)
@@ -121,12 +120,14 @@ else:
     import node_ListSum
     import node_ListStartEnd
     import node_ListItem
+    import node_ListBoom
     import node_DistancePP
     import node_Series
     import node_Vector
     import node_Vector_out
     import node_VectorNormal
     import node_VectorMatrix
+    import node_VectorDrop
     import node_Random
     import node_Float
     import node_Integer
@@ -171,12 +172,14 @@ def register():
     node_ListSum.register()
     node_ListStartEnd.register()
     node_ListItem.register()
+    node_ListBoom.register()
     node_DistancePP.register()
     node_Series.register()
     node_Vector.register()
     node_Vector_out.register()
     node_VectorNormal.register()
     node_VectorMatrix.register()
+    node_VectorDrop.register()
     node_Random.register()
     node_Float.register()
     node_Integer.register()
@@ -237,12 +240,14 @@ def unregister():
     node_Integer.unregister()
     node_Float.unregister()
     node_Random.unregister()
+    node_VectorDrop.unregister()
     node_VectorMatrix.unregister()
     node_VectorNormal.unregister()
     node_Vector_out.unregister()
     node_Vector.unregister()
     node_Series.unregister()
     node_DistancePP.unregister()
+    node_ListBoom.unregister()
     node_ListItem.unregister()
     node_ListStartEnd.unregister()
     node_ListSum.unregister()

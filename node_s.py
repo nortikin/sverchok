@@ -126,6 +126,7 @@ def make_categories():
             NodeItem("ListFLNode", label="List First&Last"),
             NodeItem("ListItemNode", label="List Item"),
             NodeItem("MaskListNode", label="List Mask"),
+            NodeItem("ListBoomNode", label="List Boom"),
             ]),
         SverchNodeCategory("SVERCHOK_N", "SVERCHOK number", items=[
             # numbers, formula nodes
@@ -156,6 +157,7 @@ def make_categories():
             NodeItem("VectorNormalNode", label="Vector' Normal"),
             NodeItem("VectorMoveNode", label="Vector Move"),
             NodeItem("VectorMatrixNode", label="Vector x Matrices"),
+            NodeItem("VectorDropNode", label="Vector Drop on mat."),
             NodeItem("MatrixGenNode", label="Matrix in"),
             NodeItem("MatrixOutNode", label="Matrix out"),
             NodeItem("MatrixDeformNode", label="Matrix Deform"),
