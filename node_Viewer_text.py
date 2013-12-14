@@ -150,7 +150,8 @@ class ViewerNode_text(Node, SverchCustomTreeNode):
             self.use_custom_color=True
             self.color = (0.5,0.5,1)
         else:
-            self.use_custom_color=False
+            self.use_custom_color=True
+            self.color = (0.05,0.05,0.1)
                 
     def update_socket(self, context):
         self.update()

@@ -124,6 +124,7 @@ def make_categories():
             NodeItem("ListLengthNode", label="List Length"),
             NodeItem("ListSumNode", label="List Sum"),
             NodeItem("ListFLNode", label="List First&Last"),
+            NodeItem("ListItemNode", label="List Item"),
             NodeItem("MaskListNode", label="List Mask"),
             ]),
         SverchNodeCategory("SVERCHOK_N", "SVERCHOK number", items=[
@@ -165,9 +166,17 @@ def make_categories():
             NodeItem("DistancePPNode", label="Distances"),
             NodeItem("AdaptivePolsNode", label="Adaptive Polygons"),
             NodeItem("CrossSectionNode", label="Cross Section"),
+            NodeItem("LineConnectNode", label="Lines Connection"),
             ]),
         ]
     return node_categories
+
+#def Sverchok_nodes_count():
+#    cats = make_categories()
+#    count = []
+#    for cnt in cats:
+#        count.append(len(cnt.items))
+#    return count
 
 def register():
     bpy.utils.register_class(SverchCustomTree)

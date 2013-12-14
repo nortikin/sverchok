@@ -10,17 +10,17 @@ class VectorNormalNode(Node, SverchCustomTreeNode):
     
     def init(self, context):
         self.inputs.new('VerticesSocket', "Vertices", "Vertices")
-        self.inputs.new('StringsSocket', "Poligons", "Poligons")
+        self.inputs.new('StringsSocket', "Polygons", "Polygons")
         self.outputs.new('VerticesSocket',"Normals","Normals")
 
     def update(self):
         # достаём два слота - вершины и полики
         if 'Centers' in self.outputs and self.outputs['Centers'].links or self.outputs['Normals'].links:
-            if 'Poligons' in self.inputs and 'Vertices' in self.inputs and self.inputs['Poligons'].links and self.inputs['Vertices'].links:
-                if not self.inputs['Poligons'].node.socket_value_update:
-                    self.inputs['Poligons'].node.update()
+            if 'Polygons' in self.inputs and 'Vertices' in self.inputs and self.inputs['Polygons'].links and self.inputs['Vertices'].links:
+                if not self.inputs['Polygons'].node.socket_value_update:
+                    self.inputs['Polygons'].node.update()
                 #if type(self.inputs['Poligons'].links[0].from_socket) == StringsSocket:
-                pols = eval(self.inputs['Poligons'].links[0].from_socket.StringsProperty)
+                pols = eval(self.inputs['Polygons'].links[0].from_socket.StringsProperty)
                 
                 
                 if not self.inputs['Vertices'].node.socket_value_update:
