@@ -72,7 +72,7 @@ class CircleNode(Node, SverchCustomTreeNode):
             listVertY.pop()
             listVertX.insert(Vertices, (Radius*cos(radians(Angle))))
             listVertY.insert(Vertices, (Radius*sin(radians(Angle))))
-        else:
+        elif Angle < 360 and self.mode_ == 1:
             listVertX.append(0.0)
             listVertY.append(0.0)
         # outputs
