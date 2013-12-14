@@ -97,11 +97,13 @@ if "bpy" in locals():
     imp.reload(node_Voronoi)
     imp.reload(node_Plane)
     imp.reload(node_Circle)
+    imp.reload(node_Cylinder)
     imp.reload(node_Sphere)
     imp.reload(node_EvaluateLine)
     imp.reload(node_MaskList)
     imp.reload(node_Image)
     imp.reload(node_LineConnect)
+    imp.reload(node_Area)
 else:
     import node_s
     import node_CentersPolsNode
@@ -144,11 +146,13 @@ else:
     import node_Voronoi
     import node_Plane
     import node_Circle
+    import node_Cylinder
     import node_Sphere
     import node_EvaluateLine
     import node_MaskList
     import node_Image
     import node_LineConnect
+    import node_Area
 
 def register():
     import bpy
@@ -192,11 +196,13 @@ def register():
     node_Voronoi.register()
     node_Plane.register()
     node_Circle.register()
+    node_Cylinder.register()
     node_Sphere.register()
     node_EvaluateLine.register()
     node_MaskList.register()
     node_Image.register()
     node_LineConnect.register()
+    node_Area.register()
         
     if 'SVERCHOK' not in nodeitems_utils._node_categories:
         nodeitems_utils.register_node_categories("SVERCHOK", node_s.make_categories())
@@ -205,11 +211,13 @@ def register():
 def unregister():
     import bpy
     import nodeitems_utils
+    node_Area.unregister()
     node_LineConnect.unregister()
     node_Image.unregister()
     node_MaskList.unregister()
     node_EvaluateLine.unregister()
     node_Sphere.unregister()
+    node_Cylinder.unregister()
     node_Circle.unregister()
     node_Plane.unregister()
     node_Voronoi.unregister()
