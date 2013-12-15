@@ -55,7 +55,7 @@ class VectorDropNode(Node, SverchCustomTreeNode):
                 k = lengthve 
             vec_c=Vector((0,0,0))
             for v in vecs[k]:
-                vec  = m*v
+                vec  = v*m
                 out_.append(vec)
                 vec_c+=vec
             
