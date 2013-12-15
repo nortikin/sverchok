@@ -53,10 +53,31 @@ class VectorDropNode(Node, SverchCustomTreeNode):
             k = i
             if k > lengthve:
                 k = lengthve 
+            vec_c=Vector((0,0,0))
             for v in vecs[k]:
-                out_.append(v.rotate(m))
-            out.append(out_)
-        return out
+                vec  = v*m
+                out_.append(vec)
+                vec_c+=vec
+            
+            vec_c = vec_c / len(vecs[k]) 
+            
+            v = out_[1]-out_[0]
+            w = out_[2]-out_[0]
+            A = v.y*w.z - v.z*w.y
+            B = -v.x*w.z + v.z*w.x
+            C = v.x*w.y - v.y*w.x
+            #D = -out_[0].x*A - out_[0].y*B - out_[0].z*C
+            
+            norm = Vector((A,B,C)).normalized()
+            vec0 = Vector((0,0,1))
+
+            mat_rot_norm = vec0.rotation_difference(norm).to_matrix().to_4x4()
+            for v in out_:
+                v_out =  (v-vec_c)* mat_rot_norm 
+               
+                out.append(v_out)
+
+        return [out]
                 
     def update_socket(self, context):
         updateNode(self,context)
