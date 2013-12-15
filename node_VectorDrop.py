@@ -41,6 +41,7 @@ class VectorDropNode(Node, SverchCustomTreeNode):
                 self.outputs['Vectors'].node.update()
             
             vectors_ = self.vecscorrect(vecs, mats)
+            print (vectors_)
             vectors = Vector_degenerate(vectors_)
             self.outputs['Vectors'].VerticesProperty = str(vectors)
             
