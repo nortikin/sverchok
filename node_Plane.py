@@ -54,7 +54,8 @@ class PlaneNode(Node, SverchCustomTreeNode):
             for i in range(IntegerY):
                 listVertX.append(0.0)
                 for j in range(IntegerX-1):
-                    listVertX.append(round(j*StepX[j], 2))
+                    listVertX.append(listVertX[j]+StepX[j])
+
         else:
             StepX = self.step_X
             listVertX = []
