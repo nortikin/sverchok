@@ -3,10 +3,10 @@ from node_s import *
 from mathutils import *
 from util import *
 
-class VectorMatrixNode(Node, SverchCustomTreeNode):
+class MatrixApplyNode(Node, SverchCustomTreeNode):
     ''' Multiply vectors on matrixes with several objects in output '''
-    bl_idname = 'VectorMatrixNode'
-    bl_label = 'Vector on Matrix'
+    bl_idname = 'MatrixApplyNode'
+    bl_label = 'Apply matrix for vectors'
     bl_icon = 'OUTLINER_OB_EMPTY'
     
     def init(self, context):
@@ -66,10 +66,10 @@ class VectorMatrixNode(Node, SverchCustomTreeNode):
     
 
 def register():
-    bpy.utils.register_class(VectorMatrixNode)
+    bpy.utils.register_class(MatrixApplyNode)
     
 def unregister():
-    bpy.utils.unregister_class(VectorMatrixNode)
+    bpy.utils.unregister_class(MatrixApplyNode)
 
 if __name__ == "__main__":
     register()

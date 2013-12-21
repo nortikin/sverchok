@@ -75,12 +75,12 @@ if "bpy" in locals():
     imp.reload(node_Vector)
     imp.reload(node_Vector_out)
     imp.reload(node_VectorNormal)
-    imp.reload(node_VectorMatrix)
+    imp.reload(node_MatrixApply)
     imp.reload(node_VectorDrop)
     imp.reload(node_Random)
     imp.reload(node_Float)
     imp.reload(node_Integer)
-    imp.reload(node_Number)
+    imp.reload(node_Float2Int)
     imp.reload(node_VectorMove)
     imp.reload(node_MatrixDeform)
     imp.reload(node_MatrixGenerator)
@@ -126,12 +126,12 @@ else:
     import node_Vector
     import node_Vector_out
     import node_VectorNormal
-    import node_VectorMatrix
+    import node_MatrixApply
     import node_VectorDrop
     import node_Random
     import node_Float
     import node_Integer
-    import node_Number
+    import node_Float2Int
     import node_VectorMove
     import node_MatrixDeform
     import node_MatrixGenerator
@@ -178,12 +178,12 @@ def register():
     node_Vector.register()
     node_Vector_out.register()
     node_VectorNormal.register()
-    node_VectorMatrix.register()
+    node_MatrixApply.register()
     node_VectorDrop.register()
     node_Random.register()
     node_Float.register()
     node_Integer.register()
-    node_Number.register()
+    node_Float2Int.register()
     node_VectorMove.register()
     node_MatrixDeform.register()
     node_MatrixGenerator.register()
@@ -236,12 +236,12 @@ def unregister():
     node_MatrixGenerator.unregister()
     node_MatrixDeform.unregister()
     node_VectorMove.unregister()
-    node_Number.unregister()
+    node_Float2Int.unregister()
     node_Integer.unregister()
     node_Float.unregister()
     node_Random.unregister()
     node_VectorDrop.unregister()
-    node_VectorMatrix.unregister()
+    node_MatrixApply.unregister()
     node_VectorNormal.unregister()
     node_Vector_out.unregister()
     node_Vector.unregister()

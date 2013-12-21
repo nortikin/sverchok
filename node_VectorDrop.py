@@ -29,7 +29,7 @@ class VectorDropNode(Node, SverchCustomTreeNode):
                 #print (vecs)
                 if not self.inputs['Matrixes'].node.socket_value_update:
                     self.inputs['Matrixes'].node.update()
-                mats_ = eval(self.inputs['Matrixes'].links[0].from_socket.MatrixProperty)
+                mats_ = dataCorrect(eval(self.inputs['Matrixes'].links[0].from_socket.MatrixProperty))
                 mats = Matrix_generate(mats_)
             else:
                 vecs = [[]]

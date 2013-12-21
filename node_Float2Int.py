@@ -1,9 +1,9 @@
 import bpy
 from node_s import *
 
-class NumberNode(Node, SverchCustomTreeNode):
-    ''' Number '''
-    bl_idname = 'NumberNode'
+class Float2IntNode(Node, SverchCustomTreeNode):
+    ''' Float2Int '''
+    bl_idname = 'Float2IntNode'
     bl_label = 'Float2int'
     bl_icon = 'OUTLINER_OB_EMPTY'
     
@@ -55,10 +55,10 @@ class NumberNode(Node, SverchCustomTreeNode):
 
 
 def register():
-    bpy.utils.register_class(NumberNode)
+    bpy.utils.register_class(Float2IntNode)
     
 def unregister():
-    bpy.utils.unregister_class(NumberNode)
+    bpy.utils.unregister_class(Float2IntNode)
 
 if __name__ == "__main__":
     register()
