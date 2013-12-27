@@ -131,6 +131,7 @@ def make_categories():
         SverchNodeCategory("SVERCHOK_N", "SVERCHOK number", items=[
             # numbers, formula nodes
             NodeItem("GenSeriesNode", label="Series"),
+            NodeItem("GenRangeNode", label="Range"),
             NodeItem("RandomNode", label="Random"),
             NodeItem("FloatNode", label="Float"),
             NodeItem("IntegerNode", label="Int"),
@@ -167,6 +168,7 @@ def make_categories():
             NodeItem("EvaluateLineNode", label="Evaluate Line"),
             NodeItem("CentersPolsNode", label="Centers Polygons"),
             NodeItem("DistancePPNode", label="Distances"),
+            NodeItem("DistanceVerticesNode", label="Simple Distances"),
             NodeItem("AreaNode", label="Area"),
             NodeItem("AdaptivePolsNode", label="Adaptive Polygons"),
             NodeItem("CrossSectionNode", label="Cross Section"),

@@ -47,6 +47,7 @@ for item in path:
 if flag == False:
     sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'sverchok_nodes'))
     sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'sverchok-master'))
+
     print("sverchok_nodes: added to phytonpath :-)")
 
 
@@ -103,6 +104,7 @@ if "bpy" in locals():
     imp.reload(node_Image)
     imp.reload(node_LineConnect)
     imp.reload(node_Area)
+    imp.reload(node_Range)
 else:
     import node_s
     import node_CentersPolsNode
@@ -154,6 +156,7 @@ else:
     import node_Image
     import node_LineConnect
     import node_Area
+    import node_Range
 
 def register():
     import bpy
@@ -206,6 +209,7 @@ def register():
     node_Image.register()
     node_LineConnect.register()
     node_Area.register()
+    node_Range.register()
         
     if 'SVERCHOK' not in nodeitems_utils._node_categories:
         nodeitems_utils.register_node_categories("SVERCHOK", node_s.make_categories())
@@ -214,6 +218,7 @@ def register():
 def unregister():
     import bpy
     import nodeitems_utils
+    node_Range.unregister()
     node_Area.unregister()
     node_LineConnect.unregister()
     node_Image.unregister()
