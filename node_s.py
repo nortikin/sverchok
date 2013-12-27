@@ -168,7 +168,6 @@ def make_categories():
             NodeItem("EvaluateLineNode", label="Evaluate Line"),
             NodeItem("CentersPolsNode", label="Centers Polygons"),
             NodeItem("DistancePPNode", label="Distances"),
-            NodeItem("DistanceVerticesNode", label="Simple Distances"),
             NodeItem("AreaNode", label="Area"),
             NodeItem("AdaptivePolsNode", label="Adaptive Polygons"),
             NodeItem("CrossSectionNode", label="Cross Section"),
