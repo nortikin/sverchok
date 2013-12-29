@@ -138,6 +138,8 @@ def make_categories():
             NodeItem("Float2IntNode", label="Float 2 Int"),
             NodeItem("FormulaNode", label="Formula"),
             NodeItem("Formula2Node", label="Formula2"),
+            NodeItem("ScalarFunctionXNode", label="Math f(x)"),
+    
             ]),
         SverchNodeCategory("SVERCHOK_G", "SVERCHOK generator", items=[
             # objects, new elements, line, plane
