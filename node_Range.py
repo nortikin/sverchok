@@ -40,9 +40,9 @@ class GenRangeNode(Node, SverchCustomTreeNode):
             Stop = self.stop_
         
         if 'Divisions' in self.inputs and len(self.inputs['Divisions'].links)>0:
-            if not self.inputs['Divions'].node.socket_value_update:
+            if not self.inputs['Divisions'].node.socket_value_update:
                 self.inputs['Divisions'].node.update()
-            Divisions = eval(self.inputs['Divisons'].links[0].from_socket.StringsProperty)[0][0]
+            Divisions = eval(self.inputs['Divisions'].links[0].from_socket.StringsProperty)[0][0]
         else:
             Divisions = self.divisions_
         
