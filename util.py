@@ -447,6 +447,12 @@ def myZip(list_all, level, level2=0):
         else:
             return False 
 
+def fullList(l, count):
+    d = count - len(l)
+    if d > 0:
+        l.extend([l[-1] for a in range(d)])
+    return
+
 
 ################### update List join magic ##########
 
