@@ -151,7 +151,7 @@ class ScalarMathNode(Node, SverchCustomTreeNode):
                 self.outputs['float'].node.update()
             result = []
             if nrInputs == 0:
-                result = [[constant[self.items_]]]
+                result = [constant[self.items_]]
             if nrInputs == 1:
                 if len(Number1):
                     x = eval(Number1)
@@ -201,14 +201,9 @@ class ScalarMathNode(Node, SverchCustomTreeNode):
            (type(l2) is int or type(l2) is float):
                 return f(l1,l2)
         if type(l1) is list and type (l2) is list:
-            d = len(l1) - len(l2) 
-#            print(d)
-            if d < 0:
-                for i in range(abs(d)):
-                    l1.append(l1[-1])
-            if d > 0:
-                for i in range(abs(d)):
-                    l2.append(l2[-1])    
+            max_obj = max(len(l1),len(l2)) 
+            fullList(l1,max_obj)
+            fullList(l2,max_obj)    
             res = []
         
             for i in range(len(l1)):
