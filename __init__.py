@@ -55,7 +55,7 @@ if flag == False:
 if "bpy" in locals():
     import imp
     imp.reload(node_s)
-    imp.reload(node_FunctionClasses)
+    imp.reload(node_ScalarMath)
     imp.reload(node_CentersPolsNode)
     imp.reload(util)
     imp.reload(node_Objects)
@@ -109,7 +109,7 @@ if "bpy" in locals():
     imp.reload(node_Range)
 else:
     import node_s
-    import node_FunctionClasses
+    import node_ScalarMath
     import node_CentersPolsNode
     import util
     import node_Objects
@@ -166,7 +166,7 @@ def register():
     import bpy
     import nodeitems_utils
     node_s.register()
-    node_FunctionClasses.register()
+    node_ScalarMath.register()
     node_CentersPolsNode.register()
     node_Objects.register()
     node_Viewer.register()
@@ -274,7 +274,7 @@ def unregister():
     node_Viewer.unregister()
     node_Objects.unregister()
     node_CentersPolsNode.unregister()
-    node_FunctionClasses.register()
+    node_ScalarMath.register()
     node_s.unregister()
     
     if 'SVERCHOK' in nodeitems_utils._node_categories:
