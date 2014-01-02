@@ -176,16 +176,10 @@ class VectorMathNode(Node, SverchCustomTreeNode):
                 else:
                     return w.to_tuple()
         if type(l1) is list and type (l2) is list:
-            d = len(l1) - len(l2) 
-
-            if d < 0:
-                for i in range(abs(d)):
-                    l1.append(l1[-1])
-            if d > 0:
-                for i in range(abs(d)):
-                    l2.append(l2[-1])    
+            max_obj = max(len(l1),len(l2)) 
+            fullList(l1,max_obj)
+            fullList(l2,max_obj)    
             res = []
-        
             for i in range(len(l1)):
                 res.append( self.recurse_fxy(l1[i], l2[i],f))
             return res    
