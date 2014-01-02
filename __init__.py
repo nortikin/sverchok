@@ -84,6 +84,7 @@ if "bpy" in locals():
     imp.reload(node_Integer)
     imp.reload(node_Float2Int)
     imp.reload(node_VectorMove)
+    imp.reload(node_VectorMath)
     imp.reload(node_MatrixDeform)
     imp.reload(node_MatrixGenerator)
     imp.reload(node_MatrixDestructor)
@@ -137,6 +138,7 @@ else:
     import node_Integer
     import node_Float2Int
     import node_VectorMove
+    import node_VectorMath
     import node_MatrixDeform
     import node_MatrixGenerator
     import node_MatrixDestructor
@@ -191,6 +193,7 @@ def register():
     node_Integer.register()
     node_Float2Int.register()
     node_VectorMove.register()
+    node_VectorMath.register()
     node_MatrixDeform.register()
     node_MatrixGenerator.register()
     node_MatrixDestructor.register()
@@ -244,6 +247,7 @@ def unregister():
     node_MatrixDestructor.unregister()
     node_MatrixGenerator.unregister()
     node_MatrixDeform.unregister()
+    node_VectorMath.register()
     node_VectorMove.unregister()
     node_Float2Int.unregister()
     node_Integer.unregister()
