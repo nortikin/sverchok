@@ -47,6 +47,9 @@ class ScalarMathNode(Node, SverchCustomTreeNode):
         ("RADIANS",         "Radians",      ""),
         ("ABS",             "Absolute",     ""),
         ("CEIL",            "Ceiling",      ""),
+        ("ROUND",           "Round",        ""), 
+        ("FMOD",            "Fmod",         ""),
+        ("MODULO",          "modulo",       ""),     
         ("FLOOR",           "floor",        ""),
         ("EXP",             "Exponent",     ""),
         ("LN",              "log",          ""),
@@ -109,7 +112,11 @@ class ScalarMathNode(Node, SverchCustomTreeNode):
                 'SUB':      lambda x,y : x-y,
                 'DIV':      lambda x,y : x/y,
                 'MUL':      lambda x,y : x*y,
-                'POW':      lambda x,y : x**y
+                'POW':      lambda x,y : x**y,
+                'ROUND':    lambda x,y : round(x,y),
+                'FMOD':     lambda x,y : fmod(x,y),
+                'MODULO':   lambda x,y : x%y
+                
         }
         constant  = {
                 'PI':       pi,
