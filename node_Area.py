@@ -38,9 +38,9 @@ class AreaNode(Node, SverchCustomTreeNode):
                poly = []
                for j in Polygons[i]:
                    poly.append(Vertices[j])
-               areas.append(round(self.area(poly),3))
+               areas.append(round(self.area(poly),10))
            
-           self.outputs['Area'].StringsProperty = str(areas)
+           self.outputs['Area'].StringsProperty = str([areas])
     
     #determinant of matrix a
     def det(self, a):
