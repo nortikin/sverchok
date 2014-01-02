@@ -138,7 +138,7 @@ def make_categories():
             NodeItem("Float2IntNode", label="Float 2 Int"),
             NodeItem("FormulaNode", label="Formula"),
             NodeItem("Formula2Node", label="Formula2"),
-            NodeItem("ScalarFunctionXNode", label="Math f(x)"),
+            NodeItem("ScalarMathNode", label="Math"),
     
             ]),
         SverchNodeCategory("SVERCHOK_G", "SVERCHOK generator", items=[
@@ -159,6 +159,7 @@ def make_categories():
             NodeItem("VectorsOutNode", label="Vector out"),
             NodeItem("VectorNormalNode", label="Vector' Normal"),
             NodeItem("VectorMoveNode", label="Vector Move"),
+            NodeItem("VectorMathNode", label="Vector Moth"),
             NodeItem("MatrixApplyNode", label="Matrix Apply"),
             NodeItem("VectorDropNode", label="Vector Drop"),
             NodeItem("MatrixGenNode", label="Matrix in"),
