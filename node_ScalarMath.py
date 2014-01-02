@@ -62,8 +62,10 @@ class ScalarMathNode(Node, SverchCustomTreeNode):
         ("SINH",            "sinh",         ""),
         ("TANH",            "tanh",         ""),
         ("ADD",              "+",           ""),
-        ("DIV",              "-",           ""),
+        ("SUB",              "-",           ""),
         ("MUL",              "*",           ""),
+        ("DIV",              "/",           ""),  
+        ("INTDIV",           "//",           ""),        
         ("POW",              "**",          ""),  
         ("PI",               "pi",          ""),
         ("E",                 "e",          ""), 
@@ -98,7 +100,7 @@ class ScalarMathNode(Node, SverchCustomTreeNode):
               'FLOOR':      floor,
               'CEIL':       ceil,
               'EXP':        exp,
-              'LOG':        log,
+              'LN':         log,
               'LOG1P':      log1p,
               'LOG10':      log10,
               'ACOSH':      acosh,
@@ -111,6 +113,7 @@ class ScalarMathNode(Node, SverchCustomTreeNode):
                 'ADD':      lambda x,y : x+y,
                 'SUB':      lambda x,y : x-y,
                 'DIV':      lambda x,y : x/y,
+                'INTDIV':   lambda x,y : x//y,
                 'MUL':      lambda x,y : x*y,
                 'POW':      lambda x,y : x**y,
                 'ROUND':    lambda x,y : round(x,y),
@@ -124,6 +127,7 @@ class ScalarMathNode(Node, SverchCustomTreeNode):
         }
                    
         # inputs
+        nrInputs = 1
         if self.items_ in constant:
             nrInputs = 0
         elif self.items_ in fx:
