@@ -34,7 +34,7 @@ class VectorMathNode(Node, SverchCustomTreeNode):
         ("CROSS",       "Cross product",        ""), 
         ("DOT",         "Dot product",          ""), 
         ("ADD",         "Add",                  ""),   
-        ("SUB",         "Sub",                    ""),
+        ("SUB",         "Sub",                  ""),
         ("LEN",         "Length",               ""),
         ("DISTANCE",    "Distance",             ""),
         ("NORMALIZE",   "Normalize",            ""),
