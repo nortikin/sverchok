@@ -175,6 +175,7 @@ def make_categories():
             NodeItem("AdaptivePolsNode", label="Adaptive Polygons"),
             NodeItem("CrossSectionNode", label="Cross Section"),
             NodeItem("LineConnectNode", label="Lines Connection"),
+            NodeItem("SortCircleNode", label="Topology Sort: Circle")
             ]),
         ]
     return node_categories
