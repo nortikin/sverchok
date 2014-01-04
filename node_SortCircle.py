@@ -59,8 +59,9 @@ class SortCircleNode(Node, SverchCustomTreeNode):
             vert_res=[]      
             if len(vert_list) and len(edge_list):
                 for i in range(len(vert_list)):
-                    vert_res.append( self.topologySort( vert_list[i], edge_list[i]))
-                self.outputs['vertices'].VerticesProperty = str([vert_res])
+                    vert_res.append(self.topologySort( vert_list[i], edge_list[i]))
+            #print(len(vert_res)!=len(vert_list[i]))        
+            self.outputs['vertices'].VerticesProperty = str(vert_res)
                 
             
         if 'edges' in self.outputs and len(self.outputs['edges'].links)>0:
@@ -73,27 +74,70 @@ class SortCircleNode(Node, SverchCustomTreeNode):
                     if self.is_circle:
                         edge_res.append( [[i,(i+1)%l] for i in range(l)] )
                     else:
-                        edge_res.append( [[i,(i+1)%l] for i in range(l - 1)])
-            self.outputs['edges'].StringsProperty = str([edge_res])
+                        edge_res.append( [[i,i+1] for i in range(l - 1)])
+            self.outputs['edges'].StringsProperty = str(edge_res)
 
 
 
 # take a list of verts and edges and sorts them according according to the visual order
 # makes order of the geometry follow the topology of the edges
 # vert_list, edge_list                             
+# [(0, 1),(0, 2),(2, 3),(3, 4),(4, 5),(5, 6),(6, 7)]
+# feels like there should be a simpler way... this a bit brute force.
 
-    def topologySort(self, v_l , e_l):    
+    def topologySort(self, v_l , e_l):  
+        if len(v_l) != len(e_l):
+            print(len(v_l),len(e_l))
+            return self.topologySort2(v_l,e_l)  
         l,l1 = e_l[0]
         res = [l]
         for j in range(len(v_l)-1):
-            tmp=[e_l[i] for i in range(len(e_l)) if l in e_l[i] and not l1 in e_l[i] ][0]
-            if tmp[0] in res:
-                res.append(tmp[1])
-                l1,l = l, tmp[1]
+            tmp=[e_l[i] for i in range(len(e_l)) if l in e_l[i] and not l1 in e_l[i] ]
+            if len(tmp) == 0:
+                break
+            if tmp[0][0] in res:
+                res.append(tmp[0][1])
+                l1,l = l, tmp[0][1]
             else:
-                res.append(tmp[0])
-                l1,l = l, tmp[0]
+                res.append(tmp[0][0])
+                l1,l = l, tmp[0][0]
                
+        v_res = [v_l[i] for i in res]
+        return v_res        
+        
+    def topologySort2(self, v_l , e_l):    
+        l,l1 = e_l[0]
+        res = [l,l1]
+        
+        for j in range(len(v_l)):
+            tmp=[e_l[i] for i in range(len(e_l)) if l in e_l[i] and not l1 in e_l[i] ]
+            if not len(tmp):
+                break
+            if tmp[0][0] in res:
+                res.append(tmp[0][1])
+                l1,l = l, tmp[0][1]
+            else:
+                res.append(tmp[0][0])
+                l1,l = l, tmp[0][0]
+        print("res:",len(res),":", len(v_l),":", res ,":",e_l ) 
+        if len(res) != len(v_l):
+            #unsorted = [i for i in range(len(v_l)) if not i in res]
+            print("kanske")           
+            l = res[0]
+            
+            while len(res) < len(v_l): #non cyclic
+                tmp=[e_l[i] for i in range(len(e_l)) if l in e_l[i]] 
+                print(tmp)
+                for i in tmp:
+                    if not (i[0] in res and i[1] in res):
+                        if l == i[0]:
+                            l = i[1]
+                        else:
+                            l = i[0]
+                res.insert(0,l)
+
+        print("res:",len(res),":", len(v_l),":", res) 
+           
         v_res = [v_l[i] for i in res]
         return v_res        
         
