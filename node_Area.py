@@ -1,6 +1,7 @@
 import bpy
 from node_s import *
 from util import *
+import math
 
 class AreaNode(Node, SverchCustomTreeNode):
     ''' Area '''
@@ -8,39 +9,57 @@ class AreaNode(Node, SverchCustomTreeNode):
     bl_label = 'Area'
     bl_icon = 'OUTLINER_OB_EMPTY'
     
+    per_face = bpy.props.BoolProperty(name='per_face', default=True, update=updateNode)
+
+    
     def init(self, context):
         self.inputs.new('VerticesSocket', "Vertices", "Vertices")
         self.inputs.new('StringsSocket', "Polygons", "Polygons")
         self.outputs.new('StringsSocket', "Area", "Area")
-
+        
+    def draw_buttons(self, context, layout):
+        layout.prop(self, "per_face", text="per face")
+        
     def update(self):
         # inputs
-        if self.inputs['Vertices'].links and self.inputs['Vertices'].links:
-            if self.inputs['Vertices'].links and len(self.inputs['Vertices'].links)>0:
-                if not self.inputs['Vertices'].node.socket_value_update:
-                    self.inputs['Vertices'].node.update()
-                if self.inputs['Vertices'].links[0].from_socket.VerticesProperty:
-                    Vertices = eval(self.inputs['Vertices'].links[0].from_socket.VerticesProperty)[0]
-
+        if 'Vertices' in self.inputs and len(self.inputs['Vertices'].links)>0:
+            if not self.inputs['Vertices'].node.socket_value_update:
+                self.inputs['Vertices'].node.update()
+            if self.inputs['Vertices'].links[0].from_socket.VerticesProperty:
+                Vertices = eval(self.inputs['Vertices'].links[0].from_socket.VerticesProperty)
+        else:
+            Vertices = []
 
         if len(self.inputs['Polygons'].links)>0:
             if not self.inputs['Polygons'].node.socket_value_update:
                 self.inputs['Polygons'].node.update()
-            Polygons = eval(self.inputs['Polygons'].links[0].from_socket.StringsProperty)[0]
-
+            Polygons = eval(self.inputs['Polygons'].links[0].from_socket.StringsProperty)
+        else:
+            Polygons = []    
 
         # outputs
         if 'Area' in self.outputs and len(self.outputs['Area'].links)>0:
-           if not self.outputs['Area'].node.socket_value_update:
+            if not self.outputs['Area'].node.socket_value_update:
                self.outputs['Area'].node.update()
-           areas = []
-           for i in range(len(Polygons)):
-               poly = []
-               for j in Polygons[i]:
-                   poly.append(Vertices[j])
-               areas.append(round(self.area(poly),10))
-           
-           self.outputs['Area'].StringsProperty = str([areas])
+            areas = []
+            for i, obj in enumerate(Polygons):
+                print(i, obj)
+                res = []
+                for face in obj:
+                    print(face)
+                    poly = []
+                    for j in face:
+                        print(i,j,":",Vertices)    
+                        poly.append(Vertices[i][j])
+                    res.append(self.area(poly))  
+                print("res",res)      
+                if self.per_face:
+                    areas.append([math.fsum(res)])
+                else:
+                    areas.append(res)
+        
+                print("areas",areas,"j",j,"i",i)           
+            self.outputs['Area'].StringsProperty = str([areas])
     
     #determinant of matrix a
     def det(self, a):
