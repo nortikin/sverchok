@@ -43,22 +43,18 @@ class AreaNode(Node, SverchCustomTreeNode):
                self.outputs['Area'].node.update()
             areas = []
             for i, obj in enumerate(Polygons):
-                print(i, obj)
                 res = []
                 for face in obj:
-                    print(face)
                     poly = []
                     for j in face:
-                        print(i,j,":",Vertices)    
                         poly.append(Vertices[i][j])
                     res.append(self.area(poly))  
-                print("res",res)      
+
                 if self.per_face:
-                    areas.append([math.fsum(res)])
+                    areas.append(math.fsum(res))
                 else:
                     areas.append(res)
-        
-                print("areas",areas,"j",j,"i",i)           
+                   
             self.outputs['Area'].StringsProperty = str([areas])
     
     #determinant of matrix a
