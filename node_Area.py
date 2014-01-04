@@ -45,15 +45,15 @@ class AreaNode(Node, SverchCustomTreeNode):
             for i, obj in enumerate(Polygons):
                 res = []
                 for face in obj:
-                    poly = []
+                    poly = []                 
                     for j in face:
                         poly.append(Vertices[i][j])
                     res.append(self.area(poly))  
-
+   
                 if self.per_face:
-                    areas.append(math.fsum(res))
+                    areas.extend(res)
                 else:
-                    areas.append(res)
+                    areas.append(math.fsum(res))
                    
             self.outputs['Area'].StringsProperty = str([areas])
     
@@ -64,14 +64,14 @@ class AreaNode(Node, SverchCustomTreeNode):
     #unit normal vector of plane defined by points a, b, and c
     def unit_normal(self, a, b, c):
         x = self.det([[1,a[1],a[2]],
-                 [1,b[1],b[2]],
-                 [1,c[1],c[2]]])
+                      [1,b[1],b[2]],
+                      [1,c[1],c[2]]])
         y = self.det([[a[0],1,a[2]],
-                 [b[0],1,b[2]],
-                 [c[0],1,c[2]]])
+                      [b[0],1,b[2]],
+                      [c[0],1,c[2]]])
         z = self.det([[a[0],a[1],1],
-                 [b[0],b[1],1],
-                 [c[0],c[1],1]])
+                      [b[0],b[1],1],
+                      [c[0],c[1],1]])
         magnitude = (x**2 + y**2 + z**2)**.5
         return (x/magnitude, y/magnitude, z/magnitude)
 
