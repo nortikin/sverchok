@@ -51,9 +51,13 @@ class CentersPolsNode(Node, SverchCustomTreeNode):
                         v0 = Vector(vers[p[0]][:])
                         v1 = Vector(vers[p[1]][:])
                         v2 = Vector(vers[p[2]][:])
-                        v3 = Vector(vers[p[3]][:])
+                        if len(p)>3:
+                            v3 = Vector(vers[p[3]][:])
+                            poi_2 = (v2+v3)/2
+                        else:
+                            poi_2 = v2
+                            
                         poi_1 = (v0+v1)/2
-                        poi_2 = (v2+v3)/2
                         vm = poi_2 - poi_1
                         medians.append(vm)
                     
