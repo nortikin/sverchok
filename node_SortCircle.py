@@ -45,38 +45,35 @@ class SortCircleNode(Node, SverchCustomTreeNode):
             type(self.inputs['vertices'].links[0].from_socket) == VerticesSocket:
             if not self.inputs['vertices'].node.socket_value_update:
                 self.inputs['vertices'].node.update()  
-            vert_list = eval(self.inputs['vertices'].links[0].from_socket.VerticesProperty)[0]
+            vert_list = eval(self.inputs['vertices'].links[0].from_socket.VerticesProperty)
             
         if 'edges' in self.inputs and self.inputs['edges'].links and \
             type(self.inputs['edges'].links[0].from_socket) == StringsSocket:
             if not self.inputs['edges'].node.socket_value_update:
                 self.inputs['edges'].node.update()  
-            edge_list = eval(self.inputs['edges'].links[0].from_socket.StringsProperty)[0]
-        
-      #  print("edges:",edge_list,"verts:",vert_list) 
-
-       # for i in vert_list:
-       #     vert_list[i]=self.topologySort(vert_list[i],edge_list[i])
-                    
-        #print("edges:",edge_list,"verts:",vert_list) 
-        
+            edge_list = eval(self.inputs['edges'].links[0].from_socket.StringsProperty)
+               
         if 'vertices' in self.outputs and len(self.outputs['vertices'].links)>0:
             if not self.outputs['vertices'].node.socket_value_update:
-                self.outputs['vertices'].node.update()  
+                self.outputs['vertices'].node.update()
+            vert_res=[]      
             if len(vert_list) and len(edge_list):
-                vert_res = self.topologySort( vert_list, edge_list)
+                for i in range(len(vert_list)):
+                    vert_res.append( self.topologySort( vert_list[i], edge_list[i]))
                 self.outputs['vertices'].VerticesProperty = str([vert_res])
-    
+                
             
         if 'edges' in self.outputs and len(self.outputs['edges'].links)>0:
             if not self.outputs['edges'].node.socket_value_update:
                 self.outputs['edges'].node.update()
-            l=len(vert_res[0])
-            if l:
-                if self.is_circle:
-                    edge_res = [[i,(i+1)%l] for i in range(l)] 
-                else:
-                    edge_res = [[i,(i+1)%l] for i in range(l - 1)]
+            edge_res = []
+            for v_l in vert_list:    
+                l=len(v_l)
+                if l:
+                    if self.is_circle:
+                        edge_res.append( [[i,(i+1)%l] for i in range(l)] )
+                    else:
+                        edge_res.append( [[i,(i+1)%l] for i in range(l - 1)])
             self.outputs['edges'].StringsProperty = str([edge_res])
 
 
