@@ -87,7 +87,6 @@ class SortCircleNode(Node, SverchCustomTreeNode):
 
     def topologySort(self, v_l , e_l):  
         if len(v_l) != len(e_l):
-            print(len(v_l),len(e_l))
             return self.topologySort2(v_l,e_l)  
         l,l1 = e_l[0]
         res = [l]
@@ -121,8 +120,6 @@ class SortCircleNode(Node, SverchCustomTreeNode):
                 l1,l = l, tmp[0][0]
         print("res:",len(res),":", len(v_l),":", res ,":",e_l ) 
         if len(res) != len(v_l):
-            #unsorted = [i for i in range(len(v_l)) if not i in res]
-            print("kanske")           
             l = res[0]
             
             while len(res) < len(v_l): #non cyclic
@@ -136,7 +133,6 @@ class SortCircleNode(Node, SverchCustomTreeNode):
                             l = i[0]
                 res.insert(0,l)
 
-        print("res:",len(res),":", len(v_l),":", res) 
            
         v_res = [v_l[i] for i in res]
         return v_res        
