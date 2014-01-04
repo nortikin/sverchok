@@ -247,7 +247,7 @@ def unregister():
     node_MatrixDestructor.unregister()
     node_MatrixGenerator.unregister()
     node_MatrixDeform.unregister()
-    node_VectorMath.register()
+    node_VectorMath.unregister()
     node_VectorMove.unregister()
     node_Float2Int.unregister()
     node_Integer.unregister()
@@ -274,7 +274,7 @@ def unregister():
     node_Viewer.unregister()
     node_Objects.unregister()
     node_CentersPolsNode.unregister()
-    node_ScalarMath.register()
+    node_ScalarMath.unregister()
     node_s.unregister()
     
     if 'SVERCHOK' in nodeitems_utils._node_categories:
