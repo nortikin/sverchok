@@ -96,7 +96,7 @@ if "bpy" in locals():
     imp.reload(node_Line)
     imp.reload(node_Hilbert)
     imp.reload(node_HilbertImage)
-    imp.reload(node_Voronoi)
+    imp.reload(node_Voronoi2D)
     imp.reload(node_Plane)
     imp.reload(node_Circle)
     imp.reload(node_Cylinder)
@@ -151,7 +151,7 @@ else:
     import node_Line
     import node_Hilbert
     import node_HilbertImage
-    import node_Voronoi
+    import node_Voronoi2D
     import node_Plane
     import node_Circle
     import node_Cylinder
@@ -207,7 +207,7 @@ def register():
     node_Line.register()
     node_Hilbert.register()
     node_HilbertImage.register()
-    node_Voronoi.register()
+    node_Voronoi2D.register()
     node_Plane.register()
     node_Circle.register()
     node_Cylinder.register()
@@ -239,7 +239,7 @@ def unregister():
     node_Cylinder.unregister()
     node_Circle.unregister()
     node_Plane.unregister()
-    node_Voronoi.unregister()
+    node_Voronoi2D.unregister()
     node_HilbertImage.unregister()
     node_Hilbert.unregister()
     node_Line.unregister()
