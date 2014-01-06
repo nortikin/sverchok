@@ -18,7 +18,7 @@ class AreaNode(Node, SverchCustomTreeNode):
         self.outputs.new('StringsSocket', "Area", "Area")
         
     def draw_buttons(self, context, layout):
-        layout.prop(self, "per_face", text="per face")
+        layout.prop(self, "per_face", text="Count faces")
         
     def update(self):
         # inputs
