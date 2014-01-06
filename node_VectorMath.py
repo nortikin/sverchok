@@ -42,7 +42,8 @@ class VectorMathNode(Node, SverchCustomTreeNode):
         ("NOISE-V",     "Noise Vector",         ""),
         ("NOISE-S",     "Noise Scalar",         ""),   
         ("CELL-V",      "Vector Cell noise",    ""),
-        ("CELL-S",      "Scalar Cell noise",    ""),    
+        ("CELL-S",      "Scalar Cell noise",    ""), 
+        ("ANGLE",       "Angle",                ""),   
         ]
         
         
@@ -68,6 +69,8 @@ class VectorMathNode(Node, SverchCustomTreeNode):
             "LEN"       :   (lambda u   : u.length,1),
             "NOISE-S"   :   (lambda u   : mathutils.noise.noise(u), 1),
             "CELL-S"    :   (lambda u   : mathutils.noise.cell(u), 1),
+            "ANGLE"     :   (lambda u,v : u.angle(v,0),2),
+            "ANGLE-SIGN":   (lambda u,v : u.angle_signed(v,0),2)  
          }
          
         vector_out = {
