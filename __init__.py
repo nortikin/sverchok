@@ -28,7 +28,7 @@
 bl_info = {
     "name": "Sverchok",
     "author": "Nedovizin Alexander, Gorodetskiy Nikita",
-    "version": (0, 2, 6),
+    "version": (0, 2, 7),
     "blender": (2, 6, 9), 
     "location": "Nodes > CustomNodesTree > Add user nodes",
     "description": "Do parametric node-based geometry programming",
