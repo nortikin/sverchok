@@ -150,7 +150,7 @@ def make_categories():
             NodeItem("SphereNode", label="Sphere"),
             NodeItem("HilbertNode", label="Hilbert"),
             NodeItem("HilbertImageNode", label="Hilbert image"),
-            NodeItem("VoronoiNode", label="Voronoi"),
+            NodeItem("Voronoi2DNode", label="Voronoi"),
             NodeItem("ImageNode", label="Image"),
             ]),
         SverchNodeCategory("SVERCHOK_V", "SVERCHOK vector", items=[
@@ -175,7 +175,7 @@ def make_categories():
             NodeItem("AdaptivePolsNode", label="Adaptive Polygons"),
             NodeItem("CrossSectionNode", label="Cross Section"),
             NodeItem("LineConnectNode", label="Lines Connection"),
-            NodeItem("SortCircleNode", label="Topology Sort: Circle")
+            NodeItem("DelaunayTriangulation2DNode", label="Delaunay Tri 2D ")
             ]),
         ]
     return node_categories
