@@ -38,7 +38,11 @@ class VectorMathNode(Node, SverchCustomTreeNode):
         ("LEN",         "Length",               ""),
         ("DISTANCE",    "Distance",             ""),
         ("NORMALIZE",   "Normalize",            ""),
-        ("NEG",         "Negate",               ""),       
+        ("NEG",         "Negate",               ""),  
+        ("NOISE-V",     "Noise Vector",         ""),
+        ("NOISE-S",     "Noise Scalar",         ""),   
+        ("CELL-V",      "Vector Cell noise",    ""),
+        ("CELL-S",      "Scalar Cell noise",    ""),    
         ]
         
         
@@ -61,7 +65,9 @@ class VectorMathNode(Node, SverchCustomTreeNode):
         scalar_out = {
             "DOT"       :   (lambda u,v  : u.dot(v) , 2),
             "DISTANCE"  :   (lambda u,v : (u-v).length, 2),
-            "LEN"       :   (lambda u   : u.length,1)
+            "LEN"       :   (lambda u   : u.length,1),
+            "NOISE-S"   :   (lambda u   : mathutils.noise.noise(u), 1),
+            "CELL-S"    :   (lambda u   : mathutils.noise.cell(u), 1),
          }
          
         vector_out = {
@@ -69,7 +75,9 @@ class VectorMathNode(Node, SverchCustomTreeNode):
             "ADD"       :   (lambda u,v : u + v, 2),
             "SUB"       :   (lambda u,v : u - v, 2),
             "NORMALIZE" :   (lambda u   : u.normalized(), 1),
-            "NEG"       :   (lambda u   : -u, 1)
+            "NEG"       :   (lambda u   : -u, 1),
+            "NOISE-V"   :   (lambda u   : mathutils.noise.noise_vector(u), 1),
+            "CELL-V"    :   (lambda u   : mathutils.noise.cell_vector(u), 1),
         }   
                    
     # check and adjust outputs and input size
@@ -177,8 +185,8 @@ class VectorMathNode(Node, SverchCustomTreeNode):
                     return w.to_tuple()
         if type(l1) is list and type (l2) is list:
             max_obj = max(len(l1),len(l2)) 
-            fullList(l1,max_obj)
-            fullList(l2,max_obj)    
+            fullList(l1, max_obj)
+            fullList(l2, max_obj)    
             res = []
             for i in range(len(l1)):
                 res.append( self.recurse_fxy(l1[i], l2[i],f))
