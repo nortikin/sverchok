@@ -112,6 +112,7 @@ class ViewerNode(Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
     
     Vertex_show = bpy.props.BoolProperty(name='Vertex_show', description='Show or not vertices', default=True)
+    activate = bpy.props.BoolProperty(name='Activate', description='Activate node', default=True)
     
     def init(self, context):
         self.inputs.new('VerticesSocket', 'vertices', 'vertices')
@@ -121,14 +122,16 @@ class ViewerNode(Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         layout.operator('node.sverchok_mesh_baker', text='bake').ident = self.name
         layout.prop(self, "Vertex_show", text="Vertex show")
+        layout.prop(self, "activate", text="Activate node")
         
     def update(self):
         global cache_viewer_baker
         cache_viewer_baker[self.name+'v'] = []
         cache_viewer_baker[self.name+'ep'] = []
         cache_viewer_baker[self.name+'m'] = []
-        if self.inputs['vertices'].links or self.inputs['matrix'].links:
+        if self.activate and (self.inputs['vertices'].links or self.inputs['matrix'].links):
             callback_disable(self.name)
+            
             if len(self.inputs['vertices'].links)>0:
                 if not self.inputs['vertices'].node.socket_value_update:
                     self.inputs['vertices'].node.update()
@@ -156,6 +159,10 @@ class ViewerNode(Node, SverchCustomTreeNode):
                     cache_viewer_baker[self.name+'m'] = dataCorrect(propm)
             else:
                 cache_viewer_baker[self.name+'m'] = []
+        
+        else:
+            callback_disable(self.name)
+        
         if cache_viewer_baker[self.name+'v'] or cache_viewer_baker[self.name+'m']:
             callback_enable(self.name, cache_viewer_baker[self.name+'v'], cache_viewer_baker[self.name+'ep'], \
                 cache_viewer_baker[self.name+'m'], self.Vertex_show)
