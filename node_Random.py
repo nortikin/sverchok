@@ -19,8 +19,8 @@ class RandomNode(Node, SverchCustomTreeNode):
         self.outputs.new('StringsSocket', "Random", "Random")
         
     def draw_buttons(self, context, layout):
-        layout.prop(self, "count_inner", text="number")
-        layout.prop(self, "seed", text="seed")
+        layout.prop(self, "count_inner", text="Count")
+        layout.prop(self, "seed", text="Seed")
 
 
     def update(self):
