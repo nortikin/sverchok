@@ -65,12 +65,57 @@ class ScalarMathNode(Node, SverchCustomTreeNode):
         ("SUB",              "-",           ""),
         ("MUL",              "*",           ""),
         ("DIV",              "/",           ""),  
-        ("INTDIV",           "//",           ""),        
+        ("INTDIV",           "//",          ""),        
         ("POW",              "**",          ""),  
         ("PI",               "pi",          ""),
-        ("E",                 "e",          ""), 
+        ("E",                "e",           ""), 
+        ("MIN",              "min",         ""),
+        ("MAX",              "max",         ""),    
         ]
         
+    fx = {
+        'SINE':       sin,
+        'COSINE':     cos,
+        'TANGENT':    tan,
+        'ARCSINE':    asin,
+        'ARCCOSINE':  acos,
+        'ARCTANGENT': atan,
+        'SQRT':       lambda x: sqrt(fabs(x)),
+        'NEG':        lambda x: -x,
+        'DEGREES':    degrees,
+        'RADIANS':    radians,
+        'ABS':        fabs,
+        'FLOOR':      floor,
+        'CEIL':       ceil,
+        'EXP':        exp,
+        'LN':         log,
+        'LOG1P':      log1p,
+        'LOG10':      log10,
+        'ACOSH':      acosh,
+        'ASINH':      asinh,
+        'COSH':       cosh,
+        'SINH':       sinh,
+        'TANH':       tanh
+    }
+    
+    fxy = {
+        'ADD':      lambda x,y : x+y,
+        'SUB':      lambda x,y : x-y,
+        'DIV':      lambda x,y : x/y,
+        'INTDIV':   lambda x,y : x//y,
+        'MUL':      lambda x,y : x*y,
+        'POW':      lambda x,y : x**y,
+        'ROUND':    lambda x,y : round(x,y),
+        'FMOD':     lambda x,y : fmod(x,y),
+        'MODULO':   lambda x,y : x%y,
+        'MIN':      lambda x,y : min(x,y),
+        'MAX':      lambda x,y : max(x,y)                     
+    }
+    
+    constant = {
+        'PI':       pi,
+        'E':       e  
+    }       
         
     items_=bpy.props.EnumProperty( items = mode_items, name="Function", 
             description="Function choice", default="SINE", update=updateNode)
@@ -85,54 +130,15 @@ class ScalarMathNode(Node, SverchCustomTreeNode):
 
     def update(self):
     
-        fx = {
-              'SINE':       sin,
-              'COSINE':     cos,
-              'TANGENT':    tan,
-              'ARCSINE':    asin,
-              'ARCCOSINE':  acos,
-              'ARCTANGENT': atan,
-              'SQRT':       lambda x: sqrt(fabs(x)),
-              'NEG':        lambda x: -x,
-              'DEGREES':    degrees,
-              'RADIANS':    radians,
-              'ABS':        fabs,
-              'FLOOR':      floor,
-              'CEIL':       ceil,
-              'EXP':        exp,
-              'LN':         log,
-              'LOG1P':      log1p,
-              'LOG10':      log10,
-              'ACOSH':      acosh,
-              'ASINH':      asinh,
-              'COSH':       cosh,
-              'SINH':       sinh,
-              'TANH':       tanh
-              }
-        fxy = {
-                'ADD':      lambda x,y : x+y,
-                'SUB':      lambda x,y : x-y,
-                'DIV':      lambda x,y : x/y,
-                'INTDIV':   lambda x,y : x//y,
-                'MUL':      lambda x,y : x*y,
-                'POW':      lambda x,y : x**y,
-                'ROUND':    lambda x,y : round(x,y),
-                'FMOD':     lambda x,y : fmod(x,y),
-                'MODULO':   lambda x,y : x%y
-                
-        }
-        constant  = {
-                'PI':       pi,
-                'E':       e  
-        }
+
                    
         # inputs
         nrInputs = 1
-        if self.items_ in constant:
+        if self.items_ in self.constant:
             nrInputs = 0
-        elif self.items_ in fx:
+        elif self.items_ in self.fx:
             nrInputs = 1
-        elif self.items_ in fxy:
+        elif self.items_ in self.fxy:
             nrInputs = 2
                 
         self.set_inputs(nrInputs)
@@ -162,16 +168,16 @@ class ScalarMathNode(Node, SverchCustomTreeNode):
                 self.outputs['float'].node.update()
             result = []
             if nrInputs == 0:
-                result = [constant[self.items_]]
+                result = [self.constant[self.items_]]
             if nrInputs == 1:
                 if len(Number1):
                     x = eval(Number1)
-                    result = self.recurse_fx(x,fx[self.items_])
+                    result = self.recurse_fx(x,self.fx[self.items_])
             if nrInputs == 2:
                 if len(Number1) and len(Number2):
                     x = eval(Number1)
                     y = eval(Number2)
-                    result = self.recurse_fxy(x,y,fxy[self.items_])
+                    result = self.recurse_fxy(x,y,self.fxy[self.items_])
                       
             self.outputs['float'].StringsProperty = str(result)
     
