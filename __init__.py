@@ -68,6 +68,7 @@ if "bpy" in locals():
     imp.reload(node_Shift)
     imp.reload(node_ListReverse)
     imp.reload(node_ListLength)
+    imp.reload(node_ListFunc)
     imp.reload(node_ListSum)
     imp.reload(node_ListStartEnd)
     imp.reload(node_ListItem)
@@ -122,6 +123,7 @@ else:
     import node_Shift
     import node_ListReverse
     import node_ListLength
+    import node_ListFunc
     import node_ListSum
     import node_ListStartEnd
     import node_ListItem
@@ -177,6 +179,7 @@ def register():
     node_Shift.register()
     node_ListReverse.register()
     node_ListLength.register()
+    node_ListFunc.register()
     node_ListSum.register()
     node_ListStartEnd.register()
     node_ListItem.register()
@@ -264,6 +267,7 @@ def unregister():
     node_ListItem.unregister()
     node_ListStartEnd.unregister()
     node_ListSum.unregister()
+    node_ListFunc.unregister()
     node_ListLength.unregister()
     node_ListReverse.unregister()
     node_Shift.unregister()

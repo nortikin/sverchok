@@ -122,6 +122,7 @@ def make_categories():
             NodeItem("ShiftNode", label="List Shift"),
             NodeItem("ListReverseNode", label="List Reverse"),
             NodeItem("ListLengthNode", label="List Length"),
+            NodeItem("ListFuncNode", label="List Function"),
             NodeItem("ListSumNode", label="List Sum"),
             NodeItem("ListFLNode", label="List First&Last"),
             NodeItem("ListItemNode", label="List Item"),
@@ -131,15 +132,12 @@ def make_categories():
         SverchNodeCategory("SVERCHOK_N", "SVERCHOK number", items=[
             # numbers, formula nodes
             NodeItem("GenSeriesNode", label="Series"),
-            NodeItem("GenRangeNode", label="Range"),
             NodeItem("RandomNode", label="Random"),
             NodeItem("FloatNode", label="Float"),
             NodeItem("IntegerNode", label="Int"),
-            NodeItem("Float2IntNode", label="Float 2 Int"),
+            NodeItem("NumberNode", label="Float 2 Int"),
             NodeItem("FormulaNode", label="Formula"),
             NodeItem("Formula2Node", label="Formula2"),
-            NodeItem("ScalarMathNode", label="Math"),
-    
             ]),
         SverchNodeCategory("SVERCHOK_G", "SVERCHOK generator", items=[
             # objects, new elements, line, plane
@@ -150,7 +148,7 @@ def make_categories():
             NodeItem("SphereNode", label="Sphere"),
             NodeItem("HilbertNode", label="Hilbert"),
             NodeItem("HilbertImageNode", label="Hilbert image"),
-            NodeItem("Voronoi2DNode", label="Voronoi"),
+            NodeItem("VoronoiNode", label="Voronoi"),
             NodeItem("ImageNode", label="Image"),
             ]),
         SverchNodeCategory("SVERCHOK_V", "SVERCHOK vector", items=[
@@ -159,9 +157,8 @@ def make_categories():
             NodeItem("VectorsOutNode", label="Vector out"),
             NodeItem("VectorNormalNode", label="Vector' Normal"),
             NodeItem("VectorMoveNode", label="Vector Move"),
-            NodeItem("VectorMathNode", label="Vector Moth"),
-            NodeItem("MatrixApplyNode", label="Matrix Apply"),
-            NodeItem("VectorDropNode", label="Vector Drop"),
+            NodeItem("VectorMatrixNode", label="Vector x Matrices"),
+            NodeItem("VectorDropNode", label="Vector Drop on mat."),
             NodeItem("MatrixGenNode", label="Matrix in"),
             NodeItem("MatrixOutNode", label="Matrix out"),
             NodeItem("MatrixDeformNode", label="Matrix Deform"),
@@ -175,7 +172,6 @@ def make_categories():
             NodeItem("AdaptivePolsNode", label="Adaptive Polygons"),
             NodeItem("CrossSectionNode", label="Cross Section"),
             NodeItem("LineConnectNode", label="Lines Connection"),
-            NodeItem("DelaunayTriangulation2DNode", label="Delaunay Tri 2D ")
             ]),
         ]
     return node_categories
