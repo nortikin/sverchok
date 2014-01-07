@@ -14,17 +14,6 @@ cache_nodes = {}
 ################### update magic ####################
 #####################################################
 
-
-# update node on framechange
-def update_nodes(scene):
-    try: bpy.ops.node.sverchok_update_all()
-    except: pass
-# addtionally 
-pre = bpy.app.handlers.frame_change_pre
-for x in pre: pre.remove(x)
-pre.append(update_nodes)
-
-
 # main update
 def read_cnodes(cnode):
     global cache_nodes
@@ -83,7 +72,17 @@ def is_updated_cnode():
     
 def lock_updated_cnode():
      write_cnodes('LOCK UPDATE CNODES', 1)   
-        
+
+
+# update node on framechange
+def update_nodes(scene):
+    try: bpy.ops.node.sverchok_update_all()
+    except: pass
+# addtionally 
+pre = bpy.app.handlers.frame_change_pre
+for x in pre: pre.remove(x)
+pre.append(update_nodes)
+
 
 #####################################################
 ################### bmesh magic #####################
