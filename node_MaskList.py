@@ -112,7 +112,7 @@ class MaskListNode(Node, SverchCustomTreeNode):
                 self.outputs['dataTrue'].MatrixProperty = str(result[0])
         else:
             self.outputs['dataTrue'].StringsProperty='[[]]'
-        #print ('всё',result)
+        print ('всё',result)
         if 'dataFalse' in self.outputs and len(self.outputs['dataFalse'].links)>0:
             if not self.outputs['dataFalse'].node.socket_value_update:
                 self.outputs['dataFalse'].node.update()
@@ -135,20 +135,21 @@ class MaskListNode(Node, SverchCustomTreeNode):
         return res
     
 
-    def putCurrentLevelList(self, list_a, list_b, mask_l, level):   
+    def putCurrentLevelList(self, list_a, list_b, mask_l, level, idx=0):   
         result_t = []
         result_f = []
         if level>1:
             if type(list_a) in [list, tuple]:
                 for idx,l in enumerate(list_a):
-                    l2 = self.putCurrentLevelList(l, list_b, mask_l, level-1)
+                    l2 = self.putCurrentLevelList(l, list_b, mask_l, level-1, idx)
                     result_t.append(l2[0])
                     result_f.append(l2[1])
             else:
                 print('AHTUNG!!!')
                 return list_a
         else:
-            mask = mask_l[0]
+            indx = min(len(mask_l), idx)
+            mask = mask_l[indx]
             mask_0 = copy(mask)
             while len(mask)<len(list_a):
                 if len(mask_0)==0:
