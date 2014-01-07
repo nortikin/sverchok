@@ -125,8 +125,8 @@ def make_categories():
             NodeItem("ListSumNode", label="List Sum"),
             NodeItem("ListFLNode", label="List First&Last"),
             NodeItem("ListItemNode", label="List Item"),
+	    NodeItem("ListFuncNode", label="List Math"),
             NodeItem("MaskListNode", label="List Mask"),
-            NodeItem("ListBoomNode", label="List Boom"),
             ]),
         SverchNodeCategory("SVERCHOK_N", "SVERCHOK number", items=[
             # numbers, formula nodes
@@ -159,7 +159,7 @@ def make_categories():
             NodeItem("VectorsOutNode", label="Vector out"),
             NodeItem("VectorNormalNode", label="Vector' Normal"),
             NodeItem("VectorMoveNode", label="Vector Move"),
-            NodeItem("VectorMathNode", label="Vector Moth"),
+            NodeItem("VectorMathNode", label="Vector Math"),
             NodeItem("MatrixApplyNode", label="Matrix Apply"),
             NodeItem("VectorDropNode", label="Vector Drop"),
             NodeItem("MatrixGenNode", label="Matrix in"),
@@ -175,7 +175,8 @@ def make_categories():
             NodeItem("AdaptivePolsNode", label="Adaptive Polygons"),
             NodeItem("CrossSectionNode", label="Cross Section"),
             NodeItem("LineConnectNode", label="Lines Connection"),
-            NodeItem("DelaunayTriangulation2DNode", label="Delaunay Tri 2D ")
+            NodeItem("DelaunayTriangulation2DNode", label="Delaunay Tri 2D "),
+            NodeItem("ListBoomNode", label="Polygon Boom"),
             ]),
         ]
     return node_categories
