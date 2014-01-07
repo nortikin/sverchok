@@ -14,6 +14,18 @@ cache_nodes = {}
 ################### update magic ####################
 #####################################################
 
+
+# update node on framechange
+def update_nodes(scene):
+    try: bpy.ops.node.sverchok_update_all()
+    except: pass
+# addtionally 
+pre = bpy.app.handlers.frame_change_pre
+for x in pre: pre.remove(x)
+pre.append(update_nodes)
+
+
+# main update
 def read_cnodes(cnode):
     global cache_nodes
     if cnode not in cache_nodes:
@@ -609,3 +621,71 @@ def updateNode(self, context):
     is_updated_cnode()
     
     
+
+
+##############################################################
+##############################################################
+############## changable type of socket magic ################
+########### if you have separate socket solution #############
+#################### wellcome to provide #####################
+##############################################################
+##############################################################
+
+# node has to have self veriables:
+# typ = bpy.props.StringProperty(name='typ', default='')
+# newsock = bpy.props.BoolProperty(name='newsock', default=False)
+# and in update:
+# inputsocketname = 'data'
+# outputsocketname = ['dataTrue','dataFalse'] # 'data...' - are names of your sockets
+# self.changable_sockets(inputsocketname, outputsocketname)
+
+# try if changed types of input socket
+def check_sockets(inputsocketname, self):
+    if type(self.inputs[inputsocketname].links[0].from_socket) == VerticesSocket:
+        if self.typ == 'v':
+            self.newsock = False
+        else:
+            self.typ = 'v'
+            self.newsock = True
+    if type(self.inputs[inputsocketname].links[0].from_socket) == StringsSocket:
+        if self.typ == 's':
+            self.newsock = False
+        else:
+            self.typ = 's'
+            self.newsock = True
+    if type(self.inputs[inputsocketname].links[0].from_socket) == MatrixSocket:
+        if self.typ == 'm':
+            self.newsock = False
+        else:
+            self.typ = 'm'
+            self.newsock = True
+    return
+    
+# cleaning of old not fited
+def clean_sockets(outputsocketname, self):
+    for n in outputsocketname:
+        if n in self.outputs:
+            self.outputs.remove(self.outputs[n])
+    return
+
+# main def for changable sockets type
+def changable_sockets(inputsocketname, outputsocketname, socketname):
+    self = bpy.data.node_groups[socketname[1]].nodes[socketname[0]]
+    if len(self.inputs[inputsocketname].links) > 0:
+        check_sockets(inputsocketname, self)
+        if self.newsock:
+            clean_sockets(outputsocketname, self)
+            self.newsock = False
+            if self.typ == 'v':
+                for n in outputsocketname:
+                    self.outputs.new('VerticesSocket', n, n)
+            if self.typ == 's':
+                for n in outputsocketname:
+                    self.outputs.new('StringsSocket', n, n)
+            if self.typ == 'm':
+                for n in outputsocketname:
+                    self.outputs.new('MatrixSocket', n, n)
+        else:
+            self.newsock = False
+    return
+
