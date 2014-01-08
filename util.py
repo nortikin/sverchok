@@ -676,11 +676,13 @@ def makeTreeUpdate():
 def speedUpdate():
     global list_nodes4update
     for ng_name in list_nodes4update:
-        nods = bpy.context.blend_data.node_groups[ng_name].nodes
-        for nod_name in list_nodes4update[ng_name]:
-            nods[nod_name].update()
-            
-        bpy.context.blend_data.node_groups[ng_name].interface_update(bpy.context)
+        if ng_name in bpy.context.blend_data.node_groups:
+            nods = bpy.context.blend_data.node_groups[ng_name].nodes
+            for nod_name in list_nodes4update[ng_name]:
+                if nod_name in nods:
+                    nods[nod_name].update()
+                
+            bpy.context.blend_data.node_groups[ng_name].interface_update(bpy.context)
 
 
 ##############################################################
