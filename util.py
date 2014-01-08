@@ -619,7 +619,27 @@ def updateNode(self, context):
     updateAllOuts(self)
     is_updated_cnode()
     
+
+def updateTreeNode(self, context):
+    for ng in context.blend_data.node_groups:
+        for nod in ng.nodes:
+            flag=False
+            for inputs in nod.inputs:
+                if inputs.links:
+                    Flag=True
+                    break
+            
+            if flag: 
+                continue
+            
+            ini_update_cnode(nod.name)
+            lock_updated_cnode()
+            updateAllOuts(nod)
+            is_updated_cnode()  
+            
+        ng.interface_update(bpy.context)
     
+      
 
 
 ##############################################################
@@ -687,4 +707,3 @@ def changable_sockets(inputsocketname, outputsocketname, socketname):
         else:
             self.newsock = False
     return
-
