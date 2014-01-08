@@ -9,6 +9,7 @@ bmesh_mapping = {}
 per_cache = {}
 temp_handle = {}
 cache_nodes = {}
+list_nodes4update = {}
 
 #####################################################
 ################### update magic ####################
@@ -74,14 +75,6 @@ def lock_updated_cnode():
      write_cnodes('LOCK UPDATE CNODES', 1)   
 
 
-# update node on framechange
-def update_nodes(scene):
-    try: bpy.ops.node.sverchok_update_all()
-    except: pass
-# addtionally 
-pre = bpy.app.handlers.frame_change_pre
-for x in pre: pre.remove(x)
-pre.append(update_nodes)
 
 
 #####################################################
@@ -619,7 +612,7 @@ def updateNode(self, context):
     updateAllOuts(self)
     is_updated_cnode()
     
-
+'''
 def updateTreeNode(self, context):
     for ng in context.blend_data.node_groups:
         for nod in ng.nodes:
@@ -637,9 +630,57 @@ def updateTreeNode(self, context):
             updateAllOuts(nod)
             is_updated_cnode()  
             
-        #ng.interface_update(bpy.context)
+        #ng.interface_update(bpy.context)'''
     
+
+def makeTreeUpdate():
+    global list_nodes4update
+    def insertnode(nod, nodeset, etalonset):
+        if nod.name not in etalonset:
+            nodeset.append(nod.name)
+            for output in nod.outputs:
+                for link in output.links:
+                    nod_ = link.to_socket.node
+                    insertnode(nod_, nodeset, etalonset)
+                    if nodeset:
+                        idx = min(len(etalonset)-1, 0)
+                        etalonset = etalonset[:idx]+nodeset + etalonset[idx:]
+                        nodeset = []
+        elif nodeset:
+            idx = etalonset.index(nod.name)
+            etalonset = etalonset[:idx]+nodeset + etalonset[idx:]
+            nodeset = []
+        
+        return etalonset
+            
       
+    for ng in bpy.context.blend_data.node_groups:
+        nodeset_e=[]
+        for nod in ng.nodes:
+            flag=False
+            for inputs in nod.inputs:
+                if inputs.links:
+                    Flag=True
+                    break
+            
+            if flag: 
+                continue
+            
+            nodeset_a = []
+            nodeset_e = insertnode(nod, nodeset_a, nodeset_e)
+            
+        list_nodes4update[ng.name] = nodeset_e
+    return
+    
+
+def speedUpdate():
+    global list_nodes4update
+    for ng_name in list_nodes4update:
+        nods = bpy.context.blend_data.node_groups[ng_name].nodes
+        for nod_name in list_nodes4update[ng_name]:
+            nods[nod_name].update()
+            
+        bpy.context.blend_data.node_groups[ng_name].interface_update(bpy.context)
 
 
 ##############################################################
@@ -707,3 +748,15 @@ def changable_sockets(inputsocketname, outputsocketname, socketname):
         else:
             self.newsock = False
     return
+
+
+# update node on framechange
+def update_nodes(scene):
+    try: #bpy.ops.node.sverchok_update_all()
+        speedUpdate()
+    except: pass
+# addtionally 
+pre = bpy.app.handlers.frame_change_pre
+for x in pre: pre.remove(x)
+pre.append(update_nodes)
+
