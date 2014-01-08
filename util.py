@@ -637,7 +637,7 @@ def updateTreeNode(self, context):
             updateAllOuts(nod)
             is_updated_cnode()  
             
-        ng.interface_update(bpy.context)
+        #ng.interface_update(bpy.context)
     
       
 
