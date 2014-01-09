@@ -33,7 +33,7 @@ class RandomNode(Node, SverchCustomTreeNode):
         else:
             Coun = self.count_inner
             
-        if 'Seed' in self.inputs and len(self.inputs['Seed'].links)>0 and type(self.inputs['Seed'].links[0].from_socket) == bpy.types.StringSocket:
+        if 'Seed' in self.inputs and len(self.inputs['Seed'].links)>0 and type(self.inputs['Seed'].links[0].from_socket) == bpy.types.StringsSocket:
             if not self.inputs['Seed'].node.socket_value_update:
                 self.inputs['Seed'].node.update()
             
