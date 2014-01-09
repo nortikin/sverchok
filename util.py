@@ -298,6 +298,19 @@ def Matrix_scale(prop, list=False):
             Vectors.append(p.to_scale())
     return [Vectors]
 
+# returns (Vector, rotation) utility function for Matrix Destructor. if list is true
+# the Vector is decomposed into tuple format.  
+def Matrix_rotation(prop, list=False):
+    Vectors = []
+    for p in prop:
+        q = p.to_quaternion()
+        if list:
+            vec,angle=q.to_axis_angle()
+            Vectors.append(( vec[:], angle))         
+        else:
+            Vectors.append(q.to_axis_angle())         
+    return [Vectors]    
+
 def Vector_generate(prop):
     vec_out = []
     for i, object in enumerate(prop):  # lists by objects
