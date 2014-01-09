@@ -683,19 +683,26 @@ def makeTreeUpdate():
             nodeset_e = insertnode(nod, nodeset_a, nodeset_e)
             
         list_nodes4update[ng.name] = nodeset_e
+        list_nodes4update['TreeName'] = bpy.context.space_data.node_tree.name
     return
     
 
 def speedUpdate():
     global list_nodes4update
+    if 'TreeName' in list_nodes4update:
+        NodeTree_name = list_nodes4update['TreeName']
+    else:
+        NodeTree_name = bpy.context.space_data.node_tree.name
+        list_nodes4update['TreeName'] = NodeTree_name
+        
     for ng_name in list_nodes4update:
-        if ng_name in bpy.context.blend_data.node_groups:
-            nods = bpy.context.blend_data.node_groups[ng_name].nodes
+        if ng_name in bpy.context.blend_data.node_groups and ng_name==NodeTree_name:
+            nods = bpy.data.node_groups[ng_name].nodes
             for nod_name in list_nodes4update[ng_name]:
                 if nod_name in nods:
                     nods[nod_name].update()
                 
-            bpy.context.blend_data.node_groups[ng_name].interface_update(bpy.context)
+            bpy.data.node_groups[ng_name].interface_update(bpy.context)
 
 
 ##############################################################
@@ -774,4 +781,3 @@ def update_nodes(scene):
 pre = bpy.app.handlers.frame_change_pre
 for x in pre: pre.remove(x)
 pre.append(update_nodes)
-
