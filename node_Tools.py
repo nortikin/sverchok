@@ -11,12 +11,6 @@ class SverchokUpdateAll(bpy.types.Operator):
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
-        '''
-        lock_updated_cnode()
-        for ng in context.blend_data.node_groups:
-            ng.interface_update(bpy.context)
-        is_updated_cnode()'''
-        
         makeTreeUpdate()
         speedUpdate()
         return {'FINISHED'}
