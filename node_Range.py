@@ -56,7 +56,7 @@ class GenRangeNode(Node, SverchCustomTreeNode):
             if Divisions > 2:
                 Range.extend([c for c in self.xfrange(Start, Stop, Divisions)])                       
             Range.append(Stop)
-            
+            print([Range,])
             self.outputs['Range'].StringsProperty = str([Range, ])
 
     def xfrange(self, start, stop, divisions):

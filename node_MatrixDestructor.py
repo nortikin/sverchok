@@ -53,10 +53,8 @@ class MatrixOutNode(Node, SverchCustomTreeNode):
                         rots.append(pair[0])
                         angles.append(round(math.degrees(pair[1]),7))
                 self.outputs['Rotation'].VerticesProperty = str([rots,])
-# this should be updated to handle new numbernode formats.
-
-                print([angles,])
-                self.outputs['Angle'].StringsProperty = str([angles, ])
+# this should be updated to handle new numbernode formats. but so should the rest this file.
+                self.outputs['Angle'].StringsProperty = str([angles ])
 
                    
         else:
