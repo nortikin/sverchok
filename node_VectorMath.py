@@ -137,12 +137,20 @@ class VectorMathNode(Node, SverchCustomTreeNode):
             if nrInputs == 1:
                 if len(vector1):
                     u = eval(vector1)
-                    result = self.recurse_fx(u,vector_out[self.items_][0])
+                    leve = levelsOflist(u)
+                    try:
+                        result = self.recurse_fx(u,vector_out[self.items_][0], leve-1)
+                    except:
+                        print(self.name)
             if nrInputs == 2:
                 if len(vector1) and len(vector2):
                     u = eval(vector1)
                     v = eval(vector2)
-                    result = self.recurse_fxy(u,v,vector_out[self.items_][0])                 
+                    leve = levelsOflist(u)
+                    try:
+                        result = self.recurse_fxy(u,v,vector_out[self.items_][0], leve-1)
+                    except:
+                        print(self.name)           
             self.outputs['W'].VerticesProperty = str(result)
    
         #scalar-output    
@@ -153,54 +161,57 @@ class VectorMathNode(Node, SverchCustomTreeNode):
             if nrInputs == 1:
                 if len(vector1):
                     u = eval(vector1)
-                    result = self.recurse_fx(u,scalar_out[self.items_][0])            
+                    leve = levelsOflist(u)
+                    try:
+                        result = self.recurse_fx(u,scalar_out[self.items_][0], leve-1)
+                    except:
+                        print(self.name) 
             if nrInputs == 2:
                 if len(vector1) and len(vector2):
                     u = eval(vector1)
                     v = eval(vector2)
-                    result = self.recurse_fxy(u,v,scalar_out[self.items_][0])
+                    leve = levelsOflist(u)
+                    try:
+                        result = self.recurse_fxy(u,v,scalar_out[self.items_][0], leve-1)
+                    except:
+                        print(self.name) 
                     
             self.outputs['out'].StringsProperty = str(result)
                     
 
 # apply f to all values recursively  
         
-    def recurse_fx(self, l,f):
-        if type(l) is tuple:
+    def recurse_fx(self, l,f, leve):
+        if not leve:
             w = f(Vector(l))
             if self.scalar_output_socket:
                 return w
             else:
-                return w.to_tuple()     
+                return w.to_tuple()
         else:
             t = []
             for i in l:
-                t.append(self.recurse_fx(i,f))
+                t.append(self.recurse_fx(i,f, leve-1))
         return t
         
 # match length of lists, 
 # taken from mathNode
  
-    def recurse_fxy(self,l1, l2, f):
-        if type(l1) is tuple and \
-           type(l2) is tuple:
+    def recurse_fxy(self,l1, l2, f, leve):
+        if not leve:
                 w=f(Vector(l1),Vector(l2))
                 if self.scalar_output_socket:
                     return w
                 else:
                     return w.to_tuple()
-        if type(l1) is list and type (l2) is list:
+        else:
             max_obj = max(len(l1),len(l2)) 
             fullList(l1, max_obj)
             fullList(l2, max_obj)    
             res = []
             for i in range(len(l1)):
-                res.append( self.recurse_fxy(l1[i], l2[i],f))
-            return res    
-        if type(l1) is list and type(l2) is tuple:
-            return self.recurse_fxy(l1,[l2],f)
-        if type(l2) is list and type(l1) is tuple:
-            return self.recurse_fxy([l1],l2,f)
+                res.append(self.recurse_fxy(l1[i], l2[i],f, leve-1))
+            return res
             
             
     def update_socket(self, context):
