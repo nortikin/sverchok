@@ -4,7 +4,7 @@ from node_s import *
 from util import *
 
 class SvObjSelected(bpy.types.Operator):
-    """ Sverchok object selector """
+    """ G E T   SELECTED OBJECTS """
     bl_idname = "node.sverchok_object_insertion"
     bl_label = "Sverchok object selector"
     bl_options = {'REGISTER', 'UNDO'}
@@ -55,7 +55,9 @@ class ObjectsNode(Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         name_ = [self.name] + [self.id_data.name]
         name = str(name_[0]+name_[1])
-        layout.operator('node.sverchok_object_insertion', text='get selected').name_objectin = str(name_)
+        row = layout.row()
+        row.scale_y = 4.0
+        row.operator('node.sverchok_object_insertion', text='G E T').name_objectin = str(name_)
         handle = handle_read(name)
         if handle[0]:
             for o in handle[1]:

@@ -248,10 +248,26 @@ def draw_callback_view(handle, sl1, sl2, sl3, vs):
                 glPointSize(1.75)
                 glLineWidth(1.0)
         glDisable(GL_POLYGON)
+        
+    # for future bezier drawing - to remake
+    #if data_edges and data_vector and bezier:
+        # here 3 lines that i must understand
+        #from bpy_extras.view3d_utils import location_3d_to_region_2d
+        #region = context.region
+        #region_data = context.region_data
+        
+        #glEnable(GL_BLEND)
+        #glColor4f(1, 0, 0, 0.5)
+        #glLineWidth(1.0)
+        #glBegin(GL_LINE_STRIP)
+        #for i in range(current_frame):
+            #glVertex2f(*location_3d_to_region_2d(region, region_data, (math.sin(i / 10), 0, i / 10)).to_tuple())
+        #glEnd()
+        #glDisable(GL_BLEND)
     
     #######
     # matrix
-    if data_matrix and not data_polygons and not data_edges and not data_vector:
+    if data_matrix and not data_vector:
         for mat in data_matrix:
             draw_matrix(mat)
     

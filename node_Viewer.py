@@ -8,7 +8,7 @@ from util import *
 cache_viewer_baker = {}
 
 class SvObjBake(bpy.types.Operator):
-    """Sverchok mesh baker"""
+    """ B A K E   OBJECTS """
     bl_idname = "node.sverchok_mesh_baker"
     bl_label = "Sverchok mesh baker"
     bl_options = {'REGISTER', 'UNDO'}
@@ -105,6 +105,13 @@ class SvObjBake(bpy.types.Operator):
         #print (ob.name + ' baked')
         return [ob,me]
 
+# asked in forutm, wait to answer
+#class ViewerDrawColor(Color):
+    #''' Color of viewer objects '''
+    #bl_idname = 'SverchokViewerDrawColor'
+    #bl_label = 'Sv Viewer Draw Color'
+    #color = ()
+
 class ViewerNode(Node, SverchCustomTreeNode):
     ''' ViewerNode '''
     bl_idname = 'ViewerNode'
@@ -113,6 +120,9 @@ class ViewerNode(Node, SverchCustomTreeNode):
     
     Vertex_show = bpy.props.BoolProperty(name='Vertex_show', description='Show or not vertices', default=True)
     activate = bpy.props.BoolProperty(name='Activate', description='Activate node', default=True)
+    #R = bpy.props.FloatProperty(name='R', description='R', default=0.30, min=0, max=1, options={'ANIMATABLE'}, update=updateNode)
+    #G = bpy.props.FloatProperty(name='G', description='G', default=0.59, min=0, max=1, options={'ANIMATABLE'}, update=updateNode)
+    #B = bpy.props.FloatProperty(name='B', description='B', default=0.11, min=0, max=1, options={'ANIMATABLE'}, update=updateNode)
     
     def init(self, context):
         self.inputs.new('VerticesSocket', 'vertices', 'vertices')
@@ -120,9 +130,19 @@ class ViewerNode(Node, SverchCustomTreeNode):
         self.inputs.new('MatrixSocket', 'matrix', 'matrix')
     
     def draw_buttons(self, context, layout):
-        layout.operator('node.sverchok_mesh_baker', text='bake').ident = self.name
-        layout.prop(self, "Vertex_show", text="Vertex show")
-        layout.prop(self, "activate", text="Activate node")
+        row = layout.row(align=True)
+        row.prop(self, "Vertex_show", text="Verts")
+        row.prop(self, "activate", text="Show")
+        row = layout.row()
+        row.scale_y=4.0
+        row.operator('node.sverchok_mesh_baker', text='B A K E').ident = self.name
+        # to make custom color
+        #layout.prop(self, 'color', text='color')
+        #row = layout.row(align=True)
+        #row.scale_x=10.0
+        #row.prop(self, "R", text="R")
+        #row.prop(self, "G", text="G")
+        #row.prop(self, "B", text="B")
         
     def update(self):
         global cache_viewer_baker
@@ -181,12 +201,14 @@ class ViewerNode(Node, SverchCustomTreeNode):
         self.update()
 
 def register():
+    #bpy.utils.register_class(ViewerDrawColor)
     bpy.utils.register_class(ViewerNode)
     bpy.utils.register_class(SvObjBake)
     
 def unregister():
     bpy.utils.unregister_class(SvObjBake)
     bpy.utils.unregister_class(ViewerNode)
+    #bpy.utils.unregister_class(ViewerDrawColor)
     
 
 if __name__ == "__main__":
