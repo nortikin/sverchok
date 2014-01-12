@@ -619,11 +619,13 @@ def updateSlot(self, context):
     return
     
 def updateNode(self, context):
+    speedUpdate()
+    '''
     if not ini_update_cnode(self.name):
         return
     
     updateAllOuts(self)
-    is_updated_cnode()
+    is_updated_cnode()'''
     
 '''
 def updateTreeNode(self, context):
