@@ -46,12 +46,12 @@ def tag_redraw_all_view3d():
                         region.tag_redraw()
 
 
-def callback_enable(name, sl1, sl2, sl3, vs):
+def callback_enable(name, sl1, sl2, sl3, vs, colo, tran):
     global temp_handle
     handle = handle_read(name)
     if handle[0]:
         return
-    handle_view = SpaceView3D.draw_handler_add(draw_callback_view, (name, sl1, sl2, sl3, vs), 'WINDOW', 'POST_VIEW')
+    handle_view = SpaceView3D.draw_handler_add(draw_callback_view, (name, sl1, sl2, sl3, vs, colo, tran), 'WINDOW', 'POST_VIEW')
     handle_write(name, handle_view)
     tag_redraw_all_view3d()
     
@@ -67,12 +67,16 @@ def callback_disable(name):
     tag_redraw_all_view3d()
    
     
-def draw_callback_view(handle, sl1, sl2, sl3, vs):
+def draw_callback_view(handle, sl1, sl2, sl3, vs, colo, tran):
     context = bpy.context
 
     from bgl import glEnable, glDisable, glColor3f, glVertex3f, glPointSize, glLineWidth, glBegin, glEnd, glLineStipple, GL_POINTS, GL_LINE_STRIP, GL_LINES, GL_LINE, GL_LINE_STIPPLE, GL_POLYGON, GL_POLYGON_STIPPLE, GL_POLYGON_SMOOTH, glPolygonStipple
     
     # define globals, separate edgs from pols
+    if tran:
+        polyholy = GL_POLYGON_STIPPLE
+    else:
+        polyholy = GL_POLYGON
     if sl1:
         data_vector = Vector_generate(sl1)
         verlen = len(data_vector) - 1
@@ -95,6 +99,9 @@ def draw_callback_view(handle, sl1, sl2, sl3, vs):
         data_matrix = []
         for i in range(0, verlen+1):
             data_matrix.append(Matrix())
+    coloa = colo[0]
+    colob = colo[1]
+    coloc = colo[2]
     
     if data_vector == 0 and data_polygons == 0 and data_matrix == 0 and data_edges == 0:
         callback_disable(handle)
@@ -202,11 +209,11 @@ def draw_callback_view(handle, sl1, sl2, sl3, vs):
                     #print ('рисовальня', matrix, vec_corrected)
                 glEnd()
                 glPointSize(3.0)
-        
+    
     #######
     # lines
     if data_edges and data_vector:
-        glColor3f(0.5, 1.0, 0.5)
+        glColor3f(coloa,colob,coloc)
         glLineWidth(1.0)
         glPointSize(1.75)
         glEnable(GL_LINES)
@@ -224,13 +231,14 @@ def draw_callback_view(handle, sl1, sl2, sl3, vs):
                 glPointSize(1.75)
                 glLineWidth(1.0)
         glDisable(GL_LINES)
+        
+        
     #######
     # polygons
     if data_polygons and data_vector:
-        glColor3f(1.0, 0.5, 0.5)
         glLineWidth(1.0)
         glPointSize(1.75)
-        glEnable(GL_POLYGON)
+        glEnable(polyholy)
         
         for i, matrix in enumerate(data_matrix):    # object
             k = i
@@ -239,15 +247,17 @@ def draw_callback_view(handle, sl1, sl2, sl3, vs):
             oblen = len(data_polygons[k])
             for j, pol in enumerate(data_polygons[k]):
                 glBegin(GL_POLYGON)
-                rand = j / oblen
-                glColor3f(1-rand, 1-rand, rand)
+                randa = (j/oblen) * coloa
+                randb = (j/oblen) * colob
+                randc = (j/oblen) * coloc
+                glColor3f(randa, randb, randc)
                 for point in pol:
                     vec_corrected = data_matrix[i]*data_vector[k][int(point)]
                     glVertex3f(*vec_corrected)
                 glEnd()
                 glPointSize(1.75)
                 glLineWidth(1.0)
-        glDisable(GL_POLYGON)
+        glDisable(polyholy)
         
     # for future bezier drawing - to remake
     #if data_edges and data_vector and bezier:
