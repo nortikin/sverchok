@@ -118,9 +118,10 @@ class ViewerNode(Node, SverchCustomTreeNode):
     bl_label = 'Viewer Draw'
     bl_icon = 'OUTLINER_OB_EMPTY'
     
-    Vertex_show = bpy.props.BoolProperty(name='Vertex_show', description='Show or not vertices', default=True)
-    activate = bpy.props.BoolProperty(name='Activate', description='Activate node', default=True)
-    transparant = bpy.props.BoolProperty(name='Transparant', description='transparant polygons', default=False)
+    Vertex_show = bpy.props.BoolProperty(name='Vertices', description='Show or not vertices', default=True)
+    activate = bpy.props.BoolProperty(name='Show', description='Activate node?', default=True)
+    transparant = bpy.props.BoolProperty(name='Transparant', description='transparant polygons?', default=False)
+    shading = bpy.props.BoolProperty(name='Shading', description='shade the object or index representation?', default=False)
     coloris = bpy.types.Colors
     coloris.color[1]['default'] = (0.055,0.312,0.5)
     color_view = coloris.color
@@ -140,6 +141,9 @@ class ViewerNode(Node, SverchCustomTreeNode):
         row = layout.row(align=True)
         row.scale_x=10.0
         row.prop(self, "transparant", text="Transp")
+        row.prop(self, "shading", text="Shade")
+        row = layout.row(align=True)
+        row.scale_x=10.0
         row.prop(self, "color_view", text="Color")
         #a = self.color_view[2]
         #layout.label(text=str(round(a, 4)))
@@ -185,7 +189,7 @@ class ViewerNode(Node, SverchCustomTreeNode):
         
         if cache_viewer_baker[self.name+'v'] or cache_viewer_baker[self.name+'m']:
             callback_enable(self.name, cache_viewer_baker[self.name+'v'], cache_viewer_baker[self.name+'ep'], \
-                cache_viewer_baker[self.name+'m'], self.Vertex_show, self.color_view, self.transparant)
+                cache_viewer_baker[self.name+'m'], self.Vertex_show, self.color_view, self.transparant, self.shading)
             
             self.use_custom_color=True
             self.color = (1,0.3,0)

@@ -20,6 +20,7 @@
 
 import bpy
 import blf
+import math
 import mathutils
 from mathutils import Vector, Matrix
 import node_Viewer
@@ -46,12 +47,12 @@ def tag_redraw_all_view3d():
                         region.tag_redraw()
 
 
-def callback_enable(name, sl1, sl2, sl3, vs, colo, tran):
+def callback_enable(name, sl1, sl2, sl3, vs, colo, tran, shade):
     global temp_handle
     handle = handle_read(name)
     if handle[0]:
         return
-    handle_view = SpaceView3D.draw_handler_add(draw_callback_view, (name, sl1, sl2, sl3, vs, colo, tran), 'WINDOW', 'POST_VIEW')
+    handle_view = SpaceView3D.draw_handler_add(draw_callback_view, (name, sl1, sl2, sl3, vs, colo, tran, shade), 'WINDOW', 'POST_VIEW')
     handle_write(name, handle_view)
     tag_redraw_all_view3d()
     
@@ -67,7 +68,7 @@ def callback_disable(name):
     tag_redraw_all_view3d()
    
     
-def draw_callback_view(handle, sl1, sl2, sl3, vs, colo, tran):
+def draw_callback_view(handle, sl1, sl2, sl3, vs, colo, tran, shade):
     context = bpy.context
 
     from bgl import glEnable, glDisable, glColor3f, glVertex3f, glPointSize, glLineWidth, glBegin, glEnd, glLineStipple, GL_POINTS, GL_LINE_STRIP, GL_LINES, GL_LINE, GL_LINE_STIPPLE, GL_POLYGON, GL_POLYGON_STIPPLE, GL_POLYGON_SMOOTH, glPolygonStipple
@@ -196,7 +197,7 @@ def draw_callback_view(handle, sl1, sl2, sl3, vs, colo, tran):
     if vs:
         if data_vector:
             glPointSize(3.0)
-            glColor3f(1.0, 1.0, 1.0)
+            glColor3f(0.8, 0.9, 1.0)
             
             for i, matrix in enumerate(data_matrix):
                 glBegin(GL_POINTS)
@@ -215,7 +216,6 @@ def draw_callback_view(handle, sl1, sl2, sl3, vs, colo, tran):
     if data_edges and data_vector:
         glColor3f(coloa,colob,coloc)
         glLineWidth(1.0)
-        glPointSize(1.75)
         glEnable(GL_LINES)
         
         for i, matrix in enumerate(data_matrix):    # object
@@ -235,9 +235,9 @@ def draw_callback_view(handle, sl1, sl2, sl3, vs, colo, tran):
         
     #######
     # polygons
+    vectorlight = Vector((0.66,-0.66,-0.66))
     if data_polygons and data_vector:
         glLineWidth(1.0)
-        glPointSize(1.75)
         glEnable(polyholy)
         
         for i, matrix in enumerate(data_matrix):    # object
@@ -247,10 +247,21 @@ def draw_callback_view(handle, sl1, sl2, sl3, vs, colo, tran):
             oblen = len(data_polygons[k])
             for j, pol in enumerate(data_polygons[k]):
                 glBegin(GL_POLYGON)
-                randa = (j/oblen) * coloa
-                randb = (j/oblen) * colob
-                randc = (j/oblen) * coloc
-                glColor3f(randa, randb, randc)
+                if shade:
+                    normal_no_ = mathutils.geometry.normal(
+                            data_vector[k][pol[0]],
+                            data_vector[k][pol[1]],
+                            data_vector[k][pol[2]]
+                            )
+                    normal_no = (normal_no_.angle(vectorlight,0))/math.pi
+                    randa = (normal_no * coloa) - 0.1
+                    randb = (normal_no * colob) - 0.1
+                    randc = (normal_no * coloc) - 0.1
+                else:
+                    randa = ((j/oblen) + coloa) / 2.5
+                    randb = ((j/oblen) + colob) / 2.5
+                    randc = ((j/oblen) + coloc) / 2.5
+                glColor3f(randa+0.2, randb+0.2, randc+0.2)
                 for point in pol:
                     vec_corrected = data_matrix[i]*data_vector[k][int(point)]
                     glVertex3f(*vec_corrected)
