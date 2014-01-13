@@ -74,7 +74,9 @@ class ViewerNode_text(Node, SverchCustomTreeNode):
         self.inputs.new('MatrixSocket', 'matrix', 'matrix')
         
     def draw_buttons(self, context, layout):
-        layout.operator('node.sverchok_viewer_button', text='view')
+        row = layout.row()
+        row.scale_y = 4.0
+        row.operator('node.sverchok_viewer_button', text='V I E W')
     
     def update(self):
         # vertices socket

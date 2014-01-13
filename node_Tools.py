@@ -14,6 +14,16 @@ class SverchokUpdateAll(bpy.types.Operator):
         makeTreeUpdate()
         speedUpdate()
         return {'FINISHED'}
+
+class SverchokPurgeCache(bpy.types.Operator):
+    """Sverchok purge cache"""
+    bl_idname = "node.sverchok_purge_cache"
+    bl_label = "Sverchok purge cache"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    def execute(self, context):
+        print(bpy.context.space_data.node_tree.name)
+        return {'FINISHED'}
     
 class SverchokHome(bpy.types.Operator):
     """Sverchok Home"""
@@ -47,6 +57,7 @@ class SverchokToolsMenu(bpy.types.Panel):
         box = layout.box()
         col = box.column(align=True)
         col.label(text="Sverchok v_0.2.7")
+        col.label(text='layout: '+bpy.context.space_data.node_tree.name)
         row = col.row(align=True)
         row.operator('wm.url_open', text='Help!').url = 'http://wiki.blender.org/index.php/Extensions:2.6/Py/Scripts/Nodes/Sverchok'
         row.operator('wm.url_open', text='Home!').url = 'http://nikitron.cc.ua/blend_scripts.html'
@@ -102,6 +113,7 @@ class ToolsNode(Node, SverchCustomTreeNode):
 
 def register():
     bpy.utils.register_class(SverchokUpdateAll)
+    bpy.utils.register_class(SverchokPurgeCache)
     bpy.utils.register_class(SverchokHome)
     bpy.utils.register_class(SverchokToolsMenu)
     bpy.utils.register_class(ToolsNode)
@@ -110,6 +122,7 @@ def unregister():
     bpy.utils.unregister_class(ToolsNode)
     bpy.utils.unregister_class(SverchokToolsMenu)
     bpy.utils.unregister_class(SverchokHome)
+    bpy.utils.unregister_class(SverchokPurgeCache)
     bpy.utils.unregister_class(SverchokUpdateAll)
 
 if __name__ == "__main__":

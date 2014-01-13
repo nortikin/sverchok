@@ -125,6 +125,7 @@ def make_categories():
             NodeItem("ListSumNode", label="List Sum"),
             NodeItem("ListFLNode", label="List First&Last"),
             NodeItem("ListItemNode", label="List Item"),
+            NodeItem("ListRepeaterNode", label="List Repeater"),
 	    NodeItem("ListFuncNode", label="List Math"),
             NodeItem("MaskListNode", label="List Mask"),
             ]),

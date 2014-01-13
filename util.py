@@ -619,11 +619,13 @@ def updateSlot(self, context):
     return
     
 def updateNode(self, context):
+    speedUpdate()
+    '''
     if not ini_update_cnode(self.name):
         return
     
     updateAllOuts(self)
-    is_updated_cnode()
+    is_updated_cnode()'''
     
 '''
 def updateTreeNode(self, context):
@@ -722,7 +724,7 @@ def speedUpdate():
 # self.changable_sockets(inputsocketname, outputsocketname)
 
 # try if changed types of input socket
-def check_sockets(inputsocketname, self):
+def check_sockets(self, inputsocketname):
     if type(self.inputs[inputsocketname].links[0].from_socket) == VerticesSocket:
         if self.typ == 'v':
             self.newsock = False
@@ -744,7 +746,7 @@ def check_sockets(inputsocketname, self):
     return
     
 # cleaning of old not fited
-def clean_sockets(outputsocketname, self):
+def clean_sockets(self, outputsocketname):
     for n in outputsocketname:
         if n in self.outputs:
             self.outputs.remove(self.outputs[n])
