@@ -32,7 +32,7 @@ class ScalarMathNode(Node, SverchCustomTreeNode):
  
 
 # Math functions from http://docs.python.org/3.3/library/math.html
-# maybe this should be distilled to most common with the others available via FormulaNode
+# maybe this should be distilled to most common with the others available via Formula2 Node
     
     mode_items = [
         ("SINE",            "Sine",         ""),
@@ -70,6 +70,7 @@ class ScalarMathNode(Node, SverchCustomTreeNode):
         ("POW",              "**",          ""),  
         ("PI",               "pi",          ""),
         ("E",                "e",           ""), 
+        ("PHI",              "phi",         ""),
         ("MIN",              "min",         ""),
         ("MAX",              "max",         ""),    
         ]
@@ -116,7 +117,8 @@ class ScalarMathNode(Node, SverchCustomTreeNode):
     
     constant = {
         'PI':       pi,
-        'E':       e  
+        'E':        e,
+        'PHI':      1.61803398875, 
     }       
         
     items_=bpy.props.EnumProperty( items = mode_items, name="Function", 
@@ -131,8 +133,6 @@ class ScalarMathNode(Node, SverchCustomTreeNode):
         
 
     def update(self):
-    
-
                    
         # inputs
         nrInputs = 1
