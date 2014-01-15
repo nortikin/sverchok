@@ -29,9 +29,12 @@
 # Steve Fortune's homepage: http://netlib.bell-labs.com/cm/cs/who/sjf/index.html
 #
 #############################################################################
-
-# python 2 to 3 using 2to3 by Linus Yng, added Site.__lt__ and cmp, modified output
-# downloaded from http://svn.osgeo.org/qgis/trunk/qgis/python/plugins/fTools/tools/voronoi.py
+#
+# python 2 to conversion 3 using 2to3 by Linus Yng, added Site.__lt__ and cmp,
+# modified output,downloaded from:
+# http://svn.osgeo.org/qgis/trunk/qgis/python/plugins/fTools/tools/voronoi.py
+#
+#############################################################################
 
 def usage():
     print("""
