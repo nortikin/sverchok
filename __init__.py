@@ -256,7 +256,7 @@ def unregister():
     node_Tools.unregister()
     node_Formula2.unregister()
     node_Formula.unregister()
-    node_MatrixShear.register()
+    node_MatrixShear.unregister()
     node_MatrixDestructor.unregister()
     node_MatrixGenerator.unregister()
     node_MatrixDeform.unregister()
