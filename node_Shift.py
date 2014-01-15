@@ -11,8 +11,10 @@ class ShiftNode(Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
     
     enclose = bpy.props.BoolProperty(name='check_tail', default=True, update=updateNode)
+    level = bpy.props.IntProperty(name = 'level', default=0, min=0, update=updateNode)
     
     def draw_buttons(self, context, layout):
+        layout.prop(self, "level", text="level")
         layout.prop(self, "enclose", text="enclose")
     
     def init(self, context):
@@ -56,7 +58,7 @@ class ShiftNode(Node, SverchCustomTreeNode):
         else:          
             number = [[0]]
         
-        output = self.shift(data, number, self.enclose)  
+        output = self.shift(data, number, self.enclose, self.level)  
         #print('\nshift output',output, '\n --- ', typ, data, number, self.enclose)
         
         if 'vertices' in self.outputs and len(self.outputs['vertices'].links)>0 and typ == 'v':
@@ -75,25 +77,31 @@ class ShiftNode(Node, SverchCustomTreeNode):
             self.outputs['matrix'].MatrixProperty = str(output)
 
 
-    def shift(self, list_a, shift, check_enclose):
-        list_all = []
-        if type(list_a)==list:
-            for i,l in enumerate(list_a):
-                k=min(len(shift)-1, i)
-                n = shift[k][0]
-                n_=min(abs(n), len(l))
-                if n<0:
-                    list_out = l[:-n_]
-                    if check_enclose:
-                        list_out = l[-n_:]+list_out
-                else:
-                    list_out = l[n_:]
-                    if check_enclose:
-                        list_out.extend(l[:n_])
-                #print('\nn list_out', n,list_out)        
-                list_all.append(list_out)
-        if list_all==[]:
-            list_all=[[]]
+    def shift(self, list_a, shift, check_enclose, level):
+        if level:
+            list_all = []
+            for idx, obj in enumerate(list_a):
+                list_all.append(self.shift([obj], shift, check_enclose, level-1))
+                
+        else:
+            list_all = []
+            if type(list_a)==list:
+                for i,l in enumerate(list_a):
+                    k=min(len(shift)-1, i)
+                    n = shift[k][0]
+                    n_=min(abs(n), len(l))
+                    if n<0:
+                        list_out = l[:-n_]
+                        if check_enclose:
+                            list_out = l[-n_:]+list_out
+                    else:
+                        list_out = l[n_:]
+                        if check_enclose:
+                            list_out.extend(l[:n_])
+                    #print('\nn list_out', n,list_out)        
+                    list_all.append(list_out)
+            if list_all==[]:
+                list_all=[[]]
         return list_all
 
 
