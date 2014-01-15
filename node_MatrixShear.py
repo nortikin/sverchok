@@ -25,7 +25,7 @@ class MatrixShearNode(Node, SverchCustomTreeNode):
             
     def init(self, context):
         self.inputs.new('StringsSocket', "Factor1", "Factor2")
-        self.inputs.new('StringsSocket', "Factor1", "Factor2")
+        self.inputs.new('StringsSocket', "Factor2", "Factor2")
         self.outputs.new('MatrixSocket', "Matrix", "Matrix")
         
     def draw_buttons(self, context, layout):
