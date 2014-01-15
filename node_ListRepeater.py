@@ -38,12 +38,12 @@ class ListRepeaterNode(Node, SverchCustomTreeNode):
             if 'Number' in self.inputs and len(self.inputs['Number'].links)>0:
                 if not self.inputs['Number'].node.socket_value_update:
                     self.inputs['Number'].node.update()
-                Number = eval(self.inputs['Number'].links[0].from_socket.StringsProperty)[0][0]
+                Number = eval(self.inputs['Number'].links[0].from_socket.StringsProperty)[0]
             else:
-                Number = self.number
+                Number = [self.number]
             
             if 'Data' in self.outputs and self.outputs['Data'].links:
-                out_ = self.count(data, self.level, int(Number))
+                out_ = self.count(data, self.level, Number)
                 if self.unwrap:
                     if len(out_)>0:
                         out = []
@@ -54,15 +54,16 @@ class ListRepeaterNode(Node, SverchCustomTreeNode):
                     
                 self.outputs['Data'].StringsProperty = str(out)  
             
-    def count(self, data, level, number):
+    def count(self, data, level, number, cou=0):
         if level:
             out = []
-            for obj in data:
-                out.append(self.count(obj, level-1, number))
+            for idx, obj in enumerate(data):
+                out.append(self.count(obj, level-1, number, idx))
                 
         else:
             out = []
-            for i in range(number):
+            indx = min(cou,len(number)-1)
+            for i in range(int(number[indx])):
                 out.append(data)
         return out
             
