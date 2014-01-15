@@ -48,6 +48,7 @@ class ScalarMathNode(Node, SverchCustomTreeNode):
         ("ABS",             "Absolute",     ""),
         ("CEIL",            "Ceiling",      ""),
         ("ROUND",           "Round",        ""), 
+        ("ROUND-N",         "Round N",      ""),
         ("FMOD",            "Fmod",         ""),
         ("MODULO",          "modulo",       ""),     
         ("FLOOR",           "floor",        ""),
@@ -95,7 +96,8 @@ class ScalarMathNode(Node, SverchCustomTreeNode):
         'ASINH':      asinh,
         'COSH':       cosh,
         'SINH':       sinh,
-        'TANH':       tanh
+        'TANH':       tanh,
+        'ROUND':      round  
     }
     
     fxy = {
@@ -105,7 +107,7 @@ class ScalarMathNode(Node, SverchCustomTreeNode):
         'INTDIV':   lambda x,y : x//y,
         'MUL':      lambda x,y : x*y,
         'POW':      lambda x,y : x**y,
-        'ROUND':    lambda x,y : round(x,y),
+        'ROUND-N':  lambda x,y : round(x,y),
         'FMOD':     lambda x,y : fmod(x,y),
         'MODULO':   lambda x,y : x%y,
         'MIN':      lambda x,y : min(x,y),
