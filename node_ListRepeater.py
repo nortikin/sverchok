@@ -11,10 +11,12 @@ class ListRepeaterNode(Node, SverchCustomTreeNode):
     
     level = bpy.props.IntProperty(name = 'level', default=1, min=0, update=updateNode)
     number = bpy.props.IntProperty(name = 'number', default=1, min=1, update=updateNode)
+    unwrap = bpy.props.BoolProperty(name = 'unwrap', default=False, update=updateNode)
     
     def draw_buttons(self, context, layout):
         layout.prop(self, "level", text="level")
         layout.prop(self, "number", text="number")
+        layout.prop(self, "unwrap", text="unwrap")
         
     def init(self, context):
         self.inputs.new('StringsSocket', "Data", "Data")
@@ -41,7 +43,15 @@ class ListRepeaterNode(Node, SverchCustomTreeNode):
                 Number = self.number
             
             if 'Data' in self.outputs and self.outputs['Data'].links:
-                out = self.count(data, self.level, int(Number))
+                out_ = self.count(data, self.level, int(Number))
+                if self.unwrap:
+                    if len(out_)>0:
+                        out = []
+                        for o in out_:
+                            out.extend(o)
+                else:
+                    out = out_
+                    
                 self.outputs['Data'].StringsProperty = str(out)  
             
     def count(self, data, level, number):
