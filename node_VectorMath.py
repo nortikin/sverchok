@@ -41,7 +41,7 @@ class VectorMathNode(Node, SverchCustomTreeNode):
         ("NEG",         "Negate",               ""),  
         ("NOISE-V",     "Noise Vector",         ""),
         ("NOISE-S",     "Noise Scalar",         ""),   
- #       ("CELL-V",      "Vector Cell noise",    ""), broken in blender, maybe enable in future.
+        ("CELL-V",      "Vector Cell noise",    ""), #fixed in 2.69.8
         ("CELL-S",      "Scalar Cell noise",    ""), 
         ("ANGLE",       "Angle",                ""),
         ("PROJECT",     "Project",              ""),
@@ -81,7 +81,7 @@ class VectorMathNode(Node, SverchCustomTreeNode):
             "NORMALIZE" :   (lambda u   : u.normalized(), 1),
             "NEG"       :   (lambda u   : -u, 1),
             "NOISE-V"   :   (lambda u   : mathutils.noise.noise_vector(u), 1),
- #           "CELL-V"    :   (lambda u   : mathutils.noise.cell_vector(u), 1),
+            "CELL-V"    :   (lambda u   : mathutils.noise.cell_vector(u), 1),
             "REFLECT"   :   (lambda u,v : u.reflect(v), 2),
             "PROJECT"   :   (lambda u,v : u.project(v), 2),      
         }   
