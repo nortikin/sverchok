@@ -10,7 +10,7 @@ class ListItemNode(Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
     
     level = bpy.props.IntProperty(name = 'level_to_count', default=2, min=0, update=updateNode)
-    item = bpy.props.IntProperty(name = 'item', default=0, min=0, update=updateNode)
+    item = bpy.props.IntProperty(name = 'item', default=0, update=updateNode)
     
     def draw_buttons(self, context, layout):
         layout.prop(self, "level", text="level")
