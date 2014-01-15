@@ -32,7 +32,7 @@ class ScalarMathNode(Node, SverchCustomTreeNode):
  
 
 # Math functions from http://docs.python.org/3.3/library/math.html
-# maybe this should be distilled to most common with the others available via FormulaNode
+# maybe this should be distilled to most common with the others available via Formula2 Node
     
     mode_items = [
         ("SINE",            "Sine",         ""),
@@ -48,6 +48,7 @@ class ScalarMathNode(Node, SverchCustomTreeNode):
         ("ABS",             "Absolute",     ""),
         ("CEIL",            "Ceiling",      ""),
         ("ROUND",           "Round",        ""), 
+        ("ROUND-N",         "Round N",      ""),
         ("FMOD",            "Fmod",         ""),
         ("MODULO",          "modulo",       ""),     
         ("FLOOR",           "floor",        ""),
@@ -69,6 +70,7 @@ class ScalarMathNode(Node, SverchCustomTreeNode):
         ("POW",              "**",          ""),  
         ("PI",               "pi",          ""),
         ("E",                "e",           ""), 
+        ("PHI",              "phi",         ""),
         ("MIN",              "min",         ""),
         ("MAX",              "max",         ""),    
         ]
@@ -95,7 +97,8 @@ class ScalarMathNode(Node, SverchCustomTreeNode):
         'ASINH':      asinh,
         'COSH':       cosh,
         'SINH':       sinh,
-        'TANH':       tanh
+        'TANH':       tanh,
+        'ROUND':      round  
     }
     
     fxy = {
@@ -105,7 +108,7 @@ class ScalarMathNode(Node, SverchCustomTreeNode):
         'INTDIV':   lambda x,y : x//y,
         'MUL':      lambda x,y : x*y,
         'POW':      lambda x,y : x**y,
-        'ROUND':    lambda x,y : round(x,y),
+        'ROUND-N':  lambda x,y : round(x,y),
         'FMOD':     lambda x,y : fmod(x,y),
         'MODULO':   lambda x,y : x%y,
         'MIN':      lambda x,y : min(x,y),
@@ -114,7 +117,8 @@ class ScalarMathNode(Node, SverchCustomTreeNode):
     
     constant = {
         'PI':       pi,
-        'E':       e  
+        'E':        e,
+        'PHI':      1.61803398875, 
     }       
         
     items_=bpy.props.EnumProperty( items = mode_items, name="Function", 
@@ -129,8 +133,6 @@ class ScalarMathNode(Node, SverchCustomTreeNode):
         
 
     def update(self):
-    
-
                    
         # inputs
         nrInputs = 1
