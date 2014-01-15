@@ -18,6 +18,7 @@ class ListRepeaterNode(Node, SverchCustomTreeNode):
         
     def init(self, context):
         self.inputs.new('StringsSocket', "Data", "Data")
+        self.inputs.new('StringsSocket', "Number","Number")
         self.outputs.new('StringsSocket',"Data", "Data")
 
     def update(self):
@@ -32,8 +33,15 @@ class ListRepeaterNode(Node, SverchCustomTreeNode):
             elif type(self.inputs['Data'].links[0].from_socket) == MatrixSocket:
                 data = eval(self.inputs['Data'].links[0].from_socket.MatrixProperty)
             
+            if 'Number' in self.inputs and len(self.inputs['Number'].links)>0:
+                if not self.inputs['Number'].node.socket_value_update:
+                    self.inputs['Number'].node.update()
+                Number = eval(self.inputs['Number'].links[0].from_socket.StringsProperty)[0][0]
+            else:
+                Number = self.number
+            
             if 'Data' in self.outputs and self.outputs['Data'].links:
-                out = self.count(data, self.level, self.number)
+                out = self.count(data, self.level, int(Number))
                 self.outputs['Data'].StringsProperty = str(out)  
             
     def count(self, data, level, number):
