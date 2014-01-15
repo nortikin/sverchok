@@ -92,6 +92,7 @@ if "bpy" in locals():
     imp.reload(node_MatrixGenerator)
     imp.reload(node_MatrixDestructor)
     imp.reload(node_MatrixShear)
+    imp.reload(node_MatrixInterpolation)
     imp.reload(node_Formula)
     imp.reload(node_Formula2)
     imp.reload(node_Tools)
@@ -150,6 +151,7 @@ else:
     import node_MatrixGenerator
     import node_MatrixDestructor
     import node_MatrixShear
+    import node_MatrixInterpolation
     import node_Formula
     import node_Formula2
     import node_Tools
@@ -209,6 +211,7 @@ def register():
     node_MatrixGenerator.register()
     node_MatrixDestructor.register()
     node_MatrixShear.register()
+    node_MatrixInterpolation.register()
     node_Formula.register()
     node_Formula2.register()
     node_Tools.register()
@@ -256,6 +259,7 @@ def unregister():
     node_Tools.unregister()
     node_Formula2.unregister()
     node_Formula.unregister()
+    node_MatrixInterpolation.unregister()
     node_MatrixShear.unregister()
     node_MatrixDestructor.unregister()
     node_MatrixGenerator.unregister()

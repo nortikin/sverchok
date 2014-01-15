@@ -167,6 +167,7 @@ def make_categories():
             NodeItem("MatrixOutNode", label="Matrix out"),
             NodeItem("MatrixDeformNode", label="Matrix Deform"),
             NodeItem("MatrixShearNode", label="Shear Matrix"),
+            NodeItem("MatrixInterpolationNode", label="Matrix Interpolation"),
             NodeItem("RandomVectorNode", label="Random Vector"),
             ]),
         SverchNodeCategory("SVERCHOK_M", "SVERCHOK modifier", items=[
