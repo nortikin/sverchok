@@ -77,18 +77,19 @@ class ShiftNode(Node, SverchCustomTreeNode):
             self.outputs['matrix'].MatrixProperty = str(output)
 
 
-    def shift(self, list_a, shift, check_enclose, level):
+    def shift(self, list_a, shift, check_enclose, level, cou=0):
         if level:
             list_all = []
             for idx, obj in enumerate(list_a):
-                list_all.append(self.shift([obj], shift, check_enclose, level-1))
+                list_all.append(self.shift(obj, shift, check_enclose, level-1, idx))
                 
         else:
             list_all = []
             if type(list_a)==list:
+                indx = min(cou, len(shift)-1)
                 for i,l in enumerate(list_a):
-                    k=min(len(shift)-1, i)
-                    n = shift[k][0]
+                    k=min(len(shift[indx])-1, i)
+                    n = shift[indx][k]
                     n_=min(abs(n), len(l))
                     if n<0:
                         list_out = l[:-n_]
