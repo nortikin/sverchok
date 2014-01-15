@@ -166,6 +166,7 @@ def make_categories():
             NodeItem("MatrixGenNode", label="Matrix in"),
             NodeItem("MatrixOutNode", label="Matrix out"),
             NodeItem("MatrixDeformNode", label="Matrix Deform"),
+            NodeItem("RandomVectorNode", label="Random Vector"),
             ]),
         SverchNodeCategory("SVERCHOK_M", "SVERCHOK modifier", items=[
             # modifiers that find data from another data

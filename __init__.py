@@ -81,6 +81,7 @@ if "bpy" in locals():
     imp.reload(node_VectorNormal)
     imp.reload(node_MatrixApply)
     imp.reload(node_VectorDrop)
+    imp.reload(node_RandomVector) 
     imp.reload(node_Random)
     imp.reload(node_Float)
     imp.reload(node_Integer)
@@ -138,6 +139,7 @@ else:
     import node_MatrixApply
     import node_VectorDrop
     import node_Random
+    import node_RandomVector
     import node_Float
     import node_Integer
     import node_Float2Int
@@ -195,6 +197,7 @@ def register():
     node_MatrixApply.register()
     node_VectorDrop.register()
     node_Random.register()
+    node_RandomVector.register()
     node_Float.register()
     node_Integer.register()
     node_Float2Int.register()
@@ -258,6 +261,7 @@ def unregister():
     node_Float2Int.unregister()
     node_Integer.unregister()
     node_Float.unregister()
+    node_RandomVector.unregister()
     node_Random.unregister()
     node_VectorDrop.unregister()
     node_MatrixApply.unregister()
