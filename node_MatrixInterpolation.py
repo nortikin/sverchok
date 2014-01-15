@@ -23,6 +23,7 @@ from mathutils import Vector, Matrix
 
 # Matrix are assumed to be in format
 # [M1 M2 Mn ...] per Matrix_generate and Matrix_listing
+# Instead of empty matrix input identity matrix is used.
 #
 # Factor a list of value float values between 0.0 and 1.0,
 # for now only one list supported
