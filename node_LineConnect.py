@@ -74,7 +74,7 @@ class LineConnectNode(Node, SverchCustomTreeNode):
             print(lens)
             joinvers = []
             for ob in vers_:
-                print('ob',ob)
+                #print('ob',ob)
                 self.fullList(ob, ml)
                 joinvers.extend(ob)
             objecto = []
