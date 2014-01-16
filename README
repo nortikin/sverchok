@@ -1,9 +1,20 @@
 Sverchok parametric tools 0.2.7
+addon for: blender.org
+License: GPL3
 
-Install as blender addon
-Home http://nikitron.cc.ua/blend_scripts.html
-Read Patric Schumaher's parametrists' manifest before use.
-All information in home page.
-All links on it too.
+Sverchok - is parametsic tool for architect, allowing to programm geometry in non-text mode, with nodes. 
+Mesh programming, operates with separate coordinates, vectors (the sama as vectors in sverchok with base always zero),
+rotation angles, matrices (user-freandly rotation-scale-location).
+Many tools (>50 nodes 0.2.7v).
+You may make with sverchok: parametric constructions, calculate areas, materials, 
+change parameters, that you programmed easily, vector fields, cross sections etc etc etc.
 
-Authors: Alexander Nedovizin, Nikita Gorodetskiy
+
+Install as blender addon, ctrl+alt+U => addons => install from file => choose zip-archive => activate flag => 
+=> open node area in window (change window area type)
+
+
+Homepage http://nikitron.cc.ua/sverchok.html
+
+
+Authors: Alexander Nedovizin, Nikita Gorodetskiy, Linus Yng, Agustin Gimenez

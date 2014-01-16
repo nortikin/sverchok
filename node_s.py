@@ -126,7 +126,8 @@ def make_categories():
             NodeItem("ListFLNode", label="List First&Last"),
             NodeItem("ListItemNode", label="List Item"),
             NodeItem("ListRepeaterNode", label="List Repeater"),
-	    NodeItem("ListFuncNode", label="List Math"),
+	        NodeItem("ListFuncNode", label="List Math"),
+            NodeItem("ConverterNode", label="SocketConvert"),
             NodeItem("MaskListNode", label="List Mask"),
             ]),
         SverchNodeCategory("SVERCHOK_N", "SVERCHOK number", items=[
@@ -140,7 +141,6 @@ def make_categories():
             NodeItem("FormulaNode", label="Formula"),
             NodeItem("Formula2Node", label="Formula2"),
             NodeItem("ScalarMathNode", label="Math"),
-    
             ]),
         SverchNodeCategory("SVERCHOK_G", "SVERCHOK generator", items=[
             # objects, new elements, line, plane
