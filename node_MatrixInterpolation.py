@@ -24,9 +24,8 @@ from mathutils import Vector, Matrix
 # Matrix are assumed to be in format
 # [M1 M2 Mn ...] per Matrix_generate and Matrix_listing
 # Instead of empty matrix input identity matrix is used.
-#
+# So only one matrix input is needed for useful result
 # Factor a list of value float values between 0.0 and 1.0,
-# for now only one list supported
 
 
 class MatrixInterpolationNode(Node, SverchCustomTreeNode):
@@ -84,13 +83,17 @@ class MatrixInterpolationNode(Node, SverchCustomTreeNode):
             if not self.outputs['C'].node.socket_value_update:
                 self.outputs['C'].node.update()
             matrixes_=[]
-# match inputs, first matrix A and B using fullList,
+# match inputs, first matrix A and B using fullList
+# then extend the factor list if necessary,             
+# A and B should control length of list, not interpolation lists
             max_l = max(len(A),len(B))
             fullList(A,max_l)
             fullList(B,max_l)
+            if len(factor) < max_l:
+                fullList(factor,max_l)
             for i in range(max_l):
-                for k in range(len(factor[0])):
-                    matrixes_.append(A[i].lerp(B[i], factor[0][k]))
+                for k in range(len(factor[i])):
+                    matrixes_.append(A[i].lerp(B[i], factor[i][k]))
                     
             if not matrixes_:
                 return
