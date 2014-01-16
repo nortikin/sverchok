@@ -55,21 +55,24 @@ class EvaluateLine(Node, SverchCustomTreeNode):
             if not self.outputs['EvPoint'].node.socket_value_update:
                 self.outputs['EvPoint'].node.update()
             points = []
-# match inputs using fullList
+
+# match inputs using fullList, longest list matching on A and B
+# extend factor list if necessary, it should not control length of output
+
             max_obj = max(len(VerticesA),len(VerticesB))
             fullList(VerticesA,max_obj)
             fullList(VerticesB,max_obj)
+            if len(factor) < max_obj:
+                fullList(factor,max_obj)
             for i in range(max_obj):
                 max_l = max(len(VerticesA[i]),len(VerticesB[i]))
                 fullList(VerticesA[i],max_l)
                 fullList(VerticesB[i],max_l) 
                 obj_pts = []
-                print(max_l)   
                 for j in range(max_l):
                     tmp_pts = []   
-                    tmp_pts = [ VerticesA[i][j].lerp(VerticesB[i][j],factor[0][k]) \
+                    tmp_pts = [ VerticesA[i][j].lerp(VerticesB[i][j],factor[i][k]) \
                                 for k in range(len(factor[0]))]
-                    print(tmp_pts)            
                     obj_pts.append(tmp_pts) 
                 points.append(Vector_degenerate(obj_pts))
                                     
