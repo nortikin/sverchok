@@ -105,12 +105,6 @@ class SvObjBake(bpy.types.Operator):
         #print (ob.name + ' baked')
         return [ob,me]
 
-# asked in forutm, wait to answer
-#class ViewerDrawColor(Color):
-    #''' Color of viewer objects '''
-    #bl_idname = 'SverchokViewerDrawColor'
-    #bl_label = 'Sv Viewer Draw Color'
-    #color = ()
 
 class ViewerNode(Node, SverchCustomTreeNode):
     ''' ViewerNode '''
@@ -122,7 +116,7 @@ class ViewerNode(Node, SverchCustomTreeNode):
     activate = bpy.props.BoolProperty(name='Show', description='Activate node?', default=True)
     transparant = bpy.props.BoolProperty(name='Transparant', description='transparant polygons?', default=False)
     shading = bpy.props.BoolProperty(name='Shading', description='shade the object or index representation?', default=False)
-    coloris = bpy.types.Colors
+    coloris = bpy.types.SvColors
     coloris.color[1]['default'] = (0.055,0.312,0.5)
     color_view = coloris.color
         
@@ -205,14 +199,12 @@ class ViewerNode(Node, SverchCustomTreeNode):
         self.update()
 
 def register():
-    #bpy.utils.register_class(ViewerDrawColor)
     bpy.utils.register_class(ViewerNode)
     bpy.utils.register_class(SvObjBake)
     
 def unregister():
     bpy.utils.unregister_class(SvObjBake)
     bpy.utils.unregister_class(ViewerNode)
-    #bpy.utils.unregister_class(ViewerDrawColor)
     
 
 if __name__ == "__main__":
