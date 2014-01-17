@@ -128,6 +128,7 @@ def make_categories():
             NodeItem("ListRepeaterNode", label="List Repeater"),
 	        NodeItem("ListFuncNode", label="List Math"),
             NodeItem("ConverterNode", label="SocketConvert"),
+            NodeItem("ListFlipNode", label="ListFlip"),
             NodeItem("MaskListNode", label="List Mask"),
             ]),
         SverchNodeCategory("SVERCHOK_N", "SVERCHOK number", items=[
