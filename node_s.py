@@ -7,6 +7,11 @@ from nodeitems_utils import NodeCategory, NodeItem
 from mathutils import Matrix
 from util import updateSlot
 
+class SvColors(bpy.types.PropertyGroup):
+    """ Class for colors CollectionProperty """
+    color = bpy.props.FloatVectorProperty(
+        name="svcolor", description="sverchok color", default=(0.055,0.312,0.5), min=0, max=1,
+        step=1, precision=3, subtype='COLOR_GAMMA', size=3)
 
 class MatrixSocket(NodeSocket):
     '''4x4 matrix Socket_type'''
@@ -194,6 +199,7 @@ def make_categories():
 #    return count
 
 def register():
+    bpy.utils.register_class(SvColors)
     bpy.utils.register_class(SverchCustomTree)
     bpy.utils.register_class(MatrixSocket)
     bpy.utils.register_class(ObjectSocket)
@@ -206,6 +212,7 @@ def unregister():
     bpy.utils.unregister_class(ObjectSocket)
     bpy.utils.unregister_class(MatrixSocket)
     bpy.utils.unregister_class(SverchCustomTree)
+    bpy.utils.unregister_class(SvColors)
 
 if __name__ == "__main__":
     register()
