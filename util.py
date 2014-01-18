@@ -109,7 +109,7 @@ def clear_bmm(bm_ref='ALL'):
 #####################################################
 ################### cache magic #####################
 #####################################################
-
+'''
 def cache_delete(cache):
     if cache in per_cache:
        del per_cache[cache]
@@ -163,7 +163,7 @@ def cache_check(cache, recipient, donor, centres, formula, diap_min, diap_max):
     else:
         result = False
     return result    
-
+'''
 
 def handle_delete(handle):
     if handle in temp_handle:
