@@ -118,6 +118,8 @@ def make_categories():
             NodeItem("ViewerNode", label="Viewer draw"),
             NodeItem("ViewerNode_text", label="Viewer text"),
             NodeItem("ToolsNode", label="Tools"),
+            NodeItem("WifiInNode", label="Wifi in"),
+            NodeItem("WifiOutNode", label="Wifi out"),
             ]),
         SverchNodeCategory("SVERCHOK_L", "SVERCHOK list", items=[
             # lists nodes
@@ -144,8 +146,6 @@ def make_categories():
             NodeItem("FloatNode", label="Float"),
             NodeItem("IntegerNode", label="Int"),
             NodeItem("Float2IntNode", label="Float 2 Int"),
-            NodeItem("VariableNode", label="Variables"),
-            NodeItem("VariableDestNode", label="Variable Dest"),
             NodeItem("FormulaNode", label="Formula"),
             NodeItem("Formula2Node", label="Formula2"),
             NodeItem("ScalarMathNode", label="Math"),

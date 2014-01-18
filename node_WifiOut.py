@@ -3,10 +3,10 @@ from node_s import *
 from util import *
 
 
-class VariableDestNode(Node, SverchCustomTreeNode):
-    ''' Variable Dest '''
-    bl_idname = 'VariableDestNode'
-    bl_label = 'Variable Dest'
+class WifiOutNode(Node, SverchCustomTreeNode):
+    ''' WifiOutNode '''
+    bl_idname = 'WifiOutNode'
+    bl_label = 'Wifi output'
     bl_icon = 'OUTLINER_OB_EMPTY'
     
     var_name = bpy.props.StringProperty(name = 'var_name', default='a', update=updateNode)
@@ -39,7 +39,16 @@ class VariableDestNode(Node, SverchCustomTreeNode):
                 self.var_name!=self.outputs[self.outputs.keys()[0]].name[:lsvn]:
                     for c in self.outputs:
                         self.outputs.remove(c)
-            
+                    self.outputs.new('StringsSocket', str(self.var_name)+"[0]", str(self.var_name)+"[0]")
+                        
+            # без цветовой дифференциации штанов цивилизация обречена (c)
+            if self.outputs[0].links:
+                self.use_custom_color=True
+                self.color = (0.4,0,0.8)
+            else:
+                self.use_custom_color=True
+                self.color = (0.05,0,0.2)
+                
             if dest:
                 dic_typ = {'s':'StringsSocket', 'v':'VerticesSocket', 'm':'MatrixSocket'}
                 for i, dst in enumerate(dest):
@@ -81,10 +90,10 @@ class VariableDestNode(Node, SverchCustomTreeNode):
                                 
             
 def register():
-    bpy.utils.register_class(VariableDestNode)
+    bpy.utils.register_class(WifiOutNode)
     
 def unregister():
-    bpy.utils.unregister_class(VariableDestNode)
+    bpy.utils.unregister_class(WifiOutNode)
 
 if __name__ == "__main__":
     register()

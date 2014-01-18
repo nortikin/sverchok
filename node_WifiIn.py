@@ -3,10 +3,10 @@ from node_s import *
 from util import *
 
 
-class VariableNode(Node, SverchCustomTreeNode):
-    ''' Variable '''
-    bl_idname = 'VariableNode'
-    bl_label = 'Variable'
+class WifiInNode(Node, SverchCustomTreeNode):
+    ''' Wifi Input '''
+    bl_idname = 'WifiInNode'
+    bl_label = 'Wifi input'
     bl_icon = 'OUTLINER_OB_EMPTY'
     
     var_name = bpy.props.StringProperty(name = 'var_name', default='a', update=updateNode)
@@ -69,13 +69,19 @@ class VariableNode(Node, SverchCustomTreeNode):
             
         sv_Vars[self.var_name] = list_vars
         
+        if self.inputs[0].links:
+            self.use_custom_color=True
+            self.color = (0.4,0,0.8)
+        else:
+            self.use_custom_color=True
+            self.color = (0.05,0,0.2)
      
      
 def register():
-    bpy.utils.register_class(VariableNode)
+    bpy.utils.register_class(WifiInNode)
     
 def unregister():
-    bpy.utils.unregister_class(VariableNode)
+    bpy.utils.unregister_class(WifiInNode)
 
 if __name__ == "__main__":
     register()
