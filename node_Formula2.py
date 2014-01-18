@@ -127,6 +127,12 @@ class Formula2Node(Node, SverchCustomTreeNode):
     def calc_item(self, x, formula, nlist, j, k, q):
         X = x
         n = []
+        a = []
+        list_vars = [w for w in sv_Vars.keys()]
+        for v in list_vars:
+            a = sv_Vars[v]
+            print('!!!f',a, sv_Vars[v])
+        
         for nitem in nlist:
             n.append(nitem[j][k][q])
         N = n
