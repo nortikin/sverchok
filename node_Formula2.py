@@ -130,8 +130,12 @@ class Formula2Node(Node, SverchCustomTreeNode):
         a = []
         list_vars = [w for w in sv_Vars.keys()]
         for v in list_vars:
-            a = sv_Vars[v]
-            print('!!!f',a, sv_Vars[v])
+            if v[:6]=='sv_typ': continue
+            abra = sv_Vars[v]
+            exec(str(v)+'=[]')
+            for i, aa_abra in enumerate(abra):
+                eva = str(v)+'.append('+str(aa_abra)+')'
+                eval(eva)
         
         for nitem in nlist:
             n.append(nitem[j][k][q])

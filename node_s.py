@@ -145,6 +145,7 @@ def make_categories():
             NodeItem("IntegerNode", label="Int"),
             NodeItem("Float2IntNode", label="Float 2 Int"),
             NodeItem("VariableNode", label="Variables"),
+            NodeItem("VariableDestNode", label="Variable Dest"),
             NodeItem("FormulaNode", label="Formula"),
             NodeItem("Formula2Node", label="Formula2"),
             NodeItem("ScalarMathNode", label="Math"),
