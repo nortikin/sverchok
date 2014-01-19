@@ -21,12 +21,12 @@ class WifiOutNode(Node, SverchCustomTreeNode):
     def update(self):
         global sv_Vars
         # outputs
-        
+        var_name = self.var_name
         list_vars = []
-        if self.var_name in sv_Vars.keys():
+        if var_name in sv_Vars.keys():
             dest = []
             for v in sv_Vars.keys():
-                fs = v.find('sv_typ'+self.var_name)
+                fs = v.find('sv_typ'+var_name)
                 if fs>=0:
                     iv = v.find('[')
                     sv = int(v[iv+1:-1])
@@ -34,12 +34,12 @@ class WifiOutNode(Node, SverchCustomTreeNode):
                     dest.append((sv, sv_Vars[v]))
                     dest.sort()
             
-            lsvn = len(self.var_name)
+            lsvn = len(var_name)
             if len(self.outputs)>0 and \
                 self.var_name!=self.outputs[self.outputs.keys()[0]].name[:lsvn]:
                     for c in self.outputs:
                         self.outputs.remove(c)
-                    self.outputs.new('StringsSocket', str(self.var_name)+"[0]", str(self.var_name)+"[0]")
+                    self.outputs.new('StringsSocket', str(var_name)+"[0]", str(var_name)+"[0]")
                         
             # без цветовой дифференциации штанов цивилизация обречена (c)
             flag_links = False
@@ -57,15 +57,15 @@ class WifiOutNode(Node, SverchCustomTreeNode):
             if dest:
                 dic_typ = {'s':'StringsSocket', 'v':'VerticesSocket', 'm':'MatrixSocket'}
                 for i, dst in enumerate(dest):
-                    if dst[0]>len(sv_Vars[self.var_name])-1: break
+                    if dst[0]>len(sv_Vars[var_name])-1: break
                     typ = dst[1]
-                    var = sv_Vars[self.var_name][dst[0]]
+                    var = sv_Vars[var_name][dst[0]]
                     flag = True
                     flag2 = True
                     while(flag):
                         flag = False
                         louts = len(self.outputs)
-                        a_name = self.var_name + '['+str(dst[0])+']'
+                        a_name = var_name + '['+str(dst[0])+']'
                         if dst[0]==louts:
                             self.outputs.new(dic_typ[typ], a_name, a_name)
                             if   typ=='s':
@@ -76,7 +76,7 @@ class WifiOutNode(Node, SverchCustomTreeNode):
                                 self.outputs[a_name].MatrixProperty = str(var)
                                     
                         else:
-                            if a_name in self.outputs and louts<=len(sv_Vars[self.var_name]) and \
+                            if a_name in self.outputs and louts<=len(sv_Vars[var_name]) and \
                                 str(type(self.outputs[a_name]))[15:-2]==dic_typ[typ]:
                                     
                                 if   typ=='s':
@@ -89,18 +89,17 @@ class WifiOutNode(Node, SverchCustomTreeNode):
                             elif flag2:
                                 flag2 = False
                                 flag = True
-                                if louts > len(sv_Vars[self.var_name]):
+                                if louts > len(sv_Vars[var_name]):
                                     flag2 = True
                                     
-                                cl = min(louts-1,len(sv_Vars[self.var_name])-1)
+                                cl = min(louts-1,len(sv_Vars[var_name])-1)
                                 for c in self.outputs[cl:]:
                                     self.outputs.remove(c)
         else:
             for c in self.outputs:
                 self.outputs.remove(c)
-            self.outputs.new('StringsSocket', str(self.var_name)+"[0]", str(self.var_name)+"[0]")
+            self.outputs.new('StringsSocket', str(var_name)+"[0]", str(var_name)+"[0]")
              
-
             
 def register():
     bpy.utils.register_class(WifiOutNode)
