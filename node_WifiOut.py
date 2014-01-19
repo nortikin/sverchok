@@ -48,7 +48,7 @@ class WifiOutNode(Node, SverchCustomTreeNode):
             else:
                 self.use_custom_color=True
                 self.color = (0.05,0,0.2)
-                
+             
             if dest:
                 dic_typ = {'s':'StringsSocket', 'v':'VerticesSocket', 'm':'MatrixSocket'}
                 for i, dst in enumerate(dest):
@@ -71,7 +71,7 @@ class WifiOutNode(Node, SverchCustomTreeNode):
                                 self.outputs[a_name].MatrixProperty = str(var)
                                     
                         else:
-                            if a_name in self.outputs and louts>dst[0] and \
+                            if a_name in self.outputs and louts<=len(sv_Vars[self.var_name]) and \
                                 str(type(self.outputs[a_name]))[15:-2]==dic_typ[typ]:
                                     
                                 if   typ=='s':
@@ -84,10 +84,13 @@ class WifiOutNode(Node, SverchCustomTreeNode):
                             elif flag2:
                                 flag2 = False
                                 flag = True
-                                cl = min(louts-1,dst[0])
+                                if louts > len(sv_Vars[self.var_name]):
+                                    flag2 = True
+                                    
+                                cl = min(louts-1,len(sv_Vars[self.var_name])-1)
                                 for c in self.outputs[cl:]:
                                     self.outputs.remove(c)
-                                
+
             
 def register():
     bpy.utils.register_class(WifiOutNode)
