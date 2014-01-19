@@ -42,7 +42,12 @@ class WifiOutNode(Node, SverchCustomTreeNode):
                     self.outputs.new('StringsSocket', str(self.var_name)+"[0]", str(self.var_name)+"[0]")
                         
             # без цветовой дифференциации штанов цивилизация обречена (c)
-            if self.outputs[0].links:
+            flag_links = False
+            for fl in self.outputs:
+                if fl.links:
+                    flag_links = True
+                    
+            if flag_links:
                 self.use_custom_color=True
                 self.color = (0.4,0,0.8)
             else:

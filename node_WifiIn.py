@@ -46,6 +46,18 @@ class WifiInNode(Node, SverchCustomTreeNode):
                     a_name = self.var_name + '['+str(len(self.inputs))+']'
                     self.inputs.new('StringsSocket', a_name, a_name)
         
+        flag_links = False
+        for fl in self.inputs:
+            if fl.links:
+                flag_links = True
+                    
+        if flag_links:
+            self.use_custom_color=True
+            self.color = (0.4,0,0.8)
+        else:
+            self.use_custom_color=True
+            self.color = (0.05,0,0.2)
+        
         list_vars = []
         for idx, multi in enumerate(self.inputs): 
             a_name = self.var_name + '['+str(idx)+']'
@@ -69,12 +81,7 @@ class WifiInNode(Node, SverchCustomTreeNode):
             
         sv_Vars[self.var_name] = list_vars
         
-        if self.inputs[0].links:
-            self.use_custom_color=True
-            self.color = (0.4,0,0.8)
-        else:
-            self.use_custom_color=True
-            self.color = (0.05,0,0.2)
+        
      
      
 def register():
