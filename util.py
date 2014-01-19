@@ -659,7 +659,7 @@ def makeTreeUpdate():
                     nod_ = link.to_socket.node
                     insertnode(nod_, nodeset, etalonset, priority)
                     if nodeset:
-                        if nod_.name[:4]=='Vari':
+                        if nod_.name[:4]=='Wifi':
                             priority = nodeset + priority
                             nodeset = []
                         else:
