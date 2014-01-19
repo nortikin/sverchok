@@ -15,7 +15,8 @@ class WifiInNode(Node, SverchCustomTreeNode):
         layout.prop(self, "var_name", text="var name")
     
     def init(self, context):
-        self.inputs.new('StringsSocket', "a[0]", "a[0]")
+        var_name = self.var_name
+        self.inputs.new('StringsSocket', var_name+"[0]", var_name+"[0]")
         
     def check_slots(self, num):
         l = []
@@ -33,6 +34,7 @@ class WifiInNode(Node, SverchCustomTreeNode):
     def update(self):
         global sv_Vars
         # inputs
+        var_name = self.var_name
         ch = self.check_slots(0)
         if ch:
             for c in ch[:-1]:
@@ -43,7 +45,7 @@ class WifiInNode(Node, SverchCustomTreeNode):
             if multi.links:
                 ch = self.check_slots(1)
                 if not ch:
-                    a_name = self.var_name + '['+str(len(self.inputs))+']'
+                    a_name = var_name + '['+str(len(self.inputs))+']'
                     self.inputs.new('StringsSocket', a_name, a_name)
         
         flag_links = False
@@ -60,26 +62,40 @@ class WifiInNode(Node, SverchCustomTreeNode):
         
         list_vars = []
         for idx, multi in enumerate(self.inputs): 
-            a_name = self.var_name + '['+str(idx)+']'
+            a_name = var_name + '['+str(idx)+']'
             typ = 's'
             if multi.links:
                 if type(multi.links[0].from_socket) == StringsSocket:
-                    mult = eval(multi.links[0].from_socket.StringsProperty)
+                    try:
+                        mult = eval(multi.links[0].from_socket.StringsProperty)
+                    except:
+                        print ('no data in wifi: '+a_name)
+                        mult = [[None]]
                     typ = 's'
                 elif type(multi.links[0].from_socket) == VerticesSocket:
-                    mult = eval(multi.links[0].from_socket.VerticesProperty)
+                    try:
+                        mult = eval(multi.links[0].from_socket.VerticesProperty)
+                    except:
+                        print ('no data in wifi: '+a_name)
+                        mult = [[None]]
                     typ = 'v'
                 elif type(multi.links[0].from_socket) == MatrixSocket:
-                    mult = eval(multi.links[0].from_socket.MatrixProperty)
+                    try:
+                        mult = eval(multi.links[0].from_socket.MatrixProperty)
+                    except:
+                        print ('no data in wifi: '+a_name)
+                        mult = [[None]]
                     typ = 'm'
+                
             else:
-                mult = [[0.0]]
+                mult = [[None]]
             
             list_vars.append(mult)
             multi.name = a_name
-            sv_Vars['sv_typ'+self.var_name+a_name] = typ
+            sv_Vars['sv_typ'+var_name+a_name] = typ
             
-        sv_Vars[self.var_name] = list_vars
+        sv_Vars[var_name] = list_vars
+        
         
         
      
