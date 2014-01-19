@@ -96,9 +96,10 @@ class WifiOutNode(Node, SverchCustomTreeNode):
                                 for c in self.outputs[cl:]:
                                     self.outputs.remove(c)
         else:
-            for c in self.outputs:
-                self.outputs.remove(c)
-            self.outputs.new('StringsSocket', str(self.var_name)+"[0]", str(self.var_name)+"[0]")
+            if len(sv_Vars)>0:
+                for c in self.outputs:
+                    self.outputs.remove(c)
+                self.outputs.new('StringsSocket', str(self.var_name)+"[0]", str(self.var_name)+"[0]")
              
 
             
