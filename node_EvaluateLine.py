@@ -64,22 +64,20 @@ class EvaluateLine(Node, SverchCustomTreeNode):
             fullList(VerticesB,max_obj)
             if len(factor) < max_obj:
                 fullList(factor,max_obj)
+                
             for i in range(max_obj):
                 max_l = max(len(VerticesA[i]),len(VerticesB[i]))
                 fullList(VerticesA[i],max_l)
                 fullList(VerticesB[i],max_l) 
-                obj_pts = []
                 for j in range(max_l):
-                    tmp_pts = []   
                     tmp_pts = [ VerticesA[i][j].lerp(VerticesB[i][j],factor[i][k]) \
-                                for k in range(len(factor[0]))]
-                    obj_pts.append(tmp_pts) 
-                points.append(Vector_degenerate(obj_pts))
-                                    
+                                for k in range(len(factor[i]))]
+                    points.append(tmp_pts) 
+                 
             if not points:
                 return
                        
-            self.outputs['EvPoint'].VerticesProperty = str(points)            
+            self.outputs['EvPoint'].VerticesProperty = str(Vector_degenerate(points))
     
    
     
