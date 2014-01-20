@@ -10,6 +10,7 @@ per_cache = {}
 temp_handle = {}
 cache_nodes = {}
 list_nodes4update = {}
+sv_Vars = {}
 
 #####################################################
 ################### update magic ####################
@@ -108,7 +109,7 @@ def clear_bmm(bm_ref='ALL'):
 #####################################################
 ################### cache magic #####################
 #####################################################
-
+'''
 def cache_delete(cache):
     if cache in per_cache:
        del per_cache[cache]
@@ -162,7 +163,7 @@ def cache_check(cache, recipient, donor, centres, formula, diap_min, diap_max):
     else:
         result = False
     return result    
-
+'''
 
 def handle_delete(handle):
     if handle in temp_handle:
@@ -650,27 +651,38 @@ def updateTreeNode(self, context):
 
 def makeTreeUpdate():
     global list_nodes4update
-    def insertnode(nod, nodeset, etalonset):
-        if nod.name not in etalonset:
+    def insertnode(nod, nodeset, etalonset, priority):
+        if nod.name not in etalonset and nod.name not in priority:
             nodeset.append(nod.name)
             for output in nod.outputs:
                 for link in output.links:
                     nod_ = link.to_socket.node
-                    insertnode(nod_, nodeset, etalonset)
+                    insertnode(nod_, nodeset, etalonset, priority)
                     if nodeset:
-                        idx = min(len(etalonset)-1, 0)
-                        etalonset = etalonset[:idx]+nodeset + etalonset[idx:]
-                        nodeset = []
+                        if len(nod_.name)>4 and nod_.name[:5]=='WifiI':
+                            priority = nodeset + priority
+                            nodeset = []
+                        else:
+                            idx = min(len(etalonset)-1, 0)
+                            etalonset = etalonset[:idx]+nodeset + etalonset[idx:]
+                            nodeset = []
+                            
+        elif nod.name in priority:
+            idx = priority.index(nod.name)
+            priority = priority[:idx]+nodeset + priority[idx:]
+            nodeset = []
+                                
         elif nodeset:
             idx = etalonset.index(nod.name)
             etalonset = etalonset[:idx]+nodeset + etalonset[idx:]
             nodeset = []
-        
-        return etalonset
+
+        return etalonset, priority
             
       
     for ng in bpy.context.blend_data.node_groups:
         nodeset_e=[]
+        prioritet = []
         for nod in ng.nodes:
             flag=False
             for inputs in nod.inputs:
@@ -682,9 +694,9 @@ def makeTreeUpdate():
                 continue
             
             nodeset_a = []
-            nodeset_e = insertnode(nod, nodeset_a, nodeset_e)
+            nodeset_e, prioritet = insertnode(nod, nodeset_a, nodeset_e, priority=prioritet)
             
-        list_nodes4update[ng.name] = nodeset_e
+        list_nodes4update[ng.name] = prioritet + nodeset_e
         list_nodes4update['TreeName'] = bpy.context.space_data.node_tree.name
     return
     

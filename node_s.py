@@ -24,10 +24,9 @@ class MatrixSocket(NodeSocket):
     
     def draw(self, context, layout, node, text):
         if self.is_linked:
-            layout.label(text)
+            layout.label(text + '.' + str(self.MatrixProperty)[:7])
         else:
-            col = layout.column(align=True)
-            col.label(text)
+            layout.label(text)
    
     def draw_color(self, context, node):
         '''if self.is_linked:
@@ -35,8 +34,9 @@ class MatrixSocket(NodeSocket):
         else: '''
         return(.2,.8,.8,1.0)
 
+'''
 class ObjectSocket(NodeSocket):
-        '''ObjectSocket'''
+        'ObjectSocket'
         bl_idname = "ObjectSocket"
         bl_label = "Object Socket"
         
@@ -52,6 +52,7 @@ class ObjectSocket(NodeSocket):
                 
         def draw_color(self, context, node):
             return(0.8,0.8,0.2,1.0)
+'''
 
 class VerticesSocket(NodeSocket):
         '''String Vertices - one string'''
@@ -63,12 +64,9 @@ class VerticesSocket(NodeSocket):
 
         def draw(self, context, layout, node, text):
             if self.is_linked:
-                layout.label(text + str(self.VerticesProperty))
+                layout.label(text + '.' + str(self.VerticesProperty)[:7])
             else:
-                col = layout.column(align=True)
-                row = col.row(align=True)
-                row.label(text)
-                #row.prop(self, 'VerticesProperty', text=text)
+                layout.label(text)
                 
         def draw_color(self, context, node):
             return(0.9,0.6,0.2,1.0)
@@ -82,12 +80,9 @@ class StringsSocket(NodeSocket):
 
         def draw(self, context, layout, node, text):
             if self.is_linked:
-                layout.label(text + str(self.StringsProperty))
+                layout.label(text + '.' + str(self.StringsProperty)[:7])
             else:
-                col = layout.column(align=True)
-                row = col.row(align=True)
-                row.label(text)
-                #row.prop(self, 'StringsProperty', text=text)
+                layout.label(text)
                 
         def draw_color(self, context, node):
             return(0.6,1.0,0.6,1.0)
@@ -118,6 +113,8 @@ def make_categories():
             NodeItem("ViewerNode", label="Viewer draw"),
             NodeItem("ViewerNode_text", label="Viewer text"),
             NodeItem("ToolsNode", label="Tools"),
+            NodeItem("WifiInNode", label="Wifi in"),
+            NodeItem("WifiOutNode", label="Wifi out"),
             ]),
         SverchNodeCategory("SVERCHOK_L", "SVERCHOK list", items=[
             # lists nodes
@@ -202,14 +199,14 @@ def register():
     bpy.utils.register_class(SvColors)
     bpy.utils.register_class(SverchCustomTree)
     bpy.utils.register_class(MatrixSocket)
-    bpy.utils.register_class(ObjectSocket)
+    #bpy.utils.register_class(ObjectSocket)
     bpy.utils.register_class(StringsSocket)
     bpy.utils.register_class(VerticesSocket)
     
 def unregister():
     bpy.utils.unregister_class(VerticesSocket)
     bpy.utils.unregister_class(StringsSocket)
-    bpy.utils.unregister_class(ObjectSocket)
+    #bpy.utils.unregister_class(ObjectSocket)
     bpy.utils.unregister_class(MatrixSocket)
     bpy.utils.unregister_class(SverchCustomTree)
     bpy.utils.unregister_class(SvColors)
