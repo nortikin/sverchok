@@ -60,7 +60,7 @@ class TextInNode(Node, SverchCustomTreeNode):
                 self.outputs.remove[out.name]
                 
         for name in self.csv_data:
-            print(name)
+#            print(name)
             if not name in self.outputs:
  #               print("new socket",name)
                 self.outputs.new('StringsSocket', name, name) 
