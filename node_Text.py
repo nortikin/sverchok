@@ -62,10 +62,10 @@ class TextInNode(Node, SverchCustomTreeNode):
         for name in self.csv_data:
             print(name)
             if not name in self.outputs:
-                print("new socket",name)
+ #               print("new socket",name)
                 self.outputs.new('StringsSocket', name, name) 
                 
-        print("hello update()",self.csv_data)
+    #    print("hello update()",self.csv_data)
         for name in self.csv_data:
             if name in self.outputs and len(self.outputs[name].links)>0:
                 if not self.outputs[name].node.socket_value_update:
@@ -79,9 +79,7 @@ class TextInNode(Node, SverchCustomTreeNode):
     def load(self):
         #reset 
         self.changed = True
-      
-      #  for i self.csv_data:
-      #      del self.csv_data[i]        
+             
         f = bpy.data.texts[self.text].as_string()
         reader = csv.reader(io.StringIO(f),delimiter=',')
         
@@ -97,7 +95,7 @@ class TextInNode(Node, SverchCustomTreeNode):
                     if j == 0:
                         name = row[0]
                     else:
-                        pass #discard
+                        pass #discard strings other than first
 
             if not name:
                 name = "Row "+ str(i)
