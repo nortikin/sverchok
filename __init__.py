@@ -22,12 +22,14 @@
 # -*- coding: utf-8 -*-
 # Gorodetskiy Nikita
 # Nedovzin Alexander
+# Linus Yng
+# Agustin Jimenez
 # http://nikitron.cc.ua/sverchok.html
 
 
 bl_info = {
     "name": "Sverchok",
-    "author": "Nedovizin Alexander, Gorodetskiy Nikita",
+    "author": "Nedovizin Alexander, Gorodetskiy Nikita, Linus Yng, Agustin Jimenez",
     "version": (0, 2, 7),
     "blender": (2, 6, 9), 
     "location": "Nodes > CustomNodesTree > Add user nodes",
@@ -116,6 +118,7 @@ if "bpy" in locals():
     imp.reload(node_Range)
     imp.reload(node_Converter)
     imp.reload(node_ListFlip)
+    #imp.reload(node_Test1)
 else:
     import node_s
     import node_ScalarMath
@@ -179,6 +182,7 @@ else:
     import node_Range
     import node_Converter
     import node_ListFlip
+    #import node_Test1
 
 def register():
     import bpy
@@ -243,6 +247,7 @@ def register():
     node_Range.register()
     node_Converter.register()
     node_ListFlip.register()
+    #node_Test1.register()
         
     if 'SVERCHOK' not in nodeitems_utils._node_categories:
         nodeitems_utils.register_node_categories("SVERCHOK", node_s.make_categories())
@@ -252,6 +257,7 @@ def unregister():
     import bpy
     import nodeitems_utils
     
+    #node_Test1.unregister()
     node_ListFlip.unregister()
     node_Converter.unregister()
     node_Range.unregister()
