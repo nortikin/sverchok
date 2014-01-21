@@ -116,6 +116,7 @@ if "bpy" in locals():
     imp.reload(node_Range)
     imp.reload(node_Converter)
     imp.reload(node_ListFlip)
+    imp.reload(node_Text)
 else:
     import node_s
     import node_ScalarMath
@@ -179,6 +180,7 @@ else:
     import node_Range
     import node_Converter
     import node_ListFlip
+    import node_Text
 
 def register():
     import bpy
@@ -243,6 +245,7 @@ def register():
     node_Range.register()
     node_Converter.register()
     node_ListFlip.register()
+    node_Text.register()
         
     if 'SVERCHOK' not in nodeitems_utils._node_categories:
         nodeitems_utils.register_node_categories("SVERCHOK", node_s.make_categories())
@@ -252,6 +255,7 @@ def unregister():
     import bpy
     import nodeitems_utils
     
+    node_Text.unregister()
     node_ListFlip.unregister()
     node_Converter.unregister()
     node_Range.unregister()

@@ -115,6 +115,7 @@ def make_categories():
             NodeItem("ToolsNode", label="Tools"),
             NodeItem("WifiInNode", label="Wifi in"),
             NodeItem("WifiOutNode", label="Wifi out"),
+            NodeItem("TextInNode",  label="Text In"),
             ]),
         SverchNodeCategory("SVERCHOK_L", "SVERCHOK list", items=[
             # lists nodes
