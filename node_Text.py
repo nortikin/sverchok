@@ -64,13 +64,12 @@ class TextInNode(Node, SverchCustomTreeNode):
 
         # should be able to select external file
 
-    def update(self): 
-                 
-        for name in self.csv_data[self.name]:
-            if name in self.outputs and len(self.outputs[name].links)>0:
-                if not self.outputs[name].node.socket_value_update:
-                    self.outputs[name].node.update()
-                self.outputs[name].StringsProperty = str([self.csv_data[self.name][name]])
+    def update(self):               
+        for item in self.csv_data[self.name]:
+            if item in self.outputs and len(self.outputs[item].links)>0:
+                if not self.outputs[item].node.socket_value_update:
+                    self.outputs[item].node.update()
+                self.outputs[item].StringsProperty = str([self.csv_data[self.name][item]])
  
                         
     def update_socket(self, context):
