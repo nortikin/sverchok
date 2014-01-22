@@ -129,10 +129,11 @@ def make_categories():
             NodeItem("ListFLNode", label="List First&Last"),
             NodeItem("ListItemNode", label="List Item"),
             NodeItem("ListRepeaterNode", label="List Repeater"),
-	        NodeItem("ListFuncNode", label="List Math"),
+	    NodeItem("ListFuncNode", label="List Math"),
             NodeItem("ConverterNode", label="SocketConvert"),
             NodeItem("ListFlipNode", label="ListFlip"),
             NodeItem("MaskListNode", label="List Mask"),
+            # NodeItem("Test1Node", label="test1"),
             ]),
         SverchNodeCategory("SVERCHOK_N", "SVERCHOK number", items=[
             # numbers, formula nodes
