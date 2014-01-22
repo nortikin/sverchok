@@ -112,9 +112,10 @@ def make_categories():
             NodeItem("ObjectsNode", label="Objects in"),
             NodeItem("ViewerNode", label="Viewer draw"),
             NodeItem("ViewerNode_text", label="Viewer text"),
-            NodeItem("ToolsNode", label="Tools"),
+            NodeItem("SvTextInNode",  label="Text In"),
             NodeItem("WifiInNode", label="Wifi in"),
             NodeItem("WifiOutNode", label="Wifi out"),
+            NodeItem("ToolsNode", label="Tools"),
             ]),
         SverchNodeCategory("SVERCHOK_L", "SVERCHOK list", items=[
             # lists nodes
