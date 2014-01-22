@@ -1,3 +1,25 @@
+# ##### BEGIN GPL LICENSE BLOCK #####
+#
+#  This program is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU General Public License
+#  as published by the Free Software Foundation; either version 2
+#  of the License, or (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software Foundation,
+#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+# ##### END GPL LICENSE BLOCK #####
+
+# made by: Linus Yng
+#
+#
+
 import bpy, bmesh, mathutils
 from bpy.props import StringProperty, EnumProperty, BoolProperty
 from node_s import *
@@ -12,21 +34,20 @@ class SvTextInOp(bpy.types.Operator):
     bl_label = "Sverchok text input"
     bl_options = {'REGISTER', 'UNDO'}
     
-    name_objectin = StringProperty(name='text file name', description='Name of text buffer')
     
 # how to find which node this operator belongs to?
 # create operator for each and remove as needed?
  
     def execute(self, context):
         node = context.active_node
-        if not type(node) is TextInNode:
-            print("wrong type")
+        if not type(node) is SvTextInNode:
+            print("wrong type of node active for load operator")
             return {'CANCELLED'}
         node.load()
         return {'FINISHED'}
 
     
-class TextInNode(Node, SverchCustomTreeNode):
+class SvTextInNode(Node, SverchCustomTreeNode):
     ''' Text Input '''
     bl_idname = 'TextInNode'
     bl_label = 'Text Input'
@@ -38,7 +59,6 @@ class TextInNode(Node, SverchCustomTreeNode):
     
     def avail_texts(self,context):
         texts = bpy.data.texts
-# should be sorted       items = [(t.name,t.name,"") for t in sorted(texts, key = lambda t : t.name )]
         items = [(t.name,t.name,"") for t in texts]
         return items
 
@@ -48,7 +68,7 @@ class TextInNode(Node, SverchCustomTreeNode):
     columns = BoolProperty(default=True, options={'ANIMATABLE'})
     names = BoolProperty(default=True, options={'ANIMATABLE'})
                                        
-#    formatting options for future 
+#    formatting options for future implementation
 #    decimal = StringProperty(name="Decimal separator", default=".")
 #    delimiter = StringProperty(name="Delimiter", default=",")
     
@@ -62,7 +82,7 @@ class TextInNode(Node, SverchCustomTreeNode):
         layout.prop(self,'names','Named fields?')
         layout.operator('node.sverchok_text_input', text='Load')
 
-        # should be able to select external file
+        # should be able to select external file, for now load in text editor
 
     def update(self):               
         for item in self.csv_data[self.name]:
@@ -93,13 +113,10 @@ class TextInNode(Node, SverchCustomTreeNode):
                     if self.names:
                         for name in row:
                             tmp = name
-                            print(name,row)
                             c = 1
                             while tmp in csv_data:
                                 tmp = name+str(c)
                                 c += 1
-                                print(tmp,name,c)
-    
                             csv_data[str(tmp)] = []
                         continue #first row is names    
                     else:
@@ -135,25 +152,24 @@ class TextInNode(Node, SverchCustomTreeNode):
                 if not name:
                     name = "Row "+ str(i)
                 csv_data[name] = out   
-                
+        # store data        
         self.csv_data[self.name]=csv_data
-        #remove sockets
+        # remove sockets
         for out in self.outputs:
             self.outputs.remove(out)
         # create sockets with names, maybe implement update in future       
         for name in csv_data:
-            self.outputs.new('StringsSocket', name, name)                 
-                  
+            self.outputs.new('StringsSocket', name, name)                   
  
 
 
 def register():
     bpy.utils.register_class(SvTextInOp)
-    bpy.utils.register_class(TextInNode)
+    bpy.utils.register_class(SvTextInNode)
     
 def unregister():
     bpy.utils.unregister_class(SvTextInOp)
-    bpy.utils.unregister_class(TextInNode)
+    bpy.utils.unregister_class(SvTextInNode)
 
 if __name__ == "__main__":
     register()
