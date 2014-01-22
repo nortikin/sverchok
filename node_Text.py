@@ -1,9 +1,10 @@
 import bpy, bmesh, mathutils
-from bpy.props import StringProperty, EnumProperty
+from bpy.props import StringProperty, EnumProperty, BoolProperty
 from node_s import *
 from util import *
 import io
 import csv
+import collections
 
 class SvTextInOp(bpy.types.Operator):
     """ Load CSV data """
@@ -13,15 +14,17 @@ class SvTextInOp(bpy.types.Operator):
     
     name_objectin = StringProperty(name='text file name', description='Name of text buffer')
     
-
+# how to find which node this operator belongs to?
+# create operator for each and remove as needed?
+ 
     def execute(self, context):
-        print(context.active_node.name)
         node = context.active_node
         if not type(node) is TextInNode:
             print("wrong type")
             return {'CANCELLED'}
         node.load()
         return {'FINISHED'}
+
     
 class TextInNode(Node, SverchCustomTreeNode):
     ''' Text Input '''
@@ -29,43 +32,38 @@ class TextInNode(Node, SverchCustomTreeNode):
     bl_label = 'Text Input'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    csv_data = {}
-    changed = False
+    csv_data = collections.OrderedDict()
     
     def avail_texts(self,context):
         texts = bpy.data.texts
-        items = [(t.name,t.name,"") for i,t in enumerate(texts)]
+# should be sorted       items = [(t.name,t.name,"") for t in sorted(texts, key = lambda t : t.name )]
+        items = [(t.name,t.name,"") for t in texts]
         return items
 
     text = EnumProperty(items = avail_texts, name="Texts", 
                         description="Choose text file to load", update=updateNode)
-                                      
-    decimal = StringProperty(name="Decimal separator", default=".")
-    delimiter = StringProperty(name="Delimiter", default=",")
+    
+    columns = BoolProperty(default=True, options={'ANIMATABLE'})
+    names = BoolProperty(default=True, options={'ANIMATABLE'})
+                                       
+#    formatting options for future 
+#    decimal = StringProperty(name="Decimal separator", default=".")
+#    delimiter = StringProperty(name="Delimiter", default=",")
     
 
     def init(self, context):
-        self.update_texts()
-        
-        
+        pass
+                
     def draw_buttons(self, context, layout):
         layout.operator('node.sverchok_text_input', text='Load')
-        layout.prop(self,"text","Text Select:");
+        layout.prop(self,"text","Text Select:")
+        row = layout.row()
+        row.prop(self,'columns','Columns?')
+        row.prop(self,'names','Named fields?')
+        # should be able to select external file
 
     def update(self): 
-  
-        #remove sockets
-        for out in self.outputs:
-            if not out.name in self.csv_data:
-                self.outputs.remove[out.name]
-                
-        for name in self.csv_data:
-#            print(name)
-            if not name in self.outputs:
- #               print("new socket",name)
-                self.outputs.new('StringsSocket', name, name) 
-                
-    #    print("hello update()",self.csv_data)
+                 
         for name in self.csv_data:
             if name in self.outputs and len(self.outputs[name].links)>0:
                 if not self.outputs[name].node.socket_value_update:
@@ -78,31 +76,61 @@ class TextInNode(Node, SverchCustomTreeNode):
 
     def load(self):
         #reset 
-        self.changed = True
-             
+        for name in self.csv_data: 
+            del self.csv_data[name]
+            
         f = bpy.data.texts[self.text].as_string()
+        # should be able to select external file
         reader = csv.reader(io.StringIO(f),delimiter=',')
         
-        for i,row in enumerate(reader):
-            name = []
-            out = []
-    
-            for j,obj in enumerate(row):
-                nr = []
-                try:
-                    out.append(float(obj))   
-                except ValueError:
-                    if j == 0:
-                        name = row[0]
+        if self.columns:
+            for i,row in enumerate(reader):
+             
+                if i == 0: #setup names
+                    if self.names:
+                        for name in row:
+                            tmp = name
+                            while not tmp in self.csv_data:
+                                j = 1
+                                tmp = name+str(j)
+                                j += 1
+                            self.csv_data[str(tmp)] = []
+                        continue #first row is names    
                     else:
+                        for j in range(len(row)):
+                            self.csv_data["Col "+str(j)] = []
+                # load data               
+                for j,name in enumerate(self.csv_data):
+                    try:
+                        self.csv_data[name].append(float(row[j]))   
+                    except (ValueError, IndexError):
                         pass #discard strings other than first
+        #rows            
+        else: 
+            for i,row in enumerate(reader):
+                name = []
+                out = []
+    
+                for j,obj in enumerate(row):
+                    nr = []
+                    try:
+                        out.append(float(obj))   
+                    except ValueError:
+                        if j == 0 and not self.names:
+                            name = row[0]
+                        else:
+                            pass #discard strings other than first
 
-            if not name:
-                name = "Row "+ str(i)
-            self.csv_data[name] = out   
+                if not name:
+                    name = "Row "+ str(i)
+                self.csv_data[name] = out   
         
-        print(self.csv_data) 
-                
+        #remove sockets
+        for out in self.outputs:
+            self.outputs.remove(out)
+        # create sockets with names, maybe implement update in future       
+        for name in self.csv_data:
+            self.outputs.new('StringsSocket', name, name)                 
                   
  
 
