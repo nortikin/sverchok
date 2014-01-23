@@ -41,38 +41,22 @@ class SvTextInOp(bpy.types.Operator):
     bl_label = "Sverchok text input"
     bl_options = {'REGISTER', 'UNDO'}
     
+    # from object in
+    name_obj = StringProperty(name='object name')
+    name_tree = StringProperty(name='tree name')
     
-# how to find which node this operator belongs to?
-# create operator for each and remove as needed?
- 
     def execute(self, context):
-        node = context.active_node
-        if isinstance(node,SvTextIn):
-            node.load()
-            return {'FINISHED'}
-        else:
-            print("wrong type of node active for load operator")
-            return {'CANCELLED'}
+        node = bpy.data.node_groups[self.name_tree].nodes[self.name_obj]
+        node.load()
+        return {'FINISHED'}
+      
 
-        
-# base class, file handling etc should be here
-        
-class SvTextIn(Node, SverchCustomTreeNode):
-    ''' Text Input Class'''
-    bl_idname = 'SvTextIn'
-    bl_label = 'Input'
-    bl_icon = 'OUTLINER_OB_EMPTY'
-    
-    def load():
-        return    
-
-class SvCsvInNode(SvTextIn):
-    ''' Csv Input '''
-    bl_idname = 'SvCsvInNode'
-    bl_label = 'CSV Input'
+class SvTextInNode(Node,SverchCustomTreeNode):
+    ''' Text Input '''
+    bl_idname = 'SvTextInNode'
+    bl_label = 'Text Input'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-# why is this shared between instances?
 
     csv_data = {}
            
@@ -82,7 +66,7 @@ class SvCsvInNode(SvTextIn):
         return items 
         
     text = EnumProperty(items = avail_texts, name="Texts", 
-                        description="Choose text file to load", update=updateNode)
+                        description="Choose text to load", update=updateNode)
     current_text = StringProperty(default = "")
     
     columns = BoolProperty(default=True, options={'ANIMATABLE'})
@@ -101,8 +85,9 @@ class SvCsvInNode(SvTextIn):
         layout.prop(self,"text","Text Select:")
         layout.prop(self,'columns','Columns')
         layout.prop(self,'names','Named fields?')
-        layout.operator('node.sverchok_text_input', text='Load')
-
+        op = layout.operator('node.sverchok_text_input', text='Load')
+        op.name_tree = self.id_data.name
+        op.name_obj = self.name 
         # should be able to select external file, for now load in text editor
 
     def update(self):
@@ -201,9 +186,11 @@ class SvCsvInNode(SvTextIn):
             
 # loads a python list using eval
 # any python list is considered valid input and you
-# have know which socket to use it with
+# have know which socket to use it with, 
+
+# to be merged with above class, do not use
             
-class SvRawInNode(SvTextIn):
+class SvRawInNode(Node,SverchCustomTreeNode):
     ''' Raw Text Input - expects a python list '''
     bl_idname = 'SvRawInNode'
     bl_label = 'Sv List Input'
@@ -228,8 +215,9 @@ class SvRawInNode(SvTextIn):
                 
     def draw_buttons(self, context, layout):
         layout.prop(self,"text","Text Select:")
-        layout.operator('node.sverchok_text_input', text='Load')
-
+        op = layout.operator('node.sverchok_text_input', text='Load')
+        op.name_tree = self.id_data.name
+        op.name_obj = self.name 
         # should be able to select external file, for now load in text editor
 
     def update(self):
@@ -284,7 +272,6 @@ class SvRawInNode(SvTextIn):
             data = ast.literal_eval(f)
         except:
             pass
-#        print(f,data)    
         if type(data) is list:
             self.list_data[self.name] = data
             self.use_custom_color=True
@@ -299,14 +286,12 @@ class SvRawInNode(SvTextIn):
 
 def register():
     bpy.utils.register_class(SvTextInOp)
-    bpy.utils.register_class(SvCsvInNode)
-    bpy.utils.register_class(SvRawInNode)
+    bpy.utils.register_class(SvTextInNode)
 
     
 def unregister():
     bpy.utils.unregister_class(SvTextInOp)
-    bpy.utils.unregister_class(SvCsvInNode)
-    bpy.utils.unregister_class(SvRawInNode)
+    bpy.utils.unregister_class(SvTextInNode)
 
 if __name__ == "__main__":
     register()
