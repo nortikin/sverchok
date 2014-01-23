@@ -113,7 +113,7 @@ def make_categories():
             NodeItem("ViewerNode", label="Viewer draw"),
             NodeItem("ViewerNode_text", label="Viewer text"),
             NodeItem("SvTextInNode",  label="Csv Input"),
-            NodeItem("SvRawInNode",  label="Sverchok List In"),
+#            NodeItem("SvRawInNode",  label="Sverchok List In"),
             NodeItem("WifiInNode", label="Wifi in"),
             NodeItem("WifiOutNode", label="Wifi out"),
             NodeItem("ToolsNode", label="Tools"),
