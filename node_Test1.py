@@ -44,6 +44,10 @@ class Test1Node(Node, SverchCustomTreeNode):
             # get multysocket values to list - TODO
             
             # how to assign correct property to adaptive output:
+            # in nearest future with socket's data' dictionary we will send
+            # only node_name+layout_name+socket_name in str() format
+            # and will make separate definition to easyly assign and
+            # get and recognise data from dictionary
             SvSetSocketAnyType(self, self.outputs['data'], result)
             
 def register():
