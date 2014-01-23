@@ -27,9 +27,16 @@ from util import *
 import io
 import csv
 import collections
+import ast
+
+
+# status colors
+
+FAIL_COLOR = (0.8,0.1,0.1)
+READY_COLOR = (0,0.5,0.2)
 
 class SvTextInOp(bpy.types.Operator):
-    """ Load CSV data """
+    """ Load text data """
     bl_idname = "node.sverchok_text_input"
     bl_label = "Sverchok text input"
     bl_options = {'REGISTER', 'UNDO'}
@@ -40,28 +47,40 @@ class SvTextInOp(bpy.types.Operator):
  
     def execute(self, context):
         node = context.active_node
-        if not type(node) is SvTextInNode:
+        if isinstance(node,SvTextIn):
+            node.load()
+            return {'FINISHED'}
+        else:
             print("wrong type of node active for load operator")
             return {'CANCELLED'}
-        node.load()
-        return {'FINISHED'}
 
+        
+# base class, file handling etc should be here
+        
+class SvTextIn(Node, SverchCustomTreeNode):
+    ''' Text Input Class'''
+    bl_idname = 'SvTextIn'
+    bl_label = 'Input'
+    bl_icon = 'OUTLINER_OB_EMPTY'
     
-class SvTextInNode(Node, SverchCustomTreeNode):
-    ''' Text Input '''
-    bl_idname = 'TextInNode'
-    bl_label = 'Text Input'
+    def load():
+        return    
+
+class SvCsvInNode(SvTextIn):
+    ''' Csv Input '''
+    bl_idname = 'SvCsvInNode'
+    bl_label = 'CSV Input'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
 # why is this shared between instances?
 
     csv_data = {}
-    
+           
     def avail_texts(self,context):
         texts = bpy.data.texts
         items = [(t.name,t.name,"") for t in texts]
-        return items
-
+        return items 
+        
     text = EnumProperty(items = avail_texts, name="Texts", 
                         description="Choose text file to load", update=updateNode)
     
@@ -74,8 +93,9 @@ class SvTextInNode(Node, SverchCustomTreeNode):
     
 
     def init(self, context):
-        pass
-                
+        self.use_custom_color = False
+    
+        
     def draw_buttons(self, context, layout):
         layout.prop(self,"text","Text Select:")
         layout.prop(self,'columns','Columns')
@@ -84,7 +104,14 @@ class SvTextInNode(Node, SverchCustomTreeNode):
 
         # should be able to select external file, for now load in text editor
 
-    def update(self):               
+    def update(self):       
+        if not self.name in self.csv_data:
+            self.use_custom_color = True
+            self.color = FAIL_COLOR
+            return #nothing loaded
+        
+        self.use_custom_color = True
+        self.color = READY_COLOR
         for item in self.csv_data[self.name]:
             if item in self.outputs and len(self.outputs[item].links)>0:
                 if not self.outputs[item].node.socket_value_update:
@@ -157,19 +184,112 @@ class SvTextInNode(Node, SverchCustomTreeNode):
         # remove sockets
         for out in self.outputs:
             self.outputs.remove(out)
-        # create sockets with names, maybe implement update in future       
+        # create sockets with names, maybe implement reload() in future       
         for name in csv_data:
-            self.outputs.new('StringsSocket', name, name)                   
- 
+            self.outputs.new('StringsSocket', name, name)
+            
+            
+# loads a python list using eval
+# any python list is considered valid input and you
+# have know which socket to use it with
+            
+class SvRawInNode(SvTextIn):
+    ''' Raw Text Input - expects a python list '''
+    bl_idname = 'SvRawInNode'
+    bl_label = 'Sv List Input'
+    bl_icon = 'OUTLINER_OB_EMPTY'
 
+    list_data = {}
+    
+    def avail_texts(self,context):
+        texts = bpy.data.texts
+        items = [(t.name,t.name,"") for t in texts]
+        return items 
+    
+    text = EnumProperty(items = avail_texts, name="Texts", 
+                        description="Choose text file to load", update=updateNode)    
+
+        
+    def init(self, context):
+        self.use_custom_color = False
+        self.outputs.new('VerticesSocket', 'Vertices', 'Vertices')
+        self.outputs.new('StringsSocket', 'Data', 'Data')
+        self.outputs.new('MatrixSocket', 'Matrix', 'Matrix')
+                
+    def draw_buttons(self, context, layout):
+        layout.prop(self,"text","Text Select:")
+        layout.operator('node.sverchok_text_input', text='Load')
+
+        # should be able to select external file, for now load in text editor
+
+    def update(self):
+        # nothing loaded               
+        if not self.name in self.list_data:
+            return
+            
+        # load data into connected socket
+        for item in ['Vertices','Data','Matrix']:
+            if item in self.outputs and len(self.outputs[item].links)>0:
+                if not self.outputs[item].node.socket_value_update:
+                    self.outputs[item].node.update()
+                if item == 'Vertices':
+                    self.outputs[item].VerticesProperty = str(self.list_data[self.name])
+                if item == 'Data':
+                    self.outputs[item].StringsProperty = str(self.list_data[self.name])
+                if item == 'Matrix':
+                    self.outputs[item].MatrixProperty = str(self.list_data[self.name])        
+ 
+                        
+    def update_socket(self, context):
+        self.update()
+
+    def load(self):
+        
+        data = None
+                
+        if self.name in self.list_data:
+            del self.list_data[self.name]
+      
+        #reset sockets
+        for item in ['Vertices','Data','Matrix']:
+            if item in self.outputs:
+                if item == 'Vertices':
+                    self.outputs[item].VerticesProperty = ""
+                if item == 'Data':
+                    self.outputs[item].StringsProperty = ""
+                if item == 'Matrix':
+                    self.outputs[item].MatrixProperty = ""
+           
+        f = bpy.data.texts[self.text].as_string()
+        # should be able to select external file
+        try:
+            data = ast.literal_eval(f)
+        except:
+            pass
+#        print(f,data)    
+        if type(data) is list:
+            self.list_data[self.name] = data
+            self.use_custom_color=True
+            self.color = READY_COLOR
+        else:
+            self.use_custom_color=True
+            self.color = FAIL_COLOR
+        
+        self.update()                  
+
+            
+        
 
 def register():
     bpy.utils.register_class(SvTextInOp)
-    bpy.utils.register_class(SvTextInNode)
+    bpy.utils.register_class(SvCsvInNode)
+    bpy.utils.register_class(SvRawInNode)
+
     
 def unregister():
     bpy.utils.unregister_class(SvTextInOp)
-    bpy.utils.unregister_class(SvTextInNode)
+    bpy.utils.unregister_class(SvCsvInNode)
+    bpy.utils.unregister_class(SvRawInNode)
 
 if __name__ == "__main__":
     register()
