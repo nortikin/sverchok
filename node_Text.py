@@ -41,12 +41,13 @@ class SvTextInOp(bpy.types.Operator):
     bl_label = "Sverchok text input"
     bl_options = {'REGISTER', 'UNDO'}
     
+    # from object in
+    name_obj = StringProperty(name='object name')
+    name_tree = StringProperty(name='tree name')
     
-# how to find which node this operator belongs to?
-# create operator for each and remove as needed?
- 
     def execute(self, context):
-        node = context.active_node
+        node = bpy.data.node_groups[self.name_tree].nodes[self.name_obj]
+        
         if isinstance(node,SvTextIn):
             node.load()
             return {'FINISHED'}
@@ -66,13 +67,12 @@ class SvTextIn(Node, SverchCustomTreeNode):
     def load():
         return    
 
-class SvCsvInNode(SvTextIn):
-    ''' Csv Input '''
+class SvTextInNode(SvTextIn):
+    ''' Text Input '''
     bl_idname = 'SvCsvInNode'
     bl_label = 'CSV Input'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-# why is this shared between instances?
 
     csv_data = {}
            
@@ -82,7 +82,7 @@ class SvCsvInNode(SvTextIn):
         return items 
         
     text = EnumProperty(items = avail_texts, name="Texts", 
-                        description="Choose text file to load", update=updateNode)
+                        description="Choose text to load", update=updateNode)
     current_text = StringProperty(default = "")
     
     columns = BoolProperty(default=True, options={'ANIMATABLE'})
@@ -101,11 +101,14 @@ class SvCsvInNode(SvTextIn):
         layout.prop(self,"text","Text Select:")
         layout.prop(self,'columns','Columns')
         layout.prop(self,'names','Named fields?')
-        layout.operator('node.sverchok_text_input', text='Load')
-
+        op = layout.operator('node.sverchok_text_input', text='Load')
+        op.name_tree = self.id_data.name
+        op.name_obj = self.name 
         # should be able to select external file, for now load in text editor
 
     def update(self):
+        print([self.name] + [self.id_data.name])
+
         # no data, try to reload the data otherwise fail       
         if not self.name in self.csv_data:
             self.load(reload = True)
@@ -228,8 +231,9 @@ class SvRawInNode(SvTextIn):
                 
     def draw_buttons(self, context, layout):
         layout.prop(self,"text","Text Select:")
-        layout.operator('node.sverchok_text_input', text='Load')
-
+        op = layout.operator('node.sverchok_text_input', text='Load')
+        op.name_tree = self.id_data.name
+        op.name_obj = self.name 
         # should be able to select external file, for now load in text editor
 
     def update(self):
