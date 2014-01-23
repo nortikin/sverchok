@@ -83,6 +83,7 @@ class SvCsvInNode(SvTextIn):
         
     text = EnumProperty(items = avail_texts, name="Texts", 
                         description="Choose text file to load", update=updateNode)
+    current_text = StringProperty(default = "")
     
     columns = BoolProperty(default=True, options={'ANIMATABLE'})
     names = BoolProperty(default=True, options={'ANIMATABLE'})
@@ -104,11 +105,14 @@ class SvCsvInNode(SvTextIn):
 
         # should be able to select external file, for now load in text editor
 
-    def update(self):       
+    def update(self):
+        # no data, try to reload the data otherwise fail       
         if not self.name in self.csv_data:
-            self.use_custom_color = True
-            self.color = FAIL_COLOR
-            return #nothing loaded
+            self.load(reload = True)
+            if not self.name in self.csv_data:
+                self.use_custom_color = True
+                self.color = FAIL_COLOR    
+                return #nothing loaded
         
         self.use_custom_color = True
         self.color = READY_COLOR
@@ -122,18 +126,23 @@ class SvCsvInNode(SvTextIn):
     def update_socket(self, context):
         self.update()
 
-    def load(self):
+# reload options needs more work to be stable, name check of input and so on
+
+    def load(self, reload = False):
         
         csv_data = collections.OrderedDict() 
         
         if self.name in self.csv_data:
             del self.csv_data[self.name]
-                    
-        f = bpy.data.texts[self.text].as_string()
-        # should be able to select external file
+            
+        if self.current_text == self.text:
+            reload = True
+        self.current_text = self.text
+            
+        f = bpy.data.texts[self.current_text].as_string()
+        # should be able to select external file, and formatting options
         reader = csv.reader(io.StringIO(f),delimiter=',')
         
-
         if self.columns:
             for i,row in enumerate(reader):         
                 if i == 0: #setup names
@@ -181,12 +190,13 @@ class SvCsvInNode(SvTextIn):
                 csv_data[name] = out   
         # store data        
         self.csv_data[self.name]=csv_data
+        if not reload:
         # remove sockets
-        for out in self.outputs:
-            self.outputs.remove(out)
-        # create sockets with names, maybe implement reload() in future       
-        for name in csv_data:
-            self.outputs.new('StringsSocket', name, name)
+            for out in self.outputs:
+                self.outputs.remove(out)
+            # create sockets with names, maybe implement reload() in future       
+            for name in csv_data:
+                self.outputs.new('StringsSocket', name, name)
             
             
 # loads a python list using eval
@@ -223,9 +233,14 @@ class SvRawInNode(SvTextIn):
         # should be able to select external file, for now load in text editor
 
     def update(self):
-        # nothing loaded               
+        # nothing loaded, try to load and if it doesn't work fail             
         if not self.name in self.list_data:
-            return
+            self.load()
+            if not self.name in self.list_data:
+                self.use_custom_color=True
+                self.color = FAIL_COLOR
+                self.reset_sockets()
+                return
             
         # load data into connected socket
         for item in ['Vertices','Data','Matrix']:
@@ -242,15 +257,8 @@ class SvRawInNode(SvTextIn):
                         
     def update_socket(self, context):
         self.update()
-
-    def load(self):
         
-        data = None
-                
-        if self.name in self.list_data:
-            del self.list_data[self.name]
-      
-        #reset sockets
+    def reset_sockets(self):
         for item in ['Vertices','Data','Matrix']:
             if item in self.outputs:
                 if item == 'Vertices':
@@ -259,6 +267,16 @@ class SvRawInNode(SvTextIn):
                     self.outputs[item].StringsProperty = ""
                 if item == 'Matrix':
                     self.outputs[item].MatrixProperty = ""
+                    
+    def load(self, reload = False):
+        
+        data = None
+                
+        if self.name in self.list_data:
+            del self.list_data[self.name]
+      
+        #reset sockets
+        self.reset_sockets()
            
         f = bpy.data.texts[self.text].as_string()
         # should be able to select external file
@@ -275,7 +293,6 @@ class SvRawInNode(SvTextIn):
             self.use_custom_color=True
             self.color = FAIL_COLOR
         
-        self.update()                  
 
             
         
