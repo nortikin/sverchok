@@ -91,8 +91,6 @@ class SvTextInNode(Node,SverchCustomTreeNode):
         # should be able to select external file, for now load in text editor
 
     def update(self):
-        print([self.name] + [self.id_data.name])
-
         # no data, try to reload the data otherwise fail       
         if not self.name in self.csv_data:
             self.load(reload = True)
@@ -274,7 +272,6 @@ class SvRawInNode(Node,SverchCustomTreeNode):
             data = ast.literal_eval(f)
         except:
             pass
-#        print(f,data)    
         if type(data) is list:
             self.list_data[self.name] = data
             self.use_custom_color=True
