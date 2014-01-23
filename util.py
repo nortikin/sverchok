@@ -200,9 +200,10 @@ def handle_check(handle, prop):
 
 #####################################################
 ################# list levels magic #################
-########### working with nesting levels #############
-################ define data floor ##################
 #####################################################
+
+# working with nesting levels
+# define data floor
 
 # data from nasting to standart: TO container( objects( lists( floats, ), ), )
 def dataCorrect(data, nominal_dept=2):
@@ -250,12 +251,11 @@ def levelsOflist(list):
 
 #####################################################
 ################### matrix magic ####################
-##### tools that makes easier to convert data #######
-####### from string to matrixes, vertices, ##########
-######### lists, other and vise versa ###############
 #####################################################
 
-
+# tools that makes easier to convert data
+# from string to matrixes, vertices,
+# lists, other and vise versa 
 
 def Matrix_listing(prop):
     mat_out = []
@@ -728,28 +728,27 @@ def speedUpdate():
 ##############################################################
 
 # node has to have self veriables:
-# typ = bpy.props.StringProperty(name='typ', default='')
-# newsock = bpy.props.BoolProperty(name='newsock', default=False)
+# self.typ = bpy.props.StringProperty(name='typ', default='')
+# self.newsock = bpy.props.BoolProperty(name='newsock', default=False)
 # and in update:
-# inputsocketname = 'data'
-# outputsocketname = ['dataTrue','dataFalse'] # 'data...' - are names of your sockets
-# self.changable_sockets(inputsocketname, outputsocketname)
+# inputsocketname = 'data' # 'data' - name of your input socket, that defines type
+# outputsocketname = ['dataTrue','dataFalse'] # 'data...' - are names of your sockets to be changed
+# changable_sockets(self, inputsocketname, outputsocketname)
 
-# try if changed types of input socket
 def check_sockets(self, inputsocketname):
-    if type(self.inputs[inputsocketname].links[0].from_socket) == VerticesSocket:
+    if type(self.inputs[inputsocketname].links[0].from_socket) == bpy.types.VerticesSocket:
         if self.typ == 'v':
             self.newsock = False
         else:
             self.typ = 'v'
             self.newsock = True
-    if type(self.inputs[inputsocketname].links[0].from_socket) == StringsSocket:
+    if type(self.inputs[inputsocketname].links[0].from_socket) == bpy.types.StringsSocket:
         if self.typ == 's':
             self.newsock = False
         else:
             self.typ = 's'
             self.newsock = True
-    if type(self.inputs[inputsocketname].links[0].from_socket) == MatrixSocket:
+    if type(self.inputs[inputsocketname].links[0].from_socket) == bpy.types.MatrixSocket:
         if self.typ == 'm':
             self.newsock = False
         else:
@@ -765,12 +764,11 @@ def clean_sockets(self, outputsocketname):
     return
 
 # main def for changable sockets type
-def changable_sockets(inputsocketname, outputsocketname, socketname):
-    self = bpy.data.node_groups[socketname[1]].nodes[socketname[0]]
+def changable_sockets(self, inputsocketname, outputsocketname):
     if len(self.inputs[inputsocketname].links) > 0:
-        check_sockets(inputsocketname, self)
+        check_sockets(self, inputsocketname)
         if self.newsock:
-            clean_sockets(outputsocketname, self)
+            clean_sockets(self, outputsocketname)
             self.newsock = False
             if self.typ == 'v':
                 for n in outputsocketname:
@@ -785,8 +783,40 @@ def changable_sockets(inputsocketname, outputsocketname, socketname):
             self.newsock = False
     return
 
+def SvGetSocketAnyType(self, socket):
+    if not socket.node.socket_value_update:
+        socket.node.update()
+    if type(socket.links[0].from_socket) == bpy.types.StringsSocket:
+        typeresult = eval(socket.links[0].from_socket.StringsProperty)
+    elif type(socket.links[0].from_socket) == bpy.types.VerticesSocket:
+        typeresult = eval(socket.links[0].from_socket.VerticesProperty)
+    elif type(socket.links[0].from_socket) == bpy.types.MatrixSocket:
+        typeresult = eval(socket.links[0].from_socket.MatrixProperty)
+    return typeresult
 
+def SvSetSocketAnyType(self, socket, res):
+    if not socket.node.socket_value_update:
+        socket.node.update()
+    if type(socket.links[0]) == bpy.types.StringsSocket:
+        socket.StringsProperty = str(res)
+    elif type(socket.links[0]) == bpy.types.VerticesSocket:
+        socket.VerticesProperty = str(res)
+    elif type(socket.links[0]) == bpy.types.MatrixSocket:
+        socket.MatrixProperty = str(res)
+    return typeresult
+
+####################################
+# быстрый сортировщик / quick sorter
+####################################
+
+def svQsort(L):
+    if L: return qsort([x for x in L[1:] if x<L[0]]) + L[0:1] + qsort([x for x in L[1:] if x>=L[0]])
+    return []
+
+####################################
 # update node on framechange
+####################################
+
 def update_nodes(scene):
     try: #bpy.ops.node.sverchok_update_all()
         speedUpdate()

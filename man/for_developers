@@ -43,3 +43,4 @@ Some rules:
 7.keep order in node' update definition as if output: if input. To count input only if you have output socket assembled.
 8.look at todo list to know what is happening on and what you can do.
 9.use your nodes.
+10. there is no reason to to auto wrap or make less levels of wrapping, than needed to proceed in other nodes. So, for now canonical will be [[0,1,2,3]] for simple data and [[[0,1,2,3]]] for real data as edge, vertex, matrix other cases may be more nasty, but not less nesty and wrapping need to be grounded on some reasons to be provided. You right.
