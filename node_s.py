@@ -88,10 +88,10 @@ class StringsSocket(NodeSocket):
             return(0.6,1.0,0.6,1.0)
         
 class SverchCustomTree(NodeTree):
-    '''A Sverchok node tree type that will show up in the node editor header'''
+    ''' Sverchok - architectural node programming of geometry in low level '''
     bl_idname = 'SverchCustomTreeType'
     bl_label = 'Sverchok Node Tree'
-    bl_icon = 'NODETREE'
+    bl_icon = 'RNA'
 
 
 class SverchCustomTreeNode:

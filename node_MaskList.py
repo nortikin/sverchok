@@ -24,61 +24,16 @@ class MaskListNode(Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         layout.prop(self, "Level", text="Level lists")
     
-        # try if changed types of input socket
-    def check_sockets(self, inputsocketname):
-        if type(self.inputs[inputsocketname].links[0].from_socket) == VerticesSocket:
-            if self.typ == 'v':
-                self.newsock = False
-            else:
-                self.typ = 'v'
-                self.newsock = True
-        if type(self.inputs[inputsocketname].links[0].from_socket) == StringsSocket:
-            if self.typ == 's':
-                self.newsock = False
-            else:
-                self.typ = 's'
-                self.newsock = True
-        if type(self.inputs[inputsocketname].links[0].from_socket) == MatrixSocket:
-            if self.typ == 'm':
-                self.newsock = False
-            else:
-                self.typ = 'm'
-                self.newsock = True
-        return
-        
-    # cleaning of old not fited
-    def clean_sockets(self, outputsocketname):
-        for n in outputsocketname:
-            if n in self.outputs:
-                self.outputs.remove(self.outputs[n])
-        return
-
-    # main def for changable sockets type
-    def changable_sockets(self, inputsocketname, outputsocketname):
-        if len(self.inputs[inputsocketname].links) > 0:
-            self.check_sockets(inputsocketname)
-            if self.newsock:
-                self.clean_sockets(outputsocketname)
-                self.newsock = False
-                if self.typ == 'v':
-                    for n in outputsocketname:
-                        self.outputs.new('VerticesSocket', n, n)
-                if self.typ == 's':
-                    for n in outputsocketname:
-                        self.outputs.new('StringsSocket', n, n)
-                if self.typ == 'm':
-                    for n in outputsocketname:
-                        self.outputs.new('MatrixSocket', n, n)
-            else:
-                self.newsock = False
-        return
-    
     def update(self):
         # changable types sockets in output
-        #socketname = [self.name] + [self.id_data.name]
+        # you need the next:
+        # typ - needed self value
+        # newsocket - needed self value
+        # inputsocketname to get one socket to define type
+        # outputsocketname to get list of outputs, that will be changed
         inputsocketname = 'data'
         outputsocketname = ['dataTrue','dataFalse']
-        self.changable_sockets(inputsocketname, outputsocketname)
+        changable_sockets(self, inputsocketname, outputsocketname)
         
         # input sockets
         if 'data' not in self.inputs:
