@@ -12,6 +12,8 @@ class ListRepeaterNode(Node, SverchCustomTreeNode):
     level = bpy.props.IntProperty(name = 'level', default=1, min=0, update=updateNode)
     number = bpy.props.IntProperty(name = 'number', default=1, min=1, update=updateNode)
     unwrap = bpy.props.BoolProperty(name = 'unwrap', default=False, update=updateNode)
+    typ = bpy.props.StringProperty(name='typ', default='')
+    newsock = bpy.props.BoolProperty(name='newsock', default=False)
     
     def draw_buttons(self, context, layout):
         layout.prop(self, "level", text="level")
@@ -22,18 +24,15 @@ class ListRepeaterNode(Node, SverchCustomTreeNode):
         self.inputs.new('StringsSocket', "Data", "Data")
         self.inputs.new('StringsSocket', "Number","Number")
         self.outputs.new('StringsSocket',"Data", "Data")
-
+        
     def update(self):
         # достаём два слота - вершины и полики
         if 'Data' in self.inputs and self.inputs['Data'].links:
-            if not self.inputs['Data'].node.socket_value_update:
-                self.inputs['Data'].node.update()
-            if type(self.inputs['Data'].links[0].from_socket) == StringsSocket:
-                data = eval(self.inputs['Data'].links[0].from_socket.StringsProperty)
-            elif type(self.inputs['Data'].links[0].from_socket) == VerticesSocket:
-                data = eval(self.inputs['Data'].links[0].from_socket.VerticesProperty)
-            elif type(self.inputs['Data'].links[0].from_socket) == MatrixSocket:
-                data = eval(self.inputs['Data'].links[0].from_socket.MatrixProperty)
+            inputsocketname = 'Data'
+            outputsocketname = ['Data',]
+            changable_sockets(self, inputsocketname, outputsocketname)
+            
+            data = SvGetSocketAnyType(self, self.inputs['Data'])
             
             if 'Number' in self.inputs and len(self.inputs['Number'].links)>0:
                 if not self.inputs['Number'].node.socket_value_update:
@@ -52,7 +51,7 @@ class ListRepeaterNode(Node, SverchCustomTreeNode):
                 else:
                     out = out_
                     
-                self.outputs['Data'].StringsProperty = str(out)  
+                SvSetSocketAnyType(self, 'Data', out)
             
     def count(self, data, level, number, cou=0):
         if level:

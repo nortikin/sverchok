@@ -79,6 +79,7 @@ if "bpy" in locals():
     imp.reload(node_ListItem)
     imp.reload(node_ListRepeater)
     imp.reload(node_ListBoom)
+    imp.reload(node_ListSort)
     imp.reload(node_DistancePP)
     imp.reload(node_Series)
     imp.reload(node_Vector)
@@ -144,6 +145,7 @@ else:
     import node_ListItem
     import node_ListRepeater
     import node_ListBoom
+    import node_ListSort
     import node_DistancePP
     import node_Series
     import node_Vector
@@ -210,6 +212,7 @@ def register():
     node_ListItem.register()
     node_ListRepeater.register()
     node_ListBoom.register()
+    node_ListSort.register()
     node_DistancePP.register()
     node_Series.register()
     node_Vector.register()
@@ -307,6 +310,7 @@ def unregister():
     node_Vector.unregister()
     node_Series.unregister()
     node_DistancePP.unregister()
+    node_ListSort.unregister()
     node_ListBoom.unregister()
     node_ListRepeater.unregister()
     node_ListItem.unregister()
