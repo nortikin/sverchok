@@ -21,24 +21,14 @@ class ListLengthNode(Node, SverchCustomTreeNode):
     def update(self):
         # достаём два слота - вершины и полики
         if 'Length' in self.outputs and self.outputs['Length'].links:
-            if not self.outputs['Length'].node.socket_value_update:
-                self.outputs['Length'].node.update()
-            if 'Data' in self.inputs and self.inputs['Data'].links:
-                if not self.inputs['Data'].node.socket_value_update:
-                    self.inputs['Data'].node.update()
-                if type(self.inputs['Data'].links[0].from_socket) == StringsSocket:
-                    data = eval(self.inputs['Data'].links[0].from_socket.StringsProperty)
-                elif type(self.inputs['Data'].links[0].from_socket) == VerticesSocket:
-                    data = eval(self.inputs['Data'].links[0].from_socket.VerticesProperty)
-                elif type(self.inputs['Data'].links[0].from_socket) == MatrixSocket:
-                    data = eval(self.inputs['Data'].links[0].from_socket.MatrixProperty)
+            data = SvGetSocketAnyType(self, self.inputs['Data'])
                 
-                if not self.level:
-                    out = str([len(data)])
-                else:
-                    out = str(self.count(data, self.level))
-                
-                self.outputs['Length'].StringsProperty = out
+            if not self.level:
+                out = str([len(data)])
+            else:
+                out = str(self.count(data, self.level))
+            
+            SvSetSocketAnyType(self, 'Length', out)
             
     def count(self, data, level):
         if level:
@@ -46,7 +36,7 @@ class ListLengthNode(Node, SverchCustomTreeNode):
             for obj in data:
                 out.append(self.count(obj, level-1))
         elif type(data) not in [float, int]:
-            out = len(data)
+            out = [len(data)]
         elif type(data) in [float, int]:
             out = 1
         else:

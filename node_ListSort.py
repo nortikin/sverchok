@@ -21,7 +21,7 @@ class ListSortNode(Node, SverchCustomTreeNode):
         self.outputs.new('StringsSocket',"data", "data")
 
     def update(self):
-        if 'data' in self.inputs and len(self.inputs['data'].links>0):
+        if 'data' in self.inputs and len(self.inputs['data'].links)>0:
             # адаптивный сокет
             inputsocketname = 'data'
             outputsocketname = ['data']
