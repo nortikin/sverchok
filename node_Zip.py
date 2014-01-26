@@ -12,15 +12,15 @@ class ZipNode(Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
     
     level = bpy.props.IntProperty(name = 'level', default=1, min=1)
+    typ = bpy.props.StringProperty(name='typ', default='')
+    newsock = bpy.props.BoolProperty(name='newsock', default=False)
     
     def draw_buttons(self, context, layout):
         layout.prop(self, "level", text="Level")
     
     def init(self, context):
         self.inputs.new('StringsSocket', "data", "data")
-        self.outputs.new('VerticesSocket', 'vertices', 'vertices')
         self.outputs.new('StringsSocket', 'data', 'data')
-        self.outputs.new('MatrixSocket', 'matrix', 'matrix')
     
     def check_slots(self, num):
         l = []
@@ -38,53 +38,29 @@ class ZipNode(Node, SverchCustomTreeNode):
     def update(self):
         # inputs
         JoinLevel = self.level
-        
         ch = self.check_slots(0)
         if ch and len(self.inputs)>1:
                 for c in ch[:]:
                     self.inputs.remove(self.inputs[ch[0]])
-            
         slots = []
-        typ = ''
-        for idx, multi in enumerate(self.inputs[:]):   
-             
+        for idx, multi in enumerate(self.inputs[:]):
             if multi.links:
-                if not multi.node.socket_value_update:
-                    multi.node.update()
-                if type(multi.links[0].from_socket) == VerticesSocket:
-                    slots.append(eval(multi.links[0].from_socket.VerticesProperty))
-                    ch = self.check_slots(2)
-                    typ = 'v'
-                if type(multi.links[0].from_socket) == StringsSocket:
-                    slots.append(eval(multi.links[0].from_socket.StringsProperty))
-                    ch = self.check_slots(2)
-                    typ = 's'
-                if type(multi.links[0].from_socket) == MatrixSocket:
-                    slots.append(eval(multi.links[0].from_socket.MatrixProperty))
-                    ch = self.check_slots(2)
-                    typ = 'm'
+                slots.append(SvGetSocketAnyType(self, multi))
+                ch = self.check_slots(2)
         if not ch:
             self.inputs.new('StringsSocket', "data", "data")
         
         
-        if 'vertices' in self.outputs and self.outputs['vertices'].links or \
-            'data' in self.outputs and self.outputs['data'].links or \
-            'matrix' in self.outputs and self.outputs['matrix'].links:
+        if 'data' in self.inputs and len(self.inputs['data'].links)>0:
+            # адаптивный сокет
+            inputsocketname = 'data'
+            outputsocketname = ['data']
+            changable_sockets(self, inputsocketname, outputsocketname)
+            
+        if 'data' in self.outputs and self.outputs['data'].links:
             output = self.myZip(slots,JoinLevel)  
-
-            if len(self.outputs['vertices'].links)>0 and typ == 'v':
-                if not self.outputs['vertices'].node.socket_value_update:
-                    self.outputs['vertices'].node.update()
-                self.outputs['vertices'].links[0].from_socket.VerticesProperty =  str(output)
-            if len(self.outputs['data'].links)>0 and typ == 's':
-                if not self.outputs['data'].node.socket_value_update:
-                    self.outputs['data'].node.update()
-                self.outputs['data'].links[0].from_socket.StringsProperty =  str(output)
-            if len(self.outputs['matrix'].links)>0 and typ == 'm':
-                if not self.outputs['matrix'].node.socket_value_update:
-                    self.outputs['matrix'].node.update()
-                self.outputs['matrix'].links[0].from_socket.MatrixProperty = str(output)
-    
+            
+            SvSetSocketAnyType(self, 'data', output)
     
     def myZip(self, list_all, level, level2=0):
         if level==level2:

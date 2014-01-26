@@ -14,13 +14,11 @@ class ListFuncNode(Node, SverchCustomTreeNode):
         ("MAX",         "Maximum",        ""), 
         ("AVR",         "Average",        ""),   
         ]
-        
-        
     func_=bpy.props.EnumProperty( items = mode_items, name="Function", 
             description="Function choice", default="AVR", update=updateNode)
-            
-    
     level = bpy.props.IntProperty(name = 'level_to_count', default=1, min=0, update=updateNode)
+    typ = bpy.props.StringProperty(name='typ', default='')
+    newsock = bpy.props.BoolProperty(name='newsock', default=False)
     
     def draw_buttons(self, context, layout):
         layout.prop(self, "level", text="level")
@@ -31,20 +29,15 @@ class ListFuncNode(Node, SverchCustomTreeNode):
         self.outputs.new('StringsSocket',"Function","Function")
 
     def update(self):
-        # достаём два слота - вершины и полики
+        if 'Data' in self.inputs and len(self.inputs['Data'].links)>0:
+            # адаптивный сокет
+            inputsocketname = 'Data'
+            outputsocketname = ['Function']
+            changable_sockets(self, inputsocketname, outputsocketname)
+            
         if 'Function' in self.outputs and self.outputs['Function'].links:
-            if not self.outputs['Function'].node.socket_value_update:
-                self.outputs['Function'].node.update()
             if 'Data' in self.inputs and self.inputs['Data'].links:
-                if not self.inputs['Data'].node.socket_value_update:
-                    self.inputs['Data'].node.update()
-                if type(self.inputs['Data'].links[0].from_socket) == StringsSocket:
-                    data = eval(self.inputs['Data'].links[0].from_socket.StringsProperty)
-                elif type(self.inputs['Data'].links[0].from_socket) == VerticesSocket:
-                    data = eval(self.inputs['Data'].links[0].from_socket.VerticesProperty)
-                elif type(self.inputs['Data'].links[0].from_socket) == MatrixSocket:
-                    data = eval(self.inputs['Data'].links[0].from_socket.MatrixProperty)
-                
+                data = SvGetSocketAnyType(self, self.inputs['Data'])
                 if self.func_=='MIN':
                     func=min
                 elif self.func_=='MAX':
@@ -57,7 +50,7 @@ class ListFuncNode(Node, SverchCustomTreeNode):
                 else:
                     out = str(self.count(data, self.level, func))
                 
-                self.outputs['Function'].StringsProperty = out
+                SvSetSocketAnyType(self, 'Function', out)
                 
             
     def count(self, data, level, func):

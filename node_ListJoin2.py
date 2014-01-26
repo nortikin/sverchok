@@ -12,12 +12,12 @@ class ListJoinNode(Node, SverchCustomTreeNode):
     JoinLevel = bpy.props.IntProperty(name='JoinLevel', description='Choose join level of data (see help)', default=1, min=1, update=updateNode)
     mix_check = bpy.props.BoolProperty(name='mix', description='Grouping similar to zip()', default=False, update=updateNode)
     wrap_check = bpy.props.BoolProperty(name='wrap', description='Grouping similar to append(list)', default=False, update=updateNode)
+    typ = bpy.props.StringProperty(name='typ', default='')
+    newsock = bpy.props.BoolProperty(name='newsock', default=False)
     
     def init(self, context):
         self.inputs.new('StringsSocket', "data", "data")
-        self.outputs.new('VerticesSocket', 'vertices', 'vertices')
         self.outputs.new('StringsSocket', 'data', 'data')
-        self.outputs.new('MatrixSocket', 'matrix', 'matrix')
     
     def check_slots(self, num):
         l = []
@@ -36,7 +36,6 @@ class ListJoinNode(Node, SverchCustomTreeNode):
         layout.prop(self, "wrap_check", text="wrap")
         layout.prop(self, "JoinLevel", text="JoinLevel lists")
     
-    
     def update(self):
         # inputs
         ch = self.check_slots(0)
@@ -44,32 +43,19 @@ class ListJoinNode(Node, SverchCustomTreeNode):
             for c in ch:
                 self.inputs.remove(self.inputs[ch[0]])
         slots = []
-        typ = ''
-        for idx, multi in enumerate(self.inputs[:]):   
-             
+        for idx, multi in enumerate(self.inputs[:]):
             if multi.links:
-                if not multi.node.socket_value_update:
-                    multi.node.update()
-                if type(multi.links[0].from_socket) == VerticesSocket:
-                    slots.append(eval(multi.links[0].from_socket.VerticesProperty))
-                    ch = self.check_slots(2)
-                    typ = 'v'
-                if type(multi.links[0].from_socket) == StringsSocket:
-                    slots.append(eval(multi.links[0].from_socket.StringsProperty))
-                    ch = self.check_slots(2)
-                    typ = 's'
-                if type(multi.links[0].from_socket) == MatrixSocket:
-                    slots.append(eval(multi.links[0].from_socket.MatrixProperty))
-                    ch = self.check_slots(2)
-                    typ = 'm'
+                slots.append(SvGetSocketAnyType(self, multi))
+                ch = self.check_slots(2)
+                
         if not ch:
             self.inputs.new('StringsSocket', "data", "data")
+            
+        inputsocketname = 'data'
+        outputsocketname = ['data',]
+        changable_sockets(self, inputsocketname, outputsocketname)
         
-        
-        if 'vertices' in self.outputs and self.outputs['vertices'].links or \
-            'data' in self.outputs and self.outputs['data'].links or \
-            'matrix' in self.outputs and  self.outputs['matrix'].links:
-           
+        if 'data' in self.outputs and self.outputs['data'].links:
             list_result = joiner(slots,self.JoinLevel)
             result = list_result.copy()
             
@@ -85,20 +71,7 @@ class ListJoinNode(Node, SverchCustomTreeNode):
                     list_wrap_mix = wrapper_2(slots, list_mix, self.JoinLevel)
                     result = list_wrap_mix.copy()
             
-            #output = [result]
-
-            if len(self.outputs['vertices'].links)>0 and typ == 'v':
-                if not self.outputs['vertices'].node.socket_value_update:
-                    self.outputs['vertices'].node.update()
-                self.outputs['vertices'].links[0].from_socket.VerticesProperty =  str(result)
-            if len(self.outputs['data'].links)>0 and typ == 's':
-                if not self.outputs['data'].node.socket_value_update:
-                    self.outputs['data'].node.update()
-                self.outputs['data'].links[0].from_socket.StringsProperty =  str(result)
-            if len(self.outputs['matrix'].links)>0 and typ == 'm':
-                if not self.outputs['matrix'].node.socket_value_update:
-                    self.outputs['matrix'].node.update()
-                self.outputs['matrix'].links[0].from_socket.MatrixProperty = str(result)
+            SvSetSocketAnyType(self, 'data', result)
 
 def register():
     bpy.utils.register_class(ListJoinNode)
