@@ -32,6 +32,13 @@ import locale
 import json
 import itertools
 
+# TODO, 
+# load and dump to/from external file
+# update stability, do not disconnect unless something changed
+# fix colors for TextOut
+# 
+
+
 # status colors
 
 FAIL_COLOR = (0.8,0.1,0.1)
@@ -135,7 +142,7 @@ class SvTextInNode(Node,SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         
         layout.prop(self,"text","Select Text")
-        layout.prop(self,"file","File")
+    #    layout.prop(self,"file","File") external file, TODO
         layout.prop(self,'textmode','textmode',expand=True)
         if self.textmode == 'CSV':
             layout.prop(self,'csv_header','Header fields')
