@@ -103,30 +103,30 @@ class SvTextInNode(Node,SverchCustomTreeNode):
                            
 # csv standard dialect as defined in http://docs.python.org/3.3/library/csv.html
 # below are csv settings, user defined are set to 10 to allow more settings be added before
+# user defined. 
+# to add ; as delimiter and , as decimal mark 
  
-    csv_dialects = [( 'excel',      'Excel',        'Standard excel',1),
-                    ( 'excel-tab',  'Excel tabs',   'Excel tab format',2),
-                    ( 'unix',       'Unix',         'Unix standard',3),
-                    ( 'user',       'User defined', 'Define settings yourself',10),]
+    csv_dialects = [( 'excel',      'Excel',        'Standard excel',   1),
+                    ( 'excel-tab',  'Excel tabs',   'Excel tab format', 2),
+                    ( 'unix',       'Unix',         'Unix standard',    3),
+                    ( 'user',       'User defined', 'Define settings',10),]
                     
                     
     csv_dialect = EnumProperty(items = csv_dialects, name="Csv Dialect", 
                         description="Choose csv dialect", default='excel', update=updateNode)
                         
-
-   
-    csv_delimiters = [(',',  ",",    "Comma: ,", 1),
-                     ('\t', 'tab',  "Tab", 2),
+    csv_delimiters = [(',',  ",",    "Comma: ,",    1),
+                     ('\t', 'tab',  "Tab",          2),
                      (';',  ';',    "Semi-colon ;", 3),
-                     ('CUSTOM', 'custom',"Custom",10),]
+                     ('CUSTOM', 'custom',"Custom",  10),]
                      
     csv_delimiter = EnumProperty(items = csv_delimiters, default=',')
     csv_custom_delimiter =  StringProperty(default=':')
     
-    csv_decimalmarks = [('.',  ".",    "Dot",1),
-                        (',', ',',  "Comma",2),
-                        ('LOCALE',  'Locale', "Follow locale",3),
-                        ('CUSTOM', 'custom',"Custom",10),]
+    csv_decimalmarks = [('.',       ".",        "Dot",          1),
+                        (',',       ',',        "Comma",        2),
+                        ('LOCALE',  'Locale',   "Follow locale",3),
+                        ('CUSTOM', 'custom',    "Custom",       10),]
                         
     csv_decimalmark = EnumProperty(items = csv_decimalmarks, default='LOCALE')
     csv_custom_decimalmark = StringProperty(default=',')
@@ -164,16 +164,13 @@ class SvTextInNode(Node,SverchCustomTreeNode):
             
         if self.textmode == 'JSON': # self documenting format
             pass        
-                     
-
-
+                    
         op = layout.operator('node.sverchok_text_input', text='Load')
         op.name_tree = self.id_data.name
         op.name_obj = self.name 
-        
       
     # dispatch functions
-          
+    
     def update(self): #dispatch based on mode
         if self.textmode == 'CSV':
             self.update_csv()
@@ -197,14 +194,19 @@ class SvTextInNode(Node,SverchCustomTreeNode):
 # CSV methods. 
 #            
     def update_csv(self):
-        # no data, try to reload the data otherwise fail       
+# no data, try to reload the data otherwise fail       
 #         if not self.name in self.csv_data:
 #             self.load(reload = True)
 #             if not self.name in self.csv_data:
 #                 self.use_custom_color = True
 #                 self.color = FAIL_COLOR    
 #                 return #nothing loaded
-        
+#
+        if not self.name in self.csv_data:
+            self.use_custom_color = True
+            self.color = FAIL_COLOR    
+            return           
+            
         self.use_custom_color = True
         self.color = READY_COLOR
         for item in self.csv_data[self.name]:
@@ -230,7 +232,7 @@ class SvTextInNode(Node,SverchCustomTreeNode):
             
         f = io.StringIO(bpy.data.texts[self.current_text].as_string())
 
-    # setup CSV options
+        # setup CSV options
 
         if self.csv_dialect == 'user':
             if self.csv_delimiter == 'CUSTOM':
@@ -241,7 +243,8 @@ class SvTextInNode(Node,SverchCustomTreeNode):
             reader = csv.reader(f,delimiter=d)
         else:
             reader = csv.reader(f,dialect=self.csv_dialect)
-        # parse decimalmark
+
+        # setup parse decimalmark
    
         if self.csv_decimalmark == ',':
             get_number = lambda s: float(s.replace(',','.'))
@@ -349,14 +352,11 @@ class SvTextInNode(Node,SverchCustomTreeNode):
     def update_sv(self):
         # nothing loaded, try to load and if it doesn't work fail             
         if not self.name in self.list_data:
-            self.load()
-            if not self.name in self.list_data:
-                self.use_custom_color=True
-                self.color = FAIL_COLOR
-                self.reset_sockets()
-                return
+            self.use_custom_color=True
+            self.color = FAIL_COLOR
+            return
             
-        # load data into connected socket
+        # load data into selected socket
         for item in ['Vertices','Data','Matrix']:
             if item in self.outputs and len(self.outputs[item].links)>0:
                 if not self.outputs[item].node.socket_value_update:
@@ -365,12 +365,16 @@ class SvTextInNode(Node,SverchCustomTreeNode):
 #
 # JSON
 #
-# Loads JSON data as    
+# Loads JSON data    
 #
+# format dict {socket_name : (socket type in ['v','m','s'], list data)
+#              socket_name1 :etc. 
+# socket_name must be unique
 
     def load_json(self, reload = False):
         json_data = {}
-                
+       
+        #reset data        
         if self.name in self.json_data:
             del self.json_data[self.name]
 
@@ -397,16 +401,18 @@ class SvTextInNode(Node,SverchCustomTreeNode):
                 self.use_custom_color=True
                 self.color = FAIL_COLOR       
                 return
-        
-        self.json_data[self.name]=json_data    
-
-        
+                
+        self.json_data[self.name]=json_data         
         
     def update_json(self):
         if not self.name in self.json_data:
-
+            self.use_custom_color=True
+            self.color = FAIL_COLOR
             return
-                
+        
+        self.use_custom_color=True
+        self.color = READY_COLOR          
+        
         for item in self.json_data[self.name]:
             if item in self.outputs and len(self.outputs[item].links)>0:
                 if not self.outputs[item].node.socket_value_update:
@@ -447,9 +453,6 @@ class SvTextOutNode(Node,SverchCustomTreeNode):
     bl_label = 'Text Output'
     bl_icon = 'OUTLINER_OB_EMPTY'
     
-
-
-    
     def avail_texts(self, context):
         texts = bpy.data.texts
         items = [(t.name,t.name,"") for t in texts]
@@ -468,18 +471,17 @@ class SvTextOutNode(Node,SverchCustomTreeNode):
     
     text = EnumProperty(items = avail_texts, name="Texts", 
                         description="Choose text to load", update=updateNode)
-
-        
-    text_modes = [("CSV", "Csv", "Csv data","",1),
-                  ("SV", "Sverchok","Python data",2),
-                  ("JSON", "JSON", "Sverchok JSON",3)]  
+  
+    text_modes = [("CSV",   "Csv",      "Csv data","",  1),
+                  ("SV",    "Sverchok", "Python data",  2),
+                  ("JSON",  "JSON",     "Sverchok JSON",3)]  
     
     text_mode = EnumProperty(items = text_modes, default='CSV',update=change_mode)
     
      
-    csv_dialects = [( 'excel',      'Excel',        'Standard excel',1),
-                    ( 'excel-tab',  'Excel tabs',   'Excel tab format',2),
-                    ( 'unix',       'Unix',         'Unix standard',3),]
+    csv_dialects = [( 'excel',      'Excel',        'Standard excel',   1),
+                    ( 'excel-tab',  'Excel tabs',   'Excel tab format', 2),
+                    ( 'unix',       'Unix',         'Unix standard',    3),]
                     
     csv_dialect = EnumProperty(items = csv_dialects, default='excel')                    
 
@@ -500,11 +502,7 @@ class SvTextOutNode(Node,SverchCustomTreeNode):
         op = layout.operator('node.sverchok_text_output', text='Dump')
         op.name_tree = self.id_data.name
         op.name_obj = self.name      
-     
     
-
-            
-                
     
     def update_socket(self, context):
         self.update()
@@ -512,7 +510,7 @@ class SvTextOutNode(Node,SverchCustomTreeNode):
 
     
     #manage sockets
-    #
+    # does not do anything with data until dump is executed
     
     def update(self):
         if self.text_mode == 'CSV':
@@ -539,17 +537,13 @@ class SvTextOutNode(Node,SverchCustomTreeNode):
         if self.text_mode == 'CSV':
             data_out = []
             for socket in self.inputs:
-                min_l = -1
                 if socket.is_linked and \
                     type(socket.links[0].from_socket) == StringsSocket:
                     
                     tmp = socket.links[0].from_socket.StringsProperty
                     if len(tmp):
+                        # flatten list
                         data_out.append(list(itertools.chain.from_iterable(eval(tmp))))
-                        if min_l == -1:
-                            min_l = len(data_out[-1])
-                        else:
-                            min_l = min(len(data_out[-1]),min_l)
                         
             csv_str = io.StringIO()
             writer = csv.writer(csv_str,dialect=self.csv_dialect)
@@ -569,7 +563,7 @@ class SvTextOutNode(Node,SverchCustomTreeNode):
                         tmp_name = name_dict[get_socket_type(self,item.name)]
                         name = tmp_name
                         j = 1
-                        while name in data_out:
+                        while name in data_out: #unique names for json
                             name = tmp_name+str(j)
                             j += 1
                             
