@@ -797,13 +797,20 @@ def SvGetSocketAnyType(self, socket):
 def SvSetSocketAnyType(self, socket, res):
     if not socket.node.socket_value_update:
         socket.node.update()
-    if type(socket.links[0]) == bpy.types.StringsSocket:
+    if type(socket) == bpy.types.StringsSocket:
         socket.StringsProperty = str(res)
-    elif type(socket.links[0]) == bpy.types.VerticesSocket:
+    elif type(socket) == bpy.types.VerticesSocket:
         socket.VerticesProperty = str(res)
-    elif type(socket.links[0]) == bpy.types.MatrixSocket:
+    elif type(socket) == bpy.types.MatrixSocket:
         socket.MatrixProperty = str(res)
-    return typeresult
+
+def get_socket_type(node, inputsocketname):
+    if type(node.inputs[inputsocketname].links[0].from_socket) == bpy.types.VerticesSocket:
+        return 'v'
+    if type(node.inputs[inputsocketname].links[0].from_socket) == bpy.types.StringsSocket:
+        return 's'
+    if type(node.inputs[inputsocketname].links[0].from_socket) == bpy.types.MatrixSocket:
+        return 'm'
 
 ####################################
 # быстрый сортировщик / quick sorter
