@@ -84,7 +84,6 @@ class VectorMathNode(Node, SverchCustomTreeNode):
             "CELL-V"    :   (lambda u   : mathutils.noise.cell_vector(u), 1),
             "REFLECT"   :   (lambda u,v : u.reflect(v), 2),
             "PROJECT"   :   (lambda u,v : u.project(v), 2),   
-            "ADD2"      :   (lambda u,v : u + v, 2),
    
         }   
                    
