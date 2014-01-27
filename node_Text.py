@@ -361,7 +361,7 @@ class SvTextInNode(Node,SverchCustomTreeNode):
             if item in self.outputs and len(self.outputs[item].links)>0:
                 if not self.outputs[item].node.socket_value_update:
                     self.outputs[item].node.update()  
-                SvSetSocketAnyType(self,self.outputs[item], str(self.list_data[self.name]))
+                SvSetSocketAnyType(self,item, str(self.list_data[self.name]))
 #
 # JSON
 #
@@ -412,8 +412,7 @@ class SvTextInNode(Node,SverchCustomTreeNode):
                 if not self.outputs[item].node.socket_value_update:
                     self.outputs[item].node.update()
                 out = self.json_data[self.name][item][1]
-
-                SvSetSocketAnyType(self, self.outputs[item], self.json_data[self.name][item][1])
+                SvSetSocketAnyType(self, item, out)
                 
 
 ########################################################################################
