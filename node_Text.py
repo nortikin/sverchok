@@ -28,13 +28,25 @@ import io
 import csv
 import collections
 import ast
-
+import locale
+import json
+import itertools
 
 # status colors
 
 FAIL_COLOR = (0.8,0.1,0.1)
 READY_COLOR = (0,0.5,0.2)
 
+# utility function    
+def new_output_socket(node,name,type):
+    if type == 'v':
+        node.outputs.new('VerticesSocket',name,name)
+    if type == 's':
+        node.outputs.new('StringsSocket',name,name)
+    if type == 'm':
+        node.outputs.new('MatrixSocket',name,name)
+        
+        
 class SvTextInOp(bpy.types.Operator):
     """ Load text data """
     bl_idname = "node.sverchok_text_input"
@@ -57,8 +69,11 @@ class SvTextInNode(Node,SverchCustomTreeNode):
     bl_label = 'Text Input'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-
     csv_data = {}
+    list_data = {}
+    json_data = {}
+
+# general settings
            
     def avail_texts(self,context):
         texts = bpy.data.texts
@@ -67,37 +82,121 @@ class SvTextInNode(Node,SverchCustomTreeNode):
         
     text = EnumProperty(items = avail_texts, name="Texts", 
                         description="Choose text to load", update=updateNode)
-    current_text = StringProperty(default = "")
     
-    columns = BoolProperty(default=True, options={'ANIMATABLE'})
-    names = BoolProperty(default=True, options={'ANIMATABLE'})
-                                       
-#    formatting options for future implementation
-#    decimal = StringProperty(name="Decimal separator", default=".")
-#    delimiter = StringProperty(name="Delimiter", default=",")
-    
+    text_modes = [("CSV", "Csv", "Csv data","",1),
+                  ("SV", "Sverchok","Python data","",2),
+                  ("JSON", "JSON", "Sverchok JSON",3)]  
+                
+    textmode = EnumProperty(items = text_modes, default='CSV',update=updateNode,)
 
-    def init(self, context):
-        self.use_custom_color = False
+# name of loaded text, to support reloading    
+    current_text = StringProperty(default = "")
+# external file
+    file = StringProperty(subtype='FILE_PATH')
+                           
+# csv standard dialect as defined in http://docs.python.org/3.3/library/csv.html
+# below are csv settings, user defined are set to 10 to allow more settings be added before
+ 
+    csv_dialects = [( 'excel',      'Excel',        'Standard excel',1),
+                    ( 'excel-tab',  'Excel tabs',   'Excel tab format',2),
+                    ( 'unix',       'Unix',         'Unix standard',3),
+                    ( 'user',       'User defined', 'Define settings yourself',10),]
+                    
+                    
+    csv_dialect = EnumProperty(items = csv_dialects, name="Csv Dialect", 
+                        description="Choose csv dialect", default='excel', update=updateNode)
+                        
+
+   
+    csv_delimiters = [(',',  ",",    "Comma: ,", 1),
+                     ('\t', 'tab',  "Tab", 2),
+                     (';',  ';',    "Semi-colon ;", 3),
+                     ('CUSTOM', 'custom',"Custom",10),]
+                     
+    csv_delimiter = EnumProperty(items = csv_delimiters, default=',')
+    csv_custom_delimiter =  StringProperty(default=':')
     
-        
+    csv_decimalmarks = [('.',  ".",    "Dot",1),
+                        (',', ',',  "Comma",2),
+                        ('LOCALE',  'Locale', "Follow locale",3),
+                        ('CUSTOM', 'custom',"Custom",10),]
+                        
+    csv_decimalmark = EnumProperty(items = csv_decimalmarks, default='LOCALE')
+    csv_custom_decimalmark = StringProperty(default=',')
+    csv_header = BoolProperty(default=False)                                  
+
+# Sverchok list options
+# choose which socket to interpretate data as
+    socket_types = [('v', 'Vertices',  "Point, vector or vertices data",1),
+                   ('s', 'Data',    "Generals numbers or edge polygon data",2),
+                   ('m', 'Matrix',  "Matrix data",3),]
+    socket_type = EnumProperty(items = socket_types, default='s')
+    
     def draw_buttons(self, context, layout):
-        layout.prop(self,"text","Text Select:")
-        layout.prop(self,'columns','Columns')
-        layout.prop(self,'names','Named fields?')
+        
+        layout.prop(self,"text","Select Text")
+        layout.prop(self,"file","File")
+        layout.prop(self,'textmode','textmode',expand=True)
+        if self.textmode == 'CSV':
+            layout.prop(self,'csv_header','Header fields')
+            layout.prop(self,'csv_dialect','Dialect')
+            if self.csv_dialect == 'user':
+                layout.label(text="Delimiter")
+                layout.prop(self, 'csv_delimiter',"Delimiter", expand = True)
+                if self.csv_delimiter == 'CUSTOM':
+                    layout.prop(self,'csv_custom_delimiter',"Custom")
+                
+                layout.label(text="Decimalmark")
+                layout.prop(self, 'csv_decimalmark',"Decimalmark", expand = True)
+                if self.csv_decimalmark == 'CUSTOM':
+                    layout.prop(self,'csv_custom_decimalmark',"Custom")   
+
+        if self.textmode == 'SV':
+            layout.label(text="Select data type")
+            layout.prop(self,'socket_type',expand = True)
+            
+        if self.textmode == 'JSON': # self documenting format
+            pass        
+                     
+
+
         op = layout.operator('node.sverchok_text_input', text='Load')
         op.name_tree = self.id_data.name
         op.name_obj = self.name 
-        # should be able to select external file, for now load in text editor
+        
+      
+    # dispatch functions
+          
+    def update(self): #dispatch based on mode
+        if self.textmode == 'CSV':
+            self.update_csv()
+        elif self.textmode == 'SV':
+            self.update_sv()
+        elif self.textmode == 'JSON':
+            self.update_json()
 
-    def update(self):
+
+    def load(self, reload = False):
+        if self.textmode == 'CSV':
+            self.load_csv()
+        elif self.textmode =='SV':
+            self.load_sv()
+        elif self.textmode =='JSON':
+            self.load_json()
+
+    def update_socket(self, context):
+        self.update()  
+#
+# CSV methods. 
+#            
+    def update_csv(self):
         # no data, try to reload the data otherwise fail       
-        if not self.name in self.csv_data:
-            self.load(reload = True)
-            if not self.name in self.csv_data:
-                self.use_custom_color = True
-                self.color = FAIL_COLOR    
-                return #nothing loaded
+#         if not self.name in self.csv_data:
+#             self.load(reload = True)
+#             if not self.name in self.csv_data:
+#                 self.use_custom_color = True
+#                 self.color = FAIL_COLOR    
+#                 return #nothing loaded
         
         self.use_custom_color = True
         self.color = READY_COLOR
@@ -106,74 +205,96 @@ class SvTextInNode(Node,SverchCustomTreeNode):
                 if not self.outputs[item].node.socket_value_update:
                     self.outputs[item].node.update()
                 self.outputs[item].StringsProperty = str([self.csv_data[self.name][item]])
+
  
-                        
-    def update_socket(self, context):
-        self.update()
-
+ 
 # reload options needs more work to be stable, name check of input and so on
-
-    def load(self, reload = False):
+            
+    def load_csv(self, reload = False):
         
         csv_data = collections.OrderedDict() 
         
         if self.name in self.csv_data:
             del self.csv_data[self.name]
             
-        if self.current_text == self.text:
-            reload = True
+       #  if self.current_text == self.text:
+#             reload = True
         self.current_text = self.text
             
-        f = bpy.data.texts[self.current_text].as_string()
-        # should be able to select external file, and formatting options
-        reader = csv.reader(io.StringIO(f),delimiter=',')
-        
-        if self.columns:
-            for i,row in enumerate(reader):         
-                if i == 0: #setup names
-                    if self.names:
-                        for name in row:
-                            tmp = name
-                            c = 1
-                            while tmp in csv_data:
-                                tmp = name+str(c)
-                                c += 1
-                            csv_data[str(tmp)] = []
-                        continue #first row is names    
-                    else:
-                        for j in range(len(row)):
-                            csv_data["Col "+str(j)] = []
-                # load data 
-                              
-                for j,name in enumerate(csv_data):
-                    try:
-                        csv_data[name].append(float(row[j]))   
-                    except (ValueError, IndexError):
-                        pass #discard strings other than first row
-                        
-        else:         #rows            
-            for i,row in enumerate(reader):
-                name = []
-                out = []
-                for j,obj in enumerate(row):
-                    nr = []
-                    try:
-                        out.append(float(obj))   
-                    except ValueError:
-                        if j == 0 and self.names:
-                            tmp = row[0]
-                            c = 1    
-                            while tmp in csv_data:
-                                tmp = row[0]+str(c)
-                                c += 1
-                            name = tmp
-                        else:
-                            pass #discard strings other than first column
+        f = io.StringIO(bpy.data.texts[self.current_text].as_string())
 
-                if not name:
-                    name = "Row "+ str(i)
-                csv_data[name] = out   
-        # store data        
+    # setup CSV options
+
+        if self.csv_dialect == 'user':
+            if self.csv_delimiter == 'CUSTOM':
+                d = self.csv_custom_delimiter
+            else:
+                d = self.csv_delimiter
+                
+            reader = csv.reader(f,delimiter=d)
+        else:
+            reader = csv.reader(f,dialect=self.csv_dialect)
+        # parse decimalmark
+   
+        if self.csv_decimalmark == ',':
+            get_number = lambda s: float(s.replace(',','.'))
+        elif self.csv_decimalmark == 'LOCALE':
+            get_number = lambda s: locale.atof(s)  
+        elif self.csv_decimalmark == 'CUSTOM':
+            if self.csv_custom_decimalmark :
+                get_number = lambda s: float(s.replace(self.csv_custom_decimalmark,'.'))
+        else: # . default
+            get_number = float        
+            
+    # load data
+        for i,row in enumerate(reader):         
+            if i == 0: #setup names
+                if self.csv_header:
+                    for name in row:
+                        tmp = name
+                        c = 1
+                        while tmp in csv_data:
+                            tmp = name+str(c)
+                            c += 1
+                        csv_data[str(tmp)] = []
+                    continue #first row is names    
+                else:
+                    for j in range(len(row)):
+                        csv_data["Col "+str(j)] = []
+            # load data 
+                          
+            for j,name in enumerate(csv_data):
+                try:
+                    csv_data[name].append(get_number(row[j]))   
+                except (ValueError, IndexError):
+                    pass #discard strings other than first row
+
+# no row styled data in standard csv, let us follow that                        
+#         else:         #rows            
+#             for i,row in enumerate(reader):
+#                 name = []
+#                 out = []
+#                 for j,obj in enumerate(row):
+#                     nr = []
+#                     try:
+#                         out.append(float(obj))   
+#                     except ValueError:
+#                         if j == 0 and self.names:
+#                             tmp = row[0]
+#                             c = 1    
+#                             while tmp in csv_data:
+#                                 tmp = row[0]+str(c)
+#                                 c += 1
+#                             name = tmp
+#                         else:
+#                             pass #discard strings other than first column
+# 
+#                 if not name:
+#                     name = "Row "+ str(i)
+#                 csv_data[name] = out   
+#         # store data
+
+
         self.csv_data[self.name]=csv_data
         if not reload:
         # remove sockets
@@ -182,45 +303,43 @@ class SvTextInNode(Node,SverchCustomTreeNode):
             # create sockets with names, maybe implement reload() in future       
             for name in csv_data:
                 self.outputs.new('StringsSocket', name, name)
-            
-            
+
+#
+# Sverchok list data
+#
 # loads a python list using eval
 # any python list is considered valid input and you
 # have know which socket to use it with, 
-
-# to be merged with above class, do not use
             
-class SvRawInNode(Node,SverchCustomTreeNode):
-    ''' Raw Text Input - expects a python list '''
-    bl_idname = 'SvRawInNode'
-    bl_label = 'Sv List Input'
-    bl_icon = 'OUTLINER_OB_EMPTY'
-
-    list_data = {}
-    
-    def avail_texts(self,context):
-        texts = bpy.data.texts
-        items = [(t.name,t.name,"") for t in texts]
-        return items 
-    
-    text = EnumProperty(items = avail_texts, name="Texts", 
-                        description="Choose text file to load", update=updateNode)    
-
-        
-    def init(self, context):
-        self.use_custom_color = False
-        self.outputs.new('VerticesSocket', 'Vertices', 'Vertices')
-        self.outputs.new('StringsSocket', 'Data', 'Data')
-        self.outputs.new('MatrixSocket', 'Matrix', 'Matrix')
-                
-    def draw_buttons(self, context, layout):
-        layout.prop(self,"text","Text Select:")
-        op = layout.operator('node.sverchok_text_input', text='Load')
-        op.name_tree = self.id_data.name
-        op.name_obj = self.name 
-        # should be able to select external file, for now load in text editor
-
-    def update(self):
+    def load_sv(self, reload = False):
+        data = None
+        name_dict = {'m':'Matrix','s':'Data','v':'Vertices'}
+            
+        if self.name in self.list_data:
+            del self.list_data[self.name]
+      
+        #reset sockets
+        for i in range(len(self.outputs)):
+            self.outputs.remove(self.outputs[0])
+             
+        f = bpy.data.texts[self.text].as_string()
+        # should be able to select external file
+        try:
+            data = ast.literal_eval(f)
+        except:
+            pass
+        if type(data) is list:
+            typ = self.socket_type
+            new_output_socket(self,name_dict[typ],typ)
+            self.list_data[self.name] = data
+            self.use_custom_color=True
+            self.color = READY_COLOR
+            
+        else:
+            self.use_custom_color=True
+            self.color = FAIL_COLOR    
+            
+    def update_sv(self):
         # nothing loaded, try to load and if it doesn't work fail             
         if not self.name in self.list_data:
             self.load()
@@ -234,67 +353,242 @@ class SvRawInNode(Node,SverchCustomTreeNode):
         for item in ['Vertices','Data','Matrix']:
             if item in self.outputs and len(self.outputs[item].links)>0:
                 if not self.outputs[item].node.socket_value_update:
+                    self.outputs[item].node.update()  
+                SvSetSocketAnyType(self,self.outputs[item], str(self.list_data[self.name]))
+#
+# JSON
+#
+# Loads JSON data as    
+#
+
+    def load_json(self, reload = False):
+        json_data = {}
+                
+        if self.name in self.json_data:
+            del self.json_data[self.name]
+
+        #reset sockets
+        for i in range(len(self.outputs)):
+            self.outputs.remove(self.outputs[-1])
+                       
+       #  if self.current_text == self.text:
+#             reload = True
+        self.current_text = self.text
+            
+        f = io.StringIO(bpy.data.texts[self.current_text].as_string())
+        try:
+            json_data = json.load(f)
+        except:
+            pass
+        #create sockets   
+
+        for item in json_data:
+            data = json_data[item]
+            if len(data) == 2 and data[0] in ['v','s','m']:                                 
+                new_output_socket(self,item,data[0])
+            else: # someting is wrong
+                self.use_custom_color=True
+                self.color = FAIL_COLOR       
+                return
+        
+        self.json_data[self.name]=json_data    
+
+        
+        
+    def update_json(self):
+        if not self.name in self.json_data:
+
+            return
+                
+        for item in self.json_data[self.name]:
+            if item in self.outputs and len(self.outputs[item].links)>0:
+                if not self.outputs[item].node.socket_value_update:
                     self.outputs[item].node.update()
-                if item == 'Vertices':
-                    self.outputs[item].VerticesProperty = str(self.list_data[self.name])
-                if item == 'Data':
-                    self.outputs[item].StringsProperty = str(self.list_data[self.name])
-                if item == 'Matrix':
-                    self.outputs[item].MatrixProperty = str(self.list_data[self.name])        
- 
-                        
+                out = self.json_data[self.name][item][1]
+
+                SvSetSocketAnyType(self, self.outputs[item], self.json_data[self.name][item][1])
+                
+
+########################################################################################
+#
+# Text Output
+#
+########################################################################################
+        
+class SvTextOutOp(bpy.types.Operator):
+    """ Dumps text data """
+    bl_idname = "node.sverchok_text_output"
+    bl_label = "Sverchok text output"
+    bl_options = {'REGISTER', 'UNDO'}
+    
+    # from object in
+    name_obj = StringProperty(name='object name')
+    name_tree = StringProperty(name='tree name')
+    
+    def execute(self, context):
+        node = bpy.data.node_groups[self.name_tree].nodes[self.name_obj]
+        out = node.get_data()
+        if len(out) == 0:
+            return {'FINISHED'}
+        bpy.data.texts[node.text].clear()
+        bpy.data.texts[node.text].write(out)
+        return {'FINISHED'}
+            
+            
+class SvTextOutNode(Node,SverchCustomTreeNode):
+    ''' Text Output Node '''
+    bl_idname = 'SvTextOutNode'
+    bl_label = 'Text Output'
+    bl_icon = 'OUTLINER_OB_EMPTY'
+    
+
+
+    
+    def avail_texts(self, context):
+        texts = bpy.data.texts
+        items = [(t.name,t.name,"") for t in texts]
+        return items 
+
+    def change_mode(self, context):
+        for i in range(len(self.inputs)):
+            self.inputs.remove(self.inputs[0])
+        
+        if self.text_mode == 'CSV':
+            self.inputs.new('StringsSocket','Col 1','Col 1')
+        if self.text_mode == 'JSON':
+            self.inputs.new('StringsSocket','Data 1','Data 1')
+        if self.text_mode == 'SV':
+            self.inputs.new('StringsSocket','Data','Data')        
+    
+    text = EnumProperty(items = avail_texts, name="Texts", 
+                        description="Choose text to load", update=updateNode)
+
+        
+    text_modes = [("CSV", "Csv", "Csv data","",1),
+                  ("SV", "Sverchok","Python data",2),
+                  ("JSON", "JSON", "Sverchok JSON",3)]  
+    
+    text_mode = EnumProperty(items = text_modes, default='CSV',update=change_mode)
+    
+     
+    csv_dialects = [( 'excel',      'Excel',        'Standard excel',1),
+                    ( 'excel-tab',  'Excel tabs',   'Excel tab format',2),
+                    ( 'unix',       'Unix',         'Unix standard',3),]
+                    
+    csv_dialect = EnumProperty(items = csv_dialects, default='excel')                    
+
+
+    def init(self,context):
+        self.inputs.new('StringsSocket','Col 1','Col 1')
+
+    def draw_buttons(self, context, layout):
+    
+        layout.prop(self,'text',"Select text")
+    
+        layout.label("Select output format")
+        layout.prop(self,'text_mode',"Text format",expand = True)
+        
+        if self.text_mode == 'CSV':
+            layout.prop(self,'csv_dialect')                
+    
+        op = layout.operator('node.sverchok_text_output', text='Dump')
+        op.name_tree = self.id_data.name
+        op.name_obj = self.name      
+     
+    
+
+            
+                
+    
     def update_socket(self, context):
         self.update()
         
-    def reset_sockets(self):
-        for item in ['Vertices','Data','Matrix']:
-            if item in self.outputs:
-                if item == 'Vertices':
-                    self.outputs[item].VerticesProperty = ""
-                if item == 'Data':
-                    self.outputs[item].StringsProperty = ""
-                if item == 'Matrix':
-                    self.outputs[item].MatrixProperty = ""
+
+    
+    #manage sockets
+    #
+    
+    def update(self):
+        if self.text_mode == 'CSV':
+            if len(self.inputs)>0 and self.inputs[-1].is_linked:
+                name = 'Col '+ str(len(self.inputs)+1)
+                self.inputs.new('StringsSocket',name,name )
+            else:
+                if len(self.inputs) > 2 and not self.inputs[-2].is_linked:
+                    self.inputs.remove(self.inputs[-1])   
+        elif self.text_mode == 'JSON':
+            if len(self.inputs)>0 and self.inputs[-1].is_linked:
+                name = 'Data '+ str(len(self.inputs)+1)
+                self.inputs.new('StringsSocket', name,name)          
+            else:
+                if len(self.inputs) > 2 and not self.inputs[-2].is_linked:
+                    self.inputs.remove(self.inputs[-1])  
+        elif self.text_mode == 'SV':
+            pass #only one input, do nothing
+  
+    # build a string with data from sockets        
+
+    def get_data(self):
+        out = ""
+        if self.text_mode == 'CSV':
+            data_out = []
+            for socket in self.inputs:
+                min_l = -1
+                if socket.is_linked and \
+                    type(socket.links[0].from_socket) == StringsSocket:
                     
-    def load(self, reload = False):
-        
-        data = None
+                    tmp = socket.links[0].from_socket.StringsProperty
+                    if len(tmp):
+                        data_out.append(list(itertools.chain.from_iterable(eval(tmp))))
+                        if min_l == -1:
+                            min_l = len(data_out[-1])
+                        else:
+                            min_l = min(len(data_out[-1]),min_l)
+                        
+            csv_str = io.StringIO()
+            writer = csv.writer(csv_str,dialect=self.csv_dialect)
+            for row in zip(*data_out):
+                writer.writerow(row)   
+                             
+            out = csv_str.getvalue()    
                 
-        if self.name in self.list_data:
-            del self.list_data[self.name]
-      
-        #reset sockets
-        self.reset_sockets()
-           
-        f = bpy.data.texts[self.text].as_string()
-        # should be able to select external file
-        try:
-            data = ast.literal_eval(f)
-        except:
-            pass
-        if type(data) is list:
-            self.list_data[self.name] = data
-            self.use_custom_color=True
-            self.color = READY_COLOR
-        else:
-            self.use_custom_color=True
-            self.color = FAIL_COLOR
-        
+        elif self.text_mode == 'JSON':
+            data_out = {}
+            name_dict = {'m':'Matrix','s':'Data','v':'Vertices'}
 
+            for item in self.inputs:
+                if item.is_linked:
+                    tmp = SvGetSocketAnyType(self, item)
+                    if len(tmp):
+                        tmp_name = name_dict[get_socket_type(self,item.name)]
+                        name = tmp_name
+                        j = 1
+                        while name in data_out:
+                            name = tmp_name+str(j)
+                            j += 1
+                            
+                        data_out[name] = (get_socket_type(self,item.name),tmp)
+            out = json.dumps(data_out,indent=4)    
             
+        elif self.text_mode == 'SV':
+            if self.inputs['Data'].is_linked:
+                out = str(SvGetSocketAnyType(self,self.inputs['Data']))
         
-
+        return out
+    
 def register():
     bpy.utils.register_class(SvTextInOp)
     bpy.utils.register_class(SvTextInNode)
+    bpy.utils.register_class(SvTextOutOp)
+    bpy.utils.register_class(SvTextOutNode)
 
     
 def unregister():
     bpy.utils.unregister_class(SvTextInOp)
     bpy.utils.unregister_class(SvTextInNode)
+    bpy.utils.unregister_class(SvTextOutOp)
+    bpy.utils.unregister_class(SvTextOutNode)
 
 if __name__ == "__main__":
     register()
-
-
 
