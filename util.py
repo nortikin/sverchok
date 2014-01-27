@@ -794,25 +794,7 @@ def SvGetSocketAnyType(self, socket):
         typeresult = eval(socket.links[0].from_socket.MatrixProperty)
     return typeresult
 
-<<<<<<< HEAD
-def SvSetSocketAnyType(self, socket, res):
-    if not socket.node.socket_value_update:
-        socket.node.update()
-    if type(socket) == bpy.types.StringsSocket:
-        socket.StringsProperty = str(res)
-    elif type(socket) == bpy.types.VerticesSocket:
-        socket.VerticesProperty = str(res)
-    elif type(socket) == bpy.types.MatrixSocket:
-        socket.MatrixProperty = str(res)
 
-def get_socket_type(node, inputsocketname):
-    if type(node.inputs[inputsocketname].links[0].from_socket) == bpy.types.VerticesSocket:
-        return 'v'
-    if type(node.inputs[inputsocketname].links[0].from_socket) == bpy.types.StringsSocket:
-        return 's'
-    if type(node.inputs[inputsocketname].links[0].from_socket) == bpy.types.MatrixSocket:
-        return 'm'
-=======
 def SvSetSocketAnyType(self, socket, out):
     if not self.outputs[socket].node.socket_value_update:
         self.outputs[socket].node.update()
@@ -822,8 +804,16 @@ def SvSetSocketAnyType(self, socket, out):
         self.outputs[socket].VerticesProperty = str(out) 
     elif type(self.outputs[socket]) == bpy.types.MatrixSocket:
         self.outputs[socket].MatrixProperty = str(out) 
->>>>>>> 5e3863ceaaeb0fb2fa1de91f5dc7c2c11a7c7b2d
 
+
+def get_socket_type(node, inputsocketname):
+    if type(node.inputs[inputsocketname].links[0].from_socket) == bpy.types.VerticesSocket:
+        return 'v'
+    if type(node.inputs[inputsocketname].links[0].from_socket) == bpy.types.StringsSocket:
+        return 's'
+    if type(node.inputs[inputsocketname].links[0].from_socket) == bpy.types.MatrixSocket:
+        return 'm'
+        
 ####################################
 # быстрый сортировщик / quick sorter
 ####################################
