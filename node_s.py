@@ -130,10 +130,15 @@ def make_categories():
             NodeItem("ListFLNode", label="List First&Last"),
             NodeItem("ListItemNode", label="List Item"),
             NodeItem("ListRepeaterNode", label="List Repeater"),
+<<<<<<< HEAD
 	        NodeItem("ListFuncNode", label="List Math"),
+=======
+            NodeItem("ListFuncNode", label="List Math"),
+>>>>>>> 5e3863ceaaeb0fb2fa1de91f5dc7c2c11a7c7b2d
             NodeItem("ConverterNode", label="SocketConvert"),
             NodeItem("ListFlipNode", label="ListFlip"),
             NodeItem("MaskListNode", label="List Mask"),
+            NodeItem("ListSortNode", label="List Sort"),
             # NodeItem("Test1Node", label="test1"),
             ]),
         SverchNodeCategory("SVERCHOK_N", "SVERCHOK number", items=[

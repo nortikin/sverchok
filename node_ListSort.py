@@ -21,32 +21,26 @@ class ListSortNode(Node, SverchCustomTreeNode):
         self.outputs.new('StringsSocket',"data", "data")
 
     def update(self):
-        # адаптивный сокет
-        inputsocketname = 'data'
-        outputsocketname = ['data']
-        changable_sockets(self, inputsocketname, outputsocketname)
+        if 'data' in self.inputs and len(self.inputs['data'].links)>0:
+            # адаптивный сокет
+            inputsocketname = 'data'
+            outputsocketname = ['data']
+            changable_sockets(self, inputsocketname, outputsocketname)
 
         # достаём два слота - вершины и полики
-        if 'data' in self.outputs and self.outputs['data'].links /
-                    and 'data' in self.inputs and self.inputs['data'].links:
+        if 'data' in self.outputs and len(self.outputs['data'].links)>0 \
+                and 'data' in self.inputs and len(self.inputs['data'].links)>0:
             if not self.outputs['data'].node.socket_value_update:
                 self.outputs['data'].node.update()
-            #if 'data' in self.inputs and self.inputs['data'].links:
-            if not self.inputs['data'].node.socket_value_update:
-                self.inputs['data'].node.update()
-            if type(self.inputs['data'].links[0].from_socket) == StringsSocket:
-                data = eval(self.inputs['data'].links[0].from_socket.StringsProperty)
-            elif type(self.inputs['data'].links[0].from_socket) == VerticesSocket:
-                data = eval(self.inputs['data'].links[0].from_socket.VerticesProperty)
-            elif type(self.inputs['data'].links[0].from_socket) == MatrixSocket:
-                data = eval(self.inputs['data'].links[0].from_socket.MatrixProperty)
+            data_ = SvGetSocketAnyType(self, self.inputs['data'])
             
             # init_level = levelsOflist(data)
-            data_ = dataCorrect(data, nominal_dept=self.level)
-            svQsort(data_)
-            out = str(self.count(data, self.level))
-            
-            self.outputs['data'].StringsProperty = out
+            data = dataCorrect(data_, nominal_dept=self.level)
+            out_ = []
+            for obj in data:
+                out_.append(svQsort(obj))
+            out = dataCorrect(out_)
+            SvSetSocketAnyType(self, 'data', out)
             
 
     def update_socket(self, context):

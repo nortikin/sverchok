@@ -48,7 +48,7 @@ class Test1Node(Node, SverchCustomTreeNode):
             # only node_name+layout_name+socket_name in str() format
             # and will make separate definition to easyly assign and
             # get and recognise data from dictionary
-            SvSetSocketAnyType(self, self.outputs['data'], result)
+            SvSetSocketAnyType(self, 'data', result)
             
 def register():
     bpy.utils.register_class(Test1Node)

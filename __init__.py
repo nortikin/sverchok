@@ -1,30 +1,33 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
-#
-#  This program is free software; you can redistribute it and/or
-#  modify it under the terms of the GNU General Public License
-#  as published by the Free Software Foundation; either version 2
-#  of the License, or (at your option) any later version.
-#
-#  This program is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with this program; if not, write to the Free Software Foundation,
-#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-#
-# ##### END GPL LICENSE BLOCK #####
-
-# <pep8 compliant>
-
-
-# -*- coding: utf-8 -*-
-# Gorodetskiy Nikita
-# Nedovzin Alexander
-# Linus Yng
-# Agustin Jimenez
-# http://nikitron.cc.ua/sverchok.html
+ #  ***** BEGIN GPL LICENSE BLOCK *****
+ #
+ #  This program is free software; you can redistribute it and/or
+ #  modify it under the terms of the GNU General Public License
+ #  as published by the Free Software Foundation; either version 2
+ #  of the License, or (at your option) any later version.
+ #
+ #  This program is distributed in the hope that it will be useful,
+ #  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ #  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ #  GNU General Public License for more details.
+ #
+ #  You should have received a copy of the GNU General Public License
+ #  along with this program; if not, see <http://www.gnu.org/licenses/>
+ #  and write to the Free Software Foundation, Inc., 51 Franklin Street, 
+ #  Fifth Floor, Boston, MA  02110-1301, USA..
+ #
+ #  The Original Code is Copyright (C) 2013-2014 by Gorodetskiy Nikita	###
+ #  All rights reserved.
+ #
+ #  Contact:      sverchok-b3d@yandex.ru	###
+ #  Information:  http://nikitron.cc.ua/sverchok.html	###
+ #
+ #  The Original Code is: all of this file.
+ #
+ #  Contributor(s): Nedovizin Alexander, Gorodetskiy Nikita, Linus Yng, Agustin Gimenez.
+ #
+ #  ***** END GPL LICENSE BLOCK *****
+ #
+ # -*- coding: utf-8 -*-
 
 
 bl_info = {
@@ -76,6 +79,7 @@ if "bpy" in locals():
     imp.reload(node_ListItem)
     imp.reload(node_ListRepeater)
     imp.reload(node_ListBoom)
+    imp.reload(node_ListSort)
     imp.reload(node_DistancePP)
     imp.reload(node_Series)
     imp.reload(node_Vector)
@@ -141,6 +145,7 @@ else:
     import node_ListItem
     import node_ListRepeater
     import node_ListBoom
+    import node_ListSort
     import node_DistancePP
     import node_Series
     import node_Vector
@@ -207,6 +212,7 @@ def register():
     node_ListItem.register()
     node_ListRepeater.register()
     node_ListBoom.register()
+    node_ListSort.register()
     node_DistancePP.register()
     node_Series.register()
     node_Vector.register()
@@ -260,8 +266,8 @@ def unregister():
     import bpy
     import nodeitems_utils
     
-    #node_Test1.unregister()
     node_Text.unregister()
+    #node_Test1.unregister()
     node_ListFlip.unregister()
     node_Converter.unregister()
     node_Range.unregister()
@@ -304,6 +310,7 @@ def unregister():
     node_Vector.unregister()
     node_Series.unregister()
     node_DistancePP.unregister()
+    node_ListSort.unregister()
     node_ListBoom.unregister()
     node_ListRepeater.unregister()
     node_ListItem.unregister()

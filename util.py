@@ -794,6 +794,7 @@ def SvGetSocketAnyType(self, socket):
         typeresult = eval(socket.links[0].from_socket.MatrixProperty)
     return typeresult
 
+<<<<<<< HEAD
 def SvSetSocketAnyType(self, socket, res):
     if not socket.node.socket_value_update:
         socket.node.update()
@@ -811,13 +812,24 @@ def get_socket_type(node, inputsocketname):
         return 's'
     if type(node.inputs[inputsocketname].links[0].from_socket) == bpy.types.MatrixSocket:
         return 'm'
+=======
+def SvSetSocketAnyType(self, socket, out):
+    if not self.outputs[socket].node.socket_value_update:
+        self.outputs[socket].node.update()
+    if type(self.outputs[socket]) == bpy.types.StringsSocket:
+        self.outputs[socket].StringsProperty = str(out) 
+    elif type(self.outputs[socket]) == bpy.types.VerticesSocket:
+        self.outputs[socket].VerticesProperty = str(out) 
+    elif type(self.outputs[socket]) == bpy.types.MatrixSocket:
+        self.outputs[socket].MatrixProperty = str(out) 
+>>>>>>> 5e3863ceaaeb0fb2fa1de91f5dc7c2c11a7c7b2d
 
 ####################################
 # быстрый сортировщик / quick sorter
 ####################################
 
 def svQsort(L):
-    if L: return qsort([x for x in L[1:] if x<L[0]]) + L[0:1] + qsort([x for x in L[1:] if x>=L[0]])
+    if L: return svQsort([x for x in L[1:] if x<L[0]]) + L[0:1] + svQsort([x for x in L[1:] if x>=L[0]])
     return []
 
 ####################################
