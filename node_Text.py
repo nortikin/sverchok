@@ -20,7 +20,7 @@
 #
 #
 
-import bpy, bmesh, mathutils
+import bpy
 from bpy.props import StringProperty, EnumProperty, BoolProperty
 from node_s import *
 from util import *
@@ -109,6 +109,7 @@ class SvTextInNode(Node,SverchCustomTreeNode):
     csv_dialects = [( 'excel',      'Excel',        'Standard excel',   1),
                     ( 'excel-tab',  'Excel tabs',   'Excel tab format', 2),
                     ( 'unix',       'Unix',         'Unix standard',    3),
+                    ( 'semicolon',  'Excel ;,',     'Excel ; ,',        4),
                     ( 'user',       'User defined', 'Define settings',10),]
                     
                     
@@ -241,11 +242,15 @@ class SvTextInNode(Node,SverchCustomTreeNode):
                 d = self.csv_delimiter
                 
             reader = csv.reader(f,delimiter=d)
+        elif self.csv_dialect == 'semicolon':
+            self.csv_decimalmark = ','
+            reader = csv.reader(f,delimiter = ';')
         else:
             reader = csv.reader(f,dialect=self.csv_dialect)
+            self.csv_decimalmark = '.'
 
         # setup parse decimalmark
-   
+            
         if self.csv_decimalmark == ',':
             get_number = lambda s: float(s.replace(',','.'))
         elif self.csv_decimalmark == 'LOCALE':
