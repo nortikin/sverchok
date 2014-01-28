@@ -135,6 +135,7 @@ def make_categories():
             NodeItem("ListFlipNode", label="ListFlip"),
             NodeItem("MaskListNode", label="List Mask"),
             NodeItem("ListSortNode", label="List Sort"),
+            NodeItem("ListShuffleNode", label="List Shuffle"),
             # NodeItem("Test1Node", label="test1"),
             ]),
         SverchNodeCategory("SVERCHOK_N", "SVERCHOK number", items=[

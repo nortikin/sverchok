@@ -71,6 +71,7 @@ if "bpy" in locals():
     imp.reload(node_ListJoin2)
     imp.reload(node_Zip)
     imp.reload(node_Shift)
+    imp.reload(node_ListShuffle)
     imp.reload(node_ListReverse)
     imp.reload(node_ListLength)
     imp.reload(node_ListFunc)
@@ -137,6 +138,7 @@ else:
     import node_ListJoin2
     import node_Zip
     import node_Shift
+    import node_ListShuffle
     import node_ListReverse
     import node_ListLength
     import node_ListFunc
@@ -204,6 +206,7 @@ def register():
     node_ListJoin2.register()
     node_Zip.register()
     node_Shift.register()
+    node_ListShuffle.register()
     node_ListReverse.register()
     node_ListLength.register()
     node_ListFunc.register()
@@ -319,6 +322,7 @@ def unregister():
     node_ListFunc.unregister()
     node_ListLength.unregister()
     node_ListReverse.unregister()
+    node_ListShuffle.unregister()
     node_Shift.unregister()
     node_Zip.unregister()
     node_ListJoin2.unregister()
