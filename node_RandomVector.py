@@ -26,15 +26,16 @@ class RandomVectorNode(Node, SverchCustomTreeNode):
 
     def update(self):
         # inputs
-        if 'Count' in self.inputs and len(self.inputs['Count'].links)>0 and type(self.inputs['Count'].links[0].from_socket) == bpy.types.StringsSocket:
+        if 'Count' in self.inputs and len(self.inputs['Count'].links)>0 and \
+            type(self.inputs['Count'].links[0].from_socket) == bpy.types.StringsSocket:
             if not self.inputs['Count'].node.socket_value_update:
                 self.inputs['Count'].node.update()
-                
-            Coun = int(eval(self.inputs['Count'].links[0].from_socket.StringsProperty)[0][0])
+            Coun = eval(self.inputs['Count'].links[0].from_socket.StringsProperty)
         else:
-            Coun = self.count_inner
+            Coun = [[self.count_inner]]
             
-        if 'Seed' in self.inputs and len(self.inputs['Seed'].links)>0 and type(self.inputs['Seed'].links[0].from_socket) == bpy.types.StringsSocket:
+        if 'Seed' in self.inputs and len(self.inputs['Seed'].links)>0 and \
+             type(self.inputs['Seed'].links[0].from_socket) == bpy.types.StringsSocket:
             if not self.inputs['Seed'].node.socket_value_update:
                 self.inputs['Seed'].node.update()
             
@@ -49,8 +50,15 @@ class RandomVectorNode(Node, SverchCustomTreeNode):
         if 'Random' in self.outputs and len(self.outputs['Random'].links)>0:
             if not self.outputs['Random'].node.socket_value_update:
                 self.inputs['Random'].node.update()
-            Random = [random_unit_vector().to_tuple() for i in range(Coun)]
-            self.outputs['Random'].VerticesProperty = str([Random])
+            Random = []
+        # Coun[0], only takes first list
+        #
+            for number in Coun[0]:
+                if number > 0:
+                    Random.append( [random_unit_vector().to_tuple() \
+                                        for i in range(int(number))])
+        
+            self.outputs['Random'].VerticesProperty = str(Random)
 
     
     def update_socket(self, context):
