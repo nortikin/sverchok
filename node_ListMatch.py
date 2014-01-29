@@ -1,8 +1,13 @@
+#
+# List Match Node by Linus Yng
+#
+
 import bpy
 from node_s import *
 from util import *
 import itertools
 
+# could be moved to util
 
 # longest list matching [[1,2,3,4,5], [10,11]] -> [[1,2,3,4,5], [10,11,11,11,11]]
 def match_long_repeat(lsts):
@@ -101,6 +106,7 @@ class ListMatchNode(Node, SverchCustomTreeNode):
                     self.outputs.remove(self.outputs[socket.name])
                     self.outputs.new(socket.links[0].from_socket.bl_idname,socket.name,socket.name)
                     self.outputs.move(len(self.outputs)-1,idx)
+    
         # check inputs and that there is at least one output
         if count_inputs == len(self.inputs)-1 and count_outputs:                                  
             out = []
@@ -110,7 +116,6 @@ class ListMatchNode(Node, SverchCustomTreeNode):
                 if socket.is_linked:
                     lsts.append(SvGetSocketAnyType(self,socket))
         
-#            print("lsts in",lsts)
             if self.mode == 'XREF':
                 out = self.match(lsts,self.level,match_cross)
             elif self.mode == 'LONG':
@@ -120,7 +125,7 @@ class ListMatchNode(Node, SverchCustomTreeNode):
                     out = self.match(lsts,self.level,match_long_repeat)
             elif self.mode == 'SHORT':
                 out = self.match(lsts,self.level,match_short)
- #           print("out",out)
+           # output into linked sockets 
             for i,socket in enumerate(self.outputs):
                 if i>len(out):
                     break
