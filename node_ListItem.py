@@ -77,14 +77,23 @@ class ListItemNode(Node, SverchCustomTreeNode):
 # Based on ListItem
 # For now only accepts one list of items
 # by Linus Yng
-        
+
+def repeat_last(lst):
+    i = -1
+    while True:
+        i += 1
+        if len(lst) > i:
+            yield lst[i]
+        else:
+            yield lst[-1]
+             
 class ListItem2Node(Node, SverchCustomTreeNode):
     ''' List item '''
     bl_idname = 'ListItem2Node'
     bl_label = 'List item'
     bl_icon = 'OUTLINER_OB_EMPTY'
     
-    level = bpy.props.IntProperty(name = 'level_to_count', default=2, min=0, update=updateNode)
+    level = bpy.props.IntProperty(name = 'level_to_count', default=2, min=1, update=updateNode)
     item = bpy.props.IntProperty(name = 'item', default=0, update=updateNode)
     typ = bpy.props.StringProperty(name='typ', default='')
     newsock = bpy.props.BoolProperty(name='newsock', default=False)
@@ -117,24 +126,19 @@ class ListItem2Node(Node, SverchCustomTreeNode):
                     items = [[self.item]]
                     
                 if 'Item' in self.outputs and self.outputs['Item'].links:
-                    out = self.get_items(data, self.level, items[0])
+                    out = self.get(data, self.level, items,self.get_items)
                     SvSetSocketAnyType(self, 'Item', out)
                 if 'Other' in self.outputs and self.outputs['Other'].links:
-                    out = self.get_other(data, self.level,items[0])
+                    out = self.get(data, self.level,items,self.get_other)
                     SvSetSocketAnyType(self, 'Other', out)
             
-    def get_items(self,data, level, items):
-        if level:
-            return [self.get_items(obj,level-1,items) for obj in data]
+    def get_items(self,data, items):
+        if type(data) in [list, tuple]:
+            return [data[item] for item in items if item < len(data) and item >= -len(data)]
         else:
-            if type(data) == list or type(data) == tuple:
-                return [data[item] for item in items if item < len(data) and item >= -len(data)]
-            else:
-                return None
-            
-    def get_other(self, data, level, items):
-        if level:
-            return [self.get_other(obj,level-1,items) for obj in data]          
+            return None
+    
+    def get_other(self, data, items):
         is_tuple = False
         if type(data) == tuple:
             data = list(data)
@@ -144,8 +148,7 @@ class ListItem2Node(Node, SverchCustomTreeNode):
             for idx,item in enumerate(items):
                 if item < 0:
                     m_items[idx] = len(data)-abs(item)
-            indxs = sorted(set(m_items), reverse = True)
-            for i in indxs:
+            for i in sorted(set(m_items), reverse = True):
                 if i < len(data) and i > -1:
                     del data[i]
             if is_tuple:
@@ -154,6 +157,15 @@ class ListItem2Node(Node, SverchCustomTreeNode):
                 return data
         else:
             return None
+            
+    def get(self, data, level, items,f):
+        if level == 1:
+            item_iter = repeat_last(items)
+            return [self.get(obj,level-1,next(item_iter),f) for obj in data]
+        elif level:
+            return [self.get(obj,level-1,items,f) for obj in data]
+        else:   
+            return f(data,items)
         
     def update_socket(self, context):
         self.update()
