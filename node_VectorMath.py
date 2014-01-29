@@ -31,21 +31,21 @@ class VectorMathNode(Node, SverchCustomTreeNode):
 # vector math functions
   # normalize, length 
     mode_items = [
-        ("CROSS",       "Cross product",        ""), 
-        ("DOT",         "Dot product",          ""), 
-        ("ADD",         "Add",                  ""),   
-        ("SUB",         "Sub",                  ""),
-        ("LEN",         "Length",               ""),
-        ("DISTANCE",    "Distance",             ""),
-        ("NORMALIZE",   "Normalize",            ""),
-        ("NEG",         "Negate",               ""),  
-        ("NOISE-V",     "Noise Vector",         ""),
-        ("NOISE-S",     "Noise Scalar",         ""),   
-        ("CELL-V",      "Vector Cell noise",    ""), #fixed in 2.69.8
-        ("CELL-S",      "Scalar Cell noise",    ""), 
-        ("ANGLE",       "Angle",                ""),
-        ("PROJECT",     "Project",              ""),
-        ("REFLECT",     "Reflect",              ""),
+        ("CROSS",       "Cross product",        "",0), 
+        ("DOT",         "Dot product",          "",1), 
+        ("ADD",         "Add",                  "",2),   
+        ("SUB",         "Sub",                  "",3),
+        ("LEN",         "Length",               "",4),
+        ("DISTANCE",    "Distance",             "",5),
+        ("NORMALIZE",   "Normalize",            "",6),
+        ("NEG",         "Negate",               "",7),  
+        ("NOISE-V",     "Noise Vector",         "",8),
+        ("NOISE-S",     "Noise Scalar",         "",9),   
+        ("CELL-V",      "Vector Cell noise",    "",10), 
+        ("CELL-S",      "Scalar Cell noise",    "",11), 
+        ("ANGLE",       "Angle",                "",12),
+        ("PROJECT",     "Project",              "",13),
+        ("REFLECT",     "Reflect",              "",14),
         ]
         
         
@@ -83,7 +83,8 @@ class VectorMathNode(Node, SverchCustomTreeNode):
             "NOISE-V"   :   (lambda u   : mathutils.noise.noise_vector(u), 1),
             "CELL-V"    :   (lambda u   : mathutils.noise.cell_vector(u), 1),
             "REFLECT"   :   (lambda u,v : u.reflect(v), 2),
-            "PROJECT"   :   (lambda u,v : u.project(v), 2),      
+            "PROJECT"   :   (lambda u,v : u.project(v), 2),   
+   
         }   
                    
     # check and adjust outputs and input size
