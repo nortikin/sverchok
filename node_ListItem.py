@@ -1,12 +1,11 @@
-import bpy, bmesh, mathutils
-from mathutils import Vector, Matrix
+import bpy
 from node_s import *
 from util import *
 
 class ListItemNode(Node, SverchCustomTreeNode):
     ''' List item '''
     bl_idname = 'ListItemNode'
-    bl_label = 'List item'
+    bl_label = 'List item old'
     bl_icon = 'OUTLINER_OB_EMPTY'
     
     level = bpy.props.IntProperty(name = 'level_to_count', default=2, min=0, update=updateNode)
@@ -71,12 +70,102 @@ class ListItemNode(Node, SverchCustomTreeNode):
 
     def update_socket(self, context):
         self.update()
+        
+# ListItem2
+# Allows a list of items, with both negative and positive index and repeated values
+# Other output is not wrapped.
+# Based on ListItem
+# For now only accepts one list of items
+# by Linus Yng
+        
+class ListItem2Node(Node, SverchCustomTreeNode):
+    ''' List item '''
+    bl_idname = 'ListItem2Node'
+    bl_label = 'List item'
+    bl_icon = 'OUTLINER_OB_EMPTY'
+    
+    level = bpy.props.IntProperty(name = 'level_to_count', default=2, min=0, update=updateNode)
+    item = bpy.props.IntProperty(name = 'item', default=0, update=updateNode)
+    typ = bpy.props.StringProperty(name='typ', default='')
+    newsock = bpy.props.BoolProperty(name='newsock', default=False)
+    
+    def draw_buttons(self, context, layout):
+        layout.prop(self, "level", text="level")
+        layout.prop(self, "item", text="item")
+        
+    def init(self, context):
+        self.inputs.new('StringsSocket', "Data", "Data")
+        self.inputs.new('StringsSocket', "Item", "Item")
+        self.outputs.new('StringsSocket',"Item","Item")
+        self.outputs.new('StringsSocket',"Other","Other")
+
+    def update(self):
+        if 'Data' in self.inputs and len(self.inputs['Data'].links)>0:
+            inputsocketname = 'Data'
+            outputsocketname = ['Item','Other']
+            changable_sockets(self, inputsocketname, outputsocketname)
+        
+        if 'Item' in self.outputs and self.outputs['Item'].links or \
+                'Other' in self.outputs and self.outputs['Other'].links:
+            
+            if 'Data' in self.inputs and self.inputs['Data'].links:
+                data = SvGetSocketAnyType(self, self.inputs['Data'])
+                
+                if 'Item' in self.inputs and self.inputs['Item'].is_linked:
+                    items = SvGetSocketAnyType(self,self.inputs['Item'])
+                else:
+                    items = [[self.item]]
+                    
+                if 'Item' in self.outputs and self.outputs['Item'].links:
+                    out = self.get_items(data, self.level, items[0])
+                    SvSetSocketAnyType(self, 'Item', out)
+                if 'Other' in self.outputs and self.outputs['Other'].links:
+                    out = self.get_other(data, self.level,items[0])
+                    SvSetSocketAnyType(self, 'Other', out)
+            
+    def get_items(self,data, level, items):
+        if level:
+            return [self.get_items(obj,level-1,items) for obj in data]
+        else:
+            if type(data) == list or type(data) == tuple:
+                return [data[item] for item in items if item < len(data) and item >= -len(data)]
+            else:
+                return None
+            
+    def get_other(self, data, level, items):
+        if level:
+            return [self.get_other(obj,level-1,items) for obj in data]          
+        is_tuple = False
+        if type(data) == tuple:
+            data = list(data)
+            is_tuple = True
+        if type(data) == list:   
+            m_items = items.copy() 
+            for idx,item in enumerate(items):
+                if item < 0:
+                    m_items[idx] = len(data)-abs(item)
+            indxs = sorted(set(m_items), reverse = True)
+            for i in indxs:
+                if i < len(data) and i > -1:
+                    del data[i]
+            if is_tuple:
+                return tuple(data)
+            else:
+                return data
+        else:
+            return None
+        
+    def update_socket(self, context):
+        self.update()
 
 def register():
     bpy.utils.register_class(ListItemNode)   
+    bpy.utils.register_class(ListItem2Node)   
     
 def unregister():
     bpy.utils.unregister_class(ListItemNode)
+    bpy.utils.unregister_class(ListItem2Node)
+
 
 if __name__ == "__main__":
     register()

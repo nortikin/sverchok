@@ -128,7 +128,7 @@ def make_categories():
             NodeItem("ListLengthNode", label="List Length"),
             NodeItem("ListSumNode", label="List Sum"),
             NodeItem("ListFLNode", label="List First&Last"),
-            NodeItem("ListItemNode", label="List Item"),
+            NodeItem("ListItem2Node", label="List Item"),
             NodeItem("ListRepeaterNode", label="List Repeater"),
             NodeItem("ListFuncNode", label="List Math"),
             NodeItem("ConverterNode", label="SocketConvert"),
