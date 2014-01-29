@@ -34,26 +34,6 @@ def match_cross(lsts):
 def match_short(lsts):
     return list(map(list,zip(*zip(*lsts))))
 
-# Todo
-# Socket handling
-# Error handling
-# Multi obj handling 
-
-def get_socket_type(node, inputsocketname):
-    if type(node.inputs[inputsocketname].links[0].from_socket) == bpy.types.VerticesSocket:
-        return 'v'
-    if type(node.inputs[inputsocketname].links[0].from_socket) == bpy.types.StringsSocket:
-        return 's'
-    if type(node.inputs[inputsocketname].links[0].from_socket) == bpy.types.MatrixSocket:
-        return 'm'
-        
-def get_socket_type2(node, name):
-    if type(node.outputs[name]) == bpy.types.VerticesSocket:
-        return 'v'
-    if type(node.outputs[name]) == bpy.types.StringsSocket:
-        return 's'
-    if type(node.outputs[name]) == bpy.types.MatrixSocket:
-        return 'm'        
     
 class ListMatchNode(Node, SverchCustomTreeNode):
     ''' Stream Matching node '''
@@ -64,10 +44,6 @@ class ListMatchNode(Node, SverchCustomTreeNode):
     level = bpy.props.IntProperty(name='level', description='Choose level of data (see help)' \
                                 , default=1, min=1, update=updateNode)
 
-    
-    typ = bpy.props.StringProperty(name='typ', default='')
-    newsock = bpy.props.BoolProperty(name='newsock', default=False)
-    
     modes = [("SHORT", "Short", "Shortest List",    1),
              ("LONG",   "Long", "Longest List",     2),
              ("XREF",   "X-Ref", "Cross reference", 3)]
@@ -101,9 +77,10 @@ class ListMatchNode(Node, SverchCustomTreeNode):
             return f(lsts)
         elif type(lsts) == tuple:
             return tuple(f(list(lsts)))
+        return None
          
     def update(self):
-        # inputs
+        # socket handling
         if self.inputs[-1].is_linked:
             name = 'Data '+str(len(self.inputs))
             self.inputs.new('StringsSocket', name, name)
@@ -112,41 +89,43 @@ class ListMatchNode(Node, SverchCustomTreeNode):
             while len(self.inputs)>2 and not self.inputs[-2].is_linked:
                 self.inputs.remove(self.inputs[-1])
                 self.outputs.remove(self.outputs[-1])
-
-        cons = 0     
+        # check number of connections and type match input socket n with output socket n
+        count_inputs = 0
+        count_outputs = 0     
         for idx,socket in enumerate(self.inputs):
+            if self.outputs[socket.name].is_linked:
+                count_outputs += 1
             if socket.is_linked:
-                cons += 1
+                count_inputs += 1
                 if type(socket.links[0].from_socket) != type(self.outputs[socket.name]):
                     self.outputs.remove(self.outputs[socket.name])
                     self.outputs.new(socket.links[0].from_socket.bl_idname,socket.name,socket.name)
                     self.outputs.move(len(self.outputs)-1,idx)
-
-        if cons == len(self.inputs)-1:
-            if 'Data 0' in self.outputs and self.outputs['Data 0'].is_linked:                                       
-                out = []
-                lsts = [] 
-                for socket in self.inputs:
-                    print(socket.name,socket.is_linked)
-                    if socket.is_linked:
-                        lsts.append(SvGetSocketAnyType(self,socket))
-                
-                print("lsts in",lsts)
-                if self.mode == 'XREF':
-                    out = self.match(lsts,self.level,match_cross)
-                elif self.mode == 'LONG':
-                    if self.long_mode == 'CYCLE':
-                        out = self.match(lsts,self.level,match_long_cycle)
-                    else: # REPEAT
-                        out = self.match(lsts,self.level,match_long_repeat)
-                elif self.mode == 'SHORT':
-                    out = self.match(lsts,self.level,match_short)
-                print("out",out)
-                for i,socket in enumerate(self.outputs):
-                    if i>len(out):
-                        break
-                    if socket.is_linked:
-                        SvSetSocketAnyType(self,socket.name,out[i])
+        # check inputs and that there is at least one output
+        if count_inputs == len(self.inputs)-1 and count_outputs:                                  
+            out = []
+            lsts = [] 
+            # get data
+            for socket in self.inputs:
+                if socket.is_linked:
+                    lsts.append(SvGetSocketAnyType(self,socket))
+        
+#            print("lsts in",lsts)
+            if self.mode == 'XREF':
+                out = self.match(lsts,self.level,match_cross)
+            elif self.mode == 'LONG':
+                if self.long_mode == 'CYCLE':
+                    out = self.match(lsts,self.level,match_long_cycle)
+                else: # REPEAT
+                    out = self.match(lsts,self.level,match_long_repeat)
+            elif self.mode == 'SHORT':
+                out = self.match(lsts,self.level,match_short)
+ #           print("out",out)
+            for i,socket in enumerate(self.outputs):
+                if i>len(out):
+                    break
+                if socket.is_linked:
+                    SvSetSocketAnyType(self,socket.name,out[i])
             
 
 def register():
