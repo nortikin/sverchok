@@ -195,14 +195,6 @@ class SvTextInNode(Node,SverchCustomTreeNode):
 # CSV methods. 
 #            
     def update_csv(self):
-# no data, try to reload the data otherwise fail       
-#         if not self.name in self.csv_data:
-#             self.load(reload = True)
-#             if not self.name in self.csv_data:
-#                 self.use_custom_color = True
-#                 self.color = FAIL_COLOR    
-#                 return #nothing loaded
-#
         if not self.name in self.csv_data:
             self.use_custom_color = True
             self.color = FAIL_COLOR    
@@ -324,7 +316,7 @@ class SvTextInNode(Node,SverchCustomTreeNode):
 #
 # loads a python list using eval
 # any python list is considered valid input and you
-# have know which socket to use it with, 
+# have know which socket to use it with. 
             
     def load_sv(self, reload = False):
         data = None
@@ -502,7 +494,7 @@ class SvTextOutNode(Node,SverchCustomTreeNode):
         layout.prop(self,'text_mode',"Text format",expand = True)
         
         if self.text_mode == 'CSV':
-            layout.prop(self,'csv_dialect')                
+            layout.prop(self,'csv_dialect',"Dialect")                
     
         op = layout.operator('node.sverchok_text_output', text='Dump')
         op.name_tree = self.id_data.name
