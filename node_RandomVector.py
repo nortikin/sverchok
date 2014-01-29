@@ -11,7 +11,8 @@ class RandomVectorNode(Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
     
     count_inner = bpy.props.IntProperty(name = 'count_inner', description='random', default=1, min=1, options={'ANIMATABLE'}, update=updateNode)
-    seed = bpy.props.IntProperty(name = 'seed', description='random seed', default=0, options={'ANIMATABLE'}, update=updateNode)
+    seed = bpy.props.IntProperty(name = 'seed', description='random seed', default=1,min=1, options={'ANIMATABLE'}, update=updateNode)
+    # seed 0 gives inconsistent results
     
     def init(self, context):
         self.inputs.new('StringsSocket', "Count", "Count")
@@ -44,6 +45,7 @@ class RandomVectorNode(Node, SverchCustomTreeNode):
             Seed = self.seed
         
         # set seed, protect against float input
+        print(int(round(Seed)))
         seed_set(int(round(Seed)))
         
         # outputs 
@@ -54,7 +56,7 @@ class RandomVectorNode(Node, SverchCustomTreeNode):
         # Coun[0], only takes first list
         #
             for number in Coun[0]:
-                if number > 0:
+                if number > 1:
                     Random.append( [random_unit_vector().to_tuple() \
                                         for i in range(int(number))])
         
