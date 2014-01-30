@@ -10,9 +10,8 @@ class RandomVectorNode(Node, SverchCustomTreeNode):
     bl_label = 'Random Vector'
     bl_icon = 'OUTLINER_OB_EMPTY'
     
-    count_inner = bpy.props.IntProperty(name = 'count_inner', description='random', default=1, min=1, options={'ANIMATABLE'}, update=updateNode)
-    seed = bpy.props.IntProperty(name = 'seed', description='random seed', default=1,min=1, options={'ANIMATABLE'}, update=updateNode)
-    # seed 0 gives inconsistent results
+    count_inner = bpy.props.IntProperty(name = 'count_inner', description='random', default=1,min=1, options={'ANIMATABLE'}, update=updateNode)
+    seed = bpy.props.IntProperty(name = 'seed', description='random seed', default=1, options={'ANIMATABLE'}, update=updateNode)
     
     def init(self, context):
         self.inputs.new('StringsSocket', "Count", "Count")
@@ -45,8 +44,14 @@ class RandomVectorNode(Node, SverchCustomTreeNode):
             Seed = self.seed
         
         # set seed, protect against float input
-        print(int(round(Seed)))
-        seed_set(int(round(Seed)))
+        # seed = 0 is special value for blender which unsets the seed value
+        # and starts to use system time making the random values unrepeatable.
+        # So when seed = 0 we use a random value far from 0, generated used random.org
+        int_seed = int(round(Seed))
+        if int_seed:
+            seed_set(int_seed)
+        else:
+            seed_set(140230)
         
         # outputs 
         if 'Random' in self.outputs and len(self.outputs['Random'].links)>0:
