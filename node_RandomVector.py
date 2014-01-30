@@ -10,9 +10,8 @@ class RandomVectorNode(Node, SverchCustomTreeNode):
     bl_label = 'Random Vector'
     bl_icon = 'OUTLINER_OB_EMPTY'
     
-    count_inner = bpy.props.IntProperty(name = 'count_inner', description='random', default=1, min=1, options={'ANIMATABLE'}, update=updateNode)
-    seed = bpy.props.IntProperty(name = 'seed', description='random seed', default=1,min=1, options={'ANIMATABLE'}, update=updateNode)
-    # seed 0 gives inconsistent results
+    count_inner = bpy.props.IntProperty(name = 'count_inner', description='random', default=1,min=1, options={'ANIMATABLE'}, update=updateNode)
+    seed = bpy.props.IntProperty(name = 'seed', description='random seed', default=1, options={'ANIMATABLE'}, update=updateNode)
     
     def init(self, context):
         self.inputs.new('StringsSocket', "Count", "Count")
@@ -43,24 +42,27 @@ class RandomVectorNode(Node, SverchCustomTreeNode):
             Seed = eval(self.inputs['Seed'].links[0].from_socket.StringsProperty)[0][0]
         else:
             Seed = self.seed
-        
-        # set seed, protect against float input
-        print(int(round(Seed)))
-        seed_set(int(round(Seed)))
+      
         
         # outputs 
         if 'Random' in self.outputs and len(self.outputs['Random'].links)>0:
-            if not self.outputs['Random'].node.socket_value_update:
-                self.inputs['Random'].node.update()
-            Random = []
-        # Coun[0], only takes first list
-        #
+            Random = []          
+            # set seed, protect against float input
+            # seed = 0 is special value for blender which unsets the seed value
+            # and starts to use system time making the random values unrepeatable.
+            # So when seed = 0 we use a random value far from 0, generated used random.org
+            int_seed = int(round(Seed))
+            if int_seed:
+                seed_set(int_seed)
+            else:
+                seed_set(140230)  
+                
+            # Coun[0], only takes first list
             for number in Coun[0]:
-                if number > 1:
+                if number > 0:
                     Random.append( [random_unit_vector().to_tuple() \
                                         for i in range(int(number))])
-        
-            self.outputs['Random'].VerticesProperty = str(Random)
+            SvSetSocketAnyType(self,'Random',Random)
 
     
     def update_socket(self, context):

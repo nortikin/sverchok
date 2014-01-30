@@ -47,7 +47,7 @@ class RandomNode(Node, SverchCustomTreeNode):
         
         if 'Random' in self.outputs and len(self.outputs['Random'].links)>0:
             if not self.outputs['Random'].node.socket_value_update:
-                self.inputs['Random'].node.update()
+                self.outputs['Random'].node.update()
             Random = [c for c in self.RandM(Coun)]
             
             self.outputs['Random'].StringsProperty = str([Random, ])

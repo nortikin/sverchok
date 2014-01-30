@@ -10,15 +10,15 @@ class ListFuncNode(Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
     
     mode_items = [
-        ("MIN",         "Minimum",        ""), 
-        ("MAX",         "Maximum",        ""), 
-        ("AVR",         "Average",        ""),   
+        ("MIN",         "Minimum",        "",1), 
+        ("MAX",         "Maximum",        "",2), 
+        ("AVR",         "Average",        "",3),   
         ]
     func_=bpy.props.EnumProperty( items = mode_items, name="Function", 
             description="Function choice", default="AVR", update=updateNode)
     level = bpy.props.IntProperty(name = 'level_to_count', default=1, min=0, update=updateNode)
-    typ = bpy.props.StringProperty(name='typ', default='')
-    newsock = bpy.props.BoolProperty(name='newsock', default=False)
+#    typ = bpy.props.StringProperty(name='typ', default='')
+#    newsock = bpy.props.BoolProperty(name='newsock', default=False)
     
     def draw_buttons(self, context, layout):
         layout.prop(self, "level", text="level")
@@ -29,12 +29,12 @@ class ListFuncNode(Node, SverchCustomTreeNode):
         self.outputs.new('StringsSocket',"Function","Function")
 
     def update(self):
-        if 'Data' in self.inputs and len(self.inputs['Data'].links)>0:
-            # адаптивный сокет
-            inputsocketname = 'Data'
-            outputsocketname = ['Function']
-            changable_sockets(self, inputsocketname, outputsocketname)
-            
+#        if 'Data' in self.inputs and len(self.inputs['Data'].links)>0:
+#             # адаптивный сокет
+#             inputsocketname = 'Data'
+#             outputsocketname = ['Function']
+#             changable_sockets(self, inputsocketname, outputsocketname)
+#             
         if 'Function' in self.outputs and self.outputs['Function'].links:
             if 'Data' in self.inputs and self.inputs['Data'].links:
                 data = SvGetSocketAnyType(self, self.inputs['Data'])

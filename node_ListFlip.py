@@ -46,13 +46,13 @@ class ListFlipNode(Node, SverchCustomTreeNode):
         return max(le)
     
     def update(self):
-        if 'data' in self.outputs and self.outputs['data'].links:
+        if 'data' in self.inputs and self.inputs['data'].links:
             # адаптивный сокет
             inputsocketname = 'data'
             outputsocketname = ['data']
             changable_sockets(self, inputsocketname, outputsocketname)
             
-        if 'data' in self.inputs and self.inputs['data'].links:
+        if 'data' in self.outputs and self.outputs['data'].links:
             outEval = SvGetSocketAnyType(self, self.inputs['data'])
             outCorr = dataCorrect(outEval) # this is bullshit, as max 3 in levels
             levels = self.level-1
