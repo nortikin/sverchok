@@ -85,13 +85,13 @@ class ListSliceNode(Node, SverchCustomTreeNode):
             
     def other(self,data,start,stop):
         if type(data) in [tuple,list]:
-            return  
+            return data[:start]+data[stop:]
         else:
             return None
             
     def get(self,data, start, stop, level, f):
         if level>1: # find level to work on
-            return [self.get_slice(obj,start,stop,level-1) for obj in data]
+            return [self.get(obj,start,stop,level-1,f) for obj in data]
         elif level==1: #execute the chosen function
             start_iter = repeat_last(start)
             stop_iter = repeat_last(stop)
