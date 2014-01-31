@@ -31,9 +31,19 @@ def match_long_cycle(lsts):
             tmp.append(itertools.cycle(l))
     return list(map( list, zip(*zip(*tmp))))
 
-# cross matching [[1,2], [5,6,7]] -> [[1,1,1,2,2,2], [5,6,7,5,6,7]]
+# cross matching 
+# [[1,2], [5,6,7]] -> [[1,1,1,2,2,2], [5,6,7,5,6,7]]
 def match_cross(lsts):
     return list(map(list,zip(*itertools.product(*lsts))))
+    
+# cross matching 2, more useful order
+# [[1,2], [5,6,7]] ->[[1, 2, 1, 2, 1, 2], [5, 5, 6, 6, 7, 7]]   
+# but longer and less elegant expression
+# performance difference is minimal since number of lists is usually small
+
+def match_cross2(lsts):
+    return list(reversed(list(map(list,zip(*itertools.product(*reversed(lsts)))))))
+
 
 # Shortest list decides output length [[1,2,3,4,5], [10,11]] -> [[1,2], [10, 11]]   
 def match_short(lsts):
@@ -72,12 +82,17 @@ class ListMatchNode(Node, SverchCustomTreeNode):
         layout.prop(self, "mode", expand = True)
         if self.mode == "LONG":
             layout.prop(self,'long_mode',expand = True)
-            
+
+# recursive update of match function, now performs match function until depth
+# works for short&long and simple scenarios. respect sub lists
+# should there be possibility to choose different functions for depths?
+
     def match(self,lsts,level,f):
         level -= 1
-        if level:
-            tmp = self.match([l[0] for l in lsts],level,f)
-            return [[l] for l in tmp]  
+        if level and type(lsts) in [list,tuple]:
+            tmp = f(lsts)
+            tmp2=[self.match(obj,level,f) for obj in zip(*tmp)]
+            return list(map(list,zip(*tmp2)))
         elif type(lsts) == list:
             return f(lsts)
         elif type(lsts) == tuple:
@@ -117,7 +132,7 @@ class ListMatchNode(Node, SverchCustomTreeNode):
                     lsts.append(SvGetSocketAnyType(self,socket))
         
             if self.mode == 'XREF':
-                out = self.match(lsts,self.level,match_cross)
+                out = self.match(lsts,self.level,match_cross2)
             elif self.mode == 'LONG':
                 if self.long_mode == 'CYCLE':
                     out = self.match(lsts,self.level,match_long_cycle)
@@ -125,9 +140,9 @@ class ListMatchNode(Node, SverchCustomTreeNode):
                     out = self.match(lsts,self.level,match_long_repeat)
             elif self.mode == 'SHORT':
                 out = self.match(lsts,self.level,match_short)
-           # output into linked sockets 
+           # output into linked sockets s
             for i,socket in enumerate(self.outputs):
-                if i>len(out):
+                if i==len(out): #never write to last socket
                     break
                 if socket.is_linked:
                     SvSetSocketAnyType(self,socket.name,out[i])
