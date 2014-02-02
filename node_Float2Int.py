@@ -24,7 +24,7 @@ class Float2IntNode(Node, SverchCustomTreeNode):
         # outputs
         if 'int' in self.outputs and len(self.outputs['int'].links)>0:
             if not self.outputs['int'].node.socket_value_update:
-                self.inputs['int'].node.update()
+                self.outputs['int'].node.update()
             num = eval(Number)
             #level = self.levels(num)
             result = self.inte(num)
