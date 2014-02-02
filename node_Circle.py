@@ -78,7 +78,7 @@ class CircleNode(Node, SverchCustomTreeNode):
         # outputs
         if 'Vertices' in self.outputs and len(self.outputs['Vertices'].links)>0:
             if not self.outputs['Vertices'].node.socket_value_update:
-                self.inputs['Nº Vertices'].node.update()
+                self.outputs['Vertices'].node.update()
 
             X = listVertX
             Y = listVertY
@@ -95,7 +95,7 @@ class CircleNode(Node, SverchCustomTreeNode):
 
         if 'Edges' in self.outputs and len(self.outputs['Edges'].links)>0:
             if not self.outputs['Edges'].node.socket_value_update:
-                self.inputs['Edges'].node.update()
+                self.outputs['Edges'].node.update()
 
             listEdg = []
             for i in range(Vertices-1):
@@ -110,7 +110,7 @@ class CircleNode(Node, SverchCustomTreeNode):
 
         if 'Polygons' in self.outputs and len(self.outputs['Polygons'].links)>0:
             if not self.outputs['Polygons'].node.socket_value_update:
-                self.inputs['Polygons'].node.update()
+                self.outputs['Polygons'].node.update()
 
             listPlg = []
             for i in range(Vertices):
