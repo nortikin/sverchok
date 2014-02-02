@@ -29,7 +29,7 @@ class IntegerNode(Node, SverchCustomTreeNode):
         # outputs
         if 'Integer' in self.outputs and len(self.outputs['Integer'].links)>0:
             if not self.outputs['Integer'].node.socket_value_update:
-                self.inputs['Integer'].node.update()
+                self.outputs['Integer'].node.update()
             
             self.outputs['Integer'].StringsProperty = str([[Integer, ]])
     
