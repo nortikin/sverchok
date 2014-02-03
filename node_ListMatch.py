@@ -101,14 +101,10 @@ class ListMatchNode(Node, SverchCustomTreeNode):
 
     def match(self,lsts,level,f1,f2):
         level -= 1  
-        if not isinstance(lsts,(list,tuple)):
-            return None
-        if not isinstance(lsts[0],(list,tuple)):
-            return None  
+  
         if level:
-            tmp = f1(lsts)
-            tmp2=[self.match(obj,level,f1,f2) for obj in zip(*tmp)]
-            return list(map(list,zip(*tmp2)))
+            tmp=[self.match(obj,level,f1,f2) for obj in zip(*f1(lsts))]
+            return list(map(list,zip(*tmp)))
         elif type(lsts) == list:
             return f2(lsts)
         elif type(lsts) == tuple:
@@ -154,8 +150,11 @@ class ListMatchNode(Node, SverchCustomTreeNode):
             for socket in self.inputs:
                 if socket.is_linked:
                     lsts.append(SvGetSocketAnyType(self,socket))
-            out = self.match(lsts,self.level,func_dict[self.mode],func_dict[self.mode_final])
-    
+            try:
+                out = self.match(lsts,self.level,func_dict[self.mode],func_dict[self.mode_final])
+            except:
+                print(self.name," failed")
+                
            # output into linked sockets s
             for i,socket in enumerate(self.outputs):
                 if i==len(out): #never write to last socket
