@@ -9,14 +9,28 @@ import itertools
 
 # could be moved to util
 
+def repeat_last(lst):
+    i = -1
+    while True:
+        i += 1
+        if len(lst) > i:
+            yield lst[i]
+        else:
+            yield lst[-1]
+            
 # longest list matching [[1,2,3,4,5], [10,11]] -> [[1,2,3,4,5], [10,11,11,11,11]]
 def match_long_repeat(lsts):
     max_l = 0
+    tmp = []
     for l in lsts:
         max_l = max(max_l,len(l))
     for l in lsts:
-        l.extend(itertools.repeat(l[-1],max_l-len(l)))
-    return lsts 
+        if len(l)==max_l:
+            tmp.append(l)
+        else:
+            tmp.append(repeat_last(l))
+            
+    return list(map( list, zip(*zip(*tmp))))
 
 # longest list matching, cycle [[1,2,3,4,5] ,[10,11]] -> [[1,2,3,4,5] ,[10,11,10,11,10]]
 def match_long_cycle(lsts):
@@ -60,46 +74,52 @@ class ListMatchNode(Node, SverchCustomTreeNode):
                                 , default=1, min=1, update=updateNode)
 
     modes = [("SHORT", "Short", "Shortest List",    1),
-             ("LONG",   "Long", "Longest List",     2),
-             ("XREF",   "X-Ref", "Cross reference", 3)]
+             ("CYCLE",   "Cycle", "Longest List",   2),
+             ("REPEAT",   "Repeat", "Longest List", 3),
+             ("XREF",   "X-Ref", "Cross reference", 4)]
     
-    long_modes = [("CYCLE", "Cycle", "Cycle through list",  1),
-                  ("REPEAT", "Repeat","Repeat Last",        2)]
-
-    mode = bpy.props.EnumProperty(items = modes, default='SHORT', update=updateNode)
-    long_mode = bpy.props.EnumProperty(items = long_modes, default='REPEAT',update=updateNode)
-
-    
+    mode = bpy.props.EnumProperty(items = modes, default='REPEAT',update=updateNode)
+    mode_final = bpy.props.EnumProperty(items = modes, default='REPEAT',update=updateNode)
+  
     def init(self, context):
         self.inputs.new('StringsSocket', 'Data 0', 'Data 0')
         self.inputs.new('StringsSocket', 'Data 1', 'Data 1')
         self.outputs.new('StringsSocket', 'Data 0', 'Data 0')
         self.outputs.new('StringsSocket', 'Data 1', 'Data 1')
-    
-    
+      
     def draw_buttons(self, context, layout):
         layout.prop(self, "level", text="Level")
+        layout.label("Recurse/Final")
         layout.prop(self, "mode", expand = True)
-        if self.mode == "LONG":
-            layout.prop(self,'long_mode',expand = True)
-
+        layout.prop(self, "mode_final", expand = True)
+   
 # recursive update of match function, now performs match function until depth
 # works for short&long and simple scenarios. respect sub lists
-# should there be possibility to choose different functions for depths?
+# matches until the chosen level
+# f2 is applied to the final level of matching,
+# f1 is applied to every level until the final, where f2 is used.
 
-    def match(self,lsts,level,f):
-        level -= 1
-        if level and type(lsts) in [list,tuple]:
-            tmp = f(lsts)
-            tmp2=[self.match(obj,level,f) for obj in zip(*tmp)]
-            return list(map(list,zip(*tmp2)))
+    def match(self,lsts,level,f1,f2):
+        level -= 1  
+  
+        if level:
+            tmp=[self.match(obj,level,f1,f2) for obj in zip(*f1(lsts))]
+            return list(map(list,zip(*tmp)))
         elif type(lsts) == list:
-            return f(lsts)
+            return f2(lsts)
         elif type(lsts) == tuple:
-            return tuple(f(list(lsts)))
+            return tuple(f2(list(lsts)))
         return None
          
     def update(self):
+        # inputs
+        func_dict = { 
+            'SHORT': match_short,
+            'CYCLE': match_long_cycle,
+            'REPEAT': match_long_repeat,
+            'XREF': match_cross2
+            }
+        
         # socket handling
         if self.inputs[-1].is_linked:
             name = 'Data '+str(len(self.inputs))
@@ -130,16 +150,11 @@ class ListMatchNode(Node, SverchCustomTreeNode):
             for socket in self.inputs:
                 if socket.is_linked:
                     lsts.append(SvGetSocketAnyType(self,socket))
-        
-            if self.mode == 'XREF':
-                out = self.match(lsts,self.level,match_cross2)
-            elif self.mode == 'LONG':
-                if self.long_mode == 'CYCLE':
-                    out = self.match(lsts,self.level,match_long_cycle)
-                else: # REPEAT
-                    out = self.match(lsts,self.level,match_long_repeat)
-            elif self.mode == 'SHORT':
-                out = self.match(lsts,self.level,match_short)
+            try:
+                out = self.match(lsts,self.level,func_dict[self.mode],func_dict[self.mode_final])
+            except:
+                print(self.name," failed")
+                
            # output into linked sockets s
             for i,socket in enumerate(self.outputs):
                 if i==len(out): #never write to last socket

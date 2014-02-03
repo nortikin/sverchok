@@ -29,7 +29,7 @@ class FloatNode(Node, SverchCustomTreeNode):
         # outputs
         if 'Float' in self.outputs and len(self.outputs['Float'].links)>0:
             if not self.outputs['Float'].node.socket_value_update:
-                self.inputs['Float'].node.update()
+                self.outputs['Float'].node.update()
             
             self.outputs['Float'].StringsProperty = str([[Float, ]])
     

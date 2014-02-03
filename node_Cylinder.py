@@ -109,7 +109,7 @@ class CylinderNode(Node, SverchCustomTreeNode):
 
         if 'Edges' in self.outputs and len(self.outputs['Edges'].links)>0:
             if not self.outputs['Edges'].node.socket_value_update:
-                self.inputs['Edges'].node.update()
+                self.outputs['Edges'].node.update()
 
             listEdg = []
             for i in range(Subd+2):
@@ -126,7 +126,7 @@ class CylinderNode(Node, SverchCustomTreeNode):
 
         if 'Polygons' in self.outputs and len(self.outputs['Polygons'].links)>0:
             if not self.outputs['Polygons'].node.socket_value_update:
-                self.inputs['Polygons'].node.update()
+                self.outputs['Polygons'].node.update()
 
             listPlg = []
             for i in range(Subd+1):
