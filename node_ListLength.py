@@ -39,7 +39,6 @@ class ListLengthNode(Node, SverchCustomTreeNode):
             return [self.count(obj,level-1) for obj in data] 
         elif level == 2:
             out = [self.count(obj,level-1) for obj in data]
-            print(out)
             return out
         elif level > 2: # flatten all but last level
             out = [self.count(obj,level-1) for obj in data] 
