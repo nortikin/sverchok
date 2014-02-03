@@ -88,7 +88,7 @@ class PlaneNode(Node, SverchCustomTreeNode):
         # outputs
         if 'Vertices' in self.outputs and len(self.outputs['Vertices'].links)>0:
             if not self.outputs['Vertices'].node.socket_value_update:
-                self.outputs['Nº Vertices'].node.update()
+                self.outputs['Vertices'].node.update()
 
             X = listVertX
             Y = listVertY
