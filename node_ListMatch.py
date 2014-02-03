@@ -9,14 +9,28 @@ import itertools
 
 # could be moved to util
 
+def repeat_last(lst):
+    i = -1
+    while True:
+        i += 1
+        if len(lst) > i:
+            yield lst[i]
+        else:
+            yield lst[-1]
+            
 # longest list matching [[1,2,3,4,5], [10,11]] -> [[1,2,3,4,5], [10,11,11,11,11]]
 def match_long_repeat(lsts):
     max_l = 0
+    tmp = []
     for l in lsts:
         max_l = max(max_l,len(l))
     for l in lsts:
-        l.extend(itertools.repeat(l[-1],max_l-len(l)))
-    return lsts 
+        if len(l)==max_l:
+            tmp.append(l)
+        else:
+            tmp.append(repeat_last(l))
+            
+    return list(map( list, zip(*zip(*tmp))))
 
 # longest list matching, cycle [[1,2,3,4,5] ,[10,11]] -> [[1,2,3,4,5] ,[10,11,10,11,10]]
 def match_long_cycle(lsts):
@@ -83,11 +97,15 @@ class ListMatchNode(Node, SverchCustomTreeNode):
 # works for short&long and simple scenarios. respect sub lists
 # matches until the chosen level
 # f2 is applied to the final level of matching,
-# f1 is applied to every level until the final
+# f1 is applied to every level until the final, where f2 is used.
 
     def match(self,lsts,level,f1,f2):
-        level -= 1
-        if level and type(lsts) in [list,tuple]:
+        level -= 1  
+        if not isinstance(lsts,(list,tuple)):
+            return None
+        if not isinstance(lsts[0],(list,tuple)):
+            return None  
+        if level:
             tmp = f1(lsts)
             tmp2=[self.match(obj,level,f1,f2) for obj in zip(*tmp)]
             return list(map(list,zip(*tmp2)))
@@ -98,7 +116,7 @@ class ListMatchNode(Node, SverchCustomTreeNode):
         return None
          
     def update(self):
-    
+        # inputs
         func_dict = { 
             'SHORT': match_short,
             'CYCLE': match_long_cycle,
