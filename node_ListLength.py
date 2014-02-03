@@ -1,7 +1,7 @@
-import bpy
+import bpy, bmesh, mathutils
+from mathutils import Vector, Matrix
 from node_s import *
 from util import *
-import itertools
 
 class ListLengthNode(Node, SverchCustomTreeNode):
     ''' List Length '''
@@ -24,27 +24,25 @@ class ListLengthNode(Node, SverchCustomTreeNode):
             data = SvGetSocketAnyType(self, self.inputs['Data'])
                 
             if not self.level:
-                out = [[len(data)]]
-            elif self.level == 1:
-                out = [self.count(data, self.level)]
+                out = str([len(data)])
             else:
-                out = self.count(data,self.level)
+                out = str(self.count(data, self.level))
             
             SvSetSocketAnyType(self, 'Length', out)
-         
+            
     def count(self, data, level):
-        if isinstance(data, (float, int)):
-            return 1  
-        if level == 1:
-            return [self.count(obj,level-1) for obj in data] 
-        elif level == 2:
-            out = [self.count(obj,level-1) for obj in data]
-            return out
-        elif level > 2: # flatten all but last level
-            out = [self.count(obj,level-1) for obj in data] 
-            return [list(itertools.chain.from_iterable(obj)) for obj in out] 
-             
-        return len(data)        
+        if level:
+            out = []
+            for obj in data:
+                out.append(self.count(obj, level-1))
+        elif type(data) not in [float, int]:
+            out = [len(data)]
+        elif type(data) in [float, int]:
+            out = 1
+        else:
+            pass
+        return out
+            
 
     def update_socket(self, context):
         self.update()
