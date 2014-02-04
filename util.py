@@ -4,6 +4,7 @@ from node_s import *
 global bmesh_mapping, per_cache
 from functools import reduce
 from math import radians
+import itertools
 
 bmesh_mapping = {}
 per_cache = {}
@@ -194,9 +195,76 @@ def handle_check(handle, prop):
     else:
         result = False
     return result 
+    
+#####################################################
+################ list matching magic ################
+#####################################################
+
+# creates an infinite iterator 
+# use with terminating input
+ 
+def repeat_last(lst):
+    i = -1
+    while lst:
+        i += 1
+        if len(lst) > i:
+            yield lst[i]
+        else:
+            yield lst[-1]
+            
+# longest list matching [[1,2,3,4,5], [10,11]] -> [[1,2,3,4,5], [10,11,11,11,11]]
+def match_long_repeat(lsts):
+    max_l = 0
+    tmp = []
+    for l in lsts:
+        max_l = max(max_l,len(l))
+    for l in lsts:
+        if len(l)==max_l:
+            tmp.append(l)
+        else:
+            tmp.append(repeat_last(l))
+            
+    return list(map( list, zip(*zip(*tmp))))
+
+# longest list matching, cycle [[1,2,3,4,5] ,[10,11]] -> [[1,2,3,4,5] ,[10,11,10,11,10]]
+def match_long_cycle(lsts):
+    max_l = 0
+    tmp = []
+    for l in lsts:
+        max_l = max(max_l,len(l))
+    for l in lsts:
+        if len(l)==max_l:
+            tmp.append(l)
+        else:
+            tmp.append(itertools.cycle(l))
+    return list(map( list, zip(*zip(*tmp))))
+
+# cross matching 
+# [[1,2], [5,6,7]] -> [[1,1,1,2,2,2], [5,6,7,5,6,7]]
+def match_cross(lsts):
+    return list(map(list,zip(*itertools.product(*lsts))))
+
+# use this one    
+# cross matching 2, more useful order
+# [[1,2], [5,6,7]] ->[[1, 2, 1, 2, 1, 2], [5, 5, 6, 6, 7, 7]]   
+# but longer and less elegant expression
+# performance difference is minimal since number of lists is usually small
+
+def match_cross2(lsts):
+    return list(reversed(list(map(list,zip(*itertools.product(*reversed(lsts)))))))
 
 
+# Shortest list decides output length [[1,2,3,4,5], [10,11]] -> [[1,2], [10, 11]]   
+def match_short(lsts):
+    return list(map(list,zip(*zip(*lsts))))
 
+# extends list so len(l) == count
+
+def fullList(l, count):
+    d = count - len(l)
+    if d > 0:
+        l.extend([l[-1] for a in range(d)])
+    return
 
 #####################################################
 ################# list levels magic #################
@@ -465,11 +533,6 @@ def myZip(list_all, level, level2=0):
         else:
             return False 
 
-def fullList(l, count):
-    d = count - len(l)
-    if d > 0:
-        l.extend([l[-1] for a in range(d)])
-    return
 
 
 ################### update List join magic ##########
@@ -813,6 +876,23 @@ def get_socket_type(node, inputsocketname):
         return 's'
     if type(node.inputs[inputsocketname].links[0].from_socket) == bpy.types.MatrixSocket:
         return 'm'
+
+#     utility function for handling n-inputs, for usage see Test1.py
+#     for examples see ListJoin2, LineConnect, ListZip  
+#     min parameter sets minimum number of sockets  
+#     setup two variables in Node class 
+#     base_name = 'Data '
+#     multi_socket_type = 'StringsSocket'
+
+def multi_socket(node , min=1):
+    if min < 1:
+        min = 0
+    if node.inputs[-1].is_linked:
+        name = node.base_name+str(len(node.inputs))
+        node.inputs.new(node.multi_socket_type, name, name)
+    else:
+        while len(node.inputs)>min and not node.inputs[-2].is_linked:
+            node.inputs.remove(node.inputs[-1])
         
 ####################################
 # быстрый сортировщик / quick sorter
