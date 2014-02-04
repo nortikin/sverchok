@@ -881,12 +881,18 @@ def get_socket_type(node, inputsocketname):
 #     for examples see ListJoin2, LineConnect, ListZip  
 #     min parameter sets minimum number of sockets  
 #     setup two variables in Node class 
+#     create Fixed inputs socket, the multi socket will not change anything
+#     below min  
 #     base_name = 'Data '
 #     multi_socket_type = 'StringsSocket'
 
 def multi_socket(node , min=1):
+    # probably incorrect state due init or change of inputs
+    # do nothing
+    if not len(node.inputs):
+        return
     if min < 1:
-        min = 0
+        min = 1
     if node.inputs[-1].is_linked:
         name = node.base_name+str(len(node.inputs))
         node.inputs.new(node.multi_socket_type, name, name)
