@@ -2,7 +2,6 @@ import bpy
 from node_s import *
 from util import *
 
-
 class ListJoinNode(Node, SverchCustomTreeNode):
     ''' ListJoin node '''
     bl_idname = 'ListJoinNode'
@@ -15,22 +14,13 @@ class ListJoinNode(Node, SverchCustomTreeNode):
     typ = bpy.props.StringProperty(name='typ', default='')
     newsock = bpy.props.BoolProperty(name='newsock', default=False)
     
+    base_name = 'data '
+    multi_socket_type = 'StringsSocket'
+    
     def init(self, context):
         self.inputs.new('StringsSocket', "data", "data")
         self.outputs.new('StringsSocket', 'data', 'data')
-    
-    def check_slots(self, num):
-        l = []
-        if len(self.inputs)<num+1:
-            return False
-        for i, sl in enumerate(self.inputs[num:]):   
-            if len(sl.links)==0:
-                l.append(i+num)
-        if l:
-            return l
-        else:
-            return False
-    
+       
     def draw_buttons(self, context, layout):
         layout.prop(self, "mix_check", text="mix")
         layout.prop(self, "wrap_check", text="wrap")
@@ -38,40 +28,39 @@ class ListJoinNode(Node, SverchCustomTreeNode):
     
     def update(self):
         # inputs
-        ch = self.check_slots(0)
-        if ch and len(self.inputs)>1:
-            for c in ch:
-                self.inputs.remove(self.inputs[ch[0]])
-        slots = []
-        for idx, multi in enumerate(self.inputs[:]):
-            if multi.links:
-                slots.append(SvGetSocketAnyType(self, multi))
-                ch = self.check_slots(2)
-                
-        if not ch:
-            self.inputs.new('StringsSocket', "data", "data")
-            
-        inputsocketname = 'data'
-        outputsocketname = ['data',]
-        changable_sockets(self, inputsocketname, outputsocketname)
+        multi_socket(self , min=1)
+        
+        if 'data' in self.inputs and len(self.inputs['data'].links)>0:
+            inputsocketname = 'data'
+            outputsocketname = ['data']
+            changable_sockets(self, inputsocketname, outputsocketname)
         
         if 'data' in self.outputs and self.outputs['data'].links:
+            slots = []
+            for socket in self.inputs:
+                if socket.is_linked:
+                    slots.append(SvGetSocketAnyType(self,socket))
+            if len(slots)==0:
+                return
+                
             list_result = joiner(slots,self.JoinLevel)
             result = list_result.copy()
-            
             if self.mix_check:
                 list_mix = myZip_2(slots,self.JoinLevel)
                 result = list_mix.copy()
-                
+
             if self.wrap_check:
                 list_wrap = wrapper_2(slots, list_result, self.JoinLevel)
                 result = list_wrap.copy()
-                
+
                 if self.mix_check:
                     list_wrap_mix = wrapper_2(slots, list_mix, self.JoinLevel)
                     result = list_wrap_mix.copy()
-            
+                    
             SvSetSocketAnyType(self, 'data', result)
+            
+    def update_socket(self, context):
+        self.update()
 
 def register():
     bpy.utils.register_class(ListJoinNode)

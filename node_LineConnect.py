@@ -2,7 +2,6 @@ import bpy
 from node_s import *
 from util import *
 
-
 class LineConnectNode(Node, SverchCustomTreeNode):
     ''' LineConnect node '''
     bl_idname = 'LineConnectNode'
@@ -14,34 +13,20 @@ class LineConnectNode(Node, SverchCustomTreeNode):
     link_check = bpy.props.BoolProperty(name='link', description='link parts', default=False, update=updateNode)
     cicl_check = bpy.props.BoolProperty(name='cicle', description='cicle line', default=False, update=updateNode)
     
+    base_name = 'vertices '
+    multi_socket_type = 'VerticesSocket'
+    
     def init(self, context):
-        self.inputs.new('VerticesSocket', "vertices", "vertices")
+        self.inputs.new('VerticesSocket', 'vertices', 'vertices')
         self.outputs.new('VerticesSocket', 'vertices', 'vertices')
         self.outputs.new('StringsSocket', 'data', 'data')
-    
-    def check_slots(self, num):
-        l = []
-        if len(self.inputs)<num+1:
-            return False
-        for i, sl in enumerate(self.inputs[num:]):   
-            if len(sl.links)==0:
-                l.append(i+num)
-        if l:
-            return l
-        else:
-            return False
     
     def draw_buttons(self, context, layout):
         layout.prop(self, "dir_check", text="direction")
         layout.prop(self, "link_check", text="to link")
         layout.prop(self, "cicl_check", text="cicle first-last")
         layout.prop(self, "JoinLevel", text="connect level")
-    
-    def fullList(self, l, count):
-        d = count - len(l)
-        if d > 0:
-            l.extend([l[-1] for a in range(d)])
-        return
+
     
     def connect(self, vers, dirn, link, cicl, clev):
         vers_ = []
@@ -71,11 +56,11 @@ class LineConnectNode(Node, SverchCustomTreeNode):
                 edges.append(objecto)
         else:
             ml = max(lens)
-            print(lens)
+            #print(lens)
             joinvers = []
             for ob in vers_:
                 #print('ob',ob)
-                self.fullList(ob, ml)
+                fullList(ob, ml)
                 joinvers.extend(ob)
             objecto = []
             for i, ve in enumerate(vers_[0][0:-1]):
@@ -87,41 +72,26 @@ class LineConnectNode(Node, SverchCustomTreeNode):
     
     def update(self):
         # inputs
-        ch = self.check_slots(0)
-        if ch and len(self.inputs)>1:
-            for c in ch:
-                self.inputs.remove(self.inputs[ch[0]])
-        slots = []
-        for idx, multi in enumerate(self.inputs[:]):   
-             
-            if multi.links:
-                if not multi.node.socket_value_update:
-                    multi.node.update()
-                if type(multi.links[0].from_socket) == VerticesSocket:
-                    slots.append(eval(multi.links[0].from_socket.VerticesProperty))
-                    # print ('slots',levelsOflist(slots))
-                    ch = self.check_slots(2)
-        if not ch:
-            self.inputs.new('VerticesSocket', "vertices", "vertices")
-        
-        
-        if 'vertices' in self.outputs and self.outputs['vertices'].links or \
-                'data' in self.outputs and self.outputs['data'].links:
-            
+        multi_socket(self , min=1)
+
+        if 'vertices' in self.outputs and self.outputs['vertices'].is_linked or \
+                'data' in self.outputs and self.outputs['data'].is_linked:
+            slots = []
+            for socket in self.inputs:
+                if socket.is_linked and type(socket.links[0].from_socket) == VerticesSocket:
+                    slots.append(SvGetSocketAnyType(self,socket))
+            if len(slots) == 0:
+                return
             if levelsOflist(slots) <=4:
                 lev = 1
             else:
                 lev = self.JoinLevel
             result = self.connect(slots, self.dir_check, self.link_check, self.cicl_check, lev)
-            print (levelsOflist(slots), '===>', levelsOflist(result))
-            if len(self.outputs['vertices'].links)>0:
-                if not self.outputs['vertices'].node.socket_value_update:
-                    self.outputs['vertices'].node.update()
-                self.outputs['vertices'].links[0].from_socket.VerticesProperty =  str(result[0])
-            if len(self.outputs['data'].links)>0:
-                if not self.outputs['data'].node.socket_value_update:
-                    self.outputs['data'].node.update()
-                self.outputs['data'].links[0].from_socket.StringsProperty = str(result[1])
+            print(levelsOflist(slots), '===>', levelsOflist(result))
+            if self.outputs['vertices'].is_linked:
+                 SvSetSocketAnyType(self,'vertices',result[0])
+            if self.outputs['data'].is_linked:
+                SvSetSocketAnyType(self,'data',result[1])
 
 def register():
     bpy.utils.register_class(LineConnectNode)
