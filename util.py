@@ -759,8 +759,8 @@ def makeTreeUpdate():
             nodeset_e, prioritet = insertnode(nod, nodeset_a, nodeset_e, priority=prioritet)
             
         list_nodes4update[ng.name] = prioritet + nodeset_e
-        print(list_nodes4update[ng.name])
-        list_nodes4update['TreeName'] = bpy.context.space_data.node_tree.name
+        #print(list_nodes4update[ng.name])
+    list_nodes4update['TreeName'] = bpy.context.space_data.node_tree.name
     return
 
 # alternative implementation
@@ -779,7 +779,7 @@ def makeTreeUpdate2():
         out = []
         wifi_out = []
         wifi_in = []
-        # select wifi nodes, put nodes with inputs first in out
+        # select wifi nodes, put nodes without inputs first in out
         for node in deps.keys():
             if not deps[node]:
                 if node[:6] == 'Wifi o':
@@ -811,6 +811,7 @@ def makeTreeUpdate2():
                 out.append(name)
                 node_names.pop()
             else:
+            # this node cannot be inserted, take new    
                 node_names.insert(0,node_names.pop())
         return out
     
