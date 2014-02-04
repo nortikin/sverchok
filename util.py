@@ -775,13 +775,13 @@ def makeTreeUpdate2():
         # get nodes and dependencies
         # 90% of the time is in this for loop.
         
-        for node in bpy.data.node_groups[node_tree].nodes[:]:
+        for name,node in bpy.data.node_groups[node_tree].nodes.items():
             node_dep = []
             for socket in node.inputs:
                 if socket.is_linked:
                     node_dep.append(socket.links[0].from_socket.node.name)
             if node_dep or len(node.inputs) or len(node.outputs):
-                deps[node.name]=node_dep
+                deps[name]=node_dep
         out = []
         wifi_out = []
         wifi_in = []
@@ -849,10 +849,10 @@ def speedUpdate():
             nods = bpy.data.node_groups[ng_name].nodes
             for nod_name in list_nodes4update[ng_name]:
                 if nod_name in nods:
-                    nods[nod_name].update()
-
-                
-            bpy.data.node_groups[ng_name].interface_update(bpy.context)
+                    nods[nod_name].update()          
+                          
+#            this should not be necessary   
+#           bpy.data.node_groups[ng_name].interface_update(bpy.context)
 
 
 ##############################################################
