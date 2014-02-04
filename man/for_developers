@@ -40,7 +40,12 @@
 
 	f.list definitions:
 		1.fullList(l, count) - makes list full till some count. last item multiplied to rest of needed length, ie [1,2,3,4] for count 6 will be [1,2,3,4,4,4]
-		2.some others to operate with exact nodes
+		2.  match_short(lsts) Shortest list decides output length [[1,2,3,4,5], [10,11]] -> [[1,2], [10, 11]]   
+		3.  match_cross2(lsts) cross rference [[1,2], [5,6,7]] ->[[1, 2, 1, 2, 1, 2], [5, 5, 6, 6, 7, 7]] 
+		4.  match_long_repeat(lsts) repeat last of shorter list [[1,2,3,4,5] ,[10,11]] -> [[1,2,3,4,5] ,[10,11,10,11,10]]
+		5.  match_long_cycle(lsts) cycle shorts lists [[1,2,3,4,5] ,[10,11]] -> [[1,2,3,4,5] ,[10,11,10,11,10]]
+		6. 	repeat_last(lst) creates an infinite iterator that repeats last item of list, for cycle see itertools.cycle
+		7. some others to operate with exact nodes
 
 	g.update sockets - definitions to operate with update
 
@@ -54,9 +59,18 @@
 			  outputsocketname = ['dataTrue','dataFalse'] # 'data...' - are names of your sockets to be changed
 			  changable_sockets(self, inputsocketname, outputsocketname)
 
-	i.multisocket definitions - makes possible to use multisocket (as in formulas 'n' sockets) - in todo list
-
-4.not use enumerate property, if you prepare to add items to this property. it makes life harder.
+	i.multi-socket multi_socket(node,min=1) - as used by ListJoin, List Zip, Lines Connect multi_socket(node,min=1)  
+	 base_name = 'data '
+     multi_socket_type = 'StringsSocket'
+     setup the fixed number of socket you need, the last of them is the first multi socket. minimum of one.
+     then in update(self):
+     			multi_socket(self,min=1) 
+     for more details see files mentioned above		
+      
+    	
+	
+4.to use enumerate property you have to assign index to items, never change the index of items added, it will break
+  if you more functions.
 5.not make many nodes if you can do less multifunctionsl.
 6.use levels, findout how it works and use level IntProperty in draw to define what level is to operate. We operate with 1,2,3 - standart and additional 4... infinity. make sure, that your levels limited, dropped down by levelsOflist as maximum value
 7.keep order in node' update definition as if output: if input. To count input only if you have output socket assembled.
