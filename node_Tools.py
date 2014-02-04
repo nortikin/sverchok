@@ -11,7 +11,7 @@ class SverchokUpdateAll(bpy.types.Operator):
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
-        makeTreeUpdate()
+        makeTreeUpdate2()
         speedUpdate()
         return {'FINISHED'}
 
