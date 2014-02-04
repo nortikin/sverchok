@@ -764,18 +764,24 @@ def makeTreeUpdate():
     return
 
 # alternative implementation
+# maybe could be quicker 
+
 def makeTreeUpdate2():
     global list_nodes4update
 
     def make_tree(node_tree):
+    def make_tree(node_tree):
         deps = {}
         # get nodes and dependencies
+        # 90% of the time is in this for loop.
+        
         for node in bpy.data.node_groups[node_tree].nodes[:]:
             node_dep = []
             for socket in node.inputs:
                 if socket.is_linked:
                     node_dep.append(socket.links[0].from_socket.node.name)
-            deps[node.name]=node_dep
+            if node_dep or len(node.inputs) or len(node.outputs):
+                deps[node.name]=node_dep
         out = []
         wifi_out = []
         wifi_in = []
@@ -788,6 +794,11 @@ def makeTreeUpdate2():
                     out.append(node)
             if node[:6] == 'Wifi i':
                 wifi_in.append(node)   
+     
+        # del keys in out
+        for node in out:
+            del deps[node]
+             
         # deal with wifi depdencices            
         for wifi_out_node in wifi_out:
             wifi_dep = []
@@ -797,27 +808,33 @@ def makeTreeUpdate2():
                     wifi_dep.append(wifi_in_node)
             if wifi_dep:
                 deps[wifi_out_node]=wifi_dep        
-   
+        
         node_names = list(deps.keys())
+        index = -1
         while len(node_names):
-            name = node_names[-1]
+            name = node_names[index]
+
             dep_names = deps[name]
             dep_count = 0
             for dep_name in dep_names:
-                if out.count(dep_name):
+                if dep_name in out:  
                     dep_count +=1
+                else: 
+                    index = node_names.index(dep_name)
+                    break
             # if all dependencies are in out        
             if dep_count == len(dep_names):
                 out.append(name)
-                node_names.pop()
-            else:
-            # this node cannot be inserted, take new    
-                node_names.insert(0,node_names.pop())
+                del node_names[index]
+                index = -1
+  
         return out
+    
     
     for ng in bpy.data.node_groups[:]:                
         list_nodes4update[ng.name]=make_tree(ng.name)
     list_nodes4update['TreeName'] = bpy.context.space_data.node_tree.name   
+   
 
 def speedUpdate():
     global list_nodes4update
