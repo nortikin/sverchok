@@ -4,6 +4,7 @@ from node_s import *
 global bmesh_mapping, per_cache
 from functools import reduce
 from math import radians
+import itertools
 
 bmesh_mapping = {}
 per_cache = {}
@@ -194,9 +195,76 @@ def handle_check(handle, prop):
     else:
         result = False
     return result 
+    
+#####################################################
+################ list matching magic ################
+#####################################################
+
+# creates an infinite iterator 
+# use with terminating input
+ 
+def repeat_last(lst):
+    i = -1
+    while lst:
+        i += 1
+        if len(lst) > i:
+            yield lst[i]
+        else:
+            yield lst[-1]
+            
+# longest list matching [[1,2,3,4,5], [10,11]] -> [[1,2,3,4,5], [10,11,11,11,11]]
+def match_long_repeat(lsts):
+    max_l = 0
+    tmp = []
+    for l in lsts:
+        max_l = max(max_l,len(l))
+    for l in lsts:
+        if len(l)==max_l:
+            tmp.append(l)
+        else:
+            tmp.append(repeat_last(l))
+            
+    return list(map( list, zip(*zip(*tmp))))
+
+# longest list matching, cycle [[1,2,3,4,5] ,[10,11]] -> [[1,2,3,4,5] ,[10,11,10,11,10]]
+def match_long_cycle(lsts):
+    max_l = 0
+    tmp = []
+    for l in lsts:
+        max_l = max(max_l,len(l))
+    for l in lsts:
+        if len(l)==max_l:
+            tmp.append(l)
+        else:
+            tmp.append(itertools.cycle(l))
+    return list(map( list, zip(*zip(*tmp))))
+
+# cross matching 
+# [[1,2], [5,6,7]] -> [[1,1,1,2,2,2], [5,6,7,5,6,7]]
+def match_cross(lsts):
+    return list(map(list,zip(*itertools.product(*lsts))))
+
+# use this one    
+# cross matching 2, more useful order
+# [[1,2], [5,6,7]] ->[[1, 2, 1, 2, 1, 2], [5, 5, 6, 6, 7, 7]]   
+# but longer and less elegant expression
+# performance difference is minimal since number of lists is usually small
+
+def match_cross2(lsts):
+    return list(reversed(list(map(list,zip(*itertools.product(*reversed(lsts)))))))
 
 
+# Shortest list decides output length [[1,2,3,4,5], [10,11]] -> [[1,2], [10, 11]]   
+def match_short(lsts):
+    return list(map(list,zip(*zip(*lsts))))
 
+# extends list so len(l) == count
+
+def fullList(l, count):
+    d = count - len(l)
+    if d > 0:
+        l.extend([l[-1] for a in range(d)])
+    return
 
 #####################################################
 ################# list levels magic #################
@@ -465,11 +533,6 @@ def myZip(list_all, level, level2=0):
         else:
             return False 
 
-def fullList(l, count):
-    d = count - len(l)
-    if d > 0:
-        l.extend([l[-1] for a in range(d)])
-    return
 
 
 ################### update List join magic ##########
@@ -685,11 +748,10 @@ def makeTreeUpdate():
         prioritet = []
         for nod in ng.nodes:
             flag=False
-            for inputs in nod.inputs:
-                if inputs.links:
+            for input in nod.inputs:
+                if input.is_linked:
                     Flag=True
-                    break
-            
+                    break  
             if flag: 
                 continue
             
@@ -697,9 +759,65 @@ def makeTreeUpdate():
             nodeset_e, prioritet = insertnode(nod, nodeset_a, nodeset_e, priority=prioritet)
             
         list_nodes4update[ng.name] = prioritet + nodeset_e
-        list_nodes4update['TreeName'] = bpy.context.space_data.node_tree.name
+        #print(list_nodes4update[ng.name])
+    list_nodes4update['TreeName'] = bpy.context.space_data.node_tree.name
     return
+
+# alternative implementation
+def makeTreeUpdate2():
+    global list_nodes4update
+
+    def make_tree(node_tree):
+        deps = {}
+        # get nodes and dependencies
+        for node in bpy.data.node_groups[node_tree].nodes[:]:
+            node_dep = []
+            for socket in node.inputs:
+                if socket.is_linked:
+                    node_dep.append(socket.links[0].from_socket.node.name)
+            deps[node.name]=node_dep
+        out = []
+        wifi_out = []
+        wifi_in = []
+        # select wifi nodes, put nodes without inputs first in out
+        for node in deps.keys():
+            if not deps[node]:
+                if node[:6] == 'Wifi o':
+                    wifi_out.append(node)
+                else:
+                    out.append(node)
+            if node[:6] == 'Wifi i':
+                wifi_in.append(node)   
+        # deal with wifi depdencices            
+        for wifi_out_node in wifi_out:
+            wifi_dep = []
+            for wifi_in_node in wifi_in:
+                if bpy.data.node_groups[node_tree].nodes[wifi_out_node].var_name == \
+                   bpy.data.node_groups[node_tree].nodes[wifi_in_node].var_name:
+                    wifi_dep.append(wifi_in_node)
+            if wifi_dep:
+                deps[wifi_out_node]=wifi_dep        
+   
+        node_names = list(deps.keys())
+        while len(node_names):
+            name = node_names[-1]
+            dep_names = deps[name]
+            dep_count = 0
+            for dep_name in dep_names:
+                if out.count(dep_name):
+                    dep_count +=1
+            # if all dependencies are in out        
+            if dep_count == len(dep_names):
+                out.append(name)
+                node_names.pop()
+            else:
+            # this node cannot be inserted, take new    
+                node_names.insert(0,node_names.pop())
+        return out
     
+    for ng in bpy.data.node_groups[:]:                
+        list_nodes4update[ng.name]=make_tree(ng.name)
+    list_nodes4update['TreeName'] = bpy.context.space_data.node_tree.name   
 
 def speedUpdate():
     global list_nodes4update
@@ -715,6 +833,7 @@ def speedUpdate():
             for nod_name in list_nodes4update[ng_name]:
                 if nod_name in nods:
                     nods[nod_name].update()
+
                 
             bpy.data.node_groups[ng_name].interface_update(bpy.context)
 
@@ -813,6 +932,29 @@ def get_socket_type(node, inputsocketname):
         return 's'
     if type(node.inputs[inputsocketname].links[0].from_socket) == bpy.types.MatrixSocket:
         return 'm'
+
+#     utility function for handling n-inputs, for usage see Test1.py
+#     for examples see ListJoin2, LineConnect, ListZip  
+#     min parameter sets minimum number of sockets  
+#     setup two variables in Node class 
+#     create Fixed inputs socket, the multi socket will not change anything
+#     below min  
+#     base_name = 'Data '
+#     multi_socket_type = 'StringsSocket'
+
+def multi_socket(node , min=1):
+    # probably incorrect state due init or change of inputs
+    # do nothing
+    if not len(node.inputs):
+        return
+    if min < 1:
+        min = 1
+    if node.inputs[-1].is_linked:
+        name = node.base_name+str(len(node.inputs))
+        node.inputs.new(node.multi_socket_type, name, name)
+    else:
+        while len(node.inputs)>min and not node.inputs[-2].is_linked:
+            node.inputs.remove(node.inputs[-1])
         
 ####################################
 # быстрый сортировщик / quick sorter

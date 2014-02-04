@@ -9,59 +9,7 @@ import itertools
 
 # could be moved to util
 
-def repeat_last(lst):
-    i = -1
-    while True:
-        i += 1
-        if len(lst) > i:
-            yield lst[i]
-        else:
-            yield lst[-1]
-            
-# longest list matching [[1,2,3,4,5], [10,11]] -> [[1,2,3,4,5], [10,11,11,11,11]]
-def match_long_repeat(lsts):
-    max_l = 0
-    tmp = []
-    for l in lsts:
-        max_l = max(max_l,len(l))
-    for l in lsts:
-        if len(l)==max_l:
-            tmp.append(l)
-        else:
-            tmp.append(repeat_last(l))
-            
-    return list(map( list, zip(*zip(*tmp))))
 
-# longest list matching, cycle [[1,2,3,4,5] ,[10,11]] -> [[1,2,3,4,5] ,[10,11,10,11,10]]
-def match_long_cycle(lsts):
-    max_l = 0
-    tmp = []
-    for l in lsts:
-        max_l = max(max_l,len(l))
-    for l in lsts:
-        if len(l)==max_l:
-            tmp.append(l)
-        else:
-            tmp.append(itertools.cycle(l))
-    return list(map( list, zip(*zip(*tmp))))
-
-# cross matching 
-# [[1,2], [5,6,7]] -> [[1,1,1,2,2,2], [5,6,7,5,6,7]]
-def match_cross(lsts):
-    return list(map(list,zip(*itertools.product(*lsts))))
-    
-# cross matching 2, more useful order
-# [[1,2], [5,6,7]] ->[[1, 2, 1, 2, 1, 2], [5, 5, 6, 6, 7, 7]]   
-# but longer and less elegant expression
-# performance difference is minimal since number of lists is usually small
-
-def match_cross2(lsts):
-    return list(reversed(list(map(list,zip(*itertools.product(*reversed(lsts)))))))
-
-
-# Shortest list decides output length [[1,2,3,4,5], [10,11]] -> [[1,2], [10, 11]]   
-def match_short(lsts):
-    return list(map(list,zip(*zip(*lsts))))
 
     
 class ListMatchNode(Node, SverchCustomTreeNode):
@@ -101,7 +49,6 @@ class ListMatchNode(Node, SverchCustomTreeNode):
 
     def match(self,lsts,level,f1,f2):
         level -= 1  
-  
         if level:
             tmp=[self.match(obj,level,f1,f2) for obj in zip(*f1(lsts))]
             return list(map(list,zip(*tmp)))
@@ -113,6 +60,7 @@ class ListMatchNode(Node, SverchCustomTreeNode):
          
     def update(self):
         # inputs
+        # these functions are in util.py
         func_dict = { 
             'SHORT': match_short,
             'CYCLE': match_long_cycle,

@@ -3,21 +3,7 @@ from node_s import *
 from util import *
 
 # ListSlice
-# by Linus Yng
-
-# utility generator function for use instead of fullList when input does not match,
-# note, non terminating process.
-# to move to util
-
-def repeat_last(lst):
-    i = -1
-    while True:
-        i += 1
-        if len(lst) > i:
-            yield lst[i]
-        else:
-            yield lst[-1]
-            
+# by Linus Yng            
 
 # Slices a list using function like:
 # Slice  = data[start:stop]

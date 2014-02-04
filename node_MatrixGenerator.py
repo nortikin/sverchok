@@ -60,22 +60,19 @@ class MatrixGenNode(Node, SverchCustomTreeNode):
                     rotA = Vector_generate(rotA_)
             
             # outputs
-        
-            if not self.outputs['Matrix'].node.socket_value_update:
-                self.outputs['Matrix'].node.update()
+            if 'Matrix' in self.inputs and self.inputs['Matrix'].is_linked:
             
-            max_l = max(len(loc[0]), len(scale[0]), len(rot[0]), len(angle[0]), len(rotA[0]))
-            orig = []
-            for l in range(max_l):
-                M = mathutils.Matrix()
-                orig.append(M)
-            if len(orig)==0:
-                return
-            
-            matrixes_ = matrixdef(orig, loc, scale, rot, angle, rotA)
-            matrixes = Matrix_listing(matrixes_)
-            self.outputs['Matrix'].MatrixProperty = str(matrixes)
-            #print ('matrix_def', str(matrixes))
+                max_l = max(len(loc[0]), len(scale[0]), len(rot[0]), len(angle[0]), len(rotA[0]))
+                orig = []
+                for l in range(max_l):
+                    M = mathutils.Matrix()
+                    orig.append(M)
+                if len(orig)==0:
+                    return           
+                matrixes_ = matrixdef(orig, loc, scale, rot, angle, rotA)
+                matrixes = Matrix_listing(matrixes_)
+                SvSetSocketAnyType(self,'Matrix',matrixes)
+                #print ('matrix_def', str(matrixes))
     
                 
     def update_socket(self, context):

@@ -456,16 +456,18 @@ class SvTextOutNode(Node,SverchCustomTreeNode):
         return items 
 
     def change_mode(self, context):
-        for i in range(len(self.inputs)):
-            self.inputs.remove(self.inputs[0])
+        self.inputs.clear()
         
         if self.text_mode == 'CSV':
-            self.inputs.new('StringsSocket','Col 1','Col 1')
+            self.inputs.new('StringsSocket','Col 0','Col 0')
+            self.base_name = 'Col '
         if self.text_mode == 'JSON':
-            self.inputs.new('StringsSocket','Data 1','Data 1')
+            self.inputs.new('StringsSocket','Data 0','Data 0')
+            self.base_name = 'Data '
         if self.text_mode == 'SV':
-            self.inputs.new('StringsSocket','Data','Data')        
-    
+            self.inputs.new('StringsSocket','Data','Data')
+                        
+            
     text = EnumProperty(items = avail_texts, name="Texts", 
                         description="Choose text to load", update=updateNode)
   
@@ -482,9 +484,11 @@ class SvTextOutNode(Node,SverchCustomTreeNode):
                     
     csv_dialect = EnumProperty(items = csv_dialects, default='excel')                    
 
+    base_name = StringProperty(name='base_name',default='Col ')
+    multi_socket_type = StringProperty(name='multi_socket_type',default='StringsSocket')
 
     def init(self,context):
-        self.inputs.new('StringsSocket','Col 1','Col 1')
+        self.inputs.new('StringsSocket','Col 0','Col 0')
 
     def draw_buttons(self, context, layout):
     
@@ -505,25 +509,12 @@ class SvTextOutNode(Node,SverchCustomTreeNode):
         self.update()
         
 
-    
     #manage sockets
     # does not do anything with data until dump is executed
     
     def update(self):
-        if self.text_mode == 'CSV':
-            if len(self.inputs)>0 and self.inputs[-1].is_linked:
-                name = 'Col '+ str(len(self.inputs)+1)
-                self.inputs.new('StringsSocket',name,name )
-            else:
-                if len(self.inputs) > 2 and not self.inputs[-2].is_linked:
-                    self.inputs.remove(self.inputs[-1])   
-        elif self.text_mode == 'JSON':
-            if len(self.inputs)>0 and self.inputs[-1].is_linked:
-                name = 'Data '+ str(len(self.inputs)+1)
-                self.inputs.new('StringsSocket', name,name)          
-            else:
-                if len(self.inputs) > 2 and not self.inputs[-2].is_linked:
-                    self.inputs.remove(self.inputs[-1])  
+        if self.text_mode == 'CSV' or self.text_mode == 'JSON':
+            multi_socket(self,min=1)
         elif self.text_mode == 'SV':
             pass #only one input, do nothing
   

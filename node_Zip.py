@@ -15,52 +15,36 @@ class ZipNode(Node, SverchCustomTreeNode):
     typ = bpy.props.StringProperty(name='typ', default='')
     newsock = bpy.props.BoolProperty(name='newsock', default=False)
     
+    base_name = 'data '
+    multi_socket_type = 'StringsSocket'
+    
     def draw_buttons(self, context, layout):
         layout.prop(self, "level", text="Level")
     
     def init(self, context):
         self.inputs.new('StringsSocket', "data", "data")
         self.outputs.new('StringsSocket', 'data', 'data')
-    
-    def check_slots(self, num):
-        l = []
-        if len(self.inputs)<num+1:
-            return False
-        for i, sl in enumerate(self.inputs[num:]):   
-            if len(sl.links)==0:
-                 l.append(i+num)
-        if l:
-            return l
-        else:
-            return False
-    
+
 
     def update(self):
         # inputs
-        JoinLevel = self.level
-        ch = self.check_slots(0)
-        if ch and len(self.inputs)>1:
-                for c in ch[:]:
-                    self.inputs.remove(self.inputs[ch[0]])
-        slots = []
-        for idx, multi in enumerate(self.inputs[:]):
-            if multi.links:
-                slots.append(SvGetSocketAnyType(self, multi))
-                ch = self.check_slots(2)
-        if not ch:
-            self.inputs.new('StringsSocket', "data", "data")
+        multi_socket(self , min=1)
         
-        
-        if 'data' in self.inputs and len(self.inputs['data'].links)>0:
+        if 'data' in self.inputs and self.inputs['data'].is_linked:
             # адаптивный сокет
             inputsocketname = 'data'
             outputsocketname = ['data']
             changable_sockets(self, inputsocketname, outputsocketname)
-            
-        if 'data' in self.outputs and self.outputs['data'].links:
-            output = self.myZip(slots,JoinLevel)  
-            
-            SvSetSocketAnyType(self, 'data', output)
+        
+        if 'data' in self.outputs and self.outputs['data'].is_linked:
+            slots = []
+            for socket in self.inputs:
+                if socket.is_linked:
+                    slots.append(SvGetSocketAnyType(self,socket))
+            if len(slots) < 2:
+                return    
+            output = self.myZip(slots,self.level)  
+            SvSetSocketAnyType(self, 'Data', output)
     
     def myZip(self, list_all, level, level2=0):
         if level==level2:

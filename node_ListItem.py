@@ -2,6 +2,9 @@ import bpy
 from node_s import *
 from util import *
 
+# supports of older code, remove soon
+# Linus Yng, Feb 4, 2014
+
 class ListItemNode(Node, SverchCustomTreeNode):
     ''' List item '''
     bl_idname = 'ListItemNode'
@@ -78,14 +81,6 @@ class ListItemNode(Node, SverchCustomTreeNode):
 # For now only accepts one list of items
 # by Linus Yng
 
-def repeat_last(lst):
-    i = -1
-    while True:
-        i += 1
-        if len(lst) > i:
-            yield lst[i]
-        else:
-            yield lst[-1]
              
 class ListItem2Node(Node, SverchCustomTreeNode):
     ''' List item '''
