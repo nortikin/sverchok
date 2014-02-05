@@ -770,7 +770,6 @@ def makeTreeUpdate2():
     global list_nodes4update
 
     def make_tree(node_tree):
-    def make_tree(node_tree):
         deps = {}
         # get nodes and dependencies
         # 90% of the time is in this for loop.

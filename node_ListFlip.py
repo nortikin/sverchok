@@ -46,18 +46,10 @@ class ListFlipNode(Node, SverchCustomTreeNode):
         return max(le)
     
     def update(self):
-<<<<<<< Updated upstream
-        if 'data' in self.inputs and self.inputs['data'].links:
-            # адаптивный сокет
-            inputsocketname = 'data'
-            outputsocketname = ['data']
-            changable_sockets(self, inputsocketname, outputsocketname)
-=======
         # адаптивный сокет
         inputsocketname = 'data'
         outputsocketname = ['data']
         changable_sockets(self, inputsocketname, outputsocketname)
->>>>>>> Stashed changes
             
         if 'data' in self.outputs and self.outputs['data'].links:
             outEval = SvGetSocketAnyType(self, self.inputs['data'])
