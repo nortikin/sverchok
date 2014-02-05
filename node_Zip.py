@@ -44,7 +44,7 @@ class ZipNode(Node, SverchCustomTreeNode):
             if len(slots) < 2:
                 return    
             output = self.myZip(slots,self.level)  
-            SvSetSocketAnyType(self, 'Data', output)
+            SvSetSocketAnyType(self, 'data', output)
     
     def myZip(self, list_all, level, level2=0):
         if level==level2:
