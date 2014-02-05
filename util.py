@@ -685,6 +685,8 @@ def updateSlot(self, context):
     
 def updateNode(self, context):
     speedUpdate(self.name,self.id_data.name)
+ 
+ 
     '''
     if not ini_update_cnode(self.name):
         return
@@ -818,8 +820,8 @@ def make_update_list(node_tree,node_set = None):
             tmp = list(deps.keys())
             name = tmp[0]
         else: # no nodes
-            return
-    # index stack for traversing node graph   
+            return []
+    #  stack for traversing node graph   
     tree_stack = []          
     out = collections.OrderedDict()
     
@@ -848,6 +850,7 @@ def make_update_list(node_tree,node_set = None):
                 for node_name in deps.keys():
                     name=node_name
                     break
+    
     return list(out.keys())
     
 def makeTreeUpdate2():
@@ -856,6 +859,7 @@ def makeTreeUpdate2():
         
     for ng in bpy.data.node_groups[:]:                
         list_nodes4update[ng.name]=make_update_list(ng.name)
+#        print(list_nodes4update[ng.name])
     list_nodes4update['TreeName'] = bpy.context.space_data.node_tree.name   
 
 
@@ -874,9 +878,7 @@ def make_tree_from_node(node_name,tree_name):
     while current_node:
         if current_node[:6] == 'Wifi i':
             if not wifi_out:  # build only if needed
-                for name,node in ng.nodes.items():
-                    if name[:6] == 'Wifi o':
-                        wifi_out.append(name)
+                wifi_out = [name for name in ng.nodes.key() if name[:6] == 'Wifi o']
             for wifi_out_node in wifi_out:
                 if ng.nodes[current_node].var_name == ng.nodes[current_node].var_name:
                     if not wifi_out_node in out_set:
@@ -892,7 +894,9 @@ def make_tree_from_node(node_name,tree_name):
             current_node = out_stack.pop()
         else:
             current_node = ''
-
+ #   out=make_update_list(tree_name,out_set)
+ #   print("out:",out)
+ #   print("node set:",out_set)
     return make_update_list(tree_name,out_set)
        
         
