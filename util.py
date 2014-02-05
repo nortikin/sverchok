@@ -683,7 +683,7 @@ def updateSlot(self, context):
     return
     
 def updateNode(self, context):
-    speedUpdate()
+    speedUpdate(start_node=self.name)
     '''
     if not ini_update_cnode(self.name):
         return
@@ -763,79 +763,96 @@ def makeTreeUpdate():
     list_nodes4update['TreeName'] = bpy.context.space_data.node_tree.name
     return
 
-# alternative implementation
-# maybe could be quicker 
+
+# alternative non recursive implementation
 
 def makeTreeUpdate2():
     global list_nodes4update
 
     def make_tree(node_tree):
         deps = {}
-        # get nodes and dependencies
-        # 90% of the time is in this for loop.
-        
-        for name,node in bpy.data.node_groups[node_tree].nodes.items():
+        # get nodes, select root nodes, wifi nodes and create dependencies for each node
+        # 70-80% of the time is in the first loop
+        roots = []
+        wifi_out = []
+        wifi_in = []
+        ng = bpy.data.node_groups[node_tree]
+        for name,node in ng.nodes.items():
             node_dep = []
             for socket in node.inputs:
                 if socket.is_linked:
                     node_dep.append(socket.links[0].from_socket.node.name)
+            is_root = True            
+            for socket in node.outputs:
+                if socket.is_linked:
+                    is_root = False
+                    break
+            # ignore nodes without input or outputs        
             if node_dep or len(node.inputs) or len(node.outputs):
                 deps[name]=node_dep
-        out = []
-        wifi_out = []
-        wifi_in = []
-        # select wifi nodes, put nodes without inputs first in out
-        for node in deps.keys():
-            if not deps[node]:
-                if node[:6] == 'Wifi o':
-                    wifi_out.append(node)
-                else:
-                    out.append(node)
-            if node[:6] == 'Wifi i':
-                wifi_in.append(node)   
-     
-        # del keys in out
-        for node in out:
-            del deps[node]
-             
-        # deal with wifi depdencices            
+            if is_root and node_dep and not name[:6] == 'Wifi i':
+                roots.append(name)
+            if name[:6] == 'Wifi o':
+                wifi_out.append(name)
+            if name[:6] == 'Wifi i':
+                wifi_in.append(name)  
+                
+        # create wifi out dependencies            
         for wifi_out_node in wifi_out:
             wifi_dep = []
             for wifi_in_node in wifi_in:
-                if bpy.data.node_groups[node_tree].nodes[wifi_out_node].var_name == \
-                   bpy.data.node_groups[node_tree].nodes[wifi_in_node].var_name:
+                if ng.nodes[wifi_out_node].var_name == ng.nodes[wifi_in_node].var_name:
                     wifi_dep.append(wifi_in_node)
             if wifi_dep:
                 deps[wifi_out_node]=wifi_dep        
-        
+ 
         node_names = list(deps.keys())
-        index = -1
-        while len(node_names):
+        if roots:
+            index = node_names.index(roots.pop())
+        else: #should never happen for a proper node tree
+            index = -1
+        # index stack for traversing node graph   
+        tree_index = []          
+        out = []
+       
+        # travel in node graph create one sorted list of nodes based on dependencies
+        while len(node_names)!=len(out):
             name = node_names[index]
-
-            dep_names = deps[name]
             dep_count = 0
-            for dep_name in dep_names:
+            for dep_name in deps[name]:
                 if dep_name in out:  
                     dep_count +=1
-                else: 
+                else:
+                    tree_index.append(index)
                     index = node_names.index(dep_name)
                     break
             # if all dependencies are in out        
-            if dep_count == len(dep_names):
-                out.append(name)
-                del node_names[index]
-                index = -1
-  
+            if dep_count == len(deps[name]):
+                if not name in out:
+                    out.append(name)
+                    node_names[index]=''
+                if tree_index:
+                    index = tree_index.pop()
+                elif roots:
+                    index = node_names.index(roots.pop())
+                else:
+                    if len(node_names)==len(out):
+                        break
+                    index = 0
+                    for i in range(len(node_names)):
+                        if node_names[i]:
+                            index=i
+                            break
         return out
     
     
+        
     for ng in bpy.data.node_groups[:]:                
         list_nodes4update[ng.name]=make_tree(ng.name)
     list_nodes4update['TreeName'] = bpy.context.space_data.node_tree.name   
-   
 
-def speedUpdate():
+# only update from start_node
+def speedUpdate(start_node = None):
     global list_nodes4update
     if 'TreeName' in list_nodes4update:
         NodeTree_name = list_nodes4update['TreeName']
@@ -846,10 +863,16 @@ def speedUpdate():
     for ng_name in list_nodes4update:
         if ng_name in bpy.context.blend_data.node_groups and ng_name==NodeTree_name:
             nods = bpy.data.node_groups[ng_name].nodes
-            for nod_name in list_nodes4update[ng_name]:
+            index = 0
+            if start_node:
+                try:
+                    index = list_nodes4update[ng_name].index(start_node)
+                except:
+                    pass
+            for nod_name in list_nodes4update[ng_name][index:]:
                 if nod_name in nods:
-                    nods[nod_name].update()          
-                          
+                    nods[nod_name].update()
+      
 #            this should not be necessary   
 #           bpy.data.node_groups[ng_name].interface_update(bpy.context)
 
