@@ -60,7 +60,7 @@ class MatrixGenNode(Node, SverchCustomTreeNode):
                     rotA = Vector_generate(rotA_)
             
             # outputs
-            if 'Matrix' in self.inputs and self.inputs['Matrix'].is_linked:
+            if 'Matrix' in self.outputs and self.outputs['Matrix'].is_linked:
             
                 max_l = max(len(loc[0]), len(scale[0]), len(rot[0]), len(angle[0]), len(rotA[0]))
                 orig = []

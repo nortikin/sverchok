@@ -845,7 +845,7 @@ def make_update_list(node_tree,node_set = None):
             elif roots:
                 name = roots.pop()
             else: 
-                if len(deps)==len(out):
+                if node_count == len(out):
                     break
                 for node_name in deps.keys():
                     name=node_name
@@ -878,7 +878,7 @@ def make_tree_from_node(node_name,tree_name):
     while current_node:
         if current_node[:6] == 'Wifi i':
             if not wifi_out:  # build only if needed
-                wifi_out = [name for name in ng.nodes.key() if name[:6] == 'Wifi o']
+                wifi_out = [name for name in ng.nodes.keys() if name[:6] == 'Wifi o']
             for wifi_out_node in wifi_out:
                 if ng.nodes[current_node].var_name == ng.nodes[current_node].var_name:
                     if not wifi_out_node in out_set:
