@@ -845,7 +845,7 @@ def make_update_list(node_tree,node_set = None):
             elif roots:
                 name = roots.pop()
             else: 
-                if len(deps)==len(out):
+                if node_count == len(out):
                     break
                 for node_name in deps.keys():
                     name=node_name
