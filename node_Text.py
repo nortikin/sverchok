@@ -528,10 +528,10 @@ class SvTextOutNode(Node,SverchCustomTreeNode):
                 if socket.is_linked and \
                     type(socket.links[0].from_socket) == StringsSocket:
                     
-                    tmp = socket.links[0].from_socket.StringsProperty
+                    tmp = SvGetSocketAnyType(self,socket)
                     if len(tmp):
                         # flatten list
-                        data_out.append(list(itertools.chain.from_iterable(eval(tmp))))
+                        data_out.append(list(itertools.chain.from_iterable(tmp)))
                         
             csv_str = io.StringIO()
             writer = csv.writer(csv_str,dialect=self.csv_dialect)

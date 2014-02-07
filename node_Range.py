@@ -25,41 +25,35 @@ class GenRangeNode(Node, SverchCustomTreeNode):
 
     def update(self):
         # inputs
-        if 'Start' in self.inputs and len(self.inputs['Start'].links)>0:
-            if not self.inputs['Start'].node.socket_value_update:
-                self.inputs['Start'].node.update()
-            Start = eval(self.inputs['Start'].links[0].from_socket.StringsProperty)[0][0]
+        if 'Start' in self.inputs and self.inputs['Start'].is_linked:
+            tmp = SvGetSocketAnyType(self,self.inputs['Start'])
+            Start = tmp[0][0]
         else:
             Start = self.start_
     
-        if 'Stop' in self.inputs and len(self.inputs['Stop'].links)>0:
-            if not self.inputs['Stop'].node.socket_value_update:
-                self.inputs['Stop'].node.update()
-            Stop = eval(self.inputs['Stop'].links[0].from_socket.StringsProperty)[0][0]
+        if 'Stop' in self.inputs and self.inputs['Stop'].is_linked:
+            tmp = SvGetSocketAnyType(self,self.inputs['Stop'])
+            Stop = tmp[0][0]
         else:
             Stop = self.stop_
         
-        if 'Divisions' in self.inputs and len(self.inputs['Divisions'].links)>0:
-            if not self.inputs['Divisions'].node.socket_value_update:
-                self.inputs['Divisions'].node.update()
-            Divisions = eval(self.inputs['Divisions'].links[0].from_socket.StringsProperty)[0][0]
+        if 'Divisions' in self.inputs and self.inputs['Divisions'].is_linked:
+            tmp = SvGetSocketAnyType(self,self.inputs['Divisions'])
+            Divisions = tmp[0][0]
         else:
             Divisions = self.divisions_
         
         # outputs
-        if 'Range' in self.outputs and len(self.outputs['Range'].links)>0:
-            if not self.outputs['Range'].node.socket_value_update:
-                self.inputs['Range'].node.update()
+        if 'Range' in self.outputs and self.outputs['Range'].is_linked:
             if Divisions < 2:
                 Divisions = 2
             Range = [Start]
             if Divisions > 2:
                 Range.extend([c for c in self.xfrange(Start, Stop, Divisions)])                       
             Range.append(Stop)
-            self.outputs['Range'].StringsProperty = str([Range, ])
+            SvSetSocketAnyType(self, 'Range',[Range])
 
-    def xfrange(self, start, stop, divisions):
-        
+    def xfrange(self, start, stop, divisions):       
         step = (stop - start) / (divisions - 1 )
         count = start 
         for i in range( divisions - 2 ):
