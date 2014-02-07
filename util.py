@@ -19,7 +19,6 @@ list_nodes4update = {}
 sv_Vars = {}
 socket_data_cache = {}
 
-
         
 #####################################################
 ################### update magic ####################
@@ -692,7 +691,8 @@ def sverchok_debug(mode = None,key=None,value=None):
     if key != None and value != None:
         DEBUG_SETTINGS[key]=value
     if key != None and value == None:
-        del DEBUG_SETTINGS[key]
+        if key in DEBUG_SETTINGS:
+            del DEBUG_SETTINGS[key]
     return DEBUG_MODE
     
 #####################################################
@@ -1096,7 +1096,10 @@ def socket_id(socket):
 
 def SvSetSocket(socket, out):
     global socket_data_cache
-    socket_data_cache[socket_id(socket)]=copy.copy(out)
+    s_id = socket_id(socket)
+    if s_id in socket_data_cache:
+        del socket_data_cache[s_id]
+    socket_data_cache[s_id]=copy.copy(out)
    
 def SvGetSocket(socket):
     global socket_data_cache
