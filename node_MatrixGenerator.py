@@ -19,29 +19,26 @@ class MatrixGenNode(Node, SverchCustomTreeNode):
 
     def update(self):
         # inputs
-            if 'Location' in self.inputs and self.inputs['Location'].links and \
+            if 'Location' in self.inputs and self.inputs['Location'].is_linked and \
                 type(self.inputs['Location'].links[0].from_socket) == VerticesSocket:
-                if not self.inputs['Location'].node.socket_value_update:
-                    self.inputs['Location'].node.update()
-                loc_ = eval(self.inputs['Location'].links[0].from_socket.VerticesProperty)
+
+                loc_ = SvGetAnySocket(self,self.inputs['Location'])
                 loc = Vector_generate(loc_)
             else:
                 loc = [[]]
             
-            if 'Scale' in self.inputs and self.inputs['Scale'].links and \
+            if 'Scale' in self.inputs and self.inputs['Scale'].is_linked and \
                 type(self.inputs['Scale'].links[0].from_socket) == VerticesSocket:
-                if not self.inputs['Scale'].node.socket_value_update:
-                    self.inputs['Scale'].node.update()
-                scale_ = eval(self.inputs['Scale'].links[0].from_socket.VerticesProperty)
+          
+                scale_ = SvGetAnySocket(self,self.inputs['Scale'])
                 scale = Vector_generate(scale_)
             else:
                 scale = [[]]
                 
-            if 'Rotation' in self.inputs and self.inputs['Rotation'].links and \
+            if 'Rotation' in self.inputs and self.inputs['Rotation'].is_linked and \
                 type(self.inputs['Rotation'].links[0].from_socket) == VerticesSocket:
-                if not self.inputs['Rotation'].node.socket_value_update:
-                    self.inputs['Rotation'].node.update()
-                rot_ = eval(self.inputs['Rotation'].links[0].from_socket.VerticesProperty)
+
+                rot_ = SvGetAnySocket(self,self.inputs['Rotation'])
                 rot = Vector_generate(rot_)
                 #print ('matrix_def', str(rot_))
             else:
@@ -49,18 +46,16 @@ class MatrixGenNode(Node, SverchCustomTreeNode):
             
             rotA=[[]]
             angle = [[0.0]]
-            if 'Angle' in self.inputs and self.inputs['Angle'].links:
-                if not self.inputs['Angle'].node.socket_value_update:
-                        self.inputs['Angle'].node.update()
+            if 'Angle' in self.inputs and self.inputs['Angle'].is_linked:
                 if type(self.inputs['Angle'].links[0].from_socket) == StringsSocket:
-                    angle = eval(self.inputs['Angle'].links[0].from_socket.StringsProperty)
+                    angle = SvGetAnySocket(self,self.inputs['Angle'])
                     
                 elif type(self.inputs['Angle'].links[0].from_socket) == VerticesSocket:
-                    rotA_ = eval(self.inputs['Angle'].links[0].from_socket.VerticesProperty)
+                    rotA_ =SvGetAnySocket(self,self.inputs['Angle'])
                     rotA = Vector_generate(rotA_)
             
             # outputs
-            if 'Matrix' in self.inputs and self.inputs['Matrix'].is_linked:
+            if 'Matrix' in self.outputs and self.outputs['Matrix'].is_linked:
             
                 max_l = max(len(loc[0]), len(scale[0]), len(rot[0]), len(angle[0]), len(rotA[0]))
                 orig = []

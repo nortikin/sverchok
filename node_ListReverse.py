@@ -38,12 +38,9 @@ class ListReverseNode(Node, SverchCustomTreeNode):
                 out.append(self.revers(l, level))
             return out
         elif type(list) in [type([])]:
-            #print (type(list))
-            list.reverse()
-            return list
+            return list[::-1]
         elif type(list) in [type(tuple())]:
-            out = list[::-1]
-            return out
+            return out[::-1]
 
 def register():
     bpy.utils.register_class(ListReverseNode)

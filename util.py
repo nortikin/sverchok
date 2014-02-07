@@ -6,14 +6,21 @@ from functools import reduce
 from math import radians
 import itertools
 import collections
+import time
+import copy
 
+DEBUG_MODE = False
+DEBUG_SETTINGS = {}
 bmesh_mapping = {}
 per_cache = {}
 temp_handle = {}
 cache_nodes = {}
 list_nodes4update = {}
 sv_Vars = {}
+socket_data_cache = {}
 
+
+        
 #####################################################
 ################### update magic ####################
 #####################################################
@@ -660,8 +667,25 @@ def wrapper_2(l_etalon, list_a, level):
          list_tmp = [list_tmp]
     return list_tmp
 
+#####################################################
+############### debug settings magic ################
+#####################################################
 
-
+def sv_debug_update(self,context):   
+    if sverchok_debug(mode=self.debug_mode):
+        sverchok_debug(key='show_updated_nodes', value=self.show_updated_nodes)
+        sverchok_debug(key='print_timings', value=self.print_timings)
+       
+    
+def sverchok_debug(mode = None,key=None,value=None):
+    global DEBUG_MODE
+    global DEBUG_SETTINGS
+    if mode != None:
+        DEBUG_MODE = mode
+    if key != None and value != None:
+        DEBUG_SETTINGS[key]=value
+    return DEBUG_MODE
+    
 #####################################################
 ############### update sockets magic ################
 #####################################################
@@ -845,7 +869,7 @@ def make_update_list(node_tree,node_set = None):
             elif roots:
                 name = roots.pop()
             else: 
-                if len(deps)==len(out):
+                if node_count==len(out):
                     break
                 for node_name in deps.keys():
                     name=node_name
@@ -856,7 +880,9 @@ def make_update_list(node_tree,node_set = None):
 def makeTreeUpdate2():
     """ makes a complete update list for the current node tree"""
     global list_nodes4update
-        
+    global socket_data_cache
+    # clear cache on every full update
+    socket_data_cache.clear()
     for ng in bpy.data.node_groups[:]:                
         list_nodes4update[ng.name]=make_update_list(ng.name)
 #        print(list_nodes4update[ng.name])
@@ -868,17 +894,18 @@ def makeTreeUpdate2():
 def make_tree_from_node(node_name,tree_name):
     """ 
     Create a partial update list from a sub-tree, node_name is node that has changed
-    Only nodes downtree from node_name
+    Only nodes downtree from node_name are updated
     """
     ng = bpy.data.node_groups[tree_name]
     out_set = {node_name}
     out_stack = []
     wifi_out = []
     current_node = node_name
+    # build the set of nodes that needs to be updated
     while current_node:
         if current_node[:6] == 'Wifi i':
             if not wifi_out:  # build only if needed
-                wifi_out = [name for name in ng.nodes.key() if name[:6] == 'Wifi o']
+                wifi_out = [name for name in ng.nodes.keys() if name[:6] == 'Wifi o']
             for wifi_out_node in wifi_out:
                 if ng.nodes[current_node].var_name == ng.nodes[current_node].var_name:
                     if not wifi_out_node in out_set:
@@ -907,9 +934,13 @@ def make_tree_from_node(node_name,tree_name):
 # only update from start_node with selected tree or update everything if nothing is set.
 def speedUpdate(start_node = None, node_tree_name = None):
     global list_nodes4update
-
+    global socket_data_cache
+    global DEBUG_MODE
+    global DEBUG_SETTINGS
+    
     if not 'TreeName' in list_nodes4update: 
         makeTreeUpdate2() 
+        socket_data_cache.clear()
         start_node = None
     if 'TreeName' in list_nodes4update:
         NodeTree_name = list_nodes4update['TreeName']
@@ -920,29 +951,45 @@ def speedUpdate(start_node = None, node_tree_name = None):
     if start_node != None:
         out = make_tree_from_node(start_node,node_tree_name)
         nods = bpy.data.node_groups[node_tree_name].nodes
-#        start = time.time()        
 
         for nod_name in out:
             if nod_name in nods:
+              
+                if DEBUG_MODE:
+                    if DEBUG_SETTINGS['print_timings']:
+                        start = time.time()        
+                        
                 nods[nod_name].update()
-#                print("updated-sub:",nod_name)
-#        stop = time.time()
 
-#        print("limited update",round(stop-start,4))
-    
+                if DEBUG_MODE:
+                    if DEBUG_SETTINGS['print_timings']:
+                        stop = time.time()
+                        print("Partial updated: ",nod_name, " in ", round(stop-start,4))    
+                    if DEBUG_SETTINGS['show_updated_nodes']:
+                        nods[nod_name].use_custom_color = True
+                        nods[nod_name].color = (0.8,0,0)
+
         return
                     
     for ng_name in list_nodes4update:
         if ng_name in bpy.context.blend_data.node_groups and ng_name==NodeTree_name:
             nods = bpy.data.node_groups[ng_name].nodes
-#            start = time.time()  
             for nod_name in list_nodes4update[ng_name]:
                 if nod_name in nods:
+                    if DEBUG_MODE:
+                        if DEBUG_SETTINGS['print_timings']:
+                            start = time.time() 
+                            
                     nods[nod_name].update()
-#                    print("updated:",nod_name)
-#            stop = time.time()
-#            print("full update",round(stop-start,4))    
-
+                    
+                    if DEBUG_MODE:
+                        if DEBUG_SETTINGS['print_timings']==True:
+                            stop = time.time()
+                            print("Updated: ",nod_name, " in ", round(stop-start,4))    
+                        if DEBUG_SETTINGS['show_updated_nodes']==True:
+                            nods[nod_name].use_custom_color = False
+                        
+                        
 ##############################################################
 ##############################################################
 ############## changable type of socket magic ################
@@ -1010,6 +1057,9 @@ def changable_sockets(self, inputsocketname, outputsocketname):
 def SvGetSocketAnyType(self, socket):
     if not socket.node.socket_value_update:
         socket.node.update()
+    out = SvGetSocket(socket)
+    if out != None:
+        return out
     if type(socket.links[0].from_socket) == bpy.types.StringsSocket:
         typeresult = eval(socket.links[0].from_socket.StringsProperty)
     elif type(socket.links[0].from_socket) == bpy.types.VerticesSocket:
@@ -1022,6 +1072,7 @@ def SvGetSocketAnyType(self, socket):
 def SvSetSocketAnyType(self, socket, out):
     if not self.outputs[socket].node.socket_value_update:
         self.outputs[socket].node.update()
+    SvSetSocket(self.outputs[socket],out)
     if type(self.outputs[socket]) == bpy.types.StringsSocket:
         self.outputs[socket].StringsProperty = str(out) 
     elif type(self.outputs[socket]) == bpy.types.VerticesSocket:
@@ -1029,6 +1080,28 @@ def SvSetSocketAnyType(self, socket, out):
     elif type(self.outputs[socket]) == bpy.types.MatrixSocket:
         self.outputs[socket].MatrixProperty = str(out) 
 
+# caching data solution
+
+def socket_id(socket):
+    return socket.id_data.name+socket.node.name+socket.name
+
+def SvSetSocket(socket, out):
+    global socket_data_cache
+    socket_data_cache[socket_id(socket)]=copy.copy(out)
+   
+def SvGetSocket(socket):
+    global socket_data_cache
+    global DEBUG_MODE
+    if socket.is_linked:
+        other =  socket.links[0].from_socket
+        id = socket_id(other)
+        if id in socket_data_cache:
+            out = socket_data_cache[id]
+            return copy.deepcopy(out)
+        else: # should be return None or something
+            if DEBUG_MODE:
+                print("cache miss:",socket.node.name,"->",socket.name,"from:",other.node.name,"->",other.name)
+            return None
 
 def get_socket_type(node, inputsocketname):
     if type(node.inputs[inputsocketname].links[0].from_socket) == bpy.types.VerticesSocket:

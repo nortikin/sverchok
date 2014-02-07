@@ -113,31 +113,28 @@ class VectorMathNode(Node, SverchCustomTreeNode):
 
 # get inputs
         
-        if 'U' in self.inputs and len(self.inputs['U'].links)>0 and \
-            type(self.inputs['U'].links[0].from_socket) == VerticesSocket:
-            if not self.inputs['U'].node.socket_value_update:
-                self.inputs['U'].node.update()
-            vector1 = self.inputs['U'].links[0].from_socket.VerticesProperty
-        else:
-            vector1 = []
-        
-        if 'V' in self.inputs and len(self.inputs['V'].links)>0 and \
-            type(self.inputs['V'].links[0].from_socket) == VerticesSocket:
-            if not self.inputs['V'].node.socket_value_update:
-                self.inputs['V'].node.update()
-            vector2 = self.inputs['V'].links[0].from_socket.VerticesProperty
-        else:   
-            vector2 = []
+
                    
         # vector-output
-        if 'W' in self.outputs and len(self.outputs['W'].links)>0:
-            if not self.outputs['W'].node.socket_value_update:
-                self.outputs['W'].node.update()
+        if 'W' in self.outputs and self.outputs['W'].is_linked:
+         
+            if 'U' in self.inputs and self.inputs['U'].is_linked and \
+                type(self.inputs['U'].links[0].from_socket) == VerticesSocket:
+                vector1 = SvGetSocketAnyType(self,self.inputs['U'])
+            else:
+                vector1 = []
+        
+            if 'V' in self.inputs and self.inputs['V'].is_linked and \
+                type(self.inputs['V'].links[0].from_socket) == VerticesSocket:
+                vector2 =  SvGetSocketAnyType(self,self.inputs['V'])
+            else:   
+                vector2 = []
+           
             result = []
        
             if nrInputs == 1:
                 if len(vector1):
-                    u = eval(vector1)
+                    u = vector1
                     leve = levelsOflist(u)
                     try:
                         result = self.recurse_fx(u,vector_out[self.items_][0], leve-1)
@@ -145,23 +142,34 @@ class VectorMathNode(Node, SverchCustomTreeNode):
                         print(self.name)
             if nrInputs == 2:
                 if len(vector1) and len(vector2):
-                    u = eval(vector1)
-                    v = eval(vector2)
+                    u = vector1
+                    v = vector2
                     leve = levelsOflist(u)
                     try:
                         result = self.recurse_fxy(u,v,vector_out[self.items_][0], leve-1)
                     except:
                         print(self.name)           
-            self.outputs['W'].VerticesProperty = str(result)
+            SvSetSocketAnyType(self, 'W',result)
    
         #scalar-output    
-        if 'out' in self.outputs and len(self.outputs['out'].links)>0:
-            if not self.outputs['out'].node.socket_value_update:
-                self.outputs['out'].node.update() 
+        if 'out' in self.outputs and self.outputs['out'].is_linked:
+   
+            if 'U' in self.inputs and self.inputs['U'].is_linked and \
+                type(self.inputs['U'].links[0].from_socket) == VerticesSocket:
+                vector1 = SvGetSocketAnyType(self,self.inputs['U'])
+            else:
+                vector1 = []
+        
+            if 'V' in self.inputs and self.inputs['V'].is_linked and \
+                type(self.inputs['V'].links[0].from_socket) == VerticesSocket:
+                vector2 =  SvGetSocketAnyType(self,self.inputs['V'])
+            else:   
+                vector2 = []
+     
             result = []   
             if nrInputs == 1:
                 if len(vector1):
-                    u = eval(vector1)
+                    u = vector1
                     leve = levelsOflist(u)
                     try:
                         result = self.recurse_fx(u,scalar_out[self.items_][0], leve-1)
@@ -169,15 +177,15 @@ class VectorMathNode(Node, SverchCustomTreeNode):
                         print(self.name) 
             if nrInputs == 2:
                 if len(vector1) and len(vector2):
-                    u = eval(vector1)
-                    v = eval(vector2)
+                    u = vector1
+                    v = vector2
                     leve = levelsOflist(u)
                     try:
                         result = self.recurse_fxy(u,v,scalar_out[self.items_][0], leve-1)
                     except:
                         print(self.name) 
-                    
-            self.outputs['out'].StringsProperty = str(result)
+            SvSetSocketAnyType(self, 'out',result)
+        
                     
 
 # apply f to all values recursively  
