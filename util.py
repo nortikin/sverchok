@@ -673,8 +673,15 @@ def wrapper_2(l_etalon, list_a, level):
 
 def sv_debug_update(self,context):   
     if sverchok_debug(mode=self.debug_mode):
-        sverchok_debug(key='show_updated_nodes', value=self.show_updated_nodes)
-        sverchok_debug(key='print_timings', value=self.print_timings)
+        if self.show_updated_nodes:
+            sverchok_debug(key='show_updated_nodes', value=self.show_updated_nodes)
+        else:
+            sverchok_debug(key='show_updated_nodes')
+        if self.show_updated_nodes:
+            sverchok_debug(key='print_timings', value=self.show_updated_nodes)
+        else:
+            sverchok_debug(key='print_timings')
+            
        
     
 def sverchok_debug(mode = None,key=None,value=None):
@@ -684,6 +691,8 @@ def sverchok_debug(mode = None,key=None,value=None):
         DEBUG_MODE = mode
     if key != None and value != None:
         DEBUG_SETTINGS[key]=value
+    if key != None and value == None:
+        del DEBUG_SETTINGS[key]
     return DEBUG_MODE
     
 #####################################################
@@ -956,16 +965,16 @@ def speedUpdate(start_node = None, node_tree_name = None):
             if nod_name in nods:
               
                 if DEBUG_MODE:
-                    if DEBUG_SETTINGS['print_timings']:
+                    if 'print_timings' in DEBUG_SETTINGS:
                         start = time.time()        
                         
                 nods[nod_name].update()
 
                 if DEBUG_MODE:
-                    if DEBUG_SETTINGS['print_timings']:
+                    if 'print_timings' in DEBUG_SETTINGS:
                         stop = time.time()
                         print("Partial updated: ",nod_name, " in ", round(stop-start,4))    
-                    if DEBUG_SETTINGS['show_updated_nodes']:
+                    if 'show_updated_nodes' in DEBUG_SETTINGS:
                         nods[nod_name].use_custom_color = True
                         nods[nod_name].color = (0.8,0,0)
 
@@ -977,16 +986,16 @@ def speedUpdate(start_node = None, node_tree_name = None):
             for nod_name in list_nodes4update[ng_name]:
                 if nod_name in nods:
                     if DEBUG_MODE:
-                        if DEBUG_SETTINGS['print_timings']:
+                        if 'print_timings' in DEBUG_SETTINGS:
                             start = time.time() 
                             
                     nods[nod_name].update()
                     
                     if DEBUG_MODE:
-                        if DEBUG_SETTINGS['print_timings']==True:
+                        if 'print_timings' in DEBUG_SETTINGS:
                             stop = time.time()
                             print("Updated: ",nod_name, " in ", round(stop-start,4))    
-                        if DEBUG_SETTINGS['show_updated_nodes']==True:
+                        if 'show_updated_nodes' in DEBUG_SETTINGS:
                             nods[nod_name].use_custom_color = False
                         
                         
@@ -1092,7 +1101,7 @@ def SvSetSocket(socket, out):
 def SvGetSocket(socket):
     global socket_data_cache
     global DEBUG_MODE
-    if socket.is_linked:
+    if DEBUG_MODE and socket.is_linked:
         other =  socket.links[0].from_socket
         id = socket_id(other)
         if id in socket_data_cache:
