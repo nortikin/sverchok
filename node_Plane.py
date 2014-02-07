@@ -107,7 +107,7 @@ class PlaneNode(Node, SverchCustomTreeNode):
                     listEdg.append((IntegerX*j+i, IntegerX*j+i+IntegerX))
 
             edg = list(listEdg)
-            SvSetSocketAnyType(self, 'Edges',edg)
+            SvSetSocketAnyType(self, 'Edges',[edg])
             
         if 'Polygons' in self.outputs and self.outputs['Polygons'].is_linked:       
             listPlg = []
@@ -115,7 +115,7 @@ class PlaneNode(Node, SverchCustomTreeNode):
                 for j in range(IntegerY-1):
                     listPlg.append((IntegerX*j+i, IntegerX*j+i+1, IntegerX*j+i+IntegerX+1, IntegerX*j+i+IntegerX))
             plg = list(listPlg)
-            SvSetSocketAnyType(self, 'Polygons',[listPlg])
+            SvSetSocketAnyType(self, 'Polygons',[plg])
 
     def update_socket(self, context):
         self.update()
