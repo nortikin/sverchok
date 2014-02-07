@@ -935,10 +935,6 @@ def make_tree_from_node(node_name,tree_name):
  #   print("node set:",out_set)
     return make_update_list(tree_name,out_set)
        
-        
-# for timing different nodes
-#import time
-#import operator
 
 # only update from start_node with selected tree or update everything if nothing is set.
 def speedUpdate(start_node = None, node_tree_name = None):
@@ -1082,6 +1078,8 @@ def SvSetSocketAnyType(self, socket, out):
     if not self.outputs[socket].node.socket_value_update:
         self.outputs[socket].node.update()
     SvSetSocket(self.outputs[socket],out)
+    # R/W decision point
+    #return
     if type(self.outputs[socket]) == bpy.types.StringsSocket:
         self.outputs[socket].StringsProperty = str(out) 
     elif type(self.outputs[socket]) == bpy.types.VerticesSocket:
@@ -1094,6 +1092,19 @@ def SvSetSocketAnyType(self, socket, out):
 def socket_id(socket):
     return socket.id_data.name+socket.node.name+socket.name
 
+# about 50% faster than built in deep copy, needs to be tested.
+# and verified. can be made more effective.
+# useful for our limited case
+# we should be able to specify vectors here to get them create
+# or stop destroying them when in vector socket.
+
+def sv_deep_copy(lst):
+    if isinstance(lst,(list,tuple)):
+        if not isinstance(lst[0],(list,tuple)):
+            return lst[:]
+        return [sv_deep_copy(l) for l in lst]
+    return lst
+    
 def SvSetSocket(socket, out):
     global socket_data_cache
     s_id = socket_id(socket)
@@ -1109,6 +1120,7 @@ def SvGetSocket(socket):
         id = socket_id(other)
         if id in socket_data_cache:
             out = socket_data_cache[id]
+#            return sv_deep_copy(out)
             return copy.deepcopy(out)
         else: # failure, should raise error in future
             if DEBUG_MODE:
