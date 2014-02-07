@@ -1113,7 +1113,7 @@ def SvGetSocket(socket):
         else: # failure, should raise error in future
             if DEBUG_MODE:
                 print("cache miss:",socket.node.name,"->",socket.name,"from:",other.node.name,"->",other.name)
-            return None
+    return None
 
 def get_socket_type(node, inputsocketname):
     if type(node.inputs[inputsocketname].links[0].from_socket) == bpy.types.VerticesSocket:
