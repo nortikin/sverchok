@@ -869,7 +869,7 @@ def make_update_list(node_tree,node_set = None):
             elif roots:
                 name = roots.pop()
             else: 
-                if node_count==len(out):
+                if node_count == len(out):
                     break
                 for node_name in deps.keys():
                     name=node_name
@@ -1098,7 +1098,7 @@ def SvGetSocket(socket):
         if id in socket_data_cache:
             out = socket_data_cache[id]
             return copy.deepcopy(out)
-        else: # should be return None or something
+        else: # failure, should raise error in future
             if DEBUG_MODE:
                 print("cache miss:",socket.node.name,"->",socket.name,"from:",other.node.name,"->",other.name)
             return None
