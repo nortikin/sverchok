@@ -22,27 +22,23 @@ class VectorDropNode(Node, SverchCustomTreeNode):
                     type(self.inputs['Vectors'].links[0].from_socket) == VerticesSocket \
                     and self.inputs['Matrixes'] and \
                     type(self.inputs['Matrixes'].links[0].from_socket) == MatrixSocket:
-                if not self.inputs['Vectors'].node.socket_value_update:
-                    self.inputs['Vectors'].node.update()
-                vecs_ = eval(self.inputs['Vectors'].links[0].from_socket.VerticesProperty)
+
+                vecs_ = SvGetSocketAnyType(self,self.inputs['Vectors'])
+                
                 vecs = Vector_generate(vecs_)
                 #print (vecs)
-                if not self.inputs['Matrixes'].node.socket_value_update:
-                    self.inputs['Matrixes'].node.update()
-                mats_ = dataCorrect(eval(self.inputs['Matrixes'].links[0].from_socket.MatrixProperty))
+      
+                mats_ = dataCorrect(SvGetSocketAnyType(self,self.inputs['Matrixes']))
                 mats = Matrix_generate(mats_)
             else:
                 vecs = [[]]
                 mats = [Matrix()]
             
             # outputs
-        
-            if not self.outputs['Vectors'].node.socket_value_update:
-                self.outputs['Vectors'].node.update()
             
             vectors_ = self.vecscorrect(vecs, mats)
             vectors = Vector_degenerate(vectors_)
-            self.outputs['Vectors'].VerticesProperty = str(vectors)
+            SvSetSocketAnyType(self,'Vectors', vectors)
             
     
     def vecscorrect(self, vecs, mats):

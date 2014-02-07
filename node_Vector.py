@@ -16,32 +16,26 @@ class GenVectorsNode(Node, SverchCustomTreeNode):
         
     def update(self):
         # inputs
-        if self.inputs['X'].links and \
+        if self.inputs['X'].is_linked and \
             type(self.inputs['X'].links[0].from_socket) == StringsSocket:
-            if not self.inputs['X'].node.socket_value_update:
-                self.inputs['X'].node.update()
             X_ = SvGetSocketAnyType(self,self.inputs['X'])
         else:
             X_ = [[0.0]]
         
-        if self.inputs['Y'].links and \
+        if self.inputs['Y'].is_linked and \
             type(self.inputs['Y'].links[0].from_socket) == StringsSocket:
-            if not self.inputs['Y'].node.socket_value_update:
-                self.inputs['Y'].node.update()
             Y_ = SvGetSocketAnyType(self,self.inputs['Y'])
         else:
             Y_ = [[0.0]]
             
-        if self.inputs['Z'].links and \
+        if self.inputs['Z'].is_linked and \
             type(self.inputs['Z'].links[0].from_socket) == StringsSocket:
-            if not self.inputs['Z'].node.socket_value_update:
-                self.inputs['Z'].node.update()
             Z_ = SvGetSocketAnyType(self,self.inputs['Z'])
         else:
             Z_ = [[0.0]]
         
         # outputs
-        if 'Vectors' in self.outputs and len(self.outputs['Vectors'].links)>0:
+        if 'Vectors' in self.outputs and self.outputs['Vectors'].is_linked:
            
             max_obj = max(len(X_), len(Y_), len(Z_))
             self.fullList(X_,max_obj)

@@ -30,7 +30,7 @@ class RandomVectorNode(Node, SverchCustomTreeNode):
             type(self.inputs['Count'].links[0].from_socket) == bpy.types.StringsSocket:
             if not self.inputs['Count'].node.socket_value_update:
                 self.inputs['Count'].node.update()
-            Coun = eval(self.inputs['Count'].links[0].from_socket.StringsProperty)
+            Coun = SvGetSocketAnyType(self,self.inputs['Count'])
         else:
             Coun = [[self.count_inner]]
             
@@ -38,8 +38,8 @@ class RandomVectorNode(Node, SverchCustomTreeNode):
              type(self.inputs['Seed'].links[0].from_socket) == bpy.types.StringsSocket:
             if not self.inputs['Seed'].node.socket_value_update:
                 self.inputs['Seed'].node.update()
-            
-            Seed = eval(self.inputs['Seed'].links[0].from_socket.StringsProperty)[0][0]
+            tmp = SvGetSocketAnyType(self,self.inputs['Seed'])
+            Seed = tmp[0][0]
         else:
             Seed = self.seed
       
