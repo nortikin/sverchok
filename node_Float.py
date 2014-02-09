@@ -19,23 +19,17 @@ class FloatNode(Node, SverchCustomTreeNode):
 
     def update(self):
         # inputs
-        if len(self.inputs['Float'].links)>0:
-            if not self.inputs['Float'].node.socket_value_update:
-                self.inputs['Float'].node.update()
-            Float = eval(self.inputs['Float'].links[0].from_socket.StringsProperty)[0][0]
+        if 'Float' in self.inputs and self.inputs['Float'].is_linked:
+            tmp = SvGetSocketAnyType(self,self.inputs['Float'])
+            Float = tmp[0][0]
         else:
             Float = self.float_
-        
         # outputs
-        if 'Float' in self.outputs and len(self.outputs['Float'].links)>0:
-            if not self.outputs['Float'].node.socket_value_update:
-                self.outputs['Float'].node.update()
-            
-            self.outputs['Float'].StringsProperty = str([[Float, ]])
+        if 'Float' in self.outputs and self.outputs['Float'].is_linked:
+            SvSetSocketAnyType(self,'Float',[[Float]])
     
     def update_socket(self, context):
         self.update()
-
 
 def register():
     bpy.utils.register_class(FloatNode)

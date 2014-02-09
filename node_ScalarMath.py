@@ -148,41 +148,36 @@ class ScalarMathNode(Node, SverchCustomTreeNode):
         self.label=self.items_
         
         
-        if 'X' in self.inputs and len(self.inputs['X'].links)>0 and \
+        if 'X' in self.inputs and self.inputs['X'].is_linked and \
             type(self.inputs['X'].links[0].from_socket) == StringsSocket:
-            if not self.inputs['X'].node.socket_value_update:
-                self.inputs['X'].node.update()
-            Number1 = self.inputs['X'].links[0].from_socket.StringsProperty
+
+            Number1 = SvGetSocketAnyType(self,self.inputs['X'])
         else:
             Number1 = []
         
-        if 'Y' in self.inputs and len(self.inputs['Y'].links)>0 and \
+        if 'Y' in self.inputs and self.inputs['Y'].is_linked and \
             type(self.inputs['Y'].links[0].from_socket) == StringsSocket:
-            if not self.inputs['Y'].node.socket_value_update:
-                self.inputs['Y'].node.update()
-            Number2 = self.inputs['Y'].links[0].from_socket.StringsProperty
+
+            Number2 = SvGetSocketAnyType(self,self.inputs['Y'])
         else:   
             Number2 = []
                    
         # outputs
-        if 'float' in self.outputs and len(self.outputs['float'].links)>0:
-            if not self.outputs['float'].node.socket_value_update:
-                self.outputs['float'].node.update()
+        if 'float' in self.outputs and self.outputs['float'].is_linked:
             result = []
             if nrInputs == 0:
                 result = [self.constant[self.items_]]
             if nrInputs == 1:
                 if len(Number1):
-                    x = eval(Number1)
+                    x = Number1
                     result = self.recurse_fx(x,self.fx[self.items_])
             if nrInputs == 2:
                 if len(Number1) and len(Number2):
-                    x = eval(Number1)
-                    y = eval(Number2)
+                    x = Number1
+                    y = Number2
                     result = self.recurse_fxy(x,y,self.fxy[self.items_])
-                      
-            self.outputs['float'].StringsProperty = str(result)
-    
+            SvSetSocketAnyType(self,'float',result) 
+            
     def set_inputs(self,n):
         if n == len(self.inputs):
             return

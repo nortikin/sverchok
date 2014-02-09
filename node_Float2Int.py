@@ -14,36 +14,32 @@ class Float2IntNode(Node, SverchCustomTreeNode):
 
     def update(self):
         # inputs
-        if 'float' in self.inputs and len(self.inputs['float'].links)>0 and type(self.inputs['float'].links[0].from_socket) == StringsSocket:
-            if not self.inputs['float'].node.socket_value_update:
-                self.inputs['float'].node.update()
-            Number = self.inputs['float'].links[0].from_socket.StringsProperty
+        if 'float' in self.inputs and self.inputs['float'].is_linked and \
+             type(self.inputs['float'].links[0].from_socket) == StringsSocket:
+
+            Number = SvGetSocketAnyType(self,self.inputs['float'])
         else:
             Number = []
         
         # outputs
-        if 'int' in self.outputs and len(self.outputs['int'].links)>0:
-            if not self.outputs['int'].node.socket_value_update:
-                self.outputs['int'].node.update()
+        if 'int' in self.outputs and self.outputs['int'].is_linked:
+ 
             num = eval(Number)
             #level = self.levels(num)
             result = self.inte(num)
             #print (result)
             
-            self.outputs['int'].StringsProperty = str(result)
+            SvSetSocketAnyType(self,'int',result)
     
     def update_socket(self, context):
         self.update()
     
     def inte(self, l):
         if type(l) == int or type(l) == float:
-            t = round(l)
+            return t = round(l)
         else:
-            t = []
-            for i in l:
-                i = self.inte(i)
-                t.append(i)
-        return t
+            return [self.inte(i) for i in l]
+       
             
     
     def levels(self, list):
