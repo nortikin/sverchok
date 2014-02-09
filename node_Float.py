@@ -26,8 +26,6 @@ class FloatNode(Node, SverchCustomTreeNode):
             Float = self.float_
         # outputs
         if 'Float' in self.outputs and self.outputs['Float'].is_linked:
-                self.outputs['Float'].node.update()
-            
             SvSetSocketAnyType(self,'Float',[[Float]])
     
     def update_socket(self, context):
