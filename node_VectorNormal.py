@@ -1,6 +1,7 @@
 import bpy, bmesh, mathutils
 from mathutils import Vector, Matrix
 from node_s import *
+from util import *
 
 class VectorNormalNode(Node, SverchCustomTreeNode):
     ''' Find Vector's normals '''

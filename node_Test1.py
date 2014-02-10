@@ -8,6 +8,10 @@ class Test1Node(Node, SverchCustomTreeNode):
     bl_label = 'Test 1'
     bl_icon = 'OUTLINER_OB_EMPTY'
     
+    # two veriables for multi socket input
+    base_name = 'x'
+    multi_socket_type = 'StringsSocket'
+    
     # two veriables for adaptive socket
     typ = bpy.props.StringProperty(name='typ', default='')
     newsock = bpy.props.BoolProperty(name='newsock', default=False)
@@ -18,103 +22,121 @@ class Test1Node(Node, SverchCustomTreeNode):
         pass
         
     def init(self, context):
-        # initial socket, that defines type of adaptive socket
-        self.inputs.new('StringsSocket', "x", "x")
+        # initial socket, is defines type of output
+        self.inputs.new('StringsSocket', "data", "data")
+        # this is multysocket
+        self.inputs.new('StringsSocket', "x0", "x0")
         # adaptive socket
-        self.outputs.new('VerticesSocket', "data", "data")
+        self.outputs.new('StringsSocket', "data", "data")
         
-   def update(self):
-        # multisocket - from util(formula node) + cache
-        # make multisocket - TODO
+    def update(self):
+        # multisocket - from util(formula node)
+        multi_socket(self, min=2)
         
-        if 'x' in self.inputs and len(self.inputs['x'].links)>0:
-            if not self.inputs['x'].node.socket_value_update:
-                self.inputs['x'].node.update() 
-            # adaptive socket - from util(mask list node) + cache
+        if 'x0' in self.inputs and len(self.inputs['x0'].links)>0:
+            if not self.inputs['x0'].node.socket_value_update:
+                self.inputs['x0'].node.update() 
+            # adaptive socket - from util(mask list node)
+            inputsocketname = self.inputs[0].name   # is you need x0 to define socket type - set 0 to 1
+            outputsocketname = ['data',]
+            changable_sockets(self, inputsocketname, outputsocketname)
+        
+        if 'data' in self.outputs and len(self.outputs['data'].links)>0:
+            if 'x0' in self.inputs and len(self.inputs['x0'].links)>0:
+                # get any type socket from input:
+                X = SvGetSocketAnyType(self, self.inputs['data'])
+                slots = []
+                for socket in self.inputs:
+                    if socket.is_linked:
+                        slots.append(SvGetSocketAnyType(self,socket))
+
+                # determine if you have enough inputs for make output
+                # if not return
+                # examples: all but last (last is never connected)
+                # len(slots) == len(self.inputs)-1    
+                # if more than 2 etc.
+
+                if len(slots) < 2:
+                    return   
+                
+                # Process data
+                X_ = dataCorrect(X)
+                result = []
+                for socket in slots:
+                    result.extend(self.f(X_,dataCorrect(socket)))
+                
+                
+                # how to assign correct property to adaptive output:
+                # in nearest future with socket's data' dictionary we will send
+                # only node_name+layout_name+socket_name in str() format
+                # and will make separate definition to easyly assign and
+                # get and recognise data from dictionary
+                SvSetSocketAnyType(self, 'data', result)
+            
+    def f(self, x, socket):
+        ''' this makes sum of units for every socket and object '''
+        out = []
+        fullList(x, len(socket))
+        for i, obj in enumerate(socket):
+            if type(obj) not in [int, float]:
+                out.append(self.f(x[i],obj))
+            else:
+                out.append(obj+x[i])
+        return out
+
+
+class Test2Node(Node, SverchCustomTreeNode):
+    ''' Test2 without comments '''
+    bl_idname = 'Test2Node'
+    bl_label = 'Test 2'
+    bl_icon = 'OUTLINER_OB_EMPTY'
+    
+    base_name = 'x'
+    multi_socket_type = 'StringsSocket'
+    typ = bpy.props.StringProperty(name='typ', default='')
+    newsock = bpy.props.BoolProperty(name='newsock', default=False)
+        
+    def init(self, context):
+        self.inputs.new('StringsSocket', "data", "data")
+        self.inputs.new('StringsSocket', "x0", "x0")
+        self.outputs.new('StringsSocket', "data", "data")
+        
+    def update(self):
+        multi_socket(self, min=2)
+        
+        if 'x0' in self.inputs and len(self.inputs['x0'].links)>0:
+            if not self.inputs['x0'].node.socket_value_update:
+                self.inputs['x0'].node.update() 
             inputsocketname = self.inputs[0].name
             outputsocketname = ['data',]
             changable_sockets(self, inputsocketname, outputsocketname)
         
         if 'data' in self.outputs and len(self.outputs['data'].links)>0:
-            if 'x' in self.inputs and len(self.inputs['x'].links)>0:
-                # get any type socket from input:
-                X = SvGetSocketAnyType(self, self.inputs['x'])
+            if 'x0' in self.inputs and len(self.inputs['x0'].links)>0:
+                X = SvGetSocketAnyType(self, self.inputs['data'])
+                slots = []
+                for socket in self.inputs:
+                    if socket.is_linked:
+                        slots.append(SvGetSocketAnyType(self,socket))
+                if len(slots) < 2:
+                    return
+                
+                X_ = dataCorrect(X)
+                result = []
+                for socket in slots:
+                    result.extend(self.f(X_,dataCorrect(socket)))
+                
+                SvSetSocketAnyType(self, 'data', result)
             
-            result = f(X)
-
-            # how to assign correct property to adaptive output:
-            # in nearest future with socket's data' dictionary we will send
-            # only node_name+layout_name+socket_name in str() format
-            # and will make separate definition to easyly assign and
-            # get and recognise data from dictionary
-            SvSetSocketAnyType(self, 'data', result)
-
-
-# multi input example
-class Test2Node(Node, SverchCustomTreeNode):
-    ''' Test 2 node to test new features and make ideal node as example of howto '''
-    bl_idname = 'Test2Node'
-    bl_label = 'Test 1'
-    bl_icon = 'OUTLINER_OB_EMPTY'
-    
-    # two veriables for adaptive socket
-    typ = bpy.props.StringProperty(name='typ', default='')
-    newsock = bpy.props.BoolProperty(name='newsock', default=False)
-    # Base name for multi socket input
-    
-    base_name = 'Data '
-    multi_socket_type = 'StringsSocket'
-
-    def draw_buttons(self, context, layout):
-        # if to make button - use name of socket and name of tree
-        # will be here soon
-        pass
-        
-    def init(self, context):
-        # initial socket, that defines type of adaptive socket
-        self.inputs.new('StringsSocket', "Data 0", "Data 0")
-        # multisocket 
-        # adaptive socket
-        self.outputs.new('VerticesSocket', "Data", "Data")
-        
-   def update(self):
-        # multisocket - from util(formula node) + cache
-        # 
-        mulit_socket(min=1)
-        
-        if 'Data 0' in self.inputs and self.inputs['Data 0'].is_linked:
-            
-            # adaptive socket output - from util(mask list node) + cache
-            inputsocketname = self.inputs[0].name
-            outputsocketname = ['Data',]
-            changable_sockets(self, inputsocketname, outputsocketname)
-            
-        # if output is linked collect data and process
-        if 'Data' in self.outputs and self.outputs['Data'].is_linked:
-            
-            slots = []
-            for socket in self.inputs:
-                if socket.is_linked:
-                    slots.append(SvGetSocketAnyType(self,socket))
-
-            # determine if you have enough inputs for make output
-            # if not return
-            # examples: all but last (last is never connected)
-            # len(slots) == len(self.inputs)-1    
-            # if more than 2 etc.
-
-            if len(slots) < 2:
-                return   
-            
-            # Process data
-            result = f(X)
-            # how to assign correct property to adaptive output:
-            # in nearest future with socket's data' dictionary we will send
-            # only node_name+layout_name+socket_name in str() format
-            # and will make separate definition to easyly assign and
-            # get and recognise data from dictionary
-            SvSetSocketAnyType(self, 'Data', result)
-            
+    def f(self, x, socket):
+        out = []
+        fullList(x, len(socket))
+        for i, obj in enumerate(socket):
+            if type(obj) not in [int, float]:
+                out.append(self.f(x[i],obj))
+            else:
+                out.append(obj+x[i])
+        return out
 
 def register():
     bpy.utils.register_class(Test1Node)

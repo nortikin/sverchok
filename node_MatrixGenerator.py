@@ -22,7 +22,7 @@ class MatrixGenNode(Node, SverchCustomTreeNode):
             if 'Location' in self.inputs and self.inputs['Location'].is_linked and \
                 type(self.inputs['Location'].links[0].from_socket) == VerticesSocket:
 
-                loc_ = SvGetAnySocket(self,self.inputs['Location'])
+                loc_ = SvGetSocketAnyType(self,self.inputs['Location'])
                 loc = Vector_generate(loc_)
             else:
                 loc = [[]]
@@ -30,7 +30,7 @@ class MatrixGenNode(Node, SverchCustomTreeNode):
             if 'Scale' in self.inputs and self.inputs['Scale'].is_linked and \
                 type(self.inputs['Scale'].links[0].from_socket) == VerticesSocket:
           
-                scale_ = SvGetAnySocket(self,self.inputs['Scale'])
+                scale_ = SvGetSocketAnyType(self,self.inputs['Scale'])
                 scale = Vector_generate(scale_)
             else:
                 scale = [[]]
@@ -38,7 +38,7 @@ class MatrixGenNode(Node, SverchCustomTreeNode):
             if 'Rotation' in self.inputs and self.inputs['Rotation'].is_linked and \
                 type(self.inputs['Rotation'].links[0].from_socket) == VerticesSocket:
 
-                rot_ = SvGetAnySocket(self,self.inputs['Rotation'])
+                rot_ = SvGetSocketAnyType(self,self.inputs['Rotation'])
                 rot = Vector_generate(rot_)
                 #print ('matrix_def', str(rot_))
             else:
@@ -48,10 +48,10 @@ class MatrixGenNode(Node, SverchCustomTreeNode):
             angle = [[0.0]]
             if 'Angle' in self.inputs and self.inputs['Angle'].is_linked:
                 if type(self.inputs['Angle'].links[0].from_socket) == StringsSocket:
-                    angle = SvGetAnySocket(self,self.inputs['Angle'])
+                    angle = SvGetSocketAnyType(self,self.inputs['Angle'])
                     
                 elif type(self.inputs['Angle'].links[0].from_socket) == VerticesSocket:
-                    rotA_ =SvGetAnySocket(self,self.inputs['Angle'])
+                    rotA_ =SvGetSocketAnyType(self,self.inputs['Angle'])
                     rotA = Vector_generate(rotA_)
             
             # outputs

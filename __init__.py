@@ -125,7 +125,7 @@ if "bpy" in locals():
     imp.reload(node_Range)
     imp.reload(node_Converter)
     imp.reload(node_ListFlip)
-    #imp.reload(node_Test1)
+    imp.reload(node_Test1)
     imp.reload(node_Text)
 else:
     import node_s
@@ -194,7 +194,7 @@ else:
     import node_Range
     import node_Converter
     import node_ListFlip
-    #import node_Test1
+    import node_Test1
     import node_Text
 
 def register():
@@ -264,7 +264,7 @@ def register():
     node_Range.register()
     node_Converter.register()
     node_ListFlip.register()
-    #node_Test1.register()
+    node_Test1.register()
     node_Text.register()
         
     if 'SVERCHOK' not in nodeitems_utils._node_categories:
@@ -276,7 +276,7 @@ def unregister():
     import nodeitems_utils
     
     node_Text.unregister()
-    #node_Test1.unregister()
+    node_Test1.unregister()
     node_ListFlip.unregister()
     node_Converter.unregister()
     node_Range.unregister()
