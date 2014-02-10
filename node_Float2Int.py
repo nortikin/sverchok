@@ -36,7 +36,7 @@ class Float2IntNode(Node, SverchCustomTreeNode):
     
     def inte(self, l):
         if type(l) == int or type(l) == float:
-            return t = round(l)
+            return round(l)
         else:
             return [self.inte(i) for i in l]
        
