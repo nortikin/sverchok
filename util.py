@@ -541,8 +541,9 @@ def myZip(list_all, level, level2=0):
             return False 
 
 
-
+#####################################################
 ################### update List join magic ##########
+#####################################################
 
 def myZip_2(list_all, level, level2=1):
     def create_listDown(list_all, level):
@@ -1123,7 +1124,7 @@ def SvSetSocket(socket, out):
 def SvGetSocket(socket):
     global socket_data_cache
     global DEBUG_MODE
-    if DEBUG_MODE and socket.is_linked:
+    if socket.is_linked:
         other =  socket.links[0].from_socket
         id = socket_id(other)
         if id in socket_data_cache:
@@ -1142,6 +1143,10 @@ def get_socket_type(node, inputsocketname):
         return 's'
     if type(node.inputs[inputsocketname].links[0].from_socket) == bpy.types.MatrixSocket:
         return 'm'
+
+#####################################
+# Multysocket / множественный сокет #
+#####################################
 
 #     utility function for handling n-inputs, for usage see Test1.py
 #     for examples see ListJoin2, LineConnect, ListZip  

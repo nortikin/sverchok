@@ -117,6 +117,8 @@ def make_categories():
             NodeItem("WifiInNode", label="Wifi in"),
             NodeItem("WifiOutNode", label="Wifi out"),
             NodeItem("ToolsNode", label="Tools"),
+            NodeItem("Test1Node", label="Test1"),
+            NodeItem("Test2Node", label="Test2"),
             ]),
         SverchNodeCategory("SVERCHOK_L", "SVERCHOK list", items=[
             # lists nodes
@@ -138,7 +140,6 @@ def make_categories():
             NodeItem("ListSortNode", label="List Sort"),
             NodeItem("ListShuffleNode", label="List Shuffle"),
             NodeItem("ListMatchNode", label="List Match"),
-            # NodeItem("Test1Node", label="test1"),
             ]),
         SverchNodeCategory("SVERCHOK_N", "SVERCHOK number", items=[
             # numbers, formula nodes
