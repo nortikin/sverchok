@@ -677,7 +677,7 @@ def sv_debug_update(self,context):
         else:
             sverchok_debug(key='show_updated_nodes')
         if self.show_updated_nodes:
-            sverchok_debug(key='print_timings', value=self.show_updated_nodes)
+            sverchok_debug(key='print_timings', value=self.print_timings)
         else:
             sverchok_debug(key='print_timings')
             
