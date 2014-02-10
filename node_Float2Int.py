@@ -23,12 +23,7 @@ class Float2IntNode(Node, SverchCustomTreeNode):
         
         # outputs
         if 'int' in self.outputs and self.outputs['int'].is_linked:
- 
-            num = eval(Number)
-            #level = self.levels(num)
-            result = self.inte(num)
-            #print (result)
-            
+            result = self.inte(Number)
             SvSetSocketAnyType(self,'int',result)
     
     def update_socket(self, context):
