@@ -68,23 +68,11 @@ class WifiOutNode(Node, SverchCustomTreeNode):
                         a_name = var_name + '['+str(dst[0])+']'
                         if dst[0]==louts:
                             self.outputs.new(dic_typ[typ], a_name, a_name)
-                            if   typ=='s':
-                                self.outputs[a_name].StringsProperty = str(var)
-                            elif typ=='v':
-                                self.outputs[a_name].VerticesProperty = str(var)
-                            elif typ=='m':
-                                self.outputs[a_name].MatrixProperty = str(var)
-                                    
+                            SvSetSocketAnyType(self,a_name,var)                             
                         else:
                             if a_name in self.outputs and louts<=len(sv_Vars[var_name]) and \
                                 str(type(self.outputs[a_name]))[15:-2]==dic_typ[typ]:
-                                    
-                                if   typ=='s':
-                                    self.outputs[a_name].StringsProperty = str(var)
-                                elif typ=='v':
-                                    self.outputs[a_name].VerticesProperty = str(var)
-                                elif typ=='m':
-                                    self.outputs[a_name].MatrixProperty = str(var)
+                                SvSetSocketAnyType(self,a_name,var)
                                     
                             elif flag2:
                                 flag2 = False

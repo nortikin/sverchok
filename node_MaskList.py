@@ -41,52 +41,27 @@ class MaskListNode(Node, SverchCustomTreeNode):
         data = [[]]
         mask=[[1,0]]
         
-        if not self.inputs['data'].node.socket_value_update:
-            self.inputs['data'].node.update()
-        if self.inputs['data'].links and \
-                type(self.inputs['data'].links[0].from_socket) == VerticesSocket:
-            data = eval(self.inputs['data'].links[0].from_socket.VerticesProperty)
-        if self.inputs['data'].links and \
-                type(self.inputs['data'].links[0].from_socket) == StringsSocket:
-            data = eval(self.inputs['data'].links[0].from_socket.StringsProperty)
-        if self.inputs['data'].links and \
-                type(self.inputs['data'].links[0].from_socket) == MatrixSocket:
-            data = eval(self.inputs['data'].links[0].from_socket.MatrixProperty)
+       
+        if self.inputs['data'].is_linked:
+            data = SvGetSocketAnyType(self,self.inputs['data'])
             
-        
-        if not self.inputs['mask'].node.socket_value_update:
-            multi.node.update()
-        if self.inputs['mask'].links and \
+        if self.inputs['mask'].is_linked and \
                 type(self.inputs['mask'].links[0].from_socket) == StringsSocket:
-            mask = eval(self.inputs['mask'].links[0].from_socket.StringsProperty)
+            mask = SvGetSocketAnyType(self,self.inputs['mask'])
         
         result =  self.getMask(data, mask, self.Level)
         
         # outupy sockets data
-        if 'dataTrue' in self.outputs and len(self.outputs['dataTrue'].links)>0:
-            if not self.outputs['dataTrue'].node.socket_value_update:
-                self.outputs['dataTrue'].node.update()
-            if self.typ == 'v':
-                self.outputs['dataTrue'].VerticesProperty = str(result[0])
-            if self.typ == 's':
-                self.outputs['dataTrue'].StringsProperty = str(result[0])
-            if self.typ == 'm':
-                self.outputs['dataTrue'].MatrixProperty = str(result[0])
+        if 'dataTrue' in self.outputs and self.outputs['dataTrue'].is_linked:
+            SvSetSocketAnyType(self,'dataTrue',result[0])
         else:
-            self.outputs['dataTrue'].StringsProperty='[[]]'
+            SvSetSocketAnyType(self,'dataTrue',[[]])
         # print ('всё',result)
-        if 'dataFalse' in self.outputs and len(self.outputs['dataFalse'].links)>0:
-            if not self.outputs['dataFalse'].node.socket_value_update:
-                self.outputs['dataFalse'].node.update()
-            if self.typ == 'v':
-                self.outputs['dataFalse'].VerticesProperty =  str(result[1])
-            if self.typ == 's':
-                self.outputs['dataFalse'].StringsProperty =  str(result[1])
-            if self.typ == 'm':
-                self.outputs['dataFalse'].MatrixProperty = str(result[1])
+        if 'dataFalse' in self.outputs and self.outputs['dataFalse'].is_linked:
+            SvSetSocketAnyType(self,'dataFalse',result[1])
         else:
-            self.outputs['dataFalse'].StringsProperty='[[]]'      
-    
+            SvSetSocketAnyType(self,'dataFalse',[[]])
+
     
     # working horse
     def getMask(self, list_a, mask_l, level):

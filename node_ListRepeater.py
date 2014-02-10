@@ -34,10 +34,9 @@ class ListRepeaterNode(Node, SverchCustomTreeNode):
             
             data = SvGetSocketAnyType(self, self.inputs['Data'])
             
-            if 'Number' in self.inputs and len(self.inputs['Number'].links)>0:
-                if not self.inputs['Number'].node.socket_value_update:
-                    self.inputs['Number'].node.update()
-                Number = eval(self.inputs['Number'].links[0].from_socket.StringsProperty)[0]
+            if 'Number' in self.inputs and self.inputs['Number'].is_linked:
+                tmp = SvGetSocketAnyType(self,self.inputs['Number'])
+                Number = tmp[0]
             else:
                 Number = [self.number]
             

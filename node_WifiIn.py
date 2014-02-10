@@ -67,21 +67,21 @@ class WifiInNode(Node, SverchCustomTreeNode):
             if multi.links:
                 if type(multi.links[0].from_socket) == StringsSocket:
                     try:
-                        mult = eval(multi.links[0].from_socket.StringsProperty)
+                        mult = SvGetSocketAnyType(self,multi)
                     except:
                         print ('no data in wifi: '+a_name)
                         mult = [[None]]
                     typ = 's'
                 elif type(multi.links[0].from_socket) == VerticesSocket:
                     try:
-                        mult = eval(multi.links[0].from_socket.VerticesProperty)
+                        mult = SvGetSocketAnyType(self,multi)
                     except:
                         print ('no data in wifi: '+a_name)
                         mult = [[None]]
                     typ = 'v'
                 elif type(multi.links[0].from_socket) == MatrixSocket:
                     try:
-                        mult = eval(multi.links[0].from_socket.MatrixProperty)
+                        mult = SvGetSocketAnyType(self,multi)
                     except:
                         print ('no data in wifi: '+a_name)
                         mult = [[None]]
