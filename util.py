@@ -717,8 +717,13 @@ def updateSlot(self, context):
     return
     
 def updateNode(self, context):
+    global DEBUG_MODE
+    global DEBUG_SETTINGS
+    a=time.time()
     speedUpdate(self.name,self.id_data.name)
- 
+    b=time.time()
+    if DEBUG_MODE:
+        print("Partial update from node",self.name,"in",round(b-a,4))
  
     '''
     if not ini_update_cnode(self.name):
@@ -747,7 +752,8 @@ def updateTreeNode(self, context):
             
         #ng.interface_update(bpy.context)'''
     
-
+# old function, kept while evaluating new solution.
+# look at makeTreeUpdate2() and make_update_list()
 def makeTreeUpdate():
     global list_nodes4update
     def insertnode(nod, nodeset, etalonset, priority):
@@ -810,7 +816,8 @@ def make_update_list(node_tree,node_set = None):
     deps = {}
     # get nodes, select root nodes, wifi nodes and create dependencies for each node
     # 70-80% of the time is in the first loop
-    roots = []
+    #  stack for traversing node graph   
+    tree_stack = collections.deque()
     wifi_out = []
     wifi_in = []
     ng = bpy.data.node_groups[node_tree]
@@ -831,7 +838,7 @@ def make_update_list(node_tree,node_set = None):
         if node_dep or len(node.inputs) or len(node.outputs):
             deps[name]=node_dep
         if is_root and node_dep and not name[:6] == 'Wifi i':
-            roots.append(name)
+            tree_stack.append(name)
         if name[:6] == 'Wifi o':
             wifi_out.append(name)
         if name[:6] == 'Wifi i':
@@ -846,16 +853,15 @@ def make_update_list(node_tree,node_set = None):
         if wifi_dep:
             deps[wifi_out_node]=wifi_dep        
     
-    if roots:
-        name = roots.pop()
-    else: #should never happen for a proper node tree
+    if tree_stack:
+        name = tree_stack.pop()
+    else:
         if len(deps):
             tmp = list(deps.keys())
             name = tmp[0]
         else: # no nodes
             return []
-    #  stack for traversing node graph   
-    tree_stack = []          
+          
     out = collections.OrderedDict()
     
     # travel in node graph create one sorted list of nodes based on dependencies
@@ -875,8 +881,6 @@ def make_update_list(node_tree,node_set = None):
                 del deps[name]
             if tree_stack:
                 name = tree_stack.pop()
-            elif roots:
-                name = roots.pop()
             else: 
                 if node_count == len(out):
                     break
@@ -1075,11 +1079,15 @@ def SvGetSocketAnyType(self, socket):
 
 
 def SvSetSocketAnyType(self, socket, out):
+    global DEBUG_MODE
     if not self.outputs[socket].node.socket_value_update:
         self.outputs[socket].node.update()
     SvSetSocket(self.outputs[socket],out)
-    # R/W decision point
-    #return
+    # R/W decision point, to test performance without
+    # writing to string props, uncomment. will break if any used node
+    # is not using SvGet/SvSet
+    #if DEBUG_MODE:
+    #    return
     if type(self.outputs[socket]) == bpy.types.StringsSocket:
         self.outputs[socket].StringsProperty = str(out) 
     elif type(self.outputs[socket]) == bpy.types.VerticesSocket:
@@ -1120,8 +1128,8 @@ def SvGetSocket(socket):
         id = socket_id(other)
         if id in socket_data_cache:
             out = socket_data_cache[id]
-#            return sv_deep_copy(out)
-            return copy.deepcopy(out)
+            return sv_deep_copy(out)
+  #          return copy.deepcopy(out)
         else: # failure, should raise error in future
             if DEBUG_MODE:
                 print("cache miss:",socket.node.name,"->",socket.name,"from:",other.node.name,"->",other.name)
