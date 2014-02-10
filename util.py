@@ -1108,7 +1108,7 @@ def socket_id(socket):
 
 def sv_deep_copy(lst):
     if isinstance(lst,(list,tuple)):
-        if not isinstance(lst[0],(list,tuple)):
+        if lst and not isinstance(lst[0],(list,tuple)):
             return lst[:]
         return [sv_deep_copy(l) for l in lst]
     return lst
