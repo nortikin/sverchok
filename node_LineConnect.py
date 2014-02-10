@@ -87,7 +87,7 @@ class LineConnectNode(Node, SverchCustomTreeNode):
             else:
                 lev = self.JoinLevel
             result = self.connect(slots, self.dir_check, self.link_check, self.cicl_check, lev)
-            print(levelsOflist(slots), '===>', levelsOflist(result))
+            #print(levelsOflist(slots), '===>', levelsOflist(result))
             if self.outputs['vertices'].is_linked:
                  SvSetSocketAnyType(self,'vertices',result[0])
             if self.outputs['data'].is_linked:
