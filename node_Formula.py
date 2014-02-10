@@ -33,7 +33,6 @@ class FormulaNode(Node, SverchCustomTreeNode):
         else:
             return False
 
-
     def update(self):
         # inputs
         ch = self.check_slots(1)
@@ -41,26 +40,17 @@ class FormulaNode(Node, SverchCustomTreeNode):
             for c in ch[:-1]:
                 self.inputs.remove(self.inputs[ch[0]])
         
-        if 'X' in self.inputs and self.inputs['X'].links: 
-            if not self.inputs['X'].node.socket_value_update:
-                self.inputs['X'].node.update()
-            if type(self.inputs['X'].links[0].from_socket) == StringsSocket:
-                vecs = eval(self.inputs['X'].links[0].from_socket.StringsProperty)
-            elif type(self.inputs['X'].links[0].from_socket) == VerticesSocket:
-                vecs = eval(self.inputs['X'].links[0].from_socket.VerticesProperty)
-            elif type(self.inputs['X'].links[0].from_socket) == MatrixSocket:
-                vecs = eval(self.inputs['X'].links[0].from_socket.MatrixProperty)
+        if 'X' in self.inputs and self.inputs['X'].is_linked: 
+            vecs = SvGetSocketAnyType(self,self.inputs['X'])
         else:
             vecs = [[0.0]]
         
         list_mult=[]
         for idx, multi in enumerate(self.inputs[1:]):   
-            if multi.links and \
+            if multi.is_linked and \
                 type(multi.links[0].from_socket) == StringsSocket:
-                if not multi.node.socket_value_update:
-                    multi.node.update()
                 
-                mult = eval(multi.links[0].from_socket.StringsProperty)
+                mult = SvGetSocketAnyType(self,multi)
                 ch = self.check_slots(2)
                 if not ch:
                     self.inputs.new('StringsSocket', 'n[.]', "n[.]")
@@ -70,9 +60,8 @@ class FormulaNode(Node, SverchCustomTreeNode):
             list_mult= [[0.0]]
         
         # outputs
-        if 'Result' in self.outputs and len(self.outputs['Result'].links)>0:
-           if not self.outputs['Result'].node.socket_value_update:
-               self.outputs['Result'].node.update()
+        if 'Result' in self.outputs and self.outputs['Result'].is_linked:
+
            code_formula = parser.expr(self.formula).compile()
            r_=[]
            result=[]
@@ -98,7 +87,7 @@ class FormulaNode(Node, SverchCustomTreeNode):
            r = self.inte(vecs,code_formula,lres)  
            
            result.extend(r)           
-           self.outputs['Result'].StringsProperty = str(result)
+           SvSetSocketAnyType(self,'Result',result)
     
     def inte(self, l, formula, list_n, indx=0):
         if type(l) in [int, float]:

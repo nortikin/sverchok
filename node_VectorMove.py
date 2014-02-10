@@ -18,39 +18,32 @@ class VectorMoveNode(Node, SverchCustomTreeNode):
 
     def update(self):
         # inputs
-        if 'vertices' in self.inputs and self.inputs['vertices'].links and \
+        if 'vertices' in self.inputs and self.inputs['vertices'].is_linked and \
             type(self.inputs['vertices'].links[0].from_socket) == VerticesSocket:
-            if not self.inputs['vertices'].node.socket_value_update:
-                self.inputs['vertices'].node.update()
-            vers_ = eval(self.inputs['vertices'].links[0].from_socket.VerticesProperty)
+            vers_ = SvGetSocketAnyType(self,self.inputs['vertices'])
             vers = Vector_generate(vers_)
         else:
             vers = []
         
-        if 'vectors' in self.inputs and self.inputs['vectors'].links and \
+        if 'vectors' in self.inputs and self.inputs['vectors'].is_linked and \
             type(self.inputs['vectors'].links[0].from_socket) == VerticesSocket:
-            if not self.inputs['vectors'].node.socket_value_update:
-                self.inputs['vectors'].node.update()
-            vecs_ = eval(self.inputs['vectors'].links[0].from_socket.VerticesProperty)
+   
+            vecs_ = SvGetSocketAnyType(self,self.inputs['vectors'])
             vecs = Vector_generate(vecs_)
         else:
             vecs = []
             
-        if 'multiplier' in self.inputs and self.inputs['multiplier'].links and \
+        if 'multiplier' in self.inputs and self.inputs['multiplier'].is_linked and \
             type(self.inputs['multiplier'].links[0].from_socket) == StringsSocket:
-            if not self.inputs['multiplier'].node.socket_value_update:
-                self.inputs['multiplier'].node.update()
-            mult = eval(self.inputs['multiplier'].links[0].from_socket.StringsProperty)
+
+            mult = SvGetSocketAnyType(self,self.inputs['multiplier'])
         else:
             mult = [[1.0]]
         
         # outputs
-        if 'vertices' in self.outputs and len(self.outputs['vertices'].links)>0:
-           if not self.inputs['vertices'].node.socket_value_update:
-               self.inputs['vertices'].node.update()
-           
+        if 'vertices' in self.outputs and self.outputs['vertices'].is_linked:
            mov = self.moved(vers, vecs, mult)
-           self.outputs['vertices'].VerticesProperty = str(mov, )
+           SvSetSocketAnyType(self,'vertices',mov)
     
     def moved(self, vers, vecs, mult):
         r = len(vers) - len(vecs)
