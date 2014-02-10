@@ -677,7 +677,7 @@ def sv_debug_update(self,context):
         else:
             sverchok_debug(key='show_updated_nodes')
         if self.show_updated_nodes:
-            sverchok_debug(key='print_timings', value=self.show_updated_nodes)
+            sverchok_debug(key='print_timings', value=self.print_timings)
         else:
             sverchok_debug(key='print_timings')
             
@@ -1108,7 +1108,7 @@ def socket_id(socket):
 
 def sv_deep_copy(lst):
     if isinstance(lst,(list,tuple)):
-        if not isinstance(lst[0],(list,tuple)):
+        if lst and not isinstance(lst[0],(list,tuple)):
             return lst[:]
         return [sv_deep_copy(l) for l in lst]
     return lst
