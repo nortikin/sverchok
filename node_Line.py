@@ -1,7 +1,6 @@
 import bpy
 from node_s import *
 from util import *
-from types import *
 
 class LineNode(Node, SverchCustomTreeNode):
     ''' Line '''
@@ -24,17 +23,13 @@ class LineNode(Node, SverchCustomTreeNode):
 
     def update(self):
         # inputs
-        if 'Nº Vertices' in self.inputs and len(self.inputs['Nº Vertices'].links)>0:
-            if not self.inputs['Nº Vertices'].node.socket_value_update:
-                self.inputs['Nº Vertices'].node.update()
-            Integer = int(eval(self.inputs['Nº Vertices'].links[0].from_socket.StringsProperty)[0][0])
+        if 'Nº Vertices' in self.inputs and self.inputs['Nº Vertices'].is_linked:
+            Integer = int(SvGetSocketAnyType(self,self.inputs['Nº Vertices'])[0][0])
         else:
             Integer = self.int_
 
-        if 'Step' in self.inputs and len(self.inputs['Step'].links)>0:
-            if not self.inputs['Step'].node.socket_value_update:
-                self.inputs['Step'].node.update()
-            Step = eval(self.inputs['Step'].links[0].from_socket.StringsProperty)[0]
+        if 'Step' in self.inputs and self.inputs['Step'].is_linked:
+            Step = SvGetSocketAnyType(self,self.inputs['Step'])[0]
             
             if len(Step) < Integer:
                 fullList(Step, Integer)
@@ -50,37 +45,26 @@ class LineNode(Node, SverchCustomTreeNode):
             X = listVert
 
         # outputs
-        if 'Vertices' in self.outputs and len(self.outputs['Vertices'].links)>0:
-            if not self.outputs['Vertices'].node.socket_value_update:
-                self.outputs['Vertices'].node.update()
-
+        if 'Vertices' in self.outputs and self.outputs['Vertices'].is_linked:
 
             Y = [0.0]
             Z = [0.0]
             max_num = len(X)
-            self.fullList(Y,max_num)
-            self.fullList(Z,max_num)
+            fullList(Y,max_num)
+            fullList(Z,max_num)
 
             points = list(zip(X,Y,Z))
-            self.outputs['Vertices'].VerticesProperty = str([points])
+            SvSetSocketAnyType(self, 'Vertices',[points])
 
-        if 'Edges' in self.outputs and len(self.outputs['Edges'].links)>0:
-            if not self.outputs['Edges'].node.socket_value_update:
-                self.outputs['Edges'].node.update()
+        if 'Edges' in self.outputs and self.outputs['Edges'].is_linked:
 
             listEdg = []
             for i in range(Integer-1):
                 listEdg.append((i, i+1))
 
             edg = list(listEdg)
-            self.outputs['Edges'].StringsProperty = str([edg])
+            SvSetSocketAnyType(self, 'Edges',[edg])
 
-    def fullList(self, l, count):
-        d = count - len(l)
-        if d > 0:
-            l.extend([l[-1] for a in range(d)])
-        return
-    
     def update_socket(self, context):
         self.update()
 
