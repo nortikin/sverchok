@@ -29,23 +29,22 @@ class SphereNode(Node, SverchCustomTreeNode):
     def update(self):
         # inputs
         if 'Radius' in self.inputs and self.inputs['Radius'].is_linked:
-        
-            tmp = SvGetSocketAnyType(self,self.inputs['Radius'])
-            Radius = float(tmp[0][0])
+
+            Radius = float(SvGetSocketAnyType(self,self.inputs['Radius'])[0][0])
         else:
             Radius = self.rad_
 
         if 'U' in self.inputs and self.inputs['U'].is_linked:
-            tmp = SvGetSocketAnyType(self,self.inputs['U'])
-            U = int(tmp[0][0])
+
+            U = int(SvGetSocketAnyType(self,self.inputs['U'])[0][0])
+
             if U < 3:
                 U = 3
         else:
             U = self.U_
 
         if 'V' in self.inputs and self.inputs['V'].is_linked:
-            tmp = SvGetSocketAnyType(self,self.inputs['V'])
-            V = int(tmp[0][0])
+            V = int(SvGetSocketAnyType(self,self.inputs['V'])[0][0])
             if V < 3:
                 V = 3
         else:
@@ -82,6 +81,7 @@ class SphereNode(Node, SverchCustomTreeNode):
             points = list(zip(X,Y,Z))
             SvSetSocketAnyType(self,'Vertices',[points[(U-1):-(U-1)]])
 
+
         if 'Edges' in self.outputs and self.outputs['Edges'].is_linked:
 
             listEdg = []
@@ -96,14 +96,16 @@ class SphereNode(Node, SverchCustomTreeNode):
                 listEdg.append((nr_pts-1, i+nr_pts-U-1))
                 
             listEdg.reverse()
-            SvSetSocketAnyType(self,'Edges',[listEdg])
+            edg = [listEdg]
+            SvSetSocketAnyType(self, 'Edges',[edg])
 
-        if 'Polygons' in self.outputs and self.outputs['Polygons'].is_linked:
-            listPln = []
+        if 'Polygons' in self.outputs and self.outputs['Polygons'].is_linked: 
+
+            listPlg = []
             for i in range(V-3):
-                listPln.append((U*i+2*U, 1+U*i+U, 1+U*i,  U*i+U))
+                listPlg.append((U*i+2*U, 1+U*i+U, 1+U*i,  U*i+U))
                 for j in range(U-1):
-                    listPln.append((1+U*i+j+U, 2+U*i+j+U, 2+U*i+j, 1+U*i+j))
+                    listPlg.append((1+U*i+j+U, 2+U*i+j+U, 2+U*i+j, 1+U*i+j))
 
             for i in range(U-1):
                 listPln.append((1+i, 2+i, 0))
@@ -114,9 +116,9 @@ class SphereNode(Node, SverchCustomTreeNode):
             SvSetSocketAnyType(self,'Polygons',[listPln])
 
 
+
     def update_socket(self, context):
         self.update()
-
 
 def register():
     bpy.utils.register_class(SphereNode)

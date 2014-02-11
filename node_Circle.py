@@ -30,26 +30,20 @@ class CircleNode(Node, SverchCustomTreeNode):
 
     def update(self):
         # inputs
-        if len(self.inputs['Radius'].links)>0:
-            if not self.inputs['Radius'].node.socket_value_update:
-                self.inputs['Radius'].node.update()
-            Radius = float(eval(self.inputs['Radius'].links[0].from_socket.StringsProperty)[0][0])
+        if 'Radius' in self.inputs and self.inputs['Radius'].is_linked:
+            Radius = float(SvGetSocketAnyType(self,self.inputs['Radius'])[0][0])
         else:
             Radius = self.rad_
 
-        if len(self.inputs['Nº Vertices'].links)>0:
-            if not self.inputs['Nº Vertices'].node.socket_value_update:
-                self.inputs['Nº Vertices'].node.update()
-            Vertices = int(eval(self.inputs['Nº Vertices'].links[0].from_socket.StringsProperty)[0][0])
+        if 'Nº Vertices' in self.inputs and self.inputs['Nº Vertices'].is_linked:
+            Vertices = int(SvGetSocketAnyType(self,self.inputs['Nº Vertices'])[0][0])
             if Vertices < 3:
                 Vertices = 3
         else:
             Vertices = self.vert_
 
-        if len(self.inputs['Degrees'].links)>0:
-            if not self.inputs['Degrees'].node.socket_value_update:
-                self.inputs['Degrees'].node.update()
-            Angle = int(eval(self.inputs['Degrees'].links[0].from_socket.StringsProperty)[0][0])
+        if 'Degrees' in self.inputs and self.inputs['Degrees'].is_linked:
+            Angle = float(SvGetSocketAnyType(self,self.inputs['Degrees'])[0][0])
             if Angle < 0:
                 Angle = 0
             elif Angle > 360:
@@ -76,9 +70,7 @@ class CircleNode(Node, SverchCustomTreeNode):
             listVertX.append(0.0)
             listVertY.append(0.0)
         # outputs
-        if 'Vertices' in self.outputs and len(self.outputs['Vertices'].links)>0:
-            if not self.outputs['Vertices'].node.socket_value_update:
-                self.outputs['Vertices'].node.update()
+        if 'Vertices' in self.outputs and self.outputs['Vertices'].is_linked:
 
             X = listVertX
             Y = listVertY
@@ -86,16 +78,14 @@ class CircleNode(Node, SverchCustomTreeNode):
 
             max_num = max(len(X), len(Y), len(Z))
             
-            self.fullList(X,max_num)
-            self.fullList(Y,max_num)
-            self.fullList(Z,max_num)
+            fullList(X,max_num)
+            fullList(Y,max_num)
+            fullList(Z,max_num)
 
             points = list(zip(X,Y,Z))
-            self.outputs['Vertices'].VerticesProperty = str([points])
+            SvSetSocketAnyType(self, 'Vertices',[points])
 
-        if 'Edges' in self.outputs and len(self.outputs['Edges'].links)>0:
-            if not self.outputs['Edges'].node.socket_value_update:
-                self.outputs['Edges'].node.update()
+        if 'Edges' in self.outputs and self.outputs['Edges'].is_linked:
 
             listEdg = []
             for i in range(Vertices-1):
@@ -106,11 +96,9 @@ class CircleNode(Node, SverchCustomTreeNode):
             else:
                 listEdg.append((0, Vertices-1))
             edg = list(listEdg)
-            self.outputs['Edges'].StringsProperty = str([edg])
+            SvSetSocketAnyType(self, 'Edges',[edg])
 
-        if 'Polygons' in self.outputs and len(self.outputs['Polygons'].links)>0:
-            if not self.outputs['Polygons'].node.socket_value_update:
-                self.outputs['Polygons'].node.update()
+        if 'Polygons' in self.outputs and self.outputs['Polygons'].is_linked:
 
             listPlg = []
             for i in range(Vertices):
@@ -119,17 +107,10 @@ class CircleNode(Node, SverchCustomTreeNode):
                 listPlg.insert(0, Vertices)
 
             plg = [listPlg]
-            self.outputs['Polygons'].StringsProperty = str([plg])
-
-    def fullList(self, l, count):
-        d = count - len(l)
-        if d > 0:
-            l.extend([l[-1] for a in range(d)])
-        return
+            SvSetSocketAnyType(self, 'Polygons',[plg])
     
     def update_socket(self, context):
         self.update()
-
 
 def register():
     bpy.utils.register_class(CircleNode)
