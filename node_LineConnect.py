@@ -9,6 +9,7 @@ class LineConnectNode(Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
     
     JoinLevel = bpy.props.IntProperty(name='JoinLevel', description='Choose connect level of data (see help)', default=1, min=1, max=2, update=updateNode)
+    polygons = bpy.props.BoolProperty(name='polygons', description='Do polygons or not?', default=True, update=updateNode)
     dir_check = bpy.props.BoolProperty(name='direction', description='direction to connect', default=True, update=updateNode)
     link_check = bpy.props.BoolProperty(name='link', description='link parts', default=False, update=updateNode)
     cicl_check = bpy.props.BoolProperty(name='cicle', description='cicle line', default=False, update=updateNode)
@@ -23,12 +24,13 @@ class LineConnectNode(Node, SverchCustomTreeNode):
     
     def draw_buttons(self, context, layout):
         layout.prop(self, "dir_check", text="direction")
-        layout.prop(self, "link_check", text="to link")
-        layout.prop(self, "cicl_check", text="cicle first-last")
+        #layout.prop(self, "link_check", text="to link")
+        #layout.prop(self, "cicl_check", text="cicle first-last")
+        layout.prop(self, "polygons", text="do polygons")
         layout.prop(self, "JoinLevel", text="connect level")
 
     
-    def connect(self, vers, dirn, link, cicl, clev):
+    def connect(self, vers, dirn, link, cicl, clev, polygons):
         vers_ = []
         lens = []
         
@@ -63,9 +65,16 @@ class LineConnectNode(Node, SverchCustomTreeNode):
                 fullList(ob, ml)
                 joinvers.extend(ob)
             objecto = []
-            for i, ve in enumerate(vers_[0][0:-1]):
-                inds = [j*ml+i for j in range(lenvers)]
-                objecto.append(inds)
+            if polygons:
+                for i, ve in enumerate(vers_[0][:]):
+                    inds = [j*ml+i for j in range(lenvers)]
+                    objecto.append(inds)
+            else:
+                for i, ve in enumerate(vers_[0][:]):
+                    inds = [j*ml+i for j in range(lenvers)]
+                    for i, item in enumerate(inds):
+                        if i==0: continue
+                        objecto.append([item,inds[i-1]])
             edges.append(objecto)
             vers_ = [joinvers]
         return vers_, edges
@@ -86,7 +95,7 @@ class LineConnectNode(Node, SverchCustomTreeNode):
                 lev = 1
             else:
                 lev = self.JoinLevel
-            result = self.connect(slots, self.dir_check, self.link_check, self.cicl_check, lev)
+            result = self.connect(slots, self.dir_check, self.link_check, self.cicl_check, lev, self.polygons)
             #print(levelsOflist(slots), '===>', levelsOflist(result))
             if self.outputs['vertices'].is_linked:
                  SvSetSocketAnyType(self,'vertices',result[0])
