@@ -25,25 +25,22 @@ class GenSeriesNode(Node, SverchCustomTreeNode):
 
     def update(self):
         # inputs
-        if 'Start' in self.inputs and len(self.inputs['Start'].links)>0:
-            if not self.inputs['Start'].node.socket_value_update:
-                self.inputs['Start'].node.update()
-            Start = eval(self.inputs['Start'].links[0].from_socket.StringsProperty)[0][0]
+        if 'Start' in self.inputs and self.inputs['Start'].is_linked:
+            tmp = SvGetSocketAnyType(self,self.inputs['Start'])
+            Start = tmp[0][0]
         else:
             Start = self.start_
     
-        if 'Stop' in self.inputs and len(self.inputs['Stop'].links)>0:
-            if not self.inputs['Stop'].node.socket_value_update:
-                self.inputs['Stop'].node.update()
-            Stop = eval(self.inputs['Stop'].links[0].from_socket.StringsProperty)[0][0]
+        if 'Stop' in self.inputs and self.inputs['Stop'].is_linked:
+            tmp = SvGetSocketAnyType(self,self.inputs['Stop'])
+            Start = tmp[0][0]
         else:
             Stop = self.stop_
         
-        if 'Step' in self.inputs and len(self.inputs['Step'].links)>0:
-            if not self.inputs['Step'].node.socket_value_update:
-                self.inputs['Step'].node.update()
-            Step = eval(self.inputs['Step'].links[0].from_socket.StringsProperty)[0][0]
-        else:
+        if 'Step' in self.inputs and self.inputs['Step'].is_linked:
+            tmp = SvGetSocketAnyType(self,self.inputs['Step'])
+            Step = tmp[0][0]
+          else:
             Step = self.step_
         
         # outputs
@@ -57,7 +54,7 @@ class GenSeriesNode(Node, SverchCustomTreeNode):
                 Stop = Start+1
             series = [c for c in self.xfrange(Start, Stop, Step)]
             
-            self.outputs['Series'].StringsProperty = str([series, ])
+            SvSetSocketAnyType(self,'Series', [series])
 
     def xfrange(self, start, stop, step):
         while start < stop:

@@ -31,12 +31,11 @@ class ShiftNode(Node, SverchCustomTreeNode):
             outputsocketname = ['data']
             changable_sockets(self, inputsocketname, outputsocketname)
         
-        if 'data' in self.outputs and len(self.outputs['data'].links)>0:
-            if 'shift' in self.inputs and self.inputs['shift'].links and \
+        if 'data' in self.outputs and self.outputs['data'].is_linked:
+            if 'shift' in self.inputs and self.inputs['shift'].is_linked and \
                 type(self.inputs['shift'].links[0].from_socket) == StringsSocket:
-                if not self.inputs['shift'].node.socket_value_update:
-                    self.inputs['shift'].node.update()
-                number = eval(self.inputs['shift'].links[0].from_socket.StringsProperty)
+                
+                number = SvGetSocketAnyType(self,self.inputs['shift'])
                 # не знаю насколько целесообразно
                 #if type(number)!=list or type(number[0])!=list or type(number[0][0])!=int:
                     #number = [[0]]

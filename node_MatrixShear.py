@@ -29,8 +29,7 @@ class MatrixShearNode(Node, SverchCustomTreeNode):
         self.outputs.new('MatrixSocket', "Matrix", "Matrix")
         
     def draw_buttons(self, context, layout):
-        layout.prop(self,"plane_","Shear plane:");
-
+        layout.prop(self,"plane_","Shear plane:",expand=True)
         layout.prop(self, "factor1_", text="Factor 1")
         layout.prop(self, "factor2_", text="Factor 2")
 
@@ -38,19 +37,17 @@ class MatrixShearNode(Node, SverchCustomTreeNode):
         # inputs
         factor1 = []
         factor2 = []
-        if 'Factor1' in self.inputs and self.inputs['Factor1'].links and \
+        if 'Factor1' in self.inputs and self.inputs['Factor1'].is_linked and \
             type(self.inputs['Factor1'].links[0].from_socket) == StringsSocket:
-            if not self.inputs['Factor1'].node.socket_value_update:
-                self.inputs['Factor1'].node.update()
-            factor1 = eval(self.inputs['Factor1'].links[0].from_socket.StringsProperty)
+
+            factor1 = SvGetSocketAnyType(self,self.inputs['Factor1'])
         if not factor1:
             factor1 = [[self.factor1_]]
         
-        if 'Factor2' in self.inputs and self.inputs['Factor2'].links and \
+        if 'Factor2' in self.inputs and self.inputs['Factor2'].is_linked and \
             type(self.inputs['Factor2'].links[0].from_socket) == StringsSocket:
-            if not self.inputs['Factor2'].node.socket_value_update:
-                self.inputs['Factor2'].node.update()
-            factor2 = eval(self.inputs['Factor2'].links[0].from_socket.StringsProperty)
+   
+            factor2 = SvGetSocketAnyType(self,self.inputs['Factor2'])
         if not factor2:
             factor2 = [[self.factor2_]]
         
@@ -58,8 +55,6 @@ class MatrixShearNode(Node, SverchCustomTreeNode):
         # outputs
     
         if 'Matrix' in self.outputs and self.outputs['Matrix'].links: 
-            if not self.outputs['Matrix'].node.socket_value_update:
-                self.outputs['Matrix'].node.update()
     
             max_l = max(len(factor1),len(factor2))
             fullList(factor1,max_l)
@@ -73,7 +68,7 @@ class MatrixShearNode(Node, SverchCustomTreeNode):
                     matrixes_.append(Matrix.Shear(self.plane_,4,(factor1[i][j],factor2[i][j])))
             
             matrixes = Matrix_listing(matrixes_)
-            self.outputs['Matrix'].MatrixProperty = str(matrixes)
+            SvSetSocketAnyType(self, 'Matrix', matrixes)
         
                 
     def update_socket(self, context):
