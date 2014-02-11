@@ -106,17 +106,17 @@ class ObjectsNode(Node, SverchCustomTreeNode):
                 pols_out.append(pols)
                 mtrx_out.append(mtrx)
             if vers_out[0]:
-                if 'Vertices' in self.outputs and len(self.outputs['Vertices'].links)>0:
-                    self.outputs['Vertices'].VerticesProperty = str(vers_out)
+                if 'Vertices' in self.outputs and self.outputs['Vertices'].is_linked:
+                    SvSetSocketAnyType(self, 'Vertices',vers_out)
                     
-                if 'Edges' in self.outputs and len(self.outputs['Edges'].links)>0:
-                    self.outputs['Edges'].StringsProperty = str(edgs_out)
+                if 'Edges' in self.outputs and self.outputs['Edges'].is_linked:
+                    SvSetSocketAnyType(self, 'Edges',edgs_out)
                     
-                if 'Polygons' in self.outputs and len(self.outputs['Polygons'].links)>0:
-                    self.outputs['Polygons'].StringsProperty = str(pols_out)
+                if 'Polygons' in self.outputs and self.outputs['Polygons'].is_linked:
+                    SvSetSocketAnyType(self, 'Polygons',pols_out)
             
-            if 'Matrixes' in self.outputs and len(self.outputs['Matrixes'].links)>0:
-                self.outputs['Matrixes'].MatrixProperty = str(mtrx_out)
+            if 'Matrixes' in self.outputs and self.outputs['Matrixes'].is_linked:
+                SvSetSocketAnyType(self, 'Matrixes',mtrx_out)
             #print ('матрёны: ', mtrx)
         #print (self.objects_local)
         if self.objects_local:
