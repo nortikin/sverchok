@@ -29,7 +29,7 @@ class MatrixShearNode(Node, SverchCustomTreeNode):
         self.outputs.new('MatrixSocket', "Matrix", "Matrix")
         
     def draw_buttons(self, context, layout):
-        layout.prop(self,"plane_","Shear plane:",expand=True)
+        layout.prop(self,"plane_","Shear plane:",expand=False)
         layout.prop(self, "factor1_", text="Factor 1")
         layout.prop(self, "factor2_", text="Factor 2")
 

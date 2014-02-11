@@ -21,13 +21,16 @@ class ListBoomNode(Node, SverchCustomTreeNode):
     
     def update(self):
         # inputs
-        if 'vertices' in self.inputs and self.inputs['vertices'].links and \
-                'edg_pol' in self.inputs and self.inputs['edg_pol'].links:
-            vertices = eval(self.inputs['vertices'].links[0].from_socket.VerticesProperty)
-            edgs_pols = eval(self.inputs['edg_pol'].links[0].from_socket.StringsProperty)
+      
         
-        if 'vertices' in self.outputs and self.outputs['vertices'].links or \
-                'edg_pol' in self.outputs and self.outputs['edg_pol'].links:
+        if 'vertices' in self.outputs and self.outputs['vertices'].is_linked or \
+                'edg_pol' in self.outputs and self.outputs['edg_pol'].is_linked:
+            if 'vertices' in self.inputs and self.inputs['vertices'].is_linked and \
+                'edg_pol' in self.inputs and self.inputs['edg_pol'].is_linked:
+                vertices = SvGetSocketAnyType(self, self.inputs['vertices'])
+                edgs_pols = SvGetSocketAnyType(self, self.inputs['edg_pol'])
+            else:
+                return
             vert_out = []
             edpo_out = []
             for k, ob in enumerate(edgs_pols):
@@ -40,14 +43,10 @@ class ListBoomNode(Node, SverchCustomTreeNode):
                     vert_out.append(new_vers)
                     edpo_out.append([new_edpo])
             
-            if len(self.outputs['vertices'].links)>0:
-                if not self.outputs['vertices'].node.socket_value_update:
-                    self.outputs['vertices'].node.update()
-                self.outputs['vertices'].links[0].from_socket.VerticesProperty =  str(vert_out)
-            if len(self.outputs['edg_pol'].links)>0:
-                if not self.outputs['edg_pol'].node.socket_value_update:
-                    self.outputs['edg_pol'].node.update()
-                self.outputs['edg_pol'].links[0].from_socket.StringsProperty = str(edpo_out)
+            if 'vertices' in self.outputs and self.outputs['vertices'].is_linked:
+                SvSetSocketAnyType(self, 'vertices',vert_out)
+            if 'edg_pol' in self.outputs and self.outputs['edg_pol'].is_linked:
+                SvSetSocketAnyType(self,'edg_pol',edpo_out)
 
 def register():
     bpy.utils.register_class(ListBoomNode)

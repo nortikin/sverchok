@@ -828,8 +828,8 @@ def make_update_list(node_tree,node_set = None):
     for name,node in [(node_name,ng.nodes[node_name]) for node_name in node_set]:
         node_dep = []
         for socket in node.inputs:
-            if socket.is_linked and socket.links[0].from_socket.node.name in node_set:
-                node_dep.append(socket.links[0].from_socket.node.name)
+            if socket.is_linked and socket.links[0].from_node.name in node_set:
+                node_dep.append(socket.links[0].from_node.name)
         is_root = True            
         for socket in node.outputs:
             if socket.is_linked:
@@ -870,12 +870,15 @@ def make_update_list(node_tree,node_set = None):
     while node_count > len(out):
         node_dependencies = True
         for dep_name in deps[name]:
-            if not dep_name in out:  
+            if not dep_name in out:
                 tree_stack.append(name)
                 name = dep_name
                 node_dependencies = False
                 break
-        # if all dependencies are in out        
+        if len(tree_stack) > node_count:
+            print("Invalid node tree!")
+            return []
+        # if all dependencies are in out
         if node_dependencies:
             if not name in out:
                 out[name]=1
@@ -928,9 +931,9 @@ def make_tree_from_node(node_name,tree_name):
         for socket in ng.nodes[current_node].outputs:
             if socket.is_linked:
                 for link in socket.links:
-                    if not link.to_socket.node.name in out_set:
-                        out_set.add(link.to_socket.node.name)
-                        out_stack.append(link.to_socket.node.name)
+                    if not link.to_node.name in out_set:
+                        out_set.add(link.to_node.name)
+                        out_stack.append(link.to_node.name)
         if out_stack:
             current_node = out_stack.pop()
         else:
@@ -947,7 +950,7 @@ def speedUpdate(start_node = None, node_tree_name = None):
     global socket_data_cache
     global DEBUG_MODE
     global DEBUG_SETTINGS
-    
+
     if not 'TreeName' in list_nodes4update: 
         makeTreeUpdate2() 
         socket_data_cache.clear()
@@ -961,23 +964,20 @@ def speedUpdate(start_node = None, node_tree_name = None):
     if start_node != None:
         out = make_tree_from_node(start_node,node_tree_name)
         nods = bpy.data.node_groups[node_tree_name].nodes
-
+        
         for nod_name in out:
-            if nod_name in nods:
-              
+            if nod_name in nods:   
                 if DEBUG_MODE:
                     if 'print_timings' in DEBUG_SETTINGS:
-                        start = time.time()        
-                        
+                        start = time.time()                   
                 nods[nod_name].update()
-
                 if DEBUG_MODE:
                     if 'print_timings' in DEBUG_SETTINGS:
                         stop = time.time()
                         print("Partial updated: ",nod_name, " in ", round(stop-start,4))    
                     if 'show_updated_nodes' in DEBUG_SETTINGS:
                         nods[nod_name].use_custom_color = True
-                        nods[nod_name].color = (0.8,0,0)
+                        nods[nod_name].color = (0.1,.8,0)
 
         return
                     
