@@ -54,34 +54,30 @@ class MatrixInterpolationNode(Node, SverchCustomTreeNode):
         B = []
         factor = [] # 0 is valid value so I use [] as placeholder
         
-        if 'A' in self.inputs and self.inputs['A'].links and \
+        if 'A' in self.inputs and self.inputs['A'].is_linked and \
             type(self.inputs['A'].links[0].from_socket) == MatrixSocket:
-            if not self.inputs['A'].node.socket_value_update:
-                self.inputs['A'].node.update()
-            A = Matrix_generate(eval(self.inputs['A'].links[0].from_socket.MatrixProperty))
+
+            A = Matrix_generate(SvGetSocketAnyType(self,self.inputs['A']))
         if not A:
             A = [Matrix.Identity(4)]
         
-        if 'B' in self.inputs and self.inputs['B'].links and \
+        if 'B' in self.inputs and self.inputs['B'].is_linked and \
             type(self.inputs['B'].links[0].from_socket) == MatrixSocket:
-            if not self.inputs['B'].node.socket_value_update:
-                self.inputs['B'].node.update()
-            B = Matrix_generate(eval(self.inputs['B'].links[0].from_socket.MatrixProperty))
+
+            B = Matrix_generate(SvGetSocketAnyType(self,self.inputs['B']))
         if not B:
             B = [Matrix.Identity(4)]
                 
-        if 'Factor' in self.inputs and self.inputs['Factor'].links and \
+        if 'Factor' in self.inputs and self.inputs['Factor'].is_linked and \
             type(self.inputs['Factor'].links[0].from_socket) == StringsSocket:
-            if not self.inputs['Factor'].node.socket_value_update:
-                self.inputs['Factor'].node.update()
-            factor = eval(self.inputs['Factor'].links[0].from_socket.StringsProperty)
+
+            factor = SvGetSocketAnyType(self,self.inputs['Factor'])
 
         if not factor:
             factor = [[self.factor_]]
       
-        if 'C' in self.outputs and self.outputs['C'].links: 
-            if not self.outputs['C'].node.socket_value_update:
-                self.outputs['C'].node.update()
+        if 'C' in self.outputs and self.outputs['C'].is_linked:
+
             matrixes_=[]
 # match inputs, first matrix A and B using fullList
 # then extend the factor list if necessary,             
@@ -99,7 +95,7 @@ class MatrixInterpolationNode(Node, SverchCustomTreeNode):
                 return
                        
             matrixes = Matrix_listing(matrixes_)
-            self.outputs['C'].MatrixProperty = str(matrixes)            
+            SvSetSocketAnyType(self, 'C', matrixes)            
     
             
             
