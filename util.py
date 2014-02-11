@@ -840,9 +840,9 @@ def make_update_list(node_tree,node_set = None):
             deps[name]=node_dep
         if is_root and node_dep and not name[:6] == 'Wifi i':
             tree_stack.append(name)
-        if name[:6] == 'Wifi o':
+        if node.bl_idname == 'WifiOutNode':
             wifi_out.append(name)
-        if name[:6] == 'Wifi i':
+        if node.bl_idname == 'WifiInNode':
             wifi_in.append(name)  
             
     # create wifi out dependencies            
@@ -920,9 +920,9 @@ def make_tree_from_node(node_name,tree_name):
     current_node = node_name
     # build the set of nodes that needs to be updated
     while current_node:
-        if current_node[:6] == 'Wifi i':
+        if ng.nodes[current_node].bl_idname == 'WifiInNode':
             if not wifi_out:  # build only if needed
-                wifi_out = [name for name in ng.nodes.keys() if name[:6] == 'Wifi o']
+                wifi_out = [name for name in ng.nodes.keys() if ng.nodes[name].bl_idname == 'WifiOutNode']
             for wifi_out_node in wifi_out:
                 if ng.nodes[current_node].var_name == ng.nodes[current_node].var_name:
                     if not wifi_out_node in out_set:
