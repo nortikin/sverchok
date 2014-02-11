@@ -47,15 +47,38 @@ class LineConnectNode(Node, SverchCustomTreeNode):
         lenvers = len(vers_)
         edges = []
         if dirn:
-            for k, ob in enumerate(vers_):
+            if not polygons:
+                for k, ob in enumerate(vers_):
+                    objecto = []
+                    for i, ve in enumerate(ob[0:-1]):
+                        objecto.append([i,i+1])
+                    if link:
+                        pass
+                    if cicl:
+                        objecto.append([0,k-1])
+                    edges.append(objecto)
+            else:
+                length_ob = []
+                newobject = []
+                for k, ob in enumerate(vers_):
+                    length_ob.append(len(ob))
+                    newobject.extend(ob)
+                curr = 0
                 objecto = []
-                for i, ve in enumerate(ob[0:-1]):
-                    objecto.append([i,i+1])
-                if link:
-                    pass
-                if cicl:
-                    objecto.append([0,k-1])
-                edges.append(objecto)
+                indexes__ = []
+                for i, ob in enumerate(length_ob):
+                    indexes_ = []
+                    for i in range(ob):
+                        indexes_.append(curr)
+                        curr += 1
+                    if i > 0:
+                        indexes = indexes_ + indexes__[::-1]
+                        objecto.append(indexes)
+                    indexes__ = indexes_
+                vers_ = [newobject]
+                print (objecto, len(vers_[0]))
+                edges = [objecto]
+                    
         else:
             ml = max(lens)
             #print(lens)
