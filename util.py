@@ -1126,9 +1126,9 @@ def SvGetSocket(socket):
     global DEBUG_MODE
     if socket.is_linked:
         other =  socket.links[0].from_socket
-        id = socket_id(other)
-        if id in socket_data_cache:
-            out = socket_data_cache[id]
+        s_id = socket_id(other)
+        if s_id in socket_data_cache:
+            out = socket_data_cache[s_id]
             return sv_deep_copy(out)
   #          return copy.deepcopy(out)
         else: # failure, should raise error in future
