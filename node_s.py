@@ -7,6 +7,11 @@ from nodeitems_utils import NodeCategory, NodeItem
 from mathutils import Matrix
 from util import updateSlot
 
+class SvColors(bpy.types.PropertyGroup):
+    """ Class for colors CollectionProperty """
+    color = bpy.props.FloatVectorProperty(
+        name="svcolor", description="sverchok color", default=(0.055,0.312,0.5), min=0, max=1,
+        step=1, precision=3, subtype='COLOR_GAMMA', size=3)
 
 class MatrixSocket(NodeSocket):
     '''4x4 matrix Socket_type'''
@@ -19,10 +24,9 @@ class MatrixSocket(NodeSocket):
     
     def draw(self, context, layout, node, text):
         if self.is_linked:
-            layout.label(text)
+            layout.label(text + '.' + str(self.MatrixProperty)[:7])
         else:
-            col = layout.column(align=True)
-            col.label(text)
+            layout.label(text)
    
     def draw_color(self, context, node):
         '''if self.is_linked:
@@ -30,8 +34,9 @@ class MatrixSocket(NodeSocket):
         else: '''
         return(.2,.8,.8,1.0)
 
+'''
 class ObjectSocket(NodeSocket):
-        '''ObjectSocket'''
+        'ObjectSocket'
         bl_idname = "ObjectSocket"
         bl_label = "Object Socket"
         
@@ -47,6 +52,7 @@ class ObjectSocket(NodeSocket):
                 
         def draw_color(self, context, node):
             return(0.8,0.8,0.2,1.0)
+'''
 
 class VerticesSocket(NodeSocket):
         '''String Vertices - one string'''
@@ -58,12 +64,9 @@ class VerticesSocket(NodeSocket):
 
         def draw(self, context, layout, node, text):
             if self.is_linked:
-                layout.label(text + str(self.VerticesProperty))
+                layout.label(text + '.' + str(self.VerticesProperty)[:7])
             else:
-                col = layout.column(align=True)
-                row = col.row(align=True)
-                row.label(text)
-                #row.prop(self, 'VerticesProperty', text=text)
+                layout.label(text)
                 
         def draw_color(self, context, node):
             return(0.9,0.6,0.2,1.0)
@@ -77,21 +80,18 @@ class StringsSocket(NodeSocket):
 
         def draw(self, context, layout, node, text):
             if self.is_linked:
-                layout.label(text + str(self.StringsProperty))
+                layout.label(text + '.' + str(self.StringsProperty)[:7])
             else:
-                col = layout.column(align=True)
-                row = col.row(align=True)
-                row.label(text)
-                #row.prop(self, 'StringsProperty', text=text)
+                layout.label(text)
                 
         def draw_color(self, context, node):
             return(0.6,1.0,0.6,1.0)
         
 class SverchCustomTree(NodeTree):
-    '''A Sverchok node tree type that will show up in the node editor header'''
+    ''' Sverchok - architectural node programming of geometry in low level '''
     bl_idname = 'SverchCustomTreeType'
     bl_label = 'Sverchok Node Tree'
-    bl_icon = 'NODETREE'
+    bl_icon = 'RNA'
 
 
 class SverchCustomTreeNode:
@@ -112,7 +112,13 @@ def make_categories():
             NodeItem("ObjectsNode", label="Objects in"),
             NodeItem("ViewerNode", label="Viewer draw"),
             NodeItem("ViewerNode_text", label="Viewer text"),
+            NodeItem("SvTextInNode",  label="Text in"),
+            NodeItem("SvTextOutNode",  label="Text out"),
+            NodeItem("WifiInNode", label="Wifi in"),
+            NodeItem("WifiOutNode", label="Wifi out"),
             NodeItem("ToolsNode", label="Tools"),
+            NodeItem("Test1Node", label="Test1"),
+            NodeItem("Test2Node", label="Test2"),
             ]),
         SverchNodeCategory("SVERCHOK_L", "SVERCHOK list", items=[
             # lists nodes
@@ -120,23 +126,32 @@ def make_categories():
             NodeItem("ListJoinNode", label="List Join"),
             NodeItem("ZipNode", label="List Zip"),
             NodeItem("ShiftNode", label="List Shift"),
+            NodeItem("ListSliceNode", label="List Slice"),
             NodeItem("ListReverseNode", label="List Reverse"),
             NodeItem("ListLengthNode", label="List Length"),
             NodeItem("ListSumNode", label="List Sum"),
             NodeItem("ListFLNode", label="List First&Last"),
-            NodeItem("ListItemNode", label="List Item"),
+            NodeItem("ListItem2Node", label="List Item"),
+            NodeItem("ListRepeaterNode", label="List Repeater"),
+            NodeItem("ListFuncNode", label="List Math"),
+            NodeItem("ConverterNode", label="SocketConvert"),
+            NodeItem("ListFlipNode", label="ListFlip"),
             NodeItem("MaskListNode", label="List Mask"),
-            NodeItem("ListBoomNode", label="List Boom"),
+            NodeItem("ListSortNode", label="List Sort"),
+            NodeItem("ListShuffleNode", label="List Shuffle"),
+            NodeItem("ListMatchNode", label="List Match"),
             ]),
         SverchNodeCategory("SVERCHOK_N", "SVERCHOK number", items=[
             # numbers, formula nodes
             NodeItem("GenSeriesNode", label="Series"),
+            NodeItem("GenRangeNode", label="Range"),
             NodeItem("RandomNode", label="Random"),
             NodeItem("FloatNode", label="Float"),
             NodeItem("IntegerNode", label="Int"),
-            NodeItem("NumberNode", label="Float 2 Int"),
+            NodeItem("Float2IntNode", label="Float 2 Int"),
             NodeItem("FormulaNode", label="Formula"),
             NodeItem("Formula2Node", label="Formula2"),
+            NodeItem("ScalarMathNode", label="Math"),
             ]),
         SverchNodeCategory("SVERCHOK_G", "SVERCHOK generator", items=[
             # objects, new elements, line, plane
@@ -147,7 +162,7 @@ def make_categories():
             NodeItem("SphereNode", label="Sphere"),
             NodeItem("HilbertNode", label="Hilbert"),
             NodeItem("HilbertImageNode", label="Hilbert image"),
-            NodeItem("VoronoiNode", label="Voronoi"),
+            NodeItem("Voronoi2DNode", label="Voronoi"),
             NodeItem("ImageNode", label="Image"),
             ]),
         SverchNodeCategory("SVERCHOK_V", "SVERCHOK vector", items=[
@@ -156,11 +171,15 @@ def make_categories():
             NodeItem("VectorsOutNode", label="Vector out"),
             NodeItem("VectorNormalNode", label="Vector' Normal"),
             NodeItem("VectorMoveNode", label="Vector Move"),
-            NodeItem("VectorMatrixNode", label="Vector x Matrices"),
-            NodeItem("VectorDropNode", label="Vector Drop on mat."),
+            NodeItem("VectorMathNode", label="Vector Math"),
+            NodeItem("MatrixApplyNode", label="Matrix Apply"),
+            NodeItem("VectorDropNode", label="Vector Drop"),
             NodeItem("MatrixGenNode", label="Matrix in"),
             NodeItem("MatrixOutNode", label="Matrix out"),
             NodeItem("MatrixDeformNode", label="Matrix Deform"),
+            NodeItem("MatrixShearNode", label="Shear Matrix"),
+            NodeItem("MatrixInterpolationNode", label="Matrix Interpolation"),
+            NodeItem("RandomVectorNode", label="Random Vector"),
             ]),
         SverchNodeCategory("SVERCHOK_M", "SVERCHOK modifier", items=[
             # modifiers that find data from another data
@@ -171,6 +190,8 @@ def make_categories():
             NodeItem("AdaptivePolsNode", label="Adaptive Polygons"),
             NodeItem("CrossSectionNode", label="Cross Section"),
             NodeItem("LineConnectNode", label="Lines Connection"),
+            NodeItem("DelaunayTriangulation2DNode", label="Delaunay Tri 2D "),
+            NodeItem("ListBoomNode", label="Polygon Boom"),
             ]),
         ]
     return node_categories
@@ -183,18 +204,20 @@ def make_categories():
 #    return count
 
 def register():
+    bpy.utils.register_class(SvColors)
     bpy.utils.register_class(SverchCustomTree)
     bpy.utils.register_class(MatrixSocket)
-    bpy.utils.register_class(ObjectSocket)
+    #bpy.utils.register_class(ObjectSocket)
     bpy.utils.register_class(StringsSocket)
     bpy.utils.register_class(VerticesSocket)
     
 def unregister():
     bpy.utils.unregister_class(VerticesSocket)
     bpy.utils.unregister_class(StringsSocket)
-    bpy.utils.unregister_class(ObjectSocket)
+    #bpy.utils.unregister_class(ObjectSocket)
     bpy.utils.unregister_class(MatrixSocket)
     bpy.utils.unregister_class(SverchCustomTree)
+    bpy.utils.unregister_class(SvColors)
 
 if __name__ == "__main__":
     register()

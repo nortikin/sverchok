@@ -1,8 +1,0 @@
-to make your node:
-1.create branch or fork of master in github
-2.copy fitting existing node
-3.change class name, class id, class description, class registration in your file
-4.add node id in node_s.py in NodeCategory, line 110
-5.Add in init.py filename without .py extension in every of forth' columns, and remember to follow order in registration/unregistration
-6.tell us to merge branches.
-7.pull git master and work forward

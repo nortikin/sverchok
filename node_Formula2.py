@@ -12,6 +12,8 @@ class Formula2Node(Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
     
     formula = bpy.props.StringProperty(name = 'formula', default='x+n[0]', update=updateNode)
+    typ = bpy.props.StringProperty(name='typ', default='')
+    newsock = bpy.props.BoolProperty(name='newsock', default=False)
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "formula", text="formula")
@@ -19,8 +21,7 @@ class Formula2Node(Node, SverchCustomTreeNode):
     def init(self, context):
         self.inputs.new('StringsSocket', "X", "X")
         self.inputs.new('StringsSocket', "n[.]", "n[.]")
-        self.outputs.new('VerticesSocket', "ResultV", "ResultV")
-        self.outputs.new('StringsSocket', "ResultD", "ResultD")
+        self.outputs.new('StringsSocket', "Result", "Result")
         
     def check_slots(self, num):
         l = []
@@ -42,49 +43,28 @@ class Formula2Node(Node, SverchCustomTreeNode):
             for c in ch[:-1]:
                 self.inputs.remove(self.inputs[ch[-1]])
         
-        if 'X' in self.inputs and self.inputs['X'].links: 
-            if not self.inputs['X'].node.socket_value_update:
-                self.inputs['X'].node.update()
-            if type(self.inputs['X'].links[0].from_socket) == StringsSocket:
-                vecs = eval(self.inputs['X'].links[0].from_socket.StringsProperty)
-                #typesock = 's'
-                #if self.outputs[0].links[0].from_socket.VerticesProperty:
-                    #self.outputs.remove(self.outputs[0])
-                    #self.outputs.new('StringsSocket', "Result", "Result")
-            elif type(self.inputs['X'].links[0].from_socket) == VerticesSocket:
-                vecs = eval(self.inputs['X'].links[0].from_socket.VerticesProperty)
-                #typesock = 'v'
-                #if self.outputs[0].links[0].from_socket.StringsProperty:
-                    #self.outputs.remove(self.outputs[0])
-                    #self.outputs.new('VerticesSocket', "Result", "Result")
-        else:
-            vecs = [[0.0]]
-        
         list_mult=[]
         for idx, multi in enumerate(self.inputs[1:]):   
             if multi.links:
-                if not multi.node.socket_value_update:
-                    multi.node.update()
-                if type(multi.links[0].from_socket) == StringsSocket:
-                    mult = eval(multi.links[0].from_socket.StringsProperty)
-                elif type(multi.links[0].from_socket) == VerticesSocket:
-                    mult = eval(multi.links[0].from_socket.VerticesProperty)
-                elif type(multi.links[0].from_socket) == MatrixSocket:
-                    mult = eval(multi.links[0].from_socket.MatrixProperty)
+                list_mult.extend(SvGetSocketAnyType(self, multi))
                 ch = self.check_slots(2)
-                if not ch:
-                    self.inputs.new('StringsSocket', 'n[.]', "n[.]")
-
-                list_mult.extend(mult)
+        if not ch:
+            self.inputs.new('StringsSocket', 'n[.]', "n[.]")
+        
         if len(list_mult)==0:
             list_mult= [[0.0]]
             
+        if 'X' in self.inputs and len(self.inputs['X'].links)>0:
+            # адаптивный сокет
+            inputsocketname = 'X'
+            outputsocketname = ['Result']
+            changable_sockets(self, inputsocketname, outputsocketname)
+            vecs = SvGetSocketAnyType(self, self.inputs['X'])
+        else:
+            vecs = [[0.0]]
+            
         # outputs
-        if 'ResultD' in self.outputs and len(self.outputs['ResultD'].links)>0 or 'ResultV' in self.outputs and len(self.outputs['ResultV'].links)>0:
-            if not self.outputs['ResultD'].node.socket_value_update:
-               self.outputs['ResultD'].node.update()
-            if not self.outputs['ResultV'].node.socket_value_update:
-               self.outputs['ResultV'].node.update()
+        if 'Result' in self.outputs and len(self.outputs['Result'].links)>0:
             code_formula = parser.expr(self.formula).compile()
             
             # finding nasty levels, make equal nastyness (canonical 0,1,2,3)
@@ -93,6 +73,7 @@ class Formula2Node(Node, SverchCustomTreeNode):
                 levels.append(levelsOflist(n))
             maxlevel = max(max(levels), 3)
             diflevel = maxlevel - levels[0]
+            
             if diflevel:
                 vecs_ = dataSpoil([vecs], diflevel-1)
                 vecs = dataCorrect(vecs_, nominal_dept=2)
@@ -102,13 +83,10 @@ class Formula2Node(Node, SverchCustomTreeNode):
                 if diflevel:
                     list_temp = dataSpoil([list_mult[i-1]], diflevel-1)
                     list_mult[i-1] = dataCorrect(list_temp, nominal_dept=2)
-            #print (list_mult, vecs)
-            
             r = self.inte(vecs, code_formula, list_mult, 3)
-            
             result = dataCorrect(r, nominal_dept=min((levels[0]-1),2))
-            self.outputs['ResultD'].StringsProperty = str(result)
-            self.outputs['ResultV'].VerticesProperty = str(result)
+            
+            SvSetSocketAnyType(self, 'Result', result)
     
     def inte(self, list_x, formula, list_n, levels, index=0):
         ''' calc lists in formula '''
@@ -127,6 +105,16 @@ class Formula2Node(Node, SverchCustomTreeNode):
     def calc_item(self, x, formula, nlist, j, k, q):
         X = x
         n = []
+        a = []
+        list_vars = [w for w in sv_Vars.keys()]
+        for v in list_vars:
+            if v[:6]=='sv_typ': continue
+            abra = sv_Vars[v]
+            exec(str(v)+'=[]')
+            for i, aa_abra in enumerate(abra):
+                eva = str(v)+'.append('+str(aa_abra)+')'
+                eval(eva)
+        
         for nitem in nlist:
             n.append(nitem[j][k][q])
         N = n

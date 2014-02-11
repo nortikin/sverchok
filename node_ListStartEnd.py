@@ -10,6 +10,8 @@ class ListFLNode(Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
     
     level = bpy.props.IntProperty(name = 'level_to_count', default=2, min=0, update=updateNode)
+    typ = bpy.props.StringProperty(name='typ', default='')
+    newsock = bpy.props.BoolProperty(name='newsock', default=False)
     
     def draw_buttons(self, context, layout):
         layout.prop(self, "level", text="level")
@@ -20,30 +22,22 @@ class ListFLNode(Node, SverchCustomTreeNode):
         self.outputs.new('StringsSocket',"Last","Last")
 
     def update(self):
-        # достаём два слота - вершины и полики
+        if 'Data' in self.inputs and len(self.inputs['Data'].links)>0:
+            # адаптивный сокет
+            inputsocketname = 'Data'
+            outputsocketname = ['First','Last']
+            changable_sockets(self, inputsocketname, outputsocketname)
+        
         if 'First' in self.outputs and self.outputs['First'].links or \
                 'Last' in self.outputs and self.outputs['Last'].links:
-            if not self.outputs['First'].node.socket_value_update:
-                self.outputs['First'].node.update()
-            if not self.outputs['Last'].node.socket_value_update:
-                self.outputs['Last'].node.update()
-            if 'Data' in self.inputs and self.inputs['Data'].links:
-                if not self.inputs['Data'].node.socket_value_update:
-                    self.inputs['Data'].node.update()
-                if type(self.inputs['Data'].links[0].from_socket) == StringsSocket:
-                    data = eval(self.inputs['Data'].links[0].from_socket.StringsProperty)
-                elif type(self.inputs['Data'].links[0].from_socket) == VerticesSocket:
-                    data = eval(self.inputs['Data'].links[0].from_socket.VerticesProperty)
-                elif type(self.inputs['Data'].links[0].from_socket) == MatrixSocket:
-                    data = eval(self.inputs['Data'].links[0].from_socket.MatrixProperty)
-                
-                
-                if 'First' in self.outputs and self.outputs['First'].links:
-                    out = self.count(data, self.level, True)
-                    self.outputs['First'].StringsProperty = str(out)  
-                if 'Last' in self.outputs and self.outputs['Last'].links:
-                    out = self.count(data, self.level, False)
-                    self.outputs['Last'].StringsProperty = str(out)
+            data = SvGetSocketAnyType(self, self.inputs['Data'])
+            
+            if 'First' in self.outputs and self.outputs['First'].links:
+                out = self.count(data, self.level, True)
+                SvSetSocketAnyType(self, 'First', out)
+            if 'Last' in self.outputs and self.outputs['Last'].links:
+                out = self.count(data, self.level, False)
+                SvSetSocketAnyType(self, 'Last', out)
             
     def count(self, data, level, First):
         if level:

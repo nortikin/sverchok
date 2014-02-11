@@ -1,6 +1,7 @@
 import bpy
 from node_s import *
 from mathutils import *
+import math
 from util import *
 
 class MatrixOutNode(Node, SverchCustomTreeNode):
@@ -12,11 +13,13 @@ class MatrixOutNode(Node, SverchCustomTreeNode):
     def init(self, context):
         self.outputs.new('VerticesSocket', "Location", "Location")
         self.outputs.new('VerticesSocket', "Scale", "Scale")
+        self.outputs.new('VerticesSocket', "Rotation", "Rotation")
+        self.outputs.new('StringsSocket', "Angle", "Angle") 
         self.inputs.new('MatrixSocket', "Matrix", "Matrix")
         
 
     def update(self):
-        if self.inputs['Matrix'].links:
+        if 'Matrix' in self.inputs and self.inputs['Matrix'].links:
             if not self.inputs['Matrix'].node.socket_value_update:
                 self.inputs['Matrix'].node.update()
             matrixes_ = eval(self.inputs['Matrix'].links[0].from_socket.MatrixProperty)
@@ -34,6 +37,26 @@ class MatrixOutNode(Node, SverchCustomTreeNode):
                     self.outputs['Scale'].node.update()
                 locs = Matrix_scale(matrixes, list=True)
                 self.outputs['Scale'].VerticesProperty = str(locs)
+             
+                
+            if ('Rotation' in self.outputs and self.outputs['Rotation'].links ) \
+                or ('Angle' in self.outputs and self.outputs['Angle'].links):
+                if not self.outputs['Angle'].node.socket_value_update:
+                    self.outputs['Angle'].node.update()
+                if not self.outputs['Angle'].node.socket_value_update:
+                    self.outputs['Angle'].node.update()    
+                locs = Matrix_rotation(matrixes, list=True)
+                rots = []
+                angles = []
+                for lists in locs:
+                    for pair in lists:
+                        rots.append(pair[0])
+                        angles.append(round(math.degrees(pair[1]),7))
+                self.outputs['Rotation'].VerticesProperty = str([rots,])
+# this should be updated to handle new numbernode formats. but so should the rest this file.
+                self.outputs['Angle'].StringsProperty = str([angles ])
+
+                   
         else:
             matrixes = [[]]
     def update_socket(self, context):

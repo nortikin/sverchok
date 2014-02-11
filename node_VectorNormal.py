@@ -1,6 +1,7 @@
 import bpy, bmesh, mathutils
 from mathutils import Vector, Matrix
 from node_s import *
+from util import *
 
 class VectorNormalNode(Node, SverchCustomTreeNode):
     ''' Find Vector's normals '''
@@ -17,17 +18,12 @@ class VectorNormalNode(Node, SverchCustomTreeNode):
         # достаём два слота - вершины и полики
         if 'Centers' in self.outputs and self.outputs['Centers'].links or self.outputs['Normals'].links:
             if 'Polygons' in self.inputs and 'Vertices' in self.inputs and self.inputs['Polygons'].links and self.inputs['Vertices'].links:
-                if not self.inputs['Polygons'].node.socket_value_update:
-                    self.inputs['Polygons'].node.update()
+
                 #if type(self.inputs['Poligons'].links[0].from_socket) == StringsSocket:
-                pols = eval(self.inputs['Polygons'].links[0].from_socket.StringsProperty)
+                pols = SvGetSocketAnyType(self,self.inputs['Polygons'])
                 
-                
-                if not self.inputs['Vertices'].node.socket_value_update:
-                    self.inputs['Vertices'].node.update()
                 #if type(self.inputs['Vertices'].links[0].from_socket) == VerticesSocket:
-                vers = eval(self.inputs['Vertices'].links[0].from_socket.VerticesProperty)
-                
+                vers = SvGetSocketAnyType(self,self.inputs['Vertices'])
                 normalsFORout = []
                 for i, obj in enumerate(vers):
                     mesh_temp = bpy.data.meshes.new('temp')
@@ -40,10 +36,8 @@ class VectorNormalNode(Node, SverchCustomTreeNode):
                     bpy.data.meshes.remove(mesh_temp)
                 #print (normalsFORout)
                 
-                if 'Normals' in self.outputs and len(self.outputs['Normals'].links)>0:
-                    if not self.outputs['Normals'].node.socket_value_update:
-                        self.outputs['Normals'].node.update()
-                    self.outputs['Normals'].VerticesProperty = str(normalsFORout) 
+                if 'Normals' in self.outputs and self.outputs['Normals'].is_linked:
+                    SvSetSocketAnyType(self,'Normals',normalsFORout)
             
             
 

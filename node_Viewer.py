@@ -8,7 +8,7 @@ from util import *
 cache_viewer_baker = {}
 
 class SvObjBake(bpy.types.Operator):
-    """Sverchok mesh baker"""
+    """ B A K E   OBJECTS """
     bl_idname = "node.sverchok_mesh_baker"
     bl_label = "Sverchok mesh baker"
     bl_options = {'REGISTER', 'UNDO'}
@@ -105,60 +105,80 @@ class SvObjBake(bpy.types.Operator):
         #print (ob.name + ' baked')
         return [ob,me]
 
+
 class ViewerNode(Node, SverchCustomTreeNode):
     ''' ViewerNode '''
     bl_idname = 'ViewerNode'
     bl_label = 'Viewer Draw'
     bl_icon = 'OUTLINER_OB_EMPTY'
     
-    Vertex_show = bpy.props.BoolProperty(name='Vertex_show', description='Show or not vertices', default=True)
-    
+    Vertex_show = bpy.props.BoolProperty(name='Vertices', description='Show or not vertices', default=True,update=updateNode)
+    activate = bpy.props.BoolProperty(name='Show', description='Activate node?', default=True,update=updateNode)
+    transparant = bpy.props.BoolProperty(name='Transparant', description='transparant polygons?', default=False,update=updateNode)
+    shading = bpy.props.BoolProperty(name='Shading', description='shade the object or index representation?', default=False,update=updateNode)
+    coloris = SvColors
+    coloris.color[1]['default'] = (0.055,0.312,0.5)
+    color_view = coloris.color
+        
     def init(self, context):
         self.inputs.new('VerticesSocket', 'vertices', 'vertices')
         self.inputs.new('StringsSocket', 'edg_pol', 'edg_pol')
         self.inputs.new('MatrixSocket', 'matrix', 'matrix')
     
     def draw_buttons(self, context, layout):
-        layout.operator('node.sverchok_mesh_baker', text='bake').ident = self.name
-        layout.prop(self, "Vertex_show", text="Vertex show")
+        row = layout.row(align=True)
+        row.prop(self, "Vertex_show", text="Verts")
+        row.prop(self, "activate", text="Show")
+        row = layout.row()
+        row.scale_y=4.0
+        row.operator('node.sverchok_mesh_baker', text='B A K E').ident = self.name
+        row = layout.row(align=True)
+        row.scale_x=10.0
+        row.prop(self, "transparant", text="Transp")
+        row.prop(self, "shading", text="Shade")
+        row = layout.row(align=True)
+        row.scale_x=10.0
+        row.prop(self, "color_view", text="Color")
+        #a = self.color_view[2]
+        #layout.label(text=str(round(a, 4)))
         
     def update(self):
         global cache_viewer_baker
         cache_viewer_baker[self.name+'v'] = []
         cache_viewer_baker[self.name+'ep'] = []
         cache_viewer_baker[self.name+'m'] = []
-        if self.inputs['vertices'].links or self.inputs['matrix'].links:
+        if self.activate and (self.inputs['vertices'].is_linked or self.inputs['matrix'].is_linked):
             callback_disable(self.name)
-            if len(self.inputs['vertices'].links)>0:
-                if not self.inputs['vertices'].node.socket_value_update:
-                    self.inputs['vertices'].node.update()
-                if self.inputs['vertices'].links[0].from_socket.VerticesProperty:
-                    propv = eval(self.inputs['vertices'].links[0].from_socket.VerticesProperty)
-                    cache_viewer_baker[self.name+'v'] = dataCorrect(propv)
+            
+            if 'vertices' in self.inputs and self.inputs['vertices'].is_linked and \
+                type(self.inputs['vertices'].links[0].from_socket) == VerticesSocket:
+                
+                propv = SvGetSocketAnyType(self, self.inputs['vertices'])
+                cache_viewer_baker[self.name+'v'] = dataCorrect(propv)
             else:
                 cache_viewer_baker[self.name+'v'] = []
                             
-            if 'edg_pol' in self.inputs and self.inputs['edg_pol'].links and len(self.inputs['edg_pol'].links)>0:
-                if not self.inputs['edg_pol'].node.socket_value_update:
-                    self.inputs['edg_pol'].node.update()
-                if self.inputs['edg_pol'].links[0].from_socket.StringsProperty:
-                    prope = eval(self.inputs['edg_pol'].links[0].from_socket.StringsProperty)
-                    cache_viewer_baker[self.name+'ep'] = dataCorrect(prope)
-                    #print (prope)
+            if 'edg_pol' in self.inputs and self.inputs['edg_pol'].is_linked and \
+                type(self.inputs['edg_pol'].links[0].from_socket) == StringsSocket:
+                prope = SvGetSocketAnyType(self, self.inputs['edg_pol'])
+                cache_viewer_baker[self.name+'ep'] = dataCorrect(prope)
+                #print (prope)
             else:
                 cache_viewer_baker[self.name+'ep'] = []
                     
-            if 'matrix' in self.inputs and self.inputs['matrix'].links and len(self.inputs['matrix'].links)>0:
-                if not self.inputs['matrix'].node.socket_value_update:
-                    self.inputs['matrix'].node.update()
-                if self.inputs['matrix'].links[0].from_socket.MatrixProperty:
-                    propm = eval(self.inputs['matrix'].links[0].from_socket.MatrixProperty)
+            if 'matrix' in self.inputs and self.inputs['matrix'].is_linked and \
+               type(self.inputs['matrix'].links[0].from_socket) == MatrixSocket:
+                    propm = SvGetSocketAnyType(self, self.inputs['matrix'])
                     cache_viewer_baker[self.name+'m'] = dataCorrect(propm)
             else:
                 cache_viewer_baker[self.name+'m'] = []
+        
+        else:
+            callback_disable(self.name)
+        
         if cache_viewer_baker[self.name+'v'] or cache_viewer_baker[self.name+'m']:
             callback_enable(self.name, cache_viewer_baker[self.name+'v'], cache_viewer_baker[self.name+'ep'], \
-                cache_viewer_baker[self.name+'m'], self.Vertex_show)
+                cache_viewer_baker[self.name+'m'], self.Vertex_show, self.color_view, self.transparant, self.shading)
             
             self.use_custom_color=True
             self.color = (1,0.3,0)

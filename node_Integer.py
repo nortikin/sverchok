@@ -19,20 +19,16 @@ class IntegerNode(Node, SverchCustomTreeNode):
 
     def update(self):
         # inputs
-        if len(self.inputs['Integer'].links)>0:
-            if not self.inputs['Integer'].node.socket_value_update:
-                self.inputs['Integer'].node.update()
-            Integer = eval(self.inputs['Integer'].links[0].from_socket.StringsProperty)[0][0]
+        if 'Integer' in self.inputs and self.inputs['Integer'].is_linked:
+            tmp = SvGetSocketAnyType(self,self.inputs['Integer'])
+            Integer = tmp[0][0]
         else:
             Integer = self.int_
         
         # outputs
-        if 'Integer' in self.outputs and len(self.outputs['Integer'].links)>0:
-            if not self.outputs['Integer'].node.socket_value_update:
-                self.inputs['Integer'].node.update()
+        if 'Integer' in self.outputs and self.outputs['Integer'].is_linked:
+            SvSetSocketAnyType(self, 'Integer',[[Integer]])
             
-            self.outputs['Integer'].StringsProperty = str([[Integer, ]])
-    
     def update_socket(self, context):
         self.update()
 

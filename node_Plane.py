@@ -30,24 +30,21 @@ class PlaneNode(Node, SverchCustomTreeNode):
 
     def update(self):
         # inputs
-        if len(self.inputs['Nº Vertices X'].links)>0:
-            if not self.inputs['Nº Vertices X'].node.socket_value_update:
-                self.inputs['Nº Vertices X'].node.update()
-            IntegerX = int(eval(self.inputs['Nº Vertices X'].links[0].from_socket.StringsProperty)[0][0])
+        if 'Nº Vertices X' in self.inputs and self.inputs['Nº Vertices X'].is_linked:
+            tmp = SvGetSocketAnyType(self,self.inputs['Nº Vertices X'])
+            IntegerX = int(tmp[0][0])
         else:
             IntegerX = self.int_X
 
-        if len(self.inputs['Nº Vertices Y'].links)>0:
-            if not self.inputs['Nº Vertices Y'].node.socket_value_update:
-                self.inputs['Nº Vertices Y'].node.update()
-            IntegerY = int(eval(self.inputs['Nº Vertices Y'].links[0].from_socket.StringsProperty)[0][0])
+        if 'Nº Vertices Y' in self.inputs and self.inputs['Nº Vertices Y'].is_linked:
+            tmp = SvGetSocketAnyType(self,self.inputs['Nº Vertices Y'])
+            IntegerY = int(tmp[0][0])
         else:
             IntegerY = self.int_Y
 
-        if len(self.inputs['Step X'].links)>0:
-            if not self.inputs['Step X'].node.socket_value_update:
-                self.inputs['Step X'].node.update()
-            StepX = eval(self.inputs['Step X'].links[0].from_socket.StringsProperty)[0]
+        if 'Step X' in self.inputs and self.inputs['Step X'].is_linked:
+     
+            StepX = SvGetSocketAnyType(self,self.inputs['Step X'])
 
             listVertX = []
             self.fullList(StepX, IntegerX)
@@ -64,10 +61,9 @@ class PlaneNode(Node, SverchCustomTreeNode):
                     listVertX.append(0.0+j)
             listVertX = [StepX*i for i in listVertX]
 
-        if len(self.inputs['Step Y'].links)>0:
-            if not self.inputs['Step Y'].node.socket_value_update:
-                self.inputs['Step Y'].node.update()
-            StepY = eval(self.inputs['Step Y'].links[0].from_socket.StringsProperty)[0]
+        if 'Step Y' in self.inputs and self.inputs['Step Y'].is_linked:
+
+            StepY = SvGetSocketAnyType(self,self.inputs['Step Y'])
 
             listVertY = []
             self.fullList(StepY, IntegerY)
@@ -86,9 +82,7 @@ class PlaneNode(Node, SverchCustomTreeNode):
 
         #print('.....IntegerY.....',IntegerY, IntegerX)
         # outputs
-        if 'Vertices' in self.outputs and len(self.outputs['Vertices'].links)>0:
-            if not self.outputs['Vertices'].node.socket_value_update:
-                self.outputs['Nº Vertices'].node.update()
+        if 'Vertices' in self.outputs and self.outputs['Vertices'].is_linked:
 
             X = listVertX
             Y = listVertY
@@ -96,17 +90,14 @@ class PlaneNode(Node, SverchCustomTreeNode):
 
             max_num = max(len(X), len(Y), len(Z))
             
-            self.fullList(X,max_num)
-            self.fullList(Y,max_num)
-            self.fullList(Z,max_num)
+            fullList(X,max_num)
+            fullList(Y,max_num)
+            fullList(Z,max_num)
 
             points = list(zip(X,Y,Z))
-            self.outputs['Vertices'].VerticesProperty = str([points])
+            SvSetSocketAnyType(self, 'Vertices',[points])
 
-        if 'Edges' in self.outputs and len(self.outputs['Edges'].links)>0:
-            if not self.outputs['Edges'].node.socket_value_update:
-                self.outputs['Edges'].node.update()
-
+        if 'Edges' in self.outputs and self.outputs['Edges'].is_linked:
             listEdg = []
             for i in range(IntegerY):
                 for j in range(IntegerX-1):
@@ -116,25 +107,16 @@ class PlaneNode(Node, SverchCustomTreeNode):
                     listEdg.append((IntegerX*j+i, IntegerX*j+i+IntegerX))
 
             edg = list(listEdg)
-            self.outputs['Edges'].StringsProperty = str([edg])
-
-        if 'Polygons' in self.outputs and len(self.outputs['Polygons'].links)>0:
-            if not self.outputs['Polygons'].node.socket_value_update:
-                self.outputs['Polygons'].node.update()
-
+            SvSetSocketAnyType(self, 'Edges',[edg])
+            
+        if 'Polygons' in self.outputs and self.outputs['Polygons'].is_linked:       
             listPlg = []
             for i in range(IntegerX-1):
                 for j in range(IntegerY-1):
                     listPlg.append((IntegerX*j+i, IntegerX*j+i+1, IntegerX*j+i+IntegerX+1, IntegerX*j+i+IntegerX))
             plg = list(listPlg)
-            self.outputs['Polygons'].StringsProperty = str([plg])
+            SvSetSocketAnyType(self, 'Polygons',[plg])
 
-    def fullList(self, l, count):
-        d = count - len(l)
-        if d > 0:
-            l.extend([l[-1] for a in range(d)])
-        return
-    
     def update_socket(self, context):
         self.update()
 
