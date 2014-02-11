@@ -22,25 +22,18 @@ class AreaNode(Node, SverchCustomTreeNode):
         
     def update(self):
         # inputs
-        if 'Vertices' in self.inputs and len(self.inputs['Vertices'].links)>0:
-            if not self.inputs['Vertices'].node.socket_value_update:
-                self.inputs['Vertices'].node.update()
-            if self.inputs['Vertices'].links[0].from_socket.VerticesProperty:
-                Vertices = eval(self.inputs['Vertices'].links[0].from_socket.VerticesProperty)
+        if 'Vertices' in self.inputs and self.inputs['Vertices'].is_linked:
+                Vertices = SvGetSocketAnyType(self,self.inputs['Vertices'])
         else:
             Vertices = []
 
-        if len(self.inputs['Polygons'].links)>0:
-            if not self.inputs['Polygons'].node.socket_value_update:
-                self.inputs['Polygons'].node.update()
-            Polygons = eval(self.inputs['Polygons'].links[0].from_socket.StringsProperty)
+        if 'Polygons' in self.inputs and self.inputs['Polygons'].is_linked:
+            Polygons = SvGetSocketAnyType(self,self.inputs['Polygons'])
         else:
             Polygons = []    
 
         # outputs
-        if 'Area' in self.outputs and len(self.outputs['Area'].links)>0:
-            if not self.outputs['Area'].node.socket_value_update:
-               self.outputs['Area'].node.update()
+        if 'Area' in self.outputs and self.outputs['Area'].is_linked:
             areas = []
             for i, obj in enumerate(Polygons):
                 res = []
@@ -55,7 +48,7 @@ class AreaNode(Node, SverchCustomTreeNode):
                 else:
                     areas.append(math.fsum(res))
                    
-            self.outputs['Area'].StringsProperty = str([areas])
+            SvSetSocketAnyType(self, 'Area',[areas])
     
     #determinant of matrix a
     def det(self, a):
