@@ -36,45 +36,34 @@ class CylinderNode(Node, SverchCustomTreeNode):
 
     def update(self):
         # inputs
-        if len(self.inputs['RadTop'].links)>0:
-            if not self.inputs['RadTop'].node.socket_value_update:
-                self.inputs['RadTop'].node.update()
-            RadiusTop = float(eval(self.inputs['RadTop'].links[0].from_socket.StringsProperty)[0][0])
+        if 'RadTop' in self.inputs and self.inputs['RadTop'].is_linked:
+            RadiusTop = float(SvGetSocketAnyType(self,self.inputs['RadTop'])[0][0])
         else:
             RadiusTop = self.radTop_
 
-        if len(self.inputs['RadBot'].links)>0:
-            if not self.inputs['RadBot'].node.socket_value_update:
-                self.inputs['RadBot'].node.update()
-            RadiusBot = float(eval(self.inputs['RadBot'].links[0].from_socket.StringsProperty)[0][0])
+        if 'RadBot' in self.inputs and self.inputs['RadBot'].is_linked:
+            RadiusBot = float(SvGetSocketAnyType(self,self.inputs['RadBot'])[0][0])
         else:
             RadiusBot = self.radBot_
 
-        if len(self.inputs['Vertices'].links)>0:
-            if not self.inputs['Vertices'].node.socket_value_update:
-                self.inputs['Vertices'].node.update()
-            Vertices = int(eval(self.inputs['Vertices'].links[0].from_socket.StringsProperty)[0][0])
+        if 'Vertices' in self.inputs and self.inputs['Vertices'].is_linked:
+            Vertices = int(SvGetSocketAnyType(self,self.inputs['Vertices'])[0][0])
             if Vertices < 3:
                 Vertices = 3
         else:
             Vertices = self.vert_
 
-        if len(self.inputs['Height'].links)>0:
-            if not self.inputs['Height'].node.socket_value_update:
-                self.inputs['Height'].node.update()
-            Height = float(eval(self.inputs['Height'].links[0].from_socket.StringsProperty)[0][0])
+        if 'Height' in self.inputs and self.inputs['Height'].is_linked:
+            Height = float(SvGetSocketAnyType(self,self.inputs['Height'])[0][0])
         else:
             Height = self.height_
 
-        if len(self.inputs['Subdivisions'].links)>0:
-            if not self.inputs['Subdivisions'].node.socket_value_update:
-                self.inputs['Subdivisions'].node.update()
-            Subd = int(eval(self.inputs['Subdivisions'].links[0].from_socket.StringsProperty)[0][0])
+        if 'Subdivisions' in self.inputs and self.inputs['Subdivisions'].is_linked:
+            Subd = int(SvGetSocketAnyType(self,self.inputs['Subdivisions'])[0][0])
             if Subd < 0:
                 Subd = 0
         else:
             Subd = self.subd_
-
 
         tetha = 360/Vertices
         heightSubd = Height/(Subd+1)
@@ -90,9 +79,7 @@ class CylinderNode(Node, SverchCustomTreeNode):
                 listVertZ.append(heightSubd*i)
 
         # outputs
-        if 'Vertices' in self.outputs and len(self.outputs['Vertices'].links)>0:
-            if not self.outputs['Vertices'].node.socket_value_update:
-                self.inputs['Nº Vertices'].node.update()
+        if 'Vertices' in self.outputs and self.outputs['Vertices'].is_linked:
 
             X = listVertX
             Y = listVertY
@@ -100,16 +87,14 @@ class CylinderNode(Node, SverchCustomTreeNode):
 
             max_num = max(len(X), len(Y), len(Z))
             
-            self.fullList(X,max_num)
-            self.fullList(Y,max_num)
-            self.fullList(Z,max_num)
+            fullList(X,max_num)
+            fullList(Y,max_num)
+            fullList(Z,max_num)
 
             points = list(zip(X,Y,Z))
-            self.outputs['Vertices'].VerticesProperty = str([points])
+            SvSetSocketAnyType(self, 'Vertices',[points])
 
-        if 'Edges' in self.outputs and len(self.outputs['Edges'].links)>0:
-            if not self.outputs['Edges'].node.socket_value_update:
-                self.outputs['Edges'].node.update()
+        if 'Edges' in self.outputs and self.outputs['Edges'].is_linked:
 
             listEdg = []
             for i in range(Subd+2):
@@ -122,11 +107,9 @@ class CylinderNode(Node, SverchCustomTreeNode):
                     listEdg.append((j+Vertices*i, j+Vertices+Vertices*i))
 
             edg = list(listEdg)
-            self.outputs['Edges'].StringsProperty = str([edg])
+            SvSetSocketAnyType(self, 'Edges',[edg])
 
-        if 'Polygons' in self.outputs and len(self.outputs['Polygons'].links)>0:
-            if not self.outputs['Polygons'].node.socket_value_update:
-                self.outputs['Polygons'].node.update()
+        if 'Polygons' in self.outputs and self.outputs['Polygons'].is_linked:
 
             listPlg = []
             for i in range(Subd+1):
@@ -145,14 +128,8 @@ class CylinderNode(Node, SverchCustomTreeNode):
                 listPlg.append(capTop)
 
             plg = [listPlg]
-            self.outputs['Polygons'].StringsProperty = str(plg)
+            SvSetSocketAnyType(self, 'Polygons',[plg])
 
-    def fullList(self, l, count):
-        d = count - len(l)
-        if d > 0:
-            l.extend([l[-1] for a in range(d)])
-        return
-    
     def update_socket(self, context):
         self.update()
 
