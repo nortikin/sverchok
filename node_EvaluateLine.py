@@ -25,24 +25,14 @@ class EvaluateLine(Node, SverchCustomTreeNode):
         VerticesB = []
         factor = []
         
-        if len(self.inputs['Vertice A'].links)>0:
-            if not self.inputs['Vertice A'].node.socket_value_update:
-                self.inputs['Vertice A'].node.update()
-            VerticesA_ = eval(self.inputs['Vertice A'].links[0].from_socket.VerticesProperty)
-            VerticesA = Vector_generate(VerticesA_)
+        if 'Vertice A' in self.inputs and self.inputs['Vertice A'].is_linked:
+            VerticesA = Vector_generate(SvGetSocketAnyType(self,self.inputs['Vertice A']))
             
-
-        if len(self.inputs['Vertice B'].links)>0:
-            if not self.inputs['Vertice B'].node.socket_value_update:
-                self.inputs['Vertice B'].node.update()
-            VerticesB_ = eval(self.inputs['Vertice B'].links[0].from_socket.VerticesProperty)
-            VerticesB = Vector_generate(VerticesB_)
+        if 'Vertice B' in self.inputs and self.inputs['Vertice B'].is_linked:
+            VerticesB = Vector_generate(SvGetSocketAnyType(self,self.inputs['Vertice B']))
         
-        if 'Factor' in self.inputs and self.inputs['Factor'].links and \
-            type(self.inputs['Factor'].links[0].from_socket) == StringsSocket:
-            if not self.inputs['Factor'].node.socket_value_update:
-                self.inputs['Factor'].node.update()
-            factor = eval(self.inputs['Factor'].links[0].from_socket.StringsProperty)
+        if 'Factor' in self.inputs and self.inputs['Factor'].is_linked:
+            factor = SvGetSocketAnyType(self,self.inputs['Factor'])
         
         if not (VerticesA and VerticesB):
             return
@@ -51,9 +41,7 @@ class EvaluateLine(Node, SverchCustomTreeNode):
             factor = [[self.factor_]]         
 
         # outputs
-        if 'EvPoint' in self.outputs and self.outputs['EvPoint'].links: 
-            if not self.outputs['EvPoint'].node.socket_value_update:
-                self.outputs['EvPoint'].node.update()
+        if 'EvPoint' in self.outputs and self.outputs['EvPoint'].is_linked:
             points = []
 
 # match inputs using fullList, longest list matching on A and B
@@ -77,13 +65,10 @@ class EvaluateLine(Node, SverchCustomTreeNode):
             if not points:
                 return
                        
-            self.outputs['EvPoint'].VerticesProperty = str(Vector_degenerate(points))
-    
-   
+            SvSetSocketAnyType(self, 'EvPoint',Vector_degenerate(points))
     
     def update_socket(self, context):
         self.update()
-
 
 def register():
     bpy.utils.register_class(EvaluateLine)

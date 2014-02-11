@@ -31,23 +31,20 @@ class PlaneNode(Node, SverchCustomTreeNode):
     def update(self):
         # inputs
         if 'Nº Vertices X' in self.inputs and self.inputs['Nº Vertices X'].is_linked:
-            tmp = SvGetSocketAnyType(self,self.inputs['Nº Vertices X'])
-            IntegerX = int(tmp[0][0])
+            IntegerX = int(SvGetSocketAnyType(self,self.inputs['Nº Vertices X'])[0][0])
         else:
             IntegerX = self.int_X
 
         if 'Nº Vertices Y' in self.inputs and self.inputs['Nº Vertices Y'].is_linked:
-            tmp = SvGetSocketAnyType(self,self.inputs['Nº Vertices Y'])
-            IntegerY = int(tmp[0][0])
+            IntegerY = int(SvGetSocketAnyType(self,self.inputs['Nº Vertices Y'])[0][0])
         else:
             IntegerY = self.int_Y
 
-        if 'Step X' in self.inputs and self.inputs['Step X'].is_linked:
-     
-            StepX = SvGetSocketAnyType(self,self.inputs['Step X'])
+        if 'Step X' in self.inputs and self.inputs['Step X'].is_linked:     
+            StepX = SvGetSocketAnyType(self,self.inputs['Step X'])[0]
 
             listVertX = []
-            self.fullList(StepX, IntegerX)
+            fullList(StepX, IntegerX)
             for i in range(IntegerY):
                 listVertX.append(0.0)
                 for j in range(IntegerX-1):
@@ -62,11 +59,10 @@ class PlaneNode(Node, SverchCustomTreeNode):
             listVertX = [StepX*i for i in listVertX]
 
         if 'Step Y' in self.inputs and self.inputs['Step Y'].is_linked:
-
-            StepY = SvGetSocketAnyType(self,self.inputs['Step Y'])
+            StepY = SvGetSocketAnyType(self,self.inputs['Step Y'])[0]
 
             listVertY = []
-            self.fullList(StepY, IntegerY)
+            fullList(StepY, IntegerY)
             for i in range(IntegerX):
                 listVertY.append(0.0)
             for i in range(IntegerY-1):
@@ -80,7 +76,6 @@ class PlaneNode(Node, SverchCustomTreeNode):
                     listVertY.append(0.0+i)
             listVertY = [StepY*i for i in listVertY]
 
-        #print('.....IntegerY.....',IntegerY, IntegerX)
         # outputs
         if 'Vertices' in self.outputs and self.outputs['Vertices'].is_linked:
 
