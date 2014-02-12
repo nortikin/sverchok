@@ -838,7 +838,7 @@ def make_update_list(node_tree,node_set = None):
         # ignore nodes without input or outputs, like frames        
         if node_dep or len(node.inputs) or len(node.outputs):
             deps[name]=node_dep
-        if is_root and node_dep and not name[:6] == 'Wifi i':
+        if is_root and node_dep and not node.bl_idname == 'WifiOutNode':
             tree_stack.append(name)
         if node.bl_idname == 'WifiOutNode':
             wifi_out.append(name)
