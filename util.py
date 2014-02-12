@@ -838,11 +838,11 @@ def make_update_list(node_tree,node_set = None):
         # ignore nodes without input or outputs, like frames        
         if node_dep or len(node.inputs) or len(node.outputs):
             deps[name]=node_dep
-        if is_root and node_dep and not name[:6] == 'Wifi i':
+        if is_root and node_dep and not node.bl_idname == 'WifiInNode':
             tree_stack.append(name)
-        if name[:6] == 'Wifi o':
+        if node.bl_idname == 'WifiOutNode':
             wifi_out.append(name)
-        if name[:6] == 'Wifi i':
+        if node.bl_idname == 'WifiInNode':
             wifi_in.append(name)  
             
     # create wifi out dependencies            
@@ -920,9 +920,9 @@ def make_tree_from_node(node_name,tree_name):
     current_node = node_name
     # build the set of nodes that needs to be updated
     while current_node:
-        if current_node[:6] == 'Wifi i':
+        if ng.nodes[current_node].bl_idname == 'WifiInNode':
             if not wifi_out:  # build only if needed
-                wifi_out = [name for name in ng.nodes.keys() if name[:6] == 'Wifi o']
+                wifi_out = [name for name in ng.nodes.keys() if ng.nodes[name].bl_idname == 'WifiOutNode']
             for wifi_out_node in wifi_out:
                 if ng.nodes[current_node].var_name == ng.nodes[current_node].var_name:
                     if not wifi_out_node in out_set:
@@ -1098,8 +1098,9 @@ def SvSetSocketAnyType(self, socket, out):
 
 # caching data solution
 
+# socket.name is not unique... identifier is
 def socket_id(socket):
-    return socket.id_data.name+socket.node.name+socket.name
+    return socket.id_data.name+socket.node.name+socket.identifier
 
 # about 50% faster than built in deep copy, needs to be tested.
 # and verified. can be made more effective.
