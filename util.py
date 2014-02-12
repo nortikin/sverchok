@@ -1098,8 +1098,9 @@ def SvSetSocketAnyType(self, socket, out):
 
 # caching data solution
 
+# socket.name is not unique... identifier is
 def socket_id(socket):
-    return socket.id_data.name+socket.node.name+socket.name
+    return socket.id_data.name+socket.node.name+socket.identifier
 
 # about 50% faster than built in deep copy, needs to be tested.
 # and verified. can be made more effective.
