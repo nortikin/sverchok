@@ -94,7 +94,7 @@ class SverchCustomTree(NodeTree):
     bl_icon = 'RNA'
     def update(self):
         makeTreeUpdate2(tree_name = self.name)
-        speedUpdate(tree.name = self.name)
+        speedUpdate(tree_name = self.name)
         
 
 

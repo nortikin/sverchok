@@ -960,6 +960,7 @@ def make_tree_from_nodes(node_names,tree_name):
     return make_update_list(tree_name,out_set)
 
 # to make update tree based on node types and node names bases
+# no used yet
 def make_animation_tree(node_types,node_list,tree_name):
     global list_nodes4update
     # should add a check do find animated or driven nodes.
@@ -1002,7 +1003,7 @@ def speedUpdate(start_node = None, tree_name = None, animation_mode = False):
                 if DEBUG_MODE:
                     if 'print_timings' in DEBUG_SETTINGS:
                         stop = time.time()
-                        print("Partial updated: ",nod_name, " in ", round(stop-start,4))    
+                        print("Updated: ",nod_name, " in ", round(stop-start,4))    
                     if 'show_updated_nodes' in DEBUG_SETTINGS:
                         nods[nod_name].use_custom_color = True
                         nods[nod_name].color = (0.1,.8,0)
@@ -1028,6 +1029,8 @@ def speedUpdate(start_node = None, tree_name = None, animation_mode = False):
     if tree_name != None:        
         if not tree_name in list_nodes4update:
             makeUpdateTree2(tree_name)
+        if not tree_name in bpy.data.node_groups:
+            return #setup is not complete
         nods = bpy.data.node_groups[tree_name].nodes
         do_update(list_nodes4update[tree_name],bpy.data.node_groups[tree_name].nodes)
         return            

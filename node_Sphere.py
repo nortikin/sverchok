@@ -101,11 +101,11 @@ class SphereNode(Node, SverchCustomTreeNode):
 
         if 'Polygons' in self.outputs and self.outputs['Polygons'].links: 
 
-            listPlg = []
+            listPln = []
             for i in range(V-3):
-                listPlg.append((U*i+2*U, 1+U*i+U, 1+U*i,  U*i+U))
+                listPln.append((U*i+2*U, 1+U*i+U, 1+U*i,  U*i+U))
                 for j in range(U-1):
-                    listPlg.append((1+U*i+j+U, 2+U*i+j+U, 2+U*i+j, 1+U*i+j))
+                    listPln.append((1+U*i+j+U, 2+U*i+j+U, 2+U*i+j, 1+U*i+j))
 
             for i in range(U-1):
                 listPln.append((1+i, 2+i, 0))
