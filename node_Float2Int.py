@@ -15,7 +15,7 @@ class Float2IntNode(Node, SverchCustomTreeNode):
 
     def update(self):
         # inputs
-        if 'float' in self.inputs and self.inputs['float'].is_linked and \
+        if 'float' in self.inputs and self.inputs['float'].links and \
              type(self.inputs['float'].links[0].from_socket) == StringsSocket:
 
             Number = SvGetSocketAnyType(self,self.inputs['float'])
@@ -23,7 +23,7 @@ class Float2IntNode(Node, SverchCustomTreeNode):
             Number = []
         
         # outputs
-        if 'int' in self.outputs and self.outputs['int'].is_linked:
+        if 'int' in self.outputs and self.outputs['int'].links:
             result = self.inte(Number)
             SvSetSocketAnyType(self,'int',result)
     

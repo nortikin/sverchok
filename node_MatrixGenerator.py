@@ -19,7 +19,7 @@ class MatrixGenNode(Node, SverchCustomTreeNode):
 
     def update(self):
         # inputs
-            if 'Location' in self.inputs and self.inputs['Location'].is_linked and \
+            if 'Location' in self.inputs and self.inputs['Location'].links and \
                 type(self.inputs['Location'].links[0].from_socket) == VerticesSocket:
 
                 loc_ = SvGetSocketAnyType(self,self.inputs['Location'])
@@ -27,7 +27,7 @@ class MatrixGenNode(Node, SverchCustomTreeNode):
             else:
                 loc = [[]]
             
-            if 'Scale' in self.inputs and self.inputs['Scale'].is_linked and \
+            if 'Scale' in self.inputs and self.inputs['Scale'].links and \
                 type(self.inputs['Scale'].links[0].from_socket) == VerticesSocket:
           
                 scale_ = SvGetSocketAnyType(self,self.inputs['Scale'])
@@ -35,7 +35,7 @@ class MatrixGenNode(Node, SverchCustomTreeNode):
             else:
                 scale = [[]]
                 
-            if 'Rotation' in self.inputs and self.inputs['Rotation'].is_linked and \
+            if 'Rotation' in self.inputs and self.inputs['Rotation'].links and \
                 type(self.inputs['Rotation'].links[0].from_socket) == VerticesSocket:
 
                 rot_ = SvGetSocketAnyType(self,self.inputs['Rotation'])
@@ -46,7 +46,7 @@ class MatrixGenNode(Node, SverchCustomTreeNode):
             
             rotA=[[]]
             angle = [[0.0]]
-            if 'Angle' in self.inputs and self.inputs['Angle'].is_linked:
+            if 'Angle' in self.inputs and self.inputs['Angle'].links:
                 if type(self.inputs['Angle'].links[0].from_socket) == StringsSocket:
                     angle = SvGetSocketAnyType(self,self.inputs['Angle'])
                     
@@ -55,7 +55,7 @@ class MatrixGenNode(Node, SverchCustomTreeNode):
                     rotA = Vector_generate(rotA_)
             
             # outputs
-            if 'Matrix' in self.outputs and self.outputs['Matrix'].is_linked:
+            if 'Matrix' in self.outputs and self.outputs['Matrix'].links:
             
                 max_l = max(len(loc[0]), len(scale[0]), len(rot[0]), len(angle[0]), len(rotA[0]))
                 orig = []

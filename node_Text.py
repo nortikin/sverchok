@@ -525,7 +525,7 @@ class SvTextOutNode(Node,SverchCustomTreeNode):
         if self.text_mode == 'CSV':
             data_out = []
             for socket in self.inputs:
-                if socket.is_linked and \
+                if socket.links and \
                     type(socket.links[0].from_socket) == StringsSocket:
                     
                     tmp = SvGetSocketAnyType(self,socket)
@@ -545,7 +545,7 @@ class SvTextOutNode(Node,SverchCustomTreeNode):
             name_dict = {'m':'Matrix','s':'Data','v':'Vertices'}
 
             for item in self.inputs:
-                if item.is_linked:
+                if item.links:
                     tmp = SvGetSocketAnyType(self, item)
                     if len(tmp):
                         tmp_name = name_dict[get_socket_type(self,item.name)]
@@ -559,7 +559,7 @@ class SvTextOutNode(Node,SverchCustomTreeNode):
             out = json.dumps(data_out,indent=4)    
             
         elif self.text_mode == 'SV':
-            if self.inputs['Data'].is_linked:
+            if self.inputs['Data'].links:
                 out = str(SvGetSocketAnyType(self,self.inputs['Data']))
         
         return out

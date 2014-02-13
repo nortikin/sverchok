@@ -40,14 +40,14 @@ class FormulaNode(Node, SverchCustomTreeNode):
             for c in ch[:-1]:
                 self.inputs.remove(self.inputs[ch[0]])
         
-        if 'X' in self.inputs and self.inputs['X'].is_linked: 
+        if 'X' in self.inputs and self.inputs['X'].links: 
             vecs = SvGetSocketAnyType(self,self.inputs['X'])
         else:
             vecs = [[0.0]]
         
         list_mult=[]
         for idx, multi in enumerate(self.inputs[1:]):   
-            if multi.is_linked and \
+            if multi.links and \
                 type(multi.links[0].from_socket) == StringsSocket:
                 
                 mult = SvGetSocketAnyType(self,multi)
@@ -60,7 +60,7 @@ class FormulaNode(Node, SverchCustomTreeNode):
             list_mult= [[0.0]]
         
         # outputs
-        if 'Result' in self.outputs and self.outputs['Result'].is_linked:
+        if 'Result' in self.outputs and self.outputs['Result'].links:
 
            code_formula = parser.expr(self.formula).compile()
            r_=[]

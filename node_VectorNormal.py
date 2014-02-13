@@ -36,7 +36,7 @@ class VectorNormalNode(Node, SverchCustomTreeNode):
                     bpy.data.meshes.remove(mesh_temp)
                 #print (normalsFORout)
                 
-                if 'Normals' in self.outputs and self.outputs['Normals'].is_linked:
+                if 'Normals' in self.outputs and self.outputs['Normals'].links:
                     SvSetSocketAnyType(self,'Normals',normalsFORout)
             
             

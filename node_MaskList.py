@@ -42,22 +42,22 @@ class MaskListNode(Node, SverchCustomTreeNode):
         mask=[[1,0]]
         
        
-        if self.inputs['data'].is_linked:
+        if self.inputs['data'].links:
             data = SvGetSocketAnyType(self,self.inputs['data'])
             
-        if self.inputs['mask'].is_linked and \
+        if self.inputs['mask'].links and \
                 type(self.inputs['mask'].links[0].from_socket) == StringsSocket:
             mask = SvGetSocketAnyType(self,self.inputs['mask'])
         
         result =  self.getMask(data, mask, self.Level)
         
         # outupy sockets data
-        if 'dataTrue' in self.outputs and self.outputs['dataTrue'].is_linked:
+        if 'dataTrue' in self.outputs and self.outputs['dataTrue'].links:
             SvSetSocketAnyType(self,'dataTrue',result[0])
         else:
             SvSetSocketAnyType(self,'dataTrue',[[]])
         # print ('всё',result)
-        if 'dataFalse' in self.outputs and self.outputs['dataFalse'].is_linked:
+        if 'dataFalse' in self.outputs and self.outputs['dataFalse'].links:
             SvSetSocketAnyType(self,'dataFalse',result[1])
         else:
             SvSetSocketAnyType(self,'dataFalse',[[]])

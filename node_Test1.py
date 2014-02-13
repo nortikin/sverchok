@@ -47,7 +47,7 @@ class Test1Node(Node, SverchCustomTreeNode):
                 X = SvGetSocketAnyType(self, self.inputs['data'])
                 slots = []
                 for socket in self.inputs:
-                    if socket.is_linked:
+                    if socket.links:
                         slots.append(SvGetSocketAnyType(self,socket))
 
                 # determine if you have enough inputs for make output
@@ -116,7 +116,7 @@ class Test2Node(Node, SverchCustomTreeNode):
                 X = SvGetSocketAnyType(self, self.inputs['data'])
                 slots = []
                 for socket in self.inputs:
-                    if socket.is_linked:
+                    if socket.links:
                         slots.append(SvGetSocketAnyType(self,socket))
                 if len(slots) < 2:
                     return

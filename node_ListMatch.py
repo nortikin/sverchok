@@ -69,21 +69,21 @@ class ListMatchNode(Node, SverchCustomTreeNode):
             }
         
         # socket handling
-        if self.inputs[-1].is_linked:
+        if self.inputs[-1].links:
             name = 'Data '+str(len(self.inputs))
             self.inputs.new('StringsSocket', name, name)
             self.outputs.new('StringsSocket', name, name)
         else:
-            while len(self.inputs)>2 and not self.inputs[-2].is_linked:
+            while len(self.inputs)>2 and not self.inputs[-2].links:
                 self.inputs.remove(self.inputs[-1])
                 self.outputs.remove(self.outputs[-1])
         # check number of connections and type match input socket n with output socket n
         count_inputs = 0
         count_outputs = 0     
         for idx,socket in enumerate(self.inputs):
-            if self.outputs[socket.name].is_linked:
+            if self.outputs[socket.name].links:
                 count_outputs += 1
-            if socket.is_linked:
+            if socket.links:
                 count_inputs += 1
                 if type(socket.links[0].from_socket) != type(self.outputs[socket.name]):
                     self.outputs.remove(self.outputs[socket.name])
@@ -96,7 +96,7 @@ class ListMatchNode(Node, SverchCustomTreeNode):
             lsts = [] 
             # get data
             for socket in self.inputs:
-                if socket.is_linked:
+                if socket.links:
                     lsts.append(SvGetSocketAnyType(self,socket))
             try:
                 out = self.match(lsts,self.level,func_dict[self.mode],func_dict[self.mode_final])
@@ -107,7 +107,7 @@ class ListMatchNode(Node, SverchCustomTreeNode):
             for i,socket in enumerate(self.outputs):
                 if i==len(out): #never write to last socket
                     break
-                if socket.is_linked:
+                if socket.links:
                     SvSetSocketAnyType(self,socket.name,out[i])
             
 

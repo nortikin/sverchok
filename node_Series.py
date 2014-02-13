@@ -25,19 +25,19 @@ class GenSeriesNode(Node, SverchCustomTreeNode):
 
     def update(self):
         # inputs
-        if 'Start' in self.inputs and self.inputs['Start'].is_linked:
+        if 'Start' in self.inputs and self.inputs['Start'].links:
             tmp = SvGetSocketAnyType(self,self.inputs['Start'])
             Start = tmp[0][0]
         else:
             Start = self.start_
     
-        if 'Stop' in self.inputs and self.inputs['Stop'].is_linked:
+        if 'Stop' in self.inputs and self.inputs['Stop'].links:
             tmp = SvGetSocketAnyType(self,self.inputs['Stop'])
             Start = tmp[0][0]
         else:
             Stop = self.stop_
         
-        if 'Step' in self.inputs and self.inputs['Step'].is_linked:
+        if 'Step' in self.inputs and self.inputs['Step'].links:
             tmp = SvGetSocketAnyType(self,self.inputs['Step'])
             Step = tmp[0][0]
           else:

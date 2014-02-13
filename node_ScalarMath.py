@@ -148,14 +148,14 @@ class ScalarMathNode(Node, SverchCustomTreeNode):
         self.label=self.items_
         
         
-        if 'X' in self.inputs and self.inputs['X'].is_linked and \
+        if 'X' in self.inputs and self.inputs['X'].links and \
             type(self.inputs['X'].links[0].from_socket) == StringsSocket:
 
             Number1 = SvGetSocketAnyType(self,self.inputs['X'])
         else:
             Number1 = []
         
-        if 'Y' in self.inputs and self.inputs['Y'].is_linked and \
+        if 'Y' in self.inputs and self.inputs['Y'].links and \
             type(self.inputs['Y'].links[0].from_socket) == StringsSocket:
 
             Number2 = SvGetSocketAnyType(self,self.inputs['Y'])
@@ -163,7 +163,7 @@ class ScalarMathNode(Node, SverchCustomTreeNode):
             Number2 = []
                    
         # outputs
-        if 'float' in self.outputs and self.outputs['float'].is_linked:
+        if 'float' in self.outputs and self.outputs['float'].links:
             result = []
             if nrInputs == 0:
                 result = [self.constant[self.items_]]

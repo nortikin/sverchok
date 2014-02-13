@@ -30,19 +30,19 @@ class CircleNode(Node, SverchCustomTreeNode):
 
     def update(self):
         # inputs
-        if 'Radius' in self.inputs and self.inputs['Radius'].is_linked:
+        if 'Radius' in self.inputs and self.inputs['Radius'].links:
             Radius = float(SvGetSocketAnyType(self,self.inputs['Radius'])[0][0])
         else:
             Radius = self.rad_
 
-        if 'Nº Vertices' in self.inputs and self.inputs['Nº Vertices'].is_linked:
+        if 'Nº Vertices' in self.inputs and self.inputs['Nº Vertices'].links:
             Vertices = int(SvGetSocketAnyType(self,self.inputs['Nº Vertices'])[0][0])
             if Vertices < 3:
                 Vertices = 3
         else:
             Vertices = self.vert_
 
-        if 'Degrees' in self.inputs and self.inputs['Degrees'].is_linked:
+        if 'Degrees' in self.inputs and self.inputs['Degrees'].links:
             Angle = float(SvGetSocketAnyType(self,self.inputs['Degrees'])[0][0])
             if Angle < 0:
                 Angle = 0
@@ -70,7 +70,7 @@ class CircleNode(Node, SverchCustomTreeNode):
             listVertX.append(0.0)
             listVertY.append(0.0)
         # outputs
-        if 'Vertices' in self.outputs and self.outputs['Vertices'].is_linked:
+        if 'Vertices' in self.outputs and self.outputs['Vertices'].links:
 
             X = listVertX
             Y = listVertY
@@ -85,7 +85,7 @@ class CircleNode(Node, SverchCustomTreeNode):
             points = list(zip(X,Y,Z))
             SvSetSocketAnyType(self, 'Vertices',[points])
 
-        if 'Edges' in self.outputs and self.outputs['Edges'].is_linked:
+        if 'Edges' in self.outputs and self.outputs['Edges'].links:
 
             listEdg = []
             for i in range(Vertices-1):
@@ -98,7 +98,7 @@ class CircleNode(Node, SverchCustomTreeNode):
             edg = list(listEdg)
             SvSetSocketAnyType(self, 'Edges',[edg])
 
-        if 'Polygons' in self.outputs and self.outputs['Polygons'].is_linked:
+        if 'Polygons' in self.outputs and self.outputs['Polygons'].links:
 
             listPlg = []
             for i in range(Vertices):

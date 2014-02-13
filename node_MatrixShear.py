@@ -37,14 +37,14 @@ class MatrixShearNode(Node, SverchCustomTreeNode):
         # inputs
         factor1 = []
         factor2 = []
-        if 'Factor1' in self.inputs and self.inputs['Factor1'].is_linked and \
+        if 'Factor1' in self.inputs and self.inputs['Factor1'].links and \
             type(self.inputs['Factor1'].links[0].from_socket) == StringsSocket:
 
             factor1 = SvGetSocketAnyType(self,self.inputs['Factor1'])
         if not factor1:
             factor1 = [[self.factor1_]]
         
-        if 'Factor2' in self.inputs and self.inputs['Factor2'].is_linked and \
+        if 'Factor2' in self.inputs and self.inputs['Factor2'].links and \
             type(self.inputs['Factor2'].links[0].from_socket) == StringsSocket:
    
             factor2 = SvGetSocketAnyType(self,self.inputs['Factor2'])

@@ -25,13 +25,13 @@ class EvaluateLine(Node, SverchCustomTreeNode):
         VerticesB = []
         factor = []
         
-        if 'Vertice A' in self.inputs and self.inputs['Vertice A'].is_linked:
+        if 'Vertice A' in self.inputs and self.inputs['Vertice A'].links:
             VerticesA = Vector_generate(SvGetSocketAnyType(self,self.inputs['Vertice A']))
             
-        if 'Vertice B' in self.inputs and self.inputs['Vertice B'].is_linked:
+        if 'Vertice B' in self.inputs and self.inputs['Vertice B'].links:
             VerticesB = Vector_generate(SvGetSocketAnyType(self,self.inputs['Vertice B']))
         
-        if 'Factor' in self.inputs and self.inputs['Factor'].is_linked:
+        if 'Factor' in self.inputs and self.inputs['Factor'].links:
             factor = SvGetSocketAnyType(self,self.inputs['Factor'])
         
         if not (VerticesA and VerticesB):
@@ -41,7 +41,7 @@ class EvaluateLine(Node, SverchCustomTreeNode):
             factor = [[self.factor_]]         
 
         # outputs
-        if 'EvPoint' in self.outputs and self.outputs['EvPoint'].is_linked:
+        if 'EvPoint' in self.outputs and self.outputs['EvPoint'].links:
             points = []
 
 # match inputs using fullList, longest list matching on A and B

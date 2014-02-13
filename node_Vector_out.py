@@ -17,7 +17,7 @@ class VectorsOutNode(Node, SverchCustomTreeNode):
     def update(self):
         # inputs
         X, Y, Z = [], [], []
-        if 'Vectors' in self.inputs and self.inputs['Vectors'].is_linked:
+        if 'Vectors' in self.inputs and self.inputs['Vectors'].links:
             xyz = SvGetSocketAnyType(self,self.inputs['Vectors'])
             
             data = dataCorrect(xyz) # 
@@ -30,7 +30,7 @@ class VectorsOutNode(Node, SverchCustomTreeNode):
                     Z.append(item[2]) 
                     
             for i,name in enumerate(['X','Y','Z']):
-                if self.outputs[name].is_linked:
+                if self.outputs[name].links:
                     SvSetSocketAnyType(self,name,[[X,Y,Z][i]])
                             
     def update_socket(self, context):

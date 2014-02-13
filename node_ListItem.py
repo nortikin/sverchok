@@ -115,7 +115,7 @@ class ListItem2Node(Node, SverchCustomTreeNode):
             if 'Data' in self.inputs and self.inputs['Data'].links:
                 data = SvGetSocketAnyType(self, self.inputs['Data'])
                 
-                if 'Item' in self.inputs and self.inputs['Item'].is_linked:
+                if 'Item' in self.inputs and self.inputs['Item'].links:
                     items = SvGetSocketAnyType(self,self.inputs['Item'])
                 else:
                     items = [[self.item]]

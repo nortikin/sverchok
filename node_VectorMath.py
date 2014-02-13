@@ -116,15 +116,15 @@ class VectorMathNode(Node, SverchCustomTreeNode):
 
                    
         # vector-output
-        if 'W' in self.outputs and self.outputs['W'].is_linked:
+        if 'W' in self.outputs and self.outputs['W'].links:
          
-            if 'U' in self.inputs and self.inputs['U'].is_linked and \
+            if 'U' in self.inputs and self.inputs['U'].links and \
                 type(self.inputs['U'].links[0].from_socket) == VerticesSocket:
                 vector1 = SvGetSocketAnyType(self,self.inputs['U'])
             else:
                 vector1 = []
         
-            if 'V' in self.inputs and self.inputs['V'].is_linked and \
+            if 'V' in self.inputs and self.inputs['V'].links and \
                 type(self.inputs['V'].links[0].from_socket) == VerticesSocket:
                 vector2 =  SvGetSocketAnyType(self,self.inputs['V'])
             else:   
@@ -152,15 +152,15 @@ class VectorMathNode(Node, SverchCustomTreeNode):
             SvSetSocketAnyType(self, 'W',result)
    
         #scalar-output    
-        if 'out' in self.outputs and self.outputs['out'].is_linked:
+        if 'out' in self.outputs and self.outputs['out'].links:
    
-            if 'U' in self.inputs and self.inputs['U'].is_linked and \
+            if 'U' in self.inputs and self.inputs['U'].links and \
                 type(self.inputs['U'].links[0].from_socket) == VerticesSocket:
                 vector1 = SvGetSocketAnyType(self,self.inputs['U'])
             else:
                 vector1 = []
         
-            if 'V' in self.inputs and self.inputs['V'].is_linked and \
+            if 'V' in self.inputs and self.inputs['V'].links and \
                 type(self.inputs['V'].links[0].from_socket) == VerticesSocket:
                 vector2 =  SvGetSocketAnyType(self,self.inputs['V'])
             else:   

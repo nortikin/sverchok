@@ -25,26 +25,26 @@ class GenRangeNode(Node, SverchCustomTreeNode):
 
     def update(self):
         # inputs
-        if 'Start' in self.inputs and self.inputs['Start'].is_linked:
+        if 'Start' in self.inputs and self.inputs['Start'].links:
             tmp = SvGetSocketAnyType(self,self.inputs['Start'])
             Start = tmp[0][0]
         else:
             Start = self.start_
     
-        if 'Stop' in self.inputs and self.inputs['Stop'].is_linked:
+        if 'Stop' in self.inputs and self.inputs['Stop'].links:
             tmp = SvGetSocketAnyType(self,self.inputs['Stop'])
             Stop = tmp[0][0]
         else:
             Stop = self.stop_
         
-        if 'Divisions' in self.inputs and self.inputs['Divisions'].is_linked:
+        if 'Divisions' in self.inputs and self.inputs['Divisions'].links:
             tmp = SvGetSocketAnyType(self,self.inputs['Divisions'])
             Divisions = tmp[0][0]
         else:
             Divisions = self.divisions_
         
         # outputs
-        if 'Range' in self.outputs and self.outputs['Range'].is_linked:
+        if 'Range' in self.outputs and self.outputs['Range'].links:
             if Divisions < 2:
                 Divisions = 2
             Range = [Start]

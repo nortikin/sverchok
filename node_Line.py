@@ -23,12 +23,12 @@ class LineNode(Node, SverchCustomTreeNode):
 
     def update(self):
         # inputs
-        if 'Nº Vertices' in self.inputs and self.inputs['Nº Vertices'].is_linked:
+        if 'Nº Vertices' in self.inputs and self.inputs['Nº Vertices'].links:
             Integer = int(SvGetSocketAnyType(self,self.inputs['Nº Vertices'])[0][0])
         else:
             Integer = self.int_
 
-        if 'Step' in self.inputs and self.inputs['Step'].is_linked:
+        if 'Step' in self.inputs and self.inputs['Step'].links:
             Step = SvGetSocketAnyType(self,self.inputs['Step'])[0]
             
             if len(Step) < Integer:
@@ -45,7 +45,7 @@ class LineNode(Node, SverchCustomTreeNode):
             X = listVert
 
         # outputs
-        if 'Vertices' in self.outputs and self.outputs['Vertices'].is_linked:
+        if 'Vertices' in self.outputs and self.outputs['Vertices'].links:
 
             Y = [0.0]
             Z = [0.0]
@@ -56,7 +56,7 @@ class LineNode(Node, SverchCustomTreeNode):
             points = list(zip(X,Y,Z))
             SvSetSocketAnyType(self, 'Vertices',[points])
 
-        if 'Edges' in self.outputs and self.outputs['Edges'].is_linked:
+        if 'Edges' in self.outputs and self.outputs['Edges'].links:
 
             listEdg = []
             for i in range(Integer-1):
