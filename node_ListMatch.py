@@ -81,7 +81,7 @@ class ListMatchNode(Node, SverchCustomTreeNode):
         count_inputs = 0
         count_outputs = 0     
         for idx,socket in enumerate(self.inputs):
-            if self.outputs[socket.name].links:
+            if socket.name in self.outputs and self.outputs[socket.name].links:
                 count_outputs += 1
             if socket.links:
                 count_inputs += 1
