@@ -40,7 +40,7 @@ class GenSeriesNode(Node, SverchCustomTreeNode):
         if 'Step' in self.inputs and self.inputs['Step'].links:
             tmp = SvGetSocketAnyType(self,self.inputs['Step'])
             Step = tmp[0][0]
-          else:
+        else:
             Step = self.step_
         
         # outputs
