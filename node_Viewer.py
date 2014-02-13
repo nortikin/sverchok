@@ -192,6 +192,13 @@ class ViewerNode(Node, SverchCustomTreeNode):
     
     def update_socket(self, context):
         self.update()
+    
+    def free(self):
+        global cache_viewer_baker
+        callback_disable(self.name)
+        #cache_viewer_baker[self.name+'v'] = []
+        #cache_viewer_baker[self.name+'ep'] = []
+        #cache_viewer_baker[self.name+'m'] = []            
 
 def register():
     bpy.utils.register_class(ViewerNode)

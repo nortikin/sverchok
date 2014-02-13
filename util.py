@@ -845,7 +845,7 @@ def make_update_list(node_tree,node_set = None):
         # ignore nodes without input or outputs, like frames        
         if node_dep or len(node.inputs) or len(node.outputs):
             deps[name]=node_dep
-        if is_root and node_dep and not node.bl_idname == 'WifiOutNode':
+        if is_root and node_dep and not node.bl_idname == 'WifiInNode':
             tree_stack.append(name)
         if node.bl_idname == 'WifiOutNode':
             wifi_out.append(name)
@@ -1141,6 +1141,7 @@ def SvSetSocketAnyType(self, socket, out):
 
 # caching data solution
 
+# socket.name is not unique... identifier is
 def socket_id(socket):
     return socket.id_data.name+socket.node.name+socket.identifier
 
