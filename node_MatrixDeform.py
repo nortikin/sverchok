@@ -20,39 +20,35 @@ class MatrixDeformNode(Node, SverchCustomTreeNode):
 
     def update(self):
         # inputs
-        if 'Matrix' in self.outputs and len(self.outputs['Matrix'].links)>0:
+        if 'Matrix' in self.outputs and self.outputs['Matrix'].links:
             if self.inputs['Original'].links and \
                 type(self.inputs['Original'].links[0].from_socket) == MatrixSocket:
-                if not self.inputs['Original'].node.socket_value_update:
-                    self.inputs['Original'].node.update()
-                orig_ = eval(self.inputs['Original'].links[0].from_socket.MatrixProperty)
+
+                orig_ = SvGetSocketAnyType(self, self.inputs['Original'])
                 orig = Matrix_generate(orig_)
             else:
                 return
                 
             if 'Location' in self.inputs and self.inputs['Location'].links and \
                 type(self.inputs['Location'].links[0].from_socket) == VerticesSocket:
-                if not self.inputs['Location'].node.socket_value_update:
-                    self.inputs['Location'].node.update()
-                loc_ = eval(self.inputs['Location'].links[0].from_socket.VerticesProperty)
+
+                loc_ = SvGetSocketAnyType(self,self.inputs['Location'])
                 loc = Vector_generate(loc_)
             else:
                 loc = [[]]
             
             if 'Scale' in self.inputs and self.inputs['Scale'].links and \
                 type(self.inputs['Scale'].links[0].from_socket) == VerticesSocket:
-                if not self.inputs['Scale'].node.socket_value_update:
-                    self.inputs['Scale'].node.update()
-                scale_ = eval(self.inputs['Scale'].links[0].from_socket.VerticesProperty)
+   
+                scale_ = SvGetSocketAnyType(self,self.inputs['Scale'])
                 scale = Vector_generate(scale_)
             else:
                 scale = [[]]
                 
             if 'Rotation' in self.inputs and self.inputs['Rotation'].links and \
                 type(self.inputs['Rotation'].links[0].from_socket) == VerticesSocket:
-                if not self.inputs['Rotation'].node.socket_value_update:
-                    self.inputs['Rotation'].node.update()
-                rot_ = eval(self.inputs['Rotation'].links[0].from_socket.VerticesProperty)
+
+                rot_ = SvGetSocketAnyType(self,self.inputs['Rotation'])
                 rot = Vector_generate(rot_)
                 #print ('matrix_def', str(rot_))
             else:
@@ -61,20 +57,16 @@ class MatrixDeformNode(Node, SverchCustomTreeNode):
             rotA=[[]]
             angle = [[0.0]]
             if 'Angle' in self.inputs and self.inputs['Angle'].links:
-                if not self.inputs['Angle'].node.socket_value_update:
-                        self.inputs['Angle'].node.update()
+     
                 if type(self.inputs['Angle'].links[0].from_socket) == StringsSocket:
-                    angle = eval(self.inputs['Angle'].links[0].from_socket.StringsProperty)
+                    angle = SvGetSocketAnyType(self,self.inputs['Angle'])
                     
                 elif type(self.inputs['Angle'].links[0].from_socket) == VerticesSocket:
-                    rotA_ = eval(self.inputs['Angle'].links[0].from_socket.VerticesProperty)
+                    rotA_ = SvGetSocketAnyType(self,self.inputs['Angle'])
                     rotA = Vector_generate(rotA_)
             
             # outputs
         
-            if not self.outputs['Matrix'].node.socket_value_update:
-                self.outputs['Matrix'].node.update()
-            
             matrixes_ = matrixdef(orig, loc, scale, rot, angle, rotA)
             matrixes = Matrix_listing(matrixes_)
             self.outputs['Matrix'].MatrixProperty = str(matrixes)
