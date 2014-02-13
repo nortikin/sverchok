@@ -677,7 +677,7 @@ def sv_debug_update(self,context):
             sverchok_debug(key='show_updated_nodes', value=self.show_updated_nodes)
         else:
             sverchok_debug(key='show_updated_nodes')
-        if self.show_updated_nodes:
+        if self.print_timings:
             sverchok_debug(key='print_timings', value=self.print_timings)
         else:
             sverchok_debug(key='print_timings')
@@ -706,7 +706,7 @@ def updateAllOuts(self, update_self=True):
         self.update()
     #print('update_node ', self.name) 
     for output in self.outputs:
-        if output.is_linked:
+        if output.links:
             for link in output.links:
                 nod = link.to_socket.node
                 if check_update_node(nod.name, True):
@@ -755,6 +755,7 @@ def updateTreeNode(self, context):
     
 # old function, kept while evaluating new solution.
 # look at makeTreeUpdate2() and make_update_list()
+# if you try to use this now you might have to change speedUpdate...
 def makeTreeUpdate():
     global list_nodes4update
     def insertnode(nod, nodeset, etalonset, priority):
@@ -792,7 +793,7 @@ def makeTreeUpdate():
         for nod in ng.nodes:
             flag=False
             for input in nod.inputs:
-                if input.is_linked:
+                if input.links:
                     Flag=True
                     break  
             if flag: 
@@ -802,7 +803,7 @@ def makeTreeUpdate():
             nodeset_e, prioritet = insertnode(nod, nodeset_a, nodeset_e, priority=prioritet)
             
         list_nodes4update[ng.name] = prioritet + nodeset_e
-        print("MaketreeUpdate()",list_nodes4update[ng.name])
+        #print("MaketreeUpdate()",list_nodes4update[ng.name])
     list_nodes4update['TreeName'] = bpy.context.space_data.node_tree.name
     return
 
@@ -821,6 +822,8 @@ def make_update_list(node_tree,node_set = None):
     tree_stack = collections.deque()
     wifi_out = []
     wifi_in = []
+    if not node_tree in bpy.data.node_groups:
+        return []
     ng = bpy.data.node_groups[node_tree]
     node_list = []
     if not node_set: # if no node_set, take all
@@ -828,17 +831,21 @@ def make_update_list(node_tree,node_set = None):
     for name,node in [(node_name,ng.nodes[node_name]) for node_name in node_set]:
         node_dep = []
         for socket in node.inputs:
-            if socket.is_linked and socket.links[0].from_node.name in node_set:
-                node_dep.append(socket.links[0].from_node.name)
+            if socket.links and socket.links[0].from_node.name in node_set:
+                if socket.links[0].is_valid:
+                    node_dep.append(socket.links[0].from_node.name)
+                else: #invalid node tree. Join nodes with F gives one instance of this, then ok
+                    #print("Invalid Link in",node_tree,"!",socket.name,"->",socket.links[0].from_socket.name)
+                    return []
         is_root = True            
         for socket in node.outputs:
-            if socket.is_linked:
+            if socket.links:
                 is_root = False
                 break
         # ignore nodes without input or outputs, like frames        
         if node_dep or len(node.inputs) or len(node.outputs):
             deps[name]=node_dep
-        if is_root and node_dep and not name[:6] == 'Wifi i':
+        if is_root and node_dep and not node.bl_idname == 'WifiOutNode':
             tree_stack.append(name)
         if node.bl_idname == 'WifiOutNode':
             wifi_out.append(name)
@@ -852,7 +859,10 @@ def make_update_list(node_tree,node_set = None):
             if ng.nodes[wifi_out_node].var_name == ng.nodes[wifi_in_node].var_name:
                 wifi_dep.append(wifi_in_node)
         if wifi_dep:
-            deps[wifi_out_node]=wifi_dep        
+            deps[wifi_out_node]=wifi_dep
+        else:
+            print("Broken Wifi dependency:",wifi_out_node,"var:",ng.nodes[wifi_out_node])
+            return []   
     
     if tree_stack:
         name = tree_stack.pop()
@@ -894,30 +904,39 @@ def make_update_list(node_tree,node_set = None):
     
     return list(out.keys())
     
-def makeTreeUpdate2():
+def makeTreeUpdate2(tree_name=None):
     """ makes a complete update list for the current node tree"""
     global list_nodes4update
     global socket_data_cache
     # clear cache on every full update
     socket_data_cache.clear()
-    for ng in bpy.data.node_groups[:]:                
-        list_nodes4update[ng.name]=make_update_list(ng.name)
-#        print(list_nodes4update[ng.name])
-    list_nodes4update['TreeName'] = bpy.context.space_data.node_tree.name   
+    if tree_name != None:
+        list_nodes4update[tree_name] = make_update_list(tree_name)
+        list_nodes4update['TreeName'] = tree_name
+    else:    
+        for ng in bpy.data.node_groups[:]:
+            if ng.bl_idname == 'SverchCustomTreeType':               
+                list_nodes4update[ng.name]=make_update_list(ng.name)
+#           print(list_nodes4update[ng.name])
+        list_nodes4update['TreeName'] = bpy.context.space_data.node_tree.name   
 
 
 
                 
-def make_tree_from_node(node_name,tree_name):
+def make_tree_from_nodes(node_names,tree_name):
     """ 
-    Create a partial update list from a sub-tree, node_name is node that has changed
+    Create a partial update list from a sub-tree, node_names is a list of node that
+    drives change for the tree
     Only nodes downtree from node_name are updated
     """
+    if not node_names:
+        print("No nodes!")
+        return make_update_list(tree_name)
     ng = bpy.data.node_groups[tree_name]
-    out_set = {node_name}
-    out_stack = []
+    out_set = set(node_names)
+    current_node = node_names.pop()
+    out_stack = node_names[:]
     wifi_out = []
-    current_node = node_name
     # build the set of nodes that needs to be updated
     while current_node:
         if ng.nodes[current_node].bl_idname == 'WifiInNode':
@@ -929,7 +948,7 @@ def make_tree_from_node(node_name,tree_name):
                         out_stack.append(wifi_out_node)
                         out_set.add(wifi_out_node)
         for socket in ng.nodes[current_node].outputs:
-            if socket.is_linked:
+            if socket.links:
                 for link in socket.links:
                     if not link.to_node.name in out_set:
                         out_set.add(link.to_node.name)
@@ -938,34 +957,43 @@ def make_tree_from_node(node_name,tree_name):
             current_node = out_stack.pop()
         else:
             current_node = ''
- #   out=make_update_list(tree_name,out_set)
- #   print("out:",out)
- #   print("node set:",out_set)
     return make_update_list(tree_name,out_set)
-       
+
+# to make update tree based on node types and node names bases
+def make_animation_tree(node_types,node_list,tree_name):
+    global list_nodes4update
+    # should add a check do find animated or driven nodes.
+    ng = bpy.data.node_groups[tree_name]
+    node_set = set(node_list)
+    for n_t in node_types:
+        node_set = node_set | {name for name in ng.nodes.keys() if ng.nodes[name].bl_idname == n_t}
+    #print("make ani tree",node_set)
+    a_tree = make_tree_from_nodes(list(node_set),tree_name)
+    #print("make anitree2",a_tree)
+    if "SverchokAnimationTree" in list_nodes4update:
+        a_tree_list = list_nodes4update["SverchokAnimationTree"]
+        if not tree_name in a_tree_list:
+            a_tree_list.append(tree_name)
+            list_nodes4update["SverchokAnimationTree"]=a_tree_list
+    else:
+        list_nodes4update["SverchokAnimationTree"]=[tree_name]
+    #print(a_tree)
+    if a_tree:
+        list_nodes4update["SverchokAnimationTree"+tree_name]=a_tree
+    
+    
+import traceback      
 
 # only update from start_node with selected tree or update everything if nothing is set.
-def speedUpdate(start_node = None, node_tree_name = None):
+# 
+def speedUpdate(start_node = None, tree_name = None, animation_mode = False):
     global list_nodes4update
     global socket_data_cache
     global DEBUG_MODE
     global DEBUG_SETTINGS
-
-    if not 'TreeName' in list_nodes4update: 
-        makeTreeUpdate2() 
-        socket_data_cache.clear()
-        start_node = None
-    if 'TreeName' in list_nodes4update:
-        NodeTree_name = list_nodes4update['TreeName']
-    else:
-        NodeTree_name = bpy.context.space_data.node_tree.name
-        list_nodes4update['TreeName'] = NodeTree_name
-   
-    if start_node != None:
-        out = make_tree_from_node(start_node,node_tree_name)
-        nods = bpy.data.node_groups[node_tree_name].nodes
-        
-        for nod_name in out:
+    
+    def do_update(node_list,nods):
+        for nod_name in node_list:
             if nod_name in nods:   
                 if DEBUG_MODE:
                     if 'print_timings' in DEBUG_SETTINGS:
@@ -979,27 +1007,42 @@ def speedUpdate(start_node = None, node_tree_name = None):
                         nods[nod_name].use_custom_color = True
                         nods[nod_name].color = (0.1,.8,0)
 
+    if animation_mode:
+        if not "SverchokAnimationTree" in list_nodes4update:
+            print("No animation data")
+            return
+        for ng in list_nodes4update["SverchokAnimationTree"]:
+            nods = bpy.data.node_groups[ng].nodes
+            do_update(list_nodes4update["SverchokAnimationTree"+ng],nods)
         return
-                    
+    
+    if start_node != None: 
+        if tree_name in list_nodes4update:
+            update_list = make_tree_from_nodes([start_node],tree_name)
+            nods = bpy.data.node_groups[tree_name].nodes
+            do_update(update_list,nods)
+            return  
+        else:
+            socket_data_cache.clear()
+            makeTreeUpdate2() 
+    if tree_name != None:        
+        if not tree_name in list_nodes4update:
+            makeUpdateTree2(tree_name)
+        nods = bpy.data.node_groups[tree_name].nodes
+        do_update(list_nodes4update[tree_name],bpy.data.node_groups[tree_name].nodes)
+        return            
+
+    if 'TreeName' in list_nodes4update:
+        NodeTree_name = list_nodes4update['TreeName']
+    else:
+        NodeTree_name = bpy.context.space_data.node_tree.name
+        list_nodes4update['TreeName'] = NodeTree_name
+          
     for ng_name in list_nodes4update:
         if ng_name in bpy.context.blend_data.node_groups and ng_name==NodeTree_name:
             nods = bpy.data.node_groups[ng_name].nodes
-            for nod_name in list_nodes4update[ng_name]:
-                if nod_name in nods:
-                    if DEBUG_MODE:
-                        if 'print_timings' in DEBUG_SETTINGS:
-                            start = time.time() 
-                            
-                    nods[nod_name].update()
-                    
-                    if DEBUG_MODE:
-                        if 'print_timings' in DEBUG_SETTINGS:
-                            stop = time.time()
-                            print("Updated: ",nod_name, " in ", round(stop-start,4))    
-                        if 'show_updated_nodes' in DEBUG_SETTINGS:
-                            nods[nod_name].use_custom_color = False
-                        
-                        
+            do_update(list_nodes4update[ng_name],nods)
+            
 ##############################################################
 ##############################################################
 ############## changable type of socket magic ################
@@ -1099,7 +1142,7 @@ def SvSetSocketAnyType(self, socket, out):
 # caching data solution
 
 def socket_id(socket):
-    return socket.id_data.name+socket.node.name+socket.name
+    return socket.id_data.name+socket.node.name+socket.identifier
 
 # about 50% faster than built in deep copy, needs to be tested.
 # and verified. can be made more effective.
@@ -1121,15 +1164,19 @@ def SvSetSocket(socket, out):
         del socket_data_cache[s_id]
     socket_data_cache[s_id]=copy.copy(out)
    
-def SvGetSocket(socket):
+def SvGetSocket(socket, copy = False):
     global socket_data_cache
     global DEBUG_MODE
-    if socket.is_linked:
+    if socket.links:
+       # print(len(socket.links),socket_id(socket),socket.links,socket.linked)
         other =  socket.links[0].from_socket
         s_id = socket_id(other)
         if s_id in socket_data_cache:
             out = socket_data_cache[s_id]
-            return sv_deep_copy(out)
+            if copy:
+                return out.copy()
+            else:
+                return sv_deep_copy(out)
   #          return copy.deepcopy(out)
         else: # failure, should raise error in future
             if DEBUG_MODE:
@@ -1164,11 +1211,11 @@ def multi_socket(node , min=1):
         return
     if min < 1:
         min = 1
-    if node.inputs[-1].is_linked:
+    if node.inputs[-1].links:
         name = node.base_name+str(len(node.inputs))
         node.inputs.new(node.multi_socket_type, name, name)
     else:
-        while len(node.inputs)>min and not node.inputs[-2].is_linked:
+        while len(node.inputs)>min and not node.inputs[-2].links:
             node.inputs.remove(node.inputs[-1])
         
 ####################################
@@ -1185,7 +1232,7 @@ def svQsort(L):
 
 def update_nodes(scene):
     try: #bpy.ops.node.sverchok_update_all()
-        speedUpdate()
+        speedupdate()  
     except: pass
 # addtionally 
 pre = bpy.app.handlers.frame_change_pre
