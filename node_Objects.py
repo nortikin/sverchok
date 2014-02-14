@@ -106,16 +106,16 @@ class ObjectsNode(Node, SverchCustomTreeNode):
                 pols_out.append(pols)
                 mtrx_out.append(mtrx)
             if vers_out[0]:
-                if 'Vertices' in self.outputs and self.outputs['Vertices'].is_linked:
+                if 'Vertices' in self.outputs and self.outputs['Vertices'].links:
                     SvSetSocketAnyType(self, 'Vertices',vers_out)
                     
-                if 'Edges' in self.outputs and self.outputs['Edges'].is_linked:
+                if 'Edges' in self.outputs and self.outputs['Edges'].links:
                     SvSetSocketAnyType(self, 'Edges',edgs_out)
                     
-                if 'Polygons' in self.outputs and self.outputs['Polygons'].is_linked:
+                if 'Polygons' in self.outputs and self.outputs['Polygons'].links:
                     SvSetSocketAnyType(self, 'Polygons',pols_out)
             
-            if 'Matrixes' in self.outputs and self.outputs['Matrixes'].is_linked:
+            if 'Matrixes' in self.outputs and self.outputs['Matrixes'].links:
                 SvSetSocketAnyType(self, 'Matrixes',mtrx_out)
             #print ('матрёны: ', mtrx)
         #print (self.objects_local)

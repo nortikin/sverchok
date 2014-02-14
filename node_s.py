@@ -5,7 +5,7 @@ from bpy.types import NodeTree, Node, NodeSocket
 import nodeitems_utils
 from nodeitems_utils import NodeCategory, NodeItem
 from mathutils import Matrix
-from util import updateSlot
+from util import updateSlot, makeTreeUpdate2, speedUpdate
 
 class SvColors(bpy.types.PropertyGroup):
     """ Class for colors CollectionProperty """
@@ -92,6 +92,10 @@ class SverchCustomTree(NodeTree):
     bl_idname = 'SverchCustomTreeType'
     bl_label = 'Sverchok Node Tree'
     bl_icon = 'RNA'
+    def update(self):
+        makeTreeUpdate2(tree_name = self.name)
+        speedUpdate(tree_name = self.name)
+        
 
 
 class SverchCustomTreeNode:

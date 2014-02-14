@@ -24,13 +24,13 @@ class ListShuffleNode(Node, SverchCustomTreeNode):
         self.outputs.new('StringsSocket', 'data', 'data')
     
     def update(self):
-        if 'data' in self.inputs and self.inputs['data'].is_linked:
+        if 'data' in self.inputs and self.inputs['data'].links:
             # адаптивный сокет
             inputsocketname = 'data'
             outputsocketname = ['data']
             changable_sockets(self, inputsocketname, outputsocketname)
         
-        if 'data' in self.outputs and self.outputs['data'].is_linked:
+        if 'data' in self.outputs and self.outputs['data'].links:
             random.seed(self.seed)    
             data = SvGetSocketAnyType(self, self.inputs['data'])
             output = self.shuffle(data, self.level)

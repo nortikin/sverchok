@@ -147,10 +147,10 @@ class ViewerNode(Node, SverchCustomTreeNode):
         cache_viewer_baker[self.name+'v'] = []
         cache_viewer_baker[self.name+'ep'] = []
         cache_viewer_baker[self.name+'m'] = []
-        if self.activate and (self.inputs['vertices'].is_linked or self.inputs['matrix'].is_linked):
+        if self.activate and (self.inputs['vertices'].links or self.inputs['matrix'].links):
             callback_disable(self.name)
             
-            if 'vertices' in self.inputs and self.inputs['vertices'].is_linked and \
+            if 'vertices' in self.inputs and self.inputs['vertices'].links and \
                 type(self.inputs['vertices'].links[0].from_socket) == VerticesSocket:
                 
                 propv = SvGetSocketAnyType(self, self.inputs['vertices'])
@@ -158,7 +158,7 @@ class ViewerNode(Node, SverchCustomTreeNode):
             else:
                 cache_viewer_baker[self.name+'v'] = []
                             
-            if 'edg_pol' in self.inputs and self.inputs['edg_pol'].is_linked and \
+            if 'edg_pol' in self.inputs and self.inputs['edg_pol'].links and \
                 type(self.inputs['edg_pol'].links[0].from_socket) == StringsSocket:
                 prope = SvGetSocketAnyType(self, self.inputs['edg_pol'])
                 cache_viewer_baker[self.name+'ep'] = dataCorrect(prope)
@@ -166,7 +166,7 @@ class ViewerNode(Node, SverchCustomTreeNode):
             else:
                 cache_viewer_baker[self.name+'ep'] = []
                     
-            if 'matrix' in self.inputs and self.inputs['matrix'].is_linked and \
+            if 'matrix' in self.inputs and self.inputs['matrix'].links and \
                type(self.inputs['matrix'].links[0].from_socket) == MatrixSocket:
                     propm = SvGetSocketAnyType(self, self.inputs['matrix'])
                     cache_viewer_baker[self.name+'m'] = dataCorrect(propm)

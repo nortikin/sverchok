@@ -17,23 +17,14 @@ class ListSumNode(Node, SverchCustomTreeNode):
     def update(self):
         # достаём два слота - вершины и полики
         if 'Sum' in self.outputs and self.outputs['Sum'].links:
-            if not self.outputs['Sum'].node.socket_value_update:
-                self.outputs['Sum'].node.update()
             if 'Data' in self.inputs and self.inputs['Data'].links:
-                if not self.inputs['Data'].node.socket_value_update:
-                    self.inputs['Data'].node.update()
-                if type(self.inputs['Data'].links[0].from_socket) == StringsSocket:
-                    data = eval(self.inputs['Data'].links[0].from_socket.StringsProperty)
-                elif type(self.inputs['Data'].links[0].from_socket) == VerticesSocket:
-                    data = eval(self.inputs['Data'].links[0].from_socket.VerticesProperty)
-                elif type(self.inputs['Data'].links[0].from_socket) == MatrixSocket:
-                    data = eval(self.inputs['Data'].links[0].from_socket.MatrixProperty)
+                data = SvGetSocketAnyType(self,self.inputs['Data'])
                     
                 out_ = self.summ(data)
                 #    print(out_)
-                out = str([[sum(out_)]])
-                
-                self.outputs['Sum'].StringsProperty = out
+                out = [[sum(out_)]]
+
+                SvSetSocketAnyType(self,'Sum', out)
             
     def summ(self, data):
         out = []

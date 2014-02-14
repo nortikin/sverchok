@@ -77,4 +77,5 @@
 8.look at todo list to know what is happening on and what you can do.
 9.use your nodes and test them.
 10.there is no reason to auto wrap or make less levels of wrapping, than needed to proceed in other nodes. So, for now canonical will be [[0,1,2,3]] for simple data and [[[0,1,2,3]]] for real data as edge, vertex, matrix other cases may be more nasty, but not less nesty and wrapping need to be grounded on some reasons to be provided.
-11.Look at test1 node. it is canonical node. This is how all have to be organized. If you need to do new node - take test1 as default template.
+11. Do not use is_linked to test if socket is linked, check links. Good: if socket.links: Bad: if socket.is_linked:
+12.Look at test1 node. it is canonical node. This is how all have to be organized. If you need to do new node - take test1 as default template.

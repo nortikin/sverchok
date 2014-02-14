@@ -46,12 +46,12 @@ class ListSliceNode(Node, SverchCustomTreeNode):
             if 'Data' in self.inputs and self.inputs['Data'].links:
                 data = SvGetSocketAnyType(self, self.inputs['Data'])
                 
-                if 'Start' in self.inputs and self.inputs['Start'].is_linked:
+                if 'Start' in self.inputs and self.inputs['Start'].links:
                     start = SvGetSocketAnyType(self,self.inputs['Start'])[0]
                 else:
                     start = [self.start]
                 
-                if 'Stop' in self.inputs and self.inputs['Stop'].is_linked:
+                if 'Stop' in self.inputs and self.inputs['Stop'].links:
                     stop = SvGetSocketAnyType(self,self.inputs['Stop'])[0]
                 else:
                     stop = [self.stop]

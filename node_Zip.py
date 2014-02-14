@@ -30,16 +30,16 @@ class ZipNode(Node, SverchCustomTreeNode):
         # inputs
         multi_socket(self , min=1)
         
-        if 'data' in self.inputs and self.inputs['data'].is_linked:
+        if 'data' in self.inputs and self.inputs['data'].links:
             # адаптивный сокет
             inputsocketname = 'data'
             outputsocketname = ['data']
             changable_sockets(self, inputsocketname, outputsocketname)
         
-        if 'data' in self.outputs and self.outputs['data'].is_linked:
+        if 'data' in self.outputs and self.outputs['data'].links:
             slots = []
             for socket in self.inputs:
-                if socket.is_linked:
+                if socket.links:
                     slots.append(SvGetSocketAnyType(self,socket))
             if len(slots) < 2:
                 return    

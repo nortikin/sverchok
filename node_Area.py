@@ -22,18 +22,18 @@ class AreaNode(Node, SverchCustomTreeNode):
         
     def update(self):
         # inputs
-        if 'Vertices' in self.inputs and self.inputs['Vertices'].is_linked:
+        if 'Vertices' in self.inputs and self.inputs['Vertices'].links:
                 Vertices = SvGetSocketAnyType(self,self.inputs['Vertices'])
         else:
             Vertices = []
 
-        if 'Polygons' in self.inputs and self.inputs['Polygons'].is_linked:
+        if 'Polygons' in self.inputs and self.inputs['Polygons'].links:
             Polygons = SvGetSocketAnyType(self,self.inputs['Polygons'])
         else:
             Polygons = []    
 
         # outputs
-        if 'Area' in self.outputs and self.outputs['Area'].is_linked:
+        if 'Area' in self.outputs and self.outputs['Area'].links:
             areas = []
             for i, obj in enumerate(Polygons):
                 res = []

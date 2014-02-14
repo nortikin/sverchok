@@ -38,7 +38,7 @@ class ListJoinNode(Node, SverchCustomTreeNode):
         if 'data' in self.outputs and self.outputs['data'].links:
             slots = []
             for socket in self.inputs:
-                if socket.is_linked:
+                if socket.links:
                     slots.append(SvGetSocketAnyType(self,socket))
             if len(slots)==0:
                 return

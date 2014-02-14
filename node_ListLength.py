@@ -21,16 +21,17 @@ class ListLengthNode(Node, SverchCustomTreeNode):
     def update(self):
         # достаём два слота - вершины и полики
         if 'Length' in self.outputs and self.outputs['Length'].links:
-            data = SvGetSocketAnyType(self, self.inputs['Data'])
+            if 'Data' in self.inputs and self.inputs['Data'].links:
+                data = SvGetSocketAnyType(self, self.inputs['Data'])
                 
-            if not self.level:
-                out = [[len(data)]]
-            elif self.level == 1:
-                out = [self.count(data, self.level)]
-            else:
-                out = self.count(data,self.level)
+                if not self.level:
+                    out = [[len(data)]]
+                elif self.level == 1:
+                    out = [self.count(data, self.level)]
+                else:
+                    out = self.count(data,self.level)
             
-            SvSetSocketAnyType(self, 'Length', out)
+                SvSetSocketAnyType(self, 'Length', out)
          
     def count(self, data, level):
         if isinstance(data, (float, int)):

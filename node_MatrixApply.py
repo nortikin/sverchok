@@ -12,38 +12,32 @@ class MatrixApplyNode(Node, SverchCustomTreeNode):
     def init(self, context):
         self.inputs.new('VerticesSocket', "Vectors", "Vectors")
         self.inputs.new('MatrixSocket', "Matrixes", "Matrixes")
-        
         self.outputs.new('VerticesSocket', "Vectors", "Vectors")
         
 
     def update(self):
         # inputs
-        if 'Vectors' in self.outputs and len(self.outputs['Vectors'].links)>0:
-            if self.inputs['Vectors'].links and \
-                    type(self.inputs['Vectors'].links[0].from_socket) == VerticesSocket \
-                    and self.inputs['Matrixes'] and \
-                    type(self.inputs['Matrixes'].links[0].from_socket) == MatrixSocket:
-                if not self.inputs['Vectors'].node.socket_value_update:
-                    self.inputs['Vectors'].node.update()
-                vecs_ = eval(self.inputs['Vectors'].links[0].from_socket.VerticesProperty)
+        if 'Vectors' in self.outputs and self.outputs['Vectors'].links:
+            if not ('Vectors' in self.inputs and self.inputs['Vectors'].links):
+                return
+            if not ('Matrixes' in self.inputs and self.inputs['Matrixes'].links):
+                return    
+            if  type(self.inputs['Vectors'].links[0].from_socket) == VerticesSocket and \
+                type(self.inputs['Matrixes'].links[0].from_socket) == MatrixSocket:
+
+                vecs_ = SvGetSocketAnyType(self, self.inputs['Vectors'])
                 vecs = Vector_generate(vecs_)
-                #print (vecs)
-                if not self.inputs['Matrixes'].node.socket_value_update:
-                    self.inputs['Matrixes'].node.update()
-                mats_ = eval(self.inputs['Matrixes'].links[0].from_socket.MatrixProperty)
+          
+                mats_ = SvGetSocketAnyType(self, self.inputs['Matrixes'])
                 mats = Matrix_generate(mats_)
             else:
                 vecs = [[]]
                 mats = [Matrix()]
             
             # outputs
-        
-            if not self.outputs['Vectors'].node.socket_value_update:
-                self.outputs['Vectors'].node.update()
-            
             vectors_ = self.vecscorrect(vecs, mats)
             vectors = Vector_degenerate(vectors_)
-            self.outputs['Vectors'].VerticesProperty = str(vectors)
+            SvSetSocketAnyType(self, 'Vectors', vectors)
             
     
     def vecscorrect(self, vecs, mats):

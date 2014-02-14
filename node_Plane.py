@@ -30,17 +30,17 @@ class PlaneNode(Node, SverchCustomTreeNode):
 
     def update(self):
         # inputs
-        if 'Nº Vertices X' in self.inputs and self.inputs['Nº Vertices X'].is_linked:
+        if 'Nº Vertices X' in self.inputs and self.inputs['Nº Vertices X'].links:
             IntegerX = int(SvGetSocketAnyType(self,self.inputs['Nº Vertices X'])[0][0])
         else:
             IntegerX = self.int_X
 
-        if 'Nº Vertices Y' in self.inputs and self.inputs['Nº Vertices Y'].is_linked:
+        if 'Nº Vertices Y' in self.inputs and self.inputs['Nº Vertices Y'].links:
             IntegerY = int(SvGetSocketAnyType(self,self.inputs['Nº Vertices Y'])[0][0])
         else:
             IntegerY = self.int_Y
 
-        if 'Step X' in self.inputs and self.inputs['Step X'].is_linked:     
+        if 'Step X' in self.inputs and self.inputs['Step X'].links:     
             StepX = SvGetSocketAnyType(self,self.inputs['Step X'])[0]
 
             listVertX = []
@@ -58,7 +58,7 @@ class PlaneNode(Node, SverchCustomTreeNode):
                     listVertX.append(0.0+j)
             listVertX = [StepX*i for i in listVertX]
 
-        if 'Step Y' in self.inputs and self.inputs['Step Y'].is_linked:
+        if 'Step Y' in self.inputs and self.inputs['Step Y'].links:
             StepY = SvGetSocketAnyType(self,self.inputs['Step Y'])[0]
 
             listVertY = []
@@ -77,7 +77,7 @@ class PlaneNode(Node, SverchCustomTreeNode):
             listVertY = [StepY*i for i in listVertY]
 
         # outputs
-        if 'Vertices' in self.outputs and self.outputs['Vertices'].is_linked:
+        if 'Vertices' in self.outputs and self.outputs['Vertices'].links:
 
             X = listVertX
             Y = listVertY
@@ -92,7 +92,7 @@ class PlaneNode(Node, SverchCustomTreeNode):
             points = list(zip(X,Y,Z))
             SvSetSocketAnyType(self, 'Vertices',[points])
 
-        if 'Edges' in self.outputs and self.outputs['Edges'].is_linked:
+        if 'Edges' in self.outputs and self.outputs['Edges'].links:
             listEdg = []
             for i in range(IntegerY):
                 for j in range(IntegerX-1):
@@ -104,7 +104,7 @@ class PlaneNode(Node, SverchCustomTreeNode):
             edg = list(listEdg)
             SvSetSocketAnyType(self, 'Edges',[edg])
             
-        if 'Polygons' in self.outputs and self.outputs['Polygons'].is_linked:       
+        if 'Polygons' in self.outputs and self.outputs['Polygons'].links:       
             listPlg = []
             for i in range(IntegerX-1):
                 for j in range(IntegerY-1):

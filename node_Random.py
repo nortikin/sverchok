@@ -24,7 +24,7 @@ class RandomNode(Node, SverchCustomTreeNode):
 
     def update(self):
         # inputs
-        if 'Count' in self.inputs and self.inputs['Count'].is_linked and \
+        if 'Count' in self.inputs and self.inputs['Count'].links and \
             type(self.inputs['Count'].links[0].from_socket) == bpy.types.StringsSocket:
       
             tmp = SvGetSocketAnyType(self,self.inputs['Count'])
@@ -32,7 +32,7 @@ class RandomNode(Node, SverchCustomTreeNode):
         else:
             Coun = self.count_inner
             
-        if 'Seed' in self.inputs and self.inputs['Seed'].is_linked and \
+        if 'Seed' in self.inputs and self.inputs['Seed'].links and \
             type(self.inputs['Seed'].links[0].from_socket) == bpy.types.StringsSocket:
             
             tmp = SvGetSocketAnyType(self,self.inputs['Seed'])
@@ -44,7 +44,7 @@ class RandomNode(Node, SverchCustomTreeNode):
         # outputs
         random.seed(Seed)
         
-        if 'Random' in self.outputs and self.outputs['Random'].is_linked:
+        if 'Random' in self.outputs and self.outputs['Random'].links:
             Random = [round(random.random(),16) for c in range(Coun)]
             SvSetSocketAnyType(self, 'Random',[Random])
 

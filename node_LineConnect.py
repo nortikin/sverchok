@@ -106,11 +106,11 @@ class LineConnectNode(Node, SverchCustomTreeNode):
         # inputs
         multi_socket(self , min=1)
 
-        if 'vertices' in self.outputs and self.outputs['vertices'].is_linked or \
-                'data' in self.outputs and self.outputs['data'].is_linked:
+        if 'vertices' in self.outputs and self.outputs['vertices'].links or \
+                'data' in self.outputs and self.outputs['data'].links:
             slots = []
             for socket in self.inputs:
-                if socket.is_linked and type(socket.links[0].from_socket) == VerticesSocket:
+                if socket.links and type(socket.links[0].from_socket) == VerticesSocket:
                     slots.append(SvGetSocketAnyType(self,socket))
             if len(slots) == 0:
                 return
@@ -120,9 +120,9 @@ class LineConnectNode(Node, SverchCustomTreeNode):
                 lev = self.JoinLevel
             result = self.connect(slots, self.dir_check, self.link_check, self.cicl_check, lev, self.polygons)
             #print(levelsOflist(slots), '===>', levelsOflist(result))
-            if self.outputs['vertices'].is_linked:
+            if self.outputs['vertices'].links:
                  SvSetSocketAnyType(self,'vertices',result[0])
-            if self.outputs['data'].is_linked:
+            if self.outputs['data'].links:
                 SvSetSocketAnyType(self,'data',result[1])
 
 def register():

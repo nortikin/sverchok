@@ -28,13 +28,13 @@ class SphereNode(Node, SverchCustomTreeNode):
 
     def update(self):
         # inputs
-        if 'Radius' in self.inputs and self.inputs['Radius'].is_linked:
+        if 'Radius' in self.inputs and self.inputs['Radius'].links:
 
             Radius = float(SvGetSocketAnyType(self,self.inputs['Radius'])[0][0])
         else:
             Radius = self.rad_
 
-        if 'U' in self.inputs and self.inputs['U'].is_linked:
+        if 'U' in self.inputs and self.inputs['U'].links:
 
             U = int(SvGetSocketAnyType(self,self.inputs['U'])[0][0])
 
@@ -43,7 +43,7 @@ class SphereNode(Node, SverchCustomTreeNode):
         else:
             U = self.U_
 
-        if 'V' in self.inputs and self.inputs['V'].is_linked:
+        if 'V' in self.inputs and self.inputs['V'].links:
             V = int(SvGetSocketAnyType(self,self.inputs['V'])[0][0])
             if V < 3:
                 V = 3
@@ -54,7 +54,7 @@ class SphereNode(Node, SverchCustomTreeNode):
         nr_pts = U*V-(U-1)*2
         
         # outputs
-        if 'Vertices' in self.outputs and self.outputs['Vertices'].is_linked:
+        if 'Vertices' in self.outputs and self.outputs['Vertices'].links:
 
             tetha = 360/U
             phi = 180/(V-1)
@@ -82,7 +82,7 @@ class SphereNode(Node, SverchCustomTreeNode):
             SvSetSocketAnyType(self,'Vertices',[points[(U-1):-(U-1)]])
 
 
-        if 'Edges' in self.outputs and self.outputs['Edges'].is_linked:
+        if 'Edges' in self.outputs and self.outputs['Edges'].links:
 
             listEdg = []
             for i in range(V-2):
@@ -99,13 +99,13 @@ class SphereNode(Node, SverchCustomTreeNode):
             edg = [listEdg]
             SvSetSocketAnyType(self, 'Edges',[edg])
 
-        if 'Polygons' in self.outputs and self.outputs['Polygons'].is_linked: 
+        if 'Polygons' in self.outputs and self.outputs['Polygons'].links: 
 
-            listPlg = []
+            listPln = []
             for i in range(V-3):
-                listPlg.append((U*i+2*U, 1+U*i+U, 1+U*i,  U*i+U))
+                listPln.append((U*i+2*U, 1+U*i+U, 1+U*i,  U*i+U))
                 for j in range(U-1):
-                    listPlg.append((1+U*i+j+U, 2+U*i+j+U, 2+U*i+j, 1+U*i+j))
+                    listPln.append((1+U*i+j+U, 2+U*i+j+U, 2+U*i+j, 1+U*i+j))
 
             for i in range(U-1):
                 listPln.append((1+i, 2+i, 0))

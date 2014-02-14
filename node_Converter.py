@@ -24,25 +24,14 @@ class ConverterNode(Node, SverchCustomTreeNode):
             'data' in self.outputs and self.outputs['data'].links or \
             'matrix' in self.outputs and  self.outputs['matrix'].links:
             
-            if type(self.inputs['data'].links[0].from_socket) == VerticesSocket:
-                out = self.inputs['data'].links[0].from_socket.VerticesProperty
-            if type(self.inputs['data'].links[0].from_socket) == StringsSocket:
-                out = self.inputs['data'].links[0].from_socket.StringsProperty
-            if type(self.inputs['data'].links[0].from_socket) == MatrixSocket:
-                out = self.inputs['data'].links[0].from_socket.MatrixProperty
+            out = SvGetSocketAnyType(self,self.inputs['data'])
 
-            if len(self.outputs['vertices'].links)>0:
-                if not self.outputs['vertices'].node.socket_value_update:
-                    self.outputs['vertices'].node.update()
-                self.outputs['vertices'].links[0].from_socket.VerticesProperty = out
-            if len(self.outputs['data'].links)>0:
-                if not self.outputs['data'].node.socket_value_update:
-                    self.outputs['data'].node.update()
-                self.outputs['data'].links[0].from_socket.StringsProperty = out
-            if len(self.outputs['matrix'].links)>0:
-                if not self.outputs['matrix'].node.socket_value_update:
-                    self.outputs['matrix'].node.update()
-                self.outputs['matrix'].links[0].from_socket.MatrixProperty = out
+            if self.outputs['vertices'].links:
+                SvSetSocketAnyType(self, 'vertices', out)
+            if self.outputs['data'].links:
+                SvSetSocketAnyType(self, 'data', out)
+            if self.outputs['matrix'].links:
+                SvSetSocketAnyType(self, 'matrix', out)
 
 def register():
     bpy.utils.register_class(ConverterNode)

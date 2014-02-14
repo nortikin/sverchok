@@ -16,26 +16,26 @@ class GenVectorsNode(Node, SverchCustomTreeNode):
         
     def update(self):
         # inputs
-        if self.inputs['X'].is_linked and \
+        if self.inputs['X'].links and \
             type(self.inputs['X'].links[0].from_socket) == StringsSocket:
             X_ = SvGetSocketAnyType(self,self.inputs['X'])
         else:
             X_ = [[0.0]]
         
-        if self.inputs['Y'].is_linked and \
+        if self.inputs['Y'].links and \
             type(self.inputs['Y'].links[0].from_socket) == StringsSocket:
             Y_ = SvGetSocketAnyType(self,self.inputs['Y'])
         else:
             Y_ = [[0.0]]
             
-        if self.inputs['Z'].is_linked and \
+        if self.inputs['Z'].links and \
             type(self.inputs['Z'].links[0].from_socket) == StringsSocket:
             Z_ = SvGetSocketAnyType(self,self.inputs['Z'])
         else:
             Z_ = [[0.0]]
         
         # outputs
-        if 'Vectors' in self.outputs and self.outputs['Vectors'].is_linked:
+        if 'Vectors' in self.outputs and self.outputs['Vectors'].links:
            
             max_obj = max(len(X_), len(Y_), len(Z_))
             self.fullList(X_,max_obj)

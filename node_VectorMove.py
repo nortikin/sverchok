@@ -18,14 +18,14 @@ class VectorMoveNode(Node, SverchCustomTreeNode):
 
     def update(self):
         # inputs
-        if 'vertices' in self.inputs and self.inputs['vertices'].is_linked and \
+        if 'vertices' in self.inputs and self.inputs['vertices'].links and \
             type(self.inputs['vertices'].links[0].from_socket) == VerticesSocket:
             vers_ = SvGetSocketAnyType(self,self.inputs['vertices'])
             vers = Vector_generate(vers_)
         else:
             vers = []
         
-        if 'vectors' in self.inputs and self.inputs['vectors'].is_linked and \
+        if 'vectors' in self.inputs and self.inputs['vectors'].links and \
             type(self.inputs['vectors'].links[0].from_socket) == VerticesSocket:
    
             vecs_ = SvGetSocketAnyType(self,self.inputs['vectors'])
@@ -33,7 +33,7 @@ class VectorMoveNode(Node, SverchCustomTreeNode):
         else:
             vecs = []
             
-        if 'multiplier' in self.inputs and self.inputs['multiplier'].is_linked and \
+        if 'multiplier' in self.inputs and self.inputs['multiplier'].links and \
             type(self.inputs['multiplier'].links[0].from_socket) == StringsSocket:
 
             mult = SvGetSocketAnyType(self,self.inputs['multiplier'])
@@ -41,7 +41,7 @@ class VectorMoveNode(Node, SverchCustomTreeNode):
             mult = [[1.0]]
         
         # outputs
-        if 'vertices' in self.outputs and self.outputs['vertices'].is_linked:
+        if 'vertices' in self.outputs and self.outputs['vertices'].links:
            mov = self.moved(vers, vecs, mult)
            SvSetSocketAnyType(self,'vertices',mov)
     
