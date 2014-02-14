@@ -387,15 +387,20 @@ def Matrix_rotation(prop, list=False):
             Vectors.append(q.to_axis_angle())         
     return [Vectors]    
 
-def Vector_generate(prop):
-    vec_out = []
-    for i, object in enumerate(prop):  # lists by objects
-        veclist = []
-        for v in object: # verts
-            veclist.append(Vector(v[:]))
-        vec_out.append(veclist)
-    return vec_out
+#def Vector_generate(prop):
+#    vec_out = []
+#    for i, object in enumerate(prop):  # lists by objects
+#        veclist = []
+#        for v in object: # verts
+#            veclist.append(Vector(v[:]))
+#        vec_out.append(veclist)
+#    return vec_out
 
+#  about 30% quicker
+     
+def Vector_generate(prop):
+    return [[Vector(v) for v in obj] for obj in prop]
+           
 def Vector_degenerate(prop):
     vec_out = []
     for i, object in enumerate(prop):  # lists by objects
@@ -961,9 +966,10 @@ def make_tree_from_nodes(node_names,tree_name):
 
 # to make update tree based on node types and node names bases
 # no used yet
+# should add a check do find animated or driven nodes.
+
 def make_animation_tree(node_types,node_list,tree_name):
     global list_nodes4update
-    # should add a check do find animated or driven nodes.
     ng = bpy.data.node_groups[tree_name]
     node_set = set(node_list)
     for n_t in node_types:
@@ -983,10 +989,9 @@ def make_animation_tree(node_types,node_list,tree_name):
         list_nodes4update["SverchokAnimationTree"+tree_name]=a_tree
     
     
-import traceback      
 
-# only update from start_node with selected tree or update everything if nothing is set.
-# 
+# master update function, has several different modes 
+
 def speedUpdate(start_node = None, tree_name = None, animation_mode = False):
     global list_nodes4update
     global socket_data_cache
@@ -1007,7 +1012,8 @@ def speedUpdate(start_node = None, tree_name = None, animation_mode = False):
                     if 'show_updated_nodes' in DEBUG_SETTINGS:
                         nods[nod_name].use_custom_color = True
                         nods[nod_name].color = (0.1,.8,0)
-
+                        
+    # try to update optimized animation trees
     if animation_mode:
         if not "SverchokAnimationTree" in list_nodes4update:
             print("No animation data")
@@ -1016,7 +1022,7 @@ def speedUpdate(start_node = None, tree_name = None, animation_mode = False):
             nods = bpy.data.node_groups[ng].nodes
             do_update(list_nodes4update["SverchokAnimationTree"+ng],nods)
         return
-    
+    # start from the mentioned node the, called from updateNode
     if start_node != None: 
         if tree_name in list_nodes4update:
             update_list = make_tree_from_nodes([start_node],tree_name)
@@ -1026,11 +1032,12 @@ def speedUpdate(start_node = None, tree_name = None, animation_mode = False):
         else:
             socket_data_cache.clear()
             makeTreeUpdate2() 
+    # draw the named tree, called from SverchokCustomTreeNode
     if tree_name != None:        
         if not tree_name in list_nodes4update:
             makeUpdateTree2(tree_name)
         if not tree_name in bpy.data.node_groups:
-            return #setup is not complete
+            return #start up is not complete
         nods = bpy.data.node_groups[tree_name].nodes
         do_update(list_nodes4update[tree_name],bpy.data.node_groups[tree_name].nodes)
         return            
