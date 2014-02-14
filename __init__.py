@@ -125,6 +125,7 @@ if "bpy" in locals():
     imp.reload(node_Range)
     imp.reload(node_Converter)
     imp.reload(node_ListFlip)
+    imp.reload(node_FrameNode)
     imp.reload(node_Test1)
     imp.reload(node_Text)
 else:
@@ -194,6 +195,7 @@ else:
     import node_Range
     import node_Converter
     import node_ListFlip
+    import node_FrameNode
     import node_Test1
     import node_Text
 
@@ -264,6 +266,7 @@ def register():
     node_Range.register()
     node_Converter.register()
     node_ListFlip.register()
+    node_FrameNode.register()
     node_Test1.register()
     node_Text.register()
         
@@ -277,6 +280,7 @@ def unregister():
     
     node_Text.unregister()
     node_Test1.unregister()
+    node_FrameNode.unregister()
     node_ListFlip.unregister()
     node_Converter.unregister()
     node_Range.unregister()

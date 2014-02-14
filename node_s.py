@@ -120,6 +120,7 @@ def make_categories():
             NodeItem("SvTextOutNode",  label="Text out"),
             NodeItem("WifiInNode", label="Wifi in"),
             NodeItem("WifiOutNode", label="Wifi out"),
+            NodeItem("SvFrameInfoNode", label="Frame info"),
             NodeItem("ToolsNode", label="Tools"),
             NodeItem("Test1Node", label="Test1"),
             NodeItem("Test2Node", label="Test2"),
