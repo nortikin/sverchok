@@ -96,8 +96,7 @@ class SphereNode(Node, SverchCustomTreeNode):
                 listEdg.append((nr_pts-1, i+nr_pts-U-1))
                 
             listEdg.reverse()
-            edg = [listEdg]
-            SvSetSocketAnyType(self, 'Edges',[edg])
+            SvSetSocketAnyType(self, 'Edges',[listEdg])
 
         if 'Polygons' in self.outputs and self.outputs['Polygons'].links: 
 
