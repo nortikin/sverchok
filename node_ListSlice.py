@@ -15,7 +15,7 @@ class ListSliceNode(Node, SverchCustomTreeNode):
     bl_label = 'List Slice'
     bl_icon = 'OUTLINER_OB_EMPTY'
     
-    level = bpy.props.IntProperty(name = 'level_to_count', default=2, min=1, update=updateNode)
+    level = bpy.props.IntProperty(name = 'level_to_count', default=2, min=0, update=updateNode)
     start = bpy.props.IntProperty(name = 'start', default=0, update=updateNode)
     stop = bpy.props.IntProperty(name = 'stop', default=1, update=updateNode)
 
@@ -57,10 +57,16 @@ class ListSliceNode(Node, SverchCustomTreeNode):
                     stop = [self.stop]
                     
                 if 'Slice' in self.outputs and self.outputs['Slice'].links:
-                    out = self.get(data,start,stop,self.level,self.slice)
+                    if level:
+                        out = self.get(data,start,stop,self.level,self.slice)
+                    else:
+                        out = self.slice(data,start[0],stop[0])    
                     SvSetSocketAnyType(self, 'Slice', out)
                 if 'Other' in self.outputs and self.outputs['Other'].links:
-                    out = self.get(data, start,stop,self.level,self.other)
+                    if level:
+                        out = self.get(data, start,stop,self.level,self.other)
+                    else:
+                        out = self.other(data,start[0],stop[0])
                     SvSetSocketAnyType(self, 'Other', out)
     
     def slice(self,data,start,stop):
