@@ -24,7 +24,6 @@ def bisect(cut_me_vertices, cut_me_edges, pp, pno, outer, inner,fill):
     bm_verts =[ bm.verts.new(v) for v in cut_me_vertices]
     if cut_me_edges:
         for edge in cut_me_edges:
-            print(edge)
             bm.edges.new((bm_verts[edge[0]],bm_verts[edge[1]]))
     else:
         for face in cut_me_polygons:
@@ -96,11 +95,8 @@ class SvBisectNode(Node, SverchCustomTreeNode):
             polys_out = []
             
             for cut_mat in cut_mats:
-               
                 pp = cut_mat.to_translation()
-               
-                pno = Vector((0.0, 0.0, 1.0)) * cut_mat.to_3x3().transposed()
-                print("pp",pp[:],"pno",pno[:])
+                pno = Vector((0.0, 0.0, 1.0)) * cut_mat.to_3x3().transposed()                
                 for obj in zip(verts_ob,edg_pols):
                     res = bisect(obj[0], obj[1], pp, pno, self.outer, self.inner,self.fill)
                     if not res:
