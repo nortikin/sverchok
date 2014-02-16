@@ -127,8 +127,8 @@ class CylinderNode(Node, SverchCustomTreeNode):
                 listPlg.append(capBot)
                 listPlg.append(capTop)
 
-            plg = [listPlg]
-            SvSetSocketAnyType(self, 'Polygons',[plg])
+            
+            SvSetSocketAnyType(self, 'Polygons',[listPlg])
 
     def update_socket(self, context):
         self.update()

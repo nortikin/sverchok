@@ -45,7 +45,14 @@ class SverchokToolsMenu(bpy.types.Panel):
     bl_label = "Sverchok Tools"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
-
+    
+    @classmethod
+    def poll(cls,context):
+        try:
+            return context.space_data.node_tree.bl_idname == 'SverchCustomTreeType'
+        except:
+            return False
+                
     def draw(self, context):
         layout = self.layout
         #layout.scale_y=1.1
@@ -57,7 +64,7 @@ class SverchokToolsMenu(bpy.types.Panel):
         box = layout.box()
         col = box.column(align=True)
         col.label(text="Sverchok v_0.2.7")
-        col.label(text='layout: '+bpy.context.space_data.node_tree.name)
+        col.label(text='layout: '+context.space_data.node_tree.name)
         row = col.row(align=True)
         row.operator('wm.url_open', text='Help!').url = 'http://wiki.blender.org/index.php/Extensions:2.6/Py/Scripts/Nodes/Sverchok'
         row.operator('wm.url_open', text='Home!').url = 'http://nikitron.cc.ua/blend_scripts.html'

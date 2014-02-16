@@ -88,7 +88,7 @@ class ListItem2Node(Node, SverchCustomTreeNode):
     bl_label = 'List item'
     bl_icon = 'OUTLINER_OB_EMPTY'
     
-    level = bpy.props.IntProperty(name = 'level_to_count', default=2, min=1, update=updateNode)
+    level = bpy.props.IntProperty(name = 'level_to_count', default=2, min=0, update=updateNode)
     item = bpy.props.IntProperty(name = 'item', default=0, update=updateNode)
     typ = bpy.props.StringProperty(name='typ', default='')
     newsock = bpy.props.BoolProperty(name='newsock', default=False)
@@ -121,10 +121,16 @@ class ListItem2Node(Node, SverchCustomTreeNode):
                     items = [[self.item]]
                     
                 if 'Item' in self.outputs and self.outputs['Item'].links:
-                    out = self.get(data, self.level, items,self.get_items)
+                    if self.level:
+                        out = self.get(data, self.level, items,self.get_items)
+                    else:
+                        out = self.get_items(data, items[0])
                     SvSetSocketAnyType(self, 'Item', out)
                 if 'Other' in self.outputs and self.outputs['Other'].links:
-                    out = self.get(data, self.level,items,self.get_other)
+                    if self.level:
+                        out = self.get(data, self.level,items,self.get_other)
+                    else:
+                        out = self.get_other(data, items[0])
                     SvSetSocketAnyType(self, 'Other', out)
             
     def get_items(self,data, items):
