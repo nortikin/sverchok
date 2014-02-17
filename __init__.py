@@ -110,6 +110,8 @@ if "bpy" in locals():
     imp.reload(node_AdaptivePolygons)
     imp.reload(node_CrossSection)
     imp.reload(node_Bisect)
+    imp.reload(node_Solidify)
+    imp.reload(node_Wireframe)
     imp.reload(node_Line)
     imp.reload(node_Hilbert)
     imp.reload(node_HilbertImage)
@@ -181,6 +183,8 @@ else:
     import node_AdaptivePolygons
     import node_CrossSection
     import node_Bisect
+    import node_Solidify
+    import node_Wireframe
     import node_Line
     import node_Hilbert
     import node_HilbertImage
@@ -253,6 +257,8 @@ def register():
     node_AdaptivePolygons.register()
     node_CrossSection.register()
     node_Bisect.register()
+    node_Solidify.register()
+    node_Wireframe.register()
     node_Line.register()
     node_Hilbert.register()
     node_HilbertImage.register()
@@ -300,6 +306,8 @@ def unregister():
     node_HilbertImage.unregister()
     node_Hilbert.unregister()
     node_Line.unregister()
+    node_Wireframe.unregister()
+    node_Solidify.unregister()
     node_Bisect.unregister()
     node_CrossSection.unregister()
     node_AdaptivePolygons.unregister()
