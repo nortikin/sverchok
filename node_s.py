@@ -195,6 +195,7 @@ def make_categories():
             NodeItem("AdaptivePolsNode", label="Adaptive Polygons"),
             NodeItem("CrossSectionNode", label="Cross Section"),
             NodeItem("SvBisectNode", label="Bisect"),
+            NodeItem("SvSolidifyNode", label="Solidify"),
             NodeItem("LineConnectNode", label="Lines Connection"),
             NodeItem("DelaunayTriangulation2DNode", label="Delaunay Tri 2D "),
             NodeItem("ListBoomNode", label="Polygon Boom"),
