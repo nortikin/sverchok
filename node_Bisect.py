@@ -1,4 +1,4 @@
-import bpy, bmesh, mathutils
+import bmesh, mathutils
 from mathutils import Vector, Matrix
 from node_s import *
 from util import *
@@ -18,9 +18,7 @@ def bisect(cut_me_vertices, cut_me_edges, pp, pno, outer, inner,fill):
         cut_me_polygons = cut_me_edges.copy() 
         cut_me_edges=[]
 
-
     bm=bmesh.new() 
-
     bm_verts =[ bm.verts.new(v) for v in cut_me_vertices]
     if cut_me_edges:
         for edge in cut_me_edges:
@@ -29,15 +27,14 @@ def bisect(cut_me_vertices, cut_me_edges, pp, pno, outer, inner,fill):
         for face in cut_me_polygons:
             bm.faces.new([bm_verts[i] for i in face])
              
-    if cut_me_edges:
-        bmesh.ops.edgeloop_fill(bm, edges=bm.edges[:])
-
     geom_in = bm.verts[:] +bm.edges[:]+bm.faces[:]
     res=bmesh.ops.bisect_plane(bm,geom=geom_in, dist=0.00001,
                                 plane_co = pp, plane_no = pno, use_snap_center = False, 
                                 clear_outer= outer, clear_inner = inner)
+    # this needs work function with solid gemometry
     if fill:
-        bmesh.ops.contextual_create(bm,geom=res['geom_cut'])
+        fres = bmesh.ops.edgenet_prepare(bm, edges=[e for e in res['geom_cut'] if isinstance(e,bmesh.types.BMEdge)])
+        bmesh.ops.edgeloop_fill(bm, edges = fres['edges'])
     edges = []
     faces = []
     bm.verts.index_update()
@@ -79,15 +76,17 @@ class SvBisectNode(Node, SverchCustomTreeNode):
         layout.prop(self,'fill',text="Fill cuts")
 
     def update(self):
+        if not ('vertices' in self.outputs and self.outputs['vertices'].links or \
+            'edges' in self.outputs and self.outputs['edges'].links and\
+            'polygons' in self.outputs and self.outputs['polygons'].links):
+            return
+            
         if 'vertices' in self.inputs and self.inputs['vertices'].links and \
             'edg_pol' in self.inputs and self.inputs['edg_pol'].links and\
             'cut_matrix' in self.inputs and self.inputs['cut_matrix'].links:
                 
-       
             verts_ob = Vector_generate(SvGetSocketAnyType(self,self.inputs['vertices']))
             edg_pols = SvGetSocketAnyType(self,self.inputs['edg_pol'])
-            
-           
             cut_mats_ = SvGetSocketAnyType(self,self.inputs['cut_matrix'])
             cut_mats = Matrix_generate(cut_mats_)
             verts_out = []
@@ -106,7 +105,6 @@ class SvBisectNode(Node, SverchCustomTreeNode):
                     polys_out.append(res[2])
                  
             if 'vertices' in self.outputs and self.outputs['vertices'].links:
-                #output = Vector_degenerate(verts_out)
                 SvSetSocketAnyType(self, 'vertices',verts_out)
             
             if 'edges' in self.outputs and self.outputs['edges'].links:
