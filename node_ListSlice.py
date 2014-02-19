@@ -57,13 +57,13 @@ class ListSliceNode(Node, SverchCustomTreeNode):
                     stop = [self.stop]
                     
                 if 'Slice' in self.outputs and self.outputs['Slice'].links:
-                    if level:
+                    if self.level:
                         out = self.get(data,start,stop,self.level,self.slice)
                     else:
                         out = self.slice(data,start[0],stop[0])    
                     SvSetSocketAnyType(self, 'Slice', out)
                 if 'Other' in self.outputs and self.outputs['Other'].links:
-                    if level:
+                    if self.level:
                         out = self.get(data, start,stop,self.level,self.other)
                     else:
                         out = self.other(data,start[0],stop[0])
