@@ -12,7 +12,7 @@ class ListFuncNode(Node, SverchCustomTreeNode):
     mode_items = [
         ("MIN",         "Minimum",        "",1), 
         ("MAX",         "Maximum",        "",2), 
-        ("AVR",         "Average",        "",3),   
+        ("AVR",         "Average",        "",3),  
         ]
     func_=bpy.props.EnumProperty( items = mode_items, name="Function", 
             description="Function choice", default="AVR", update=updateNode)
@@ -29,12 +29,7 @@ class ListFuncNode(Node, SverchCustomTreeNode):
         self.outputs.new('StringsSocket',"Function","Function")
 
     def update(self):
-#        if 'Data' in self.inputs and len(self.inputs['Data'].links)>0:
-#             # адаптивный сокет
-#             inputsocketname = 'Data'
-#             outputsocketname = ['Function']
-#             changable_sockets(self, inputsocketname, outputsocketname)
-#             
+            
         if 'Function' in self.outputs and self.outputs['Function'].links:
             if 'Data' in self.inputs and self.inputs['Data'].links:
                 data = SvGetSocketAnyType(self, self.inputs['Data'])
@@ -46,11 +41,11 @@ class ListFuncNode(Node, SverchCustomTreeNode):
                     func=self.avr
                 
                 if not self.level:
-                    out = str([func(data)])
+                    out = [func(data)]
                 else:
-                    out = str(self.count(data, self.level, func))
+                    out = self.count(data, self.level, func)
                 
-                SvSetSocketAnyType(self, 'Function', out)
+                SvSetSocketAnyType(self, 'Function', [out])
                 
             
     def count(self, data, level, func):
