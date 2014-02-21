@@ -45,11 +45,10 @@ class MatrixOutNode(Node, SverchCustomTreeNode):
                     for pair in lists:
                         angles.append(round(math.degrees(pair[1]),7))
                 SvSetSocketAnyType(self, 'Rotation',rots)
-                self.outputs['Angle'].StringsProperty = str([angles ])
-
-                   
+                SvSetSocketAnyType(self, 'Angle',[angles])
         else:
             matrixes = [[]]
+            
     def update_socket(self, context):
         self.update()
 
