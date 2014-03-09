@@ -1215,7 +1215,7 @@ def get_socket_type(node, inputsocketname):
 #     base_name = 'Data '
 #     multi_socket_type = 'StringsSocket'
 
-def multi_socket(node , min=1):
+def multi_socket(node , min=1, start=0, breck=False):
     # probably incorrect state due o init or change of inputs
     # do nothing
     if not len(node.inputs):
@@ -1223,7 +1223,11 @@ def multi_socket(node , min=1):
     if min < 1:
         min = 1
     if node.inputs[-1].links:
-        name = node.base_name+str(len(node.inputs))
+        length = start + len(node.inputs)
+        if breck:
+            name = node.base_name + '[' + str(length) + ']'
+        else:
+            name = node.base_name + str(length)
         node.inputs.new(node.multi_socket_type, name, name)
     else:
         while len(node.inputs)>min and not node.inputs[-2].links:

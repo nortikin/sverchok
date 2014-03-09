@@ -23,12 +23,12 @@ class Formula2Node(Node, SverchCustomTreeNode):
         
     def init(self, context):
         self.inputs.new('StringsSocket', "X", "X")
-        self.inputs.new('StringsSocket', "n0", "n0")
+        self.inputs.new('StringsSocket', "n[0]", "n[0]")
         self.outputs.new('StringsSocket', "Result", "Result")
     
     def update(self):
         # inputs
-        multi_socket(self, min=3)
+        multi_socket(self, min=2, start=-1, breck=True)
         
         if 'X' in self.inputs and len(self.inputs['X'].links)>0:
             # адаптивный сокет
@@ -39,13 +39,14 @@ class Formula2Node(Node, SverchCustomTreeNode):
         else:
             vecs = [[0.0]]
             
-        if 'n0' in self.inputs and len(self.inputs['n0'].links)>0:
+        if 'n[0]' in self.inputs and len(self.inputs['n[0]'].links)>0:
             list_mult = []
             i = 0
             for socket in self.inputs:
                 if socket.links and i!=0:
-                    list_mult.append(SvGetSocketAnyType(self,socket))
-                else: i = 1
+                    list_mult.append(SvGetSocketAnyType(self, socket))
+                else: 
+                    i = 1
             print(list_mult)
         # outputs
         if 'Result' in self.outputs and len(self.outputs['Result'].links)>0:
