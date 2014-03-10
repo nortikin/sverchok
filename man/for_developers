@@ -64,8 +64,8 @@
      multi_socket_type = 'StringsSocket'
      setup the fixed number of socket you need, the last of them is the first multi socket. minimum of one.
      then in update(self):
-     			multi_socket(self,min=1) 
-     for more details see files mentioned above		
+     			multi_socket(self, min=1, start=0, breck=False)  - [where min - minimum count of input sockets; start - starting of numeration, could be -1, -2 to start as in formula2 node; breck - to make breckets, as used in formula2 node]
+     for more details see files mentioned above
       
     	
 	

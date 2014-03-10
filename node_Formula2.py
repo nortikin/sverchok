@@ -39,17 +39,18 @@ class Formula2Node(Node, SverchCustomTreeNode):
         else:
             vecs = [[0.0]]
             
-        if 'n[0]' in self.inputs and len(self.inputs['n[0]'].links)>0:
-            list_mult = []
-            i = 0
-            for socket in self.inputs:
-                if socket.links and i!=0:
-                    list_mult.append(SvGetSocketAnyType(self, socket))
-                else: 
-                    i = 1
-            print(list_mult)
+        
         # outputs
         if 'Result' in self.outputs and len(self.outputs['Result'].links)>0:
+            list_mult = []
+            if 'n[0]' in self.inputs and len(self.inputs['n[0]'].links)>0:
+                i = 0
+                for socket in self.inputs:
+                    if socket.links and i!=0:
+                        list_mult.append(SvGetSocketAnyType(self, socket))
+                    else: 
+                        i = 1
+                #print(list_mult)
             code_formula = parser.expr(self.formula).compile()
             # finding nasty levels, make equal nastyness (canonical 0,1,2,3)
             levels = [levelsOflist(vecs)]
@@ -67,7 +68,7 @@ class Formula2Node(Node, SverchCustomTreeNode):
                 if diflevel:
                     list_temp = dataSpoil([list_mult[i-1]], diflevel-1)
                     list_mult[i-1] = dataCorrect(list_temp, nominal_dept=2)
-            print(list_mult)
+            #print(list_mult)
             r = self.inte(vecs, code_formula, list_mult, 3)
             result = dataCorrect(r, nominal_dept=min((levels[0]-1),2))
             
