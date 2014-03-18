@@ -60,9 +60,9 @@ class SvSolidifyNode(Node, SverchCustomTreeNode):
         layout.prop(self,'thickness',text="Thickness")
 
     def update(self):
-        if not ('vertices' in self.outputs and self.outputs['vertices'].links or \
-            'edges' in self.outputs and self.outputs['edges'].links or\
-            'polygons' in self.outputs and self.outputs['polygons'].links):
+        if not ('vertices' in self.outputs and not self.outputs['vertices'].links and not \
+            'edges' in self.outputs and not self.outputs['edges'].links and not \
+            'polygons' in self.outputs and not self.outputs['polygons'].links):
             return
             
         if 'vertices' in self.inputs and self.inputs['vertices'].links and \

@@ -33,7 +33,7 @@ class GenSeriesNode(Node, SverchCustomTreeNode):
     
         if 'Stop' in self.inputs and self.inputs['Stop'].links:
             tmp = SvGetSocketAnyType(self,self.inputs['Stop'])
-            Start = tmp[0][0]
+            Stop = tmp[0][0]
         else:
             Stop = self.stop_
         
