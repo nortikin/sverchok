@@ -866,7 +866,7 @@ def make_update_list(node_tree,node_set = None):
         if wifi_dep:
             deps[wifi_out_node]=wifi_dep
         else:
-            print("Broken Wifi dependency:",wifi_out_node,"var:",ng.nodes[wifi_out_node])
+            print("Broken Wifi dependency:",wifi_out_node,"-> var:",ng.nodes[wifi_out_node].var_name)
             return []   
     
     if tree_stack:

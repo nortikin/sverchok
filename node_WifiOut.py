@@ -37,8 +37,7 @@ class WifiOutNode(Node, SverchCustomTreeNode):
             lsvn = len(var_name)
             if len(self.outputs)>0 and \
                 self.var_name!=self.outputs[self.outputs.keys()[0]].name[:lsvn]:
-                    for c in self.outputs:
-                        self.outputs.remove(c)
+                    self.outputs.clear()
                     self.outputs.new('StringsSocket', str(var_name)+"[0]", str(var_name)+"[0]")
                         
             # без цветовой дифференциации штанов цивилизация обречена (c)
