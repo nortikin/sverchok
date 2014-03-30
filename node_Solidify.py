@@ -60,9 +60,7 @@ class SvSolidifyNode(Node, SverchCustomTreeNode):
         layout.prop(self,'thickness',text="Thickness")
 
     def update(self):
-        if not ('vertices' in self.outputs and not self.outputs['vertices'].links and not \
-            'edges' in self.outputs and not self.outputs['edges'].links and not \
-            'polygons' in self.outputs and not self.outputs['polygons'].links):
+        if not self.outputs['vertices'].links:
             return
             
         if 'vertices' in self.inputs and self.inputs['vertices'].links and \
@@ -71,7 +69,7 @@ class SvSolidifyNode(Node, SverchCustomTreeNode):
        
             verts = Vector_generate(SvGetSocketAnyType(self,self.inputs['vertices']))
             polys = SvGetSocketAnyType(self,self.inputs['polygons'])
-            
+            print (verts,polys)
 
             verts_out = []
             edges_out = []

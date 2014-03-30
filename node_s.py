@@ -200,6 +200,7 @@ def make_categories():
             NodeItem("LineConnectNode", label="Lines Connection"),
             NodeItem("DelaunayTriangulation2DNode", label="Delaunay Tri 2D "),
             NodeItem("ListBoomNode", label="Polygon Boom"),
+            NodeItem("Pols2EdgsNode", label="Polygons to Edges"),
             ]),
         ]
     return node_categories
