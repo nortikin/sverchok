@@ -69,7 +69,7 @@ class SvSolidifyNode(Node, SverchCustomTreeNode):
        
             verts = Vector_generate(SvGetSocketAnyType(self,self.inputs['vertices']))
             polys = SvGetSocketAnyType(self,self.inputs['polygons'])
-            print (verts,polys)
+            #print (verts,polys)
 
             verts_out = []
             edges_out = []
