@@ -16,7 +16,7 @@ def soldify(vertices, faces, t):
         return False
                 
     bm=bmesh.new() 
-    bm_verts =[ bm.verts.new(v) for v in vertices]
+    bm_verts =[bm.verts.new(v) for v in vertices]
     for face in faces:
         bm.faces.new([bm_verts[i] for i in face])
              
