@@ -132,9 +132,10 @@ class Formula2Node(Node, SverchCustomTreeNode):
     
     def enlarge(self, list, equal):
         ''' enlarge minor n[i] list to size of x list '''
-        if equal > 0:
-            list.append(list[-1])    
-            list = self.enlarge(list, equal-1)
+        while equal > 0:
+            list.append(list[-1])
+            equal -= 1    
+            #list = self.enlarge(list, equal-1)
             #print (list, equal)
         return list
             
