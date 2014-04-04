@@ -273,6 +273,19 @@ def fullList(l, count):
         l.extend([l[-1] for a in range(d)])
     return
 
+def sv_zip(*iterables):
+    # zip('ABCD', 'xy') --> Ax By
+    sentinel = object()
+    iterators = [iter(it) for it in iterables]
+    while iterators:
+        result = []
+        for it in iterators:
+            elem = next(it, sentinel)
+            if elem is sentinel:
+                return
+            result.append(elem)
+        yield result
+
 #####################################################
 ################# list levels magic #################
 #####################################################

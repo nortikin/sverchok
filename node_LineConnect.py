@@ -76,7 +76,7 @@ class LineConnectNode(Node, SverchCustomTreeNode):
                         objecto.append(indexes)
                     indexes__ = indexes_
                 vers_ = [newobject]
-                print (objecto, len(vers_[0]))
+                #print (objecto, len(vers_[0]))
                 edges = [objecto]
                     
         else:

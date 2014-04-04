@@ -78,7 +78,7 @@ class SphereNode(Node, SverchCustomTreeNode):
             fullList(Y,max_num)
             fullList(Z,max_num)
 
-            points = list(zip(X,Y,Z))
+            points = list(sv_zip(X,Y,Z))
             SvSetSocketAnyType(self,'Vertices',[points[(U-1):-(U-1)]])
 
 
@@ -87,13 +87,13 @@ class SphereNode(Node, SverchCustomTreeNode):
             listEdg = []
             for i in range(V-2):
                 for j in range(U-1):
-                    listEdg.append((j+1+U*i, j+2+U*i))
-                listEdg.append((U*(i+1), U*(i+1)-U+1))
+                    listEdg.append([j+1+U*i, j+2+U*i])
+                listEdg.append([U*(i+1), U*(i+1)-U+1])
             for i in range(U*(V-3)):
-                listEdg.append((i+1, i+1+U))
+                listEdg.append([i+1, i+1+U])
             for i in range(U):
-                listEdg.append((0, i+1))
-                listEdg.append((nr_pts-1, i+nr_pts-U-1))
+                listEdg.append([0, i+1])
+                listEdg.append([nr_pts-1, i+nr_pts-U-1])
                 
             listEdg.reverse()
             SvSetSocketAnyType(self, 'Edges',[listEdg])
@@ -102,15 +102,15 @@ class SphereNode(Node, SverchCustomTreeNode):
 
             listPln = []
             for i in range(V-3):
-                listPln.append((U*i+2*U, 1+U*i+U, 1+U*i,  U*i+U))
+                listPln.append([U*i+2*U, 1+U*i+U, 1+U*i,  U*i+U])
                 for j in range(U-1):
-                    listPln.append((1+U*i+j+U, 2+U*i+j+U, 2+U*i+j, 1+U*i+j))
+                    listPln.append([1+U*i+j+U, 2+U*i+j+U, 2+U*i+j, 1+U*i+j])
 
             for i in range(U-1):
-                listPln.append((1+i, 2+i, 0))
-                listPln.append((i+nr_pts-U, i+nr_pts-1-U, nr_pts-1))
-            listPln.append((U, 1, 0))
-            listPln.append((nr_pts-1-U, nr_pts-2, nr_pts-1))
+                listPln.append([1+i, 2+i, 0])
+                listPln.append([i+nr_pts-U, i+nr_pts-1-U, nr_pts-1])
+            listPln.append([U, 1, 0])
+            listPln.append([nr_pts-1-U, nr_pts-2, nr_pts-1])
             
             SvSetSocketAnyType(self,'Polygons',[listPln])
 

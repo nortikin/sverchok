@@ -93,13 +93,13 @@ class ObjectsNode(Node, SverchCustomTreeNode):
                 else:
                     obj_data = obj.data
                     for m in obj.matrix_world:
-                        mtrx.append(m[:])
+                        mtrx.append(list(m))
                     for v in obj_data.vertices:
-                        vers.append(v.co[:])
+                        vers.append(list(v.co))
                     for edg in obj_data.edges:
-                        edgs.append((edg.vertices[0],edg.vertices[1]))
+                        edgs.append([edg.vertices[0],edg.vertices[1]])
                     for p in obj_data.polygons:
-                        pols.append(p.vertices[:])
+                        pols.append(list(p.vertices))
                     #print (vers, edgs, pols, mtrx)
                 edgs_out.append(edgs)
                 vers_out.append(vers)

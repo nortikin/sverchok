@@ -91,7 +91,7 @@ class CylinderNode(Node, SverchCustomTreeNode):
             fullList(Y,max_num)
             fullList(Z,max_num)
 
-            points = list(zip(X,Y,Z))
+            points = list(sv_zip(X,Y,Z))
             SvSetSocketAnyType(self, 'Vertices',[points])
 
         if 'Edges' in self.outputs and self.outputs['Edges'].links:
@@ -99,12 +99,12 @@ class CylinderNode(Node, SverchCustomTreeNode):
             listEdg = []
             for i in range(Subd+2):
                 for j in range(Vertices-1):
-                    listEdg.append((j+Vertices*i, j+1+Vertices*i))
-                listEdg.append((Vertices-1+Vertices*i, 0+Vertices*i))
+                    listEdg.append([j+Vertices*i, j+1+Vertices*i])
+                listEdg.append([Vertices-1+Vertices*i, 0+Vertices*i])
 
             for i in range(Subd+1):
                 for j in range(Vertices):
-                    listEdg.append((j+Vertices*i, j+Vertices+Vertices*i))
+                    listEdg.append([j+Vertices*i, j+Vertices+Vertices*i])
 
             edg = list(listEdg)
             SvSetSocketAnyType(self, 'Edges',[edg])
@@ -114,8 +114,8 @@ class CylinderNode(Node, SverchCustomTreeNode):
             listPlg = []
             for i in range(Subd+1):
                 for j in range(Vertices-1):
-                    listPlg.append((j+Vertices*i, j+1+Vertices*i, j+1+Vertices*i+Vertices, j+Vertices*i+Vertices))
-                listPlg.append((Vertices-1+Vertices*i, 0+Vertices*i, 0+Vertices*i+Vertices, Vertices-1+Vertices*i+Vertices))
+                    listPlg.append([j+Vertices*i, j+1+Vertices*i, j+1+Vertices*i+Vertices, j+Vertices*i+Vertices])
+                listPlg.append([Vertices-1+Vertices*i, 0+Vertices*i, 0+Vertices*i+Vertices, Vertices-1+Vertices*i+Vertices])
 
             if self.cap_ == 1:
                 capBot = []
