@@ -87,9 +87,8 @@ class CircleNode(Node, SverchCustomTreeNode):
 
         if 'Edges' in self.outputs and self.outputs['Edges'].links:
 
-            listEdg = []
-            for i in range(Vertices-1):
-                listEdg.append((i, i+1))
+            listEdg = [(i, i+1) for i in range(Vertices-1)]
+                
             if Angle < 360 and self.mode_ == 1:
                 listEdg.append((0, Vertices))
                 listEdg.append((Vertices-1, Vertices))
