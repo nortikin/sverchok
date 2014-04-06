@@ -100,9 +100,8 @@ class CircleNode(Node, SverchCustomTreeNode):
 
         if 'Polygons' in self.outputs and self.outputs['Polygons'].links:
 
-            listPlg = []
-            for i in range(Vertices):
-                listPlg.append(i)
+            listPlg = list(range(Vertices))
+
             if Angle < 360 and self.mode_ == 1:
                 listPlg.insert(0, Vertices)
 
