@@ -62,10 +62,9 @@ class CircleNode(Node, SverchCustomTreeNode):
             listVertY.append(Radius*sin(radians(tetha*i)))
 
         if Angle < 360 and self.mode_ == 0:
-            listVertX.pop()
-            listVertY.pop()
-            listVertX.insert(Vertices, (Radius*cos(radians(Angle))))
-            listVertY.insert(Vertices, (Radius*sin(radians(Angle))))
+            sigma = radians(Angle)
+            listVertX[-1] = Radius*cos(sigma)
+            listVertY[-1] = Radius*sin(sigma)
         elif Angle < 360 and self.mode_ == 1:
             listVertX.append(0.0)
             listVertY.append(0.0)
@@ -87,9 +86,8 @@ class CircleNode(Node, SverchCustomTreeNode):
 
         if 'Edges' in self.outputs and self.outputs['Edges'].links:
 
-            listEdg = []
-            for i in range(Vertices-1):
-                listEdg.append((i, i+1))
+            listEdg = [(i, i+1) for i in range(Vertices-1)]
+                
             if Angle < 360 and self.mode_ == 1:
                 listEdg.append((0, Vertices))
                 listEdg.append((Vertices-1, Vertices))
@@ -100,9 +98,8 @@ class CircleNode(Node, SverchCustomTreeNode):
 
         if 'Polygons' in self.outputs and self.outputs['Polygons'].links:
 
-            listPlg = []
-            for i in range(Vertices):
-                listPlg.append(i)
+            listPlg = list(range(Vertices))
+
             if Angle < 360 and self.mode_ == 1:
                 listPlg.insert(0, Vertices)
 

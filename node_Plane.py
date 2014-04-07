@@ -12,6 +12,7 @@ class PlaneNode(Node, SverchCustomTreeNode):
     int_Y = bpy.props.IntProperty(name = 'int_Y', description='Nº Vertices Y', default=2, min=2, options={'ANIMATABLE'}, update=updateNode)
     step_X = bpy.props.FloatProperty(name = 'step_X', description='Step length X', default=1.0, options={'ANIMATABLE'}, update=updateNode)
     step_Y = bpy.props.FloatProperty(name = 'step_Y', description='Step length Y', default=1.0, options={'ANIMATABLE'}, update=updateNode)
+    Separate = bpy.props.BoolProperty(name = 'Separate', description='Separate UV coords', default=True, update=updateNode)
     
     def init(self, context):
         self.inputs.new('StringsSocket', "Nº Vertices X", "Nº Vertices X")
@@ -23,6 +24,7 @@ class PlaneNode(Node, SverchCustomTreeNode):
         self.outputs.new('StringsSocket', "Polygons", "Polygons")
     
     def draw_buttons(self, context, layout):
+        layout.prop(self, "Separate", text="Separate")
         layout.prop(self, "int_X", text="Nº Vert X")
         layout.prop(self, "int_Y", text="Nº Vert Y")
         layout.prop(self, "step_X", text="Step X")
@@ -90,7 +92,16 @@ class PlaneNode(Node, SverchCustomTreeNode):
             fullList(Z,max_num)
 
             points = list(zip(X,Y,Z))
-            SvSetSocketAnyType(self, 'Vertices',[points])
+            if self.Separate:
+                out=[]
+                for y in range(IntegerY):
+                    out_=[]
+                    for x in range(IntegerX):
+                        out_.append(points[IntegerX*y+x])
+                    out.append(out_)
+                SvSetSocketAnyType(self, 'Vertices',[out])
+            else:
+                SvSetSocketAnyType(self, 'Vertices',[points])
 
         if 'Edges' in self.outputs and self.outputs['Edges'].links:
             listEdg = []
