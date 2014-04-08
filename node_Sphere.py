@@ -56,7 +56,7 @@ class SphereNode(Node, SverchCustomTreeNode):
         # outputs
         if 'Vertices' in self.outputs and self.outputs['Vertices'].links:
 
-            tetha = 360/U
+            theta  = 360/U
             phi = 180/(V-1)
             listVertX = []
             listVertY = []
@@ -65,8 +65,8 @@ class SphereNode(Node, SverchCustomTreeNode):
             # this code generates more vertices than necessary. should be looked into
             for i in range(V):
                 for j in range(U):
-                    listVertX.append(round(Radius*cos(radians(tetha*j))*sin(radians(phi*i)),8))
-                    listVertY.append(round(Radius*sin(radians(tetha*j))*sin(radians(phi*i)),8))
+                    listVertX.append(round(Radius*cos(radians(theta*j))*sin(radians(phi*i)),8))
+                    listVertY.append(round(Radius*sin(radians(theta*j))*sin(radians(phi*i)),8))
                     listVertZ.append(round(Radius*cos(radians(phi*i)),8))    
                 X = listVertX
                 Y = listVertY

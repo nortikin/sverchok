@@ -65,7 +65,7 @@ class CylinderNode(Node, SverchCustomTreeNode):
         else:
             Subd = self.subd_
 
-        tetha = 360/Vertices
+        theta = 360/Vertices
         heightSubd = Height/(Subd+1)
         listVertX = []
         listVertY = []
@@ -74,8 +74,8 @@ class CylinderNode(Node, SverchCustomTreeNode):
         for i in range(Subd+2):
             radius = RadiusBot - ((RadiusBot-RadiusTop)/(Subd+1))*i
             for j in range(Vertices):
-                listVertX.append(radius*cos(radians(tetha*j)))
-                listVertY.append(radius*sin(radians(tetha*j)))
+                listVertX.append(radius*cos(radians(theta*j)))
+                listVertY.append(radius*sin(radians(theta*j)))
                 listVertZ.append(heightSubd*i)
 
         # outputs

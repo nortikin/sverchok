@@ -52,14 +52,14 @@ class CircleNode(Node, SverchCustomTreeNode):
             Angle = self.degr_
 
         if Angle < 360:
-            tetha = Angle/(Vertices-1)
+            theta = Angle/(Vertices-1)
         else:
-            tetha = Angle/Vertices
+            theta = Angle/Vertices
         listVertX = []
         listVertY = []
         for i in range(Vertices):
-            listVertX.append(Radius*cos(radians(tetha*i)))
-            listVertY.append(Radius*sin(radians(tetha*i)))
+            listVertX.append(Radius*cos(radians(theta*i)))
+            listVertY.append(Radius*sin(radians(theta*i)))
 
         if Angle < 360 and self.mode_ == 0:
             sigma = radians(Angle)
