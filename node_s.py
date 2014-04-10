@@ -124,6 +124,7 @@ def make_categories():
             NodeItem("ToolsNode", label="Tools"),
             NodeItem("Test1Node", label="Test1"),
             NodeItem("Test2Node", label="Test2"),
+            NodeItem("NoteNode", label="Note"),
             ]),
         SverchNodeCategory("SVERCHOK_L", "SVERCHOK list", items=[
             # lists nodes
