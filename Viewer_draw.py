@@ -104,7 +104,7 @@ def draw_callback_view(handle, sl1, sl2, sl3, vs, colo, tran, shade):
     colob = colo[1]
     coloc = colo[2]
     
-    if data_vector == 0 and data_polygons == 0 and data_matrix == 0 and data_edges == 0:
+    if (data_vector, data_polygons, data_matrix, data_edges) == (0, 0, 0, 0):
         callback_disable(handle)
     #print ('вход', sl1, sl2, sl3)
     #print ('преобраз', data_vector)
