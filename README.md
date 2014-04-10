@@ -7,7 +7,8 @@ License: GPL3
 Sverchok is a powerful parametric tool for architects, allowing geometry to be programmed visually with nodes. 
 Mesh and geometry programming consists of combining basic elements such as:  
 
-  - lists of Vectors representing coordinates (Sverchok vectors are zero based)
+  - lists of indexed Vectors representing coordinates (Sverchok vectors are zero based)
+  - lists of grouped indices to represent edges and polygons.
   - rotation angles 
   - matrices (user-friendly rotation-scale-location transformations)
 
