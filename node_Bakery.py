@@ -8,7 +8,11 @@ class BakeryNode(Node, SverchCustomTreeNode):
     bl_label = 'Bakery'
     bl_icon = 'OUTLINER_OB_EMPTY'
     
+    activate = bpy.props.BoolProperty(name='Show', description='Activate node?', default=True,update=updateNode)
+    
     def draw_buttons(self, context, layout):
+        row = layout.row(align=True)
+        row.prop(self, "activate", text="Show")
         pass
         
     def init(self, context):
@@ -17,12 +21,11 @@ class BakeryNode(Node, SverchCustomTreeNode):
         self.inputs.new('MatrixSocket', 'matrix', 'matrix')
         
     def update(self):
-        if self.inputs['vertices'].links and self.inputs['edg_pol'].links and self.inputs['matrix'].links:
-            
+        if self.inputs['vertices'].links and self.inputs['edg_pol'].links and self.activate:
             if 'vertices' in self.inputs and self.inputs['vertices'].links and \
                     type(self.inputs['vertices'].links[0].from_socket) == VerticesSocket:
                 propv = SvGetSocketAnyType(self, self.inputs['vertices'])
-                vertices = dataCorrect(propv)
+                vertices = dataCorrect(propv, nominal_dept=2)
             else:
                 vertices = []
                             
@@ -40,14 +43,19 @@ class BakeryNode(Node, SverchCustomTreeNode):
             else:
                 matrices = []
                 if vertices and edges:
-                    for i in range((len(vertices))):
+                    for i in vertices:
                         matrices.append(Matrix())
             
             if vertices and edges:
                 self.makeobjects(vertices, edges, matrices)
             else:
                 self.makeobjects([[[0,0,0],[1,0,0],[0.5,1,0]]], [[[1,2,0]]], matrixes)
-            
+        else:
+            for obj in bpy.context.scene.objects:
+                nam = 'Sv_' + self.name
+                if nam in obj.name:
+                    bpy.context.scene.objects[obj.name].select = True
+                    bpy.ops.object.delete(use_global=False)
     
     def makeobjects(self, vers, edg_pol, mats):
         # fht = предохранитель от перебора рёбер и полигонов.

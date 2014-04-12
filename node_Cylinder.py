@@ -9,12 +9,13 @@ class CylinderNode(Node, SverchCustomTreeNode):
     bl_label = 'Cylinder'
     bl_icon = 'OUTLINER_OB_EMPTY'
     
-    radTop_ = bpy.props.FloatProperty(name = 'radTop_', description='Radius Top', default=2.0, options={'ANIMATABLE'}, update=updateNode)
-    radBot_ = bpy.props.FloatProperty(name = 'radBot_', description='Radius Bottom', default=2.0, options={'ANIMATABLE'}, update=updateNode)
+    radTop_ = bpy.props.FloatProperty(name = 'radTop_', description='Radius Top', default=1.0, options={'ANIMATABLE'}, update=updateNode)
+    radBot_ = bpy.props.FloatProperty(name = 'radBot_', description='Radius Bottom', default=1.0, options={'ANIMATABLE'}, update=updateNode)
     vert_ = bpy.props.IntProperty(name = 'vert_', description='Vertices', default=32, min=3, options={'ANIMATABLE'}, update=updateNode)
-    height_ = bpy.props.FloatProperty(name = 'height_', description='Height', default=5.0, options={'ANIMATABLE'}, update=updateNode)
+    height_ = bpy.props.FloatProperty(name = 'height_', description='Height', default=2.0, options={'ANIMATABLE'}, update=updateNode)
     subd_ = bpy.props.IntProperty(name = 'subd_', description='Subdivisions', default=0, min=0,options={'ANIMATABLE'}, update=updateNode)
-    cap_ = bpy.props.BoolProperty(name = 'cap_', description='Caps', default=0, options={'ANIMATABLE'}, update=updateNode)
+    cap_ = bpy.props.BoolProperty(name = 'cap_', description='Caps', default=True, options={'ANIMATABLE'}, update=updateNode)
+    Separate = bpy.props.BoolProperty(name = 'Separate', description='Separate UV coords', default=True, update=updateNode)
 
     def init(self, context):
         self.inputs.new('StringsSocket', "RadTop", "RadTop")
@@ -27,12 +28,14 @@ class CylinderNode(Node, SverchCustomTreeNode):
         self.outputs.new('StringsSocket', "Polygons", "Polygons")
     
     def draw_buttons(self, context, layout):
+        row = layout.row(align=True)
+        row.prop(self, "Separate", text="Separate")
+        row.prop(self, "cap_", text="Caps")
         layout.prop(self, "radTop_", text="Radius Top")
         layout.prop(self, "radBot_", text="Radius Bottom")
         layout.prop(self, "vert_", text="Nº Vert")
         layout.prop(self, "height_", text="Height")
         layout.prop(self, "subd_", text="Subdivisions")
-        layout.prop(self, "cap_", text="Caps")
 
     def update(self):
         # inputs
@@ -92,7 +95,17 @@ class CylinderNode(Node, SverchCustomTreeNode):
             fullList(Z,max_num)
 
             points = list(sv_zip(X,Y,Z))
-            SvSetSocketAnyType(self, 'Vertices',[points])
+            if self.Separate:
+                out=[]
+                for y in range(Vertices):
+                    out_=[]
+                    for x in range(Subd+2):
+                        out_.append(points[Subd+2*y+x])
+                    out.append(out_)
+                SvSetSocketAnyType(self, 'Vertices',[out])
+            else:
+                SvSetSocketAnyType(self, 'Vertices',[points])
+                
 
         if 'Edges' in self.outputs and self.outputs['Edges'].links:
 

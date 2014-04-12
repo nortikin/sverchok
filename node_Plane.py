@@ -91,7 +91,7 @@ class PlaneNode(Node, SverchCustomTreeNode):
             fullList(Y,max_num)
             fullList(Z,max_num)
 
-            points = list(zip(X,Y,Z))
+            points = list(sv_zip(X,Y,Z))
             if self.Separate:
                 out=[]
                 for y in range(IntegerY):
