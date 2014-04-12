@@ -114,6 +114,7 @@ def make_categories():
         SverchNodeCategory("SVERCHOK_B", "SVERCHOK basic", items=[
             # basic nodes
             NodeItem("ObjectsNode", label="Objects in"),
+            NodeItem("BakeryNode", label="Bake all"),
             NodeItem("ViewerNode", label="Viewer draw"),
             NodeItem("ViewerNode_text", label="Viewer text"),
             NodeItem("SvTextInNode",  label="Text in"),

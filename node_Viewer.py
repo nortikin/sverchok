@@ -163,9 +163,9 @@ class ViewerNode(Node, SverchCustomTreeNode):
                 cache_viewer_baker[self.name+'ep'] = []
                     
             if 'matrix' in self.inputs and self.inputs['matrix'].links and \
-               type(self.inputs['matrix'].links[0].from_socket) == MatrixSocket:
-                    propm = SvGetSocketAnyType(self, self.inputs['matrix'])
-                    cache_viewer_baker[self.name+'m'] = dataCorrect(propm)
+                type(self.inputs['matrix'].links[0].from_socket) == MatrixSocket:
+                propm = SvGetSocketAnyType(self, self.inputs['matrix'])
+                cache_viewer_baker[self.name+'m'] = dataCorrect(propm)
             else:
                 cache_viewer_baker[self.name+'m'] = []
         
