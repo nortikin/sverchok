@@ -2,6 +2,10 @@ import bpy
 from node_s import *
 from util import *
 
+
+sverchok_bakery_cache = {}
+
+
 class BakeryNode(Node, SverchCustomTreeNode):
     ''' Bakery node to bake geometry every time '''
     bl_idname = 'BakeryNode'
@@ -48,14 +52,19 @@ class BakeryNode(Node, SverchCustomTreeNode):
             
             if vertices and edges:
                 self.makeobjects(vertices, edges, matrices)
-            else:
-                self.makeobjects([[[0,0,0],[1,0,0],[0.5,1,0]]], [[[1,2,0]]], matrixes)
+            self.use_custom_color=True
+            self.color = (1,0.3,0)
         else:
+            self.use_custom_color=True
+            self.color = (0.1,0.05,0)
+        
             for obj in bpy.context.scene.objects:
                 nam = 'Sv_' + self.name
                 if nam in obj.name:
                     bpy.context.scene.objects[obj.name].select = True
                     bpy.ops.object.delete(use_global=False)
+            global sverchok_bakery_cache
+            sverchok_bakery_cache[self.name] = []
     
     def makeobjects(self, vers, edg_pol, mats):
         # fht = предохранитель от перебора рёбер и полигонов.
@@ -78,15 +87,28 @@ class BakeryNode(Node, SverchCustomTreeNode):
             fhtagn.append(min(len(vertices[u]), fht[u]))
         #lenmesh = len(vertices) - 1
         
-        # delete previous objects
+        # name space for particular bakery node
+        # defined only by matrices count (without .001 etc)
+        global sverchok_bakery_cache
+        try:
+            cache = sverchok_bakery_cache[self.name]
+        except:
+            cache = []
+        names = ['Sv_' + self.name + str(i) for i, t in enumerate(mats)]
+        #print('bakery'+str(names)+str(cache))
+        
+        # delete previous objects удаляет предыдущие объекты, если есть, если надо.
         bpy.ops.object.select_all(action='DESELECT')
-        for obj in bpy.context.scene.objects:
+        for i, obj in enumerate(bpy.context.scene.objects):
             nam = 'Sv_' + self.name
             if nam in obj.name:
-                bpy.context.scene.objects[obj.name].select = True
-                bpy.ops.object.delete(use_global=False)
+                if obj.name not in names:
+                    bpy.context.scene.objects[obj.name].select = True
+                    bpy.ops.object.delete(use_global=False)
 
         for i, m in enumerate(matrixes):
+            # solution to reduce number of vertices respect to edges/pols
+            ########
             k = i
             lenver = len(vertices) - 1
             if i > lenver:
@@ -96,33 +118,52 @@ class BakeryNode(Node, SverchCustomTreeNode):
                 v = vertices[k]
             if (len(v)-1) < fhtagn[k]:
                 continue
-            # возможно такая сложность не нужна, но пусть лежит тут. Удалять лишние точки не обязательно.
             elif fhtagn[k] < (len(v)-1):
                 nonneed = (len(v)-1) - fhtagn[k]
                 for q in range(nonneed):
                     v.pop((fhtagn[k]+1))
-
+            #########
+            # end of solution to reduce vertices
+            
             e = edg_pol[k] if edgs else []
             p = edg_pol[k] if pols else []
             
-            objects[str(i)] = self.makemesh(i,v,e,p,m)
-            
-        for ite in objects.values():
+            # to change old, create new separately
+            if names[i] not in cache:
+                objects[str(i)] = self.makemesh(names[i],v,e,p,m)
+            elif bpy.context.scene.objects.find(names[i]) >= 0:
+                objects[str(i)] = self.makemesh_exist(names[i],v,e,p,m)
+            else:
+                objects[str(i)] = self.makemesh(names[i],v,e,p,m)
+        
+        for i, ite in enumerate(objects.values()):
             me = ite[1]
             ob = ite[0]
             calcedg = True
             if edgs: calcedg = False
             me.update(calc_edges=calcedg)
-            bpy.context.scene.objects.link(ob)
+            if ob.name not in cache:
+                bpy.context.scene.objects.link(ob)
+            
+        # save cache
+        sverchok_bakery_cache[self.name] = names
             
     def makemesh(self,i,v,e,p,m):
-        name = 'Sv_' + self.name + str(i)
+        name = i
         me = bpy.data.meshes.new(name)
         me.from_pydata(v, e, p)
         ob = bpy.data.objects.new(name, me)
         ob.matrix_world = m
         ob.show_name = False
         ob.hide_select = False
+        return [ob,me]
+    
+    def makemesh_exist(self,i,v,e,p,m):
+        name = i
+        me = bpy.data.meshes.new(name)
+        me.from_pydata(v, e, p)
+        ob = bpy.data.objects[name]
+        ob.matrix_world = m
         return [ob,me]
                 
 def register():

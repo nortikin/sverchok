@@ -58,3 +58,8 @@
     74 сокет материалов.
 
     75 узел группирования по маске. Вот есть предмет, шар. нам надо UV поменять. что для этого сделать - flip list, но флипать надо между уровнями групп вершин. а для этого их надо сгруппировать. То есть, если у нас U6,V12, то сгруппировать вершины по 6, затем флипнуть, так получим группы по 12, но всего групп 6,  было 12 групп по 6 вершин. То есть узел флип найдёт своего напарника "и они уйдут в закат"
+
+    76 1. Get Bounding Box Center Point (BBOX CENTER) => would be nice to have setup that spit out Bounding Box,
+       2. Get the average position based on all vector.
+       3. Have an Empty Position that user can control.
+
