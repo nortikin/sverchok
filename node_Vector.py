@@ -16,19 +16,19 @@ class GenVectorsNode(Node, SverchCustomTreeNode):
         
     def update(self):
         # inputs
-        if self.inputs['X'].links and \
+        if 'X' in self.inputs and self.inputs['X'].links and \
             type(self.inputs['X'].links[0].from_socket) == StringsSocket:
             X_ = SvGetSocketAnyType(self,self.inputs['X'])
         else:
             X_ = [[0.0]]
         
-        if self.inputs['Y'].links and \
+        if 'Y' in self.inputs and self.inputs['Y'].links and \
             type(self.inputs['Y'].links[0].from_socket) == StringsSocket:
             Y_ = SvGetSocketAnyType(self,self.inputs['Y'])
         else:
             Y_ = [[0.0]]
             
-        if self.inputs['Z'].links and \
+        if 'Z' in self.inputs and self.inputs['Z'].links and \
             type(self.inputs['Z'].links[0].from_socket) == StringsSocket:
             Z_ = SvGetSocketAnyType(self,self.inputs['Z'])
         else:
