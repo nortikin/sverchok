@@ -30,7 +30,6 @@ class SvMeshJoinNode(Node, SverchCustomTreeNode):
             offset = 0         
             for obj in zip(verts,poly_edge): 
                 verts_out.extend(obj[0])
-                len(obj[0])
                 if offset:
                     res=[list(map(lambda x:operator.add(offset,x),ep)) for ep in obj[1]]
                     poly_edge_out.extend(res)   
