@@ -450,7 +450,13 @@ def matrixdef(orig, loc, scale, rot, angle, vec_angle=[[]]):
             k = min(len(loc[0])-1,i)
             mat_tran = de.Translation(loc[0][k])
             ma *= mat_tran
-        
+       
+        if scale[0]:
+            k = min(len(scale[0])-1,i)
+            scale2=scale[0][k]
+            for j in range(3):
+                ma[j][j] = ma[j][j] * scale2[j]
+                       
         if vec_angle[0] and rot[0]:
             k = min(len(rot[0])-1,i)
             a = min(len(vec_angle[0])-1,i)
@@ -466,14 +472,7 @@ def matrixdef(orig, loc, scale, rot, angle, vec_angle=[[]]):
             a = min(len(angle[0])-1,i)
             mat_rot = de.Rotation(radians(angle[0][a]), 4, rot[0][k].normalized())
             ma = ma * mat_rot
-            
-        if scale[0]:
-            k = min(len(scale[0])-1,i)
-            scale2=scale[0][k]
-            for j in range(4):
-                kk=min(j,2)
-                ma[j][j] = ma[j][j] * scale2[kk]
-            
+
         modif.append(ma)
     return modif
 
