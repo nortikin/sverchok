@@ -137,6 +137,8 @@ if "bpy" in locals():
     imp.reload(node_Note)
     imp.reload(node_Bakery)
     imp.reload(node_VertsDelDoubles)
+    imp.reload(node_RemoveDoubles)
+    imp.reload(node_MeshJoin)
 else:
     import node_s
     import node_ScalarMath
@@ -216,6 +218,8 @@ else:
     import node_Note
     import node_Bakery
     import node_VertsDelDoubles
+    import node_RemoveDoubles
+    import node_MeshJoin
 
 def register():
     import bpy
@@ -295,6 +299,8 @@ def register():
     node_Note.register()
     node_Bakery.register()
     node_VertsDelDoubles.register()
+    node_RemoveDoubles.register()
+    node_MeshJoin.register()
         
     if 'SVERCHOK' not in nodeitems_utils._node_categories:
         nodeitems_utils.register_node_categories("SVERCHOK", node_s.make_categories())
@@ -304,6 +310,8 @@ def unregister():
     import bpy
     import nodeitems_utils
     
+    node_MeshJoin.unregister()
+    node_RemoveDoubles.unregister()
     node_VertsDelDoubles.unregister()
     node_Bakery.unregister()
     node_Note.unregister()

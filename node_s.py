@@ -204,6 +204,8 @@ def make_categories():
             NodeItem("Voronoi2DNode", label="Voronoi"),
             NodeItem("ListBoomNode", label="Polygon Boom"),
             NodeItem("Pols2EdgsNode", label="Polygons to Edges"),
+            NodeItem("SvMeshJoinNode", label="Mesh Join"),
+            NodeItem("SvRemoveDoublesNode", label="Mesh Remove Doubles"),
             ]),
         ]
     return node_categories
