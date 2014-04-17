@@ -3,15 +3,15 @@ from mathutils import Vector, Matrix
 from node_s import *
 from util import *
 
-# 
+# based on CrossSectionNode
 # but using python bmesh code for driving
 # by Linus Yng
 
-def soldify(vertices, faces, d):
+def soldify(vertices, faces, t):
 
     if not faces or not vertices:
         return False
-    
+   
     if len(faces[0])==2:
         return False
                 
@@ -20,7 +20,10 @@ def soldify(vertices, faces, d):
     for face in faces:
         bm.faces.new([bm_verts[i] for i in face])
              
-    res=bmesh.ops.remove_doubles(bm, verts=bm_verts, dist=d)
+    geom_in = bm.verts[:]+bm.edges[:]+bm.faces[:]
+    
+    bmesh.ops.recalc_face_normals(bm, faces=bm.faces[:])
+    res=bmesh.ops.solidify(bm, geom=geom_in, thickness=t)
 
     edges = []
     faces = []
