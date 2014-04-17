@@ -38,7 +38,7 @@ class IndexViewerNode(Node, SverchCustomTreeNode):
         inputs = self.inputs
 
         # end early
-        if not ('vertices' in inputs):
+        if not ('vertices' in inputs) and not ('matrix' in inputs):
             IV.callback_disable(self.name)
             return
 

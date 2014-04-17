@@ -117,6 +117,7 @@ def make_categories():
             NodeItem("BakeryNode", label="Bake all"),
             NodeItem("ViewerNode", label="Viewer draw"),
             NodeItem("ViewerNode_text", label="Viewer text"),
+            NodeItem("IndexViewerNode", label="Viewer INDX"),
             NodeItem("SvTextInNode",  label="Text in"),
             NodeItem("SvTextOutNode",  label="Text out"),
             NodeItem("WifiInNode", label="Wifi in"),
