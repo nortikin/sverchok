@@ -66,7 +66,9 @@ if "bpy" in locals():
     imp.reload(node_Objects)
     imp.reload(node_Viewer)
     imp.reload(node_Viewer_text)
+    imp.reload(node_IDXview)
     imp.reload(Viewer_draw)
+    imp.reload(Index_Viewer_draw)
     imp.reload(node_ListLevels)
     imp.reload(node_ListJoin2)
     imp.reload(node_Zip)
@@ -132,6 +134,9 @@ if "bpy" in locals():
     imp.reload(node_Test1)
     imp.reload(node_Text)
     imp.reload(node_Pols2Edgs)
+    imp.reload(node_Note)
+    imp.reload(node_Bakery)
+    imp.reload(node_VertsDelDoubles)
 else:
     import node_s
     import node_ScalarMath
@@ -140,7 +145,9 @@ else:
     import node_Objects
     import node_Viewer
     import node_Viewer_text
+    import node_IDXview
     import Viewer_draw
+    import Index_Viewer_draw
     import node_ListLevels
     import node_ListJoin2
     import node_Zip
@@ -206,6 +213,9 @@ else:
     import node_Test1
     import node_Text
     import node_Pols2Edgs
+    import node_Note
+    import node_Bakery
+    import node_VertsDelDoubles
 
 def register():
     import bpy
@@ -216,6 +226,7 @@ def register():
     node_Objects.register()
     node_Viewer.register()
     node_Viewer_text.register()
+    node_IDXview.register()
     node_ListLevels.register()
     node_ListJoin2.register()
     node_Zip.register()
@@ -281,6 +292,9 @@ def register():
     node_Test1.register()
     node_Text.register()
     node_Pols2Edgs.register()
+    node_Note.register()
+    node_Bakery.register()
+    node_VertsDelDoubles.register()
         
     if 'SVERCHOK' not in nodeitems_utils._node_categories:
         nodeitems_utils.register_node_categories("SVERCHOK", node_s.make_categories())
@@ -290,6 +304,9 @@ def unregister():
     import bpy
     import nodeitems_utils
     
+    node_VertsDelDoubles.unregister()
+    node_Bakery.unregister()
+    node_Note.unregister()
     node_Pols2Edgs.unregister()
     node_Text.unregister()
     node_Test1.unregister()
@@ -355,6 +372,7 @@ def unregister():
     node_Zip.unregister()
     node_ListJoin2.unregister()
     node_ListLevels.unregister()
+    node_IDXview.unregister()
     node_Viewer_text.unregister()
     node_Viewer.unregister()
     node_Objects.unregister()

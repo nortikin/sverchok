@@ -78,6 +78,7 @@ def draw_callback_view(handle, sl1, sl2, sl3, vs, colo, tran, shade):
         polyholy = GL_POLYGON_STIPPLE
     else:
         polyholy = GL_POLYGON
+
     if sl1:
         data_vector = Vector_generate(sl1)
         verlen = len(data_vector) - 1
@@ -94,17 +95,17 @@ def draw_callback_view(handle, sl1, sl2, sl3, vs, colo, tran, shade):
             data_edges = []
     else:
         data_edges, data_polygons = [], []
+
     if sl3:
         data_matrix = Matrix_generate(sl3)
     else:
-        data_matrix = []
-        for i in range(0, verlen+1):
-            data_matrix.append(Matrix())
+        data_matrix = [Matrix() for i in range(verlen+1)]
+
     coloa = colo[0]
     colob = colo[1]
     coloc = colo[2]
     
-    if data_vector == 0 and data_polygons == 0 and data_matrix == 0 and data_edges == 0:
+    if (data_vector, data_polygons, data_matrix, data_edges) == (0, 0, 0, 0):
         callback_disable(handle)
     #print ('вход', sl1, sl2, sl3)
     #print ('преобраз', data_vector)

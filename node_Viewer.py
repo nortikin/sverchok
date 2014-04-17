@@ -76,14 +76,10 @@ class SvObjBake(bpy.types.Operator):
                 for q in range(nonneed):
                     v.pop((fhtagn[k]+1))
                 #print (fhtagn[k], (len(v)-1))
-            if edgs:
-                e = edg_pol[k]
-            else:
-                e = []
-            if pols:
-                p = edg_pol[k]
-            else:
-                p = []
+
+            e = edg_pol[k] if edgs else []
+            p = edg_pol[k] if pols else []
+            
             objects[str(i)] = self.makemesh(i,v,e,p,m)
         for ite in objects.values():
             me = ite[1]
@@ -167,9 +163,9 @@ class ViewerNode(Node, SverchCustomTreeNode):
                 cache_viewer_baker[self.name+'ep'] = []
                     
             if 'matrix' in self.inputs and self.inputs['matrix'].links and \
-               type(self.inputs['matrix'].links[0].from_socket) == MatrixSocket:
-                    propm = SvGetSocketAnyType(self, self.inputs['matrix'])
-                    cache_viewer_baker[self.name+'m'] = dataCorrect(propm)
+                type(self.inputs['matrix'].links[0].from_socket) == MatrixSocket:
+                propm = SvGetSocketAnyType(self, self.inputs['matrix'])
+                cache_viewer_baker[self.name+'m'] = dataCorrect(propm)
             else:
                 cache_viewer_baker[self.name+'m'] = []
         

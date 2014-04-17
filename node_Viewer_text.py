@@ -13,7 +13,9 @@ class SverchokViewer(bpy.types.Operator):
     bl_idname = "node.sverchok_viewer_button"
     bl_label = "Sverchok viewer"
     bl_options = {'REGISTER', 'UNDO'}
-
+    
+    nodename = bpy.props.StringProperty(name='nodename',default='None')
+    
     def execute(self, context):
         global cache_viewer_slot1
         global cache_viewer_slot2
@@ -46,10 +48,15 @@ class SverchokViewer(bpy.types.Operator):
                 + '\n' \
                 + '                                     Sverchok team' \
         
-        if cache_viewer_slot1['veriable'] or cache_viewer_slot2['veriable'] or cache_viewer_slot3['veriable']:
-            for_file = 'vertices: \n' + cache_viewer_slot1['veriable'] \
-                        + cache_viewer_slot2['type'] + cache_viewer_slot2['veriable'] \
-                        + '\nmatrixes: \n' + cache_viewer_slot3['veriable'] + podpis
+        if cache_viewer_slot1['veriable'+self.nodename] or cache_viewer_slot2['veriable'+self.nodename] or cache_viewer_slot3['veriable'+self.nodename]:
+            for_file = 'node name: '+ self.nodename \
+                        + '\n\nvertices: \n' \
+                        + cache_viewer_slot1['veriable'+self.nodename] \
+                        + cache_viewer_slot2['type'+self.nodename] \
+                        + cache_viewer_slot2['veriable'+self.nodename] \
+                        + '\n\nmatrixes: \n' \
+                        + cache_viewer_slot3['veriable'+self.nodename] \
+                        + podpis
         else:
             for_file = 'vertices: \nNone' \
                         + '\ndata: \nNone' \
@@ -57,9 +64,9 @@ class SverchokViewer(bpy.types.Operator):
         bpy.data.texts['Sverchok_viewer'].from_string(for_file)
         bpy.context.area.type = 'NODE_EDITOR'
         #print (cache_viewer_slot1['veriable'], cache_viewer_slot2['veriable'], cache_viewer_slot3['veriable'])
-        cache_viewer_slot1['veriable'] = 'None \n'
-        cache_viewer_slot2['veriable'] = 'None \n'
-        cache_viewer_slot3['veriable'] = 'None \n'
+        #cache_viewer_slot1['veriable'] = 'None \n'
+        #cache_viewer_slot2['veriable'] = 'None \n'
+        #cache_viewer_slot3['veriable'] = 'None \n'
         return {'FINISHED'}
 
 class ViewerNode_text(Node, SverchCustomTreeNode):
@@ -76,7 +83,7 @@ class ViewerNode_text(Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         row = layout.row()
         row.scale_y = 4.0
-        row.operator('node.sverchok_viewer_button', text='V I E W')
+        row.operator('node.sverchok_viewer_button', text='V I E W').nodename=self.name
     
     def update(self):
         # vertices socket
@@ -84,10 +91,8 @@ class ViewerNode_text(Node, SverchCustomTreeNode):
         global cache_viewer_slot1
         global cache_viewer_slot2
         global cache_viewer_slot3
-        cache_viewer_slot1['veriable'] = 'None \n'
-        cache_viewer_slot2['veriable'] = 'None \n'
-        cache_viewer_slot2['type'] = '\nunknown data: \n'
-        cache_viewer_slot3['veriable'] = 'None \n'
+        
+        
         if 'vertices' in self.inputs and len(self.inputs['vertices'].links)>0:
             if not self.inputs['vertices'].node.socket_value_update:
                 self.inputs['vertices'].node.update()
@@ -103,8 +108,10 @@ class ViewerNode_text(Node, SverchCustomTreeNode):
                     a = self.readFORviewer_sockets_data_small(evaverti, deptl, len(evaverti))
                 else:
                     a = 'None \n'
-                cache_viewer_slot1['veriable'] = a
+                cache_viewer_slot1['veriable'+self.name] = a
                 #print ('viewer text input1')
+        else:
+            cache_viewer_slot1['veriable'+self.name] = 'None \n'
         # edges/faces socket
         if 'edg_pol' in self.inputs and len(self.inputs['edg_pol'].links)>0:
             if not self.inputs['edg_pol'].node.socket_value_update:
@@ -116,7 +123,7 @@ class ViewerNode_text(Node, SverchCustomTreeNode):
                 
                 evaline_str = eval(line_str)
                 if evaline_str:
-                    cache_viewer_slot2['type'] = str(self.edgDef(evaline_str))
+                    cache_viewer_slot2['type'+self.name] = str(self.edgDef(evaline_str))
                 deptl = levelsOflist(evaline_str)
                 #print(str(evaline_str))
                 #print (deptl, ' text viewer')
@@ -126,8 +133,11 @@ class ViewerNode_text(Node, SverchCustomTreeNode):
                     b = self.readFORviewer_sockets_data_small(evaline_str, deptl, len(evaline_str))
                 else:
                     b = 'None \n'
-                cache_viewer_slot2['veriable'] = str(b)
+                cache_viewer_slot2['veriable'+self.name] = str(b)
                 #print ('viewer text input2')
+        else:
+            cache_viewer_slot2['veriable'+self.name] = 'None \n'
+            cache_viewer_slot2['type'+self.name] = '\n\ndata \n'
         # matrix socket
         if 'matrix' in self.inputs and len(self.inputs['matrix'].links)>0:
             if not self.inputs['matrix'].node.socket_value_update:
@@ -144,8 +154,10 @@ class ViewerNode_text(Node, SverchCustomTreeNode):
                     c = self.readFORviewer_sockets_data_small(eva, deptl, len(eva))
                 else:
                     c = 'None \n'
-                cache_viewer_slot3['veriable'] = str(c)
+                cache_viewer_slot3['veriable'+self.name] = str(c)
                 #print ('viewer text input3')
+        else:
+            cache_viewer_slot3['veriable'+self.name] = 'None \n'
         
         if len(self.inputs['matrix'].links)>0 or len(self.inputs['vertices'].links)>0 or \
                 len(self.inputs['edg_pol'].links)>0:
@@ -159,12 +171,12 @@ class ViewerNode_text(Node, SverchCustomTreeNode):
         self.update()
     
     def edgDef(self, l):
-        t = '\ndata:'
+        t = '\n\ndata: \n'
         if l[0] and type(l[0]) in [int, float]:
             if len(l) > 2:
-                t = '\npolygons: \n'
+                t = '\n\npolygons: \n'
             else:
-                t = '\nedges: \n'
+                t = '\n\nedges: \n'
         elif l[0]:
             t = self.edgDef(l[0])
         else:
