@@ -59,7 +59,7 @@ class IndexViewerNode(Node, SverchCustomTreeNode):
                 im_links = inputs['matrix'].links
 
                 # end early, skips to drwa vertex indices without matrix
-                if im_links and (len(im_link) > 0) and \
+                if im_links and (len(im_links) > 0) and \
                         isinstance(im_links[0].from_socket, MatrixSocket):
 
                     propm = SvGetSocketAnyType(self, inputs['matrix'])

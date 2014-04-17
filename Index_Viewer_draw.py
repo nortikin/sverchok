@@ -179,14 +179,14 @@ def draw_callback_px(name, draw_verts, draw_matrix, draw_bg):
 
     if data_vector:
         if draw_matrix:
-            matrix = draw_matrix[0]
+            matrix = data_matrix[0]
 
         idx = 0
         for verts in data_vector:
 
             if draw_matrix:
                 for v in verts:
-                    vc = matrix * vert
+                    vc = matrix * v
                     draw_index(vert_idx_color, idx, vc)
                     idx += 1
             else:
