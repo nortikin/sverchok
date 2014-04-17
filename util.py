@@ -458,7 +458,6 @@ def matrixdef(orig, loc, scale, rot, angle, vec_angle=[[]]):
             for j in range(3):
                 id_m[j][j] = scale2[j]
             ma *= id_m
-            #    ma[j][j] = ma[j][j] * scale2[j]
 
         if vec_angle[0] and rot[0]:
             k = min(len(rot[0])-1,i)
