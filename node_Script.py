@@ -247,7 +247,8 @@ class SvScriptNode(Node, SverchCustomTreeNode):
 
         # for now inputs in script must be matched by socket inputs.
         if len(params) == len(input_names):
-            print(params)
+            #print(params)
+            pass
         else:
             return
 

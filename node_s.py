@@ -204,7 +204,7 @@ def make_categories():
             NodeItem("LineConnectNode", label="Lines Connection"),
             NodeItem("DelaunayTriangulation2DNode", label="Delaunay 2D "),
             NodeItem("Voronoi2DNode", label="Voronoi"),
-            NodeItem("ListBoomNode", label="Polygon Boom"),
+            NodeItem("PolygonBoomNode", label="Polygon Boom"),
             NodeItem("Pols2EdgsNode", label="Polygons to Edges"),
             NodeItem("SvMeshJoinNode", label="Mesh Join"),
             NodeItem("SvRemoveDoublesNode", label="Mesh Remove Doubles"),

@@ -3,10 +3,10 @@ from node_s import *
 from util import *
 
 
-class ListBoomNode(Node, SverchCustomTreeNode):
+class PolygonBoomNode(Node, SverchCustomTreeNode):
     ''' Destroy object to many object of polygons '''
-    bl_idname = 'ListBoomNode'
-    bl_label = 'ListBoom'
+    bl_idname = 'PolygonBoomNode'
+    bl_label = 'PolygonBoom'
     bl_icon = 'OUTLINER_OB_EMPTY'
     
     def init(self, context):
@@ -49,10 +49,10 @@ class ListBoomNode(Node, SverchCustomTreeNode):
                 SvSetSocketAnyType(self,'edg_pol',edpo_out)
 
 def register():
-    bpy.utils.register_class(ListBoomNode)
+    bpy.utils.register_class(PolygonBoomNode)
     
 def unregister():
-    bpy.utils.unregister_class(ListBoomNode)
+    bpy.utils.unregister_class(PolygonBoomNode)
 
 if __name__ == "__main__":
     register()
