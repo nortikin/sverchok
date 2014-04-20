@@ -32,9 +32,10 @@ READY_COLOR = (0, 0.8, 0.95)
 
 def new_output_socket(node, name, stype):
     socket_type = {
-        tuple: 'VerticesSocket',
-        str: 'StringsSocket',
-        list: 'MatrixSocket'}.get(stype, None)
+        'v': 'VerticesSocket',
+        's': 'StringsSocket',
+        'm': 'MatrixSocket'
+        }.get(stype, None)
 
     if socket_type:
         node.outputs.new(socket_type, name, name)
@@ -42,13 +43,13 @@ def new_output_socket(node, name, stype):
 
 def new_input_socket(node, stype, name, dval):
     socket_type = {
-        int: IntProperty(name=name, default=dval, update=updateNode),
-        float: FloatProperty(name=name, default=dval, update=updateNode)
-    }.get(stype, None)
+        'v': 'VerticesSocket',
+        's': 'StringsSocket',
+        'm': 'MatrixSocket'
+        }.get(stype, None)
 
     if socket_type:
-        # node.parametric_in[name] = socket_type
-        node.inputs.new('StringsSocket', name, name)
+        node.inputs.new(socket_type, name, name).default = dval
 
 
 def instrospect_py(self):
@@ -167,7 +168,7 @@ class SvScriptNode(Node, SverchCustomTreeNode):
         - Load may be pressed to import an updated function
         - tries to preserve existing sockets or add new ones if needed
         '''
-        for socket_type, data, name in self.out_sockets:
+        for socket_type, name, data in self.out_sockets:
             if not (name in self.outputs):
                 new_output_socket(self, name, socket_type)
                 SvSetSocketAnyType(self, name, data)  # can output w/out input
@@ -240,8 +241,7 @@ class SvScriptNode(Node, SverchCustomTreeNode):
             if not links:
                 continue
 
-            # somehow this is triggered early.
-            k = links[0].from_socket.StringsProperty
+            k = str(SvGetSocketAnyType(self, self.inputs[name]))
             kfree = k[2:-2]
             params.append(ast.literal_eval(kfree))
 
@@ -262,7 +262,7 @@ class SvScriptNode(Node, SverchCustomTreeNode):
         if node_function:
             in_sockets, out_sockets = node_function(*params)
 
-            for socket_type, data, name in out_sockets:
+            for socket_type, name, data in out_sockets:
                 SvSetSocketAnyType(self, name, data)
 
     def update_coffee(self):
