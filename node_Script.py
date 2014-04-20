@@ -98,6 +98,62 @@ def instrospect_py(node):
     # this will return a callable function if sv_main is found, else None
     return [f.get('sv_main', None), params]
 
+class SvDefaultScriptTemplate(bpy.types.Operator):
+    ''' Creates template text file for making own script '''
+    bl_idname = 'node.sverchok_script_template'
+    bl_label = 'Template'
+    bl_options = {'REGISTER'}
+    
+    def execute(self, context):
+        texts = bpy.data.texts.items()
+        exists = False
+        for t in texts:
+            if bpy.data.texts[t[0]].name == 'template':
+                exists = True
+                break
+        bpy.context.area.type = 'TEXT_EDITOR'
+        if not exists:
+            bpy.ops.text.new()
+            texts_new = bpy.data.texts.items()
+            for t in texts_new:
+                if t not in texts:
+                    bpy.data.texts[t[0]].name = 'template'
+        bpy.ops.text.select_all()
+        template = '''def sv_main(data=23,step=1):
+    
+    # in boilerplate - make your own sockets
+    in_sockets = [
+        ['s', 'Vertices',  data],
+        ['s', 'Step', step],
+    ]
+    
+    # import libreryes - your defined
+    from util import sv_zip
+    from math import sin
+    
+    # your's code here
+    out_x = [i for i in range(int(data))]
+    out_y = [0 for i in range(int(data))]
+    out_z = [sin(i*step) for i in range(int(data))]
+    out = [list(sv_zip(out_x,out_y,out_z))]
+    edg=[[i,i-1] for i, ed in enumerate(out_x) if i>0]
+     
+    # out boilerplate - set your own sockets packet
+    out_sockets = [
+        ['v', 'Out', out],
+        ['s', 'edg', edg],
+    ]
+
+    return in_sockets, out_sockets
+
+if __name__ == "__main__":
+    # here is yors script's name - must be the same as in blender's text datablock
+    template = sv_main({0},{1})'''
+        
+        bpy.data.texts['template'].from_string(template)
+        bpy.context.area.type = 'NODE_EDITOR'
+        return {'FINISHED'}
+                        
 
 class SvScriptOp(bpy.types.Operator):
     """ Load Script as Generator """
@@ -158,6 +214,8 @@ class SvScriptNode(Node, SverchCustomTreeNode):
         layout.prop(self, 'scriptmode', 'scriptmode', expand=True)
 
         row = layout.row(align=True)
+        if not self.script_str:
+            row.operator('node.sverchok_script_template', text='Template')
         op = row.operator('node.sverchok_script_input', text='Load')
         op.name_tree = self.id_data.name
         op.name_obj = self.name
@@ -276,11 +334,13 @@ class SvScriptNode(Node, SverchCustomTreeNode):
 def register():
     bpy.utils.register_class(SvScriptOp)
     bpy.utils.register_class(SvScriptNode)
+    bpy.utils.register_class(SvDefaultScriptTemplate)
 
 
 def unregister():
-    bpy.utils.unregister_class(SvScriptOp)
+    bpy.utils.unregister_class(SvDefaultScriptTemplate)
     bpy.utils.unregister_class(SvScriptNode)
+    bpy.utils.unregister_class(SvScriptOp)
 
 
 if __name__ == "__main__":
