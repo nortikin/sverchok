@@ -141,7 +141,7 @@ class SvDefaultScriptTemplate(bpy.types.Operator):
     # out boilerplate - set your own sockets packet
     out_sockets = [
         ['v', 'Out', out],
-        ['s', 'edg', edg],
+        ['s', 'edg', [edg]],
     ]
 
     return in_sockets, out_sockets
