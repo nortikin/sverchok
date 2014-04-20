@@ -52,9 +52,9 @@ def new_input_socket(node, stype, name, dval):
         node.inputs.new(socket_type, name, name).default = dval
 
 
-def instrospect_py(self):
-    script_str = self.script_str
-    script = self.script
+def instrospect_py(node):
+    script_str = node.script_str
+    script = node.script
 
     def find_variables(script_str):
         import re
@@ -142,7 +142,7 @@ class SvScriptNode(Node, SverchCustomTreeNode):
         default='Py',
         update=updateNode)
 
-    # name of loaded text, to support reloading
+    # stores the script as a string
     script_str = StringProperty(default="")
 
     #parametric_in = {}
