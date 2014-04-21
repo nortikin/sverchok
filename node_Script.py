@@ -23,6 +23,7 @@ from bpy.props import IntProperty, FloatProperty
 from node_s import *
 from util import *
 import ast
+import os
 
 FAIL_COLOR = (0.8, 0.1, 0.1)
 READY_COLOR = (0, 0.8, 0.95)
@@ -99,6 +100,34 @@ def instrospect_py(node):
     return [f.get('sv_main', None), params]
 
 
+class SvDefaultScriptTemplate(bpy.types.Operator):
+    ''' Creates template text file for making own script '''
+    bl_idname = 'node.sverchok_script_template'
+    bl_label = 'Template'
+    bl_options = {'REGISTER'}
+
+    def execute(self, context):
+        if 'template' in bpy.data.texts:
+            msg = 'template exists already'
+            self.report({"WARNING"}, msg)
+            return {'CANCELLED'}
+
+        new_template = bpy.data.texts.new('template')
+
+        # testing only.
+        sv_path = os.path.dirname(os.path.realpath(__file__))
+        script_dir = "node_script_templates"
+        template_name = "template.py"
+        path_to_template = os.path.join(sv_path, script_dir, template_name)
+
+        with open(path_to_template) as f:
+            template_str = f.read()
+            bpy.data.texts['template'].from_string(template_str)
+            return {'FINISHED'}
+
+        return {'CANCELLED'}
+
+
 class SvScriptOp(bpy.types.Operator):
     """ Load Script as Generator """
     bl_idname = "node.sverchok_script_input"
@@ -158,6 +187,8 @@ class SvScriptNode(Node, SverchCustomTreeNode):
         layout.prop(self, 'scriptmode', 'scriptmode', expand=True)
 
         row = layout.row(align=True)
+        if not self.script_str:
+            row.operator('node.sverchok_script_template', text='Template')
         op = row.operator('node.sverchok_script_input', text='Load')
         op.name_tree = self.id_data.name
         op.name_obj = self.name
@@ -247,7 +278,8 @@ class SvScriptNode(Node, SverchCustomTreeNode):
 
         # for now inputs in script must be matched by socket inputs.
         if len(params) == len(input_names):
-            print(params)
+            #print(params)
+            pass
         else:
             return
 
@@ -275,11 +307,13 @@ class SvScriptNode(Node, SverchCustomTreeNode):
 def register():
     bpy.utils.register_class(SvScriptOp)
     bpy.utils.register_class(SvScriptNode)
+    bpy.utils.register_class(SvDefaultScriptTemplate)
 
 
 def unregister():
-    bpy.utils.unregister_class(SvScriptOp)
+    bpy.utils.unregister_class(SvDefaultScriptTemplate)
     bpy.utils.unregister_class(SvScriptNode)
+    bpy.utils.unregister_class(SvScriptOp)
 
 
 if __name__ == "__main__":
