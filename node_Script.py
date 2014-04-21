@@ -23,6 +23,7 @@ from bpy.props import IntProperty, FloatProperty
 from node_s import *
 from util import *
 import ast
+import os
 
 FAIL_COLOR = (0.8, 0.1, 0.1)
 READY_COLOR = (0, 0.8, 0.95)
@@ -107,47 +108,24 @@ class SvDefaultScriptTemplate(bpy.types.Operator):
 
     def execute(self, context):
         if 'template' in bpy.data.texts:
-            print('template exists already')
+            msg = 'template exists already'
+            self.report({"WARNING"}, msg)
             return {'CANCELLED'}
 
         new_template = bpy.data.texts.new('template')
-        template_str = '''\
-def sv_main(data=23,step=1):
 
-    # in boilerplate - make your own sockets
-    in_sockets = [
-        ['s', 'Vertices',  data],
-        ['s', 'Step', step],
-    ]
+        # testing only.
+        sv_path = os.path.dirname(os.path.realpath(__file__))
+        script_dir = "node_script_templates"
+        template_name = "template.py"
+        path_to_template = os.path.join(sv_path, script_dir, template_name)
 
-    # import libreryes - your defined
-    from util import sv_zip
-    from math import sin
+        with open(path_to_template) as f:
+            template_str = f.read()
+            bpy.data.texts['template'].from_string(template_str)
+            return {'FINISHED'}
 
-    # your's code here
-    out_x = [i for i in range(int(data))]
-    out_y = [0 for i in range(int(data))]
-    out_z = [sin(i*step) for i in range(int(data))]
-    out = [list(sv_zip(out_x,out_y,out_z))]
-    edg=[[i,i-1] for i, ed in enumerate(out_x) if i>0]
-
-    # out boilerplate - set your own sockets packet
-    out_sockets = [
-        ['v', 'Out', out],
-        ['s', 'edg', [edg]],
-    ]
-
-    return in_sockets, out_sockets
-
-if __name__ == "__main__":
-    # here your script's name must be the same as in blender's text datablock
-    # no special characters (must be a valid variable name too, no dots)
-    template = sv_main({0},{1})
-
-'''
-
-        bpy.data.texts['template'].from_string(template_str)
-        return {'FINISHED'}
+        return {'CANCELLED'}
 
 
 class SvScriptOp(bpy.types.Operator):
