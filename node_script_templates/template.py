@@ -10,7 +10,7 @@ def sv_main(data=23, step=1):
     from util import sv_zip
     from math import sin
 
-    # your's code here
+    # your code here
     out_x = [i for i in range(int(data))]
     out_y = [0 for i in range(int(data))]
     out_z = [sin(i*step) for i in range(int(data))]
