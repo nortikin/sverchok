@@ -140,6 +140,7 @@ if "bpy" in locals():
     imp.reload(node_VertsDelDoubles)
     imp.reload(node_RemoveDoubles)
     imp.reload(node_MeshJoin)
+    imp.reload(node_VertSort)
 else:
     import node_s
     import node_ScalarMath
@@ -222,6 +223,7 @@ else:
     import node_VertsDelDoubles
     import node_RemoveDoubles
     import node_MeshJoin
+    import node_VertSort
 
 def register():
     import bpy
@@ -304,6 +306,7 @@ def register():
     node_VertsDelDoubles.register()
     node_RemoveDoubles.register()
     node_MeshJoin.register()
+    node_VertSort.register()
         
     if 'SVERCHOK' not in nodeitems_utils._node_categories:
         nodeitems_utils.register_node_categories("SVERCHOK", node_s.make_categories())
@@ -313,6 +316,7 @@ def unregister():
     import bpy
     import nodeitems_utils
     
+    node_VertSort.unregister()
     node_MeshJoin.unregister()
     node_RemoveDoubles.unregister()
     node_VertsDelDoubles.unregister()

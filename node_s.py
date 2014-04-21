@@ -208,6 +208,7 @@ def make_categories():
             NodeItem("Pols2EdgsNode", label="Polygons to Edges"),
             NodeItem("SvMeshJoinNode", label="Mesh Join"),
             NodeItem("SvRemoveDoublesNode", label="Mesh Remove Doubles"),
+            NodeItem("SvVertSortNode", label="Vertices Sort"),
             ]),
         ]
     return node_categories
