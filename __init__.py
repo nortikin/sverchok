@@ -133,6 +133,7 @@ if "bpy" in locals():
     imp.reload(node_FrameNode)
     imp.reload(node_Test1)
     imp.reload(node_Text)
+    imp.reload(node_Script)
     imp.reload(node_Pols2Edgs)
     imp.reload(node_Note)
     imp.reload(node_Bakery)
@@ -215,6 +216,7 @@ else:
     import node_FrameNode
     import node_Test1
     import node_Text
+    import node_Script
     import node_Pols2Edgs
     import node_Note
     import node_Bakery
@@ -297,6 +299,7 @@ def register():
     node_FrameNode.register()
     node_Test1.register()
     node_Text.register()
+    node_Script.register()
     node_Pols2Edgs.register()
     node_Note.register()
     node_Bakery.register()
@@ -320,6 +323,7 @@ def unregister():
     node_Bakery.unregister()
     node_Note.unregister()
     node_Pols2Edgs.unregister()
+    node_Script.unregister()
     node_Text.unregister()
     node_Test1.unregister()
     node_FrameNode.unregister()
