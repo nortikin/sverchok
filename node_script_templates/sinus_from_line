@@ -36,4 +36,4 @@ def sv_main(data=[],step=0.3):
 
 if __name__ == "__main__":
     # here is yors script's name - must be the same as in blender's text datablock
-    template_sinus_from_line = sv_main({0},{1})
+    sinus_from_line = sv_main({0},{1})

@@ -105,24 +105,25 @@ class SvDefaultScriptTemplate(bpy.types.Operator):
     bl_idname = 'node.sverchok_script_template'
     bl_label = 'Template'
     bl_options = {'REGISTER'}
-
+    
+    script_name = StringProperty(name='name', default='')
+    
     def execute(self, context):
-        if 'template' in bpy.data.texts:
+        if self.script_name in bpy.data.texts:
             msg = 'template exists already'
             self.report({"WARNING"}, msg)
             return {'CANCELLED'}
 
-        new_template = bpy.data.texts.new('template')
-
+        new_template = bpy.data.texts.new(self.script_name)
+        
         # testing only.
         sv_path = os.path.dirname(os.path.realpath(__file__))
         script_dir = "node_script_templates"
-        template_name = "template.py"
-        path_to_template = os.path.join(sv_path, script_dir, template_name)
-
+        path_to_template = os.path.join(sv_path, script_dir, self.script_name)
+        print(path_to_template)
         with open(path_to_template) as f:
             template_str = f.read()
-            bpy.data.texts['template'].from_string(template_str)
+            bpy.data.texts[self.script_name].from_string(template_str)
             return {'FINISHED'}
 
         return {'CANCELLED'}
@@ -155,11 +156,32 @@ class SvScriptNode(Node, SverchCustomTreeNode):
         scripts = bpy.data.texts
         items = [(t.name, t.name, "") for t in scripts]
         return items
-
+    
+    def files_in_folder(self, context):
+        sv_path = os.path.dirname(os.path.realpath(__file__))
+        script_dir = "node_script_templates"
+        path_to_folder = os.path.join(sv_path, script_dir)
+        files = os.listdir(path_to_folder)
+        files_property = [(f,f,'',i) for i, f in enumerate(files)]
+        return files_property
+    
+    def avail_templates(self, context):
+        sv_path = os.path.dirname(os.path.realpath(__file__))
+        script_dir = "node_script_templates"
+        path = os.path.join(sv_path, script_dir)
+        items = [(t, t, "") for t in next(os.walk(path))[2]]
+        return items
+    
+    files_popup = EnumProperty(
+        items=avail_templates,
+        name='template_files',
+        description='choose file to load as template',
+        update=updateNode)
+            
     script = EnumProperty(
         items=avail_scripts,
         name="Texts",
-        description="Choose text to load",
+        description="Choose text to load in node",
         update=updateNode)
 
     script_modes = [
@@ -183,12 +205,19 @@ class SvScriptNode(Node, SverchCustomTreeNode):
         pass
 
     def draw_buttons(self, context, layout):
-        layout.prop(self, "script", "Select Script")
-        layout.prop(self, 'scriptmode', 'scriptmode', expand=True)
+        
+        
 
-        row = layout.row(align=True)
+        col = layout.column(align=True)
         if not self.script_str:
-            row.operator('node.sverchok_script_template', text='Template')
+            row = col.row(align=True)
+            row.prop(self, 'files_popup', '')
+            tem = row.operator('node.sverchok_script_template', text='Template')
+            tem.script_name = self.files_popup
+        row = col.row(align=True)
+        row.prop(self, 'scriptmode', 'scriptmode', expand=True)
+        row = col.row(align=True)
+        row.prop(self, "script", "")
         op = row.operator('node.sverchok_script_input', text='Load')
         op.name_tree = self.id_data.name
         op.name_obj = self.name

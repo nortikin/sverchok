@@ -36,4 +36,4 @@ def sv_main(pt_a=[]):
 if __name__ == "__main__":
     # here your script's name must be the same as in blender's text datablock
     # no special characters (must be a valid variable name too, no dots)
-    incenter = sv_main({0})
+    circle_fit_triangle = sv_main({0})
