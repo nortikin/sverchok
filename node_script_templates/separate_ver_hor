@@ -38,7 +38,3 @@ def sv_main(v=[],e=[],tres=1):
     ]
 
     return in_sockets, out_sockets
-
-if __name__ == "__main__":
-    # here is yors script's name - must be the same as in blender's text datablock
-    separate_ver_hor = sv_main({0},{1},{2})

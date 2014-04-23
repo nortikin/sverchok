@@ -32,8 +32,3 @@ def sv_main(pt_a=[]):
     ]
  
     return in_sockets, out_sockets
- 
-if __name__ == "__main__":
-    # here your script's name must be the same as in blender's text datablock
-    # no special characters (must be a valid variable name too, no dots)
-    circle_fit_triangle = sv_main({0})

@@ -33,7 +33,3 @@ def sv_main(data=[],step=0.3):
     ]
 
     return in_sockets, out_sockets
-
-if __name__ == "__main__":
-    # here is yors script's name - must be the same as in blender's text datablock
-    sinus_from_line = sv_main({0},{1})
