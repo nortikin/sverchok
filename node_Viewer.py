@@ -26,7 +26,6 @@ class SvObjBake(bpy.types.Operator):
             matrixes = []
             for i in range((len(vers))):
                 matrixes.append(Matrix())
-        print('items to draw', str(cache_viewer_baker))
         self.makeobjects(vers, edg_pol, matrixes)
         cache_viewer_baker = {}
         return {'FINISHED'}
