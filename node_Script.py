@@ -61,39 +61,30 @@ def instrospect_py(node):
         import re
 
         lines = script_str.split('\n')
-        lines_a = [i for i in lines if script in i]
         lines_b = [i for i in lines if ('def sv_main') in i]
-
-        if len(lines_a) == 1:
-            pattern = '\{(\d+?)\}'
-            f = re.findall(pattern, lines_a[0])
-            num_params = len(f)
-        else:
-            print('expected something like: scriptname = sv_main({0},{1},..)')
-            return False, False
 
         if len(lines_b) == 1:
             pattern2 = '=(.+?)[,\)]'
             param_values = re.findall(pattern2, lines_b[0])
         else:
             print('your def sv_main must contain variable_names and defaults')
-            return False, False
+            return False
 
-        return num_params, param_values
+        return param_values
 
     '''
     this section shall
     - retrieve variables
     - return None in the case of any failure
     '''
-    nparams, params = find_variables(script_str)
-    if all([nparams, params]):
+    params = find_variables(script_str)
+    if params:
         params = list(map(ast.literal_eval, params))
     else:
         print('see demo files for NodeScript')
         return
 
-    exec(script_str.format(*params))
+    exec(script_str)
     f = vars()
 
     # this will return a callable function if sv_main is found, else None
