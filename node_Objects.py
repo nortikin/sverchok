@@ -9,18 +9,19 @@ class SvObjSelected(bpy.types.Operator):
     bl_label = "Sverchok object selector"
     bl_options = {'REGISTER', 'UNDO'}
     
-    name_objectin = StringProperty(name='name object in', description='it is name of reality')
+    node_name = StringProperty(name='name node', default='', description='it is name of node')
+    tree_name = StringProperty(name='name tree', default='', description='it is name of tree')
     
-    def enable(self, name_, name, handle):
+    def enable(self, name_no, name_tr, handle):
         objects = []
         for o in bpy.context.selected_objects:
             objects.append(o.name)
-        handle_write(name, objects)
+        handle_write(name_no+name_tr, objects)
         # временное решение с группой. надо решать, как достать имя группы узлов
-        if len(bpy.data.node_groups) == 1:
-            handle = handle_read(name)
+        if len(bpy.data.node_groups) >= 1:
+            handle = handle_read(name_no+name_tr)
             #print ('exec',name)
-            bpy.data.node_groups[name_[1]].nodes[name_[0]].objects_local = str(handle[1])
+            bpy.data.node_groups[name_tr].nodes[name_no].objects_local = str(handle[1])
     
     def disable(self, name, handle):
         if not handle[0]:
@@ -28,11 +29,11 @@ class SvObjSelected(bpy.types.Operator):
         handle_delete(name)
     
     def execute(self, context):
-        name_ = eval(self.name_objectin)
-        name = str(name_[0]+name_[1])
-        handle = handle_read(name)
-        self.disable(name, handle)
-        self.enable(name_, name, handle)
+        name_no = self.node_name
+        name_tr = self.tree_name
+        handle = handle_read(name_no+name_tr)
+        self.disable(name_no+name_tr, handle)
+        self.enable(name_no, name_tr, handle)
         return {'FINISHED'}
     
 class ObjectsNode(Node, SverchCustomTreeNode):
@@ -53,15 +54,15 @@ class ObjectsNode(Node, SverchCustomTreeNode):
         self.outputs.new('MatrixSocket', "Matrixes", "Matrixes")
         
     def draw_buttons(self, context, layout):
-        name_ = [self.name] + [self.id_data.name]
-        name = str(name_[0]+name_[1])
         row = layout.row()
         row.scale_y = 4.0
-        row.operator('node.sverchok_object_insertion', text='G E T').name_objectin = str(name_)
-        handle = handle_read(name)
+        opera = row.operator('node.sverchok_object_insertion', text='G E T')
+        opera.node_name = self.name
+        opera.tree_name = self.id_data.name
+        handle = handle_read(self.name+self.id_data.name)
         if handle[0]:
             for o in handle[1]:
-                layout.label(o)
+                layout.label(str(o))
         else:
             layout.label('--None--')
 
