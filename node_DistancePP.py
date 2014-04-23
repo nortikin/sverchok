@@ -24,9 +24,8 @@ class DistancePPNode(Node, SverchCustomTreeNode):
     def update(self):
         if self.inputs['vertices1'].links and self.inputs['vertices2'].links:
             if self.inputs['vertices1'].links and self.inputs['vertices1'].links:
-                if isinstance(VerticesSocket, self.inputs['vertices1'].links[0].from_socket):
-                    prop1_ = SvGetSocketAnyType(self,self.inputs['vertices1'])
-                    prop1 = Vector_generate(prop1_)
+                prop1_ = SvGetSocketAnyType(self,self.inputs['vertices1'])
+                prop1 = Vector_generate(prop1_)
                     
             if self.inputs['vertices2'].links and self.inputs['vertices2'].links:
                 prop2_ = SvGetSocketAnyType(self,self.inputs['vertices2'])
