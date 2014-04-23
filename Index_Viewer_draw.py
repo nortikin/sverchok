@@ -24,7 +24,6 @@ import bgl
 import math
 import mathutils
 from mathutils import Vector, Matrix
-from bpy_extras.view3d_utils import location_3d_to_region_2d as loc3d2d
 
 import node_Viewer
 from node_Viewer import *
