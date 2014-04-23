@@ -18,7 +18,7 @@ cache_nodes = {}
 list_nodes4update = {}
 sv_Vars = {}
 socket_data_cache = {}
-
+cache_viewer_baker = {}
 
 #####################################################
 ################### update magic ####################

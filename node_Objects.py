@@ -22,6 +22,7 @@ class SvObjSelected(bpy.types.Operator):
             handle = handle_read(name_no+name_tr)
             #print ('exec',name)
             bpy.data.node_groups[name_tr].nodes[name_no].objects_local = str(handle[1])
+        
     
     def disable(self, name, handle):
         if not handle[0]:
@@ -34,6 +35,7 @@ class SvObjSelected(bpy.types.Operator):
         handle = handle_read(name_no+name_tr)
         self.disable(name_no+name_tr, handle)
         self.enable(name_no, name_tr, handle)
+        print('have got {0} items from scene.'.format(handle[1]))
         return {'FINISHED'}
     
 class ObjectsNode(Node, SverchCustomTreeNode):
@@ -62,7 +64,7 @@ class ObjectsNode(Node, SverchCustomTreeNode):
         handle = handle_read(self.name+self.id_data.name)
         if handle[0]:
             for o in handle[1]:
-                layout.label(str(o))
+                layout.label(o)
         else:
             layout.label('--None--')
 
