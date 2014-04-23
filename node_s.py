@@ -13,6 +13,7 @@ class SvColors(bpy.types.PropertyGroup):
         name="svcolor", description="sverchok color", default=(0.055,0.312,0.5), min=0, max=1,
         step=1, precision=3, subtype='COLOR_GAMMA', size=3)
 
+
 class MatrixSocket(NodeSocket):
     '''4x4 matrix Socket_type'''
     #ref: http://urchn.org/post/nodal-transform-experiment
@@ -24,7 +25,7 @@ class MatrixSocket(NodeSocket):
     
     def draw(self, context, layout, node, text):
         if self.is_linked:
-            layout.label(text + '.' + str(self.MatrixProperty)[:7])
+            layout.label(text + '.' + SvGetSocketInfo(self))
         else:
             layout.label(text)
    
@@ -64,7 +65,7 @@ class VerticesSocket(NodeSocket):
 
         def draw(self, context, layout, node, text):
             if self.is_linked:
-                layout.label(text + '.' + str(self.VerticesProperty)[:7])
+                layout.label(text + '.' + SvGetSocketInfo(self))
             else:
                 layout.label(text)
                 
@@ -80,7 +81,7 @@ class StringsSocket(NodeSocket):
 
         def draw(self, context, layout, node, text):
             if self.is_linked:
-                layout.label(text + '.' + str(self.StringsProperty)[:7])
+                layout.label(text + '.' + SvGetSocketInfo(self))
             else:
                 layout.label(text)
                 

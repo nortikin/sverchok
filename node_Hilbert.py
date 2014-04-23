@@ -24,43 +24,31 @@ class HilbertNode(Node, SverchCustomTreeNode):
 
     def update(self):
         # inputs
-        if len(self.outputs['Edges'].links)>0 or len(self.outputs['Vertices'].links)>0:
-            if len(self.inputs['Level'].links)>0:
-                if not self.inputs['Level'].node.socket_value_update:
-                    self.inputs['Level'].node.update()
-                Integer = int(eval(self.inputs['Level'].links[0].from_socket.StringsProperty)[0][0])
+        if 'Egdes' in self.outputs and self.outputs['Edges'].links or self.outputs['Vertices'].links:
+            if self.inputs['Level'].links:
+                Integer = int(SvGetSocketAnyType(self,self.inputs['Level'])[0][0])
             else:
                 Integer = self.level_
     
-            if len(self.inputs['Size'].links)>0:
-                if not self.inputs['Size'].node.socket_value_update:
-                    self.inputs['Size'].node.update()
-                Step = eval(self.inputs['Size'].links[0].from_socket.StringsProperty)[0][0]
+            if self.inputs['Size'].links:
+                Step = eval(SvGetSocketAnyType(self,self.inputs['Size'])[0][0]
             else:
                 Step = self.size_
             
 
         # outputs
-        if len(self.outputs['Vertices'].links)>0:
-            if 'Vertices' in self.outputs and len(self.outputs['Vertices'].links)>0:
-                if not self.outputs['Vertices'].node.socket_value_update:
-                    self.outputs['Vertices'].node.update()
-                
-                verts = self.hilbert(0.0, 0.0, Step*1.0, 0.0, 0.0, Step*1.0, Integer)
-                
-                self.outputs['Vertices'].VerticesProperty = str([verts])
-    
-            if 'Edges' in self.outputs and len(self.outputs['Edges'].links)>0:
-                if not self.outputs['Edges'].node.socket_value_update:
-                    self.outputs['Edges'].node.update()
-    
-                listEdg = []
-                r = len(verts)-1
-                for i in range(r):
-                    listEdg.append((i, i+1))
-    
-                edg = list(listEdg)
-                self.outputs['Edges'].StringsProperty = str([edg])
+        if 'Vertices' in self.outputs and self.outputs['Vertices'].links:
+            verts = self.hilbert(0.0, 0.0, Step*1.0, 0.0, 0.0, Step*1.0, Integer)
+            SvSetSocketAnyType(self,'Vertices',[verts])
+
+        if 'Edges' in self.outputs and self.outputs['Edges'].links:
+            listEdg = []
+            r = len(verts)-1
+            for i in range(r):
+                listEdg.append((i, i+1))
+
+            edg = list(listEdg)
+            SvSetSocketAnyType(self,'Edges',[edg])
 
     def hilbert(self, x0, y0, xi, xj, yi, yj, n):
         out = []
