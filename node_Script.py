@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+# BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -14,7 +14,7 @@
 #  along with this program; if not, write to the Free Software Foundation,
 #  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
-# ##### END GPL LICENSE BLOCK #####
+# END GPL LICENSE BLOCK #####
 
 
 import bpy
@@ -36,7 +36,7 @@ def new_output_socket(node, name, stype):
         'v': 'VerticesSocket',
         's': 'StringsSocket',
         'm': 'MatrixSocket'
-        }.get(stype, None)
+    }.get(stype, None)
 
     if socket_type:
         node.outputs.new(socket_type, name, name)
@@ -47,7 +47,7 @@ def new_input_socket(node, stype, name, dval):
         'v': 'VerticesSocket',
         's': 'StringsSocket',
         'm': 'MatrixSocket'
-        }.get(stype, None)
+    }.get(stype, None)
 
     if socket_type:
         node.inputs.new(socket_type, name, name).default = dval
@@ -101,34 +101,37 @@ def instrospect_py(node):
 
 
 class SvDefaultScriptTemplate(bpy.types.Operator):
+
     ''' Creates template text file for making own script '''
     bl_idname = 'node.sverchok_script_template'
     bl_label = 'Template'
     bl_options = {'REGISTER'}
 
+    script_name = StringProperty(name='name', default='')
+
     def execute(self, context):
-        if 'template' in bpy.data.texts:
+        if self.script_name in bpy.data.texts:
             msg = 'template exists already'
             self.report({"WARNING"}, msg)
             return {'CANCELLED'}
 
-        new_template = bpy.data.texts.new('template')
+        new_template = bpy.data.texts.new(self.script_name)
 
         # testing only.
         sv_path = os.path.dirname(os.path.realpath(__file__))
         script_dir = "node_script_templates"
-        template_name = "template.py"
-        path_to_template = os.path.join(sv_path, script_dir, template_name)
-
+        path_to_template = os.path.join(sv_path, script_dir, self.script_name)
+        print(path_to_template)
         with open(path_to_template) as f:
             template_str = f.read()
-            bpy.data.texts['template'].from_string(template_str)
+            bpy.data.texts[self.script_name].from_string(template_str)
             return {'FINISHED'}
 
         return {'CANCELLED'}
 
 
 class SvScriptOp(bpy.types.Operator):
+
     """ Load Script as Generator """
     bl_idname = "node.sverchok_script_input"
     bl_label = "Sverchok script input"
@@ -146,6 +149,7 @@ class SvScriptOp(bpy.types.Operator):
 
 
 class SvScriptNode(Node, SverchCustomTreeNode):
+
     ''' Text Input '''
     bl_idname = 'SvScriptNode'
     bl_label = 'Script Generator'
@@ -156,10 +160,23 @@ class SvScriptNode(Node, SverchCustomTreeNode):
         items = [(t.name, t.name, "") for t in scripts]
         return items
 
+    def avail_templates(self, context):
+        sv_path = os.path.dirname(os.path.realpath(__file__))
+        script_dir = "node_script_templates"
+        path = os.path.join(sv_path, script_dir)
+        items = [(t, t, "") for t in next(os.walk(path))[2]]
+        return items
+
+    files_popup = EnumProperty(
+        items=avail_templates,
+        name='template_files',
+        description='choose file to load as template',
+        update=updateNode)
+
     script = EnumProperty(
         items=avail_scripts,
         name="Texts",
-        description="Choose text to load",
+        description="Choose text to load in node",
         update=updateNode)
 
     script_modes = [
@@ -174,7 +191,6 @@ class SvScriptNode(Node, SverchCustomTreeNode):
     # stores the script as a string
     script_str = StringProperty(default="")
 
-    #parametric_in = {}
     node_function = None
     in_sockets = []
     out_sockets = []
@@ -183,12 +199,20 @@ class SvScriptNode(Node, SverchCustomTreeNode):
         pass
 
     def draw_buttons(self, context, layout):
-        layout.prop(self, "script", "Select Script")
-        layout.prop(self, 'scriptmode', 'scriptmode', expand=True)
 
-        row = layout.row(align=True)
+        col = layout.column(align=True)
         if not self.script_str:
-            row.operator('node.sverchok_script_template', text='Template')
+            row = col.row(align=True)
+            row.prop(self, 'files_popup', '')
+            tem = row.operator(
+                'node.sverchok_script_template', text='Template')
+            tem.script_name = self.files_popup
+
+        row = col.row(align=True)
+        row.prop(self, 'scriptmode', 'scriptmode', expand=True)
+        row = col.row(align=True)
+        row.prop(self, "script", "")
+
         op = row.operator('node.sverchok_script_input', text='Load')
         op.name_tree = self.id_data.name
         op.name_obj = self.name
@@ -215,6 +239,7 @@ class SvScriptNode(Node, SverchCustomTreeNode):
     load(_*)
     - these are done once upon pressing load button, depending on scriptmode
     '''
+
     def load(self):
         # user picks script from dropdown.
         self.script_str = bpy.data.texts[self.script].as_string()
@@ -278,7 +303,7 @@ class SvScriptNode(Node, SverchCustomTreeNode):
 
         # for now inputs in script must be matched by socket inputs.
         if len(params) == len(input_names):
-            #print(params)
+            # print(params)
             pass
         else:
             return
