@@ -1185,15 +1185,20 @@ def sv_deep_copy(lst):
 # Build string for showing in socket label
 def SvGetSocketInfo(socket):    
     def build_info(data):
-        if isinstance(data,(list,tuple)):
+        if isinstance(data,list):
             return '['+build_info(data[0])
+        elif isinstance(data,tuple):
+            return '('+build_info(data[0])
         else:
             return str(data)
+    global socket_data_cache
             
-    if socket.links:
-        data = SvGetSocket(socket, copy=True)
+    s_id = socket_id(socket)
+    if s_id in socket_data_cache:
+        data = socket_data_cache[s_id]
         if data:
-            return build_info(data)[:7] 
+            return build_info(data)[:7]    
+    
     return ''
         
 def SvSetSocket(socket, out):
@@ -1207,7 +1212,6 @@ def SvGetSocket(socket, copy = False):
     global socket_data_cache
     global DEBUG_MODE
     if socket.links:
-       # print(len(socket.links),socket_id(socket),socket.links,socket.linked)
         other =  socket.links[0].from_socket
         s_id = socket_id(other)
         if s_id in socket_data_cache:
