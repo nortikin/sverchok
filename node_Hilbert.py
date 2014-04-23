@@ -31,7 +31,7 @@ class HilbertNode(Node, SverchCustomTreeNode):
                 Integer = self.level_
     
             if self.inputs['Size'].links:
-                Step = eval(SvGetSocketAnyType(self,self.inputs['Size'])[0][0]
+                Step = SvGetSocketAnyType(self,self.inputs['Size'])[0][0]
             else:
                 Step = self.size_
             
@@ -67,11 +67,6 @@ class HilbertNode(Node, SverchCustomTreeNode):
             out.extend(self.hilbert(x0 + xi/2 + yi,   y0 + xj/2 + yj,  -yi/2,-yj/2,-xi/2,-xj/2, n - 1))
             return out
 
-    def fullList(self, l, count):
-        d = count - len(l)
-        if d > 0:
-            l.extend([l[-1] for a in range(d)])
-        return
     
     def update_socket(self, context):
         self.update()

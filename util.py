@@ -1185,15 +1185,15 @@ def sv_deep_copy(lst):
 # Build string for showing in socket label
 def SvGetSocketInfo(socket):    
     def build_info(data):
-        if isinstance(lst,(list,tuple)):
+        if isinstance(data,(list,tuple)):
             return '['+build_info(data[0])
         else:
-            return str(data[0])
+            return str(data)
             
     if socket.links:
         data = SvGetSocket(socket, copy=True)
         if data:
-            return build_info(data) 
+            return build_info(data)[:7] 
     return ''
         
 def SvSetSocket(socket, out):
