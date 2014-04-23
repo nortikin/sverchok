@@ -23,7 +23,7 @@ class AreaNode(Node, SverchCustomTreeNode):
     def update(self):
         # inputs
         if 'Vertices' in self.inputs and self.inputs['Vertices'].links:
-                Vertices = SvGetSocketAnyType(self,self.inputs['Vertices'])
+            Vertices = SvGetSocketAnyType(self,self.inputs['Vertices'])
         else:
             Vertices = []
 

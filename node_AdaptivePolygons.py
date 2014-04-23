@@ -116,7 +116,7 @@ class AdaptivePolsNode(Node, SverchCustomTreeNode):
                 output = Vector_degenerate(vers_out)
                 #print (output)
                 if 'Vertices' in self.outputs and self.outputs['Vertices'].links:
-                    SvSetSocketAnyType(self,'Vertices',pols_out) 
+                    SvSetSocketAnyType(self,'Vertices',output) 
             
                 if 'Poligons' in self.outputs and self.outputs['Poligons'].links:
                     SvSetSocketAnyType(self,'Poligons',pols_out)
