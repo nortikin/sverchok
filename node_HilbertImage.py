@@ -70,8 +70,6 @@ class HilbertImageNode(Node, SverchCustomTreeNode):
                 SvSetSocketAnyType(self,self.outputs['Vertices'])
     
             if 'Edges' in self.outputs and len(self.outputs['Edges'].links)>0:
-                if not self.outputs['Edges'].node.socket_value_update:
-                    self.outputs['Edges'].node.update()
     
                 listEdg = []
                 r = len(verts)-1

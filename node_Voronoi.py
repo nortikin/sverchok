@@ -30,15 +30,11 @@ class VoronoiNode(Node, SverchCustomTreeNode):
         # inputs
         if len(self.outputs['Edges'].links)>0 or len(self.outputs['Vertices'].links)>0:
             if len(self.inputs['Level'].links)>0:
-                if not self.inputs['Level'].node.socket_value_update:
-                    self.inputs['Level'].node.update()
-                Integer = int(eval(self.inputs['Level'].links[0].from_socket.StringsProperty)[0][0])
+                Integer = int(SvGetSocketAnyType(self,self.inputs['Level'])[0][0])
             else:
                 Integer = self.level_
     
             if len(self.inputs['Size'].links)>0:
-                if not self.inputs['Size'].node.socket_value_update:
-                    self.inputs['Size'].node.update()
                 Step = eval(self.inputs['Size'].links[0].from_socket.StringsProperty)[0][0]
             else:
                 Step = self.size_
@@ -46,16 +42,12 @@ class VoronoiNode(Node, SverchCustomTreeNode):
 
         # outputs
         if 'Vertices' in self.outputs and len(self.outputs['Vertices'].links)>0:
-            if not self.outputs['Vertices'].node.socket_value_update:
-                self.outputs['Vertices'].node.update()
             
             verts = self.hilbert(0.0, 0.0, Step*1.0, 0.0, 0.0, Step*1.0, Integer)
             
             self.outputs['Vertices'].VerticesProperty = str([verts])
 
         if 'Edges' in self.outputs and len(self.outputs['Edges'].links)>0:
-            if not self.outputs['Edges'].node.socket_value_update:
-                self.outputs['Edges'].node.update()
 
             listEdg = []
             r = len(verts)-1
@@ -66,28 +58,28 @@ class VoronoiNode(Node, SverchCustomTreeNode):
             self.outputs['Edges'].StringsProperty = str([edg])
 
     def voronoi(self, xbox, yboy, zboz, vertices):
-    	#image = Image.new("RGB", (width, height))
-    	#putpixel = image.putpixel
-    	#imgx, imgy = image.size
-    	nx = []
-    	ny = []
-    	nz = []
-    	for vert in vertices:
-    		nx.append(vert[0])
-    		ny.append(vert[1])
-    		nz.append(vert[2])
-    		
-    	for y in range(imgy):
-    		for x in range(imgx):
-    			dmin = math.hypot(imgx-1, imgy-1)
-    			j = -1
-    			for i in range(num_cells):
-    				d = math.hypot(nx[i]-x, ny[i]-y)
-    				if d < dmin:
-    					dmin = d
-    					j = i
-    			#putpixel((x, y), (nr[j], ng[j], nb[j]))
-    	#image.save("VoronoiDiagram.png", "PNG")
+        #image = Image.new("RGB", (width, height))
+        #putpixel = image.putpixel
+        #imgx, imgy = image.size
+        nx = []
+        ny = []
+        nz = []
+        for vert in vertices:
+            nx.append(vert[0])
+            ny.append(vert[1])
+            nz.append(vert[2])
+            
+        for y in range(imgy):
+            for x in range(imgx):
+                dmin = math.hypot(imgx-1, imgy-1)
+                j = -1
+                for i in range(num_cells):
+                    d = math.hypot(nx[i]-x, ny[i]-y)
+                    if d < dmin:
+                        dmin = d
+                        j = i
+                #putpixel((x, y), (nr[j], ng[j], nb[j]))
+        #image.save("VoronoiDiagram.png", "PNG")
             #image.show()
 
     def fullList(self, l, count):

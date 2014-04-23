@@ -329,13 +329,15 @@ def dataStandart(data, dept, nominal_dept):
 
 # calc list nesting only in countainment level integer
 
-def levelsOflist(list):
+def levelsOflist(lst):
+    if not lst:
+        return 1
     level = 1
-    for n in list:
-        if type(n) in [type([]), type(tuple())] and len(n) > 0: # why it not understands [list, tuple]??? strange behaviour
+    for n in lst:
+        if n and isinstance(n,(list,tuple)): 
             level += levelsOflist(n)
         return level
-
+    return
 
 #####################################################
 ################### matrix magic ####################
@@ -1132,10 +1134,9 @@ def changable_sockets(self, inputsocketname, outputsocketname):
     return
 
 def SvGetSocketAnyType(self, socket):
-    if not socket.node.socket_value_update:
-        socket.node.update()
+
     out = SvGetSocket(socket)
-    if out != None:
+    if out :
         return out
     else:
         return []
@@ -1169,8 +1170,7 @@ def SvSetSocketAnyType(self, socket_name, out):
 def socket_id(socket):
     return socket.id_data.name+socket.node.name+socket.identifier
 
-# about 50% faster than built in deep copy, needs to be tested.
-# and verified. can be made more effective.
+# faster than builtin deep copy for us.
 # useful for our limited case
 # we should be able to specify vectors here to get them create
 # or stop destroying them when in vector socket.
@@ -1183,16 +1183,19 @@ def sv_deep_copy(lst):
     return lst
 
 # Build string for showing in socket label
+
 def SvGetSocketInfo(socket):    
     def build_info(data):
+        if not data:
+            return str(data)
         if isinstance(data,list):
             return '['+build_info(data[0])
         elif isinstance(data,tuple):
             return '('+build_info(data[0])
         else:
             return str(data)
-    global socket_data_cache
             
+    global socket_data_cache
     s_id = socket_id(socket)
     if s_id in socket_data_cache:
         data = socket_data_cache[s_id]
@@ -1220,7 +1223,6 @@ def SvGetSocket(socket, copy = False):
                 return out.copy()
             else:
                 return sv_deep_copy(out)
-  #          return copy.deepcopy(out)
         else: # failure, should raise error in future
             if DEBUG_MODE:
                 print("cache miss:",socket.node.name,"->",socket.name,"from:",other.node.name,"->",other.name)

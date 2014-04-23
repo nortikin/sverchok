@@ -30,8 +30,6 @@ class ListSortNode(Node, SverchCustomTreeNode):
         # достаём два слота - вершины и полики
         if 'data' in self.outputs and len(self.outputs['data'].links)>0 \
                 and 'data' in self.inputs and len(self.inputs['data'].links)>0:
-            if not self.outputs['data'].node.socket_value_update:
-                self.outputs['data'].node.update()
             data_ = SvGetSocketAnyType(self, self.inputs['data'])
             
             # init_level = levelsOflist(data)
