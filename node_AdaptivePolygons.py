@@ -46,27 +46,18 @@ class AdaptivePolsNode(Node, SverchCustomTreeNode):
         # достаём два слота - вершины и полики
         if 'Vertices' in self.outputs and self.outputs['Vertices'].links:
             if self.inputs['PolsR'].links and self.inputs['VersR'].links and self.inputs['VersD'].links and self.inputs['PolsD'].links:
-                if not self.inputs['PolsR'].node.socket_value_update:
-                    self.inputs['PolsR'].node.update()
-                if not self.inputs['VersR'].node.socket_value_update:
-                    self.inputs['VersR'].node.update()
-                if not self.inputs['VersD'].node.socket_value_update:
-                    self.inputs['VersD'].node.update()
-                if not self.inputs['PolsD'].node.socket_value_update:
-                    self.inputs['PolsD'].node.update()
-                if not self.inputs['Z_Coef'].node.socket_value_update:
-                    self.inputs['Z_Coef'].node.update()
+   
                 if self.inputs['Z_Coef'].links:
-                    z_coef = eval(self.inputs['Z_Coef'].links[0].from_socket.StringsProperty)[0]
+                    z_coef = SvGetSocketAnyType(self,self.inputs['Z_Coef'])[0]
                 else:
                     z_coef = []
                 
                 
                 
-                polsR = eval(self.inputs['PolsR'].links[0].from_socket.StringsProperty)[0] # recipient one object [0]
-                versR = eval(self.inputs['VersR'].links[0].from_socket.VerticesProperty)[0]  # recipient
-                polsD = eval(self.inputs['PolsD'].links[0].from_socket.StringsProperty) # donor many objects [:]
-                versD_ = eval(self.inputs['VersD'].links[0].from_socket.VerticesProperty) # donor
+                polsR = SvGetSocketAnyType(self,self.inputs['PolsR'])[0] # recipient one object [0]
+                versR = SvGetSocketAnyType(self,self.inputs['VersR'])[0]  # recipient
+                polsD = SvGetSocketAnyType(self,self.inputs['PolsD']) # donor many objects [:]
+                versD_ = SvGetSocketAnyType(self,self.inputs['VersD']) # donor
                 versD = Vector_generate(versD_)
                 ##### it is needed for normals of vertices
                 new_me = bpy.data.meshes.new('recepient')
@@ -122,16 +113,13 @@ class AdaptivePolsNode(Node, SverchCustomTreeNode):
                         
                 #print (Vector_degenerate(vers_out))
                 
-                if not self.outputs['Vertices'].node.socket_value_update:
-                    self.outputs['Vertices'].node.update()
                 output = Vector_degenerate(vers_out)
                 #print (output)
-                self.outputs['Vertices'].VerticesProperty = str(output)
-                
-                if 'Poligons' in self.outputs and len(self.outputs['Poligons'].links)>0:
-                    if not self.outputs['Poligons'].node.socket_value_update:
-                        self.outputs['Poligons'].node.update()
-                    self.outputs['Poligons'].StringsProperty = str(pols_out) 
+                if 'Vertices' in self.outputs and self.outputs['Vertices'].links:
+                    SvSetSocketAnyType(self,'Vertices',pols_out) 
+            
+                if 'Poligons' in self.outputs and self.outputs['Poligons'].links:
+                    SvSetSocketAnyType(self,'Poligons',pols_out)
             
             
 

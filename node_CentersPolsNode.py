@@ -17,18 +17,15 @@ class CentersPolsNode(Node, SverchCustomTreeNode):
     def update(self):
         # достаём два слота - вершины и полики
         if 'Centers' in self.outputs and self.outputs['Centers'].links or self.outputs['Normals'].links:
-            if 'Polygons' in self.inputs and 'Vertices' in self.inputs and self.inputs['Polygons'].links and self.inputs['Vertices'].links:
-                if not self.inputs['Polygons'].node.socket_value_update:
-                    self.inputs['Polygons'].node.update()
-                #if type(self.inputs['Polygons'].links[0].from_socket) == StringsSocket:
-                pols_ = eval(self.inputs['Polygons'].links[0].from_socket.StringsProperty)
+            if 'Polygons' in self.inputs and 'Vertices' in self.inputs \
+                and self.inputs['Polygons'].links and self.inputs['Vertices'].links:
+ 
+                pols_ = SvGetSocketAnyType(self,self.inputs['Polygons'])
                 #else:
                 #    pols = []
                 
-                if not self.inputs['Vertices'].node.socket_value_update:
-                    self.inputs['Vertices'].node.update()
                 #if type(self.inputs['Vertices'].links[0].from_socket) == VerticesSocket:
-                vers_ = eval(self.inputs['Vertices'].links[0].from_socket.VerticesProperty)
+                vers_ = SvGetSocketAnyType(self,self.inputs['Vertices'])
                 #else:
                 #    vers = []
                         
@@ -99,15 +96,11 @@ class CentersPolsNode(Node, SverchCustomTreeNode):
                     mat_collect.extend(mat_collect_)
                         #print ( 'M'+ str(M) + '\n' + 'lM' + str(lM) + '\n' + 'qrot' + str(q_rot1) + '\n' )
                 #print ( 'matrix: ' + str(mat_collect) )
-                if not self.outputs['Centers'].node.socket_value_update:
-                    self.outputs['Centers'].node.update()
-                self.outputs['Centers'].MatrixProperty = str(mat_collect)
+                SvSetSocketAnyType(self,'Centers',mat_collect)
                 # удаляем временный мусор
                 bpy.data.meshes.remove(mesh_temp)
                 if 'Normals' in self.outputs and len(self.outputs['Normals'].links)>0:
-                    if not self.outputs['Normals'].node.socket_value_update:
-                        self.outputs['Normals'].node.update()
-                    self.outputs['Normals'].VerticesProperty = str(normalsFORout) 
+                    SvSetSocketAnyType(self,'Normals',normalsFORout) 
             
             
 
