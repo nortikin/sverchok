@@ -5,13 +5,14 @@ from bpy.types import NodeTree, Node, NodeSocket
 import nodeitems_utils
 from nodeitems_utils import NodeCategory, NodeItem
 from mathutils import Matrix
-from util import updateSlot, makeTreeUpdate2, speedUpdate
+from util import updateSlot, makeTreeUpdate2, speedUpdate, SvGetSocketInfo
 
 class SvColors(bpy.types.PropertyGroup):
     """ Class for colors CollectionProperty """
     color = bpy.props.FloatVectorProperty(
         name="svcolor", description="sverchok color", default=(0.055,0.312,0.5), min=0, max=1,
         step=1, precision=3, subtype='COLOR_GAMMA', size=3)
+
 
 class MatrixSocket(NodeSocket):
     '''4x4 matrix Socket_type'''
@@ -23,11 +24,13 @@ class MatrixSocket(NodeSocket):
     
     
     def draw(self, context, layout, node, text):
-        if self.is_linked:
-            layout.label(text + '.' + str(self.MatrixProperty)[:7])
+        if self.is_linked and self.is_output:
+            layout.label(text + '.' + SvGetSocketInfo(self))
+        elif self.is_linked:
+            layout.label(text + '.')
         else:
             layout.label(text)
-   
+
     def draw_color(self, context, node):
         '''if self.is_linked:
             return(.8,.3,.75,1.0)
@@ -63,8 +66,10 @@ class VerticesSocket(NodeSocket):
         #V = list()
 
         def draw(self, context, layout, node, text):
-            if self.is_linked:
-                layout.label(text + '.' + str(self.VerticesProperty)[:7])
+            if self.is_linked and self.is_output:
+                layout.label(text + '.' + SvGetSocketInfo(self))
+            elif self.is_linked:
+                layout.label(text + '.')
             else:
                 layout.label(text)
                 
@@ -79,8 +84,10 @@ class StringsSocket(NodeSocket):
         StringsProperty = StringProperty(name='StringsProperty', update=updateSlot)
 
         def draw(self, context, layout, node, text):
-            if self.is_linked:
-                layout.label(text + '.' + str(self.StringsProperty)[:7])
+            if self.is_linked and self.is_output:
+                layout.label(text + '.' + SvGetSocketInfo(self))
+            elif self.is_linked:
+                layout.label(text + '.')
             else:
                 layout.label(text)
                 

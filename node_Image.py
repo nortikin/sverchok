@@ -45,54 +45,42 @@ class ImageNode(Node, SverchCustomTreeNode):
 
     def update(self):
         # inputs
-        if len(self.inputs['vecs X'].links)>0:
-            if not self.inputs['vecs X'].node.socket_value_update:
-                self.inputs['vecs X'].node.update()
-            IntegerX = min(int(eval(self.inputs['vecs X'].links[0].from_socket.StringsProperty)[0][0]),100)
+        if 'vecs X' in self.inputs and self.inputs['vecs X'].links:
+            IntegerX = min(int(SvGetSocketAnyType(self,self.inputs['vecs X'])[0][0]),100)
         else:
             IntegerX = int(self.Xvecs)
 
-        if len(self.inputs['vecs Y'].links)>0:
-            if not self.inputs['vecs Y'].node.socket_value_update:
-                self.inputs['vecs Y'].node.update()
-            IntegerY = min(int(eval(self.inputs['vecs Y'].links[0].from_socket.StringsProperty)[0][0]),100)
+        if 'vecs Y' in self.inputs and self.inputs['vecs Y'].links:
+            IntegerY = min(int(SvGetSocketAnyType(self,self.inputs['vecs Y'])[0][0]),100)
         else:
             IntegerY = int(self.Yvecs)
 
-        if len(self.inputs['Step X'].links)>0:
-            if not self.inputs['Step X'].node.socket_value_update:
-                self.inputs['Step X'].node.update()
-            StepX = eval(self.inputs['Step X'].links[0].from_socket.StringsProperty)[0]
-            self.fullList(StepX, IntegerX)
+        if 'Step X' in self.inputs and self.inputs['Step X'].links:
+            StepX = SvGetSocketAnyType(self,self.inputs['Step X'])[0]
+            fullList(StepX, IntegerX)
             
         else:
             StepX = [self.Xstep]
-            self.fullList(StepX, IntegerX)
+            fullList(StepX, IntegerX)
 
-        if len(self.inputs['Step Y'].links)>0:
-            if not self.inputs['Step Y'].node.socket_value_update:
-                self.inputs['Step Y'].node.update()
-            StepY = eval(self.inputs['Step Y'].links[0].from_socket.StringsProperty)[0]
-            self.fullList(StepY, IntegerY)
+        if 'Step Y' in self.inputs and self.inputs['Step Y'].links:
+            StepY = SvGetSocketAnyType(self,self.inputs['Step Y'])[0]
+            fullList(StepY, IntegerY)
             
         else:
             StepY = [self.Ystep]
-            self.fullList(StepY, IntegerY)
+            fullList(StepY, IntegerY)
 
         # outputs
-        if 'vecs' in self.outputs and len(self.outputs['vecs'].links)>0:
-            if not self.outputs['vecs'].node.socket_value_update:
-                self.outputs['vecs'].node.update()
+        if 'vecs' in self.outputs and self.outputs['vecs'].links:
             
             out = self.make_vertices(IntegerX-1, IntegerY-1, StepX, StepY, self.name_image)
             #print 
-            self.outputs['vecs'].VerticesProperty = str([out])
+            SvSetSocketAnyType(self,'vecs',[out])
         else:
-            self.outputs['vecs'].VerticesProperty = str([[[]]])
+            SvSetSocketAnyType(self,'vecs',[[[]]])
 
         if 'edgs' in self.outputs and len(self.outputs['edgs'].links)>0:
-            if not self.outputs['edgs'].node.socket_value_update:
-                self.inputs['edgs'].node.update()
 
             listEdg = []
             for i in range(IntegerY):
@@ -103,28 +91,20 @@ class ImageNode(Node, SverchCustomTreeNode):
                     listEdg.append((IntegerX*j+i, IntegerX*j+i+IntegerX))
 
             edg = list(listEdg)
-            self.outputs['edgs'].StringsProperty = str([edg])
+            SvSetSocketAnyType(self,'edgs',[edg])
         else:
-            self.outputs['edgs'].StringsProperty = str([[[]]])
+            SvSetSocketAnyType(self,'edgs',[[[]]])
 
-        if 'pols' in self.outputs and len(self.outputs['pols'].links)>0:
-            if not self.outputs['pols'].node.socket_value_update:
-                self.inputs['pols'].node.update()
+        if 'pols' in self.outputs and self.outputs['pols'].links:
 
             listPlg = []
             for i in range(IntegerX-1):
                 for j in range(IntegerY-1):
                     listPlg.append((IntegerX*j+i, IntegerX*j+i+1, IntegerX*j+i+IntegerX+1, IntegerX*j+i+IntegerX))
             plg = list(listPlg)
-            self.outputs['pols'].StringsProperty = str([plg])
+            SvSetSocketAnyType(self,'pols',[plg])
         else:
-            self.outputs['pols'].StringsProperty = str([[[]]])
-    
-    def fullList(self, l, count):
-        d = count - len(l)
-        if d > 0:
-            l.extend([l[-1] for a in range(d)])
-        return
+            SvSetSocketAnyType(self,'pols',[[[]]])
     
     def make_vertices(self, delitelx, delitely, stepx, stepy, image_name):
         lenx = bpy.data.images[image_name].size[0]

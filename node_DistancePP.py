@@ -23,51 +23,38 @@ class DistancePPNode(Node, SverchCustomTreeNode):
         
     def update(self):
         if self.inputs['vertices1'].links and self.inputs['vertices2'].links:
-            if self.inputs['vertices1'].links and len(self.inputs['vertices1'].links)>0:
-                if not self.inputs['vertices1'].node.socket_value_update:
-                    self.inputs['vertices1'].node.update()
-                if self.inputs['vertices1'].links[0].from_socket.VerticesProperty:
-                    prop1_ = eval(self.inputs['vertices1'].links[0].from_socket.VerticesProperty)
+            if self.inputs['vertices1'].links and self.inputs['vertices1'].links:
+                if isinstance(VerticesSocket, self.inputs['vertices1'].links[0].from_socket):
+                    prop1_ = SvGetSocketAnyType(self,self.inputs['vertices1'])
                     prop1 = Vector_generate(prop1_)
                     
-            if self.inputs['vertices2'].links and len(self.inputs['vertices2'].links)>0:
-                if not self.inputs['vertices2'].node.socket_value_update:
-                    self.inputs['vertices2'].node.update()
-                if self.inputs['vertices2'].links[0].from_socket.VerticesProperty:
-                    prop2_ = eval(self.inputs['vertices2'].links[0].from_socket.VerticesProperty)
-                    prop2 = Vector_generate(prop2_)
+            if self.inputs['vertices2'].links and self.inputs['vertices2'].links:
+                prop2_ = SvGetSocketAnyType(self,self.inputs['vertices2'])
+                prop2 = Vector_generate(prop2_)
                 
         elif self.inputs['matrix1'].links and self.inputs['matrix2'].links:
-            if self.inputs['matrix1'].links and len(self.inputs['matrix1'].links)>0:
-                if not self.inputs['matrix1'].node.socket_value_update:
-                    self.inputs['matrix1'].node.update()
-                if self.inputs['matrix1'].links[0].from_socket.MatrixProperty:
-                    propa = eval(self.inputs['matrix1'].links[0].from_socket.MatrixProperty)
-                    prop1 = Matrix_location(Matrix_generate(propa))
+            if self.inputs['matrix1'].links and self.inputs['matrix1'].links:
+                propa = SvGetSocketAnyType(self,self.inputs['matrix1'])
+                prop1 = Matrix_location(Matrix_generate(propa))
                 
-            if self.inputs['matrix2'].links and len(self.inputs['matrix2'].links)>0:
-                if not self.inputs['matrix2'].node.socket_value_update:
-                    self.inputs['matrix2'].node.update()
-                if self.inputs['matrix2'].links[0].from_socket.MatrixProperty:
-                    propb = eval(self.inputs['matrix2'].links[0].from_socket.MatrixProperty)
-                    prop2 = Matrix_location(Matrix_generate(propb))
+            if self.inputs['matrix2'].links and self.inputs['matrix2'].links:
+                propb = SvGetSocketAnyType(self,self.inputs['matrix2'])
+                prop2 = Matrix_location(Matrix_generate(propb))
                     
         else:
             prop1, prop2 = [], []
         if prop1 and prop2:
-            if len(self.outputs['distances'].links)>0:
-                if not self.outputs['distances'].node.socket_value_update:
-                    self.outputs['distances'].node.update()
+            if self.outputs['distances'].links:
                 #print ('distances input', str(prop1), str(prop2))
                 if self.Cross_dist:
                     output = self.calcM(prop1, prop2)
                 else:
                     output = self.calcV(prop1, prop2)
-                self.outputs['distances'].StringsProperty = str(output)
+                SvSetSocketAnyType(self,'distances',output)
                 
                 #print ('distances out' , str(output))
         else:
-            self.outputs['distances'].StringsProperty = ''
+            SvSetSocketAnyType(self,'distances', [])
     
     def calcV(self, list1, list2):
         dists = []

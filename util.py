@@ -1137,31 +1137,31 @@ def SvGetSocketAnyType(self, socket):
     out = SvGetSocket(socket)
     if out != None:
         return out
-    if type(socket.links[0].from_socket) == bpy.types.StringsSocket:
-        typeresult = eval(socket.links[0].from_socket.StringsProperty)
-    elif type(socket.links[0].from_socket) == bpy.types.VerticesSocket:
-        typeresult = eval(socket.links[0].from_socket.VerticesProperty)
-    elif type(socket.links[0].from_socket) == bpy.types.MatrixSocket:
-        typeresult = eval(socket.links[0].from_socket.MatrixProperty)
-    return typeresult
+    else:
+        return []
+    #if type(socket.links[0].from_socket) == bpy.types.StringsSocket:
+    #    typeresult = eval(socket.links[0].from_socket.StringsProperty)
+    #elif type(socket.links[0].from_socket) == bpy.types.VerticesSocket:
+    #    typeresult = eval(socket.links[0].from_socket.VerticesProperty)
+    #elif type(socket.links[0].from_socket) == bpy.types.MatrixSocket:
+    #    typeresult = eval(socket.links[0].from_socket.MatrixProperty)
+    #return typeresult
 
 
-def SvSetSocketAnyType(self, socket, out):
-    global DEBUG_MODE
-    if not self.outputs[socket].node.socket_value_update:
-        self.outputs[socket].node.update()
-    SvSetSocket(self.outputs[socket],out)
+def SvSetSocketAnyType(self, socket_name, out):
+    SvSetSocket(self.outputs[socket_name],out)
+    return
     # R/W decision point, to test performance without
     # writing to string props, uncomment. will break if any used node
     # is not using SvGet/SvSet
     #if DEBUG_MODE:
     #    return
-    if type(self.outputs[socket]) == bpy.types.StringsSocket:
-        self.outputs[socket].StringsProperty = str(out)
-    elif type(self.outputs[socket]) == bpy.types.VerticesSocket:
-        self.outputs[socket].VerticesProperty = str(out)
-    elif type(self.outputs[socket]) == bpy.types.MatrixSocket:
-        self.outputs[socket].MatrixProperty = str(out)
+    #if type(self.outputs[socket_name]) == bpy.types.StringsSocket:
+    #    self.outputs[socket_name].StringsProperty = str(out)
+    #elif type(self.outputs[socket_name]) == bpy.types.VerticesSocket:
+    #    self.outputs[socket_name].VerticesProperty = str(out)
+    #elif type(self.outputs[socket_name]) == bpy.types.MatrixSocket:
+    #    self.outputs[socket_name].MatrixProperty = str(out)
 
 # caching data solution
 
@@ -1182,6 +1182,25 @@ def sv_deep_copy(lst):
         return [sv_deep_copy(l) for l in lst]
     return lst
 
+# Build string for showing in socket label
+def SvGetSocketInfo(socket):    
+    def build_info(data):
+        if isinstance(data,list):
+            return '['+build_info(data[0])
+        elif isinstance(data,tuple):
+            return '('+build_info(data[0])
+        else:
+            return str(data)
+    global socket_data_cache
+            
+    s_id = socket_id(socket)
+    if s_id in socket_data_cache:
+        data = socket_data_cache[s_id]
+        if data:
+            return build_info(data)[:7]    
+    
+    return ''
+        
 def SvSetSocket(socket, out):
     global socket_data_cache
     s_id = socket_id(socket)
@@ -1193,7 +1212,6 @@ def SvGetSocket(socket, copy = False):
     global socket_data_cache
     global DEBUG_MODE
     if socket.links:
-       # print(len(socket.links),socket_id(socket),socket.links,socket.linked)
         other =  socket.links[0].from_socket
         s_id = socket_id(other)
         if s_id in socket_data_cache:

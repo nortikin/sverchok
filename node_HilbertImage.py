@@ -40,33 +40,25 @@ class HilbertImageNode(Node, SverchCustomTreeNode):
 
     def update(self):
         # inputs
-        if len(self.outputs['Edges'].links)>0 or len(self.outputs['Vertices'].links)>0:
-            if len(self.inputs['Level'].links)>0:
-                if not self.inputs['Level'].node.socket_value_update:
-                    self.inputs['Level'].node.update()
-                Integer = int(eval(self.inputs['Level'].links[0].from_socket.StringsProperty)[0][0])
+        if self.outputs['Edges'].links or self.outputs['Vertices'].links:
+            if 'Level' in self.inputs and self.inputs['Level'].links:
+                Integer = int(SvGetSocketAnyType(self,self.inputs['Level'])[0][0])
             else:
                 Integer = self.level_
     
-            if len(self.inputs['Size'].links)>0:
-                if not self.inputs['Size'].node.socket_value_update:
-                    self.inputs['Size'].node.update()
-                Step = eval(self.inputs['Size'].links[0].from_socket.StringsProperty)[0][0]
+            if 'Size' in self.inputs and self.inputs['Size'].links:
+                Step = SvGetSocketAnyType(self,self.inputs['Size'])[0][0]
             else:
                 Step = self.size_
             
-            if len(self.inputs['Sensitivity'].links)>0:
-                if not self.inputs['Sensitivity'].node.socket_value_update:
-                    self.inputs['Sensitivity'].node.update()
-                Sensitivity = eval(self.inputs['Sensitivity'].links[0].from_socket.StringsProperty)[0][0]
+            if 'Sensitivity'in self.inputs and self.inputs['Sensitivity'].links:
+                Sensitivity = SvGetSocketAnyType(self,self.inputs['Sensitivity'])[0][0]
             else:
                 Sensitivity = self.sensitivity_
 
         # outputs
-        if len(self.outputs['Vertices'].links)>0 and self.name_image:
-            if 'Vertices' in self.outputs and len(self.outputs['Vertices'].links)>0:
-                if not self.outputs['Vertices'].node.socket_value_update:
-                    self.outputs['Vertices'].node.update()
+        if 'Vertices' in self.outputs and self.outputs['Vertices'].links and self.name_image:
+            if 'Vertices' in self.outputs and self.outputs['Vertices'].links:
                 
                 img = bpy.data.images[self.name_image]
                 pixels = list(img.pixels)
@@ -75,7 +67,7 @@ class HilbertImageNode(Node, SverchCustomTreeNode):
                     for ip,p in enumerate(v):
                         verts[iv][ip]*=Step
                 
-                self.outputs['Vertices'].VerticesProperty = str([verts])
+                SvSetSocketAnyType(self,self.outputs['Vertices'])
     
             if 'Edges' in self.outputs and len(self.outputs['Edges'].links)>0:
                 if not self.outputs['Edges'].node.socket_value_update:
@@ -87,10 +79,11 @@ class HilbertImageNode(Node, SverchCustomTreeNode):
                     listEdg.append((i, i+1))
     
                 edg = list(listEdg)
-                self.outputs['Edges'].StringsProperty = str([edg])
+                SvSetSocketAnyType(self,'Edges',[edg])
         else:
-            self.outputs['Vertices'].VerticesProperty = str([[]])
-            self.outputs['Edges'].StringsProperty = str([[]])
+            pass
+            #self.outputs['Vertices'].VerticesProperty = str([[]])
+            #self.outputs['Edges'].StringsProperty = str([[]])
 
     def hilbert(self, x0, y0, xi, xj, yi, yj, n, img, pixels, Sensitivity):
         w = img.size[0]-1
@@ -115,12 +108,6 @@ class HilbertImageNode(Node, SverchCustomTreeNode):
             out.extend(self.hilbert(x0 + xi/2 + yi/2, y0 + xj/2 + yj/2, xi/2, xj/2, yi/2, yj/2, n - 1, img, pixels, Sensitivity))
             out.extend(self.hilbert(x0 + xi/2 + yi,   y0 + xj/2 + yj,  -yi/2,-yj/2,-xi/2,-xj/2, n - 1, img, pixels, Sensitivity))
             return out
-
-    def fullList(self, l, count):
-        d = count - len(l)
-        if d > 0:
-            l.extend([l[-1] for a in range(d)])
-        return
     
     def update_socket(self, context):
         self.update()

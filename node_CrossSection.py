@@ -195,25 +195,18 @@ class CrossSectionNode(Node, SverchCustomTreeNode):
             and self.inputs['edg_pol'].links \
             and self.inputs['cut_matrix'].links:
                 
-            if not self.inputs['vertices'].node.socket_value_update:
-                self.inputs['vertices'].node.update()
-            if not self.inputs['edg_pol'].node.socket_value_update:
-                self.inputs['edg_pol'].node.update()
-            if not self.inputs['cut_matrix'].node.socket_value_update:
-                self.inputs['cut_matrix'].node.update()
         
-            verts_ob = Vector_generate(eval(self.inputs['vertices'].links[0].from_socket.VerticesProperty))
-            edg_pols_ob = eval(self.inputs['edg_pol'].links[0].from_socket.StringsProperty)
+            verts_ob = Vector_generate(SvGetSocketAnyType(self,self.inputs['vertices']))
+            edg_pols_ob = SvGetSocketAnyType(self,self.inputs['edg_pol'])
             
             if self.inputs['matrix'].links:
-                if not self.inputs['matrix'].node.socket_value_update:
-                    self.inputs['matrix'].node.update()
-                matrixs = eval(self.inputs['matrix'].links[0].from_socket.MatrixProperty)
+                
+                matrixs = SvGetSocketAnyType(self,self.inputs['matrix'])
             else:
                 matrixs = []
                 for le in verts_ob:
                     matrixs.append(Matrix())
-            cut_mats = eval(self.inputs['cut_matrix'].links[0].from_socket.MatrixProperty)
+            cut_mats = SvGetSocketAnyType(self,self.inputs['cut_matrix'])
             
             verts_out = []
             edges_out = []
@@ -238,20 +231,18 @@ class CrossSectionNode(Node, SverchCustomTreeNode):
                     verts_out.extend(verts_pre_out)
                     edges_out.extend(edges_pre_out)
             
-            if 'vertices' in self.outputs and len(self.outputs['vertices'].links)>0:
-                if not self.outputs['vertices'].node.socket_value_update:
-                    self.outputs['vertices'].node.update()
+            if 'vertices' in self.outputs and self.outputs['vertices'].links:
                 output = Vector_degenerate(verts_out)
-                self.outputs['vertices'].VerticesProperty = str(output)
+                SvSetSocketAnyType(self,'vertices',output)
             
-            if 'edges' in self.outputs and len(self.outputs['edges'].links)>0:
-                if not self.outputs['edges'].node.socket_value_update:
-                    self.outputs['edges'].node.update()
-                self.outputs['edges'].StringsProperty = str(edges_out) 
+            if 'edges' in self.outputs and self.outputs['edges'].links:
+
+                SvSetSocketAnyType(self,'edges',edges_out) 
             
         else:
-            self.outputs['vertices'].VerticesProperty = str([])
-            self.outputs['edges'].StringsProperty = str([])
+            pass
+        #    self.outputs['vertices'].VerticesProperty = str([])
+        #    self.outputs['edges'].StringsProperty = str([])
         
 
     def update_socket(self, context):
@@ -265,10 +256,3 @@ def unregister():
 
 if __name__ == "__main__":
     register()
-
-
-
-
-
-
-
