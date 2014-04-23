@@ -45,7 +45,7 @@ class IndexViewerNode(Node, SverchCustomTreeNode):
         # alias in case it is present
         iv_links = inputs['vertices'].links
 
-        if self.activate and iv_links and (len(iv_links) > 0):
+        if self.activate and iv_links:
             IV.callback_disable(self.name)
             draw_verts, draw_matrix = [], []
 
@@ -59,9 +59,7 @@ class IndexViewerNode(Node, SverchCustomTreeNode):
                 im_links = inputs['matrix'].links
 
                 # end early, skips to drwa vertex indices without matrix
-                if im_links and (len(im_links) > 0) and \
-                        isinstance(im_links[0].from_socket, MatrixSocket):
-
+                if im_links and isinstance(im_links[0].from_socket, MatrixSocket):
                     propm = SvGetSocketAnyType(self, inputs['matrix'])
                     draw_matrix = dataCorrect(propm)
 
