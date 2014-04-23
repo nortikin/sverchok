@@ -22,26 +22,24 @@ class DistancePPNode(Node, SverchCustomTreeNode):
         layout.prop(self, "Cross_dist", text="CrossOver")
         
     def update(self):
+        for name in ['vertices1', 'vertices2','matrix1','matrix2']:
+            if not name in self.inputs:
+                return
+                
         if self.inputs['vertices1'].links and self.inputs['vertices2'].links:
-            if self.inputs['vertices1'].links and self.inputs['vertices1'].links:
-                prop1_ = SvGetSocketAnyType(self,self.inputs['vertices1'])
-                prop1 = Vector_generate(prop1_)
-                    
-            if self.inputs['vertices2'].links and self.inputs['vertices2'].links:
-                prop2_ = SvGetSocketAnyType(self,self.inputs['vertices2'])
-                prop2 = Vector_generate(prop2_)
+            prop1_ = SvGetSocketAnyType(self,self.inputs['vertices1'])
+            prop1 = Vector_generate(prop1_)
+            prop2_ = SvGetSocketAnyType(self,self.inputs['vertices2'])
+            prop2 = Vector_generate(prop2_)
                 
-        elif self.inputs['matrix1'].links and self.inputs['matrix2'].links:
-            if self.inputs['matrix1'].links and self.inputs['matrix1'].links:
-                propa = SvGetSocketAnyType(self,self.inputs['matrix1'])
-                prop1 = Matrix_location(Matrix_generate(propa))
-                
-            if self.inputs['matrix2'].links and self.inputs['matrix2'].links:
-                propb = SvGetSocketAnyType(self,self.inputs['matrix2'])
-                prop2 = Matrix_location(Matrix_generate(propb))
-                    
+        elif self.inputs['matrix1'].links and self.inputs['matrix2'].links:        
+            propa = SvGetSocketAnyType(self,self.inputs['matrix1'])
+            prop1 = Matrix_location(Matrix_generate(propa))
+            propb = SvGetSocketAnyType(self,self.inputs['matrix2'])
+            prop2 = Matrix_location(Matrix_generate(propb))
         else:
             prop1, prop2 = [], []
+
         if prop1 and prop2:
             if self.outputs['distances'].links:
                 #print ('distances input', str(prop1), str(prop2))
