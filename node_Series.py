@@ -45,8 +45,6 @@ class GenSeriesNode(Node, SverchCustomTreeNode):
         
         # outputs
         if 'Series' in self.outputs and len(self.outputs['Series'].links)>0:
-            if not self.outputs['Series'].node.socket_value_update:
-                self.inputs['Series'].node.update()
             #print (Start, Stop, Step)
             if Step < 0:
                 Step = 1

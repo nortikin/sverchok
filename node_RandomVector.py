@@ -26,18 +26,14 @@ class RandomVectorNode(Node, SverchCustomTreeNode):
 
     def update(self):
         # inputs
-        if 'Count' in self.inputs and len(self.inputs['Count'].links)>0 and \
+        if 'Count' in self.inputs and self.inputs['Count'].links and \
             type(self.inputs['Count'].links[0].from_socket) == bpy.types.StringsSocket:
-            if not self.inputs['Count'].node.socket_value_update:
-                self.inputs['Count'].node.update()
             Coun = SvGetSocketAnyType(self,self.inputs['Count'])
         else:
             Coun = [[self.count_inner]]
             
-        if 'Seed' in self.inputs and len(self.inputs['Seed'].links)>0 and \
+        if 'Seed' in self.inputs and self.inputs['Seed'].links and \
              type(self.inputs['Seed'].links[0].from_socket) == bpy.types.StringsSocket:
-            if not self.inputs['Seed'].node.socket_value_update:
-                self.inputs['Seed'].node.update()
             tmp = SvGetSocketAnyType(self,self.inputs['Seed'])
             Seed = tmp[0][0]
         else:
@@ -45,7 +41,7 @@ class RandomVectorNode(Node, SverchCustomTreeNode):
       
         
         # outputs 
-        if 'Random' in self.outputs and len(self.outputs['Random'].links)>0:
+        if 'Random' in self.outputs and self.outputs['Random'].links:
             Random = []          
             # set seed, protect against float input
             # seed = 0 is special value for blender which unsets the seed value

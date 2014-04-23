@@ -204,8 +204,6 @@ class SvTextInNode(Node,SverchCustomTreeNode):
         self.color = READY_COLOR
         for item in self.csv_data[self.name]:
             if item in self.outputs and len(self.outputs[item].links)>0:
-                if not self.outputs[item].node.socket_value_update:
-                    self.outputs[item].node.update()
                 self.outputs[item].StringsProperty = str([self.csv_data[self.name][item]])
 
  
@@ -356,8 +354,6 @@ class SvTextInNode(Node,SverchCustomTreeNode):
         # load data into selected socket
         for item in ['Vertices','Data','Matrix']:
             if item in self.outputs and len(self.outputs[item].links)>0:
-                if not self.outputs[item].node.socket_value_update:
-                    self.outputs[item].node.update()  
                 SvSetSocketAnyType(self,item, str(self.list_data[self.name]))
 #
 # JSON
@@ -412,8 +408,6 @@ class SvTextInNode(Node,SverchCustomTreeNode):
         
         for item in self.json_data[self.name]:
             if item in self.outputs and len(self.outputs[item].links)>0:
-                if not self.outputs[item].node.socket_value_update:
-                    self.outputs[item].node.update()
                 out = self.json_data[self.name][item][1]
                 SvSetSocketAnyType(self, item, out)
                 

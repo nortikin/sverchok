@@ -34,8 +34,6 @@ class Test1Node(Node, SverchCustomTreeNode):
         multi_socket(self, min=2)
         
         if 'x0' in self.inputs and len(self.inputs['x0'].links)>0:
-            if not self.inputs['x0'].node.socket_value_update:
-                self.inputs['x0'].node.update() 
             # adaptive socket - from util(mask list node)
             inputsocketname = self.inputs[0].name   # is you need x0 to define socket type - set 0 to 1
             outputsocketname = ['data',]
@@ -105,8 +103,6 @@ class Test2Node(Node, SverchCustomTreeNode):
         multi_socket(self, min=2)
         
         if 'x0' in self.inputs and len(self.inputs['x0'].links)>0:
-            if not self.inputs['x0'].node.socket_value_update:
-                self.inputs['x0'].node.update() 
             inputsocketname = self.inputs[0].name
             outputsocketname = ['data',]
             changable_sockets(self, inputsocketname, outputsocketname)
