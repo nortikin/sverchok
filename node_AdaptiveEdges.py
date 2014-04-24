@@ -46,7 +46,7 @@ class SvAdaptiveEdgeNode(Node, SverchCustomTreeNode):
         d_vector.normalize()
 
         for vc,edg in zip(versR,edgeR):
-            v_out = vc[:]
+            v_out = []
             e_out = []
             for e in edg:
 
@@ -59,7 +59,7 @@ class SvAdaptiveEdgeNode(Node, SverchCustomTreeNode):
                 mat_l = Matrix.Translation(vc[e[0]])
                 mat = mat_l * mat_r * mat_s
                 e_out.extend([list(map(lambda x:operator.add(len(v_out),x),e)) for e in edgD])  
-                v_out.extend([mat*v for v in verD[1:-1]])
+                v_out.extend([mat*v for v in verD])
                    
             verts_out.append(v_out)
             edges_out.append(e_out)
