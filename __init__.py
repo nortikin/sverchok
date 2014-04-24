@@ -15,11 +15,11 @@
  #  and write to the Free Software Foundation, Inc., 51 Franklin Street, 
  #  Fifth Floor, Boston, MA  02110-1301, USA..
  #
- #  The Original Code is Copyright (C) 2013-2014 by Gorodetskiy Nikita	###
+ #  The Original Code is Copyright (C) 2013-2014 by Gorodetskiy Nikita  ###
  #  All rights reserved.
  #
- #  Contact:      sverchok-b3d@yandex.ru	###
- #  Information:  http://nikitron.cc.ua/sverchok.html	###
+ #  Contact:      sverchok-b3d@yandex.ru    ###
+ #  Information:  http://nikitron.cc.ua/sverchok.html   ###
  #
  #  The Original Code is: all of this file.
  #
@@ -141,6 +141,8 @@ if "bpy" in locals():
     imp.reload(node_RemoveDoubles)
     imp.reload(node_MeshJoin)
     imp.reload(node_VertSort)
+    imp.reload(node_ConvexHull)
+
 else:
     import node_s
     import node_ScalarMath
@@ -224,7 +226,8 @@ else:
     import node_RemoveDoubles
     import node_MeshJoin
     import node_VertSort
-
+    import node_ConvexHull
+    
 def register():
     import bpy
     import nodeitems_utils
@@ -307,6 +310,7 @@ def register():
     node_RemoveDoubles.register()
     node_MeshJoin.register()
     node_VertSort.register()
+    node_ConvexHull.register()
         
     if 'SVERCHOK' not in nodeitems_utils._node_categories:
         nodeitems_utils.register_node_categories("SVERCHOK", node_s.make_categories())
@@ -316,6 +320,7 @@ def unregister():
     import bpy
     import nodeitems_utils
     
+    node_ConvexHull.unregister()
     node_VertSort.unregister()
     node_MeshJoin.unregister()
     node_RemoveDoubles.unregister()

@@ -216,6 +216,8 @@ def make_categories():
             NodeItem("SvMeshJoinNode", label="Mesh Join"),
             NodeItem("SvRemoveDoublesNode", label="Mesh Remove Doubles"),
             NodeItem("SvVertSortNode", label="Vertices Sort"),
+            NodeItem("SvConvexHullNode", label="Convex Hull"),
+            
             ]),
         ]
     return node_categories
