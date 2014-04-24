@@ -38,7 +38,7 @@ def sv_main(size=1,divx=1,divy=1,divz=1):
             cup=True
         else:
             cup=False
-        col.append(generate_row(size,divx,divy,step_z*i,cup))
+        col.extend(generate_row(size,divx,divy,step_z*i,cup))
         
     out=[col]
     pol = []
@@ -56,7 +56,9 @@ def sv_main(size=1,divx=1,divy=1,divz=1):
                 ])
         return pol
     pol.extend(generate_plane(divx,divy))
-    coef = (divz-1)*(divx-1)*2 + (divz-1)*(divy+1)*2 + (divx+1)*(divy+1)
+    coef = (divz-1)*(divx-1)*2 \
+            + (divz-1)*(divy+1)*2 \
+            + (divx+1)*(divy+1)
     print(coef)
     pol2 = []
     for p in pol:
@@ -78,7 +80,6 @@ def sv_main(size=1,divx=1,divy=1,divz=1):
     # out boilerplate - set your own sockets packet
     out_sockets = [
         ['v', 'Ver', out],
-        ['s', 'Edg', edg],
         ['s', 'Pol', [pol]],
     ]
 
