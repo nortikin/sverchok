@@ -1,0 +1,86 @@
+def sv_main(size=1,divx=1,divy=1,divz=1):
+    
+    # in boilerplate - make your own sockets
+    in_sockets = [
+        ['s', 'Size(float)',  size],
+        ['s', 'DivisionsX(int)', divx],
+        ['s', 'DivisionsY(int)', divy],
+        ['s', 'DivisionsZ(int)', divz],
+    ]
+    
+    # import libreryes - your defined
+    
+    # your's code here
+    if divx<1: divx=1
+    if divy<1: divy=1
+    if divz<1: divz=1
+    
+    def generate_row(size,dx,dy,z,cup):
+        step_x = size/(dx)
+        step_y = size/(dy)
+        row = []
+        for y in range(dy+1): 
+            for x in range(dx+1):
+                if cup:
+                    row.append([step_x*x,step_y*y,z])
+                elif x in [0,dx] and y not in [0,dy]:
+                    row.append([step_x*x,step_y*y,z])
+                elif x not in [0,dx] and y in [0,dy]:
+                    row.append([step_x*x,step_y*y,z])
+                elif x in [0,dx] and y in [0,dy]:
+                    row.append([step_x*x,step_y*y,z])
+        return row
+            
+    col = []
+    step_z = size/(divz)
+    for i in range(divz+1):
+        if i == 0 or i == divz:
+            cup=True
+        else:
+            cup=False
+        col.extend(generate_row(size,divx,divy,step_z*i,cup))
+        
+    out=[col]
+    pol = []
+    
+    # please, somebody, make it easyer
+    def generate_plane(divx,divy):
+        pol=[]
+        for y in range(divy):
+            for x in range(divx):
+                pol.append([
+                    x + y*(divx+1),
+                    (x+1) + y*(divx+1),
+                    (x+1) + (y+1)*(divx+1),
+                    x + (y+1)*(divx+1)
+                ])
+        return pol
+    pol.extend(generate_plane(divx,divy))
+    coef = (divz-1)*(divx-1)*2 \
+            + (divz-1)*(divy+1)*2 \
+            + (divx+1)*(divy+1)
+    print(coef)
+    pol2 = []
+    for p in pol:
+        temppol=[]
+        for i in p:
+            temppol.append(i+coef)
+        pol2.append(temppol)
+    pol.extend(pol2)
+    # задание - сделать полигонизацию из существующих точек
+    # по рядам и по столбцам понятно, как быть с вертикалями?
+    # головная боль
+    
+    # simple cube
+    #out=[[[-1.0, -1.0, -1.0], [-1.0, 1.0, -1.0], [1.0, 1.0, -1.0], [1.0, -1.0, -1.0], [-1.0, -1.0, 1.0], [-1.0, 1.0, 1.0], [1.0, 1.0, 1.0], [1.0, -1.0, 1.0]]]
+    #edg=[[[0, 4], [4, 5], [5, 1], [1, 0], [5, 6], [6, 2], [2, 1], [6, 7], [7, 3], [3, 2], [7, 4], [0, 3]]]
+    #pol=[[[4, 5, 1, 0], [5, 6, 2, 1], [6, 7, 3, 2], [7, 4, 0, 3], [0, 1, 2, 3], [7, 6, 5, 4]]]
+    edg=[]
+    
+    # out boilerplate - set your own sockets packet
+    out_sockets = [
+        ['v', 'Ver', out],
+        ['s', 'Pol', [pol]],
+    ]
+
+    return in_sockets, out_sockets
