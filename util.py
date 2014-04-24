@@ -330,8 +330,6 @@ def dataStandart(data, dept, nominal_dept):
 # calc list nesting only in countainment level integer
 
 def levelsOflist(lst):
-    if not lst:
-        return 1
     level = 1
     for n in lst:
         if n and isinstance(n,(list,tuple)): 
