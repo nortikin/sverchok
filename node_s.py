@@ -204,6 +204,7 @@ def make_categories():
             NodeItem("DistancePPNode", label="Distances"),
             NodeItem("AreaNode", label="Area"),
             NodeItem("AdaptivePolsNode", label="Adaptive Polygons"),
+            NodeItem("SvAdaptiveEdgeNode", label="Adaptive Edges"),
             NodeItem("CrossSectionNode", label="Cross Section.old"),
             NodeItem("SvBisectNode", label="Bisect.new"),
             NodeItem("SvSolidifyNode", label="Solidify"),
@@ -215,6 +216,7 @@ def make_categories():
             NodeItem("Pols2EdgsNode", label="Polygons to Edges"),
             NodeItem("SvMeshJoinNode", label="Mesh Join"),
             NodeItem("SvRemoveDoublesNode", label="Mesh Remove Doubles"),
+            NodeItem("SvDeleteLooseNode", label="Delete Loose"),
             NodeItem("SvVertSortNode", label="Vertices Sort"),
             NodeItem("SvConvexHullNode", label="Convex Hull"),
             

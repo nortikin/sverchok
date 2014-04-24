@@ -110,6 +110,7 @@ if "bpy" in locals():
     imp.reload(node_Formula2)
     imp.reload(node_Tools)
     imp.reload(node_AdaptivePolygons)
+    imp.reload(node_AdaptiveEdges)
     imp.reload(node_CrossSection)
     imp.reload(node_Bisect)
     imp.reload(node_Solidify)
@@ -139,6 +140,7 @@ if "bpy" in locals():
     imp.reload(node_Bakery)
     imp.reload(node_VertsDelDoubles)
     imp.reload(node_RemoveDoubles)
+    imp.reload(node_DeleteLoose)
     imp.reload(node_MeshJoin)
     imp.reload(node_VertSort)
     imp.reload(node_ConvexHull)
@@ -195,6 +197,7 @@ else:
     import node_Formula2
     import node_Tools
     import node_AdaptivePolygons
+    import node_AdaptiveEdges
     import node_CrossSection
     import node_Bisect
     import node_Solidify
@@ -224,6 +227,7 @@ else:
     import node_Bakery
     import node_VertsDelDoubles
     import node_RemoveDoubles
+    import node_DeleteLoose
     import node_MeshJoin
     import node_VertSort
     import node_ConvexHull
@@ -279,6 +283,7 @@ def register():
     node_Formula2.register()
     node_Tools.register()
     node_AdaptivePolygons.register()
+    node_AdaptiveEdges.register()
     node_CrossSection.register()
     node_Bisect.register()
     node_Solidify.register()
@@ -308,6 +313,7 @@ def register():
     node_Bakery.register()
     node_VertsDelDoubles.register()
     node_RemoveDoubles.register()
+    node_DeleteLoose.register()
     node_MeshJoin.register()
     node_VertSort.register()
     node_ConvexHull.register()
@@ -323,6 +329,7 @@ def unregister():
     node_ConvexHull.unregister()
     node_VertSort.unregister()
     node_MeshJoin.unregister()
+    node_DeleteLoose.unregister()
     node_RemoveDoubles.unregister()
     node_VertsDelDoubles.unregister()
     node_Bakery.unregister()
@@ -352,6 +359,7 @@ def unregister():
     node_Solidify.unregister()
     node_Bisect.unregister()
     node_CrossSection.unregister()
+    node_node_AdaptiveEdges()
     node_AdaptivePolygons.unregister()
     node_Tools.unregister()
     node_Formula2.unregister()
