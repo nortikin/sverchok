@@ -1,6 +1,7 @@
 import bpy, bmesh, mathutils
 from mathutils import Vector, Matrix
 from node_s import *
+from util import *
 
 class CentersPolsNode(Node, SverchCustomTreeNode):
     ''' Centers of polygons of mesh (not including matrixes, so apply scale-rot-loc ctrl+A) '''
