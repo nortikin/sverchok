@@ -33,8 +33,8 @@
 bl_info = {
     "name": "Sverchok",
     "author": "Nedovizin Alexander, Gorodetskiy Nikita, Linus Yng, Agustin Jimenez, Dealga McArdle",
-    "version": (0, 2, 7),
-    "blender": (2, 6, 9), 
+    "version": (0, 2, 8),
+    "blender": (2, 7, 0), 
     "location": "Nodes > CustomNodesTree > Add user nodes",
     "description": "Do parametric node-based geometry programming",
     "warning": "requires nodes window",
@@ -144,6 +144,7 @@ if "bpy" in locals():
     imp.reload(node_MeshJoin)
     imp.reload(node_VertSort)
     imp.reload(node_ConvexHull)
+    imp.reload(node_KDTree)
 
 else:
     import node_s
@@ -231,6 +232,7 @@ else:
     import node_MeshJoin
     import node_VertSort
     import node_ConvexHull
+    import node_KDTree
     
 def register():
     import bpy
@@ -317,6 +319,7 @@ def register():
     node_MeshJoin.register()
     node_VertSort.register()
     node_ConvexHull.register()
+    node_KDTree.register()
         
     if 'SVERCHOK' not in nodeitems_utils._node_categories:
         nodeitems_utils.register_node_categories("SVERCHOK", node_s.make_categories())
@@ -326,6 +329,7 @@ def unregister():
     import bpy
     import nodeitems_utils
     
+    node_KDTree.unregister()
     node_ConvexHull.unregister()
     node_VertSort.unregister()
     node_MeshJoin.unregister()

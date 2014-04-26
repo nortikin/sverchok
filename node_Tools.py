@@ -63,7 +63,7 @@ class SverchokToolsMenu(bpy.types.Panel):
         box.operator(SverchokUpdateAll.bl_idname, text="UPDATE")
         box = layout.box()
         col = box.column(align=True)
-        col.label(text="Sverchok v_0.2.7")
+        col.label(text="Sverchok v_0.2.8")
         col.label(text='layout: '+context.space_data.node_tree.name)
         row = col.row(align=True)
         row.operator('wm.url_open', text='Help!').url = 'http://wiki.blender.org/index.php/Extensions:2.6/Py/Scripts/Nodes/Sverchok'
