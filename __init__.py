@@ -33,8 +33,8 @@
 bl_info = {
     "name": "Sverchok",
     "author": "Nedovizin Alexander, Gorodetskiy Nikita, Linus Yng, Agustin Jimenez, Dealga McArdle",
-    "version": (0, 2, 7),
-    "blender": (2, 6, 9), 
+    "version": (0, 2, 8),
+    "blender": (2, 7, 0), 
     "location": "Nodes > CustomNodesTree > Add user nodes",
     "description": "Do parametric node-based geometry programming",
     "warning": "requires nodes window",
