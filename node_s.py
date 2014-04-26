@@ -219,7 +219,7 @@ def make_categories():
             NodeItem("SvDeleteLooseNode", label="Delete Loose"),
             NodeItem("SvVertSortNode", label="Vertices Sort"),
             NodeItem("SvConvexHullNode", label="Convex Hull"),
-            
+            NodeItem("SvKDTreeNode", label="KDTree find"),
             ]),
         ]
     return node_categories
