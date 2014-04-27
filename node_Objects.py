@@ -1,5 +1,5 @@
 import bpy, bmesh, mathutils
-from bpy.props import StringProperty
+from bpy.props import StringProperty, BoolProperty
 from node_s import *
 from util import *
 
@@ -46,9 +46,19 @@ class ObjectsNode(Node, SverchCustomTreeNode):
     
     #def object_select(self, context):
         #return [tuple(3 * [ob.name]) for ob in context.scene.objects if ob.type == 'MESH' or ob.type == 'EMPTY']
-    objects_local = StringProperty(name='local objects in', description='objects, binded to current node', default='', update=updateNode)
+    objects_local = StringProperty(
+        name='local objects in', description='objects, binded to current node',
+        default='', 
+        update=updateNode)
     #ObjectProperty = EnumProperty(items = object_select, name = 'ObjectProperty')
-    
+
+    modifiers = BoolProperty(
+        name='Modifiers',
+        description='Apply modifier geometry to import (original untouched)',
+        default=False,
+        update=updateNode)
+
+
     def init(self, context):
         self.outputs.new('VerticesSocket', "Vertices", "Vertices")
         self.outputs.new('StringsSocket', "Edges", "Edges")
@@ -67,6 +77,9 @@ class ObjectsNode(Node, SverchCustomTreeNode):
                 layout.label(o)
         else:
             layout.label('--None--')
+
+        row = layout.row(align=True)
+        row.prop(self, "modifiers", text="post modifiers")             
 
     def update(self):
         name_ = [self.name] + [self.id_data.name]
@@ -94,7 +107,12 @@ class ObjectsNode(Node, SverchCustomTreeNode):
                     for m in obj.matrix_world:
                         mtrx.append(m[:])
                 else:
-                    obj_data = obj.data
+                    #obj_data = obj.data
+                    # post modifier geometry if ticked
+                    scene = bpy.context.scene
+                    settings = 'PREVIEW'
+                    obj_data = obj.to_mesh(scene, self.modifiers, settings)
+
                     for m in obj.matrix_world:
                         mtrx.append(list(m))
                     for v in obj_data.vertices:

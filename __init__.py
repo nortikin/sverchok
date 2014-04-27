@@ -145,6 +145,7 @@ if "bpy" in locals():
     imp.reload(node_VertSort)
     imp.reload(node_ConvexHull)
     imp.reload(node_KDTree)
+    imp.reload(text_editor_Submenu)
 
 else:
     import node_s
@@ -233,6 +234,7 @@ else:
     import node_VertSort
     import node_ConvexHull
     import node_KDTree
+    import text_editor_Submenu
     
 def register():
     import bpy
@@ -320,6 +322,7 @@ def register():
     node_VertSort.register()
     node_ConvexHull.register()
     node_KDTree.register()
+    text_editor_Submenu.register()
         
     if 'SVERCHOK' not in nodeitems_utils._node_categories:
         nodeitems_utils.register_node_categories("SVERCHOK", node_s.make_categories())
@@ -329,6 +332,7 @@ def unregister():
     import bpy
     import nodeitems_utils
     
+    text_editor_Submenu.unregister()
     node_KDTree.unregister()
     node_ConvexHull.unregister()
     node_VertSort.unregister()
