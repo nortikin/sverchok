@@ -117,12 +117,12 @@ def update_mesh(bm, d):
 
 
 def unselect_nonintersecting(bm, d_edges, edge_indices):
-    print(d_edges, edge_indices)
+    # print(d_edges, edge_indices)
     if len(edge_indices) > len(d_edges):
         reserved_edges = set(edge_indices) - set(d_edges)
         for edge in reserved_edges:
             bm.edges[edge].select = False
-        print("unselected {}, non intersecting edges".format(reserved_edges))
+        # print("unselected {}, non intersecting edges".format(reserved_edges))
 
 
 class SvIntersectEdgesNode(Node, SverchCustomTreeNode):
@@ -159,12 +159,10 @@ class SvIntersectEdgesNode(Node, SverchCustomTreeNode):
         bm.normal_update()
 
         edge_indices = [e.index for e in bm.edges]
-        print('edges_indices:', edge_indices)
         for edge in bm.edges:
             edge.select = True
 
         d = get_intersection_dictionary(bm, edge_indices)
-        print(d)
 
         unselect_nonintersecting(bm, d.keys(), edge_indices)
         update_mesh(bm, d)
@@ -173,7 +171,7 @@ class SvIntersectEdgesNode(Node, SverchCustomTreeNode):
         edges_out = [[j.index for j in i.verts] for i in bm.edges]
 
         SvSetSocketAnyType(self, 'Verts_out', [verts_out])
-        SvSetSocketAnyType(self, 'Edges_out', edges_out)
+        SvSetSocketAnyType(self, 'Edges_out', [edges_out])
 
     def update_socket(self, context):
         self.update()
