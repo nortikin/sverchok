@@ -15,35 +15,47 @@ def sv_main(size=1,divx=1,divy=1,divz=1):
     if divy<1: divy=1
     if divz<1: divz=1
     
-    def generate_row(size,dx,dy,z,cup):
+    criteria = ((divx+1)*(divy+1))
+    
+    # def to make rows and indeces
+    def generate_row(size,dx,dy,z,cup,criteria):
         step_x = size/(dx)
         step_y = size/(dy)
         row = []
+        i = 0
+        inds = []
         for y in range(dy+1): 
             for x in range(dx+1):
                 if cup:
                     row.append([step_x*x,step_y*y,z])
+                    inds.append(i)
                 elif x in [0,dx] and y not in [0,dy]:
                     row.append([step_x*x,step_y*y,z])
+                    inds.append(i+criteria)
                 elif x not in [0,dx] and y in [0,dy]:
                     row.append([step_x*x,step_y*y,z])
+                    inds.append(i+criteria)
                 elif x in [0,dx] and y in [0,dy]:
                     row.append([step_x*x,step_y*y,z])
-        return row
-            
+                    inds.append(i+criteria)
+                i += 1
+        return row, inds
+    
+    # make vertices + indeces of them
     col = []
+    indeces_rows = []
     step_z = size/(divz)
     for i in range(divz+1):
         if i == 0 or i == divz:
             cup=True
         else:
             cup=False
-        col.extend(generate_row(size,divx,divy,step_z*i,cup))
+        gen = generate_row(size,divx,divy,step_z*i,cup,criteria)
+        indeces_rows.append(gen[1])
+        col.extend(gen[0])
         
-    out=[col]
     pol = []
-    
-    # please, somebody, make it easyer
+    # def to make bottom - floor quads
     def generate_plane(divx,divy):
         pol=[]
         for y in range(divy):
@@ -55,11 +67,14 @@ def sv_main(size=1,divx=1,divy=1,divz=1):
                     x + (y+1)*(divx+1)
                 ])
         return pol
+    
+    # to make floor
     pol.extend(generate_plane(divx,divy))
     coef = (divz-1)*(divx-1)*2 \
             + (divz-1)*(divy+1)*2 \
             + (divx+1)*(divy+1)
-    print(coef)
+    
+    # to make celling just copying
     pol2 = []
     for p in pol:
         temppol=[]
@@ -67,15 +82,33 @@ def sv_main(size=1,divx=1,divy=1,divz=1):
             temppol.append(i+coef)
         pol2.append(temppol)
     pol.extend(pol2)
+    
+    # walls
+    print(indeces_rows)
+    pol3=[]
+    for i in indeces_rows[1]:
+        if (i-criteria)<divx:
+            pol3.append([i-criteria,i,i+1,i-criteria+1])
+        elif (criteria-1)>(i-criteria)>(criteria-divx-2):
+            pol3.append([i-criteria,i,i+1,i-criteria+1])
+    
+    
+    # multiply walls at floors
+    #if divz>=1:
+    #    pol4 = add_sides(pol3, criteria, divz)
+    
+    pol.extend(pol3)
+    #pol.extend(pol4)
     # задание - сделать полигонизацию из существующих точек
     # по рядам и по столбцам понятно, как быть с вертикалями?
     # головная боль
-    
+    out=[col]
     # simple cube
-    #out=[[[-1.0, -1.0, -1.0], [-1.0, 1.0, -1.0], [1.0, 1.0, -1.0], [1.0, -1.0, -1.0], [-1.0, -1.0, 1.0], [-1.0, 1.0, 1.0], [1.0, 1.0, 1.0], [1.0, -1.0, 1.0]]]
-    #edg=[[[0, 4], [4, 5], [5, 1], [1, 0], [5, 6], [6, 2], [2, 1], [6, 7], [7, 3], [3, 2], [7, 4], [0, 3]]]
-    #pol=[[[4, 5, 1, 0], [5, 6, 2, 1], [6, 7, 3, 2], [7, 4, 0, 3], [0, 1, 2, 3], [7, 6, 5, 4]]]
-    edg=[]
+    if divx ==1 and divy ==1 and divz ==1:
+        out=[[[-1.0, -1.0, -1.0], [-1.0, 1.0, -1.0], [1.0, 1.0, -1.0], [1.0, -1.0, -1.0], [-1.0, -1.0, 1.0], [-1.0, 1.0, 1.0], [1.0, 1.0, 1.0], [1.0, -1.0, 1.0]]]
+        edg=[[[0, 4], [4, 5], [5, 1], [1, 0], [5, 6], [6, 2], [2, 1], [6, 7], [7, 3], [3, 2], [7, 4], [0, 3]]]
+        pol=[[[4, 5, 1, 0], [5, 6, 2, 1], [6, 7, 3, 2], [7, 4, 0, 3], [0, 1, 2, 3], [7, 6, 5, 4]]]
+    
     
     # out boilerplate - set your own sockets packet
     out_sockets = [
