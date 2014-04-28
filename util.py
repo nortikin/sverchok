@@ -1277,11 +1277,11 @@ def svQsort(L):
 # update node on framechange
 ####################################
 
-def update_nodes(scene):
-    try: #bpy.ops.node.sverchok_update_all()
-        speedupdate()
-    except: pass
+#def update_nodes(scene):
+#    try: #bpy.ops.node.sverchok_update_all()
+#        speedupdate()
+#    except: pass
 # addtionally
-pre = bpy.app.handlers.frame_change_pre
-for x in pre: pre.remove(x)
-pre.append(update_nodes)
+#pre = bpy.app.handlers.frame_change_pre
+#for x in pre: pre.remove(x)
+#pre.append(update_nodes)
