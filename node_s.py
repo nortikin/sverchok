@@ -192,6 +192,7 @@ def make_categories():
             # objects, new elements, line, plane
             NodeItem("LineNode", label="Line"),
             NodeItem("PlaneNode", label="Plane"),
+            NodeItem("SvBoxNode", label="Box"),
             NodeItem("CircleNode", label="Circle"),
             NodeItem("CylinderNode", label="Cylinder"),
             NodeItem("SphereNode", label="Sphere"),
