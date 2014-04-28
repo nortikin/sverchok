@@ -4,8 +4,6 @@ from node_s import *
 import Viewer_draw
 from Viewer_draw import *
 from util import *
-from bpy.app.handlers import persistent
-
 
 class SvObjBake(bpy.types.Operator):
     """ B A K E   OBJECTS """
@@ -144,7 +142,6 @@ class ViewerNode(Node, SverchCustomTreeNode):
     def update(self):
         global cache_viewer_baker
         # node id, used as ref
-
         n_id = self.name+self.id_data.name
         if self.old_nid != n_id:
             callback_disable(self.old_nid)
@@ -210,18 +207,12 @@ class ViewerNode(Node, SverchCustomTreeNode):
         #cache_viewer_baker[self.name+self.id_data.name+'ep'] = []
         #cache_viewer_baker[self.name+self.id_data.name+'m'] = []            
 
-@persistent
-def sv_clean(scene):
-    callback_disable_all()
-    
 def register():
     bpy.utils.register_class(ViewerNode)
-    bpy.app.handlers.load_pre.append(sv_clean) 
     bpy.utils.register_class(SvObjBake)
     
 def unregister():
     bpy.utils.unregister_class(SvObjBake)
-    bpy.app.handlers.load_pre.remove(sv_clean) 
     bpy.utils.unregister_class(ViewerNode)
     
 
