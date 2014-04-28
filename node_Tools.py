@@ -63,13 +63,12 @@ class SverchokToolsMenu(bpy.types.Panel):
         box.operator(SverchokUpdateAll.bl_idname, text="UPDATE")
       
         box=layout.box()
-        box.label(text="Animation update")
+        box.label(text="Layout manager")
         col=box.column(align=True)
         row=col.row(align=True)
-#        row.label(text='Show')
-#        row.label(text='Bake')
+        row.label(text='Show')
+        #row.label(text='Bake')
         row.label(text='Animate')
-
         row.label(text='Name')
       
         ng = bpy.data.node_groups
@@ -77,8 +76,8 @@ class SverchokToolsMenu(bpy.types.Panel):
         for name,tree in ng.items():
             if tree.bl_idname == 'SverchCustomTreeType':
                 row=col.row(align=True)
- #               row.prop(tree, 'sv_show',text=' ')
- #               row.prop(tree, 'sv_bake',text=' ')
+                row.prop(tree, 'sv_show',text='')
+        #       row.prop(tree, 'sv_bake',text='')
                 row.prop(tree, 'sv_animate',text=' ')
                 row.label(text=name)
 

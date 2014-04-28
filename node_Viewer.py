@@ -143,6 +143,10 @@ class ViewerNode(Node, SverchCustomTreeNode):
         cache_viewer_baker[self.name+self.id_data.name+'v'] = []
         cache_viewer_baker[self.name+self.id_data.name+'ep'] = []
         cache_viewer_baker[self.name+self.id_data.name+'m'] = []
+        if not self.id_data.sv_show:
+            callback_disable(self.name+self.id_data.name)
+            return
+            
         if self.activate and (self.inputs['vertices'].links or self.inputs['matrix'].links):
             callback_disable(self.name+self.id_data.name)
             
