@@ -270,7 +270,6 @@ def register():
     bpy.utils.register_class(StringsSocket)
     bpy.utils.register_class(VerticesSocket)
     bpy.app.handlers.frame_change_pre.append(sv_update_handler) 
-    print("update handler...")
        
 def unregister():
     bpy.utils.unregister_class(VerticesSocket)
