@@ -64,6 +64,7 @@ class SverchokToolsMenu(bpy.types.Panel):
       
         box=layout.box()
         box.label(text="Layout manager")
+
         col=box.column(align=True)
         row=col.row(align=True)
         row.label(text='Show')
