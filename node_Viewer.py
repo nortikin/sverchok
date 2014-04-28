@@ -174,7 +174,7 @@ class ViewerNode(Node, SverchCustomTreeNode):
                 cache_viewer_baker[self.name+self.id_data.name+'m'] = []
         
         else:
-            callback_disable(self.name-self.id_data.name)
+            callback_disable(self.name+self.id_data.name)
         
         if cache_viewer_baker[self.name+self.id_data.name+'v'] or cache_viewer_baker[self.name+self.id_data.name+'m']:
             callback_enable(self.name+self.id_data.name, cache_viewer_baker[self.name+self.id_data.name+'v'], cache_viewer_baker[self.name+self.id_data.name+'ep'], \

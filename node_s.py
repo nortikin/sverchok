@@ -101,10 +101,14 @@ class SverchCustomTree(NodeTree):
     bl_label = 'Sverchok Node Tree'
     bl_icon = 'RNA'
     
-    sv_animate = BoolProperty(name="Animate", default=True)
-    sv_show = BoolProperty(name="Show", default=True)
-    sv_bake = BoolProperty(name="Bake", default=True)
+    def updateTree(self,context):
+        speedUpdate(tree_name = self.name)
+        
+    sv_animate = BoolProperty(name="Animate", default=True, update=updateTree)
+    sv_show = BoolProperty(name="Show", default=True, update=updateTree)
+    sv_bake = BoolProperty(name="Bake", default=True, update=updateTree)
     
+        
     def update(self):
         '''
         Rebuild and update the Sverchok node tree, used at editor changes
