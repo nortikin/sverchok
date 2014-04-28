@@ -256,11 +256,11 @@ def make_categories():
 def sv_update_handler(scene):
     '''Sverchok update handler'''
     for name,tree in bpy.data.node_groups.items():
-        if tree.bl_idname =='SverchCustomTreeType':
+        if tree.bl_idname =='SverchCustomTreeType' and tree.nodes:
             try:
                 tree.update_ani()                
-            except:
-                print('Failed to update:',name)
+            except Exception as e:
+                print('Failed to update:',name,str(e))
                     
 def register():
     bpy.utils.register_class(SvColors)
