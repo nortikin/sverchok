@@ -67,21 +67,33 @@ class SverchokToolsMenu(bpy.types.Panel):
 
         col=box.column(align=True)
         row=col.row(align=True)
+        row.label(text='Name')
         row.label(text='Show')
         #row.label(text='Bake')
         row.label(text='Animate')
-        row.label(text='Name')
+        row.icon
       
         ng = bpy.data.node_groups
       
         for name,tree in ng.items():
             if tree.bl_idname == 'SverchCustomTreeType':
                 row=col.row(align=True)
-                row.prop(tree, 'sv_show',text=' ')
+                if name==context.space_data.node_tree.name:
+                    row.label(text=name,icon='FILE_TICK')
+                else:
+                    row.label(text=name)
+                
+                if tree.sv_show:
+                    row.prop(tree, 'sv_show',icon='RESTRICT_VIEW_OFF',text=' ')
+                else:
+                    row.prop(tree, 'sv_show',icon='RESTRICT_VIEW_ON',text=' ')
+                
+                if tree.sv_animate:
+                    row.prop(tree, 'sv_animate',icon='RESTRICT_VIEW_OFF',text=' ')
+                else:
+                    row.prop(tree, 'sv_animate',icon='RESTRICT_VIEW_ON',text=' ')
+                    
         #       row.prop(tree, 'sv_bake',text=' ')
-                row.prop(tree, 'sv_animate',text=' ')
-                row.label(text=name)
-
   
         box = layout.box()
         col = box.column(align=True)
