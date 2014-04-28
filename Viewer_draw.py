@@ -57,6 +57,12 @@ def callback_enable(name, sl1, sl2, sl3, vs, colo, tran, shade):
     tag_redraw_all_view3d()
     
 
+def callback_disable_all():
+    global temp_handle
+    temp_list = list(temp_handle.keys())
+    for name in temp_list:
+        callback_disable(name)
+    
 def callback_disable(name):
     global temp_handle
     handle = handle_read(name)

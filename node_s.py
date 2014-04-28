@@ -252,6 +252,7 @@ def make_categories():
 #        count.append(len(cnt.items))
 #    return count
 
+# animation update handler
 @persistent
 def sv_update_handler(scene):
     '''Sverchok update handler'''
@@ -262,6 +263,16 @@ def sv_update_handler(scene):
             except Exception as e:
                 print('Failed to update:',name,str(e))
                     
+# clean up handler
+            
+@persistent
+def sv_clean(scene):
+    # callbacks for node_Viewer
+    import Viewer_draw
+    Viewer_draw.callback_disable_all()
+
+    
+                        
 def register():
     bpy.utils.register_class(SvColors)
     bpy.utils.register_class(SverchCustomTree)
@@ -270,6 +281,8 @@ def register():
     bpy.utils.register_class(StringsSocket)
     bpy.utils.register_class(VerticesSocket)
     bpy.app.handlers.frame_change_pre.append(sv_update_handler) 
+    bpy.app.handlers.load_pre.append(sv_clean) 
+
        
 def unregister():
     bpy.utils.unregister_class(VerticesSocket)
@@ -279,6 +292,8 @@ def unregister():
     bpy.utils.unregister_class(SverchCustomTree)
     bpy.utils.unregister_class(SvColors)
     bpy.app.handlers.frame_change_pre.remove(sv_update_handler)
+    bpy.app.handlers.load_pre.remove(sv_clean) 
+
 
 if __name__ == "__main__":
     register()
