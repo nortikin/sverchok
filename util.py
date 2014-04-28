@@ -733,7 +733,6 @@ def updateAllOuts(self, update_self=True):
                     updateAllOuts(nod)
 
 
-
 def updateSlot(self, context):
     return
 
@@ -741,37 +740,10 @@ def updateNode(self, context):
     global DEBUG_MODE
     global DEBUG_SETTINGS
     a=time.time()
-    speedUpdate(self.name,self.id_data.name)
+    speedUpdate(start_node = self.name,tree_name =self.id_data.name)
     b=time.time()
     if DEBUG_MODE:
         print("Partial update from node",self.name,"in",round(b-a,4))
-
-    '''
-    if not ini_update_cnode(self.name):
-        return
-
-    updateAllOuts(self)
-    is_updated_cnode()'''
-
-'''
-def updateTreeNode(self, context):
-    for ng in context.blend_data.node_groups:
-        for nod in ng.nodes:
-            flag=False
-            for inputs in nod.inputs:
-                if inputs.links:
-                    Flag=True
-                    break
-
-            if flag:
-                continue
-
-            ini_update_cnode(nod.name)
-            lock_updated_cnode()
-            updateAllOuts(nod)
-            is_updated_cnode()
-
-        #ng.interface_update(bpy.context)'''
 
 # old function, kept while evaluating new solution.
 # look at makeTreeUpdate2() and make_update_list()
@@ -1050,7 +1022,7 @@ def speedUpdate(start_node = None, tree_name = None, animation_mode = False):
     # draw the named tree, called from SverchokCustomTreeNode
     if tree_name != None:
         if not tree_name in list_nodes4update:
-            makeUpdateTree2(tree_name)
+            makeTreeUpdate2(tree_name= tree_name) 
         if not tree_name in bpy.data.node_groups:
             return #start up is not complete
         nods = bpy.data.node_groups[tree_name].nodes
