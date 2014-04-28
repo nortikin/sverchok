@@ -63,7 +63,7 @@ class SverchokToolsMenu(bpy.types.Panel):
         box.operator(SverchokUpdateAll.bl_idname, text="UPDATE")
       
         box=layout.box()
-        box.label(text="Animation update")
+        box.label(text="Layout Manager")
         col=box.column(align=True)
         row=col.row(align=True)
 #        row.label(text='Show')
