@@ -346,6 +346,7 @@ def levelsOflist(lst):
 # lists, other and vise versa
 
 def Matrix_listing(prop):
+    # matrix degenerate
     mat_out = []
     for i, matrix in enumerate(prop):
         unit = []
