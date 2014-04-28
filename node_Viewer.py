@@ -113,6 +113,7 @@ class ViewerNode(Node, SverchCustomTreeNode):
     coloris = SvColors
     coloris.color[1]['default'] = (0.055,0.312,0.5)
     color_view = coloris.color
+    old_nid =  bpy.props.StringProperty(name='oldNID')
         
     def init(self, context):
         self.inputs.new('VerticesSocket', 'vertices', 'vertices')
@@ -142,6 +143,10 @@ class ViewerNode(Node, SverchCustomTreeNode):
         global cache_viewer_baker
         # node id, used as ref
         n_id = self.name+self.id_data.name
+        if self.old_nid != n_id:
+            callback_disable(self.old_nid)
+            self.old_nid = n_id
+            
         cache_viewer_baker[n_id+'v'] = []
         cache_viewer_baker[n_id+'ep'] = []
         cache_viewer_baker[n_id+'m'] = []
