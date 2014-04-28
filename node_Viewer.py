@@ -140,41 +140,47 @@ class ViewerNode(Node, SverchCustomTreeNode):
         
     def update(self):
         global cache_viewer_baker
-        cache_viewer_baker[self.name+self.id_data.name+'v'] = []
-        cache_viewer_baker[self.name+self.id_data.name+'ep'] = []
-        cache_viewer_baker[self.name+self.id_data.name+'m'] = []
+        # node id, used as ref
+        n_id = self.name+self.id_data.name
+        cache_viewer_baker[n_id+'v'] = []
+        cache_viewer_baker[n_id+'ep'] = []
+        cache_viewer_baker[n_id+'m'] = []
+        if not self.id_data.sv_show:
+            callback_disable(n_id)
+            return
+            
         if self.activate and (self.inputs['vertices'].links or self.inputs['matrix'].links):
-            callback_disable(self.name)
+            callback_disable(n_id)
             
             if 'vertices' in self.inputs and self.inputs['vertices'].links and \
                 type(self.inputs['vertices'].links[0].from_socket) == VerticesSocket:
                 
                 propv = SvGetSocketAnyType(self, self.inputs['vertices'])
-                cache_viewer_baker[self.name+self.id_data.name+'v'] = dataCorrect(propv)
+                cache_viewer_baker[n_id+'v'] = dataCorrect(propv)
             else:
-                cache_viewer_baker[self.name+self.id_data.name+'v'] = []
+                cache_viewer_baker[n_id+'v'] = []
                             
             if 'edg_pol' in self.inputs and self.inputs['edg_pol'].links and \
                 type(self.inputs['edg_pol'].links[0].from_socket) == StringsSocket:
                 prope = SvGetSocketAnyType(self, self.inputs['edg_pol'])
-                cache_viewer_baker[self.name+self.id_data.name+'ep'] = dataCorrect(prope)
+                cache_viewer_baker[n_id+'ep'] = dataCorrect(prope)
                 #print (prope)
             else:
-                cache_viewer_baker[self.name+self.id_data.name+'ep'] = []
+                cache_viewer_baker[n_id+'ep'] = []
                     
             if 'matrix' in self.inputs and self.inputs['matrix'].links and \
                 type(self.inputs['matrix'].links[0].from_socket) == MatrixSocket:
                 propm = SvGetSocketAnyType(self, self.inputs['matrix'])
-                cache_viewer_baker[self.name+self.id_data.name+'m'] = dataCorrect(propm)
+                cache_viewer_baker[n_id+'m'] = dataCorrect(propm)
             else:
-                cache_viewer_baker[self.name+self.id_data.name+'m'] = []
+                cache_viewer_baker[n_id+'m'] = []
         
         else:
-            callback_disable(self.name)
+            callback_disable(n_id)
         
-        if cache_viewer_baker[self.name+self.id_data.name+'v'] or cache_viewer_baker[self.name+self.id_data.name+'m']:
-            callback_enable(self.name, cache_viewer_baker[self.name+self.id_data.name+'v'], cache_viewer_baker[self.name+self.id_data.name+'ep'], \
-                cache_viewer_baker[self.name+self.id_data.name+'m'], self.Vertex_show, self.color_view, self.transparant, self.shading)
+        if cache_viewer_baker[n_id+'v'] or cache_viewer_baker[n_id+'m']:
+            callback_enable(n_id, cache_viewer_baker[n_id+'v'], cache_viewer_baker[n_id+'ep'], \
+                cache_viewer_baker[n_id+'m'], self.Vertex_show, self.color_view, self.transparant, self.shading)
             
             self.use_custom_color=True
             self.color = (1,0.3,0)
@@ -183,7 +189,7 @@ class ViewerNode(Node, SverchCustomTreeNode):
             self.color = (0.1,0.05,0)
             #print ('отражения вершин ',len(cache_viewer_baker['v']), " рёбёры ", len(cache_viewer_baker['ep']), "матрицы",len(cache_viewer_baker['m']))
         if not self.inputs['vertices'].links and not self.inputs['matrix'].links:
-            callback_disable(self.name+self.id_data.name)
+            callback_disable(n_id)
             cache_viewer_baker = {}
     
     def update_socket(self, context):

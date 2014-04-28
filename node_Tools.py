@@ -61,6 +61,40 @@ class SverchokToolsMenu(bpy.types.Panel):
         box.scale_y=3.0
         
         box.operator(SverchokUpdateAll.bl_idname, text="UPDATE")
+      
+        box=layout.box()
+        box.label(text="Layout manager")
+
+        col=box.column(align=True)
+        row=col.row(align=True)
+        row.label(text='Name')
+        row.label(text='Show')
+        #row.label(text='Bake')
+        row.label(text='Animate')
+        row.icon
+      
+        ng = bpy.data.node_groups
+      
+        for name,tree in ng.items():
+            if tree.bl_idname == 'SverchCustomTreeType':
+                row=col.row(align=True)
+                if name==context.space_data.node_tree.name:
+                    row.label(text=name,icon='FILE_TICK')
+                else:
+                    row.label(text=name)
+                
+                if tree.sv_show:
+                    row.prop(tree, 'sv_show',icon='RESTRICT_VIEW_OFF',text=' ')
+                else:
+                    row.prop(tree, 'sv_show',icon='RESTRICT_VIEW_ON',text=' ')
+                
+                if tree.sv_animate:
+                    row.prop(tree, 'sv_animate',icon='RESTRICT_VIEW_OFF',text=' ')
+                else:
+                    row.prop(tree, 'sv_animate',icon='RESTRICT_VIEW_ON',text=' ')
+                    
+        #       row.prop(tree, 'sv_bake',text=' ')
+  
         box = layout.box()
         col = box.column(align=True)
         col.label(text="Sverchok v_0.2.8")
@@ -72,6 +106,7 @@ class SverchokToolsMenu(bpy.types.Panel):
         row = col.row(align=True)
         row.operator('wm.url_open', text='FBack').url = 'http://www.blenderartists.org/forum/showthread.php?272679-Addon-WIP-Sverchok-parametric-tool-for-architects/'
         row.operator('wm.url_open', text='Bugtr').url = 'https://docs.google.com/forms/d/1L2BIpDhjMgQEbVAc7pEq93432Qanu8UPbINhzJ5SryI/viewform'
+  
         
         
 
