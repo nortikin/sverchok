@@ -78,7 +78,7 @@ class SverchokToolsMenu(bpy.types.Panel):
             if tree.bl_idname == 'SverchCustomTreeType':
                 row=col.row(align=True)
                 row.prop(tree, 'sv_show',text=' ')
-        #       row.prop(tree, 'sv_bake',text='')
+        #       row.prop(tree, 'sv_bake',text=' ')
                 row.prop(tree, 'sv_animate',text=' ')
                 row.label(text=name)
 

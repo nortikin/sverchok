@@ -240,6 +240,7 @@ def make_categories():
             NodeItem("SvVertSortNode", label="Vertices Sort"),
             NodeItem("SvConvexHullNode", label="Convex Hull"),
             NodeItem("SvKDTreeNode", label="KDTree find"),
+            NodeItem("SvIntersectEdgesNode", label="Intersect Edges"),            
             ]),
         ]
     return node_categories
