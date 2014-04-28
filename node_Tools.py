@@ -61,6 +61,28 @@ class SverchokToolsMenu(bpy.types.Panel):
         box.scale_y=3.0
         
         box.operator(SverchokUpdateAll.bl_idname, text="UPDATE")
+      
+        box=layout.box()
+        box.label(text="Animation update")
+        col=box.column(align=True)
+        row=col.row(align=True)
+#        row.label(text='Show')
+#        row.label(text='Bake')
+        row.label(text='Animate')
+
+        row.label(text='Name')
+      
+        ng = bpy.data.node_groups
+      
+        for name,tree in ng.items():
+            if tree.bl_idname == 'SverchCustomTreeType':
+                row=col.row(align=True)
+ #               row.prop(tree, 'sv_show',text=' ')
+ #               row.prop(tree, 'sv_bake',text=' ')
+                row.prop(tree, 'sv_animate',text=' ')
+                row.label(text=name)
+
+  
         box = layout.box()
         col = box.column(align=True)
         col.label(text="Sverchok v_0.2.8")
@@ -72,6 +94,7 @@ class SverchokToolsMenu(bpy.types.Panel):
         row = col.row(align=True)
         row.operator('wm.url_open', text='FBack').url = 'http://www.blenderartists.org/forum/showthread.php?272679-Addon-WIP-Sverchok-parametric-tool-for-architects/'
         row.operator('wm.url_open', text='Bugtr').url = 'https://docs.google.com/forms/d/1L2BIpDhjMgQEbVAc7pEq93432Qanu8UPbINhzJ5SryI/viewform'
+  
         
         
 

@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 import bpy
-from bpy.props import IntProperty, FloatProperty, StringProperty, FloatVectorProperty, CollectionProperty, EnumProperty
+from bpy.props import IntProperty, FloatProperty, StringProperty, FloatVectorProperty, CollectionProperty, EnumProperty, BoolProperty
 from bpy.types import NodeTree, Node, NodeSocket
 import nodeitems_utils
 from nodeitems_utils import NodeCategory, NodeItem
 from mathutils import Matrix
 from util import updateSlot, makeTreeUpdate2, speedUpdate, SvGetSocketInfo
+from bpy.app.handlers import persistent
 
 class SvColors(bpy.types.PropertyGroup):
     """ Class for colors CollectionProperty """
@@ -99,9 +100,24 @@ class SverchCustomTree(NodeTree):
     bl_idname = 'SverchCustomTreeType'
     bl_label = 'Sverchok Node Tree'
     bl_icon = 'RNA'
+    
+    sv_animate = BoolProperty(name="Animate", default=True)
+    sv_show = BoolProperty(name="Show", default=True)
+    sv_bake = BoolProperty(name="Bake", default=True)
+    
     def update(self):
+        '''
+        Rebuild and update the Sverchok node tree, used at editor changes
+        '''
         makeTreeUpdate2(tree_name = self.name)
         speedUpdate(tree_name = self.name)
+    
+    def update_ani(self):
+        '''
+        Updates the Sverchok node tree if animation layers show true. For animation callback
+        '''
+        if self.sv_animate:
+            speedUpdate(tree_name = self.name)
         
 
 
@@ -231,6 +247,16 @@ def make_categories():
 #        count.append(len(cnt.items))
 #    return count
 
+@persistent
+def sv_update_handler(scene):
+    '''Sverchok update handler'''
+    for name,tree in bpy.data.node_groups.items():
+        if tree.bl_idname =='SverchCustomTreeType':
+            try:
+                tree.update_ani()                
+            except:
+                print('Failed to update:',name)
+                    
 def register():
     bpy.utils.register_class(SvColors)
     bpy.utils.register_class(SverchCustomTree)
@@ -238,7 +264,9 @@ def register():
     #bpy.utils.register_class(ObjectSocket)
     bpy.utils.register_class(StringsSocket)
     bpy.utils.register_class(VerticesSocket)
-    
+    bpy.app.handlers.frame_change_pre.append(sv_update_handler) 
+    print("update handler...")
+       
 def unregister():
     bpy.utils.unregister_class(VerticesSocket)
     bpy.utils.unregister_class(StringsSocket)
@@ -246,6 +274,7 @@ def unregister():
     bpy.utils.unregister_class(MatrixSocket)
     bpy.utils.unregister_class(SverchCustomTree)
     bpy.utils.unregister_class(SvColors)
+    bpy.app.handlers.frame_change_pre.remove(sv_update_handler)
 
 if __name__ == "__main__":
     register()
