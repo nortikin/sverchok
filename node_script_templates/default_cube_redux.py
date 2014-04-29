@@ -34,10 +34,10 @@ def sv_main(size=1.0, divx=1, divy=1, divz=1):
 
         bm = bmesh.new()
         [bm.verts.new(co) for co in verts]
-        bm.normal_update()
+        bm.verts.index_update()
         for face in faces:
             bm.faces.new(tuple(bm.verts[i] for i in face))
-        bm.normal_update()
+        bm.faces.index_update()
 
         dist = 0.0001
         section_dict = {0: divx, 1: divy, 2: divz}
