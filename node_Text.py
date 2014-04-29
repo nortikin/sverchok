@@ -203,8 +203,8 @@ class SvTextInNode(Node,SverchCustomTreeNode):
         self.use_custom_color = True
         self.color = READY_COLOR
         for item in self.csv_data[self.name]:
-            if item in self.outputs and len(self.outputs[item].links)>0:
-                self.outputs[item].StringsProperty = str([self.csv_data[self.name][item]])
+            if item in self.outputs and self.outputs[item].links:
+                SvSetSocketAnyType(self,item,[self.csv_data[self.name][item]])
 
  
  
@@ -299,12 +299,10 @@ class SvTextInNode(Node,SverchCustomTreeNode):
 #                 csv_data[name] = out   
 #         # store data
 
-
         self.csv_data[self.name]=csv_data
         if not reload:
         # remove sockets
-            for out in self.outputs:
-                self.outputs.remove(out)
+            self.outputs.clear()
             # create sockets with names, maybe implement reload() in future       
             for name in csv_data:
                 self.outputs.new('StringsSocket', name, name)
