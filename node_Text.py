@@ -299,7 +299,6 @@ class SvTextInNode(Node,SverchCustomTreeNode):
 #                 csv_data[name] = out   
 #         # store data
 
-        print(csv_data)
         self.csv_data[self.name]=csv_data
         if not reload:
         # remove sockets
