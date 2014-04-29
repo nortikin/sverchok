@@ -194,20 +194,29 @@ class SvScriptNode(Node, SverchCustomTreeNode):
         col = layout.column(align=True)
         if not self.script_str:
             row = col.row(align=True)
+            row.label(text='DOWNLOAD PY:')
+            row = col.row(align=True)
             row.prop(self, 'files_popup', '')
             tem = row.operator(
                 'node.sverchok_script_template', text='Template')
             tem.script_name = self.files_popup
-
-        row = col.row(align=True)
-        row.prop(self, 'scriptmode', 'scriptmode', expand=True)
-        row = col.row(align=True)
-        row.prop(self, "script", "")
-
-        op = row.operator('node.sverchok_script_input', text='Load')
-        op.name_tree = self.id_data.name
-        op.name_obj = self.name
-
+        
+            #row = col.row(align=True)
+            #row.prop(self, 'scriptmode', 'scriptmode', expand=True)
+            row = col.row(align=True)
+            row.label(text='USE PY:')
+            row = col.row(align=True)
+            row.prop(self, "script", "")
+            op = row.operator('node.sverchok_script_input', text='Load')
+            op.name_tree = self.id_data.name
+            op.name_obj = self.name
+        else:
+            col.label(text='LOADED:')
+            row = col.row()
+            col2=row.column()
+            col2.scale_x=0.05
+            col2.label(icon='TEXT',text=' ')
+            row.label(text=self.script)
     def create_or_update_sockets(self):
         '''
         - desired features not flly implemente yet (only socket add so far)
