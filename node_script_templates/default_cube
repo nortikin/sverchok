@@ -161,7 +161,7 @@ def sv_main(size=1,divx=1,divy=1,divz=1):
             criteria+(divz-1)*coef_A+divx, \
             criteria*2+(divz-1)*coef_A+1, \
             divx+1)])
-    print(ran_D)
+    #print(ran_D)
     polWal_D = generate_wall_CD(ran_D,False)
             
     pol.extend(polWal_A)

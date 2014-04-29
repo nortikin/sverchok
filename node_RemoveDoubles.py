@@ -13,6 +13,8 @@ def remove_doubles(vertices, faces, d):
     
     if len(faces[0])==2:
         EdgeMode = True
+    else:
+    	EdgeMode = False
                 
     bm=bmesh.new() 
     bm_verts =[bm.verts.new(v) for v in vertices]
