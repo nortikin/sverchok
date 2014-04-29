@@ -57,55 +57,64 @@ class SverchokToolsMenu(bpy.types.Panel):
         layout = self.layout
         #layout.scale_y=1.1
         layout.active = True
-        box = layout.box()
-        box.scale_y=3.0
+        col = layout.column()
+        col.scale_y=3.0
         
-        box.operator(SverchokUpdateAll.bl_idname, text="UPDATE")
+        col.operator(SverchokUpdateAll.bl_idname, text="UPDATE")
       
         box=layout.box()
-        box.label(text="Layout manager")
-
+        #box.label(text="Layout manager")
+        little_width = 0.12
         col=box.column(align=True)
         row=col.row(align=True)
-        row.label(text='Name')
-        row.label(text='Show')
+        row.label(text='Layout')
+        col1=row.column(align=True)
+        col1.scale_x=little_width
+        col1.label(icon='RESTRICT_VIEW_OFF',text=' ')
         #row.label(text='Bake')
-        row.label(text='Animate')
-        row.icon
+        col2=row.column(align=True)
+        col2.scale_x=little_width
+        col2.label(icon='ANIM',text=' ')
+        col2.icon
       
         ng = bpy.data.node_groups
       
         for name,tree in ng.items():
             if tree.bl_idname == 'SverchCustomTreeType':
+                
                 row=col.row(align=True)
+                
                 if name==context.space_data.node_tree.name:
-                    row.label(text=name,icon='FILE_TICK')
+                    row.label(text=name,icon='LINK')
                 else:
                     row.label(text=name)
                 
+                split = row.column(align=True)
+                split.scale_x = little_width
                 if tree.sv_show:
-                    row.prop(tree, 'sv_show',icon='RESTRICT_VIEW_OFF',text=' ')
+                    split.prop(tree, 'sv_show',icon='UNLOCKED',text=' ')
                 else:
-                    row.prop(tree, 'sv_show',icon='RESTRICT_VIEW_ON',text=' ')
-                
+                    split.prop(tree, 'sv_show',icon='LOCKED',text=' ')
+                split = row.column(align=True)
+                split.scale_x = little_width
                 if tree.sv_animate:
-                    row.prop(tree, 'sv_animate',icon='RESTRICT_VIEW_OFF',text=' ')
+                    split.prop(tree, 'sv_animate',icon='UNLOCKED',text=' ')
                 else:
-                    row.prop(tree, 'sv_animate',icon='RESTRICT_VIEW_ON',text=' ')
+                    split.prop(tree, 'sv_animate',icon='LOCKED',text=' ')
                     
         #       row.prop(tree, 'sv_bake',text=' ')
   
         box = layout.box()
         col = box.column(align=True)
         col.label(text="Sverchok v_0.2.8")
-        col.label(text='layout: '+context.space_data.node_tree.name)
+        #col.label(text='layout: '+context.space_data.node_tree.name)
         row = col.row(align=True)
         row.operator('wm.url_open', text='Help!').url = 'http://wiki.blender.org/index.php/Extensions:2.6/Py/Scripts/Nodes/Sverchok'
         row.operator('wm.url_open', text='Home!').url = 'http://nikitron.cc.ua/blend_scripts.html'
         #layout.operator(SverchokHome.bl_idname, text="WWW: Go home")
-        row = col.row(align=True)
-        row.operator('wm.url_open', text='FBack').url = 'http://www.blenderartists.org/forum/showthread.php?272679-Addon-WIP-Sverchok-parametric-tool-for-architects/'
-        row.operator('wm.url_open', text='Bugtr').url = 'https://docs.google.com/forms/d/1L2BIpDhjMgQEbVAc7pEq93432Qanu8UPbINhzJ5SryI/viewform'
+        #row = col.row(align=True)
+        #row.operator('wm.url_open', text='FBack').url = 'http://www.blenderartists.org/forum/showthread.php?272679-Addon-WIP-Sverchok-parametric-tool-for-architects/'
+        #row.operator('wm.url_open', text='Bugtr').url = 'https://docs.google.com/forms/d/1L2BIpDhjMgQEbVAc7pEq93432Qanu8UPbINhzJ5SryI/viewform'
   
         
         
