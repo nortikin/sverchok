@@ -282,7 +282,7 @@ class SvScriptNode(Node, SverchCustomTreeNode):
             return
 
         input_names = [i.name for i in self.inputs]
-        params = []
+        kargs = {}
         for name in input_names:
             links = self.inputs[name].links
             if not links:
@@ -290,25 +290,19 @@ class SvScriptNode(Node, SverchCustomTreeNode):
 
             k = str(SvGetSocketAnyType(self, self.inputs[name]))
             kfree = k[2:-2]
-            params.append(ast.literal_eval(kfree))
+            # print('name: {0} = {1}'.format(name, kfree))
+            kargs[name] = ast.literal_eval(kfree)
 
-        # for now inputs in script must be matched by socket inputs.
-        if len(params) == len(input_names):
-            # print(params)
-            pass
-        else:
-            return
-
-        def get_sv_main(params):
-            exec(self.script_str.format(*params))
+        def get_sv_main():
+            exec(self.script_str)
             f = vars()
             return f
 
-        f = get_sv_main(params)
+        f = get_sv_main()
         node_function = f.get('sv_main', None)
 
         if node_function:
-            in_sockets, out_sockets = node_function(*params)
+            in_sockets, out_sockets = node_function(**kargs)
 
             for socket_type, name, data in out_sockets:
                 SvSetSocketAnyType(self, name, data)
