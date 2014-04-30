@@ -254,7 +254,7 @@ class SvScriptNode(Node, SverchCustomTreeNode):
 
     def create_or_update_sockets(self):
         '''
-        - desired features not flly implemente yet (only socket add so far)
+        - desired features not fully implemented yet (only socket add so far)
         - Load may be pressed to import an updated function
         - tries to preserve existing sockets or add new ones if needed
         '''
