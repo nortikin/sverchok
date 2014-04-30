@@ -31,6 +31,7 @@ READY_COLOR = (0, 0.8, 0.95)
 
 # utility functions
 
+
 def new_output_socket(node, name, stype):
     socket_type = {
         'v': 'VerticesSocket',
@@ -64,8 +65,11 @@ def instrospect_py(node):
         lines_b = [i for i in lines if ('def sv_main') in i]
 
         if len(lines_b) == 1:
-            pattern2 = '=(.+?)[,\)]'
-            param_values = re.findall(pattern2, lines_b[0])
+
+            function_line = lines_b[0]
+            pattern1 = '=(.+?)[,\)]'
+            param_values = re.findall(pattern1, function_line)
+
         else:
             print('your def sv_main must contain variable_names and defaults')
             return False
@@ -93,7 +97,7 @@ def instrospect_py(node):
 
 class SvDefaultScriptTemplate(bpy.types.Operator):
 
-    ''' Creates template text file for making own script '''
+    ''' Creates template text file to start making your own script '''
     bl_idname = 'node.sverchok_script_template'
     bl_label = 'Template'
     bl_options = {'REGISTER'}
@@ -179,8 +183,8 @@ class SvScriptNode(Node, SverchCustomTreeNode):
         default='Py',
         update=updateNode)
 
-    # stores the script as a string
     script_str = StringProperty(default="")
+    # script_ui_param_names = StringProperty(default="")
 
     node_function = None
     in_sockets = []
@@ -194,19 +198,34 @@ class SvScriptNode(Node, SverchCustomTreeNode):
         col = layout.column(align=True)
         if not self.script_str:
             row = col.row(align=True)
+            row.label(text='DOWNLOAD PY:')
+            row = col.row(align=True)
             row.prop(self, 'files_popup', '')
             tem = row.operator(
                 'node.sverchok_script_template', text='Template')
             tem.script_name = self.files_popup
 
-        row = col.row(align=True)
-        row.prop(self, 'scriptmode', 'scriptmode', expand=True)
-        row = col.row(align=True)
-        row.prop(self, "script", "")
-
-        op = row.operator('node.sverchok_script_input', text='Load')
-        op.name_tree = self.id_data.name
-        op.name_obj = self.name
+            #row = col.row(align=True)
+            #row.prop(self, 'scriptmode', 'scriptmode', expand=True)
+            row = col.row(align=True)
+            row.label(text='USE PY:')
+            row = col.row(align=True)
+            row.prop(self, "script", "")
+            op = row.operator('node.sverchok_script_input', text='Load')
+            op.name_tree = self.id_data.name
+            op.name_obj = self.name
+        else:
+            row = col.row()
+            col2 = row.column()
+            col2.scale_x = 0.05
+            col2.label(icon='TEXT', text=' ')
+            row.label(text='LOADED:')
+            row = col.row()
+            row.label(text=self.script)
+            row = col.row()
+            op = row.operator('node.sverchok_script_input', text='Reload')
+            op.name_tree = self.id_data.name
+            op.name_obj = self.name
 
     def create_or_update_sockets(self):
         '''
@@ -281,35 +300,38 @@ class SvScriptNode(Node, SverchCustomTreeNode):
         if not self.inputs:
             return
 
-        input_names = [i.name for i in self.inputs]
-        params = []
-        for name in input_names:
-            links = self.inputs[name].links
-            if not links:
-                continue
-
-            k = str(SvGetSocketAnyType(self, self.inputs[name]))
-            kfree = k[2:-2]
-            params.append(ast.literal_eval(kfree))
-
-        # for now inputs in script must be matched by socket inputs.
-        if len(params) == len(input_names):
-            # print(params)
-            pass
-        else:
-            return
-
-        def get_sv_main(params):
-            exec(self.script_str.format(*params))
+        def get_sv_main():
+            exec(self.script_str)
             f = vars()
             return f
 
-        f = get_sv_main(params)
+        f = get_sv_main()
         node_function = f.get('sv_main', None)
 
-        if node_function:
-            in_sockets, out_sockets = node_function(*params)
+        if not node_function:
+            return
 
+        defaults = node_function.__defaults__
+        input_names = [i.name for i in self.inputs]
+
+        fparams = []
+        for param_idx, name in enumerate(input_names):
+            links = self.inputs[name].links
+            if not links:
+                this_val = defaults[param_idx]
+            else:
+                try:
+                    k = str(SvGetSocketAnyType(self, self.inputs[name]))
+                    kfree = k[2:-2]
+                    this_val = ast.literal_eval(kfree)
+                except:
+                    this_val = defaults[param_idx]
+
+            fparams.append(this_val)
+
+        if node_function and (len(fparams) == len(input_names)):
+
+            _, out_sockets = node_function(*fparams)
             for socket_type, name, data in out_sockets:
                 SvSetSocketAnyType(self, name, data)
 
