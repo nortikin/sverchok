@@ -5,7 +5,7 @@ from bpy.types import NodeTree, Node, NodeSocket
 import nodeitems_utils
 from nodeitems_utils import NodeCategory, NodeItem
 from mathutils import Matrix
-from util import updateSlot, makeTreeUpdate2, speedUpdate, SvGetSocketInfo
+from util import makeTreeUpdate2, speedUpdate, SvGetSocketInfo
 from bpy.app.handlers import persistent
 
 class SvColors(bpy.types.PropertyGroup):
@@ -20,9 +20,6 @@ class MatrixSocket(NodeSocket):
     #ref: http://urchn.org/post/nodal-transform-experiment
     bl_idname = "MatrixSocket"
     bl_label = "Matrix Socket"
-    
-    MatrixProperty = StringProperty(name='MatrixProperty', update=updateSlot)
-    
     
     def draw(self, context, layout, node, text):
         if self.is_linked and self.is_output:
@@ -63,9 +60,6 @@ class VerticesSocket(NodeSocket):
         bl_idname = "VerticesSocket"
         bl_label = "Vertices Socket"
         
-        VerticesProperty = StringProperty(name='VerticesProperty', update=updateSlot)
-        #V = list()
-
         def draw(self, context, layout, node, text):
             if self.is_linked and self.is_output:
                 layout.label(text + '.' + SvGetSocketInfo(self))
@@ -82,8 +76,6 @@ class StringsSocket(NodeSocket):
         bl_idname = "StringsSocket"
         bl_label = "Strings Socket"
         
-        StringsProperty = StringProperty(name='StringsProperty', update=updateSlot)
-
         def draw(self, context, layout, node, text):
             if self.is_linked and self.is_output:
                 layout.label(text + '.' + SvGetSocketInfo(self))
@@ -103,10 +95,11 @@ class SverchCustomTree(NodeTree):
     
     def updateTree(self,context):
         speedUpdate(tree_name = self.name)
+        #should turn off tree. for now it does by updating it
         
-    sv_animate = BoolProperty(name="Animate", default=True, update=updateTree)
+    sv_animate = BoolProperty(name="Animate", default=True)
     sv_show = BoolProperty(name="Show", default=True, update=updateTree)
-    sv_bake = BoolProperty(name="Bake", default=True, update=updateTree)
+    sv_bake = BoolProperty(name="Bake", default=True )
     
         
     def update(self):

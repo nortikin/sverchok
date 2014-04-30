@@ -1,7 +1,6 @@
 import bpy, bmesh, mathutils
 from mathutils import Vector, Matrix
 from node_s import *
-global bmesh_mapping, per_cache
 from functools import reduce
 from math import radians
 import itertools
@@ -9,16 +8,28 @@ import collections
 import time
 import copy
 
+global bmesh_mapping, per_cache
+
 DEBUG_MODE = False
-DEBUG_SETTINGS = {}
+
+temp_handle = {}
+
+cache_nodes = {}
+# cache node group update trees
+list_nodes4update = {}
+# cache for partial update lists
+partial_update_cache = {}
+# wifi node data
+sv_Vars = {}
+# socket cache
+socket_data_cache = {}
+#
+cache_viewer_baker = {}
+
+# note used?
+
 bmesh_mapping = {}
 per_cache = {}
-temp_handle = {}
-cache_nodes = {}
-list_nodes4update = {}
-sv_Vars = {}
-socket_data_cache = {}
-cache_viewer_baker = {}
 
 #####################################################
 ################### update magic ####################
@@ -85,7 +96,6 @@ def lock_updated_cnode():
 
 
 
-
 #####################################################
 ################### bmesh magic #####################
 #####################################################
@@ -117,66 +127,11 @@ def clear_bmm(bm_ref='ALL'):
 #####################################################
 ################### cache magic #####################
 #####################################################
-'''
-def cache_delete(cache):
-    if cache in per_cache:
-       del per_cache[cache]
 
-
-def cache_read(cache):
-    # current tool not cached yet
-    if not (cache in per_cache):
-        return(False, False, False, False, False, False, False)
-
-    recipient = per_cache[cache]["recipient"]
-    donor = per_cache[cache]["donor"]
-    centres = per_cache[cache]["centres"]
-    formula = per_cache[cache]["formula"]
-    diap_min = per_cache[cache]["diap_min"]
-    diap_max = per_cache[cache]["diap_max"]
-
-    return(True, recipient, donor, centres, formula, diap_min, diap_max)
-
-
-# store information in the cache
-def cache_write(cache, recipient, donor, centres, formula, diap_min, diap_max):
-    # clear cache of current tool
-    if cache in per_cache:
-        #del per_cache[cache]
-        if recipient != per_cache[cache]['recipient']: cache_delete(cache)
-        elif donor != per_cache[cache]['donor']: cache_delete(cache)
-        elif centres != per_cache[cache]['centres']: cache_delete(cache)
-        elif formula != per_cache[cache]['formula']: cache_delete(cache)
-        elif diap_min != per_cache[cache]['diap_min']: cache_delete(cache)
-        elif diap_max != per_cache[cache]['diap_max']: cache_delete(cache)
-
-    # update cache
-    if not (cache in per_cache) and cache!='':
-        per_cache[cache] = {"recipient": recipient, "donor": donor,
-            "centres": centres, "formula": formula,
-            "diap_min":diap_min, "diap_max":diap_max}
-
-
-def cache_check(cache, recipient, donor, centres, formula, diap_min, diap_max):
-    result = True
-    if cache in per_cache:
-        if recipient != per_cache[cache]['recipient'] \
-            or donor != per_cache[cache]['donor'] \
-            or centres != per_cache[cache]['centres'] \
-            or formula != per_cache[cache]['formula'] \
-            or diap_min != per_cache[cache]['diap_min'] \
-            or diap_max != per_cache[cache]['diap_max']:
-                cache_delete(cache)
-                result = False
-    else:
-        result = False
-    return result
-'''
 
 def handle_delete(handle):
     if handle in temp_handle:
        del temp_handle[handle]
-
 
 def handle_read(handle):
     if not (handle in temp_handle):
@@ -185,14 +140,12 @@ def handle_read(handle):
     prop = temp_handle[handle]['prop']
     return (True, prop)
 
-
 def handle_write(handle, prop):
     if handle in temp_handle:
         if prop != temp_handle[handle]['prop']: handle_delete(handle)
 
     if not (handle in temp_handle) and handle !='':
         temp_handle[handle] = {"prop": prop}
-
 
 def handle_check(handle, prop):
     result = True
@@ -266,7 +219,6 @@ def match_short(lsts):
     return list(map(list,zip(*zip(*lsts))))
 
 # extends list so len(l) == count
-
 def fullList(l, count):
     d = count - len(l)
     if d > 0:
@@ -275,6 +227,7 @@ def fullList(l, count):
 
 def sv_zip(*iterables):
     # zip('ABCD', 'xy') --> Ax By
+    # like standard zip but list instead of tuple
     sentinel = object()
     iterators = [iter(it) for it in iterables]
     while iterators:
@@ -326,7 +279,6 @@ def dataStandart(data, dept, nominal_dept):
     return output
 
 
-
 # calc list nesting only in countainment level integer
 
 def levelsOflist(lst):
@@ -356,8 +308,6 @@ def Matrix_listing(prop):
         mat_out.append((unit))
     return mat_out
 
-
-
 def Matrix_generate(prop):
     mat_out = []
     for i, matrix in enumerate(prop):
@@ -367,8 +317,6 @@ def Matrix_generate(prop):
             unit[k] = Vector(m)
         mat_out.append(unit)
     return mat_out
-
-
 
 def Matrix_location(prop, list=False):
     Vectors = []
@@ -401,17 +349,6 @@ def Matrix_rotation(prop, list=False):
             Vectors.append(q.to_axis_angle())
     return [Vectors]
 
-#def Vector_generate(prop):
-#    vec_out = []
-#    for i, object in enumerate(prop):  # lists by objects
-#        veclist = []
-#        for v in object: # verts
-#            veclist.append(Vector(v[:]))
-#        vec_out.append(veclist)
-#    return vec_out
-
-#  about 30% quicker
-
 def Vector_generate(prop):
     return [[Vector(v) for v in obj] for obj in prop]
 
@@ -423,8 +360,6 @@ def Vector_degenerate(prop):
             veclist.append((v[:]))
         vec_out.append(veclist)
     return vec_out
-
-
 
 def Edg_pol_generate(prop):
     edg_pol_out = []
@@ -691,115 +626,22 @@ def wrapper_2(l_etalon, list_a, level):
 ############### debug settings magic ################
 #####################################################
 
-def sv_debug_update(self,context):
-    if sverchok_debug(mode=self.debug_mode):
-        if self.show_updated_nodes:
-            sverchok_debug(key='show_updated_nodes', value=self.show_updated_nodes)
-        else:
-            sverchok_debug(key='show_updated_nodes')
-        if self.print_timings:
-            sverchok_debug(key='print_timings', value=self.print_timings)
-        else:
-            sverchok_debug(key='print_timings')
-
-
-
-def sverchok_debug(mode = None,key=None,value=None):
+def sverchok_debug(mode):
     global DEBUG_MODE
-    global DEBUG_SETTINGS
-    if mode != None:
-        DEBUG_MODE = mode
-    if key != None and value != None:
-        DEBUG_SETTINGS[key]=value
-    if key != None and value == None:
-        if key in DEBUG_SETTINGS:
-            del DEBUG_SETTINGS[key]
-    return DEBUG_MODE
+    DEBUG_MODE=mode
 
 #####################################################
-############### update sockets magic ################
+############### update system magic! ################
 #####################################################
 
-
-def updateAllOuts(self, update_self=True):
-    if update_self:
-        self.update()
-    #print('update_node ', self.name)
-    for output in self.outputs:
-        if output.links:
-            for link in output.links:
-                nod = link.to_socket.node
-                if check_update_node(nod.name, True):
-                    updateAllOuts(nod)
-
-
-def updateSlot(self, context):
-    return
 
 def updateNode(self, context):
     global DEBUG_MODE
-    global DEBUG_SETTINGS
     a=time.time()
     speedUpdate(start_node = self.name,tree_name =self.id_data.name)
     b=time.time()
     if DEBUG_MODE:
         print("Partial update from node",self.name,"in",round(b-a,4))
-
-# old function, kept while evaluating new solution.
-# look at makeTreeUpdate2() and make_update_list()
-# if you try to use this now you might have to change speedUpdate...
-def makeTreeUpdate():
-    global list_nodes4update
-    def insertnode(nod, nodeset, etalonset, priority):
-        if nod.name not in etalonset and nod.name not in priority:
-            nodeset.append(nod.name)
-            for output in nod.outputs:
-                for link in output.links:
-                    nod_ = link.to_socket.node
-                    insertnode(nod_, nodeset, etalonset, priority)
-                    if nodeset:
-                        if len(nod_.name)>4 and nod_.name[:5]=='WifiI':
-                            priority = nodeset + priority
-                            nodeset = []
-                        else:
-                            idx = min(len(etalonset)-1, 0)
-                            etalonset = etalonset[:idx]+nodeset + etalonset[idx:]
-                            nodeset = []
-
-        elif nod.name in priority:
-            idx = priority.index(nod.name)
-            priority = priority[:idx]+nodeset + priority[idx:]
-            nodeset = []
-
-        elif nodeset:
-            idx = etalonset.index(nod.name)
-            etalonset = etalonset[:idx]+nodeset + etalonset[idx:]
-            nodeset = []
-
-        return etalonset, priority
-
-
-    for ng in bpy.context.blend_data.node_groups:
-        nodeset_e=[]
-        prioritet = []
-        for nod in ng.nodes:
-            flag=False
-            for input in nod.inputs:
-                if input.links:
-                    Flag=True
-                    break
-            if flag:
-                continue
-
-            nodeset_a = []
-            nodeset_e, prioritet = insertnode(nod, nodeset_a, nodeset_e, priority=prioritet)
-
-        list_nodes4update[ng.name] = prioritet + nodeset_e
-        #print("MaketreeUpdate()",list_nodes4update[ng.name])
-    list_nodes4update['TreeName'] = bpy.context.space_data.node_tree.name
-    return
-
-
 
 def make_update_list(node_tree,node_set = None):
     """ Makes a list for updates from a node_group
@@ -896,22 +738,6 @@ def make_update_list(node_tree,node_set = None):
 
     return list(out.keys())
 
-def makeTreeUpdate2(tree_name=None):
-    """ makes a complete update list for the current node tree"""
-    global list_nodes4update
-    global socket_data_cache
-    # clear cache on every full update
-    socket_data_cache.clear()
-    if tree_name != None:
-        list_nodes4update[tree_name] = make_update_list(tree_name)
-        list_nodes4update['TreeName'] = tree_name
-    else:
-        for ng in bpy.data.node_groups[:]:
-            if ng.bl_idname == 'SverchCustomTreeType':
-                list_nodes4update[ng.name]=make_update_list(ng.name)
-#           print(list_nodes4update[ng.name])
-        list_nodes4update['TreeName'] = bpy.context.space_data.node_tree.name
-
 
 
 
@@ -975,6 +801,23 @@ def make_animation_tree(node_types,node_list,tree_name):
     if a_tree:
         list_nodes4update["SverchokAnimationTree"+tree_name]=a_tree
 
+def makeTreeUpdate2(tree_name=None):
+    """ makes a complete update list for the tree_name, or all node trees"""
+    global list_nodes4update
+    global partial_update_cache
+    global socket_data_cache
+    # clear cache on every full update
+    
+    if tree_name != None:
+        list_nodes4update[tree_name] = make_update_list(tree_name)
+        partial_update_cache[tree_name] = {}
+        socket_data_cache[tree_name] = {}
+    else:
+        for name,ng in bpy.data.node_groups.items():
+            if ng.bl_idname == 'SverchCustomTreeType':
+                list_nodes4update[name]=make_update_list(name)
+                partial_update_cache[tree_name] = {}
+        socket_data_cache.clear()        
 
 
 # master update function, has several different modes
@@ -983,24 +826,17 @@ def speedUpdate(start_node = None, tree_name = None, animation_mode = False):
     global list_nodes4update
     global socket_data_cache
     global DEBUG_MODE
-    global DEBUG_SETTINGS
 
     def do_update(node_list,nods):
         for nod_name in node_list:
             if nod_name in nods:
                 if DEBUG_MODE:
-                    if 'print_timings' in DEBUG_SETTINGS:
-                        start = time.time()
+                    start = time.time()
                 nods[nod_name].update()
                 if DEBUG_MODE:
-                    if 'print_timings' in DEBUG_SETTINGS:
-                        stop = time.time()
-                        print("Updated: ",nod_name, " in ", round(stop-start,4))
-                    if 'show_updated_nodes' in DEBUG_SETTINGS:
-                        nods[nod_name].use_custom_color = True
-                        nods[nod_name].color = (0.1,.8,0)
-
-    # try to update optimized animation trees
+                    stop = time.time()
+                    
+    # try to update optimized animation trees, not ready needs to be redone
     if animation_mode:
         if not "SverchokAnimationTree" in list_nodes4update:
             print("No animation data")
@@ -1011,34 +847,38 @@ def speedUpdate(start_node = None, tree_name = None, animation_mode = False):
         return
     # start from the mentioned node the, called from updateNode
     if start_node != None:
-        if tree_name in list_nodes4update:
-            update_list = make_tree_from_nodes([start_node],tree_name)
+        if tree_name in list_nodes4update and list_nodes4update[tree_name]:
+            if tree_name in partial_update_cache:
+                if start_node in partial_update_cache[tree_name]:
+                    update_list= partial_update_cache[tree_name][start_node]
+            if not update_list:
+                update_list = make_tree_from_nodes([start_node],tree_name)
+                partial_update_cache[tree_name][start_node]=update_list
             nods = bpy.data.node_groups[tree_name].nodes
             do_update(update_list,nods)
             return
         else:
             socket_data_cache.clear()
-            makeTreeUpdate2()
-    # draw the named tree, called from SverchokCustomTreeNode
+            makeTreeUpdate2(tree_name)
+            do_update(list_nodes4update[tree_name],bpy.data.node_groups[tree_name].nodes)
+            return
+    # draw the complete named tree, called from SverchokCustomTreeNode
     if tree_name != None:
         if not tree_name in list_nodes4update:
-            makeTreeUpdate2(tree_name= tree_name) 
-        if not tree_name in bpy.data.node_groups:
+            makeTreeUpdate2(tree_name = tree_name)
+        if not tree_name in bpy.data.node_groups.keys():
+            print('Press update button')
             return #start up is not complete
-        nods = bpy.data.node_groups[tree_name].nodes
+        nods = bpy.data.node_groups[tree_name].nodes 
         do_update(list_nodes4update[tree_name],bpy.data.node_groups[tree_name].nodes)
         return
 
-    if 'TreeName' in list_nodes4update:
-        NodeTree_name = list_nodes4update['TreeName']
-    else:
-        NodeTree_name = bpy.context.space_data.node_tree.name
-        list_nodes4update['TreeName'] = NodeTree_name
-
+    # update all node trees
     for ng_name in list_nodes4update:
-        if ng_name in bpy.context.blend_data.node_groups and ng_name==NodeTree_name:
+        if ng_name.bl_idname == 'SverchCustomTreeType':
             nods = bpy.data.node_groups[ng_name].nodes
             do_update(list_nodes4update[ng_name],nods)
+
 
 ##############################################################
 ##############################################################
@@ -1104,6 +944,74 @@ def changable_sockets(self, inputsocketname, outputsocketname):
             self.newsock = False
     return
 
+def get_socket_type(node, inputsocketname):
+    if type(node.inputs[inputsocketname].links[0].from_socket) == bpy.types.VerticesSocket:
+        return 'v'
+    if type(node.inputs[inputsocketname].links[0].from_socket) == bpy.types.StringsSocket:
+        return 's'
+    if type(node.inputs[inputsocketname].links[0].from_socket) == bpy.types.MatrixSocket:
+        return 'm'
+
+       
+#####################################
+# Multysocket / множественный сокет #
+#####################################
+
+#     utility function for handling n-inputs, for usage see Test1.py
+#     for examples see ListJoin2, LineConnect, ListZip
+#     min parameter sets minimum number of sockets
+#     setup two variables in Node class
+#     create Fixed inputs socket, the multi socket will not change anything
+#     below min
+#     base_name = 'Data '
+#     multi_socket_type = 'StringsSocket'
+
+def multi_socket(node , min=1, start=0, breck=False):
+    # probably incorrect state due or init or change of inputs
+    # do nothing
+    if not len(node.inputs):
+        return
+    if min < 1:
+        min = 1
+    if node.inputs[-1].links:
+        length = start + len(node.inputs)
+        if breck:
+            name = node.base_name + '[' + str(length) + ']'
+        else:
+            name = node.base_name + str(length)
+        node.inputs.new(node.multi_socket_type, name, name)
+    else:
+        while len(node.inputs)>min and not node.inputs[-2].links:
+            node.inputs.remove(node.inputs[-1])
+
+#####################################
+# node and socket id functions      #
+#####################################
+
+def node_id(*args):
+    global ID_CACHE
+    if len(args)==2:
+        group,name=args[0],args[1]
+    elif len(args)==1:
+        node=args[0]
+        name=node.name
+        name=node.id_data.name
+    h=hash(bpy.data.node_groups[group].nodes[name])
+    ID_CACHE[h]=(group,name)
+    return h        
+
+
+# socket.name is not unique... identifier is
+def socket_id(socket):
+    hash(socket)
+    #return socket.id_data.name+socket.node.name+socket.identifier
+
+
+#####################################
+# socket data cache                 #
+#####################################
+
+
 def SvGetSocketAnyType(self, socket):
 
     out = SvGetSocket(socket)
@@ -1111,35 +1019,10 @@ def SvGetSocketAnyType(self, socket):
         return out
     else:
         return []
-    #if type(socket.links[0].from_socket) == bpy.types.StringsSocket:
-    #    typeresult = eval(socket.links[0].from_socket.StringsProperty)
-    #elif type(socket.links[0].from_socket) == bpy.types.VerticesSocket:
-    #    typeresult = eval(socket.links[0].from_socket.VerticesProperty)
-    #elif type(socket.links[0].from_socket) == bpy.types.MatrixSocket:
-    #    typeresult = eval(socket.links[0].from_socket.MatrixProperty)
-    #return typeresult
-
 
 def SvSetSocketAnyType(self, socket_name, out):
     SvSetSocket(self.outputs[socket_name],out)
     return
-    # R/W decision point, to test performance without
-    # writing to string props, uncomment. will break if any used node
-    # is not using SvGet/SvSet
-    #if DEBUG_MODE:
-    #    return
-    #if type(self.outputs[socket_name]) == bpy.types.StringsSocket:
-    #    self.outputs[socket_name].StringsProperty = str(out)
-    #elif type(self.outputs[socket_name]) == bpy.types.VerticesSocket:
-    #    self.outputs[socket_name].VerticesProperty = str(out)
-    #elif type(self.outputs[socket_name]) == bpy.types.MatrixSocket:
-    #    self.outputs[socket_name].MatrixProperty = str(out)
-
-# caching data solution
-
-# socket.name is not unique... identifier is
-def socket_id(socket):
-    return socket.id_data.name+socket.node.name+socket.identifier
 
 # faster than builtin deep copy for us.
 # useful for our limited case
@@ -1171,9 +1054,9 @@ def SvGetSocketInfo(socket):
     if s_id in socket_data_cache:
         data = socket_data_cache[s_id]
         if data:
-            return build_info(data)[:7]    
-    
-    return ''
+            return build_info(data)[:7]
+    else:
+        return ''
         
 def SvSetSocket(socket, out):
     global socket_data_cache
@@ -1199,44 +1082,6 @@ def SvGetSocket(socket, copy = False):
                 print("cache miss:",socket.node.name,"->",socket.name,"from:",other.node.name,"->",other.name)
     return None
 
-def get_socket_type(node, inputsocketname):
-    if type(node.inputs[inputsocketname].links[0].from_socket) == bpy.types.VerticesSocket:
-        return 'v'
-    if type(node.inputs[inputsocketname].links[0].from_socket) == bpy.types.StringsSocket:
-        return 's'
-    if type(node.inputs[inputsocketname].links[0].from_socket) == bpy.types.MatrixSocket:
-        return 'm'
-
-#####################################
-# Multysocket / множественный сокет #
-#####################################
-
-#     utility function for handling n-inputs, for usage see Test1.py
-#     for examples see ListJoin2, LineConnect, ListZip
-#     min parameter sets minimum number of sockets
-#     setup two variables in Node class
-#     create Fixed inputs socket, the multi socket will not change anything
-#     below min
-#     base_name = 'Data '
-#     multi_socket_type = 'StringsSocket'
-
-def multi_socket(node , min=1, start=0, breck=False):
-    # probably incorrect state due o init or change of inputs
-    # do nothing
-    if not len(node.inputs):
-        return
-    if min < 1:
-        min = 1
-    if node.inputs[-1].links:
-        length = start + len(node.inputs)
-        if breck:
-            name = node.base_name + '[' + str(length) + ']'
-        else:
-            name = node.base_name + str(length)
-        node.inputs.new(node.multi_socket_type, name, name)
-    else:
-        while len(node.inputs)>min and not node.inputs[-2].links:
-            node.inputs.remove(node.inputs[-1])
 
 ####################################
 # быстрый сортировщик / quick sorter
@@ -1246,15 +1091,4 @@ def svQsort(L):
     if L: return svQsort([x for x in L[1:] if x<L[0]]) + L[0:1] + svQsort([x for x in L[1:] if x>=L[0]])
     return []
 
-####################################
-# update node on framechange
-####################################
 
-#def update_nodes(scene):
-#    try: #bpy.ops.node.sverchok_update_all()
-#        speedupdate()
-#    except: pass
-# addtionally
-#pre = bpy.app.handlers.frame_change_pre
-#for x in pre: pre.remove(x)
-#pre.append(update_nodes)
