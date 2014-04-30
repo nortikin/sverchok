@@ -9,9 +9,9 @@ class SphereNode(Node, SverchCustomTreeNode):
     bl_label = 'Sphere'
     bl_icon = 'OUTLINER_OB_EMPTY'
     
-    rad_ = bpy.props.FloatProperty(name = 'rad_', description='Radius', default=2, options={'ANIMATABLE'}, update=updateNode)
-    U_ = bpy.props.IntProperty(name = 'U_', description='U', default=32, min=3, options={'ANIMATABLE'}, update=updateNode)
-    V_ = bpy.props.IntProperty(name = 'V_', description='V', default=32, min=3, options={'ANIMATABLE'}, update=updateNode)
+    rad_ = bpy.props.FloatProperty(name = 'rad_', description='Radius', default=1.0, options={'ANIMATABLE'}, update=updateNode)
+    U_ = bpy.props.IntProperty(name = 'U_', description='U', default=24, min=3, options={'ANIMATABLE'}, update=updateNode)
+    V_ = bpy.props.IntProperty(name = 'V_', description='V', default=24, min=3, options={'ANIMATABLE'}, update=updateNode)
 
     def init(self, context):
         self.inputs.new('StringsSocket', "Radius", "Radius")
