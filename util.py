@@ -8,6 +8,8 @@ import collections
 import time
 import copy
 
+import traceback
+
 global bmesh_mapping, per_cache
 
 DEBUG_MODE = False
@@ -787,19 +789,8 @@ def make_animation_tree(node_types,node_list,tree_name):
     node_set = set(node_list)
     for n_t in node_types:
         node_set = node_set | {name for name in ng.nodes.keys() if ng.nodes[name].bl_idname == n_t}
-    #print("make ani tree",node_set)
     a_tree = make_tree_from_nodes(list(node_set),tree_name)
-    #print("make anitree2",a_tree)
-    if "SverchokAnimationTree" in list_nodes4update:
-        a_tree_list = list_nodes4update["SverchokAnimationTree"]
-        if not tree_name in a_tree_list:
-            a_tree_list.append(tree_name)
-            list_nodes4update["SverchokAnimationTree"]=a_tree_list
-    else:
-        list_nodes4update["SverchokAnimationTree"]=[tree_name]
-    #print(a_tree)
-    if a_tree:
-        list_nodes4update["SverchokAnimationTree"+tree_name]=a_tree
+    return a_tree
 
 def makeTreeUpdate2(tree_name=None):
     """ makes a complete update list for the tree_name, or all node trees"""
@@ -817,7 +808,7 @@ def makeTreeUpdate2(tree_name=None):
             if ng.bl_idname == 'SverchCustomTreeType':
                 list_nodes4update[name]=make_update_list(name)
                 partial_update_cache[tree_name] = {}
-        socket_data_cache.clear()        
+                socket_data_cache[tree_name] = {}    
 
 
 # master update function, has several different modes
@@ -828,6 +819,7 @@ def speedUpdate(start_node = None, tree_name = None, animation_mode = False):
     global DEBUG_MODE
 
     def do_update(node_list,nods):
+        global DEBUG_MODE
         for nod_name in node_list:
             if nod_name in nods:
                 if DEBUG_MODE:
@@ -835,19 +827,14 @@ def speedUpdate(start_node = None, tree_name = None, animation_mode = False):
                 nods[nod_name].update()
                 if DEBUG_MODE:
                     stop = time.time()
-                    
-    # try to update optimized animation trees, not ready needs to be redone
+                    print("Updated: ",nod_name, " in ", round(stop-start,4))    
+    # try to update optimized animation trees, not ready, needs to be redone
     if animation_mode:
-        if not "SverchokAnimationTree" in list_nodes4update:
-            print("No animation data")
-            return
-        for ng in list_nodes4update["SverchokAnimationTree"]:
-            nods = bpy.data.node_groups[ng].nodes
-            do_update(list_nodes4update["SverchokAnimationTree"+ng],nods)
-        return
+        pass
     # start from the mentioned node the, called from updateNode
     if start_node != None:
         if tree_name in list_nodes4update and list_nodes4update[tree_name]:
+            update_list = None
             if tree_name in partial_update_cache:
                 if start_node in partial_update_cache[tree_name]:
                     update_list= partial_update_cache[tree_name][start_node]
@@ -858,26 +845,24 @@ def speedUpdate(start_node = None, tree_name = None, animation_mode = False):
             do_update(update_list,nods)
             return
         else:
-            socket_data_cache.clear()
-            makeTreeUpdate2(tree_name)
+            makeTreeUpdate2(tree_name = tree_name)
             do_update(list_nodes4update[tree_name],bpy.data.node_groups[tree_name].nodes)
             return
     # draw the complete named tree, called from SverchokCustomTreeNode
     if tree_name != None:
         if not tree_name in list_nodes4update:
-            makeTreeUpdate2(tree_name = tree_name)
-        if not tree_name in bpy.data.node_groups.keys():
-            print('Press update button')
+            mmakeTreeUpdate2(tree_name = tree_name)
+        if not tree_name in bpy.data.node_groups:
             return #start up is not complete
         nods = bpy.data.node_groups[tree_name].nodes 
         do_update(list_nodes4update[tree_name],bpy.data.node_groups[tree_name].nodes)
         return
 
     # update all node trees
-    for ng_name in list_nodes4update:
-        if ng_name.bl_idname == 'SverchCustomTreeType':
-            nods = bpy.data.node_groups[ng_name].nodes
-            do_update(list_nodes4update[ng_name],nods)
+    for name,ng in bpy.data.node_groups.items():
+        if ng.bl_idname == 'SverchCustomTreeType':
+            nods = bpy.data.node_groups[name].nodes
+            do_update(list_nodes4update[name],nods)
 
 
 ##############################################################
@@ -988,23 +973,12 @@ def multi_socket(node , min=1, start=0, breck=False):
 # node and socket id functions      #
 #####################################
 
-def node_id(*args):
-    global ID_CACHE
-    if len(args)==2:
-        group,name=args[0],args[1]
-    elif len(args)==1:
-        node=args[0]
-        name=node.name
-        name=node.id_data.name
-    h=hash(bpy.data.node_groups[group].nodes[name])
-    ID_CACHE[h]=(group,name)
-    return h        
 
 
 # socket.name is not unique... identifier is
 def socket_id(socket):
-    hash(socket)
-    #return socket.id_data.name+socket.node.name+socket.identifier
+    #return hash(socket)
+    return socket.id_data.name+socket.node.name+socket.identifier
 
 
 #####################################
@@ -1048,37 +1022,42 @@ def SvGetSocketInfo(socket):
             return '('+build_info(data[0])
         else:
             return str(data)
-            
     global socket_data_cache
+    ng = socket.id_data.name
     s_id = socket_id(socket)
-    if s_id in socket_data_cache:
-        data = socket_data_cache[s_id]
-        if data:
-            return build_info(data)[:7]
-    else:
-        return ''
+    if ng in socket_data_cache:
+        if s_id in socket_data_cache[ng]:
+            data=socket_data_cache[ng][s_id]
+            if data:        
+                return build_info(data)[:7]
+    return ''
         
 def SvSetSocket(socket, out):
     global socket_data_cache
     s_id = socket_id(socket)
-    if s_id in socket_data_cache:
-        del socket_data_cache[s_id]
-    socket_data_cache[s_id]=copy.copy(out)
+    s_ng = socket.id_data.name
+    if not s_ng in socket_data_cache:
+        socket_data_cache[s_ng]={}
+    socket_data_cache[s_ng][s_id]=out
 
 def SvGetSocket(socket, copy = False):
     global socket_data_cache
     global DEBUG_MODE
     if socket.links:
-        other =  socket.links[0].from_socket
+        other = socket.links[0].from_socket
         s_id = socket_id(other)
-        if s_id in socket_data_cache:
-            out = socket_data_cache[s_id]
+        s_ng = other.id_data.name
+        if not s_ng in socket_data_cache:
+            return None
+        if s_id in socket_data_cache[s_ng]:
+            out = socket_data_cache[s_ng][s_id]
             if copy:
                 return out.copy()
             else:
                 return sv_deep_copy(out)
         else: # failure, should raise error in future
             if DEBUG_MODE:
+#                traceback.print_stack()
                 print("cache miss:",socket.node.name,"->",socket.name,"from:",other.node.name,"->",other.name)
     return None
 
