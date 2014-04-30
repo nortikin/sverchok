@@ -25,6 +25,7 @@ from util import *
 import ast
 import os
 
+
 FAIL_COLOR = (0.8, 0.1, 0.1)
 READY_COLOR = (0, 0.8, 0.95)
 
@@ -58,42 +59,20 @@ def instrospect_py(node):
     script_str = node.script_str
     script = node.script
 
-    def find_variables(script_str):
-        import re
-
-        lines = script_str.split('\n')
-        lines_b = [i for i in lines if ('def sv_main') in i]
-
-        if len(lines_b) == 1:
-
-            # yes, I could do this with capture groups.
-            function_line = lines_b[0]
-            pattern1 = '=(.+?)[,\)]'
-            param_values = re.findall(pattern1, function_line)
-
-        else:
-            print('your def sv_main must contain variable_names and defaults')
-            return False
-
-        return param_values
-
-    '''
-    this section shall
-    - retrieve variables
-    - return None in the case of any failure
-    '''
-    params = find_variables(script_str)
-    if params:
-        params = list(map(ast.literal_eval, params))
-    else:
+    try:
+        exec(script_str)
+        f = vars()
+        node_functor = f.get('sv_main', None)
+    except:
         print('see demo files for NodeScript')
         return
-
-    exec(script_str)
-    f = vars()
-
-    # this will return a callable function if sv_main is found, else None
-    return [f.get('sv_main', None), params]
+    finally:
+        '''
+        this will return a callable function if sv_main is found, else None
+        '''
+        if node_functor:
+            params = node_functor.__defaults__
+            return [node_functor, params]
 
 
 class SvDefaultScriptTemplate(bpy.types.Operator):
