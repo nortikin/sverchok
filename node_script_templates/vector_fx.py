@@ -1,5 +1,7 @@
 def sv_main(verts=[], dist=1.1, strength=1.0):
 
+    # combine this script with petal_sin.py
+
     in_sockets = [
        ['v', 'Verts', verts],
        ['s', 'Dist', dist],
