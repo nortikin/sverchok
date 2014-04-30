@@ -42,9 +42,11 @@ class SverchokHome(bpy.types.Operator):
 
 class SverchokToolsMenu(bpy.types.Panel):
     bl_idname = "Sverchok_tools_menu"
-    bl_label = "Sverchok Tools"
+    bl_label = "Sverchok 0.2.8"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
+    bl_category = 'Sverchok'
+    use_pin=True
     
     @classmethod
     def poll(cls,context):
@@ -104,13 +106,13 @@ class SverchokToolsMenu(bpy.types.Panel):
                     
         #       row.prop(tree, 'sv_bake',text=' ')
   
-        box = layout.box()
-        col = box.column(align=True)
-        col.label(text="Sverchok v_0.2.8")
+        #box = layout.box()
+        #col = box.column(align=True)
+        #col.label(text="Sverchok v_0.2.8")
         #col.label(text='layout: '+context.space_data.node_tree.name)
-        row = col.row(align=True)
-        row.operator('wm.url_open', text='Help!').url = 'http://wiki.blender.org/index.php/Extensions:2.6/Py/Scripts/Nodes/Sverchok'
-        row.operator('wm.url_open', text='Home!').url = 'http://nikitron.cc.ua/blend_scripts.html'
+        #row = col.row(align=True)
+        #row.operator('wm.url_open', text='Help!').url = 'http://wiki.blender.org/index.php/Extensions:2.6/Py/Scripts/Nodes/Sverchok'
+        #row.operator('wm.url_open', text='Home!').url = 'http://nikitron.cc.ua/blend_scripts.html'
         #layout.operator(SverchokHome.bl_idname, text="WWW: Go home")
         #row = col.row(align=True)
         #row.operator('wm.url_open', text='FBack').url = 'http://www.blenderartists.org/forum/showthread.php?272679-Addon-WIP-Sverchok-parametric-tool-for-architects/'
