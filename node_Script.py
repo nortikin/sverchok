@@ -66,6 +66,7 @@ def instrospect_py(node):
 
         if len(lines_b) == 1:
 
+            # yes, I could do this with capture groups.
             function_line = lines_b[0]
             pattern1 = '=(.+?)[,\)]'
             param_values = re.findall(pattern1, function_line)
@@ -112,11 +113,10 @@ class SvDefaultScriptTemplate(bpy.types.Operator):
 
         new_template = bpy.data.texts.new(self.script_name)
 
-        # testing only.
         sv_path = os.path.dirname(os.path.realpath(__file__))
         script_dir = "node_script_templates"
         path_to_template = os.path.join(sv_path, script_dir, self.script_name)
-        print(path_to_template)
+
         with open(path_to_template) as f:
             template_str = f.read()
             bpy.data.texts[self.script_name].from_string(template_str)
@@ -140,6 +140,24 @@ class SvScriptOp(bpy.types.Operator):
         print('pressed load')
         node = bpy.data.node_groups[self.name_tree].nodes[self.name_obj]
         node.load()
+        return {'FINISHED'}
+
+
+class SvNodeSelfNuke(bpy.types.Operator):
+
+    bl_idname = "node.sverchok_scriptnode_nuke"
+    bl_label = "Sverchok scriptnode nuke"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    # from object in
+    name_obj = StringProperty(name='object name')
+    name_tree = StringProperty(name='tree name')
+
+    def execute(self, context):
+        print('pressed nuke, Boom')
+        node = bpy.data.node_groups[self.name_tree].nodes[self.name_obj]
+        node.nuke_me(context)
+        node.script_str = ""
         return {'FINISHED'}
 
 
@@ -184,7 +202,6 @@ class SvScriptNode(Node, SverchCustomTreeNode):
         update=updateNode)
 
     script_str = StringProperty(default="")
-    # script_ui_param_names = StringProperty(default="")
 
     node_function = None
     in_sockets = []
@@ -192,6 +209,13 @@ class SvScriptNode(Node, SverchCustomTreeNode):
 
     def init(self, context):
         pass
+
+    def nuke_me(self, context):
+        in_out = [self.inputs, self.outputs]
+        for socket_set in in_out:
+            while len(socket_set) > 0:
+                socket_set.remove(socket_set[-1])
+        # maybe do this with one swoop instead.
 
     def draw_buttons(self, context, layout):
 
@@ -224,6 +248,7 @@ class SvScriptNode(Node, SverchCustomTreeNode):
             row.label(text=self.script)
             row = col.row()
             op = row.operator('node.sverchok_script_input', text='Reload')
+            op = row.operator('node.sverchok_scriptnode_nuke', text='Nuke')
             op.name_tree = self.id_data.name
             op.name_obj = self.name
 
@@ -345,10 +370,12 @@ class SvScriptNode(Node, SverchCustomTreeNode):
 def register():
     bpy.utils.register_class(SvScriptOp)
     bpy.utils.register_class(SvScriptNode)
+    bpy.utils.register_class(SvNodeSelfNuke)
     bpy.utils.register_class(SvDefaultScriptTemplate)
 
 
 def unregister():
+    bpy.utils.unregister_class(SvNodeSelfNuke)
     bpy.utils.unregister_class(SvDefaultScriptTemplate)
     bpy.utils.unregister_class(SvScriptNode)
     bpy.utils.unregister_class(SvScriptOp)
