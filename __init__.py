@@ -148,6 +148,7 @@ if "bpy" in locals():
     imp.reload(text_editor_Submenu)
     imp.reload(node_Intersect_Edges)
     imp.reload(node_Box)
+    imp.reload(node_KDTree_Edges)
 
 else:
     import node_s
@@ -239,6 +240,7 @@ else:
     import text_editor_Submenu
     import node_Intersect_Edges
     import node_Box
+    import node_KDTree_Edges
     
 def register():
     import bpy
@@ -329,6 +331,7 @@ def register():
     text_editor_Submenu.register()
     node_Intersect_Edges.register()
     node_Box.register()
+    node_KDTree_Edges.register()
         
     if 'SVERCHOK' not in nodeitems_utils._node_categories:
         nodeitems_utils.register_node_categories("SVERCHOK", node_s.make_categories())
@@ -337,7 +340,8 @@ def register():
 def unregister():
     import bpy
     import nodeitems_utils
-    
+
+    node_KDTree_Edges.unregister()
     node_Box.unregister()
     node_Intersect_Edges.unregister()
     text_editor_Submenu.unregister()
