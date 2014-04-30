@@ -210,12 +210,17 @@ class SvScriptNode(Node, SverchCustomTreeNode):
             op.name_tree = self.id_data.name
             op.name_obj = self.name
         else:
-            col.label(text='LOADED:')
             row = col.row()
             col2=row.column()
             col2.scale_x=0.05
             col2.label(icon='TEXT',text=' ')
+            row.label(text='LOADED:')
+            row = col.row()
             row.label(text=self.script)
+            row = col.row()
+            op = row.operator('node.sverchok_script_input', text='Reload')
+            op.name_tree = self.id_data.name
+            op.name_obj = self.name
 
     def create_or_update_sockets(self):
         '''
