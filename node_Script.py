@@ -93,7 +93,7 @@ def instrospect_py(node):
 
 class SvDefaultScriptTemplate(bpy.types.Operator):
 
-    ''' Creates template text file for making own script '''
+    ''' Creates template text file to start making your own script '''
     bl_idname = 'node.sverchok_script_template'
     bl_label = 'Template'
     bl_options = {'REGISTER'}
@@ -179,7 +179,6 @@ class SvScriptNode(Node, SverchCustomTreeNode):
         default='Py',
         update=updateNode)
 
-    # stores the script as a string
     script_str = StringProperty(default="")
 
     node_function = None
@@ -217,6 +216,7 @@ class SvScriptNode(Node, SverchCustomTreeNode):
             col2.scale_x=0.05
             col2.label(icon='TEXT',text=' ')
             row.label(text=self.script)
+
     def create_or_update_sockets(self):
         '''
         - desired features not flly implemente yet (only socket add so far)
@@ -291,16 +291,18 @@ class SvScriptNode(Node, SverchCustomTreeNode):
             return
 
         input_names = [i.name for i in self.inputs]
-        kargs = {}
+        #kargs = {}
+        fparams = []
         for name in input_names:
+            print('yikes:', name)
             links = self.inputs[name].links
             if not links:
                 continue
 
             k = str(SvGetSocketAnyType(self, self.inputs[name]))
             kfree = k[2:-2]
-            # print('name: {0} = {1}'.format(name, kfree))
-            kargs[name] = ast.literal_eval(kfree)
+            #kargs[name] = ast.literal_eval(kfree)
+            fparams.append(ast.literal_eval(kfree))
 
         def get_sv_main():
             exec(self.script_str)
@@ -310,8 +312,9 @@ class SvScriptNode(Node, SverchCustomTreeNode):
         f = get_sv_main()
         node_function = f.get('sv_main', None)
 
-        if node_function:
-            in_sockets, out_sockets = node_function(**kargs)
+        if node_function and (len(fparams) == len(input_names)):
+            #in_sockets, out_sockets = node_function(**kargs)
+            in_sockets, out_sockets = node_function(*fparams)
 
             for socket_type, name, data in out_sockets:
                 SvSetSocketAnyType(self, name, data)
