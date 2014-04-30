@@ -28,12 +28,6 @@ import os
 FAIL_COLOR = (0.8, 0.1, 0.1)
 READY_COLOR = (0, 0.8, 0.95)
 
-'''
-user made var names in the function definition of sv_main must not contain pipe |.
-pipe is used temporarily to store varnames as a concatenated string in a StringProperty
-
-
-'''
 
 # utility functions
 
@@ -72,7 +66,6 @@ def instrospect_py(node):
 
         if len(lines_b) == 1:
 
-            # yes, I could do this with capture groups.
             function_line = lines_b[0]
             pattern1 = '=(.+?)[,\)]'
             param_values = re.findall(pattern1, function_line)
