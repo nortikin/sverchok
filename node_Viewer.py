@@ -114,6 +114,7 @@ class ViewerNode(Node, SverchCustomTreeNode):
     coloris.color[1]['default'] = (0.055,0.312,0.5)
     color_view = coloris.color
     old_nid =  bpy.props.StringProperty(name='oldNID')
+    col=(1,1,0)
         
     def init(self, context):
         self.inputs.new('VerticesSocket', 'vertices', 'vertices')
@@ -130,12 +131,13 @@ class ViewerNode(Node, SverchCustomTreeNode):
         opera.idname = self.name
         opera.idtree = self.id_data.name
         row = layout.row(align=True)
-        row.scale_x=10.0
         row.prop(self, "transparant", text="Transp")
         row.prop(self, "shading", text="Shade")
-        row = layout.row(align=True)
-        row.scale_x=10.0
-        row.prop(self, "color_view", text="Color")
+        col = layout.column(align=True)
+        #row.scale_x=1.2
+        row = col.row(align=True)
+        #row.prop(self, "color_view", text=" ")
+        row.template_color_picker(self, 'color_view', value_slider=True)
         #a = self.color_view[2]
         #layout.label(text=str(round(a, 4)))
         

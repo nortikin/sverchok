@@ -24,6 +24,8 @@ import bgl
 import math
 import mathutils
 from mathutils import Vector, Matrix
+import bmesh
+from bmesh.types import BMFace
 
 import node_Viewer
 from node_Viewer import *
@@ -95,30 +97,31 @@ def tag_redraw_all_view3d():
                         region.tag_redraw()
 
 
-def callback_enable(name, draw_verts, draw_matrix, draw_bg):
-    handle = handle_read(name)
+def callback_enable(node, draw_verts, draw_edges, draw_faces, draw_matrix, draw_bg):
+    handle = handle_read(node.name)
     if handle[0]:
         return
 
     handle_pixel = SpaceView3D.draw_handler_add(
-        draw_callback_px, (name, draw_verts, draw_matrix, draw_bg),
+        draw_callback_px, (
+            node, draw_verts, draw_edges, draw_faces, draw_matrix, draw_bg),
         'WINDOW', 'POST_PIXEL')
-    handle_write(name, handle_pixel)
+    handle_write(node.name, handle_pixel)
     tag_redraw_all_view3d()
 
 
-def callback_disable(name):
-    handle = handle_read(name)
+def callback_disable(node):
+    handle = handle_read(node.name)
     if not handle[0]:
         return
 
     handle_pixel = handle[1]
     SpaceView3D.draw_handler_remove(handle_pixel, 'WINDOW')
-    handle_delete(name)
+    handle_delete(node.name)
     tag_redraw_all_view3d()
 
 
-def draw_callback_px(name, draw_verts, draw_matrix, draw_bg):
+def draw_callback_px(node, draw_verts, draw_edges, draw_faces, draw_matrix, draw_bg):
     context = bpy.context
     data_vector = []
     data_matrix = []
@@ -126,20 +129,29 @@ def draw_callback_px(name, draw_verts, draw_matrix, draw_bg):
     if draw_verts:
         data_vector = Vector_generate(draw_verts)
 
+    if draw_edges:
+        data_edges = draw_edges
+
+    if draw_faces:
+        data_faces = draw_faces
+
     if draw_matrix:
         data_matrix = Matrix_generate(draw_matrix)
 
     if (data_vector, data_matrix) == (0, 0):
-        callback_disable(name)
+        callback_disable(node.name)
         return
 
     region = context.region
     region3d = context.space_data.region_3d
 
     vert_idx_color = (1, 1, 1)
+    edge_idx_color = (1.0, 1.0, 0.0)
+    face_idx_color = (1.0, 0.8, 0.8)
+
     font_id = 0
     text_height = 13
-    blf.size(font_id, text_height, 72)
+    blf.size(font_id, text_height, 72)  # should check prefs.dpi
 
     region_mid_width = region.width / 2.0
     region_mid_height = region.height / 2.0
@@ -175,19 +187,34 @@ def draw_callback_px(name, draw_verts, draw_matrix, draw_bg):
 
     ########
     # points
+    def calc_median(vlist):
+        a = Vector((0, 0, 0))
+        for v in vlist:
+            a += v
+        return a * (1/len(vlist))
 
-    if data_vector:
+    for obj_index, verts in enumerate(data_vector):
+        final_verts = verts
 
-        idx = 0
-        for verts in data_vector:
+        # quicklt apply matrix if necessary
+        if draw_matrix:
+            matrix = data_matrix[obj_index]
+            final_verts = [matrix * v for v in verts]
 
-            if draw_matrix:
-                matrix = data_matrix[0]
-                for v in verts:
-                    vc = matrix * v
-                    draw_index(vert_idx_color, idx, vc)
-                    idx += 1
-            else:
-                for v in verts:
-                    draw_index(vert_idx_color, idx, v)
-                    idx += 1
+        if node.display_vert_index:
+            for idx, v in enumerate(final_verts):
+                draw_index(vert_idx_color, idx, v)
+
+        if data_edges and node.display_edge_index:
+            for edge_details in enumerate(data_edges[obj_index]):
+                edge_index, (idx1, idx2) = edge_details
+                v1 = Vector(final_verts[idx1])
+                v2 = Vector(final_verts[idx2])
+                loc = v1 + ((v2 - v1) / 2)
+                draw_index(edge_idx_color, edge_index, loc)
+
+        if data_faces and node.display_face_index:
+            for face_index, f in enumerate(data_faces[obj_index]):
+                verts = [Vector(final_verts[idx]) for idx in f]
+                median = calc_median(verts)
+                draw_index(face_idx_color, face_index, median)
