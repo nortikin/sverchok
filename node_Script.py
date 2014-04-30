@@ -28,8 +28,15 @@ import os
 FAIL_COLOR = (0.8, 0.1, 0.1)
 READY_COLOR = (0, 0.8, 0.95)
 
+'''
+user made var names in the function definition of sv_main must not contain pipe |.
+pipe is used temporarily to store varnames as a concatenated string in a StringProperty
+
+
+'''
 
 # utility functions
+
 
 def new_output_socket(node, name, stype):
     socket_type = {
@@ -64,8 +71,12 @@ def instrospect_py(node):
         lines_b = [i for i in lines if ('def sv_main') in i]
 
         if len(lines_b) == 1:
-            pattern2 = '=(.+?)[,\)]'
-            param_values = re.findall(pattern2, lines_b[0])
+
+            # yes, I could do this with capture groups.
+            function_line = lines_b[0]
+            pattern1 = '=(.+?)[,\)]'
+            param_values = re.findall(pattern1, function_line)
+
         else:
             print('your def sv_main must contain variable_names and defaults')
             return False
@@ -180,6 +191,7 @@ class SvScriptNode(Node, SverchCustomTreeNode):
         update=updateNode)
 
     script_str = StringProperty(default="")
+    # script_ui_param_names = StringProperty(default="")
 
     node_function = None
     in_sockets = []
@@ -199,7 +211,7 @@ class SvScriptNode(Node, SverchCustomTreeNode):
             tem = row.operator(
                 'node.sverchok_script_template', text='Template')
             tem.script_name = self.files_popup
-        
+
             #row = col.row(align=True)
             #row.prop(self, 'scriptmode', 'scriptmode', expand=True)
             row = col.row(align=True)
@@ -211,9 +223,9 @@ class SvScriptNode(Node, SverchCustomTreeNode):
             op.name_obj = self.name
         else:
             row = col.row()
-            col2=row.column()
-            col2.scale_x=0.05
-            col2.label(icon='TEXT',text=' ')
+            col2 = row.column()
+            col2.scale_x = 0.05
+            col2.label(icon='TEXT', text=' ')
             row.label(text='LOADED:')
             row = col.row()
             row.label(text=self.script)
@@ -295,20 +307,6 @@ class SvScriptNode(Node, SverchCustomTreeNode):
         if not self.inputs:
             return
 
-        input_names = [i.name for i in self.inputs]
-        #kargs = {}
-        fparams = []
-        for name in input_names:
-            print('yikes:', name)
-            links = self.inputs[name].links
-            if not links:
-                continue
-
-            k = str(SvGetSocketAnyType(self, self.inputs[name]))
-            kfree = k[2:-2]
-            #kargs[name] = ast.literal_eval(kfree)
-            fparams.append(ast.literal_eval(kfree))
-
         def get_sv_main():
             exec(self.script_str)
             f = vars()
@@ -317,10 +315,30 @@ class SvScriptNode(Node, SverchCustomTreeNode):
         f = get_sv_main()
         node_function = f.get('sv_main', None)
 
-        if node_function and (len(fparams) == len(input_names)):
-            #in_sockets, out_sockets = node_function(**kargs)
-            in_sockets, out_sockets = node_function(*fparams)
+        if not node_function:
+            return
 
+        defaults = node_function.__defaults__
+        input_names = [i.name for i in self.inputs]
+
+        fparams = []
+        for param_idx, name in enumerate(input_names):
+            links = self.inputs[name].links
+            if not links:
+                this_val = defaults[param_idx]
+            else:
+                try:
+                    k = str(SvGetSocketAnyType(self, self.inputs[name]))
+                    kfree = k[2:-2]
+                    this_val = ast.literal_eval(kfree)
+                except:
+                    this_val = defaults[param_idx]
+
+            fparams.append(this_val)
+
+        if node_function and (len(fparams) == len(input_names)):
+
+            _, out_sockets = node_function(*fparams)
             for socket_type, name, data in out_sockets:
                 SvSetSocketAnyType(self, name, data)
 
