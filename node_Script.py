@@ -211,18 +211,18 @@ class SvScriptNode(Node, SverchCustomTreeNode):
         pass
 
     def nuke_me(self, context):
+        print(dir(self.inputs))
         in_out = [self.inputs, self.outputs]
         for socket_set in in_out:
-            while len(socket_set) > 0:
-                socket_set.remove(socket_set[-1])
-        # maybe do this with one swoop instead.
+            socket_set.clear()
+        self.use_custom_color = False
 
     def draw_buttons(self, context, layout):
 
         col = layout.column(align=True)
         if not self.script_str:
             row = col.row(align=True)
-            row.label(text='DOWNLOAD PY:')
+            row.label(text='IMPORT PY:')
             row = col.row(align=True)
             row.prop(self, 'files_popup', '')
             tem = row.operator(
