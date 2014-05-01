@@ -66,7 +66,7 @@ class MatrixDeformNode(Node, SverchCustomTreeNode):
                     rotA = Vector_generate(rotA_)
             
             # outputs
-            print(loc)
+            #print(loc)
             matrixes_ = matrixdef(orig, loc, scale, rot, angle, rotA)
             matrixes = Matrix_listing(matrixes_)
             SvSetSocketAnyType(self, 'Matrix', matrixes)
