@@ -208,7 +208,7 @@ class SvScriptNode(Node, SverchCustomTreeNode):
             row = col.row(align=True)
             row.prop(self, 'files_popup', '')
             tem = row.operator(
-                'node.sverchok_script_template', text='Template')
+                'node.sverchok_script_template', text='Import Template')
             tem.script_name = self.files_popup
 
             #row = col.row(align=True)
@@ -230,7 +230,7 @@ class SvScriptNode(Node, SverchCustomTreeNode):
             row.label(text=self.script)
             row = col.row()
             op = row.operator('node.sverchok_script_input', text='Reload')
-            op = row.operator('node.sverchok_scriptnode_nuke', text='Nuke')
+            op = row.operator('node.sverchok_scriptnode_nuke', text='Clear')
             op.name_tree = self.id_data.name
             op.name_obj = self.name
 
