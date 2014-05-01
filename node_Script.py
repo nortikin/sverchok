@@ -25,6 +25,7 @@ from util import *
 import ast
 import os
 
+
 FAIL_COLOR = (0.8, 0.1, 0.1)
 READY_COLOR = (0, 0.8, 0.95)
 
@@ -58,41 +59,20 @@ def instrospect_py(node):
     script_str = node.script_str
     script = node.script
 
-    def find_variables(script_str):
-        import re
-
-        lines = script_str.split('\n')
-        lines_b = [i for i in lines if ('def sv_main') in i]
-
-        if len(lines_b) == 1:
-
-            function_line = lines_b[0]
-            pattern1 = '=(.+?)[,\)]'
-            param_values = re.findall(pattern1, function_line)
-
-        else:
-            print('your def sv_main must contain variable_names and defaults')
-            return False
-
-        return param_values
-
-    '''
-    this section shall
-    - retrieve variables
-    - return None in the case of any failure
-    '''
-    params = find_variables(script_str)
-    if params:
-        params = list(map(ast.literal_eval, params))
-    else:
+    try:
+        exec(script_str)
+        f = vars()
+        node_functor = f.get('sv_main', None)
+    except:
         print('see demo files for NodeScript')
         return
-
-    exec(script_str)
-    f = vars()
-
-    # this will return a callable function if sv_main is found, else None
-    return [f.get('sv_main', None), params]
+    finally:
+        '''
+        this will return a callable function if sv_main is found, else None
+        '''
+        if node_functor:
+            params = node_functor.__defaults__
+            return [node_functor, params]
 
 
 class SvDefaultScriptTemplate(bpy.types.Operator):
@@ -112,11 +92,10 @@ class SvDefaultScriptTemplate(bpy.types.Operator):
 
         new_template = bpy.data.texts.new(self.script_name)
 
-        # testing only.
         sv_path = os.path.dirname(os.path.realpath(__file__))
         script_dir = "node_script_templates"
         path_to_template = os.path.join(sv_path, script_dir, self.script_name)
-        print(path_to_template)
+
         with open(path_to_template) as f:
             template_str = f.read()
             bpy.data.texts[self.script_name].from_string(template_str)
@@ -140,6 +119,24 @@ class SvScriptOp(bpy.types.Operator):
         print('pressed load')
         node = bpy.data.node_groups[self.name_tree].nodes[self.name_obj]
         node.load()
+        return {'FINISHED'}
+
+
+class SvNodeSelfNuke(bpy.types.Operator):
+
+    bl_idname = "node.sverchok_scriptnode_nuke"
+    bl_label = "Sverchok scriptnode nuke"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    # from object in
+    name_obj = StringProperty(name='object name')
+    name_tree = StringProperty(name='tree name')
+
+    def execute(self, context):
+        print('pressed nuke, Boom')
+        node = bpy.data.node_groups[self.name_tree].nodes[self.name_obj]
+        node.nuke_me(context)
+        node.script_str = ""
         return {'FINISHED'}
 
 
@@ -184,7 +181,6 @@ class SvScriptNode(Node, SverchCustomTreeNode):
         update=updateNode)
 
     script_str = StringProperty(default="")
-    # script_ui_param_names = StringProperty(default="")
 
     node_function = None
     in_sockets = []
@@ -193,12 +189,19 @@ class SvScriptNode(Node, SverchCustomTreeNode):
     def init(self, context):
         pass
 
+    def nuke_me(self, context):
+        print(dir(self.inputs))
+        in_out = [self.inputs, self.outputs]
+        for socket_set in in_out:
+            socket_set.clear()
+        self.use_custom_color = False
+
     def draw_buttons(self, context, layout):
 
         col = layout.column(align=True)
         if not self.script_str:
             row = col.row(align=True)
-            row.label(text='DOWNLOAD PY:')
+            row.label(text='IMPORT PY:')
             row = col.row(align=True)
             row.prop(self, 'files_popup', '')
             tem = row.operator(
@@ -224,12 +227,13 @@ class SvScriptNode(Node, SverchCustomTreeNode):
             row.label(text=self.script)
             row = col.row()
             op = row.operator('node.sverchok_script_input', text='Reload')
+            op = row.operator('node.sverchok_scriptnode_nuke', text='Nuke')
             op.name_tree = self.id_data.name
             op.name_obj = self.name
 
     def create_or_update_sockets(self):
         '''
-        - desired features not flly implemente yet (only socket add so far)
+        - desired features not fully implemented yet (only socket add so far)
         - Load may be pressed to import an updated function
         - tries to preserve existing sockets or add new ones if needed
         '''
@@ -345,10 +349,12 @@ class SvScriptNode(Node, SverchCustomTreeNode):
 def register():
     bpy.utils.register_class(SvScriptOp)
     bpy.utils.register_class(SvScriptNode)
+    bpy.utils.register_class(SvNodeSelfNuke)
     bpy.utils.register_class(SvDefaultScriptTemplate)
 
 
 def unregister():
+    bpy.utils.unregister_class(SvNodeSelfNuke)
     bpy.utils.unregister_class(SvDefaultScriptTemplate)
     bpy.utils.unregister_class(SvScriptNode)
     bpy.utils.unregister_class(SvScriptOp)

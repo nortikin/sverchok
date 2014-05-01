@@ -9,8 +9,8 @@ class CircleNode(Node, SverchCustomTreeNode):
     bl_label = 'Circle'
     bl_icon = 'OUTLINER_OB_EMPTY'
     
-    rad_ = bpy.props.FloatProperty(name = 'rad_', description='Radius', default=2, options={'ANIMATABLE'}, update=updateNode)
-    vert_ = bpy.props.IntProperty(name = 'vert_', description='Vertices', default=32, min=3, options={'ANIMATABLE'}, update=updateNode)
+    rad_ = bpy.props.FloatProperty(name = 'rad_', description='Radius', default=1.0, options={'ANIMATABLE'}, update=updateNode)
+    vert_ = bpy.props.IntProperty(name = 'vert_', description='Vertices', default=24, min=3, options={'ANIMATABLE'}, update=updateNode)
     degr_ = bpy.props.FloatProperty(name = 'degr_', description='Degrees', default=360, min=0, max=360, options={'ANIMATABLE'}, update=updateNode)
     mode_ = bpy.props.BoolProperty(name = 'mode_', description='Mode', default=0, options={'ANIMATABLE'}, update=updateNode)
 
