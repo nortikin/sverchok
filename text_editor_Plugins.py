@@ -3,6 +3,24 @@ import os
 from bpy.props import EnumProperty, StringProperty
 import re
 
+sv_error_message = '''\
+______________Sverchok Script Generator Node rules_______________
+
+For this operation to work the current line must contain the text:
+:   'def sv_main(**variables**):'
+
+Where '**variables**' is something like:
+:   'verts=[], petal_size=2.3, num_petals=1'
+
+There are three types of input streams that this node can interpret:
+- 'v' (vertices, 3-tuple coordinates)
+- 's' (data: float, integer),
+- 'm' (matrices: nested lists 4*4)
+
+                For more information see the wiki
+                see also the bundled templates for clarification
+'''
+
 
 def has_selection(self, text):
     return not (text.select_end_line == text.current_line and
@@ -48,12 +66,7 @@ class SvVarnamesToSockets(bpy.types.Operator):
         copied_text = bpy.data.window_managers[0].clipboard
         if not "def sv_main(" in copied_text:
             self.report({'INFO'}, "ERROR - LOOK CONSOLE")
-            print('\n______________Sverchok Script Generator Node rules_______________\n')
-            print("Check text to contain 'def sv_main(**veriables**):'")
-            print("Where '**veriables**' is something like \n    'v=[]' for vertices list or s=1 for data")
-            print("There is three cases 'v' - vertices,'s'-data,'m'-matrices ")
-            print("And two for they data - '[]' for list and floats/inegers")
-            print("                          More information - look wiki")
+            print(sv_error_message)
             return {'CANCELLED'}
         answer = converted(copied_text)
 
