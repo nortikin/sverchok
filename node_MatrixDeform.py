@@ -69,7 +69,7 @@ class MatrixDeformNode(Node, SverchCustomTreeNode):
             print(loc)
             matrixes_ = matrixdef(orig, loc, scale, rot, angle, rotA)
             matrixes = Matrix_listing(matrixes_)
-            self.outputs['Matrix'].MatrixProperty = str(matrixes)
+            SvSetSocketAnyType(self, 'Matrix', matrixes)
             #print ('matrix_def', str(matrixes))
     
                 
