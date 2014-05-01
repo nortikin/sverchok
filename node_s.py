@@ -75,7 +75,6 @@ class StringsSocket(NodeSocket):
         '''String any type - one string'''
         bl_idname = "StringsSocket"
         bl_label = "Strings Socket"
-        prop_name = StringProperty(default='')
         
         def draw(self, context, layout, node, text):
             if self.is_linked and self.is_output:
@@ -83,10 +82,7 @@ class StringsSocket(NodeSocket):
             elif self.is_linked:
                 layout.label(text + '.')
             else:
-                if self.prop_name != '':
-                    layout.prop(self.node,self.prop_name)
-                else:
-                    layout.label(text)
+                layout.label(text)
                     
         def draw_color(self, context, node):
             return(0.6,1.0,0.6,1.0)
