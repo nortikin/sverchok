@@ -95,9 +95,12 @@ class BasicTextMenu(bpy.types.Menu):
 # appear if a selection is set.
 if True:
     wm = bpy.context.window_manager
-    km = wm.keyconfigs.default.keymaps['Text']
-    new_shortcut = km.keymap_items.new('wm.call_menu', 'I', 'PRESS', ctrl=True)
-    new_shortcut.properties.name = 'TEXT_MT_svplug_menu'
+    try:
+        km = wm.keyconfigs.default.keymaps['Text']
+        new_shortcut = km.keymap_items.new('wm.call_menu', 'I', 'PRESS', ctrl=True)
+        new_shortcut.properties.name = 'TEXT_MT_svplug_menu'
+    except KeyError:
+        print("Text key not found in keymap, that's ok")
 
 
 def register():
