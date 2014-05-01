@@ -10,8 +10,6 @@ def has_selection(self, text):
 
 
 def converted(test_str):
-    if not "def sv_main(" in test_str:
-        return
 
     r = re.compile('(?P<name>\w+)=(?P<defval>.*?|\[\])[,\)]')
     k = [m.groupdict() for m in r.finditer(test_str)]
@@ -48,6 +46,15 @@ class SvVarnamesToSockets(bpy.types.Operator):
         bpy.ops.text.select_line()
         bpy.ops.text.copy()
         copied_text = bpy.data.window_managers[0].clipboard
+        if not "def sv_main(" in copied_text:
+            self.report({'INFO'}, "ERROR - LOOK CONSOLE")
+            print('\n______________Sverchok Script Generator Node rules_______________\n')
+            print("Check text to contain 'def sv_main(**veriables**):'")
+            print("Where '**veriables**' is something like \n    'v=[]' for vertices list or s=1 for data")
+            print("There is three cases 'v' - vertices,'s'-data,'m'-matrices ")
+            print("And two for they data - '[]' for list and floats/inegers")
+            print("                          More information - look wiki")
+            return {'CANCELLED'}
         answer = converted(copied_text)
 
         if answer:

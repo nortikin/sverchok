@@ -34,7 +34,7 @@ class SvTextSubMenu(bpy.types.Menu):
     bl_idname = "TEXT_MT_templates_submenu"
     bl_label = "Sv NodeScripts"
     bl_options = {'REGISTER', 'UNDO'}
-
+    
     def draw(self, context):
         layout = self.layout
 
