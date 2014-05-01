@@ -83,7 +83,7 @@ class StringsSocket(NodeSocket):
                 layout.label(text + '.')
             else:
                 layout.label(text)
-                
+                    
         def draw_color(self, context, node):
             return(0.6,1.0,0.6,1.0)
         
@@ -176,6 +176,7 @@ def make_categories():
             NodeItem("RandomNode", label="Random"),
             NodeItem("FloatNode", label="Float"),
             NodeItem("IntegerNode", label="Int"),
+            NodeItem("SvListInputNode", label="List Input"),
             NodeItem("Float2IntNode", label="Float 2 Int"),
             NodeItem("FormulaNode", label="Formula"),
             NodeItem("Formula2Node", label="Formula2"),
