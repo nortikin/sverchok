@@ -5,7 +5,7 @@ from util import *
 class SvListInputNode(Node, SverchCustomTreeNode):
     ''' Creta a float or int List '''
     bl_idname = 'SvListInputNode'
-    bl_label = 'Matrix Input'
+    bl_label = 'List Input'
     bl_icon = 'OUTLINER_OB_EMPTY'
                 
     defaults = [0 for i in range(32)]
