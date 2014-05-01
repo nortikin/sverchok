@@ -10,9 +10,13 @@ def sv_main():
     in_sockets = [
     ]
 
-    # import libreryes - your defined
+    # import libraries here
+    #
 
-    # your's code here
+    # your code and definitions here
+    #
+    #
+    #
 
     # out boilerplate - set your own sockets packet
     # the same principle as in in_sockets
