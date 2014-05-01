@@ -75,6 +75,7 @@ class StringsSocket(NodeSocket):
         '''String any type - one string'''
         bl_idname = "StringsSocket"
         bl_label = "Strings Socket"
+        prop_name = StringProperty(default='')
         
         def draw(self, context, layout, node, text):
             if self.is_linked and self.is_output:
@@ -82,8 +83,11 @@ class StringsSocket(NodeSocket):
             elif self.is_linked:
                 layout.label(text + '.')
             else:
-                layout.label(text)
-                
+                if self.prop_name != '':
+                    layout.prop(self.node,self.prop_name)
+                else:
+                    layout.label(text)
+                    
         def draw_color(self, context, node):
             return(0.6,1.0,0.6,1.0)
         
@@ -176,6 +180,7 @@ def make_categories():
             NodeItem("RandomNode", label="Random"),
             NodeItem("FloatNode", label="Float"),
             NodeItem("IntegerNode", label="Int"),
+            NodeItem("SvListInputNode", label="List Input"),
             NodeItem("Float2IntNode", label="Float 2 Int"),
             NodeItem("FormulaNode", label="Formula"),
             NodeItem("Formula2Node", label="Formula2"),
