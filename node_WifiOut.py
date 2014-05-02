@@ -2,6 +2,8 @@ import bpy
 from node_s import *
 from util import *
 
+# Warning, changing this node without modifying the update system might break functionlaity
+# bl_idname and var_name is used by the update system
 
 class WifiOutNode(Node, SverchCustomTreeNode):
     ''' WifiOutNode '''
