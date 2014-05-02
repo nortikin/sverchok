@@ -39,7 +39,7 @@ def converted(test_str):
         # assume more will follow
     }
 
-    indent = "   "
+    indent = "    "
     socket_members = []
     for variable in k:
         stype = variable['defval']
