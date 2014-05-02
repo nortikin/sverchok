@@ -27,30 +27,8 @@ class CircleNode(Node, SverchCustomTreeNode):
         layout.prop(self, "vert_", text="Nº Vert")
         layout.prop(self, "degr_", text="Degrees")
         layout.prop(self, "mode_", text="Mode")
-
-    def update(self):
-        # inputs
-        if 'Radius' in self.inputs and self.inputs['Radius'].links:
-            Radius = float(SvGetSocketAnyType(self,self.inputs['Radius'])[0][0])
-        else:
-            Radius = self.rad_
-
-        if 'Nº Vertices' in self.inputs and self.inputs['Nº Vertices'].links:
-            Vertices = int(SvGetSocketAnyType(self,self.inputs['Nº Vertices'])[0][0])
-            if Vertices < 3:
-                Vertices = 3
-        else:
-            Vertices = self.vert_
-
-        if 'Degrees' in self.inputs and self.inputs['Degrees'].links:
-            Angle = float(SvGetSocketAnyType(self,self.inputs['Degrees'])[0][0])
-            if Angle < 0:
-                Angle = 0
-            elif Angle > 360:
-                Angle = 360
-        else:
-            Angle = self.degr_
-
+    
+    def make_verts(self,Angle,Vertices,Radius): 
         if Angle < 360:
             theta = Angle/(Vertices-1)
         else:
@@ -68,43 +46,69 @@ class CircleNode(Node, SverchCustomTreeNode):
         elif Angle < 360 and self.mode_ == 1:
             listVertX.append(0.0)
             listVertY.append(0.0)
-        # outputs
-        if 'Vertices' in self.outputs and self.outputs['Vertices'].links:
+        
+        X = listVertX
+        Y = listVertY
+        Z = [0.0]
 
-            X = listVertX
-            Y = listVertY
-            Z = [0.0]
+        max_num = max(len(X), len(Y), len(Z))
+        
+        fullList(X,max_num)
+        fullList(Y,max_num)
+        fullList(Z,max_num)
 
-            max_num = max(len(X), len(Y), len(Z))
+        points = list(zip(X,Y,Z))
+        return points
+        
+    def make_edges(self,Vertices,Angle):
+        listEdg = [(i, i+1) for i in range(Vertices-1)]
             
-            fullList(X,max_num)
-            fullList(Y,max_num)
-            fullList(Z,max_num)
+        if Angle < 360 and self.mode_ == 1:
+            listEdg.append((0, Vertices))
+            listEdg.append((Vertices-1, Vertices))
+        else:
+            listEdg.append((0, Vertices-1))
+        return listEdg
+    
+    def make_faces(self,Angle,Vertices):  
+        listPlg = list(range(Vertices))
 
-            points = list(zip(X,Y,Z))
-            SvSetSocketAnyType(self, 'Vertices',[points])
+        if Angle < 360 and self.mode_ == 1:
+            listPlg.insert(0, Vertices)
+        return [listPlg]
+        
+    def update(self):
+        # inputs
+        if 'Radius' in self.inputs and self.inputs['Radius'].links:
+            Radius = SvGetSocketAnyType(self,self.inputs['Radius'])[0]
+        else:
+            Radius = [self.rad_]
+
+        if 'Nº Vertices' in self.inputs and self.inputs['Nº Vertices'].links:
+            Vertices = SvGetSocketAnyType(self,self.inputs['Nº Vertices'])[0]
+            Vertices = list(map(lambda x:max(3,int(x)), Vertices))
+        else:
+            Vertices = [self.vert_]
+
+        if 'Degrees' in self.inputs and self.inputs['Degrees'].links:
+            Angle = SvGetSocketAnyType(self,self.inputs['Degrees'])[0]
+            Angle = list(map(lambda x:min(360,max(0,x)),Angle))
+        else:
+            Angle = [self.degr_]
+            
+        parameters = match_long_repeat([Angle,Vertices,Radius])
+
+        if 'Vertices' in self.outputs and self.outputs['Vertices'].links:
+            points = [self.make_verts(a,v,r) for a,v,r in zip(*parameters)]
+            SvSetSocketAnyType(self, 'Vertices',points)
 
         if 'Edges' in self.outputs and self.outputs['Edges'].links:
-
-            listEdg = [(i, i+1) for i in range(Vertices-1)]
-                
-            if Angle < 360 and self.mode_ == 1:
-                listEdg.append((0, Vertices))
-                listEdg.append((Vertices-1, Vertices))
-            else:
-                listEdg.append((0, Vertices-1))
-            edg = list(listEdg)
-            SvSetSocketAnyType(self, 'Edges',[edg])
+            edg = [self.make_edges(v,a) for a,v,r in zip(*parameters)]
+            SvSetSocketAnyType(self, 'Edges',edg)
 
         if 'Polygons' in self.outputs and self.outputs['Polygons'].links:
-
-            listPlg = list(range(Vertices))
-
-            if Angle < 360 and self.mode_ == 1:
-                listPlg.insert(0, Vertices)
-
-            plg = [listPlg]
-            SvSetSocketAnyType(self, 'Polygons',[plg])
+            plg = [self.make_faces(a,v) for a,v,r in zip(*parameters)]
+            SvSetSocketAnyType(self, 'Polygons',plg)
     
     def update_socket(self, context):
         self.update()
