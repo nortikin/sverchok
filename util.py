@@ -36,6 +36,7 @@ per_cache = {}
 #####################################################
 ################### update magic ####################
 #####################################################
+# is this used?
 
 # main update
 def read_cnodes(cnode):
@@ -389,14 +390,6 @@ def matrixdef(orig, loc, scale, rot, angle, vec_angle=[[]]):
             mat_tran = de.Translation(loc[0][k])
             ma *= mat_tran
 
-        if scale[0]:
-            k = min(len(scale[0])-1,i)
-            scale2=scale[0][k]
-            id_m = Matrix.Identity(4)
-            for j in range(3):
-                id_m[j][j] = scale2[j]
-            ma *= id_m
-
         if vec_angle[0] and rot[0]:
             k = min(len(rot[0])-1,i)
             a = min(len(vec_angle[0])-1,i)
@@ -412,6 +405,14 @@ def matrixdef(orig, loc, scale, rot, angle, vec_angle=[[]]):
             a = min(len(angle[0])-1,i)
             mat_rot = de.Rotation(radians(angle[0][a]), 4, rot[0][k].normalized())
             ma = ma * mat_rot
+
+        if scale[0]:
+            k = min(len(scale[0])-1,i)
+            scale2=scale[0][k]
+            id_m = Matrix.Identity(4)
+            for j in range(3):
+                id_m[j][j] = scale2[j]
+            ma *= id_m
 
         modif.append(ma)
     return modif
@@ -631,6 +632,7 @@ def wrapper_2(l_etalon, list_a, level):
 def sverchok_debug(mode):
     global DEBUG_MODE
     DEBUG_MODE=mode
+    return DEBUG_MODE
 
 #####################################################
 ############### update system magic! ################
