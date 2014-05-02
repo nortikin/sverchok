@@ -123,8 +123,7 @@ def callback_disable(node):
 
 def draw_callback_px(node, draw_verts, draw_edges, draw_faces, draw_matrix, draw_bg):
     context = bpy.context
-    data_vector = []
-    data_matrix = []
+    data_vector, data_matrix, data_edges, data_faces = [], [], [], []
 
     if draw_verts:
         data_vector = Vector_generate(draw_verts)
