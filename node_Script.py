@@ -63,7 +63,7 @@ def instrospect_py(node):
         exec(script_str)
         f = vars()
         node_functor = f.get('sv_main', None)
-    except:
+    except UnboundLocalError:
         print('see demo files for NodeScript')
         return
     finally:
@@ -72,7 +72,7 @@ def instrospect_py(node):
         '''
         if node_functor:
             params = node_functor.__defaults__
-            return [node_functor, params]
+            return [node_functor, params, f]
 
 
 class SvDefaultScriptTemplate(bpy.types.Operator):
@@ -270,7 +270,11 @@ class SvScriptNode(Node, SverchCustomTreeNode):
             if details[0] is None:
                 print('should never reach here')
                 pass
-            node_function, params = details
+            node_function, params, f = details
+            del f['sv_main']
+            del f['script_str']
+            globals().update(f)
+
             self.node_dict[hash(self)]['node_function'] = node_function
             self.in_sockets, self.out_sockets = node_function(*params)
 
