@@ -1,3 +1,6 @@
+# not finished yet
+# will create circles field in what circles will fill maximum space
+
 def sv_main(v=[],c=3):
 
     in_sockets = [

@@ -182,11 +182,12 @@ class SvScriptNode(Node, SverchCustomTreeNode):
 
     script_str = StringProperty(default="")
 
-    node_function = None
+    node_dict = {}
     in_sockets = []
     out_sockets = []
 
     def init(self, context):
+        self.node_dict[hash(self)] = {}
         pass
 
     def nuke_me(self, context):
@@ -195,6 +196,8 @@ class SvScriptNode(Node, SverchCustomTreeNode):
         for socket_set in in_out:
             socket_set.clear()
         self.use_custom_color = False
+        if 'node_function' in self.node_dict[hash(self)]:
+            del self.node_dict[hash(self)]['node_function']
 
     def draw_buttons(self, context, layout):
 
@@ -205,7 +208,7 @@ class SvScriptNode(Node, SverchCustomTreeNode):
             row = col.row(align=True)
             row.prop(self, 'files_popup', '')
             tem = row.operator(
-                'node.sverchok_script_template', text='Template')
+                'node.sverchok_script_template', text='Import Template')
             tem.script_name = self.files_popup
 
             #row = col.row(align=True)
@@ -227,7 +230,7 @@ class SvScriptNode(Node, SverchCustomTreeNode):
             row.label(text=self.script)
             row = col.row()
             op = row.operator('node.sverchok_script_input', text='Reload')
-            op = row.operator('node.sverchok_scriptnode_nuke', text='Nuke')
+            op = row.operator('node.sverchok_scriptnode_nuke', text='Clear')
             op.name_tree = self.id_data.name
             op.name_obj = self.name
 
@@ -258,6 +261,7 @@ class SvScriptNode(Node, SverchCustomTreeNode):
         # user picks script from dropdown.
         self.script_str = bpy.data.texts[self.script].as_string()
         if self.scriptmode == 'Py':
+            self.node_dict[hash(self)] = {}
             self.load_py()
 
     def load_py(self):
@@ -266,8 +270,9 @@ class SvScriptNode(Node, SverchCustomTreeNode):
             if details[0] is None:
                 print('should never reach here')
                 pass
-            self.node_function, params = details
-            self.in_sockets, self.out_sockets = self.node_function(*params)
+            node_function, params = details
+            self.node_dict[hash(self)]['node_function'] = node_function
+            self.in_sockets, self.out_sockets = node_function(*params)
 
             print('found {0} in sock requests'.format(len(self.in_sockets)))
             print('found {0} out sock requests'.format(len(self.out_sockets)))
@@ -304,14 +309,12 @@ class SvScriptNode(Node, SverchCustomTreeNode):
         if not self.inputs:
             return
 
-        def get_sv_main():
-            exec(self.script_str)
-            f = vars()
-            return f
+        # this line exists only to preserve backwards compatibility, version bump
+        # will drop this check.
+        if not hash(self) in self.node_dict:
+            self.load()
 
-        f = get_sv_main()
-        node_function = f.get('sv_main', None)
-
+        node_function = self.node_dict[hash(self)].get('node_function', None)
         if not node_function:
             return
 
