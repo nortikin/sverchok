@@ -266,9 +266,11 @@ def sv_update_handler(scene):
             
 @persistent
 def sv_clean(scene):
-    # callbacks for node_Viewer
+    # callbacks for view nodes
     import Viewer_draw
+    import Index_Viewer_draw
     Viewer_draw.callback_disable_all()
+    Index_Viewer_draw.callback_disable_all()
 
     
                         
