@@ -98,7 +98,7 @@ def tag_redraw_all_view3d():
 
 
 def callback_enable(node, draw_verts, draw_edges, draw_faces, draw_matrix, draw_bg):
-    handle = handle_read(node.name)
+    handle = handle_read(hash(node))
     if handle[0]:
         return
 
@@ -106,21 +106,26 @@ def callback_enable(node, draw_verts, draw_edges, draw_faces, draw_matrix, draw_
         draw_callback_px, (
             node, draw_verts, draw_edges, draw_faces, draw_matrix, draw_bg),
         'WINDOW', 'POST_PIXEL')
-    handle_write(node.name, handle_pixel)
+    handle_write(hash(node), handle_pixel)
     tag_redraw_all_view3d()
 
 
 def callback_disable(node):
-    handle = handle_read(node.name)
+    handle = handle_read(hash(node))
     if not handle[0]:
         return
 
     handle_pixel = handle[1]
     SpaceView3D.draw_handler_remove(handle_pixel, 'WINDOW')
-    handle_delete(node.name)
+    handle_delete(hash(node))
     tag_redraw_all_view3d()
 
-
+def callback_disable_all():
+    global temp_handle
+    temp_list = list(temp_handle.keys())
+    for name in temp_list:
+        callback_disable(name)
+    
 def draw_callback_px(node, draw_verts, draw_edges, draw_faces, draw_matrix, draw_bg):
     context = bpy.context
 

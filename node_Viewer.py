@@ -14,14 +14,16 @@ class SvObjBake(bpy.types.Operator):
     idname = bpy.props.StringProperty(name='idname', default='', description='name of parent node')
     idtree = bpy.props.StringProperty(name='idtree', default='', description='name of parent tree')
     
+    
     def execute(self, context):
         global cache_viewer_baker
-        if cache_viewer_baker[self.idname+self.idtree+'m'] and not cache_viewer_baker[self.idname+self.idtree+'v']:
+        nid = str(hash(bpy.data.node_groups[self.idtree].nodes[self.idname]))
+        if cache_viewer_baker[nid+'m'] and not cache_viewer_baker[nid+'v']:
             return {'CANCELLED'}
-        vers = dataCorrect(cache_viewer_baker[self.idname+self.idtree+'v'])
-        edg_pol = dataCorrect(cache_viewer_baker[self.idname+self.idtree+'ep'])
-        if cache_viewer_baker[self.idname+self.idtree+'m']:
-            matrixes = dataCorrect(cache_viewer_baker[self.idname+self.idtree+'m'])
+        vers = dataCorrect(cache_viewer_baker[nid+'v'])
+        edg_pol = dataCorrect(cache_viewer_baker[nid+'ep'])
+        if cache_viewer_baker[nid+'m']:
+            matrixes = dataCorrect(cache_viewer_baker[nid+'m'])
         else:
             matrixes = []
             for i in range((len(vers))):
@@ -113,7 +115,6 @@ class ViewerNode(Node, SverchCustomTreeNode):
     coloris = SvColors
     coloris.color[1]['default'] = (0.055,0.312,0.5)
     color_view = coloris.color
-    old_nid =  bpy.props.StringProperty(name='oldNID')
     col=(1,1,0)
         
     def init(self, context):
@@ -144,10 +145,7 @@ class ViewerNode(Node, SverchCustomTreeNode):
     def update(self):
         global cache_viewer_baker
         # node id, used as ref
-        n_id = self.name+self.id_data.name
-        if self.old_nid != n_id:
-            callback_disable(self.old_nid)
-            self.old_nid = n_id
+        n_id = str(hash(self))
             
         cache_viewer_baker[n_id+'v'] = []
         cache_viewer_baker[n_id+'ep'] = []
@@ -204,7 +202,7 @@ class ViewerNode(Node, SverchCustomTreeNode):
     
     def free(self):
         global cache_viewer_baker
-        callback_disable(self.name+self.id_data.name)
+        callback_disable(str(hash(self)))
         #cache_viewer_baker[self.name+self.id_data.name+'v'] = []
         #cache_viewer_baker[self.name+self.id_data.name+'ep'] = []
         #cache_viewer_baker[self.name+self.id_data.name+'m'] = []            
