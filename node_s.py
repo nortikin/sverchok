@@ -173,10 +173,10 @@ def make_categories():
             # numbers, formula nodes
             NodeItem("GenSeriesNode", label="Series"),
             NodeItem("GenRangeNode", label="Range"),
+            NodeItem("SvListInputNode", label="List Input"),
             NodeItem("RandomNode", label="Random"),
             NodeItem("FloatNode", label="Float"),
             NodeItem("IntegerNode", label="Int"),
-            NodeItem("SvListInputNode", label="List Input"),
             NodeItem("Float2IntNode", label="Float 2 Int"),
             NodeItem("FormulaNode", label="Formula"),
             NodeItem("Formula2Node", label="Formula2"),
@@ -206,6 +206,7 @@ def make_categories():
             NodeItem("VectorDropNode", label="Vector Drop"),
             NodeItem("VertsDelDoublesNode", label="Vector X Doubles"),
             NodeItem("EvaluateLineNode", label="Vectors Evaluate"),
+            NodeItem("SvVertSortNode", label="Vertices Sort"),
             NodeItem("MatrixApplyNode", label="Matrix Apply"),
             NodeItem("MatrixGenNode", label="Matrix in"),
             NodeItem("MatrixOutNode", label="Matrix out"),
@@ -214,10 +215,8 @@ def make_categories():
             NodeItem("MatrixInterpolationNode", label="Matrix Interpolation"),
             ]),
         SverchNodeCategory("SVERCHOK_M", "SVERCHOK modifier", items=[
-            # modifiers that find data from another data
+            # modifiers deforms and reorganize and reconstruct data
             NodeItem("CentersPolsNode", label="Centers Polygons"),
-            NodeItem("DistancePPNode", label="Distances"),
-            NodeItem("AreaNode", label="Area"),
             NodeItem("AdaptivePolsNode", label="Adaptive Polygons"),
             NodeItem("SvAdaptiveEdgeNode", label="Adaptive Edges"),
             NodeItem("CrossSectionNode", label="Cross Section.old"),
@@ -232,10 +231,14 @@ def make_categories():
             NodeItem("SvMeshJoinNode", label="Mesh Join"),
             NodeItem("SvRemoveDoublesNode", label="Mesh Remove Doubles"),
             NodeItem("SvDeleteLooseNode", label="Delete Loose"),
-            NodeItem("SvVertSortNode", label="Vertices Sort"),
             NodeItem("SvConvexHullNode", label="Convex Hull"),
-            NodeItem("SvKDTreeNode", label="KDTree find"),
             NodeItem("SvIntersectEdgesNode", label="Intersect Edges"),
+            ]),
+        SverchNodeCategory("SVERCHOK_A", "SVERCHOK analisators", items=[
+            # investigate data
+            NodeItem("DistancePPNode", label="Distances"),
+            NodeItem("AreaNode", label="Area"),
+            NodeItem("SvKDTreeNode", label="KDTree Verts"),
             NodeItem("SvKDTreeEdgesNode", label="KDTree Edges"),
             ]),
         ]
