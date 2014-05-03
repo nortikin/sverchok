@@ -652,7 +652,6 @@ def make_update_list(node_tree,node_set = None):
     if a node set is passed only the subtree defined by the node set is used. Otherwise
     the complete node tree is used.
     """
-
     deps = {}
     # get nodes, select root nodes, wifi nodes and create dependencies for each node
     # 70-80% of the time is in the first loop
@@ -660,9 +659,17 @@ def make_update_list(node_tree,node_set = None):
     tree_stack = collections.deque()
     wifi_out = []
     wifi_in = []
+    # the following is witch craft and should be removed.
     if not node_tree in bpy.data.node_groups:
-        return []
-    ng = bpy.data.node_groups[node_tree]
+        try:
+            dummy=bpy.data.node_groups[node_tree]
+        except KeyError:
+            print("Node group init failure",node_tree)
+        if not bpy.data.node_groups.get(node_tree,False):
+            print("Following error caused on purpose to init, don't know why but it works...")
+            dummy=bpy.data.node_groups[node_tree]
+            return []
+    ng = bpy.data.node_groups.get(node_tree)
     node_list = []
     if not node_set: # if no node_set, take all
         node_set = set(ng.nodes.keys())
@@ -809,8 +816,8 @@ def makeTreeUpdate2(tree_name=None):
         for name,ng in bpy.data.node_groups.items():
             if ng.bl_idname == 'SverchCustomTreeType':
                 list_nodes4update[name]=make_update_list(name)
-                partial_update_cache[tree_name] = {}
-                socket_data_cache[tree_name] = {}    
+                partial_update_cache[name] = {}
+                socket_data_cache[name] = {}    
 
 
 # master update function, has several different modes
@@ -853,7 +860,8 @@ def speedUpdate(start_node = None, tree_name = None, animation_mode = False):
     # draw the complete named tree, called from SverchokCustomTreeNode
     if tree_name != None:
         if not tree_name in list_nodes4update:
-            mmakeTreeUpdate2(tree_name = tree_name)
+            ng = tree_name
+            makeTreeUpdate2(tree_name = ng)
         if not tree_name in bpy.data.node_groups:
             return #start up is not complete
         nods = bpy.data.node_groups[tree_name].nodes 
