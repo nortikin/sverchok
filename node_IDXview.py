@@ -60,20 +60,17 @@ class IndexViewerNode(Node, SverchCustomTreeNode):
         if not ('vertices' in inputs) and not ('matrix' in inputs):
             IV.callback_disable(self)
             return
-        # the node tree shouldn't be drawn            
+        # end if tree status is set to not show
         if not self.id_data.sv_show:
             IV.callback_disable(self)
             return
-            
+        
         # alias in case it is present
         iv_links = inputs['vertices'].links
 
-
-            
         if self.activate and iv_links:
             IV.callback_disable(self)
             draw_verts, draw_matrix = [], []
-        
 
             # gather vertices from input
             if isinstance(iv_links[0].from_socket, VerticesSocket):
@@ -91,12 +88,13 @@ class IndexViewerNode(Node, SverchCustomTreeNode):
 
             data_feind = []
             for socket in ['edges', 'faces']:
-                if inputs[socket].links:
+                try:
                     propm = SvGetSocketAnyType(self, inputs[socket])
                     input_stream = dataCorrect(propm)
-                else:
+                except:
                     input_stream = []
-                data_feind.append(input_stream)
+                finally:
+                    data_feind.append(input_stream)
 
             draw_edges, draw_faces = data_feind
 
