@@ -94,7 +94,7 @@ class SverchCustomTree(NodeTree):
     bl_icon = 'RNA'
     
     def updateTree(self,context):
-        speedUpdate(tree_name = self.name)
+        speedUpdate(tree = self)
         #should turn off tree. for now it does by updating it
         
     sv_animate = BoolProperty(name="Animate", default=True)
@@ -106,15 +106,15 @@ class SverchCustomTree(NodeTree):
         '''
         Rebuild and update the Sverchok node tree, used at editor changes
         '''
-        makeTreeUpdate2(tree_name = self.name)
-        speedUpdate(tree_name = self.name)
+        makeTreeUpdate2(tree = self)
+        speedUpdate(tree = self)
     
     def update_ani(self):
         '''
         Updates the Sverchok node tree if animation layers show true. For animation callback
         '''
         if self.sv_animate:
-            speedUpdate(tree_name = self.name)
+            speedUpdate(tree=self)
         
 
 
@@ -257,10 +257,10 @@ def sv_update_handler(scene):
     '''Sverchok update handler'''
     for name,tree in bpy.data.node_groups.items():
         if tree.bl_idname =='SverchCustomTreeType' and tree.nodes:
-            try:
-                tree.update_ani()                
-            except Exception as e:
-                print('Failed to update:',name,str(e))
+            #try:
+            tree.update_ani()                
+            #except Exception as e:
+            #    print('Failed to update:',name,str(e))
                     
 # clean up handler
             
