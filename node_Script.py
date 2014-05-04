@@ -111,14 +111,9 @@ class SvScriptOp(bpy.types.Operator):
     bl_label = "Sverchok script input"
     bl_options = {'REGISTER', 'UNDO'}
 
-    # from object in
-    name_obj = StringProperty(name='object name')
-    name_tree = StringProperty(name='tree name')
-
     def execute(self, context):
         print('pressed load')
-        node = bpy.data.node_groups[self.name_tree].nodes[self.name_obj]
-        node.load()
+        context.node.load()
         return {'FINISHED'}
 
 
@@ -128,15 +123,10 @@ class SvNodeSelfNuke(bpy.types.Operator):
     bl_label = "Sverchok scriptnode nuke"
     bl_options = {'REGISTER', 'UNDO'}
 
-    # from object in
-    name_obj = StringProperty(name='object name')
-    name_tree = StringProperty(name='tree name')
-
     def execute(self, context):
         print('pressed nuke, Boom')
-        node = bpy.data.node_groups[self.name_tree].nodes[self.name_obj]
-        node.nuke_me(context)
-        node.script_str = ""
+        context.node.nuke_me(context)
+        context.node.script_str = ""
         return {'FINISHED'}
 
 
@@ -218,8 +208,6 @@ class SvScriptNode(Node, SverchCustomTreeNode):
             row = col.row(align=True)
             row.prop(self, "script", "")
             op = row.operator('node.sverchok_script_input', text='Load')
-            op.name_tree = self.id_data.name
-            op.name_obj = self.name
         else:
             row = col.row()
             col2 = row.column()
@@ -231,8 +219,6 @@ class SvScriptNode(Node, SverchCustomTreeNode):
             row = col.row()
             op = row.operator('node.sverchok_script_input', text='Reload')
             op = row.operator('node.sverchok_scriptnode_nuke', text='Clear')
-            op.name_tree = self.id_data.name
-            op.name_obj = self.name
 
     def create_or_update_sockets(self):
         '''
@@ -270,7 +256,7 @@ class SvScriptNode(Node, SverchCustomTreeNode):
         if self.scriptmode == 'Py':
             self.node_dict[hash(self)] = {}
             self.load_py()
-    
+
     def load_py(self):
         details = instrospect_py(self)
         if details:
