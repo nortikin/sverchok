@@ -152,6 +152,7 @@ def make_categories():
             # lists nodes
             NodeItem("ListLevelsNode", label="List Levels"),
             NodeItem("ListJoinNode", label="List Join"),
+            NodeItem("ListDecomposeNode", label="List Decompose"),
             NodeItem("ZipNode", label="List Zip"),
             NodeItem("ShiftNode", label="List Shift"),
             NodeItem("ListSliceNode", label="List Slice"),
