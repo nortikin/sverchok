@@ -62,7 +62,7 @@ class VerticesSocket(NodeSocket):
         
         def draw(self, context, layout, node, text):
             if self.is_linked and self.is_output:
-                layout.label(text + '.' + SvGetSocketInfo(self))
+                layout.label(text + '.'+ SvGetSocketInfo(self))
             elif self.is_linked:
                 layout.label(text + '.')
             else:
@@ -281,7 +281,7 @@ def register():
     #bpy.utils.register_class(ObjectSocket)
     bpy.utils.register_class(StringsSocket)
     bpy.utils.register_class(VerticesSocket)
-    bpy.app.handlers.frame_change_pre.append(sv_update_handler) 
+    bpy.app.handlers.frame_change_post.append(sv_update_handler) 
     bpy.app.handlers.load_pre.append(sv_clean) 
 
        
@@ -292,7 +292,7 @@ def unregister():
     bpy.utils.unregister_class(MatrixSocket)
     bpy.utils.unregister_class(SverchCustomTree)
     bpy.utils.unregister_class(SvColors)
-    bpy.app.handlers.frame_change_pre.remove(sv_update_handler)
+    bpy.app.handlers.frame_change_post.remove(sv_update_handler)
     bpy.app.handlers.load_pre.remove(sv_clean) 
 
 

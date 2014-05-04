@@ -751,6 +751,7 @@ def make_tree_from_nodes(node_names,tree_name):
     Only nodes downtree from node_name are updated
     """
     ng = bpy.data.node_groups[tree_name]
+    nodes = ng.nodes
     if not node_names:
         print("No nodes!")
         return make_update_list(ng)
@@ -761,15 +762,16 @@ def make_tree_from_nodes(node_names,tree_name):
     wifi_out = []
     # build the set of nodes that needs to be updated
     while current_node:
-        if ng.nodes[current_node].bl_idname == 'WifiInNode':
+        if nodes[current_node].bl_idname == 'WifiInNode':
             if not wifi_out:  # build only if needed
-                wifi_out = [name for name in ng.nodes.keys() if ng.nodes[name].bl_idname == 'WifiOutNode']
+                wifi_out = [name for name,node in nodes.items() if node.bl_idname == 'WifiOutNode']
+            var_name = nodes[current_node].var_name
             for wifi_out_node in wifi_out:
-                if ng.nodes[wifi_out_node].var_name == ng.nodes[current_node].var_name:
+                if nodes[wifi_out_node].var_name == var_name:
                     if not wifi_out_node in out_set:
                         out_stack.append(wifi_out_node)
                         out_set.add(wifi_out_node)
-        for socket in ng.nodes[current_node].outputs:
+        for socket in nodes[current_node].outputs:
             if socket.links:
                 for link in socket.links:
                     if not link.to_node.name in out_set:
