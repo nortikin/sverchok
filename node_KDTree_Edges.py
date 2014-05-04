@@ -55,15 +55,15 @@ class SvKDTreeEdgesNode(Node, SverchCustomTreeNode):
             return
 
         optional_sockets = [
-            ['mindist', self.mindist],
-            ['maxdist', self.maxdist],
-            ['maxNum', self.maxNum],
-            ['skip', self.skip]]
+            ['mindist', self.mindist, float],
+            ['maxdist', self.maxdist, float],
+            ['maxNum', self.maxNum, int],
+            ['skip', self.skip, int]]
 
         socket_inputs = []
-        for s, s_default_value in optional_sockets:
+        for s, s_default_value, dtype in optional_sockets:
             if s in inputs and inputs[s].links:
-                sock_input = int(SvGetSocketAnyType(self, inputs[s])[0][0])
+                k = dtype(SvGetSocketAnyType(self, inputs[s])[0][0])
             else:
                 sock_input = s_default_value
             socket_inputs.append(sock_input)
