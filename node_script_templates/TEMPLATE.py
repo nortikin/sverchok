@@ -1,3 +1,7 @@
+# import libraries here
+#
+
+
 def sv_main():
 
     # in boilerplate - make your own sockets
@@ -9,9 +13,6 @@ def sv_main():
 
     in_sockets = [
     ]
-
-    # import libraries here
-    #
 
     # your code and definitions here
     #
