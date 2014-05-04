@@ -22,10 +22,8 @@ class MatrixSocket(NodeSocket):
     bl_label = "Matrix Socket"
     
     def draw(self, context, layout, node, text):
-        if self.is_linked and self.is_output:
+        if self.is_linked:
             layout.label(text + '.' + SvGetSocketInfo(self))
-        elif self.is_linked:
-            layout.label(text + '.')
         else:
             layout.label(text)
 
@@ -61,10 +59,8 @@ class VerticesSocket(NodeSocket):
         bl_label = "Vertices Socket"
         
         def draw(self, context, layout, node, text):
-            if self.is_linked and self.is_output:
+            if self.is_linked:
                 layout.label(text + '.'+ SvGetSocketInfo(self))
-            elif self.is_linked:
-                layout.label(text + '.')
             else:
                 layout.label(text)
                 
@@ -77,10 +73,8 @@ class StringsSocket(NodeSocket):
         bl_label = "Strings Socket"
         
         def draw(self, context, layout, node, text):
-            if self.is_linked and self.is_output:
+            if self.is_linked:
                 layout.label(text + '.' + SvGetSocketInfo(self))
-            elif self.is_linked:
-                layout.label(text + '.')
             else:
                 layout.label(text)
                     
