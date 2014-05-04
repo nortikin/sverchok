@@ -146,6 +146,8 @@ class ViewerNode(Node, SverchCustomTreeNode):
         global cache_viewer_baker
         # node id, used as ref
         n_id = str(hash(self))
+        if not 'matrix' in self.inputs:
+            return
             
         cache_viewer_baker[n_id+'v'] = []
         cache_viewer_baker[n_id+'ep'] = []
