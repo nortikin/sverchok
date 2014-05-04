@@ -64,6 +64,9 @@ class SvKDTreeEdgesNode(Node, SverchCustomTreeNode):
             finally:
                 socket_inputs.append(socket_input)
 
+        self.run_kdtree(socket_inputs, verts)
+
+    def run_kdtree(self, socket_inputs, verts):
         mindist, maxdist, maxNum, skip = socket_inputs
 
         # make kdtree
