@@ -263,7 +263,14 @@ class SvScriptNode(Node, SverchCustomTreeNode):
         if self.scriptmode == 'Py':
             self.node_dict[hash(self)] = {}
             self.load_py()
-
+    '''
+    reload when we have script_str but not node_dict, on file open.
+    '''
+    def reload(self):
+        if self.scriptmode == 'Py':
+            self.node_dict[hash(self)] = {}
+            self.load_py()
+    
     def load_py(self):
         details = instrospect_py(self)
         if details:
@@ -312,7 +319,11 @@ class SvScriptNode(Node, SverchCustomTreeNode):
         '''
         if not self.inputs:
             return
-
+        
+        # we have script but no node_dict, lets try to reload    
+        if self.script_str and not hash(self) in self.node_dict:
+            self.reload()
+            
         # this line exists only to preserve backwards compatibility, version bump
         # will drop this check.
         if not hash(self) in self.node_dict:
