@@ -642,7 +642,7 @@ def sverchok_debug(mode):
 def updateNode(self, context):
     global DEBUG_MODE
     a=time.time()
-    speedUpdate(start_node = self.name,tree_name =self.id_data.name)
+    speedUpdate(start_node = self)
     b=time.time()
     if DEBUG_MODE:
         print("Partial update from node",self.name,"in",round(b-a,4))
@@ -659,17 +659,9 @@ def make_update_list(node_tree,node_set = None):
     tree_stack = collections.deque()
     wifi_out = []
     wifi_in = []
-    # the following is witch craft and should be removed.
-    if not node_tree in bpy.data.node_groups:
-        try:
-            dummy=bpy.data.node_groups[node_tree]
-        except KeyError:
-            print("Node group init failure",node_tree)
-        if not bpy.data.node_groups.get(node_tree,False):
-            print("Following error caused on purpose to init, don't know why but it works...")
-            dummy=bpy.data.node_groups[node_tree]
-            return []
-    ng = bpy.data.node_groups.get(node_tree)
+        
+          
+    ng = node_tree
     node_list = []
     if not node_set: # if no node_set, take all
         node_set = set(ng.nodes.keys())
@@ -758,10 +750,11 @@ def make_tree_from_nodes(node_names,tree_name):
     drives change for the tree
     Only nodes downtree from node_name are updated
     """
+    ng = bpy.data.node_groups[tree_name]
     if not node_names:
         print("No nodes!")
-        return make_update_list(tree_name)
-    ng = bpy.data.node_groups[tree_name]
+        return make_update_list(ng)
+    
     out_set = set(node_names)
     current_node = node_names.pop()
     out_stack = node_names[:]
@@ -772,7 +765,7 @@ def make_tree_from_nodes(node_names,tree_name):
             if not wifi_out:  # build only if needed
                 wifi_out = [name for name in ng.nodes.keys() if ng.nodes[name].bl_idname == 'WifiOutNode']
             for wifi_out_node in wifi_out:
-                if ng.nodes[current_node].var_name == ng.nodes[current_node].var_name:
+                if ng.nodes[wifi_out_node].var_name == ng.nodes[current_node].var_name:
                     if not wifi_out_node in out_set:
                         out_stack.append(wifi_out_node)
                         out_set.add(wifi_out_node)
@@ -786,7 +779,7 @@ def make_tree_from_nodes(node_names,tree_name):
             current_node = out_stack.pop()
         else:
             current_node = ''
-    return make_update_list(tree_name,out_set)
+    return make_update_list(ng,out_set)
 
 # to make update tree based on node types and node names bases
 # no used yet
@@ -801,28 +794,28 @@ def make_animation_tree(node_types,node_list,tree_name):
     a_tree = make_tree_from_nodes(list(node_set),tree_name)
     return a_tree
 
-def makeTreeUpdate2(tree_name=None):
+def makeTreeUpdate2(tree=None):
     """ makes a complete update list for the tree_name, or all node trees"""
     global list_nodes4update
     global partial_update_cache
     global socket_data_cache
     # clear cache on every full update
     
-    if tree_name != None:
-        list_nodes4update[tree_name] = make_update_list(tree_name)
-        partial_update_cache[tree_name] = {}
-        socket_data_cache[tree_name] = {}
+    if tree != None:
+        list_nodes4update[tree.name] = make_update_list(tree)
+        partial_update_cache[tree.name] = {}
+        socket_data_cache[tree.name] = {}
     else:
         for name,ng in bpy.data.node_groups.items():
             if ng.bl_idname == 'SverchCustomTreeType':
-                list_nodes4update[name]=make_update_list(name)
+                list_nodes4update[name]=make_update_list(ng)
                 partial_update_cache[name] = {}
                 socket_data_cache[name] = {}    
 
 
 # master update function, has several different modes
 
-def speedUpdate(start_node = None, tree_name = None, animation_mode = False):
+def speedUpdate(start_node = None, tree = None, animation_mode = False):
     global list_nodes4update
     global socket_data_cache
     global DEBUG_MODE
@@ -842,30 +835,27 @@ def speedUpdate(start_node = None, tree_name = None, animation_mode = False):
         pass
     # start from the mentioned node the, called from updateNode
     if start_node != None:
-        if tree_name in list_nodes4update and list_nodes4update[tree_name]:
+        tree = start_node.id_data
+        if tree.name in list_nodes4update and list_nodes4update[tree.name]:
             update_list = None
-            if tree_name in partial_update_cache:
-                if start_node in partial_update_cache[tree_name]:
-                    update_list= partial_update_cache[tree_name][start_node]
+            if tree.name in partial_update_cache:
+                if start_node in partial_update_cache[tree.name]:
+                    update_list= partial_update_cache[tree.name][start_node.name]
             if not update_list:
-                update_list = make_tree_from_nodes([start_node],tree_name)
-                partial_update_cache[tree_name][start_node]=update_list
-            nods = bpy.data.node_groups[tree_name].nodes
+                update_list = make_tree_from_nodes([start_node.name],tree.name)
+                partial_update_cache[tree.name][start_node.name]=update_list
+            nods = tree.nodes
             do_update(update_list,nods)
             return
         else:
-            makeTreeUpdate2(tree_name = tree_name)
-            do_update(list_nodes4update[tree_name],bpy.data.node_groups[tree_name].nodes)
+            makeTreeUpdate2(tree)
+            do_update(list_nodes4update[tree.name],tree.nodes)
             return
     # draw the complete named tree, called from SverchokCustomTreeNode
-    if tree_name != None:
-        if not tree_name in list_nodes4update:
-            ng = tree_name
-            makeTreeUpdate2(tree_name = ng)
-        if not tree_name in bpy.data.node_groups:
-            return #start up is not complete
-        nods = bpy.data.node_groups[tree_name].nodes 
-        do_update(list_nodes4update[tree_name],bpy.data.node_groups[tree_name].nodes)
+    if tree != None:
+        if not tree.name in list_nodes4update:
+            makeTreeUpdate2(tree)
+        do_update(list_nodes4update[tree.name],tree.nodes)
         return
 
     # update all node trees
