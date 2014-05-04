@@ -938,11 +938,21 @@ def get_socket_type(node, inputsocketname):
         return 's'
     if type(node.inputs[inputsocketname].links[0].from_socket) == bpy.types.MatrixSocket:
         return 'm'
+    
+def get_socket_type_full(node, inputsocketname):
+    # it is real solution, universal
+    if type(node.inputs[inputsocketname].links[0].from_socket) == bpy.types.VerticesSocket:
+        return 'VerticesSocket'
+    if type(node.inputs[inputsocketname].links[0].from_socket) == bpy.types.StringsSocket:
+        return 'StringsSocket'
+    if type(node.inputs[inputsocketname].links[0].from_socket) == bpy.types.MatrixSocket:
+        return 'MatrixSocket'
+
 
        
-#####################################
-# Multysocket / множественный сокет #
-#####################################
+###########################################
+# Multysocket magic / множественный сокет #
+###########################################
 
 #     utility function for handling n-inputs, for usage see Test1.py
 #     for examples see ListJoin2, LineConnect, ListZip
@@ -953,23 +963,45 @@ def get_socket_type(node, inputsocketname):
 #     base_name = 'Data '
 #     multi_socket_type = 'StringsSocket'
 
-def multi_socket(node , min=1, start=0, breck=False):
+def multi_socket(node , min=1, start=0, breck=False, output=False):
     # probably incorrect state due or init or change of inputs
     # do nothing
+    # min - integer, minimal number of sockets, at list 1 needed
+    # start - integer, starting socket.
+    # breck - boolean, adding brecket to nmae of socket x[0] x[1] x[2] etc
+    # output - integer, deal with output, if>0 counts number of outputs multy sockets
+    # base name added in separated node in self.base_name = 'some_name', i.e. 'x', 'data'
+    # node.multi_socket_type - type of socket, added in self.multi_socket_type 
+    # as one of three sverchok types 'StringsProperty', 'MatricesProperty', 'VerticesProperty'
     if not len(node.inputs):
         return
     if min < 1:
         min = 1
-    if node.inputs[-1].links:
-        length = start + len(node.inputs)
-        if breck:
-            name = node.base_name + '[' + str(length) + ']'
+    if not output:
+        if node.inputs[-1].links:
+            length = start + len(node.inputs)
+            if breck:
+                name = node.base_name + '[' + str(length) + ']'
+            else:
+                name = node.base_name + str(length)
+            node.inputs.new(node.multi_socket_type, name, name)
         else:
-            name = node.base_name + str(length)
-        node.inputs.new(node.multi_socket_type, name, name)
+            while len(node.inputs)>min and not node.inputs[-2].links:
+                node.inputs.remove(node.inputs[-1])
     else:
-        while len(node.inputs)>min and not node.inputs[-2].links:
-            node.inputs.remove(node.inputs[-1])
+        lenod=len(node.outputs)
+        if lenod<output:
+            length = output-lenod
+            for n in range(length):
+                if breck:
+                    name = node.base_name + '[' + str(n+lenod-1) + ']'
+                else:
+                    name = node.base_name + str(n+lenod-1)
+                node.outputs.new(node.multi_socket_type, name, name)
+        else:
+            while len(node.outputs)>output:
+                node.outputs.remove(node.outputs[-1])
+        
 
 #####################################
 # node and socket id functions      #

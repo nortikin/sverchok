@@ -10,7 +10,7 @@ def sv_main(l=10,s=0,c=3):
        ['s', 'Seed', s],
        ['s', 'Count', c],
     ]
-    # always set seed when using with random
+    # always set seed when with rand
     random.seed(s)
     items=random.sample(range(l), c)
 
