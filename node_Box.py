@@ -2,19 +2,23 @@ import bpy
 from node_s import *
 from util import *
 
+import bmesh
+import mathutils
+from mathutils import Vector
+
 class SvBoxNode(Node, SverchCustomTreeNode):
     ''' Box '''
     bl_idname = 'SvBoxNode'
     bl_label = 'Box'
     bl_icon = 'OUTLINER_OB_EMPTY'
     
-    Divx = bpy.props.IntProperty(name = 'Divx', description='divisions x', \
+    Divx = bpy.props.IntProperty(name = 'Divx', description='divisions x',
             default=2, min=1, options={'ANIMATABLE'}, update=updateNode)
-    Divy = bpy.props.IntProperty(name = 'Divy', description='divisions y', \
+    Divy = bpy.props.IntProperty(name = 'Divy', description='divisions y',
             default=2, min=1, options={'ANIMATABLE'}, update=updateNode)
-    Divz = bpy.props.IntProperty(name = 'Divz', description='divisions z', \
+    Divz = bpy.props.IntProperty(name = 'Divz', description='divisions z',
             default=2, min=1, options={'ANIMATABLE'}, update=updateNode)
-    Size = bpy.props.FloatProperty(name = 'Size', description='Size', \
+    Size = bpy.props.FloatProperty(name = 'Size', description='Size',
             default=1.0, options={'ANIMATABLE'}, update=updateNode)
     
     def init(self, context):
@@ -32,7 +36,7 @@ class SvBoxNode(Node, SverchCustomTreeNode):
         layout.prop(self, "Divy", text="Divy")
         layout.prop(self, "Divz", text="Divz")
 
-    def makecube(self, size,divx,divy,divz):
+    def makecube(self, size, divx, divy, divz):
         if 0 in (divx, divy, divz):
             return [], []
 
@@ -50,11 +54,6 @@ class SvBoxNode(Node, SverchCustomTreeNode):
 
         if (divx, divy, divz) == (1, 1, 1):
             return verts, faces
-
-        # ok, looks like we have some work to do!
-        import bmesh
-        import mathutils
-        from mathutils import Vector
 
         bm = bmesh.new()
         [bm.verts.new(co) for co in verts]
@@ -88,16 +87,16 @@ class SvBoxNode(Node, SverchCustomTreeNode):
                     use_snap_center=False,
                     clear_outer=False, clear_inner=False)
 
-        indices = lambda face: [v.index for v in face.verts]
+        indices = lambda i: [j.index for j in i.verts]
+        
         verts = [v.co.to_tuple() for v in bm.verts]
         faces = [indices(face) for face in bm.faces]
-        edg = []
-        return [verts], edg, [faces]
-        
+        edges = [indices(edge) for edge in bm.edges]
+        return [verts], edges, [faces]
 
 
     def update(self):
-        # inputs
+
         if 'Size' in self.inputs and self.inputs['Size'].links:
             size = int(SvGetSocketAnyType(self,self.inputs['Size'])[0][0])
         else:
@@ -114,7 +113,7 @@ class SvBoxNode(Node, SverchCustomTreeNode):
             divz = int(SvGetSocketAnyType(self,self.inputs['Divz'])[0][0])
         else:
             divz = self.Divz
-
+            
         out = self.makecube(size,divx,divy,divz)
         
         # outputs
