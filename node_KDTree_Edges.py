@@ -54,19 +54,23 @@ class SvKDTreeEdgesNode(Node, SverchCustomTreeNode):
         except (IndexError, KeyError) as e:
             return
 
-        optional_sockets = ['mindist', 'maxdist', 'maxNum', 'skip']
+        optional_sockets = [
+            ['mindist', self.mindist],
+            ['maxdist', self.maxdist],
+            ['maxNum', self.maxNum],
+            ['skip', self.skip]]
+
         socket_inputs = []
-        for socket in optional_sockets:
-            try:
-                socket_input = SvGetSocketAnyType(self, inputs[socket])[0][0]
-            except:
-                socket_input = self[socket]
-            finally:
-                socket_inputs.append(socket_input)
+        for s, s_default_value in optional_sockets:
+            if s in inputs and inputs[s].links:
+                sock_input = int(SvGetSocketAnyType(self, inputs[s])[0][0])
+            else:
+                sock_input = s_default_value
+            socket_inputs.append(sock_input)
 
-        self.run_kdtree(socket_inputs, verts)
+        self.run_kdtree(verts, socket_inputs)
 
-    def run_kdtree(self, socket_inputs, verts):
+    def run_kdtree(self, verts, socket_inputs):
         mindist, maxdist, maxNum, skip = socket_inputs
 
         # make kdtree
