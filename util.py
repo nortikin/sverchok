@@ -1050,10 +1050,10 @@ def SvGetSocketInfo(socket):
     def build_info(data):
         if not data:
             return str(data)
-        if isinstance(data,list):
-            return '['+build_info(data[0])
-        elif isinstance(data,tuple):
-            return '('+build_info(data[0])
+        #if isinstance(data,list):
+            #return '['+build_info(data[0])
+        #elif isinstance(data,tuple):
+            #return '('+build_info(data[0])
         else:
             return str(data)
     global socket_data_cache
@@ -1063,7 +1063,7 @@ def SvGetSocketInfo(socket):
         if s_id in socket_data_cache[ng]:
             data=socket_data_cache[ng][s_id]
             if data:        
-                return build_info(data)[:7]
+                return build_info(len(data))
     return ''
         
 def SvSetSocket(socket, out):
