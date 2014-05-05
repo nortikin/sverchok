@@ -104,10 +104,10 @@ class SvDefaultScriptTemplate(bpy.types.Operator):
         return {'CANCELLED'}
 
 
-class SvCallbackOp(bpy.types.Operator):
+class SvScriptNodeCallbackOp(bpy.types.Operator):
 
     bl_idname = "node.sverchok_callback"
-    bl_label = "Sverchok script input"
+    bl_label = "Sverchok scriptnode callback"
     bl_options = {'REGISTER', 'UNDO'}
 
     fn_name = StringProperty(default='')
@@ -118,13 +118,16 @@ class SvCallbackOp(bpy.types.Operator):
 
         f = getattr(n, fn_name, None)
         if not f:
-            print("Bad function name from:", node.name)
+            msg = "{0} has no function named '{1}'".format(node.name, fn_name)
+            self.report({"WARNING"}, msg)
             return {'CANCELLED'}
 
         if fn_name == "load":
             f()
         elif fn_name == "nuke_me":
             f(context)
+
+        # while in development this is handy
         else:
             msg = "Callback Operator has no function by this name: " + fn_name
             self.report({"WARNING"}, msg)
@@ -309,14 +312,12 @@ class SvScriptNode(Node, SverchCustomTreeNode):
         if not self.inputs:
             return
 
-        # we have script but no node_dict, lets try to reload
-        if self.script_str and not hash(self) in self.node_dict:
-            self.reload()
-
-        # this line exists only to preserve backwards compatibility, version bump
-        # will drop this check.
+        # we have script but no node_dict, lets try to reload else load.
         if not hash(self) in self.node_dict:
-            self.load()
+            if self.script_str:
+                self.reload()
+            else:
+                self.load()
 
         node_function = self.node_dict[hash(self)].get('node_function', None)
         if not node_function:
@@ -356,14 +357,14 @@ class SvScriptNode(Node, SverchCustomTreeNode):
 def register():
     bpy.utils.register_class(SvScriptNode)
     bpy.utils.register_class(SvDefaultScriptTemplate)
-    bpy.utils.register_class(SvCallbackOp)
+    bpy.utils.register_class(SvScriptNodeCallbackOp)
 
 
 def unregister():
     bpy.utils.unregister_class(SvDefaultScriptTemplate)
     bpy.utils.unregister_class(SvScriptNode)
-    bpy.utils.unregister_class(SvCallbackOp)
+    bpy.utils.unregister_class(SvScriptNodeCallbackOp)
 
 
-if __name__ == "__main__":
-    register()
+# if __name__ == "__main__":
+#     register()
