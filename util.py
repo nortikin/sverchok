@@ -1062,8 +1062,10 @@ def SvGetSocketInfo(socket):
     ng = socket.id_data.name
     if socket.is_output:
         s_id = socket_id(socket)
-    else:
+    elif socket.links:
         s_id = socket_id(socket.links[0].from_socket)
+    else:
+        return ''
     if ng in socket_data_cache:
         if s_id in socket_data_cache[ng]:
             data=socket_data_cache[ng][s_id]
