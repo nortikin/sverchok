@@ -940,13 +940,15 @@ def get_socket_type(node, inputsocketname):
         return 'm'
     
 def get_socket_type_full(node, inputsocketname):
-    # it is real solution, universal
-    if type(node.inputs[inputsocketname].links[0].from_socket) == bpy.types.VerticesSocket:
-        return 'VerticesSocket'
-    if type(node.inputs[inputsocketname].links[0].from_socket) == bpy.types.StringsSocket:
-        return 'StringsSocket'
-    if type(node.inputs[inputsocketname].links[0].from_socket) == bpy.types.MatrixSocket:
-        return 'MatrixSocket'
+   # this is solution, universal and future proof.
+    return node.inputs[inputsocketname].links[0].from_socket.bl_idname
+     # it is real solution, universal
+    #if type(node.inputs[inputsocketname].links[0].from_socket) == bpy.types.VerticesSocket:
+    #    return 'VerticesSocket'
+    #if type(node.inputs[inputsocketname].links[0].from_socket) == bpy.types.StringsSocket:
+    #    return 'StringsSocket'
+    #if type(node.inputs[inputsocketname].links[0].from_socket) == bpy.types.MatrixSocket:
+    #    return 'MatrixSocket'
 
 
        
