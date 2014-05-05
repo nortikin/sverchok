@@ -36,32 +36,32 @@ class IndexViewerNode(Node, SverchCustomTreeNode):
     # color props
     bg_edges_col = FloatVectorProperty(
         name="bg_edges", description='',
-        size = 4, min = 0.0, max = 1.0,
+        size=4, min=0.0, max=1.0,
         default=(.2, .2, .2, 1.0), subtype='COLOR')
 
     bg_faces_col = FloatVectorProperty(
         name="bg_faces", description='',
-        size = 4, min = 0.0, max = 1.0,
+        size=4, min=0.0, max=1.0,
         default=(.2, .2, .2, 1.0), subtype='COLOR')
 
     bg_verts_col = FloatVectorProperty(
         name="bg_verts", description='',
-        size = 4, min = 0.0, max = 1.0,
+        size=4, min=0.0, max=1.0,
         default=(.2, .2, .2, 1.0), subtype='COLOR')
 
     numid_edges_col = FloatVectorProperty(
         name="numid_edges", description='',
-        size = 4, min = 0.0, max = 1.0,
+        size=4, min=0.0, max=1.0,
         default=(1.0, 1.0, 0.1, 1.0), subtype='COLOR')
 
     numid_faces_col = FloatVectorProperty(
         name="numid_faces", description='',
-        size = 4, min = 0.0, max = 1.0,
+        size=4, min=0.0, max=1.0,
         default=(1.0, .8, .8, 1.0), subtype='COLOR')
 
     numid_verts_col = FloatVectorProperty(
         name="numid_verts", description='',
-        size = 4, min = 0.0, max = 1.0,
+        size=4, min=0.0, max=1.0,
         default=(1, 1, 1, 1.0), subtype='COLOR')
 
     def init(self, context):
@@ -87,15 +87,41 @@ class IndexViewerNode(Node, SverchCustomTreeNode):
     def draw_buttons_ext(self, context, layout):
         row = layout.row(align=True)
 
-        colprops = ['bg_edges_col', 'bg_faces_col', 'bg_verts_col',
-                    'numid_edges_col', 'numid_faces_col', 'numid_verts_col']
+        box = layout.box()
+        #box.label(text="Layout manager")
+        little_width = 0.22
+        col = box.column(align=True)
+        row = col.row(align=True)
+        row.label(text='IDX pallete')
 
-        for colprop in colprops:
-            layout.separator()
-            col = layout.column(align=True)
+        col1 = row.column(align=True)
+        col1.scale_x = little_width
+        col1.label(icon='VERTEXSEL', text=' ')
+
+        col2 = row.column(align=True)
+        col2.scale_x = little_width
+        col2.label(icon='EDGESEL', text=' ')
+
+        col3 = row.column(align=True)
+        col3.scale_x = little_width
+        col3.label(icon='FACESEL', text=' ')
+
+        colprops = [
+            ['numbers', ['numid_verts_col', 'numid_edges_col', 'numid_faces_col']],
+            ['background', ['bg_verts_col', 'bg_edges_col', 'bg_faces_col']]
+        ]
+
+        for label, geomtry_types in colprops:
             row = col.row(align=True)
-            display_name = colprop.replace("_col", "")
-            row.prop(self, colprop, text=display_name)
+            row.label(text=label)
+
+            split = row.column(align=True)
+            split.scale_x = little_width
+
+            for colprop in geomtry_types:
+                split.scale_x = little_width
+                split = row.column(align=True)
+                split.prop(self, colprop, text="")
 
     def update(self):
         inputs = self.inputs
@@ -164,5 +190,5 @@ def unregister():
     bpy.utils.unregister_class(IndexViewerNode)
 
 
-if __name__ == "__main__":
-    register()
+#if __name__ == "__main__":
+#    register()
