@@ -940,13 +940,15 @@ def get_socket_type(node, inputsocketname):
         return 'm'
     
 def get_socket_type_full(node, inputsocketname):
-    # it is real solution, universal
-    if type(node.inputs[inputsocketname].links[0].from_socket) == bpy.types.VerticesSocket:
-        return 'VerticesSocket'
-    if type(node.inputs[inputsocketname].links[0].from_socket) == bpy.types.StringsSocket:
-        return 'StringsSocket'
-    if type(node.inputs[inputsocketname].links[0].from_socket) == bpy.types.MatrixSocket:
-        return 'MatrixSocket'
+   # this is solution, universal and future proof.
+    return node.inputs[inputsocketname].links[0].from_socket.bl_idname
+     # it is real solution, universal
+    #if type(node.inputs[inputsocketname].links[0].from_socket) == bpy.types.VerticesSocket:
+    #    return 'VerticesSocket'
+    #if type(node.inputs[inputsocketname].links[0].from_socket) == bpy.types.StringsSocket:
+    #    return 'StringsSocket'
+    #if type(node.inputs[inputsocketname].links[0].from_socket) == bpy.types.MatrixSocket:
+    #    return 'MatrixSocket'
 
 
        
@@ -1058,12 +1060,17 @@ def SvGetSocketInfo(socket):
             return str(data)
     global socket_data_cache
     ng = socket.id_data.name
-    s_id = socket_id(socket)
+    if socket.is_output:
+        s_id = socket_id(socket)
+    elif socket.links:
+        s_id = socket_id(socket.links[0].from_socket)
+    else:
+        return ''
     if ng in socket_data_cache:
         if s_id in socket_data_cache[ng]:
             data=socket_data_cache[ng][s_id]
             if data:        
-                return build_info(len(data))
+                return str(len(data))
     return ''
         
 def SvSetSocket(socket, out):
