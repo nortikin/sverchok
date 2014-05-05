@@ -104,6 +104,29 @@ class SvDefaultScriptTemplate(bpy.types.Operator):
         return {'CANCELLED'}
 
 
+class SvScriptUICallbackOp(bpy.types.Operator):
+
+    bl_idname = "node.script_ui_callback"
+    bl_label = "Sverchok script ui"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    fn_name = StringProperty(default='')
+
+    def execute(self, context):
+        n = context.node
+        node_function = n.node_dict[hash(n)]['node_function']
+        fn_name = self.fn_name
+
+        f = getattr(node_function, fn_name, None)
+        if not f:
+            msg = "{0} has no function named '{1}'".format(node.name, fn_name)
+            self.report({"WARNING"}, msg)
+            return {'CANCELLED'}
+
+        f()
+        return {'FINISHED'}
+
+
 class SvScriptNodeCallbackOp(bpy.types.Operator):
 
     bl_idname = "node.sverchok_callback"
@@ -128,10 +151,10 @@ class SvScriptNodeCallbackOp(bpy.types.Operator):
             f(context)
 
         # while in development this is handy
-        else:
-            msg = "Callback Operator has no function by this name: " + fn_name
-            self.report({"WARNING"}, msg)
-            return {'CANCELLED'}
+        # else:
+        #     msg = "Callback Operator has no function by this name: " + fn_name
+        #     self.report({"WARNING"}, msg)
+        #     return {'CANCELLED'}
 
         return {'FINISHED'}
 
@@ -167,16 +190,9 @@ class SvScriptNode(Node, SverchCustomTreeNode):
         description="Choose text to load in node",
         update=updateNode)
 
-    script_modes = [
-        ("Py", "Python", "Python File", "", 1),
-        ("coffee", "CoffeeScript", "cf File", "", 2)]
-
-    scriptmode = EnumProperty(
-        items=script_modes,
-        default='Py',
-        update=updateNode)
-
     script_str = StringProperty(default="")
+    button_names = StringProperty(default="")
+    has_buttons = BoolProperty(default=False)
 
     node_dict = {}
     in_sockets = []
@@ -187,14 +203,17 @@ class SvScriptNode(Node, SverchCustomTreeNode):
         pass
 
     def nuke_me(self, context):
-        print(dir(self.inputs))
         in_out = [self.inputs, self.outputs]
         for socket_set in in_out:
             socket_set.clear()
-        self.use_custom_color = False
+
         if 'node_function' in self.node_dict[hash(self)]:
             del self.node_dict[hash(self)]['node_function']
+        
+        self.use_custom_color = False
         self.script_str = ""
+        self.button_names = ""
+        self.has_buttons = False
 
     def draw_buttons(self, context, layout):
 
@@ -226,6 +245,11 @@ class SvScriptNode(Node, SverchCustomTreeNode):
             row.operator('node.sverchok_callback', text='Reload').fn_name = 'load'
             row.operator('node.sverchok_callback', text='Clear').fn_name = 'nuke_me'
 
+            if self.has_buttons:
+                row = col.row()
+                for fname in self.button_names.split('|'):
+                    row.operator('node.script_ui_callback', text=fname).fn_name = fname
+
     def create_or_update_sockets(self):
         '''
         - desired features not fully implemented yet (only socket add so far)
@@ -250,18 +274,19 @@ class SvScriptNode(Node, SverchCustomTreeNode):
     '''
 
     def load(self):
-        # user picks script from dropdown.
         self.script_str = bpy.data.texts[self.script].as_string()
-        if self.scriptmode == 'Py':
-            self.node_dict[hash(self)] = {}
-            self.load_py()
+        self.node_dict[hash(self)] = {}
+        self.button_names = ""
+        self.has_buttons = False
+        self.load_py()
     '''
     reload when we have script_str but not node_dict, on file open.
     '''
     def reload(self):
-        if self.scriptmode == 'Py':
-            self.node_dict[hash(self)] = {}
-            self.load_py()
+        self.node_dict[hash(self)] = {}
+        self.button_names = ""
+        self.has_buttons = False
+        self.load_py()
 
     def load_py(self):
         details = instrospect_py(self)
@@ -275,7 +300,23 @@ class SvScriptNode(Node, SverchCustomTreeNode):
             globals().update(f)
 
             self.node_dict[hash(self)]['node_function'] = node_function
-            self.in_sockets, self.out_sockets = node_function(*params)
+
+            function_output = node_function(*params)
+            num_return_params = len(function_output)
+
+            if num_return_params == 2:
+                self.in_sockets, self.out_sockets = function_output
+            if num_return_params == 3:
+                self.has_buttons = True
+                self.in_sockets, self.out_sockets, ui_ops = function_output
+
+            if self.has_buttons:
+                named_buttons = []
+                for button_name, button_function in ui_ops:
+                    f = self.node_dict[hash(self)]['node_function']
+                    setattr(f, button_name, button_function)
+                    named_buttons.append(button_name)
+                self.button_names = "|".join(named_buttons)
 
             print('found {0} in sock requests'.format(len(self.in_sockets)))
             print('found {0} out sock requests'.format(len(self.out_sockets)))
@@ -298,10 +339,16 @@ class SvScriptNode(Node, SverchCustomTreeNode):
     '''
 
     def update(self):
-        if self.scriptmode == 'Py':
-            self.update_py()
-        elif self.scriptmode == 'coffee':
-            self.update_cf()
+        if not self.inputs:
+            return
+
+        if not hash(self) in self.node_dict:
+            if self.script_str:
+                self.reload()
+            else:
+                self.load()
+
+        self.update_py()
 
     def update_py(self):
         '''
@@ -309,16 +356,6 @@ class SvScriptNode(Node, SverchCustomTreeNode):
         - runs script with default values for those in_sockets not connected
         - does nothing if input is unchanged.
         '''
-        if not self.inputs:
-            return
-
-        # we have script but no node_dict, lets try to reload else load.
-        if not hash(self) in self.node_dict:
-            if self.script_str:
-                self.reload()
-            else:
-                self.load()
-
         node_function = self.node_dict[hash(self)].get('node_function', None)
         if not node_function:
             return
@@ -358,12 +395,14 @@ def register():
     bpy.utils.register_class(SvScriptNode)
     bpy.utils.register_class(SvDefaultScriptTemplate)
     bpy.utils.register_class(SvScriptNodeCallbackOp)
+    bpy.utils.register_class(SvScriptUICallbackOp)
 
 
 def unregister():
     bpy.utils.unregister_class(SvDefaultScriptTemplate)
     bpy.utils.unregister_class(SvScriptNode)
     bpy.utils.unregister_class(SvScriptNodeCallbackOp)
+    bpy.utils.unregister_class(SvScriptUICallbackOp)
 
 
 # if __name__ == "__main__":
