@@ -246,8 +246,8 @@ class SvScriptNode(Node, SverchCustomTreeNode):
             row.operator('node.sverchok_callback', text='Clear').fn_name = 'nuke_me'
 
             if self.has_buttons:
-                row = col.row()
                 for fname in self.button_names.split('|'):
+                    row = col.row()
                     row.operator('node.script_ui_callback', text=fname).fn_name = fname
 
     def create_or_update_sockets(self):
