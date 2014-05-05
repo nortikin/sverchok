@@ -120,12 +120,14 @@ def callback_disable(node):
     handle_delete(hash(node))
     tag_redraw_all_view3d()
 
+
 def callback_disable_all():
     global temp_handle
     temp_list = list(temp_handle.keys())
     for name in temp_list:
         callback_disable(name)
-    
+
+
 def draw_callback_px(node, draw_verts, draw_edges, draw_faces, draw_matrix, draw_bg):
     context = bpy.context
 
@@ -142,9 +144,12 @@ def draw_callback_px(node, draw_verts, draw_edges, draw_faces, draw_matrix, draw
     region = context.region
     region3d = context.space_data.region_3d
 
-    vert_idx_color = (1, 1, 1)
-    edge_idx_color = (1.0, 1.0, 0.0)
-    face_idx_color = (1.0, 0.8, 0.8)
+    vert_idx_color = node.numid_verts_col
+    edge_idx_color = node.numid_edges_col
+    face_idx_color = node.numid_faces_col
+    vert_bg_color = node.bg_verts_col
+    edge_bg_color = node.bg_edges_col
+    face_bg_color = node.bg_faces_col
 
     font_id = 0
     text_height = 13
@@ -156,7 +161,7 @@ def draw_callback_px(node, draw_verts, draw_edges, draw_faces, draw_matrix, draw
     # vars for projection
     perspective_matrix = region3d.perspective_matrix.copy()
 
-    def draw_index(rgb, index, vec):
+    def draw_index(rgb, rgb2, index, vec):
 
         vec_4d = perspective_matrix * vec.to_4d()
         if vec_4d.w <= 0.0:
@@ -170,7 +175,7 @@ def draw_callback_px(node, draw_verts, draw_edges, draw_faces, draw_matrix, draw
             polyline = get_points(index)
 
             ''' draw polygon '''
-            bgl.glColor4f(0.103, 0.2, 0.2, 0.2)
+            bgl.glColor4f(*rgb2)
             bgl.glBegin(bgl.GL_POLYGON)
             for pointx, pointy in polyline:
                 bgl.glVertex2f(pointx+x, pointy+y)
@@ -178,7 +183,7 @@ def draw_callback_px(node, draw_verts, draw_edges, draw_faces, draw_matrix, draw
 
         ''' draw text '''
         txt_width, txt_height = blf.dimensions(0, index)
-        bgl.glColor3f(*rgb)
+        bgl.glColor4f(*rgb)
         blf.position(0, x - (txt_width / 2), y - (txt_height / 2), 0)
         blf.draw(0, index)
 
@@ -200,7 +205,7 @@ def draw_callback_px(node, draw_verts, draw_edges, draw_faces, draw_matrix, draw
 
         if node.display_vert_index:
             for idx, v in enumerate(final_verts):
-                draw_index(vert_idx_color, idx, v)
+                draw_index(vert_idx_color, vert_bg_color, idx, v)
 
         if data_edges and node.display_edge_index:
             for edge_details in enumerate(data_edges[obj_index]):
@@ -208,10 +213,10 @@ def draw_callback_px(node, draw_verts, draw_edges, draw_faces, draw_matrix, draw
                 v1 = Vector(final_verts[idx1])
                 v2 = Vector(final_verts[idx2])
                 loc = v1 + ((v2 - v1) / 2)
-                draw_index(edge_idx_color, edge_index, loc)
+                draw_index(edge_idx_color, edge_bg_color, edge_index, loc)
 
         if data_faces and node.display_face_index:
             for face_index, f in enumerate(data_faces[obj_index]):
                 verts = [Vector(final_verts[idx]) for idx in f]
                 median = calc_median(verts)
-                draw_index(face_idx_color, face_index, median)
+                draw_index(face_idx_color, face_bg_color, face_index, median)
