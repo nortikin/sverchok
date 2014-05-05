@@ -17,15 +17,13 @@ There are three types of input streams that this node can interpret:
 
 == Buttons in Node ==
 
-# bind the found functions listed in ui_operators to the node function as attributes
+* bind the found functions listed in ui_operators to the node function as attributes
     https://github.com/nortikin/sverchok/blob/master/node_Script.py#L313-L319
-# set has_buttons to True
-# if has_buttons then draw_buttons will do the extra loop over button_names
-# each button name calls SvScriptUICallbackOp() with node 
+* if has_buttons then draw_buttons will do the extra loop over button_names
+* each button name calls SvScriptUICallbackOp() with node 
     https://github.com/nortikin/sverchok/blob/master/node_Script.py#L248-L251
-# each script_node allows us to access node_function,because we bind the Operator functions to the node function as attributes
-# if we can access node_function then we can also access node_function.attributes. (by name)
+* each script_node allows us to access node_function,because we bind the Operator functions to the node function as attributes
+* if we can access node_function then we can also access node_function.attributes. (by name)
     https://github.com/nortikin/sverchok/blob/master/node_Script.py#L107-L127
-# my head exploded.
 
 Button names must be valid attribute names ( no special characters | () , etc...)
