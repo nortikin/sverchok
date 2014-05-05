@@ -209,7 +209,7 @@ class SvScriptNode(Node, SverchCustomTreeNode):
 
         if 'node_function' in self.node_dict[hash(self)]:
             del self.node_dict[hash(self)]['node_function']
-        
+
         self.use_custom_color = False
         self.script_str = ""
         self.button_names = ""
@@ -380,7 +380,9 @@ class SvScriptNode(Node, SverchCustomTreeNode):
 
         if node_function and (len(fparams) == len(input_names)):
 
-            _, out_sockets = node_function(*fparams)
+            fn_return_values = node_function(*fparams)
+            out_sockets = fn_return_values[1]
+
             for socket_type, name, data in out_sockets:
                 SvSetSocketAnyType(self, name, data)
 
