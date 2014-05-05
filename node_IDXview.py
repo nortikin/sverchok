@@ -2,7 +2,7 @@ import bpy
 import bmesh
 import mathutils
 from mathutils import Vector, Matrix
-from bpy.props import BoolProperty
+from bpy.props import BoolProperty, FloatVectorProperty
 
 from node_s import *
 from util import *
@@ -26,12 +26,43 @@ class IndexViewerNode(Node, SverchCustomTreeNode):
         update=updateNode)
 
     display_vert_index = BoolProperty(
-        name="Vertices", description="Display vertex indices", 
+        name="Vertices", description="Display vertex indices",
         default=True)
     display_edge_index = BoolProperty(
         name="Edges", description="Display edge indices")
     display_face_index = BoolProperty(
-        name="Faces", description="Display face indices")    
+        name="Faces", description="Display face indices")
+
+    # color props
+    bg_edges_col = FloatVectorProperty(
+        name="bg_edges", description='',
+        size = 4, min = 0.0, max = 1.0,
+        default=(.2, .2, .2, 1.0), subtype='COLOR')
+
+    bg_faces_col = FloatVectorProperty(
+        name="bg_faces", description='',
+        size = 4, min = 0.0, max = 1.0,
+        default=(.2, .2, .2, 1.0), subtype='COLOR')
+
+    bg_verts_col = FloatVectorProperty(
+        name="bg_verts", description='',
+        size = 4, min = 0.0, max = 1.0,
+        default=(.2, .2, .2, 1.0), subtype='COLOR')
+
+    numid_edges_col = FloatVectorProperty(
+        name="numid_edges", description='',
+        size = 4, min = 0.0, max = 1.0,
+        default=(1.0, 1.0, 0.1, 1.0), subtype='COLOR')
+
+    numid_faces_col = FloatVectorProperty(
+        name="numid_faces", description='',
+        size = 4, min = 0.0, max = 1.0,
+        default=(1.0, .8, .8, 1.0), subtype='COLOR')
+
+    numid_verts_col = FloatVectorProperty(
+        name="numid_verts", description='',
+        size = 4, min = 0.0, max = 1.0,
+        default=(1, 1, 1, 1.0), subtype='COLOR')
 
     def init(self, context):
         self.inputs.new('VerticesSocket', 'vertices', 'vertices')
@@ -48,10 +79,23 @@ class IndexViewerNode(Node, SverchCustomTreeNode):
         col = layout.column(align=True)
         row = col.row(align=True)
         row.active = (self.activate)
-     
+
         row.prop(self, "display_vert_index", toggle=True)
         row.prop(self, "display_edge_index", toggle=True)
         row.prop(self, "display_face_index", toggle=True)
+
+    def draw_buttons_ext(self, context, layout):
+        row = layout.row(align=True)
+
+        colprops = ['bg_edges_col', 'bg_faces_col', 'bg_verts_col',
+                    'numid_edges_col', 'numid_faces_col', 'numid_verts_col']
+
+        for colprop in colprops:
+            layout.separator()
+            col = layout.column(align=True)
+            row = col.row(align=True)
+            display_name = colprop.replace("_col", "")
+            row.prop(self, colprop, text=display_name)
 
     def update(self):
         inputs = self.inputs
@@ -60,11 +104,12 @@ class IndexViewerNode(Node, SverchCustomTreeNode):
         if not ('vertices' in inputs) and not ('matrix' in inputs):
             IV.callback_disable(self)
             return
+
         # end if tree status is set to not show
         if not self.id_data.sv_show:
             IV.callback_disable(self)
             return
-        
+
         # alias in case it is present
         iv_links = inputs['vertices'].links
 
@@ -99,7 +144,8 @@ class IndexViewerNode(Node, SverchCustomTreeNode):
             draw_edges, draw_faces = data_feind
 
             bg = self.draw_bg
-            IV.callback_enable(self, draw_verts, draw_edges, draw_faces, draw_matrix, bg)
+            IV.callback_enable(
+                self, draw_verts, draw_edges, draw_faces, draw_matrix, bg)
         else:
             IV.callback_disable(self)
 
