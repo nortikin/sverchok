@@ -23,7 +23,7 @@ class MatrixSocket(NodeSocket):
     
     def draw(self, context, layout, node, text):
         if self.is_linked:
-            layout.label(text + '.' + SvGetSocketInfo(self))
+            layout.label(text + '. ' + SvGetSocketInfo(self))
         else:
             layout.label(text)
 
@@ -60,7 +60,7 @@ class VerticesSocket(NodeSocket):
         
         def draw(self, context, layout, node, text):
             if self.is_linked:
-                layout.label(text + '.'+ SvGetSocketInfo(self))
+                layout.label(text + '. '+ SvGetSocketInfo(self))
             else:
                 layout.label(text)
                 
@@ -74,7 +74,7 @@ class StringsSocket(NodeSocket):
         
         def draw(self, context, layout, node, text):
             if self.is_linked:
-                layout.label(text + '.' + SvGetSocketInfo(self))
+                layout.label(text + '. ' + SvGetSocketInfo(self))
             else:
                 layout.label(text)
                     
