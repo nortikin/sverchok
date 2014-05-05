@@ -63,8 +63,8 @@ ListLevels manual
 
 
 
-   Памятка по уровням структуры данных
-   Data structures:
+   Памятка по уровням структуры данных, их сочетаниях
+   Data structures levels combinations:
 
  0123 [1, [2,3], [4,[5],[6,[7]]], [8]]
  0    [                              ]

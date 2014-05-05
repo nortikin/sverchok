@@ -1,3 +1,16 @@
+
+== NEW TODO lists are in github: ==
+
+# zeffii https://github.com/nortikin/sverchok/issues/118
+# nikitron https://github.com/nortikin/sverchok/issues/120
+# ly https://github.com/nortikin/sverchok/issues/119
+
+create your own
+
+
+
+
+
 ТУДУшечка.
 дополняется снизу.
 
@@ -62,4 +75,7 @@
     76 1. Get Bounding Box Center Point (BBOX CENTER) => would be nice to have setup that spit out Bounding Box,
        2. Get the average position based on all vector.
        3. Have an Empty Position that user can control.
+
+
+
 
