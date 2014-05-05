@@ -202,11 +202,13 @@ def make_categories():
             NodeItem("VertsDelDoublesNode", label="Vector X Doubles"),
             NodeItem("EvaluateLineNode", label="Vectors Evaluate"),
             NodeItem("SvVertSortNode", label="Vertices Sort"),
+            NodeItem("SvNoiseNode", label="Noise"),
             NodeItem("MatrixApplyNode", label="Matrix Apply"),
             NodeItem("MatrixGenNode", label="Matrix in"),
             NodeItem("MatrixOutNode", label="Matrix out"),
             NodeItem("MatrixDeformNode", label="Matrix Deform"),
             NodeItem("MatrixShearNode", label="Shear Matrix"),
+            
             NodeItem("MatrixInterpolationNode", label="Matrix Interpolation"),
             ]),
         SverchNodeCategory("SVERCHOK_M", "SVERCHOK modifier", items=[
