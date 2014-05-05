@@ -104,29 +104,32 @@ class SvDefaultScriptTemplate(bpy.types.Operator):
         return {'CANCELLED'}
 
 
-class SvScriptOp(bpy.types.Operator):
+class SvCallbackOp(bpy.types.Operator):
 
-    """ Load Script as Generator """
-    bl_idname = "node.sverchok_script_input"
+    bl_idname = "node.sverchok_callback"
     bl_label = "Sverchok script input"
     bl_options = {'REGISTER', 'UNDO'}
 
-    def execute(self, context):
-        print('pressed load')
-        context.node.load()
-        return {'FINISHED'}
-
-
-class SvNodeSelfNuke(bpy.types.Operator):
-
-    bl_idname = "node.sverchok_scriptnode_nuke"
-    bl_label = "Sverchok scriptnode nuke"
-    bl_options = {'REGISTER', 'UNDO'}
+    fn_name = StringProperty(default='')
 
     def execute(self, context):
-        print('pressed nuke, Boom')
-        context.node.nuke_me(context)
-        context.node.script_str = ""
+        n = context.node
+        fn_name = self.fn_name
+
+        f = getattr(n, fn_name, None)
+        if not f:
+            print("Bad function name from:", node.name)
+            return {'CANCELLED'}
+
+        if fn_name == "load":
+            f()
+        elif fn_name == "nuke_me":
+            f(context)
+        else:
+            msg = "Callback Operator has no function by this name: " + fn_name
+            self.report({"WARNING"}, msg)
+            return {'CANCELLED'}
+
         return {'FINISHED'}
 
 
@@ -188,6 +191,7 @@ class SvScriptNode(Node, SverchCustomTreeNode):
         self.use_custom_color = False
         if 'node_function' in self.node_dict[hash(self)]:
             del self.node_dict[hash(self)]['node_function']
+        self.script_str = ""
 
     def draw_buttons(self, context, layout):
 
@@ -201,13 +205,12 @@ class SvScriptNode(Node, SverchCustomTreeNode):
                 'node.sverchok_script_template', text='Import Template')
             tem.script_name = self.files_popup
 
-            #row = col.row(align=True)
-            #row.prop(self, 'scriptmode', 'scriptmode', expand=True)
             row = col.row(align=True)
             row.label(text='USE PY:')
             row = col.row(align=True)
             row.prop(self, "script", "")
-            op = row.operator('node.sverchok_script_input', text='Load')
+            row.operator('node.sverchok_callback', text='Load').fn_name = 'load'
+
         else:
             row = col.row()
             col2 = row.column()
@@ -217,8 +220,8 @@ class SvScriptNode(Node, SverchCustomTreeNode):
             row = col.row()
             row.label(text=self.script)
             row = col.row()
-            op = row.operator('node.sverchok_script_input', text='Reload')
-            op = row.operator('node.sverchok_scriptnode_nuke', text='Clear')
+            row.operator('node.sverchok_callback', text='Reload').fn_name = 'load'
+            row.operator('node.sverchok_callback', text='Clear').fn_name = 'nuke_me'
 
     def create_or_update_sockets(self):
         '''
@@ -305,11 +308,11 @@ class SvScriptNode(Node, SverchCustomTreeNode):
         '''
         if not self.inputs:
             return
-        
-        # we have script but no node_dict, lets try to reload    
+
+        # we have script but no node_dict, lets try to reload
         if self.script_str and not hash(self) in self.node_dict:
             self.reload()
-            
+
         # this line exists only to preserve backwards compatibility, version bump
         # will drop this check.
         if not hash(self) in self.node_dict:
@@ -351,17 +354,15 @@ class SvScriptNode(Node, SverchCustomTreeNode):
 
 
 def register():
-    bpy.utils.register_class(SvScriptOp)
     bpy.utils.register_class(SvScriptNode)
-    bpy.utils.register_class(SvNodeSelfNuke)
     bpy.utils.register_class(SvDefaultScriptTemplate)
+    bpy.utils.register_class(SvCallbackOp)
 
 
 def unregister():
-    bpy.utils.unregister_class(SvNodeSelfNuke)
     bpy.utils.unregister_class(SvDefaultScriptTemplate)
     bpy.utils.unregister_class(SvScriptNode)
-    bpy.utils.unregister_class(SvScriptOp)
+    bpy.utils.unregister_class(SvCallbackOp)
 
 
 if __name__ == "__main__":
