@@ -10,8 +10,10 @@ import inspect
 # from http://www.blender.org/documentation/blender_python_api_2_70_release/mathutils.noise.html
 
 def avail_noise(self,context):
-    return [(t[0],t[0].title(),t[0].title(),'',t[1]) for t in inspect.getmembers(noise.types) if isinstance(t[1],int)]
-
+    n_t=[(t[0],t[0].title(),t[0].title(),'',t[1]) for t in inspect.getmembers(noise.types) if isinstance(t[1],int)]
+    n_t.sort(key=operator.itemgetter(0),reverse=True)
+    return n_t
+    
 class SvNoiseNode(Node, SverchCustomTreeNode):
     '''Basic Noise node'''
     bl_idname = 'SvNoiseNode'
@@ -55,7 +57,7 @@ class SvNoiseNode(Node, SverchCustomTreeNode):
                 
     def draw_buttons(self, context, layout):
         layout.prop(self,'out_mode',expand=True)
-        layout.prop(self,'noise_type',text='Select')
+        layout.prop(self,'noise_type',text="Type")
         
     def update(self):
     
@@ -71,7 +73,7 @@ class SvNoiseNode(Node, SverchCustomTreeNode):
             out = []
             n_t = self.noise_dict[self.noise_type]
             n_f = self.noise_f[self.out_mode]
-            
+                
             for obj in verts: 
                 out.append([n_f(v,n_t) for v in obj])
                 
