@@ -8,10 +8,15 @@ class GenVectorsNode(Node, SverchCustomTreeNode):
     bl_label = 'Vectors in'
     bl_icon = 'OUTLINER_OB_EMPTY'
     
+    x_ = bpy.props.FloatProperty(name = 'X', description='X', default=0.0, precision=3, update=updateNode)
+    y_ = bpy.props.FloatProperty(name = 'Y', description='Y', default=0.0, precision=3, update=updateNode)
+    z_ = bpy.props.FloatProperty(name = 'Z', description='Z', default=0.0, precision=3, update=updateNode)
+
     def init(self, context):
-        self.inputs.new('StringsSocket', "X", "X")
-        self.inputs.new('StringsSocket', "Y", "Y")
-        self.inputs.new('StringsSocket', "Z", "Z")
+        self.inputs.new('StringsSocket', "X").prop_name='x_'
+        self.inputs.new('StringsSocket', "Y").prop_name='y_'
+        self.inputs.new('StringsSocket', "Z").prop_name='z_'
+        self.width=100
         self.outputs.new('VerticesSocket', "Vectors", "Vectors")
         
     def update(self):
@@ -20,19 +25,19 @@ class GenVectorsNode(Node, SverchCustomTreeNode):
             type(self.inputs['X'].links[0].from_socket) == StringsSocket:
             X_ = SvGetSocketAnyType(self,self.inputs['X'])
         else:
-            X_ = [[0.0]]
+            X_ = [[self.x_]]
         
         if 'Y' in self.inputs and self.inputs['Y'].links and \
             type(self.inputs['Y'].links[0].from_socket) == StringsSocket:
             Y_ = SvGetSocketAnyType(self,self.inputs['Y'])
         else:
-            Y_ = [[0.0]]
+            Y_ = [[self.y_]]
             
         if 'Z' in self.inputs and self.inputs['Z'].links and \
             type(self.inputs['Z'].links[0].from_socket) == StringsSocket:
             Z_ = SvGetSocketAnyType(self,self.inputs['Z'])
         else:
-            Z_ = [[0.0]]
+            Z_ = [[self.z_]]
         
         # outputs
         if 'Vectors' in self.outputs and self.outputs['Vectors'].links:

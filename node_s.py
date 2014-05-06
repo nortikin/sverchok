@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import bpy
 from bpy.props import IntProperty, FloatProperty, StringProperty, FloatVectorProperty, CollectionProperty, EnumProperty, BoolProperty
-from bpy.types import NodeTree, Node, NodeSocket
+from bpy.types import NodeTree, Node, NodeSocket, NodeSocketStandard
 import nodeitems_utils
 from nodeitems_utils import NodeCategory, NodeItem
 from mathutils import Matrix
@@ -20,8 +20,11 @@ class MatrixSocket(NodeSocket):
     #ref: http://urchn.org/post/nodal-transform-experiment
     bl_idname = "MatrixSocket"
     bl_label = "Matrix Socket"
-    
+    prop_name = StringProperty(default='')
+
     def draw(self, context, layout, node, text):
+    #    if not self.is_output and not self.is_linked and self.prop_name:
+    #        layout.prop(node,self.prop_name,expand=False)
         if self.is_linked:
             layout.label(text + '. ' + SvGetSocketInfo(self))
         else:
@@ -53,12 +56,15 @@ class ObjectSocket(NodeSocket):
             return(0.8,0.8,0.2,1.0)
 '''
 
-class VerticesSocket(NodeSocket):
+class VerticesSocket(NodeSocketStandard):
         '''String Vertices - one string'''
         bl_idname = "VerticesSocket"
         bl_label = "Vertices Socket"
-        
+        prop_name = StringProperty(default='')
+
         def draw(self, context, layout, node, text):
+        #    if not self.is_output and not self.is_linked and self.prop_name:
+        #        layout.prop(node,self.prop_name,expand=False)
             if self.is_linked:
                 layout.label(text + '. '+ SvGetSocketInfo(self))
             else:
@@ -67,13 +73,16 @@ class VerticesSocket(NodeSocket):
         def draw_color(self, context, node):
             return(0.9,0.6,0.2,1.0)
 
-class StringsSocket(NodeSocket):
+class StringsSocket(NodeSocketStandard):
         '''String any type - one string'''
         bl_idname = "StringsSocket"
         bl_label = "Strings Socket"
+        prop_name = StringProperty(default='')
         
         def draw(self, context, layout, node, text):
-            if self.is_linked:
+            if not self.is_output and not self.is_linked and self.prop_name:
+                layout.prop(node,self.prop_name)
+            elif self.is_linked:
                 layout.label(text + '. ' + SvGetSocketInfo(self))
             else:
                 layout.label(text)
