@@ -150,12 +150,6 @@ class SvScriptNodeCallbackOp(bpy.types.Operator):
         elif fn_name == "nuke_me":
             f(context)
 
-        # while in development this is handy
-        # else:
-        #     msg = "Callback Operator has no function by this name: " + fn_name
-        #     self.report({"WARNING"}, msg)
-        #     return {'CANCELLED'}
-
         return {'FINISHED'}
 
 
@@ -270,19 +264,14 @@ class SvScriptNode(Node, SverchCustomTreeNode):
 
     '''
     load(_*)
-    - these are done once upon pressing load button, depending on scriptmode
+    - these are done once upon load or reload button presses
     '''
 
     def load(self):
         self.script_str = bpy.data.texts[self.script].as_string()
-        self.node_dict[hash(self)] = {}
-        self.button_names = ""
-        self.has_buttons = False
-        self.load_py()
-    '''
-    reload when we have script_str but not node_dict, on file open.
-    '''
-    def reload(self):
+        self.load_function()
+
+    def load_function(self):
         self.node_dict[hash(self)] = {}
         self.button_names = ""
         self.has_buttons = False
@@ -344,7 +333,7 @@ class SvScriptNode(Node, SverchCustomTreeNode):
 
         if not hash(self) in self.node_dict:
             if self.script_str:
-                self.reload()
+                self.load_function()
             else:
                 self.load()
 
