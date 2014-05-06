@@ -89,10 +89,10 @@ class IndexViewerNode(Node, SverchCustomTreeNode):
 
         box = layout.box()
         #box.label(text="Layout manager")
-        little_width = 0.22
+        little_width = 0.135
         col = box.column(align=True)
         row = col.row(align=True)
-        row.label(text='IDX pallete')
+        row.label(text='Colors') #IDX pallete
 
         col1 = row.column(align=True)
         col1.scale_x = little_width
@@ -107,21 +107,21 @@ class IndexViewerNode(Node, SverchCustomTreeNode):
         col3.label(icon='FACESEL', text=' ')
 
         colprops = [
-            ['numbers', ['numid_verts_col', 'numid_edges_col', 'numid_faces_col']],
-            ['background', ['bg_verts_col', 'bg_edges_col', 'bg_faces_col']]
+            ['Numbers :', ['numid_verts_col', 'numid_edges_col', 'numid_faces_col']],
+            ['Backgrnd :', ['bg_verts_col', 'bg_edges_col', 'bg_faces_col']]
         ]
 
         for label, geomtry_types in colprops:
             row = col.row(align=True)
             row.label(text=label)
 
-            split = row.column(align=True)
-            split.scale_x = little_width
+            
+            #split.scale_x = little_width
 
             for colprop in geomtry_types:
-                split.scale_x = little_width
-                split = row.column(align=True)
-                split.prop(self, colprop, text="")
+                col4 = row.column(align=True)
+                col4.scale_x = little_width
+                col4.prop(self, colprop, text="")
 
     def update(self):
         inputs = self.inputs
@@ -190,5 +190,5 @@ def unregister():
     bpy.utils.unregister_class(IndexViewerNode)
 
 
-#if __name__ == "__main__":
-#    register()
+if __name__ == "__main__":
+    register()
