@@ -25,7 +25,7 @@ class BakeryNode(Node, SverchCustomTreeNode):
         self.inputs.new('MatrixSocket', 'matrix', 'matrix')
         
     def update(self):
-        # check if
+        # check if running during startup, cancel if True
         try:
             l=bpy.data.node_groups[self.id_data.name]
         except Exception as e:
