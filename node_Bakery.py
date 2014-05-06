@@ -25,6 +25,13 @@ class BakeryNode(Node, SverchCustomTreeNode):
         self.inputs.new('MatrixSocket', 'matrix', 'matrix')
         
     def update(self):
+        # check if
+        try:
+            l=bpy.data.node_groups[self.id_data.name]
+        except Exception as e:
+            print("Bakery cannot run during startup",e)
+            return
+            
         if self.inputs['vertices'].links and self.inputs['edg_pol'].links and self.activate:
             if 'vertices' in self.inputs and self.inputs['vertices'].links and \
                     type(self.inputs['vertices'].links[0].from_socket) == VerticesSocket:
