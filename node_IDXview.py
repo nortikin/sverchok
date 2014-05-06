@@ -86,14 +86,16 @@ class IndexViewerNode(Node, SverchCustomTreeNode):
 
     def draw_buttons_ext(self, context, layout):
         row = layout.row(align=True)
-
         box = layout.box()
-        #box.label(text="Layout manager")
         little_width = 0.135
+
+        # heading - wide column for descriptors
         col = box.column(align=True)
         row = col.row(align=True)
-        row.label(text='Colors') #IDX pallete
+        row.label(text='Colors')  # IDX pallete
 
+        # heading - remaining column space divided by
+        # little_width factor. shows icons only
         col1 = row.column(align=True)
         col1.scale_x = little_width
         col1.label(icon='VERTEXSEL', text=' ')
@@ -106,19 +108,19 @@ class IndexViewerNode(Node, SverchCustomTreeNode):
         col3.scale_x = little_width
         col3.label(icon='FACESEL', text=' ')
 
+        # 'table info'
         colprops = [
             ['Numbers :', ['numid_verts_col', 'numid_edges_col', 'numid_faces_col']],
             ['Backgrnd :', ['bg_verts_col', 'bg_edges_col', 'bg_faces_col']]
         ]
 
-        for label, geomtry_types in colprops:
+        # each first draws the table row heading, 'label'
+        # then for each geometry type will draw the color property
+        # with the same spacing as col1, col2, col3 above
+        for label, geometry_types in colprops:
             row = col.row(align=True)
             row.label(text=label)
-
-            
-            #split.scale_x = little_width
-
-            for colprop in geomtry_types:
+            for colprop in geometry_types:
                 col4 = row.column(align=True)
                 col4.scale_x = little_width
                 col4.prop(self, colprop, text="")
@@ -188,7 +190,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(IndexViewerNode)
-
-
-if __name__ == "__main__":
-    register()
