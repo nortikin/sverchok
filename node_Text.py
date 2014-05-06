@@ -352,7 +352,7 @@ class SvTextInNode(Node,SverchCustomTreeNode):
         # load data into selected socket
         for item in ['Vertices','Data','Matrix']:
             if item in self.outputs and len(self.outputs[item].links)>0:
-                SvSetSocketAnyType(self,item, str(self.list_data[self.name]))
+                SvSetSocketAnyType(self,item, self.list_data[self.name])
 #
 # JSON
 #
