@@ -1,7 +1,7 @@
 import bpy
 from node_s import *
 from util import *
-from math import sin, cos
+from math import sin, cos,pi,degrees
 
 class CircleNode(Node, SverchCustomTreeNode):
     ''' Circle '''
@@ -9,23 +9,21 @@ class CircleNode(Node, SverchCustomTreeNode):
     bl_label = 'Circle'
     bl_icon = 'OUTLINER_OB_EMPTY'
     
-    rad_ = bpy.props.FloatProperty(name = 'rad_', description='Radius', default=1.0, options={'ANIMATABLE'}, update=updateNode)
-    vert_ = bpy.props.IntProperty(name = 'vert_', description='Vertices', default=24, min=3, options={'ANIMATABLE'}, update=updateNode)
-    degr_ = bpy.props.FloatProperty(name = 'degr_', description='Degrees', default=360, min=0, max=360, options={'ANIMATABLE'}, update=updateNode)
-    mode_ = bpy.props.BoolProperty(name = 'mode_', description='Mode', default=0, options={'ANIMATABLE'}, update=updateNode)
+    rad_ = bpy.props.FloatProperty(name = 'Radius', description='Radius', default=1.0,  update=updateNode)
+    vert_ = bpy.props.IntProperty(name = 'N Vertices', description='Vertices', default=24, min=3,  update=updateNode)
+    degr_ = bpy.props.FloatProperty(name = 'Degrees', description='Degrees', default=360, min=0, max=pi*2,subtype='ANGLE', options={'ANIMATABLE'}, update=updateNode)
+    mode_ = bpy.props.BoolProperty(name = 'mode_', description='Mode', default=0,  update=updateNode)
 
     def init(self, context):
-        self.inputs.new('StringsSocket', "Radius", "Radius")
-        self.inputs.new('StringsSocket', "Nº Vertices", "Nº Vertices")
-        self.inputs.new('StringsSocket', "Degrees", "Degrees")
+        self.inputs.new('StringsSocket', "Radius").prop_name='rad_'
+        self.inputs.new('StringsSocket', "Nº Vertices").prop_name='vert_'
+        self.inputs.new('StringsSocket', "Degrees").prop_name='degr_'
+        
         self.outputs.new('VerticesSocket', "Vertices", "Vertices")
         self.outputs.new('StringsSocket', "Edges", "Edges")
         self.outputs.new('StringsSocket', "Polygons", "Polygons")
     
     def draw_buttons(self, context, layout):
-        layout.prop(self, "rad_", text="Radius")
-        layout.prop(self, "vert_", text="Nº Vert")
-        layout.prop(self, "degr_", text="Degrees")
         layout.prop(self, "mode_", text="Mode")
     
     def make_verts(self,Angle,Vertices,Radius): 
@@ -94,7 +92,8 @@ class CircleNode(Node, SverchCustomTreeNode):
             Angle = SvGetSocketAnyType(self,self.inputs['Degrees'])[0]
             Angle = list(map(lambda x:min(360,max(0,x)),Angle))
         else:
-            Angle = [self.degr_]
+            # okay this is silly but since the rest was written before this gave degrees.
+            Angle = [degrees(self.degr_)]
             
         parameters = match_long_repeat([Angle,Vertices,Radius])
 
