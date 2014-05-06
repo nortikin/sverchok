@@ -28,19 +28,12 @@ class SvKDTreeEdgesNode(Node, SverchCustomTreeNode):
         name='skip', description='skip first n',
         default=0, min=0, options={'ANIMATABLE'}, update=updateNode)
 
-    def draw_buttons(self, context, layout):
-        layout.prop(self, "mindist", text="Minimum dist")
-        layout.prop(self, "maxdist", text="Maximum dist")
-        layout.prop(self, "maxNum", text="max edge count")
-        layout.prop(self, "skip", text="skip first n")
-        pass
-
     def init(self, context):
         self.inputs.new('VerticesSocket', 'Verts', 'Verts')
-        self.inputs.new('StringsSocket', 'mindist', 'mindist')
-        self.inputs.new('StringsSocket', 'maxdist', 'maxdist')
-        self.inputs.new('StringsSocket', 'maxNum', 'maxNum')
-        self.inputs.new('StringsSocket', 'skip', 'skip')
+        self.inputs.new('StringsSocket', 'mindist', 'mindist').prop_name = 'mindist'
+        self.inputs.new('StringsSocket', 'maxdist', 'maxdist').prop_name = 'maxdist'
+        self.inputs.new('StringsSocket', 'maxNum', 'maxNum').prop_name = 'maxNum'
+        self.inputs.new('StringsSocket', 'skip', 'skip').prop_name = 'skip'
 
         self.outputs.new('StringsSocket', 'Edges', 'Edges')
 
@@ -118,6 +111,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvKDTreeEdgesNode)
-
-if __name__ == "__main__":
-    register()
