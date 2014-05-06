@@ -85,23 +85,13 @@ class SvDefaultScriptTemplate(bpy.types.Operator):
     script_name = StringProperty(name='name', default='')
 
     def execute(self, context):
-        if self.script_name in bpy.data.texts:
-            msg = 'template exists already'
-            self.report({"WARNING"}, msg)
-            return {'CANCELLED'}
-
-        new_template = bpy.data.texts.new(self.script_name)
-
+        # if a script is already in text.data list then 001 .002
+        # are automatically append by ops.text.open
         sv_path = os.path.dirname(os.path.realpath(__file__))
         script_dir = "node_script_templates"
         path_to_template = os.path.join(sv_path, script_dir, self.script_name)
-
-        with open(path_to_template) as f:
-            template_str = f.read()
-            bpy.data.texts[self.script_name].from_string(template_str)
-            return {'FINISHED'}
-
-        return {'CANCELLED'}
+        bpy.ops.text.open(filepath=path_to_template, internal=True)
+        return {'FINISHED'}
 
 
 class SvScriptUICallbackOp(bpy.types.Operator):
@@ -394,7 +384,3 @@ def unregister():
     bpy.utils.unregister_class(SvScriptNode)
     bpy.utils.unregister_class(SvScriptNodeCallbackOp)
     bpy.utils.unregister_class(SvScriptUICallbackOp)
-
-
-# if __name__ == "__main__":
-#     register()
