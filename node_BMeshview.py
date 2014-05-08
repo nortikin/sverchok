@@ -74,7 +74,7 @@ def make_bmesh_geometry(context, verts, edges, faces, matrix, origin, name):
     bm.free()  # free and prevent further access
 
     sv_object.hide_select = True
-    print('origin:', origin)
+    #print('origin:', origin)
     sv_object.location = origin
 
     # apply matrices if necessary
@@ -249,7 +249,7 @@ class BmeshViewerNode(Node, SverchCustomTreeNode):
                 origin = last_origin
 
             mesh_name = self.basemesh_name + "_" + str(obj_index)
-            print('origin here:', origin)
+            #print('origin here:', origin)
             make_bmesh_geometry(C, Verts, Edges, Faces, matrix, origin, mesh_name)
 
     def update_socket(self, context):
