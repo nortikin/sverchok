@@ -150,6 +150,8 @@ class IndexViewerNode(Node, SverchCustomTreeNode):
 
     def update(self):
         inputs = self.inputs
+        
+        # if you change this change in free() also
         n_id = hash(self)
         # end early
         if not ('vertices' in inputs) and not ('matrix' in inputs):
@@ -197,15 +199,15 @@ class IndexViewerNode(Node, SverchCustomTreeNode):
             bg = self.draw_bg
             settings = self.get_settings()
             IV.callback_enable(
-                self, draw_verts, draw_edges, draw_faces, draw_matrix, bg, settings.copy())
+                n_id, draw_verts, draw_edges, draw_faces, draw_matrix, bg, settings.copy())
         else:
-            IV.callback_disable(self)
+            IV.callback_disable(n_id)
 
     def update_socket(self, context):
         self.update()
 
     def free(self):
-        IV.callback_disable(self)
+        IV.callback_disable(hash(self))
 
 
 def register():
