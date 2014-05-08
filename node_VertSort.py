@@ -35,6 +35,7 @@ class SvVertSortNode(Node, SverchCustomTreeNode):
             self.inputs.new('StringsSocket', 'Index Data', 'Index Data')
         
         updateNode(self,[])        
+        
 
     modes = [("XYZ",    "XYZ", "X Y Z Sort",    1),
              ("DIST",   "Dist", "Distance",     2),
@@ -134,12 +135,12 @@ class SvVertSortNode(Node, SverchCustomTreeNode):
                         
                 for v,p,m in zip(Vector_generate(verts),poly_edge,mat_iter):
                     axis = m * Vector((0,0,1)) 
-                    axis_norm = m * Vector((-1,0,0))
+                    axis_norm = m * Vector((1,0,0))
                     base_point = m * Vector((0,0,0))
                     intersect_d = [intersect_point_line(v_c,base_point,axis) for v_c in v]
                     rotate_d = [ f(axis,(axis_norm+v_l[0]).rotation_difference(v_c)) for v_c, v_l in zip(v,intersect_d)]
-                    s_v = ((data[1], data[0][1], i) for i, data in enumerate(zip(intersect_d,rotate_d)))
-                    s_v = sorted(s_v, key=itemgetter(1,0))
+                    s_v = ((data[0][1], data[1], i) for i, data in enumerate(zip(intersect_d,rotate_d)))
+                    s_v = sorted(s_v, key=itemgetter(0,1))
                     
                     verts_out.append([v[i[-1]].to_tuple() for i in s_v])
                     
