@@ -74,7 +74,6 @@ def make_bmesh_geometry(context, verts, edges, faces, matrix, origin, name):
     bm.free()  # free and prevent further access
 
     sv_object.hide_select = True
-    #print('origin:', origin)
     sv_object.location = origin
 
     # apply matrices if necessary
@@ -143,7 +142,7 @@ class BmeshViewerNode(Node, SverchCustomTreeNode):
         self.inputs.new('StringsSocket', 'edges', 'edges')
         self.inputs.new('StringsSocket', 'faces', 'faces')
         self.inputs.new('MatrixSocket', 'matrix', 'matrix')
-        self.inputs.new('VerticesSocket', 'origins', 'origins')
+        self.inputs.new('VerticesSocket', 'obj.location', 'obj.location')
 
     def draw_buttons(self, context, layout):
         row = layout.row(align=True)
@@ -170,44 +169,35 @@ class BmeshViewerNode(Node, SverchCustomTreeNode):
         row = layout.row()
         row.prop(self, "basemesh_name", text="")
 
+    def get_corrected_data(self, socket_name, socket_type):
+        inputs = self.inputs
+        socket = inputs[socket_name].links[0].from_socket
+        if isinstance(socket, socket_type):
+            socket_in = SvGetSocketAnyType(self, inputs[socket_name])
+            return dataCorrect(socket_in)
+        else:
+            return []
+
     def get_geometry_from_sockets(self):
         inputs = self.inputs
+        mverts, medges, mfaces, mmatrix, mobj_loc = [], [], [], [], [[]]
 
-        iv_links = inputs['vertices'].links
-        mverts, medges, mfaces, mmatrix, morigins = [], [], [], [], [[]]
+        mverts = self.get_corrected_data('vertices', VerticesSocket)
 
-        # gather vertices from input
-        if isinstance(iv_links[0].from_socket, VerticesSocket):
-            propv = SvGetSocketAnyType(self, inputs['vertices'])
-            mverts = dataCorrect(propv)
+        # could be looped.
+        if 'matrix' in inputs and inputs['matrix'].links:
+            mmatrix = self.get_corrected_data('matrix', MatrixSocket)
 
-        # matrix might be operating on vertices, check and act on.
-        if 'matrix' in inputs:
-            im_links = inputs['matrix'].links
+        if 'edges' in inputs and inputs['edges'].links:
+            medges = self.get_corrected_data('edges', StringsSocket)
 
-            # find the transform matrices
-            if im_links and isinstance(im_links[0].from_socket, MatrixSocket):
-                propm = SvGetSocketAnyType(self, inputs['matrix'])
-                mmatrix = dataCorrect(propm)
+        if 'faces' in inputs and inputs['faces'].links:
+            mfaces = self.get_corrected_data('faces', StringsSocket)
 
-        data_feind = []
-        for socket in ['edges', 'faces']:
-            try:
-                propm = SvGetSocketAnyType(self, inputs[socket])
-                input_stream = dataCorrect(propm)
-            except:
-                input_stream = []
-            finally:
-                data_feind.append(input_stream)
+        if 'obj.location' in inputs and inputs['obj.location'].links:
+            mobj_loc = self.get_corrected_data('obj.location', VerticesSocket)
 
-        if 'origins' in inputs and inputs['origins'].links:
-            # gather origin vectors from input
-            origins_socket = inputs['origins'].links[0].from_socket
-            if isinstance(origins_socket, VerticesSocket):
-                origins_in = SvGetSocketAnyType(self, inputs['origins'])
-                morigins = dataCorrect(origins_in)
-
-        return mverts, data_feind[0], data_feind[1], mmatrix, morigins[0]
+        return mverts, medges, mfaces, mmatrix, mobj_loc[0]
 
     def get_structure(self, stype, sindex):
         if not stype:
@@ -233,24 +223,26 @@ class BmeshViewerNode(Node, SverchCustomTreeNode):
         if not self.activate or not ('vertices' in self.inputs):
             return
 
+        if not self.inputs['vertices'].links:
+            return
+
         C = bpy.context
         r = self.get_geometry_from_sockets()
-        mverts, medges, mfaces, mmatrix, morigins = r
+        mverts, medges, mfaces, mmatrix, mobj_loc = r
 
-        last_origin = (0, 0, 0)
+        last_objloc = (0, 0, 0)
         for obj_index, Verts in enumerate(mverts):
             Edges = self.get_structure(medges, obj_index)
             Faces = self.get_structure(mfaces, obj_index)
             matrix = self.get_structure(mmatrix, obj_index)
-            origin = self.get_structure(morigins, obj_index)
-            if origin:
-                last_origin = origin
+            objloc = self.get_structure(mobj_loc, obj_index)
+            if objloc:
+                last_objloc = objloc
             else:
-                origin = last_origin
+                objloc = last_objloc
 
             mesh_name = self.basemesh_name + "_" + str(obj_index)
-            #print('origin here:', origin)
-            make_bmesh_geometry(C, Verts, Edges, Faces, matrix, origin, mesh_name)
+            make_bmesh_geometry(C, Verts, Edges, Faces, matrix, objloc, mesh_name)
 
     def update_socket(self, context):
         self.update()
