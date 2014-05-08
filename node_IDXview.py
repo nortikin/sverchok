@@ -167,7 +167,7 @@ class IndexViewerNode(Node, SverchCustomTreeNode):
         iv_links = inputs['vertices'].links
 
         if self.activate and iv_links:
-            IV.callback_disable(self)
+            IV.callback_disable(n_id)
             draw_verts, draw_matrix = [], []
 
             # gather vertices from input
