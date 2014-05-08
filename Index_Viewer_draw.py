@@ -27,8 +27,6 @@ from mathutils import Vector, Matrix
 import bmesh
 from bmesh.types import BMFace
 
-import node_Viewer
-from node_Viewer import *
 from util import *
 
 SpaceView3D = bpy.types.SpaceView3D
@@ -97,27 +95,26 @@ def tag_redraw_all_view3d():
                         region.tag_redraw()
 
 
-def callback_enable(node, draw_verts, draw_edges, draw_faces, draw_matrix, draw_bg):
-    handle = handle_read(hash(node))
+def callback_enable(n_id, draw_verts, draw_edges, draw_faces, draw_matrix, draw_bg, settings):
+    handle = handle_read(n_id)
     if handle[0]:
         return
-
     handle_pixel = SpaceView3D.draw_handler_add(
         draw_callback_px, (
-            node, draw_verts, draw_edges, draw_faces, draw_matrix, draw_bg),
+           n_id, draw_verts, draw_edges, draw_faces, draw_matrix, draw_bg, settings),
         'WINDOW', 'POST_PIXEL')
-    handle_write(hash(node), handle_pixel)
+    handle_write(n_id, handle_pixel)
     tag_redraw_all_view3d()
 
 
-def callback_disable(node):
-    handle = handle_read(hash(node))
+def callback_disable(n_id):
+    handle = handle_read(n_id)
     if not handle[0]:
         return
 
     handle_pixel = handle[1]
     SpaceView3D.draw_handler_remove(handle_pixel, 'WINDOW')
-    handle_delete(hash(node))
+    handle_delete(n_id)
     tag_redraw_all_view3d()
 
 
@@ -128,7 +125,7 @@ def callback_disable_all():
         callback_disable(name)
 
 
-def draw_callback_px(node, draw_verts, draw_edges, draw_faces, draw_matrix, draw_bg):
+def draw_callback_px(n_id, draw_verts, draw_edges, draw_faces, draw_matrix, draw_bg, settings):
     context = bpy.context
 
     # ensure data or empty lists.
@@ -138,19 +135,24 @@ def draw_callback_px(node, draw_verts, draw_edges, draw_faces, draw_matrix, draw
     data_matrix = Matrix_generate(draw_matrix) if draw_matrix else []
 
     if (data_vector, data_matrix) == (0, 0):
-        callback_disable(node.name)
+    #    callback_disable(n_id)
+    #   not sure that it is safe to disable the callback in callback
+    #   just return instead. 
         return
 
     region = context.region
     region3d = context.space_data.region_3d
 
-    vert_idx_color = node.numid_verts_col
-    edge_idx_color = node.numid_edges_col
-    face_idx_color = node.numid_faces_col
-    vert_bg_color = node.bg_verts_col
-    edge_bg_color = node.bg_edges_col
-    face_bg_color = node.bg_faces_col
-
+    vert_idx_color = settings['numid_verts_col']
+    edge_idx_color = settings['numid_edges_col']
+    face_idx_color = settings['numid_faces_col']
+    vert_bg_color = settings['bg_verts_col']
+    edge_bg_color = settings['bg_edges_col']
+    face_bg_color = settings['bg_faces_col']
+    display_vert_index = settings['display_vert_index']
+    display_edge_index = settings['display_edge_index']
+    display_face_index = settings['display_face_index']
+    
     font_id = 0
     text_height = 13
     blf.size(font_id, text_height, 72)  # should check prefs.dpi
@@ -203,11 +205,11 @@ def draw_callback_px(node, draw_verts, draw_edges, draw_faces, draw_matrix, draw
             matrix = data_matrix[obj_index]
             final_verts = [matrix * v for v in verts]
 
-        if node.display_vert_index:
+        if display_vert_index:
             for idx, v in enumerate(final_verts):
                 draw_index(vert_idx_color, vert_bg_color, idx, v)
 
-        if data_edges and node.display_edge_index:
+        if data_edges and display_edge_index:
             for edge_details in enumerate(data_edges[obj_index]):
                 edge_index, (idx1, idx2) = edge_details
                 v1 = Vector(final_verts[idx1])
@@ -215,7 +217,7 @@ def draw_callback_px(node, draw_verts, draw_edges, draw_faces, draw_matrix, draw
                 loc = v1 + ((v2 - v1) / 2)
                 draw_index(edge_idx_color, edge_bg_color, edge_index, loc)
 
-        if data_faces and node.display_face_index:
+        if data_faces and display_face_index:
             for face_index, f in enumerate(data_faces[obj_index]):
                 verts = [Vector(final_verts[idx]) for idx in f]
                 median = calc_median(verts)

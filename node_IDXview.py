@@ -27,42 +27,48 @@ class IndexViewerNode(Node, SverchCustomTreeNode):
 
     display_vert_index = BoolProperty(
         name="Vertices", description="Display vertex indices",
-        default=True)
+        default=True , update=updateNode)
     display_edge_index = BoolProperty(
-        name="Edges", description="Display edge indices")
+        name="Edges", description="Display edge indices", update=updateNode)
     display_face_index = BoolProperty(
-        name="Faces", description="Display face indices")
+        name="Faces", description="Display face indices", update=updateNode)
 
     # color props
     bg_edges_col = FloatVectorProperty(
         name="bg_edges", description='',
         size=4, min=0.0, max=1.0,
-        default=(.2, .2, .2, 1.0), subtype='COLOR')
+        default=(.2, .2, .2, 1.0), subtype='COLOR'
+        ,update=updateNode)
 
     bg_faces_col = FloatVectorProperty(
         name="bg_faces", description='',
         size=4, min=0.0, max=1.0,
-        default=(.2, .2, .2, 1.0), subtype='COLOR')
+        default=(.2, .2, .2, 1.0), subtype='COLOR'
+        ,update=updateNode)
 
     bg_verts_col = FloatVectorProperty(
         name="bg_verts", description='',
         size=4, min=0.0, max=1.0,
-        default=(.2, .2, .2, 1.0), subtype='COLOR')
+        default=(.2, .2, .2, 1.0), subtype='COLOR'
+        ,update=updateNode)
 
     numid_edges_col = FloatVectorProperty(
         name="numid_edges", description='',
         size=4, min=0.0, max=1.0,
-        default=(1.0, 1.0, 0.1, 1.0), subtype='COLOR')
+        default=(1.0, 1.0, 0.1, 1.0), subtype='COLOR'
+        ,update=updateNode)
 
     numid_faces_col = FloatVectorProperty(
         name="numid_faces", description='',
         size=4, min=0.0, max=1.0,
-        default=(1.0, .8, .8, 1.0), subtype='COLOR')
+        default=(1.0, .8, .8, 1.0), subtype='COLOR'
+        ,update=updateNode)
 
     numid_verts_col = FloatVectorProperty(
         name="numid_verts", description='',
         size=4, min=0.0, max=1.0,
-        default=(1, 1, 1, 1.0), subtype='COLOR')
+        default=(1, 1, 1, 1.0), subtype='COLOR'
+        ,update=updateNode)
 
     def init(self, context):
         self.inputs.new('VerticesSocket', 'vertices', 'vertices')
@@ -83,6 +89,23 @@ class IndexViewerNode(Node, SverchCustomTreeNode):
         row.prop(self, "display_vert_index", toggle=True)
         row.prop(self, "display_edge_index", toggle=True)
         row.prop(self, "display_face_index", toggle=True)
+    
+    def get_settings(self):
+        '''Produce a dict of settings for the callback'''
+        settings = {}
+        # A copy is needed, we can't have reference to the 
+        # node in a callback, it will crash blender on undo
+        settings['bg_edges_col'] = self.bg_edges_col[:]
+        settings['bg_faces_col'] = self.bg_faces_col[:]
+        settings['bg_verts_col'] = self.bg_verts_col[:]
+        settings['numid_edges_col'] = self.numid_edges_col[:] 
+        settings['numid_faces_col'] = self.numid_faces_col[:] 
+        settings['numid_verts_col'] = self.numid_verts_col[:] 
+        settings['display_vert_index'] = self.display_vert_index
+        settings['display_edge_index'] = self.display_edge_index
+        settings['display_face_index'] = self.display_face_index
+        
+        return settings    
 
     def draw_buttons_ext(self, context, layout):
         row = layout.row(align=True)
@@ -127,15 +150,15 @@ class IndexViewerNode(Node, SverchCustomTreeNode):
 
     def update(self):
         inputs = self.inputs
-
+        n_id = hash(self)
         # end early
         if not ('vertices' in inputs) and not ('matrix' in inputs):
-            IV.callback_disable(self)
+            IV.callback_disable(n_id)
             return
 
         # end if tree status is set to not show
         if not self.id_data.sv_show:
-            IV.callback_disable(self)
+            IV.callback_disable(n_id)
             return
 
         # alias in case it is present
@@ -172,8 +195,9 @@ class IndexViewerNode(Node, SverchCustomTreeNode):
             draw_edges, draw_faces = data_feind
 
             bg = self.draw_bg
+            settings = self.get_settings()
             IV.callback_enable(
-                self, draw_verts, draw_edges, draw_faces, draw_matrix, bg)
+                self, draw_verts, draw_edges, draw_faces, draw_matrix, bg, settings.copy())
         else:
             IV.callback_disable(self)
 
