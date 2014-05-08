@@ -187,7 +187,7 @@ class ViewerNode(Node, SverchCustomTreeNode):
         
         if cache_viewer_baker[n_id+'v'] or cache_viewer_baker[n_id+'m']:
             callback_enable(n_id, cache_viewer_baker[n_id+'v'], cache_viewer_baker[n_id+'ep'], \
-                cache_viewer_baker[n_id+'m'], self.Vertex_show, self.color_view, self.transparant, self.shading)
+                cache_viewer_baker[n_id+'m'], self.Vertex_show, self.color_view.copy(), self.transparant, self.shading)
             
             self.use_custom_color=True
             self.color = (1,0.3,0)
