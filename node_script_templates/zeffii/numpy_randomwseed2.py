@@ -1,5 +1,5 @@
 import numpy as np
-import inspect
+# import inspect
 
 def sv_main(b=89, n_items=1500, q_factor_x=2, q_factor_y=2, seed=6, a=90):
 
@@ -37,10 +37,10 @@ def sv_main(b=89, n_items=1500, q_factor_x=2, q_factor_y=2, seed=6, a=90):
 
     return in_sockets, out_sockets, ui_operators
 
-f = sv_main
-a, b, ops = sv_main()
+#f = sv_main
+#a, b, ops = sv_main()
 # f.button1 = ops[0]
 
 #print(f.button1[0])
-setattr(f, ops[0][0], ops[0][1])
-f.button1()
+#setattr(f, ops[0][0], ops[0][1])
+#f.button1()
