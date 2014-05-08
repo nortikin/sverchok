@@ -150,6 +150,7 @@ def make_categories():
             NodeItem("SvFrameInfoNode", label="Frame info"),
             NodeItem("ToolsNode", label="Tools"),
             NodeItem("NoteNode", label="Note"),
+            NodeItem("BmeshViewerNode", label="BMesh View (Beta)"),
             ]),
         SverchNodeCategory("SVERCHOK_L", "SVERCHOK list", items=[
             # lists nodes
