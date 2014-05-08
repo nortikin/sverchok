@@ -174,7 +174,7 @@ class BmeshViewerNode(Node, SverchCustomTreeNode):
         inputs = self.inputs
 
         iv_links = inputs['vertices'].links
-        mverts, medges, mfaces, mmatrix, morigins = [], [], [], [], []
+        mverts, medges, mfaces, mmatrix, morigins = [], [], [], [], [[]]
 
         # gather vertices from input
         if isinstance(iv_links[0].from_socket, VerticesSocket):
