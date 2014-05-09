@@ -66,7 +66,8 @@ ui_operators = [
     ['button_name', func1]
 ] 
 ```
-Here `func1` is the function you want to call when pressing the button.
+- Here `func1` is the function you want to call when pressing the button.
+- Each `"button_name"` is the text you want to appear on the button. For simplicity it must be unique and a valid variable name. Use alphanumerics only and separate words with single underscores if you need.
 
 #### `return`
 
