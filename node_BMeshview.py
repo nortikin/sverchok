@@ -74,7 +74,7 @@ def make_bmesh_geometry(context, name, obj_location, verts, edges, faces, matrix
 
     # apply matrices if necessary
     if matrix:
-        sv_object.data.transform(matrix)
+        sv_object.matrix_local = list(zip(*matrix))
 
 
 class SvBmeshViewOp(bpy.types.Operator):
