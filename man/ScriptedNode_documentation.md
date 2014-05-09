@@ -28,7 +28,7 @@ At present all scripts for SN must (strict list - general):
 - `sv_main` must take 1 or more arguments (even if you don't use it)
 - all function arguments for `sv_main` must have defaults.
 - each script shall define 'in_sockets' and 'out_sockets'
-- TextEditor has automatic `in_sockets` list creation (`Ctrl+I -> Generate in_sockets`) when the key cursor is over the `sv_main` line.
+- TextEditor has automatic `in_sockets` list creation (`Ctrl+I -> Generate in_sockets`) when the key cursor is over `sv_main`.
 - 'ui_operators' is an optional third output parameter
 
 #### `in_sockets`
@@ -51,9 +51,9 @@ out_sockets = [
 ]
 ```
 
-#### `in_socket and out_socket`
+#### `in_sockets and out_sockets`
 
-- Each `socket name on ui` shall be unique.
+- Each `"socket name on ui"` string shall be unique.
 - `type` are currently limited to
    - 's' : floats, ints, edges, faces
    - 'v' : vertices, vectors
