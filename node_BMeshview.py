@@ -22,10 +22,6 @@ def default_mesh(name):
 def bmesh_from_pydata(verts=[], edges=[], faces=[]):
     ''' verts is necessary, edges/faces are optional '''
 
-    if not verts:
-        print("verts data seems empty")
-        return
-
     bm = bmesh.new()
     [bm.verts.new(co) for co in verts]
     bm.verts.index_update()
@@ -49,7 +45,7 @@ def bmesh_from_pydata(verts=[], edges=[], faces=[]):
     return bm
 
 
-def make_bmesh_geometry(context, verts, edges, faces, matrix, origin, name):
+def make_bmesh_geometry(context, name, obj_location, verts, edges, faces, matrix):
     # no verts. no processing.
     if not verts:
         return
@@ -74,7 +70,7 @@ def make_bmesh_geometry(context, verts, edges, faces, matrix, origin, name):
     bm.free()  # free and prevent further access
 
     sv_object.hide_select = True
-    sv_object.location = origin
+    sv_object.location = obj_location
 
     # apply matrices if necessary
     if matrix:
@@ -184,7 +180,7 @@ class BmeshViewerNode(Node, SverchCustomTreeNode):
 
         mverts = self.get_corrected_data('vertices', VerticesSocket)
 
-        # could be looped.
+        # could be looped, yielded..
         if 'matrix' in inputs and inputs['matrix'].links:
             mmatrix = self.get_corrected_data('matrix', MatrixSocket)
 
@@ -227,22 +223,22 @@ class BmeshViewerNode(Node, SverchCustomTreeNode):
             return
 
         C = bpy.context
-        r = self.get_geometry_from_sockets()
-        mverts, medges, mfaces, mmatrix, mobj_loc = r
+        mverts, *mrest = self.get_geometry_from_sockets()
 
-        last_objloc = (0, 0, 0)
+        def get_all_structures(obj_index):
+            return [self.get_structure(geom, obj_index) for geom in mrest]
+
+        location = (0, 0, 0)
         for obj_index, Verts in enumerate(mverts):
-            Edges = self.get_structure(medges, obj_index)
-            Faces = self.get_structure(mfaces, obj_index)
-            matrix = self.get_structure(mmatrix, obj_index)
-            objloc = self.get_structure(mobj_loc, obj_index)
-            if objloc:
-                last_objloc = objloc
-            else:
-                objloc = last_objloc
+            if not Verts:
+                continue
+
+            *edges_faces_matrix, obj_location = get_all_structures(obj_index)
+            if obj_location:
+                location = obj_location
 
             mesh_name = self.basemesh_name + "_" + str(obj_index)
-            make_bmesh_geometry(C, Verts, Edges, Faces, matrix, objloc, mesh_name)
+            make_bmesh_geometry(C, mesh_name, location, Verts, *edges_faces_matrix)
 
     def update_socket(self, context):
         self.update()
