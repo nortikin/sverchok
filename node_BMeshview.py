@@ -226,7 +226,8 @@ class BmeshViewerNode(Node, SverchCustomTreeNode):
         mverts, *mrest = self.get_geometry_from_sockets()
 
         def get_all_structures(obj_index):
-            return [self.get_structure(geom, obj_index) for geom in mrest]
+            for geom in mrest:
+                yield self.get_structure(geom, obj_index)
 
         location = (0, 0, 0)
         for obj_index, Verts in enumerate(mverts):
