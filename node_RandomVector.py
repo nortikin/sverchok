@@ -28,36 +28,34 @@ class RandomVectorNode(Node, SverchCustomTreeNode):
         # inputs
         if 'Count' in self.inputs and self.inputs['Count'].links and \
             type(self.inputs['Count'].links[0].from_socket) == bpy.types.StringsSocket:
-            Coun = SvGetSocketAnyType(self,self.inputs['Count'])
+            Coun = SvGetSocketAnyType(self,self.inputs['Count'])[0]
         else:
-            Coun = [[self.count_inner]]
+            Coun = [self.count_inner]
             
         if 'Seed' in self.inputs and self.inputs['Seed'].links and \
              type(self.inputs['Seed'].links[0].from_socket) == bpy.types.StringsSocket:
-            tmp = SvGetSocketAnyType(self,self.inputs['Seed'])
-            Seed = tmp[0][0]
+            Seed = SvGetSocketAnyType(self,self.inputs['Seed'])[0]
         else:
-            Seed = self.seed
+            Seed = [self.seed]
       
         
         # outputs 
         if 'Random' in self.outputs and self.outputs['Random'].links:
             Random = []          
+            param=match_long_repeat([Coun,Seed])
             # set seed, protect against float input
             # seed = 0 is special value for blender which unsets the seed value
             # and starts to use system time making the random values unrepeatable.
             # So when seed = 0 we use a random value far from 0, generated used random.org
-            int_seed = int(round(Seed))
-            if int_seed:
-                seed_set(int_seed)
-            else:
-                seed_set(140230)  
-                
-            # Coun[0], only takes first list
-            for number in Coun[0]:
-                if number > 0:
-                    Random.append( [random_unit_vector().to_tuple() \
-                                        for i in range(int(number))])
+            for c,s in zip(*param):
+                int_seed = int(round(s))
+                if int_seed:
+                    seed_set(int_seed)
+                else:
+                    seed_set(140230)  
+                                    
+                Random.append([random_unit_vector().to_tuple() for i in range(int(max(1,c)))])
+            
             SvSetSocketAnyType(self,'Random',Random)
 
     
