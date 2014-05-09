@@ -23,19 +23,22 @@ def bmesh_from_pydata(verts=[], edges=[], faces=[]):
     ''' verts is necessary, edges/faces are optional '''
 
     bm = bmesh.new()
-    [bm.verts.new(co) for co in verts]
+    add_vert = bm.verts.new
+    [add_vert(co) for co in verts]
     bm.verts.index_update()
 
     if faces:
+        add_face = bm.faces.new
         for face in faces:
-            bm.faces.new(tuple(bm.verts[i] for i in face))
+            add_face(tuple(bm.verts[i] for i in face))
         bm.faces.index_update()
 
     if edges:
+        add_edge = bm.edges.new
         for edge in edges:
             edge_seq = tuple(bm.verts[i] for i in edge)
             try:
-                bm.edges.new(edge_seq)
+                add_edge(edge_seq)
             except ValueError:
                 # edge exists!
                 pass
@@ -174,7 +177,7 @@ class BmeshViewerNode(Node, SverchCustomTreeNode):
 
     def get_geometry_from_sockets(self):
         inputs = self.inputs
-        mverts, medges, mfaces, mmatrix, mobj_loc = [], [], [], [], [[]]
+        mverts, medges, mfaces, mmatrix = [], [], [], []
 
         mverts = self.get_corrected_data('vertices', VerticesSocket)
 
@@ -231,6 +234,29 @@ class BmeshViewerNode(Node, SverchCustomTreeNode):
             data = get_edges_faces_matrices(obj_index)
             mesh_name = self.basemesh_name + "_" + str(obj_index)
             make_bmesh_geometry(C, mesh_name, Verts, *data)
+
+        print(obj_index)
+        self.remove_non_updated_objects(obj_index, self.basemesh_name)
+
+    def remove_non_updated_objects(self, obj_index, _name):
+
+        meshes = bpy.data.meshes
+        objects = bpy.data.objects
+        objs = [obj for obj in bpy.data.objects if obj.type == 'MESH']
+        objs = [obj for obj in objs if obj.name.startswith(_name)]
+        objs = [obj.name for obj in objs if int(obj.name.split("_")[-1]) > obj_index]
+
+        # select and finally remove all excess objects
+        for object_name in objs:
+            objects[object_name].hide_select = False
+            objects[object_name].select = True
+        bpy.ops.object.delete()
+
+        # delete associated meshes
+        for object_name in objs:
+            meshes.remove(meshes[object_name])
+
+        # fingers crossed.
 
     def update_socket(self, context):
         self.update()
