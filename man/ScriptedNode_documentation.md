@@ -81,7 +81,7 @@ return in_sockets, out_sockets, ui_operators
 ### Examples
 
 The best way to get familiarity with SN is to go through the templates folder. They are intended to be lightweight and educational, but some of them will show
-advanced use cases. The [thread on github]() may also provide some pictorial insights and animations.
+advanced use cases. The [thread on github](https://github.com/nortikin/sverchok/issues/85) may also provide some pictorial insights and animations.
 
 Sverchok includes a plugin in TextEditor which conveniently adds `sv NodeScripts` to the Templates menu.
 
