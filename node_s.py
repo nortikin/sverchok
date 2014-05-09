@@ -202,7 +202,7 @@ def make_categories():
             NodeItem("SvScriptNode", label="Scripted Node")            
             ]),
         SverchNodeCategory("SVERCHOK_V", "SVERCHOK vector", items=[
-            # vectors and matrixes nodes
+            # Vector nodes
             NodeItem("GenVectorsNode", label="Vector in"),
             NodeItem("VectorsOutNode", label="Vector out"),
             NodeItem("VectorNormalNode", label="Vector' Normal"),
@@ -213,12 +213,15 @@ def make_categories():
             NodeItem("EvaluateLineNode", label="Vectors Evaluate"),
             NodeItem("SvVertSortNode", label="Vertices Sort"),
             NodeItem("SvNoiseNode", label="Noise"),
+        #    ]),
+        #SverchNodeCategory("SVERCHOK_Ma", "SVERCHOK matrix", items=[
+        #    # Matrix nodes
             NodeItem("MatrixApplyNode", label="Matrix Apply"),
             NodeItem("MatrixGenNode", label="Matrix in"),
             NodeItem("MatrixOutNode", label="Matrix out"),
+            NodeItem("SvMatrixValueIn", label="Matrix Input"),
             NodeItem("MatrixDeformNode", label="Matrix Deform"),
             NodeItem("MatrixShearNode", label="Shear Matrix"),
-            
             NodeItem("MatrixInterpolationNode", label="Matrix Interpolation"),
             ]),
         SverchNodeCategory("SVERCHOK_M", "SVERCHOK modifier", items=[
