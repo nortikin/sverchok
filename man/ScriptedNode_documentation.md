@@ -28,9 +28,9 @@ At present all scripts for SN must (strict list - general):
 - `sv_main` must take 1 or more arguments (even if you don't use it)
 - all function arguments for `sv_main` must have defaults.
 - each script shall define 'in_sockets' and 'out_sockets'
+- 'ui_operators' is an optional third output parameter
 - TextEditor has automatic `in_sockets` list creation (`Ctrl+I -> Generate in_sockets`) when the key cursor is over `sv_main`.  
     ![showit](https://cloud.githubusercontent.com/assets/619340/2854040/e6351180-d14b-11e3-8055-b3d8c707675d.gif) 
-- 'ui_operators' is an optional third output parameter
 
 #### `in_sockets`
 
@@ -156,3 +156,20 @@ This is stupid and has to be addressed. However, until such time there is an exa
 SN iteration 1 is itself a prototype and is a testing ground for iteration 2. The intention was always to provide multiple programming language interfaces, initially coffeescript because it's a lightweight language with crazy expressive capacity.
 
 iteration 2 might work a little different, perhap working from within a class but trying to do extra introspection to reduce as much boilerplate as is reasonably possible.
+
+The only reason in_sockets needs to be declared at the moment is if you want to have socket names that are different than the function arguments. It would be possible to allow `sv_main()` to take zero arguments too. So possible configurations should be:
+
+```text
+
+sv_main()
+sv_main() + out_sockets
+sv_main() + ui_operators
+sv_main(a=[],..)
+sv_main(a=[],..) + in_sockets
+sv_main(a=[],..) + out_sockets
+sv_main(a=[],..) + in_socket + out_sockets
+
+..etc, with ui_operators optional to all combinations
+```
+
+That's it for now.
