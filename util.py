@@ -253,7 +253,8 @@ def sv_zip(*iterables):
 def dataCorrect(data, nominal_dept=2):
     dept = levelsOflist(data)
     output = []
-    if dept < 2:
+
+    if (dept is None) or dept < 2:
         return [dept, data]
     else:
         output = dataStandart(data, dept, nominal_dept)
