@@ -5,7 +5,7 @@ from bpy.types import NodeTree, Node, NodeSocket, NodeSocketStandard
 import nodeitems_utils
 from nodeitems_utils import NodeCategory, NodeItem
 from mathutils import Matrix
-from util import makeTreeUpdate2, speedUpdate, SvGetSocketInfo
+from util import makeTreeUpdate2, speedUpdate, SvGetSocketInfo, SvGetSocket,SvSetSocket
 from bpy.app.handlers import persistent
 
 class SvColors(bpy.types.PropertyGroup):
@@ -78,6 +78,17 @@ class StringsSocket(NodeSocketStandard):
         bl_idname = "StringsSocket"
         bl_label = "Strings Socket"
         prop_name = StringProperty(default='')
+        
+        def sv_get(self,default=None):
+            if self.links and not self.is_output:
+                return SvGetSocket(self)
+            elif self.prop_name:
+                return [[self.node[self.prop_name]]]
+            else:
+                return default
+                
+        def sv_set(data):
+            SvSetSocket(self,data)
         
         def draw(self, context, layout, node, text):
             if not self.is_output and not self.is_linked and self.prop_name:
