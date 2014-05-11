@@ -91,6 +91,9 @@ class StringsSocket(NodeSocketStandard):
             SvSetSocket(self,data)
         
         def draw(self, context, layout, node, text):
+            if self.prop_name:
+                text=self.node.rna_type.properties[self.prop_name].name
+                
             if not self.is_output and not self.is_linked and self.prop_name:
                 layout.prop(node,self.prop_name)
             elif self.is_linked:
