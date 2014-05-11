@@ -183,6 +183,7 @@ def make_categories():
             NodeItem("ListSortNode", label="List Sort"),
             NodeItem("ListShuffleNode", label="List Shuffle"),
             NodeItem("ListMatchNode", label="List Match"),
+            NodeItem("GenListRangeIntNode", label="List Range Integers"),
             NodeItem("ConverterNode", label="SocketConvert"),
             ]),
         SverchNodeCategory("SVERCHOK_N", "SVERCHOK number", items=[
