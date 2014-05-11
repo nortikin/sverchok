@@ -83,7 +83,7 @@ class StringsSocket(NodeSocketStandard):
             if self.links and not self.is_output:
                 return SvGetSocket(self)
             elif self.prop_name:
-                return [[self.node[self.prop_name]]]
+                return [[getattr(self.node,self.prop_name)]]
             else:
                 return default
                 
