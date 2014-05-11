@@ -107,12 +107,14 @@ class GenListRangeInt(Node, SverchCustomTreeNode):
         if 'Start' in inputs and inputs['Start'].links:
             tmp = SvGetSocketAnyType(self, inputs['Start'])
             Start = tmp[0][0]
+            # Start = inputs['Start'].sv_get()
         else:
             Start = self.start_
 
         if 'Step' in inputs and inputs['Step'].links:
             tmp = SvGetSocketAnyType(self, inputs['Step'])
             Step = tmp[0][0]
+            # Step = inputs['Step'].sv_get()
         else:
             Step = self.step_
 
@@ -121,6 +123,7 @@ class GenListRangeInt(Node, SverchCustomTreeNode):
             if 'Stop' in inputs and inputs['Stop'].links:
                 tmp = SvGetSocketAnyType(self, inputs['Stop'])
                 Stop = tmp[0][0]
+                #Stop = inputs['Stop'].sv_get()
             else:
                 Stop = self.stop_
 
@@ -131,6 +134,7 @@ class GenListRangeInt(Node, SverchCustomTreeNode):
             if 'Count' in inputs and inputs['Count'].links:
                 tmp = SvGetSocketAnyType(self, inputs['Count'])
                 Count = tmp[0][0]
+                # Count = inputs['Count'].sv_get()
             else:
                 Count = self.count_
             range_ = self.countRange(Start, Step, Count)
