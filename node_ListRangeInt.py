@@ -172,7 +172,7 @@ class GenListRangeInt(Node, SverchCustomTreeNode):
         # test intRange "lazy range"
         a = 'self.intRange(20, 40, 2)'
         b = 'self.intRange(20, 30, 1)'
-        c = 'sefl.intRange(-4, 4, 1)'
+        c = 'self.intRange(-4, 4, 1)'
         d = 'self.intRange(5, -4, 1)'
         e = 'self.intRange(20, 30, -1)'
         self.print_tests([a, b, c, d, e])
