@@ -139,7 +139,7 @@ class GenListRangeInt(Node, SverchCustomTreeNode):
                 Count = self.count_
             range_ = self.countRange(Start, Step, Count)
 
-        print(range_)
+        # print(range_)
         SvSetSocketAnyType(self, 'Range', [range_])
 
     def intRange(self, start=0, stop=1, step=1):
