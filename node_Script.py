@@ -273,7 +273,7 @@ class SvScriptNode(Node, SverchCustomTreeNode):
 
             if None in details:
                 if not details[1]:
-                    print('sv_mai() must take arguments')
+                    print('sv_main() must take arguments')
                 print('should never reach here')
                 return
 
