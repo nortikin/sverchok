@@ -162,8 +162,8 @@ The only reason in_sockets needs to be declared at the moment is if you want to 
 ```text
 
 sv_main()
+sv_main() + in_sockets
 sv_main() + out_sockets
-sv_main() + ui_operators
 sv_main(a=[],..)
 sv_main(a=[],..) + in_sockets
 sv_main(a=[],..) + out_sockets
