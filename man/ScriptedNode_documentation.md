@@ -153,17 +153,15 @@ This is stupid and has to be addressed. However, until such time there is an exa
 
 ### Future
 
-SN iteration 1 is itself a prototype and is a testing ground for iteration 2. The intention was always to provide multiple programming language interfaces, initially coffeescript because it's a lightweight language with crazy expressive capacity.
-
-iteration 2 might work a little different, perhap working from within a class but trying to do extra introspection to reduce as much boilerplate as is reasonably possible.
+SN iteration 1 is itself a prototype and is a testing ground for iteration 2. The intention was always to provide multiple programming language interfaces, initially coffeescript because it's a lightweight language with crazy expressive capacity. iteration 2 might work a little different, perhap working from within a class but trying to do extra introspection to reduce boilerplate.
 
 The only reason in_sockets needs to be declared at the moment is if you want to have socket names that are different than the function arguments. It would be possible to allow `sv_main()` to take zero arguments too. So possible configurations should be:
 
 ```text
 
 sv_main()
+sv_main() + in_sockets
 sv_main() + out_sockets
-sv_main() + ui_operators
 sv_main(a=[],..)
 sv_main(a=[],..) + in_sockets
 sv_main(a=[],..) + out_sockets
