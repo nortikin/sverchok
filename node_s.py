@@ -23,7 +23,7 @@ class MatrixSocket(NodeSocket):
     prop_name = StringProperty(default='')
     # beta interface only use for debug, might change
     def sv_get(self,default=None):
-        if self.links and not self.is_output:
+        if self.links and self.is_output:
             return SvGetSocket(self)
         else:
             return default
@@ -73,7 +73,7 @@ class VerticesSocket(NodeSocketStandard):
         
     # beta interface only use for debug, might change
     def sv_get(self,default=None):
-        if self.links and not self.is_output:
+        if self.links and self.is_output:
             return SvGetSocket(self)
         else:
             return default
