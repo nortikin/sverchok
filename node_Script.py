@@ -270,9 +270,13 @@ class SvScriptNode(Node, SverchCustomTreeNode):
     def load_py(self):
         details = instrospect_py(self)
         if details:
-            if details[0] is None:
+
+            if None in details:
+                if not details[1]:
+                    print('sv_mai() must take arguments')
                 print('should never reach here')
-                pass
+                return
+
             node_function, params, f = details
             del f['sv_main']
             del f['script_str']
