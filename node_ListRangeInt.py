@@ -67,10 +67,8 @@ class GenListRangeInt(Node, SverchCustomTreeNode):
         mode = self.mode
         if mode == self.current_mode:
             return
-        if mode == 'LAZYRANGE':
-            self.inputs[-1].prop_name = 'stop_'
-        else:
-            self.inputs[-1].prop_name = 'count_'
+
+        self.inputs[-1].prop_name = {'LAZYRANGE': 'stop_'}.get(mode, 'count_')
 
         self.current_mode = mode
         updateNode(self, context)
