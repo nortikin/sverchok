@@ -97,7 +97,7 @@ class StringsSocket(NodeSocketStandard):
                     t=text
                     print('Warning output socket:',self.name,'in node:',node.name,'has property attached')
                 else:    
-                    prop=self.node.rna_type.properties.get(self.prop_name,None)
+                    prop=node.rna_type.properties.get(self.prop_name,None)
                     t=prop.name if prop else text
             else:
                 t=text
