@@ -77,6 +77,7 @@ class StringsSocket(NodeSocketStandard):
         '''String any type - one string'''
         bl_idname = "StringsSocket"
         bl_label = "Strings Socket"
+                
         prop_name = StringProperty(default='')
         
         def sv_get(self,default=None):
@@ -87,19 +88,26 @@ class StringsSocket(NodeSocketStandard):
             else:
                 return default
                 
-        def sv_set(data):
+        def sv_set(self,data):
             SvSetSocket(self,data)
         
         def draw(self, context, layout, node, text):
             if self.prop_name:
-                text=self.node.rna_type.properties[self.prop_name].name
+                if self.is_output:
+                    t=text
+                    print('Warning output socket:',self.name,'in node:',node.name,'has property attached')
+                else:    
+                    prop=self.node.rna_type.properties.get(self.prop_name,None)
+                    t=prop.name if prop else text
+            else:
+                t=text
                 
             if not self.is_output and not self.is_linked and self.prop_name:
                 layout.prop(node,self.prop_name)
             elif self.is_linked:
-                layout.label(text + '. ' + SvGetSocketInfo(self))
+                layout.label(t + '. ' + SvGetSocketInfo(self))
             else:
-                layout.label(text)
+                layout.label(t)
                     
         def draw_color(self, context, node):
             return(0.6,1.0,0.6,1.0)
