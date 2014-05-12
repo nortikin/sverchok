@@ -867,6 +867,11 @@ def speedUpdate(start_node = None, tree = None, animation_mode = False):
             nods = bpy.data.node_groups[name].nodes
             do_update(list_nodes4update[name],nods)
 
+def get_update_lists(ng):
+    global list_nodes4update
+    global partial_update_cache
+    
+    return (list_nodes4update[ng.name],partial_update_cache[ng.name])
 
 ##############################################################
 ##############################################################
@@ -967,15 +972,18 @@ def get_socket_type_full(node, inputsocketname):
 #     multi_socket_type = 'StringsSocket'
 
 def multi_socket(node , min=1, start=0, breck=False, output=False):
-    # probably incorrect state due or init or change of inputs
+    '''
+     min - integer, minimal number of sockets, at list 1 needed
+     start - integer, starting socket.
+     breck - boolean, adding brecket to nmae of socket x[0] x[1] x[2] etc
+     output - integer, deal with output, if>0 counts number of outputs multy sockets
+     base name added in separated node in self.base_name = 'some_name', i.e. 'x', 'data'
+     node.multi_socket_type - type of socket, added in self.multi_socket_type 
+     as one of three sverchok types 'StringsProperty', 'MatricesProperty', 'VerticesProperty'
+     
+    '''
+    #probably incorrect state due or init or change of inputs
     # do nothing
-    # min - integer, minimal number of sockets, at list 1 needed
-    # start - integer, starting socket.
-    # breck - boolean, adding brecket to nmae of socket x[0] x[1] x[2] etc
-    # output - integer, deal with output, if>0 counts number of outputs multy sockets
-    # base name added in separated node in self.base_name = 'some_name', i.e. 'x', 'data'
-    # node.multi_socket_type - type of socket, added in self.multi_socket_type 
-    # as one of three sverchok types 'StringsProperty', 'MatricesProperty', 'VerticesProperty'
     if not len(node.inputs):
         return
     if min < 1:

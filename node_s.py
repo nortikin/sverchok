@@ -5,7 +5,7 @@ from bpy.types import NodeTree, Node, NodeSocket, NodeSocketStandard
 import nodeitems_utils
 from nodeitems_utils import NodeCategory, NodeItem
 from mathutils import Matrix
-from util import makeTreeUpdate2, speedUpdate, SvGetSocketInfo, SvGetSocket,SvSetSocket
+from util import makeTreeUpdate2, speedUpdate, SvGetSocketInfo, SvGetSocket,SvSetSocket, get_update_lists
 from bpy.app.handlers import persistent
 
 class SvColors(bpy.types.PropertyGroup):
@@ -21,6 +21,15 @@ class MatrixSocket(NodeSocket):
     bl_idname = "MatrixSocket"
     bl_label = "Matrix Socket"
     prop_name = StringProperty(default='')
+    # beta interface only use for debug, might change
+    def sv_get(self,default=None):
+        if self.links and not self.is_output:
+            return SvGetSocket(self)
+        else:
+            return default
+            
+    def sv_set(self,data):
+        SvSetSocket(self,data)
 
     def draw(self, context, layout, node, text):
     #    if not self.is_output and not self.is_linked and self.prop_name:
@@ -57,60 +66,70 @@ class ObjectSocket(NodeSocket):
 '''
 
 class VerticesSocket(NodeSocketStandard):
-        '''String Vertices - one string'''
-        bl_idname = "VerticesSocket"
-        bl_label = "Vertices Socket"
-        prop_name = StringProperty(default='')
+    '''String Vertices - one string'''
+    bl_idname = "VerticesSocket"
+    bl_label = "Vertices Socket"
+    prop_name = StringProperty(default='')
+        
+    # beta interface only use for debug, might change
+    def sv_get(self,default=None):
+        if self.links and not self.is_output:
+            return SvGetSocket(self)
+        else:
+            return default
+            
+    def sv_set(self,data):
+        SvSetSocket(self,data)
 
-        def draw(self, context, layout, node, text):
-        #    if not self.is_output and not self.is_linked and self.prop_name:
-        #        layout.prop(node,self.prop_name,expand=False)
-            if self.is_linked:
-                layout.label(text + '. '+ SvGetSocketInfo(self))
-            else:
-                layout.label(text)
-                
-        def draw_color(self, context, node):
-            return(0.9,0.6,0.2,1.0)
+    def draw(self, context, layout, node, text):
+    #    if not self.is_output and not self.is_linked and self.prop_name:
+    #        layout.prop(node,self.prop_name,expand=False)
+        if self.is_linked:
+            layout.label(text + '. '+ SvGetSocketInfo(self))
+        else:
+            layout.label(text)
+            
+    def draw_color(self, context, node):
+        return(0.9,0.6,0.2,1.0)
 
 class StringsSocket(NodeSocketStandard):
-        '''String any type - one string'''
-        bl_idname = "StringsSocket"
-        bl_label = "Strings Socket"
-                
-        prop_name = StringProperty(default='')
-        
-        def sv_get(self,default=None):
-            if self.links and not self.is_output:
-                return SvGetSocket(self)
-            elif self.prop_name:
-                return [[getattr(self.node,self.prop_name)]]
-            else:
-                return default
-                
-        def sv_set(self,data):
-            SvSetSocket(self,data)
-        
-        def draw(self, context, layout, node, text):
-            if self.prop_name:
-                if self.is_output:
-                    t=text
-                    print('Warning output socket:',self.name,'in node:',node.name,'has property attached')
-                else:    
-                    prop=node.rna_type.properties.get(self.prop_name,None)
-                    t=prop.name if prop else text
-            else:
+    '''String any type - one string'''
+    bl_idname = "StringsSocket"
+    bl_label = "Strings Socket"
+            
+    prop_name = StringProperty(default='')
+    
+    def sv_get(self,default=None):
+        if self.links and not self.is_output:
+            return SvGetSocket(self)
+        elif self.prop_name:
+            return [[getattr(self.node,self.prop_name)]]
+        else:
+            return default
+            
+    def sv_set(self,data):
+        SvSetSocket(self,data)
+    
+    def draw(self, context, layout, node, text):
+        if self.prop_name:
+            if self.is_output:
                 t=text
+                print('Warning output socket:',self.name,'in node:',node.name,'has property attached')
+            else:    
+                prop=node.rna_type.properties.get(self.prop_name,None)
+                t=prop.name if prop else text
+        else:
+            t=text
+            
+        if not self.is_output and not self.is_linked and self.prop_name:
+            layout.prop(node,self.prop_name)
+        elif self.is_linked:
+            layout.label(t + '. ' + SvGetSocketInfo(self))
+        else:
+            layout.label(t)
                 
-            if not self.is_output and not self.is_linked and self.prop_name:
-                layout.prop(node,self.prop_name)
-            elif self.is_linked:
-                layout.label(t + '. ' + SvGetSocketInfo(self))
-            else:
-                layout.label(t)
-                    
-        def draw_color(self, context, node):
-            return(0.6,1.0,0.6,1.0)
+    def draw_color(self, context, node):
+        return(0.6,1.0,0.6,1.0)
         
 class SverchCustomTree(NodeTree):
     ''' Sverchok - architectural node programming of geometry in low level '''
@@ -126,6 +145,9 @@ class SverchCustomTree(NodeTree):
     sv_show = BoolProperty(name="Show", default=True, update=updateTree)
     sv_bake = BoolProperty(name="Bake", default=True )
     
+    # get update list for debug info, tuple (fulllist,dictofpartiallists)
+    def get_update_lists(self):
+        return get_update_lists(self)
         
     def update(self):
         '''
