@@ -5,14 +5,15 @@ from bpy.types import NodeTree, Node, NodeSocket, NodeSocketStandard
 import nodeitems_utils
 from nodeitems_utils import NodeCategory, NodeItem
 from mathutils import Matrix
-from util import makeTreeUpdate2, speedUpdate, SvGetSocketInfo, SvGetSocket,SvSetSocket, get_update_lists
+from util import makeTreeUpdate2, speedUpdate, SvGetSocketInfo, SvGetSocket,SvSetSocket, get_update_lists, updateNode
 from bpy.app.handlers import persistent
+
 
 class SvColors(bpy.types.PropertyGroup):
     """ Class for colors CollectionProperty """
     color = bpy.props.FloatVectorProperty(
         name="svcolor", description="sverchok color", default=(0.055,0.312,0.5), min=0, max=1,
-        step=1, precision=3, subtype='COLOR_GAMMA', size=3)
+        step=1, precision=3, subtype='COLOR_GAMMA', size=3, update=updateNode)
 
 
 class MatrixSocket(NodeSocket):
