@@ -269,6 +269,7 @@ def draw_callback_view(handle, sl1, sl2, sl3, vs, colo, tran, shade):
                 glColor3f(randa+0.2, randb+0.2, randc+0.2)
                 if len(pol)>4:
                     glBegin(GL_TRIANGLES)
+                    glColor3f(randa+0.2, randb+0.2, randc+0.2)
                     v=[data_vector[k][i] for i in pol]
                     tess_poly=mathutils.geometry.tessellate_polygon([v])
                     for a,b,c in tess_poly:
@@ -277,11 +278,13 @@ def draw_callback_view(handle, sl1, sl2, sl3, vs, colo, tran, shade):
                         glVertex3f(*(data_matrix[i]*v[c]))
                 elif len(pol)==4:
                     glBegin(GL_POLYGON)
+                    glColor3f(randa+0.2, randb+0.2, randc+0.2)
                     for point in pol:
                         vec_corrected = data_matrix[i]*data_vector[k][int(point)]
                         glVertex3f(*vec_corrected)
                 else:
                     glBegin(GL_TRIANGLES)
+                    glColor3f(randa+0.2, randb+0.2, randc+0.2)
                     for point in pol:
                         vec_corrected = data_matrix[i]*data_vector[k][int(point)]
                         glVertex3f(*vec_corrected)
