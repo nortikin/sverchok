@@ -100,10 +100,15 @@ class SvBmeshViewOp(bpy.types.Operator):
                 obj.hide = n.state_view
             n.state_view = not n.state_view
 
-        if type_op == 'hide_render':
+        elif type_op == 'hide_render':
             for obj in objs:
                 obj.hide_render = n.state_render
             n.state_render = not n.state_render
+
+        elif type_op == 'hide_select':
+            for obj in objs:
+                obj.hide_select = n.state_select
+            n.state_select = not n.state_select
 
     def execute(self, context):
         self.hide_unhide(context, self.fn_name)
@@ -134,6 +139,7 @@ class BmeshViewerNode(Node, SverchCustomTreeNode):
     basemesh_name = StringProperty(default=get_random_init())
     state_view = BoolProperty(default=True)
     state_render = BoolProperty(default=True)
+    state_select = BoolProperty(default=True)
 
     def init(self, context):
         self.inputs.new('VerticesSocket', 'vertices', 'vertices')
@@ -143,10 +149,9 @@ class BmeshViewerNode(Node, SverchCustomTreeNode):
 
     def draw_buttons(self, context, layout):
         row = layout.row(align=True)
-        row.prop(self, "activate", text="Update")
-
-        row = layout.row()
-        row.alignment = 'RIGHT'
+        split = row.split()
+        col1 = split.column()
+        col1.prop(self, "activate", text="Update")
 
         def icons(button_type):
             icon = 'WARNING'
@@ -156,11 +161,20 @@ class BmeshViewerNode(Node, SverchCustomTreeNode):
             elif button_type == 'r':
                 state = self.state_render
                 icon = 'RESTRICT_RENDER_OFF' if state else 'RESTRICT_RENDER_ON'
+            elif button_type == 's':
+                state = self.state_select
+                icon = 'RESTRICT_SELECT_OFF' if state else 'RESTRICT_SELECT_ON'
+
             return icon
 
+        split = split.split()
+        col2 = split.column()
         sh = 'node.showhide_bmesh'
-        row.operator(sh, text='', icon=icons('v')).fn_name = 'hide_view'
-        row.operator(sh, text='', icon=icons('r')).fn_name = 'hide_render'
+        col2.operator(sh, text='', icon=icons('v')).fn_name = 'hide_view'
+        col3 = split.column()
+        col3.operator(sh, text='', icon=icons('s')).fn_name = 'hide_select'
+        col4 = split.column()
+        col4.operator(sh, text='', icon=icons('r')).fn_name = 'hide_render'
 
         layout.label("Base mesh name(s)", icon='OUTLINER_OB_MESH')
         row = layout.row()
@@ -214,10 +228,10 @@ class BmeshViewerNode(Node, SverchCustomTreeNode):
             return
 
         # regular code from this point
-        if not self.activate or not ('vertices' in self.inputs):
-            return
-
-        if not self.inputs['vertices'].links:
+        if self.activate and ('vertices' in self.inputs):
+            if not self.inputs['vertices'].links:
+                return
+        else:
             return
 
         C = bpy.context
