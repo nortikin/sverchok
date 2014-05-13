@@ -76,9 +76,8 @@ def callback_disable(name):
     
 def draw_callback_view(handle, sl1, sl2, sl3, vs, colo, tran, shade):
     context = bpy.context
-
     from bgl import glEnable, glDisable, glColor3f, glVertex3f, glPointSize, glLineWidth, glBegin, glEnd, glLineStipple, GL_POINTS, GL_LINE_STRIP, GL_LINES, GL_LINE, GL_LINE_STIPPLE, GL_POLYGON, GL_POLYGON_STIPPLE, GL_POLYGON_SMOOTH, glPolygonStipple
-    
+    from bgl import GL_TRIANGLES, GL_QUADS
     # define globals, separate edgs from pols
     if tran:
         polyholy = GL_POLYGON_STIPPLE
@@ -253,7 +252,6 @@ def draw_callback_view(handle, sl1, sl2, sl3, vs, colo, tran, shade):
                 k = verlen
             oblen = len(data_polygons[k])
             for j, pol in enumerate(data_polygons[k]):
-                glBegin(GL_POLYGON)
                 if shade:
                     normal_no_ = mathutils.geometry.normal(
                             data_vector[k][pol[0]],
@@ -269,9 +267,24 @@ def draw_callback_view(handle, sl1, sl2, sl3, vs, colo, tran, shade):
                     randb = ((j/oblen) + colob) / 2.5
                     randc = ((j/oblen) + coloc) / 2.5
                 glColor3f(randa+0.2, randb+0.2, randc+0.2)
-                for point in pol:
-                    vec_corrected = data_matrix[i]*data_vector[k][int(point)]
-                    glVertex3f(*vec_corrected)
+                if len(pol)>4:
+                    glBegin(GL_TRIANGLES)
+                    v=[data_vector[k][i] for i in pol]
+                    tess_poly=mathutils.geometry.tessellate_polygon([v])
+                    for a,b,c in tess_poly:
+                        glVertex3f(*(data_matrix[i]*v[a]))
+                        glVertex3f(*(data_matrix[i]*v[b]))
+                        glVertex3f(*(data_matrix[i]*v[c]))
+                elif len(pol)==4:
+                    glBegin(GL_POLYGON)
+                    for point in pol:
+                        vec_corrected = data_matrix[i]*data_vector[k][int(point)]
+                        glVertex3f(*vec_corrected)
+                else:
+                    glBegin(GL_TRIANGLES)
+                    for point in pol:
+                        vec_corrected = data_matrix[i]*data_vector[k][int(point)]
+                        glVertex3f(*vec_corrected)
                 glEnd()
                 glPointSize(1.75)
                 glLineWidth(1.0)
