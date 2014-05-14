@@ -17,7 +17,7 @@ class SvObjBake(bpy.types.Operator):
     
     def execute(self, context):
         global cache_viewer_baker
-        nid = str(hash(bpy.data.node_groups[self.idtree].nodes[self.idname]))
+        nid = node_id(bpy.data.node_groups[self.idtree].nodes[self.idname])
         if cache_viewer_baker[nid+'m'] and not cache_viewer_baker[nid+'v']:
             return {'CANCELLED'}
         vers = dataCorrect(cache_viewer_baker[nid+'v'])
@@ -29,7 +29,6 @@ class SvObjBake(bpy.types.Operator):
             for i in range((len(vers))):
                 matrixes.append(Matrix())
         self.makeobjects(vers, edg_pol, matrixes)
-        cache_viewer_baker = {}
         return {'FINISHED'}
     
     def makeobjects(self, vers, edg_pol, mats):
@@ -148,13 +147,15 @@ class ViewerNode(Node, SverchCustomTreeNode):
     def update(self):
         global cache_viewer_baker
         # node id, used as ref
-        n_id = str(node_id(self))
+        n_id = node_id(self)
         if not 'matrix' in self.inputs:
             return
             
-        cache_viewer_baker[n_id+'v'] = []
-        cache_viewer_baker[n_id+'ep'] = []
-        cache_viewer_baker[n_id+'m'] = []
+        cache_viewer_baker.pop( n_id+'v',None)
+        cache_viewer_baker.pop( n_id+'ep',None)
+        cache_viewer_baker.pop( n_id+'m',None)
+        
+        
         if not self.id_data.sv_show:
             callback_disable(n_id)
             return
@@ -200,18 +201,17 @@ class ViewerNode(Node, SverchCustomTreeNode):
             #print ('отражения вершин ',len(cache_viewer_baker['v']), " рёбёры ", len(cache_viewer_baker['ep']), "матрицы",len(cache_viewer_baker['m']))
         if not self.inputs['vertices'].links and not self.inputs['matrix'].links:
             callback_disable(n_id)
-            cache_viewer_baker = {}
-    
+        
     def update_socket(self, context):
         self.update()
     
     def free(self):
         global cache_viewer_baker
         callback_disable(node_id(self))
-        #cache_viewer_baker[self.name+self.id_data.name+'v'] = []
-        #cache_viewer_baker[self.name+self.id_data.name+'ep'] = []
-        #cache_viewer_baker[self.name+self.id_data.name+'m'] = []            
-
+        cache_viewer_baker.pop(n_id+'v',None)
+        cache_viewer_baker.pop(n_id+'ep',None)
+        cache_viewer_baker.pop(n_id+'m',None)
+        
 def register():
     bpy.utils.register_class(ViewerNode)
     bpy.utils.register_class(SvObjBake)
