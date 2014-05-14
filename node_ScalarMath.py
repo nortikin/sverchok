@@ -71,6 +71,7 @@ class ScalarMathNode(Node, SverchCustomTreeNode):
         ("PI",               "pi",          "",60),
         ("E",                "e",           "",61), 
         ("PHI",              "phi",         "",62),
+        ("2PI",              "2*pi",        "",63),
         ("MIN",              "min",         "",70),
         ("MAX",              "max",         "",71),    
         ]
@@ -117,6 +118,7 @@ class ScalarMathNode(Node, SverchCustomTreeNode):
     
     constant = {
         'PI':       pi,
+        '2PI':      pi*2,
         'E':        e,
         'PHI':      1.61803398875, 
     }       
