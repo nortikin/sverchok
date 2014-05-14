@@ -207,7 +207,8 @@ class ViewerNode(Node, SverchCustomTreeNode):
     
     def free(self):
         global cache_viewer_baker
-        callback_disable(node_id(self))
+        n_id=node_id(self)
+        callback_disable(n_id)
         cache_viewer_baker.pop(n_id+'v',None)
         cache_viewer_baker.pop(n_id+'ep',None)
         cache_viewer_baker.pop(n_id+'m',None)
