@@ -151,9 +151,9 @@ class ViewerNode(Node, SverchCustomTreeNode):
         if not 'matrix' in self.inputs:
             return
             
-        cache_viewer_baker.pop( n_id+'v',None)
-        cache_viewer_baker.pop( n_id+'ep',None)
-        cache_viewer_baker.pop( n_id+'m',None)
+        cache_viewer_baker[ n_id+'v']=[]
+        cache_viewer_baker[n_id+'ep']=[]
+        cache_viewer_baker[n_id+'m']=[]
         
         
         if not self.id_data.sv_show:

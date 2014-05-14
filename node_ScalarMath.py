@@ -166,7 +166,7 @@ class ScalarMathNode(Node, SverchCustomTreeNode):
         if 'float' in self.outputs and self.outputs['float'].links:
             result = []
             if nrInputs == 0:
-                result = [self.constant[self.items_]]
+                result = [[self.constant[self.items_]]]
             if nrInputs == 1:
                 if len(Number1):
                     x = Number1
