@@ -14,7 +14,10 @@ class IndexViewerNode(Node, SverchCustomTreeNode):
     bl_idname = 'IndexViewerNode'
     bl_label = 'Index Viewer Draw'
     bl_icon = 'OUTLINER_OB_EMPTY'
-
+    
+    # node id
+    n_id =  StringProperty(default='',options={'SKIP_SAVE'})
+    
     activate = BoolProperty(
         name='Show', description='Activate node?',
         default=True,
@@ -152,7 +155,7 @@ class IndexViewerNode(Node, SverchCustomTreeNode):
         inputs = self.inputs
         
         # if you change this change in free() also
-        n_id = hash(self)
+        n_id = node_id(self)
         # end early
         if not ('vertices' in inputs) and not ('matrix' in inputs):
             IV.callback_disable(n_id)
@@ -207,7 +210,7 @@ class IndexViewerNode(Node, SverchCustomTreeNode):
         self.update()
 
     def free(self):
-        IV.callback_disable(hash(self))
+        IV.callback_disable(node_id(self))
 
 
 def register():

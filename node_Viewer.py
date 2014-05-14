@@ -108,6 +108,9 @@ class ViewerNode(Node, SverchCustomTreeNode):
     bl_label = 'Viewer Draw'
     bl_icon = 'OUTLINER_OB_EMPTY'
     
+    # node id
+    n_id =  StringProperty(default='',options={'SKIP_SAVE'})
+    
     Vertex_show = bpy.props.BoolProperty(name='Vertices', description='Show or not vertices', default=True,update=updateNode)
     activate = bpy.props.BoolProperty(name='Show', description='Activate node?', default=True,update=updateNode)
     transparant = bpy.props.BoolProperty(name='Transparant', description='transparant polygons?', default=False,update=updateNode)
@@ -145,7 +148,7 @@ class ViewerNode(Node, SverchCustomTreeNode):
     def update(self):
         global cache_viewer_baker
         # node id, used as ref
-        n_id = str(hash(self))
+        n_id = str(node_id(self))
         if not 'matrix' in self.inputs:
             return
             
@@ -204,7 +207,7 @@ class ViewerNode(Node, SverchCustomTreeNode):
     
     def free(self):
         global cache_viewer_baker
-        callback_disable(str(hash(self)))
+        callback_disable(node_id(self))
         #cache_viewer_baker[self.name+self.id_data.name+'v'] = []
         #cache_viewer_baker[self.name+self.id_data.name+'ep'] = []
         #cache_viewer_baker[self.name+self.id_data.name+'m'] = []            

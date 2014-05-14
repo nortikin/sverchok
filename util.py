@@ -7,7 +7,7 @@ import itertools
 import collections
 import time
 import copy
-
+import uuid
 import traceback
 
 global bmesh_mapping, per_cache
@@ -1023,7 +1023,12 @@ def multi_socket(node , min=1, start=0, breck=False, output=False):
 # socket.name is not unique... identifier is
 def socket_id(socket):
     #return hash(socket)
-    return socket.id_data.name+socket.node.name+socket.identifier
+    return hash(socket.id_data.name+socket.node.name+socket.identifier)
+
+def node_id(node):
+    if not node.n_id:
+        node.n_id=str(hash(uuid.uuid4()))
+    return node.n_id
 
 
 #####################################
