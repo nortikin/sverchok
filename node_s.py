@@ -217,13 +217,13 @@ def make_categories():
             NodeItem("ListSortNode", label="List Sort"),
             NodeItem("ListShuffleNode", label="List Shuffle"),
             NodeItem("ListMatchNode", label="List Match"),
-            NodeItem("GenListRangeIntNode", label="List Range Integers"),
             NodeItem("ConverterNode", label="SocketConvert"),
             ]),
         SverchNodeCategory("SVERCHOK_N", "SVERCHOK number", items=[
             # numbers, formula nodes
             NodeItem("GenSeriesNode", label="Series"),
             NodeItem("GenRangeNode", label="Range"),
+            NodeItem("GenListRangeIntNode", label="List Range Integers"),
             NodeItem("SvListInputNode", label="List Input"),
             NodeItem("RandomNode", label="Random"),
             NodeItem("FloatNode", label="Float"),
