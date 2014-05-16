@@ -7,7 +7,6 @@ import itertools
 import collections
 import time
 import copy
-#import uuid
 import traceback
 
 global bmesh_mapping, per_cache
@@ -1027,7 +1026,7 @@ def socket_id(socket):
 
 # For when need a key for use with dict in node
 #  create a string property like this.
-#  n_id =  StringProperty(default='',options={'SKIP_SAVE'})
+#  n_id =  StringProperty(default='')
 # And a copy function 
 #  def copy(self,node)
 #      self.nid=''
@@ -1037,7 +1036,7 @@ def socket_id(socket):
 
 def node_id(node):
     if not node.n_id:
-        node.n_id=str(hash(node)+hash(time.process_time()))
+        node.n_id=str(hash(node)^hash(time.monotonic()))
     return node.n_id
 
 
