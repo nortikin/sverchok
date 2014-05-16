@@ -79,6 +79,10 @@ class IndexViewerNode(Node, SverchCustomTreeNode):
         self.inputs.new('StringsSocket', 'faces', 'faces')
         self.inputs.new('MatrixSocket', 'matrix', 'matrix')
 
+    # reset n_id on copy
+    def copy(self,node):
+        self.n_id=''
+    
     def draw_buttons(self, context, layout):
         row = layout.row(align=True)
         row.prop(self, "activate", text="Show")

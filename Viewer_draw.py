@@ -61,7 +61,8 @@ def callback_disable_all():
     global temp_handle
     temp_list = list(temp_handle.keys())
     for name in temp_list:
-        callback_disable(name)
+        if name:
+            callback_disable(name)
     
 def callback_disable(name):
     global temp_handle
@@ -77,7 +78,7 @@ def callback_disable(name):
 def draw_callback_view(handle, sl1, sl2, sl3, vs, colo, tran, shade):
     context = bpy.context
     from bgl import glEnable, glDisable, glColor3f, glVertex3f, glPointSize, glLineWidth, glBegin, glEnd, glLineStipple, GL_POINTS, GL_LINE_STRIP, GL_LINES, GL_LINE, GL_LINE_STIPPLE, GL_POLYGON, GL_POLYGON_STIPPLE, GL_POLYGON_SMOOTH, glPolygonStipple
-    from bgl import GL_TRIANGLES, GL_QUADS
+    from bgl import GL_TRIANGLES, GL_QUADS, glColor4f
     # define globals, separate edgs from pols
     if tran:
         polyholy = GL_POLYGON_STIPPLE
@@ -266,10 +267,10 @@ def draw_callback_view(handle, sl1, sl2, sl3, vs, colo, tran, shade):
                     randa = ((j/oblen) + coloa) / 2.5
                     randb = ((j/oblen) + colob) / 2.5
                     randc = ((j/oblen) + coloc) / 2.5
-                glColor3f(randa+0.2, randb+0.2, randc+0.2)
                 if len(pol)>4:
                     glBegin(GL_TRIANGLES)
-                    glColor3f(randa+0.2, randb+0.2, randc+0.2)
+                    glColor4f(randa+0.2, randb+0.2, randc+0.2,0.5)
+                    #glColor3f(randa+0.2, randb+0.2, randc+0.2)
                     v=[data_vector[k][i] for i in pol]
                     tess_poly=mathutils.geometry.tessellate_polygon([v])
                     for a,b,c in tess_poly:

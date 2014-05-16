@@ -139,10 +139,14 @@ class ViewerNode(Node, SverchCustomTreeNode):
         col = layout.column(align=True)
         #row.scale_x=1.2
         row = col.row(align=True)
-        #row.prop(self, "color_view", text=" ")
-        row.template_color_picker(self, 'color_view', value_slider=True)
+        row.prop(self, "color_view", text=" ")
+        #row.template_color_picker(self, 'color_view', value_slider=True)
         #a = self.color_view[2]
         #layout.label(text=str(round(a, 4)))
+    
+    # reset n_id on duplicate (shift-d)
+    def copy(self,node):
+        self.n_id=''
         
     def update(self):
         global cache_viewer_baker
