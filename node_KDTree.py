@@ -176,7 +176,7 @@ class SvKDTreeNode(Node, SverchCustomTreeNode):
 
             for i, vtx in enumerate(cVerts):
                 co, index, dist = kd.find(vtx)
-                add_verts_coords([co.to_tuple()])
+                add_verts_coords(co.to_tuple())
                 add_verts_idxs(index)
                 add_verts_dists(dist)
 
@@ -214,7 +214,7 @@ class SvKDTreeNode(Node, SverchCustomTreeNode):
                 dist_list = []
                 n_list = kd.find_n(vtx, n)
                 for co, index, dist in n_list:
-                    co_list.append([co.to_tuple()])
+                    co_list.append(co.to_tuple())
                     idx_list.append(index)
                     dist_list.append(dist)
                 add_co_proximas(co_list)
@@ -262,7 +262,7 @@ class SvKDTreeNode(Node, SverchCustomTreeNode):
                 dist_list = []
                 n_list = kd.find_range(vtx, r)
                 for co, index, dist in n_list:
-                    co_list.append([co.to_tuple()])
+                    co_list.append(co.to_tuple())
                     idx_list.append(index)
                     dist_list.append(dist)
                 add_co(co_list)
