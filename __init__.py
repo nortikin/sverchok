@@ -413,7 +413,7 @@ def unregister():
     node_Solidify.unregister()
     node_Bisect.unregister()
     node_CrossSection.unregister()
-    node_node_AdaptiveEdges()
+    node_AdaptiveEdges()
     node_AdaptivePolygons.unregister()
     node_Tools.unregister()
     node_Formula2.unregister()
