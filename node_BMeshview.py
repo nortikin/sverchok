@@ -256,7 +256,9 @@ class BmeshViewerNode(Node, SverchCustomTreeNode):
 
         meshes = bpy.data.meshes
         objects = bpy.data.objects
-        objs = [obj for obj in bpy.data.objects if obj.type == 'MESH']
+        bpy.ops.object.select_all(False)     
+        
+        objs = [obj for obj in objects if obj.type == 'MESH']
         objs = [obj for obj in objs if obj.name.startswith(_name)]
         objs = [obj.name for obj in objs if int(obj.name.split("_")[-1]) > obj_index]
 
