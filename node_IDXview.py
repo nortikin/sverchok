@@ -168,10 +168,15 @@ class IndexViewerNode(Node, SverchCustomTreeNode):
         # end early
         if not ('vertices' in inputs) and not ('matrix' in inputs):
             IV.callback_disable(n_id)
+            return
+        # end if tree status is set to not show
+        if not self.id_data.sv_show:
         
         
         if not self.activate:
             IV.callback_disable(n_id)
+            return
+       
 
         # alias in case it is present
         iv_links = inputs['vertices'].links
@@ -231,6 +236,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(IndexViewerNode)
-
-if __name__ == '__main__':
-    register()
