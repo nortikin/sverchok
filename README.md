@@ -37,7 +37,7 @@ Install Sverchok as you would any blender addon.
    Drop the `sverchok-master` folder into `/scripts/addons`.  
    User Preferences > Addons > Community > (search Sverchok) > activate flag beside Sverchok  
 
--  _Linux download and installation_ 
+-  _Linux download and updating/installation_ 
 
    Open terminal and run there one line:
 
