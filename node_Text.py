@@ -41,8 +41,8 @@ import itertools
 
 # status colors
 
-FAIL_COLOR = (0.8,0.1,0.1)
-READY_COLOR = (0,0.5,0.2)
+FAIL_COLOR = (0.05,0.05,0.1)
+READY_COLOR = (0.5,0.5,1)
 
 # utility function    
 def new_output_socket(node,name,type):
@@ -433,6 +433,7 @@ class SvTextOutOp(bpy.types.Operator):
             return {'FINISHED'}
         bpy.data.texts[node.text].clear()
         bpy.data.texts[node.text].write(out)
+        node.color = READY_COLOR
         return {'FINISHED'}
             
             
@@ -509,7 +510,8 @@ class SvTextOutNode(Node,SverchCustomTreeNode):
             multi_socket(self,min=1)
         elif self.text_mode == 'SV':
             pass #only one input, do nothing
-  
+        self.use_custom_color = True
+        self.color = FAIL_COLOR
     # build a string with data from sockets        
 
     def get_data(self):
