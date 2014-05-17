@@ -3,6 +3,7 @@ from mathutils import Matrix
 from util import *
 from node_s import *
 import webbrowser
+import os
 
 class SverchokUpdateAll(bpy.types.Operator):
     """Sverchok update all"""
@@ -38,6 +39,29 @@ class SverchokHome(bpy.types.Operator):
                 webbrowser.open_new_tab(page)
             except:
                 self.report({'WARNING'}, "Error in opening the page %s." % (page))
+        return {'FINISHED'}
+
+class SverchokUpdateAddon(bpy.types.Operator):
+    """Sverchok update addon"""
+    bl_idname = "node.sverchok_update_addon"
+    bl_label = "Sverchok update addon in linux"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    def execute(self, context):
+        if os.sys.platform == 'linux':
+            try:
+                os.curdir = '~/.config/blender/2.70/scripts/addons/'
+                os.system('wget https://github.com/nortikin/sverchok/archive/master.zip')
+                self.report({'INFO'}, "Downloaded archive, unpacking")
+            except:
+                self.report({'ERROR'}, "Cannot download archive")
+            try:
+                os.system('unzip -B master.zip')
+                self.report({'INFO'}, "Unzipped, you can rerun blender addons F8")
+            except:
+                self.report({'ERROR'}, "cannot unzip archive somehow")
+        else:
+            self.report({'WARNING'}, "It is not Linux, install Linux")
         return {'FINISHED'}
 
 class SverchokToolsMenu(bpy.types.Panel):
@@ -103,7 +127,7 @@ class SverchokToolsMenu(bpy.types.Panel):
                     split.prop(tree, 'sv_animate',icon='UNLOCKED',text=' ')
                 else:
                     split.prop(tree, 'sv_animate',icon='LOCKED',text=' ')
-                    
+        layout.column().operator(SverchokUpdateAddon.bl_idname, text='Update Sverchok addon')
         #       row.prop(tree, 'sv_bake',text=' ')
   
         #box = layout.box()
@@ -166,6 +190,7 @@ class ToolsNode(Node, SverchCustomTreeNode):
 
 def register():
     bpy.utils.register_class(SverchokUpdateAll)
+    bpy.utils.register_class(SverchokUpdateAddon)
     bpy.utils.register_class(SverchokPurgeCache)
     bpy.utils.register_class(SverchokHome)
     bpy.utils.register_class(SverchokToolsMenu)
@@ -176,6 +201,7 @@ def unregister():
     bpy.utils.unregister_class(SverchokToolsMenu)
     bpy.utils.unregister_class(SverchokHome)
     bpy.utils.unregister_class(SverchokPurgeCache)
+    bpy.utils.unregister_class(SverchokUpdateAddon)
     bpy.utils.unregister_class(SverchokUpdateAll)
 
 if __name__ == "__main__":
