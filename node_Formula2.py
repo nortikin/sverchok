@@ -113,31 +113,28 @@ class Formula2Node(Node, SverchCustomTreeNode):
             Lenin = len(ne)
             equal = Lennox - Lenin
             if equal > 0:
-                ne = self.enlarge(ne, equal)
+                self.enlarge(ne, equal)
             for i, obj in enumerate(listX):
                 Lennox = len(obj)
                 Lenin = len(ne[i])
                 equal = Lennox - Lenin
                 if equal > 0:
-                    ne[i] = self.enlarge(ne[i], equal)
+                    self.enlarge(ne[i], equal)
                 for j, list in enumerate(obj):
                     Lennox = len(list)
                     Lenin = len(ne[i][j])
                     equal = Lennox - Lenin 
                     if equal > 0:
-                        ne[i][j] = self.enlarge(ne[i][j], equal)
+                        self.enlarge(ne[i][j], equal)
                 
             new_list_n.append(ne)
         return new_list_n
     
-    def enlarge(self, list, equal):
+    def enlarge(self, lst, equal):
         ''' enlarge minor n[i] list to size of x list '''
-        while equal > 0:
-            list.append(list[-1])
-            equal -= 1    
-            #list = self.enlarge(list, equal-1)
-            #print (list, equal)
-        return list
+        
+        lst.extend([lst[-1] for i in range(equal)])
+        #return lst
             
 def register():
     bpy.utils.register_class(Formula2Node)
