@@ -9,6 +9,10 @@ from util import *
 import Index_Viewer_draw as IV
 
 
+# status colors
+FAIL_COLOR = (0.1,0.05,0)
+READY_COLOR = (1,0.3,0)
+
 class IndexViewerNode(Node, SverchCustomTreeNode):
     ''' IDX ViewerNode '''
     bl_idname = 'IndexViewerNode'
@@ -17,6 +21,7 @@ class IndexViewerNode(Node, SverchCustomTreeNode):
     
     # node id
     n_id =  StringProperty(default='',options={'SKIP_SAVE'})
+    
     
     activate = BoolProperty(
         name='Show', description='Activate node?',
@@ -163,12 +168,10 @@ class IndexViewerNode(Node, SverchCustomTreeNode):
         # end early
         if not ('vertices' in inputs) and not ('matrix' in inputs):
             IV.callback_disable(n_id)
-            return
-
-        # end if tree status is set to not show
-        if not self.id_data.sv_show:
+        
+        
+        if not self.activate:
             IV.callback_disable(n_id)
-            return
 
         # alias in case it is present
         iv_links = inputs['vertices'].links
@@ -190,7 +193,7 @@ class IndexViewerNode(Node, SverchCustomTreeNode):
                 if im_links and isinstance(im_links[0].from_socket, MatrixSocket):
                     propm = SvGetSocketAnyType(self, inputs['matrix'])
                     draw_matrix = dataCorrect(propm)
-
+            
             data_feind = []
             for socket in ['edges', 'faces']:
                 try:
@@ -207,8 +210,13 @@ class IndexViewerNode(Node, SverchCustomTreeNode):
             settings = self.get_settings()
             IV.callback_enable(
                 n_id, draw_verts, draw_edges, draw_faces, draw_matrix, bg, settings.copy())
+            self.use_custom_color=True
+            self.color = READY_COLOR
         else:
             IV.callback_disable(n_id)
+            self.use_custom_color=True
+            self.color = FAIL_COLOR
+        
 
     def update_socket(self, context):
         self.update()
@@ -223,3 +231,6 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(IndexViewerNode)
+
+if __name__ == '__main__':
+    register()
