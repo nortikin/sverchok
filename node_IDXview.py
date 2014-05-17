@@ -171,9 +171,6 @@ class IndexViewerNode(Node, SverchCustomTreeNode):
             return
         # end if tree status is set to not show
         if not self.id_data.sv_show:
-        
-        
-        if not self.activate:
             IV.callback_disable(n_id)
             return
        

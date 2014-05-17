@@ -57,9 +57,12 @@ class SverchokUpdateAddon(bpy.types.Operator):
                 self.report({'ERROR'}, "Cannot download archive")
             try:
                 os.system('unzip -B master.zip')
+                os.system('rm master.zip')
                 self.report({'INFO'}, "Unzipped, you can rerun blender addons F8")
+                
             except:
                 self.report({'ERROR'}, "cannot unzip archive somehow")
+                os.system('rm master.zip')
         else:
             self.report({'WARNING'}, "It is not Linux, install Linux")
         return {'FINISHED'}
