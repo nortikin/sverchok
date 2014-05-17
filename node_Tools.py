@@ -42,15 +42,17 @@ class SverchokHome(bpy.types.Operator):
         return {'FINISHED'}
 
 class SverchokUpdateAddon(bpy.types.Operator):
-    """Sverchok update addon"""
+    """ Sverchok update addon without any browsing and so on. After - press F8 to reload addons """
     bl_idname = "node.sverchok_update_addon"
     bl_label = "Sverchok update addon in linux"
     bl_options = {'REGISTER', 'UNDO'}
-
+    
+    #version = bpy.props.StringProperty(name='Your Blender version is', default='2.70')
+    
     def execute(self, context):
         if os.sys.platform == 'linux':
             try:
-                os.curdir = '~/.config/blender/2.70/scripts/addons/'
+                os.curdir = '~/.config/blender/'+bpy.app.version_string[:4]+'/scripts/addons/'
                 os.system('wget https://github.com/nortikin/sverchok/archive/master.zip')
                 self.report({'INFO'}, "Downloaded archive, unpacking")
             except:
@@ -58,7 +60,7 @@ class SverchokUpdateAddon(bpy.types.Operator):
             try:
                 os.system('unzip -B master.zip')
                 os.system('rm master.zip')
-                self.report({'INFO'}, "Unzipped, you can rerun blender addons F8")
+                self.report({'INFO'}, "Unzipped, reload addons with F8 button")
                 
             except:
                 self.report({'ERROR'}, "cannot unzip archive somehow")
@@ -66,6 +68,11 @@ class SverchokUpdateAddon(bpy.types.Operator):
         else:
             self.report({'WARNING'}, "It is not Linux, install Linux")
         return {'FINISHED'}
+    
+    #def invoke(self, context, event):
+        #wm = context.window_manager
+        #wm.invoke_props_dialog(self, 250)
+        #return {'RUNNING_MODAL'}
 
 class SverchokToolsMenu(bpy.types.Panel):
     bl_idname = "Sverchok_tools_menu"
