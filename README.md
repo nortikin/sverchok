@@ -40,8 +40,10 @@ Install Sverchok as you would any blender addon.
    Enable permanently in the startup.blend using `Ctrl + U` and `Save User Settings` from the Addons menu.   
 
 -  _Upgrade Sverchok on fly_   
-   Use button 'Upgrade Sverchok addon' in sverchok panel in node editor (press N for panel)  
+   Use button 'Upgrade Sverchok addon' in sverchok panel in node editor (press `N` for panel)  
+   And at the end press `F8` button to reload addons. In next blender run in panel will appear new version number  
 
 ###Contact and Credit
-Homepage http://nikitron.cc.ua/sverchok.html  
-Authors: Alexander Nedovizin, Nikita Gorodetskiy, Linus Yng, Agustin Gimenez, Dealga McArdle
+Homepage: http://nikitron.cc.ua/sverchok.html  
+Authors: Alexander Nedovizin, Nikita Gorodetskiy, Linus Yng, Agustin Gimenez, Dealga McArdle  
+Email: sverchok-b3d@yandex.ru  
