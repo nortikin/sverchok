@@ -62,7 +62,7 @@ class SverchokUpdateAddon(bpy.types.Operator):
             try:
                 os.curdir = bpy.utils.script_paths()[1]+'/addons/sverchok-master' 
                 #os.environ['HOME']+'/.config/blender/'+bpy.app.version_string[:4]
-                os.chdir = os.curdir
+                os.chdir(os.curdir)
                 version_url = urllib.request.urlretrieve('https://raw.githubusercontent.com/nortikin/sverchok/master/version')
                 url_file = open(version_url[0],'r')
                 version_url = url_file.read()[:-1]
@@ -76,7 +76,7 @@ class SverchokUpdateAddon(bpy.types.Operator):
                     return {'CANCELLED'}
                 else:
                     os.curdir = bpy.utils.script_paths()[1]+'/addons'
-                    os.chdir = os.curdir
+                    os.chdir(os.curdir)
                     print(1)
                     os.system('wget https://github.com/nortikin/sverchok/archive/master.zip')
                     try:
