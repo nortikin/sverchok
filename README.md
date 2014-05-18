@@ -1,7 +1,7 @@
 ##Sverchok parametric tools
-version 0.2.8  
-addon for: blender.org  
-License: GPL3  
+version - look version file here.
+addon for: http://blender.org  
+License: GPL3
   
 ###Description
 Sverchok is a powerful parametric tool for architects, allowing geometry to be programmed visually with nodes. 
