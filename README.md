@@ -45,5 +45,11 @@ Install Sverchok as you would any blender addon.
 
 ###Contact and Credit
 Homepage: http://nikitron.cc.ua/sverchok.html  
-Authors: Alexander Nedovizin, Nikita Gorodetskiy, Linus Yng, Agustin Gimenez, Dealga McArdle  
+Authors: 
+-  Alexander Nedovizin,  
+-  Nikita Gorodetskiy,  
+-  Linus Yng,  
+-  Agustin Gimenez, 
+-  Dealga McArdle  
+
 Email: sverchok-b3d@yandex.ru  
