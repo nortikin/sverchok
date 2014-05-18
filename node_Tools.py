@@ -5,6 +5,7 @@ from node_s import *
 import webbrowser
 import os
 import urllib
+from zipfile import ZipFile
 
 # needed to show current version
 script_paths = bpy.utils.script_paths()[1]
