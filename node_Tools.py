@@ -4,6 +4,13 @@ from util import *
 from node_s import *
 import webbrowser
 import os
+import urllib
+
+# needed to show current version
+svversion = bpy.utils.script_paths()[1]+'/addons/sverchok-master/version'
+svlocal_file = open(svversion,'r+')
+svversion_local = svlocal_file.read()[:-1]
+svlocal_file.close()
 
 class SverchokUpdateAll(bpy.types.Operator):
     """Sverchok update all"""
@@ -50,21 +57,38 @@ class SverchokUpdateAddon(bpy.types.Operator):
     #version = bpy.props.StringProperty(name='Your Blender version is', default='2.70')
     
     def execute(self, context):
+        
         if os.sys.platform == 'linux':
             try:
-                os.curdir = '~/.config/blender/'+bpy.app.version_string[:4]+'/scripts/addons/'
-                os.system('wget https://github.com/nortikin/sverchok/archive/master.zip')
-                self.report({'INFO'}, "Downloaded archive, unpacking")
-            except:
-                self.report({'ERROR'}, "Cannot download archive")
-            try:
-                os.system('unzip -B master.zip')
-                os.system('rm master.zip')
-                self.report({'INFO'}, "Unzipped, reload addons with F8 button")
+                os.curdir = bpy.utils.script_paths()[1]+'/addons/sverchok-master' 
+                #os.environ['HOME']+'/.config/blender/'+bpy.app.version_string[:4]
+                os.chdir = os.curdir
+                version_url = urllib.request.urlretrieve('https://raw.githubusercontent.com/nortikin/sverchok/master/version')
+                url_file = open(version_url[0],'r')
+                version_url = url_file.read()[:-1]
+                url_file.close()
+                local_file = open(os.curdir+'/version','r')
+                version_local = local_file.read()[:-1]
+                local_file.close()
                 
+                if version_local == version_url:
+                    self.report({'INFO'}, "You already have latest version of Sverchok, no need to upgrade.")
+                    return {'CANCELLED'}
+                else:
+                    os.curdir = bpy.utils.script_paths()[1]+'/addons'
+                    os.chdir = os.curdir
+                    print(1)
+                    os.system('wget https://github.com/nortikin/sverchok/archive/master.zip')
+                    try:
+                        os.system('unzip -B master.zip -d '+os.curdir)
+                        os.system('rm master.zip')
+                        self.report({'INFO'}, "Unzipped, reload addons with F8 button")
+                        
+                    except:
+                        self.report({'ERROR'}, "cannot unzip archive somehow")
+                        os.system('rm master.zip')
             except:
-                self.report({'ERROR'}, "cannot unzip archive somehow")
-                os.system('rm master.zip')
+                self.report({'ERROR'}, "Cannot download archive or compare versions")
         else:
             self.report({'WARNING'}, "It is not Linux, install Linux")
         return {'FINISHED'}
@@ -76,7 +100,7 @@ class SverchokUpdateAddon(bpy.types.Operator):
 
 class SverchokToolsMenu(bpy.types.Panel):
     bl_idname = "Sverchok_tools_menu"
-    bl_label = "Sverchok 0.2.8"
+    bl_label = "Sverchok "+svversion_local
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
     bl_category = 'Sverchok'
@@ -137,7 +161,9 @@ class SverchokToolsMenu(bpy.types.Panel):
                     split.prop(tree, 'sv_animate',icon='UNLOCKED',text=' ')
                 else:
                     split.prop(tree, 'sv_animate',icon='LOCKED',text=' ')
-        layout.column().operator(SverchokUpdateAddon.bl_idname, text='Update Sverchok addon')
+                    
+        
+        layout.column().operator(SverchokUpdateAddon.bl_idname, text='Upgrade Sverchok addon')
         #       row.prop(tree, 'sv_bake',text=' ')
   
         #box = layout.box()
