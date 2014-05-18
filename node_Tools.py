@@ -77,12 +77,12 @@ class SverchokUpdateAddon(bpy.types.Operator):
                 self.report({'INFO'}, "You already have latest version of Sverchok, no need to upgrade.")
                 return {'CANCELLED'}
             else:
-                os.curdir = os.path.normpath(os.path.join(bpy.utils.script_paths()[1],'/addons'))
+                os.curdir = os.path.normpath(bpy.utils.script_paths()[1]+'/addons')
                 os.chdir(os.curdir)
                 #os.system('wget https://github.com/nortikin/sverchok/archive/master.zip')
                 try:
                     url = 'https://github.com/nortikin/sverchok/archive/master.zip'
-                    file = urllib.request.urlretrieve(url,os.path.normpath(os.path.join(os.curdir,'/master.zip')))
+                    file = urllib.request.urlretrieve(url,os.path.normpath(os.curdir+'/master.zip'))
                     ZipFile(file[0]).extractall(path=os.curdir, members=None, pwd=None)
                     os.remove(file[0])
                     #os.system('unzip -o master.zip -d '+os.curdir)
