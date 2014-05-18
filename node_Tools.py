@@ -7,7 +7,7 @@ import os
 import urllib
 
 # needed to show current version
-svversion = bpy.utils.script_paths()[1]+'/addons/sverchok-master/version'
+svversion = os.path.normpath(os.path.join(bpy.utils.script_paths()[1], 'addons/sverchok-master/version'))
 svlocal_file = open(svversion,'r+')
 svversion_local = svlocal_file.read()[:-1]
 svlocal_file.close()
@@ -58,39 +58,38 @@ class SverchokUpdateAddon(bpy.types.Operator):
     
     def execute(self, context):
         
-        if os.sys.platform == 'linux':
-            try:
-                os.curdir = bpy.utils.script_paths()[1]+'/addons/sverchok-master' 
-                #os.environ['HOME']+'/.config/blender/'+bpy.app.version_string[:4]
+        #if os.sys.platform == 'linux':
+        try:
+            os.curdir = os.path.normpath(os.path.join(bpy.utils.script_paths()[1], 'addons/sverchok-master')) 
+            #os.environ['HOME']+'/.config/blender/'+bpy.app.version_string[:4]
+            os.chdir(os.curdir)
+            version_url = urllib.request.urlretrieve('https://raw.githubusercontent.com/nortikin/sverchok/master/version')
+            url_file = open(version_url[0],'r')
+            version_url = url_file.read()[:-1]
+            url_file.close()
+            local_file = open(os.path.join(os.curdir, 'version'), 'r')
+            version_local = local_file.read()[:-1]
+            local_file.close()
+            
+            if version_local == version_url:
+                self.report({'INFO'}, "You already have latest version of Sverchok, no need to upgrade.")
+                return {'CANCELLED'}
+            else:
+                os.curdir = bpy.utils.script_paths()[1]+'/addons'
                 os.chdir(os.curdir)
-                version_url = urllib.request.urlretrieve('https://raw.githubusercontent.com/nortikin/sverchok/master/version')
-                url_file = open(version_url[0],'r')
-                version_url = url_file.read()[:-1]
-                url_file.close()
-                local_file = open(os.curdir+'/version','r')
-                version_local = local_file.read()[:-1]
-                local_file.close()
-                
-                if version_local == version_url:
-                    self.report({'INFO'}, "You already have latest version of Sverchok, no need to upgrade.")
-                    return {'CANCELLED'}
-                else:
-                    os.curdir = bpy.utils.script_paths()[1]+'/addons'
-                    os.chdir(os.curdir)
-                    print(1)
-                    os.system('wget https://github.com/nortikin/sverchok/archive/master.zip')
-                    try:
-                        os.system('unzip -B master.zip -d '+os.curdir)
-                        os.system('rm master.zip')
-                        self.report({'INFO'}, "Unzipped, reload addons with F8 button")
-                        
-                    except:
-                        self.report({'ERROR'}, "cannot unzip archive somehow")
-                        os.system('rm master.zip')
-            except:
-                self.report({'ERROR'}, "Cannot download archive or compare versions")
-        else:
-            self.report({'WARNING'}, "It is not Linux, install Linux")
+                os.system('wget https://github.com/nortikin/sverchok/archive/master.zip')
+                try:
+                    os.system('unzip -o master.zip -d '+os.curdir)
+                    os.system('rm master.zip')
+                    self.report({'INFO'}, "Unzipped, reload addons with F8 button")
+                    
+                except:
+                    self.report({'ERROR'}, "cannot unzip archive somehow")
+                    os.system('rm master.zip')
+        except:
+            self.report({'ERROR'}, "Cannot download archive or compare versions")
+        #else:
+        #    self.report({'WARNING'}, "It is not Linux, install Linux")
         return {'FINISHED'}
     
     #def invoke(self, context, event):
