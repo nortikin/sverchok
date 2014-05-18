@@ -27,26 +27,21 @@ Version 0.2.8 comes with more than 100 nodes to help create and manipulate geome
 Install Sverchok as you would any blender addon.  
   
 -  _Installation from Preferences_  
-   Download Sverchok from github
-   User Preferences > Addons > install from file > 
-   choose zip-archive > activate flag beside Sverchok
-   If appears error - close and run blender again.
+   Download Sverchok from github  
+   User Preferences > Addons > install from file >   
+   choose zip-archive > activate flag beside Sverchok  
+   If appears error - close and run blender again and activate again.  
+   Enable permanently in the startup.blend using `Ctrl + U` and `Save User Settings` from the Addons menu.  
   
 -  _Manual installation_  
-   Download Sverchok from github
+   Download Sverchok from github  
    Drop the `sverchok-master` folder into `/scripts/addons`.  
    User Preferences > Addons > Community > (search Sverchok) > activate flag beside Sverchok  
+   Enable permanently in the startup.blend using `Ctrl + U` and `Save User Settings` from the Addons menu.   
 
--  _Linux download and updating/installation_ 
+-  _Upgrade Sverchok on fly_   
+   Use button 'Upgrade Sverchok addon' in sverchok panel in node editor (press N for panel)  
 
-   Open terminal and run there one line:
-
-     `cd ~/.config/blender/2.70/scripts/addons/ && wget https://github.com/nortikin/sverchok/archive/master.zip && unzip master.zip`
-
-   User Preferences > Addons > Community > (search Sverchok) > activate flag beside Sverchok
-
-Enable permanently in the startup.blend using `Ctrl + U` and `Save User Settings` from the Addons menu.
-  
 ###Contact and Credit
 Homepage http://nikitron.cc.ua/sverchok.html  
 Authors: Alexander Nedovizin, Nikita Gorodetskiy, Linus Yng, Agustin Gimenez, Dealga McArdle
