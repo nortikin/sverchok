@@ -39,8 +39,6 @@ At present all scripts for SN must (strict list - general):
 
 ```python
 sv_main(vecs_in_multi=[[]], vecs_in_flat=[], some_var=1, some_ratio=1.2):
-sv_main(vecs_in_multi=[[]], vecs_in_flat=[], some_ratio=1.2):
-sv_main(vecs_in_flat=[], some_ratio=1.2):
 
 [[]]    # for nested
 []      # for float
