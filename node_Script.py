@@ -334,11 +334,7 @@ class SvScriptNode(Node, SverchCustomTreeNode):
         self.update_py()
 
     def update_py(self):
-        '''
-        triggered when update is called, ideally this
-        - runs script with default values for those in_sockets not connected
-        - does nothing if input is unchanged.
-        '''
+
         node_function = self.node_dict[hash(self)].get('node_function', None)
         if not node_function:
             return
@@ -349,15 +345,22 @@ class SvScriptNode(Node, SverchCustomTreeNode):
         fparams = []
         for param_idx, name in enumerate(input_names):
             links = self.inputs[name].links
-            if not links:
-                this_val = defaults[param_idx]
-            else:
-                try:
-                    k = str(SvGetSocketAnyType(self, self.inputs[name]))
-                    kfree = k[2:-2]
-                    this_val = ast.literal_eval(kfree)
-                except:
-                    this_val = defaults[param_idx]
+            this_val = defaults[param_idx]
+
+            if links:
+                if isinstance(this_val, list):
+                    try:
+                        this_val = SvGetSocketAnyType(self, self.inputs[param_idx])
+                        this_val = dataCorrect(this_val)
+                    except:
+                        this_val = defaults[param_idx]
+                elif isinstance(this_val, (int, float)):
+                    try:
+                        k = str(SvGetSocketAnyType(self, self.inputs[name]))
+                        kfree = k[2:-2]
+                        this_val = ast.literal_eval(kfree)
+                    except:
+                        this_val = defaults[param_idx]
 
             fparams.append(this_val)
 
