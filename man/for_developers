@@ -28,14 +28,14 @@
 			usage: levelsOflist(list) - returns level of list nestiness [[]] - is 2, [] - 1, [[[]]] - 3
 
 	e.matrix definitions - to make something with matrices/vertices
-		1.Matrix_generate(prop) - make from mathutils.Matrix() simple list like [[][][][]] with container is [[[][][][]]]
-		2.Matrix_listing(prop) - make from simple list real mathutils.Matrix(()()()())
+		1.Matrix_generate(prop) - make from simple list real mathutils.Matrix(()()()())
+		2.Matrix_listing(prop) - make from mathutils.Matrix() simple list like [[][][][]] with container is [[[][][][]]]
 		3.Matrix_location(prop, list=False) - return mathutils.Vector() of matrix' location
 		4.Matrix_scale(prop, list=False) - the same, but returns matrix' scale vectors
 		5.Matrix_rotation(prop, list=False) - return rotation axis and rotation angle in radians value as tuple (Vector((x,y,z)),angle)
 		6.Vector_generate(prop) - makes from simple list real mathutils.Vector(), as Matrix generate def
 		7.Vector_degenerate(prop) - as matrix listing, it degenerate Vectors to simple list
-		8.Vector_degenerate(prop) - define wether it is edges or polygons in list, and terurns tuple as (type,list)
+		8.Edg_pol_generate(prop) - define wether it is edges or polygons in list, and terurns tuple as (type,list)
 		9.matrixdef(orig, loc, scale, rot, angle, vec_angle=[[]]) - defines matrix
 
 	f.list definitions:
@@ -60,12 +60,12 @@
 			  changable_sockets(self, inputsocketname, outputsocketname)
 
 	i.multi-socket multi_socket(node,min=1) - as used by ListJoin, List Zip, Lines Connect multi_socket(node,min=1)  
-	 base_name = 'data '
-     multi_socket_type = 'StringsSocket'
-     setup the fixed number of socket you need, the last of them is the first multi socket. minimum of one.
-     then in update(self):
-     			multi_socket(self, min=1, start=0, breck=False)  - [where min - minimum count of input sockets; start - starting of numeration, could be -1, -2 to start as in formula2 node; breck - to make breckets, as used in formula2 node]
-     for more details see files mentioned above
+                 base_name = 'data '
+                 multi_socket_type = 'StringsSocket'
+                 setup the fixed number of socket you need, the last of them is the first multi socket. minimum of one.
+                 then in update(self):
+                 multi_socket(self, min=1, start=0, breck=False)  - [where min - minimum count of input sockets; start - starting of numeration, could be -1, -2 to start as in formula2 node; breck - to make breckets, as used in formula2 node]
+                 for more details see files mentioned above
       
     	
 	
