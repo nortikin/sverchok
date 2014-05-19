@@ -131,7 +131,7 @@ class SvScriptNodeCallbackOp(bpy.types.Operator):
 
         f = getattr(n, fn_name, None)
         if not f:
-            msg = "{0} has no function named '{1}'".format(node.name, fn_name)
+            msg = "{0} has no function named '{1}'".format(n.name, fn_name)
             self.report({"WARNING"}, msg)
             return {'CANCELLED'}
 
