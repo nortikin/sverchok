@@ -29,7 +29,6 @@
  #
  # -*- coding: utf-8 -*-
 
-
 bl_info = {
     "name": "Sverchok",
     "author": "Nedovizin Alexander, Gorodetskiy Nikita, Linus Yng, Agustin Jimenez, Dealga McArdle",
