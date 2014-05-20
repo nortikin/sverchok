@@ -222,9 +222,10 @@ def make_categories():
             ]),
         SverchNodeCategory("SVERCHOK_N", "SVERCHOK number", items=[
             # numbers, formula nodes
-            NodeItem("GenSeriesNode", label="Series float"),
-            NodeItem("GenRangeNode", label="Range float"),
+            #NodeItem("GenSeriesNode", label="Series float"),
+            #NodeItem("GenRangeNode", label="Range float"),
             NodeItem("GenListRangeIntNode", label="Range Int"),
+            NodeItem("SvGenFloatRange", label="Range Float"),
             NodeItem("SvListInputNode", label="List Input"),
             NodeItem("RandomNode", label="Random"),
             NodeItem("FloatNode", label="Float"),

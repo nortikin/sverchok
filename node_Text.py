@@ -31,6 +31,7 @@ import ast
 import locale
 import json
 import itertools
+import pprint
 
 # TODO, 
 # load and dump to/from external file
@@ -210,6 +211,7 @@ class SvTextInNode(Node,SverchCustomTreeNode):
         self.json_data.pop(n_id,None)        
         
     # dispatch functions
+    # general reload should ONLY be called from operator on ui change
     
     def reload(self):
         if self.textmode == 'CSV':
@@ -218,7 +220,10 @@ class SvTextInNode(Node,SverchCustomTreeNode):
             self.reload_sv()
         elif self.textmode == 'JSON':
             self.reload_json()
-
+        # if we turn on reload on update we need a safety check for this 
+        # two work. 
+        updateNode(self,None)
+        
     def update(self): #dispatch based on mode
         # startup safety net
         try:
@@ -229,8 +234,7 @@ class SvTextInNode(Node,SverchCustomTreeNode):
         
         if not self.current_text:
             return
-        #if self.reload_on_update:
-        #    self.reload()
+
         if self.textmode == 'CSV':
             self.update_csv()
         elif self.textmode == 'SV':
@@ -261,6 +265,9 @@ class SvTextInNode(Node,SverchCustomTreeNode):
 #            
     def update_csv(self):
         n_id=node_id(self)
+
+        if self.reload_on_update:
+            self.reload_csv()
 
         if self.current_text and not n_id in self.csv_data:
             self.reload_csv()
@@ -408,6 +415,10 @@ class SvTextInNode(Node,SverchCustomTreeNode):
             
     def update_sv(self):
         n_id = node_id(self)
+        
+        
+        if self.reload_on_update:
+            self.reload_sv()
         # nothing loaded, try to load and if it doesn't work fail             
         if not n_id in self.list_data and self.current_text:
             self.reload_sv()
@@ -478,6 +489,9 @@ class SvTextInNode(Node,SverchCustomTreeNode):
     def update_json(self):
         n_id = node_id(self)
         
+        if self.reload_on_update:
+            self.reload_csv()
+            
         if not n_id in self.json_data and self.current_text:
             self.reload_json()
                 
@@ -537,13 +551,23 @@ class SvTextOutNode(Node,SverchCustomTreeNode):
     
     text_mode = EnumProperty(items = text_modes, default='CSV',update=change_mode)
     
-     
+    # csv options 
     csv_dialects = [( 'excel',      'Excel',        'Standard excel',   1),
                     ( 'excel-tab',  'Excel tabs',   'Excel tab format', 2),
                     ( 'unix',       'Unix',         'Unix standard',    3),]
                     
     csv_dialect = EnumProperty(items = csv_dialects, default='excel')                    
 
+    # sv options
+    sv_modes = [('compact',     'Compact',      'Using str()', 1),
+                ('pretty',      'Pretty',       'Using pretty print',2)]  
+    sv_mode = EnumProperty(items = sv_modes, default='compact')
+    # json options
+    json_modes = [('compact',    'Compact',      'Minimal', 1),
+                  ('pretty',      'Pretty',      'Indent and order',2)]
+    json_mode = EnumProperty(items = json_modes, default='pretty')
+    
+                  
     base_name = StringProperty(name='base_name',default='Col ')
     multi_socket_type = StringProperty(name='multi_socket_type',default='StringsSocket')
 
@@ -564,7 +588,14 @@ class SvTextOutNode(Node,SverchCustomTreeNode):
         
         if self.text_mode == 'CSV':
             layout.prop(self,'csv_dialect',"Dialect")                
-    
+        
+        if self.text_mode == 'SV':
+            layout.prop(self,'sv_mode',"Format",expand=True)                
+        
+        if self.text_mode == 'JSON':
+            layout.prop(self,'json_mode',"Format",expand=True)                
+        
+        
         
         layout.operator('node.sverchok_text_callback', text='Dump').fn_name='dump'
         layout.prop(self,'append',"Append")
@@ -632,12 +663,19 @@ class SvTextOutNode(Node,SverchCustomTreeNode):
                             j += 1
                             
                         data_out[name] = (get_socket_type(self,socket.name),tmp)
-            out = json.dumps(data_out,indent=4)    
             
+            if self.json_mode=='pretty':            
+                out = json.dumps(data_out,indent=4)    
+            else: #compact
+                out = json.dumps(data_out,separators=(',', ':'))
+                
         elif self.text_mode == 'SV':
             if self.inputs['Data'].links:
-                out = str(SvGetSocketAnyType(self,self.inputs['Data']))
-        
+                data = SvGetSocketAnyType(self,self.inputs['Data'])
+                if self.sv_mode == 'pretty':
+                    out = pprint.pformat(data)
+                else: #compact
+                    out = str(data)
         return out
     
 def register():

@@ -159,6 +159,7 @@ if "bpy" in locals():
     imp.reload(node_MatrixInput)
     imp.reload(node_ListRangeInt)
     imp.reload(node_DebugPrint)
+    imp.reload(node_ListRangeFloat)
     
 else:
     import node_s
@@ -259,6 +260,7 @@ else:
     import node_MatrixInput
     import node_ListRangeInt
     import node_DebugPrint
+    import node_ListRangeFloat
 
 def register():
     import bpy
@@ -358,6 +360,7 @@ def register():
     node_MatrixInput.register()
     node_ListRangeInt.register()
     node_DebugPrint.register()
+    node_ListRangeFloat.register()
         
     if 'SVERCHOK' not in nodeitems_utils._node_categories:
         nodeitems_utils.register_node_categories("SVERCHOK", node_s.make_categories())
@@ -367,6 +370,7 @@ def unregister():
     import bpy
     import nodeitems_utils
 
+    node_ListRangeFloat.unregister()
     node_DebugPrint.unregister()
     node_ListRangeInt.unregister()
     node_MatrixInput.unregister()
