@@ -10,6 +10,7 @@ class ShiftNode(Node, SverchCustomTreeNode):
     bl_label = 'List Shift'
     bl_icon = 'OUTLINER_OB_EMPTY'
     
+    shift_c = bpy.props.IntProperty(name = 'Shift',default=0,update=updateNode)
     enclose = bpy.props.BoolProperty(name='check_tail', default=True, update=updateNode)
     level = bpy.props.IntProperty(name = 'level', default=0, min=0, update=updateNode)
     typ = bpy.props.StringProperty(name='typ', default='')
@@ -21,7 +22,7 @@ class ShiftNode(Node, SverchCustomTreeNode):
     
     def init(self, context):
         self.inputs.new('StringsSocket', "data", "data")
-        self.inputs.new('StringsSocket', "shift", "shift")
+        self.inputs.new('StringsSocket', "shift", "shift").prop_name='shift_c'
         self.outputs.new('StringsSocket', 'data', 'data')
 
     def update(self):
@@ -40,7 +41,7 @@ class ShiftNode(Node, SverchCustomTreeNode):
                 #if type(number)!=list or type(number[0])!=list or type(number[0][0])!=int:
                     #number = [[0]]
             else:          
-                number = [[0]]
+                number = [[self.shift_c]]
             
             data = SvGetSocketAnyType(self, self.inputs['data'])
             output = self.shift(data, number, self.enclose, self.level)
