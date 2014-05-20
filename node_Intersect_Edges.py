@@ -159,16 +159,26 @@ class SvIntersectEdgesNode(Node, SverchCustomTreeNode):
         bm.normal_update()
 
         edge_indices = [e.index for e in bm.edges]
+        trim_indices = len(edge_indices)
         for edge in bm.edges:
             edge.select = True
 
         d = get_intersection_dictionary(bm, edge_indices)
 
         unselect_nonintersecting(bm, d.keys(), edge_indices)
+
+        # store non_intersecting edge sequencer
+        # add_back = [(edge.verts[0].index, edge.verts[1].index) for edge in bm.edges if not edge.select]
+        add_back = [[i.index for i in edge.verts] for edge in bm.edges if not edge.select]
+
         update_mesh(bm, d)
 
         verts_out = [v.co.to_tuple() for v in bm.verts]
         edges_out = [[j.index for j in i.verts] for i in bm.edges]
+
+        # optional correction, remove originals, add back those that are not intersecting.
+        edges_out = edges_out[trim_indices:]
+        edges_out.extend(add_back)
 
         SvSetSocketAnyType(self, 'Verts_out', [verts_out])
         SvSetSocketAnyType(self, 'Edges_out', [edges_out])
