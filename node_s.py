@@ -200,7 +200,7 @@ def make_categories():
             ]),
         SverchNodeCategory("SVERCHOK_L", "SVERCHOK list", items=[
             # lists nodes
-            NodeItem("ListLevelsNode", label="List Levels"),
+            NodeItem("ListLevelsNode", label="List Del Levels"),
             NodeItem("ListJoinNode", label="List Join"),
             NodeItem("ListDecomposeNode", label="List Decompose"),
             NodeItem("ZipNode", label="List Zip"),

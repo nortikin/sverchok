@@ -32,6 +32,19 @@ At present all scripts for SN must (strict list - general):
 - TextEditor has automatic `in_sockets` list creation (`Ctrl+I -> Generate in_sockets`) when the key cursor is over `sv_main`.  
     ![showit](https://cloud.githubusercontent.com/assets/619340/2854040/e6351180-d14b-11e3-8055-b3d8c707675d.gif) 
 
+
+#### `sv_main()`
+
+`sv_main()` can take int, float and list or nested list. Here are some legal examples:
+
+```python
+sv_main(vecs_in_multi=[[]], vecs_in_flat=[], some_var=1, some_ratio=1.2):
+
+[[]]    # for nested
+[]      # for float
+
+```
+
 #### `in_sockets`
 
 ```python
