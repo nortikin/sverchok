@@ -168,7 +168,6 @@ class SvIntersectEdgesNode(Node, SverchCustomTreeNode):
         unselect_nonintersecting(bm, d.keys(), edge_indices)
 
         # store non_intersecting edge sequencer
-        # add_back = [(edge.verts[0].index, edge.verts[1].index) for edge in bm.edges if not edge.select]
         add_back = [[i.index for i in edge.verts] for edge in bm.edges if not edge.select]
 
         update_mesh(bm, d)
