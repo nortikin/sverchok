@@ -296,6 +296,7 @@ def make_categories():
             # investigate data
             NodeItem("DistancePPNode", label="Distances"),
             NodeItem("AreaNode", label="Area"),
+            NodeItem("SvBBoxNode", label="Bounding box"),
             NodeItem("SvKDTreeNode", label="KDTree Verts"),
             NodeItem("SvKDTreeEdgesNode", label="KDTree Edges"),
             ]),
