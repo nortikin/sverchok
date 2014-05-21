@@ -30,6 +30,9 @@ from bmesh.types import BMFace
 from util import *
 
 SpaceView3D = bpy.types.SpaceView3D
+
+callback_dict = {}
+
 point_dict = {}
 
 
@@ -96,33 +99,31 @@ def tag_redraw_all_view3d():
 
 
 def callback_enable(n_id, draw_verts, draw_edges, draw_faces, draw_matrix, draw_bg, settings):
-    handle = handle_read(n_id)
-    if handle[0]:
+    global callback_dict
+    if n_id in callback_dict:
         return
     handle_pixel = SpaceView3D.draw_handler_add(
         draw_callback_px, (
            n_id, draw_verts, draw_edges, draw_faces, draw_matrix, draw_bg, settings),
         'WINDOW', 'POST_PIXEL')
-    handle_write(n_id, handle_pixel)
+    callback_dict[n_id]=handle_pixel
     tag_redraw_all_view3d()
-
 
 def callback_disable(n_id):
-    handle = handle_read(n_id)
-    if not handle[0]:
+    global callback_dict
+    handle_pixel = callback_dict.get(n_id,None)
+    if not handle_pixel:
         return
-
-    handle_pixel = handle[1]
     SpaceView3D.draw_handler_remove(handle_pixel, 'WINDOW')
-    handle_delete(n_id)
+    del callback_dict[n_id]
     tag_redraw_all_view3d()
 
-
 def callback_disable_all():
-    global temp_handle
-    temp_list = list(temp_handle.keys())
-    for name in temp_list:
-        callback_disable(name)
+    global callback_dict
+    temp_list = list(callback_dict.keys())
+    for n_id in temp_list:
+        if n_id:
+            callback_disable(n_id)
 
 
 def draw_callback_px(n_id, draw_verts, draw_edges, draw_faces, draw_matrix, draw_bg, settings):

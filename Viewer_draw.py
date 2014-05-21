@@ -27,7 +27,7 @@ import node_Viewer
 from node_Viewer import *
 from util import *
 
-global temp_handle
+callback_dict = {}
 SpaceView3D = bpy.types.SpaceView3D
 
 # ------------------------------------------------------------------------ #
@@ -48,30 +48,28 @@ def tag_redraw_all_view3d():
 
 
 def callback_enable(name, sl1, sl2, sl3, vs, colo, tran, shade):
-    global temp_handle
-    handle = handle_read(name)
-    if handle[0]:
+    global callback_dict
+    if name in callback_dict:
         return
     handle_view = SpaceView3D.draw_handler_add(draw_callback_view, (name, sl1, sl2, sl3, vs, colo, tran, shade), 'WINDOW', 'POST_VIEW')
-    handle_write(name, handle_view)
+    callback_dict[name]=handle_view
     tag_redraw_all_view3d()
     
 
 def callback_disable_all():
-    global temp_handle
-    temp_list = list(temp_handle.keys())
+    global callback_dict
+    temp_list = list(callback_dict.keys())
     for name in temp_list:
         if name:
             callback_disable(name)
     
 def callback_disable(name):
-    global temp_handle
-    handle = handle_read(name)
-    if not handle[0]:
+    global callback_dict
+    handle_view = callback_dict.get(name,None)
+    if not handle_view:
         return
-    handle_view = handle[1]
     SpaceView3D.draw_handler_remove(handle_view, 'WINDOW')
-    handle_delete(name)
+    del callback_dict[name]
     tag_redraw_all_view3d()
    
     
