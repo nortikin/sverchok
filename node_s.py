@@ -102,11 +102,12 @@ class StringsSocket(NodeSocketStandard):
     
     def sv_get(self,default=None):
         if self.links and not self.is_output:
-            return SvGetSocket(self)
-        elif self.prop_name:
+            out = SvGetSocket(self)
+            if out:
+                return out
+        if self.prop_name:
             return [[getattr(self.node,self.prop_name)]]
-        else:
-            return default
+        return default
             
     def sv_set(self,data):
         SvSetSocket(self,data)
@@ -234,6 +235,7 @@ def make_categories():
             # NodeItem("FormulaNode", label="Formula"),
             NodeItem("Formula2Node", label="Formula2"),
             NodeItem("ScalarMathNode", label="Math"),
+            NodeItem("SvMapRangeNode", label="Map Range"),
             ]),
         SverchNodeCategory("SVERCHOK_G", "SVERCHOK generator", items=[
             # objects, new elements, line, plane
