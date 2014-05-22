@@ -197,6 +197,7 @@ def make_categories():
             NodeItem("SvFrameInfoNode", label="Frame info"),
             NodeItem("ToolsNode", label="Tools"),
             NodeItem("NoteNode", label="Note"),
+            NodeItem("GTextNode", label="GText"),
             # NodeItem("SvDebugPrintNode", label="debug"),
             ]),
         SverchNodeCategory("SVERCHOK_L", "SVERCHOK list", items=[
