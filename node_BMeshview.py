@@ -240,7 +240,14 @@ class BmeshViewerNode(Node, SverchCustomTreeNode):
         def get_edges_faces_matrices(obj_index):
             for geom in mrest:
                 yield self.get_structure(geom, obj_index)
-
+        
+        # matrices need to define count of objects. paradigma
+        maxlen = max(len(mverts),len(mrest[0]),len(mrest[1]),len(mrest[2]))
+        fullList(mverts, maxlen)
+        if mrest[0]: fullList(mrest[0], maxlen)
+        if mrest[1]: fullList(mrest[1], maxlen)
+        if mrest[2]: fullList(mrest[2], maxlen)
+        
         for obj_index, Verts in enumerate(mverts):
             if not Verts:
                 continue
