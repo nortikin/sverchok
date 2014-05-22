@@ -42,17 +42,19 @@ class SvMapRangeNode(Node, SverchCustomTreeNode):
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "clamp")
-
-    def map_range(self,x,old_min,old_max,new_min,new_max):
+    
+    def map_range(self,x_list,old_min,old_max,new_min,new_max):
         old_d = old_max - old_min
         new_d = new_max - new_min
-        x_o = (x-old_min)/old_d
-        x_n = new_min+(x_o * new_d)
+        scale = new_d/old_d
         
+        def f(x):
+            return new_min + (x-old_min)*scale
+            
         if self.clamp:
-            return min(new_max,max(new_min,x_n))
+            return [min(new_max,max(new_min,f(x))) for x in x_list]
         else:
-            return x_n
+            return [f(x) for x in x_list]
             
     def update(self):
         inputs = self.inputs
@@ -63,9 +65,7 @@ class SvMapRangeNode(Node, SverchCustomTreeNode):
             return
         value_in=iter(inputs[0].sv_get())
         param=[repeat_last(inputs[i].sv_get()[0]) for i in range(1,5)]
-        out = []
-        for args in zip(value_in,*param):
-             out.append([self.map_range(v,*args[1:]) for v in args[0]])
+        out = [self.map_range(*args) for args in zip(value_in, *param)]
         self.outputs['Value'].sv_set(out)
                 
                 
