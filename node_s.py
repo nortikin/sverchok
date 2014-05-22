@@ -291,6 +291,7 @@ def make_categories():
             NodeItem("SvMeshJoinNode", label="Mesh Join"),
             NodeItem("SvRemoveDoublesNode", label="Mesh Remove Doubles"),
             NodeItem("SvDeleteLooseNode", label="Delete Loose"),
+            NodeItem('SvSeparateMeshNode', label="Separate Loose Parts"),
             NodeItem("SvConvexHullNode", label="Convex Hull"),
             NodeItem("SvIntersectEdgesNode", label="Intersect Edges"),
             ]),
