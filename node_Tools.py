@@ -8,7 +8,7 @@ import urllib
 from zipfile import ZipFile
 
 # needed to show current version
-script_paths = bpy.utils.script_paths()[1]
+script_paths = bpy.utils.script_paths()[-1]
 svversion = os.path.normpath(os.path.join(script_paths, 'addons', 'sverchok-master', 'version'))
 svlocal_file = open(svversion,'r+')
 svversion_local = svlocal_file.read()[:-1]
@@ -62,7 +62,7 @@ class SverchokUpdateAddon(bpy.types.Operator):
         
         #if os.sys.platform == 'linux':
         try:
-            os.curdir = os.path.normpath(os.path.join(bpy.utils.script_paths()[1], 'addons/sverchok-master')) 
+            os.curdir = os.path.normpath(os.path.join(bpy.utils.script_paths()[-1], 'addons/sverchok-master')) 
             #os.environ['HOME']+'/.config/blender/'+bpy.app.version_string[:4]
             os.chdir(os.curdir)
             version_url = urllib.request.urlretrieve('https://raw.githubusercontent.com/nortikin/sverchok/master/version')
@@ -77,7 +77,7 @@ class SverchokUpdateAddon(bpy.types.Operator):
                 self.report({'INFO'}, "You already have latest version of Sverchok, no need to upgrade.")
                 return {'CANCELLED'}
             else:
-                os.curdir = os.path.normpath(os.path.join(bpy.utils.script_paths()[1],'addons'))
+                os.curdir = os.path.normpath(os.path.join(bpy.utils.script_paths()[-1],'addons'))
                 os.chdir(os.curdir)
                 #os.system('wget https://github.com/nortikin/sverchok/archive/master.zip')
                 try:
