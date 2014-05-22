@@ -99,7 +99,7 @@ class GenListRangeInt(Node, SverchCustomTreeNode):
         param=[inputs[i].sv_get()[0] for i in range(3)]
         f=self.func_dict[self.mode]
         out = [f(*args) for args in zip(*match_long_repeat(param))]
-        self.outputs['Range'].sv_set(out)
+        outputs['Range'].sv_set(out)
                 
 
 def register():
