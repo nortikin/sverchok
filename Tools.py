@@ -77,11 +77,11 @@ class SverchokCheckForUpgrades(bpy.types.Operator):
         except:
             self.report({'ERROR'}, "Cannot even get version, check connection")
         
-        if version_url and svversion_local == version_url:
-            self.report({'INFO'}, "You already have latest version of Sverchok, no need to upgrade.")
-        elif version_url:
+        if version_url and svversion_local != version_url:
             sv_new_version = True
             self.report({'INFO'}, "There is new version.")
+        elif version_url:
+            self.report({'INFO'}, "You already have latest version of Sverchok, no need to upgrade.")
         return {'FINISHED'}
 
 class SverchokUpdateAddon(bpy.types.Operator):
