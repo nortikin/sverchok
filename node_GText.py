@@ -46,12 +46,11 @@ def generate_greasepencil(node, text, col, pxwide, pos, fontdict):
     if not (node_name in gp.layers):
         layer = gp.layers.new(node_name)
         layer.frames.new(1)
+        layer.line_width = 1
     else:
         layer = gp.layers[node_name]
         layer.frames[0].clear()
-
-    layer.line_width = 1
-
+        
     for ch in text:
         if ch == "\n":
             yof -= line_height
@@ -125,6 +124,11 @@ class GTextNode(Node, SverchCustomTreeNode):
         row.operator(
             'node.sverchok_gtext_button', text='Get from Clipboard'
             ).mode = 'clipboard'
+        if self.id_data.grease_pencil:
+            gp_layer=self.id_data.grease_pencil.layers.get(self.name)
+            if gp_layer:
+                layout.prop(gp_layer,'color')
+                layout.prop(gp_layer,'line_width')
 
     def init(self, context):
         pass
