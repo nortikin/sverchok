@@ -7,12 +7,23 @@ import os
 import urllib
 from zipfile import ZipFile
 
-# needed to show current version
-script_paths = bpy.utils.script_paths()[-1]
-svversion = os.path.normpath(os.path.join(script_paths, 'addons', 'sverchok-master', 'version'))
-svlocal_file = open(svversion,'r+')
-svversion_local = svlocal_file.read()[:-1]
-svlocal_file.close()
+
+def sv_get_local_path():
+    script_paths = os.path.normpath(os.path.dirname(__file__))
+    bl_addons_path = os.path.dirname(script_paths)
+    svversion = os.path.normpath(os.path.join(script_paths, 'version'))
+    svlocal_file = open(svversion,'r+')
+    svversion_local = svlocal_file.read()[:-1]
+    svlocal_file.close()
+    return script_paths, bl_addons_path, svversion_local
+
+# global veriables in tools
+script_paths, bl_addons_path, svversion_local = sv_get_local_path()
+    
+def sv_get_url_path():
+    url = 'https://raw.githubusercontent.com/nortikin/sverchok/master/version'
+    version_url = urllib.request.urlopen(url).read().strip().decode()
+    return version_url
 
 class SverchokUpdateAll(bpy.types.Operator):
     """Sverchok update all"""
@@ -56,52 +67,31 @@ class SverchokUpdateAddon(bpy.types.Operator):
     bl_label = "Sverchok update addon in linux"
     bl_options = {'REGISTER', 'UNDO'}
     
-    #version = bpy.props.StringProperty(name='Your Blender version is', default='2.70')
-    
     def execute(self, context):
-        
-        #if os.sys.platform == 'linux':
+        os.curdir = script_paths
+        os.chdir(os.curdir)
         try:
-            os.curdir = os.path.normpath(os.path.join(bpy.utils.script_paths()[-1], 'addons/sverchok-master')) 
-            #os.environ['HOME']+'/.config/blender/'+bpy.app.version_string[:4]
-            os.chdir(os.curdir)
-            version_url = urllib.request.urlretrieve('https://raw.githubusercontent.com/nortikin/sverchok/master/version')
-            url_file = open(version_url[0],'r')
-            version_url = url_file.read()[:-1]
-            url_file.close()
-            local_file = open(os.path.join(os.curdir, 'version'), 'r')
-            version_local = local_file.read()[:-1]
-            local_file.close()
-            
-            if version_local == version_url:
-                self.report({'INFO'}, "You already have latest version of Sverchok, no need to upgrade.")
-                return {'CANCELLED'}
-            else:
-                os.curdir = os.path.normpath(os.path.join(bpy.utils.script_paths()[-1],'addons'))
-                os.chdir(os.curdir)
-                #os.system('wget https://github.com/nortikin/sverchok/archive/master.zip')
-                try:
-                    url = 'https://github.com/nortikin/sverchok/archive/master.zip'
-                    file = urllib.request.urlretrieve(url,os.path.normpath(os.path.join(os.curdir,'master.zip')))
-                    ZipFile(file[0]).extractall(path=os.curdir, members=None, pwd=None)
-                    os.remove(file[0])
-                    #os.system('unzip -o master.zip -d '+os.curdir)
-                    #os.system('rm master.zip')
-                    self.report({'INFO'}, "Unzipped, reload addons with F8 button")
-                    
-                except:
-                    self.report({'ERROR'}, "cannot unzip archive somehow")
-                    os.system('rm master.zip')
+            version_url = sv_get_url_path()
         except:
-            self.report({'ERROR'}, "Cannot download archive or compare versions")
-        #else:
-        #    self.report({'WARNING'}, "It is not Linux, install Linux")
+            self.report({'ERROR'}, "Cannot even get version, check connection")
+        if version_url and svversion_local == version_url:
+            self.report({'INFO'}, "You already have latest version of Sverchok, no need to upgrade.")
+            return {'CANCELLED'}
+        else:
+            os.curdir = bl_addons_path
+            os.chdir(os.curdir)
+            try:
+                url = 'https://github.com/nortikin/sverchok/archive/master.zip'
+                file = urllib.request.urlretrieve(url,os.path.normpath(os.path.join(os.curdir,'master.zip')))
+            except:
+                self.report({'ERROR'}, "Cannot retrieve file from Internet")
+            try:
+                ZipFile(file[0]).extractall(path=os.curdir, members=None, pwd=None)
+                os.remove(file[0])
+                self.report({'INFO'}, "Unzipped, reload addons with F8 button")
+            except:
+                self.report({'ERROR'}, "Cannot extract files")
         return {'FINISHED'}
-    
-    #def invoke(self, context, event):
-        #wm = context.window_manager
-        #wm.invoke_props_dialog(self, 250)
-        #return {'RUNNING_MODAL'}
 
 class SverchokToolsMenu(bpy.types.Panel):
     bl_idname = "Sverchok_tools_menu"
