@@ -110,7 +110,7 @@ if "bpy" in locals():
     imp.reload(node_WifiIn)
     imp.reload(node_Formula)
     imp.reload(node_Formula2)
-    imp.reload(node_Tools)
+    imp.reload(Tools)
     imp.reload(node_AdaptivePolygons)
     imp.reload(node_AdaptiveEdges)
     imp.reload(node_CrossSection)
@@ -215,7 +215,7 @@ else:
     import node_WifiIn
     import node_Formula
     import node_Formula2
-    import node_Tools
+    import Tools
     import node_AdaptivePolygons
     import node_AdaptiveEdges
     import node_CrossSection
@@ -319,7 +319,7 @@ def register():
     node_WifiIn.register()
     node_Formula.register()
     node_Formula2.register()
-    node_Tools.register()
+    Tools.register()
     node_AdaptivePolygons.register()
     node_AdaptiveEdges.register()
     node_CrossSection.register()
@@ -435,7 +435,7 @@ def unregister():
     node_CrossSection.unregister()
     node_AdaptiveEdges.unregister()
     node_AdaptivePolygons.unregister()
-    node_Tools.unregister()
+    Tools.unregister()
     node_Formula2.unregister()
     node_Formula.unregister()
     node_WifiIn.unregister()
@@ -486,8 +486,8 @@ def unregister():
     if 'SVERCHOK' in nodeitems_utils._node_categories:
         nodeitems_utils.unregister_node_categories("SVERCHOK")
         
-if __name__ == "__main__":
-    register()
+#if __name__ == "__main__":
+    #register()
     #import nodeitems_utils
     #if 'SVERCHOK' in nodeitems_utils._node_categories:
         #unregister()

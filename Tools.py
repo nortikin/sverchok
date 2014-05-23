@@ -19,6 +19,7 @@ def sv_get_local_path():
 
 # global veriables in tools
 script_paths, bl_addons_path, svversion_local = sv_get_local_path()
+sv_new_version = False
     
 def sv_get_url_path():
     url = 'https://raw.githubusercontent.com/nortikin/sverchok/master/version'
@@ -61,36 +62,52 @@ class SverchokHome(bpy.types.Operator):
                 self.report({'WARNING'}, "Error in opening the page %s." % (page))
         return {'FINISHED'}
 
-class SverchokUpdateAddon(bpy.types.Operator):
-    """ Sverchok update addon without any browsing and so on. After - press F8 to reload addons """
-    bl_idname = "node.sverchok_update_addon"
-    bl_label = "Sverchok update addon in linux"
-    bl_options = {'REGISTER', 'UNDO'}
+class SverchokCheckForUpgrades(bpy.types.Operator):
+    """ Check if there new version on github """
+    bl_idname = "node.sverchok_check_for_upgrades"
+    bl_label = "Sverchok check for new version"
+    bl_options = {'REGISTER'}
     
     def execute(self, context):
+        global sv_new_version
         os.curdir = script_paths
         os.chdir(os.curdir)
         try:
             version_url = sv_get_url_path()
         except:
             self.report({'ERROR'}, "Cannot even get version, check connection")
+        
         if version_url and svversion_local == version_url:
             self.report({'INFO'}, "You already have latest version of Sverchok, no need to upgrade.")
-            return {'CANCELLED'}
-        else:
+        elif version_url:
+            sv_new_version = True
+            self.report({'INFO'}, "There is new version.")
+        return {'FINISHED'}
+
+class SverchokUpdateAddon(bpy.types.Operator):
+    """ Sverchok update addon without any browsing and so on. After - press F8 to reload addons """
+    bl_idname = "node.sverchok_update_addon"
+    bl_label = "Sverchok update addon"
+    bl_options = {'REGISTER'}
+    
+    def execute(self, context):
+        global sv_new_version
+        if sv_new_version:
             os.curdir = bl_addons_path
             os.chdir(os.curdir)
             try:
                 url = 'https://github.com/nortikin/sverchok/archive/master.zip'
                 file = urllib.request.urlretrieve(url,os.path.normpath(os.path.join(os.curdir,'master.zip')))
+                try:
+                    ZipFile(file[0]).extractall(path=os.curdir, members=None, pwd=None)
+                    os.remove(file[0])
+                    sv_new_version = False
+                    self.report({'INFO'}, "Unzipped, reload addons with F8 button")
+                except:
+                    self.report({'ERROR'}, "Cannot extract files")
             except:
-                self.report({'ERROR'}, "Cannot retrieve file from Internet")
-            try:
-                ZipFile(file[0]).extractall(path=os.curdir, members=None, pwd=None)
-                os.remove(file[0])
-                self.report({'INFO'}, "Unzipped, reload addons with F8 button")
-            except:
-                self.report({'ERROR'}, "Cannot extract files")
+                self.report({'ERROR'}, "Cannot get archive from Internet")
+            
         return {'FINISHED'}
 
 class SverchokToolsMenu(bpy.types.Panel):
@@ -157,8 +174,10 @@ class SverchokToolsMenu(bpy.types.Panel):
                 else:
                     split.prop(tree, 'sv_animate',icon='LOCKED',text=' ')
                     
-        
-        layout.column().operator(SverchokUpdateAddon.bl_idname, text='Upgrade Sverchok addon')
+        if sv_new_version:
+            layout.column().operator(SverchokUpdateAddon.bl_idname, text='Upgrade Sverchok addon')
+        else:
+            layout.column().operator(SverchokCheckForUpgrades.bl_idname, text='Check for new version')
         #       row.prop(tree, 'sv_bake',text=' ')
   
         #box = layout.box()
@@ -221,6 +240,7 @@ class ToolsNode(Node, SverchCustomTreeNode):
 
 def register():
     bpy.utils.register_class(SverchokUpdateAll)
+    bpy.utils.register_class(SverchokCheckForUpgrades)
     bpy.utils.register_class(SverchokUpdateAddon)
     bpy.utils.register_class(SverchokPurgeCache)
     bpy.utils.register_class(SverchokHome)
@@ -233,6 +253,7 @@ def unregister():
     bpy.utils.unregister_class(SverchokHome)
     bpy.utils.unregister_class(SverchokPurgeCache)
     bpy.utils.unregister_class(SverchokUpdateAddon)
+    bpy.utils.unregister_class(SverchokCheckForUpgrades)
     bpy.utils.unregister_class(SverchokUpdateAll)
 
 if __name__ == "__main__":
