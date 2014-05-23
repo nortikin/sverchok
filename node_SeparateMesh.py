@@ -49,14 +49,15 @@ class SvSeparateMeshNode(Node, SverchCustomTreeNode):
                     for node in node_links[n]:
                         if not node in node_set_list[-1]:
                             node_stack.append(node)                                                        
-                    if node_stack:
+                    if not node_stack: # new mesh part
+                        n=nodes.pop()
+                        node_set_list.append(set([n]))
+                    else:
                         while node_stack and n in node_set_list[-1]:
                             n = node_stack.pop()
                         nodes.discard(n)
                         node_set_list[-1].add(n)
-                    if not node_stack: # new mesh part
-                        n=nodes.pop()
-                        node_set_list.append(set([n]))
+
                 # create new meshes from sets
                 if len(node_set_list)>1:
                     for node_set in node_set_list:
