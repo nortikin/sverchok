@@ -11,7 +11,7 @@ import traceback
 
 global bmesh_mapping, per_cache
 
-DEBUG_MODE = False
+DEBUG_MODE = True
 
 # temporary setting while testing new update system
 # to test new, set to False
