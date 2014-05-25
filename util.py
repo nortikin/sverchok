@@ -13,6 +13,10 @@ global bmesh_mapping, per_cache
 
 DEBUG_MODE = False
 
+# temporary setting while testing new update system
+# to test new, set to False
+USE_OLD = True
+
 temp_handle = {}
 
 cache_nodes = {}
@@ -640,6 +644,10 @@ def sverchok_debug(mode):
 
 
 def updateNode(self, context):
+    """
+    When a node has changed state and need to call a partial update.
+    For example a user exposed bpy.prop
+    """
     global DEBUG_MODE
     a=time.time()
     speedUpdate(start_node = self)
@@ -647,10 +655,21 @@ def updateNode(self, context):
     if DEBUG_MODE:
         print("Partial update from node",self.name,"in",round(b-a,4))
 
-def make_update_list(node_tree,node_set = None):
-    """ Makes a list for updates from a node_group
-    if a node set is passed only the subtree defined by the node set is used. Otherwise
-    the complete node tree is used.
+def make_update_list(ng,node_set = None):
+    '''
+    Temporary functions while testing for swithing implementation
+    '''
+    if USE_OLD: 
+        return make_update_list_old(ng,node_set) 
+    else: 
+        return make_update_list_new(ng,node_set)   
+
+def make_update_list_old(node_tree,node_set = None):
+    """
+    NOTE THIS IS THE OLD SLOW IMPLEMENTATION 
+    Makes a list for updates from a node_group
+    if a node set is passed only the subtree defined by the node set is used. 
+    Otherwise the complete node tree is used.
     """
     deps = {}
     # get nodes, select root nodes, wifi nodes and create dependencies for each node
@@ -660,9 +679,7 @@ def make_update_list(node_tree,node_set = None):
     wifi_out = []
     wifi_in = []
         
-          
     ng = node_tree
-    node_list = []
     if not node_set: # if no node_set, take all
         node_set = set(ng.nodes.keys())
     for name,node in [(node_name,ng.nodes[node_name]) for node_name in node_set]:
@@ -738,10 +755,137 @@ def make_update_list(node_tree,node_set = None):
                 for node_name in deps.keys():
                     name=node_name
                     break
+    return list(out.keys())
+    
+# new 5 times quicker implementation
+
+def make_update_list_new(node_tree,node_set = None):
+    """ 
+    Makes a list for updates from a node_group
+    if a node set is passed only the subtree defined by the node set is used. Otherwise
+    the complete node tree is used.
+    """
+    
+    ng = node_tree
+    
+    if not node_set: # if no node_set, take all
+        node_set = set(ng.nodes.keys())
+    
+    if len(node_set) == 1:
+        return list(node_set)
+        
+    deps = {name:set() for name in node_set}
+    root_set = set()
+    for link in ng.links:
+        if not link.is_valid:
+            return [] #this happens more often than one might think
+        t_node = link.to_node
+        t_name = t_node.name
+        f_name = link.from_node.name
+        if t_name in node_set:
+            is_root = not any((s.links for s in t_node.outputs))
+            if f_name in node_set:
+                deps[t_name].add(f_name)
+            if is_root and t_node.bl_idname != 'WifiInNode':
+                root_set.add(t_node.name)  
+    
+    #  stack for traversing node graph
+    tree_stack = collections.deque(root_set)
+    
+    # create wifi out dependencies, process if needed
+    wifi_out_nodes = [(name,node.var_name) for name,node in ng.nodes.items() 
+                       if node.bl_idname == 'WifiOutNode' and name in node_set ]
+    if wifi_out_nodes:
+        wifi_dict = {node.var_name:name for name,node in ng.nodes.items() 
+                        if node.bl_idname == 'WifiInNode'}
+        for name,var_name in wifi_out_nodes:
+            if not var_name in wifi_dict:
+                print("Unsatisifed Wifi dependency: node, {0} var,{1}".format(name,var_name))
+                return []
+            deps[name].add(wifi_dict[var_name])
+
+    if tree_stack:
+        name = tree_stack.pop()
+    else:
+        if len(deps):
+            tmp = deps.popitem()
+            name = tmp[0]
+        else: # no nodes
+            return []
+
+    out = collections.OrderedDict()
+
+    # travel in node graph create one sorted list of nodes based on dependencies
+    node_count = len(deps)
+    while node_count > len(out):
+        node_dependencies = True
+        for dep_name in deps[name]:
+            if not dep_name in out:
+                tree_stack.append(name)
+                name = dep_name
+                node_dependencies = False
+                break
+        if len(tree_stack) > node_count:
+            print("Invalid node tree!")
+            return []
+        # if all dependencies are in out
+        if node_dependencies:
+            if not name in out:
+                out[name]=1
+            if tree_stack:
+                name = tree_stack.pop()
+            else:
+                if node_count == len(out):
+                    break
+                for node_name in deps.keys():
+                    if not node_name in out:
+                        name=node_name
+                        break
 
     return list(out.keys())
 
-
+def separate_nodes(ng):
+    ''' 
+    Separate a node group (layout) into unconnected parts
+    Arguments: Node group
+    Returns: A list of sets with separate node groups
+    '''
+    node_links = { name:set() for name in ng.nodes.keys()}
+    nodes=set(ng.nodes.keys())
+    if not nodes:
+        return []
+    for index,link in ng.links.items():
+        if not link.is_valid:
+            return []
+        f_name=link.from_node.name
+        t_name=link.to_node.name
+        node_links[f_name].add(t_name)
+        node_links[t_name].add(f_name)
+    wifi_dict = {node.var_name:name for name,node in ng.nodes.items() if node.bl_idname == 'WifiInNode'}
+    wifi_out_nodes = [(name,node.var_name) for name,node in ng.nodes.items() if node.bl_idname == 'WifiOutNode']
+    for name,var_name in wifi_out_nodes:
+        if not var_name in wifi_dict:
+            print("Unsatisifed Wifi dependency: node, {0} var,{1}".format(name,var_name))
+            return []
+        node_links[name].add(wifi_dict[var_name])
+        node_links[wifi_dict[var_name]].add(name)
+    n= nodes.pop()
+    node_set_list = [set([n])]
+    node_stack = collections.deque()
+    # find separate sets
+    while nodes:
+        for node in node_links[n]:
+            if not node in node_set_list[-1]:
+                node_stack.append(node)
+        if not node_stack: # new part
+            n=nodes.pop()
+            node_set_list.append(set([n]))
+        else:
+            while  n in node_set_list[-1] and node_stack:
+                n = node_stack.pop()
+            nodes.discard(n)
+            node_set_list[-1].add(n)
+    return node_set_list
 
 
 def make_tree_from_nodes(node_names,tree_name):
@@ -783,10 +927,10 @@ def make_tree_from_nodes(node_names,tree_name):
             current_node = ''
     return make_update_list(ng,out_set)
 
+
 # to make update tree based on node types and node names bases
 # no used yet
 # should add a check do find animated or driven nodes.
-
 def make_animation_tree(node_types,node_list,tree_name):
     global list_nodes4update
     ng = bpy.data.node_groups[tree_name]
@@ -795,6 +939,14 @@ def make_animation_tree(node_types,node_list,tree_name):
         node_set = node_set | {name for name in ng.nodes.keys() if ng.nodes[name].bl_idname == n_t}
     a_tree = make_tree_from_nodes(list(node_set),tree_name)
     return a_tree
+    
+def create_update_list(ng):
+    '''
+    Create update list with separate node groups in layouts
+    '''
+    split = separate_nodes(ng)
+    out = [make_update_list(ng,s) for s in split]
+    return out
 
 def makeTreeUpdate2(tree=None):
     """ makes a complete update list for the tree_name, or all node trees"""
@@ -804,17 +956,35 @@ def makeTreeUpdate2(tree=None):
     # clear cache on every full update
     
     if tree != None:
-        list_nodes4update[tree.name] = make_update_list(tree)
+        list_nodes4update[tree.name] = create_update_list(tree)
         partial_update_cache[tree.name] = {}
         socket_data_cache[tree.name] = {}
     else:
         for name,ng in bpy.data.node_groups.items():
             if ng.bl_idname == 'SverchCustomTreeType':
-                list_nodes4update[name]=make_update_list(ng)
+                list_nodes4update[name]=create_update_list(ng)
                 partial_update_cache[name] = {}
                 socket_data_cache[name] = {}    
 
 
+
+def do_update_debug(node_list,nods):
+    global DEBUG_MODE
+    timings =[]
+    for nod_name in node_list:
+        if nod_name in nods:
+            delta=None
+            try:
+                start = time.perf_counter()
+                nods[nod_name].update()
+                delta = time.perf_counter()-start
+            except Exception as e:
+                print("Node {0} had exception {1}".format(nod_name,e))
+            if delta:  
+                print("Updated  {0} in:{1}".format(nod_name,round(delta,4)))  
+                timings.append((nod_name,delta))
+    
+                
 # master update function, has several different modes
 
 def speedUpdate(start_node = None, tree = None, animation_mode = False):
@@ -822,16 +992,17 @@ def speedUpdate(start_node = None, tree = None, animation_mode = False):
     global socket_data_cache
     global DEBUG_MODE
 
-    def do_update(node_list,nods):
-        global DEBUG_MODE
+    def do_update_normal(node_list,nods):
         for nod_name in node_list:
             if nod_name in nods:
-                if DEBUG_MODE:
-                    start = time.time()
                 nods[nod_name].update()
-                if DEBUG_MODE:
-                    stop = time.time()
-                    print("Updated: ",nod_name, " in ", round(stop-start,4))    
+    
+    if not DEBUG_MODE:
+        do_update=do_update_normal
+    else:
+        do_update=do_update_debug
+        
+    
     # try to update optimized animation trees, not ready, needs to be redone
     if animation_mode:
         pass
@@ -854,17 +1025,17 @@ def speedUpdate(start_node = None, tree = None, animation_mode = False):
             do_update(list_nodes4update[tree.name],tree.nodes)
             return
     # draw the complete named tree, called from SverchokCustomTreeNode
+    # we flatten this update lists for now, refactoring in progress
     if tree != None:
         if not tree.name in list_nodes4update:
             makeTreeUpdate2(tree)
-        do_update(list_nodes4update[tree.name],tree.nodes)
+        do_update(itertools.chain.from_iterable(list_nodes4update[tree.name]),tree.nodes)
         return
 
     # update all node trees
     for name,ng in bpy.data.node_groups.items():
         if ng.bl_idname == 'SverchCustomTreeType':
-            nods = bpy.data.node_groups[name].nodes
-            do_update(list_nodes4update[name],nods)
+            do_update(itertools.chain.from_iterable(list_nodes4update[name]),ng.nodes)
 
 def get_update_lists(ng):
     global list_nodes4update
@@ -1029,7 +1200,7 @@ def socket_id(socket):
 #  n_id =  StringProperty(default='')
 # And a copy function 
 #  def copy(self,node)
-#      self.nid=''
+#      self.n_id=''
 # the always use like this 
 # n_id = node_id(self)
 # node_dict[n_id]['key']
