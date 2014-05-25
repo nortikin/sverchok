@@ -73,7 +73,6 @@ class LineConnectNode(Node, SverchCustomTreeNode):
                         indexes = indexes_ + indexes__[::-1]
                         if quad and len(indexes)>=4:
                             quaded = [(indexes[k], indexes[k+1], indexes[-(k+2)], indexes[-(k+1)]) for k in range((len(indexes)-1)//2)]
-                            print(quaded)
                             objecto.extend(quaded)
                         else:
                             objecto.append(indexes)
