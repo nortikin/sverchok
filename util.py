@@ -11,11 +11,11 @@ import traceback
 
 global bmesh_mapping, per_cache
 
-DEBUG_MODE = True
+DEBUG_MODE = False
 
 # temporary setting while testing new update system
 # to test new, set to False
-USE_OLD = False
+USE_OLD = True
 
 temp_handle = {}
 
