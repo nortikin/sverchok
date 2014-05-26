@@ -9,6 +9,17 @@ from util import *
 import random
 
 
+def get_random_init():
+    greek_alphabet = [
+        'Alpha', 'Beta', 'Gamma', 'Delta',
+        'Epsilon', 'Zeta', 'Eta', 'Theta',
+        'Iota', 'Kappa', 'Lamda', 'Mu',
+        'Nu', 'Xi', 'Omicron', 'Pi',
+        'Rho', 'Sigma', 'Tau', 'Upsilon',
+        'Phi', 'Chi', 'Psi', 'Omega']
+    return random.choice(greek_alphabet)
+
+
 def default_mesh(name):
     verts = [(1, 1, -1), (1, -1, -1), (-1, -1, -1)]
     faces = [(0, 1, 2)]
@@ -110,6 +121,14 @@ class SvBmeshViewOp(bpy.types.Operator):
                 obj.hide_select = n.state_select
             n.state_select = not n.state_select
 
+        elif type_op == 'mesh_select':
+            for obj in objs:
+                obj.select = n.select_state_mesh
+            n.select_state_mesh = not n.select_state_mesh
+
+        elif type_op == 'random_mesh_name':
+            n.basemesh_name = get_random_init()
+
     def execute(self, context):
         self.hide_unhide(context, self.fn_name)
         return {'FINISHED'}
@@ -121,25 +140,16 @@ class BmeshViewerNode(Node, SverchCustomTreeNode):
     bl_label = 'Bmesh Viewer Draw'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    def get_random_init():
-        greek_alphabet = [
-            'Alpha', 'Beta', 'Gamma', 'Delta',
-            'Epsilon', 'Zeta', 'Eta', 'Theta',
-            'Iota', 'Kappa', 'Lamda', 'Mu',
-            'Nu', 'Xi', 'Omicron', 'Pi',
-            'Rho', 'Sigma', 'Tau', 'Upsilon',
-            'Phi', 'Chi', 'Psi', 'Omega']
-        return random.choice(greek_alphabet)
-
     activate = BoolProperty(
         name='Show', description='Activate node?',
         default=True,
         update=updateNode)
 
-    basemesh_name = StringProperty(default=get_random_init())
+    basemesh_name = StringProperty(default=get_random_init(), update=updateNode)
     state_view = BoolProperty(default=True)
     state_render = BoolProperty(default=True)
     state_select = BoolProperty(default=True)
+    select_state_mesh = BoolProperty(default=False)
 
     def init(self, context):
         self.inputs.new('VerticesSocket', 'vertices', 'vertices')
@@ -179,6 +189,15 @@ class BmeshViewerNode(Node, SverchCustomTreeNode):
         layout.label("Base mesh name(s)", icon='OUTLINER_OB_MESH')
         row = layout.row()
         row.prop(self, "basemesh_name", text="")
+
+    def draw_buttons_ext(self, context, layout):
+        sh = 'node.showhide_bmesh'
+
+        row = layout.row(align=True)
+        row.prop(self, "basemesh_name", text="")
+        row.operator(sh, text='Random Name').fn_name = 'random_mesh_name'
+        row = layout.row()
+        row.operator(sh, text='Select Meshes').fn_name = 'mesh_select'
 
     def get_corrected_data(self, socket_name, socket_type):
         inputs = self.inputs
@@ -240,14 +259,17 @@ class BmeshViewerNode(Node, SverchCustomTreeNode):
         def get_edges_faces_matrices(obj_index):
             for geom in mrest:
                 yield self.get_structure(geom, obj_index)
-        
+
         # matrices need to define count of objects. paradigma
-        maxlen = max(len(mverts),len(mrest[0]),len(mrest[1]),len(mrest[2]))
+        maxlen = max(len(mverts), len(mrest[0]), len(mrest[1]), len(mrest[2]))
         fullList(mverts, maxlen)
-        if mrest[0]: fullList(mrest[0], maxlen)
-        if mrest[1]: fullList(mrest[1], maxlen)
-        if mrest[2]: fullList(mrest[2], maxlen)
-        
+        if mrest[0]:
+            fullList(mrest[0], maxlen)
+        if mrest[1]:
+            fullList(mrest[1], maxlen)
+        if mrest[2]:
+            fullList(mrest[2], maxlen)
+
         for obj_index, Verts in enumerate(mverts):
             if not Verts:
                 continue
@@ -256,8 +278,8 @@ class BmeshViewerNode(Node, SverchCustomTreeNode):
             mesh_name = self.basemesh_name + "_" + str(obj_index)
             make_bmesh_geometry(C, mesh_name, Verts, *data)
 
-        print(obj_index)
         self.remove_non_updated_objects(obj_index, self.basemesh_name)
+        self.set_corresponding_materials()
 
     def remove_non_updated_objects(self, obj_index, _name):
 
@@ -282,6 +304,20 @@ class BmeshViewerNode(Node, SverchCustomTreeNode):
             meshes.remove(meshes[object_name])
 
         # fingers crossed.
+
+    def set_corresponding_materials(self):
+        objs = bpy.data.objects
+        first_mesh = self.basemesh_name + '_0'
+
+        group_material = objs[first_mesh].active_material
+
+        if group_material:
+            for obj in objs:
+                # if this object is made by bmesh - assign material of 'object_0'
+                if obj.name.startswith(self.basemesh_name + "_"):
+                    active_mat = obj.active_material
+                    if (not active_mat) or not (active_mat == group_material):
+                        active_mat = group_material
 
     def update_socket(self, context):
         self.update()
