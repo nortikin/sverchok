@@ -11,7 +11,7 @@ class LineConnectNode(Node, SverchCustomTreeNode):
     JoinLevel = bpy.props.IntProperty(name='JoinLevel', description='Choose connect level of data (see help)', default=1, min=1, max=2, update=updateNode)
     polygons = bpy.props.BoolProperty(name='polygons', description='Do polygons or not?', default=True, update=updateNode)
     dir_check = bpy.props.BoolProperty(name='direction', description='direction to connect', default=True, update=updateNode)
-    link_check = bpy.props.BoolProperty(name='link', description='link parts', default=False, update=updateNode)
+    quad_check = bpy.props.BoolProperty(name='quad', description='quad', default=False, update=updateNode)
     cicl_check = bpy.props.BoolProperty(name='cicle', description='cicle line', default=False, update=updateNode)
     
     base_name = 'vertices '
@@ -24,13 +24,13 @@ class LineConnectNode(Node, SverchCustomTreeNode):
     
     def draw_buttons(self, context, layout):
         layout.prop(self, "dir_check", text="direction")
-        #layout.prop(self, "link_check", text="to link")
-        #layout.prop(self, "cicl_check", text="cicle first-last")
+        layout.prop(self, "quad_check", text="quad pols")
+        layout.prop(self, "cicl_check", text="cicle first-last")
         layout.prop(self, "polygons", text="do polygons")
         layout.prop(self, "JoinLevel", text="connect level")
 
     
-    def connect(self, vers, dirn, link, cicl, clev, polygons):
+    def connect(self, vers, dirn, quad, cicl, clev, polygons):
         vers_ = []
         lens = []
         
@@ -52,10 +52,6 @@ class LineConnectNode(Node, SverchCustomTreeNode):
                     objecto = []
                     for i, ve in enumerate(ob[0:-1]):
                         objecto.append([i,i+1])
-                    if link:
-                        pass
-                    if cicl:
-                        objecto.append([0,k-1])
                     edges.append(objecto)
             else:
                 length_ob = []
@@ -68,23 +64,33 @@ class LineConnectNode(Node, SverchCustomTreeNode):
                 indexes__ = []
                 for i, ob in enumerate(length_ob):
                     indexes_ = []
-                    for i in range(ob):
+                    for w in range(ob):
                         indexes_.append(curr)
                         curr += 1
+                    if i==0 and cicl:
+                        cicle_firstrow = indexes_
                     if i > 0:
                         indexes = indexes_ + indexes__[::-1]
-                        objecto.append(indexes)
+                        if quad and len(indexes)>=4:
+                            quaded = [(indexes[k], indexes[k+1], indexes[-(k+2)], indexes[-(k+1)]) for k in range((len(indexes)-1)//2)]
+                            objecto.extend(quaded)
+                        else:
+                            objecto.append(indexes)
+                        if i==len(length_ob)-1 and cicl:
+                            indexes = cicle_firstrow + indexes_[::-1]
+                            if quad and len(indexes)>=4:
+                                quaded = [(indexes[k], indexes[k+1], indexes[-(k+2)], indexes[-(k+1)]) for k in range((len(indexes)-1)//2)]
+                                objecto.extend(quaded)
+                            else:
+                                objecto.append(indexes)
                     indexes__ = indexes_
                 vers_ = [newobject]
-                #print (objecto, len(vers_[0]))
                 edges = [objecto]
                     
         else:
             ml = max(lens)
-            #print(lens)
             joinvers = []
             for ob in vers_:
-                #print('ob',ob)
                 fullList(ob, ml)
                 joinvers.extend(ob)
             objecto = []
@@ -96,8 +102,12 @@ class LineConnectNode(Node, SverchCustomTreeNode):
                 for i, ve in enumerate(vers_[0][:]):
                     inds = [j*ml+i for j in range(lenvers)]
                     for i, item in enumerate(inds):
-                        if i==0: continue
-                        objecto.append([item,inds[i-1]])
+                        if i==0 and cicl:
+                            objecto.append([inds[0],inds[-1]])
+                        elif i==0:
+                            continue
+                        else:
+                            objecto.append([item,inds[i-1]])
             edges.append(objecto)
             vers_ = [joinvers]
         return vers_, edges
@@ -118,8 +128,8 @@ class LineConnectNode(Node, SverchCustomTreeNode):
                 lev = 1
             else:
                 lev = self.JoinLevel
-            result = self.connect(slots, self.dir_check, self.link_check, self.cicl_check, lev, self.polygons)
-            #print(levelsOflist(slots), '===>', levelsOflist(result))
+            result = self.connect(slots, self.dir_check, self.quad_check, self.cicl_check, lev, self.polygons)
+            
             if self.outputs['vertices'].links:
                  SvSetSocketAnyType(self,'vertices',result[0])
             if self.outputs['data'].links:
