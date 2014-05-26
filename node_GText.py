@@ -11,13 +11,30 @@ import re
 import ast
 import os
 
+
+def info(v):
+    combo = []
+    for points in v:
+        combo.extend(points)
+
+    x, y, z = zip(*combo)
+    minx, maxx = min(x), max(x)
+    return minx, maxx, (maxx-minx)
+
+
 def openjson_asdict(fname):
     sv_path = os.path.dirname(os.path.realpath(__file__))
     path_to_json = os.path.join(sv_path, fname)
     with open(path_to_json) as d:
         return ast.literal_eval(''.join(d.readlines()))
 
+
+def analyze_glyphs(fdict):
+    return {k: info(v) for k, v in fdict.items()}
+
+
 fdict = openjson_asdict('font3.dict')
+fdict_sizes = analyze_glyphs(fdict)
 
 
 def generate_greasepencil(node, text, col, pxwide, pos, fontdict):
@@ -25,7 +42,9 @@ def generate_greasepencil(node, text, col, pxwide, pos, fontdict):
     line_height = 38
     char_width = pxwide
 
-    spaces = 0
+    scalar = 25  # <--- determines scale
+    spacing = scalar / 2.5
+
     yof = 0
     xof = 0
     bcx, bcy = pos
@@ -50,7 +69,7 @@ def generate_greasepencil(node, text, col, pxwide, pos, fontdict):
     else:
         layer = gp.layers[node_name]
         layer.frames[0].clear()
-        
+
     for ch in text:
         if ch == "\n":
             yof -= line_height
@@ -67,17 +86,21 @@ def generate_greasepencil(node, text, col, pxwide, pos, fontdict):
             xof += char_width
             continue
 
+        minx, maxx, xwide = fdict_sizes[str(ord(ch))]
+
         for chain in v:
             s = layer.frames[0].strokes.new()
             s.draw_mode = '2DSPACE'
             s.points.add(len(chain))
             for idx, p in enumerate(chain):
-                ap = Vector(p) * 25
+                ap = Vector(p) - Vector((minx, 0, 0))
+                ap *= scalar
                 x, y = ap[:2]
                 xyz = ((x + bcx + xof), (y + bcy + yof), 0)
                 s.points[idx].co = xyz
 
-        xof += char_width
+        # xof += char_width
+        xof += ((xwide*scalar) + spacing)
 
 
 class SverchokGText(bpy.types.Operator):
@@ -107,16 +130,13 @@ class GTextNode(Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     text = StringProperty(name='text', default='your text here')
-    locator = IntVectorProperty(name="locator", description="stores location", default=(0, 0), size=2)
+    locator = IntVectorProperty(
+        name="locator", description="stores location", default=(0, 0), size=2)
 
     def draw_buttons(self, context, layout):
         row = layout.row(align=True)
         row.operator('node.sverchok_gtext_button', text='Set').mode = 'set'
         row.operator('node.sverchok_gtext_button', text='Clear').mode = 'clear'
-
-        # if not (self.locator) == self.location:
-        #     # self.locator = self.location
-        #     self.draw_gtext()
         pass
 
     def draw_buttons_ext(self, context, layout):
@@ -125,18 +145,15 @@ class GTextNode(Node, SverchCustomTreeNode):
             'node.sverchok_gtext_button', text='Get from Clipboard'
             ).mode = 'clipboard'
         if self.id_data.grease_pencil:
-            gp_layer=self.id_data.grease_pencil.layers.get(self.name)
+            gp_layer = self.id_data.grease_pencil.layers.get(self.name)
             if gp_layer:
-                layout.prop(gp_layer,'color')
-                layout.prop(gp_layer,'line_width')
+                layout.prop(gp_layer, 'color')
+                layout.prop(gp_layer, 'line_width')
 
     def init(self, context):
         pass
 
     def update(self):
-        # if not (self.intx, self.inty) == self.location:
-        #     self.intx, self.inty = self.location
-        #     self.draw_gtext()
         pass
 
     def set_gtest(self):
