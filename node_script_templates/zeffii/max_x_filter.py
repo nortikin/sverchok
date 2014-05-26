@@ -10,7 +10,7 @@ def sv_main(verts=[], edges=[], max_x=0.2):
     out_sockets = [ ['v', 'Vecs', []], ['s', 'Edges', []] ]
 
     if not verts and edges:
-        return out_sockets
+        return in_sockets, out_sockets
     
     # - first find all vertices with x component larger than max_x
     mask_indices = []
