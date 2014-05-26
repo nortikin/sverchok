@@ -1,5 +1,5 @@
 import bpy
-from bpy.props import IntVectorProperty, StringProperty
+from bpy.props import IntVectorProperty, StringProperty, IntProperty
 from mathutils import Vector
 
 from node_s import *
@@ -37,13 +37,12 @@ fdict = openjson_asdict('font3.dict')
 fdict_sizes = analyze_glyphs(fdict)
 
 
-def generate_greasepencil(node, text, col, pxwide, pos, fontdict):
+def generate_greasepencil(node, text, col, pos, fontdict):
 
-    line_height = 38
-    char_width = pxwide
-
-    scalar = 25  # <--- determines scale
+    scalar = node.text_scale
+    line_height = scalar * 1.56
     spacing = scalar / 2.5
+    char_width = scalar / 1.14
 
     yof = 0
     xof = 0
@@ -75,6 +74,8 @@ def generate_greasepencil(node, text, col, pxwide, pos, fontdict):
             yof -= line_height
             xof = 0
             continue
+
+        # use m as space unit.
 
         if ch == " ":
             xof += char_width
@@ -133,6 +134,8 @@ class GTextNode(Node, SverchCustomTreeNode):
     locator = IntVectorProperty(
         name="locator", description="stores location", default=(0, 0), size=2)
 
+    text_scale = IntProperty(name="font size", default=25, update=updateNode)
+
     def draw_buttons(self, context, layout):
         row = layout.row(align=True)
         row.operator('node.sverchok_gtext_button', text='Set').mode = 'set'
@@ -149,6 +152,7 @@ class GTextNode(Node, SverchCustomTreeNode):
             if gp_layer:
                 layout.prop(gp_layer, 'color')
                 layout.prop(gp_layer, 'line_width')
+                layout.prop(self, 'text_scale')
 
     def init(self, context):
         pass
@@ -176,16 +180,14 @@ class GTextNode(Node, SverchCustomTreeNode):
 
     def draw_gtext(self):
         text = self.text
-
         col = []
-        pxwide = 21
         pos = self.location
 
         x_offset = 0
         y_offset = -90
         offset = lambda x, y: (x+x_offset, y+y_offset)
         pos = offset(*pos)
-        generate_greasepencil(self, text, col, pxwide, pos, fdict)
+        generate_greasepencil(self, text, col, pos, fdict)
 
 
 def register():
