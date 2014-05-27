@@ -656,7 +656,6 @@ def make_dep_dict(node_tree):
     Create a dependency dictionary for node group.
     """
     ng = node_tree
-    start=time.perf_counter()
     deps = {name:set() for name in ng.nodes.keys()}
     for link in ng.links:
         if not link.is_valid:
@@ -793,7 +792,6 @@ def make_tree_from_nodes(node_names,tree):
     drives change for the tree
     Only nodes downtree from node_name are updated
     """
-    # this one also can be improved... 
     ng = tree
     nodes = ng.nodes
     if not node_names:
@@ -805,8 +803,8 @@ def make_tree_from_nodes(node_names,tree):
     out_stack = collections.deque(node_names)
     current_node = out_stack.pop()
     wifi_out = []
-    
-    # build downwards links
+        
+    # build downwards links, this should be cached perhaps
     node_links = {name:set() for name in nodes.keys()}
     for link in ng.links:
         if not link.is_valid:
