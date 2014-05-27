@@ -1,7 +1,14 @@
 from node_s import *
 from util import *
-
+import time
 import collections
+from itertools import filterfalse, tee
+
+def partition(pred, iterable):
+    'Use a predicate to partition entries into false entries and true entries'
+    # partition(is_odd, range(10)) --> 0 2 4 6 8   and  1 3 5 7 9
+    t1, t2 = tee(iterable)
+    return filterfalse(pred, t1), filter(pred, t2)
 
 class SvSeparateMeshNode(Node, SverchCustomTreeNode):
     '''Separate Loose mesh parts'''
@@ -30,7 +37,7 @@ class SvSeparateMeshNode(Node, SverchCustomTreeNode):
             poly_edge_out = []
             for ve,pe in zip(verts,poly):
                 
-                # build links        
+                # build links
                 node_links = {}
                 for edge_face in pe:
                     for i in edge_face:
@@ -39,39 +46,41 @@ class SvSeparateMeshNode(Node, SverchCustomTreeNode):
                         s=node_links[i]
                         node_links[i]=s.union(edge_face)
                 
-                nodes=set(node_links.keys())
-                
-                n= nodes.pop()
+                nodes = set(node_links.keys())
+                n = nodes.pop()
                 node_set_list = [set([n])]
                 node_stack = collections.deque()
+                node_stack_append = node_stack.append 
+                node_stack_pop = node_stack.pop
+                node_set = node_set_list[-1]
                 # find separate sets
                 while nodes:
                     for node in node_links[n]:
-                        if not node in node_set_list[-1]:
-                            node_stack.append(node)                                                        
+                        if not node in node_set:
+                            node_stack_append(node)                                                        
                     if not node_stack: # new mesh part
                         n=nodes.pop()
                         node_set_list.append(set([n]))
+                        node_set = node_set_list[-1]
                     else:
-                        while node_stack and n in node_set_list[-1]:
-                            n = node_stack.pop()
+                        while node_stack and n in node_set:
+                            n = node_stack_pop()
                         nodes.discard(n)
-                        node_set_list[-1].add(n)
-
-                # create new meshes from sets
+                        node_set.add(n)
+                # create new meshes from sets, this is the slow part.
                 if len(node_set_list)>1:
                     for node_set in node_set_list:
                         mesh_index = sorted(node_set)
                         vert_dict = {j:i for i,j in enumerate(mesh_index)}
                         new_vert = [ve[i] for i in mesh_index]
-                        new_pe=filter(lambda x:x[0] in node_set,pe)
-                        new_pe= [list(map(lambda n:vert_dict[n],fe)) for fe in new_pe]
+                        new_pe = [[vert_dict[n] for n in fe] for fe in pe
+                                                if fe[0] in node_set]
                         verts_out.append(new_vert)
                         poly_edge_out.append(new_pe)
                 elif node_set_list: #no reprocessing needed
                     verts_out.append(ve)
                     poly_edge_out.append(pe)
-                    
+
             if 'Vertices' in self.outputs and self.outputs['Vertices'].links:
                 SvSetSocketAnyType(self, 'Vertices',verts_out)
             

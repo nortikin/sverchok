@@ -294,6 +294,7 @@ def make_categories():
             NodeItem("SvDeleteLooseNode", label="Delete Loose"),
             NodeItem('SvSeparateMeshNode', label="Separate Loose Parts"),
             NodeItem("SvConvexHullNode", label="Convex Hull"),
+            NodeItem("SvFillsHoleNode", label="Fill Holes"),
             NodeItem("SvIntersectEdgesNode", label="Intersect Edges"),
             ]),
         SverchNodeCategory("SVERCHOK_A", "SVERCHOK analisators", items=[

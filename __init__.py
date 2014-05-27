@@ -164,6 +164,7 @@ if "bpy" in locals():
     imp.reload(node_MapRange)
     imp.reload(node_SeparateMesh)
     imp.reload(node_GText)    
+    imp.reload(node_FillHole)
 
 else:
     import node_s
@@ -269,6 +270,7 @@ else:
     import node_MapRange
     import node_SeparateMesh
     import node_GText
+    import node_FillHole
 
 def register():
     import bpy
@@ -373,6 +375,7 @@ def register():
     node_MapRange.register()
     node_SeparateMesh.register()
     node_GText.register()
+    node_FillHole.register()
         
     if 'SVERCHOK' not in nodeitems_utils._node_categories:
         nodeitems_utils.register_node_categories("SVERCHOK", node_s.make_categories())
@@ -382,6 +385,7 @@ def unregister():
     import bpy
     import nodeitems_utils
 
+    node_FillHole.unregister()
     node_GText.unregister()    
     node_SeparateMesh.unregister()
     node_MapRange.unregister()
