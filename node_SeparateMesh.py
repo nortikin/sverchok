@@ -1,14 +1,7 @@
 from node_s import *
 from util import *
-import time
 import collections
-from itertools import filterfalse, tee
-
-def partition(pred, iterable):
-    'Use a predicate to partition entries into false entries and true entries'
-    # partition(is_odd, range(10)) --> 0 2 4 6 8   and  1 3 5 7 9
-    t1, t2 = tee(iterable)
-    return filterfalse(pred, t1), filter(pred, t2)
+import time
 
 class SvSeparateMeshNode(Node, SverchCustomTreeNode):
     '''Separate Loose mesh parts'''
@@ -36,7 +29,6 @@ class SvSeparateMeshNode(Node, SverchCustomTreeNode):
             verts_out = []
             poly_edge_out = []
             for ve,pe in zip(verts,poly):
-                
                 # build links
                 node_links = {}
                 for edge_face in pe:
@@ -67,7 +59,7 @@ class SvSeparateMeshNode(Node, SverchCustomTreeNode):
                             n = node_stack_pop()
                         nodes.discard(n)
                         node_set.add(n)
-                # create new meshes from sets, this is the slow part.
+                # create new meshes from sets, new_pe is the slow line.
                 if len(node_set_list)>1:
                     for node_set in node_set_list:
                         mesh_index = sorted(node_set)
