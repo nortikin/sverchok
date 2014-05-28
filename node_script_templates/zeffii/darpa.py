@@ -2,6 +2,7 @@ import mathutils
 from mathutils import Vector
 import math
 
+# this file would be placed directly into the sverchokmaster directory when used.
 
 def get_length(verts):
     summed = 0
