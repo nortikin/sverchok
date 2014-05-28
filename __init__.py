@@ -166,6 +166,7 @@ if "bpy" in locals():
     imp.reload(node_GText)    
     imp.reload(node_FillHole)
     imp.reload(node_ListSplit)
+    imp.reload(node_VertMask)
 
 else:
     import node_s
@@ -273,10 +274,11 @@ else:
     import node_GText
     import node_FillHole
     import node_ListSplit
+    import node_VertMask
 
 import bpy
 from bpy.types import AddonPreferences
-from bpy.props import  BoolProperty
+from bpy.props import  BoolProperty, FloatVectorProperty
 import util
 
 def update_debug_mode(self,context):
@@ -285,16 +287,94 @@ def update_debug_mode(self,context):
 class SverchokPreferences(AddonPreferences):
 
     bl_idname = __name__
+    
     show_debug = BoolProperty(name="Print update timings", 
                         description="Print update timings in console", 
                         default=False, subtype='NONE',
                         update = update_debug_mode)
     
+    bg_edges_col = FloatVectorProperty(
+        name="bg_edges", description='',
+        size=4, min=0.0, max=1.0,
+        default=(.2, .2, .2, 1.0), subtype='COLOR'
+        )
+
+    bg_faces_col = FloatVectorProperty(
+        name="bg_faces", description='',
+        size=4, min=0.0, max=1.0,
+        default=(.2, .2, .2, 1.0), subtype='COLOR'
+        )
+
+    bg_verts_col = FloatVectorProperty(
+        name="bg_verts", description='',
+        size=4, min=0.0, max=1.0,
+        default=(.2, .2, .2, 1.0), subtype='COLOR'
+        )
+
+    numid_edges_col = FloatVectorProperty(
+        name="numid_edges", description='',
+        size=4, min=0.0, max=1.0,
+        default=(1.0, 1.0, 0.1, 1.0), subtype='COLOR'
+        )
+
+    numid_faces_col = FloatVectorProperty(
+        name="numid_faces", description='',
+        size=4, min=0.0, max=1.0,
+        default=(1.0, .8, .8, 1.0), subtype='COLOR'
+        )
+
+    numid_verts_col = FloatVectorProperty(
+        name="numid_verts", description='',
+        size=4, min=0.0, max=1.0,
+        default=(1, 1, 1, 1.0), subtype='COLOR'
+        )
+        
+    
     def draw(self, context):
         layout = self.layout
-        layout.label(text="Sverchok preferences")
-        layout.prop(self, "show_debug")
+        layout.label("Index Viewer default")
+        row = layout.row(align=True)
+        box = layout.box()
+        little_width = 0.135
 
+        # heading - wide column for descriptors
+        col = box.column(align=True)
+        row = col.row(align=True)
+        row.label(text='Colors')  # IDX pallete
+
+        # heading - remaining column space divided by
+        # little_width factor. shows icons only
+        col1 = row.column(align=True)
+        col1.scale_x = little_width
+        col1.label(icon='VERTEXSEL', text=' ')
+
+        col2 = row.column(align=True)
+        col2.scale_x = little_width
+        col2.label(icon='EDGESEL', text=' ')
+
+        col3 = row.column(align=True)
+        col3.scale_x = little_width
+        col3.label(icon='FACESEL', text=' ')
+
+        # 'table info'
+        colprops = [
+            ['Numbers :', ['numid_verts_col', 'numid_edges_col', 'numid_faces_col']],
+            ['Backgrnd :', ['bg_verts_col', 'bg_edges_col', 'bg_faces_col']]
+        ]
+
+        # each first draws the table row heading, 'label'
+        # then for each geometry type will draw the color property
+        # with the same spacing as col1, col2, col3 above
+        for label, geometry_types in colprops:
+            row = col.row(align=True)
+            row.label(text=label)
+            for colprop in geometry_types:
+                col4 = row.column(align=True)
+                col4.scale_x = little_width
+                col4.prop(self, colprop, text="")
+                
+        layout.prop(self, "show_debug")
+        
 
 def register():
     import bpy
@@ -401,6 +481,7 @@ def register():
     node_GText.register()
     node_FillHole.register()
     node_ListSplit.register()
+    node_VertMask.register()
     
     bpy.utils.register_class(SverchokPreferences)
        
@@ -412,6 +493,7 @@ def unregister():
     import bpy
     import nodeitems_utils
 
+    node_VertMask.unregister()
     node_ListSplit.unregister()
     node_FillHole.unregister()
     node_GText.unregister()    
