@@ -783,7 +783,7 @@ def separate_nodes(ng,links=None):
             nodes.discard(n)
             node_set_list[-1].add(n)
     
-    return [n for n in node_set_list if len(n)!=1]
+    return [n for n in node_set_list if len(n) > 1]
 
 
 def make_tree_from_nodes(node_names,tree):
@@ -846,7 +846,7 @@ def make_animation_tree(node_types,node_list,tree_name):
     node_set = set(node_list)
     for n_t in node_types:
         node_set = node_set | {name for name,node in ng.nodes.items() if node.bl_idname == n_t}
-    a_tree = make_tree_from_nodes(list(node_set),tree_name)
+    a_tree = make_tree_from_nodes(list(node_set), tree_name)
     return a_tree
     
 
@@ -866,7 +866,7 @@ def makeTreeUpdate2(tree=None):
         if ng.bl_idname == 'SverchCustomTreeType':
             node_sets = separate_nodes(ng)
             deps = make_dep_dict(ng)
-            out = [make_update_list(ng,s,deps) for s in node_sets]
+            out = [make_update_list(ng, s, deps) for s in node_sets]
             list_nodes4update[name] = out
             partial_update_cache[name] = {}
             socket_data_cache[name] = {}    

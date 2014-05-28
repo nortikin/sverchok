@@ -198,7 +198,7 @@ def make_categories():
             NodeItem("ToolsNode", label="Tools"),
             NodeItem("NoteNode", label="Note"),
             NodeItem("GTextNode", label="GText"),
-            # NodeItem("SvDebugPrintNode", label="debug"),
+            NodeItem("SvDebugPrintNode", label="Debug print"),
             ]),
         SverchNodeCategory("SVERCHOK_L", "SVERCHOK list", items=[
             # lists nodes
@@ -208,6 +208,7 @@ def make_categories():
             NodeItem("ZipNode", label="List Zip"),
             NodeItem("ShiftNode", label="List Shift"),
             NodeItem("ListSliceNode", label="List Slice"),
+            NodeItem("SvListSplitNode", label="List Split"),
             NodeItem("ListReverseNode", label="List Reverse"),
             NodeItem("ListLengthNode", label="List Length"),
             NodeItem("ListSumNode", label="List Sum"),
@@ -215,7 +216,7 @@ def make_categories():
             NodeItem("ListItem2Node", label="List Item"),
             NodeItem("ListRepeaterNode", label="List Repeater"),
             NodeItem("ListFuncNode", label="List Math"),
-            NodeItem("ListFlipNode", label="ListFlip"),
+            NodeItem("ListFlipNode", label="List Flip"),
             NodeItem("MaskListNode", label="List Mask"),
             NodeItem("ListSortNode", label="List Sort"),
             NodeItem("ListShuffleNode", label="List Shuffle"),

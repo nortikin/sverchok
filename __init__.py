@@ -165,6 +165,7 @@ if "bpy" in locals():
     imp.reload(node_SeparateMesh)
     imp.reload(node_GText)    
     imp.reload(node_FillHole)
+    imp.reload(node_ListSplit)
 
 else:
     import node_s
@@ -271,6 +272,29 @@ else:
     import node_SeparateMesh
     import node_GText
     import node_FillHole
+    import node_ListSplit
+
+import bpy
+from bpy.types import AddonPreferences
+from bpy.props import  BoolProperty
+import util
+
+def update_debug_mode(self,context):
+    util.DEBUG_MODE = self.show_debug
+
+class SverchokPreferences(AddonPreferences):
+
+    bl_idname = __name__
+    show_debug = BoolProperty(name="Print update timings", 
+                        description="Print update timings in console", 
+                        default=False, subtype='NONE',
+                        update = update_debug_mode)
+    
+    def draw(self, context):
+        layout = self.layout
+        layout.label(text="Sverchok preferences")
+        layout.prop(self, "show_debug")
+
 
 def register():
     import bpy
@@ -376,7 +400,10 @@ def register():
     node_SeparateMesh.register()
     node_GText.register()
     node_FillHole.register()
-        
+    node_ListSplit.register()
+    
+    bpy.utils.register_class(SverchokPreferences)
+       
     if 'SVERCHOK' not in nodeitems_utils._node_categories:
         nodeitems_utils.register_node_categories("SVERCHOK", node_s.make_categories())
     
@@ -385,6 +412,7 @@ def unregister():
     import bpy
     import nodeitems_utils
 
+    node_ListSplit.unregister()
     node_FillHole.unregister()
     node_GText.unregister()    
     node_SeparateMesh.unregister()
@@ -486,6 +514,8 @@ def unregister():
     node_CentersPolsNode.unregister()
     node_ScalarMath.unregister()
     node_s.unregister()
+    
+    bpy.utils.unregister_class(SverchokPreferences)
     
     if 'SVERCHOK' in nodeitems_utils._node_categories:
         nodeitems_utils.unregister_node_categories("SVERCHOK")
