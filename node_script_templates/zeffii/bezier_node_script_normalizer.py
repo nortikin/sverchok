@@ -1,3 +1,5 @@
+# demo blend
+# https://github.com/zeffii/bpy_script/blob/master/script_node_demos/bezier_node_script_003_mod.blend
 
 import mathutils
 from mathutils.geometry import interpolate_bezier as bezlerp
