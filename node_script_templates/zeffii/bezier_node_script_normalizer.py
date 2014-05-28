@@ -3,9 +3,9 @@ import mathutils
 from mathutils.geometry import interpolate_bezier as bezlerp
 from mathutils import Vector
 
-import darpa
-from darpa import get_length
-from darpa import get_verts_n_edges
+import spline_utils
+from spline_utils import get_length
+from spline_utils import get_verts_n_edges
 
 
 def sv_main(verts=[], num_verts=20, new_divisions=20):
@@ -36,8 +36,8 @@ def sv_main(verts=[], num_verts=20, new_divisions=20):
     # while developing, it can be useful to uncomment this 
     if 'get_length' in globals():
         import imp
-        imp.reload(darpa)
-        from darpa import get_length, get_verts_n_edges
+        imp.reload(spline_utils)
+        from spline_utils import get_length, get_verts_n_edges
 
 
     f = list(map(Vector, verts[0]))
