@@ -35,8 +35,7 @@ class SvSeparateMeshNode(Node, SverchCustomTreeNode):
                     for i in edge_face:
                         if not i in node_links:
                             node_links[i]=set()
-                        s=node_links[i]
-                        node_links[i]=s.union(edge_face)
+                        node_links[i].update(edge_face)
                 
                 nodes = set(node_links.keys())
                 n = nodes.pop()
