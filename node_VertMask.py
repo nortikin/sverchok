@@ -19,7 +19,7 @@ class SvVertMaskNode(Node, SverchCustomTreeNode):
         self.outputs.new('StringsSocket', 'Poly Egde', 'Poly Egde')        
         
     def update(self):
-        if not 'False Poly Egde' in self.outputs:
+        if not 'Poly Egde' in self.outputs:
             return
         if not any((s.links for s in self.outputs)):
             return       
