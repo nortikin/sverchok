@@ -19,7 +19,7 @@ def fill_holes(vertices, edges, s):
         bm.edges.new([bm_verts[e[0]],bm_verts[e[1]]])
 
     res=bmesh.ops.holes_fill(bm, edges=bm.edges[:], sides=s)
-
+    bmesh.ops.recalc_face_normals(bm, faces=bm.faces[:])
     edges = []
     faces = []
     bm.verts.index_update()
