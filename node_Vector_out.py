@@ -24,14 +24,14 @@ class VectorsOutNode(Node, SverchCustomTreeNode):
             #print (data)
             X,Y,Z = [],[],[]
             for obj in data:
-                for item in obj:
-                    X.append(item[0]) 
-                    Y.append(item[1]) 
-                    Z.append(item[2]) 
+                x_,y_,z_ = (x for x in zip(*obj))
+                X.append(x_)
+                Y.append(y_)
+                Z.append(z_)
                     
             for i,name in enumerate(['X','Y','Z']):
                 if self.outputs[name].links:
-                    SvSetSocketAnyType(self,name,[[X,Y,Z][i]])
+                    SvSetSocketAnyType(self,name,[X,Y,Z][i])
                             
     def update_socket(self, context):
         self.update()
