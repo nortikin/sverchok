@@ -27,7 +27,6 @@ class VectorsOutNode(Node, SverchCustomTreeNode):
                 X.append(x_)
                 Y.append(y_)
                 Z.append(z_)
-            print(X,Y,Z)        
             for i,name in enumerate(['X','Y','Z']):
                 if self.outputs[name].links:
                     SvSetSocketAnyType(self,name,[X,Y,Z][i])
