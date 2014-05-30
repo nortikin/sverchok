@@ -19,8 +19,9 @@ def sv_main(verts=[[]]):
     e_set = set()
     for i, vtx in enumerate(verts):
         
-        # 2, because the first closest vertex to each
-        # vertex is that vertex.
+        # 3, because the first closest vertex to each
+        # vertex is that vertex. and the 2nd closest might
+        # be picked already by a different edge
         print('i:', i)
         for (co, index, dist) in kd.find_n(vtx, 3):
             print(co, index, dist)
