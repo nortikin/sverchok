@@ -8,7 +8,6 @@ def sv_main(verts=[[]]):
         ['v', 'verts', verts]]
 
     verts = verts[0]
-    print('now;', verts)
     size = len(verts)
     kd = mathutils.kdtree.KDTree(size)
 
@@ -21,7 +20,7 @@ def sv_main(verts=[[]]):
     for i, vtx in enumerate(verts):
         
         # 2, because the first closest vertex to each
-        # vertex is that vertex.
+        # vertex is that vertex. [1:] to skip the first
         for (co, index, dist) in kd.find_n(vtx, 2)[1:]:
             edge = tuple(sorted([i, index]))
             if not edge in e_set:
