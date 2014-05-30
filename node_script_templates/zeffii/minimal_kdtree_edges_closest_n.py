@@ -23,12 +23,13 @@ def sv_main(verts=[[]]):
         # vertex is that vertex. [1:] to skip the first
         for (co, index, dist) in kd.find_n(vtx, 2)[1:]:
             edge = tuple(sorted([i, index]))
+            
+            # checking if edge tuple is in a set is faster on larger
+            # sets.
             if not edge in e_set:
                 e_set.add(edge)
                 e.append(edge)
 
-    # out boilerplate
-    print(e)
     out_sockets = [
         ['s', 'Edges', [e]]
     ]
