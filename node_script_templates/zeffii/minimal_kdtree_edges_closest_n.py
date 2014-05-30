@@ -20,18 +20,19 @@ def sv_main(verts=[[]]):
     for i, vtx in enumerate(verts):
         
         # 2, because the first closest vertex to each
-        # vertex is that vertex. [1:] to skip the first
-        for (co, index, dist) in kd.find_n(vtx, 2)[1:]:
+        # vertex is that vertex.
+        print('i:', i)
+        for (co, index, dist) in kd.find_n(vtx, 3):
+            print(co, index, dist)
+            if i==index:
+                print('found self!')
+                continue
             edge = tuple(sorted([i, index]))
-            
-            # checking if edge tuple is in a set is faster on larger
-            # sets.
             if not edge in e_set:
                 e_set.add(edge)
                 e.append(edge)
 
-    out_sockets = [
-        ['s', 'Edges', [e]]
-    ]
+    # out boilerplate
+    out_sockets = [['s', 'Edges', [e]]]
 
     return in_sockets, out_sockets
