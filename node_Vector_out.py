@@ -16,7 +16,6 @@ class VectorsOutNode(Node, SverchCustomTreeNode):
         
     def update(self):
         # inputs
-        X, Y, Z = [], [], []
         if 'Vectors' in self.inputs and self.inputs['Vectors'].links:
             xyz = SvGetSocketAnyType(self,self.inputs['Vectors'])
             
@@ -24,11 +23,11 @@ class VectorsOutNode(Node, SverchCustomTreeNode):
             #print (data)
             X,Y,Z = [],[],[]
             for obj in data:
-                x_,y_,z_ = (x for x in zip(*obj))
+                x_,y_,z_ = (list(x) for x in zip(*obj))
                 X.append(x_)
                 Y.append(y_)
                 Z.append(z_)
-                    
+            print(X,Y,Z)        
             for i,name in enumerate(['X','Y','Z']):
                 if self.outputs[name].links:
                     SvSetSocketAnyType(self,name,[X,Y,Z][i])

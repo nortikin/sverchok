@@ -19,7 +19,6 @@
 import bpy
 from node_s import *
 from util import *
-from mathutils import Vector, Matrix
 from math import *
 
 
@@ -208,14 +207,10 @@ class ScalarMathNode(Node, SverchCustomTreeNode):
 # apply f to all values recursively  
         
     def recurse_fx(self, l,f):
-        if type(l) == int or type(l) == float:
-            t = f(l)
+        if isinstance(l,(int,float)):
+            return f(l)
         else:
-            t = []
-            for i in l:
-                i = self.recurse_fx(i,f)
-                t.append(i)
-        return t
+            return [self.recurse_fx(i,f) for i in l]
         
 # match length of lists, 
 # cases
@@ -226,21 +221,16 @@ class ScalarMathNode(Node, SverchCustomTreeNode):
 # [1,2,[1,1,1]] + [[1,2,3],1,2] -> [[2,3,4],3,[3,3,3]]
  
     def recurse_fxy(self,l1, l2, f):
-        if (type(l1) is int or type(l1) is float) and \
-           (type(l2) is int or type(l2) is float):
+        if (isinstance(l1,(int,float)) and 
+           isinstance(l2,(int,float))):
                 return f(l1,l2)
-        if type(l1) is list and type (l2) is list:
-            max_obj = max(len(l1),len(l2)) 
-            fullList(l1,max_obj)
-            fullList(l2,max_obj)    
-            res = []
-        
-            for i in range(len(l1)):
-                res.append( self.recurse_fxy(l1[i], l2[i],f))
-            return res    
-        if type(l1) is list and (type(l2) is float or type(l2) is int):
+        if (isinstance(l2,(list,tuple)) and
+           isinstance(l1,(list,tuple))) :
+            data=zip(*match_long_repeat([l1,l2]))
+            return [self.recurse_fxy(ll1,ll2,f) for ll1,ll2 in data] 
+        if isinstance(l1,(list,tuple)) and isinstance(l2,(int,float)):
             return self.recurse_fxy(l1,[l2],f)
-        if type(l2) is list and (type(l1) is float or type(l1) is int):
+        if isinstance(l1,(int,float)) and isinstance(l2,(list,tuple)):
             return self.recurse_fxy([l1],l2,f)
             
     def update_socket(self, context):
