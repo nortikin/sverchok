@@ -158,16 +158,35 @@ def sv_main(n_petals=8, vp_petal=20, profile_radius=1.3, amp=1.0):
     return in_sockets, out_sockets
 ```
 
+Here's a `ui_operator` example, it acts like a throughput (because in and out are still needed by design). You'll notice that inside `func1` the node's input socket is accessed using `SvGetSockeyAnyType(...)`. It is probably more logical if we could access the input data directly from the variable `items_in`, currently this is not possible -- therefor the solution is to use what sverchok nodes use in their internal code too. The upshot, is that this exposes you to how you might access the socket content of other nodes. Experiment :)
+
+```python
+
+def sv_main(items_in=[[]]):
+ 
+    in_sockets = [
+        ['v', 'items_in', items_in]]
+ 
+    def func1():
+        # directly from incoming Object_in socket.
+        sn = bpy.context.node
+        
+        # safe? or return early
+        if not (sn.inputs and sn.inputs[0].links):
+            return
+
+        verts = SvGetSocketAnyType(sn, sn.inputs['items_in'])
+        print(verts)
+ 
+    out_sockets = [['v', 'Verts', items_in]]
+    ui_operators = [['print_names', func1]]
+ 
+    return in_sockets, out_sockets, ui_operators
+```
 
 ### Limitations
 
-Mostly limitations are imaginary barriers which an increase in Python Skills will bypass, but if I have to mention something that surprised me it's the state of the `in_socket` variables when running a `ui_operator` function. 
-
-`ui_operator`  
-
-For example if you have Verts coming into the node, like `sv_main(verts=[])` then you might expect to be able to do something with those verts from within your UI function. Unfortunately the local variables don't currently work that way, in order for you to make geometry with the UI operator, you have to generate it from inside the `sv_main()` function or access it through a somewhat roundabout way which is closer to how the regular nodes do it.
-
-This is stupid and has to be addressed. However, until such time there is an example in the github thread that can probably be improved on.
+Mostly limitations are imaginary barriers which an increase in Python Skills will bypass.
 
 ### Future
 
