@@ -12,7 +12,7 @@ aka Script Node or SN. (iteration 1)
 
 When you want to express an idea in written form, if the concept is suitable for a one line Python expression then you can use the Formula nodes. They require little setup just [plug and play](). However, they are not intended for multi-line python statements, and sometimes that's exactly what you want.
 
-ScriptNode (SN) allows you to write multi-line python programs, it's possible to use the node as a Sandbox for writing full nodes. The only real limitation will be your Python Skills and knowledge of bpy. It's a prototype so bug reports are welcome.
+ScriptNode (SN) allows you to write multi-line python programs, it's possible to use the node as a Sandbox for writing full nodes. The only real limitation will be your familiarty with Python and `bpy`. It's a prototype so bug reports are welcome.
 
 ### Features
 
