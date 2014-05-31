@@ -29,7 +29,7 @@ At present all scripts for SN must (strict list - general):
 - all function arguments for `sv_main` must have defaults.
 - each script shall define `in_sockets` and `out_sockets`
 - `ui_operators` is an optional third output parameter
-- TextEditor has automatic `in_sockets` list creation (`Ctrl+I -> Generate in_sockets`) when the key cursor is over `sv_main`. (please not it can't detect if you want nested verts or edge/polygon so it assumes you want 'v') 
+- TextEditor has automatic `in_sockets` list creation (`Ctrl+I -> Generate in_sockets`) when the key cursor is over `sv_main`. (please note: it doesn't attempt to detect if you want nested verts or edge/polygon so it assumes you want 'v') 
     ![showit](https://cloud.githubusercontent.com/assets/619340/2854040/e6351180-d14b-11e3-8055-b3d8c707675d.gif) 
 
 
