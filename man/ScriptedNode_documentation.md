@@ -27,8 +27,8 @@ At present all scripts for SN must (strict list - general):
 - have 1 `sv_main` function as the main workhorse
 - `sv_main` must take 1 or more arguments (even if you don't use it)
 - all function arguments for `sv_main` must have defaults.
-- each script shall define 'in_sockets' and 'out_sockets'
-- 'ui_operators' is an optional third output parameter
+- each script shall define `in_sockets` and `out_sockets`
+- `ui_operators` is an optional third output parameter
 - TextEditor has automatic `in_sockets` list creation (`Ctrl+I -> Generate in_sockets`) when the key cursor is over `sv_main`.  
     ![showit](https://cloud.githubusercontent.com/assets/619340/2854040/e6351180-d14b-11e3-8055-b3d8c707675d.gif) 
 
@@ -40,8 +40,8 @@ At present all scripts for SN must (strict list - general):
 ```python
 sv_main(vecs_in_multi=[[]], vecs_in_flat=[], some_var=1, some_ratio=1.2):
 
-[[]]    # for nested
-[]      # for foat
+[[]]    # for nested Vectors
+[]      # for flat
 
 ```
 
