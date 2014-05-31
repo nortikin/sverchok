@@ -161,7 +161,11 @@ def sv_main(n_petals=8, vp_petal=20, profile_radius=1.3, amp=1.0):
 
 ### Limitations
 
-Mostly limitations will be down to a lack of imagination or Python Skills, but if I have to mention something that surprised me it's the state of the in_socket variables when running a ui_operator function. For example if you have Verts coming into the node, like `sv_main(verts=[])` then you might expect to be able to do something with those verts from within your UI function. Unfortunately the local variables don't currently work that way, in order for you to make geometry with the UI operator, you have to generate it from inside the `sv_main()` function or access it through a somewhat roundabout way which is closer to how the regular nodes do it.
+Mostly limitations are imaginary barriers which an increase in Python Skills will bypass, but if I have to mention something that surprised me it's the state of the `in_socket` variables when running a `ui_operator` function. 
+
+`ui_operator`  
+
+For example if you have Verts coming into the node, like `sv_main(verts=[])` then you might expect to be able to do something with those verts from within your UI function. Unfortunately the local variables don't currently work that way, in order for you to make geometry with the UI operator, you have to generate it from inside the `sv_main()` function or access it through a somewhat roundabout way which is closer to how the regular nodes do it.
 
 This is stupid and has to be addressed. However, until such time there is an example in the github thread that can probably be improved on.
 
