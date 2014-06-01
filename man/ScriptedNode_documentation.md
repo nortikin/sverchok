@@ -190,7 +190,7 @@ Mostly limitations are imaginary barriers which an increase in Python Skills wil
 
 ### Future
 
-SN iteration 1 is itself a prototype and is a testing ground for iteration 2. The intention was always to provide multiple programming language interfaces, initially coffeescript because it's a lightweight language with crazy expressive capacity. iteration 2 might work a little different, perhap working from within a class but trying to do extra introspection to reduce boilerplate.
+SN iteration 1 is itself a prototype and is a testing ground for iteration 2. The intention was always to provide multiple programming language interfaces, initially coffeescript because it's a lightweight language with crazy expressive capacity. iteration 2 might work a little different, perhaps working from within a class but trying to do extra introspection to reduce boilerplate.
 
 The only reason in_sockets needs to be declared at the moment is if you want to have socket names that are different than the function arguments. It would be possible to allow `sv_main()` to take zero arguments too. So possible configurations should be:
 
