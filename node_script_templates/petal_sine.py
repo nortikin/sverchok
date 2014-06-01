@@ -1,3 +1,7 @@
+from math import sin, cos, radians, pi
+from mathutils import Vector, Euler
+
+
 def sv_main(n_petals=8, vp_petal=20, profile_radius=1.3, amp=1.0):
 
     in_sockets = [
@@ -7,9 +11,6 @@ def sv_main(n_petals=8, vp_petal=20, profile_radius=1.3, amp=1.0):
         ['s', 'Amp',  amp],
     ]
 
-    from math import sin, cos, radians, pi
-    from mathutils import Vector, Euler
-
     # variables
     z_float = 0.0
     n_verts = n_petals * vp_petal
@@ -18,7 +19,6 @@ def sv_main(n_petals=8, vp_petal=20, profile_radius=1.3, amp=1.0):
 
     # consumables
     Verts = []
-    Edges = []
 
     # makes vertex coordinates
     for i in range(n_verts):
@@ -37,12 +37,9 @@ def sv_main(n_petals=8, vp_petal=20, profile_radius=1.3, amp=1.0):
         y_float = ampline.y
         Verts.append((x_float, y_float, z_float))
 
-    # makes edge keys
-    for i in range(n_verts):
-        if i == n_verts - 1:
-            Edges.append([i, 0])
-            break
-        Edges.append([i, i + 1])
+    # makes edge keys, ensure cyclic
+    Edges = [[i, i + 1] for i in range(n_verts - 1)]
+    Edges.append([i, 0])
 
     out_sockets = [
         ['v', 'Verts', [Verts]],
