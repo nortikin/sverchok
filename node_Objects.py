@@ -122,8 +122,15 @@ class ObjectsNode(Node, SverchCustomTreeNode):
                     for m in obj.matrix_world:
                         mtrx.append(m[:])
                 elif obj.type == 'CURVE':
-                    for m in obj.matrix_world:
-                        mtrx.append(m[:])
+
+                    for spline in obj.data.splines:
+                        verts, edges = get_points(spline)
+                        edgs_out.append(edges)
+                        vers_out.append(verts)
+                        mtrx_out.append(obj.matrix_world[:])
+
+                    continue
+
                 else:
                     #obj_data = obj.data
                     # post modifier geometry if ticked
