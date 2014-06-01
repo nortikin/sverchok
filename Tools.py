@@ -5,6 +5,7 @@ from node_s import *
 import webbrowser
 import os
 import urllib
+import urllib.request
 from zipfile import ZipFile
 import traceback
 
@@ -67,6 +68,7 @@ class SverchokCheckForUpgrades(bpy.types.Operator):
         global sv_new_version
         os.curdir = sv_script_paths
         os.chdir(os.curdir)
+        report = self.report
         try:
             with open(sv_version) as sv_local_file:
                 version_local = next(sv_local_file).strip()
@@ -83,9 +85,9 @@ class SverchokCheckForUpgrades(bpy.types.Operator):
         
         if version_local != version_url:
             sv_new_version = True
-            self.report({'INFO'}, "There is new version.")
+            report({'INFO'}, "There is new version.")
         else:
-            self.report({'INFO'}, "You already have latest version of Sverchok, no need to upgrade.")
+            report({'INFO'}, "You already have latest version of Sverchok, no need to upgrade.")
         return {'FINISHED'}
 
 class SverchokUpdateAddon(bpy.types.Operator):
