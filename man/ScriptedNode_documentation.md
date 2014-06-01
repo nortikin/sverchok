@@ -124,7 +124,6 @@ def sv_main(n_petals=8, vp_petal=20, profile_radius=1.3, amp=1.0):
 
     # consumables
     Verts = []
-    Edges = []
 
     # makes vertex coordinates
     for i in range(n_verts):
@@ -143,12 +142,9 @@ def sv_main(n_petals=8, vp_petal=20, profile_radius=1.3, amp=1.0):
         y_float = ampline.y
         Verts.append((x_float, y_float, z_float))
 
-    # makes edge keys
-    for i in range(n_verts):
-        if i == n_verts - 1:
-            Edges.append([i, 0])
-            break
-        Edges.append([i, i + 1])
+    # makes edge keys, ensure cyclic
+    Edges = [[i, i + 1] for i in range(n_verts - 1)]
+    Edges.append([i, 0])
 
     out_sockets = [
         ['v', 'Verts', [Verts]],
@@ -156,6 +152,7 @@ def sv_main(n_petals=8, vp_petal=20, profile_radius=1.3, amp=1.0):
     ]
 
     return in_sockets, out_sockets
+
 ```
 
 Here's a `ui_operator` example, it acts like a throughput (because in and out are still needed by design). You'll notice that inside `func1` the node's input socket is accessed using `SvGetSockeyAnyType(...)`. It is probably more logical if we could access the input data directly from the variable `items_in`, currently this is not possible -- therefor the solution is to use what sverchok nodes use in their internal code too. The upshot, is that this exposes you to how you might access the socket content of other nodes. Experiment :)
