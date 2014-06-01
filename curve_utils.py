@@ -33,14 +33,15 @@ def get_points(spline, clean=True):
         pts = [v[:] for v in points]
         master_point_list.extend(pts)
 
-    # some clean up to remove consecutive doubles, this could be smarter...
+    # some clean up to remove consecutive doubles
     if clean:
         old = master_point_list
         good = [v for i, v in enumerate(old[:-1]) if not old[i] == old[i + 1]]
         good.append(old[-1])
-        return good
+        master_point_list = good
 
     # makes edge keys, ensure cyclic
+    n_verts = len(master_point_list)
     Edges = [[i, i + 1] for i in range(n_verts - 1)]
     if spline.use_cyclic_u:
         Edges.append([i, 0])
