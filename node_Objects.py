@@ -11,10 +11,15 @@ class SvObjSelected(bpy.types.Operator):
     
     node_name = StringProperty(name='name node', default='', description='it is name of node')
     tree_name = StringProperty(name='name tree', default='', description='it is name of tree')
+    grup_name = StringProperty(name='grup tree', default='', description='it is name of grup')
     
     def enable(self, name_no, name_tr, handle):
         objects = []
-        for o in bpy.context.selected_objects:
+        if self.grup_name and len(bpy.data.groups[self.grup_name].objects)>0:
+            objs = bpy.data.groups[self.grup_name].objects
+        else:
+            objs = bpy.context.selected_objects
+        for o in objs:
             objects.append(o.name)
         handle_write(name_no+name_tr, objects)
         # временное решение с группой. надо решать, как достать имя группы узлов
@@ -51,7 +56,10 @@ class ObjectsNode(Node, SverchCustomTreeNode):
         default='', 
         update=updateNode)
     #ObjectProperty = EnumProperty(items = object_select, name = 'ObjectProperty')
-
+    groupname = StringProperty(
+        name='groupname', description='group that gather objects',
+        default='', 
+        update=updateNode)
     modifiers = BoolProperty(
         name='Modifiers',
         description='Apply modifier geometry to import (original untouched)',
@@ -71,21 +79,31 @@ class ObjectsNode(Node, SverchCustomTreeNode):
         opera = row.operator('node.sverchok_object_insertion', text='G E T')
         opera.node_name = self.name
         opera.tree_name = self.id_data.name
+        opera.grup_name = self.groupname
+        layout.prop(self, 'groupname', text='Group')
         handle = handle_read(self.name+self.id_data.name)
-        if handle[0]:
+        if self.objects_local:
             for o in handle[1]:
                 layout.label(o)
         else:
             layout.label('--None--')
 
         row = layout.row(align=True)
-        row.prop(self, "modifiers", text="post modifiers")             
+        row.prop(self, "modifiers", text="Post modifiers")             
 
     def update(self):
         name_ = [self.name] + [self.id_data.name]
         name = str(name_[0]+name_[1])
         handle = handle_read(name)
         #print (handle)
+        if self.objects_local:
+            # bpy.ops.node.sverchok_object_insertion(node_name=self.name, tree_name=self.id_data.name, grup_name=self.groupname)
+            # not updating. need to understand mechanic of update
+            self.use_custom_color=True
+            self.color = (0,0.5,0.2)
+        else:
+            self.use_custom_color=True
+            self.color = (0,0.1,0.05)
         if self.objects_local and not handle[0]:
             handle_write(name, eval(self.objects_local))
         elif handle[0]:
@@ -138,14 +156,6 @@ class ObjectsNode(Node, SverchCustomTreeNode):
             
             if 'Matrixes' in self.outputs and self.outputs['Matrixes'].links:
                 SvSetSocketAnyType(self, 'Matrixes',mtrx_out)
-            #print ('матрёны: ', mtrx)
-        #print (self.objects_local)
-        if self.objects_local:
-            self.use_custom_color=True
-            self.color = (0,0.5,0.2)
-        else:
-            self.use_custom_color=True
-            self.color = (0,0.1,0.05)
                 
     def update_socket(self, context):
         self.update()
