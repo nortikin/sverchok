@@ -127,7 +127,7 @@ class ObjectsNode(Node, SverchCustomTreeNode):
                         verts, edges = get_points(spline)
                         edgs_out.append(edges)
                         vers_out.append(verts)
-                        mtrx_out.append(obj.matrix_world[:])
+                        mtrx_out.append(list(v[:] for v in obj.matrix_world))
 
                     continue
 
