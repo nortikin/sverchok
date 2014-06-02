@@ -59,7 +59,8 @@ then here are steps to fix that.
 - in the Blender directory rename the `python` folder to `_python` so Blender uses your local Python 3.4 install.
   
 
-binaries
+binaries  
+
 python: https://www.python.org/downloads/release/python-341/
 numpy: http://sourceforge.net/projects/numpy/files/NumPy/
 
