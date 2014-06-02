@@ -39,10 +39,10 @@ class ListItemNode(Node, SverchCustomTreeNode):
                 data = SvGetSocketAnyType(self, self.inputs['Data'])
                 
                 if 'Item' in self.outputs and self.outputs['Item'].links:
-                    out = self.count(data, self.level, self.item, True)
+                    out = self.count(data, self.level-1, self.item, True)
                     SvSetSocketAnyType(self, 'Item', out)
                 if 'Other' in self.outputs and self.outputs['Other'].links:
-                    out = self.count(data, self.level, self.item, False)
+                    out = self.count(data, self.level-1, self.item, False)
                     SvSetSocketAnyType(self, 'Other', out)
             
     def count(self, data, level, item, itself):
@@ -122,13 +122,13 @@ class ListItem2Node(Node, SverchCustomTreeNode):
                     
                 if 'Item' in self.outputs and self.outputs['Item'].links:
                     if self.level:
-                        out = self.get(data, self.level, items,self.get_items)
+                        out = self.get(data, self.level-1, items,self.get_items)
                     else:
                         out = self.get_items(data, items[0])
                     SvSetSocketAnyType(self, 'Item', out)
                 if 'Other' in self.outputs and self.outputs['Other'].links:
                     if self.level:
-                        out = self.get(data, self.level,items,self.get_other)
+                        out = self.get(data, self.level-1,items,self.get_other)
                     else:
                         out = self.get_other(data, items[0])
                     SvSetSocketAnyType(self, 'Other', out)

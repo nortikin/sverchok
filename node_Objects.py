@@ -66,6 +66,11 @@ class ObjectsNode(Node, SverchCustomTreeNode):
         description='Apply modifier geometry to import (original untouched)',
         default=False,
         update=updateNode)
+    vergroups = BoolProperty(
+        name='Vergroups',
+        description='Use vertex groups to nesty insertion',
+        default=False,
+        update=updateNode)
 
 
     def init(self, context):
@@ -73,6 +78,7 @@ class ObjectsNode(Node, SverchCustomTreeNode):
         self.outputs.new('StringsSocket', "Edges", "Edges")
         self.outputs.new('StringsSocket', "Polygons", "Polygons")
         self.outputs.new('MatrixSocket', "Matrixes", "Matrixes")
+        self.outputs.new('StringsSocket', "Vers_grouped", "Vers_grouped")
         
     def draw_buttons(self, context, layout):
         row = layout.row()
@@ -91,6 +97,8 @@ class ObjectsNode(Node, SverchCustomTreeNode):
 
         row = layout.row(align=True)
         row.prop(self, "modifiers", text="Post modifiers")             
+        row = layout.row(align=True)
+        row.prop(self, "vergroups", text="Vertex groups")             
 
     def update(self):
         name_ = [self.name] + [self.id_data.name]
@@ -111,11 +119,13 @@ class ObjectsNode(Node, SverchCustomTreeNode):
             objs = handle[1]
             edgs_out = []
             vers_out = []
+            vers_out_grouped = []
             pols_out = []
             mtrx_out = []
             for obj_ in objs: # names of objects
                 edgs = []
                 vers = []
+                vers_grouped = []
                 pols = []
                 mtrx = []
                 obj = bpy.data.objects[obj_] # objects itself
@@ -141,7 +151,9 @@ class ObjectsNode(Node, SverchCustomTreeNode):
 
                     for m in obj.matrix_world:
                         mtrx.append(list(m))
-                    for v in obj_data.vertices:
+                    for k, v in enumerate(obj_data.vertices):
+                        if self.vergroups and v.groups.values():
+                            vers_grouped.append(k)
                         vers.append(list(v.co))
                     for edg in obj_data.edges:
                         edgs.append([edg.vertices[0],edg.vertices[1]])
@@ -150,9 +162,11 @@ class ObjectsNode(Node, SverchCustomTreeNode):
                     #print (vers, edgs, pols, mtrx)
                 edgs_out.append(edgs)
                 vers_out.append(vers)
+                vers_out_grouped.append(vers_grouped)
                 pols_out.append(pols)
                 mtrx_out.append(mtrx)
             if vers_out[0]:
+                
                 if 'Vertices' in self.outputs and self.outputs['Vertices'].links:
                     SvSetSocketAnyType(self, 'Vertices',vers_out)
                     
@@ -161,6 +175,9 @@ class ObjectsNode(Node, SverchCustomTreeNode):
                     
                 if 'Polygons' in self.outputs and self.outputs['Polygons'].links:
                     SvSetSocketAnyType(self, 'Polygons',pols_out)
+                
+                if 'Vers_grouped' in self.outputs and self.outputs['Vers_grouped'].links:
+                    SvSetSocketAnyType(self, 'Vers_grouped',vers_out_grouped)
             
             if 'Matrixes' in self.outputs and self.outputs['Matrixes'].links:
                 SvSetSocketAnyType(self, 'Matrixes',mtrx_out)
