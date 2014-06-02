@@ -48,9 +48,9 @@ We now include NumPy code in Sverchok nodes, this means that you should have an 
 
 If it mentions   
 
--  `multiarray`
--  `DLL failure`
--  `Module use of python33.dll conflicts with this version of Python`
+-  multiarray
+-  DLL failure
+-  Module use of python33.dll conflicts with this version of Python
 
 then here are steps to fix that.  
 
