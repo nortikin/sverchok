@@ -10,6 +10,9 @@ def sv_main(verts=[[]], nx=20, ny=20, nz=20):
         ['s', 'ny', ny],
         ['s', 'nz', nz]]
 
+    # enforce min division of 1
+    nx, ny, nz = [max(i, 1) for i in [nx, ny, nz]]
+
     # this is a sparse 3d grid
     grid_3d = defaultdict(list)
 
@@ -33,6 +36,7 @@ def sv_main(verts=[[]], nx=20, ny=20, nz=20):
             return s
 
         def avg_vert(verts):
+            # incoming is verts per bucket
             nv = len(verts)
             return verts[0] if nv == 1 else sum_verts(verts) * (1 / nv)
 
