@@ -22,7 +22,7 @@ def frange( start, stop, step):
 
 def frange_count(start, stop, count):       
     ''' Gives count total values in [start,stop] '''
-    count = int(count)
+    count = max(int(count),2)
     step = (stop - start) / (count - 1 )
     yield start
     for i in range(count - 2):
@@ -53,7 +53,7 @@ class SvGenFloatRange(Node, SverchCustomTreeNode):
         options={'ANIMATABLE'}, update=updateNode)
     count_ = IntProperty(
         name='count', description='num items', default=10,
-        options={'ANIMATABLE'}, update=updateNode)
+        options={'ANIMATABLE'}, min=1, update=updateNode)
 
     step_ = FloatProperty(
         name='step', description='step', default=1.0,

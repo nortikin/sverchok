@@ -263,6 +263,7 @@ def make_categories():
             NodeItem("VectorDropNode", label="Vector Drop"),
             NodeItem("VertsDelDoublesNode", label="Vector X Doubles"),
             NodeItem("EvaluateLineNode", label="Vectors Evaluate"),
+            NodeItem("SvInterpolationNode", label="Interpolation"),
             NodeItem("SvVertSortNode", label="Vertices Sort"),
             NodeItem("SvNoiseNode", label="Noise"),
         #    ]),

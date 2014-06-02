@@ -17,10 +17,13 @@ class ListShuffleNode(Node, SverchCustomTreeNode):
     
     def draw_buttons(self, context, layout):
         layout.prop(self, 'level', text="level")
-        layout.prop(self, 'seed',text="Seed")
+        if not 'seed' in self.inputs:
+            layout.prop(self, 'seed',text="Seed")
     
     def init(self, context):
         self.inputs.new('StringsSocket', "data", "data")
+        self.inputs.new('StringsSocket', "seed").prop_name='seed'
+
         self.outputs.new('StringsSocket', 'data', 'data')
     
     def update(self):
@@ -31,7 +34,13 @@ class ListShuffleNode(Node, SverchCustomTreeNode):
             changable_sockets(self, inputsocketname, outputsocketname)
         
         if 'data' in self.outputs and self.outputs['data'].links:
-            random.seed(self.seed)    
+            
+            if not 'seed' in self.inputs:
+                seed = self.seed
+            else:
+                seed = self.inputs['seed'].sv_get()[0][0]
+            
+            random.seed(seed)    
             data = SvGetSocketAnyType(self, self.inputs['data'])
             output = self.shuffle(data, self.level)
             SvSetSocketAnyType(self, 'data', output)
