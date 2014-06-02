@@ -78,7 +78,6 @@ class ObjectsNode(Node, SverchCustomTreeNode):
         self.outputs.new('StringsSocket', "Edges", "Edges")
         self.outputs.new('StringsSocket', "Polygons", "Polygons")
         self.outputs.new('MatrixSocket', "Matrixes", "Matrixes")
-        self.outputs.new('StringsSocket', "Vers_grouped", "Vers_grouped")
         
     def draw_buttons(self, context, layout):
         row = layout.row()
@@ -101,6 +100,10 @@ class ObjectsNode(Node, SverchCustomTreeNode):
         row.prop(self, "vergroups", text="Vertex groups")             
 
     def update(self):
+        if self.vergroups and not ('Vers_grouped' in self.outputs):
+            self.outputs.new('StringsSocket', "Vers_grouped", "Vers_grouped")
+        elif not self.vergroups and ('Vers_grouped' in self.outputs):
+            self.outputs.remove('StringsSocket', "Vers_grouped", "Vers_grouped")
         name_ = [self.name] + [self.id_data.name]
         name = str(name_[0]+name_[1])
         handle = handle_read(name)
