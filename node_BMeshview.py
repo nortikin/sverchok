@@ -83,7 +83,7 @@ def make_bmesh_geometry(context, name, verts, edges, faces, matrix):
     bm.to_mesh(sv_object.data)
     bm.free()  # free and prevent further access
 
-    sv_object.hide_select = True
+    sv_object.hide_select = False
 
     # apply matrices if necessary
     if matrix:
