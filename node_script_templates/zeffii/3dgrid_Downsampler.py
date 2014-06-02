@@ -10,6 +10,9 @@ def sv_main(verts=[[]], nx=20, ny=20, nz=20):
         ['s', 'ny', ny],
         ['s', 'nz', nz]]
 
+    # enforce min division of 1
+    nx, ny, nz = [max(i, 1) for i in [nx, ny, nz]]
+
     grid_3d = defaultdict(list)
 
     def downsample(verts, n=(20, 20, 20)):
@@ -19,27 +22,20 @@ def sv_main(verts=[[]], nx=20, ny=20, nz=20):
             return [[min(dim), max(dim)] for dim in rotated]
 
         def get_divs(bbox):
-            # refactor later.
-            x_span = bbox[0][1] - bbox[0][0]
-            y_span = bbox[1][1] - bbox[1][0]
-            z_span = bbox[2][1] - bbox[2][0]
-            x_seg = x_span / n[0]
-            y_seg = y_span / n[1]
-            z_seg = z_span / n[2]
-            xdiv = [bbox[0][0] + (x_seg * i) for i in range(n[0])]
-            ydiv = [bbox[1][0] + (y_seg * i) for i in range(n[1])]
-            zdiv = [bbox[2][0] + (z_seg * i) for i in range(n[2])]
-            return xdiv, ydiv, zdiv
+            divs = []
+            for i in range(3):
+                dim_seg = (bbox[i][1] - bbox[i][0]) / n[i]
+                divs.append([bbox[i][0] + (dim_seg * k) for k in range(n[i])])
+            return divs
+
+        def sum_verts(verts):
+            s = verts[0]
+            for v in verts[1:]:
+                s += v
+            return s * (1 / len(verts))
 
         def avg_vert(verts):
-            n_verts = len(verts)
-            s = verts[0]
-            if n_verts == 1:
-                return s
-            else:
-                for v in verts[1:]:
-                    s = s + v
-                return s * (1 / n_verts)
+            return verts[0] if len(verts) == 1 else sum_verts(verts)
 
         def find_slot(dim, dimdivs):
             for idx, div in reversed(list(enumerate(dimdivs))):
