@@ -58,11 +58,10 @@ then here are steps to fix that.
 - download and install numpy 1.8 (for python 3.4) for your os.
 - in the Blender directory rename the `python` folder to `_python` so Blender uses your local Python 3.4 install.
   
-
+  
 binaries  
-
-python: https://www.python.org/downloads/release/python-341/
-numpy: http://sourceforge.net/projects/numpy/files/NumPy/
+python: https://www.python.org/downloads/release/python-341/  
+numpy: http://sourceforge.net/projects/numpy/files/NumPy/  
 
   
 An alternative is to send a polite email to whoever builds the binary of Blender which you currently use, and inform them that their NumPy inclusion should be double-checked.
