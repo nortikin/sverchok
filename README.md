@@ -44,12 +44,19 @@ Install Sverchok as you would any blender addon.
    And at the end press `F8` button to reload addons. In next blender run in panel will appear new version number  
 
 ###Troubleshooting Installation Errors
-We now include NumPy code in Sverchok nodes, this means that you should have an up-to-date version of NumPy on your machine. Normally if you get your Blender precompiled NumPy will be included with Python, however this isn't always the case. If you get an error when enabling Sverchok the last lines of the error are important: If it mentions `multiarray` or a `DLL failure` or `Module use of python33.dll conflicts with this version of Python` then here are steps to fix that.  
-  
-The python that comes with your Blender doesn't appear to have the most up to date (or complete) numpy included.
+We now include NumPy code in Sverchok nodes, this means that you should have an up-to-date version of NumPy on your machine. Normally if you get your Blender precompiled NumPy will be included with Python, however this isn't always the case. If you get an error when enabling Sverchok the last lines of the error are important: 
+
+If it mentions   
+
+-  `multiarray`
+-  `DLL failure`
+-  `Module use of python33.dll conflicts with this version of Python`
+
+then here are steps to fix that.  
+
 - download and install Python 3.4.(1) for your os
 - download and install numpy 1.8 (for python 3.4) for your os.
-- in the Blender directory rename the python folder to _python so Blender uses your local Python 3.4 install.
+- in the Blender directory rename the `python` folder to `_python` so Blender uses your local Python 3.4 install.
   
 
 ```
