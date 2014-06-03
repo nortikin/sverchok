@@ -1,3 +1,21 @@
+# ##### BEGIN GPL LICENSE BLOCK #####
+#
+#  This program is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU General Public License
+#  as published by the Free Software Foundation; either version 2
+#  of the License, or (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software Foundation,
+#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+# ##### END GPL LICENSE BLOCK #####
+
 from node_s import *
 from util import *
 import bpy
@@ -5,34 +23,72 @@ import numpy as np
 from bpy.props import EnumProperty, FloatProperty
 import bisect
 
-# from numerical recipes for C, section 3.3 
-# I made some mistake while translating the algorithm, needs to be redone
+# spline function modifed from
+# from looptools 4.5.2 done by Bart Crouch 
 
-def spline(t,x):
-    y2 = np.zeros(t.shape)
-    u = np.zeros(t.shape)
-    for i in range(1,len(t)-1):
-        sig = (t[i]-t[i-1])/(t[i+1]-t[i-1])
-        p= sig * y2[i-1]+2.0
-        y2[i]=(sig-1.0)/p
-        u[i]=(x[i+1]-x[i])/(t[i+1]-t[i]) - (x[i]-x[i-1])/(t[i]-t[i-1])
-        u[i]=(6.0*u[i]/(t[i+1]-t[i-1])-sig*u[i-1])/p
-    y2[-1] = 0
-    for k in reversed(range(1,t.size - 1)):
-        y2[k]=y2[k]*y2[k+1]+u[k]
-    return y2
+# calculates natural cubic splines through all given knots
+def cubic_spline(locs, tknots):
+    knots = list(range(len(locs)))
     
-def spline_eval(s_t,s_x,y2,t_in):
-    indx = s_t.searchsorted(t_in, side='right')
-    indx = indx.clip(0, y2.size-2)
-    x_out = []
-    x_app = x_out.append
-    for i,t in zip(indx,t_in):
-        h = s_t[i+1]-s_t[i]
-        a = (s_t[i+1]-t)/h
-        b = (t - s_t[i])/h
-        x_app( a*s_x[i]+b*s_x[i+1] + ((a**3-a)*y2[i]+(b**3-b)*y2[i+1])*(h**2)/6.0)  
-    return x_out
+    n = len(knots)
+    if n < 2:
+        return False
+    x = tknots[:]
+    result = []
+    for j in range(3):
+        a = []
+        for i in locs:
+            a.append(i[j])
+        h = []
+        for i in range(n-1):
+            if x[i+1] - x[i] == 0:
+                h.append(1e-8)
+            else:
+                h.append(x[i+1] - x[i])
+        q = [False]
+        for i in range(1, n-1):
+            q.append(3/h[i]*(a[i+1]-a[i]) - 3/h[i-1]*(a[i]-a[i-1]))
+        l = [1.0]
+        u = [0.0]
+        z = [0.0]
+        for i in range(1, n-1):
+            l.append(2*(x[i+1]-x[i-1]) - h[i-1]*u[i-1])
+            if l[i] == 0:
+                l[i] = 1e-8
+            u.append(h[i] / l[i])
+            z.append((q[i] - h[i-1] * z[i-1]) / l[i])
+        l.append(1.0)
+        z.append(0.0)
+        b = [False for i in range(n-1)]
+        c = [False for i in range(n)]
+        d = [False for i in range(n-1)]
+        c[n-1] = 0.0
+        for i in range(n-2, -1, -1):
+            c[i] = z[i] - u[i]*c[i+1]
+            b[i] = (a[i+1]-a[i])/h[i] - h[i]*(c[i+1]+2*c[i])/3
+            d[i] = (c[i+1]-c[i]) / (3*h[i])
+        for i in range(n-1):
+            result.append([a[i], b[i], c[i], d[i], x[i]])
+    splines = []
+    for i in range(len(knots)-1):
+        splines.append([result[i], result[i+n-1], result[i+(n-1)*2]])
+    return(splines)
+
+def eval_spline(splines,tknots,t_in):
+    out = []
+    for t in t_in:
+        n = bisect.bisect(tknots,t,lo=0,hi=len(tknots))-1
+        if n > len(splines)-1:
+            n = len(splines)-1
+        if n < 0:
+            n = 0 
+        pt = []
+        for i in range(3):
+            ax, bx, cx, dx, tx = splines[n][i]
+            x = ax + bx*(t-tx) + cx*(t-tx)**2 + dx*(t-tx)**3
+            pt.append(x)
+        out.append(pt)
+    return out
 
 class SvInterpolationNode(Node, SverchCustomTreeNode):
     '''Interpolate'''
@@ -52,8 +108,8 @@ class SvInterpolationNode(Node, SverchCustomTreeNode):
         self.outputs.new('VerticesSocket', 'Vertices')
     
     def draw_buttons(self, context, layout):
-        pass
-    #    layout.prop(self, 'mode', expand=True)
+    #    pass
+        layout.prop(self, 'mode', expand=True)
         
     def update(self):
         if not 'Vertices' in self.outputs:
@@ -75,10 +131,11 @@ class SvInterpolationNode(Node, SverchCustomTreeNode):
                 # this should also be numpy
                 if self.mode == 'LIN':
                     out = [np.interp(t_corr, t, pts[i]) for i in range(3)]
+                    verts_out.append(list(zip(*out)))
                 else: #SPL
-                    spl = [spline(t,pts[i]) for i in range(3)]
-                    out = [spline_eval(t,pts[i],spl[i],t_corr) for i in range(3)]
-                verts_out.append(list(zip(*out)))
+                    spl = cubic_spline(v,t)
+                    out = eval_spline(spl,t,t_corr)
+                    verts_out.append(out)
 
             if 'Vertices' in self.outputs and self.outputs['Vertices'].links:
                 SvSetSocketAnyType(self, 'Vertices',verts_out)
