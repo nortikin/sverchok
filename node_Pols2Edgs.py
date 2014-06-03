@@ -18,8 +18,20 @@ class Pols2EdgsNode(Node, SverchCustomTreeNode):
                 X_ = SvGetSocketAnyType(self, self.inputs['pols'])
                 X = dataCorrect(X_)
                 #print('p2e-X',str(X))
-                result = self.polstoedgs(X)
+                result = self.pols_edges(X)
                 SvSetSocketAnyType(self, 'edgs', result)
+
+
+    def pols_edges(self,obj):
+        out = []
+        for faces in obj:
+            out_edges = set()
+            for face in faces:
+                for edge in zip(face,face[1:]+[face[0]]):
+                    out_edges.add(tuple(sorted(edge)))
+            out.append(list(out_edges))
+        return out
+                
     def polstoedgs(self, pols):
         out = []
         for obj in pols:
