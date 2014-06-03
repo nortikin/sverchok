@@ -135,15 +135,6 @@ class ObjectsNode(Node, SverchCustomTreeNode):
                 if obj.type == 'EMPTY':
                     for m in obj.matrix_world:
                         mtrx.append(m[:])
-                elif obj.type == 'CURVE':
-
-                    for spline in obj.data.splines:
-                        verts, edges = get_points(spline)
-                        edgs_out.append(edges)
-                        vers_out.append(verts)
-                        mtrx_out.append(list(v[:] for v in obj.matrix_world))
-
-                    continue
 
                 else:
                     #obj_data = obj.data
