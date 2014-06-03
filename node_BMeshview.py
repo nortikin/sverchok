@@ -83,7 +83,7 @@ def make_bmesh_geometry(context, name, verts, edges, faces, matrix):
     bm.to_mesh(sv_object.data)
     bm.free()  # free and prevent further access
 
-    sv_object.hide_select = True
+    sv_object.hide_select = False
 
     # apply matrices if necessary
     if matrix:
@@ -286,7 +286,9 @@ class BmeshViewerNode(Node, SverchCustomTreeNode):
         meshes = bpy.data.meshes
         objects = bpy.data.objects
 
+        objects_to_reselect = []
         for i in bpy.context.selected_objects:
+            objects_to_reselect.append(i.name)
             i.select = False
 
         objs = [obj for obj in objects if obj.type == 'MESH']
@@ -303,7 +305,11 @@ class BmeshViewerNode(Node, SverchCustomTreeNode):
         for object_name in objs:
             meshes.remove(meshes[object_name])
 
-        # fingers crossed.
+        # reselect
+        for name in objects_to_reselect:
+            bpy.data.objects[name].select = True
+
+        # fingers crossed. 
 
     def set_corresponding_materials(self):
         objs = bpy.data.objects
