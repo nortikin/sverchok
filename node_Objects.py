@@ -2,7 +2,7 @@ import bpy, bmesh, mathutils
 from bpy.props import StringProperty, BoolProperty
 from node_s import *
 from util import *
-from curve_utils import *
+#from curve_utils import *
 
 class SvObjSelected(bpy.types.Operator):
     """ G E T   SELECTED OBJECTS """
