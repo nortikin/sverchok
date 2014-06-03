@@ -5,34 +5,7 @@ import numpy as np
 from bpy.props import EnumProperty, FloatProperty
 import bisect
 
-# from numerical recipes for C, section 3.3 
-# I made some mistake while translating the algorithm, needs to be redone
 
-def spline(t,x):
-    y2 = np.zeros(t.shape)
-    u = np.zeros(t.shape)
-    for i in range(1,len(t)-1):
-        sig = (t[i]-t[i-1])/(t[i+1]-t[i-1])
-        p= sig * y2[i-1]+2.0
-        y2[i]=(sig-1.0)/p
-        u[i]=(x[i+1]-x[i])/(t[i+1]-t[i]) - (x[i]-x[i-1])/(t[i]-t[i-1])
-        u[i]=(6.0*u[i]/(t[i+1]-t[i-1])-sig*u[i-1])/p
-    y2[-1] = 0
-    for k in reversed(range(1,t.size - 1)):
-        y2[k]=y2[k]*y2[k+1]+u[k]
-    return y2
-    
-def spline_eval(s_t,s_x,y2,t_in):
-    indx = s_t.searchsorted(t_in, side='right')
-    indx = indx.clip(0, y2.size-2)
-    x_out = []
-    x_app = x_out.append
-    for i,t in zip(indx,t_in):
-        h = s_t[i+1]-s_t[i]
-        a = (s_t[i+1]-t)/h
-        b = (t - s_t[i])/h
-        x_app( a*s_x[i]+b*s_x[i+1] + ((a**3-a)*y2[i]+(b**3-b)*y2[i+1])*(h**2)/6.0)  
-    return x_out
 
 class SvInterpolationNode(Node, SverchCustomTreeNode):
     '''Interpolate'''
