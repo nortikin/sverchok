@@ -168,6 +168,7 @@ if "bpy" in locals():
     imp.reload(node_ListSplit)
     imp.reload(node_VertMask)
     imp.reload(node_Interpolation)
+    imp.reload(node_Lathe)
 
 else:
     import node_s
@@ -277,6 +278,7 @@ else:
     import node_ListSplit
     import node_VertMask
     import node_Interpolation
+    import node_Lathe
 
 import bpy
 from bpy.types import AddonPreferences
@@ -408,6 +410,7 @@ def register():
     node_ListSplit.register()
     node_VertMask.register()
     node_Interpolation.register()
+    node_Lathe.register()
     
     bpy.utils.register_class(SverchokPreferences)
        
@@ -419,6 +422,7 @@ def unregister():
     import bpy
     import nodeitems_utils
 
+    node_Lathe.unregister()
     node_Interpolation.unregister()
     node_VertMask.unregister()
     node_ListSplit.unregister()
