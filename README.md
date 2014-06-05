@@ -12,7 +12,7 @@ Mesh and geometry programming consists of combining basic elements such as:
   - rotation angles 
   - matrices (user-friendly rotation-scale-location transformations)
 
-Version 0.2.8 comes with more than 100 nodes to help create and manipulate geometry. Combining these nodes will allow you to:
+Comes with more than 100 nodes to help create and manipulate geometry. Combining these nodes will allow you to:
 
   - do parametric constructions
   - easily change parameters with sliders and formulas
