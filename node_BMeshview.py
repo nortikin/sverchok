@@ -145,7 +145,7 @@ class BmeshViewerNode(Node, SverchCustomTreeNode):
         default=True,
         update=updateNode)
 
-    basemesh_name = StringProperty(default=get_random_init(), update=updateNode)
+    basemesh_name = StringProperty(default='Alpha', update=updateNode)
     state_view = BoolProperty(default=True)
     state_render = BoolProperty(default=True)
     state_select = BoolProperty(default=True)
@@ -189,6 +189,7 @@ class BmeshViewerNode(Node, SverchCustomTreeNode):
         layout.label("Base mesh name(s)", icon='OUTLINER_OB_MESH')
         row = layout.row()
         row.prop(self, "basemesh_name", text="")
+        self.draw_buttons_ext(context, layout)
 
     def draw_buttons_ext(self, context, layout):
         sh = 'node.showhide_bmesh'
@@ -337,3 +338,6 @@ def register():
 def unregister():
     bpy.utils.unregister_class(BmeshViewerNode)
     bpy.utils.unregister_class(SvBmeshViewOp)
+
+if __name__  == '__main__':
+    register()
