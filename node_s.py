@@ -299,6 +299,7 @@ def make_categories():
             NodeItem("SvConvexHullNode", label="Convex Hull"),
             NodeItem("SvFillsHoleNode", label="Fill Holes"),
             NodeItem("SvIntersectEdgesNode", label="Intersect Edges"),
+            NodeItem("SvLatheNode", label="Lathe"),
             ]),
         SverchNodeCategory("SVERCHOK_A", "SVERCHOK analisators", items=[
             # investigate data
