@@ -272,7 +272,8 @@ class BmeshViewerNode(Node, SverchCustomTreeNode):
         for g in bpy.data.groups:
             if self.basemesh_name in g.name:
                 groupeexist=True
-        if not groupeexist: bpy.ops.group.create(group=self.basemesh_name)
+        if not groupeexist: 
+            bpy.ops.group.create(name=self.basemesh_name)
 
         for obj in objs:
             if self.basemesh_name in obj.name:
