@@ -121,7 +121,7 @@ class BmeshViewerNode(Node, SverchCustomTreeNode):
 
     basemesh_name = StringProperty(default='Alpha', update=updateNode)
     randname_choosed = BoolProperty(default=False)
-    grouping = BoolProperty(default=True)
+    grouping = BoolProperty(default=False)
     state_view = BoolProperty(default=True)
     state_render = BoolProperty(default=True)
     state_select = BoolProperty(default=True)
@@ -163,7 +163,7 @@ class BmeshViewerNode(Node, SverchCustomTreeNode):
         col4.operator(sh, text='', icon=icons('r')).fn_name = 'hide_render'
         
         row=layout.row()
-        row.prop(self,'grouping',text='to Group')
+        row.prop(self, "grouping",text="to Group")
         
         layout.label("Base mesh name(s)", icon='OUTLINER_OB_MESH')
         #row = layout.row()
@@ -260,6 +260,32 @@ class BmeshViewerNode(Node, SverchCustomTreeNode):
 
         self.remove_non_updated_objects(obj_index, self.basemesh_name)
         self.set_corresponding_materials()
+        if self.grouping:
+            self.to_group()
+    
+    def to_group(self):
+        # this def for grouping
+        selo = bpy.context.selected_objects
+        objs = bpy.data.objects
+        bpy.ops.object.select_all(action='DESELECT')
+        groupeexist=False
+        for g in bpy.data.groups:
+            if self.basemesh_name in g.name:
+                groupeexist=True
+        if not groupeexist: bpy.ops.group.create(group=self.basemesh_name)
+
+        for obj in objs:
+            if self.basemesh_name in obj.name:
+                obj.select = True
+                
+        bpy.ops.object.group_link(group=self.basemesh_name)
+        bpy.ops.object.make_links_data(type='GROUPS')
+
+        
+        bpy.ops.object.select_all(action='DESELECT')
+        for obj in selo:
+            obj.select = True
+            
 
     def remove_non_updated_objects(self, obj_index, _name):
 
