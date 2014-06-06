@@ -64,7 +64,7 @@ def make_bmesh_geometry(context, name, verts, edges, faces, matrix):
 
 
 class SvBmeshViewOp(bpy.types.Operator):
-
+    ''' Pick random greek leter or select meshes in scene '''
     bl_idname = "node.showhide_bmesh"
     bl_label = "Sverchok bmesh showhide"
     bl_options = {'REGISTER', 'UNDO'}
@@ -101,6 +101,7 @@ class SvBmeshViewOp(bpy.types.Operator):
 
         elif type_op == 'random_mesh_name':
             n.basemesh_name = get_random_init()
+            n.randname_choosed = True
 
     def execute(self, context):
         self.hide_unhide(context, self.fn_name)
@@ -119,6 +120,7 @@ class BmeshViewerNode(Node, SverchCustomTreeNode):
         update=updateNode)
 
     basemesh_name = StringProperty(default='Alpha', update=updateNode)
+    randname_choosed = BoolProperty(default=False)
     state_view = BoolProperty(default=True)
     state_render = BoolProperty(default=True)
     state_select = BoolProperty(default=True)
@@ -160,18 +162,18 @@ class BmeshViewerNode(Node, SverchCustomTreeNode):
         col4.operator(sh, text='', icon=icons('r')).fn_name = 'hide_render'
 
         layout.label("Base mesh name(s)", icon='OUTLINER_OB_MESH')
-        row = layout.row()
+        #row = layout.row()
+        #row.prop(self, "basemesh_name", text="")
+        # this is button to randomise
+        col = layout.column(align=True)
+        row = col.row(align=True)
+        row.scale_y=1.1
         row.prop(self, "basemesh_name", text="")
-        self.draw_buttons_ext(context, layout)
-
-    def draw_buttons_ext(self, context, layout):
-        sh = 'node.showhide_bmesh'
-
-        row = layout.row(align=True)
-        row.prop(self, "basemesh_name", text="")
-        row.operator(sh, text='Random Name').fn_name = 'random_mesh_name'
-        row = layout.row()
-        row.operator(sh, text='Select Meshes').fn_name = 'mesh_select'
+        if not self.randname_choosed:
+            row.operator(sh, text='Random Name').fn_name = 'random_mesh_name'
+        row = col.row(align=True)
+        row.scale_y=0.9
+        row.operator(sh, text='Select/Deselect').fn_name = 'mesh_select'
 
     def get_corrected_data(self, socket_name, socket_type):
         inputs = self.inputs
