@@ -6,6 +6,8 @@ from bpy.props import BoolProperty, FloatVectorProperty
 
 from node_s import *
 from util import *
+from sv_bmesh_utils import bmesh_from_pydata
+
 import random
 
 
@@ -28,35 +30,6 @@ def default_mesh(name):
     mesh_data.from_pydata(verts, [], faces)
     mesh_data.update()
     return mesh_data
-
-
-def bmesh_from_pydata(verts=[], edges=[], faces=[]):
-    ''' verts is necessary, edges/faces are optional '''
-
-    bm = bmesh.new()
-    add_vert = bm.verts.new
-    [add_vert(co) for co in verts]
-    bm.verts.index_update()
-
-    if faces:
-        add_face = bm.faces.new
-        for face in faces:
-            add_face(tuple(bm.verts[i] for i in face))
-        bm.faces.index_update()
-
-    if edges:
-        add_edge = bm.edges.new
-        for edge in edges:
-            edge_seq = tuple(bm.verts[i] for i in edge)
-            try:
-                add_edge(edge_seq)
-            except ValueError:
-                # edge exists!
-                pass
-
-        bm.edges.index_update()
-
-    return bm
 
 
 def make_bmesh_geometry(context, name, verts, edges, faces, matrix):
