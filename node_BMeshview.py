@@ -121,6 +121,7 @@ class BmeshViewerNode(Node, SverchCustomTreeNode):
 
     basemesh_name = StringProperty(default='Alpha', update=updateNode)
     randname_choosed = BoolProperty(default=False)
+    grouping = BoolProperty(default=True)
     state_view = BoolProperty(default=True)
     state_render = BoolProperty(default=True)
     state_select = BoolProperty(default=True)
@@ -160,7 +161,10 @@ class BmeshViewerNode(Node, SverchCustomTreeNode):
         col3.operator(sh, text='', icon=icons('s')).fn_name = 'hide_select'
         col4 = split.column()
         col4.operator(sh, text='', icon=icons('r')).fn_name = 'hide_render'
-
+        
+        row=layout.row()
+        row.prop(self,'grouping',text='to Group')
+        
         layout.label("Base mesh name(s)", icon='OUTLINER_OB_MESH')
         #row = layout.row()
         #row.prop(self, "basemesh_name", text="")
