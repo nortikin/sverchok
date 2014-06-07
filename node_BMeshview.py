@@ -6,6 +6,8 @@ from bpy.props import BoolProperty, FloatVectorProperty
 
 from node_s import *
 from util import *
+from sv_bmesh_utils import bmesh_from_pydata
+
 import random
 
 
@@ -28,35 +30,6 @@ def default_mesh(name):
     mesh_data.from_pydata(verts, [], faces)
     mesh_data.update()
     return mesh_data
-
-
-def bmesh_from_pydata(verts=[], edges=[], faces=[]):
-    ''' verts is necessary, edges/faces are optional '''
-
-    bm = bmesh.new()
-    add_vert = bm.verts.new
-    [add_vert(co) for co in verts]
-    bm.verts.index_update()
-
-    if faces:
-        add_face = bm.faces.new
-        for face in faces:
-            add_face(tuple(bm.verts[i] for i in face))
-        bm.faces.index_update()
-
-    if edges:
-        add_edge = bm.edges.new
-        for edge in edges:
-            edge_seq = tuple(bm.verts[i] for i in edge)
-            try:
-                add_edge(edge_seq)
-            except ValueError:
-                # edge exists!
-                pass
-
-        bm.edges.index_update()
-
-    return bm
 
 
 def make_bmesh_geometry(context, name, verts, edges, faces, matrix):
@@ -91,7 +64,7 @@ def make_bmesh_geometry(context, name, verts, edges, faces, matrix):
 
 
 class SvBmeshViewOp(bpy.types.Operator):
-
+    ''' Pick random greek leter or select meshes in scene '''
     bl_idname = "node.showhide_bmesh"
     bl_label = "Sverchok bmesh showhide"
     bl_options = {'REGISTER', 'UNDO'}
@@ -128,6 +101,7 @@ class SvBmeshViewOp(bpy.types.Operator):
 
         elif type_op == 'random_mesh_name':
             n.basemesh_name = get_random_init()
+            n.randname_choosed = True
 
     def execute(self, context):
         self.hide_unhide(context, self.fn_name)
@@ -146,6 +120,8 @@ class BmeshViewerNode(Node, SverchCustomTreeNode):
         update=updateNode)
 
     basemesh_name = StringProperty(default='Alpha', update=updateNode)
+    randname_choosed = BoolProperty(default=False)
+    grouping = BoolProperty(default=False)
     state_view = BoolProperty(default=True)
     state_render = BoolProperty(default=True)
     state_select = BoolProperty(default=True)
@@ -185,20 +161,23 @@ class BmeshViewerNode(Node, SverchCustomTreeNode):
         col3.operator(sh, text='', icon=icons('s')).fn_name = 'hide_select'
         col4 = split.column()
         col4.operator(sh, text='', icon=icons('r')).fn_name = 'hide_render'
-
+        
+        row=layout.row()
+        row.prop(self, "grouping",text="to Group")
+        
         layout.label("Base mesh name(s)", icon='OUTLINER_OB_MESH')
-        row = layout.row()
+        #row = layout.row()
+        #row.prop(self, "basemesh_name", text="")
+        # this is button to randomise
+        col = layout.column(align=True)
+        row = col.row(align=True)
+        row.scale_y=1.1
         row.prop(self, "basemesh_name", text="")
-        self.draw_buttons_ext(context, layout)
-
-    def draw_buttons_ext(self, context, layout):
-        sh = 'node.showhide_bmesh'
-
-        row = layout.row(align=True)
-        row.prop(self, "basemesh_name", text="")
-        row.operator(sh, text='Random Name').fn_name = 'random_mesh_name'
-        row = layout.row()
-        row.operator(sh, text='Select Meshes').fn_name = 'mesh_select'
+        if not self.randname_choosed:
+            row.operator(sh, text='Random Name').fn_name = 'random_mesh_name'
+        row = col.row(align=True)
+        row.scale_y=0.9
+        row.operator(sh, text='Select/Deselect').fn_name = 'mesh_select'
 
     def get_corrected_data(self, socket_name, socket_type):
         inputs = self.inputs
@@ -281,6 +260,33 @@ class BmeshViewerNode(Node, SverchCustomTreeNode):
 
         self.remove_non_updated_objects(obj_index, self.basemesh_name)
         self.set_corresponding_materials()
+        if self.grouping:
+            self.to_group()
+    
+    def to_group(self):
+        # this def for grouping
+        #selo = bpy.context.selected_objects
+        objs = bpy.data.objects
+        #bpy.ops.object.select_all(action='DESELECT')
+        if not self.basemesh_name in bpy.data.groups:
+            newgroup = bpy.data.groups.new(self.basemesh_name)
+            #bpy.ops.group.create(name=self.basemesh_name)
+        else:
+            newgroup = bpy.data.groups[self.basemesh_name]
+        for obj in objs:
+            if self.basemesh_name in obj.name:
+                if obj.name not in newgroup.objects:
+                    newgroup.objects.link(obj)
+                #obj.select = True
+        #bpy.context.scene.objects.active = bpy.context.selected_objects[0]
+        #bpy.ops.object.group_link(group=self.basemesh_name)
+        #bpy.ops.object.make_links_data(type='GROUPS')
+
+        
+        #bpy.ops.object.select_all(action='DESELECT')
+        #for obj in selo:
+            #obj.select = True
+            
 
     def remove_non_updated_objects(self, obj_index, _name):
 

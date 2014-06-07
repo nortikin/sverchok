@@ -355,13 +355,7 @@ def Vector_generate(prop):
     return [[Vector(v) for v in obj] for obj in prop]
 
 def Vector_degenerate(prop):
-    vec_out = []
-    for i, object in enumerate(prop):  # lists by objects
-        veclist = []
-        for v in object: # verts
-            veclist.append((v[:]))
-        vec_out.append(veclist)
-    return vec_out
+    return [[v[0:3] for v in object] for object in prop]
 
 def Edg_pol_generate(prop):
     edg_pol_out = []
