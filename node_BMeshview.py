@@ -265,27 +265,27 @@ class BmeshViewerNode(Node, SverchCustomTreeNode):
     
     def to_group(self):
         # this def for grouping
-        selo = bpy.context.selected_objects
+        #selo = bpy.context.selected_objects
         objs = bpy.data.objects
-        bpy.ops.object.select_all(action='DESELECT')
-        groupeexist=False
-        for g in bpy.data.groups:
-            if self.basemesh_name in g.name:
-                groupeexist=True
-        if not groupeexist: 
-            bpy.ops.group.create(name=self.basemesh_name)
-
+        #bpy.ops.object.select_all(action='DESELECT')
+        if not self.basemesh_name in bpy.data.groups:
+            newgroup = bpy.data.groups.new(self.basemesh_name)
+            #bpy.ops.group.create(name=self.basemesh_name)
+        else:
+            newgroup = bpy.data.groups[self.basemesh_name]
         for obj in objs:
             if self.basemesh_name in obj.name:
-                obj.select = True
-                
-        bpy.ops.object.group_link(group=self.basemesh_name)
-        bpy.ops.object.make_links_data(type='GROUPS')
+                if obj.name not in newgroup.objects:
+                    newgroup.objects.link(obj)
+                #obj.select = True
+        #bpy.context.scene.objects.active = bpy.context.selected_objects[0]
+        #bpy.ops.object.group_link(group=self.basemesh_name)
+        #bpy.ops.object.make_links_data(type='GROUPS')
 
         
-        bpy.ops.object.select_all(action='DESELECT')
-        for obj in selo:
-            obj.select = True
+        #bpy.ops.object.select_all(action='DESELECT')
+        #for obj in selo:
+            #obj.select = True
             
 
     def remove_non_updated_objects(self, obj_index, _name):
