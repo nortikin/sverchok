@@ -8,18 +8,19 @@ class LineNode(Node, SverchCustomTreeNode):
     bl_label = 'Line'
     bl_icon = 'OUTLINER_OB_EMPTY'
     
-    int_ = bpy.props.IntProperty(name = 'int_', description='Nº Vertices', default=2, min=2, options={'ANIMATABLE'}, update=updateNode)
-    step_ = bpy.props.FloatProperty(name = 'step_', description='Step length', default=1.0, options={'ANIMATABLE'}, update=updateNode)
+    int_ = bpy.props.IntProperty(name = 'N Verts', description='Nº Vertices', default=2, min=2, options={'ANIMATABLE'}, update=updateNode)
+    step_ = bpy.props.FloatProperty(name = 'Step', description='Step length', default=1.0, options={'ANIMATABLE'}, update=updateNode)
 
     def init(self, context):
-        self.inputs.new('StringsSocket', "Nº Vertices", "Nº Vertices")
-        self.inputs.new('StringsSocket', "Step", "Step length")
+        self.inputs.new('StringsSocket', "Nº Vertices").prop_name = 'int_'
+        self.inputs.new('StringsSocket', "Step").prop_name = 'step_'
         self.outputs.new('VerticesSocket', "Vertices", "Vertices")
         self.outputs.new('StringsSocket', "Edges", "Edges")
     
     def draw_buttons(self, context, layout):
-        layout.prop(self, "int_", text="Nº Vert")
-        layout.prop(self, "step_", text="Step")
+        pass
+        #layout.prop(self, "int_", text="Nº Vert")
+        #layout.prop(self, "step_", text="Step")
 
     def update(self):
         # inputs

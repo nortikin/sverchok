@@ -8,7 +8,9 @@ from util import *
 # Slices a list using function like:
 # Slice  = data[start:stop]
 # Other = data[:start]+data[stop:]
-       
+     
+
+
 class ListSliceNode(Node, SverchCustomTreeNode):
     ''' List Slice '''
     bl_idname = 'ListSliceNode'
@@ -16,21 +18,19 @@ class ListSliceNode(Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
     
     level = bpy.props.IntProperty(name = 'level_to_count', default=2, min=0, update=updateNode)
-    start = bpy.props.IntProperty(name = 'start', default=0, update=updateNode)
-    stop = bpy.props.IntProperty(name = 'stop', default=1, update=updateNode)
+    start = bpy.props.IntProperty(name = 'Start', default=0, update=updateNode)
+    stop = bpy.props.IntProperty(name = 'Stop', default=1, update=updateNode)
 
     typ = bpy.props.StringProperty(name='typ', default='')
     newsock = bpy.props.BoolProperty(name='newsock', default=False)
     
     def draw_buttons(self, context, layout):
         layout.prop(self, "level", text="level")
-        layout.prop(self, "start", text="Start")
-        layout.prop(self, "stop", text="Stop")
         
     def init(self, context):
-        self.inputs.new('StringsSocket', "Data", "Data")
-        self.inputs.new('StringsSocket', "Start", "Start")
-        self.inputs.new('StringsSocket', "Stop", "Stop")
+        self.inputs.new('StringsSocket', "Data")
+        self.inputs.new('StringsSocket', "Start").prop_name='start'
+        self.inputs.new('StringsSocket', "Stop").prop_name='stop'
         self.outputs.new('StringsSocket',"Slice","Slice")
         self.outputs.new('StringsSocket',"Other","Other")
 

@@ -8,45 +8,46 @@ class RandomNode(Node, SverchCustomTreeNode):
     bl_idname = 'RandomNode'
     bl_label = 'Random'
     bl_icon = 'OUTLINER_OB_EMPTY'
-    
-    count_inner = bpy.props.IntProperty(name = 'count_inner', description='random', default=1, min=1, options={'ANIMATABLE'}, update=updateNode)
-    seed = bpy.props.FloatProperty(name = 'seed', description='random seed', default=0, options={'ANIMATABLE'}, update=updateNode)
+
+    count_inner = bpy.props.IntProperty(name = 'Count', default=1, min=1, options={'ANIMATABLE'}, update=updateNode)
+    seed = bpy.props.FloatProperty(name = 'Seed', default=0, options={'ANIMATABLE'}, update=updateNode)
     
     def init(self, context):
-        self.inputs.new('StringsSocket', "Count", "Count")
-        self.inputs.new('StringsSocket', "Seed", "Seed")
+        self.inputs.new('StringsSocket', "Count").prop_name = 'count_inner'
+        self.inputs.new('StringsSocket', "Seed").prop_name = 'seed'
 
         self.outputs.new('StringsSocket', "Random", "Random")
         
     def draw_buttons(self, context, layout):
-        layout.prop(self, "count_inner", text="Count")
-        layout.prop(self, "seed", text="Seed")
+        pass
+        #layout.prop(self, "count_inner", text="Count")
+        #layout.prop(self, "seed", text="Seed")
 
     def update(self):
+        if not 'Random' in self.outputs:
+            return
         # inputs
-        if 'Count' in self.inputs and self.inputs['Count'].links and \
-            type(self.inputs['Count'].links[0].from_socket) == bpy.types.StringsSocket:
-      
-            tmp = SvGetSocketAnyType(self,self.inputs['Count'])
-            Coun = tmp[0][0]
-        else:
-            Coun = self.count_inner
+        if 'Count' in self.inputs:
+            Coun = self.inputs['Count'].sv_get()[0]
             
-        if 'Seed' in self.inputs and self.inputs['Seed'].links and \
-            type(self.inputs['Seed'].links[0].from_socket) == bpy.types.StringsSocket:
-            
-            tmp = SvGetSocketAnyType(self,self.inputs['Seed'])
-            Seed = tmp[0][0]
-        else:
-            Seed = self.seed
-        
+        if 'Seed' in self.inputs:
+            Seed = self.inputs['Seed'].sv_get()[0]
         
         # outputs
-        random.seed(Seed)
         
         if 'Random' in self.outputs and self.outputs['Random'].links:
-            Random = [round(random.random(),16) for c in range(Coun)]
-            SvSetSocketAnyType(self, 'Random',[Random])
+            Random = []
+            if len(Seed) == 1:
+                random.seed(Seed[0])
+                for c in Coun:
+                    Random.append([round(random.random(),16) for i in range(int(c))])
+            else:
+                param = match_repeat_long([Seed,Count])
+                for s,c in zip(*param):
+                    random.seed(s)
+                    Random.append([round(random.random(),16) for i in range(int(c))])
+                    
+            SvSetSocketAnyType(self, 'Random',Random)
 
     
     def update_socket(self, context):

@@ -331,7 +331,6 @@ def sv_update_handler(scene):
                 print('Failed to update:',name,str(e))
                     
 # clean up handler
-            
 @persistent
 def sv_clean(scene):
     # callbacks for view nodes
@@ -340,7 +339,16 @@ def sv_clean(scene):
     Viewer_draw.callback_disable_all()
     Index_Viewer_draw.callback_disable_all()
 
-    
+@persistent
+def sv_upgrade_nodes(scene):
+    # update nodes to compact layout
+    import upgrade
+    for name,tree in bpy.data.node_groups.items():
+        if tree.bl_idname =='SverchCustomTreeType' and tree.nodes:
+            try:
+                upgrade.upgrade_nodes(tree)                
+            except Exception as e:
+                print('Failed to upgrade:',name,str(e))
                         
 def register():
     bpy.utils.register_class(SvColors)
@@ -351,6 +359,7 @@ def register():
     bpy.utils.register_class(VerticesSocket)
     bpy.app.handlers.frame_change_post.append(sv_update_handler) 
     bpy.app.handlers.load_pre.append(sv_clean) 
+    bpy.app.handlers.load_post.append(sv_upgrade_nodes) 
 
        
 def unregister():
@@ -362,7 +371,7 @@ def unregister():
     bpy.utils.unregister_class(SvColors)
     bpy.app.handlers.frame_change_post.remove(sv_update_handler)
     bpy.app.handlers.load_pre.remove(sv_clean) 
-
+    bpy.app.handlers.load_post.remove(sv_upgrade_nodes)
 
 if __name__ == "__main__":
     register()

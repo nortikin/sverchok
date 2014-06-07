@@ -153,7 +153,8 @@ class SvScriptNode(Node, SverchCustomTreeNode):
     def avail_scripts(self, context):
         scripts = bpy.data.texts
         items = [(t.name, t.name, "") for t in scripts]
-        items.sort(key=lambda x:x[0].upper())
+        # changes order for old files...
+        #items.sort(key=lambda x:x[0].upper())
         return items
 
     def avail_templates(self, context):
@@ -161,7 +162,8 @@ class SvScriptNode(Node, SverchCustomTreeNode):
         script_dir = "node_script_templates"
         path = os.path.join(sv_path, script_dir)
         items = [(t, t, "") for t in next(os.walk(path))[2]]
-        items.sort(key=lambda x:x[0].upper())
+        # changes order for old files
+        #items.sort(key=lambda x:x[0].upper())
         return items
 
     files_popup = EnumProperty(

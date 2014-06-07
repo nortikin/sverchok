@@ -185,7 +185,6 @@ def match_long_repeat(lsts):
             tmp.append(l)
         else:
             tmp.append(repeat_last(l))
-
     return list(map( list, zip(*zip(*tmp))))
 
 # longest list matching, cycle [[1,2,3,4,5] ,[10,11]] -> [[1,2,3,4,5] ,[10,11,10,11,10]]

@@ -1,34 +1,30 @@
 import bpy
 from node_s import *
 from util import *
-
+     
 class PlaneNode(Node, SverchCustomTreeNode):
     ''' Plane '''
     bl_idname = 'PlaneNode'
     bl_label = 'Plane'
     bl_icon = 'OUTLINER_OB_EMPTY'
     
-    int_X = bpy.props.IntProperty(name = 'int_X', description='Nº Vertices X', default=2, min=2, options={'ANIMATABLE'}, update=updateNode)
-    int_Y = bpy.props.IntProperty(name = 'int_Y', description='Nº Vertices Y', default=2, min=2, options={'ANIMATABLE'}, update=updateNode)
-    step_X = bpy.props.FloatProperty(name = 'step_X', description='Step length X', default=1.0, options={'ANIMATABLE'}, update=updateNode)
-    step_Y = bpy.props.FloatProperty(name = 'step_Y', description='Step length Y', default=1.0, options={'ANIMATABLE'}, update=updateNode)
+    int_X = bpy.props.IntProperty(name = 'N Vert X', description='Nº Vertices X', default=2, min=2, options={'ANIMATABLE'}, update=updateNode)
+    int_Y = bpy.props.IntProperty(name = 'N Vert Y', description='Nº Vertices Y', default=2, min=2, options={'ANIMATABLE'}, update=updateNode)
+    step_X = bpy.props.FloatProperty(name = 'Step X', description='Step length X', default=1.0, options={'ANIMATABLE'}, update=updateNode)
+    step_Y = bpy.props.FloatProperty(name = 'Step Y', description='Step length Y', default=1.0, options={'ANIMATABLE'}, update=updateNode)
     Separate = bpy.props.BoolProperty(name = 'Separate', description='Separate UV coords', default=True, update=updateNode)
     
     def init(self, context):
-        self.inputs.new('StringsSocket', "Nº Vertices X", "Nº Vertices X")
-        self.inputs.new('StringsSocket', "Nº Vertices Y", "Nº Vertices Y")
-        self.inputs.new('StringsSocket', "Step X", "Step length X")
-        self.inputs.new('StringsSocket', "Step Y", "Step length Y")
-        self.outputs.new('VerticesSocket', "Vertices", "Vertices")
-        self.outputs.new('StringsSocket', "Edges", "Edges")
-        self.outputs.new('StringsSocket', "Polygons", "Polygons")
+        self.inputs.new('StringsSocket', "Nº Vertices X").prop_name = 'int_X'
+        self.inputs.new('StringsSocket', "Nº Vertices Y").prop_name = 'int_Y'
+        self.inputs.new('StringsSocket', "Step X").prop_name = 'step_X'
+        self.inputs.new('StringsSocket', "Step Y").prop_name = 'step_Y'
+        self.outputs.new('VerticesSocket', "Vertices")
+        self.outputs.new('StringsSocket', "Edges")
+        self.outputs.new('StringsSocket', "Polygons")
     
     def draw_buttons(self, context, layout):
         layout.prop(self, "Separate", text="Separate")
-        layout.prop(self, "int_X", text="Nº Vert X")
-        layout.prop(self, "int_Y", text="Nº Vert Y")
-        layout.prop(self, "step_X", text="Step X")
-        layout.prop(self, "step_Y", text="Step Y")
 
     def update(self):
         # inputs

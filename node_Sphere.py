@@ -3,116 +3,97 @@ from node_s import *
 from util import *
 from math import sin, cos
 
+def sphere_verts(U, V, Radius):
+    theta  = 360/U
+    phi = 180/(V-1)
+    X = [0]
+    Y = [0]
+    Z = [-Radius]
+    for i in range(1,V-1):
+        X.extend([round(Radius*cos(radians(theta*j))*sin(radians(phi*i)),8) for j in range(U)])
+        Y.extend([round(Radius*sin(radians(theta*j))*sin(radians(phi*i)),8) for j in range(U)])
+        Z.extend([round(Radius*cos(radians(phi*i)),8) for j in range(U)])
+    X.append(0)            
+    Y.append(0)
+    Z.append(Radius)    
+    return list(sv_zip(X,Y,Z))    
+
+def sphere_edges(U,V):
+    nr_pts = U*V-(U-1)*2
+    listEdg = []
+    for i in range(V-2):
+        listEdg.extend([[j+1+U*i, j+2+U*i] for j in range(U-1)])
+        listEdg.append([U*(i+1), U*(i+1)-U+1])
+    listEdg.extend([[i+1, i+1+U] for i in range(U*(V-3))])
+    listEdg.extend([[0, i+1] for i in U])
+    listEdg.extend([[nr_pts-1, i+nr_pts-U-1] for i in U])        
+    listEdg.reverse()
+    return listEdg
+    
+def sphere_faces(U,V):
+    nr_pts = U*V-(U-1)*2
+    listPln = []
+    for i in range(V-3):
+        listPln.append([U*i+2*U, 1+U*i+U, 1+U*i,  U*i+U])
+        listPln.extend([[1+U*i+j+U, 2+U*i+j+U, 2+U*i+j, 1+U*i+j] for j in range(U-1) ])
+
+    for i in range(U-1):
+        listPln.append([1+i, 2+i, 0])
+        listPln.append([i+nr_pts-U, i+nr_pts-1-U, nr_pts-1])
+    listPln.append([U, 1, 0])
+    listPln.append([nr_pts-1-U, nr_pts-2, nr_pts-1])
+    return listPln
+
+ 
+
 class SphereNode(Node, SverchCustomTreeNode):
     ''' Sphere '''
     bl_idname = 'SphereNode'
     bl_label = 'Sphere'
     bl_icon = 'OUTLINER_OB_EMPTY'
     
-    rad_ = bpy.props.FloatProperty(name = 'rad_', description='Radius', default=1.0, options={'ANIMATABLE'}, update=updateNode)
-    U_ = bpy.props.IntProperty(name = 'U_', description='U', default=24, min=3, options={'ANIMATABLE'}, update=updateNode)
-    V_ = bpy.props.IntProperty(name = 'V_', description='V', default=24, min=3, options={'ANIMATABLE'}, update=updateNode)
+    rad_ = bpy.props.FloatProperty(name = 'Radius', description='Radius', default=1.0, options={'ANIMATABLE'}, update=updateNode)
+    U_ = bpy.props.IntProperty(name = 'U', description='U', default=24, min=3, options={'ANIMATABLE'}, update=updateNode)
+    V_ = bpy.props.IntProperty(name = 'V', description='V', default=24, min=3, options={'ANIMATABLE'}, update=updateNode)
 
     def init(self, context):
-        self.inputs.new('StringsSocket', "Radius", "Radius")
-        self.inputs.new('StringsSocket', "U", "U")
-        self.inputs.new('StringsSocket', "V", "V")
-        self.outputs.new('VerticesSocket', "Vertices", "Vertices")
-        self.outputs.new('StringsSocket', "Edges", "Edges")
-        self.outputs.new('StringsSocket', "Polygons", "Polygons")
+        self.inputs.new('StringsSocket', "Radius").prop_name = 'rad_'
+        self.inputs.new('StringsSocket', "U").prop_name = 'U_'
+        self.inputs.new('StringsSocket', "V").prop_name = 'V_'
+        
+        self.outputs.new('VerticesSocket', "Vertices")
+        self.outputs.new('StringsSocket', "Edges")
+        self.outputs.new('StringsSocket', "Polygons")
     
     def draw_buttons(self, context, layout):
-        layout.prop(self, "rad_", text="Radius")
-        layout.prop(self, "U_", text="U")
-        layout.prop(self, "V_", text="V")
+        pass
+        #layout.prop(self, "rad_", text="Radius")
+        #layout.prop(self, "U_", text="U")
+        #layout.prop(self, "V_", text="V")
 
     def update(self):
         # inputs
-        if 'Radius' in self.inputs and self.inputs['Radius'].links:
+        if not 'Polygons' in self.outputs:
+            return
+            
+        Radius = self.inputs['Radius'].sv_get()[0]
+        U = [max(int(u),3) for u in self.inputs['U'].sv_get()[0]]
+        V = [max(int(v),3) for v in self.inputs['V'].sv_get()[0]]
 
-            Radius = float(SvGetSocketAnyType(self,self.inputs['Radius'])[0][0])
-        else:
-            Radius = self.rad_
-
-        if 'U' in self.inputs and self.inputs['U'].links:
-
-            U = int(SvGetSocketAnyType(self,self.inputs['U'])[0][0])
-
-            if U < 3:
-                U = 3
-        else:
-            U = self.U_
-
-        if 'V' in self.inputs and self.inputs['V'].links:
-            V = int(SvGetSocketAnyType(self,self.inputs['V'])[0][0])
-            if V < 3:
-                V = 3
-        else:
-            V = self.V_
-
-        
-        nr_pts = U*V-(U-1)*2
+        params = match_long_repeat([U,V,Radius])
         
         # outputs
-        if 'Vertices' in self.outputs and self.outputs['Vertices'].links:
+        if self.outputs['Vertices'].links:
+            verts = [sphere_verts(u,v,r) for u,v,r in zip(*params)]
+            SvSetSocketAnyType(self,'Vertices',verts)
 
-            theta  = 360/U
-            phi = 180/(V-1)
-            listVertX = []
-            listVertY = []
-            listVertZ = []
-            
-            # this code generates more vertices than necessary. should be looked into
-            for i in range(V):
-                for j in range(U):
-                    listVertX.append(round(Radius*cos(radians(theta*j))*sin(radians(phi*i)),8))
-                    listVertY.append(round(Radius*sin(radians(theta*j))*sin(radians(phi*i)),8))
-                    listVertZ.append(round(Radius*cos(radians(phi*i)),8))    
-                X = listVertX
-                Y = listVertY
-                Z = listVertZ
+        if self.outputs['Edges'].links:
+            edges = [sphere_edges(u,v) for u,v,r in zip(*params)]
+            SvSetSocketAnyType(self, 'Edges', edges)
 
-            max_num = max(len(X), len(Y), len(Z))
-            
-            fullList(X,max_num)
-            fullList(Y,max_num)
-            fullList(Z,max_num)
-
-            points = list(sv_zip(X,Y,Z))
-            SvSetSocketAnyType(self,'Vertices',[points[(U-1):-(U-1)]])
-
-
-        if 'Edges' in self.outputs and self.outputs['Edges'].links:
-
-            listEdg = []
-            for i in range(V-2):
-                for j in range(U-1):
-                    listEdg.append([j+1+U*i, j+2+U*i])
-                listEdg.append([U*(i+1), U*(i+1)-U+1])
-            for i in range(U*(V-3)):
-                listEdg.append([i+1, i+1+U])
-            for i in range(U):
-                listEdg.append([0, i+1])
-                listEdg.append([nr_pts-1, i+nr_pts-U-1])
-                
-            listEdg.reverse()
-            SvSetSocketAnyType(self, 'Edges',[listEdg])
-
-        if 'Polygons' in self.outputs and self.outputs['Polygons'].links: 
-
-            listPln = []
-            for i in range(V-3):
-                listPln.append([U*i+2*U, 1+U*i+U, 1+U*i,  U*i+U])
-                for j in range(U-1):
-                    listPln.append([1+U*i+j+U, 2+U*i+j+U, 2+U*i+j, 1+U*i+j])
-
-            for i in range(U-1):
-                listPln.append([1+i, 2+i, 0])
-                listPln.append([i+nr_pts-U, i+nr_pts-1-U, nr_pts-1])
-            listPln.append([U, 1, 0])
-            listPln.append([nr_pts-1-U, nr_pts-2, nr_pts-1])
-            
-            SvSetSocketAnyType(self,'Polygons',[listPln])
+        if self.outputs['Polygons'].links: 
+            faces = [sphere_faces(u,v) for u,v,r in zip(*params)]
+            SvSetSocketAnyType(self, 'Polygons', faces)
 
 
 
