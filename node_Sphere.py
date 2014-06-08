@@ -25,8 +25,8 @@ def sphere_edges(U,V):
         listEdg.extend([[j+1+U*i, j+2+U*i] for j in range(U-1)])
         listEdg.append([U*(i+1), U*(i+1)-U+1])
     listEdg.extend([[i+1, i+1+U] for i in range(U*(V-3))])
-    listEdg.extend([[0, i+1] for i in U])
-    listEdg.extend([[nr_pts-1, i+nr_pts-U-1] for i in U])        
+    listEdg.extend([[0, i+1] for i in range(U)])
+    listEdg.extend([[nr_pts-1, i+nr_pts-U-1] for i in range(U)])        
     listEdg.reverse()
     return listEdg
     
