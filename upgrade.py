@@ -33,6 +33,27 @@ upgrade_dict = {
         [['Float','float_']],
     'IntegerNode':
         [['Integer','int_']],
+    'HilbertNode':
+        [["Level",'level_'],
+         ["Size",'size_']],
+    'HilbertImageNode':
+        [["Level",'level_'],
+         ["Size",'size_'],
+         ["Sensitivity",'sensitivity_']],
+    'VectorMoveNode':
+        [["multiplier",'mult_']],
+    'EvaluateLine':
+        [["Factor",'factor_']],
+    'SvBoxNode':
+        [["Size",'Size'],
+         ["Divx",'Divx'],
+         ["Divy",'Divy'],
+         ["Divz",'Divz']],
+    'ImageNode':
+        [["vecs X",'Xvecs'],
+         ["vecs Y",'Yvecs'],
+         ["Step X",'Xstep'],
+         ["Step Y",'Ystep']],
     }
 
 def upgrade_nodes(ng):
