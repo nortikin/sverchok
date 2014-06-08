@@ -21,17 +21,14 @@ class HilbertImageNode(Node, SverchCustomTreeNode):
     B = bpy.props.FloatProperty(name='B', description='B', default=0.11, min=0, max=1, options={'ANIMATABLE'}, update=updateNode)
     
     def init(self, context):
-        self.inputs.new('StringsSocket', "Level", "Level")
-        self.inputs.new('StringsSocket', "Size", "Size")
-        self.inputs.new('StringsSocket', "Sensitivity", "Sensitivity")
+        self.inputs.new('StringsSocket', "Level", "Level").prop_name='level_'
+        self.inputs.new('StringsSocket', "Size", "Size").prop_name='size_'
+        self.inputs.new('StringsSocket', "Sensitivity", "Sensitivity").prop_name='sensitivity_'
         self.outputs.new('VerticesSocket', "Vertices", "Vertices")
         self.outputs.new('StringsSocket', "Edges", "Edges")
     
     def draw_buttons(self, context, layout):
-        layout.prop(self, "level_", text="Level")
-        layout.prop(self, "size_", text="Size")
         layout.prop(self, "name_image", text="image name")
-        layout.prop(self, "sensitivity_", text="Sensitivity")
         row = layout.row(align=True)
         row.scale_x=10.0
         row.prop(self, "R", text="R")
