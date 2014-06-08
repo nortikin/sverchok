@@ -8,14 +8,12 @@ class FloatNode(Node, SverchCustomTreeNode):
     bl_label = 'Float'
     bl_icon = 'OUTLINER_OB_EMPTY'
     
-    float_ = bpy.props.FloatProperty(name = 'float_', description='float number', default=1.0, options={'ANIMATABLE'}, update=updateNode)
+    float_ = bpy.props.FloatProperty(name = 'Float', description='float number', default=1.0, options={'ANIMATABLE'}, update=updateNode)
     
     def init(self, context):
-        self.inputs.new('StringsSocket', "Float", "Float")
-        self.outputs.new('StringsSocket', "Float", "Float")
+        self.inputs.new('StringsSocket', "Float").prop_name='float_'
+        self.outputs.new('StringsSocket', "Float")
     
-    def draw_buttons(self, context, layout):
-        layout.prop(self, "float_", text="float")
 
     def update(self):
         # inputs

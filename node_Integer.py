@@ -8,15 +8,12 @@ class IntegerNode(Node, SverchCustomTreeNode):
     bl_label = 'Integer'
     bl_icon = 'OUTLINER_OB_EMPTY'
     
-    int_ = bpy.props.IntProperty(name = 'int_', description='integer number', default=1, options={'ANIMATABLE'}, update=updateNode)
+    int_ = bpy.props.IntProperty(name = 'Int', description='integer number', default=1, options={'ANIMATABLE'}, update=updateNode)
     
     def init(self, context):
-        self.inputs.new('StringsSocket', "Integer", "Integer")
+        self.inputs.new('StringsSocket', "Integer", "Integer").prop_name='int_'
         self.outputs.new('StringsSocket', "Integer", "Integer")
     
-    def draw_buttons(self, context, layout):
-        layout.prop(self, "int_", text="integer")
-
     def update(self):
         # inputs
         if 'Integer' in self.inputs and self.inputs['Integer'].links:

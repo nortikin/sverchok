@@ -29,6 +29,10 @@ upgrade_dict = {
     'LineNode': 
         [["Nº Vertices",'int_'],
          ["Step",'step_']],
+    'FloatNode':
+        [['Float','float_']],
+    'IntegerNode':
+        [['Integer','int_']],
     }
 
 def upgrade_nodes(ng):
