@@ -114,10 +114,8 @@ class ViewerNode(Node, SverchCustomTreeNode):
     activate = bpy.props.BoolProperty(name='Show', description='Activate node?', default=True,update=updateNode)
     transparant = bpy.props.BoolProperty(name='Transparant', description='transparant polygons?', default=False,update=updateNode)
     shading = bpy.props.BoolProperty(name='Shading', description='shade the object or index representation?', default=False,update=updateNode)
-    coloris = SvColors
-    coloris.color[1]['default'] = (0.055,0.312,0.5)
-    color_view = coloris.color
-    col=(1,1,0)
+    
+    color_view = SvColors.color
         
     def init(self, context):
         self.inputs.new('VerticesSocket', 'vertices', 'vertices')
@@ -137,12 +135,9 @@ class ViewerNode(Node, SverchCustomTreeNode):
         row.prop(self, "transparant", text="Transp")
         row.prop(self, "shading", text="Shade")
         col = layout.column(align=True)
-        #row.scale_x=1.2
         row = col.row(align=True)
         row.prop(self, "color_view", text=" ")
         #row.template_color_picker(self, 'color_view', value_slider=True)
-        #a = self.color_view[2]
-        #layout.label(text=str(round(a, 4)))
     
     # reset n_id on duplicate (shift-d)
     def copy(self,node):
