@@ -22,19 +22,16 @@ class SvBoxNode(Node, SverchCustomTreeNode):
             default=1.0, options={'ANIMATABLE'}, update=updateNode)
     
     def init(self, context):
-        self.inputs.new('StringsSocket', "Size", "Size")
-        self.inputs.new('StringsSocket', "Divx", "Divx")
-        self.inputs.new('StringsSocket', "Divy", "Divy")
-        self.inputs.new('StringsSocket', "Divz", "Divz")
+        self.inputs.new('StringsSocket', "Size", "Size").prop_name='Size'
+        self.inputs.new('StringsSocket', "Divx", "Divx").prop_name='Divx'
+        self.inputs.new('StringsSocket', "Divy", "Divy").prop_name='Divy'
+        self.inputs.new('StringsSocket', "Divz", "Divz").prop_name='Divz'
         self.outputs.new('VerticesSocket', "Vers", "Vers")
         self.outputs.new('StringsSocket', "Edgs", "Edgs")
         self.outputs.new('StringsSocket', "Pols", "Pols")
     
     def draw_buttons(self, context, layout):
-        layout.prop(self, "Size", text="Size")
-        layout.prop(self, "Divx", text="Divx")
-        layout.prop(self, "Divy", text="Divy")
-        layout.prop(self, "Divz", text="Divz")
+        pass
 
     def makecube(self, size, divx, divy, divz):
         if 0 in (divx, divy, divz):
