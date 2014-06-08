@@ -11,13 +11,13 @@ class EvaluateLine(Node, SverchCustomTreeNode):
     factor_ = bpy.props.FloatProperty(name = 'factor', description='Step length', default=0.5, min=0.0, max=1.0, options={'ANIMATABLE'}, update=updateNode)
 
     def init(self, context):
-        self.inputs.new('StringsSocket',"Factor","Factor")
+        self.inputs.new('StringsSocket',"Factor","Factor").prop_name='factor_'
         self.inputs.new('VerticesSocket', "Vertice A", "Vertice A")
         self.inputs.new('VerticesSocket', "Vertice B", "Vertice B")
         self.outputs.new('VerticesSocket', "EvPoint", "EvPoint")
     
     def draw_buttons(self, context, layout):
-        layout.prop(self,"factor_","Factor:");
+        pass
         
     def update(self):
         # inputs
