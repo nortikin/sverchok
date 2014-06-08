@@ -9,10 +9,12 @@ class VectorMoveNode(Node, SverchCustomTreeNode):
     bl_label = 'Vectors Move'
     bl_icon = 'OUTLINER_OB_EMPTY'
     
+    mult_ = bpy.props.FloatProperty(name='multiplier', default=1.0, options={'ANIMATABLE'}, update=updateNode)
+    
     def init(self, context):
         self.inputs.new('VerticesSocket', "vertices", "vertices")
         self.inputs.new('VerticesSocket', "vectors", "vectors")
-        self.inputs.new('StringsSocket', "multiplier", "multiplier")
+        self.inputs.new('StringsSocket', "multiplier", "multiplier").prop_name='mult_'
         self.outputs.new('VerticesSocket', "vertices", "vertices")
         
 
