@@ -21,27 +21,21 @@ class ImageNode(Node, SverchCustomTreeNode):
     #name_image = bpy.props.StringProperty(name='image_name', description='image name', default='', update=updateNode)
     
     def init(self, context):
-        self.inputs.new('StringsSocket', "vecs X", "vecs X")
-        self.inputs.new('StringsSocket', "vecs Y", "vecs Y")
-        self.inputs.new('StringsSocket', "Step X", "Step X")
-        self.inputs.new('StringsSocket', "Step Y", "Step Y")
+        self.inputs.new('StringsSocket', "vecs X", "vecs X").prop_name='Xvecs'
+        self.inputs.new('StringsSocket', "vecs Y", "vecs Y").prop_name='Yvecs'
+        self.inputs.new('StringsSocket', "Step X", "Step X").prop_name='Xstep'
+        self.inputs.new('StringsSocket', "Step Y", "Step Y").prop_name='Ystep'
         self.outputs.new('VerticesSocket', "vecs", "vecs")
         self.outputs.new('StringsSocket', "edgs", "edgs")
         self.outputs.new('StringsSocket', "pols", "pols")
     
     def draw_buttons(self, context, layout):
-        row = layout.column_flow(columns=1,align=True)
-        row.prop(self, "Xvecs", text="vectors X")
-        row.prop(self, "Yvecs", text="vectors Y")
-        row = layout.column_flow(columns=1,align=True)
-        row.prop(self, "Xstep", text="step X")
-        row.prop(self, "Ystep", text="step Y")
+        layout.prop(self, "name_image", text="image")
         row = layout.row(align=True)
         row.scale_x=10.0
         row.prop(self, "R", text="R")
         row.prop(self, "G", text="G")
         row.prop(self, "B", text="B")
-        layout.prop(self, "name_image", text="image")
 
     def update(self):
         # inputs
