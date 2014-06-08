@@ -13,15 +13,14 @@ class HilbertNode(Node, SverchCustomTreeNode):
     size_ = bpy.props.FloatProperty(name = 'size', description='Size', default=1.0, min=0.1, options={'ANIMATABLE'}, update=updateNode)
 
     def init(self, context):
-        self.inputs.new('StringsSocket', "Level", "Level")
-        self.inputs.new('StringsSocket', "Size", "Size")
+        self.inputs.new('StringsSocket', "Level", "Level").prop_name='level_'
+        self.inputs.new('StringsSocket', "Size", "Size").prop_name='size_'
         self.outputs.new('VerticesSocket', "Vertices", "Vertices")
         self.outputs.new('StringsSocket', "Edges", "Edges")
     
     def draw_buttons(self, context, layout):
-        layout.prop(self, "level_", text="Level")
-        layout.prop(self, "size_", text="Size")
-
+        pass
+    
     def update(self):
         # inputs
         if 'Egdes' in self.outputs and self.outputs['Edges'].links or self.outputs['Vertices'].links:
