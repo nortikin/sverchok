@@ -57,8 +57,7 @@ upgrade_dict = {
     }
 
 def upgrade_nodes(ng):
-    for node_type in upgrade_dict:
-        for node in [node for name,node in ng.nodes.items() if node.bl_idname == node_type]:
-            for s_name,p_name in upgrade_dict[node_type]:
-                if s_name in node.inputs and not node.inputs[s_name].prop_name:
-                    node.inputs[s_name].prop_name = p_name
+    for node in [node for name,node in ng.nodes.items() if node.bl_idname in upgrade_dict]:
+        for s_name,p_name in upgrade_dict[node.bl_idname]:
+            if s_name in node.inputs and not node.inputs[s_name].prop_name:
+                node.inputs[s_name].prop_name = p_name
