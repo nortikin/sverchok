@@ -8,14 +8,14 @@ def sphere_verts(U, V, Radius):
     phi = 180/(V-1)
     X = [0]
     Y = [0]
-    Z = [-Radius]
+    Z = [Radius]
     for i in range(1,V-1):
         X.extend([round(Radius*cos(radians(theta*j))*sin(radians(phi*i)),8) for j in range(U)])
         Y.extend([round(Radius*sin(radians(theta*j))*sin(radians(phi*i)),8) for j in range(U)])
         Z.extend([round(Radius*cos(radians(phi*i)),8) for j in range(U)])
     X.append(0)            
     Y.append(0)
-    Z.append(Radius)    
+    Z.append(-Radius)    
     return list(sv_zip(X,Y,Z))    
 
 def sphere_edges(U,V):
