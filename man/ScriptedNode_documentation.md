@@ -181,6 +181,42 @@ def sv_main(items_in=[[]]):
     return in_sockets, out_sockets, ui_operators
 ```
 
+####Breakout Scripts
+For lack of a better term, SN scripts written in this style let you pass variables to a script located in `/sverchok-master/..` or `/sverchok-master/your_module_name/some_library`. To keep your sverchok-master folder organized I recommend using a module folder. In the example below I made a folder inside sverchok-master called `sv_modules` and inside that I have a file called `sv_curve_utils`, which contains a function `loft`. This way of coding requires a bit of setup work, but then you can focus purely on the algorithm inside `loft`.
+```python
+from mathutils import Vector, Euler, Matrix
+import sv_modules
+from sv_modules.sv_curve_utils import loft
+ 
+def sv_main(verts_p=[], edges_p=[], verts_t=[], edges_t=[]):
+ 
+    in_sockets = [
+        ['v', 'verts_p', verts_p],
+        ['s', 'edges_p', edges_p],
+        ['v', 'verts_t', verts_t],
+        ['s', 'edges_t', edges_t]]
+ 
+    verts_out = []
+    faces_out = []
+ 
+    def out_sockets():
+        return [['v', 'verts_out', verts_out]]
+ 
+    if not all([verts_p, edges_p, verts_t, edges_t]):
+        return in_sockets, out_sockets()
+
+    # while developing, it can be useful to uncomment this 
+    if 'loft' in globals():
+        import imp
+        imp.reload(sv_modules.sv_curve_utils)
+        from sv_modules.sv_curve_utils import loft
+ 
+    verts_out = loft(verts_p[0], verts_t[0])  #  this is you break-out code
+ 
+    # here the call to out_sockets() will pick up verts_out 
+    return in_sockets, out_sockets()
+```
+
 ### Limitations
 
 Mostly limitations are imaginary barriers which an increase in Python Skills will bypass.
