@@ -57,7 +57,9 @@ upgrade_dict = {
     }
 
 def upgrade_nodes(ng):
-    for node in [node for name,node in ng.nodes.items() if node.bl_idname in upgrade_dict]:
+    ''' Apply prop_name for nodes in the node group ng for 
+        upgrade to compact ui ''' 
+    for node in [node for node in ng.nodes if node.bl_idname in upgrade_dict]:
         for s_name,p_name in upgrade_dict[node.bl_idname]:
             if s_name in node.inputs and not node.inputs[s_name].prop_name:
                 node.inputs[s_name].prop_name = p_name
