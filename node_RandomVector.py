@@ -14,8 +14,8 @@ class RandomVectorNode(Node, SverchCustomTreeNode):
     seed = bpy.props.IntProperty(name = 'Seed', description='random seed', default=1, options={'ANIMATABLE'}, update=updateNode)
     
     def init(self, context):
-        self.inputs.new('StringsSocket', "Count", "Count").prop_name = 'count_inner'
-        self.inputs.new('StringsSocket', "Seed", "Seed").porp_name = 'seed'
+        self.inputs.new('StringsSocket', "Count").prop_name = 'count_inner'
+        self.inputs.new('StringsSocket', "Seed").prop_name = 'seed'
 
         self.outputs.new('VerticesSocket', "Random", "Random")
         
