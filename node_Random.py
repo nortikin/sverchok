@@ -40,12 +40,12 @@ class RandomNode(Node, SverchCustomTreeNode):
             if len(Seed) == 1:
                 random.seed(Seed[0])
                 for c in Coun:
-                    Random.append([round(random.random(),16) for i in range(int(c))])
+                    Random.append([random.random() for i in range(int(c))])
             else:
                 param = match_repeat_long([Seed,Count])
                 for s,c in zip(*param):
                     random.seed(s)
-                    Random.append([round(random.random(),16) for i in range(int(c))])
+                    Random.append([random.random() for i in range(int(c))])
                     
             SvSetSocketAnyType(self, 'Random',Random)
 

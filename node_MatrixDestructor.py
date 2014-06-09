@@ -1,7 +1,7 @@
 import bpy
 from node_s import *
 from mathutils import *
-import math
+from math import degrees
 from util import *
 
 class MatrixOutNode(Node, SverchCustomTreeNode):
@@ -43,7 +43,7 @@ class MatrixOutNode(Node, SverchCustomTreeNode):
                 for lists in locs:
                     rots.append([pair[0] for pair in lists])
                     for pair in lists:
-                        angles.append(round(math.degrees(pair[1]),7))
+                        angles.append(degrees(pair[1]))
                 SvSetSocketAnyType(self, 'Rotation',rots)
                 SvSetSocketAnyType(self, 'Angle',[angles])
         else:

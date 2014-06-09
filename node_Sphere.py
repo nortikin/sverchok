@@ -4,19 +4,18 @@ from util import *
 from math import sin, cos
 
 def sphere_verts(U, V, Radius):
-    theta  = 360/U
-    phi = 180/(V-1)
-    X = [0]
-    Y = [0]
-    Z = [Radius]
+    theta  = radians(360/U)
+    phi = radians(180/(V-1))
+    pts = [[0,0,Radius]]
     for i in range(1,V-1):
-        X.extend([round(Radius*cos(radians(theta*j))*sin(radians(phi*i)),8) for j in range(U)])
-        Y.extend([round(Radius*sin(radians(theta*j))*sin(radians(phi*i)),8) for j in range(U)])
-        Z.extend([round(Radius*cos(radians(phi*i)),8) for j in range(U)])
-    X.append(0)            
-    Y.append(0)
-    Z.append(-Radius)    
-    return list(sv_zip(X,Y,Z))    
+        sin_phi_i =sin(phi*i)
+        for j in range(U):
+            X = Radius*cos(theta*j)*sin_phi_i
+            Y = Radius*sin(theta*j)*sin_phi_i 
+            Z = Radius*cos(phi*i)
+            pts.append([X,Y,Z])
+    pts.append([0,0, -Radius])
+    return pts  
 
 def sphere_edges(U,V):
     nr_pts = U*V-(U-1)*2

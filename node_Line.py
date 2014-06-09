@@ -37,7 +37,7 @@ class LineNode(Node, SverchCustomTreeNode):
             
             listVert = []
             for i in range(Integer):
-                listVert.append(round((i*Step[i]),4))
+                listVert.append(i*Step[i])
             X = listVert
 
         else:
