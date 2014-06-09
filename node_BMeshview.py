@@ -281,7 +281,7 @@ class BmeshViewerNode(Node, SverchCustomTreeNode):
         objects = bpy.data.objects
 
         objects_to_reselect = []
-        for i in bpy.context.selected_objects:
+        for i in (i for i in objects if i.select):
             objects_to_reselect.append(i.name)
             i.select = False
 
