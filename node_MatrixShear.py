@@ -16,22 +16,20 @@ class MatrixShearNode(Node, SverchCustomTreeNode):
            ("XZ",       "XZ-plane",        ""),     
            ("YZ",       "YZ-plane",        ""),  
     ]   
-    factor1_ = bpy.props.FloatProperty(name = 'factor1_', description='Factor1', default=0.0, options={'ANIMATABLE'}, update=updateNode)
-    factor2_ = bpy.props.FloatProperty(name = 'factor2_', description='Factor2', default=0.0, options={'ANIMATABLE'}, update=updateNode)
+    factor1_ = bpy.props.FloatProperty(name = 'Factor 1', description='Factor1', default=0.0, options={'ANIMATABLE'}, update=updateNode)
+    factor2_ = bpy.props.FloatProperty(name = 'Factor 2', description='Factor2', default=0.0, options={'ANIMATABLE'}, update=updateNode)
      
     plane_=bpy.props.EnumProperty( items = mode_items, name="Plane", 
             description="Function choice", default="XY", update=updateNode)
             
             
     def init(self, context):
-        self.inputs.new('StringsSocket', "Factor1", "Factor2")
-        self.inputs.new('StringsSocket', "Factor2", "Factor2")
+        self.inputs.new('StringsSocket', "Factor1").prop_name = 'factor1_' 
+        self.inputs.new('StringsSocket', "Factor2").prop_name =  'factor2_'
         self.outputs.new('MatrixSocket', "Matrix", "Matrix")
         
     def draw_buttons(self, context, layout):
-        layout.prop(self,"plane_","Shear plane:",expand=False)
-        layout.prop(self, "factor1_", text="Factor 1")
-        layout.prop(self, "factor2_", text="Factor 2")
+        layout.prop(self,"plane_","Shear plane:",expand=True)
 
     def update(self):
         # inputs

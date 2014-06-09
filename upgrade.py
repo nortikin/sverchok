@@ -54,6 +54,19 @@ upgrade_dict = {
          ["vecs Y",'Yvecs'],
          ["Step X",'Xstep'],
          ["Step Y",'Ystep']],
+    'GenVectorsNode':
+        [['X','x_'],
+         ['Y','y_'],
+         ['Z','z_']],
+    'MatrixInterpolationNode':
+        [['Factor','factor_']],
+    'MatrixShearNode':
+        [['Factor1','factor1_'],
+         ['Factor2','factor2_']],
+    'RandomVectorNode':
+        [["Count",'count_inner'],
+         ["Seed", "seed"]],
+         
     }
 
 def upgrade_nodes(ng):

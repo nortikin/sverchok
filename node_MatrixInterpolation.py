@@ -38,10 +38,10 @@ class MatrixInterpolationNode(Node, SverchCustomTreeNode):
                                      min=0.0,max=1.0, options={'ANIMATABLE'}, update=updateNode)
 
     def draw_buttons(self, context, layout):
-        layout.prop(self,"factor_","Factor:");
-
+        pass
+        
     def init(self, context):
-        self.inputs.new('StringsSocket', "Factor", "Factor")
+        self.inputs.new('StringsSocket', "Factor", "Factor").prop_name = 'factor_'
         self.inputs.new('MatrixSocket', "A", "A") 
         self.inputs.new('MatrixSocket', "B", "B")        
         self.outputs.new('MatrixSocket', "C", "C")

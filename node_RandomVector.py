@@ -10,20 +10,15 @@ class RandomVectorNode(Node, SverchCustomTreeNode):
     bl_label = 'Random Vector'
     bl_icon = 'OUTLINER_OB_EMPTY'
     
-    count_inner = bpy.props.IntProperty(name = 'count_inner', description='random', default=1,min=1, options={'ANIMATABLE'}, update=updateNode)
-    seed = bpy.props.IntProperty(name = 'seed', description='random seed', default=1, options={'ANIMATABLE'}, update=updateNode)
+    count_inner = bpy.props.IntProperty(name = 'Count', description='random', default=1,min=1, options={'ANIMATABLE'}, update=updateNode)
+    seed = bpy.props.IntProperty(name = 'Seed', description='random seed', default=1, options={'ANIMATABLE'}, update=updateNode)
     
     def init(self, context):
-        self.inputs.new('StringsSocket', "Count", "Count")
-        self.inputs.new('StringsSocket', "Seed", "Seed")
+        self.inputs.new('StringsSocket', "Count", "Count").prop_name = 'count_inner'
+        self.inputs.new('StringsSocket', "Seed", "Seed").porp_name = 'seed'
 
         self.outputs.new('VerticesSocket', "Random", "Random")
         
-    def draw_buttons(self, context, layout):
-        layout.prop(self, "count_inner", text="Count")
-        layout.prop(self, "seed", text="Seed")
-
-
     def update(self):
         # inputs
         if 'Count' in self.inputs and self.inputs['Count'].links and \
