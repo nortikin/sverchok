@@ -211,7 +211,7 @@ def sv_main(verts_p=[], edges_p=[], verts_t=[], edges_t=[]):
         imp.reload(sv_modules.sv_curve_utils)
         from sv_modules.sv_curve_utils import loft
  
-    verts_out = loft(verts_p[0], verts_t[0])  #  this is you break-out code
+    verts_out = loft(verts_p[0], verts_t[0])  #  this is your break-out code
  
     # here the call to out_sockets() will pick up verts_out 
     return in_sockets, out_sockets()
