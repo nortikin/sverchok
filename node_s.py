@@ -5,6 +5,7 @@ from bpy.types import NodeTree, Node, NodeSocket, NodeSocketStandard
 import nodeitems_utils
 from nodeitems_utils import NodeCategory, NodeItem
 from mathutils import Matrix
+import util
 from util import makeTreeUpdate2, speedUpdate, SvGetSocketInfo, SvGetSocket,SvSetSocket, get_update_lists, updateNode
 from bpy.app.handlers import persistent
 
@@ -338,6 +339,7 @@ def sv_clean(scene):
     import Index_Viewer_draw
     Viewer_draw.callback_disable_all()
     Index_Viewer_draw.callback_disable_all()
+    util.temp_handle = {}
 
 @persistent
 def sv_upgrade_nodes(scene):
