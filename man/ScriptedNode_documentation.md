@@ -197,8 +197,7 @@ def sv_main(verts_p=[], edges_p=[], verts_t=[], edges_t=[]):
         ['s', 'edges_t', edges_t]]
  
     verts_out = []
-    faces_out = []
- 
+
     def out_sockets():
         return [['v', 'verts_out', verts_out]]
  
