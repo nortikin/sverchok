@@ -95,11 +95,10 @@ class ListItem2Node(Node, SverchCustomTreeNode):
     
     def draw_buttons(self, context, layout):
         layout.prop(self, "level", text="level")
-        layout.prop(self, "item", text="item")
         
     def init(self, context):
         self.inputs.new('StringsSocket', "Data", "Data")
-        self.inputs.new('StringsSocket', "Item", "Item")
+        self.inputs.new('StringsSocket', "Item", "Item").prop_name = 'item'
         self.outputs.new('StringsSocket',"Item","Item")
         self.outputs.new('StringsSocket',"Other","Other")
 
