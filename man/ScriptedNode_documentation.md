@@ -5,6 +5,7 @@ aka Script Node or SN. (iteration 1)
 - Introduction
 - Features
 - Examples
+- Techniques to improve Speed
 - Limitations
 - Future
 
@@ -215,6 +216,10 @@ def sv_main(verts_p=[], edges_p=[], verts_t=[], edges_t=[]):
     # here the call to out_sockets() will pick up verts_out 
     return in_sockets, out_sockets()
 ```
+
+### Techniques to improve Python Performance
+
+There are many ways to speed up python code. Some slowness will be down to innefficient algorithm design, other slowness is caused purely by how much processing is minimally required to solve a problem. A decent read regarding general methods to improve python code performancecan be found on [python.org](https://wiki.python.org/moin/PythonSpeed/PerformanceTips). If you don't know where the cycles are being consumed, then you don't know if your efforts to optimize will have any significant impact.  
 
 ### Limitations
 
