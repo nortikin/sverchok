@@ -95,9 +95,9 @@ class SvBoxNode(Node, SverchCustomTreeNode):
     def update(self):
 
         if 'Size' in self.inputs and self.inputs['Size'].links:
-            size = int(SvGetSocketAnyType(self,self.inputs['Size'])[0][0])
+            size = SvGetSocketAnyType(self,self.inputs['Size'])[0]
         else:
-            size = self.Size
+            size = [self.Size]
         if 'Divx' in self.inputs and self.inputs['Divx'].links:
             divx = int(SvGetSocketAnyType(self,self.inputs['Divx'])[0][0])
         else:
@@ -110,8 +110,8 @@ class SvBoxNode(Node, SverchCustomTreeNode):
             divz = int(SvGetSocketAnyType(self,self.inputs['Divz'])[0][0])
         else:
             divz = self.Divz
-            
-        out = self.makecube(size,divx,divy,divz)
+        
+        out = [a for a in (zip(*[self.makecube(s,divx,divy,divz) for s in size]))]
         
         # outputs
         if 'Vers' in self.outputs and self.outputs['Vers'].links:       

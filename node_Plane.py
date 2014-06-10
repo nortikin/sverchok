@@ -12,7 +12,7 @@ class PlaneNode(Node, SverchCustomTreeNode):
     int_Y = bpy.props.IntProperty(name = 'N Vert Y', description='Nº Vertices Y', default=2, min=2, options={'ANIMATABLE'}, update=updateNode)
     step_X = bpy.props.FloatProperty(name = 'Step X', description='Step length X', default=1.0, options={'ANIMATABLE'}, update=updateNode)
     step_Y = bpy.props.FloatProperty(name = 'Step Y', description='Step length Y', default=1.0, options={'ANIMATABLE'}, update=updateNode)
-    Separate = bpy.props.BoolProperty(name = 'Separate', description='Separate UV coords', default=True, update=updateNode)
+    Separate = bpy.props.BoolProperty(name = 'Separate', description='Separate UV coords', default=False, update=updateNode)
     
     def init(self, context):
         self.inputs.new('StringsSocket', "Nº Vertices X").prop_name = 'int_X'
