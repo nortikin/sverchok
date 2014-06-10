@@ -17,12 +17,11 @@ class ListRepeaterNode(Node, SverchCustomTreeNode):
     
     def draw_buttons(self, context, layout):
         layout.prop(self, "level", text="level")
-        layout.prop(self, "number", text="number")
         layout.prop(self, "unwrap", text="unwrap")
         
     def init(self, context):
         self.inputs.new('StringsSocket', "Data", "Data")
-        self.inputs.new('StringsSocket', "Number","Number")
+        self.inputs.new('StringsSocket', "Number","Number").prop_name = 'number'
         self.outputs.new('StringsSocket',"Data", "Data")
         
     def update(self):

@@ -66,6 +66,10 @@ upgrade_dict = {
     'RandomVectorNode':
         [["Count",'count_inner'],
          ["Seed", "seed"]],
+    'ListRepeaterNode':
+        [["Number", "number"]],
+    'ListItem2Node':
+        [["Item","item"]]
          
     }
 
