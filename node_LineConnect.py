@@ -41,7 +41,7 @@ class LineConnectNode(Node, SverchCustomTreeNode):
         def joinvers(ver):
             joinvers = []
             for ob in ver:
-                fullList(ob, ml)
+                fullList(list(ob), ml)
                 joinvers.extend(ob)
             return joinvers
         # we will take common case of nestiness, it is not flatten as correctData is, 
