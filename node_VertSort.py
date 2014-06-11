@@ -55,9 +55,9 @@ class SvVertSortNode(Node, SverchCustomTreeNode):
         self.inputs.new('VerticesSocket', 'Vertices', 'Vertices')
         self.inputs.new('StringsSocket', 'PolyEdge', 'PolyEdge')
 
-        self.outputs.new('VerticesSocket', 'Vertices', 'Vertices')
-        self.outputs.new('StringsSocket', 'PolyEdge', 'PolyEdge')
-        self.outputs.new('StringsSocket', 'Item order','Item Order')
+        self.outputs.new('VerticesSocket', 'Vertices')
+        self.outputs.new('StringsSocket', 'PolyEdge')
+        self.outputs.new('StringsSocket', 'Item order')
 
     def update(self):
 
@@ -75,9 +75,10 @@ class SvVertSortNode(Node, SverchCustomTreeNode):
             poly_edge_out = []
             item_order = []
             
-            polyOutput = polyIn and 'PolyEdge' in self.outputs and self.outputs['PolyEdge'].links
-            orderOutput = 'Item Order' in self.outputs and self.outputs['Item Order'].links
-            vertOutput = 'Vertices' in self.outputs and self.outputs['Vertices'].links
+            polyOutput = bool(polyIn and 'PolyEdge' in self.outputs and self.outputs['PolyEdge'].links)
+            orderOutput = bool('Item order' in self.outputs and self.outputs['Item order'].links)
+            print("order",orderOutput)
+            vertOutput = bool('Vertices' in self.outputs and self.outputs['Vertices'].links)
             
             if not any((vertOutput,orderOutput,polyOutput)):
                 return
@@ -158,21 +159,22 @@ class SvVertSortNode(Node, SverchCustomTreeNode):
                     return
                     
                 for v,p,i in zip(verts,poly_edge,index):
+                    
                     s_v = sorted( [(data[0],data[1],i) for i,data in enumerate(zip(i,v))],key=itemgetter(0))
                     
                     verts_out.append([obj[1] for obj in s_v])
                     
                     if polyOutput:
                         v_index = { item[-1]:j for j,item in enumerate(s_v)}
-                        poly_edge_out.append([list(map(lambda n:v_index[n],pe)) for pe in p])
+                        poly_edge_out.append([[v_index[k] for k in pe] for pe in p])
                     if orderOutput:
                         item_order.append([i[-1] for i in s_v])
 
-            if 'Vertices' in self.outputs and self.outputs['Vertices'].links:
+            if vertOutput:
                 SvSetSocketAnyType(self, 'Vertices',verts_out)
-            if 'PolyEdge' in self.outputs and self.outputs['PolyEdge'].links:
+            if polyOutput:
                 SvSetSocketAnyType(self, 'PolyEdge',poly_edge_out)
-            if 'Item Order' in self.outputs and self.outputs['Item Order'].links:
+            if orderOutput:
                 SvSetSocketAnyType(self, 'Item order',item_order)
 
     def update_socket(self, context):
