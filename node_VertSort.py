@@ -77,7 +77,6 @@ class SvVertSortNode(Node, SverchCustomTreeNode):
             
             polyOutput = bool(polyIn and 'PolyEdge' in self.outputs and self.outputs['PolyEdge'].links)
             orderOutput = bool('Item order' in self.outputs and self.outputs['Item order'].links)
-            print("order",orderOutput)
             vertOutput = bool('Vertices' in self.outputs and self.outputs['Vertices'].links)
             
             if not any((vertOutput,orderOutput,polyOutput)):
