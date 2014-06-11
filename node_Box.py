@@ -89,7 +89,7 @@ class SvBoxNode(Node, SverchCustomTreeNode):
         verts = [v.co.to_tuple() for v in bm.verts]
         faces = [indices(face) for face in bm.faces]
         edges = [indices(edge) for edge in bm.edges]
-        return [verts], edges, [faces]
+        return verts, edges, faces
 
 
     def update(self):
