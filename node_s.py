@@ -219,6 +219,7 @@ def make_categories():
             NodeItem("ListFuncNode", label="List Math"),
             NodeItem("ListFlipNode", label="List Flip"),
             NodeItem("MaskListNode", label="List Mask"),
+            NodeItem("SvMaskJoinNode", label="Mask Join"),
             NodeItem("ListSortNode", label="List Sort"),
             NodeItem("ListShuffleNode", label="List Shuffle"),
             NodeItem("ListMatchNode", label="List Match"),

@@ -18,9 +18,11 @@ class MaskListNode(Node, SverchCustomTreeNode):
     def init(self, context):
         self.inputs.new('StringsSocket', "data", "data")
         self.inputs.new('StringsSocket', "mask", "mask")
+        
+        self.outputs.new('StringsSocket', "mask", "mask")
         self.outputs.new('StringsSocket', 'dataTrue', 'dataTrue')
         self.outputs.new('StringsSocket', 'dataFalse', 'dataFalse')
-    
+        
     def draw_buttons(self, context, layout):
         layout.prop(self, "Level", text="Level lists")
     
@@ -61,7 +63,13 @@ class MaskListNode(Node, SverchCustomTreeNode):
             SvSetSocketAnyType(self,'dataFalse',result[1])
         else:
             SvSetSocketAnyType(self,'dataFalse',[[]])
+                    
+        if 'mask' in self.outputs and self.outputs['mask'].links:
+            SvSetSocketAnyType(self,'mask',result[2])
+        else:
+            SvSetSocketAnyType(self,'mask',[[]])
 
+        
     
     # working horse
     def getMask(self, list_a, mask_l, level):
@@ -75,12 +83,14 @@ class MaskListNode(Node, SverchCustomTreeNode):
     def putCurrentLevelList(self, list_a, list_b, mask_l, level, idx=0):   
         result_t = []
         result_f = []
+        mask_out =[]
         if level>1:
             if type(list_a) in [list, tuple]:
                 for idx,l in enumerate(list_a):
                     l2 = self.putCurrentLevelList(l, list_b, mask_l, level-1, idx)
                     result_t.append(l2[0])
                     result_f.append(l2[1])
+                    mask_out.append(l2[2])
             else:
                 print('AHTUNG!!!')
                 return list_a
@@ -99,8 +109,9 @@ class MaskListNode(Node, SverchCustomTreeNode):
                     result_t.append(tmp)
                 else:
                     result_f.append(tmp)
+            mask_out=mask[:len(list_a)]
                 
-        return (result_t,result_f)
+        return (result_t,result_f,mask_out)
             
             
     def getCurrentLevelList(self, list_a, level):

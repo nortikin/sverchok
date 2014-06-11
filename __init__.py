@@ -169,7 +169,8 @@ if "bpy" in locals():
     imp.reload(node_VertMask)
     imp.reload(node_Interpolation)
     imp.reload(node_Lathe)
-
+    imp.reload(node_MaskJoin)
+    
 else:
     import node_s
     import node_ScalarMath
@@ -279,7 +280,8 @@ else:
     import node_VertMask
     import node_Interpolation
     import node_Lathe
-
+    import node_MaskJoin
+    
 import bpy
 from bpy.types import AddonPreferences
 from bpy.props import  BoolProperty, FloatVectorProperty
@@ -411,6 +413,7 @@ def register():
     node_VertMask.register()
     node_Interpolation.register()
     node_Lathe.register()
+    node_MaskJoin.register()
     
     bpy.utils.register_class(SverchokPreferences)
        
@@ -422,6 +425,7 @@ def unregister():
     import bpy
     import nodeitems_utils
 
+    node_MaskJoin.unregister()
     node_Lathe.unregister()
     node_Interpolation.unregister()
     node_VertMask.unregister()
