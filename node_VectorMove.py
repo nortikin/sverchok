@@ -40,7 +40,7 @@ class VectorMoveNode(Node, SverchCustomTreeNode):
 
             mult = SvGetSocketAnyType(self,self.inputs['multiplier'])
         else:
-            mult = [[1.0]]
+            mult = [[self.mult_]]
         
         # outputs
         if 'vertices' in self.outputs and self.outputs['vertices'].links:
