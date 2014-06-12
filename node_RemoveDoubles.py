@@ -59,6 +59,7 @@ class SvRemoveDoublesNode(Node, SverchCustomTreeNode):
                                        default=0.001, precision=3, min=0, update=updateNode)
 
     def init(self, context):
+        self.inputs.new('StringsSocket', 'Distance').prop_name = 'distance'
         self.inputs.new('VerticesSocket', 'Vertices', 'Vertices')
         self.inputs.new('StringsSocket', 'PolyEdge', 'PolyEdge')
         
@@ -79,15 +80,21 @@ class SvRemoveDoublesNode(Node, SverchCustomTreeNode):
                 
             verts = Vector_generate(SvGetSocketAnyType(self,self.inputs['Vertices']))
             polys = SvGetSocketAnyType(self,self.inputs['PolyEdge'])
+            if 'Distance' in self.inputs:
+                distance = self.inputs['Distance'].sv_get()[0]
+            else:
+                distance = [self.distance]
+                
             if 'Doubles' in self.outputs:
                 has_double_out = bool('Doubles' in self.outputs)
+            
             verts_out = []
             edges_out = []
             polys_out = []
             d_out = []
-                     
-            for obj in zip(verts,polys):
-                res = remove_doubles(obj[0], obj[1], self.distance, has_double_out)
+            
+            for v,p,d in zip(verts,polys,repeat_last(distance)):
+                res = remove_doubles(v, p, d, has_double_out)
                 if not res:
                     return
                 verts_out.append(res[0])
@@ -119,10 +126,3 @@ def unregister():
 
 if __name__ == "__main__":
     register()
-
-
-
-
-
-
-

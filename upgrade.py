@@ -69,13 +69,43 @@ upgrade_dict = {
     'ListRepeaterNode':
         [["Number", "number"]],
     'ListItem2Node':
-        [["Item","item"]]
+        [["Item","item"]],
+    'SvWireframeNode':
+        [['thickness','thickness'],
+         ['Offset','offset']],
+    'SvSolidifyNode':
+        [['thickness','thickness']],
+    'SvRemoveDoublesNode':
+        [['Distance','distance']],    
          
     }
 
+# new sockets
+# format
+# bl_idname : [[new_socket0],[newsocket1]],
+# new_socket [inputs/outputs,type,name,position]
+
+new_socket_dict = {
+    'SvWireframeNode':
+        [['inputs','StringsSocket','thickness',0],
+         ['inputs','StringsSocket','Offset',1]],
+    'SvSolidifyNode':
+        [['inputs','StringsSocket','thickness',0]],
+    'SvRemoveDoublesNode':
+        [['inputs','StringsSocket','Distance',0]]
+    }
+        
 def upgrade_nodes(ng):
     ''' Apply prop_name for nodes in the node group ng for 
         upgrade to compact ui ''' 
+    for node in [n for n in ng.nodes if n.bl_idname in new_socket_dict]:
+        for in_out, s_type, name, pos in new_socket_dict[node.bl_idname]:
+            s_list = getattr(node,in_out)
+            if s_list:
+                if not name in s_list:
+                    s_list.new(s_type,name)
+                    s_list.move(len(s_list)-1,pos)
+                
     for node in [node for node in ng.nodes if node.bl_idname in upgrade_dict]:
         for s_name,p_name in upgrade_dict[node.bl_idname]:
             if s_name in node.inputs and not node.inputs[s_name].prop_name:

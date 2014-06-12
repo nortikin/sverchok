@@ -3,8 +3,7 @@ from mathutils import Vector, Matrix
 from node_s import *
 from util import *
 
-# based on CrossSectionNode
-# but using python bmesh code for driving
+from sv_bmesh_utils import bmesh_from_pydata
 # by Linus Yng
 
 def soldify(vertices, faces, t):
@@ -14,11 +13,7 @@ def soldify(vertices, faces, t):
    
     if len(faces[0])==2:
         return False
-                
-    bm=bmesh.new() 
-    bm_verts =[bm.verts.new(v) for v in vertices]
-    for face in faces:
-        bm.faces.new([bm_verts[i] for i in face])
+    bm = bmesh_from_pydata(vertices,[],faces)            
              
     geom_in = bm.verts[:]+bm.edges[:]+bm.faces[:]
     
@@ -46,9 +41,11 @@ class SvSolidifyNode(Node, SverchCustomTreeNode):
     bl_label = 'Solidify'
     bl_icon = 'OUTLINER_OB_EMPTY'
     
-    thickness = bpy.props.FloatProperty(name='thickness', description='Shell thickness', default=0.1, update=updateNode)
+    thickness = bpy.props.FloatProperty(name='Thickness', description='Shell thickness', default=0.1, update=updateNode)
 
     def init(self, context):
+        
+        self.inputs.new('StringsSocket', 'thickness').prop_name = 'thickness'
         self.inputs.new('VerticesSocket', 'vertices', 'vertices')
         self.inputs.new('StringsSocket', 'polygons', 'polygons')
         
@@ -56,9 +53,6 @@ class SvSolidifyNode(Node, SverchCustomTreeNode):
         self.outputs.new('StringsSocket', 'edges', 'edges')
         self.outputs.new('StringsSocket', 'polygons', 'polygons')
                 
-    def draw_buttons(self, context, layout):
-        layout.prop(self,'thickness',text="Thickness")
-
     def update(self):
         if not self.outputs['vertices'].links:
             return
@@ -69,14 +63,19 @@ class SvSolidifyNode(Node, SverchCustomTreeNode):
        
             verts = Vector_generate(SvGetSocketAnyType(self,self.inputs['vertices']))
             polys = SvGetSocketAnyType(self,self.inputs['polygons'])
+            if 'thickness' in self.inputs:
+                thickness = self.inputs['thickness'].sv_get()[0]
+            else:
+                thickness = [self.thickness]
+                
             #print (verts,polys)
 
             verts_out = []
             edges_out = []
             polys_out = []
                      
-            for obj in zip(verts,polys):
-                res = soldify(obj[0], obj[1], self.thickness)
+            for v,p,t in zip(verts,polys,repeat_last(thickness)):
+                res = soldify(v,p,t)
                 if not res:
                     return
                 verts_out.append(res[0])
@@ -93,7 +92,6 @@ class SvSolidifyNode(Node, SverchCustomTreeNode):
                 SvSetSocketAnyType(self, 'polygons', polys_out) 
             
      
-
     def update_socket(self, context):
         self.update()
 
@@ -105,10 +103,3 @@ def unregister():
 
 if __name__ == "__main__":
     register()
-
-
-
-
-
-
-

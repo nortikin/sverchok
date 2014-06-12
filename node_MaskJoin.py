@@ -1,8 +1,7 @@
 from node_s import *
 from util import *
-import itertools
-from itertools import cycle, islice
-from bpy.props import IntProperty
+from itertools import cycle
+from bpy.props import IntProperty, BoolProperty
 
 class SvMaskJoinNode(Node, SverchCustomTreeNode):
     '''Mask Join'''
@@ -11,6 +10,7 @@ class SvMaskJoinNode(Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
     
     level = IntProperty(min=1, name="Level", default=1)
+    choice = BoolProperty(default=False, name="Choice", update=updateNode)
     
     typ = bpy.props.StringProperty(name='typ', default='')
     newsock = bpy.props.BoolProperty(name='newsock', default=False)
@@ -24,6 +24,7 @@ class SvMaskJoinNode(Node, SverchCustomTreeNode):
     
     def draw_buttons(self, context, layout):
         layout.prop(self,'level')
+        layout.prop(self,'choice')
     
     def update(self):
         if not 'Data' in self.outputs:
@@ -34,19 +35,31 @@ class SvMaskJoinNode(Node, SverchCustomTreeNode):
         outputsocketname = ['Data']
         changable_sockets(self, inputsocketname, outputsocketname)
 
-        if all((s.links for s in self.inputs)):
-            mask = SvGetSocketAnyType(self,self.inputs['Mask'])
+        if all((s.links for s in self.inputs[1:])):
+            if self.inputs['Mask'].links:
+                mask = SvGetSocketAnyType(self,self.inputs['Mask'])
+            else: #to match MaskList
+                mask = [[1,0]]
             data_t = SvGetSocketAnyType(self,self.inputs['Data True'])
             data_f = SvGetSocketAnyType(self,self.inputs['Data False'])
             
             data_out = self.get_level(mask,data_t,data_f,self.level-1)
             
             SvSetSocketAnyType(self, 'Data',data_out)
-            
+    
+    def apply_choice_mask(self, mask, data_t, data_f):
+        out = []
+        for m,t,f in zip(cycle(mask),data_t,data_f):
+            if m:
+                out.append(t)
+            else:
+                out.append(f)
+        return out
+        
     def apply_mask(self,mask,data_t,data_f):
         ind_t,ind_f=0,0
         out = []
-        for m in mask:
+        for m in cycle(mask):
             if m:
                 if ind_t == len(data_t):
                     return out 
@@ -67,8 +80,13 @@ class SvMaskJoinNode(Node, SverchCustomTreeNode):
                 print("Fail")
                 return
             max_index = min(map(len,param))
+            if self.choice:
+                apply_mask = self.apply_choice_mask
+            else:
+                apply_mask = self.apply_mask
+                
             for i in range(max_index):
-                out.append(self.apply_mask(mask[i],data_t[i],data_f[i]))
+                out.append(apply_mask(mask[i],data_t[i],data_f[i]))
             return out
         elif level > 2: 
             out = []

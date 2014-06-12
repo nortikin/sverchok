@@ -54,6 +54,9 @@ class SvWireframeNode(Node, SverchCustomTreeNode):
     boundary = bpy.props.BoolProperty(name='boundary', description='boundry', default=True, update=updateNode)
     
     def init(self, context):
+        self.inputs.new('StringsSocket', 'thickness').prop_name='thickness'
+        self.inputs.new('StringsSocket', 'Offset').prop_name='offset'
+        
         self.inputs.new('VerticesSocket', 'vertices', 'vertices')
         self.inputs.new('StringsSocket', 'polygons', 'polygons')
         
@@ -62,8 +65,6 @@ class SvWireframeNode(Node, SverchCustomTreeNode):
         self.outputs.new('StringsSocket', 'polygons', 'polygons')
                 
     def draw_buttons(self, context, layout):
-        layout.prop(self,'thickness',text="Thickness")
-        layout.prop(self,'offset',text="Offset")
         layout.prop(self,'boundary',text="Boundary")
         layout.prop(self,'even_offset',text="Offset even")
         layout.prop(self,'relative_offset',text="Offset relative")
@@ -81,14 +82,16 @@ class SvWireframeNode(Node, SverchCustomTreeNode):
        
             verts = Vector_generate(SvGetSocketAnyType(self,self.inputs['vertices']))
             polys = SvGetSocketAnyType(self,self.inputs['polygons'])
-            
-
+            if 'thickness' in self.inputs:
+                thickness = self.inputs['thickness'].sv_get()[0]
+            else:
+                thickness = [self.thickness]
             verts_out = []
             edges_out = []
             polys_out = []
                      
-            for obj in zip(verts,polys):
-                res = wireframe(obj[0], obj[1], self.thickness,self.offset,
+            for v,p,t in zip(verts,polys,repeat_last(thickness)):
+                res = wireframe(v, p, t,self.offset,
                                 self.replace,self.boundary ,self.even_offset,self.relative_offset)
                 if not res:
                     return
@@ -105,8 +108,6 @@ class SvWireframeNode(Node, SverchCustomTreeNode):
             if 'polygons' in self.outputs and self.outputs['polygons'].links:
                 SvSetSocketAnyType(self, 'polygons', polys_out) 
             
-     
-
     def update_socket(self, context):
         self.update()
 
