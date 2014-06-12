@@ -57,7 +57,7 @@ def make_bmesh_geometry(context, name, verts, edges, faces, matrix):
     bm.free()  # free and prevent further access
 
     sv_object.hide_select = False
-
+    
     # apply matrices if necessary
     if matrix:
         sv_object.matrix_local = list(zip(*matrix))
@@ -120,6 +120,7 @@ class BmeshViewerNode(Node, SverchCustomTreeNode):
         update=updateNode)
 
     basemesh_name = StringProperty(default='Alpha', update=updateNode)
+    material = StringProperty(default='', update=updateNode)
     randname_choosed = BoolProperty(default=False)
     grouping = BoolProperty(default=False)
     state_view = BoolProperty(default=True)
@@ -178,6 +179,9 @@ class BmeshViewerNode(Node, SverchCustomTreeNode):
         row = col.row(align=True)
         row.scale_y=0.9
         row.operator(sh, text='Select/Deselect').fn_name = 'mesh_select'
+        row = col.row(align=True)
+        row.scale_y=0.9
+        row.prop(self, "material", text="mat.")
 
     def get_corrected_data(self, socket_name, socket_type):
         inputs = self.inputs
@@ -227,42 +231,40 @@ class BmeshViewerNode(Node, SverchCustomTreeNode):
             return
 
         # regular code from this point
-        if self.activate and ('vertices' in self.inputs):
-            if not self.inputs['vertices'].links:
-                return
-        else:
-            return
+        if self.activate and self.inputs['vertices'].is_linked and self.inputs['faces'].is_linked:
+            C = bpy.context
+            mverts, *mrest = self.get_geometry_from_sockets()
 
-        C = bpy.context
-        mverts, *mrest = self.get_geometry_from_sockets()
+            def get_edges_faces_matrices(obj_index):
+                for geom in mrest:
+                    yield self.get_structure(geom, obj_index)
 
-        def get_edges_faces_matrices(obj_index):
-            for geom in mrest:
-                yield self.get_structure(geom, obj_index)
+            # matrices need to define count of objects. paradigma
+            maxlen = max(len(mverts), len(mrest[0]), len(mrest[1]), len(mrest[2]))
+            fullList(mverts, maxlen)
+            if mrest[0]:
+                fullList(mrest[0], maxlen)
+            if mrest[1]:
+                fullList(mrest[1], maxlen)
+            if mrest[2]:
+                fullList(mrest[2], maxlen)
 
-        # matrices need to define count of objects. paradigma
-        maxlen = max(len(mverts), len(mrest[0]), len(mrest[1]), len(mrest[2]))
-        fullList(mverts, maxlen)
-        if mrest[0]:
-            fullList(mrest[0], maxlen)
-        if mrest[1]:
-            fullList(mrest[1], maxlen)
-        if mrest[2]:
-            fullList(mrest[2], maxlen)
+            for obj_index, Verts in enumerate(mverts):
+                if not Verts:
+                    continue
 
-        for obj_index, Verts in enumerate(mverts):
-            if not Verts:
-                continue
+                data = get_edges_faces_matrices(obj_index)
+                mesh_name = self.basemesh_name + "_" + str(obj_index)
+                make_bmesh_geometry(C, mesh_name, Verts, *data)
 
-            data = get_edges_faces_matrices(obj_index)
-            mesh_name = self.basemesh_name + "_" + str(obj_index)
-            make_bmesh_geometry(C, mesh_name, Verts, *data)
-
-        self.remove_non_updated_objects(obj_index, self.basemesh_name)
-        self.set_corresponding_materials()
-        if self.grouping:
-            self.to_group()
-    
+            self.remove_non_updated_objects(obj_index, self.basemesh_name)
+            self.set_corresponding_materials()
+            if self.inputs['vertices'].is_linked:
+                if self.grouping:
+                    self.to_group()
+                if self.material:
+                    self.set_corresponding_materials()
+        
     def to_group(self):
         # this def for grouping objects in scene
         objs = bpy.data.objects
@@ -307,17 +309,16 @@ class BmeshViewerNode(Node, SverchCustomTreeNode):
 
     def set_corresponding_materials(self):
         objs = bpy.data.objects
-        first_mesh = self.basemesh_name + '_0'
+        # first_mesh = self.basemesh_name + '_0'
 
-        group_material = objs[first_mesh].active_material
+        # group_material = objs[first_mesh].active_material
 
-        if group_material:
-            for obj in objs:
-                # if this object is made by bmesh - assign material of 'object_0'
-                if obj.name.startswith(self.basemesh_name + "_"):
-                    active_mat = obj.active_material
-                    if (not active_mat) or not (active_mat == group_material):
-                        active_mat = group_material
+        # if group_material:
+        for obj in objs:
+            # if this object is made by bmesh - assign material of 'object_0'
+            if obj.name.startswith(self.basemesh_name + "_"):
+                if self.material in bpy.data.materials:
+                    obj.active_material = bpy.data.materials[self.material]
 
     def update_socket(self, context):
         self.update()
