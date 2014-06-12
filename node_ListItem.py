@@ -120,13 +120,13 @@ class ListItem2Node(Node, SverchCustomTreeNode):
                     items = [[self.item]]
                     
                 if 'Item' in self.outputs and self.outputs['Item'].links:
-                    if self.level:
+                    if self.level-1:
                         out = self.get(data, self.level-1, items,self.get_items)
                     else:
                         out = self.get_items(data, items[0])
                     SvSetSocketAnyType(self, 'Item', out)
                 if 'Other' in self.outputs and self.outputs['Other'].links:
-                    if self.level:
+                    if self.level-1:
                         out = self.get(data, self.level-1,items,self.get_other)
                     else:
                         out = self.get_other(data, items[0])
