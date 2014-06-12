@@ -69,7 +69,8 @@ class SvRemoveDoublesNode(Node, SverchCustomTreeNode):
         self.outputs.new('VerticesSocket', 'Doubles', 'Doubles')
             
     def draw_buttons(self, context, layout):
-        layout.prop(self,'distance',text="Distance")
+        #layout.prop(self,'distance',text="Distance")
+        pass
 
     def update(self):
         if not any([s.links for s in self.outputs]):

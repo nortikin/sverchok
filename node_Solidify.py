@@ -54,7 +54,7 @@ class SvSolidifyNode(Node, SverchCustomTreeNode):
         self.outputs.new('StringsSocket', 'polygons', 'polygons')
                 
     def update(self):
-        if not self.outputs['vertices'].links:
+        if not self.outputs['vertices'].is_linked:
             return
             
         if 'vertices' in self.inputs and self.inputs['vertices'].links and \

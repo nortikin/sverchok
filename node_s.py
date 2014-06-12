@@ -196,9 +196,9 @@ def make_categories():
             # NodeItem("Test1Node", label="Test1"),
             # NodeItem("Test2Node", label="Test2"),
             NodeItem("SvFrameInfoNode", label="Frame info"),
-            NodeItem("ToolsNode", label="Tools"),
             NodeItem("NoteNode", label="Note"),
             NodeItem("GTextNode", label="GText"),
+            NodeItem("ToolsNode", label="Update Button"),
             NodeItem("SvDebugPrintNode", label="Debug print"),
             ]),
         SverchNodeCategory("SVERCHOK_L", "SVERCHOK list", items=[
@@ -219,7 +219,7 @@ def make_categories():
             NodeItem("ListFuncNode", label="List Math"),
             NodeItem("ListFlipNode", label="List Flip"),
             NodeItem("MaskListNode", label="List Mask"),
-            NodeItem("SvMaskJoinNode", label="Mask Join"),
+            NodeItem("SvMaskJoinNode", label="List Mask Join"),
             NodeItem("ListSortNode", label="List Sort"),
             NodeItem("ListShuffleNode", label="List Shuffle"),
             NodeItem("ListMatchNode", label="List Match"),
@@ -237,7 +237,7 @@ def make_categories():
             NodeItem("IntegerNode", label="Int"),
             NodeItem("Float2IntNode", label="Float 2 Int"),
             # NodeItem("FormulaNode", label="Formula"),
-            NodeItem("Formula2Node", label="Formula2"),
+            NodeItem("Formula2Node", label="Formula"), # for newbies this is not predictable why "Formula2" renamed
             NodeItem("ScalarMathNode", label="Math"),
             NodeItem("SvMapRangeNode", label="Map Range"),
             ]),
@@ -253,13 +253,12 @@ def make_categories():
             NodeItem("HilbertImageNode", label="Hilbert image"),
             NodeItem("ImageNode", label="Image"),
             NodeItem("RandomVectorNode", label="Random Vector"),
-            NodeItem("SvScriptNode", label="Scripted Node")            
+            NodeItem("SvScriptNode", label="Scripted Node")
             ]),
         SverchNodeCategory("SVERCHOK_V", "SVERCHOK vector", items=[
             # Vector nodes
             NodeItem("GenVectorsNode", label="Vector in"),
             NodeItem("VectorsOutNode", label="Vector out"),
-            NodeItem("VectorNormalNode", label="Vector' Normal"),
             NodeItem("VectorMoveNode", label="Vector Move"),
             NodeItem("VectorMathNode", label="Vector Math"),
             NodeItem("VectorDropNode", label="Vector Drop"),
@@ -276,28 +275,27 @@ def make_categories():
             NodeItem("MatrixOutNode", label="Matrix out"),
             NodeItem("SvMatrixValueIn", label="Matrix Input"),
             NodeItem("MatrixDeformNode", label="Matrix Deform"),
-            NodeItem("MatrixShearNode", label="Shear Matrix"),
+            NodeItem("MatrixShearNode", label="Matrix Shear"), # for uniform view renamed
             NodeItem("MatrixInterpolationNode", label="Matrix Interpolation"),
             ]),
         SverchNodeCategory("SVERCHOK_M", "SVERCHOK modifier", items=[
             # modifiers deforms and reorganize and reconstruct data
-            NodeItem("CentersPolsNode", label="Centers Polygons"),
             NodeItem("AdaptivePolsNode", label="Adaptive Polygons"),
             NodeItem("SvAdaptiveEdgeNode", label="Adaptive Edges"),
             NodeItem("CrossSectionNode", label="Cross Section"),
             NodeItem("SvBisectNode", label="Bisect"),
             NodeItem("SvSolidifyNode", label="Solidify"),
             NodeItem("SvWireframeNode", label="Wireframe"),
-            NodeItem("LineConnectNode", label="Lines Connection"),
+            NodeItem("LineConnectNode", label="UV Connection"),
             NodeItem("DelaunayTriangulation2DNode", label="Delaunay 2D "),
             NodeItem("Voronoi2DNode", label="Voronoi 2D"),
             NodeItem("PolygonBoomNode", label="Polygon Boom"),
             NodeItem("Pols2EdgsNode", label="Polygons to Edges"),
             NodeItem("SvMeshJoinNode", label="Mesh Join"),
-            NodeItem("SvRemoveDoublesNode", label="Mesh Remove Doubles"),
+            NodeItem("SvRemoveDoublesNode", label="Remove Doubles"),
             NodeItem("SvDeleteLooseNode", label="Delete Loose"),
             NodeItem('SvSeparateMeshNode', label="Separate Loose Parts"),
-            NodeItem('SvVertMaskNode', label="Mesh Mask Vertices"),
+            NodeItem('SvVertMaskNode', label="Mask Vertices"),
             NodeItem("SvConvexHullNode", label="Convex Hull"),
             NodeItem("SvFillsHoleNode", label="Fill Holes"),
             NodeItem("SvIntersectEdgesNode", label="Intersect Edges"),
@@ -305,11 +303,13 @@ def make_categories():
             ]),
         SverchNodeCategory("SVERCHOK_A", "SVERCHOK analisators", items=[
             # investigate data
-            NodeItem("DistancePPNode", label="Distances"),
+            NodeItem("CentersPolsNode", label="Centers Polygons"),
+            NodeItem("VectorNormalNode", label="Vector' Normal"),
+            NodeItem("DistancePPNode", label="Distance"),
             NodeItem("AreaNode", label="Area"),
             NodeItem("SvBBoxNode", label="Bounding box"),
-            NodeItem("SvKDTreeNode", label="KDTree Verts"),
-            NodeItem("SvKDTreeEdgesNode", label="KDTree Edges"),
+            NodeItem("SvKDTreeNode", label="KDT Closest Verts"),
+            NodeItem("SvKDTreeEdgesNode", label="KDT Closest Edges"), #KDTree renamed to be clear
             ]),
         ]
     return node_categories

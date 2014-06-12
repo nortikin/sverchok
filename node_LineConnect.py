@@ -3,9 +3,9 @@ from node_s import *
 from util import *
 
 class LineConnectNode(Node, SverchCustomTreeNode):
-    ''' LineConnect node '''
+    ''' UV Connect node '''
     bl_idname = 'LineConnectNode'
-    bl_label = 'Line Connect'
+    bl_label = 'UV Connect'
     bl_icon = 'OUTLINER_OB_EMPTY'
     
     JoinLevel = bpy.props.IntProperty(name='JoinLevel', description='Choose connect level of data (see help)', default=1, min=1, max=2, update=updateNode)
@@ -13,7 +13,7 @@ class LineConnectNode(Node, SverchCustomTreeNode):
     direction = [('U_dir', 'U_dir', 'u direction'),('V_dir', 'V_dir', 'v direction')]
     dir_check = bpy.props.EnumProperty(items=direction, name='direction', options={'ANIMATABLE'}, update=updateNode)
     # as cyclic too have to have U cyclic and V cyclic flags - two flags
-    cicl_check = bpy.props.BoolProperty(name='cicle', description='cicle line', default=False, update=updateNode)
+    cicl_check = bpy.props.BoolProperty(name='cycle', description='cycle line', default=False, update=updateNode)
     slice_check = bpy.props.BoolProperty(name='slice', description='slice polygon', default=True, update=updateNode)
     
     base_name = 'vertices '
@@ -26,7 +26,7 @@ class LineConnectNode(Node, SverchCustomTreeNode):
     
     def draw_buttons(self, context, layout):
         layout.prop(self, "dir_check", text="direction", expand=True)
-        layout.prop(self, "cicl_check", text="cicle")
+        layout.prop(self, "cicl_check", text="cycle")
         row=layout.row(align=True)
         row.prop(self, "polygons", text="polygons")
         row.prop(self, "slice_check", text="slice")
