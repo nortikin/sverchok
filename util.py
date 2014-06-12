@@ -12,10 +12,10 @@ import traceback
 global bmesh_mapping, per_cache
 
 DEBUG_MODE = False
-
+#handle for object in node
 temp_handle = {}
-
-cache_nodes = {}
+# cache node group update trees it not used, as i see
+# cache_nodes = {}
 # cache node group update trees
 list_nodes4update = {}
 # cache for partial update lists
@@ -24,18 +24,19 @@ partial_update_cache = {}
 sv_Vars = {}
 # socket cache
 socket_data_cache = {}
-#
+# for viewer baker node cache
 cache_viewer_baker = {}
 
 # note used?
 
-bmesh_mapping = {}
-per_cache = {}
+#bmesh_mapping = {}
+#per_cache = {}
 
 #####################################################
 ################### update magic ####################
 #####################################################
 # is this used?
+# i think no
 
 # main update
 def read_cnodes(cnode):
@@ -137,7 +138,7 @@ def handle_delete(handle):
 
 def handle_read(handle):
     if not (handle in temp_handle):
-        return (False, False)
+        return (False, [])
 
     prop = temp_handle[handle]['prop']
     return (True, prop)
@@ -146,17 +147,16 @@ def handle_write(handle, prop):
     if handle in temp_handle:
         if prop != temp_handle[handle]['prop']: handle_delete(handle)
 
-    if not (handle in temp_handle) and handle !='':
+    elif not (handle in temp_handle) and handle:
         temp_handle[handle] = {"prop": prop}
 
 def handle_check(handle, prop):
-    result = True
     if handle in handle_check:
         if prop != handle_check[handle]['prop']:
-                result = False
+            return False
     else:
-        result = False
-    return result
+        return False
+    return True
 
 #####################################################
 ################ list matching magic ################

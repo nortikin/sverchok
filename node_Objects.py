@@ -18,13 +18,16 @@ class SvObjSelected(bpy.types.Operator):
         objects = []
         if self.grup_name and len(bpy.data.groups[self.grup_name].objects)>0:
             objs = bpy.data.groups[self.grup_name].objects
-        else:
+        elif bpy.context.selected_objects:
             objs = bpy.context.selected_objects
+        else:
+            self.report('Go home, you tired, there is no object selected')
+            return
         for o in objs:
             objects.append(o.name)
         handle_write(name_no+name_tr, objects)
         # временное решение с группой. надо решать, как достать имя группы узлов
-        if len(bpy.data.node_groups) >= 1:
+        if bpy.data.node_groups[name_tr]:
             handle = handle_read(name_no+name_tr)
             #print ('exec',name)
             bpy.data.node_groups[name_tr].nodes[name_no].objects_local = str(handle[1])
@@ -89,8 +92,12 @@ class ObjectsNode(Node, SverchCustomTreeNode):
         layout.prop(self, 'groupname', text='Group')
         handle = handle_read(self.name+self.id_data.name)
         if self.objects_local:
-            for o in handle[1]:
-                layout.label(o)
+            print(self.objects_local)
+            if handle[0]:
+                for o in handle[1]:
+                    layout.label(o)
+            else:
+                handle_write(self.name+self.id_data.name, eval(self.objects_local))
         else:
             layout.label('--None--')
 
@@ -100,14 +107,15 @@ class ObjectsNode(Node, SverchCustomTreeNode):
         row.prop(self, "vergroups", text="Vertex groups")             
 
     def update(self):
+        # check for grouping socket
         if self.vergroups and not ('Vers_grouped' in self.outputs):
             self.outputs.new('StringsSocket', "Vers_grouped", "Vers_grouped")
         elif not self.vergroups and ('Vers_grouped' in self.outputs):
             self.outputs.remove('StringsSocket', "Vers_grouped", "Vers_grouped")
-        name_ = [self.name] + [self.id_data.name]
-        name = str(name_[0]+name_[1])
+        
+        name = self.name + self.id_data.name
         handle = handle_read(name)
-        #print (handle)
+        print (handle)
         if self.objects_local:
             # bpy.ops.node.sverchok_object_insertion(node_name=self.name, tree_name=self.id_data.name, grup_name=self.groupname)
             # not updating. need to understand mechanic of update
