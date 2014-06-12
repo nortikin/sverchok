@@ -15,9 +15,9 @@ def avail_noise(self,context):
     return n_t
     
 class SvNoiseNode(Node, SverchCustomTreeNode):
-    '''Basic Noise node'''
+    '''Vector Noise node'''
     bl_idname = 'SvNoiseNode'
-    bl_label = 'Noise'
+    bl_label = 'Vector Noise'
     bl_icon = 'OUTLINER_OB_EMPTY'
     
     def changeMode(self,context):

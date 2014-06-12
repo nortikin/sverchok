@@ -91,9 +91,9 @@ def eval_spline(splines,tknots,t_in):
     return out
 
 class SvInterpolationNode(Node, SverchCustomTreeNode):
-    '''Interpolate'''
+    '''Vector Interpolate'''
     bl_idname = 'SvInterpolationNode'
-    bl_label = 'Interpolation'
+    bl_label = 'Vector Interpolation'
     bl_icon = 'OUTLINER_OB_EMPTY'
     
     t_in = FloatProperty(name="t", min=0, max=1, precision=5, default=.5, update=updateNode)

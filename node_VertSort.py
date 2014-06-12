@@ -10,9 +10,9 @@ def distK(v1,v2):
     return sum((i[0]-i[1])**2 for i in zip(v1,v2))
 
 class SvVertSortNode(Node, SverchCustomTreeNode):
-    '''Vertices sort'''
+    '''Vector sort'''
     bl_idname = 'SvVertSortNode'
-    bl_label = 'Vertices Sort'
+    bl_label = 'Vector Sort'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     def mode_change(self,context):

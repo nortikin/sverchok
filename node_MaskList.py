@@ -20,6 +20,8 @@ class MaskListNode(Node, SverchCustomTreeNode):
         self.inputs.new('StringsSocket', "mask", "mask")
         
         self.outputs.new('StringsSocket', "mask", "mask")
+        self.outputs.new('StringsSocket', "ind_true", "ind_true")
+        self.outputs.new('StringsSocket', "ind_false", "ind_false")
         self.outputs.new('StringsSocket', 'dataTrue', 'dataTrue')
         self.outputs.new('StringsSocket', 'dataFalse', 'dataFalse')
         
@@ -54,20 +56,28 @@ class MaskListNode(Node, SverchCustomTreeNode):
         result =  self.getMask(data, mask, self.Level)
         
         # outupy sockets data
-        if 'dataTrue' in self.outputs and self.outputs['dataTrue'].links:
+        if 'dataTrue' in self.outputs and self.outputs['dataTrue'].is_linked:
             SvSetSocketAnyType(self,'dataTrue',result[0])
         else:
             SvSetSocketAnyType(self,'dataTrue',[[]])
         # print ('всё',result)
-        if 'dataFalse' in self.outputs and self.outputs['dataFalse'].links:
+        if 'dataFalse' in self.outputs and self.outputs['dataFalse'].is_linked:
             SvSetSocketAnyType(self,'dataFalse',result[1])
         else:
             SvSetSocketAnyType(self,'dataFalse',[[]])
                     
-        if 'mask' in self.outputs and self.outputs['mask'].links:
+        if 'mask' in self.outputs and self.outputs['mask'].is_linked:
             SvSetSocketAnyType(self,'mask',result[2])
         else:
-            SvSetSocketAnyType(self,'mask',[[]])
+            SvSetSocketAnyType(self,'mask',[[]])            
+        if 'ind_true' in self.outputs and self.outputs['ind_true'].is_linked:
+            SvSetSocketAnyType(self,'ind_true',result[3])
+        else:
+            SvSetSocketAnyType(self,'ind_true',[[]])            
+        if 'ind_false' in self.outputs and self.outputs['ind_false'].is_linked:
+            SvSetSocketAnyType(self,'ind_false',result[4])
+        else:
+            SvSetSocketAnyType(self,'ind_false',[[]])
 
         
     
@@ -84,6 +94,8 @@ class MaskListNode(Node, SverchCustomTreeNode):
         result_t = []
         result_f = []
         mask_out =[]
+        ind_true = []
+        ind_false = []
         if level>1:
             if type(list_a) in [list, tuple]:
                 for idx,l in enumerate(list_a):
@@ -91,6 +103,8 @@ class MaskListNode(Node, SverchCustomTreeNode):
                     result_t.append(l2[0])
                     result_f.append(l2[1])
                     mask_out.append(l2[2])
+                    ind_true.append(l2[3])
+                    ind_false.append(l2[4])
             else:
                 print('AHTUNG!!!')
                 return list_a
@@ -98,20 +112,23 @@ class MaskListNode(Node, SverchCustomTreeNode):
             indx = min(len(mask_l)-1, idx)
             mask = mask_l[indx]
             mask_0 = copy(mask)
+            
             while len(mask)<len(list_a):
                 if len(mask_0)==0:
                     mask_0 = [1,0]
                 mask = mask+mask_0
-    
+                
             for idx,l in enumerate(list_a):
                 tmp = list_b.pop(0)
                 if mask[idx]:
                     result_t.append(tmp)
+                    ind_true.append(idx)
                 else:
                     result_f.append(tmp)
+                    ind_false.append(idx)
             mask_out=mask[:len(list_a)]
                 
-        return (result_t,result_f,mask_out)
+        return (result_t,result_f,mask_out, ind_true, ind_false)
             
             
     def getCurrentLevelList(self, list_a, level):

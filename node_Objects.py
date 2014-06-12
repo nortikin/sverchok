@@ -92,7 +92,6 @@ class ObjectsNode(Node, SverchCustomTreeNode):
         layout.prop(self, 'groupname', text='Group')
         handle = handle_read(self.name+self.id_data.name)
         if self.objects_local:
-            print(self.objects_local)
             if handle[0]:
                 for o in handle[1]:
                     layout.label(o)
