@@ -76,8 +76,7 @@ upgrade_dict = {
     'SvSolidifyNode':
         [['thickness','thickness']],
     'SvRemoveDoublesNode':
-        [['Distance','distance']],    
-         
+        [['Distance','distance']],
     }
 
 # new sockets
@@ -92,7 +91,10 @@ new_socket_dict = {
     'SvSolidifyNode':
         [['inputs','StringsSocket','thickness',0]],
     'SvRemoveDoublesNode':
-        [['inputs','StringsSocket','Distance',0]]
+        [['inputs','StringsSocket','Distance',0]],
+    'MaskListNode':
+        [['outputs','StringsSocket','ind_true',1],
+         ['outputs','StringsSocket','ind_false',2]],
     }
         
 def upgrade_nodes(ng):
