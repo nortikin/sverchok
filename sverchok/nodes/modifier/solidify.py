@@ -24,7 +24,7 @@ from node_tree import SverchCustomTreeNode
 from data_structure import (updateNode, Vector_generate, repeat_last,
                             SvSetSocketAnyType, SvGetSocketAnyType)
 
-from sv_bmesh_utils import bmesh_from_pydata
+from utils.sv_bmesh_utils import bmesh_from_pydata
 # by Linus Yng
 
 
