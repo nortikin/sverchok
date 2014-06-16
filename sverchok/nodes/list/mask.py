@@ -1,6 +1,25 @@
+# ##### BEGIN GPL LICENSE BLOCK #####
+#
+#  This program is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU General Public License
+#  as published by the Free Software Foundation; either version 2
+#  of the License, or (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software Foundation,
+#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+# ##### END GPL LICENSE BLOCK #####
+
 from copy import copy
 
 import bpy
+from bpy.props import BoolProperty, IntProperty, StringProperty
 from node_tree import SverchCustomTreeNode
 from data_structure import (updateNode, changable_sockets,
                             SvSetSocketAnyType, SvGetSocketAnyType)
@@ -12,10 +31,14 @@ class MaskListNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'MaskList'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    Level = bpy.props.IntProperty(name='Level', description='Choose list level of data (see help)', default=1, min=1, max=10, update=updateNode)
+    Level = IntProperty(name='Level', description='Choose list level of data (see help)',
+                        default=1, min=1, max=10,
+                        update=updateNode)
 
-    typ = bpy.props.StringProperty(name='typ', default='')
-    newsock = bpy.props.BoolProperty(name='newsock', default=False)
+    typ = StringProperty(name='typ',
+                         default='')
+    newsock = BoolProperty(name='newsock',
+                           default=False)
 
     def init(self, context):
         self.inputs.new('StringsSocket', "data", "data")
@@ -36,42 +59,39 @@ class MaskListNode(bpy.types.Node, SverchCustomTreeNode):
         # inputsocketname to get one socket to define type
         # outputsocketname to get list of outputs, that will be changed
         inputsocketname = 'data'
-        outputsocketname = ['dataTrue','dataFalse']
+        outputsocketname = ['dataTrue', 'dataFalse']
         changable_sockets(self, inputsocketname, outputsocketname)
 
         # input sockets
         if 'data' not in self.inputs:
             return False
         data = [[]]
-        mask=[[1,0]]
-
+        mask = [[1, 0]]
 
         if self.inputs['data'].links:
-            data = SvGetSocketAnyType(self,self.inputs['data'])
+            data = SvGetSocketAnyType(self, self.inputs['data'])
 
         if self.inputs['mask'].links and \
-                type(self.inputs['mask'].links[0].from_socket) == StringsSocket:
-            mask = SvGetSocketAnyType(self,self.inputs['mask'])
+           type(self.inputs['mask'].links[0].from_socket) == StringsSocket:
+            mask = SvGetSocketAnyType(self, self.inputs['mask'])
 
-        result =  self.getMask(data, mask, self.Level)
+        result = self.getMask(data, mask, self.Level)
 
         # outupy sockets data
         if 'dataTrue' in self.outputs and self.outputs['dataTrue'].links:
-            SvSetSocketAnyType(self,'dataTrue',result[0])
+            SvSetSocketAnyType(self, 'dataTrue', result[0])
         else:
-            SvSetSocketAnyType(self,'dataTrue',[[]])
+            SvSetSocketAnyType(self, 'dataTrue', [[]])
         # print ('всё',result)
         if 'dataFalse' in self.outputs and self.outputs['dataFalse'].links:
-            SvSetSocketAnyType(self,'dataFalse',result[1])
+            SvSetSocketAnyType(self, 'dataFalse', result[1])
         else:
-            SvSetSocketAnyType(self,'dataFalse',[[]])
+            SvSetSocketAnyType(self, 'dataFalse', [[]])
 
         if 'mask' in self.outputs and self.outputs['mask'].links:
-            SvSetSocketAnyType(self,'mask',result[2])
+            SvSetSocketAnyType(self, 'mask', result[2])
         else:
-            SvSetSocketAnyType(self,'mask',[[]])
-
-
+            SvSetSocketAnyType(self, 'mask', [[]])
 
     # working horse
     def getMask(self, list_a, mask_l, level):
@@ -81,14 +101,13 @@ class MaskListNode(bpy.types.Node, SverchCustomTreeNode):
             res = self.putCurrentLevelList(list_a, list_b, mask_l, level)
         return res
 
-
     def putCurrentLevelList(self, list_a, list_b, mask_l, level, idx=0):
         result_t = []
         result_f = []
-        mask_out =[]
-        if level>1:
+        mask_out = []
+        if level > 1:
             if type(list_a) in [list, tuple]:
-                for idx,l in enumerate(list_a):
+                for idx, l in enumerate(list_a):
                     l2 = self.putCurrentLevelList(l, list_b, mask_l, level-1, idx)
                     result_t.append(l2[0])
                     result_f.append(l2[1])
@@ -100,25 +119,24 @@ class MaskListNode(bpy.types.Node, SverchCustomTreeNode):
             indx = min(len(mask_l)-1, idx)
             mask = mask_l[indx]
             mask_0 = copy(mask)
-            while len(mask)<len(list_a):
-                if len(mask_0)==0:
-                    mask_0 = [1,0]
+            while len(mask) < len(list_a):
+                if len(mask_0) == 0:
+                    mask_0 = [1, 0]
                 mask = mask+mask_0
 
-            for idx,l in enumerate(list_a):
+            for idx, l in enumerate(list_a):
                 tmp = list_b.pop(0)
                 if mask[idx]:
                     result_t.append(tmp)
                 else:
                     result_f.append(tmp)
-            mask_out=mask[:len(list_a)]
+            mask_out = mask[:len(list_a)]
 
-        return (result_t,result_f,mask_out)
-
+        return (result_t, result_f, mask_out)
 
     def getCurrentLevelList(self, list_a, level):
-        list_b=[]
-        if level>1:
+        list_b = []
+        if level > 1:
             if type(list_a) in [list, tuple]:
                 for l in list_a:
                     l2 = self.getCurrentLevelList(l, level-1)
@@ -139,8 +157,6 @@ class MaskListNode(bpy.types.Node, SverchCustomTreeNode):
 def register():
     bpy.utils.register_class(MaskListNode)
 
+
 def unregister():
     bpy.utils.unregister_class(MaskListNode)
-
-if __name__ == "__main__":
-    register()

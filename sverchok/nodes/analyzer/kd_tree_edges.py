@@ -1,33 +1,52 @@
+# ##### BEGIN GPL LICENSE BLOCK #####
+#
+#  This program is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU General Public License
+#  as published by the Free Software Foundation; either version 2
+#  of the License, or (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software Foundation,
+#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+# ##### END GPL LICENSE BLOCK #####
+
 import bpy
+from bpy.props import IntProperty, FloatProperty
 import mathutils
 from mathutils import Vector
+
 from node_tree import SverchCustomTreeNode
 from data_structure import updateNode, SvSetSocketAnyType, SvGetSocketAnyType
 
+
 # documentation/blender_python_api_2_70_release/mathutils.kdtree.html
-
-
 class SvKDTreeEdgesNode(bpy.types.Node, SverchCustomTreeNode):
 
     bl_idname = 'SvKDTreeEdgesNode'
     bl_label = 'Kdtree Edges'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    mindist = bpy.props.FloatProperty(
-        name='mindist', description='Minimum dist',
-        default=0.1, options={'ANIMATABLE'}, update=updateNode)
+    mindist = FloatProperty(name='mindist', description='Minimum dist',
+                            default=0.1,
+                            options={'ANIMATABLE'}, update=updateNode)
 
-    maxdist = bpy.props.FloatProperty(
-        name='maxdist', description='Maximum dist',
-        default=2.0, options={'ANIMATABLE'}, update=updateNode)
+    maxdist = FloatProperty(name='maxdist', description='Maximum dist',
+                            default=2.0,
+                            options={'ANIMATABLE'}, update=updateNode)
 
-    maxNum = bpy.props.IntProperty(
-        name='maxNum', description='max edge count',
-        default=4, min=1, options={'ANIMATABLE'}, update=updateNode)
+    maxNum = IntProperty(name='maxNum', description='max edge count',
+                         default=4, min=1,
+                         options={'ANIMATABLE'}, update=updateNode)
 
-    skip = bpy.props.IntProperty(
-        name='skip', description='skip first n',
-        default=0, min=0, options={'ANIMATABLE'}, update=updateNode)
+    skip = IntProperty(name='skip', description='skip first n',
+                       default=0, min=0,
+                       options={'ANIMATABLE'}, update=updateNode)
 
     def init(self, context):
         self.inputs.new('VerticesSocket', 'Verts', 'Verts')

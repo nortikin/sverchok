@@ -1,4 +1,24 @@
+# ##### BEGIN GPL LICENSE BLOCK #####
+#
+#  This program is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU General Public License
+#  as published by the Free Software Foundation; either version 2
+#  of the License, or (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software Foundation,
+#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+# ##### END GPL LICENSE BLOCK #####
+
 import bpy
+from bpy.props import BoolProperty, IntProperty, StringProperty
+
 from node_tree import SverchCustomTreeNode
 from data_structure import (updateNode, changable_sockets,
                             SvSetSocketAnyType, SvGetSocketAnyType)
@@ -10,11 +30,19 @@ class ListRepeaterNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'List repeater'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    level = bpy.props.IntProperty(name = 'level', default=1, min=0, update=updateNode)
-    number = bpy.props.IntProperty(name = 'number', default=1, min=1, update=updateNode)
-    unwrap = bpy.props.BoolProperty(name = 'unwrap', default=False, update=updateNode)
-    typ = bpy.props.StringProperty(name='typ', default='')
-    newsock = bpy.props.BoolProperty(name='newsock', default=False)
+    level = IntProperty(name='level',
+                        default=1, min=0,
+                        update=updateNode)
+    number = IntProperty(name='number',
+                         default=1, min=1,
+                         update=updateNode)
+    unwrap = BoolProperty(name='unwrap',
+                          default=False,
+                          update=updateNode)
+    typ = StringProperty(name='typ',
+                         default='')
+    newsock = BoolProperty(name='newsock',
+                           default=False)
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "level", text="level")
@@ -22,20 +50,20 @@ class ListRepeaterNode(bpy.types.Node, SverchCustomTreeNode):
 
     def init(self, context):
         self.inputs.new('StringsSocket', "Data", "Data")
-        self.inputs.new('StringsSocket', "Number","Number").prop_name = 'number'
-        self.outputs.new('StringsSocket',"Data", "Data")
+        self.inputs.new('StringsSocket', "Number", "Number").prop_name = 'number'
+        self.outputs.new('StringsSocket', "Data", "Data")
 
     def update(self):
         # достаём два слота - вершины и полики
         if 'Data' in self.inputs and self.inputs['Data'].links:
             inputsocketname = 'Data'
-            outputsocketname = ['Data',]
+            outputsocketname = ['Data', ]
             changable_sockets(self, inputsocketname, outputsocketname)
 
             data = SvGetSocketAnyType(self, self.inputs['Data'])
 
             if 'Number' in self.inputs and self.inputs['Number'].links:
-                tmp = SvGetSocketAnyType(self,self.inputs['Number'])
+                tmp = SvGetSocketAnyType(self, self.inputs['Number'])
                 Number = tmp[0]
             else:
                 Number = [self.number]
@@ -43,7 +71,7 @@ class ListRepeaterNode(bpy.types.Node, SverchCustomTreeNode):
             if 'Data' in self.outputs and self.outputs['Data'].links:
                 out_ = self.count(data, self.level, Number)
                 if self.unwrap:
-                    if len(out_)>0:
+                    if len(out_) > 0:
                         out = []
                         for o in out_:
                             out.extend(o)
@@ -60,20 +88,18 @@ class ListRepeaterNode(bpy.types.Node, SverchCustomTreeNode):
 
         else:
             out = []
-            indx = min(cou,len(number)-1)
+            indx = min(cou, len(number)-1)
             for i in range(int(number[indx])):
                 out.append(data)
         return out
 
-
     def update_socket(self, context):
         self.update()
+
 
 def register():
     bpy.utils.register_class(ListRepeaterNode)
 
+
 def unregister():
     bpy.utils.unregister_class(ListRepeaterNode)
-
-if __name__ == "__main__":
-    register()

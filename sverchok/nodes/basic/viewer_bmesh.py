@@ -1,7 +1,26 @@
+# ##### BEGIN GPL LICENSE BLOCK #####
+#
+#  This program is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU General Public License
+#  as published by the Free Software Foundation; either version 2
+#  of the License, or (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software Foundation,
+#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+# ##### END GPL LICENSE BLOCK #####
+
 import bpy
 from bpy.props import BoolProperty, StringProperty
+
 from node_tree import (SverchCustomTreeNode, VerticesSocket,
-                         MatrixSocket, StringsSocket)
+                       MatrixSocket, StringsSocket)
 from data_structure import dataCorrect, fullList, updateNode, SvGetSocketAnyType
 from utils.sv_bmesh_utils import bmesh_from_pydata
 
@@ -159,8 +178,8 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
         col4 = split.column()
         col4.operator(sh, text='', icon=icons('r')).fn_name = 'hide_render'
 
-        row=layout.row()
-        row.prop(self, "grouping",text="to Group")
+        row = layout.row()
+        row.prop(self, "grouping", text="to Group")
 
         layout.label("Base mesh name(s)", icon='OUTLINER_OB_MESH')
         #row = layout.row()
@@ -168,12 +187,12 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
         # this is button to randomise
         col = layout.column(align=True)
         row = col.row(align=True)
-        row.scale_y=1.1
+        row.scale_y = 1.1
         row.prop(self, "basemesh_name", text="")
         if not self.randname_choosed:
             row.operator(sh, text='Random Name').fn_name = 'random_mesh_name'
         row = col.row(align=True)
-        row.scale_y=0.9
+        row.scale_y = 0.9
         row.operator(sh, text='Select/Deselect').fn_name = 'mesh_select'
 
     def get_corrected_data(self, socket_name, socket_type):
@@ -263,7 +282,7 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
     def to_group(self):
         # this def for grouping objects in scene
         objs = bpy.data.objects
-        if not self.basemesh_name in bpy.data.groups:
+        if self.basemesh_name not in bpy.data.groups:
             newgroup = bpy.data.groups.new(self.basemesh_name)
         else:
             newgroup = bpy.data.groups[self.basemesh_name]
@@ -328,6 +347,3 @@ def register():
 def unregister():
     bpy.utils.unregister_class(BmeshViewerNode)
     bpy.utils.unregister_class(SvBmeshViewOp)
-
-if __name__  == '__main__':
-    register()

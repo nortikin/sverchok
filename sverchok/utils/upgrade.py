@@ -1,82 +1,99 @@
+# ##### BEGIN GPL LICENSE BLOCK #####
+#
+#  This program is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU General Public License
+#  as published by the Free Software Foundation; either version 2
+#  of the License, or (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software Foundation,
+#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+# ##### END GPL LICENSE BLOCK #####
 
 # dict for nodes be upgraded to
 # compact node layout. Format
 # bl_idname : [[socket_name0, prop_name0],
 #              [socket_name1, prop_name1]],
 
-upgrade_dict = { 
-    'SphereNode': 
+upgrade_dict = {
+    'SphereNode':
         [['Radius', 'rad_'],
          ['U', 'U_'],
          ['V', 'V_']],
-    'CylinderNode': 
-        [['RadTop','radTop_'],
-         ['RadBot','radBot_'],
-         ['Vertices','vert_'],
+    'CylinderNode':
+        [['RadTop', 'radTop_'],
+         ['RadBot', 'radBot_'],
+         ['Vertices', 'vert_'],
          ['Height', 'height_'],
          ['Subdivisions', 'subd_']],
     'RandomNode':
-        [['Count','count_inner'],
-         ['Seed','seed']],   
+        [['Count', 'count_inner'],
+         ['Seed', 'seed']],
     'PlaneNode':
-        [["Nº Vertices X",'int_X'],
-         ["Nº Vertices Y",'int_Y'],
-         ["Step X","step_X"],
-         ["Step Y","step_Y"]],
-    'ListSliceNode' :  
-        [['Start','start'],
+        [["Nº Vertices X", 'int_X'],
+         ["Nº Vertices Y", 'int_Y'],
+         ["Step X", "step_X"],
+         ["Step Y", "step_Y"]],
+    'ListSliceNode':
+        [['Start', 'start'],
          ['Stop', 'stop']],
-    'LineNode': 
-        [["Nº Vertices",'int_'],
-         ["Step",'step_']],
+    'LineNode':
+        [["Nº Vertices", 'int_'],
+         ["Step", 'step_']],
     'FloatNode':
-        [['Float','float_']],
+        [['Float', 'float_']],
     'IntegerNode':
-        [['Integer','int_']],
+        [['Integer', 'int_']],
     'HilbertNode':
-        [["Level",'level_'],
-         ["Size",'size_']],
+        [["Level", 'level_'],
+         ["Size", 'size_']],
     'HilbertImageNode':
-        [["Level",'level_'],
-         ["Size",'size_'],
-         ["Sensitivity",'sensitivity_']],
+        [["Level", 'level_'],
+         ["Size", 'size_'],
+         ["Sensitivity", 'sensitivity_']],
     'VectorMoveNode':
-        [["multiplier",'mult_']],
+        [["multiplier", 'mult_']],
     'EvaluateLine':
-        [["Factor",'factor_']],
+        [["Factor", 'factor_']],
     'SvBoxNode':
-        [["Size",'Size'],
-         ["Divx",'Divx'],
-         ["Divy",'Divy'],
-         ["Divz",'Divz']],
+        [["Size", 'Size'],
+         ["Divx", 'Divx'],
+         ["Divy", 'Divy'],
+         ["Divz", 'Divz']],
     'ImageNode':
-        [["vecs X",'Xvecs'],
-         ["vecs Y",'Yvecs'],
-         ["Step X",'Xstep'],
-         ["Step Y",'Ystep']],
+        [["vecs X", 'Xvecs'],
+         ["vecs Y", 'Yvecs'],
+         ["Step X", 'Xstep'],
+         ["Step Y", 'Ystep']],
     'GenVectorsNode':
-        [['X','x_'],
-         ['Y','y_'],
-         ['Z','z_']],
+        [['X', 'x_'],
+         ['Y', 'y_'],
+         ['Z', 'z_']],
     'MatrixInterpolationNode':
-        [['Factor','factor_']],
+        [['Factor', 'factor_']],
     'MatrixShearNode':
-        [['Factor1','factor1_'],
-         ['Factor2','factor2_']],
+        [['Factor1', 'factor1_'],
+         ['Factor2', 'factor2_']],
     'RandomVectorNode':
-        [["Count",'count_inner'],
+        [["Count", 'count_inner'],
          ["Seed", "seed"]],
     'ListRepeaterNode':
         [["Number", "number"]],
     'ListItem2Node':
-        [["Item","item"]]
-         
+        [["Item", "item"]]
     }
 
+
 def upgrade_nodes(ng):
-    ''' Apply prop_name for nodes in the node group ng for 
-        upgrade to compact ui ''' 
+    ''' Apply prop_name for nodes in the node group ng for
+        upgrade to compact ui '''
     for node in [node for node in ng.nodes if node.bl_idname in upgrade_dict]:
-        for s_name,p_name in upgrade_dict[node.bl_idname]:
+        for s_name, p_name in upgrade_dict[node.bl_idname]:
             if s_name in node.inputs and not node.inputs[s_name].prop_name:
                 node.inputs[s_name].prop_name = p_name

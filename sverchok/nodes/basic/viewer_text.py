@@ -1,11 +1,31 @@
+# ##### BEGIN GPL LICENSE BLOCK #####
+#
+#  This program is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU General Public License
+#  as published by the Free Software Foundation; either version 2
+#  of the License, or (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software Foundation,
+#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+# ##### END GPL LICENSE BLOCK #####
+
 import bpy
+from bpy.props import StringProperty
+
 from node_tree import SverchCustomTreeNode
 from data_structure import levelsOflist, SvGetSocketAnyType
 
-#global cache_viewer_slot1, cache_viewer_slot2, cache_viewer_slot3
-cache_viewer_slot1 = {} #{'veriable':'None \n'}
-cache_viewer_slot2 = {} #{'veriable':'None \n'}
-cache_viewer_slot3 = {} #{'veriable':'None \n'}
+# global cache_viewer_slot1, cache_viewer_slot2, cache_viewer_slot3
+cache_viewer_slot1 = {}  # {'veriable':'None \n'}
+cache_viewer_slot2 = {}  # {'veriable':'None \n'}
+cache_viewer_slot3 = {}  # {'veriable':'None \n'}
 
 
 class SverchokViewer(bpy.types.Operator):
@@ -14,7 +34,8 @@ class SverchokViewer(bpy.types.Operator):
     bl_label = "Sverchok viewer"
     bl_options = {'REGISTER', 'UNDO'}
 
-    nodename = bpy.props.StringProperty(name='nodename',default='None')
+    nodename = StringProperty(name='nodename',
+                              default='None')
 
     def execute(self, context):
         global cache_viewer_slot1
@@ -49,7 +70,7 @@ class SverchokViewer(bpy.types.Operator):
                 + '                                     Sverchok team' \
 
         if cache_viewer_slot1['veriable'+self.nodename] or cache_viewer_slot2['veriable'+self.nodename] or cache_viewer_slot3['veriable'+self.nodename]:
-            for_file = 'node name: '+ self.nodename \
+            for_file = 'node name: ' + self.nodename \
                         + '\n\nvertices: \n' \
                         + cache_viewer_slot1['veriable'+self.nodename] \
                         + cache_viewer_slot2['type'+self.nodename] \
@@ -84,7 +105,7 @@ class ViewerNode_text(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         row = layout.row()
         row.scale_y = 4.0
-        row.operator('node.sverchok_viewer_button', text='V I E W').nodename=self.name
+        row.operator('node.sverchok_viewer_button', text='V I E W').nodename = self.name
 
     def update(self):
         # vertices socket
@@ -93,11 +114,10 @@ class ViewerNode_text(bpy.types.Node, SverchCustomTreeNode):
         global cache_viewer_slot2
         global cache_viewer_slot3
 
-
         if 'vertices' in self.inputs and self.inputs['vertices'].links:
 
             if type(self.inputs['vertices'].links[0].from_socket) == bpy.types.VerticesSocket:
-                evaverti = SvGetSocketAnyType(self,self.inputs['vertices'])
+                evaverti = SvGetSocketAnyType(self, self.inputs['vertices'])
                 #evaverti = eval(verti)
                 deptl = levelsOflist(evaverti)
                 #print(str(evaverti))
@@ -113,10 +133,10 @@ class ViewerNode_text(bpy.types.Node, SverchCustomTreeNode):
         else:
             cache_viewer_slot1['veriable'+self.name] = 'None \n'
         # edges/faces socket
-        if 'edg_pol' in self.inputs and len(self.inputs['edg_pol'].links)>0:
+        if 'edg_pol' in self.inputs and len(self.inputs['edg_pol'].links) > 0:
 
             if type(self.inputs['edg_pol'].links[0].from_socket) == bpy.types.StringsSocket:
-                evaline_str = SvGetSocketAnyType(self,self.inputs['edg_pol'])
+                evaline_str = SvGetSocketAnyType(self, self.inputs['edg_pol'])
                 #print (line_str)
 
                 if evaline_str:
@@ -136,10 +156,10 @@ class ViewerNode_text(bpy.types.Node, SverchCustomTreeNode):
             cache_viewer_slot2['veriable'+self.name] = 'None \n'
             cache_viewer_slot2['type'+self.name] = '\n\ndata \n'
         # matrix socket
-        if 'matrix' in self.inputs and len(self.inputs['matrix'].links)>0:
+        if 'matrix' in self.inputs and len(self.inputs['matrix'].links) > 0:
 
             if type(self.inputs['matrix'].links[0].from_socket) == bpy.types.MatrixSocket:
-                eva = SvGetSocketAnyType(self,self.inputs['matrix'])
+                eva = SvGetSocketAnyType(self, self.inputs['matrix'])
                 deptl = levelsOflist(eva)
                 #print (deptl, ' text viewer')
                 if deptl and deptl > 2:
@@ -153,13 +173,13 @@ class ViewerNode_text(bpy.types.Node, SverchCustomTreeNode):
         else:
             cache_viewer_slot3['veriable'+self.name] = 'None \n'
 
-        if len(self.inputs['matrix'].links)>0 or len(self.inputs['vertices'].links)>0 or \
-                len(self.inputs['edg_pol'].links)>0:
-            self.use_custom_color=True
-            self.color = (0.5,0.5,1)
+        if len(self.inputs['matrix'].links) > 0 or len(self.inputs['vertices'].links) > 0 or \
+                len(self.inputs['edg_pol'].links) > 0:
+            self.use_custom_color = True
+            self.color = (0.5, 0.5, 1)
         else:
-            self.use_custom_color=True
-            self.color = (0.05,0.05,0.1)
+            self.use_custom_color = True
+            self.color = (0.05, 0.05, 0.1)
 
     def update_socket(self, context):
         self.update()
@@ -176,7 +196,6 @@ class ViewerNode_text(bpy.types.Node, SverchCustomTreeNode):
         else:
             pass
         return t
-
 
     def readFORviewer_sockets_data(self, data, dept, le):
         cache = ''
@@ -215,9 +234,7 @@ def register():
     bpy.utils.register_class(SverchokViewer)
     bpy.utils.register_class(ViewerNode_text)
 
+
 def unregister():
     bpy.utils.unregister_class(ViewerNode_text)
     bpy.utils.unregister_class(SverchokViewer)
-
-if __name__ == "__main__":
-    register()

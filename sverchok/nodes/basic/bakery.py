@@ -1,7 +1,27 @@
+# ##### BEGIN GPL LICENSE BLOCK #####
+#
+#  This program is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU General Public License
+#  as published by the Free Software Foundation; either version 2
+#  of the License, or (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software Foundation,
+#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+# ##### END GPL LICENSE BLOCK #####
+
 import bpy
+from bpy.props import BoolProperty
 from mathutils import Matrix
+
 from node_tree import (SverchCustomTreeNode, MatrixSocket,
-                         StringsSocket, VerticesSocket)
+                       StringsSocket, VerticesSocket)
 from data_structure import (dataCorrect, updateNode,
                             Matrix_generate, Vector_generate,
                             SvGetSocketAnyType)
@@ -16,7 +36,9 @@ class BakeryNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Bakery'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    activate = bpy.props.BoolProperty(name='Show', description='Activate node?', default=True,update=updateNode)
+    activate = BoolProperty(name='Show', description='Activate node?',
+                            default=True,
+                            update=updateNode)
 
     def draw_buttons(self, context, layout):
         row = layout.row(align=True)
@@ -31,9 +53,9 @@ class BakeryNode(bpy.types.Node, SverchCustomTreeNode):
     def update(self):
         # check if running during startup, cancel if True
         try:
-            l=bpy.data.node_groups[self.id_data.name]
+            l = bpy.data.node_groups[self.id_data.name]
         except Exception as e:
-            print("Bakery cannot run during startup",e)
+            print("Bakery cannot run during startup", e)
             return
 
         if self.inputs['vertices'].links and self.inputs['edg_pol'].links and self.activate:
@@ -63,11 +85,11 @@ class BakeryNode(bpy.types.Node, SverchCustomTreeNode):
 
             if vertices and edges:
                 self.makeobjects(vertices, edges, matrices)
-            self.use_custom_color=True
-            self.color = (1,0.3,0)
+            self.use_custom_color = True
+            self.color = (1, 0.3, 0)
         else:
-            self.use_custom_color=True
-            self.color = (0.1,0.05,0)
+            self.use_custom_color = True
+            self.color = (0.1, 0.05, 0)
 
             for obj in bpy.context.scene.objects:
                 nam = 'Sv_' + self.name
@@ -141,17 +163,18 @@ class BakeryNode(bpy.types.Node, SverchCustomTreeNode):
 
             # to change old, create new separately
             if names[i] not in cache:
-                objects[str(i)] = self.makemesh(names[i],v,e,p,m)
+                objects[str(i)] = self.makemesh(names[i], v, e, p, m)
             elif bpy.context.scene.objects.find(names[i]) >= 0:
-                objects[str(i)] = self.makemesh_exist(names[i],v,e,p,m)
+                objects[str(i)] = self.makemesh_exist(names[i], v, e, p, m)
             else:
-                objects[str(i)] = self.makemesh(names[i],v,e,p,m)
+                objects[str(i)] = self.makemesh(names[i], v, e, p, m)
 
         for i, ite in enumerate(objects.values()):
             me = ite[1]
             ob = ite[0]
             calcedg = True
-            if edgs: calcedg = False
+            if edgs:
+                calcedg = False
             me.update(calc_edges=calcedg)
             if ob.name not in cache:
                 bpy.context.scene.objects.link(ob)
@@ -159,7 +182,7 @@ class BakeryNode(bpy.types.Node, SverchCustomTreeNode):
         # save cache
         sverchok_bakery_cache[self.name] = names
 
-    def makemesh(self,i,v,e,p,m):
+    def makemesh(self, i, v, e, p, m):
         name = i
         me = bpy.data.meshes.new(name)
         me.from_pydata(v, e, p)
@@ -167,22 +190,20 @@ class BakeryNode(bpy.types.Node, SverchCustomTreeNode):
         ob.matrix_world = m
         ob.show_name = False
         ob.hide_select = False
-        return [ob,me]
+        return [ob, me]
 
-    def makemesh_exist(self,i,v,e,p,m):
+    def makemesh_exist(self, i, v, e, p, m):
         name = i
         me = bpy.data.meshes.new(name)
         me.from_pydata(v, e, p)
         ob = bpy.data.objects[name]
         ob.matrix_world = m
-        return [ob,me]
+        return [ob, me]
+
 
 def register():
     bpy.utils.register_class(BakeryNode)
 
+
 def unregister():
     bpy.utils.unregister_class(BakeryNode)
-
-
-if __name__ == "__main__":
-    register()

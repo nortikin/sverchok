@@ -1,25 +1,28 @@
 from math import sin, cos, radians
 
 import bpy
+from bpy.props import IntProperty, FloatProperty
+
 from node_tree import SverchCustomTreeNode
 from data_structure import updateNode, match_long_repeat, SvSetSocketAnyType
 
 
 def sphere_verts(U, V, Radius):
-    theta  = radians(360/U)
+    theta = radians(360/U)
     phi = radians(180/(V-1))
-    pts = [[0,0,Radius]]
-    for i in range(1,V-1):
-        sin_phi_i =sin(phi*i)
+    pts = [[0, 0, Radius]]
+    for i in range(1, V-1):
+        sin_phi_i = sin(phi*i)
         for j in range(U):
             X = Radius*cos(theta*j)*sin_phi_i
             Y = Radius*sin(theta*j)*sin_phi_i
             Z = Radius*cos(phi*i)
-            pts.append([X,Y,Z])
-    pts.append([0,0, -Radius])
+            pts.append([X, Y, Z])
+    pts.append([0, 0, -Radius])
     return pts
 
-def sphere_edges(U,V):
+
+def sphere_edges(U, V):
     nr_pts = U*V-(U-1)*2
     listEdg = []
     for i in range(V-2):
@@ -31,12 +34,13 @@ def sphere_edges(U,V):
     listEdg.reverse()
     return listEdg
 
-def sphere_faces(U,V):
+
+def sphere_faces(U, V):
     nr_pts = U*V-(U-1)*2
     listPln = []
     for i in range(V-3):
         listPln.append([U*i+2*U, 1+U*i+U, 1+U*i,  U*i+U])
-        listPln.extend([[1+U*i+j+U, 2+U*i+j+U, 2+U*i+j, 1+U*i+j] for j in range(U-1) ])
+        listPln.extend([[1+U*i+j+U, 2+U*i+j+U, 2+U*i+j, 1+U*i+j] for j in range(U-1)])
 
     for i in range(U-1):
         listPln.append([1+i, 2+i, 0])
@@ -52,9 +56,15 @@ class SphereNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Sphere'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    rad_ = bpy.props.FloatProperty(name = 'Radius', description='Radius', default=1.0, options={'ANIMATABLE'}, update=updateNode)
-    U_ = bpy.props.IntProperty(name = 'U', description='U', default=24, min=3, options={'ANIMATABLE'}, update=updateNode)
-    V_ = bpy.props.IntProperty(name = 'V', description='V', default=24, min=3, options={'ANIMATABLE'}, update=updateNode)
+    rad_ = FloatProperty(name='Radius', description='Radius',
+                         default=1.0,
+                         options={'ANIMATABLE'}, update=updateNode)
+    U_ = IntProperty(name='U', description='U',
+                     default=24, min=3,
+                     options={'ANIMATABLE'}, update=updateNode)
+    V_ = IntProperty(name='V', description='V',
+                     default=24, min=3,
+                     options={'ANIMATABLE'}, update=updateNode)
 
     def init(self, context):
         self.inputs.new('StringsSocket', "Radius").prop_name = 'rad_'
@@ -73,38 +83,35 @@ class SphereNode(bpy.types.Node, SverchCustomTreeNode):
 
     def update(self):
         # inputs
-        if not 'Polygons' in self.outputs:
+        if 'Polygons' not in self.outputs:
             return
 
         Radius = self.inputs['Radius'].sv_get()[0]
-        U = [max(int(u),3) for u in self.inputs['U'].sv_get()[0]]
-        V = [max(int(v),3) for v in self.inputs['V'].sv_get()[0]]
+        U = [max(int(u), 3) for u in self.inputs['U'].sv_get()[0]]
+        V = [max(int(v), 3) for v in self.inputs['V'].sv_get()[0]]
 
-        params = match_long_repeat([U,V,Radius])
+        params = match_long_repeat([U, V, Radius])
 
         # outputs
         if self.outputs['Vertices'].links:
-            verts = [sphere_verts(u,v,r) for u,v,r in zip(*params)]
-            SvSetSocketAnyType(self,'Vertices',verts)
+            verts = [sphere_verts(u, v, r) for u, v, r in zip(*params)]
+            SvSetSocketAnyType(self, 'Vertices', verts)
 
         if self.outputs['Edges'].links:
-            edges = [sphere_edges(u,v) for u,v,r in zip(*params)]
+            edges = [sphere_edges(u, v) for u, v, r in zip(*params)]
             SvSetSocketAnyType(self, 'Edges', edges)
 
         if self.outputs['Polygons'].links:
-            faces = [sphere_faces(u,v) for u,v,r in zip(*params)]
+            faces = [sphere_faces(u, v) for u, v, r in zip(*params)]
             SvSetSocketAnyType(self, 'Polygons', faces)
-
-
 
     def update_socket(self, context):
         self.update()
 
+
 def register():
     bpy.utils.register_class(SphereNode)
 
+
 def unregister():
     bpy.utils.unregister_class(SphereNode)
-
-if __name__ == "__main__":
-    register()

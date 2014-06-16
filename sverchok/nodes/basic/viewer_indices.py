@@ -1,13 +1,32 @@
+# ##### BEGIN GPL LICENSE BLOCK #####
+#
+#  This program is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU General Public License
+#  as published by the Free Software Foundation; either version 2
+#  of the License, or (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software Foundation,
+#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+# ##### END GPL LICENSE BLOCK #####
+
 import bpy
 from bpy.props import BoolProperty, FloatVectorProperty, StringProperty
+
 from node_tree import SverchCustomTreeNode, MatrixSocket, VerticesSocket
 from data_structure import dataCorrect, node_id, updateNode, SvGetSocketAnyType
 from utils import index_viewer_draw as IV
 
 
 # status colors
-FAIL_COLOR = (0.1,0.05,0)
-READY_COLOR = (1,0.3,0)
+FAIL_COLOR = (0.1, 0.05, 0)
+READY_COLOR = (1, 0.3, 0)
 
 
 class IndexViewerNode(bpy.types.Node, SverchCustomTreeNode):
@@ -17,8 +36,7 @@ class IndexViewerNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     # node id
-    n_id =  StringProperty(default='',options={'SKIP_SAVE'})
-
+    n_id = StringProperty(default='', options={'SKIP_SAVE'})
 
     activate = BoolProperty(
         name='Show', description='Activate node?',
@@ -32,48 +50,51 @@ class IndexViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
     display_vert_index = BoolProperty(
         name="Vertices", description="Display vertex indices",
-        default=True , update=updateNode)
+        default=True,
+        update=updateNode)
     display_edge_index = BoolProperty(
-        name="Edges", description="Display edge indices", update=updateNode)
+        name="Edges", description="Display edge indices",
+        update=updateNode)
     display_face_index = BoolProperty(
-        name="Faces", description="Display face indices", update=updateNode)
+        name="Faces", description="Display face indices",
+        update=updateNode)
 
     # color props
     bg_edges_col = FloatVectorProperty(
         name="bg_edges", description='',
         size=4, min=0.0, max=1.0,
-        default=(.2, .2, .2, 1.0), subtype='COLOR'
-        ,update=updateNode)
+        default=(.2, .2, .2, 1.0), subtype='COLOR',
+        update=updateNode)
 
     bg_faces_col = FloatVectorProperty(
         name="bg_faces", description='',
         size=4, min=0.0, max=1.0,
-        default=(.2, .2, .2, 1.0), subtype='COLOR'
-        ,update=updateNode)
+        default=(.2, .2, .2, 1.0), subtype='COLOR',
+        update=updateNode)
 
     bg_verts_col = FloatVectorProperty(
         name="bg_verts", description='',
         size=4, min=0.0, max=1.0,
-        default=(.2, .2, .2, 1.0), subtype='COLOR'
-        ,update=updateNode)
+        default=(.2, .2, .2, 1.0), subtype='COLOR',
+        update=updateNode)
 
     numid_edges_col = FloatVectorProperty(
         name="numid_edges", description='',
         size=4, min=0.0, max=1.0,
-        default=(1.0, 1.0, 0.1, 1.0), subtype='COLOR'
-        ,update=updateNode)
+        default=(1.0, 1.0, 0.1, 1.0), subtype='COLOR',
+        update=updateNode)
 
     numid_faces_col = FloatVectorProperty(
         name="numid_faces", description='',
         size=4, min=0.0, max=1.0,
-        default=(1.0, .8, .8, 1.0), subtype='COLOR'
-        ,update=updateNode)
+        default=(1.0, .8, .8, 1.0), subtype='COLOR',
+        update=updateNode)
 
     numid_verts_col = FloatVectorProperty(
         name="numid_verts", description='',
         size=4, min=0.0, max=1.0,
-        default=(1, 1, 1, 1.0), subtype='COLOR'
-        ,update=updateNode)
+        default=(1, 1, 1, 1.0), subtype='COLOR',
+        update=updateNode)
 
     def init(self, context):
         self.inputs.new('VerticesSocket', 'vertices', 'vertices')
@@ -82,8 +103,8 @@ class IndexViewerNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('MatrixSocket', 'matrix', 'matrix')
 
     # reset n_id on copy
-    def copy(self,node):
-        self.n_id=''
+    def copy(self, node):
+        self.n_id = ''
 
     def draw_buttons(self, context, layout):
         row = layout.row(align=True)
@@ -171,7 +192,6 @@ class IndexViewerNode(bpy.types.Node, SverchCustomTreeNode):
             IV.callback_disable(n_id)
             return
 
-
         # alias in case it is present
         iv_links = inputs['vertices'].links
 
@@ -209,13 +229,12 @@ class IndexViewerNode(bpy.types.Node, SverchCustomTreeNode):
             settings = self.get_settings()
             IV.callback_enable(
                 n_id, draw_verts, draw_edges, draw_faces, draw_matrix, bg, settings.copy())
-            self.use_custom_color=True
+            self.use_custom_color = True
             self.color = READY_COLOR
         else:
             IV.callback_disable(n_id)
-            self.use_custom_color=True
+            self.use_custom_color = True
             self.color = FAIL_COLOR
-
 
     def update_socket(self, context):
         self.update()

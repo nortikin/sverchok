@@ -1,5 +1,24 @@
+# ##### BEGIN GPL LICENSE BLOCK #####
+#
+#  This program is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU General Public License
+#  as published by the Free Software Foundation; either version 2
+#  of the License, or (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software Foundation,
+#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+# ##### END GPL LICENSE BLOCK #####
+
 import bpy
-from bpy.props import StringProperty, BoolProperty
+from bpy.props import BoolProperty, StringProperty
+
 from node_tree import SverchCustomTreeNode
 from data_structure import (handle_read, handle_write, handle_delete,
                             SvSetSocketAnyType, updateNode)
@@ -11,13 +30,16 @@ class SvObjSelected(bpy.types.Operator):
     bl_label = "Sverchok object selector"
     bl_options = {'REGISTER', 'UNDO'}
 
-    node_name = StringProperty(name='name node', default='', description='it is name of node')
-    tree_name = StringProperty(name='name tree', default='', description='it is name of tree')
-    grup_name = StringProperty(name='grup tree', default='', description='it is name of grup')
+    node_name = StringProperty(name='name node', description='it is name of node',
+                               default='')
+    tree_name = StringProperty(name='name tree', description='it is name of tree',
+                               default='')
+    grup_name = StringProperty(name='grup tree', description='it is name of grup',
+                               default='')
 
     def enable(self, name_no, name_tr, handle):
         objects = []
-        if self.grup_name and len(bpy.data.groups[self.grup_name].objects)>0:
+        if self.grup_name and len(bpy.data.groups[self.grup_name].objects) > 0:
             objs = bpy.data.groups[self.grup_name].objects
         else:
             objs = bpy.context.selected_objects
@@ -29,7 +51,6 @@ class SvObjSelected(bpy.types.Operator):
             handle = handle_read(name_no+name_tr)
             #print ('exec',name)
             bpy.data.node_groups[name_tr].nodes[name_no].objects_local = str(handle[1])
-
 
     def disable(self, name, handle):
         if not handle[0]:
@@ -74,7 +95,6 @@ class ObjectsNode(bpy.types.Node, SverchCustomTreeNode):
         default=False,
         update=updateNode)
 
-
     def init(self, context):
         self.outputs.new('VerticesSocket', "Vertices", "Vertices")
         self.outputs.new('StringsSocket', "Edges", "Edges")
@@ -113,11 +133,11 @@ class ObjectsNode(bpy.types.Node, SverchCustomTreeNode):
         if self.objects_local:
             # bpy.ops.node.sverchok_object_insertion(node_name=self.name, tree_name=self.id_data.name, grup_name=self.groupname)
             # not updating. need to understand mechanic of update
-            self.use_custom_color=True
-            self.color = (0,0.5,0.2)
+            self.use_custom_color = True
+            self.color = (0, 0.5, 0.2)
         else:
-            self.use_custom_color=True
-            self.color = (0,0.1,0.05)
+            self.use_custom_color = True
+            self.color = (0, 0.1, 0.05)
         if self.objects_local and not handle[0]:
             handle_write(name, eval(self.objects_local))
         elif handle[0]:
@@ -127,13 +147,13 @@ class ObjectsNode(bpy.types.Node, SverchCustomTreeNode):
             vers_out_grouped = []
             pols_out = []
             mtrx_out = []
-            for obj_ in objs: # names of objects
+            for obj_ in objs:  # names of objects
                 edgs = []
                 vers = []
                 vers_grouped = []
                 pols = []
                 mtrx = []
-                obj = bpy.data.objects[obj_] # objects itself
+                obj = bpy.data.objects[obj_]  # objects itself
                 if obj.type == 'EMPTY':
                     for m in obj.matrix_world:
                         mtrx.append(m[:])
@@ -152,7 +172,7 @@ class ObjectsNode(bpy.types.Node, SverchCustomTreeNode):
                             vers_grouped.append(k)
                         vers.append(list(v.co))
                     for edg in obj_data.edges:
-                        edgs.append([edg.vertices[0],edg.vertices[1]])
+                        edgs.append([edg.vertices[0], edg.vertices[1]])
                     for p in obj_data.polygons:
                         pols.append(list(p.vertices))
                     #print (vers, edgs, pols, mtrx)
@@ -164,32 +184,29 @@ class ObjectsNode(bpy.types.Node, SverchCustomTreeNode):
             if vers_out[0]:
 
                 if 'Vertices' in self.outputs and self.outputs['Vertices'].links:
-                    SvSetSocketAnyType(self, 'Vertices',vers_out)
+                    SvSetSocketAnyType(self, 'Vertices', vers_out)
 
                 if 'Edges' in self.outputs and self.outputs['Edges'].links:
-                    SvSetSocketAnyType(self, 'Edges',edgs_out)
+                    SvSetSocketAnyType(self, 'Edges', edgs_out)
 
                 if 'Polygons' in self.outputs and self.outputs['Polygons'].links:
-                    SvSetSocketAnyType(self, 'Polygons',pols_out)
+                    SvSetSocketAnyType(self, 'Polygons', pols_out)
 
                 if 'Vers_grouped' in self.outputs and self.outputs['Vers_grouped'].links:
-                    SvSetSocketAnyType(self, 'Vers_grouped',vers_out_grouped)
+                    SvSetSocketAnyType(self, 'Vers_grouped', vers_out_grouped)
 
             if 'Matrixes' in self.outputs and self.outputs['Matrixes'].links:
-                SvSetSocketAnyType(self, 'Matrixes',mtrx_out)
+                SvSetSocketAnyType(self, 'Matrixes', mtrx_out)
 
     def update_socket(self, context):
         self.update()
-
 
 
 def register():
     bpy.utils.register_class(SvObjSelected)
     bpy.utils.register_class(ObjectsNode)
 
+
 def unregister():
     bpy.utils.unregister_class(ObjectsNode)
     bpy.utils.unregister_class(SvObjSelected)
-
-if __name__ == "__main__":
-    register()

@@ -21,6 +21,7 @@ import os
 
 import bpy
 from bpy.props import StringProperty, EnumProperty, BoolProperty
+
 from node_tree import SverchCustomTreeNode
 from data_structure import (dataCorrect, updateNode,
                             SvSetSocketAnyType, SvGetSocketAnyType)

@@ -1,41 +1,63 @@
+# ##### BEGIN GPL LICENSE BLOCK #####
+#
+#  This program is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU General Public License
+#  as published by the Free Software Foundation; either version 2
+#  of the License, or (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software Foundation,
+#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+# ##### END GPL LICENSE BLOCK #####
+
 import bpy
 from bpy.props import IntProperty, EnumProperty, FloatProperty, StringProperty
+
 from node_tree import SverchCustomTreeNode
 from data_structure import updateNode, match_long_repeat
 
 
-def frange( start, stop, step):
+def frange(start, stop, step):
     '''Behaves like range but for floats'''
     if start == stop:
-        stop+=1
-    step = max(1e-5,abs(step))
+        stop += 1
+    step = max(1e-5, abs(step))
     if start < stop:
-        while start<stop:
+        while start < stop:
             yield start
             start += step
     else:
-        step=-abs(step)
+        step = -abs(step)
         while start > stop:
             yield start
             start += step
 
+
 def frange_count(start, stop, count):
     ''' Gives count total values in [start,stop] '''
-    count = max(int(count),2)
-    step = (stop - start) / (count - 1 )
+    count = max(int(count), 2)
+    step = (stop - start) / (count - 1)
     yield start
     for i in range(count - 2):
         start += step
         yield start
     yield stop
 
-def frange_step(start,step,count):
+
+def frange_step(start, step, count):
     ''' Gives count values with step from start'''
-    if abs(step)<1e-5:
-        step=1
+    if abs(step) < 1e-5:
+        step = 1
     for i in range(int(count)):
         yield start
         start += step
+
 
 class SvGenFloatRange(bpy.types.Node, SverchCustomTreeNode):
     ''' Generator range list of floats'''
@@ -44,18 +66,22 @@ class SvGenFloatRange(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     start_ = FloatProperty(
-        name='start', description='start', default=0,
+        name='start', description='start',
+        default=0,
         options={'ANIMATABLE'}, update=updateNode)
 
     stop_ = FloatProperty(
-        name='stop', description='stop', default=10,
+        name='stop', description='stop',
+        default=10,
         options={'ANIMATABLE'}, update=updateNode)
     count_ = IntProperty(
-        name='count', description='num items', default=10,
+        name='count', description='num items',
+        default=10,
         options={'ANIMATABLE'}, min=1, update=updateNode)
 
     step_ = FloatProperty(
-        name='step', description='step', default=1.0,
+        name='step', description='step',
+        default=1.0,
         options={'ANIMATABLE'}, update=updateNode)
 
     current_mode = StringProperty(default="FRANGE")
@@ -79,7 +105,7 @@ class SvGenFloatRange(bpy.types.Node, SverchCustomTreeNode):
         elif mode == 'FRANGE_COUNT':
             self.inputs[1].prop_name = 'stop_'
             self.inputs[2].prop_name = 'count_'
-        else: #
+        else:
             self.inputs[1].prop_name = 'step_'
             self.inputs[2].prop_name = 'count_'
 
@@ -98,20 +124,20 @@ class SvGenFloatRange(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         layout.prop(self, "mode", expand=True)
 
-    func_dict ={'FRANGE': frange,
-                'FRANGE_COUNT': frange_count,
-                'FRANGE_STEP':frange_step }
+    func_dict = {'FRANGE': frange,
+                 'FRANGE_COUNT': frange_count,
+                 'FRANGE_STEP': frange_step}
 
     def update(self):
         inputs = self.inputs
         outputs = self.outputs
 
         # outputs, end early.
-        if not 'Range' in outputs or not outputs['Range'].links:
+        if 'Range' not in outputs or not outputs['Range'].links:
             return
 
-        param=[inputs[i].sv_get()[0] for i in range(3)]
-        f=self.func_dict[self.mode]
+        param = [inputs[i].sv_get()[0] for i in range(3)]
+        f = self.func_dict[self.mode]
         out = [list(f(*args)) for args in zip(*match_long_repeat(param))]
         self.outputs['Range'].sv_set(out)
 

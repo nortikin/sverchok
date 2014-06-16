@@ -1,3 +1,21 @@
+# ##### BEGIN GPL LICENSE BLOCK #####
+#
+#  This program is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU General Public License
+#  as published by the Free Software Foundation; either version 2
+#  of the License, or (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software Foundation,
+#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+# ##### END GPL LICENSE BLOCK #####
+
 import webbrowser
 import os
 import urllib
@@ -7,7 +25,7 @@ import traceback
 
 import bpy
 from data_structure import makeTreeUpdate2, speedUpdate
-from .. node_tree import SverchCustomTreeNode
+from node_tree import SverchCustomTreeNode
 
 
 def sv_get_local_path():
@@ -34,6 +52,7 @@ class SverchokUpdateAll(bpy.types.Operator):
         speedUpdate()
         return {'FINISHED'}
 
+
 class SverchokPurgeCache(bpy.types.Operator):
     """Sverchok purge cache"""
     bl_idname = "node.sverchok_purge_cache"
@@ -43,6 +62,7 @@ class SverchokPurgeCache(bpy.types.Operator):
     def execute(self, context):
         print(bpy.context.space_data.node_tree.name)
         return {'FINISHED'}
+
 
 class SverchokHome(bpy.types.Operator):
     """Sverchok Home"""
@@ -58,6 +78,7 @@ class SverchokHome(bpy.types.Operator):
             except:
                 self.report({'WARNING'}, "Error in opening the page %s." % (page))
         return {'FINISHED'}
+
 
 class SverchokCheckForUpgrades(bpy.types.Operator):
     """ Check if there new version on github """
@@ -91,6 +112,7 @@ class SverchokCheckForUpgrades(bpy.types.Operator):
             report({'INFO'}, "You already have latest version of Sverchok, no need to upgrade.")
         return {'FINISHED'}
 
+
 class SverchokUpdateAddon(bpy.types.Operator):
     """ Sverchok update addon without any browsing and so on. After - press F8 to reload addons """
     bl_idname = "node.sverchok_update_addon"
@@ -103,7 +125,7 @@ class SverchokUpdateAddon(bpy.types.Operator):
         os.chdir(os.curdir)
         try:
             url = 'https://github.com/nortikin/sverchok/archive/master.zip'
-            file = urllib.request.urlretrieve(url,os.path.normpath(os.path.join(os.curdir,'master.zip')))
+            file = urllib.request.urlretrieve(url, os.path.normpath(os.path.join(os.curdir, 'master.zip')))
         except:
             self.report({'ERROR'}, "Cannot get archive from Internet")
             return {'CANCELLED'}
@@ -118,16 +140,17 @@ class SverchokUpdateAddon(bpy.types.Operator):
 
         return {'FINISHED'}
 
+
 class SverchokToolsMenu(bpy.types.Panel):
     bl_idname = "Sverchok_tools_menu"
     bl_label = "Sverchok "+sv_version_local
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
     bl_category = 'Sverchok'
-    use_pin=True
+    use_pin = True
 
     @classmethod
-    def poll(cls,context):
+    def poll(cls, context):
         try:
             return context.space_data.node_tree.bl_idname == 'SverchCustomTreeType'
         except:
@@ -138,49 +161,49 @@ class SverchokToolsMenu(bpy.types.Panel):
         #layout.scale_y=1.1
         layout.active = True
         col = layout.column()
-        col.scale_y=3.0
+        col.scale_y = 3.0
 
         col.operator(SverchokUpdateAll.bl_idname, text="UPDATE")
 
-        box=layout.box()
+        box = layout.box()
         #box.label(text="Layout manager")
         little_width = 0.12
-        col=box.column(align=True)
-        row=col.row(align=True)
+        col = box.column(align=True)
+        row = col.row(align=True)
         row.label(text='Layout')
-        col1=row.column(align=True)
-        col1.scale_x=little_width
-        col1.label(icon='RESTRICT_VIEW_OFF',text=' ')
+        col1 = row.column(align=True)
+        col1.scale_x = little_width
+        col1.label(icon='RESTRICT_VIEW_OFF', text=' ')
         #row.label(text='Bake')
-        col2=row.column(align=True)
-        col2.scale_x=little_width
-        col2.label(icon='ANIM',text=' ')
+        col2 = row.column(align=True)
+        col2.scale_x = little_width
+        col2.label(icon='ANIM', text=' ')
         col2.icon
 
         ng = bpy.data.node_groups
 
-        for name,tree in ng.items():
+        for name, tree in ng.items():
             if tree.bl_idname == 'SverchCustomTreeType':
 
-                row=col.row(align=True)
+                row = col.row(align=True)
 
-                if name==context.space_data.node_tree.name:
-                    row.label(text=name,icon='LINK')
+                if name == context.space_data.node_tree.name:
+                    row.label(text=name, icon='LINK')
                 else:
                     row.label(text=name)
 
                 split = row.column(align=True)
                 split.scale_x = little_width
                 if tree.sv_show:
-                    split.prop(tree, 'sv_show',icon='UNLOCKED',text=' ')
+                    split.prop(tree, 'sv_show', icon='UNLOCKED', text=' ')
                 else:
-                    split.prop(tree, 'sv_show',icon='LOCKED',text=' ')
+                    split.prop(tree, 'sv_show', icon='LOCKED', text=' ')
                 split = row.column(align=True)
                 split.scale_x = little_width
                 if tree.sv_animate:
-                    split.prop(tree, 'sv_animate',icon='UNLOCKED',text=' ')
+                    split.prop(tree, 'sv_animate', icon='UNLOCKED', text=' ')
                 else:
-                    split.prop(tree, 'sv_animate',icon='LOCKED',text=' ')
+                    split.prop(tree, 'sv_animate', icon='LOCKED', text=' ')
 
         if sv_new_version:
             layout.column().operator(SverchokUpdateAddon.bl_idname, text='Upgrade Sverchok addon')
@@ -201,9 +224,6 @@ class SverchokToolsMenu(bpy.types.Panel):
         #row.operator('wm.url_open', text='Bugtr').url = 'https://docs.google.com/forms/d/1L2BIpDhjMgQEbVAc7pEq93432Qanu8UPbINhzJ5SryI/viewform'
 
 
-
-
-
 class ToolsNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Tools for different purposes '''
     bl_idname = 'ToolsNode'
@@ -219,7 +239,7 @@ class ToolsNode(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons(self, context, layout):
         col = layout.column()
-        col.scale_y=15
+        col.scale_y = 15
         col.template_color_picker
         col.operator(SverchokUpdateAll.bl_idname, text="UPDATE")
         #box = layout.box()
@@ -240,11 +260,11 @@ class ToolsNode(bpy.types.Node, SverchCustomTreeNode):
 
     def update(self):
         self.use_custom_color = True
-        self.color = (1.0,0.0,0.0)
-
+        self.color = (1.0, 0.0, 0.0)
 
     def update_socket(self, context):
         pass
+
 
 def register():
     bpy.utils.register_class(SverchokUpdateAll)
@@ -255,6 +275,7 @@ def register():
     bpy.utils.register_class(SverchokToolsMenu)
     bpy.utils.register_class(ToolsNode)
 
+
 def unregister():
     bpy.utils.unregister_class(ToolsNode)
     bpy.utils.unregister_class(SverchokToolsMenu)
@@ -263,6 +284,3 @@ def unregister():
     bpy.utils.unregister_class(SverchokUpdateAddon)
     bpy.utils.unregister_class(SverchokCheckForUpgrades)
     bpy.utils.unregister_class(SverchokUpdateAll)
-
-if __name__ == "__main__":
-    register()

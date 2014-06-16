@@ -1,9 +1,28 @@
+# ##### BEGIN GPL LICENSE BLOCK #####
+#
+#  This program is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU General Public License
+#  as published by the Free Software Foundation; either version 2
+#  of the License, or (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software Foundation,
+#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+# ##### END GPL LICENSE BLOCK #####
+
 import ast
 import os
 
 import bpy
-from bpy.props import IntVectorProperty, StringProperty, IntProperty
+from bpy.props import IntProperty, IntVectorProperty, StringProperty
 from mathutils import Vector
+
 from node_tree import SverchCustomTreeNode
 from data_structure import updateNode
 
@@ -126,11 +145,14 @@ class GTextNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'GText'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    text = StringProperty(name='text', default='your text here')
-    locator = IntVectorProperty(
-        name="locator", description="stores location", default=(0, 0), size=2)
+    text = StringProperty(name='text',
+                          default='your text here')
+    locator = IntVectorProperty(name="locator", description="stores location",
+                                default=(0, 0), size=2)
 
-    text_scale = IntProperty(name="font size", default=25, update=updateNode)
+    text_scale = IntProperty(name="font size",
+                             default=25,
+                             update=updateNode)
 
     def draw_buttons(self, context, layout):
         row = layout.row(align=True)

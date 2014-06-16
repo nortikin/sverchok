@@ -1,8 +1,27 @@
+# ##### BEGIN GPL LICENSE BLOCK #####
+#
+#  This program is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU General Public License
+#  as published by the Free Software Foundation; either version 2
+#  of the License, or (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software Foundation,
+#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+# ##### END GPL LICENSE BLOCK #####
+
 import bpy
+from bpy.props import BoolProperty, IntProperty, StringProperty
+
 from node_tree import SverchCustomTreeNode
-from data_structure import (levelsOflist,
-                            multi_socket, changable_sockets, get_socket_type_full,
-                            SvSetSocket, SvGetSocketAnyType)
+from data_structure import (levelsOflist, multi_socket, changable_sockets,
+                            get_socket_type_full, SvSetSocket, SvGetSocketAnyType)
 
 
 class ListDecomposeNode(bpy.types.Node, SverchCustomTreeNode):
@@ -16,14 +35,17 @@ class ListDecomposeNode(bpy.types.Node, SverchCustomTreeNode):
     multi_socket_type = 'StringsSocket'
 
     # two veriables for adaptive socket
-    typ = bpy.props.StringProperty(name='typ', default='')
-    newsock = bpy.props.BoolProperty(name='newsock', default=False)
+    typ = StringProperty(name='typ',
+                         default='')
+    newsock = BoolProperty(name='newsock',
+                           default=False)
 
-    level = bpy.props.IntProperty(name='level', default=1,min=0)
+    level = IntProperty(name='level',
+                        default=1, min=0)
 
     def draw_buttons(self, context, layout):
         col = layout.column(align=True)
-        col.prop(self,'level')
+        col.prop(self, 'level')
 
     def init(self, context):
         # initial socket, is defines type of output
@@ -41,7 +63,7 @@ class ListDecomposeNode(bpy.types.Node, SverchCustomTreeNode):
             result = self.beat(data, leve, leve)
 
             # multisocket - from util(formula node)
-            multi_socket(self, min=1, start=2,breck=True, output=len(result))
+            multi_socket(self, min=1, start=2, breck=True, output=len(result))
 
             # adaptive socket - from util(mask list node)
             # list to pack and change type of multysockets in output... maybe not so quick
@@ -55,29 +77,27 @@ class ListDecomposeNode(bpy.types.Node, SverchCustomTreeNode):
             # and will make separate definition to easyly assign and
             # get and recognise data from dictionary
             for i, out in enumerate(result):
-                SvSetSocket(self.outputs[i],out)
+                SvSetSocket(self.outputs[i], out)
 
     def beat(self, data, level, left):
-        out=[]
+        out = []
         if left:
             for objects in data:
-                out.extend(self.beat(objects,level,left-1))
+                out.extend(self.beat(objects, level, left-1))
         elif level:
             if type(data) not in (int, float):
                 for objects in data:
-                    out.append([self.beat(objects,level-1,0)])
+                    out.append([self.beat(objects, level-1, 0)])
             else:
                 return data
         else:
             out.extend([data])
         return out
 
+
 def register():
     bpy.utils.register_class(ListDecomposeNode)
 
+
 def unregister():
     bpy.utils.unregister_class(ListDecomposeNode)
-
-
-if __name__ == "__main__":
-    register()

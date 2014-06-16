@@ -1,3 +1,21 @@
+# ##### BEGIN GPL LICENSE BLOCK #####
+#
+#  This program is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU General Public License
+#  as published by the Free Software Foundation; either version 2
+#  of the License, or (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software Foundation,
+#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+# ##### END GPL LICENSE BLOCK #####
+
 from math import degrees
 
 import bpy
@@ -20,25 +38,21 @@ class MatrixOutNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('StringsSocket', "Angle", "Angle")
         self.inputs.new('MatrixSocket', "Matrix", "Matrix")
 
-
     def update(self):
         if 'Matrix' in self.inputs and self.inputs['Matrix'].links:
-            matrixes_ = SvGetSocketAnyType(self,self.inputs['Matrix'])
+            matrixes_ = SvGetSocketAnyType(self, self.inputs['Matrix'])
             matrixes = Matrix_generate(matrixes_)
 
             if 'Location' in self.outputs and self.outputs['Location'].links:
                 locs = Matrix_location(matrixes, list=True)
                 SvSetSocketAnyType(self, 'Location', locs)
 
-
             if 'Scale' in self.outputs and self.outputs['Scale'].links:
-
                 locs = Matrix_scale(matrixes, list=True)
-                SvSetSocketAnyType(self,'Scale', locs)
+                SvSetSocketAnyType(self, 'Scale', locs)
 
-
-            if ('Rotation' in self.outputs and self.outputs['Rotation'].links ) \
-                or ('Angle' in self.outputs and self.outputs['Angle'].links):
+            if ('Rotation' in self.outputs and self.outputs['Rotation'].links) \
+               or ('Angle' in self.outputs and self.outputs['Angle'].links):
 
                 locs = Matrix_rotation(matrixes, list=True)
                 rots = []
@@ -47,8 +61,8 @@ class MatrixOutNode(bpy.types.Node, SverchCustomTreeNode):
                     rots.append([pair[0] for pair in lists])
                     for pair in lists:
                         angles.append(degrees(pair[1]))
-                SvSetSocketAnyType(self, 'Rotation',rots)
-                SvSetSocketAnyType(self, 'Angle',[angles])
+                SvSetSocketAnyType(self, 'Rotation', rots)
+                SvSetSocketAnyType(self, 'Angle', [angles])
         else:
             matrixes = [[]]
 
@@ -56,13 +70,9 @@ class MatrixOutNode(bpy.types.Node, SverchCustomTreeNode):
         self.update()
 
 
-
-
 def register():
     bpy.utils.register_class(MatrixOutNode)
 
+
 def unregister():
     bpy.utils.unregister_class(MatrixOutNode)
-
-if __name__ == "__main__":
-    register()

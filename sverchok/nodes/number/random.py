@@ -1,6 +1,26 @@
+# ##### BEGIN GPL LICENSE BLOCK #####
+#
+#  This program is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU General Public License
+#  as published by the Free Software Foundation; either version 2
+#  of the License, or (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software Foundation,
+#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+# ##### END GPL LICENSE BLOCK #####
+
 import random
 
 import bpy
+from bpy.props import IntProperty, FloatProperty
+
 from node_tree import SverchCustomTreeNode
 from data_structure import updateNode, match_long_repeat, SvSetSocketAnyType
 
@@ -11,8 +31,12 @@ class RandomNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Random'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    count_inner = bpy.props.IntProperty(name = 'Count', default=1, min=1, options={'ANIMATABLE'}, update=updateNode)
-    seed = bpy.props.FloatProperty(name = 'Seed', default=0, options={'ANIMATABLE'}, update=updateNode)
+    count_inner = IntProperty(name='Count',
+                              default=1, min=1,
+                              options={'ANIMATABLE'}, update=updateNode)
+    seed = FloatProperty(name='Seed',
+                         default=0,
+                         options={'ANIMATABLE'}, update=updateNode)
 
     def init(self, context):
         self.inputs.new('StringsSocket', "Count").prop_name = 'count_inner'
@@ -26,7 +50,7 @@ class RandomNode(bpy.types.Node, SverchCustomTreeNode):
         #layout.prop(self, "seed", text="Seed")
 
     def update(self):
-        if not 'Random' in self.outputs:
+        if 'Random' not in self.outputs:
             return
         # inputs
         if 'Count' in self.inputs:
@@ -44,13 +68,12 @@ class RandomNode(bpy.types.Node, SverchCustomTreeNode):
                 for c in Coun:
                     Random.append([random.random() for i in range(int(c))])
             else:
-                param = match_long_repeat([Seed,Count])
-                for s,c in zip(*param):
+                param = match_long_repeat([Seed, Coun])
+                for s, c in zip(*param):
                     random.seed(s)
                     Random.append([random.random() for i in range(int(c))])
 
-            SvSetSocketAnyType(self, 'Random',Random)
-
+            SvSetSocketAnyType(self, 'Random', Random)
 
     def update_socket(self, context):
         self.update()
@@ -59,8 +82,6 @@ class RandomNode(bpy.types.Node, SverchCustomTreeNode):
 def register():
     bpy.utils.register_class(RandomNode)
 
+
 def unregister():
     bpy.utils.unregister_class(RandomNode)
-
-if __name__ == "__main__":
-    register()

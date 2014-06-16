@@ -1,7 +1,28 @@
+# ##### BEGIN GPL LICENSE BLOCK #####
+#
+#  This program is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU General Public License
+#  as published by the Free Software Foundation; either version 2
+#  of the License, or (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software Foundation,
+#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+# ##### END GPL LICENSE BLOCK #####
+
 import bpy
+from bpy.props import BoolProperty
+from mathutils import Vector
+
 from node_tree import SverchCustomTreeNode
-from data_structure import (SvSetSocketAnyType, SvGetSocketAnyType,
-                            Matrix_generate, Matrix_location,
+from data_structure import (Matrix_generate, Matrix_location,
+                            SvGetSocketAnyType, SvSetSocketAnyType,
                             Vector_generate)
 
 
@@ -11,7 +32,8 @@ class DistancePPNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Distances'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    Cross_dist = bpy.props.BoolProperty(name='Cross_dist', description='DANGEROUSE! If crossover dimension calculation, be sure', default=False)
+    Cross_dist = BoolProperty(name='Cross_dist', description='DANGEROUS! If crossover dimension calculation, be sure',
+                              default=False)
 
     def init(self, context):
         self.inputs.new('VerticesSocket', 'vertices1', 'vertices1')
@@ -24,20 +46,20 @@ class DistancePPNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "Cross_dist", text="CrossOver")
 
     def update(self):
-        for name in ['vertices1', 'vertices2','matrix1','matrix2']:
-            if not name in self.inputs:
+        for name in ['vertices1', 'vertices2', 'matrix1', 'matrix2']:
+            if name not in self.inputs:
                 return
 
         if self.inputs['vertices1'].links and self.inputs['vertices2'].links:
-            prop1_ = SvGetSocketAnyType(self,self.inputs['vertices1'])
+            prop1_ = SvGetSocketAnyType(self, self.inputs['vertices1'])
             prop1 = Vector_generate(prop1_)
-            prop2_ = SvGetSocketAnyType(self,self.inputs['vertices2'])
+            prop2_ = SvGetSocketAnyType(self, self.inputs['vertices2'])
             prop2 = Vector_generate(prop2_)
 
         elif self.inputs['matrix1'].links and self.inputs['matrix2'].links:
-            propa = SvGetSocketAnyType(self,self.inputs['matrix1'])
+            propa = SvGetSocketAnyType(self, self.inputs['matrix1'])
             prop1 = Matrix_location(Matrix_generate(propa))
-            propb = SvGetSocketAnyType(self,self.inputs['matrix2'])
+            propb = SvGetSocketAnyType(self, self.inputs['matrix2'])
             prop2 = Matrix_location(Matrix_generate(propb))
         else:
             prop1, prop2 = [], []
@@ -49,20 +71,20 @@ class DistancePPNode(bpy.types.Node, SverchCustomTreeNode):
                     output = self.calcM(prop1, prop2)
                 else:
                     output = self.calcV(prop1, prop2)
-                SvSetSocketAnyType(self,'distances',output)
+                SvSetSocketAnyType(self, 'distances', output)
 
                 #print ('distances out' , str(output))
         else:
-            SvSetSocketAnyType(self,'distances', [])
+            SvSetSocketAnyType(self, 'distances', [])
 
     def calcV(self, list1, list2):
         dists = []
-        lenlis = min(len(list1),len(list2)) -1
+        lenlis = min(len(list1), len(list2)) - 1
         for i, object1 in enumerate(list1):
             if i > lenlis:
                 continue
             values = []
-            lenlen = min(len(object1),len(list2[i])) -1
+            lenlen = min(len(object1), len(list2[i])) - 1
             for k, vert1 in enumerate(object1):
                 if k > lenlen:
                     continue
@@ -86,7 +108,7 @@ class DistancePPNode(bpy.types.Node, SverchCustomTreeNode):
                 for obln in long:
                     oblndis = []
                     for verl in obln:
-                        oblndis.append(self.distance(vers,verl))
+                        oblndis.append(self.distance(vers, verl))
                     obshdis.append(oblndis)
             dists.append(obshdis)
         #print(dists)
@@ -99,11 +121,10 @@ class DistancePPNode(bpy.types.Node, SverchCustomTreeNode):
     def update_socket(self, context):
         self.update()
 
+
 def register():
     bpy.utils.register_class(DistancePPNode)
 
+
 def unregister():
     bpy.utils.unregister_class(DistancePPNode)
-
-if __name__ == "__main__":
-    register()

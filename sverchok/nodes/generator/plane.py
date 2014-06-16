@@ -1,6 +1,26 @@
+# ##### BEGIN GPL LICENSE BLOCK #####
+#
+#  This program is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU General Public License
+#  as published by the Free Software Foundation; either version 2
+#  of the License, or (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software Foundation,
+#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+# ##### END GPL LICENSE BLOCK #####
+
 import bpy
+from bpy.props import BoolProperty, IntProperty, FloatProperty
+
 from node_tree import SverchCustomTreeNode
-from data_structure import (updateNode, fullList,
+from data_structure import (updateNode, fullList, sv_zip,
                             SvSetSocketAnyType, SvGetSocketAnyType)
 
 
@@ -10,11 +30,21 @@ class PlaneNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Plane'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    int_X = bpy.props.IntProperty(name = 'N Vert X', description='Nº Vertices X', default=2, min=2, options={'ANIMATABLE'}, update=updateNode)
-    int_Y = bpy.props.IntProperty(name = 'N Vert Y', description='Nº Vertices Y', default=2, min=2, options={'ANIMATABLE'}, update=updateNode)
-    step_X = bpy.props.FloatProperty(name = 'Step X', description='Step length X', default=1.0, options={'ANIMATABLE'}, update=updateNode)
-    step_Y = bpy.props.FloatProperty(name = 'Step Y', description='Step length Y', default=1.0, options={'ANIMATABLE'}, update=updateNode)
-    Separate = bpy.props.BoolProperty(name = 'Separate', description='Separate UV coords', default=False, update=updateNode)
+    int_X = IntProperty(name='N Vert X', description='Nº Vertices X',
+                        default=2, min=2,
+                        options={'ANIMATABLE'}, update=updateNode)
+    int_Y = IntProperty(name='N Vert Y', description='Nº Vertices Y',
+                        default=2, min=2,
+                        options={'ANIMATABLE'}, update=updateNode)
+    step_X = FloatProperty(name='Step X', description='Step length X',
+                           default=1.0, options={'ANIMATABLE'},
+                           update=updateNode)
+    step_Y = FloatProperty(name='Step Y', description='Step length Y',
+                           default=1.0,
+                           options={'ANIMATABLE'}, update=updateNode)
+    Separate = BoolProperty(name='Separate', description='Separate UV coords',
+                            default=False,
+                            update=updateNode)
 
     def init(self, context):
         self.inputs.new('StringsSocket', "Nº Vertices X").prop_name = 'int_X'
@@ -31,17 +61,17 @@ class PlaneNode(bpy.types.Node, SverchCustomTreeNode):
     def update(self):
         # inputs
         if 'Nº Vertices X' in self.inputs and self.inputs['Nº Vertices X'].links:
-            IntegerX = int(SvGetSocketAnyType(self,self.inputs['Nº Vertices X'])[0][0])
+            IntegerX = int(SvGetSocketAnyType(self, self.inputs['Nº Vertices X'])[0][0])
         else:
             IntegerX = self.int_X
 
         if 'Nº Vertices Y' in self.inputs and self.inputs['Nº Vertices Y'].links:
-            IntegerY = int(SvGetSocketAnyType(self,self.inputs['Nº Vertices Y'])[0][0])
+            IntegerY = int(SvGetSocketAnyType(self, self.inputs['Nº Vertices Y'])[0][0])
         else:
             IntegerY = self.int_Y
 
         if 'Step X' in self.inputs and self.inputs['Step X'].links:
-            StepX = SvGetSocketAnyType(self,self.inputs['Step X'])[0]
+            StepX = SvGetSocketAnyType(self, self.inputs['Step X'])[0]
 
             listVertX = []
             fullList(StepX, IntegerX)
@@ -59,7 +89,7 @@ class PlaneNode(bpy.types.Node, SverchCustomTreeNode):
             listVertX = [StepX*i for i in listVertX]
 
         if 'Step Y' in self.inputs and self.inputs['Step Y'].links:
-            StepY = SvGetSocketAnyType(self,self.inputs['Step Y'])[0]
+            StepY = SvGetSocketAnyType(self, self.inputs['Step Y'])[0]
 
             listVertY = []
             fullList(StepY, IntegerY)
@@ -85,21 +115,21 @@ class PlaneNode(bpy.types.Node, SverchCustomTreeNode):
 
             max_num = max(len(X), len(Y), len(Z))
 
-            fullList(X,max_num)
-            fullList(Y,max_num)
-            fullList(Z,max_num)
+            fullList(X, max_num)
+            fullList(Y, max_num)
+            fullList(Z, max_num)
 
-            points = list(sv_zip(X,Y,Z))
+            points = list(sv_zip(X, Y, Z))
             if self.Separate:
-                out=[]
+                out = []
                 for y in range(IntegerY):
-                    out_=[]
+                    out_ = []
                     for x in range(IntegerX):
                         out_.append(points[IntegerX*y+x])
                     out.append(out_)
-                SvSetSocketAnyType(self, 'Vertices',[out])
+                SvSetSocketAnyType(self, 'Vertices', [out])
             else:
-                SvSetSocketAnyType(self, 'Vertices',[points])
+                SvSetSocketAnyType(self, 'Vertices', [points])
 
         if 'Edges' in self.outputs and self.outputs['Edges'].links:
             listEdg = []
@@ -111,7 +141,7 @@ class PlaneNode(bpy.types.Node, SverchCustomTreeNode):
                     listEdg.append((IntegerX*j+i, IntegerX*j+i+IntegerX))
 
             edg = list(listEdg)
-            SvSetSocketAnyType(self, 'Edges',[edg])
+            SvSetSocketAnyType(self, 'Edges', [edg])
 
         if 'Polygons' in self.outputs and self.outputs['Polygons'].links:
             listPlg = []
@@ -119,7 +149,7 @@ class PlaneNode(bpy.types.Node, SverchCustomTreeNode):
                 for j in range(IntegerY-1):
                     listPlg.append((IntegerX*j+i, IntegerX*j+i+1, IntegerX*j+i+IntegerX+1, IntegerX*j+i+IntegerX))
             plg = list(listPlg)
-            SvSetSocketAnyType(self, 'Polygons',[plg])
+            SvSetSocketAnyType(self, 'Polygons', [plg])
 
     def update_socket(self, context):
         self.update()
@@ -128,8 +158,6 @@ class PlaneNode(bpy.types.Node, SverchCustomTreeNode):
 def register():
     bpy.utils.register_class(PlaneNode)
 
+
 def unregister():
     bpy.utils.unregister_class(PlaneNode)
-
-if __name__ == "__main__":
-    register()

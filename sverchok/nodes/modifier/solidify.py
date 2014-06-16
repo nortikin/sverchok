@@ -1,5 +1,25 @@
-import bmesh
+# ##### BEGIN GPL LICENSE BLOCK #####
+#
+#  This program is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU General Public License
+#  as published by the Free Software Foundation; either version 2
+#  of the License, or (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software Foundation,
+#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+# ##### END GPL LICENSE BLOCK #####
+
 import bpy
+from bpy.props import FloatProperty
+import bmesh
+
 from node_tree import SverchCustomTreeNode
 from data_structure import (updateNode, Vector_generate,
                             SvSetSocketAnyType, SvGetSocketAnyType)
@@ -8,23 +28,24 @@ from data_structure import (updateNode, Vector_generate,
 # but using python bmesh code for driving
 # by Linus Yng
 
+
 def soldify(vertices, faces, t):
 
     if not faces or not vertices:
         return False
 
-    if len(faces[0])==2:
+    if len(faces[0]) == 2:
         return False
 
-    bm=bmesh.new()
-    bm_verts =[bm.verts.new(v) for v in vertices]
+    bm = bmesh.new()
+    bm_verts = [bm.verts.new(v) for v in vertices]
     for face in faces:
         bm.faces.new([bm_verts[i] for i in face])
 
     geom_in = bm.verts[:]+bm.edges[:]+bm.faces[:]
 
     bmesh.ops.recalc_face_normals(bm, faces=bm.faces[:])
-    res=bmesh.ops.solidify(bm, geom=geom_in, thickness=t)
+    res = bmesh.ops.solidify(bm, geom=geom_in, thickness=t)
 
     edges = []
     faces = []
@@ -38,7 +59,7 @@ def soldify(vertices, faces, t):
         faces.append([v.index for v in face.verts[:]])
     bm.clear()
     bm.free()
-    return (verts,edges,faces)
+    return (verts, edges, faces)
 
 
 class SvSolidifyNode(bpy.types.Node, SverchCustomTreeNode):
@@ -47,7 +68,9 @@ class SvSolidifyNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Solidify'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    thickness = bpy.props.FloatProperty(name='thickness', description='Shell thickness', default=0.1, update=updateNode)
+    thickness = FloatProperty(name='thickness', description='Shell thickness',
+                              default=0.1,
+                              update=updateNode)
 
     def init(self, context):
         self.inputs.new('VerticesSocket', 'vertices', 'vertices')
@@ -58,25 +81,24 @@ class SvSolidifyNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('StringsSocket', 'polygons', 'polygons')
 
     def draw_buttons(self, context, layout):
-        layout.prop(self,'thickness',text="Thickness")
+        layout.prop(self, 'thickness', text="Thickness")
 
     def update(self):
         if not self.outputs['vertices'].links:
             return
 
         if 'vertices' in self.inputs and self.inputs['vertices'].links and \
-            'polygons' in self.inputs and self.inputs['polygons'].links:
+           'polygons' in self.inputs and self.inputs['polygons'].links:
 
-
-            verts = Vector_generate(SvGetSocketAnyType(self,self.inputs['vertices']))
-            polys = SvGetSocketAnyType(self,self.inputs['polygons'])
+            verts = Vector_generate(SvGetSocketAnyType(self, self.inputs['vertices']))
+            polys = SvGetSocketAnyType(self, self.inputs['polygons'])
             #print (verts,polys)
 
             verts_out = []
             edges_out = []
             polys_out = []
 
-            for obj in zip(verts,polys):
+            for obj in zip(verts, polys):
                 res = soldify(obj[0], obj[1], self.thickness)
                 if not res:
                     return
@@ -85,24 +107,21 @@ class SvSolidifyNode(bpy.types.Node, SverchCustomTreeNode):
                 polys_out.append(res[2])
 
             if 'vertices' in self.outputs and self.outputs['vertices'].links:
-                SvSetSocketAnyType(self, 'vertices',verts_out)
+                SvSetSocketAnyType(self, 'vertices', verts_out)
 
             if 'edges' in self.outputs and self.outputs['edges'].links:
-                SvSetSocketAnyType(self, 'edges',edges_out)
+                SvSetSocketAnyType(self, 'edges', edges_out)
 
             if 'polygons' in self.outputs and self.outputs['polygons'].links:
                 SvSetSocketAnyType(self, 'polygons', polys_out)
 
-
-
     def update_socket(self, context):
         self.update()
+
 
 def register():
     bpy.utils.register_class(SvSolidifyNode)
 
+
 def unregister():
     bpy.utils.unregister_class(SvSolidifyNode)
-
-if __name__ == "__main__":
-    register()

@@ -1,5 +1,24 @@
+# ##### BEGIN GPL LICENSE BLOCK #####
+#
+#  This program is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU General Public License
+#  as published by the Free Software Foundation; either version 2
+#  of the License, or (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software Foundation,
+#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+# ##### END GPL LICENSE BLOCK #####
+
 import bpy
-from bpy.props import IntProperty
+from bpy.props import BoolProperty, IntProperty, StringProperty
+
 from node_tree import SverchCustomTreeNode
 from data_structure import (changable_sockets,
                             SvSetSocketAnyType, SvGetSocketAnyType)
@@ -11,10 +30,13 @@ class SvMaskJoinNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Mask Join'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    level = IntProperty(min=1, name="Level", default=1)
+    level = IntProperty(name="Level",
+                        default=1, min=1)
 
-    typ = bpy.props.StringProperty(name='typ', default='')
-    newsock = bpy.props.BoolProperty(name='newsock', default=False)
+    typ = StringProperty(name='typ',
+                         default='')
+    newsock = BoolProperty(name='newsock',
+                           default=False)
 
     def init(self, context):
         self.inputs.new('StringsSocket', 'Mask')
@@ -24,10 +46,10 @@ class SvMaskJoinNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('StringsSocket', 'Data')
 
     def draw_buttons(self, context, layout):
-        layout.prop(self,'level')
+        layout.prop(self, 'level')
 
     def update(self):
-        if not 'Data' in self.outputs:
+        if 'Data' not in self.outputs:
             return
         if not self.outputs['Data'].links:
             return
@@ -36,16 +58,16 @@ class SvMaskJoinNode(bpy.types.Node, SverchCustomTreeNode):
         changable_sockets(self, inputsocketname, outputsocketname)
 
         if all((s.links for s in self.inputs)):
-            mask = SvGetSocketAnyType(self,self.inputs['Mask'])
-            data_t = SvGetSocketAnyType(self,self.inputs['Data True'])
-            data_f = SvGetSocketAnyType(self,self.inputs['Data False'])
+            mask = SvGetSocketAnyType(self, self.inputs['Mask'])
+            data_t = SvGetSocketAnyType(self, self.inputs['Data True'])
+            data_f = SvGetSocketAnyType(self, self.inputs['Data False'])
 
-            data_out = self.get_level(mask,data_t,data_f,self.level-1)
+            data_out = self.get_level(mask, data_t, data_f, self.level-1)
 
-            SvSetSocketAnyType(self, 'Data',data_out)
+            SvSetSocketAnyType(self, 'Data', data_out)
 
-    def apply_mask(self,mask,data_t,data_f):
-        ind_t,ind_f=0,0
+    def apply_mask(self, mask, data_t, data_f):
+        ind_t, ind_f = 0, 0
         out = []
         for m in mask:
             if m:
@@ -60,33 +82,32 @@ class SvMaskJoinNode(bpy.types.Node, SverchCustomTreeNode):
                 ind_f += 1
         return out
 
-    def get_level(self,mask,data_t,data_f,level):
-        if level==1:
+    def get_level(self, mask, data_t, data_f, level):
+        if level == 1:
             out = []
-            param=(mask,data_t,data_f)
-            if not all((isinstance(p,(list,tuple)) for p in param)):
+            param = (mask, data_t, data_f)
+            if not all((isinstance(p, (list, tuple)) for p in param)):
                 print("Fail")
                 return
-            max_index = min(map(len,param))
+            max_index = min(map(len, param))
             for i in range(max_index):
-                out.append(self.apply_mask(mask[i],data_t[i],data_f[i]))
+                out.append(self.apply_mask(mask[i], data_t[i], data_f[i]))
             return out
         elif level > 2:
             out = []
-            for t,f in zip(data_t,data_f):
-                out.append(self.get_level(mask,t,f, level - 1))
+            for t, f in zip(data_t, data_f):
+                out.append(self.get_level(mask, t, f, level - 1))
             return out
         else:
-            return self.apply_mask(mask[0],data_t,data_f)
+            return self.apply_mask(mask[0], data_t, data_f)
 
     def update_socket(self, context):
         self.update()
 
+
 def register():
     bpy.utils.register_class(SvMaskJoinNode)
 
+
 def unregister():
     bpy.utils.unregister_class(SvMaskJoinNode)
-
-if __name__ == "__main__":
-    register()

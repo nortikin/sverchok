@@ -1,28 +1,47 @@
-import bmesh
+# ##### BEGIN GPL LICENSE BLOCK #####
+#
+#  This program is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU General Public License
+#  as published by the Free Software Foundation; either version 2
+#  of the License, or (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software Foundation,
+#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+# ##### END GPL LICENSE BLOCK #####
+
 import bpy
+from bpy.props import FloatProperty, BoolProperty
+import bmesh
+
 from node_tree import SverchCustomTreeNode
 from data_structure import (updateNode, Vector_generate,
                             SvSetSocketAnyType, SvGetSocketAnyType)
 
 
-def wireframe(vertices, faces, t,o,replace,boundary ,even_offset,relative_offset):
+def wireframe(vertices, faces, t, o, replace, boundary, even_offset, relative_offset):
 
     if not faces or not vertices:
         return False
 
-    if len(faces[0])==2:
+    if len(faces[0]) == 2:
         return False
 
-    bm=bmesh.new()
-    bm_verts =[ bm.verts.new(v) for v in vertices]
+    bm = bmesh.new()
+    bm_verts = [bm.verts.new(v) for v in vertices]
     for face in faces:
         bm.faces.new([bm_verts[i] for i in face])
 
-
     bmesh.ops.recalc_face_normals(bm, faces=bm.faces[:])
-    res=bmesh.ops.wireframe(bm, faces=bm.faces[:], thickness=t,offset=o,use_replace=replace, \
-                            use_boundary=boundary,use_even_offset=even_offset, \
-                            use_relative_offset=relative_offset)
+    res = bmesh.ops.wireframe(bm, faces=bm.faces[:], thickness=t, offset=o, use_replace=replace,
+                              use_boundary=boundary, use_even_offset=even_offset,
+                              use_relative_offset=relative_offset)
     #bmesh.ops.wireframe(bm, faces, thickness, offset, use_replace,
     #    use_boundary, use_even_offset, use_crease, crease_weight, thickness, use_relative_offset, material_offset)
     edges = []
@@ -37,7 +56,7 @@ def wireframe(vertices, faces, t,o,replace,boundary ,even_offset,relative_offset
         faces.append([v.index for v in face.verts[:]])
     bm.clear()
     bm.free()
-    return (verts,edges,faces)
+    return (verts, edges, faces)
 
 
 class SvWireframeNode(bpy.types.Node, SverchCustomTreeNode):
@@ -46,13 +65,24 @@ class SvWireframeNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Wireframe'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    thickness = bpy.props.FloatProperty(name='thickness', description='thickness', min=0.0,default=0.01, update=updateNode)
-    offset = bpy.props.FloatProperty(name='offset', description='offset',min=0.0, default=0.01, update=updateNode)
-
-    replace = bpy.props.BoolProperty(name='replace', description='replace', default=True, update=updateNode)
-    even_offset = bpy.props.BoolProperty(name='even_offset', description='even_offset', default=True, update=updateNode)
-    relative_offset = bpy.props.BoolProperty(name='relative_offset',description='even_offset', default=False, update=updateNode)
-    boundary = bpy.props.BoolProperty(name='boundary', description='boundry', default=True, update=updateNode)
+    thickness = FloatProperty(name='thickness', description='thickness',
+                              default=0.01, min=0.0,
+                              update=updateNode)
+    offset = FloatProperty(name='offset', description='offset',
+                           default=0.01, min=0.0,
+                           update=updateNode)
+    replace = BoolProperty(name='replace', description='replace',
+                           default=True,
+                           update=updateNode)
+    even_offset = BoolProperty(name='even_offset', description='even_offset',
+                               default=True,
+                               update=updateNode)
+    relative_offset = BoolProperty(name='relative_offset', description='even_offset',
+                                   default=False,
+                                   update=updateNode)
+    boundary = BoolProperty(name='boundary', description='boundry',
+                            default=True,
+                            update=updateNode)
 
     def init(self, context):
         self.inputs.new('VerticesSocket', 'vertices', 'vertices')
@@ -63,34 +93,33 @@ class SvWireframeNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('StringsSocket', 'polygons', 'polygons')
 
     def draw_buttons(self, context, layout):
-        layout.prop(self,'thickness',text="Thickness")
-        layout.prop(self,'offset',text="Offset")
-        layout.prop(self,'boundary',text="Boundary")
-        layout.prop(self,'even_offset',text="Offset even")
-        layout.prop(self,'relative_offset',text="Offset relative")
-        layout.prop(self,'replace',text="Replace")
+        layout.prop(self, 'thickness', text="Thickness")
+        layout.prop(self, 'offset', text="Offset")
+        layout.prop(self, 'boundary', text="Boundary")
+        layout.prop(self, 'even_offset', text="Offset even")
+        layout.prop(self, 'relative_offset', text="Offset relative")
+        layout.prop(self, 'replace', text="Replace")
 
     def update(self):
-        if not ('vertices' in self.outputs and self.outputs['vertices'].links or \
-            'edges' in self.outputs and self.outputs['edges'].links or\
-            'polygons' in self.outputs and self.outputs['polygons'].links):
+        if not ('vertices' in self.outputs and self.outputs['vertices'].links or
+                'edges' in self.outputs and self.outputs['edges'].links or
+                'polygons' in self.outputs and self.outputs['polygons'].links):
             return
 
         if 'vertices' in self.inputs and self.inputs['vertices'].links and \
-            'polygons' in self.inputs and self.inputs['polygons'].links:
+           'polygons' in self.inputs and self.inputs['polygons'].links:
 
-
-            verts = Vector_generate(SvGetSocketAnyType(self,self.inputs['vertices']))
-            polys = SvGetSocketAnyType(self,self.inputs['polygons'])
-
+            verts = Vector_generate(SvGetSocketAnyType(self, self.inputs['vertices']))
+            polys = SvGetSocketAnyType(self, self.inputs['polygons'])
 
             verts_out = []
             edges_out = []
             polys_out = []
 
-            for obj in zip(verts,polys):
-                res = wireframe(obj[0], obj[1], self.thickness,self.offset,
-                                self.replace,self.boundary ,self.even_offset,self.relative_offset)
+            for obj in zip(verts, polys):
+                res = wireframe(obj[0], obj[1], self.thickness, self.offset,
+                                self.replace, self.boundary,
+                                self.even_offset, self.relative_offset)
                 if not res:
                     return
                 verts_out.append(res[0])
@@ -98,24 +127,21 @@ class SvWireframeNode(bpy.types.Node, SverchCustomTreeNode):
                 polys_out.append(res[2])
 
             if 'vertices' in self.outputs and self.outputs['vertices'].links:
-                SvSetSocketAnyType(self, 'vertices',verts_out)
+                SvSetSocketAnyType(self, 'vertices', verts_out)
 
             if 'edges' in self.outputs and self.outputs['edges'].links:
-                SvSetSocketAnyType(self, 'edges',edges_out)
+                SvSetSocketAnyType(self, 'edges', edges_out)
 
             if 'polygons' in self.outputs and self.outputs['polygons'].links:
                 SvSetSocketAnyType(self, 'polygons', polys_out)
 
-
-
     def update_socket(self, context):
         self.update()
+
 
 def register():
     bpy.utils.register_class(SvWireframeNode)
 
+
 def unregister():
     bpy.utils.unregister_class(SvWireframeNode)
-
-if __name__ == "__main__":
-    register()

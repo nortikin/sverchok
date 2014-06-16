@@ -1,6 +1,26 @@
+# ##### BEGIN GPL LICENSE BLOCK #####
+#
+#  This program is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU General Public License
+#  as published by the Free Software Foundation; either version 2
+#  of the License, or (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software Foundation,
+#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+# ##### END GPL LICENSE BLOCK #####
+
 from math import sin, cos, radians
 
 import bpy
+from bpy.props import BoolProperty, IntProperty, FloatProperty
+
 from node_tree import SverchCustomTreeNode
 from data_structure import (match_long_repeat, sv_zip,
                             updateNode, SvSetSocketAnyType)
@@ -19,16 +39,17 @@ def cylinder_vertices(Subd, Vertices, Height, RadiusBot, RadiusTop, Separate):
             Y.append(radius*sin(radians(theta*j)))
             Z.append(heightSubd*i)
 
-    points = list(sv_zip(X,Y,Z))
+    points = list(sv_zip(X, Y, Z))
     if Separate:
-        out=[]
+        out = []
         for y in range(Vertices):
-            out_=[]
+            out_ = []
             for x in range(Subd+2):
                 out_.append(points[Subd+2*y+x])
             out.append(out_)
         points = out
     return points
+
 
 def cylinder_edges(Subd, Vertices):
     listEdg = []
@@ -42,7 +63,8 @@ def cylinder_edges(Subd, Vertices):
 
     return listEdg
 
-def cylinder_faces(Subd,Vertices,Cap):
+
+def cylinder_faces(Subd, Vertices, Cap):
     listPlg = []
     for i in range(Subd+1):
         for j in range(Vertices-1):
@@ -66,13 +88,27 @@ class CylinderNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Cylinder'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    radTop_ = bpy.props.FloatProperty(name = 'Radius Top', default=1.0, options={'ANIMATABLE'}, update=updateNode)
-    radBot_ = bpy.props.FloatProperty(name = 'Radius Bottom', default=1.0, options={'ANIMATABLE'}, update=updateNode)
-    vert_ = bpy.props.IntProperty(name = 'Vertices', default=32, min=3, options={'ANIMATABLE'}, update=updateNode)
-    height_ = bpy.props.FloatProperty(name = 'Height', default=2.0, options={'ANIMATABLE'}, update=updateNode)
-    subd_ = bpy.props.IntProperty(name = 'Subdivisions', default=0, min=0,options={'ANIMATABLE'}, update=updateNode)
-    cap_ = bpy.props.BoolProperty(name = 'Caps', default=True, options={'ANIMATABLE'}, update=updateNode)
-    Separate = bpy.props.BoolProperty(name = 'Separate', description='Separate UV coords', default=False, update=updateNode)
+    radTop_ = FloatProperty(name='Radius Top',
+                            default=1.0,
+                            options={'ANIMATABLE'}, update=updateNode)
+    radBot_ = FloatProperty(name='Radius Bottom',
+                            default=1.0,
+                            options={'ANIMATABLE'}, update=updateNode)
+    vert_ = IntProperty(name='Vertices',
+                        default=32, min=3,
+                        options={'ANIMATABLE'}, update=updateNode)
+    height_ = FloatProperty(name='Height',
+                            default=2.0,
+                            options={'ANIMATABLE'}, update=updateNode)
+    subd_ = IntProperty(name='Subdivisions',
+                        default=0, min=0,
+                        options={'ANIMATABLE'}, update=updateNode)
+    cap_ = BoolProperty(name='Caps',
+                        default=True,
+                        options={'ANIMATABLE'}, update=updateNode)
+    Separate = BoolProperty(name='Separate', description='Separate UV coords',
+                            default=False,
+                            update=updateNode)
 
     def init(self, context):
         self.inputs.new('StringsSocket', "RadTop").prop_name = 'radTop_'
@@ -91,7 +127,7 @@ class CylinderNode(bpy.types.Node, SverchCustomTreeNode):
         row.prop(self, "cap_", text="Caps")
 
     def update(self):
-        if not 'Polygons' in self.outputs:
+        if 'Polygons' not in self.outputs:
             return
         # inputs
 
@@ -99,26 +135,26 @@ class CylinderNode(bpy.types.Node, SverchCustomTreeNode):
 
         RadiusTop = inputs['RadTop'].sv_get()[0]
         RadiusBot = inputs['RadBot'].sv_get()[0]
-        Vertices = [max(int(v),3) for v in inputs['Vertices'].sv_get()[0]]
+        Vertices = [max(int(v), 3) for v in inputs['Vertices'].sv_get()[0]]
         Height = inputs['Height'].sv_get()[0]
-        Sub = [max(int(s),0) for s in inputs['Subdivisions'].sv_get()[0]]
+        Sub = [max(int(s), 0) for s in inputs['Subdivisions'].sv_get()[0]]
         params = match_long_repeat([Sub, Vertices, Height, RadiusBot, RadiusTop])
         # outputs
         if self.outputs['Vertices'].links:
 
-            points = [cylinder_vertices(s,v,h,rb,rt,self.Separate)
-                        for s,v,h,rb,rt in zip(*params)]
-            SvSetSocketAnyType(self, 'Vertices',points)
+            points = [cylinder_vertices(s, v, h, rb, rt, self.Separate)
+                      for s, v, h, rb, rt in zip(*params)]
+            SvSetSocketAnyType(self, 'Vertices', points)
 
         if self.outputs['Edges'].links:
-            edges = [cylinder_edges(s,v)
-                        for s,v,h,rb,rt in zip(*params)]
-            SvSetSocketAnyType(self, 'Edges',edges)
+            edges = [cylinder_edges(s, v)
+                     for s, v, h, rb, rt in zip(*params)]
+            SvSetSocketAnyType(self, 'Edges', edges)
 
         if self.outputs['Polygons'].links:
-            faces = [cylinder_faces(s,v,self.cap_)
-                        for s,v,h,rb,rt in zip(*params)]
-            SvSetSocketAnyType(self, 'Polygons',faces)
+            faces = [cylinder_faces(s, v, self.cap_)
+                     for s, v, h, rb, rt in zip(*params)]
+            SvSetSocketAnyType(self, 'Polygons', faces)
 
     def update_socket(self, context):
         self.update()
@@ -127,8 +163,6 @@ class CylinderNode(bpy.types.Node, SverchCustomTreeNode):
 def register():
     bpy.utils.register_class(CylinderNode)
 
+
 def unregister():
     bpy.utils.unregister_class(CylinderNode)
-
-if __name__ == "__main__":
-    register()

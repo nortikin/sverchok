@@ -17,6 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 # <pep8 compliant>
+
 import math
 
 import bpy
@@ -32,6 +33,7 @@ SpaceView3D = bpy.types.SpaceView3D
 # THIS part taken from  "Math Vis (Console)" addon, author Campbell Barton #
 # With some editing for Sverchok                                           #
 # ------------------------------------------------------------------------ #
+
 
 def tag_redraw_all_view3d():
     context = bpy.context
@@ -49,8 +51,10 @@ def callback_enable(name, sl1, sl2, sl3, vs, colo, tran, shade):
     global callback_dict
     if name in callback_dict:
         return
-    handle_view = SpaceView3D.draw_handler_add(draw_callback_view, (name, sl1, sl2, sl3, vs, colo, tran, shade), 'WINDOW', 'POST_VIEW')
-    callback_dict[name]=handle_view
+    handle_view = SpaceView3D.draw_handler_add(draw_callback_view,
+                                               (name, sl1, sl2, sl3, vs, colo, tran, shade),
+                                               'WINDOW', 'POST_VIEW')
+    callback_dict[name] = handle_view
     tag_redraw_all_view3d()
 
 
@@ -61,9 +65,10 @@ def callback_disable_all():
         if name:
             callback_disable(name)
 
+
 def callback_disable(name):
     global callback_dict
-    handle_view = callback_dict.get(name,None)
+    handle_view = callback_dict.get(name, None)
     if not handle_view:
         return
     SpaceView3D.draw_handler_remove(handle_view, 'WINDOW')
@@ -187,7 +192,7 @@ def draw_callback_view(handle, sl1, sl2, sl3, vs, colo, tran, shade):
         glLineStipple(1, 0xAAAA)
         glEnable(GL_LINE_STIPPLE)
 
-        for i in range(0,24,2):
+        for i in range(0, 24, 2):
             glBegin(GL_LINE_STRIP)
             glVertex3f(*bb[i])
             glVertex3f(*bb[i+1])
@@ -217,7 +222,7 @@ def draw_callback_view(handle, sl1, sl2, sl3, vs, colo, tran, shade):
     #######
     # lines
     if data_edges and data_vector:
-        glColor3f(coloa,colob,coloc)
+        glColor3f(coloa, colob, coloc)
         glLineWidth(1.0)
         glEnable(GL_LINES)
 
@@ -238,7 +243,7 @@ def draw_callback_view(handle, sl1, sl2, sl3, vs, colo, tran, shade):
 
     #######
     # polygons
-    vectorlight = Vector((-0.66,-0.66,-0.66))
+    vectorlight = Vector((-0.66, -0.66, -0.66))
     if data_polygons and data_vector:
         glLineWidth(1.0)
         glEnable(polyholy)
@@ -255,7 +260,7 @@ def draw_callback_view(handle, sl1, sl2, sl3, vs, colo, tran, shade):
                             data_vector[k][pol[1]],
                             data_vector[k][pol[2]]
                             )
-                    normal_no = (normal_no_.angle(vectorlight,0))/math.pi
+                    normal_no = (normal_no_.angle(vectorlight, 0))/math.pi
                     randa = (normal_no * coloa) - 0.1
                     randb = (normal_no * colob) - 0.1
                     randc = (normal_no * coloc) - 0.1
@@ -263,17 +268,17 @@ def draw_callback_view(handle, sl1, sl2, sl3, vs, colo, tran, shade):
                     randa = ((j/oblen) + coloa) / 2.5
                     randb = ((j/oblen) + colob) / 2.5
                     randc = ((j/oblen) + coloc) / 2.5
-                if len(pol)>4:
+                if len(pol) > 4:
                     glBegin(GL_TRIANGLES)
-                    glColor4f(randa+0.2, randb+0.2, randc+0.2,0.5)
+                    glColor4f(randa+0.2, randb+0.2, randc+0.2, 0.5)
                     #glColor3f(randa+0.2, randb+0.2, randc+0.2)
-                    v=[data_vector[k][i] for i in pol]
-                    tess_poly=mathutils.geometry.tessellate_polygon([v])
-                    for a,b,c in tess_poly:
+                    v = [data_vector[k][i] for i in pol]
+                    tess_poly = mathutils.geometry.tessellate_polygon([v])
+                    for a, b, c in tess_poly:
                         glVertex3f(*(data_matrix[i]*v[a]))
                         glVertex3f(*(data_matrix[i]*v[b]))
                         glVertex3f(*(data_matrix[i]*v[c]))
-                elif len(pol)==4:
+                elif len(pol) == 4:
                     glBegin(GL_POLYGON)
                     glColor3f(randa+0.2, randb+0.2, randc+0.2)
                     for point in pol:

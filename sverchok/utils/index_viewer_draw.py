@@ -103,17 +103,19 @@ def callback_enable(n_id, draw_verts, draw_edges, draw_faces, draw_matrix, draw_
         draw_callback_px, (
            n_id, draw_verts, draw_edges, draw_faces, draw_matrix, draw_bg, settings),
         'WINDOW', 'POST_PIXEL')
-    callback_dict[n_id]=handle_pixel
+    callback_dict[n_id] = handle_pixel
     tag_redraw_all_view3d()
+
 
 def callback_disable(n_id):
     global callback_dict
-    handle_pixel = callback_dict.get(n_id,None)
+    handle_pixel = callback_dict.get(n_id, None)
     if not handle_pixel:
         return
     SpaceView3D.draw_handler_remove(handle_pixel, 'WINDOW')
     del callback_dict[n_id]
     tag_redraw_all_view3d()
+
 
 def callback_disable_all():
     global callback_dict

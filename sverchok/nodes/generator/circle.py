@@ -1,6 +1,26 @@
+# ##### BEGIN GPL LICENSE BLOCK #####
+#
+#  This program is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU General Public License
+#  as published by the Free Software Foundation; either version 2
+#  of the License, or (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software Foundation,
+#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+# ##### END GPL LICENSE BLOCK #####
+
 from math import sin, cos, pi, degrees, radians
 
 import bpy
+from bpy.props import BoolProperty, IntProperty, FloatProperty
+
 from node_tree import SverchCustomTreeNode
 from data_structure import (fullList, match_long_repeat, updateNode,
                             SvSetSocketAnyType, SvGetSocketAnyType)
@@ -12,10 +32,18 @@ class CircleNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Circle'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    rad_ = bpy.props.FloatProperty(name = 'rad_', description='Radius', default=1.0, options={'ANIMATABLE'}, update=updateNode)
-    vert_ = bpy.props.IntProperty(name = 'vert_', description='Vertices', default=24, min=3, options={'ANIMATABLE'}, update=updateNode)
-    degr_ = bpy.props.FloatProperty(name = 'degr_', description='Degrees', default=360, min=0, max=360, options={'ANIMATABLE'}, update=updateNode)
-    mode_ = bpy.props.BoolProperty(name = 'mode_', description='Mode', default=0, options={'ANIMATABLE'}, update=updateNode)
+    rad_ = FloatProperty(name='rad_', description='Radius',
+                         default=1.0, options={'ANIMATABLE'},
+                         update=updateNode)
+    vert_ = IntProperty(name='vert_', description='Vertices',
+                        default=24, min=3, options={'ANIMATABLE'},
+                        update=updateNode)
+    degr_ = FloatProperty(name='degr_', description='Degrees',
+                          default=360, min=0, max=360,
+                          options={'ANIMATABLE'}, update=updateNode)
+    mode_ = BoolProperty(name='mode_', description='Mode',
+                         default=0, options={'ANIMATABLE'},
+                         update=updateNode)
 
     def init(self, context):
         self.inputs.new('StringsSocket', "Radius", "Radius")
@@ -31,7 +59,7 @@ class CircleNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "degr_", text="Degrees")
         layout.prop(self, "mode_", text="Mode")
 
-    def make_verts(self,Angle,Vertices,Radius):
+    def make_verts(self, Angle, Vertices, Radius):
         if Angle < 360:
             theta = Angle/(Vertices-1)
         else:
@@ -56,14 +84,14 @@ class CircleNode(bpy.types.Node, SverchCustomTreeNode):
 
         max_num = max(len(X), len(Y), len(Z))
 
-        fullList(X,max_num)
-        fullList(Y,max_num)
-        fullList(Z,max_num)
+        fullList(X, max_num)
+        fullList(Y, max_num)
+        fullList(Z, max_num)
 
-        points = list(zip(X,Y,Z))
+        points = list(zip(X, Y, Z))
         return points
 
-    def make_edges(self,Vertices,Angle):
+    def make_edges(self, Vertices, Angle):
         listEdg = [(i, i+1) for i in range(Vertices-1)]
 
         if Angle < 360 and self.mode_ == 1:
@@ -73,7 +101,7 @@ class CircleNode(bpy.types.Node, SverchCustomTreeNode):
             listEdg.append((0, Vertices-1))
         return listEdg
 
-    def make_faces(self,Angle,Vertices):
+    def make_faces(self, Angle, Vertices):
         listPlg = list(range(Vertices))
 
         if Angle < 360 and self.mode_ == 1:
@@ -83,35 +111,35 @@ class CircleNode(bpy.types.Node, SverchCustomTreeNode):
     def update(self):
         # inputs
         if 'Radius' in self.inputs and self.inputs['Radius'].links:
-            Radius = SvGetSocketAnyType(self,self.inputs['Radius'])[0]
+            Radius = SvGetSocketAnyType(self, self.inputs['Radius'])[0]
         else:
             Radius = [self.rad_]
 
         if 'Nº Vertices' in self.inputs and self.inputs['Nº Vertices'].links:
-            Vertices = SvGetSocketAnyType(self,self.inputs['Nº Vertices'])[0]
-            Vertices = list(map(lambda x:max(3,int(x)), Vertices))
+            Vertices = SvGetSocketAnyType(self, self.inputs['Nº Vertices'])[0]
+            Vertices = list(map(lambda x: max(3, int(x)), Vertices))
         else:
             Vertices = [self.vert_]
 
         if 'Degrees' in self.inputs and self.inputs['Degrees'].links:
-            Angle = SvGetSocketAnyType(self,self.inputs['Degrees'])[0]
-            Angle = list(map(lambda x:min(360,max(0,x)),Angle))
+            Angle = SvGetSocketAnyType(self, self.inputs['Degrees'])[0]
+            Angle = list(map(lambda x: min(360, max(0, x)), Angle))
         else:
             Angle = [self.degr_]
 
-        parameters = match_long_repeat([Angle,Vertices,Radius])
+        parameters = match_long_repeat([Angle, Vertices, Radius])
 
         if 'Vertices' in self.outputs and self.outputs['Vertices'].links:
-            points = [self.make_verts(a,v,r) for a,v,r in zip(*parameters)]
-            SvSetSocketAnyType(self, 'Vertices',points)
+            points = [self.make_verts(a, v, r) for a, v, r in zip(*parameters)]
+            SvSetSocketAnyType(self, 'Vertices', points)
 
         if 'Edges' in self.outputs and self.outputs['Edges'].links:
-            edg = [self.make_edges(v,a) for a,v,r in zip(*parameters)]
-            SvSetSocketAnyType(self, 'Edges',edg)
+            edg = [self.make_edges(v, a) for a, v, r in zip(*parameters)]
+            SvSetSocketAnyType(self, 'Edges', edg)
 
         if 'Polygons' in self.outputs and self.outputs['Polygons'].links:
-            plg = [self.make_faces(a,v) for a,v,r in zip(*parameters)]
-            SvSetSocketAnyType(self, 'Polygons',plg)
+            plg = [self.make_faces(a, v) for a, v, r in zip(*parameters)]
+            SvSetSocketAnyType(self, 'Polygons', plg)
 
     def update_socket(self, context):
         self.update()
@@ -123,15 +151,22 @@ class SvCircleNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Circle'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    rad_ = bpy.props.FloatProperty(name = 'Radius', description='Radius', default=1.0,  update=updateNode)
-    vert_ = bpy.props.IntProperty(name = 'N Vertices', description='Vertices', default=24, min=3,  update=updateNode)
-    degr_ = bpy.props.FloatProperty(name = 'Degrees', description='Degrees', default=360, min=0, max=pi*2,subtype='ANGLE', options={'ANIMATABLE'}, update=updateNode)
-    mode_ = bpy.props.BoolProperty(name = 'mode_', description='Mode', default=0,  update=updateNode)
+    rad_ = FloatProperty(name='Radius', description='Radius',
+                         default=1.0,
+                         update=updateNode)
+    vert_ = IntProperty(name='N Vertices', description='Vertices',
+                        default=24, min=3,
+                        update=updateNode)
+    degr_ = FloatProperty(name='Degrees', description='Degrees',
+                          default=360, min=0, max=pi*2, subtype='ANGLE',
+                          options={'ANIMATABLE'}, update=updateNode)
+    mode_ = BoolProperty(name='mode_', description='Mode',
+                         default=0,  update=updateNode)
 
     def init(self, context):
-        self.inputs.new('StringsSocket', "Radius").prop_name='rad_'
-        self.inputs.new('StringsSocket', "Nº Vertices").prop_name='vert_'
-        self.inputs.new('StringsSocket', "Degrees").prop_name='degr_'
+        self.inputs.new('StringsSocket', "Radius").prop_name = 'rad_'
+        self.inputs.new('StringsSocket', "Nº Vertices").prop_name = 'vert_'
+        self.inputs.new('StringsSocket', "Degrees").prop_name = 'degr_'
 
         self.outputs.new('VerticesSocket', "Vertices", "Vertices")
         self.outputs.new('StringsSocket', "Edges", "Edges")
@@ -140,7 +175,7 @@ class SvCircleNode(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         layout.prop(self, "mode_", text="Mode")
 
-    def make_verts(self,Angle,Vertices,Radius):
+    def make_verts(self, Angle, Vertices, Radius):
         if Angle < 360:
             theta = Angle/(Vertices-1)
         else:
@@ -165,14 +200,14 @@ class SvCircleNode(bpy.types.Node, SverchCustomTreeNode):
 
         max_num = max(len(X), len(Y), len(Z))
 
-        fullList(X,max_num)
-        fullList(Y,max_num)
-        fullList(Z,max_num)
+        fullList(X, max_num)
+        fullList(Y, max_num)
+        fullList(Z, max_num)
 
-        points = list(zip(X,Y,Z))
+        points = list(zip(X, Y, Z))
         return points
 
-    def make_edges(self,Vertices,Angle):
+    def make_edges(self, Vertices, Angle):
         listEdg = [(i, i+1) for i in range(Vertices-1)]
 
         if Angle < 360 and self.mode_ == 1:
@@ -182,7 +217,7 @@ class SvCircleNode(bpy.types.Node, SverchCustomTreeNode):
             listEdg.append((0, Vertices-1))
         return listEdg
 
-    def make_faces(self,Angle,Vertices):
+    def make_faces(self, Angle, Vertices):
         listPlg = list(range(Vertices))
 
         if Angle < 360 and self.mode_ == 1:
@@ -192,47 +227,46 @@ class SvCircleNode(bpy.types.Node, SverchCustomTreeNode):
     def update(self):
         # inputs
         if 'Radius' in self.inputs and self.inputs['Radius'].links:
-            Radius = SvGetSocketAnyType(self,self.inputs['Radius'])[0]
+            Radius = SvGetSocketAnyType(self, self.inputs['Radius'])[0]
         else:
             Radius = [self.rad_]
 
         if 'Nº Vertices' in self.inputs and self.inputs['Nº Vertices'].links:
-            Vertices = SvGetSocketAnyType(self,self.inputs['Nº Vertices'])[0]
-            Vertices = list(map(lambda x:max(3,int(x)), Vertices))
+            Vertices = SvGetSocketAnyType(self, self.inputs['Nº Vertices'])[0]
+            Vertices = list(map(lambda x: max(3, int(x)), Vertices))
         else:
             Vertices = [self.vert_]
 
         if 'Degrees' in self.inputs and self.inputs['Degrees'].links:
-            Angle = SvGetSocketAnyType(self,self.inputs['Degrees'])[0]
-            Angle = list(map(lambda x:min(360,max(0,x)),Angle))
+            Angle = SvGetSocketAnyType(self, self.inputs['Degrees'])[0]
+            Angle = list(map(lambda x: min(360, max(0, x)), Angle))
         else:
             # okay this is silly but since the rest was written before this gave degrees.
             Angle = [degrees(self.degr_)]
 
-        parameters = match_long_repeat([Angle,Vertices,Radius])
+        parameters = match_long_repeat([Angle, Vertices, Radius])
 
         if 'Vertices' in self.outputs and self.outputs['Vertices'].links:
-            points = [self.make_verts(a,v,r) for a,v,r in zip(*parameters)]
-            SvSetSocketAnyType(self, 'Vertices',points)
+            points = [self.make_verts(a, v, r) for a, v, r in zip(*parameters)]
+            SvSetSocketAnyType(self, 'Vertices', points)
 
         if 'Edges' in self.outputs and self.outputs['Edges'].links:
-            edg = [self.make_edges(v,a) for a,v,r in zip(*parameters)]
-            SvSetSocketAnyType(self, 'Edges',edg)
+            edg = [self.make_edges(v, a) for a, v, r in zip(*parameters)]
+            SvSetSocketAnyType(self, 'Edges', edg)
 
         if 'Polygons' in self.outputs and self.outputs['Polygons'].links:
-            plg = [self.make_faces(a,v) for a,v,r in zip(*parameters)]
-            SvSetSocketAnyType(self, 'Polygons',plg)
+            plg = [self.make_faces(a, v) for a, v, r in zip(*parameters)]
+            SvSetSocketAnyType(self, 'Polygons', plg)
 
     def update_socket(self, context):
         self.update()
+
 
 def register():
     bpy.utils.register_class(SvCircleNode)
     bpy.utils.register_class(CircleNode)
 
+
 def unregister():
     bpy.utils.unregister_class(SvCircleNode)
     bpy.utils.unregister_class(CircleNode)
-
-if __name__ == "__main__":
-    register()

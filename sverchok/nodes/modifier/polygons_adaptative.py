@@ -1,9 +1,30 @@
+# ##### BEGIN GPL LICENSE BLOCK #####
+#
+#  This program is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU General Public License
+#  as published by the Free Software Foundation; either version 2
+#  of the License, or (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software Foundation,
+#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+# ##### END GPL LICENSE BLOCK #####
+
 import bpy
+from bpy.props import FloatProperty
+
 from node_tree import SverchCustomTreeNode
 from data_structure import (updateNode, Vector_generate, Vector_degenerate,
                             SvSetSocketAnyType, SvGetSocketAnyType)
 
 # "coauthor": "Alessandro Zomparelli (sketchesofcode)"
+
 
 class AdaptivePolsNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Make spread one object on another adaptively polygons of mesh (not including matrixes, so apply scale-rot-loc ctrl+A) '''
@@ -11,7 +32,10 @@ class AdaptivePolsNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Adaptive Polygons'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    width_coef = bpy.props.FloatProperty(name='width_coef', description='with coefficient for sverchok adaptivepols donors size', default=1.0, max=3.0, min=0.5, update=updateNode)
+    width_coef = FloatProperty(name='width_coef',
+                               description='with coefficient for sverchok adaptivepols donors size',
+                               default=1.0, max=3.0, min=0.5,
+                               update=updateNode)
 
     def init(self, context):
         self.inputs.new('VerticesSocket', "VersR", "VersR")
@@ -45,19 +69,20 @@ class AdaptivePolsNode(bpy.types.Node, SverchCustomTreeNode):
     def update(self):
         # достаём два слота - вершины и полики
         if 'Vertices' in self.outputs and self.outputs['Vertices'].links:
-            if self.inputs['PolsR'].links and self.inputs['VersR'].links and self.inputs['VersD'].links and self.inputs['PolsD'].links:
+            if (self.inputs['PolsR'].links
+               and self.inputs['VersR'].links
+               and self.inputs['VersD'].links
+               and self.inputs['PolsD'].links):
 
                 if self.inputs['Z_Coef'].links:
-                    z_coef = SvGetSocketAnyType(self,self.inputs['Z_Coef'])[0]
+                    z_coef = SvGetSocketAnyType(self, self.inputs['Z_Coef'])[0]
                 else:
                     z_coef = []
 
-
-
-                polsR = SvGetSocketAnyType(self,self.inputs['PolsR'])[0] # recipient one object [0]
-                versR = SvGetSocketAnyType(self,self.inputs['VersR'])[0]  # recipient
-                polsD = SvGetSocketAnyType(self,self.inputs['PolsD']) # donor many objects [:]
-                versD_ = SvGetSocketAnyType(self,self.inputs['VersD']) # donor
+                polsR = SvGetSocketAnyType(self, self.inputs['PolsR'])[0]  # recipient one object [0]
+                versR = SvGetSocketAnyType(self, self.inputs['VersR'])[0]  # recipient
+                polsD = SvGetSocketAnyType(self, self.inputs['PolsD'])  # donor many objects [:]
+                versD_ = SvGetSocketAnyType(self, self.inputs['VersD'])  # donor
                 versD = Vector_generate(versD_)
                 ##### it is needed for normals of vertices
                 new_me = bpy.data.meshes.new('recepient')
@@ -65,7 +90,6 @@ class AdaptivePolsNode(bpy.types.Node, SverchCustomTreeNode):
                 new_me.update(calc_edges=True)
                 new_ve = new_me.vertices
                 #print (new_ve[0].normal, 'normal')
-
 
                 for i, vD in enumerate(versD):
 
@@ -106,31 +130,26 @@ class AdaptivePolsNode(bpy.types.Node, SverchCustomTreeNode):
                             new_pols.append([id for id in p])
                         pols_out.append(new_pols)
                         vers_out.append(new_vers)
-                    bpy.data.meshes.remove(new_me) # cleaning and washing
+                    bpy.data.meshes.remove(new_me)  # cleaning and washing
                     del(new_ve)
-
-
 
                 #print (Vector_degenerate(vers_out))
 
                 output = Vector_degenerate(vers_out)
                 #print (output)
                 if 'Vertices' in self.outputs and self.outputs['Vertices'].links:
-                    SvSetSocketAnyType(self,'Vertices',output)
+                    SvSetSocketAnyType(self, 'Vertices', output)
 
                 if 'Poligons' in self.outputs and self.outputs['Poligons'].links:
-                    SvSetSocketAnyType(self,'Poligons',pols_out)
-
-
+                    SvSetSocketAnyType(self, 'Poligons', pols_out)
 
     def update_socket(self, context):
         self.update()
 
+
 def register():
     bpy.utils.register_class(AdaptivePolsNode)
 
+
 def unregister():
     bpy.utils.unregister_class(AdaptivePolsNode)
-
-if __name__ == "__main__":
-    register()

@@ -1,7 +1,26 @@
+# ##### BEGIN GPL LICENSE BLOCK #####
+#
+#  This program is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU General Public License
+#  as published by the Free Software Foundation; either version 2
+#  of the License, or (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software Foundation,
+#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+# ##### END GPL LICENSE BLOCK #####
+
 import parser
-#from math import *
 
 import bpy
+from bpy.props import BoolProperty, StringProperty
+
 from node_tree import SverchCustomTreeNode
 from data_structure import (sv_Vars, updateNode, multi_socket, changable_sockets,
                             dataSpoil, dataCorrect, levelsOflist,
@@ -14,9 +33,13 @@ class Formula2Node(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Formula2'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    formula = bpy.props.StringProperty(name = 'formula', default='x+n[0]', update=updateNode)
-    typ = bpy.props.StringProperty(name='typ', default='')
-    newsock = bpy.props.BoolProperty(name='newsock', default=False)
+    formula = StringProperty(name='formula',
+                             default='x+n[0]',
+                             update=updateNode)
+    typ = StringProperty(name='typ',
+                         default='')
+    newsock = BoolProperty(name='newsock',
+                           default=False)
 
     base_name = 'n'
     multi_socket_type = 'StringsSocket'
@@ -33,7 +56,7 @@ class Formula2Node(bpy.types.Node, SverchCustomTreeNode):
         # inputs
         multi_socket(self, min=2, start=-1, breck=True)
 
-        if 'X' in self.inputs and len(self.inputs['X'].links)>0:
+        if 'X' in self.inputs and len(self.inputs['X'].links) > 0:
             # адаптивный сокет
             inputsocketname = 'X'
             outputsocketname = ['Result']
@@ -42,14 +65,13 @@ class Formula2Node(bpy.types.Node, SverchCustomTreeNode):
         else:
             vecs = [[0.0]]
 
-
         # outputs
-        if 'Result' in self.outputs and len(self.outputs['Result'].links)>0:
+        if 'Result' in self.outputs and len(self.outputs['Result'].links) > 0:
             list_mult = []
-            if 'n[0]' in self.inputs and len(self.inputs['n[0]'].links)>0:
+            if 'n[0]' in self.inputs and len(self.inputs['n[0]'].links) > 0:
                 i = 0
                 for socket in self.inputs:
-                    if socket.links and i!=0:
+                    if socket.links and i != 0:
                         list_mult.append(SvGetSocketAnyType(self, socket))
                     else:
                         i = 1
@@ -66,14 +88,15 @@ class Formula2Node(bpy.types.Node, SverchCustomTreeNode):
                 vecs_ = dataSpoil([vecs], diflevel-1)
                 vecs = dataCorrect(vecs_, nominal_dept=2)
             for i, lev in enumerate(levels):
-                if i==0: continue
+                if i == 0:
+                    continue
                 diflevel = maxlevel-lev
                 if diflevel:
                     list_temp = dataSpoil([list_mult[i-1]], diflevel-1)
                     list_mult[i-1] = dataCorrect(list_temp, nominal_dept=2)
             #print(list_mult)
             r = self.inte(vecs, code_formula, list_mult, 3)
-            result = dataCorrect(r, nominal_dept=min((levels[0]-1),2))
+            result = dataCorrect(r, nominal_dept=min((levels[0]-1), 2))
 
             SvSetSocketAnyType(self, 'Result', result)
 
@@ -97,7 +120,8 @@ class Formula2Node(bpy.types.Node, SverchCustomTreeNode):
         a = []
         list_vars = [w for w in sv_Vars.keys()]
         for v in list_vars:
-            if v[:6]=='sv_typ': continue
+            if v[:6] == 'sv_typ':
+                continue
             abra = sv_Vars[v]
             exec(str(v)+'=[]')
             for i, aa_abra in enumerate(abra):
@@ -139,11 +163,10 @@ class Formula2Node(bpy.types.Node, SverchCustomTreeNode):
         lst.extend([lst[-1] for i in range(equal)])
         #return lst
 
+
 def register():
     bpy.utils.register_class(Formula2Node)
 
+
 def unregister():
     bpy.utils.unregister_class(Formula2Node)
-
-if __name__ == "__main__":
-    register()

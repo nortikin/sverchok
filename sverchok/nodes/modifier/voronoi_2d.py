@@ -17,9 +17,11 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
+from bpy.props import FloatProperty
+
 from node_tree import SverchCustomTreeNode
 from data_structure import updateNode, SvSetSocketAnyType, SvGetSocketAnyType
-from utils.voronoi import Site,computeVoronoiDiagram,computeDelaunayTriangulation
+from utils.voronoi import Site, computeVoronoiDiagram, computeDelaunayTriangulation
 
 
 class Voronoi2DNode(bpy.types.Node, SverchCustomTreeNode):
@@ -28,7 +30,9 @@ class Voronoi2DNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Voronoi'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    clip = bpy.props.FloatProperty(name = 'clip', description='Clipping Distance', default=1.0, min=0, options={'ANIMATABLE'}, update=updateNode)
+    clip = FloatProperty(name='clip', description='Clipping Distance',
+                         default=1.0, min=0,
+                         options={'ANIMATABLE'}, update=updateNode)
 
     def init(self, context):
         self.inputs.new('VerticesSocket', "Vertices", "Vertices")
@@ -44,10 +48,10 @@ class Voronoi2DNode(bpy.types.Node, SverchCustomTreeNode):
     def update(self):
         # inputs
         if 'Edges' in self.outputs and self.outputs['Edges'].links or \
-            'Vertices' in self.outputs and self.outputs['Vertices'].links:
+           'Vertices' in self.outputs and self.outputs['Vertices'].links:
 
             if 'Vertices' in self.inputs and self.inputs['Vertices'].links:
-                points_in = SvGetSocketAnyType(self,self.inputs['Vertices'])
+                points_in = SvGetSocketAnyType(self, self.inputs['Vertices'])
 
             pts_out = []
     #        polys_out = []
@@ -58,14 +62,14 @@ class Voronoi2DNode(bpy.types.Node, SverchCustomTreeNode):
                 x_min = obj[0][0]
                 y_min = obj[0][1]
                 y_max = obj[0][1]
-                #creates points in format for voronoi library, throwing away z
+                # creates points in format for voronoi library, throwing away z
                 for pt in obj:
-                    x,y = pt[0],pt[1]
-                    x_max = max(x,x_max)
-                    x_min = min(x,x_min)
-                    y_max = max(y,y_max)
-                    y_min = min(x,x_min)
-                    pt_list.append(Site(pt[0],pt[1]))
+                    x, y = pt[0], pt[1]
+                    x_max = max(x, x_max)
+                    x_min = min(x, x_min)
+                    y_max = max(y, y_max)
+                    y_min = min(x, x_min)
+                    pt_list.append(Site(pt[0], pt[1]))
 
                 res = computeVoronoiDiagram(pt_list)
 
@@ -77,10 +81,10 @@ class Voronoi2DNode(bpy.types.Node, SverchCustomTreeNode):
                 x_min = x_min - delta
                 y_min = y_min - delta
 
-                #clipping box to bounding box.
+                # clipping box to bounding box.
                 pts_tmp = []
                 for pt in res[0]:
-                    x,y=pt[0],pt[1]
+                    x, y = pt[0], pt[1]
                     if x < x_min:
                         x = x_min
                     if x > x_max:
@@ -90,26 +94,24 @@ class Voronoi2DNode(bpy.types.Node, SverchCustomTreeNode):
                         y = y_min
                     if y > y_max:
                         y = y_max
-                    pts_tmp.append((x,y,0))
+                    pts_tmp.append((x, y, 0))
 
                 pts_out.append(pts_tmp)
 
-                edges_out.append([ (edge[1], edge[2]) for edge in edges if -1 not in edge ])
-
+                edges_out.append([(edge[1], edge[2]) for edge in edges if -1 not in edge])
 
             # outputs
             if 'Vertices' in self.outputs and self.outputs['Vertices'].links:
                 SvSetSocketAnyType(self, 'Vertices', pts_out)
 
             if 'Edges' in self.outputs and self.outputs['Edges'].links:
-                SvSetSocketAnyType(self,'Edges',edges_out)
+                SvSetSocketAnyType(self, 'Edges', edges_out)
 
     def update_socket(self, context):
         self.update()
 
 
-#computeDelaunayTriangulation
-
+# computeDelaunayTriangulation
 class DelaunayTriangulation2DNode(bpy.types.Node, SverchCustomTreeNode):
     ''' DelaunayTriangulation '''
     bl_idname = 'DelaunayTriangulation2DNode'
@@ -126,17 +128,17 @@ class DelaunayTriangulation2DNode(bpy.types.Node, SverchCustomTreeNode):
         if not ('Polygons' in self.outputs and self.outputs['Polygons'].links):
             return
         if 'Vertices' in self.inputs and self.inputs['Vertices'].links:
-            points_in = SvGetSocketAnyType(self,self.inputs['Vertices'])
-        tris_out=[]
+            points_in = SvGetSocketAnyType(self, self.inputs['Vertices'])
+        tris_out = []
 
         for obj in points_in:
 
-            pt_list = [Site(pt[0],pt[1]) for pt in obj]
+            pt_list = [Site(pt[0], pt[1]) for pt in obj]
             res = computeDelaunayTriangulation(pt_list)
-            tris_out.append([tri for tri in res if -1 not in tri] )
+            tris_out.append([tri for tri in res if -1 not in tri])
 
         if 'Polygons' in self.outputs and self.outputs['Polygons'].links:
-            SvSetSocketAnyType(self,'Polygons',tris_out)
+            SvSetSocketAnyType(self, 'Polygons', tris_out)
 
     def update_socket(self, context):
         self.update()
@@ -145,9 +147,8 @@ class DelaunayTriangulation2DNode(bpy.types.Node, SverchCustomTreeNode):
 def register():
     bpy.utils.register_class(Voronoi2DNode)
     bpy.utils.register_class(DelaunayTriangulation2DNode)
+
+
 def unregister():
     bpy.utils.unregister_class(Voronoi2DNode)
     bpy.utils.unregister_class(DelaunayTriangulation2DNode)
-
-if __name__ == "__main__":
-    register()

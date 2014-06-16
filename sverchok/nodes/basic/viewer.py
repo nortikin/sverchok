@@ -1,7 +1,27 @@
+# ##### BEGIN GPL LICENSE BLOCK #####
+#
+#  This program is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU General Public License
+#  as published by the Free Software Foundation; either version 2
+#  of the License, or (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software Foundation,
+#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+# ##### END GPL LICENSE BLOCK #####
+
 import bpy
+from bpy.props import BoolProperty, StringProperty
 from mathutils import Matrix
+
 from node_tree import (SverchCustomTreeNode, SvColors,
-                         StringsSocket, VerticesSocket, MatrixSocket)
+                       StringsSocket, VerticesSocket, MatrixSocket)
 from data_structure import (cache_viewer_baker,
                             dataCorrect, node_id,
                             Vector_generate, Matrix_generate,
@@ -15,9 +35,10 @@ class SvObjBake(bpy.types.Operator):
     bl_label = "Sverchok mesh baker"
     bl_options = {'REGISTER', 'UNDO'}
 
-    idname = bpy.props.StringProperty(name='idname', default='', description='name of parent node')
-    idtree = bpy.props.StringProperty(name='idtree', default='', description='name of parent tree')
-
+    idname = StringProperty(name='idname', description='name of parent node',
+                            default='')
+    idtree = StringProperty(name='idtree', description='name of parent tree',
+                            default='')
 
     def execute(self, context):
         global cache_viewer_baker
@@ -83,16 +104,17 @@ class SvObjBake(bpy.types.Operator):
             e = edg_pol[k] if edgs else []
             p = edg_pol[k] if pols else []
 
-            objects[str(i)] = self.makemesh(i,v,e,p,m)
+            objects[str(i)] = self.makemesh(i, v, e, p, m)
         for ite in objects.values():
             me = ite[1]
             ob = ite[0]
             calcedg = True
-            if edgs: calcedg = False
+            if edgs:
+                calcedg = False
             me.update(calc_edges=calcedg)
             bpy.context.scene.objects.link(ob)
 
-    def makemesh(self,i,v,e,p,m):
+    def makemesh(self, i, v, e, p, m):
         name = 'Sv_' + str(i)
         me = bpy.data.meshes.new(name)
         me.from_pydata(v, e, p)
@@ -102,7 +124,7 @@ class SvObjBake(bpy.types.Operator):
         ob.hide_select = False
         #print ([ob,me])
         #print (ob.name + ' baked')
-        return [ob,me]
+        return [ob, me]
 
 
 class ViewerNode(bpy.types.Node, SverchCustomTreeNode):
@@ -112,12 +134,20 @@ class ViewerNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     # node id
-    n_id =  bpy.props.StringProperty(default='',options={'SKIP_SAVE'})
+    n_id = StringProperty(default='', options={'SKIP_SAVE'})
 
-    Vertex_show = bpy.props.BoolProperty(name='Vertices', description='Show or not vertices', default=True,update=updateNode)
-    activate = bpy.props.BoolProperty(name='Show', description='Activate node?', default=True,update=updateNode)
-    transparant = bpy.props.BoolProperty(name='Transparant', description='transparant polygons?', default=False,update=updateNode)
-    shading = bpy.props.BoolProperty(name='Shading', description='shade the object or index representation?', default=False,update=updateNode)
+    Vertex_show = BoolProperty(name='Vertices', description='Show or not vertices',
+                               default=True,
+                               update=updateNode)
+    activate = BoolProperty(name='Show', description='Activate node?',
+                            default=True,
+                            update=updateNode)
+    transparant = BoolProperty(name='Transparant', description='transparant polygons?',
+                               default=False,
+                               update=updateNode)
+    shading = BoolProperty(name='Shading', description='shade the object or index representation?',
+                           default=False,
+                           update=updateNode)
 
     color_view = SvColors.color
 
@@ -131,7 +161,7 @@ class ViewerNode(bpy.types.Node, SverchCustomTreeNode):
         row.prop(self, "Vertex_show", text="Verts")
         row.prop(self, "activate", text="Show")
         row = layout.row()
-        row.scale_y=4.0
+        row.scale_y = 4.0
         opera = row.operator('node.sverchok_mesh_baker', text='B A K E')
         opera.idname = self.name
         opera.idtree = self.id_data.name
@@ -144,20 +174,19 @@ class ViewerNode(bpy.types.Node, SverchCustomTreeNode):
         #row.template_color_picker(self, 'color_view', value_slider=True)
 
     # reset n_id on duplicate (shift-d)
-    def copy(self,node):
-        self.n_id=''
+    def copy(self, node):
+        self.n_id = ''
 
     def update(self):
         global cache_viewer_baker
         # node id, used as ref
         n_id = node_id(self)
-        if not 'matrix' in self.inputs:
+        if 'matrix' not in self.inputs:
             return
 
-        cache_viewer_baker[ n_id+'v']=[]
-        cache_viewer_baker[n_id+'ep']=[]
-        cache_viewer_baker[n_id+'m']=[]
-
+        cache_viewer_baker[n_id+'v'] = []
+        cache_viewer_baker[n_id+'ep'] = []
+        cache_viewer_baker[n_id+'m'] = []
 
         if not self.id_data.sv_show:
             callback_disable(n_id)
@@ -196,11 +225,11 @@ class ViewerNode(bpy.types.Node, SverchCustomTreeNode):
             callback_enable(n_id, cache_viewer_baker[n_id+'v'], cache_viewer_baker[n_id+'ep'], \
                 cache_viewer_baker[n_id+'m'], self.Vertex_show, self.color_view.copy(), self.transparant, self.shading)
 
-            self.use_custom_color=True
-            self.color = (1,0.3,0)
+            self.use_custom_color = True
+            self.color = (1, 0.3, 0)
         else:
-            self.use_custom_color=True
-            self.color = (0.1,0.05,0)
+            self.use_custom_color = True
+            self.color = (0.1, 0.05, 0)
             #print ('отражения вершин ',len(cache_viewer_baker['v']), " рёбёры ", len(cache_viewer_baker['ep']), "матрицы",len(cache_viewer_baker['m']))
         if not self.inputs['vertices'].links and not self.inputs['matrix'].links:
             callback_disable(n_id)
@@ -210,20 +239,18 @@ class ViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
     def free(self):
         global cache_viewer_baker
-        n_id=node_id(self)
+        n_id = node_id(self)
         callback_disable(n_id)
-        cache_viewer_baker.pop(n_id+'v',None)
-        cache_viewer_baker.pop(n_id+'ep',None)
-        cache_viewer_baker.pop(n_id+'m',None)
+        cache_viewer_baker.pop(n_id+'v', None)
+        cache_viewer_baker.pop(n_id+'ep', None)
+        cache_viewer_baker.pop(n_id+'m', None)
+
 
 def register():
     bpy.utils.register_class(ViewerNode)
     bpy.utils.register_class(SvObjBake)
 
+
 def unregister():
     bpy.utils.unregister_class(SvObjBake)
     bpy.utils.unregister_class(ViewerNode)
-
-
-if __name__ == "__main__":
-    register()

@@ -18,8 +18,10 @@
 
 import bpy
 from mathutils import Matrix
-from node_tree import SverchCustomTreeNode, MatrixSocket
-from data_structure import (updateNode, fullList, Matrix_listing,
+
+from node_tree import SverchCustomTreeNode, MatrixSocket, StringsSocket
+from data_structure import (updateNode, fullList,
+                            Matrix_listing, Matrix_generate,
                             SvGetSocketAnyType, SvSetSocketAnyType)
 
 
@@ -36,8 +38,9 @@ class MatrixInterpolationNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Matrix Interpolation'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    factor_ = bpy.props.FloatProperty(name = 'factor1_', description='Factor1', default=0.5,\
-                                     min=0.0,max=1.0, options={'ANIMATABLE'}, update=updateNode)
+    factor_ = bpy.props.FloatProperty(name='factor1_', description='Factor1',
+                                      default=0.5, min=0.0, max=1.0,
+                                      options={'ANIMATABLE'}, update=updateNode)
 
     def draw_buttons(self, context, layout):
         pass
@@ -48,47 +51,45 @@ class MatrixInterpolationNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('MatrixSocket', "B", "B")
         self.outputs.new('MatrixSocket', "C", "C")
 
-
     def update(self):
-        #inputs
-
+        # inputs
         A = []
         B = []
-        factor = [] # 0 is valid value so I use [] as placeholder
+        factor = []  # 0 is valid value so I use [] as placeholder
 
         if 'A' in self.inputs and self.inputs['A'].links and \
-            type(self.inputs['A'].links[0].from_socket) == MatrixSocket:
+           type(self.inputs['A'].links[0].from_socket) == MatrixSocket:
 
-            A = Matrix_generate(SvGetSocketAnyType(self,self.inputs['A']))
+            A = Matrix_generate(SvGetSocketAnyType(self, self.inputs['A']))
         if not A:
             A = [Matrix.Identity(4)]
 
         if 'B' in self.inputs and self.inputs['B'].links and \
-            type(self.inputs['B'].links[0].from_socket) == MatrixSocket:
+           type(self.inputs['B'].links[0].from_socket) == MatrixSocket:
 
-            B = Matrix_generate(SvGetSocketAnyType(self,self.inputs['B']))
+            B = Matrix_generate(SvGetSocketAnyType(self, self.inputs['B']))
         if not B:
             B = [Matrix.Identity(4)]
 
         if 'Factor' in self.inputs and self.inputs['Factor'].links and \
-            type(self.inputs['Factor'].links[0].from_socket) == StringsSocket:
+           type(self.inputs['Factor'].links[0].from_socket) == StringsSocket:
 
-            factor = SvGetSocketAnyType(self,self.inputs['Factor'])
+            factor = SvGetSocketAnyType(self, self.inputs['Factor'])
 
         if not factor:
             factor = [[self.factor_]]
 
         if 'C' in self.outputs and self.outputs['C'].links:
 
-            matrixes_=[]
-# match inputs, first matrix A and B using fullList
-# then extend the factor list if necessary,
-# A and B should control length of list, not interpolation lists
-            max_l = max(len(A),len(B))
-            fullList(A,max_l)
-            fullList(B,max_l)
+            matrixes_ = []
+            # match inputs, first matrix A and B using fullList
+            # then extend the factor list if necessary,
+            # A and B should control length of list, not interpolation lists
+            max_l = max(len(A), len(B))
+            fullList(A, max_l)
+            fullList(B, max_l)
             if len(factor) < max_l:
-                fullList(factor,max_l)
+                fullList(factor, max_l)
             for i in range(max_l):
                 for k in range(len(factor[i])):
                     matrixes_.append(A[i].lerp(B[i], factor[i][k]))
@@ -99,18 +100,13 @@ class MatrixInterpolationNode(bpy.types.Node, SverchCustomTreeNode):
             matrixes = Matrix_listing(matrixes_)
             SvSetSocketAnyType(self, 'C', matrixes)
 
-
-
     def update_socket(self, context):
         self.update()
-
 
 
 def register():
     bpy.utils.register_class(MatrixInterpolationNode)
 
+
 def unregister():
     bpy.utils.unregister_class(MatrixInterpolationNode)
-
-if __name__ == "__main__":
-    register()

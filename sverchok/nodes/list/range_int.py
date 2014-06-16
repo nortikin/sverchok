@@ -1,6 +1,26 @@
+# ##### BEGIN GPL LICENSE BLOCK #####
+#
+#  This program is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU General Public License
+#  as published by the Free Software Foundation; either version 2
+#  of the License, or (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software Foundation,
+#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+# ##### END GPL LICENSE BLOCK #####
+
 import bpy
 from bpy.props import IntProperty, EnumProperty, StringProperty
-from node_tree import updateNode, SverchCustomTreeNode
+
+from node_tree import SverchCustomTreeNode
+from data_structure import updateNode, match_long_repeat
 
 
 '''
@@ -12,7 +32,8 @@ See class unit tests for behaviours
 
 '''
 
-def intRange( start=0, step=1, stop=1):
+
+def intRange(start=0, step=1, stop=1):
     '''
     slightly different behaviour: "lazy range"
     - step is always |step| (absolute)
@@ -25,7 +46,8 @@ def intRange( start=0, step=1, stop=1):
         step *= -1
     return list(range(start, stop, step))
 
-def countRange( start=0, step=1, count=10):
+
+def countRange(start=0, step=1, count=10):
     count = max(count, 0)
     if count == 0:
         return []
@@ -40,18 +62,22 @@ class GenListRangeInt(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     start_ = IntProperty(
-        name='start', description='start', default=0,
+        name='start', description='start',
+        default=0,
         options={'ANIMATABLE'}, update=updateNode)
 
     stop_ = IntProperty(
-        name='stop', description='stop', default=10,
+        name='stop', description='stop',
+        default=10,
         options={'ANIMATABLE'}, update=updateNode)
     count_ = IntProperty(
-        name='count', description='num items', default=10,
+        name='count', description='num items',
+        default=10,
         options={'ANIMATABLE'}, update=updateNode)
 
     step_ = IntProperty(
-        name='step', description='step', default=1,
+        name='step', description='step',
+        default=1,
         options={'ANIMATABLE'}, update=updateNode)
 
     current_mode = StringProperty(default="LAZYRANGE")
@@ -85,19 +111,19 @@ class GenListRangeInt(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         layout.prop(self, "mode", expand=True)
 
-    func_dict ={'LAZYRANGE': intRange,
-                'COUNTRANGE': countRange}
+    func_dict = {'LAZYRANGE': intRange,
+                 'COUNTRANGE': countRange}
 
     def update(self):
         inputs = self.inputs
         outputs = self.outputs
 
         # outputs, end early.
-        if not 'Range' in outputs or not outputs['Range'].links:
+        if 'Range' not in outputs or not outputs['Range'].links:
             return
 
-        param=[inputs[i].sv_get()[0] for i in range(3)]
-        f=self.func_dict[self.mode]
+        param = [inputs[i].sv_get()[0] for i in range(3)]
+        f = self.func_dict[self.mode]
         out = [f(*args) for args in zip(*match_long_repeat(param))]
         outputs['Range'].sv_set(out)
 
