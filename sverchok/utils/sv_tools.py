@@ -31,7 +31,7 @@ from node_tree import SverchCustomTreeNode
 def sv_get_local_path():
     sv_script_paths = os.path.normpath(os.path.dirname(__file__))
     bl_addons_path = os.path.dirname(sv_script_paths)
-    sv_version = os.path.normpath(os.path.join(sv_script_paths, 'version'))
+    sv_version = os.path.normpath(os.path.join(sv_script_paths, 'utils', 'version'))
     with open(sv_version) as sv_local_file:
         sv_version_local = next(sv_local_file).strip()
     return sv_script_paths, bl_addons_path, sv_version_local, sv_version
@@ -98,7 +98,7 @@ class SverchokCheckForUpgrades(bpy.types.Operator):
             report({'INFO'}, "Failed to read local version")
             return {'CANCELLED'}
         try:
-            url = 'https://raw.githubusercontent.com/nortikin/sverchok/master/version'
+            url = 'https://raw.githubusercontent.com/nortikin/sverchok/refactor/utils/version'
             version_url = urllib.request.urlopen(url).read().strip().decode()
         except urllib.error.URLError:
             traceback.print_exc()
@@ -124,8 +124,8 @@ class SverchokUpdateAddon(bpy.types.Operator):
         os.curdir = bl_addons_path
         os.chdir(os.curdir)
         try:
-            url = 'https://github.com/nortikin/sverchok/archive/master.zip'
-            file = urllib.request.urlretrieve(url, os.path.normpath(os.path.join(os.curdir, 'master.zip')))
+            url = 'https://github.com/nortikin/sverchok/archive/refactor.zip'
+            file = urllib.request.urlretrieve(url, os.path.normpath(os.path.join(os.curdir, 'refactor.zip')))
         except:
             self.report({'ERROR'}, "Cannot get archive from Internet")
             return {'CANCELLED'}
