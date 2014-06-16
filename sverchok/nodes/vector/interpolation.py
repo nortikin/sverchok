@@ -16,12 +16,12 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+import bisect
 import numpy as np
 
 import bpy
 from bpy.props import EnumProperty, FloatProperty
 
-from .. modifier.bisect import bisect
 from node_tree import SverchCustomTreeNode
 from data_structure import (updateNode, dataCorrect, repeat_last,
                             SvSetSocketAnyType, SvGetSocketAnyType)
