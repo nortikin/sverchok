@@ -183,8 +183,8 @@ class SvScriptNode(bpy.types.Node, SverchCustomTreeNode):
     has_buttons = BoolProperty(default=False)
 
     node_dict = {}
-    in_sockets = []
-    out_sockets = []
+    #in_sockets = []
+    #out_sockets = []
 
     def init(self, context):
         self.node_dict[hash(self)] = {}
@@ -241,18 +241,18 @@ class SvScriptNode(bpy.types.Node, SverchCustomTreeNode):
                     row = col.row()
                     row.operator('node.script_ui_callback', text=fname).fn_name = fname
 
-    def create_or_update_sockets(self):
+    def create_or_update_sockets(self, in_sockets, out_sockets):
         '''
         - desired features not fully implemented yet (only socket add so far)
         - Load may be pressed to import an updated function
         - tries to preserve existing sockets or add new ones if needed
         '''
-        for socket_type, name, data in self.out_sockets:
+        for socket_type, name, data in out_sockets:
             if not (name in self.outputs):
                 new_output_socket(self, name, socket_type)
                 SvSetSocketAnyType(self, name, data)  # can output w/out input
 
-        for socket_type, name, dval in self.in_sockets:
+        for socket_type, name, dval in in_sockets:
             if not (name in self.inputs):
                 new_input_socket(self, socket_type, name, dval)
 
@@ -297,10 +297,10 @@ class SvScriptNode(bpy.types.Node, SverchCustomTreeNode):
             num_return_params = len(function_output)
 
             if num_return_params == 2:
-                self.in_sockets, self.out_sockets = function_output
+                in_sockets, out_sockets = function_output
             if num_return_params == 3:
                 self.has_buttons = True
-                self.in_sockets, self.out_sockets, ui_ops = function_output
+                in_sockets, out_sockets, ui_ops = function_output
 
             if self.has_buttons:
                 named_buttons = []
@@ -310,11 +310,11 @@ class SvScriptNode(bpy.types.Node, SverchCustomTreeNode):
                     named_buttons.append(button_name)
                 self.button_names = "|".join(named_buttons)
 
-            print('found {0} in sock requests'.format(len(self.in_sockets)))
-            print('found {0} out sock requests'.format(len(self.out_sockets)))
+            print('found {0} in sock requests'.format(len(in_sockets)))
+            print('found {0} out sock requests'.format(len(out_sockets)))
 
-            if self.in_sockets and self.out_sockets:
-                self.create_or_update_sockets()
+            if in_sockets and out_sockets:
+                self.create_or_update_sockets(in_sockets, out_sockets)
             return
 
         print('load_py, failed because introspection failed')
