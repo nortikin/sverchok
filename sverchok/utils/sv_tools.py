@@ -31,7 +31,7 @@ from node_tree import SverchCustomTreeNode
 def sv_get_local_path():
     sv_script_paths = os.path.normpath(os.path.dirname(__file__))
     bl_addons_path = os.path.dirname(sv_script_paths)
-    sv_version = os.path.normpath(os.path.join(sv_script_paths, 'utils', 'version'))
+    sv_version = os.path.normpath(os.path.join(sv_script_paths, 'version'))
     with open(sv_version) as sv_local_file:
         sv_version_local = next(sv_local_file).strip()
     return sv_script_paths, bl_addons_path, sv_version_local, sv_version
