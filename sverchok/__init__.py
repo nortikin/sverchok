@@ -52,8 +52,8 @@ for item in path:
         flag = True
         break
 if flag is False:
-    #sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'sverchok_nodes'))
     sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'sverchok'))
+    sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'sverchok-refactoring'))
 
     print("Sverchok_nodes: added to pythonpath :-)")
     print("Have a nice day with Sverchok")
