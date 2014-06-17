@@ -22,6 +22,7 @@ import os
 import bpy
 from bpy.props import StringProperty, EnumProperty, BoolProperty
 
+from utils.sv_tools import sv_get_local_path
 from node_tree import SverchCustomTreeNode
 from data_structure import (dataCorrect, updateNode,
                             SvSetSocketAnyType, SvGetSocketAnyType)
@@ -29,7 +30,8 @@ from data_structure import (dataCorrect, updateNode,
 FAIL_COLOR = (0.8, 0.1, 0.1)
 READY_COLOR = (0, 0.8, 0.95)
 
-
+sv_path = os.path.dirname(sv_get_local_path()[0])
+print(sv_path)
 # utility functions
 
 
@@ -87,9 +89,8 @@ class SvDefaultScriptTemplate(bpy.types.Operator):
     def execute(self, context):
         # if a script is already in text.data list then 001 .002
         # are automatically append by ops.text.open
-        sv_path = os.path.dirname(os.path.realpath(__file__))
-        script_dir = "node_script_templates"
-        path_to_template = os.path.join(sv_path, script_dir, self.script_name)
+        templates_path = os.path.join(sv_path, "node_scripts", "templates")
+        path_to_template = os.path.join(templates_path, self.script_name)
         bpy.ops.text.open(filepath=path_to_template, internal=True)
         return {'FINISHED'}
 
@@ -158,10 +159,8 @@ class SvScriptNode(bpy.types.Node, SverchCustomTreeNode):
         return items
 
     def avail_templates(self, context):
-        sv_path = os.path.dirname(os.path.realpath(__file__))
-        script_dir = "node_script_templates"
-        path = os.path.join(sv_path, script_dir)
-        items = [(t, t, "") for t in next(os.walk(path))[2]]
+        templates_path = os.path.join(sv_path, "node_scripts", "templates")
+        items = [(t, t, "") for t in next(os.walk(templates_path))[2]]
         # changes order for old files
         #items.sort(key=lambda x:x[0].upper())
         return items
