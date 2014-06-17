@@ -136,7 +136,7 @@ class ObjectsNode(bpy.types.Node, SverchCustomTreeNode):
         
         name = self.name + self.id_data.name
         handle = handle_read(name)
-        print (handle)
+        #print (handle)
         if self.objects_local:
             # bpy.ops.node.sverchok_object_insertion(node_name=self.name, tree_name=self.id_data.name, grup_name=self.groupname)
             # not updating. need to understand mechanic of update
