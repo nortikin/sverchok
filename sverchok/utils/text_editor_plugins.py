@@ -20,7 +20,6 @@ import re
 
 import bpy
 
-
 sv_error_message = '''\
 ______________Sverchok Script Generator Node rules_______________
 
@@ -35,8 +34,8 @@ There are three types of input streams that this node can interpret:
 - 's' (data: float, integer),
 - 'm' (matrices: nested lists 4*4)
 
-                For more information see the wiki
-                see also the bundled templates for clarification
+        For more information see the wiki
+        see also the bundled templates for clarification
 '''
 
 

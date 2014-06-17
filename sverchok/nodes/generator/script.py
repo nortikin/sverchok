@@ -31,7 +31,7 @@ FAIL_COLOR = (0.8, 0.1, 0.1)
 READY_COLOR = (0, 0.8, 0.95)
 
 sv_path = os.path.dirname(sv_get_local_path()[0])
-print(sv_path)
+
 # utility functions
 
 

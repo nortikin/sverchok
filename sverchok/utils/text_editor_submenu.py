@@ -21,11 +21,13 @@ import os
 import bpy
 from bpy.props import StringProperty
 
+from utils.sv_tools import sv_get_local_path
+
+sv_path = os.path.dirname(sv_get_local_path()[0])
+
 
 def get_template_path():
-    sv_path = os.path.dirname(os.path.realpath(__file__))
-    script_dir = "node_script_templates"
-    return os.path.join(sv_path, script_dir)
+    return os.path.join(sv_path, "node_scripts", "templates")
 
 
 def get_templates():
