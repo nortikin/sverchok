@@ -42,14 +42,12 @@ class SvAdaptiveEdgeNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('StringsSocket', 'Edges', 'Edges')
 
     def update(self):
-
-        in_sockets = ['VersR', 'EdgeR', 'VersD', 'EdgeD']
-        for name in in_sockets:
-            if name not in self.inputs:
-                return
-        for name in in_sockets:
-            if not self.inputs[name].links:
-                return
+        if not 'Edges' in self.outputs:
+            return
+        if not all((s.links for s in self.inputs)):
+            return
+        if not any((s.links for s in self.outputs)):
+            return
 
         versR = Vector_generate(SvGetSocketAnyType(self, self.inputs['VersR']))
         versD = Vector_generate(SvGetSocketAnyType(self, self.inputs['VersD']))
@@ -59,33 +57,36 @@ class SvAdaptiveEdgeNode(bpy.types.Node, SverchCustomTreeNode):
         edges_out = []
 
         # only first obj
-        verD = [v-versD[0][0] for v in versD[0]]
+        verD = [v - versD[0][0] for v in versD[0]]
         edgD = edgeD[0]
         d_vector = verD[-1].copy()
         d_scale = d_vector.length
         d_vector.normalize()
-
         for vc, edg in zip(versR, edgeR):
             v_out = []
             e_out = []
+            e_out_app = e_out.append
+            v_out_app = v_out.append
             for e in edg:
-
-                e_vector = vc[e[1]]-vc[e[0]]
+                e_vector = vc[e[1]] - vc[e[0]]
                 e_scale = e_vector.length
                 e_vector.normalize()
                 q1 = d_vector.rotation_difference(e_vector)
-                mat_s = Matrix.Scale(e_scale/d_scale, 4)
+                mat_s = Matrix.Scale(e_scale / d_scale, 4)
                 mat_r = Matrix.Rotation(q1.angle, 4, q1.axis)
                 mat_l = Matrix.Translation(vc[e[0]])
                 mat = mat_l * mat_r * mat_s
-                e_out.extend([list(map(lambda x:operator.add(len(v_out), x), e)) for e in edgD])
-                v_out.extend([mat*v for v in verD])
+                for edge in edgD:
+                    offset = len(v_out)
+                    e_out_app([i + offset for i in edge])
+                for v in verD:
+                    v_out_app((mat * v)[:])
 
             verts_out.append(v_out)
             edges_out.append(e_out)
 
         if 'Vertices' in self.outputs and self.outputs['Vertices'].links:
-            SvSetSocketAnyType(self, 'Vertices', Vector_degenerate(verts_out))
+            SvSetSocketAnyType(self, 'Vertices', verts_out)
 
         if 'Edges' in self.outputs and self.outputs['Edges'].links:
             SvSetSocketAnyType(self, 'Edges', edges_out)
