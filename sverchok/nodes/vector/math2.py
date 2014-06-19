@@ -234,11 +234,9 @@ class VectorMath2Node(bpy.types.Node, SverchCustomTreeNode):
                 '''
                 b = []
                 if operation in scalars:
-                    recurse_fn2 = self.recurse_fxy2
                     socket = ['S', StringsSocket]
                     msg = "two inputs, 1 scalar, "
                 else:
-                    recurse_fn2 = self.recurse_fxy
                     socket = ['V', VerticesSocket]
                     msg = "two inputs, both vector, "
 
@@ -252,7 +250,7 @@ class VectorMath2Node(bpy.types.Node, SverchCustomTreeNode):
                     return
 
                 try:
-                    result = recurse_fn2(u, b, func, leve - 1)
+                    result = self.recurse_fxy(u, b, func, leve - 1)
                 except:
                     print(self.name, msg, 'failed')
                     return
