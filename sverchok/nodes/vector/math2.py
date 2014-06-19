@@ -20,9 +20,10 @@ from itertools import zip_longest
 
 import bpy
 from bpy.props import EnumProperty, BoolProperty, StringProperty
-from mathutils import noise, Vector
-
-from node_tree import SverchCustomTreeNode, VerticesSocket
+from mathutils import Vector
+from mathutils.noise import noise_vector, cell_vector, noise, cell
+from math import degrees
+from node_tree import SverchCustomTreeNode, VerticesSocket, StringsSocket
 from data_structure import (fullList, levelsOflist, updateNode,
                             SvSetSocketAnyType, SvGetSocketAnyType)
 
@@ -302,7 +303,7 @@ class VectorMath2Node(bpy.types.Node, SverchCustomTreeNode):
             t = [rfx(i, f, leve-1) for i in l]
         return t
 
-    def recurse_fxy(l1, l2, f, leve):
+    def recurse_fxy(self, l1, l2, f, leve):
         res = []
         res_append = res.append
         # will only be used if lists are of unequal length
@@ -312,7 +313,7 @@ class VectorMath2Node(bpy.types.Node, SverchCustomTreeNode):
                 res_append(f(u, v))
         else:
             for u, v in zip_longest(l1, l2, fillvalue=fl):
-                res.append(recurse_fxy(u, v, f, leve-1))
+                res_append(self.recurse_fxy(u, v, f, leve-1))
         return res
 
     def update_socket(self, context):
