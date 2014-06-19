@@ -292,13 +292,13 @@ class VectorMath2Node(bpy.types.Node, SverchCustomTreeNode):
 
     '''
     apply f to all values recursively
-    - fxy, fxy2 do full list matching by length
+    - fx and fxy do full list matching by length
     '''
 
     # vector -> scalar | vector
     def recurse_fx(self, l, f, leve):
         if not leve:
-            return f(Vector(l))
+            return f(l)
         else:
             rfx = self.recurse_fx
             t = [rfx(i, f, leve-1) for i in l]
