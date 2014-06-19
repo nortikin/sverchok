@@ -82,7 +82,7 @@ class ScalarMathNode(bpy.types.Node, SverchCustomTreeNode):
         ("+1",               "x+1",         "", 81),
         ("*2",               "x*2",         "", 82),
         ("/2",               "x/2",         "", 83),
-        ("x**2",             "x**2",        "", 84),
+        ("POW2",             "x**2",        "", 84),
         ]
 
     fx = {
