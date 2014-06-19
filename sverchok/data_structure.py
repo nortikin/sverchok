@@ -17,17 +17,20 @@
 # ##### END GPL LICENSE BLOCK #####
 
 from functools import reduce
-from math import radians
+from math import radians, log
 import itertools
 import collections
 import time
-
+import ast
 import bpy
 from mathutils import Vector, Matrix
 
 global bmesh_mapping, per_cache
 
 DEBUG_MODE = False
+HEAT_MAP = False
+
+
 #handle for object in node
 temp_handle = {}
 # cache node group update trees it not used, as i see
@@ -679,6 +682,45 @@ def sverchok_debug(mode):
     return DEBUG_MODE
 
 
+def setup_init():
+    global DEBUG_MODE
+    global HEAT_MAP
+    
+    addon = bpy.context.user_preferences.addons.get("sverchok")
+    if addon:
+        DEBUG_MODE = addon.preferences.show_debug
+        HEAT_MAP = addon.preferences.heat_map
+    
+        
+    
+    
+#####################################################
+###############  heat map system     ################
+#####################################################
+
+
+def heat_map_state(state):
+    global HEAT_MAP
+    HEAT_MAP = state
+    sv_ng = [ng for ng in bpy.data.node_groups if ng.bl_idname == 'SverchCustomTreeType']
+    if state:
+        for ng in sv_ng:
+            color_data = {node.name: (node.color[:], node.use_custom_color) for node in ng.nodes}
+            if not ng.sv_user_colors:
+                ng.sv_user_colors = str(color_data)
+    else:
+        for ng in sv_ng:
+            if not ng.sv_user_colors:
+                print("{0} has no colors".format(ng.name))
+                continue
+            color_data = ast.literal_eval(ng.sv_user_colors)
+            for name, node in ng.nodes.items():
+                if name in color_data:
+                    color, use = color_data[name]
+                    setattr(node, 'color', color)
+                    setattr(node, 'use_custom_color', use)
+            ng.sv_user_colors = ""
+            
 #####################################################
 ############### update system magic! ################
 #####################################################
@@ -734,7 +776,6 @@ def make_update_list(node_tree, node_set=None, dependencies=None):
     """
 
     ng = node_tree
-    start = time.perf_counter()
     if not node_set:  # if no node_set, take all
         node_set = set(ng.nodes.keys())
     if len(node_set) == 1:
@@ -835,7 +876,7 @@ def separate_nodes(ng, links=None):
             nodes.discard(n)
             node_set_list[-1].add(n)
 
-    return [n for n in node_set_list if len(n) > 1]
+    return [node for node in node_set_list if len(node) > 1]
 
 
 def make_tree_from_nodes(node_names, tree):
@@ -854,7 +895,6 @@ def make_tree_from_nodes(node_names, tree):
 
     out_stack = collections.deque(node_names)
     current_node = out_stack.pop()
-    wifi_out = []
 
     # build downwards links, this should be cached perhaps
     node_links = {name: set() for name in nodes.keys()}
@@ -926,6 +966,43 @@ def makeTreeUpdate2(tree=None):
             socket_data_cache[name] = {}
 
 
+def do_update_heat_map(node_list, nodes):
+    global DEBUG_MODE
+    times = []
+    node_list = list(node_list)
+    for name in node_list:
+        if name in nodes:
+            start = time.perf_counter()
+            nodes[name].update()
+            delta = time.perf_counter()-start
+            if DEBUG_MODE:
+                print("Updated  {0} in:{1}".format(name, round(delta, 4)))
+            times.append(delta)
+    if not times:
+        return
+    if not nodes.id_data.sv_user_colors:
+        ng = nodes.id_data
+        color_data = {node.name: (node. color[:], node.use_custom_color) for node in nodes}
+        nodes.id_data.sv_user_colors = str(color_data)
+        
+    t_max = max(times)
+    # ugly hack, we should make standard way that doesn't rely on the name
+    # __package__ doesn't work
+    addon = bpy.context.user_preferences.addons.get("sverchok")
+    if addon:
+        # to use Vector.lerp
+        cold = Vector(addon.preferences.heat_map_cold)
+        hot =  addon.preferences.heat_map_hot
+    else:
+        print("Cannot find preferences")
+        cold = Vector((1,1,1))
+        hot = (.7,0,0)
+    for name, t in zip(node_list, times):
+        nodes[name].use_custom_color = True
+        # linerar scale.
+        nodes[name].color = cold.lerp(hot, t / t_max)
+
+
 def do_update_debug(node_list, nods):
     global DEBUG_MODE
     timings = []
@@ -951,7 +1028,8 @@ def speedUpdate(start_node=None, tree=None, animation_mode=False):
     global list_nodes4update
     global DEBUG_MODE
     global partial_update_cache
-
+    global HEAT_MAP
+    
     def do_update(node_list, nods):
         for nod_name in node_list:
             if nod_name in nods:
@@ -959,12 +1037,14 @@ def speedUpdate(start_node=None, tree=None, animation_mode=False):
 
     if DEBUG_MODE:
         do_update = do_update_debug
+    if HEAT_MAP:
+        do_update = do_update_heat_map
 
     # try to update optimized animation trees, not ready
     if animation_mode:
         pass
     # start from the mentioned node the, called from updateNode
-    if start_node is not None:
+    if start_node:
         tree = start_node.id_data
         if tree.name in list_nodes4update and list_nodes4update[tree.name]:
             update_list = None
@@ -982,24 +1062,21 @@ def speedUpdate(start_node=None, tree=None, animation_mode=False):
             do_update(itertools.chain.from_iterable(list_nodes4update[tree.name]), tree.nodes)
             return
     # draw the complete named tree, called from SverchokCustomTreeNode
-    # we flatten this update lists for now, refactoring in progress
-    if tree is not None:
-        update_list = list_nodes4update.get(tree.name)
-        if not update_list:
-            makeTreeUpdate2(tree)
-            update_list = list_nodes4update.get(tree.name)
-        do_update(itertools.chain.from_iterable(update_list), tree.nodes)
-        return
+    if tree:
+        node_groups = [(tree.name,tree)]
+    else:
+        node_groups = bpy.data.node_groups.items()
 
     # update all node trees
-    for name, ng in bpy.data.node_groups.items():
+    for name, ng in node_groups:
         if ng.bl_idname == 'SverchCustomTreeType':
             update_list = list_nodes4update.get(name)
             if not update_list:
                 makeTreeUpdate2(ng)
                 update_list = list_nodes4update.get(name)
-            do_update(itertools.chain.from_iterable(update_list), ng.nodes)
-
+            for l in update_list:
+                do_update(l, ng .nodes)
+            
 
 def get_update_lists(ng):
     global list_nodes4update

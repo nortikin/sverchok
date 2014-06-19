@@ -89,26 +89,46 @@ if "bpy" in locals():
 
 import bpy
 from bpy.types import AddonPreferences
-from bpy.props import BoolProperty
+from bpy.props import BoolProperty, FloatVectorProperty
 import data_structure
-
-
-def update_debug_mode(self, context):
-    data_structure.DEBUG_MODE = self.show_debug
 
 
 class SverchokPreferences(AddonPreferences):
 
     bl_idname = __name__
 
+
+    def update_debug_mode(self, context):
+        data_structure.DEBUG_MODE = self.show_debug
+
+    def update_heat_map(self, context):
+        data_structure.heat_map_state(self.heat_map)
+
     show_debug = BoolProperty(name="Print update timings",
                               description="Print update timings in console",
                               default=False, subtype='NONE',
                               update=update_debug_mode)
 
+    heat_map = BoolProperty(name="Heat map",
+                            description="Color nodes according to time",
+                            default=False, subtype='NONE',
+                            update=update_heat_map)
+
+    heat_map_hot = FloatVectorProperty(name="Heat map hot", description='',
+                                       size=3, min=0.0, max=1.0,
+                                       default=(1, 0, 0), subtype='COLOR')
+
+    heat_map_cold = FloatVectorProperty(name="Heat map cold", description='',
+                                        size=3, min=0.0, max=1.0,
+                                        default=(1, 1, 1), subtype='COLOR')
+
     def draw(self, context):
         layout = self.layout
         layout.prop(self, "show_debug")
+        row = layout.row()
+        row.prop(self, "heat_map")
+        row.prop(self, "heat_map_hot")
+        row.prop(self, "heat_map_cold")
 
 
 def register():

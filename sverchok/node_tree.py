@@ -172,6 +172,7 @@ class SverchCustomTree(NodeTree):
     sv_animate = BoolProperty(name="Animate", default=True)
     sv_show = BoolProperty(name="Show", default=True, update=updateTree)
     sv_bake = BoolProperty(name="Bake", default=True)
+    sv_user_colors = StringProperty(default="")
 
     # get update list for debug info, tuple (fulllist,dictofpartiallists)
     def get_update_lists(self):
@@ -367,7 +368,9 @@ def sv_clean(scene):
     from utils import index_viewer_draw
     viewer_draw.callback_disable_all()
     index_viewer_draw.callback_disable_all()
+    data_structure.sv_Vars = {}
     data_structure.temp_handle = {}
+    
 
 
 @persistent
@@ -380,6 +383,7 @@ def sv_upgrade_nodes(scene):
                 upgrade.upgrade_nodes(tree)
             except Exception as e:
                 print('Failed to upgrade:', name, str(e))
+    data_structure.setup_init()
 
 
 def register():
