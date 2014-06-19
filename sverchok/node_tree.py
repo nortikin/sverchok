@@ -279,7 +279,8 @@ def make_categories():
             NodeItem("HilbertImageNode", label="Hilbert image"),
             NodeItem("ImageNode", label="Image"),
             NodeItem("RandomVectorNode", label="Random Vector"),
-            NodeItem("SvScriptNode", label="Scripted Node")
+            NodeItem("SvFormulaShapeNode", label="Formula"),
+            NodeItem("SvScriptNode", label="Scripted Node"),
             ]),
         SverchNodeCategory("SVERCHOK_V", "SVERCHOK vector", items=[
             # Vector nodes
