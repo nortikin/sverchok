@@ -16,13 +16,14 @@
 #
 # END GPL LICENSE BLOCK #####
 
+from math import degrees
 from itertools import zip_longest
 
 import bpy
 from bpy.props import EnumProperty, BoolProperty, StringProperty
 from mathutils import Vector
 from mathutils.noise import noise_vector, cell_vector, noise, cell
-from math import degrees
+
 from node_tree import SverchCustomTreeNode, VerticesSocket, StringsSocket
 from data_structure import (fullList, levelsOflist, updateNode,
                             SvSetSocketAnyType, SvGetSocketAnyType)
