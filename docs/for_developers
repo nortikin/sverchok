@@ -21,7 +21,6 @@ Wellcome!
 6. Add in nodes/__init__.py filename
 7. tell us to merge branches/forks
 
-
 	SOME RULES:
 1. all classes that are subclasses of blender classes - have to have prefix Sv, ie SvColors
 2. node_tree.py contains that classes, maybe you need to create collection property or new socket (for 
