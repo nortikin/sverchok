@@ -31,6 +31,20 @@ from math import acos, acosh, asin, asinh, atan, atan2, \
                             isnan,ldexp,lgamma,log,log10,log1p,log2,modf, \
                             pi,pow,radians,sin,sinh,sqrt,tan,tanh,trunc
 
+sv_no_ve = [[(3, -1, 0),  (1, -1, 0),  (1, 2, 0),  (4, 2, 0),  (-1, -1, 0),
+  (0, -1, 0),  (1, 0, 0),  (0, 2, 0),  (-1, 2, 0),  (-1, 0, 0),  (0, 0, 0),
+  (3, 2, 0),  (2, 2, 0),  (3, 0, 0),  (3, 1, 0),  (7, -1, 0),  (8, -1, 0),
+  (7, 2, 0),  (10, 2, 0),  (5, -1, 0),  (6, -1, 0),  (7, 0, 0),  (7, 1, 0),
+  (6, 2, 0),  (5, 2, 0),  (5, 0, 0),  (5, 1, 0),  (10, 0, 0),  (10, 1, 0),
+  (9, 2, 0),  (8, 2, 0),  (8, 0, 0),  (8, 1, 0),  (9, 0, 0)]]
+  
+sv_no_ed = [[[12, 11],  [5, 1],  [11, 3],  [5, 4],  [6, 1],  [7, 2],
+  [8, 7],  [9, 8],  [10, 9],  [6, 10],  [14, 11],  [13, 0],  [14, 13],
+  [30, 29],  [20, 15],  [22, 17],  [29, 18],  [28, 27],  [20, 19],
+  [21, 15],  [22, 21],  [23, 17],  [24, 23],  [26, 24],  [25, 19],
+  [26, 25],  [28, 18],  [32, 30],  [31, 16],  [32, 31],  [33, 31],
+  [27, 33]]]
+
 class SvFormulaShapeNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Formula shape '''
     bl_idname = 'SvFormulaShapeNode'
@@ -46,19 +60,20 @@ class SvFormulaShapeNode(bpy.types.Node, SverchCustomTreeNode):
                     options={'ANIMATABLE'},
                     update=updateNode)
     # sphere
-    tt = FloatProperty(name='tt', description='pistol tt', default=1,
+    XX = FloatProperty(name='XX', description='XX factor', default=1,
                     options={'ANIMATABLE'},
                     update=updateNode)
     # sphere
-    pp = FloatProperty(name='pp', description='ppoe', default=1,
+    YY = FloatProperty(name='YY', description='YY factor', default=1,
                     options={'ANIMATABLE'},
                     update=updateNode)
-    # additional
-    additional = FloatProperty(name='additional', description='additional', default=1,
+    # sphere
+    ZZ = FloatProperty(name='ZZ', description='ZZ factor', default=1,
                     options={'ANIMATABLE'},
                     update=updateNode)
     
     # formula for usual case
+    # formulas contributed by Paul Kotelevets aka 1D
     list_formula = [    '(0,1,0)',
                         '((tan(i/10)+1), sin(i/2), sin(i/4))',
                         '(cos(i)*cos(i)*i/300, sin(i)*cos(i)*i/300, -(2*i)/(200+sin(i)))',
@@ -106,126 +121,206 @@ class SvFormulaShapeNode(bpy.types.Node, SverchCustomTreeNode):
                         '(1/log((1+ sin(i))), cos(i), i/200)',
                         '(sin(i), -3*pi/4, sin(2*i*3.14)*sin(i*pi/2))',
                         '(sin(i), -3*pi/4, sin(2*i*3.14)*sin(i*3.14))',
-                        '(cos(tt) * cos(pp),  sin(tt) * sin(pp),  (i/100))',
-                        '(log(exp(sin(tt)) *  exp(cos(pp))), log(exp(sin(tt)) * exp(sin(pp))), (exp(cos(tt))))',
                         #sphere
-                        '(sin(tt) * cos(pp), sin(tt) * sin(pp), cos(tt))',
-                        '(sin(tt) * cos(pp), sin(tt) * sin(pp)+i/500, cos(tt))',
-                        '(sin(tt) * cos(pp),  sin(tt) * sin(pp),  exp(cos(tt)))', #tt = 0.2*pi*i
-                        '(sin(tt) * atan(pp), sin(tt) * sin(pp),  exp(cos(tt)))', ##pp = 3/pi*i || pp = tt/4 || tt = 58/pi*i  pp = 2*pi*i
-                        '(tan(tt) * atan(pp), sin(tt) * sin(pp),  cos(tt))',
-                        '(sin(tt) * cos(pp),  sin(tt) * sin(pp),  cos(tt))', #pp = tt/4 || pp = 3/pi*i ||pp = tt*5
-                        '(sin(tt) * cos(pp) * log(pp, 2)/10, sin(pp) * sin(pp) * cos(tt), cos(tt))', ##sp16+16
-                        '(sin(tt) * cos(pp) * sin(pp),  sin(pp) * sin(pp) * cos(tt),  cos(tt))',
-                        '(sin(pp) * cos(pp) * sin(pp),  sin(pp) * sin(pp) * sin(tt),  cos(pp))',
-                        '(sin(pp) * cos(pp) * sin(pp),  sin(pp) * sin(pp) * sin(tt),  cos(tt))',
-                        '(sin(tt) * cos(pp),  sin(tt) * sin(pp),  cos(tt) * sin(2*tt))',
-                        '(sin(tt) * cos(pp),  sin(tt) * sin(pp),  cos(tt) * sin(pp))',
-                        '(sin(tt) * cos(pp),  sin(tt) * sin(pp) * sin(pp),  cos(tt) * sin(pp))',    #sp15
-                        '(sin(tt) * cos(pp) * cos(pp),  sin(tt) * sin(pp) * sin(pp),  cos(tt)*sin(pp))',   #sp1, sp11, sp21, sp22
-                        '(sin(tt) * cos(pp) * cos(tt),  sin(tt) * sin(pp) * sin(pp),  cos(tt)*sin(pp))',   #sp14, sp15
-                        '(sin(pp) * cos(pp) * cos(tt),  sin(tt) * sin(pp) * sin(pp),  cos(tt)*sin(pp))',   #sp14, sp15
-                        '(sin(pp) * cos(pp) * cos(tt),  sin(tt) * sin(pp) * sin(pp),  cos(tt))', ]         #sp4, sp3
+                        '(cos(XX) * cos(YY),  sin(XX) * sin(YY),  (i/100))',
+                        '(log(exp(sin(XX)) *  exp(cos(YY))), log(exp(sin(XX)) * exp(sin(YY))), (exp(cos(XX))))',
+                        '(sin(XX) * cos(YY), sin(XX) * sin(YY), cos(XX))',
+                        '(sin(XX) * cos(YY), sin(XX) * sin(YY)+i/500, cos(XX))',
+                        '(sin(XX) * cos(YY),  sin(XX) * sin(YY),  exp(cos(XX)))', #XX = 0.2*pi*i
+                        '(sin(XX) * atan(YY), sin(XX) * sin(YY),  exp(cos(XX)))', ##YY = 3/pi*i || YY = XX/4 || XX = 58/pi*i  YY = 2*pi*i
+                        '(tan(XX) * atan(YY), sin(XX) * sin(YY),  cos(XX))',
+                        '(sin(XX) * cos(YY),  sin(XX) * sin(YY),  cos(XX))', #YY = XX/4 || YY = 3/pi*i ||YY = XX*5
+                        '(sin(XX) * cos(YY) * log(YY, 2)/10, sin(YY) * sin(YY) * cos(XX), cos(XX))', ##sp16+16
+                        '(sin(XX) * cos(YY) * sin(YY),  sin(YY) * sin(YY) * cos(XX),  cos(XX))',
+                        '(sin(YY) * cos(YY) * sin(YY),  sin(YY) * sin(YY) * sin(XX),  cos(YY))',
+                        '(sin(YY) * cos(YY) * sin(YY),  sin(YY) * sin(YY) * sin(XX),  cos(XX))',
+                        '(sin(XX) * cos(YY),  sin(XX) * sin(YY),  cos(XX) * sin(2*XX))',
+                        '(sin(XX) * cos(YY),  sin(XX) * sin(YY),  cos(XX) * sin(YY))',
+                        '(sin(XX) * cos(YY),  sin(XX) * sin(YY) * sin(YY),  cos(XX) * sin(YY))',    #sp15
+                        '(sin(XX) * cos(YY) * cos(YY),  sin(XX) * sin(YY) * sin(YY),  cos(XX)*sin(YY))',   #sp1, sp11, sp21, sp22
+                        '(sin(XX) * cos(YY) * cos(XX),  sin(XX) * sin(YY) * sin(YY),  cos(XX)*sin(YY))',   #sp14, sp15
+                        '(sin(YY) * cos(YY) * cos(XX),  sin(XX) * sin(YY) * sin(YY),  cos(XX)*sin(YY))',   #sp14, sp15
+                        '(sin(YY) * cos(YY) * cos(XX),  sin(XX) * sin(YY) * sin(YY),  cos(XX))', ]         #sp4, sp3
                         
     formula_enum = [(i, 'formula1 {0}'.format(k), i, k) for k, i in enumerate(list_formula)]
     formula = EnumProperty(items=formula_enum, name='formula1')
     
-    list_tt_pp = [  'tt, pp',
-                    'i, i',
-                    'pi*i , i/pi',
-                    'tan(i) , 1/tan(i)',
-                    'sin(i) , tan(i)',
-                    'cos(aa*pi*i), aa/pi*i',
-                    'cos(aa*pi*i), sin(aa/pi*i)',
-                    'aa*pi*i, log(pi*i)+aa',
-                    'aa*pi*i, aa/pi*i',
-                    'i*2*pi, i',
-                    'i/5*pi, i',
-                    '2/pi*i, aa*pi*i',
-                    '2/pi*i, aa*pi*i',
-                    '2/pi*i, aa*pi*i',
-                    'aa*pi*i, aa/pi*i',
-                    '2*pi*log(i)*aa, 12/pi*log(i)*aa',
-                    'aa*pi*i, sin(tan(tt))*15',
-                    '12*pi*i, tan(tt)*18',
-                    '3*pi*i, tan(tt)*10',
-                    'aa*pi*i, log(i*1)/tan(tt)*aa',
-                    'i, i*pi/aa',
-                    'i*pi/2, i*2/pi',
-                    'i*pi/2, i*2',
-                    '14*pi*i, i',
-                    'pi*6*i, i',
-                    'i*pi*aa, pi/i*aa*10',
-                    'i, i/2',
-                    'i/2, i/2',
-                    'pi*i, i/pi*6',
-                    '500/i, i*3',
-                    'i/2, 1/i*500',
-                    'cos(i), i/3',
-                    'i*pi*3, i*pi/4',
-                    'i*i*pi, 1/i/pi', ]
+    list_X_X = [    'XX',
+                    'i',
+                    'i**2',
+                    'pi*i',
+                    'i*i*pi',
+                    'i/pi',
+                    'pi/i',
+                    'i*XX',
+                    'i/XX',
+                    'XX/i',
+                    'XX*pi*i',
+                    'XX/i/pi',
+                    'XX/pi*i',
+                    'i*pi/XX',
+                    'i/pi*XX',
+                    'pi/i*XX',
+                    'i*XX/pi',
+                    '1/i*XX*pi',
+                    # logs
+                    'log(pi*i)+XX',
+                    'log(i*1)/tan(XX*i)*50',
+                    '12/pi*log(i)*XX',
+                    '2*pi*log(i)*XX',
+                    # trigono
+                    'tan(i)',
+                    'sin(i)',
+                    'cos(i)',
+                    'sin(XX/pi*i)',
+                    'sin(tan(XX*i))*50',
+                    'cos(XX*pi*i)',
+                    'tan(XX*i*pi)',
+                    'tan(i)*XX',
+                    ]
     
-    tt_pp_enum = [(i, 'formula1 {0}'.format(k), i, k) for k, i in enumerate(list_tt_pp)]
-    tt_pp = EnumProperty(items=tt_pp_enum, name='tt_pp')
+    X_X_enum = [(i, i, 'XX v{0}'.format(k), k) for k, i in enumerate(list_X_X)]
+    X_X = EnumProperty(items=X_X_enum, name='X_X')
+                    
+    list_Y_Y = [    'YY',
+                    'i',
+                    'i**2',
+                    'pi*i',
+                    'i*i*pi',
+                    'i/pi',
+                    'pi/i',
+                    'i*YY',
+                    'i/YY',
+                    'YY/i',
+                    'YY*pi*i',
+                    'YY/i/pi',
+                    'YY/pi*i',
+                    'i*pi/YY',
+                    'i/pi*YY',
+                    'pi/i*YY',
+                    'i*YY/pi',
+                    '1/i*YY*pi',
+                    # logs
+                    'log(pi*i)+YY',
+                    'log(i*1)/tan(YY*i)*50',
+                    '12/pi*log(i)*YY',
+                    '2*pi*log(i)*YY',
+                    # trigono
+                    'tan(i)',
+                    'sin(i)',
+                    'cos(i)',
+                    'sin(YY/pi*i)',
+                    'sin(tan(YY*i))*50',
+                    'cos(YY*pi*i)',
+                    'tan(YY*i*pi)',
+                    'tan(i)*YY',
+                    ]
+    
+    Y_Y_enum = [(i, i, 'YY v{0}'.format(k), k) for k, i in enumerate(list_Y_Y)]
+    Y_Y = EnumProperty(items=Y_Y_enum, name='Y_Y')
+    
+    list_Z_Z = [    'ZZ',
+                    'i',
+                    'i**2',
+                    'pi*i',
+                    'i*i*pi',
+                    'i/pi',
+                    'pi/i',
+                    'i*ZZ',
+                    'i/ZZ',
+                    'ZZ/i',
+                    'ZZ*pi*i',
+                    'ZZ/i/pi',
+                    'ZZ/pi*i',
+                    'i*pi/ZZ',
+                    'i/pi*ZZ',
+                    'pi/i*ZZ',
+                    'i*ZZ/pi',
+                    '1/i*ZZ*pi',
+                    # logs
+                    'log(pi*i)+ZZ',
+                    'log(i*1)/tan(ZZ*i)*50',
+                    '12/pi*log(i)*ZZ',
+                    '2*pi*log(i)*ZZ',
+                    # trigono
+                    'tan(i)',
+                    'sin(i)',
+                    'cos(i)',
+                    'sin(ZZ/pi*i)',
+                    'sin(tan(ZZ*i))*50',
+                    'cos(ZZ*pi*i)',
+                    'tan(ZZ*i*pi)',
+                    'tan(i)*ZZ',
+                    ]
+    
+    Z_Z_enum = [(i, i, 'ZZ v{0}'.format(k), k) for k, i in enumerate(list_Z_Z)]
+    Z_Z = EnumProperty(items=Z_Z_enum, name='Z_Z')
     
     list_i = [      'n*f',
-                    'n*f*1.5+1',
-                    'n*f+aa',
-                    'n*f*1.5+1',
-                    'n*f*0.5000+218', ]
+                    'n*f*ZZ',
+                    'n*f*YY',
+                    'n*f*XX',
+                    'n*f*ZZ*XX*YY', ]
     
     i_enum = [(i, i, 'i override {0}'.format(k), k) for k, i in enumerate(list_i)]
     i_override = EnumProperty(items=i_enum, name='i_override')
     
     # end veriables enumerate
     
-    def makeverts(self,vert,f,tt,pp,aa,formula,tt_pp,i_over):
+    def makeverts(self, vert, f, XX, YY, ZZ, formula, X_X, Y_Y, Z_Z, i_over):
         ''' main function '''
         out=[]
         for n in range(vert):
             i = eval(i_over)
-            tt, pp = eval(tt_pp)
+            XX = eval(X_X)
+            YY = eval(Y_Y)
+            ZZ = eval(Z_Z)
             out.append(eval(formula))
         return [out]
 
     def init(self, context):
         self.inputs.new('StringsSocket', "Count").prop_name = 'number'
         self.inputs.new('StringsSocket', "Scale").prop_name = 'scale'
-        self.inputs.new('StringsSocket', "SP1").prop_name = 'tt'
-        self.inputs.new('StringsSocket', "SP2").prop_name = 'pp'
-        self.inputs.new('StringsSocket', "SP3").prop_name = 'additional'
+        self.inputs.new('StringsSocket', "XX").prop_name = 'XX'
+        self.inputs.new('StringsSocket', "YY").prop_name = 'YY'
+        self.inputs.new('StringsSocket', "ZZ").prop_name = 'ZZ'
         self.outputs.new('VerticesSocket', "Verts", "Verts")
         self.outputs.new('StringsSocket', "Edges", "Edges")
     
     def draw_buttons(self,context,layout):
-        row = layout.column(align=True)
-        row.prop(self, 'formula', text='Exp')
-        row.prop(self, 'tt_pp', text='tt_pp')
-        row.prop(self, 'i_override', text='i')
+        col = layout.column(align=True)
+        col.prop(self, 'formula', text='Exp')
+        row = col.row(align=True)
+        row.prop(self, 'X_X', text='')
+        row.prop(self, 'Y_Y', text='')
+        row.prop(self, 'Z_Z', text='')
+        col.prop(self, 'i_override', text='i')
     
     def update(self):
         # inputs
         Count = self.inputs['Count'].sv_get()[0][0]
         Scale = self.inputs['Scale'].sv_get()[0][0]
-        SP1 = self.inputs['SP1'].sv_get()[0][0]
-        SP2 = self.inputs['SP2'].sv_get()[0][0]
-        SP3 = self.inputs['SP3'].sv_get()[0][0]
-        #print(self.formula, self.tt_pp, self.i_override)
+        SP1 = self.inputs['XX'].sv_get()[0][0]
+        SP2 = self.inputs['YY'].sv_get()[0][0]
+        SP3 = self.inputs['ZZ'].sv_get()[0][0]
+        #print(self.formula, self.XX_YY, self.i_override)
         # outputs
         if self.outputs['Verts'].is_linked:
             try:
                 out = self.makeverts(Count, Scale, SP1, SP2, SP3, self.formula, 
-                                self.tt_pp, self.i_override)
+                                self.X_X, self.Y_Y, self.Z_Z, self.i_override)
+                SvSetSocketAnyType(self, 'Verts', out)
             except:
                 print('Cannot calculate, formula generator')
-                out = [[[1,1,i/10] for i in range(Count)]]
-            SvSetSocketAnyType(self, 'Verts', out)
+                out = sv_no_ve
+                edg = sv_no_ed
+                SvSetSocketAnyType(self, 'Verts', sv_no_ve)
+                SvSetSocketAnyType(self, 'Edges', sv_no_ed)
+                return
 
         if self.outputs['Edges'].is_linked:
-
-            edg = [[[i-1, i] for i in range(1, Count)]]
-
-            SvSetSocketAnyType(self, 'Edges', edg)
+                edg = [[[i-1, i] for i in range(1, Count)]]
+                SvSetSocketAnyType(self, 'Edges', edg)
 
     def update_socket(self, context):
         self.update()
@@ -254,8 +349,8 @@ if __name__ == '__main__':
 
 #    i=i*1.2
 #    tt = i*i
-#    pp = 1/i*500
-#    X = ( (sin(tt), sin(pp), cos(tt)) )
+#    YY = 1/i*500
+#    X = ( (sin(tt), sin(YY), cos(tt)) )
 #    X = ( (sin(f), f/20, f/20 ))
 
 ### ------------- Over Spherical: This formulas can be used with sphericals variables presets, or this one:
