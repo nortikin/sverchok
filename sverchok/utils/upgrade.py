@@ -110,7 +110,8 @@ new_socket_dict = {
     'SvRemoveDoublesNode':
         [['inputs', 'StringsSocket', 'Distance', 0]],
     'MaskListNode':
-        [['outputs', 'StringsSocket', 'ind_true', 1],
+        [['outputs', 'StringsSocket', 'mask', 0],
+         ['outputs', 'StringsSocket', 'ind_true', 1],
          ['outputs', 'StringsSocket', 'ind_false', 2]],
     }
 
