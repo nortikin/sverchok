@@ -986,8 +986,8 @@ def do_update_heat_map(node_list, nodes):
         nodes.id_data.sv_user_colors = str(color_data)
         
     t_max = max(times)
-    # ugly hack, we should make standard way that doesn't rely on the name
-    # __package__ doesn't work
+    # ugly hack, we should make standard way that doesn't rely on the name.
+    # __package__ doesn't work.
     addon = bpy.context.user_preferences.addons.get("sverchok")
     if addon:
         # to use Vector.lerp
@@ -996,7 +996,7 @@ def do_update_heat_map(node_list, nodes):
     else:
         print("Cannot find preferences")
         cold = Vector((1,1,1))
-        hot = (.7,0,0)
+        hot = (.8,0,0)
     for name, t in zip(node_list, times):
         nodes[name].use_custom_color = True
         # linerar scale.

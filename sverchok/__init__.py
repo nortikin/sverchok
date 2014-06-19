@@ -116,7 +116,7 @@ class SverchokPreferences(AddonPreferences):
 
     heat_map_hot = FloatVectorProperty(name="Heat map hot", description='',
                                        size=3, min=0.0, max=1.0,
-                                       default=(1, 0, 0), subtype='COLOR')
+                                       default=(.8, 0, 0), subtype='COLOR')
 
     heat_map_cold = FloatVectorProperty(name="Heat map cold", description='',
                                         size=3, min=0.0, max=1.0,
