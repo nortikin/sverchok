@@ -286,7 +286,7 @@ def make_categories():
             NodeItem("VectorsOutNode", label="Vector out"),
             NodeItem("VectorMoveNode", label="Vector Move"),
             NodeItem("VectorMathNode", label="Vector Math"),
-            NodeItem("VectorMath2Node", label="Vector Math2"),
+            #NodeItem("VectorMath2Node", label="Vector Math2"),
             NodeItem("VectorDropNode", label="Vector Drop"),
             NodeItem("VertsDelDoublesNode", label="Vector X Doubles"),
             NodeItem("EvaluateLineNode", label="Vector Evaluate"),
