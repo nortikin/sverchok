@@ -196,8 +196,8 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
         row.scale_y = 0.9
         row.operator(sh, text='Select/Deselect').fn_name = 'mesh_select'
         row = col.row(align=True)
-        row.scale_y=0.9
-        #row.template_ID
+        row.scale_y = 0.9
+        # row.template_ID
         row.prop(self, "material", text="mat.")
 
     def get_corrected_data(self, socket_name, socket_type):
@@ -349,4 +349,3 @@ def register():
 def unregister():
     bpy.utils.unregister_class(BmeshViewerNode)
     bpy.utils.unregister_class(SvBmeshViewOp)
-register()
