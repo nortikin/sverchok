@@ -59,7 +59,7 @@ class SvFormulaShapeNode(bpy.types.Node, SverchCustomTreeNode):
                     update=updateNode)
     
     # formula for usual case
-    list_formula = [    '(0,0,0)',
+    list_formula = [    '(0,1,0)',
                         '((tan(i/10)+1), sin(i/2), sin(i/4))',
                         '(cos(i)*cos(i)*i/300, sin(i)*cos(i)*i/300, -(2*i)/(200+sin(i)))',
                         '(cos(i)*i/200, sin(i)*i/200, (-i*i)/90000)',
@@ -130,7 +130,7 @@ class SvFormulaShapeNode(bpy.types.Node, SverchCustomTreeNode):
     formula_enum = [(i, 'formula1 {0}'.format(k), i, k) for k, i in enumerate(list_formula)]
     formula = EnumProperty(items=formula_enum, name='formula1')
     
-    list_tt_pp = [  '',
+    list_tt_pp = [  'tt, pp',
                     'i, i',
                     'pi*i , i/pi',
                     'tan(i) , 1/tan(i)',
@@ -168,11 +168,11 @@ class SvFormulaShapeNode(bpy.types.Node, SverchCustomTreeNode):
     tt_pp_enum = [(i, 'formula1 {0}'.format(k), i, k) for k, i in enumerate(list_tt_pp)]
     tt_pp = EnumProperty(items=tt_pp_enum, name='tt_pp')
     
-    list_i = [      '',
-                    'i*1.5+1',
-                    'i+aa',
-                    'i*1.5+1',
-                    'i*0.5000+218', ]
+    list_i = [      'n*f',
+                    'n*f*1.5+1',
+                    'n*f+aa',
+                    'n*f*1.5+1',
+                    'n*f*0.5000+218', ]
     
     i_enum = [(i, i, 'i override {0}'.format(k), k) for k, i in enumerate(list_i)]
     i_override = EnumProperty(items=i_enum, name='i_override')
@@ -183,11 +183,8 @@ class SvFormulaShapeNode(bpy.types.Node, SverchCustomTreeNode):
         ''' main function '''
         out=[]
         for n in range(vert):
-            i = n*f
-            if i_over:
-                i = eval(i_over)
-            if tt_pp:
-                tt, pp = eval(tt_pp)
+            i = eval(i_over)
+            tt, pp = eval(tt_pp)
             out.append(eval(formula))
         return [out]
 
@@ -216,10 +213,12 @@ class SvFormulaShapeNode(bpy.types.Node, SverchCustomTreeNode):
         #print(self.formula, self.tt_pp, self.i_override)
         # outputs
         if self.outputs['Verts'].is_linked:
-
-            out = self.makeverts(Count, Scale, SP1, SP2, SP3, self.formula, 
+            try:
+                out = self.makeverts(Count, Scale, SP1, SP2, SP3, self.formula, 
                                 self.tt_pp, self.i_override)
-            
+            except:
+                print('Cannot calculate, formula generator')
+                out = [[[1,1,i/10] for i in range(Count)]]
             SvSetSocketAnyType(self, 'Verts', out)
 
         if self.outputs['Edges'].is_linked:
