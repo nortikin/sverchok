@@ -80,10 +80,11 @@ class SvListInputNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "mode", expand=True)
 
         if self.mode == 'vector':
+            col = layout.column(align=False)
             for i in range(self.v_int):
-                col = layout.column(align=True)
+                row = col.row(align=True)
                 for j in range(3):
-                    col.prop(self, 'vector_list', index=i*3+j, text='XYZ'[j])
+                    row.prop(self, 'vector_list', index=i*3+j, text='XYZ'[j])
         else:
             col = layout.column(align=True)
             for i in range(self.int_):
