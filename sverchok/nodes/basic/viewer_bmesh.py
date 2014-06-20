@@ -248,7 +248,8 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
             return
 
         # regular code from this point
-        if self.activate and self.inputs['vertices'].is_linked and self.inputs['faces'].is_linked:
+        if self.activate and 'vertices' in inputs and inputs['vertices'].links:
+
             C = bpy.context
             mverts, *mrest = self.get_geometry_from_sockets()
 
