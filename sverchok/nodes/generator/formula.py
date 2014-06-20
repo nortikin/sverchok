@@ -73,67 +73,153 @@ class SvFormulaShapeNode(bpy.types.Node, SverchCustomTreeNode):
                     update=updateNode)
     
     # formula for usual case
-    # formulas contributed by Paul Kotelevets aka 1D
-    list_formula = [    '(0,1,0)',
-                        '((tan(i/XX)+1), sin(i/YY), sin(i/ZZ))',
-                        '(cos(i)*cos(i)*i/XX, sin(i)*cos(i)*i/YY, -(2*i)/(ZZ+sin(i)))',
-                        '(cos(i)*i/XX, sin(i)*i/YY, (-i*i)/ZZ*900)',
-                        '(cos(i)*i/XX, sin(i)*i/YY, ((ZZ*100/(i*(1+i)-ZZ*300))))',
-                        '(cos(i)*i/XX, sin(i)*i/YY, (ZZ*1000/(i*i+ZZ*500)))',
-                        '(cos(i/2)*i/XX-cos(i/2), sin(i/2)*i/YY-cos(i/2), -i/(ZZ+sin(i/2)))',
-                        '(cos(i/2)*i/XX-cos(i/2), sin(i/2)*i/YY-cos(i/2), -(1+sin(i/2)))',
-                        '(cos(i/2)*i/XX, sin(i/2)*i/YY, -i/(ZZ+i*sin(i)))',
-                        '((i/XX)*1, sin(i/YY), sin(i/ZZ))',
-                        '(sin(i/XX), tan(2+(i/YY)), tan(ZZ+(i/3)))',
-                        '(sin(i/XX), cos(i/YY), tan(i*ZZ))',
-                        '(exp(i/XX), cos(i/YY),(sin(i)+cos(i))/(0.001+exp(i/ZZ))',
-                        '(sin(i)/(XX+cos(i)), cos(i)/(YY+sin(i)), tan(i/ZZ)/exp(i/ZZ*10))',
-                        '(sin(i/XX), sin(i/YY), sin(i/ZZ))',
-                        '(cos(i*XX+i*i), cos(i/YY+i*i), cos(i+i*ZZ))',
-                        '(sin(i/XX+i*i), sin(i/ZZ+i*i), cos(i))',
-                        '(sin(i/XX+i*i), sin(i/YY+i*i), cos(i)*ZZ)',
-                        '(sin(i/XX+i), sin(i/YY+i), cos(i/ZZ))',
-                        '(cos(i)*i/XX, sin(i)*i/YY, -i/ZZ)',
-                        '(cos(i/XX), sin(i/5), -i/200)',
-                        '(cos(i/XX), sin(i/5), -i/300)',
-                        '(sin(i/XX-i), sin(i/YY-i), sin(i/ZZ))',
-                        '(cos(i/XX), sin(i/YY), sin(i/ZZ))',
-                        '(cos(XX/i)*2, sin(YY/i)*2, sin(ZZ/i))',
-                        '(pow(cos(i*XX), 3), pow(sin(i*YY), 3), 3*cos(sin(i*ZZ)))',
-                        '(sin(cos(i*XX))*2, pow(sin(i*YY), 5), 3*cos(sin(i*ZZ)))',
-                        '(sin(cos(i*XX))*2, sin(sin(i*YY)), 3*cos(sin(i*ZZ)))',
-                        '(tan(sin(i*XX)), tan(cos(i*YY)), 3*cos(sin(i*ZZ)))',
-                        '(tan(cos(i+i)), i/YY, tan(cos(i+i/ZZ)))',
-                        '(tan(cos(i+i)), tan(sin(i+i)), tan(cos(i+i/ZZ)))',
-                        '(atan(cos(i+i)), atan(sin(i+i)), atan(cos(i+i/ZZ)))',
-                        '(tan(cos(i+i*XX)), sin(tan(i+i*YY)), tan(cos(i+i*ZZ)))',
-                        '(XX/log((1+ sin(i))), YY/log((1+ cos(i))), i/ZZ)',
-                        '(XX/log((1+ sin(i))), cos(i), i/ZZ)',
-                        '(sin(i), -YY*pi/4, sin(ZZ*i*3.14)*sin(i*pi/(ZZ+0.0001)))',
-                        '(sin(i), -YY*pi/4, sin(ZZ*i*3.14)*sin(i*3.14))',
+    list_formulaX = [    'i*XX',
+                        '(i/100)',
+                        '(i**2)*XX',
+                        'sqrt(i*XX)'
+                        'sin(XX)',
+                        'sin(i*XX)',
+                        'sin(i*XX+i**2)',
+                        'sin(i)/(XX+cos(i))',
+                        'sin(cos(i*XX))',
+                        'sin(i)*cos(i)*i*XX',
+                        'sin(i)*i*XX',
+                        'cos(XX)',
+                        'cos(i*XX)',
+                        'cos(i)*i*XX',
+                        '(cos(i)**2)*i*XX',
+                        'cos(i*XX)**3',
+                        'cos(i/2)*i*XX-cos(i/2)',
+                        'cos(i*XX+i**2)',
+                        'cos(i)*i*XX',
+                        'cos(i*XX)',
+                        'tan(i*XX)',
+                        'tan(sin(i*XX))',
+                        'tan(cos(XX*i**2))',
+                        'atan(cos(i*XX))',
+                        'XX*log((1+ sin(i)))',
                         #sphere
-                        '(cos(XX) * cos(YY),  sin(XX) * sin(YY),  (i/100))',
-                        '(log(exp(sin(XX)) *  exp(cos(YY))), log(exp(sin(XX)) * exp(sin(YY))), (exp(cos(XX))))',
-                        '(sin(XX) * cos(YY), sin(XX) * sin(YY), cos(XX))',
-                        '(sin(XX) * cos(YY), sin(XX) * sin(YY)+i/500, cos(XX))',
-                        '(sin(XX) * cos(YY),  sin(XX) * sin(YY),  exp(cos(XX)))', #XX = 0.2*pi*i
-                        '(sin(XX) * atan(YY), sin(XX) * sin(YY),  exp(cos(XX)))', ##YY = 3/pi*i || YY = XX/4 || XX = 58/pi*i  YY = 2*pi*i
-                        '(tan(XX) * atan(YY), sin(XX) * sin(YY),  cos(XX))',
-                        '(sin(XX) * cos(YY),  sin(XX) * sin(YY),  cos(XX))', #YY = XX/4 || YY = 3/pi*i ||YY = XX*5
-                        '(sin(XX) * cos(YY) * log(YY, 2)/10, sin(YY) * sin(YY) * cos(XX), cos(XX))', ##sp16+16
-                        '(sin(XX) * cos(YY) * sin(YY),  sin(YY) * sin(YY) * cos(XX),  cos(XX))',
-                        '(sin(YY) * cos(YY) * sin(YY),  sin(YY) * sin(YY) * sin(XX),  cos(YY))',
-                        '(sin(YY) * cos(YY) * sin(YY),  sin(YY) * sin(YY) * sin(XX),  cos(XX))',
-                        '(sin(XX) * cos(YY),  sin(XX) * sin(YY),  cos(XX) * sin(2*XX))',
-                        '(sin(XX) * cos(YY),  sin(XX) * sin(YY),  cos(XX) * sin(YY))',
-                        '(sin(XX) * cos(YY),  sin(XX) * sin(YY) * sin(YY),  cos(XX) * sin(YY))',    #sp15
-                        '(sin(XX) * cos(YY) * cos(YY),  sin(XX) * sin(YY) * sin(YY),  cos(XX)*sin(YY))',   #sp1, sp11, sp21, sp22
-                        '(sin(XX) * cos(YY) * cos(XX),  sin(XX) * sin(YY) * sin(YY),  cos(XX)*sin(YY))',   #sp14, sp15
-                        '(sin(YY) * cos(YY) * cos(XX),  sin(XX) * sin(YY) * sin(YY),  cos(XX)*sin(YY))',   #sp14, sp15
-                        '(sin(YY) * cos(YY) * cos(XX),  sin(XX) * sin(YY) * sin(YY),  cos(XX))', ]         #sp4, sp3
+                        'cos(XX) * cos(YY)',
+                        'cos(XX) * sin(XX)',
+                        'sin(XX) * cos(YY)',
+                        'sin(XX) * sin(YY)',
+                        'sin(YY) * sin(YY)',
+                        'log(exp(sin(XX)) * exp(cos(YY))', 
+                        'log(exp(sin(XX)) * exp(sin(YY))',
+                        'exp(cos(XX))',
+                        'sin(XX) * atan(YY)',
+                        'tan(XX) * atan(YY)',
+                        'sin(YY) * sin(YY) * sin(XX)',
+                        'sin(XX) * sin(YY) * sin(YY)',
+                        'sin(YY) * sin(YY) * cos(XX)',
+                        'sin(XX) * cos(YY) * cos(YY)',
+                        'sin(XX) * cos(YY) * sin(YY)',
+                        'sin(YY) * cos(YY) * sin(YY)',
+                        'sin(XX) * cos(YY) * log(YY, 2)/10',
+                        'sin(YY) * cos(YY) * cos(XX)', ]
                         
-    formula_enum = [(i, 'formula1 {0}'.format(k), i, k) for k, i in enumerate(list_formula)]
-    formula = EnumProperty(items=formula_enum, name='formula1')
+    list_formulaY = [   'i*YY',
+                        '(i/100)',
+                        '(i**2)*YY',
+                        'sqrt(i*YY)'
+                        'sin(YY)',
+                        'sin(i*YY)',
+                        'sin(i*YY+i**2)',
+                        'sin(i)/(YY+cos(i))',
+                        'sin(cos(i*YY))',
+                        'sin(i)*cos(i)*i*YY',
+                        'sin(i)*i*YY',
+                        'cos(YY)',
+                        'cos(i*YY)',
+                        'cos(i)*i*YY',
+                        '(cos(i)**2)*i*YY',
+                        'cos(i*YY)**3',
+                        'cos(i/2)*i*YY-cos(i/2)',
+                        'cos(i*YY+i**2)',
+                        'cos(i)*i*YY',
+                        'cos(i*YY)',
+                        'tan(i*YY)',
+                        'tan(sin(i*YY))',
+                        'tan(cos(YY*i**2))',
+                        'atan(cos(i*YY))',
+                        'YY*log((1+ sin(i)))',
+                        #sphere
+                        'cos(XX) * cos(YY)',
+                        'cos(XX) * sin(XX)',
+                        'sin(XX) * cos(YY)',
+                        'sin(XX) * sin(YY)',
+                        'sin(YY) * sin(YY)',
+                        'log(exp(sin(XX)) * exp(cos(YY))', 
+                        'log(exp(sin(XX)) * exp(sin(YY))',
+                        'exp(cos(XX))',
+                        'sin(XX) * atan(YY)',
+                        'tan(XX) * atan(YY)',
+                        'sin(YY) * sin(YY) * sin(XX)',
+                        'sin(XX) * sin(YY) * sin(YY)',
+                        'sin(YY) * sin(YY) * cos(XX)',
+                        'sin(XX) * cos(YY) * cos(YY)',
+                        'sin(XX) * cos(YY) * sin(YY)',
+                        'sin(YY) * cos(YY) * sin(YY)',
+                        'sin(XX) * cos(YY) * log(YY, 2)/10',
+                        'sin(YY) * cos(YY) * cos(XX)', ]
+                        
+    list_formulaZ = [   'i*ZZ',
+                        '(i/100)',
+                        '(i**2)*ZZ',
+                        'sqrt(i*ZZ)'
+                        'sin(ZZ)',
+                        'sin(i*ZZ)',
+                        'sin(i*ZZ+i**2)',
+                        'sin(i)/(ZZ+cos(i))',
+                        'sin(cos(i*ZZ))',
+                        'sin(i)*cos(i)*i*ZZ',
+                        'sin(i)*i*ZZ',
+                        'cos(ZZ)',
+                        'cos(i*ZZ)',
+                        'cos(i)*i*ZZ',
+                        '(cos(i)**2)*i*ZZ',
+                        'cos(i*ZZ)**3',
+                        'cos(i/2)*i*ZZ-cos(i/2)',
+                        'cos(i*ZZ+i**2)',
+                        'cos(i)*i*ZZ',
+                        'cos(i*ZZ)',
+                        'tan(i*ZZ)',
+                        'tan(sin(i*ZZ))',
+                        'tan(cos(ZZ*i**2))',
+                        'atan(cos(i*ZZ))',
+                        'ZZ*log((1+ sin(i)))',
+                        #sphere
+                        'cos(XX) * cos(YY)',
+                        'cos(XX) * sin(XX)',
+                        'sin(XX) * cos(YY)',
+                        'sin(XX) * sin(YY)',
+                        'sin(YY) * sin(YY)',
+                        'log(exp(sin(XX)) * exp(cos(YY))', 
+                        'log(exp(sin(XX)) * exp(sin(YY))',
+                        'exp(cos(XX))',
+                        'sin(XX) * atan(YY)',
+                        'tan(XX) * atan(YY)',
+                        'sin(YY) * sin(YY) * sin(XX)',
+                        'sin(XX) * sin(YY) * sin(YY)',
+                        'sin(YY) * sin(YY) * cos(XX)',
+                        'sin(XX) * cos(YY) * cos(YY)',
+                        'sin(XX) * cos(YY) * sin(YY)',
+                        'sin(YY) * cos(YY) * sin(YY)',
+                        'sin(XX) * cos(YY) * log(YY, 2)/10',
+                        'sin(YY) * cos(YY) * cos(XX)', ]
+                        
+    formulaX_enum = [(i, i, 'formulaX {0}'.format(k), k) for k, i in enumerate(list_formulaX)]
+    formulaY_enum = [(i, i, 'formulaY {0}'.format(k), k) for k, i in enumerate(list_formulaY)]
+    formulaZ_enum = [(i, i, 'formulaZ {0}'.format(k), k) for k, i in enumerate(list_formulaZ)]
+    formulaX = EnumProperty(items=formulaX_enum, name='formulaX',
+                    options={'ANIMATABLE'},
+                    update=updateNode)
+    formulaY = EnumProperty(items=formulaY_enum, name='formulaY',
+                    options={'ANIMATABLE'},
+                    update=updateNode)
+    formulaZ = EnumProperty(items=formulaZ_enum, name='formulaZ',
+                    options={'ANIMATABLE'},
+                    update=updateNode)
     
     list_X_X = [    'XX',
                     'i',
@@ -169,8 +255,10 @@ class SvFormulaShapeNode(bpy.types.Node, SverchCustomTreeNode):
                     'tan(i)*XX',
                     ]
     
-    X_X_enum = [(i, i, 'XX v{0}'.format(k), k) for k, i in enumerate(list_X_X)]
-    X_X = EnumProperty(items=X_X_enum, name='X_X')
+    X_X_enum = [(i, i, i, k) for k, i in enumerate(list_X_X)]
+    X_X = EnumProperty(items=X_X_enum, name='X_X',
+                    options={'ANIMATABLE'},
+                    update=updateNode)
                     
     list_Y_Y = [    'YY',
                     'i',
@@ -206,8 +294,10 @@ class SvFormulaShapeNode(bpy.types.Node, SverchCustomTreeNode):
                     'tan(i)*YY',
                     ]
     
-    Y_Y_enum = [(i, i, 'YY v{0}'.format(k), k) for k, i in enumerate(list_Y_Y)]
-    Y_Y = EnumProperty(items=Y_Y_enum, name='Y_Y')
+    Y_Y_enum = [(i, i, i, k) for k, i in enumerate(list_Y_Y)]
+    Y_Y = EnumProperty(items=Y_Y_enum, name='Y_Y',
+                    options={'ANIMATABLE'},
+                    update=updateNode)
     
     list_Z_Z = [    'ZZ',
                     'i',
@@ -243,8 +333,10 @@ class SvFormulaShapeNode(bpy.types.Node, SverchCustomTreeNode):
                     'tan(i)*ZZ',
                     ]
     
-    Z_Z_enum = [(i, i, 'ZZ v{0}'.format(k), k) for k, i in enumerate(list_Z_Z)]
-    Z_Z = EnumProperty(items=Z_Z_enum, name='Z_Z')
+    Z_Z_enum = [(i, i, i, k) for k, i in enumerate(list_Z_Z)]
+    Z_Z = EnumProperty(items=Z_Z_enum, name='Z_Z',
+                    options={'ANIMATABLE'},
+                    update=updateNode)
     
     list_i = [      'n*f',
                     'n*f*ZZ',
@@ -253,11 +345,13 @@ class SvFormulaShapeNode(bpy.types.Node, SverchCustomTreeNode):
                     'n*f*ZZ*XX*YY', ]
     
     i_enum = [(i, i, 'i override {0}'.format(k), k) for k, i in enumerate(list_i)]
-    i_override = EnumProperty(items=i_enum, name='i_override')
+    i_override = EnumProperty(items=i_enum, name='i_override',
+                    options={'ANIMATABLE'},
+                    update=updateNode)
     
     # end veriables enumerate
     
-    def makeverts(self, vert, f, XX, YY, ZZ, formula, X_X, Y_Y, Z_Z, i_over):
+    def makeverts(self, vert, f, XX, YY, ZZ, fx,fy,fz, X_X, Y_Y, Z_Z, i_over):
         ''' main function '''
         out=[]
         for n in range(vert):
@@ -265,7 +359,10 @@ class SvFormulaShapeNode(bpy.types.Node, SverchCustomTreeNode):
             XX = eval(X_X)
             YY = eval(Y_Y)
             ZZ = eval(Z_Z)
-            out.append(eval(formula))
+            X = eval(fx)
+            Y = eval(fy)
+            Z = eval(fz)
+            out.append((X,Y,Z))
         return [out]
 
     def init(self, context):
@@ -279,7 +376,10 @@ class SvFormulaShapeNode(bpy.types.Node, SverchCustomTreeNode):
     
     def draw_buttons(self,context,layout):
         col = layout.column(align=True)
-        col.prop(self, 'formula', text='Exp')
+        row = col.row(align=True)
+        row.prop(self, 'formulaX', text='')
+        row.prop(self, 'formulaY', text='')
+        row.prop(self, 'formulaZ', text='')
         row = col.row(align=True)
         row.prop(self, 'X_X', text='')
         row.prop(self, 'Y_Y', text='')
@@ -297,7 +397,8 @@ class SvFormulaShapeNode(bpy.types.Node, SverchCustomTreeNode):
         # outputs
         if self.outputs['Verts'].is_linked:
             try:
-                out = self.makeverts(Count, Scale, SP1, SP2, SP3, self.formula, 
+                out = self.makeverts(Count, Scale, SP1, SP2, SP3, 
+                                self.formulaX, self.formulaY, self.formulaZ, 
                                 self.X_X, self.Y_Y, self.Z_Z, self.i_override)
                 SvSetSocketAnyType(self, 'Verts', out)
             except:
