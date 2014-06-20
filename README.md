@@ -45,7 +45,7 @@ Install Sverchok as you would any blender addon.
 
 ###Troubleshooting Installation Errors
 
-Sverchok can fail to install for a variety of reasons, we've compiled a list and known resolutions [here](/docs/Installation_troubleshooting.md).
+In case Sverchok fails to install, we've compiled a list of reasons and known resolutions [here](/docs/Installation_troubleshooting.md). Please let us know if you encounter other installation issues.
 
 ###Contact and Credit
 Homepage: http://nikitron.cc.ua/sverchok.html  
