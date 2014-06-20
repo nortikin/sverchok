@@ -8,8 +8,6 @@ def sv_main(size=1,divx=1,divy=1,divz=1):
         ['s', 'DivisionsZ(int)', divz],
     ]
     
-    # import libreryes - your defined
-    
     # your's code here
     if divx<1: divx=1
     if divy<1: divy=1

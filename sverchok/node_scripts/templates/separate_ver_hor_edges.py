@@ -1,17 +1,18 @@
+# it separates vertical and horisontal edges
+from data_structure import sv_zip
+from math import sin
+
+
 def sv_main(v=[],e=[],tres=1):
     
-    # in boilerplate - make your own sockets
     in_sockets = [
         ['v', 'Vertices',  v],
         ['s', 'edges', e],
         ['s', 'Threshold', tres],
     ]
     
-    # import libreryes - your defined
-    from util import sv_zip
-    from math import sin
+
     
-    # your's code here
     edgV=[]
     edgH=[]
     edgX=[]
@@ -28,8 +29,7 @@ def sv_main(v=[],e=[],tres=1):
             edgV.append(edg)
         else:
             edgX.append(edg)
-     
-    # out boilerplate - set your own sockets packet
+    
     out_sockets = [
         ['v', 'Vers', v],
         ['s', 'edgV', [edgV]],

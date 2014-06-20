@@ -1,3 +1,8 @@
+# imports and aliases
+from math import sin, cos, pi, atan2, radians
+from mathutils import Euler, Vector
+
+
 def sv_main(n_verts=12, prad=1.2, crad=0.5, n_iter=4, n_turns=7, height=6):
 
     # in boilerplate, could be less verbose
@@ -10,9 +15,7 @@ def sv_main(n_verts=12, prad=1.2, crad=0.5, n_iter=4, n_turns=7, height=6):
         ['s', "height", height]
     ]
 
-    # imports and aliases
-    from math import sin, cos, pi, atan2, radians
-    from mathutils import Euler, Vector
+    
 
     def make_coil():
 

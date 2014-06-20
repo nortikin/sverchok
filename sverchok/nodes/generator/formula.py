@@ -76,7 +76,7 @@ class SvFormulaShapeNode(bpy.types.Node, SverchCustomTreeNode):
     list_formulaX = [    'i*XX',
                         '(i/100)',
                         '(i**2)*XX',
-                        'sqrt(i*XX)'
+                        'sqrt(i*XX)',
                         'sin(XX)',
                         'sin(i*XX)',
                         'sin(i*XX+i**2)',
@@ -121,7 +121,7 @@ class SvFormulaShapeNode(bpy.types.Node, SverchCustomTreeNode):
     list_formulaY = [   'i*YY',
                         '(i/100)',
                         '(i**2)*YY',
-                        'sqrt(i*YY)'
+                        'sqrt(i*YY)',
                         'sin(YY)',
                         'sin(i*YY)',
                         'sin(i*YY+i**2)',
@@ -166,7 +166,7 @@ class SvFormulaShapeNode(bpy.types.Node, SverchCustomTreeNode):
     list_formulaZ = [   'i*ZZ',
                         '(i/100)',
                         '(i**2)*ZZ',
-                        'sqrt(i*ZZ)'
+                        'sqrt(i*ZZ)',
                         'sin(ZZ)',
                         'sin(i*ZZ)',
                         'sin(i*ZZ+i**2)',

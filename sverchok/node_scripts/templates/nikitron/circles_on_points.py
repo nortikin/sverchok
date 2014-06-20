@@ -1,6 +1,11 @@
 # not finished yet
 # will create circles field in what circles will fill maximum space
 
+from math import sin, cos, radians, pi, sqrt
+from mathutils import Vector, Euler
+from random import random
+
+
 def sv_main(v=[],c=3):
 
     in_sockets = [
@@ -8,9 +13,6 @@ def sv_main(v=[],c=3):
         ['s', 'circle',  c],
     ]
 
-    from math import sin, cos, radians, pi, sqrt
-    from mathutils import Vector, Euler
-    from random import random
     if v:
         max_ = max([i[0] for i in v])
         mix_ = min([i[0] for i in v])
