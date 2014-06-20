@@ -2,7 +2,7 @@
 
 #### NumPy
 
-We now include NumPy code in Sverchok nodes, this means that you should have an up-to-date version of NumPy on your machine. Normally if you get your Blender precompiled NumPy will be included with Python, however this isn't always the case. The windows builds on blender buildbot may contain a cut down version of NumPy due to the license connected with certain numpy modules. 
+We now include NumPy code in Sverchok nodes, this means that you should have an up-to-date version of NumPy on your machine. Normally if you get your Blender precompiled NumPy will be included with Python, however this isn't always the case. The windows builds on blender buildbot may contain a cut down version of NumPy due to the licenses under which it can be spread in compiled form.
 
 If you get an error when enabling Sverchok the last lines of the error are important, if it mentions:   
 
@@ -27,7 +27,7 @@ To confirm that NumPy is installed properly on your system, for py3.4, launch yo
 ```
 Python 3.4.1 (v3.4.1:c0e311e010fc, May 18 2014, 10:38:22) <edited>
 Type "help", "copyright", "credits" or "license" for more information.
->>> `import numpy`
+>>> import numpy
 >>> 
 ```
 
