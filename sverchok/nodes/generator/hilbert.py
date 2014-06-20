@@ -47,23 +47,23 @@ class HilbertNode(bpy.types.Node, SverchCustomTreeNode):
 
     def update(self):
         # inputs
-        if 'Egdes' in self.outputs and self.outputs['Edges'].links or self.outputs['Vertices'].links:
-            if self.inputs['Level'].links:
+        if self.outputs['Edges'].is_linked or self.outputs['Vertices'].is_linked:
+            if self.inputs['Level'].is_linked:
                 Integer = int(SvGetSocketAnyType(self, self.inputs['Level'])[0][0])
             else:
                 Integer = self.level_
 
-            if self.inputs['Size'].links:
+            if self.inputs['Size'].is_linked:
                 Step = SvGetSocketAnyType(self, self.inputs['Size'])[0][0]
             else:
                 Step = self.size_
 
         # outputs
-        if 'Vertices' in self.outputs and self.outputs['Vertices'].links:
+        if self.outputs['Vertices'].is_linked:
             verts = self.hilbert(0.0, 0.0, Step*1.0, 0.0, 0.0, Step*1.0, Integer)
             SvSetSocketAnyType(self, 'Vertices', [verts])
 
-        if 'Edges' in self.outputs and self.outputs['Edges'].links:
+        if self.outputs['Edges'].is_linked:
             listEdg = []
             r = len(verts)-1
             for i in range(r):

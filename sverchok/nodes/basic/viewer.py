@@ -137,17 +137,17 @@ class ViewerNode(bpy.types.Node, SverchCustomTreeNode):
     n_id = StringProperty(default='', options={'SKIP_SAVE'})
 
     Vertex_show = BoolProperty(name='Vertices', description='Show or not vertices',
-                               default=True,
-                               update=updateNode)
+                    default=True,
+                    update=updateNode)
     activate = BoolProperty(name='Show', description='Activate node?',
-                            default=True,
-                            update=updateNode)
+                    default=True,
+                    update=updateNode)
     transparant = BoolProperty(name='Transparant', description='transparant polygons?',
-                               default=False,
-                               update=updateNode)
+                    default=False,
+                    update=updateNode)
     shading = BoolProperty(name='Shading', description='shade the object or index representation?',
-                           default=False,
-                           update=updateNode)
+                    default=False,
+                    update=updateNode)
 
     color_view = SvColors.color
 

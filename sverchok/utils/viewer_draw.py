@@ -52,8 +52,8 @@ def callback_enable(name, sl1, sl2, sl3, vs, colo, tran, shade):
     if name in callback_dict:
         return
     handle_view = SpaceView3D.draw_handler_add(draw_callback_view,
-                                               (name, sl1, sl2, sl3, vs, colo, tran, shade),
-                                               'WINDOW', 'POST_VIEW')
+                    (name, sl1, sl2, sl3, vs, colo, tran, shade),
+                    'WINDOW', 'POST_VIEW')
     callback_dict[name] = handle_view
     tag_redraw_all_view3d()
 
@@ -78,17 +78,25 @@ def callback_disable(name):
 
 def draw_callback_view(handle, sl1, sl2, sl3, vs, colo, tran, shade):
     context = bpy.context
-    from bgl import glEnable, glDisable, glColor3f, glVertex3f, glPointSize, glLineWidth, glBegin, glEnd, glLineStipple, GL_POINTS, GL_LINE_STRIP, GL_LINES, GL_LINE, GL_LINE_STIPPLE, GL_POLYGON, GL_POLYGON_STIPPLE, GL_POLYGON_SMOOTH, glPolygonStipple
-    from bgl import GL_TRIANGLES, GL_QUADS, glColor4f
+    from bgl import glEnable, glDisable, glColor3f, glVertex3f, glPointSize, \
+                glLineWidth, glBegin, glEnd, glLineStipple, GL_POINTS, \
+                GL_LINE_STRIP, GL_LINES, GL_LINE, GL_LINE_STIPPLE, GL_POLYGON, \
+                GL_POLYGON_STIPPLE, GL_POLYGON_SMOOTH, glPolygonStipple, \
+                GL_TRIANGLES, GL_QUADS, glColor4f
     # define globals, separate edgs from pols
     if tran:
         polyholy = GL_POLYGON_STIPPLE
+        edgeholy = GL_LINE_STIPPLE
+        edgeline = GL_LINE_STRIP
     else:
         polyholy = GL_POLYGON
+        edgeholy = GL_LINE
+        edgeline = GL_LINES
 
     if sl1:
         data_vector = Vector_generate(sl1)
-        verlen = len(data_vector) - 1
+        verlen = len(data_vector)-1
+        verlen_every = [len(d)-1 for d in data_vector]
     else:
         data_vector = []
         verlen = 0
@@ -199,7 +207,8 @@ def draw_callback_view(handle, sl1, sl2, sl3, vs, colo, tran, shade):
             glEnd()
 
 
-
+    # MAYBE WE SHOULD CONNECT ITERATION FOR ALL PROCESS TO DECREASE 
+    # TIME?
     ########
     # points
     if vs:
@@ -224,21 +233,23 @@ def draw_callback_view(handle, sl1, sl2, sl3, vs, colo, tran, shade):
     if data_edges and data_vector:
         glColor3f(coloa, colob, coloc)
         glLineWidth(1.0)
-        glEnable(GL_LINES)
+        glEnable(edgeholy)
 
         for i, matrix in enumerate(data_matrix):    # object
             k = i
-            if i > verlen:
+            if i > verlen:   # filter to share objects
                 k = verlen
             for line in data_edges[k]:                 # line
-                glBegin(GL_LINES)
+                if max(line) > verlen_every[i]:
+                    continue
+                glBegin(edgeline)
                 for point in line:              # point
                     vec_corrected = data_matrix[i]*data_vector[k][int(point)]
                     glVertex3f(*vec_corrected)
                 glEnd()
                 glPointSize(1.75)
                 glLineWidth(1.0)
-        glDisable(GL_LINES)
+        glDisable(edgeholy)
 
 
     #######
@@ -254,6 +265,8 @@ def draw_callback_view(handle, sl1, sl2, sl3, vs, colo, tran, shade):
                 k = verlen
             oblen = len(data_polygons[k])
             for j, pol in enumerate(data_polygons[k]):
+                if max(pol) > verlen_every[i]:
+                    continue
                 if shade:
                     normal_no_ = mathutils.geometry.normal(
                             data_vector[k][pol[0]],

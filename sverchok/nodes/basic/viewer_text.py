@@ -173,8 +173,8 @@ class ViewerNode_text(bpy.types.Node, SverchCustomTreeNode):
         else:
             cache_viewer_slot3['veriable'+self.name] = 'None \n'
 
-        if len(self.inputs['matrix'].links) > 0 or len(self.inputs['vertices'].links) > 0 or \
-                len(self.inputs['edg_pol'].links) > 0:
+        if self.inputs['matrix'].is_linked or self.inputs['vertices'].is_linked or \
+                    self.inputs['edg_pol'].is_linked:
             self.use_custom_color = True
             self.color = (0.5, 0.5, 1)
         else:
