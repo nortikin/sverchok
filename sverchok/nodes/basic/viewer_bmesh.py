@@ -248,6 +248,7 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
             return
 
         # regular code from this point
+        inputs = self.inputs
         if self.activate and 'vertices' in inputs and inputs['vertices'].links:
 
             C = bpy.context
@@ -277,7 +278,7 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
             self.remove_non_updated_objects(obj_index, self.basemesh_name)
             self.set_corresponding_materials()
-            if self.inputs['vertices'].is_linked:
+            if self.inputs['vertices'].links:
                 if self.grouping:
                     self.to_group()
                 if self.material:
@@ -323,15 +324,10 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
         for name in objects_to_reselect:
             bpy.data.objects[name].select = True
 
-        # fingers crossed.
+        # fingers crossed 2x.
 
     def set_corresponding_materials(self):
         objs = bpy.data.objects
-        # first_mesh = self.basemesh_name + '_0'
-
-        # group_material = objs[first_mesh].active_material
-
-        # if group_material:
         for obj in objs:
             # if this object is made by bmesh - assign material of 'object_0'
             if obj.name.startswith(self.basemesh_name + "_"):
