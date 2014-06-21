@@ -240,8 +240,8 @@ def draw_callback_view(handle, sl1, sl2, sl3, vs, colo, tran, shade):
             if i > verlen:   # filter to share objects
                 k = verlen
             for line in data_edges[k]:                 # line
-                if max(line) > verlen_every[i]:
-                    continue
+                if max(line) > verlen_every[k]:
+                    line = data_edges[k][-1]
                 glBegin(edgeline)
                 for point in line:              # point
                     vec_corrected = data_matrix[i]*data_vector[k][int(point)]
@@ -265,8 +265,9 @@ def draw_callback_view(handle, sl1, sl2, sl3, vs, colo, tran, shade):
                 k = verlen
             oblen = len(data_polygons[k])
             for j, pol in enumerate(data_polygons[k]):
-                if max(pol) > verlen_every[i]:
-                    continue
+                if max(pol) > verlen_every[k]:
+                    pol = data_edges[k][-1]
+                    j = len(data_edges[k])-1
                 if shade:
                     normal_no_ = mathutils.geometry.normal(
                             data_vector[k][pol[0]],

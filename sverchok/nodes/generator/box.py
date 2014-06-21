@@ -32,13 +32,13 @@ class SvBoxNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     Divx = IntProperty(name='Divx', description='divisions x',
-                       default=2, min=1, options={'ANIMATABLE'},
+                       default=1, min=1, options={'ANIMATABLE'},
                        update=updateNode)
     Divy = IntProperty(name='Divy', description='divisions y',
-                       default=2, min=1, options={'ANIMATABLE'},
+                       default=1, min=1, options={'ANIMATABLE'},
                        update=updateNode)
     Divz = IntProperty(name='Divz', description='divisions z',
-                       default=2, min=1, options={'ANIMATABLE'},
+                       default=1, min=1, options={'ANIMATABLE'},
                        update=updateNode)
     Size = FloatProperty(name='Size', description='Size',
                          default=1.0, options={'ANIMATABLE'},
@@ -71,9 +71,13 @@ class SvBoxNode(bpy.types.Node, SverchCustomTreeNode):
         faces = [[0, 1, 2, 3], [4, 7, 6, 5],
                  [0, 4, 5, 1], [1, 5, 6, 2],
                  [2, 6, 7, 3], [4, 0, 3, 7]]
-
+        
+        edges = [[0, 4], [4, 5], [5, 1], [1, 0],
+                 [5, 6], [6, 2], [2, 1], [6, 7],
+                 [7, 3], [3, 2], [7, 4], [0, 3]]
+        
         if (divx, divy, divz) == (1, 1, 1):
-            return verts, faces
+            return verts, edges, faces
 
         bm = bmesh.new()
         [bm.verts.new(co) for co in verts]
