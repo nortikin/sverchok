@@ -195,7 +195,7 @@ class ViewerNode(bpy.types.Node, SverchCustomTreeNode):
         if self.activate and (self.inputs['vertices'].links or self.inputs['matrix'].links):
             callback_disable(n_id)
 
-            if 'vertices' in self.inputs and self.inputs['vertices'].links and \
+            if self.inputs['vertices'].links and \
                 type(self.inputs['vertices'].links[0].from_socket) == VerticesSocket:
 
                 propv = SvGetSocketAnyType(self, self.inputs['vertices'])
@@ -203,7 +203,7 @@ class ViewerNode(bpy.types.Node, SverchCustomTreeNode):
             else:
                 cache_viewer_baker[n_id+'v'] = []
 
-            if 'edg_pol' in self.inputs and self.inputs['edg_pol'].links and \
+            if self.inputs['edg_pol'].links and \
                 type(self.inputs['edg_pol'].links[0].from_socket) == StringsSocket:
                 prope = SvGetSocketAnyType(self, self.inputs['edg_pol'])
                 cache_viewer_baker[n_id+'ep'] = dataCorrect(prope)
@@ -211,7 +211,7 @@ class ViewerNode(bpy.types.Node, SverchCustomTreeNode):
             else:
                 cache_viewer_baker[n_id+'ep'] = []
 
-            if 'matrix' in self.inputs and self.inputs['matrix'].links and \
+            if self.inputs['matrix'].links and \
                 type(self.inputs['matrix'].links[0].from_socket) == MatrixSocket:
                 propm = SvGetSocketAnyType(self, self.inputs['matrix'])
                 cache_viewer_baker[n_id+'m'] = dataCorrect(propm)

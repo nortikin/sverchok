@@ -114,7 +114,7 @@ class ViewerNode_text(bpy.types.Node, SverchCustomTreeNode):
         global cache_viewer_slot2
         global cache_viewer_slot3
 
-        if 'vertices' in self.inputs and self.inputs['vertices'].links:
+        if self.inputs['vertices'].links:
 
             if type(self.inputs['vertices'].links[0].from_socket) == bpy.types.VerticesSocket:
                 evaverti = SvGetSocketAnyType(self, self.inputs['vertices'])
@@ -133,7 +133,7 @@ class ViewerNode_text(bpy.types.Node, SverchCustomTreeNode):
         else:
             cache_viewer_slot1['veriable'+self.name] = 'None \n'
         # edges/faces socket
-        if 'edg_pol' in self.inputs and len(self.inputs['edg_pol'].links) > 0:
+        if self.inputs['edg_pol'].links:
 
             if type(self.inputs['edg_pol'].links[0].from_socket) == bpy.types.StringsSocket:
                 evaline_str = SvGetSocketAnyType(self, self.inputs['edg_pol'])
@@ -156,7 +156,7 @@ class ViewerNode_text(bpy.types.Node, SverchCustomTreeNode):
             cache_viewer_slot2['veriable'+self.name] = 'None \n'
             cache_viewer_slot2['type'+self.name] = '\n\ndata \n'
         # matrix socket
-        if 'matrix' in self.inputs and len(self.inputs['matrix'].links) > 0:
+        if self.inputs['matrix'].links:
 
             if type(self.inputs['matrix'].links[0].from_socket) == bpy.types.MatrixSocket:
                 eva = SvGetSocketAnyType(self, self.inputs['matrix'])
@@ -173,8 +173,8 @@ class ViewerNode_text(bpy.types.Node, SverchCustomTreeNode):
         else:
             cache_viewer_slot3['veriable'+self.name] = 'None \n'
 
-        if self.inputs['matrix'].is_linked or self.inputs['vertices'].is_linked or \
-                    self.inputs['edg_pol'].is_linked:
+        if self.inputs['matrix'].links or self.inputs['vertices'].links or \
+                    self.inputs['edg_pol'].links:
             self.use_custom_color = True
             self.color = (0.5, 0.5, 1)
         else:

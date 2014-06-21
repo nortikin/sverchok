@@ -395,7 +395,7 @@ class SvFormulaShapeNode(bpy.types.Node, SverchCustomTreeNode):
         SP3 = self.inputs['ZZ'].sv_get()[0][0]
         #print(self.formula, self.XX_YY, self.i_override)
         # outputs
-        if self.outputs['Verts'].is_linked:
+        if self.outputs['Verts'].links:
             try:
                 out = self.makeverts(Count, Scale, SP1, SP2, SP3, 
                                 self.formulaX, self.formulaY, self.formulaZ, 
@@ -409,7 +409,7 @@ class SvFormulaShapeNode(bpy.types.Node, SverchCustomTreeNode):
                 SvSetSocketAnyType(self, 'Edges', sv_no_ed)
                 return
 
-        if self.outputs['Edges'].is_linked:
+        if self.outputs['Edges'].links:
                 edg = [[[i-1, i] for i in range(1, Count)]]
                 SvSetSocketAnyType(self, 'Edges', edg)
 
