@@ -127,11 +127,9 @@ def callback_disable_all():
 def draw_callback_px(n_id, data):
 
     context = bpy.context
-    print(dir(context.space_data))
     region = context.region
     rv2d = region.view2d
 
-    #content, loc = data
     content = data.get('content', 'no data')
     x, y = data.get('location', (120, 120))
 
