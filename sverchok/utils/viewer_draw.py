@@ -102,12 +102,17 @@ def draw_callback_view(handle, sl1, sl2, sl3, vs, colo, tran, shade):
         verlen = 0
 
     if sl2:
-        if len(sl2[0][0]) == 2:
-            data_edges = sl2
+        if sl2[0]:
+            if len(sl2[0][0]) == 2:
+                data_edges = sl2
+                data_polygons = []
+            elif len(sl2[0][0]) > 2:
+                data_polygons = sl2
+                data_edges = []
+        else:
             data_polygons = []
-        elif len(sl2[0][0]) > 2:
-            data_polygons = sl2
             data_edges = []
+    
     else:
         data_edges, data_polygons = [], []
 

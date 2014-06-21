@@ -9,6 +9,14 @@ def sv_main(p=[],m=[]):
     in_sockets = [
         ['s', 'p', p],
         ['s', 'm', m]]
+    if not m:
+        out_sockets = [
+        ['s', 'out', []],
+        ['s', 'out_not', p],
+        ]
+        
+        return in_sockets, out_sockets
+
     out = []
     out_not = []
     for opol,omas in zip(p,m):
