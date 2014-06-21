@@ -124,6 +124,7 @@ def callback_disable_all():
         if n_id:
             callback_disable(n_id)
 
+
 def draw_callback_px(n_id, data):
 
     context = bpy.context
@@ -140,7 +141,7 @@ def draw_callback_px(n_id, data):
     # x = 30  # region.width 
     # y = region.height - 40
     ypos = y
-    str_width = 80
+    str_width = 60
 
     def draw_text(content, rgb, ypos):
         ''' draw text '''
@@ -178,6 +179,11 @@ def draw_callback_px(n_id, data):
         content_array_2 = content_array[-10:]
         print_section(content_array_2, ypos)
 
+    if len(content_array) == 1:
+        ''' split on subunit - case of no newline to split on. '''
+        content_array = content_array[0].replace("), (", "),\n (")
+        content_array = content_array.split("\n")
+        print_section(content_array, ypos)
     else:
         ''' show all '''
         print_section(content_array, ypos)
