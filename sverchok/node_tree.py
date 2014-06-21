@@ -288,7 +288,6 @@ def make_categories():
             NodeItem("VectorsOutNode", label="Vector out"),
             NodeItem("VectorMoveNode", label="Vector Move"),
             NodeItem("VectorMathNode", label="Vector Math"),
-            #NodeItem("VectorMath2Node", label="Vector Math2"),
             NodeItem("VectorDropNode", label="Vector Drop"),
             NodeItem("VertsDelDoublesNode", label="Vector X Doubles"),
             NodeItem("EvaluateLineNode", label="Vector Evaluate"),
@@ -339,6 +338,11 @@ def make_categories():
             NodeItem("SvKDTreeNode", label="KDT Closest Verts"),
             NodeItem("SvKDTreeEdgesNode", label="KDT Closest Edges"), #KDTree renamed to be clear
             ]),
+        SverchNodeCategory("SVERCHOK_X", "SVERCHOK beta nodes", items=[
+            # for testing convenience, 
+            NodeItem("VectorMath2Node", label="Vector Math2"),
+            NodeItem("BGLdemoNode", label="BGL debug print"),
+            ]),        
         ]
     return node_categories
 
