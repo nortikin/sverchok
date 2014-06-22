@@ -33,6 +33,7 @@ using slice [:] to generate 3-tuple instead of .to_tuple()
 because it tests slightly faster on larger data.
 '''
 
+
 scalar_out = {
     "DOT":          (lambda u, v: Vector(u).dot(v), 2),
     "DISTANCE":     (lambda u, v: (Vector(u) - Vector(v)).length, 2),
@@ -46,8 +47,8 @@ scalar_out = {
 
 vector_out = {
     "CROSS":        (lambda u, v: Vector(u).cross(v)[:], 2),
-    "ADD":          (lambda u, v: (Vector(u) + Vector(v))[:], 2),
-    "SUB":          (lambda u, v: (Vector(u) - Vector(v))[:], 2),
+    "ADD":          (lambda u, v: (u[0]+v[0],u[1]+v[1],u[2]+v[2]), 2),
+    "SUB":          (lambda u, v: (u[0]-v[0],u[1]-v[1],u[2]-v[2]), 2),
     "REFLECT":      (lambda u, v: Vector(u).reflect(v)[:], 2),
     "PROJECT":      (lambda u, v: Vector(u).project(v)[:], 2),
     "SCALAR":       (lambda u, s: (Vector(u) * s)[:], 2),
@@ -205,7 +206,7 @@ class VectorMath2Node(bpy.types.Node, SverchCustomTreeNode):
         vector1 = []
         if 'U' in inputs and inputs['U'].links:
             if isinstance(inputs['U'].links[0].from_socket, VerticesSocket):
-                vector1 = SvGetSocketAnyType(self, inputs['U'])
+                vector1 = SvGetSocketAnyType(self, inputs['U'], deepcopy=False)
 
         if not vector1:
             return
@@ -243,7 +244,7 @@ class VectorMath2Node(bpy.types.Node, SverchCustomTreeNode):
                 name, _type = socket
                 if name in inputs and inputs[name].links:
                     if isinstance(inputs[name].links[0].from_socket, _type):
-                        b = SvGetSocketAnyType(self, inputs[name])
+                        b = SvGetSocketAnyType(self, inputs[name], deepcopy=False)
 
                 # this means one of the necessary sockets is not connected
                 if not b:
@@ -274,7 +275,7 @@ class VectorMath2Node(bpy.types.Node, SverchCustomTreeNode):
                 elif all([num_inputs == 2, ('V' in inputs), (inputs['V'].links)]):
 
                     if isinstance(inputs['V'].links[0].from_socket, VerticesSocket):
-                        vector2 = SvGetSocketAnyType(self, inputs['V'])
+                        vector2 = SvGetSocketAnyType(self, inputs['V'], deepcopy=False)
                         result = self.recurse_fxy(u, vector2, func, leve - 1)
                     else:
                         print('socket connected to V is not a vertices socket')

@@ -1075,7 +1075,7 @@ def speedUpdate(start_node=None, tree=None, animation_mode=False):
                 makeTreeUpdate2(ng)
                 update_list = list_nodes4update.get(name)
             for l in update_list:
-                do_update(l, ng .nodes)
+                do_update(l, ng.nodes)
             
 
 def get_update_lists(ng):
@@ -1263,8 +1263,8 @@ def node_id(node):
 #####################################
 
 
-def SvGetSocketAnyType(self, socket):
-    out = SvGetSocket(socket)
+def SvGetSocketAnyType(self, socket, deepcopy=True):
+    out = SvGetSocket(socket, deepcopy)
     if out:
         return out
     else:
@@ -1325,7 +1325,7 @@ def SvSetSocket(socket, out):
     socket_data_cache[s_ng][s_id] = out
 
 
-def SvGetSocket(socket, copy=False):
+def SvGetSocket(socket, deepcopy = True):
     global socket_data_cache
     global DEBUG_MODE
     if socket.links:
@@ -1336,10 +1336,10 @@ def SvGetSocket(socket, copy=False):
             return None
         if s_id in socket_data_cache[s_ng]:
             out = socket_data_cache[s_ng][s_id]
-            if copy:
-                return out.copy()
-            else:
+            if deepcopy:
                 return sv_deep_copy(out)
+            else:
+                return out.copy()
         else:  # failure, should raise error in future
             if DEBUG_MODE:
 #                traceback.print_stack()

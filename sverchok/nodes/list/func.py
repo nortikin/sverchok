@@ -16,12 +16,16 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+from itertools import accumulate
+
 import bpy
 from bpy.props import EnumProperty, IntProperty
 
 from node_tree import SverchCustomTreeNode
 from data_structure import updateNode, SvSetSocketAnyType, SvGetSocketAnyType
 
+def acc(l):
+    return list(accumulate(l))
 
 class ListFuncNode(bpy.types.Node, SverchCustomTreeNode):
     ''' List function '''
@@ -33,6 +37,8 @@ class ListFuncNode(bpy.types.Node, SverchCustomTreeNode):
         ("MIN",         "Minimum",        "", 1),
         ("MAX",         "Maximum",        "", 2),
         ("AVR",         "Average",        "", 3),
+        ("SUM",         "Sum",            "", 4),
+        #("ACC",         "Accumulate",     "", 5),
         ]
     func_ = EnumProperty(name="Function", description="Function choice",
                          default="AVR", items=mode_items,
@@ -52,17 +58,18 @@ class ListFuncNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('StringsSocket', "Function", "Function")
 
     def update(self):
-
+        func_dict = {
+            "MIN": min,
+            "MAX": max,
+            "AVR": self.avr,
+            "SUM": sum,
+            #"ACC": acc
+            }
         if 'Function' in self.outputs and self.outputs['Function'].links:
             if 'Data' in self.inputs and self.inputs['Data'].links:
                 data = SvGetSocketAnyType(self, self.inputs['Data'])
-                if self.func_ == 'MIN':
-                    func = min
-                elif self.func_ == 'MAX':
-                    func = max
-                else:
-                    func = self.avr
-
+                func = func_dict[self.func_]
+                
                 if not self.level:
                     out = [func(data)]
                 else:
