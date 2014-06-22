@@ -113,6 +113,8 @@ new_socket_dict = {
         [['outputs', 'StringsSocket', 'mask', 0],
          ['outputs', 'StringsSocket', 'ind_true', 1],
          ['outputs', 'StringsSocket', 'ind_false', 2]],
+    'ListFLNode':
+        [['outputs', 'StringsSocket', 'Middl', 2]],
     }
 
 
