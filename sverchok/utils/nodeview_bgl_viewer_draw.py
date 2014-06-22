@@ -138,7 +138,7 @@ def draw_callback_px(n_id, data):
     text_height = 13
     blf.size(font_id, text_height, 72)  # should check prefs.dpi
 
-    # x = 30  # region.width 
+    # x = 30  # region.width
     # y = region.height - 40
     ypos = y
     str_width = 60
@@ -151,7 +151,7 @@ def draw_callback_px(n_id, data):
         blf.draw(0, content)
 
     def print_section(content_array, ypos):
-        
+
         # http://stackoverflow.com/a/7584567/1243487
         rounded_vals = re.compile(r"\d*\.\d+")
         def mround(match):
@@ -162,28 +162,23 @@ def draw_callback_px(n_id, data):
             draw_text(line_rounded, (0.02, 0.02, 0.02), ypos)
             ypos -= (text_height * 1.3)
 
-        return ypos # handy
-
     content_str = pprint.pformat(content, width=str_width)
     content_array = content_str.split('\n')
 
     if len(content_array) > 20:
-        ''' first 10 .. last 10 '''
-        # take first ten and last ten and only show those with ellipse between.
-        content_array_1 = content_array[0:10]
-        ypos = print_section(content_array_1, ypos)
+        ''' first 10, ellipses, last 10 '''
+        ellipses = ['... ... ...']
+        head = content_array[0:10]
+        tail = content_array[-10:]
+        display_text = head + ellipses + tail
 
-        draw_text('.. .. ..', (0, 0, 0), ypos)
-        ypos -= (text_height * 1.3)
-        
-        content_array_2 = content_array[-10:]
-        print_section(content_array_2, ypos)
-
-    if len(content_array) == 1:
+    elif len(content_array) == 1:
         ''' split on subunit - case of no newline to split on. '''
         content_array = content_array[0].replace("), (", "),\n (")
-        content_array = content_array.split("\n")
-        print_section(content_array, ypos)
+        display_text = content_array.split("\n")
+
     else:
-        ''' show all '''
-        print_section(content_array, ypos)
+        display_text = content_array
+
+    print_section(display_text, ypos)
+    

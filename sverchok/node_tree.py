@@ -372,8 +372,10 @@ def sv_clean(scene):
     # callbacks for view nodes
     from utils import viewer_draw
     from utils import index_viewer_draw
+    from utils import nodeview_bgl_viewer_draw
     viewer_draw.callback_disable_all()
     index_viewer_draw.callback_disable_all()
+    nodeview_bgl_viewer_draw.callback_disable_all()
     data_structure.sv_Vars = {}
     data_structure.temp_handle = {}
     
