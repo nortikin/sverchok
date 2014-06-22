@@ -43,8 +43,8 @@ class ListFLNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "level", text="level")
 
     def init(self, context):
-        self.inputs.new('StringsSocket', "Data", "Data")
         self.outputs.new('StringsSocket', "Middl", "Middl")
+        self.inputs.new('StringsSocket', "Data", "Data")
         self.outputs.new('StringsSocket', "First", "First")
         self.outputs.new('StringsSocket', "Last", "Last")
 
