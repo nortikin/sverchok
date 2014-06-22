@@ -53,6 +53,7 @@ vector_out = {
     "PROJECT":      (lambda u, v: Vector(u).project(v)[:], 2),
     "SCALAR":       (lambda u, s: (Vector(u) * s)[:], 2),
     "1/SCALAR":     (lambda u, s: (Vector(u) * (1 / s))[:], 2),
+    "ROUND":        (lambda u, s: Vector(u).to_tuple(s), 2),
 
     "NORMALIZE":    (lambda u: Vector(u).normalized()[:], 1),
     "NEG":          (lambda u: -Vector(u)[:], 1),
@@ -90,7 +91,8 @@ class VectorMath2Node(bpy.types.Node, SverchCustomTreeNode):
         ("SCALAR",      "Multiply Scalar",      "", 15),
         ("1/SCALAR",    "Multiply 1/Scalar",    "", 16),
 
-        ("ANGLE RAD",   "Angle Radians",        "", 17)
+        ("ANGLE RAD",   "Angle Radians",        "", 17),
+        ("ROUND",       "Round s digits",       "", 18)
     ]
 
     def mode_change(self, context):
@@ -128,7 +130,7 @@ class VectorMath2Node(bpy.types.Node, SverchCustomTreeNode):
         outputs = self.outputs
         new_op = self.items_
         current_op = self.current_op
-        scalars = ["SCALAR", "1/SCALAR"]
+        scalars = ["SCALAR", "1/SCALAR", "ROUND"]
 
         if (new_op in scalars) and (current_op in scalars):
             return  # it's OK nothing to change
@@ -214,7 +216,7 @@ class VectorMath2Node(bpy.types.Node, SverchCustomTreeNode):
         # reaches here only if we have vector1
         u = vector1
         leve = levelsOflist(u)
-        scalars = ["SCALAR", "1/SCALAR"]
+        scalars = ["SCALAR", "1/SCALAR", "ROUND"]
         result = []
 
         # vector-output
