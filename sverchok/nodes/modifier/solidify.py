@@ -28,7 +28,7 @@ from utils.sv_bmesh_utils import bmesh_from_pydata
 # by Linus Yng
 
 
-def soldify(vertices, faces, t):
+def soldify(vertices, faces, t, verlen):
 
     if not faces or not vertices:
         return False
@@ -45,6 +45,7 @@ def soldify(vertices, faces, t):
 
     edges = []
     faces = []
+    newpols = []
     bm.verts.index_update()
     bm.edges.index_update()
     bm.faces.index_update()
@@ -52,10 +53,13 @@ def soldify(vertices, faces, t):
         edges.append([v.index for v in edge.verts[:]])
     verts = [vert.co[:] for vert in bm.verts[:]]
     for face in bm.faces:
-        faces.append([v.index for v in face.verts[:]])
+        indexes = [v.index for v in face.verts[:]]
+        faces.append(indexes)
+        if not verlen.intersection(indexes):
+            newpols.append(indexes)
     bm.clear()
     bm.free()
-    return (verts, edges, faces)
+    return (verts, edges, faces, newpols)
 
 
 class SvSolidifyNode(bpy.types.Node, SverchCustomTreeNode):
@@ -77,6 +81,7 @@ class SvSolidifyNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('VerticesSocket', 'vertices', 'vertices')
         self.outputs.new('StringsSocket', 'edges', 'edges')
         self.outputs.new('StringsSocket', 'polygons', 'polygons')
+        self.outputs.new('StringsSocket', 'newpols', 'newpols')
 
     def update(self):
         if not 'polygons' in self.outputs:
@@ -99,24 +104,30 @@ class SvSolidifyNode(bpy.types.Node, SverchCustomTreeNode):
             verts_out = []
             edges_out = []
             polys_out = []
-
+            newpo_out = []
+            
             for v, p, t in zip(verts, polys, repeat_last(thickness)):
-                res = soldify(v, p, t)
-
+                verlen = set(range(len(v)))
+                res = soldify(v, p, t, verlen)
+            
                 if not res:
                     return
                 verts_out.append(res[0])
                 edges_out.append(res[1])
                 polys_out.append(res[2])
-
+                newpo_out.append(res[3])
+            
             if 'vertices' in self.outputs and self.outputs['vertices'].links:
                 SvSetSocketAnyType(self, 'vertices', verts_out)
-
+            
             if 'edges' in self.outputs and self.outputs['edges'].links:
                 SvSetSocketAnyType(self, 'edges', edges_out)
-
+            
             if 'polygons' in self.outputs and self.outputs['polygons'].links:
                 SvSetSocketAnyType(self, 'polygons', polys_out)
+                
+            if 'newpols' in self.outputs and self.outputs['newpols'].links:
+                SvSetSocketAnyType(self, 'newpols', newpo_out)
 
     def update_socket(self, context):
         self.update()
@@ -128,3 +139,6 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvSolidifyNode)
+
+if __name__ == '__main__':
+    register()

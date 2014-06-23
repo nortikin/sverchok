@@ -17,14 +17,17 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-from bpy.props import BoolProperty, StringProperty, IntProperty
+from bpy.props import BoolProperty, StringProperty, IntProperty, FloatProperty
 
+import bmesh
 from utils.sv_bmesh_utils import bmesh_from_pydata
 from node_tree import SverchCustomTreeNode
 from data_structure import (changable_sockets, multi_socket,
-                            fullList, dataCorrect,
-                            SvSetSocketAnyType, SvGetSocketAnyType)
+                            fullList, dataCorrect, updateNode,
+                            SvSetSocketAnyType, SvGetSocketAnyType,
+                            Vector_generate)
 from mathutils import Vector, Matrix
+from math import tan, sin, cos, degrees, radians
 
 
 class SvOffsetNode(bpy.types.Node, SverchCustomTreeNode):
@@ -33,22 +36,19 @@ class SvOffsetNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Offset Node'
     bl_icon = 'OUTLINER_OB_EMPTY'
     
-    offset = FloatProperty(name='opp', description='distance of offset',
+    offset = FloatProperty(name='offset', description='distance of offset',
                   default=0.04,
-                  update=updateNode)
-    nsides = IntProperty(name='n_', description='number of sides',
-                  default=0,
-                  update=updateNode)
-    radius = FloatProperty(name='adj1', description='radius of inset',
-                  default=0.04,
-                  update=updateNode)
-    keepface = BoolProperty(name='kp', description='to keep face inside',
-                  default=True,
-                  update=updateNode)
-
+                  options={'ANIMATABLE'}, update=updateNode)
+    nsides = IntProperty(name='nsides', description='number of sides',
+                  default=1, min=1, max=64,
+                  options={'ANIMATABLE'}, update=updateNode)
+    radius = FloatProperty(name='redius', description='radius of inset',
+                  default=0.04, min=0.0001,
+                  options={'ANIMATABLE'}, update=updateNode)
+    
 
     def draw_buttons(self, context, layout):
-        layout.prop(self, 'keepface', text='keepface')
+        pass
 
     def init(self, context):
         self.inputs.new('VerticesSocket', 'Vers', 'Vers')
@@ -59,36 +59,42 @@ class SvOffsetNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('VerticesSocket', 'Vers', 'Vers')
         self.outputs.new('StringsSocket', "Edgs", "Edgs")
         self.outputs.new('StringsSocket', "Pols", "Pols")
+        self.outputs.new('StringsSocket', "NewPols", "NewPols")
 
     def update(self):
         
         if self.outputs['Vers'].links and self.inputs['Vers'].links:
                 vertices = Vector_generate(SvGetSocketAnyType(self, self.inputs['Vers']))
                 faces = SvGetSocketAnyType(self, self.inputs['Pols'])
-                offset = SvGetSocketAnyType(self, self.inputs['Offset'])[0]
-                nsides = SvGetSocketAnyType(self, self.inputs['N sides'])[0]
-                radius = SvGetSocketAnyType(self, self.inputs['Radius'])[0]
+                offset = self.inputs['Offset'].sv_get()[0][0]
+                nsides = self.inputs['N sides'].sv_get()[0][0]
+                radius = self.inputs['Radius'].sv_get()[0][0]
                 outv = []
                 oute = []
                 outp = []
+                outn = []
                 for verts_obj, faces_obj in zip(vertices, faces):
                     # this is for one object
+                    verlen = set(range(len(verts_obj)))
                     bme = bmesh_from_pydata(verts_obj, [], faces_obj)
                     geom_in = bme.verts[:]+bme.edges[:]+bme.faces[:]
                     bmesh.ops.recalc_face_normals(bme, faces=bme.faces[:])
-                    list_0 = [ f.index for f in bme.faces if f.select and f.is_valid ]
+                    list_0 = [ f.index for f in bme.faces ]
                     # calculation itself
                     result = \
-                        self.Offset_pols(bme, list_0, offset, radius, nsides, self.keepface)
+                        self.Offset_pols(bme, list_0, offset, radius, nsides, verlen)
                     outv.append(result[0])
                     oute.append(result[1])
                     outp.append(result[2])
+                    outn.append(result[3])
                 if self.outputs['Vers'].links:
                     SvSetSocketAnyType(self, 'Vers', outv)
                 if self.outputs['Edgs'].links:
                     SvSetSocketAnyType(self, 'Edgs', oute)
                 if self.outputs['Pols'].links:
                     SvSetSocketAnyType(self, 'Pols', outp)
+                if self.outputs['NewPols'].links:
+                    SvSetSocketAnyType(self, 'NewPols', outn)
     
     
     # #################
@@ -108,9 +114,9 @@ class SvOffsetNode(bpy.types.Node, SverchCustomTreeNode):
     # kp -      keep face, not delete it.
     # #################
     
-    def Offset_pols(self, bme, list_0, opp, adj1, n_, kp):
+    def Offset_pols(self, bme, list_0, opp, adj1, n_, verlen):
 
-        list_del = [] # what for?
+        list_del = [] # to delete old shape polygons
         for fi in list_0:
             f = bme.faces[fi]
             f.select_set(0)
@@ -132,11 +138,11 @@ class SvOffsetNode(bpy.types.Node, SverchCustomTreeNode):
                 adj = opp / tan(ang * 0.5)
                 h = (adj ** 2 + opp ** 2) ** 0.5
                 if round(degrees(ang)) == 180 or round(degrees(ang)) == 0.0:
-                    p6 = a_rot(radians(90), p, vec1, p - \
+                    p6 = self.a_rot(radians(90), p, vec1, p - \
                                 ((f.normal).normalized() * opp))
                     list_1.append(p6)
                 else:
-                    p6 = a_rot(-radians(90), p, ((p - (vec1.normalized() * adj)) - \
+                    p6 = self.a_rot(-radians(90), p, ((p - (vec1.normalized() * adj)) - \
                                 (p - (vec2.normalized() * adj))), p - \
                                 ((f.normal).normalized() * h))
                     list_1.append(p6)
@@ -175,7 +181,7 @@ class SvOffsetNode(bpy.types.Node, SverchCustomTreeNode):
                     list_3 = []
                     
                     for o in range(n_ + 1):
-                        q5 = a_rot((rot_ang * o / n_), rp_, axis_, q4)
+                        q5 = self.a_rot((rot_ang * o / n_), rp_, axis_, q4)
                         bme.verts.new(q5)
                         bme.verts.index_update()
                         dict_0[j].append(bme.verts[-1])
@@ -210,27 +216,34 @@ class SvOffsetNode(bpy.types.Node, SverchCustomTreeNode):
             #        for kk in range(n3_ - 1):
             #            bme.faces.new( [ dict_0[k_][kk], dict_0[k_][(kk + 1) % n3_], q_ ] )
             #            bme.faces.index_update()
-        
         # this is old
         del_ = [bme.faces.remove(f) for f in list_del]
         del del_
         # i think, it deletes doubling faces
         
+        # remove doubles
+        bmesh.ops.remove_doubles(bme, dist=0.0001)
+        # if radius 0 than cleaning loose
+        
         # from Linus Yng solidify example
         edges = []
         faces = []
+        newpols = []
         # clean and assign
         bme.verts.index_update()
         bme.edges.index_update()
         bme.faces.index_update()
-        for edge in bm.edges[:]:
+        for edge in bme.edges[:]:
             edges.append([v.index for v in edge.verts[:]])
-        verts = [vert.co[:] for vert in bm.verts[:]]
+        verts = [vert.co[:] for vert in bme.verts[:]]
         for face in bme.faces:
-            faces.append([v.index for v in face.verts[:]])
+            indexes = [v.index for v in face.verts[:]]
+            faces.append(indexes)
+            if not verlen.intersection(indexes):
+                newpols.append(indexes)
         bme.clear()
         bme.free()
-        return (verts, edges, faces)
+        return (verts, edges, faces, newpols)
 
 
 
@@ -241,5 +254,6 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvOffsetNode)
+
 if __name__ == '__main__':
     register()
