@@ -15,7 +15,7 @@ Most operations are self explanatory, but in case they aren't then here is a qui
 | Cross product | u, v | s | u cross v |
 | Dot product | u, v | s | u dot v |
 | Add | u, v | w | u + v |
-| Sub | u, v | W | u - v |
+| Sub | u, v | w | u - v |
 | Length | u | s | distance(u, origin) |
 | Distance | u, v | s | distance(u, v) |
 | Normalize | u | w | scale vector to length 1 |
