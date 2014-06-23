@@ -36,14 +36,14 @@ class SvOffsetNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Offset Node'
     bl_icon = 'OUTLINER_OB_EMPTY'
     
-    offset = FloatProperty(name='opp', description='distance of offset',
+    offset = FloatProperty(name='offset', description='distance of offset',
                   default=0.04,
                   options={'ANIMATABLE'}, update=updateNode)
-    nsides = IntProperty(name='n_', description='number of sides',
+    nsides = IntProperty(name='nsides', description='number of sides',
                   default=1, min=1, max=64,
                   options={'ANIMATABLE'}, update=updateNode)
-    radius = FloatProperty(name='adj1', description='radius of inset',
-                  default=0.04, min=0,
+    radius = FloatProperty(name='redius', description='radius of inset',
+                  default=0.04, min=0.0001,
                   options={'ANIMATABLE'}, update=updateNode)
     
 
@@ -222,7 +222,7 @@ class SvOffsetNode(bpy.types.Node, SverchCustomTreeNode):
         # i think, it deletes doubling faces
         
         # remove doubles
-        bmesh.ops.remove_doubles(bme)
+        bmesh.ops.remove_doubles(bme, dist=0.0001)
         # if radius 0 than cleaning loose
         
         # from Linus Yng solidify example
