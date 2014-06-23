@@ -11,9 +11,9 @@ Some modes accept a Vector (U) and a Scalar (S), while other accepts two Vectors
 Most operations are self explanatory, but in case they aren't then here is a quick overview: 
 
 | Tables        | inputs | outputs | description |
-| ------------- |:-------------:| -----:|
-| Cross product | u, v | s | u cross v    |
-| Dot product | u, v | s | u dot v   |
+| ------------- |:------:|:-----:| -----:|
+| Cross product | u, v | s | u cross v |
+| Dot product | u, v | s | u dot v |
 | Add | u, v | w | u + v |
 | Sub | u, v | W | u - v |
 | Length | u | s | distance(u, origin) |
