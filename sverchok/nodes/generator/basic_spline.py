@@ -76,7 +76,7 @@ class BasicSplineNode(bpy.types.Node, SverchCustomTreeNode):
         outputs = self.outputs
 
         '''
-        - is edges socket created, means all sockets exist.
+        - is hnd_edges socket created, means all sockets exist.
         - is anything connected to the Verts socket?
         '''
         if not (('hnd Edges' in outputs) and (outputs['Verts'].links)):
