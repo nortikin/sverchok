@@ -342,7 +342,7 @@ def make_categories():
             # for testing convenience, 
             NodeItem("VectorMath2Node", label="Vector Math2"),
             NodeItem("BGLdemoNode", label="BGL debug print"),
-            #NodeItem("SvOffsetNode", label="Offset"),
+            NodeItem("SvOffsetNode", label="Offset"),
             ]),        
         ]
     return node_categories
