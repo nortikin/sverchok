@@ -344,6 +344,7 @@ def make_categories():
             NodeItem("BGLdemoNode", label="BGL debug print"),
             NodeItem("BasicSplineNode", label="Basic Spline"),
             NodeItem("SvOffsetNode", label="Offset"),
+            NodeItem("SvEmptyOutNode", label="Empty out"),
             ]),        
         ]
     return node_categories
@@ -366,6 +367,7 @@ def sv_update_handler(scene):
                 tree.update_ani()
             except Exception as e:
                 print('Failed to update:', name, str(e))
+    scene.update()
 
 
 # clean up handler

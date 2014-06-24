@@ -21,9 +21,11 @@ import operator
 import bpy
 from mathutils import Matrix
 
+from bpy.props import BoolProperty
 from node_tree import SverchCustomTreeNode
-from data_structure import (Vector_generate, Vector_degenerate,
-                            SvSetSocketAnyType, SvGetSocketAnyType)
+from data_structure import (Vector_generate,
+                            SvSetSocketAnyType, SvGetSocketAnyType,
+                            updateNode)
 
 
 class SvAdaptiveEdgeNode(bpy.types.Node, SverchCustomTreeNode):
@@ -31,6 +33,12 @@ class SvAdaptiveEdgeNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvAdaptiveEdgeNode'
     bl_label = 'Adaptive Edges'
     bl_icon = 'OUTLINER_OB_EMPTY'
+
+    mesh_join = BoolProperty(name="Join meshes", default=True,
+                            update=updateNode)
+
+    def draw_buttons(self, context, layout):
+        layout.prop(self, "mesh_join")
 
     def init(self, context):
         self.inputs.new('VerticesSocket', 'VersR', 'VersR')
@@ -55,7 +63,7 @@ class SvAdaptiveEdgeNode(bpy.types.Node, SverchCustomTreeNode):
         edgeD = SvGetSocketAnyType(self, self.inputs['EdgeD'])
         verts_out = []
         edges_out = []
-
+        mesh_join = self.mesh_join
         # only first obj
         verD = [v - versD[0][0] for v in versD[0]]
         edgD = edgeD[0]
@@ -63,11 +71,16 @@ class SvAdaptiveEdgeNode(bpy.types.Node, SverchCustomTreeNode):
         d_scale = d_vector.length
         d_vector.normalize()
         for vc, edg in zip(versR, edgeR):
-            v_out = []
+            if mesh_join:
+                v_out = []
+                v_out_app = v_out.append
             e_out = []
             e_out_app = e_out.append
-            v_out_app = v_out.append
+
             for e in edg:
+                if not mesh_join:
+                    v_out = []
+                    v_out_app = v_out.append
                 e_vector = vc[e[1]] - vc[e[0]]
                 e_scale = e_vector.length
                 e_vector.normalize()
@@ -76,14 +89,19 @@ class SvAdaptiveEdgeNode(bpy.types.Node, SverchCustomTreeNode):
                 mat_r = Matrix.Rotation(q1.angle, 4, q1.axis)
                 mat_l = Matrix.Translation(vc[e[0]])
                 mat = mat_l * mat_r * mat_s
-                for edge in edgD:
-                    offset = len(v_out)
-                    e_out_app([i + offset for i in edge])
+
+                offset = len(v_out)
                 for v in verD:
                     v_out_app((mat * v)[:])
-
-            verts_out.append(v_out)
-            edges_out.append(e_out)
+                if mesh_join:
+                    for edge in edgD:
+                        e_out_app([i + offset for i in edge])
+                else:
+                    verts_out.append(v_out)
+                    edges_out.append(edgD)
+            if mesh_join:
+                verts_out.append(v_out)
+                edges_out.append(e_out)
 
         if 'Vertices' in self.outputs and self.outputs['Vertices'].links:
             SvSetSocketAnyType(self, 'Vertices', verts_out)
