@@ -58,8 +58,8 @@ class SvOffsetNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('StringsSocket', "Radius", "Radius").prop_name = 'radius'
         self.outputs.new('VerticesSocket', 'Vers', 'Vers')
         self.outputs.new('StringsSocket', "Edgs", "Edgs")
-        self.outputs.new('StringsSocket', "Pols", "Pols")
-        self.outputs.new('StringsSocket', "NewPols", "NewPols")
+        self.outputs.new('StringsSocket', "OutPols", "OutPols")
+        self.outputs.new('StringsSocket', "InPols", "InPols")
 
     def update(self):
         
@@ -71,7 +71,7 @@ class SvOffsetNode(bpy.types.Node, SverchCustomTreeNode):
                 radius = self.inputs['Radius'].sv_get()[0][0]
                 outv = []
                 oute = []
-                outp = []
+                outo = []
                 outn = []
                 for verts_obj, faces_obj in zip(vertices, faces):
                     # this is for one object
@@ -85,16 +85,16 @@ class SvOffsetNode(bpy.types.Node, SverchCustomTreeNode):
                         self.Offset_pols(bme, list_0, offset, radius, nsides, verlen)
                     outv.append(result[0])
                     oute.append(result[1])
-                    outp.append(result[2])
+                    outo.append(result[2])
                     outn.append(result[3])
                 if self.outputs['Vers'].links:
                     SvSetSocketAnyType(self, 'Vers', outv)
                 if self.outputs['Edgs'].links:
                     SvSetSocketAnyType(self, 'Edgs', oute)
-                if self.outputs['Pols'].links:
-                    SvSetSocketAnyType(self, 'Pols', outp)
-                if self.outputs['NewPols'].links:
-                    SvSetSocketAnyType(self, 'NewPols', outn)
+                if self.outputs['OutPols'].links:
+                    SvSetSocketAnyType(self, 'OutPols', outo)
+                if self.outputs['InPols'].links:
+                    SvSetSocketAnyType(self, 'InPols', outn)
     
     
     # #################
@@ -238,9 +238,10 @@ class SvOffsetNode(bpy.types.Node, SverchCustomTreeNode):
         verts = [vert.co[:] for vert in bme.verts[:]]
         for face in bme.faces:
             indexes = [v.index for v in face.verts[:]]
-            faces.append(indexes)
             if not verlen.intersection(indexes):
                 newpols.append(indexes)
+            else:
+                faces.append(indexes)
         bme.clear()
         bme.free()
         return (verts, edges, faces, newpols)
