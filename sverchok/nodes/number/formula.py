@@ -136,4 +136,6 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(FormulaNode)
-register()
+
+if __name__ == '__main__':
+    register()
