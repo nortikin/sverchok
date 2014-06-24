@@ -40,6 +40,7 @@ class SvEmptyOutNode(bpy.types.Node, SverchCustomTreeNode):
     empty_name = StringProperty(default='Sv empty', name="Base name",
                                 description="Base name of empty",
                                 update=rename_empty)
+    obj_name = StringProperty(default='')
 
     def create_empty(self):
         n_id = node_id(self)
@@ -52,9 +53,9 @@ class SvEmptyOutNode(bpy.types.Node, SverchCustomTreeNode):
         return empty
 
     def init(self, context):
-        self.inputs.new('MatrixSocket', "Matrix")
         self.create_empty()
-
+        self.inputs.new('MatrixSocket', "Matrix")
+        
     def find_empty(self):
         n_id = node_id(self)
         for obj in bpy.data.objects:
@@ -82,7 +83,7 @@ class SvEmptyOutNode(bpy.types.Node, SverchCustomTreeNode):
         empty = self.find_empty()
         if not empty:
             empty = self.create_empty()
-            print("creted new empty")
+            print("created new empty")
 
         if self.inputs['Matrix'].links:
             mats = SvGetSocketAnyType(self, self.inputs['Matrix'])
@@ -94,8 +95,8 @@ class SvEmptyOutNode(bpy.types.Node, SverchCustomTreeNode):
 
     def copy(self, node):
         self.n_id = ''
-        self.create_empty()
-
+        empty = self.create_empty()
+        self.label = empty.name
 
 def register():
     bpy.utils.register_class(SvEmptyOutNode)
