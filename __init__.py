@@ -93,7 +93,8 @@ from bpy.types import AddonPreferences
 from bpy.props import BoolProperty, FloatVectorProperty
 import data_structure
 global sv_script_paths, bl_addons_path, sv_version_local, \
-                        sv_version, sv_new_version
+                        sv_version
+sv_new_version = False
 
 class SverchokPreferences(AddonPreferences):
 
