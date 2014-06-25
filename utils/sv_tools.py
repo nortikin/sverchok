@@ -98,7 +98,8 @@ class SverchokCheckForUpgrades(bpy.types.Operator):
             report({'INFO'}, "Failed to read local version")
             return {'CANCELLED'}
         try:
-            url = 'https://raw.githubusercontent.com/nortikin/sverchok/refactor/utils/version'
+            # here change folder
+            url = 'https://raw.githubusercontent.com/nortikin/sverchok/master/utils/version'
             version_url = urllib.request.urlopen(url).read().strip().decode()
         except urllib.error.URLError:
             traceback.print_exc()
@@ -124,12 +125,17 @@ class SverchokUpdateAddon(bpy.types.Operator):
         os.curdir = bl_addons_path
         os.chdir(os.curdir)
         try:
-            url = 'https://github.com/nortikin/sverchok/archive/refactor.zip'
-            file = urllib.request.urlretrieve(url, os.path.normpath(os.path.join(os.curdir, 'refactor.zip')))
+            # here change folder
+            url = 'https://github.com/nortikin/sverchok/archive/master.zip'
+            # here change folder
+            file = urllib.request.urlretrieve(url, os.path.normpath(os.path.join(os.curdir, 'master.zip')))
         except:
             self.report({'ERROR'}, "Cannot get archive from Internet")
             return {'CANCELLED'}
         try:
+            os.remove(os.path.normpath(os.path.join(os.curdir, 'sverchok')))
+            os.remove(os.path.normpath(os.path.join(os.curdir, 'sverchok-master')))
+            os.remove(os.path.normpath(os.path.join(os.curdir, 'sverchok-refactor')))
             ZipFile(file[0]).extractall(path=os.curdir, members=None, pwd=None)
             os.remove(file[0])
             sv_new_version = False
@@ -284,3 +290,5 @@ def unregister():
     bpy.utils.unregister_class(SverchokUpdateAddon)
     bpy.utils.unregister_class(SverchokCheckForUpgrades)
     bpy.utils.unregister_class(SverchokUpdateAll)
+if __name__  ==  '__main__':
+    register()

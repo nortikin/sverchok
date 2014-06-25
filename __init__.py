@@ -54,6 +54,7 @@ for item in path:
 if flag is False:
     sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'sverchok'))
     sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'sverchok-refactoring'))
+    sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'sverchok-master'))
 
     print("Sverchok_nodes: added to pythonpath :-)")
     print("Have a nice day with Sverchok")
@@ -91,7 +92,8 @@ import bpy
 from bpy.types import AddonPreferences
 from bpy.props import BoolProperty, FloatVectorProperty
 import data_structure
-
+global sv_script_paths, bl_addons_path, sv_version_local, \
+                        sv_version, sv_new_version
 
 class SverchokPreferences(AddonPreferences):
 
@@ -122,6 +124,7 @@ class SverchokPreferences(AddonPreferences):
                                         size=3, min=0.0, max=1.0,
                                         default=(1, 1, 1), subtype='COLOR')
 
+
     def draw(self, context):
         layout = self.layout
         layout.prop(self, "show_debug")
@@ -129,6 +132,12 @@ class SverchokPreferences(AddonPreferences):
         row.prop(self, "heat_map")
         row.prop(self, "heat_map_hot")
         row.prop(self, "heat_map_cold")
+        row = layout.row()
+        row.operator('wm.url_open', text='Home!').url = 'http://nikitron.cc.ua/blend_scripts.html'
+        if sv_new_version:
+            row.operator('node.sverchok_update_addon', text='Upgrade Sverchok addon')
+        else:
+            row.operator('node.sverchok_check_for_upgrades', text='Check for new version')
 
 
 def register():
