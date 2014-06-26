@@ -279,7 +279,7 @@ def make_categories():
             NodeItem("HilbertImageNode", label="Hilbert image"),
             NodeItem("ImageNode", label="Image"),
             NodeItem("RandomVectorNode", label="Random Vector"),
-            NodeItem("SvFormulaShapeNode", label="Formula"),
+            NodeItem("SvFormulaShapeNode", label="Formula shape"),
             NodeItem("SvScriptNode", label="Scripted Node"),
             ]),
         SverchNodeCategory("SVERCHOK_V", "SVERCHOK vector", items=[
@@ -420,3 +420,4 @@ def unregister():
     bpy.app.handlers.frame_change_post.remove(sv_update_handler)
     bpy.app.handlers.load_pre.remove(sv_clean)
     bpy.app.handlers.load_post.remove(sv_upgrade_nodes)
+
