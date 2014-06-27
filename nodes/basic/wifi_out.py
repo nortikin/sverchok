@@ -17,13 +17,16 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-from bpy.props import StringProperty
+from bpy.props import StringProperty, EnumProperty
 
 from node_tree import SverchCustomTreeNode
-from data_structure import sv_Vars, updateNode, SvSetSocketAnyType
+from data_structure import updateNode, SvSetSocketAnyType, SvGetSocketAnyType
 
 # Warning, changing this node without modifying the update system might break functionlaity
 # bl_idname and var_name is used by the update system
+
+READY_COLOR = (0.674, 0.242, 0.363)
+FAIL_COLOR =  (0.536, 0.242, 0.674)
 
 
 class WifiOutNode(bpy.types.Node, SverchCustomTreeNode):
@@ -33,84 +36,109 @@ class WifiOutNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     var_name = StringProperty(name='var_name',
-                              default='a',
-                              update=updateNode)
+                              default='')
+
+    def avail_var_name(self, context):
+        ng = self.id_data
+        out = [(n.var_name, n.var_name, "") for n in ng.nodes
+               if n.bl_idname == 'WifiInNode']
+        if out:
+            out.sort(key=lambda n: n[0])
+        return out
+
+    var_names = EnumProperty(items=avail_var_name, name="var names")
+
+    def set_var_name(self):
+        self.var_name = self.var_names
+        ng = self.id_data
+        wifi_dict = {node.var_name: node
+                     for node in ng.nodes
+                     if node.bl_idname == 'WifiInNode'}
+        self.outputs.clear()
+        if self.var_name in wifi_dict:
+            self.outputs.clear()
+            node = wifi_dict[self.var_name]
+            while len(self.outputs) != len(node.inputs):
+                socket = node.inputs[-1]
+                self.outputs.new(socket.bl_idname, socket.name)
+        else:
+            self.outputs.clear()
+
+    def reset_var_name(self):
+        self.var_name = ""
+        self.color = FAIL_COLOR
+        self.outputs.clear()
 
     def draw_buttons(self, context, layout):
-        layout.prop(self, "var_name", text="var name")
+        op_name = 'node.sverchok_text_callback'
+        if self.var_name:
+            row = layout.row()
+            row.label(text="Var:")
+            row.label(text=self.var_name)
+            op = layout.operator(op_name, text='Unlink')
+            op.fn_name = "reset_var_name"
+        else:
+            layout.prop(self, "var_names")
+            op = layout.operator(op_name, text='Link')
+            op.fn_name = "set_var_name"
 
     def init(self, context):
-        self.outputs.new('StringsSocket', "a[0]", "a[0]")
+        self.use_custom_color = True
+        self.color = FAIL_COLOR
+
+    def gen_var_name(self):
+        #from socket
+        if self.outputs:
+            n = self.outputs[0].name.rstrip("[0]")
+            self.var_name = n
 
     def update(self):
-        global sv_Vars
-        # outputs
-        var_name = self.var_name
-        list_vars = []
-        if var_name in sv_Vars.keys():
-            dest = []
-            for v in sv_Vars.keys():
-                fs = v.find('sv_typ'+var_name)
-                if fs >= 0:
-                    iv = v.find('[')
-                    sv = int(v[iv+1:-1])
-                    # dest - (index, typ)
-                    dest.append((sv, sv_Vars[v]))
-                    dest.sort()
+        if not self.var_name and self.outputs:
+            self.gen_var_name()
+        ng = self.id_data
+        wifi_dict = {node.var_name: node
+                     for name, node in ng.nodes.items()
+                     if node.bl_idname == 'WifiInNode'}
 
-            lsvn = len(var_name)
-            if len(self.outputs) > 0 and \
-               self.var_name != self.outputs[self.outputs.keys()[0]].name[:lsvn]:
-                    self.outputs.clear()
-                    self.outputs.new('StringsSocket', str(var_name)+"[0]", str(var_name)+"[0]")
+        node = wifi_dict.get(self.var_name)
+        if node:
+            inputs = node.inputs
+            outputs = self.outputs
+            if any(s.links for s in outputs):
+                self.color = READY_COLOR
+            #node is the wifi node
+            inputs = node.inputs
+            outputs = self.outputs
 
-            # без цветовой дифференциации штанов цивилизация обречена (c)
-            flag_links = False
-            for fl in self.outputs:
-                if fl.links:
-                    flag_links = True
+            # match socket type
+            for idx, i_o in enumerate(zip(inputs, outputs)):
+                i_socket, o_socket = i_o
+                if i_socket.links:
+                    f_socket = i_socket.links[0].from_socket
+                    if f_socket.bl_idname != o_socket.bl_idname:
+                        outputs.remove(o_socket)
+                        outputs.new(f_socket.bl_idname, i_socket.name)
+                        outputs.move(len(self.outputs)-1, idx)
 
-            if flag_links:
-                self.use_custom_color = True
-                self.color = (0.4, 0, 0.8)
-            else:
-                self.use_custom_color = True
-                self.color = (0.05, 0, 0.2)
+            # adjust number of inputs
+            while len(outputs) != len(inputs):
+                if len(outputs) > len(inputs):
+                    outputs.remove(outputs[-1])
+                else:
+                    n = len(outputs)
+                    socket = inputs[n]
+                    if socket.links:
+                        s_type = socket.links[0].from_socket.bl_idname
+                    else:
+                        s_type = 'StringsSocket'
+                    s_name = socket.name
+                    outputs.new(s_type, s_name)
 
-            if dest:
-                dic_typ = {'s': 'StringsSocket', 'v': 'VerticesSocket', 'm': 'MatrixSocket'}
-                for i, dst in enumerate(dest):
-                    if dst[0] > len(sv_Vars[var_name])-1:
-                        break
-                    typ = dst[1]
-                    var = sv_Vars[var_name][dst[0]]
-                    flag = True
-                    flag2 = True
-                    while(flag):
-                        flag = False
-                        louts = len(self.outputs)
-                        a_name = var_name + '['+str(dst[0])+']'
-                        if dst[0] == louts:
-                            self.outputs.new(dic_typ[typ], a_name, a_name)
-                            SvSetSocketAnyType(self, a_name, var)
-                        else:
-                            if a_name in self.outputs and louts <= len(sv_Vars[var_name]) and \
-                                str(type(self.outputs[a_name]))[15:-2] == dic_typ[typ]:
-                                SvSetSocketAnyType(self, a_name, var)
-
-                            elif flag2:
-                                flag2 = False
-                                flag = True
-                                if louts > len(sv_Vars[var_name]):
-                                    flag2 = True
-
-                                cl = min(louts-1, len(sv_Vars[var_name])-1)
-                                for c in self.outputs[cl:]:
-                                    self.outputs.remove(c)
-        else:
-            if len(sv_Vars) > 0:
-                self.outputs.clear()
-                self.outputs.new('StringsSocket', str(var_name)+"[0]", str(var_name)+"[0]")
+            # transfer data
+            for in_socket, out_socket in zip(node.inputs, self.outputs):
+                if in_socket.links and out_socket.links:
+                    data = SvGetSocketAnyType(node, in_socket, deepcopy=False)
+                    SvSetSocketAnyType(self, out_socket.name, data)
 
 
 def register():

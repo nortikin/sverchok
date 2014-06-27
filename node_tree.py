@@ -182,6 +182,13 @@ class SverchCustomTree(NodeTree):
         '''
         Rebuild and update the Sverchok node tree, used at editor changes
         '''
+        # startup safety net, a lot things will just break if this isn't
+        # stopped...
+        try:
+            l = bpy.data.node_groups[self.id_data.name]
+        except:
+            return
+
         makeTreeUpdate2(tree=self)
         speedUpdate(tree=self)
 
@@ -388,7 +395,7 @@ def sv_clean(scene):
 
 
 @persistent
-def sv_upgrade_nodes(scene):
+def sv_post_load(scene):
     # update nodes to compact layout
     from utils import upgrade
     for name, tree in bpy.data.node_groups.items():
@@ -397,6 +404,9 @@ def sv_upgrade_nodes(scene):
                 upgrade.upgrade_nodes(tree)
             except Exception as e:
                 print('Failed to upgrade:', name, str(e))
+    for ng in bpy.data.node_groups:
+        if ng.bl_idname == 'SverchCustomTreeType' and ng.nodes:
+            ng.update()
     data_structure.setup_init()
 
 
@@ -409,7 +419,7 @@ def register():
     bpy.utils.register_class(VerticesSocket)
     bpy.app.handlers.frame_change_post.append(sv_update_handler)
     bpy.app.handlers.load_pre.append(sv_clean)
-    bpy.app.handlers.load_post.append(sv_upgrade_nodes)
+    bpy.app.handlers.load_post.append(sv_post_load)
 
 
 def unregister():
@@ -421,5 +431,5 @@ def unregister():
     bpy.utils.unregister_class(SvColors)
     bpy.app.handlers.frame_change_post.remove(sv_update_handler)
     bpy.app.handlers.load_pre.remove(sv_clean)
-    bpy.app.handlers.load_post.remove(sv_upgrade_nodes)
+    bpy.app.handlers.load_post.remove(sv_post_load)
 
