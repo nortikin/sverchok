@@ -18,7 +18,7 @@
 
 import bpy
 from mathutils import Matrix
-from bpy.props import StringProperty
+from bpy.props import StringProperty, BoolProperty
 
 from node_tree import SverchCustomTreeNode
 from data_structure import SvGetSocketAnyType, node_id, Matrix_generate
@@ -40,7 +40,11 @@ class SvEmptyOutNode(bpy.types.Node, SverchCustomTreeNode):
     empty_name = StringProperty(default='Sv empty', name="Base name",
                                 description="Base name of empty",
                                 update=rename_empty)
-    obj_name = StringProperty(default='')
+    auto_remove = BoolProperty(default=True,
+                               description="Remove on node delete",
+                               name="Auto delete")
+    # To speed up finding the empty if many objects
+    empty_ref_name = StringProperty(default='')
 
     def create_empty(self):
         n_id = node_id(self)
@@ -50,18 +54,31 @@ class SvEmptyOutNode(bpy.types.Node, SverchCustomTreeNode):
         scene.objects.link(empty)
         scene.update()
         empty["SVERCHOK_REF"] = n_id
+        self.empty_ref_name = empty.name
         return empty
 
     def init(self, context):
         self.create_empty()
         self.inputs.new('MatrixSocket', "Matrix")
-        
+
     def find_empty(self):
         n_id = node_id(self)
-        for obj in bpy.data.objects:
+
+        def check_empty(obj):
+            """ Check that it is the correct empty """
             if obj.type == 'EMPTY':
-                if "SVERCHOK_REF" in obj and obj["SVERCHOK_REF"] == n_id:
-                    return obj
+                return "SVERCHOK_REF" in obj and obj["SVERCHOK_REF"] == n_id
+            return False
+
+        objects = bpy.data.objects
+        if self.empty_ref_name in objects:
+            obj = objects[self.empty_ref_name]
+            if check_empty(obj):
+                return obj
+        for obj in objects:
+            if check_empty(obj):
+                self.empty_ref_name = obj.name
+                return obj
         return None
 
     def draw_buttons(self, context, layout):
@@ -69,6 +86,9 @@ class SvEmptyOutNode(bpy.types.Node, SverchCustomTreeNode):
         row = layout.row()
         row.scale_y = 1.1
         row.prop(self, "empty_name", text="")
+
+    def draw_buttons_ext(self, context, layout):
+        layout.prop(self, "auto_remove")
 
     def update(self):
         if not "Matrix" in self.inputs:
@@ -79,7 +99,6 @@ class SvEmptyOutNode(bpy.types.Node, SverchCustomTreeNode):
         except:
             print(self.name, "cannot run during startup, press update.")
             return
-
         empty = self.find_empty()
         if not empty:
             empty = self.create_empty()
@@ -97,6 +116,19 @@ class SvEmptyOutNode(bpy.types.Node, SverchCustomTreeNode):
         self.n_id = ''
         empty = self.create_empty()
         self.label = empty.name
+
+    def free(self):
+        if self.auto_remove:
+            empty = self.find_empty()
+            if empty:
+                scene = bpy.context.scene
+                objects = bpy.data.objects
+                try:
+                    scene.objects.unlink(empty)
+                    objects.remove(empty)
+                except:
+                    print("{0} failed to remove empty".format(self.name))
+
 
 def register():
     bpy.utils.register_class(SvEmptyOutNode)
