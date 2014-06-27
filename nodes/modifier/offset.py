@@ -66,15 +66,18 @@ class SvOffsetNode(bpy.types.Node, SverchCustomTreeNode):
         if self.outputs['Vers'].links and self.inputs['Vers'].links:
                 vertices = Vector_generate(SvGetSocketAnyType(self, self.inputs['Vers']))
                 faces = SvGetSocketAnyType(self, self.inputs['Pols'])
-                offset = self.inputs['Offset'].sv_get()[0][0]
+                offset = self.inputs['Offset'].sv_get()[0]
                 nsides = self.inputs['N sides'].sv_get()[0][0]
-                radius = self.inputs['Radius'].sv_get()[0][0]
+                radius = self.inputs['Radius'].sv_get()[0]
+                print(radius,nsides,offset)
                 outv = []
                 oute = []
                 outo = []
                 outn = []
                 for verts_obj, faces_obj in zip(vertices, faces):
                     # this is for one object
+                    fullList(offset, len(faces_obj))
+                    fullList(radius, len(faces_obj))
                     verlen = set(range(len(verts_obj)))
                     bme = bmesh_from_pydata(verts_obj, [], faces_obj)
                     geom_in = bme.verts[:]+bme.edges[:]+bme.faces[:]
@@ -114,10 +117,12 @@ class SvOffsetNode(bpy.types.Node, SverchCustomTreeNode):
     # kp -      keep face, not delete it.
     # #################
     
-    def Offset_pols(self, bme, list_0, opp, adj1, n_, verlen):
+    def Offset_pols(self, bme, list_0, offset, radius, n_, verlen):
 
         list_del = [] # to delete old shape polygons
-        for fi in list_0:
+        for q, fi in enumerate(list_0):
+            adj1 = radius[q]
+            opp = offset[q]
             f = bme.faces[fi]
             f.select_set(0)
             list_del.append(f)
