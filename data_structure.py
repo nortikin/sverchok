@@ -1339,7 +1339,7 @@ def SvGetSocket(socket, deepcopy = True):
             if deepcopy:
                 return sv_deep_copy(out)
             else:
-                return out.copy()
+                return out[:]
         else:  # failure, should raise error in future
             if DEBUG_MODE:
 #                traceback.print_stack()
