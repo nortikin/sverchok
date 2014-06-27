@@ -30,7 +30,7 @@ from node_tree import SverchCustomTreeNode
 
 def sv_get_local_path():
     sv_script_paths = os.path.normpath(os.path.dirname(__file__))
-    bl_addons_path = os.path.dirname(sv_script_paths)
+    bl_addons_path = os.path.split(os.path.dirname(sv_script_paths))[0]
     sv_version = os.path.normpath(os.path.join(sv_script_paths, 'version'))
     with open(sv_version) as sv_local_file:
         sv_version_local = next(sv_local_file).strip()
@@ -133,9 +133,7 @@ class SverchokUpdateAddon(bpy.types.Operator):
             self.report({'ERROR'}, "Cannot get archive from Internet")
             return {'CANCELLED'}
         try:
-            os.remove(os.path.normpath(os.path.join(os.curdir, 'sverchok')))
-            os.remove(os.path.normpath(os.path.join(os.curdir, 'sverchok-master')))
-            os.remove(os.path.normpath(os.path.join(os.curdir, 'sverchok-refactor')))
+            #os.removedirs(os.path.normpath(os.path.join(os.curdir, 'sverchok')))
             ZipFile(file[0]).extractall(path=os.curdir, members=None, pwd=None)
             os.remove(file[0])
             sv_new_version = False
@@ -292,3 +290,8 @@ def unregister():
     bpy.utils.unregister_class(SverchokUpdateAll)
 if __name__  ==  '__main__':
     register()
+
+
+
+
+
