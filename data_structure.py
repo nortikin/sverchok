@@ -753,7 +753,7 @@ def make_dep_dict(node_tree):
     # create wifi out dependencies, process if needed
     wifi_out_nodes = [(name, node.var_name)
                       for name, node in ng.nodes.items()
-                      if node.bl_idname == 'WifiOutNode']
+                      if node.bl_idname == 'WifiOutNode' and node.outputs]
     if wifi_out_nodes:
         wifi_dict = {node.var_name: name
                      for name, node in ng.nodes.items()
@@ -843,7 +843,7 @@ def separate_nodes(ng, links=None):
 
     wifi_out_nodes = [(name, node.var_name)
                       for name, node in ng.nodes.items()
-                      if node.bl_idname == 'WifiOutNode']
+                      if node.bl_idname == 'WifiOutNode' and node.outputs]
     if wifi_out_nodes:
         wifi_dict = {node.var_name: name
                      for name, node in ng.nodes.items()
@@ -905,7 +905,7 @@ def make_tree_from_nodes(node_names, tree):
 
     wifi_out_nodes = [(name, node.var_name)
                       for name, node in nodes.items()
-                      if node.bl_idname == 'WifiOutNode']
+                      if node.bl_idname == 'WifiOutNode' and node.outputs]
     if wifi_out_nodes:
         wifi_dict = {node.var_name: name
                      for name, node in nodes.items()
@@ -1184,8 +1184,8 @@ def get_socket_type_full(node, inputsocketname):
 #     setup two variables in Node class
 #     create Fixed inputs socket, the multi socket will not change anything
 #     below min
-#     base_name = 'Data '
-#     multi_socket_type = 'StringsSocket'
+#     base_name = StringProperty(default='Data ')
+#     multi_socket_type = StringProperty(default='StringsSocket')
 
 
 def multi_socket(node, min=1, start=0, breck=False, output=False):
