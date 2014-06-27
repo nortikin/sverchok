@@ -345,6 +345,8 @@ def make_categories():
             NodeItem("BasicSplineNode", label="Basic Spline"),
             NodeItem("SvOffsetNode", label="Offset"),
             NodeItem("SvEmptyOutNode", label="Empty out"),
+            # NodeItem("Gen3DcursorNode", label="3D cursor"),
+            NodeItem("EvalKnievalNode", label="Eval Knieval"),
             ]),        
         ]
     return node_categories
