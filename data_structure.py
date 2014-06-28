@@ -30,6 +30,8 @@ global bmesh_mapping, per_cache
 DEBUG_MODE = False
 HEAT_MAP = False
 
+# this is set correctly later.
+__package__ = "sverchok"
 
 #handle for object in node
 temp_handle = {}
@@ -685,12 +687,13 @@ def sverchok_debug(mode):
 def setup_init():
     global DEBUG_MODE
     global HEAT_MAP
-    
-    addon = bpy.context.user_preferences.addons.get("sverchok")
+    global __package__
+    # okay this set __package__ to what it should be
+    __package__ = bpy.types.SverchokPreferences.bl_idname
+    addon = bpy.context.user_preferences.addons.get(__package__)
     if addon:
         DEBUG_MODE = addon.preferences.show_debug
         HEAT_MAP = addon.preferences.heat_map
-    
         
     
     
@@ -986,9 +989,8 @@ def do_update_heat_map(node_list, nodes):
         nodes.id_data.sv_user_colors = str(color_data)
         
     t_max = max(times)
-    # ugly hack, we should make standard way that doesn't rely on the name.
-    # __package__ doesn't work.
-    addon = bpy.context.user_preferences.addons.get("sverchok")
+    
+    addon = bpy.context.user_preferences.addons.get(__package__)
     if addon:
         # to use Vector.lerp
         cold = Vector(addon.preferences.heat_map_cold)

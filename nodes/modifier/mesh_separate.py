@@ -38,9 +38,9 @@ class SvSeparateMeshNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('StringsSocket', 'Poly Egde', 'Poly Egde')
 
     def update(self):
-        if 'Poly Egde' not in self.outputs:
-            return
-        if not any((self.outputs[0].links, self.outputs[1].links)):
+        #if 'Poly Egde' not in self.outputs:
+            #return
+        if not self.outputs[0].links and not self.outputs[1].links)):
             return
         if self.inputs['Vertices'].links and self.inputs['Poly Egde'].links:
 
@@ -110,3 +110,4 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvSeparateMeshNode)
+

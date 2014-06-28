@@ -366,10 +366,14 @@ def make_categories():
 #    return count
 
 
+# section for sverchok handlers.
+
 # animation update handler
 @persistent
 def sv_update_handler(scene):
-    '''Sverchok update handler'''
+    """
+    Update sverchok node tree on frame change events.
+    """
     for name, tree in bpy.data.node_groups.items():
         if tree.bl_idname == 'SverchCustomTreeType' and tree.nodes:
             try:
@@ -382,7 +386,9 @@ def sv_update_handler(scene):
 # clean up handler
 @persistent
 def sv_clean(scene):
-    # callbacks for view nodes
+    """
+    Cleanup callbacks, clean dicts.
+    """
     from utils import viewer_draw
     from utils import index_viewer_draw
     from utils import nodeview_bgl_viewer_draw
@@ -396,7 +402,9 @@ def sv_clean(scene):
 
 @persistent
 def sv_post_load(scene):
-    # update nodes to compact layout
+    """
+    Upgrade nodes, apply preferences and do an update.
+    """
     from utils import upgrade
     for name, tree in bpy.data.node_groups.items():
         if tree.bl_idname == 'SverchCustomTreeType' and tree.nodes:
@@ -404,11 +412,32 @@ def sv_post_load(scene):
                 upgrade.upgrade_nodes(tree)
             except Exception as e:
                 print('Failed to upgrade:', name, str(e))
+    # apply preferences
+    data_structure.setup_init()
+    addon_name = data_structure.__package__
+    addon = bpy.context.user_preferences.addons.get(addon_name)
+    if addon and hasattr(addon, "preferences"):
+        set_frame_change(addon.preferences.frame_change_mode)
+        
+    # do an update
     for ng in bpy.data.node_groups:
         if ng.bl_idname == 'SverchCustomTreeType' and ng.nodes:
             ng.update()
-    data_structure.setup_init()
 
+def set_frame_change(mode):
+    post = bpy.app.handlers.frame_change_post
+    pre = bpy.app.handlers.frame_change_pre
+    # remove all
+    if sv_update_handler in post:
+        post.remove(sv_update_handler)
+    if sv_update_handler in pre:
+        pre.remove(sv_update_handler)
+    # apply the right one
+    if mode == "POST":
+        post.append(sv_update_handler)
+    elif mode == "PRE": 
+        pre.append(sv_update_handler)
+    
 
 def register():
     bpy.utils.register_class(SvColors)
@@ -417,7 +446,6 @@ def register():
     #bpy.utils.register_class(ObjectSocket)
     bpy.utils.register_class(StringsSocket)
     bpy.utils.register_class(VerticesSocket)
-    bpy.app.handlers.frame_change_post.append(sv_update_handler)
     bpy.app.handlers.load_pre.append(sv_clean)
     bpy.app.handlers.load_post.append(sv_post_load)
 
@@ -429,7 +457,6 @@ def unregister():
     bpy.utils.unregister_class(MatrixSocket)
     bpy.utils.unregister_class(SverchCustomTree)
     bpy.utils.unregister_class(SvColors)
-    bpy.app.handlers.frame_change_post.remove(sv_update_handler)
     bpy.app.handlers.load_pre.remove(sv_clean)
     bpy.app.handlers.load_post.remove(sv_post_load)
 

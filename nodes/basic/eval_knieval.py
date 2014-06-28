@@ -17,7 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-from mathutils import Vector, Matrix
+from mathutils import Vector, Matrix, Euler, Quaternion
 from bpy.props import FloatProperty, StringProperty, BoolProperty
 from node_tree import SverchCustomTreeNode, StringsSocket, VerticesSocket, MatrixSocket
 from data_structure import updateNode, SvGetSocketAnyType, SvSetSocketAnyType
@@ -27,9 +27,9 @@ Each node starts out as a send node, but can be converted to a receiver node too
 Strings to trigger the two modes / mode change are:
 
 - send:     `path.to.prop = {x}`
-- receive:  `{x} = path.to.prop`
+- receive:  `{x} = path.to.prop` , or `=path.to.prop`
 
-            NodeItem("EvalKnievalNode", label="Eval Knieval"),
+    NodeItem("EvalKnievalNode", label="Eval Knieval"),
 
 '''
 
@@ -136,7 +136,7 @@ class EvalKnievalNode(bpy.types.Node, SverchCustomTreeNode):
         prop_to_eval = self.eval_str.split('=')[1].strip()
         tvar = None
 
-        # yes there's a massive assumption here.
+        # yes there's a massive assumption here too.
         if not self.eval_success:
             try:
                 tvar = eval(prop_to_eval)
@@ -151,7 +151,7 @@ class EvalKnievalNode(bpy.types.Node, SverchCustomTreeNode):
 
         if not tvar:
             return
-
+        print("Tvar", tvar)
         # set the outputs again.
         if not (self.previous_eval_str == self.eval_str):
             output_socket_type = 'StringsSocket'
@@ -159,7 +159,7 @@ class EvalKnievalNode(bpy.types.Node, SverchCustomTreeNode):
                 output_socket_type = 'VerticesSocket'
             elif isinstance(tvar, tuple):
                 output_socket_type = 'VerticesSocket'
-            elif isinstance(tvar, Matrix):
+            elif isinstance(tvar, (Matrix, Euler, Quaternion)):
                 output_socket_type = 'MatrixSocket'
             elif isinstance(tvar, (int, float)):
                 output_socket_type = 'StringsSocket'
@@ -174,20 +174,23 @@ class EvalKnievalNode(bpy.types.Node, SverchCustomTreeNode):
                 socket_to = link.to_socket
 
             # needs clever reconnect? maybe not.
-            outputs.remove(outputs[0])
-            outputs.new(output_socket_type, 'x')
+            if outputs[0].bl_idname != output_socket_type:
+                outputs.clear()
+                outputs.new(output_socket_type, 'x')
 
             if needs_reconnect:
                 ng = self.id_data
                 ng.links.new(outputs[0], socket_to)                
 
         if isinstance(tvar, Vector):
-            tvar = tvar[:]
+            data = [[tvar[:]]]
         elif isinstance(tvar, Matrix):
-            tvar = [r[:] for r in tvar[:]]
-
+            data = [[r[:] for r in tvar[:]]]
+        elif isinstance(tvar, (Euler, Quaternion)):
+            tvar = tvar.to_matrix().to_4x4()
+            data = [[r[:] for r in tvar[:]]]
         # finally we can set this.
-        SvSetSocketAnyType(self, 0, [[tvar]])
+        SvSetSocketAnyType(self, 0, data)
         self.previous_eval_str = self.eval_str
 
     def set_sockets(self):
@@ -196,10 +199,8 @@ class EvalKnievalNode(bpy.types.Node, SverchCustomTreeNode):
             'input': (self.inputs, self.outputs),
             'output': (self.outputs, self.inputs)
         }[self.mode]
-
-        for i in b:
-            b.remove(b[-1])
-
+        b.clear()
+        
         # can do exact socket here, info is known at this point
         a.new('StringsSocket', 'x')
         if self.mode == 'input':

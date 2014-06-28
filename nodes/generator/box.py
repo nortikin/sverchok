@@ -113,7 +113,7 @@ class SvBoxNode(bpy.types.Node, SverchCustomTreeNode):
 
         indices = lambda i: [j.index for j in i.verts]
 
-        verts = [v.co.to_tuple() for v in bm.verts]
+        verts = [list(v.co.to_tuple()) for v in bm.verts]
         faces = [indices(face) for face in bm.faces]
         edges = [indices(edge) for edge in bm.edges]
         return verts, edges, faces
