@@ -308,18 +308,18 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
             return
 
         # select and finally remove all excess objects
-        scene = bpy.context.scene # fix for render mode is needed?
+        scene = bpy.context.scene  # fix for render mode is needed?
 
         for object_name in objs:
             obj = objects[object_name]
-            obj.hide_select = False # needed?
+            obj.hide_select = False  # needed?
             scene.objects.unlink(obj)
             objects.remove(obj)
- 
+
         # delete associated meshes
         for object_name in objs:
             meshes.remove(meshes[object_name])
- 
+
         # fingers crossed 2x.
 
     def set_corresponding_materials(self):
