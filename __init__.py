@@ -68,7 +68,7 @@ if flag is False:
 import importlib
 import data_structure
 import node_tree
-from utils import sv_tools
+from .utils import sv_tools
 import nodes
 nodes_list = []
 for category, names in nodes.nodes_dict.items():
@@ -99,6 +99,7 @@ class SverchokPreferences(AddonPreferences):
     bl_idname = __name__
 
     def update_debug_mode(self, context):
+        print(dir(context))
         data_structure.DEBUG_MODE = self.show_debug
 
     def update_heat_map(self, context):
