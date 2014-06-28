@@ -46,12 +46,12 @@ class MatrixSocket(NodeSocket):
     prop_name = StringProperty(default='')
 
     # beta interface only use for debug, might change
-    def sv_get(self, default=None):
-        if self.links and self.is_output:
-            return SvGetSocket(self)
+    def sv_get(self, default=None, deepcopy=False):
+        if self.links and not self.is_output:
+            return SvGetSocket(self, deepcopy)
         else:
             return default
-
+            
     def sv_set(self, data):
         SvSetSocket(self, data)
 
@@ -97,9 +97,9 @@ class VerticesSocket(NodeSocketStandard):
     prop_name = StringProperty(default='')
 
     # beta interface only use for debug, might change
-    def sv_get(self, default=None):
-        if self.links and self.is_output:
-            return SvGetSocket(self)
+    def sv_get(self, default=None, deepcopy=False):
+        if self.links and not self.is_output:
+            return SvGetSocket(self, deepcopy)
         else:
             return default
 
@@ -125,9 +125,9 @@ class StringsSocket(NodeSocketStandard):
 
     prop_name = StringProperty(default='')
 
-    def sv_get(self, default=None):
+    def sv_get(self, default=None, deepcopy=False):
         if self.links and not self.is_output:
-            out = SvGetSocket(self)
+            out = SvGetSocket(self, deepcopy)
             if out:
                 return out
         if self.prop_name:

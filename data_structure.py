@@ -1318,6 +1318,8 @@ def SvGetSocketInfo(socket):
 
 def SvSetSocket(socket, out):
     global socket_data_cache
+    if not socket.is_output:
+        print("Warning, setting input socket")
     s_id = socket_id(socket)
     s_ng = socket.id_data.name
     if s_ng not in socket_data_cache:
@@ -1339,7 +1341,7 @@ def SvGetSocket(socket, deepcopy = True):
             if deepcopy:
                 return sv_deep_copy(out)
             else:
-                return out[:]
+                return out
         else:  # failure, should raise error in future
             if DEBUG_MODE:
 #                traceback.print_stack()
