@@ -301,29 +301,25 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
         meshes = bpy.data.meshes
         objects = bpy.data.objects
 
-        objects_to_reselect = []
-        for i in (i for i in objects if i.select):
-            objects_to_reselect.append(i.name)
-            i.select = False
-
         objs = [obj for obj in objects if obj.type == 'MESH']
         objs = [obj for obj in objs if obj.name.startswith(_name)]
         objs = [obj.name for obj in objs if int(obj.name.split("_")[-1]) > obj_index]
+        if not objs:
+            return
 
         # select and finally remove all excess objects
-        for object_name in objs:
-            objects[object_name].hide_select = False
-            objects[object_name].select = True
-        bpy.ops.object.delete()
+        scene = bpy.context.scene # fix for render mode is needed?
 
+        for object_name in objs:
+            obj = objects[object_name]
+            obj.hide_select = False # needed?
+            scene.objects.unlink(obj)
+            objects.remove(obj)
+ 
         # delete associated meshes
         for object_name in objs:
             meshes.remove(meshes[object_name])
-
-        # reselect
-        for name in objects_to_reselect:
-            bpy.data.objects[name].select = True
-
+ 
         # fingers crossed 2x.
 
     def set_corresponding_materials(self):
