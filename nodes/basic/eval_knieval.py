@@ -27,9 +27,9 @@ Each node starts out as a send node, but can be converted to a receiver node too
 Strings to trigger the two modes / mode change are:
 
 - send:     `path.to.prop = {x}`
-- receive:  `{x} = path.to.prop`
+- receive:  `{x} = path.to.prop` , or `=path.to.prop`
 
-            NodeItem("EvalKnievalNode", label="Eval Knieval"),
+    NodeItem("EvalKnievalNode", label="Eval Knieval"),
 
 '''
 
@@ -136,7 +136,7 @@ class EvalKnievalNode(bpy.types.Node, SverchCustomTreeNode):
         prop_to_eval = self.eval_str.split('=')[1].strip()
         tvar = None
 
-        # yes there's a massive assumption here.
+        # yes there's a massive assumption here too.
         if not self.eval_success:
             try:
                 tvar = eval(prop_to_eval)
