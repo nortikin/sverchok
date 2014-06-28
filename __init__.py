@@ -32,7 +32,7 @@
 bl_info = {
     "name": "Sverchok",
     "author": "Nedovizin Alexander, Gorodetskiy Nikita, Linus Yng, Agustin Jimenez, Dealga McArdle",
-    "version": (0, 3, 0),
+    "version": (0, 4, 0),
     "blender": (2, 7, 0),
     "location": "Nodes > CustomNodesTree > Add user nodes",
     "description": "Do parametric node-based geometry programming",
@@ -52,10 +52,12 @@ for item in path:
         flag = True
         break
 if flag is False:
+    # the below add 3 ugly paths, is it really needed? why not just the right one?
     sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'sverchok'))
     sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'sverchok-refactoring'))
     sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'sverchok-master'))
-
+    # like this?
+    #sys.path.append(os.path.dirname(__file__))
     print("Sverchok_nodes: added to pythonpath :-)")
     print("Have a nice day with Sverchok")
 
@@ -66,7 +68,7 @@ if flag is False:
 import importlib
 import data_structure
 import node_tree
-from .utils import sv_tools
+from utils import sv_tools
 import nodes
 nodes_list = []
 for category, names in nodes.nodes_dict.items():
@@ -90,16 +92,11 @@ if "bpy" in locals():
 
 import bpy
 from bpy.types import AddonPreferences
-from bpy.props import BoolProperty, FloatVectorProperty
-import data_structure
-global sv_script_paths, bl_addons_path, sv_version_local, \
-                        sv_version
-sv_new_version = False
+from bpy.props import BoolProperty, FloatVectorProperty, EnumProperty
 
 class SverchokPreferences(AddonPreferences):
 
     bl_idname = __name__
-
 
     def update_debug_mode(self, context):
         data_structure.DEBUG_MODE = self.show_debug
@@ -107,6 +104,9 @@ class SverchokPreferences(AddonPreferences):
     def update_heat_map(self, context):
         data_structure.heat_map_state(self.heat_map)
 
+    def set_frame_change(self, context):
+        node_tree.set_frame_change(self.frame_change_mode)
+        
     show_debug = BoolProperty(name="Print update timings",
                               description="Print update timings in console",
                               default=False, subtype='NONE',
@@ -124,18 +124,40 @@ class SverchokPreferences(AddonPreferences):
     heat_map_cold = FloatVectorProperty(name="Heat map cold", description='',
                                         size=3, min=0.0, max=1.0,
                                         default=(1, 1, 1), subtype='COLOR')
-
-
+    
+    frame_change_modes = \
+            [("PRE", "Pre", "Update Sverchok before frame change", 0),
+             ("POST", "Post", "Update Sverchok after frame change", 1),
+             ("NONE", "None", "Sverchok doesn't update on frame change", 2)]
+ 
+    frame_change_mode = EnumProperty(items=frame_change_modes, 
+                            name="Frame change",
+                            description="Select frame change handler", 
+                            default="POST",
+                            update=set_frame_change)
+    
+ 
     def draw(self, context):
         layout = self.layout
-        layout.prop(self, "show_debug")
-        row = layout.row()
-        row.prop(self, "heat_map")
+
+        col = layout.column()
+        col.label(text="General")
+        col.label(text="Frame change handler:")
+        row =  col.row()
+        row.prop(self, "frame_change_mode", expand=True)
+        col.separator()
+        col.label(text="Debug")
+        col.prop(self, "show_debug")
+        col.prop(self, "heat_map")
+        row = col.row()
+        row.active = self.heat_map
         row.prop(self, "heat_map_hot")
         row.prop(self, "heat_map_cold")
-        row = layout.row()
+
+        col.separator()
+        row=layout.row()
         row.operator('wm.url_open', text='Home!').url = 'http://nikitron.cc.ua/blend_scripts.html'
-        if sv_new_version:
+        if sv_tools.sv_new_version:
             row.operator('node.sverchok_update_addon', text='Upgrade Sverchok addon')
         else:
             row.operator('node.sverchok_check_for_upgrades', text='Check for new version')
