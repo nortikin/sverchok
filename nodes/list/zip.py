@@ -20,8 +20,8 @@ import bpy
 from bpy.props import BoolProperty, IntProperty, StringProperty
 
 from node_tree import SverchCustomTreeNode
-from data_structure import (changable_sockets, multi_socket,
-                            SvSetSocketAnyType, SvGetSocketAnyType)
+from data_structure import (changable_sockets, multi_socket, preobrazovatel,
+                            SvSetSocketAnyType, SvGetSocketAnyType, updateNode)
 
 
 class ZipNode(bpy.types.Node, SverchCustomTreeNode):
@@ -36,12 +36,16 @@ class ZipNode(bpy.types.Node, SverchCustomTreeNode):
                          default='')
     newsock = BoolProperty(name='newsock',
                            default=False)
-
+    unwrap = BoolProperty(name='unwrap', 
+                description='unwrap objects?',
+                default=False,
+                update=updateNode)
     base_name = 'data '
     multi_socket_type = 'StringsSocket'
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "level", text="Level")
+        layout.prop(self, "unwrap", text="UnWrap")
 
     def init(self, context):
         self.inputs.new('StringsSocket', "data", "data")
@@ -65,6 +69,8 @@ class ZipNode(bpy.types.Node, SverchCustomTreeNode):
             if len(slots) < 2:
                 return
             output = self.myZip(slots, self.level)
+            if self.unwrap:
+                output = preobrazovatel(output, [2,3])
             SvSetSocketAnyType(self, 'data', output)
 
     def myZip(self, list_all, level, level2=0):
@@ -116,3 +122,6 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(ZipNode)
+
+if __name__ == '__main__':
+    register()
