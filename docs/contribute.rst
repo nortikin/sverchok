@@ -19,6 +19,17 @@ OUR WORKFLOW:
 
 6. Brainstorming and finding solutions. We are mostly new in python and programming, we are artists.
 
+WHAT NOT TO DO:
+===============
+
+Doing these things will break old layouts and or create very ugly code in the node.
+
+1. Change .bl_idname of a node
+
+2. Remove or rename sockets
+
+3. Adding new socket without updating upgrade.py
+
 
 TO MAKE YOUR NODE:
 ==================
