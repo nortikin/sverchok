@@ -160,7 +160,7 @@ class EvalKnievalNode(bpy.types.Node, SverchCustomTreeNode):
             output_socket_type = 'StringsSocket'
             if isinstance(tvar, Vector):
                 output_socket_type = 'VerticesSocket'
-            elif isinstance(tvar, tuple):
+            elif isinstance(tvar, (list, tuple)):
                 output_socket_type = 'VerticesSocket'
             elif isinstance(tvar, (Matrix, Euler, Quaternion)):
                 output_socket_type = 'MatrixSocket'
@@ -192,6 +192,9 @@ class EvalKnievalNode(bpy.types.Node, SverchCustomTreeNode):
         elif isinstance(tvar, (Euler, Quaternion)):
             tvar = tvar.to_matrix().to_4x4()
             data = [[r[:] for r in tvar[:]]]
+        elif isinstance(tvar, list):
+            data = [tvar]
+
         # finally we can set this.
         SvSetSocketAnyType(self, 0, data)
         self.previous_eval_str = self.eval_str
