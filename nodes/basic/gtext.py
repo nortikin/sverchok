@@ -176,7 +176,12 @@ class GTextNode(bpy.types.Node, SverchCustomTreeNode):
         pass
 
     def update(self):
-        pass
+        if self.text != 'your text here':
+            self.use_custom_color = True
+            self.color = (0.5,0.5,1)
+        else:
+            self.use_custom_color = True
+            self.color = (0.05,0.05,0.1)
 
     def set_gtest(self):
         self.text = bpy.context.window_manager.clipboard
@@ -216,3 +221,6 @@ def register():
 def unregister():
     bpy.utils.unregister_class(SverchokGText)
     bpy.utils.unregister_class(GTextNode)
+
+if __name__ == '__main__':
+    register()

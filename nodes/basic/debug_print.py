@@ -55,14 +55,19 @@ class SvDebugPrintNode(bpy.types.Node, SverchCustomTreeNode):
 
     def update(self):
         multi_socket(self, min=1)
-
+        
         if not self.print_data:
             return
-
+        
         for i, socket in enumerate(self.inputs):
             if socket.links and self.print_socket[i]:
                 print(SvGetSocketAnyType(self, socket, deepcopy=False))
-
+        if self.inputs['Data 0'].links:
+            self.use_custom_color = True
+            self.color = (0.5,0.5,1)
+        else:
+            self.use_custom_color = True
+            self.color = (0.05,0.05,0.1)
     def update_socket(self, context):
         self.update()
 
@@ -73,3 +78,6 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvDebugPrintNode)
+
+if __name__ == '__main__':
+    register()
