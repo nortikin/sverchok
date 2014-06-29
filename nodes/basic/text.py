@@ -43,7 +43,6 @@ from data_structure import (node_id, multi_socket, get_socket_type,
 
 
 # status colors
-
 FAIL_COLOR = (0.05, 0.05, 0.1)
 READY_COLOR = (0.5, 0.5, 1)
 
@@ -680,3 +679,6 @@ def unregister():
     bpy.utils.unregister_class(SvTextInOp)
     bpy.utils.unregister_class(SvTextInNode)
     bpy.utils.unregister_class(SvTextOutNode)
+
+if __name__ == '__main__':
+    register()

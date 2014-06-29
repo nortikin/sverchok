@@ -37,10 +37,6 @@ class SverchokNote(bpy.types.Operator):
         name = context.screen.name
         areas = bpy.data.screens[name].areas
         text = eval(self.text)
-        for ar in areas:
-            if ar.type == 'NODE_EDITOR':
-                ar.spaces.active.node_tree.nodes[text[0]].use_custom_color = True
-                ar.spaces.active.node_tree.nodes[text[0]].color = (0.6, 0.3, 0.012)
 
         Sv_handle_Note[text[0]] = True
         out = []
@@ -72,10 +68,7 @@ class SverchokUnNote(bpy.types.Operator):
         name = context.screen.name
         areas = bpy.data.screens[name].areas
         text = eval(self.text)
-        for ar in areas:
-            if ar.type == 'NODE_EDITOR':
-                ar.spaces.active.node_tree.nodes[text[0]].use_custom_color = True
-                ar.spaces.active.node_tree.nodes[text[0]].color = (1.0, 0.8, 0.4)
+        
         Sv_handle_Note[text[0]] = False
         Sv_handle_Note[text[0]+'text'] = str(['your text here'])
         return {'FINISHED'}
@@ -122,7 +115,12 @@ class NoteNode(bpy.types.Node, SverchCustomTreeNode):
         pass
 
     def update(self):
-        pass
+        if self.text != 'your text here':
+            self.use_custom_color = True
+            self.color = (0.5,0.5,1)
+        else:
+            self.use_custom_color = True
+            self.color = (0.05,0.05,0.1)
 
 
 def register():
@@ -135,3 +133,6 @@ def unregister():
     bpy.utils.unregister_class(SverchokUnNote)
     bpy.utils.unregister_class(SverchokNote)
     bpy.utils.unregister_class(NoteNode)
+
+if __name__ == '__main__':
+    register()

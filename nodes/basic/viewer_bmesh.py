@@ -250,7 +250,8 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
         # regular code from this point
         inputs = self.inputs
         if self.activate and 'vertices' in inputs and inputs['vertices'].links:
-
+            self.use_custom_color = True
+            self.color = (1, 0.3, 0)
             C = bpy.context
             mverts, *mrest = self.get_geometry_from_sockets()
 
@@ -283,6 +284,9 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
                     self.to_group()
                 if self.material:
                     self.set_corresponding_materials()
+        else:
+            self.use_custom_color = True
+            self.color = (0.1, 0.05, 0)
 
     def to_group(self):
         # this def for grouping objects in scene
@@ -342,3 +346,6 @@ def register():
 def unregister():
     bpy.utils.unregister_class(BmeshViewerNode)
     bpy.utils.unregister_class(SvBmeshViewOp)
+
+if __name__ == '__main__':
+    register()
