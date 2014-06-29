@@ -135,6 +135,7 @@ class EvalKnievalNode(bpy.types.Node, SverchCustomTreeNode):
         objs = data.objects
         mats = data.materials
         meshes = data.meshes
+        texts = data.texts
 
         prop_to_eval = self.eval_str.split('=')[1].strip()
         tvar = None
