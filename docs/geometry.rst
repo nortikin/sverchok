@@ -1,5 +1,5 @@
 ***********************
-Introdution to geometry
+Introduction to geometry
 ***********************
 
 Basics
