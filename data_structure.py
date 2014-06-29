@@ -31,7 +31,7 @@ DEBUG_MODE = False
 HEAT_MAP = False
 
 # this is set correctly later.
-__package__ = "sverchok"
+SVERCHOK_NAME = "sverchok"
 
 #handle for object in node
 temp_handle = {}
@@ -687,10 +687,10 @@ def sverchok_debug(mode):
 def setup_init():
     global DEBUG_MODE
     global HEAT_MAP
-    global __package__
+    global SVERCHOK_NAME
     # okay this set __package__ to what it should be
-    __package__ = bpy.types.SverchokPreferences.bl_idname
-    addon = bpy.context.user_preferences.addons.get(__package__)
+    SVERCHOK_NAME = bpy.types.SverchokPreferences.bl_idname
+    addon = bpy.context.user_preferences.addons.get(SVERCHOK_NAME)
     if addon:
         DEBUG_MODE = addon.preferences.show_debug
         HEAT_MAP = addon.preferences.heat_map
@@ -990,7 +990,7 @@ def do_update_heat_map(node_list, nodes):
         
     t_max = max(times)
     
-    addon = bpy.context.user_preferences.addons.get(__package__)
+    addon = bpy.context.user_preferences.addons.get(SVERCHOK_NAME)
     if addon:
         # to use Vector.lerp
         cold = Vector(addon.preferences.heat_map_cold)

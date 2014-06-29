@@ -45,20 +45,9 @@ bl_info = {
 import os
 import sys
 
-path = sys.path
-flag = False
-for item in path:
-    if "sverchok" in item:
-        flag = True
-        break
-if flag is False:
-    # the below add 3 ugly paths, is it really needed? why not just the right one?
-    sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'sverchok'))
-    sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'sverchok-refactoring'))
-    sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'sverchok-master'))
-    # like this?
-    #sys.path.append(os.path.dirname(__file__))
-    print("Sverchok_nodes: added to pythonpath :-)")
+current_path = os.path.dirname(__file__) 
+if not current_path in sys.path:
+    sys.path.append(current_path)
     print("Have a nice day with Sverchok")
 
 
