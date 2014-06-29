@@ -36,10 +36,12 @@ class SvObjSelected(bpy.types.Operator):
                                default='')
     grup_name = StringProperty(name='grup tree', description='it is name of grup',
                                default='')
+    sort = BoolProperty(name='sort objects', description='to sort objects by name or not',
+                               default=True)
 
-    def enable(self, name_no, name_tr, handle):
+    def enable(self, name_no, name_tr, handle, sorting):
         objects = []
-        if self.grup_name and len(bpy.data.groups[self.grup_name].objects) > 0:
+        if self.grup_name and bpy.data.groups[self.grup_name].objects:
             objs = bpy.data.groups[self.grup_name].objects
         elif bpy.context.selected_objects:
             objs = bpy.context.selected_objects
@@ -48,6 +50,8 @@ class SvObjSelected(bpy.types.Operator):
             return
         for o in objs:
             objects.append(o.name)
+        if sorting:
+            objects.sort()
         handle_write(name_no+name_tr, objects)
         # временное решение с группой. надо решать, как достать имя группы узлов
         if bpy.data.node_groups[name_tr]:
@@ -63,9 +67,10 @@ class SvObjSelected(bpy.types.Operator):
     def execute(self, context):
         name_no = self.node_name
         name_tr = self.tree_name
+        sorting = self.sort
         handle = handle_read(name_no+name_tr)
         self.disable(name_no+name_tr, handle)
-        self.enable(name_no, name_tr, handle)
+        self.enable(name_no, name_tr, handle, sorting)
         print('have got {0} items from scene.'.format(handle[1]))
         return {'FINISHED'}
 
@@ -84,7 +89,7 @@ class ObjectsNode(bpy.types.Node, SverchCustomTreeNode):
         update=updateNode)
     #ObjectProperty = EnumProperty(items = object_select, name = 'ObjectProperty')
     groupname = StringProperty(
-        name='groupname', description='group that gather objects',
+        name='groupname', description='group of objects (green outline CTRL+G)',
         default='',
         update=updateNode)
     modifiers = BoolProperty(
@@ -96,6 +101,11 @@ class ObjectsNode(bpy.types.Node, SverchCustomTreeNode):
         name='Vergroups',
         description='Use vertex groups to nesty insertion',
         default=False,
+        update=updateNode)
+    sort = BoolProperty(
+        name='sort by name',
+        description='sorting inserted objects by names',
+        default=True,
         update=updateNode)
 
     def init(self, context):
@@ -111,21 +121,28 @@ class ObjectsNode(bpy.types.Node, SverchCustomTreeNode):
         opera.node_name = self.name
         opera.tree_name = self.id_data.name
         opera.grup_name = self.groupname
-        layout.prop(self, 'groupname', text='Group')
+        opera.sort = self.sort
+        row = layout.row(align=True)
+        row.prop(self, 'groupname', text='')
+        row.prop(self, 'sort', text='Sort objects')
+        
+        row = layout.row(align=True)
+        row.prop(self, "modifiers", text="Post modifiers")
+        # row = layout.row(align=True)
+        row.prop(self, "vergroups", text="Vert groups")
+        
         handle = handle_read(self.name+self.id_data.name)
         if self.objects_local:
             if handle[0]:
-                for o in handle[1]:
+                for i, o in enumerate(handle[1]):
+                    if i > 4:
+                        layout.label('. . . more '+str(len(handle[1])-5)+' items')
+                        break
                     layout.label(o)
             else:
                 handle_write(self.name+self.id_data.name, eval(self.objects_local))
         else:
             layout.label('--None--')
-
-        row = layout.row(align=True)
-        row.prop(self, "modifiers", text="Post modifiers")
-        row = layout.row(align=True)
-        row.prop(self, "vergroups", text="Vertex groups")
 
     def update(self):
         # check for grouping socket
@@ -217,3 +234,6 @@ def register():
 def unregister():
     bpy.utils.unregister_class(ObjectsNode)
     bpy.utils.unregister_class(SvObjSelected)
+
+if __name__ == '__main__':
+    register()
