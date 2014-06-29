@@ -24,8 +24,3 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
-
-
-In the meantime, you can read:
-* [RestructuredText Primer](http://sphinx-doc.org/rest.html#rst-primer)
-* [Sphinx Markup](http://sphinx-doc.org/markup/index.html#sphinxmarkup)
