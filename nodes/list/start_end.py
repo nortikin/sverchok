@@ -43,8 +43,9 @@ class ListFLNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "level", text="level")
 
     def init(self, context):
-        self.outputs.new('StringsSocket', "Middl", "Middl")
+        
         self.inputs.new('StringsSocket', "Data", "Data")
+        self.outputs.new('StringsSocket', "Middl", "Middl")
         self.outputs.new('StringsSocket', "First", "First")
         self.outputs.new('StringsSocket', "Last", "Last")
 
@@ -52,7 +53,7 @@ class ListFLNode(bpy.types.Node, SverchCustomTreeNode):
         if self.inputs['Data'].links:
             # адаптивный сокет
             inputsocketname = 'Data'
-            outputsocketname = ['First', 'Last']
+            outputsocketname = ["Middl",'First', 'Last']
             changable_sockets(self, inputsocketname, outputsocketname)
 
         if 'First' in self.outputs and self.outputs['First'].links or \
