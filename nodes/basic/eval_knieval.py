@@ -16,6 +16,9 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+import ast
+from ast import literal_eval
+
 import bpy
 from mathutils import Vector, Matrix, Euler, Quaternion
 from bpy.props import FloatProperty, StringProperty, BoolProperty
