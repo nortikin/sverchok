@@ -348,7 +348,7 @@ def make_categories():
             ]),
         SverchNodeCategory("SVERCHOK_X", "SVERCHOK beta nodes", items=[
             # for testing convenience,
-            NodeItem("VectorMath2Node", label="Vector Math2"),
+            #NodeItem("VectorMath2Node", label="Vector Math2"),
             NodeItem("BGLdemoNode", label="BGL debug print"),
             NodeItem("BasicSplineNode", label="Basic Spline"),
             NodeItem("SvOffsetNode", label="Offset"),
