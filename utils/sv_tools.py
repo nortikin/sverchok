@@ -184,7 +184,7 @@ class SverchokToolsMenu(bpy.types.Panel):
         layout.active = True
         col = layout.column()
         col.scale_y = 3.0
-        u = "Update"
+        u = "Update all"
         col.operator(SverchokUpdateAll.bl_idname, text=u)
         u = "Update {0}".format(ng_name)
         op = col.operator(SverchokUpdateCurrent.bl_idname, text = u)
@@ -261,8 +261,8 @@ class ToolsNode(bpy.types.Node, SverchCustomTreeNode):
         col = layout.column()
         col.scale_y = 15
         col.template_color_picker
-        u = "Update"
-        col.operator(SverchokUpdateAll.bl_idname, text=u)
+        u = "Update "
+        #col.operator(SverchokUpdateAll.bl_idname, text=u)
         op = col.operator(SverchokUpdateCurrent.bl_idname, text=u+self.id_data.name)
         op.node_group = self.id_data.name
         #box = layout.box()
