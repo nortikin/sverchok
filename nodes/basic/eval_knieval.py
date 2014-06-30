@@ -38,6 +38,12 @@ Strings to trigger the two modes / mode change are:
 '''
 
 
+def read_text(args):
+    # if args has separators then look on local disk
+    # else in .blend
+    pass
+
+
 # def eval_text(node, function_text, out_text, update=True):
 def eval_text(function_text, out_text, update=True):
     texts = bpy.data.texts
@@ -66,10 +72,65 @@ def eval_text(function_text, out_text, update=True):
     return out_data
 
 
-def read_text(args):
-    # if args has separators then look on local disk
-    # else in .blend
-    pass
+def get_params(prop, pat):
+    regex = re.compile(pat)
+    return literal_eval(regex.findall(prop)[0])
+
+
+def process_macro(node, macro, prop_to_eval):
+    tvar = None
+    params = get_params(prop_to_eval, '\(.*?\)')
+
+    if macro == 'eval_text':
+        if not (len(params) in [2, 3]):
+            return
+        fn = eval_text
+    else:
+        if not (len(params) == 1):
+            return
+        fn = read_text
+
+    # do this once, if success skip the try on the next update
+    if not node.eval_success:
+        try:
+            tvar = fn(*params)
+        except:
+            fail_msg = "nope, {type} with ({params}) failed"
+            print(fail_msg.format(type=macro, params=str(params)))
+            node.previous_eval_str = ""
+        finally:
+            node.eval_success = False if (tvar is None) else True
+            return tvar
+    else:
+        print('running {macro} unevalled'.format(macro=macro))
+        return fn(*params)
+
+
+def process_prop_string(node, prop_to_eval):
+    tvar = None
+
+    c = bpy.context
+    scene = c.scene
+    data = bpy.data
+    objs = data.objects
+    mats = data.materials
+    meshes = data.meshes
+    texts = data.texts
+
+    # yes there's a massive assumption here too.
+    if not node.eval_success:
+        try:
+            tvar = eval(prop_to_eval)
+        except:
+            print("nope, crash n burn hard")
+            node.previous_eval_str = ""
+        finally:
+            print('evalled', tvar)
+            node.eval_success = False if (tvar is None) else True
+    else:
+        tvar = eval(prop_to_eval)
+
+    return tvar
 
 
 class EvalKnievalNode(bpy.types.Node, SverchCustomTreeNode):
@@ -159,58 +220,28 @@ class EvalKnievalNode(bpy.types.Node, SverchCustomTreeNode):
             exec(fxed)
 
     def output_mode(self):
-        print('you are here')
         outputs = self.outputs
         if (len(outputs) == 0) or (not outputs[0].links):
             print('has no link!')
             return
 
-        c = bpy.context
-        scene = c.scene
-        data = bpy.data
-        objs = data.objects
-        mats = data.materials
-        meshes = data.meshes
-        texts = data.texts
-
-        tvar = None
         prop_to_eval = self.eval_str.split('=')[1].strip()
-
         macro = prop_to_eval.split("(")[0]
+        tvar = None
 
         if macro in ['eval_text', 'read_text']:
-            params = get_params(prop_to_eval, '\(.*?\)')
-            if macro == 'eval_text':
-                if not (len(params) in [2, 3]):
-                    return
-                fn = eval_text
-            else:
-                if not (len(params) == 1):
-                    return
-                fn = read_text
-
-            tvar = fn(*params)
-
+            tvar = process_macro(self, macro, prop_to_eval)
         else:
-            # yes there's a massive assumption here too.
-            if not self.eval_success:
-                try:
-                    tvar = eval(prop_to_eval)
-                except:
-                    print("nope, crash n burn hard")
-                    self.previous_eval_str = ""
-                finally:
-                    print('evalled', tvar)
-                    self.eval_success = True if tvar else False
-            else:
-                tvar = eval(prop_to_eval)
+            tvar = process_prop_string(self, prop_to_eval)
 
-        # this prevents catching 0 or False
+        # explicit None must be caught. not 0 or False
         if tvar is None:
             return
 
-        print("Tvar", tvar)
-        # set the outputs again.
+        print("tvar: ", tvar)
+        # set the outputs according to the data types
+        # the body of this if-statement is done only infrequently,
+        # when the eval string is not the same as the last eval.
         if not (self.previous_eval_str == self.eval_str):
             output_socket_type = 'StringsSocket'
             if isinstance(tvar, Vector):
@@ -255,14 +286,12 @@ class EvalKnievalNode(bpy.types.Node, SverchCustomTreeNode):
         self.previous_eval_str = self.eval_str
 
     def set_sockets(self):
-        # what kind of obfuscated magic is this?
         a, b = {
             'input': (self.inputs, self.outputs),
             'output': (self.outputs, self.inputs)
         }[self.mode]
         b.clear()
 
-        # can do exact socket here, info is known at this point
         a.new('StringsSocket', 'x')
         if self.mode == 'input':
             a[0].prop_name = 'x'
@@ -279,7 +308,7 @@ class EvalKnievalNode(bpy.types.Node, SverchCustomTreeNode):
             return
 
         if (len(self.eval_str) <= 5) or not ("=" in self.eval_str):
-            # self.set_ui_color()
+            self.set_ui_color()
             return
 
         if not (self.eval_str == self.previous_eval_str):
