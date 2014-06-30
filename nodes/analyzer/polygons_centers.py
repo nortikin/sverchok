@@ -73,7 +73,7 @@ class CentersPolsNode(bpy.types.Node, SverchCustomTreeNode):
                             v3 = versv[p[l]]
                             poi_2 = (v2+v3)/2
                             # normals
-                            norm = geometry.normal(v0, v1, v3)
+                            norm = geometry.normal(v0, v1, v2, v3)
                             normals.append(norm)
                         else:
                             poi_2 = v2
@@ -138,6 +138,6 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(CentersPolsNode)
+    
 if __name__ == '__main__':
     register()
-
