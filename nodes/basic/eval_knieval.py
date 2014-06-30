@@ -38,6 +38,7 @@ Strings to trigger the two modes / mode change are:
 
 
 class EvalKnievalNode(bpy.types.Node, SverchCustomTreeNode):
+
     ''' Eval Knieval Node '''
     bl_idname = 'EvalKnievalNode'
     bl_label = 'Eval Knieval Node'
@@ -184,7 +185,7 @@ class EvalKnievalNode(bpy.types.Node, SverchCustomTreeNode):
 
             if needs_reconnect:
                 ng = self.id_data
-                ng.links.new(outputs[0], socket_to)                
+                ng.links.new(outputs[0], socket_to)
 
         if isinstance(tvar, Vector):
             data = [[tvar[:]]]
@@ -207,7 +208,7 @@ class EvalKnievalNode(bpy.types.Node, SverchCustomTreeNode):
             'output': (self.outputs, self.inputs)
         }[self.mode]
         b.clear()
-        
+
         # can do exact socket here, info is known at this point
         a.new('StringsSocket', 'x')
         if self.mode == 'input':
@@ -218,14 +219,14 @@ class EvalKnievalNode(bpy.types.Node, SverchCustomTreeNode):
         outputs = self.outputs
 
         if self.mode == "input" and len(inputs) == 0:
-            #self.set_ui_color()
+            # self.set_ui_color()
             return
         elif self.mode == "output" and len(outputs) == 0:
-            #self.set_ui_color()
+            # self.set_ui_color()
             return
 
         if (len(self.eval_str) <= 5) or not ("=" in self.eval_str):
-            #self.set_ui_color()
+            # self.set_ui_color()
             return
 
         if not (self.eval_str == self.previous_eval_str):
