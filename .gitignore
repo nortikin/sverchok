@@ -47,6 +47,8 @@ __MACOSX
 *.kdev4
 
 #Ignore KDE's backup files
+#thanks, i have trouobles 
+#with this sometimes in gedit
 *~
 
 
