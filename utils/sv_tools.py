@@ -59,9 +59,9 @@ class SverchokUpdateCurrent(bpy.types.Operator):
     bl_idname = "node.sverchok_update_current"
     bl_label = "Sverchok update all"
     bl_options = {'REGISTER', 'UNDO'}
-    
+
     node_group = StringProperty(default="")
-    
+
     def execute(self, context):
         ng = bpy.data.node_groups.get(self.node_group)
         if ng:
@@ -178,7 +178,7 @@ class SverchokToolsMenu(bpy.types.Panel):
             return False
 
     def draw(self, context):
-        current_ng = context.space_data.node_tree
+        ng_name = context.space_data.node_tree.name
         layout = self.layout
         #layout.scale_y=1.1
         layout.active = True
@@ -186,8 +186,9 @@ class SverchokToolsMenu(bpy.types.Panel):
         col.scale_y = 3.0
         u = "Update"
         col.operator(SverchokUpdateAll.bl_idname, text=u)
-        op = col.operator(SverchokUpdateCurrent.bl_idname, text=u + current_ng.name)
-        op.node_group = current_ng.name
+        u = "Update {0}".format(ng_name)
+        op = col.operator(SverchokUpdateCurrent.bl_idname, text = u)
+        op.node_group = ng_name
         box = layout.box()
         little_width = 0.12
         col = box.column(align=True)
@@ -206,7 +207,7 @@ class SverchokToolsMenu(bpy.types.Panel):
 
                 row = col.row(align=True)
 
-                if name == current_ng.name:
+                if name == ng_name:
                     row.label(text=name, icon='LINK')
                 else:
                     row.label(text=name)
@@ -262,8 +263,8 @@ class ToolsNode(bpy.types.Node, SverchCustomTreeNode):
         col.template_color_picker
         u = "Update"
         col.operator(SverchokUpdateAll.bl_idname, text=u)
-        op = col.operator(SverchokUpdateCurrent.bl_idname, text=u+current_ng.name)
-        op.node_group = current_ng.name
+        op = col.operator(SverchokUpdateCurrent.bl_idname, text=u+self.id_data.name)
+        op.node_group = self.id_data.name
         #box = layout.box()
 
         #col = box.column(align=True)
@@ -307,11 +308,6 @@ def unregister():
     bpy.utils.unregister_class(SverchokCheckForUpgrades)
     bpy.utils.unregister_class(SverchokUpdateAll)
     bpy.utils.unregister_class(SverchokUpdateCurrent)
-    
+
 if __name__  ==  '__main__':
     register()
-
-
-
-
-
