@@ -16,6 +16,7 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+import re
 import ast
 from ast import literal_eval
 
@@ -37,7 +38,42 @@ Strings to trigger the two modes / mode change are:
 '''
 
 
+# def eval_text(node, function_text, out_text, update=True):
+def eval_text(function_text, out_text, update=True):
+    texts = bpy.data.texts
+
+    # this text should be initiated outside of blender or made external.
+    # if text on filesystem is modified between updates, reload it and
+    # re-execute it.
+    text = texts[function_text]
+    if update:
+        # might not even work without ui interact
+        # if text.is_modified:
+        fp = text.filepath
+        with open(fp) as new_text:
+            text.from_string(''.join(new_text.readlines()))
+
+    # at this point text is updated and can be executed.
+    # could be cached in node.
+    exec(text.as_string())
+
+    # if function_text execed OK, then it has written to texts[out_text]
+    # This file out_text should exist.
+    out_data = None
+    if out_text in texts:
+        out_data = literal_eval(out_text.from_string())
+
+    return out_data
+
+
+def read_text(args):
+    # if args has separators then look on local disk
+    # else in .blend
+    pass
+
+
 class EvalKnievalNode(bpy.types.Node, SverchCustomTreeNode):
+
     ''' Eval Knieval Node '''
     bl_idname = 'EvalKnievalNode'
     bl_label = 'Eval Knieval Node'
@@ -137,24 +173,42 @@ class EvalKnievalNode(bpy.types.Node, SverchCustomTreeNode):
         meshes = data.meshes
         texts = data.texts
 
-        prop_to_eval = self.eval_str.split('=')[1].strip()
         tvar = None
+        prop_to_eval = self.eval_str.split('=')[1].strip()
 
-        # yes there's a massive assumption here too.
-        if not self.eval_success:
-            try:
-                tvar = eval(prop_to_eval)
-            except:
-                print("nope, crash n burn hard")
-                self.previous_eval_str = ""
-            finally:
-                print('evalled', tvar)
-                self.eval_success = True if tvar else False
+        macro = prop_to_eval.split("(")[0]
+
+        if macro in ['eval_text', 'read_text']:
+            params = get_params(prop_to_eval, '\(.*?\)')
+            if macro == 'eval_text':
+                if not (len(params) in [2, 3]):
+                    return
+                fn = eval_text
+            else:
+                if not (len(params) == 1):
+                    return
+                fn = read_text
+
+            tvar = fn(*params)
+
         else:
-            tvar = eval(prop_to_eval)
+            # yes there's a massive assumption here too.
+            if not self.eval_success:
+                try:
+                    tvar = eval(prop_to_eval)
+                except:
+                    print("nope, crash n burn hard")
+                    self.previous_eval_str = ""
+                finally:
+                    print('evalled', tvar)
+                    self.eval_success = True if tvar else False
+            else:
+                tvar = eval(prop_to_eval)
 
-        if not tvar:
+        # this prevents catching 0 or False
+        if tvar is None:
             return
+
         print("Tvar", tvar)
         # set the outputs again.
         if not (self.previous_eval_str == self.eval_str):
@@ -184,7 +238,7 @@ class EvalKnievalNode(bpy.types.Node, SverchCustomTreeNode):
 
             if needs_reconnect:
                 ng = self.id_data
-                ng.links.new(outputs[0], socket_to)                
+                ng.links.new(outputs[0], socket_to)
 
         if isinstance(tvar, Vector):
             data = [[tvar[:]]]
@@ -207,7 +261,7 @@ class EvalKnievalNode(bpy.types.Node, SverchCustomTreeNode):
             'output': (self.outputs, self.inputs)
         }[self.mode]
         b.clear()
-        
+
         # can do exact socket here, info is known at this point
         a.new('StringsSocket', 'x')
         if self.mode == 'input':
@@ -218,14 +272,14 @@ class EvalKnievalNode(bpy.types.Node, SverchCustomTreeNode):
         outputs = self.outputs
 
         if self.mode == "input" and len(inputs) == 0:
-            #self.set_ui_color()
+            # self.set_ui_color()
             return
         elif self.mode == "output" and len(outputs) == 0:
-            #self.set_ui_color()
+            # self.set_ui_color()
             return
 
         if (len(self.eval_str) <= 5) or not ("=" in self.eval_str):
-            #self.set_ui_color()
+            # self.set_ui_color()
             return
 
         if not (self.eval_str == self.previous_eval_str):
