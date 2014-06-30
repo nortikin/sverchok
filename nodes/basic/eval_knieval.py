@@ -133,6 +133,22 @@ def process_prop_string(node, prop_to_eval):
     return tvar
 
 
+def wrap_output_data(tvar):
+    if isinstance(tvar, Vector):
+        data = [[tvar[:]]]
+    elif isinstance(tvar, Matrix):
+        data = [[r[:] for r in tvar[:]]]
+    elif isinstance(tvar, (Euler, Quaternion)):
+        tvar = tvar.to_matrix().to_4x4()
+        data = [[r[:] for r in tvar[:]]]
+    elif isinstance(tvar, list):
+        data = [tvar]
+    else:
+        data = tvar
+
+    return data
+
+
 class EvalKnievalNode(bpy.types.Node, SverchCustomTreeNode):
 
     ''' Eval Knieval Node '''
@@ -238,50 +254,12 @@ class EvalKnievalNode(bpy.types.Node, SverchCustomTreeNode):
         if tvar is None:
             return
 
-        print("tvar: ", tvar)
-        # set the outputs according to the data types
-        # the body of this if-statement is done only infrequently,
-        # when the eval string is not the same as the last eval.
         if not (self.previous_eval_str == self.eval_str):
-            output_socket_type = 'StringsSocket'
-            if isinstance(tvar, Vector):
-                output_socket_type = 'VerticesSocket'
-            elif isinstance(tvar, (list, tuple)):
-                output_socket_type = 'VerticesSocket'
-            elif isinstance(tvar, (Matrix, Euler, Quaternion)):
-                output_socket_type = 'MatrixSocket'
-            elif isinstance(tvar, (int, float)):
-                output_socket_type = 'StringsSocket'
-
-            links = outputs[0].links
-            needs_reconnect = False
-
-            if links and links[0]:
-                needs_reconnect = True
-                link = links[0]
-                node_to = link.to_node
-                socket_to = link.to_socket
-
-            # needs clever reconnect? maybe not.
-            if outputs[0].bl_idname != output_socket_type:
-                outputs.clear()
-                outputs.new(output_socket_type, 'x')
-
-            if needs_reconnect:
-                ng = self.id_data
-                ng.links.new(outputs[0], socket_to)
-
-        if isinstance(tvar, Vector):
-            data = [[tvar[:]]]
-        elif isinstance(tvar, Matrix):
-            data = [[r[:] for r in tvar[:]]]
-        elif isinstance(tvar, (Euler, Quaternion)):
-            tvar = tvar.to_matrix().to_4x4()
-            data = [[r[:] for r in tvar[:]]]
-        elif isinstance(tvar, list):
-            data = [tvar]
+            print("tvar: ", tvar)
+            self.morph_socket_types(tvar)
 
         # finally we can set this.
+        data = wrap_output_data(tvar)
         SvSetSocketAnyType(self, 0, data)
         self.previous_eval_str = self.eval_str
 
@@ -323,7 +301,8 @@ class EvalKnievalNode(bpy.types.Node, SverchCustomTreeNode):
             self.eval_success = False
 
         {
-            "input": self.input_mode, "output": self.output_mode
+            "input": self.input_mode,
+            "output": self.output_mode
         }.get(self.mode, lambda: None)()
 
         self.set_ui_color()
@@ -334,6 +313,40 @@ class EvalKnievalNode(bpy.types.Node, SverchCustomTreeNode):
             self.color = (0.98, 0.6, 0.6)
         else:
             self.color = (1.0, 1.0, 1.0)
+
+    def morph_socket_types(self, tvar):
+        # set the outputs according to the data types
+        # the body of this if-statement is done only infrequently,
+        # when the eval string is not the same as the last eval.
+        outputs = self.outputs
+        output_socket_type = 'StringsSocket'
+
+        if isinstance(tvar, Vector):
+            output_socket_type = 'VerticesSocket'
+        elif isinstance(tvar, (list, tuple)):
+            output_socket_type = 'VerticesSocket'
+        elif isinstance(tvar, (Matrix, Euler, Quaternion)):
+            output_socket_type = 'MatrixSocket'
+        elif isinstance(tvar, (int, float)):
+            output_socket_type = 'StringsSocket'
+
+        links = outputs[0].links
+        needs_reconnect = False
+
+        if links and links[0]:
+            needs_reconnect = True
+            link = links[0]
+            node_to = link.to_node
+            socket_to = link.to_socket
+
+        # needs clever reconnect? maybe not.
+        if outputs[0].bl_idname != output_socket_type:
+            outputs.clear()
+            outputs.new(output_socket_type, 'x')
+
+        if needs_reconnect:
+            ng = self.id_data
+            ng.links.new(outputs[0], socket_to)
 
     def update_socket(self, context):
         self.update()
