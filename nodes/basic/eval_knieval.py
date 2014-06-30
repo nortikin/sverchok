@@ -54,20 +54,24 @@ def eval_text(function_text, out_text, update=True):
     text = texts[function_text]
     if update:
         # might not even work without ui interact
-        # if text.is_modified:
         fp = text.filepath
+        fp = bpy.path.abspath(fp)
         with open(fp) as new_text:
-            text.from_string(''.join(new_text.readlines()))
+            text_body = ''.join(new_text.readlines())
+            text.from_string(text_body)
 
     # at this point text is updated and can be executed.
     # could be cached in node.
+    text = texts[function_text]
     exec(text.as_string())
 
     # if function_text execed OK, then it has written to texts[out_text]
     # This file out_text should exist.
     out_data = None
     if out_text in texts:
-        out_data = literal_eval(out_text.from_string())
+        written_data = texts[out_text].as_string()
+        print(written_data)
+        out_data = literal_eval(written_data)
 
     return out_data
 
@@ -78,17 +82,20 @@ def get_params(prop, pat):
 
 
 def process_macro(node, macro, prop_to_eval):
-    tvar = None
     params = get_params(prop_to_eval, '\(.*?\)')
+    tvar = None
+    fn = None
 
     if macro == 'eval_text':
-        if not (len(params) in [2, 3]):
-            return
-        fn = eval_text
+        if 2 <= len(params) <= 3:
+            fn = eval_text
     else:
-        if not (len(params) == 1):
-            return
-        fn = read_text
+        if len(params) == 1:
+            fn = read_text
+
+    if not fn:
+        return
+
 
     # do this once, if success skip the try on the next update
     if not node.eval_success:
@@ -99,7 +106,8 @@ def process_macro(node, macro, prop_to_eval):
             print(fail_msg.format(type=macro, params=str(params)))
             node.previous_eval_str = ""
         finally:
-            node.eval_success = False if (tvar is None) else True
+            node.eval_success = False if (tvar == None) else True
+            print('success?', node.eval_success)
             return tvar
     else:
         print('running {macro} unevalled'.format(macro=macro))
@@ -286,7 +294,7 @@ class EvalKnievalNode(bpy.types.Node, SverchCustomTreeNode):
             return
 
         if (len(self.eval_str) <= 5) or not ("=" in self.eval_str):
-            self.set_ui_color()
+            # self.set_ui_color()
             return
 
         if not (self.eval_str == self.previous_eval_str):
