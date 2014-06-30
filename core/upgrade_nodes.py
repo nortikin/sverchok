@@ -116,8 +116,8 @@ new_socket_dict = {
     'ListFLNode':
         [['outputs', 'StringsSocket', 'Middl', 2]],
     'CentersPolsNode':
-        [['outputs', 'VerticesSocket', "Norm_abs", 3],
-         ['outputs', 'VerticesSocket', "Origins", 4]],
+        [['outputs', 'VerticesSocket', "Norm_abs", 1],
+         ['outputs', 'VerticesSocket', "Origins", 2]],
     'SvSolidifyNode':
         [['outputs', 'StringsSocket', 'newpols', 3]],
     }
