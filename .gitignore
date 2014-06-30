@@ -47,7 +47,11 @@ __MACOSX
 *.kdev4
 
 #Ignore KDE's backup files
-*~ 
+*~
 
+
+#Ignore sphinx build folder
+docs/_build
 
 docs/.make.bat.swp
+
