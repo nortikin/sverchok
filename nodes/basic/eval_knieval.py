@@ -16,6 +16,9 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+import ast
+from ast import literal_eval
+
 import bpy
 from mathutils import Vector, Matrix, Euler, Quaternion
 from bpy.props import FloatProperty, StringProperty, BoolProperty
@@ -132,6 +135,7 @@ class EvalKnievalNode(bpy.types.Node, SverchCustomTreeNode):
         objs = data.objects
         mats = data.materials
         meshes = data.meshes
+        texts = data.texts
 
         prop_to_eval = self.eval_str.split('=')[1].strip()
         tvar = None
@@ -157,7 +161,7 @@ class EvalKnievalNode(bpy.types.Node, SverchCustomTreeNode):
             output_socket_type = 'StringsSocket'
             if isinstance(tvar, Vector):
                 output_socket_type = 'VerticesSocket'
-            elif isinstance(tvar, tuple):
+            elif isinstance(tvar, (list, tuple)):
                 output_socket_type = 'VerticesSocket'
             elif isinstance(tvar, (Matrix, Euler, Quaternion)):
                 output_socket_type = 'MatrixSocket'
@@ -189,6 +193,9 @@ class EvalKnievalNode(bpy.types.Node, SverchCustomTreeNode):
         elif isinstance(tvar, (Euler, Quaternion)):
             tvar = tvar.to_matrix().to_4x4()
             data = [[r[:] for r in tvar[:]]]
+        elif isinstance(tvar, list):
+            data = [tvar]
+
         # finally we can set this.
         SvSetSocketAnyType(self, 0, data)
         self.previous_eval_str = self.eval_str
