@@ -18,15 +18,16 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-from bpy.app.handlers import persistent
 from bpy.props import StringProperty, BoolProperty, FloatVectorProperty
 from bpy.types import NodeTree, NodeSocket, NodeSocketStandard
 from nodeitems_utils import NodeCategory, NodeItem
 
 import data_structure
-from data_structure import (makeTreeUpdate2, speedUpdate,
-                            SvGetSocketInfo, SvGetSocket,
-                            SvSetSocket, get_update_lists, updateNode)
+from data_structure import (SvGetSocketInfo, SvGetSocket,
+                            SvSetSocket,  updateNode)
+from core.update_system import (build_update_list, sverchok_update,
+                                get_update_lists)
+from core import upgrade_nodes
 
 
 class SvColors(bpy.types.PropertyGroup):
@@ -51,7 +52,7 @@ class MatrixSocket(NodeSocket):
             return SvGetSocket(self, deepcopy)
         else:
             return default
-            
+
     def sv_set(self, data):
         SvSetSocket(self, data)
 
@@ -165,12 +166,12 @@ class SverchCustomTree(NodeTree):
     bl_label = 'Sverchok Node Tree'
     bl_icon = 'RNA'
 
-    def updateTree(self, context):
-        speedUpdate(tree=self)
+    def turn_off_ng(self, context):
+        sverchok_update(tree=self)
         #should turn off tree. for now it does by updating it
 
     sv_animate = BoolProperty(name="Animate", default=True)
-    sv_show = BoolProperty(name="Show", default=True, update=updateTree)
+    sv_show = BoolProperty(name="Show", default=True, update=turn_off_ng)
     sv_bake = BoolProperty(name="Bake", default=True)
     sv_user_colors = StringProperty(default="")
 
@@ -189,15 +190,15 @@ class SverchCustomTree(NodeTree):
         except:
             return
 
-        makeTreeUpdate2(tree=self)
-        speedUpdate(tree=self)
+        build_update_list(tree=self)
+        sverchok_update(tree=self)
 
     def update_ani(self):
-        '''
+        """
         Updates the Sverchok node tree if animation layers show true. For animation callback
-        '''
+        """
         if self.sv_animate:
-            speedUpdate(tree=self)
+            sverchok_update(tree=self)
 
 
 class SverchCustomTreeNode:
@@ -270,7 +271,7 @@ def make_categories():
             NodeItem("IntegerNode", label="Int"),
             NodeItem("Float2IntNode", label="Float 2 Int"),
             # NodeItem("FormulaNode", label="Formula"),
-            NodeItem("Formula2Node", label="Formula"), # for newbies this is not predictable why "Formula2" renamed
+            NodeItem("Formula2Node", label="Formula"),  # for newbies this is not predictable why "Formula2" renamed
             NodeItem("ScalarMathNode", label="Math"),
             NodeItem("SvMapRangeNode", label="Map Range"),
             ]),
@@ -301,15 +302,15 @@ def make_categories():
             NodeItem("SvInterpolationNode", label="Vector Interpolation"),
             NodeItem("SvVertSortNode", label="Vector Sort"),
             NodeItem("SvNoiseNode", label="Vector Noise"),
-        #    ]),
-        #SverchNodeCategory("SVERCHOK_Ma", "SVERCHOK matrix", items=[
-        #    # Matrix nodes
+            ]),
+        SverchNodeCategory("SVERCHOK_Ma", "SVERCHOK matrix", items=[
+            # Matrix nodes
             NodeItem("MatrixApplyNode", label="Matrix Apply"),
             NodeItem("MatrixGenNode", label="Matrix in"),
             NodeItem("MatrixOutNode", label="Matrix out"),
             NodeItem("SvMatrixValueIn", label="Matrix Input"),
             NodeItem("MatrixDeformNode", label="Matrix Deform"),
-            NodeItem("MatrixShearNode", label="Matrix Shear"), # for uniform view renamed
+            NodeItem("MatrixShearNode", label="Matrix Shear"),  # for uniform view renamed
             NodeItem("MatrixInterpolationNode", label="Matrix Interpolation"),
             ]),
         SverchNodeCategory("SVERCHOK_M", "SVERCHOK modifier", items=[
@@ -343,10 +344,10 @@ def make_categories():
             NodeItem("AreaNode", label="Area"),
             NodeItem("SvBBoxNode", label="Bounding box"),
             NodeItem("SvKDTreeNode", label="KDT Closest Verts"),
-            NodeItem("SvKDTreeEdgesNode", label="KDT Closest Edges"), #KDTree renamed to be clear
+            NodeItem("SvKDTreeEdgesNode", label="KDT Closest Edges"),  # KDTree renamed to be clear
             ]),
         SverchNodeCategory("SVERCHOK_X", "SVERCHOK beta nodes", items=[
-            # for testing convenience, 
+            # for testing convenience,
             NodeItem("VectorMath2Node", label="Vector Math2"),
             NodeItem("BGLdemoNode", label="BGL debug print"),
             NodeItem("BasicSplineNode", label="Basic Spline"),
@@ -355,7 +356,7 @@ def make_categories():
             # NodeItem("Gen3DcursorNode", label="3D cursor"),
             NodeItem("EvalKnievalNode", label="Eval Knieval"),
             NodeItem("svBasicArcNode", label="Basic 3pt Arc"),
-            ]),        
+            ]),
         ]
     return node_categories
 
@@ -366,82 +367,6 @@ def make_categories():
 #        count.append(len(cnt.items))
 #    return count
 
-
-# section for sverchok handlers.
-
-# animation update handler
-@persistent
-def sv_update_handler(scene):
-    """
-    Update sverchok node tree on frame change events.
-    """
-    for name, tree in bpy.data.node_groups.items():
-        if tree.bl_idname == 'SverchCustomTreeType' and tree.nodes:
-            try:
-                tree.update_ani()
-            except Exception as e:
-                print('Failed to update:', name, str(e))
-    scene.update()
-
-
-# clean up handler
-@persistent
-def sv_clean(scene):
-    """
-    Cleanup callbacks, clean dicts.
-    """
-    from utils import viewer_draw
-    from utils import index_viewer_draw
-    from utils import nodeview_bgl_viewer_draw
-    viewer_draw.callback_disable_all()
-    index_viewer_draw.callback_disable_all()
-    nodeview_bgl_viewer_draw.callback_disable_all()
-    data_structure.sv_Vars = {}
-    data_structure.temp_handle = {}
-    
-
-
-@persistent
-def sv_post_load(scene):
-    """
-    Upgrade nodes, apply preferences and do an update.
-    """
-    from utils import upgrade
-    for name, tree in bpy.data.node_groups.items():
-        if tree.bl_idname == 'SverchCustomTreeType' and tree.nodes:
-            try:
-                upgrade.upgrade_nodes(tree)
-            except Exception as e:
-                print('Failed to upgrade:', name, str(e))
-    # apply preferences
-    data_structure.setup_init()
-    addon_name = data_structure.SVERCHOK_NAME
-    addon = bpy.context.user_preferences.addons.get(addon_name)
-    if addon and hasattr(addon, "preferences"):
-        set_frame_change(addon.preferences.frame_change_mode)
-    else:
-        print("Couldn't find Sverchok preferences")
-        
-    # do an update
-    for ng in bpy.data.node_groups:
-        if ng.bl_idname == 'SverchCustomTreeType' and ng.nodes:
-            ng.update()
-
-def set_frame_change(mode):
-    post = bpy.app.handlers.frame_change_post
-    pre = bpy.app.handlers.frame_change_pre
-    # remove all
-    if sv_update_handler in post:
-        post.remove(sv_update_handler)
-    if sv_update_handler in pre:
-        pre.remove(sv_update_handler)
-    # apply the right one
-    if mode == "POST":
-        post.append(sv_update_handler)
-    elif mode == "PRE": 
-        pre.append(sv_update_handler)
-    
-
 def register():
     bpy.utils.register_class(SvColors)
     bpy.utils.register_class(SverchCustomTree)
@@ -449,9 +374,6 @@ def register():
     #bpy.utils.register_class(ObjectSocket)
     bpy.utils.register_class(StringsSocket)
     bpy.utils.register_class(VerticesSocket)
-    bpy.app.handlers.load_pre.append(sv_clean)
-    bpy.app.handlers.load_post.append(sv_post_load)
-
 
 def unregister():
     bpy.utils.unregister_class(VerticesSocket)
@@ -460,6 +382,4 @@ def unregister():
     bpy.utils.unregister_class(MatrixSocket)
     bpy.utils.unregister_class(SverchCustomTree)
     bpy.utils.unregister_class(SvColors)
-    bpy.app.handlers.load_pre.remove(sv_clean)
-    bpy.app.handlers.load_post.remove(sv_post_load)
 

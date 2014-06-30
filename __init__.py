@@ -55,10 +55,13 @@ if not current_path in sys.path:
 # importing first allows to stores a list of nodes before eventually reloading
 # potential problem : are new nodes imported???
 import importlib
+import nodes
+
 import data_structure
 import node_tree
 from .utils import sv_tools
-import nodes
+from .core import handlers
+
 nodes_list = []
 for category, names in nodes.nodes_dict.items():
     nodes_cat = importlib.import_module('.{}'.format(category), 'nodes')
@@ -73,6 +76,7 @@ if "bpy" in locals():
     importlib.reload(node_tree)
     importlib.reload(nodes)
     importlib.reload(sv_tools)
+    importlib.reload(handlers)
     # (index_)viewer_draw -> name not defined error, because I never used it??
     #importlib.reload(viewer_draw)
     #importlib.reload(index_viewer_draw)
@@ -95,7 +99,7 @@ class SverchokPreferences(AddonPreferences):
         data_structure.heat_map_state(self.heat_map)
 
     def set_frame_change(self, context):
-        node_tree.set_frame_change(self.frame_change_mode)
+        handlers.set_frame_change(self.frame_change_mode)
         
     show_debug = BoolProperty(name="Print update timings",
                               description="Print update timings in console",
@@ -163,6 +167,7 @@ def register():
     sv_tools.register()
     text_editor_plugins.register()
     text_editor_submenu.register()
+    handlers.register()
 
     bpy.utils.register_class(SverchokPreferences)
 
@@ -181,6 +186,7 @@ def unregister():
     sv_tools.unregister()
     text_editor_plugins.unregister()
     text_editor_submenu.unregister()
+    handlers.unregister()
 
     bpy.utils.unregister_class(SverchokPreferences)
 

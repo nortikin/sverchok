@@ -149,7 +149,7 @@ class ObjectsNode(bpy.types.Node, SverchCustomTreeNode):
         if self.vergroups and not ('Vers_grouped' in self.outputs):
             self.outputs.new('StringsSocket', "Vers_grouped", "Vers_grouped")
         elif not self.vergroups and ('Vers_grouped' in self.outputs):
-            self.outputs.remove('StringsSocket', "Vers_grouped", "Vers_grouped")
+            self.outputs.remove(self.outputs['Vers_grouped'])
         
         name = self.name + self.id_data.name
         handle = handle_read(name)

@@ -24,7 +24,9 @@ from zipfile import ZipFile
 import traceback
 
 import bpy
-from data_structure import makeTreeUpdate2, speedUpdate
+from bpy.props import StringProperty
+
+from core.update_system import sverchok_update, build_update_list
 from node_tree import SverchCustomTreeNode
 
 
@@ -48,8 +50,23 @@ class SverchokUpdateAll(bpy.types.Operator):
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
-        makeTreeUpdate2()
-        speedUpdate()
+        build_update_list()
+        sverchok_update()
+        return {'FINISHED'}
+
+class SverchokUpdateCurrent(bpy.types.Operator):
+    """Sverchok update all"""
+    bl_idname = "node.sverchok_update_current"
+    bl_label = "Sverchok update all"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    node_group = StringProperty(default="")
+
+    def execute(self, context):
+        ng = bpy.data.node_groups.get(self.node_group)
+        if ng:
+            build_update_list(tree=ng)
+            sverchok_update(tree=ng)
         return {'FINISHED'}
 
 
@@ -161,16 +178,18 @@ class SverchokToolsMenu(bpy.types.Panel):
             return False
 
     def draw(self, context):
+        ng_name = context.space_data.node_tree.name
         layout = self.layout
         #layout.scale_y=1.1
         layout.active = True
         col = layout.column()
         col.scale_y = 3.0
-
-        col.operator(SverchokUpdateAll.bl_idname, text="UPDATE")
-
+        u = "Update all"
+        col.operator(SverchokUpdateAll.bl_idname, text=u)
+        u = "Update {0}".format(ng_name)
+        op = col.operator(SverchokUpdateCurrent.bl_idname, text = u)
+        op.node_group = ng_name
         box = layout.box()
-        #box.label(text="Layout manager")
         little_width = 0.12
         col = box.column(align=True)
         row = col.row(align=True)
@@ -178,20 +197,17 @@ class SverchokToolsMenu(bpy.types.Panel):
         col1 = row.column(align=True)
         col1.scale_x = little_width
         col1.label(icon='RESTRICT_VIEW_OFF', text=' ')
-        #row.label(text='Bake')
         col2 = row.column(align=True)
         col2.scale_x = little_width
         col2.label(icon='ANIM', text=' ')
         col2.icon
 
-        ng = bpy.data.node_groups
-
-        for name, tree in ng.items():
+        for name, tree in bpy.data.node_groups.items():
             if tree.bl_idname == 'SverchCustomTreeType':
 
                 row = col.row(align=True)
 
-                if name == context.space_data.node_tree.name:
+                if name == ng_name:
                     row.label(text=name, icon='LINK')
                 else:
                     row.label(text=name)
@@ -245,7 +261,10 @@ class ToolsNode(bpy.types.Node, SverchCustomTreeNode):
         col = layout.column()
         col.scale_y = 15
         col.template_color_picker
-        col.operator(SverchokUpdateAll.bl_idname, text="UPDATE")
+        u = "Update "
+        #col.operator(SverchokUpdateAll.bl_idname, text=u)
+        op = col.operator(SverchokUpdateCurrent.bl_idname, text=u+self.id_data.name)
+        op.node_group = self.id_data.name
         #box = layout.box()
 
         #col = box.column(align=True)
@@ -256,9 +275,8 @@ class ToolsNode(bpy.types.Node, SverchCustomTreeNode):
         #col.operator('wm.url_open', text='FBack').url = 'http://www.blenderartists.org/forum/showthread.php?272679-Addon-WIP-Sverchok-parametric-tool-for-architects/'
         #col.operator('wm.url_open', text='Bugtr').url = 'https://docs.google.com/forms/d/1L2BIpDhjMgQEbVAc7pEq93432Qanu8UPbINhzJ5SryI/viewform'
 
-        lennon = len(bpy.data.node_groups[self.id_data.name].nodes)
-        group = self.id_data.name
-        tex = str(lennon) + ' | ' + str(group)
+        node_count = len(self.id_data.nodes)
+        tex = str(node_count) + ' | ' + str(self.id_data.name)
         layout.label(text=tex)
         #layout.template_color_ramp(self, 'color_', expand=True)
 
@@ -271,6 +289,7 @@ class ToolsNode(bpy.types.Node, SverchCustomTreeNode):
 
 
 def register():
+    bpy.utils.register_class(SverchokUpdateCurrent)
     bpy.utils.register_class(SverchokUpdateAll)
     bpy.utils.register_class(SverchokCheckForUpgrades)
     bpy.utils.register_class(SverchokUpdateAddon)
@@ -288,10 +307,7 @@ def unregister():
     bpy.utils.unregister_class(SverchokUpdateAddon)
     bpy.utils.unregister_class(SverchokCheckForUpgrades)
     bpy.utils.unregister_class(SverchokUpdateAll)
+    bpy.utils.unregister_class(SverchokUpdateCurrent)
+
 if __name__  ==  '__main__':
     register()
-
-
-
-
-
