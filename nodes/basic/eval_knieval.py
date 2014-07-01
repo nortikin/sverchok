@@ -333,7 +333,7 @@ class EvalKnievalNode(bpy.types.Node, SverchCustomTreeNode):
         Triggered by mode changes between [input, output] this removes the socket
         from one side and adds a socket to the other side. This way you have something
         to plug into. When you connect a node to a socket, the socket can then be
-        automagically morphed to match the socket-type. (morhing is however done in the
+        automagically morphed to match the socket-type. (morphing is however done in the
         morph functions)
         """
         a, b = {
