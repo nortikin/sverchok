@@ -39,7 +39,6 @@ class CentersPolsNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('MatrixSocket', "Centers", "Centers")
 
     def update(self):
-        # достаём два слота - вершины и полики
         if self.outputs['Centers'].links or self.outputs['Normals'].links or \
                 self.outputs['Origins'].links or self.outputs['Norm_abs'].links:
             if 'Polygons' in self.inputs and 'Vertices' in self.inputs \
@@ -98,20 +97,15 @@ class CentersPolsNode(bpy.types.Node, SverchCustomTreeNode):
                     mat_collect_ = []
                     for cen, med, nor in zip(centrs, medians, normals):
                         loc = Matrix.Translation(cen)
-                        # need better solution for Z,Y vectors + may be X vector correction 
+                        # need better solution for Z,Y vectors + may be X vector correction
                         vecz = Vector((0, 1e-6, 1))
-                        nn, zz = nor, vecz
-                        q_rot0 = zz.rotation_difference(nn).to_matrix().to_4x4()
-                        q_rot2 = nn.rotation_difference(zz).to_matrix().to_4x4()
+                        q_rot0 = vecz.rotation_difference(nor).to_matrix().to_4x4()
+                        q_rot2 = nor.rotation_difference(vecz).to_matrix().to_4x4()
                         vecy = Vector((1e-6, 1, 0)) * q_rot2
-                        yy = vecy
-                        mm = med
-                        q_rot1 = yy.rotation_difference(mm).to_matrix().to_4x4()
-
+                        q_rot1 = vecy.rotation_difference(med).to_matrix().to_4x4()
+                        # loc is matrix * rot vector * rot vector
                         M = loc*q_rot1*q_rot0
                         lM = [ j[:] for j in M ]
-                        
-                        # отдаётся параметр матрицы на сокет. просто присвоение матрицы
                         mat_collect_.append(lM)
                     mat_collect.extend(mat_collect_)
                 
@@ -133,5 +127,6 @@ def unregister():
     
 if __name__ == '__main__':
     register()
+
 
 
