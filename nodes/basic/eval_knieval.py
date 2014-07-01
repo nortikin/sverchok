@@ -318,39 +318,6 @@ class EvalKnievalNode(bpy.types.Node, SverchCustomTreeNode):
         # explicit None must be caught. not 0 or False
         if tvar is None:
             return
-<<<<<<< HEAD
-=======
-        print("Tvar", tvar)
-        # set the outputs again.
-        if not (self.previous_eval_str == self.eval_str):
-            output_socket_type = 'StringsSocket'
-            if isinstance(tvar, Vector):
-                output_socket_type = 'VerticesSocket'
-            elif isinstance(tvar, (list, tuple)):
-                output_socket_type = 'VerticesSocket'
-            elif isinstance(tvar, (Matrix, Euler, Quaternion)):
-                output_socket_type = 'MatrixSocket'
-            elif isinstance(tvar, (int, float)):
-                output_socket_type = 'StringsSocket'
-
-            links = outputs[0].links
-            needs_reconnect = False
-
-            if links and links[0]:
-                needs_reconnect = True
-                link = links[0]
-                node_to = link.to_node
-                socket_to = link.to_socket
-
-            # needs clever reconnect? maybe not.
-            if outputs[0].bl_idname != output_socket_type:
-                outputs.clear()
-                outputs.new(output_socket_type, 'x')
-
-            if needs_reconnect:
-                ng = self.id_data
-                ng.links.new(outputs[0], socket_to)
->>>>>>> origin/master
 
         if not (self.previous_eval_str == self.eval_str):
             print("tvar: ", tvar)
@@ -375,10 +342,6 @@ class EvalKnievalNode(bpy.types.Node, SverchCustomTreeNode):
         }[self.mode]
         b.clear()
 
-<<<<<<< HEAD
-=======
-        # can do exact socket here, info is known at this point
->>>>>>> origin/master
         a.new('StringsSocket', 'x')
         if self.mode == 'input':
             a[0].prop_name = 'x'
@@ -396,22 +359,11 @@ class EvalKnievalNode(bpy.types.Node, SverchCustomTreeNode):
         outputs = self.outputs
 
         if self.mode == "input" and len(inputs) == 0:
-<<<<<<< HEAD
             return
         elif self.mode == "output" and len(outputs) == 0:
             return
 
         if (len(self.eval_str) <= 4) or not ("=" in self.eval_str):
-=======
-            # self.set_ui_color()
-            return
-        elif self.mode == "output" and len(outputs) == 0:
-            # self.set_ui_color()
-            return
-
-        if (len(self.eval_str) <= 5) or not ("=" in self.eval_str):
-            # self.set_ui_color()
->>>>>>> origin/master
             return
 
         if not (self.eval_str == self.previous_eval_str):
