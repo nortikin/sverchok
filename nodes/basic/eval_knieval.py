@@ -47,9 +47,9 @@ def read_text(fp, update=True):
     internal_file = False
     text_name = fp
     if not (os.sep in fp) and (fp in texts):
-        print(fp)
-        # file in blend, but linked outside
-        print('internal file!')
+        # print(fp)
+        # # file in blend, but linked outside
+        # print('internal file!')
         internal_file = True
         fp = texts[text_name].filepath
         fp = bpy.path.abspath(fp)
@@ -65,14 +65,26 @@ def read_text(fp, update=True):
 
 # def eval_text(node, function_text, out_text, update=True):
 def eval_text(function_text, out_text, update=True):
-    texts = bpy.data.texts
+    """
+    eval_text(function_text, out_text, update=True)
+        :   function_text
+            a reference to a file inside blender. This text should be initiated outside
+            of blender or made external by saving and loading. The content of this file is
+            what writes to the out_text.
 
-    # this text should be initiated outside of blender or made external.
-    # if text on filesystem is modified between updates, reload it and
-    # re-execute it.
+        :   out_text
+            the internal text file to read from. The content of which might be changing on
+            each update.
+
+        :   update
+            this parameter isn't very useful at the moment, but keep it to True if you
+            want to update the content of the internal text file. Else only the external
+            file will be read.
+    """
+    texts = bpy.data.texts
     text = texts[function_text]
+
     if update:
-        # might not even work without ui interact
         fp = text.filepath
         fp = bpy.path.abspath(fp)
         with open(fp) as new_text:
@@ -89,13 +101,13 @@ def eval_text(function_text, out_text, update=True):
     out_data = None
     if out_text in texts:
         written_data = texts[out_text].as_string()
-        print(written_data)
         out_data = literal_eval(written_data)
 
     return out_data
 
 
 def get_params(prop, pat):
+    """function to convert the string representation to literal arguments ready for passing"""
     regex = re.compile(pat)
     return literal_eval(regex.findall(prop)[0])
 
@@ -133,6 +145,18 @@ def process_macro(node, macro, prop_to_eval):
 
 
 def process_prop_string(node, prop_to_eval):
+    """
+    First it is evaluated in a try/except scenario, and if that went OK then the next update
+    is without try/except.
+
+    example eval strings might be:
+        =objs['Cube'].location
+        =objs['Cube'].matrix_world
+
+    I have expressively not implemented a wide range of features, imo that's what Scriped Node
+    is best at.
+
+    """
     tvar = None
 
     c = bpy.context
@@ -157,6 +181,39 @@ def process_prop_string(node, prop_to_eval):
         tvar = eval(prop_to_eval)
 
     return tvar
+
+
+def process_input_to_bpy(node, tvar):
+    """
+    this is one-way, node is the reference to the current eval node. tvar is the current
+    variable being introduced into bpy. First it is executed in a try/except scenario,
+    and if that went OK then the next update is without try/except.
+    """
+
+    c = bpy.context
+    scene = c.scene
+    data = bpy.data
+    objs = data.objects
+    mats = data.materials
+    meshes = data.meshes
+
+    fxed = node.eval_str.format(x=tvar)
+
+    # yes there's a massive assumption here.
+    if not node.eval_success:
+        success = False
+        try:
+            exec(fxed)
+            success = True
+            node.previous_eval_str = node.eval_str
+        except:
+            print("nope, crash n burn")
+            success = False
+            node.previous_eval_str = ""
+        finally:
+            node.eval_success = success
+    else:
+        exec(fxed)
 
 
 def wrap_output_data(tvar):
@@ -241,32 +298,7 @@ class EvalKnievalNode(bpy.types.Node, SverchCustomTreeNode):
         if not tvar:
             return
 
-        # convenience accessors,
-        # if in render mode these must be obtain some other way
-        c = bpy.context
-        scene = c.scene
-        data = bpy.data
-        objs = data.objects
-        mats = data.materials
-        meshes = data.meshes
-
-        fxed = self.eval_str.format(x=tvar)
-
-        # yes there's a massive assumption here.
-        if not self.eval_success:
-            success = False
-            try:
-                exec(fxed)
-                success = True
-                self.previous_eval_str = self.eval_str
-            except:
-                print("nope, crash n burn")
-                success = False
-                self.previous_eval_str = ""
-            finally:
-                self.eval_success = success
-        else:
-            exec(fxed)
+        process_input_to_bpy(self, tvar)
 
     def output_mode(self):
         outputs = self.outputs
