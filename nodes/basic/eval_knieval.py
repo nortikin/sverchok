@@ -201,14 +201,16 @@ class EvalKnievalNode(bpy.types.Node, SverchCustomTreeNode):
             return
         print('has a link!')
 
-        # the scheme is: first make a generic socket and then morph it to
-        # whatever we plug into it.
+        # then morph default socket type to whatever we plug into it.
         from_socket = inputs[0].links[0].from_socket
+        incoming_socket_type = type(from_socket)
         stype = {
             VerticesSocket: 'VerticesSocket',
             MatrixSocket: 'MatrixSocket',
             StringsSocket: 'StringsSocket'
-        }.get(type(from_socket), None)
+        }.get(incoming_socket_type, None)
+
+        print(incoming_socket_type, from_socket, stype)
 
         if not stype:
             print('unidentified flying input')
@@ -387,19 +389,13 @@ class EvalKnievalNode(bpy.types.Node, SverchCustomTreeNode):
         Preserves the connection.
         """
 
-        new_type_socket = {
-            VerticesSocket: 'VerticesSocket',
-            MatrixSocket: 'MatrixSocket',
-            StringsSocket: 'StringsSocket'
-        }.get(new_type, None)
-
         # where is the data coming from?
         inputs = self.inputs
         node_from = inputs[0].links[0].from_node
 
         # flatten and reinstate
         inputs.clear()
-        inputs.new(new_type_socket, 'x')
+        inputs.new(new_type, 'x')
 
         # reconnect
         ng = self.id_data
