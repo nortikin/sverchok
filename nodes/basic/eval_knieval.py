@@ -96,7 +96,6 @@ def process_macro(node, macro, prop_to_eval):
     if not fn:
         return
 
-
     # do this once, if success skip the try on the next update
     if not node.eval_success:
         try:
@@ -106,7 +105,7 @@ def process_macro(node, macro, prop_to_eval):
             print(fail_msg.format(type=macro, params=str(params)))
             node.previous_eval_str = ""
         finally:
-            node.eval_success = False if (tvar == None) else True
+            node.eval_success = False if (tvar is None) else True
             print('success?', node.eval_success)
             return tvar
     else:
@@ -224,6 +223,7 @@ class EvalKnievalNode(bpy.types.Node, SverchCustomTreeNode):
         objs = data.objects
         mats = data.materials
         meshes = data.meshes
+        cursor = scene.cursor_location
 
         fxed = self.eval_str.format(x=tvar)
 
