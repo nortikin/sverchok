@@ -39,12 +39,14 @@ Strings to trigger the two modes / mode change are:
 
 
 def read_text(file_path, update=True):
+    """ hold it! not implemented yet
     # if args has separators then look on local disk
     # else in .blend
     with open(fp) as new_text:
         text_body = ''.join(new_text.readlines())
 
     out_data = literal_eval(written_data)
+    """
     pass
 
 
@@ -201,26 +203,26 @@ class EvalKnievalNode(bpy.types.Node, SverchCustomTreeNode):
 
         # the scheme is: first make a generic socket and then morph it to
         # whatever we plug into it.
-        socket = type(inputs[0].links[0].from_socket)
+        from_socket = inputs[0].links[0].from_socket
         stype = {
-            StringsSocket: 's',
-            VerticesSocket: 'v',
-            MatrixSocket: 'm'
-        }.get(socket, None)
+            VerticesSocket: 'VerticesSocket',
+            MatrixSocket: 'MatrixSocket',
+            StringsSocket: 'StringsSocket'
+        }.get(type(from_socket), None)
 
         if not stype:
             print('unidentified flying input')
             return
 
         # if the current self.input socket is different to incoming
-        if not isinstance(socket, self.inputs[0]):
+        if not (stype == self.inputs[0].bl_idname):
             self.morph_input_socket_type(stype)
 
         # I you want to send complex data to bpy use SN.
         tvar = None
         tvar = SvGetSocketAnyType(self, inputs[0])[0][0]
 
-        # input can still be empty
+        # input can still be empty or []
         if not tvar:
             return
 
