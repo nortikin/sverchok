@@ -40,7 +40,7 @@ Strings to trigger the two modes / mode change are:
 def read_text(fp, update=True):
     """
     if args has separators then look on local disk else in .blend.
-    Here update, writes the changes to the textfile in .blender
+    update writes the changes to the textfile in blender
     """
     texts = bpy.data.texts
 
