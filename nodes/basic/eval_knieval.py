@@ -16,6 +16,7 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+import os
 import re
 import ast
 from ast import literal_eval
@@ -27,27 +28,39 @@ from node_tree import SverchCustomTreeNode, StringsSocket, VerticesSocket, Matri
 from data_structure import updateNode, SvGetSocketAnyType, SvSetSocketAnyType
 
 '''
-Each node starts out as a send node, but can be converted to a receiver node too.
+Each node starts out as a send node, but can be converted to a receiver node.
 Strings to trigger the two modes / mode change are:
 
 - send:     `path.to.prop = {x}`
 - receive:  `{x} = path.to.prop` , or `=path.to.prop`
 
-    NodeItem("EvalKnievalNode", label="Eval Knieval"),
-
 '''
 
 
-def read_text(file_path, update=True):
-    """ hold it! not implemented yet
-    # if args has separators then look on local disk
-    # else in .blend
+def read_text(fp, update=True):
+    """
+    if args has separators then look on local disk else in .blend.
+    Here update, writes the changes to the textfile in .blender
+    """
+    texts = bpy.data.texts
+
+    internal_file = False
+    text_name = fp
+    if not (os.sep in fp) and (fp in texts):
+        print(fp)
+        # file in blend, but linked outside
+        print('internal file!')
+        internal_file = True
+        fp = texts[text_name].filepath
+        fp = bpy.path.abspath(fp)
+
     with open(fp) as new_text:
         text_body = ''.join(new_text.readlines())
 
-    out_data = literal_eval(written_data)
-    """
-    pass
+    if internal_file and update:
+        texts[text_name].from_string(text_body)
+
+    return literal_eval(text_body)
 
 
 # def eval_text(node, function_text, out_text, update=True):
