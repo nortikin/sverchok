@@ -38,9 +38,13 @@ Strings to trigger the two modes / mode change are:
 '''
 
 
-def read_text(args):
+def read_text(file_path, update=True):
     # if args has separators then look on local disk
     # else in .blend
+    with open(fp) as new_text:
+        text_body = ''.join(new_text.readlines())
+
+    out_data = literal_eval(written_data)
     pass
 
 
@@ -90,7 +94,7 @@ def process_macro(node, macro, prop_to_eval):
         if 2 <= len(params) <= 3:
             fn = eval_text
     else:
-        if len(params) == 1:
+        if 1 <= len(params) <= 2:
             fn = read_text
 
     if not fn:
@@ -193,23 +197,28 @@ class EvalKnievalNode(bpy.types.Node, SverchCustomTreeNode):
         inputs = self.inputs
         if (len(inputs) == 0) or (not inputs[0].links):
             return
-
         print('has a link!')
+
         # the scheme is: first make a generic socket and then morph it to
         # whatever we plug into it.
-        tvar = None
         socket = type(inputs[0].links[0].from_socket)
-        stypes = {
+        stype = {
             StringsSocket: 's',
             VerticesSocket: 'v',
             MatrixSocket: 'm'
-        }
+        }.get(socket, None)
 
-        stype = stypes.get(socket, None)
-        if stype:
-            tvar = SvGetSocketAnyType(self, inputs[0])[0][0]
-        else:
+        if not stype:
+            print('unidentified flying input')
             return
+
+        # if the current self.input socket is different to incoming
+        if not isinstance(socket, self.inputs[0]):
+            self.morph_input_socket_type(stype)
+
+        # I you want to send complex data to bpy use SN.
+        tvar = None
+        tvar = SvGetSocketAnyType(self, inputs[0])[0][0]
 
         # input can still be empty
         if not tvar:
@@ -264,7 +273,7 @@ class EvalKnievalNode(bpy.types.Node, SverchCustomTreeNode):
 
         if not (self.previous_eval_str == self.eval_str):
             print("tvar: ", tvar)
-            self.morph_socket_types(tvar)
+            self.morph_output_socket_type(tvar)
 
         # finally we can set this.
         data = wrap_output_data(tvar)
@@ -272,6 +281,13 @@ class EvalKnievalNode(bpy.types.Node, SverchCustomTreeNode):
         self.previous_eval_str = self.eval_str
 
     def set_sockets(self):
+        """
+        Triggered by mode changes between [input, output] this removes the socket
+        from one side and adds a socket to the other side. This way you have something
+        to plug into. When you connect a node to a socket, the socket can then be
+        automagically morphed to match the socket-type. (morhing is however done in the
+        morph functions)
+        """
         a, b = {
             'input': (self.inputs, self.outputs),
             'output': (self.outputs, self.inputs)
@@ -283,6 +299,14 @@ class EvalKnievalNode(bpy.types.Node, SverchCustomTreeNode):
             a[0].prop_name = 'x'
 
     def update(self):
+        """
+        Update behaves like the conductor, it detects the modes and sends flow control
+        to functions that know how to deal with socket data consistent for those modes.
+
+        It also avoids extra calculation by figuring out if input/output critera are
+        met before anything is processed. It returns early if it can.
+
+        """
         inputs = self.inputs
         outputs = self.outputs
 
@@ -293,7 +317,7 @@ class EvalKnievalNode(bpy.types.Node, SverchCustomTreeNode):
             # self.set_ui_color()
             return
 
-        if (len(self.eval_str) <= 5) or not ("=" in self.eval_str):
+        if (len(self.eval_str) <= 4) or not ("=" in self.eval_str):
             # self.set_ui_color()
             return
 
@@ -317,15 +341,14 @@ class EvalKnievalNode(bpy.types.Node, SverchCustomTreeNode):
 
     def set_ui_color(self):
         self.use_custom_color = True
-        if not self.eval_success:
-            self.color = (0.98, 0.6, 0.6)
-        else:
-            self.color = (1.0, 1.0, 1.0)
+        self.color = (1.0, 1.0, 1.0) if self.eval_success else (0.98, 0.6, 0.6)
 
-    def morph_socket_types(self, tvar):
-        # set the outputs according to the data types
-        # the body of this if-statement is done only infrequently,
-        # when the eval string is not the same as the last eval.
+    def morph_output_socket_type(self, tvar):
+        """
+        Set the output according to the data types
+        the body of this if-statement is done only infrequently,
+        when the eval string is not the same as the last eval.
+        """
         outputs = self.outputs
         output_socket_type = 'StringsSocket'
 
@@ -355,6 +378,30 @@ class EvalKnievalNode(bpy.types.Node, SverchCustomTreeNode):
         if needs_reconnect:
             ng = self.id_data
             ng.links.new(outputs[0], socket_to)
+
+    def morph_input_socket_type(self, new_type):
+        """
+        Recasts current input socket type to conform to incoming type
+        Preserves the connection.
+        """
+
+        new_type_socket = {
+            VerticesSocket: 'VerticesSocket',
+            MatrixSocket: 'MatrixSocket',
+            StringsSocket: 'StringsSocket'
+        }.get(new_type, None)
+
+        # where is the data coming from?
+        inputs = self.inputs
+        node_from = inputs[0].links[0].from_node
+
+        # flatten and reinstate
+        inputs.clear()
+        inputs.new(new_type_socket, 'x')
+
+        # reconnect
+        ng = self.id_data
+        ng.links.new(inputs[0], socket_to)
 
     def update_socket(self, context):
         self.update()
