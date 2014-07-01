@@ -390,7 +390,9 @@ class EvalKnievalNode(bpy.types.Node, SverchCustomTreeNode):
 
         # where is the data coming from?
         inputs = self.inputs
-        node_from = inputs[0].links[0].from_node
+        link = inputs[0].links[0]
+        node_from = link.from_node
+        socket_from = link.from_socket
 
         # flatten and reinstate
         inputs.clear()
@@ -398,7 +400,7 @@ class EvalKnievalNode(bpy.types.Node, SverchCustomTreeNode):
 
         # reconnect
         ng = self.id_data
-        ng.links.new(inputs[0], socket_to)
+        ng.links.new(socket_from, inputs[0])
 
     def update_socket(self, context):
         self.update()
