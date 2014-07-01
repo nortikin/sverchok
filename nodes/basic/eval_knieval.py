@@ -349,7 +349,7 @@ class EvalKnievalNode(bpy.types.Node, SverchCustomTreeNode):
     def update(self):
         """
         Update behaves like the conductor, it detects the modes and sends flow control
-        to functions that know how to deal with socket data consistent for those modes.
+        to functions that know how to deal with socket data consistent with those modes.
 
         It also avoids extra calculation by figuring out if input/output critera are
         met before anything is processed. It returns early if it can.
@@ -359,14 +359,11 @@ class EvalKnievalNode(bpy.types.Node, SverchCustomTreeNode):
         outputs = self.outputs
 
         if self.mode == "input" and len(inputs) == 0:
-            # self.set_ui_color()
             return
         elif self.mode == "output" and len(outputs) == 0:
-            # self.set_ui_color()
             return
 
         if (len(self.eval_str) <= 4) or not ("=" in self.eval_str):
-            # self.set_ui_color()
             return
 
         if not (self.eval_str == self.previous_eval_str):
