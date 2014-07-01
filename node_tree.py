@@ -200,13 +200,23 @@ class SverchCustomTree(NodeTree):
         if self.sv_animate:
             sverchok_update(tree=self)
 
-
+class SverchGroupTree(NodeTree):
+    bl_idname = 'SverchGroupTreeType'
+    bl_label = 'SvGroups'
+    bl_icon = 'NONE'
+    """
+    Custom group to support node groups
+    """
+    @classmethod
+    def poll(cls, context):
+        return False
+    
 class SverchCustomTreeNode:
     @classmethod
     def poll(cls, ntree):
-        return ntree.bl_idname == 'SverchCustomTreeType'
+        return ntree.bl_idname in ['SverchCustomTreeType','SverchGroupTreeType']
 
-
+    
 class SverchNodeCategory(NodeCategory):
     @classmethod
     def poll(cls, context):
@@ -369,6 +379,7 @@ def make_categories():
 def register():
     bpy.utils.register_class(SvColors)
     bpy.utils.register_class(SverchCustomTree)
+    bpy.utils.register_class(SverchGroupTree)
     bpy.utils.register_class(MatrixSocket)
     #bpy.utils.register_class(ObjectSocket)
     bpy.utils.register_class(StringsSocket)
@@ -380,5 +391,6 @@ def unregister():
     #bpy.utils.unregister_class(ObjectSocket)
     bpy.utils.unregister_class(MatrixSocket)
     bpy.utils.unregister_class(SverchCustomTree)
+    bpy.utils.unregister_class(SverchGroupTree)
     bpy.utils.unregister_class(SvColors)
 
