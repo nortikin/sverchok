@@ -231,12 +231,11 @@ class EvalKnievalNode(bpy.types.Node, SverchCustomTreeNode):
         # convenience accessors,
         # if in render mode these must be obtain some other way
         c = bpy.context
-        scene = bpy.context.scene
+        scene = c.scene
         data = bpy.data
         objs = data.objects
         mats = data.materials
         meshes = data.meshes
-        cursor = scene.cursor_location
 
         fxed = self.eval_str.format(x=tvar)
 
