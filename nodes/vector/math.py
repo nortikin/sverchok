@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+# BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -14,25 +14,62 @@
 #  along with this program; if not, write to the Free Software Foundation,
 #  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
-# ##### END GPL LICENSE BLOCK #####
+# END GPL LICENSE BLOCK #####
+
+from math import degrees
+from itertools import zip_longest
 
 import bpy
-from bpy.props import EnumProperty
-from mathutils import noise, Vector
+from bpy.props import EnumProperty, BoolProperty, StringProperty
+from mathutils import Vector
+from mathutils.noise import noise_vector, cell_vector, noise, cell
 
-from node_tree import SverchCustomTreeNode, VerticesSocket
+from node_tree import SverchCustomTreeNode, VerticesSocket, StringsSocket
 from data_structure import (fullList, levelsOflist, updateNode,
                             SvSetSocketAnyType, SvGetSocketAnyType)
 
+'''
+using slice [:] to generate 3-tuple instead of .to_tuple()
+because it tests slightly faster on larger data.
+'''
+
+
+scalar_out = {
+    "DOT":          (lambda u, v: Vector(u).dot(v), 2),
+    "DISTANCE":     (lambda u, v: (Vector(u) - Vector(v)).length, 2),
+    "ANGLE RAD":    (lambda u, v: Vector(u).angle(v, 0), 2),
+    "ANGLE DEG":    (lambda u, v: degrees(Vector(u).angle(v, 0)), 2),
+
+    "LEN":          (lambda u: Vector(u).length, 1),
+    "NOISE-S":      (lambda u: noise(Vector(u)), 1),
+    "CELL-S":       (lambda u: cell(Vector(u)), 1)
+}
+
+vector_out = {
+    "CROSS":        (lambda u, v: Vector(u).cross(v)[:], 2),
+    "ADD":          (lambda u, v: (u[0]+v[0],u[1]+v[1],u[2]+v[2]), 2),
+    "SUB":          (lambda u, v: (u[0]-v[0],u[1]-v[1],u[2]-v[2]), 2),
+    "REFLECT":      (lambda u, v: Vector(u).reflect(v)[:], 2),
+    "PROJECT":      (lambda u, v: Vector(u).project(v)[:], 2),
+    "SCALAR":       (lambda u, s: (Vector(u) * s)[:], 2),
+    "1/SCALAR":     (lambda u, s: (Vector(u) * (1 / s))[:], 2),
+    "ROUND":        (lambda u, s: Vector(u).to_tuple(s), 2),
+
+    "NORMALIZE":    (lambda u: Vector(u).normalized()[:], 1),
+    "NEG":          (lambda u: -Vector(u)[:], 1),
+    "NOISE-V":      (lambda u: noise_vector(Vector(u))[:], 1),
+    "CELL-V":       (lambda u: cell_vector(Vector(u))[:], 1)
+}
+
 
 class VectorMathNode(bpy.types.Node, SverchCustomTreeNode):
-    ''' VectorMathNode '''
+
+    ''' VectorMath Node '''
     bl_idname = 'VectorMathNode'
     bl_label = 'Vector Math'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     # vector math functions
-    # normalize, length
     mode_items = [
         ("CROSS",       "Cross product",        "", 0),
         ("DOT",         "Dot product",          "", 1),
@@ -42,20 +79,40 @@ class VectorMathNode(bpy.types.Node, SverchCustomTreeNode):
         ("DISTANCE",    "Distance",             "", 5),
         ("NORMALIZE",   "Normalize",            "", 6),
         ("NEG",         "Negate",               "", 7),
+
         ("NOISE-V",     "Noise Vector",         "", 8),
         ("NOISE-S",     "Noise Scalar",         "", 9),
         ("CELL-V",      "Vector Cell noise",    "", 10),
         ("CELL-S",      "Scalar Cell noise",    "", 11),
-        ("ANGLE",       "Angle",                "", 12),
+
+        ("ANGLE DEG",   "Angle Degrees",        "", 12),
         ("PROJECT",     "Project",              "", 13),
         ("REFLECT",     "Reflect",              "", 14),
-        ]
+        ("SCALAR",      "Multiply Scalar",      "", 15),
+        ("1/SCALAR",    "Multiply 1/Scalar",    "", 16),
 
-    items_ = EnumProperty(name="Function", description="Function choice",
-                          default="CROSS", items=mode_items,
-                          update=updateNode)
-    # matches default of CROSS product
-    scalar_output_socket = False
+        ("ANGLE RAD",   "Angle Radians",        "", 17),
+        ("ROUND",       "Round s digits",       "", 18)
+    ]
+
+    def mode_change(self, context):
+
+        if not (self.items_ == self.current_op):
+            self.label = self.items_
+            self.update_outputs_and_inputs()
+            self.current_op = self.items_
+            updateNode(self, context)
+
+    items_ = EnumProperty(
+        items=mode_items,
+        name="Function",
+        description="Function choice",
+        default="CROSS",
+        update=mode_change)
+
+    # matches default of CROSS product, defaults to False at init time.
+    scalar_output_socket = BoolProperty()
+    current_op = StringProperty(default="CROSS")
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "items_", "Functions:")
@@ -65,158 +122,201 @@ class VectorMathNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('VerticesSocket', "V", "v")
         self.outputs.new('VerticesSocket', "W", "W")
 
-    def update(self):
+    def update_outputs_and_inputs(self):
+        '''
+        Reaches here only if new operation is different from current op
+        '''
+        inputs = self.inputs
+        outputs = self.outputs
+        new_op = self.items_
+        current_op = self.current_op
+        scalars = ["SCALAR", "1/SCALAR", "ROUND"]
 
-        scalar_out = {
-            "DOT"       :   (lambda u, v: u.dot(v), 2),
-            "DISTANCE"  :   (lambda u, v: (u-v).length, 2),
-            "LEN"       :   (lambda u   : u.length, 1),
-            "NOISE-S"   :   (lambda u   : noise.noise(u), 1),
-            "CELL-S"    :   (lambda u   : noise.cell(u), 1),
-            "ANGLE"     :   (lambda u, v: u.angle(v, 0), 2),
-        }
+        if (new_op in scalars) and (current_op in scalars):
+            return  # it's OK nothing to change
 
-        vector_out = {
-            "CROSS"     :   (lambda u, v: u.cross(v), 2),
-            "ADD"       :   (lambda u, v: u + v, 2),
-            "SUB"       :   (lambda u, v: u - v, 2),
-            "NORMALIZE" :   (lambda u   : u.normalized(), 1),
-            "NEG"       :   (lambda u   : -u, 1),
-            "NOISE-V"   :   (lambda u   : noise.noise_vector(u), 1),
-            "CELL-V"    :   (lambda u   : noise.cell_vector(u), 1),
-            "REFLECT"   :   (lambda u, v: u.reflect(v), 2),
-            "PROJECT"   :   (lambda u, v: u.project(v), 2),
-        }
+        '''
+        reaches this point, means it needs to rewire
+        '''
 
         # check and adjust outputs and input size
-
-        if self.items_ in scalar_out:
-            nrInputs = scalar_out[self.items_][1]
-            if 'W' in self.outputs:
-                self.outputs.remove(self.outputs['W'])
-                self.outputs.new('StringsSocket', "out", "out")
+        if new_op in scalar_out:
             self.scalar_output_socket = True
+            nrInputs = scalar_out[new_op][1]
+            if 'W' in outputs:
+                outputs.remove(outputs['W'])
+                outputs.new('StringsSocket', "out", "out")
 
-        elif self.items_ in vector_out:
-            nrInputs = vector_out[self.items_][1]
-            if 'out' in self.outputs:
-                self.outputs.remove(self.outputs['out'])
-                self.outputs.new('VerticesSocket', "W", "W")
+        else:
             self.scalar_output_socket = False
+            nrInputs = vector_out[new_op][1]
+            if 'out' in outputs:
+                outputs.remove(outputs['out'])
+                outputs.new('VerticesSocket', "W", "W")
 
-        # adjust inputs
+        '''
+        this monster removes and adds sockets depending on what kind of switch
+        between new_ops is made, some new_op changes require addition of sockets
+        others require deletion or replacement.
+        '''
 
-        if nrInputs < len(self.inputs):
-            self.inputs.remove(self.inputs['V'])
-        elif nrInputs > len(self.inputs):
-            self.inputs.new('VerticesSocket', "V", "v")
+        add_scalar_input = lambda: inputs.new('StringsSocket', "S", "s")
+        add_vector_input = lambda: inputs.new('VerticesSocket', "V", "v")
+        remove_last_input = lambda: inputs.remove(inputs[-1])
 
+        if nrInputs < len(inputs):
+            remove_last_input()
+
+        elif nrInputs > len(inputs):
+            if (new_op in scalars):
+                add_scalar_input()
+            else:
+                add_vector_input()
+
+        else:
+            if nrInputs == 1:
+                # is only ever a vector u
+                return
+
+            if new_op in scalars:
+                remove_last_input()
+                add_scalar_input()
+            elif (current_op in scalars):
+                remove_last_input()
+                add_vector_input()
+
+    def nothing_to_process(self):
+        inputs = self.inputs
+        outputs = self.outputs
+
+        if not (('out' in outputs) or ('W' in outputs)):
+            return True
+
+        if not outputs[0].links:
+            return True
+
+    def update(self):
+        inputs = self.inputs
+        outputs = self.outputs
+        operation = self.items_
         self.label = self.items_
 
-        # get inputs
+        if self.nothing_to_process():
+            return
+
+        # this input is shared over both.
+        vector1 = []
+        if 'U' in inputs and inputs['U'].links:
+            if isinstance(inputs['U'].links[0].from_socket, VerticesSocket):
+                vector1 = SvGetSocketAnyType(self, inputs['U'], deepcopy=False)
+
+        if not vector1:
+            return
+
+        # reaches here only if we have vector1
+        u = vector1
+        leve = levelsOflist(u)
+        scalars = ["SCALAR", "1/SCALAR", "ROUND"]
+        result = []
 
         # vector-output
-        if 'W' in self.outputs and self.outputs['W'].links:
+        if 'W' in outputs and outputs['W'].links:
 
-            if 'U' in self.inputs and self.inputs['U'].links and \
-               type(self.inputs['U'].links[0].from_socket) == VerticesSocket:
-                vector1 = SvGetSocketAnyType(self, self.inputs['U'])
+            func = vector_out[operation][0]
+            if len(inputs) == 1:
+                try:
+                    result = self.recurse_fx(u, func, leve - 1)
+                except:
+                    print('one input only, failed')
+                    return
+
+            elif len(inputs) == 2:
+
+                '''
+                get second input sockets content, depending on mode
+                '''
+                b = []
+                if operation in scalars:
+                    socket = ['S', StringsSocket]
+                    msg = "two inputs, 1 scalar, "
+                else:
+                    socket = ['V', VerticesSocket]
+                    msg = "two inputs, both vector, "
+
+                name, _type = socket
+                if name in inputs and inputs[name].links:
+                    if isinstance(inputs[name].links[0].from_socket, _type):
+                        b = SvGetSocketAnyType(self, inputs[name], deepcopy=False)
+
+                # this means one of the necessary sockets is not connected
+                if not b:
+                    return
+
+                try:
+                    result = self.recurse_fxy(u, b, func, leve - 1)
+                except:
+                    print(self.name, msg, 'failed')
+                    return
+
             else:
-                vector1 = []
+                return  # fail!
 
-            if 'V' in self.inputs and self.inputs['V'].links and \
-               type(self.inputs['V'].links[0].from_socket) == VerticesSocket:
-                vector2 = SvGetSocketAnyType(self, self.inputs['V'])
-            else:
-                vector2 = []
-
-            result = []
-
-            if nrInputs == 1:
-                if len(vector1):
-                    u = vector1
-                    leve = levelsOflist(u)
-                    try:
-                        result = self.recurse_fx(u, vector_out[self.items_][0], leve-1)
-                    except:
-                        print(self.name)
-            if nrInputs == 2:
-                if len(vector1) and len(vector2):
-                    u = vector1
-                    v = vector2
-                    leve = levelsOflist(u)
-                    try:
-                        result = self.recurse_fxy(u, v, vector_out[self.items_][0], leve-1)
-                    except:
-                        print(self.name)
             SvSetSocketAnyType(self, 'W', result)
 
         # scalar-output
-        if 'out' in self.outputs and self.outputs['out'].links:
+        if 'out' in outputs and outputs['out'].links:
 
-            if 'U' in self.inputs and self.inputs['U'].links and \
-               type(self.inputs['U'].links[0].from_socket) == VerticesSocket:
-                vector1 = SvGetSocketAnyType(self, self.inputs['U'])
-            else:
-                vector1 = []
+            vector2, result = [], []
+            func = scalar_out[operation][0]
+            num_inputs = len(inputs)
 
-            if 'V' in self.inputs and self.inputs['V'].links and \
-               type(self.inputs['V'].links[0].from_socket) == VerticesSocket:
-                vector2 = SvGetSocketAnyType(self, self.inputs['V'])
-            else:
-                vector2 = []
+            try:
+                if num_inputs == 1:
+                    result = self.recurse_fx(u, func, leve - 1)
 
-            result = []
-            if nrInputs == 1:
-                if len(vector1):
-                    u = vector1
-                    leve = levelsOflist(u)
-                    try:
-                        result = self.recurse_fx(u, scalar_out[self.items_][0], leve-1)
-                    except:
-                        print(self.name)
-            if nrInputs == 2:
-                if len(vector1) and len(vector2):
-                    u = vector1
-                    v = vector2
-                    leve = levelsOflist(u)
-                    try:
-                        result = self.recurse_fxy(u, v, scalar_out[self.items_][0], leve-1)
-                    except:
-                        print(self.name)
-            SvSetSocketAnyType(self, 'out', result)
+                elif all([num_inputs == 2, ('V' in inputs), (inputs['V'].links)]):
 
-    # apply f to all values recursively
+                    if isinstance(inputs['V'].links[0].from_socket, VerticesSocket):
+                        vector2 = SvGetSocketAnyType(self, inputs['V'], deepcopy=False)
+                        result = self.recurse_fxy(u, vector2, func, leve - 1)
+                    else:
+                        print('socket connected to V is not a vertices socket')
+                else:
+                    return
+
+            except:
+                print('failed scalar out, {} inputs'.format(num_inputs))
+                return
+
+            if result:
+                SvSetSocketAnyType(self, 'out', result)
+
+    '''
+    apply f to all values recursively
+    - fx and fxy do full list matching by length
+    '''
+
+    # vector -> scalar | vector
     def recurse_fx(self, l, f, leve):
         if not leve:
-            w = f(Vector(l))
-            if self.scalar_output_socket:
-                return w
-            else:
-                return w.to_tuple()
+            return f(l)
         else:
-            t = []
-            for i in l:
-                t.append(self.recurse_fx(i, f, leve-1))
+            rfx = self.recurse_fx
+            t = [rfx(i, f, leve-1) for i in l]
         return t
 
-    # match length of lists,
-    # taken from mathNode
     def recurse_fxy(self, l1, l2, f, leve):
-        if not leve:
-                w = f(Vector(l1), Vector(l2))
-                if self.scalar_output_socket:
-                    return w
-                else:
-                    return w.to_tuple()
+        res = []
+        res_append = res.append
+        # will only be used if lists are of unequal length
+        fl = l2[-1] if len(l1) > len(l2) else l1[-1]
+        if leve == 1:
+            for u, v in zip_longest(l1, l2, fillvalue=fl):
+                res_append(f(u, v))
         else:
-            max_obj = max(len(l1), len(l2))
-            fullList(l1, max_obj)
-            fullList(l2, max_obj)
-            res = []
-            for i in range(len(l1)):
-                res.append(self.recurse_fxy(l1[i], l2[i], f, leve-1))
-            return res
+            for u, v in zip_longest(l1, l2, fillvalue=fl):
+                res_append(self.recurse_fxy(u, v, f, leve-1))
+        return res
 
     def update_socket(self, context):
         self.update()
