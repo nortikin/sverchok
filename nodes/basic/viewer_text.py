@@ -58,16 +58,8 @@ class SverchokViewer(bpy.types.Operator):
         bpy.ops.text.select_all()
         podpis = '\n' + '\n' \
                 + '**************************************************' + '\n' \
-                + '             Sverchok parametric tools            ' + '\n' \
-                + '                   nikitron.cc.ua                 ' + '\n' \
-                + '\n' \
-                + '             You can support Sverchok             ' + '\n' \
-                + '   Feel free to donate, to code, fill wiki page   ' + '\n' \
-                + '          or participate in another way           ' + '\n' \
-                + '\n' \
-                + 'Huge thanks for Paul Kotelevets, our prime donator' + '\n' \
-                + '\n' \
-                + '                                     Sverchok team' \
+                + '                     The End                      '
+
 
         if cache_viewer_slot1['veriable'+self.nodename] or cache_viewer_slot2['veriable'+self.nodename] or cache_viewer_slot3['veriable'+self.nodename]:
             for_file = 'node name: ' + self.nodename \
@@ -238,3 +230,4 @@ def register():
 def unregister():
     bpy.utils.unregister_class(ViewerNode_text)
     bpy.utils.unregister_class(SverchokViewer)
+
