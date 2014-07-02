@@ -42,10 +42,10 @@ class Sv3DviewPropsNode(bpy.types.Node, SverchCustomTreeNode):
                     n_panel = area.spaces[0]
 
                     row = layout.row(align=True)
-                    row.label('3dview {idx}'.format(idx=idx))
+                    row.label('3dview {idx} show:'.format(idx=idx))
                     row = layout.row(align=True)
-                    row.prop(n_panel, 'show_only_render', text='show render')
-                    row.prop(n_panel, 'show_floor', text='showg grid')
+                    row.prop(n_panel, 'show_only_render', text='render')
+                    row.prop(n_panel, 'show_floor', text='grid')
 
                     row = layout.row(align=True)
                     row.prop(n_panel, "show_axis_x", text="X", toggle=True)
@@ -57,18 +57,18 @@ class Sv3DviewPropsNode(bpy.types.Node, SverchCustomTreeNode):
         theme = bpy.context.user_preferences.themes['Default']
 
         row = layout.row(align=True)
-        row.prop(world, 'horizon_color', text='horizon color')
+        row.prop(world, 'horizon_color', text='horizon')
 
         row = layout.row(align=True)
-        row.prop(theme.view_3d, 'grid', text='grid color')
+        row.prop(theme.view_3d, 'grid', text='grid')
 
         row = layout.row(align=True)
         gradients = theme.view_3d.space.gradients
         row.prop(gradients, 'show_grad', text='show gradient')
 
         row = layout.row(align=True)
-        row.prop(gradients, 'high_gradient', text='high gradient')
-        row.prop(gradients, 'gradient', text='low gradient')
+        row.prop(gradients, 'high_gradient', text='high')
+        row.prop(gradients, 'gradient', text='low')
 
     def update(self):
         pass
