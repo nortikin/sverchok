@@ -84,7 +84,6 @@ def tag_redraw_all_nodeviews():
 
 def callback_enable(*args):
     n_id = args[0]
-
     global callback_dict
     if n_id in callback_dict:
         return
@@ -116,7 +115,7 @@ def draw_callback_px(n_id, data):
 
     lines = data.get('content', 'no data')
     x, y = data.get('location', (120, 120))
-
+    color = data.get('color', (0.1, 0.1, 0.1))
     font_id = 0
     text_height = 13
     blf.size(font_id, text_height, 72)  # should check prefs.dpi
@@ -133,5 +132,5 @@ def draw_callback_px(n_id, data):
         blf.draw(0, content)
 
     for line in lines:
-        draw_text(line, (0.02, 0.02, 0.02), ypos)
+        draw_text(line, color, ypos)
         ypos -= (text_height * 1.3)

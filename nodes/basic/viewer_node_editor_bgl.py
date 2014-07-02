@@ -35,7 +35,13 @@ class BGL_demo_Node(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     # node id
-    n_id = StringProperty(default='', options={'SKIP_SAVE'})
+    n_id = StringProperty(default='')
+
+    text_color = FloatVectorProperty(
+        name="Color", description='Text color',
+        size=3, min=0.0, max=1.0,
+        default=(.1, .1, .1), subtype='COLOR',
+        update=updateNode)
 
     activate = BoolProperty(
         name='Show', description='Activate node?',
@@ -52,6 +58,7 @@ class BGL_demo_Node(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         row = layout.row(align=True)
         row.prop(self, "activate", text="Show")
+        row.prop(self, "text_color")
 
     def update(self):
         inputs = self.inputs
@@ -69,11 +76,12 @@ class BGL_demo_Node(bpy.types.Node, SverchCustomTreeNode):
 
             # gather vertices from input
             lines = nvBGL.parse_socket(inputs[0])
-            
+
             draw_data = {
                 'content': lines,
-                'location': (self.location + Vector((self.width+20, 0)))[:]
-            }
+                'location': (self.location + Vector((self.width+20, 0)))[:],
+                'color': self.text_color[:],
+                }
             nvBGL.callback_enable(n_id, draw_data)
             self.color = READY_COLOR
         else:
