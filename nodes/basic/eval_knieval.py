@@ -40,7 +40,7 @@ Strings to trigger the two modes / mode change are:
 def read_text(fp, update=True):
     """
     if args has separators then look on local disk else in .blend.
-    Here update, writes the changes to the textfile in .blender
+    update writes the changes to the textfile in blender
     """
     texts = bpy.data.texts
 
@@ -333,7 +333,7 @@ class EvalKnievalNode(bpy.types.Node, SverchCustomTreeNode):
         Triggered by mode changes between [input, output] this removes the socket
         from one side and adds a socket to the other side. This way you have something
         to plug into. When you connect a node to a socket, the socket can then be
-        automagically morphed to match the socket-type. (morhing is however done in the
+        automagically morphed to match the socket-type. (morphing is however done in the
         morph functions)
         """
         a, b = {
