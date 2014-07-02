@@ -59,11 +59,8 @@ class Sv3DviewPropsNode(bpy.types.Node, SverchCustomTreeNode):
         row = layout.row(align=True)
         box = row.box()
         boxrow = box.row(align=True)
-        boxrow.prop(world, 'horizon_color', text='horizon')
         boxrow.prop(theme.view_3d, 'grid', text='grid')
 
-        # row = layout.row(align=True)
-        # box.separator()
         gradients = theme.view_3d.space.gradients
         boxrow = box.row(align=True)
         boxrow.prop(gradients, 'show_grad', text='gradient')
@@ -71,10 +68,11 @@ class Sv3DviewPropsNode(bpy.types.Node, SverchCustomTreeNode):
         if not gradients.show_grad:
             boxrow.prop(gradients, 'high_gradient', text='background')
         else:
-            #row = layout.row(align=True)
-            boxrow = box.row(align=True)
-            boxrow.prop(gradients, 'high_gradient', text='high')
-            boxrow.prop(gradients, 'gradient', text='low')
+            boxrow.prop(gradients, 'high_gradient', text='')
+            boxrow.prop(gradients, 'gradient', text='')
+
+        row = layout.row(align=True)
+        row.prop(world, 'horizon_color', text='horizon')
 
     def update(self):
         pass
