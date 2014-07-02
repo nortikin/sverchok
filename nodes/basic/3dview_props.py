@@ -58,7 +58,8 @@ class Sv3DviewPropsNode(bpy.types.Node, SverchCustomTreeNode):
 
         # bpy.context.scene.world?, should check properly
         world = bpy.data.worlds['World']
-        theme = bpy.context.user_preferences.themes['Default']
+        prefs = bpy.context.user_preferences
+        theme = prefs.themes['Default']
 
         row = layout.row(align=True)
         box = row.box()
@@ -77,6 +78,9 @@ class Sv3DviewPropsNode(bpy.types.Node, SverchCustomTreeNode):
 
         row = layout.row(align=True)
         row.prop(world, 'horizon_color', text='horizon')
+
+        row = layout.row(align=True)
+        row.prop(prefs.inputs, 'view_rotate_method', text='orbit')
 
     def update(self):
         pass
