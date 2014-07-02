@@ -49,16 +49,18 @@ class BGL_demo_Node(bpy.types.Node, SverchCustomTreeNode):
         update=updateNode)
 
     def init(self, context):
-        self.inputs.new('VerticesSocket', 'vertices', 'vertices')
+        self.inputs.new('StringsSocket', 'Data')
 
     # reset n_id on copy
     def copy(self, node):
         self.n_id = ''
 
     def draw_buttons(self, context, layout):
-        row = layout.row(align=True)
-        row.prop(self, "activate", text="Show")
-        row.prop(self, "text_color")
+        row = layout.row()
+        icon='RESTRICT_VIEW_OFF' if self.activate else 'RESTRICT_VIEW_ON'
+        row.separator()
+        row.prop(self, "activate", icon=icon, text='')
+        row.prop(self, "text_color",text='')
 
     def update(self):
         inputs = self.inputs
