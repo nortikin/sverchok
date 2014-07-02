@@ -45,7 +45,6 @@ class Sv3DviewPropsNode(bpy.types.Node, SverchCustomTreeNode):
                     row.label('3dview {idx}'.format(idx=idx))
                     row = layout.row(align=True)
                     row.prop(n_panel, 'show_only_render', text='show render')
-                    row = layout.row(align=True)
                     row.prop(n_panel, 'show_floor', text='showg grid')
 
                     row = layout.row(align=True)
@@ -61,7 +60,7 @@ class Sv3DviewPropsNode(bpy.types.Node, SverchCustomTreeNode):
         row.prop(world, 'horizon_color', text='horizon color')
 
         row = layout.row(align=True)
-        row.prop(theme, 'view_3d.grid', text='grid color')
+        row.prop(theme.view_3d, 'grid', text='grid color')
 
         row = layout.row(align=True)
         gradients = theme.view_3d.space.gradients
