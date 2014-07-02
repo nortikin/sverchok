@@ -355,6 +355,7 @@ def make_categories():
             # NodeItem("Gen3DcursorNode", label="3D cursor"),
             NodeItem("EvalKnievalNode", label="Eval Knieval"),
             NodeItem("svBasicArcNode", label="Basic 3pt Arc"),
+            NodeItem("Sv3DviewPropsNode", label="3dview properties"),
             ]),
         ]
     return node_categories
