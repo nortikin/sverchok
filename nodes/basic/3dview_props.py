@@ -33,7 +33,6 @@ class Sv3DviewPropsNode(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons(self, context, layout):
         context = bpy.context
-        row = layout.row(align=True)
 
         idx = -1
         for window in context.window_manager.windows:
@@ -43,12 +42,14 @@ class Sv3DviewPropsNode(bpy.types.Node, SverchCustomTreeNode):
                     n_panel = area.spaces[0]
 
                     row = layout.row(align=True)
+                    row.label('3dview {idx}:'.format(idx=idx))
 
-                    row.label('3dview {idx} show:'.format(idx=idx))
-                    row = layout.row(align=True)
-                    row.active = not n_panel.show_only_render
-                    row.prop(n_panel, 'show_only_render', text='render')
-                    row.prop(n_panel, 'show_floor', text='grid')
+                    col = row.column()
+                    col.prop(n_panel, 'show_only_render', text='render')
+
+                    col = row.column()
+                    col.active = not n_panel.show_only_render
+                    col.prop(n_panel, 'show_floor', text='grid')
 
                     row = layout.row(align=True)
                     row.active = not n_panel.show_only_render
