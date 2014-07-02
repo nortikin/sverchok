@@ -53,21 +53,6 @@ class BGL_demo_Node(bpy.types.Node, SverchCustomTreeNode):
         row = layout.row(align=True)
         row.prop(self, "activate", text="Show")
 
-    def process_input(self, socket_data, socket_type):
-        if socket_type == 'verts':
-            # requires pprint processing step here? or in the node
-            # .. probably here.
-            return {
-                'content': socket_data,
-                'location': (self.location + Vector((self.width+20, 0)))[:]
-            }
-
-        elif socket_type == 'lists':
-            pass
-
-        else:  # 'matrices'
-            pass
-
     def update(self):
         inputs = self.inputs
         n_id = node_id(self)
@@ -83,26 +68,19 @@ class BGL_demo_Node(bpy.types.Node, SverchCustomTreeNode):
         if self.activate and in_links:
 
             # gather vertices from input
-            m = -1
-            for i, Socket in enumerate([VerticesSocket, StringsSocket, MatrixSocket]):
-                if isinstance(in_links[0].from_socket, Socket):
-                    m = i
-                    break
-
-            socket_type = ['verts', 'lists', 'matrices', None][m]
-            if not socket_type:
-                return
-
-            raw_data = SvGetSocketAnyType(self, inputs[0])
-            socket_data = dataCorrect(raw_data)
-
-            draw_data = self.process_input(socket_data, socket_type)
+            lines = nvBGL.parse_socket(inputs[0])
+            
+            draw_data = {
+                'content': lines,
+                'location': (self.location + Vector((self.width+20, 0)))[:]
+            }
             nvBGL.callback_enable(n_id, draw_data)
             self.color = READY_COLOR
         else:
             self.color = FAIL_COLOR
 
     def update_socket(self, context):
+        print("update socket {0}}".format(self.name))
         self.update()
 
     def free(self):
