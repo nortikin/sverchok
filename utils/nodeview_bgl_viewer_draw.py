@@ -117,8 +117,9 @@ def draw_callback_px(n_id, data):
     x, y = data.get('location', (120, 120))
     color = data.get('color', (0.1, 0.1, 0.1))
     font_id = 0
-    text_height = 12
-    blf.size(font_id, text_height, 150)  # should check prefs.dpi
+    text_height = 13
+    # why does the text look so jagged?
+    blf.size(font_id, text_height, 72)  # should check prefs.dpi
     bgl.glColor3f(*color)
     # x = 30  # region.width
     # y = region.height - 40
