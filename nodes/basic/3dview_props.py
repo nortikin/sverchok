@@ -22,6 +22,7 @@ from node_tree import SverchCustomTreeNode
 
 
 class Sv3DviewPropsNode(bpy.types.Node, SverchCustomTreeNode):
+
     ''' Sv 3Dview Props Node '''
     bl_idname = 'Sv3DviewPropsNode'
     bl_label = 'Sv 3Dview Props Node'
@@ -42,12 +43,15 @@ class Sv3DviewPropsNode(bpy.types.Node, SverchCustomTreeNode):
                     n_panel = area.spaces[0]
 
                     row = layout.row(align=True)
+
                     row.label('3dview {idx} show:'.format(idx=idx))
                     row = layout.row(align=True)
+                    row.active = not n_panel.show_only_render
                     row.prop(n_panel, 'show_only_render', text='render')
                     row.prop(n_panel, 'show_floor', text='grid')
 
                     row = layout.row(align=True)
+                    row.active = not n_panel.show_only_render
                     row.prop(n_panel, "show_axis_x", text="X", toggle=True)
                     row.prop(n_panel, "show_axis_y", text="Y", toggle=True)
                     row.prop(n_panel, "show_axis_z", text="Z", toggle=True)
