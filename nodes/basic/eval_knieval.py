@@ -355,7 +355,6 @@ class EvalKnievalNode(bpy.types.Node, SverchCustomTreeNode):
         if stype == 'MatrixSocket':
             prop = SvGetSocketAnyType(self, inputs[0])
             tvar = Matrix_generate(prop)[0]
-            print(tvar)
         else:
             tvar = SvGetSocketAnyType(self, inputs[0])[0][0]
 
