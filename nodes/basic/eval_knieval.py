@@ -25,7 +25,7 @@ import bpy
 from mathutils import Vector, Matrix, Euler, Quaternion, Color
 from bpy.props import FloatProperty, StringProperty, BoolProperty
 from node_tree import SverchCustomTreeNode, StringsSocket, VerticesSocket, MatrixSocket
-from data_structure import updateNode, SvGetSocketAnyType, SvSetSocketAnyType
+from data_structure import updateNode, SvGetSocketAnyType, SvSetSocketAnyType, Matrix_generate
 
 '''
 Each node starts out as a send node, but can be converted to a receiver node.
@@ -349,11 +349,12 @@ class EvalKnievalNode(bpy.types.Node, SverchCustomTreeNode):
             self.morph_input_socket_type(stype)
 
         # only one nesting level supported, for types other than matrix.
-        # else x gets complicated. x is complicated anyway, but this forces
+        # else x gets complicated. x is complex already, this forces
         # simplicity
         tvar = None
         if stype == 'MatrixSocket':
-            tvar = Matrix(SvGetSocketAnyType(self, inputs[0])[0])
+            prop = SvGetSocketAnyType(self, inputs[0])
+            tvar = Matrix_generate(prop)[0]
             print(tvar)
         else:
             tvar = SvGetSocketAnyType(self, inputs[0])[0][0]
