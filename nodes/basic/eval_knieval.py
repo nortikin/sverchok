@@ -22,7 +22,7 @@ import ast
 from ast import literal_eval
 
 import bpy
-from mathutils import Vector, Matrix, Euler, Quaternion
+from mathutils import Vector, Matrix, Euler, Quaternion, Color
 from bpy.props import FloatProperty, StringProperty, BoolProperty
 from node_tree import SverchCustomTreeNode, StringsSocket, VerticesSocket, MatrixSocket
 from data_structure import updateNode, SvGetSocketAnyType, SvSetSocketAnyType
@@ -353,7 +353,7 @@ class EvalKnievalNode(bpy.types.Node, SverchCustomTreeNode):
         # simplicity
         tvar = None
         if stype == 'MatrixSocket':
-            tvar = SvGetSocketAnyType(self, inputs[0])
+            tvar = Matrix(SvGetSocketAnyType(self, inputs[0])[0])
             print(tvar)
         else:
             tvar = SvGetSocketAnyType(self, inputs[0])[0][0]
