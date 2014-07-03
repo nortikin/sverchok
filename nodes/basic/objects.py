@@ -199,6 +199,7 @@ class ObjectsNode(bpy.types.Node, SverchCustomTreeNode):
                         edgs.append([edg.vertices[0], edg.vertices[1]])
                     for p in obj_data.polygons:
                         pols.append(list(p.vertices))
+                    bpy.data.meshes.remove(obj_data)
                     #print (vers, edgs, pols, mtrx)
                 edgs_out.append(edgs)
                 vers_out.append(vers)
