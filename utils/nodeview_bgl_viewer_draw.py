@@ -33,6 +33,52 @@ point_dict = {}
 def adjust_list(in_list, x, y):
     return [[old_x + x, old_y + y] for (old_x, old_y) in in_list]
 
+def digest_socket(socket):
+    
+    data = socket.sv_get(deepcopy=False)
+    
+    def digest(data, out):
+        if isinstance(data, (list,tuple)):
+            if data:
+                out.append([len(d) for d in data])
+                return out,
+
+def parse_socket(socket):
+
+    data = socket.sv_get(deepcopy=False)
+
+    str_width = 60
+
+    # okay, here we should be more clever and extract part of the list
+    # to avoid the amount of time it take to format it.
+    
+    content_str = pprint.pformat(data, width=str_width)
+    content_array = content_str.split('\n')
+
+    if len(content_array) > 20:
+        ''' first 10, ellipses, last 10 '''
+        ellipses = ['... ... ...']
+        head = content_array[0:10]
+        tail = content_array[-10:]
+        display_text = head + ellipses + tail
+    elif len(content_array) == 1:
+        ''' split on subunit - case of no newline to split on. '''
+        content_array = content_array[0].replace("), (", "),\n (")
+        display_text = content_array.split("\n")
+    else:
+        display_text = content_array
+
+    # http://stackoverflow.com/a/7584567/1243487
+    rounded_vals = re.compile(r"\d*\.\d+")
+
+    def mround(match):
+        return "{:.5f}".format(float(match.group()))
+
+    out = []
+    for line in display_text:
+        out.append(re.sub(rounded_vals, mround, line))
+    return out
+
 
 def parse_socket(socket):
 

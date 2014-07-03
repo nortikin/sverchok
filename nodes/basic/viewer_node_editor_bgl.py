@@ -17,7 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-from bpy.props import BoolProperty, FloatVectorProperty, StringProperty
+from bpy.props import BoolProperty, FloatVectorProperty, StringProperty, EnumProperty
 
 from node_tree import SverchCustomTreeNode, MatrixSocket, VerticesSocket, StringsSocket
 from data_structure import dataCorrect, node_id, updateNode, SvGetSocketAnyType
@@ -48,6 +48,23 @@ class BGL_demo_Node(bpy.types.Node, SverchCustomTreeNode):
         default=True,
         update=updateNode)
 
+    
+    def avail_nodes(self, context):
+        ng = self.id_data
+        return [(n.name,n.name,"") for n in ng.nodes]
+         
+    def avail_sockets(self, context):
+        if self.node_name:
+            node = self.id_data.nodes.get(self.node_name)
+            if node:
+                return [(s.name,s.name,"") for s in node.inputs if s.links]
+        else:
+            return [("","","")]
+    
+    node_name = EnumProperty(items=avail_nodes, name="Node") 
+    socket_name = EnumProperty(items=avail_sockets, name="Sockets",update=updateNode)
+    
+        
     def init(self, context):
         self.inputs.new('StringsSocket', 'Data')
 
@@ -61,6 +78,8 @@ class BGL_demo_Node(bpy.types.Node, SverchCustomTreeNode):
         row.separator()
         row.prop(self, "activate", icon=icon, text='')
         row.prop(self, "text_color",text='')
+        layout.prop(self, "node_name")
+        layout.prop(self, "socket_name")
 
     def update(self):
         inputs = self.inputs
@@ -87,7 +106,21 @@ class BGL_demo_Node(bpy.types.Node, SverchCustomTreeNode):
             nvBGL.callback_enable(n_id, draw_data)
             self.color = READY_COLOR
         else:
-            self.color = FAIL_COLOR
+            ng = self.id_data
+            node = ng.nodes.get(self.node_name)
+            if node:
+                s = self.socket_name
+                if s in node.inputs and node.inputs[s].links:
+                    lines = nvBGL.parse_socket(node.inputs[s])
+                    draw_data = {
+                        'content': lines,
+                        'location': (self.location + Vector((self.width+20, 0)))[:],
+                        'color': self.text_color[:],
+                        }
+                    nvBGL.callback_enable(n_id, draw_data)
+                    self.color = READY_COLOR
+            else:
+                self.color = FAIL_COLOR
 
     def update_socket(self, context):
         print("update socket {0}}".format(self.name))
