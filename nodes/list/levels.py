@@ -16,6 +16,8 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+from ast import literal_eval
+
 import bpy
 from bpy.props import BoolProperty, StringProperty
 from node_tree import SverchCustomTreeNode
@@ -53,7 +55,7 @@ class ListLevelsNode(bpy.types.Node, SverchCustomTreeNode):
 
             if 'data' in self.outputs and len(self.outputs['data'].links) > 0:
                 data = SvGetSocketAnyType(self, self.inputs['data'])
-                userlevelb = eval('['+self.Sverch_LisLev+']')
+                userlevelb = literal_eval('['+self.Sverch_LisLev+']')
                 SvSetSocketAnyType(self, 'data', preobrazovatel(data, userlevelb))
 
     def update_socket(self, context):

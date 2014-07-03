@@ -15,6 +15,7 @@
 #  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 # ##### END GPL LICENSE BLOCK #####
+from ast import literal_eval
 
 import bpy
 from bpy.props import StringProperty
@@ -36,7 +37,7 @@ class SverchokNote(bpy.types.Operator):
     def execute(self, context):
         name = context.screen.name
         areas = bpy.data.screens[name].areas
-        text = eval(self.text)
+        text = literal_eval(self.text)
 
         Sv_handle_Note[text[0]] = True
         out = []
@@ -67,7 +68,7 @@ class SverchokUnNote(bpy.types.Operator):
     def execute(self, context):
         name = context.screen.name
         areas = bpy.data.screens[name].areas
-        text = eval(self.text)
+        text = literal_eval(self.text)
         
         Sv_handle_Note[text[0]] = False
         Sv_handle_Note[text[0]+'text'] = str(['your text here'])
@@ -104,7 +105,7 @@ class NoteNode(bpy.types.Node, SverchCustomTreeNode):
             row.operator('node.sverchok_note_button', text='MIND').text = str([self.name, self.text, self.width])
 
         else:
-            ev = eval(Sv_handle_Note[self.name+'text'])
+            ev = literal_eval(Sv_handle_Note[self.name+'text'])
             for t in ev:
                 row = layout.row(align=True)
                 row.label(t)
