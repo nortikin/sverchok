@@ -424,9 +424,7 @@ class EvalKnievalNode(bpy.types.Node, SverchCustomTreeNode):
         elif self.mode == "output" and len(outputs) == 0:
             return
 
-        self.eval_str = self.eval_str.strip()
-
-        if (len(self.eval_str) <= 4):
+        if len(self.eval_str) <= 4:
             return
 
         perform_do_function = self.eval_str.endswith("with x")
