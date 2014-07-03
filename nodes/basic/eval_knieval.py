@@ -348,9 +348,15 @@ class EvalKnievalNode(bpy.types.Node, SverchCustomTreeNode):
         if not (stype == self.inputs[0].bl_idname):
             self.morph_input_socket_type(stype)
 
-        # I you want to send complex data to bpy use SN.
+        # only one nesting level supported, for types other than matrix.
+        # else x gets complicated. x is complicated anyway, but this forces
+        # simplicity
         tvar = None
-        tvar = SvGetSocketAnyType(self, inputs[0])[0][0]
+        if stype == 'MatrixSocket':
+            tvar = SvGetSocketAnyType(self, inputs[0])
+            print(tvar)
+        else:
+            tvar = SvGetSocketAnyType(self, inputs[0])[0][0]
 
         # input can still be empty or []
         if not tvar:
