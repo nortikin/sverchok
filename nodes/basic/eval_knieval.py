@@ -48,7 +48,7 @@ def read_text(fp, update=True):
     text_name = fp
     if not (os.sep in fp) and (fp in texts):
         # print(fp)
-        # # file in blend, but linked outside
+        # file in blend, but linked outside
         # print('internal file!')
         internal_file = True
         fp = texts[text_name].filepath
@@ -216,6 +216,64 @@ def process_input_to_bpy(node, tvar):
         exec(fxed)
 
 
+def process_input_dofunction(node, x):
+    """
+    This function aims to facilitate the repeated execution of a python file
+    located inside Blender. Similar to Scripted Node but with the restriction
+    that it has one input by design. Realistically the input can be an array,
+    and therefore nested with a collection of variables.
+
+    The python file to exec shall be specified in the eval string like so:
+
+        `do_function('file_name.py') with x`
+
+    Here x is the value of the input socket, this will automatically be in the
+    scope of the function when EK calls it. First it is executed in a
+    try/except scenario, and if that went OK then the next update is without
+    try/except.
+
+    The content of file_name.py can be anything that executes, function or
+    a flat file. The following convenience variables will be present.
+    """
+
+    c = bpy.context
+    scene = c.scene
+    data = bpy.data
+    objs = data.objects
+    mats = data.materials
+    meshes = data.meshes
+    texts = data.texts
+
+    # extract filename
+    # if filename not in .blend return and throw error
+    function_file = get_params(node.eval_str, '\(.*?\)')
+
+    if not (function_file in texts):
+        print('function_file, not found -- check spelling')
+        node.eval_success = False
+        node.previous_eval_str = ""
+        return
+
+    text = texts[function_file]
+    raw_text_str = text.as_string()
+
+    # yes there's a massive assumption here.
+    if not node.eval_success:
+        success = False
+        try:
+            exec(raw_text_str)
+            success = True
+            node.previous_eval_str = node.eval_str
+        except:
+            print("nope, crash n burn")
+            success = False
+            node.previous_eval_str = ""
+        finally:
+            node.eval_success = success
+    else:
+        exec(raw_text_str)
+
+
 def wrap_output_data(tvar):
     if isinstance(tvar, Vector):
         data = [[tvar[:]]]
@@ -268,8 +326,8 @@ class EvalKnievalNode(bpy.types.Node, SverchCustomTreeNode):
     def input_mode(self):
         inputs = self.inputs
         if (len(inputs) == 0) or (not inputs[0].links):
+            print('has no link!')
             return
-        print('has a link!')
 
         # then morph default socket type to whatever we plug into it.
         from_socket = inputs[0].links[0].from_socket
@@ -280,7 +338,7 @@ class EvalKnievalNode(bpy.types.Node, SverchCustomTreeNode):
             StringsSocket: 'StringsSocket'
         }.get(incoming_socket_type, None)
 
-        print(incoming_socket_type, from_socket, stype)
+        # print(incoming_socket_type, from_socket, stype)
 
         if not stype:
             print('unidentified flying input')
@@ -298,7 +356,10 @@ class EvalKnievalNode(bpy.types.Node, SverchCustomTreeNode):
         if not tvar:
             return
 
-        process_input_to_bpy(self, tvar)
+        if self.eval_str.endswith("with x"):
+            process_input_dofunction(self, tvar)
+        else:
+            process_input_to_bpy(self, tvar)
 
     def output_mode(self):
         outputs = self.outputs
@@ -363,13 +424,22 @@ class EvalKnievalNode(bpy.types.Node, SverchCustomTreeNode):
         elif self.mode == "output" and len(outputs) == 0:
             return
 
-        if (len(self.eval_str) <= 4) or not ("=" in self.eval_str):
+        if len(self.eval_str) <= 4:
+            return
+
+        perform_do_function = self.eval_str.endswith("with x")
+        io_eval = ("=" in self.eval_str)
+
+        if not any([io_eval, perform_do_function]):
             return
 
         if not (self.eval_str == self.previous_eval_str):
-            t = self.eval_str.split("=")
-            right_to_left = len(t[0]) > len(t[1])
-            self.mode = 'input' if right_to_left else 'output'
+            if perform_do_function:
+                self.mode = 'input'
+            else:
+                t = self.eval_str.split("=")
+                right_to_left = len(t[0]) > len(t[1])
+                self.mode = 'input' if right_to_left else 'output'
             self.eval_success = False
 
         if not (self.mode == self.previous_mode):
