@@ -215,7 +215,7 @@ class SverchNodeCategory(NodeCategory):
 
 def make_categories():
     node_categories = [
-        SverchNodeCategory("SVERCHOK_B", "SVERCHOK basic", items=[
+        SverchNodeCategory("SVERCHOK_B", "Basic", items=[
             # basic nodes
             NodeItem("ObjectsNode", label="Objects in"),
             NodeItem("BmeshViewerNode", label="BMesh View"),
@@ -235,7 +235,7 @@ def make_categories():
             NodeItem("ToolsNode", label="Update Button"),
             NodeItem("SvDebugPrintNode", label="Debug print"),
             ]),
-        SverchNodeCategory("SVERCHOK_L", "SVERCHOK list", items=[
+        SverchNodeCategory("SVERCHOK_L", "List", items=[
             # lists nodes
             NodeItem("ListLevelsNode", label="List Del Levels"),
             NodeItem("ListJoinNode", label="List Join"),
@@ -259,7 +259,7 @@ def make_categories():
             NodeItem("ListMatchNode", label="List Match"),
             NodeItem("ConverterNode", label="SocketConvert"),
             ]),
-        SverchNodeCategory("SVERCHOK_N", "SVERCHOK number", items=[
+        SverchNodeCategory("SVERCHOK_N", "Number", items=[
             # numbers, formula nodes
             #NodeItem("GenSeriesNode", label="Series float"),
             #NodeItem("GenRangeNode", label="Range float"),
@@ -275,7 +275,7 @@ def make_categories():
             NodeItem("ScalarMathNode", label="Math"),
             NodeItem("SvMapRangeNode", label="Map Range"),
             ]),
-        SverchNodeCategory("SVERCHOK_G", "SVERCHOK generator", items=[
+        SverchNodeCategory("SVERCHOK_G", "Generator", items=[
             # objects, new elements, line, plane
             NodeItem("LineNode", label="Line"),
             NodeItem("PlaneNode", label="Plane"),
@@ -290,7 +290,7 @@ def make_categories():
             NodeItem("SvFormulaShapeNode", label="Formula shape"),
             NodeItem("SvScriptNode", label="Scripted Node"),
             ]),
-        SverchNodeCategory("SVERCHOK_V", "SVERCHOK vector", items=[
+        SverchNodeCategory("SVERCHOK_V", "Vector", items=[
             # Vector nodes
             NodeItem("GenVectorsNode", label="Vector in"),
             NodeItem("VectorsOutNode", label="Vector out"),
@@ -303,7 +303,7 @@ def make_categories():
             NodeItem("SvVertSortNode", label="Vector Sort"),
             NodeItem("SvNoiseNode", label="Vector Noise"),
             ]),
-        SverchNodeCategory("SVERCHOK_Ma", "SVERCHOK matrix", items=[
+        SverchNodeCategory("SVERCHOK_Ma", "Matrix", items=[
             # Matrix nodes
             NodeItem("MatrixApplyNode", label="Matrix Apply"),
             NodeItem("MatrixGenNode", label="Matrix in"),
@@ -313,7 +313,7 @@ def make_categories():
             NodeItem("MatrixShearNode", label="Matrix Shear"),  # for uniform view renamed
             NodeItem("MatrixInterpolationNode", label="Matrix Interpolation"),
             ]),
-        SverchNodeCategory("SVERCHOK_M", "SVERCHOK modifier", items=[
+        SverchNodeCategory("SVERCHOK_M", "Modifier", items=[
             # modifiers deforms and reorganize and reconstruct data
             NodeItem("AdaptivePolsNode", label="Adaptive Polygons"),
             NodeItem("SvAdaptiveEdgeNode", label="Adaptive Edges"),
@@ -336,7 +336,7 @@ def make_categories():
             NodeItem("SvIntersectEdgesNode", label="Intersect Edges"),
             NodeItem("SvLatheNode", label="Lathe"),
             ]),
-        SverchNodeCategory("SVERCHOK_A", "SVERCHOK analisators", items=[
+        SverchNodeCategory("SVERCHOK_A", "Analysers", items=[
             # investigate data
             NodeItem("CentersPolsNode", label="Centers Polygons"),
             NodeItem("VectorNormalNode", label="Vector' Normal"),
@@ -346,7 +346,7 @@ def make_categories():
             NodeItem("SvKDTreeNode", label="KDT Closest Verts"),
             NodeItem("SvKDTreeEdgesNode", label="KDT Closest Edges"),  # KDTree renamed to be clear
             ]),
-        SverchNodeCategory("SVERCHOK_X", "SVERCHOK beta nodes", items=[
+        SverchNodeCategory("SVERCHOK_X", "Beta", items=[
             # for testing convenience,
             NodeItem("BGLdemoNode", label="BGL debug print"),
             NodeItem("BasicSplineNode", label="Basic Spline"),

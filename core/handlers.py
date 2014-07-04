@@ -37,8 +37,10 @@ def sv_post_load(scene):
     """
     Upgrade nodes, apply preferences and do an update.
     """
+    sv_trees = []
     for name, tree in bpy.data.node_groups.items():
         if tree.bl_idname == 'SverchCustomTreeType' and tree.nodes:
+            sv_trees.append(tree)
             try:
                 upgrade_nodes.upgrade_nodes(tree)
             except Exception as e:
@@ -51,7 +53,24 @@ def sv_post_load(scene):
         set_frame_change(addon.preferences.frame_change_mode)
     else:
         print("Couldn't find Sverchok preferences")
-
+    unsafe_nodes = {
+        'SvScriptNode',
+        'FormulaNode',
+        'Formula2Node',
+        'EvalKnievalNode',
+    }
+    unsafe = False
+    for tree in sv_trees:
+        if any((n.bl_idname in unsafe_nodes for n in tree.nodes)):
+            unsafe = True
+            break
+    # do nothing with this for now        
+    #if unsafe:
+    #    print("unsafe nodes found")
+    #else:
+    #    print("safe")
+        
+    #print("post load .update()")
     # do an update
     for ng in bpy.data.node_groups:
         if ng.bl_idname == 'SverchCustomTreeType' and ng.nodes:
