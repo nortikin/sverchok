@@ -61,8 +61,8 @@ class BGL_demo_Node(bpy.types.Node, SverchCustomTreeNode):
         else:
             return [("","","")]
     
-    node_name = EnumProperty(items=avail_nodes, name="Node") 
-    socket_name = EnumProperty(items=avail_sockets, name="Sockets",update=updateNode)
+    #node_name = EnumProperty(items=avail_nodes, name="Node") 
+    #socket_name = EnumProperty(items=avail_sockets, name="Sockets",update=updateNode)
     
         
     def init(self, context):
@@ -106,6 +106,9 @@ class BGL_demo_Node(bpy.types.Node, SverchCustomTreeNode):
             nvBGL.callback_enable(n_id, draw_data)
             self.color = READY_COLOR
         else:
+            self.color = FAIL_COLOR
+            return
+            # the part below should be in the node like this.
             ng = self.id_data
             node = ng.nodes.get(self.node_name)
             if node:
@@ -119,8 +122,7 @@ class BGL_demo_Node(bpy.types.Node, SverchCustomTreeNode):
                         }
                     nvBGL.callback_enable(n_id, draw_data)
                     self.color = READY_COLOR
-            else:
-                self.color = FAIL_COLOR
+                
 
     def update_socket(self, context):
         print("update socket {0}}".format(self.name))
