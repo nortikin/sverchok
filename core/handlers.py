@@ -64,13 +64,13 @@ def sv_post_load(scene):
         if any((n.bl_idname in unsafe_nodes for n in tree.nodes)):
             unsafe = True
             break
-            
-    if unsafe:
-        print("unsafe nodes found")
-    else:
-        print("safe")
+    # do nothing with this for now        
+    #if unsafe:
+    #    print("unsafe nodes found")
+    #else:
+    #    print("safe")
         
-    print("post load .update()")
+    #print("post load .update()")
     # do an update
     for ng in bpy.data.node_groups:
         if ng.bl_idname == 'SverchCustomTreeType' and ng.nodes:
