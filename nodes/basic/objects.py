@@ -16,6 +16,8 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+from ast import literal_eval
+
 import bpy
 from bpy.props import BoolProperty, StringProperty
 
@@ -140,7 +142,7 @@ class ObjectsNode(bpy.types.Node, SverchCustomTreeNode):
                         break
                     layout.label(o)
             else:
-                handle_write(self.name+self.id_data.name, eval(self.objects_local))
+                handle_write(self.name+self.id_data.name, literal_eval(self.objects_local))
         else:
             layout.label('--None--')
 
@@ -163,7 +165,7 @@ class ObjectsNode(bpy.types.Node, SverchCustomTreeNode):
             self.use_custom_color = True
             self.color = (0, 0.1, 0.05)
         if self.objects_local and not handle[0]:
-            handle_write(name, eval(self.objects_local))
+            handle_write(name, literal_eval(self.objects_local))
         elif handle[0]:
             objs = handle[1]
             edgs_out = []
@@ -199,6 +201,7 @@ class ObjectsNode(bpy.types.Node, SverchCustomTreeNode):
                         edgs.append([edg.vertices[0], edg.vertices[1]])
                     for p in obj_data.polygons:
                         pols.append(list(p.vertices))
+                    bpy.data.meshes.remove(obj_data)
                     #print (vers, edgs, pols, mtrx)
                 edgs_out.append(edgs)
                 vers_out.append(vers)
