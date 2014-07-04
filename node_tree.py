@@ -356,6 +356,7 @@ def make_categories():
             NodeItem("EvalKnievalNode", label="Eval Knieval"),
             NodeItem("svBasicArcNode", label="Basic 3pt Arc"),
             NodeItem("Sv3DviewPropsNode", label="3dview properties"),
+            NodeItem("SvReRouteNode", label="Reroute Node")
             ]),
         ]
     return node_categories
