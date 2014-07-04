@@ -78,8 +78,8 @@ class BGL_demo_Node(bpy.types.Node, SverchCustomTreeNode):
         row.separator()
         row.prop(self, "activate", icon=icon, text='')
         row.prop(self, "text_color",text='')
-        layout.prop(self, "node_name")
-        layout.prop(self, "socket_name")
+        #layout.prop(self, "node_name")
+        #layout.prop(self, "socket_name")
 
     def update(self):
         inputs = self.inputs
