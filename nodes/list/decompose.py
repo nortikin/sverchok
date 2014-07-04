@@ -78,6 +78,7 @@ class ListDecomposeNode(bpy.types.Node, SverchCustomTreeNode):
             # get and recognise data from dictionary
             for i, out in enumerate(result):
                 SvSetSocket(self.outputs[i], out)
+                if i >= 32: break
 
     def beat(self, data, level, left):
         out = []
@@ -101,3 +102,4 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(ListDecomposeNode)
+

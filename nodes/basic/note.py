@@ -84,6 +84,15 @@ class NoteNode(bpy.types.Node, SverchCustomTreeNode):
     text = StringProperty(name='text',
                           default='your text here')
 
+    def init(self, context):
+        if self.text != 'your text here':
+            self.use_custom_color = True
+            self.color = (0.5,0.5,1)
+        else:
+            self.use_custom_color = True
+            self.color = (0.05,0.05,0.1)
+        self.width = 400
+    
     def draw_buttons(self, context, layout):
         global Sv_handle_Note
         if self.name not in Sv_handle_Note:
@@ -92,7 +101,6 @@ class NoteNode(bpy.types.Node, SverchCustomTreeNode):
             areas = bpy.data.screens[name].areas
             for ar in areas:
                 if ar.type == 'NODE_EDITOR':
-                    ar.spaces.active.node_tree.nodes[self.name].width = 320
                     ar.spaces.active.node_tree.nodes[self.name].width_hidden = 320
                     ar.spaces.active.node_tree.nodes[self.name].location[0] += 10
             # not works in this context. Have to be rewrited.
@@ -102,7 +110,7 @@ class NoteNode(bpy.types.Node, SverchCustomTreeNode):
             row = layout.row(align=True)
             row.prop(self, 'text', text='')
             row = layout.row(align=True)
-            row.operator('node.sverchok_note_button', text='MIND').text = str([self.name, self.text, self.width])
+            row.operator('node.sverchok_note_button', text='MIND').text = str([self.name, self.text])
 
         else:
             ev = literal_eval(Sv_handle_Note[self.name+'text'])
@@ -110,18 +118,10 @@ class NoteNode(bpy.types.Node, SverchCustomTreeNode):
                 row = layout.row(align=True)
                 row.label(t)
             row = layout.row(align=True)
-            row.operator('node.sverchok_note_unbutton', text='CHANGE').text = str([self.name, self.text, self.width])
-
-    def init(self, context):
-        pass
+            row.operator('node.sverchok_note_unbutton', text='CHANGE').text = str([self.name, self.text])
 
     def update(self):
-        if self.text != 'your text here':
-            self.use_custom_color = True
-            self.color = (0.5,0.5,1)
-        else:
-            self.use_custom_color = True
-            self.color = (0.05,0.05,0.1)
+        pass
 
 
 def register():
@@ -137,3 +137,5 @@ def unregister():
 
 if __name__ == '__main__':
     register()
+
+
