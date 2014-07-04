@@ -99,6 +99,7 @@ class BGL_demo_Node(bpy.types.Node, SverchCustomTreeNode):
             lines = nvBGL.parse_socket(inputs[0])
 
             draw_data = {
+                'tree_name': self.id_data.name,
                 'content': lines,
                 'location': (self.location + Vector((self.width+20, 0)))[:],
                 'color': self.text_color[:],
@@ -108,20 +109,21 @@ class BGL_demo_Node(bpy.types.Node, SverchCustomTreeNode):
         else:
             self.color = FAIL_COLOR
             return
-            # the part below should be in the node like this.
-            ng = self.id_data
-            node = ng.nodes.get(self.node_name)
-            if node:
-                s = self.socket_name
-                if s in node.inputs and node.inputs[s].links:
-                    lines = nvBGL.parse_socket(node.inputs[s])
-                    draw_data = {
-                        'content': lines,
-                        'location': (self.location + Vector((self.width+20, 0)))[:],
-                        'color': self.text_color[:],
-                        }
-                    nvBGL.callback_enable(n_id, draw_data)
-                    self.color = READY_COLOR
+
+            # # the part below should be in the node like this.
+            # ng = self.id_data
+            # node = ng.nodes.get(self.node_name)
+            # if node:
+            #     s = self.socket_name
+            #     if s in node.inputs and node.inputs[s].links:
+            #         lines = nvBGL.parse_socket(node.inputs[s])
+            #         draw_data = {
+            #             'content': lines,
+            #             'location': (self.location + Vector((self.width+20, 0)))[:],
+            #             'color': self.text_color[:],
+            #             }
+            #         nvBGL.callback_enable(n_id, draw_data)
+            #         self.color = READY_COLOR
                 
 
     def update_socket(self, context):
