@@ -359,9 +359,10 @@ class EvalKnievalNode(bpy.types.Node, SverchCustomTreeNode):
         self.width = 400
 
     def draw_buttons(self, context, layout):
-        # if self.selected_hyper in {'DO', 'SET'}:
-        #     row = layout.row()
-        #     row.separator()
+        if self.selected_hyper in {'DO', 'SET'}:
+            row = layout.row()
+            # row.separator()
+            row.label('')
 
         row = layout.row()
         row.prop(self, 'selected_hyper', expand=True)
