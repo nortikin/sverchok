@@ -105,6 +105,7 @@ class ScalarMathNode(bpy.types.Node, SverchCustomTreeNode):
         'LOG10':      log10,
         'ACOSH':      acosh,
         'ASINH':      asinh,
+        'ATANH':      atanh,
         'COSH':       cosh,
         'SINH':       sinh,
         'TANH':       tanh,
