@@ -23,6 +23,8 @@ import re
 import bpy
 import blf
 import bgl
+import node_tree
+
 from bpy.types import SpaceNodeEditor
 
 
@@ -75,16 +77,14 @@ def parse_socket(socket):
 
 
 def tag_redraw_all_nodeviews():
-    context = bpy.context
 
-    # Py cant access notifers
-    for window in context.window_manager.windows:
+    for window in bpy.context.window_manager.windows:
         for area in window.screen.areas:
             if area.type == 'NODE_EDITOR':
                 for region in area.regions:
                     if region.type == 'WINDOW':
                         region.tag_redraw()
-
+   
 
 def callback_enable(*args):
     n_id = args[0]
@@ -117,11 +117,22 @@ def callback_disable_all():
 
 def draw_callback_px(n_id, data):
 
+    space = bpy.context.space_data
+    ng_view = space.edit_tree
+    ng_name = space.edit_tree.name
+
+    if not (data['tree_name'] == ng_name):
+        return
+
+    if not isinstance(ng_view, node_tree.SverchCustomTree):
+        return
+
     lines = data.get('content', 'no data')
     x, y = data.get('location', (120, 120))
     color = data.get('color', (0.1, 0.1, 0.1))
     font_id = 0
     text_height = 13
+
     # why does the text look so jagged?
     blf.size(font_id, text_height, 72)  # should check prefs.dpi
     bgl.glColor3f(*color)

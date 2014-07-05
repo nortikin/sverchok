@@ -239,7 +239,6 @@ def make_categories():
             # lists nodes
             NodeItem("ListLevelsNode", label="List Del Levels"),
             NodeItem("ListJoinNode", label="List Join"),
-            NodeItem("ListDecomposeNode", label="List Decompose"),
             NodeItem("ZipNode", label="List Zip"),
             NodeItem("ShiftNode", label="List Shift"),
             NodeItem("ListSliceNode", label="List Slice"),
@@ -356,6 +355,7 @@ def make_categories():
             NodeItem("EvalKnievalNode", label="Eval Knieval"),
             NodeItem("svBasicArcNode", label="Basic 3pt Arc"),
             NodeItem("Sv3DviewPropsNode", label="3dview properties"),
+            NodeItem("ListDecomposeNode", label="List Decompose"), # need to be completely reviewed
             NodeItem("SvReRouteNode", label="Reroute Node")
             ]),
         ]
@@ -383,4 +383,5 @@ def unregister():
     bpy.utils.unregister_class(MatrixSocket)
     bpy.utils.unregister_class(SverchCustomTree)
     bpy.utils.unregister_class(SvColors)
+
 

@@ -62,9 +62,11 @@ class ListFLNode(bpy.types.Node, SverchCustomTreeNode):
             data = SvGetSocketAnyType(self, self.inputs['Data'])
             
             # blocking too height values of levels, reduce
-            levels = levelsOflist(data)-1
+            levels = levelsOflist(data)-2
             if levels >= self.level:
-                levels = self.level
+                levels = self.level-1
+            elif levels < 1:
+                levels = 1
             # assign out
             if self.outputs['First'].links:
                 out = self.count(data, levels, 0)
@@ -102,3 +104,4 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(ListFLNode)
+
