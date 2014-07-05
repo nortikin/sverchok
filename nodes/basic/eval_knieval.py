@@ -19,20 +19,21 @@
 import os
 import re
 import ast
+import traceback
 from ast import literal_eval
 
 import bpy
 from mathutils import Vector, Matrix, Euler, Quaternion, Color
-from bpy.props import FloatProperty, StringProperty, BoolProperty
+from bpy.props import FloatProperty, StringProperty, BoolProperty, EnumProperty
 from node_tree import SverchCustomTreeNode, StringsSocket, VerticesSocket, MatrixSocket
 from data_structure import updateNode, SvGetSocketAnyType, SvSetSocketAnyType, Matrix_generate
 
 '''
-Each node starts out as a send node, but can be converted to a receiver node.
-Strings to trigger the two modes / mode change are:
-
-- send:     `path.to.prop = {x}`
-- receive:  `{x} = path.to.prop` , or `=path.to.prop`
+- SET:  `path.to.prop`
+- GET:  `path.to.prop`
+- DO:   `eval_text(a, b, [True])
+        `read_text(a, [True])
+        `do_function(a) with x
 
 '''
 
@@ -131,9 +132,12 @@ def process_macro(node, macro, prop_to_eval):
     if not node.eval_success:
         try:
             tvar = fn(*params)
-        except:
-            fail_msg = "nope, {type} with ({params}) failed"
-            print(fail_msg.format(type=macro, params=str(params)))
+        except Exception as err:
+            if node.full_traceback:
+                print(traceback.format_exc())
+            else:
+                fail_msg = "nope, {type} with ({params}) failed - try full traceback"
+                print(fail_msg.format(type=macro, params=str(params)))
             node.previous_eval_str = ""
         finally:
             node.eval_success = False if (tvar is None) else True
@@ -150,8 +154,8 @@ def process_prop_string(node, prop_to_eval):
     is without try/except.
 
     example eval strings might be:
-        =objs['Cube'].location
-        =objs['Cube'].matrix_world
+        objs['Cube'].location
+        objs['Cube'].matrix_world
 
     I have expressively not implemented a wide range of features, imo that's what Scriped Node
     is best at.
@@ -171,8 +175,11 @@ def process_prop_string(node, prop_to_eval):
     if not node.eval_success:
         try:
             tvar = eval(prop_to_eval)
-        except:
-            print("nope, crash n burn hard")
+        except Exception as err:
+            if node.full_traceback:
+                print(traceback.format_exc())
+            else:
+                print("nope, crash n burn hard - try full traceback")
             node.previous_eval_str = ""
         finally:
             print('evalled', tvar)
@@ -183,7 +190,7 @@ def process_prop_string(node, prop_to_eval):
     return tvar
 
 
-def process_input_to_bpy(node, tvar):
+def process_input_to_bpy(node, tvar, stype):
     """
     this is one-way, node is the reference to the current eval node. tvar is the current
     variable being introduced into bpy. First it is executed in a try/except scenario,
@@ -197,7 +204,10 @@ def process_input_to_bpy(node, tvar):
     mats = data.materials
     meshes = data.meshes
 
-    fxed = node.eval_str.format(x=tvar)
+    if stype == 'MatrixSocket':
+        tvar = str(tvar[:])
+
+    fxed = (node.eval_str.strip() + " = {x}").format(x=tvar)
 
     # yes there's a massive assumption here.
     if not node.eval_success:
@@ -206,8 +216,11 @@ def process_input_to_bpy(node, tvar):
             exec(fxed)
             success = True
             node.previous_eval_str = node.eval_str
-        except:
-            print("nope, crash n burn")
+        except Exception as err:
+            if node.full_traceback:
+                print(traceback.format_exc())
+            else:
+                print("nope, crash n burn - try full traceback")
             success = False
             node.previous_eval_str = ""
         finally:
@@ -264,8 +277,11 @@ def process_input_dofunction(node, x):
             exec(raw_text_str)
             success = True
             node.previous_eval_str = node.eval_str
-        except:
-            print("nope, crash n burn")
+        except Exception as err:
+            if node.full_traceback:
+                print(traceback.format_exc())
+            else:
+                print("nope, crash n burn - try full traceback")
             success = False
             node.previous_eval_str = ""
         finally:
@@ -307,21 +323,98 @@ class EvalKnievalNode(bpy.types.Node, SverchCustomTreeNode):
     previous_mode = StringProperty(default="input")
 
     eval_success = BoolProperty(default=False)
+
+    # not hooked up yet.
     eval_knieval_mode = BoolProperty(
         default=True,
         description="when unticked, try/except is done only once")
+
+    # hyper: because it's above mode.
+    current_hyper = StringProperty(default="SET")
+    hyper_options = [
+        ("DO",  "Do",  "", 0),
+        ("SET", "Set", "", 1),
+        ("GET", "Get", "", 2)
+    ]
+
+    def mode_change(self, context):
+
+        if not (self.selected_hyper == self.current_hyper):
+            self.label = self.selected_hyper
+            self.update_outputs_and_inputs()
+            self.current_hyper = self.selected_hyper
+            updateNode(self, context)
+
+    selected_hyper = EnumProperty(
+        items=hyper_options,
+        name="Behavior",
+        description="Choices of behavior",
+        default="SET",
+        update=mode_change)
+
+    full_traceback = BoolProperty()
 
     def init(self, context):
         self.inputs.new('StringsSocket', "x").prop_name = 'x'
         self.width = 400
 
     def draw_buttons(self, context, layout):
+        if self.selected_hyper in {'DO', 'SET'}:
+            row = layout.row()
+            # row.separator()
+            row.label('')
+
+        row = layout.row()
+        row.prop(self, 'selected_hyper', expand=True)
         row = layout.row()
         row.prop(self, 'eval_str', text='')
 
     def draw_buttons_ext(self, context, layout):
         row = layout.row()
-        row.prop(self, 'eval_knieval_mode', text='eval knieval mode')
+        # row.prop(self, 'eval_knieval_mode', text='eval knieval mode')
+        row.prop(self, 'full_traceback', text='full traceback')
+
+    def update_outputs_and_inputs(self):
+        self.mode = {
+            'SET': 'input',
+            'GET': 'output',
+            'DO': 'input'
+            }.get(self.selected_hyper, None)
+
+        if not (self.mode == self.previous_mode):
+            self.set_sockets()
+            self.previous_mode = self.mode
+            self.eval_success = False
+
+    def update(self):
+        """
+        Update behaves like the conductor, it detects the modes and sends flow control
+        to functions that know how to deal with socket data consistent with those modes.
+
+        It also avoids extra calculation by figuring out if input/output critera are
+        met before anything is processed. It returns early if it can.
+
+        """
+        inputs = self.inputs
+        outputs = self.outputs
+
+        if self.mode == "input" and len(inputs) == 0:
+            return
+        elif self.mode == "output" and len(outputs) == 0:
+            return
+
+        if len(self.eval_str) <= 4:
+            return
+
+        if not (self.eval_str == self.previous_eval_str):
+            self.eval_success = False
+
+        {
+            "input": self.input_mode,
+            "output": self.output_mode
+        }.get(self.mode, lambda: None)()
+
+        self.set_ui_color()
 
     def input_mode(self):
         inputs = self.inputs
@@ -355,6 +448,7 @@ class EvalKnievalNode(bpy.types.Node, SverchCustomTreeNode):
         if stype == 'MatrixSocket':
             prop = SvGetSocketAnyType(self, inputs[0])
             tvar = Matrix_generate(prop)[0]
+            # print('---repr-\n', repr(tvar))
         else:
             tvar = SvGetSocketAnyType(self, inputs[0])[0][0]
 
@@ -365,7 +459,7 @@ class EvalKnievalNode(bpy.types.Node, SverchCustomTreeNode):
         if self.eval_str.endswith("with x"):
             process_input_dofunction(self, tvar)
         else:
-            process_input_to_bpy(self, tvar)
+            process_input_to_bpy(self, tvar, stype)
 
     def output_mode(self):
         outputs = self.outputs
@@ -373,7 +467,7 @@ class EvalKnievalNode(bpy.types.Node, SverchCustomTreeNode):
             print('has no link!')
             return
 
-        prop_to_eval = self.eval_str.split('=')[1].strip()
+        prop_to_eval = self.eval_str.strip()
         macro = prop_to_eval.split("(")[0]
         tvar = None
 
@@ -412,53 +506,6 @@ class EvalKnievalNode(bpy.types.Node, SverchCustomTreeNode):
         a.new('StringsSocket', 'x')
         if self.mode == 'input':
             a[0].prop_name = 'x'
-
-    def update(self):
-        """
-        Update behaves like the conductor, it detects the modes and sends flow control
-        to functions that know how to deal with socket data consistent with those modes.
-
-        It also avoids extra calculation by figuring out if input/output critera are
-        met before anything is processed. It returns early if it can.
-
-        """
-        inputs = self.inputs
-        outputs = self.outputs
-
-        if self.mode == "input" and len(inputs) == 0:
-            return
-        elif self.mode == "output" and len(outputs) == 0:
-            return
-
-        if len(self.eval_str) <= 4:
-            return
-
-        perform_do_function = self.eval_str.endswith("with x")
-        io_eval = ("=" in self.eval_str)
-
-        if not any([io_eval, perform_do_function]):
-            return
-
-        if not (self.eval_str == self.previous_eval_str):
-            if perform_do_function:
-                self.mode = 'input'
-            else:
-                t = self.eval_str.split("=")
-                right_to_left = len(t[0]) > len(t[1])
-                self.mode = 'input' if right_to_left else 'output'
-            self.eval_success = False
-
-        if not (self.mode == self.previous_mode):
-            self.set_sockets()
-            self.previous_mode = self.mode
-            self.eval_success = False
-
-        {
-            "input": self.input_mode,
-            "output": self.output_mode
-        }.get(self.mode, lambda: None)()
-
-        self.set_ui_color()
 
     def set_ui_color(self):
         self.use_custom_color = True
