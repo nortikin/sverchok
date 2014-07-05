@@ -19,6 +19,7 @@
 import os
 import re
 import ast
+import traceback
 from ast import literal_eval
 
 import bpy
@@ -131,9 +132,12 @@ def process_macro(node, macro, prop_to_eval):
     if not node.eval_success:
         try:
             tvar = fn(*params)
-        except:
-            fail_msg = "nope, {type} with ({params}) failed"
-            print(fail_msg.format(type=macro, params=str(params)))
+        except Exception as err:
+            if node.full_traceback:
+                print(traceback.format_exc())
+            else:
+                fail_msg = "nope, {type} with ({params}) failed - try full traceback"
+                print(fail_msg.format(type=macro, params=str(params)))
             node.previous_eval_str = ""
         finally:
             node.eval_success = False if (tvar is None) else True
@@ -171,8 +175,11 @@ def process_prop_string(node, prop_to_eval):
     if not node.eval_success:
         try:
             tvar = eval(prop_to_eval)
-        except:
-            print("nope, crash n burn hard")
+        except Exception as err:
+            if node.full_traceback:
+                print(traceback.format_exc())
+            else:
+                print("nope, crash n burn hard - try full traceback")
             node.previous_eval_str = ""
         finally:
             print('evalled', tvar)
@@ -206,8 +213,11 @@ def process_input_to_bpy(node, tvar):
             exec(fxed)
             success = True
             node.previous_eval_str = node.eval_str
-        except:
-            print("nope, crash n burn")
+        except Exception as err:
+            if node.full_traceback:
+                print(traceback.format_exc())
+            else:
+                print("nope, crash n burn - try full traceback")
             success = False
             node.previous_eval_str = ""
         finally:
@@ -264,8 +274,11 @@ def process_input_dofunction(node, x):
             exec(raw_text_str)
             success = True
             node.previous_eval_str = node.eval_str
-        except:
-            print("nope, crash n burn")
+        except Exception as err:
+            if node.full_traceback:
+                print(traceback.format_exc())
+            else:
+                print("nope, crash n burn - try full traceback")
             success = False
             node.previous_eval_str = ""
         finally:
@@ -336,6 +349,8 @@ class EvalKnievalNode(bpy.types.Node, SverchCustomTreeNode):
         default="SET",
         update=mode_change)
 
+    full_traceback = BoolProperty()
+
     def init(self, context):
         self.inputs.new('StringsSocket', "x").prop_name = 'x'
         self.width = 400
@@ -352,7 +367,8 @@ class EvalKnievalNode(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons_ext(self, context, layout):
         row = layout.row()
-        row.prop(self, 'eval_knieval_mode', text='eval knieval mode')
+        # row.prop(self, 'eval_knieval_mode', text='eval knieval mode')
+        row.prop(self, 'full_traceback', text='full traceback')
 
     def update_outputs_and_inputs(self):
         self.mode = {
@@ -428,6 +444,7 @@ class EvalKnievalNode(bpy.types.Node, SverchCustomTreeNode):
         if stype == 'MatrixSocket':
             prop = SvGetSocketAnyType(self, inputs[0])
             tvar = Matrix_generate(prop)[0]
+            print(tvar)
         else:
             tvar = SvGetSocketAnyType(self, inputs[0])[0][0]
 
