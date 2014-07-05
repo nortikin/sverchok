@@ -81,7 +81,7 @@ class Sv3DviewPropsNode(bpy.types.Node, SverchCustomTreeNode):
         row.prop(world, 'horizon_color', text='horizon')
 
         row = layout.row(align=True)
-        row.prop(prefs.inputs, 'view_rotate_method', text='orbit')
+        row.prop(prefs.inputs, 'view_rotate_method', text='orbit', expand=True)
 
     def update(self):
         pass
