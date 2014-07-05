@@ -141,22 +141,31 @@ class SverchokUpdateAddon(bpy.types.Operator):
         global sv_new_version
         os.curdir = bl_addons_path
         os.chdir(os.curdir)
+        bpy.data.window_managers[0].progress_begin(0,100)
+        bpy.data.window_managers[0].progress_update(20)
         try:
             # here change folder
             url = 'https://github.com/nortikin/sverchok/archive/master.zip'
             # here change folder
             file = urllib.request.urlretrieve(url, os.path.normpath(os.path.join(os.curdir, 'master.zip')))
+            bpy.data.window_managers[0].progress_update(50)
         except:
             self.report({'ERROR'}, "Cannot get archive from Internet")
+            bpy.data.window_managers[0].progress_end()
             return {'CANCELLED'}
         try:
             #os.removedirs(os.path.normpath(os.path.join(os.curdir, 'sverchok')))
             ZipFile(file[0]).extractall(path=os.curdir, members=None, pwd=None)
+            bpy.data.window_managers[0].progress_update(90)
             os.remove(file[0])
             sv_new_version = False
+            bpy.data.window_managers[0].progress_update(100)
+            bpy.data.window_managers[0].progress_end()
             self.report({'INFO'}, "Unzipped, reload addons with F8 button")
         except:
             self.report({'ERROR'}, "Cannot extract files")
+            bpy.data.window_managers[0].progress_end()
+            os.remove(file[0])
             return {'CANCELLED'}
 
         return {'FINISHED'}
@@ -311,3 +320,4 @@ def unregister():
 
 if __name__  ==  '__main__':
     register()
+

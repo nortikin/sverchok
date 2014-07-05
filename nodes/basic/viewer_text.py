@@ -48,14 +48,11 @@ class SverchokViewer(bpy.types.Operator):
             if bpy.data.texts[t[0]].name == 'Sverchok_viewer':
                 exists = True
                 break
-        bpy.context.area.type = 'TEXT_EDITOR'
+        
+        #bpy.context.area.type = 'TEXT_EDITOR'
         if not exists:
-            bpy.ops.text.new()
-            texts_new = bpy.data.texts.items()
-            for t in texts_new:
-                if t not in texts:
-                    bpy.data.texts[t[0]].name = 'Sverchok_viewer'
-        bpy.ops.text.select_all()
+            bpy.data.texts.new('Sverchok_viewer')
+        #bpy.ops.text.select_all()
         podpis = '\n' + '\n' \
                 + '**************************************************' + '\n' \
                 + '                     The End                      '
@@ -74,8 +71,11 @@ class SverchokViewer(bpy.types.Operator):
             for_file = 'vertices: \nNone' \
                         + '\ndata: \nNone' \
                         + '\nmatrixes: \nNone' + podpis
-        bpy.data.texts['Sverchok_viewer'].from_string(for_file)
-        bpy.context.area.type = 'NODE_EDITOR'
+        bpy.data.texts['Sverchok_viewer'].clear()
+        bpy.data.texts['Sverchok_viewer'].write(for_file)
+        #before was ugly solution
+        #bpy.data.texts['Sverchok_viewer'].from_string(for_file)
+        #bpy.context.area.type = 'NODE_EDITOR'
         #print (cache_viewer_slot1['veriable'], cache_viewer_slot2['veriable'], cache_viewer_slot3['veriable'])
         #cache_viewer_slot1['veriable'] = 'None \n'
         #cache_viewer_slot2['veriable'] = 'None \n'
@@ -231,3 +231,5 @@ def unregister():
     bpy.utils.unregister_class(ViewerNode_text)
     bpy.utils.unregister_class(SverchokViewer)
 
+if __name__ == '__main__':
+    register()
