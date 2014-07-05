@@ -190,7 +190,7 @@ def process_prop_string(node, prop_to_eval):
     return tvar
 
 
-def process_input_to_bpy(node, tvar):
+def process_input_to_bpy(node, tvar, stype):
     """
     this is one-way, node is the reference to the current eval node. tvar is the current
     variable being introduced into bpy. First it is executed in a try/except scenario,
@@ -203,6 +203,9 @@ def process_input_to_bpy(node, tvar):
     objs = data.objects
     mats = data.materials
     meshes = data.meshes
+
+    if stype == 'MatrixSocket':
+        tvar = str(tvar[:])
 
     fxed = (node.eval_str.strip() + " = {x}").format(x=tvar)
 
@@ -455,7 +458,7 @@ class EvalKnievalNode(bpy.types.Node, SverchCustomTreeNode):
         if self.eval_str.endswith("with x"):
             process_input_dofunction(self, tvar)
         else:
-            process_input_to_bpy(self, tvar)
+            process_input_to_bpy(self, tvar, stype)
 
     def output_mode(self):
         outputs = self.outputs
