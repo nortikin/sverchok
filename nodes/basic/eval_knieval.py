@@ -314,10 +314,11 @@ class EvalKnievalNode(bpy.types.Node, SverchCustomTreeNode):
         description="when unticked, try/except is done only once")
 
     # hyper: because it's above mode.
+    current_hyper = StringProperty(default="SET")
     hyper_options = [
-        ("SET", "Set", "", 0),
-        ("GET", "Get", "", 1),
-        ("DO",  "Do",  "", 2)
+        ("DO",  "Do",  "", 0),
+        ("SET", "Set", "", 1),
+        ("GET", "Get", "", 2)
     ]
 
     def mode_change(self, context):
@@ -340,6 +341,10 @@ class EvalKnievalNode(bpy.types.Node, SverchCustomTreeNode):
         self.width = 400
 
     def draw_buttons(self, context, layout):
+        # if self.selected_hyper in {'DO', 'SET'}:
+        #     row = layout.row()
+        #     row.separator()
+
         row = layout.row()
         row.prop(self, 'selected_hyper', expand=True)
         row = layout.row()
