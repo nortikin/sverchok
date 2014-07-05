@@ -72,6 +72,7 @@ for category, names in nodes.nodes_dict.items():
 
 if "bpy" in locals():
     import importlib
+    import nodeitems_utils
     importlib.reload(data_structure)
     importlib.reload(node_tree)
     importlib.reload(nodes)
@@ -82,6 +83,11 @@ if "bpy" in locals():
     #importlib.reload(index_viewer_draw)
     for n in nodes_list:
         importlib.reload(n)
+    
+    if 'SVERCHOK' in nodeitems_utils._node_categories:
+        nodeitems_utils.unregister_node_categories("SVERCHOK")
+    nodeitems_utils.register_node_categories("SVERCHOK",
+                                                 node_tree.make_categories())
 
 import bpy
 from bpy.types import AddonPreferences
@@ -191,5 +197,4 @@ def unregister():
     bpy.utils.unregister_class(SverchokPreferences)
 
     if 'SVERCHOK' not in nodeitems_utils._node_categories:
-        nodeitems_utils.unregister_node_categories("SVERCHOK",
-                                                   node_tree.make_categories())
+        nodeitems_utils.unregister_node_categories("SVERCHOK")
