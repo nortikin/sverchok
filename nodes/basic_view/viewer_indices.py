@@ -20,7 +20,8 @@ import bpy
 from bpy.props import BoolProperty, FloatVectorProperty, StringProperty
 
 from node_tree import SverchCustomTreeNode, MatrixSocket, VerticesSocket
-from data_structure import dataCorrect, node_id, updateNode, SvGetSocketAnyType
+from data_structure import dataCorrect, node_id, updateNode, SvGetSocketAnyType, \
+                            fullList
 from utils import index_viewer_draw as IV
 
 
@@ -101,6 +102,7 @@ class IndexViewerNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('StringsSocket', 'edges', 'edges')
         self.inputs.new('StringsSocket', 'faces', 'faces')
         self.inputs.new('MatrixSocket', 'matrix', 'matrix')
+        self.inputs.new('StringsSocket', 'text', 'text')
 
     # reset n_id on copy
     def copy(self, node):
@@ -180,6 +182,7 @@ class IndexViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
     def update(self):
         inputs = self.inputs
+        text=''
 
         # if you change this change in free() also
         n_id = node_id(self)
@@ -203,7 +206,15 @@ class IndexViewerNode(bpy.types.Node, SverchCustomTreeNode):
             if isinstance(iv_links[0].from_socket, VerticesSocket):
                 propv = SvGetSocketAnyType(self, inputs['vertices'])
                 draw_verts = dataCorrect(propv)
-
+            
+            # idea to make text in 3d
+            if 'text' in inputs and inputs['text'].links:
+                text_so = SvGetSocketAnyType(self, inputs['text'])
+                text = dataCorrect(text_so)
+                fullList(text, len(draw_verts))
+                for i, t in enumerate(text):
+                    fullList(text[i], len(draw_verts[i]))
+                
             # matrix might be operating on vertices, check and act on.
             if 'matrix' in inputs:
                 im_links = inputs['matrix'].links
@@ -228,7 +239,7 @@ class IndexViewerNode(bpy.types.Node, SverchCustomTreeNode):
             bg = self.draw_bg
             settings = self.get_settings()
             IV.callback_enable(
-                n_id, draw_verts, draw_edges, draw_faces, draw_matrix, bg, settings.copy())
+                n_id, draw_verts, draw_edges, draw_faces, draw_matrix, bg, settings.copy(), text)
             self.use_custom_color = True
             self.color = READY_COLOR
         else:
