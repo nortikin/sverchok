@@ -23,40 +23,40 @@ from node_tree import SverchCustomTreeNode
 from data_structure import updateNode, SvSetSocketAnyType
 
 
-class svPlaneInputNode(bpy.types.Node, SverchCustomTreeNode):
-    ''' Generator for XY, XZ, and YZ Planes.
+class svAxisInputNode(bpy.types.Node, SverchCustomTreeNode):
+    ''' Generator for X, Y or Z axis.
 
     This gives convenience in node view to make clear even in a minimized
-    state which plane the node outputs. Especially useful for rotation input.
+    state which Vector-axis the node outputs. Especially useful for rotation input.
 
     outputs the vectors:
-        XY: [0,0,1]
-        XZ: [0,1,0]
-        YZ: [1,0,0]
+        X: [1,0,0]
+        Y: [0,1,0]
+        Z: [0,0,1]
     '''
 
-    bl_idname = 'svPlaneInputNode'
-    bl_label = 'Plane input'
+    bl_idname = 'svAxisInputNode'
+    bl_label = 'Axis Input'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     def mode_change(self, context):
-        if not (self.selected_plane == self.current_plane):
-            self.label = self.selected_plane
-            self.current_plane = self.selected_plane
+        if not (self.selected_axis == self.current_axis):
+            self.label = self.selected_axis
+            self.current_axis = self.selected_axis
             updateNode(self, context)
 
-    plane_options = [
-        ("XY", "XY", "", 0),
-        ("XZ", "XZ", "", 1),
-        ("YZ", "YZ", "", 2)
+    axis_options = [
+        ("X", "X", "", 0),
+        ("Y", "Y", "", 1),
+        ("Z", "Z", "", 2)
     ]
-    current_plane = StringProperty(default='XY')
+    current_axis = StringProperty(default='Z')
 
-    selected_plane = EnumProperty(
-        items=plane_options,
-        name="Type of plane",
-        description="offers basic plane output vectors XY XZ YZ",
-        default="XY",
+    selected_axis = EnumProperty(
+        items=axis_options,
+        name="Type of axis",
+        description="offers basic axis output vectors X|Y|Z",
+        default="Z",
         update=mode_change)
 
     def init(self, context):
@@ -65,28 +65,27 @@ class svPlaneInputNode(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons(self, context, layout):
         row = layout.row()
-        row.prop(self, 'selected_plane', expand=True)
+        row.prop(self, 'selected_axis', expand=True)
 
     def update(self):
 
-        # outputs
         if 'Vectors' in self.outputs and self.outputs['Vectors'].links:
 
-            planar_vector = {
-                'XY': (0, 0, 1),
-                'XZ': (0, 1, 0),
-                'YZ': (1, 0, 0)
-            }.get(self.current_plane, None)
+            axial_vector = {
+                'X': (1, 0, 0),
+                'Y': (0, 1, 0),
+                'Z': (0, 0, 1)
+            }.get(self.current_axis, None)
 
-            SvSetSocketAnyType(self, 'Vectors', [[planar_vector]])
+            SvSetSocketAnyType(self, 'Vectors', [[axial_vector]])
 
     def update_socket(self, context):
         self.update()
 
 
 def register():
-    bpy.utils.register_class(svPlaneInputNode)
+    bpy.utils.register_class(svAxisInputNode)
 
 
 def unregister():
-    bpy.utils.unregister_class(svPlaneInputNode)
+    bpy.utils.unregister_class(svAxisInputNode)
