@@ -356,7 +356,8 @@ def make_categories():
             NodeItem("svBasicArcNode", label="Basic 3pt Arc"),
             NodeItem("Sv3DviewPropsNode", label="3dview properties"),
             NodeItem("ListDecomposeNode", label="List Decompose"), # need to be completely reviewed
-            NodeItem("SvReRouteNode", label="Reroute Node")
+            NodeItem("SvReRouteNode", label="Reroute Node"),
+            NodeItem("svAxisInputNode", label="Axis X|Y|Z")
             ]),
         ]
     return node_categories
