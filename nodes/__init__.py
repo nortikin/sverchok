@@ -108,5 +108,6 @@ nodes_dict = {'analyzer': ['area',
                          'vector_in',
                          'vector_out',
                          'vertices_delete_doubles',
-                         'vertices_sort']
+                         'vertices_sort',
+                         'axis_input']
               }
