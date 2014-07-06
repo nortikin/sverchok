@@ -623,12 +623,12 @@ class SvTextOutNode(bpy.types.Node, SverchCustomTreeNode):
             data_out = []
             for socket in self.inputs:
                 if socket.links and \
-                   type(socket.links[0].from_socket) == StringsSocket:
+                    type(socket.links[0].from_socket) == StringsSocket:
 
                     tmp = SvGetSocketAnyType(self, socket)
                     if tmp:
                         # flatten list
-                        data_out.append(list(itertools.chain.from_iterable(tmp)))
+                        data_out.extend(list(itertools.chain.from_iterable([tmp])))
 
             csv_str = io.StringIO()
             writer = csv.writer(csv_str, dialect=self.csv_dialect)
@@ -682,3 +682,4 @@ def unregister():
 
 if __name__ == '__main__':
     register()
+
