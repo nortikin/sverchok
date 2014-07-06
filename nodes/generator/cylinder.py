@@ -42,12 +42,17 @@ def cylinder_vertices(Subd, Vertices, Height, RadiusBot, RadiusTop, Separate):
     points = list(sv_zip(X, Y, Z))
     if Separate:
         out = []
-        for y in range(Vertices):
-            out_ = []
-            for x in range(Subd+2):
-                out_.append(points[Subd+2*y+x])
-            out.append(out_)
+        out_ = []
+        x = 0
+        for y, P in enumerate(points):
+            x += 1
+            out_.append(P)
+            if x//Vertices:
+                out.append(out_)
+                out_ = []
+                x = 0
         points = out
+        #points = list(zip(*out))
     return points
 
 
@@ -166,3 +171,6 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(CylinderNode)
+
+if __name__ == '__main__':
+    register()

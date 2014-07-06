@@ -62,7 +62,7 @@ class LineConnectNode(bpy.types.Node, SverchCustomTreeNode):
         row = layout.row(align=True)
         row.prop(self, "polygons", text="polygons")
         row.prop(self, "slice_check", text="slice")
-        layout.prop(self, "JoinLevel", text="level")
+        #layout.prop(self, "JoinLevel", text="level")
 
     def connect(self, vers, dirn, cicl, clev, polygons, slice):
         vers_ = []
@@ -78,17 +78,22 @@ class LineConnectNode(bpy.types.Node, SverchCustomTreeNode):
         # we will take common case of nestiness, it is not flatten as correctData is,
         # but pick in upper level bottom level of data. could be automated in future
         # to check for levelsOflist() and correct in recursion
-        if clev == 1:
-            for ob in vers:
-                vers_.extend(ob)
-                for o in ob:
-                    lens.append(len(o))
-        elif clev == 2:
+        # print(levelsOflist(vers))
+        if levelsOflist(vers) == 4: # was clev - manually defined, but it is wrong way
             for ob in vers:
                 for o in ob:
-                    vers_.extend(o)
+                    vers_.append(ob)
                     lens.append(len(o))
+        elif levelsOflist(vers) == 5:
+            for ob in vers:
+                for o in ob:
+                    for v in o:
+                        vers_.append(v)
+                        lens.append(len(v))
+        else:
+            print('wrong level in UV connect')
         lenvers = len(vers_)
+        print(lenvers, lens)
         edges = []
         ml = max(lens)
         if dirn == 'U_dir':
@@ -161,7 +166,7 @@ class LineConnectNode(bpy.types.Node, SverchCustomTreeNode):
                         for k, ve in enumerate(ob[:-1]):
                             objecto.append([i*lenvers+k, (i+1)*lenvers+k, (i+1)*lenvers+k+1, i*lenvers+k+1])
                             if i == 0 and cicl:
-                                objecto.append([k, (ml-1)*lenvers+k, (ml-1)*lenvers+k+1, k+1])
+                                objecto.append([k+1, (ml-1)*lenvers+k+1, (ml-1)*lenvers+k, k])
             elif not polygons:
                 joinvers = joinvers(vers_)
                 for i, ve in enumerate(vers_[0][:]):
@@ -207,3 +212,6 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(LineConnectNode)
+
+if __name__ == '__main__':
+    register()
