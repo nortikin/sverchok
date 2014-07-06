@@ -215,18 +215,22 @@ class SverchNodeCategory(NodeCategory):
 
 def make_categories():
     node_categories = [
-        SverchNodeCategory("SVERCHOK_B", "Basic", items=[
-            # basic nodes
-            NodeItem("ObjectsNode", label="Objects in"),
+        SverchNodeCategory("SVERCHOK_Viz", "Basic Viz", items=[
             NodeItem("BmeshViewerNode", label="BMesh View"),
             # NodeItem("BakeryNode", label="Bake all"),
             NodeItem("ViewerNode", label="Viewer draw"),
             NodeItem("ViewerNode_text", label="Viewer text"),
             NodeItem("IndexViewerNode", label="Viewer INDX"),
+            ]),
+        SverchNodeCategory("SVERCHOK_Dat", "Basic Data", items=[
+            NodeItem("ObjectsNode", label="Objects in"),
             NodeItem("SvTextInNode",  label="Text in"),
             NodeItem("SvTextOutNode",  label="Text out"),
             NodeItem("WifiInNode", label="Wifi in"),
             NodeItem("WifiOutNode", label="Wifi out"),
+            ]),
+        SverchNodeCategory("SVERCHOK_Deb", "Basic Debug", items=[
+            # basic nodes
             # NodeItem("Test1Node", label="Test1"),
             # NodeItem("Test2Node", label="Test2"),
             NodeItem("SvFrameInfoNode", label="Frame info"),
@@ -237,31 +241,31 @@ def make_categories():
             ]),
         SverchNodeCategory("SVERCHOK_L", "List", items=[
             # lists nodes
-            NodeItem("ListLevelsNode", label="List Del Levels"),
             NodeItem("ListJoinNode", label="List Join"),
             NodeItem("ZipNode", label="List Zip"),
-            NodeItem("ShiftNode", label="List Shift"),
-            NodeItem("ListSliceNode", label="List Slice"),
-            NodeItem("SvListSplitNode", label="List Split"),
-            NodeItem("ListReverseNode", label="List Reverse"),
+            NodeItem("ListLevelsNode", label="List Del Levels"),
             NodeItem("ListLengthNode", label="List Length"),
             NodeItem("ListSumNode", label="List Sum"),
-            NodeItem("ListFLNode", label="List First&Last"),
-            NodeItem("ListItem2Node", label="List Item"),
-            NodeItem("ListRepeaterNode", label="List Repeater"),
-            NodeItem("ListFuncNode", label="List Math"),
-            NodeItem("ListFlipNode", label="List Flip"),
             NodeItem("MaskListNode", label="List Mask (out)"),
             NodeItem("SvMaskJoinNode", label="List Mask Join (in)"),
-            NodeItem("ListSortNode", label="List Sort"),
-            NodeItem("ListShuffleNode", label="List Shuffle"),
             NodeItem("ListMatchNode", label="List Match"),
+            NodeItem("ListFuncNode", label="List Math"),
             NodeItem("ConverterNode", label="SocketConvert"),
+            ]),
+        SverchNodeCategory("SVERCHOK_Lint", "List interfere", items=[
+            NodeItem("ShiftNode", label="List Shift"),
+            NodeItem("ListRepeaterNode", label="List Repeater"),
+            NodeItem("ListSliceNode", label="List Slice"),
+            NodeItem("SvListSplitNode", label="List Split"),
+            NodeItem("ListFLNode", label="List First&Last"),
+            NodeItem("ListItem2Node", label="List Item"),
+            NodeItem("ListReverseNode", label="List Reverse"),
+            NodeItem("ListShuffleNode", label="List Shuffle"),
+            NodeItem("ListSortNode", label="List Sort"),
+            NodeItem("ListFlipNode", label="List Flip"),
             ]),
         SverchNodeCategory("SVERCHOK_N", "Number", items=[
             # numbers, formula nodes
-            #NodeItem("GenSeriesNode", label="Series float"),
-            #NodeItem("GenRangeNode", label="Range float"),
             NodeItem("GenListRangeIntNode", label="Range Int"),
             NodeItem("SvGenFloatRange", label="Range Float"),
             NodeItem("SvListInputNode", label="List Input"),
@@ -312,8 +316,19 @@ def make_categories():
             NodeItem("MatrixShearNode", label="Matrix Shear"),  # for uniform view renamed
             NodeItem("MatrixInterpolationNode", label="Matrix Interpolation"),
             ]),
-        SverchNodeCategory("SVERCHOK_M", "Modifier", items=[
+        SverchNodeCategory("SVERCHOK_Mc", "Modifier Change", items=[
             # modifiers deforms and reorganize and reconstruct data
+            NodeItem("PolygonBoomNode", label="Polygon Boom"),
+            NodeItem("Pols2EdgsNode", label="Polygons to Edges"),
+            NodeItem("SvMeshJoinNode", label="Mesh Join"),
+            NodeItem("SvRemoveDoublesNode", label="Remove Doubles"),
+            NodeItem("SvDeleteLooseNode", label="Delete Loose"),
+            NodeItem('SvSeparateMeshNode', label="Separate Loose Parts"),
+            NodeItem('SvVertMaskNode', label="Mask Vertices"),
+            NodeItem("SvFillsHoleNode", label="Fill Holes"),
+            NodeItem("SvIntersectEdgesNode", label="Intersect Edges"),
+            ]),
+        SverchNodeCategory("SVERCHOK_Mm", "Modifier Make", items=[
             NodeItem("AdaptivePolsNode", label="Adaptive Polygons"),
             NodeItem("SvAdaptiveEdgeNode", label="Adaptive Edges"),
             NodeItem("CrossSectionNode", label="Cross Section"),
@@ -323,16 +338,7 @@ def make_categories():
             NodeItem("LineConnectNode", label="UV Connection"),
             NodeItem("DelaunayTriangulation2DNode", label="Delaunay 2D "),
             NodeItem("Voronoi2DNode", label="Voronoi 2D"),
-            NodeItem("PolygonBoomNode", label="Polygon Boom"),
-            NodeItem("Pols2EdgsNode", label="Polygons to Edges"),
-            NodeItem("SvMeshJoinNode", label="Mesh Join"),
-            NodeItem("SvRemoveDoublesNode", label="Remove Doubles"),
-            NodeItem("SvDeleteLooseNode", label="Delete Loose"),
-            NodeItem('SvSeparateMeshNode', label="Separate Loose Parts"),
-            NodeItem('SvVertMaskNode', label="Mask Vertices"),
             NodeItem("SvConvexHullNode", label="Convex Hull"),
-            NodeItem("SvFillsHoleNode", label="Fill Holes"),
-            NodeItem("SvIntersectEdgesNode", label="Intersect Edges"),
             NodeItem("SvLatheNode", label="Lathe"),
             ]),
         SverchNodeCategory("SVERCHOK_A", "Analysers", items=[
@@ -384,5 +390,6 @@ def unregister():
     bpy.utils.unregister_class(MatrixSocket)
     bpy.utils.unregister_class(SverchCustomTree)
     bpy.utils.unregister_class(SvColors)
+
 
 
