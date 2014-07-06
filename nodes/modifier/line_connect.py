@@ -78,13 +78,14 @@ class LineConnectNode(bpy.types.Node, SverchCustomTreeNode):
         # we will take common case of nestiness, it is not flatten as correctData is,
         # but pick in upper level bottom level of data. could be automated in future
         # to check for levelsOflist() and correct in recursion
-        # print(levelsOflist(vers))
-        if levelsOflist(vers) == 4: # was clev - manually defined, but it is wrong way
+        lol = levelsOflist(vers)
+        # print(lol)
+        if lol == 4: # was clev - manually defined, but it is wrong way
             for ob in vers:
                 for o in ob:
-                    vers_.append(ob)
+                    vers_.append(o)
                     lens.append(len(o))
-        elif levelsOflist(vers) == 5:
+        elif lol == 5:
             for ob in vers:
                 for o in ob:
                     for v in o:
@@ -93,7 +94,7 @@ class LineConnectNode(bpy.types.Node, SverchCustomTreeNode):
         else:
             print('wrong level in UV connect')
         lenvers = len(vers_)
-        print(lenvers, lens)
+        #print(lenvers, lens)
         edges = []
         ml = max(lens)
         if dirn == 'U_dir':
@@ -215,3 +216,4 @@ def unregister():
 
 if __name__ == '__main__':
     register()
+
