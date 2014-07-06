@@ -21,6 +21,7 @@ import bpy
 from bpy.props import StringProperty
 
 from node_tree import SverchCustomTreeNode
+from data_structure import SvSetSocketAnyType
 
 Sv_handle_Note = {}
 
@@ -92,6 +93,7 @@ class NoteNode(bpy.types.Node, SverchCustomTreeNode):
             self.use_custom_color = True
             self.color = (0.05,0.05,0.1)
         self.width = 400
+        self.outputs.new('StringsSocket', "Text", "Text")
     
     def draw_buttons(self, context, layout):
         global Sv_handle_Note
@@ -121,7 +123,9 @@ class NoteNode(bpy.types.Node, SverchCustomTreeNode):
             row.operator('node.sverchok_note_unbutton', text='CHANGE').text = str([self.name, self.text])
 
     def update(self):
-        pass
+        if 'Text' in self.outputs and self.outputs['Text'].links:
+            text = [[a] for a in self.text.split()]
+            SvSetSocketAnyType(self, 'Text', [text])
 
 
 def register():
@@ -137,5 +141,6 @@ def unregister():
 
 if __name__ == '__main__':
     register()
+
 
 

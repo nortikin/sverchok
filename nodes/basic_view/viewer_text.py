@@ -178,7 +178,7 @@ class ViewerNode_text(bpy.types.Node, SverchCustomTreeNode):
 
     def edgDef(self, l):
         t = '\n\ndata: \n'
-        if l[0] and type(l[0]) in [int, float]:
+        if l[0] and type(l[0]) in [int, float, str]:
             if len(l) > 2:
                 t = '\n\npolygons: \n'
             else:
@@ -233,3 +233,4 @@ def unregister():
 
 if __name__ == '__main__':
     register()
+

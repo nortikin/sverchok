@@ -95,13 +95,13 @@ def tag_redraw_all_view3d():
                         region.tag_redraw()
 
 
-def callback_enable(n_id, draw_verts, draw_edges, draw_faces, draw_matrix, draw_bg, settings):
+def callback_enable(n_id, draw_verts, draw_edges, draw_faces, draw_matrix, draw_bg, settings, text):
     global callback_dict
     if n_id in callback_dict:
         return
     handle_pixel = SpaceView3D.draw_handler_add(
         draw_callback_px, (
-           n_id, draw_verts, draw_edges, draw_faces, draw_matrix, draw_bg, settings),
+           n_id, draw_verts, draw_edges, draw_faces, draw_matrix, draw_bg, settings, text),
         'WINDOW', 'POST_PIXEL')
     callback_dict[n_id] = handle_pixel
     tag_redraw_all_view3d()
@@ -125,7 +125,7 @@ def callback_disable_all():
             callback_disable(n_id)
 
 
-def draw_callback_px(n_id, draw_verts, draw_edges, draw_faces, draw_matrix, draw_bg, settings):
+def draw_callback_px(n_id, draw_verts, draw_edges, draw_faces, draw_matrix, draw_bg, settings, text):
     context = bpy.context
 
     # ensure data or empty lists.
@@ -133,6 +133,7 @@ def draw_callback_px(n_id, draw_verts, draw_edges, draw_faces, draw_matrix, draw
     data_edges = draw_edges
     data_faces = draw_faces
     data_matrix = Matrix_generate(draw_matrix) if draw_matrix else []
+    data_text = text
 
     if (data_vector, data_matrix) == (0, 0):
     #    callback_disable(n_id)
@@ -163,7 +164,7 @@ def draw_callback_px(n_id, draw_verts, draw_edges, draw_faces, draw_matrix, draw
     # vars for projection
     perspective_matrix = region3d.perspective_matrix.copy()
 
-    def draw_index(rgb, rgb2, index, vec):
+    def draw_index(rgb, rgb2, index, vec, text=''):
 
         vec_4d = perspective_matrix * vec.to_4d()
         if vec_4d.w <= 0.0:
@@ -171,7 +172,10 @@ def draw_callback_px(n_id, draw_verts, draw_edges, draw_faces, draw_matrix, draw
 
         x = region_mid_width + region_mid_width * (vec_4d.x / vec_4d.w)
         y = region_mid_height + region_mid_height * (vec_4d.y / vec_4d.w)
-        index = str(index)
+        if text:
+            index = str(text[0])
+        else:
+            index = str(index)
 
         if draw_bg:
             polyline = get_points(index)
@@ -195,10 +199,14 @@ def draw_callback_px(n_id, draw_verts, draw_edges, draw_faces, draw_matrix, draw
         a = Vector((0, 0, 0))
         for v in vlist:
             a += v
-        return a * (1/len(vlist))
+        return a / len(vlist)
 
     for obj_index, verts in enumerate(data_vector):
         final_verts = verts
+        if data_text:
+            text_obj = data_text[obj_index]
+        else:
+            text_obj = ''
 
         # quicklt apply matrix if necessary
         if draw_matrix:
@@ -207,7 +215,10 @@ def draw_callback_px(n_id, draw_verts, draw_edges, draw_faces, draw_matrix, draw
 
         if display_vert_index:
             for idx, v in enumerate(final_verts):
-                draw_index(vert_idx_color, vert_bg_color, idx, v)
+                if text_obj:
+                    draw_index(vert_idx_color, vert_bg_color, idx, v, text_obj[idx])
+                else:
+                    draw_index(vert_idx_color, vert_bg_color, idx, v)
 
         if data_edges and display_edge_index:
             for edge_details in enumerate(data_edges[obj_index]):
@@ -222,3 +233,7 @@ def draw_callback_px(n_id, draw_verts, draw_edges, draw_faces, draw_matrix, draw
                 verts = [Vector(final_verts[idx]) for idx in f]
                 median = calc_median(verts)
                 draw_index(face_idx_color, face_bg_color, face_index, median)
+
+
+
+
