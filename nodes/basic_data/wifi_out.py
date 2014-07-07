@@ -58,9 +58,7 @@ class WifiOutNode(bpy.types.Node, SverchCustomTreeNode):
         if self.var_name in wifi_dict:
             self.outputs.clear()
             node = wifi_dict[self.var_name]
-            while len(self.outputs) != len(node.inputs):
-                socket = node.inputs[-1]
-                self.outputs.new(socket.bl_idname, socket.name)
+            self.update()
         else:
             self.outputs.clear()
 
@@ -121,8 +119,8 @@ class WifiOutNode(bpy.types.Node, SverchCustomTreeNode):
                         outputs.move(len(self.outputs)-1, idx)
 
             # adjust number of inputs
-            while len(outputs) != len(inputs):
-                if len(outputs) > len(inputs):
+            while len(outputs) != len(inputs)-1:
+                if len(outputs) > len(inputs)-1:
                     outputs.remove(outputs[-1])
                 else:
                     n = len(outputs)
