@@ -21,7 +21,7 @@ import bpy
 from bpy.props import StringProperty
 
 from node_tree import SverchCustomTreeNode
-from data_structure import SvSetSocketAnyType
+from data_structure import SvSetSocketAnyType, updateNode
 
 Sv_handle_Note = {}
 
@@ -33,7 +33,8 @@ class SverchokNote(bpy.types.Operator):
     bl_options = {'REGISTER', 'UNDO'}
 
     text = StringProperty(name='text',
-                          default='')
+                          default='',
+                          update=updateNode)
 
     def execute(self, context):
         name = context.screen.name
@@ -64,7 +65,8 @@ class SverchokUnNote(bpy.types.Operator):
     bl_options = {'REGISTER', 'UNDO'}
 
     text = StringProperty(name='text',
-                          default='')
+                          default='',
+                          update=updateNode)
 
     def execute(self, context):
         name = context.screen.name
@@ -83,7 +85,8 @@ class NoteNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     text = StringProperty(name='text',
-                          default='your text here')
+                          default='your text here',
+                          update=updateNode)
 
     def init(self, context):
         if self.text != 'your text here':
@@ -141,6 +144,7 @@ def unregister():
 
 if __name__ == '__main__':
     register()
+
 
 
 
