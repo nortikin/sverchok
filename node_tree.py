@@ -288,6 +288,7 @@ def make_categories():
             NodeItem("CylinderNode", label="Cylinder"),
             NodeItem("SphereNode", label="Sphere"),
             NodeItem("HilbertNode", label="Hilbert"),
+            NodeItem("Hilbert3dNode", label="Hilbert3d"),
             NodeItem("HilbertImageNode", label="Hilbert image"),
             NodeItem("ImageNode", label="Image"),
             NodeItem("RandomVectorNode", label="Random Vector"),
@@ -391,6 +392,7 @@ def unregister():
     bpy.utils.unregister_class(MatrixSocket)
     bpy.utils.unregister_class(SverchCustomTree)
     bpy.utils.unregister_class(SvColors)
+
 
 
 
