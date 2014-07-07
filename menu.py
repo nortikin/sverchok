@@ -174,6 +174,7 @@ def make_categories():
         # need to be completely reviewed
         ["ListDecomposeNode",   "List Decompose"],
         ["SvReRouteNode",       "Reroute Point"],
+        ["SvVolumeNode",       "Volume"],
         ["svAxisInputNode",     "Vector X | Y | Z"]]
 
     node_categories = []
@@ -184,3 +185,4 @@ def make_categories():
             items=[NodeItem(bl_idname, name) for bl_idname, name in nodes]))
 
     return node_categories
+
