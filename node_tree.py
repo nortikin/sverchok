@@ -17,6 +17,8 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+from collections import OrderedDict
+
 import bpy
 from bpy.props import StringProperty, BoolProperty, FloatVectorProperty
 from bpy.types import NodeTree, NodeSocket, NodeSocketStandard
@@ -142,7 +144,8 @@ class StringsSocket(NodeSocketStandard):
         if self.prop_name:
             if self.is_output:
                 t = text
-                print('Warning output socket:', self.name, 'in node:', node.name, 'has property attached')
+                msg = "Warning output socket: {name} in node: {node} has property attached"
+                print(msg.format(name=self.name, node=node.name))
             else:
                 prop = node.rna_type.properties.get(self.prop_name, None)
                 t = prop.name if prop else text
@@ -214,161 +217,167 @@ class SverchNodeCategory(NodeCategory):
 
 
 def make_categories():
-    node_categories = [
-        SverchNodeCategory("SVERCHOK_Viz", "Basic Viz", items=[
-            # NodeItem("BakeryNode", label="Bake all"),
-            NodeItem("BmeshViewerNode", label="Viewer BMesh"),
-            NodeItem("ViewerNode", label="Viewer draw"),
-            NodeItem("ViewerNode_text", label="Viewer text"),
-            NodeItem("IndexViewerNode", label="Viewer INDX"),
-            ]),
-        SverchNodeCategory("SVERCHOK_Dat", "Basic Data", items=[
-            NodeItem("ObjectsNode", label="Objects in"),
-            NodeItem("SvTextInNode",  label="Text in"),
-            NodeItem("SvTextOutNode",  label="Text out"),
-            NodeItem("WifiInNode", label="Wifi in"),
-            NodeItem("WifiOutNode", label="Wifi out"),
-            ]),
-        SverchNodeCategory("SVERCHOK_Deb", "Basic Debug", items=[
-            # basic nodes
-            # NodeItem("Test1Node", label="Test1"),
-            # NodeItem("Test2Node", label="Test2"),
-            # NodeItem("ToolsNode", label="Update Button"),
-            NodeItem("SvFrameInfoNode", label="Frame info"),
-            NodeItem("NoteNode", label="Note"),
-            NodeItem("GTextNode", label="GText"),
-            NodeItem("SvDebugPrintNode", label="Debug print"),
-            ]),
-        SverchNodeCategory("SVERCHOK_Lm", "List main", items=[
-            # lists nodes
-            NodeItem("ListJoinNode", label="List Join"),
-            NodeItem("ZipNode", label="List Zip"),
-            NodeItem("ListLevelsNode", label="List Del Levels"),
-            NodeItem("ListLengthNode", label="List Length"),
-            NodeItem("ListSumNode", label="List Sum"),
-            NodeItem("MaskListNode", label="List Mask (out)"),
-            NodeItem("SvMaskJoinNode", label="List Mask Join (in)"),
-            NodeItem("ListMatchNode", label="List Match"),
-            NodeItem("ListFuncNode", label="List Math"),
-            NodeItem("ConverterNode", label="SocketConvert"),
-            ]),
-        SverchNodeCategory("SVERCHOK_Ls", "List struct", items=[
-            # list structure deformations
-            NodeItem("ShiftNode", label="List Shift"),
-            NodeItem("ListRepeaterNode", label="List Repeater"),
-            NodeItem("ListSliceNode", label="List Slice"),
-            NodeItem("SvListSplitNode", label="List Split"),
-            NodeItem("ListFLNode", label="List First&Last"),
-            NodeItem("ListItem2Node", label="List Item"),
-            NodeItem("ListReverseNode", label="List Reverse"),
-            NodeItem("ListShuffleNode", label="List Shuffle"),
-            NodeItem("ListSortNode", label="List Sort"),
-            NodeItem("ListFlipNode", label="List Flip"),
-            ]),
-        SverchNodeCategory("SVERCHOK_N", "Number", items=[
-            # numbers, formula nodes
-            NodeItem("GenListRangeIntNode", label="Range Int"),
-            NodeItem("SvGenFloatRange", label="Range Float"),
-            NodeItem("SvListInputNode", label="List Input"),
-            NodeItem("RandomNode", label="Random"),
-            NodeItem("FloatNode", label="Float"),
-            NodeItem("IntegerNode", label="Int"),
-            NodeItem("Float2IntNode", label="Float 2 Int"),
-            # NodeItem("FormulaNode", label="Formula"),
-            NodeItem("Formula2Node", label="Formula"),  # for newbies this is not predictable why "Formula2" renamed
-            NodeItem("ScalarMathNode", label="Math"),
-            NodeItem("SvMapRangeNode", label="Map Range"),
-            ]),
-        SverchNodeCategory("SVERCHOK_G", "Generator", items=[
-            # objects, new elements, line, plane
-            NodeItem("LineNode", label="Line"),
-            NodeItem("PlaneNode", label="Plane"),
-            NodeItem("SvBoxNode", label="Box"),
-            NodeItem("SvCircleNode", label="Circle"),
-            NodeItem("CylinderNode", label="Cylinder"),
-            NodeItem("SphereNode", label="Sphere"),
-            NodeItem("HilbertNode", label="Hilbert"),
-            NodeItem("Hilbert3dNode", label="Hilbert3d"),
-            NodeItem("HilbertImageNode", label="Hilbert image"),
-            NodeItem("ImageNode", label="Image"),
-            NodeItem("RandomVectorNode", label="Random Vector"),
-            NodeItem("SvFormulaShapeNode", label="Formula shape"),
-            NodeItem("SvScriptNode", label="Scripted Node"),
-            ]),
-        SverchNodeCategory("SVERCHOK_V", "Vector", items=[
-            # Vector nodes
-            NodeItem("GenVectorsNode", label="Vector in"),
-            NodeItem("VectorsOutNode", label="Vector out"),
-            NodeItem("VectorMoveNode", label="Vector Move"),
-            NodeItem("VectorMathNode", label="Vector Math"),
-            NodeItem("VectorDropNode", label="Vector Drop"),
-            NodeItem("VertsDelDoublesNode", label="Vector X Doubles"),
-            NodeItem("EvaluateLineNode", label="Vector Evaluate"),
-            NodeItem("SvInterpolationNode", label="Vector Interpolation"),
-            NodeItem("SvVertSortNode", label="Vector Sort"),
-            NodeItem("SvNoiseNode", label="Vector Noise"),
-            ]),
-        SverchNodeCategory("SVERCHOK_Ma", "Matrix", items=[
-            # Matrix nodes
-            NodeItem("MatrixApplyNode", label="Matrix Apply"),
-            NodeItem("MatrixGenNode", label="Matrix in"),
-            NodeItem("MatrixOutNode", label="Matrix out"),
-            NodeItem("SvMatrixValueIn", label="Matrix Input"),
-            NodeItem("MatrixDeformNode", label="Matrix Deform"),
-            NodeItem("MatrixShearNode", label="Matrix Shear"),  # for uniform view renamed
-            NodeItem("MatrixInterpolationNode", label="Matrix Interpolation"),
-            ]),
-        SverchNodeCategory("SVERCHOK_Mc", "Modifier Change", items=[
-            # modifiers deforms and reorganize and reconstruct data
-            NodeItem("PolygonBoomNode", label="Polygon Boom"),
-            NodeItem("Pols2EdgsNode", label="Polygons to Edges"),
-            NodeItem("SvMeshJoinNode", label="Mesh Join"),
-            NodeItem("SvRemoveDoublesNode", label="Remove Doubles"),
-            NodeItem("SvDeleteLooseNode", label="Delete Loose"),
-            NodeItem('SvSeparateMeshNode', label="Separate Loose Parts"),
-            NodeItem('SvVertMaskNode', label="Mask Vertices"),
-            NodeItem("SvFillsHoleNode", label="Fill Holes"),
-            NodeItem("SvIntersectEdgesNode", label="Intersect Edges"),
-            ]),
-        SverchNodeCategory("SVERCHOK_Mm", "Modifier Make", items=[
-            NodeItem("LineConnectNode", label="UV Connection"),
-            NodeItem("AdaptivePolsNode", label="Adaptive Polygons"),
-            NodeItem("SvAdaptiveEdgeNode", label="Adaptive Edges"),
-            NodeItem("CrossSectionNode", label="Cross Section"),
-            NodeItem("SvBisectNode", label="Bisect"),
-            NodeItem("SvSolidifyNode", label="Solidify"),
-            NodeItem("SvWireframeNode", label="Wireframe"),
-            NodeItem("DelaunayTriangulation2DNode", label="Delaunay 2D "),
-            NodeItem("Voronoi2DNode", label="Voronoi 2D"),
-            NodeItem("SvConvexHullNode", label="Convex Hull"),
-            NodeItem("SvLatheNode", label="Lathe"),
-            ]),
-        SverchNodeCategory("SVERCHOK_A", "Analyser", items=[
-            # investigate data
-            NodeItem("CentersPolsNode", label="Centers Polygons"),
-            NodeItem("VectorNormalNode", label="Vertex Normal"),
-            NodeItem("DistancePPNode", label="Distance"),
-            NodeItem("AreaNode", label="Area"),
-            NodeItem("SvBBoxNode", label="Bounding box"),
-            NodeItem("SvKDTreeNode", label="KDT Closest Verts"),
-            NodeItem("SvKDTreeEdgesNode", label="KDT Closest Edges"),  # KDTree renamed to be clear
-            ]),
-        SverchNodeCategory("SVERCHOK_X", "Beta test", items=[
-            # for testing convenience,
-            NodeItem("BGLdemoNode", label="Viewer BGL debug"),
-            NodeItem("BasicSplineNode", label="2pt Spline"),
-            NodeItem("svBasicArcNode", label="3pt Arc"),
-            NodeItem("SvOffsetNode", label="Offset"),
-            NodeItem("SvEmptyOutNode", label="Empty out"),
-            # NodeItem("Gen3DcursorNode", label="3D cursor"),
-            NodeItem("EvalKnievalNode", label="Eval Knieval"),
-            NodeItem("Sv3DviewPropsNode", label="3dview Props"),
-            NodeItem("ListDecomposeNode", label="List Decompose"), # need to be completely reviewed
-            NodeItem("SvReRouteNode", label="Reroute Point"),
-            NodeItem("svAxisInputNode", label="Vector X|Y|Z")
-            ]),
-        ]
+
+    node_cats = OrderedDict()
+    ''' [node's bl_idname,   name in menu] '''
+
+    node_cats["Basic Viz"] = [
+        ["BmeshViewerNode", "Viewer BMesh"],
+        ["ViewerNode",      "Viewer draw"],
+        ["ViewerNode_text", "Viewer text"],
+        ["IndexViewerNode", "Viewer INDX"]]
+
+    node_cats["Basic Data"] = [
+        ["ObjectsNode",     "Objects in"],
+        ["SvTextInNode",    "Text in"],
+        ["SvTextOutNode",   "Text out"],
+        ["WifiInNode",      "Wifi in"],
+        ["WifiOutNode",     "Wifi out"]]
+
+    node_cats["Basic Debug"] = [
+        # ["Test1Node",     "Test1"],
+        # ["Test2Node",     "Test2"],
+        # ["ToolsNode",     "Update Button"],
+        ["SvFrameInfoNode", "Frame info"],
+        ["NoteNode",        "Note"],
+        ["GTextNode",       "GText"],
+        ["SvDebugPrintNode", "Debug print"]]
+
+    node_cats["List main"] = [
+        ["ListJoinNode",    "List Join"],
+        ["ZipNode",         "List Zip"],
+        ["ListLevelsNode",  "List Del Levels"],
+        ["ListLengthNode",  "List Length"],
+        ["ListSumNode",     "List Sum"],
+        ["MaskListNode",    "List Mask (out)"],
+        ["SvMaskJoinNode",  "List Mask Join (in)"],
+        ["ListMatchNode",   "List Match"],
+        ["ListFuncNode",    "List Math"],
+        ["ConverterNode",   "SocketConvert"]]
+
+    node_cats["List struct"] = [
+        ["ShiftNode",       "List Shift"],
+        ["ListRepeaterNode", "List Repeater"],
+        ["ListSliceNode",   "List Slice"],
+        ["SvListSplitNode", "List Split"],
+        ["ListFLNode",      "List First&Last"],
+        ["ListItem2Node",   "List Item"],
+        ["ListReverseNode", "List Reverse"],
+        ["ListShuffleNode", "List Shuffle"],
+        ["ListSortNode",    "List Sort"],
+        ["ListFlipNode",    "List Flip"]]
+
+    node_cats["Number"] = [
+        # numbers, formula nodes
+        ["GenListRangeIntNode", "Range Int"],
+        ["SvGenFloatRange", "Range Float"],
+        ["SvListInputNode", "List Input"],
+        ["RandomNode",      "Random"],
+        ["FloatNode",       "Float"],
+        ["IntegerNode",     "Int"],
+        ["Float2IntNode",   "Float 2 Int"],
+        # ["FormulaNode", "Formula"],
+        # for newbies this is not predictable why "Formula2" renamed
+        ["Formula2Node",    "Formula"],
+        ["ScalarMathNode",  "Math"],
+        ["SvMapRangeNode",  "Map Range"]]
+
+    node_cats["Generator"] = [
+        # objects, new elements, line, plane
+        ["LineNode",        "Line"],
+        ["PlaneNode",       "Plane"],
+        ["SvBoxNode",       "Box"],
+        ["SvCircleNode",    "Circle"],
+        ["CylinderNode",    "Cylinder"],
+        ["SphereNode",      "Sphere"],
+        ["HilbertNode",     "Hilbert"],
+        ["Hilbert3dNode",   "Hilbert3d"],
+        ["HilbertImageNode", "Hilbert image"],
+        ["ImageNode",       "Image"],
+        ["RandomVectorNode", "Random Vector"],
+        ["SvFormulaShapeNode", "Formula shape"],
+        ["SvScriptNode", "Scripted Node"]]
+
+    node_cats["Vector"] = [
+        ["GenVectorsNode",  "Vector in"],
+        ["VectorsOutNode",  "Vector out"],
+        ["VectorMoveNode",  "Vector Move"],
+        ["VectorMathNode",  "Vector Math"],
+        ["VectorDropNode",  "Vector Drop"],
+        ["VertsDelDoublesNode", "Vector X Doubles"],
+        ["EvaluateLineNode", "Vector Evaluate"],
+        ["SvInterpolationNode", "Vector Interpolation"],
+        ["SvVertSortNode", "Vector Sort"],
+        ["SvNoiseNode", "Vector Noise"]]
+
+    node_cats["Matrix"] = [
+        ["MatrixApplyNode",     "Matrix Apply"],
+        ["MatrixGenNode",       "Matrix in"],
+        ["MatrixOutNode",       "Matrix out"],
+        ["SvMatrixValueIn",     "Matrix Input"],
+        ["MatrixDeformNode",    "Matrix Deform"],
+        ["MatrixShearNode",     "Matrix Shear"],  # for uniform view renamed
+        ["MatrixInterpolationNode", "Matrix Interpolation"]]
+
+    node_cats["Modifier Change"] = [
+        # modifiers deforms and reorganize and reconstruct data
+        ["PolygonBoomNode",     "Polygon Boom"],
+        ["Pols2EdgsNode",       "Polygons to Edges"],
+        ["SvMeshJoinNode",      "Mesh Join"],
+        ["SvRemoveDoublesNode", "Remove Doubles"],
+        ["SvDeleteLooseNode",   "Delete Loose"],
+        ["SvSeparateMeshNode",  "Separate Loose Parts"],
+        ["SvVertMaskNode",      "Mask Vertices"],
+        ["SvFillsHoleNode",     "Fill Holes"],
+        ["SvIntersectEdgesNode", "Intersect Edges"]]
+
+    node_cats["Modifier Make"] = [
+        ["LineConnectNode",     "UV Connection"],
+        ["AdaptivePolsNode",    "Adaptive Polygons"],
+        ["SvAdaptiveEdgeNode",  "Adaptive Edges"],
+        ["CrossSectionNode",    "Cross Section"],
+        ["SvBisectNode",        "Bisect"],
+        ["SvSolidifyNode",      "Solidify"],
+        ["SvWireframeNode",     "Wireframe"],
+        ["DelaunayTriangulation2DNode", "Delaunay 2D "],
+        ["Voronoi2DNode",       "Voronoi 2D"],
+        ["SvConvexHullNode",    "Convex Hull"],
+        ["SvLatheNode",         "Lathe"]]
+
+    node_cats["Analyser"] = [
+        # investigate data
+        ["CentersPolsNode",     "Centers Polygons"],
+        ["VectorNormalNode",    "Vertex Normal"],
+        ["DistancePPNode",      "Distance"],
+        ["AreaNode",            "Area"],
+        ["SvBBoxNode",          "Bounding box"],
+        ["SvKDTreeNode",        "KDT Closest Verts"],
+        ["SvKDTreeEdgesNode",   "KDT Closest Edges"]]
+
+    node_cats["Beta test"] = [
+        # for testing convenience,
+        ["BGLdemoNode",         "Viewer BGL debug"],
+        ["BasicSplineNode",     "2pt Spline"],
+        ["svBasicArcNode",      "3pt Arc"],
+        ["SvOffsetNode",        "Offset"],
+        ["SvEmptyOutNode",      "Empty out"],
+        # ["Gen3DcursorNode", "3D cursor"],
+        ["EvalKnievalNode",     "Eval Knieval"],
+        ["Sv3DviewPropsNode",   "3dview Props"],
+        # need to be completely reviewed
+        ["ListDecomposeNode",   "List Decompose"],
+        ["SvReRouteNode",       "Reroute Point"],
+        ["svAxisInputNode",     "Vector X | Y | Z"]]
+
+    node_categories = []
+    for category, nodes in node_cats.items():
+        name_big = "SVERCHOK_" + category.replace(' ', '_')
+        node_categories.append(SverchNodeCategory(
+            name_big, category,
+            items=[NodeItem(bl_idname, name) for bl_idname, name in nodes]))
+
     return node_categories
+
 
 #def Sverchok_nodes_count():
 #    cats = make_categories()
@@ -385,6 +394,7 @@ def register():
     bpy.utils.register_class(StringsSocket)
     bpy.utils.register_class(VerticesSocket)
 
+
 def unregister():
     bpy.utils.unregister_class(VerticesSocket)
     bpy.utils.unregister_class(StringsSocket)
@@ -392,8 +402,3 @@ def unregister():
     bpy.utils.unregister_class(MatrixSocket)
     bpy.utils.unregister_class(SverchCustomTree)
     bpy.utils.unregister_class(SvColors)
-
-
-
-
-
