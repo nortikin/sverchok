@@ -1,4 +1,5 @@
 nodes_dict = {'analyzer': ['area',
+                           'volume',
                            'bbox',
                            'distance_pp',
                            'polygons_centers',
@@ -113,4 +114,5 @@ nodes_dict = {'analyzer': ['area',
                          'vertices_sort',
                          'axis_input']
               }
+
 

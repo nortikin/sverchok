@@ -69,7 +69,7 @@ class SvOffsetNode(bpy.types.Node, SverchCustomTreeNode):
                 offset = self.inputs['Offset'].sv_get()[0]
                 nsides = self.inputs['N sides'].sv_get()[0][0]
                 radius = self.inputs['Radius'].sv_get()[0]
-                print(radius,nsides,offset)
+                #print(radius,nsides,offset)
                 outv = []
                 oute = []
                 outo = []
@@ -263,3 +263,4 @@ def unregister():
 
 if __name__ == '__main__':
     register()
+
