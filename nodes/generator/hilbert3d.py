@@ -18,19 +18,19 @@
 
 import bpy
 from bpy.props import IntProperty, FloatProperty
-
+import numpy as np
 from node_tree import SverchCustomTreeNode
 from data_structure import updateNode, SvSetSocketAnyType, SvGetSocketAnyType
 
 
-class HilbertNode(bpy.types.Node, SverchCustomTreeNode):
-    ''' Hilbert line '''
-    bl_idname = 'HilbertNode'
-    bl_label = 'Hilbert'
+class Hilbert3dNode(bpy.types.Node, SverchCustomTreeNode):
+    ''' Hilbert3d line '''
+    bl_idname = 'Hilbert3dNode'
+    bl_label = 'Hilbert3d'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     level_ = IntProperty(name='level', description='Level',
-                         default=2, min=1, max=6,
+                         default=2, min=1, max=5,
                          options={'ANIMATABLE'}, update=updateNode)
     size_ = FloatProperty(name='size', description='Size',
                           default=1.0, min=0.1,
@@ -60,43 +60,50 @@ class HilbertNode(bpy.types.Node, SverchCustomTreeNode):
 
         # outputs
         if self.outputs['Vertices'].links:
-            verts = self.hilbert(0.0, 0.0, Step*1.0, 0.0, 0.0, Step*1.0, Integer)
-            SvSetSocketAnyType(self, 'Vertices', [verts])
+            verts = self.hilbert(Integer)
+            SvSetSocketAnyType(self, 'Vertices', verts)
 
         if self.outputs['Edges'].links:
             listEdg = []
-            r = len(verts)-1
+            r = len(verts[0])-1
             for i in range(r):
                 listEdg.append((i, i+1))
 
             edg = list(listEdg)
             SvSetSocketAnyType(self, 'Edges', [edg])
 
-    def hilbert(self, x0, y0, xi, xj, yi, yj, n):
-        out = []
-        if n <= 0:
-            X = x0 + (xi + yi)/2
-            Y = y0 + (xj + yj)/2
-            out.append(X)
-            out.append(Y)
-            out.append(0)
-            return [out]
+    def hilbert(self, n):
+            
+        in_sockets = [
+            ['s', 'n', n]]
 
-        else:
-            out.extend(self.hilbert(x0,               y0,               yi/2, yj/2, xi/2, xj/2, n - 1))
-            out.extend(self.hilbert(x0 + xi/2,        y0 + xj/2,        xi/2, xj/2, yi/2, yj/2, n - 1))
-            out.extend(self.hilbert(x0 + xi/2 + yi/2, y0 + xj/2 + yj/2, xi/2, xj/2, yi/2, yj/2, n - 1))
-            out.extend(self.hilbert(x0 + xi/2 + yi,   y0 + xj/2 + yj,  -yi/2,-yj/2,-xi/2,-xj/2, n - 1))
-            return out
+        def hilbert3(n):
+            if (n <= 0):
+                x, y, z = 0, 0, 0
+            else:
+                [xo, yo, zo] = hilbert3(n-1)
+                x = .5 * np.array([.5+zo, .5+yo, -.5+yo, -.5-xo, -.5-xo, -.5-yo, .5-yo, .5+zo])
+                y = .5 * np.array([.5+xo, .5+zo, .5+zo, .5+yo, -.5+yo, -.5-zo, -.5-zo, -.5-xo])
+                z = .5 * np.array([.5+yo, -.5+xo, -.5+xo, .5-zo, .5-zo, -.5+xo, -.5+xo, .5-yo])
+            return [x, y, z]
+
+        vx, vy, vz = hilbert3(n)
+        vx = vx.flatten().tolist()
+        vy = vy.flatten().tolist()
+        vz = vz.flatten().tolist()
+        verts = [list(zip(vx, vy, vz))]
+        return verts
 
     def update_socket(self, context):
         self.update()
 
 
 def register():
-    bpy.utils.register_class(HilbertNode)
+    bpy.utils.register_class(Hilbert3dNode)
 
 
 def unregister():
-    bpy.utils.unregister_class(HilbertNode)
+    bpy.utils.unregister_class(Hilbert3dNode)
 
+if __name__  == '__main__':
+    register()

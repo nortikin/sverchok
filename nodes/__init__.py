@@ -28,6 +28,7 @@ nodes_dict = {'analyzer': ['area',
                             'cylinder',
                             'hilbert_image',
                             'hilbert',
+                            'hilbert3d',
                             'image',
                             'line',
                             'plane',
@@ -112,3 +113,4 @@ nodes_dict = {'analyzer': ['area',
                          'vertices_sort',
                          'axis_input']
               }
+
