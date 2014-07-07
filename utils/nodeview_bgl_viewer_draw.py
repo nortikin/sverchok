@@ -118,12 +118,14 @@ def callback_disable_all():
 def draw_callback_px(n_id, data):
 
     space = bpy.context.space_data
+  
     ng_view = space.edit_tree
+    # ng_view can be None
+    if not ng_view:
+        return
     ng_name = space.edit_tree.name
-
     if not (data['tree_name'] == ng_name):
         return
-
     if not isinstance(ng_view, node_tree.SverchCustomTree):
         return
 
@@ -139,7 +141,6 @@ def draw_callback_px(n_id, data):
     # x = 30  # region.width
     # y = region.height - 40
     ypos = y
-
 
     for line in lines:
         blf.position(0, x, ypos, 0)
