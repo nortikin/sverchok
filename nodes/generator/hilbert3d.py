@@ -60,7 +60,7 @@ class Hilbert3dNode(bpy.types.Node, SverchCustomTreeNode):
 
         # outputs
         if self.outputs['Vertices'].links:
-            verts = self.hilbert(Integer)
+            verts = self.hilbert(Step, Integer)
             SvSetSocketAnyType(self, 'Vertices', verts)
 
         if self.outputs['Edges'].links:
@@ -72,19 +72,16 @@ class Hilbert3dNode(bpy.types.Node, SverchCustomTreeNode):
             edg = list(listEdg)
             SvSetSocketAnyType(self, 'Edges', [edg])
 
-    def hilbert(self, n):
-            
-        in_sockets = [
-            ['s', 'n', n]]
+    def hilbert(self, step, n):
 
         def hilbert3(n):
             if (n <= 0):
                 x, y, z = 0, 0, 0
             else:
                 [xo, yo, zo] = hilbert3(n-1)
-                x = .5 * np.array([.5+zo, .5+yo, -.5+yo, -.5-xo, -.5-xo, -.5-yo, .5-yo, .5+zo])
-                y = .5 * np.array([.5+xo, .5+zo, .5+zo, .5+yo, -.5+yo, -.5-zo, -.5-zo, -.5-xo])
-                z = .5 * np.array([.5+yo, -.5+xo, -.5+xo, .5-zo, .5-zo, -.5+xo, -.5+xo, .5-yo])
+                x = step * .5 * np.array([.5+zo, .5+yo, -.5+yo, -.5-xo, -.5-xo, -.5-yo, .5-yo, .5+zo])
+                y = step * .5 * np.array([.5+xo, .5+zo, .5+zo, .5+yo, -.5+yo, -.5-zo, -.5-zo, -.5-xo])
+                z = step * .5 * np.array([.5+yo, -.5+xo, -.5+xo, .5-zo, .5-zo, -.5+xo, -.5+xo, .5-yo])
             return [x, y, z]
 
         vx, vy, vz = hilbert3(n)
@@ -107,3 +104,4 @@ def unregister():
 
 if __name__  == '__main__':
     register()
+
