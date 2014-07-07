@@ -59,6 +59,7 @@ import nodes
 
 import data_structure
 import node_tree
+import menu
 from .utils import sv_tools
 from .core import handlers
 
@@ -76,6 +77,7 @@ if "bpy" in locals():
     importlib.reload(data_structure)
     importlib.reload(node_tree)
     importlib.reload(nodes)
+    importlib.reload(menu)
     importlib.reload(sv_tools)
     importlib.reload(handlers)
     # (index_)viewer_draw -> name not defined error, because I never used it??
@@ -86,8 +88,7 @@ if "bpy" in locals():
     
     if 'SVERCHOK' in nodeitems_utils._node_categories:
         nodeitems_utils.unregister_node_categories("SVERCHOK")
-    nodeitems_utils.register_node_categories("SVERCHOK",
-                                                 node_tree.make_categories())
+    nodeitems_utils.register_node_categories("SVERCHOK", menu.make_categories())
 
 import bpy
 from bpy.types import AddonPreferences
@@ -98,7 +99,7 @@ class SverchokPreferences(AddonPreferences):
     bl_idname = __name__
 
     def update_debug_mode(self, context):
-        print(dir(context))
+        #print(dir(context))
         data_structure.DEBUG_MODE = self.show_debug
 
     def update_heat_map(self, context):
@@ -178,8 +179,7 @@ def register():
     bpy.utils.register_class(SverchokPreferences)
 
     if 'SVERCHOK' not in nodeitems_utils._node_categories:
-        nodeitems_utils.register_node_categories("SVERCHOK",
-                                                 node_tree.make_categories())
+        nodeitems_utils.register_node_categories("SVERCHOK", menu.make_categories())
 
 
 def unregister():

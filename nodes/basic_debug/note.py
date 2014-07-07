@@ -33,8 +33,7 @@ class SverchokNote(bpy.types.Operator):
     bl_options = {'REGISTER', 'UNDO'}
 
     text = StringProperty(name='text',
-                          default='',
-                          update=updateNode)
+                          default='')
 
     def execute(self, context):
         name = context.screen.name
@@ -65,8 +64,7 @@ class SverchokUnNote(bpy.types.Operator):
     bl_options = {'REGISTER', 'UNDO'}
 
     text = StringProperty(name='text',
-                          default='',
-                          update=updateNode)
+                          default='')
 
     def execute(self, context):
         name = context.screen.name
@@ -144,7 +142,3 @@ def unregister():
 
 if __name__ == '__main__':
     register()
-
-
-
-
