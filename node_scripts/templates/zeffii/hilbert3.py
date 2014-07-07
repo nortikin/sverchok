@@ -1,4 +1,7 @@
 """
+
+after octave code by cicciospice, numpy recode by zeffii
+
 function [x,y,z] = hilbert3(n)
     if n <= 0
         x = 0;
@@ -40,6 +43,3 @@ def sv_main(n=3):
     ]
 
     return in_sockets, out_sockets
-
-# print('-----')
-# print( sv_main(2))
