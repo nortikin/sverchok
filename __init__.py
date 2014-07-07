@@ -98,7 +98,7 @@ class SverchokPreferences(AddonPreferences):
     bl_idname = __name__
 
     def update_debug_mode(self, context):
-        print(dir(context))
+        #print(dir(context))
         data_structure.DEBUG_MODE = self.show_debug
 
     def update_heat_map(self, context):
