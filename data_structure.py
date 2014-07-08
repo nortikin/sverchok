@@ -24,7 +24,7 @@ import ast
 import bpy
 from mathutils import Vector, Matrix
 
-from core.update_system import sverchok_update
+from  core.update_system import sverchok_update
 
 global bmesh_mapping, per_cache
 
@@ -36,7 +36,13 @@ SVERCHOK_NAME = "sverchok"
 
 #handle for object in node
 temp_handle = {}
-# wifi node data, not used
+# cache node group update trees it not used, as i see
+# cache_nodes = {}
+# cache node group update trees
+list_nodes4update = {}
+# cache for partial update lists
+partial_update_cache = {}
+# wifi node data
 sv_Vars = {}
 # socket cache
 socket_data_cache = {}
@@ -727,9 +733,7 @@ def heat_map_state(state):
 def updateNode(self, context):
     """
     When a node has changed state and need to call a partial update.
-    For example a user exposed bpy.prop, the context argument isn't 
-    used but need to usable as a callback for update= in with 
-    bpy.props.
+    For example a user exposed bpy.prop
     """
     global DEBUG_MODE
     a = time.perf_counter()
@@ -746,32 +750,85 @@ def updateNode(self, context):
 ##############################################################
 ##############################################################
 
-# 
+# node has to have self veriables:
+# self.typ = bpy.props.StringProperty(name='typ', default='')
+# self.newsock = bpy.props.BoolProperty(name='newsock', default=False)
+# and in update:
 # inputsocketname = 'data' # 'data' - name of your input socket, that defines type
-# outputsocketname = ['dataTrue','dataFalse'] # 'data...' - are  of your sockets to be changed
+# outputsocketname = ['dataTrue','dataFalse'] # 'data...' - are names of your sockets to be changed
 # changable_sockets(self, inputsocketname, outputsocketname)
 
 
+def check_sockets(self, inputsocketname):
+    if type(self.inputs[inputsocketname].links[0].from_socket) == bpy.types.VerticesSocket:
+        if self.typ == 'v':
+            self.newsock = False
+        else:
+            self.typ = 'v'
+            self.newsock = True
+    if type(self.inputs[inputsocketname].links[0].from_socket) == bpy.types.StringsSocket:
+        if self.typ == 's':
+            self.newsock = False
+        else:
+            self.typ = 's'
+            self.newsock = True
+    if type(self.inputs[inputsocketname].links[0].from_socket) == bpy.types.MatrixSocket:
+        if self.typ == 'm':
+            self.newsock = False
+        else:
+            self.typ = 'm'
+            self.newsock = True
+    return
+
+
+# cleaning of old not fited
+def clean_sockets(self, outputsocketname):
+    for n in outputsocketname:
+        if n in self.outputs:
+            self.outputs.remove(self.outputs[n])
+    return
+
+
 # main def for changable sockets type
-def changable_sockets(node, inputsocketname, outputsocketname):
-    '''
-    arguments: node, name of socket to follow, list of socket to change
-    '''
-    in_socket = node.inputs.get(inputsocketname)
-    outputs = node.outputs
-    if in_socket and in_socket.links:
-        s_type = in_socket.links[0].from_socket.bl_idname
-        if node.outputs[outputsocketname[0]].bl_idname != s_type:
-            for n in outputsocketname:
-                if n in outputs:
-                    outputs.remove(outputs[n])
-            for n in outputsocketname:
-                outputs.new(s_type, n)
+def changable_sockets(self, inputsocketname, outputsocketname):
+    if len(self.inputs[inputsocketname].links) > 0:
+        check_sockets(self, inputsocketname)
+        if self.newsock:
+            clean_sockets(self, outputsocketname)
+            self.newsock = False
+            if self.typ == 'v':
+                for n in outputsocketname:
+                    self.outputs.new('VerticesSocket', n, n)
+            if self.typ == 's':
+                for n in outputsocketname:
+                    self.outputs.new('StringsSocket', n, n)
+            if self.typ == 'm':
+                for n in outputsocketname:
+                    self.outputs.new('MatrixSocket', n, n)
+        else:
+            self.newsock = False
+    return
+
+
+def get_socket_type(node, inputsocketname):
+    if type(node.inputs[inputsocketname].links[0].from_socket) == bpy.types.VerticesSocket:
+        return 'v'
+    if type(node.inputs[inputsocketname].links[0].from_socket) == bpy.types.StringsSocket:
+        return 's'
+    if type(node.inputs[inputsocketname].links[0].from_socket) == bpy.types.MatrixSocket:
+        return 'm'
 
 
 def get_socket_type_full(node, inputsocketname):
+   # this is solution, universal and future proof.
     return node.inputs[inputsocketname].links[0].from_socket.bl_idname
-
+     # it is real solution, universal
+    #if type(node.inputs[inputsocketname].links[0].from_socket) == bpy.types.VerticesSocket:
+    #    return 'VerticesSocket'
+    #if type(node.inputs[inputsocketname].links[0].from_socket) == bpy.types.StringsSocket:
+    #    return 'StringsSocket'
+    #if type(node.inputs[inputsocketname].links[0].from_socket) == bpy.types.MatrixSocket:
+    #    return 'MatrixSocket'
 
 
 ###########################################
@@ -801,21 +858,34 @@ def multi_socket(node, min=1, start=0, breck=False, output=False):
     '''
     #probably incorrect state due or init or change of inputs
     # do nothing
-    sockets = node.outputs if output else node.inputs
-    if not len(sockets):
+    if not len(node.inputs):
         return
     if min < 1:
         min = 1
-    if sockets[-1].links:
-        length = start + len(sockets)
-        if breck:
-            name = node.base_name + '[' + str(length) + ']'
+    if not output:
+        if node.inputs[-1].links:
+            length = start + len(node.inputs)
+            if breck:
+                name = node.base_name + '[' + str(length) + ']'
+            else:
+                name = node.base_name + str(length)
+            node.inputs.new(node.multi_socket_type, name, name)
         else:
-            name = node.base_name + str(length)
-        node.inputs.new(node.multi_socket_type, name, name)
+            while len(node.inputs) > min and not node.inputs[-2].links:
+                node.inputs.remove(node.inputs[-1])
     else:
-        while len(node.inputs) > min and not node.inputs[-2].links:
-            node.inputs.remove(node.inputs[-1])
+        lenod = len(node.outputs)
+        if lenod < output:
+            length = output-lenod
+            for n in range(length):
+                if breck:
+                    name = node.base_name + '[' + str(n+lenod-1) + ']'
+                else:
+                    name = node.base_name + str(n+lenod-1)
+                node.outputs.new(node.multi_socket_type, name, name)
+        else:
+            while len(node.outputs) > output:
+                node.outputs.remove(node.outputs[-1])
 
 
 #####################################
@@ -860,7 +930,7 @@ def SvGetSocketAnyType(self, socket, deepcopy=True):
 
 def SvSetSocketAnyType(self, socket_name, out):
     SvSetSocket(self.outputs[socket_name], out)
-
+    return
 
 # faster than builtin deep copy for us.
 # useful for our limited case
@@ -878,6 +948,15 @@ def sv_deep_copy(lst):
 
 # Build string for showing in socket label
 def SvGetSocketInfo(socket):
+    def build_info(data):
+        if not data:
+            return str(data)
+        #if isinstance(data,list):
+            #return '['+build_info(data[0])
+        #elif isinstance(data,tuple):
+            #return '('+build_info(data[0])
+        else:
+            return str(data)
     global socket_data_cache
     ng = socket.id_data.name
     if socket.is_output:

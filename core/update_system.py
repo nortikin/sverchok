@@ -264,20 +264,16 @@ def do_update_heat_map(node_list, nodes):
     Create a heat map for the node tree, under development.
     """
     global DEBUG_MODE
-    node_info = [] 
+    times = []
     node_list = list(node_list)
     for name in node_list:
         if name in nodes:
-            node = nodes[name]
             start = time.perf_counter()
-            node.update()
+            nodes[name].update()
             delta = time.perf_counter()-start
             if data_structure.DEBUG_MODE:
                 print("Updated  {0} in:{1}".format(name, round(delta, 4)))
-            if node.hidden:
-                node_list.append((delta, node.location[:], 30, node.width_hidden))
-            else:
-                node_list.append((delta, node.location[:], 30, node.width_hidden))
+            times.append(delta)
     if not times:
         return
     if not nodes.id_data.sv_user_colors:
