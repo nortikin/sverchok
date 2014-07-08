@@ -62,6 +62,8 @@ class NoteNode(bpy.types.Node, SverchCustomTreeNode):
     def init(self, context):
         n_id = node_id(self)
         self.width = 400
+        self.color = (.9, .9, .9)
+        self.use_custom_color = True
         self.outputs.new('StringsSocket', "Text", "Text")
     
     def draw_buttons(self, context, layout):
@@ -72,11 +74,10 @@ class NoteNode(bpy.types.Node, SverchCustomTreeNode):
             data = self.text_cache.get(self.n_id)
             if data and data[0] == self.width:
                 for line in data[1]:
-                    print(line)
                     layout.label(text=line)
                 return
                 
-        text_lines = format_text(self.text, self.width )
+        text_lines = format_text(self.text, self.width)
         for line in text_lines:
             layout.label(text=line)
 
@@ -85,7 +86,9 @@ class NoteNode(bpy.types.Node, SverchCustomTreeNode):
         
     def update(self):
         n_id = node_id(self)
-        
+        if not n_id in self.text_cache:
+            self.format_text()
+            
         if 'Text' in self.outputs and self.outputs['Text'].links:
             text = self.text.split(" ")
             SvSetSocketAnyType(self, 'Text', [text])
