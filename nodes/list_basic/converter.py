@@ -29,28 +29,20 @@ class ConverterNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     def init(self, context):
-        self.inputs.new('StringsSocket', "data", "data")
-        self.outputs.new('VerticesSocket', 'vertices', 'vertices')
-        self.outputs.new('StringsSocket', 'data', 'data')
-        self.outputs.new('MatrixSocket', 'matrix', 'matrix')
+        self.inputs.new('StringsSocket', "data")
+        self.outputs.new('VerticesSocket', 'vertices')
+        self.outputs.new('StringsSocket', 'data')
+        self.outputs.new('MatrixSocket', 'matrix')
 
     def draw_buttons(self, context, layout):
         pass
 
     def update(self):
-        if 'vertices' in self.outputs and self.outputs['vertices'].links or \
-           'data' in self.outputs and self.outputs['data'].links or \
-           'matrix' in self.outputs and self.outputs['matrix'].links:
-
-            out = SvGetSocketAnyType(self, self.inputs['data'])
-
-            if self.outputs['vertices'].links:
-                SvSetSocketAnyType(self, 'vertices', out)
-            if self.outputs['data'].links:
-                SvSetSocketAnyType(self, 'data', out)
-            if self.outputs['matrix'].links:
-                SvSetSocketAnyType(self, 'matrix', out)
-
+        if "data" in self.inputs and self.inputs[0].links:            
+            out = SvGetSocketAnyType(self, self.inputs[0], deepcopy=False)
+            for s in self.outputs:
+                if s.links:
+                    SvSetSocketAnyType(self, s.name, out)
 
 def register():
     bpy.utils.register_class(ConverterNode)
