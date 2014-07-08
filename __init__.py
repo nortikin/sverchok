@@ -32,11 +32,11 @@
 bl_info = {
     "name": "Sverchok",
     "author": "Nedovizin Alexander, Gorodetskiy Nikita, Linus Yng, Agustin Jimenez, Dealga McArdle",
-    "version": (0, 4, 0),
+    "version": (0, 4, 2),
     "blender": (2, 7, 0),
     "location": "Nodes > CustomNodesTree > Add user nodes",
     "description": "Do parametric node-based geometry programming",
-    "warning": "requires nodes window",
+    "warning": "",
     "wiki_url": "http://wiki.blender.org/index.php/Extensions:2.6/Py/Scripts/Nodes/Sverchok",
     "tracker_url": "http://www.blenderartists.org/forum/showthread.php?272679-Addon-WIP-Sverchok-parametric-tool-for-architects",
     "category": "Node"}
@@ -198,3 +198,4 @@ def unregister():
 
     if 'SVERCHOK' not in nodeitems_utils._node_categories:
         nodeitems_utils.unregister_node_categories("SVERCHOK")
+

@@ -125,9 +125,9 @@ class SverchokCheckForUpgrades(bpy.types.Operator):
 
         if version_local != version_url:
             sv_new_version = True
-            report({'INFO'}, "There is new version.")
+            report({'INFO'}, "New version {0}".format(version_url))
         else:
-            report({'INFO'}, "You already have latest version of Sverchok, no need to upgrade.")
+            report({'INFO'}, "Your version {0} is last.".format(version_local))
         return {'FINISHED'}
 
 
@@ -155,15 +155,18 @@ class SverchokUpdateAddon(bpy.types.Operator):
             return {'CANCELLED'}
         try:
             #os.removedirs(os.path.normpath(os.path.join(os.curdir, 'sverchok')))
+            err=0
             ZipFile(file[0]).extractall(path=os.curdir, members=None, pwd=None)
             bpy.data.window_managers[0].progress_update(90)
+            err=1
             os.remove(file[0])
+            err=2
             sv_new_version = False
             bpy.data.window_managers[0].progress_update(100)
             bpy.data.window_managers[0].progress_end()
             self.report({'INFO'}, "Unzipped, reload addons with F8 button")
         except:
-            self.report({'ERROR'}, "Cannot extract files")
+            self.report({'ERROR'}, "Cannot extract files errno {0}".format(str(err)))
             bpy.data.window_managers[0].progress_end()
             os.remove(file[0])
             return {'CANCELLED'}
@@ -320,4 +323,5 @@ def unregister():
 
 if __name__  ==  '__main__':
     register()
+
 
