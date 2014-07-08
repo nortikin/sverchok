@@ -70,16 +70,17 @@ class NoteNode(bpy.types.Node, SverchCustomTreeNode):
             
         row = layout.row()
         row.prop(self, "text")
+        col = layout.column(align=True)
         if self.n_id in self.text_cache:
             data = self.text_cache.get(self.n_id)
             if data and data[0] == self.width:
                 for line in data[1]:
-                    layout.label(text=line)
+                    col.label(text=line)
                 return
                 
         text_lines = format_text(self.text, self.width)
         for line in text_lines:
-            layout.label(text=line)
+            col.label(text=line)
 
     def draw_buttons_ext(self, context, layout):
         layout.prop(self, "text_width")
