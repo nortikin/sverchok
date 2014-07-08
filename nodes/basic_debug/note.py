@@ -87,9 +87,7 @@ class NoteNode(bpy.types.Node, SverchCustomTreeNode):
         n_id = node_id(self)
         
         if 'Text' in self.outputs and self.outputs['Text'].links:
-            text = self.text_cache.get(n_id)
-            if not text:
-                text = self.format_text()
+            text = self.text.split(" ")
             SvSetSocketAnyType(self, 'Text', [text])
     
     def copy(self, node):
