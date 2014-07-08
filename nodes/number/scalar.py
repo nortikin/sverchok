@@ -224,18 +224,23 @@ class ScalarMathNode(bpy.types.Node, SverchCustomTreeNode):
     # [1,2,3] + [1,2] -> [2,4,5] , list is expanded to match length, [-1] is repeated
     # odd cases too.
     # [1,2,[1,1,1]] + [[1,2,3],1,2] -> [[2,3,4],3,[3,3,3]]
-    def recurse_fxy(self, l1, l2, f):
-        if (isinstance(l1, (int, float)) and
-           isinstance(l2, (int, float))):
+   def recurse_fxy(self, l1, l2, f):
+        if (isinstance(l1, (int, float)) and isinstance(l2, (int, float))):
                 return f(l1, l2)
-        if (isinstance(l2, (list, tuple)) and
-           isinstance(l1, (list, tuple))):
-            data = zip(*match_long_repeat([l1, l2]))
-            return [self.recurse_fxy(ll1, ll2, f) for ll1, ll2 in data]
+                
+        if (isinstance(l2, (list, tuple)) and isinstance(l1, (list, tuple))):
+            fl = l2[-1] if len(l1) > len(l2) else l1[-1]
+            res = []
+            res_append
+            for x, y in zip_longest(l1, l2, fillvalue=fl):
+                res_append(self.recurse_fxy(x, y, f)
+            return res
+            
         if isinstance(l1, (list, tuple)) and isinstance(l2, (int, float)):
             return self.recurse_fxy(l1, [l2], f)
         if isinstance(l1, (int, float)) and isinstance(l2, (list, tuple)):
             return self.recurse_fxy([l1], l2, f)
+
 
     def update_socket(self, context):
         self.update()
