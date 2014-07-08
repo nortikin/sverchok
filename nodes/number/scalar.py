@@ -222,7 +222,7 @@ class ScalarMathNode(bpy.types.Node, SverchCustomTreeNode):
             
         if 'Y' in self.inputs:
             y = self.inputs['Y'].sv_get(deepcopy=False)
-
+        
         # outputs
         if 'float' in self.outputs and self.outputs['float'].links:
             result = []
