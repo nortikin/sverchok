@@ -26,96 +26,97 @@ from node_tree import SverchNodeCategory
 def make_categories():
 
     node_cats = OrderedDict()
-    ''' [node's bl_idname,   name in menu] '''
+    ''' [node's bl_idname,      name in menu] '''
 
     node_cats["Basic Viz"] = [
-        ["BmeshViewerNode", "Viewer BMesh"],
-        ["ViewerNode",      "Viewer draw"],
-        ["ViewerNode_text", "Viewer text"],
-        ["IndexViewerNode", "Viewer INDX"]]
+        ["ViewerNode",          "Viewer draw"],
+        ["ViewerNode_text",     "Viewer text"],
+        ["IndexViewerNode",     "Viewer INDX"],
+        ["Sv3DviewPropsNode",   "3dview Props"],
+        ["BmeshViewerNode",     "Viewer BMesh"]]
 
     node_cats["Basic Data"] = [
-        ["ObjectsNode",     "Objects in"],
-        ["SvTextInNode",    "Text in"],
-        ["SvTextOutNode",   "Text out"],
-        ["WifiInNode",      "Wifi in"],
-        ["WifiOutNode",     "Wifi out"]]
+        ["ObjectsNode",         "Objects in"],
+        ["SvTextInNode",        "Text in"],
+        ["SvTextOutNode",       "Text out"],
+        ["WifiInNode",          "Wifi in"],
+        ["WifiOutNode",         "Wifi out"]]
 
     node_cats["Basic Debug"] = [
-        # ["Test1Node",     "Test1"],
-        # ["Test2Node",     "Test2"],
-        # ["ToolsNode",     "Update Button"],
-        ["SvFrameInfoNode", "Frame info"],
-        ["NoteNode",        "Note"],
-        ["GTextNode",       "GText"],
-        ["SvDebugPrintNode", "Debug print"]]
+        # ["Test1Node",         "Test1"],
+        # ["Test2Node",         "Test2"],
+        # ["ToolsNode",         "Update Button"],
+        ["SvFrameInfoNode",     "Frame info"],
+        ["NoteNode",            "Note"],
+        ["GTextNode",           "GText"],
+        ["SvDebugPrintNode",    "Debug print"]]
 
     node_cats["List main"] = [
-        ["ListJoinNode",    "List Join"],
-        ["ZipNode",         "List Zip"],
-        ["ListLevelsNode",  "List Del Levels"],
-        ["ListLengthNode",  "List Length"],
-        ["ListSumNode",     "List Sum"],
-        ["MaskListNode",    "List Mask (out)"],
-        ["SvMaskJoinNode",  "List Mask Join (in)"],
-        ["ListMatchNode",   "List Match"],
-        ["ListFuncNode",    "List Math"],
-        ["ConverterNode",   "SocketConvert"]]
+        ["ListJoinNode",        "List Join"],
+        ["ZipNode",             "List Zip"],
+        ["ListLevelsNode",      "List Del Levels"],
+        ["ListLengthNode",      "List Length"],
+        ["ListSumNode",         "List Sum"],
+        ["MaskListNode",        "List Mask (out)"],
+        ["SvMaskJoinNode",      "List Mask Join (in)"],
+        ["ListMatchNode",       "List Match"],
+        ["ListFuncNode",        "List Math"],
+        ["ConverterNode",       "SocketConvert"]]
 
     node_cats["List struct"] = [
-        ["ShiftNode",       "List Shift"],
-        ["ListRepeaterNode", "List Repeater"],
-        ["ListSliceNode",   "List Slice"],
-        ["SvListSplitNode", "List Split"],
-        ["ListFLNode",      "List First&Last"],
-        ["ListItem2Node",   "List Item"],
-        ["ListReverseNode", "List Reverse"],
-        ["ListShuffleNode", "List Shuffle"],
-        ["ListSortNode",    "List Sort"],
-        ["ListFlipNode",    "List Flip"]]
+        ["ShiftNode",           "List Shift"],
+        ["ListRepeaterNode",    "List Repeater"],
+        ["ListSliceNode",       "List Slice"],
+        ["SvListSplitNode",     "List Split"],
+        ["ListFLNode",          "List First&Last"],
+        ["ListItem2Node",       "List Item"],
+        ["ListReverseNode",     "List Reverse"],
+        ["ListShuffleNode",     "List Shuffle"],
+        ["ListSortNode",        "List Sort"],
+        ["ListFlipNode",        "List Flip"]]
 
     node_cats["Number"] = [
         # numbers, formula nodes
         ["GenListRangeIntNode", "Range Int"],
-        ["SvGenFloatRange", "Range Float"],
-        ["SvListInputNode", "List Input"],
-        ["RandomNode",      "Random"],
-        ["FloatNode",       "Float"],
-        ["IntegerNode",     "Int"],
-        ["Float2IntNode",   "Float 2 Int"],
+        ["SvGenFloatRange",     "Range Float"],
+        ["SvListInputNode",     "List Input"],
+        ["RandomNode",          "Random"],
+        ["FloatNode",           "Float"],
+        ["IntegerNode",         "Int"],
+        ["Float2IntNode",       "Float 2 Int"],
         # ["FormulaNode", "Formula"],
         # for newbies this is not predictable why "Formula2" renamed
-        ["Formula2Node",    "Formula"],
-        ["ScalarMathNode",  "Math"],
-        ["SvMapRangeNode",  "Map Range"]]
+        ["Formula2Node",        "Formula"],
+        ["ScalarMathNode",      "Math"],
+        ["SvMapRangeNode",      "Map Range"]]
 
     node_cats["Generator"] = [
         # objects, new elements, line, plane
-        ["LineNode",        "Line"],
-        ["PlaneNode",       "Plane"],
-        ["SvBoxNode",       "Box"],
-        ["SvCircleNode",    "Circle"],
-        ["CylinderNode",    "Cylinder"],
-        ["SphereNode",      "Sphere"],
-        ["HilbertNode",     "Hilbert"],
-        ["Hilbert3dNode",   "Hilbert3d"],
-        ["HilbertImageNode", "Hilbert image"],
-        ["ImageNode",       "Image"],
-        ["RandomVectorNode", "Random Vector"],
-        ["SvFormulaShapeNode", "Formula shape"],
-        ["SvScriptNode", "Scripted Node"]]
+        ["LineNode",            "Line"],
+        ["PlaneNode",           "Plane"],
+        ["SvBoxNode",           "Box"],
+        ["SvCircleNode",        "Circle"],
+        ["CylinderNode",        "Cylinder"],
+        ["SphereNode",          "Sphere"],
+        ["HilbertNode",         "Hilbert"],
+        ["Hilbert3dNode",       "Hilbert3d"],
+        ["HilbertImageNode",    "Hilbert image"],
+        ["ImageNode",           "Image"],
+        ["RandomVectorNode",    "Random Vector"],
+        ["SvFormulaShapeNode",  "Formula shape"],
+        ["SvScriptNode",        "Scripted Node"]]
 
     node_cats["Vector"] = [
-        ["GenVectorsNode",  "Vector in"],
-        ["VectorsOutNode",  "Vector out"],
-        ["VectorMoveNode",  "Vector Move"],
-        ["VectorMathNode",  "Vector Math"],
-        ["VectorDropNode",  "Vector Drop"],
+        ["GenVectorsNode",      "Vector in"],
+        ["VectorsOutNode",      "Vector out"],
+        ["VectorMoveNode",      "Vector Move"],
+        ["VectorMathNode",      "Vector Math"],
+        ["VectorDropNode",      "Vector Drop"],
         ["VertsDelDoublesNode", "Vector X Doubles"],
-        ["EvaluateLineNode", "Vector Evaluate"],
+        ["EvaluateLineNode",    "Vector Evaluate"],
         ["SvInterpolationNode", "Vector Interpolation"],
-        ["SvVertSortNode", "Vector Sort"],
-        ["SvNoiseNode", "Vector Noise"]]
+        ["SvVertSortNode",      "Vector Sort"],
+        ["SvNoiseNode",         "Vector Noise"]]
 
     node_cats["Matrix"] = [
         ["MatrixApplyNode",     "Matrix Apply"],
@@ -168,14 +169,13 @@ def make_categories():
         ["svBasicArcNode",      "3pt Arc"],
         ["SvOffsetNode",        "Offset"],
         ["SvEmptyOutNode",      "Empty out"],
-        # ["Gen3DcursorNode", "3D cursor"],
         ["EvalKnievalNode",     "Eval Knieval"],
-        ["Sv3DviewPropsNode",   "3dview Props"],
         # need to be completely reviewed
         ["ListDecomposeNode",   "List Decompose"],
         ["SvReRouteNode",       "Reroute Point"],
-        ["SvVolumeNode",       "Volume"],
-        ["svAxisInputNode",     "Vector X | Y | Z"]]
+        ["SvVolumeNode",        "Volume"],
+        ["svAxisInputNode",     "Vector X | Y | Z"],
+        ["SvInstancerNode",     "mesh instancer"]]
 
     node_categories = []
     for category, nodes in node_cats.items():
@@ -185,4 +185,3 @@ def make_categories():
             items=[NodeItem(bl_idname, name) for bl_idname, name in nodes]))
 
     return node_categories
-
