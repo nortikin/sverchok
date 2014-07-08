@@ -29,7 +29,8 @@ TEXT_WIDTH = 6
 def format_text(text, width):
     out = []
     for t in text.splitlines():
-        out.extend(textwrap.wrap(t, width // TEXT_WIDTH)+[""])
+        out.extend(textwrap.wrap(t, width // TEXT_WIDTH))
+        out.append("")
     return out
 
 
