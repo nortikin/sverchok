@@ -27,7 +27,10 @@ from data_structure import SvSetSocketAnyType, updateNode, node_id
 TEXT_WIDTH = 6
 
 def format_text(text, width):
-    return textwrap.wrap(text, width // TEXT_WIDTH)+[" "]
+    out = []
+    for t in text.splitlines():
+        out.extend(textwrap.wrap(t, width // TEXT_WIDTH)+[""])
+    return out
 
 
 class NoteNode(bpy.types.Node, SverchCustomTreeNode):
@@ -62,16 +65,26 @@ class NoteNode(bpy.types.Node, SverchCustomTreeNode):
         #row = layout.row()
         #row.scale_y = 1.1
         #row.prop(self, "text", text='')
+        def draw_lines(col, lines):
+            skip = False
+            for l in lines:
+                if l:
+                    col.label(text=l)
+                    skip = False
+                elif skip:
+                    continue
+                else:
+                    col.label(text=l)
+                    skip = True
+                    
         col = layout.column(align=True)
         if self.n_id in self.text_cache:
             data = self.text_cache.get(self.n_id)
             if data and data[0] == self.width:
-                for line in data[1]:
-                    col.label(text=line)
+                draw_lines(col, data[1])
                 return
         text_lines = format_text(self.text, self.width)
-        for line in text_lines:
-            col.label(text=line)
+        draw_lines(col, text_lines)
         
     def draw_buttons_ext(self, context, layout):
         layout.prop(self, "text")
