@@ -37,10 +37,6 @@ class NoteNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Note'
     bl_icon = 'OUTLINER_OB_EMPTY'
     
-    def update_width(self, context):
-        global t_w
-        t_w = self.text_width
-        
     def update_text(self, context):
         self.format_text()
         updateNode(self, context)
@@ -51,13 +47,10 @@ class NoteNode(bpy.types.Node, SverchCustomTreeNode):
     text_cache = {}
     n_id = StringProperty(default='')
     
-    text_width = IntProperty(min=1, update=update_width)
-
     def format_text(self):
         n_id = node_id(self)
         tl = format_text(self.text, self.width)
         self.text_cache[n_id] = (self.width, tl)
-        return tl
         
     def init(self, context):
         n_id = node_id(self)
@@ -67,9 +60,9 @@ class NoteNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('StringsSocket', "Text", "Text")
     
     def draw_buttons(self, context, layout):
-            
         row = layout.row()
-        row.prop(self, "text")
+        row.scale_y = 1.1
+        row.prop(self, "text", text='')
         col = layout.column(align=True)
         if self.n_id in self.text_cache:
             data = self.text_cache.get(self.n_id)
@@ -77,13 +70,12 @@ class NoteNode(bpy.types.Node, SverchCustomTreeNode):
                 for line in data[1]:
                     col.label(text=line)
                 return
-                
         text_lines = format_text(self.text, self.width)
         for line in text_lines:
             col.label(text=line)
 
     def draw_buttons_ext(self, context, layout):
-        layout.prop(self, "text_width")
+        pass
         
     def update(self):
         n_id = node_id(self)
@@ -95,7 +87,8 @@ class NoteNode(bpy.types.Node, SverchCustomTreeNode):
             SvSetSocketAnyType(self, 'Text', [text])
     
     def copy(self, node):
-        n_id = ''
+        self.n_id = ''
+        node_id(self)
 
 def register():
     bpy.utils.register_class(NoteNode)
