@@ -31,9 +31,18 @@ import bpy
 from bpy.props import BoolProperty, EnumProperty, StringProperty
 
 from node_tree import SverchCustomTreeNode, StringsSocket
-from data_structure import (node_id, multi_socket, get_socket_type,
+from data_structure import (node_id, multi_socket,
                             updateNode, SvGetSocketAnyType, SvSetSocketAnyType)
 
+
+#this function shouldn't be used, always use full .bl_idname in the code
+def get_socket_type(node, inputsocketname):
+    if type(node.inputs[inputsocketname].links[0].from_socket) == bpy.types.VerticesSocket:
+        return 'v'
+    if type(node.inputs[inputsocketname].links[0].from_socket) == bpy.types.StringsSocket:
+        return 's'
+    if type(node.inputs[inputsocketname].links[0].from_socket) == bpy.types.MatrixSocket:
+        return 'm'
 
 # TODO,
 # load and dump to/from external file
@@ -220,7 +229,7 @@ class SvTextInNode(bpy.types.Node, SverchCustomTreeNode):
         elif self.textmode == 'JSON':
             self.reload_json()
         # if we turn on reload on update we need a safety check for this
-        # two work.
+        # too work.
         updateNode(self, None)
 
     def update(self):  # dispatch based on mode
