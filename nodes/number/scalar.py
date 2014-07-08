@@ -20,7 +20,7 @@ from math import *
 from itertools import zip_longest
 
 import bpy
-from bpy.props import EnumProperty, FloatProperty
+from bpy.props import EnumProperty, FloatProperty, IntProperty
 
 from node_tree import SverchCustomTreeNode, StringsSocket
 from data_structure import (updateNode, match_long_repeat,
@@ -126,7 +126,7 @@ class ScalarMathNode(bpy.types.Node, SverchCustomTreeNode):
         'INTDIV':   lambda x, y : x//y,
         'MUL':      lambda x, y : x*y,
         'POW':      lambda x, y : x**y,
-        'ROUND-N':  lambda x, y : round(x, y),
+        'ROUND-N':  lambda x, y : round(x, int(y)),
         'FMOD':     lambda x, y : fmod(x, y),
         'MODULO':   lambda x, y : x % y,
         'MIN':      lambda x, y : min(x, y),
@@ -140,6 +140,11 @@ class ScalarMathNode(bpy.types.Node, SverchCustomTreeNode):
         'PHI':      1.61803398875,
     }
     
+    int_prop ={
+        'ROUND-N':  ("x","i_y"),
+        }
+        
+        
     # items_ is a really bad name but changing it breaks old layouts 
     items_ = EnumProperty(name="Function", description="Function choice",
                           default="SINE", items=mode_items,
@@ -147,7 +152,11 @@ class ScalarMathNode(bpy.types.Node, SverchCustomTreeNode):
     x = FloatProperty(default=1, name='x', update=updateNode)
     y = FloatProperty(default=1, name='y', update=updateNode)
     
-
+    # only used for round-n, for completeness right now.
+    # perhaps make it switchable via draw buttons ext
+    i_x = IntProperty(default=1, name='x', update=updateNode)
+    i_y = IntProperty(default=1, name='y', update=updateNode)
+    
     def draw_buttons(self, context, layout):
         layout.prop(self, "items_", "Functions:")
 
@@ -178,9 +187,12 @@ class ScalarMathNode(bpy.types.Node, SverchCustomTreeNode):
             nrInputs = 1
         elif self.items_ in self.fxy:
             nrInputs = 2
+            # ugly hack to verify int property, should be improved.
+            if self.items_ =='ROUND-N':
+                if 'Y' in self.inputs:
+                    self.inputs['Y'].prop_name = 'i_y'
 
         self.set_inputs(nrInputs)
-        
         
         if 'X' in self.inputs:
             x = self.inputs['X'].sv_get(deepcopy=False)
@@ -206,10 +218,11 @@ class ScalarMathNode(bpy.types.Node, SverchCustomTreeNode):
             while n < len(self.inputs):
                 self.inputs.remove(self.inputs[-1])
         if n > len(self.inputs):
+            p_x, p_y = self.int_prop.get(self.items_, ('x', 'y'))
             if 'X' not in self.inputs:
-                self.inputs.new('StringsSocket', "X").prop_name = 'x'
+                self.inputs.new('StringsSocket', "X").prop_name = p_x
             if 'Y' not in self.inputs:
-                self.inputs.new('StringsSocket', "Y").prop_name = 'y'
+                self.inputs.new('StringsSocket', "Y").prop_name = p_y
 
     # apply f to all values recursively
     def recurse_fx(self, l, f):
