@@ -15,7 +15,6 @@
 #  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 # ##### END GPL LICENSE BLOCK #####
-from ast import literal_eval
 import textwrap
 
 import bpy
@@ -60,9 +59,9 @@ class NoteNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('StringsSocket', "Text", "Text")
     
     def draw_buttons(self, context, layout):
-        row = layout.row()
-        row.scale_y = 1.1
-        row.prop(self, "text", text='')
+        #row = layout.row()
+        #row.scale_y = 1.1
+        #row.prop(self, "text", text='')
         col = layout.column(align=True)
         if self.n_id in self.text_cache:
             data = self.text_cache.get(self.n_id)
@@ -75,7 +74,13 @@ class NoteNode(bpy.types.Node, SverchCustomTreeNode):
             col.label(text=line)
 
     def draw_buttons_ext(self, context, layout):
-        pass
+        layout.prop(self, "text")
+        layout.prop(self.outputs[0], "hide", toggle=True, text="Output socket")
+        op = layout.operator("node.sverchok_text_callback", text="From clipboard")
+        op.fn_name = "from_clipboard"
+    
+    def from_clipboard(self):
+        self.text = bpy.context.window_manager.clipboard
         
     def update(self):
         n_id = node_id(self)
