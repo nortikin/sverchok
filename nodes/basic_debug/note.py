@@ -19,7 +19,7 @@ from ast import literal_eval
 
 import bpy
 from bpy.props import StringProperty
-
+import pprint
 from node_tree import SverchCustomTreeNode
 from data_structure import SvSetSocketAnyType, updateNode
 
@@ -36,24 +36,9 @@ class SverchokNote(bpy.types.Operator):
                           default='')
 
     def execute(self, context):
-        name = context.screen.name
-        areas = bpy.data.screens[name].areas
         text = literal_eval(self.text)
-
         Sv_handle_Note[text[0]] = True
-        out = []
-        length = len(text[1])
-        width = min(47, length)  # min(round(text[2]/10), lenth)
-        text2 = ''
-        k = 1
-        for i, t in enumerate(text[1]):
-            text2 += t
-            if k == width or i == len(text[1])-1:
-                out.append(text2)
-                text2 = ''
-                k = 1
-            k += 1
-        Sv_handle_Note[text[0]+'text'] = str(out)
+        Sv_handle_Note[text[0]+'text'] = text[1]
         return {'FINISHED'}
 
 
@@ -67,10 +52,7 @@ class SverchokUnNote(bpy.types.Operator):
                           default='')
 
     def execute(self, context):
-        name = context.screen.name
-        areas = bpy.data.screens[name].areas
         text = literal_eval(self.text)
-        
         Sv_handle_Note[text[0]] = False
         Sv_handle_Note[text[0]+'text'] = str(['your text here'])
         return {'FINISHED'}
@@ -87,43 +69,36 @@ class NoteNode(bpy.types.Node, SverchCustomTreeNode):
                           update=updateNode)
 
     def init(self, context):
-        if self.text != 'your text here':
+        self.width = 400
+        self.outputs.new('StringsSocket', "Text", "Text")
+    
+    def draw_buttons(self, context, layout):
+        if self.name not in Sv_handle_Note:
+            Sv_handle_Note[self.name] = False
+
+        if not Sv_handle_Note[self.name]:
+            row = layout.column(align=True)
+            row.prop(self, 'text', text='')
+            row.operator('node.sverchok_note_button', text='MIND').text = str([self.name, self.text])
+
+        else:
+            #ev = literal_eval(Sv_handle_Note[self.name+'text'])
+            ev = Sv_handle_Note[self.name+'text']
+            row = layout.column(align=True)
+            out = pprint.pformat(ev, width=60)
+            #print(out)
+            #row.label(ev)
+            for t in out.splitlines():
+                row.label(t)
+            row.operator('node.sverchok_note_unbutton', text='CHANGE').text = str([self.name, self.text])
+
+    def update(self):
+        if Sv_handle_Note[self.name]:
             self.use_custom_color = True
             self.color = (0.5,0.5,1)
         else:
             self.use_custom_color = True
             self.color = (0.05,0.05,0.1)
-        self.width = 400
-        self.outputs.new('StringsSocket', "Text", "Text")
-    
-    def draw_buttons(self, context, layout):
-        global Sv_handle_Note
-        if self.name not in Sv_handle_Note:
-            Sv_handle_Note[self.name] = False
-            name = context.screen.name
-            areas = bpy.data.screens[name].areas
-            for ar in areas:
-                if ar.type == 'NODE_EDITOR':
-                    ar.spaces.active.node_tree.nodes[self.name].width_hidden = 320
-                    ar.spaces.active.node_tree.nodes[self.name].location[0] += 10
-            # not works in this context. Have to be rewrited.
-            # aim - to esteblish width of node 320
-
-        if not Sv_handle_Note[self.name]:
-            row = layout.row(align=True)
-            row.prop(self, 'text', text='')
-            row = layout.row(align=True)
-            row.operator('node.sverchok_note_button', text='MIND').text = str([self.name, self.text])
-
-        else:
-            ev = literal_eval(Sv_handle_Note[self.name+'text'])
-            for t in ev:
-                row = layout.row(align=True)
-                row.label(t)
-            row = layout.row(align=True)
-            row.operator('node.sverchok_note_unbutton', text='CHANGE').text = str([self.name, self.text])
-
-    def update(self):
         if 'Text' in self.outputs and self.outputs['Text'].links:
             text = [[a] for a in self.text.split()]
             SvSetSocketAnyType(self, 'Text', [text])
