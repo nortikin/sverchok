@@ -27,7 +27,7 @@ from data_structure import SvSetSocketAnyType, updateNode, node_id
 TEXT_WIDTH = 6
 
 def format_text(text, width):
-    return textwrap.wrap(text, width // TEXT_WIDTH)
+    return textwrap.wrap(text, width // TEXT_WIDTH)+[" "]
 
 
 class NoteNode(bpy.types.Node, SverchCustomTreeNode):
@@ -72,7 +72,7 @@ class NoteNode(bpy.types.Node, SverchCustomTreeNode):
         text_lines = format_text(self.text, self.width)
         for line in text_lines:
             col.label(text=line)
-
+        
     def draw_buttons_ext(self, context, layout):
         layout.prop(self, "text")
         layout.prop(self.outputs[0], "hide", toggle=True, text="Output socket")
