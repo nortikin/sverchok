@@ -44,6 +44,7 @@ class FloatNode(bpy.types.Node, SverchCustomTreeNode):
             Float = tmp[0][0]
         else:
             Float = self.float_
+        self.label = str(round(Float, 3))
         # outputs
         if 'Float' in self.outputs and self.outputs['Float'].links:
             SvSetSocketAnyType(self, 'Float', [[Float]])
