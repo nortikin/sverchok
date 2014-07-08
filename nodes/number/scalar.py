@@ -20,7 +20,8 @@ from math import *
 from itertools import zip_longest
 
 import bpy
-from bpy.props import EnumProperty, FloatProperty, IntProperty
+from bpy.props import (EnumProperty, FloatProperty,
+                       IntProperty, BoolVectorProperty)
 
 from node_tree import SverchCustomTreeNode, StringsSocket
 from data_structure import (updateNode, match_long_repeat,
@@ -157,9 +158,31 @@ class ScalarMathNode(bpy.types.Node, SverchCustomTreeNode):
     i_x = IntProperty(default=1, name='x', update=updateNode)
     i_y = IntProperty(default=1, name='y', update=updateNode)
     
+    # boolvector to control prop type
+    def change_prop_type(self, context):
+        inputs = self.inputs
+        if inputs:
+            inputs[0].prop_name = 'i_x' if self.prop_types[0] else 'x'
+        if len(inputs)>1:
+            if not self.items_ in self.int_prop: 
+                inputs[1].prop_name = 'i_y' if self.prop_types[1] else 'y'
+            else:
+                inputs[1].prop_name = 'i_y'
+            
+    prop_types = BoolVectorProperty(size=2, default=(False, False),
+                                    update=change_prop_type)
+        
     def draw_buttons(self, context, layout):
         layout.prop(self, "items_", "Functions:")
 
+    def draw_buttons_ext(self, context, layout):
+        layout.label(text="Change property type")
+        for i,s in enumerate(self.inputs):
+            row = layout.row()
+            row.label(text=s.name)
+            t = "To int" if self.prop_types[i] else "To float"
+            row.prop(self, "prop_types", index=i, text=t, toggle=True)
+            
     def init(self, context):
         self.inputs.new('StringsSocket', "X").prop_name = 'x'
         self.outputs.new('StringsSocket', "float")
@@ -218,11 +241,11 @@ class ScalarMathNode(bpy.types.Node, SverchCustomTreeNode):
             while n < len(self.inputs):
                 self.inputs.remove(self.inputs[-1])
         if n > len(self.inputs):
-            p_x, p_y = self.int_prop.get(self.items_, ('x', 'y'))
             if 'X' not in self.inputs:
-                self.inputs.new('StringsSocket', "X").prop_name = p_x
+                self.inputs.new('StringsSocket', "X")
             if 'Y' not in self.inputs:
-                self.inputs.new('StringsSocket', "Y").prop_name = p_y
+                self.inputs.new('StringsSocket', "Y")
+            self.change_prop_type(None)
 
     # apply f to all values recursively
     def recurse_fx(self, l, f):
