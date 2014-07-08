@@ -94,7 +94,7 @@ upgrade_dict = {
         [['thickness', 'thickness']],
     'SvRemoveDoublesNode':
         [['Distance', 'distance']],
-    ''ScalarMathNode'':
+    'ScalarMathNode':
         [['X', 'x'],
          ['Y', 'y']]
     }

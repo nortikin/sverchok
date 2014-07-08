@@ -180,7 +180,7 @@ class ScalarMathNode(bpy.types.Node, SverchCustomTreeNode):
         for i,s in enumerate(self.inputs):
             row = layout.row()
             row.label(text=s.name)
-            t = "To int" if self.prop_types[i] else "To float"
+            t = "To float" if self.prop_types[i] else "To int"
             row.prop(self, "prop_types", index=i, text=t, toggle=True)
             
     def init(self, context):
@@ -189,16 +189,16 @@ class ScalarMathNode(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_label(self):
         nrInputs = len(self.inputs)
-        if nrInputs == 0:
-            label = self.items_
-        elif nrInputs == 1:
-            x_label = 'X' if self.inputs[0].links else str(round(self.x, 3))
-            label = " ".join((self.items_, x_label))
-        elif nrInputs == 2:
-            x_label = 'X' if self.inputs[0].links else str(round(self.x, 3))
-            y_label = 'Y' if self.inputs[1].links else str(round(self.y, 3))
-            label = " ".join((self.items_ , x_label, ", ", y_label))
-        return label
+        label = [self.items_]
+        if nrInputs:
+            x = self.i_x if self.prop_types[0] else self.x
+            x_label = 'X' if self.inputs[0].links else str(round(x, 3))
+            label.append(x_label)
+        if nrInputs == 2:
+            y = self.i_y if self.prop_types[1] else self.y
+            y_label = 'Y' if self.inputs[1].links else str(round(y, 3))
+            label.extend((", ", y_label))
+        return " ".join(label)
         
     def update(self):
 
