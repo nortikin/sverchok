@@ -40,10 +40,10 @@ class IntegerNode(bpy.types.Node, SverchCustomTreeNode):
         # inputs
         if 'Integer' in self.inputs and self.inputs['Integer'].links:
             tmp = SvGetSocketAnyType(self, self.inputs['Integer'])
-            Integer = tmp[0][0]
+            Integer = int(tmp[0][0])
         else:
             Integer = self.int_
-
+        self.label = Integer
         # outputs
         if 'Integer' in self.outputs and self.outputs['Integer'].links:
             SvSetSocketAnyType(self, 'Integer', [[Integer]])
