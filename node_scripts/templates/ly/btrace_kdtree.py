@@ -4,13 +4,13 @@ import collections
 from itertools import islice
 from mathutils import Vector
 
-def sv_main(objs=[], seed=1, start=-1):
+def sv_main(objs=[], seed=1, start=-1, step=5, switch=.9):
 
     # in boilerplate, could be less verbose
     in_sockets = [
         ['v', 'verts', objs],
         ['s', 'seed', seed],
-        ['s', 'start', start]
+        ['s', 'start', start],
     ]
     
     random.seed(seed)
@@ -34,10 +34,10 @@ def sv_main(objs=[], seed=1, start=-1):
         out = collections.OrderedDict({index:0})
         while len(out) < size:
             #print(round(len(out)/size,3))
-            if (len(out) / size) < .90: 
+            if (len(out) / size) < .9: 
                 found_next = False
                 n = 0
-                step = 5
+                step = 10
                 while not found_next:
                     count = min(size, n+step)
                     for pt, n_i, dist in islice(kd.find_n(verts[index], count), n, count):
@@ -48,9 +48,10 @@ def sv_main(objs=[], seed=1, start=-1):
                             break
                     if n > size:
                         break
-                    n += 5
+                    n += step
             else: #now we reduced the number of verts and the above gets very slow
                 if not vecs:
+                    del kd
                     total_set = set(range(size))
                     indx = total_set - set(out.keys())
                     vecs = {i:Vector(verts[i]) for i in indx}
