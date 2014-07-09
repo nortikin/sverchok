@@ -21,8 +21,9 @@ from bpy.props import IntProperty
 import bmesh
 
 from node_tree import SverchCustomTreeNode
-from data_structure import (updateNode, repeat_last,
+from data_structure import (updateNode, repeat_last, dataCorrect,
                             SvSetSocketAnyType, SvGetSocketAnyType)
+from utils.sv_bmesh_utils import bmesh_from_pydata
 
 
 def fill_holes(vertices, edges, s):
@@ -32,12 +33,8 @@ def fill_holes(vertices, edges, s):
 
     if len(edges[0]) != 2:
         return False
-
-    bm = bmesh.new()
-    bm_verts = [bm.verts.new(v) for v in vertices]
-    for e in edges:
-        bm.edges.new([bm_verts[e[0]], bm_verts[e[1]]])
-
+    
+    bm = bmesh_from_pydata(vertices, edges, [])
     res = bmesh.ops.holes_fill(bm, edges=bm.edges[:], sides=s)
     bmesh.ops.recalc_face_normals(bm, faces=bm.faces[:])
     edges = []
@@ -81,8 +78,8 @@ class SvFillHolesNode(bpy.types.Node, SverchCustomTreeNode):
         if 'vertices' in self.inputs and self.inputs['vertices'].links and \
            'edges' in self.inputs and self.inputs['edges'].links:
 
-            verts = SvGetSocketAnyType(self, self.inputs['vertices'])
-            edges = SvGetSocketAnyType(self, self.inputs['edges'])
+            verts = dataCorrect(SvGetSocketAnyType(self, self.inputs['vertices']))
+            edges = dataCorrect(SvGetSocketAnyType(self, self.inputs['edges']))
             sides = repeat_last(self.inputs['Sides'].sv_get()[0])
             verts_out = []
             edges_out = []

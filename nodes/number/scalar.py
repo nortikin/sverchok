@@ -17,7 +17,6 @@
 # ##### END GPL LICENSE BLOCK #####
 
 from math import *
-from itertools import zip_longest
 
 import bpy
 from bpy.props import (EnumProperty, FloatProperty,
@@ -39,7 +38,7 @@ class ScalarMathNode(bpy.types.Node, SverchCustomTreeNode):
 # maybe this should be distilled to most common with the others available via Formula2 Node
 # And some constants etc.
 # Keep 4, columns number unchanged and only add new with unique number
-    
+
     mode_items = [
         ("SINE",            "Sine",         "", 1),
         ("COSINE",          "Cosine",       "", 2),
@@ -152,9 +151,8 @@ class ScalarMathNode(bpy.types.Node, SverchCustomTreeNode):
                           update=updateNode)
     x = FloatProperty(default=1, name='x', update=updateNode)
     y = FloatProperty(default=1, name='y', update=updateNode)
-    
-    # only used for round-n, for completeness right now.
-    # perhaps make it switchable via draw buttons ext
+
+    # switch able
     i_x = IntProperty(default=1, name='x', update=updateNode)
     i_y = IntProperty(default=1, name='y', update=updateNode)
     
@@ -216,7 +214,7 @@ class ScalarMathNode(bpy.types.Node, SverchCustomTreeNode):
                     self.inputs['Y'].prop_name = 'i_y'
 
         self.set_inputs(nrInputs)
-        
+
         if 'X' in self.inputs:
             x = self.inputs['X'].sv_get(deepcopy=False)
             
@@ -228,10 +226,15 @@ class ScalarMathNode(bpy.types.Node, SverchCustomTreeNode):
             result = []
             if nrInputs == 0:
                 result = [[self.constant[self.items_]]]
-            elif nrInputs == 1:
-                result = self.recurse_fx(x, self.fx[self.items_])
-            elif nrInputs == 2:
-                result = self.recurse_fxy(x, y, self.fxy[self.items_])
+            if nrInputs == 1:
+                if len(Number1):
+                    x = Number1
+                    result = self.recurse_fx(x, self.fx[self.items_])
+            if nrInputs == 2:
+                if len(Number1) and len(Number2):
+                    x = Number1
+                    y = Number2
+                    result = self.recurse_fxy(x, y, self.fxy[self.items_])
             SvSetSocketAnyType(self, 'float', result)
 
     def set_inputs(self, n):
@@ -264,15 +267,10 @@ class ScalarMathNode(bpy.types.Node, SverchCustomTreeNode):
     def recurse_fxy(self, l1, l2, f):
         if (isinstance(l1, (int, float)) and isinstance(l2, (int, float))):
                 return f(l1, l2)
-                
-        if (isinstance(l2, (list, tuple)) and isinstance(l1, (list, tuple))):
-            fl = l2[-1] if len(l1) > len(l2) else l1[-1]
-            res = []
-            res_append = res.append
-            for x, y in zip_longest(l1, l2, fillvalue=fl):
-                res_append(self.recurse_fxy(x, y, f))
-            return res
-            
+        if (isinstance(l2, (list, tuple)) and
+           isinstance(l1, (list, tuple))):
+            data = zip(*match_long_repeat([l1, l2]))
+            return [self.recurse_fxy(ll1, ll2, f) for ll1, ll2 in data]
         if isinstance(l1, (list, tuple)) and isinstance(l2, (int, float)):
             return self.recurse_fxy(l1, [l2], f)
         if isinstance(l1, (int, float)) and isinstance(l2, (list, tuple)):
