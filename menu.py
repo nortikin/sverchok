@@ -98,6 +98,8 @@ def make_categories():
         ["SvCircleNode",        "Circle"],
         ["CylinderNode",        "Cylinder"],
         ["SphereNode",          "Sphere"],
+        ["BasicSplineNode",     "2pt Spline"],
+        ["svBasicArcNode",      "3pt Arc"],        
         ["HilbertNode",         "Hilbert"],
         ["Hilbert3dNode",       "Hilbert3d"],
         ["HilbertImageNode",    "Hilbert image"],
@@ -165,8 +167,6 @@ def make_categories():
     node_cats["Beta test"] = [
         # for testing convenience,
         ["BGLdemoNode",         "Viewer BGL debug"],
-        ["BasicSplineNode",     "2pt Spline"],
-        ["svBasicArcNode",      "3pt Arc"],
         ["SvOffsetNode",        "Offset"],
         ["SvEmptyOutNode",      "Empty out"],
         ["EvalKnievalNode",     "Eval Knieval"],
