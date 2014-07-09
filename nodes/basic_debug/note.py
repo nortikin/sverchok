@@ -18,7 +18,7 @@
 import textwrap
 
 import bpy
-from bpy.props import StringProperty, IntProperty
+from bpy.props import StringProperty, IntProperty, BoolProperty
 
 from node_tree import SverchCustomTreeNode
 from data_structure import SvSetSocketAnyType, updateNode, node_id
@@ -49,6 +49,8 @@ class NoteNode(bpy.types.Node, SverchCustomTreeNode):
                           update=update_text)
     text_cache = {}
     n_id = StringProperty(default='')
+    show_text = BoolProperty(default=False, name="Show text", 
+                             description="Show text box in node")
     
     def format_text(self):
         n_id = node_id(self)
@@ -63,9 +65,11 @@ class NoteNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('StringsSocket', "Text", "Text")
     
     def draw_buttons(self, context, layout):
-        #row = layout.row()
-        #row.scale_y = 1.1
-        #row.prop(self, "text", text='')
+        if self.show_text:
+            row = layout.row()
+            row.scale_y = 1.1
+            row.prop(self, "text", text='')
+        
         def draw_lines(col, lines):
             skip = False
             for l in lines:
@@ -89,9 +93,17 @@ class NoteNode(bpy.types.Node, SverchCustomTreeNode):
         
     def draw_buttons_ext(self, context, layout):
         layout.prop(self, "text")
+        layout.prop(self, "show_text", toggle=True)
         layout.prop(self.outputs[0], "hide", toggle=True, text="Output socket")
         op = layout.operator("node.sverchok_text_callback", text="From clipboard")
         op.fn_name = "from_clipboard"
+        op = layout.operator("node.sverchok_text_callback", text="To text editor")
+        op.fn_name = "to_text"
+
+    def to_text(self):
+        if not "Sverchok Note" in bpy.data.texts:
+            bpy.data.texts.new("Sverchok Note")
+        bpy.data.texts["Sverchok Note"].write(self.text)
     
     def from_clipboard(self):
         self.text = bpy.context.window_manager.clipboard
