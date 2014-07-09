@@ -44,11 +44,13 @@ TO MAKE YOUR NODE:
 
 4. change class name, class id, class description, class registration in your file
 
-5. add node id in node_tree.py in NodeCategory.
+5. add node id in menu.py in make_categories() in your category.
 
-6. Add in ``nodes/__init__.py`` filename
+6. Add file to category that you need
 
-7. tell us to merge branches/forks
+7. Add in ``nodes/__init__.py`` filename
+
+8. tell us to merge branches/forks
 
 
 SOME RULES:
