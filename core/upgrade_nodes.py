@@ -94,6 +94,9 @@ upgrade_dict = {
         [['thickness', 'thickness']],
     'SvRemoveDoublesNode':
         [['Distance', 'distance']],
+    'ScalarMathNode':
+        [['X', 'x'],
+         ['Y', 'y']]
     }
 
 # new sockets
@@ -136,5 +139,6 @@ def upgrade_nodes(ng):
 
     for node in [node for node in ng.nodes if node.bl_idname in upgrade_dict]:
         for s_name, p_name in upgrade_dict[node.bl_idname]:
-            if s_name in node.inputs and not node.inputs[s_name].prop_name:
-                node.inputs[s_name].prop_name = p_name
+            socket = node.inputs.get(s_name)
+            if socket and not socket.prop_name:
+                socket.prop_name = p_name
