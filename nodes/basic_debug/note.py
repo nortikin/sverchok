@@ -15,47 +15,24 @@
 #  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 # ##### END GPL LICENSE BLOCK #####
-from ast import literal_eval
+import textwrap
 
 import bpy
-from bpy.props import StringProperty
-import pprint
+
+from bpy.props import StringProperty, IntProperty, BoolProperty
+
 from node_tree import SverchCustomTreeNode
-from data_structure import SvSetSocketAnyType, updateNode
-
-Sv_handle_Note = {}
+from data_structure import SvSetSocketAnyType, updateNode, node_id
 
 
-class SverchokNote(bpy.types.Operator):
-    """Sverchok Note"""
-    bl_idname = "node.sverchok_note_button"
-    bl_label = "Sverchok notes"
-    bl_options = {'REGISTER', 'UNDO'}
+TEXT_WIDTH = 6
 
-    text = StringProperty(name='text',
-                          default='')
-
-    def execute(self, context):
-        text = literal_eval(self.text)
-        Sv_handle_Note[text[0]] = True
-        Sv_handle_Note[text[0]+'text'] = text[1]
-        return {'FINISHED'}
-
-
-class SverchokUnNote(bpy.types.Operator):
-    """Sverchok UnNote"""
-    bl_idname = "node.sverchok_note_unbutton"
-    bl_label = "Sverchok Un notes"
-    bl_options = {'REGISTER', 'UNDO'}
-
-    text = StringProperty(name='text',
-                          default='')
-
-    def execute(self, context):
-        text = literal_eval(self.text)
-        Sv_handle_Note[text[0]] = False
-        Sv_handle_Note[text[0]+'text'] = str(['your text here'])
-        return {'FINISHED'}
+def format_text(text, width):
+    out = []
+    for t in text.splitlines():
+        out.extend(textwrap.wrap(t, width // TEXT_WIDTH))
+        out.append("")
+    return out
 
 
 class NoteNode(bpy.types.Node, SverchCustomTreeNode):
@@ -63,56 +40,99 @@ class NoteNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'NoteNode'
     bl_label = 'Note'
     bl_icon = 'OUTLINER_OB_EMPTY'
-
+    
+    def update_text(self, context):
+        self.format_text()
+        updateNode(self, context)
+        
     text = StringProperty(name='text',
                           default='your text here',
-                          update=updateNode)
-
+                          update=update_text)
+    text_cache = {}
+    n_id = StringProperty(default='')
+    show_text = BoolProperty(default=False, name="Show text", 
+                             description="Show text box in node")
+    
+    def format_text(self):
+        n_id = node_id(self)
+        tl = format_text(self.text, self.width)
+        self.text_cache[n_id] = (self.width, tl)
+        
     def init(self, context):
+        n_id = node_id(self)
         self.width = 400
+        self.color = (0.5, 0.5, 1)
+        self.use_custom_color = True
         self.outputs.new('StringsSocket', "Text", "Text")
     
     def draw_buttons(self, context, layout):
-        if self.name not in Sv_handle_Note:
-            Sv_handle_Note[self.name] = False
+        if self.show_text:
+            row = layout.row()
+            row.scale_y = 1.1
+            row.prop(self, "text", text='')
+        
+        def draw_lines(col, lines):
+            skip = False
+            for l in lines:
+                if l:
+                    col.label(text=l)
+                    skip = False
+                elif skip:
+                    continue
+                else:
+                    col.label(text=l)
+                    skip = True
+                    
+        col = layout.column(align=True)
+        if self.n_id in self.text_cache:
+            data = self.text_cache.get(self.n_id)
+            if data and data[0] == self.width:
+                draw_lines(col, data[1])
+                return
+        text_lines = format_text(self.text, self.width)
+        draw_lines(col, text_lines)
+        
+    def draw_buttons_ext(self, context, layout):
+        layout.prop(self, "text")
+        layout.prop(self, "show_text", toggle=True)
+        layout.prop(self.outputs[0], "hide", toggle=True, text="Output socket")
+        op = layout.operator("node.sverchok_text_callback", text="From clipboard")
+        op.fn_name = "from_clipboard"
+        op = layout.operator("node.sverchok_text_callback", text="To text editor")
+        op.fn_name = "to_text"
 
-        if not Sv_handle_Note[self.name]:
-            row = layout.column(align=True)
-            row.prop(self, 'text', text='')
-            row.operator('node.sverchok_note_button', text='MIND').text = str([self.name, self.text])
-
-        else:
-            #ev = literal_eval(Sv_handle_Note[self.name+'text'])
-            ev = Sv_handle_Note[self.name+'text']
-            row = layout.column(align=True)
-            out = pprint.pformat(ev, width=60)
-            #print(out)
-            #row.label(ev)
-            for t in out.splitlines():
-                row.label(t)
-            row.operator('node.sverchok_note_unbutton', text='CHANGE').text = str([self.name, self.text])
-
+    def to_text(self):
+        sv_n_t = "Sverchok Note Buffer"
+        text = bpy.data.texts.get(sv_n_t)
+        if not text:
+            text = bpy.data.texts.new(sv_n_t)
+        text.clear()
+        text.write(self.text)
+    
+    def from_clipboard(self):
+        self.text = bpy.context.window_manager.clipboard
+        
     def update(self):
-        if Sv_handle_Note[self.name]:
-            self.use_custom_color = True
-            self.color = (0.5,0.5,1)
-        else:
-            self.use_custom_color = True
-            self.color = (0.05,0.05,0.1)
+        n_id = node_id(self)
+        if not n_id in self.text_cache:
+            self.format_text()
+            
         if 'Text' in self.outputs and self.outputs['Text'].links:
+            # I'm not sure that this makes sense, but keeping it like 
+            # old note right now. Would expect one value, and optional
+            # split, or split via a text processing node, 
+            # but keeping this for now
             text = [[a] for a in self.text.split()]
             SvSetSocketAnyType(self, 'Text', [text])
-
+    
+    def copy(self, node):
+        self.n_id = ''
+        node_id(self)
 
 def register():
     bpy.utils.register_class(NoteNode)
-    bpy.utils.register_class(SverchokNote)
-    bpy.utils.register_class(SverchokUnNote)
-
 
 def unregister():
-    bpy.utils.unregister_class(SverchokUnNote)
-    bpy.utils.unregister_class(SverchokNote)
     bpy.utils.unregister_class(NoteNode)
 
 if __name__ == '__main__':
