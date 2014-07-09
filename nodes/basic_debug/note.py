@@ -101,9 +101,12 @@ class NoteNode(bpy.types.Node, SverchCustomTreeNode):
         op.fn_name = "to_text"
 
     def to_text(self):
-        if not "Sverchok Note" in bpy.data.texts:
-            bpy.data.texts.new("Sverchok Note")
-        bpy.data.texts["Sverchok Note"].write(self.text)
+        sv_n_t = "Sverchok Note Buffer"
+        text = bpy.data.texts.get(sv_n_t)
+        if not text:
+            text = bpy.data.texts.new(sv_n_t)
+        text.clear()
+        text.write(self.text)
     
     def from_clipboard(self):
         self.text = bpy.context.window_manager.clipboard
