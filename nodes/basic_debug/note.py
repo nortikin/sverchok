@@ -60,7 +60,7 @@ class NoteNode(bpy.types.Node, SverchCustomTreeNode):
     def init(self, context):
         n_id = node_id(self)
         self.width = 400
-        self.color = (.9, .9, .9)
+        self.color = (0.5, 0.5, 1)
         self.use_custom_color = True
         self.outputs.new('StringsSocket', "Text", "Text")
     
