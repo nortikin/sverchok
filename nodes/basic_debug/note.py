@@ -117,7 +117,11 @@ class NoteNode(bpy.types.Node, SverchCustomTreeNode):
             self.format_text()
             
         if 'Text' in self.outputs and self.outputs['Text'].links:
-            text = self.text.split(" ")
+            # I'm not sure that this makes sense, but keeping it like 
+            # old note right now. Would expect one value, and optional
+            # split, or split via a text processing node, 
+            # but keeping this for now
+            text = [[a] for a in self.text.split()]
             SvSetSocketAnyType(self, 'Text', [text])
     
     def copy(self, node):
