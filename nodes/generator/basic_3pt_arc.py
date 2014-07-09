@@ -24,7 +24,7 @@ from bpy.props import IntProperty, FloatProperty, FloatVectorProperty
 from mathutils import Vector, Euler, geometry
 
 from node_tree import SverchCustomTreeNode, VerticesSocket, StringsSocket
-from data_structure import (updateNode, SvSetSocketAnyType, SvGetSocketAnyType)
+from data_structure import updateNode, SvSetSocketAnyType, SvGetSocketAnyType
 
 
 def generate_3PT_mode_1(pts=[], num_verts=20, make_edges=False):
