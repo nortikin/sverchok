@@ -24,7 +24,7 @@ from bpy.props import IntProperty, FloatProperty, FloatVectorProperty
 from mathutils import Vector, Euler, geometry
 
 from node_tree import SverchCustomTreeNode, VerticesSocket, StringsSocket
-from data_structure import (updateNode, SvSetSocketAnyType, SvGetSocketAnyType)
+from data_structure import updateNode, SvSetSocketAnyType, SvGetSocketAnyType
 
 
 def generate_3PT_mode_1(pts=[], num_verts=20, make_edges=False):
@@ -33,7 +33,7 @@ def generate_3PT_mode_1(pts=[], num_verts=20, make_edges=False):
     - call this function only if you have 3 pts,
     - do your error checking before passing to it.
     '''
-
+    num_verts -= 1
     verts, edges = [], []
     V = Vector
 
@@ -106,7 +106,7 @@ class svBasicArcNode(bpy.types.Node, SverchCustomTreeNode):
     num_verts = IntProperty(
         name='num_verts',
         description='Num Vertices',
-        default=20, min=2,
+        default=20, min=3,
         update=updateNode)
 
     arc_pts = FloatVectorProperty(
