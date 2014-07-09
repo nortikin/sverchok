@@ -17,7 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-from bpy.props import FloatProperty
+from bpy.props import FloatProperty, BoolProperty
 
 from node_tree import SverchCustomTreeNode
 from data_structure import updateNode, SvSetSocketAnyType, SvGetSocketAnyType
@@ -33,6 +33,13 @@ class FloatNode(bpy.types.Node, SverchCustomTreeNode):
                            default=1.0,
                            options={'ANIMATABLE'}, update=updateNode)
 
+    show = BoolProperty(name='in title', description='show number in title',
+                           default=False,
+                           update=updateNode)
+
+    def draw_buttons_ext(self, context, layout):
+        layout.prop(self, 'show')
+
     def init(self, context):
         self.inputs.new('StringsSocket', "Float").prop_name = 'float_'
         self.outputs.new('StringsSocket', "Float")
@@ -45,7 +52,8 @@ class FloatNode(bpy.types.Node, SverchCustomTreeNode):
         else:
             Float = self.float_
         # outputs
-        self.label = str(Float)
+        if self.show:
+            self.label = str(Float)
         if 'Float' in self.outputs and self.outputs['Float'].links:
             SvSetSocketAnyType(self, 'Float', [[Float]])
 

@@ -17,7 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-from bpy.props import IntProperty
+from bpy.props import IntProperty, BoolProperty
 from node_tree import SverchCustomTreeNode
 from data_structure import updateNode, SvSetSocketAnyType, SvGetSocketAnyType
 
@@ -32,6 +32,13 @@ class IntegerNode(bpy.types.Node, SverchCustomTreeNode):
                        default=1,
                        options={'ANIMATABLE'}, update=updateNode)
 
+    show = BoolProperty(name='in title', description='show number in title',
+                           default=False,
+                           update=updateNode)
+
+    def draw_buttons_ext(self, context, layout):
+        layout.prop(self, 'show')
+
     def init(self, context):
         self.inputs.new('StringsSocket', "Integer", "Integer").prop_name = 'int_'
         self.outputs.new('StringsSocket', "Integer", "Integer")
@@ -43,7 +50,8 @@ class IntegerNode(bpy.types.Node, SverchCustomTreeNode):
             Integer = int(tmp[0][0])
         else:
             Integer = self.int_
-        self.label = str(Integer)
+        if self.show:
+            self.label = str(Integer)
         # outputs
         if 'Integer' in self.outputs and self.outputs['Integer'].links:
             SvSetSocketAnyType(self, 'Integer', [[Integer]])
@@ -58,3 +66,4 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(IntegerNode)
+
