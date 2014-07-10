@@ -17,9 +17,10 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-from bpy.props import IntProperty
+from bpy.props import IntProperty, BoolProperty
 from node_tree import SverchCustomTreeNode
-from data_structure import updateNode, SvSetSocketAnyType, SvGetSocketAnyType
+from data_structure import updateNode, SvSetSocketAnyType, SvGetSocketAnyType, \
+                            draw_label
 
 
 class IntegerNode(bpy.types.Node, SverchCustomTreeNode):
@@ -43,7 +44,7 @@ class IntegerNode(bpy.types.Node, SverchCustomTreeNode):
             Integer = int(tmp[0][0])
         else:
             Integer = self.int_
-        self.label = str(Integer)
+        draw_label(self.label, Integer)
         # outputs
         if 'Integer' in self.outputs and self.outputs['Integer'].links:
             SvSetSocketAnyType(self, 'Integer', [[Integer]])
@@ -58,3 +59,7 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(IntegerNode)
+
+
+
+

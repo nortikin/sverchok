@@ -17,10 +17,11 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-from bpy.props import FloatProperty
+from bpy.props import FloatProperty, BoolProperty
 
 from node_tree import SverchCustomTreeNode
-from data_structure import updateNode, SvSetSocketAnyType, SvGetSocketAnyType
+from data_structure import updateNode, SvSetSocketAnyType, SvGetSocketAnyType, \
+                            draw_label
 
 
 class FloatNode(bpy.types.Node, SverchCustomTreeNode):
@@ -45,7 +46,7 @@ class FloatNode(bpy.types.Node, SverchCustomTreeNode):
         else:
             Float = self.float_
         # outputs
-        self.label = str(Float)
+        draw_label(self.label, Float)
         if 'Float' in self.outputs and self.outputs['Float'].links:
             SvSetSocketAnyType(self, 'Float', [[Float]])
 
@@ -59,3 +60,6 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(FloatNode)
+
+
+
