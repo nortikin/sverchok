@@ -5,6 +5,7 @@ nodes_dict = {
         'bbox',
         'distance_pp',
         'polygons_centers',
+        'neuro_elman',
         'kd_tree',
         'kd_tree_edges'],
 

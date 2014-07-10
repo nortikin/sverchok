@@ -175,6 +175,7 @@ def make_categories():
         ["SvReRouteNode",       "Reroute Point"],
         ["SvVolumeNode",        "Volume"],
         ["svAxisInputNode",     "Vector X | Y | Z"],
+        ["NeuroElman1LNode",    "Neuro"],
         ["SvInstancerNode",     "mesh instancer"]]
 
     node_categories = []
