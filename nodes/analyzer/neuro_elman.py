@@ -16,6 +16,8 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+# by Alexander Nedovizin
+
 import bpy
 from bpy.props import BoolProperty, IntProperty, StringProperty
 
@@ -28,11 +30,6 @@ import random, cmath
 
 
 
-def sigmoida(x, a):    
-    #a = 5.0 # 5== -1 - +1, 1== -5 - +5
-    b = 5/a
-    return 1/(1+cmath.exp(-b*x).real)
-    #return (cmath.exp(a*x).real-cmath.exp(-a*x).real)/(cmath.exp(-a*x).real+cmath.exp(a*x).real)
 
 
 class Neuro_Elman:
@@ -58,18 +55,26 @@ class Neuro_Elman:
         return out
     
     
+    def sigmoida(self, x, a):    
+        #a = 5.0 # 5== -1 - +1, 1== -5 - +5
+        b = 5/a
+        return 1/(1+cmath.exp(-b*x).real)
+        #return (cmath.exp(a*x).real-cmath.exp(-a*x).real)/(cmath.exp(-a*x).real+cmath.exp(a*x).real)
+
+    
     def neuro(self, list_in, etalon, learning=False): 
         flag = True
         while flag:
             outA = self.layerA(list_in)
             outB = self.layerB(outA)
             suma = sum(outB)
-            if learning:
+            if learning and abs(etalon-suma)>1e-2:
                 self.learning(suma, etalon)
-            
-            if not learning or not abs(etalon-suma)>1e-2:
+            else:
+            #if not learning or not abs(etalon-suma)>1e-2:
                 flag = False
-            
+        
+        ##print('wA',self.wA)
         return suma
     
     
@@ -79,7 +84,7 @@ class Neuro_Elman:
             self.wA = self.init_w(lin, self.InB)
             self.InA = lin
             
-        outA = list(map(sigmoida, list_in, [1]*self.InA))
+        outA = list(map(self.sigmoida, list_in, [3]*self.InA))
         return outA
     
     
@@ -113,7 +118,7 @@ class NeuroElman1LNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Neuro Elman 1 Layer'
     bl_icon = 'OUTLINER_OB_EMPTY'
     
-    Elman = Neuro_Elman(1,5)
+    Elman = Neuro_Elman(1,1)
     
 
     def init(self, context):
@@ -134,13 +139,15 @@ class NeuroElman1LNode(bpy.types.Node, SverchCustomTreeNode):
                 flag = False
                 etalon = 0
             
-            data = SvGetSocketAnyType(self, self.inputs['data'])
+            data = SvGetSocketAnyType(self, self.inputs['data'])[0]
+            if type(data) not in [list, tuple]: data = [data]
+            ##print('\ndata',data)
             result = [[self.Elman.neuro(data, etalon, flag)]]
         
         else:
             result = [[]]
             
-        #print('result', result)
+        ##print('result', result)
         SvSetSocketAnyType(self, 'result', result)
 
     def update_socket(self, context):
@@ -154,3 +161,5 @@ def register():
 def unregister():
     bpy.utils.unregister_class(NeuroElman1LNode)
 
+if __name__ == '__main__':
+    register()

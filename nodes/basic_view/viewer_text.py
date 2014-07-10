@@ -90,6 +90,8 @@ class ViewerNode_text(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     def init(self, context):
+        self.use_custom_color = True
+        self.color = (0.05, 0.05, 0.1)
         self.inputs.new('VerticesSocket', 'vertices', 'vertices')
         self.inputs.new('StringsSocket', 'edg_pol', 'edg_pol')
         self.inputs.new('MatrixSocket', 'matrix', 'matrix')
@@ -105,73 +107,73 @@ class ViewerNode_text(bpy.types.Node, SverchCustomTreeNode):
         global cache_viewer_slot1
         global cache_viewer_slot2
         global cache_viewer_slot3
+        if 'vertices' in self.inputs and 'edg_pol' in self.inputs and 'matrix' in self.inputs:
+            if self.inputs['vertices'].links:
 
-        if self.inputs['vertices'].links:
+                if type(self.inputs['vertices'].links[0].from_socket) == bpy.types.VerticesSocket:
+                    evaverti = SvGetSocketAnyType(self, self.inputs['vertices'])
+                    #evaverti = eval(verti)
+                    deptl = levelsOflist(evaverti)
+                    #print(str(evaverti))
+                    #print (deptl, ' text viewer')
+                    if deptl and deptl > 2:
+                        a = self.readFORviewer_sockets_data(evaverti, deptl, len(evaverti))
+                    elif deptl:
+                        a = self.readFORviewer_sockets_data_small(evaverti, deptl, len(evaverti))
+                    else:
+                        a = 'None \n'
+                    cache_viewer_slot1['veriable'+self.name] = a
+                    #print ('viewer text input1')
+            else:
+                cache_viewer_slot1['veriable'+self.name] = 'None \n'
+            # edges/faces socket
+            if self.inputs['edg_pol'].links:
 
-            if type(self.inputs['vertices'].links[0].from_socket) == bpy.types.VerticesSocket:
-                evaverti = SvGetSocketAnyType(self, self.inputs['vertices'])
-                #evaverti = eval(verti)
-                deptl = levelsOflist(evaverti)
-                #print(str(evaverti))
-                #print (deptl, ' text viewer')
-                if deptl and deptl > 2:
-                    a = self.readFORviewer_sockets_data(evaverti, deptl, len(evaverti))
-                elif deptl:
-                    a = self.readFORviewer_sockets_data_small(evaverti, deptl, len(evaverti))
-                else:
-                    a = 'None \n'
-                cache_viewer_slot1['veriable'+self.name] = a
-                #print ('viewer text input1')
-        else:
-            cache_viewer_slot1['veriable'+self.name] = 'None \n'
-        # edges/faces socket
-        if self.inputs['edg_pol'].links:
+                if type(self.inputs['edg_pol'].links[0].from_socket) == bpy.types.StringsSocket:
+                    evaline_str = SvGetSocketAnyType(self, self.inputs['edg_pol'])
+                    #print (line_str)
 
-            if type(self.inputs['edg_pol'].links[0].from_socket) == bpy.types.StringsSocket:
-                evaline_str = SvGetSocketAnyType(self, self.inputs['edg_pol'])
-                #print (line_str)
+                    if evaline_str:
+                        cache_viewer_slot2['type'+self.name] = str(self.edgDef(evaline_str))
+                    deptl = levelsOflist(evaline_str)
+                    #print(str(evaline_str))
+                    #print (deptl, ' text viewer')
+                    if deptl and deptl > 2:
+                        b = self.readFORviewer_sockets_data(evaline_str, deptl, len(evaline_str))
+                    elif deptl:
+                        b = self.readFORviewer_sockets_data_small(evaline_str, deptl, len(evaline_str))
+                    else:
+                        b = 'None \n'
+                    cache_viewer_slot2['veriable'+self.name] = str(b)
+                    #print ('viewer text input2')
+            else:
+                cache_viewer_slot2['veriable'+self.name] = 'None \n'
+                cache_viewer_slot2['type'+self.name] = '\n\ndata \n'
+            # matrix socket
+            if self.inputs['matrix'].links:
 
-                if evaline_str:
-                    cache_viewer_slot2['type'+self.name] = str(self.edgDef(evaline_str))
-                deptl = levelsOflist(evaline_str)
-                #print(str(evaline_str))
-                #print (deptl, ' text viewer')
-                if deptl and deptl > 2:
-                    b = self.readFORviewer_sockets_data(evaline_str, deptl, len(evaline_str))
-                elif deptl:
-                    b = self.readFORviewer_sockets_data_small(evaline_str, deptl, len(evaline_str))
-                else:
-                    b = 'None \n'
-                cache_viewer_slot2['veriable'+self.name] = str(b)
-                #print ('viewer text input2')
-        else:
-            cache_viewer_slot2['veriable'+self.name] = 'None \n'
-            cache_viewer_slot2['type'+self.name] = '\n\ndata \n'
-        # matrix socket
-        if self.inputs['matrix'].links:
+                if type(self.inputs['matrix'].links[0].from_socket) == bpy.types.MatrixSocket:
+                    eva = SvGetSocketAnyType(self, self.inputs['matrix'])
+                    deptl = levelsOflist(eva)
+                    #print (deptl, ' text viewer')
+                    if deptl and deptl > 2:
+                        c = self.readFORviewer_sockets_data(eva, deptl, len(eva))
+                    elif deptl:
+                        c = self.readFORviewer_sockets_data_small(eva, deptl, len(eva))
+                    else:
+                        c = 'None \n'
+                    cache_viewer_slot3['veriable'+self.name] = str(c)
+                    #print ('viewer text input3')
+            else:
+                cache_viewer_slot3['veriable'+self.name] = 'None \n'
 
-            if type(self.inputs['matrix'].links[0].from_socket) == bpy.types.MatrixSocket:
-                eva = SvGetSocketAnyType(self, self.inputs['matrix'])
-                deptl = levelsOflist(eva)
-                #print (deptl, ' text viewer')
-                if deptl and deptl > 2:
-                    c = self.readFORviewer_sockets_data(eva, deptl, len(eva))
-                elif deptl:
-                    c = self.readFORviewer_sockets_data_small(eva, deptl, len(eva))
-                else:
-                    c = 'None \n'
-                cache_viewer_slot3['veriable'+self.name] = str(c)
-                #print ('viewer text input3')
-        else:
-            cache_viewer_slot3['veriable'+self.name] = 'None \n'
-
-        if self.inputs['matrix'].links or self.inputs['vertices'].links or \
-                    self.inputs['edg_pol'].links:
-            self.use_custom_color = True
-            self.color = (0.5, 0.5, 1)
-        else:
-            self.use_custom_color = True
-            self.color = (0.05, 0.05, 0.1)
+            if self.inputs['matrix'].links or self.inputs['vertices'].links or \
+                        self.inputs['edg_pol'].links:
+                self.use_custom_color = True
+                self.color = (0.5, 0.5, 1)
+            else:
+                self.use_custom_color = True
+                self.color = (0.05, 0.05, 0.1)
 
     def update_socket(self, context):
         self.update()
@@ -233,4 +235,5 @@ def unregister():
 
 if __name__ == '__main__':
     register()
+
 

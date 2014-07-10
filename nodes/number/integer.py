@@ -32,14 +32,6 @@ class IntegerNode(bpy.types.Node, SverchCustomTreeNode):
                        default=1,
                        options={'ANIMATABLE'}, update=updateNode)
 
-    show = BoolProperty(name='in title', description='show number in title',
-                           default=False,
-                           update=updateNode)
-
-    def draw_buttons_ext(self, context, layout):
-        layout.prop(self, 'show')
-
-    
     def draw_label(self):
         if self.inputs[0].links:
             return self.bl_label
@@ -57,7 +49,6 @@ class IntegerNode(bpy.types.Node, SverchCustomTreeNode):
             Integer = int(tmp[0][0])
         else:
             Integer = self.int_
-
         # outputs
         if 'Integer' in self.outputs and self.outputs['Integer'].links:
             SvSetSocketAnyType(self, 'Integer', [[Integer]])
@@ -72,4 +63,9 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(IntegerNode)
+
+
+
+
+
 

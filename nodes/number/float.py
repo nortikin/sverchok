@@ -20,7 +20,7 @@ import bpy
 from bpy.props import FloatProperty, BoolProperty
 
 from node_tree import SverchCustomTreeNode
-from data_structure import updateNode, SvSetSocketAnyType, SvGetSocketAnyType
+from data_structure import updateNode, SvSetSocketAnyType, SvGetSocketAnyType,
 
 
 class FloatNode(bpy.types.Node, SverchCustomTreeNode):
@@ -32,13 +32,6 @@ class FloatNode(bpy.types.Node, SverchCustomTreeNode):
     float_ = FloatProperty(name='Float', description='float number',
                            default=1.0,
                            options={'ANIMATABLE'}, update=updateNode)
-
-    show = BoolProperty(name='in title', description='show number in title',
-                           default=False,
-                           update=updateNode)
-
-    def draw_buttons_ext(self, context, layout):
-        layout.prop(self, 'show')
 
     def init(self, context):
         self.inputs.new('StringsSocket', "Float").prop_name = 'float_'
