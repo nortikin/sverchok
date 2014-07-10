@@ -22,7 +22,8 @@ import bmesh
 
 from node_tree import SverchCustomTreeNode
 from data_structure import (updateNode, Vector_generate, repeat_last,
-                            SvSetSocketAnyType, SvGetSocketAnyType)
+                            SvSetSocketAnyType, SvGetSocketAnyType,
+                            fullList)
 
 from utils.sv_bmesh_utils import bmesh_from_pydata
 # by Linus Yng
@@ -41,7 +42,7 @@ def soldify(vertices, faces, t, verlen):
     geom_in = bm.verts[:]+bm.edges[:]+bm.faces[:]
 
     bmesh.ops.recalc_face_normals(bm, faces=bm.faces[:])
-    res = bmesh.ops.solidify(bm, geom=geom_in, thickness=t)
+    res = bmesh.ops.solidify(bm, geom=geom_in, thickness=t[0])
 
     edges = []
     faces = []
@@ -95,9 +96,9 @@ class SvSolidifyNode(bpy.types.Node, SverchCustomTreeNode):
             verts = Vector_generate(SvGetSocketAnyType(self, self.inputs['vertices']))
             polys = SvGetSocketAnyType(self, self.inputs['polygons'])
             if 'thickness' in self.inputs:
-                thickness = self.inputs['thickness'].sv_get()[0]
+                thickness = self.inputs['thickness'].sv_get()
             else:
-                thickness = [self.thickness]
+                thickness = [[self.thickness]]
 
             #print (verts,polys)
 
@@ -105,8 +106,8 @@ class SvSolidifyNode(bpy.types.Node, SverchCustomTreeNode):
             edges_out = []
             polys_out = []
             newpo_out = []
-            
-            for v, p, t in zip(verts, polys, repeat_last(thickness)):
+            fullList(thickness, len(verts))
+            for v, p, t in zip(verts, polys, thickness):
                 verlen = set(range(len(v)))
                 res = soldify(v, p, t, verlen)
             

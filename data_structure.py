@@ -1022,16 +1022,6 @@ def svQsort(L):
     if L: return svQsort([x for x in L[1:] if x<L[0]]) + L[0:1] + svQsort([x for x in L[1:] if x>=L[0]])
     return []
 
-####################################
-# float and integer 
-# draw label if not custom
-# magic
-####################################
-
-def draw_label(self, value):
-    val = str(value)
-    if not self.label or self.label != val:
-        self.label = val
 
 
 

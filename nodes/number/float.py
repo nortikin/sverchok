@@ -20,8 +20,7 @@ import bpy
 from bpy.props import FloatProperty, BoolProperty
 
 from node_tree import SverchCustomTreeNode
-from data_structure import updateNode, SvSetSocketAnyType, SvGetSocketAnyType, \
-                            draw_label
+from data_structure import updateNode, SvSetSocketAnyType, SvGetSocketAnyType
 
 
 class FloatNode(bpy.types.Node, SverchCustomTreeNode):
@@ -33,11 +32,32 @@ class FloatNode(bpy.types.Node, SverchCustomTreeNode):
     float_ = FloatProperty(name='Float', description='float number',
                            default=1.0,
                            options={'ANIMATABLE'}, update=updateNode)
+    maxim = FloatProperty(name='max', description='maximum',
+                       default=1000,
+                       update=updateNode)
+    minim = FloatProperty(name='min', description='minimum',
+                       default=-1000,
+                       update=updateNode)
 
     def init(self, context):
         self.inputs.new('StringsSocket', "Float").prop_name = 'float_'
         self.outputs.new('StringsSocket', "Float")
 
+    def draw_buttons_ext(self, context, layout):
+        row = layout.row(align=True)
+        row.prop(self, 'minim')
+        row.prop(self, 'maxim')
+    
+    def draw_label(self):
+        if not self.label:
+            return str(self.float_)
+        valset= set('1234567890')
+        val = str(self.float_)
+        if valset.intersection(set(self.label)):
+            return str(self.float_)
+        else:
+            return self.bl_label
+            
     def update(self):
         # inputs
         if 'Float' in self.inputs and self.inputs['Float'].links:
@@ -45,8 +65,11 @@ class FloatNode(bpy.types.Node, SverchCustomTreeNode):
             Float = tmp[0][0]
         else:
             Float = self.float_
+        if Float > self.maxim:
+            Float = self.int_ = self.maxim
+        if Float < self.minim:
+            Float = self.int_ = self.minim
         # outputs
-        draw_label(self, Float)
         if 'Float' in self.outputs and self.outputs['Float'].links:
             SvSetSocketAnyType(self, 'Float', [[Float]])
 
@@ -60,9 +83,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(FloatNode)
-
-
-
-
-
-

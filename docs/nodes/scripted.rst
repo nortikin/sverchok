@@ -263,6 +263,9 @@ on [python.org](https://wiki.python.org/moin/PythonSpeed/PerformanceTips).
 If you don't know where the cycles are being consumed, then you don't know
 if your efforts to optimize will have any significant impact.
 
+Read these 5 rules by Rob Pike before any optimization.
+http://users.ece.utexas.edu/~adnan/pike.html
+
 Limitations
 -----------
 
