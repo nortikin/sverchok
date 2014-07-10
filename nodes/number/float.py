@@ -43,7 +43,13 @@ class FloatNode(bpy.types.Node, SverchCustomTreeNode):
     def init(self, context):
         self.inputs.new('StringsSocket', "Float").prop_name = 'float_'
         self.outputs.new('StringsSocket', "Float")
-
+    
+    def draw_label(self):
+        if self.inputs[0].links:
+            return "Integer"
+        else:
+            return str(self.int_)
+            
     def update(self):
         # inputs
         if 'Float' in self.inputs and self.inputs['Float'].links:
@@ -52,8 +58,6 @@ class FloatNode(bpy.types.Node, SverchCustomTreeNode):
         else:
             Float = self.float_
         # outputs
-        if self.show:
-            self.label = str(Float)
         if 'Float' in self.outputs and self.outputs['Float'].links:
             SvSetSocketAnyType(self, 'Float', [[Float]])
 

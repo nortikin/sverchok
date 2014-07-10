@@ -39,6 +39,13 @@ class IntegerNode(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons_ext(self, context, layout):
         layout.prop(self, 'show')
 
+    
+    def draw_label(self):
+        if self.inputs[0].links:
+            return "Integer"
+        else:
+            return str(self.int_)
+            
     def init(self, context):
         self.inputs.new('StringsSocket', "Integer", "Integer").prop_name = 'int_'
         self.outputs.new('StringsSocket', "Integer", "Integer")
@@ -50,8 +57,7 @@ class IntegerNode(bpy.types.Node, SverchCustomTreeNode):
             Integer = int(tmp[0][0])
         else:
             Integer = self.int_
-        if self.show:
-            self.label = str(Integer)
+
         # outputs
         if 'Integer' in self.outputs and self.outputs['Integer'].links:
             SvSetSocketAnyType(self, 'Integer', [[Integer]])
