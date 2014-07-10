@@ -46,7 +46,7 @@ class FloatNode(bpy.types.Node, SverchCustomTreeNode):
         else:
             Float = self.float_
         # outputs
-        draw_label(self.label, Float)
+        draw_label(self, Float)
         if 'Float' in self.outputs and self.outputs['Float'].links:
             SvSetSocketAnyType(self, 'Float', [[Float]])
 
@@ -60,6 +60,9 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(FloatNode)
+
+
+
 
 
 

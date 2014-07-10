@@ -1028,8 +1028,11 @@ def svQsort(L):
 # magic
 ####################################
 
-def draw_label(label, value):
-    if not label:
-        label = str(value)
+def draw_label(self, value):
+    val = str(value)
+    if not self.label or self.label != val:
+        self.label = val
+
+
 
 
