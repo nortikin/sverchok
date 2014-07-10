@@ -42,7 +42,7 @@ class IntegerNode(bpy.types.Node, SverchCustomTreeNode):
     
     def draw_label(self):
         if self.inputs[0].links:
-            return "Integer"
+            return self.bl_label
         else:
             return str(self.int_)
             
