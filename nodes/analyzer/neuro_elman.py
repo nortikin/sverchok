@@ -19,7 +19,7 @@
 # by Alexander Nedovizin
 
 import bpy
-from bpy.props import BoolProperty, IntProperty, StringProperty
+from bpy.props import BoolProperty, IntProperty, StringProperty, FloatProperty
 
 from node_tree import SverchCustomTreeNode
 from data_structure import (updateNode, changable_sockets,
@@ -36,6 +36,8 @@ class Neuro_Elman:
     InA = 0
     InB = 0
     wA = []
+    gister = 0.01
+    k_learning = 0.1
     
     
     def __init__(self, num_a, num_b):
@@ -62,13 +64,13 @@ class Neuro_Elman:
         #return (cmath.exp(a*x).real-cmath.exp(-a*x).real)/(cmath.exp(-a*x).real+cmath.exp(a*x).real)
 
     
-    def neuro(self, list_in, etalon, learning=False): 
+    def neuro(self, list_in, etalon, maxim, learning=False): 
         flag = True
-        while flag:
-            outA = self.layerA(list_in)
+        if flag:
+            outA = self.layerA(list_in, maxim)
             outB = self.layerB(outA)
             suma = sum(outB)
-            if learning and abs(etalon-suma)>1e-2:
+            if learning and abs(etalon-suma)>self.gister:
                 self.learning(suma, etalon)
             else:
             #if not learning or not abs(etalon-suma)>1e-2:
@@ -78,13 +80,13 @@ class Neuro_Elman:
         return suma
     
     
-    def layerA(self, list_in):
+    def layerA(self, list_in, maxim):
         lin = len(list_in)
         if lin!=self.InA:
             self.wA = self.init_w(lin, self.InB)
             self.InA = lin
             
-        outA = list(map(self.sigmoida, list_in, [3]*self.InA))
+        outA = list(map(self.sigmoida, list_in, [maxim]*self.InA))
         return outA
     
     
@@ -100,7 +102,7 @@ class Neuro_Elman:
     
     def learning(self, sumB, etalon):
         d = etalon - sumB
-        epsilon = 0.3
+        epsilon = self.k_learning
         
         for ida,la in enumerate(self.wA):
             for idb, lb in enumerate(la):
@@ -119,15 +121,35 @@ class NeuroElman1LNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
     
     Elman = Neuro_Elman(1,1)
-    
+    k_learning = FloatProperty(name='k_learning',
+                            default=0.1,
+                            update=updateNode)
+    gisterezis = FloatProperty(name='gisterezis',
+                            default=0.01,
+                            min = 0.0,
+                            max = 1.0,
+                            update=updateNode)
+    maximum = FloatProperty(name='maximum',
+                            default=3.0,
+                            update=updateNode)
 
     def init(self, context):
         self.inputs.new('StringsSocket', "data", "data")
         self.inputs.new('StringsSocket', "etalon", "etalon")
         self.outputs.new('StringsSocket', "result", "result")
         
-
+        
+    def draw_buttons(self, context, layout):
+        layout.prop(self, "k_learning", text="koeff learning")
+        layout.prop(self, "gisterezis", text="gisterezis")
+        layout.prop(self, "maximum", text="maximum")
+    
+    
     def update(self):
+        self.Elman.gister = abs(self.gisterezis)
+        self.Elman.k_learning = self.k_learning
+        
+        result = []
         if 'result' in self.outputs and len(self.outputs['result'].links) > 0 \
                 and 'data' in self.inputs and len(self.inputs['data'].links) > 0:
             
@@ -139,10 +161,11 @@ class NeuroElman1LNode(bpy.types.Node, SverchCustomTreeNode):
                 flag = False
                 etalon = 0
             
-            data = SvGetSocketAnyType(self, self.inputs['data'])[0]
-            if type(data) not in [list, tuple]: data = [data]
-            ##print('\ndata',data)
-            result = [[self.Elman.neuro(data, etalon, flag)]]
+            data_ = SvGetSocketAnyType(self, self.inputs['data'])
+            for data in data_:
+                if type(data) not in [list, tuple]: data = [data]
+                ##print('\ndata',data)
+                result.append([self.Elman.neuro(data, etalon, self.maximum, flag)])
         
         else:
             result = [[]]
@@ -161,5 +184,3 @@ def register():
 def unregister():
     bpy.utils.unregister_class(NeuroElman1LNode)
 
-if __name__ == '__main__':
-    register()
