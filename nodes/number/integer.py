@@ -44,7 +44,7 @@ class IntegerNode(bpy.types.Node, SverchCustomTreeNode):
             Integer = int(tmp[0][0])
         else:
             Integer = self.int_
-        draw_label(self.label, Integer)
+        draw_label(self, Integer)
         # outputs
         if 'Integer' in self.outputs and self.outputs['Integer'].links:
             SvSetSocketAnyType(self, 'Integer', [[Integer]])
@@ -59,6 +59,8 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(IntegerNode)
+
+
 
 
 
