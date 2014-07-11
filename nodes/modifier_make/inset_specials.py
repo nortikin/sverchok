@@ -162,6 +162,8 @@ class SvInsetSpecial(bpy.types.Node, SverchCustomTreeNode):
         else:
             inset_rates = [[self.inset]]
 
+        # print(inset_rates)
+
         # unvectorized implementation, expects only one set of
         # verts+faces+excavateness , excavateness can be a list of floats.
         # for non-uniform excavation.
