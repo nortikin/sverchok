@@ -35,6 +35,7 @@ from data_structure import (updateNode, Vector_generate, repeat_last,
 def inset_special(vertices, faces, inset_rates, axis, distance, make_inner):
 
     new_faces = []
+    print(len(faces), len(inset_rates))
 
     def get_average_vector(verts, n):
         dummy_vec = Vector()
@@ -48,7 +49,7 @@ def inset_special(vertices, faces, inset_rates, axis, distance, make_inner):
         out_faces = []
         out_faces.append([a, b, e, d])
         out_faces.append([b, c, f, e])
-        out_faces.append([c, a, d, e])
+        out_faces.append([c, a, d, f])
         if make_inner:
             out_faces.append([d, e, f])
         return out_faces
@@ -112,7 +113,7 @@ def inset_special(vertices, faces, inset_rates, axis, distance, make_inner):
             new_inner_from(face, inset_by, axis, distance, make_inner)
 
     new_verts = [v[:] for v in vertices]
-    print('new_faces=', new_faces)
+    # print('new_faces=', new_faces)
     return new_verts, new_faces
 
 
@@ -177,7 +178,7 @@ class SvInsetSpecial(bpy.types.Node, SverchCustomTreeNode):
             'distance': 0,
             'make_inner': False
         }
-        print(func_args)
+        # print(func_args)
         res = inset_special(**func_args)
 
         if not res:
@@ -191,7 +192,6 @@ class SvInsetSpecial(bpy.types.Node, SverchCustomTreeNode):
         SvSetSocketAnyType(self, 'vertices', [verts_out])
 
         if outputs['polygons'].links:
-            print(len(polys_out))
             SvSetSocketAnyType(self, 'polygons', [polys_out])
 
     def update_socket(self, context):
