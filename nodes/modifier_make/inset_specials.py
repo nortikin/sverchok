@@ -34,6 +34,8 @@ from data_structure import (updateNode, Vector_generate, repeat_last,
 
 def inset_special(vertices, faces, inset_rates, axis, distance, make_inner):
 
+    new_faces = []
+
     def get_average_vector(verts, n):
         dummy_vec = Vector()
         v for v in verts:
@@ -87,32 +89,29 @@ def inset_special(vertices, faces, inset_rates, axis, distance, make_inner):
         to get
          - new faces
          - avg vertex location
+         - but can't lerp until avg is known. so each input face is looped at least twice.
         '''
         current_verts_idx = len(vertices)
         n = len(face)
         verts = [vertices[i] for i in face]
         avg_vec = get_average_vector(verts, n)
 
+        # lerp and add to vertices immediately
         new_verts_prime = [avg_vec.lerp(v, inset_by) for v in verts]
-        # add to vertices immediately
         vertices.extend(new_verts_prime)
+
         tail_idx = current_verts_idx + n
 
-        get_faces_prime = {
-            3: do_tri,
-            4: do_quad,
-            }.get(n, do_ngon)
+        get_faces_prime = {3: do_tri, 4: do_quad}.get(n, do_ngon)
+        new_faces_prime = get_faces_prime(face, tail_idx, make_inner)
+        new_faces.append(new_faces_prime)
 
-        new_faces_prime = get_faces_prime(face, lv_idx, make_inner)
-
-    new_verts = []
-    new_faces = []
     for idx, face in enumerate(faces):
         if excavateness[idx] > 0:
             inset_by = inset_rates[idx]
-            inset_v, inset_f = new_inner_from(face, inset_by, axis, distance, make_inner)
-            pass
+            new_inner_from(face, inset_by, axis, distance, make_inner)
 
+    new_verts = [v[:] for v in vertices]
     return new_verts, new_faces
 
 
