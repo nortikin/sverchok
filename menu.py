@@ -176,8 +176,7 @@ def make_categories():
         # should be removed...
         ["SvReRouteNode",       "Reroute Point"],
         ["SvVolumeNode",        "Volume"],
-        ["svAxisInputNode",     "Vector X | Y | Z"],
-        ["SvSwitchNode",        "Switich"]]
+        ["SvSwitchNode",        "Switich"],
         ["svAxisInputNode",     "Vector X | Y | Z"],
         ["SvNeuroElman1LNode",  "Neuro"],
         ["SvInstancerNode",     "mesh instancer"]]
