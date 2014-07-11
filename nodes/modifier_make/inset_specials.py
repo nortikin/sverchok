@@ -100,7 +100,7 @@ def inset_special(vertices, faces, inset_rates, axis, distance, make_inner):
         new_verts_prime = [avg_vec.lerp(v, inset_by) for v in verts]
         vertices.extend(new_verts_prime)
 
-        tail_idx = current_verts_idx + n
+        tail_idx = (current_verts_idx + n) - 1
 
         get_faces_prime = {3: do_tri, 4: do_quad}.get(n, do_ngon)
         new_faces_prime = get_faces_prime(face, tail_idx, make_inner)
