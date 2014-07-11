@@ -35,7 +35,7 @@ from data_structure import (updateNode, Vector_generate, repeat_last,
 def inset_special(vertices, faces, inset_rates, axis, distance, make_inner):
 
     new_faces = []
-    print(len(faces), len(inset_rates))
+    # print(len(faces), len(inset_rates))
 
     def get_average_vector(verts, n):
         dummy_vec = Vector()
