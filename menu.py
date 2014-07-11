@@ -176,7 +176,8 @@ def make_categories():
         ["SvVolumeNode",        "Volume"],
         ["svAxisInputNode",     "Vector X | Y | Z"],
         ["NeuroElman1LNode",    "Neuro"],
-        ["SvInstancerNode",     "mesh instancer"]]
+        ["SvInstancerNode",     "mesh instancer"],
+        ["SvInsetSpecial",      "mesh inset specials"]]
 
     node_categories = []
     for category, nodes in node_cats.items():

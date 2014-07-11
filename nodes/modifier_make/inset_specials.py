@@ -17,7 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-import mathtutils
+import mathutils
 
 from mathutils import Vector
 from bpy.props import FloatProperty
@@ -107,8 +107,8 @@ def inset_special(vertices, faces, inset_rates, axis, distance, make_inner):
         new_faces.append(new_faces_prime)
 
     for idx, face in enumerate(faces):
-        if excavateness[idx] > 0:
-            inset_by = inset_rates[idx]
+        inset_by = inset_rates[idx][0]  # WARNING, levels issue
+        if inset_by > 0:
             new_inner_from(face, inset_by, axis, distance, make_inner)
 
     new_verts = [v[:] for v in vertices]
@@ -125,12 +125,12 @@ class SvInsetSpecial(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'InsetSpecial'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    excavate = FloatProperty(
-        name='Excavate', description='excavate amount', default=0.1, update=updateNode)
+    inset = FloatProperty(
+        name='Inset', description='inset amount', default=0.1, update=updateNode)
 
     def init(self, context):
 
-        self.inputs.new('StringsSocket', 'excavate').prop_name = 'excavate'
+        self.inputs.new('StringsSocket', 'inset').prop_name = 'inset'
         self.inputs.new('VerticesSocket', 'vertices', 'vertices')
         self.inputs.new('StringsSocket', 'polygons', 'polygons')
 
@@ -155,27 +155,28 @@ class SvInsetSpecial(bpy.types.Node, SverchCustomTreeNode):
         verts = Vector_generate(SvGetSocketAnyType(self, inputs['vertices']))
         polys = SvGetSocketAnyType(self, inputs['polygons'])
 
-        if self.inputs['excavate'].links:
-            excavateness = self.inputs['excavate'].sv_get()
+        if self.inputs['inset'].links:
+            inset_rates = self.inputs['inset'].sv_get()
         else:
-            excavateness = [[self.excavate]]
+            inset_rates = [[self.inset]]
 
         # unvectorized implementation, expects only one set of
         # verts+faces+excavateness , excavateness can be a list of floats.
         # for non-uniform excavation.
         verts_out = []
         polys_out = []
-        fullList(excavateness, len(polys[0]))
+        fullList(inset_rates, len(polys[0]))
 
         #verts, faces, axis=None, distance=0, make_inner=False
         func_args = {
-            'verts': verts[0],
+            'vertices': verts[0],
             'faces': polys[0],
-            'inset_rates': excavateness,
+            'inset_rates': inset_rates,
             'axis': None,
             'distance': 0,
             'make_inner': False
         }
+        print(func_args)
         res = inset_special(**func_args)
 
         if not res:
