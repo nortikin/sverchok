@@ -17,8 +17,11 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
+import mathtutils
+
+from mathutils import Vector
 from bpy.props import FloatProperty
-import bmesh
+
 
 from node_tree import SverchCustomTreeNode
 from data_structure import (updateNode, Vector_generate, repeat_last,
@@ -26,16 +29,57 @@ from data_structure import (updateNode, Vector_generate, repeat_last,
                             fullList)
 
 
-def inset_special(vertices, faces, excavateness):
+def inset_special(vertices, faces, inset_rates, axis, distance, make_inner):
 
-    def new_inner_from(face):
+    def get_average_vector(verts, n):
+        dummy_vec = Vector()
+        v for v in verts:
+            dummy_vec = dummy_vec + v
+        return dummy_vec * 1/n
+
+    def new_inner_from(face, inset_by, axis, distance, make_inner):
+        '''
+        face:       (idx list) face to work on
+        inset_by:   (scalar) amount to open the face
+        axis:       (vector) axis relative to face normal
+        distance:   (scalar) push new verts on axis by this amount
+        make_inner: create extra internal face
+        '''
+        current_verts_idx = len(vertices)
+        n = len(face)
+        verts = [vertices[i] for i in face]
+        avg_vec = get_average_vector(verts, n)
+
+        # dumb implementation first.
+        new_verts_prime = [avg_vec.lerp(v, inset_by) for v in verts]
+        # add to vertices immediately
+        vertices.extend(new_verts_prime)
+        last_vertex_idx = current_verts_idx + n
+
+        '''
+        if verts is A, B, C
+        then new faces prime is
+        A  B  B' A'
+        B  C  C' B'
+        C  A  A' C'
+
+        in indices that's (relative)
+        idx0, idx1, last_vertex_idx-(n-1), last_vertex_idx-n
+        idx1, idxn, last_vertex_idx-(n-2), last_vertex_idx-(n-1)
+        .. ,.. ,.. ,..
+        idxn, idx0, last_vertex_idx-n, last_vertex_idx-(n-2)
+
+        '''
+        new_faces_prime = []
+        
         pass
 
     new_verts = []
     new_faces = []
     for idx, face in enumerate(faces):
         if excavateness[idx] > 0:
-            inset_verts = new_inner_from(face)
+            inset_by = inset_rates[idx]
+            inset_v, inset_f = new_inner_from(face, inset_by, axis, distance, make_inner)
             pass
     return
 
@@ -92,7 +136,17 @@ class SvInsetSpecial(bpy.types.Node, SverchCustomTreeNode):
         verts_out = []
         polys_out = []
         fullList(excavateness, len(polys[0]))
-        res = inset_special(verts[0], polys[0], excavateness):
+
+        #verts, faces, axis=None, distance=0, make_inner=False
+        func_args = {
+            'verts': verts[0], 
+            'faces': polys[0],
+            'inset_rates': excavateness,
+            'axis': None, 
+            'distance': 0, 
+            'make_inner': False
+        }
+        res = inset_special(**func_args)
         
         if not res:
             return
