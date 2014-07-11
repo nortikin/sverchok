@@ -29,6 +29,9 @@ from data_structure import (updateNode, Vector_generate, repeat_last,
                             fullList)
 
 
+''' very non optimal routines. beware. I know this '''
+
+
 def inset_special(vertices, faces, inset_rates, axis, distance, make_inner):
 
     def get_average_vector(verts, n):
@@ -37,6 +40,41 @@ def inset_special(vertices, faces, inset_rates, axis, distance, make_inner):
             dummy_vec = dummy_vec + v
         return dummy_vec * 1/n
 
+    def do_tri(face, lv_idx, make_inner):
+        a, b, c = face
+        d, e, f = lv_idx-2, lv_idx-1, lv_idx
+        out_faces = []
+        out_faces.append([a, b, e, d])
+        out_faces.append([b, c, f, e])
+        out_faces.append([c, a, d, e])
+        if make_inner:
+            out_faces.append([d, e, f])
+        return out_faces
+
+    def do_quad(face, lv_idx, make_inner):
+        a, b, c, d = face
+        e, f, g, h = lv_idx-3, lv_idx-2, lv_idx-1, lv_idx
+        out_faces = []
+        out_faces.append([a, b, f, e])
+        out_faces.append([b, c, g, f])
+        out_faces.append([c, d, h, g])
+        out_faces.append([d, a, e, h])
+        if make_inner:
+            out_faces.append([e, f, g, h])
+        return out_faces
+
+    def do_ngon(face, lv_idx, make_inner):
+        '''
+        setting up the forloop only makes sense for ngons
+        idx0, idx1, last_vertex_idx-(n-1), last_vertex_idx-n
+        idx1, idxn, last_vertex_idx-(n-2), last_vertex_idx-(n-1)
+        .. ,.. ,.. ,..
+        idxn, idx0, last_vertex_idx-n, last_vertex_idx-(n-2)
+
+        '''
+        print('ngons are not yet supported')
+        return []
+
     def new_inner_from(face, inset_by, axis, distance, make_inner):
         '''
         face:       (idx list) face to work on
@@ -44,35 +82,28 @@ def inset_special(vertices, faces, inset_rates, axis, distance, make_inner):
         axis:       (vector) axis relative to face normal
         distance:   (scalar) push new verts on axis by this amount
         make_inner: create extra internal face
+
+        # dumb implementation first. should only loop over the verts of face 1 time
+        to get
+         - new faces
+         - avg vertex location
         '''
         current_verts_idx = len(vertices)
         n = len(face)
         verts = [vertices[i] for i in face]
         avg_vec = get_average_vector(verts, n)
 
-        # dumb implementation first.
         new_verts_prime = [avg_vec.lerp(v, inset_by) for v in verts]
         # add to vertices immediately
         vertices.extend(new_verts_prime)
-        last_vertex_idx = current_verts_idx + n
+        tail_idx = current_verts_idx + n
 
-        '''
-        if verts is A, B, C
-        then new faces prime is
-        A  B  B' A'
-        B  C  C' B'
-        C  A  A' C'
+        get_faces_prime = {
+            3: do_tri,
+            4: do_quad,
+            }.get(n, do_ngon)
 
-        in indices that's (relative)
-        idx0, idx1, last_vertex_idx-(n-1), last_vertex_idx-n
-        idx1, idxn, last_vertex_idx-(n-2), last_vertex_idx-(n-1)
-        .. ,.. ,.. ,..
-        idxn, idx0, last_vertex_idx-n, last_vertex_idx-(n-2)
-
-        '''
-        new_faces_prime = []
-        
-        pass
+        new_faces_prime = get_faces_prime(face, lv_idx, make_inner)
 
     new_verts = []
     new_faces = []
@@ -81,7 +112,8 @@ def inset_special(vertices, faces, inset_rates, axis, distance, make_inner):
             inset_by = inset_rates[idx]
             inset_v, inset_f = new_inner_from(face, inset_by, axis, distance, make_inner)
             pass
-    return
+
+    return new_verts, new_faces
 
 
 class SvInsetSpecial(bpy.types.Node, SverchCustomTreeNode):
@@ -94,9 +126,8 @@ class SvInsetSpecial(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'InsetSpecial'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    excavate = FloatProperty(name='Excavate', description='excavate amount',
-                              default=0.1,
-                              update=updateNode)
+    excavate = FloatProperty(
+        name='Excavate', description='excavate amount', default=0.1, update=updateNode)
 
     def init(self, context):
 
@@ -124,13 +155,13 @@ class SvInsetSpecial(bpy.types.Node, SverchCustomTreeNode):
 
         verts = Vector_generate(SvGetSocketAnyType(self, inputs['vertices']))
         polys = SvGetSocketAnyType(self, inputs['polygons'])
-        
+
         if self.inputs['excavate'].links:
             excavateness = self.inputs['excavate'].sv_get()
         else:
             excavateness = [[self.excavate]]
 
-        # unvectorized implementation, expects only one set of 
+        # unvectorized implementation, expects only one set of
         # verts+faces+excavateness , excavateness can be a list of floats.
         # for non-uniform excavation.
         verts_out = []
@@ -139,25 +170,24 @@ class SvInsetSpecial(bpy.types.Node, SverchCustomTreeNode):
 
         #verts, faces, axis=None, distance=0, make_inner=False
         func_args = {
-            'verts': verts[0], 
+            'verts': verts[0],
             'faces': polys[0],
             'inset_rates': excavateness,
-            'axis': None, 
-            'distance': 0, 
+            'axis': None,
+            'distance': 0,
             'make_inner': False
         }
         res = inset_special(**func_args)
-        
+
         if not res:
             return
         verts_out.append(res[0])
         polys_out.append(res[1])
 
-
         # this section deals purely with hooking up the processed data to the
         # ouputs
         SvSetSocketAnyType(self, 'vertices', verts_out)
-        
+
         if outputs['polygons'].links:
             SvSetSocketAnyType(self, 'polygons', polys_out)
 

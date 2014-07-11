@@ -109,7 +109,8 @@ nodes_dict = {
         'voronoi_2d',
         'voronoi',
         'offset',
-        'wireframe'],
+        'wireframe',
+        'inset_specials'],
 
     'number': [
         'float_to_int',
