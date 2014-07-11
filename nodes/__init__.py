@@ -24,7 +24,8 @@ nodes_dict = {
         'text',
         'wifi_in',
         'wifi_out',
-        'eval_knieval'],
+        'eval_knieval',
+        'switch'],
 
     'basic_debug': [
         'debug_print',

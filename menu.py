@@ -42,6 +42,7 @@ def make_categories():
         ["WifiInNode",          "Wifi in"],
         ["WifiOutNode",         "Wifi out"]]
 
+        
     node_cats["Basic Debug"] = [
         # ["Test1Node",         "Test1"],
         # ["Test2Node",         "Test2"],
@@ -172,12 +173,13 @@ def make_categories():
         ["EvalKnievalNode",     "Eval Knieval"],
         # need to be completely reviewed
         ["ListDecomposeNode",   "List Decompose"],
+        # should be removed...
         ["SvReRouteNode",       "Reroute Point"],
         ["SvVolumeNode",        "Volume"],
         ["svAxisInputNode",     "Vector X | Y | Z"],
         ["NeuroElman1LNode",    "Neuro"],
-        ["SvInstancerNode",     "mesh instancer"]]
-
+        ["SvInstancerNode",     "mesh instancer"],
+        ["SvSwitchNode",        "Switich"]]
     node_categories = []
     for category, nodes in node_cats.items():
         name_big = "SVERCHOK_" + category.replace(' ', '_')
