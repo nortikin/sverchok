@@ -38,7 +38,7 @@ def inset_special(vertices, faces, inset_rates, axis, distance, make_inner):
 
     def get_average_vector(verts, n):
         dummy_vec = Vector()
-        v for v in verts:
+        for v in verts:
             dummy_vec = dummy_vec + v
         return dummy_vec * 1/n
 
