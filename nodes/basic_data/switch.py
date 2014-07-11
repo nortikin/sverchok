@@ -25,7 +25,7 @@ from data_structure import (SvSetSocketAnyType, SvGetSocketAnyType,
 
 
 class SvSwitchNode(bpy.types.Node, SverchCustomTreeNode):
-    ''' Wifi Input '''
+    ''' Switch Node '''
     bl_idname = 'SvSwitchNode'
     bl_label = 'Switch'
     bl_icon = 'OUTLINER_OB_EMPTY'
@@ -34,9 +34,7 @@ class SvSwitchNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "switch_count")
     
     def change_count(self, context):
-        print("change_count called")
         in_count = len(self.inputs)
-        print(in_count)
         if in_count < self.switch_count * 2 + 1:
             while len(self.inputs) != self.switch_count * 2 + 1:
                 n = int((len(self.inputs)-1) / 2)
@@ -85,7 +83,6 @@ class SvSwitchNode(bpy.types.Node, SverchCustomTreeNode):
             sockets = self.inputs[1 + count:]
         for in_s,out_s in zip(sockets, self.outputs):
             if in_s.links and out_s.links:
-                print(in_s.name, out_s.name)
                 data = in_s.sv_get(deepcopy=False)
                 out_s.sv_set(data)
             
