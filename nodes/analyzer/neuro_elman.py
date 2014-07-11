@@ -32,7 +32,7 @@ import random, cmath
 
 
 
-class Neuro_Elman:
+class SvNeuro_Elman:
     InA = 0
     InB = 0
     wA = []
@@ -114,13 +114,13 @@ class Neuro_Elman:
 # *********************
 
 
-class NeuroElman1LNode(bpy.types.Node, SverchCustomTreeNode):
+class SvNeuroElman1LNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Neuro Elman 1 Layer '''
-    bl_idname = 'NeuroElman1LNode'
+    bl_idname = 'SvNeuroElman1LNode'
     bl_label = 'Neuro Elman 1 Layer'
     bl_icon = 'OUTLINER_OB_EMPTY'
     
-    Elman = Neuro_Elman(1,1)
+    Elman = SvNeuro_Elman(1,1)
     k_learning = FloatProperty(name='k_learning',
                             default=0.1,
                             update=updateNode)
@@ -178,9 +178,10 @@ class NeuroElman1LNode(bpy.types.Node, SverchCustomTreeNode):
 
 
 def register():
-    bpy.utils.register_class(NeuroElman1LNode)
+    bpy.utils.register_class(SvNeuroElman1LNode)
 
 
 def unregister():
-    bpy.utils.unregister_class(NeuroElman1LNode)
+    bpy.utils.unregister_class(SvNeuroElman1LNode)
+
 

@@ -177,9 +177,11 @@ def make_categories():
         ["SvReRouteNode",       "Reroute Point"],
         ["SvVolumeNode",        "Volume"],
         ["svAxisInputNode",     "Vector X | Y | Z"],
-        ["NeuroElman1LNode",    "Neuro"],
-        ["SvInstancerNode",     "mesh instancer"],
         ["SvSwitchNode",        "Switich"]]
+        ["svAxisInputNode",     "Vector X | Y | Z"],
+        ["SvNeuroElman1LNode",  "Neuro"],
+        ["SvInstancerNode",     "mesh instancer"]]
+
     node_categories = []
     for category, nodes in node_cats.items():
         name_big = "SVERCHOK_" + category.replace(' ', '_')
@@ -188,3 +190,4 @@ def make_categories():
             items=[NodeItem(bl_idname, name) for bl_idname, name in nodes]))
 
     return node_categories
+
