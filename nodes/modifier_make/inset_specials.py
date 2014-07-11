@@ -104,7 +104,7 @@ def inset_special(vertices, faces, inset_rates, axis, distance, make_inner):
 
         get_faces_prime = {3: do_tri, 4: do_quad}.get(n, do_ngon)
         new_faces_prime = get_faces_prime(face, tail_idx, make_inner)
-        new_faces.append(new_faces_prime)
+        new_faces.extend(new_faces_prime)
 
     for idx, face in enumerate(faces):
         inset_by = inset_rates[idx][0]  # WARNING, levels issue
@@ -112,6 +112,7 @@ def inset_special(vertices, faces, inset_rates, axis, distance, make_inner):
             new_inner_from(face, inset_by, axis, distance, make_inner)
 
     new_verts = [v[:] for v in vertices]
+    print('new_faces=', new_faces)
     return new_verts, new_faces
 
 
@@ -181,15 +182,17 @@ class SvInsetSpecial(bpy.types.Node, SverchCustomTreeNode):
 
         if not res:
             return
-        verts_out.append(res[0])
-        polys_out.append(res[1])
+
+        # unvectorized.
+        verts_out, polys_out = res
 
         # this section deals purely with hooking up the processed data to the
         # ouputs
-        SvSetSocketAnyType(self, 'vertices', verts_out)
+        SvSetSocketAnyType(self, 'vertices', [verts_out])
 
         if outputs['polygons'].links:
-            SvSetSocketAnyType(self, 'polygons', polys_out)
+            print(len(polys_out))
+            SvSetSocketAnyType(self, 'polygons', [polys_out])
 
     def update_socket(self, context):
         self.update()
