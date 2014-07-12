@@ -106,7 +106,7 @@ def inset_special(vertices, faces, inset_rates, axis, distances, make_inner):
                 local_normal = (local_normal + vector(axis)).normalized()
 
             v = new_verts_prime[0]
-            distance_rate = (v-(local_normal-v)).length / distance
+            distance_rate = (local_normal-v).length / distance
             new_verts_prime = [v.lerp(v+local_normal, distance_rate) for v in new_verts_prime]
 
         vertices.extend(new_verts_prime)
