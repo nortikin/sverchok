@@ -99,7 +99,7 @@ def make_categories():
         ["CylinderNode",        "Cylinder"],
         ["SphereNode",          "Sphere"],
         ["BasicSplineNode",     "2pt Spline"],
-        ["svBasicArcNode",      "3pt Arc"],        
+        ["svBasicArcNode",      "3pt Arc"],
         ["HilbertNode",         "Hilbert"],
         ["Hilbert3dNode",       "Hilbert3d"],
         ["HilbertImageNode",    "Hilbert image"],
@@ -172,12 +172,19 @@ def make_categories():
         ["EvalKnievalNode",     "Eval Knieval"],
         # need to be completely reviewed
         ["ListDecomposeNode",   "List Decompose"],
+        # should be removed...
         ["SvReRouteNode",       "Reroute Point"],
         ["SvVolumeNode",        "Volume"],
+        ["SvSwitchNode",        "Switch"],
         ["svAxisInputNode",     "Vector X | Y | Z"],
+<<<<<<< HEAD
         ["NeuroElman1LNode",    "Neuro"],
         ["SvInstancerNode",     "mesh instancer"],
         ["SvInsetSpecial",      "mesh inset specials"]]
+=======
+        ["SvNeuroElman1LNode",  "Neuro"],
+        ["SvInstancerNode",     "mesh instancer"]]
+>>>>>>> origin/master
 
     node_categories = []
     for category, nodes in node_cats.items():

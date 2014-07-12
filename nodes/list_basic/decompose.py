@@ -24,9 +24,9 @@ from data_structure import (levelsOflist, multi_socket, changable_sockets,
                             get_socket_type_full, SvSetSocket, SvGetSocketAnyType)
 
 
-class ListDecomposeNode(bpy.types.Node, SverchCustomTreeNode):
+class SvListDecomposeNode(bpy.types.Node, SverchCustomTreeNode):
     ''' List devided to multiple sockets in some level '''
-    bl_idname = 'ListDecomposeNode'
+    bl_idname = 'SvListDecomposeNode'
     bl_label = 'List Decompose'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
@@ -97,9 +97,10 @@ class ListDecomposeNode(bpy.types.Node, SverchCustomTreeNode):
 
 
 def register():
-    bpy.utils.register_class(ListDecomposeNode)
+    bpy.utils.register_class(SvListDecomposeNode)
 
 
 def unregister():
-    bpy.utils.unregister_class(ListDecomposeNode)
+    bpy.utils.unregister_class(SvListDecomposeNode)
+
 
