@@ -103,7 +103,9 @@ def inset_special(vertices, faces, inset_rates, axis, distances, make_inner):
         if distance:
             local_normal = mathutils.geometry.normal(*new_verts_prime[:3])
             if axis:
-                local_normal = (local_normal + vector(axis)).normalized()
+                #  normal + face_avg + axis ##############
+                local_normal = local_normal + vector(axis)
+                pass
 
             v = new_verts_prime[0]
             # distance_rate = distance / (local_normal-v).length 
