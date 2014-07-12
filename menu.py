@@ -42,7 +42,6 @@ def make_categories():
         ["WifiInNode",          "Wifi in"],
         ["WifiOutNode",         "Wifi out"]]
 
-        
     node_cats["Basic Debug"] = [
         # ["Test1Node",         "Test1"],
         # ["Test2Node",         "Test2"],
@@ -100,7 +99,7 @@ def make_categories():
         ["CylinderNode",        "Cylinder"],
         ["SphereNode",          "Sphere"],
         ["BasicSplineNode",     "2pt Spline"],
-        ["svBasicArcNode",      "3pt Arc"],        
+        ["svBasicArcNode",      "3pt Arc"],
         ["HilbertNode",         "Hilbert"],
         ["Hilbert3dNode",       "Hilbert3d"],
         ["HilbertImageNode",    "Hilbert image"],
@@ -176,7 +175,7 @@ def make_categories():
         # should be removed...
         ["SvReRouteNode",       "Reroute Point"],
         ["SvVolumeNode",        "Volume"],
-        ["SvSwitchNode",        "Switich"],
+        ["SvSwitchNode",        "Switch"],
         ["svAxisInputNode",     "Vector X | Y | Z"],
         ["SvNeuroElman1LNode",  "Neuro"],
         ["SvInstancerNode",     "mesh instancer"]]
@@ -189,4 +188,3 @@ def make_categories():
             items=[NodeItem(bl_idname, name) for bl_idname, name in nodes]))
 
     return node_categories
-
