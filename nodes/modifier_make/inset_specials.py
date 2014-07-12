@@ -20,7 +20,7 @@ import bpy
 import mathutils
 
 from mathutils import Vector
-from bpy.props import FloatProperty
+from bpy.props import FloatProperty, FloatVectorProperty
 
 
 from node_tree import SverchCustomTreeNode
@@ -103,12 +103,8 @@ def inset_special(vertices, faces, inset_rates, axis, distances, make_inner):
         if distance:
             local_normal = mathutils.geometry.normal(*new_verts_prime[:3])
             if axis:
-                #  normal + face_avg + axis ##############
-                local_normal = local_normal + vector(axis)
-                pass
+                local_normal = (local_normal + Vector(axis)).normalized()
 
-            v = new_verts_prime[0]
-            # distance_rate = distance / (local_normal-v).length 
             new_verts_prime = [v.lerp(v+local_normal, distance) for v in new_verts_prime]
 
         vertices.extend(new_verts_prime)
@@ -123,8 +119,19 @@ def inset_special(vertices, faces, inset_rates, axis, distances, make_inner):
         inset_by = inset_rates[idx][0]  # WARNING, levels issue
         if inset_by > 0:
             # 100 is totally a magic number... why?
-            push_by = distances[idx][0] / 100 # WARNING, levels issue
-            new_inner_from(face, inset_by, axis, push_by, make_inner)
+            push_by = distances[idx][0] # WARNING, levels issue
+            # if axis:
+            #     axial = axis[idx][0]
+
+            #     # print(axial)
+            #     if (axial[0] == axial[1] == axial[2]) == 0.0:
+            #         axial = None
+            # else:
+            #     axial = None
+
+            # print(axial)
+            axial = None
+            new_inner_from(face, inset_by, axial, push_by, make_inner)
 
     new_verts = [v[:] for v in vertices]
     # print('new_faces=', new_faces)
@@ -143,11 +150,13 @@ class SvInsetSpecial(bpy.types.Node, SverchCustomTreeNode):
 
     inset = FloatProperty(name='Inset', description='inset amount', default=0.1, update=updateNode)
     distance = FloatProperty(name='Distance', description='Distance', default=0.0, update=updateNode)
+    # axis = FloatVectorProperty(name='axis', description='axis relative to normal', default=(0,0,1), update=updateNode)
 
     def init(self, context):
 
         self.inputs.new('StringsSocket', 'inset').prop_name = 'inset'
         self.inputs.new('StringsSocket', 'distance').prop_name = 'distance'
+        # self.inputs.new('VerticesSocket', 'axis').prop_name = 'axis'
         self.inputs.new('VerticesSocket', 'vertices', 'vertices')
         self.inputs.new('StringsSocket', 'polygons', 'polygons')
 
@@ -179,10 +188,16 @@ class SvInsetSpecial(bpy.types.Node, SverchCustomTreeNode):
         inset_rates = self.get_value_for('inset', [[self.inset]])
         distance_vals = self.get_value_for('distance', [[self.distance]])
 
+        #if self.inputs['axis'].links:
+        #    axees = self.get_value_for('axis', [[self.axis]])
+        #else:
+        #    axees = None
+
         # print(inset_rates)
         # unvectorized implementation, expects only one set of verts + faces + etc
         fullList(inset_rates, len(polys[0]))
         fullList(distance_vals, len(polys[0]))
+        #fullList(axees, len(polys[0]))
 
         #verts, faces, axis=None, distance=0, make_inner=False
         verts_out = []
