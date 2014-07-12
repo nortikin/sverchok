@@ -3,8 +3,8 @@
 version - look version file here   
 addon for: http://blender.org   
 License: GPL3   
-compatible with Blender version: `>=`` 2.71
-requires Python 3.4. (included in Blender)
+compatible with Blender version: `>=`` 2.71  
+requires Python 3.4. (included in Blender)  
 
   
 ###Description
