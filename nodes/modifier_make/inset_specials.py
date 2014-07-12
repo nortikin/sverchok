@@ -190,7 +190,7 @@ class SvInsetSpecial(bpy.types.Node, SverchCustomTreeNode):
         verts_out, polys_out = res
 
         # this section deals purely with hooking up the processed data to the
-        # ouputs
+        # outputs
         SvSetSocketAnyType(self, 'vertices', [verts_out])
 
         if outputs['polygons'].links:
@@ -206,6 +206,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvInsetSpecial)
-
-if __name__ == '__main__':
-    register()
