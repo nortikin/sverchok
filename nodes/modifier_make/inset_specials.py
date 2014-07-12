@@ -32,7 +32,7 @@ from data_structure import (updateNode, Vector_generate, repeat_last,
 ''' very non optimal routines. beware. I know this '''
 
 
-def inset_special(vertices, faces, inset_rates, axis, distance, make_inner):
+def inset_special(vertices, faces, inset_rates, axis, distances, make_inner):
 
     new_faces = []
     # print(len(faces), len(inset_rates))
@@ -99,6 +99,16 @@ def inset_special(vertices, faces, inset_rates, axis, distance, make_inner):
 
         # lerp and add to vertices immediately
         new_verts_prime = [avg_vec.lerp(v, inset_by) for v in verts]
+
+        if distance:
+            local_normal = mathutils.geometry.normal(*new_verts_prime[:3])
+            if axis:
+                local_normal = (local_normal + vector(axis)).normalized()
+
+            v = new_verts_prime[0]
+            distance_rate = (v-(local_normal-v)).length / distance
+            new_verts_prime = [v.lerp(v+local_normal, distance_rate) for v in new_verts_prime]
+
         vertices.extend(new_verts_prime)
 
         tail_idx = (current_verts_idx + n) - 1
@@ -110,7 +120,8 @@ def inset_special(vertices, faces, inset_rates, axis, distance, make_inner):
     for idx, face in enumerate(faces):
         inset_by = inset_rates[idx][0]  # WARNING, levels issue
         if inset_by > 0:
-            new_inner_from(face, inset_by, axis, distance, make_inner)
+            push_by = distances[idx][0]  # WARNING, levels issue
+            new_inner_from(face, inset_by, axis, push_by, make_inner)
 
     new_verts = [v[:] for v in vertices]
     # print('new_faces=', new_faces)
@@ -127,12 +138,13 @@ class SvInsetSpecial(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'InsetSpecial'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    inset = FloatProperty(
-        name='Inset', description='inset amount', default=0.1, update=updateNode)
+    inset = FloatProperty(name='Inset', description='inset amount', default=0.1, update=updateNode)
+    distance = FloatProperty(name='Distance', description='Distance', default=0.0, update=updateNode)
 
     def init(self, context):
 
         self.inputs.new('StringsSocket', 'inset').prop_name = 'inset'
+        self.inputs.new('StringsSocket', 'distance').prop_name = 'distance'
         self.inputs.new('VerticesSocket', 'vertices', 'vertices')
         self.inputs.new('StringsSocket', 'polygons', 'polygons')
 
@@ -150,6 +162,9 @@ class SvInsetSpecial(bpy.types.Node, SverchCustomTreeNode):
         if all([i['vertices'].links, i['polygons'].links, o['vertices'].links]):
             self.process()
 
+    def get_value_for(self, param, fallback):
+        return self.inputs[param].sv_get() if self.inputs[param].links else fallback
+
     def process(self):
         inputs = self.inputs
         outputs = self.outputs
@@ -157,40 +172,36 @@ class SvInsetSpecial(bpy.types.Node, SverchCustomTreeNode):
         verts = Vector_generate(SvGetSocketAnyType(self, inputs['vertices']))
         polys = SvGetSocketAnyType(self, inputs['polygons'])
 
-        if self.inputs['inset'].links:
-            inset_rates = self.inputs['inset'].sv_get()
-        else:
-            inset_rates = [[self.inset]]
+        ''' get_value_for( param name, fallback )'''
+        inset_rates = self.get_value_for('inset', [[self.inset]])
+        distance_vals = self.get_value_for('distance', [[self.distance]])
 
         # print(inset_rates)
-
-        # unvectorized implementation, expects only one set of
-        # verts+faces+inset_rates , inset_rates can be a list of floats.
-        # for non-uniform excavation.
-        verts_out = []
-        polys_out = []
+        # unvectorized implementation, expects only one set of verts + faces + etc
         fullList(inset_rates, len(polys[0]))
+        fullList(distance_vals, len(polys[0]))
 
         #verts, faces, axis=None, distance=0, make_inner=False
+        verts_out = []
+        polys_out = []
+
         func_args = {
             'vertices': verts[0],
             'faces': polys[0],
             'inset_rates': inset_rates,
             'axis': None,
-            'distance': 0,
+            'distances': distance_vals,
             'make_inner': False
         }
-        # print(func_args)
+
         res = inset_special(**func_args)
 
         if not res:
             return
 
-        # unvectorized.
         verts_out, polys_out = res
 
-        # this section deals purely with hooking up the processed data to the
-        # outputs
+        # deal  with hooking up the processed data to the outputs
         SvSetSocketAnyType(self, 'vertices', [verts_out])
 
         if outputs['polygons'].links:
