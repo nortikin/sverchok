@@ -106,8 +106,8 @@ def inset_special(vertices, faces, inset_rates, axis, distances, make_inner):
                 local_normal = (local_normal + vector(axis)).normalized()
 
             v = new_verts_prime[0]
-            distance_rate = distance / (local_normal-v).length 
-            new_verts_prime = [v.lerp(v+local_normal, distance_rate) for v in new_verts_prime]
+            # distance_rate = distance / (local_normal-v).length 
+            new_verts_prime = [v.lerp(v+local_normal, distance) for v in new_verts_prime]
 
         vertices.extend(new_verts_prime)
 
@@ -120,7 +120,8 @@ def inset_special(vertices, faces, inset_rates, axis, distances, make_inner):
     for idx, face in enumerate(faces):
         inset_by = inset_rates[idx][0]  # WARNING, levels issue
         if inset_by > 0:
-            push_by = distances[idx][0]  # WARNING, levels issue
+            # 100 is totally a magic number... why?
+            push_by = distances[idx][0] / 100 # WARNING, levels issue
             new_inner_from(face, inset_by, axis, push_by, make_inner)
 
     new_verts = [v[:] for v in vertices]
