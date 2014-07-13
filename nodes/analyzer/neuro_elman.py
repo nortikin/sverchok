@@ -71,10 +71,6 @@ class SvNeuro_Elman:
         outC = self.layerC(outB, prop)
         
         ##cc += 1
-        print('\nABC',outA)
-        print(outB)
-        print(outC)
-        print(prop)
         ##print('count ',cc)
         
         flag = False
