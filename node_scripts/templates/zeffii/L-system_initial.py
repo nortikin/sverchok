@@ -1,5 +1,3 @@
-# original code by jeff steward and dealga mcardle in js
-# ported to python by dealga for sverchok.
 # https://groups.google.com/d/msg/tributary/9kI-CGVVQb4/J6joc8q6VhwJ
 
 import math
