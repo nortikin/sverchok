@@ -1,3 +1,6 @@
+# original code by jeff steward and dealga mcardle in js
+# ported to python by dealga for sverchok. 
+
 import math
 from math import sin, cos, radians, degrees, pi, pow
 
@@ -7,25 +10,26 @@ from random import random
 import ast
 from ast import literal_eval
 
-
-def sv_main(i_max=8):
+def sv_main(i_max=8, bend=-10.71875, arm_dist=5890):
 
     def to_rad(degrees):
         return degrees * 2 * pi / 360
 
     in_sockets = [
-        ['s', 'i_max', i_max]]
+        ['s', 'i_max', i_max],
+        ['s', 'bend', bend],
+        ['s', 'arm_dist', arm_dist]]
 
     verts_out = []
     out_sockets = [
         ['v', 'verts', verts_out]
     ]
 
-    bend = 2 * (-10.71875)                # angle to twist (degrees)
+    bend = 2 * bend                       # angle to twist (degrees)
     i_max = 8                             # limit, warning 10 is probably an upperlimit
     i_user = 7                            # scrub between 1 and upperlimit for recursion levels
     iterations = min(i_max, i_user)       # number of rewrites (recursion levels in grammar)
-    F = 5890 / (pow(2.4, iterations))     # arm distance
+    F = arm_dist / (pow(2.4, iterations))     # arm distance
     x_start = 3
     y_start = 8
 
@@ -40,8 +44,10 @@ def sv_main(i_max=8):
     rules = {}                            # a map of the rules
     commands = {}                         # a map of the commands
 
+
     def get_xy(angle_rad, Lv):
         return {'x': cos(angle_rad) * Lv, 'y': sin(angle_rad) * Lv}
+
 
     def command_from_rad(command):
         command_parts = command.split(" ")
@@ -49,7 +55,7 @@ def sv_main(i_max=8):
         if len(command_parts) > 2:
             if command_parts[2] == "R":
                 Lv = Lv * (1 + (literal_eval(command_parts[3]) * (random() - 0.5)) / 100)
-
+        
         c = get_xy(Lvals['angle_rad'], Lv)
         Lvals['x_current'] += c['x']
         Lvals['y_current'] += c['y']
@@ -65,7 +71,8 @@ def sv_main(i_max=8):
 
     def make_path(rules, commands, start_string):
         # tributary.ctx.moveTo(x_start,y_start)
-        verts_out.append((0, 0, 0))
+
+        verts_out.append((0,0,0))
 
         recursive_path(rules, commands, start_string, 0)
         # tributary.ctx.stroke()
