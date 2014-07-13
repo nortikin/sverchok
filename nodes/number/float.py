@@ -47,14 +47,10 @@ class FloatNode(bpy.types.Node, SverchCustomTreeNode):
         row = layout.row(align=True)
         row.prop(self, 'minim')
         row.prop(self, 'maxim')
-    
+
     def draw_label(self):
-        if not self.label:
-            return str(self.float_)
-        valset= set('1234567890')
-        val = str(self.float_)
-        if valset.intersection(set(self.label)):
-            return str(self.float_)
+        if not self.inputs[0].links:
+            return str(round(self.float_, 3))
         else:
             return self.bl_label
             
@@ -83,3 +79,6 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(FloatNode)
+
+if __name__ == '__main__':
+    register()

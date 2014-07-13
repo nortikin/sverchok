@@ -99,7 +99,7 @@ def make_categories():
         ["CylinderNode",        "Cylinder"],
         ["SphereNode",          "Sphere"],
         ["BasicSplineNode",     "2pt Spline"],
-        ["svBasicArcNode",      "3pt Arc"],        
+        ["svBasicArcNode",      "3pt Arc"],
         ["HilbertNode",         "Hilbert"],
         ["Hilbert3dNode",       "Hilbert3d"],
         ["HilbertImageNode",    "Hilbert image"],
@@ -171,11 +171,13 @@ def make_categories():
         ["SvEmptyOutNode",      "Empty out"],
         ["EvalKnievalNode",     "Eval Knieval"],
         # need to be completely reviewed
-        ["SvListDecomposeNode",   "List Decompose"],
+        ["ListDecomposeNode",   "List Decompose"],
+        # should be removed...
         ["SvReRouteNode",       "Reroute Point"],
         ["SvVolumeNode",        "Volume"],
+        ["SvSwitchNode",        "Switch"],
         ["svAxisInputNode",     "Vector X | Y | Z"],
-        ["SvNeuroElman1LNode",    "Neuro"],
+        ["SvNeuroElman1LNode",  "Neuro"],
         ["SvInstancerNode",     "mesh instancer"]]
 
     node_categories = []
@@ -186,4 +188,3 @@ def make_categories():
             items=[NodeItem(bl_idname, name) for bl_idname, name in nodes]))
 
     return node_categories
-

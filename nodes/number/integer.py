@@ -37,12 +37,9 @@ class IntegerNode(bpy.types.Node, SverchCustomTreeNode):
     minim = IntProperty(name='min', description='minimum',
                        default=-1000,
                        update=updateNode)
+
     def draw_label(self):
-        if not self.label:
-            return str(self.int_)
-        valset= set('1234567890')
-        val = str(self.float_)
-        if valset.intersection(set(self.label)):
+        if not self.inputs[0].links:
             return str(self.int_)
         else:
             return self.bl_label
@@ -82,8 +79,5 @@ def register():
 def unregister():
     bpy.utils.unregister_class(IntegerNode)
 
-
-
-
-
-
+if __name__ == '__main__':
+    register()

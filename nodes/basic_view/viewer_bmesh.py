@@ -63,7 +63,7 @@ def make_bmesh_geometry(context, name, verts, edges, faces, matrix):
         temp_mesh = default_mesh(name)
         sv_object = objects.new(name, temp_mesh)
         scene.objects.link(sv_object)
-        scene.update()
+        # scene.update()
 
     # definitely verts, definitely do something.
     bm = bmesh_from_pydata(verts, edges, faces)
