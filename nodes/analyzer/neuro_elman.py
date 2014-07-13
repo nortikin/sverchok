@@ -238,9 +238,14 @@ class SvNeuroElman1LNode(bpy.types.Node, SverchCustomTreeNode):
                 flag = False
                 etalon = [[0]]
             
-            props['InA'] = self.lA+1
-            props['InB'] = self.lB
-            props['InC'] = self.lC
+            if (props['InA']!=self.lA+1) or props['InB']!=self.lB or \
+                props['InC']!=self.lC:
+                props['InA'] = self.lA+1
+                props['InB'] = self.lB
+                props['InC'] = self.lC
+                props['wA'] = self.Elman.init_w(props['InA'], props['InB'])
+                props['wB'] = self.Elman.init_w(props['InB'], props['InC'])
+                
             props['gister'] = self.gisterezis
             props['k_learning'] = self.k_learning
             props['epsilon'] = self.epsilon
