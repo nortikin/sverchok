@@ -56,7 +56,7 @@ vector_out = {
     "ROUND":        (lambda u, s: Vector(u).to_tuple(s), 2),
 
     "NORMALIZE":    (lambda u: Vector(u).normalized()[:], 1),
-    "NEG":          (lambda u: -Vector(u)[:], 1),
+    "NEG":          (lambda u: (-Vector(u))[:], 1),
     "NOISE-V":      (lambda u: noise_vector(Vector(u))[:], 1),
     "CELL-V":       (lambda u: cell_vector(Vector(u))[:], 1)
 }
