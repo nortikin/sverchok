@@ -26,8 +26,8 @@ def sv_main(i_user=8, bend=-10.71875, arm_dist=5890):
     ]
 
     bend = 2 * bend                       # angle to twist (degrees)
-    iterations = min(8, i_user)       # number of rewrites (recursion levels in grammar)
-    F = arm_dist / (pow(2.4, iterations))     # arm distance
+    iterations = min(8, i_user)           # number of rewrites (recursion levels in grammar)
+    F = arm_dist / (pow(2.4, iterations)) # arm distance
     x_start = 0
     y_start = 0
 
