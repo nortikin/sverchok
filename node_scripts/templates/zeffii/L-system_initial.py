@@ -10,13 +10,13 @@ import ast
 from ast import literal_eval
 
 
-def sv_main(i_max=8, bend=-10.71875, arm_dist=5890):
+def sv_main(i_user=8, bend=-10.71875, arm_dist=5890):
 
     def to_rad(degrees):
         return degrees * 2 * pi / 360
 
     in_sockets = [
-        ['s', 'i_max', i_max],
+        ['s', 'i_user', i_user],
         ['s', 'bend', bend],
         ['s', 'arm_dist', arm_dist]]
 
@@ -26,9 +26,7 @@ def sv_main(i_max=8, bend=-10.71875, arm_dist=5890):
     ]
 
     bend = 2 * bend                       # angle to twist (degrees)
-    i_max = 8                             # limit, warning 10 is probably an upperlimit
-    i_user = 7                            # scrub between 1 and upperlimit for recursion levels
-    iterations = min(i_max, i_user)       # number of rewrites (recursion levels in grammar)
+    iterations = min(8, i_user)       # number of rewrites (recursion levels in grammar)
     F = arm_dist / (pow(2.4, iterations))     # arm distance
     x_start = 0
     y_start = 0
