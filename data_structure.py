@@ -167,30 +167,21 @@ def handle_delete(handle):
     if handle in temp_handle:
         del temp_handle[handle]
 
-
 def handle_read(handle):
     if not (handle in temp_handle):
         return (False, [])
-
-    prop = temp_handle[handle]['prop']
-    return (True, prop)
-
+    return (True, temp_handle[handle]['prop'])
 
 def handle_write(handle, prop):
-    if handle in temp_handle:
-        if prop != temp_handle[handle]['prop']:
-            handle_delete(handle)
-    elif not (handle in temp_handle) and handle:
-        temp_handle[handle] = {"prop": prop}
-
+    handle_delete(handle)
+    
+    temp_handle[handle] = {"prop" : prop}
 
 def handle_check(handle, prop):
-    if handle in handle_check:
-        if prop != handle_check[handle]['prop']:
-            return False
-    else:
-        return False
-    return True
+    if handle in handle_check and \
+            prop == handle_check[handle]['prop']:
+        return True
+    return False
 
 
 #####################################################
@@ -1035,6 +1026,8 @@ def reset_socket_cache(ng):
 def svQsort(L):
     if L: return svQsort([x for x in L[1:] if x<L[0]]) + L[0:1] + svQsort([x for x in L[1:] if x>=L[0]])
     return []
+
+
 
 
 
