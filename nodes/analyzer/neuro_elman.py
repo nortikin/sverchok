@@ -235,9 +235,9 @@ class SvNeuroElman1LNode(bpy.types.Node, SverchCustomTreeNode):
             props['epsilon'] = self.epsilon
             props['k_lambda'] = self.k_lambda
             
-            data_ = SvGetSocketAnyType(self, self.inputs['data'])
+            data_ = SvGetSocketAnyType(self, self.inputs['data'])[0]
+            if type(data_[0]) not in [list, tuple]: data_ = [data_]
             for idx, data in enumerate(data_):
-                if type(data) not in [list, tuple]: data = [data]
                 let = len(etalon)-1
                 eta = etalon[min(idx,let)]
                 if type(eta) not in [list, tuple]: eta = [eta]
