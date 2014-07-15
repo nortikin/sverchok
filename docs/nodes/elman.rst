@@ -7,6 +7,7 @@ Elman neuro node layer 1
  Узел нейронной сети
   данные запакованные в один объект. Если подаёшь серию по одному числу в сеть, то на входе будет много объектов с одним числом. И на выходе будет столько же объектов.
   Если на вход подать все числа в одном объекте, это будет считаться много параметров и выдавать один объект.
+  Всегда вводите постоянное число переменных, если переменные поменялись - сбрасываются все исчисления. Будьте последовательны.
 
 - coef_learning - коэффициент скорости обучения, влияет на точность (чем меньше, тем точнее и дольше);
 - gisterezis - разброс выходных и эталонных данных;
@@ -22,7 +23,9 @@ Elman neuro node layer 1
 English
 -------
 
-  Neuro network node
+ Neuro network node
+  Input data. Inserting many objects - output many objects. Inserting one object with many parameters - output one object.
+  Always insert constant numbers count of parameters, otherwise it will reset neuro data and start every time from beginning. Keep constant numbers count.
 
 - coef_learning - learning speed coeffitient, accuracy influence (less - more accuracy);
 - gisterezis - spread of input and etalon data;
