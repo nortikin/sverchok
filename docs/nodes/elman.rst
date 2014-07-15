@@ -5,7 +5,6 @@ Elman neuro node layer 1
 ---------
 
   Узел нейронной сети
-  ^^^^^^^^^^^^^^^^^^^
 
 - koef_learning - коэффициент скорости обучения, влияет на точность (чем меньше, тем точнее и дольше);
 - gisterezis - разброс выходных и эталонных данных;
@@ -22,7 +21,6 @@ English
 -------
 
   Neuro network node
-  ^^^^^^^^^^^^^^^^^^
 
 - koef_learning - learning speed koeffitient, accuracy influence (less - more accuracy);
 - gisterezis - spread of input and etalon data;
