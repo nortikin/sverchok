@@ -37,6 +37,8 @@ class IntegerNode(bpy.types.Node, SverchCustomTreeNode):
     minim = IntProperty(name='min', description='minimum',
                        default=-1000,
                        update=updateNode)
+    to3d = BoolProperty(name='to3d', description='show in 3d panel',
+                       default=True, update=updateNode)
 
     def draw_label(self):
         if not self.inputs[0].links:
@@ -48,6 +50,8 @@ class IntegerNode(bpy.types.Node, SverchCustomTreeNode):
         row = layout.row(align=True)
         row.prop(self, 'minim')
         row.prop(self, 'maxim')
+        row = layout.row(align=True)
+        row.prop(self, 'to3d')
 
     def init(self, context):
         self.inputs.new('StringsSocket', "Integer", "Integer").prop_name = 'int_'
@@ -81,3 +85,4 @@ def unregister():
 
 if __name__ == '__main__':
     register()
+
