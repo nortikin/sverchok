@@ -127,7 +127,7 @@ class SvLogicNode(bpy.types.Node, SverchCustomTreeNode):
             row.prop(self, "prop_types", index=i, text=t, toggle=True)
 
     def init(self, context):
-        self.inputs.new('StringsSocket', "X")
+        self.inputs.new('StringsSocket', "X").prop_name = 'x'
         self.outputs.new('StringsSocket', "Gate")
         
 
@@ -156,11 +156,18 @@ class SvLogicNode(bpy.types.Node, SverchCustomTreeNode):
 
         self.set_inputs(nrInputs)
 
+        if self.items_ in self.fxy2:
+            self.inputs[0].prop_name = 'i_x'
+            self.inputs[1].prop_name = 'i_y'
+        else:
+            self.inputs[0].prop_name = 'x'
+            self.inputs[1].prop_name = 'y'
+
         if 'X' in self.inputs:
-            x = int(self.inputs['X'].sv_get(deepcopy=False)[0][0])
+            x = self.inputs['X'].sv_get(deepcopy=False)[0][0]
  
         if 'Y' in self.inputs:
-            y = int(self.inputs['Y'].sv_get(deepcopy=False)[0][0])
+            y = self.inputs['Y'].sv_get(deepcopy=False)[0][0]
         
         # outputs
         if 'Gate' in self.outputs and self.outputs['Gate'].links:
