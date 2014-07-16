@@ -311,9 +311,13 @@ class SvLayoutScanPropertyes(bpy.types.Operator):
                     tree.Sv3DPanel.clear()
                 for no in tree.nodes:
                     if hasattr(no, 'int_'):
-                        tree.Sv3DPanel[no.name] = 'int_'
+                        if len(no.inputs) == 1 and len(no.outputs) == 1:
+                            if not no.inputs[0].links and no.outputs[0].links:
+                                tree.Sv3DPanel[no.name] = 'int_'
                     if hasattr(no, 'float_'):
-                        tree.Sv3DPanel[no.name] = 'float_'
+                        if len(no.inputs) == 1 and len(no.outputs) == 1:
+                            if not no.inputs[0].links and no.outputs[0].links:
+                                tree.Sv3DPanel[no.name] = 'float_'
                         
         return {'FINISHED'} 
 
@@ -343,10 +347,10 @@ class Sv3DPanel(bpy.types.Panel):
                         tex = no
                     row = col.row(align=True)
                     row.prop(node, ver, text=tex)
-                    colo = row.column()
+                    colo = row.column(align=True)
                     colo.scale_x = 0.25
                     colo.prop(node, 'minim', text='min', slider=True)
-                    colo = row.column()
+                    colo = row.column(align=True)
                     colo.scale_x = 0.25
                     colo.prop(node, 'maxim', text='max', slider=True)
                         
@@ -380,6 +384,9 @@ def unregister():
 
 if __name__  ==  '__main__':
     register()
+
+
+
 
 
 
