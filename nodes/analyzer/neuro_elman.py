@@ -64,7 +64,7 @@ class SvNeuro_Elman:
                 d = prop['InC']-lin
                 etalon = etalon+[0]*d
             etalon_ = list(map(lambda x: x/maxim, etalon))
-            self.learning(outA, outB, outC, etalon_, prop)
+            self.learning(outA, outB, outC, etalon_, maxim, prop)
         outC_ = list(map(lambda x: x*maxim, outC))
         return outC_
     
@@ -86,7 +86,7 @@ class SvNeuro_Elman:
                 t1 = lb*outA[ida]
                 outB[idb] += t1
                 
-        outB_ = [self.sigmoida(p,prop['InA']) for p in outB]
+        outB_ = [self.sigmoida(p,prop['InB']) for p in outB]
         return outB_
     
     def layerC(self, outB, prop):
@@ -122,18 +122,18 @@ class SvNeuro_Elman:
     def func_w(self, w, dw, prop):
         return (1-prop['k_lambda'])*w + dw 
 
-    def learning(self, outA, outB, outC, etalon, prop):
+    def learning(self, outA, outB, outC, etalon, maxim, prop):
         list_wA = deepcopy(prop['wA'])
         list_wB = deepcopy(prop['wB'])
         list_x = deepcopy(outA)
         for idx, x in enumerate(outA):
             step = 0
-            xi = x
+            
+            xi = deepcopy(x)
             outB_ = deepcopy(outB)
             outC_ = deepcopy(outC)
             while step<prop['cycles']:
                 step += 1
-                
                 eB = [0]*prop['InB']
                 eA = [0]*prop['InA']
                 for idc, c in enumerate(outC_):
@@ -156,9 +156,9 @@ class SvNeuro_Elman:
                         list_wA[ida][idb] = self.func_w(list_wA[ida][idb], dwji, prop)
                         eA[ida] += sigmaB*dwji
                     
-                xi = xi - prop['epsilon'] * xi*(1-xi)
+                xi = xi - prop['epsilon'] * xi*(maxim-xi)
                 absdx = abs(x-xi)
-                if absdx<= prop['trashold'] or absdx>abs(x): break
+                if absdx<= prop['trashold'] or absdx>abs(maxim/2): break
                 list_x[idx] = xi
                 
                 outB_ = self.layerB(list_x, prop)
