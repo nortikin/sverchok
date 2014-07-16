@@ -25,7 +25,7 @@ from mathutils import Vector, Matrix
 from bpy.props import BoolProperty, FloatVectorProperty, StringProperty, EnumProperty, FloatProperty
 
 from node_tree import SverchCustomTreeNode, MatrixSocket
-from data_structure import dataCorrect, updateNode, SvGetSocketAnyType
+from data_structure import dataCorrect, updateNode, SvGetSocketAnyType, fullList
 
 
 def get_random_init():
@@ -42,7 +42,7 @@ def get_random_init():
 class SvMetaballNode(bpy.types.Node, SverchCustomTreeNode):
     '''
     each metaball has 3 main variables:
-    - location, radius and sign (Bool, but accepts 0 or 1) 
+    - location, radius and sign (Bool, but accepts 0 or 1)
     '''
 
     bl_idname = 'SvMetaballNode'
@@ -64,7 +64,7 @@ class SvMetaballNode(bpy.types.Node, SverchCustomTreeNode):
 
     def init(self, context):
         self.inputs.new('VerticesSocket', 'location', 'location')
-        self.inputs.new('StringsSocket', 'radius','radius')
+        self.inputs.new('StringsSocket', 'radius', 'radius')
         self.inputs.new('StringsSocket', 'sign', 'sign')
 
     def draw_buttons(self, context, layout):
@@ -153,4 +153,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvMetaballNode)
-
