@@ -16,6 +16,8 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+import random
+
 import bpy
 import mathutils
 
@@ -103,7 +105,7 @@ def inset_special(vertices, faces, inset_rates, axis, distances, make_inner):
         if distance:
             local_normal = mathutils.geometry.normal(*new_verts_prime[:3])
             if axis:
-                local_normal = (local_normal + Vector(axis)).normalized()
+                local_normal = (avg_vec + local_normal + Vector(axis)).normalized()
 
             new_verts_prime = [v.lerp(v+local_normal, distance) for v in new_verts_prime]
 
@@ -131,6 +133,8 @@ def inset_special(vertices, faces, inset_rates, axis, distances, make_inner):
 
             # print(axial)
             axial = None
+
+            # axial = (random.random(),random.random(), 0.0)
             new_inner_from(face, inset_by, axial, push_by, make_inner)
 
     new_verts = [v[:] for v in vertices]
