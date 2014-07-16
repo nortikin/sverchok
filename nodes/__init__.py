@@ -51,7 +51,8 @@ nodes_dict = {
         'sphere',
         'basic_spline',
         'basic_3pt_arc',
-        'instancer'],
+        'instancer',
+        'meta_balls'],
 
     'list_basic': [
         'converter',

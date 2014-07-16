@@ -51,7 +51,7 @@ class SvMetaballNode(bpy.types.Node, SverchCustomTreeNode):
 
     activate = BoolProperty(
         default=True,
-        name='Show', description='Activate node?',
+        name='ActiveUpdates', description='Activate node?',
         update=updateNode)
 
     metaball_name = StringProperty(
@@ -60,7 +60,7 @@ class SvMetaballNode(bpy.types.Node, SverchCustomTreeNode):
         update=updateNode)
 
     resolution = FloatProperty(default=0.16)
-
+    render_resolution = FloatProperty(default=0.16)
 
     def init(self, context):
         self.inputs.new('VerticesSocket', 'location', 'location')
@@ -93,7 +93,7 @@ class SvMetaballNode(bpy.types.Node, SverchCustomTreeNode):
 
         self.process()
 
-    def metaget(s_name, fallback):
+    def metaget(self, s_name, fallback):
         inputs = self.inputs
         if inputs[s_name].links:
             socket_in = SvGetSocketAnyType(self, inputs[s_name])[0]
@@ -101,18 +101,10 @@ class SvMetaballNode(bpy.types.Node, SverchCustomTreeNode):
         else
             return fallback
 
-
-
-
-
-    def process(self):
+    def get_metaball_reference(self):
         scene = bpy.context.scene
         objs = bpy.data.objects
         metaballs = bpy.data.metaballs
-
-        inputs = self.inputs
-        locations = self.metaget('location', [(0, 0, 0)])
-
 
         # add metaball object
         if not (metaball_name in metaballs):
@@ -121,11 +113,21 @@ class SvMetaballNode(bpy.types.Node, SverchCustomTreeNode):
             scene.objects.link(obj)
         else:
             mball = metaballs[metaball_name]
+        return mball
 
-        # mball.render_resolution = you decide
+    def process(self):
+        locations = self.metaget('location', [(0, 0, 0)])
+        signs = self.metaget('sign', [1])
+        radii = self.metaget('radius', [0.5])
+
+        fullList(signs, len(locations))
+        fullList(radii, len(locations))
+
+        mball = self.get_metaball_reference()
+        mball.render_resolution = self.render_resolution
         mball.resolution = self.resolution  # View resolution
-        metaball_cloud = zip([locations, sign, radius])
 
+        metaball_cloud = zip([locations, signs, radii])
         for idx, (co, sign, radius) in enumerate(metaball_cloud):
             if idx > len(mball.elements):
                 ele = mball.elements.new()
