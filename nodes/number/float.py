@@ -62,9 +62,9 @@ class FloatNode(bpy.types.Node, SverchCustomTreeNode):
         else:
             Float = self.float_
         if Float > self.maxim:
-            Float = self.int_ = self.maxim
+            Float = self.float_ = self.maxim
         if Float < self.minim:
-            Float = self.int_ = self.minim
+            Float = self.float_ = self.minim
         # outputs
         if 'Float' in self.outputs and self.outputs['Float'].links:
             SvSetSocketAnyType(self, 'Float', [[Float]])
@@ -82,3 +82,4 @@ def unregister():
 
 if __name__ == '__main__':
     register()
+

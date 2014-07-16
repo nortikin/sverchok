@@ -299,8 +299,61 @@ class ToolsNode(bpy.types.Node, SverchCustomTreeNode):
     def update_socket(self, context):
         pass
 
+class SvLayoutScanPropertyes(bpy.types.Operator):
+    ''' scan layouts of sverchok for properties '''
+    bl_idname = "node.sv_scan_propertyes"
+    bl_label = "scan for propertyes in sverchok leyouts"
+
+    def execute(self, context):
+        for tree in bpy.data.node_groups:
+            if tree.bl_idname == 'SverchCustomTreeType':
+                if tree.Sv3DPanel:
+                    tree.Sv3DPanel.clear()
+                for no in tree.nodes:
+                    if hasattr(no, 'int_'):
+                        tree.Sv3DPanel[no.name] = 'int_'
+                    if hasattr(no, 'float_'):
+                        tree.Sv3DPanel[no.name] = 'float_'
+                        
+        return {'FINISHED'} 
+
+class Sv3DPanel(bpy.types.Panel):
+    ''' Panel to manipuplate parameters in sverchok layouts '''
+    
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'TOOLS'
+    bl_label = "Sverchok "+sv_version_local
+    bl_options = {'DEFAULT_CLOSED'}
+    bl_category = 'SV'
+    
+    def draw(self, context):
+        layout = self.layout
+        row = layout.row(align=True)
+        row.operator('node.sv_scan_propertyes', text='Scan for props')
+        for tree in bpy.data.node_groups:
+            if tree.bl_idname == 'SverchCustomTreeType':
+                box = layout.box()
+                col = box.column(align=True)
+                col.label(text=tree.name)
+                for no, ver in tree.Sv3DPanel.items():
+                    node = tree.nodes[no]
+                    if node.label:
+                        tex = node.label
+                    else:
+                        tex = no
+                    row = col.row(align=True)
+                    row.prop(node, ver, text=tex)
+                    colo = row.column()
+                    colo.scale_x = 0.25
+                    colo.prop(node, 'minim', text='min', slider=True)
+                    colo = row.column()
+                    colo.scale_x = 0.25
+                    colo.prop(node, 'maxim', text='max', slider=True)
+                        
+
 
 def register():
+    bpy.types.SverchCustomTreeType.Sv3DPanel = {}
     bpy.utils.register_class(SverchokUpdateCurrent)
     bpy.utils.register_class(SverchokUpdateAll)
     bpy.utils.register_class(SverchokCheckForUpgrades)
@@ -309,9 +362,13 @@ def register():
     bpy.utils.register_class(SverchokHome)
     bpy.utils.register_class(SverchokToolsMenu)
     bpy.utils.register_class(ToolsNode)
+    bpy.utils.register_class(Sv3DPanel)
+    bpy.utils.register_class(SvLayoutScanPropertyes)
 
 
 def unregister():
+    bpy.utils.unregister_class(SvLayoutScanPropertyes)
+    bpy.utils.unregister_class(Sv3DPanel)
     bpy.utils.unregister_class(ToolsNode)
     bpy.utils.unregister_class(SverchokToolsMenu)
     bpy.utils.unregister_class(SverchokHome)
@@ -323,5 +380,9 @@ def unregister():
 
 if __name__  ==  '__main__':
     register()
+
+
+
+
 
 
