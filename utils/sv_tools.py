@@ -372,21 +372,22 @@ class Sv3DPanel(bpy.types.Panel):
                 else:
                     split.prop(tree, 'sv_animate', icon='LOCKED', text=' ')
                 
-                treedic = tree.Sv3DPanel[tree.name]
-                for no, ver in treedic.items():
-                    node = tree.nodes[no]
-                    if node.label:
-                        tex = node.label
-                    else:
-                        tex = no
-                    row = col.row(align=True)
-                    row.prop(node, ver, text=tex)
-                    colo = row.column(align=True)
-                    colo.scale_x = little_width*2
-                    colo.prop(node, 'minim', text=' ', slider=True)
-                    colo = row.column(align=True)
-                    colo.scale_x = little_width*2
-                    colo.prop(node, 'maxim', text=' ', slider=True)
+                if tree.name in tree.Sv3DPanel:
+                    treedic = tree.Sv3DPanel[tree.name]
+                    for no, ver in treedic.items():
+                        node = tree.nodes[no]
+                        if node.label:
+                            tex = node.label
+                        else:
+                            tex = no
+                        row = col.row(align=True)
+                        row.prop(node, ver, text=tex)
+                        colo = row.column(align=True)
+                        colo.scale_x = little_width*2
+                        colo.prop(node, 'minim', text=' ', slider=True)
+                        colo = row.column(align=True)
+                        colo.scale_x = little_width*2
+                        colo.prop(node, 'maxim', text=' ', slider=True)
                         
 
 
@@ -416,6 +417,8 @@ def unregister():
     bpy.utils.unregister_class(SverchokUpdateAll)
     bpy.utils.unregister_class(SverchokUpdateCurrent)
     del bpy.types.SverchCustomTreeType.Sv3DPanel
+
+
 
 
 
