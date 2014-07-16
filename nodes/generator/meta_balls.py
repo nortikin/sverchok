@@ -98,7 +98,7 @@ class SvMetaballNode(bpy.types.Node, SverchCustomTreeNode):
         if inputs[s_name].links:
             socket_in = SvGetSocketAnyType(self, inputs[s_name])[0]
             return dataCorrect(socket_in)
-        else
+        else:
             return fallback
 
     def get_metaball_reference(self):
