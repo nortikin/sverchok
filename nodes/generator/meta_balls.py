@@ -107,12 +107,12 @@ class SvMetaballNode(bpy.types.Node, SverchCustomTreeNode):
         metaballs = bpy.data.metaballs
 
         # add metaball object
-        if not (metaball_name in metaballs):
-            mball = metaballs.new(metaball_name)
+        if not (self.metaball_name in metaballs):
+            mball = metaballs.new(self.metaball_name)
             obj = objs.new(basemesh_name+"OBJ", mball)
             scene.objects.link(obj)
         else:
-            mball = metaballs[metaball_name]
+            mball = metaballs[self.metaball_name]
         return mball
 
     def process(self):
@@ -127,7 +127,9 @@ class SvMetaballNode(bpy.types.Node, SverchCustomTreeNode):
         mball.render_resolution = self.render_resolution
         mball.resolution = self.resolution  # View resolution
 
-        metaball_cloud = zip([locations, signs, radii])
+        print(locations, signs, radii)
+
+        metaball_cloud = zip(locations, signs, radii)
         for idx, (co, sign, radius) in enumerate(metaball_cloud):
             if idx > len(mball.elements):
                 ele = mball.elements.new()
