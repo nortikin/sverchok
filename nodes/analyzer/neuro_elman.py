@@ -35,12 +35,12 @@ from cmath import exp
 class SvNeuro_Elman:
     
     
-    def init_w(self, number, ext):
+    def init_w(self, number, ext, treshold):
         out = []
         for n in range(number):
             tmp = []
             for e in range(ext):
-                tmp.append(uniform(-0.1 , 0.1))
+                tmp.append(uniform(-treshold, treshold))
             out.append(tmp)
         
         return out
@@ -54,33 +54,28 @@ class SvNeuro_Elman:
         return 1/(1+exp(-b*x).real+1e-8)
     
     def neuro(self, list_in, etalon, maxim, learning, prop): 
-        outA = self.layerA(list_in, maxim, prop)
+        outA = self.layerA(list_in, prop)
         outB = self.layerB(outA, prop)
         outC = self.layerC(outB, prop)
         
-        flag = False
         if learning:
             lin = len(etalon)
             if lin<prop['InC']:
                 d = prop['InC']-lin
                 etalon = etalon+[0]*d
-                
-            for idc, c in enumerate(outC):
-                if abs(etalon[idc]-c)>prop['gister']:
-                    flag = True
-                    break
-            if flag:
-                self.learning(outA, outB, outC, etalon, maxim, prop)
-        return outC
+            etalon_ = list(map(lambda x: x/maxim, etalon))
+            self.learning(outA, outB, outC, etalon_, prop)
+        outC_ = list(map(lambda x: x*maxim, outC))
+        return outC_
     
     
-    def layerA(self, list_in, maxim, prop):
+    def layerA(self, list_in, prop):
         lin = len(list_in)
         if lin<prop['InA']:
             d = prop['InA']-lin
             list_in = list_in+[1]*d
         
-        outA = list(map(self.sigmoida, list_in, [maxim]*prop['InA']))
+        outA = deepcopy(list_in)
         return outA
     
     
@@ -127,7 +122,7 @@ class SvNeuro_Elman:
     def func_w(self, w, dw, prop):
         return (1-prop['k_lambda'])*w + dw 
 
-    def learning(self, outA, outB, outC, etalon, maxim, prop):
+    def learning(self, outA, outB, outC, etalon, prop):
         list_wA = deepcopy(prop['wA'])
         list_wB = deepcopy(prop['wB'])
         list_x = deepcopy(outA)
@@ -162,7 +157,8 @@ class SvNeuro_Elman:
                         eA[ida] += sigmaB*dwji
                     
                 xi = xi - prop['epsilon'] * xi*(1-xi)
-                if abs(x-xi)<= prop['trashold']: break
+                absdx = abs(x-xi)
+                if absdx<= prop['trashold'] or absdx>abs(x): break
                 list_x[idx] = xi
                 
                 outB_ = self.layerB(list_x, prop)
@@ -171,32 +167,6 @@ class SvNeuro_Elman:
         prop['wA'] = list_wA
         prop['wB'] = list_wB
                 
-# *********************************
-
-    
-    def learning2(self, outA, outB, outC, etalon, maxim, prop):
-        list_w = deepcopy(prop['wB'])
-        list_wa = deepcopy(prop['wA'])
-        sigBk = [0]*prop['InB']
-        for idc, c in enumerate(outC):
-            c_ = self.sigmoida(c,etalon[idc])
-            sigmaC = c_*(1-c_)*(etalon[idc]-c)
-            for idw, wbc in enumerate(prop['wB']):
-                list_w[idw][idc] = (1-prop['k_lambda'])*wbc[idc] + prop['epsilon'] * sigmaC * outB[idw]
-                sigBk[idw] += sigmaC*wbc[idc]
-        
-        for idb, b in enumerate(outB):
-            sigmaB = b*(1-b)*(1-prop['k_lambda'])*sigBk[idb]
-            for idw, wab in enumerate(prop['wA']):
-                list_wa[idw][idb] = (1-prop['k_lambda'])*wab[idb] + prop['k_learning'] * sigmaB * outA[idw]/maxim
-                
-        prop['wB'] = list_w
-        prop['wA'] = list_wa
-        return 
-
-
-
-# *********************
 
 
 class SvNeuroElman1LNode(bpy.types.Node, SverchCustomTreeNode):
@@ -284,8 +254,8 @@ class SvNeuroElman1LNode(bpy.types.Node, SverchCustomTreeNode):
                      'trashold':0.01,
                      'k_lambda':0.0001}
                      
-            props['wA'] = self.Elman.init_w(props['InA'], props['InB'])
-            props['wB'] = self.Elman.init_w(props['InB'], props['InC'])
+            props['wA'] = self.Elman.init_w(props['InA'], props['InB'], props['trashold'])
+            props['wB'] = self.Elman.init_w(props['InB'], props['InC'], props['trashold'])
             
             
         self.Elman.gister = abs(self.gisterezis)
@@ -328,7 +298,7 @@ class SvNeuroElman1LNode(bpy.types.Node, SverchCustomTreeNode):
                 result.append([self.Elman.neuro(data2, eta, self.maximum, flag, props)])
         
         else:
-            result = [[]]
+            result = [[[]]]
         
         handle_write(handle_name, props)
         SvSetSocketAnyType(self, 'result', result)
@@ -355,8 +325,8 @@ class SvNeuroOps(bpy.types.Operator):
             prop = handle[1]
             Elman = SvNeuro_Elman()
             if handle[0]:
-                prop['wA']=Elman.init_w(prop['InA'], prop['InB'])
-                prop['wB']=Elman.init_w(prop['InB'], prop['InC'])
+                prop['wA']=Elman.init_w(prop['InA'], prop['InB'], prop['trashold'])
+                prop['wB']=Elman.init_w(prop['InB'], prop['InC'], prop['trashold'])
                 handle_write(self.handle_name, prop)
                 
         return {'FINISHED'}
