@@ -125,7 +125,8 @@ nodes_dict = {
         'range',
         'range_float',
         'range_int',
-        'series'],
+        'series',
+        'logic'],
 
     'vector': [
         'drop',

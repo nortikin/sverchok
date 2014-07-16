@@ -38,6 +38,8 @@ class FloatNode(bpy.types.Node, SverchCustomTreeNode):
     minim = FloatProperty(name='min', description='minimum',
                        default=-1000,
                        update=updateNode)
+    to3d = BoolProperty(name='to3d', description='show in 3d panel',
+                       default=True, update=updateNode)
 
     def init(self, context):
         self.inputs.new('StringsSocket', "Float").prop_name = 'float_'
@@ -47,6 +49,8 @@ class FloatNode(bpy.types.Node, SverchCustomTreeNode):
         row = layout.row(align=True)
         row.prop(self, 'minim')
         row.prop(self, 'maxim')
+        row = layout.row(align=True)
+        row.prop(self, 'to3d')
 
     def draw_label(self):
         if not self.inputs[0].links:
@@ -82,4 +86,5 @@ def unregister():
 
 if __name__ == '__main__':
     register()
+
 
