@@ -159,9 +159,11 @@ class SvLogicNode(bpy.types.Node, SverchCustomTreeNode):
         if self.items_ in self.fxy2:
             self.inputs[0].prop_name = 'i_x'
             self.inputs[1].prop_name = 'i_y'
-        else:
+        elif self.items_ in self.fxy:
             self.inputs[0].prop_name = 'x'
             self.inputs[1].prop_name = 'y'
+        elif self.items_ in self.fx:
+            self.inputs[0].prop_name = 'x'
 
         if 'X' in self.inputs:
             x = self.inputs['X'].sv_get(deepcopy=False)[0][0]
