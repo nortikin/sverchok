@@ -22,7 +22,7 @@ import bpy
 from bpy.props import StringProperty, IntProperty, BoolProperty
 
 from node_tree import SverchCustomTreeNode
-from data_structure import SvSetSocketAnyType, updateNode, node_id
+from data_structure import SvSetSocketAnyType, updateNode, node_id, SvGetSocketAnyType
 
 
 TEXT_WIDTH = 6
@@ -63,7 +63,8 @@ class NoteNode(bpy.types.Node, SverchCustomTreeNode):
         self.width = 400
         self.color = (0.5, 0.5, 1)
         self.use_custom_color = True
-        self.outputs.new('StringsSocket', "Text", "Text")
+        self.inputs.new('StringsSocket', "Text In", "Text In")
+        self.outputs.new('StringsSocket', "Text Out", "Text Out")
     
     def draw_buttons(self, context, layout):
         if self.show_text:
@@ -96,6 +97,7 @@ class NoteNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "text")
         layout.prop(self, "show_text", toggle=True)
         layout.prop(self.outputs[0], "hide", toggle=True, text="Output socket")
+        layout.prop(self.inputs[0], "hide", toggle=True, text="Input socket")
         op = layout.operator("node.sverchok_text_callback", text="From clipboard")
         op.fn_name = "from_clipboard"
         op = layout.operator("node.sverchok_text_callback", text="To text editor")
@@ -113,17 +115,20 @@ class NoteNode(bpy.types.Node, SverchCustomTreeNode):
         self.text = bpy.context.window_manager.clipboard
         
     def update(self):
+        if 'Text In' in self.inputs and self.inputs['Text In'].links:
+            self.text = str(SvGetSocketAnyType(self,self.inputs['Text In']))
+
         n_id = node_id(self)
         if not n_id in self.text_cache:
             self.format_text()
             
-        if 'Text' in self.outputs and self.outputs['Text'].links:
+        if 'Text Out' in self.outputs and self.outputs['Text Out'].links:
             # I'm not sure that this makes sense, but keeping it like 
             # old note right now. Would expect one value, and optional
             # split, or split via a text processing node, 
             # but keeping this for now
             text = [[a] for a in self.text.split()]
-            SvSetSocketAnyType(self, 'Text', [text])
+            SvSetSocketAnyType(self, 'Text Out', [text])
     
     def copy(self, node):
         self.n_id = ''
