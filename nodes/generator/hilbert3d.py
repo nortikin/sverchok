@@ -46,6 +46,10 @@ class Hilbert3dNode(bpy.types.Node, SverchCustomTreeNode):
         pass
 
     def update(self):
+
+        if not ('Edges' in self.outputs):
+            return
+
         # inputs
         if self.outputs['Edges'].links or self.outputs['Vertices'].links:
             if self.inputs['Level'].links:
