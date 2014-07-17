@@ -96,7 +96,7 @@ class SvMetaballNode(bpy.types.Node, SverchCustomTreeNode):
     def metaget(self, s_name, fallback):
         inputs = self.inputs
         if inputs[s_name].links:
-            socket_in = SvGetSocketAnyType(self, inputs[s_name])[0]
+            socket_in = SvGetSocketAnyType(self, inputs[s_name])
             return dataCorrect(socket_in)
         else:
             return fallback
@@ -109,29 +109,28 @@ class SvMetaballNode(bpy.types.Node, SverchCustomTreeNode):
         # add metaball object
         if not (self.metaball_name in metaballs):
             mball = metaballs.new(self.metaball_name)
-            obj = objs.new(basemesh_name+"OBJ", mball)
+            obj = objs.new(self.metaball_name+"OBJ", mball)
             scene.objects.link(obj)
         else:
             mball = metaballs[self.metaball_name]
         return mball
 
     def process(self):
-        locations = self.metaget('location', [(0, 0, 0)])
-        signs = self.metaget('sign', [1])
-        radii = self.metaget('radius', [0.5])
+        locations = self.metaget('location', [(0, 0, 0)])[0]
+        signs = self.metaget('sign', [1])[0][0]
+        radii = self.metaget('radius', [0.5])[0][0]
 
-        fullList(signs, len(locations))
-        fullList(radii, len(locations))
-
+        #fullList(signs, len(locations))
+        #fullList(radii, len(locations))
         mball = self.get_metaball_reference()
+        print(mball)
         mball.render_resolution = self.render_resolution
         mball.resolution = self.resolution  # View resolution
 
-        print(locations, signs, radii)
-
-        metaball_cloud = zip(locations, signs, radii)
-        for idx, (co, sign, radius) in enumerate(metaball_cloud):
-            if idx > len(mball.elements):
+        print('num_ mball elements', len(mball.elements))
+        for idx, (co, sign, radius) in enumerate(zip(locations, signs, radii)):
+            print(idx, co, sign, radius)
+            if idx > len(mball.elements)-1:
                 ele = mball.elements.new()
             else:
                 ele = mball.elements[idx]
