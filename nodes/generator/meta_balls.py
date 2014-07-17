@@ -59,7 +59,7 @@ class SvMetaballNode(bpy.types.Node, SverchCustomTreeNode):
         description='stores the mesh name found in the object, this mesh is instanced',
         update=updateNode)
 
-    resolution = FloatProperty(default=0.16, update=updateNode)
+    resolution = FloatProperty(default=0.16, min=0.15, update=updateNode)
     render_resolution = FloatProperty(default=0.16, update=updateNode)
 
     def init(self, context):
@@ -79,7 +79,7 @@ class SvMetaballNode(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons_ext(self, context, layout):
         row = layout.row(align=True)
         row.prop(self, "resolution", text="view resolution")
-        row.prop(self, "render_resolution", text="view resolution")
+        row.prop(self, "render_resolution", text="render resolution")
 
     def abort_processing(self):
         try:
