@@ -123,13 +123,13 @@ class SvMetaballNode(bpy.types.Node, SverchCustomTreeNode):
         #fullList(signs, len(locations))
         #fullList(radii, len(locations))
         mball = self.get_metaball_reference()
-        print(mball)
+        #print(mball)
         mball.render_resolution = self.render_resolution
         mball.resolution = self.resolution  # View resolution
 
-        print('num_ mball elements', len(mball.elements))
+        print('-- mball elements', len(mball.elements))
         for idx, (co, sign, radius) in enumerate(zip(locations, signs, radii)):
-            print(idx, co, sign, radius)
+            # print(idx, co, sign, radius)
             if idx > len(mball.elements)-1:
                 ele = mball.elements.new()
             else:
