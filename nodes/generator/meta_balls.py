@@ -93,11 +93,20 @@ class SvMetaballNode(bpy.types.Node, SverchCustomTreeNode):
 
         self.process()
 
-    def metaget(self, s_name, fallback):
+    def metaget(self, s_name, fallback, level):
+        '''
+        private function for the processing function, accepts level 0..2
+        '''
         inputs = self.inputs
         if inputs[s_name].links:
             socket_in = SvGetSocketAnyType(self, inputs[s_name])
-            return dataCorrect(socket_in)
+            if level == 1:
+                data = dataCorrect(socket_in)[0]
+            elif level == 2:
+                data = dataCorrect(socket_in)[0][0]
+            else:
+                data = dataCorrect(socket_in)
+            return data
         else:
             return fallback
 
@@ -116,24 +125,25 @@ class SvMetaballNode(bpy.types.Node, SverchCustomTreeNode):
         return mball
 
     def process(self):
-        locations = self.metaget('location', [(0, 0, 0)])[0]
-        signs = self.metaget('sign', [1])[0][0]
-        radii = self.metaget('radius', [0.5])[0][0]
+        locations = self.metaget('location', [(0, 0, 0)], level=1)
+        signs = self.metaget('sign', [0], level=2)
+        radii = self.metaget('radius', [0.5], level=2)
 
-        #fullList(signs, len(locations))
-        #fullList(radii, len(locations))
+        fullList(signs, len(locations))
+        fullList(radii, len(locations))
+
         mball = self.get_metaball_reference()
-        #print(mball)
         mball.render_resolution = self.render_resolution
         mball.resolution = self.resolution  # View resolution
 
-        print('-- mball elements', len(mball.elements))
+        # print('-- mball elements', len(mball.elements))
         for idx, (co, sign, radius) in enumerate(zip(locations, signs, radii)):
             # print(idx, co, sign, radius)
             if idx > len(mball.elements)-1:
                 ele = mball.elements.new()
             else:
                 ele = mball.elements[idx]
+            # print(sign, radius)
             ele.co = co
             ele.use_negative = sign
             ele.radius = radius
