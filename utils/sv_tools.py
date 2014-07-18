@@ -22,6 +22,7 @@ import urllib
 import urllib.request
 from zipfile import ZipFile
 import traceback
+import collections
 
 import bpy
 from bpy.props import StringProperty
@@ -299,8 +300,99 @@ class ToolsNode(bpy.types.Node, SverchCustomTreeNode):
     def update_socket(self, context):
         pass
 
+class SvLayoutScanPropertyes(bpy.types.Operator):
+    ''' scan layouts of sverchok for properties '''
+    
+    bl_idname = "node.sv_scan_propertyes"
+    bl_label = "scan for propertyes in sverchok leyouts"
+
+    def execute(self, context):
+        for tree in bpy.data.node_groups:
+            tna = tree.name
+            if tree.bl_idname == 'SverchCustomTreeType':
+                if hasattr(tree.Sv3DPanel, tna):
+                    tree.Sv3DPanel[tna].clear()
+                templist = []
+                for no in tree.nodes:
+                    if hasattr(no, 'int_'):
+                        if no.inputs and no.outputs:
+                            if not no.inputs[0].links \
+                                    and no.outputs[0].links \
+                                    and no.to3d == True:
+                                templist.append([no. label, no.name, 'int_'])
+                    if hasattr(no, 'float_'):
+                        if no.inputs and no.outputs:
+                            if not no.inputs[0].links \
+                                    and no.outputs[0].links \
+                                    and no.to3d == True:
+                                templist.append([no. label, no.name, 'float_'])
+                templist.sort()
+                templ = [[t[1],t[2]] for t in templist]
+                tree.Sv3DPanel[tna] = dict(templ)
+                #tree.Sv3DPanel[a[0]] = a[1]
+        return {'FINISHED'}
+
+class Sv3DPanel(bpy.types.Panel):
+    ''' Panel to manipuplate parameters in sverchok layouts '''
+    
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'TOOLS'
+    bl_label = "Sverchok "+sv_version_local
+    bl_options = {'DEFAULT_CLOSED'}
+    bl_category = 'SV'
+    
+    
+    
+    def draw(self, context):
+        layout = self.layout
+        little_width = 0.12
+        row = layout.row(align=True)
+        row.scale_y = 2.0
+        row.operator('node.sv_scan_propertyes', text='Scan for props')
+        row.operator(SverchokUpdateAll.bl_idname, text="Update all")
+        for tree in bpy.data.node_groups:
+            if tree.bl_idname == 'SverchCustomTreeType':
+                box = layout.box()
+                col = box.column(align=True)
+                row = col.row(align=True)
+                split = row.column(align=True)
+                split.label(text='Layout: '+tree.name)
+                
+                
+                split = row.column(align=True)
+                split.scale_x = little_width
+                if tree.sv_show:
+                    split.prop(tree, 'sv_show', icon='RESTRICT_VIEW_OFF', text=' ')
+                else:
+                    split.prop(tree, 'sv_show', icon='RESTRICT_VIEW_ON', text=' ')
+                split = row.column(align=True)
+                split.scale_x = little_width
+                if tree.sv_animate:
+                    split.prop(tree, 'sv_animate', icon='UNLOCKED', text=' ')
+                else:
+                    split.prop(tree, 'sv_animate', icon='LOCKED', text=' ')
+                
+                if tree.name in tree.Sv3DPanel:
+                    treedic = tree.Sv3DPanel[tree.name]
+                    for no, ver in treedic.items():
+                        node = tree.nodes[no]
+                        if node.label:
+                            tex = node.label
+                        else:
+                            tex = no
+                        row = col.row(align=True)
+                        row.prop(node, ver, text=tex)
+                        colo = row.column(align=True)
+                        colo.scale_x = little_width*2
+                        colo.prop(node, 'minim', text=' ', slider=True)
+                        colo = row.column(align=True)
+                        colo.scale_x = little_width*2
+                        colo.prop(node, 'maxim', text=' ', slider=True)
+                        
+
 
 def register():
+    bpy.types.SverchCustomTreeType.Sv3DPanel = {}
     bpy.utils.register_class(SverchokUpdateCurrent)
     bpy.utils.register_class(SverchokUpdateAll)
     bpy.utils.register_class(SverchokCheckForUpgrades)
@@ -309,9 +401,13 @@ def register():
     bpy.utils.register_class(SverchokHome)
     bpy.utils.register_class(SverchokToolsMenu)
     bpy.utils.register_class(ToolsNode)
+    bpy.utils.register_class(Sv3DPanel)
+    bpy.utils.register_class(SvLayoutScanPropertyes)
 
 
 def unregister():
+    bpy.utils.unregister_class(SvLayoutScanPropertyes)
+    bpy.utils.unregister_class(Sv3DPanel)
     bpy.utils.unregister_class(ToolsNode)
     bpy.utils.unregister_class(SverchokToolsMenu)
     bpy.utils.unregister_class(SverchokHome)
@@ -320,8 +416,18 @@ def unregister():
     bpy.utils.unregister_class(SverchokCheckForUpgrades)
     bpy.utils.unregister_class(SverchokUpdateAll)
     bpy.utils.unregister_class(SverchokUpdateCurrent)
+    del bpy.types.SverchCustomTreeType.Sv3DPanel
 
-if __name__  ==  '__main__':
-    register()
+
+
+
+
+
+
+
+
+
+
+
 
 
