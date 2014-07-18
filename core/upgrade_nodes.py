@@ -123,12 +123,17 @@ new_socket_dict = {
          ['outputs', 'VerticesSocket', "Origins", 2]],
     'SvSolidifyNode':
         [['outputs', 'StringsSocket', 'newpols', 3]],
+    'FloatNode':
+        [['inputs', 'StringsSocket', "hello-test", 1]],
     }
 
 def upgrade_all():
+    print(bpy.data.node_groups.keys())
     for name, tree in bpy.data.node_groups.items():
+        print(tree.bl_idname)
         if tree.bl_idname == 'SverchCustomTreeType' and tree.nodes:
             try:
+                
                 upgrade_nodes.upgrade_nodes(tree)
             except Exception as e:
                 print('Failed to upgrade:', name, str(e))

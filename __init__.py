@@ -129,11 +129,15 @@ def register():
         if hasattr(m, "register"):
             m.register()
         else:
-            pass
-            #print("failed to register {}".format(m.__name__))
+            #pass
+            print("failed to register {}".format(m.__name__))
     if 'SVERCHOK' not in nodeitems_utils._node_categories:
         nodeitems_utils.register_node_categories("SVERCHOK", menu.make_categories())
     if reload_event:
+        for m in imported_modules:
+            if m.__name__ == "data_structure":
+                print(m.__name__)
+                m.setup_init()
         print("reloaded sverchok, press update")
 
 def unregister():
