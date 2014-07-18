@@ -68,7 +68,7 @@ class SvObjSelected(bpy.types.Operator):
 
     def execute(self, context):
         name_no = self.node_name
-            name_tr = self.tree_name
+        name_tr = self.tree_name
         sorting = self.sort
         handle = handle_read(name_no+name_tr)
         self.disable(name_no+name_tr, handle)
