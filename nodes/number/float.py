@@ -65,6 +65,8 @@ class FloatNode(bpy.types.Node, SverchCustomTreeNode):
             Float = tmp[0][0]
         else:
             Float = self.float_
+        if self.maxim < self.minim:
+            self.minim = self.maxim
         if Float > self.maxim:
             Float = self.float_ = self.maxim
         if Float < self.minim:
@@ -86,5 +88,7 @@ def unregister():
 
 if __name__ == '__main__':
     register()
+
+
 
 

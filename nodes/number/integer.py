@@ -64,6 +64,8 @@ class IntegerNode(bpy.types.Node, SverchCustomTreeNode):
             Integer = int(tmp[0][0])
         else:
             Integer = self.int_
+        if self.maxim < self.minim:
+            self.minim = self.maxim
         if Integer > self.maxim:
             Integer = self.int_ = self.maxim
         if Integer < self.minim:
@@ -85,4 +87,6 @@ def unregister():
 
 if __name__ == '__main__':
     register()
+
+
 
