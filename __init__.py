@@ -58,7 +58,6 @@ import importlib
 
 imported_modules = []
 node_list = []
-
 # ugly hack, should make respective dict in __init__ like nodes
 # or parse it 
 root_modules = ["node_tree", 
@@ -70,11 +69,7 @@ utils_modules = ["cad_module", "sv_bmesh_utils", "text_editor_submenu",
                 "text_editor_plugins"]
 
 
-if imported_modules:
-    import nodeitems_utils
-    for im in imported_modules:
-        importlib.reload(n)
-    nodes = importlib.import_module('nodes')
+def make_node_list():
     node_list = []
     for category, names in nodes.nodes_dict.items():
         nodes_cat = importlib.import_module('.{}'.format(category), 'nodes')
@@ -82,53 +77,60 @@ if imported_modules:
             node = importlib.import_module('.{}'.format(name),
                                            'nodes.{}'.format(category))
             node_list.append(node)
-            importlib.reload(node)
+    return node_list
+
+for m in root_modules:
+    im = importlib.import_module('{}'.format(m))
+    imported_modules.append(im)
+menu = imported_modules[-1]
+# settings needs __package__ set, so we use relative import
+im = importlib.import_module('.settings', __name__) 
+imported_modules.append(im)
+
+core = importlib.import_module('core') 
+imported_modules.append(core)
+
+for m in core_modules:
+    im = importlib.import_module('.{}'.format(m), "core")
+    imported_modules.append(im)
+
+utils = importlib.import_module('utils') 
+imported_modules.append(utils)
+
+for m in utils_modules:    
+    im = importlib.import_module('.{}'.format(m), 
+                                 'utils')
+    imported_modules.append(im)
+
+nodes = importlib.import_module('nodes') 
+imported_modules.append(nodes)
+node_list = make_node_list()
+
+
+if "bpy" in locals():
+    import nodeitems_utils
+    nodes = importlib.reload(nodes)
+    node_list = make_node_list()
+    #print(imported_modules)
+    for im in imported_modules+make_node_list():
+        #print("reloading", im.__name__)
+        importlib.reload(im)
     
     if 'SVERCHOK' in nodeitems_utils._node_categories:
         nodeitems_utils.unregister_node_categories("SVERCHOK")
     nodeitems_utils.register_node_categories("SVERCHOK", menu.make_categories())
-    import bpy
-    print("sverchok reload")
-    print(len(bpy.data.node_groups))
-else:
-    for m in root_modules:
-        im = importlib.import_module('{}'.format(m))
-        imported_modules.append(im)
-    menu = imported_modules[-1]
-    # settings needs __package__ set, so we use relative import
-    im = importlib.import_module('.settings', __name__) 
-    imported_modules.append(im)
 
-
-    core = importlib.import_module('core') 
-    imported_modules.append(core)
-
-    for m in core_modules:
-        im = importlib.import_module('.{}'.format(m), "core")
-        imported_modules.append(im)
-
-    utils = importlib.import_module('utils') 
-    imported_modules.append(utils)
-
-    for m in utils_modules:    
-        im = importlib.import_module('.{}'.format(m), 
-                                     'utils')
-        imported_modules.append(im)
-
-    nodes = importlib.import_module('nodes') 
-    imported_modules.append(nodes)
-    for category, names in nodes.nodes_dict.items():
-        nodes_cat = importlib.import_module('.{}'.format(category), 'nodes')
-        for name in names:
-            node = importlib.import_module('.{}'.format(name),
-                                           'nodes.{}'.format(category))
-            node_list.append(node)
+    
+import bpy
 
 def register():
     import nodeitems_utils
     for m in imported_modules + node_list:
         if hasattr(m, "register"):
             m.register()
+        else:
+            pass
+            #print("failed to register {}".format(m.__name__))
 
     if 'SVERCHOK' not in nodeitems_utils._node_categories:
         nodeitems_utils.register_node_categories("SVERCHOK", menu.make_categories())
