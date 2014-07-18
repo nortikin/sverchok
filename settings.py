@@ -77,7 +77,7 @@ class SverchokPreferences(AddonPreferences):
 
 def register():
     bpy.utils.register_class(SverchokPreferences)
-
+    
 
 def unregister():
     bpy.utils.unregister_class(SverchokPreferences)

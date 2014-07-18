@@ -119,8 +119,8 @@ if "bpy" in locals():
     if 'SVERCHOK' in nodeitems_utils._node_categories:
         nodeitems_utils.unregister_node_categories("SVERCHOK")
     nodeitems_utils.register_node_categories("SVERCHOK", menu.make_categories())
-
-    
+    core.upgrade_nodes.upgrade_all()
+        
 import bpy
 
 def register():
