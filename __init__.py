@@ -55,128 +55,69 @@ if not current_path in sys.path:
 # importing first allows to stores a list of nodes before eventually reloading
 # potential problem : are new nodes imported???
 import importlib
-import nodes
 
-import data_structure
-import node_tree
-import menu
-from .utils import sv_tools
-from .core import handlers
+imported_modules = []
 
-nodes_list = []
-for category, names in nodes.nodes_dict.items():
-    nodes_cat = importlib.import_module('.{}'.format(category), 'nodes')
-    for name in names:
-        node = importlib.import_module('.{}'.format(name),
-                                       'nodes.{}'.format(category))
-        nodes_list.append(node)
+root_modules = ["node_tree", 
+                "data_structure", "menu"]
+core_modules = ["handlers", "update_system", "upgrade_nodes"]
+utils_modules = ["cad_module", "sv_bmesh_utils", "text_editor_submenu",
+                "index_viewer_draw", "sv_curve_utils", "viewer_draw",
+                "sv_tools", "voronoi", "nodeview_bgl_viewer_draw",
+                "text_editor_plugins"]
 
-if "bpy" in locals():
+
+if imported_modules:
     import importlib
     import nodeitems_utils
-    importlib.reload(data_structure)
-    importlib.reload(node_tree)
-    importlib.reload(nodes)
-    importlib.reload(menu)
-    importlib.reload(sv_tools)
-    importlib.reload(handlers)
-    # (index_)viewer_draw -> name not defined error, because I never used it??
-    #importlib.reload(viewer_draw)
-    #importlib.reload(index_viewer_draw)
-    for n in nodes_list:
+    for im in imported_modules:
         importlib.reload(n)
     
     if 'SVERCHOK' in nodeitems_utils._node_categories:
         nodeitems_utils.unregister_node_categories("SVERCHOK")
     nodeitems_utils.register_node_categories("SVERCHOK", menu.make_categories())
+else:
+    for m in root_modules:
+        im = importlib.import_module('{}'.format(m))
+        imported_modules.append(im)
+    menu = imported_modules[-1]
+    # settings needs __package__ set
+    im = importlib.import_module('.settings', __name__) 
+    imported_modules.append(im)
 
-import bpy
-from bpy.types import AddonPreferences
-from bpy.props import BoolProperty, FloatVectorProperty, EnumProperty
+    core = importlib.import_module('core') 
+    imported_modules.append(core)
 
-class SverchokPreferences(AddonPreferences):
+    # ugly hack, should make respective __init__ like nodes    
+    for m in core_modules:
+        im = importlib.import_module('.{}'.format(m), "core")
+        imported_modules.append(core)
 
-    bl_idname = __name__
+    utils = importlib.import_module('utils') 
+    imported_modules.append(utils)
 
-    def update_debug_mode(self, context):
-        #print(dir(context))
-        data_structure.DEBUG_MODE = self.show_debug
+    for m in utils_modules:    
+        im = importlib.import_module('.{}'.format(m), 
+                                     'utils')
+        imported_modules.append(im)
 
-    def update_heat_map(self, context):
-        data_structure.heat_map_state(self.heat_map)
-
-    def set_frame_change(self, context):
-        handlers.set_frame_change(self.frame_change_mode)
+    nodes = importlib.import_module('nodes') 
+    imported_modules.append(nodes)
         
-    show_debug = BoolProperty(name="Print update timings",
-                              description="Print update timings in console",
-                              default=False, subtype='NONE',
-                              update=update_debug_mode)
-
-    heat_map = BoolProperty(name="Heat map",
-                            description="Color nodes according to time",
-                            default=False, subtype='NONE',
-                            update=update_heat_map)
-
-    heat_map_hot = FloatVectorProperty(name="Heat map hot", description='',
-                                       size=3, min=0.0, max=1.0,
-                                       default=(.8, 0, 0), subtype='COLOR')
-
-    heat_map_cold = FloatVectorProperty(name="Heat map cold", description='',
-                                        size=3, min=0.0, max=1.0,
-                                        default=(1, 1, 1), subtype='COLOR')
-    
-    frame_change_modes = \
-            [("PRE", "Pre", "Update Sverchok before frame change", 0),
-             ("POST", "Post", "Update Sverchok after frame change", 1),
-             ("NONE", "None", "Sverchok doesn't update on frame change", 2)]
- 
-    frame_change_mode = EnumProperty(items=frame_change_modes, 
-                            name="Frame change",
-                            description="Select frame change handler", 
-                            default="POST",
-                            update=set_frame_change)
-    
- 
-    def draw(self, context):
-        layout = self.layout
-
-        col = layout.column()
-        col.label(text="General")
-        col.label(text="Frame change handler:")
-        row =  col.row()
-        row.prop(self, "frame_change_mode", expand=True)
-        col.separator()
-        col.label(text="Debug")
-        col.prop(self, "show_debug")
-        col.prop(self, "heat_map")
-        row = col.row()
-        row.active = self.heat_map
-        row.prop(self, "heat_map_hot")
-        row.prop(self, "heat_map_cold")
-
-        col.separator()
-        row=layout.row()
-        row.operator('wm.url_open', text='Home!').url = 'http://nikitron.cc.ua/blend_scripts.html'
-        if sv_tools.sv_new_version:
-            row.operator('node.sverchok_update_addon', text='Upgrade Sverchok addon')
-        else:
-            row.operator('node.sverchok_check_for_upgrades', text='Check for new version')
-
+    for category, names in nodes.nodes_dict.items():
+        nodes_cat = importlib.import_module('.{}'.format(category), 'nodes')
+        #print("cat: {}".format(category)) 
+        for name in names:
+            node = importlib.import_module('.{}'.format(name),
+                                           'nodes.{}'.format(category))
+            #print("node {}".format(name))
+            imported_modules.append(node)
 
 def register():
     import nodeitems_utils
-    from .utils import sv_tools, text_editor_plugins, text_editor_submenu
-
-    node_tree.register()
-    for n in nodes_list:
-        n.register()
-    sv_tools.register()
-    text_editor_plugins.register()
-    text_editor_submenu.register()
-    handlers.register()
-
-    bpy.utils.register_class(SverchokPreferences)
+    for m in imported_modules:
+        if hasattr(m, "register"):
+            m.register()
 
     if 'SVERCHOK' not in nodeitems_utils._node_categories:
         nodeitems_utils.register_node_categories("SVERCHOK", menu.make_categories())
@@ -184,18 +125,9 @@ def register():
 
 def unregister():
     import nodeitems_utils
-    from .utils import sv_tools, text_editor_plugins, text_editor_submenu
-
-    node_tree.unregister()
-    for n in nodes_list:
-        n.unregister()
-    sv_tools.unregister()
-    text_editor_plugins.unregister()
-    text_editor_submenu.unregister()
-    handlers.unregister()
-
-    bpy.utils.unregister_class(SverchokPreferences)
+    for m in reversed(imported_modules):
+        if hasattr(m, "unregister"):
+            m.unregister()
 
     if 'SVERCHOK' not in nodeitems_utils._node_categories:
         nodeitems_utils.unregister_node_categories("SVERCHOK")
-
