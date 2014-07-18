@@ -5,7 +5,7 @@ from bpy.props import BoolProperty, FloatVectorProperty, EnumProperty
 import data_structure
 from core import handlers
 from utils import sv_tools
-
+SVERCHOK_NAME = __package__
 # the way this works is backwards and should be redone
 class SverchokPreferences(AddonPreferences):
 

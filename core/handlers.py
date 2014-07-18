@@ -47,13 +47,12 @@ def sv_post_load(scene):
                 print('Failed to upgrade:', name, str(e))
     # apply preferences
     data_structure.setup_init()
-    import settings
-    addon_name = settings.__package__
+    addon_name = data_structure.SVERCHOK_NAME
     addon = bpy.context.user_preferences.addons.get(addon_name)
     if addon and hasattr(addon, "preferences"):
         set_frame_change(addon.preferences.frame_change_mode)
     else:
-        print("Couldn't find Sverchok preferences")
+        print("Couldn't find Sverchok preferences with {}".format(addon_name))
     unsafe_nodes = {
         'SvScriptNode',
         'FormulaNode',

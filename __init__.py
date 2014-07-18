@@ -45,7 +45,7 @@ bl_info = {
 import os
 import sys
 
-current_path = os.path.dirname(__file__) 
+current_path = os.path.dirname(__file__)
 if not current_path in sys.path:
     sys.path.append(current_path)
     print("Have a nice day with Sverchok")
@@ -59,14 +59,14 @@ import importlib
 imported_modules = []
 node_list = []
 # ugly hack, should make respective dict in __init__ like nodes
-# or parse it 
-root_modules = ["node_tree", 
+# or parse it
+root_modules = ["node_tree",
                 "data_structure", "menu"]
 core_modules = ["handlers", "update_system", "upgrade_nodes"]
 utils_modules = ["cad_module", "sv_bmesh_utils", "text_editor_submenu",
-                "index_viewer_draw", "sv_curve_utils", "viewer_draw",
-                "sv_tools", "voronoi", "nodeview_bgl_viewer_draw",
-                "text_editor_plugins"]
+                 "index_viewer_draw", "sv_curve_utils", "viewer_draw",
+                 "sv_tools", "voronoi", "nodeview_bgl_viewer_draw",
+                 "text_editor_plugins"]
 
 
 def make_node_list():
@@ -80,29 +80,31 @@ def make_node_list():
     return node_list
 
 for m in root_modules:
-    im = importlib.import_module('{}'.format(m))
+    im = importlib.import_module('{}'.format(m), __name__)
     imported_modules.append(im)
-menu = imported_modules[-1]
-# settings needs __package__ set, so we use relative import
-im = importlib.import_module('.settings', __name__) 
-imported_modules.append(im)
 
-core = importlib.import_module('core') 
+menu = imported_modules[-1]
+
+# settings needs __package__ set, so we use relative import
+settings = importlib.import_module('.settings', __name__)
+imported_modules.append(settings)
+
+core = importlib.import_module('core')
 imported_modules.append(core)
 
 for m in core_modules:
     im = importlib.import_module('.{}'.format(m), "core")
     imported_modules.append(im)
 
-utils = importlib.import_module('utils') 
+utils = importlib.import_module('utils')
 imported_modules.append(utils)
 
-for m in utils_modules:    
-    im = importlib.import_module('.{}'.format(m), 
+for m in utils_modules:
+    im = importlib.import_module('.{}'.format(m),
                                  'utils')
     imported_modules.append(im)
 
-nodes = importlib.import_module('nodes') 
+nodes = importlib.import_module('nodes')
 imported_modules.append(nodes)
 node_list = make_node_list()
 reload_event = False
@@ -113,13 +115,13 @@ if "bpy" in locals():
     node_list = make_node_list()
     for im in imported_modules+make_node_list():
         importlib.reload(im)
-    
+
     if 'SVERCHOK' in nodeitems_utils._node_categories:
         nodeitems_utils.unregister_node_categories("SVERCHOK")
     nodeitems_utils.register_node_categories("SVERCHOK", menu.make_categories())
-    core.upgrade_nodes.upgrade_all()
+    # core.upgrade_nodes.upgrade_all()  # doesn't work, anyway.
     reload_event = True
-    
+
 import bpy
 
 
@@ -129,16 +131,16 @@ def register():
         if hasattr(m, "register"):
             m.register()
         else:
-            #pass
-            print("failed to register {}".format(m.__name__))
+            pass
+            #print("failed to register {}".format(m.__name__))
     if 'SVERCHOK' not in nodeitems_utils._node_categories:
         nodeitems_utils.register_node_categories("SVERCHOK", menu.make_categories())
     if reload_event:
         for m in imported_modules:
             if m.__name__ == "data_structure":
-                print(m.__name__)
                 m.setup_init()
         print("reloaded sverchok, press update")
+
 
 def unregister():
     import nodeitems_utils
