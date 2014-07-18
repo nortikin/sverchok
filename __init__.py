@@ -105,23 +105,23 @@ for m in utils_modules:
 nodes = importlib.import_module('nodes') 
 imported_modules.append(nodes)
 node_list = make_node_list()
-
+reload_event = False
 
 if "bpy" in locals():
     import nodeitems_utils
     nodes = importlib.reload(nodes)
     node_list = make_node_list()
-    #print(imported_modules)
     for im in imported_modules+make_node_list():
-        #print("reloading", im.__name__)
         importlib.reload(im)
     
     if 'SVERCHOK' in nodeitems_utils._node_categories:
         nodeitems_utils.unregister_node_categories("SVERCHOK")
     nodeitems_utils.register_node_categories("SVERCHOK", menu.make_categories())
     core.upgrade_nodes.upgrade_all()
-        
+    reload_event = True
+    
 import bpy
+
 
 def register():
     import nodeitems_utils
@@ -131,10 +131,10 @@ def register():
         else:
             pass
             #print("failed to register {}".format(m.__name__))
-
     if 'SVERCHOK' not in nodeitems_utils._node_categories:
         nodeitems_utils.register_node_categories("SVERCHOK", menu.make_categories())
-
+    if reload_event:
+        print("reloaded sverchok, press update")
 
 def unregister():
     import nodeitems_utils
@@ -142,5 +142,5 @@ def unregister():
         if hasattr(m, "unregister"):
             m.unregister()
 
-    if 'SVERCHOK' not in nodeitems_utils._node_categories:
+    if 'SVERCHOK' in nodeitems_utils._node_categories:
         nodeitems_utils.unregister_node_categories("SVERCHOK")

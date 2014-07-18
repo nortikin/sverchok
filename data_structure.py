@@ -25,7 +25,6 @@ import bpy
 from mathutils import Vector, Matrix
 
 from  core.update_system import sverchok_update
-import settings
 
 global bmesh_mapping, per_cache
 
@@ -681,7 +680,7 @@ def setup_init():
     global DEBUG_MODE
     global HEAT_MAP
     global SVERCHOK_NAME
-    
+    import settings
     SVERCHOK_NAME = settings.__package__
     addon = bpy.context.user_preferences.addons.get(SVERCHOK_NAME)
     if addon:
