@@ -57,7 +57,10 @@ if not current_path in sys.path:
 import importlib
 
 imported_modules = []
+node_list = []
 
+# ugly hack, should make respective dict in __init__ like nodes
+# or parse it 
 root_modules = ["node_tree", 
                 "data_structure", "menu"]
 core_modules = ["handlers", "update_system", "upgrade_nodes"]
@@ -68,30 +71,41 @@ utils_modules = ["cad_module", "sv_bmesh_utils", "text_editor_submenu",
 
 
 if imported_modules:
-    import importlib
     import nodeitems_utils
     for im in imported_modules:
         importlib.reload(n)
+    nodes = importlib.import_module('nodes')
+    node_list = []
+    for category, names in nodes.nodes_dict.items():
+        nodes_cat = importlib.import_module('.{}'.format(category), 'nodes')
+        for name in names:
+            node = importlib.import_module('.{}'.format(name),
+                                           'nodes.{}'.format(category))
+            node_list.append(node)
+            importlib.reload(node)
     
     if 'SVERCHOK' in nodeitems_utils._node_categories:
         nodeitems_utils.unregister_node_categories("SVERCHOK")
     nodeitems_utils.register_node_categories("SVERCHOK", menu.make_categories())
+    import bpy
+    print("sverchok reload")
+    print(len(bpy.data.node_groups))
 else:
     for m in root_modules:
         im = importlib.import_module('{}'.format(m))
         imported_modules.append(im)
     menu = imported_modules[-1]
-    # settings needs __package__ set
+    # settings needs __package__ set, so we use relative import
     im = importlib.import_module('.settings', __name__) 
     imported_modules.append(im)
+
 
     core = importlib.import_module('core') 
     imported_modules.append(core)
 
-    # ugly hack, should make respective __init__ like nodes    
     for m in core_modules:
         im = importlib.import_module('.{}'.format(m), "core")
-        imported_modules.append(core)
+        imported_modules.append(im)
 
     utils = importlib.import_module('utils') 
     imported_modules.append(utils)
@@ -103,19 +117,16 @@ else:
 
     nodes = importlib.import_module('nodes') 
     imported_modules.append(nodes)
-        
     for category, names in nodes.nodes_dict.items():
         nodes_cat = importlib.import_module('.{}'.format(category), 'nodes')
-        #print("cat: {}".format(category)) 
         for name in names:
             node = importlib.import_module('.{}'.format(name),
                                            'nodes.{}'.format(category))
-            #print("node {}".format(name))
-            imported_modules.append(node)
+            node_list.append(node)
 
 def register():
     import nodeitems_utils
-    for m in imported_modules:
+    for m in imported_modules + node_list:
         if hasattr(m, "register"):
             m.register()
 
@@ -125,7 +136,7 @@ def register():
 
 def unregister():
     import nodeitems_utils
-    for m in reversed(imported_modules):
+    for m in reversed(imported_modules + node_list):
         if hasattr(m, "unregister"):
             m.unregister()
 
