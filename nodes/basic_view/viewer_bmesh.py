@@ -23,7 +23,7 @@ from node_tree import (SverchCustomTreeNode, VerticesSocket,
                        MatrixSocket, StringsSocket)
 from data_structure import dataCorrect, fullList, updateNode, SvGetSocketAnyType
 from utils.sv_bmesh_utils import bmesh_from_pydata
-
+import itertools
 import random
 
 
@@ -48,7 +48,7 @@ def default_mesh(name):
     return mesh_data
 
 
-def make_bmesh_geometry(context, name, verts, edges, faces, matrix):
+def make_bmesh_geometry(context, name, verts, edges, faces, matrix, fixed_verts=False):
     # no verts. no processing.
     if not verts:
         return
@@ -64,15 +64,20 @@ def make_bmesh_geometry(context, name, verts, edges, faces, matrix):
         sv_object = objects.new(name, temp_mesh)
         scene.objects.link(sv_object)
         # scene.update()
-
+   
+    mesh = sv_object.data
+    if len(mesh.vertices) == len(verts) and fixed_verts:
+        f_v = list(itertools.chain.from_iterable(verts))
+        mesh.vertices.foreach_set('co', f_v)
     # definitely verts, definitely do something.
-    bm = bmesh_from_pydata(verts, edges, faces)
+    else:
+        bm = bmesh_from_pydata(verts, edges, faces)
 
-    # Finish up, write the bmesh back to the mesh
-    bm.to_mesh(sv_object.data)
-    bm.free()  # free and prevent further access
-
-    sv_object.hide_select = False
+        # Finish up, write the bmesh back to the mesh
+        bm.to_mesh(sv_object.data)
+        bm.free()  # free and prevent further access
+    
+        sv_object.hide_select = False
 
     # apply matrices if necessary
     if matrix:
@@ -143,6 +148,7 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
     state_render = BoolProperty(default=True)
     state_select = BoolProperty(default=True)
     select_state_mesh = BoolProperty(default=False)
+    fixed_verts = BoolProperty(default=False, name="Fixed vertices")
 
     def init(self, context):
         self.inputs.new('VerticesSocket', 'vertices', 'vertices')
@@ -200,6 +206,14 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
         # row.template_ID
         row.prop(self, "material", text="mat.")
 
+    def draw_buttons_ext(self, context, layout):
+        self.draw_buttons(context, layout)
+        layout.separator()
+        layout.label(text="Beta options")
+        layout.prop(self, "fixed_verts", text="Fixed vert count")
+        layout.label(text="Note: Use only with unchanging topology")
+        layout.separator()
+    
     def get_corrected_data(self, socket_name, socket_type):
         inputs = self.inputs
         socket = inputs[socket_name].links[0].from_socket
@@ -275,7 +289,7 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
                 data = get_edges_faces_matrices(obj_index)
                 mesh_name = self.basemesh_name + "_" + str(obj_index)
-                make_bmesh_geometry(C, mesh_name, Verts, *data)
+                make_bmesh_geometry(C, mesh_name, Verts, *data, fixed_verts=self.fixed_verts)
 
             self.remove_non_updated_objects(obj_index, self.basemesh_name)
             self.set_corresponding_materials()
