@@ -13,7 +13,6 @@ Mesh and geometry programming consists of combining basic elements such as:
 
   - lists of indexed Vectors representing coordinates (Sverchok vectors are zero based)
   - lists of grouped indices to represent edges and polygons.
-  - rotation angles 
   - matrices (user-friendly rotation-scale-location transformations)
 
 Comes with more than 100 nodes to help create and manipulate geometry. Combining these nodes will allow you to:
