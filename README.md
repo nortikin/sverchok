@@ -4,7 +4,7 @@ version - look version file in utils folder
 addon for: http://blender.org   
 License: GPL3   
 compatible with Blender version: `>=` 2.71  
-requires Python 3.4. (included in Blender) and numpy  
+requires Python 3.4. and numpy (included in Blender)  
 
   
 ###Description
