@@ -51,7 +51,8 @@ nodes_dict = {
         'sphere',
         'basic_spline',
         'basic_3pt_arc',
-        'instancer'],
+        'instancer',
+        'profile'],
 
     'list_basic': [
         'converter',

@@ -19,6 +19,8 @@
 ''' by Dealga McArdle | 2014 '''
 
 import parser
+from math import *
+from string import ascii_lowercase
 
 import bpy
 from bpy.props import BoolProperty, StringProperty
@@ -28,7 +30,10 @@ from data_structure import (sv_Vars, updateNode, multi_socket, changable_sockets
                             dataSpoil, dataCorrect, levelsOflist,
                             SvSetSocketAnyType, SvGetSocketAnyType)
 
-from math import *
+
+
+idx_map = {i: j for i, j in enumerate(ascii_lowercase)}
+
 
 
 class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
@@ -54,6 +59,27 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('VerticesSocket', "Verts", "Verts")
         self.outputs.new('StringsSocket', "Edges", "Edges")
 
+    def adjust_inputs(self):
+        ''' 
+        take care of adding new inputs when the last is full 
+        -- if needed
+        
+        warning. 26 inputs is max, you probably want to approach 
+        profile creation in a different way.
+        '''
+        inputs = self.inputs
+        if inputs[-1].links:
+            new_index = len(inputs)
+            new_letter = idx_map.get(new_index, None)
+            if new_letter:
+                inputs.new('StringsSocket', new_letter, new_letter)
+            else:
+                print('this implementation goes up to 26 chars only, use SN or EK')
+                print('- or contact Dealga')
+        elif not inputs[-2].links:
+            inputs.remove(inputs[-1])
+
+
     def update(self):
         if not ('Edges' in self.outputs):
             return
@@ -62,18 +88,12 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
         if not inputs[0].links:
             return
 
-        if inputs[-1].links:
-            new_index = len(inputs)
-            new_letter = alpha_from_index(new_index)
-            inputs.new('StringsSocket', new_letter, new_letter)
-        elif not inputs[-2].links:
-            inputs[-1].remove()
-
-
-
+        self.adjust_inputs()
+        self.process()
 
 
     def process(self):
+        pass
 
 
 
