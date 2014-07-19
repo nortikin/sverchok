@@ -1,6 +1,6 @@
 ##Sverchok parametric tools
 
-version - look version file in utils folder
+version - look version file in utils folder   
 addon for: http://blender.org   
 License: GPL3   
 compatible with Blender version: `>=` 2.71  
