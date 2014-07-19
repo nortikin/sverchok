@@ -23,7 +23,12 @@ Comes with more than 100 nodes to help create and manipulate geometry. Combining
   - calculate areas
   - design material
   - use Vector fields
-  - even code your own custom nodes
+  - even code your own custom nodes in python
+  - make your own 'addons' on node layouts and utilise them with Sverchok 3dview panel in everyday pipeline
+  - access to pythn API with special node
+  - upgrade Sverchok with one button
+  - make your own neuro network
+  - analize geometry and make CSV tables or import directly to Sverhok
   - and more!
 
 ###Installation
