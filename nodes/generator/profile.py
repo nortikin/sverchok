@@ -50,7 +50,8 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
 
 
     def draw_buttons(self, context, layout):
-        layout.prop(self, "lineformula", text="")
+        row = layout.row(align=True)
+        row.prop(self, "profile_str", text="")
 
     def init(self, context):
         self.inputs.new('StringsSocket', "a", "a")
