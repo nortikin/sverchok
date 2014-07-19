@@ -15,6 +15,7 @@ Mesh and geometry programming consists of combining basic elements such as:
   - lists of grouped indices to represent edges and polygons.
   - matrices (user-friendly rotation-scale-location transformations)
 
+###Possibilities
 Comes with more than 100 nodes to help create and manipulate geometry. Combining these nodes will allow you to:
 
   - do parametric constructions
