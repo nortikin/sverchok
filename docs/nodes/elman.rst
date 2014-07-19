@@ -5,6 +5,9 @@ Elman neuro node layer 1
 ---------
 
  Узел нейронной сети
+  Обучаемый узел. вы его можете обучить закономерностям в данных, подавая данные для просчёта и идеальные числа.
+  Выставляя параметры вы коррекируете работу нейросети. Данный узел просто вырабатывает "условный рефлекс".
+  Вынимая идеальный эталонный параметр вы отпускаете его в вольное плаванье, узел теперь сам решает что надо выдавать в ответ на данные.
   Данные запакованные в каждый объект. Если подаёшь серию по одному числу в объекте, то на входе будет много объектов. И на выходе будет столько же объектов с числом.
   Если на вход подать все числа в одном объекте, это будет считаться много параметров и выдавать один объект.
   Всегда вводите постоянное число переменных, если переменные поменялись - сбрасываются все исчисления. Будьте последовательны.
@@ -24,6 +27,7 @@ English
 -------
 
  Neuro network node
+  This node teachable. You may teach him rules, that he understand himself. Just put data and correct answer. When displace answer, he will find right answer himself.
   Input data. Inserting many objects - output many objects. Inserting one object with many parameters - output one object.
   Always insert constant numbers count of parameters, otherwise it will reset neuro data and start every time from beginning. Keep constant numbers count.
 
