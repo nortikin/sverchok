@@ -86,7 +86,9 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
 
         if not ('Edges' in self.outputs):
             return
-        elif not self.inputs[0].links:
+
+        ''' must have at least one input... '''
+        elif len([1 for inputs in self.inputs if inputs.links]) == 0:
             return
 
         self.adjust_inputs()
@@ -145,6 +147,9 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
     def process(self):
         segments, longest = self.get_input()
         self.homogenize_input(segments, longest)
+
+        if longest < 1:
+            return
 
         for segment in segments:
             fstr = {}
