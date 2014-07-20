@@ -35,9 +35,14 @@ idx_map = {i: j for i, j in enumerate(ascii_lowercase)}
 
 class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
     '''
-    SvProfileNode generates a (set of) profiles or elevation segments using
-    assignments, variables and a string descriptor like in SVG.
+    SvProfileNode generates (a set of) profiles or elevation segments using
+    assignments, variables and a string descriptor similar to SVG.
 
+    This node expects simple input, or vectorized input aware.
+    - Feed it input like [[0, 0, 0, 0.4, 0.4]] per input. 
+    - input can be of any length
+    - sockets wit no input are automatically 0
+    - The longest input array will be used to extend the shorter ones, using last value repeat.
     '''
     bl_idname = 'SvProfileNode'
     bl_label = 'ProfileNode'
@@ -73,52 +78,70 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
             inputs.remove(inputs[-1])
 
     def update(self):
+        '''
+        update analyzes the state of the node and returns if the criteria to start processing
+        are not met.
+        '''
+
         if not ('Edges' in self.outputs):
             return
-
-        inputs = self.inputs
-        if not inputs[0].links:
+        elif not self.inputs[0].links:
             return
 
         self.adjust_inputs()
 
-        outputs = self.outputs
-        if not outputs[0].links:
-            # 0 = verts, this at least needs a connection
+        # 0 == verts, this is a minim requirement.
+        if not self.outputs[0].links:
             return
 
         self.process()
 
+    def meta_get(self, s_name, fallback, level):
+        '''
+        private function for the processing function, accepts level 0..2
+        - if socket has no links, then return fallback value
+        - s_name can be an index instead of socket name
+        '''
+        inputs = self.inputs
+        if inputs[s_name].links:
+            socket_in = SvGetSocketAnyType(self, inputs[s_name])
+            if level == 1:
+                data = dataCorrect(socket_in)[0]
+            elif level == 2:
+                data = dataCorrect(socket_in)[0][0]
+            else:
+                data = dataCorrect(socket_in)
+            return data
+        else:
+            return fallback
 
-    def meta_getter(self, idx, fallback):
+    def homogenize_input(self, segments):
+        '''edit segments in place, extend all to'''
+        longest_len = 
         pass
 
-    def homogenize_input(self):
+    def get_input(self):
         '''
         this function finds the longest input list, and adjusts all others to match it.
         '''
         segments = {}
         for i, input_ in enumerate(self.inputs):
-
-            # not using .get for dict lookup because they should all be valid and known.
             letter = idx_map[i]
+            data = self.meta_get(i, [[0]], 1)
+            segments[letter] = [len(data[0]), data]
 
-
-            segments[letter] = if input_.links
-
+        return segments
 
     def process(self):
-        segments = self.homogenize_input()
+        segments = self.get_input()
+        self.homogenize_input(segments)
 
         for segment in segments:
             fstr = {}
 
             result = literal_eval(self.profile_str)
 
-
         pass
-
-
 
 
 def register():
