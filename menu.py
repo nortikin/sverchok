@@ -180,8 +180,7 @@ def make_categories():
         ["SvNeuroElman1LNode",  "Neuro"],
         ["SvInstancerNode",     "mesh instancer"],
         ["SvLogicNode",         "Logic"],
-        ["SvProfileNode",       "ProfileParametric"],
-        ]
+        ["SvProfileNode",       "ProfileParametric"]]
 
     node_categories = []
     for category, nodes in node_cats.items():
