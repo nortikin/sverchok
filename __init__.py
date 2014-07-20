@@ -68,7 +68,7 @@ utils_modules = ["cad_module", "sv_bmesh_utils", "text_editor_submenu",
                  "sv_tools", "voronoi", "nodeview_bgl_viewer_draw",
                  "text_editor_plugins"]
 
-
+# parse the nodes/__init__.py dictionary and load all nodes
 def make_node_list():
     node_list = []
     for category, names in nodes.nodes_dict.items():
@@ -112,7 +112,6 @@ reload_event = False
 if "bpy" in locals():
     import nodeitems_utils
     nodes = importlib.reload(nodes)
-    node_list = make_node_list()
     for im in imported_modules+make_node_list():
         importlib.reload(im)
 
@@ -139,7 +138,7 @@ def register():
         for m in imported_modules:
             if m.__name__ == "data_structure":
                 m.setup_init()
-        print("reloaded sverchok, press update")
+        print("Sverchok is reloaded, press update")
 
 
 def unregister():
