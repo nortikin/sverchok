@@ -27,7 +27,7 @@ import bpy
 from bpy.props import BoolProperty, StringProperty
 
 from node_tree import SverchCustomTreeNode
-from data_structure import (updateNode, dataCorrect, SvSetSocketAnyType, SvGetSocketAnyType)
+from data_structure import fullList, updateNode, dataCorrect, SvSetSocketAnyType, SvGetSocketAnyType
 
 
 idx_map = {i: j for i, j in enumerate(ascii_lowercase)}
@@ -87,8 +87,8 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
         if not ('Edges' in self.outputs):
             return
 
-        ''' must have at least one input... '''
         elif len([1 for inputs in self.inputs if inputs.links]) == 0:
+            ''' must have at least one input... '''
             return
 
         self.adjust_inputs()
@@ -122,11 +122,13 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
         '''
         edit segments in place, extend all to match length of longest
         '''
-        pass
+        for letter, letter_dict in segments.items():
+            if letter_dict['length'] < longest:
+                fullList(letter_dict['data'], longest)
 
     def get_input(self):
         '''
-        collect all input socket data, and track the loneest sequence.
+        collect all input socket data, and track the longest sequence.
         '''
         segments = {}
         longest = 0
@@ -146,10 +148,13 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
 
     def process(self):
         segments, longest = self.get_input()
-        self.homogenize_input(segments, longest)
 
         if longest < 1:
+            print('logic error, longest < 1')
             return
+
+        self.homogenize_input(segments, longest)
+
 
         for segment in segments:
             fstr = {}
