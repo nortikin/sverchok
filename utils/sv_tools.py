@@ -300,7 +300,11 @@ class ToolsNode(bpy.types.Node, SverchCustomTreeNode):
     def update_socket(self, context):
         pass
 
-class SvLayoutScanPropertyes(bpy.types.Operator):
+class Sv3dPropItem(bpy.types.PropertyGroup):
+    node_name = StringProperty()
+    prop_name = StringProperty() 
+
+class SvLayoutScanProperties(bpy.types.Operator):
     ''' scan layouts of sverchok for properties '''
     
     bl_idname = "node.sv_scan_propertyes"
@@ -310,8 +314,6 @@ class SvLayoutScanPropertyes(bpy.types.Operator):
         for tree in bpy.data.node_groups:
             tna = tree.name
             if tree.bl_idname == 'SverchCustomTreeType':
-                if hasattr(tree.Sv3DPanel, tna):
-                    tree.Sv3DPanel[tna].clear()
                 templist = []
                 for no in tree.nodes:
                     if hasattr(no, 'int_') and not 'LineNode' in no.bl_idname:
@@ -328,8 +330,12 @@ class SvLayoutScanPropertyes(bpy.types.Operator):
                                 templist.append([no. label, no.name, 'float_'])
                 templist.sort()
                 templ = [[t[1],t[2]] for t in templist]
-                tree.Sv3DPanel[tna] = dict(templ)
-                #tree.Sv3DPanel[a[0]] = a[1]
+                tree.Sv3DProps.clear()
+                for name, prop in templ:
+                    tree.Sv3DProps.add()
+                    tree.Sv3DProps[-1].node_name = name
+                    tree.Sv3DProps[-1].prop_name = prop
+                    
         return {'FINISHED'}
 
 class Sv3DPanel(bpy.types.Panel):
@@ -340,8 +346,7 @@ class Sv3DPanel(bpy.types.Panel):
     bl_label = "Sverchok "+sv_version_local
     bl_options = {'DEFAULT_CLOSED'}
     bl_category = 'SV'
-    
-    
+
     
     def draw(self, context):
         layout = self.layout
@@ -372,27 +377,26 @@ class Sv3DPanel(bpy.types.Panel):
                 else:
                     split.prop(tree, 'sv_animate', icon='LOCKED', text=' ')
                 
-                if tree.name in tree.Sv3DPanel:
-                    treedic = tree.Sv3DPanel[tree.name]
-                    for no, ver in treedic.items():
-                        node = tree.nodes[no]
-                        if node.label:
-                            tex = node.label
-                        else:
-                            tex = no
-                        row = col.row(align=True)
-                        row.prop(node, ver, text=tex)
-                        colo = row.column(align=True)
-                        colo.scale_x = little_width*2
-                        colo.prop(node, 'minim', text=' ', slider=True)
-                        colo = row.column(align=True)
-                        colo.scale_x = little_width*2
-                        colo.prop(node, 'maxim', text=' ', slider=True)
-                        
+                for item in tree.Sv3DProps:
+                    no = item.node_name
+                    ver = item.prop_name
+                    node = tree.nodes[no]
+                    if node.label:
+                        tex = node.label
+                    else:
+                        tex = no
+                    row = col.row(align=True)
+                    row.prop(node, ver, text=tex)
+                    colo = row.column(align=True)
+                    colo.scale_x = little_width*2
+                    colo.prop(node, 'minim', text=' ', slider=True)
+                    colo = row.column(align=True)
+                    colo.scale_x = little_width*2
+                    colo.prop(node, 'maxim', text=' ', slider=True)
+                    
 
 
 def register():
-    bpy.types.SverchCustomTreeType.Sv3DPanel = {}
     bpy.utils.register_class(SverchokUpdateCurrent)
     bpy.utils.register_class(SverchokUpdateAll)
     bpy.utils.register_class(SverchokCheckForUpgrades)
@@ -402,11 +406,14 @@ def register():
     bpy.utils.register_class(SverchokToolsMenu)
     bpy.utils.register_class(ToolsNode)
     bpy.utils.register_class(Sv3DPanel)
-    bpy.utils.register_class(SvLayoutScanPropertyes)
-
+    bpy.utils.register_class(Sv3dPropItem)
+    bpy.utils.register_class(SvLayoutScanProperties)
+    bpy.types.NodeTree.Sv3DProps = \
+                        bpy.props.CollectionProperty(type=Sv3dPropItem)
 
 def unregister():
-    bpy.utils.unregister_class(SvLayoutScanPropertyes)
+    bpy.utils.unregister_class(SvLayoutScanProperties)
+    bpy.utils.unregister_class(Sv3dPropItem)
     bpy.utils.unregister_class(Sv3DPanel)
     bpy.utils.unregister_class(ToolsNode)
     bpy.utils.unregister_class(SverchokToolsMenu)
@@ -416,8 +423,7 @@ def unregister():
     bpy.utils.unregister_class(SverchokCheckForUpgrades)
     bpy.utils.unregister_class(SverchokUpdateAll)
     bpy.utils.unregister_class(SverchokUpdateCurrent)
-    del bpy.types.SverchCustomTreeType.Sv3DPanel
-
+    
 
 
 
