@@ -48,7 +48,7 @@ class FloatNode(bpy.types.Node, SverchCustomTreeNode):
         
     def update_max(self, context):
         if self.maxim < self.minim:
-            self.maxin = self.minim + 1
+            self.maxim = self.minim + 1
             return
         if self.float_ > self.maxim:
             self.float_ = self.maxim
