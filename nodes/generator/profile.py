@@ -155,13 +155,25 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
 
         self.homogenize_input(segments, longest)
 
+        full_result_verts = []
+        full_result_edges = []
 
-        for segment in segments:
-            fstr = {}
+        if idx in range(longest):
+            for letter in segments:
 
-            result = literal_eval(self.profile_str)
+                ''' this brings these named parameters in local scope '''
+                fstr = '{letter} = {data}'.format(letter=letter, data=data[idx])
+                exec(fstr)
 
-        pass
+                ''' this assumes all variables used in profile_str are local now '''
+                result = literal_eval(self.profile_str)
+                full_result_verts.append(result)
+
+        if full_result_verts:
+            SvSetSocketAnyType(self, 'Verts', full_result_verts)
+
+            #if self.inputs['Edges'].links:
+            #   SvSetSocketAnyType(self, 'Edges', full_result_edges)
 
 
 def register():
