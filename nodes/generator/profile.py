@@ -122,9 +122,12 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
         '''
         edit segments in place, extend all to match length of longest
         '''
+        f = lambda l: [item for sublist in l for item in sublist]
+
         for letter, letter_dict in segments.items():
             if letter_dict['length'] < longest:
                 fullList(letter_dict['data'], longest)
+                letter_dict['data'] = f(letter_dict['data'])
 
     def get_input(self):
         '''
@@ -136,9 +139,9 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
             letter = idx_map[i]
 
             ''' get socket data, or use a fallback '''
-            data = self.meta_get(i, [[0]], 2)
+            data = self.meta_get(i, [[0]], 1)
 
-            num_datapoints = len(data[0])
+            num_datapoints = len(data)
             segments[letter] = {'length': num_datapoints, 'data': data}
 
             if num_datapoints > longest:
@@ -164,7 +167,7 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
             for letter, data in segments.items():
 
                 ''' this brings these named parameters in local scope '''
-                print(letter, '->, 'data['data'])
+                print(letter, '->', data['data'])
                 fstr = '{l} = {d}'.format(l=letter, d=data['data'][idx])
                 # exec(fstr)
                 print(fstr)
