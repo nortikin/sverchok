@@ -416,7 +416,7 @@ def unregister():
     bpy.utils.unregister_class(SverchokCheckForUpgrades)
     bpy.utils.unregister_class(SverchokUpdateAll)
     bpy.utils.unregister_class(SverchokUpdateCurrent)
-    del bpy.types.SverchCustomTreeType.Sv3DPanel
+    #del bpy.types.SverchCustomTreeType.Sv3DPanel
 
 
 

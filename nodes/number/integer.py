@@ -40,12 +40,16 @@ class IntegerNode(bpy.types.Node, SverchCustomTreeNode):
     def update_max(self, context):
         if self.maxim < self.minim:
             self.maxin = self.minim+1
+            print("bad max")
+            return
         if self.int_ > self.maxim:
             self.int_ = self.maxim
     
     def update_min(self, context):
         if self.minim > self.maxim:
             self.minim = self.maxim-1
+            print("bad min")
+            return
         if self.int_ < self.minim:
             self.int_ = self.minim
         
