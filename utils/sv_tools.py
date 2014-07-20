@@ -408,7 +408,7 @@ def register():
     bpy.utils.register_class(Sv3DPanel)
     bpy.utils.register_class(Sv3dPropItem)
     bpy.utils.register_class(SvLayoutScanProperties)
-    bpy.types.NodeTree.Sv3DProps = \
+    bpy.types.SverchCustomTreeType.Sv3DProps = \
                         bpy.props.CollectionProperty(type=Sv3dPropItem)
 
 def unregister():
