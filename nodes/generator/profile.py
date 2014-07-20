@@ -35,13 +35,13 @@ idx_map = {i: j for i, j in enumerate(ascii_lowercase)}
 
 class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
     '''
-    SvProfileNode generates (a set of) profiles or elevation segments using
-    assignments, variables and a string descriptor similar to SVG.
+    SvProfileNode generates one or more profiles / elevation segments using;
+    assignments, variables, and a string descriptor similar to SVG.
 
-    This node expects simple input, or vectorized input aware.
-    - Feed it input like [[0, 0, 0, 0.4, 0.4]] per input. 
+    This node expects simple input, or vectorized input.
+    - Feed it input like [[0, 0, 0, 0.4, 0.4]] per input.
     - input can be of any length
-    - sockets wit no input are automatically 0
+    - sockets with no input are automatically 0, not None
     - The longest input array will be used to extend the shorter ones, using last value repeat.
     '''
     bl_idname = 'SvProfileNode'
@@ -63,7 +63,8 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
 
     def adjust_inputs(self):
         '''
-        takes care of adding new inputs until reaching 26, think of using SN or EK
+        takes care of adding new inputs until reaching 26,
+        think of using SN or EK if you get that far.
         '''
         inputs = self.inputs
         if inputs[-1].links:
@@ -115,26 +116,35 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
         else:
             return fallback
 
-    def homogenize_input(self, segments):
-        '''edit segments in place, extend all to'''
-        longest_len = 
+    def homogenize_input(self, segments, longest):
+        '''
+        edit segments in place, extend all to match length of longest
+        '''
         pass
 
     def get_input(self):
         '''
-        this function finds the longest input list, and adjusts all others to match it.
+        collect all input socket data, and track the loneest sequence.
         '''
         segments = {}
+        longest = 0
         for i, input_ in enumerate(self.inputs):
             letter = idx_map[i]
-            data = self.meta_get(i, [[0]], 1)
-            segments[letter] = [len(data[0]), data]
 
-        return segments
+            ''' get socket data, or use a fallback '''
+            data = self.meta_get(i, [[0]], 1)
+
+            num_datapoints = len(data[0])
+            segments[letter] = {'length': num_datapoints, 'data': data}
+
+            if num_datapoints > longest:
+                longest = num_datapoints
+
+        return segments, longest
 
     def process(self):
-        segments = self.get_input()
-        self.homogenize_input(segments)
+        segments, longest = self.get_input()
+        self.homogenize_input(segments, longest)
 
         for segment in segments:
             fstr = {}
