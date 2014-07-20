@@ -164,17 +164,18 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
         print(segments)
 
         for idx in range(longest):
-            for letter, data in segments.items():
+            temp_str = self.profile_str
+            ''' separation from prefix should occur here '''
+            # if char 0 == L, M, C, etc,..
 
-                ''' this brings these named parameters in local scope '''
-                # print(letter, '--->', data['data'][idx])
-                fstr = '{l} = {d}'.format(l=letter, d=data['data'][idx])
-                exec(fstr)
-                # print(fstr)
+            for letter, data in segments.items():
+                temp_str = temp_str.replace(letter, str(data['data'][idx]))
+                #fstr = '{l} = {d}'.format(l=letter, d=data['data'][idx])
 
             ''' this assumes all variables used in profile_str are local now '''
-            print(locals())
-            result = literal_eval(self.profile_str)
+            #print(locals())
+            #print(self.profile_str)
+            result = literal_eval(temp_str)
             full_result_verts.append(result)
 
         if full_result_verts:
