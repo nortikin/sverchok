@@ -15,7 +15,7 @@
 #  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 # ##### END GPL LICENSE BLOCK #####
-
+import bpy
 # dict for nodes be upgraded to
 # compact node layout. Format
 # bl_idname : [[socket_name0, prop_name0],
@@ -125,6 +125,16 @@ new_socket_dict = {
         [['outputs', 'StringsSocket', 'newpols', 3]],
     }
 
+# not used right now, didn't work for the intended purpose
+
+def upgrade_all():
+    print(bpy.data.node_groups.keys())
+    for name, tree in bpy.data.node_groups.items():
+        if tree.bl_idname == 'SverchCustomTreeType' and tree.nodes:
+            try:
+                upgrade_nodes.upgrade_nodes(tree)
+            except Exception as e:
+                print('Failed to upgrade:', name, str(e))
 
 def upgrade_nodes(ng):
     ''' Apply prop_name for nodes in the node group ng for
