@@ -139,7 +139,7 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
             letter = idx_map[i]
 
             ''' get socket data, or use a fallback '''
-            data = self.meta_get(i, [[0]], 1)
+            data = self.meta_get(i, [0], 2)
 
             num_datapoints = len(data)
             segments[letter] = {'length': num_datapoints, 'data': data}
@@ -167,14 +167,15 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
             for letter, data in segments.items():
 
                 ''' this brings these named parameters in local scope '''
-                print(letter, '->', data['data'][idx])
+                # print(letter, '--->', data['data'][idx])
                 fstr = '{l} = {d}'.format(l=letter, d=data['data'][idx])
-                # exec(fstr)
-                print(fstr)
+                exec(fstr)
+                # print(fstr)
 
             ''' this assumes all variables used in profile_str are local now '''
-            # result = literal_eval(self.profile_str)
-            # full_result_verts.append(result)
+            print(locals())
+            result = literal_eval(self.profile_str)
+            full_result_verts.append(result)
 
         if full_result_verts:
             SvSetSocketAnyType(self, 'Verts', full_result_verts)
