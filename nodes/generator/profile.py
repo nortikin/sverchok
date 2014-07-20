@@ -127,7 +127,7 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
         for letter, letter_dict in segments.items():
             if letter_dict['length'] < longest:
                 fullList(letter_dict['data'], longest)
-                letter_dict['data'] = f(letter_dict['data'])
+                # letter_dict['data'] = f(letter_dict['data'])
 
     def get_input(self):
         '''
@@ -167,7 +167,7 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
             for letter, data in segments.items():
 
                 ''' this brings these named parameters in local scope '''
-                print(letter, '->', data['data'])
+                print(letter, '->', data['data'][idx])
                 fstr = '{l} = {d}'.format(l=letter, d=data['data'][idx])
                 # exec(fstr)
                 print(fstr)
