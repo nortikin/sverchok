@@ -680,13 +680,13 @@ def setup_init():
     global DEBUG_MODE
     global HEAT_MAP
     global SVERCHOK_NAME
-    
     SVERCHOK_NAME = bpy.types.SverchokPreferences.bl_idname
     addon = bpy.context.user_preferences.addons.get(SVERCHOK_NAME)
     if addon:
         DEBUG_MODE = addon.preferences.show_debug
         HEAT_MAP = addon.preferences.heat_map
-        
+    else:
+        print("Setup of preferences failed")
     
     
 #####################################################

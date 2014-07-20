@@ -52,7 +52,7 @@ def sv_post_load(scene):
     if addon and hasattr(addon, "preferences"):
         set_frame_change(addon.preferences.frame_change_mode)
     else:
-        print("Couldn't find Sverchok preferences")
+        print("Couldn't find Sverchok preferences with {}".format(addon_name))
     unsafe_nodes = {
         'SvScriptNode',
         'FormulaNode',
