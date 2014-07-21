@@ -48,7 +48,7 @@ class SvObjSelected(bpy.types.Operator):
         elif bpy.context.selected_objects:
             objs = bpy.context.selected_objects
         else:
-            self.report('Go home, you tired, there is no object selected')
+            self.report({'WARNING'},'No object selected')
             return
         for o in objs:
             objects.append(o.name)
@@ -192,6 +192,7 @@ class ObjectsNode(bpy.types.Node, SverchCustomTreeNode):
                     # post modifier geometry if ticked
                     scene = bpy.context.scene
                     settings = 'PREVIEW'
+                    # create a temporary mesh
                     obj_data = obj.to_mesh(scene, self.modifiers, settings)
 
                     for m in obj.matrix_world:
@@ -200,10 +201,12 @@ class ObjectsNode(bpy.types.Node, SverchCustomTreeNode):
                         if self.vergroups and v.groups.values():
                             vers_grouped.append(k)
                         vers.append(list(v.co))
-                    for edg in obj_data.edges:
-                        edgs.append([edg.vertices[0], edg.vertices[1]])
+                    #for edg in obj_data.edges:
+                    #    edgs.append([edg.vertices[0], edg.vertices[1]])
+                    edgs = obj_data.edge_keys
                     for p in obj_data.polygons:
                         pols.append(list(p.vertices))
+                    # remove the temp mesh
                     bpy.data.meshes.remove(obj_data)
                     #print (vers, edgs, pols, mtrx)
                 edgs_out.append(edgs)

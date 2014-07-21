@@ -28,24 +28,47 @@ class IntegerNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Integer'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
+    def update_value(self, context):
+        if self.int_ < self.minim:
+            self.int_ = self.minim
+            return
+        if self.int_ > self.maxim:
+            self.int_ = self.maxim
+            return
+        updateNode(self, context)
+        
+    def update_max(self, context):
+        if self.maxim < self.minim:
+            self.maxim = self.minim + 1
+            return
+        if self.int_ > self.maxim:
+            self.int_ = self.maxim
+    
+    def update_min(self, context):
+        if self.minim > self.maxim:
+            self.minim = self.maxim - 1
+            return
+        if self.int_ < self.minim:
+            self.int_ = self.minim
+        
     int_ = IntProperty(name='Int', description='integer number',
                        default=1,
-                       options={'ANIMATABLE'}, update=updateNode)
+                       options={'ANIMATABLE'}, update=update_value)
     maxim = IntProperty(name='max', description='maximum',
                        default=1000,
-                       update=updateNode)
+                       update=update_max)
     minim = IntProperty(name='min', description='minimum',
                        default=-1000,
-                       update=updateNode)
+                       update=update_min)
     to3d = BoolProperty(name='to3d', description='show in 3d panel',
-                       default=True, update=updateNode)
+                       default=True)
 
     def draw_label(self):
         if not self.inputs[0].links:
             return str(self.int_)
         else:
             return self.bl_label
-
+    
     def draw_buttons_ext(self, context, layout):
         row = layout.row(align=True)
         row.prop(self, 'minim')
@@ -61,15 +84,10 @@ class IntegerNode(bpy.types.Node, SverchCustomTreeNode):
         # inputs
         if 'Integer' in self.inputs and self.inputs['Integer'].links:
             tmp = SvGetSocketAnyType(self, self.inputs['Integer'])
-            Integer = int(tmp[0][0])
+            Integer = min(max(int(tmp[0][0]), self.minim), self.maxim)
         else:
             Integer = self.int_
-        if self.maxim < self.minim:
-            self.minim = self.maxim
-        if Integer > self.maxim:
-            Integer = self.int_ = self.maxim
-        if Integer < self.minim:
-            Integer = self.int_ = self.minim
+
         # outputs
         if 'Integer' in self.outputs and self.outputs['Integer'].links:
             SvSetSocketAnyType(self, 'Integer', [[Integer]])

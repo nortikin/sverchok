@@ -29,17 +29,48 @@ class FloatNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Float'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
+    # calling updateNode will trigger the update system
+    # setting self.float_ will cause a recursive call to
+    # update_value so after that we can return
+    # this is also why updateNode shouldn't be called from
+    # inside the update function, either directly
+    # or indirectly by setting a property that will trigger another
+    # update event
+    
+    def update_value(self, context):
+        if self.float_ < self.minim:
+            self.float_ = self.minim
+            return  # recursion protection
+        if self.float_ > self.maxim:
+            self.float_ = self.maxim
+            return  # recursion protection
+        updateNode(self, context)
+        
+    def update_max(self, context):
+        if self.maxim < self.minim:
+            self.maxim = self.minim + 1
+            return
+        if self.float_ > self.maxim:
+            self.float_ = self.maxim
+    
+    def update_min(self, context):
+        if self.minim > self.maxim:
+            self.minim = self.maxim-1
+            return 
+        if self.float_ < self.minim:
+            self.float_ = self.minim
+    
     float_ = FloatProperty(name='Float', description='float number',
                            default=1.0,
-                           options={'ANIMATABLE'}, update=updateNode)
+                           options={'ANIMATABLE'}, update=update_value)
     maxim = FloatProperty(name='max', description='maximum',
                        default=1000,
-                       update=updateNode)
+                       update=update_max)
     minim = FloatProperty(name='min', description='minimum',
                        default=-1000,
-                       update=updateNode)
+                       update=update_min)
     to3d = BoolProperty(name='to3d', description='show in 3d panel',
-                       default=True, update=updateNode)
+                       default=True)
 
     def init(self, context):
         self.inputs.new('StringsSocket', "Float").prop_name = 'float_'
@@ -62,15 +93,9 @@ class FloatNode(bpy.types.Node, SverchCustomTreeNode):
         # inputs
         if 'Float' in self.inputs and self.inputs['Float'].links:
             tmp = SvGetSocketAnyType(self, self.inputs['Float'])
-            Float = tmp[0][0]
+            Float = min(max(float(tmp[0][0]), self.minim), self.maxim)
         else:
             Float = self.float_
-        if self.maxim < self.minim:
-            self.minim = self.maxim
-        if Float > self.maxim:
-            Float = self.float_ = self.maxim
-        if Float < self.minim:
-            Float = self.float_ = self.minim
         # outputs
         if 'Float' in self.outputs and self.outputs['Float'].links:
             SvSetSocketAnyType(self, 'Float', [[Float]])

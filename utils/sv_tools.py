@@ -314,7 +314,7 @@ class SvLayoutScanPropertyes(bpy.types.Operator):
                     tree.Sv3DPanel[tna].clear()
                 templist = []
                 for no in tree.nodes:
-                    if hasattr(no, 'int_') and no.bl_idname != 'LineNode':
+                    if hasattr(no, 'int_') and not 'LineNode' in no.bl_idname:
                         if no.inputs and no.outputs:
                             if not no.inputs[0].links \
                                     and no.outputs[0].links \
@@ -416,7 +416,8 @@ def unregister():
     bpy.utils.unregister_class(SverchokCheckForUpgrades)
     bpy.utils.unregister_class(SverchokUpdateAll)
     bpy.utils.unregister_class(SverchokUpdateCurrent)
-    del bpy.types.SverchCustomTreeType.Sv3DPanel
+    #del bpy.types.SverchCustomTreeType.Sv3DPanel
+
 
 
 
