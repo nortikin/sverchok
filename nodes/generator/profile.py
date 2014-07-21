@@ -24,7 +24,7 @@ from math import *
 from string import ascii_lowercase
 
 import bpy
-from bpy.props import BoolProperty, StringProperty
+from bpy.props import BoolProperty, StringProperty, EnumProperty
 
 from node_tree import SverchCustomTreeNode
 from data_structure import fullList, updateNode, dataCorrect, SvSetSocketAnyType, SvGetSocketAnyType
@@ -48,9 +48,31 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'ProfileNode'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
+    def mode_change(self, context):
+        if not (self.selected_axis == self.current_axis):
+            self.label = self.selected_axis
+            self.current_axis = self.selected_axis
+            updateNode(self, context)
+
+    axis_options = [
+        ("X", "X", "", 0),
+        ("Y", "Y", "", 1),
+        ("Z", "Z", "", 2)
+    ]
+    current_axis = StringProperty(default='Z')
+
+    selected_axis = EnumProperty(
+        items=axis_options,
+        name="Type of axis",
+        description="offers basic axis output vectors X|Y|Z",
+        default="Z",
+        update=mode_change)
+
     profile_str = StringProperty(default="", update=updateNode)
 
     def draw_buttons(self, context, layout):
+        row = layout.row()
+        row.prop(self, 'selected_axis', expand=True)
         row = layout.row(align=True)
         row.prop(self, "profile_str", text="")
 
@@ -170,6 +192,14 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
                 temp_str = temp_str.replace(letter, str(data['data'][idx]))
 
             result = literal_eval(temp_str)
+            
+            axis_fill = {
+                'X': lambda coords: (0, coords[0], coords[1]),
+                'Y': lambda coords: (coords[0], 0, coords[1]),
+                'Z': lambda coords: (coords[0], coords[1], 0)
+                }.get(self.current_axis)
+
+            result = list(map(axis_fill, result))
             full_result_verts.append(result)
 
         if full_result_verts:
