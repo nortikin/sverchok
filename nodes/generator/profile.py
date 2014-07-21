@@ -161,8 +161,6 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
         full_result_verts = []
         full_result_edges = []
 
-        print(segments)
-
         for idx in range(longest):
             temp_str = self.profile_str
             ''' separation from prefix should occur here '''
@@ -170,15 +168,12 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
 
             for letter, data in segments.items():
                 temp_str = temp_str.replace(letter, str(data['data'][idx]))
-                #fstr = '{l} = {d}'.format(l=letter, d=data['data'][idx])
 
-            ''' this assumes all variables used in profile_str are local now '''
-            #print(locals())
-            #print(self.profile_str)
             result = literal_eval(temp_str)
             full_result_verts.append(result)
 
         if full_result_verts:
+            # print(full_result_verts)
             SvSetSocketAnyType(self, 'Verts', full_result_verts)
 
             #if self.inputs['Edges'].links:
