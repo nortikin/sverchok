@@ -43,7 +43,9 @@ class NoteNode(bpy.types.Node, SverchCustomTreeNode):
     
     def update_text(self, context):
         self.format_text()
-        updateNode(self, context)
+        # recursion protection, should be solved with better structure
+        if not self.inputs[0].links:
+            updateNode(self, context)
         
     text = StringProperty(name='text',
                           default='your text here',
