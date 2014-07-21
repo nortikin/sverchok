@@ -221,8 +221,8 @@ def draw_callback_px(n_id, draw_verts, draw_edges, draw_faces, draw_matrix, draw
                     draw_index(vert_idx_color, vert_bg_color, idx, v)
 
         if data_edges and display_edge_index:
-            for edge_index, edge_details in enumerate(data_edges[obj_index]):
-                idx1, idx2 = edge_details
+            for edge_index, (idx1, idx2) in enumerate(data_edges[obj_index]):
+                
                 v1 = Vector(final_verts[idx1])
                 v2 = Vector(final_verts[idx2])
                 loc = v1 + ((v2 - v1) / 2)
@@ -243,6 +243,7 @@ def draw_callback_px(n_id, draw_verts, draw_edges, draw_faces, draw_matrix, draw
 
 def unregister():
     callback_disable_all()
+
 
 
 
