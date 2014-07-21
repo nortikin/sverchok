@@ -316,18 +316,22 @@ class SvLayoutScanProperties(bpy.types.Operator):
             if tree.bl_idname == 'SverchCustomTreeType':
                 templist = []
                 for no in tree.nodes:
-                    if hasattr(no, 'int_') and not 'LineNode' in no.bl_idname:
+                    print(no.bl_idname)
+                    if no.bl_idname == "IntegerNode":
                         if no.inputs and no.outputs:
                             if not no.inputs[0].links \
                                     and no.outputs[0].links \
                                     and no.to3d == True:
                                 templist.append([no. label, no.name, 'int_'])
-                    if hasattr(no, 'float_'):
+                    if no.bl_idname == "FloatNode":
                         if no.inputs and no.outputs:
                             if not no.inputs[0].links \
                                     and no.outputs[0].links \
                                     and no.to3d == True:
                                 templist.append([no.label, no.name, 'float_'])
+                    if no.bl_idname == "ObjectsNode":
+                        if any((s.links for s in no.outputs)):
+                            templist.append([no.label, no.name, ""])
                 templist.sort()
                 templ = [[t[1],t[2]] for t in templist]
                 tree.Sv3DProps.clear()
@@ -385,15 +389,24 @@ class Sv3DPanel(bpy.types.Panel):
                         tex = node.label
                     else:
                         tex = no
-                    row = col.row(align=True)
-                    row.prop(node, ver, text=tex)
-                    colo = row.column(align=True)
-                    colo.scale_x = little_width*2
-                    colo.prop(node, 'minim', text=' ', slider=True)
-                    colo = row.column(align=True)
-                    colo.scale_x = little_width*2
-                    colo.prop(node, 'maxim', text=' ', slider=True)
-                    
+                    if node.bl_idname == "ObjectsNode":
+                        row = col.row(align=True)
+                        row.label(text=node.label if node.label else no)
+                        op=row.operator("node.sverchok_object_insertion", text="Get")
+                        op.node_name = node.name
+                        op.tree_name = tree.name
+                        op.grup_name = node.groupname
+                        op.sort = node.sort
+                    elif node.bl_idname in {"IntegerNode", "FloatNode"}:
+                        row = col.row(align=True)
+                        row.prop(node, ver, text=tex)
+                        colo = row.column(align=True)
+                        colo.scale_x = little_width*2
+                        colo.prop(node, 'minim', text=' ', slider=True)
+                        colo = row.column(align=True)
+                        colo.scale_x = little_width*2
+                        colo.prop(node, 'maxim', text=' ', slider=True)
+                        
 
 
 def register():
