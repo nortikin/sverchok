@@ -327,7 +327,7 @@ class SvLayoutScanProperties(bpy.types.Operator):
                             if not no.inputs[0].links \
                                     and no.outputs[0].links \
                                     and no.to3d == True:
-                                templist.append([no. label, no.name, 'float_'])
+                                templist.append([no.label, no.name, 'float_'])
                 templist.sort()
                 templ = [[t[1],t[2]] for t in templist]
                 tree.Sv3DProps.clear()
@@ -423,19 +423,3 @@ def unregister():
     bpy.utils.unregister_class(SverchokCheckForUpgrades)
     bpy.utils.unregister_class(SverchokUpdateAll)
     bpy.utils.unregister_class(SverchokUpdateCurrent)
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
