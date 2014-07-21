@@ -93,7 +93,7 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
 
         self.adjust_inputs()
 
-        # 0 == verts, this is a minim requirement.
+        # 0 == verts, this is a minimum requirement.
         if not self.outputs[0].links:
             return
 
