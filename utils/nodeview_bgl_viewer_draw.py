@@ -146,3 +146,7 @@ def draw_callback_px(n_id, data):
         blf.position(0, x, ypos, 0)
         blf.draw(0, line)
         ypos -= (text_height * 1.3)
+        
+        
+def unregister():
+    callback_disable_all()

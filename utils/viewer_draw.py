@@ -335,3 +335,6 @@ def draw_callback_view(handle, sl1, sl2, sl3, vs, colo, tran, shade):
     if data_matrix and not data_vector:
         for mat in data_matrix:
             draw_matrix(mat)
+            
+def unregister():
+    callback_disable_all()
