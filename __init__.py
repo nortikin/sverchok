@@ -112,7 +112,8 @@ reload_event = False
 if "bpy" in locals():
     import nodeitems_utils
     nodes = importlib.reload(nodes)
-    for im in imported_modules+make_node_list():
+    node_list = make_node_list()
+    for im in imported_modules+node_list:
         importlib.reload(im)
 
     if 'SVERCHOK' in nodeitems_utils._node_categories:

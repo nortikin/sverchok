@@ -87,16 +87,23 @@ def set_frame_change(mode):
         pre.remove(sv_update_handler)
     # apply the right one
     if mode == "POST":
+        print("Removed handler post")
         post.append(sv_update_handler)
     elif mode == "PRE":
+        print("Removed handler pre")
         pre.append(sv_update_handler)
 
 
 def register():
     bpy.app.handlers.load_pre.append(sv_clean)
     bpy.app.handlers.load_post.append(sv_post_load)
-
+    data_structure.setup_init()
+    addon_name = data_structure.SVERCHOK_NAME
+    addon = bpy.context.user_preferences.addons.get(addon_name)
+    if addon and hasattr(addon, "preferences"):
+        set_frame_change(addon.preferences.frame_change_mode)
 
 def unregister():
     bpy.app.handlers.load_pre.remove(sv_clean)
     bpy.app.handlers.load_post.remove(sv_post_load)
+    set_frame_change(None)
