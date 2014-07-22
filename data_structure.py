@@ -30,6 +30,7 @@ global bmesh_mapping, per_cache
 
 DEBUG_MODE = False
 HEAT_MAP = False
+RELOAD_EVENT = False
 
 # this is set correctly later.
 SVERCHOK_NAME = "sverchok"

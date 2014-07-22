@@ -331,10 +331,17 @@ def sverchok_update(start_node=None, tree=None, animation_mode=False):
             if nod_name in nods:
                 nods[nod_name].update()
 
+    # first update event after a reload, apply sverchok startup
+    if data_structure.RELOAD_EVENT:
+        data_structure.RELOAD_EVENT = False
+        from core import handlers
+        handlers.sv_post_load([])
+        return
     if data_structure.DEBUG_MODE:
         do_update = do_update_debug
     if data_structure.HEAT_MAP:
         do_update = do_update_heat_map
+    
 
     # try to update optimized animation trees, not ready
     if animation_mode:
