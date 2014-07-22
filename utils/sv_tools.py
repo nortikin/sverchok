@@ -302,12 +302,13 @@ class ToolsNode(bpy.types.Node, SverchCustomTreeNode):
 
 class SvClearNodesLayouts (bpy.types.Operator):
     """Clear node layouts sverchok and blendgraph, when no nodes editor opened"""      
-    bl_idname = "object.sv_delete_nodelayouts"
+    bl_idname = "node.sv_delete_nodelayouts"
     bl_label = "del layouts"
     bl_options = {'REGISTER', 'UNDO'} 
     
     
-    do_clear = bpy.props.BoolProperty(default=False, name='even used', description='remove even if layout has one user (not fake user)')
+    do_clear = bpy.props.BoolProperty(default=False, name='even used', \
+                        description='remove even if layout has one user (not fake user)')
 
     @classmethod
     def poll(cls, self):
@@ -394,8 +395,9 @@ class Sv3DPanel(bpy.types.Panel):
         row.operator(SverchokUpdateAll.bl_idname, text="Update all")
         row = col.row(align=True)
         row.prop(context.scene, 'sv_do_clear', text='hard clean')
-        delley = row.operator('object.sv_delete_nodelayouts', text='Clean layouts')
-        delley.do_clear = context.scene.sv_do_clear
+        delley = row.operator('node.sv_delete_nodelayouts', \
+                              text='Clean layouts').do_clear = \
+                              context.scene.sv_do_clear
         for tree in bpy.data.node_groups:
             if tree.bl_idname == 'SverchCustomTreeType':
                 box = layout.box()
@@ -447,7 +449,9 @@ class Sv3DPanel(bpy.types.Panel):
 
 
 def register():
-    bpy.types.Scene.sv_do_clear = bpy.props.BoolProperty(default=False, name='even used', description='remove even if layout has one user (not fake user)')
+    bpy.types.Scene.sv_do_clear = bpy.props.BoolProperty(default=False, \
+        name='even used', description='remove even if \
+        layout has one user (not fake user)')
     bpy.utils.register_class(SverchokUpdateCurrent)
     bpy.utils.register_class(SverchokUpdateAll)
     bpy.utils.register_class(SverchokCheckForUpgrades)
@@ -459,10 +463,12 @@ def register():
     bpy.utils.register_class(Sv3DPanel)
     bpy.utils.register_class(Sv3dPropItem)
     bpy.utils.register_class(SvLayoutScanProperties)
+    bpy.utils.register_class(SvClearNodesLayouts)
     bpy.types.SverchCustomTreeType.Sv3DProps = \
                         bpy.props.CollectionProperty(type=Sv3dPropItem)
 
 def unregister():
+    bpy.utils.unregister_class(SvClearNodesLayouts)
     bpy.utils.unregister_class(SvLayoutScanProperties)
     bpy.utils.unregister_class(Sv3dPropItem)
     bpy.utils.unregister_class(Sv3DPanel)
@@ -475,3 +481,5 @@ def unregister():
     bpy.utils.unregister_class(SverchokUpdateAll)
     bpy.utils.unregister_class(SverchokUpdateCurrent)
     del bpy.types.Scene.do_clear
+
+
