@@ -46,13 +46,6 @@ def sv_post_load(scene):
             except Exception as e:
                 print('Failed to upgrade:', name, str(e))
     # apply preferences
-    data_structure.setup_init()
-    addon_name = data_structure.SVERCHOK_NAME
-    addon = bpy.context.user_preferences.addons.get(addon_name)
-    if addon and hasattr(addon, "preferences"):
-        set_frame_change(addon.preferences.frame_change_mode)
-    else:
-        print("Couldn't find Sverchok preferences with {}".format(addon_name))
     unsafe_nodes = {
         'SvScriptNode',
         'FormulaNode',
@@ -87,10 +80,10 @@ def set_frame_change(mode):
         pre.remove(sv_update_handler)
     # apply the right one
     if mode == "POST":
-        print("Removed handler post")
+        print("Removed Sverchok handler post")
         post.append(sv_update_handler)
     elif mode == "PRE":
-        print("Removed handler pre")
+        print("Removed Sverchok handler pre")
         pre.append(sv_update_handler)
 
 
@@ -102,6 +95,8 @@ def register():
     addon = bpy.context.user_preferences.addons.get(addon_name)
     if addon and hasattr(addon, "preferences"):
         set_frame_change(addon.preferences.frame_change_mode)
+    else:
+        print("Couldn't setup Sverchok frame change handler")
 
 def unregister():
     bpy.app.handlers.load_pre.remove(sv_clean)

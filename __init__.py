@@ -92,6 +92,7 @@ imported_modules.append(settings)
 core = importlib.import_module('core')
 imported_modules.append(core)
 
+
 for m in core_modules:
     im = importlib.import_module('.{}'.format(m), "core")
     imported_modules.append(im)
@@ -136,9 +137,11 @@ def register():
     if 'SVERCHOK' not in nodeitems_utils._node_categories:
         nodeitems_utils.register_node_categories("SVERCHOK", menu.make_categories())
     if reload_event:
+        # tag reload event which will cause a full sverchok startup on
+        # first update event
         for m in imported_modules:
             if m.__name__ == "data_structure":
-                m.setup_init()
+                m.RELOAD_EVENT = True
         print("Sverchok is reloaded, press update")
 
 
