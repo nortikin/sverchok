@@ -300,6 +300,38 @@ class ToolsNode(bpy.types.Node, SverchCustomTreeNode):
     def update_socket(self, context):
         pass
 
+class SvClearNodesLayouts (bpy.types.Operator):
+    """Clear node layouts sverchok and blendgraph, when no nodes editor opened"""      
+    bl_idname = "object.sv_delete_nodelayouts"
+    bl_label = "del layouts"
+    bl_options = {'REGISTER', 'UNDO'} 
+    
+    
+    do_clear = bpy.props.BoolProperty(default=False, name='even used', description='remove even if layout has one user (not fake user)')
+
+    @classmethod
+    def poll(cls, self):
+        for area in bpy.context.window.screen.areas:
+            if area.type == 'NODE_EDITOR':
+                return False
+        return True
+
+    def execute(self, context):
+        trees = bpy.data.node_groups
+        for T in trees:
+            if T.bl_rna.name in ['Shader Node Tree']:
+                continue
+            if trees[T.name].users > 1 and T.use_fake_user == True:
+                print ('Layout '+str(T.name)+' protected by fake user.')
+            if trees[T.name].users == 1 and self.do_clear and T.use_fake_user == False:
+                print ('cleaning user: '+str(T.name))
+                trees[T.name].user_clear()
+            if trees[T.name].users == 0:
+                print ('removing layout: '+str(T.name)+' | '+str(T.bl_rna.name))
+                bpy.data.node_groups.remove(T)
+                
+        return {'FINISHED'}
+
 class Sv3dPropItem(bpy.types.PropertyGroup):
     node_name = StringProperty()
     prop_name = StringProperty() 
@@ -351,14 +383,19 @@ class Sv3DPanel(bpy.types.Panel):
     bl_options = {'DEFAULT_CLOSED'}
     bl_category = 'SV'
 
-    
+
     def draw(self, context):
         layout = self.layout
         little_width = 0.12
-        row = layout.row(align=True)
+        col = layout.column(align=True)
+        row = col.row(align=True)
         row.scale_y = 2.0
         row.operator('node.sv_scan_propertyes', text='Scan for props')
         row.operator(SverchokUpdateAll.bl_idname, text="Update all")
+        row = col.row(align=True)
+        row.prop(context.scene, 'sv_do_clear', text='hard clean')
+        delley = row.operator('object.sv_delete_nodelayouts', text='Clean layouts')
+        delley.do_clear = context.scene.sv_do_clear
         for tree in bpy.data.node_groups:
             if tree.bl_idname == 'SverchCustomTreeType':
                 box = layout.box()
@@ -410,6 +447,7 @@ class Sv3DPanel(bpy.types.Panel):
 
 
 def register():
+    bpy.types.Scene.sv_do_clear = bpy.props.BoolProperty(default=False, name='even used', description='remove even if layout has one user (not fake user)')
     bpy.utils.register_class(SverchokUpdateCurrent)
     bpy.utils.register_class(SverchokUpdateAll)
     bpy.utils.register_class(SverchokCheckForUpgrades)
@@ -436,3 +474,4 @@ def unregister():
     bpy.utils.unregister_class(SverchokCheckForUpgrades)
     bpy.utils.unregister_class(SverchokUpdateAll)
     bpy.utils.unregister_class(SverchokUpdateCurrent)
+    del bpy.types.Scene.do_clear
