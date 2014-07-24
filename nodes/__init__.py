@@ -96,7 +96,9 @@ nodes_dict = {
         'polygons_boom',
         'polygons_to_edges',
         'remove_doubles',
-        'vertices_mask'],
+        'vertices_mask',
+        'rotate3d',
+        'scale'],
 
     'modifier_make': [
         'bisect',
