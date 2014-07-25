@@ -97,7 +97,7 @@ nodes_dict = {
         'polygons_to_edges',
         'remove_doubles',
         'vertices_mask',
-        'rotate3d',
+        'axis_rotation',
         'scale'],
 
     'modifier_make': [
