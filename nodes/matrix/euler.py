@@ -21,7 +21,7 @@ from math import radians
 import bpy
 from bpy.props import EnumProperty, FloatProperty
 
-from mathutils import Matrix
+from mathutils import Matrix, Euler
 
 from node_tree import SverchCustomTreeNode, StringsSocket
 from data_structure import (updateNode, Matrix_listing, match_long_repeat,
@@ -51,25 +51,25 @@ class SvMatrixEulerNode(bpy.types.Node, SverchCustomTreeNode):
         updateNode(self, context)
 
     orders = [
-        ('XYZ', "",        "", 0),
-        ('XZY', "",        "", 1),
-        ('YXZ', "",        "", 2),
-        ('YZX', "",        "", 3),
-        ('ZXY', "",        "", 4),
-        ('ZYX', "",        "", 5),
+        ('XYZ', "XYZ",        "", 0),
+        ('XZY', 'XZY',        "", 1),
+        ('YXZ', 'YXZ',        "", 2),
+        ('YZX', 'YZX',        "", 3),
+        ('ZXY', 'ZXY',        "", 4),
+        ('ZYX', 'ZYX',        "", 5),
     ]
     order = EnumProperty(name="Order", description="Order",
                           default="XYZ", items=orders,
                           update=change_prop)
 
     def init(self, context):
-        self.inputs.new('StringsSocket', "pos0").prop_name = 'x'
-        self.inputs.new('StringsSocket', "pos1").prop_name = 'y'
-        self.inputs.new('StringsSocket', "pos1").prop_name = 'z'
+        self.inputs.new('StringsSocket', "pos0").prop_name = 'X'
+        self.inputs.new('StringsSocket', "pos1").prop_name = 'Y'
+        self.inputs.new('StringsSocket', "pos1").prop_name = 'Z'
         self.outputs.new('MatrixSocket', "Matrix", "Matrix")
 
     def draw_buttons(self, context, layout):
-        layout.prop(self, "plane_", "Shear plane:", expand=True)
+        layout.prop(self, "order", text="Order:")
 
     def update(self):
         if not 'Matrix' in self.outputs:
@@ -80,7 +80,7 @@ class SvMatrixEulerNode(bpy.types.Node, SverchCustomTreeNode):
         param = [s.sv_get()[0] for s in inputs]
         mats = []
         for angles in zip(*match_long_repeat(param)):
-            a_r = [math.radians(x) for x in angles]
+            a_r = [radians(x) for x in angles]
             mat = Euler(a_r, self.order).to_matrix().to_4x4()
             mats.append(mat)
         SvSetSocketAnyType(self, 'Matrix', Matrix_listing(mats))
