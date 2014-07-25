@@ -88,7 +88,9 @@ nodes_dict = {
         'shear'],
 
     'modifier_change': [
+        'axis_rotation',
         'delete_loose',
+        'euler_rotation',
         'edges_intersect',
         'holes_fill',
         'mesh_join',
@@ -96,9 +98,8 @@ nodes_dict = {
         'polygons_boom',
         'polygons_to_edges',
         'remove_doubles',
-        'vertices_mask',
-        'axis_rotation',
-        'scale'],
+        'scale',
+        'vertices_mask'],
 
     'modifier_make': [
         'bisect',
