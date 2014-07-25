@@ -16,7 +16,7 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-from math import cos, sin, sqrt, radians
+from mathutils import Vector
 
 import bpy
 from bpy.props import FloatProperty
@@ -41,17 +41,15 @@ class SvScaleNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('StringsSocket', "Factor", "Factor").prop_name = "factor_"
         self.outputs.new('VerticesSocket', "Vertices", "Vertices")
 
-    def scaling(self, Vertices, Center, Factor):
-        a = Center[0] + Factor*(Vertices[0] - Center[0])
-        b = Center[1] + Factor*(Vertices[1] - Center[1])
-        c = Center[2] + Factor*(Vertices[2] - Center[2])
-        point = [a, b, c]
-        return point
+    def scaling(self, vertex, center, factor):
+        pt = Vector(vertex)
+        c = Vector(center)
+        return (c + factor*(pt-c))[:]
 
-    def vert_scl(self, Vertices, Center, Factor):
+    def vert_scl(self, vertex, center, factor):
         scaled = []
-        for i in Vertices:
-            scaled.append(self.scaling(i, Center, Factor))
+        for i in vertex:
+            scaled.append(self.scaling(i, center, factor))
         return scaled
   
     def update(self):
