@@ -85,7 +85,8 @@ nodes_dict = {
         'generator',
         'input',
         'interpolation',
-        'shear'],
+        'shear',
+        'euler'],
 
     'modifier_change': [
         'axis_rotation',

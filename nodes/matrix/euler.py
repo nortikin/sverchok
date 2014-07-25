@@ -16,33 +16,40 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+from math import radians
+
 import bpy
 from bpy.props import EnumProperty, FloatProperty
+
 from mathutils import Matrix
 
 from node_tree import SverchCustomTreeNode, StringsSocket
-from data_structure import (updateNode, fullList, Matrix_listing,
+from data_structure import (updateNode, Matrix_listing, match_long_repeat,
                             SvSetSocketAnyType, SvGetSocketAnyType)
 
 
-class MatrixEulerNode(bpy.types.Node, SverchCustomTreeNode):
+class SvMatrixEulerNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Construct a Matirx from Euler '''
-    bl_idname = 'MatrixEulerNode'
+    bl_idname = 'SvMatrixEulerNode'
     bl_label = 'Euler Matrix'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    # select Shear plane
 
-    x = FloatProperty(name='X', description='X rotation',
+    X = FloatProperty(name='X', description='X rotation',
                              default=0.0,
                              options={'ANIMATABLE'}, update=updateNode)
-    y = FloatProperty(name='Y', description='Y rotation',
+    Y = FloatProperty(name='Y', description='Y rotation',
                              default=0.0,
                              options={'ANIMATABLE'}, update=updateNode)
-    z = FloatProperty(name='Z', description='Z rotation',
+    Z = FloatProperty(name='Z', description='Z rotation',
                              default=0.0,
                              options={'ANIMATABLE'}, update=updateNode)
-    
+
+    def change_prop(self, context):
+        for i, name in enumerate(self.order):
+            self.inputs[i].prop_name = name
+        updateNode(self, context)
+
     orders = [
         ('XYZ', "",        "", 0),
         ('XZY', "",        "", 1),
@@ -53,7 +60,7 @@ class MatrixEulerNode(bpy.types.Node, SverchCustomTreeNode):
     ]
     order = EnumProperty(name="Order", description="Order",
                           default="XYZ", items=orders,
-                          update=updateNode)
+                          update=change_prop)
 
     def init(self, context):
         self.inputs.new('StringsSocket', "pos0").prop_name = 'x'
@@ -65,33 +72,23 @@ class MatrixEulerNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "plane_", "Shear plane:", expand=True)
 
     def update(self):
-        inputs = self.inputs 
+        if not 'Matrix' in self.outputs:
+            return
+        if not self.outputs['Matrix'].links:
+            return
+        inputs = self.inputs
         param = [s.sv_get()[0] for s in inputs]
-        match_long_repeat 
-        # outputs
-        if 'Matrix' in self.outputs and self.outputs['Matrix'].links:
-
-            max_l = max(len(factor1), len(factor2))
-            fullList(factor1, max_l)
-            fullList(factor2, max_l)
-            matrixes_ = []
-            for i in range(max_l):
-                max_inner = max(len(factor1[i]), len(factor2[i]))
-                fullList(factor1[i], max_inner)
-                fullList(factor2[i], max_inner)
-                for j in range(max_inner):
-                    matrixes_.append(Matrix.Shear(self.plane_, 4, (factor1[i][j], factor2[i][j])))
-
-            matrixes = Matrix_listing(matrixes_)
-            SvSetSocketAnyType(self, 'Matrix', matrixes)
-
-    def update_socket(self, context):
-        self.update()
+        mats = []
+        for angles in zip(*match_long_repeat(param)):
+            a_r = [math.radians(x) for x in angles]
+            mat = Euler(a_r, self.order).to_matrix().to_4x4()
+            mats.append(mat)
+        SvSetSocketAnyType(self, 'Matrix', Matrix_listing(mats))
 
 
 def register():
-    bpy.utils.register_class(MatrixShearNode)
+    bpy.utils.register_class(SvMatrixEulerNode)
 
 
 def unregister():
-    bpy.utils.unregister_class(MatrixShearNode)
+    bpy.utils.unregister_class(SvMatrixEulerNode)
