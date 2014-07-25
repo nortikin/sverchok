@@ -55,9 +55,9 @@ class SvEulerRotationNode(bpy.types.Node, SverchCustomTreeNode):
         v = Vector(vertex)
         return (v*mat_eul)[:]
 
-    def vert_rot(self, vertices, x, y, z):
+    def vert_rot(self, vertex, x, y, z):
         rotated = []
-        for i in vertices:
+        for i in vertex:
             rotated.append(self.rotation(i, x, y, z))
         return rotated
   
