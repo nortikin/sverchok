@@ -16,8 +16,6 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-from math import cos, sin, sqrt, radians
-
 from mathutils import Vector
 
 import bpy
