@@ -1,0 +1,216 @@
+# ##### BEGIN GPL LICENSE BLOCK #####
+#
+#  This program is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU General Public License
+#  as published by the Free Software Foundation; either version 2
+#  of the License, or (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software Foundation,
+#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+# ##### END GPL LICENSE BLOCK #####
+
+from math import radians
+
+from mathutils import Matrix, Vector, Euler, Quaternion
+
+import bpy
+from bpy.props import FloatProperty, EnumProperty, StringProperty
+
+from node_tree import SverchCustomTreeNode
+from data_structure import (SvGetSocketAnyType, SvSetSocketAnyType,
+                            updateNode, match_long_repeat, Matrix_generate,
+                            Matrix_listing, dataCorrect)
+
+
+def axis_rotation(vertex, center, axis, angle):
+    rotated = []
+    mat = Matrix.Rotation(radians(angle), 4,  axis)
+    c = Vector(center)
+    for i in vertex:            
+        pt = Vector(i)
+        rotated.append((c + mat * ( pt - c))[:])
+    return rotated
+
+def euler_rotation(vertex, x, y, z):
+    rotated = []
+    mat_eul = Euler((radians(x), radians(y), radians(z)), 'XYZ').to_matrix()
+    for i in vertex:
+        v = Vector(i)
+        rotated.append((mat_eul*v)[:])
+    return rotated
+
+def quat_rotation(matrix, x, y, z):
+    rotated = []
+    quat_a = Quaternion((1.0, 0.0, 0.0), radians(x))
+    quat_b = Quaternion((0.0, 1.0, 0.0), radians(y))
+    quat_c = Quaternion((0.0, 0.0, 1.0), radians(z))
+    quat_out = quat_a * quat_b * quat_c
+    for i in matrix:    
+        j = quat_out.to_matrix().to_4x4()
+        k = j*matrix
+        rotated.append(Matrix_listing([k]))
+    return rotated
+
+class SvRotationNode(bpy.types.Node, SverchCustomTreeNode):
+    ''' Axis Rotation '''
+    bl_idname = 'SvRotationNode'
+    bl_label = 'Rotation'
+    bl_icon = 'OUTLINER_OB_EMPTY'
+
+    angle_ = FloatProperty(name='Angle', description='rotation angle',
+                           default=0.0,
+                           options={'ANIMATABLE'}, update=updateNode)
+    x_ = FloatProperty(name='X', description='X angle',
+                           default=0.0,
+                           options={'ANIMATABLE'}, update=updateNode)
+    y_ = FloatProperty(name='Y', description='Y angle',
+                           default=0.0,
+                           options={'ANIMATABLE'}, update=updateNode)
+    z_ = FloatProperty(name='Z', description='Z angle',
+                           default=0.0,
+                           options={'ANIMATABLE'}, update=updateNode)
+
+    current_mode = StringProperty(default="AXIS")
+
+    modes = [
+        ("AXIS", "Axis", "Axis and angle rotation", 1),
+        ("EULER", "Euler", "Euler Rotation", 2),
+        ("QUAT", "Quat", "Quaternion Rotation", 3),
+    ]
+
+    def mode_change(self, context):
+        # just because click doesn't mean we need to change mode
+        mode = self.mode
+        if mode == self.current_mode:
+            return
+
+        while len(self.inputs) > 0:
+            self.inputs.remove(self.inputs[-1])
+        while len(self.outputs) > 0:
+            self.outputs.remove(self.outputs[-1])
+
+        if mode == 'AXIS':
+            self.inputs.new('VerticesSocket', "Vertices", "Vertices")
+            self.inputs.new('VerticesSocket', "Center", "Center")
+            self.inputs.new('VerticesSocket', "Axis", "Axis")
+            self.inputs.new('StringsSocket', "Angle", "Angle").prop_name = "angle_"
+            self.outputs.new('VerticesSocket', "Vertices", "Vertices")
+        elif mode == 'EULER':
+            self.inputs.new('VerticesSocket', "Vertices", "Vertices")
+            self.inputs.new('StringsSocket', "X", "X").prop_name = "x_"
+            self.inputs.new('StringsSocket', "Y", "Y").prop_name = "y_"
+            self.inputs.new('StringsSocket', "Z", "Z").prop_name = "z_"
+            self.outputs.new('VerticesSocket', "Vertices", "Vertices")
+        elif mode == 'QUAT':
+            self.inputs.new('MatrixSocket', "Matrix", "Matrix")    
+            self.inputs.new('StringsSocket', "X", "X").prop_name = "x_"
+            self.inputs.new('StringsSocket', "Y", "Y").prop_name = "y_"
+            self.inputs.new('StringsSocket', "Z", "Z").prop_name = "z_"
+            self.outputs.new('MatrixSocket', "Matrix", "Matrix") 
+
+        self.current_mode = mode
+        updateNode(self, context)
+
+    mode = EnumProperty(items=modes, default='AXIS', update=mode_change)
+
+    def init(self, context):
+        self.inputs.new('VerticesSocket', "Vertices", "Vertices")
+        self.inputs.new('VerticesSocket', "Center", "Center")
+        self.inputs.new('VerticesSocket', "Axis", "Axis")
+        self.inputs.new('StringsSocket', "Angle", "Angle").prop_name = "angle_"
+        self.outputs.new('VerticesSocket', "Vertices", "Vertices")
+
+    def draw_buttons(self, context, layout):
+        layout.prop(self, "mode", expand=True)
+
+    def update(self):
+        # inputs
+        if self.mode == 'AXIS':
+            if 'Vertices' in self.inputs and self.inputs['Vertices'].links:
+                Vertices = SvGetSocketAnyType(self, self.inputs['Vertices'])
+            else:
+                Vertices = []
+            if 'Angle' in self.inputs and self.inputs['Angle'].links:
+                Angle = SvGetSocketAnyType(self, self.inputs['Angle'])[0]
+            else:
+                Angle = [self.angle_]
+            if 'Center' in self.inputs and self.inputs['Center'].links:
+                Center = SvGetSocketAnyType(self, self.inputs['Center'])[0]
+            else:
+                Center = [[0.0, 0.0, 0.0]]
+            if 'Axis' in self.inputs and self.inputs['Axis'].links:
+                Axis = SvGetSocketAnyType(self, self.inputs['Axis'])[0]
+            else:
+                Axis = [[0.0, 0.0, 1.0]]
+
+            parameters = match_long_repeat([Vertices, Center, Axis, Angle])
+
+        elif self.mode == 'EULER':
+            if 'Vertices' in self.inputs and self.inputs['Vertices'].links:
+                Vertices = SvGetSocketAnyType(self, self.inputs['Vertices'])
+            else:
+                Vertices = []
+            if 'X' in self.inputs and self.inputs['X'].links:
+                X = SvGetSocketAnyType(self, self.inputs['X'])[0]
+            else:
+                X = [self.x_]
+            if 'Y' in self.inputs and self.inputs['Y'].links:
+                Y = SvGetSocketAnyType(self, self.inputs['Y'])[0]
+            else:
+                Y = [self.y_]
+            if 'Z' in self.inputs and self.inputs['Z'].links:
+                Z = SvGetSocketAnyType(self, self.inputs['Z'])[0]
+            else:
+                Z = [self.z_]
+
+            parameters = match_long_repeat([Vertices, X, Y, Z])
+
+        elif self.mode == 'QUAT':
+            if 'Matrix' in self.inputs and self.inputs['Matrix'].links:
+                Matrix = Matrix_generate(SvGetSocketAnyType(self, self.inputs['Matrix']))
+            else:
+                Matrix = []
+            if 'X' in self.inputs and self.inputs['X'].links:
+                X = SvGetSocketAnyType(self, self.inputs['X'])[0]
+            else:
+                X = [self.x_]
+            if 'Y' in self.inputs and self.inputs['Y'].links:
+                Y = SvGetSocketAnyType(self, self.inputs['Y'])[0]
+            else:
+                Y = [self.y_]
+            if 'Z' in self.inputs and self.inputs['Z'].links:
+                Z = SvGetSocketAnyType(self, self.inputs['Z'])[0]
+            else:
+                Z = [self.z_]
+
+            parameters = match_long_repeat([Matrix, X, Y, Z])
+
+        # outputs
+        if 'Vertices' in self.outputs and self.outputs['Vertices'].links:
+            if self.mode == 'AXIS':
+                points = [axis_rotation(v, c, d, a) for v, c, d, a in zip(*parameters)]
+                SvSetSocketAnyType(self, 'Vertices', points)
+            elif self.mode == 'EULER':
+                points = [euler_rotation(v, x, y, z) for v, x, y, z in zip(*parameters)]
+                SvSetSocketAnyType(self, 'Vertices', points)
+        if 'Matrix' in self.outputs and self.outputs['Matrix'].links:
+            points = [quat_rotation(m, x, y, z) for m, x, y, z in zip(*parameters)]
+            SvSetSocketAnyType(self, 'Matrix', dataCorrect(points))
+
+    def update_socket(self, context):
+        self.update()
+
+
+def register():
+    bpy.utils.register_class(SvRotationNode)
+
+
+def unregister():
+    bpy.utils.unregister_class(SvRotationNode)
