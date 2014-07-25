@@ -89,9 +89,7 @@ nodes_dict = {
         'euler'],
 
     'modifier_change': [
-        'axis_rotation',
         'delete_loose',
-        'euler_rotation',
         'edges_intersect',
         'holes_fill',
         'mesh_join',
@@ -99,6 +97,7 @@ nodes_dict = {
         'polygons_boom',
         'polygons_to_edges',
         'remove_doubles',
+        'rotation',
         'scale',
         'vertices_mask'],
 
