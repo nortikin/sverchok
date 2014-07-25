@@ -16,7 +16,7 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-from math import cos, sin, sqrt, radians
+from math import radians
 
 from mathutils import Euler, Vector, Matrix
 
