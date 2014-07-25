@@ -181,6 +181,7 @@ def make_categories():
         ["SvInstancerNode",     "mesh instancer"],
         ["SvLogicNode",         "Logic"],
         ["SvRotateNode",        "Axis Rotation"],
+        ["SvEulerRotationNode", "Euler Rotation"],
         ["SvScaleNode",         "Scale"]]
 
     node_categories = []
