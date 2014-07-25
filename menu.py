@@ -180,7 +180,7 @@ def make_categories():
         ["SvNeuroElman1LNode",  "Neuro"],
         ["SvInstancerNode",     "mesh instancer"],
         ["SvLogicNode",         "Logic"],
-        ["SvRotateNode",        "Rotate 3D"],
+        ["SvRotateNode",        "Axis Rotation"],
         ["SvScaleNode",         "Scale"]]
 
     node_categories = []
