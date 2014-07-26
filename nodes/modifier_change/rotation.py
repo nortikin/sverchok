@@ -25,8 +25,7 @@ from bpy.props import FloatProperty, EnumProperty, StringProperty
 
 from node_tree import SverchCustomTreeNode
 from data_structure import (SvGetSocketAnyType, SvSetSocketAnyType,
-                            updateNode, match_long_repeat, Matrix_generate,
-                            Matrix_listing, dataCorrect)
+                            updateNode, match_long_repeat)
 
 
 def axis_rotation(vertex, center, axis, angle):
