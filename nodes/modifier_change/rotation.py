@@ -46,13 +46,12 @@ def euler_rotation(vertex, x, y, z, order):
         rotated.append((mat_eul*v)[:])
     return rotated
 
-def quat_rotation(matrix, x, y, z):
+def quat_rotation(vertex, x, y, z, w):
     rotated = []
-    quat_a = Quaternion((1.0, 0.0, 0.0), radians(x))
-    quat_b = Quaternion((0.0, 1.0, 0.0), radians(y))
-    quat_c = Quaternion((0.0, 0.0, 1.0), radians(z))
-    quat_out = (quat_a * quat_b * quat_c).to_matrix().to_4x4()
-    rotated.append(Matrix_listing([quat_out*matrix]))
+    quat = Quaternion((w, x, y, z)).normalized()
+    for i in vertex:
+        v = Vector(i)
+        rotated.append((quat*v)[:])
     return rotated
 
 class SvRotationNode(bpy.types.Node, SverchCustomTreeNode):
@@ -73,6 +72,9 @@ class SvRotationNode(bpy.types.Node, SverchCustomTreeNode):
     z_ = FloatProperty(name='Z', description='Z angle',
                            default=0.0,
                            options={'ANIMATABLE'}, update=updateNode)
+    w_ = FloatProperty(name='W', description='W',
+                           default=1.0,
+                           options={'ANIMATABLE'}, update=updateNode)
 
     current_mode = StringProperty(default="AXIS")
 
@@ -82,29 +84,19 @@ class SvRotationNode(bpy.types.Node, SverchCustomTreeNode):
         if mode == self.current_mode:
             return
 
-        while len(self.inputs) > 0:
+        while len(self.inputs) > 1:
             self.inputs.remove(self.inputs[-1])
-        while len(self.outputs) > 0:
-            self.outputs.remove(self.outputs[-1])
 
         if mode == 'AXIS':
-            self.inputs.new('VerticesSocket', "Vertices", "Vertices")
             self.inputs.new('VerticesSocket', "Center", "Center")
             self.inputs.new('VerticesSocket', "Axis", "Axis")
             self.inputs.new('StringsSocket', "Angle", "Angle").prop_name = "angle_"
-            self.outputs.new('VerticesSocket', "Vertices", "Vertices")
-        elif mode == 'EULER':
-            self.inputs.new('VerticesSocket', "Vertices", "Vertices")
+        elif mode == 'EULER' or mode == 'QUAT':
             self.inputs.new('StringsSocket', "X", "X").prop_name = "x_"
             self.inputs.new('StringsSocket', "Y", "Y").prop_name = "y_"
             self.inputs.new('StringsSocket', "Z", "Z").prop_name = "z_"
-            self.outputs.new('VerticesSocket', "Vertices", "Vertices")
-        elif mode == 'QUAT':
-            self.inputs.new('MatrixSocket', "Matrix", "Matrix")    
-            self.inputs.new('StringsSocket', "X", "X").prop_name = "x_"
-            self.inputs.new('StringsSocket', "Y", "Y").prop_name = "y_"
-            self.inputs.new('StringsSocket', "Z", "Z").prop_name = "z_"
-            self.outputs.new('MatrixSocket', "Matrix", "Matrix") 
+            if mode == 'QUAT':
+                self.inputs.new('StringsSocket', "W", "W").prop_name = "w_"
 
         self.current_mode = mode
         updateNode(self, context)
@@ -165,7 +157,7 @@ class SvRotationNode(bpy.types.Node, SverchCustomTreeNode):
 
             parameters = match_long_repeat([Vertices, Center, Axis, Angle])
 
-        elif self.mode == 'EULER':
+        elif self.mode == 'EULER' or self.mode == 'QUAT':
             if 'Vertices' in self.inputs and self.inputs['Vertices'].links:
                 Vertices = SvGetSocketAnyType(self, self.inputs['Vertices'])
             else:
@@ -185,25 +177,13 @@ class SvRotationNode(bpy.types.Node, SverchCustomTreeNode):
 
             parameters = match_long_repeat([Vertices, X, Y, Z, [self.order]])
 
-        elif self.mode == 'QUAT':
-            if 'Matrix' in self.inputs and self.inputs['Matrix'].links:
-                Matrix_ = Matrix_generate(SvGetSocketAnyType(self, self.inputs['Matrix']))
-            else:
-                Matrix_ = [Matrix.Identity(4)]
-            if 'X' in self.inputs and self.inputs['X'].links:
-                X = SvGetSocketAnyType(self, self.inputs['X'])[0]
-            else:
-                X = [self.x_]
-            if 'Y' in self.inputs and self.inputs['Y'].links:
-                Y = SvGetSocketAnyType(self, self.inputs['Y'])[0]
-            else:
-                Y = [self.y_]
-            if 'Z' in self.inputs and self.inputs['Z'].links:
-                Z = SvGetSocketAnyType(self, self.inputs['Z'])[0]
-            else:
-                Z = [self.z_]
+            if self.mode == 'QUAT':
+                if 'W' in self.inputs and self.inputs['W'].links:
+                    W = SvGetSocketAnyType(self, self.inputs['W'])[0]
+                else:
+                    W = [self.w_]
 
-            parameters = match_long_repeat([Matrix_, X, Y, Z])
+                parameters = match_long_repeat([Vertices, X, Y, Z, W])
 
         # outputs
         if 'Vertices' in self.outputs and self.outputs['Vertices'].links:
@@ -213,9 +193,9 @@ class SvRotationNode(bpy.types.Node, SverchCustomTreeNode):
             elif self.mode == 'EULER':
                 points = [euler_rotation(v, x, y, z, o) for v, x, y, z, o in zip(*parameters)]
                 SvSetSocketAnyType(self, 'Vertices', points)
-        if 'Matrix' in self.outputs and self.outputs['Matrix'].links:
-            points = [quat_rotation(m, x, y, z) for m, x, y, z in zip(*parameters)]
-            SvSetSocketAnyType(self, 'Matrix', dataCorrect(points))
+            elif self.mode == 'QUAT':
+                points = [quat_rotation(m, x, y, z, w) for m, x, y, z, w in zip(*parameters)]
+                SvSetSocketAnyType(self, 'Vertices', points)
 
     def update_socket(self, context):
         self.update()
