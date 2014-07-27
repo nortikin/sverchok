@@ -171,6 +171,11 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
 
         return segments, longest
 
+    def parse_path_string(self):
+        ''' separation from prefix should occur here '''
+        # if char 0 == L, M, C, etc,..
+        pass
+
     def process(self):
         segments, longest = self.get_input()
 
@@ -185,8 +190,7 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
 
         for idx in range(longest):
             temp_str = self.profile_str
-            ''' separation from prefix should occur here '''
-            # if char 0 == L, M, C, etc,..
+            # temp_str = preparse_path_string(temp_str)
 
             for letter, data in segments.items():
                 temp_str = temp_str.replace(letter, str(data['data'][idx]))
