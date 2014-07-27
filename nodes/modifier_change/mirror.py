@@ -96,7 +96,7 @@ class SvMirrorNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('VerticesSocket', "Vertices", "Vertices")
 
     def draw_buttons(self, context, layout):
-        row = layout.row()
+        row = layout.row(align=True)
         row.prop(self, "x_mirror", toggle=True)
         row.prop(self, "y_mirror", toggle=True)
         row.prop(self, "z_mirror", toggle=True)
