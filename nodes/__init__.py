@@ -94,6 +94,7 @@ nodes_dict = {
         'holes_fill',
         'mesh_join',
         'mesh_separate',
+        'mirror',
         'polygons_boom',
         'polygons_to_edges',
         'remove_doubles',
