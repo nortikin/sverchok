@@ -292,7 +292,7 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
                 make_bmesh_geometry(C, mesh_name, Verts, *data, fixed_verts=self.fixed_verts)
 
             self.remove_non_updated_objects(obj_index, self.basemesh_name)
-            self.set_corresponding_materials()
+            #self.set_corresponding_materials()
             if self.inputs['vertices'].links:
                 if self.grouping:
                     self.to_group()
@@ -363,3 +363,4 @@ def unregister():
 
 if __name__ == '__main__':
     register()
+

@@ -19,6 +19,7 @@ def sv_main(loc=[[]], mode=0):
     objects = bpy.data.objects
     curves = bpy.data.curves
     scene = bpy.context.scene
+    meshes = bpy.data.meshes
 
     base_body = "A"
     curve_name = "SN_" + base_body
@@ -65,7 +66,7 @@ def sv_main(loc=[[]], mode=0):
             v_packed = [(v[i], v[i+1], v[i+2]) for i in range(0, len(v),3)]
             
             # collect edges
-            e_packed = [e.vertices[:] for e in data.edges]
+            e_packed = data.edge_keys
             
             verts_out.append(v_packed)
             edges_out.append(e_packed)
@@ -74,6 +75,8 @@ def sv_main(loc=[[]], mode=0):
                 f_packed = [fx.vertices[:] for fx in data.polygons]
                 # print(f_packed)
                 faces_out.append(f_packed)
+                
+        meshes.remove(data)
 
     out_sockets[0][2] = [verts_out]
     out_sockets[1][2] = [edges_out]
