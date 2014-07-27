@@ -19,7 +19,7 @@
 from mathutils import Vector
 
 import bpy
-from bpy.props import StringProperty, EnumProperty, BoolProperty
+from bpy.props import StringProperty, EnumProperty, BoolProperty, FloatVectorProperty
 
 from node_tree import SverchCustomTreeNode
 from data_structure import updateNode, SvSetSocketAnyType, SvGetSocketAnyType, match_long_repeat, dataCorrect
