@@ -182,7 +182,8 @@ def make_categories():
         ["SvLogicNode",         "Logic"],
         ["SvRotationNode",      "Rotation"],
         ["SvScaleNode",         "Scale"],
-        ["SvMatrixEulerNode",   "Matrix Euler"]]
+        ["SvMatrixEulerNode",   "Matrix Euler"],
+        ["SvMirrorNode",        "Mirror"]]
 
     node_categories = []
     for category, nodes in node_cats.items():
