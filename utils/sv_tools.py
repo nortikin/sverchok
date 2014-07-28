@@ -175,9 +175,9 @@ class SverchokUpdateAddon(bpy.types.Operator):
         return {'FINISHED'}
 
 class SvSwitchToLayout (bpy.types.Operator):
-    """Clear node layouts sverchok and blendgraph, when no nodes editor opened"""      
+    """Switch to exact layout, user freandly way"""      
     bl_idname = "node.sv_switch_layout"
-    bl_label = "del layouts"
+    bl_label = "switch layouts"
     bl_options = {'REGISTER', 'UNDO'} 
     
     
@@ -506,6 +506,7 @@ def unregister():
     bpy.utils.unregister_class(SverchokUpdateAll)
     bpy.utils.unregister_class(SverchokUpdateCurrent)
     del bpy.types.Scene.do_clear
+
 
 
 
