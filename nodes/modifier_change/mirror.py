@@ -64,6 +64,43 @@ def axis_mirror(vertex, center, axis):
         axis_mirrored.append(z)
     return axis_mirrored
 
+def clipping(vertex, center, axis):
+    x = center[0]
+
+    for v in vertex:
+        avr = list(map(sum, zip(*v)))
+        avr = [n/len(v) for n in avr]
+
+    if axis[0]:
+        if x[0] > avr[0]:
+            for i in vertex[0]:        
+                if i[0] > x[0]:
+                    i[0] = x[0]
+        else:
+            for i in vertex[0]:        
+                if i[0] < x[0]:
+                    i[0] = x[0]
+    if axis[1]:
+        if x[1] > avr[1]:
+            for i in vertex[0]:        
+                if i[1] > x[1]:
+                    i[1] = x[1]
+        else:
+            for i in vertex[0]:        
+                if i[1] < x[1]:
+                    i[1] = x[1]
+    if axis[2]:
+        if x[2] > avr[2]:
+            for i in vertex[0]:        
+                if i[2] > x[2]:
+                    i[2] = x[2]
+        else:
+            for i in vertex[0]:        
+                if i[2] < x[2]:
+                    i[2] = x[2]
+
+    return vertex
+
 class SvMirrorNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Mirroring  '''
 
@@ -89,6 +126,8 @@ class SvMirrorNode(bpy.types.Node, SverchCustomTreeNode):
                             update=mode_change)
     z_mirror = BoolProperty(name="Z", description="Z mirror",
                             update=mode_change)
+    clipping = BoolProperty(name="Clipping", description="Clipping option",
+                            update=mode_change)
 
     def init(self, context):
         self.inputs.new('VerticesSocket', "Vertices", "Vertices")
@@ -101,6 +140,10 @@ class SvMirrorNode(bpy.types.Node, SverchCustomTreeNode):
         row.prop(self, "y_mirror", toggle=True)
         row.prop(self, "z_mirror", toggle=True)
 
+        col = layout.column(align=True)
+        row = col.row(align=True)
+        row.prop(self, "clipping", text="Clipping")
+
     def update(self):
         # inputs
         if 'Vertices' in self.inputs and self.inputs['Vertices'].links:
@@ -111,6 +154,9 @@ class SvMirrorNode(bpy.types.Node, SverchCustomTreeNode):
             Center = SvGetSocketAnyType(self, self.inputs['Center'])[0]
         else:
             Center = [[0.0, 0.0, 0.0]]
+
+        if self.clipping == True:
+            Vertices = clipping(Vertices, Center, self.current_axis)
 
         parameters = match_long_repeat([Vertices, Center, [self.current_axis]])
 
