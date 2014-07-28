@@ -81,7 +81,7 @@ class SverchokPurgeCache(bpy.types.Operator):
         print(bpy.context.space_data.node_tree.name)
         return {'FINISHED'}
 
-
+# USED IN CTRL+U PROPERTIES WINDOW
 class SverchokHome(bpy.types.Operator):
     """Sverchok Home"""
     bl_idname = "node.sverchok_home"
@@ -174,6 +174,29 @@ class SverchokUpdateAddon(bpy.types.Operator):
 
         return {'FINISHED'}
 
+class SvSwitchToLayout (bpy.types.Operator):
+    """Clear node layouts sverchok and blendgraph, when no nodes editor opened"""      
+    bl_idname = "node.sv_switch_layout"
+    bl_label = "del layouts"
+    bl_options = {'REGISTER', 'UNDO'} 
+    
+    
+    layout_name = bpy.props.StringProperty(default='', name='layout_name', \
+                        description='layout name to change layout by button')
+
+    @classmethod
+    def poll(cls, self):
+        if bpy.context.space_data.node_tree.bl_rna.name == 'Sverchok Node Tree' \
+                and bpy.context.space_data.node_tree.name != self.layout_name:
+            return 1
+        else:
+            return 0
+
+    def execute(self, context):
+        
+        context.space_data.node_tree = bpy.data.node_groups[self.layout_name]
+                
+        return {'FINISHED'}
 
 class SverchokToolsMenu(bpy.types.Panel):
     bl_idname = "Sverchok_tools_menu"
@@ -221,9 +244,9 @@ class SverchokToolsMenu(bpy.types.Panel):
                 row = col.row(align=True)
 
                 if name == ng_name:
-                    row.label(text=name, icon='LINK')
-                else:
                     row.label(text=name)
+                else:
+                    row.operator('node.sv_switch_layout', text=name).layout_name = name
 
                 split = row.column(align=True)
                 split.scale_x = little_width
@@ -258,7 +281,7 @@ class SverchokToolsMenu(bpy.types.Panel):
 
 
 class ToolsNode(bpy.types.Node, SverchCustomTreeNode):
-    ''' Tools for different purposes '''
+    ''' NOT USED '''
     bl_idname = 'ToolsNode'
     bl_label = 'Tools node'
     bl_icon = 'OUTLINER_OB_EMPTY'
@@ -462,6 +485,7 @@ def register():
     bpy.utils.register_class(ToolsNode)
     bpy.utils.register_class(Sv3DPanel)
     bpy.utils.register_class(Sv3dPropItem)
+    bpy.utils.register_class(SvSwitchToLayout)
     bpy.utils.register_class(SvLayoutScanProperties)
     bpy.utils.register_class(SvClearNodesLayouts)
     bpy.types.SverchCustomTreeType.Sv3DProps = \
@@ -470,6 +494,7 @@ def register():
 def unregister():
     bpy.utils.unregister_class(SvClearNodesLayouts)
     bpy.utils.unregister_class(SvLayoutScanProperties)
+    bpy.utils.unregister_class(SvSwitchToLayout)
     bpy.utils.unregister_class(Sv3dPropItem)
     bpy.utils.unregister_class(Sv3DPanel)
     bpy.utils.unregister_class(ToolsNode)
@@ -481,5 +506,7 @@ def unregister():
     bpy.utils.unregister_class(SverchokUpdateAll)
     bpy.utils.unregister_class(SverchokUpdateCurrent)
     del bpy.types.Scene.do_clear
+
+
 
 
