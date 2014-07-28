@@ -186,16 +186,17 @@ class SvSwitchToLayout (bpy.types.Operator):
 
     @classmethod
     def poll(cls, self):
-        if bpy.context.space_data.node_tree.bl_rna.name == 'Sverchok Node Tree' \
-                and bpy.context.space_data.node_tree.name != self.layout_name:
-            return 1
+        if bpy.context.space_data.type == 'NODE_EDITOR':
+            if bpy.context.space_data.node_tree.bl_rna.name == 'Sverchok Node Tree':
+                return 1
         else:
             return 0
 
     def execute(self, context):
-        
-        context.space_data.node_tree = bpy.data.node_groups[self.layout_name]
-                
+        if context.space_data.node_tree.name != self.layout_name:
+            context.space_data.node_tree = bpy.data.node_groups[self.layout_name]
+        else:
+            return {'CANCELLED'}
         return {'FINISHED'}
 
 class SverchokToolsMenu(bpy.types.Panel):
@@ -506,6 +507,8 @@ def unregister():
     bpy.utils.unregister_class(SverchokUpdateAll)
     bpy.utils.unregister_class(SverchokUpdateCurrent)
     del bpy.types.Scene.do_clear
+
+
 
 
 
