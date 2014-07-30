@@ -390,7 +390,6 @@ class Sv3DPanel(bpy.types.Panel):
                         colo.prop(node, 'maxim', text=' ', slider=True)
                         
 
-
 def register():
     bpy.types.SverchCustomTreeType.Sv3DPanel = {}
     bpy.utils.register_class(SverchokUpdateCurrent)
