@@ -41,63 +41,46 @@ def axis_mirror(vertex, center, axis):
     axis_mirrored = [[vertex]]
     axis = Vector(axis)
     center = Vector(center)
-    if axis[0] == True:
+
+    if axis[0]:
         x =  mirror(axis_mirrored, center, (1.0, 0.0, 0.0))
         axis_mirrored.append(x)
-        if axis[1] == True:
+        if axis[1]:
             y =  mirror(axis_mirrored, center, (0.0, 1.0, 0.0))
             axis_mirrored.append(y)
-            if axis[2] == True:
+            if axis[2]:
                 z =  mirror(axis_mirrored, center, (0.0, 0.0, 1.0))
                 axis_mirrored.append(z)
-        elif axis[2] == True:
+        elif axis[2]:
             z =  mirror(axis_mirrored, center, (0.0, 0.0, 1.0))
             axis_mirrored.append(z)
-    elif axis[1] == True:
+    elif axis[1]:
         y =  mirror(axis_mirrored, center, (0.0, 1.0, 0.0))
         axis_mirrored.append(y)
-        if axis[2] == True:
+        if axis[2]:
             z =  mirror(axis_mirrored, center, (0.0, 0.0, 1.0))
             axis_mirrored.append(z)
-    elif axis[2] == True:
+    elif axis[2]:
         z =  mirror(axis_mirrored, center, (0.0, 0.0, 1.0))
         axis_mirrored.append(z)
+
     return axis_mirrored
 
 def clipping(vertex, center, axis):
-    x = center[0]
-
-    for v in vertex:
+    for v in [vertex]:
         avr = list(map(sum, zip(*v)))
         avr = [n/len(v) for n in avr]
 
-    if axis[0]:
-        if x[0] > avr[0]:
-            for i in vertex[0]:        
-                if i[0] > x[0]:
-                    i[0] = x[0]
-        else:
-            for i in vertex[0]:        
-                if i[0] < x[0]:
-                    i[0] = x[0]
-    if axis[1]:
-        if x[1] > avr[1]:
-            for i in vertex[0]:        
-                if i[1] > x[1]:
-                    i[1] = x[1]
-        else:
-            for i in vertex[0]:        
-                if i[1] < x[1]:
-                    i[1] = x[1]
-    if axis[2]:
-        if x[2] > avr[2]:
-            for i in vertex[0]:        
-                if i[2] > x[2]:
-                    i[2] = x[2]
-        else:
-            for i in vertex[0]:        
-                if i[2] < x[2]:
-                    i[2] = x[2]
+    for index, i in enumerate(axis):
+        if i:
+            if center[index] > avr[index]:
+                for i in vertex:
+                    if i[index] > center[index]:
+                        i[index] = center[index]
+            else:
+                for i in vertex:
+                    if i[index] < center[index]:
+                        i[index] = center[index]
 
     return vertex
 
@@ -155,10 +138,10 @@ class SvMirrorNode(bpy.types.Node, SverchCustomTreeNode):
         else:
             Center = [[0.0, 0.0, 0.0]]
 
-        if self.clipping == True:
-            Vertices = clipping(Vertices, Center, self.current_axis)
-
         parameters = match_long_repeat([Vertices, Center, [self.current_axis]])
+
+        if self.clipping == True:
+            Vertices = [clipping(v, c, a) for v, c, a in zip(*parameters)]
 
         # outputs
         if 'Vertices' in self.outputs and self.outputs['Vertices'].links:
