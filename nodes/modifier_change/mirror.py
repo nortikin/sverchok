@@ -16,116 +16,103 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-from mathutils import Vector
+from math import radians
+
+from mathutils import Vector, Matrix
 
 import bpy
-from bpy.props import StringProperty, EnumProperty, BoolProperty, FloatVectorProperty
+from bpy.props import StringProperty, EnumProperty
 
 from node_tree import SverchCustomTreeNode
-from data_structure import updateNode, SvSetSocketAnyType, SvGetSocketAnyType, match_long_repeat, dataCorrect
+from data_structure import updateNode, SvSetSocketAnyType, SvGetSocketAnyType, match_long_repeat
 
-
-def mirror(vertex, center, axis):
-    mirrored = []
-    vertex = dataCorrect(vertex, nominal_dept=2)
+def mirrorPoint(vertex, vert_a):
+    vert = []
+    a = Vector(vert_a)
+    mat = Matrix.Translation(2*a)
+    mat_rot = Matrix.Rotation(radians(180), 4, 'X')
+    c = mat*mat_rot
     for i in vertex:
-        tmp = []
-        for j in i:
-            v = Vector(j).reflect(axis)
-            c = Vector((center[0]*axis[0], center[1]*axis[1], center[2]*axis[2]))
-            tmp.append((v+2*c)[:])
-        mirrored.append(tmp)
-    return mirrored
+        v = Vector(i)
+        vert.append((c*v)[:])
+    return vert
 
-def axis_mirror(vertex, center, axis):
-    axis_mirrored = [[vertex]]
-    axis = Vector(axis)
-    center = Vector(center)
+def mirrorAxis(vertex, vert_a, vert_b):
+    vert = []
+    a = Vector(vert_a)
+    b = Vector(vert_b)
+    c = b - a
+    for i in vertex:
+        v = Vector(i)
+        #Intersection point in vector A-B from point V
+        pq = v - a
+        w2 = pq - ((pq.dot(c) / c.length_squared) * c)
+        x = v - w2
 
-    if axis[0]:
-        x =  mirror(axis_mirrored, center, (1.0, 0.0, 0.0))
-        axis_mirrored.append(x)
-        if axis[1]:
-            y =  mirror(axis_mirrored, center, (0.0, 1.0, 0.0))
-            axis_mirrored.append(y)
-            if axis[2]:
-                z =  mirror(axis_mirrored, center, (0.0, 0.0, 1.0))
-                axis_mirrored.append(z)
-        elif axis[2]:
-            z =  mirror(axis_mirrored, center, (0.0, 0.0, 1.0))
-            axis_mirrored.append(z)
-    elif axis[1]:
-        y =  mirror(axis_mirrored, center, (0.0, 1.0, 0.0))
-        axis_mirrored.append(y)
-        if axis[2]:
-            z =  mirror(axis_mirrored, center, (0.0, 0.0, 1.0))
-            axis_mirrored.append(z)
-    elif axis[2]:
-        z =  mirror(axis_mirrored, center, (0.0, 0.0, 1.0))
-        axis_mirrored.append(z)
+        mat = Matrix.Translation(2*(v - w2 - v))
+        mat_rot = Matrix.Rotation(radians(360), 4, c)
+        vert.append(((mat*mat_rot)*v)[:])
+    return vert
 
-    return axis_mirrored
-
-def clipping(vertex, center, axis):
-    for v in [vertex]:
-        avr = list(map(sum, zip(*v)))
-        avr = [n/len(v) for n in avr]
-
-    for index, i in enumerate(axis):
-        if i:
-            if center[index] > avr[index]:
-                for i in vertex:
-                    if i[index] > center[index]:
-                        i[index] = center[index]
-            else:
-                for i in vertex:
-                    if i[index] < center[index]:
-                        i[index] = center[index]
-
-    return vertex
+def mirrorPlane(vertex, matrix):
+    vert = []
+    a = Matrix(matrix)
+    eul = a.to_euler()
+    normal = Vector((0.0, 0.0, 1.0))
+    normal.rotate(eul)
+    tras = Matrix.Translation(2*a.to_translation())
+    for i in vertex:
+        v = Vector(i)
+        r = v.reflect(normal)
+        vert.append((tras*r)[:])
+    return vert
 
 class SvMirrorNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Mirroring  '''
-
     bl_idname = 'SvMirrorNode'
     bl_label = 'Mirror'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     def mode_change(self, context):
-        self.current_axis = ((0.0, 0.0, 0.0))
-        if self.x_mirror == True:
-            self.current_axis[0] = 1.0
-        if self.y_mirror == True:
-            self.current_axis[1] = 1.0
-        if self.z_mirror == True:
-            self.current_axis[2] = 1.0
+        # just because click doesn't mean we need to change mode
+        mode = self.mode
+        if mode == self.current_mode:
+            return
+
+        while len(self.inputs) > 1:
+            self.inputs.remove(self.inputs[-1])
+
+        if mode == 'VERTEX':
+            self.inputs.new('VerticesSocket', "Vert A", "Vert A")
+
+        if mode == 'AXIS':
+            self.inputs.new('VerticesSocket', "Vert A", "Vert A")
+            self.inputs.new('VerticesSocket', "Vert B", "Vert B")
+
+        if mode == 'PLANE':
+            self.inputs.new('MatrixSocket', "Plane", "Plane")
+
+        self.current_mode = mode
         updateNode(self, context)
 
-    current_axis = FloatVectorProperty(name="current_axis", default=(1.0, 0.0, 0.0))
+    modes = [
+        ("VERTEX", "Vertex", "Mirror aroung vertex", 1),
+        ("AXIS", "Axis", "Mirror around axis", 2),
+        ("PLANE", "Plane", "Mirror around plane", 3),
+    ]
 
-    x_mirror = BoolProperty(name="X", description="X mirror",
-                            default=True,   update=mode_change)
-    y_mirror = BoolProperty(name="Y", description="Y mirror",
-                            update=mode_change)
-    z_mirror = BoolProperty(name="Z", description="Z mirror",
-                            update=mode_change)
-    clipping = BoolProperty(name="Clipping", description="Clipping option",
-                            update=mode_change)
+    mode = EnumProperty(name="mode", description="mode",
+                          default='VERTEX', items=modes,
+                          update=mode_change)
+    current_mode = StringProperty(default="VERTEX")
 
     def init(self, context):
         self.inputs.new('VerticesSocket', "Vertices", "Vertices")
-        self.inputs.new('VerticesSocket', "Center", "Center")
+        self.inputs.new('VerticesSocket', "Vert A", "Vert A")
         self.outputs.new('VerticesSocket', "Vertices", "Vertices")
 
     def draw_buttons(self, context, layout):
-        row = layout.row(align=True)
-        row.prop(self, "x_mirror", toggle=True)
-        row.prop(self, "y_mirror", toggle=True)
-        row.prop(self, "z_mirror", toggle=True)
-
-        col = layout.column(align=True)
-        row = col.row(align=True)
-        row.prop(self, "clipping", text="Clipping")
+        layout.prop(self, "mode", expand=True)
 
     def update(self):
         # inputs
@@ -133,20 +120,33 @@ class SvMirrorNode(bpy.types.Node, SverchCustomTreeNode):
             Vertices = SvGetSocketAnyType(self, self.inputs['Vertices'])
         else:
             Vertices = []
-        if 'Center' in self.inputs and self.inputs['Center'].links:
-            Center = SvGetSocketAnyType(self, self.inputs['Center'])[0]
+        if 'Vert A' in self.inputs and self.inputs['Vert A'].links:
+            Vert_A = SvGetSocketAnyType(self, self.inputs['Vert A'])[0]
         else:
-            Center = [[0.0, 0.0, 0.0]]
-
-        parameters = match_long_repeat([Vertices, Center, [self.current_axis]])
-
-        if self.clipping == True:
-            Vertices = [clipping(v, c, a) for v, c, a in zip(*parameters)]
+            Vert_A = [[0.0, 0.0, 0.0]]
+        if 'Vert B' in self.inputs and self.inputs['Vert B'].links:
+            Vert_B = SvGetSocketAnyType(self, self.inputs['Vert B'])[0]
+        else:
+            Vert_B = [[1.0, 0.0, 0.0]]
+        if 'Plane' in self.inputs and self.inputs['Plane'].links:
+            Plane = SvGetSocketAnyType(self, self.inputs['Plane'])
+        else:
+            Plane = []
 
         # outputs
         if 'Vertices' in self.outputs and self.outputs['Vertices'].links:
-            points = dataCorrect([axis_mirror(v, c, a) for v, c, a in zip(*parameters)])
-            SvSetSocketAnyType(self, 'Vertices', points)
+            if self.mode == 'VERTEX':
+                parameters = match_long_repeat([Vertices, Vert_A])
+                points = [mirrorPoint(v, a) for v, a in zip(*parameters)]
+                SvSetSocketAnyType(self, 'Vertices', points)
+            elif self.mode == 'AXIS':
+                parameters = match_long_repeat([Vertices, Vert_A, Vert_B])
+                points = [mirrorAxis(v, a, b) for v, a, b in zip(*parameters)]
+                SvSetSocketAnyType(self, 'Vertices', points)
+            elif self.mode == 'PLANE':
+                parameters = match_long_repeat([Vertices, Plane])
+                points = [mirrorPlane(v, p) for v, p in zip(*parameters)]
+                SvSetSocketAnyType(self, 'Vertices', points)
 
     def update_socket(self, context):
         self.update()
