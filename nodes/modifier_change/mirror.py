@@ -131,7 +131,7 @@ class SvMirrorNode(bpy.types.Node, SverchCustomTreeNode):
         if 'Plane' in self.inputs and self.inputs['Plane'].links:
             Plane = SvGetSocketAnyType(self, self.inputs['Plane'])
         else:
-            Plane = []
+            Plane = [Matrix()]
 
         # outputs
         if 'Vertices' in self.outputs and self.outputs['Vertices'].links:
