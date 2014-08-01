@@ -33,6 +33,37 @@ from data_structure import fullList, updateNode, dataCorrect, SvSetSocketAnyType
 idx_map = {i: j for i, j in enumerate(ascii_lowercase)}
 
 
+def parse_path_line(segments, line, section_type, close_section, cp):
+    ''' 
+    cp = current position 
+
+    expects input like
+
+    M a,b
+    L a,e 10.0,34
+    L a,e 10.0,34 z
+
+    '''
+
+
+
+    if section_type == 'move_to_absolute':
+        pass
+    if section_type == 'move_to_relative':
+        pass
+    if section_type == 'line_to_absolute':
+        pass
+    if section_type == 'line_to_relative':
+        pass
+
+    #for letter, data in segments.items():
+    #    temp_str = temp_str.replace(letter, str(data['data'][idx]))
+
+    #result = literal_eval(temp_str)
+
+
+
+
 class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
     '''
     SvProfileNode generates one or more profiles / elevation segments using;
@@ -68,7 +99,9 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
         default="Z",
         update=mode_change)
 
-    profile_str = StringProperty(default="", update=updateNode)
+    # profile_str = StringProperty(default="", update=updateNode)
+    profile_file = StringProperty(default="", update=updateNode)
+    filename = StringProperty(default="", update=updateNode)
 
     def draw_buttons(self, context, layout):
         row = layout.row()
@@ -105,6 +138,11 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
         update analyzes the state of the node and returns if the criteria to start processing
         are not met.
         '''
+
+        # keeping the file internal for now.
+        filename = self.profile_file.strip()
+        if not (filename in bpy.data.texts):
+            return
 
         if not ('Edges' in self.outputs):
             return
@@ -144,7 +182,7 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
         '''
         edit segments in place, extend all to match length of longest
         '''
-        f = lambda l: [item for sublist in l for item in sublist]
+        #f = lambda l: [item for sublist in l for item in sublist]
 
         for letter, letter_dict in segments.items():
             if letter_dict['length'] < longest:
@@ -171,11 +209,6 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
 
         return segments, longest
 
-    def parse_path_string(self):
-        ''' separation from prefix should occur here '''
-        # if char 0 == L, M, C, etc,..
-        pass
-
     def process(self):
         segments, longest = self.get_input()
 
@@ -189,14 +222,8 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
         full_result_edges = []
 
         for idx in range(longest):
-            temp_str = self.profile_str
-            # temp_str = preparse_path_string(temp_str)
+            result, edges = self.parse_path_file(segments)
 
-            for letter, data in segments.items():
-                temp_str = temp_str.replace(letter, str(data['data'][idx]))
-
-            result = literal_eval(temp_str)
-            
             axis_fill = {
                 'X': lambda coords: (0, coords[0], coords[1]),
                 'Y': lambda coords: (coords[0], 0, coords[1]),
@@ -205,14 +232,70 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
 
             result = list(map(axis_fill, result))
             full_result_verts.append(result)
+            full_result_edges.append(edges)
 
         if full_result_verts:
-            # print(full_result_verts)
             SvSetSocketAnyType(self, 'Verts', full_result_verts)
 
-            #if self.inputs['Edges'].links:
-            #   SvSetSocketAnyType(self, 'Edges', full_result_edges)
-        print('here --- ')
+            if self.inputs['Edges'].links:
+                SvSetSocketAnyType(self, 'Edges', full_result_edges)
+
+
+    def parse_path_file(self, segments):
+        ''' 
+        segments is a dict of letters to variables mapping.
+        this function expects that all remapable lines contain lower case chars.
+        '''
+        file_str = bpy.data.texts[self.filename]
+        lines = file_str.split('\n')
+
+        # initial start position, unless specified otherwise.
+        posxy = [0, 0]
+        result = []
+
+        for line in lines:
+            if not line:
+                continue
+
+            # svg type path descriptions, not a full implementation
+            section_type = {
+                'M': 'move_to_absolute',
+                'm': 'move_to_relative',
+                'L': 'line_to_absolute',
+                'l': 'line_to_relative'
+            }.get(line[0])
+
+            '''
+            if the user really needs z as last vbalue
+            and z is indeed a variable and not intended to 
+            close a section, then you must add ;
+            '''
+
+            # closed segment detection.
+            close_section = False
+            last_char = line.strip()[-1]
+            if last_char in {'z', 'Z'}:
+                '''deal with closing current verts edges combo'''
+                line = line.strip()[1:-1].strip()
+                close_section = True
+
+            elif last_char in {';'}:
+                '''user is crazy and has a..z filled with variables
+                good for user.
+                '''
+                line = line.strip()[1:-1].strip()
+                close_section = False
+
+            else:
+                '''doesn't end with ; or z, Z '''
+                line = line.strip()[1:].strip()
+
+            verts, edges = parse_path_line(segments, line, section_type, close_section, posxy)
+            final_verts.append(verts)
+            final_edges.append(edges)
+            posxy = verts[-1]
+
+        return final_verts, final_edges
 
 
 def register():
