@@ -79,17 +79,28 @@ class SvMirrorNode(bpy.types.Node, SverchCustomTreeNode):
         if mode == self.current_mode:
             return
 
-        while len(self.inputs) > 1:
-            self.inputs.remove(self.inputs[-1])
-
         if mode == 'VERTEX':
-            self.inputs.new('VerticesSocket', "Vert A", "Vert A")
+            n = 2 if "Vert A" in self.inputs else 1
+            while len(self.inputs) > n:
+                self.inputs.remove(self.inputs[-1])
+            if n == 1:
+                self.inputs.new('VerticesSocket', "Vert A", "Vert A")
 
         if mode == 'AXIS':
-            self.inputs.new('VerticesSocket', "Vert A", "Vert A")
-            self.inputs.new('VerticesSocket', "Vert B", "Vert B")
+            n = 2 if "Vert A" in self.inputs else 1
+            if n == 2:
+                while len(self.inputs) > n:
+                    self.inputs.remove(self.inputs[-1])
+                self.inputs.new('VerticesSocket', "Vert B", "Vert B")
+            else:
+                while len(self.inputs) > n:
+                    self.inputs.remove(self.inputs[-1])                
+                self.inputs.new('VerticesSocket', "Vert A", "Vert A")
+                self.inputs.new('VerticesSocket', "Vert B", "Vert B")
 
         if mode == 'PLANE':
+            while len(self.inputs) > 1:
+                self.inputs.remove(self.inputs[-1])
             self.inputs.new('MatrixSocket', "Plane", "Plane")
 
         self.current_mode = mode
