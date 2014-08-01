@@ -81,7 +81,7 @@ class SverchokPurgeCache(bpy.types.Operator):
         print(bpy.context.space_data.node_tree.name)
         return {'FINISHED'}
 
-
+# USED IN CTRL+U PROPERTIES WINDOW
 class SverchokHome(bpy.types.Operator):
     """Sverchok Home"""
     bl_idname = "node.sverchok_home"
@@ -174,6 +174,30 @@ class SverchokUpdateAddon(bpy.types.Operator):
 
         return {'FINISHED'}
 
+class SvSwitchToLayout (bpy.types.Operator):
+    """Switch to exact layout, user freandly way"""      
+    bl_idname = "node.sv_switch_layout"
+    bl_label = "switch layouts"
+    bl_options = {'REGISTER', 'UNDO'} 
+    
+    
+    layout_name = bpy.props.StringProperty(default='', name='layout_name', \
+                        description='layout name to change layout by button')
+
+    @classmethod
+    def poll(cls, self):
+        if bpy.context.space_data.type == 'NODE_EDITOR':
+            if bpy.context.space_data.node_tree.bl_rna.name == 'Sverchok Node Tree':
+                return 1
+        else:
+            return 0
+
+    def execute(self, context):
+        if context.space_data.node_tree.name != self.layout_name:
+            context.space_data.node_tree = bpy.data.node_groups[self.layout_name]
+        else:
+            return {'CANCELLED'}
+        return {'FINISHED'}
 
 class SverchokToolsMenu(bpy.types.Panel):
     bl_idname = "Sverchok_tools_menu"
@@ -221,9 +245,9 @@ class SverchokToolsMenu(bpy.types.Panel):
                 row = col.row(align=True)
 
                 if name == ng_name:
-                    row.label(text=name, icon='LINK')
-                else:
                     row.label(text=name)
+                else:
+                    row.operator('node.sv_switch_layout', text=name).layout_name = name
 
                 split = row.column(align=True)
                 split.scale_x = little_width
@@ -258,7 +282,7 @@ class SverchokToolsMenu(bpy.types.Panel):
 
 
 class ToolsNode(bpy.types.Node, SverchCustomTreeNode):
-    ''' Tools for different purposes '''
+    ''' NOT USED '''
     bl_idname = 'ToolsNode'
     bl_label = 'Tools node'
     bl_icon = 'OUTLINER_OB_EMPTY'
@@ -300,7 +324,44 @@ class ToolsNode(bpy.types.Node, SverchCustomTreeNode):
     def update_socket(self, context):
         pass
 
-class SvLayoutScanPropertyes(bpy.types.Operator):
+class SvClearNodesLayouts (bpy.types.Operator):
+    """Clear node layouts sverchok and blendgraph, when no nodes editor opened"""      
+    bl_idname = "node.sv_delete_nodelayouts"
+    bl_label = "del layouts"
+    bl_options = {'REGISTER', 'UNDO'} 
+    
+    
+    do_clear = bpy.props.BoolProperty(default=False, name='even used', \
+                        description='remove even if layout has one user (not fake user)')
+
+    @classmethod
+    def poll(cls, self):
+        for area in bpy.context.window.screen.areas:
+            if area.type == 'NODE_EDITOR':
+                return False
+        return True
+
+    def execute(self, context):
+        trees = bpy.data.node_groups
+        for T in trees:
+            if T.bl_rna.name in ['Shader Node Tree']:
+                continue
+            if trees[T.name].users > 1 and T.use_fake_user == True:
+                print ('Layout '+str(T.name)+' protected by fake user.')
+            if trees[T.name].users == 1 and self.do_clear and T.use_fake_user == False:
+                print ('cleaning user: '+str(T.name))
+                trees[T.name].user_clear()
+            if trees[T.name].users == 0:
+                print ('removing layout: '+str(T.name)+' | '+str(T.bl_rna.name))
+                bpy.data.node_groups.remove(T)
+                
+        return {'FINISHED'}
+
+class Sv3dPropItem(bpy.types.PropertyGroup):
+    node_name = StringProperty()
+    prop_name = StringProperty() 
+
+class SvLayoutScanProperties(bpy.types.Operator):
     ''' scan layouts of sverchok for properties '''
     
     bl_idname = "node.sv_scan_propertyes"
@@ -310,26 +371,32 @@ class SvLayoutScanPropertyes(bpy.types.Operator):
         for tree in bpy.data.node_groups:
             tna = tree.name
             if tree.bl_idname == 'SverchCustomTreeType':
-                if hasattr(tree.Sv3DPanel, tna):
-                    tree.Sv3DPanel[tna].clear()
                 templist = []
                 for no in tree.nodes:
-                    if hasattr(no, 'int_') and not 'LineNode' in no.bl_idname:
+                    print(no.bl_idname)
+                    if no.bl_idname == "IntegerNode":
                         if no.inputs and no.outputs:
                             if not no.inputs[0].links \
                                     and no.outputs[0].links \
                                     and no.to3d == True:
                                 templist.append([no. label, no.name, 'int_'])
-                    if hasattr(no, 'float_'):
+                    if no.bl_idname == "FloatNode":
                         if no.inputs and no.outputs:
                             if not no.inputs[0].links \
                                     and no.outputs[0].links \
                                     and no.to3d == True:
-                                templist.append([no. label, no.name, 'float_'])
+                                templist.append([no.label, no.name, 'float_'])
+                    if no.bl_idname == "ObjectsNode":
+                        if any((s.links for s in no.outputs)):
+                            templist.append([no.label, no.name, ""])
                 templist.sort()
                 templ = [[t[1],t[2]] for t in templist]
-                tree.Sv3DPanel[tna] = dict(templ)
-                #tree.Sv3DPanel[a[0]] = a[1]
+                tree.Sv3DProps.clear()
+                for name, prop in templ:
+                    tree.Sv3DProps.add()
+                    tree.Sv3DProps[-1].node_name = name
+                    tree.Sv3DProps[-1].prop_name = prop
+                    
         return {'FINISHED'}
 
 class Sv3DPanel(bpy.types.Panel):
@@ -340,16 +407,21 @@ class Sv3DPanel(bpy.types.Panel):
     bl_label = "Sverchok "+sv_version_local
     bl_options = {'DEFAULT_CLOSED'}
     bl_category = 'SV'
-    
-    
-    
+
+
     def draw(self, context):
         layout = self.layout
         little_width = 0.12
-        row = layout.row(align=True)
+        col = layout.column(align=True)
+        row = col.row(align=True)
         row.scale_y = 2.0
         row.operator('node.sv_scan_propertyes', text='Scan for props')
         row.operator(SverchokUpdateAll.bl_idname, text="Update all")
+        row = col.row(align=True)
+        row.prop(context.scene, 'sv_do_clear', text='hard clean')
+        delley = row.operator('node.sv_delete_nodelayouts', \
+                              text='Clean layouts').do_clear = \
+                              context.scene.sv_do_clear
         for tree in bpy.data.node_groups:
             if tree.bl_idname == 'SverchCustomTreeType':
                 box = layout.box()
@@ -372,14 +444,23 @@ class Sv3DPanel(bpy.types.Panel):
                 else:
                     split.prop(tree, 'sv_animate', icon='LOCKED', text=' ')
                 
-                if tree.name in tree.Sv3DPanel:
-                    treedic = tree.Sv3DPanel[tree.name]
-                    for no, ver in treedic.items():
-                        node = tree.nodes[no]
-                        if node.label:
-                            tex = node.label
-                        else:
-                            tex = no
+                for item in tree.Sv3DProps:
+                    no = item.node_name
+                    ver = item.prop_name
+                    node = tree.nodes[no]
+                    if node.label:
+                        tex = node.label
+                    else:
+                        tex = no
+                    if node.bl_idname == "ObjectsNode":
+                        row = col.row(align=True)
+                        row.label(text=node.label if node.label else no)
+                        op=row.operator("node.sverchok_object_insertion", text="Get")
+                        op.node_name = node.name
+                        op.tree_name = tree.name
+                        op.grup_name = node.groupname
+                        op.sort = node.sort
+                    elif node.bl_idname in {"IntegerNode", "FloatNode"}:
                         row = col.row(align=True)
                         row.prop(node, ver, text=tex)
                         colo = row.column(align=True)
@@ -392,7 +473,9 @@ class Sv3DPanel(bpy.types.Panel):
 
 
 def register():
-    bpy.types.SverchCustomTreeType.Sv3DPanel = {}
+    bpy.types.Scene.sv_do_clear = bpy.props.BoolProperty(default=False, \
+        name='even used', description='remove even if \
+        layout has one user (not fake user)')
     bpy.utils.register_class(SverchokUpdateCurrent)
     bpy.utils.register_class(SverchokUpdateAll)
     bpy.utils.register_class(SverchokCheckForUpgrades)
@@ -402,11 +485,18 @@ def register():
     bpy.utils.register_class(SverchokToolsMenu)
     bpy.utils.register_class(ToolsNode)
     bpy.utils.register_class(Sv3DPanel)
-    bpy.utils.register_class(SvLayoutScanPropertyes)
-
+    bpy.utils.register_class(Sv3dPropItem)
+    bpy.utils.register_class(SvSwitchToLayout)
+    bpy.utils.register_class(SvLayoutScanProperties)
+    bpy.utils.register_class(SvClearNodesLayouts)
+    bpy.types.SverchCustomTreeType.Sv3DProps = \
+                        bpy.props.CollectionProperty(type=Sv3dPropItem)
 
 def unregister():
-    bpy.utils.unregister_class(SvLayoutScanPropertyes)
+    bpy.utils.unregister_class(SvClearNodesLayouts)
+    bpy.utils.unregister_class(SvLayoutScanProperties)
+    bpy.utils.unregister_class(SvSwitchToLayout)
+    bpy.utils.unregister_class(Sv3dPropItem)
     bpy.utils.unregister_class(Sv3DPanel)
     bpy.utils.unregister_class(ToolsNode)
     bpy.utils.unregister_class(SverchokToolsMenu)
@@ -416,16 +506,6 @@ def unregister():
     bpy.utils.unregister_class(SverchokCheckForUpgrades)
     bpy.utils.unregister_class(SverchokUpdateAll)
     bpy.utils.unregister_class(SverchokUpdateCurrent)
-    #del bpy.types.SverchCustomTreeType.Sv3DPanel
-
-
-
-
-
-
-
-
-
 
 
 
