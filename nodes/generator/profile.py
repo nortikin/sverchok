@@ -339,8 +339,8 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
 
             if close_section:
                 closing_edge = [self.state_idx-1, intermediate_idx]
-                print(len(line_data))
-                print(closing_edge)
+                # print(len(line_data))
+                # print(closing_edge)
                 temp_edges.append(closing_edge)
             return line_data, temp_edges
 
