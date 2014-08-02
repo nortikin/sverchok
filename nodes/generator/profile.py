@@ -193,7 +193,6 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
 
         for idx in range(longest):
             result, edges = self.parse_path_file(segments, idx)
-            print(result)
 
             axis_fill = {
                 'X': lambda coords: (0, coords[0], coords[1]),
