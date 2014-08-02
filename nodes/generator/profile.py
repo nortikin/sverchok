@@ -69,15 +69,15 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
 
     # profile_str = StringProperty(default="", update=updateNode)
     profile_file = StringProperty(default="", update=updateNode)
-    filename = StringProperty(default="", update=updateNode)
-    posxy = FloatVectorProperty(default=(0.0, 0.0), sizez=2) # update=updateNode)
+    filename = StringProperty(default="")
+    posxy = FloatVectorProperty(default=(0.0, 0.0), size=2) # update=updateNode)
     state_idx = IntProperty(default=0)
 
     def draw_buttons(self, context, layout):
         row = layout.row()
         row.prop(self, 'selected_axis', expand=True)
         row = layout.row(align=True)
-        row.prop(self, "profile_str", text="")
+        row.prop(self, "profile_file", text="")
 
     def init(self, context):
         self.inputs.new('StringsSocket', "a", "a")
@@ -110,8 +110,8 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
         '''
 
         # keeping the file internal for now.
-        filename = self.profile_file.strip()
-        if not (filename in bpy.data.texts):
+        self.filename = self.profile_file.strip()
+        if not (self.filename in bpy.data.texts):
             return
 
         if not ('Edges' in self.outputs):
@@ -204,10 +204,11 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
             full_result_verts.append(result)
             full_result_edges.append(edges)
 
+
         if full_result_verts:
             SvSetSocketAnyType(self, 'Verts', full_result_verts)
 
-            if self.inputs['Edges'].links:
+            if self.outputs['Edges'].links:
                 SvSetSocketAnyType(self, 'Edges', full_result_edges)
 
 
@@ -219,12 +220,14 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
         this function expects that all remapable lines contain lower case chars.
         '''
         file_str = bpy.data.texts[self.filename]
-        lines = file_str.split('\n')
+        lines = file_str.as_string().split('\n')
 
         # initial start position, unless specified otherwise.
         posxy = [0, 0]
         result = []
         self.state_idx = 0  # reset this
+
+        final_verts, final_edges = [], []
 
         for line in lines:
             if not line:
@@ -274,7 +277,7 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
                 final_verts.append(verts)
                 final_edges.append(edges)
 
-            posxy = verts[-1]
+                posxy = verts[-1]
 
         return final_verts, final_edges
 
@@ -304,7 +307,7 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
                 xy.append(float(char))
 
             if section_type == 'move_to_relative':
-                posxy = (posxy[0] + xy[0], posxy[1] + xy[1])
+                posxy = (self.posxy[0] + xy[0], self.posxy[1] + xy[1])
             else:
                 posxy = (xy[0], xy[1])
             return
@@ -314,11 +317,12 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
             and draws a line from it to the first set of 2d coordinates, and 
             onwards till complete '''
             # temp_str = temp_str.replace(letter, str(data['data'][idx]))
-            line_data = [[xy[0], xy[1]]]
+            line_data = [[self.posxy[0], self.posxy[1]]]
             intermediate_idx = self.state_idx
             self.state_idx += 1
 
             tempstr = line.split(' ')
+            print(tempstr)
             for t in tempstr:
                 components = t.split(',')
                 sub_comp = []
@@ -333,7 +337,7 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
 
                 line_data.append(sub_comp)
 
-            temp_edges = [[i, i+1] for i in range(intermediate_idx, len(line_data)-1):
+            temp_edges = [[i, i+1] for i in range(intermediate_idx, len(line_data)-1)]
 
             if close_section:
                 temp_edges.append([self.state_idx, intermediate_idx])
