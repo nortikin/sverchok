@@ -75,8 +75,9 @@ class IndexViewerNode(bpy.types.Node, SverchCustomTreeNode):
         update=updateNode)
 
     # fontsize
-    fonts_ = [(n.name,n.name,n.name) for n in bpy.data.fonts]
-    fonts = EnumProperty(items=fonts_, name='fonts')
+    fonts = EnumProperty(items=[('Bfont','Bfont','Bfont')], \
+        name='fonts', update=updateNode)
+        
 
     font_size = FloatProperty(
         name="font_size", description='',
@@ -150,6 +151,8 @@ class IndexViewerNode(bpy.types.Node, SverchCustomTreeNode):
         row.operator('object.sv_text_baking', text='B A K E')
         row = col.row(align=True)
         row.prop(self, "font_size")
+        #fonts_ = [(n.name,n.name,n.name) for n in bpy.data.fonts]
+        #self.fonts = EnumProperty(items=fonts_, name='fonts', update=updateNode)
         row = col.row(align=True)
         row.prop(self, "fonts", expand=False)
 
@@ -406,4 +409,7 @@ def unregister():
 
 if __name__ == '__main__':
     register()
+
+
+
 
