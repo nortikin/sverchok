@@ -47,11 +47,11 @@ class ListSumNode(bpy.types.Node, SverchCustomTreeNode):
     def summ(self, data):
         out = []
 
-        if data[0] and (type(data[0]) in [type(1.2), type(1)]):
+        if data and (type(data[0]) in [type(1.2), type(1)]):
             for obj in data:
                 out.append(obj)
             #print (data)
-        elif data[0] and (type(data[0]) in [tuple, list]):
+        elif data and (type(data[0]) in [tuple, list]):
             for obj in data:
                 out.extend(self.summ(obj))
         return out

@@ -86,7 +86,8 @@ nodes_dict = {
         'generator',
         'input',
         'interpolation',
-        'shear'],
+        'shear',
+        'euler'],
 
     'modifier_change': [
         'delete_loose',
@@ -94,9 +95,12 @@ nodes_dict = {
         'holes_fill',
         'mesh_join',
         'mesh_separate',
+        'mirror',
         'polygons_boom',
         'polygons_to_edges',
         'remove_doubles',
+        'rotation',
+        'scale',
         'vertices_mask'],
 
     'modifier_make': [
