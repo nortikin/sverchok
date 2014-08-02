@@ -193,6 +193,7 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
 
         for idx in range(longest):
             result, edges = self.parse_path_file(segments, idx)
+            print(result)
 
             axis_fill = {
                 'X': lambda coords: (0, coords[0], coords[1]),
@@ -200,7 +201,7 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
                 'Z': lambda coords: (coords[0], coords[1], 0)
                 }.get(self.current_axis)
 
-            result = list(map(axis_fill, result))
+            result = list(map(axis_fill, result[0]))
             full_result_verts.append(result)
             full_result_edges.append(edges)
 
@@ -276,8 +277,7 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
                 verts, edges = results
                 final_verts.append(verts)
                 final_edges.append(edges)
-
-                posxy = verts[-1]
+                self.posxy = verts[-1]
 
         return final_verts, final_edges
 
@@ -322,7 +322,7 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
             self.state_idx += 1
 
             tempstr = line.split(' ')
-            print(tempstr)
+            # print(tempstr)
             for t in tempstr:
                 components = t.split(',')
                 sub_comp = []
