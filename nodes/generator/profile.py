@@ -332,14 +332,16 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
                     else:
                         pushval = float(char)
                     sub_comp.append(pushval)
-                    self.state_idx += 1
-
                 line_data.append(sub_comp)
+                self.state_idx += 1
 
             temp_edges = [[i, i+1] for i in range(intermediate_idx, len(line_data)-1)]
 
             if close_section:
-                temp_edges.append([self.state_idx, intermediate_idx])
+                closing_edge = [self.state_idx-1, intermediate_idx]
+                print(len(line_data))
+                print(closing_edge)
+                temp_edges.append(closing_edge)
             return line_data, temp_edges
 
         elif section_type == 'line_to_relative':
