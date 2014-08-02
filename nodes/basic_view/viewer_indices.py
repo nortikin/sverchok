@@ -17,17 +17,31 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-from bpy.props import BoolProperty, FloatVectorProperty, StringProperty
+from bpy.props import BoolProperty, FloatVectorProperty, StringProperty, FloatProperty, \
+                      EnumProperty
 
-from node_tree import SverchCustomTreeNode, MatrixSocket, VerticesSocket
+from node_tree import SverchCustomTreeNode, MatrixSocket, VerticesSocket, StringsSocket
 from data_structure import dataCorrect, node_id, updateNode, SvGetSocketAnyType, \
-                            fullList
+                           fullList, Vector_generate, Matrix_generate
 from utils import index_viewer_draw as IV
+from mathutils import Vector
 
 
 # status colors
 FAIL_COLOR = (0.1, 0.05, 0)
 READY_COLOR = (1, 0.3, 0)
+
+
+class SvBakeText (bpy.types.Operator):
+    """3Dtext baking"""      
+    bl_idname = "object.sv_text_baking" 
+    bl_label = "bake text"        
+    bl_options = {'REGISTER', 'UNDO'}         
+    
+    def execute(self, context):
+        n = context.node
+        n.collect_text_to_bake()
+        return {'FINISHED'}
 
 
 class IndexViewerNode(bpy.types.Node, SverchCustomTreeNode):
@@ -58,6 +72,16 @@ class IndexViewerNode(bpy.types.Node, SverchCustomTreeNode):
         update=updateNode)
     display_face_index = BoolProperty(
         name="Faces", description="Display face indices",
+        update=updateNode)
+
+    # fontsize
+    fonts = EnumProperty(items=[('Bfont','Bfont','Bfont')], \
+        name='fonts', update=updateNode)
+        
+
+    font_size = FloatProperty(
+        name="font_size", description='',
+        min=0.01, default=0.1,
         update=updateNode)
 
     # color props
@@ -122,6 +146,16 @@ class IndexViewerNode(bpy.types.Node, SverchCustomTreeNode):
         row.prop(self, "display_edge_index", toggle=True)
         row.prop(self, "display_face_index", toggle=True)
 
+        row = col.row(align=True)
+        row.scale_y = 3
+        row.operator('object.sv_text_baking', text='B A K E')
+        row = col.row(align=True)
+        row.prop(self, "font_size")
+        #fonts_ = [(n.name,n.name,n.name) for n in bpy.data.fonts]
+        #self.fonts = EnumProperty(items=fonts_, name='fonts', update=updateNode)
+        row = col.row(align=True)
+        row.prop(self, "fonts", expand=False)
+
     def get_settings(self):
         '''Produce a dict of settings for the callback'''
         settings = {}
@@ -179,6 +213,115 @@ class IndexViewerNode(bpy.types.Node, SverchCustomTreeNode):
                 col4 = row.column(align=True)
                 col4.scale_x = little_width
                 col4.prop(self, colprop, text="")
+
+
+    # baking
+    def collect_text_to_bake(self):
+        # n_id, settings, text
+        context = bpy.context
+
+        # ensure data or empty lists.
+        # gather vertices from input
+        if self.inputs['vertices'].links:
+            if isinstance(self.inputs['vertices'].links[0].from_socket, VerticesSocket):
+                propv = dataCorrect(SvGetSocketAnyType(self, self.inputs['vertices']))
+                data_vector = Vector_generate(propv) if propv else []
+        else: return
+        data_edges, data_faces = [], []
+        if self.inputs['edges'].links:
+            if isinstance(self.inputs['edges'].links[0].from_socket, StringsSocket):
+                data_edges = dataCorrect(SvGetSocketAnyType(self, self.inputs['edges']))
+        if self.inputs['faces'].links:
+            if isinstance(self.inputs['faces'].links[0].from_socket, StringsSocket):
+                data_faces = dataCorrect(SvGetSocketAnyType(self, self.inputs['faces']))
+        data_matrix = []
+        if self.inputs['matrix'].links:
+            if isinstance(self.inputs['matrix'].links[0].from_socket, MatrixSocket):
+                matrix = dataCorrect(SvGetSocketAnyType(self, self.inputs['matrix']))
+                data_matrix = Matrix_generate(matrix) if matrix else []
+        data_text = ''
+        if self.inputs['text'].links:
+            if isinstance(self.inputs['text'].links[0].from_socket, StringsSocket):
+                data_text = dataCorrect(SvGetSocketAnyType(self, self.inputs['text']))
+
+        display_vert_index = self.display_vert_index
+        display_edge_index = self.display_edge_index
+        display_face_index = self.display_face_index
+
+        ########
+        # points
+        def calc_median(vlist):
+            a = Vector((0, 0, 0))
+            for v in vlist:
+                a += v
+            return a / len(vlist)
+
+        for obj_index, verts in enumerate(data_vector):
+            final_verts = verts
+            if data_text:
+                text_obj = data_text[obj_index]
+            else:
+                text_obj = ''
+
+            # quickly apply matrix if necessary
+            if data_matrix:
+                matrix = data_matrix[obj_index]
+                final_verts = [matrix * v for v in verts]
+
+            if display_vert_index:
+                for idx, v in enumerate(final_verts):
+                    if text_obj:
+                        self.bake(idx, v, text_obj[idx])
+                    else:
+                        self.bake(idx, v)
+
+            if data_edges and display_edge_index:
+                for edge_index, (idx1, idx2) in enumerate(data_edges[obj_index]):
+                    
+                    v1 = Vector(final_verts[idx1])
+                    v2 = Vector(final_verts[idx2])
+                    loc = v1 + ((v2 - v1) / 2)
+                    if text_obj:
+                        self.bake(edge_index, loc, text_obj[edge_index])
+                    else:
+                        self.bake(edge_index, loc)
+
+            if data_faces and display_face_index:
+                for face_index, f in enumerate(data_faces[obj_index]):
+                    verts = [Vector(final_verts[idx]) for idx in f]
+                    median = calc_median(verts)
+                    if text_obj:
+                        self.bake(face_index, median, text_obj[face_index])
+                    else:
+                        self.bake(face_index, median)
+
+    def bake(self, index, origin, text_=''):
+        if text_:
+            text = str(text_[0])
+        else:
+            text = str(index)
+        # Create and name TextCurve object
+        bpy.ops.object.text_add(view_align=False,
+            enter_editmode=False,location=origin)
+        ob = bpy.context.object
+        ob.name = 'sv_text_' + text
+        tcu = ob.data
+        tcu.name = 'sv_text_' + text
+        # TextCurve attributes
+        tcu.body = text
+        tcu.font = bpy.data.fonts[self.fonts]
+        tcu.offset_x = 0
+        tcu.offset_y = 0
+        tcu.resolution_u = 2
+        tcu.shear = 0
+        Tsize = self.font_size
+        tcu.size = Tsize
+        tcu.space_character = 1
+        tcu.space_word = 1
+        tcu.align = 'CENTER'
+        # Inherited Curve attributes
+        tcu.extrude = 0.0
+        tcu.fill_mode = 'NONE'
 
     def update(self):
         inputs = self.inputs
@@ -256,8 +399,17 @@ class IndexViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
 def register():
     bpy.utils.register_class(IndexViewerNode)
+    bpy.utils.register_class(SvBakeText)
 
 
 def unregister():
+    bpy.utils.unregister_class(SvBakeText)
     bpy.utils.unregister_class(IndexViewerNode)
+
+
+if __name__ == '__main__':
+    register()
+
+
+
 
