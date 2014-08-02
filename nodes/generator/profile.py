@@ -201,8 +201,8 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
                 }.get(self.current_axis)
 
             result = list(map(axis_fill, result[0]))
-            full_result_verts.append(result)
-            full_result_edges.append(edges)
+            full_result_verts.append([result])
+            full_result_edges.append([edges])
 
 
         if full_result_verts:
@@ -300,7 +300,7 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
             xy = []
             for char in temp_str:
                 if char in segments:
-                    pushval = segments[char][idx]
+                    pushval = segments[char]['data'][idx]
                 else:
                     pushval = char
                 xy.append(float(char))
@@ -328,7 +328,7 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
                 for char in components:
                     char.strip()
                     if char in segments:
-                        pushval = segments[char][idx]
+                        pushval = segments[char]['data'][idx]
                     else:
                         pushval = float(char)
                     sub_comp.append(pushval)
