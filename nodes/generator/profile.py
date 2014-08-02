@@ -24,43 +24,13 @@ from math import *
 from string import ascii_lowercase
 
 import bpy
-from bpy.props import BoolProperty, StringProperty, EnumProperty
+from bpy.props import BoolProperty, StringProperty, EnumProperty, FloatVectorProperty, IntProperty
 
 from node_tree import SverchCustomTreeNode
 from data_structure import fullList, updateNode, dataCorrect, SvSetSocketAnyType, SvGetSocketAnyType
 
 
 idx_map = {i: j for i, j in enumerate(ascii_lowercase)}
-
-
-def parse_path_line(segments, line, section_type, close_section, cp):
-    ''' 
-    cp = current position 
-
-    expects input like
-
-    M a,b
-    L a,e 10.0,34
-    L a,e 10.0,34 z
-
-    '''
-
-
-
-    if section_type == 'move_to_absolute':
-        pass
-    if section_type == 'move_to_relative':
-        pass
-    if section_type == 'line_to_absolute':
-        pass
-    if section_type == 'line_to_relative':
-        pass
-
-    #for letter, data in segments.items():
-    #    temp_str = temp_str.replace(letter, str(data['data'][idx]))
-
-    #result = literal_eval(temp_str)
-
 
 
 
@@ -70,8 +40,6 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
     assignments, variables, and a string descriptor similar to SVG.
 
     This node expects simple input, or vectorized input.
-    - Feed it input like [[0, 0, 0, 0.4, 0.4]] per input.
-    - input can be of any length
     - sockets with no input are automatically 0, not None
     - The longest input array will be used to extend the shorter ones, using last value repeat.
     '''
@@ -102,6 +70,8 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
     # profile_str = StringProperty(default="", update=updateNode)
     profile_file = StringProperty(default="", update=updateNode)
     filename = StringProperty(default="", update=updateNode)
+    posxy = FloatVectorProperty(default=(0.0, 0.0), sizez=2) # update=updateNode)
+    state_idx = IntProperty(default=0)
 
     def draw_buttons(self, context, layout):
         row = layout.row()
@@ -222,7 +192,7 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
         full_result_edges = []
 
         for idx in range(longest):
-            result, edges = self.parse_path_file(segments)
+            result, edges = self.parse_path_file(segments, idx)
 
             axis_fill = {
                 'X': lambda coords: (0, coords[0], coords[1]),
@@ -241,8 +211,10 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
                 SvSetSocketAnyType(self, 'Edges', full_result_edges)
 
 
-    def parse_path_file(self, segments):
+    def parse_path_file(self, segments, idx):
         ''' 
+        This section is partial preprocessor per line found in the file at bpy.data.texts[filename]
+
         segments is a dict of letters to variables mapping.
         this function expects that all remapable lines contain lower case chars.
         '''
@@ -252,6 +224,7 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
         # initial start position, unless specified otherwise.
         posxy = [0, 0]
         result = []
+        self.state_idx = 0  # reset this
 
         for line in lines:
             if not line:
@@ -262,11 +235,15 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
                 'M': 'move_to_absolute',
                 'm': 'move_to_relative',
                 'L': 'line_to_absolute',
-                'l': 'line_to_relative'
-            }.get(line[0])
+                'l': 'line_to_relative',
+                '#': 'comment'
+            }.get(line.strip()[0])
+
+            if (not section_type) or (section_type == 'comment'):
+                continue
 
             '''
-            if the user really needs z as last vbalue
+            if the user really needs z as last value
             and z is indeed a variable and not intended to 
             close a section, then you must add ;
             '''
@@ -290,12 +267,87 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
                 '''doesn't end with ; or z, Z '''
                 line = line.strip()[1:].strip()
 
-            verts, edges = parse_path_line(segments, line, section_type, close_section, posxy)
-            final_verts.append(verts)
-            final_edges.append(edges)
+            results = self.parse_path_line(idx, segments, line, section_type, close_section)
+
+            if results:
+                verts, edges = results
+                final_verts.append(verts)
+                final_edges.append(edges)
+
             posxy = verts[-1]
 
         return final_verts, final_edges
+
+    def parse_path_line(self, idx, segments, line, section_type, close_section):
+        ''' 
+        expects input like
+
+        M a,b
+        m a,b
+        L a,e 10.0,34
+        L a,e 10.0,34 z
+        L a,e 10.0,34 ......x,y y,z;  <- no close, but using z as last variable
+        L a,e 10.0,34 ......x,y y,z z  <- both. unlikely but potential scenario
+        '''
+
+        ''' these two are very similar crazy code sharing '''
+        if section_type in {'move_to_absolute', 'move_to_relative'}:
+
+            ''' no point doing multiple moves, so split on comma and move posxy '''
+            temp_str = line.split(',')
+            xy = []
+            for char in temp_str:
+                if char in segments:
+                    pushval = segments[char][idx]
+                else:
+                    pushval = char
+                xy.append(float(char))
+
+            if section_type == 'move_to_relative':
+                posxy = (posxy[0] + xy[0], posxy[1] + xy[1])
+            else:
+                posxy = (xy[0], xy[1])
+            return
+
+        elif section_type == 'line_to_absolute':
+            ''' assumes you have posxy (current needle position) where you want it, 
+            and draws a line from it to the first set of 2d coordinates, and 
+            onwards till complete '''
+            # temp_str = temp_str.replace(letter, str(data['data'][idx]))
+            line_data = [[xy[0], xy[1]]]
+            intermediate_idx = self.state_idx
+            self.state_idx += 1
+
+            tempstr = line.split(' ')
+            for t in tempstr:
+                components = t.split(',')
+                sub_comp = []
+                for char in components:
+                    char.strip()
+                    if char in segments:
+                        pushval = segments[char][idx]
+                    else:
+                        pushval = float(char)
+                    sub_comp.append(pushval)
+                    self.state_idx += 1
+
+                line_data.append(sub_comp)
+
+            temp_edges = [[i, i+1] for i in range(intermediate_idx, len(line_data)-1):
+
+            if close_section:
+                temp_edges.append([self.state_idx, intermediate_idx])
+            return line_data, temp_edges
+
+        elif section_type == 'line_to_relative':
+            pass
+
+        #for letter, data in segments.items():
+        #    temp_str = temp_str.replace(letter, str(data['data'][idx]))
+
+        #result = literal_eval(temp_str)
+
+
 
 
 def register():
