@@ -17,14 +17,15 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-from bpy.props import BoolProperty, FloatVectorProperty, StringProperty, FloatProperty, \
-                      EnumProperty
+from mathutils import Vector
+from bpy.props import BoolProperty, FloatVectorProperty, StringProperty, FloatProperty, EnumProperty
 
 from node_tree import SverchCustomTreeNode, MatrixSocket, VerticesSocket, StringsSocket
-from data_structure import dataCorrect, node_id, updateNode, SvGetSocketAnyType, \
-                           fullList, Vector_generate, Matrix_generate
+from data_structure import (
+    dataCorrect, node_id, updateNode, SvGetSocketAnyType, fullList, Vector_generate,
+    Matrix_generate)
+
 from utils import index_viewer_draw as IV
-from mathutils import Vector
 
 
 # status colors
@@ -33,11 +34,12 @@ READY_COLOR = (1, 0.3, 0)
 
 
 class SvBakeText (bpy.types.Operator):
-    """3Dtext baking"""      
-    bl_idname = "object.sv_text_baking" 
-    bl_label = "bake text"        
-    bl_options = {'REGISTER', 'UNDO'}         
-    
+
+    """3Dtext baking"""
+    bl_idname = "object.sv_text_baking"
+    bl_label = "bake text"
+    bl_options = {'REGISTER', 'UNDO'}
+
     def execute(self, context):
         n = context.node
         n.collect_text_to_bake()
@@ -45,6 +47,7 @@ class SvBakeText (bpy.types.Operator):
 
 
 class IndexViewerNode(bpy.types.Node, SverchCustomTreeNode):
+
     ''' IDX ViewerNode '''
     bl_idname = 'IndexViewerNode'
     bl_label = 'Index Viewer Draw'
@@ -75,9 +78,8 @@ class IndexViewerNode(bpy.types.Node, SverchCustomTreeNode):
         update=updateNode)
 
     # fontsize
-    fonts = EnumProperty(items=[('Bfont','Bfont','Bfont')], \
-        name='fonts', update=updateNode)
-        
+    fonts = EnumProperty(items=[('Bfont', 'Bfont', 'Bfont')],
+                         name='fonts', update=updateNode)
 
     font_size = FloatProperty(
         name="font_size", description='',
@@ -199,7 +201,8 @@ class IndexViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
         # 'table info'
         colprops = [
-            ['Numbers :', ['numid_verts_col', 'numid_edges_col', 'numid_faces_col']],
+            ['Numbers :', [
+                'numid_verts_col', 'numid_edges_col', 'numid_faces_col']],
             ['Backgrnd :', ['bg_verts_col', 'bg_edges_col', 'bg_faces_col']]
         ]
 
@@ -214,7 +217,6 @@ class IndexViewerNode(bpy.types.Node, SverchCustomTreeNode):
                 col4.scale_x = little_width
                 col4.prop(self, colprop, text="")
 
-
     # baking
     def collect_text_to_bake(self):
         # n_id, settings, text
@@ -224,25 +226,31 @@ class IndexViewerNode(bpy.types.Node, SverchCustomTreeNode):
         # gather vertices from input
         if self.inputs['vertices'].links:
             if isinstance(self.inputs['vertices'].links[0].from_socket, VerticesSocket):
-                propv = dataCorrect(SvGetSocketAnyType(self, self.inputs['vertices']))
+                propv = dataCorrect(
+                    SvGetSocketAnyType(self, self.inputs['vertices']))
                 data_vector = Vector_generate(propv) if propv else []
-        else: return
+        else:
+            return
         data_edges, data_faces = [], []
         if self.inputs['edges'].links:
             if isinstance(self.inputs['edges'].links[0].from_socket, StringsSocket):
-                data_edges = dataCorrect(SvGetSocketAnyType(self, self.inputs['edges']))
+                data_edges = dataCorrect(
+                    SvGetSocketAnyType(self, self.inputs['edges']))
         if self.inputs['faces'].links:
             if isinstance(self.inputs['faces'].links[0].from_socket, StringsSocket):
-                data_faces = dataCorrect(SvGetSocketAnyType(self, self.inputs['faces']))
+                data_faces = dataCorrect(
+                    SvGetSocketAnyType(self, self.inputs['faces']))
         data_matrix = []
         if self.inputs['matrix'].links:
             if isinstance(self.inputs['matrix'].links[0].from_socket, MatrixSocket):
-                matrix = dataCorrect(SvGetSocketAnyType(self, self.inputs['matrix']))
+                matrix = dataCorrect(
+                    SvGetSocketAnyType(self, self.inputs['matrix']))
                 data_matrix = Matrix_generate(matrix) if matrix else []
         data_text = ''
         if self.inputs['text'].links:
             if isinstance(self.inputs['text'].links[0].from_socket, StringsSocket):
-                data_text = dataCorrect(SvGetSocketAnyType(self, self.inputs['text']))
+                data_text = dataCorrect(
+                    SvGetSocketAnyType(self, self.inputs['text']))
 
         display_vert_index = self.display_vert_index
         display_edge_index = self.display_edge_index
@@ -277,7 +285,7 @@ class IndexViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
             if data_edges and display_edge_index:
                 for edge_index, (idx1, idx2) in enumerate(data_edges[obj_index]):
-                    
+
                     v1 = Vector(final_verts[idx1])
                     v2 = Vector(final_verts[idx2])
                     loc = v1 + ((v2 - v1) / 2)
@@ -302,7 +310,7 @@ class IndexViewerNode(bpy.types.Node, SverchCustomTreeNode):
             text = str(index)
         # Create and name TextCurve object
         bpy.ops.object.text_add(view_align=False,
-            enter_editmode=False,location=origin)
+                                enter_editmode=False, location=origin)
         ob = bpy.context.object
         ob.name = 'sv_text_' + text
         tcu = ob.data
@@ -325,31 +333,33 @@ class IndexViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
     def update(self):
         inputs = self.inputs
-        text=''
+        text = ''
 
         # if you change this change in free() also
         n_id = node_id(self)
+        IV.callback_disable(n_id)
+
         # end early
-        if not ('vertices' in inputs) and not ('matrix' in inputs):
-            IV.callback_disable(n_id)
+        # check if UI is populated.
+        if not ('text' in inputs):
             return
+
         # end if tree status is set to not show
         if not self.id_data.sv_show:
-            IV.callback_disable(n_id)
             return
 
         # alias in case it is present
         iv_links = inputs['vertices'].links
+        self.use_custom_color = True
 
         if self.activate and iv_links:
-            IV.callback_disable(n_id)
             draw_verts, draw_matrix = [], []
 
             # gather vertices from input
             if isinstance(iv_links[0].from_socket, VerticesSocket):
                 propv = SvGetSocketAnyType(self, inputs['vertices'])
                 draw_verts = dataCorrect(propv)
-            
+
             # idea to make text in 3d
             if 'text' in inputs and inputs['text'].links:
                 text_so = SvGetSocketAnyType(self, inputs['text'])
@@ -357,7 +367,7 @@ class IndexViewerNode(bpy.types.Node, SverchCustomTreeNode):
                 fullList(text, len(draw_verts))
                 for i, t in enumerate(text):
                     fullList(text[i], len(draw_verts[i]))
-                
+
             # matrix might be operating on vertices, check and act on.
             if 'matrix' in inputs:
                 im_links = inputs['matrix'].links
@@ -382,12 +392,12 @@ class IndexViewerNode(bpy.types.Node, SverchCustomTreeNode):
             bg = self.draw_bg
             settings = self.get_settings()
             IV.callback_enable(
-                n_id, draw_verts, draw_edges, draw_faces, draw_matrix, bg, settings.copy(), text)
-            self.use_custom_color = True
+                n_id,
+                draw_verts, draw_edges, draw_faces, draw_matrix,
+                bg, settings.copy(), text)
+
             self.color = READY_COLOR
         else:
-            IV.callback_disable(n_id)
-            self.use_custom_color = True
             self.color = FAIL_COLOR
 
     def update_socket(self, context):
@@ -409,7 +419,3 @@ def unregister():
 
 if __name__ == '__main__':
     register()
-
-
-
-
