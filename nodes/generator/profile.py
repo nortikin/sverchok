@@ -33,7 +33,6 @@ from data_structure import fullList, updateNode, dataCorrect, SvSetSocketAnyType
 idx_map = {i: j for i, j in enumerate(ascii_lowercase)}
 
 
-
 class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
     '''
     SvProfileNode generates one or more profiles / elevation segments using;
@@ -70,7 +69,7 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
     # profile_str = StringProperty(default="", update=updateNode)
     profile_file = StringProperty(default="", update=updateNode)
     filename = StringProperty(default="")
-    posxy = FloatVectorProperty(default=(0.0, 0.0), size=2) # update=updateNode)
+    posxy = FloatVectorProperty(default=(0.0, 0.0), size=2)  # update=updateNode)
     state_idx = IntProperty(default=0)
 
     def draw_buttons(self, context, layout):
@@ -204,16 +203,14 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
             full_result_verts.append(result)
             full_result_edges.append(edges)
 
-
         if full_result_verts:
             SvSetSocketAnyType(self, 'Verts', full_result_verts)
 
             if self.outputs['Edges'].links:
                 SvSetSocketAnyType(self, 'Edges', full_result_edges)
 
-
     def parse_path_file(self, segments, idx):
-        ''' 
+        '''
         This section is partial preprocessor per line found in the file at bpy.data.texts[filename]
 
         segments is a dict of letters to variables mapping.
@@ -247,7 +244,7 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
 
             '''
             if the user really needs z as last value
-            and z is indeed a variable and not intended to 
+            and z is indeed a variable and not intended to
             close a section, then you must add ;
             '''
 
@@ -281,7 +278,7 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
         return final_verts, final_edges
 
     def parse_path_line(self, idx, segments, line, section_type, close_section):
-        ''' 
+        '''
         expects input like
 
         M a,b
@@ -312,8 +309,8 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
             return
 
         elif section_type == 'line_to_absolute':
-            ''' assumes you have posxy (current needle position) where you want it, 
-            and draws a line from it to the first set of 2d coordinates, and 
+            ''' assumes you have posxy (current needle position) where you want it,
+            and draws a line from it to the first set of 2d coordinates, and
             onwards till complete '''
             # temp_str = temp_str.replace(letter, str(data['data'][idx]))
             line_data = [[self.posxy[0], self.posxy[1]]]
@@ -335,22 +332,64 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
                 line_data.append(sub_comp)
                 self.state_idx += 1
 
-            temp_edges = [[i, i+1] for i in range(intermediate_idx, intermediate_idx + len(line_data)-1)]
+            start = intermediate_idx
+            end = intermediate_idx + len(line_data)-1
+            temp_edges = [[i, i+1] for i in range(start, end)]
+
+            # move current needle to last position
 
             if close_section:
                 closing_edge = [self.state_idx-1, intermediate_idx]
                 temp_edges.append(closing_edge)
+                self.posxy = tuple(line_data[0])
+            else:
+                self.posxy = tuple(line_data[-1])
+
             return line_data, temp_edges
 
         elif section_type == 'line_to_relative':
-            pass
+            '''experimental.. will start from current posxy'''
+            line_data = [[self.posxy[0], self.posxy[1]]]
+            intermediate_idx = self.state_idx
+            self.state_idx += 1
+
+            tempstr = line.split(' ')
+            # print(tempstr)
+            for t in tempstr:
+                components = t.split(',')
+                sub_comp = []
+                for char in components:
+                    char.strip()
+                    if char in segments:
+                        pushval = segments[char]['data'][idx]
+                    else:
+                        pushval = float(char)
+                    sub_comp.append(pushval)
+                final = [self.posxy[0] + sub_comp[0], self.posxy[1] + sub_comp[1]]
+                self.posxy = tuple(final)
+
+                line_data.append(final)
+                self.state_idx += 1
+
+            start = intermediate_idx
+            end = intermediate_idx + len(line_data)-1
+            temp_edges = [[i, i+1] for i in range(start, end)]
+
+            # move current needle to last position
+
+            if close_section:
+                closing_edge = [self.state_idx-1, intermediate_idx]
+                temp_edges.append(closing_edge)
+                self.posxy = tuple(line_data[0])
+            else:
+                self.posxy = tuple(line_data[-1])
+
+            return line_data, temp_edges
 
         #for letter, data in segments.items():
         #    temp_str = temp_str.replace(letter, str(data['data'][idx]))
 
         #result = literal_eval(temp_str)
-
-
 
 
 def register():
