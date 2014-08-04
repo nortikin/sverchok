@@ -25,6 +25,8 @@ from string import ascii_lowercase
 
 import bpy
 from bpy.props import BoolProperty, StringProperty, EnumProperty, FloatVectorProperty, IntProperty
+from mathutils import Vector
+from mathutils.geometry import interpolate_bezier
 
 from node_tree import SverchCustomTreeNode
 from data_structure import fullList, updateNode, dataCorrect, SvSetSocketAnyType, SvGetSocketAnyType
@@ -236,6 +238,7 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
                 'm': 'move_to_relative',
                 'L': 'line_to_absolute',
                 'l': 'line_to_relative',
+                'C': 'bezier_curve_to_absolute',
                 '#': 'comment'
             }.get(line.strip()[0])
 
@@ -290,6 +293,7 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
         '''
 
         ''' these two are very similar crazy code sharing '''
+
         if section_type in {'move_to_absolute', 'move_to_relative'}:
 
             ''' no point doing multiple moves, so split on comma and move posxy '''
@@ -308,10 +312,16 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
                 self.posxy = (xy[0], xy[1])
             return
 
+
         elif section_type == 'line_to_absolute':
-            ''' assumes you have posxy (current needle position) where you want it,
+            ''' 
+            line to absolute and relative are very very very similar, and eventually
+            should be merged into a single function if possible 
+            
+            assumes you have posxy (current needle position) where you want it,
             and draws a line from it to the first set of 2d coordinates, and
-            onwards till complete '''
+            onwards till complete 
+            '''
             # temp_str = temp_str.replace(letter, str(data['data'][idx]))
             line_data = [[self.posxy[0], self.posxy[1]]]
             intermediate_idx = self.state_idx
@@ -323,7 +333,6 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
                 components = t.split(',')
                 sub_comp = []
                 for char in components:
-                    char.strip()
                     if char in segments:
                         pushval = segments[char]['data'][idx]
                     else:
@@ -359,7 +368,6 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
                 components = t.split(',')
                 sub_comp = []
                 for char in components:
-                    char.strip()
                     if char in segments:
                         pushval = segments[char]['data'][idx]
                     else:
@@ -386,11 +394,74 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
 
             return line_data, temp_edges
 
-        #for letter, data in segments.items():
-        #    temp_str = temp_str.replace(letter, str(data['data'][idx]))
+        elif section_type == 'bezier_curve_to_absolute':
 
-        #result = literal_eval(temp_str)
+            '''
+            expects 5 params:
+            C <2v control1> <2v control2> <2v knot2> <int num_segments> <int even_spread> [z]
 
+            C control1 control2 knot2 10 0 [z]
+            C control1 control2 knot2 20 1 [z]
+
+            C x1,y1 x2,y2 x3,y3 num bool [z]
+            '''
+            tempstr = line.split(' ')
+
+            if not len(tempstr) == 5:
+                print('error on line: ', line)
+                return
+
+            ''' fully defined '''
+
+            knot1 = [self.posxy[0], self.posxy[1]]
+            handle1 = self.get_2vec(tempstr[0], segments, idx)
+            handle2 = self.get_2vec(tempstr[1], segments, idx)
+            knot2 = self.get_2vec(tempstr[2], segments, idx)
+            r = self.get_int(tempstr[3], segments, idx)
+            s = self.get_int(tempstr[4], segments, idx)  # not used yet
+
+            vec = lambda v: Vector((v[0], v[1], 0))
+
+            bezier = vec(knot1), vec(handle1), vec(handle2), vec(knot2), r
+            points = interpolate_bezier(*bezier)
+
+            # parse down to 2d
+            line_data = [[v[0], v[1]] for v in points]
+
+            intermediate_idx = self.state_idx
+            self.state_idx += len(points)
+
+            start = intermediate_idx
+            end = intermediate_idx + len(line_data)-1
+            temp_edges = [[i, i+1] for i in range(start, end)]
+
+            # move current needle to last position
+            if close_section:
+                closing_edge = [self.state_idx-1, intermediate_idx]
+                temp_edges.append(closing_edge)
+                self.posxy = tuple(line_data[0])
+            else:
+                self.posxy = tuple(line_data[-1])
+
+            return line_data, temp_edges
+
+    def get_2vec(self, t, segments, idx):
+        components = t.split(',')
+        sub_comp = []
+        for char in components:
+            if char in segments:
+                pushval = segments[char]['data'][idx]
+            else:
+                pushval = float(char)
+            sub_comp.append(pushval)
+        return sub_comp
+
+    def get_int(self, component, segments, idx):
+        if component in segments:
+            pushval = segments[component]['data'][idx]
+        else:
+            pushval = component
+        return int(pushval)
 
 def register():
     bpy.utils.register_class(SvProfileNode)
