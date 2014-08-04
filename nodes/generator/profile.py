@@ -438,11 +438,12 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
             points = points[1:]
             line_data = [[v[0], v[1]] for v in points]
 
+            self.state_idx -= 1
             intermediate_idx = self.state_idx
-            self.state_idx += len(points)
+            self.state_idx += len(points) + 1
 
-            start = intermediate_idx-1
-            end = intermediate_idx + len(line_data)-1
+            start = intermediate_idx
+            end = intermediate_idx + len(line_data)
             temp_edges = [[i, i+1] for i in range(start, end)]
 
             # move current needle to last position
