@@ -73,6 +73,7 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
     filename = StringProperty(default="")
     posxy = FloatVectorProperty(default=(0.0, 0.0), size=2)  # update=updateNode)
     state_idx = IntProperty(default=0)
+    previous_command = StringProperty(default="START")
 
     def draw_buttons(self, context, layout):
         row = layout.row()
@@ -228,6 +229,8 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
 
         final_verts, final_edges = [], []
 
+        self.previous_command = "START"
+
         for line in lines:
             if not line:
                 continue
@@ -279,6 +282,7 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
                 line = line.strip()[1:].strip()
 
             results = self.parse_path_line(idx, segments, line, section_type, close_section)
+            self.previous_command = section_type
 
             if results:
                 verts, edges = results
@@ -305,14 +309,16 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
         if section_type in {'move_to_absolute', 'move_to_relative'}:
 
             ''' no point doing multiple moves, so split on comma and move posxy '''
-            temp_str = line.split(',')
-            xy = []
-            for char in temp_str:
-                if char in segments:
-                    pushval = segments[char]['data'][idx]
-                else:
-                    pushval = char
-                xy.append(float(pushval))
+
+            # temp_str = line.split(',')
+            # xy = []
+            # for char in temp_str:
+            #     if char in segments:
+            #         pushval = segments[char]['data'][idx]
+            #     else:
+            #         pushval = char
+            #     xy.append(float(pushval))
+            xy = self.get_2vec(line, segments, idx)
 
             if section_type == 'move_to_relative':
                 self.posxy = (self.posxy[0] + xy[0], self.posxy[1] + xy[1])
@@ -338,14 +344,16 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
             tempstr = line.split(' ')
             # print(tempstr)
             for t in tempstr:
-                components = t.split(',')
-                sub_comp = []
-                for char in components:
-                    if char in segments:
-                        pushval = segments[char]['data'][idx]
-                    else:
-                        pushval = float(char)
-                    sub_comp.append(pushval)
+
+                # components = t.split(',')
+                # sub_comp = []
+                # for char in components:
+                #     if char in segments:
+                #         pushval = segments[char]['data'][idx]
+                #     else:
+                #         pushval = float(char)
+                #     sub_comp.append(pushval)
+                sub_comp = self.get_2vec(t, segments, idx)
                 line_data.append(sub_comp)
                 self.state_idx += 1
 
@@ -373,14 +381,15 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
             tempstr = line.split(' ')
             # print(tempstr)
             for t in tempstr:
-                components = t.split(',')
-                sub_comp = []
-                for char in components:
-                    if char in segments:
-                        pushval = segments[char]['data'][idx]
-                    else:
-                        pushval = float(char)
-                    sub_comp.append(pushval)
+                # components = t.split(',')
+                # sub_comp = []
+                # for char in components:
+                #     if char in segments:
+                #         pushval = segments[char]['data'][idx]
+                #     else:
+                #         pushval = float(char)
+                #     sub_comp.append(pushval)
+                sub_comp = self.get_2vec(t, segments, idx)                    
                 final = [self.posxy[0] + sub_comp[0], self.posxy[1] + sub_comp[1]]
                 self.posxy = tuple(final)
 
@@ -440,10 +449,10 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
 
             self.state_idx -= 1
             intermediate_idx = self.state_idx
-            self.state_idx += len(points) + 1
+            self.state_idx += (len(points) + 1)
 
             start = intermediate_idx
-            end = intermediate_idx + len(line_data)
+            end = intermediate_idx + len(line_data) + 1
             temp_edges = [[i, i+1] for i in range(start, end)]
 
             # move current needle to last position
