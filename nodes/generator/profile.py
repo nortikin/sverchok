@@ -239,11 +239,19 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
                 'L': 'line_to_absolute',
                 'l': 'line_to_relative',
                 'C': 'bezier_curve_to_absolute',
+                'X': 'close_now',
                 '#': 'comment'
             }.get(line.strip()[0])
 
             if (not section_type) or (section_type == 'comment'):
                 continue
+
+            if section_type == 'close_now':
+                print('arrives here')
+                edges = [self.state_idx-1, 0]              
+                final_edges.extend([edges])
+                # this is the end of the loop, maybe use break
+                continue 
 
             '''
             if the user really needs z as last value
@@ -426,12 +434,14 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
             points = interpolate_bezier(*bezier)
 
             # parse down to 2d
+            # be aware , we drop the first point.
+            points = points[1:]
             line_data = [[v[0], v[1]] for v in points]
 
             intermediate_idx = self.state_idx
             self.state_idx += len(points)
 
-            start = intermediate_idx
+            start = intermediate_idx-1
             end = intermediate_idx + len(line_data)-1
             temp_edges = [[i, i+1] for i in range(start, end)]
 
@@ -444,6 +454,7 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
                 self.posxy = tuple(line_data[-1])
 
             return line_data, temp_edges
+
 
     def get_2vec(self, t, segments, idx):
         components = t.split(',')
