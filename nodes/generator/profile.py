@@ -305,11 +305,11 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
 
         <>  : mandatory field
         []  : optional field
-        2v  : two point vector `a,b`  
+        2v  : two point vector `a,b`
                 - no space between ,
                 - a and b can be number literals
                 - no backticks.
-        <int .. > 
+        <int .. >
             : means the value will be cast as an int even if you input float
         z   : is optional for closing a line
         X   : as a final command to close the edges (cyclic) [-1, 0]
@@ -336,17 +336,10 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
             and draws a line from it to the first set of 2d coordinates, and
             onwards till complete
             '''
-            # temp_str = temp_str.replace(letter, str(data['data'][idx]))
-            if self.previous_command in {'move_to_absolute', 'move_to_relative'}:
-                line_data = [[self.posxy[0], self.posxy[1]]]
-                intermediate_idx = self.state_idx
-                self.state_idx += 1
-            else:
-                line_data = []
-                intermediate_idx = self.state_idx
 
+            intermediate_idx, line_data = self.push_forward()
             tempstr = line.split(' ')
-            # print(tempstr)
+
             for t in tempstr:
                 sub_comp = self.get_2vec(t, segments, idx)
                 line_data.append(sub_comp)
@@ -368,17 +361,11 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
             return line_data, temp_edges
 
         elif section_type == 'line_to_relative':
-            '''experimental.. will start from current posxy'''
-            if self.previous_command in {'move_to_absolute', 'move_to_relative'}:
-                line_data = [[self.posxy[0], self.posxy[1]]]
-                intermediate_idx = self.state_idx
-                self.state_idx += 1
-            else:
-                line_data = []
-                intermediate_idx = self.state_idx
 
+            '''experimental.. will start from current posxy'''
+            intermediate_idx, line_data = self.push_forward()
             tempstr = line.split(' ')
-            # print(tempstr)
+
             for t in tempstr:
                 sub_comp = self.get_2vec(t, segments, idx)
                 final = [self.posxy[0] + sub_comp[0], self.posxy[1] + sub_comp[1]]
@@ -405,7 +392,7 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
         elif section_type == 'bezier_curve_to_absolute':
 
             '''
-            expects 5 params:  
+            expects 5 params:
                 C x1,y1 x2,y2 x3,y3 num bool [z]
             example:
                 C control1 control2 knot2 10 0 [z]
@@ -472,6 +459,16 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
         else:
             pushval = component
         return int(pushval)
+
+    def push_forward(self):
+        if self.previous_command in {'move_to_absolute', 'move_to_relative'}:
+            line_data = [[self.posxy[0], self.posxy[1]]]
+            intermediate_idx = self.state_idx
+            self.state_idx += 1
+        else:
+            line_data = []
+            intermediate_idx = self.state_idx
+        return intermediate_idx, line_data
 
 
 def register():
