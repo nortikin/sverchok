@@ -154,12 +154,9 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
         '''
         edit segments in place, extend all to match length of longest
         '''
-        #f = lambda l: [item for sublist in l for item in sublist]
-
         for letter, letter_dict in segments.items():
             if letter_dict['length'] < longest:
                 fullList(letter_dict['data'], longest)
-                # letter_dict['data'] = f(letter_dict['data'])
 
     def get_input(self):
         '''
@@ -226,10 +223,9 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
         posxy = [0, 0]
         result = []
         self.state_idx = 0  # reset this
+        self.previous_command = "START"
 
         final_verts, final_edges = [], []
-
-        self.previous_command = "START"
 
         for line in lines:
             if not line:
@@ -242,6 +238,7 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
                 'L': 'line_to_absolute',
                 'l': 'line_to_relative',
                 'C': 'bezier_curve_to_absolute',
+                'c': 'bezier_curve_to_relative',
                 'X': 'close_now',
                 '#': 'comment'
             }.get(line.strip()[0])
@@ -295,11 +292,9 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
         '''
         expects input like
 
-        M <2v coordinate>
-        m <2v coordinate>
-        L <2v coordinate 1> <2v coordinate 2> <2v coordinate n> [z]
-        l <2v coordinate 1> <2v coordinate 2> <2v coordinate n> [z]
-        C <2v control1> <2v control2> <2v knot2> <int num_segments> <int even_spread> [z]
+        M|m <2v coordinate>
+        L|l <2v coordinate 1> <2v coordinate 2> <2v coordinate n> [z]
+        C|c <2v control1> <2v control2> <2v knot2> <int num_segments> <int even_spread> [z]
         X
 
         <>  : mandatory field
@@ -312,18 +307,16 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
             : means the value will be cast as an int even if you input float
         z   : is optional for closing a line
         X   : as a final command to close the edges (cyclic) [-1, 0]
+        #   : single line comment prefix
 
         '''
 
-        ''' these two are very similar crazy code sharing '''
-
         if section_type in {'move_to_absolute', 'move_to_relative'}:
             xy = self.get_2vec(line, segments, idx)
-
-            if section_type == 'move_to_relative':
-                self.posxy = (self.posxy[0] + xy[0], self.posxy[1] + xy[1])
-            else:
+            if section_type == 'move_to_absolute':
                 self.posxy = (xy[0], xy[1])
+            else:
+                self.posxy = (self.posxy[0] + xy[0], self.posxy[1] + xy[1])
             return
 
         elif section_type in {'line_to_absolute', 'line_to_relative'}:
@@ -359,8 +352,8 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
             example:
                 C control1 control2 knot2 10 0 [z]
                 C control1 control2 knot2 20 1 [z]
-
             '''
+
             tempstr = line.split(' ')
 
             if not len(tempstr) == 5:
