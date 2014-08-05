@@ -250,7 +250,6 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
                 continue
 
             if section_type == 'close_now':
-                print('arrives here')
                 edges = [self.state_idx-1, 0]
                 final_edges.extend([edges])
                 # this is the end of the loop, maybe use break
@@ -328,45 +327,27 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
             return
 
         elif section_type == 'line_to_absolute':
-            '''
-            line to absolute and relative are very very very similar, and eventually
-            should be merged into a single function if possible
 
-            assumes you have posxy (current needle position) where you want it,
+            ''' assumes you have posxy (current needle position) where you want it,
             and draws a line from it to the first set of 2d coordinates, and
-            onwards till complete
-            '''
+            onwards till complete '''
 
             intermediate_idx, line_data = self.push_forward()
             tempstr = line.split(' ')
-
             for t in tempstr:
                 sub_comp = self.get_2vec(t, segments, idx)
                 line_data.append(sub_comp)
                 self.state_idx += 1
 
-            # start = intermediate_idx
-            # end = intermediate_idx + len(line_data)-1
-            # temp_edges = [[i, i+1] for i in range(start, end)]
-
-            # # move current needle to last position
-
-            # if close_section:
-            #     closing_edge = [self.state_idx-1, intermediate_idx]
-            #     temp_edges.append(closing_edge)
-            #     self.posxy = tuple(line_data[0])
-            # else:
-            #     self.posxy = tuple(line_data[-1])
-            temp_edges = self.make_edges(close_section, intermediate_idx, line_data)
-
+            temp_edges = self.make_edges(close_section, intermediate_idx, line_data, -1)
             return line_data, temp_edges
 
         elif section_type == 'line_to_relative':
 
             '''experimental.. will start from current posxy'''
+
             intermediate_idx, line_data = self.push_forward()
             tempstr = line.split(' ')
-
             for t in tempstr:
                 sub_comp = self.get_2vec(t, segments, idx)
                 final = [self.posxy[0] + sub_comp[0], self.posxy[1] + sub_comp[1]]
@@ -375,20 +356,7 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
                 line_data.append(final)
                 self.state_idx += 1
 
-            # start = intermediate_idx
-            # end = intermediate_idx + len(line_data)-1
-            # temp_edges = [[i, i+1] for i in range(start, end)]
-
-            # # move current needle to last position
-
-            # if close_section:
-            #     closing_edge = [self.state_idx-1, intermediate_idx]
-            #     temp_edges.append(closing_edge)
-            #     self.posxy = tuple(line_data[0])
-            # else:
-            #     self.posxy = tuple(line_data[-1])
-            temp_edges = self.make_edges(close_section, intermediate_idx, line_data)
-
+            temp_edges = self.make_edges(close_section, intermediate_idx, line_data, -1)
             return line_data, temp_edges
 
         elif section_type == 'bezier_curve_to_absolute':
@@ -430,20 +398,7 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
             intermediate_idx = self.state_idx
             self.state_idx += (len(points) + 1)
 
-            # rrefactorize!
-            start = intermediate_idx
-            end = intermediate_idx + len(line_data) + 1
-            temp_edges = [[i, i+1] for i in range(start, end)]
-
-            # move current needle to last position
-            if close_section:
-                closing_edge = [self.state_idx-1, intermediate_idx]
-                temp_edges.append(closing_edge)
-                self.posxy = tuple(line_data[0])
-            else:
-                self.posxy = tuple(line_data[-1])
-            # temp_edges = self.make_edges(close_section, intermediate_idx, line_data)
-
+            temp_edges = self.make_edges(close_section, intermediate_idx, line_data, 1)
             return line_data, temp_edges
 
     def get_2vec(self, t, segments, idx):
@@ -474,9 +429,9 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
             intermediate_idx = self.state_idx
         return intermediate_idx, line_data
 
-    def make_edges(self, close_section, intermediate_idx, line_data):
+    def make_edges(self, close_section, intermediate_idx, line_data, offset):
         start = intermediate_idx
-        end = intermediate_idx + len(line_data)-1
+        end = intermediate_idx + len(line_data) + offset
         temp_edges = [[i, i+1] for i in range(start, end)]
 
         # move current needle to last position
