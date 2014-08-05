@@ -326,7 +326,7 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
                 self.posxy = (xy[0], xy[1])
             return
 
-        elif section_type == 'line_to_absolute':
+        elif section_type in {'line_to_absolute', 'line_to_relative'}:
 
             ''' assumes you have posxy (current needle position) where you want it,
             and draws a line from it to the first set of 2d coordinates, and
@@ -334,27 +334,19 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
 
             intermediate_idx, line_data = self.push_forward()
             tempstr = line.split(' ')
-            for t in tempstr:
-                sub_comp = self.get_2vec(t, segments, idx)
-                line_data.append(sub_comp)
-                self.state_idx += 1
 
-            temp_edges = self.make_edges(close_section, intermediate_idx, line_data, -1)
-            return line_data, temp_edges
-
-        elif section_type == 'line_to_relative':
-
-            '''experimental.. will start from current posxy'''
-
-            intermediate_idx, line_data = self.push_forward()
-            tempstr = line.split(' ')
-            for t in tempstr:
-                sub_comp = self.get_2vec(t, segments, idx)
-                final = [self.posxy[0] + sub_comp[0], self.posxy[1] + sub_comp[1]]
-                self.posxy = tuple(final)
-
-                line_data.append(final)
-                self.state_idx += 1
+            if section_type == 'line_to_absolute':
+                for t in tempstr:
+                    sub_comp = self.get_2vec(t, segments, idx)
+                    line_data.append(sub_comp)
+                    self.state_idx += 1
+            else:
+                for t in tempstr:
+                    sub_comp = self.get_2vec(t, segments, idx)
+                    final = [self.posxy[0] + sub_comp[0], self.posxy[1] + sub_comp[1]]
+                    self.posxy = tuple(final)
+                    line_data.append(final)
+                    self.state_idx += 1
 
             temp_edges = self.make_edges(close_section, intermediate_idx, line_data, -1)
             return line_data, temp_edges
