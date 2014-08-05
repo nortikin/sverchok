@@ -286,6 +286,9 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
                 final_edges.extend(edges)
                 self.posxy = verts[-1]
 
+        # print(len(final_verts), '...', final_edges[-1])
+        # if len(final_verts) in final_edges[-1]:
+        #     final_edges.pop()
         return final_verts, final_edges
 
     def parse_path_line(self, idx, segments, line, section_type, close_section):
@@ -344,7 +347,7 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
             temp_edges = self.make_edges(close_section, intermediate_idx, line_data, -1)
             return line_data, temp_edges
 
-        elif section_type == 'bezier_curve_to_absolute':
+        elif section_type in {'bezier_curve_to_absolute', 'bezier_curve_to_relative'}:
 
             '''
             expects 5 params:
@@ -355,22 +358,30 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
             '''
 
             tempstr = line.split(' ')
-
             if not len(tempstr) == 5:
                 print('error on line: ', line)
                 return
 
             ''' fully defined '''
+            vec = lambda v: Vector((v[0], v[1], 0))
+            relative = lambda a, b: [a[0]+b[0], a[1]+b[1]]
 
             knot1 = [self.posxy[0], self.posxy[1]]
-            handle1 = self.get_2vec(tempstr[0], segments, idx)
-            handle2 = self.get_2vec(tempstr[1], segments, idx)
-            knot2 = self.get_2vec(tempstr[2], segments, idx)
+            if section_type == 'bezier_curve_to_absolute':
+                handle1 = self.get_2vec(tempstr[0], segments, idx)
+                handle2 = self.get_2vec(tempstr[1], segments, idx)
+                knot2 = self.get_2vec(tempstr[2], segments, idx)
+            else:
+                points = []
+                for j in range(3):
+                    point_pre = self.get_2vec(tempstr[j], segments, idx)
+                    point = relative(self.posxy, point_pre)
+                    points.append(point)
+                    self.posxy = tuple(point)
+                handle1, handle2, knot2 = points
+
             r = self.get_int(tempstr[3], segments, idx)
             s = self.get_int(tempstr[4], segments, idx)  # not used yet
-
-            vec = lambda v: Vector((v[0], v[1], 0))
-
             bezier = vec(knot1), vec(handle1), vec(handle2), vec(knot2), r
             points = interpolate_bezier(*bezier)
 
