@@ -247,9 +247,35 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
                 continue
 
             if section_type == 'close_now':
-                edges = [self.state_idx-1, 0]
-                final_edges.extend([edges])
-                # this is the end of the loop, maybe use break
+
+                # print(final_edges[-3:])
+
+                if len(final_verts) in final_edges[-1]:
+                    ''' 
+                    does the current last index refer to a non existing index?
+                    this one can be removed then (immediately)
+                    '''
+                    final_edges.pop() 
+
+                    ''' but is the last vertex cooincident with the first vertex
+                    thus allowing a closed loop. Let's check '''
+                    last_edge_idx = final_edges[-1][1]
+                    a = Vector(final_verts[0])
+                    b = Vector(final_verts[last_edge_idx])
+                    if (a-b).length < 0.0005:
+                        final_edges[-1][1] = 0
+                        final_verts.pop()
+                    else:
+                        print('here be dragons. last vertex is not close enough')
+
+                else:
+                    ''' 
+                    at this point there is probably distance between end
+                    point and start..so this bridges the gap 
+                    '''
+                    edges = [self.state_idx-1, 0]
+                    final_edges.extend([edges])
+                    # this is the end of the loop, maybe use break
                 continue
 
             '''
