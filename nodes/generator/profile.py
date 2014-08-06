@@ -251,11 +251,11 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
                 # print(final_edges[-3:])
 
                 if len(final_verts) in final_edges[-1]:
-                    ''' 
+                    '''
                     does the current last index refer to a non existing index?
                     this one can be removed then (immediately)
                     '''
-                    final_edges.pop() 
+                    final_edges.pop()
 
                     ''' but is the last vertex cooincident with the first vertex
                     thus allowing a closed loop. Let's check '''
@@ -269,14 +269,15 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
                         print('here be dragons. last vertex is not close enough')
 
                 else:
-                    ''' 
+                    '''
                     at this point there is probably distance between end
-                    point and start..so this bridges the gap 
+                    point and start..so this bridges the gap
                     '''
                     edges = [self.state_idx-1, 0]
                     final_edges.extend([edges])
-                    # this is the end of the loop, maybe use break
-                continue
+
+                # end of processing
+                break
 
             '''
             if the user really needs z as last value
@@ -336,6 +337,8 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
             : means the value will be cast as an int even if you input float
         z   : is optional for closing a line
         X   : as a final command to close the edges (cyclic) [-1, 0]
+            in addition, if the first and last vertex share coordinate space
+            the last vertex is dropped and the cycle is made anyway.
         #   : single line comment prefix
 
         '''
