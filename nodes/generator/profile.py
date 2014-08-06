@@ -315,7 +315,7 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
         # print(len(final_verts), '...', final_edges[-1])
         if len(final_verts) in final_edges[-1]:
             final_edges.pop()
-        return final_verts, final_edges
+        return final_verts, [final_edges]
 
     def parse_path_line(self, idx, segments, line, section_type, close_section):
         '''
