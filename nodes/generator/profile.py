@@ -28,6 +28,7 @@ from bpy.props import BoolProperty, StringProperty, EnumProperty, FloatVectorPro
 from mathutils import Vector
 from mathutils.geometry import interpolate_bezier
 
+from utils.sv_curve_utils import Arc
 from node_tree import SverchCustomTreeNode
 from data_structure import fullList, updateNode, dataCorrect, SvSetSocketAnyType, SvGetSocketAnyType
 
@@ -239,6 +240,8 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
                 'l': 'line_to_relative',
                 'C': 'bezier_curve_to_absolute',
                 'c': 'bezier_curve_to_relative',
+                'A': 'arc_to_absolute',
+                'a': 'arc_to_relative',
                 'X': 'close_now',
                 '#': 'comment'
             }.get(line.strip()[0])
@@ -388,7 +391,7 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
 
             tempstr = line.split(' ')
             if not len(tempstr) == 5:
-                print('error on line: ', line)
+                print('error on line CurveTo: ', line)
                 return
 
             ''' fully defined '''
@@ -409,8 +412,8 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
                     self.posxy = tuple(point)
                 handle1, handle2, knot2 = points
 
-            r = self.get_int(tempstr[3], segments, idx)
-            s = self.get_int(tempstr[4], segments, idx)  # not used yet
+            r = self.get_typed(tempstr[3], segments, idx, int)
+            s = self.get_typed(tempstr[4], segments, idx, int)  # not used yet
             bezier = vec(knot1), vec(handle1), vec(handle2), vec(knot2), r
             points = interpolate_bezier(*bezier)
 
@@ -418,6 +421,57 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
             # be aware , we drop the first point.
             points = points[1:]
             line_data = [[v[0], v[1]] for v in points]
+
+            self.state_idx -= 1
+            intermediate_idx = self.state_idx
+            self.state_idx += (len(points) + 1)
+
+            temp_edges = self.make_edges(close_section, intermediate_idx, line_data, 1)
+            return line_data, temp_edges
+
+        elif section_type in {'arc_to_absolute', 'arc_to_relative'}:
+
+            '''
+            (rx=3.0, ry=3.0, xaxis_rot=0, flag1=1, flag2=0, x=11.6, y=13.3, num_verts=20)
+            A rx,ry rot flag1 flag2 x,y num_verts
+            '''
+            relative = lambda a, b: [a[0]+b[0], a[1]+b[1]]
+
+            tempstr = line.split(' ')
+            if not len(tempstr) == 6:
+                print(tempstr)
+                print('error on ArcTo line: ', line)
+                return
+
+            points = []
+            sx = self.posxy[0]
+            sy = self.posxy[1]
+            start = complex(sx, sy)  # 2vec
+            radius = complex(*self.get_2vec(tempstr[0], segments, idx))
+
+            xaxis_rot = self.get_typed(tempstr[1], segments, idx, float)
+            flag1 = self.get_typed(tempstr[2], segments, idx, int)
+            flag2 = self.get_typed(tempstr[3], segments, idx, int)
+            num_verts = self.get_typed(tempstr[5], segments, idx, int)
+
+            if section_type == 'arc_to_absolute':
+                end = complex(*self.get_2vec(tempstr[4], segments, idx))
+            else:
+                xy_end_pre = self.get_2vec(tempstr[4], segments, idx)
+                xy_end_final = relative(self.posxy, xy_end_pre)
+                end = complex(*xy_end_final)
+
+            arc = Arc(start, radius, xaxis_rot, flag1, flag2, end)
+
+            theta = 1/num_verts
+
+            for i in range(num_verts):
+                point = arc.point(theta * i)
+                points.append(point)
+
+            # we drop the first point.
+            points = points[1:]
+            line_data = points
 
             self.state_idx -= 1
             intermediate_idx = self.state_idx
@@ -437,12 +491,13 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
             sub_comp.append(pushval)
         return sub_comp
 
-    def get_int(self, component, segments, idx):
+    def get_typed(self, component, segments, idx, typed):
+        ''' typed can be any castable type, int / float...etc ) '''
         if component in segments:
             pushval = segments[component]['data'][idx]
         else:
             pushval = component
-        return int(pushval)
+        return typed(pushval)
 
     def push_forward(self):
         if self.previous_command in {'move_to_absolute', 'move_to_relative'}:
