@@ -18,12 +18,13 @@
 
 import bpy
 from mathutils import Vector
-from bpy.props import BoolProperty, FloatVectorProperty, StringProperty, FloatProperty, EnumProperty
+from bpy.props import (BoolProperty, FloatVectorProperty, StringProperty,
+                       FloatProperty, EnumProperty)
 
 from node_tree import SverchCustomTreeNode, MatrixSocket, VerticesSocket, StringsSocket
 from data_structure import (
-    dataCorrect, node_id, updateNode, SvGetSocketAnyType, fullList, Vector_generate,
-    Matrix_generate)
+    dataCorrect, node_id, updateNode, SvGetSocketAnyType, fullList,
+    Vector_generate, Matrix_generate)
 
 from utils import index_viewer_draw as IV
 
@@ -59,6 +60,11 @@ class IndexViewerNode(bpy.types.Node, SverchCustomTreeNode):
     activate = BoolProperty(
         name='Show', description='Activate node?',
         default=True,
+        update=updateNode)
+
+    bakebuttonshow = BoolProperty(
+        name='bakebuttonshow', description='show bake button on node',
+        default=False,
         update=updateNode)
 
     draw_bg = BoolProperty(
@@ -148,15 +154,16 @@ class IndexViewerNode(bpy.types.Node, SverchCustomTreeNode):
         row.prop(self, "display_edge_index", toggle=True)
         row.prop(self, "display_face_index", toggle=True)
 
-        row = col.row(align=True)
-        row.scale_y = 3
-        row.operator('object.sv_text_baking', text='B A K E')
-        row = col.row(align=True)
-        row.prop(self, "font_size")
-        #fonts_ = [(n.name,n.name,n.name) for n in bpy.data.fonts]
-        #self.fonts = EnumProperty(items=fonts_, name='fonts', update=updateNode)
-        row = col.row(align=True)
-        row.prop(self, "fonts", expand=False)
+        if self.bakebuttonshow:
+            row = col.row(align=True)
+            row.scale_y = 3
+            row.operator('object.sv_text_baking', text='B A K E')
+            row = col.row(align=True)
+            row.prop(self, "font_size")
+            #fonts_ = [(n.name,n.name,n.name) for n in bpy.data.fonts]
+            #self.fonts = EnumProperty(items=fonts_, name='fonts', update=updateNode)
+            row = col.row(align=True)
+            row.prop(self, "fonts", expand=False)
 
     def get_settings(self):
         '''Produce a dict of settings for the callback'''
@@ -216,6 +223,8 @@ class IndexViewerNode(bpy.types.Node, SverchCustomTreeNode):
                 col4 = row.column(align=True)
                 col4.scale_x = little_width
                 col4.prop(self, colprop, text="")
+
+        layout.prop(self, 'bakebuttonshow')
 
     # baking
     def collect_text_to_bake(self):
@@ -310,7 +319,7 @@ class IndexViewerNode(bpy.types.Node, SverchCustomTreeNode):
             text = str(index)
         # Create and name TextCurve object
         bpy.ops.object.text_add(view_align=False,
-                                enter_editmode=False, location=origin)
+                                enter_editmode=False,location=origin)
         ob = bpy.context.object
         ob.name = 'sv_text_' + text
         tcu = ob.data
@@ -353,6 +362,7 @@ class IndexViewerNode(bpy.types.Node, SverchCustomTreeNode):
         self.use_custom_color = True
 
         if self.activate and iv_links:
+            IV.callback_disable(n_id)
             draw_verts, draw_matrix = [], []
 
             # gather vertices from input
@@ -392,10 +402,9 @@ class IndexViewerNode(bpy.types.Node, SverchCustomTreeNode):
             bg = self.draw_bg
             settings = self.get_settings()
             IV.callback_enable(
-                n_id,
-                draw_verts, draw_edges, draw_faces, draw_matrix,
-                bg, settings.copy(), text)
-
+                n_id, draw_verts, draw_edges, draw_faces,
+                draw_matrix, bg, settings.copy(), text)
+                
             self.color = READY_COLOR
         else:
             self.color = FAIL_COLOR
