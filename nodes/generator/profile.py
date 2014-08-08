@@ -452,7 +452,9 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
             xaxis_rot = self.get_typed(tempstr[1], segments, idx, float)
             flag1 = self.get_typed(tempstr[2], segments, idx, int)
             flag2 = self.get_typed(tempstr[3], segments, idx, int)
-            num_verts = self.get_typed(tempstr[5], segments, idx, int)
+
+            # numverts, requires -1 else it means segments.
+            num_verts = self.get_typed(tempstr[5], segments, idx, int) - 1  
 
             if section_type == 'arc_to_absolute':
                 end = complex(*self.get_2vec(tempstr[4], segments, idx))
@@ -465,11 +467,13 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
 
             theta = 1/num_verts
 
-            for i in range(num_verts):
+            for i in range(num_verts+1):
                 point = arc.point(theta * i)
                 points.append(point)
 
             # we drop the first point.
+            # but maybe this should see if the previous commands was not a 'START'
+            #  because that would mean that the first point/vertex does need to be made
             points = points[1:]
             line_data = points
 
