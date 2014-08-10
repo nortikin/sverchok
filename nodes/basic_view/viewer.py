@@ -149,6 +149,12 @@ class ViewerNode(bpy.types.Node, SverchCustomTreeNode):
                     default=False,
                     update=updateNode)
 
+    bakebuttonshow = BoolProperty(
+        name='bakebuttonshow', description='show bake button on node',
+        default=True,
+        update=updateNode)
+
+
     color_view = SvColors.color
 
     def init(self, context):
@@ -160,11 +166,12 @@ class ViewerNode(bpy.types.Node, SverchCustomTreeNode):
         row = layout.row(align=True)
         row.prop(self, "Vertex_show", text="Verts")
         row.prop(self, "activate", text="Show")
-        row = layout.row()
-        row.scale_y = 4.0
-        opera = row.operator('node.sverchok_mesh_baker', text='B A K E')
-        opera.idname = self.name
-        opera.idtree = self.id_data.name
+        if self.bakebuttonshow:
+            row = layout.row()
+            row.scale_y = 4.0
+            opera = row.operator('node.sverchok_mesh_baker', text='B A K E')
+            opera.idname = self.name
+            opera.idtree = self.id_data.name
         row = layout.row(align=True)
         row.prop(self, "transparant", text="Transp")
         row.prop(self, "shading", text="Shade")
@@ -172,6 +179,9 @@ class ViewerNode(bpy.types.Node, SverchCustomTreeNode):
         row = col.row(align=True)
         row.prop(self, "color_view", text=" ")
         #row.template_color_picker(self, 'color_view', value_slider=True)
+
+    def draw_buttons_ext(self, context, layout):
+        layout.prop(self, 'bakebuttonshow')
 
     # reset n_id on duplicate (shift-d)
     def copy(self, node):
@@ -254,3 +264,6 @@ def register():
 def unregister():
     bpy.utils.unregister_class(SvObjBake)
     bpy.utils.unregister_class(ViewerNode)
+
+if __name__ == '__main__':
+    register()

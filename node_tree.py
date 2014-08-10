@@ -171,9 +171,9 @@ class SverchCustomTree(NodeTree):
         sverchok_update(tree=self)
         #should turn off tree. for now it does by updating it
 
-    sv_animate = BoolProperty(name="Animate", default=True)
-    sv_show = BoolProperty(name="Show", default=True, update=turn_off_ng)
-    sv_bake = BoolProperty(name="Bake", default=True)
+    sv_animate = BoolProperty(name="Animate", default=True, description='Animate this layout')
+    sv_show = BoolProperty(name="Show", default=True, description='Show this layout', update=turn_off_ng)
+    sv_bake = BoolProperty(name="Bake", default=True, description='Bake this layout')
     sv_user_colors = StringProperty(default="")
 
     # get update list for debug info, tuple (fulllist,dictofpartiallists)
@@ -237,3 +237,4 @@ def unregister():
     bpy.utils.unregister_class(MatrixSocket)
     bpy.utils.unregister_class(SverchCustomTree)
     bpy.utils.unregister_class(SvColors)
+
