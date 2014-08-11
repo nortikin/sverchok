@@ -60,7 +60,6 @@ class PathParser(object):
     def get_geometry(self):
         '''
         This section is partial preprocessor per line found
-        this function expects that all remapable lines contain lower case chars.
         '''
 
         final_verts, final_edges = [], []
@@ -162,14 +161,16 @@ class PathParser(object):
 
     def parse_path_line(self):
         '''
-        expects input like
+        this function expects that all lines contain lower case chars for remapping, it
+        expects input like:
 
         M|m <2v coordinate>
         L|l <2v coordinate 1> <2v coordinate 2> <2v coordinate n> [z]
         C|c <2v control1> <2v control2> <2v knot2> <int num_segments> <int even_spread> [z]
         A|a <2v rx,ry> <float rot> <int flag1> <int flag2> <2v x,y> <int num_verts> [z]
         X
-
+        #
+        -----
         <>  : mandatory field
         []  : optional field
         2v  : two point vector `a,b`
@@ -198,7 +199,7 @@ class PathParser(object):
             if section_type == 'move_to_absolute':
                 self.posxy = (xy[0], xy[1])
             else:
-                self.posxy = (self.posxy[0] + xy[0], self.posxy[1] + xy[1])
+                self.posxy = relative(self.posxy, xy)
             return
 
         elif section_type in {'line_to_absolute', 'line_to_relative'}:
