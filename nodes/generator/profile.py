@@ -38,32 +38,32 @@ idx_map = {i: j for i, j in enumerate(ascii_lowercase)}
 
 class PathParser(object):
 
-    def __init__(self, filename):
+    def __init__(self, filename, segments, idx):
         self.posxy = (0, 0)
         self.previos_posxy = (0, 0)
         self.filename = filename
         self.state_idx = 0
         self.previous_command = "START"
+        self.segments = segments
+        self.profile_idx = idx
+        self._get_lines()
 
-    def parse_path_file(self, segments, idx):
+    def _get_lines(self):
+        ''' arrives here only if the file exists '''
+        file_str = bpy.data.texts[self.filename]
+        self.lines = file_str.as_string().split('\n')
+
+    def parse_path_file(self):
         '''
-        This section is partial preprocessor per line found in the file at bpy.data.texts[filename]
+        This section is partial preprocessor per line found
 
         segments is a dict of letters to variables mapping.
         this function expects that all remapable lines contain lower case chars.
         '''
-        file_str = bpy.data.texts[self.filename]
-        lines = file_str.as_string().split('\n')
-
-        # initial start position, unless specified otherwise.
-        posxy = [0, 0]
-        result = []
-        self.state_idx = 0  # reset this
-        self.previous_command = "START"
 
         final_verts, final_edges = [], []
 
-        for line in lines:
+        for line in self.lines:
             if not line:
                 continue
 
@@ -142,7 +142,7 @@ class PathParser(object):
                 '''doesn't end with ; or z, Z '''
                 line = line.strip()[1:].strip()
 
-            results = self.parse_path_line(idx, segments, line, section_type, close_section)
+            results = self.parse_path_line(line, section_type, close_section)
             self.previous_command = section_type
 
             if results:
@@ -156,13 +156,14 @@ class PathParser(object):
             final_edges.pop()
         return final_verts, [final_edges]
 
-    def parse_path_line(self, idx, segments, line, section_type, close_section):
+    def parse_path_line(self, line, section_type, close_section):
         '''
         expects input like
 
         M|m <2v coordinate>
         L|l <2v coordinate 1> <2v coordinate 2> <2v coordinate n> [z]
         C|c <2v control1> <2v control2> <2v knot2> <int num_segments> <int even_spread> [z]
+        A|a <2v rx,ry> <float rot> <int flag1> <int flag2> <2v x,y> <int num_verts> [z]
         X
 
         <>  : mandatory field
@@ -173,6 +174,7 @@ class PathParser(object):
                 - no backticks.
         <int .. >
             : means the value will be cast as an int even if you input float
+            : flags generally are 0 or 1.
         z   : is optional for closing a line
         X   : as a final command to close the edges (cyclic) [-1, 0]
             in addition, if the first and last vertex share coordinate space
@@ -182,7 +184,7 @@ class PathParser(object):
         '''
 
         if section_type in {'move_to_absolute', 'move_to_relative'}:
-            xy = self.get_2vec(line, segments, idx)
+            xy = self.get_2vec(line)
             if section_type == 'move_to_absolute':
                 self.posxy = (xy[0], xy[1])
             else:
@@ -200,12 +202,12 @@ class PathParser(object):
 
             if section_type == 'line_to_absolute':
                 for t in tempstr:
-                    sub_comp = self.get_2vec(t, segments, idx)
+                    sub_comp = self.get_2vec(t)
                     line_data.append(sub_comp)
                     self.state_idx += 1
             else:
                 for t in tempstr:
-                    sub_comp = self.get_2vec(t, segments, idx)
+                    sub_comp = self.get_2vec(t)
                     final = [self.posxy[0] + sub_comp[0], self.posxy[1] + sub_comp[1]]
                     self.posxy = tuple(final)
                     line_data.append(final)
@@ -235,20 +237,20 @@ class PathParser(object):
 
             knot1 = [self.posxy[0], self.posxy[1]]
             if section_type == 'bezier_curve_to_absolute':
-                handle1 = self.get_2vec(tempstr[0], segments, idx)
-                handle2 = self.get_2vec(tempstr[1], segments, idx)
-                knot2 = self.get_2vec(tempstr[2], segments, idx)
+                handle1 = self.get_2vec(tempstr[0])
+                handle2 = self.get_2vec(tempstr[1])
+                knot2 = self.get_2vec(tempstr[2])
             else:
                 points = []
                 for j in range(3):
-                    point_pre = self.get_2vec(tempstr[j], segments, idx)
+                    point_pre = self.get_2vec(tempstr[j])
                     point = relative(self.posxy, point_pre)
                     points.append(point)
                     self.posxy = tuple(point)
                 handle1, handle2, knot2 = points
 
-            r = self.get_typed(tempstr[3], segments, idx, int)
-            s = self.get_typed(tempstr[4], segments, idx, int)  # not used yet
+            r = self.get_typed(tempstr[3], int)
+            s = self.get_typed(tempstr[4], int)  # not used yet
             bezier = vec(knot1), vec(handle1), vec(handle2), vec(knot2), r
             points = interpolate_bezier(*bezier)
 
@@ -282,19 +284,19 @@ class PathParser(object):
             sx = self.posxy[0]
             sy = self.posxy[1]
             start = complex(sx, sy)  # 2vec
-            radius = complex(*self.get_2vec(tempstr[0], segments, idx))
+            radius = complex(*self.get_2vec(tempstr[0]))
 
-            xaxis_rot = self.get_typed(tempstr[1], segments, idx, float)
-            flag1 = self.get_typed(tempstr[2], segments, idx, int)
-            flag2 = self.get_typed(tempstr[3], segments, idx, int)
+            xaxis_rot = self.get_typed(tempstr[1], float)
+            flag1 = self.get_typed(tempstr[2], int)
+            flag2 = self.get_typed(tempstr[3], int)
 
             # numverts, requires -1 else it means segments.
-            num_verts = self.get_typed(tempstr[5], segments, idx, int) - 1
+            num_verts = self.get_typed(tempstr[5], int) - 1
 
             if section_type == 'arc_to_absolute':
-                end = complex(*self.get_2vec(tempstr[4], segments, idx))
+                end = complex(*self.get_2vec(tempstr[4]))
             else:
-                xy_end_pre = self.get_2vec(tempstr[4], segments, idx)
+                xy_end_pre = self.get_2vec(tempstr[4])
                 xy_end_final = relative(self.posxy, xy_end_pre)
                 end = complex(*xy_end_final)
 
@@ -319,7 +321,10 @@ class PathParser(object):
             temp_edges = self.make_edges(close_section, intermediate_idx, line_data, 1)
             return line_data, temp_edges
 
-    def get_2vec(self, t, segments, idx):
+    def get_2vec(self, t):
+        idx = self.profile_idx
+        segments = self.segments
+
         components = t.split(',')
         sub_comp = []
         for char in components:
@@ -330,8 +335,11 @@ class PathParser(object):
             sub_comp.append(pushval)
         return sub_comp
 
-    def get_typed(self, component, segments, idx, typed):
+    def get_typed(self, component, typed):
         ''' typed can be any castable type, int / float...etc ) '''
+        idx = self.profile_idx
+        segments = self.segments
+
         if component in segments:
             pushval = segments[component]['data'][idx]
         else:
@@ -520,8 +528,8 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
         full_result_edges = []
 
         for idx in range(longest):
-            path_object = PathParser(self.filename)
-            result, edges = path_object.parse_path_file(segments, idx)
+            path_object = PathParser(self.filename, segments, idx)
+            result, edges = path_object.parse_path_file()
 
             axis_fill = {
                 'X': lambda coords: (0, coords[0], coords[1]),
