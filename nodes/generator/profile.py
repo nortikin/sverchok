@@ -18,9 +18,8 @@
 
 ''' by Dealga McArdle | 2014 '''
 
-import parser
+# import parser
 from ast import literal_eval
-from math import *
 from string import ascii_lowercase
 
 import bpy
@@ -44,7 +43,10 @@ class PathParser(object):
         self.filename = filename
         self.state_idx = 0
         self.previous_command = "START"
+
+        ''' segments is a dict of letters to variables mapping. '''
         self.segments = segments
+
         self.profile_idx = idx
         self._get_lines()
 
@@ -53,11 +55,9 @@ class PathParser(object):
         file_str = bpy.data.texts[self.filename]
         self.lines = file_str.as_string().split('\n')
 
-    def parse_path_file(self):
+    def get_geometry(self):
         '''
         This section is partial preprocessor per line found
-
-        segments is a dict of letters to variables mapping.
         this function expects that all remapable lines contain lower case chars.
         '''
 
@@ -85,8 +85,6 @@ class PathParser(object):
                 continue
 
             if section_type == 'close_now':
-
-                # print(final_edges[-3:])
 
                 if len(final_verts) in final_edges[-1]:
                     '''
@@ -333,6 +331,7 @@ class PathParser(object):
             else:
                 pushval = float(char)
             sub_comp.append(pushval)
+
         return sub_comp
 
     def get_typed(self, component, typed):
@@ -344,6 +343,7 @@ class PathParser(object):
             pushval = segments[component]['data'][idx]
         else:
             pushval = component
+
         return typed(pushval)
 
     def push_forward(self):
@@ -354,6 +354,7 @@ class PathParser(object):
         else:
             line_data = []
             intermediate_idx = self.state_idx
+
         return intermediate_idx, line_data
 
     def make_edges(self, close_section, intermediate_idx, line_data, offset):
@@ -523,13 +524,12 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
             return
 
         self.homogenize_input(segments, longest)
-
         full_result_verts = []
         full_result_edges = []
 
         for idx in range(longest):
             path_object = PathParser(self.filename, segments, idx)
-            result, edges = path_object.parse_path_file()
+            vertices, edges = path_object.get_geometry()
 
             axis_fill = {
                 'X': lambda coords: (0, coords[0], coords[1]),
@@ -537,8 +537,8 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
                 'Z': lambda coords: (coords[0], coords[1], 0)
                 }.get(self.current_axis)
 
-            result = list(map(axis_fill, result))
-            full_result_verts.append(result)
+            vertices = list(map(axis_fill, vertices))
+            full_result_verts.append(vertices)
             full_result_edges.append(edges)
 
         if full_result_verts:
