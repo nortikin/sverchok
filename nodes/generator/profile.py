@@ -62,10 +62,9 @@ class PathParser(object):
         '''
 
         final_verts, final_edges = [], []
+        lines = [line for line in self.lines if line]
 
-        for line in self.lines:
-            if not line:
-                continue
+        for line in lines:
 
             # svg type path descriptions, not a full implementation
             section_type = {
@@ -85,40 +84,12 @@ class PathParser(object):
                 continue
 
             if section_type == 'close_now':
-
-                if len(final_verts) in final_edges[-1]:
-                    '''
-                    does the current last index refer to a non existing index?
-                    this one can be removed then (immediately)
-                    '''
-                    final_edges.pop()
-
-                    ''' but is the last vertex cooincident with the first vertex
-                    thus allowing a closed loop. Let's check '''
-                    last_edge_idx = final_edges[-1][1]
-                    a = Vector(final_verts[0])
-                    b = Vector(final_verts[last_edge_idx])
-                    if (a-b).length < 0.0005:
-                        final_edges[-1][1] = 0
-                        final_verts.pop()
-                    else:
-                        print('here be dragons. last vertex is not close enough')
-
-                else:
-                    '''
-                    at this point there is probably distance between end
-                    point and start..so this bridges the gap
-                    '''
-                    edges = [self.state_idx-1, 0]
-                    final_edges.extend([edges])
-
-                # end of processing
+                self.close_path(final_verts, final_edges)
                 break
 
             '''
-            if the user really needs z as last value
-            and z is indeed a variable and not intended to
-            close a section, then you must add ;
+            if the user really needs z as last value and z is indeed a variable
+            and not intended to close a section, then you must add ;
             '''
 
             # closed segment detection.
@@ -153,6 +124,33 @@ class PathParser(object):
         if len(final_verts) in final_edges[-1]:
             final_edges.pop()
         return final_verts, [final_edges]
+
+    def close_path(self, final_verts, final_edges):
+        if len(final_verts) in final_edges[-1]:
+            '''
+            does the current last index refer to a non existing index?
+            this one can be removed then (immediately)
+            '''
+            final_edges.pop()
+
+            ''' but is the last vertex cooincident with the first vertex
+            thus allowing a closed loop. Let's check '''
+            last_edge_idx = final_edges[-1][1]
+            a = Vector(final_verts[0])
+            b = Vector(final_verts[last_edge_idx])
+            if (a-b).length < 0.0005:
+                final_edges[-1][1] = 0
+                final_verts.pop()
+            else:
+                print('here be dragons. last vertex is not close enough')
+
+        else:
+            '''
+            at this point there is probably distance between end
+            point and start..so this bridges the gap
+            '''
+            edges = [self.state_idx-1, 0]
+            final_edges.extend([edges])
 
     def parse_path_line(self, line, section_type, close_section):
         '''
@@ -406,12 +404,9 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
         default="Z",
         update=mode_change)
 
-    # profile_str = StringProperty(default="", update=updateNode)
     profile_file = StringProperty(default="", update=updateNode)
     filename = StringProperty(default="")
-    posxy = FloatVectorProperty(default=(0.0, 0.0), size=2)  # update=updateNode)
-    # state_idx = IntProperty(default=0)
-    # previous_command = StringProperty(default="START")
+    posxy = FloatVectorProperty(default=(0.0, 0.0), size=2)
 
     def draw_buttons(self, context, layout):
         row = layout.row()
@@ -429,7 +424,6 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
     def adjust_inputs(self):
         '''
         takes care of adding new inputs until reaching 26,
-        think of using SN or EK if you get that far.
         '''
         inputs = self.inputs
         if inputs[-1].links:
@@ -469,9 +463,17 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
 
         self.process()
 
+    def homogenize_input(self, segments, longest):
+        '''
+        edit segments in place, extend all to match length of longest
+        '''
+        for letter, letter_dict in segments.items():
+            if letter_dict['length'] < longest:
+                fullList(letter_dict['data'], longest)
+
     def meta_get(self, s_name, fallback, level):
         '''
-        private function for the processing function, accepts level 0..2
+        private function for the get_input function, accepts level 0..2
         - if socket has no links, then return fallback value
         - s_name can be an index instead of socket name
         '''
@@ -487,14 +489,6 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
             return data
         else:
             return fallback
-
-    def homogenize_input(self, segments, longest):
-        '''
-        edit segments in place, extend all to match length of longest
-        '''
-        for letter, letter_dict in segments.items():
-            if letter_dict['length'] < longest:
-                fullList(letter_dict['data'], longest)
 
     def get_input(self):
         '''
