@@ -18,7 +18,6 @@
 
 ''' by Dealga McArdle | 2014 '''
 
-# import parser
 from ast import literal_eval
 from string import ascii_lowercase
 
@@ -43,6 +42,9 @@ class PathParser(object):
         self.filename = filename
         self.state_idx = 0
         self.previous_command = "START"
+        self.close_section = ""
+        self.section_type = ""
+        self.stripped_line = ""
 
         ''' segments is a dict of letters to variables mapping. '''
         self.segments = segments
@@ -67,7 +69,7 @@ class PathParser(object):
         for line in lines:
 
             # svg type path descriptions, not a full implementation
-            section_type = {
+            self.section_type = {
                 'M': 'move_to_absolute',
                 'm': 'move_to_relative',
                 'L': 'line_to_absolute',
@@ -80,39 +82,16 @@ class PathParser(object):
                 '#': 'comment'
             }.get(line.strip()[0])
 
-            if (not section_type) or (section_type == 'comment'):
+            if (not self.section_type) or (self.section_type == 'comment'):
                 continue
 
-            if section_type == 'close_now':
+            if self.section_type == 'close_now':
                 self.close_path(final_verts, final_edges)
                 break
 
-            '''
-            if the user really needs z as last value and z is indeed a variable
-            and not intended to close a section, then you must add ;
-            '''
-
-            # closed segment detection.
-            close_section = False
-            last_char = line.strip()[-1]
-            if last_char in {'z', 'Z'}:
-                '''deal with closing current verts edges combo'''
-                line = line.strip()[1:-1].strip()
-                close_section = True
-
-            elif last_char in {';'}:
-                '''user is crazy and has a..z filled with variables
-                good for user.
-                '''
-                line = line.strip()[1:-1].strip()
-                close_section = False
-
-            else:
-                '''doesn't end with ; or z, Z '''
-                line = line.strip()[1:].strip()
-
-            results = self.parse_path_line(line, section_type, close_section)
-            self.previous_command = section_type
+            self.quickread_and_strip(line)
+            results = self.parse_path_line()
+            self.previous_command = self.section_type
 
             if results:
                 verts, edges = results
@@ -124,6 +103,34 @@ class PathParser(object):
         if len(final_verts) in final_edges[-1]:
             final_edges.pop()
         return final_verts, [final_edges]
+
+    def quickread_and_strip(self, line):
+        '''
+        closed segment detection.
+
+        if the user really needs z as last value and z is indeed a variable
+        and not intended to close a section, then you must add ;
+        '''
+        close_section = False
+        last_char = line.strip()[-1]
+        if last_char in {'z', 'Z'}:
+            '''deal with closing current verts edges combo'''
+            stripped_line = line.strip()[1:-1].strip()
+            close_section = True
+
+        elif last_char in {';'}:
+            '''user is crazy and has a..z filled with variables
+            good for user.
+            '''
+            stripped_line = line.strip()[1:-1].strip()
+            close_section = False
+
+        else:
+            '''doesn't end with ; or z, Z '''
+            stripped_line = line.strip()[1:].strip()
+
+        self.stripped_line = stripped_line
+        self.close_section = close_section
 
     def close_path(self, final_verts, final_edges):
         if len(final_verts) in final_edges[-1]:
@@ -152,7 +159,7 @@ class PathParser(object):
             edges = [self.state_idx-1, 0]
             final_edges.extend([edges])
 
-    def parse_path_line(self, line, section_type, close_section):
+    def parse_path_line(self):
         '''
         expects input like
 
@@ -178,6 +185,11 @@ class PathParser(object):
         #   : single line comment prefix
 
         '''
+
+        # aliases for convenience, none of these are written to after this point.
+        section_type = self.section_type
+        line = self.stripped_line
+        close_section = self.close_section
 
         if section_type in {'move_to_absolute', 'move_to_relative'}:
             xy = self.get_2vec(line)
@@ -209,7 +221,7 @@ class PathParser(object):
                     line_data.append(final)
                     self.state_idx += 1
 
-            temp_edges = self.make_edges(close_section, intermediate_idx, line_data, -1)
+            temp_edges = self.make_edges(intermediate_idx, line_data, -1)
             return line_data, temp_edges
 
         elif section_type in {'bezier_curve_to_absolute', 'bezier_curve_to_relative'}:
@@ -259,7 +271,7 @@ class PathParser(object):
             intermediate_idx = self.state_idx
             self.state_idx += (len(points) + 1)
 
-            temp_edges = self.make_edges(close_section, intermediate_idx, line_data, 1)
+            temp_edges = self.make_edges(intermediate_idx, line_data, 1)
             return line_data, temp_edges
 
         elif section_type in {'arc_to_absolute', 'arc_to_relative'}:
@@ -314,7 +326,7 @@ class PathParser(object):
             intermediate_idx = self.state_idx
             self.state_idx += (len(points) + 1)
 
-            temp_edges = self.make_edges(close_section, intermediate_idx, line_data, 1)
+            temp_edges = self.make_edges(intermediate_idx, line_data, 1)
             return line_data, temp_edges
 
     def get_2vec(self, t):
@@ -355,13 +367,13 @@ class PathParser(object):
 
         return intermediate_idx, line_data
 
-    def make_edges(self, close_section, intermediate_idx, line_data, offset):
+    def make_edges(self, intermediate_idx, line_data, offset):
         start = intermediate_idx
         end = intermediate_idx + len(line_data) + offset
         temp_edges = [[i, i+1] for i in range(start, end)]
 
         # move current needle to last position
-        if close_section:
+        if self.close_section:
             closing_edge = [self.state_idx-1, intermediate_idx]
             temp_edges.append(closing_edge)
             self.posxy = tuple(line_data[0])
