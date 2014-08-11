@@ -29,12 +29,9 @@ from data_structure import updateNode, SvSetSocketAnyType, SvGetSocketAnyType, m
 def mirrorPoint(vertex, vert_a):
     vert = []
     a = Vector(vert_a)
-    mat = Matrix.Translation(2*a)
-    mat_rot = Matrix.Rotation(radians(180), 4, 'X')
-    c = mat*mat_rot
     for i in vertex:
         v = Vector(i)
-        vert.append((c*v)[:])
+        vert.append((v+2*(a-v))[:])
     return vert
 
 def mirrorAxis(vertex, vert_a, vert_b):
