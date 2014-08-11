@@ -133,11 +133,11 @@ class PathParser(object):
         self.close_section = close_section
 
     def close_path(self, final_verts, final_edges):
+        '''
+        does the current last index refer to a non existing index?
+        this one can be removed then (immediately)
+        '''
         if len(final_verts) in final_edges[-1]:
-            '''
-            does the current last index refer to a non existing index?
-            this one can be removed then (immediately)
-            '''
             final_edges.pop()
 
             ''' but is the last vertex cooincident with the first vertex
@@ -145,6 +145,7 @@ class PathParser(object):
             last_edge_idx = final_edges[-1][1]
             a = Vector(final_verts[0])
             b = Vector(final_verts[last_edge_idx])
+
             if (a-b).length < 0.0005:
                 final_edges[-1][1] = 0
                 final_verts.pop()
@@ -185,6 +186,7 @@ class PathParser(object):
         #   : single line comment prefix
 
         '''
+        relative = lambda a, b: [a[0]+b[0], a[1]+b[1]]
 
         # aliases for convenience, none of these are written to after this point.
         section_type = self.section_type
@@ -216,7 +218,7 @@ class PathParser(object):
             else:
                 for t in tempstr:
                     sub_comp = self.get_2vec(t)
-                    final = [self.posxy[0] + sub_comp[0], self.posxy[1] + sub_comp[1]]
+                    final = relative(self.posxy, sub_comp)
                     self.posxy = tuple(final)
                     line_data.append(final)
                     self.state_idx += 1
@@ -241,7 +243,6 @@ class PathParser(object):
 
             ''' fully defined '''
             vec = lambda v: Vector((v[0], v[1], 0))
-            relative = lambda a, b: [a[0]+b[0], a[1]+b[1]]
 
             knot1 = [self.posxy[0], self.posxy[1]]
             if section_type == 'bezier_curve_to_absolute':
@@ -277,10 +278,11 @@ class PathParser(object):
         elif section_type in {'arc_to_absolute', 'arc_to_relative'}:
 
             '''
-            (rx=3.0, ry=3.0, xaxis_rot=0, flag1=1, flag2=0, x=11.6, y=13.3, num_verts=20)
-            A rx,ry rot flag1 flag2 x,y num_verts
+            expects 6 parameters:
+                A rx,ry rot flag1 flag2 x,y num_verts [z]
+            example:
+                A <2v xr,yr> <rot> <int-bool> <int-bool> <2v xend,yend> <int num_verts> [z]
             '''
-            relative = lambda a, b: [a[0]+b[0], a[1]+b[1]]
 
             tempstr = line.split(' ')
             if not len(tempstr) == 6:
