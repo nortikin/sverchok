@@ -289,7 +289,7 @@ class PathParser(object):
             flag2 = self.get_typed(tempstr[3], segments, idx, int)
 
             # numverts, requires -1 else it means segments.
-            num_verts = self.get_typed(tempstr[5], segments, idx, int) - 1  
+            num_verts = self.get_typed(tempstr[5], segments, idx, int) - 1
 
             if section_type == 'arc_to_absolute':
                 end = complex(*self.get_2vec(tempstr[4], segments, idx))
@@ -362,7 +362,6 @@ class PathParser(object):
             self.posxy = tuple(line_data[-1])
 
         return temp_edges
-
 
 
 class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
