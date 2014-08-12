@@ -397,24 +397,21 @@ class PathParser(object):
         turn: 'd-e-b+-a+1.223/2*4'
         into: ['d','-','e','-','b','+','','-','a','+','1.223','/','2','*','4']
         '''
-        idx = self.profile_idx
-
         # extract parens, but allow internal parens if needed.. internal parens
         # are not supported in literal_eval.
         side = component[1:-1]
         pat = '([\(\)-+*\/])'
         chopped = re.split(pat, side)
 
+        # - replace known variable chars with intended variable
+        # - remove empty elements
         for i, ch in enumerate(chopped):
             if ch in self.segments:
-                chopped[i] = str(self.segments[ch]['data'][idx])
-
-        # remove empty elements
+                chopped[i] = str(self.segments[ch]['data'][self.profile_idx])
         chopped = [ch for ch in chopped if ch]
 
-        # replace known variable chars with intended variable
+        # - depending on the parsing mode, return found end value.
         string_repr = ''.join(chopped).strip()
-
         if self.extended_parsing:
             code = parser.expr(string_repr).compile()
             return eval(code)
