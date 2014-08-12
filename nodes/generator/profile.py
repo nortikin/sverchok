@@ -103,6 +103,11 @@ class PathParser(object):
         first_char = line.strip()[0]
         self.section_type = self.supported_types.get(first_char)
 
+    def sanitize_edgekeys(self, final_verts, final_edges):
+        ''' remove references to non existing vertices '''
+        if len(final_verts) in final_edges[-1]:
+            final_edges.pop()
+
     def get_geometry(self):
         '''
         This section is partial preprocessor per line found:
@@ -137,9 +142,7 @@ class PathParser(object):
                 final_edges.extend(edges)
                 self.posxy = verts[-1]
 
-        if len(final_verts) in final_edges[-1]:
-            final_edges.pop()
-
+        self.sanitize_edgekeys(final_verts, final_edges)
         return final_verts, [final_edges]
 
     def quickread_and_strip(self, line):
