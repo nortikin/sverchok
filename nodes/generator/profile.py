@@ -347,16 +347,14 @@ class PathParser(object):
         - it expects to have a valid value for the close_section variable
         '''
 
-        if section_type in {'move_to_absolute', 'move_to_relative'}:
+        t = self.section_type
+        if t in {'move_to_absolute', 'move_to_relative'}:
             return self.perform_MoveTo()
-
-        elif section_type in {'line_to_absolute', 'line_to_relative'}:
+        elif t in {'line_to_absolute', 'line_to_relative'}:
             return self.perform_LineTo()
-
-        elif section_type in {'bezier_curve_to_absolute', 'bezier_curve_to_relative'}:
+        elif t in {'bezier_curve_to_absolute', 'bezier_curve_to_relative'}:
             return self.perform_CurveTo()
-
-        elif section_type in {'arc_to_absolute', 'arc_to_relative'}:
+        elif t in {'arc_to_absolute', 'arc_to_relative'}:
             return self.perform_ArcTo()
 
     def get_2vec(self, t):
