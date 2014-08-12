@@ -48,8 +48,8 @@ input like:
     []  : optional field
     2v  : two point vector `a,b`
             - no space between ,
-            - a and b can be number literals
-            - no backticks.
+            - no backticks
+            - a and b can be number literals or lowercase 1-character symbols for variables
     <int .. >
         : means the value will be cast as an int even if you input float
         : flags generally are 0 or 1.
