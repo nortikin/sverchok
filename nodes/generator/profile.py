@@ -34,7 +34,49 @@ from data_structure import fullList, updateNode, dataCorrect, SvSetSocketAnyType
 idx_map = {i: j for i, j in enumerate(ascii_lowercase)}
 
 
+'''
+input like:
+
+    M|m <2v coordinate>
+    L|l <2v coordinate 1> <2v coordinate 2> <2v coordinate n> [z]
+    C|c <2v control1> <2v control2> <2v knot2> <int num_segments> <int even_spread> [z]
+    A|a <2v rx,ry> <float rot> <int flag1> <int flag2> <2v x,y> <int num_verts> [z]
+    X
+    #
+    -----
+    <>  : mandatory field
+    []  : optional field
+    2v  : two point vector `a,b`
+            - no space between ,
+            - a and b can be number literals
+            - no backticks.
+    <int .. >
+        : means the value will be cast as an int even if you input float
+        : flags generally are 0 or 1.
+    z   : is optional for closing a line
+    X   : as a final command to close the edges (cyclic) [-1, 0]
+        in addition, if the first and last vertex share coordinate space
+        the last vertex is dropped and the cycle is made anyway.
+    #   : single line comment prefix
+
+'''
+
+
 class PathParser(object):
+
+    # not a full implementation, yet
+    supported_types = {
+        'M': 'move_to_absolute',
+        'm': 'move_to_relative',
+        'L': 'line_to_absolute',
+        'l': 'line_to_relative',
+        'C': 'bezier_curve_to_absolute',
+        'c': 'bezier_curve_to_relative',
+        'A': 'arc_to_absolute',
+        'a': 'arc_to_relative',
+        'X': 'close_now',
+        '#': 'comment'
+    }
 
     def __init__(self, filename, segments, idx):
         self.posxy = (0, 0)
@@ -59,27 +101,20 @@ class PathParser(object):
 
     def get_geometry(self):
         '''
-        This section is partial preprocessor per line found
+        This section is partial preprocessor per line found:
+        lines like
+            L a,b c,d e,f z
+        become (after stripping/trimming)
+            a,b c,d e,f
+            - section_type is stored for the current line
+            - close_section flag is stored depending on if z is found.
         '''
 
         final_verts, final_edges = [], []
         lines = [line for line in self.lines if line]
 
         for line in lines:
-
-            # svg type path descriptions, not a full implementation
-            self.section_type = {
-                'M': 'move_to_absolute',
-                'm': 'move_to_relative',
-                'L': 'line_to_absolute',
-                'l': 'line_to_relative',
-                'C': 'bezier_curve_to_absolute',
-                'c': 'bezier_curve_to_relative',
-                'A': 'arc_to_absolute',
-                'a': 'arc_to_relative',
-                'X': 'close_now',
-                '#': 'comment'
-            }.get(line.strip()[0])
+            self.section_type = self.supported_types.get(line.strip()[0])
 
             if (not self.section_type) or (self.section_type == 'comment'):
                 continue
@@ -98,9 +133,9 @@ class PathParser(object):
                 final_edges.extend(edges)
                 self.posxy = verts[-1]
 
-        # print(len(final_verts), '...', final_edges[-1])
         if len(final_verts) in final_edges[-1]:
             final_edges.pop()
+
         return final_verts, [final_edges]
 
     def quickread_and_strip(self, line):
@@ -161,32 +196,13 @@ class PathParser(object):
 
     def parse_path_line(self):
         '''
-        this function expects that all lines contain lower case chars for remapping, it
-        expects input like:
-
-        M|m <2v coordinate>
-        L|l <2v coordinate 1> <2v coordinate 2> <2v coordinate n> [z]
-        C|c <2v control1> <2v control2> <2v knot2> <int num_segments> <int even_spread> [z]
-        A|a <2v rx,ry> <float rot> <int flag1> <int flag2> <2v x,y> <int num_verts> [z]
-        X
-        #
-        -----
-        <>  : mandatory field
-        []  : optional field
-        2v  : two point vector `a,b`
-                - no space between ,
-                - a and b can be number literals
-                - no backticks.
-        <int .. >
-            : means the value will be cast as an int even if you input float
-            : flags generally are 0 or 1.
-        z   : is optional for closing a line
-        X   : as a final command to close the edges (cyclic) [-1, 0]
-            in addition, if the first and last vertex share coordinate space
-            the last vertex is dropped and the cycle is made anyway.
-        #   : single line comment prefix
-
+        This function gathers state for the current profile. It is run on every line of the
+        given file.
+        - will check lines for lowercase chars to remap, or will use the float/int values
+        - it expects to know the current line type
+        - it expects to have a valid value for the close_section variable
         '''
+
         relative = lambda a, b: [a[0]+b[0], a[1]+b[1]]
 
         # aliases for convenience, none of these are written to after this point.
@@ -321,7 +337,7 @@ class PathParser(object):
 
             # we drop the first point.
             # but maybe this should see if the previous commands was not a 'START'
-            #  because that would mean that the first point/vertex does need to be made
+            # because that would mean that the first point/vertex does need to be made
             points = points[1:]
             line_data = points
 
