@@ -317,7 +317,6 @@ class PathParser(object):
         arc = Arc(start, radius, xaxis_rot, flag1, flag2, end)
 
         theta = 1/num_verts
-
         for i in range(num_verts+1):
             point = arc.point(theta * i)
             points.append(point)
