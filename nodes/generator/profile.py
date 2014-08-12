@@ -80,10 +80,11 @@ class PathParser(object):
         '#': 'comment'
     }
 
-    def __init__(self, filename, segments, idx):
+    def __init__(self, properties, segments, idx):
         self.posxy = (0, 0)
         self.previos_posxy = (0, 0)
-        self.filename = filename
+        self.filename = properties.filename
+        self.extended_parsing = properties.extended_parsing
         self.state_idx = 0
         self.previous_command = "START"
         self.section_type = None
@@ -403,7 +404,7 @@ class PathParser(object):
         side = component[1:-1]
         pat = '([\(\)-+*\/])'
         chopped = re.split(pat, side)
-        print('----', chopped)
+
         for i, ch in enumerate(chopped):
             if ch in self.segments:
                 chopped[i] = str(self.segments[ch]['data'][idx])
@@ -414,9 +415,11 @@ class PathParser(object):
         # replace known variable chars with intended variable
         string_repr = ''.join(chopped).strip()
 
-        # return literal_eval(string_repr)
-        code = parser.expr(string_repr).compile()
-        return eval(code)
+        if self.extended_parsing:
+            code = parser.expr(string_repr).compile()
+            return eval(code)
+        else:
+            return literal_eval(string_repr)
 
     def push_forward(self):
         if self.previous_command in {'move_to_absolute', 'move_to_relative'}:
@@ -481,12 +484,17 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
     profile_file = StringProperty(default="", update=updateNode)
     filename = StringProperty(default="")
     posxy = FloatVectorProperty(default=(0.0, 0.0), size=2)
+    extended_parsing = BoolProperty(default=False)
 
     def draw_buttons(self, context, layout):
         row = layout.row()
         row.prop(self, 'selected_axis', expand=True)
         row = layout.row(align=True)
         row.prop(self, "profile_file", text="")
+
+    def draw_buttons_ext(self, context, layout):
+        row = layout.row(align=True)
+        row.prop(self, "extended_parsing", text="extended parsing")
 
     def init(self, context):
         self.inputs.new('StringsSocket', "a", "a")
@@ -596,7 +604,7 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
         full_result_edges = []
 
         for idx in range(longest):
-            path_object = PathParser(self.filename, segments, idx)
+            path_object = PathParser(self, segments, idx)
             vertices, edges = path_object.get_geometry()
 
             axis_fill = {
