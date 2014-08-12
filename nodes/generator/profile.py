@@ -18,6 +18,8 @@
 
 ''' by Dealga McArdle | 2014 '''
 
+import re
+import parser
 from ast import literal_eval
 from string import ascii_lowercase
 
@@ -359,11 +361,14 @@ class PathParser(object):
 
         components = t.split(',')
         sub_comp = []
-        for char in components:
-            if char in segments:
-                pushval = segments[char]['data'][idx]
+        for component in components:
+            if component in segments:
+                '''then it is a simple one char value '''
+                pushval = segments[component]['data'][idx]
+            elif self.is_component_wrapped(component):
+                pushval = self.parse_basic_statement(component)
             else:
-                pushval = float(char)
+                pushval = float(component)
             sub_comp.append(pushval)
 
         return sub_comp
@@ -375,10 +380,42 @@ class PathParser(object):
 
         if component in segments:
             pushval = segments[component]['data'][idx]
+        elif self.is_component_wrapped(component):
+            pushval = self.parse_basic_statement(component)
         else:
             pushval = component
 
         return typed(pushval)
+
+    def is_component_wrapped(self, component):
+        '''then we have a wrapped component, like (a+b)'''
+        return (len(component) > 2) and (component[0]+component[-1] == '()')
+
+    def parse_basic_statement(self, component):
+        '''
+        turn: 'd-e-b+-a+1.223/2*4'
+        into: ['d','-','e','-','b','+','','-','a','+','1.223','/','2','*','4']
+        '''
+        idx = self.profile_idx
+
+        # extract parens
+        side = component[1:-1]
+        pat = '([\(\)-+*\/])'
+        chopped = re.split(pat, side)
+        print('----', chopped)
+        for i, ch in enumerate(chopped):
+            if ch in self.segments:
+                chopped[i] = str(self.segments[ch]['data'][idx])
+
+        # remove empty elements
+        chopped = [ch for ch in chopped if ch]
+
+        # replace known variable chars with intended variable
+        string_repr = ''.join(chopped).strip()
+
+        # return literal_eval(string_repr)
+        code = parser.expr(string_repr).compile()
+        return eval(code)
 
     def push_forward(self):
         if self.previous_command in {'move_to_absolute', 'move_to_relative'}:
