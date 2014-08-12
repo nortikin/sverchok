@@ -84,8 +84,8 @@ class PathParser(object):
         self.filename = filename
         self.state_idx = 0
         self.previous_command = "START"
+        self.section_type = None
         self.close_section = ""
-        self.section_type = ""
         self.stripped_line = ""
 
         ''' segments is a dict of letters to variables mapping. '''
@@ -116,7 +116,7 @@ class PathParser(object):
         for line in lines:
             self.section_type = self.supported_types.get(line.strip()[0])
 
-            if (not self.section_type) or (self.section_type == 'comment'):
+            if self.section_type in (None, 'comment'):
                 continue
 
             if self.section_type == 'close_now':
