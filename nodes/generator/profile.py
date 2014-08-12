@@ -346,11 +346,6 @@ class PathParser(object):
         - it expects to have a valid value for the close_section variable
         '''
 
-        # aliases for convenience, none of these are written to after this point.
-        section_type = self.section_type
-        line = self.stripped_line
-        close_section = self.close_section
-
         if section_type in {'move_to_absolute', 'move_to_relative'}:
             return self.perform_MoveTo()
 
