@@ -94,6 +94,9 @@ class PathParser(object):
         self.profile_idx = idx
         self._get_lines()
 
+    def relative(self, a, b):
+        return [a[0]+b[0], a[1]+b[1]]
+
     def _get_lines(self):
         ''' arrives here only if the file exists '''
         file_str = bpy.data.texts[self.filename]
@@ -201,6 +204,139 @@ class PathParser(object):
             edges = [self.state_idx-1, 0]
             final_edges.extend([edges])
 
+    def perform_MoveTo(self):
+        xy = self.get_2vec(self.stripped_line)
+        if self.section_type == 'move_to_absolute':
+            self.posxy = (xy[0], xy[1])
+        else:
+            self.posxy = self.relative(self.posxy, xy)
+
+    def perform_LineTo(self):
+        ''' assumes you have posxy (current needle position) where you want it,
+        and draws a line from it to the first set of 2d coordinates, and
+        onwards till complete '''
+
+        intermediate_idx, line_data = self.push_forward()
+        tempstr = self.stripped_line.split(' ')
+
+        if self.section_type == 'line_to_absolute':
+            for t in tempstr:
+                sub_comp = self.get_2vec(t)
+                line_data.append(sub_comp)
+                self.state_idx += 1
+        else:
+            for t in tempstr:
+                sub_comp = self.get_2vec(t)
+                final = self.relative(self.posxy, sub_comp)
+                self.posxy = tuple(final)
+                line_data.append(final)
+                self.state_idx += 1
+
+        temp_edges = self.make_edges(intermediate_idx, line_data, -1)
+        return line_data, temp_edges
+
+    def perform_CurveTo(self):
+        '''
+        expects 5 params:
+            C x1,y1 x2,y2 x3,y3 num bool [z]
+        example:
+            C control1 control2 knot2 10 0 [z]
+            C control1 control2 knot2 20 1 [z]
+        '''
+
+        tempstr = self.stripped_line.split(' ')
+        if not len(tempstr) == 5:
+            print('error on line CurveTo: ', self.stripped_line)
+            return
+
+        ''' fully defined '''
+        vec = lambda v: Vector((v[0], v[1], 0))
+
+        knot1 = [self.posxy[0], self.posxy[1]]
+        if self.section_type == 'bezier_curve_to_absolute':
+            handle1 = self.get_2vec(tempstr[0])
+            handle2 = self.get_2vec(tempstr[1])
+            knot2 = self.get_2vec(tempstr[2])
+        else:
+            points = []
+            for j in range(3):
+                point_pre = self.get_2vec(tempstr[j])
+                point = self.relative(self.posxy, point_pre)
+                points.append(point)
+                self.posxy = tuple(point)
+            handle1, handle2, knot2 = points
+
+        r = self.get_typed(tempstr[3], int)
+        s = self.get_typed(tempstr[4], int)  # not used yet
+        bezier = vec(knot1), vec(handle1), vec(handle2), vec(knot2), r
+        points = interpolate_bezier(*bezier)
+
+        # parse down to 2d
+        # be aware , we drop the first point.
+        points = points[1:]
+        line_data = [[v[0], v[1]] for v in points]
+
+        self.state_idx -= 1
+        intermediate_idx = self.state_idx
+        self.state_idx += (len(points) + 1)
+
+        temp_edges = self.make_edges(intermediate_idx, line_data, 1)
+        return line_data, temp_edges
+
+    def perform_ArcTo(self):
+        '''
+        expects 6 parameters:
+            A rx,ry rot flag1 flag2 x,y num_verts [z]
+        example:
+            A <2v xr,yr> <rot> <int-bool> <int-bool> <2v xend,yend> <int num_verts> [z]
+        '''
+        tempstr = self.stripped_line.split(' ')
+        if not len(tempstr) == 6:
+            print(tempstr)
+            print('error on ArcTo line: ', self.stripped_line)
+            return
+
+        points = []
+        sx = self.posxy[0]
+        sy = self.posxy[1]
+        start = complex(sx, sy)  # 2vec
+        radius = complex(*self.get_2vec(tempstr[0]))
+
+        xaxis_rot = self.get_typed(tempstr[1], float)
+        flag1 = self.get_typed(tempstr[2], int)
+        flag2 = self.get_typed(tempstr[3], int)
+
+        # numverts, requires -1 else it means segments.
+        num_verts = self.get_typed(tempstr[5], int) - 1
+
+        if self.section_type == 'arc_to_absolute':
+            end = complex(*self.get_2vec(tempstr[4]))
+        else:
+            xy_end_pre = self.get_2vec(tempstr[4])
+            xy_end_final = self.relative(self.posxy, xy_end_pre)
+            end = complex(*xy_end_final)
+
+        arc = Arc(start, radius, xaxis_rot, flag1, flag2, end)
+
+        theta = 1/num_verts
+
+        for i in range(num_verts+1):
+            point = arc.point(theta * i)
+            points.append(point)
+
+        # we drop the first point.
+        # but maybe this should see if the previous commands was not a 'START'
+        # because that would mean that the first point/vertex does need to be made
+        points = points[1:]
+        line_data = points
+
+        self.state_idx -= 1
+        intermediate_idx = self.state_idx
+        self.state_idx += (len(points) + 1)
+
+        temp_edges = self.make_edges(intermediate_idx, line_data, 1)
+        return line_data, temp_edges
+
     def parse_path_line(self):
         '''
         This function gathers state for the current profile. It is run on every line of the
@@ -210,150 +346,22 @@ class PathParser(object):
         - it expects to have a valid value for the close_section variable
         '''
 
-        relative = lambda a, b: [a[0]+b[0], a[1]+b[1]]
-
         # aliases for convenience, none of these are written to after this point.
         section_type = self.section_type
         line = self.stripped_line
         close_section = self.close_section
 
         if section_type in {'move_to_absolute', 'move_to_relative'}:
-            xy = self.get_2vec(line)
-            if section_type == 'move_to_absolute':
-                self.posxy = (xy[0], xy[1])
-            else:
-                self.posxy = relative(self.posxy, xy)
-            return
+            return self.perform_MoveTo()
 
         elif section_type in {'line_to_absolute', 'line_to_relative'}:
-
-            ''' assumes you have posxy (current needle position) where you want it,
-            and draws a line from it to the first set of 2d coordinates, and
-            onwards till complete '''
-
-            intermediate_idx, line_data = self.push_forward()
-            tempstr = line.split(' ')
-
-            if section_type == 'line_to_absolute':
-                for t in tempstr:
-                    sub_comp = self.get_2vec(t)
-                    line_data.append(sub_comp)
-                    self.state_idx += 1
-            else:
-                for t in tempstr:
-                    sub_comp = self.get_2vec(t)
-                    final = relative(self.posxy, sub_comp)
-                    self.posxy = tuple(final)
-                    line_data.append(final)
-                    self.state_idx += 1
-
-            temp_edges = self.make_edges(intermediate_idx, line_data, -1)
-            return line_data, temp_edges
+            return self.perform_LineTo()
 
         elif section_type in {'bezier_curve_to_absolute', 'bezier_curve_to_relative'}:
-
-            '''
-            expects 5 params:
-                C x1,y1 x2,y2 x3,y3 num bool [z]
-            example:
-                C control1 control2 knot2 10 0 [z]
-                C control1 control2 knot2 20 1 [z]
-            '''
-
-            tempstr = line.split(' ')
-            if not len(tempstr) == 5:
-                print('error on line CurveTo: ', line)
-                return
-
-            ''' fully defined '''
-            vec = lambda v: Vector((v[0], v[1], 0))
-
-            knot1 = [self.posxy[0], self.posxy[1]]
-            if section_type == 'bezier_curve_to_absolute':
-                handle1 = self.get_2vec(tempstr[0])
-                handle2 = self.get_2vec(tempstr[1])
-                knot2 = self.get_2vec(tempstr[2])
-            else:
-                points = []
-                for j in range(3):
-                    point_pre = self.get_2vec(tempstr[j])
-                    point = relative(self.posxy, point_pre)
-                    points.append(point)
-                    self.posxy = tuple(point)
-                handle1, handle2, knot2 = points
-
-            r = self.get_typed(tempstr[3], int)
-            s = self.get_typed(tempstr[4], int)  # not used yet
-            bezier = vec(knot1), vec(handle1), vec(handle2), vec(knot2), r
-            points = interpolate_bezier(*bezier)
-
-            # parse down to 2d
-            # be aware , we drop the first point.
-            points = points[1:]
-            line_data = [[v[0], v[1]] for v in points]
-
-            self.state_idx -= 1
-            intermediate_idx = self.state_idx
-            self.state_idx += (len(points) + 1)
-
-            temp_edges = self.make_edges(intermediate_idx, line_data, 1)
-            return line_data, temp_edges
+            return self.perform_CurveTo()
 
         elif section_type in {'arc_to_absolute', 'arc_to_relative'}:
-
-            '''
-            expects 6 parameters:
-                A rx,ry rot flag1 flag2 x,y num_verts [z]
-            example:
-                A <2v xr,yr> <rot> <int-bool> <int-bool> <2v xend,yend> <int num_verts> [z]
-            '''
-
-            tempstr = line.split(' ')
-            if not len(tempstr) == 6:
-                print(tempstr)
-                print('error on ArcTo line: ', line)
-                return
-
-            points = []
-            sx = self.posxy[0]
-            sy = self.posxy[1]
-            start = complex(sx, sy)  # 2vec
-            radius = complex(*self.get_2vec(tempstr[0]))
-
-            xaxis_rot = self.get_typed(tempstr[1], float)
-            flag1 = self.get_typed(tempstr[2], int)
-            flag2 = self.get_typed(tempstr[3], int)
-
-            # numverts, requires -1 else it means segments.
-            num_verts = self.get_typed(tempstr[5], int) - 1
-
-            if section_type == 'arc_to_absolute':
-                end = complex(*self.get_2vec(tempstr[4]))
-            else:
-                xy_end_pre = self.get_2vec(tempstr[4])
-                xy_end_final = relative(self.posxy, xy_end_pre)
-                end = complex(*xy_end_final)
-
-            arc = Arc(start, radius, xaxis_rot, flag1, flag2, end)
-
-            theta = 1/num_verts
-
-            for i in range(num_verts+1):
-                point = arc.point(theta * i)
-                points.append(point)
-
-            # we drop the first point.
-            # but maybe this should see if the previous commands was not a 'START'
-            # because that would mean that the first point/vertex does need to be made
-            points = points[1:]
-            line_data = points
-
-            self.state_idx -= 1
-            intermediate_idx = self.state_idx
-            self.state_idx += (len(points) + 1)
-
-            temp_edges = self.make_edges(intermediate_idx, line_data, 1)
-            return line_data, temp_edges
+            return self.perform_ArcTo()
 
     def get_2vec(self, t):
         idx = self.profile_idx
