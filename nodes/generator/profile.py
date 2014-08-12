@@ -136,14 +136,15 @@ class PathParser(object):
                 break
 
             self.quickread_and_strip(line)
-            results = self.parse_path_line()
-            self.previous_command = self.section_type
 
+            results = self.parse_path_line()
             if results:
                 verts, edges = results
                 final_verts.extend(verts)
                 final_edges.extend(edges)
                 self.posxy = verts[-1]
+
+            self.previous_command = self.section_type
 
         self.sanitize_edgekeys(final_verts, final_edges)
         return final_verts, [final_edges]
