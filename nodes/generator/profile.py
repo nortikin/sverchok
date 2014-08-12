@@ -298,16 +298,13 @@ class PathParser(object):
             return
 
         points = []
-        sx = self.posxy[0]
-        sy = self.posxy[1]
-        start = complex(sx, sy)  # 2vec
+        start = complex(*self.posxy)
         radius = complex(*self.get_2vec(tempstr[0]))
-
         xaxis_rot = self.get_typed(tempstr[1], float)
         flag1 = self.get_typed(tempstr[2], int)
         flag2 = self.get_typed(tempstr[3], int)
 
-        # numverts, requires -1 else it means segments.
+        # numverts, requires -1 else it means segments (21 verts is 20 segments).
         num_verts = self.get_typed(tempstr[5], int) - 1
 
         if self.section_type == 'arc_to_absolute':
