@@ -99,6 +99,10 @@ class PathParser(object):
         file_str = bpy.data.texts[self.filename]
         self.lines = file_str.as_string().split('\n')
 
+    def determin_section_type(self, line):
+        first_char = line.strip()[0]
+        self.section_type = self.supported_types.get(first_char)
+
     def get_geometry(self):
         '''
         This section is partial preprocessor per line found:
@@ -114,7 +118,7 @@ class PathParser(object):
         lines = [line for line in self.lines if line]
 
         for line in lines:
-            self.section_type = self.supported_types.get(line.strip()[0])
+            self.determin_section_type(line)
 
             if self.section_type in (None, 'comment'):
                 continue
