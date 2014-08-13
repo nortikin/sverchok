@@ -357,9 +357,6 @@ class PathParser(object):
             return self.perform_ArcTo()
 
     def get_2vec(self, t):
-        idx = self.profile_idx
-        segments = self.segments
-
         components = t.split(',')
         sub_comp = []
         for component in components:
@@ -370,11 +367,9 @@ class PathParser(object):
 
     def get_typed(self, component, typed):
         ''' typed can be any castable type, int / float...etc ) '''
-        idx = self.profile_idx
         segments = self.segments
-
         if component in segments:
-            pushval = segments[component]['data'][idx]
+            pushval = segments[component]['data'][self.profile_idx]
 
         elif self.is_component_wrapped(component):
             pushval = self.parse_basic_statement(component)
