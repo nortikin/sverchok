@@ -363,13 +363,7 @@ class PathParser(object):
         components = t.split(',')
         sub_comp = []
         for component in components:
-            if component in segments:
-                '''then it is a simple one char value '''
-                pushval = segments[component]['data'][idx]
-            elif self.is_component_wrapped(component):
-                pushval = self.parse_basic_statement(component)
-            else:
-                pushval = float(component)
+            pushval = self.get_typed(component, float)
             sub_comp.append(pushval)
 
         return sub_comp
@@ -381,8 +375,13 @@ class PathParser(object):
 
         if component in segments:
             pushval = segments[component]['data'][idx]
+
         elif self.is_component_wrapped(component):
             pushval = self.parse_basic_statement(component)
+
+        elif self.is_component_simple_negation(component):
+            pushval = self.parse_negation(component)
+
         else:
             pushval = component
 
@@ -391,6 +390,12 @@ class PathParser(object):
     def is_component_wrapped(self, component):
         '''then we have a wrapped component, like (a+b)'''
         return (len(component) > 2) and (component[0]+component[-1] == '()')
+
+    def is_component_simple_negation(self, comp):
+        return (len(comp) == 2) and (comp[0] == '-') and (comp[1] in self.segments)
+
+    def parse_negation(self, component):
+        return -(self.segments[component[1]]['data'][self.profile_idx])
 
     def parse_basic_statement(self, component):
         '''
