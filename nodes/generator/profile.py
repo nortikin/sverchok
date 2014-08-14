@@ -154,23 +154,16 @@ class PathParser(object):
 
     def quickread_and_strip(self, line):
         '''
-        closed segment detection.
+        closed segment detection. deal with closing with z or z as variable
 
         if the user really needs z as last value and z is indeed a variable
         and not intended to close a section, then you must add ;
         '''
         close_section = False
         last_char = line.strip()[-1].lower()
-        if last_char in {'z'}:
-            ''' deal with closing current verts edges combo '''
+        if last_char in {'z',';'}:
             stripped_line = line.strip()[1:-1].strip()
-            close_section = True
-
-        elif last_char in {';'}:
-            '''z is used as last variable, but not to close '''
-            stripped_line = line.strip()[1:-1].strip()
-            close_section = False
-
+            close_section = True if last_char == 'z' else False
         else:
             stripped_line = line.strip()[1:].strip()
 
