@@ -276,16 +276,8 @@ class PathParser(object):
         points = interpolate_bezier(*bezier)
 
         # parse down to 2d
-        # be aware , we drop the first point.
-        points = points[1:]
-        line_data = [[v[0], v[1]] for v in points]
-
-        self.state_idx -= 1
-        intermediate_idx = self.state_idx
-        self.state_idx += (len(points) + 1)
-
-        temp_edges = self.make_edges(intermediate_idx, line_data, 1)
-        return line_data, temp_edges
+        points = [[v[0], v[1]] for v in points]
+        return self.find_right_index_and_make_edges(points)
 
     def perform_ArcTo(self):
         '''
@@ -324,9 +316,14 @@ class PathParser(object):
             point = arc.point(theta * i)
             points.append(point)
 
-        # we drop the first point.
-        # but maybe this should see if the previous commands was not a 'START'
-        # because that would mean that the first point/vertex does need to be made
+        return self.find_right_index_and_make_edges(points)
+
+    def find_right_index_and_make_edges(self, points):
+        '''
+        we drop the first point.
+        but maybe this should see if the previous commands was not a 'START'
+        because that would mean that the first point/vertex does need to be made
+        '''
         points = points[1:]
         line_data = points
 
