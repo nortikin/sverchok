@@ -160,14 +160,14 @@ class PathParser(object):
         and not intended to close a section, then you must add ;
         '''
         close_section = False
-        last_char = line.strip()[-1]
-        if last_char in {'z', 'Z'}:
+        last_char = line.strip()[-1].lower()
+        if last_char in {'z'}:
             ''' deal with closing current verts edges combo '''
             stripped_line = line.strip()[1:-1].strip()
             close_section = True
 
         elif last_char in {';'}:
-            ''' when a..z are used as last variables, but not closing '''
+            '''z is used as last variable, but not to close '''
             stripped_line = line.strip()[1:-1].strip()
             close_section = False
 
