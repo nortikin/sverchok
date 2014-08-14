@@ -162,19 +162,16 @@ class PathParser(object):
         close_section = False
         last_char = line.strip()[-1]
         if last_char in {'z', 'Z'}:
-            '''deal with closing current verts edges combo'''
+            ''' deal with closing current verts edges combo '''
             stripped_line = line.strip()[1:-1].strip()
             close_section = True
 
         elif last_char in {';'}:
-            '''user is crazy and has a..z filled with variables
-            good for user.
-            '''
+            ''' when a..z are used as last variables, but not closing '''
             stripped_line = line.strip()[1:-1].strip()
             close_section = False
 
         else:
-            '''doesn't end with ; or z, Z '''
             stripped_line = line.strip()[1:].strip()
 
         self.stripped_line = stripped_line
