@@ -78,7 +78,9 @@ class SverchokBakeAll(bpy.types.Operator):
         
         nodes = [node for node in ng.nodes if node.bl_idname == 'ViewerNode']
         for node in nodes:
-            bpy.ops.node.sverchok_mesh_baker(idname=node.name, idtree=self.node_tree_name)
+            if node.activate and node.inputs['edg_pol'].is_linked:
+                bpy.ops.node.sverchok_mesh_baker(idname=node.name, \
+                                        idtree=self.node_tree_name)
         return {'FINISHED'}
 
 class SverchokUpdateCurrent(bpy.types.Operator):
@@ -558,5 +560,6 @@ def unregister():
 
 if __name__ == '__main__':
     register()
+
 
 
