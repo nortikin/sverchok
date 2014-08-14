@@ -102,8 +102,8 @@ class PathParser(object):
 
     def _get_lines(self):
         ''' arrives here only if the file exists '''
-        file_str = bpy.data.texts[self.filename]
-        self.lines = file_str.as_string().split('\n')
+        internal_file = bpy.data.texts[self.filename]
+        self.lines = internal_file.as_string().split('\n')
 
     def determine_section_type(self, line):
         first_char = line.strip()[0]
