@@ -161,9 +161,9 @@ class PathParser(object):
         '''
         close_section = False
         last_char = line.strip()[-1].lower()
-        if last_char in {'z',';'}:
+        if last_char in {'z', ';'}:
             stripped_line = line.strip()[1:-1].strip()
-            close_section = True if last_char == 'z' else False
+            close_section = (last_char == 'z')
         else:
             stripped_line = line.strip()[1:].strip()
 
