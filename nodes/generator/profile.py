@@ -325,14 +325,12 @@ class PathParser(object):
         because that would mean that the first point/vertex does need to be made
         '''
         points = points[1:]
-        line_data = points
 
         self.state_idx -= 1
         intermediate_idx = self.state_idx
         self.state_idx += (len(points) + 1)
-
-        temp_edges = self.make_edges(intermediate_idx, line_data, 1)
-        return line_data, temp_edges
+        temp_edges = self.make_edges(intermediate_idx, points, 1)
+        return points, temp_edges
 
     def parse_path_line(self):
         '''
