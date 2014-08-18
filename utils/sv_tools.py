@@ -74,11 +74,13 @@ class SverchokBakeAll(bpy.types.Operator):
         ng = bpy.data.node_groups[self.node_tree_name]
         nodes = [node for node in ng.nodes if node.bl_idname == 'IndexViewerNode']
         for node in nodes:
-            node.collect_text_to_bake()
+            if node.bakebuttonshow:
+                node.collect_text_to_bake()
         
         nodes = [node for node in ng.nodes if node.bl_idname == 'ViewerNode']
         for node in nodes:
-            if node.activate and node.inputs['edg_pol'].is_linked:
+            if node.activate and node.inputs['edg_pol'].is_linked \
+                and node.bakebuttonshow:
                 bpy.ops.node.sverchok_mesh_baker(idname=node.name, \
                                         idtree=self.node_tree_name)
         return {'FINISHED'}
