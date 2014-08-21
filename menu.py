@@ -118,7 +118,8 @@ def make_categories():
         ["EvaluateLineNode",    "Vector Evaluate"],
         ["SvInterpolationNode", "Vector Interpolation"],
         ["SvVertSortNode",      "Vector Sort"],
-        ["SvNoiseNode",         "Vector Noise"]]
+        ["SvNoiseNode",         "Vector Noise"],
+        ["svAxisInputNode",     "Vector X | Y | Z"]]
 
     node_cats["Matrix"] = [
         ["MatrixApplyNode",     "Matrix Apply"],
@@ -176,10 +177,10 @@ def make_categories():
         ["SvReRouteNode",       "Reroute Point"],
         ["SvVolumeNode",        "Volume"],
         ["SvSwitchNode",        "Switch"],
-        ["svAxisInputNode",     "Vector X | Y | Z"],
         ["SvNeuroElman1LNode",  "Neuro"],
         ["SvInstancerNode",     "mesh instancer"],
         ["SvLogicNode",         "Logic"],
+        ["SvProfileNode",       "ProfileParametric"],
         ["SvRotationNode",      "Rotation"],
         ["SvScaleNode",         "Scale"],
         ["SvMatrixEulerNode",   "Matrix Euler"],

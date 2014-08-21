@@ -253,6 +253,3 @@ def register():
 def unregister():
     bpy.utils.unregister_class(SvInstancerNode)
     bpy.utils.unregister_class(SvInstancerOp)
-
-if __name__ == '__main__':
-    register()
