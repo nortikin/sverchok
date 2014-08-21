@@ -7,7 +7,8 @@ nodes_dict = {
         'polygons_centers',
         'neuro_elman',
         'kd_tree',
-        'kd_tree_edges'],
+        'kd_tree_edges',
+        'weights'],
 
     'basic_view': [
         'bakery',
