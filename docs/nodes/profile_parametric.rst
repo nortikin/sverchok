@@ -41,9 +41,18 @@ Profile Parametric Node
     #   : single line comment prefix
 
 
-Variables may be negated, this is a simple negation. There are 2 slightly more elaborate evaluation modes:
+**Mode 0:** default behaviour, variables may be negated
 
-**Mode 1:** Requires the use or parentheses to indicate where extra operations take place. Mode 1 is restrictive and only allows addition and subtaction 
+:: 
+
+M a,-a 
+L a,a -a,a -a,-a z
+
+
+There are 2 slightly more elaborate evaluation modes:
+
+**Mode 1:** Requires the use or parentheses to indicate where extra operations take place. 
+Mode 1 is restrictive and only allows addition and subtraction 
 
 ::
 
