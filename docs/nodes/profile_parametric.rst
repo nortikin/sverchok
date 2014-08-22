@@ -2,9 +2,6 @@
 Profile Parametric Node
 =======================
 
-.. image:: https://cloud.githubusercontent.com/assets/619340/3905771/193b5d86-22ec-
- 11e4-93e5-724863a30bbc.png
-
 
 **Profile Node** implements a useful subset of the SVG path section commands. Currently the following segment types are available:
 
@@ -62,4 +59,9 @@ To use Mode 2, you must enable the *extended parsing* switch in the N-panel for 
 
 
 The node started out as a thought experiment and turned into something quite useful, you can see how it evolved in the `github thread <https://github.com/nortikin/sverchok/issues/350>`_
+ 
+Example usage:
+
+.. image:: https://cloud.githubusercontent.com/assets/619340/3905771/193b5d86-22ec-
+ 11e4-93e5-724863a30bbc.png
  
