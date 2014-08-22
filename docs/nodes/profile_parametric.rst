@@ -45,9 +45,8 @@ Profile Parametric Node
 
 :: 
 
-M a,-a 
-L a,a -a,a -a,-a z
-
+    M a,-a
+    L a,a -a,a -a,-a z
 
 There are 2 slightly more elaborate evaluation modes:
 
