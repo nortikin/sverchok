@@ -31,13 +31,12 @@ Profile Parametric Node
             - a and b can be 
                 - number literals
                 - lowercase 1-character symbols for variables
-    <int .. >
-        : means the value will be cast as an int even if you input float
-        : flags generally are 0 or 1.
+    int : means the value will be cast as an int even if you input float
+          flags generally are 0 or 1.
     z   : is optional for closing a line
     X   : as a final command to close the edges (cyclic) [-1, 0]
-        in addition, if the first and last vertex share coordinate space
-        the last vertex is dropped and the cycle is made anyway.
+          in addition, if the first and last vertex share coordinate space
+          the last vertex is dropped and the cycle is made anyway.
     #   : single line comment prefix
 
 
