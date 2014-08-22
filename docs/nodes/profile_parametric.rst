@@ -44,7 +44,7 @@ Profile Parametric Node
     #   : single line comment prefix
 
 
-Variables may be negated, this is a simple negation. There are 2 slightly more evaluation modes:
+Variables may be negated, this is a simple negation. There are 2 slightly more elaborate evaluation modes:
 
 **Mode 1:** Requires the use or parentheses to indicate where extra operations take place. Mode 1 is restrictive and only allows addition and subtaction 
 
@@ -58,7 +58,7 @@ Variables may be negated, this is a simple negation. There are 2 slightly more e
 
 (a*b(c/d))
 
-To use Mode 2, you must enable the *extended evaluation* switch in the N-panel for the Profile node.
+To use Mode 2, you must enable the *extended parsing* switch in the N-panel for the Profile node.
 
 
 The node started out as a thought experiment and turned into something quite useful, you can see how it evolved in the `github thread <https://github.com/nortikin/sverchok/issues/350>`_
