@@ -65,6 +65,53 @@ Mode 1 is restrictive and only allows addition and subtraction
 To use Mode 2, you must enable the *extended parsing* switch in the N-panel for the Profile node.
 
 
+Examples
+--------
+
+If you have experience with SVG paths most of this will be familiar. The biggest difference is that only the
+LineTo command accepts many points, and we always start the profile with a M <pos>,<pos>.
+
+::
+
+    M 0,0
+    L a,a b,0 c,0 d,d e,-e 
+    
+
+CurveTo and ArcTo only take enough parameters to complete one Curve or Arc, 
+unlike real SVG commands which take a whole sequence of chained CurveTo or ArcTo commands. The decision to keep 
+it at one segment type per line is mainly to preserve readability.
+
+The CurveTo and ArcTo segment types allow you to specify how many vertices are used to generate the segment. SVG 
+doesn't let you specify such things, but it makes sense to allow it for the creation of geometry.
+
+the fun bit about this is that all these variables / components can be dynamic
+
+::
+
+    M 0,0
+    L 0,3 2,3 2,4
+    C 2,5 2,5 3,5 10 0
+    L 5,5
+    C 7,5 7,5 7,3 10 0
+    L 7,2 5,0
+    X
+    
+or
+
+::
+
+    M a,a
+    L a,b c,b -c,d
+    C c,e c,e b,e g 0
+    L e,e
+    C f,e f,e f,-b g 0
+    L f,c e,a
+    X
+
+
+More Info
+---------
+
 The node started out as a thought experiment and turned into something quite useful, you can see how it evolved in the `github thread <https://github.com/nortikin/sverchok/issues/350>`_
  
 Example usage:
