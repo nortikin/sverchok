@@ -30,7 +30,7 @@ class SvVertexGroupNode(bpy.types.Node, SverchCustomTreeNode):
 
 
     allind = BoolProperty(name='All vertices', description='use all vertices of object', default=False, update=updateNode)
-    clear = BoolProperty(name='clear unused', description='clear weight of unindexed vertices', default=True update=updateNode)
+    clear = BoolProperty(name='clear unused', description='clear weight of unindexed vertices', default=True, update=updateNode)
     
     
     formula = StringProperty(name='formula', description='name of object to operate on', default='Cube', update=updateNode)
