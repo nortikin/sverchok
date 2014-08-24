@@ -8,7 +8,8 @@ nodes_dict = {
         'neuro_elman',
         'kd_tree',
         'kd_tree_edges',
-        'weights'],
+        'weights',
+        'raycast_object_space'],
 
     'basic_view': [
         'bakery',
