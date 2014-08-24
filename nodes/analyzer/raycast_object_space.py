@@ -25,7 +25,7 @@ from node_tree import SverchCustomTreeNode, StringsSocket, VerticesSocket
 from data_structure import (updateNode, Vector_generate, SvSetSocketAnyType, SvGetSocketAnyType)
 
 class SvRayCastNode(bpy.types.Node, SverchCustomTreeNode):
-    ''' Vertex Group '''
+    ''' RayCast Object '''
     bl_idname = 'SvRayCastNode'
     bl_label = 'raycast'
     bl_icon = 'OUTLINER_OB_EMPTY'
