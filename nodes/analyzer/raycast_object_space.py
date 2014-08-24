@@ -25,7 +25,7 @@ from node_tree import SverchCustomTreeNode, StringsSocket, VerticesSocket
 from data_structure import (updateNode, Vector_generate, SvSetSocketAnyType, SvGetSocketAnyType)
 
 class SvRayCastNode(bpy.types.Node, SverchCustomTreeNode):
-    ''' RayCast Object '''
+    ''' Vertex Group '''
     bl_idname = 'SvRayCastNode'
     bl_label = 'raycast'
     bl_icon = 'OUTLINER_OB_EMPTY'
@@ -51,49 +51,61 @@ class SvRayCastNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('StringsSocket', "PoligIND", "PoligIND")
     
     def update(self):
-        
+
+        if not ('PoligIND' in self.outputs):
+            return
+
+        start_links = self.inputs['start'].links
+        if not (start_links and (type(start_links[0].from_socket) == VerticesSocket)):
+            return
+
+        end_links = self.inputs['end'].links
+        if not (end_links and (type(end_links[0].from_socket) == VerticesSocket)):
+            return
+
+        if not (self.formula in bpy.data.objects):
+            return
+
+        self.process()
+
+
+    def process(self):
+
+        outputs = self.outputs        
         out=[]
         OutLoc=[]
         OutNorm=[]
         FaceINDEX=[]
 
-        
-        obj= bpy.data.objects[self.formula]
-        
-        if 'start' in self.inputs and self.inputs['start'].links and \
-           type(self.inputs['start'].links[0].from_socket) == VerticesSocket and \
-             'end' in self.inputs and self.inputs['end'].links and \
-                type(self.inputs['end'].links[0].from_socket) == VerticesSocket:
-                   st = Vector_generate(SvGetSocketAnyType(self, self.inputs['start']))
-                   en = Vector_generate(SvGetSocketAnyType(self, self.inputs['end']))
-                   start= [Vector(x) for x in st[0]]
-                   end= [Vector(x) for x in en[0]]
-                   if self.wspinput:
-                       start= [ i-obj.location for i in start ]
-                       end= [ i-obj.location for i in end ]
-        
-                   i=0
-                   while i< len(end):
-                       out.append(obj.ray_cast(start[i],end[i]))
-                       i= i+1
+        obj = bpy.data.objects[self.formula]
 
+        st = Vector_generate(SvGetSocketAnyType(self, self.inputs['start']))
+        en = Vector_generate(SvGetSocketAnyType(self, self.inputs['end']))
+        start= [Vector(x) for x in st[0]]
+        end= [Vector(x) for x in en[0]]
+        if self.wspinput:
+            start= [ i-obj.location for i in start ]
+            end= [ i-obj.location for i in end ]
 
-                   for i in out:
-                       
-                       OutNorm.append(i[1][:])
-                       FaceINDEX.append(i[2])
-                       if self.wspinput:
-                           OutLoc.append( (i[0]+obj.location)[:] )
-                       else:
-                           OutLoc.append(i[0][:])
+        i=0
+        while i< len(end):
+            out.append(obj.ray_cast(start[i],end[i]))
+            i= i+1
 
+        for i in out:
+            OutNorm.append(i[1][:])
+            FaceINDEX.append(i[2])
+            if self.wspinput:
+                OutLoc.append( (i[0]+obj.location)[:] )
+            else:
+                OutLoc.append(i[0][:])
 
-                   if self.outputs['HitP'].links:
-                       SvSetSocketAnyType(self, 'HitP', [OutLoc])
-                   if self.outputs['HitNorm'].links:
-                       SvSetSocketAnyType(self, 'HitNorm', [OutNorm])
-                   if self.outputs['PoligIND'].links:
-                       SvSetSocketAnyType(self, 'PoligIND', [FaceINDEX])
+        if outputs['HitP'].links:
+            SvSetSocketAnyType(self, 'HitP', [OutLoc])
+        if outputs['HitNorm'].links:
+            SvSetSocketAnyType(self, 'HitNorm', [OutNorm])
+        if outputs['PoligIND'].links:
+            SvSetSocketAnyType(self, 'PoligIND', [FaceINDEX])
 
 
 
