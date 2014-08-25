@@ -368,8 +368,10 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
     def set_autosmooth(self):
         for obj in self.get_children():
             mesh = obj.data
-            for p in mesh.polygons:
-                p.use_smooth = True
+            #for p in mesh.polygons:
+            #    p.use_smooth = True
+            smooth_states = [True] * len(mesh.polygons)
+            mesh.polygons.foreach_set('use_smooth', smooth_states)
             mesh.update()
 
     def update_socket(self, context):
