@@ -16,15 +16,16 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+import itertools
+import random
+
 import bpy
 from bpy.props import BoolProperty, StringProperty
 
-from node_tree import (SverchCustomTreeNode, VerticesSocket,
-                       MatrixSocket, StringsSocket)
+from node_tree import (
+    SverchCustomTreeNode, VerticesSocket, MatrixSocket, StringsSocket)
 from data_structure import dataCorrect, fullList, updateNode, SvGetSocketAnyType
 from utils.sv_bmesh_utils import bmesh_from_pydata
-import itertools
-import random
 
 
 def get_random_init():
@@ -63,24 +64,22 @@ def make_bmesh_geometry(context, name, verts, edges, faces, matrix, fixed_verts=
         temp_mesh = default_mesh(name)
         sv_object = objects.new(name, temp_mesh)
         scene.objects.link(sv_object)
-        # scene.update()
-   
+
     mesh = sv_object.data
     if len(mesh.vertices) == len(verts) and fixed_verts:
         f_v = list(itertools.chain.from_iterable(verts))
         mesh.vertices.foreach_set('co', f_v)
-    # definitely verts, definitely do something.
     else:
         bm = bmesh_from_pydata(verts, edges, faces)
 
         # Finish up, write the bmesh back to the mesh
         bm.to_mesh(sv_object.data)
         bm.free()  # free and prevent further access
-    
+
         sv_object.hide_select = False
 
-    # apply matrices if necessary
     if matrix:
+        # apply matrices if necessary
         sv_object.matrix_local = list(zip(*matrix))
 
 
@@ -149,9 +148,10 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
     state_select = BoolProperty(default=True)
     select_state_mesh = BoolProperty(default=False)
     fixed_verts = BoolProperty(default=False, name="Fixed vertices")
-    autosmooth = BoolProperty(default=False)
+    autosmooth = BoolProperty(default=False, update=updateNode)
 
     def init(self, context):
+        self.use_custom_color = True
         self.inputs.new('VerticesSocket', 'vertices', 'vertices')
         self.inputs.new('StringsSocket', 'edges', 'edges')
         self.inputs.new('StringsSocket', 'faces', 'faces')
@@ -217,7 +217,7 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
         layout.label(text="Note: Use only with unchanging topology")
         layout.separator()
         layout.prop(self, 'autosmooth', text='smooth shade')
-    
+
     def get_corrected_data(self, socket_name, socket_type):
         inputs = self.inputs
         socket = inputs[socket_name].links[0].from_socket
@@ -254,30 +254,33 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
         finally:
             return j
 
+    def set_dormant_color(self):
+        self.color = (0.5, 0.5, 0.5)
+
     def update(self):
-        self.use_custom_color = True
 
         # startup safety net
         try:
             l = bpy.data.node_groups[self.id_data.name]
         except Exception as e:
             print(self.name, "cannot run during startup, press update.")
-            self.color = (1, 0.3, 0)
+            self.set_dormant_color()
             return
 
         # explicit statement about which states are useful to process.
         if not ('matrix' in self.inputs):
-            self.color = (1, 0.3, 0)
+            self.set_dormant_color()
             return
 
         if not self.inputs['vertices'].links:
-            self.color = (1, 0.3, 0)
+            self.set_dormant_color()
             return
 
         if not self.activate:
-            self.color = (1, 0.3, 0)
+            self.set_dormant_color()
             return
 
+        self.color = (1, 0.3, 0)
         self.process()
 
     def process(self):
@@ -383,4 +386,3 @@ def unregister():
 
 if __name__ == '__main__':
     register()
-
