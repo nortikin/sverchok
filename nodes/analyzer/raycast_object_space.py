@@ -52,7 +52,7 @@ class SvRayCastNode(bpy.types.Node, SverchCustomTreeNode):
         
 
         layout.prop(self, "Modes", "Raycast modes")
-        layout.prop(self, "Iteration", "Raycast modes")
+        layout.prop(self, "Iteration", "Iteration modes")
         
     def init(self, context):
         self.inputs.new('VerticesSocket', 'start', 'start')
