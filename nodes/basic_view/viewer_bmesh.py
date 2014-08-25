@@ -152,7 +152,6 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
     autosmooth = BoolProperty(default=False)
 
     def init(self, context):
-        self.use_custom_color = True
         self.inputs.new('VerticesSocket', 'vertices', 'vertices')
         self.inputs.new('StringsSocket', 'edges', 'edges')
         self.inputs.new('StringsSocket', 'faces', 'faces')
@@ -256,6 +255,7 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
             return j
 
     def update(self):
+        self.use_custom_color = True
 
         # startup safety net
         try:
@@ -366,6 +366,7 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
             mesh = obj.data
             for p in mesh.polygons:
                 p.use_smooth = True
+            mesh.update()
 
     def update_socket(self, context):
         self.update()
