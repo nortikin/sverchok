@@ -321,8 +321,11 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
         if self.grouping:
             self.to_group()
-        if self.material:
+
+        # returns None if self.material is not present in .materials
+        if bpy.data.materials.get(self.material):
             self.set_corresponding_materials()
+
         if self.autosmooth:
             self.set_autosmooth()
 
@@ -367,9 +370,8 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
         # fingers crossed 2x.
 
     def set_corresponding_materials(self):
-        if self.material in bpy.data.materials:
-            for obj in self.get_children():
-                obj.active_material = bpy.data.materials[self.material]
+        for obj in self.get_children():
+            obj.active_material = bpy.data.materials[self.material]
 
     def set_autosmooth(self):
         for obj in self.get_children():
