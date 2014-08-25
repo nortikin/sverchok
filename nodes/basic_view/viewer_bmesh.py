@@ -144,7 +144,10 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
     state_render = BoolProperty(default=True)
     state_select = BoolProperty(default=True)
     select_state_mesh = BoolProperty(default=False)
-    fixed_verts = BoolProperty(default=False, name="Fixed vertices")
+    fixed_verts = BoolProperty(
+        default=False,
+        name="Fixed vertices",
+        description="Use only with unchanging topology")
     autosmooth = BoolProperty(default=False, update=updateNode)
 
     def init(self, context):
@@ -209,11 +212,17 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons_ext(self, context, layout):
         self.draw_buttons(context, layout)
         layout.separator()
-        layout.label(text="Beta options")
-        layout.prop(self, "fixed_verts", text="Fixed vert count")
-        layout.label(text="Note: Use only with unchanging topology")
-        layout.separator()
-        layout.prop(self, 'autosmooth', text='smooth shade')
+
+        row = layout.row()
+        box = row.box()
+
+        boxrow = box.row()
+        boxrow.label(text="Beta options")
+        boxrow = box.row()
+        boxrow.prop(self, "fixed_verts", text="Fixed vert count")
+
+        boxrow = box.row()
+        boxrow.prop(self, 'autosmooth', text='smooth shade')
 
     def get_corrected_data(self, socket_name, socket_type):
         inputs = self.inputs
