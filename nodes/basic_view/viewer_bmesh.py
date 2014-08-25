@@ -355,6 +355,7 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
             meshes.remove(meshes[object_name])
 
         # fingers crossed 2x.
+
     def get_children(self):
         objs = bpy.data.objects
         return [o for o in objs if o.name.startswith(self.basemesh_name + "_")]
