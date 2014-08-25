@@ -309,7 +309,7 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
             data = get_edges_faces_matrices(obj_index)
             mesh_name = self.basemesh_name + "_" + str(obj_index)
-            make_bmesh_geometry(node, bpy.context, mesh_name, Verts, *data)
+            make_bmesh_geometry(self, bpy.context, mesh_name, Verts, *data)
 
         self.remove_non_updated_objects(obj_index)
 
