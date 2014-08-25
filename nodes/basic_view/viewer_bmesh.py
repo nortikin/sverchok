@@ -143,14 +143,16 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
     basemesh_name = StringProperty(default='Alpha', update=updateNode)
     material = StringProperty(default='', update=updateNode)
     randname_choosed = BoolProperty(default=False)
-    grouping = BoolProperty(default=False)
+    grouping = BoolProperty(default=True)
     state_view = BoolProperty(default=True)
     state_render = BoolProperty(default=True)
     state_select = BoolProperty(default=True)
     select_state_mesh = BoolProperty(default=False)
     fixed_verts = BoolProperty(default=False, name="Fixed vertices")
+    autosmooth = BoolProperty(default=False)
 
     def init(self, context):
+        self.use_custom_color = True
         self.inputs.new('VerticesSocket', 'vertices', 'vertices')
         self.inputs.new('StringsSocket', 'edges', 'edges')
         self.inputs.new('StringsSocket', 'faces', 'faces')
@@ -196,14 +198,16 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
         row = col.row(align=True)
         row.scale_y = 1.1
         row.prop(self, "basemesh_name", text="")
+
         if not self.randname_choosed:
             row.operator(sh, text='Random Name').fn_name = 'random_mesh_name'
+
         row = col.row(align=True)
         row.scale_y = 0.9
         row.operator(sh, text='Select/Deselect').fn_name = 'mesh_select'
         row = col.row(align=True)
         row.scale_y = 0.9
-        # row.template_ID
+
         row.prop(self, "material", text="mat.")
 
     def draw_buttons_ext(self, context, layout):
@@ -213,6 +217,7 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "fixed_verts", text="Fixed vert count")
         layout.label(text="Note: Use only with unchanging topology")
         layout.separator()
+        layout.prop(self, 'autosmooth', text='smooth shade')
     
     def get_corrected_data(self, socket_name, socket_type):
         inputs = self.inputs
@@ -225,20 +230,18 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
     def get_geometry_from_sockets(self):
         inputs = self.inputs
-        mverts, medges, mfaces, mmatrix = [], [], [], []
 
-        mverts = self.get_corrected_data('vertices', VerticesSocket)
+        has_matrix = True if inputs['matrix'].links else False
+        has_edges = True if inputs['edges'].links else False
+        has_faces = True if inputs['faces'].links else False
 
-        # could be looped, yielded..
-        if 'matrix' in inputs and inputs['matrix'].links:
-            mmatrix = self.get_corrected_data('matrix', MatrixSocket)
+        get_data = lambda s, t: self.get_corrected_data(s, t)
+        V, M, S = VerticesSocket, MatrixSocket, StringsSocket
 
-        if 'edges' in inputs and inputs['edges'].links:
-            medges = self.get_corrected_data('edges', StringsSocket)
-
-        if 'faces' in inputs and inputs['faces'].links:
-            mfaces = self.get_corrected_data('faces', StringsSocket)
-
+        mverts = get_data('vertices', V)
+        mmatrix = get_data('matrix', M) if has_matrix else []
+        medges = get_data('edges', S) if has_edges else []
+        mfaces = get_data('faces', S) if has_faces else []
         return mverts, medges, mfaces, mmatrix
 
     def get_structure(self, stype, sindex):
@@ -259,48 +262,60 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
             l = bpy.data.node_groups[self.id_data.name]
         except Exception as e:
             print(self.name, "cannot run during startup, press update.")
+            self.color = (1, 0.3, 0)
             return
 
-        # regular code from this point
-        inputs = self.inputs
-        if self.activate and 'vertices' in inputs and inputs['vertices'].links:
-            self.use_custom_color = True
+        # explicit statement about which states are useful to process.
+        if not ('matrix' in self.inputs):
             self.color = (1, 0.3, 0)
-            C = bpy.context
-            mverts, *mrest = self.get_geometry_from_sockets()
+            return
 
-            def get_edges_faces_matrices(obj_index):
-                for geom in mrest:
-                    yield self.get_structure(geom, obj_index)
+        if not self.inputs['vertices'].links:
+            self.color = (1, 0.3, 0)
+            return
 
-            # matrices need to define count of objects. paradigma
-            maxlen = max(len(mverts), len(mrest[0]), len(mrest[1]), len(mrest[2]))
-            fullList(mverts, maxlen)
-            if mrest[0]:
-                fullList(mrest[0], maxlen)
-            if mrest[1]:
-                fullList(mrest[1], maxlen)
-            if mrest[2]:
-                fullList(mrest[2], maxlen)
+        if not self.activate:
+            self.color = (1, 0.3, 0)
+            return
 
-            for obj_index, Verts in enumerate(mverts):
-                if not Verts:
-                    continue
+        self.process()
 
-                data = get_edges_faces_matrices(obj_index)
-                mesh_name = self.basemesh_name + "_" + str(obj_index)
-                make_bmesh_geometry(C, mesh_name, Verts, *data, fixed_verts=self.fixed_verts)
+    def process(self):
+        inputs = self.inputs
 
-            self.remove_non_updated_objects(obj_index, self.basemesh_name)
-            #self.set_corresponding_materials()
-            if self.inputs['vertices'].links:
-                if self.grouping:
-                    self.to_group()
-                if self.material:
-                    self.set_corresponding_materials()
-        else:
-            self.use_custom_color = True
-            self.color = (0.1, 0.05, 0)
+        C = bpy.context
+        mverts, *mrest = self.get_geometry_from_sockets()
+
+        def get_edges_faces_matrices(obj_index):
+            for geom in mrest:
+                yield self.get_structure(geom, obj_index)
+
+        # matrices need to define count of objects. paradigma
+        maxlen = max(len(mverts), len(mrest[0]), len(mrest[1]), len(mrest[2]))
+        fullList(mverts, maxlen)
+        if mrest[0]:
+            fullList(mrest[0], maxlen)
+        if mrest[1]:
+            fullList(mrest[1], maxlen)
+        if mrest[2]:
+            fullList(mrest[2], maxlen)
+
+        for obj_index, Verts in enumerate(mverts):
+            if not Verts:
+                continue
+
+            data = get_edges_faces_matrices(obj_index)
+            mesh_name = self.basemesh_name + "_" + str(obj_index)
+            make_bmesh_geometry(C, mesh_name, Verts, *data, fixed_verts=self.fixed_verts)
+
+        self.remove_non_updated_objects(obj_index, self.basemesh_name)
+
+        if self.grouping:
+            self.to_group()
+        if self.material:
+            self.set_corresponding_materials()
+        if self.autosmooth:
+            self.set_autosmooth()
 
     def to_group(self):
         # this def for grouping objects in scene
@@ -315,7 +330,6 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
                     newgroup.objects.link(obj)
 
     def remove_non_updated_objects(self, obj_index, _name):
-
         meshes = bpy.data.meshes
         objects = bpy.data.objects
 
@@ -325,7 +339,6 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
         if not objs:
             return
 
-        # select and finally remove all excess objects
         scene = bpy.context.scene  # fix for render mode is needed?
 
         for object_name in objs:
@@ -339,14 +352,20 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
             meshes.remove(meshes[object_name])
 
         # fingers crossed 2x.
+    def get_children(self):
+        objs = bpy.data.objects
+        return [o for o in objs if o.name.startswith(self.basemesh_name + "_")]
 
     def set_corresponding_materials(self):
-        objs = bpy.data.objects
-        for obj in objs:
-            # if this object is made by bmesh - assign material of 'object_0'
-            if obj.name.startswith(self.basemesh_name + "_"):
-                if self.material in bpy.data.materials:
-                    obj.active_material = bpy.data.materials[self.material]
+        if self.material in bpy.data.materials:
+            for obj in self.get_children():
+                obj.active_material = bpy.data.materials[self.material]
+
+    def set_autosmooth(self):
+        for obj in self.get_children():
+            mesh = obj.data
+            for p in mesh.polygons:
+                p.use_smooth = True
 
     def update_socket(self, context):
         self.update()
