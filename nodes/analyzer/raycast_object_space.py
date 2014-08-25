@@ -31,33 +31,28 @@ class SvRayCastNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     modes = [
-    ("Object",             "object_space",          "", 1),
-    ("World",              "world_space",           "", 2),
+    ("Object",             "object_space",         "", 1),
+    ("World",              "world_space",          "", 2),
     ]
 
     Itermodes = [
-    ("match_short",             "match_short",          "", 1),
-    ("match_long_repeat",              "match_long_repeat",           "", 2),
+    ("match_short",        "match_short",          "", 1),
+    ("match_long_repeat",  "match_long_repeat",    "", 2),
     ]
 
-    
     Modes = EnumProperty(name="Raycast modes", description="Raycast modes",  default="Object", items=modes, update=updateNode)
     Iteration = EnumProperty(name="iteration modes", description="Iteration modes",  default="match_short", items=Itermodes, update=updateNode)
-
     formula = StringProperty(name='formula', description='name of object to operate on ("object_space" mode only)', default='Cube', update=updateNode)
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "formula", text="")
         row = layout.row(align=True)
-        
-
         layout.prop(self, "Modes", "Raycast modes")
         layout.prop(self, "Iteration", "Iteration modes")
         
     def init(self, context):
         self.inputs.new('VerticesSocket', 'start', 'start')
         self.inputs.new('VerticesSocket', 'end', 'end')
-
         self.outputs.new('VerticesSocket', "HitP", "HitP")
         self.outputs.new('VerticesSocket', "HitNorm", "HitNorm")
         self.outputs.new('StringsSocket', "INDEX/Succes", "INDEX/Succes")
@@ -75,10 +70,7 @@ class SvRayCastNode(bpy.types.Node, SverchCustomTreeNode):
         if not (end_links and (type(end_links[0].from_socket) == VerticesSocket)):
             return
 
-        
-
         self.process()
-
 
     def process(self):
 
@@ -87,8 +79,6 @@ class SvRayCastNode(bpy.types.Node, SverchCustomTreeNode):
         OutLoc=[]
         OutNorm=[]
         INDSucc=[]
-
-        
 
         st = Vector_generate(SvGetSocketAnyType(self, self.inputs['start']))
         en = Vector_generate(SvGetSocketAnyType(self, self.inputs['end']))
@@ -120,16 +110,12 @@ class SvRayCastNode(bpy.types.Node, SverchCustomTreeNode):
                 INDSucc.append(bpy.context.scene.ray_cast(start[i],end[i])[0])
                 i=i+1
 
-        
         if outputs['HitP'].links:
             SvSetSocketAnyType(self, 'HitP', [OutLoc])
         if outputs['HitNorm'].links:
             SvSetSocketAnyType(self, 'HitNorm', [OutNorm])
         if outputs['INDEX/Succes'].links:
             SvSetSocketAnyType(self, 'INDEX/Succes', [INDSucc])
-
-
-
 
 
     def update_socket(self, context):
