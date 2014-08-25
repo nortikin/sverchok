@@ -311,7 +311,13 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
             mesh_name = self.basemesh_name + "_" + str(obj_index)
             make_bmesh_geometry(C, mesh_name, Verts, *data, fixed_verts=self.fixed_verts)
 
-        self.remove_non_updated_objects(obj_index, self.basemesh_name)
+        # notice, 4 times after this point all objs with name.startswith(self.basemesh_name)
+        # are screened. this can be smarter.
+        self.remove_non_updated_objects(obj_index)
+
+        # possibly do a
+        # obj_list = self.get_objs()   # 1 time
+        #   self.to_group(obj_list)
 
         if self.grouping:
             self.to_group()
@@ -332,17 +338,21 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
                 if obj.name not in newgroup.objects:
                     newgroup.objects.link(obj)
 
-    def remove_non_updated_objects(self, obj_index, _name):
-        meshes = bpy.data.meshes
+    def get_children(self):
         objects = bpy.data.objects
-
         objs = [obj for obj in objects if obj.type == 'MESH']
-        objs = [obj for obj in objs if obj.name.startswith(_name)]
+        return [o for o in objs if o.name.startswith(self.basemesh_name + "_")]
+
+    def remove_non_updated_objects(self, obj_index):
+        objs = self.get_children()
         objs = [obj.name for obj in objs if int(obj.name.split("_")[-1]) > obj_index]
         if not objs:
             return
 
-        scene = bpy.context.scene  # fix for render mode is needed?
+        # fix for render mode is needed?
+        meshes = bpy.data.meshes
+        objects = bpy.data.objects
+        scene = bpy.context.scene
 
         for object_name in objs:
             obj = objects[object_name]
@@ -356,10 +366,6 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
         # fingers crossed 2x.
 
-    def get_children(self):
-        objs = bpy.data.objects
-        return [o for o in objs if o.name.startswith(self.basemesh_name + "_")]
-
     def set_corresponding_materials(self):
         if self.material in bpy.data.materials:
             for obj in self.get_children():
@@ -368,8 +374,6 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
     def set_autosmooth(self):
         for obj in self.get_children():
             mesh = obj.data
-            #for p in mesh.polygons:
-            #    p.use_smooth = True
             smooth_states = [True] * len(mesh.polygons)
             mesh.polygons.foreach_set('use_smooth', smooth_states)
             mesh.update()
