@@ -49,14 +49,11 @@ def default_mesh(name):
     return mesh_data
 
 
-def make_bmesh_geometry(context, name, verts, edges, faces, matrix, fixed_verts=False):
-    # no verts. no processing.
-    if not verts:
-        return
-
+def make_bmesh_geometry(node, context, name, verts, *topology):
     scene = context.scene
     meshes = bpy.data.meshes
     objects = bpy.data.objects
+    edges, faces, matrix = topology
 
     if name in objects:
         sv_object = objects[name]
@@ -66,15 +63,15 @@ def make_bmesh_geometry(context, name, verts, edges, faces, matrix, fixed_verts=
         scene.objects.link(sv_object)
 
     mesh = sv_object.data
-    if len(mesh.vertices) == len(verts) and fixed_verts:
+    if len(mesh.vertices) == len(verts) and node.fixed_verts:
         f_v = list(itertools.chain.from_iterable(verts))
         mesh.vertices.foreach_set('co', f_v)
     else:
         bm = bmesh_from_pydata(verts, edges, faces)
 
-        # Finish up, write the bmesh back to the mesh
+        # write bmesh, then free to prevent further access
         bm.to_mesh(sv_object.data)
-        bm.free()  # free and prevent further access
+        bm.free()
 
         sv_object.hide_select = False
 
@@ -284,24 +281,18 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
         self.process()
 
     def process(self):
-        inputs = self.inputs
-
-        C = bpy.context
         mverts, *mrest = self.get_geometry_from_sockets()
 
         def get_edges_faces_matrices(obj_index):
             for geom in mrest:
                 yield self.get_structure(geom, obj_index)
 
-        # matrices need to define count of objects. paradigma
-        maxlen = max(len(mverts), len(mrest[0]), len(mrest[1]), len(mrest[2]))
+        # extend all non empty lists to longest of mverts or *mrest
+        maxlen = max(len(mverts), *(map(len, mrest)))
         fullList(mverts, maxlen)
-        if mrest[0]:
-            fullList(mrest[0], maxlen)
-        if mrest[1]:
-            fullList(mrest[1], maxlen)
-        if mrest[2]:
-            fullList(mrest[2], maxlen)
+        for idx in range(3):
+            if mrest[idx]:
+                fullList(mrest[idx], maxlen)
 
         for obj_index, Verts in enumerate(mverts):
             if not Verts:
@@ -309,15 +300,9 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
             data = get_edges_faces_matrices(obj_index)
             mesh_name = self.basemesh_name + "_" + str(obj_index)
-            make_bmesh_geometry(C, mesh_name, Verts, *data, fixed_verts=self.fixed_verts)
+            make_bmesh_geometry(node, bpy.context, mesh_name, Verts, *data)
 
-        # notice, 4 times after this point all objs with name.startswith(self.basemesh_name)
-        # are screened. this can be smarter.
         self.remove_non_updated_objects(obj_index)
-
-        # possibly do a
-        # obj_list = self.get_objs()   # 1 time
-        #   self.to_group(obj_list)
 
         if self.grouping:
             self.to_group()
