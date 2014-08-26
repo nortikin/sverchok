@@ -235,19 +235,13 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
     def get_geometry_from_sockets(self):
         inputs = self.inputs
+        get_data = lambda s, t: self.get_corrected_data(s, t) if inputs[s].links else []
 
-        has_matrix = True if inputs['matrix'].links else False
-        has_edges = True if inputs['edges'].links else False
-        has_faces = True if inputs['faces'].links else False
-
-        get_data = lambda s, t: self.get_corrected_data(s, t)
-        V, M, S = VerticesSocket, MatrixSocket, StringsSocket
-
-        mverts = get_data('vertices', V)
-        mmatrix = get_data('matrix', M) if has_matrix else []
-        medges = get_data('edges', S) if has_edges else []
-        mfaces = get_data('faces', S) if has_faces else []
-        return mverts, medges, mfaces, mmatrix
+        mverts = get_data('vertices', VerticesSocket)
+        mmtrix = get_data('matrix', MatrixSocket)
+        medges = get_data('edges', StringsSocket)
+        mfaces = get_data('faces', StringsSocket)
+        return mverts, medges, mfaces, mmtrix
 
     def get_structure(self, stype, sindex):
         if not stype:
