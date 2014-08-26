@@ -311,7 +311,7 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
         if self.grouping:
             self.to_group(objs)
 
-        # truthy if self.material is .materials
+        # truthy if self.material is in .materials
         if bpy.data.materials.get(self.material):
             self.set_corresponding_materials(objs)
 
