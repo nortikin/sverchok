@@ -29,6 +29,10 @@ from utils.sv_bmesh_utils import bmesh_from_pydata
 
 
 def get_random_init():
+
+    # this must eventually include a check on bpy.data.objects
+    # to not return names that are present the current .blend
+
     greek_alphabet = [
         'Alpha', 'Beta', 'Gamma', 'Delta',
         'Epsilon', 'Zeta', 'Eta', 'Theta',
@@ -202,7 +206,6 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons_ext(self, context, layout):
         self.draw_buttons(context, layout)
-        
         layout.separator()
 
         row = layout.row(align=True)
