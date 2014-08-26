@@ -9,7 +9,7 @@ nodes_dict = {
         'kd_tree',
         'kd_tree_edges',
         'weights',
-        'raycast_object_space'],
+        'raycast'],
 
     'basic_view': [
         'bakery',

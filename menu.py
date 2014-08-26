@@ -185,8 +185,9 @@ def make_categories():
         ["SvScaleNode",         "Scale"],
         ["SvMatrixEulerNode",   "Matrix Euler"],
         ["SvMirrorNode",        "Mirror"],
-        ["SvWafelNode",        "Wafel"],
-        ["SvVertexGroupNode",   "Vertext group"]] #made by Ko.
+        ["SvWafelNode",         "Wafel"],
+        ["SvVertexGroupNode",   "Vertext group"],
+        ["SvRayCastNode",       "Raycast"]] #made by Ko.
 
     node_categories = []
     for category, nodes in node_cats.items():
