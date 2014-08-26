@@ -187,7 +187,7 @@ def make_categories():
         ["SvMirrorNode",        "Mirror"],
         ["SvWafelNode",         "Wafel"],
         ["SvVertexGroupNode",   "Vertext group"],
-        ["SvRayCastNode",       "Raycast"]] #made by Ko.
+        ["SvRayCastNode",       "Raycast"]]
 
     node_categories = []
     for category, nodes in node_cats.items():
