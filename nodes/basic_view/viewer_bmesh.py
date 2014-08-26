@@ -268,15 +268,12 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
             return
 
         # explicit statement about which states are useful to process.
-        if not ('matrix' in self.inputs):
-            self.set_dormant_color()
-            return
-
-        if not self.inputs['vertices'].links:
-            self.set_dormant_color()
-            return
-
         if not self.activate:
+            self.set_dormant_color()
+            return
+
+        inputs = self.inputs
+        if not ('matrix' in inputs) or not self.inputs['vertices'].links:
             self.set_dormant_color()
             return
 
