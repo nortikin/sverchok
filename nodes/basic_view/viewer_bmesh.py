@@ -306,28 +306,17 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
             make_bmesh_geometry(self, bpy.context, mesh_name, Verts, *data)
 
         self.remove_non_updated_objects(obj_index)
+        objs = self.get_children()
 
         if self.grouping:
-            self.to_group()
+            self.to_group(objs)
 
-        # returns None if self.material is not present in .materials
+        # truthy if self.material is .materials
         if bpy.data.materials.get(self.material):
-            self.set_corresponding_materials()
+            self.set_corresponding_materials(objs)
 
         if self.autosmooth:
-            self.set_autosmooth()
-
-    def to_group(self):
-        # this def for grouping objects in scene
-        objs = bpy.data.objects
-        if self.basemesh_name not in bpy.data.groups:
-            newgroup = bpy.data.groups.new(self.basemesh_name)
-        else:
-            newgroup = bpy.data.groups[self.basemesh_name]
-        for obj in objs:
-            if self.basemesh_name in obj.name:
-                if obj.name not in newgroup.objects:
-                    newgroup.objects.link(obj)
+            self.set_autosmooth(objs)
 
     def get_children(self):
         objects = bpy.data.objects
@@ -356,13 +345,23 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
             meshes.remove(meshes[object_name])
 
         # fingers crossed 2x.
+    def to_group(self, objs):
+        groups = bpy.data.groups
+        named = self.basemesh_name
 
-    def set_corresponding_materials(self):
-        for obj in self.get_children():
+        # alias group, or generate new group and alias that
+        group = groups.get(named, groups.new(named))
+
+        for obj in objs:
+            if obj.name not in group.objects:
+                group.objects.link(obj)
+
+    def set_corresponding_materials(self, objs):
+        for obj in objs:
             obj.active_material = bpy.data.materials[self.material]
 
-    def set_autosmooth(self):
-        for obj in self.get_children():
+    def set_autosmooth(self, objs):
+        for obj in objs:
             mesh = obj.data
             smooth_states = [True] * len(mesh.polygons)
             mesh.polygons.foreach_set('use_smooth', smooth_states)
