@@ -116,7 +116,6 @@ class SvBmeshViewOp(bpy.types.Operator):
 
         elif type_op == 'random_mesh_name':
             n.basemesh_name = get_random_init()
-            n.randname_choosed = True
 
     def execute(self, context):
         self.hide_unhide(context, self.fn_name)
@@ -136,7 +135,6 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
     basemesh_name = StringProperty(default='Alpha', update=updateNode)
     material = StringProperty(default='', update=updateNode)
-    randname_choosed = BoolProperty(default=False)
     grouping = BoolProperty(default=True)
     state_view = BoolProperty(default=True)
     state_render = BoolProperty(default=True)
@@ -188,16 +186,11 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
         row.prop(self, "grouping", text="to Group")
 
         layout.label("Base mesh name(s)", icon='OUTLINER_OB_MESH')
-        #row = layout.row()
-        #row.prop(self, "basemesh_name", text="")
-        # this is button to randomise
+
         col = layout.column(align=True)
         row = col.row(align=True)
         row.scale_y = 1.1
         row.prop(self, "basemesh_name", text="")
-
-        if not self.randname_choosed:
-            row.operator(sh, text='Random Name').fn_name = 'random_mesh_name'
 
         row = col.row(align=True)
         row.scale_y = 0.9
@@ -209,18 +202,23 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons_ext(self, context, layout):
         self.draw_buttons(context, layout)
+        
         layout.separator()
 
-        row = layout.row()
+        row = layout.row(align=True)
+        sh = 'node.showhide_bmesh'
+        row.operator(sh, text='Random Name').fn_name = 'random_mesh_name'
+
+        row = layout.row(align=True)
         box = row.box()
+        if box:
+            boxrow = box.row()
+            boxrow.label(text="Beta options")
+            boxrow = box.row()
+            boxrow.prop(self, "fixed_verts", text="Fixed vert count")
 
-        boxrow = box.row()
-        boxrow.label(text="Beta options")
-        boxrow = box.row()
-        boxrow.prop(self, "fixed_verts", text="Fixed vert count")
-
-        boxrow = box.row()
-        boxrow.prop(self, 'autosmooth', text='smooth shade')
+            boxrow = box.row()
+            boxrow.prop(self, 'autosmooth', text='smooth shade')
 
     def get_corrected_data(self, socket_name, socket_type):
         inputs = self.inputs
