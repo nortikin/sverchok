@@ -67,16 +67,14 @@ def make_bmesh_geometry(node, context, name, verts, *topology):
         f_v = list(itertools.chain.from_iterable(verts))
         mesh.vertices.foreach_set('co', f_v)
     else:
+        # get bmesh, write to bmesh, then free to prevent further access
         bm = bmesh_from_pydata(verts, edges, faces)
-
-        # write bmesh, then free to prevent further access
         bm.to_mesh(sv_object.data)
         bm.free()
 
         sv_object.hide_select = False
 
     if matrix:
-        # apply matrices if necessary
         sv_object.matrix_local = list(zip(*matrix))
 
 
