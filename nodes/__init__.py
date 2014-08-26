@@ -9,7 +9,7 @@ nodes_dict = {
         'kd_tree',
         'kd_tree_edges',
         'weights',
-        'raycast_object_space'],
+        'raycast'],
 
     'basic_view': [
         'bakery',
@@ -103,7 +103,8 @@ nodes_dict = {
         'remove_doubles',
         'rotation',
         'scale',
-        'vertices_mask'],
+        'vertices_mask',
+        'wafel'],
 
     'modifier_make': [
         'bisect',
@@ -149,3 +150,4 @@ nodes_dict = {
         'vertices_sort',
         'axis_input']
 }
+
