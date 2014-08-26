@@ -58,6 +58,10 @@ class SvVertexGroupNode(bpy.types.Node, SverchCustomTreeNode):
         if not (self.formula in bpy.data.objects):
             return
         
+        inputs = self.inputs
+        if not 'Weights' in inputs:
+            return
+        
         vertex_weight = self.inputs['Weights'].links
         if not (vertex_weight and (type(vertex_weight[0].from_socket) == StringsSocket)):
             return
