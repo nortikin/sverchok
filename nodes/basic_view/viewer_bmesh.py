@@ -329,7 +329,6 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
         if not objs:
             return
 
-        # fix for render mode is needed?
         meshes = bpy.data.meshes
         objects = bpy.data.objects
         scene = bpy.context.scene
@@ -344,7 +343,6 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
         for object_name in objs:
             meshes.remove(meshes[object_name])
 
-        # fingers crossed 2x.
     def to_group(self, objs):
         groups = bpy.data.groups
         named = self.basemesh_name
