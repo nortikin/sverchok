@@ -126,17 +126,10 @@ def make_bmesh_geometry(node, context, name, verts, *topology):
         mesh.vertices.foreach_set('co', f_v)
     else:
 
-        if node.bmeshmode:
-            ''' get bmesh, write bmesh to obj, free bmesh'''
-            bm = bmesh_from_pydata(verts, edges, faces)
-            bm.to_mesh(sv_object.data)
-            bm.free()
-        else:
-            new_mesh_ref = meshes.new(name)
-            new_mesh_ref.from_pydata(verts, edges, faces)
-            new_mesh_ref.update()
-            sv_object.data = new_mesh_ref
-
+        ''' get bmesh, write bmesh to obj, free bmesh'''
+        bm = bmesh_from_pydata(verts, edges, faces)
+        bm.to_mesh(sv_object.data)
+        bm.free()
         sv_object.hide_select = False
 
     if matrix:
@@ -214,10 +207,6 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
         default=False,
         update=updateNode,
         description="This auto sets all faces to smooth shade")
-    bmeshmode = BoolProperty(
-        default=True,
-        update=updateNode,
-        description="This mode enforces oldschool bmesh generation")
 
     def init(self, context):
         self.use_custom_color = True
@@ -244,12 +233,13 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
         split = split.split()
         col2 = split.column()
+        tsplit = col2.row()
         sh = 'node.showhide_bmesh'
-        col2.operator(sh, text='', icon=icons('v')).fn_name = 'hide_view'
-        col3 = split.column()
-        col3.operator(sh, text='', icon=icons('s')).fn_name = 'hide_select'
-        col4 = split.column()
-        col4.operator(sh, text='', icon=icons('r')).fn_name = 'hide_render'
+        tsplit.operator(sh, text='', icon=icons('v')).fn_name = 'hide_view'
+        #col3 = split.column()
+        tsplit.operator(sh, text='', icon=icons('s')).fn_name = 'hide_select'
+        #col4 = split.column()
+        tsplit.operator(sh, text='', icon=icons('r')).fn_name = 'hide_render'
 
         row = layout.row()
         row.prop(self, "grouping", text="to Group")
@@ -283,7 +273,6 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
             box.label(text="Beta options")
             box.prop(self, "fixed_verts", text="Fixed vert count")
             box.prop(self, 'autosmooth', text='smooth shade')
-            box.prop(self, 'bmeshmode', text='bmesh mode')
 
     def get_corrected_data(self, socket_name, socket_type):
         inputs = self.inputs
