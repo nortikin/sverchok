@@ -19,7 +19,6 @@
 import itertools
 import random
 import re
-import bpy_types
 
 import bpy
 from bpy.props import BoolProperty, StringProperty
@@ -236,9 +235,7 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
         tsplit = col2.row()
         sh = 'node.showhide_bmesh'
         tsplit.operator(sh, text='', icon=icons('v')).fn_name = 'hide_view'
-        #col3 = split.column()
         tsplit.operator(sh, text='', icon=icons('s')).fn_name = 'hide_select'
-        #col4 = split.column()
         tsplit.operator(sh, text='', icon=icons('r')).fn_name = 'hide_render'
 
         row = layout.row()
