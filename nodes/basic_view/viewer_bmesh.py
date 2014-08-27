@@ -209,15 +209,11 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
         def icons(button_type):
             icon = 'WARNING'
             if button_type == 'v':
-                state = self.state_view
-                icon = 'RESTRICT_VIEW_OFF' if state else 'RESTRICT_VIEW_ON'
+                icon = 'RESTRICT_VIEW_' + ['ON', 'OFF'][self.state_view]
             elif button_type == 'r':
-                state = self.state_render
-                icon = 'RESTRICT_RENDER_OFF' if state else 'RESTRICT_RENDER_ON'
+                icon = 'RESTRICT_RENDER_' + ['ON', 'OFF'][self.state_render]
             elif button_type == 's':
-                state = self.state_select
-                icon = 'RESTRICT_SELECT_OFF' if state else 'RESTRICT_SELECT_ON'
-
+                icon = 'RESTRICT_SELECT_' + ['ON', 'OFF'][self.state_select]
             return icon
 
         split = split.split()
