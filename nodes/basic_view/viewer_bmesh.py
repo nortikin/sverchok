@@ -19,6 +19,7 @@
 import itertools
 import random
 import re
+import bpy_types
 
 import bpy
 from bpy.props import BoolProperty, StringProperty
@@ -105,15 +106,36 @@ def make_bmesh_geometry(node, context, name, verts, *topology):
         sv_object = objects.new(name, temp_mesh)
         scene.objects.link(sv_object)
 
+    ''' There is overalapping code here for testing! '''
+
     mesh = sv_object.data
-    if len(mesh.vertices) == len(verts) and node.fixed_verts:
+    current_count = len(mesh.vertices)
+    propose_count = len(verts)
+    difference = (propose_count - current_count)
+
+    ''' With this mode you make a massive assumption about the
+        constant state of geometry. Assumes the count of verts
+        edges/faces stays the same, and only updates the locations
+
+        node.fixed_verts is not suitable for initial object creation
+        but if over time you find that the only change is going to be
+        vertices, this mode can be switched to to increase efficiency
+    '''
+    if node.fixed_verts and difference == 0:
         f_v = list(itertools.chain.from_iterable(verts))
         mesh.vertices.foreach_set('co', f_v)
     else:
-        # get bmesh, write to bmesh, then free to prevent further access
-        bm = bmesh_from_pydata(verts, edges, faces)
-        bm.to_mesh(sv_object.data)
-        bm.free()
+
+        if node.bmeshmode:
+            ''' get bmesh, write bmesh to obj, free bmesh'''
+            bm = bmesh_from_pydata(verts, edges, faces)
+            bm.to_mesh(sv_object.data)
+            bm.free()
+        else:
+            new_mesh_ref = meshes.new(name)
+            new_mesh_ref.from_pydata(verts, edges, faces)
+            new_mesh_ref.update()
+            sv_object.data = new_mesh_ref
 
         sv_object.hide_select = False
 
@@ -192,6 +214,10 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
         default=False,
         update=updateNode,
         description="This auto sets all faces to smooth shade")
+    bmeshmode = BoolProperty(
+        default=True,
+        update=updateNode,
+        description="This mode enforces oldschool bmesh generation")
 
     def init(self, context):
         self.use_custom_color = True
@@ -251,16 +277,13 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
         sh = 'node.showhide_bmesh'
         row.operator(sh, text='Random Name').fn_name = 'random_mesh_name'
 
-        row = layout.row(align=True)
-        box = row.box()
+        col = layout.column(align=True)
+        box = col.box()
         if box:
-            boxrow = box.row()
-            boxrow.label(text="Beta options")
-            boxrow = box.row()
-            boxrow.prop(self, "fixed_verts", text="Fixed vert count")
-
-            boxrow = box.row()
-            boxrow.prop(self, 'autosmooth', text='smooth shade')
+            box.label(text="Beta options")
+            box.prop(self, "fixed_verts", text="Fixed vert count")
+            box.prop(self, 'autosmooth', text='smooth shade')
+            box.prop(self, 'bmeshmode', text='bmesh mode')
 
     def get_corrected_data(self, socket_name, socket_type):
         inputs = self.inputs
@@ -368,9 +391,10 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
         objects = bpy.data.objects
         scene = bpy.context.scene
 
+        # remove excess objects
         for object_name in objs:
             obj = objects[object_name]
-            obj.hide_select = False  # needed?
+            obj.hide_select = False
             scene.objects.unlink(obj)
             objects.remove(obj)
 
