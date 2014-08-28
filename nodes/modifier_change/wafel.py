@@ -286,7 +286,8 @@ class SvWafelNode(bpy.types.Node, SverchCustomTreeNode):
                             else:
                                 '''рёбра'''
                                 # пазы формируем независимо от верх низ
-                                outeob = [[lenvep+k,lenvep+k+1],[lenvep+k+1,lenvep+k+2],[lenvep+k+2,lenvep+k+3]]
+                                outeob1 = [[lenvep+k,lenvep+k+1],[lenvep+k+1,lenvep+k+2],[lenvep+k+2,lenvep+k+3]]
+                                outeob2 = [[lenvep+k,lenvep+k+1],[lenvep+k+1,lenvep+k+2],[lenvep+k+2,lenvep+k+3]]
                                 # наполнение списков lenvep = length(vecp)
                                 newinds1.extend([[l1, lenvep+k], [lenvep+k+3, r1]])
                                 newinds2.extend([[l2, lenvep+k+3], [lenvep+k, r2]])
@@ -339,3 +340,4 @@ def unregister():
 
 if __name__ == '__main__':
     register()
+
