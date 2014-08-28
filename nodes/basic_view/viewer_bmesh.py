@@ -48,8 +48,6 @@ def natural_plus_one(object_names):
 
 
 def get_random_init():
-    # this must eventually include a check on bpy.data.objects
-    # to not return names that are present in the current .blend
     objects = bpy.data.objects
 
     greek_alphabet = [
