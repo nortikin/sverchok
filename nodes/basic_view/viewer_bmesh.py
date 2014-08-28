@@ -239,7 +239,7 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
         sh = 'node.showhide_bmesh'
         split = split.split()
         if split:
-            row = split.row()
+            row = split.row(align=True)
             row.operator(sh, text='', icon=icons('v')).fn_name = 'hide_view'
             row.operator(sh, text='', icon=icons('s')).fn_name = 'hide_select'
             row.operator(sh, text='', icon=icons('r')).fn_name = 'hide_render'
