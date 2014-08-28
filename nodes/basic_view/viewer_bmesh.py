@@ -136,7 +136,7 @@ def make_bmesh_geometry(node, context, name, verts, *topology):
 
 
 class SvBmeshViewOp(bpy.types.Operator):
-    ''' Pick random greek leter or select meshes in scene '''
+
     bl_idname = "node.showhide_bmesh"
     bl_label = "Sverchok bmesh showhide"
     bl_options = {'REGISTER', 'UNDO'}
@@ -186,11 +186,17 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     activate = BoolProperty(
-        name='Show', description='Activate node?',
+        name='Show',
+        description='When enabled this will process incoming data',
         default=True,
         update=updateNode)
 
-    basemesh_name = StringProperty(default='Alpha', update=updateNode)
+    basemesh_name = StringProperty(
+        default='Alpha',
+        update=updateNode,
+        description='sets which base name the object will use, \
+        use N-panel to pick alternative random names')
+
     material = StringProperty(default='', update=updateNode)
     grouping = BoolProperty(default=True)
     state_view = BoolProperty(default=True)
@@ -230,31 +236,30 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
                 icon = 'RESTRICT_SELECT_' + ['ON', 'OFF'][self.state_select]
             return icon
 
-        split = split.split()
-        col2 = split.column()
-        tsplit = col2.row()
         sh = 'node.showhide_bmesh'
-        tsplit.operator(sh, text='', icon=icons('v')).fn_name = 'hide_view'
-        tsplit.operator(sh, text='', icon=icons('s')).fn_name = 'hide_select'
-        tsplit.operator(sh, text='', icon=icons('r')).fn_name = 'hide_render'
+        split = split.split()
+        if split:
+            row = split.row()
+            row.operator(sh, text='', icon=icons('v')).fn_name = 'hide_view'
+            row.operator(sh, text='', icon=icons('s')).fn_name = 'hide_select'
+            row.operator(sh, text='', icon=icons('r')).fn_name = 'hide_render'
 
         row = layout.row()
-        row.prop(self, "grouping", text="to Group")
-
-        layout.label("Base mesh name(s)", icon='OUTLINER_OB_MESH')
+        row.prop(self, "grouping", text="Group")
 
         col = layout.column(align=True)
         row = col.row(align=True)
         row.scale_y = 1.1
-        row.prop(self, "basemesh_name", text="")
+        row.prop(self, "basemesh_name", text="", icon='OUTLINER_OB_MESH')
 
         row = col.row(align=True)
         row.scale_y = 0.9
-        row.operator(sh, text='Select/Deselect').fn_name = 'mesh_select'
+        row.operator(sh, text='Select / Deselect').fn_name = 'mesh_select'
         row = col.row(align=True)
         row.scale_y = 0.9
 
-        row.prop(self, "material", text="mat.")
+        # row.prop(self, "material", text="", icon='MATERIAL_DATA')
+        row.prop_search(self, 'material', bpy.data, 'materials', text='', icon='MATERIAL_DATA')
 
     def draw_buttons_ext(self, context, layout):
         self.draw_buttons(context, layout)
