@@ -1,6 +1,5 @@
 def lorenz(N, verts):
     add_vert = verts.append
-    i = 0
     h = 0.01
     a = 10.0
     b = 28.0
