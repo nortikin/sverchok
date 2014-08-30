@@ -96,6 +96,29 @@ class SvVarnamesToSockets(bpy.types.Operator):
         return {'FINISHED'}
 
 
+class SvNodeRefreshFromTextEditor(bpy.types.Operator):
+
+    bl_label = ""
+    bl_idname = "txt.noderefresh_from_texteditor"
+
+    def execute(self, context):
+        ngs = bpy.data.node_groups
+        if not ngs:
+            self.report({'INFO'}, "No NodeGroups")
+            return {'FINISHED'}
+
+        # text_file_name = bpy.context.edit_text.name
+        for ng in ngs:
+            if not ng.bl_idname == 'SverchCustomTreeType':
+                continue
+
+            node_types = [node.bl_idname for node in ng.nodes]
+            if 'SvProfileNode' in node_types:
+                ng.update()
+
+        return {'FINISHED'}
+
+
 class BasicTextMenu(bpy.types.Menu):
     bl_idname = "TEXT_MT_svplug_menu"
     bl_label = "Plugin Menu"
@@ -112,17 +135,26 @@ class BasicTextMenu(bpy.types.Menu):
 def register():
     bpy.utils.register_class(SvVarnamesToSockets)
     bpy.utils.register_class(BasicTextMenu)
+    bpy.utils.register_class(SvNodeRefreshFromTextEditor)
 
-    # Sets the keymap to Ctrl + I for inside the text editor, will only
-    # appear if no selection is set.
     wm = bpy.context.window_manager
     kc = wm.keyconfigs.addon
     try:
         shortcut_name = "Text"
         if not (shortcut_name in kc.keymaps):
             km = kc.keymaps.new(name=shortcut_name, space_type="TEXT_EDITOR")
-            new_shortcut = km.keymap_items.new('wm.call_menu', 'I', 'PRESS', ctrl=True)
+
+            # Sets the keymap to Ctrl + I for inside the text editor, will only
+            # appear if no selection is set.
+            new_shortcut = km.keymap_items.new(
+                'wm.call_menu', 'I', 'PRESS', ctrl=True)
             new_shortcut.properties.name = 'TEXT_MT_svplug_menu'
+
+            # ctrl Enter for profile node
+            new_shortcut2 = km.keymap_items.new(
+                'txt.noderefresh_from_texteditor',
+                'RET', 'PRESS', ctrl=True)
+
     except KeyError:
         print("Text key not found in keymap, that's ok")
 
@@ -130,3 +162,4 @@ def register():
 def unregister():
     bpy.utils.unregister_class(SvVarnamesToSockets)
     bpy.utils.unregister_class(BasicTextMenu)
+    bpy.utils.unregister_class(SvNodeRefreshFromTextEditor)
