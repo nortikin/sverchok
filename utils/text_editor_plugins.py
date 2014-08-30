@@ -107,7 +107,7 @@ class SvNodeRefreshFromTextEditor(bpy.types.Operator):
             self.report({'INFO'}, "No NodeGroups")
             return {'FINISHED'}
 
-        # text_file_name = bpy.context.edit_text.name
+        text_file_name = bpy.context.edit_text.name
         for ng in ngs:
             if not ng.bl_idname == 'SverchCustomTreeType':
                 continue
@@ -115,6 +115,15 @@ class SvNodeRefreshFromTextEditor(bpy.types.Operator):
             node_types = [node.bl_idname for node in ng.nodes]
             if 'SvProfileNode' in node_types:
                 ng.update()
+                continue
+
+            if 'SvScriptNode' in node_types:
+                nodes = [n for n in ng.nodes if n.bl_idname == 'SvScriptNode']
+                for n in nodes:
+                    if n.script_name == text_file_name:
+                        n.load()
+                        ng.update()
+                        continue
 
         return {'FINISHED'}
 
