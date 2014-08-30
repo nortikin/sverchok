@@ -131,6 +131,12 @@ The update mechanism doesn't process inputs or anything until the following cond
  * Profile Node has at least one input socket connected
  * The file field on the Node points to an existing Text File.
 
+
+Keyboard Shortcut to refresh Profile Node
+-----------------------------------------
+
 Updates made to the profile path text file are not propagated automatically to any nodes that might be reading that file. 
-To refresh (for now) click one of the inputs or output sockets of Profile Node. There are other ways to refresh (change a value on one of the incoming nodes, or clicking the sockets of the incoming nodes)
+To refresh a Profile Node simply hit ``Ctrl+Enter`` In TextEditor while you are editing the file, or click one of the 
+inputs or output sockets of Profile Node. There are other ways to refresh (change a value on one of the incoming nodes, 
+or clicking the sockets of the incoming nodes)
 
