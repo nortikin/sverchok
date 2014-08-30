@@ -48,15 +48,35 @@ Modifier Make
 =============
 
 UV Connection
+-------------
+
 Adaptive Polygons
+-----------------
+
 Adaptive Edges
+--------------
+
 Cross Section
+-------------
+
 Bisect
+------
+
 Solidify
+--------
+
 Wireframe
+---------
+
 Delaunay 2D
+-----------
+
 Voronoi 2D
+----------
+
 Convex Hull
+-----------
+Creates a list of Faces and Edges from an incoming list of Vertices. This can be useful to skin a simple cloud of points. Any internal points to the system will be rejected.
 
 Lathe
 -----
