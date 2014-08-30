@@ -17,11 +17,12 @@ any non obvious behaviour?
 
 Polygons to Edges
 -----------------
-any non obvious behaviour?
+All polygons are essentially a list of indices that describe which vertices make up the sides of the polygon. 
+This node reduces each polygon to its constituent edge loops.
 
 Mesh Join
 ---------
-This is like Ctrl+J in 3d View, it merges nested Vertex and Poly lists together.
+This is like ``Ctrl+J`` in 3d View, it merges nested Vertex and Poly lists together.
 
 Remove Doubles
 --------------
