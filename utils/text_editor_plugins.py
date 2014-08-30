@@ -113,9 +113,14 @@ class SvNodeRefreshFromTextEditor(bpy.types.Operator):
                 continue
 
             node_types = [node.bl_idname for node in ng.nodes]
+
             if 'SvProfileNode' in node_types:
-                ng.update()
-                continue
+                nodes = [n for n in ng.nodes if n.bl_idname == 'SvProfileNode']
+                for n in nodes:
+                    if n.filename == text_file_name:
+                        ng.update()
+                        #continue
+                        break
 
             if 'SvScriptNode' in node_types:
                 nodes = [n for n in ng.nodes if n.bl_idname == 'SvScriptNode']
@@ -123,7 +128,8 @@ class SvNodeRefreshFromTextEditor(bpy.types.Operator):
                     if n.script_name == text_file_name:
                         n.load()
                         ng.update()
-                        continue
+                        #continue
+                        break
 
         return {'FINISHED'}
 
