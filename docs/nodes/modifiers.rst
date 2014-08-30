@@ -13,12 +13,15 @@ too, but at some point we had to pick a category to fill the menus.
 
 Polygon Boom
 ------------
+any non obvious behaviour?
 
 Polygons to Edges
 -----------------
+any non obvious behaviour?
 
 Mesh Join
 ---------
+any non obvious behaviour?
 
 Remove Doubles
 --------------
@@ -26,15 +29,20 @@ Uses ``bmesh.remove_doubles`` to remove any vertices that are within a certain d
 
 Delete Loose
 ------------
+Throughputs the mesh minus any unattached Vertices, 
+any non obvious behaviour?
 
 Separate Loose Parts
 --------------------
+any non obvious behaviour?
 
 Mask Vertices
 -------------
+any non obvious behaviour?
 
 Fill Holes
 ----------
+any non obvious behaviour?
 
 Intersect Edges
 ---------------
