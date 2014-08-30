@@ -13,7 +13,8 @@ too, but at some point we had to pick a category to fill the menus.
 
 Polygon Boom
 ------------
-any non obvious behaviour?
+Any Faces that share vertices will get each their own unique vertices. This facilitates rotation on a polygon 
+around an arbitrary points without affecting the vertices of other polygons in the list.
 
 Polygons to Edges
 -----------------
