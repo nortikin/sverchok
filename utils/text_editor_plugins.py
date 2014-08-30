@@ -96,6 +96,56 @@ class SvVarnamesToSockets(bpy.types.Operator):
         return {'FINISHED'}
 
 
+class SvNodeRefreshFromTextEditor(bpy.types.Operator):
+
+    bl_label = ""
+    bl_idname = "txt.noderefresh_from_texteditor"
+
+    def execute(self, context):
+        ngs = bpy.data.node_groups
+        if not ngs:
+            self.report({'INFO'}, "No NodeGroups")
+            return {'FINISHED'}
+
+        edit_text = bpy.context.edit_text
+        text_file_name = edit_text.name
+        is_sv_tree = lambda ng: ng.bl_idname == 'SverchCustomTreeType'
+        ngs = list(filter(is_sv_tree, ngs))
+
+        if not ngs:
+            self.report({'INFO'}, "No Sverchok NodeGroups")
+            return {'FINISHED'}
+
+        looking_for_script_node = self.has_sv_main(edit_text)
+
+        for ng in ngs:
+            node_types = [node.bl_idname for node in ng.nodes]
+
+            if looking_for_script_node:
+                SN = 'SvScriptNode'
+                if SN in node_types:
+                    nodes = [n for n in ng.nodes if n.bl_idname == SN]
+                    for n in nodes:
+                        if n.script_name == text_file_name:
+                            n.load()
+                            ng.update()
+                            break
+
+            else:
+                PN = 'SvProfileNode'
+                if PN in node_types:
+                    nodes = [n for n in ng.nodes if n.bl_idname == PN]
+                    for n in nodes:
+                        if n.filename == text_file_name:
+                            ng.update()
+                            break
+
+        return {'FINISHED'}
+
+    def has_sv_main(self, txt):
+        return 'def sv_main(' in txt.as_string()
+
+
 class BasicTextMenu(bpy.types.Menu):
     bl_idname = "TEXT_MT_svplug_menu"
     bl_label = "Plugin Menu"
@@ -112,17 +162,26 @@ class BasicTextMenu(bpy.types.Menu):
 def register():
     bpy.utils.register_class(SvVarnamesToSockets)
     bpy.utils.register_class(BasicTextMenu)
+    bpy.utils.register_class(SvNodeRefreshFromTextEditor)
 
-    # Sets the keymap to Ctrl + I for inside the text editor, will only
-    # appear if no selection is set.
     wm = bpy.context.window_manager
     kc = wm.keyconfigs.addon
     try:
         shortcut_name = "Text"
         if not (shortcut_name in kc.keymaps):
             km = kc.keymaps.new(name=shortcut_name, space_type="TEXT_EDITOR")
-            new_shortcut = km.keymap_items.new('wm.call_menu', 'I', 'PRESS', ctrl=True)
+
+            # Sets the keymap to Ctrl + I for inside the text editor, will only
+            # appear if no selection is set.
+            new_shortcut = km.keymap_items.new(
+                'wm.call_menu', 'I', 'PRESS', ctrl=True)
             new_shortcut.properties.name = 'TEXT_MT_svplug_menu'
+
+            # ctrl Enter for profile node
+            new_shortcut2 = km.keymap_items.new(
+                'txt.noderefresh_from_texteditor',
+                'RET', 'PRESS', ctrl=True)
+
     except KeyError:
         print("Text key not found in keymap, that's ok")
 
@@ -130,3 +189,4 @@ def register():
 def unregister():
     bpy.utils.unregister_class(SvVarnamesToSockets)
     bpy.utils.unregister_class(BasicTextMenu)
+    bpy.utils.unregister_class(SvNodeRefreshFromTextEditor)
