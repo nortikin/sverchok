@@ -464,7 +464,7 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
         update=mode_change)
 
     profile_file = StringProperty(default="", update=updateNode)
-    filename = StringProperty(default="")
+    filename = StringProperty(default="", update=updateNode)
     posxy = FloatVectorProperty(default=(0.0, 0.0), size=2)
     extended_parsing = BoolProperty(default=False)
 
@@ -472,7 +472,8 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
         row = layout.row()
         row.prop(self, 'selected_axis', expand=True)
         row = layout.row(align=True)
-        row.prop(self, "profile_file", text="")
+        # row.prop(self, "profile_file", text="")
+        row.prop_search(self, 'filename', bpy.data, 'texts', text='', icon='TEXT')
 
     def draw_buttons_ext(self, context, layout):
         row = layout.row(align=True)
@@ -508,7 +509,7 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
         '''
 
         # keeping the file internal for now.
-        self.filename = self.profile_file.strip()
+        # self.filename = self.profile_file.strip()
         if not (self.filename in bpy.data.texts):
             return
 
