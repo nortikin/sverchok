@@ -107,28 +107,43 @@ class SvNodeRefreshFromTextEditor(bpy.types.Operator):
             self.report({'INFO'}, "No NodeGroups")
             return {'FINISHED'}
 
-        text_file_name = bpy.context.edit_text.name
+        edit_text = bpy.context.edit_text
+        text_file_name = edit_text.name
+        is_sv_tree = lambda ng: ng.bl_idname == 'SverchCustomTreeType'
+        ngs = list(filter(is_sv_tree, ngs))
+
+        if not ngs:
+            self.report({'INFO'}, "No Sverchok NodeGroups")
+            return {'FINISHED'}
+
+        looking_for_script_node = self.has_sv_main(edit_text)
+
         for ng in ngs:
-            if not ng.bl_idname == 'SverchCustomTreeType':
-                continue
-
             node_types = [node.bl_idname for node in ng.nodes]
-            if 'SvProfileNode' in node_types:
-                nodes = [n for n in ng.nodes if n.bl_idname == 'SvProfileNode']
-                for n in nodes:
-                    if n.filename == text_file_name:
-                        ng.update()
-                        break
 
-            if 'SvScriptNode' in node_types:
-                nodes = [n for n in ng.nodes if n.bl_idname == 'SvScriptNode']
-                for n in nodes:
-                    if n.script_name == text_file_name:
-                        n.load()
-                        ng.update()
-                        break
+            if looking_for_script_node:
+                SN = 'SvScriptNode'
+                if SN in node_types:
+                    nodes = [n for n in ng.nodes if n.bl_idname == SN]
+                    for n in nodes:
+                        if n.script_name == text_file_name:
+                            n.load()
+                            ng.update()
+                            break
+
+            else:
+                PN = 'SvProfileNode'
+                if PN in node_types:
+                    nodes = [n for n in ng.nodes if n.bl_idname == PN]
+                    for n in nodes:
+                        if n.filename == text_file_name:
+                            ng.update()
+                            break
 
         return {'FINISHED'}
+
+    def has_sv_main(self, txt):
+        return 'def sv_main(' in txt.as_string()
 
 
 class BasicTextMenu(bpy.types.Menu):
