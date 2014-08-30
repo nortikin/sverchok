@@ -44,7 +44,8 @@ any non obvious behaviour?
 
 Fill Holes
 ----------
-any non obvious behaviour?
+Given an Edge Net this generates polygons by looking for edge loops with n sides and joining them as faces.
+
 
 Intersect Edges
 ---------------
