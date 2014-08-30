@@ -21,7 +21,7 @@ any non obvious behaviour?
 
 Mesh Join
 ---------
-any non obvious behaviour?
+This is like Ctrl+J in 3d View, it merges nested Vertex and Poly lists together.
 
 Remove Doubles
 --------------
