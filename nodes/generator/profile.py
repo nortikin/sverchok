@@ -314,12 +314,20 @@ class PathParser(object):
         but maybe this should see if the previous commands was not a 'START'
         because that would mean that the first point/vertex does need to be made
         '''
-        points = points[1:]
+        c = continuation = 1
+        d = 1
 
-        self.state_idx -= 1
+        if self.previous_command in {'START', 'move_to_absolute', 'move_to_relative'}:
+            c = 0
+            d = -1
+
+        points = points[c:]
+
+        self.state_idx -= c
         intermediate_idx = self.state_idx
-        self.state_idx += (len(points) + 1)
-        temp_edges = self.make_edges(intermediate_idx, points, 1)
+        self.state_idx += (len(points) + c)
+        temp_edges = self.make_edges(intermediate_idx, points, d)
+
         return points, temp_edges
 
     def parse_path_line(self):
