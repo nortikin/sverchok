@@ -83,9 +83,10 @@ class IndexViewerNode(bpy.types.Node, SverchCustomTreeNode):
         name="Faces", description="Display face indices",
         update=updateNode)
 
+    fonts = StringProperty(name='fonts', default='', update=updateNode)
     # fontsize
-    fonts = EnumProperty(items=[('Bfont', 'Bfont', 'Bfont')],
-                         name='fonts', update=updateNode)
+    #fonts = EnumProperty(items=[('Bfont', 'Bfont', 'Bfont')],
+    #                     name='fonts', update=updateNode)
 
     font_size = FloatProperty(
         name="font_size", description='',
@@ -163,7 +164,7 @@ class IndexViewerNode(bpy.types.Node, SverchCustomTreeNode):
             #fonts_ = [(n.name,n.name,n.name) for n in bpy.data.fonts]
             #self.fonts = EnumProperty(items=fonts_, name='fonts', update=updateNode)
             row = col.row(align=True)
-            row.prop(self, "fonts", expand=False)
+            row.prop(self, "fonts")
 
     def get_settings(self):
         '''Produce a dict of settings for the callback'''
@@ -326,7 +327,10 @@ class IndexViewerNode(bpy.types.Node, SverchCustomTreeNode):
         tcu.name = 'sv_text_' + text
         # TextCurve attributes
         tcu.body = text
-        tcu.font = bpy.data.fonts[self.fonts]
+        try:
+            tcu.font = bpy.data.fonts[self.fonts]
+        except:
+            tcu.font = bpy.data.fonts[0]
         tcu.offset_x = 0
         tcu.offset_y = 0
         tcu.resolution_u = 2
@@ -428,3 +432,4 @@ def unregister():
 
 if __name__ == '__main__':
     register()
+
