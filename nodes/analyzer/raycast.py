@@ -21,7 +21,7 @@ import parser
 import mathutils
 from mathutils import Vector
 from bpy.props import StringProperty, BoolProperty, EnumProperty
-from node_tree import SverchCustomTreeNode, StringsSocket, VerticesSocket
+from node_tree import SverchCustomTreeNode, StringsSocket, VerticesSocket, MatrixSocket
 from data_structure import (updateNode, Vector_generate, SvSetSocketAnyType, SvGetSocketAnyType, match_short, match_long_repeat)
 
 class SvRayCastNode(bpy.types.Node, SverchCustomTreeNode):
@@ -73,12 +73,16 @@ class SvRayCastNode(bpy.types.Node, SverchCustomTreeNode):
         self.process()
 
     def process(self):
-
+        
+        SSSAT= SvSetSocketAnyType
+        bcsrc= bpy.context.scene.ray_cast
         outputs = self.outputs        
         out=[]
         OutLoc=[]
         OutNorm=[]
         INDSucc=[]
+        OutMatrix=[]
+        ObjectID=[]
 
         st = Vector_generate(SvGetSocketAnyType(self, self.inputs['start']))
         en = Vector_generate(SvGetSocketAnyType(self, self.inputs['end']))
@@ -92,6 +96,13 @@ class SvRayCastNode(bpy.types.Node, SverchCustomTreeNode):
             start, end= temp[0], temp[1]
 
         if self.Modes== 'Object' and (self.formula in bpy.data.objects):
+
+            if 'data.object' in outputs:
+                outputs.remove(outputs['data.object'])
+            
+            if 'matrix' in outputs:
+                outputs.remove(outputs['matrix'])
+            
             obj = bpy.data.objects[self.formula]
             i=0
             while i< len(end):
@@ -103,21 +114,35 @@ class SvRayCastNode(bpy.types.Node, SverchCustomTreeNode):
                 OutLoc.append(i[0][:])
 
         if self.Modes== 'World':
+
+            if not 'data.object' in outputs:
+                outputs.new("VerticesSocket", "data.object")
+            if not 'matrix' in outputs:
+               outputs.new("MatrixSocket", "matrix")
+            
             i=0
             while i< len(end):
-                OutLoc.append(bpy.context.scene.ray_cast(start[i],end[i])[3][:])
-                OutNorm.append(bpy.context.scene.ray_cast(start[i],end[i])[4][:])
-                INDSucc.append(bpy.context.scene.ray_cast(start[i],end[i])[0])
+                OutLoc.append(bcsrc(start[i],end[i])[3][:])
+                OutNorm.append(bcsrc(start[i],end[i])[4][:])
+                INDSucc.append(bcsrc(start[i],end[i])[0])
+                OutMatrix.append(bcsrc(start[i],end[i])[2][:])
+                OutMatrix= [ [a[:],b[:],c[:],d[:]] for a,b,c,d in OutMatrix ]
+                ObjectID.append(bcsrc(start[i],end[i])[1])
                 i=i+1
-
+        
         if outputs['HitP'].links:
-            SvSetSocketAnyType(self, 'HitP', [OutLoc])
+            SSSAT(self, 'HitP', [OutLoc])
         if outputs['HitNorm'].links:
-            SvSetSocketAnyType(self, 'HitNorm', [OutNorm])
+            SSSAT(self, 'HitNorm', [OutNorm])
         if outputs['INDEX/Succes'].links:
-            SvSetSocketAnyType(self, 'INDEX/Succes', [INDSucc])
-
-
+            SSSAT(self, 'INDEX/Succes', [INDSucc])
+        if 'matrix' in outputs:
+                if outputs['matrix'].links:
+                    SSSAT(self, 'matrix', OutMatrix)
+        if 'data.object' in outputs:
+                if outputs['data.object'].links:
+                    SSSAT(self, 'data.object', [ObjectID])
+    
     def update_socket(self, context):
         self.update()
 
