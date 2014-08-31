@@ -213,9 +213,9 @@ class SvScriptNode(bpy.types.Node, SverchCustomTreeNode):
             row = col.row(align=True)
             row.alignment = 'RIGHT'
             row.prop(self, 'files_popup', '')
-            tem = row.operator(
-                'node.sverchok_script_template', text='Import')
-            tem.script_name = self.files_popup
+            row.operator(
+                'node.sverchok_script_template',
+                text='Import').script_name = self.files_popup
 
             row = col.row(align=True)
             row.label(text='USE PY:')
