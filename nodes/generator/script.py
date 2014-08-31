@@ -215,14 +215,14 @@ class SvScriptNode(bpy.types.Node, SverchCustomTreeNode):
             row.prop(self, 'files_popup', '')
             row.operator(
                 'node.sverchok_script_template',
-                text='Import').script_name = self.files_popup
+                text='', icon='IMPORT').script_name = self.files_popup
 
             row = col.row(align=True)
             row.label(text='USE PY:')
             row = col.row(align=True)
             # row.prop(self, "script", "")
             row.prop_search(self, 'script', bpy.data, 'texts', text='', icon='TEXT')
-            row.operator('node.sverchok_callback', text='', icon='FILE_TICK').fn_name = 'load'
+            row.operator('node.sverchok_callback', text='', icon='PLUGIN').fn_name = 'load'
 
         else:
             row = col.row()
