@@ -90,12 +90,11 @@ class SN_Parser(object):
 
     '''
 
-    in_sockets = []
-    out_sockets = []
-    output_lines = ""
-    state = -1
-
     def __init__(self, fstring, indentation=4):
+        self.in_sockets = []
+        self.out_sockets = []
+        self.state = -1
+        self.output_lines = ""
         self.file_as_string = fstring
         self.indent = indentation * ' '
         self.convert()
@@ -262,11 +261,13 @@ class SvLangConverter(bpy.types.Operator):
 
         new_text = bpy.data.texts.new('sv_scripted.py')
         new_text.from_string(result)
-        
+
         for area in bpy.context.screen.areas:
             if area.type == 'TEXT_EDITOR':
                 area.spaces[0].text = new_text
+                break
 
+        del sv_obj
         return {'FINISHED'}
 
 
