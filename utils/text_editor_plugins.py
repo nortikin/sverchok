@@ -259,23 +259,13 @@ class SvLangConverter(bpy.types.Operator):
 
         if result:
             print(result)
-        """
-        bpy.ops.text.select_line()
-        bpy.ops.text.copy()
-        copied_text = bpy.data.window_managers[0].clipboard
-        if "def sv_main(" not in copied_text:
-            self.report({'INFO'}, "ERROR - LOOK CONSOLE")
-            print(sv_error_message)
-            return {'CANCELLED'}
-        answer = converted(copied_text)
 
-        if answer:
-            print(answer)
-            bpy.data.window_managers[0].clipboard = answer
-            bpy.ops.text.move(type='LINE_BEGIN')
-            bpy.ops.text.move(type='NEXT_LINE')
-            bpy.ops.text.paste()
-        """
+        new_text = bpy.data.texts.new('sv_scripted.py')
+        new_text.from_string(result)
+        
+        for area in bpy.context.screen.areas:
+            if area.type == 'TEXT_EDITOR':
+                area.spaces[0].text = new_text
 
         return {'FINISHED'}
 
