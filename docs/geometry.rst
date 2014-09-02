@@ -34,6 +34,9 @@ For example *House prices* are calculated depending on maybe 20 or more differen
 
     House_one = Vector((floor_space, neighbourhood, age, renovations, rooms, ...))
 
+    # or simply
+    House_one = (floor_space, neighbourhood, age, renovations, rooms, ...)
+
 Geometry really only concentrates on a small number of components. ``X, Y, Z, and maybe W``. In graphics the term Vector is often appropriated and interchangable with Vertex. The various ways in which Vectors can be manipulated will be covered in subsequent parts. If you want to do cool stuff with Sverchok spend time getting to understand Vector based math, it will be time well spent.
 
 You won't have to do the calculations yourself, but you will need to feed Sverchok meaningful input. The good news is that figuring out what Vector math operations produce which results can be observed and understood interactively without understanding the mechanics of the calculations.
@@ -94,9 +97,8 @@ to create 2 polygons, each built from 3 vertices, we do::
 
     polygons = [[0, 1, 2], [3, 4, 5]]
 
-In Blender you might mix Tris and Quads in one polygon list during the
-modelling process, but for Sverchok geometry you'll find it more convenient
-to create separate lists for each and combine them at the end.
+In Blender you might mix Tris and Quads in one object during the modelling process, 
+but for Sverchok geometry you'll find it more convenient to create separate lists for each and combine them at the end.
 
 An example that sets us up for the first Sverchok example is the cube, in python this looks like::
 
@@ -132,14 +134,14 @@ An example that sets us up for the first Sverchok example is the cube, in python
 
 If we extract from that the geometry only we are left with::
 
-    v0 = Vector((1.0, 1.0, -1.0))
-    v1 = Vector((1.0, -1.0, -1.0))
-    v2 = Vector((-1.0, -1.0, -1.0))
-    v3 = Vector((-1.0, 1.0, -1.0))
-    v4 = Vector((1.0, 1.0, 1.0))
-    v5 = Vector((1.0, -1.0, 1.0))
-    v6 = Vector((-1.0, -1.0, 1.0))
-    v7 = Vector((-1.0, 1.0, 1.0))
+    v0 = (1.0, 1.0, -1.0)
+    v1 = (1.0, -1.0, -1.0)
+    v2 = (-1.0, -1.0, -1.0)
+    v3 = (-1.0, 1.0, -1.0)
+    v4 = (1.0, 1.0, 1.0)
+    v5 = (1.0, -1.0, 1.0)
+    v6 = (-1.0, -1.0, 1.0)
+    v7 = (-1.0, 1.0, 1.0)
 
     vertices = [v0, v1, v2, v3, v4, v5, v6, v7]
 
