@@ -36,7 +36,7 @@ For example *House prices* are calculated depending on maybe 20 or more differen
 
 Geometry really only concentrates on a small number of components. ``X, Y, Z, and maybe W``. In graphics the term Vector is often appropriated and interchangable with Vertex. The various ways in which Vectors can be manipulated will be covered in subsequent parts. If you want to do cool stuff with Sverchok spend time getting to understand Vector based math, it will be time well spent.
 
-You won't have to do the calculations yourself, but you will need to throw the right stuff at Sverchok. The good news is that figuring out what Vector math operations produce which results can be observed and understood interactively
+You won't have to do the calculations yourself, but you will need to feed Sverchok meaningful input. The good news is that figuring out what Vector math operations produce which results can be observed and understood interactively without understanding the mechanics of the calculations.
 
 Index
 =======================
