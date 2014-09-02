@@ -14,16 +14,34 @@ reference for further study.
 3d geometry
 -----------
 
-The most fundamental element you need to know about is the *vertex* (plural is vertices).
+The most fundamental element you need to know about is the *vertex*.
 A vertex is a point in 3d space described by 3 or 4 values which represent
 its X, Y and Z location. Optionally a 4th value can represent a property of the
 vertex, usually *influence* or *weight* and is denoted by **W**.
 
-Vertices are the special, limited, case of *Vectors*. Understanding vector math
-is an integral part of parametric modeling and generative design. The various
-ways in which Vectors can be manipulated will be covered in subsequent parts.
-If you want to do cool stuff with Sverchok spend time getting to understand
-Vector based math, it will be time well spent.
+
+Relation beteen Vertex and Vector
+=================================
+
+*plural: Vertices*
+
+Vertices are the special, limited, case of *Vectors*. Understanding Vectors and Vector math
+is an integral part of parametric modeling and generative design, and it's a lot easier than
+it might appear at first. 
+
+Think of Vectors as things that have a multitude of properties (also called components). 
+For example *House prices* are calculated depending on maybe 20 or more different properties: floor space, neighbourhood, age, any renovations, rooms, bathrooms, garage... The point is, a house can be seen as a Vector datapoint::
+
+    House_one = Vector((floor_space, neighbourhood, age, renovations, rooms, ...))
+
+Geometry really only concentrates on a small number of components. ``X, Y, Z, and maybe W``. In graphics the term Vector is often appropriated and interchangable with Vertex. The various ways in which Vectors can be manipulated will be covered in subsequent parts. If you want to do cool stuff with Sverchok spend time getting to understand Vector based math, it will be time well spent.
+
+You won't have to do the calculations yourself, but you will need to throw the right stuff at Sverchok. The good news is that figuring out what Vector math operations produce which results can be observed and understood interactively
+
+Index
+=======================
+
+*plural: Indices*
 
 In computer graphics each vertex in an object is uniquely identified by an *index*. 
 The index of the first vertex is 0 and the index of the last vertex is equal to 
@@ -46,6 +64,9 @@ a list with 3 vertices might look like::
         (0.0, 1.0, 0.0)
     ]
 
+
+Edges
+=====
 
 *Edges* form a bond between 2 vertices. Edges are also stored in a list associated 
 with the mesh object. For example the following sets up an empty list to hold the edges::
