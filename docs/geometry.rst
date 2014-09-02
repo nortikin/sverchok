@@ -114,6 +114,8 @@ An example that sets us up for the first Sverchok example is the cube, in python
              (1.0, -1.0, 1.0),
             (-1.0, -1.0, 1.0),
             (-1.0, 1.0, 1.0)]
+
+    edges = []  # empty list for now.
     
     faces = [(0, 1, 2, 3),
              (4, 7, 6, 5),
@@ -123,7 +125,7 @@ An example that sets us up for the first Sverchok example is the cube, in python
              (4, 0, 3, 7)]
     
     mesh_data = bpy.data.meshes.new("cube_mesh_data")
-    mesh_data.from_pydata(verts, [], faces)
+    mesh_data.from_pydata(verts, edges, faces)
     mesh_data.update()
     
     cube_object = bpy.data.objects.new("Cube_Object", mesh_data)
@@ -144,8 +146,6 @@ If we extract from that the geometry only we are left with::
     v7 = (-1.0, 1.0, 1.0)
 
     vertices = [v0, v1, v2, v3, v4, v5, v6, v7]
-
-    edges = []  # empty list for now.
 
     polygons = [
         (0, 1, 2, 3),
