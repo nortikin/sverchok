@@ -160,10 +160,12 @@ If we extract from that the geometry only we are left with::
         (4, 0, 3, 7)
     ]
 
+Once you define polygons then you are also defining edges implicitely. If a polygon has 4 vertices, then it also has 4 edges. If we take the above polygons list as example and look 
+at the first polygon (index=0), it reads ``(0, 1, 2, 3)``. That polygon therefor defines the following edges `(0,1),(1,2),(2,3),(3,0)`. The last edge ``(3,0)`` is the edge that closes the polygon. 
 
-Once you define polygons then you are also defining edges implicitely.
-If a polygon has 4 vertices, then it also has 4 edges. Two adjacent polygons
-may share edges. ---blaaaa
+The polygon with index 3 reads ``(1, 5, 6, 2)``, it implies the following edges ``(1,5) (5,6) (6,2) (2,1)``. 
+
+Two adjacent polygons may share edges. [image]
 
 More on Indices and Lists
 -------------------------
