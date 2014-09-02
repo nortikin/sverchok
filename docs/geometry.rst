@@ -6,24 +6,35 @@ Basics
 ======
 
 If you've ever created a mesh and geometry programatically then you can skip this section.
-If you are uncertain what any of the following terms mean then use it as a
-reference for further study.
+If you are uncertain what any of the following terms mean then use it as a reference for 
+further study.
 
-> Vertex, Vector, Index, Edge, Face, Polygon, Normal, Transformation, and Matrix.
-
-3d geometry
------------
-
-The most fundamental element you need to know about is the *Vertex*.
-A vertex is a point in 3d space described by 3 or 4 values which represent
-its X, Y and Z location. Optionally a 4th value can represent a property of the
-vertex, usually *influence* or *weight* and is denoted by **W**.
+> List, Vertex, Vector, Index, Edge, Face, Polygon, Normal, Transformation, and Matrix.
 
 
-Relation beteen Vertex and Vector
+List
+----
+
+As a visual programming language Sverchok borrows many terms from text-based programming languages, specifically from ``Python``. Sverchok uses *Lists* to store geometry, *Lists* offer fast and ordered storage. The items stored in Lists are called *Elements*. Each element of a List is assigned a unique sequential index. 
+
+
+Index
+-----
+
+*plural: Indices*
+
+Indices allow us to quickly reference a specific element of a List. The index of the first element is 0 and the index of the last element is equal to the number of total elements minus 1. 
+
+
+3D Geometry
+===========
+
+Relation between Vertex and Vector
 ---------------------------------
 
 *plural: Vertices*
+
+The most fundamental element you need to know about is the *Vertex*. A vertex is a point in 3d space described by 3 or 4 values which represent its X, Y and Z location. Optionally a 4th value can represent a property of the vertex, usually *influence* or *weight* and is denoted by **W**.
 
 Vertices are the special, limited, case of *Vectors*. Understanding Vectors and Vector math
 is an integral part of parametric modeling and generative design, and it's a lot easier than
@@ -40,15 +51,6 @@ For example *House prices* are calculated depending on maybe 20 or more differen
 Geometry really only concentrates on a small number of components. ``X, Y, Z, and maybe W``. In graphics the term Vector is often appropriated and interchangable with Vertex. The various ways in which Vectors can be manipulated will be covered in subsequent parts. If you want to do cool stuff with Sverchok spend time getting to understand Vector based math, it will be time well spent.
 
 You won't have to do the calculations yourself, but you will need to feed Sverchok meaningful input. The good news is that figuring out what Vector math operations produce which results can be observed and understood interactively without understanding the mechanics of the calculations.
-
-Index
------
-
-*plural: Indices*
-
-In computer graphics each vertex in an object is uniquely identified by an *index*. 
-The index of the first vertex is 0 and the index of the last vertex is equal to 
-the number of total vertices minus 1. 
 
 A quick Python example should clarify this. The following would make 3 vertices.
 In this case each vertex has 3 components.::
@@ -83,7 +85,6 @@ how 3 edges are created::
 
 Here you see we are using lists inside lists to help separate the edges. This is called *Nesting*
 
-*Lists* are ordered storage.
 
 Polygons
 --------
@@ -160,24 +161,27 @@ If we extract from that the geometry only we are left with::
         (4, 0, 3, 7)
     ]
 
-Once you define polygons then you are also defining edges implicitely. If a polygon has 4 vertices, then it also has 4 edges. 
+
+Side Effect of Defining Polygons
+--------------------------------
+
+A chain of Vertex indices defines a polygon and each polygon has edges that make up its boundary. If a polygon has 4 vertices, then it also has 4 edges (or sides..if you prefer). 
+
+**example 1**  
 
 If we take the above polygons list as example and look at the first polygon (index=0), it reads ``(0, 1, 2, 3)``. That polygon therefor defines the following edges ``(0,1),(1,2),(2,3),(3,0)``. The last edge ``(3,0)`` is the edge that closes the polygon. 
 
+**example 2**  
+
 The polygon with index 3 reads ``(1, 5, 6, 2)``, it implies the following edges ``(1,5) (5,6) (6,2) (2,1)``. 
 
-Two adjacent polygons may share edges. [image]
-
-More on Indices and Lists
--------------------------
-
-The items stored in Lists are called *Elements*, each Vertex, Edge or Polygon has an *Index* associated with it. Indices allow us to quicly reference a specific element of geometry.
 
 Ready?
 ------
 
 I think this broadly covers the things you should be
 comfortable with before Sverchok will make sense.
+
 
 Sverchok
 --------
