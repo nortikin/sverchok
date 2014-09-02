@@ -19,19 +19,18 @@ A vertex is a point in 3d space described by 3 or 4 values which represent
 its X, Y and Z location. Optionally a 4th value can represent a property of the
 vertex, usually *influence* or *weight* and is denoted by **W**.
 
-Vertices are the special, limited, case of *vectors*. Understanding vector math
+Vertices are the special, limited, case of *Vectors*. Understanding vector math
 is an integral part of parametric modeling and generative design. The various
-ways in which vectors can be manipulated will be covered in subsequent parts.
+ways in which Vectors can be manipulated will be covered in subsequent parts.
 If you want to do cool stuff with Sverchok spend time getting to understand
-vector based math, it will be time well spent.
+Vector based math, it will be time well spent.
 
-In computer graphics each vertex in an object has an *index*. The index of the
-first vertex is 0 and the last has index (number_of_vertices - 1).
-Conceptually each vertex is identified uniquely by its order of appearance
-in the list of vertices of the object.
+In computer graphics each vertex in an object is uniquely identified by an *index*. 
+The index of the first vertex is 0 and the index of the last vertex is equal to 
+the number of total vertices minus 1. 
 
 A quick Python example should clarify this. The following would make 3 vertices.
-In this case each vertex has 3 components. ::
+In this case each vertex has 3 components.::
 
     v0 = (1.0, 1.0, 0.0)
     v1 = (0.5, 0.6, 1.0)
@@ -47,15 +46,14 @@ a list with 3 vertices might look like::
         (0.0, 1.0, 0.0)
     ]
 
-The first vertex has index 0. The second vertex has index 1 etc,.
 
 *Edges* form a bond between 2 vertices. Edges are also stored in a list associated 
 with the mesh object. For example the following sets up an empty list to hold the edges::
 
     edges = []
 
-If we want to declare edges, we reference the vertices by their index. Below is an example of
-how 3 edges are formed::
+If we want to declare edges, we reference the vertices by index. Below is an example of
+how 3 edges are created::
 
     edges = [[0, 1], [1, 2], [2, 0]]
 
@@ -67,7 +65,9 @@ Here you see we are using lists inside lists to help separate the edges.
 The main difference is that polygons include at least 3 unique vertex indices.
 For the purposes of this introduction we'll only cover polygons made
 from 3 or 4 vertices, these are called Tris and Quads respectively.
-Let's add another 3 vertices to make 2 distinct polygons::
+
+Now imagine we have a total of 6 vertices, the last vertex index is 5. If we want
+to create 2 polygons, each built from 3 vertices, we do::
 
     polygons = [[0, 1, 2], [3, 4, 5]]
 
