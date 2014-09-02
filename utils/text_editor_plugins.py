@@ -252,7 +252,8 @@ class SvLangConverter(bpy.types.Operator):
     bl_idname = "txt.svlang_converter"
 
     def execute(self, context):
-        txt = bpy.context.edit_text.as_string()
+        edit_text = bpy.context.edit_text
+        txt = edit_text.as_string()
         sv_obj = SN_Parser(txt)
         result = sv_obj.result
 
@@ -264,8 +265,9 @@ class SvLangConverter(bpy.types.Operator):
 
         for area in bpy.context.screen.areas:
             if area.type == 'TEXT_EDITOR':
-                area.spaces[0].text = new_text
-                break
+                if edit_text.name == area.spaces[0].text.name:
+                    area.spaces[0].text = new_text
+                    break
 
         del sv_obj
         return {'FINISHED'}
