@@ -163,13 +163,18 @@ If we extract from that the geometry only we are left with::
 
 Once you define polygons then you are also defining edges implicitely.
 If a polygon has 4 vertices, then it also has 4 edges. Two adjacent polygons
-may share edges. I think this broadly covers the things you should be
+may share edges. ---blaaaa
+
+More on Indices and Lists
+=========================
+
+The items stored in Lists are called *Elements*, each element (be it Vertex, Edge or Polygon) has an *Index* associated with it. Indices for edges and polygons are used to quicly reference an element of geometry.
+
+Ready?
+======
+
+I think this broadly covers the things you should be
 comfortable with before Sverchok will make sense.
-
-More Vertices
-=============
-
-Vertices have indices, edges and polygons do too.
 
 Sverchok
 ========
