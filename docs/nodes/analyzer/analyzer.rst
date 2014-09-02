@@ -1,6 +1,6 @@
-*****
+********
 Analyzer
-*****
+********
 
 .. toctree::
    :maxdepth: 2

@@ -1,6 +1,6 @@
-*****
+******
 Vector
-*****
+******
 
 .. toctree::
    :maxdepth: 2

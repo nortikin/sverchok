@@ -1,6 +1,6 @@
-*****
-Analyzer
-*****
+******
+Matrix
+******
 
 .. toctree::
    :maxdepth: 2

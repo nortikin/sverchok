@@ -1,6 +1,6 @@
-*****
-Analyzer
-*****
+**************
+List Structure
+**************
 
 .. toctree::
    :maxdepth: 2

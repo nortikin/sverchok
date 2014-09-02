@@ -1,6 +1,6 @@
-*****
-Analyzer
-*****
+***********
+Basic Debug
+***********
 
 .. toctree::
    :maxdepth: 2
