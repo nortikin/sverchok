@@ -90,7 +90,7 @@ Polygons
 
 *also called Faces or Polys*
 
-Polygons are built using the same convention as Edges. The main difference is that polygons include at least 3 unique vertex indices. For the purposes of this introduction we'll only cover polygons made from 3 or 4 vertices, these are called *Tris and Quads* respectively.
+Polygons are built using the same convention as Edges. The main difference is that polygons include at least 3 unique vertex indices. For the purposes of this introduction we'll only cover polygons made from 3 or 4 vertices, these are called *Tris and Quads* respectively. 
 
 Now imagine we have a total of 6 vertices, the last vertex index is 5. If we want
 to create 2 polygons, each built from 3 vertices, we do::
@@ -100,29 +100,33 @@ to create 2 polygons, each built from 3 vertices, we do::
 In Blender you might mix Tris and Quads in one object during the modelling process, 
 but for Sverchok geometry you'll find it more convenient to create separate lists for each and combine them at the end.
 
-An example that sets us up for the first Sverchok example is the cube, in python this looks like::
+An example that sets us up for the first Sverchok example is the following pyhon code::
 
     # this code can be run from Blender Text Editor and it will generate a Cube.
     
     import bpy
     
-    verts = [(1.0, 1.0, -1.0),
-             (1.0, -1.0, -1.0),
-            (-1.0, -1.0, -1.0),
-            (-1.0, 1.0, -1.0),
-             (1.0, 1.0, 1.0),
-             (1.0, -1.0, 1.0),
-            (-1.0, -1.0, 1.0),
-            (-1.0, 1.0, 1.0)]
+    verts = [
+        ( 1.0, 1.0,-1.0),
+        ( 1.0,-1.0,-1.0),
+        (-1.0,-1.0,-1.0),
+        (-1.0, 1.0,-1.0),
+        ( 1.0, 1.0, 1.0),
+        ( 1.0,-1.0, 1.0),
+        (-1.0,-1.0, 1.0),
+        (-1.0, 1.0, 1.0)
+    ]
 
     edges = []  # empty list for now.
     
-    faces = [(0, 1, 2, 3),
-             (4, 7, 6, 5),
-             (0, 4, 5, 1),
-             (1, 5, 6, 2),
-             (2, 6, 7, 3),
-             (4, 0, 3, 7)]
+    faces = [
+        (0, 1, 2, 3),
+        (4, 7, 6, 5),
+        (0, 4, 5, 1),
+        (1, 5, 6, 2),
+        (2, 6, 7, 3),
+        (4, 0, 3, 7)
+    ]
     
     mesh_data = bpy.data.meshes.new("cube_mesh_data")
     mesh_data.from_pydata(verts, edges, faces)
@@ -161,6 +165,11 @@ Once you define polygons then you are also defining edges implicitely.
 If a polygon has 4 vertices, then it also has 4 edges. Two adjacent polygons
 may share edges. I think this broadly covers the things you should be
 comfortable with before Sverchok will make sense.
+
+More Vertices
+=============
+
+Vertices have indices, edges and polygons do too.
 
 Sverchok
 ========
