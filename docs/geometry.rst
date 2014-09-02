@@ -81,20 +81,59 @@ to create separate lists for each and combine them at the end.
 An example that sets us up for the first Sverchok example is the cube.
 Conceptually in python this looks like::
 
-    v0 = Vector((x,y,z))
-    v1
-    v2
-    v3
-    v4
-    v5
-    v6
-    v7
+    # this code can be run from Blender Text Editor and it will generate a Cube.
+    
+    import bpy
+    
+    verts = [(1.0, 1.0, -1.0),
+             (1.0, -1.0, -1.0),
+            (-1.0, -1.0, -1.0),
+            (-1.0, 1.0, -1.0),
+             (1.0, 1.0, 1.0),
+             (1.0, -1.0, 1.0),
+            (-1.0, -1.0, 1.0),
+            (-1.0, 1.0, 1.0)]
+    
+    faces = [(0, 1, 2, 3),
+             (4, 7, 6, 5),
+             (0, 4, 5, 1),
+             (1, 5, 6, 2),
+             (2, 6, 7, 3),
+             (4, 0, 3, 7)]
+    
+    mesh_data = bpy.data.meshes.new("cube_mesh_data")
+    mesh_data.from_pydata(verts, [], faces)
+    mesh_data.update() # (calc_edges=True) not needed here
+    
+    cube_object = bpy.data.objects.new("Cube_Object", mesh_data)
+    
+    scene = bpy.context.scene  
+    scene.objects.link(cube_object)  
+    cube_object.select = True  
+
+If we extract from that the geometry only we are left with::
+
+    v0 = Vector((1.0, 1.0, -1.0))
+    v1 = Vector((1.0, -1.0, -1.0))
+    v2 = Vector((-1.0, -1.0, -1.0))
+    v3 = Vector((-1.0, 1.0, -1.0))
+    v4 = Vector((1.0, 1.0, 1.0))
+    v5 = Vector((1.0, -1.0, 1.0))
+    v6 = Vector((-1.0, -1.0, 1.0))
+    v7 = Vector((-1.0, 1.0, 1.0))
 
     vertices = [v0, v1, v2, v3, v4, v5, v6, v7]
 
     edges = []  # empty list for now.
 
-    polygons = [[],[],[],[],[],[]]
+    polygons = [
+        (0, 1, 2, 3),
+        (4, 7, 6, 5),
+        (0, 4, 5, 1),
+        (1, 5, 6, 2),
+        (2, 6, 7, 3),
+        (4, 0, 3, 7)
+    ]
 
 
 Once you define polygons then you are also defining edges implicitely.
