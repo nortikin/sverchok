@@ -14,7 +14,7 @@ reference for further study.
 3d geometry
 -----------
 
-The most fundamental element you need to know about is the *vertex*.
+The most fundamental element you need to know about is the *Vertex*.
 A vertex is a point in 3d space described by 3 or 4 values which represent
 its X, Y and Z location. Optionally a 4th value can represent a property of the
 vertex, usually *influence* or *weight* and is denoted by **W**.
@@ -98,8 +98,7 @@ In Blender you might mix Tris and Quads in one polygon list during the
 modelling process, but for Sverchok geometry you'll find it more convenient
 to create separate lists for each and combine them at the end.
 
-An example that sets us up for the first Sverchok example is the cube.
-Conceptually in python this looks like::
+An example that sets us up for the first Sverchok example is the cube, in python this looks like::
 
     # this code can be run from Blender Text Editor and it will generate a Cube.
     
@@ -123,7 +122,7 @@ Conceptually in python this looks like::
     
     mesh_data = bpy.data.meshes.new("cube_mesh_data")
     mesh_data.from_pydata(verts, [], faces)
-    mesh_data.update() # (calc_edges=True) not needed here
+    mesh_data.update()
     
     cube_object = bpy.data.objects.new("Cube_Object", mesh_data)
     
