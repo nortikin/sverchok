@@ -49,19 +49,16 @@ a list with 3 vertices might look like::
 
 The first vertex has index 0. The second vertex has index 1 etc,.
 
-*Edges* -- generally speaking -- form a bond between 2 vertices.
-Edges are also stored in a list associated with the mesh object.
-If we want to declare edges, we reference the vertices by their index.
-For example::
+*Edges* form a bond between 2 vertices. Edges are also stored in a list associated 
+with the mesh object. For example the following sets up an empty list to hold the edges::
 
     edges = []
 
-would set up an empty list to hold the edges,
-but doing::
+If we want to declare edges, we reference the vertices by their index. Below is an example of
+how 3 edges are formed::
 
     edges = [[0, 1], [1, 2], [2, 0]]
 
-forms 3 edges.
 Here you see we are using lists inside lists to help separate the edges.
 
 *Lists* are ordered storage.
