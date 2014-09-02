@@ -21,7 +21,7 @@ vertex, usually *influence* or *weight* and is denoted by **W**.
 
 
 Relation beteen Vertex and Vector
-=================================
+---------------------------------
 
 *plural: Vertices*
 
@@ -42,7 +42,7 @@ Geometry really only concentrates on a small number of components. ``X, Y, Z, an
 You won't have to do the calculations yourself, but you will need to feed Sverchok meaningful input. The good news is that figuring out what Vector math operations produce which results can be observed and understood interactively without understanding the mechanics of the calculations.
 
 Index
-=======================
+-----
 
 *plural: Indices*
 
@@ -69,7 +69,7 @@ a list with 3 vertices might look like::
 
 
 Edges
-=====
+-----
 
 *Edges* form a bond between 2 vertices. Edges are also stored in a list associated 
 with the mesh object. For example the following sets up an empty list to hold the edges::
@@ -86,7 +86,7 @@ Here you see we are using lists inside lists to help separate the edges. This is
 *Lists* are ordered storage.
 
 Polygons
-========
+--------
 
 *also called Faces or Polys*
 
@@ -166,18 +166,18 @@ If a polygon has 4 vertices, then it also has 4 edges. Two adjacent polygons
 may share edges. ---blaaaa
 
 More on Indices and Lists
-=========================
+-------------------------
 
-The items stored in Lists are called *Elements*, each element (be it Vertex, Edge or Polygon) has an *Index* associated with it. Indices for edges and polygons are used to quicly reference an element of geometry.
+The items stored in Lists are called *Elements*, each Vertex, Edge or Polygon has an *Index* associated with it. Indices allow us to quicly reference a specific element of geometry.
 
 Ready?
-======
+------
 
 I think this broadly covers the things you should be
 comfortable with before Sverchok will make sense.
 
 Sverchok
-========
+--------
 
 This section will introduce you to a selection of nodes that can be combined
 to create renderable geometry. Starting with the simple Plane generator
