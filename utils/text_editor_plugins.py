@@ -105,12 +105,19 @@ class SN_Parser(object):
         for line in [i for i in split_lines if i]:
             line_type = self.process(line)
 
+    def get_filename_from_svmain(self, line):
+        pat = ':(.+)>'
+        regex = re.compile(pat)
+        return regex.findall(line)[0]
+
     def process(self, line):
         line = line.strip()
 
-        if '<sv_main>' in line:
+        if '<sv_main:' in line:
             self.state = 0
+            self.python_file_name = self.get_filename_from_svmain(line)
             self.output_lines += 'def sv_main('
+            return
 
         if line.startswith('inputs'):
             self.state = 1
@@ -257,10 +264,12 @@ class SvLangConverter(bpy.types.Operator):
         sv_obj = SN_Parser(txt)
         result = sv_obj.result
 
-        if result:
-            print(result)
+        filename = sv_obj.python_file_name
+        if not filename:
+            self.report({'INFO'}, "<svmain:filename> must include filename!")
+            return {'CANCELLED'}
 
-        new_text = bpy.data.texts.new('sv_scripted.py')
+        new_text = bpy.data.texts.new(filename)
         new_text.from_string(result)
 
         for area in bpy.context.screen.areas:
