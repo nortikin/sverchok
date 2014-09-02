@@ -29,28 +29,28 @@ Indices allow us to quickly reference a specific element of a List. The index of
 3D Geometry
 ===========
 
-Relation between Vertex and Vector
----------------------------------
+Vector
+------
 
-*plural: Vertices*
-
-The most fundamental element you need to know about is the *Vertex*. A vertex is a point in 3d space described by 3 or 4 values which represent its X, Y and Z location. Optionally a 4th value can represent a property of the vertex, usually *influence* or *weight* and is denoted by **W**.
-
-Vertices are the special, limited, case of *Vectors*. Understanding Vectors and Vector math
-is an integral part of parametric modeling and generative design, and it's a lot easier than
-it might appear at first. 
-
-Think of Vectors as things that have a multitude of properties (also called components). 
-For example *House prices* are calculated depending on maybe 20 or more different properties: floor space, neighbourhood, age, any renovations, rooms, bathrooms, garage... The point is, a house can be seen as a Vector datapoint::
+The most fundamental element you need to know about is the *Vector*. Think of Vectors as things that have a multitude of properties (also called components). For example *House prices* are calculated depending on maybe 20 or more different properties: floor space, neighbourhood, age, any renovations, rooms, bathrooms, garage... The point is, a house can be seen as a Vector datapoint::
 
     House_one = Vector((floor_space, neighbourhood, age, renovations, rooms, ...))
 
     # or simply
     House_one = (floor_space, neighbourhood, age, renovations, rooms, ...)
 
-Geometry really only concentrates on a small number of components. ``X, Y, Z, and maybe W``. In graphics the term Vector is often appropriated and interchangable with Vertex. The various ways in which Vectors can be manipulated will be covered in subsequent parts. If you want to do cool stuff with Sverchok spend time getting to understand Vector based math, it will be time well spent.
+Geometry concentrates mostly on a small number of components. ``X, Y, Z, and maybe W``. If you've ever scaled or moved a model in 3d space you have performed Vector Math on the locations of those 3d points. A point in 3d space is known more commonly as a Vertex, and it is a special, limited, case of a *Vector*. More about this later.
 
-You won't have to do the calculations yourself, but you will need to feed Sverchok meaningful input. The good news is that figuring out what Vector math operations produce which results can be observed and understood interactively without understanding the mechanics of the calculations.
+Understanding Vectors and Vector math is an integral part of parametric modeling and generative design, and it's a lot easier than it might appear at first. You won't have to do the calculations yourself, but you will need to feed Sverchok meaningful input. The good news is that figuring out what Vector math operations produce which results can be learned through observation and understood by experimenting interactively.
+
+The various ways in which Vectors can be manipulated will be covered in subsequent parts. If you want to do cool stuff with Sverchok spend time getting to understand Vector based math, it will be time well spent. 
+
+Vertex
+------
+
+*plural: Vertices*
+
+A vertex is a point in 3d space described by 3 or 4 values which represent its X, Y and Z location. Optionally a 4th value can represent a property of the vertex, usually *influence* or *weight* and is denoted by **W**.
 
 A quick Python example should clarify this. The following would make 3 vertices.
 In this case each vertex has 3 components.::
