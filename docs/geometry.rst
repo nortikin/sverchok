@@ -78,14 +78,16 @@ how 3 edges are created::
 
     edges = [[0, 1], [1, 2], [2, 0]]
 
-Here you see we are using lists inside lists to help separate the edges.
+Here you see we are using lists inside lists to help separate the edges. This is called *Nesting*
 
 *Lists* are ordered storage.
 
-*Polygons* - also called Faces - are built using the same convention.
-The main difference is that polygons include at least 3 unique vertex indices.
-For the purposes of this introduction we'll only cover polygons made
-from 3 or 4 vertices, these are called Tris and Quads respectively.
+Polygons
+========
+
+*also called Faces or Polys*
+
+Polygons are built using the same convention as Edges. The main difference is that polygons include at least 3 unique vertex indices. For the purposes of this introduction we'll only cover polygons made from 3 or 4 vertices, these are called *Tris and Quads* respectively.
 
 Now imagine we have a total of 6 vertices, the last vertex index is 5. If we want
 to create 2 polygons, each built from 3 vertices, we do::
