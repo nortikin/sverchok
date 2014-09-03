@@ -5,6 +5,9 @@ aka Script Node or SN. (iteration 1)
 
 - Introduction
 - Features
+- Structure
+- Templates
+- Conveniences
 - Examples
 - Techniques to improve Python performance
 - Limitations
@@ -13,54 +16,54 @@ aka Script Node or SN. (iteration 1)
 Introduction
 ------------
 
-When you want to express an idea in written form, if the concept is suitable
-for a one line Python expression then you can use the Formula nodes.
-They require little setup just *plug and play*, however, they are not
-intended for multi-line python statements if that's what you need.
+When you want to express an idea in written form and the concept is suitable
+for a one line Python expression then often you can use a Formula node. If you
+need access to imports, classes, temporary variables, and functions then you can 
+write a script to load into ScriptNode. 
 
-ScriptNode (SN) allows you to write multi-line python programs,
-it's possible to use the node as a Sandbox for writing full nodes.
-The only real limitation will be your familiarty with Python and ``bpy``.
+ScriptNode (SN) allows you to write multi-line python programs that define 
+the functionality of a Node, while avoiding some of the boilerplate associated 
+with a regular Node. SN can be used as an environment for experimenting 
+with algorithms. Scripts written for SN are easily converted to full PyNodes.
+
 It's a prototype so bug reports are welcome.
 
 Features
 --------
 
 allows:
+
 - Loading/Reloading scripts currently in TextEditor
 - imports and aliasing, ie anything you can import from console works in SN
 - nested functions and lambdas
 - named inputs and outputs
 - named operators (buttons to action something upon button press)
 
+Structure
+---------
+
 At present all scripts for SN must (strict list - general):
+
 - have 1 `sv_main` function as the main workhorse
 - `sv_main` must take 1 or more arguments (even if you don't use it)
 - all function arguments for ``sv_main`` must have defaults.
 - each script shall define ``in_sockets`` and ``out_sockets``
 - `ui_operators` is an optional third output parameter
-- TextEditor has automatic ``in_sockets`` list creation (``Ctrl+I -> Generate in_sockets``)
-  when the key cursor is over ``sv_main``. (please note: it doesn't attempt to
-  detect if you want nested verts or edge/polygon so it assumes you want 'v')
 
+**sv_main()**
 
-.. image:: https://cloud.githubusercontent.com/assets/619340/2854040/e6351180-d14b-11e3-8055-b3d8c707675d.gif)
-
-
-sv_main()
----------
 
 ``sv_main()`` can take int, float and list or nested list.
 Here are some legal examples::
 
-    sv_main(vecs_in_multi=[[]], vecs_in_flat=[], some_var=1, some_ratio=1.2):
+    def sv_main(vecs_in_multi=[[]], vecs_in_flat=[], some_var=1, some_ratio=1.2):
 
     [[]]        # for nested input (lists of lists of any data type currently supported)
     []          # for flat (one list)
     int, float  # for single value input
 
-in_sockets
-----------
+**in_sockets**
+
 ::
 
     in_sockets = [
@@ -69,8 +72,8 @@ in_sockets
         # ...
     ]
 
-out_sockets
------------
+**out_sockets**
+
 ::
 
     out_sockets = [
@@ -79,17 +82,16 @@ out_sockets
         # ...
     ]
 
-in_sockets and out_sockets
---------------------------
+**in_sockets and out_sockets**
 
-- Each `"socket name on ui"` string shall be unique.
+- Each `socket name on ui` string shall be unique.
 - `type` are currently limited to
    - 's' : floats, ints, edges, faces
    - 'v' : vertices, vectors
    - 'm' : matrices
 
-ui_operators
-------------
+**ui_operators**
+
 ::
 
     ui_operators = [
@@ -101,14 +103,40 @@ ui_operators
   For simplicity it must be unique and a valid variable name.
   Use alphanumerics only and separate words with single underscores if you need.
 
-return
-------
+**return**
+
 
 Simple, only two flavours are allowed at the moment. ::
 
     return in_sockets, out_sockets
-    # or
     return in_sockets, out_sockets, ui_operators
+
+Templates
+---------
+
+Sverchok includes a list of easily accessible examples and templates. They can be accessed 
+from the SN node if nothing is loaded, or from the `Template Menu` in `TextEditor` as ``sv NodeScripts``.
+
+
+Conveniences
+------------
+
+We vale our time, i'm sure you do too, so features have been added to help speed up the 
+script creation process.
+
+**Text Editor**
+
+- has automatic ``in_sockets`` list creation when the key cursor is over ``sv_main``. 
+  (please note: it doesn't attempt to detect if you want nested verts or edge/polygon so it assumes you want 'v')
+  - kb shortcut: ``Ctrl+I -> Generate in_sockets``
+
+.. image::  https://cloud.githubusercontent.com/assets/619340/2854040/e6351180-d14b-11e3-8055-b3d8c707675d.gif
+
+- can also convert a template description (like `kv lang` if you know Kivy) into 
+  valid ScriptNode ready python. list creation.
+  - kb shortcut: ``Ctrl+I -> Convert svlang``
+
+- can refresh the Script Node which currently loads that script by hitting ``Ctrl+Enter``
 
 
 Examples
@@ -116,11 +144,9 @@ Examples
 
 The best way to get familiarity with SN is to go through the templates folder.
 They are intended to be lightweight and educational, but some of them will show
-advanced use cases. The [thread on github](https://github.com/nortikin/sverchok/issues/85)
-may also provide some pictorial insights and animations.
-
-Sverchok includes a plugin in TextEditor which conveniently
-adds ``sv NodeScripts`` to the Templates menu.
+advanced use cases. The images and animations on this `thread on github 
+<https://github.com/nortikin/sverchok/issues/85>`_. 
+may also provide some insight into what's possible.
 
 A typical nodescript may look like this::
 
@@ -241,7 +267,8 @@ you to how you might access the socket content of other nodes. Experiment :)
 
 
 Breakout Scripts
-^^^^^^^^^^^^^^^^
+----------------
+
 For lack of a better term, SN scripts written in this style let you pass
 variables to a script located in ``/sverchok-master/..`` or
 ``/sverchok-master/your_module_name/some_library``. To keep your sverchok-master
@@ -291,7 +318,7 @@ There are many ways to speed up python code. Some slowness will be down to
 innefficient algorithm design, other slowness is caused purely by how much
 processing is minimally required to solve a problem. A decent read regarding
 general methods to improve python code performancecan be found
-on [python.org](https://wiki.python.org/moin/PythonSpeed/PerformanceTips).
+on `python.org <https://wiki.python.org/moin/PythonSpeed/PerformanceTips>`_.
 If you don't know where the cycles are being consumed, then you don't know
 if your efforts to optimize will have any significant impact.
 
@@ -301,7 +328,7 @@ http://users.ece.utexas.edu/~adnan/pike.html
 Limitations
 -----------
 
-Mostly limitations are imaginary barriers which an increase in Python Skills will bypass.
+Most limitations are voided by increasing your Python and ``bpy`` skills.
 
 Future
 ------
