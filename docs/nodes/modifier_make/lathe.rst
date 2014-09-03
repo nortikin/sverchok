@@ -4,7 +4,7 @@ Lathe
 Functionality
 -------------
 
-Analogous to the `spin` operator and the Screw modifier. It takes a profile shape as input in the form of *vertices* and *edges* and produces *vertices*, *edges* and *faces* based on a rotation axis, angle, center, delta and step count. Internally the node is powered by the `bmesh.spin <http://www.blender.org/documentation/blender_python_api_2_71_release/bmesh.ops.html#bmesh.ops.spin>`_  operator.
+Analogous to the `spin` operator and the Screw modifier. It takes a profile shape as input in the form of *vertices* and *edges* and produces *vertices* and *faces* based on a rotation axis, angle, center, delta and step count. Internally the node is powered by the `bmesh.spin <http://www.blender.org/documentation/blender_python_api_2_71_release/bmesh.ops.html#bmesh.ops.spin>`_  operator.
 
 Inputs
 ------
@@ -23,7 +23,7 @@ All Vector parameters default to (0,0,0) if no input is given.
 +-------------+---------------+---------------------------------------------------------------+
 | **axis**    | Vector        | describes the axis around which to rotate around the pivot    |  
 +-------------+---------------+---------------------------------------------------------------+
-| **dvec**    | Vector        | is used to push the center Vector by a vector quantity        | 
+| **dvec**    | Vector        | is used to push the center Vector by a Vector quantity        | 
 +-------------+---------------+---------------------------------------------------------------+
 | **Degrees** | Scalar, Float | angle of the total rotation. Default 360.0                    |
 +-------------+---------------+---------------------------------------------------------------+
@@ -38,7 +38,10 @@ All Vector parameters default to (0,0,0) if no input is given.
 Outputs
 -------
 
+**Vertices** and **Poly**. Verts and Polys will be generated. The ``bmesh.spin`` operator doesn't consider the ordering of the Vertex and Face indices that it outputs. This might make additional processing complicated, use IndexViewer to better understand the generated geometry. Faces will however have consistent Normals.
+
 
 Example of usage
 ----------------
 
+Glass, Vase.
