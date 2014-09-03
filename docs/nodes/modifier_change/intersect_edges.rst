@@ -4,7 +4,7 @@ Intersect Edges
 Functionality
 -------------
 
-The code is straight out of TinyCAD plugin's XALL operatpr, which is part of Blender Contrib distributions.
+The code is straight out of TinyCAD plugin's XALL operator, which is part of Blender Contrib distributions.
 
 It operates on Edge based geometry only and will create new vertices on all intersections of the given geometry. 
 This node goes through a recursive process (divide and conquer) and its speed is directly proportional to the 
@@ -25,7 +25,7 @@ Verts and Edges only. Warning: Does not support faces, or Vectorized (nested lis
 Parameters
 ----------
 
-Currently no parameters, but the future could include a tollerance parameter.
+Currently no parameters, but in the future could include a tolerance parameter and a setting to consider Touching Verts-to-Edge as an Intersection.
 
 
 Outputs
