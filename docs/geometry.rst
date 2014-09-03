@@ -39,7 +39,7 @@ The most fundamental element you need to know about is the *Vector*. Think of Ve
     # or simply
     House_one = (floor_space, neighbourhood, age, renovations, rooms, ...)
 
-Geometry concentrates mostly on a small number of components. ``X, Y, Z, and maybe W``. If you've ever scaled or moved a model in 3d space you have performed Vector Math on the locations of those 3d points. A point in 3d space is known more commonly as a Vertex, and it is a special, limited, case of a *Vector*. More about this later.
+3D Geometry concentrates mostly on a small number of components. ``X, Y, Z, and maybe W``. If you've ever scaled or moved a model in 3d space you have performed Vector Math on the locations of those 3d points. The concept of *3d location* or *point in 3d space* is so important that the Vector used to describe the idea has a special name; *Vertex*, and it is a special, limited, case of a *Vector*. More about this later.
 
 Understanding Vectors and Vector math is an integral part of parametric modeling and generative design, and it's a lot easier than it might appear at first. You won't have to do the calculations yourself, but you will need to feed Sverchok meaningful input. The good news is that figuring out what Vector math operations produce which results can be learned through observation and understood by experimenting interactively.
 
