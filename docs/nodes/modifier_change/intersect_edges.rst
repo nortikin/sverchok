@@ -11,7 +11,7 @@ This node goes through a recursive process (divide and conquer) and its speed is
 number of intersecting edges passed into it. The algorithm is not optimized for large edges counts, but tends 
 to work well in most cases. 
 
-**implementation node**
+**implementation note**
 
 An Edge that touches the vertex of another edge is not considered an `Intersection` in the current implementation. 
 *Touching* might be included as an intersection type in the future via an extra toggle in the Properties Panel.
