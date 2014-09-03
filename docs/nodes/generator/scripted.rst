@@ -133,7 +133,8 @@ script creation process.
 .. image::  https://cloud.githubusercontent.com/assets/619340/2854040/e6351180-d14b-11e3-8055-b3d8c707675d.gif
 
 - can also convert a template description (like `kv lang` if you know Kivy) into 
-  valid ScriptNode ready python. list creation.
+  valid ScriptNode ready python. list creation. 
+  Example `available here <https://github.com/nortikin/sverchok/issues/376#issuecomment-54062710>`_
   - kb shortcut: ``Ctrl+I -> Convert svlang``
 
 - can refresh the Script Node which currently loads that script by hitting ``Ctrl+Enter``
