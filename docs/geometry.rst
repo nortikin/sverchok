@@ -7,9 +7,9 @@ Basics
 
 If you've ever created a mesh and geometry programatically then you can skip this section.
 If you are uncertain what any of the following terms mean then use it as a reference for 
-further study.
+further study::
 
-> List, Vertex, Vector, Index, Edge, Face, Polygon, Normal, Transformation, and Matrix.
+    List, Index, Vector, Vertex, Edge, Polygon, Normal, Transformation, and Matrix.
 
 
 List
@@ -50,7 +50,7 @@ Vertex
 
 *plural: Vertices*
 
-A vertex is a point in 3d space described by 3 or 4 values which represent its X, Y and Z location. Optionally a 4th value can represent a property of the vertex, usually *influence* or *weight* and is denoted by **W**.
+A vertex is a point in 3d space described by 3 or 4 values ``which represent its X, Y and Z location. Optionally a 4th value can represent a property of the vertex, usually *influence* or *weight* and is denoted by **W**.``
 
 A quick Python example should clarify this. The following would make 3 vertices.
 In this case each vertex has 3 components.::

@@ -15,9 +15,8 @@ Introduction
 
 When you want to express an idea in written form, if the concept is suitable
 for a one line Python expression then you can use the Formula nodes.
-They require little setup just [plug and play](). However, they are not
-intended for multi-line python statements, and sometimes
-that's exactly what you want.
+They require little setup just *plug and play*, however, they are not
+intended for multi-line python statements if that's what you need.
 
 ScriptNode (SN) allows you to write multi-line python programs,
 it's possible to use the node as a Sandbox for writing full nodes.
@@ -44,7 +43,8 @@ At present all scripts for SN must (strict list - general):
   when the key cursor is over ``sv_main``. (please note: it doesn't attempt to
   detect if you want nested verts or edge/polygon so it assumes you want 'v')
 
-  ![showit](https://cloud.githubusercontent.com/assets/619340/2854040/e6351180-d14b-11e3-8055-b3d8c707675d.gif)
+
+.. image:: https://cloud.githubusercontent.com/assets/619340/2854040/e6351180-d14b-11e3-8055-b3d8c707675d.gif)
 
 
 sv_main()
