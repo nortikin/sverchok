@@ -78,8 +78,8 @@ def instrospect_py(node):
 
 
 class SvDefaultScriptTemplate(bpy.types.Operator):
+    ''' Imports example script or template file in bpy.data.texts'''
 
-    ''' Creates template text file to start making your own script '''
     bl_idname = 'node.sverchok_script_template'
     bl_label = 'Template'
     bl_options = {'REGISTER'}
@@ -211,16 +211,18 @@ class SvScriptNode(bpy.types.Node, SverchCustomTreeNode):
             row = col.row(align=True)
             row.label(text='IMPORT PY:')
             row = col.row(align=True)
+            row.alignment = 'RIGHT'
             row.prop(self, 'files_popup', '')
-            tem = row.operator(
-                'node.sverchok_script_template', text='Import Template')
-            tem.script_name = self.files_popup
+            row.operator(
+                'node.sverchok_script_template',
+                text='', icon='IMPORT').script_name = self.files_popup
 
             row = col.row(align=True)
             row.label(text='USE PY:')
             row = col.row(align=True)
-            row.prop(self, "script", "")
-            row.operator('node.sverchok_callback', text='Load').fn_name = 'load'
+            # row.prop(self, "script", "")
+            row.prop_search(self, 'script', bpy.data, 'texts', text='', icon='TEXT')
+            row.operator('node.sverchok_callback', text='', icon='PLUGIN').fn_name = 'load'
 
         else:
             row = col.row()
