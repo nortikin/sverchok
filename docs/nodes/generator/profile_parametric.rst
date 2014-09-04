@@ -116,8 +116,7 @@ The node started out as a thought experiment and turned into something quite use
  
 Example usage:
 
-.. image:: https://cloud.githubusercontent.com/assets/619340/3905771/193b5d86-22ec-
- 11e4-93e5-724863a30bbc.png
+.. image:: https://cloud.githubusercontent.com/assets/619340/3905771/193b5d86-22ec-11e4-93e5-724863a30bbc.png
  
 
 .. image:: https://cloud.githubusercontent.com/assets/619340/3895396/81f3b96c-224d-11e4-9ca7-f07756f40a0e.png
