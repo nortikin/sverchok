@@ -45,6 +45,7 @@ Outputs
 - edges is optional
 
 **optionals for visualizing the curve handles**
+
 - hnd. Verts 
 - hnd. Edges
 
