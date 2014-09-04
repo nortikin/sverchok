@@ -12,7 +12,7 @@ Profile Parametric Node
 +---------+------+---------------------------------------------------------------------------------+ 
 | LineTo  | L,  l| <2v coordinate 1> <2v coordinate 2> <2v coordinate n> [z]                       |
 +---------+------+---------------------------------------------------------------------------------+ 
-| CurveTo | C,  c| <2v control1> <2v control2> <2v knot2> <int num_segments> <int even_spread> [z] |
+| CurveTo | C,  c| <2v control1> <2v control2> <2v knot2> <int num_verts> <int even_spread> [z]    |
 +---------+------+---------------------------------------------------------------------------------+ 
 | ArcTo   | A,  a| <2v rx,ry> <float rot> <int flag1> <int flag2> <2v x,y> <int num_verts> [z]     |
 +---------+------+---------------------------------------------------------------------------------+ 
