@@ -44,6 +44,13 @@ Outputs
 - verts needs to be connected to get output
 - edges is optional
 
+**optionals for visualizing the curve handles**
+- hnd. Verts 
+- hnd. Edges
+
+Passing hnd.Verts and hnd.Edges to a ViewerDraw node helps visualize the Handles that operate on your Spline curve. 
+
+
 Examples
 --------
 
