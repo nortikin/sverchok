@@ -14,14 +14,14 @@ It's vectorized, meaning it accepts nested and multiple inputs and produces mult
 Parameters
 ----------
 
-All Vector parameters default to (0,0,0) if no input is given.
+All Vector parameters (except axis) default to (0,0,0) if no input is given. 
 
 +-------------+---------------+-----------------------------------------------------------------+
 | Param       | Type          | Description                                                     |  
 +=============+===============+=================================================================+
 | **cent**    | Vector        | central coordinate around which to pivot                        | 
 +-------------+---------------+-----------------------------------------------------------------+
-| **axis**    | Vector        | describes the axis around which to rotate around the pivot      |  
+| **axis**    | Vector        | axis around which to rotate around the pivot, default (0, 0, 1) |  
 +-------------+---------------+-----------------------------------------------------------------+
 | **dvec**    | Vector        | is used to push the center Vector by a Vector quantity per step | 
 +-------------+---------------+-----------------------------------------------------------------+
