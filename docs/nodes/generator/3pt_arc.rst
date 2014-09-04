@@ -10,7 +10,8 @@ Inputs
 ------
 
 - arc_pts input is `[begin, mid, end, begin, mid, end, begin, mid, end..... ] ` 
-  -  must be (len % 3 == 0 )
+  - must be (len % 3 == 0 )
+
 - num verts is either  
   - constant, 
   - unique, 
@@ -20,7 +21,10 @@ Parameters
 ----------
 
 The UI is quite minimal. 
+
+
 - **num verts** can be changed via Slider input on the UI or as described above, it can be fed multiple values through the input sockets.
+
 
 Output
 ------ 
