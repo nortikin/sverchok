@@ -29,12 +29,9 @@ from data_structure import (SvGetSocketAnyType, SvSetSocketAnyType,
 
 
 def axis_rotation(vertex, center, axis, angle):
-    rotated = []
     mat = Matrix.Rotation(radians(angle), 4,  axis)
     c = Vector(center)
-    for i in vertex:            
-        pt = Vector(i)
-        rotated.append((c + mat * ( pt - c))[:])
+    rotated = [ (c + mat * ( Vector(i) - c))[:] for i in vertex ]
     return rotated
 
 def euler_rotation(vertex, x, y, z, order):
@@ -206,3 +203,6 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvRotationNode)
+
+if __name__ == '__main__':
+    register()
