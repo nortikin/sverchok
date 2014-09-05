@@ -66,9 +66,9 @@ Integers only, in list form.
 Examples
 --------
 
-In non vectorized form
+**Non-vectorized**
 
-**Int Range**
+Int Range
 
 ::
 
@@ -84,7 +84,7 @@ In non vectorized form
     intRange(2,1,-4)
     >>> [2, 1, 0, -1, -2, -3]
 
-**Count Range**
+Count Range
 
 ::
 
@@ -100,7 +100,7 @@ In non vectorized form
     countRange(2,1,4)
     >>> [2, 3, 4, 5]
 
-**Vectorized examples**
+**Vectorized**
 
-*Todo*
+*Todo, probably best with screenshot*
 
