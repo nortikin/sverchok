@@ -15,10 +15,10 @@ Inputs
 Just like in Line Node, all inputs are vectorized and they will accept single or multiple values.
 There is two basic inputs **N Vert** and **Step**, but referenced to both X and Y directions, so it results in 4 inputs:
 
-    **N Vert X**
-    **N Vert Y**
-    **Step X**
-    **Step Y**
+- **N Vert X**
+- **N Vert Y**
+- **Step X**
+- **Step Y**
 
 Same as Line, all inputs will accept a single number or an array of them or even an array of arrays::
 
