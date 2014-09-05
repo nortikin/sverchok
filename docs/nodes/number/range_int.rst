@@ -102,5 +102,9 @@ Count Range
 
 **Vectorized**
 
-*Todo, probably best with screenshot*
+`Progress Thread <https://github.com/nortikin/sverchok/issues/156>`_ in the issue tracker shows several examples.
+
+.. image:: https://cloud.githubusercontent.com/assets/619340/4163189/29d5fb56-34e4-11e4-9b00-baa15a8ddf00.png
+
+
 
