@@ -25,7 +25,7 @@ Depends on incoming data and can be nested. Level 0 is top level (totally zoomed
 Examples
 --------
 
-Often a few experiments with input hooked upto a debug node will make the exact working of this Node instantly clearer than any explanation. 
+Often a few experiments with input hooked-up to a debug node will make the exact working of this Node instantly clearer than any explanation. 
 
 .. image:: ListLengthDemo1.PNG
 .. image:: ListLengthDemo2.PNG
