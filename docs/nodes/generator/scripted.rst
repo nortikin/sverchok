@@ -84,11 +84,21 @@ Here are some legal examples::
 
 **in_sockets and out_sockets**
 
-- Each `socket name on ui` string shall be unique.
-- `type` are currently limited to
-   - 's' : floats, ints, edges, faces
-   - 'v' : vertices, vectors
-   - 'm' : matrices
+- Each *socket name on ui* string shall be unique.
+
+- **type** are currently limited to
+   
+   +---------+-------------------------------------+
+   | type id | type data                           | 
+   +=========+=====================================+
+   | 's'     | floats, ints, edges, faces, strings |
+   +---------+-------------------------------------+
+   | 'v'     | vertices, vectors                   | 
+   +---------+-------------------------------------+
+   | 'm'     | matrices                            |
+   +---------+-------------------------------------+
+
+
 
 **ui_operators**
 
