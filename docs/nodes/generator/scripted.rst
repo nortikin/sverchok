@@ -128,13 +128,14 @@ script creation process.
 
 - has automatic ``in_sockets`` list creation when the key cursor is over ``sv_main``. 
   (please note: it doesn't attempt to detect if you want nested verts or edge/polygon so it assumes you want 'v')
+
   - kb shortcut: ``Ctrl+I -> Generate in_sockets``
 
 .. image::  https://cloud.githubusercontent.com/assets/619340/2854040/e6351180-d14b-11e3-8055-b3d8c707675d.gif
 
 - can also convert a template description (like `kv lang` if you know Kivy) into 
-  valid ScriptNode ready python. list creation. 
-  Example `available here <https://github.com/nortikin/sverchok/issues/376#issuecomment-54062710>`_
+  valid ScriptNode ready python. Example `available here <https://github.com/nortikin/sverchok/issues/376#issuecomment-54062710>`_
+
   - kb shortcut: ``Ctrl+I -> Convert svlang``
 
 - can refresh the Script Node which currently loads that script by hitting ``Ctrl+Enter``
@@ -318,7 +319,7 @@ Techniques to improve Python performance
 There are many ways to speed up python code. Some slowness will be down to
 innefficient algorithm design, other slowness is caused purely by how much
 processing is minimally required to solve a problem. A decent read regarding
-general methods to improve python code performancecan be found
+general methods to improve python code performance can be found
 on `python.org <https://wiki.python.org/moin/PythonSpeed/PerformanceTips>`_.
 If you don't know where the cycles are being consumed, then you don't know
 if your efforts to optimize will have any significant impact.
