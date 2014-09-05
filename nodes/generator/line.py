@@ -20,15 +20,14 @@ import bpy
 from bpy.props import IntProperty, FloatProperty
 
 from node_tree import SverchCustomTreeNode
-from data_structure import (updateNode, fullList, SvSetSocketAnyType,
-                            SvGetSocketAnyType, match_long_repeat)
+from data_structure import updateNode, fullList, SvSetSocketAnyType, match_long_repeat
 
 from mathutils import Vector
 
 
-def line_verts(integer, step):
+def make_line(integer, step):
     vertices = [(0.0, 0.0, 0.0)]
-    integer = [integer if type(integer) is not list else integer[0]]
+    integer = [int(integer) if type(integer) is not list else int(integer[0])]
 
     if type(step) is not list:
         step = [step]
@@ -38,16 +37,11 @@ def line_verts(integer, step):
         v = Vector(vertices[i]) + Vector((step[i], 0.0, 0.0))
         vertices.append(v[:])
 
-    return vertices
-
-def line_edges(integer, step):
-    integer = [integer if type(integer) is not list else integer[0]]
     edges = []
-
     for i in range(integer[0]-1):
         edges.append((i, i+1))
 
-    return edges
+    return vertices, edges
 
 class LineNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Line '''
@@ -73,22 +67,24 @@ class LineNode(bpy.types.Node, SverchCustomTreeNode):
         pass
 
     def update(self):
-        outputs = self.outputs
         inputs = self.inputs
+        outputs = self.outputs
 
         if not 'Edges' in outputs:
             return
 
-        params = match_long_repeat([inputs["Nº Vertices"].sv_get(), inputs["Step"].sv_get()])
+        integer = inputs["Nº Vertices"].sv_get()
+        step = inputs["Step"].sv_get()
+
+        params = match_long_repeat([integer, step])
+        out = [a for a in (zip(*[make_line(i, s) for i, s in zip(*params)]))]
             
         # outputs
-        if outputs['Vertices'].links:
-            vertices = [line_verts(i, s) for i, s in zip(*params)]
-            SvSetSocketAnyType(self, 'Vertices', vertices)
+        if self.outputs['Vertices'].links:
+            SvSetSocketAnyType(self, 'Vertices', out[0])
 
-        if outputs['Edges'].links:
-            edges = [line_edges(i, s) for i, s in zip(*params)]
-            SvSetSocketAnyType(self, 'Edges', edges)
+        if self.outputs['Edges'].links:
+            SvSetSocketAnyType(self, 'Edges', out[1])
 
     def update_socket(self, context):
         self.update()
