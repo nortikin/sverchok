@@ -36,5 +36,5 @@ Examples
 Notes
 -----
 
-This is not a very fast implementation on Box, but it can act as an introduction to anyone interested in coding their own Sverchok Nodes. It is a very short node code-wise, it has a nice structure and shows how one migh construct a bmesh and use existing bmesh.ops to operate on it.
+This is not a very fast implementation of Box, but it can act as an introduction to anyone interested in coding their own Sverchok Nodes. It is a very short node code-wise, it has a nice structure and shows how one migh construct a bmesh and use existing bmesh.ops to operate on it.
 

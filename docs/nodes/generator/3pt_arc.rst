@@ -9,13 +9,16 @@ Given a *start coordinate*, a *through coordinate*, and an *end coordinate* this
 Inputs
 ------
 
-- arc_pts input is `[begin, mid, end, begin, mid, end, begin, mid, end..... ] ` 
-  - must be (len % 3 == 0 )
+- arc_pts input is `[begin, mid, end, begin, mid, end, begin, mid, end..... ]`
+
+    - must be (len % 3 == 0 )
 
 - num verts is either  
-  - constant, 
-  - unique, 
-  - or repeats last value if the number of arcs exceeds the number of values in the `num_vert` list
+
+    - constant
+    - unique
+    - or repeats last value if the number of arcs exceeds the number of values in the `num_vert` list
+
 
 Parameters
 ----------
