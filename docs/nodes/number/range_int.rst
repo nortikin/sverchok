@@ -30,20 +30,77 @@ Useful for generating sequences of Integer values. The code perhaps describes be
         return list(range(start, stop, step))
 
 
-Inputs
-------
+Inputs and Parameters
+---------------------
 
+One UI parameter controls the behaviour of this Node; the ``Range | Count`` Mode switch. The last input changes accordingly.
 
-Parameters
-----------
++-------+-------+--------------------------------------------------------+
+| Mode  | Input | Description                                            |
++=======+=======+========================================================+ 
+|       |       |                                                        |
+| Both  | Start | value to start at                                      |
+|       +-------+--------------------------------------------------------+
+|       | Step  | value of the skip distance to the next value. The Step |
+|       |       | value is considered the absolute difference between    |
+|       |       | successive numbers.                                    |
++-------+-------+--------------------------------------------------------+
+| Range | Stop  | last value to generate, don't make values beyond this. |
+|       |       | If this value is lower than the start value then the   |
+|       |       | sequence will be of descending values.                 |
++-------+-------+--------------------------------------------------------+
+| Count | Count | number of values to produce given Start and Step.      |
+|       |       | **Never negative** - negative produces an empty list   |
++-------+-------+--------------------------------------------------------+
 
+**A word on implementation:** 
+
+This Node accepts only Integers and lists of Integers, so you must convert Floats to Int first. 
+The reason is purely superficial - there is no reasonable argument not to automatically cast values.
 
 Outputs
 -------
 
+Integers only, in list form.
+
 Examples
 --------
 
+In non vectorized form
 
+**Int Range**
 
+::
+
+    intRange(0,1,10)
+    >>> [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+
+    intRange(0,2,10)
+    >>> [0, 2, 4, 6, 8]
+
+    intRange(-4,1,6)
+    >>> [-4, -3, -2, -1, 0, 1, 2, 3, 4, 5]
+
+    intRange(2,1,-4)
+    >>> [2, 1, 0, -1, -2, -3]
+
+**Count Range**
+
+::
+
+    countRange(0,1,5)
+    >>> [0, 1, 2, 3, 4]
+
+    countRange(0,2,5)
+    >>> [0, 2, 4, 6, 8]
+
+    countRange(-4,1,6)
+    >>> [-4, -3, -2, -1, 0, 1]
+
+    countRange(2,1,4)
+    >>> [2, 3, 4, 5]
+
+**Vectorized examples**
+
+*Todo*
 
