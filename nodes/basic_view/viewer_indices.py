@@ -204,9 +204,6 @@ class IndexViewerNode(bpy.types.Node, SverchCustomTreeNode):
         update=updateNode)
 
     fonts = StringProperty(name='fonts', default='', update=updateNode)
-    # fontsize
-    #fonts = EnumProperty(items=[('Bfont', 'Bfont', 'Bfont')],
-    #                     name='fonts', update=updateNode)
 
     font_size = FloatProperty(
         name="font_size", description='',
