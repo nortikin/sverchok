@@ -59,7 +59,7 @@ class TextBaker(object):
                 d = dataCorrect(SvGetSocketAnyType(node, inputs[name]))
                 if name == 'matrix':
                     d = Matrix_generate(d) if d else []
-                if name == 'vertices':
+                elif name == 'vertices':
                     d = Vector_generate(d) if d else []
                 return d
             return fallback
