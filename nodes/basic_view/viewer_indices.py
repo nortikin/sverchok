@@ -35,7 +35,122 @@ READY_COLOR = (1, 0.3, 0)
 
 
 class TextBaker(object):
-    pass
+
+    def __init__(self, node):
+        self.node = node
+
+    def collect_text_to_bake(self):
+        context = bpy.context
+        node = self.node
+        inputs = node.inputs
+
+        data_edges, data_faces = [], []
+        data_matrix = []
+        data_text = ''
+
+        def has_good_link(name, TypeSocket):
+            if inputs[name].links:
+                if isinstance(inputs[name].links[0].from_socket, TypeSocket):
+                    return True
+
+        def get_data(name, fallback=[]):
+            if name in {'edges', 'faces', 'text'}:
+                TypeSocket = StringsSocket
+            else:
+                TypeSocket = MatrixSocket if name == 'matrix' else VerticesSocket
+
+            if has_good_link(name, TypeSocket):
+                d = dataCorrect(SvGetSocketAnyType(node, inputs[name]))
+                if name == 'matrix':
+                    d = Matrix_generate(d) if d else []
+                if name == 'vertices':
+                    d = Vector_generate(d) if d else []
+                return d
+            return fallback
+
+        data_vector = get_data('vertices')
+        if not data_vector:
+            return
+
+        data_edges = get_data('edges')
+        data_faces = get_data('faces')
+        data_matrix = get_data('matrix')
+        data_text = get_data('text', '')
+
+        for obj_index, verts in enumerate(data_vector):
+            final_verts = verts
+
+            if data_text:
+                text_obj = data_text[obj_index]
+            else:
+                text_obj = ''
+
+            if data_matrix:
+                matrix = data_matrix[obj_index]
+                final_verts = [matrix * v for v in verts]
+
+            if node.display_vert_index:
+                for idx, v in enumerate(final_verts):
+                    if text_obj:
+                        self.bake(idx, v, text_obj[idx])
+                    else:
+                        self.bake(idx, v)
+
+            if data_edges and node.display_edge_index:
+                for edge_index, (idx1, idx2) in enumerate(data_edges[obj_index]):
+
+                    v1 = Vector(final_verts[idx1])
+                    v2 = Vector(final_verts[idx2])
+                    loc = v1 + ((v2 - v1) / 2)
+                    if text_obj:
+                        self.bake(edge_index, loc, text_obj[edge_index])
+                    else:
+                        self.bake(edge_index, loc)
+
+            if data_faces and node.display_face_index:
+                for face_index, f in enumerate(data_faces[obj_index]):
+                    verts = [Vector(final_verts[idx]) for idx in f]
+                    median = self.calc_median(verts)
+                    if text_obj:
+                        self.bake(face_index, median, text_obj[face_index])
+                    else:
+                        self.bake(face_index, median)
+
+    def bake(self, index, origin, text_=''):
+        fonts = bpy.data.fonts
+
+        if text_:
+            text = str(text_[0])
+        else:
+            text = str(index)
+
+        # Create and name TextCurve object
+        bpy.ops.object.text_add(view_align=False, enter_editmode=False, location=origin)
+
+        ob = bpy.context.object
+        ob.name = 'sv_text_' + text
+        tcu = ob.data
+        tcu.name = 'sv_text_' + text
+
+        # TextCurve attributes
+        tcu.body = text
+        tcu.font = fonts.get(self.node.fonts, fonts[0])
+        tcu.offset_x = 0
+        tcu.offset_y = 0
+        tcu.resolution_u = 2
+        tcu.shear = 0
+        tcu.size = self.node.font_size
+        tcu.space_character = 1
+        tcu.space_word = 1
+        tcu.align = 'CENTER'
+        tcu.extrude = 0.0
+        tcu.fill_mode = 'NONE'
+
+    def calc_median(self, vlist):
+        a = Vector((0, 0, 0))
+        for v in vlist:
+            a += v
+        return a / len(vlist)
 
 
 class SvBakeText (bpy.types.Operator):
@@ -47,7 +162,8 @@ class SvBakeText (bpy.types.Operator):
 
     def execute(self, context):
         n = context.node
-        n.collect_text_to_bake()
+        baker_obj = TextBaker(n)
+        baker_obj.collect_text_to_bake()
         return {'FINISHED'}
 
 
@@ -165,10 +281,9 @@ class IndexViewerNode(bpy.types.Node, SverchCustomTreeNode):
             row.operator('object.sv_text_baking', text='B A K E')
             row = col.row(align=True)
             row.prop(self, "font_size")
-            #fonts_ = [(n.name,n.name,n.name) for n in bpy.data.fonts]
-            #self.fonts = EnumProperty(items=fonts_, name='fonts', update=updateNode)
+
             row = col.row(align=True)
-            row.prop(self, "fonts")
+            row.prop_search(self, 'fonts', bpy.data, 'fonts', text='', icon='FONT')
 
     def get_settings(self):
         '''Produce a dict of settings for the callback'''
@@ -229,124 +344,6 @@ class IndexViewerNode(bpy.types.Node, SverchCustomTreeNode):
                 col4.prop(self, colprop, text="")
 
         layout.prop(self, 'bakebuttonshow')
-
-    # baking
-    def collect_text_to_bake(self):
-        # n_id, settings, text
-        context = bpy.context
-
-        # ensure data or empty lists.
-        # gather vertices from input
-        if self.inputs['vertices'].links:
-            if isinstance(self.inputs['vertices'].links[0].from_socket, VerticesSocket):
-                propv = dataCorrect(
-                    SvGetSocketAnyType(self, self.inputs['vertices']))
-                data_vector = Vector_generate(propv) if propv else []
-        else:
-            return
-        data_edges, data_faces = [], []
-        if self.inputs['edges'].links:
-            if isinstance(self.inputs['edges'].links[0].from_socket, StringsSocket):
-                data_edges = dataCorrect(
-                    SvGetSocketAnyType(self, self.inputs['edges']))
-        if self.inputs['faces'].links:
-            if isinstance(self.inputs['faces'].links[0].from_socket, StringsSocket):
-                data_faces = dataCorrect(
-                    SvGetSocketAnyType(self, self.inputs['faces']))
-        data_matrix = []
-        if self.inputs['matrix'].links:
-            if isinstance(self.inputs['matrix'].links[0].from_socket, MatrixSocket):
-                matrix = dataCorrect(
-                    SvGetSocketAnyType(self, self.inputs['matrix']))
-                data_matrix = Matrix_generate(matrix) if matrix else []
-        data_text = ''
-        if self.inputs['text'].links:
-            if isinstance(self.inputs['text'].links[0].from_socket, StringsSocket):
-                data_text = dataCorrect(
-                    SvGetSocketAnyType(self, self.inputs['text']))
-
-        display_vert_index = self.display_vert_index
-        display_edge_index = self.display_edge_index
-        display_face_index = self.display_face_index
-
-        ########
-        # points
-        def calc_median(vlist):
-            a = Vector((0, 0, 0))
-            for v in vlist:
-                a += v
-            return a / len(vlist)
-
-        for obj_index, verts in enumerate(data_vector):
-            final_verts = verts
-            if data_text:
-                text_obj = data_text[obj_index]
-            else:
-                text_obj = ''
-
-            # quickly apply matrix if necessary
-            if data_matrix:
-                matrix = data_matrix[obj_index]
-                final_verts = [matrix * v for v in verts]
-
-            if display_vert_index:
-                for idx, v in enumerate(final_verts):
-                    if text_obj:
-                        self.bake(idx, v, text_obj[idx])
-                    else:
-                        self.bake(idx, v)
-
-            if data_edges and display_edge_index:
-                for edge_index, (idx1, idx2) in enumerate(data_edges[obj_index]):
-
-                    v1 = Vector(final_verts[idx1])
-                    v2 = Vector(final_verts[idx2])
-                    loc = v1 + ((v2 - v1) / 2)
-                    if text_obj:
-                        self.bake(edge_index, loc, text_obj[edge_index])
-                    else:
-                        self.bake(edge_index, loc)
-
-            if data_faces and display_face_index:
-                for face_index, f in enumerate(data_faces[obj_index]):
-                    verts = [Vector(final_verts[idx]) for idx in f]
-                    median = calc_median(verts)
-                    if text_obj:
-                        self.bake(face_index, median, text_obj[face_index])
-                    else:
-                        self.bake(face_index, median)
-
-    def bake(self, index, origin, text_=''):
-        if text_:
-            text = str(text_[0])
-        else:
-            text = str(index)
-        # Create and name TextCurve object
-        bpy.ops.object.text_add(view_align=False,
-                                enter_editmode=False,
-                                location=origin)
-        ob = bpy.context.object
-        ob.name = 'sv_text_' + text
-        tcu = ob.data
-        tcu.name = 'sv_text_' + text
-        # TextCurve attributes
-        tcu.body = text
-        try:
-            tcu.font = bpy.data.fonts[self.fonts]
-        except:
-            tcu.font = bpy.data.fonts[0]
-        tcu.offset_x = 0
-        tcu.offset_y = 0
-        tcu.resolution_u = 2
-        tcu.shear = 0
-        Tsize = self.font_size
-        tcu.size = Tsize
-        tcu.space_character = 1
-        tcu.space_word = 1
-        tcu.align = 'CENTER'
-        # Inherited Curve attributes
-        tcu.extrude = 0.0
-        tcu.fill_mode = 'NONE'
 
     def update(self):
         inputs = self.inputs
