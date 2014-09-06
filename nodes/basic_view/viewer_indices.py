@@ -36,11 +36,11 @@ READY_COLOR = (1, 0.3, 0)
 
 class TextBaker(object):
 
-    def __init__(self, node):
-        self.node = node
+    def __init__(self, context):
+        self.context = context
+        self.node = context.node
 
     def collect_text_to_bake(self):
-        context = bpy.context
         node = self.node
         inputs = node.inputs
 
@@ -117,7 +117,8 @@ class TextBaker(object):
                         self.bake(face_index, median)
 
     def bake(self, index, origin, text_=''):
-        fonts = bpy.data.fonts
+
+        node = self.node
 
         if text_:
             text = str(text_[0])
@@ -125,24 +126,29 @@ class TextBaker(object):
             text = str(index)
 
         # Create and name TextCurve object
-        bpy.ops.object.text_add(view_align=False, enter_editmode=False, location=origin)
-
-        ob = bpy.context.object
+        bpy.ops.object.text_add(view_align=0, enter_editmode=0, location=origin)
+        ob = self.context.object
         ob.name = 'sv_text_' + text
-        tcu = ob.data
-        tcu.name = 'sv_text_' + text
 
         # TextCurve attributes
+        tcu = ob.data
+        tcu.name = 'sv_text_' + text
         tcu.body = text
-        tcu.font = fonts.get(self.node.fonts, fonts[0])
+
+        try:
+            tcu.font = bpy.data.fonts[node.fonts]
+        except:
+            tcu.font = bpy.data.fonts[0]
+
         tcu.offset_x = 0
         tcu.offset_y = 0
         tcu.resolution_u = 2
         tcu.shear = 0
-        tcu.size = self.node.font_size
+        tcu.size = node.font_size
         tcu.space_character = 1
         tcu.space_word = 1
         tcu.align = 'CENTER'
+
         tcu.extrude = 0.0
         tcu.fill_mode = 'NONE'
 
@@ -161,8 +167,7 @@ class SvBakeText (bpy.types.Operator):
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
-        n = context.node
-        baker_obj = TextBaker(n)
+        baker_obj = TextBaker(context)
         baker_obj.collect_text_to_bake()
         return {'FINISHED'}
 
