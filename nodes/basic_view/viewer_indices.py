@@ -34,6 +34,10 @@ FAIL_COLOR = (0.1, 0.05, 0)
 READY_COLOR = (1, 0.3, 0)
 
 
+class TextBaker(object):
+    pass
+
+
 class SvBakeText (bpy.types.Operator):
 
     """3Dtext baking"""
@@ -168,20 +172,19 @@ class IndexViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
     def get_settings(self):
         '''Produce a dict of settings for the callback'''
-        settings = {}
         # A copy is needed, we can't have reference to the
         # node in a callback, it will crash blender on undo
-        settings['bg_edges_col'] = self.bg_edges_col[:]
-        settings['bg_faces_col'] = self.bg_faces_col[:]
-        settings['bg_verts_col'] = self.bg_verts_col[:]
-        settings['numid_edges_col'] = self.numid_edges_col[:]
-        settings['numid_faces_col'] = self.numid_faces_col[:]
-        settings['numid_verts_col'] = self.numid_verts_col[:]
-        settings['display_vert_index'] = self.display_vert_index
-        settings['display_edge_index'] = self.display_edge_index
-        settings['display_face_index'] = self.display_face_index
-
-        return settings
+        return {
+            'bg_edges_col': self.bg_edges_col[:],
+            'bg_faces_col': self.bg_faces_col[:],
+            'bg_verts_col': self.bg_verts_col[:],
+            'numid_edges_col': self.numid_edges_col[:],
+            'numid_faces_col': self.numid_faces_col[:],
+            'numid_verts_col': self.numid_verts_col[:],
+            'display_vert_index': self.display_vert_index,
+            'display_edge_index': self.display_edge_index,
+            'display_face_index': self.display_face_index
+        }
 
     def draw_buttons_ext(self, context, layout):
         row = layout.row(align=True)
@@ -320,7 +323,8 @@ class IndexViewerNode(bpy.types.Node, SverchCustomTreeNode):
             text = str(index)
         # Create and name TextCurve object
         bpy.ops.object.text_add(view_align=False,
-                                enter_editmode=False,location=origin)
+                                enter_editmode=False,
+                                location=origin)
         ob = bpy.context.object
         ob.name = 'sv_text_' + text
         tcu = ob.data
@@ -346,13 +350,9 @@ class IndexViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
     def update(self):
         inputs = self.inputs
-        text = ''
-
-        # if you change this change in free() also
         n_id = node_id(self)
         IV.callback_disable(n_id)
 
-        # end early
         # check if UI is populated.
         if not ('text' in inputs):
             return
@@ -361,57 +361,56 @@ class IndexViewerNode(bpy.types.Node, SverchCustomTreeNode):
         if not self.id_data.sv_show:
             return
 
-        # alias in case it is present
-        iv_links = inputs['vertices'].links
         self.use_custom_color = True
 
-        if self.activate and iv_links:
-            IV.callback_disable(n_id)
-            draw_verts, draw_matrix = [], []
-
-            # gather vertices from input
-            if isinstance(iv_links[0].from_socket, VerticesSocket):
-                propv = SvGetSocketAnyType(self, inputs['vertices'])
-                draw_verts = dataCorrect(propv)
-
-            # idea to make text in 3d
-            if 'text' in inputs and inputs['text'].links:
-                text_so = SvGetSocketAnyType(self, inputs['text'])
-                text = dataCorrect(text_so)
-                fullList(text, len(draw_verts))
-                for i, t in enumerate(text):
-                    fullList(text[i], len(draw_verts[i]))
-
-            # matrix might be operating on vertices, check and act on.
-            if 'matrix' in inputs:
-                im_links = inputs['matrix'].links
-
-                # end early, skips to drwa vertex indices without matrix
-                if im_links and isinstance(im_links[0].from_socket, MatrixSocket):
-                    propm = SvGetSocketAnyType(self, inputs['matrix'])
-                    draw_matrix = dataCorrect(propm)
-
-            data_feind = []
-            for socket in ['edges', 'faces']:
-                try:
-                    propm = SvGetSocketAnyType(self, inputs[socket])
-                    input_stream = dataCorrect(propm)
-                except:
-                    input_stream = []
-                finally:
-                    data_feind.append(input_stream)
-
-            draw_edges, draw_faces = data_feind
-
-            bg = self.draw_bg
-            settings = self.get_settings()
-            IV.callback_enable(
-                n_id, draw_verts, draw_edges, draw_faces,
-                draw_matrix, bg, settings.copy(), text)
-                
+        if self.activate and inputs['vertices'].links:
+            self.process(n_id, IV)
             self.color = READY_COLOR
         else:
             self.color = FAIL_COLOR
+
+    def process(self, n_id, IV):
+        inputs = self.inputs
+        iv_links = inputs['vertices'].links
+        im_links = inputs['matrix'].links
+
+        draw_verts, draw_matrix = [], []
+        text = ''
+
+        # gather vertices from input
+        if isinstance(iv_links[0].from_socket, VerticesSocket):
+            propv = SvGetSocketAnyType(self, inputs['vertices'])
+            draw_verts = dataCorrect(propv)
+
+        # idea to make text in 3d
+        if inputs['text'].links:
+            text_so = SvGetSocketAnyType(self, inputs['text'])
+            text = dataCorrect(text_so)
+            fullList(text, len(draw_verts))
+            for i, t in enumerate(text):
+                fullList(text[i], len(draw_verts[i]))
+
+        if im_links and isinstance(im_links[0].from_socket, MatrixSocket):
+            propm = SvGetSocketAnyType(self, inputs['matrix'])
+            draw_matrix = dataCorrect(propm)
+
+        data_feind = []
+        for socket in ['edges', 'faces']:
+            try:
+                propm = SvGetSocketAnyType(self, inputs[socket])
+                input_stream = dataCorrect(propm)
+            except:
+                input_stream = []
+            finally:
+                data_feind.append(input_stream)
+
+        draw_edges, draw_faces = data_feind
+
+        bg = self.draw_bg
+        settings = self.get_settings()
+        IV.callback_enable(
+            n_id, draw_verts, draw_edges, draw_faces,
+            draw_matrix, bg, settings.copy(), text)
 
     def update_socket(self, context):
         self.update()
@@ -432,4 +431,3 @@ def unregister():
 
 if __name__ == '__main__':
     register()
-
