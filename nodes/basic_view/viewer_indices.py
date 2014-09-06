@@ -44,10 +44,6 @@ class TextBaker(object):
         node = self.node
         inputs = node.inputs
 
-        data_edges, data_faces = [], []
-        data_matrix = []
-        data_text = ''
-
         def has_good_link(name, TypeSocket):
             if inputs[name].links:
                 if isinstance(inputs[name].links[0].from_socket, TypeSocket):
@@ -119,7 +115,7 @@ class TextBaker(object):
     def bake(self, index, origin, text_=''):
 
         node = self.node
-        text = str( text_[0] if text_ else index )
+        text = str(text_[0] if text_ else index)
 
         # Create and name TextCurve object
         bpy.ops.object.text_add(view_align=0, enter_editmode=0, location=origin)
