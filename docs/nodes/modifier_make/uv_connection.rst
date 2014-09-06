@@ -19,11 +19,11 @@ table
 +---------------+---------------+-----------------------------------------------------------------+
 | Param         | Type          | Description                                                     |  
 +===============+===============+=================================================================+
-| **UVdir**     | Enum          | direction to connect edges and polygons                         | 
+| **UVdir**     | Enum          | Direction to connect edges and polygons                         | 
 +---------------+---------------+-----------------------------------------------------------------+
-| **cicled**    | Bool, toggle  | For edges - close loop, for polygons close loop                 |  
+| **cicled**    | Bool, toggle  | For edges and polygons close loop                               |  
 +---------------+---------------+-----------------------------------------------------------------+
-| **polygons**  | Bool, toggle  | active - make polygon, else edge                                | 
+| **polygons**  | Bool, toggle  | Active - make polygon, else edge                                | 
 +---------------+---------------+-----------------------------------------------------------------+
 | **slice**     | Bool, toggle  | Polygons can be as slices or quads                              |
 +---------------+---------------+-----------------------------------------------------------------+
