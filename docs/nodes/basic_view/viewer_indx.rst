@@ -33,7 +33,7 @@ Parameters
 +-----------------------+------------+----------------------------------------------------------------------+
 | Font  *               | string     | font, that used to bake (import fonts to scene first)                |
 +-----------------------+------------+----------------------------------------------------------------------+
-  * - only used for baking text meshes, not 3dview printing
+* - only used for baking text meshes, not 3dview printing
 
 In the *Properties Panel* (N-Panel) of this active node, it is possible to specifiy the colors of text and background polygons.
 
