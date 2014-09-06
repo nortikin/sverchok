@@ -119,11 +119,7 @@ class TextBaker(object):
     def bake(self, index, origin, text_=''):
 
         node = self.node
-
-        if text_:
-            text = str(text_[0])
-        else:
-            text = str(index)
+        text = str( text_[0] if text_ else index )
 
         # Create and name TextCurve object
         bpy.ops.object.text_add(view_align=0, enter_editmode=0, location=origin)
