@@ -283,7 +283,7 @@ class IndexViewerNode(bpy.types.Node, SverchCustomTreeNode):
             row.prop(self, "font_size")
 
             row = col.row(align=True)
-            row.prop_search(self, 'fonts', bpy.data, 'fonts', text='', icon='FONT')
+            row.prop_search(self, 'fonts', bpy.data, 'fonts', text='', icon='FONT_DATA')
 
     def get_settings(self):
         '''Produce a dict of settings for the callback'''
