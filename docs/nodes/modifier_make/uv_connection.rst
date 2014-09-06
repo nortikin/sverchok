@@ -13,11 +13,13 @@ Vertices. Multysockets can eat many objects. every object to be connecting with 
 
 Parameters
 ----------
+
 table
+
 +---------------+---------------+-----------------------------------------------------------------+
 | Param         | Type          | Description                                                     |  
 +===============+===============+=================================================================+
-| **Udir Vdir** | Enum          | direction to connect edges and polygons                         | 
+| **UVdir**     | Enum          | direction to connect edges and polygons                         | 
 +---------------+---------------+-----------------------------------------------------------------+
 | **cicled**    | Bool, toggle  | For edges - close loop, for polygons close loop                 |  
 +---------------+---------------+-----------------------------------------------------------------+
