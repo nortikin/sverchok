@@ -27,12 +27,27 @@ Parameters
 +-----------------------+------------+----------------------------------------------------------------------+
 | verts, edges, faces   | multi bool | set of toggles to choose which of the inputs are displayed.          |
 +-----------------------+------------+----------------------------------------------------------------------+
-| Font                  | string     | only used for baking text meshes, not 3dview printing                |
+| Bake *                | operator   | to bake text in blender objects                                      |
 +-----------------------+------------+----------------------------------------------------------------------+
+| Font_Size *           | float      | size of baked text                                                   |
++-----------------------+------------+----------------------------------------------------------------------+
+| Font  *               | string     | font, that used to bake (import fonts to scene first)                |
++-----------------------+------------+----------------------------------------------------------------------+
+  * - only used for baking text meshes, not 3dview printing
 
 In the *Properties Panel* (N-Panel) of this active node, it is possible to specifiy the colors of text and background polygons.
 
 **extended**
+
++-----------------------+------------+----------------------------------------------------------------------+
+| parameters            | type       | description                                                          |
++=======================+============+======================================================================+
+| bakebuttonshow        | bool       | *activation* of bake button in default parameters                    | 
++-----------------------+------------+----------------------------------------------------------------------+
+| colors font           | color      | colors for vertices, edges, polygons                                 |
++-----------------------+------------+----------------------------------------------------------------------+
+| colors background     | color      | colors for vertices, edges, polygons background                      |
++-----------------------+------------+----------------------------------------------------------------------+
 
 We added a way to show extended features in the main Node UI. 
 From here one can choose a font and bake specific *Text* to meshes as preparation for fabrication. 
