@@ -39,6 +39,7 @@ def make_categories():
         ["ObjectsNode",         "Objects in"],
         ["SvTextInNode",        "Text in"],
         ["SvTextOutNode",       "Text out"],
+        ["svFontLoader",        "Font Loader"],
         ["WifiInNode",          "Wifi in"],
         ["WifiOutNode",         "Wifi out"]]
 

@@ -26,6 +26,7 @@ nodes_dict = {
         'text',
         'wifi_in',
         'wifi_out',
+        'font_loader',
         'eval_knieval',
         'switch'],
 
@@ -150,4 +151,3 @@ nodes_dict = {
         'vertices_sort',
         'axis_input']
 }
-
