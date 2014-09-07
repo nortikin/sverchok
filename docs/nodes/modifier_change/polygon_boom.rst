@@ -4,7 +4,7 @@ Polygon Boom
 Functionality
 -------------
 
-The vertices of each polygon will be placed into separate lists. If polygons share vertices then the coordinates are duplicates into new vertices. The end result will be a nested list of polygons with each their own unique vertices. This facilitates rotation on a polygon around an arbitrary points without affecting the vertices of other polygons in the list.
+The vertices of each polygon will be placed into separate lists. If polygons share vertices then the coordinates are duplicates into new vertices. The end result will be a nested list of polygons with each their own unique vertices. This facilitates rotation of a polygon around an arbitrary points without affecting the vertices of other polygons in the list.
 
 Inputs & Outputs
 ----------------
