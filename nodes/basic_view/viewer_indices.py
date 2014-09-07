@@ -44,10 +44,6 @@ class TextBaker(object):
         node = self.node
         inputs = node.inputs
 
-        data_edges, data_faces = [], []
-        data_matrix = []
-        data_text = ''
-
         def has_good_link(name, TypeSocket):
             if inputs[name].links:
                 if isinstance(inputs[name].links[0].from_socket, TypeSocket):
@@ -63,7 +59,7 @@ class TextBaker(object):
                 d = dataCorrect(SvGetSocketAnyType(node, inputs[name]))
                 if name == 'matrix':
                     d = Matrix_generate(d) if d else []
-                if name == 'vertices':
+                elif name == 'vertices':
                     d = Vector_generate(d) if d else []
                 return d
             return fallback
@@ -119,7 +115,7 @@ class TextBaker(object):
     def bake(self, index, origin, text_=''):
 
         node = self.node
-        text = str( text_[0] if text_ else index )
+        text = str(text_[0] if text_ else index)
 
         # Create and name TextCurve object
         bpy.ops.object.text_add(view_align=0, enter_editmode=0, location=origin)
@@ -212,41 +208,17 @@ class IndexViewerNode(bpy.types.Node, SverchCustomTreeNode):
         update=updateNode)
 
     # color props
-    bg_edges_col = FloatVectorProperty(
-        name="bg_edges", description='',
-        size=4, min=0.0, max=1.0,
-        default=(.2, .2, .2, 1.0), subtype='COLOR',
-        update=updateNode)
+    def make_color_prop(name, col):
+        return FloatVectorProperty(
+            name=name, description='', size=4, min=0.0, max=1.0,
+            default=col, subtype='COLOR', update=updateNode)
 
-    bg_faces_col = FloatVectorProperty(
-        name="bg_faces", description='',
-        size=4, min=0.0, max=1.0,
-        default=(.2, .2, .2, 1.0), subtype='COLOR',
-        update=updateNode)
-
-    bg_verts_col = FloatVectorProperty(
-        name="bg_verts", description='',
-        size=4, min=0.0, max=1.0,
-        default=(.2, .2, .2, 1.0), subtype='COLOR',
-        update=updateNode)
-
-    numid_edges_col = FloatVectorProperty(
-        name="numid_edges", description='',
-        size=4, min=0.0, max=1.0,
-        default=(1.0, 1.0, 0.1, 1.0), subtype='COLOR',
-        update=updateNode)
-
-    numid_faces_col = FloatVectorProperty(
-        name="numid_faces", description='',
-        size=4, min=0.0, max=1.0,
-        default=(1.0, .8, .8, 1.0), subtype='COLOR',
-        update=updateNode)
-
-    numid_verts_col = FloatVectorProperty(
-        name="numid_verts", description='',
-        size=4, min=0.0, max=1.0,
-        default=(1, 1, 1, 1.0), subtype='COLOR',
-        update=updateNode)
+    bg_edges_col = make_color_prop("bg_edges", (.2, .2, .2, 1.0))
+    bg_faces_col = make_color_prop("bg_faces", (.2, .2, .2, 1.0))
+    bg_verts_col = make_color_prop("bg_verts", (.2, .2, .2, 1.0))
+    numid_edges_col = make_color_prop("numid_edges", (1.0, 1.0, 0.1, 1.0))
+    numid_faces_col = make_color_prop("numid_faces", (1.0, .8, .8, 1.0))
+    numid_verts_col = make_color_prop("numid_verts", (1, 1, 1, 1.0))
 
     def init(self, context):
         self.inputs.new('VerticesSocket', 'vertices', 'vertices')
