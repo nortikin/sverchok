@@ -59,7 +59,7 @@ With *show bake ui* toggled, the Node unhides a selection of UI elements conside
 
 **Glyph to Geometry**
 
-Font glyph conversion is done by Blender. If it produces strange results then most likely the font contains *invsibile mistakes* in the Glyph construction. Blender's font parser takes no extra precautions to catch inconsistant Glyph definitions.
+Font glyph conversion is done by Blender. If it produces strange results then most likely the font's Glyph contains *invsibile mistakes*. Blender's font parser takes no extra precautions to catch inconsistant Glyph definitions.
 
 Outputs
 -------
@@ -69,4 +69,6 @@ No socket output, but does output to 3d-view as either openGL drawing instructio
 Examples
 --------
 
-.. image:: https://cloud.githubusercontent.com/assets/619340/2831444/208e8f30-cfb9-11e3-8b93-cb530684e168.png
+.. image:: IndexViewerDemo1.PNG
+.. image:: IndexViewerDemo2.PNG
+.. image:: IndexViewerDemo3.PNG
