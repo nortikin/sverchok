@@ -27,12 +27,14 @@ Parameters
 +-----------------------+------------+----------------------------------------------------------------------+
 | verts, edges, faces   | multi bool | set of toggles to choose which of the inputs are displayed.          |
 +-----------------------+------------+----------------------------------------------------------------------+
-| Bake *                | operator   | to bake text in blender objects                                      |
+| Bake *                | operator   | bake text to blender geometry objects                                |
 +-----------------------+------------+----------------------------------------------------------------------+
-| Font_Size *           | float      | size of baked text                                                   |
+| Font Size *           | float      | size of baked text                                                   |
 +-----------------------+------------+----------------------------------------------------------------------+
-| Font  *               | string     | font, that used to bake (import fonts to scene first)                |
+| Font  *               | string     | font used to bake (import fonts to scene if you wish to use anything |
+|                       |            | other than BFont)                                                    |
 +-----------------------+------------+----------------------------------------------------------------------+
+
 `* - only used for baking text meshes, not 3dview printing`
 
 In the *Properties Panel* (N-Panel) of this active node, it is possible to specifiy the colors of text and background polygons.
@@ -50,11 +52,14 @@ In the *Properties Panel* (N-Panel) of this active node, it is possible to speci
 +-----------------------+------------+----------------------------------------------------------------------+
 
 We added a way to show extended features in the main Node UI. 
-From here one can choose a font and bake specific *Text* to meshes as preparation for fabrication. 
-Font glyph conversion is done by Blender. 
-If it produces strange results then most likely the font contains *invsibile mistakes* in the Glyph construction.
-Some font parsers might take extra percautions to catch inconsistant Glyph definitions. 
-Blender's font parser assumes no mistakes.
+
+**font**
+
+With *show bake ui* toggled, the Node unhides a selection of UI elements considered useful for *Baking Text* in preparation for fabrication. If no font is selected the default BFont will be used. BFont won't be visible in this list until you have done at least one bake during the current Blender session.
+
+**Glyph to Geometry**
+
+Font glyph conversion is done by Blender. If it produces strange results then most likely the font contains *invsibile mistakes* in the Glyph construction. Blender's font parser takes no extra precautions to catch inconsistant Glyph definitions.
 
 Outputs
 -------
