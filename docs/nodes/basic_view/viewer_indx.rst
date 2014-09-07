@@ -43,18 +43,18 @@ In the *Properties Panel* (N-Panel) of this active node, it is possible to speci
 +-----------------------+------------+----------------------------------------------------------------------+
 | parameters            | type       | description                                                          |
 +=======================+============+======================================================================+
-| bakebuttonshow        | bool       | *activation* of bake button in default parameters                    | 
-+-----------------------+------------+----------------------------------------------------------------------+
 | colors font           | color      | colors for vertices, edges, polygons                                 |
 +-----------------------+------------+----------------------------------------------------------------------+
 | colors background     | color      | colors for vertices, edges, polygons background                      |
++-----------------------+------------+----------------------------------------------------------------------+
+| show bake UI          | bool       | reveals extended bake UI features (Bake button, font properties)     | 
 +-----------------------+------------+----------------------------------------------------------------------+
 
 We added a way to show extended features in the main Node UI. 
 
 **font**
 
-With *show bake ui* toggled, the Node unhides a selection of UI elements considered useful for *Baking Text* in preparation for fabrication. If no font is selected the default BFont will be used. BFont won't be visible in this list until you have done at least one bake during the current Blender session.
+With *show bake UI* toggled, the Node unhides a selection of UI elements considered useful for *Baking Text* in preparation for fabrication. If no font is selected the default BFont will be used. BFont won't be visible in this list until you have done at least one bake during the current Blender session.
 
 **Glyph to Geometry**
 
