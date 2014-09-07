@@ -207,7 +207,6 @@ class IndexViewerNode(bpy.types.Node, SverchCustomTreeNode):
         min=0.01, default=0.1,
         update=updateNode)
 
-    # color props
     def make_color_prop(name, col):
         return FloatVectorProperty(
             name=name, description='', size=4, min=0.0, max=1.0,
@@ -313,7 +312,7 @@ class IndexViewerNode(bpy.types.Node, SverchCustomTreeNode):
                 col4.scale_x = little_width
                 col4.prop(self, colprop, text="")
 
-        layout.prop(self, 'bakebuttonshow')
+        layout.prop(self, 'bakebuttonshow', text='show bake UI')
 
     def update(self):
         inputs = self.inputs

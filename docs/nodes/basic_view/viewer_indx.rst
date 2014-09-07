@@ -10,8 +10,7 @@ Displays indices of incoming geometry, much like what is possible in the debug m
 Inputs
 ------
 
-This node Accepts sets of `Verts, Edges, Faces, and Matrices`. In addition it accepts a Text input to display Strings at 
-the locations passed in through the `Vertices` socket.
+This node Accepts sets of `Verts, Edges, Faces, and Matrices`. In addition it accepts a Text input to display Strings at the locations passed in through the `Vertices` socket.
 
 Parameters
 ----------
@@ -44,22 +43,41 @@ In the *Properties Panel* (N-Panel) of this active node, it is possible to speci
 +-----------------------+------------+----------------------------------------------------------------------+
 | parameters            | type       | description                                                          |
 +=======================+============+======================================================================+
-| bakebuttonshow        | bool       | *activation* of bake button in default parameters                    | 
-+-----------------------+------------+----------------------------------------------------------------------+
 | colors font           | color      | colors for vertices, edges, polygons                                 |
 +-----------------------+------------+----------------------------------------------------------------------+
 | colors background     | color      | colors for vertices, edges, polygons background                      |
++-----------------------+------------+----------------------------------------------------------------------+
+| show bake UI          | bool       | reveals extended bake UI features (Bake button, font properties)     | 
 +-----------------------+------------+----------------------------------------------------------------------+
 
 We added a way to show extended features in the main Node UI. 
 
 **font**
 
-With *show bake ui* toggled, the Node unhides a selection of UI elements considered useful for *Baking Text* in preparation for fabrication. If no font is selected the default BFont will be used. BFont won't be visible in this list until you have done at least one bake during the current Blender session.
+With *show bake UI* toggled, the Node unhides a selection of UI elements considered useful for *Baking Text* in preparation for fabrication. If no font is selected the default BFont will be used. BFont won't be visible in this list until you have done at least one bake during the current Blender session.
 
 **Glyph to Geometry**
 
-Font glyph conversion is done by Blender. If it produces strange results then most likely the font contains *invsibile mistakes* in the Glyph construction. Blender's font parser takes no extra precautions to catch inconsistant Glyph definitions.
+Font glyph conversion is done by Blender. If it produces strange results then most likely the font's Glyph contains *invsibile mistakes*. Blender's font parser takes no extra precautions to catch inconsistant Glyph definitions.
+
+**Bake locations**
+
+Depending on the toggle set in ``Verts | Edges | Faces``, the text can be shown and baked at various locations. 
+
++-------+-------------------------------------------------------------------+
+| Mode  | Location                                                          | 
++=======+===================================================================+
+| Verts | directly on the vertex location (adjusted if Matrix is input too) |
++-------+-------------------------------------------------------------------+
+| Edges | in-between the two vertices of the edge                           | 
++-------+-------------------------------------------------------------------+
+| Faces | the average location of all vertices associated with the polygon  |
++-------+-------------------------------------------------------------------+
+
+**Orientation of baked text**
+
+Currently only flat on the XY plane. ``Z = 0``
+
 
 Outputs
 -------
@@ -69,4 +87,6 @@ No socket output, but does output to 3d-view as either openGL drawing instructio
 Examples
 --------
 
-.. image:: https://cloud.githubusercontent.com/assets/619340/2831444/208e8f30-cfb9-11e3-8b93-cb530684e168.png
+.. image:: IndexViewerDemo1.PNG
+.. image:: IndexViewerDemo2.PNG
+.. image:: IndexViewerDemo3.PNG
