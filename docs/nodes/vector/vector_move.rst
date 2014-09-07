@@ -47,6 +47,7 @@ This works for one vertice or many vertices
 Move lists of matching nestedness. (whats that?! - elaborate)
 
 .. image:: VectorMoveDemo3.PNG
+.. image:: VectorMoveDemo4.PNG
 
 Notes
 -------
