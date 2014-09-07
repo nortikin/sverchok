@@ -10,8 +10,7 @@ Displays indices of incoming geometry, much like what is possible in the debug m
 Inputs
 ------
 
-This node Accepts sets of `Verts, Edges, Faces, and Matrices`. In addition it accepts a Text input to display Strings at 
-the locations passed in through the `Vertices` socket.
+This node Accepts sets of `Verts, Edges, Faces, and Matrices`. In addition it accepts a Text input to display Strings at the locations passed in through the `Vertices` socket.
 
 Parameters
 ----------
@@ -60,6 +59,25 @@ With *show bake ui* toggled, the Node unhides a selection of UI elements conside
 **Glyph to Geometry**
 
 Font glyph conversion is done by Blender. If it produces strange results then most likely the font's Glyph contains *invsibile mistakes*. Blender's font parser takes no extra precautions to catch inconsistant Glyph definitions.
+
+**Bake locations**
+
+Depending on the toggle set in ``Verts | Edges | Faces``, the text can be shown and baked at various locations. 
+
++-------+-------------------------------------------------------------------+
+| Mode  | Location                                                          | 
++=======+===================================================================+
+| Verts | directly on the vertex location (adjusted if Matrix is input too) |
++-------+-------------------------------------------------------------------+
+| Edges | in-between the two vertices of the edge                           | 
++-------+-------------------------------------------------------------------+
+| Faces | the average location of all vertices associated with the polygon  |
++-------+-------------------------------------------------------------------+
+
+**Orientation of baked text**
+
+Currently only flat on the XY plane. ``Z = 0``
+
 
 Outputs
 -------
