@@ -27,7 +27,7 @@ Examples
 Notes
 -------
 
-If you feed this node geometry and are not getting the expected output, try a subset of the input geometry and hook
+If you feed this node geometry and don't get the expected output, try a subset of the input geometry and hook
 the output up to a *debug node*. Seeing what the output really is helps get an understanding for how this Node has interpreted the data. Also view the incoming data to see if it's what you think it is, perhaps it has unexpected extra nesting or wrapping.
 
 Doesn't currently work on Plane Generator, or any generator which expresses key lists using *tuples*.
