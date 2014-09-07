@@ -29,6 +29,8 @@ Examples
 --------
 
 .. image:: MatrixApplyDemo1.PNG
+.. image:: MatrixApplyDemo5.PNG
+
 
 Notes
 -------
