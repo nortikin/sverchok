@@ -1,0 +1,227 @@
+
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Elman neuro node layer 1 &mdash; Sverchok 0.4.0 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="top" title="Sverchok 0.4.0 documentation" href="../index.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="../main.html" class="fa fa-home"> Sverchok</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../installation.html#troubleshooting-installation-errors">Troubleshooting Installation Errors</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../geometry.html">Introduction to geometry</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../geometry.html#basics">Basics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../geometry.html#sverchok">Sverchok</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../nodes.html">Nodes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="vector_math.html">Vector Math Node</a></li>
+<li class="toctree-l2"><a class="reference internal" href="scripted.html">Scripted Node (Generator)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="scripts_generator.html">Sverchok Script Generator Node rules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plane.html">Plane</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../contribute.html">Contribute</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../contribute.html#our-workflow">OUR WORKFLOW:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../contribute.html#what-not-to-do">WHAT NOT TO DO:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../contribute.html#to-make-your-node">TO MAKE YOUR NODE:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../contribute.html#some-rules">SOME RULES:</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../main.html">Sverchok</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../main.html">Docs</a> &raquo;</li>
+      
+    <li>Elman neuro node layer 1</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="../_sources/nodes/elman.txt" rel="nofollow"> View page source</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="elman-neuro-node-layer-1">
+<h1>Elman neuro node layer 1<a class="headerlink" href="#elman-neuro-node-layer-1" title="Permalink to this headline">¶</a></h1>
+</div>
+<div class="section" id="id1">
+<h1>По-русски<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h1>
+<blockquote>
+<div><dl class="docutils">
+<dt>Узел нейронной сети</dt>
+<dd>Обучаемый узел. вы его можете обучить закономерностям в данных, подавая данные для просчёта и идеальные числа.
+Выставляя параметры вы коррекируете работу нейросети. Данный узел просто вырабатывает &#8220;условный рефлекс&#8221;.
+Вынимая идеальный эталонный параметр вы отпускаете его в вольное плаванье, узел теперь сам решает что надо выдавать в ответ на данные.
+Данные запакованные в каждый объект. Если подаёшь серию по одному числу в объекте, то на входе будет много объектов. И на выходе будет столько же объектов с числом.
+Если на вход подать все числа в одном объекте, это будет считаться много параметров и выдавать один объект.
+Всегда вводите постоянное число переменных, если переменные поменялись - сбрасываются все исчисления. Будьте последовательны.</dd>
+</dl>
+</div></blockquote>
+<ul class="simple">
+<li>coef_learning - коэффициент скорости обучения, влияет на точность (чем меньше, тем точнее и дольше);</li>
+<li>gisterezis - разброс выходных и эталонных данных;</li>
+<li>maximum - максимальное числа на входе (лучше задать чуть больше);</li>
+<li>cycles - количество проходов на просчет одного объекта;</li>
+<li>A layer - количество ядер входного слоя (равно числу в чисел в объекте);</li>
+<li>B layer - количество ядер внутреннего слоя - чем больше, тем умнее нейрон (большое количество может привести к переобучению сети, иногда лучше его уменьшить);</li>
+<li>C layer - количество ядер выходного слоя - равно количеству чисел в объекте на выходе;</li>
+<li>epsilon - внутренняя переменная - определяет сдвиг аргумента в циклах cycles (на результат слабо влияет);</li>
+<li>lambda - сдерживающий коэффициент, чтобы сеть не забивалась данными;</li>
+<li>threshold - внутренняя переменная - определяет порог разумности обучения в циклах cycles (на результат не особо влияет).</li>
+</ul>
+</div>
+<div class="section" id="english">
+<h1>English<a class="headerlink" href="#english" title="Permalink to this headline">¶</a></h1>
+<blockquote>
+<div><dl class="docutils">
+<dt>Neuro network node</dt>
+<dd>This node teachable. You may teach him rules, that he understand himself. Just put data and correct answer. When displace answer, he will find right answer himself.
+Input data. Inserting many objects - output many objects. Inserting one object with many parameters - output one object.
+Always insert constant numbers count of parameters, otherwise it will reset neuro data and start every time from beginning. Keep constant numbers count.</dd>
+</dl>
+</div></blockquote>
+<ul class="simple">
+<li>coef_learning - learning speed coeffitient, accuracy influence (less - more accuracy);</li>
+<li>gisterezis - spread of input and etalon data;</li>
+<li>maximum - maximum number input (better define little overhang number);</li>
+<li>cycles - passes on one object;</li>
+<li>A layer - input layer cores (and it is number of objects);</li>
+<li>B layer - inner layer cores - more - smarter (overlearning is bad too);</li>
+<li>C layer - output layer cores - numbers quantity in output;</li>
+<li>epsilon - inner variable - argument offset in passes &#8216;cycles&#8217; (not much influence totally);</li>
+<li>lambda - holding coefficient, to preserve data flooding;</li>
+<li>threshold - inner variable - defines reasonability limit in passes &#8216;cycles&#8217; (not much influence totally).</li>
+</ul>
+</div>
+
+
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2014, nortikin.
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.4.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

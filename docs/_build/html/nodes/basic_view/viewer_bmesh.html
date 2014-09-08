@@ -1,0 +1,290 @@
+
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Viewer BMesh &mdash; Sverchok 0.4.0 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="top" title="Sverchok 0.4.0 documentation" href="../../index.html"/>
+        <link rel="up" title="Basic View" href="basic_view.html"/>
+        <link rel="next" title="3D View Properties" href="3dview_props.html"/>
+        <link rel="prev" title="Viewer Index" href="viewer_indx.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="../../main.html" class="fa fa-home"> Sverchok</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../installation.html#troubleshooting-installation-errors">Troubleshooting Installation Errors</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../geometry.html">Introduction to geometry</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../geometry.html#basics">Basics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../geometry.html#d-geometry">3D Geometry</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../nodes.html">Nodes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="basic_view.html">Basic View</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../basic_data/basic_data.html">Basic Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../basic_debug/basic_debug.html">Basic Debug</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_main/list_main.html">List Main</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_struct/list_struct.html">List Structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../number/number.html">Number</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../generator/generator.html">Generator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../vector/vector.html">Vector</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../matrix/matrix.html">Matrix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modifier_change/modifier_change.html">Modifier Change</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modifier_make/modifier_make.html">Modifier Make</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../analyzer/analyzer.html">Analyzer</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../contribute.html">Contribute</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../contribute.html#our-workflow">OUR WORKFLOW:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contribute.html#what-not-to-do">WHAT NOT TO DO:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contribute.html#to-make-your-node">TO MAKE YOUR NODE:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contribute.html#some-rules">SOME RULES:</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../main.html">Sverchok</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../main.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../nodes.html">Nodes</a> &raquo;</li>
+      
+          <li><a href="basic_view.html">Basic View</a> &raquo;</li>
+      
+    <li>Viewer BMesh</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="../../_sources/nodes/basic_view/viewer_bmesh.txt" rel="nofollow"> View page source</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="viewer-bmesh">
+<h1>Viewer BMesh<a class="headerlink" href="#viewer-bmesh" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="functionality">
+<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
+<p><em>aliases: BMeshViewer, BMView</em></p>
+<p>Similar to ViewerDraw but instead of using OpenGL calls to display geometry this Node <em>writes</em> or <em>updates</em> Blender Meshes on every geometry update. The bonus is that this geometry is renderable without an extra bake step. We can use Blender&#8217;s Modifier stack to affect the mesh. The only exception to the modifiers is the Skin Modifier but we aren&#8217;t entirely sure why, maybe because BMview invalidates the BMesh between updates.</p>
+</div>
+<div class="section" id="inputs">
+<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Verts</li>
+<li>Edges</li>
+<li>Faces</li>
+<li>Matrix</li>
+</ul>
+</div>
+<div class="section" id="parameters-features">
+<h2>Parameters &amp; Features<a class="headerlink" href="#parameters-features" title="Permalink to this headline">¶</a></h2>
+<p>Features we rarely need or want to interact with are placed in the N-Panel / Properties Panel.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="9%" />
+<col width="16%" />
+<col width="75%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Location</th>
+<th class="head">Param</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>Node UI</td>
+<td>Update</td>
+<td>Processing only happens if <em>update</em> is ticked</td>
+</tr>
+<tr class="row-odd"><td>&nbsp;</td>
+<td>Group</td>
+<td>On by default, auto groups all meshes produced by incoming geometry</td>
+</tr>
+<tr class="row-even"><td>&nbsp;</td>
+<td>Hide View</td>
+<td>Hides current meshes from view</td>
+</tr>
+<tr class="row-odd"><td>&nbsp;</td>
+<td>Hide Select</td>
+<td>Disables the ability to select these meshes</td>
+</tr>
+<tr class="row-even"><td>&nbsp;</td>
+<td>Hide Render</td>
+<td>Disables the renderability of these meshes</td>
+</tr>
+<tr class="row-odd"><td>&nbsp;</td>
+<td>Base Name</td>
+<td>Base name for Objects and Meshes made by this node</td>
+</tr>
+<tr class="row-even"><td>&nbsp;</td>
+<td>Select / Deselect</td>
+<td>Select every object in 3dview that was created by this Node using Base Name</td>
+</tr>
+<tr class="row-odd"><td>&nbsp;</td>
+<td>Material Select</td>
+<td>Assign materials to Objects made by this node</td>
+</tr>
+<tr class="row-even"><td>N Panel</td>
+<td>Random Name</td>
+<td>In the case of multiple BMview nodes, this button makes it easier to generate a new
+random name to prevent interference with existing Meshes. It will never produce and
+use the name of an existing Object, it will always append names with indices.</td>
+</tr>
+<tr class="row-odd"><td>&nbsp;</td>
+<td>Fixed Vert count</td>
+<td>If you know the only change to the mesh is in vertex locations, then this toggle
+will use the foreach construct to overwrite the locations only,
+leaving existing edges and faces unchanged. Use it if you can.</td>
+</tr>
+<tr class="row-even"><td>&nbsp;</td>
+<td>Smooth shade</td>
+<td>Automatically sets <em>shade</em> type to smooth when ticked.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="outputs">
+<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h2>
+<p>Outputs directly to Blender <tt class="docutils literal"><span class="pre">bpy.data.meshes</span></tt> and <tt class="docutils literal"><span class="pre">bpy.data.objects</span></tt></p>
+</div>
+<div class="section" id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="3dview_props.html" class="btn btn-neutral float-right" title="3D View Properties">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="viewer_indx.html" class="btn btn-neutral" title="Viewer Index"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2014, nortikin.
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.4.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
