@@ -20,7 +20,7 @@ import bpy
 from bpy.props import IntProperty, FloatProperty
 
 from node_tree import SverchCustomTreeNode
-from data_structure import updateNode, fullList, SvSetSocketAnyType, match_long_repeat
+from data_structure import updateNode, fullList, match_long_repeat
 
 from mathutils import Vector
 
@@ -80,11 +80,11 @@ class LineNode(bpy.types.Node, SverchCustomTreeNode):
         out = [a for a in (zip(*[make_line(i, s) for i, s in zip(*params)]))]
             
         # outputs
-        if self.outputs['Vertices'].links:
-            SvSetSocketAnyType(self, 'Vertices', out[0])
+        if outputs['Vertices'].links:
+            outputs['Vertices'].sv_set(out[0])
 
-        if self.outputs['Edges'].links:
-            SvSetSocketAnyType(self, 'Edges', out[1])
+        if outputs['Edges'].links:
+            outputs['Edges'].sv_set(out[1])
 
     def update_socket(self, context):
         self.update()

@@ -20,7 +20,7 @@ import bpy
 from bpy.props import BoolProperty, IntProperty, FloatProperty
 
 from node_tree import SverchCustomTreeNode
-from data_structure import updateNode, fullList, SvSetSocketAnyType, match_long_repeat
+from data_structure import updateNode, fullList, match_long_repeat
 
 from mathutils import Vector
 
@@ -55,7 +55,6 @@ def make_plane(int_x, int_y, step_x, step_y, separate):
 
     edges = []
     edges_S = []
-
     for i in range(int_y[0]):
         for j in range(int_x[0]-1):
             edges.append((int_x[0]*i+j, int_x[0]*i+j+1))
@@ -134,14 +133,14 @@ class PlaneNode(bpy.types.Node, SverchCustomTreeNode):
         out = [a for a in (zip(*[make_plane(i_x, i_y, s_x, s_y, s) for i_x, i_y, s_x, s_y, s in zip(*params)]))]
 
         # outputs
-        if self.outputs['Vertices'].links:
-            SvSetSocketAnyType(self, 'Vertices', out[0])
+        if outputs['Vertices'].links:
+            outputs['Vertices'].sv_set(out[0])
 
-        if self.outputs['Edges'].links:
-            SvSetSocketAnyType(self, 'Edges', out[1])
+        if outputs['Edges'].links:
+            outputs['Edges'].sv_set(out[1])
 
-        if self.outputs['Polygons'].links:
-            SvSetSocketAnyType(self, 'Polygons', out[2])
+        if outputs['Polygons'].links:
+            outputs['Polygons'].sv_set(out[2])
 
     def update_socket(self, context):
         self.update()
