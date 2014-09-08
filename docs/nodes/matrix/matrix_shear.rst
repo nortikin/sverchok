@@ -1,7 +1,8 @@
 Matrix Shear
 ============
 
-.. image:: Matrix_Shear.PNG
+.. image:: https://cloud.githubusercontent.com/assets/619340/4186363/32974f5a-3760-11e4-9be7-5e16ce549d0d.PNG
+  :alt: Matrix_Shear.PNG
 
 Functionality
 -------------
@@ -32,4 +33,5 @@ Examples
 
 Usage: This is most commonly connected to Matrix Apply to produce the Shear effect.
 
-.. image:: Matrix_Shear_Demo1.PNG
+.. image:: https://cloud.githubusercontent.com/assets/619340/4186364/3298a5f8-3760-11e4-83ad-e26989cb5133.PNG
+  :alt: Matrix_Shear_Demo1.PNG
