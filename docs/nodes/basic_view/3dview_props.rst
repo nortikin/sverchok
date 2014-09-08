@@ -1,7 +1,8 @@
 3D View Properties
 ==================
 
-.. image:: 3dview_props.PNG
+.. image:: https://cloud.githubusercontent.com/assets/619340/4186522/b22b2e48-3761-11e4-958e-3452eef7c466.PNG
+  :alt: 3dview_props.PNG
 
 Features
 -------------

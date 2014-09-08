@@ -87,6 +87,9 @@ No socket output, but does output to 3d-view as either openGL drawing instructio
 Examples
 --------
 
-.. image:: IndexViewerDemo1.PNG
-.. image:: IndexViewerDemo2.PNG
-.. image:: IndexViewerDemo3.PNG
+.. image:: https://cloud.githubusercontent.com/assets/619340/4186492/6903ce82-3761-11e4-9359-ebf4b51827d1.PNG
+  :alt: IndexViewerDemo1.PNG
+.. image:: https://cloud.githubusercontent.com/assets/619340/4186493/6908b712-3761-11e4-8cfb-bd487469f7ed.PNG
+  :alt: IndexViewerDemo2.PNG
+.. image:: https://cloud.githubusercontent.com/assets/619340/4186494/6910e9f0-3761-11e4-9496-3dd62ab58352.PNG
+  :alt: IndexViewerDemo3.PNG

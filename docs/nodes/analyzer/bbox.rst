@@ -33,11 +33,13 @@ Examples
 
 *Mean: Average of incoming set of Vertices*
 
-.. image:: BBox_Mean1.PNG
+.. image:: https://cloud.githubusercontent.com/assets/619340/4186539/def83614-3761-11e4-9cb4-4f7d8a8608bb.PNG
+  :alt: BBox_Mean1.PNG
 
 *Center: Average of the Bounding Box*
 
-.. image:: BBox_Center3.PNG
+.. image:: https://cloud.githubusercontent.com/assets/619340/4186538/def29d62-3761-11e4-8069-b9544e2ad62a.PNG
+  :alt: BBox_Center3.PNG
 
 Notes
 -----
