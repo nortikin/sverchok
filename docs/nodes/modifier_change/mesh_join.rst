@@ -63,7 +63,8 @@ Expects a nested collection of vertex lists. Each nested list represents an obje
 Examples
 --------
 
-.. image:: MeshJoinDemo1.PNG
+.. image:: https://cloud.githubusercontent.com/assets/619340/4186165/8ea02bde-375e-11e4-96d8-175959c26505.PNG
+  :alt: MeshJoinDemo1.PNG
 
 Notes
 -----

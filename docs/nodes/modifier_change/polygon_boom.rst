@@ -16,4 +16,5 @@ Examples
 
 The Box on default settings is a Cube with 6 polygons and each vertex is shared by three polygons. Polygon Boom separates the polygons into seperate coordinate lists (vertices).
 
-.. image:: PolygonBoomDemo1.PNG
+.. image:: https://cloud.githubusercontent.com/assets/619340/4186234/1ef77fb6-375f-11e4-8e45-4ce14df9fd94.PNG
+  :alt: PolygonBoomDemo1.PNG
