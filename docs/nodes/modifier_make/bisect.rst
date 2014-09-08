@@ -4,7 +4,7 @@ Bisect
 Functionality
 -------------
 
-This can give the cross section of an object shape from any angle. The implementation is from ``bmesh.ops.bisect_plane``.
+This can give the cross section of an object shape from any angle. The implementation is from ``bmesh.ops.bisect_plane``. It can also provide either side of the cut, separate or joined.
 
 
 Inputs 
