@@ -28,12 +28,12 @@ class svFontImporterOp(bpy.types.Operator):
     bl_idname = "fonts.font_importer"
     bl_label = "sv Font Importer Operator"
 
-    filepath = StringProperty(   name="File Path",
-                                 description="Filepath used for importing the font file",
-                                 maxlen=1024, default="", subtype='FILE_PATH')
+    filepath = StringProperty(
+        name="File Path",
+        description="Filepath used for importing the font file",
+        maxlen=1024, default="", subtype='FILE_PATH')
 
     filter_glob = StringProperty(default="*.ttf", options={'HIDDEN'})
-
 
     def execute(self, context):
         bpy.data.fonts.load(self.filepath)
@@ -43,7 +43,6 @@ class svFontImporterOp(bpy.types.Operator):
         wm = context.window_manager
         wm.fileselect_add(self)
         return {'RUNNING_MODAL'}
-
 
 
 class svFontLoader(bpy.types.Node, SverchCustomTreeNode):
@@ -62,10 +61,8 @@ class svFontLoader(bpy.types.Node, SverchCustomTreeNode):
     def update(self):
         pass
 
-
     #def update_socket(self, context):
     #    pass
-
 
 
 def register():
