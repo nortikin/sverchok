@@ -38,16 +38,21 @@ Examples
 
 This works for one vertice or many vertices
 
-.. image:: VectorMoveDemo1.PNG
+.. image:: https://cloud.githubusercontent.com/assets/619340/4185766/ce3d6c1a-375a-11e4-86ea-6525a3e34dc3.PNG
+   :alt: VectorMoveDemo1.PNG
 
 *translate back to origin*
 
-.. image:: VectorMoveDemo2.PNG
+.. image:: https://cloud.githubusercontent.com/assets/619340/4185765/ce3c512c-375a-11e4-9986-dc4a96777f0e.PNG
+   :alt: VectorMoveDemo2.PNG
 
 Move lists of matching nestedness. (whats that?! - elaborate)
 
-.. image:: VectorMoveDemo3.PNG
-.. image:: VectorMoveDemo4.PNG
+.. image:: https://cloud.githubusercontent.com/assets/619340/4185767/ce42339e-375a-11e4-926f-376f69b663bf.PNG
+   :alt: VectorMoveDemo3.PNG
+
+.. image:: https://cloud.githubusercontent.com/assets/619340/4185768/ce485684-375a-11e4-88dc-c35f1b2ce725.PNG
+   :alt: VectorMoveDemo4.PNG
 
 Notes
 -------
