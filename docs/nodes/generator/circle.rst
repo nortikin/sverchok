@@ -53,7 +53,13 @@ Outputs
 -------
 
 **Vertices**, **Edges** and **Polygons**. 
-All outputs will be generated. Depending on the type of the inputs, the node will generate only one or multiples independant circles.
+All outputs will be generated. Depending on the type of the inputs, the node will generate only one or multiples independant circles. In example:
+
+.. image:: https://cloud.githubusercontent.com/assets/5990821/4187227/07366302-3768-11e4-8e9c-4068c9ce6773.png
+.. image:: https://cloud.githubusercontent.com/assets/5990821/4187228/0759a754-3768-11e4-80a4-458e286edf20.png
+
+As you can see in the red rounded values, depending on how many inputs have the node, will be generated those same number of outputs.
+
 If **Degrees** is minor than 0, depending of the **mode** state, will be generated a sector or a segment of a circle with that degrees angle.
 
 Example of usage
