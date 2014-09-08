@@ -1,9 +1,6 @@
 Plane
 =====
 
-.. image:: /images/nodes/generator/plane_node.png
-    :alt: Node: Plane
-
 Functionality
 -------------
 
@@ -29,7 +26,7 @@ Same as Line, all inputs will accept a single number or an array of them or even
 Parameters
 ----------
 
-All parameters can be given by the node or an external input.
+All parameters except **Separate** can be given by the node or an external input.
 
 
 +--------------+---------------+-------------+----------------------------------------------------+
@@ -56,12 +53,12 @@ If **Separate** is True, the output is totally different. The grid disappear (no
 Example of usage
 ----------------
 
-.. image:: /images/nodes/generator/plane_node_example1.png
+.. image:: https://cloud.githubusercontent.com/assets/5990821/4186862/981724fa-3764-11e4-9ead-3e7eecc0433a.png
 
 The first example shows a grid with 6 vertices in X direction and 4 in Y. The distance between them is base on the next serie of floats::
 
     [0.5, 1.0 , 1.5, 2.0, 2.5]
 
-.. image:: /images/nodes/generator/plane_node_example2.png
+.. image:: https://cloud.githubusercontent.com/assets/5990821/4186863/98178f94-3764-11e4-8796-2076df9136c1.png
 
 The second example is just like the first, but with **Separate** option activated, so the output is a series of lines unconnected instead of a complete grid.

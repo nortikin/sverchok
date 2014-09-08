@@ -1,9 +1,6 @@
 Circle
 ======
 
-.. image:: /images/nodes/generator/circle_node.png
-    :alt: Node: Plane
-
 Functionality
 -------------
 
@@ -37,7 +34,7 @@ Same as other generators, all inputs will accept a single number, an array or ev
 Parameters
 ----------
 
-All parameters can be given by the node or an external input.
+All parameters except **Mode** can be given by the node or an external input.
 
 
 +----------------+---------------+-------------+----------------------------------------------------+
@@ -62,10 +59,10 @@ If **Degrees** is minor than 0, depending of the **mode** state, will be generat
 Example of usage
 ----------------
 
-.. image:: /images/nodes/generator/circle_node_example1.png
+.. image:: https://cloud.githubusercontent.com/assets/5990821/4186877/ab2f2e98-3764-11e4-9cd6-502228eec31c.png
 
 In this first example we see that circle generator can be a circle but also any regular polygon that you want.
 
-.. image:: /images/nodes/generator/circle_node_example2.png
+.. image:: https://cloud.githubusercontent.com/assets/5990821/4186876/ab2edf4c-3764-11e4-980e-d9beb10b16d8.png
 
 The second example shows the use of **mode** option and how it generates sector or segment of a circle based on the **degrees** value.
