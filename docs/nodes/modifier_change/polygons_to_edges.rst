@@ -22,7 +22,8 @@ Input & Output
 Examples
 --------
 
-.. image:: Polygon2EdgeDemo1.PNG
+.. image:: https://cloud.githubusercontent.com/assets/619340/4186197/c89fefae-375e-11e4-8224-14d47b5f9dd8.PNG
+  :alt: Polygon2EdgeDemo1.PNG
 
 Notes
 -------
@@ -32,4 +33,5 @@ the output up to a *debug node*. Seeing what the output really is helps get an u
 
 Doesn't currently work on Plane Generator, or any generator which expresses key lists using *tuples*.
 
-.. image:: Poly2EdgeDemo2.PNG
+.. image:: https://cloud.githubusercontent.com/assets/619340/4186196/c89d4510-375e-11e4-86d3-c606a0a3e920.PNG
+  :alt: Poly2EdgeDemo2.PNG
