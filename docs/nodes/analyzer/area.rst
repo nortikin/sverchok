@@ -37,6 +37,6 @@ Outputs
 Example of usage
 ----------------
 
-.. image:: https://cloud.githubusercontent.com/assets/5990821/4187932/3208d26c-376e-11e4-92ba-76e86c589e91.png
+.. image:: https://cloud.githubusercontent.com/assets/5990821/4188452/8f9cbf66-3772-11e4-8735-34462b7da54b.png
 
-In the example we have the inputs from a plane with 24 faces. We can use **Area** node to get the sum of all of them or all of them individually.
+In the example we have the inputs from a plane with 15 faces. We can use **Area** node to get the sum of all of them or the area of every face individually.
