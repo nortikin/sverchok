@@ -17,7 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-from bpy.props import StringProperty
+from bpy.props import StringProperty, FloatVectorProperty
 
 from node_tree import SverchCustomTreeNode
 from data_structure import updateNode
@@ -51,12 +51,16 @@ class svFontLoader(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'sv Font Loader'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
+    fe_vec = FloatVectorProperty(
+        name='fe_vec', size=3, default=(0.4, 0.4, 0.4), subtype='DIRECTION')
+
     def init(self, context):
         pass
 
     def draw_buttons(self, context, layout):
         row = layout.row()
         row.operator('fonts.font_importer', text='load font')
+        row.template_curve_mapping([0,1,2,3,4,5], 'fe_vec', type='VECTOR')
 
     def update(self):
         pass
