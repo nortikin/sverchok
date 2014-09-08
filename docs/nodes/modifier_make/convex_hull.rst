@@ -4,19 +4,27 @@ Convex Hull
 Functionality
 -------------
 
-Creates a list of Faces and Edges from an incoming list of Vertices. This can be useful to skin a simple cloud of points. Any internal points to the system will be rejected.
+The algorithm used is known as `Convex Hull <http://en.wikipedia.org/wiki/Convex_hull_algorithms>`_, and implemented in``bmesh.ops.convex_hull``
 
-Inputs
+Use this to skin a simple cloud of points. Any internal points to the system will be rejected. 
+
+
+Input
 ------
 
-Parameters
-----------
+*Vertices*
+
 
 Outputs
 -------
 
+*Faces* and *Edges*
+
+
 Examples
 --------
+
+
 
 Notes
 -----
