@@ -24,7 +24,8 @@ Input & Output
 Examples
 --------
 
-.. image:: separate-looseDemo1.png
+.. image:: https://cloud.githubusercontent.com/assets/619340/4186249/46e799f2-375f-11e4-8fab-4bf1776b244a.png
+  :alt: separate-looseDemo1.png
 
 Notes
 -------
