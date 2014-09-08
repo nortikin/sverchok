@@ -1,0 +1,323 @@
+
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Vector Math Node &mdash; Sverchok 0.4.0 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="top" title="Sverchok 0.4.0 documentation" href="../index.html"/>
+        <link rel="up" title="Nodes" href="../nodes.html"/>
+        <link rel="next" title="Scripted Node (Generator)" href="scripted.html"/>
+        <link rel="prev" title="Nodes" href="../nodes.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="../main.html" class="fa fa-home"> Sverchok</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../installation.html#troubleshooting-installation-errors">Troubleshooting Installation Errors</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../geometry.html">Introduction to geometry</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../geometry.html#basics">Basics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../geometry.html#sverchok">Sverchok</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="../nodes.html">Nodes</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="">Vector Math Node</a></li>
+<li class="toctree-l2"><a class="reference internal" href="scripted.html">Scripted Node (Generator)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="scripts_generator.html">Sverchok Script Generator Node rules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plane.html">Plane</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../contribute.html">Contribute</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../contribute.html#our-workflow">OUR WORKFLOW:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../contribute.html#what-not-to-do">WHAT NOT TO DO:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../contribute.html#to-make-your-node">TO MAKE YOUR NODE:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../contribute.html#some-rules">SOME RULES:</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../main.html">Sverchok</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../main.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../nodes.html">Nodes</a> &raquo;</li>
+      
+    <li>Vector Math Node</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="../_sources/nodes/vector_math.txt" rel="nofollow"> View page source</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="vector-math-node">
+<h1>Vector Math Node<a class="headerlink" href="#vector-math-node" title="Permalink to this headline">¶</a></h1>
+<p>This is a versatile node. You can perform 1 operation on 1000&#8217;s of
+list-elements, or perform operations pairwise on two lists of 1000&#8217;s of
+elements, even if they are nested. It is therefore what we call
+a <em>Vectorized</em> node, for an elaborate explanation of what this
+means see this [introduction]().</p>
+<div class="section" id="input-and-output">
+<h2>Input and Output<a class="headerlink" href="#input-and-output" title="Permalink to this headline">¶</a></h2>
+<p>The node expects correct input for the chosen operation (called mode),
+but it will fail gracefully with a message in the console if the input
+is not right for the selected mode.</p>
+<p>Some modes accept a Vector (U) and a Scalar (S), while other accepts
+two Vectors (U, V). Some modes will output a Scalar (out),
+others with output a Vector (W).</p>
+</div>
+<div class="section" id="modes">
+<h2>Modes<a class="headerlink" href="#modes" title="Permalink to this headline">¶</a></h2>
+<p>Most operations are self explanatory,
+but in case they aren&#8217;t then here is a quick overview:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="28%" />
+<col width="13%" />
+<col width="13%" />
+<col width="46%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Tables</th>
+<th class="head">inputs</th>
+<th class="head">outputs</th>
+<th class="head">description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>Cross product</td>
+<td>u, v</td>
+<td>s</td>
+<td>u cross v</td>
+</tr>
+<tr class="row-odd"><td>Dot product</td>
+<td>u, v</td>
+<td>s</td>
+<td>u dot v</td>
+</tr>
+<tr class="row-even"><td>Add</td>
+<td>u, v</td>
+<td>w</td>
+<td>u + v</td>
+</tr>
+<tr class="row-odd"><td>Sub</td>
+<td>u, v</td>
+<td>w</td>
+<td>u - v</td>
+</tr>
+<tr class="row-even"><td>Length</td>
+<td>u</td>
+<td>s</td>
+<td>distance(u, origin)</td>
+</tr>
+<tr class="row-odd"><td>Distance</td>
+<td>u, v</td>
+<td>s</td>
+<td>distance(u, v)</td>
+</tr>
+<tr class="row-even"><td>Normalize</td>
+<td>u</td>
+<td>w</td>
+<td>scale vector to length 1</td>
+</tr>
+<tr class="row-odd"><td>Negate</td>
+<td>u</td>
+<td>w</td>
+<td>reverse sign of components</td>
+</tr>
+<tr class="row-even"><td>Noise Vector</td>
+<td>u</td>
+<td>w</td>
+<td>[see mathutils]()</td>
+</tr>
+<tr class="row-odd"><td>Noise Scalar</td>
+<td>u</td>
+<td>s</td>
+<td>[see mathutils]()</td>
+</tr>
+<tr class="row-even"><td>Scalar Cell noise</td>
+<td>u</td>
+<td>s</td>
+<td>[see mathutils]()</td>
+</tr>
+<tr class="row-odd"><td>Vector Cell noise</td>
+<td>u</td>
+<td>w</td>
+<td>[see mathutils]()</td>
+</tr>
+<tr class="row-even"><td>Project</td>
+<td>u, v</td>
+<td>w</td>
+<td>u project v</td>
+</tr>
+<tr class="row-odd"><td>Reflect</td>
+<td>u, v</td>
+<td>w</td>
+<td>u reflect v</td>
+</tr>
+<tr class="row-even"><td>Multiply Scalar</td>
+<td>u, s</td>
+<td>w</td>
+<td>multiply(vector, scalar)</td>
+</tr>
+<tr class="row-odd"><td>Multiply 1/Scalar</td>
+<td>u, s</td>
+<td>w</td>
+<td>multiply(vector, 1/scalar)</td>
+</tr>
+<tr class="row-even"><td>Angle Degrees</td>
+<td>u, v</td>
+<td>s</td>
+<td>angle(u, origin, v)</td>
+</tr>
+<tr class="row-odd"><td>Angle Radians</td>
+<td>u, v</td>
+<td>s</td>
+<td>angle(u, origin, v)</td>
+</tr>
+<tr class="row-even"><td>Round s digits</td>
+<td>u, s</td>
+<td>v</td>
+<td>reduce precision of components</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="scripted.html" class="btn btn-neutral float-right" title="Scripted Node (Generator)">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="../nodes.html" class="btn btn-neutral" title="Nodes"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2014, nortikin.
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.4.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

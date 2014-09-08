@@ -1,0 +1,265 @@
+
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Lathe &mdash; Sverchok 0.4.0 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="top" title="Sverchok 0.4.0 documentation" href="../../index.html"/>
+        <link rel="up" title="Modifier Make" href="modifier_make.html"/>
+        <link rel="next" title="Analyzer" href="../analyzer/analyzer.html"/>
+        <link rel="prev" title="Convex Hull" href="convex_hull.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="../../main.html" class="fa fa-home"> Sverchok</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../installation.html#troubleshooting-installation-errors">Troubleshooting Installation Errors</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../geometry.html">Introduction to geometry</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../geometry.html#basics">Basics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../geometry.html#d-geometry">3D Geometry</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../nodes.html">Nodes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../basic_view/basic_view.html">Basic View</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../basic_data/basic_data.html">Basic Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../basic_debug/basic_debug.html">Basic Debug</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_main/list_main.html">List Main</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_struct/list_struct.html">List Structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../number/number.html">Number</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../generator/generator.html">Generator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../vector/vector.html">Vector</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../matrix/matrix.html">Matrix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modifier_change/modifier_change.html">Modifier Change</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modifier_make.html">Modifier Make</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../analyzer/analyzer.html">Analyzer</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../contribute.html">Contribute</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../contribute.html#our-workflow">OUR WORKFLOW:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contribute.html#what-not-to-do">WHAT NOT TO DO:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contribute.html#to-make-your-node">TO MAKE YOUR NODE:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contribute.html#some-rules">SOME RULES:</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../main.html">Sverchok</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../main.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../nodes.html">Nodes</a> &raquo;</li>
+      
+          <li><a href="modifier_make.html">Modifier Make</a> &raquo;</li>
+      
+    <li>Lathe</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="../../_sources/nodes/modifier_make/lathe.txt" rel="nofollow"> View page source</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="lathe">
+<h1>Lathe<a class="headerlink" href="#lathe" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="functionality">
+<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
+<p>Analogous to the <cite>spin</cite> operator and the Screw modifier. It takes a profile shape as input in the form of <em>vertices</em> and <em>edges</em> and produces <em>vertices</em> and <em>faces</em> based on a rotation axis, angle, center, delta and step count. Internally the node is powered by the <a class="reference external" href="http://www.blender.org/documentation/blender_python_api_2_71_release/bmesh.ops.html#bmesh.ops.spin">bmesh.spin</a>  operator.</p>
+</div>
+<div class="section" id="inputs">
+<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this headline">¶</a></h2>
+<p>It&#8217;s vectorized, meaning it accepts nested and multiple inputs and produces multiple sets of output</p>
+</div>
+<div class="section" id="parameters">
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
+<p>All Vector parameters (except axis) default to (0,0,0) if no input is given.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="14%" />
+<col width="16%" />
+<col width="70%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Param</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><strong>cent</strong></td>
+<td>Vector</td>
+<td>central coordinate around which to pivot</td>
+</tr>
+<tr class="row-odd"><td><strong>axis</strong></td>
+<td>Vector</td>
+<td>axis around which to rotate around the pivot, default (0, 0, 1)</td>
+</tr>
+<tr class="row-even"><td><strong>dvec</strong></td>
+<td>Vector</td>
+<td>is used to push the center Vector by a Vector quantity per step</td>
+</tr>
+<tr class="row-odd"><td><strong>Degrees</strong></td>
+<td>Scalar, Float</td>
+<td>angle of the total rotation. Default 360.0</td>
+</tr>
+<tr class="row-even"><td><strong>Steps</strong></td>
+<td>Scalar, Int</td>
+<td>numer of rotation steps. Default 20</td>
+</tr>
+<tr class="row-odd"><td><strong>Merge</strong></td>
+<td>Bool, toggle</td>
+<td>removes double vertices if the geometry can be merged,
+usually used to prevent doubles of first profile and last
+profile copy. Default <cite>off</cite>.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="outputs">
+<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h2>
+<p><strong>Vertices</strong> and <strong>Poly</strong>. Verts and Polys will be generated. The <tt class="docutils literal"><span class="pre">bmesh.spin</span></tt> operator doesn&#8217;t consider the ordering of the Vertex and Face indices that it outputs. This might make additional processing complicated, use IndexViewer to better understand the generated geometry. Faces will however have consistent Normals.</p>
+</div>
+<div class="section" id="example-of-usage">
+<h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this headline">¶</a></h2>
+<img alt="https://cloud.githubusercontent.com/assets/619340/3172893/08952296-ebdd-11e3-8e9b-574495b1a92c.png" src="https://cloud.githubusercontent.com/assets/619340/3172893/08952296-ebdd-11e3-8e9b-574495b1a92c.png" />
+<p>See the progress of how this node came to life <a class="reference external" href="https://github.com/nortikin/sverchok/issues/203">here</a> (gifs, screenshots)</p>
+<p>Glass, Vase.</p>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../analyzer/analyzer.html" class="btn btn-neutral float-right" title="Analyzer">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="convex_hull.html" class="btn btn-neutral" title="Convex Hull"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2014, nortikin.
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.4.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
