@@ -46,7 +46,7 @@ Outputs
 -------
 
 **Vertices**, **Edges** and **Polygons**. 
-All outputs will be generated. Depending on the type of the inputs, the node will generate only one or multiples independant circles.
+All outputs will be generated. Depending on the type of the inputs, the node will generate only one or multiples independant cylinders.
 If **Separate** is True, the only the top and the bottom polygons will be generated.
 With **Caps** with can enable or disable the top and bottom caps.
 
