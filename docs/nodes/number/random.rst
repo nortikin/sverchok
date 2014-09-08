@@ -1,7 +1,8 @@
 Random
 ======
 
-.. image:: NumberRandomDemo1.PNG
+.. image:: https://cloud.githubusercontent.com/assets/619340/4186017/0f076f00-375d-11e4-92ce-30af77e41307.PNG
+  :alt: NumberRandomDemo1.PNG
 
 Functionality
 -------------
@@ -30,7 +31,8 @@ A list, or nested lists.
 Examples
 --------
 
-.. image:: NumberRandomDemo2.PNG
+.. image:: https://cloud.githubusercontent.com/assets/619340/4186018/0f61f4b6-375d-11e4-99c8-6f7ef62598b3.PNG
+  :alt: NumberRandomDemo2.PNG
 
 Notes
 -----
