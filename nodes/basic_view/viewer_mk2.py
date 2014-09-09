@@ -60,6 +60,10 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
         name='light_direction', subtype='DIRECTION', min=0, max=1, size=3,
         default=(0.2, 0.6, 0.4))
 
+    vertex_colors = FloatVectorProperty(
+        name='vertex_colors', subtype='COLOR', min=0, max=1, size=3,
+        default=(0.8, 0.8, 0.4))
+
     def init(self, context):
         self.inputs.new('VerticesSocket', 'vertices', 'vertices')
         self.inputs.new('StringsSocket', 'edg_pol', 'edg_pol')
@@ -74,9 +78,11 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
         row = layout.row(align=True)
         row.prop(self, "transparant", text="Transp")
         row.prop(self, "shading", text="Shade")
+
         col = layout.column(align=True)
         row = col.row(align=True)
-        row.prop(self, "color_view", text=" ")
+        row.prop(self, "vertex_colors", text="")
+        row.prop(self, "color_view", text="")
 
         row = layout.row(align=True)
         row.prop(self, 'light_direction', text='')
@@ -143,7 +149,8 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
             'color_view': self.color_view,
             'transparent': self.transparant,
             'shading': self.shading,
-            'light_direction': self.light_direction
+            'light_direction': self.light_direction,
+            'vertex_colors': self.vertex_colors
             }
 
     def update_socket(self, context):

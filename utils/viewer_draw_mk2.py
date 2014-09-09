@@ -95,6 +95,7 @@ def draw_callback_view(n_id, cached_view, options):
     colo = options['color_view']
     tran = options['transparent']
     shade = options['shading']
+    vertex_colors = options['vertex_colors']
 
     if tran:
         polyholy = GL_POLYGON_STIPPLE
@@ -194,10 +195,12 @@ def draw_callback_view(n_id, cached_view, options):
             glVertex3f(*bb[i+1])
             glEnd()
 
+    ''' vertices '''
+
     if vs:
         if data_vector:
             glPointSize(3.0)
-            glColor3f(0.8, 0.9, 1.0)
+            glColor3f(*vertex_colors)
 
             for i, matrix in enumerate(data_matrix):
                 glBegin(GL_POINTS)
@@ -207,12 +210,11 @@ def draw_callback_view(n_id, cached_view, options):
                 for vert in data_vector[k]:
                     vec_corrected = data_matrix[i]*vert
                     glVertex3f(*vec_corrected)
-                    #print ('рисовальня', matrix, vec_corrected)
                 glEnd()
                 glPointSize(3.0)
 
-    #######
-    # lines
+    ''' edges '''
+
     if data_edges and data_vector:
         glColor3f(coloa, colob, coloc)
         glLineWidth(1.0)
@@ -234,8 +236,8 @@ def draw_callback_view(n_id, cached_view, options):
                 glLineWidth(1.0)
         glDisable(edgeholy)
 
-    #######
-    # polygons
+    ''' polygons '''
+
     vectorlight = options['light_direction']
     if data_polygons and data_vector:
         glLineWidth(1.0)
@@ -256,12 +258,9 @@ def draw_callback_view(n_id, cached_view, options):
                     j = len(data_edges[k])-1
 
                 if shade:
-                    normal_no_ = normal(
-                        data_vector[k][pol[0]],
-                        data_vector[k][pol[1]],
-                        data_vector[k][pol[2]]
-                    )
-                    normal_no = (normal_no_.angle(vectorlight, 0))/math.pi
+                    dvk = data_vector[k]
+                    normal_no_ = normal(dvk[pol[0]], dvk[pol[1]], dvk[pol[2]])
+                    normal_no = (normal_no_.angle(vectorlight, 0)) / math.pi
                     randa = (normal_no * coloa) - 0.1
                     randb = (normal_no * colob) - 0.1
                     randc = (normal_no * coloc) - 0.1
@@ -269,6 +268,7 @@ def draw_callback_view(n_id, cached_view, options):
                     randa = ((j/oblen) + coloa) / 2.5
                     randb = ((j/oblen) + colob) / 2.5
                     randc = ((j/oblen) + coloc) / 2.5
+
                 if len(pol) > 4:
                     glBegin(GL_TRIANGLES)
                     glColor4f(randa+0.2, randb+0.2, randc+0.2, 0.5)
@@ -291,6 +291,7 @@ def draw_callback_view(n_id, cached_view, options):
                     for point in pol:
                         vec_corrected = data_matrix[i]*data_vector[k][int(point)]
                         glVertex3f(*vec_corrected)
+
                 glEnd()
                 glPointSize(1.75)
                 glLineWidth(1.0)
