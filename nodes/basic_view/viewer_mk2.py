@@ -92,19 +92,20 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
         row.prop(self, "activate", text="Show", toggle=True)
 
         row = layout.row(align=True)
-        row.prop(self, "transparant", text="Transp")
-        row.prop(self, "shading", text="Shade")
+        row.prop(self, "transparant", text="Transp", toggle=True)
+        row.separator()
+        row.prop(self, "shading", text="Shade", toggle=True)
 
         row = layout.row(align=True)
-        row.prop(self, "display_verts", toggle=True)
+        row.prop(self, "display_verts", toggle=True, icon='VERTEXSEL', text='')
         row.prop(self, "vertex_colors", text="")
 
         row = layout.row(align=True)
-        row.prop(self, "display_edges", toggle=True)
+        row.prop(self, "display_edges", toggle=True, icon='EDGESEL', text='')
         row.prop(self, "edge_colors", text="")
 
         row = layout.row(align=True)
-        row.prop(self, "display_faces", toggle=True)
+        row.prop(self, "display_faces", toggle=True, icon='FACESEL', text='')
         row.prop(self, "face_colors", text="")
 
         row = layout.row(align=True)
@@ -170,6 +171,8 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
     def get_options(self):
         return {
             'show_verts': self.display_verts,
+            'show_edges': self.display_edges,
+            'show_faces': self.display_faces,
             'transparent': self.transparant,
             'shading': self.shading,
             'light_direction': self.light_direction,

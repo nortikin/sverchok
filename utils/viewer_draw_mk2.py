@@ -91,7 +91,7 @@ def draw_callback_view(n_id, cached_view, options):
     sl1 = cached_view[n_id + 'v']
     sl2 = cached_view[n_id + 'ep']
     sl3 = cached_view[n_id + 'm']
-    vs = options['show_verts']
+    show_verts = options['show_verts']
     colo = options['face_colors']
     tran = options['transparent']
     shade = options['shading']
@@ -198,21 +198,20 @@ def draw_callback_view(n_id, cached_view, options):
 
     ''' vertices '''
 
-    if vs:
-        if data_vector:
-            glPointSize(3.0)
-            glColor3f(*vertex_colors)
+    if show_verts and data_vector:
+        glPointSize(3.0)
+        glColor3f(*vertex_colors)
 
-            for i, matrix in enumerate(data_matrix):
-                glBegin(GL_POINTS)
-                k = i
-                if i > verlen:
-                    k = verlen
-                for vert in data_vector[k]:
-                    vec_corrected = data_matrix[i]*vert
-                    glVertex3f(*vec_corrected)
-                glEnd()
-                glPointSize(3.0)
+        for i, matrix in enumerate(data_matrix):
+            glBegin(GL_POINTS)
+            k = i
+            if i > verlen:
+                k = verlen
+            for vert in data_vector[k]:
+                vec_corrected = data_matrix[i]*vert
+                glVertex3f(*vec_corrected)
+            glEnd()
+            glPointSize(3.0)
 
     ''' edges '''
 
@@ -233,17 +232,17 @@ def draw_callback_view(n_id, cached_view, options):
                     vec_corrected = data_matrix[i]*data_vector[k][int(point)]
                     glVertex3f(*vec_corrected)
                 glEnd()
-                glPointSize(1.75)
-                glLineWidth(1.0)
+                # glPointSize(1.75)
+                # glLineWidth(1.0)
         glDisable(edgeholy)
 
     ''' polygons '''
 
     vectorlight = options['light_direction']
     if data_polygons and data_vector:
+
         glLineWidth(1.0)
         glEnable(polyholy)
-
         normal = mathutils.geometry.normal
 
         for i, matrix in enumerate(data_matrix):    # object
@@ -270,25 +269,27 @@ def draw_callback_view(n_id, cached_view, options):
                     randb = ((j/oblen) + colob) / 2.5
                     randc = ((j/oblen) + coloc) / 2.5
 
+                face_color = (randa+0.2, randb+0.2, randc+0.2)
                 if len(pol) > 4:
                     glBegin(GL_TRIANGLES)
-                    glColor4f(randa+0.2, randb+0.2, randc+0.2, 0.5)
-                    #glColor3f(randa+0.2, randb+0.2, randc+0.2)
+                    glColor3f(*face_color)
+
                     v = [data_vector[k][i] for i in pol]
                     tess_poly = mathutils.geometry.tessellate_polygon([v])
                     for a, b, c in tess_poly:
                         glVertex3f(*(data_matrix[i]*v[a]))
                         glVertex3f(*(data_matrix[i]*v[b]))
                         glVertex3f(*(data_matrix[i]*v[c]))
+
                 elif len(pol) == 4:
                     glBegin(GL_POLYGON)
-                    glColor3f(randa+0.2, randb+0.2, randc+0.2)
+                    glColor3f(*face_color)
                     for point in pol:
                         vec_corrected = data_matrix[i]*data_vector[k][int(point)]
                         glVertex3f(*vec_corrected)
                 else:
                     glBegin(GL_TRIANGLES)
-                    glColor3f(randa+0.2, randb+0.2, randc+0.2)
+                    glColor3f(*face_color)
                     for point in pol:
                         vec_corrected = data_matrix[i]*data_vector[k][int(point)]
                         glVertex3f(*vec_corrected)
