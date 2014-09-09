@@ -17,7 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-from bpy.props import BoolProperty, StringProperty, FloatVectorProperty
+from bpy.props import BoolProperty, StringProperty, FloatProperty, FloatVectorProperty
 from mathutils import Matrix
 
 from node_tree import (SverchCustomTreeNode, SvColors,
@@ -81,6 +81,10 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
         name="Faces", description="Display faces",
         update=updateNode)
 
+    vertex_size = FloatProperty(
+        min=1.0, max=10.0, default=2.0, step=0.2, name='vertex_size',
+        update=updateNode)
+
     def init(self, context):
         self.inputs.new('VerticesSocket', 'vertices', 'vertices')
         self.inputs.new('StringsSocket', 'edg_pol', 'edg_pol')
@@ -110,6 +114,10 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
 
         row = layout.row(align=True)
         row.prop(self, 'light_direction', text='')
+
+    def draw_buttons_ext(self, context, layout):
+        row = layout.row(align=True)
+        row.prop(self, 'vertex_size', text='vertex size')
 
     # reset n_id on duplicate (shift-d)
     def copy(self, node):
@@ -178,7 +186,8 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
             'light_direction': self.light_direction,
             'vertex_colors': self.vertex_colors,
             'face_colors': self.face_colors,
-            'edge_colors': self.edge_colors
+            'edge_colors': self.edge_colors,
+            'vertex_size': self.vertex_size
             }
 
     def update_socket(self, context):

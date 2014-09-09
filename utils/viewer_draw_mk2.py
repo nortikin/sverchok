@@ -86,7 +86,7 @@ def draw_callback_view(n_id, cached_view, options):
         glLineWidth, glBegin, glEnd, glLineStipple, glPolygonStipple, glHint,
         GL_POINTS, GL_LINE_STRIP, GL_LINES, GL_LINE, GL_LINE_LOOP, GL_LINE_STIPPLE,
         GL_POLYGON, GL_POLYGON_STIPPLE, GL_TRIANGLES, GL_QUADS, GL_POINT_SIZE,
-        GL_POINT_SMOOTH, GL_POINT_SMOOTH_HINT, GL_NICEST)
+        GL_POINT_SMOOTH, GL_POINT_SMOOTH_HINT, GL_NICEST, GL_FASTEST)
 
     sl1 = cached_view[n_id + 'v']
     sl2 = cached_view[n_id + 'ep']
@@ -297,12 +297,16 @@ def draw_callback_view(n_id, cached_view, options):
         glDisable(edgeholy)
 
     ''' vertices '''
-# GL_POINT_SMOOTH and set the GL_POINT_SMOOTH_HINT to GL_NICEST
+
     glEnable(GL_POINT_SIZE)
     glEnable(GL_POINT_SMOOTH)
-    glHint(GL_POINT_SMOOTH_HINT, GL_NICEST)
+    #glHint(GL_POINT_SMOOTH_HINT, GL_NICEST)
+    glHint(GL_POINT_SMOOTH_HINT, GL_FASTEST)
+
+    vsize = options['vertex_size']
+
     if show_verts and data_vector:
-        glPointSize(3)
+        glPointSize(vsize)
         glColor3f(*vertex_colors)
 
         for i, matrix in enumerate(data_matrix):
