@@ -110,17 +110,17 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
         if (vertex_links or matrix_links):
 
             if vertex_links:
-                if type(vertex_links[0].from_socket) == VerticesSocket:
+                if isinstance(vertex_links[0].from_socket, VerticesSocket):
                     propv = inputs['vertices'].sv_get()
                     cache_viewer_baker[vertex_ref] = dataCorrect(propv)
 
             if edgepol_links:
-                if type(edgepol_links[0].from_socket) == StringsSocket:
+                if isinstance(edgepol_links[0].from_socket, StringsSocket):
                     prope = inputs['edg_pol'].sv_get()
                     cache_viewer_baker[poledg_ref] = dataCorrect(prope)
 
             if matrix_links:
-                if type(matrix_links[0].from_socket) == MatrixSocket:
+                if isinstance(matrix_links[0].from_socket, MatrixSocket):
                     propm = inputs['matrix'].sv_get()
                     cache_viewer_baker[matrix_ref] = dataCorrect(propm)
 
