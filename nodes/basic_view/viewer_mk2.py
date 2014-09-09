@@ -17,7 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-from bpy.props import BoolProperty, StringProperty
+from bpy.props import BoolProperty, StringProperty, FloatVectorProperty
 from mathutils import Matrix
 
 from node_tree import (SverchCustomTreeNode, SvColors,
@@ -36,7 +36,6 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Viewer Draw2'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    # node id
     n_id = StringProperty(default='', options={'SKIP_SAVE'})
 
     Vertex_show = BoolProperty(
@@ -57,6 +56,10 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
 
     color_view = SvColors.color
 
+    light_direction = FloatVectorProperty(
+        name='light_direction', subtype='DIRECTION', min=0, max=1, size=3,
+        default=(0.2, 0.6, 0.4))
+
     def init(self, context):
         self.inputs.new('VerticesSocket', 'vertices', 'vertices')
         self.inputs.new('StringsSocket', 'edg_pol', 'edg_pol')
@@ -74,6 +77,9 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
         col = layout.column(align=True)
         row = col.row(align=True)
         row.prop(self, "color_view", text=" ")
+
+        row = layout.row(align=True)
+        row.prop(self, 'light_direction', text='')
 
     # reset n_id on duplicate (shift-d)
     def copy(self, node):
@@ -136,7 +142,8 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
             'show_verts': self.Vertex_show,
             'color_view': self.color_view,
             'transparent': self.transparant,
-            'shading': self.shading
+            'shading': self.shading,
+            'light_direction': self.light_direction
             }
 
     def update_socket(self, context):

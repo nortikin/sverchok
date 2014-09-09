@@ -236,7 +236,7 @@ def draw_callback_view(n_id, cached_view, options):
 
     #######
     # polygons
-    vectorlight = Vector((-0.66, -0.66, -0.66))
+    vectorlight = options['light_direction']
     if data_polygons and data_vector:
         glLineWidth(1.0)
         glEnable(polyholy)
