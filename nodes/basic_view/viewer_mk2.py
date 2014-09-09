@@ -142,7 +142,7 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
         inputs = self.inputs
         vertex_links = inputs['vertices'].links
         matrix_links = inputs['matrix'].links
-        edgepol_links = self.inputs['edg_pol'].links
+        edgepol_links = inputs['edg_pol'].links
 
         if (vertex_links or matrix_links):
 
