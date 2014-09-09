@@ -148,46 +148,23 @@ def draw_callback_view(n_id, cached_view, options):
 
     def draw_matrix(mat):
         zero_tx = mat * zero
-
         glLineWidth(2.0)
-        # x
-        glColor3f(1.0, 0.2, 0.2)
-        glBegin(GL_LINES)
-        glVertex3f(*(zero_tx))
-        glVertex3f(*(mat * x_p))
-        glEnd()
 
-        glColor3f(0.6, 0.0, 0.0)
-        glBegin(GL_LINES)
-        glVertex3f(*(zero_tx))
-        glVertex3f(*(mat * x_n))
-        glEnd()
+        axis = [
+            [(1.0, 0.2, 0.2), x_p],
+            [(0.6, 0.0, 0.0), x_n],
+            [(0.2, 1.0, 0.2), y_p],
+            [(0.0, 0.6, 0.0), y_n],
+            [(0.2, 0.2, 1.0), z_p],
+            [(0.0, 0.0, 0.6), z_n]
+        ]
 
-        # y
-        glColor3f(0.2, 1.0, 0.2)
-        glBegin(GL_LINES)
-        glVertex3f(*(zero_tx))
-        glVertex3f(*(mat * y_p))
-        glEnd()
-
-        glColor3f(0.0, 0.6, 0.0)
-        glBegin(GL_LINES)
-        glVertex3f(*(zero_tx))
-        glVertex3f(*(mat * y_n))
-        glEnd()
-
-        # z
-        glColor3f(0.2, 0.2, 1.0)
-        glBegin(GL_LINES)
-        glVertex3f(*(zero_tx))
-        glVertex3f(*(mat * z_p))
-        glEnd()
-
-        glColor3f(0.0, 0.0, 0.6)
-        glBegin(GL_LINES)
-        glVertex3f(*(zero_tx))
-        glVertex3f(*(mat * z_n))
-        glEnd()
+        for col, axial in axis:
+            glColor3f(*col)
+            glBegin(GL_LINES)
+            glVertex3f(*(zero_tx))
+            glVertex3f(*(mat * axial))
+            glEnd()
 
         # bounding box vertices
         i = 0

@@ -109,17 +109,20 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
 
         if (vertex_links or matrix_links):
 
-            if type(vertex_links[0].from_socket) == VerticesSocket:
-                propv = inputs['vertices'].sv_get()
-                cache_viewer_baker[vertex_ref] = dataCorrect(propv)
+            if vertex_links:
+                if type(vertex_links[0].from_socket) == VerticesSocket:
+                    propv = inputs['vertices'].sv_get()
+                    cache_viewer_baker[vertex_ref] = dataCorrect(propv)
 
-            if edgepol_links and type(edgepol_links[0].from_socket) == StringsSocket:
-                prope = inputs['edg_pol'].sv_get()
-                cache_viewer_baker[poledg_ref] = dataCorrect(prope)
+            if edgepol_links:
+                if type(edgepol_links[0].from_socket) == StringsSocket:
+                    prope = inputs['edg_pol'].sv_get()
+                    cache_viewer_baker[poledg_ref] = dataCorrect(prope)
 
-            if matrix_links and type(matrix_links[0].from_socket) == MatrixSocket:
-                propm = inputs['matrix'].sv_get()
-                cache_viewer_baker[matrix_ref] = dataCorrect(propm)
+            if matrix_links:
+                if type(matrix_links[0].from_socket) == MatrixSocket:
+                    propm = inputs['matrix'].sv_get()
+                    cache_viewer_baker[matrix_ref] = dataCorrect(propm)
 
         if cache_viewer_baker[vertex_ref] or cache_viewer_baker[matrix_ref]:
             config_options = self.get_options().copy()
