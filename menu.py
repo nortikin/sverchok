@@ -33,6 +33,7 @@ def make_categories():
         ["ViewerNode_text",     "Viewer text"],
         ["IndexViewerNode",     "Viewer INDX"],
         ["Sv3DviewPropsNode",   "3dview Props"],
+        ["ViewerNode2",          "Viewer draw MK2"],
         ["BmeshViewerNode",     "Viewer BMesh"]]
 
     node_cats["Basic Data"] = [

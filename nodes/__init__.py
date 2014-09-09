@@ -18,6 +18,7 @@ nodes_dict = {
         'viewer_indices',
         'viewer_text',
         'viewer',
+        'viewer_mk2',
         'empty_out',
         'reroute'],
 
@@ -150,4 +151,3 @@ nodes_dict = {
         'vertices_sort',
         'axis_input']
 }
-
