@@ -38,10 +38,6 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
 
     n_id = StringProperty(default='', options={'SKIP_SAVE'})
 
-    Vertex_show = BoolProperty(
-        name='Vertices', description='Show or not vertices',
-        default=1, update=updateNode)
-
     activate = BoolProperty(
         name='Show', description='Activate node?',
         default=1, update=updateNode)
@@ -54,15 +50,36 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
         name='Shading', description='shade the object or index representation?',
         default=0, update=updateNode)
 
-    color_view = SvColors.color
-
     light_direction = FloatVectorProperty(
         name='light_direction', subtype='DIRECTION', min=0, max=1, size=3,
         default=(0.2, 0.6, 0.4))
 
+    # geometry colors
     vertex_colors = FloatVectorProperty(
         name='vertex_colors', subtype='COLOR', min=0, max=1, size=3,
         default=(0.8, 0.8, 0.4))
+
+    edge_colors = FloatVectorProperty(
+        name='edge_colors', subtype='COLOR', min=0, max=1, size=3,
+        default=(0.4, 0.9, 0.9))
+
+    face_colors = FloatVectorProperty(
+        name='face_colors', subtype='COLOR', min=0, max=1, size=3,
+        default=(0.8, 0.2, 0.9))
+
+    # display toggles
+    display_verts = BoolProperty(
+        name="Vertices", description="Display vertices",
+        default=True,
+        update=updateNode)
+
+    display_edges = BoolProperty(
+        name="Edges", description="Display edges",
+        update=updateNode)
+
+    display_faces = BoolProperty(
+        name="Faces", description="Display faces",
+        update=updateNode)
 
     def init(self, context):
         self.inputs.new('VerticesSocket', 'vertices', 'vertices')
@@ -72,17 +89,23 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons(self, context, layout):
         row = layout.row(align=True)
-        row.prop(self, "Vertex_show", text="Verts")
-        row.prop(self, "activate", text="Show")
+        row.prop(self, "activate", text="Show", toggle=True)
 
         row = layout.row(align=True)
         row.prop(self, "transparant", text="Transp")
         row.prop(self, "shading", text="Shade")
 
-        col = layout.column(align=True)
-        row = col.row(align=True)
+        row = layout.row(align=True)
+        row.prop(self, "display_verts", toggle=True)
         row.prop(self, "vertex_colors", text="")
-        row.prop(self, "color_view", text="")
+
+        row = layout.row(align=True)
+        row.prop(self, "display_edges", toggle=True)
+        row.prop(self, "edge_colors", text="")
+
+        row = layout.row(align=True)
+        row.prop(self, "display_faces", toggle=True)
+        row.prop(self, "face_colors", text="")
 
         row = layout.row(align=True)
         row.prop(self, 'light_direction', text='')
@@ -96,6 +119,7 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
             return
 
         if not (self.id_data.sv_show and self.activate):
+            callback_disable(node_id(self))
             return
 
         self.process()
@@ -139,18 +163,19 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
         if cache_viewer_baker[vertex_ref] or cache_viewer_baker[matrix_ref]:
             config_options = self.get_options().copy()
             callback_enable(n_id, cache_viewer_baker, config_options)
-            self.color = (1, 0.3, 0.5)
+            self.color = (1, 1, 1)
         else:
-            self.color = (0.1, 0.05, 0.5)
+            self.color = (0.7, 0.7, 0.7)
 
     def get_options(self):
         return {
-            'show_verts': self.Vertex_show,
-            'color_view': self.color_view,
+            'show_verts': self.display_verts,
             'transparent': self.transparant,
             'shading': self.shading,
             'light_direction': self.light_direction,
-            'vertex_colors': self.vertex_colors
+            'vertex_colors': self.vertex_colors,
+            'face_colors': self.face_colors,
+            'edge_colors': self.edge_colors
             }
 
     def update_socket(self, context):

@@ -92,10 +92,11 @@ def draw_callback_view(n_id, cached_view, options):
     sl2 = cached_view[n_id + 'ep']
     sl3 = cached_view[n_id + 'm']
     vs = options['show_verts']
-    colo = options['color_view']
+    colo = options['face_colors']
     tran = options['transparent']
     shade = options['shading']
     vertex_colors = options['vertex_colors']
+    edge_colors = options['edge_colors']
 
     if tran:
         polyholy = GL_POLYGON_STIPPLE
@@ -216,7 +217,7 @@ def draw_callback_view(n_id, cached_view, options):
     ''' edges '''
 
     if data_edges and data_vector:
-        glColor3f(coloa, colob, coloc)
+        glColor3f(*edge_colors)
         glLineWidth(1.0)
         glEnable(edgeholy)
 
