@@ -79,7 +79,7 @@ def callback_disable(n_id):
     tag_redraw_all_view3d()
 
 
-def draw_callback_view():
+def draw_callback_view(n_id, cached_view, options):
     context = bpy.context
     from bgl import (
         glEnable, glDisable, glColor3f, glVertex3f, glPointSize,
@@ -88,7 +88,13 @@ def draw_callback_view():
         GL_POLYGON_STIPPLE, GL_POLYGON_SMOOTH, glPolygonStipple,
         GL_TRIANGLES, GL_QUADS, glColor4f)
 
-    sl1, sl2, sl3, vs, colo, tran, shade
+    sl1 = cached_view[n_id + 'v']
+    sl2 = cached_view[n_id + 'ep']
+    sl3 = cached_view[n_id + 'm']
+    vs = options['show_verts']
+    colo = options['color_view']
+    tran = options['transparent']
+    shade = options['shading']
 
     if tran:
         polyholy = GL_POLYGON_STIPPLE
@@ -107,6 +113,8 @@ def draw_callback_view():
         data_vector = []
         verlen = 0
 
+    data_polygons = []
+    data_edges = []
     if sl2:
         if sl2[0]:
             if len(sl2[0][0]) == 2:
@@ -115,12 +123,6 @@ def draw_callback_view():
             elif len(sl2[0][0]) > 2:
                 data_polygons = sl2
                 data_edges = []
-        else:
-            data_polygons = []
-            data_edges = []
-
-    else:
-        data_edges, data_polygons = [], []
 
     if sl3:
         data_matrix = Matrix_generate(sl3)
@@ -262,21 +264,26 @@ def draw_callback_view():
         glLineWidth(1.0)
         glEnable(polyholy)
 
+        normal = mathutils.geometry.normal
+
         for i, matrix in enumerate(data_matrix):    # object
             k = i
             if i > verlen:
                 k = verlen
+
             oblen = len(data_polygons[k])
             for j, pol in enumerate(data_polygons[k]):
+
                 if max(pol) > verlen_every[k]:
                     pol = data_edges[k][-1]
                     j = len(data_edges[k])-1
+
                 if shade:
-                    normal_no_ = mathutils.geometry.normal(
-                            data_vector[k][pol[0]],
-                            data_vector[k][pol[1]],
-                            data_vector[k][pol[2]]
-                            )
+                    normal_no_ = normal(
+                        data_vector[k][pol[0]],
+                        data_vector[k][pol[1]],
+                        data_vector[k][pol[2]]
+                    )
                     normal_no = (normal_no_.angle(vectorlight, 0))/math.pi
                     randa = (normal_no * coloa) - 0.1
                     randb = (normal_no * colob) - 0.1
@@ -317,6 +324,7 @@ def draw_callback_view():
     if data_matrix and not data_vector:
         for mat in data_matrix:
             draw_matrix(mat)
-            
+
+
 def unregister():
     callback_disable_all()
