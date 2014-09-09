@@ -82,16 +82,18 @@ def callback_disable(n_id):
 def draw_callback_view(n_id, cached_view, options):
     context = bpy.context
     from bgl import (
-        glEnable, glDisable, glColor3f, glVertex3f, glPointSize,
-        glLineWidth, glBegin, glEnd, glLineStipple, GL_POINTS,
-        GL_LINE_STRIP, GL_LINES, GL_LINE, GL_LINE_STIPPLE, GL_POLYGON,
-        GL_POLYGON_STIPPLE, GL_POLYGON_SMOOTH, glPolygonStipple,
-        GL_TRIANGLES, GL_QUADS, glColor4f)
+        glEnable, glDisable, glColor3f, glVertex3f, glColor4f, glPointSize,
+        glLineWidth, glBegin, glEnd, glLineStipple, glPolygonStipple, glHint,
+        GL_POINTS, GL_LINE_STRIP, GL_LINES, GL_LINE, GL_LINE_LOOP, GL_LINE_STIPPLE,
+        GL_POLYGON, GL_POLYGON_STIPPLE, GL_TRIANGLES, GL_QUADS, GL_POINT_SIZE,
+        GL_POINT_SMOOTH, GL_POINT_SMOOTH_HINT, GL_NICEST)
 
     sl1 = cached_view[n_id + 'v']
     sl2 = cached_view[n_id + 'ep']
     sl3 = cached_view[n_id + 'm']
     show_verts = options['show_verts']
+    show_edges = options['show_edges']
+    show_faces = options['show_faces']
     colo = options['face_colors']
     tran = options['transparent']
     shade = options['shading']
@@ -196,45 +198,7 @@ def draw_callback_view(n_id, cached_view, options):
             glVertex3f(*bb[i+1])
             glEnd()
 
-    ''' vertices '''
-
-    if show_verts and data_vector:
-        glPointSize(3.0)
-        glColor3f(*vertex_colors)
-
-        for i, matrix in enumerate(data_matrix):
-            glBegin(GL_POINTS)
-            k = i
-            if i > verlen:
-                k = verlen
-            for vert in data_vector[k]:
-                vec_corrected = data_matrix[i]*vert
-                glVertex3f(*vec_corrected)
-            glEnd()
-            glPointSize(3.0)
-
-    ''' edges '''
-
-    if data_edges and data_vector:
-        glColor3f(*edge_colors)
-        glLineWidth(1.0)
-        glEnable(edgeholy)
-
-        for i, matrix in enumerate(data_matrix):    # object
-            k = i
-            if i > verlen:   # filter to share objects
-                k = verlen
-            for line in data_edges[k]:                 # line
-                if max(line) > verlen_every[k]:
-                    line = data_edges[k][-1]
-                glBegin(edgeline)
-                for point in line:              # point
-                    vec_corrected = data_matrix[i]*data_vector[k][int(point)]
-                    glVertex3f(*vec_corrected)
-                glEnd()
-                # glPointSize(1.75)
-                # glLineWidth(1.0)
-        glDisable(edgeholy)
+    glDisable(GL_POINT_SIZE)
 
     ''' polygons '''
 
@@ -245,7 +209,7 @@ def draw_callback_view(n_id, cached_view, options):
         glEnable(polyholy)
         normal = mathutils.geometry.normal
 
-        for i, matrix in enumerate(data_matrix):    # object
+        for i, matrix in enumerate(data_matrix):
             k = i
             if i > verlen:
                 k = verlen
@@ -295,9 +259,61 @@ def draw_callback_view(n_id, cached_view, options):
                         glVertex3f(*vec_corrected)
 
                 glEnd()
+
+                if show_edges:
+                    glLineWidth(2.0)
+                    glBegin(GL_LINE_LOOP)
+                    glColor3f(*edge_colors)
+                    for point in pol:
+                        vec_corrected = data_matrix[i]*data_vector[k][int(point)]
+                        glVertex3f(*vec_corrected)
+                    glEnd()
+
                 glPointSize(1.75)
                 glLineWidth(1.0)
         glDisable(polyholy)
+
+    ''' edges '''
+
+    if data_edges and data_vector and show_edges:
+        glColor3f(*edge_colors)
+        glLineWidth(1.0)
+        glEnable(edgeholy)
+
+        for i, matrix in enumerate(data_matrix):    # object
+            k = i
+            if i > verlen:   # filter to share objects
+                k = verlen
+            for line in data_edges[k]:                 # line
+                if max(line) > verlen_every[k]:
+                    line = data_edges[k][-1]
+                glBegin(edgeline)
+                for point in line:              # point
+                    vec_corrected = data_matrix[i]*data_vector[k][int(point)]
+                    glVertex3f(*vec_corrected)
+                glEnd()
+                # glPointSize(1.75)
+                # glLineWidth(1.0)
+        glDisable(edgeholy)
+
+    ''' vertices '''
+# GL_POINT_SMOOTH and set the GL_POINT_SMOOTH_HINT to GL_NICEST
+    glEnable(GL_POINT_SIZE)
+    glEnable(GL_POINT_SMOOTH)
+    glHint(GL_POINT_SMOOTH_HINT, GL_NICEST)
+    if show_verts and data_vector:
+        glPointSize(3)
+        glColor3f(*vertex_colors)
+
+        for i, matrix in enumerate(data_matrix):
+            glBegin(GL_POINTS)
+            k = i
+            if i > verlen:
+                k = verlen
+            for vert in data_vector[k]:
+                vec_corrected = data_matrix[i]*vert
+                glVertex3f(*vec_corrected)
+            glEnd()
 
     #######
     # matrix
