@@ -99,6 +99,7 @@ def draw_callback_view(n_id, cached_view, options):
     shade = options['shading']
     vertex_colors = options['vertex_colors']
     edge_colors = options['edge_colors']
+    edge_width = options['edge_width']
 
     if tran:
         polyholy = GL_POLYGON_STIPPLE
@@ -277,7 +278,7 @@ def draw_callback_view(n_id, cached_view, options):
 
     if data_edges and data_vector and show_edges:
         glColor3f(*edge_colors)
-        glLineWidth(1.0)
+        glLineWidth(edge_width)
         glEnable(edgeholy)
 
         for i, matrix in enumerate(data_matrix):    # object
