@@ -50,6 +50,10 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
         name='Shading', description='shade the object or index representation?',
         default=0, update=updateNode)
 
+    # flat_shading = BoolProperty(
+    #     name='flat_shading', description='shade the object entirely flat',
+    #     default=0, update=updateNode)
+
     light_direction = FloatVectorProperty(
         name='light_direction', subtype='DIRECTION', min=0, max=1, size=3,
         default=(0.2, 0.6, 0.4))

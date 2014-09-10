@@ -234,23 +234,27 @@ def draw_callback_view(n_id, cached_view, options):
 
                     if shade:
                         dvk = data_vector[k]
-                        normal_no_ = normal(dvk[pol[0]], dvk[pol[1]], dvk[pol[2]])
-                        normal_no = (normal_no_.angle(vectorlight, 0)) / math.pi
+                        if len(pol) <= 4:
+                            normal_no = normal(dvk[pol[0]], dvk[pol[1]], dvk[pol[2]])
+                        else:
+                            normal_no = normal(dvk[pol[0]], dvk[pol[1]], dvk[pol[2]], dvk[pol[3]])
+                        normal_no = (normal_no.angle(vectorlight, 0)) / math.pi
 
                         r = (normal_no * coloa) - 0.1
                         g = (normal_no * colob) - 0.1
                         b = (normal_no * coloc) - 0.1
+                        face_color = (r+0.2, g+0.2, b+0.2)
                     else:
-                        r = ((j/oblen) + coloa) / 2.5
-                        g = ((j/oblen) + colob) / 2.5
-                        b = ((j/oblen) + coloc) / 2.5
+                        #r = ((j/oblen) + coloa) / 2.5
+                        #g = ((j/oblen) + colob) / 2.5
+                        #b = ((j/oblen) + coloc) / 2.5
+                        #face_color = (r+0.2, g+0.2, b+0.2)
+                        face_color = colo[:]
 
-                    face_color = (r+0.2, g+0.2, b+0.2)
                     glColor3f(*face_color)
                     num_verts = len(pol)
 
                     if (not forced_tesselation) or (num_verts in {3, 4}):
-                        #glBegin(GL_POLYGON if num_verts >= 4 else GL_TRIANGLES)
                         glBegin(GL_POLYGON)
                         for point in pol:
                             vec_corrected = data_matrix[i]*data_vector[k][point]
