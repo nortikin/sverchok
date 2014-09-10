@@ -4,7 +4,7 @@ Cross Section
 Functionality
 -------------
 
-Sect object with blender operator to edges/polygons (F or Alt+F cases)
+Sect object with blender operator to edges/polygons (F or Alt+F cases). In some cases work better than new bisect node.
 
 Inputs
 ------
