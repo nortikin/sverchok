@@ -57,15 +57,15 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
     # geometry colors
     vertex_colors = FloatVectorProperty(
         name='vertex_colors', subtype='COLOR', min=0, max=1, size=3,
-        default=(0.8, 0.8, 0.4))
+        default=(0.938, 0.948, 0.900))
 
     edge_colors = FloatVectorProperty(
         name='edge_colors', subtype='COLOR', min=0, max=1, size=3,
-        default=(0.4, 0.9, 0.9))
+        default=(0.5, 0.752, 0.899))
 
     face_colors = FloatVectorProperty(
         name='face_colors', subtype='COLOR', min=0, max=1, size=3,
-        default=(0.8, 0.2, 0.9))
+        default=(0.0301, 0.488, 0.899))
 
     # display toggles
     display_verts = BoolProperty(
@@ -82,11 +82,11 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
         update=updateNode)
 
     vertex_size = FloatProperty(
-        min=1.0, max=10.0, default=2.0, step=0.2, name='vertex_size',
+        min=0.0, max=10.0, default=3.2, step=0.2, name='vertex_size',
         update=updateNode)
 
     edge_width = FloatProperty(
-        min=0.0, max=10.0, default=1.0, step=0.2, name='edge_width',
+        min=0.0, max=10.0, default=1.50, step=0.2, name='edge_width',
         update=updateNode)
 
     def init(self, context):
