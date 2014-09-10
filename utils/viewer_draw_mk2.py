@@ -262,7 +262,7 @@ def draw_callback_view(n_id, cached_view, options):
                 glEnd()
 
                 if show_edges:
-                    glLineWidth(2.0)
+                    glLineWidth(edge_width)
                     glBegin(GL_LINE_LOOP)
                     glColor3f(*edge_colors)
                     for point in pol:
