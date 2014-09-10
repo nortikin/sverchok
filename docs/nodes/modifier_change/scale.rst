@@ -41,7 +41,7 @@ If you generate more outputs than inputs were given, then is probably that you n
 Example of usage
 ----------------
 
-.. image:: https://cloud.githubusercontent.com/assets/5990821/4216976/adb4043a-38e1-11e4-8ff1-0ae83cbd9ccf.png
+.. image:: https://cloud.githubusercontent.com/assets/5990821/4220292/73e9430e-3900-11e4-949f-02749baa7751.png
   :alt: ScaleDemo1.PNG
 
 In this example we use scale to convert a simple circle into a kind of parabola.
