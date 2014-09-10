@@ -64,6 +64,7 @@ Example of usage
 ^^^^^^^^^^^^^^^^
 
 .. image:: https://cloud.githubusercontent.com/assets/5990821/4216976/adb4043a-38e1-11e4-8ff1-0ae83cbd9ccf.png
+  :alt: AxisRotationDemo1.PNG
 
 In this example we use axis rotation with multiple inputs in axis an angle to create a complex geometry from just one plane.
 
@@ -113,7 +114,9 @@ Example of usage
 ^^^^^^^^^^^^^^^^
 
 .. image:: https://cloud.githubusercontent.com/assets/5990821/4216977/adb5f682-38e1-11e4-88f9-decc6485b81f.png
+  :alt: EulerRotationDemo1.PNG
 .. image:: https://cloud.githubusercontent.com/assets/5990821/4216975/adb3a990-38e1-11e4-8e3b-1584f37573e3.png
+  :alt: EulerRotationDemo2.PNG
 
 In the first example we use Euler rotation to perfomr a simple operation, we just rotate a plane around Z axis multiple times.
 The second is more complex, with multiple inputs in Y and Z to create a complex geometry from just one plane, simulating infinite loop.
@@ -166,5 +169,6 @@ Example of usage
 ^^^^^^^^^^^^^^^^
 
 .. image:: https://cloud.githubusercontent.com/assets/5990821/4216974/adab7018-38e1-11e4-9c43-78a2fdff2fe1.png
+  :alt: QuatRotationDemo1.PNG
 
 As we can see in this example, we try to rotate the plan 45 degrees and then set W with multiple values, each higher than before, but the plane is never get to rotate 180 degrees.
