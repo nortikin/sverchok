@@ -16,8 +16,6 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-# <pep8 compliant>
-
 import math
 
 import bpy
@@ -29,10 +27,82 @@ from data_structure import Vector_generate, Matrix_generate
 callback_dict = {}
 SpaceView3D = bpy.types.SpaceView3D
 
+from bgl import (
+    glEnable, glDisable, glBegin, glEnd,
+    glColor3f, glVertex3f, glColor4f, glPointSize, glLineWidth,
+    glLineStipple, glPolygonStipple, glHint, glShadeModel,
+    GL_POINTS, GL_LINE_STRIP, GL_LINES, GL_LINE, GL_LINE_LOOP, GL_LINE_STIPPLE,
+    GL_POLYGON, GL_POLYGON_STIPPLE, GL_TRIANGLES, GL_QUADS, GL_POINT_SIZE,
+    GL_POINT_SMOOTH, GL_POINT_SMOOTH_HINT, GL_NICEST, GL_FASTEST,
+    GL_FLAT, GL_SMOOTH)
+
 # ------------------------------------------------------------------------ #
-# THIS part taken from  "Math Vis (Console)" addon, author Campbell Barton #
-# With some editing for Sverchok                                           #
+# parts taken from  "Math Vis (Console)" addon, author Campbell Barton     #
 # ------------------------------------------------------------------------ #
+
+
+class MatrixDraw(object):
+
+    def __init__(self):
+        self.zero = Vector((0.0, 0.0, 0.0))
+        self.x_p = Vector((0.5, 0.0, 0.0))
+        self.x_n = Vector((-0.5, 0.0, 0.0))
+        self.y_p = Vector((0.0, 0.5, 0.0))
+        self.y_n = Vector((0.0, -0.5, 0.0))
+        self.z_p = Vector((0.0, 0.0, 0.5))
+        self.z_n = Vector((0.0, 0.0, -0.5))
+        self.bb = [Vector() for i in range(24)]
+
+    def draw_matrix(self, mat):
+        bb = self.bb
+        zero_tx = mat * self.zero
+
+        axis = [
+            [(1.0, 0.2, 0.2), self.x_p],
+            [(0.6, 0.0, 0.0), self.x_n],
+            [(0.2, 1.0, 0.2), self.y_p],
+            [(0.0, 0.6, 0.0), self.y_n],
+            [(0.2, 0.2, 1.0), self.z_p],
+            [(0.0, 0.0, 0.6), self.z_n]
+        ]
+
+        glLineWidth(2.0)
+        for col, axial in axis:
+            glColor3f(*col)
+            glBegin(GL_LINES)
+            glVertex3f(*(zero_tx))
+            glVertex3f(*(mat * axial))
+            glEnd()
+
+        # bounding box vertices
+        i = 0
+        glColor3f(1.0, 1.0, 1.0)
+        series1 = (-0.5, -0.3, -0.1, 0.1, 0.3, 0.5)
+        series2 = (-0.5, 0.5)
+        z = 0
+
+        for x in series1:
+            for y in series2:
+                bb[i][:] = x, y, z
+                bb[i] = mat * bb[i]
+                i += 1
+
+        for y in series1:
+            for x in series2:
+                bb[i][:] = x, y, z
+                bb[i] = mat * bb[i]
+                i += 1
+
+        # bounding box drawing
+        glLineWidth(1.0)
+        glLineStipple(1, 0xAAAA)
+        glEnable(GL_LINE_STIPPLE)
+
+        for i in range(0, 24, 2):
+            glBegin(GL_LINE_STRIP)
+            glVertex3f(*bb[i])
+            glVertex3f(*bb[i+1])
+            glEnd()
 
 
 def tag_redraw_all_view3d():
@@ -81,14 +151,6 @@ def callback_disable(n_id):
 
 def draw_callback_view(n_id, cached_view, options):
     context = bpy.context
-    from bgl import (
-        glEnable, glDisable, glBegin, glEnd,
-        glColor3f, glVertex3f, glColor4f, glPointSize, glLineWidth,
-        glLineStipple, glPolygonStipple, glHint, glShadeModel,
-        GL_POINTS, GL_LINE_STRIP, GL_LINES, GL_LINE, GL_LINE_LOOP, GL_LINE_STIPPLE,
-        GL_POLYGON, GL_POLYGON_STIPPLE, GL_TRIANGLES, GL_QUADS, GL_POINT_SIZE,
-        GL_POINT_SMOOTH, GL_POINT_SMOOTH_HINT, GL_NICEST, GL_FASTEST,
-        GL_FLAT, GL_SMOOTH)
 
     sl1 = cached_view[n_id + 'v']
     sl2 = cached_view[n_id + 'ep']
@@ -143,66 +205,6 @@ def draw_callback_view(n_id, cached_view, options):
     colob = colo[1]
     coloc = colo[2]
 
-    # draw_matrix vars
-    zero = Vector((0.0, 0.0, 0.0))
-    x_p = Vector((0.5, 0.0, 0.0))
-    x_n = Vector((-0.5, 0.0, 0.0))
-    y_p = Vector((0.0, 0.5, 0.0))
-    y_n = Vector((0.0, -0.5, 0.0))
-    z_p = Vector((0.0, 0.0, 0.5))
-    z_n = Vector((0.0, 0.0, -0.5))
-    bb = [Vector() for i in range(24)]
-
-    def draw_matrix(mat):
-        zero_tx = mat * zero
-        glLineWidth(2.0)
-
-        axis = [
-            [(1.0, 0.2, 0.2), x_p],
-            [(0.6, 0.0, 0.0), x_n],
-            [(0.2, 1.0, 0.2), y_p],
-            [(0.0, 0.6, 0.0), y_n],
-            [(0.2, 0.2, 1.0), z_p],
-            [(0.0, 0.0, 0.6), z_n]
-        ]
-
-        for col, axial in axis:
-            glColor3f(*col)
-            glBegin(GL_LINES)
-            glVertex3f(*(zero_tx))
-            glVertex3f(*(mat * axial))
-            glEnd()
-
-        # bounding box vertices
-        i = 0
-        glColor3f(1.0, 1.0, 1.0)
-        series1 = (-0.5, -0.3, -0.1, 0.1, 0.3, 0.5)
-        series2 = (-0.5, 0.5)
-        z = 0
-        for x in series1:
-            for y in series2:
-                bb[i][:] = x, y, z
-                bb[i] = mat * bb[i]
-                i += 1
-        for y in series1:
-            for x in series2:
-                bb[i][:] = x, y, z
-                bb[i] = mat * bb[i]
-                i += 1
-
-        # bounding box drawing
-        glLineWidth(1.0)
-        glLineStipple(1, 0xAAAA)
-        glEnable(GL_LINE_STIPPLE)
-
-        for i in range(0, 24, 2):
-            glBegin(GL_LINE_STRIP)
-            glVertex3f(*bb[i])
-            glVertex3f(*bb[i+1])
-            glEnd()
-
-    glDisable(GL_POINT_SIZE)
-
     ''' polygons '''
 
     vectorlight = options['light_direction']
@@ -252,13 +254,13 @@ def draw_callback_view(n_id, cached_view, options):
                     glBegin(GL_POLYGON)
                     glColor3f(*face_color)
                     for point in pol:
-                        vec_corrected = data_matrix[i]*data_vector[k][int(point)]
+                        vec_corrected = data_matrix[i]*data_vector[k][point]
                         glVertex3f(*vec_corrected)
                 else:
                     glBegin(GL_TRIANGLES)
                     glColor3f(*face_color)
                     for point in pol:
-                        vec_corrected = data_matrix[i]*data_vector[k][int(point)]
+                        vec_corrected = data_matrix[i]*data_vector[k][point]
                         glVertex3f(*vec_corrected)
 
                 glEnd()
@@ -268,7 +270,7 @@ def draw_callback_view(n_id, cached_view, options):
                     glBegin(GL_LINE_LOOP)
                     glColor3f(*edge_colors)
                     for point in pol:
-                        vec_corrected = data_matrix[i]*data_vector[k][int(point)]
+                        vec_corrected = data_matrix[i]*data_vector[k][point]
                         glVertex3f(*vec_corrected)
                     glEnd()
 
@@ -292,7 +294,7 @@ def draw_callback_view(n_id, cached_view, options):
                     line = data_edges[k][-1]
                 glBegin(edgeline)
                 for point in line:              # point
-                    vec_corrected = data_matrix[i]*data_vector[k][int(point)]
+                    vec_corrected = data_matrix[i]*data_vector[k][point]
                     glVertex3f(*vec_corrected)
                 glEnd()
                 # glPointSize(1.75)
@@ -322,11 +324,14 @@ def draw_callback_view(n_id, cached_view, options):
                 glVertex3f(*vec_corrected)
         glEnd()
 
-    #######
-    # matrix
+    glDisable(GL_POINT_SIZE)
+
+    ''' matrix '''
+
     if data_matrix and not data_vector:
+        md = MatrixDraw()
         for mat in data_matrix:
-            draw_matrix(mat)
+            md.draw_matrix(mat)
 
 
 def unregister():
