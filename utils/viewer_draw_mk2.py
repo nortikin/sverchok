@@ -164,7 +164,7 @@ def draw_callback_view(n_id, cached_view, options):
     vertex_colors = options['vertex_colors']
     edge_colors = options['edge_colors']
     edge_width = options['edge_width']
-    forced_tesselation = options['forced_tesselation']
+    forced_tessellation = options['forced_tessellation']
 
     if tran:
         polyholy = GL_POLYGON_STIPPLE
@@ -254,7 +254,7 @@ def draw_callback_view(n_id, cached_view, options):
                     glColor3f(*face_color)
                     num_verts = len(pol)
 
-                    if (not forced_tesselation) or (num_verts in {3, 4}):
+                    if (not forced_tessellation) or (num_verts in {3, 4}):
                         glBegin(GL_POLYGON)
                         for point in pol:
                             vec_corrected = data_matrix[i]*data_vector[k][point]
