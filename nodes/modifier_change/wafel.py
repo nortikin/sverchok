@@ -45,6 +45,9 @@ class SvWafelNode(bpy.types.Node, SverchCustomTreeNode):
     circle_rad = FloatProperty(name='radius', description='radius of circle',
                            default=0.01)
 
+    tube_radius = FloatProperty(name='tube_radius', description='radius of tube',
+                           default=0.05)
+
     threshold = FloatProperty(name='threshold', description='threshold for interect edge',
                            default=16)
 
@@ -65,6 +68,8 @@ class SvWafelNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('StringsSocket', 'edgcont', 'edgcont')
         self.inputs.new('StringsSocket', 'thick').prop_name = 'thick'
         self.inputs.new('StringsSocket', 'circl rad').prop_name = 'circle_rad'
+        self.inputs.new('VerticesSocket', 'vec_tube', 'vec_tube')
+        self.inputs.new('StringsSocket', 'tube_radius').prop_name = 'tube_radius'
         
         self.outputs.new('VerticesSocket', 'vupper', 'vupper')
         self.outputs.new('StringsSocket', 'outeup', 'outeup')
@@ -194,6 +199,13 @@ class SvWafelNode(bpy.types.Node, SverchCustomTreeNode):
                     norm_cont = [ [ NM(i[0],i[len(i)//2], i[-1]) ] for i in vec_cont ] # довести до ума
                 else:
                     vec_cont = []
+                if 'vec_tube' in self.inputs and self.inputs['vec_tube'].links:
+                    vectube = self.inputs['vec_tube'].sv_get()
+                    vec_tube = Vector_generate(vectube)
+                    circle_tube = [ (Vector((sin(radians(i)),cos(radians(i)),0))*self.tube_radius) \
+                              for i in range(0,360,15) ]
+                else:
+                    vec_tube = []
                 outeup = []
                 outelo = []
                 vupper = []
@@ -370,6 +382,22 @@ class SvWafelNode(bpy.types.Node, SverchCustomTreeNode):
                                 vupperob.extend(circle_to_add_1+circle_to_add_2)
                                 vlowerob.extend(circle_to_add_1+circle_to_add_2)
                                 k += 24
+                            if vec_tube:
+                                for v in vec_tube:
+                                    crcl_cntr = IL2P(v[0], v[1], l, n)
+                                    if crcl_cntr:
+                                        inside = crcl_cntr[0]<m1x and crcl_cntr[0]>m2x and crcl_cntr[1]<m1y \
+                                             and crcl_cntr[1]>m2y and crcl_cntr[2]<=m1z and crcl_cntr[2]>=m2z
+                                        if inside:
+                                            outeob = [ [lenvep+k+i,lenvep+k+i+1] for i in range(0,23) ]
+                                            outeob.append([lenvep+k,lenvep+k+23])
+                                            newinds1.extend(outeob)
+                                            newinds2.extend(outeob)
+                                            mat_rot_cir = n.rotation_difference(Vector((0,0,1))).to_matrix().to_4x4()
+                                            circle_to_add = [ vecir*mat_rot_cir+crcl_cntr for vecir in circle_tube ]
+                                            vupperob.extend(circle_to_add)
+                                            vlowerob.extend(circle_to_add)
+                                            k += 24
                         elif cop < 0.001 and inside and shortedge <= thick*threshold:
                             vupperob.extend([one,two])
                             vlowerob.extend([one,two])
