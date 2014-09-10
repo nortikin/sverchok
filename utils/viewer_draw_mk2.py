@@ -211,6 +211,7 @@ def draw_callback_view(n_id, cached_view, options):
         glLineWidth(1.0)
         glEnable(polyholy)
         normal = mathutils.geometry.normal
+        tessellate = mathutils.geometry.tessellate_polygon
 
         for i, matrix in enumerate(data_matrix):
             k = i
@@ -224,44 +225,41 @@ def draw_callback_view(n_id, cached_view, options):
                     pol = data_edges[k][-1]
                     j = len(data_edges[k])-1
 
-                if shade:
-                    dvk = data_vector[k]
-                    normal_no_ = normal(dvk[pol[0]], dvk[pol[1]], dvk[pol[2]])
-                    normal_no = (normal_no_.angle(vectorlight, 0)) / math.pi
-                    randa = (normal_no * coloa) - 0.1
-                    randb = (normal_no * colob) - 0.1
-                    randc = (normal_no * coloc) - 0.1
-                else:
-                    randa = ((j/oblen) + coloa) / 2.5
-                    randb = ((j/oblen) + colob) / 2.5
-                    randc = ((j/oblen) + coloc) / 2.5
+                if show_faces:
 
-                face_color = (randa+0.2, randb+0.2, randc+0.2)
-                if len(pol) > 4:
-                    glBegin(GL_TRIANGLES)
+                    if shade:
+                        dvk = data_vector[k]
+                        normal_no_ = normal(dvk[pol[0]], dvk[pol[1]], dvk[pol[2]])
+                        normal_no = (normal_no_.angle(vectorlight, 0)) / math.pi
+                        randa = (normal_no * coloa) - 0.1
+                        randb = (normal_no * colob) - 0.1
+                        randc = (normal_no * coloc) - 0.1
+                    else:
+                        randa = ((j/oblen) + coloa) / 2.5
+                        randb = ((j/oblen) + colob) / 2.5
+                        randc = ((j/oblen) + coloc) / 2.5
+
+                    face_color = (randa+0.2, randb+0.2, randc+0.2)
                     glColor3f(*face_color)
+                    num_verts = len(pol)
 
-                    v = [data_vector[k][i] for i in pol]
-                    tess_poly = mathutils.geometry.tessellate_polygon([v])
-                    for a, b, c in tess_poly:
-                        glVertex3f(*(data_matrix[i]*v[a]))
-                        glVertex3f(*(data_matrix[i]*v[b]))
-                        glVertex3f(*(data_matrix[i]*v[c]))
+                    if num_verts in {3, 4}:
+                        glBegin(GL_POLYGON if num_verts == 4 else GL_TRIANGLES)
+                        for point in pol:
+                            vec_corrected = data_matrix[i]*data_vector[k][point]
+                            glVertex3f(*vec_corrected)
 
-                elif len(pol) == 4:
-                    glBegin(GL_POLYGON)
-                    glColor3f(*face_color)
-                    for point in pol:
-                        vec_corrected = data_matrix[i]*data_vector[k][point]
-                        glVertex3f(*vec_corrected)
-                else:
-                    glBegin(GL_TRIANGLES)
-                    glColor3f(*face_color)
-                    for point in pol:
-                        vec_corrected = data_matrix[i]*data_vector[k][point]
-                        glVertex3f(*vec_corrected)
+                    else:
+                        ''' ngons, we tessellate '''
+                        glBegin(GL_TRIANGLES)
+                        v = [data_vector[k][i] for i in pol]
+                        tess_poly = tessellate([v])
+                        for a, b, c in tess_poly:
+                            glVertex3f(*(data_matrix[i]*v[a]))
+                            glVertex3f(*(data_matrix[i]*v[b]))
+                            glVertex3f(*(data_matrix[i]*v[c]))
 
-                glEnd()
+                    glEnd()
 
                 if show_edges:
                     glLineWidth(edge_width)
