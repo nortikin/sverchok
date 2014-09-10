@@ -164,6 +164,7 @@ def draw_callback_view(n_id, cached_view, options):
     vertex_colors = options['vertex_colors']
     edge_colors = options['edge_colors']
     edge_width = options['edge_width']
+    forced_tesselation = options['forced_tesselation']
 
     if tran:
         polyholy = GL_POLYGON_STIPPLE
@@ -184,14 +185,12 @@ def draw_callback_view(n_id, cached_view, options):
 
     data_polygons = []
     data_edges = []
-    if sl2:
-        if sl2[0]:
-            if len(sl2[0][0]) == 2:
-                data_edges = sl2
-                data_polygons = []
-            elif len(sl2[0][0]) > 2:
-                data_polygons = sl2
-                data_edges = []
+    if sl2 and sl2[0]:
+        len_sl2 = len(sl2[0][0])
+        if len_sl2 == 2:
+            data_edges = sl2
+        elif len_sl2 > 2:
+            data_polygons = sl2
 
     if sl3:
         data_matrix = Matrix_generate(sl3)
@@ -202,6 +201,12 @@ def draw_callback_view(n_id, cached_view, options):
         callback_disable(n_id)
 
     coloa, colob, coloc = colo[:]
+
+    ''' pre process verts and apply matrices if needed '''
+
+    #
+    #
+    #
 
     ''' polygons '''
 
@@ -231,20 +236,22 @@ def draw_callback_view(n_id, cached_view, options):
                         dvk = data_vector[k]
                         normal_no_ = normal(dvk[pol[0]], dvk[pol[1]], dvk[pol[2]])
                         normal_no = (normal_no_.angle(vectorlight, 0)) / math.pi
-                        randa = (normal_no * coloa) - 0.1
-                        randb = (normal_no * colob) - 0.1
-                        randc = (normal_no * coloc) - 0.1
-                    else:
-                        randa = ((j/oblen) + coloa) / 2.5
-                        randb = ((j/oblen) + colob) / 2.5
-                        randc = ((j/oblen) + coloc) / 2.5
 
-                    face_color = (randa+0.2, randb+0.2, randc+0.2)
+                        r = (normal_no * coloa) - 0.1
+                        g = (normal_no * colob) - 0.1
+                        b = (normal_no * coloc) - 0.1
+                    else:
+                        r = ((j/oblen) + coloa) / 2.5
+                        g = ((j/oblen) + colob) / 2.5
+                        b = ((j/oblen) + coloc) / 2.5
+
+                    face_color = (r+0.2, g+0.2, b+0.2)
                     glColor3f(*face_color)
                     num_verts = len(pol)
 
-                    if num_verts in {3, 4}:
-                        glBegin(GL_POLYGON if num_verts == 4 else GL_TRIANGLES)
+                    if (not forced_tesselation) or (num_verts in {3, 4}):
+                        #glBegin(GL_POLYGON if num_verts >= 4 else GL_TRIANGLES)
+                        glBegin(GL_POLYGON)
                         for point in pol:
                             vec_corrected = data_matrix[i]*data_vector[k][point]
                             glVertex3f(*vec_corrected)
@@ -270,8 +277,7 @@ def draw_callback_view(n_id, cached_view, options):
                         glVertex3f(*vec_corrected)
                     glEnd()
 
-                glPointSize(1.75)
-                glLineWidth(1.0)
+        glLineWidth(1.0)
         glDisable(polyholy)
 
     ''' edges '''
@@ -281,20 +287,19 @@ def draw_callback_view(n_id, cached_view, options):
         glLineWidth(edge_width)
         glEnable(edgeholy)
 
-        for i, matrix in enumerate(data_matrix):    # object
+        for i, matrix in enumerate(data_matrix):
             k = i
             if i > verlen:   # filter to share objects
                 k = verlen
-            for line in data_edges[k]:                 # line
+            for line in data_edges[k]:
                 if max(line) > verlen_every[k]:
                     line = data_edges[k][-1]
                 glBegin(edgeline)
-                for point in line:              # point
+                for point in line:
                     vec_corrected = data_matrix[i]*data_vector[k][point]
                     glVertex3f(*vec_corrected)
                 glEnd()
-                # glPointSize(1.75)
-                # glLineWidth(1.0)
+
         glDisable(edgeholy)
 
     ''' vertices '''

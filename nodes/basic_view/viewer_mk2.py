@@ -89,6 +89,12 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
         min=0.0, max=10.0, default=1.50, step=0.2, name='edge_width',
         update=updateNode)
 
+    # misc options
+    ngon_tesselate = BoolProperty(
+        default=0, name='ngon_tesselate',
+        description='useful for concave ngons, forces ngons to be tesselated',
+        update=updateNode)
+
     def init(self, context):
         self.inputs.new('VerticesSocket', 'vertices', 'vertices')
         self.inputs.new('StringsSocket', 'edg_pol', 'edg_pol')
@@ -123,6 +129,7 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
         col = layout.column(align=True)
         col.prop(self, 'vertex_size', text='vertex size')
         col.prop(self, 'edge_width', text='edge_width')
+        col.prop(self, 'ngon_tesselate', text='ngons tesselation', toggle=True)
 
     # reset n_id on duplicate (shift-d)
     def copy(self, node):
@@ -196,7 +203,8 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
             'face_colors': self.face_colors,
             'edge_colors': self.edge_colors,
             'vertex_size': self.vertex_size,
-            'edge_width': self.edge_width
+            'edge_width': self.edge_width,
+            'forced_tesselation': self.ngon_tesselate
             }
 
     def update_socket(self, context):
