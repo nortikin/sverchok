@@ -54,5 +54,6 @@ Example of usage
 ----------------
 
 .. image:: https://cloud.githubusercontent.com/assets/5990821/4186892/cb062d3e-3764-11e4-95c3-511fd668ce1e.png
+  :alt: CylinderDemo1.PNG
 
 In this example with can see some examples of what can be done with this node.

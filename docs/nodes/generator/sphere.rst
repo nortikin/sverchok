@@ -43,5 +43,6 @@ Example of usage
 ----------------
 
 .. image:: https://cloud.githubusercontent.com/assets/5990821/4187465/2a08ffdc-376a-11e4-8359-b4f98567dedb.png
+  :alt: SphereDemo1.PNG
 
 As you can see, lot of different outputs can be generated with this node.

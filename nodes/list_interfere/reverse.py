@@ -66,7 +66,7 @@ class ListReverseNode(bpy.types.Node, SverchCustomTreeNode):
         elif type(list) in [type([])]:
             return list[::-1]
         elif type(list) in [type(tuple())]:
-            return out[::-1]
+            return list[::-1]
 
 
 def register():

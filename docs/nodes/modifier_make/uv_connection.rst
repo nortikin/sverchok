@@ -35,3 +35,7 @@ Outputs
 
 Example of usage
 ----------------
+
+.. image:: https://cloud.githubusercontent.com/assets/5783432/4199915/97853346-380a-11e4-9968-3661e95bf80c.png
+  :alt: ConnectingUV.PNG
+

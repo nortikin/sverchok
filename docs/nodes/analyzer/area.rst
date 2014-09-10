@@ -38,5 +38,6 @@ Example of usage
 ----------------
 
 .. image:: https://cloud.githubusercontent.com/assets/5990821/4188452/8f9cbf66-3772-11e4-8735-34462b7da54b.png
+  :alt: AreaDemo1.PNG
 
 In the example we have the inputs from a plane with 15 faces. We can use **Area** node to get the sum of all of them or the area of every face individually.
