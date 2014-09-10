@@ -23,8 +23,6 @@ import bpy
 from mathutils import Vector, Euler
 from mathutils.geometry import distance_point_to_plane as D2P
 from mathutils.geometry import intersect_line_line as IL2L
-from mathutils.geometry import intersect_line_plane as IL2P
-from mathutils.geometry import normal as NM
 from mathutils import kdtree as KDT
 from data_structure import Vector_generate, Vector_degenerate, fullList, \
                            SvSetSocketAnyType, SvGetSocketAnyType, dataCorrect
@@ -41,65 +39,31 @@ class SvWafelNode(bpy.types.Node, SverchCustomTreeNode):
 
     thick = FloatProperty(name='thick', description='thickness of material',
                            default=0.01)
-
-    circle_rad = FloatProperty(name='radius', description='radius of circle',
-                           default=0.01)
-
-    threshold = FloatProperty(name='threshold', description='threshold for interect edge',
-                           default=16)
-
-    circle = BoolProperty(name='circle', description='circle for leyer',
-                           default=False)
-
-    circl_place = EnumProperty(name='place', items=[('Up','Up','Up'),('Midl','Midl','Midl'),('Down','Down','Down')],
-                           description='circle placement', default='Up')
-
     rounded = BoolProperty(name='rounded', description='making rounded edges',
                            default = False)
+    up_down = EnumProperty(name='up_down', items=[('UP','UP','UP'),('DOWN','DOWN','DOWN')],
+                           description='up or down', default = 'UP')
 
     def init(self, context):
         self.inputs.new('VerticesSocket', 'vec', 'vec')
+        self.inputs.new('StringsSocket', 'edg', 'edg')
         self.inputs.new('VerticesSocket', 'vecplan', 'vecplan')
         self.inputs.new('StringsSocket', 'edgplan', 'edgplan')
+        self.inputs.new('VerticesSocket', 'loc', 'loc')
+        self.inputs.new('VerticesSocket', 'norm', 'norm')
         self.inputs.new('VerticesSocket', 'vecont', 'vecont')
-        self.inputs.new('StringsSocket', 'edgcont', 'edgcont')
+        self.inputs.new('VerticesSocket', 'loccont', 'loccont')
+        self.inputs.new('VerticesSocket', 'normcont', 'normcont')
         self.inputs.new('StringsSocket', 'thick').prop_name = 'thick'
-        self.inputs.new('StringsSocket', 'circl rad').prop_name = 'circle_rad'
         
         self.outputs.new('VerticesSocket', 'vupper', 'vupper')
         self.outputs.new('StringsSocket', 'outeup', 'outeup')
         self.outputs.new('VerticesSocket', 'vlower', 'vlower')
         self.outputs.new('StringsSocket', 'outelo', 'outelo')
-        self.outputs.new('VerticesSocket', 'centers', 'centers')
 
     def draw_buttons(self, context, layout):
-        row = layout.row(align=True)
-        row.prop(self, 'rounded')
-        row.prop(self, 'circle')
-        row = layout.row(align=True)
-        row.prop(self, 'threshold')
-        row = layout.row(align=True)
-        row.prop(self, 'circl_place', expand=True)
-
-    def rotation_on_axis(self, p,v,a):
-        '''
-        rotate one point 'p' over axis normalized 'v' on degrees 'a'
-        '''
-        Xp,Yp,Zp = p[:]
-        Xv,Yv,Zv = v[:]
-        Temp = 1 - cos(a)
-        Nx = Xp * (Xv * Temp * Xv + cos(a)) + \
-             Yp * (Yv * Temp * Xv - sin(a) * Zv) + \
-             Zp * (Zv * Temp * Xv + sin(a) * Yv)
-
-        Ny = Xp * (Xv * Temp * Yv + sin(a) * Zv) + \
-             Yp * (Yv * Temp * Yv + cos(a)) + \
-             Zp * (Zv * Temp * Yv - sin(a) * Xv)
-
-        Nz = Xp * (Xv * Temp * Zv - sin(a) * Yv) + \
-             Yp * (Yv * Temp * Zv + sin(a) * Xv) + \
-             Zp * (Zv * Temp * Zv + cos(a))
-        return Vector(( Nx,Ny,Nz ))
+        layout.prop(self, 'rounded')
+        layout.prop(self, 'up_down', expand=True)
 
     def calc_indexes(self, edgp, near):
         '''
@@ -116,21 +80,17 @@ class SvWafelNode(bpy.types.Node, SverchCustomTreeNode):
         q.append(deledges)
         return q
 
-    def interpolation(self, vecp, vec, en0, en1, diry, dirx):
-        '''
-        shifting on height
-        '''
-        out = []
-        k = False
-        for en in [en0, en1]:
-            if k:
-                out.append(IL2L(vec,vecp[en],vec-dirx,vec-dirx-diry)[0])
-            else:
-                out.append(IL2L(vec,vecp[en],vec+dirx,vec+dirx-diry)[0])
-            k = True
-        return out
+    def interpolation(self, vecp, vec, en0, en1, thick):
+        # shifting on height
+        interp1_ = Vector((vecp[en0][0],vecp[en0][1],0)) - Vector((vec[0], vec[1], 0))
+        interp1 = thick/interp1_.length
+        interp2_ = Vector((vecp[en1][0],vecp[en1][1],0)) - Vector((vec[0], vec[1], 0))
+        interp2 = thick/interp2_.length
+        a = (vecp[en0][2]-vec[2])*interp1
+        b = (vecp[en1][2]-vec[2])*interp2
+        return a, b
 
-    def calc_leftright(self, vecp, vec, dirx, en0, en1, thick, diry):
+    def calc_leftright(self, vecp, vec, dir, en0, en1, thick):
         '''
         calc left right from defined point and direction to join vertices
         oriented on given indexes
@@ -138,16 +98,16 @@ class SvWafelNode(bpy.types.Node, SverchCustomTreeNode):
         l r - indexes of this nearest points
         lz rz - height difference to compensate
         '''
-        a,b = vecp[en0]-vec+dirx, vecp[en0]-vec-dirx
+        a,b = vecp[en0]-vec+dir, vecp[en0]-vec-dir
         if a.length > b.length:
-            l =  en0
-            r =  en1
-            rz, lz = self.interpolation(vecp, vec, l, r, diry, dirx)
+            left, l = vecp[en0], en0
+            right,r = vecp[en1], en1
+            lz, rz = self.interpolation(vecp, vec, en0, en1, thick)
         else:
-            l =  en1
-            r =  en0
-            rz, lz = self.interpolation(vecp, vec, l, r, diry, dirx)
-        return l, r, lz, rz
+            left, l = vecp[en1], en1
+            right,r = vecp[en0], en0
+            rz, lz = self.interpolation(vecp, vec, en0, en1, thick)
+        return left, right, l, r, lz, rz
 
     def get_coplanar(self,vec, loc_cont, norm_cont,vec_cont):
         '''
@@ -164,67 +124,54 @@ class SvWafelNode(bpy.types.Node, SverchCustomTreeNode):
         return False
 
     def update(self):
-        if not 'centers' in self.outputs:
-            return
-        if 'vec' in self.inputs and 'vecplan' in self.inputs \
-                and 'edgplan' in self.inputs:
+        if 'vec' in self.inputs and 'edg' in self.inputs:
             print(self.name, 'is starting')
-            if self.inputs['vec'].links and self.inputs['vecplan'].links \
-                    and self.inputs['edgplan'].links:
-                if self.circle:
-                    circle = [ (Vector((sin(radians(i)),cos(radians(i)),0))*self.circle_rad)/4 \
-                              for i in range(0,360,30) ]
+            if self.inputs['vec'].links and self.inputs['edg'].links:
+
+                
                 vec = self.inputs['vec'].sv_get()
+                edg = self.inputs['edg'].sv_get()
                 vecplan = self.inputs['vecplan'].sv_get()
                 edgplan = self.inputs['edgplan'].sv_get()
+                loc = self.inputs['loc'].sv_get()
+                norm = self.inputs['norm'].sv_get()
                 thick = self.inputs['thick'].sv_get()[0][0]
                 sinuso60 = 0.8660254037844386
                 sinuso60_minus = 0.133974596
                 sinuso30 = 0.5
                 sinuso45 = 0.7071067811865475
-                thick_2 = thick/2
-                thick_3 = thick/3
-                thick_6 = thick/6
-                threshold = self.threshold
-                if 'vecont' in self.inputs and self.inputs['vecont'].links:
+                if 'loccont' in self.inputs and self.inputs['loccont'].links and \
+                       'normcont' in self.inputs and self.inputs['normcont'].links:
                     vecont = self.inputs['vecont'].sv_get()
-                    edgcont = self.inputs['edgcont'].sv_get()
+                    loccont = self.inputs['loccont'].sv_get()
+                    normcont = self.inputs['normcont'].sv_get()
                     vec_cont = Vector_generate(vecont)
-                    loc_cont = [ [ i[0] ] for i in vec_cont ]
-                    norm_cont = [ [ NM(i[0],i[len(i)//2], i[-1]) ] for i in vec_cont ] # довести до ума
+                    loc_cont = Vector_generate(loccont)
+                    norm_cont = Vector_generate(normcont)
                 else:
-                    vec_cont = []
+                    norm_cont = [[Vector((0,0,1)) for i in range(len(norm[0]))]]
+                    loc_cont = [[Vector((0,0,10000)) for i in range(len(norm[0]))]]
+                    vec_cont = [[Vector((1000,0,1))] for i in range(len(norm[0]))]
                 outeup = []
                 outelo = []
                 vupper = []
                 vlower = []
-                centers = []
                 vec_ = Vector_generate(vec)
+                loc_ = Vector_generate(loc)
+                norm_ = Vector_generate(norm)
                 vecplan_ = Vector_generate(vecplan)
-                for centersver, vecp, edgp in zip(vecplan,vecplan_,edgplan):
+                #print(self.name, 'veriables: \n', \
+                #      vec_,'\n',
+                #      vecplan_,'\n',
+                #      loc_,'\n',
+                #      loc_cont)
+                for l,n,vecp, edgp in zip(loc_[0],norm_[0],vecplan_,edgplan):
                     newinds1 = edgp.copy()
                     newinds2 = edgp.copy()
                     vupperob = vecp.copy()
                     vlowerob = vecp.copy()
                     deledges1 = []
                     deledges2 = []
-                    # to define bounds
-                    x = [i[0] for i in vecp]
-                    y = [i[1] for i in vecp]
-                    z = [i[2] for i in vecp]
-                    m1x,m2x,m1y,m2y,m1z,m2z = max(x), min(x), max(y), min(y), max(z), min(z)
-                    l = Vector((sum(x)/len(x),sum(y)/len(y),sum(z)/len(z)))
-                    n_select = [vecp[0],vecp[len(vecp)//2], vecp[-1]] # довести до ума
-                    n_select.sort(key=lambda x: sum(x[:]), reverse=False)
-                    n_ = NM(n_select[0],n_select[1],n_select[2])
-                    n_.normalize()
-                    # а виновта ли нормаль?
-                    if n_[0] < 0:
-                        n = n_ * -1
-                    else:
-                        n = n_
-                    cen = [sum(i) for i in zip(*centersver)]
-                    centers.append(Vector(cen)/len(centersver))
                     k = 0
                     lenvep = len(vecp)
                     # KDtree collections closest to join edges to sockets
@@ -232,6 +179,10 @@ class SvWafelNode(bpy.types.Node, SverchCustomTreeNode):
                     for i,v in enumerate(vecp):
                         tree.insert(v,i)
                     tree.balance()
+                    # to define bounds
+                    x = [i[0] for i in vecp]
+                    y = [i[1] for i in vecp]
+                    m1x,m2x,m1y,m2y = max(x), min(x), max(y), min(y)
                     # vertical edges iterations
                     # every edge is object - two points, one edge
                     for v in vec_:
@@ -241,11 +192,7 @@ class SvWafelNode(bpy.types.Node, SverchCustomTreeNode):
                         vlist.sort(key=lambda x: x[2], reverse=False)
                         # flip if coplanar to enemy plane
                         # flip plane coplanar
-                        if vec_cont:
-                            fliped = self.get_coplanar(v[0], loc_cont,norm_cont, vec_cont)
-                        else:
-                            fliped = False
-                        shortedge = (vlist[1]-vlist[0]).length
+                        fliped = self.get_coplanar(v[0], loc_cont,norm_cont, vec_cont)
                         if fliped:
                             two, one = vlist
                         else:
@@ -253,23 +200,23 @@ class SvWafelNode(bpy.types.Node, SverchCustomTreeNode):
                         # coplanar to owner
                         cop = abs(D2P(one,l,n))
                         # defining bounds
-                        inside = one[0]<m1x and one[0]>m2x and one[1]<m1y and one[1]>m2y \
-                                 and one[2]<=m1z and one[2]>=m2z
+                        inside = one[0]<m1x and one[0]>m2x and one[1]<m1y and one[1]>m2y
                         # if in bounds and coplanar do:
                         #print(self.name,l, cop, inside)
-                        if cop < 0.001 and inside and shortedge > thick*threshold:
+                        if cop < 0.001 and inside:
                             '''
                             huge calculations. if we can reduce...
                             '''
                             # find shift for thickness in sockets
-                            diry = two - one
-                            diry.normalize()
-                            # solution for vertical wafel - cool but not in diagonal case
-                            # angle = radians(degrees(atan(n.y/n.x))+90)
-                            dirx_ = self.rotation_on_axis(diry, n, radians(90))
-                            dirx = dirx_*thick_2
+                            angle = radians(degrees(atan(n.y/n.x))+90)
+                            thick_2 = thick/2
+                            direction = Vector((cos(angle),sin(angle),0))*thick_2
+                            #matr = Euler((0,0,angle),'YZX').to_matrix().to_4x4()
+                            #matr.translation = 
+                            #direction = matr
                             # вектор, индекс, расстояние
-                            # запоминаем порядок находим какие удалить рёбра
+                            # запоминаем порядок
+                            # находим какие удалить рёбра
                             # делаем выборку левая-правая точка
                             nearv_1, near_1 = tree.find(one)[:2]
                             nearv_2, near_2 = tree.find(two)[:2]
@@ -279,18 +226,25 @@ class SvWafelNode(bpy.types.Node, SverchCustomTreeNode):
                             deledges1.extend(de1)
                             en_2, en_3, de2 = self.calc_indexes(edgp, near_2)
                             deledges2.extend(de2)
-                            # print(vecp, one, dirx, en_0, en_1)
+                            # old delete
+                            # en_0,en_1 = [[t for t in i if t != near_1] for i in edgp if near_1 in i]
+                            # en_2,en_3 = [[t for t in i if t != near_2] for i in edgp if near_2 in i]
+                            # print(vecp, one, direction, en_0, en_1)
                             # left-right indexes and vectors
                             # с учётом интерполяций по высоте
-                            l1, r1, lz1, rz1 = \
-                                    self.calc_leftright(vecp, one, dirx, en_0, en_1, thick_2, diry)
-                            l2, r2, lz2, rz2 = \
-                                    self.calc_leftright(vecp, two, dirx, en_2, en_3, thick_2, diry)
-                            # print(left2, right2, l2, r2, lz2, rz2)
+                            left1, right1, l1, r1, lz1, rz1 = \
+                                    self.calc_leftright(vecp, one, direction, en_0, en_1, thick_2)
+                            left2, right2, l2, r2, lz2, rz2 = \
+                                    self.calc_leftright(vecp, two, direction, en_2, en_3, thick_2)
+
                             # средняя точка и её смещение по толщине материала
                             three = (one-two)/2 + two
                             if self.rounded:
                                 '''рёбра'''
+                                if fliped:
+                                    doflip = -1
+                                else:
+                                    doflip = 1
                                 # пазы формируем независимо от верх низ
 
                                 outeob1 = [[lenvep+k+8,lenvep+k],[lenvep+k+1,lenvep+k+2],
@@ -308,24 +262,26 @@ class SvWafelNode(bpy.types.Node, SverchCustomTreeNode):
                                 newinds1.extend([[l1, lenvep+k], [lenvep+k+9, r1]])
                                 newinds2.extend([[l2, lenvep+k+9], [lenvep+k, r2]])
                                 '''Вектора'''
-                                round1 = diry*thick_3
-                                round2 = diry*thick_3*sinuso30
-                                round2_= dirx/3 + dirx*(2*sinuso60/3)
-                                round3 = diry*thick_3*sinuso60_minus
-                                round3_= dirx/3 + dirx*(2*sinuso30/3)
-                                round4 = dirx/3
-                                vupperob.extend([lz2,
-                                                 three+round1-dirx, three+round2-round2_,
+                                thick_3 = thick/3
+                                thick_6 = thick/6
+                                round1 = Vector((0,0,doflip*thick_3))
+                                round2 = Vector((0,0,doflip*thick_3*sinuso30))
+                                round2_= direction/3 + direction*(2*sinuso60/3)
+                                round3 = Vector((0,0,doflip*thick_3*sinuso60_minus))
+                                round3_= direction/3 + direction*(2*sinuso30/3)
+                                round4 = direction/3
+                                vupperob.extend([two-direction-Vector((0,0,lz2)),
+                                                 three+round1-direction, three+round2-round2_,
                                                  three+round3-round3_, three-round4,
                                                  three+round4, three+round3+round3_,
-                                                 three+round2+round2_, three+round1+dirx,
-                                                 rz2])
-                                vlowerob.extend([rz1,
-                                                 three-round1-dirx, three-round2-round2_,
+                                                 three+round2+round2_, three+round1+direction,
+                                                 two+direction-Vector((0,0,rz2))])
+                                vlowerob.extend([one+direction-Vector((0,0,rz1)),
+                                                 three-round1-direction, three-round2-round2_,
                                                  three-round3-round3_, three-round4,
                                                  three+round4, three-round3+round3_,
-                                                 three-round2+round2_, three-round1+dirx,
-                                                 lz1])
+                                                 three-round2+round2_, three-round1+direction,
+                                                 one-direction-Vector((0,0,lz1))])
                                 k += 10
                             else:
                                 '''рёбра'''
@@ -336,46 +292,13 @@ class SvWafelNode(bpy.types.Node, SverchCustomTreeNode):
                                 newinds1.extend([[l1, lenvep+k], [lenvep+k+3, r1]])
                                 newinds2.extend([[l2, lenvep+k+3], [lenvep+k, r2]])
                                 '''Вектора'''
-                                vupperob.extend([lz2, three-dirx, 
-                                                 three+dirx, rz2])
-                                vlowerob.extend([rz1, three+dirx,
-                                                 three-dirx, lz1])
+                                vupperob.extend([two-direction-Vector((0,0,lz2)), three-direction, 
+                                                 three+direction, two+direction-Vector((0,0,rz2))])
+                                vlowerob.extend([one+direction-Vector((0,0,rz1)), three+direction,
+                                                 three-direction, one-direction-Vector((0,0,lz1))])
                                 k += 4
                             newinds1.extend(outeob1)
                             newinds2.extend(outeob2)
-                            if self.circle:
-                                CP = self.circl_place
-                                if CP == 'Midl':
-                                    crcl_cntr = IL2P(one, two, Vector((0,0,0)), Vector((0,0,-1)))
-                                elif CP == 'Up' and not fliped:
-                                    crcl_cntr = two - diry*self.circle_rad*2
-                                elif CP == 'Down' and not fliped:
-                                    crcl_cntr = one + diry*self.circle_rad*2
-                                elif CP == 'Up' and fliped:
-                                    crcl_cntr = one + diry*self.circle_rad*2
-                                elif CP == 'Down' and fliped:
-                                    crcl_cntr = two - diry*self.circle_rad*2
-                                # forgot howto 'else' in line iteration?
-                                outeob1 = [ [lenvep+k+i,lenvep+k+i+1] for i in range(0,11) ]
-                                outeob1.append([lenvep+k,lenvep+k+11])
-                                outeob2 = [ [lenvep+k+i,lenvep+k+i+1] for i in range(12,23) ]
-                                outeob2.append([lenvep+k+12,lenvep+k+23])
-                                newinds1.extend(outeob1+outeob2)
-                                newinds2.extend(outeob1+outeob2)
-                                mat_rot_cir = n.rotation_difference(Vector((0,0,1))).to_matrix().to_4x4()
-                                circle_to_add_1 = [vecir*mat_rot_cir+crcl_cntr+ \
-                                        dirx_*self.circle_rad for vecir in circle ]
-                                circle_to_add_2 = [vecir*mat_rot_cir+crcl_cntr- \
-                                        dirx_*self.circle_rad for vecir in circle ]
-                                vupperob.extend(circle_to_add_1+circle_to_add_2)
-                                vlowerob.extend(circle_to_add_1+circle_to_add_2)
-                                k += 24
-                        elif cop < 0.001 and inside and shortedge <= thick*threshold:
-                            vupperob.extend([one,two])
-                            vlowerob.extend([one,two])
-                            newinds1.append([lenvep+k,lenvep+k+1])
-                            newinds2.append([lenvep+k,lenvep+k+1])
-                            k += 2
                     del tree
                     for e in deledges1:
                         if e in newinds1:
@@ -390,7 +313,6 @@ class SvWafelNode(bpy.types.Node, SverchCustomTreeNode):
                         vlower.append(vlowerob)
                 vupper = Vector_degenerate(vupper)
                 vlower = Vector_degenerate(vlower)
-                centers = Vector_degenerate([centers])
                 
                 if 'vupper' in self.outputs and self.outputs['vupper'].links:
                     out = dataCorrect(vupper)
@@ -401,8 +323,6 @@ class SvWafelNode(bpy.types.Node, SverchCustomTreeNode):
                     SvSetSocketAnyType(self, 'vlower', vlower)
                 if 'outelo' in self.outputs and self.outputs['outelo'].links:
                     SvSetSocketAnyType(self, 'outelo', outelo)
-                if 'centers' in self.outputs and self.outputs['centers'].links:
-                    SvSetSocketAnyType(self, 'centers', centers)
                 print(self.name, 'is finishing')
         
 
@@ -420,8 +340,4 @@ def unregister():
 
 if __name__ == '__main__':
     register()
-
-
-
-
 
