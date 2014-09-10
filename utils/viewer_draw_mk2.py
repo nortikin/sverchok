@@ -206,7 +206,6 @@ def draw_callback_view(n_id, cached_view, options):
     ''' polygons '''
 
     vectorlight = options['light_direction']
-    glShadeModel(GL_SMOOTH)
     if data_polygons and data_vector:
 
         glLineWidth(1.0)
