@@ -21,4 +21,4 @@ Examples
 --------
 
 .. image:: https://cloud.githubusercontent.com/assets/5990821/4200340/20740696-3810-11e4-8e2d-8397e801b644.png
-  :alt: ListSummaDemo2.PNG
+  :alt: ListSummaDemo1.PNG
