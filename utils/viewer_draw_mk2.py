@@ -82,11 +82,13 @@ def callback_disable(n_id):
 def draw_callback_view(n_id, cached_view, options):
     context = bpy.context
     from bgl import (
-        glEnable, glDisable, glColor3f, glVertex3f, glColor4f, glPointSize,
-        glLineWidth, glBegin, glEnd, glLineStipple, glPolygonStipple, glHint,
+        glEnable, glDisable, glBegin, glEnd,
+        glColor3f, glVertex3f, glColor4f, glPointSize, glLineWidth,
+        glLineStipple, glPolygonStipple, glHint, glShadeModel,
         GL_POINTS, GL_LINE_STRIP, GL_LINES, GL_LINE, GL_LINE_LOOP, GL_LINE_STIPPLE,
         GL_POLYGON, GL_POLYGON_STIPPLE, GL_TRIANGLES, GL_QUADS, GL_POINT_SIZE,
-        GL_POINT_SMOOTH, GL_POINT_SMOOTH_HINT, GL_NICEST, GL_FASTEST)
+        GL_POINT_SMOOTH, GL_POINT_SMOOTH_HINT, GL_NICEST, GL_FASTEST,
+        GL_FLAT, GL_SMOOTH)
 
     sl1 = cached_view[n_id + 'v']
     sl2 = cached_view[n_id + 'ep']
@@ -310,15 +312,15 @@ def draw_callback_view(n_id, cached_view, options):
         glPointSize(vsize)
         glColor3f(*vertex_colors)
 
+        glBegin(GL_POINTS)
         for i, matrix in enumerate(data_matrix):
-            glBegin(GL_POINTS)
             k = i
             if i > verlen:
                 k = verlen
             for vert in data_vector[k]:
                 vec_corrected = data_matrix[i]*vert
                 glVertex3f(*vec_corrected)
-            glEnd()
+        glEnd()
 
     #######
     # matrix
