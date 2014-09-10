@@ -167,7 +167,8 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
             if edgepol_links:
                 if isinstance(edgepol_links[0].from_socket, StringsSocket):
                     prope = inputs['edg_pol'].sv_get()
-                    cache_viewer_baker[poledg_ref] = dataCorrect(prope)
+                    if prope:
+                        cache_viewer_baker[poledg_ref] = dataCorrect(prope)
 
             if matrix_links:
                 if isinstance(matrix_links[0].from_socket, MatrixSocket):
