@@ -201,9 +201,7 @@ def draw_callback_view(n_id, cached_view, options):
     if (data_vector, data_polygons, data_matrix, data_edges) == (0, 0, 0, 0):
         callback_disable(n_id)
 
-    coloa = colo[0]
-    colob = colo[1]
-    coloc = colo[2]
+    coloa, colob, coloc = colo[:]
 
     ''' polygons '''
 
