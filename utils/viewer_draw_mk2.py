@@ -318,9 +318,9 @@ def draw_callback_view(n_id, cached_view, options):
     ''' vertices '''
 
     glEnable(GL_POINT_SIZE)
-    glEnable(GL_POINT_SMOOTH)
-    #glHint(GL_POINT_SMOOTH_HINT, GL_NICEST)
-    glHint(GL_POINT_SMOOTH_HINT, GL_FASTEST)
+    # glEnable(GL_POINT_SMOOTH)
+    # glHint(GL_POINT_SMOOTH_HINT, GL_NICEST)
+    # glHint(GL_POINT_SMOOTH_HINT, GL_FASTEST)
 
     vsize = options['vertex_size']
 
