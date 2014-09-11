@@ -1,2 +1,2 @@
-Remouve Doubles
+Remove Doubles
 ===============
