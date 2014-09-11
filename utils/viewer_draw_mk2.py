@@ -17,6 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import math
+from math import pi
 
 import bpy
 import mathutils
@@ -238,17 +239,13 @@ def draw_callback_view(n_id, cached_view, options):
                             normal_no = normal(dvk[pol[0]], dvk[pol[1]], dvk[pol[2]])
                         else:
                             normal_no = normal(dvk[pol[0]], dvk[pol[1]], dvk[pol[2]], dvk[pol[3]])
-                        normal_no = (normal_no.angle(vectorlight, 0)) / math.pi
+                        normal_no = (normal_no.angle(vectorlight, 0)) / pi
 
                         r = (normal_no * coloa) - 0.1
                         g = (normal_no * colob) - 0.1
                         b = (normal_no * coloc) - 0.1
                         face_color = (r+0.2, g+0.2, b+0.2)
                     else:
-                        #r = ((j/oblen) + coloa) / 2.5
-                        #g = ((j/oblen) + colob) / 2.5
-                        #b = ((j/oblen) + coloc) / 2.5
-                        #face_color = (r+0.2, g+0.2, b+0.2)
                         face_color = colo[:]
 
                     glColor3f(*face_color)
@@ -273,6 +270,7 @@ def draw_callback_view(n_id, cached_view, options):
                     glEnd()
 
                 if show_edges:
+                    glEnable(edgeholy)
                     glLineWidth(edge_width)
                     glBegin(GL_LINE_LOOP)
                     glColor3f(*edge_colors)
@@ -280,6 +278,7 @@ def draw_callback_view(n_id, cached_view, options):
                         vec_corrected = data_matrix[i]*data_vector[k][point]
                         glVertex3f(*vec_corrected)
                     glEnd()
+                    glDisable(edgeholy)
 
         glLineWidth(1.0)
         glDisable(polyholy)
