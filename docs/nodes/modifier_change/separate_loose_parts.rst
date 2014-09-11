@@ -1,7 +1,5 @@
-Separate Loose
-==============
-
-*aka: Separate Loose Parts*
+Separate Loose Parts
+====================
 
 Functionality
 -------------
