@@ -412,7 +412,7 @@ class SvBoxRoundedNode(bpy.types.Node, SverchCustomTreeNode):
         if not self.inputs['vector_size'].links:
             return
 
-        self.proces()
+        self.process()
 
     def process(self):
 
