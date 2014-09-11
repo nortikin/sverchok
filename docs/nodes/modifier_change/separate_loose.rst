@@ -1,10 +1,12 @@
-Separate Loose Parts
-====================
+Separate Loose
+==============
+
+*aka: Separate Loose Parts*
 
 Functionality
 -------------
 
-Split a mesh into unconnected parts in a pure topologoical operation.
+Split a mesh into unconnected parts in a pure topological operation.
 
 Input & Output
 --------------
@@ -31,4 +33,4 @@ Notes
 -------
 
 Note that it doesn't take double vertices into account.
-There is not gurantee about the order of the outputs
+There is no guarantee about the order of the outputs
