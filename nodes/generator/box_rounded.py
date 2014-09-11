@@ -173,13 +173,13 @@ def round_cube(
             if rows < dxyz[yp] + 2:
                 svitc.extend([[] for i in range(dxyz[yp] + 2 - rows)])
             vert[zp] = (half_chord + exyz[zp]) * dir[zp]
-            print(dssxyz, half_chord, exyz, dir)
+            # print(dssxyz, half_chord, exyz, dir)
             for j in range(dxyz[yp] + 2):
                 vert[yp] = (j * dssxyz[yp] - half_chord - exyz[yp]) * dir[yp]
                 for i in range(dxyz[xp] + 2):
                     vert[xp] = (i * dssxyz[xp] - half_chord - exyz[xp]) * dir[xp]
                     if (side == 5) or ((i < dxyz[xp] + 1 and j < dxyz[yp] + 1) and (side < 4 or (i and j))):
-                        print(side, vert)
+                        # print(side, vert)
                         svitc[j].append(len(verts))
                         verts.append(tuple(vert))
     else:
@@ -442,7 +442,7 @@ class SvBoxRoundedNode(bpy.types.Node, SverchCustomTreeNode):
                 'div_type': div_types[i],
                 'odd_axis_align': axis_aligns[i]
                 })
-            print(multi_dict[i])
+            # print(multi_dict[i])
 
         out = list(zip(*[round_cube(**kwargs) for kwargs in multi_dict]))
 
