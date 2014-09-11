@@ -86,7 +86,7 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
         update=updateNode)
 
     edge_width = IntProperty(
-        min=1.0, max=10, default=2, step=1, name='edge_width',
+        min=1, max=10, default=2, step=1, name='edge_width',
         update=updateNode)
 
     # misc options
