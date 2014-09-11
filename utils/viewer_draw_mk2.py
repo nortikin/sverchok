@@ -34,8 +34,8 @@ from bgl import (
     glLineStipple, glPolygonStipple, glHint, glShadeModel,
     GL_POINTS, GL_LINE_STRIP, GL_LINES, GL_LINE, GL_LINE_LOOP, GL_LINE_STIPPLE,
     GL_POLYGON, GL_POLYGON_STIPPLE, GL_TRIANGLES, GL_QUADS, GL_POINT_SIZE,
-    GL_POINT_SMOOTH, GL_POINT_SMOOTH_HINT, GL_NICEST, GL_FASTEST,
-    GL_FLAT, GL_SMOOTH)
+    GL_POINT_SMOOTH, GL_POINT_SMOOTH_HINT, GL_LINE_SMOOTH_HINT,
+    GL_NICEST, GL_FASTEST, GL_FLAT, GL_SMOOTH)
 
 # ------------------------------------------------------------------------ #
 # parts taken from  "Math Vis (Console)" addon, author Campbell Barton     #
@@ -214,7 +214,7 @@ def draw_callback_view(n_id, cached_view, options):
     vectorlight = options['light_direction']
     if data_polygons and data_vector:
 
-        glLineWidth(1.0)
+        # glLineWidth(1.0)
         glEnable(polyholy)
         normal = mathutils.geometry.normal
         tessellate = mathutils.geometry.tessellate_polygon
@@ -223,6 +223,8 @@ def draw_callback_view(n_id, cached_view, options):
             k = i
             if i > verlen:
                 k = verlen
+
+            mesh_edges = set()
 
             oblen = len(data_polygons[k])
             for j, pol in enumerate(data_polygons[k]):
@@ -270,19 +272,27 @@ def draw_callback_view(n_id, cached_view, options):
                     glEnd()
 
                 if show_edges:
-                    glEnable(edgeholy)
-                    glLineWidth(edge_width)
-                    glBegin(GL_LINE_LOOP)
-                    glColor3f(*edge_colors)
-                    for point in pol:
-                        vec_corrected = data_matrix[i]*data_vector[k][point]
-                        glVertex3f(*vec_corrected)
-                    glEnd()
-                    glDisable(edgeholy)
+                    # collect raw edges, sort by index, use set to prevent dupes.
+                    er = pol + [pol[0]]
+                    kb = {tuple(sorted((e, er[i+1]))) for i, e in enumerate(er[:-1])}
+                    mesh_edges.update(kb)
 
-        glLineWidth(1.0)
+            if show_edges and mesh_edges:
+                # glHint(GL_LINE_SMOOTH_HINT, GL_NICEST)
+                glEnable(edgeholy)
+                glLineWidth(edge_width)
+                glColor3f(*edge_colors)
+                glBegin(GL_LINES)
+                for p1, p2 in mesh_edges:
+                    glVertex3f(*data_matrix[i]*data_vector[k][p1])
+                    glVertex3f(*data_matrix[i]*data_vector[k][p2])
+
+                glEnd()
+                glDisable(edgeholy)
+
         glDisable(polyholy)
 
+    # glLineWidth(1.0)
     ''' edges '''
 
     if data_edges and data_vector and show_edges:
