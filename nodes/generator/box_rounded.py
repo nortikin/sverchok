@@ -41,6 +41,8 @@ def round_cube(
         arcdiv=4, lindiv=0., size=(0., 0., 0.),
         div_type=0, odd_axis_align=0):
 
+    print(lindiv)
+
     odd_axis_align = bool(odd_axis_align)
     #   subdiv = CORNERS
     # subdiv bitmasks

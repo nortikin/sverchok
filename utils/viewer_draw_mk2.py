@@ -273,7 +273,7 @@ def draw_callback_view(n_id, cached_view, options):
 
                 if show_edges:
                     # collect raw edges, sort by index, use set to prevent dupes.
-                    er = pol + [pol[0]]
+                    er = list(pol) + [pol[0]]
                     kb = {tuple(sorted((e, er[i+1]))) for i, e in enumerate(er[:-1])}
                     mesh_edges.update(kb)
 
