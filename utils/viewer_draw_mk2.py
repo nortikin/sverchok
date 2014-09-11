@@ -22,6 +22,8 @@ from math import pi
 import bpy
 import mathutils
 from mathutils import Vector, Matrix
+from mathutils.geometry import normal
+from mathutils.geometry import tessellate_polygon as tessellate
 
 from data_structure import Vector_generate, Matrix_generate
 
@@ -216,8 +218,6 @@ def draw_callback_view(n_id, cached_view, options):
 
         # glLineWidth(1.0)
         glEnable(polyholy)
-        normal = mathutils.geometry.normal
-        tessellate = mathutils.geometry.tessellate_polygon
 
         for i, matrix in enumerate(data_matrix):
             k = i
