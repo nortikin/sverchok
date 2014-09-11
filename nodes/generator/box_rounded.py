@@ -42,15 +42,15 @@ def round_cube(
         div_type=0, odd_axis_align=0):
 
     odd_axis_align = bool(odd_axis_align)
-
-    CORNERS, EDGES, ALL = 0, 1, 2
-    subdiv = CORNERS
-
+    #   subdiv = CORNERS
     # subdiv bitmasks
-    if not (0 <= div_type <= 3):
-        div_type = 0
+    CORNERS, EDGES, ALL = 0, 1, 2
+    try:
+        subdiv = ('CORNERS', 'EDGES', 'ALL').index(div_type)
+    except ValueError:
+        subdiv = CORNERS  # fallback
 
-    radius = max(radius, 0)
+    radius = max(radius, 0.)
     if not radius:
         arcdiv = 1
 
@@ -87,11 +87,11 @@ def round_cube(
         sagitta = radius - radius * sqrt(id2 * id2 / 3. - id2 + 1.)
 
     # Extrusion per axis
-    exyz = [0. if s < 2. * (radius-sagitta) else (s - 2. * (radius-sagitta)) * 0.5 for s in size]
+    exyz = [0. if s < 2. * (radius - sagitta) else (s - 2. * (radius - sagitta)) * 0.5 for s in size]
     ex, ey, ez = exyz
 
-    dxyz = [0, 0, 0]       # extrusion divisions per axis
-    dssxyz = [0., 0., 0.]  # extrusion division step sizes per axis
+    dxyz = [0, 0, 0]      # extrusion divisions per axis
+    dssxyz = [0., 0., 0.] # extrusion division step sizes per axis
 
     for i in range(3):
         sc = 2. * (exyz[i] + half_chord)
@@ -102,8 +102,25 @@ def round_cube(
         else:
             dssxyz[i] = sc
 
+    # if info_only:
+    #     ec = sum(1 for n in exyz if n)
+    #     if subdiv:
+    #         fxyz = [d + (e and axis_aligned) for d, e in zip(dxyz, exyz)]
+    #         dvc = arcdiv * 4 * sum(fxyz)
+    #         if subdiv == ALL:
+    #             dvc += sum(p1 * p2 for p1, p2 in permutations(fxyz, 2))
+    #         elif subdiv == EDGES:
+    #             #      (0, 0, 2, 4) * sum(dxyz) + (0, 0, 2, 6)
+    #             dvc += ec * ec // 2 * sum(dxyz) + ec * (ec - 1) if axis_aligned else 0
+    #     else:
+    #         dvc = (arcdiv * 4) * ec + ec * (ec - 1) if axis_aligned else 0
+    #     vert_count = int(6 * arcdiv*arcdiv + (0 if odd_aligned else 2) + dvc)
+    #     if not radius and not max(size) > 0:
+    #         vert_count = 1
+    #     return arcdiv, lindiv, vert_count
+
     if not radius and not max(size) > 0:
-        return [(0, 0, 0)], []
+        return [(0,0,0)], []
 
     # uv lookup table
     uvlt = []
@@ -111,7 +128,7 @@ def round_cube(
     for j in range(1, steps + 1):
         v2 = v*v
         uvlt.append((v, v2, radius * sqrt(18. - 6. * v2) / 6.))
-        v = vi + j * step_size  # v += step_size # instead of accumulating errors
+        v = vi + j * step_size # v += step_size # instead of accumulating errors
         # clear precision errors / signs at axis
         if abs(v) < 1e-10:
             v = 0.0
@@ -120,8 +137,8 @@ def round_cube(
     #         xp yp zp  xd  yd  zd
     sides = ((0, 2, 1, (-1,  1,  1)),   # Y+ Front
              (1, 2, 0, (-1, -1,  1)),   # X- Left
-             (0, 2, 1, (1, -1,  1)),   # Y- Back
-             (1, 2, 0, (1,  1,  1)),   # X+ Right
+             (0, 2, 1, ( 1, -1,  1)),   # Y- Back
+             (1, 2, 0, ( 1,  1,  1)),   # X+ Right
              (0, 1, 2, (-1,  1, -1)),   # Z- Bottom
              (0, 1, 2, (-1, -1,  1)))   # Z+ Top
 
@@ -136,7 +153,7 @@ def round_cube(
         zer = axis_aligned + (dxyz[2] if subdiv else 0)
         for side in range(4):
             svit[side].extend([[] for i in range(zer)])
-    ryi = rzi = 0  # row vertex indices
+    ryi = rzi = 0 # row vertex indices
     # Extend rows for odd_aligned
     if odd_aligned:
         for side in range(4):
@@ -148,7 +165,7 @@ def round_cube(
     vert = [0., 0., 0.]
     verts = []
 
-    if arcdiv == 1 and not odd_aligned and subdiv == 2:
+    if arcdiv == 1 and not odd_aligned and subdiv == ALL:
         # Special case: 3D Grid Cuboid
         for side, (xp, yp, zp, dir) in enumerate(sides):
             svitc = svit[side]
@@ -156,13 +173,13 @@ def round_cube(
             if rows < dxyz[yp] + 2:
                 svitc.extend([[] for i in range(dxyz[yp] + 2 - rows)])
             vert[zp] = (half_chord + exyz[zp]) * dir[zp]
-
+            print(dssxyz, half_chord, exyz, dir)
             for j in range(dxyz[yp] + 2):
                 vert[yp] = (j * dssxyz[yp] - half_chord - exyz[yp]) * dir[yp]
                 for i in range(dxyz[xp] + 2):
                     vert[xp] = (i * dssxyz[xp] - half_chord - exyz[xp]) * dir[xp]
-                    if (side == 5) or ((i < dxyz[xp]+1 and j < dxyz[yp]+1) and (
-                            side < 4 or (i and j))):
+                    if (side == 5) or ((i < dxyz[xp] + 1 and j < dxyz[yp] + 1) and (side < 4 or (i and j))):
+                        print(side, vert)
                         svitc[j].append(len(verts))
                         verts.append(tuple(vert))
     else:
@@ -194,15 +211,14 @@ def round_cube(
                     exr = exyz[xp]
                     eyr = exyz[yp]
 
-                    if (side == 5) or (i < arcdiv and j < arcdiv and (
-                            side < 4 or (i and j or odd_aligned))):
+                    if (side == 5) or (i < arcdiv and j < arcdiv and (side < 4 or (i and j or odd_aligned))):
                         vert[0] = (vert[0] + copysign(ex, vert[0])) * dir[0]
                         vert[1] = (vert[1] + copysign(ey, vert[1])) * dir[1]
                         vert[2] = (vert[2] + copysign(ez, vert[2])) * dir[2]
                         rv = tuple(vert)
 
                         if exr and i == hemi:
-                            rx = vert[xp]  # save xp
+                            rx = vert[xp] # save xp
                             vert[xp] = rxi = (-exr - half_chord) * dir[xp]
                             if axis_aligned:
                                 svitc[ri].append(len(verts))
@@ -236,7 +252,7 @@ def round_cube(
                                                 svitc[hemi + axis_aligned + l].append(len(verts))
                                                 verts.append(tuple(vert))
                                             vert[yp] = ry
-                            vert[xp] = rx  # restore
+                            vert[xp] = rx # restore
 
                         if eyr and j == hemi:
                             vert[yp] = (-eyr - half_chord) * dir[yp]
@@ -301,7 +317,7 @@ def round_cube(
     for side, rows in enumerate(svit):
         xp, yp = sides[side][:2]
         oa4 = odd_aligned and side == 4
-        if oa4:  # special case
+        if oa4: # special case
             hemi += 1
         for j, row in enumerate(rows[:-1]):
             tri = odd_aligned and (oa4 and not j or rows[j+1][-1] < 0)
@@ -323,18 +339,9 @@ def round_cube(
                 # subdiv = EDGES (not ALL)
                 elif subdiv and len(rows[j + 1]) < len(row) and (i >= hemi):
                     if (i == hemi):
-                        faces.append((
-                            vi,
-                            row[i+1+dxyz[xp]],
-                            rows[j+1+dxyz[yp]][i+1+dxyz[xp]],
-                            rows[j+1+dxyz[yp]][i]))
-
+                        faces.append((vi, row[i+1+dxyz[xp]], rows[j+1+dxyz[yp]][i+1+dxyz[xp]], rows[j+1+dxyz[yp]][i]))
                     elif i > hemi + dxyz[xp]:
-                        faces.append((
-                            vi,
-                            row[i+1],
-                            rows[j+1][i+1-dxyz[xp]],
-                            rows[j+1][i-dxyz[xp]]))
+                        faces.append((vi, row[i+1], rows[j+1][i+1-dxyz[xp]], rows[j+1][i-dxyz[xp]]))
                 elif subdiv and len(rows[j + 1]) > len(row) and (i >= hemi):
                     if (i > hemi):
                         faces.append((vi, row[i+1], rows[j+1][i+1+dxyz[xp]], rows[j+1][i+dxyz[xp]]))
@@ -369,11 +376,11 @@ class SvBoxRoundedNode(bpy.types.Node, SverchCustomTreeNode):
 
     div_type = IntProperty(
         name='div_type', description='CORNERS, EDGES, ALL',
-        min=0, max=3, default=0, update=updateNode)
+        min=0, max=2, default=0, update=updateNode)
 
     odd_axis_align = IntProperty(
         name='odd_axis_align', description='uhh',
-        default=0, update=updateNode)
+        default=0, min=0, max=1, update=updateNode)
 
     def init(self, context):
         new = self.inputs.new
@@ -435,6 +442,7 @@ class SvBoxRoundedNode(bpy.types.Node, SverchCustomTreeNode):
                 'div_type': div_types[i],
                 'odd_axis_align': axis_aligns[i]
                 })
+            print(multi_dict[i])
 
         out = list(zip(*[round_cube(**kwargs) for kwargs in multi_dict]))
 
