@@ -152,6 +152,54 @@ def callback_disable(n_id):
     tag_redraw_all_view3d()
 
 
+def display_faces(options, pol, data_vector, data_matrix, k, i):
+
+    colo = options['face_colors']
+    shade = options['shading']
+    forced_tessellation = options['forced_tessellation']
+    vectorlight = options['light_direction']
+
+    num_verts = len(pol)
+
+    if shade:
+        dvk = data_vector[k]
+        if num_verts <= 4:
+            normal_no = normal(
+                dvk[pol[0]], dvk[pol[1]], dvk[pol[2]])
+        else:
+            normal_no = normal(
+                dvk[pol[0]], dvk[pol[1]], dvk[pol[2]], dvk[pol[3]])
+
+        normal_no = (normal_no.angle(vectorlight, 0)) / pi
+
+        r = (normal_no * colo[0]) - 0.1
+        g = (normal_no * colo[1]) - 0.1
+        b = (normal_no * colo[2]) - 0.1
+        face_color = (r+0.2, g+0.2, b+0.2)
+    else:
+        face_color = colo[:]
+
+    glColor3f(*face_color)
+
+    if (not forced_tessellation) or (num_verts in {3, 4}):
+        glBegin(GL_POLYGON)
+        for point in pol:
+            vec_corrected = data_matrix[i]*data_vector[k][point]
+            glVertex3f(*vec_corrected)
+
+    else:
+        ''' ngons, we tessellate '''
+        glBegin(GL_TRIANGLES)
+        v = [data_vector[k][i] for i in pol]
+        tess_poly = tessellate([v])
+        for a, b, c in tess_poly:
+            glVertex3f(*(data_matrix[i]*v[a]))
+            glVertex3f(*(data_matrix[i]*v[b]))
+            glVertex3f(*(data_matrix[i]*v[c]))
+
+    glEnd()
+
+
 def draw_callback_view(n_id, cached_view, options):
     context = bpy.context
 
@@ -205,21 +253,15 @@ def draw_callback_view(n_id, cached_view, options):
 
     coloa, colob, coloc = colo[:]
 
-    ''' pre process verts and apply matrices if needed '''
-
-    #
-    #
-    #
-
     ''' polygons '''
 
     vectorlight = options['light_direction']
     if data_polygons and data_vector:
 
-        # glLineWidth(1.0)
         glEnable(polyholy)
 
         for i, matrix in enumerate(data_matrix):
+
             k = i
             if i > verlen:
                 k = verlen
@@ -234,45 +276,10 @@ def draw_callback_view(n_id, cached_view, options):
                     j = len(data_edges[k])-1
 
                 if show_faces:
+                    display_faces(options, pol, data_vector, data_matrix, k, i)
 
-                    if shade:
-                        dvk = data_vector[k]
-                        if len(pol) <= 4:
-                            normal_no = normal(dvk[pol[0]], dvk[pol[1]], dvk[pol[2]])
-                        else:
-                            normal_no = normal(dvk[pol[0]], dvk[pol[1]], dvk[pol[2]], dvk[pol[3]])
-                        normal_no = (normal_no.angle(vectorlight, 0)) / pi
-
-                        r = (normal_no * coloa) - 0.1
-                        g = (normal_no * colob) - 0.1
-                        b = (normal_no * coloc) - 0.1
-                        face_color = (r+0.2, g+0.2, b+0.2)
-                    else:
-                        face_color = colo[:]
-
-                    glColor3f(*face_color)
-                    num_verts = len(pol)
-
-                    if (not forced_tessellation) or (num_verts in {3, 4}):
-                        glBegin(GL_POLYGON)
-                        for point in pol:
-                            vec_corrected = data_matrix[i]*data_vector[k][point]
-                            glVertex3f(*vec_corrected)
-
-                    else:
-                        ''' ngons, we tessellate '''
-                        glBegin(GL_TRIANGLES)
-                        v = [data_vector[k][i] for i in pol]
-                        tess_poly = tessellate([v])
-                        for a, b, c in tess_poly:
-                            glVertex3f(*(data_matrix[i]*v[a]))
-                            glVertex3f(*(data_matrix[i]*v[b]))
-                            glVertex3f(*(data_matrix[i]*v[c]))
-
-                    glEnd()
-
+                # collect raw edges, sort by index, use set to prevent dupes.
                 if show_edges:
-                    # collect raw edges, sort by index, use set to prevent dupes.
                     er = list(pol) + [pol[0]]
                     kb = {tuple(sorted((e, er[i+1]))) for i, e in enumerate(er[:-1])}
                     mesh_edges.update(kb)
@@ -292,7 +299,6 @@ def draw_callback_view(n_id, cached_view, options):
 
         glDisable(polyholy)
 
-    # glLineWidth(1.0)
     ''' edges '''
 
     if data_edges and data_vector and show_edges:
@@ -301,12 +307,16 @@ def draw_callback_view(n_id, cached_view, options):
         glEnable(edgeholy)
 
         for i, matrix in enumerate(data_matrix):
+
             k = i
             if i > verlen:   # filter to share objects
                 k = verlen
+
             for line in data_edges[k]:
+
                 if max(line) > verlen_every[k]:
                     line = data_edges[k][-1]
+
                 glBegin(edgeline)
                 for point in line:
                     vec_corrected = data_matrix[i]*data_vector[k][point]
