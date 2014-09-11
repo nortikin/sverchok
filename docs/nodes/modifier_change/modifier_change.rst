@@ -8,7 +8,7 @@ Modifier Change
    polygon_boom
    polygons_to_edges
    mesh_join
-   remouve_doubles
+   remove_doubles
    separate_loose_parts
    mask_vertices
    fill_holes
