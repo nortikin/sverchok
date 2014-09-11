@@ -6,7 +6,7 @@ Separate Loose
 Functionality
 -------------
 
-Split a mesh into unconnected parts in a pure topologoical operation.
+Split a mesh into unconnected parts in a pure topological operation.
 
 Input & Output
 --------------
