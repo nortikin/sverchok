@@ -40,6 +40,7 @@ nodes_dict = {
 
     'generator': [
         'box',
+        'box_rounded',
         'circle',
         'cylinder',
         'hilbert_image',

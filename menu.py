@@ -107,6 +107,7 @@ def make_categories():
         ["ImageNode",           "Image"],
         ["RandomVectorNode",    "Random Vector"],
         ["SvFormulaShapeNode",  "Formula shape"],
+        ["SvProfileNode",       "ProfileParametric"],
         ["SvScriptNode",        "Scripted Node"]]
 
     node_cats["Vector"] = [
@@ -175,13 +176,13 @@ def make_categories():
         # need to be completely reviewed
         ["ListDecomposeNode",   "List Decompose"],
         # should be removed...
+        ["SvBoxRoundedNode",    "Rounded Box"],
         ["SvReRouteNode",       "Reroute Point"],
         ["SvVolumeNode",        "Volume"],
         ["SvSwitchNode",        "Switch"],
         ["SvNeuroElman1LNode",  "Neuro"],
         ["SvInstancerNode",     "mesh instancer"],
         ["SvLogicNode",         "Logic"],
-        ["SvProfileNode",       "ProfileParametric"],
         ["SvRotationNode",      "Rotation"],
         ["SvScaleNode",         "Scale"],
         ["SvMatrixEulerNode",   "Matrix Euler"],

@@ -24,7 +24,7 @@ import bmesh
 from mathutils import Vector
 from bpy.props import IntProperty, FloatProperty
 
-from node_tree import SverchCustomTreeNode
+from node_tree import SverchCustomTreeNode, VerticesSocket
 from data_structure import updateNode, SvSetSocketAnyType, SvGetSocketAnyType
 
 
@@ -373,12 +373,12 @@ class SvBoxRoundedNode(bpy.types.Node, SverchCustomTreeNode):
         default=4, update=updateNode)
 
     lindiv = FloatProperty(
-        name='lindiv', description='rate of linear division per surface'
+        name='lindiv', description='rate of linear division per surface',
         default=0., update=updateNode)
 
-    _size = VectorProperty(
-        name='_size', description='no idea',
-        default=(0., 0., 0.), size=3, update=updateNode)
+    # vector_size = FloatVectorProperty(
+    #     name='vector_size', description='no idea',
+    #     default=(0., 0., 0.), size=3, update=updateNode)
 
     div_type = IntProperty(
         name='div_type', description='CORNERS, EDGES, ALL',
@@ -393,7 +393,7 @@ class SvBoxRoundedNode(bpy.types.Node, SverchCustomTreeNode):
         new('StringsSocket', "radius", "radius").prop_name = 'radius'
         new('StringsSocket', "arcdiv", "arcdiv").prop_name = 'arcdiv'
         new('StringsSocket', "lindiv", "lindiv").prop_name = 'lindiv'
-        new('VerticesSocket', "_size", "_size")
+        new('VerticesSocket', "vector_size", "vector_size")
         new('StringsSocket', "div_type", "div_type").prop_name = 'div_type'
         new('StringsSocket', "odd_axis_align", "odd_axis_align").prop_name = 'odd_axis_align'
 
@@ -409,7 +409,7 @@ class SvBoxRoundedNode(bpy.types.Node, SverchCustomTreeNode):
             ''' ui not fully drawn yet '''
             return
 
-        if not self.inputs['_size'].links:
+        if not self.inputs['vector_size'].links:
             return
 
         self.proces()
@@ -419,7 +419,7 @@ class SvBoxRoundedNode(bpy.types.Node, SverchCustomTreeNode):
         inputs = self.inputs
         outputs = self.outputs
 
-        sizes = SvGetSocketAnyType(self, inputs['_size'])[0][0]
+        sizes = SvGetSocketAnyType(self, inputs['vector_size'])[0][0]
         if not sizes:
             return
 
