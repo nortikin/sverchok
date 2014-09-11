@@ -372,7 +372,7 @@ class SvBoxRoundedNode(bpy.types.Node, SverchCustomTreeNode):
 
     lindiv = FloatProperty(
         name='lindiv', description='rate of linear division per surface',
-        default=0., update=updateNode)
+        default=0., min = 0.0, step=100, precision=1, update=updateNode)
 
     div_type = IntProperty(
         name='div_type', description='CORNERS, EDGES, ALL',

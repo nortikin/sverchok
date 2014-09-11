@@ -17,7 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-from bpy.props import BoolProperty, StringProperty, FloatProperty, FloatVectorProperty
+from bpy.props import BoolProperty, StringProperty, FloatProperty, FloatVectorProperty, IntProperty
 from mathutils import Matrix
 
 from node_tree import (SverchCustomTreeNode, SvColors,
@@ -85,8 +85,8 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
         min=0.0, max=10.0, default=3.2, step=0.2, name='vertex_size',
         update=updateNode)
 
-    edge_width = FloatProperty(
-        min=0.0, max=10.0, default=1.50, step=0.2, name='edge_width',
+    edge_width = IntProperty(
+        min=1.0, max=10, default=2, step=1, name='edge_width',
         update=updateNode)
 
     # misc options
