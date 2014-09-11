@@ -25,7 +25,9 @@ from mathutils import Vector
 from bpy.props import IntProperty, FloatProperty
 
 from node_tree import SverchCustomTreeNode, VerticesSocket
-from data_structure import updateNode, SvSetSocketAnyType, SvGetSocketAnyType
+from data_structure import (
+    updateNode, fullList,
+    SvSetSocketAnyType, SvGetSocketAnyType)
 
 
 #
@@ -37,7 +39,12 @@ from data_structure import updateNode, SvSetSocketAnyType, SvGetSocketAnyType
 def round_cube(
         radius=1.0,
         arcdiv=4, lindiv=0., size=(0., 0., 0.),
-        div_type=0, odd_axis_align=False):
+        div_type=0, odd_axis_align=0):
+
+    odd_axis_align = bool(odd_axis_align)
+
+    CORNERS, EDGES, ALL = 0, 1, 2
+    subdiv = CORNERS
 
     # subdiv bitmasks
     if not (0 <= div_type <= 3):
@@ -55,7 +62,7 @@ def round_cube(
             lindiv = 1. / (pi / (arcdiv * 2.) * radius)
     lindiv = max(lindiv, 0.)
     if not lindiv:
-        subdiv = 0
+        subdiv = CORNERS
 
     odd = arcdiv % 2  # even = arcdiv % 2 ^ 1
     step_size = 2. / arcdiv
@@ -70,7 +77,7 @@ def round_cube(
     axis_aligned = not odd or odd_aligned
 
     if arcdiv == 1 and not odd_aligned and subdiv == EDGES:
-        subdiv = 0
+        subdiv = CORNERS
 
     half_chord = 0.  # ~ spherical cap base radius
     sagitta = 0.  # ~ spherical cap height
@@ -348,22 +355,6 @@ class SvBoxRoundedNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'RoundBox'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    # Divx = IntProperty(
-    #     name='Divx', description='divisions x',
-    #     default=1, min=1, update=updateNode)
-
-    # Divy = IntProperty(
-    #     name='Divy', description='divisions y',
-    #     default=1, min=1, update=updateNode)
-
-    # Divz = IntProperty(
-    #     name='Divz', description='divisions z',
-    #     default=1, min=1, update=updateNode)
-
-    # Size = FloatProperty(
-    #     name='Size', description='Size',
-    #     default=1.0, update=updateNode)
-
     radius = FloatProperty(
         name='radius', description='fillet radius',
         default=1.0, update=updateNode)
@@ -375,10 +366,6 @@ class SvBoxRoundedNode(bpy.types.Node, SverchCustomTreeNode):
     lindiv = FloatProperty(
         name='lindiv', description='rate of linear division per surface',
         default=0., update=updateNode)
-
-    # vector_size = FloatVectorProperty(
-    #     name='vector_size', description='no idea',
-    #     default=(0., 0., 0.), size=3, update=updateNode)
 
     div_type = IntProperty(
         name='div_type', description='CORNERS, EDGES, ALL',
@@ -419,15 +406,35 @@ class SvBoxRoundedNode(bpy.types.Node, SverchCustomTreeNode):
         inputs = self.inputs
         outputs = self.outputs
 
-        sizes = SvGetSocketAnyType(self, inputs['vector_size'])[0][0]
+        sizes = SvGetSocketAnyType(self, inputs['vector_size'])[0]
         if not sizes:
             return
 
-        radii = inputs['radius'].sv_get()[0][0]
-        arc_divs = inputs['arcdiv'].sv_get()[0][0]
-        lin_divs = inputs['lindiv'].sv_get()[0][0]
-        div_types = inputs['div_type'].sv_get()[0][0]
-        axis_aligns = inputs['odd_axis_align'].sv_get()[0][0]
+        # sizes determines FullLength
+        num_boxes = len(sizes)
+
+        radii = inputs['radius'].sv_get()[0]
+        arc_divs = inputs['arcdiv'].sv_get()[0]
+        lin_divs = inputs['lindiv'].sv_get()[0]
+        div_types = inputs['div_type'].sv_get()[0]
+        axis_aligns = inputs['odd_axis_align'].sv_get()[0]
+
+        fullList(radii, num_boxes)
+        fullList(arc_divs, num_boxes)
+        fullList(lin_divs, num_boxes)
+        fullList(div_types, num_boxes)
+        fullList(axis_aligns, num_boxes)
+
+        multi_dict = []
+        for i, args in enumerate(sizes):
+            multi_dict.append({
+                'radius': radii[i],
+                'arcdiv': arc_divs[i],
+                'lindiv': lin_divs[i],
+                'size': args,
+                'div_type': div_types[i],
+                'odd_axis_align': axis_aligns[i]
+                })
 
         out = list(zip(*[round_cube(**kwargs) for kwargs in multi_dict]))
 
