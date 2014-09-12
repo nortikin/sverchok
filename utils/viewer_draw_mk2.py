@@ -329,7 +329,7 @@ def draw_geometry(n_id, options, data_vector, data_polygons, data_matrix, data_e
 
 
 def draw_callback_view(n_id, cached_view, options):
-    context = bpy.context
+    # context = bpy.context
 
     sl1 = cached_view[n_id + 'v']
     sl2 = cached_view[n_id + 'ep']
