@@ -152,7 +152,7 @@ def callback_disable(n_id):
     tag_redraw_all_view3d()
 
 
-def get_color_from_normal(dvk, pol, numverts, vectorlight, colo):
+def get_color_from_normal(dvk, pol, num_verts, vectorlight, colo):
     if num_verts <= 4:
         normal_no = normal(dvk[pol[0]], dvk[pol[1]], dvk[pol[2]])
     else:
@@ -177,7 +177,7 @@ def display_face(options, pol, data_vector, data_matrix, k, i):
     dvk = data_vector[k]
 
     if shade:
-        face_color = get_color_from_normal(dvk, pol, numverts, vectorlight, colo)
+        face_color = get_color_from_normal(dvk, pol, num_verts, vectorlight, colo)
     else:
         face_color = colo[:]
 
@@ -299,8 +299,8 @@ def draw_geometry(n_id, options, data_vector, data_polygons, data_matrix, data_e
     ''' vertices '''
 
     glEnable(GL_POINT_SIZE)
-    # glEnable(GL_POINT_SMOOTH)
-    # glHint(GL_POINT_SMOOTH_HINT, GL_NICEST)
+    glEnable(GL_POINT_SMOOTH)
+    glHint(GL_POINT_SMOOTH_HINT, GL_NICEST)
     # glHint(GL_POINT_SMOOTH_HINT, GL_FASTEST)
 
     vsize = options['vertex_size']
@@ -319,6 +319,7 @@ def draw_geometry(n_id, options, data_vector, data_polygons, data_matrix, data_e
         glEnd()
 
     glDisable(GL_POINT_SIZE)
+    glDisable(GL_POINT_SMOOTH)
 
     ''' matrix '''
 
