@@ -172,12 +172,12 @@ def display_face(options, pol, data_vector, data_matrix, k, i):
     colo = options['face_colors']
     shade = options['shading']
     forced_tessellation = options['forced_tessellation']
-    vectorlight = options['light_direction']
 
     num_verts = len(pol)
     dvk = data_vector[k]
 
     if shade:
+        vectorlight = options['light_direction']
         face_color = get_color_from_normal(dvk, pol, num_verts, vectorlight, colo)
     else:
         face_color = colo[:]
