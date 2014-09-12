@@ -108,6 +108,7 @@ class MatrixDraw(object):
             glEnd()
         glDisable(GL_LINE_STIPPLE)
 
+
 def tag_redraw_all_view3d():
     context = bpy.context
 
@@ -378,9 +379,9 @@ def draw_callback_view(n_id, cached_view, options):
     draw_geometry(n_id, options, data_vector, data_polygons, data_matrix, data_edges)
 
     # restore to system state
-    # 
+    #
     glLineWidth(1)
+
 
 def unregister():
     callback_disable_all()
-
