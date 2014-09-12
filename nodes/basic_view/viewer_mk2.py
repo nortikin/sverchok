@@ -102,29 +102,34 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
         self.use_custom_color = True
 
     def draw_buttons(self, context, layout):
-        row = layout.row(align=True)
-        if self.activate:
-            row.prop(self, "activate", icon='RESTRICT_VIEW_OFF', text="", toggle=True)
-        else:
-            row.prop(self, "activate", icon='RESTRICT_VIEW_ON', text="", toggle=True)
-        if self.transparant:
-            row.prop(self, "transparant", icon='WIRE', text="", toggle=True)
-        else:
-            row.prop(self, "transparant", icon='SOLID', text="", toggle=True)
-        if self.shading:
-            row.prop(self, "shading", icon='LAMP_SPOT', text="", toggle=True) #MATCAP_07
-        else:
-            row.prop(self, "shading", icon='BLANK1', text="", toggle=True) #MATCAP_01
+
+        view_icon = 'RESTRICT_VIEW_' + ('OFF' if self.activate else 'ON')
+        trans_icon = 'WIRE' if self.transparant else 'SOLID'
+        shade_icon = 'LAMP_SPOT' if self.shading else 'BLANK1'
 
         row = layout.row(align=True)
+        split = row.split()
+        r = split.column()
+        r.prop(self, "activate", text="Show", toggle=True, icon=view_icon)
+
+        r = split.column()
+        r.active = self.activate
+        row = r.row()
+        row.prop(self, "transparant", toggle=True, icon=trans_icon, icon_only=True, expand=True)
+        row.prop(self, "shading", toggle=True, icon=shade_icon, icon_only=True, expand=True)
+
+        row = layout.row(align=True)
+        row.active = self.activate
         row.prop(self, "display_verts", toggle=True, icon='VERTEXSEL', text='')
         row.prop(self, "vertex_colors", text="")
 
         row = layout.row(align=True)
+        row.active = self.activate
         row.prop(self, "display_edges", toggle=True, icon='EDGESEL', text='')
         row.prop(self, "edge_colors", text="")
 
         row = layout.row(align=True)
+        row.active = self.activate
         row.prop(self, "display_faces", toggle=True, icon='FACESEL', text='')
         row.prop(self, "face_colors", text="")
 
