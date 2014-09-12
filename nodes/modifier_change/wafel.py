@@ -215,6 +215,7 @@ class SvWafelNode(bpy.types.Node, SverchCustomTreeNode):
                 vec_ = Vector_generate(vec)
                 vecplan_ = Vector_generate(vecplan)
                 for centersver, vecp, edgp in zip(vecplan,vecplan_,edgplan):
+                    tubes_flag_bed_solution_i_know = False
                     newinds1 = edgp.copy()
                     newinds2 = edgp.copy()
                     vupperob = vecp.copy()
@@ -383,7 +384,7 @@ class SvWafelNode(bpy.types.Node, SverchCustomTreeNode):
                                 vupperob.extend(circle_to_add_1+circle_to_add_2)
                                 vlowerob.extend(circle_to_add_1+circle_to_add_2)
                                 k += 24
-                            if vec_tube:
+                            if vec_tube and not tubes_flag_bed_solution_i_know:
                                 for v in vec_tube:
                                     crcl_cntr = IL2P(v[0], v[1], l, n)
                                     if crcl_cntr:
@@ -399,6 +400,7 @@ class SvWafelNode(bpy.types.Node, SverchCustomTreeNode):
                                             vupperob.extend(circle_to_add)
                                             vlowerob.extend(circle_to_add)
                                             k += 24
+                                tubes_flag_bed_solution_i_know = True
                         elif cop < 0.001 and inside and shortedge <= thick*threshold:
                             vupperob.extend([one,two])
                             vlowerob.extend([one,two])
