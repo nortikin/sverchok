@@ -106,7 +106,7 @@ class MatrixDraw(object):
             glVertex3f(*bb[i])
             glVertex3f(*bb[i+1])
             glEnd()
-
+        glDisable(GL_LINE_STIPPLE)
 
 def tag_redraw_all_view3d():
     context = bpy.context
@@ -380,3 +380,4 @@ def draw_callback_view(n_id, cached_view, options):
 
 def unregister():
     callback_disable_all()
+
