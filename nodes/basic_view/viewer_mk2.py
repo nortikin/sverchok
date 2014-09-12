@@ -134,6 +134,8 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
         row.prop(self, "face_colors", text="")
 
     def draw_buttons_ext(self, context, layout):
+        self.draw_buttons(context, layout)
+
         col = layout.column(align=True)
         col.prop(self, 'vertex_size', text='vertex size')
         col.prop(self, 'edge_width', text='edge_width')
