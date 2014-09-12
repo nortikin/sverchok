@@ -379,7 +379,7 @@ def draw_callback_view(n_id, cached_view, options):
 
     # restore to system state
     # 
-    glLineWidth(2)
+    glLineWidth(1)
 
 def unregister():
     callback_disable_all()
