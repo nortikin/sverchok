@@ -186,7 +186,8 @@ def display_face(options, pol, data_vector, data_matrix, k, i):
     if (num_verts in {3, 4}) or (not forced_tessellation):
         glBegin(GL_POLYGON)
         for point in pol:
-            glVertex3f(*data_matrix[i]*dvk[point])
+            vec = data_matrix[i] * dvk[point]
+            glVertex3f(*vec)
         glEnd()
 
     else:
@@ -195,7 +196,8 @@ def display_face(options, pol, data_vector, data_matrix, k, i):
         v = [dvk[i] for i in pol]
         for pol in tessellate([v]):
             for point in pol:
-                glVertex3f(*(data_matrix[i]*v[point]))
+                vec = data_matrix[i]*v[point]
+                glVertex3f(*vec)
         glEnd()
 
 
@@ -263,9 +265,11 @@ def draw_geometry(n_id, options, data_vector, data_polygons, data_matrix, data_e
                 glLineWidth(edge_width)
                 glColor3f(*edge_colors)
                 glBegin(GL_LINES)
-                for p1, p2 in mesh_edges:
-                    glVertex3f(*(data_matrix[i] * data_vector[k][p1]))
-                    glVertex3f(*(data_matrix[i] * data_vector[k][p2]))
+                for edge in mesh_edges:
+                    for p in edge:
+                        vec = data_matrix[i] * data_vector[k][p]
+                        glVertex3f(*vec)
+
                 glEnd()
                 glDisable(edgeholy)
 
@@ -290,8 +294,9 @@ def draw_geometry(n_id, options, data_vector, data_polygons, data_matrix, data_e
                     line = data_edges[k][-1]
 
                 glBegin(edgeline)
-                for point in line:
-                    glVertex3f(*(data_matrix[i] * data_vector[k][point]))
+                for p in line:
+                    vec = data_matrix[i] * data_vector[k][p]
+                    glVertex3f(*vec)
                 glEnd()
 
         glDisable(edgeholy)
@@ -314,8 +319,8 @@ def draw_geometry(n_id, options, data_vector, data_polygons, data_matrix, data_e
             k = get_max_k(i, verlen)
 
             for vert in data_vector[k]:
-                vec_corrected = data_matrix[i]*vert
-                glVertex3f(*vec_corrected)
+                vec = data_matrix[i] * vert
+                glVertex3f(*vec)
         glEnd()
 
     glDisable(GL_POINT_SIZE)
