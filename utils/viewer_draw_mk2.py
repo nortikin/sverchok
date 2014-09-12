@@ -377,6 +377,9 @@ def draw_callback_view(n_id, cached_view, options):
     options['verlen'] = verlen
     draw_geometry(n_id, options, data_vector, data_polygons, data_matrix, data_edges)
 
+    # restore to system state
+    # 
+    glLineWidth(2)
 
 def unregister():
     callback_disable_all()
