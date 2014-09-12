@@ -202,7 +202,8 @@ class SvWafelNode(bpy.types.Node, SverchCustomTreeNode):
                 if 'vec_tube' in self.inputs and self.inputs['vec_tube'].links:
                     vectube = self.inputs['vec_tube'].sv_get()
                     vec_tube = Vector_generate(vectube)
-                    circle_tube = [ (Vector((sin(radians(i)),cos(radians(i)),0))*self.tube_radius) \
+                    tube_radius = self.inputs['tube_radius'].sv_get()[0][0]
+                    circle_tube = [ (Vector((sin(radians(i)),cos(radians(i)),0))*tube_radius) \
                               for i in range(0,360,15) ]
                 else:
                     vec_tube = []
@@ -448,6 +449,7 @@ def unregister():
 
 if __name__ == '__main__':
     register()
+
 
 
 
