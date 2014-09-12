@@ -152,7 +152,21 @@ def callback_disable(n_id):
     tag_redraw_all_view3d()
 
 
-def display_faces(options, pol, data_vector, data_matrix, k, i):
+def get_color_from_normal(dvk, pol, numverts, vectorlight, colo):
+    if num_verts <= 4:
+        normal_no = normal(dvk[pol[0]], dvk[pol[1]], dvk[pol[2]])
+    else:
+        normal_no = normal(dvk[pol[0]], dvk[pol[1]], dvk[pol[2]], dvk[pol[3]])
+
+    normal_no = (normal_no.angle(vectorlight, 0)) / pi
+
+    r = (normal_no * colo[0]) - 0.1
+    g = (normal_no * colo[1]) - 0.1
+    b = (normal_no * colo[2]) - 0.1
+    return (r+0.2, g+0.2, b+0.2)
+
+
+def display_face(options, pol, data_vector, data_matrix, k, i):
 
     colo = options['face_colors']
     shade = options['shading']
@@ -160,62 +174,47 @@ def display_faces(options, pol, data_vector, data_matrix, k, i):
     vectorlight = options['light_direction']
 
     num_verts = len(pol)
+    dvk = data_vector[k]
 
     if shade:
-        dvk = data_vector[k]
-        if num_verts <= 4:
-            normal_no = normal(
-                dvk[pol[0]], dvk[pol[1]], dvk[pol[2]])
-        else:
-            normal_no = normal(
-                dvk[pol[0]], dvk[pol[1]], dvk[pol[2]], dvk[pol[3]])
-
-        normal_no = (normal_no.angle(vectorlight, 0)) / pi
-
-        r = (normal_no * colo[0]) - 0.1
-        g = (normal_no * colo[1]) - 0.1
-        b = (normal_no * colo[2]) - 0.1
-        face_color = (r+0.2, g+0.2, b+0.2)
+        face_color = get_color_from_normal(dvk, pol, numverts, vectorlight, colo)
     else:
         face_color = colo[:]
 
     glColor3f(*face_color)
 
-    if (not forced_tessellation) or (num_verts in {3, 4}):
+    if (num_verts in {3, 4}) or (not forced_tessellation):
         glBegin(GL_POLYGON)
         for point in pol:
-            vec_corrected = data_matrix[i]*data_vector[k][point]
-            glVertex3f(*vec_corrected)
+            glVertex3f(*data_matrix[i]*dvk[point])
+        glEnd()
 
     else:
         ''' ngons, we tessellate '''
         glBegin(GL_TRIANGLES)
-        v = [data_vector[k][i] for i in pol]
-        tess_poly = tessellate([v])
-        for a, b, c in tess_poly:
-            glVertex3f(*(data_matrix[i]*v[a]))
-            glVertex3f(*(data_matrix[i]*v[b]))
-            glVertex3f(*(data_matrix[i]*v[c]))
-
-    glEnd()
+        v = [dvk[i] for i in pol]
+        for pol in tessellate([v]):
+            for point in pol:
+                glVertex3f(*(data_matrix[i]*v[point]))
+        glEnd()
 
 
-def draw_callback_view(n_id, cached_view, options):
-    context = bpy.context
+def draw_geometry(n_id, options, data_vector, data_polygons, data_matrix, data_edges):
 
-    sl1 = cached_view[n_id + 'v']
-    sl2 = cached_view[n_id + 'ep']
-    sl3 = cached_view[n_id + 'm']
     show_verts = options['show_verts']
     show_edges = options['show_edges']
     show_faces = options['show_faces']
-    colo = options['face_colors']
-    tran = options['transparent']
-    shade = options['shading']
+
     vertex_colors = options['vertex_colors']
     edge_colors = options['edge_colors']
     edge_width = options['edge_width']
-    forced_tessellation = options['forced_tessellation']
+
+    tran = options['transparent']
+    shade = options['shading']
+
+    verlen = options['verlen']
+    if 'verlen_every' in options:
+        verlen_every = options['verlen_every']
 
     if tran:
         polyholy = GL_POLYGON_STIPPLE
@@ -226,45 +225,20 @@ def draw_callback_view(n_id, cached_view, options):
         edgeholy = GL_LINE
         edgeline = GL_LINES
 
-    if sl1:
-        data_vector = Vector_generate(sl1)
-        verlen = len(data_vector)-1
-        verlen_every = [len(d)-1 for d in data_vector]
-    else:
-        data_vector = []
-        verlen = 0
-
-    data_polygons = []
-    data_edges = []
-    if sl2 and sl2[0]:
-        len_sl2 = len(sl2[0][0])
-        if len_sl2 == 2:
-            data_edges = sl2
-        elif len_sl2 > 2:
-            data_polygons = sl2
-
-    if sl3:
-        data_matrix = Matrix_generate(sl3)
-    else:
-        data_matrix = [Matrix() for i in range(verlen+1)]
-
-    if (data_vector, data_polygons, data_matrix, data_edges) == (0, 0, 0, 0):
-        callback_disable(n_id)
-
-    coloa, colob, coloc = colo[:]
+    def get_max_k(i, verlen):
+        k = i
+        if i > verlen:
+            k = verlen
+        return k
 
     ''' polygons '''
 
-    vectorlight = options['light_direction']
     if data_polygons and data_vector:
 
         glEnable(polyholy)
 
         for i, matrix in enumerate(data_matrix):
-
-            k = i
-            if i > verlen:
-                k = verlen
+            k = get_max_k(i, verlen)
 
             mesh_edges = set()
 
@@ -273,10 +247,9 @@ def draw_callback_view(n_id, cached_view, options):
 
                 if max(pol) > verlen_every[k]:
                     pol = data_edges[k][-1]
-                    j = len(data_edges[k])-1
 
                 if show_faces:
-                    display_faces(options, pol, data_vector, data_matrix, k, i)
+                    display_face(options, pol, data_vector, data_matrix, k, i)
 
                 # collect raw edges, sort by index, use set to prevent dupes.
                 if show_edges:
@@ -291,9 +264,8 @@ def draw_callback_view(n_id, cached_view, options):
                 glColor3f(*edge_colors)
                 glBegin(GL_LINES)
                 for p1, p2 in mesh_edges:
-                    glVertex3f(*data_matrix[i]*data_vector[k][p1])
-                    glVertex3f(*data_matrix[i]*data_vector[k][p2])
-
+                    glVertex3f(*(data_matrix[i] * data_vector[k][p1]))
+                    glVertex3f(*(data_matrix[i] * data_vector[k][p2]))
                 glEnd()
                 glDisable(edgeholy)
 
@@ -302,25 +274,24 @@ def draw_callback_view(n_id, cached_view, options):
     ''' edges '''
 
     if data_edges and data_vector and show_edges:
+
         glColor3f(*edge_colors)
         glLineWidth(edge_width)
         glEnable(edgeholy)
 
         for i, matrix in enumerate(data_matrix):
-
-            k = i
-            if i > verlen:   # filter to share objects
-                k = verlen
+            k = get_max_k(i, verlen)
 
             for line in data_edges[k]:
 
+                # i think this catches edges which refer to indices not present in
+                # the accompanyinh vertex list.
                 if max(line) > verlen_every[k]:
                     line = data_edges[k][-1]
 
                 glBegin(edgeline)
                 for point in line:
-                    vec_corrected = data_matrix[i]*data_vector[k][point]
-                    glVertex3f(*vec_corrected)
+                    glVertex3f(*(data_matrix[i] * data_vector[k][point]))
                 glEnd()
 
         glDisable(edgeholy)
@@ -340,9 +311,8 @@ def draw_callback_view(n_id, cached_view, options):
 
         glBegin(GL_POINTS)
         for i, matrix in enumerate(data_matrix):
-            k = i
-            if i > verlen:
-                k = verlen
+            k = get_max_k(i, verlen)
+
             for vert in data_vector[k]:
                 vec_corrected = data_matrix[i]*vert
                 glVertex3f(*vec_corrected)
@@ -356,6 +326,50 @@ def draw_callback_view(n_id, cached_view, options):
         md = MatrixDraw()
         for mat in data_matrix:
             md.draw_matrix(mat)
+
+
+def draw_callback_view(n_id, cached_view, options):
+    context = bpy.context
+
+    sl1 = cached_view[n_id + 'v']
+    sl2 = cached_view[n_id + 'ep']
+    sl3 = cached_view[n_id + 'm']
+
+    if sl1:
+        data_vector = Vector_generate(sl1)
+        verlen = len(data_vector)-1
+        options['verlen_every'] = [len(d)-1 for d in data_vector]
+    else:
+        if not sl3:
+            # end early: no matrix and no vertices
+            callback_disable(n_id)
+            return
+
+        # display matrix repr only.
+        data_vector = []
+        verlen = 0
+
+    data_polygons = []
+    data_edges = []
+
+    if sl2 and sl2[0]:
+        len_sl2 = len(sl2[0][0])
+        if len_sl2 == 2:
+            data_edges = sl2
+        elif len_sl2 > 2:
+            data_polygons = sl2
+
+    if sl3:
+        data_matrix = Matrix_generate(sl3)
+    else:
+        data_matrix = [Matrix() for i in range(verlen+1)]
+
+    if (data_vector, data_polygons, data_matrix, data_edges) == (0, 0, 0, 0):
+        callback_disable(n_id)
+        return
+
+    options['verlen'] = verlen
+    draw_geometry(n_id, options, data_vector, data_polygons, data_matrix, data_edges)
 
 
 def unregister():
