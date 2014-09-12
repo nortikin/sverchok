@@ -39,15 +39,15 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
     n_id = StringProperty(default='', options={'SKIP_SAVE'})
 
     activate = BoolProperty(
-        name='Show', description='Activate node?',
+        name='Show', description='Activate',
         default=1, update=updateNode)
 
     transparant = BoolProperty(
-        name='Transparant', description='transparant polygons?',
+        name='Transparant', description='transparant',
         default=0, update=updateNode)
 
     shading = BoolProperty(
-        name='Shading', description='shade the object or index representation?',
+        name='Shading', description='shade or flat',
         default=0, update=updateNode)
 
     light_direction = FloatVectorProperty(
@@ -103,12 +103,18 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons(self, context, layout):
         row = layout.row(align=True)
-        row.prop(self, "activate", text="Show", toggle=True)
-
-        row = layout.row(align=True)
-        row.prop(self, "transparant", text="Transp", toggle=True)
-        row.separator()
-        row.prop(self, "shading", text="Shade", toggle=True)
+        if self.activate:
+            row.prop(self, "activate", icon='RESTRICT_VIEW_OFF', text="", toggle=True)
+        else:
+            row.prop(self, "activate", icon='RESTRICT_VIEW_ON', text="", toggle=True)
+        if self.transparant:
+            row.prop(self, "transparant", icon='WIRE', text="", toggle=True)
+        else:
+            row.prop(self, "transparant", icon='SOLID', text="", toggle=True)
+        if self.shading:
+            row.prop(self, "shading", icon='LAMP_SPOT', text="", toggle=True) #MATCAP_07
+        else:
+            row.prop(self, "shading", icon='BLANK1', text="", toggle=True) #MATCAP_01
 
         row = layout.row(align=True)
         row.prop(self, "display_verts", toggle=True, icon='VERTEXSEL', text='')
