@@ -48,19 +48,25 @@ class WebModalTimerOperator(bpy.types.Operator):
     node_group = StringProperty(default='')
 
     def modal(self, context, event):
-        ng = bpy.data.node_groups.get(self.node_group)
-        if ng: 
+        if self.node_group and self.node_name:
+            ng = bpy.data.node_groups.get(self.node_group)
             n = ng.nodes[self.node_name]
         else:
             return {'PASS_THROUGH'}
- 
-        if (event.type == 'TIMER'):
-            if not n.active:
-                self.cancel(context)
-                return {'FINISHED'}
-            print('meee!')
 
+        if not (event.type == 'TIMER'):
+            return {'PASS_THROUGH'}
+
+        if not n.active:
+            self.cancel(context)
+            return {'FINISHED'}
+
+        self.process(ng, n)
         return {'PASS_THROUGH'}
+
+    def process(self, ng, n):
+        ''' reaches here only if event is TIMER and n.active '''
+        print('meee!', ng, n)
 
     def event_dispatcher(self, context, type_op):
         if type_op == 'start':
@@ -107,6 +113,7 @@ class SvWebsocketNode(bpy.types.Node, SverchCustomTreeNode):
 
     def update(self):
         if not len(self.inputs) == 2:
+            self.active = 0
             return
 
         #if self.draw_to_host and not self.active:
