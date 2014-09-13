@@ -48,8 +48,11 @@ class WebModalTimerOperator(bpy.types.Operator):
     node_group = StringProperty(default='')
 
     def modal(self, context, event):
-        ng = bpy.data.node_groups[self.node_group]
-        n = ng.nodes[self.node_name]
+        ng = bpy.data.node_groups.get(self.node_group)
+        if ng: 
+            n = ng.nodes[self.node_name]
+        else:
+            return {'PASS_THROUGH'}
  
         if (event.type == 'TIMER'):
             if not n.active:
