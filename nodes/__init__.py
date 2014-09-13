@@ -28,6 +28,7 @@ nodes_dict = {
         'wifi_in',
         'wifi_out',
         'eval_knieval',
+        'websockets_viewer',
         'switch'],
 
     'basic_debug': [
