@@ -76,13 +76,30 @@ class ImageComponentsOps(bpy.types.Operator):
 
         # work on copy only
         pxls = img.pixels[:]
-        num_pixels = len(pxls)
+        num_pixels = int(len(pxls) / 4)
 
-        node_dict['image'] = {}
+        node_dict['image'] = {
+            'x': [], 'y': [], 'r': [], 'g': [], 'b': [], 'a': []
+        }
+
+        add_x = node_dict['image']['x'].append
+        add_y = node_dict['image']['y'].append
+        add_r = node_dict['image']['r'].append
+        add_g = node_dict['image']['g'].append
+        add_b = node_dict['image']['b'].append
+        add_a = node_dict['image']['a'].append
+        xy_spread = n.xy_spread
+        z_spread = n.z_spread
+
         for idx in range(num_pixels):
-            r, c = idx_to_co(idx, w)
-            color = rgba_from_index(idx, pxls)
-            node_dict['image'][(r, c)] = color
+            x, y = idx_to_co(idx, w)
+            r, g, b, a = rgba_from_index(idx, pxls)
+            add_x(x*xy_spread)
+            add_y(y*xy_spread)
+            add_r(r*z_spread)
+            add_g(g*z_spread)
+            add_b(b*z_spread)
+            add_a(a*z_spread)
 
         n.loaded = True
 
@@ -115,6 +132,9 @@ class SvImageComponentsNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Image Components'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
+    # node storage, reference by the hash of self.
+    node_dict = {}
+
     image_name = StringProperty(
         default="",
         name='image_name',
@@ -139,23 +159,18 @@ class SvImageComponentsNode(bpy.types.Node, SverchCustomTreeNode):
         name='z_spread',
         update=updateNode)
 
-    node_dict = {}
-
     def init(self, context):
         self.node_dict[hash(self)] = {}
         self.node_dict[hash(self)]['node_image'] = {}
 
+        xy, z = 'xy_spread', 'z_spread'
         new_in = self.inputs.new
-        new_in('StringsSocket', 'xy_spread', 'xy_spread').prop_name = 'xy_spread'
-        new_in('StringsSocket', 'z_spread', 'z_spread').prop_name = 'z_spread'
+        new_in('StringsSocket', xy, xy).prop_name = xy
+        new_in('StringsSocket', z, z).prop_name = z
 
         new_out = self.outputs.new
-        new_out('StringsSocket', 'x', 'x')
-        new_out('StringsSocket', 'y', 'y')
-        new_out('StringsSocket', 'r', 'r')
-        new_out('StringsSocket', 'g', 'g')
-        new_out('StringsSocket', 'b', 'b')
-        new_out('StringsSocket', 'a', 'a')
+        for i in 'xyrgba':
+            new_out('StringsSocket', i, i)
 
     def draw_buttons(self, context, layout):
         col = layout.column()
@@ -191,7 +206,10 @@ class SvImageComponentsNode(bpy.types.Node, SverchCustomTreeNode):
     def process(self):
         outputs = self.outputs
 
-        pass
+        dict_data = self.node_dict[hash(self)]['node_image']['image']
+        for name in 'xyrgba':
+            if outputs[name].links:
+                SvSetSocketAnyType(self, name, [dict_data[name]])
 
     def update_socket(self, context):
         self.update()
