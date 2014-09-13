@@ -6,6 +6,7 @@ nodes_dict = {
         'distance_pp',
         'polygons_centers',
         'neuro_elman',
+        'image_components',
         'kd_tree',
         'kd_tree_edges',
         'weights',

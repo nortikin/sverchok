@@ -24,8 +24,8 @@ from bpy.props import StringProperty, EnumProperty, BoolProperty
 
 from utils.sv_tools import sv_get_local_path
 from node_tree import SverchCustomTreeNode
-from data_structure import (dataCorrect, updateNode,
-                            SvSetSocketAnyType, SvGetSocketAnyType)
+from data_structure import (
+    dataCorrect, updateNode, SvSetSocketAnyType, SvGetSocketAnyType)
 
 FAIL_COLOR = (0.8, 0.1, 0.1)
 READY_COLOR = (0, 0.8, 0.95)
