@@ -116,15 +116,27 @@ class SvImageComponentsNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     image_name = StringProperty(
+        default="",
         name='image_name',
         description='name of image to CC',
-        default="",
         update=updateNode)
 
     loaded = BoolProperty(
+        default=0,
         name='loaded',
         description='confirms the state of image loading',
-        default=0,
+        update=updateNode)
+
+    xy_spread = FloatProperty(
+        default=0.01,
+        step=0.001,
+        name='xy_spread',
+        update=updateNode)
+
+    z_spread = FloatProperty(
+        default=0.01,
+        step=0.001,
+        name='z_spread',
         update=updateNode)
 
     node_dict = {}
@@ -132,8 +144,18 @@ class SvImageComponentsNode(bpy.types.Node, SverchCustomTreeNode):
     def init(self, context):
         self.node_dict[hash(self)] = {}
         self.node_dict[hash(self)]['node_image'] = {}
-        print('in init', self.node_dict)
-        self.outputs.new('VerticesSocket', "vecs", "vecs")
+
+        new_in = self.inputs.new
+        new_in('StringsSocket', 'xy_spread', 'xy_spread').prop_name = 'xy_spread'
+        new_in('StringsSocket', 'z_spread', 'z_spread').prop_name = 'z_spread'
+
+        new_out = self.outputs.new
+        new_out('StringsSocket', 'x', 'x')
+        new_out('StringsSocket', 'y', 'y')
+        new_out('StringsSocket', 'r', 'r')
+        new_out('StringsSocket', 'g', 'g')
+        new_out('StringsSocket', 'b', 'b')
+        new_out('StringsSocket', 'a', 'a')
 
     def draw_buttons(self, context, layout):
         col = layout.column()
@@ -155,9 +177,20 @@ class SvImageComponentsNode(bpy.types.Node, SverchCustomTreeNode):
             icon=operator_icon).fn_name = operator_type
 
     def update(self):
-        pass
+        outputs = self.outputs
+
+        if not self.loaded:
+            return
+        if not len(outputs) == 6:
+            return
+        if not (outputs['x'].links and outputs['y'].links):
+            return
+
+        self.process()
 
     def process(self):
+        outputs = self.outputs
+
         pass
 
     def update_socket(self, context):
