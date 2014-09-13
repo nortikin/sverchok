@@ -16,6 +16,8 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+import webbrowser
+
 import bpy
 from bpy.props import IntProperty, FloatProperty, BoolProperty, StringProperty
 import bmesh
@@ -23,7 +25,6 @@ from mathutils import Vector
 
 from node_tree import SverchCustomTreeNode, VerticesSocket, StringsSocket
 from data_structure import updateNode, SvSetSocketAnyType, SvGetSocketAnyType
-
 
 # class DrawHTML(object):
 
@@ -75,6 +76,11 @@ class WebModalTimerOperator(bpy.types.Operator):
             self._timer = wm.event_timer_add(1, context.window)
             wm.modal_handler_add(self)
 
+            # start webbrowser
+            url = "C:\\Users\\dealga\\Documents\\tapi.html"
+            # url = "http://www.python.org"
+            webbrowser.open(url)
+
         if type_op == 'end':
             context.node.active = False
 
@@ -108,8 +114,9 @@ class SvWebsocketNode(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         row = layout.row()
         flash_operator = 'wm.web_modal_timer_operator'
-        row.operator(flash_operator, text='start').mode = 'start'
-        row.operator(flash_operator, text='stop').mode = 'end'
+        tstr = 'start' if not self.active else 'end'
+
+        row.operator(flash_operator, text=tstr).mode = tstr
 
     def update(self):
         if not len(self.inputs) == 2:
