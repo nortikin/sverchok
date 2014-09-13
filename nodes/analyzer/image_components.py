@@ -88,18 +88,16 @@ class ImageComponentsOps(bpy.types.Operator):
         add_g = node_dict['image']['g'].append
         add_b = node_dict['image']['b'].append
         add_a = node_dict['image']['a'].append
-        xy_spread = n.xy_spread
-        z_spread = n.z_spread
 
         for idx in range(num_pixels):
             x, y = idx_to_co(idx, w)
             r, g, b, a = rgba_from_index(idx, pxls)
-            add_x(x*xy_spread)
-            add_y(y*xy_spread)
-            add_r(r*z_spread)
-            add_g(g*z_spread)
-            add_b(b*z_spread)
-            add_a(a*z_spread)
+            add_x(x)
+            add_y(y)
+            add_r(r)
+            add_g(g)
+            add_b(b)
+            add_a(a)
 
         n.loaded = True
 
@@ -209,7 +207,9 @@ class SvImageComponentsNode(bpy.types.Node, SverchCustomTreeNode):
         dict_data = self.node_dict[hash(self)]['node_image']['image']
         for name in 'xyrgba':
             if outputs[name].links:
-                SvSetSocketAnyType(self, name, [dict_data[name]])
+                m = self.xy_spread if name in 'xy' else self.z_spread
+                data = [v*m for v in dict_data[name]]
+                SvSetSocketAnyType(self, name, [data])
 
     def update_socket(self, context):
         self.update()
