@@ -66,7 +66,8 @@ class ImageComponentsOps(bpy.types.Operator):
 
     fn_name = StringProperty(default='')
 
-    def load_image(self, n):
+    def load_image(self, context):
+        n = context.node
         node_dict = n.node_dict[hash(n)]['node_image'] = {}
 
         img = bpy.data.images[n.image_name]
@@ -83,8 +84,12 @@ class ImageComponentsOps(bpy.types.Operator):
             color = rgba_from_index(idx, pxls)
             node_dict['image'][(r, c)] = color
 
-    def unload_image(self, n):
+        n.loaded = True
+
+    def unload_image(self, context):
+        n = context.node
         n.node_dict[hash(n)]['node_image']['image'] = {}
+        n.loaded = False
 
     def execute(self, context):
         n = context.node
@@ -96,9 +101,9 @@ class ImageComponentsOps(bpy.types.Operator):
             return {'FINISHED'}
 
         if fn_name == 'load':
-            self.load_image(n)
+            self.load_image(context)
         elif fn_name == 'unload':
-            self.unload_image(n)
+            self.unload_image(context)
 
         return {'FINISHED'}
 
@@ -127,6 +132,7 @@ class SvImageComponentsNode(bpy.types.Node, SverchCustomTreeNode):
     def init(self, context):
         self.node_dict[hash(self)] = {}
         self.node_dict[hash(self)]['node_image'] = {}
+        print('in init', self.node_dict)
         self.outputs.new('VerticesSocket', "vecs", "vecs")
 
     def draw_buttons(self, context, layout):
