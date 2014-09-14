@@ -234,6 +234,10 @@ class SvImageComponentsNode(bpy.types.Node, SverchCustomTreeNode):
         if not (outputs['x'].links and outputs['y'].links):
             return
 
+        # if not hash(self) in self.node_dict:
+        #    self.node_dict = {}
+
+        print('doing!')
         self.process()
 
     def process(self):
