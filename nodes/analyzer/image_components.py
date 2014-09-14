@@ -32,11 +32,9 @@ by dealga mcardle sept 2014
 Premise of the node
 
 - make pixel copy of selected image using [:]
-- outputs r g b as:
-    - rvert (x y r)
-    - gvert (x y g)
-    - bvert (x y b)
-
+- outputs
+    - x, y, r, g, b, a
+    - polygons
 '''
 
 
