@@ -115,6 +115,9 @@ class ImageComponentsOps(bpy.types.Operator):
         add_b = node_dict['image']['b'].append
         add_a = node_dict['image']['a'].append
 
+        # todo, use a yeild from pxls instead of 
+        # idx_to_co and rgba_from_index
+
         for idx in range(num_pixels):
             x, y = idx_to_co(idx, w)
             r, g, b, a = rgba_from_index(idx, pxls)
