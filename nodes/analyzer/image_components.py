@@ -115,18 +115,19 @@ class ImageComponentsOps(bpy.types.Operator):
         add_b = node_dict['image']['b'].append
         add_a = node_dict['image']['a'].append
 
-        # todo, use a yeild from pxls instead of 
-        # idx_to_co and rgba_from_index
+        # generator expression
+        gen_obj = (i for i in pxls)
 
+        # todo, add x,y separately ? but
+        # speed test first.
         for idx in range(num_pixels):
             x, y = idx_to_co(idx, w)
-            r, g, b, a = rgba_from_index(idx, pxls)
             add_x(x)
             add_y(y)
-            add_r(r)
-            add_g(g)
-            add_b(b)
-            add_a(a)
+            add_r(next(gen_obj))
+            add_g(next(gen_obj))
+            add_b(next(gen_obj))
+            add_a(next(gen_obj))
 
         n.loaded = True
 
