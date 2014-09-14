@@ -35,6 +35,10 @@ Premise of the node
 - outputs
     - x, y, r, g, b, a
     - polygons
+
+this would allow one to combine x any y with r to show
+a strength table of r over x,y
+
 '''
 
 
