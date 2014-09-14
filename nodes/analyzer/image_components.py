@@ -247,6 +247,12 @@ class SvImageComponentsNode(bpy.types.Node, SverchCustomTreeNode):
 
         col.prop(self, 'skip', text='Skip n pixels')
 
+        if self.loaded:
+            image_dict = self.node_dict[hash(self)].get('node_image')
+            if image_dict:
+                w, h = image_dict['image']['dimensions']
+                col.label('dims h={h}, w={w}'.format(w=w, h=h))
+
     def update(self):
         outputs = self.outputs
 
