@@ -46,7 +46,7 @@ def idx_to_co(idx, width):
     """ helps translate index of pixel into 2d coordinate """
     r = int(idx / width)
     c = idx % width
-    return r, c
+    return c, r
 
 
 def co_to_idx(r, c, width):
