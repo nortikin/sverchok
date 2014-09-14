@@ -16,6 +16,8 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+from math import floor
+
 import bpy
 from bpy.props import (
     IntProperty, FloatProperty, StringProperty, BoolProperty)
@@ -58,6 +60,28 @@ def rgba_from_index(idx, dm):
     return dm[start_raw_index:start_raw_index+4]
 
 
+def generate_polygons(num_x, num_y):
+    """
+    taken from https://github.com/zeffii/BlenderSciViz/
+    """
+    faces = []
+
+    for i in range((num_x-1)*(num_y-1)):
+        x = (i % (num_x-1))
+        y = floor(i / (num_x-1))
+        verts_per_side_x = num_x
+
+        level = x + (y*verts_per_side_x)
+        idx1 = level
+        idx2 = level + 1
+        idx3 = level + verts_per_side_x + 1
+        idx4 = level + verts_per_side_x
+
+        faces.append([idx1, idx2, idx3, idx4])
+
+    return faces
+
+
 class ImageComponentsOps(bpy.types.Operator):
 
     bl_idname = "node.image_comp_callback"
@@ -79,7 +103,9 @@ class ImageComponentsOps(bpy.types.Operator):
         num_pixels = int(len(pxls) / 4)
 
         node_dict['image'] = {
-            'x': [], 'y': [], 'r': [], 'g': [], 'b': [], 'a': []
+            'x': [], 'y': [],
+            'r': [], 'g': [], 'b': [], 'a': [],
+            'polygons': [], 'dimensions': [w, h]
         }
 
         add_x = node_dict['image']['x'].append
@@ -161,14 +187,17 @@ class SvImageComponentsNode(bpy.types.Node, SverchCustomTreeNode):
         self.node_dict[hash(self)] = {}
         self.node_dict[hash(self)]['node_image'] = {}
 
-        xy, z = 'xy_spread', 'z_spread'
+        xy, z, p = 'xy_spread', 'z_spread', 'polygons'
+        socket = 'StringsSocket'
+
         new_in = self.inputs.new
-        new_in('StringsSocket', xy, xy).prop_name = xy
-        new_in('StringsSocket', z, z).prop_name = z
+        new_in(socket, xy, xy).prop_name = xy
+        new_in(socket, z, z).prop_name = z
 
         new_out = self.outputs.new
         for i in 'xyrgba':
-            new_out('StringsSocket', i, i)
+            new_out(socket, i, i)
+        new_out(socket, p, p)
 
     def draw_buttons(self, context, layout):
         col = layout.column()
@@ -194,7 +223,7 @@ class SvImageComponentsNode(bpy.types.Node, SverchCustomTreeNode):
 
         if not self.loaded:
             return
-        if not len(outputs) == 6:
+        if not len(outputs) == 7:
             return
         if not (outputs['x'].links and outputs['y'].links):
             return
@@ -204,12 +233,24 @@ class SvImageComponentsNode(bpy.types.Node, SverchCustomTreeNode):
     def process(self):
         outputs = self.outputs
 
-        dict_data = self.node_dict[hash(self)]['node_image']['image']
+        node_image = self.node_dict[hash(self)]['node_image']
+        dict_data = node_image['image']
         for name in 'xyrgba':
             if outputs[name].links:
                 m = self.xy_spread if name in 'xy' else self.z_spread
                 data = [v*m for v in dict_data[name]]
                 SvSetSocketAnyType(self, name, [data])
+
+        polygons = 'polygons'
+        if not outputs[polygons].links:
+            return
+
+        polygon_data = dict_data[polygons]
+        if not polygon_data:
+            w, h = dict_data['dimensions']
+            dict_data[polygons] = generate_polygons(w, h)
+
+        SvSetSocketAnyType(self, polygons, [polygon_data])
 
     def update_socket(self, context):
         self.update()
