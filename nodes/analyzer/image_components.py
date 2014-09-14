@@ -50,7 +50,7 @@ def idx_to_co(idx, width):
 
 
 def co_to_idx(r, c, width):
-    return r*width+c
+    return r * width + c
 
 
 def rgba_from_index(idx, dm):
@@ -59,7 +59,7 @@ def rgba_from_index(idx, dm):
     dm:     a flat sequence of ungrouped floats, every 4 floats is one rgba
     """
     start_raw_index = idx * 4
-    return dm[start_raw_index:start_raw_index+4]
+    return dm[start_raw_index:start_raw_index + 4]
 
 
 def generate_polygons(num_x, num_y):
@@ -68,12 +68,12 @@ def generate_polygons(num_x, num_y):
     """
     faces = []
 
-    for i in range((num_x-1)*(num_y-1)):
-        x = (i % (num_x-1))
-        y = floor(i / (num_x-1))
+    for i in range((num_x - 1) * (num_y - 1)):
+        x = (i % (num_x - 1))
+        y = floor(i / (num_x - 1))
         verts_per_side_x = num_x
 
-        level = x + (y*verts_per_side_x)
+        level = x + (y * verts_per_side_x)
         idx1 = level
         idx2 = level + 1
         idx3 = level + verts_per_side_x + 1
@@ -120,16 +120,32 @@ class ImageComponentsOps(bpy.types.Operator):
         # generator expression
         gen_obj = (i for i in pxls)
 
-        # todo, add x,y separately ? but
-        # speed test first.
-        for idx in range(num_pixels):
-            x, y = idx_to_co(idx, w)
-            add_x(x)
-            add_y(y)
-            add_r(next(gen_obj))
-            add_g(next(gen_obj))
-            add_b(next(gen_obj))
-            add_a(next(gen_obj))
+        if n.skip == 0:
+            for idx in range(num_pixels):
+                x, y = idx_to_co(idx, w)
+                add_x(x)
+                add_y(y)
+                add_r(next(gen_obj))
+                add_g(next(gen_obj))
+                add_b(next(gen_obj))
+                add_a(next(gen_obj))
+        else:
+
+            xlookup = [ix for ix in range(w) if ix % (n.skip+1) == 0]
+            ylookup = [iy for iy in range(h) if iy % (n.skip+1) == 0]
+
+            for idx in range(num_pixels):
+                x, y = idx_to_co(idx, w)
+                if not ((x in xlookup) and (y in ylookup)):
+                    [next(gen_obj) for i in range(4)]
+                    continue
+
+                add_x(x)
+                add_y(y)
+                add_r(next(gen_obj))
+                add_g(next(gen_obj))
+                add_b(next(gen_obj))
+                add_a(next(gen_obj))
 
         n.loaded = True
 
@@ -189,6 +205,11 @@ class SvImageComponentsNode(bpy.types.Node, SverchCustomTreeNode):
         name='z_spread',
         update=updateNode)
 
+    skip = IntProperty(
+        default=3,
+        step=1, min=0,
+        update=updateNode)
+
     def init(self, context):
         self.node_dict[hash(self)] = {}
         self.node_dict[hash(self)]['node_image'] = {}
@@ -224,6 +245,8 @@ class SvImageComponentsNode(bpy.types.Node, SverchCustomTreeNode):
             text=operator_type,
             icon=operator_icon).fn_name = operator_type
 
+        col.prop(self, 'skip', text='Skip n pixels')
+
     def update(self):
         outputs = self.outputs
 
@@ -234,10 +257,10 @@ class SvImageComponentsNode(bpy.types.Node, SverchCustomTreeNode):
         if not (outputs['x'].links and outputs['y'].links):
             return
 
-        # if not hash(self) in self.node_dict:
-        #    self.node_dict = {}
+        if not hash(self) in self.node_dict:
+            self.node_dict[hash(self)] = {}
+            self.loaded = 0
 
-        print('doing!')
         self.process()
 
     def process(self):
@@ -248,7 +271,7 @@ class SvImageComponentsNode(bpy.types.Node, SverchCustomTreeNode):
         for name in 'xyrgba':
             if outputs[name].links:
                 m = self.xy_spread if name in 'xy' else self.z_spread
-                data = [v*m for v in dict_data[name]]
+                data = [v * m for v in dict_data[name]]
                 SvSetSocketAnyType(self, name, [data])
 
         polygons = 'polygons'
@@ -257,7 +280,12 @@ class SvImageComponentsNode(bpy.types.Node, SverchCustomTreeNode):
 
         polygon_data = dict_data[polygons]
         if not polygon_data:
+
             w, h = dict_data['dimensions']
+            if not self.skip == 0:
+                w = len(range(0, w, self.skip+1))
+                h = len(range(0, h, self.skip+1))
+
             dict_data[polygons] = generate_polygons(w, h)
 
         SvSetSocketAnyType(self, polygons, [polygon_data])
