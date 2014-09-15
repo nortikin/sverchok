@@ -49,39 +49,45 @@ def idx_to_co(idx, width):
     return c, r
 
 
-def co_to_idx(r, c, width):
-    return r * width + c
-
-
-def rgba_from_index(idx, dm):
-    """
-    idx:    a pixel, idx*4 is its index in the flat dm list
-    dm:     a flat sequence of ungrouped floats, every 4 floats is one rgba
-    """
-    start_raw_index = idx * 4
-    return dm[start_raw_index:start_raw_index + 4]
-
-
 def generate_polygons(num_x, num_y):
     """
     taken from https://github.com/zeffii/BlenderSciViz/
+    num_x = num verts on x side
     """
     faces = []
-
+    faces_append = faces.append
     for i in range((num_x - 1) * (num_y - 1)):
         x = (i % (num_x - 1))
         y = floor(i / (num_x - 1))
-        verts_per_side_x = num_x
 
-        level = x + (y * verts_per_side_x)
+        level = x + (y * num_x)
         idx1 = level
-        idx2 = level + 1
-        idx3 = level + verts_per_side_x + 1
-        idx4 = level + verts_per_side_x
-
-        faces.append([idx1, idx2, idx3, idx4])
+        idx2 = idx1 + 1
+        idx4 = idx1 + num_x
+        idx3 = idx4 + 1
+        faces_append([idx1, idx2, idx3, idx4])
 
     return faces
+
+
+class svImageImporterOp(bpy.types.Operator):
+
+    bl_idname = "image.image_importer"
+    bl_label = "sv Image Import Operator"
+
+    filepath = StringProperty(
+        name="File Path",
+        description="Filepath used for importing the font file",
+        maxlen=1024, default="", subtype='FILE_PATH')
+
+    def execute(self, context):
+        bpy.data.images.load(self.filepath)
+        return {'FINISHED'}
+
+    def invoke(self, context, event):
+        wm = context.window_manager
+        wm.fileselect_add(self)
+        return {'RUNNING_MODAL'}
 
 
 class ImageComponentsOps(bpy.types.Operator):
@@ -151,7 +157,10 @@ class ImageComponentsOps(bpy.types.Operator):
 
     def unload_image(self, context):
         n = context.node
-        n.node_dict[hash(n)]['node_image']['image'] = {}
+        # using f8 to reload python addons, forces us to add extra checks
+        # because the n.dict becomes empty on reload.
+        if hash(n) in n.node_dict:
+            n.node_dict[hash(n)]['node_image']['image'] = {}
         n.loaded = False
 
     def execute(self, context):
@@ -253,6 +262,10 @@ class SvImageComponentsNode(bpy.types.Node, SverchCustomTreeNode):
                 w, h = image_dict['image']['dimensions']
                 col.label('dims h={h}, w={w}'.format(w=w, h=h))
 
+    def draw_buttons_ext(self, context, layout):
+        col = layout.column()
+        col.operator('image.image_importer', text='img from disk', icon="FILE_IMAGE")
+
     def update(self):
         outputs = self.outputs
 
@@ -279,7 +292,8 @@ class SvImageComponentsNode(bpy.types.Node, SverchCustomTreeNode):
             if outputs[name].links:
                 m = self.xy_spread if name in 'xy' else self.z_spread
                 data = [v * m for v in dict_data[name]]
-                SvSetSocketAnyType(self, name, [data])
+                #SvSetSocketAnyType(self, name, [data])
+                outputs[name].sv_set([data])
 
         polygons = 'polygons'
         if not outputs[polygons].links:
@@ -295,13 +309,14 @@ class SvImageComponentsNode(bpy.types.Node, SverchCustomTreeNode):
 
             dict_data[polygons] = generate_polygons(w, h)
 
-        SvSetSocketAnyType(self, polygons, [polygon_data])
+        outputs[polygons].sv_set([polygon_data])
 
     def update_socket(self, context):
         self.update()
 
 
 def register():
+    bpy.utils.register_class(svImageImporterOp)
     bpy.utils.register_class(ImageComponentsOps)
     bpy.utils.register_class(SvImageComponentsNode)
 
@@ -309,3 +324,4 @@ def register():
 def unregister():
     bpy.utils.unregister_class(ImageComponentsOps)
     bpy.utils.unregister_class(SvImageComponentsNode)
+    bpy.utils.unregister_class(svImageImporterOp)
