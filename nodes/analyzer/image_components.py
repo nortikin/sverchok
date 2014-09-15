@@ -105,6 +105,9 @@ class ImageComponentsOps(bpy.types.Operator):
 
     def load_image(self, context):
         n = context.node
+        if not hash(n) in n.node_dict:
+            n.node_dict[hash(n)] = {}
+
         node_dict = n.node_dict[hash(n)]['node_image'] = {}
 
         img = bpy.data.images[n.image_name]
