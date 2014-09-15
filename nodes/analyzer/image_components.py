@@ -80,8 +80,13 @@ class svImageImporterOp(bpy.types.Operator):
         description="Filepath used for importing the font file",
         maxlen=1024, default="", subtype='FILE_PATH')
 
+    origin = StringProperty("")
+
     def execute(self, context):
-        bpy.data.images.load(self.filepath)
+        a = bpy.data.images.load(self.filepath)
+        node_tree, node_name = self.origin.split('|><|')
+        node = bpy.data.node_groups[node_tree].nodes[node_name]
+        node.image_name = a.name
         return {'FINISHED'}
 
     def invoke(self, context, event):
@@ -263,8 +268,17 @@ class SvImageComponentsNode(bpy.types.Node, SverchCustomTreeNode):
                 col.label('dims h={h}, w={w}'.format(w=w, h=h))
 
     def draw_buttons_ext(self, context, layout):
+
+        # poor mans origin tracker
+        node_tree = self.id_data.name
+        node_name = self.name
+        origin = '|><|'.join([node_tree, node_name])
+
         col = layout.column()
-        col.operator('image.image_importer', text='img from disk', icon="FILE_IMAGE")
+        image_op = col.operator(
+            'image.image_importer',
+            text='img from disk',
+            icon="FILE_IMAGE").origin = origin
 
     def update(self):
         outputs = self.outputs
