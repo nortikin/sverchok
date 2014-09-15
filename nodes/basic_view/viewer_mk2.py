@@ -32,6 +32,16 @@ from data_structure import (
     Vector_generate, Matrix_generate, SvGetSocketAnyType)
 
 from utils.viewer_draw_mk2 import callback_disable, callback_enable
+from nodes.basic_view.viewer import SvObjBake
+
+# class SvBakerProcess2(bpy.types.Operator):
+#     bl_idname = "viewnode.baker_view_mk2"
+#     bl_label = "sv Baker ViewerDraw MK2"
+
+#     def execute(self, context):
+#         n = context.node
+#         print('yooo')
+#         return {'FINISHED'}
 
 
 class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
@@ -99,6 +109,11 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
         description='useful for concave ngons, forces ngons to be tessellated',
         update=updateNode)
 
+    bakebuttonshow = BoolProperty(
+        name='bakebuttonshow', description='show bake button on node',
+        default=True,
+        update=updateNode)
+
     def init(self, context):
         self.inputs.new('VerticesSocket', 'vertices', 'vertices')
         self.inputs.new('StringsSocket', 'edg_pol', 'edg_pol')
@@ -148,9 +163,18 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
         #row = layout.row(align=True)
         #row.prop(self, 'light_direction', text='')
         col.separator()
-        col.separator()
         col.label('light_direction')
         col.prop(self, 'light_direction', text='')
+
+        col.separator()
+        layout.prop(self, 'bakebuttonshow', text='show bake button')
+
+        if self.bakebuttonshow:
+            row = layout.row()
+            row.scale_y = 4.0
+            opera = row.operator('node.sverchok_mesh_baker', text='B A K E')
+            opera.idname = self.name
+            opera.idtree = self.id_data.name
 
     # reset n_id on duplicate (shift-d)
     def copy(self, node):
@@ -242,10 +266,12 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
 
 def register():
     bpy.utils.register_class(ViewerNode2)
+    bpy.utils.register_class(SvBakerProcess2)
 
 
 def unregister():
     bpy.utils.unregister_class(ViewerNode2)
+    bpy.utils.unregister_class(SvBakerProcess2)
 
 
 if __name__ == '__main__':
