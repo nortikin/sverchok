@@ -17,15 +17,19 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-from bpy.props import BoolProperty, StringProperty, FloatProperty, FloatVectorProperty, IntProperty
+from bpy.props import (
+    BoolProperty, StringProperty, IntProperty,
+    FloatProperty, FloatVectorProperty)
+
 from mathutils import Matrix
 
-from node_tree import (SverchCustomTreeNode, SvColors,
-                       StringsSocket, VerticesSocket, MatrixSocket)
-from data_structure import (cache_viewer_baker,
-                            dataCorrect, node_id,
-                            Vector_generate, Matrix_generate,
-                            updateNode, SvGetSocketAnyType)
+from node_tree import (
+    SvColors, SverchCustomTreeNode,
+    StringsSocket, VerticesSocket, MatrixSocket)
+
+from data_structure import (
+    cache_viewer_baker, node_id, updateNode, dataCorrect,
+    Vector_generate, Matrix_generate, SvGetSocketAnyType)
 
 from utils.viewer_draw_mk2 import callback_disable, callback_enable
 
@@ -141,8 +145,12 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
         col.prop(self, 'edge_width', text='edge_width')
         col.prop(self, 'ngon_tessellate', text='ngons tessellation', toggle=True)
 
-        row = layout.row(align=True)
-        row.prop(self, 'light_direction', text='')
+        #row = layout.row(align=True)
+        #row.prop(self, 'light_direction', text='')
+        col.separator()
+        col.separator()
+        col.label('light_direction')
+        col.prop(self, 'light_direction', text='')
 
     # reset n_id on duplicate (shift-d)
     def copy(self, node):
