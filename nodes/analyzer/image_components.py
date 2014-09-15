@@ -306,7 +306,6 @@ class SvImageComponentsNode(bpy.types.Node, SverchCustomTreeNode):
             if outputs[name].links:
                 m = self.xy_spread if name in 'xy' else self.z_spread
                 data = [v * m for v in dict_data[name]]
-                #SvSetSocketAnyType(self, name, [data])
                 outputs[name].sv_set([data])
 
         polygons = 'polygons'
@@ -318,6 +317,8 @@ class SvImageComponentsNode(bpy.types.Node, SverchCustomTreeNode):
 
             w, h = dict_data['dimensions']
             if not self.skip == 0:
+                # w = ceil(w/(self.skip+1))
+                # h = ceil(h/(self.skip+1))
                 w = len(range(0, w, self.skip+1))
                 h = len(range(0, h, self.skip+1))
 
