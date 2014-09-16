@@ -142,7 +142,7 @@ class ImageComponentsOps(bpy.types.Operator):
             b = next(gen_obj)
             a = next(gen_obj)
             if n.filter_mode:
-                if not eval(n.filter_str, None, vars()):
+                if not eval(n.filter_str, {}, vars()):
                     return
             add_x(x)
             add_y(y)
