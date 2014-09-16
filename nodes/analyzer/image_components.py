@@ -134,17 +134,19 @@ class ImageComponentsOps(bpy.types.Operator):
         # generator expression
         gen_obj = (i for i in pxls)
 
+        def add_pixeldata():
+            add_x(x)
+            add_y(y)
+            add_r(next(gen_obj))
+            add_g(next(gen_obj))
+            add_b(next(gen_obj))
+            add_a(next(gen_obj))
+
         if n.skip == 0:
             for idx in range(num_pixels):
                 x, y = idx_to_co(idx, w)
-                add_x(x)
-                add_y(y)
-                add_r(next(gen_obj))
-                add_g(next(gen_obj))
-                add_b(next(gen_obj))
-                add_a(next(gen_obj))
+                add_pixeldata()
         else:
-
             xlookup = [ix for ix in range(w) if ix % (n.skip+1) == 0]
             ylookup = [iy for iy in range(h) if iy % (n.skip+1) == 0]
 
@@ -153,13 +155,7 @@ class ImageComponentsOps(bpy.types.Operator):
                 if not ((x in xlookup) and (y in ylookup)):
                     [next(gen_obj) for i in range(4)]
                     continue
-
-                add_x(x)
-                add_y(y)
-                add_r(next(gen_obj))
-                add_g(next(gen_obj))
-                add_b(next(gen_obj))
-                add_a(next(gen_obj))
+                add_pixeldata()
 
         n.loaded = True
 
