@@ -137,12 +137,19 @@ class ImageComponentsOps(bpy.types.Operator):
 
         # x and y will be local when this function is called
         def add_pixeldata():
+            r = next(gen_obj)
+            g = next(gen_obj)
+            b = next(gen_obj)
+            a = next(gen_obj)
+            if n.filter_mode:
+                if not eval(n.filter_str):
+                    return
             add_x(x)
             add_y(y)
-            add_r(next(gen_obj))
-            add_g(next(gen_obj))
-            add_b(next(gen_obj))
-            add_a(next(gen_obj))
+            add_r(r)
+            add_g(g)
+            add_b(b)
+            add_a(a)
 
         if n.skip == 0:
             for idx in range(num_pixels):
@@ -225,6 +232,18 @@ class SvImageComponentsNode(bpy.types.Node, SverchCustomTreeNode):
         step=1, min=0,
         update=updateNode)
 
+    filter_mode = BoolProperty(
+        default=0,
+        name='filter_mode',
+        description='Allows arbitary filter logic, to spit out verts (polygons are dropped)',
+        update=updateNode)
+
+    filter_str = StringProperty(
+        default='',
+        name='filter_str',
+        description='will safe eval this string',
+        update=updateNode)
+
     def init(self, context):
         self.node_dict[hash(self)] = {}
         self.node_dict[hash(self)]['node_image'] = {}
@@ -259,6 +278,10 @@ class SvImageComponentsNode(bpy.types.Node, SverchCustomTreeNode):
             'node.image_comp_callback',
             text=operator_type,
             icon=operator_icon).fn_name = operator_type
+
+        col.prop(self, 'filter_mode', text='Filter?', toggle=True)
+        if self.filter_mode:
+            col.prop(self, 'filter_str', text='', icon='GROUP_VCOL')
 
         col.prop(self, 'skip', text='Skip n pixels')
 
@@ -311,6 +334,12 @@ class SvImageComponentsNode(bpy.types.Node, SverchCustomTreeNode):
                 m = self.xy_spread if name in 'xy' else self.z_spread
                 data = [v * m for v in dict_data[name]]
                 outputs[name].sv_set([data])
+
+        if self.filter_mode:
+            '''
+            possible to generate polygon from pixel.. later..for now return
+            '''
+            return
 
         polygons = 'polygons'
         if not outputs[polygons].links:
