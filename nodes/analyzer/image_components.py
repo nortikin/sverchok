@@ -352,8 +352,6 @@ class SvImageComponentsNode(bpy.types.Node, SverchCustomTreeNode):
             if not self.skip == 0:
                 w = ceil(w/(self.skip+1))
                 h = ceil(h/(self.skip+1))
-                # w = len(range(0, w, self.skip+1))
-                # h = len(range(0, h, self.skip+1))
 
             dict_data[polygons] = generate_polygons(w, h)
 
