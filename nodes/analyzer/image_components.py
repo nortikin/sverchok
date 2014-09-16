@@ -16,7 +16,7 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-from math import floor
+from math import floor, ceil
 
 import bpy
 from bpy.props import (
@@ -131,8 +131,6 @@ class ImageComponentsOps(bpy.types.Operator):
         add_g = image['g'].append
         add_b = image['b'].append
         add_a = image['a'].append
-
-        print("i'm here!; ")
 
         # generator expression
         gen_obj = (i for i in pxls)
@@ -323,8 +321,8 @@ class SvImageComponentsNode(bpy.types.Node, SverchCustomTreeNode):
 
             w, h = dict_data['dimensions']
             if not self.skip == 0:
-                # w = ceil(w/(self.skip+1))
-                # h = ceil(h/(self.skip+1))
+                #w = ceil(w/(self.skip+1))
+                #h = ceil(h/(self.skip+1))
                 w = len(range(0, w, self.skip+1))
                 h = len(range(0, h, self.skip+1))
 

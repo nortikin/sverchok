@@ -360,6 +360,10 @@ def draw_callback_view(n_id, cached_view, options):
     data_edges = []
 
     if sl2 and sl2[0]:
+        if isinstance(sl2[0], int):
+            callback_disable(n_id)
+            return
+
         len_sl2 = len(sl2[0][0])
         if len_sl2 == 2:
             data_edges = sl2
