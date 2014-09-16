@@ -124,16 +124,20 @@ class ImageComponentsOps(bpy.types.Operator):
             'polygons': [], 'dimensions': [w, h]
         }
 
-        add_x = node_dict['image']['x'].append
-        add_y = node_dict['image']['y'].append
-        add_r = node_dict['image']['r'].append
-        add_g = node_dict['image']['g'].append
-        add_b = node_dict['image']['b'].append
-        add_a = node_dict['image']['a'].append
+        image = node_dict['image']
+        add_x = image['x'].append
+        add_y = image['y'].append
+        add_r = image['r'].append
+        add_g = image['g'].append
+        add_b = image['b'].append
+        add_a = image['a'].append
+
+        print("i'm here!; ")
 
         # generator expression
         gen_obj = (i for i in pxls)
 
+        # x and y will be local when this function is called
         def add_pixeldata():
             add_x(x)
             add_y(y)
