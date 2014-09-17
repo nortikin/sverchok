@@ -22,7 +22,7 @@ outputs   Will output a Scalar (s), or a Vector (w).
 ========= ==========================================================
 
 Depending on the mode you choose the sockets are automatically changed to
-accomodate the expected inputs and outputs types
+accommodate the expected inputs and outputs types
 
 
 Modes
