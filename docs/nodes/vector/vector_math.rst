@@ -24,9 +24,9 @@ Modes
 Most operations are self explanatory,
 but in case they aren't then here is a quick overview:
 
-=================== ========= ========= ===============================
+=================== ========= ========= =================================
 Tables              inputs    outputs   description
-=================== ========= ========= ===============================
+=================== ========= ========= =================================
 Cross product        u, v     s         u cross v
 Dot product          u, v     s         u dot v
 Add                  u, v     w         u + v
@@ -46,4 +46,5 @@ Multiply 1/Scalar    u, s     w         multiply(vector, 1/scalar)
 Angle Degrees        u, v     s         angle(u, origin, v)
 Angle Radians        u, v     s         angle(u, origin, v)
 Round s digits       u, s     v         reduce precision of components
-=================== ========= ========= ===============================
+Component-wise U*V   u, v     w         `w = (u.x*v.x, u.y*v.y, u.z*v.z)`
+=================== ========= ========= =================================
