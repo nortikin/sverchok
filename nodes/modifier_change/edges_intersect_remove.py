@@ -76,8 +76,9 @@ def select_non_intersecting(bm, edge_indices, mdist):
         if set(edges).issubset(drop_edges):
             continue
 
-        raw_vert_indices = cm.vertex_indices_from_edges_tuple(bm, edges)
-        v1, v2, v3, v4 = cm.vectors_from_indices(bm, raw_vert_indices)
+        vert_indices = cm.vertex_indices_from_edges_tuple(bm, edges)
+        v1, v2, v3, v4 = [bm.verts[i].co for i in vert_indices]
+
         mid_edge1 = (v1+v2) * 0.5
         mid_edge2 = (v3+v4) * 0.5
         distance = (mid_edge1 - mid_edge2).length
