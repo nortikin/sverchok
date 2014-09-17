@@ -65,6 +65,9 @@ def select_non_intersecting(bm, edge_indices, mdist):
     k = defaultdict(list)
     d = defaultdict(list)
 
+    drop_edges = set()
+
+    print('found permutations!')
     for edges in permutations:
         '''
         for (co, index, dist) in kd.find_range(vtx, mdist):
@@ -72,6 +75,9 @@ def select_non_intersecting(bm, edge_indices, mdist):
                 continue
             e.append([i, index])
         '''
+        if set(edges).issubset(drop_edges):
+            continue
+
         raw_vert_indices = cm.vertex_indices_from_edges_tuple(bm, edges)
         v1, v2, v3, v4 = cm.vectors_from_indices(bm, raw_vert_indices)
         midpointedge1 = (v1+v2)/2
@@ -85,6 +91,7 @@ def select_non_intersecting(bm, edge_indices, mdist):
         if not ei.can_skip(points, (v1, v2, v3, v4)):
             bm.edges[edges[0]].select = True
             bm.edges[edges[1]].select = True
+            drop_edges.update(set(edges))
 
 
 class SvNonIntersectEdgesNode(SvIntersectEdgesNode):
