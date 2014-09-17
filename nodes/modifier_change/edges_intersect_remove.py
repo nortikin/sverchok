@@ -21,10 +21,12 @@ from collections import defaultdict
 
 import bpy
 import bmesh
+from bpy.props import FloatProperty
 from mathutils.geometry import intersect_line_line as LineIntersect
+from mathutils.kdtree import KDTree
 
 from node_tree import SverchCustomTreeNode
-from data_structure import SvSetSocketAnyType, SvGetSocketAnyType
+from data_structure import SvSetSocketAnyType, SvGetSocketAnyType, updateNode
 from utils import cad_module as cm
 
 from nodes.modifier_change import edges_intersect as ei
@@ -46,34 +48,43 @@ def select_nonintersecting(bm, d_edges):
         bm.edges[edge].select = True
 
 
-def get_nonintersection_dictionary(bm, edge_indices):
+def make_kdtree(bm):
+    size = len(bm.verts)
+    kd = KDTree(size)
+
+    for i, vtx in enumerate(bm.verts):
+        kd.insert(vtx.co, i)
+    kd.balance()
+    return kd
+
+
+def select_non_intersecting(bm, edge_indices, mdist):
     permutations = ei.get_valid_permutations(bm, edge_indices)
 
+    # kd = make_kdtree(bm)
     k = defaultdict(list)
     d = defaultdict(list)
 
     for edges in permutations:
+        '''
+        for (co, index, dist) in kd.find_range(vtx, mdist):
+            if i == index or (num_edges > 2):
+                continue
+            e.append([i, index])
+        '''
         raw_vert_indices = cm.vertex_indices_from_edges_tuple(bm, edges)
-        vert_vectors = cm.vectors_from_indices(bm, raw_vert_indices)
-
-        points = LineIntersect(*vert_vectors)
-
-        # some can be skipped.    (NaN, None, not on both edges)
-        if ei.can_skip(points, vert_vectors):
+        v1, v2, v3, v4 = cm.vectors_from_indices(bm, raw_vert_indices)
+        midpointedge1 = (v1+v2)/2
+        midpointedge2 = (v3+v4)/2
+        distance = (midpointedge1 - midpointedge2).length
+        if distance > mdist:
             continue
 
-        # reaches this point only when an intersection happens on both edges.
-        [k[edge].append(points[0]) for edge in edges]
-
-    # k will contain a dict of edge indices and points found on those edges.
-    for edge_idx, unordered_points in k.items():
-        tv1, tv2 = bm.edges[edge_idx].verts
-        v1 = bm.verts[tv1.index].co
-        v2 = bm.verts[tv2.index].co
-        ordered_points = ei.order_points((v1, v2), unordered_points)
-        d[edge_idx].extend(ordered_points)
-
-    return d
+        # some can be skipped.    (NaN, None, not on both edges)
+        points = LineIntersect(v1, v2, v3, v4)
+        if not ei.can_skip(points, (v1, v2, v3, v4)):
+            bm.edges[edges[0]].select = True
+            bm.edges[edges[1]].select = True
 
 
 class SvNonIntersectEdgesNode(SvIntersectEdgesNode):
@@ -82,6 +93,12 @@ class SvNonIntersectEdgesNode(SvIntersectEdgesNode):
     bl_label = 'Non Intersect Edges Node'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
+    mdist = FloatProperty(default=0.2, update=updateNode)
+
+    def draw_buttons(self, context, layout):
+        col = layout.column()
+        col.prop(self, 'mdist', text='seek distance')
+
     def update(self):
         inputs = self.inputs
         outputs = self.outputs
@@ -89,31 +106,41 @@ class SvNonIntersectEdgesNode(SvIntersectEdgesNode):
         if not (len(outputs) == 2):
             return
 
+        if not outputs['Verts_out'].links:
+            return
+
+        if not (inputs['Verts_in'].links and inputs['Edges_in'].links):
+            return
+
+        self.process()
+
+    def process(self):
+        inputs = self.inputs
+
         try:
             verts_in = SvGetSocketAnyType(self, inputs['Verts_in'])[0]
             edges_in = SvGetSocketAnyType(self, inputs['Edges_in'])[0]
-            linked = outputs[0].links
         except (IndexError, KeyError) as e:
             return
 
-        bm = bmesh.new()
-        [bm.verts.new(co) for co in verts_in]
-        bm.normal_update()
-        [bm.edges.new((bm.verts[i], bm.verts[j])) for i, j in edges_in]
-        bm.normal_update()
-
+        bm = self.make_bm(verts_in, edges_in)
         edge_indices = [e.index for e in bm.edges]
-        for edge in bm.edges:
-            edge.select = False
 
-        d = get_nonintersection_dictionary(bm, edge_indices)
-        select_nonintersecting(bm, d.keys())
+        select_non_intersecting(bm, edge_indices, self.mdist)
 
         verts_out = [v.co.to_tuple() for v in bm.verts]
         edges_out = [[j.index for j in i.verts] for i in bm.edges if not i.select]
 
         SvSetSocketAnyType(self, 'Verts_out', [verts_out])
         SvSetSocketAnyType(self, 'Edges_out', [edges_out])
+
+    def make_bm(self, verts_in, edges_in):
+        bm = bmesh.new()
+        [bm.verts.new(co) for co in verts_in]
+        bm.normal_update()
+        [bm.edges.new((bm.verts[i], bm.verts[j])) for i, j in edges_in]
+        bm.normal_update()
+        return bm
 
 
 def register():
