@@ -35,7 +35,7 @@ nodes_dict = {
         'gtext',
         'note',
         '3dview_props',
-        'stethoscope'],
+        'viewer_node_editor_bgl'],
 
     'generator': [
         'box',
