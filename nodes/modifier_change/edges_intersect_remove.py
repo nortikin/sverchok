@@ -80,9 +80,10 @@ def select_non_intersecting(bm, edge_indices, mdist):
 
         raw_vert_indices = cm.vertex_indices_from_edges_tuple(bm, edges)
         v1, v2, v3, v4 = cm.vectors_from_indices(bm, raw_vert_indices)
-        midpointedge1 = (v1+v2)/2
-        midpointedge2 = (v3+v4)/2
-        distance = (midpointedge1 - midpointedge2).length
+        mid_edge1 = (v1+v2) * 0.5
+        mid_edge2 = (v3+v4) * 0.5
+        distance = (mid_edge1 - mid_edge2).length
+
         if distance > mdist:
             continue
 
@@ -112,10 +113,8 @@ class SvNonIntersectEdgesNode(SvIntersectEdgesNode):
 
         if not (len(outputs) == 2):
             return
-
         if not outputs['Verts_out'].links:
             return
-
         if not (inputs['Verts_in'].links and inputs['Edges_in'].links):
             return
 
@@ -123,19 +122,17 @@ class SvNonIntersectEdgesNode(SvIntersectEdgesNode):
 
     def process(self):
         inputs = self.inputs
+        verts_in = inputs['Verts_in'].sv_get()[0]
+        edges_in = inputs['Edges_in'].sv_get()[0]
 
-        try:
-            verts_in = SvGetSocketAnyType(self, inputs['Verts_in'])[0]
-            edges_in = SvGetSocketAnyType(self, inputs['Edges_in'])[0]
-        except (IndexError, KeyError) as e:
+        if not (verts_in and edges_in):
             return
 
         bm = self.make_bm(verts_in, edges_in)
-        edge_indices = [e.index for e in bm.edges]
-
+        edge_indices = (e.index for e in bm.edges)  # generator expression
         select_non_intersecting(bm, edge_indices, self.mdist)
 
-        verts_out = [v.co.to_tuple() for v in bm.verts]
+        verts_out = [v.co[:] for v in bm.verts]
         edges_out = [[j.index for j in i.verts] for i in bm.edges if not i.select]
 
         SvSetSocketAnyType(self, 'Verts_out', [verts_out])
