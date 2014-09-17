@@ -47,8 +47,8 @@ scalar_out = {
 
 vector_out = {
     "CROSS":        (lambda u, v: Vector(u).cross(v)[:], 2),
-    "ADD":          (lambda u, v: (u[0]+v[0],u[1]+v[1],u[2]+v[2]), 2),
-    "SUB":          (lambda u, v: (u[0]-v[0],u[1]-v[1],u[2]-v[2]), 2),
+    "ADD":          (lambda u, v: (u[0]+v[0], u[1]+v[1], u[2]+v[2]), 2),
+    "SUB":          (lambda u, v: (u[0]-v[0], u[1]-v[1], u[2]-v[2]), 2),
     "REFLECT":      (lambda u, v: Vector(u).reflect(v)[:], 2),
     "PROJECT":      (lambda u, v: Vector(u).project(v)[:], 2),
     "SCALAR":       (lambda u, s: (Vector(u) * s)[:], 2),
@@ -58,7 +58,9 @@ vector_out = {
     "NORMALIZE":    (lambda u: Vector(u).normalized()[:], 1),
     "NEG":          (lambda u: (-Vector(u))[:], 1),
     "NOISE-V":      (lambda u: noise_vector(Vector(u))[:], 1),
-    "CELL-V":       (lambda u: cell_vector(Vector(u))[:], 1)
+    "CELL-V":       (lambda u: cell_vector(Vector(u))[:], 1),
+
+    "COMPONENT-WISE":  (lambda u, v: (u[0]*v[0], u[1]*v[1], u[2]*v[2]), 2)
 }
 
 
@@ -92,7 +94,9 @@ class VectorMathNode(bpy.types.Node, SverchCustomTreeNode):
         ("1/SCALAR",    "Multiply 1/Scalar",    "", 16),
 
         ("ANGLE RAD",   "Angle Radians",        "", 17),
-        ("ROUND",       "Round s digits",       "", 18)
+        ("ROUND",       "Round s digits",       "", 18),
+
+        ("COMPONENT-WISE", "Component-wise U*V", "", 19)
     ]
 
     def mode_change(self, context):
