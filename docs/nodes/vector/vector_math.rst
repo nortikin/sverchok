@@ -7,16 +7,23 @@ elements, even if they are nested. It is therefore what we call
 a *Vectorized* node, for an elaborate explanation of what this
 means see this [introduction]().
 
-Input and Output
-^^^^^^^^^^^^^^^^
-
 The node expects correct input for the chosen operation (called mode),
 but it will fail gracefully with a message in the console if the input
 is not right for the selected mode.
 
-Some modes accept a Vector (U) and a Scalar (S), while other accepts
-two Vectors (U, V). Some modes will output a Scalar (S),
-others with output a Vector (W).
+Input and Output
+^^^^^^^^^^^^^^^^
+
+========= ==========================================================
+socket    description
+========= ==========================================================
+inputs    Expect a Vector and Scalar (v,s), or two Vectors (u, v)
+outputs   Will output a Scalar (s), or a Vector (w).
+========= ==========================================================
+
+Depending on the mode you choose the sockets are automatically changed to
+accomodate the expected inputs and outputs types
+
 
 Modes
 ^^^^^
