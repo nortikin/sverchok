@@ -167,7 +167,7 @@ def make_categories():
 
     node_cats["Beta test"] = [
         # for testing convenience,
-        ["BGLdemoNode",         "Viewer BGL debug"],
+        ["SvStethoscopeNode",   "Stethoscope"],
         ["SvOffsetNode",        "Offset"],
         ["SvEmptyOutNode",      "Empty out"],
         ["EvalKnievalNode",     "Eval Knieval"],
