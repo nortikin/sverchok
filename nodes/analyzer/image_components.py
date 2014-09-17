@@ -229,8 +229,7 @@ class SvImageComponentsNode(bpy.types.Node, SverchCustomTreeNode):
 
     skip = IntProperty(
         default=3,
-        step=1, min=0,
-        update=updateNode)
+        step=1, min=0)
 
     filter_mode = BoolProperty(
         default=0,

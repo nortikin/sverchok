@@ -3,8 +3,10 @@ from bpy.app.handlers import persistent
 import data_structure
 from core import upgrade_nodes
 from utils import viewer_draw
+from utils import viewer_draw_mk2
 from utils import index_viewer_draw
 from utils import nodeview_bgl_viewer_draw
+
 
 @persistent
 def sv_update_handler(scene):
@@ -19,6 +21,7 @@ def sv_update_handler(scene):
                 print('Failed to update:', name, str(e))
     scene.update()
 
+
 # clean up handler
 @persistent
 def sv_clean(scene):
@@ -26,6 +29,7 @@ def sv_clean(scene):
     Cleanup callbacks, clean dicts.
     """
     viewer_draw.callback_disable_all()
+    viewer_draw_mk2.callback_disable_all()
     index_viewer_draw.callback_disable_all()
     nodeview_bgl_viewer_draw.callback_disable_all()
     data_structure.sv_Vars = {}
@@ -57,12 +61,12 @@ def sv_post_load(scene):
         if any((n.bl_idname in unsafe_nodes for n in tree.nodes)):
             unsafe = True
             break
-    # do nothing with this for now        
+    # do nothing with this for now
     #if unsafe:
     #    print("unsafe nodes found")
     #else:
     #    print("safe")
-        
+
     #print("post load .update()")
     # do an update
     for ng in bpy.data.node_groups:
@@ -97,6 +101,7 @@ def register():
         set_frame_change(addon.preferences.frame_change_mode)
     else:
         print("Couldn't setup Sverchok frame change handler")
+
 
 def unregister():
     bpy.app.handlers.load_pre.remove(sv_clean)
