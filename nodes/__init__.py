@@ -35,7 +35,7 @@ nodes_dict = {
         'gtext',
         'note',
         '3dview_props',
-        'viewer_node_editor_bgl'],
+        'stethoscope'],
 
     'generator': [
         'box',
@@ -150,4 +150,3 @@ nodes_dict = {
         'vertices_sort',
         'axis_input']
 }
-
