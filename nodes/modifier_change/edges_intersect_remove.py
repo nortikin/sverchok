@@ -59,15 +59,13 @@ def make_kdtree(bm):
 
 
 def select_non_intersecting(bm, edge_indices, mdist):
+    print('start permutation search')
     permutations = ei.get_valid_permutations(bm, edge_indices)
+    print('found permutations!')
 
     # kd = make_kdtree(bm)
-    k = defaultdict(list)
-    d = defaultdict(list)
-
     drop_edges = set()
 
-    print('found permutations!')
     for edges in permutations:
         '''
         for (co, index, dist) in kd.find_range(vtx, mdist):
@@ -122,8 +120,10 @@ class SvNonIntersectEdgesNode(SvIntersectEdgesNode):
 
     def process(self):
         inputs = self.inputs
-        verts_in = inputs['Verts_in'].sv_get()[0]
-        edges_in = inputs['Edges_in'].sv_get()[0]
+        outputs = self.outputs
+
+        verts_in = inputs['Verts_in'].sv_get(default=[])[0]
+        edges_in = inputs['Edges_in'].sv_get(default=[])[0]
 
         if not (verts_in and edges_in):
             return
@@ -135,8 +135,8 @@ class SvNonIntersectEdgesNode(SvIntersectEdgesNode):
         verts_out = [v.co[:] for v in bm.verts]
         edges_out = [[j.index for j in i.verts] for i in bm.edges if not i.select]
 
-        SvSetSocketAnyType(self, 'Verts_out', [verts_out])
-        SvSetSocketAnyType(self, 'Edges_out', [edges_out])
+        outputs['Verts_out'].sv_set([verts_out])
+        outputs['Edges_out'].sv_set([edges_out])
 
     def make_bm(self, verts_in, edges_in):
         bm = bmesh.new()
