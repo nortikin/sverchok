@@ -15,7 +15,7 @@ but it will fail gracefully with a message in the console if the input
 is not right for the selected mode.
 
 Some modes accept a Vector (U) and a Scalar (S), while other accepts
-two Vectors (U, V). Some modes will output a Scalar (out),
+two Vectors (U, V). Some modes will output a Scalar (S),
 others with output a Vector (W).
 
 Modes
