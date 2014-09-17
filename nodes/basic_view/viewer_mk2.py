@@ -102,7 +102,7 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
 
     bakebuttonshow = BoolProperty(
         name='bakebuttonshow', description='show bake button on node',
-        default=True,
+        default=False,
         update=updateNode)
 
     def init(self, context):
@@ -142,9 +142,17 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
         row.active = self.activate
         row.prop(self, "display_faces", toggle=True, icon='FACESEL', text='')
         row.prop(self, "face_colors", text="")
+        
+        # i need it in layout to bake needed nodes without selecting them
+        # please, dont move to ext
+        if self.bakebuttonshow:
+            row = layout.row()
+            row.scale_y = 4.0
+            opera = row.operator('node.sverchok_mesh_baker', text='B A K E')
+            opera.idname = self.name
+            opera.idtree = self.id_data.name
 
     def draw_buttons_ext(self, context, layout):
-        self.draw_buttons(context, layout)
 
         col = layout.column(align=True)
         col.prop(self, 'vertex_size', text='vertex size')
@@ -159,13 +167,10 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
 
         col.separator()
         layout.prop(self, 'bakebuttonshow', text='show bake button')
+        
+        self.draw_buttons(context, layout)
 
-        if self.bakebuttonshow:
-            row = layout.row()
-            row.scale_y = 4.0
-            opera = row.operator('node.sverchok_mesh_baker', text='B A K E')
-            opera.idname = self.name
-            opera.idtree = self.id_data.name
+        
 
     # reset n_id on duplicate (shift-d)
     def copy(self, node):
@@ -265,3 +270,5 @@ def unregister():
 
 if __name__ == '__main__':
     register()
+
+
