@@ -5,6 +5,7 @@ Functionality
 -------------
 
 Prints raw socket data to console, useful for debug.
+
 .. image:: https://cloud.githubusercontent.com/assets/6241382/4299489/bccdcd88-3e37-11e4-80a8-443537dc37f6.png
 
 Inputs
