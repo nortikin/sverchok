@@ -362,6 +362,7 @@ def draw_callback_view(n_id, cached_view, options):
         data_vector = []
         verlen = 0
 
+    options['verlen'] = verlen
     data_polygons = []
     data_edges = []
 
@@ -385,11 +386,9 @@ def draw_callback_view(n_id, cached_view, options):
         callback_disable(n_id)
         return
 
-    options['verlen'] = verlen
     draw_geometry(n_id, options, data_vector, data_polygons, data_matrix, data_edges)
 
     # restore to system state
-    #
     glLineWidth(1)
 
     if options["timings"]:
