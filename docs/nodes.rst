@@ -3,7 +3,7 @@ Nodes
 *****
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
 
    Basic View <nodes/basic_view/basic_view>
    Basic Data <nodes/basic_data/basic_data>
@@ -17,4 +17,5 @@ Nodes
    Modifier Change <nodes/modifier_change/modifier_change>
    Modifier Make <nodes/modifier_make/modifier_make>
    Analyzer <nodes/analyzer/analyzer>
+
    Beta <nodes/beta/stethoscope>

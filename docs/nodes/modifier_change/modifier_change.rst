@@ -16,3 +16,4 @@ Modifier Change
    rotation
    scale
    mirror
+   delete_loose

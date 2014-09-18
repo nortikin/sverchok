@@ -18,3 +18,4 @@ Generator
    random_vector
    profile_parametric
    scripted
+   formula_shape
