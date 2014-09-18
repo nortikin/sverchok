@@ -394,15 +394,12 @@ def draw_callback_view(n_id, cached_view, options):
         glEndList()
 
         options['genlist'] = the_display_list
-
-        # draw once straight after the init of the drawlist. :)
-        glCallList(the_display_list)
-        glFlush()
-
+    
     elif options['draw_list'] == 1:
         the_display_list = options['genlist']
-        glCallList(the_display_list)
-        glFlush()
+    
+    glCallList(the_display_list)
+    glFlush()
 
     # restore to system state
     glLineWidth(1)
