@@ -142,7 +142,7 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
         row.active = self.activate
         row.prop(self, "display_faces", toggle=True, icon='FACESEL', text='')
         row.prop(self, "face_colors", text="")
-        
+
         # i need it in layout to bake needed nodes without selecting them
         # please, dont move to ext
         if self.bakebuttonshow:
@@ -159,18 +159,15 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
         col.prop(self, 'edge_width', text='edge_width')
         col.prop(self, 'ngon_tessellate', text='ngons tessellation', toggle=True)
 
-        #row = layout.row(align=True)
-        #row.prop(self, 'light_direction', text='')
         col.separator()
+
         col.label('light_direction')
         col.prop(self, 'light_direction', text='')
 
         col.separator()
-        layout.prop(self, 'bakebuttonshow', text='show bake button')
-        
-        self.draw_buttons(context, layout)
 
-        
+        layout.prop(self, 'bakebuttonshow', text='show bake button')
+        self.draw_buttons(context, layout)
 
     # reset n_id on duplicate (shift-d)
     def copy(self, node):
@@ -270,5 +267,3 @@ def unregister():
 
 if __name__ == '__main__':
     register()
-
-
