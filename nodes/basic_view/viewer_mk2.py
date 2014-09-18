@@ -111,13 +111,14 @@ class SvObjBakeMK2(bpy.types.Operator):
             else:
                 v = vertices[k]
 
-            if (len(v)-1) < fhtagn[k]:
-                continue
+            if fhtagn:
+                if (len(v)-1) < fhtagn[k]:
+                    continue
 
-            elif fhtagn[k] < (len(v)-1):
-                nonneed = (len(v)-1) - fhtagn[k]
-                for q in range(nonneed):
-                    v.pop((fhtagn[k]+1))
+                elif fhtagn[k] < (len(v)-1):
+                    nonneed = (len(v)-1) - fhtagn[k]
+                    for q in range(nonneed):
+                        v.pop((fhtagn[k]+1))
 
             e, p = [], []
             if num_keys == 2:
