@@ -156,12 +156,12 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
 
         col = layout.column(align=True)
         col.prop(self, 'vertex_size', text='vertex size')
-        col.prop(self, 'edge_width', text='edge_width')
+        col.prop(self, 'edge_width', text='edge width')
         col.prop(self, 'ngon_tessellate', text='ngons tessellation', toggle=True)
 
         col.separator()
 
-        col.label('light_direction')
+        col.label('Light Direction')
         col.prop(self, 'light_direction', text='')
 
         col.separator()
