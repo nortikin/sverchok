@@ -32,7 +32,117 @@ from data_structure import (
     Vector_generate, Matrix_generate, SvGetSocketAnyType)
 
 from utils.viewer_draw_mk2 import callback_disable, callback_enable
-from nodes.basic_view.viewer import SvObjBake
+# from nodes.basic_view.viewer import SvObjBake
+
+
+class SvObjBakeMK2(bpy.types.Operator):
+    """ B A K E   OBJECTS """
+    bl_idname = "node.sverchok_mesh_baker_mk2"
+    bl_label = "Sverchok mesh baker mk2"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    idname = StringProperty(
+        name='idname',
+        description='name of parent node',
+        default='')
+
+    idtree = StringProperty(
+        name='idtree',
+        description='name of parent tree',
+        default='')
+
+    def execute(self, context):
+        global cache_viewer_baker
+
+        node_group = bpy.data.node_groups[self.idtree]
+        node = node_group.nodes[self.idname]
+        nid = node_id(node)
+
+        matrix_cache = cache_viewer_baker[nid+'m']
+        vertex_cache = cache_viewer_baker[nid+'v']
+        edgpol_cache = cache_viewer_baker[nid+'ep']
+
+        if matrix_cache and not vertex_cache:
+            return {'CANCELLED'}
+
+        v = dataCorrect(vertex_cache)
+        e = self.dataCorrect3(edgpol_cache)
+        m = self.dataCorrect2(matrix_cache, v)
+        self.makeobjects(v, e, m)
+        return {'FINISHED'}
+
+    def dataCorrect2(self, destination, obj):
+        if destination:
+            return dataCorrect(destination)
+        return [Matrix() for v in obj]
+
+    def dataCorrect3(self, destination, fallback=[]):
+        if destination:
+            return dataCorrect(destination)
+        else:
+            return fallback
+
+    def makeobjects(self, vers, edg_pol, mats):
+        try:
+            num_keys = len(edg_pol[0][0])
+        except:
+            num_keys = 0
+
+        vertices = Vector_generate(vers)
+        matrixes = Matrix_generate(mats)
+        fht, edgs, pols = [], [], []
+
+        if num_keys >= 2:
+            for k in edg_pol:
+                maxi = max(max(a) for a in k)
+                fht.append(maxi)
+
+        objects = {}
+        fhtagn = []
+        for u, f in enumerate(fht):
+            fhtagn.append(min(len(vertices[u]), fht[u]))
+
+        for i, m in enumerate(matrixes):
+            k = i
+            lenver = len(vertices) - 1
+            if i > lenver:
+                v = vertices[-1]
+                k = lenver
+            else:
+                v = vertices[k]
+
+            if (len(v)-1) < fhtagn[k]:
+                continue
+
+            elif fhtagn[k] < (len(v)-1):
+                nonneed = (len(v)-1) - fhtagn[k]
+                for q in range(nonneed):
+                    v.pop((fhtagn[k]+1))
+
+            e, p = [], []
+            if num_keys == 2:
+                e = edg_pol[k]
+            elif num_keys > 2:
+                p = edg_pol[k]
+
+            objects[str(i)] = self.makemesh(i, v, e, p, m)
+
+        for ob, me in objects.values():
+            calcedg = False if (num_keys == 2) else True
+            me.update(calc_edges=calcedg)
+            bpy.context.scene.objects.link(ob)
+
+    def makemesh(self, i, v, e, p, m):
+        name = 'Sv_' + str(i)
+        me = bpy.data.meshes.new(name)
+        me.from_pydata(v, e, p)
+        ob = bpy.data.objects.new(name, me)
+        ob.matrix_world = m
+        ob.show_name = False
+        ob.hide_select = False
+        #print ([ob,me])
+        #print (ob.name + ' baked')
+        return [ob, me]
 
 
 class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
@@ -148,7 +258,8 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
         if self.bakebuttonshow:
             row = layout.row()
             row.scale_y = 4.0
-            opera = row.operator('node.sverchok_mesh_baker', text='B A K E')
+            # opera = row.operator('node.sverchok_mesh_baker', text='B A K E')
+            opera = row.operator('node.sverchok_mesh_baker_mk2', text='B A K E')
             opera.idname = self.name
             opera.idtree = self.id_data.name
 
@@ -259,10 +370,12 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
 
 def register():
     bpy.utils.register_class(ViewerNode2)
+    bpy.utils.register_class(SvObjBakeMK2)
 
 
 def unregister():
     bpy.utils.unregister_class(ViewerNode2)
+    bpy.utils.unregister_class(SvObjBakeMK2)
 
 
 if __name__ == '__main__':
