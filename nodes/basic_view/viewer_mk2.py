@@ -89,7 +89,7 @@ class SvObjBakeMK2(bpy.types.Operator):
 
         vertices = Vector_generate(vers)
         matrixes = Matrix_generate(mats)
-        edgs, pols, fhtagn, fht = [], [], [], []
+        edgs, pols, max_vert_index, fht = [], [], [], []
 
         if num_keys >= 2:
             for k in edg_pol:
@@ -97,7 +97,7 @@ class SvObjBakeMK2(bpy.types.Operator):
                 fht.append(maxi)
 
         for u, f in enumerate(fht):
-            fhtagn.append(min(len(vertices[u]), fht[u]))
+            max_vert_index.append(min(len(vertices[u]), fht[u]))
 
         objects = {}
         for i, m in enumerate(matrixes):
@@ -109,14 +109,14 @@ class SvObjBakeMK2(bpy.types.Operator):
             else:
                 v = vertices[k]
 
-            if fhtagn:
-                if (len(v)-1) < fhtagn[k]:
+            if max_vert_index:
+                if (len(v)-1) < max_vert_index[k]:
                     continue
 
-                elif fhtagn[k] < (len(v)-1):
-                    nonneed = (len(v)-1) - fhtagn[k]
+                elif max_vert_index[k] < (len(v)-1):
+                    nonneed = (len(v)-1) - max_vert_index[k]
                     for q in range(nonneed):
-                        v.pop((fhtagn[k]+1))
+                        v.pop((max_vert_index[k]+1))
 
             e, p = [], []
             if num_keys == 2:
