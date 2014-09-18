@@ -8,3 +8,4 @@ Basic Data
    object_in
    text
    wifi
+   switch

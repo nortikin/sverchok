@@ -3,7 +3,7 @@ Nodes
 *****
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
 
    Basic View <nodes/basic_view/basic_view>
    Basic Data <nodes/basic_data/basic_data>
