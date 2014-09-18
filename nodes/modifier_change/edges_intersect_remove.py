@@ -122,15 +122,15 @@ class SvNonIntersectEdgesNode(SvIntersectEdgesNode):
     def process(self):
         inputs = self.inputs
         outputs = self.outputs
-
-        verts_in = inputs['Verts_in'].sv_get(default=[])[0]
-        edges_in = inputs['Edges_in'].sv_get(default=[])[0]
+        verts_in = inputs['Verts_in'].sv_get()[0]
+        edges_in = inputs['Edges_in'].sv_get()[0]
 
         if not (verts_in and edges_in):
             return
 
         bm = self.make_bm(verts_in, edges_in)
         edge_indices = (e.index for e in bm.edges)  # generator expression
+
         select_non_intersecting(bm, edge_indices, self.mdist)
 
         verts_out = [v.co[:] for v in bm.verts]
