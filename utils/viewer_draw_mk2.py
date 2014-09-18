@@ -35,6 +35,9 @@ from bgl import (
     glEnable, glDisable, glBegin, glEnd,
     glColor3f, glVertex3f, glColor4f, glPointSize, glLineWidth,
     glLineStipple, glPolygonStipple, glHint, glShadeModel,
+    #
+    glGenLists, glNewList, glEndList, glCallList, glFlush,
+    #
     GL_POINTS, GL_LINE_STRIP, GL_LINES, GL_LINE, GL_LINE_LOOP, GL_LINE_STIPPLE,
     GL_POLYGON, GL_POLYGON_STIPPLE, GL_TRIANGLES, GL_QUADS, GL_POINT_SIZE,
     GL_POINT_SMOOTH, GL_POINT_SMOOTH_HINT, GL_LINE_SMOOTH_HINT,
@@ -340,7 +343,7 @@ def draw_callback_view(n_id, cached_view, options):
     # context = bpy.context
     if options["timings"]:
         start = time.perf_counter()
-        
+
     sl1 = cached_view[n_id + 'v']
     sl2 = cached_view[n_id + 'ep']
     sl3 = cached_view[n_id + 'm']
@@ -388,10 +391,10 @@ def draw_callback_view(n_id, cached_view, options):
     # restore to system state
     #
     glLineWidth(1)
-    
+
     if options["timings"]:
         stop = time.perf_counter()
-        print("callback drawn in {}".format(stop-start)) 
+        print("callback drawn in {}".format(stop-start))
 
 
 def unregister():
