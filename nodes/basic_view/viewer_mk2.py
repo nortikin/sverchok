@@ -212,6 +212,12 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
         name='bakebuttonshow', description='show bake button on node',
         default=False,
         update=updateNode)
+    
+    callback_timings = BoolProperty(
+        name='timings', description='print timings for callback',
+        default=False,
+        update=updateNode)
+    
 
     def init(self, context):
         self.inputs.new('VerticesSocket', 'vertices', 'vertices')
@@ -276,6 +282,8 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
         col.separator()
 
         layout.prop(self, 'bakebuttonshow', text='show bake button')
+        
+        layout.prop(self, 'callback_timings')
         self.draw_buttons(context, layout)
 
     # reset n_id on duplicate (shift-d)
@@ -351,7 +359,8 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
             'edge_colors': self.edge_colors,
             'vertex_size': self.vertex_size,
             'edge_width': self.edge_width,
-            'forced_tessellation': self.ngon_tessellate
+            'forced_tessellation': self.ngon_tessellate,
+            'timings': self.callback_timings
             }
 
     def update_socket(self, context):
