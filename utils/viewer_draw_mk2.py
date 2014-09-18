@@ -17,6 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import math
+import time
 from math import pi
 
 import bpy
@@ -337,7 +338,9 @@ def draw_geometry(n_id, options, data_vector, data_polygons, data_matrix, data_e
 
 def draw_callback_view(n_id, cached_view, options):
     # context = bpy.context
-
+    if options["timings"]:
+        start = time.perf_counter()
+        
     sl1 = cached_view[n_id + 'v']
     sl2 = cached_view[n_id + 'ep']
     sl3 = cached_view[n_id + 'm']
@@ -385,6 +388,10 @@ def draw_callback_view(n_id, cached_view, options):
     # restore to system state
     #
     glLineWidth(1)
+    
+    if options["timings"]:
+        stop = time.perf_counter()
+        print("callback drawn in {}".format(stop-start)) 
 
 
 def unregister():
