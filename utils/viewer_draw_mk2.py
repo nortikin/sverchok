@@ -36,7 +36,7 @@ from bgl import (
     glColor3f, glVertex3f, glColor4f, glPointSize, glLineWidth,
     glLineStipple, glPolygonStipple, glHint, glShadeModel,
     #
-    glGenLists, glNewList, glEndList, glCallList, glFlush,
+    glGenLists, glNewList, glEndList, glCallList, glFlush, GL_COMPILE,
     #
     GL_POINTS, GL_LINE_STRIP, GL_LINES, GL_LINE, GL_LINE_LOOP, GL_LINE_STIPPLE,
     GL_POLYGON, GL_POLYGON_STIPPLE, GL_TRIANGLES, GL_QUADS, GL_POINT_SIZE,
@@ -344,49 +344,61 @@ def draw_callback_view(n_id, cached_view, options):
     if options["timings"]:
         start = time.perf_counter()
 
-    sl1 = cached_view[n_id + 'v']
-    sl2 = cached_view[n_id + 'ep']
-    sl3 = cached_view[n_id + 'm']
+    if options['draw_list'] == 0:
 
-    if sl1:
-        data_vector = Vector_generate(sl1)
-        verlen = len(data_vector)-1
-        options['verlen_every'] = [len(d)-1 for d in data_vector]
-    else:
-        if not sl3:
-            # end early: no matrix and no vertices
+        sl1 = cached_view[n_id + 'v']
+        sl2 = cached_view[n_id + 'ep']
+        sl3 = cached_view[n_id + 'm']
+
+        if sl1:
+            data_vector = Vector_generate(sl1)
+            verlen = len(data_vector)-1
+            options['verlen_every'] = [len(d)-1 for d in data_vector]
+        else:
+            if not sl3:
+                # end early: no matrix and no vertices
+                callback_disable(n_id)
+                return
+
+            # display matrix repr only.
+            data_vector = []
+            verlen = 0
+
+        options['verlen'] = verlen
+        data_polygons = []
+        data_edges = []
+
+        if sl2 and sl2[0]:
+            if isinstance(sl2[0], int):
+                callback_disable(n_id)
+                return
+
+            len_sl2 = len(sl2[0][0])
+            if len_sl2 == 2:
+                data_edges = sl2
+            elif len_sl2 > 2:
+                data_polygons = sl2
+
+        if sl3:
+            data_matrix = Matrix_generate(sl3)
+        else:
+            data_matrix = [Matrix() for i in range(verlen+1)]
+
+        if (data_vector, data_polygons, data_matrix, data_edges) == (0, 0, 0, 0):
             callback_disable(n_id)
             return
 
-        # display matrix repr only.
-        data_vector = []
-        verlen = 0
+        the_display_list = glGenLists(1)
+        glNewList(the_display_list, GL_COMPILE)
+        draw_geometry(n_id, options, data_vector, data_polygons, data_matrix, data_edges)
+        glEndList()
 
-    options['verlen'] = verlen
-    data_polygons = []
-    data_edges = []
+        options['genlist'] = the_display_list
 
-    if sl2 and sl2[0]:
-        if isinstance(sl2[0], int):
-            callback_disable(n_id)
-            return
-
-        len_sl2 = len(sl2[0][0])
-        if len_sl2 == 2:
-            data_edges = sl2
-        elif len_sl2 > 2:
-            data_polygons = sl2
-
-    if sl3:
-        data_matrix = Matrix_generate(sl3)
-    else:
-        data_matrix = [Matrix() for i in range(verlen+1)]
-
-    if (data_vector, data_polygons, data_matrix, data_edges) == (0, 0, 0, 0):
-        callback_disable(n_id)
-        return
-
-    draw_geometry(n_id, options, data_vector, data_polygons, data_matrix, data_edges)
+    elif options['draw_list'] == 1:
+        the_display_list = options['genlist']
+        glCallList(the_display_list)
+        glFlush()
 
     # restore to system state
     glLineWidth(1)
@@ -394,6 +406,9 @@ def draw_callback_view(n_id, cached_view, options):
     if options["timings"]:
         stop = time.perf_counter()
         print("callback drawn in {}".format(stop-start))
+
+    # has drawn once with success.
+    options['draw_list'] = 1
 
 
 def unregister():

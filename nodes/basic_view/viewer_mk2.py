@@ -346,6 +346,7 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
 
     def get_options(self):
         return {
+            'draw_list': 0,
             'show_verts': self.display_verts,
             'show_edges': self.display_edges,
             'show_faces': self.display_faces,
