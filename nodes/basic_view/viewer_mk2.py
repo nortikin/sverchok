@@ -79,8 +79,7 @@ class SvObjBakeMK2(bpy.types.Operator):
     def dataCorrect3(self, destination, fallback=[]):
         if destination:
             return dataCorrect(destination)
-        else:
-            return fallback
+        return fallback
 
     def makeobjects(self, vers, edg_pol, mats):
         try:
@@ -212,12 +211,11 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
         name='bakebuttonshow', description='show bake button on node',
         default=False,
         update=updateNode)
-    
+
     callback_timings = BoolProperty(
         name='timings', description='print timings for callback',
         default=False,
         update=updateNode)
-    
 
     def init(self, context):
         self.inputs.new('VerticesSocket', 'vertices', 'vertices')
@@ -282,7 +280,7 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
         col.separator()
 
         layout.prop(self, 'bakebuttonshow', text='show bake button')
-        
+
         layout.prop(self, 'callback_timings')
         self.draw_buttons(context, layout)
 
