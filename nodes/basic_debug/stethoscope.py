@@ -29,9 +29,9 @@ FAIL_COLOR = (0.1, 0.05, 0)
 READY_COLOR = (1, 0.3, 0)
 
 
-class BGL_demo_Node(bpy.types.Node, SverchCustomTreeNode):
-    bl_idname = 'BGLdemoNode'
-    bl_label = 'BGL demo Node'
+class SvStethoscopeNode(bpy.types.Node, SverchCustomTreeNode):
+    bl_idname = 'SvStethoscopeNode'
+    bl_label = 'Sv Stethoscope Node'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     # node id
@@ -132,8 +132,8 @@ class BGL_demo_Node(bpy.types.Node, SverchCustomTreeNode):
 
 
 def register():
-    bpy.utils.register_class(BGL_demo_Node)
+    bpy.utils.register_class(SvStethoscopeNode)
 
 
 def unregister():
-    bpy.utils.unregister_class(BGL_demo_Node)
+    bpy.utils.unregister_class(SvStethoscopeNode)
