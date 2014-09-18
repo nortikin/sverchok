@@ -141,9 +141,7 @@ class SvObjBakeMK2(bpy.types.Operator):
         ob.matrix_world = m
         ob.show_name = False
         ob.hide_select = False
-        #print ([ob,me])
-        #print (ob.name + ' baked')
-        return [ob, me]
+        return ob, me
 
 
 class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
