@@ -33,7 +33,6 @@ def make_categories():
         ["ViewerNode_text",     "Viewer text"],
         ["IndexViewerNode",     "Viewer INDX"],
         ["Sv3DviewPropsNode",   "3dview Props"],
-        ["ViewerNode2",          "Viewer draw MK2"],
         ["BmeshViewerNode",     "Viewer BMesh"]]
 
     node_cats["Basic Data"] = [
@@ -169,6 +168,7 @@ def make_categories():
 
     node_cats["Beta test"] = [
         # for testing convenience,
+        ["ViewerNode2",          "Viewer draw MK2"],
         ["SvStethoscopeNode",   "Stethoscope"],
         ["SvOffsetNode",        "Offset"],
         ["SvEmptyOutNode",      "Empty out"],
@@ -176,7 +176,7 @@ def make_categories():
         # need to be completely reviewed
         ["ListDecomposeNode",   "List Decompose"],
         # should be removed...
-        ["SvNonIntersectEdgesNode", 'IntersectTest'],
+        ["SvNonIntersectEdgesNode", 'Non Intersects'],
         ["SvImageComponentsNode", "Image Decompose"],
         ["SvBoxRoundedNode",    "Rounded Box"],
         ["SvReRouteNode",       "Reroute Point"],
