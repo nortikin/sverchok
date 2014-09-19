@@ -1,5 +1,5 @@
 def sv_main(n=[]):
-    
+    # https://cloud.githubusercontent.com/assets/5783432/4340934/ba81ac9a-4033-11e4-864e-f1c2b099baf4.png
     '''use note node to define toe
     l - left, r - right, t - top,
     bake, convert to curve and
