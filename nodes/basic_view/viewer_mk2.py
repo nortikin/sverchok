@@ -164,7 +164,7 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
 
     light_direction = FloatVectorProperty(
         name='light_direction', subtype='DIRECTION', min=0, max=1, size=3,
-        default=(0.2, 0.6, 0.4))
+        default=(0.2, 0.6, 0.4), update=updateNode)
 
     # geometry colors
     vertex_colors = FloatVectorProperty(
