@@ -321,38 +321,18 @@ def draw_geometry(n_id, options, data_vector, data_polygons, data_matrix, data_e
 
     if show_verts and data_vector:
 
+        glPointSize(vsize)
+        glColor3f(*vertex_colors)
+        glBegin(GL_POINTS)
+
         for i, matrix in enumerate(data_matrix):
-
-            float_list = [
-                1.0, 0.0, 0.0, 0.0,
-                0.0, 1.0, 0.0, 0.0,
-                0.0, 0.0, 1.0, 0.0,
-                0.0, 0.0, 0.0, 1.0
-            ]
-
-            custom_matrix = Buffer(GL_FLOAT, 16, float_list)    #### ok test
-            old_matrix_mode = Buffer(GL_INT, [1])
-
-            glGetIntegerv(GL_MATRIX_MODE, old_matrix_mode)  #### not available
-            glLoadMatrixf(custom_matrix)             #### not sure
-            glMatrixMode(GL_MODELVIEW)               #### not sure
-            glPushMatrix()                           #### not sure
-            glBegin(GL_POINTS)
-
-            glPointSize(vsize)
-            glColor3f(*vertex_colors)
 
             k = get_max_k(i, verlen)
             for vert in data_vector[k]:
-                #vec = data_matrix[i] * vert
-                #glVertex3f(*vec)
-                glVertex3f(*vert)                     #### not sure
+                vec = data_matrix[i] * vert
+                glVertex3f(*vec)
 
-            glEnd()
-            glPopMatrix()                             #### not sure
-            glMatrixMode(old_matrix_mode)             #### not sure
-            # glLoadIdentity()                        #### not sure
-
+        glEnd()
 
     glDisable(GL_POINT_SIZE)
     glDisable(GL_POINT_SMOOTH)
