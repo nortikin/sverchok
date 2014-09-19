@@ -35,8 +35,8 @@ from bgl import (
     glEnable, glDisable, glBegin, glEnd,
     glColor3f, glVertex3f, glColor4f, glPointSize, glLineWidth,
     glLineStipple, glPolygonStipple, glHint, glShadeModel,
-    # glMatrixMode, GL_MODELVIEW_MATRIX, glPushMatrix, glPopMatrix,
-    # glLoadIdentity, glLoadMatrix, glGetMatrix,
+    # glMatrixMode, GL_MODELVIEW_MATRIX, GL_MODELVIEW,
+    # glPushMatrix, glPopMatrix, glLoadIdentity, glLoadMatrix, glGetMatrix,
     glGenLists, glNewList, glEndList, glCallList, glFlush, GL_COMPILE,
     #
     GL_POINTS, GL_POINT_SIZE, GL_POINT_SMOOTH, GL_POINT_SMOOTH_HINT,
