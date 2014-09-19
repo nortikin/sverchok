@@ -1,5 +1,5 @@
 def sv_main(n=[]):
-    # https://cloud.githubusercontent.com/assets/5783432/4340934/ba81ac9a-4033-11e4-864e-f1c2b099baf4.png
+    
     '''use note node to define toe
     l - left, r - right, t - top,
     bake, convert to curve and
@@ -14,8 +14,9 @@ def sv_main(n=[]):
             (0, 0.2, -3),
             (0, 0.2, 0),
             (1, 0.2, 1),
-            (3, 5, 1),
-            (-3, 5, 1),
+            (3, 5, 2),
+            (0, 7, 2),
+            (-3, 5, 2),
             (-1, 0.5, 1) ]
     front = True
     
