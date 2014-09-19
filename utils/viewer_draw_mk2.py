@@ -326,31 +326,10 @@ def draw_geometry(n_id, options, data_vector, data_polygons, data_matrix, data_e
         glBegin(GL_POINTS)
         for i, matrix in enumerate(data_matrix):
 
-            # float_list = [                            #### ok test
-            #     1.0, 0.0, 0.0, 0.0,                   ####
-            #     0.0, 1.0, 0.0, 0.0,                   ####
-            #     0.0, 0.0, 1.0, 0.0,                   ####
-            #     0.0, 0.0, 0.0, 1.0]                   ####
-
-            # custom_matrix = Buffer(GL_FLOAT, [16])    #### ok test
-            # for i, val in enumerate(float_list):      #### 
-            #     custom_matrix[i] = val                #### 
-
-            #old_matrix_mode = glGet(GL_MATRIX_MODE)    #### not available
-            #old_matrix_mode = GL_PROJECTION            #### therefore this ..
-            #glMatrixMode(GL_MODELVIEW)                 #### not sure
-            # glPushMatrix()                            #### not sure
-            # glLoadMatrixf(custom_matrix)              #### not sure
-
             k = get_max_k(i, verlen)
             for vert in data_vector[k]:
                 vec = data_matrix[i] * vert
                 glVertex3f(*vec)
-                #glVertex3f(*vert)                      #### not sure
-
-            # glPopMatrix()                             #### not sure
-            # glMatrixMode(old_matrix_mode)             #### not sure
-            # glLoadIdentity()                          #### not sure
 
         glEnd()
 
