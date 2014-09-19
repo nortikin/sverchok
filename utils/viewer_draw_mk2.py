@@ -32,14 +32,14 @@ callback_dict = {}
 SpaceView3D = bpy.types.SpaceView3D
 
 from bgl import (
-    glEnable, glDisable, glBegin, glEnd, Buffer, GL_FLOAT,
+    glEnable, glDisable, glBegin, glEnd,
+    Buffer, GL_FLOAT, GL_BYTE, GL_INT,
+    glGetIntegerv, glGetFloatv,
     glColor3f, glVertex3f, glColor4f, glPointSize, glLineWidth,
     glLineStipple, glPolygonStipple, glHint, glShadeModel,
     #
     GL_MATRIX_MODE, GL_MODELVIEW_MATRIX, GL_MODELVIEW, GL_PROJECTION,
-    glMatrixMode,
-    # glGet,  <-- doesnt exist?!?
-    glPushMatrix, glPopMatrix, glLoadIdentity, glLoadMatrixf,
+    glMatrixMode, glLoadMatrixf, glPushMatrix, glPopMatrix, glLoadIdentity,
     glGenLists, glNewList, glEndList, glCallList, glFlush, GL_COMPILE,
     #
     GL_POINTS, GL_POINT_SIZE, GL_POINT_SMOOTH, GL_POINT_SMOOTH_HINT,
@@ -320,18 +320,39 @@ def draw_geometry(n_id, options, data_vector, data_polygons, data_matrix, data_e
     vsize = options['vertex_size']
 
     if show_verts and data_vector:
-        glPointSize(vsize)
-        glColor3f(*vertex_colors)
 
-        glBegin(GL_POINTS)
         for i, matrix in enumerate(data_matrix):
+
+            float_list = [
+                1.0, 0.0, 0.0, 0.0,
+                0.0, 1.0, 0.0, 0.0,
+                0.0, 0.0, 1.0, 0.0,
+                0.0, 0.0, 0.0, 1.0
+            ]
+
+            custom_matrix = Buffer(GL_FLOAT, 16, float_list)    #### ok test
+            old_matrix_mode = Buffer(GL_INT, [1])
+
+            glGetIntegerv(GL_MATRIX_MODE, old_matrix_mode)  #### not available
+            glLoadMatrixf(custom_matrix)             #### not sure
+            glMatrixMode(GL_MODELVIEW)               #### not sure
+            glPushMatrix()                           #### not sure
+            glBegin(GL_POINTS)
+
+            glPointSize(vsize)
+            glColor3f(*vertex_colors)
 
             k = get_max_k(i, verlen)
             for vert in data_vector[k]:
-                vec = data_matrix[i] * vert
-                glVertex3f(*vec)
+                #vec = data_matrix[i] * vert
+                #glVertex3f(*vec)
+                glVertex3f(*vert)                     #### not sure
 
-        glEnd()
+            glEnd()
+            glPopMatrix()                             #### not sure
+            glMatrixMode(old_matrix_mode)             #### not sure
+            # glLoadIdentity()                        #### not sure
+
 
     glDisable(GL_POINT_SIZE)
     glDisable(GL_POINT_SMOOTH)
