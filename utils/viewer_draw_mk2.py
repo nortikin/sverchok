@@ -298,7 +298,7 @@ def draw_geometry(n_id, options, data_vector, data_polygons, data_matrix, data_e
             for line in data_edges[k]:
 
                 # i think this catches edges which refer to indices not present in
-                # the accompanyinh vertex list.
+                # the accompanying vertex list.
                 if max(line) > verlen_every[k]:
                     line = data_edges[k][-1]
 
