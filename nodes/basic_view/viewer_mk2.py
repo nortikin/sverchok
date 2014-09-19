@@ -169,15 +169,15 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
     # geometry colors
     vertex_colors = FloatVectorProperty(
         name='vertex_colors', subtype='COLOR', min=0, max=1, size=3,
-        default=(0.938, 0.948, 0.900))
+        default=(0.938, 0.948, 0.900), update=updateNode)
 
     edge_colors = FloatVectorProperty(
         name='edge_colors', subtype='COLOR', min=0, max=1, size=3,
-        default=(0.5, 0.752, 0.899))
+        default=(0.5, 0.752, 0.899), update=updateNode)
 
     face_colors = FloatVectorProperty(
         name='face_colors', subtype='COLOR', min=0, max=1, size=3,
-        default=(0.0301, 0.488, 0.899))
+        default=(0.0301, 0.488, 0.899), update=updateNode)
 
     # display toggles
     display_verts = BoolProperty(

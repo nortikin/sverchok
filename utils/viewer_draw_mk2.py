@@ -35,13 +35,14 @@ from bgl import (
     glEnable, glDisable, glBegin, glEnd,
     glColor3f, glVertex3f, glColor4f, glPointSize, glLineWidth,
     glLineStipple, glPolygonStipple, glHint, glShadeModel,
-    #
+    # glMatrixMode, GL_MODELVIEW_MATRIX, glPushMatrix, glPopMatrix,
+    # glLoadIdentity, glLoadMatrix, glGetMatrix,
     glGenLists, glNewList, glEndList, glCallList, glFlush, GL_COMPILE,
     #
-    GL_POINTS, GL_LINE_STRIP, GL_LINES, GL_LINE, GL_LINE_LOOP, GL_LINE_STIPPLE,
-    GL_POLYGON, GL_POLYGON_STIPPLE, GL_TRIANGLES, GL_QUADS, GL_POINT_SIZE,
-    GL_POINT_SMOOTH, GL_POINT_SMOOTH_HINT, GL_LINE_SMOOTH_HINT,
-    GL_NICEST, GL_FASTEST, GL_FLAT, GL_SMOOTH)
+    GL_POINTS, GL_POINT_SIZE, GL_POINT_SMOOTH, GL_POINT_SMOOTH_HINT,
+    GL_LINE, GL_LINES, GL_LINE_STRIP, GL_LINE_LOOP, GL_LINE_STIPPLE,
+    GL_POLYGON, GL_POLYGON_STIPPLE, GL_TRIANGLES, GL_QUADS,
+    GL_NICEST, GL_FASTEST, GL_FLAT, GL_SMOOTH, GL_LINE_SMOOTH_HINT)
 
 # ------------------------------------------------------------------------ #
 # parts taken from  "Math Vis (Console)" addon, author Campbell Barton     #
@@ -394,10 +395,10 @@ def draw_callback_view(n_id, cached_view, options):
         glEndList()
 
         options['genlist'] = the_display_list
-    
+
     elif options['draw_list'] == 1:
         the_display_list = options['genlist']
-    
+
     glCallList(the_display_list)
     glFlush()
 
@@ -406,7 +407,7 @@ def draw_callback_view(n_id, cached_view, options):
 
     if options["timings"]:
         stop = time.perf_counter()
-        print("callback drawn in {}".format(stop-start))
+        print("callback drawn in {:4f}".format(stop-start))
 
     # has drawn once with success.
     options['draw_list'] = 1
