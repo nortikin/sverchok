@@ -20,7 +20,7 @@ import ast
 import os
 
 import bpy
-from bpy.props import StringProperty, EnumProperty, BoolProperty
+from bpy.props import StringProperty, EnumProperty, BoolProperty, FloatVectorProperty, IntVectorProperty
 
 from utils.sv_tools import sv_get_local_path
 from node_tree import SverchCustomTreeNode
@@ -54,7 +54,7 @@ def new_input_socket(node, stype, name, dval):
     }.get(stype, None)
 
     if socket_type:
-        node.inputs.new(socket_type, name, name).default = dval
+        node.inputs.new(socket_type, name).default = dval
 
 
 def instrospect_py(node):
@@ -143,6 +143,7 @@ class SvScriptNodeCallbackOp(bpy.types.Operator):
 
         return {'FINISHED'}
 
+defaults = list(range(32))
 
 class SvScriptNode(bpy.types.Node, SverchCustomTreeNode):
 
@@ -181,7 +182,15 @@ class SvScriptNode(bpy.types.Node, SverchCustomTreeNode):
     script_str = StringProperty(default="")
     button_names = StringProperty(default="")
     has_buttons = BoolProperty(default=False)
+    
+    int_list = IntVectorProperty(name='int_list', description="Integer list",
+                                 default=defaults, size=32,
+                                 update=updateNode)
+    float_list = FloatVectorProperty(name='float_list', description="Float list",
+                                     default=defaults, size=32,
+                                     update=updateNode)
 
+    
     node_dict = {}
     #in_sockets = []
     #out_sockets = []

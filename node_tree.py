@@ -18,7 +18,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-from bpy.props import StringProperty, BoolProperty, FloatVectorProperty
+from bpy.props import StringProperty, BoolProperty, FloatVectorProperty, IntProperty
 from bpy.types import NodeTree, NodeSocket, NodeSocketStandard
 from nodeitems_utils import NodeCategory, NodeItem
 
@@ -125,6 +125,9 @@ class StringsSocket(NodeSocketStandard):
     bl_label = "Strings Socket"
 
     prop_name = StringProperty(default='')
+    
+    prop_type = StringProperty(default='')
+    prop_index = IntProperty()
 
     def sv_get(self, default=None, deepcopy=False):
         if self.links and not self.is_output:
@@ -150,8 +153,11 @@ class StringsSocket(NodeSocketStandard):
         else:
             t = text
 
-        if not self.is_output and not self.is_linked and self.prop_name:
-            layout.prop(node, self.prop_name)
+        if not self.is_output and not self.is_linked:
+            if self.prop_name and not self.prop_type:
+                layout.prop(node, self.prop_name)
+            elif self.prop_type:
+                layout.prop(node, self.prop_type, index=self.prop_index, text=self.name)
         elif self.is_linked:
             layout.label(t + '. ' + SvGetSocketInfo(self))
         else:
