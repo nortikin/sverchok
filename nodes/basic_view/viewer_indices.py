@@ -36,9 +36,8 @@ READY_COLOR = (1, 0.3, 0)
 
 class TextBaker(object):
 
-    def __init__(self, context):
-        self.context = context
-        self.node = context.node
+    def __init__(self, node):
+        self.node = node
 
     def collect_text_to_bake(self):
         node = self.node
@@ -113,18 +112,17 @@ class TextBaker(object):
                         self.bake(face_index, median)
 
     def bake(self, index, origin, text_=''):
-
         node = self.node
         text = str(text_[0] if text_ else index)
 
         # Create and name TextCurve object
-        bpy.ops.object.text_add(view_align=0, enter_editmode=0, location=origin)
-        ob = self.context.object
-        ob.name = 'sv_text_' + text
+        name = 'sv_text_' + text
+        tcu = bpy.data.curves.new(name=name, type='FONT')
+        obj = bpy.data.objects.new(name, tcu)
+        obj.location = origin
+        bpy.context.scene.objects.link(obj)
 
         # TextCurve attributes
-        tcu = ob.data
-        tcu.name = 'sv_text_' + text
         tcu.body = text
 
         try:
@@ -159,8 +157,7 @@ class SvBakeText (bpy.types.Operator):
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
-        baker_obj = TextBaker(context)
-        baker_obj.collect_text_to_bake()
+        context.node.bake()
         return {'FINISHED'}
 
 
@@ -383,6 +380,10 @@ class IndexViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
     def free(self):
         IV.callback_disable(node_id(self))
+
+    def bake(self):
+        baker_obj = TextBaker(self)
+        baker_obj.collect_text_to_bake()
 
 
 def register():

@@ -55,6 +55,7 @@ class SverchokUpdateAll(bpy.types.Operator):
         sverchok_update()
         return {'FINISHED'}
 
+
 class SverchokBakeAll(bpy.types.Operator):
     """Bake all nodes on this layout"""
     bl_idname = "node.sverchok_bake_all"
@@ -75,15 +76,17 @@ class SverchokBakeAll(bpy.types.Operator):
         nodes = [node for node in ng.nodes if node.bl_idname == 'IndexViewerNode']
         for node in nodes:
             if node.bakebuttonshow:
-                node.collect_text_to_bake()
-        
+                node.bake()
+
         nodes = [node for node in ng.nodes if node.bl_idname == 'ViewerNode']
         for node in nodes:
-            if node.activate and node.inputs['edg_pol'].is_linked \
-                and node.bakebuttonshow:
-                bpy.ops.node.sverchok_mesh_baker(idname=node.name, \
-                                        idtree=self.node_tree_name)
+            if node.activate:
+                if node.inputs['edg_pol'].is_linked and node.bakebuttonshow:
+                    bake = bpy.ops.node.sverchok_mesh_baker
+                    bake(idname=node.name, idtree=self.node_tree_name)
+
         return {'FINISHED'}
+
 
 class SverchokUpdateCurrent(bpy.types.Operator):
     """Sverchok update all"""
@@ -110,6 +113,7 @@ class SverchokPurgeCache(bpy.types.Operator):
     def execute(self, context):
         print(bpy.context.space_data.node_tree.name)
         return {'FINISHED'}
+
 
 # USED IN CTRL+U PROPERTIES WINDOW
 class SverchokHome(bpy.types.Operator):
@@ -172,7 +176,7 @@ class SverchokUpdateAddon(bpy.types.Operator):
         global sv_new_version
         os.curdir = bl_addons_path
         os.chdir(os.curdir)
-        bpy.data.window_managers[0].progress_begin(0,100)
+        bpy.data.window_managers[0].progress_begin(0, 100)
         bpy.data.window_managers[0].progress_update(20)
         try:
             # here change folder
