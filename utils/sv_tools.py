@@ -80,10 +80,8 @@ class SverchokBakeAll(bpy.types.Operator):
 
         nodes = [node for node in ng.nodes if node.bl_idname == 'ViewerNode']
         for node in nodes:
-            if node.activate:
-                if node.inputs['edg_pol'].is_linked and node.bakebuttonshow:
-                    bake = bpy.ops.node.sverchok_mesh_baker
-                    bake(idname=node.name, idtree=self.node_tree_name)
+            if node.bakebuttonshow:
+                node.bake()
 
         return {'FINISHED'}
 
