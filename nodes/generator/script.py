@@ -43,7 +43,7 @@ def new_output_socket(node, name, stype):
     }.get(stype, None)
 
     if socket_type:
-        node.outputs.new(socket_type, name, name)
+        node.outputs.new(socket_type, name)
 
 
 def new_input_socket(node, stype, name, dval):
@@ -54,8 +54,19 @@ def new_input_socket(node, stype, name, dval):
     }.get(stype, None)
 
     if socket_type:
-        node.inputs.new(socket_type, name).default = dval
-
+        socket = node.inputs.new(socket_type, name)
+        socket.default = dval
+        
+        if isinstance(dval, (float, int)):
+            offset = len(node.inputs)
+            if isinstance(dval, float):
+                socket.prop_type = "float_list"
+                node.float_list[offset] = dval
+            else: # dval is int
+                socket.prop_type = "int_list"
+                node.int_list[offset] = dval
+            socket.prop_index = offset
+            
 
 def instrospect_py(node):
     script_str = node.script_str
@@ -266,7 +277,7 @@ class SvScriptNode(bpy.types.Node, SverchCustomTreeNode):
         for socket_type, name, dval in in_sockets:
             if not (name in self.inputs):
                 new_input_socket(self, socket_type, name, dval)
-
+            
         self.use_custom_color = True
         self.color = READY_COLOR
 
