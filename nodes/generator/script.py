@@ -378,14 +378,16 @@ class SvScriptNode(bpy.types.Node, SverchCustomTreeNode):
 
         fparams = []
         for param_idx, name in enumerate(input_names):
-            links = self.inputs[name].links
+            socket = self.inputs[name]
             this_val = defaults[param_idx]
 
-            if isinstance(this_val, (tuple, list)):
-                this_val = self.inputs[param_idx].sv_get()
+            if isinstance(this_val, (tuple, list)) and socket.links:
+                this_val = socket.sv_get()
                 this_val = dataCorrect(this_val)
             elif isinstance(this_val, (int, float)):
-                this_val = self.inputs[param_idx].sv_get()[0][0]
+                this_val = socket.sv_get()[0][0]
+            else: # this_val without modification
+                pass
 
             fparams.append(this_val)
 
