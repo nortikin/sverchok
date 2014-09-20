@@ -381,20 +381,11 @@ class SvScriptNode(bpy.types.Node, SverchCustomTreeNode):
             links = self.inputs[name].links
             this_val = defaults[param_idx]
 
-            if links:
-                if isinstance(this_val, list):
-                    try:
-                        this_val = SvGetSocketAnyType(self, self.inputs[param_idx])
-                        this_val = dataCorrect(this_val)
-                    except:
-                        this_val = defaults[param_idx]
-                elif isinstance(this_val, (int, float)):
-                    try:
-                        k = str(SvGetSocketAnyType(self, self.inputs[name]))
-                        kfree = k[2:-2]
-                        this_val = ast.literal_eval(kfree)
-                    except:
-                        this_val = defaults[param_idx]
+            if isinstance(this_val, (tuple, list)):
+                this_val = self.inputs[param_idx].sv_get()
+                this_val = dataCorrect(this_val)
+            elif isinstance(this_val, (int, float)):
+                this_val = self.inputs[param_idx].sv_get()[0][0]
 
             fparams.append(this_val)
 

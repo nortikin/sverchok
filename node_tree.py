@@ -139,6 +139,7 @@ class StringsSocket(NodeSocketStandard):
         if self.prop_type:
             return [[getattr(self.node, self.prop_type)[self.prop_index]]]
         return default
+        
 
     def sv_set(self, data):
         SvSetSocket(self, data)
