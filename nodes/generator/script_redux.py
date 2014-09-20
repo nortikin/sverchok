@@ -77,7 +77,7 @@ def introspect_py(node):
     ''' this will return a callable function if sv_main is found, else None '''
 
     script_str = node.script_str
-    script = node.script_name
+    script = node.script
     try:
         exec(script_str)
         f = vars()
@@ -100,15 +100,8 @@ class SvDefaultScriptTemplate(bpy.types.Operator):
     script_name = StringProperty(name='name', default='')
 
     def execute(self, context):
-        n = context.node
         templates_path = os.path.join(sv_path, "node_scripts", "templates")
-
-        fullpath = [templates_path, self.script_name]
-        if not n.user_name == 'templates':
-            fullpath.insert(1, n.user_name)
-
-        path_to_template = os.path.join(*fullpath)
-        print(path_to_template)
+        path_to_template = os.path.join(templates_path, self.script_name)
         bpy.ops.text.open(filepath=path_to_template, internal=True)
         return {'FINISHED'}
 
@@ -194,6 +187,7 @@ class SvScriptNode(bpy.types.Node, SverchCustomTreeNode):
         items=avail_users,
         update=updateNode)
 
+    script = StringProperty()
     script_name = StringProperty()
     script_str = StringProperty()
     button_names = StringProperty()
@@ -242,12 +236,12 @@ class SvScriptNode(bpy.types.Node, SverchCustomTreeNode):
             row = col.row(align=True)
             row.label(text='USE PY:')
             row = col.row(align=True)
-            row.prop_search(self, 'script_name', bpy.data, 'texts', text='', icon='TEXT')
+            row.prop_search(self, 'script', bpy.data, 'texts', text='', icon='TEXT')
             row.operator('node.sverchok_callback', text='', icon='PLUGIN').fn_name = 'load'
 
         else:
             # backwards compability
-            script_name = self.script_name
+            script_name = self.script_name if self.script_name else self.script
             row = col.row()
             row.operator('node.sverchok_callback', text='Reload').fn_name = 'load'
             row.operator('node.sverchok_callback', text='Clear').fn_name = 'nuke_me'
@@ -285,7 +279,8 @@ class SvScriptNode(bpy.types.Node, SverchCustomTreeNode):
     '''
 
     def load(self):
-        self.script_str = bpy.data.texts[self.script_name].as_string()
+        self.script_str = bpy.data.texts[self.script].as_string()
+        self.script_name = self.script
         self.label = self.script_name.split('.')[0]
         self.load_function()
 
@@ -355,6 +350,9 @@ class SvScriptNode(bpy.types.Node, SverchCustomTreeNode):
                 self.load_function()
             else:
                 self.load()
+        # backwards compability
+        if self.script_str and not self.script_name:
+            self.script_name = self.script
 
         self.update_py()
 
