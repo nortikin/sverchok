@@ -73,12 +73,7 @@ class SverchokBakeAll(bpy.types.Operator):
 
     def execute(self, context):
         ng = bpy.data.node_groups[self.node_tree_name]
-        nodes = [node for node in ng.nodes if node.bl_idname == 'IndexViewerNode']
-        for node in nodes:
-            if node.bakebuttonshow:
-                node.bake()
-
-        nodes = [node for node in ng.nodes if node.bl_idname == 'ViewerNode']
+        nodes = filter(lambda n: hasattr(n, "bake"), ng.nodes)
         for node in nodes:
             if node.bakebuttonshow:
                 node.bake()
