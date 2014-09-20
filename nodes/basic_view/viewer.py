@@ -255,6 +255,10 @@ class ViewerNode(bpy.types.Node, SverchCustomTreeNode):
         cache_viewer_baker.pop(n_id+'ep', None)
         cache_viewer_baker.pop(n_id+'m', None)
 
+    def bake(self):
+        if self.activate and self.inputs['edg_pol'].is_linked:
+            bake = bpy.ops.node.sverchok_mesh_baker
+            bake(idname=self.name, idtree=self.id_data.name)
 
 def register():
     bpy.utils.register_class(ViewerNode)
