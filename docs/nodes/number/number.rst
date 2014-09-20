@@ -15,3 +15,4 @@ Number
    formula
    math
    map_range
+   logic

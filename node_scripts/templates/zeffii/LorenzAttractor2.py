@@ -1,9 +1,5 @@
-def lorenz(N, verts):
+def lorenz(N, verts, h, a, b, c):
     add_vert = verts.append
-    h = 0.01
-    a = 10.0
-    b = 28.0
-    c = 8.0 / 3.0
 
     x0 = 0.1
     y0 = 0
@@ -16,11 +12,22 @@ def lorenz(N, verts):
 
         add_vert((x1,y1,z1))
 
-def sv_main(N=1000):
+def sv_main(N=1000, h=0.01, a=10.0, b=28.0, c=8.0/3.0):
 
     verts = []
-    in_sockets = [['s', 'N', N]]
-    out_sockets = [['v','verts', [verts]]]
+    lorenz(N, verts, h, a, b, c)
+    edges = [(i, i+1) for i in range(len(verts)-1)]
+
+    in_sockets = [
+        ['s', 'N', N],
+        ['s', 'h', h],
+        ['s', 'a', a],
+        ['s', 'b', b],
+        ['s', 'c', c]]
+
+    out_sockets = [
+        ['v','verts', [verts]],
+        ['s','edges', [edges]]
+    ]
     
-    lorenz(N, verts)
     return in_sockets, out_sockets
