@@ -246,14 +246,14 @@ class SvScriptNode(bpy.types.Node, SverchCustomTreeNode):
 
         else:
             row = col.row()
-            col2 = row.column()
-            col2.scale_x = 0.05
-            col2.label(icon='TEXT', text=' ')
-            row.label(text='LOADED:')
-            row = col.row()
+            #col2 = row.column()
+            #col2.scale_x = 0.05
+            #col2.label(icon='TEXT', text=' ')
+            #row.label(text='LOADED:')
+            #row = col.row()
             # backwards compability
             script_name = self.script_name if self.script_name else self.script
-            row.label(text=script_name)
+            # row.label(text=script_name)
             row = col.row()
             row.operator('node.sverchok_callback', text='Reload').fn_name = 'load'
             row.operator('node.sverchok_callback', text='Clear').fn_name = 'nuke_me'
@@ -343,9 +343,6 @@ class SvScriptNode(bpy.types.Node, SverchCustomTreeNode):
         self.use_custom_color = True
         self.color = FAIL_COLOR
 
-    def load_cf(self):
-        pass
-
     '''
     update(_*)
     - performed whenever Sverchok is scheduled to update.
@@ -398,9 +395,6 @@ class SvScriptNode(bpy.types.Node, SverchCustomTreeNode):
 
             for socket_type, name, data in out_sockets:
                 SvSetSocketAnyType(self, name, data)
-
-    def update_coffee(self):
-        pass
 
     def update_socket(self, context):
         self.update()
