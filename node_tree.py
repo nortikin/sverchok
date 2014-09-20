@@ -160,6 +160,8 @@ class StringsSocket(NodeSocketStandard):
                 layout.prop(node, self.prop_name)
             elif self.prop_type:
                 layout.prop(node, self.prop_type, index=self.prop_index, text=self.name)
+            else:
+                layout.label(t)
         elif self.is_linked:
             layout.label(t + '. ' + SvGetSocketInfo(self))
         else:
