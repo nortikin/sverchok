@@ -112,18 +112,17 @@ class TextBaker(object):
                         self.bake(face_index, median)
 
     def bake(self, index, origin, text_=''):
-
         node = self.node
         text = str(text_[0] if text_ else index)
 
         # Create and name TextCurve object
-        bpy.ops.object.text_add(view_align=0, enter_editmode=0, location=origin)
-        ob = bpy.context.object
-        ob.name = 'sv_text_' + text
+        name = 'sv_text_' + text
+        tcu = bpy.data.curves.new(name=name, type='FONT')
+        obj = bpy.data.objects.new(name, tcu)
+        obj.location = origin
+        bpy.context.scene.objects.link(obj)
 
         # TextCurve attributes
-        tcu = ob.data
-        tcu.name = 'sv_text_' + text
         tcu.body = text
 
         try:
@@ -139,7 +138,6 @@ class TextBaker(object):
         tcu.space_character = 1
         tcu.space_word = 1
         tcu.align = 'CENTER'
-
         tcu.extrude = 0.0
         tcu.fill_mode = 'NONE'
 
