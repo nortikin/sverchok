@@ -248,12 +248,6 @@ class SvScriptNode(bpy.types.Node, SverchCustomTreeNode):
             row.operator('node.sverchok_callback', text='', icon='PLUGIN').fn_name = 'load'
 
         else:
-            row = col.row()
-            #col2 = row.column()
-            #col2.scale_x = 0.05
-            #col2.label(icon='TEXT', text=' ')
-            #row.label(text='LOADED:')
-            #row = col.row()
             # backwards compability
             script_name = self.script_name if self.script_name else self.script
             # row.label(text=script_name)
