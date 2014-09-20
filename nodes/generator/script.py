@@ -20,7 +20,9 @@ import ast
 import os
 
 import bpy
-from bpy.props import StringProperty, EnumProperty, BoolProperty, FloatVectorProperty, IntVectorProperty
+from bpy.props import (
+    StringProperty, EnumProperty, BoolProperty,
+    FloatVectorProperty, IntVectorProperty)
 
 from utils.sv_tools import sv_get_local_path
 from node_tree import SverchCustomTreeNode
@@ -56,17 +58,17 @@ def new_input_socket(node, stype, name, dval):
     if socket_type:
         socket = node.inputs.new(socket_type, name)
         socket.default = dval
-        
+
         if isinstance(dval, (float, int)):
             offset = len(node.inputs)
             if isinstance(dval, float):
                 socket.prop_type = "float_list"
                 node.float_list[offset] = dval
-            else: # dval is int
+            else:  # dval is int
                 socket.prop_type = "int_list"
                 node.int_list[offset] = dval
             socket.prop_index = offset
-            
+
 
 def instrospect_py(node):
     script_str = node.script_str
@@ -156,6 +158,7 @@ class SvScriptNodeCallbackOp(bpy.types.Operator):
 
 defaults = list(range(32))
 
+
 class SvScriptNode(bpy.types.Node, SverchCustomTreeNode):
 
     ''' Script node '''
@@ -193,18 +196,18 @@ class SvScriptNode(bpy.types.Node, SverchCustomTreeNode):
     script_str = StringProperty(default="")
     button_names = StringProperty(default="")
     has_buttons = BoolProperty(default=False)
-    
-    int_list = IntVectorProperty(name='int_list', description="Integer list",
-                                 default=defaults, size=32,
-                                 update=updateNode)
-    float_list = FloatVectorProperty(name='float_list', description="Float list",
-                                     default=defaults, size=32,
-                                     update=updateNode)
 
-    
+    int_list = IntVectorProperty(
+        name='int_list', description="Integer list",
+        default=defaults, size=32,
+        update=updateNode)
+
+    float_list = FloatVectorProperty(
+        name='float_list', description="Float list",
+        default=defaults, size=32,
+        update=updateNode)
+
     node_dict = {}
-    #in_sockets = []
-    #out_sockets = []
 
     def init(self, context):
         self.node_dict[hash(self)] = {}
@@ -277,7 +280,7 @@ class SvScriptNode(bpy.types.Node, SverchCustomTreeNode):
         for socket_type, name, dval in in_sockets:
             if not (name in self.inputs):
                 new_input_socket(self, socket_type, name, dval)
-            
+
         self.use_custom_color = True
         self.color = READY_COLOR
 
@@ -375,23 +378,25 @@ class SvScriptNode(bpy.types.Node, SverchCustomTreeNode):
 
         fparams = []
         for param_idx, name in enumerate(input_names):
-            links = self.inputs[name].links
+            socket = self.inputs[name]
             this_val = defaults[param_idx]
 
-            if links:
+            if socket.links:
                 if isinstance(this_val, list):
                     try:
-                        this_val = SvGetSocketAnyType(self, self.inputs[param_idx])
+                        this_val = socket.sv_get()
                         this_val = dataCorrect(this_val)
                     except:
                         this_val = defaults[param_idx]
                 elif isinstance(this_val, (int, float)):
                     try:
-                        k = str(SvGetSocketAnyType(self, self.inputs[name]))
+                        k = str(socket.sv_get())
                         kfree = k[2:-2]
                         this_val = ast.literal_eval(kfree)
                     except:
                         this_val = defaults[param_idx]
+            elif isinstance(this_val, (int, float)):
+                this_val = socket.sv_get()[0][0]
 
             fparams.append(this_val)
 
