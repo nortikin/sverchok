@@ -403,7 +403,7 @@ class SvScriptNode(bpy.types.Node, SverchCustomTreeNode):
 
             fparams.append(this_val)
 
-        if node_function and (len(fparams) == len(input_names)):
+        if (len(fparams) == len(input_names)):
 
             fn_return_values = node_function(*fparams)
             out_sockets = fn_return_values[1]
