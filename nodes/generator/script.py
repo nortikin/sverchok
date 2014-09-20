@@ -381,20 +381,23 @@ class SvScriptNode(bpy.types.Node, SverchCustomTreeNode):
             socket = self.inputs[name]
             this_val = defaults[param_idx]
 
+            # this deails with incoming links only.
             if socket.links:
                 if isinstance(this_val, list):
                     try:
                         this_val = socket.sv_get()
                         this_val = dataCorrect(this_val)
                     except:
-                        this_val = defaults[param_idx]
+                        pass
                 elif isinstance(this_val, (int, float)):
                     try:
                         k = str(socket.sv_get())
                         kfree = k[2:-2]
                         this_val = ast.literal_eval(kfree)
                     except:
-                        this_val = defaults[param_idx]
+                        pass
+
+            # this catches movement on UI sliders.
             elif isinstance(this_val, (int, float)):
                 this_val = socket.sv_get()[0][0]
 
