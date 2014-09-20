@@ -381,7 +381,7 @@ class SvScriptNode(bpy.types.Node, SverchCustomTreeNode):
             socket = self.inputs[name]
             this_val = defaults[param_idx]
 
-            # this deails with incoming links only.
+            # this deals with incoming links only.
             if socket.links:
                 if isinstance(this_val, list):
                     try:
