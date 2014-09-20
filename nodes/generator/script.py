@@ -21,40 +21,43 @@ import os
 
 import bpy
 from bpy.props import (
-    StringProperty, EnumProperty, BoolProperty,
-    FloatVectorProperty, IntVectorProperty)
+    StringProperty,
+    EnumProperty,
+    BoolProperty,
+    FloatVectorProperty,
+    IntVectorProperty
+)
 
 from utils.sv_tools import sv_get_local_path
 from node_tree import SverchCustomTreeNode
-from data_structure import (dataCorrect, updateNode,
-                            SvSetSocketAnyType, SvGetSocketAnyType)
+from data_structure import (
+    dataCorrect,
+    updateNode,
+    SvSetSocketAnyType,
+    SvGetSocketAnyType
+)
 
 FAIL_COLOR = (0.8, 0.1, 0.1)
 READY_COLOR = (0, 0.8, 0.95)
 
+defaults = list(range(32))
 sv_path = os.path.dirname(sv_get_local_path()[0])
 
-# utility functions
+sock_dict = {
+    'v': 'VerticesSocket',
+    's': 'StringsSocket',
+    'm': 'MatrixSocket'
+}
 
 
 def new_output_socket(node, name, stype):
-    socket_type = {
-        'v': 'VerticesSocket',
-        's': 'StringsSocket',
-        'm': 'MatrixSocket'
-    }.get(stype, None)
-
+    socket_type = sock_dict.get(stype)
     if socket_type:
         node.outputs.new(socket_type, name)
 
 
 def new_input_socket(node, stype, name, dval):
-    socket_type = {
-        'v': 'VerticesSocket',
-        's': 'StringsSocket',
-        'm': 'MatrixSocket'
-    }.get(stype, None)
-
+    socket_type = sock_dict.get(stype)
     if socket_type:
         socket = node.inputs.new(socket_type, name)
         socket.default = dval
@@ -70,21 +73,18 @@ def new_input_socket(node, stype, name, dval):
             socket.prop_index = offset
 
 
-def instrospect_py(node):
+def introspect_py(node):
+    ''' this will return a callable function if sv_main is found, else None '''
+
     script_str = node.script_str
     script = node.script
-
     try:
         exec(script_str)
         f = vars()
-        node_functor = f.get('sv_main', None)
+        node_functor = f.get('sv_main')
     except UnboundLocalError:
         print('see demo files for NodeScript')
-        return
     finally:
-        '''
-        this will return a callable function if sv_main is found, else None
-        '''
         if node_functor:
             params = node_functor.__defaults__
             return [node_functor, params, f]
@@ -100,8 +100,6 @@ class SvDefaultScriptTemplate(bpy.types.Operator):
     script_name = StringProperty(name='name', default='')
 
     def execute(self, context):
-        # if a script is already in text.data list then 001 .002
-        # are automatically append by ops.text.open
         templates_path = os.path.join(sv_path, "node_scripts", "templates")
         path_to_template = os.path.join(templates_path, self.script_name)
         bpy.ops.text.open(filepath=path_to_template, internal=True)
@@ -117,9 +115,9 @@ class SvScriptUICallbackOp(bpy.types.Operator):
     fn_name = StringProperty(default='')
 
     def execute(self, context):
+        fn_name = self.fn_name
         n = context.node
         node_function = n.node_dict[hash(n)]['node_function']
-        fn_name = self.fn_name
 
         f = getattr(node_function, fn_name, None)
         if not f:
@@ -142,8 +140,8 @@ class SvScriptNodeCallbackOp(bpy.types.Operator):
     def execute(self, context):
         n = context.node
         fn_name = self.fn_name
-
         f = getattr(n, fn_name, None)
+
         if not f:
             msg = "{0} has no function named '{1}'".format(n.name, fn_name)
             self.report({"WARNING"}, msg)
@@ -156,8 +154,6 @@ class SvScriptNodeCallbackOp(bpy.types.Operator):
 
         return {'FINISHED'}
 
-defaults = list(range(32))
-
 
 class SvScriptNode(bpy.types.Node, SverchCustomTreeNode):
 
@@ -169,15 +165,11 @@ class SvScriptNode(bpy.types.Node, SverchCustomTreeNode):
     def avail_scripts(self, context):
         scripts = bpy.data.texts
         items = [(t.name, t.name, "") for t in scripts]
-        # changes order for old files...
-        #items.sort(key=lambda x:x[0].upper())
         return items
 
     def avail_templates(self, context):
         templates_path = os.path.join(sv_path, "node_scripts", "templates")
         items = [(t, t, "") for t in next(os.walk(templates_path))[2]]
-        # changes order for old files
-        #items.sort(key=lambda x:x[0].upper())
         return items
 
     files_popup = EnumProperty(
@@ -186,32 +178,24 @@ class SvScriptNode(bpy.types.Node, SverchCustomTreeNode):
         description='choose file to load as template',
         update=updateNode)
 
-    script = EnumProperty(
-        items=avail_scripts,
-        name="Texts",
-        description="Choose text to load in node",
-        update=updateNode)
-
-    script_name = StringProperty(default="")
-    script_str = StringProperty(default="")
-    button_names = StringProperty(default="")
-    has_buttons = BoolProperty(default=False)
+    script = StringProperty()
+    script_name = StringProperty()
+    script_str = StringProperty()
+    button_names = StringProperty()
+    has_buttons = BoolProperty(default=0)
 
     int_list = IntVectorProperty(
         name='int_list', description="Integer list",
-        default=defaults, size=32,
-        update=updateNode)
+        default=defaults, size=32, update=updateNode)
 
     float_list = FloatVectorProperty(
         name='float_list', description="Float list",
-        default=defaults, size=32,
-        update=updateNode)
+        default=defaults, size=32, update=updateNode)
 
     node_dict = {}
 
     def init(self, context):
         self.node_dict[hash(self)] = {}
-        pass
 
     def nuke_me(self, context):
         in_out = [self.inputs, self.outputs]
@@ -228,8 +212,8 @@ class SvScriptNode(bpy.types.Node, SverchCustomTreeNode):
         self.has_buttons = False
 
     def draw_buttons(self, context, layout):
-
         col = layout.column(align=True)
+
         if not self.script_str:
             row = col.row(align=True)
             row.label(text='IMPORT PY:')
@@ -243,14 +227,12 @@ class SvScriptNode(bpy.types.Node, SverchCustomTreeNode):
             row = col.row(align=True)
             row.label(text='USE PY:')
             row = col.row(align=True)
-            # row.prop(self, "script", "")
             row.prop_search(self, 'script', bpy.data, 'texts', text='', icon='TEXT')
             row.operator('node.sverchok_callback', text='', icon='PLUGIN').fn_name = 'load'
 
         else:
             # backwards compability
             script_name = self.script_name if self.script_name else self.script
-            # row.label(text=script_name)
             row = col.row()
             row.operator('node.sverchok_callback', text='Reload').fn_name = 'load'
             row.operator('node.sverchok_callback', text='Clear').fn_name = 'nuke_me'
@@ -296,7 +278,7 @@ class SvScriptNode(bpy.types.Node, SverchCustomTreeNode):
         self.load_py()
 
     def load_py(self):
-        details = instrospect_py(self)
+        details = introspect_py(self)
         if details:
 
             if None in details:
