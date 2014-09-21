@@ -289,7 +289,6 @@ class SvScriptNode(bpy.types.Node, SverchCustomTreeNode):
     def process_introspected(self, details):
         node_function, params, f = details
         del f['sv_main']
-        # del f['script_str']
         globals().update(f)
 
         self.set_node_function(node_function)
