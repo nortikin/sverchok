@@ -392,7 +392,10 @@ class SvScriptNode(bpy.types.Node, SverchCustomTreeNode):
 
             # this catches movement on UI sliders.
             elif isinstance(this_val, (int, float)):
-                this_val = socket.sv_get()[0][0]
+                # extra pussyfooting for the load sequence.
+                t = socket.sv_get()
+                if t and t[0] and t[0][0]:
+                    this_val = t[0][0]
 
             fparams.append(this_val)
 
