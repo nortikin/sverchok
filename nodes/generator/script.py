@@ -18,6 +18,7 @@
 
 import ast
 import os
+import traceback
 
 import bpy
 from bpy.props import (
@@ -219,9 +220,10 @@ class SvScriptNode(bpy.types.Node, SverchCustomTreeNode):
         self.use_custom_color = False
 
     def load(self):
-        self.script_str = bpy.data.texts[self.script_name].as_string()
-        self.label = self.script_name
-        self.load_function()
+        if self.script_name:
+            self.script_str = bpy.data.texts[self.script_name].as_string()
+            self.label = self.script_name
+            self.load_function()
 
     def load_function(self):
         self.reset_node_dict()
@@ -290,6 +292,36 @@ class SvScriptNode(bpy.types.Node, SverchCustomTreeNode):
         else:
             self.process_introspected(details)
 
+    def process_introspected(self, details):
+        node_function, params, f = details
+        del f['sv_main']
+        del f['script_str']
+        globals().update(f)
+
+        self.set_node_function(node_function)
+
+        try:
+            function_output = node_function(*params)
+            num_return_params = len(function_output)
+
+            if num_return_params == 2:
+                in_sockets, out_sockets = function_output
+            if num_return_params == 3:
+                self.has_buttons = True
+                in_sockets, out_sockets, ui_ops = function_output
+
+            if self.has_buttons:
+                self.process_operator_buttons(ui_ops)
+
+            if in_sockets and out_sockets:
+                self.create_or_update_sockets(in_sockets, out_sockets)
+
+            self.indicate_ready_state()
+
+        except Exception as err:
+            traceback.format_exc()
+            self.reset_node_dict()
+
     def process_operator_buttons(self, ui_ops):
         named_buttons = []
         for button_name, button_function in ui_ops:
@@ -306,36 +338,11 @@ class SvScriptNode(bpy.types.Node, SverchCustomTreeNode):
         for socket_type, name, data in out_sockets:
             if not (name in outputs):
                 new_output_socket(self, name, socket_type)
-                # SvSetSocketAnyType(self, name, data)
                 outputs[name].sv_set(data)
 
         for socket_type, name, dval in in_sockets:
             if not (name in self.inputs):
                 new_input_socket(self, socket_type, name, dval)
-
-    def process_introspected(self, details):
-        node_function, params, f = details
-        del f['sv_main']
-        del f['script_str']
-        globals().update(f)
-
-        self.set_node_function(node_function)
-        function_output = node_function(*params)
-        num_return_params = len(function_output)
-
-        if num_return_params == 2:
-            in_sockets, out_sockets = function_output
-        if num_return_params == 3:
-            self.has_buttons = True
-            in_sockets, out_sockets, ui_ops = function_output
-
-        if self.has_buttons:
-            self.process_operator_buttons(ui_ops)
-
-        if in_sockets and out_sockets:
-            self.create_or_update_sockets(in_sockets, out_sockets)
-
-        self.indicate_ready_state()
 
     def update(self):
         if not self.inputs:
