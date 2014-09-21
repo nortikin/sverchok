@@ -301,7 +301,9 @@ class SvScriptNode(bpy.types.Node, SverchCustomTreeNode):
 
         self.set_node_function(node_function)
 
-        # no exception handling, lets get the exact error!
+        # no exception handling, let's get the exact error!
+        # errors here are errors in the user script. without reporting
+        # you have no idea what to fix.
         function_output = node_function(*params)
         num_return_params = len(function_output)
 
@@ -318,10 +320,6 @@ class SvScriptNode(bpy.types.Node, SverchCustomTreeNode):
             self.create_or_update_sockets(in_sockets, out_sockets)
 
         self.indicate_ready_state()
-
-        # except Exception as err:
-        #     traceback.format_exc()
-        #     self.reset_node_dict()
 
     def process_operator_buttons(self, ui_ops):
         named_buttons = []
