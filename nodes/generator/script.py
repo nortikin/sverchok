@@ -108,8 +108,10 @@ class SvDefaultScriptTemplate(bpy.types.Operator):
             fullpath.insert(1, n.user_name)
 
         path_to_template = os.path.join(*fullpath)
-        print(path_to_template)
-        bpy.ops.text.open(filepath=path_to_template, internal=True)
+        bpy.ops.text.open(
+            filepath=path_to_template,
+            internal=True)
+
         return {'FINISHED'}
 
 
@@ -180,7 +182,7 @@ class SvScriptNode(bpy.types.Node, SverchCustomTreeNode):
         return items
 
     def avail_users(self, context):
-        users = 'zeffii', 'nikitron', 'ly', 'ko', 'templates'
+        users = 'templates', 'zeffii', 'nikitron', 'ly', 'ko'
         return [(j, j, '') for j in users]
 
     files_popup = EnumProperty(
@@ -231,18 +233,14 @@ class SvScriptNode(bpy.types.Node, SverchCustomTreeNode):
 
         if not self.script_str:
             row = col.row(align=True)
-            row.label(text='IMPORT PY:')
-            row = col.row(align=True)
-            row.alignment = 'RIGHT'
             row.prop(self, 'files_popup', '')
             row.operator(
-                'node.sverchok_script_template',
-                text='', icon='IMPORT').script_name = self.files_popup
+                'node.sverchok_script_template', text='', icon='IMPORT'
+            ).script_name = self.files_popup
 
             row = col.row(align=True)
-            row.label(text='USE PY:')
-            row = col.row(align=True)
-            row.prop_search(self, 'script_name', bpy.data, 'texts', text='', icon='TEXT')
+            row.prop_search(
+                self, 'script_name', bpy.data, 'texts', text='', icon='TEXT')
             row.operator('node.sverchok_callback', text='', icon='PLUGIN').fn_name = 'load'
 
         else:
