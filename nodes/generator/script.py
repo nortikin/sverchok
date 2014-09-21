@@ -301,27 +301,27 @@ class SvScriptNode(bpy.types.Node, SverchCustomTreeNode):
 
         self.set_node_function(node_function)
 
-        try:
-            function_output = node_function(*params)
-            num_return_params = len(function_output)
+        # no exception handling, lets get the exact error!
+        function_output = node_function(*params)
+        num_return_params = len(function_output)
 
-            if num_return_params == 2:
-                in_sockets, out_sockets = function_output
-            if num_return_params == 3:
-                self.has_buttons = True
-                in_sockets, out_sockets, ui_ops = function_output
+        if num_return_params == 2:
+            in_sockets, out_sockets = function_output
+        if num_return_params == 3:
+            self.has_buttons = True
+            in_sockets, out_sockets, ui_ops = function_output
 
-            if self.has_buttons:
-                self.process_operator_buttons(ui_ops)
+        if self.has_buttons:
+            self.process_operator_buttons(ui_ops)
 
-            if in_sockets and out_sockets:
-                self.create_or_update_sockets(in_sockets, out_sockets)
+        if in_sockets and out_sockets:
+            self.create_or_update_sockets(in_sockets, out_sockets)
 
-            self.indicate_ready_state()
+        self.indicate_ready_state()
 
-        except Exception as err:
-            traceback.format_exc()
-            self.reset_node_dict()
+        # except Exception as err:
+        #     traceback.format_exc()
+        #     self.reset_node_dict()
 
     def process_operator_buttons(self, ui_ops):
         named_buttons = []
@@ -400,9 +400,12 @@ class SvScriptNode(bpy.types.Node, SverchCustomTreeNode):
             fparams.append(this_val)
 
         if (len(fparams) == len(input_names)):
-            out_sockets = node_function(*fparams)[1]
-            for _, name, data in out_sockets:
-                outputs[name].sv_set(data)
+            out = node_function(*fparams)
+            if len(out) == 2:
+                _, out_sockets = out
+
+                for _, name, data in out_sockets:
+                    outputs[name].sv_set(data)
 
     def update_socket(self, context):
         self.update()
