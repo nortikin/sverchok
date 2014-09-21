@@ -74,24 +74,6 @@ def new_input_socket(node, stype, name, dval):
             socket.prop_index = offset
 
 
-def introspect_py(node):
-    ''' this will return a callable function if sv_main is found, else None '''
-
-    script_str = node.script_str
-    script = node.script_name
-    node_functor = None
-    try:
-        exec(script_str)
-        f = vars()
-        node_functor = f.get('sv_main')
-    except UnboundLocalError:
-        print('no sv_main found')
-    finally:
-        if node_functor:
-            params = node_functor.__defaults__
-            return [node_functor, params, f]
-
-
 class SvDefaultScriptTemplate(bpy.types.Operator):
     ''' Imports example script or template file in bpy.data.texts'''
 
@@ -286,17 +268,28 @@ class SvScriptNode(bpy.types.Node, SverchCustomTreeNode):
                     row.operator(sn_callback, text=fname).fn_name = fname
 
     def load_py(self):
-        details = introspect_py(self)
-        if not details:
-            print('load_py, failed because introspection failed')
-            self.reset_node_dict()
-        else:
-            self.process_introspected(details)
+        node_functor = None
+        try:
+            exec(self.script_str)
+            f = vars()
+            node_functor = f.get('sv_main')
+
+        except UnboundLocalError:
+            print('no sv_main found')
+
+        finally:
+            if node_functor:
+                params = node_functor.__defaults__
+                details = [node_functor, params, f]
+                self.process_introspected(details)
+            else:
+                print("load_py failed, introspection didn\'t find sv_main")
+                self.reset_node_dict()
 
     def process_introspected(self, details):
         node_function, params, f = details
         del f['sv_main']
-        del f['script_str']
+        # del f['script_str']
         globals().update(f)
 
         self.set_node_function(node_function)
@@ -360,50 +353,57 @@ class SvScriptNode(bpy.types.Node, SverchCustomTreeNode):
 
     def process(self):
         inputs = self.inputs
-        outputs = self.outputs
-        input_names = [i.name for i in inputs]
 
         node_function = self.get_node_function()
         defaults = node_function.__defaults__
 
         fparams = []
-        for param_idx, name in enumerate(input_names):
-            socket = inputs[name]
-            this_val = defaults[param_idx]
-
-            # this deals with incoming links only.
-            if socket.links:
-                if isinstance(this_val, list):
-                    try:
-                        this_val = socket.sv_get()
-                        this_val = dataCorrect(this_val)
-                    except:
-                        pass
-                elif isinstance(this_val, (int, float)):
-                    try:
-                        k = str(socket.sv_get())
-                        kfree = k[2:-2]
-                        this_val = ast.literal_eval(kfree)
-                        #this_val = socket.sv_get()[0][0]
-                    except:
-                        pass
-
-            # this catches movement on UI sliders.
-            elif isinstance(this_val, (int, float)):
-                # extra pussyfooting for the load sequence.
-                t = socket.sv_get()
-                if t and t[0] and t[0][0]:
-                    this_val = t[0][0]
-
-            fparams.append(this_val)
+        input_names = [i.name for i in inputs]
+        for idx, name in enumerate(input_names):
+            self.get_input_or_default(name, defaults[idx], fparams)
 
         if (len(fparams) == len(input_names)):
-            out = node_function(*fparams)
-            if len(out) == 2:
-                _, out_sockets = out
+            self.set_outputs(node_function, fparams)
 
-                for _, name, data in out_sockets:
-                    outputs[name].sv_set(data)
+    def get_input_or_default(self, name, this_val, fparams):
+        ''' fill up the fparams list with found or default values '''
+        socket = self.inputs[name]
+
+        # this deals with incoming links only.
+        if socket.links:
+            if isinstance(this_val, list):
+                try:
+                    this_val = socket.sv_get()
+                    this_val = dataCorrect(this_val)
+                except:
+                    pass
+            elif isinstance(this_val, (int, float)):
+                try:
+                    k = str(socket.sv_get())
+                    kfree = k[2:-2]
+                    this_val = ast.literal_eval(kfree)
+                    #this_val = socket.sv_get()[0][0]
+                except:
+                    pass
+
+        # this catches movement on UI sliders.
+        elif isinstance(this_val, (int, float)):
+            # extra pussyfooting for the load sequence.
+            t = socket.sv_get()
+            if t and t[0] and t[0][0]:
+                this_val = t[0][0]
+
+        # either found input, or uses default.
+        fparams.append(this_val)
+
+    def set_outputs(self, node_function, fparams):
+        outputs = self.outputs
+        out = node_function(*fparams)
+        if len(out) == 2:
+            _, out_sockets = out
+
+            for _, name, data in out_sockets:
+                outputs[name].sv_set(data)
 
     def update_socket(self, context):
         self.update()
