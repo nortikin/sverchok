@@ -78,6 +78,7 @@ def introspect_py(node):
 
     script_str = node.script_str
     script = node.script_name
+    node_functor = None
     try:
         exec(script_str)
         f = vars()
@@ -111,6 +112,8 @@ class SvDefaultScriptTemplate(bpy.types.Operator):
         bpy.ops.text.open(
             filepath=path_to_template,
             internal=True)
+
+        n.script_name = self.script_name
 
         return {'FINISHED'}
 
