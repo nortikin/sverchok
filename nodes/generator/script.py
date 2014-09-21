@@ -322,10 +322,23 @@ class SvScriptNode(bpy.types.Node, SverchCustomTreeNode):
         self.button_names = "|".join(named_buttons)
 
     def create_or_update_sockets(self, in_sockets, out_sockets):
-        print('current inputs  : ', [i.name for i in self.inputs])
-        print('new required in : ', [name for x, name, y in in_sockets])
+        outputs = self.outputs
+        inputs = self.inputs
+
+        a = [i.name for i in inputs]
+        b = [name for x, name, y in in_sockets]
+        print('current inputs  : ', a)
+        print('new required in : ', b)
+
         print('current outputs : ', [i.name for i in self.outputs])
         print('new required out: ', [name for x, name, y in out_sockets])
+
+        # ones found in in_sockets but not in inputs should be removed.
+        if inputs:
+            if not set(a) == set(b):
+                removal = set(set(a) ^ set(b)) & set(a)
+                for item in removal:
+                    inputs.remove(inputs[item])
 
         outputs = self.outputs
         for socket_type, name, data in out_sockets:
