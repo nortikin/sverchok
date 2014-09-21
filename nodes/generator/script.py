@@ -144,6 +144,7 @@ class SvScriptUICallbackOp(bpy.types.Operator):
 
 
 class SvScriptNodeCallbackOp(bpy.types.Operator):
+    ''' Used by ScriptNode Operators '''
 
     bl_idname = "node.sverchok_callback"
     bl_label = "Sverchok scriptnode callback"
@@ -200,11 +201,6 @@ class SvScriptNode(bpy.types.Node, SverchCustomTreeNode):
         items=avail_users,
         update=updateNode)
 
-    script_name = StringProperty()
-    script_str = StringProperty()
-    button_names = StringProperty()
-    has_buttons = BoolProperty(default=0)
-
     int_list = IntVectorProperty(
         name='int_list', description="Integer list",
         default=defaults, size=32, update=updateNode)
@@ -212,6 +208,11 @@ class SvScriptNode(bpy.types.Node, SverchCustomTreeNode):
     float_list = FloatVectorProperty(
         name='float_list', description="Float list",
         default=defaults, size=32, update=updateNode)
+
+    script_name = StringProperty()
+    script_str = StringProperty()
+    button_names = StringProperty()
+    has_buttons = BoolProperty(default=0)
 
     node_dict = {}
 
@@ -382,9 +383,10 @@ class SvScriptNode(bpy.types.Node, SverchCustomTreeNode):
                         pass
                 elif isinstance(this_val, (int, float)):
                     try:
-                        k = str(socket.sv_get())
-                        kfree = k[2:-2]
-                        this_val = ast.literal_eval(kfree)
+                        #k = str(socket.sv_get())
+                        #kfree = k[2:-2]
+                        #this_val = ast.literal_eval(kfree)
+                        this_val = socket.sv_get()[0][0]
                     except:
                         pass
 
