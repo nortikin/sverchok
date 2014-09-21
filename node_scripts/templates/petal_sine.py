@@ -12,6 +12,7 @@ def sv_main(n_petals=8, vp_petal=20, profile_radius=1.3, amp=1.0):
     ]
 
     # variables
+    n_petals = max(1, n_petals)
     z_float = 0.0
     n_verts = n_petals * vp_petal
     section_angle = 360.0 / n_verts
