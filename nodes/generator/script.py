@@ -383,6 +383,9 @@ class SvScriptNode(bpy.types.Node, SverchCustomTreeNode):
                         pass
                 elif isinstance(this_val, (int, float)):
                     try:
+                        #k = str(socket.sv_get())
+                        #kfree = k[2:-2]
+                        #this_val = ast.literal_eval(kfree)
                         this_val = socket.sv_get()[0][0]
                     except:
                         pass
