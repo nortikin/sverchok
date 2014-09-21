@@ -83,7 +83,7 @@ def introspect_py(node):
         f = vars()
         node_functor = f.get('sv_main')
     except UnboundLocalError:
-        print('see demo files for NodeScript')
+        print('no sv_main found')
     finally:
         if node_functor:
             params = node_functor.__defaults__
@@ -213,136 +213,126 @@ class SvScriptNode(bpy.types.Node, SverchCustomTreeNode):
 
     def init(self, context):
         self.node_dict[hash(self)] = {}
+        self.use_custom_color = False
+
+    def load(self):
+        self.script_str = bpy.data.texts[self.script_name].as_string()
+        self.label = self.script_name
+        self.load_function()
+
+    def load_function(self):
+        self.reset_node_dict()
+        self.load_py()
+
+    def reset_node_dict(self):
+        self.node_dict[hash(self)] = {}
+        self.button_names = ""
+        self.has_buttons = False
+        self.use_custom_color = False
 
     def nuke_me(self, context):
         in_out = [self.inputs, self.outputs]
         for socket_set in in_out:
             socket_set.clear()
 
-        if 'node_function' in self.node_dict[hash(self)]:
-            del self.node_dict[hash(self)]['node_function']
-
-        self.use_custom_color = False
+        self.reset_node_dict()
         self.script_name = ""
         self.script_str = ""
-        self.button_names = ""
-        self.has_buttons = False
-
-    def draw_buttons(self, context, layout):
-        col = layout.column(align=True)
-
-        if not self.script_str:
-            row = col.row(align=True)
-            row.prop(self, 'files_popup', '')
-            row.operator(
-                'node.sverchok_script_template', text='', icon='IMPORT'
-            ).script_name = self.files_popup
-
-            row = col.row(align=True)
-            row.prop_search(
-                self, 'script_name', bpy.data, 'texts', text='', icon='TEXT')
-            row.operator('node.sverchok_callback', text='', icon='PLUGIN').fn_name = 'load'
-
-        else:
-            # backwards compability
-            script_name = self.script_name
-            row = col.row()
-            row.operator('node.sverchok_callback', text='Reload').fn_name = 'load'
-            row.operator('node.sverchok_callback', text='Clear').fn_name = 'nuke_me'
-
-            if self.has_buttons:
-                for fname in self.button_names.split('|'):
-                    row = col.row()
-                    row.operator('node.script_ui_callback', text=fname).fn_name = fname
 
     def draw_buttons_ext(self, context, layout):
         col = layout.column()
         col.prop(self, 'user_name')
 
+    def draw_buttons(self, context, layout):
+        sv_callback = 'node.sverchok_callback'
+        sv_template = 'node.sverchok_script_template'
+        sn_callback = 'node.script_ui_callback'
+
+        col = layout.column(align=True)
+        row = col.row()
+
+        if not self.script_str:
+            row.prop(self, 'files_popup', '')
+            import_operator = row.operator(sv_template, text='', icon='IMPORT')
+            import_operator.script_name = self.files_popup
+
+            row = col.row()
+            row.prop_search(self, 'script_name', bpy.data, 'texts', text='', icon='TEXT')
+            row.operator(sv_callback, text='', icon='PLUGIN').fn_name = 'load'
+
+        else:
+            row.operator(sv_callback, text='Reload').fn_name = 'load'
+            row.operator(sv_callback, text='Clear').fn_name = 'nuke_me'
+
+            if self.has_buttons:
+                row = layout.row()
+                for fname in self.button_names.split('|'):
+                    row.operator(sn_callback, text=fname).fn_name = fname
+
     def create_or_update_sockets(self, in_sockets, out_sockets):
-        '''
-        - desired features not fully implemented yet (only socket add so far)
-        - Load may be pressed to import an updated function
-        - tries to preserve existing sockets or add new ones if needed
-        '''
+        outputs = self.outputs
         for socket_type, name, data in out_sockets:
-            if not (name in self.outputs):
+            if not (name in outputs):
                 new_output_socket(self, name, socket_type)
-                SvSetSocketAnyType(self, name, data)  # can output w/out input
+                # SvSetSocketAnyType(self, name, data)
+                outputs[name].sv_set(data)
 
         for socket_type, name, dval in in_sockets:
             if not (name in self.inputs):
                 new_input_socket(self, socket_type, name, dval)
 
-        self.use_custom_color = True
-        self.color = READY_COLOR
-
-    '''
-    load(_*)
-    - these are done once upon load or reload button presses
-    '''
-
-    def load(self):
-        self.script_str = bpy.data.texts[self.script_name].as_string()
-        self.label = self.script_name.split('.')[0]
-        self.load_function()
-
-    def load_function(self):
-        self.node_dict[hash(self)] = {}
-        self.button_names = ""
-        self.has_buttons = False
-        self.load_py()
-
     def load_py(self):
         details = introspect_py(self)
-        if details:
 
-            if None in details:
-                if not details[1]:
-                    print('sv_main() must take arguments')
-                print('should never reach here')
-                return
+        if not details:
+            # self.use_custom_color = False
+            print('load_py, failed because introspection failed')
+            self.reset_node_dict()
+        else:
+            self.process_introspected(details)
 
-            node_function, params, f = details
-            del f['sv_main']
-            del f['script_str']
-            globals().update(f)
+    def set_node_function(self, node_function):
+        self.node_dict[hash(self)]['node_function'] = node_function
 
-            self.node_dict[hash(self)]['node_function'] = node_function
+    def get_node_function(self):
+        return self.node_dict[hash(self)].get('node_function')
 
-            function_output = node_function(*params)
-            num_return_params = len(function_output)
+    def process_operator_buttons(self, ui_ops):
+        named_buttons = []
+        for button_name, button_function in ui_ops:
+            f = self.get_node_function()
+            setattr(f, button_name, button_function)
+            named_buttons.append(button_name)
+        self.button_names = "|".join(named_buttons)
 
-            if num_return_params == 2:
-                in_sockets, out_sockets = function_output
-            if num_return_params == 3:
-                self.has_buttons = True
-                in_sockets, out_sockets, ui_ops = function_output
+    def process_introspected(self, details):
 
-            if self.has_buttons:
-                named_buttons = []
-                for button_name, button_function in ui_ops:
-                    f = self.node_dict[hash(self)]['node_function']
-                    setattr(f, button_name, button_function)
-                    named_buttons.append(button_name)
-                self.button_names = "|".join(named_buttons)
+        node_function, params, f = details
+        del f['sv_main']
+        del f['script_str']
+        globals().update(f)
 
-            print('found {0} in sock requests'.format(len(in_sockets)))
-            print('found {0} out sock requests'.format(len(out_sockets)))
+        self.set_node_function(node_function)
+        function_output = node_function(*params)
+        num_return_params = len(function_output)
 
-            if in_sockets and out_sockets:
-                self.create_or_update_sockets(in_sockets, out_sockets)
-            return
+        if num_return_params == 2:
+            in_sockets, out_sockets = function_output
+        if num_return_params == 3:
+            self.has_buttons = True
+            in_sockets, out_sockets, ui_ops = function_output
 
-        print('load_py, failed because introspection failed')
+        if self.has_buttons:
+            self.process_operator_buttons(ui_ops)
+
+        print('found {0} in sock requests'.format(len(in_sockets)))
+        print('found {0} out sock requests'.format(len(out_sockets)))
+
+        if in_sockets and out_sockets:
+            self.create_or_update_sockets(in_sockets, out_sockets)
+
         self.use_custom_color = True
-        self.color = FAIL_COLOR
-
-    '''
-    update(_*)
-    - performed whenever Sverchok is scheduled to update.
-    - also triggered by socket updates
-    '''
+        self.color = READY_COLOR
 
     def update(self):
         if not self.inputs:
@@ -354,20 +344,23 @@ class SvScriptNode(bpy.types.Node, SverchCustomTreeNode):
             else:
                 self.load()
 
-        self.update_py()
-
-    def update_py(self):
-
-        node_function = self.node_dict[hash(self)].get('node_function', None)
-        if not node_function:
+        if not self.get_node_function():
             return
 
+        self.process()
+
+    def process(self):
+        inputs = self.inputs
+        outputs = self.outputs
+
+        node_function = self.get_node_function()
         defaults = node_function.__defaults__
-        input_names = [i.name for i in self.inputs]
+
+        input_names = [i.name for i in inputs]
 
         fparams = []
         for param_idx, name in enumerate(input_names):
-            socket = self.inputs[name]
+            socket = inputs[name]
             this_val = defaults[param_idx]
 
             # this deals with incoming links only.
@@ -393,12 +386,9 @@ class SvScriptNode(bpy.types.Node, SverchCustomTreeNode):
             fparams.append(this_val)
 
         if (len(fparams) == len(input_names)):
-
-            fn_return_values = node_function(*fparams)
-            out_sockets = fn_return_values[1]
-
-            for socket_type, name, data in out_sockets:
-                SvSetSocketAnyType(self, name, data)
+            out_sockets = node_function(*fparams)[1]
+            for _, name, data in out_sockets:
+                outputs[name].sv_set(data)
 
     def update_socket(self, context):
         self.update()
