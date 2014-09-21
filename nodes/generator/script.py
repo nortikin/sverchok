@@ -224,6 +224,10 @@ class SvScriptNode(bpy.types.Node, SverchCustomTreeNode):
         self.reset_node_dict()
         self.load_py()
 
+    def indicate_ready_state(self):
+        self.use_custom_color = True
+        self.color = READY_COLOR
+
     def reset_node_dict(self):
         self.node_dict[hash(self)] = {}
         self.button_names = ""
@@ -238,6 +242,12 @@ class SvScriptNode(bpy.types.Node, SverchCustomTreeNode):
         self.reset_node_dict()
         self.script_name = ""
         self.script_str = ""
+
+    def set_node_function(self, node_function):
+        self.node_dict[hash(self)]['node_function'] = node_function
+
+    def get_node_function(self):
+        return self.node_dict[hash(self)].get('node_function')
 
     def draw_buttons_ext(self, context, layout):
         col = layout.column()
@@ -269,6 +279,22 @@ class SvScriptNode(bpy.types.Node, SverchCustomTreeNode):
                 for fname in self.button_names.split('|'):
                     row.operator(sn_callback, text=fname).fn_name = fname
 
+    def load_py(self):
+        details = introspect_py(self)
+        if not details:
+            print('load_py, failed because introspection failed')
+            self.reset_node_dict()
+        else:
+            self.process_introspected(details)
+
+    def process_operator_buttons(self, ui_ops):
+        named_buttons = []
+        for button_name, button_function in ui_ops:
+            f = self.get_node_function()
+            setattr(f, button_name, button_function)
+            named_buttons.append(button_name)
+        self.button_names = "|".join(named_buttons)
+
     def create_or_update_sockets(self, in_sockets, out_sockets):
         print('found {0} in sock requests'.format(len(in_sockets)))
         print('found {0} out sock requests'.format(len(out_sockets)))
@@ -284,32 +310,7 @@ class SvScriptNode(bpy.types.Node, SverchCustomTreeNode):
             if not (name in self.inputs):
                 new_input_socket(self, socket_type, name, dval)
 
-    def load_py(self):
-        details = introspect_py(self)
-
-        if not details:
-            # self.use_custom_color = False
-            print('load_py, failed because introspection failed')
-            self.reset_node_dict()
-        else:
-            self.process_introspected(details)
-
-    def set_node_function(self, node_function):
-        self.node_dict[hash(self)]['node_function'] = node_function
-
-    def get_node_function(self):
-        return self.node_dict[hash(self)].get('node_function')
-
-    def process_operator_buttons(self, ui_ops):
-        named_buttons = []
-        for button_name, button_function in ui_ops:
-            f = self.get_node_function()
-            setattr(f, button_name, button_function)
-            named_buttons.append(button_name)
-        self.button_names = "|".join(named_buttons)
-
     def process_introspected(self, details):
-
         node_function, params, f = details
         del f['sv_main']
         del f['script_str']
@@ -331,8 +332,7 @@ class SvScriptNode(bpy.types.Node, SverchCustomTreeNode):
         if in_sockets and out_sockets:
             self.create_or_update_sockets(in_sockets, out_sockets)
 
-        self.use_custom_color = True
-        self.color = READY_COLOR
+        self.indicate_ready_state()
 
     def update(self):
         if not self.inputs:
@@ -352,11 +352,10 @@ class SvScriptNode(bpy.types.Node, SverchCustomTreeNode):
     def process(self):
         inputs = self.inputs
         outputs = self.outputs
+        input_names = [i.name for i in inputs]
 
         node_function = self.get_node_function()
         defaults = node_function.__defaults__
-
-        input_names = [i.name for i in inputs]
 
         fparams = []
         for param_idx, name in enumerate(input_names):
@@ -393,16 +392,19 @@ class SvScriptNode(bpy.types.Node, SverchCustomTreeNode):
     def update_socket(self, context):
         self.update()
 
+classes = [
+    SvScriptNode,
+    SvDefaultScriptTemplate,
+    SvScriptNodeCallbackOp,
+    SvScriptUICallbackOp
+]
+
 
 def register():
-    bpy.utils.register_class(SvScriptNode)
-    bpy.utils.register_class(SvDefaultScriptTemplate)
-    bpy.utils.register_class(SvScriptNodeCallbackOp)
-    bpy.utils.register_class(SvScriptUICallbackOp)
+    for class_name in classes:
+        bpy.utils.register_class(class_name)
 
 
 def unregister():
-    bpy.utils.unregister_class(SvDefaultScriptTemplate)
-    bpy.utils.unregister_class(SvScriptNode)
-    bpy.utils.unregister_class(SvScriptNodeCallbackOp)
-    bpy.utils.unregister_class(SvScriptUICallbackOp)
+    for class_name in classes:
+        bpy.utils.unregister_class(class_name)
