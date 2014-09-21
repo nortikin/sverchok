@@ -322,8 +322,10 @@ class SvScriptNode(bpy.types.Node, SverchCustomTreeNode):
         self.button_names = "|".join(named_buttons)
 
     def create_or_update_sockets(self, in_sockets, out_sockets):
-        print('found {0} in sock requests'.format(len(in_sockets)))
-        print('found {0} out sock requests'.format(len(out_sockets)))
+        print('current inputs  : ', [i.name for i in self.inputs])
+        print('new required in : ', [name for x, name, y in in_sockets])
+        print('current outputs : ', [i.name for i in self.outputs])
+        print('new required out: ', [name for x, name, y in out_sockets])
 
         outputs = self.outputs
         for socket_type, name, data in out_sockets:
