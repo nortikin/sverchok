@@ -270,6 +270,9 @@ class SvScriptNode(bpy.types.Node, SverchCustomTreeNode):
                     row.operator(sn_callback, text=fname).fn_name = fname
 
     def create_or_update_sockets(self, in_sockets, out_sockets):
+        print('found {0} in sock requests'.format(len(in_sockets)))
+        print('found {0} out sock requests'.format(len(out_sockets)))
+
         outputs = self.outputs
         for socket_type, name, data in out_sockets:
             if not (name in outputs):
@@ -324,9 +327,6 @@ class SvScriptNode(bpy.types.Node, SverchCustomTreeNode):
 
         if self.has_buttons:
             self.process_operator_buttons(ui_ops)
-
-        print('found {0} in sock requests'.format(len(in_sockets)))
-        print('found {0} out sock requests'.format(len(out_sockets)))
 
         if in_sockets and out_sockets:
             self.create_or_update_sockets(in_sockets, out_sockets)
