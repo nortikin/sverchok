@@ -346,6 +346,8 @@ class SvScriptNode(bpy.types.Node, SverchCustomTreeNode):
         - removing sockets is not supported yet
         what does work?
         - adding new sockets
+
+        wipe and rebuild would be 4 lines of code. but connections would be lost
         '''
         IO = self.inputs if (direction == 'in') else self.outputs
 
@@ -370,8 +372,14 @@ class SvScriptNode(bpy.types.Node, SverchCustomTreeNode):
             return diff_list
 
         a, b = get_names_from(IO, params, direction)
-        difflist = get_diff_for_equal(a, b)
-        print(difflist)
+        ''' no changes! '''
+        if a == b:
+            return
+
+        ''' maybe same count, but different sockets '''
+        if equal_socket_count(a, b):
+            difflist = get_diff_for_equal(a, b)
+            print(difflist)
 
         if direction == 'in':
             for socket_type, name, dval in params:
