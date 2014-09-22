@@ -296,7 +296,8 @@ class IndexViewerNode(bpy.types.Node, SverchCustomTreeNode):
         colprops = [
             ['Numbers :', [
                 'numid_verts_col', 'numid_edges_col', 'numid_faces_col']],
-            ['Backgrnd :', ['bg_verts_col', 'bg_edges_col', 'bg_faces_col']]
+            ['Backgrnd :', [
+                'bg_verts_col', 'bg_edges_col', 'bg_faces_col']]
         ]
 
         # each first draws the table row heading, 'label'
@@ -384,8 +385,8 @@ class IndexViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
     def bake(self):
         if self.activate and inputs['vertices'].links:
-            bake = bpy.ops.node.sv_text_baking
-            bake(idname=self.name, idtree=self.id_data.name)
+            textbake = bpy.ops.node.sv_text_baking
+            textbake(idname=self.name, idtree=self.id_data.name)
 
 
 def register():
