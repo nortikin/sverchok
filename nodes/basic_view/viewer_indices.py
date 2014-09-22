@@ -63,7 +63,7 @@ class SvBakeText (bpy.types.Operator):
                 socket = inputs[name].links[0].from_socket
                 return isinstance(socket, TypeSocket)
 
-        def get_socket(name):
+        def get_socket_type(name):
             if name in {'edges', 'faces', 'text'}:
                 return StringsSocket
             elif name == 'matrix':
@@ -72,7 +72,7 @@ class SvBakeText (bpy.types.Operator):
                 return VerticesSocket
 
         def get_data(name, fallback=[]):
-            TypeSocket = get_socket(name)
+            TypeSocket = get_socket_type(name)
             if has_good_link(name, TypeSocket):
                 d = dataCorrect(SvGetSocketAnyType(node, inputs[name]))
                 if name == 'matrix':
