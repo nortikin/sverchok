@@ -34,13 +34,23 @@ FAIL_COLOR = (0.1, 0.05, 0)
 READY_COLOR = (1, 0.3, 0)
 
 
-class TextBaker(object):
+class SvBakeText (bpy.types.Operator):
+    """3Dtext baking"""
 
-    def __init__(self, node):
-        self.node = node
+    bl_idname = "node.sv_text_baking"
+    bl_label = "bake text"
+    bl_options = {'REGISTER', 'UNDO'}
 
-    def collect_text_to_bake(self):
-        node = self.node
+    idname = StringProperty(name='idname', description='name of parent node',
+                            default='')
+    idtree = StringProperty(name='idtree', description='name of parent tree',
+                            default='')
+
+    def execute(self, context):
+        self.collect_text_to_bake(context.node)
+        return {'FINISHED'}
+
+    def collect_text_to_bake(self, node):
         inputs = node.inputs
 
         def has_good_link(name, TypeSocket):
@@ -149,18 +159,6 @@ class TextBaker(object):
         return a / len(vlist)
 
 
-class SvBakeText (bpy.types.Operator):
-
-    """3Dtext baking"""
-    bl_idname = "object.sv_text_baking"
-    bl_label = "bake text"
-    bl_options = {'REGISTER', 'UNDO'}
-
-    def execute(self, context):
-        context.node.bake()
-        return {'FINISHED'}
-
-
 class IndexViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
     ''' IDX ViewerNode '''
@@ -244,7 +242,10 @@ class IndexViewerNode(bpy.types.Node, SverchCustomTreeNode):
         if self.bakebuttonshow:
             row = col.row(align=True)
             row.scale_y = 3
-            row.operator('object.sv_text_baking', text='B A K E')
+            baker = row.operator('node.sv_text_baking', text='B A K E')
+            baker.idname = self.name
+            baker.idtree = self.id_data.name
+
             row = col.row(align=True)
             row.prop(self, "font_size")
 
@@ -382,8 +383,9 @@ class IndexViewerNode(bpy.types.Node, SverchCustomTreeNode):
         IV.callback_disable(node_id(self))
 
     def bake(self):
-        baker_obj = TextBaker(self)
-        baker_obj.collect_text_to_bake()
+        if self.activate and inputs['vertices'].links:
+            bake = bpy.ops.node.sv_text_baking
+            bake(idname=self.name, idtree=self.id_data.name)
 
 
 def register():
