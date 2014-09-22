@@ -105,33 +105,25 @@ class SvBakeText (bpy.types.Operator):
 
             if node.display_vert_index:
                 for idx, v in enumerate(final_verts):
-                    if text_obj:
-                        self.bake(idx, v, text_obj[idx])
-                    else:
-                        self.bake(idx, v)
+                    self.bake(idx, v, text_obj)
 
             if data_edges and node.display_edge_index:
                 for edge_index, (idx1, idx2) in enumerate(data_edges[obj_index]):
-
                     v1 = Vector(final_verts[idx1])
                     v2 = Vector(final_verts[idx2])
                     loc = v1 + ((v2 - v1) / 2)
-                    if text_obj:
-                        self.bake(edge_index, loc, text_obj[edge_index])
-                    else:
-                        self.bake(edge_index, loc)
+                    self.bake(edge_index, loc, text_obj)
 
             if data_faces and node.display_face_index:
                 for face_index, f in enumerate(data_faces[obj_index]):
                     verts = [Vector(final_verts[idx]) for idx in f]
                     median = self.calc_median(verts)
-                    if text_obj:
-                        self.bake(face_index, median, text_obj[face_index])
-                    else:
-                        self.bake(face_index, median)
+                    self.bake(face_index, median, text_obj)
 
-    def bake(self, index, origin, text_=''):
+    def bake(self, index, origin, text_obj):
         node = self.node
+
+        text_ = '' if (text_obj == '') else text_obj[index]
         text = str(text_[0] if text_ else index)
 
         # Create and name TextCurve object
@@ -142,13 +134,13 @@ class SvBakeText (bpy.types.Operator):
         bpy.context.scene.objects.link(obj)
 
         # TextCurve attributes
+        file_font = bpy.data.fonts.get(node.fonts, None)
+        if file_font:
+            # else blender defaults to using bfont,
+            # and bfont is added to data.fonts
+            tcu.font = file_font
+
         tcu.body = text
-
-        try:
-            tcu.font = bpy.data.fonts[node.fonts]
-        except:
-            tcu.font = bpy.data.fonts[0]
-
         tcu.offset_x = 0
         tcu.offset_y = 0
         tcu.resolution_u = 2
