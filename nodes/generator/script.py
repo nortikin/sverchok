@@ -336,7 +336,8 @@ class SvScriptNode(bpy.types.Node, SverchCustomTreeNode):
 
     def update_existing_sockets(self, params, direction):
         '''
-        this mammoth will only run once per manual reload.
+        this mammoth will run twice per manual reload, once for self.inputs
+        and once for self.outputs.
 
         - if sockets didn't change, it ends early
         - if sockets changed, but no links are found, it removes all sockets
@@ -410,7 +411,7 @@ class SvScriptNode(bpy.types.Node, SverchCustomTreeNode):
                     ng.links.new(_from, _to)
 
                 if direction == 'out':
-                    _from = IO[val.sock]
+                    _from = IO[key]
                     _to = val.node.inputs[val.sock]
                     ng.links.new(_from, _to)
 
