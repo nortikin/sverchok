@@ -353,37 +353,57 @@ class SvScriptNode(bpy.types.Node, SverchCustomTreeNode):
         the following variable clarification is needed:
         a : list of sockets currently on the UI
         b : this is the list of sockets names wanted by the script
+        (a == b) == (user refresh didn't involve changes to sockets)
         '''
-
         a, b = get_names_from(IO, params, direction)
         if a == b:
-            '''user refresh didn't involve changes to sockets'''
             return
 
         has_links = lambda: any([socket.links for socket in IO])
 
-        ''' 
+        '''
         [ ] collect current slider values too, i guess, but gets messy
         '''
 
         if has_links:
-            reconnection_scheme = None
+            io_dict = None
             '''
-            collect links
-            [ ] nlist = gather current links [[name, othernode+socket],...]
-            [ ] delete from nlist any socket info not on b
-            [ ] IO.clear()
-            [ ] repopulate
-            [ ] reattache
+            # collect links
+            [x] nlist = get current connections
+            [x] delete from nlist any socket info not in b
             '''
+            io_dict = self.get_connections(direction, IO)
+            _a = set(io_dict.keys())
+            _b = set(b)
+            keep = _a & _b
+            removeable = keep ^ _a
+            for k in removeable:
+                io_dict.pop(k)
 
-        self.dnr(IO, direction, params)
-        if has_links and reconnection_scheme:
-            '''
-            [ ] repopulate old links
-            '''
+        '''
+        # flatten
+        [x] IO.clear()
+        [x] repopulate
+        '''
+        self.flatten_sockets(IO, direction, params)
 
-    def dnr(self, IO, direction, params):
+        if has_links and io_dict:
+            '''
+            # reattach
+            [X] repopulate old links
+            '''
+            for key, val in io_dict.items():
+                if direction == 'in':
+                    _from = val.node.outputs[val.sock]
+                    _to = IO[key]
+                    ng.links.new(_from, _to)
+
+                if direction == 'out':
+                    _from = IO[val.sock]
+                    _to = val.node.inputs[val.sock]
+                    ng.links.new(_from, _to)
+
+    def flatten_sockets(self, IO, direction, params):
         IO.clear()
         if direction == 'in':
             for socket_type, name, dval in params:
@@ -392,6 +412,23 @@ class SvScriptNode(bpy.types.Node, SverchCustomTreeNode):
         elif direction == 'out':
             for socket_type, name, data in params:
                 new_output_socket(self, name, socket_type)
+
+    def get_connections(self, direction, IO):
+        io_dict = {}
+        for s in IO:
+            if not s.links:
+                continue
+
+            r = lambda: None
+            r.nodelink = s.links[0]
+            if direction == 'in':
+                r.node = r.nodelink.from_node
+                r.sock = r.nodelink.from_socket
+            else:
+                r.node = r.nodelink.to_node
+                r.sock = r.nodelink.to_socket
+            io_dict[s.name] = r
+        return io_dict
 
     def update(self):
         if not self.inputs:
