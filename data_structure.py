@@ -284,7 +284,8 @@ def sv_zip(*iterables):
 def dataCorrect(data, nominal_dept=2):
     dept = levelsOflist(data)
     output = []
-
+    if not dept: # for empty lists 
+        return []
     if dept < 2:
         return [dept, data]
     else:
@@ -323,7 +324,7 @@ def levelsOflist(lst):
         if n and isinstance(n, (list, tuple)):
             level += levelsOflist(n)
         return level
-    return
+    return 0
 
 
 #####################################################
