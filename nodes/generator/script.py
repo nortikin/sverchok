@@ -325,30 +325,50 @@ class SvScriptNode(bpy.types.Node, SverchCustomTreeNode):
         outputs = self.outputs
         inputs = self.inputs
 
-        a = [i.name for i in inputs]
-        b = [name for x, name, y in in_sockets]
-        print('current inputs  : ', a)
-        print('new required in : ', b)
+        def get_names_from(cur_sockets, new_sockets, direction):
+            a = [i.name for i in cur_sockets]
+            b = [name for x, name, y in new_sockets]
+            print_debug(direction, (a, b))
+            return a, b
 
-        print('current outputs : ', [i.name for i in self.outputs])
-        print('new required out: ', [name for x, name, y in out_sockets])
+        def print_debug(_dir, params):
+            first_line = 'current {dir}puts  : {val}'.format(dir=_dir, val=params[0])
+            second_line = '\nnew required {dir} : {val}'.format(dir=_dir, val=params[1])
+            print(first_line + second_line)
 
-        # ones found in in_sockets but not in inputs should be removed.
-        if inputs:
-            if not set(a) == set(b):
-                removal = set(set(a) ^ set(b)) & set(a)
-                for item in removal:
-                    inputs.remove(inputs[item])
+        '''
+        the following variable clarification is needed:
+        a : currently this is the list of sockets on the UI
+        b : currently this is the list of sockets names wanted by the script
 
-        outputs = self.outputs
-        for socket_type, name, data in out_sockets:
-            if not (name in outputs):
+        the problem is two fold
+        - renaming socketnames on the fly is not detected
+        - removing sockets is not supported yet
+        what does work?
+        - adding new sockets
+        '''
+
+        if not inputs:
+            # this is executed once, after first load or after nuke.
+            for socket_type, name, dval in in_sockets:
+                new_input_socket(self, socket_type, name, dval)
+        else:
+            a, b = get_names_from(inputs, in_sockets, 'in')
+            for socket_type, name, dval in in_sockets:
+                if not (name in self.inputs):
+                    new_input_socket(self, socket_type, name, dval)
+
+        if not outputs:
+            # this is executed once, after first load or after nuke.
+            for socket_type, name, data in out_sockets:
                 new_output_socket(self, name, socket_type)
                 outputs[name].sv_set(data)
-
-        for socket_type, name, dval in in_sockets:
-            if not (name in self.inputs):
-                new_input_socket(self, socket_type, name, dval)
+        else:
+            a, b = get_names_from(outputs, out_sockets, 'out')
+            for socket_type, name, data in out_sockets:
+                if not (name in outputs):
+                    new_output_socket(self, name, socket_type)
+                    # outputs[name].sv_set(data)
 
     def update(self):
         if not self.inputs:
@@ -412,12 +432,14 @@ class SvScriptNode(bpy.types.Node, SverchCustomTreeNode):
 
     def set_outputs(self, node_function, fparams):
         outputs = self.outputs
+
         out = node_function(*fparams)
         if len(out) == 2:
             _, out_sockets = out
 
             for _, name, data in out_sockets:
-                outputs[name].sv_set(data)
+                if name in outputs:
+                    outputs[name].sv_set(data)
 
     def update_socket(self, context):
         self.update()
