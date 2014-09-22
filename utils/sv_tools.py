@@ -25,7 +25,7 @@ import traceback
 import collections
 
 import bpy
-from bpy.props import StringProperty
+from bpy.props import StringProperty, CollectionProperty
 
 from core.update_system import sverchok_update, build_update_list
 from node_tree import SverchCustomTreeNode
@@ -73,17 +73,10 @@ class SverchokBakeAll(bpy.types.Operator):
 
     def execute(self, context):
         ng = bpy.data.node_groups[self.node_tree_name]
-        nodes = [node for node in ng.nodes if node.bl_idname == 'IndexViewerNode']
+        nodes = filter(lambda n: hasattr(n, "bake"), ng.nodes)
         for node in nodes:
             if node.bakebuttonshow:
                 node.bake()
-
-        nodes = [node for node in ng.nodes if node.bl_idname == 'ViewerNode']
-        for node in nodes:
-            if node.activate:
-                if node.inputs['edg_pol'].is_linked and node.bakebuttonshow:
-                    bake = bpy.ops.node.sverchok_mesh_baker
-                    bake(idname=node.name, idtree=self.node_tree_name)
 
         return {'FINISHED'}
 
@@ -182,7 +175,8 @@ class SverchokUpdateAddon(bpy.types.Operator):
             # here change folder
             url = 'https://github.com/nortikin/sverchok/archive/master.zip'
             # here change folder
-            file = urllib.request.urlretrieve(url, os.path.normpath(os.path.join(os.curdir, 'master.zip')))
+            to_path = os.path.normpath(os.path.join(os.curdir, 'master.zip'))
+            file = urllib.request.urlretrieve(url, to_path)
             bpy.data.window_managers[0].progress_update(50)
         except:
             self.report({'ERROR'}, "Cannot get archive from Internet")
@@ -190,12 +184,12 @@ class SverchokUpdateAddon(bpy.types.Operator):
             return {'CANCELLED'}
         try:
             #os.removedirs(os.path.normpath(os.path.join(os.curdir, 'sverchok')))
-            err=0
+            err = 0
             ZipFile(file[0]).extractall(path=os.curdir, members=None, pwd=None)
             bpy.data.window_managers[0].progress_update(90)
-            err=1
+            err = 1
             os.remove(file[0])
-            err=2
+            err = 2
             sv_new_version = False
             bpy.data.window_managers[0].progress_update(100)
             bpy.data.window_managers[0].progress_end()
@@ -208,15 +202,16 @@ class SverchokUpdateAddon(bpy.types.Operator):
 
         return {'FINISHED'}
 
+
 class SvSwitchToLayout (bpy.types.Operator):
-    """Switch to exact layout, user freandly way"""      
+    """Switch to exact layout, user friendly way"""
     bl_idname = "node.sv_switch_layout"
     bl_label = "switch layouts"
-    bl_options = {'REGISTER', 'UNDO'} 
-    
-    
-    layout_name = bpy.props.StringProperty(default='', name='layout_name', \
-                        description='layout name to change layout by button')
+    bl_options = {'REGISTER', 'UNDO'}
+
+    layout_name = bpy.props.StringProperty(
+        default='', name='layout_name',
+        description='layout name to change layout by button')
 
     @classmethod
     def poll(cls, self):
@@ -257,13 +252,7 @@ class ToolsNode(bpy.types.Node, SverchCustomTreeNode):
         op.node_group = self.id_data.name
         #box = layout.box()
 
-        #col = box.column(align=True)
-        #col.template_node_socket(color=(0.0, 0.9, 0.7, 1.0))
-        #col.operator('wm.url_open', text='Help!').url = 'http://wiki.blender.org/index.php/Extensions:2.6/Py/Scripts/Nodes/Sverchok'
-        #col.operator('wm.url_open', text='Home!').url = 'http://nikitron.cc.ua/blend_scripts.html'
-        #layout.operator(SverchokHome.bl_idname, text="WWW: Go home")
-        #col.operator('wm.url_open', text='FBack').url = 'http://www.blenderartists.org/forum/showthread.php?272679-Addon-WIP-Sverchok-parametric-tool-for-architects/'
-        #col.operator('wm.url_open', text='Bugtr').url = 'https://docs.google.com/forms/d/1L2BIpDhjMgQEbVAc7pEq93432Qanu8UPbINhzJ5SryI/viewform'
+        # add back if you need
 
         node_count = len(self.id_data.nodes)
         tex = str(node_count) + ' | ' + str(self.id_data.name)
@@ -277,15 +266,16 @@ class ToolsNode(bpy.types.Node, SverchCustomTreeNode):
     def update_socket(self, context):
         pass
 
+
 class SvClearNodesLayouts (bpy.types.Operator):
-    """Clear node layouts sverchok and blendgraph, when no nodes editor opened"""      
+    """Clear node layouts sverchok and blendgraph, when no nodes editor opened"""
     bl_idname = "node.sv_delete_nodelayouts"
     bl_label = "del layouts"
-    bl_options = {'REGISTER', 'UNDO'} 
-    
-    
-    do_clear = bpy.props.BoolProperty(default=False, name='even used', \
-                        description='remove even if layout has one user (not fake user)')
+    bl_options = {'REGISTER', 'UNDO'}
+
+    do_clear = bpy.props.BoolProperty(
+        default=False, name='even used',
+        description='remove even if layout has one user (not fake user)')
 
     @classmethod
     def poll(cls, self):
@@ -299,24 +289,26 @@ class SvClearNodesLayouts (bpy.types.Operator):
         for T in trees:
             if T.bl_rna.name in ['Shader Node Tree']:
                 continue
-            if trees[T.name].users > 1 and T.use_fake_user == True:
-                print ('Layout '+str(T.name)+' protected by fake user.')
-            if trees[T.name].users >= 1 and self.do_clear and T.use_fake_user == False:
-                print ('cleaning user: '+str(T.name))
+            if trees[T.name].users > 1 and T.use_fake_user:
+                print('Layout '+str(T.name)+' protected by fake user.')
+            if trees[T.name].users >= 1 and self.do_clear and not T.use_fake_user:
+                print('cleaning user: '+str(T.name))
                 trees[T.name].user_clear()
             if trees[T.name].users == 0:
-                print ('removing layout: '+str(T.name)+' | '+str(T.bl_rna.name))
+                print('removing layout: '+str(T.name)+' | '+str(T.bl_rna.name))
                 bpy.data.node_groups.remove(T)
-                
+
         return {'FINISHED'}
+
 
 class Sv3dPropItem(bpy.types.PropertyGroup):
     node_name = StringProperty()
-    prop_name = StringProperty() 
+    prop_name = StringProperty()
+
 
 class SvLayoutScanProperties(bpy.types.Operator):
     ''' scan layouts of sverchok for properties '''
-    
+
     bl_idname = "node.sv_scan_propertyes"
     bl_label = "scan for propertyes in sverchok leyouts"
 
@@ -330,37 +322,35 @@ class SvLayoutScanProperties(bpy.types.Operator):
                     if no.bl_idname == "IntegerNode":
                         if no.inputs and no.outputs:
                             if not no.inputs[0].links \
-                                    and no.outputs[0].links \
-                                    and no.to3d == True:
+                                    and no.outputs[0].links and no.to3d:
                                 templist.append([no. label, no.name, 'int_'])
                     if no.bl_idname == "FloatNode":
                         if no.inputs and no.outputs:
                             if not no.inputs[0].links \
-                                    and no.outputs[0].links \
-                                    and no.to3d == True:
+                                    and no.outputs[0].links and no.to3d:
                                 templist.append([no.label, no.name, 'float_'])
                     if no.bl_idname == "ObjectsNode":
                         if any((s.links for s in no.outputs)):
                             templist.append([no.label, no.name, ""])
                 templist.sort()
-                templ = [[t[1],t[2]] for t in templist]
+                templ = [[t[1], t[2]] for t in templist]
                 tree.Sv3DProps.clear()
                 for name, prop in templ:
                     tree.Sv3DProps.add()
                     tree.Sv3DProps[-1].node_name = name
                     tree.Sv3DProps[-1].prop_name = prop
-                    
+
         return {'FINISHED'}
+
 
 class Sv3DPanel(bpy.types.Panel):
     ''' Panel to manipuplate parameters in sverchok layouts '''
-    
+
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
     bl_label = "Sverchok "+sv_version_local
     bl_options = {'DEFAULT_CLOSED'}
     bl_category = 'SV'
-
 
     def draw(self, context):
         layout = self.layout
@@ -372,9 +362,10 @@ class Sv3DPanel(bpy.types.Panel):
         row.operator(SverchokUpdateAll.bl_idname, text="Update all")
         row = col.row(align=True)
         row.prop(context.scene, 'sv_do_clear', text='hard clean')
-        delley = row.operator('node.sv_delete_nodelayouts', \
-                              text='Clean layouts').do_clear = \
-                              context.scene.sv_do_clear
+        delley = row.operator(
+            'node.sv_delete_nodelayouts',
+            text='Clean layouts').do_clear = context.scene.sv_do_clear
+
         for tree in bpy.data.node_groups:
             if tree.bl_idname == 'SverchCustomTreeType':
                 box = layout.box()
@@ -382,13 +373,13 @@ class Sv3DPanel(bpy.types.Panel):
                 row = col.row(align=True)
                 split = row.column(align=True)
                 split.label(text='Layout: '+tree.name)
-                
+
                 # bakery
                 split = row.column(align=True)
                 split.scale_x = little_width
                 baka = split.operator('node.sverchok_bake_all', text='B')
                 baka.node_tree_name = tree.name
-                
+
                 #eye
                 split = row.column(align=True)
                 split.scale_x = little_width
@@ -402,7 +393,7 @@ class Sv3DPanel(bpy.types.Panel):
                     split.prop(tree, 'sv_animate', icon='UNLOCKED', text=' ')
                 else:
                     split.prop(tree, 'sv_animate', icon='LOCKED', text=' ')
-                
+
                 # veriables
                 for item in tree.Sv3DProps:
                     no = item.node_name
@@ -415,7 +406,7 @@ class Sv3DPanel(bpy.types.Panel):
                     if node.bl_idname == "ObjectsNode":
                         row = col.row(align=True)
                         row.label(text=node.label if node.label else no)
-                        op=row.operator("node.sverchok_object_insertion", text="Get")
+                        op = row.operator("node.sverchok_object_insertion", text="Get")
                         op.node_name = node.name
                         op.tree_name = tree.name
                         op.grup_name = node.groupname
@@ -460,7 +451,7 @@ class SverchokToolsMenu(bpy.types.Panel):
         col = row.column(align=True)
         col.scale_y = 3.0
         u = "Update {0}".format(ng_name)
-        op = col.operator(SverchokUpdateCurrent.bl_idname, text = u)
+        op = col.operator(SverchokUpdateCurrent.bl_idname, text=u)
         op.node_group = ng_name
         box = layout.box()
         little_width = 0.12
@@ -487,7 +478,7 @@ class SverchokToolsMenu(bpy.types.Panel):
                     row.label(text=name)
                 else:
                     row.operator('node.sv_switch_layout', text=name).layout_name = name
-                
+
                 # bakery
                 split = row.column(align=True)
                 split.scale_x = little_width
@@ -508,27 +499,17 @@ class SverchokToolsMenu(bpy.types.Panel):
                     split.prop(tree, 'sv_animate', icon='LOCKED', text=' ')
 
         if sv_new_version:
-            layout.column().operator(SverchokUpdateAddon.bl_idname, text='Upgrade Sverchok addon')
+            layout.column().operator(
+                SverchokUpdateAddon.bl_idname, text='Upgrade Sverchok addon')
         else:
-            layout.column().operator(SverchokCheckForUpgrades.bl_idname, text='Check for new version')
+            layout.column().operator(
+                SverchokCheckForUpgrades.bl_idname, text='Check for new version')
         #       row.prop(tree, 'sv_bake',text=' ')
-
-        #box = layout.box()
-        #col = box.column(align=True)
-        #col.label(text="Sverchok v_0.2.8")
-        #col.label(text='layout: '+context.space_data.node_tree.name)
-        #row = col.row(align=True)
-        #row.operator('wm.url_open', text='Help!').url = 'http://wiki.blender.org/index.php/Extensions:2.6/Py/Scripts/Nodes/Sverchok'
-        #row.operator('wm.url_open', text='Home!').url = 'http://nikitron.cc.ua/blend_scripts.html'
-        #layout.operator(SverchokHome.bl_idname, text="WWW: Go home")
-        #row = col.row(align=True)
-        #row.operator('wm.url_open', text='FBack').url = 'http://www.blenderartists.org/forum/showthread.php?272679-Addon-WIP-Sverchok-parametric-tool-for-architects/'
-        #row.operator('wm.url_open', text='Bugtr').url = 'https://docs.google.com/forms/d/1L2BIpDhjMgQEbVAc7pEq93432Qanu8UPbINhzJ5SryI/viewform'
 
 
 def register():
-    bpy.types.Scene.sv_do_clear = bpy.props.BoolProperty(default=False, \
-        name='even used', description='remove even if \
+    bpy.types.Scene.sv_do_clear = bpy.props.BoolProperty(
+        default=False, name='even used', description='remove even if \
         layout has one user (not fake user)')
     bpy.utils.register_class(SverchokUpdateCurrent)
     bpy.utils.register_class(SverchokUpdateAll)
@@ -544,8 +525,8 @@ def register():
     bpy.utils.register_class(SvSwitchToLayout)
     bpy.utils.register_class(SvLayoutScanProperties)
     bpy.utils.register_class(SvClearNodesLayouts)
-    bpy.types.SverchCustomTreeType.Sv3DProps = \
-                        bpy.props.CollectionProperty(type=Sv3dPropItem)
+    bpy.types.SverchCustomTreeType.Sv3DProps = CollectionProperty(type=Sv3dPropItem)
+
 
 def unregister():
     bpy.utils.unregister_class(SvClearNodesLayouts)
@@ -565,6 +546,3 @@ def unregister():
 
 if __name__ == '__main__':
     register()
-
-
-
