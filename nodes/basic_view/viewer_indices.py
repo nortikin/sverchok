@@ -134,7 +134,7 @@ class SvBakeText (bpy.types.Operator):
         bpy.context.scene.objects.link(obj)
 
         # TextCurve attributes
-        file_font = bpy.data.fonts.get(node.fonts, None)
+        file_font = bpy.data.fonts.get(node.fonts)
         if file_font:
             # else blender defaults to using bfont,
             # and bfont is added to data.fonts
