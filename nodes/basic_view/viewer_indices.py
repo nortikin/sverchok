@@ -46,11 +46,16 @@ class SvBakeText (bpy.types.Operator):
     idtree = StringProperty(name='idtree', description='name of parent tree',
                             default='')
 
+    @property
+    def node(self):
+        return bpy.data.node_groups[self.idtree].nodes[self.idname]
+
     def execute(self, context):
-        self.collect_text_to_bake(context.node)
+        self.collect_text_to_bake()
         return {'FINISHED'}
 
-    def collect_text_to_bake(self, node):
+    def collect_text_to_bake(self):
+        node = self.node
         inputs = node.inputs
 
         def has_good_link(name, TypeSocket):
