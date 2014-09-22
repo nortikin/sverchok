@@ -361,6 +361,11 @@ class SvScriptNode(bpy.types.Node, SverchCustomTreeNode):
             return
 
         has_links = lambda: any([socket.links for socket in IO])
+
+        ''' 
+        [ ] collect current slider values too, i guess, but gets messy
+        '''
+
         if has_links:
             reconnection_scheme = None
             '''
