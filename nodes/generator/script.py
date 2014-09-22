@@ -404,6 +404,7 @@ class SvScriptNode(bpy.types.Node, SverchCustomTreeNode):
             # reattach
             [X] repopulate old links
             '''
+            ng = self.id_data
             for key, val in io_dict.items():
                 if direction == 'in':
                     _from = val.node.outputs[val.sock.name]
