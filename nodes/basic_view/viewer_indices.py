@@ -60,15 +60,19 @@ class SvBakeText (bpy.types.Operator):
 
         def has_good_link(name, TypeSocket):
             if inputs[name].links:
-                if isinstance(inputs[name].links[0].from_socket, TypeSocket):
-                    return True
+                socket = inputs[name].links[0].from_socket
+                return isinstance(socket, TypeSocket)
+
+        def get_socket(name):
+            if name in {'edges', 'faces', 'text'}:
+                return StringsSocket
+            elif name == 'matrix':
+                return MatrixSocket
+            else:
+                return VerticesSocket
 
         def get_data(name, fallback=[]):
-            if name in {'edges', 'faces', 'text'}:
-                TypeSocket = StringsSocket
-            else:
-                TypeSocket = MatrixSocket if name == 'matrix' else VerticesSocket
-
+            TypeSocket = get_socket(name)
             if has_good_link(name, TypeSocket):
                 d = dataCorrect(SvGetSocketAnyType(node, inputs[name]))
                 if name == 'matrix':
