@@ -38,6 +38,7 @@ def sv_main(n_petals=8, vp_petal=20, profile_radius=1.3, amp=1.0):
         Verts.append((x_float, y_float, z_float))
 
     # makes edge keys, ensure cyclic
+    i = 0
     Edges = [[i, i + 1] for i in range(n_verts - 1)]
     Edges.append([i, 0])
 
