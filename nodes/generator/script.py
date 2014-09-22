@@ -335,6 +335,17 @@ class SvScriptNode(bpy.types.Node, SverchCustomTreeNode):
             self.update_existing_sockets(params=out_sockets, direction='out')
 
     def update_existing_sockets(self, params, direction):
+        '''
+        this mammoth will only run once per manual reload.
+
+        - if sockets didn't change, it ends early
+        - if sockets changed, but no links are found, it removes all sockets
+          and recreates them, then returns flow control. (slider values are lost)
+        - if outputs change, and some links are found they are stored,
+          sockets are removed, recreated, and returning sockets which had previous
+          connections are reconnected
+        '''
+
         IO = self.inputs if (direction == 'in') else self.outputs
 
         def print_debug(a, b):
