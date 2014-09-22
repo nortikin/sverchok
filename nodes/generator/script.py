@@ -347,7 +347,7 @@ class SvScriptNode(bpy.types.Node, SverchCustomTreeNode):
         what does work?
         - adding new sockets
         '''
-        IO = self.inputs if 'in' else self.outputs
+        IO = self.inputs if (direction == 'in') else self.outputs
 
         def print_debug(_dir, params):
             first_line = 'current {dir}puts  : {val}'.format(dir=_dir, val=params[0])
