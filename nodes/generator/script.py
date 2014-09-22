@@ -322,24 +322,24 @@ class SvScriptNode(bpy.types.Node, SverchCustomTreeNode):
         self.button_names = "|".join(named_buttons)
 
     def create_or_update_sockets(self, in_sockets, out_sockets):
-        outputs = self.outputs
-        inputs = self.inputs
+        if not self.inputs:
+            for socket_type, name, dval in in_sockets:
+                new_input_socket(self, socket_type, name, dval)
+        else:
+            self.update_existing_sockets(params=in_sockets, direction='in')
 
-        def get_names_from(cur_sockets, new_sockets, direction):
-            a = [i.name for i in cur_sockets]
-            b = [name for x, name, y in new_sockets]
-            print_debug(direction, (a, b))
-            return a, b
+        if not self.outputs:
+            for socket_type, name, data in out_sockets:
+                new_output_socket(self, name, socket_type)
+        else:
+            self.update_existing_sockets(params=out_sockets, direction='out')
 
-        def print_debug(_dir, params):
-            first_line = 'current {dir}puts  : {val}'.format(dir=_dir, val=params[0])
-            second_line = '\nnew required {dir} : {val}'.format(dir=_dir, val=params[1])
-            print(first_line + second_line)
+    def update_existing_sockets(self, params, direction):
 
         '''
         the following variable clarification is needed:
-        a : currently this is the list of sockets on the UI
-        b : currently this is the list of sockets names wanted by the script
+        a : list of sockets currently on the UI
+        b : this is the list of sockets names wanted by the script
 
         the problem is two fold
         - renaming socketnames on the fly is not detected
@@ -347,28 +347,41 @@ class SvScriptNode(bpy.types.Node, SverchCustomTreeNode):
         what does work?
         - adding new sockets
         '''
+        IO = self.inputs if 'in' else self.outputs
 
-        if not inputs:
-            # this is executed once, after first load or after nuke.
-            for socket_type, name, dval in in_sockets:
-                new_input_socket(self, socket_type, name, dval)
-        else:
-            a, b = get_names_from(inputs, in_sockets, 'in')
-            for socket_type, name, dval in in_sockets:
-                if not (name in self.inputs):
+        def print_debug(_dir, params):
+            first_line = 'current {dir}puts  : {val}'.format(dir=_dir, val=params[0])
+            second_line = '\nnew required {dir} : {val}'.format(dir=_dir, val=params[1])
+            print(first_line + second_line)
+
+        def get_names_from(cur_sockets, new_sockets, direction):
+            a = [i.name for i in cur_sockets]
+            b = [name for x, name, y in new_sockets]
+            print_debug(direction, (a, b))
+            return a, b
+
+        def equal_socket_count(a, b):
+            return len(a) == len(b)
+
+        def get_diff_for_equal(a, b):
+            diff_list = []
+            for idx, (socket_a, socket_b) in enumerate(zip(a, b)):
+                diff_list.append([idx, socket_a == socket_b])
+            return diff_list
+
+        a, b = get_names_from(IO, params, direction)
+        difflist = get_diff_for_equal(a, b)
+        print(difflist)
+
+        if direction == 'in':
+            for socket_type, name, dval in params:
+                if not (name in IO):
                     new_input_socket(self, socket_type, name, dval)
 
-        if not outputs:
-            # this is executed once, after first load or after nuke.
-            for socket_type, name, data in out_sockets:
-                new_output_socket(self, name, socket_type)
-                outputs[name].sv_set(data)
-        else:
-            a, b = get_names_from(outputs, out_sockets, 'out')
-            for socket_type, name, data in out_sockets:
-                if not (name in outputs):
+        if direction == 'out':
+            for socket_type, name, data in params:
+                if not (name in IO):
                     new_output_socket(self, name, socket_type)
-                    # outputs[name].sv_set(data)
 
     def update(self):
         if not self.inputs:
