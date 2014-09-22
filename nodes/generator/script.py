@@ -335,61 +335,58 @@ class SvScriptNode(bpy.types.Node, SverchCustomTreeNode):
             self.update_existing_sockets(params=out_sockets, direction='out')
 
     def update_existing_sockets(self, params, direction):
-
-        '''
-        the following variable clarification is needed:
-        a : list of sockets currently on the UI
-        b : this is the list of sockets names wanted by the script
-
-        the problem is two fold
-        - renaming socketnames on the fly is not detected
-        - removing sockets is not supported yet
-        what does work?
-        - adding new sockets
-
-        wipe and rebuild would be 4 lines of code. but connections would be lost
-        '''
         IO = self.inputs if (direction == 'in') else self.outputs
 
-        def print_debug(_dir, params):
-            first_line = 'current {dir}puts  : {val}'.format(dir=_dir, val=params[0])
-            second_line = '\nnew required {dir} : {val}'.format(dir=_dir, val=params[1])
+        def print_debug(a, b):
+            d = direction
+            first_line = 'current {dir}puts  : {val}'.format(dir=d, val=a)
+            second_line = '\nnew required {dir} : {val}'.format(dir=d, val=b)
             print(first_line + second_line)
 
         def get_names_from(cur_sockets, new_sockets, direction):
             a = [i.name for i in cur_sockets]
             b = [name for x, name, y in new_sockets]
-            print_debug(direction, (a, b))
+            print_debug(a, b)
             return a, b
 
-        def equal_socket_count(a, b):
-            return len(a) == len(b)
-
-        def get_diff_for_equal(a, b):
-            diff_list = []
-            for idx, (socket_a, socket_b) in enumerate(zip(a, b)):
-                diff_list.append([idx, socket_a == socket_b])
-            return diff_list
+        '''
+        the following variable clarification is needed:
+        a : list of sockets currently on the UI
+        b : this is the list of sockets names wanted by the script
+        '''
 
         a, b = get_names_from(IO, params, direction)
-        ''' no changes! '''
         if a == b:
+            '''user refresh didn't involve changes to sockets'''
             return
 
-        ''' maybe same count, but different sockets '''
-        if equal_socket_count(a, b):
-            difflist = get_diff_for_equal(a, b)
-            print(difflist)
+        has_links = lambda: any([socket.links for socket in IO])
+        if has_links:
+            reconnection_scheme = None
+            '''
+            collect links
+            [ ] nlist = gather current links [[name, othernode+socket],...]
+            [ ] delete from nlist any socket info not on b
+            [ ] IO.clear()
+            [ ] repopulate
+            [ ] reattache
+            '''
 
+        self.dnr(IO, direction, params)
+        if has_links and reconnection_scheme:
+            '''
+            [ ] repopulate old links
+            '''
+
+    def dnr(self, IO, direction, params):
+        IO.clear()
         if direction == 'in':
             for socket_type, name, dval in params:
-                if not (name in IO):
-                    new_input_socket(self, socket_type, name, dval)
+                new_input_socket(self, socket_type, name, dval)
 
-        if direction == 'out':
+        elif direction == 'out':
             for socket_type, name, data in params:
-                if not (name in IO):
-                    new_output_socket(self, name, socket_type)
+                new_output_socket(self, name, socket_type)
 
     def update(self):
         if not self.inputs:
