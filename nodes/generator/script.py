@@ -406,13 +406,13 @@ class SvScriptNode(bpy.types.Node, SverchCustomTreeNode):
             '''
             for key, val in io_dict.items():
                 if direction == 'in':
-                    _from = val.node.outputs[val.sock]
+                    _from = val.node.outputs[val.sock.name]
                     _to = IO[key]
                     ng.links.new(_from, _to)
 
                 if direction == 'out':
                     _from = IO[key]
-                    _to = val.node.inputs[val.sock]
+                    _to = val.node.inputs[val.sock.name]
                     ng.links.new(_from, _to)
 
     def flatten_sockets(self, IO, direction, params):
