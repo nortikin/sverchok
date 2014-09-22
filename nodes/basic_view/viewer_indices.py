@@ -384,7 +384,7 @@ class IndexViewerNode(bpy.types.Node, SverchCustomTreeNode):
         IV.callback_disable(node_id(self))
 
     def bake(self):
-        if self.activate and inputs['vertices'].links:
+        if self.activate and self.inputs['vertices'].links:
             textbake = bpy.ops.node.sv_text_baking
             textbake(idname=self.name, idtree=self.id_data.name)
 
