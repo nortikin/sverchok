@@ -17,12 +17,11 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import json
-import pprint
 import os
 import re
 
 import bpy
-from bpy.types import EnumProperty
+from bpy.types import EnumProperty, StringProperty
 
 from node_tree import SverchCustomTreeNode
 
@@ -106,35 +105,59 @@ def import_tree(ng, fullpath):
     with open(fullpath) as fp:
         nodes_json = json.load(fp)
 
-    ''' first create all nodes. '''
+        ''' first create all nodes. '''
 
-    nodes_to_import = nodes_json['nodes']
-    for n in sorted(nodes_to_import):
-        node_ref = nodes_to_import[n]
+        nodes_to_import = nodes_json['nodes']
+        for n in sorted(nodes_to_import):
+            node_ref = nodes_to_import[n]
 
-        bl_idname = node_ref['bl_idname']
-        node = nodes.new(bl_idname)
-        
-        if not (node.name == n):
-           node.name = n
-
-        params = node_ref['params']
-        for p in params:
-            val = params[p]
-            setattr(node, p, val)
+            bl_idname = node_ref['bl_idname']
+            node = nodes.new(bl_idname)
             
-        node.location = node_ref['location']
-        node.height = node_ref['height']
-        node.width = node_ref['width']
-        node.label = node_ref['label']
-        node.hide = node_ref['hide']
-        node.color = node_ref['color']
+            if not (node.name == n):
+               node.name = n
+
+            params = node_ref['params']
+            for p in params:
+                val = params[p]
+                setattr(node, p, val)
+                
+            node.location = node_ref['location']
+            node.height = node_ref['height']
+            node.width = node_ref['width']
+            node.label = node_ref['label']
+            node.hide = node_ref['hide']
+            node.color = node_ref['color']
+            
+        ''' now connect them '''
         
-    ''' now connect them '''
-    
-    connections = nodes_json['connections']
-    for idx, link in connections.items():
-        ng.links.new(*resolve_socket(*link))
+        connections = nodes_json['connections']
+        for idx, link in connections.items():
+            ng.links.new(*resolve_socket(*link))
+
+
+class svNodeTreeExporter(bpy.types.Operator):
+
+    bl_idname = "node.tree_exporter"
+    bl_label = "sv NodeTree Export Operator"
+
+    filepath = StringProperty(   name="File Path",
+                                 description="Filepath used for",
+                                 maxlen=1024, default="", subtype='FILE_PATH')
+
+    filter_glob = StringProperty(default="*.json", options={'HIDDEN'})
+
+
+    def execute(self, context):
+        # bpy.data.fonts.load(self.filepath)
+        print(self.filepath)
+        return {'FINISHED'}
+
+    def invoke(self, context, event):
+        wm = context.window_manager
+        wm.fileselect_add(self)
+        return {'RUNNING_MODAL'}
+
 
 
 class SvImportExportNodeTree(bpy.types.Node, SverchCustomTreeNode):
@@ -143,11 +166,19 @@ class SvImportExportNodeTree(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Sv Import Export NodeTree'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
+    export_name = StringProperty(default='SverchokNode_export.json')
+    import_name = StringProperty()
+
     def init(self, context):
         pass
 
     def draw_buttons(self, context, layout):
-        pass
+        row = layout.row()
+        # box.label(text='import')
+
+
+        # box2.label(text='export')
+        row.operator('node.tree_exporter', text='export tree')
 
     def update(self):
         pass
@@ -157,8 +188,10 @@ class SvImportExportNodeTree(bpy.types.Node, SverchCustomTreeNode):
 
 
 def register():
+    bpy.utils.register_class(svNodeTreeExporter)
     bpy.utils.register_class(SvImportExportNodeTree)
 
 
 def unregister():
     bpy.utils.unregister_class(SvImportExportNodeTree)
+    bpy.utils.unregister_class(svNodeTreeExporter)
