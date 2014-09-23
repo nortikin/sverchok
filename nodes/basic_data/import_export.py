@@ -163,11 +163,11 @@ class svNodeTreeExporter(bpy.types.Operator):
 class SvImportExportNodeTree(bpy.types.Node, SverchCustomTreeNode):
     ''' SvImportExportNodeTree '''
     bl_idname = 'SvImportExportNodeTree'
-    bl_label = 'Sv Import Export NodeTree'
+    bl_label = 'Sv ImportExport NodeTree'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     export_name = StringProperty(default='SverchokNode_export.json')
-    import_name = StringProperty()
+    import_name = StringProperty(default='')
 
     def init(self, context):
         pass
@@ -182,9 +182,6 @@ class SvImportExportNodeTree(bpy.types.Node, SverchCustomTreeNode):
 
     def update(self):
         pass
-
-    def update_socket(self, context):
-        self.update()
 
 
 def register():
