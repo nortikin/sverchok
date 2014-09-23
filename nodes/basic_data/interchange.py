@@ -21,8 +21,8 @@ import os
 import re
 
 import bpy
-from bpy.types import EnumProperty, StringProperty
-
+from bpy.types import EnumProperty
+from bpy.props import StringProperty
 from node_tree import SverchCustomTreeNode
 
 
@@ -136,14 +136,15 @@ def import_tree(ng, fullpath):
             ng.links.new(*resolve_socket(*link))
 
 
-class svNodeTreeExporter(bpy.types.Operator):
+class SvNodeTreeExporter(bpy.types.Operator):
 
     bl_idname = "node.tree_exporter"
     bl_label = "sv NodeTree Export Operator"
 
-    filepath = StringProperty(   name="File Path",
-                                 description="Filepath used for",
-                                 maxlen=1024, default="", subtype='FILE_PATH')
+    filepath = StringProperty(
+        name="File Path",
+        description="Filepath used for",
+        maxlen=1024, default="", subtype='FILE_PATH')
 
     filter_glob = StringProperty(default="*.json", options={'HIDDEN'})
 
@@ -160,24 +161,20 @@ class svNodeTreeExporter(bpy.types.Operator):
 
 
 
-class SvImportExportNodeTree(bpy.types.Node, SverchCustomTreeNode):
+class SvImportExport(bpy.types.Node, SverchCustomTreeNode):
     ''' SvImportExportNodeTree '''
-    bl_idname = 'SvImportExportNodeTree'
-    bl_label = 'Sv ImportExport NodeTree'
+    bl_idname = 'SvImportExport'
+    bl_label = 'Sv Import Export'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    export_name = StringProperty(default='SverchokNode_export.json')
-    import_name = StringProperty(default='')
+    #exportname = StringProperty(name='exportname', default="SverchokNod")
+    #importname = StringProperty(name='importname', default="hhoih")
 
     def init(self, context):
         pass
 
     def draw_buttons(self, context, layout):
         row = layout.row()
-        # box.label(text='import')
-
-
-        # box2.label(text='export')
         row.operator('node.tree_exporter', text='export tree')
 
     def update(self):
@@ -185,10 +182,10 @@ class SvImportExportNodeTree(bpy.types.Node, SverchCustomTreeNode):
 
 
 def register():
-    bpy.utils.register_class(svNodeTreeExporter)
-    bpy.utils.register_class(SvImportExportNodeTree)
+    bpy.utils.register_class(SvNodeTreeExporter)
+    bpy.utils.register_class(SvImportExport)
 
 
 def unregister():
-    bpy.utils.unregister_class(SvImportExportNodeTree)
-    bpy.utils.unregister_class(svNodeTreeExporter)
+    bpy.utils.unregister_class(SvImportExport)
+    bpy.utils.unregister_class(SvNodeTreeExporter)

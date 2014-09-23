@@ -29,7 +29,7 @@ nodes_dict = {
         'wifi_in',
         'wifi_out',
         'eval_knieval',
-        'import_export',
+        'interchange',
         'switch'],
 
     'basic_debug': [
