@@ -223,7 +223,7 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('MatrixSocket', 'matrix', 'matrix')
         self.use_custom_color = True
 
-    def draw_but_in_both_menus(self, context, layout):
+    def draw_main_ui_elements(self, context, layout):
         view_icon = 'RESTRICT_VIEW_' + ('OFF' if self.activate else 'ON')
         trans_icon = 'WIRE' if self.transparant else 'SOLID'
         shade_icon = 'LAMP_SPOT' if self.shading else 'BLANK1'
@@ -255,8 +255,8 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
         row.prop(self, "face_colors", text="")
 
     def draw_buttons(self, context, layout):
-        self.draw_but_in_both_menus(context, layout)
-        
+        self.draw_main_ui_elements(context, layout)
+
         if self.bakebuttonshow:
             row = layout.row()
             row.scale_y = 4.0
@@ -281,7 +281,7 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, 'bakebuttonshow', text='show bake button')
 
         layout.prop(self, 'callback_timings')
-        self.draw_but_in_both_menus(context, layout)
+        self.draw_main_ui_elements(context, layout)
 
     # reset n_id on duplicate (shift-d)
     def copy(self, node):
@@ -390,4 +390,3 @@ def unregister():
 
 if __name__ == '__main__':
     register()
-
