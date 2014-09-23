@@ -6,6 +6,7 @@ nodes_dict = {
         'distance_pp',
         'polygons_centers',
         'neuro_elman',
+        'image_components',
         'kd_tree',
         'kd_tree_edges',
         'weights',
@@ -18,6 +19,7 @@ nodes_dict = {
         'viewer_indices',
         'viewer_text',
         'viewer',
+        'viewer_mk2',
         'empty_out',
         'reroute'],
 
@@ -39,6 +41,7 @@ nodes_dict = {
 
     'generator': [
         'box',
+        'box_rounded',
         'circle',
         'cylinder',
         'hilbert_image',
@@ -94,6 +97,7 @@ nodes_dict = {
     'modifier_change': [
         'delete_loose',
         'edges_intersect',
+        'edges_intersect_remove',
         'holes_fill',
         'mesh_join',
         'mesh_separate',

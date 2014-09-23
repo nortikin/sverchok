@@ -149,7 +149,6 @@ class SvBakeText (bpy.types.Operator):
         tcu.space_character = 1
         tcu.space_word = 1
         tcu.align = 'CENTER'
-
         tcu.extrude = 0.0
         tcu.fill_mode = 'NONE'
 

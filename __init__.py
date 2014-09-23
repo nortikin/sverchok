@@ -23,7 +23,12 @@
 #
 #  The Original Code is: all of this file.
 #
-#  Contributor(s): Nedovizin Alexander, Gorodetskiy Nikita, Linus Yng, Agustin Gimenez.
+#  Contributor(s): 
+#     Nedovizin Alexander 
+#     Gorodetskiy Nikita 
+#     Linus Yng 
+#     Agustin Gimenez
+#     Dealga McArdle
 #
 #  ***** END GPL LICENSE BLOCK *****
 #
@@ -60,13 +65,12 @@ imported_modules = []
 node_list = []
 # ugly hack, should make respective dict in __init__ like nodes
 # or parse it
-root_modules = ["node_tree",
-                "data_structure", "menu"]
+root_modules = ["node_tree", "data_structure", "menu"]
 core_modules = ["handlers", "update_system", "upgrade_nodes"]
-utils_modules = ["cad_module", "sv_bmesh_utils", "text_editor_submenu",
-                 "index_viewer_draw", "sv_curve_utils", "viewer_draw",
-                 "sv_tools", "voronoi", "nodeview_bgl_viewer_draw",
-                 "text_editor_plugins"]
+utils_modules = [
+    "cad_module", "sv_bmesh_utils", "text_editor_submenu",
+    "index_viewer_draw", "sv_curve_utils", "viewer_draw", "viewer_draw_mk2",
+    "sv_tools", "voronoi", "nodeview_bgl_viewer_draw", "text_editor_plugins"]
 
 # parse the nodes/__init__.py dictionary and load all nodes
 def make_node_list():
