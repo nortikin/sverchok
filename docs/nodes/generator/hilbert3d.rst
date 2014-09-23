@@ -4,7 +4,7 @@ Hilbert 3D
 Functionality
 -------------
 
-Hilbert field generator. this is concept of dence flooding of space by continuous line, that achived with division and special knotting. Hilbert space can be only cube, because of his nature.
+Hilbert space generator. this is concept of dence flooding of space by continuous line, that achived with division and special knotting. Hilbert space can be only cube, because of his nature.
 
 Inputs
 ------
@@ -38,7 +38,7 @@ Outputs
 Example of usage
 ----------------
 
-.. image:: https://cloud.githubusercontent.com/assets/5783432/4380966/a5d73b7c-436f-11e4-89e0-5a4be8f130aa.png
+.. image:: https://cloud.githubusercontent.com/assets/5783432/4380965/a5a3019a-436f-11e4-9ec9-982ab3f25671.png
   :alt: hilbert3d.PNG
 
 Smooth labirynth
