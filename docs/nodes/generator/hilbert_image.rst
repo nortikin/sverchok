@@ -22,6 +22,8 @@ All parameters can be given by the node or an external input.
 +-----------------+---------------+-------------+---------------------------------------------------+
 | Param           |  Type         |   Default   |    Description                                    |
 +=================+===============+=============+===================================================+
+| **RGB**         |  float        |   0.3,0.59,0.11   |    RGB map of imported image, sensitivity to each color     |
++-----------------+---------------+-------------+---------------------------------------------------+
 | **image name**  |  string       |   None      |    enumerate popup to choose image from stack     |
 +-----------------+---------------+-------------+---------------------------------------------------+
 | **level**       |  Int          |   2         |    level of division of hilbert square            |
