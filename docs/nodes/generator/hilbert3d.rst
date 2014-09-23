@@ -1,10 +1,10 @@
-Hilbert 2D
+Hilbert 3D
 =======================
 
 Functionality
 -------------
 
-Hilbert field generator. this is concept of dence flooding of space by continuous line, that achived with division and special knotting. Hilbert space can be only square, because of his nature.
+Hilbert field generator. this is concept of dence flooding of space by continuous line, that achived with division and special knotting. Hilbert space can be only cube, because of his nature.
 
 Inputs
 ------
@@ -39,6 +39,6 @@ Example of usage
 ----------------
 
 .. image:: https://cloud.githubusercontent.com/assets/5783432/4380966/a5d73b7c-436f-11e4-89e0-5a4be8f130aa.png
-  :alt: hilbert.PNG
+  :alt: hilbert3d.PNG
 
 Smooth labirynth
