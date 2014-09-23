@@ -90,7 +90,7 @@ def eval_spline(splines, tknots, t_in):
     return out
 
 
-def interpolate_vectors(v, t_in, mode='SPL'):
+def sv_interpolate(v, t_in, mode='SPL'):
     '''
     input
         v       : list, vectors to interpolate
