@@ -40,11 +40,24 @@ def compile_socket(link):
             link.to_node.name,
             link.to_socket.name)
 
+def write_json(layout_dict, destination_path):
+    m = json.dumps(layout_dict, sort_keys=True, indent=2)
+    # optional post processing step
+    post_processing = False
+    if post_processing:
+        flatten = lambda match: r' {}'.format(match.group(1), m)
+        m = re.sub(r'\s\s+(\d+)', flatten , m)
 
-def export(ng):
+    with open(destination_path, 'w') as node_tree:
+        node_tree.writelines(m)
+
+
+def export_tree(ng, destination_path):
     nodes = ng.nodes
     layout_dict = {}
     nodes_dict = {}
+
+    ''' get nodes and params '''
 
     for node in nodes:
         node_dict = {}
@@ -72,25 +85,19 @@ def export(ng):
         nodes_dict[node.name] = node_dict
 
     layout_dict['nodes'] = nodes_dict
+
+    ''' get connections '''
         
     links = (compile_socket(l) for l in ng.links)
     connections_dict = {idx: link for idx, link in enumerate(links)}
-    print(connections_dict)
-
     layout_dict['connections'] = connections_dict
 
-    m = json.dumps(layout_dict, sort_keys=True, indent=2)
+    write_json(layout_dict, destination_path)
 
-    # optional post processing step
-    post_processing = False
-    if post_processing:
-        flatten = lambda match: r' {}'.format(match.group(1), m)
-        m = re.sub(r'\s\s+(\d+)', flatten , m)
-
-    with open('node_tree.json', 'w') as node_tree:
-        node_tree.writelines(m)
         
-def export(ng, fullpath):
+def import_tree(ng, fullpath):
+
+    nodes = ng.nodes
 
     def resolve_socket(from_node, from_socket, to_node, to_socket):
         return (ng.nodes[from_node].outputs[from_socket], 
@@ -99,48 +106,41 @@ def export(ng, fullpath):
     with open(fullpath) as fp:
         nodes_json = json.load(fp)
 
-        ng_params = {
-            'name': ng.name, 
-            'type': 'SverchCustomTreeType'}
+    ''' first create all nodes. '''
 
-        ng = bpy.data.node_groups.new(**ng_params)
-        nodes = ng.nodes
+    nodes_to_import = nodes_json['nodes']
+    for n in sorted(nodes_to_import):
+        node_ref = nodes_to_import[n]
 
-        ''' first create all nodes. '''
-
-        nodes_to_import = nodes_json['nodes']
-        for n in sorted(nodes_to_import):
-            node_ref = nodes_to_import[n]
-
-            bl_idname = node_ref['bl_idname']
-            node = nodes.new(bl_idname)
-            if not node.name == n:
-               node.name = n
-
-            params = node_ref['params']
-            for p in params:
-                val = params[p]
-                setattr(node, p, val)
-                
-            node.location = node_ref['location']
-            node.height = node_ref['height']
-            node.width = node_ref['width']
-            node.label = node_ref['label']
-            node.hide = node_ref['hide']
-            node.color = node_ref['color']
-            
-        '''now connect them '''
+        bl_idname = node_ref['bl_idname']
+        node = nodes.new(bl_idname)
         
-        connections = nodes_json['connections']
-        for idx, link in connections.items():
-            ng.links.new(*resolve_socket(*link))
+        if not (node.name == n):
+           node.name = n
+
+        params = node_ref['params']
+        for p in params:
+            val = params[p]
+            setattr(node, p, val)
+            
+        node.location = node_ref['location']
+        node.height = node_ref['height']
+        node.width = node_ref['width']
+        node.label = node_ref['label']
+        node.hide = node_ref['hide']
+        node.color = node_ref['color']
+        
+    ''' now connect them '''
+    
+    connections = nodes_json['connections']
+    for idx, link in connections.items():
+        ng.links.new(*resolve_socket(*link))
 
 
 class SvImportExportNodeTree(bpy.types.Node, SverchCustomTreeNode):
-
-    ''' Sv 3Dview Props Node '''
-    bl_idname = 'Sv3DviewPropsNode'
-    bl_label = 'Sv 3Dview Props Node'
+    ''' SvImportExportNodeTree '''
+    bl_idname = 'SvImportExportNodeTree'
+    bl_label = 'Sv Import Export NodeTree'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     def init(self, context):
