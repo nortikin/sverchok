@@ -40,7 +40,7 @@ All parameters except **Separate** can be given by the node or an external input
 +--------------+---------------+-------------+----------------------------------------------------+
 | **Step Y**   | Float         | 1.00        | length between vertices in Y axis                  |
 +--------------+---------------+-------------+----------------------------------------------------+
-| **Separate** | Bolean        | False       | grouping vertices by V direction            |
+| **Separate** | Bolean        | False       | grouping vertices by V direction                   |
 +--------------+---------------+-------------+----------------------------------------------------+
 
 Outputs
