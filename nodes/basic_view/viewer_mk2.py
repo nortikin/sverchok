@@ -255,12 +255,9 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
         row.prop(self, "display_faces", toggle=True, icon='FACESEL', text='')
         row.prop(self, "face_colors", text="")
 
-        # i need it in layout to bake needed nodes without selecting them
-        # please, dont move to ext
         if self.bakebuttonshow:
             row = layout.row()
             row.scale_y = 4.0
-            # opera = row.operator('node.sverchok_mesh_baker', text='B A K E')
             opera = row.operator('node.sverchok_mesh_baker_mk2', text='B A K E')
             opera.idname = self.name
             opera.idtree = self.id_data.name
@@ -372,6 +369,11 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
         cache_viewer_baker.pop(n_id+'v', None)
         cache_viewer_baker.pop(n_id+'ep', None)
         cache_viewer_baker.pop(n_id+'m', None)
+
+    def bake(self):
+        if self.activate and self.inputs['edg_pol'].is_linked:
+            bake = bpy.ops.node.sverchok_mesh_baker_mk2
+            bake(idname=self.name, idtree=self.id_data.name)
 
 
 def register():
