@@ -144,7 +144,7 @@ def import_tree(ng, fullpath):
         ''' set frame parents '''
         framed_nodes = nodes_json['framed_nodes']
         for node_name, parent in framed_nodes.items():
-            ng.nodes[node_name].parent = parent
+            ng.nodes[node_name].parent = ng.nodes[parent]
 
 
 class SvNodeTreeExporter(bpy.types.Operator):
