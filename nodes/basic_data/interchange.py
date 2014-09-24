@@ -187,7 +187,13 @@ class SvNodeTreeImporter(bpy.types.Operator):
     id_tree = StringProperty()
 
     def execute(self, context):
-        ng = bpy.data.node_groups[self.id_tree]
+        if not self.id_tree:
+            ng_params = {
+                'name': '44',
+                'type': 'SverchCustomTreeType'}
+            ng = bpy.data.node_groups.new(**ng_params)
+        else:
+            ng = bpy.data.node_groups[self.id_tree]
         import_tree(ng, self.filepath)
         return {'FINISHED'}
 
@@ -221,11 +227,17 @@ class SvImportExport(bpy.types.Node, SverchCustomTreeNode):
 
         box2 = col.box()
         box2.label('pick file name from location')
-        exp = box2.operator(
+        col = box2.column()
+        exp1 = col.operator(
             'node.tree_importer',
-            text='import tree',
+            text='import here',
             icon='RNA_ADD')
-        exp.id_tree = self.id_data.name
+        exp1.id_tree = self.id_data.name
+
+        exp2 = col.operator(
+            'node.tree_importer',
+            text='import to new',
+            icon='RNA').id_tree = ''
 
     def update(self):
         pass
