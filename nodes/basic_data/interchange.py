@@ -55,8 +55,14 @@ def create_dict_of_tree(ng):
     layout_dict = {}
     nodes_dict = {}
 
+    skip_set = {'SvImportExport', 'Sv3DviewPropsNode'}
+
     ''' get nodes and params '''
     for node in nodes:
+
+        if node.bl_idname in skip_set:
+            continue
+
         node_dict = {}
         node_items = {}
         node_enums = find_enumerators(node)
@@ -91,6 +97,10 @@ def create_dict_of_tree(ng):
     ''' get framed nodes '''
     framed_nodes = {}
     for node in nodes:
+
+        if node.bl_idname in skip_set:
+            continue
+
         if node.parent:
             framed_nodes[node.name] = node.parent.name
     layout_dict['framed_nodes'] = framed_nodes
