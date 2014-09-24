@@ -90,7 +90,7 @@ def create_dict_of_tree(ng):
     connections_dict = {idx: link for idx, link in enumerate(links)}
     layout_dict['connections'] = connections_dict
 
-    ''' get frames and their nodes '''
+    ''' get framed nodes '''
     framed_nodes = {}
     for node in nodes:
         if node.parent:
