@@ -90,6 +90,13 @@ def create_dict_of_tree(ng):
     connections_dict = {idx: link for idx, link in enumerate(links)}
     layout_dict['connections'] = connections_dict
 
+    ''' get frames and their nodes '''
+    framed_nodes = {}
+    for node in nodes:
+        if node.parent:
+            framed_nodes[node.name] = node.parent.name
+    layout_dict['framed_nodes'] = framed_nodes
+
     return layout_dict
 
 
@@ -133,6 +140,11 @@ def import_tree(ng, fullpath):
         connections = nodes_json['connections']
         for idx, link in connections.items():
             ng.links.new(*resolve_socket(*link))
+
+        ''' set frame parents '''
+        framed_nodes = nodes_json['framed_nodes']
+        for node_name, parent in framed_nodes:
+            ng.nodes[node_name].parent = parent
 
 
 class SvNodeTreeExporter(bpy.types.Operator):
