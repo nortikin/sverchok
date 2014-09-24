@@ -51,7 +51,7 @@ def write_json(layout_dict, destination_path):
         node_tree.writelines(m)
 
 
-def export_tree(ng, destination_path):
+def create_dict_of_tree(ng):
     nodes = ng.nodes
     layout_dict = {}
     nodes_dict = {}
@@ -91,7 +91,6 @@ def export_tree(ng, destination_path):
     connections_dict = {idx: link for idx, link in enumerate(links)}
     layout_dict['connections'] = connections_dict
 
-    write_json(layout_dict, destination_path)
 
         
 def import_tree(ng, fullpath):
@@ -137,21 +136,27 @@ def import_tree(ng, fullpath):
 
 
 class SvNodeTreeExporter(bpy.types.Operator):
+    ''' 
+    Exporting operation will let you pick a file name,
+    it should end in .json 
+    '''
 
     bl_idname = "node.tree_exporter"
     bl_label = "sv NodeTree Export Operator"
 
     filepath = StringProperty(
         name="File Path",
-        description="Filepath used for",
+        description="Filepath used for exporting too",
         maxlen=1024, default="", subtype='FILE_PATH')
 
-    filter_glob = StringProperty(default="*.json", options={'HIDDEN'})
-
+    filter_glob = StringProperty(
+        default="*.json", 
+        options={'HIDDEN'})
 
     def execute(self, context):
-        # bpy.data.fonts.load(self.filepath)
-        print(self.filepath)
+        destination_path = 'setarbux.json'
+        layout_dict = create_dict_of_tree(ng)
+        write_json(layout_dict, destination_path)
         return {'FINISHED'}
 
     def invoke(self, context, event):
@@ -160,6 +165,35 @@ class SvNodeTreeExporter(bpy.types.Operator):
         return {'RUNNING_MODAL'}
 
 
+class SvNodeTreeImporter(bpy.types.Operator):
+    ''' 
+    Importing operation will let you pick a file to import from 
+    '''
+
+    bl_idname = "node.tree_importer"
+    bl_label = "sv NodeTree Impoty Operator"
+
+    filepath = StringProperty(
+        name="File Path",
+        description="Filepath used to import from",
+        maxlen=1024, default="", subtype='FILE_PATH')
+
+    filter_glob = StringProperty(
+        default="*.json", 
+        options={'HIDDEN'})
+
+    id_tree = StringProperty()
+
+    def execute(self, context):
+        ng = bpy.data.node_groups[id_tree]
+        import_tree(ng, filepath)
+        return {'FINISHED'}
+
+    def invoke(self, context, event):
+        wm = context.window_manager
+        wm.fileselect_add(self)
+        return {'RUNNING_MODAL'}
+
 
 class SvImportExport(bpy.types.Node, SverchCustomTreeNode):
     ''' SvImportExportNodeTree '''
@@ -167,25 +201,35 @@ class SvImportExport(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Sv Import Export'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    #exportname = StringProperty(name='exportname', default="SverchokNod")
-    #importname = StringProperty(name='importname', default="hhoih")
+    exportname = StringProperty(name='exportname', default="SverchokNod")
+    importname = StringProperty(name='importname', default="hhoih")
 
     def init(self, context):
         pass
 
     def draw_buttons(self, context, layout):
         row = layout.row()
-        row.operator('node.tree_exporter', text='export tree')
+        box1 = row.box()
+        boc1.operator('node.tree_exporter', text='export tree')
+        
+        row.separator()
+        
+        row = layout.row()
+        box2 = row.box()
+        row.operator('node.tree_importer', text='import tree').id_tree = self.bl_idname
 
     def update(self):
         pass
 
 
+
 def register():
     bpy.utils.register_class(SvNodeTreeExporter)
+    bpy.utils.register_class(SvNodeTreeImporter)
     bpy.utils.register_class(SvImportExport)
 
 
 def unregister():
     bpy.utils.unregister_class(SvImportExport)
+    bpy.utils.unregister_class(SvNodeTreeImporter)
     bpy.utils.unregister_class(SvNodeTreeExporter)
