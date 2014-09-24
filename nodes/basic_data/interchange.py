@@ -185,11 +185,13 @@ class SvNodeTreeImporter(bpy.types.Operator):
         options={'HIDDEN'})
 
     id_tree = StringProperty()
+    new_nodetree_name = StringProperty()
 
     def execute(self, context):
         if not self.id_tree:
+            ng_name = self.new_nodetree_name
             ng_params = {
-                'name': '44',
+                'name': ng_name or 'unnamed_tree',
                 'type': 'SverchCustomTreeType'}
             ng = bpy.data.node_groups.new(**ng_params)
         else:
@@ -209,13 +211,17 @@ class SvImportExport(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Sv Import Export'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    exportname = StringProperty(name='exportname', default="SverchokNod")
-    importname = StringProperty(name='importname', default="hhoih")
+    new_nodetree_name = StringProperty(
+        name='new_nodetree_name',
+        default="ImportedNodeTree")
 
     def init(self, context):
         pass
 
     def draw_buttons(self, context, layout):
+
+        ''' export '''
+
         col = layout.column(align=True)
         box1 = col.box()
         box1.label('pick file name and location')
@@ -224,6 +230,8 @@ class SvImportExport(bpy.types.Node, SverchCustomTreeNode):
             text='export tree',
             icon='FILE_BACKUP')
         imp.id_tree = self.id_data.name
+
+        ''' import '''
 
         box2 = col.box()
         box2.label('pick file name from location')
@@ -234,10 +242,15 @@ class SvImportExport(bpy.types.Node, SverchCustomTreeNode):
             icon='RNA_ADD')
         exp1.id_tree = self.id_data.name
 
+        col.separator()
+
+        col.prop(self, 'new_nodetree_name', text='tree name')
         exp2 = col.operator(
             'node.tree_importer',
             text='import to new',
-            icon='RNA').id_tree = ''
+            icon='RNA')
+        exp2.id_tree = ''
+        exp2.new_nodetree_name = self.new_nodetree_name
 
     def update(self):
         pass
