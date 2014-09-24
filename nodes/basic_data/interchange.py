@@ -151,8 +151,12 @@ class SvNodeTreeExporter(bpy.types.Operator):
         default="*.json",
         options={'HIDDEN'})
 
+    id_tree = StringProperty()
+
     def execute(self, context):
-        destination_path = 'setarbux.json'
+        ng = bpy.data.node_groups[self.id_tree]
+        destination_path = 'self.filepath'
+
         layout_dict = create_dict_of_tree(ng)
         write_json(layout_dict, destination_path)
         return {'FINISHED'}
@@ -206,15 +210,21 @@ class SvImportExport(bpy.types.Node, SverchCustomTreeNode):
         pass
 
     def draw_buttons(self, context, layout):
-        row = layout.row()
-        box1 = row.box()
-        box1.operator('node.tree_exporter', text='export tree')
+        col = layout.column(align=True)
+        box1 = col.box()
+        box1.label('pick file name and location')
+        imp = box1.operator(
+            'node.tree_exporter',
+            text='export tree',
+            icon='FILE_BACKUP')
+        imp.id_tree = self.id_data.name
 
-        row.separator()
-
-        row = layout.row()
-        box2 = row.box()
-        exp = box2.operator('node.tree_importer', text='import tree')
+        box2 = col.box()
+        box2.label('pick file name from location')
+        exp = box2.operator(
+            'node.tree_importer',
+            text='import tree',
+            icon='RNA_ADD')
         exp.id_tree = self.id_data.name
 
     def update(self):
