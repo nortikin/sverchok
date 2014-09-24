@@ -146,8 +146,10 @@ def import_tree(ng, fullpath):
             node.hide = node_ref['hide']
             node.color = node_ref['color']
 
-        update_list = nodes_json['update_list']
-        print(update_list)
+        update_lists = nodes_json['update_lists']
+        print('update lists': update_lists)
+        update_partials = nodes_json['update_partials']
+        print('update partials': update_partials)
 
         ''' now connect them '''
         connections = nodes_json['connections']
