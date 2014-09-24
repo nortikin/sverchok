@@ -143,7 +143,7 @@ def import_tree(ng, fullpath):
         connections = nodes_json['connections']
 
         destination_socket = lambda n: n[3]
-        remaining_links = connections.values[:]
+        remaining_links = connections.values()[:]
         remaining_links = list(sorted(destination_socket, remaining_links))
 
         built_idxs = set()
