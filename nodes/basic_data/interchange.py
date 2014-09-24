@@ -134,10 +134,7 @@ def import_tree(ng, fullpath):
 
 
 class SvNodeTreeExporter(bpy.types.Operator):
-    '''
-    Exporting operation will let you pick a file name,
-    it should end in .json
-    '''
+    '''Export will let you pick a .json file name'''
 
     bl_idname = "node.tree_exporter"
     bl_label = "sv NodeTree Export Operator"
@@ -155,7 +152,7 @@ class SvNodeTreeExporter(bpy.types.Operator):
 
     def execute(self, context):
         ng = bpy.data.node_groups[self.id_tree]
-        destination_path = 'self.filepath'
+        destination_path = self.filepath
 
         layout_dict = create_dict_of_tree(ng)
         write_json(layout_dict, destination_path)
@@ -168,9 +165,7 @@ class SvNodeTreeExporter(bpy.types.Operator):
 
 
 class SvNodeTreeImporter(bpy.types.Operator):
-    '''
-    Importing operation will let you pick a file to import from
-    '''
+    '''Importing operation will let you pick a file to import from'''
 
     bl_idname = "node.tree_importer"
     bl_label = "sv NodeTree Impoty Operator"
