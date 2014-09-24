@@ -34,10 +34,9 @@ def find_enumerators(node):
 
 
 def compile_socket(link):
-    return (link.from_node.name,
-            link.from_socket.name,
-            link.to_node.name,
-            link.to_socket.name)
+    return (link.from_node.name, link.from_socket.name,
+            link.to_node.name, link.to_socket.name)
+
 
 def write_json(layout_dict, destination_path):
     m = json.dumps(layout_dict, sort_keys=True, indent=2)
@@ -45,7 +44,7 @@ def write_json(layout_dict, destination_path):
     post_processing = False
     if post_processing:
         flatten = lambda match: r' {}'.format(match.group(1), m)
-        m = re.sub(r'\s\s+(\d+)', flatten , m)
+        m = re.sub(r'\s\s+(\d+)', flatten, m)
 
     with open(destination_path, 'w') as node_tree:
         node_tree.writelines(m)
@@ -62,7 +61,7 @@ def create_dict_of_tree(ng):
         node_dict = {}
         node_items = {}
         node_enums = find_enumerators(node)
-        
+
         for k, v in node.items():
             if isinstance(v, (float, int, str)):
                 node_items[k] = v
@@ -86,19 +85,18 @@ def create_dict_of_tree(ng):
     layout_dict['nodes'] = nodes_dict
 
     ''' get connections '''
-        
+
     links = (compile_socket(l) for l in ng.links)
     connections_dict = {idx: link for idx, link in enumerate(links)}
     layout_dict['connections'] = connections_dict
 
 
-        
 def import_tree(ng, fullpath):
 
     nodes = ng.nodes
 
     def resolve_socket(from_node, from_socket, to_node, to_socket):
-        return (ng.nodes[from_node].outputs[from_socket], 
+        return (ng.nodes[from_node].outputs[from_socket],
                 ng.nodes[to_node].inputs[to_socket])
 
     with open(fullpath) as fp:
@@ -112,33 +110,33 @@ def import_tree(ng, fullpath):
 
             bl_idname = node_ref['bl_idname']
             node = nodes.new(bl_idname)
-            
+
             if not (node.name == n):
-               node.name = n
+                node.name = n
 
             params = node_ref['params']
             for p in params:
                 val = params[p]
                 setattr(node, p, val)
-                
+
             node.location = node_ref['location']
             node.height = node_ref['height']
             node.width = node_ref['width']
             node.label = node_ref['label']
             node.hide = node_ref['hide']
             node.color = node_ref['color']
-            
+
         ''' now connect them '''
-        
+
         connections = nodes_json['connections']
         for idx, link in connections.items():
             ng.links.new(*resolve_socket(*link))
 
 
 class SvNodeTreeExporter(bpy.types.Operator):
-    ''' 
+    '''
     Exporting operation will let you pick a file name,
-    it should end in .json 
+    it should end in .json
     '''
 
     bl_idname = "node.tree_exporter"
@@ -150,7 +148,7 @@ class SvNodeTreeExporter(bpy.types.Operator):
         maxlen=1024, default="", subtype='FILE_PATH')
 
     filter_glob = StringProperty(
-        default="*.json", 
+        default="*.json",
         options={'HIDDEN'})
 
     def execute(self, context):
@@ -166,8 +164,8 @@ class SvNodeTreeExporter(bpy.types.Operator):
 
 
 class SvNodeTreeImporter(bpy.types.Operator):
-    ''' 
-    Importing operation will let you pick a file to import from 
+    '''
+    Importing operation will let you pick a file to import from
     '''
 
     bl_idname = "node.tree_importer"
@@ -179,14 +177,14 @@ class SvNodeTreeImporter(bpy.types.Operator):
         maxlen=1024, default="", subtype='FILE_PATH')
 
     filter_glob = StringProperty(
-        default="*.json", 
+        default="*.json",
         options={'HIDDEN'})
 
     id_tree = StringProperty()
 
     def execute(self, context):
-        ng = bpy.data.node_groups[id_tree]
-        import_tree(ng, filepath)
+        ng = bpy.data.node_groups[self.id_tree]
+        import_tree(ng, self.filepath)
         return {'FINISHED'}
 
     def invoke(self, context, event):
@@ -210,17 +208,17 @@ class SvImportExport(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         row = layout.row()
         box1 = row.box()
-        boc1.operator('node.tree_exporter', text='export tree')
-        
+        box1.operator('node.tree_exporter', text='export tree')
+
         row.separator()
-        
+
         row = layout.row()
         box2 = row.box()
-        row.operator('node.tree_importer', text='import tree').id_tree = self.bl_idname
+        exp = box2.operator('node.tree_importer', text='import tree')
+        exp.id_tree = self.id_data.name
 
     def update(self):
         pass
-
 
 
 def register():
