@@ -19,7 +19,6 @@
 import json
 import os
 import re
-from operator import itemgetter
 
 import bpy
 from bpy.types import EnumProperty
@@ -147,14 +146,24 @@ def import_tree(ng, fullpath):
             node.color = node_ref['color']
 
         update_lists = nodes_json['update_lists']
-        print('update lists': update_lists)
+        print('update lists', update_lists)
         update_partials = nodes_json['update_partials']
-        print('update partials': update_partials)
+        print('update partials', update_partials)
 
         ''' now connect them '''
         connections = nodes_json['connections']
-        for idx, link in connections.items():
-            ng.links.new(*resolve_socket(*link))
+
+        for update_list in update_lists:
+            for node in update_list:
+                # get all links that start with this node
+                links = [link for link in connections.values() if link[0] == node]
+                print('links', links)
+
+                # [ ] formula node might need reverse sorting.. because X N N N
+                links_sorted = sorted(links, key=lambda n: n[3])
+                #for idx, link in connections.items():
+                for link in links_sorted:
+                    ng.links.new(*resolve_socket(*link))
 
         ''' set frame parents '''
         framed_nodes = nodes_json['framed_nodes']
