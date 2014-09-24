@@ -98,7 +98,6 @@ nodes_dict = {
     'modifier_change': [
         'delete_loose',
         'edges_intersect',
-        'edges_intersect_remove',
         'holes_fill',
         'mesh_join',
         'mesh_separate',
