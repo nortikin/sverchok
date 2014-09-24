@@ -19,6 +19,7 @@
 import json
 import os
 import re
+from operator import itemgetter
 
 import bpy
 from bpy.types import EnumProperty
@@ -142,15 +143,14 @@ def import_tree(ng, fullpath):
         #     ng.links.new(*resolve_socket(*link))
         connections = nodes_json['connections']
 
-        destination_socket = lambda n: n[3]
         remaining_links = list(connections.values())
-        remaining_links = list(sorted(destination_socket, remaining_links))
+        remaining_links = list(sorted(remaining_links, key=itemgetter(3)))
 
         built_idxs = set()
         still_removing = True
         while still_removing:
             current_pass = []
-            for idx, links in enumerate(remaining_links):
+            for idx, link in enumerate(remaining_links):
                 if idx in built_idxs:
                     continue
 
