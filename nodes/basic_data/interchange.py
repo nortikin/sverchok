@@ -137,9 +137,33 @@ def import_tree(ng, fullpath):
 
         ''' now connect them '''
 
+        # connections = nodes_json['connections']
+        # for idx, link in connections.items():
+        #     ng.links.new(*resolve_socket(*link))
         connections = nodes_json['connections']
-        for idx, link in connections.items():
-            ng.links.new(*resolve_socket(*link))
+
+        destination_socket = lambda n: n[3]
+        remaining_links = connections.values[:]
+        remaining_links = list(sorted(destination_socket, remaining_links))
+
+        built_idxs = set()
+        still_removing = True
+        while still_removing:
+            current_pass = []
+            for idx, links in enumerate(remaining_links):
+                if idx in built_idxs:
+                    continue
+
+                # progressively this is called fewer times on each
+                # successive loop through the while.
+                try:
+                    ng.links.new(*resolve_socket(*link))
+                    built_idxs.add(idx)
+                    current_pass.append(idx)
+                except:
+                    pass
+            if not current_pass:
+                still_removing = False
 
         ''' set frame parents '''
         framed_nodes = nodes_json['framed_nodes']
