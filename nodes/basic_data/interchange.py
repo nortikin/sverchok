@@ -174,7 +174,6 @@ def import_tree(ng, fullpath):
                 #for idx, link in connections.items():
                 for link in links_sorted:
                     ng.links.new(*resolve_socket(*link))
-                    # ng.nodes[link[3]].update()
 
         ''' set frame parents '''
         framed_nodes = nodes_json['framed_nodes']
