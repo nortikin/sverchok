@@ -90,6 +90,8 @@ def create_dict_of_tree(ng):
     connections_dict = {idx: link for idx, link in enumerate(links)}
     layout_dict['connections'] = connections_dict
 
+    return layout_dict
+
 
 def import_tree(ng, fullpath):
 
@@ -156,6 +158,7 @@ class SvNodeTreeExporter(bpy.types.Operator):
 
         layout_dict = create_dict_of_tree(ng)
         write_json(layout_dict, destination_path)
+        print('exported to', self.filepath)
         return {'FINISHED'}
 
     def invoke(self, context, event):
