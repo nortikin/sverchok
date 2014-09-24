@@ -57,7 +57,6 @@ def create_dict_of_tree(ng):
     nodes_dict = {}
 
     ''' get nodes and params '''
-
     for node in nodes:
         node_dict = {}
         node_items = {}
@@ -86,7 +85,6 @@ def create_dict_of_tree(ng):
     layout_dict['nodes'] = nodes_dict
 
     ''' get connections '''
-
     links = (compile_socket(l) for l in ng.links)
     connections_dict = {idx: link for idx, link in enumerate(links)}
     layout_dict['connections'] = connections_dict
@@ -97,6 +95,19 @@ def create_dict_of_tree(ng):
         if node.parent:
             framed_nodes[node.name] = node.parent.name
     layout_dict['framed_nodes'] = framed_nodes
+
+    ''' get update list (cache, order to link) '''
+    # try/except for now, it can occur after f8 that the cache is dumped.
+    # should issue an update if nodetree isn't found in the cache
+    try:
+        layout_dict['update_lists'] = list(ng.get_update_lists()[0])
+    except:
+        layout_dict['update_lists'] = {}
+
+    try:
+        layout_dict['update_partials'] = list(ng.get_update_lists()[1])
+    except:
+        layout_dict['update_partials'] = {}
 
     return layout_dict
 
@@ -113,7 +124,6 @@ def import_tree(ng, fullpath):
         nodes_json = json.load(fp)
 
         ''' first create all nodes. '''
-
         nodes_to_import = nodes_json['nodes']
         for n in sorted(nodes_to_import):
             node_ref = nodes_to_import[n]
@@ -136,34 +146,13 @@ def import_tree(ng, fullpath):
             node.hide = node_ref['hide']
             node.color = node_ref['color']
 
+        update_list = nodes_json['update_list']
+        print(update_list)
+
         ''' now connect them '''
-
-        # connections = nodes_json['connections']
-        # for idx, link in connections.items():
-        #     ng.links.new(*resolve_socket(*link))
         connections = nodes_json['connections']
-
-        remaining_links = list(connections.values())
-        remaining_links = list(sorted(remaining_links, key=itemgetter(3)))
-
-        built_idxs = set()
-        still_removing = True
-        while still_removing:
-            current_pass = []
-            for idx, link in enumerate(remaining_links):
-                if idx in built_idxs:
-                    continue
-
-                # progressively this is called fewer times on each
-                # successive loop through the while.
-                try:
-                    ng.links.new(*resolve_socket(*link))
-                    built_idxs.add(idx)
-                    current_pass.append(idx)
-                except:
-                    pass
-            if not current_pass:
-                still_removing = False
+        for idx, link in connections.items():
+            ng.links.new(*resolve_socket(*link))
 
         ''' set frame parents '''
         framed_nodes = nodes_json['framed_nodes']
