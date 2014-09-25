@@ -365,62 +365,6 @@ class SvImportExport(bpy.types.Node, SverchCustomTreeNode):
     def update(self):
         pass
 
-<<<<<<< HEAD
-class SverchokIOLayoutsMenu(bpy.types.Panel):
-    bl_idname = "Sverchok_iolayouts_menu"
-    bl_label = "Sverchok i/o layouts"
-    bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'UI'
-    bl_category = 'Sverchok'
-    use_pin = True
-
-    @classmethod
-    def poll(cls, context):
-        try:
-            return context.space_data.node_tree.bl_idname == 'SverchCustomTreeType'
-        except:
-            return False
-
-    def draw(self, context):
-        layout = self.layout
-        ''' export '''
-
-        box = layout.box()
-        col = box.column(align=True)
-        col.scale_y = 1.2
-        col.prop(context.space_data.node_tree, 'new_nodetree_name', text='New tree')
-        col.separator()
-        
-        imp = col.operator(
-            'node.tree_exporter',
-            text='export current',
-            icon='FILE_BACKUP')
-        imp.id_tree = context.space_data.node_tree.name
-
-        ''' import '''
-
-        exp1 = col.operator(
-            'node.tree_importer',
-            text='import here',
-            icon='RNA')
-        exp1.id_tree = context.space_data.node_tree.name
-
-        exp2 = col.operator(
-            'node.tree_importer',
-            text='import new tree',
-            icon='RNA_ADD')
-        exp2.id_tree = ''
-        exp2.new_nodetree_name = context.space_data.node_tree.new_nodetree_name
-
-        ''' import special '''
-
-        exp3 = col.operator(
-            'node.tree_test_importer',
-            text='import scenario (special)',
-            icon='RNA')
-        exp3.id_tree = context.space_data.node_tree.name
-=======
->>>>>>> parent of 293c769... panel instead of node
 
 def register():
     bpy.utils.register_class(SvNodeTreeExporter)
