@@ -193,6 +193,8 @@ def import_tree(ng, fullpath):
         for node_name, parent in framed_nodes.items():
             ng.nodes[node_name].parent = ng.nodes[parent]
 
+        bpy.ops.node.sverchok_update_current(node_group=ng.name)
+
 
 class SvNodeTreeExporter(bpy.types.Operator):
     '''Export will let you pick a .json file name'''
