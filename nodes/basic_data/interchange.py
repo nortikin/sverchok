@@ -54,7 +54,8 @@ def write_json(layout_dict, destination_path):
 
 def has_a_current_mode(node):
     return node.bl_idname in {
-        'SvGenFloatRange, GenListRangeIntNode', 'SvKDTreeNode'
+        'SvGenFloatRange, GenListRangeIntNode',
+        'SvKDTreeNode', 'SvMirrorNode', 'SvRotationNode'
     }
 
 
