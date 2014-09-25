@@ -251,7 +251,7 @@ class SvNodeTreeExporter(bpy.types.Operator):
             return {'CANCELLED'}
 
         write_json(layout_dict, destination_path)
-        msg = 'exported to: ' + self.filepath
+        msg = 'exported to: ' + destination_path
         self.report({"INFO"}, msg)
         print(msg)
         return {'FINISHED'}
