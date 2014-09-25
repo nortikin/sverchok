@@ -109,15 +109,23 @@ def create_dict_of_tree(ng):
     # try/except for now, it can occur after f8 that the cache is dumped.
     # should issue an update if nodetree isn't found in the cache
     try:
-        layout_dict['update_lists'] = list(ng.get_update_lists()[0])
+        links_out = []
+        for node in chain(*ng.get_update_lists()[0]):
+            for socket in ng.nodes[node].inputs:
+                if socket.links:
+                    links_out.append(compile_socket(socket.links[0]))
+        layout_dict['update_lists'] = links_out
     except:
-        layout_dict['update_lists'] = {}
+        print('no update lists found! - trigger an update and retry')
+        return
 
     try:
         layout_dict['update_partials'] = list(ng.get_update_lists()[1])
     except:
+        print('no partial lists found! - this is OK..')
         layout_dict['update_partials'] = {}
 
+    layout_dict['export_version'] = '0.01 pre alpha'
     return layout_dict
 
 
@@ -131,6 +139,8 @@ def import_tree(ng, fullpath):
 
     with open(fullpath) as fp:
         nodes_json = json.load(fp)
+
+        print('#'*12, nodes_json['export_version'])
 
         ''' first create all nodes. '''
         nodes_to_import = nodes_json['nodes']
@@ -203,6 +213,10 @@ class SvNodeTreeExporter(bpy.types.Operator):
         destination_path = self.filepath
 
         layout_dict = create_dict_of_tree(ng)
+        if not layout_dict:
+            print('no update list found - didn\'t export')
+            return {'CANCELLED'}
+
         write_json(layout_dict, destination_path)
         print('exported to', self.filepath)
         return {'FINISHED'}
