@@ -265,15 +265,19 @@ def do_update_heat_map(node_list, nodes):
     """
     global DEBUG_MODE
     times = []
+    total_test = 0
     node_list = list(node_list)
     for name in node_list:
         if name in nodes:
             start = time.perf_counter()
             nodes[name].update()
             delta = time.perf_counter()-start
+            total_test += delta
             if data_structure.DEBUG_MODE:
-                print("Updated  {0} in:{1}".format(name, round(delta, 4)))
+                print("Updated  {0} in: {1}".format(name, round(delta, 4)))
             times.append(delta)
+    if data_structure.DEBUG_MODE:
+        print("Layout updated in: {0} seconds".format(round(total_test, 4)))
     if not times:
         return
     if not nodes.id_data.sv_user_colors:
@@ -302,6 +306,7 @@ def do_update_debug(node_list, nods):
     Debug update, under development
     """
     timings = []
+    total_test = 0
     for nod_name in node_list:
         if nod_name in nods:
             delta = None
@@ -314,8 +319,11 @@ def do_update_debug(node_list, nods):
             #    nods[nod_name].use_custom_color=True
             #    print("Node {0} had exception {1}".format(nod_name,e))
             if delta:
-                print("Updated  {0} in:{1}".format(nod_name, round(delta, 4)))
-                timings.append((nod_name, delta))
+                total_test += delta
+                print("Updated  {0} in: {1}".format(nod_name, round(delta, 4)))
+                timings.append((nod_name, delta)) # why we need it?
+    if data_structure.DEBUG_MODE:
+        print("Layout updated in: {0} seconds".format(round(total_test, 4)))
 
 
 def sverchok_update(start_node=None, tree=None, animation_mode=False):
@@ -392,3 +400,4 @@ def get_update_lists(ng):
     global update_cache
     global partial_update_cache
     return (update_cache[ng.name], partial_update_cache[ng.name])
+

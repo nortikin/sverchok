@@ -174,7 +174,7 @@ def make_categories():
         ["SvEmptyOutNode",      "Empty out"],
         ["EvalKnievalNode",     "Eval Knieval"],
         # need to be completely reviewed
-        ["ListDecomposeNode",   "List Decompose"],
+        ["SvListDecomposeNode",   "List Decompose"],
         # should be removed...
         ["SvImageComponentsNode", "Image Decompose"],
         ["SvBoxRoundedNode",    "Rounded Box"],
@@ -200,3 +200,4 @@ def make_categories():
             items=[NodeItem(bl_idname, name) for bl_idname, name in nodes]))
 
     return node_categories
+
