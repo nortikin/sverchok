@@ -53,7 +53,7 @@ Install Sverchok as you would any blender addon.
 
 ###Troubleshooting Installation Errors
 
-In case Sverchok fails to install, we've compiled a list of reasons and known resolutions [here](/docs/Installation_troubleshooting.md). Please let us know if you encounter other installation issues.
+In case Sverchok fails to install, we've compiled a list of reasons and known resolutions [here](/docs/installation.rst). Please let us know if you encounter other installation issues.
 
 ###Contact and Credit
 Homepage: http://nikitron.cc.ua/sverchok_en.html  
@@ -121,7 +121,7 @@ Email: sverchok-b3d@yandex.ru
    Нажмите потом `F8` чтобы перезагрузить дополнения блендера. Должна поменяться версия  
 
 ###Известные ошибки установки
-Не установилось? Список причин [тыц](/docs/Installation_troubleshooting.md). Если вашей ошибки там нет - пишите письма.
+Не установилось? Список причин [тыц](/docs/installation.rst). Если вашей ошибки там нет - пишите письма.
 
 ###Контакты и разработчики
 Домашняя страница: http://nikitron.cc.ua/sverchok_ru.html  
