@@ -219,11 +219,15 @@ class SvNodeTreeExporter(bpy.types.Operator):
 
         layout_dict = create_dict_of_tree(ng)
         if not layout_dict:
-            print('no update list found - didn\'t export')
+            msg = 'no update list found - didn\'t export'
+            self.report({"WARNING"}, msg)
+            print(msg)
             return {'CANCELLED'}
 
         write_json(layout_dict, destination_path)
-        print('exported to', self.filepath)
+        msg = 'exported to: ' + self.filepath
+        self.report({"INFO"}, msg)
+        print(msg)
         return {'FINISHED'}
 
     def invoke(self, context, event):
