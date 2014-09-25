@@ -164,22 +164,29 @@ def import_tree(ng, fullpath):
             node.color = node_ref['color']
 
         update_lists = nodes_json['update_lists']
-        print('update lists', update_lists)
+        print('update lists:')
+        for ulist in update_lists:
+            print(ulist)
 
         ''' now connect them '''
-        connections = nodes_json['connections']
 
-        for update_list in update_lists:
-            for node in update_list:
-                # get all links that start with this node
-                links = [link for link in connections.values() if link[0] == node]
-                print('links', links)
+        # naive
+        for link in update_lists:
+            ng.links.new(*resolve_socket(*link))
 
-                # [ ] formula node might need reverse sorting.. because X N N N
-                links_sorted = sorted(links, key=lambda n: n[3])
-                #for idx, link in connections.items():
-                for link in links_sorted:
-                    ng.links.new(*resolve_socket(*link))
+        # connections = nodes_json['connections']
+
+        # for update_list in update_lists:
+        #     for node in update_list:
+        #         # get all links that start with this node
+        #         links = [link for link in connections.values() if link[0] == node]
+        #         print('links', links)
+
+        #         # [ ] formula node might need reverse sorting.. because X N N N
+        #         links_sorted = sorted(links, key=lambda n: n[3])
+        #         #for idx, link in connections.items():
+        #         for link in links_sorted:
+        #             ng.links.new(*resolve_socket(*link))
 
         ''' set frame parents '''
         framed_nodes = nodes_json['framed_nodes']
