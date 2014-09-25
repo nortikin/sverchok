@@ -161,6 +161,8 @@ def import_tree(ng, fullpath):
                 val = params[p]
                 setattr(node, p, val)
 
+            perform_special_ops_if_tagged(node, bl_idname, params)
+
             node.location = node_ref['location']
             node.height = node_ref['height']
             node.width = node_ref['width']
@@ -200,6 +202,19 @@ def import_tree(ng, fullpath):
             ng.nodes[node_name].parent = ng.nodes[parent]
 
         bpy.ops.node.sverchok_update_current(node_group=ng.name)
+
+
+def perform_special_ops_if_tagged(node, bl_idname, params):
+    if bl_idname in {'SvGenFloatRange'}:
+        mode = params.get('mode', None)
+        if mode:
+            # get any other mode first, then back again.
+            # not cool hacks.
+            mode_cur = {mode, }
+            options = {"FRANGE", "FRANGE_COUNT", "FRANGE_STEP"}
+            any_other_mode = list(mode_cur ^ options)[0]
+            node.mode = any_other_mode
+            node.mode = mode
 
 
 class SvNodeTreeExporter(bpy.types.Operator):
