@@ -150,7 +150,7 @@ def import_tree(ng, fullpath):
                 node = nodes.new(bl_idname)
             except Exception as err:
                 print(traceback.format_exc())
-                print(bl_idname, 'not currently registered')
+                print(bl_idname, 'not currently registered, skipping')
                 continue
 
             if not (node.name == n):
