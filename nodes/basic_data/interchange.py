@@ -176,27 +176,23 @@ def import_tree(ng, fullpath):
         ''' now connect them '''
 
         # naive
+        failed_connections = []
         for link in update_lists:
             try:
                 ng.links.new(*resolve_socket(*link))
-            except:
+            except Exception as err:
+                print(traceback.format_exc())
                 msg = 'failure: ' + str(link)
                 print(msg)
+                failed_connections.append(link)
                 continue
 
-        # connections = nodes_json['connections']
-
-        # for update_list in update_lists:
-        #     for node in update_list:
-        #         # get all links that start with this node
-        #         links = [link for link in connections.values() if link[0] == node]
-        #         print('links', links)
-
-        #         # [ ] formula node might need reverse sorting.. because X N N N
-        #         links_sorted = sorted(links, key=lambda n: n[3])
-        #         #for idx, link in connections.items():
-        #         for link in links_sorted:
-        #             ng.links.new(*resolve_socket(*link))
+        if failed_connections:
+            # could retry pool in last attempt?
+            print('failed total {0}'.format(len(failed_connections)))
+            print(failed_connections)
+        else:
+            print('no failed connections! awesome.')
 
         ''' set frame parents '''
         framed_nodes = nodes_json['framed_nodes']

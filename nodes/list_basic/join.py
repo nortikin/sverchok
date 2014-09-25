@@ -57,8 +57,8 @@ class ListJoinNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "JoinLevel", text="JoinLevel lists")
 
     def update(self):
-        print('updated', self.bl_idname, self.name)
-        print('type:', self.typ)
+        #print('updated', self.bl_idname, self.name)
+        #print('type:', self.typ)
         # inputs
         multi_socket(self, min=1)
 
