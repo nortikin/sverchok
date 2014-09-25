@@ -146,7 +146,12 @@ def import_tree(ng, fullpath):
             node_ref = nodes_to_import[n]
 
             bl_idname = node_ref['bl_idname']
-            node = nodes.new(bl_idname)
+            try:
+                node = nodes.new(bl_idname)
+            except Exception as err:
+                print(traceback.format_exc())
+                print(bl_idname, 'not currently registered')
+                continue
 
             if not (node.name == n):
                 node.name = n
@@ -172,7 +177,12 @@ def import_tree(ng, fullpath):
 
         # naive
         for link in update_lists:
-            ng.links.new(*resolve_socket(*link))
+            try:
+                ng.links.new(*resolve_socket(*link))
+            except:
+                msg = 'failure: ' + str(link)
+                print(msg)
+                continue
 
         # connections = nodes_json['connections']
 
