@@ -209,6 +209,9 @@ def import_tree(ng, fullpath):
 
 
 def perform_special_ops_if_tagged(node, bl_idname, params):
+
+    # this can be generalized if we notice this is a trend for enum props
+
     if bl_idname in {'SvGenFloatRange'}:
         mode = params.get('mode', None)
         if mode:
