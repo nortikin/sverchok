@@ -290,32 +290,6 @@ class SvNodeTreeImporter(bpy.types.Operator):
         return {'RUNNING_MODAL'}
 
 
-class SvNodeTest(bpy.types.Operator):
-    '''Importing operation will test various scenarios'''
-
-    bl_idname = "node.tree_test_importer"
-    bl_label = "sv NodeTree Test Import Operator"
-
-    id_tree = StringProperty()
-
-    def execute(self, context):
-        ng = bpy.data.node_groups[self.id_tree]
-        nodes = ng.nodes
-
-        l1 = nodes.new('LineNode')
-        l2 = nodes.new('LineNode')
-        LJ = nodes.new('ListJoinNode')
-
-        l1.location = -105.1, 141.6
-        l2.location = -106.3, 2.3
-        LJ.location = 174.1, 154.5
-
-        ng.links.new(l1.outputs[0], LJ.inputs[0])
-        ng.links.new(l2.outputs[0], LJ.inputs[1])
-
-        return {'FINISHED'}
-
-
 class SvImportExport(bpy.types.Node, SverchCustomTreeNode):
     ''' SvImportExportNodeTree '''
     bl_idname = 'SvImportExport'
@@ -363,17 +337,6 @@ class SvImportExport(bpy.types.Node, SverchCustomTreeNode):
         exp2.id_tree = ''
         exp2.new_nodetree_name = self.new_nodetree_name
 
-        ''' import special '''
-
-        box3 = col.box()
-        box3.label('test limited python cases')
-        col = box3.column()
-        exp3 = col.operator(
-            'node.tree_test_importer',
-            text='import scenario',
-            icon='RNA_ADD')
-        exp3.id_tree = self.id_data.name
-
     def update(self):
         pass
 
@@ -381,12 +344,10 @@ class SvImportExport(bpy.types.Node, SverchCustomTreeNode):
 def register():
     bpy.utils.register_class(SvNodeTreeExporter)
     bpy.utils.register_class(SvNodeTreeImporter)
-    bpy.utils.register_class(SvNodeTest)
     bpy.utils.register_class(SvImportExport)
 
 
 def unregister():
     bpy.utils.unregister_class(SvImportExport)
-    bpy.utils.unregister_class(SvNodeTest)
     bpy.utils.unregister_class(SvNodeTreeImporter)
     bpy.utils.unregister_class(SvNodeTreeExporter)
