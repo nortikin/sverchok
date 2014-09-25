@@ -1,0 +1,5 @@
+class SvScript:
+    
+
+class MyScriptNode( SvScriptNode):
+.
