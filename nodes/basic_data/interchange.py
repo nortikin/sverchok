@@ -234,18 +234,41 @@ class SvNodeTreeExporter(bpy.types.Operator):
 
     id_tree = StringProperty()
 
+    def err(self, idx):
+        msg = {
+            0: 'please specify a file name, .json will be added automatically',
+            1: 'no update list found - didn\'t export'
+        }.get(idx)
+        self.report({"WARNING"}, msg)
+        print(msg)
+
+    def has_filename(self):
+        if self.filepath:
+            return True
+        self.err(0)
+
+    def has_content(self, layout_dict):
+        if layout_dict:
+            return True
+        self.err(1)
+
+    def auto_postfix_filename(self):
+        if not self.filepath.lower().endswith('.json'):
+            self.filepath += '.json'
+
     def execute(self, context):
         ng = bpy.data.node_groups[self.id_tree]
-        destination_path = self.filepath
 
-        layout_dict = create_dict_of_tree(ng)
-        if not layout_dict:
-            msg = 'no update list found - didn\'t export'
-            self.report({"WARNING"}, msg)
-            print(msg)
+        if not self.has_filename():
             return {'CANCELLED'}
 
-        write_json(layout_dict, destination_path)
+        layout_dict = create_dict_of_tree(ng)
+        if not self.has_content(layout_dict):
+            return {'CANCELLED'}
+
+        self.auto_postfix_filename()
+        write_json(layout_dict, self.filepath)
+
         msg = 'exported to: ' + self.filepath
         self.report({"INFO"}, msg)
         print(msg)
