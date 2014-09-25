@@ -138,7 +138,7 @@ def create_dict_of_tree(ng):
         print(' - trigger an update and retry')
         return
 
-    layout_dict['export_version'] = '0.03 pre alpha'
+    layout_dict['export_version'] = '0.033 pre alpha'
     return layout_dict
 
 
@@ -236,7 +236,12 @@ class SvNodeTreeExporter(bpy.types.Operator):
 
     def execute(self, context):
         ng = bpy.data.node_groups[self.id_tree]
+
         destination_path = self.filepath
+        if not destination_path.lower().endswith('.json'):
+            destination_path += '.json'
+
+        # future: should check if filepath is a folder or ends in \
 
         layout_dict = create_dict_of_tree(ng)
         if not layout_dict:
