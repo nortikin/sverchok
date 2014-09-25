@@ -157,7 +157,7 @@ def import_tree(ng, fullpath):
                 node.name = n
 
             print(node.name, node_ref['params'])
-            specials_set = {'ListJoinNode'}
+            specials_set = {'ListJoinNode', 'MaskListNode'}
 
             if not (bl_idname in specials_set):
                 params = node_ref['params']
@@ -224,7 +224,7 @@ def perform_special_ops_if_tagged(node, bl_idname, params):
 
 
 def deal_with_it(node, params):
-    if node.bl_idname == 'ListJoinNode':
+    if node.bl_idname in {'ListJoinNode', 'MaskListNode'}:
         for p in params:
             if p in {'typ', 'newsock'}:
                 continue
