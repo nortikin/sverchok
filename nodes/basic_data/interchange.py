@@ -70,6 +70,10 @@ def create_dict_of_tree(ng):
         node_enums = find_enumerators(node)
 
         for k, v in node.items():
+            if k in {'typ', 'newsock'}:
+                ''' these are reserved variables for changeable socks '''
+                continue
+
             if isinstance(v, (float, int, str)):
                 node_items[k] = v
             else:
@@ -123,7 +127,7 @@ def create_dict_of_tree(ng):
         print(' - trigger an update and retry')
         return
 
-    layout_dict['export_version'] = '0.01 pre alpha'
+    layout_dict['export_version'] = '0.02 pre alpha'
     return layout_dict
 
 
@@ -156,16 +160,11 @@ def import_tree(ng, fullpath):
             if not (node.name == n):
                 node.name = n
 
-            print(node.name, node_ref['params'])
-            specials_set = {'ListJoinNode', 'MaskListNode'}
-
-            if not (bl_idname in specials_set):
-                params = node_ref['params']
-                for p in params:
-                    val = params[p]
-                    setattr(node, p, val)
-            else:
-                deal_with_it(node, node_ref['params'])
+            params = node_ref['params']
+            print(node.name, params)
+            for p in params:
+                val = params[p]
+                setattr(node, p, val)
 
             perform_special_ops_if_tagged(node, bl_idname, params)
 
@@ -196,7 +195,6 @@ def import_tree(ng, fullpath):
                 continue
 
         if failed_connections:
-            # could retry pool in last attempt?
             print('failed total {0}'.format(len(failed_connections)))
             print(failed_connections)
         else:
@@ -221,15 +219,6 @@ def perform_special_ops_if_tagged(node, bl_idname, params):
             any_other_mode = list(mode_cur ^ options)[0]
             node.mode = any_other_mode
             node.mode = mode
-
-
-def deal_with_it(node, params):
-    if node.bl_idname in {'ListJoinNode', 'MaskListNode'}:
-        for p in params:
-            if p in {'typ', 'newsock'}:
-                continue
-            val = params[p]
-            setattr(node, p, val)
 
 
 class SvNodeTreeExporter(bpy.types.Operator):
