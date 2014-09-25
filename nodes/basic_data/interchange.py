@@ -157,11 +157,15 @@ def import_tree(ng, fullpath):
                 node.name = n
 
             print(node.name, node_ref['params'])
-            if not (bl_idname in {'ListJoinNode'}):
+            specials_set = {'ListJoinNode'}
+
+            if not (bl_idname in specials_set):
                 params = node_ref['params']
                 for p in params:
                     val = params[p]
                     setattr(node, p, val)
+            else:
+                deal_with_it(node, node_ref['params'])
 
             perform_special_ops_if_tagged(node, bl_idname, params)
 
@@ -184,8 +188,6 @@ def import_tree(ng, fullpath):
         for link in update_lists:
             try:
                 ng.links.new(*resolve_socket(*link))
-                #node = ng.nodes[link[2]]
-                #hit_update(node)
             except Exception as err:
                 print(traceback.format_exc())
                 msg = 'failure: ' + str(link)
@@ -221,10 +223,13 @@ def perform_special_ops_if_tagged(node, bl_idname, params):
             node.mode = mode
 
 
-def hit_update(node):
-    if node.bl_idname in {'ListJoinNode'}:
-        print('triggered update')
-        node.update()
+def deal_with_it(node, params):
+    if node.bl_idname == 'ListJoinNode':
+        for p in params:
+            if p in {'typ', 'newsock'}:
+                continue
+            val = params[p]
+            setattr(node, p, val)
 
 
 class SvNodeTreeExporter(bpy.types.Operator):
