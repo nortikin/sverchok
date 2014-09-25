@@ -326,7 +326,7 @@ class SvImportExport(bpy.types.Node, SverchCustomTreeNode):
         box1.label('pick file name and location')
         imp = box1.operator(
             'node.tree_exporter',
-            text='export tree',
+            text='export current',
             icon='FILE_BACKUP')
         imp.id_tree = self.id_data.name
 
