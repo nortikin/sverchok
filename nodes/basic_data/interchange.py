@@ -234,24 +234,23 @@ class SvNodeTreeExporter(bpy.types.Operator):
 
     id_tree = StringProperty()
 
-    def notify(self, idx, msg_level):
+    def err(self, idx):
         msg = {
             0: 'please specify a file name, .json will be added automatically',
-            1: 'no update list found - didn\'t export',
-            2: ('exported to: ' + self.filepath)
+            1: 'no update list found - didn\'t export'
         }.get(idx)
-        self.report({msg_level}, msg)
+        self.report({"WARNING"}, msg)
         print(msg)
 
     def has_filename(self):
         if self.filepath:
             return True
-        self.notify(0, 'WARNING')
+        self.err(0)
 
     def has_content(self, layout_dict):
         if layout_dict:
             return True
-        self.notify(1, 'WARNING')
+        self.err(1)
 
     def auto_postfix_filename(self):
         if not self.filepath.lower().endswith('.json'):
@@ -269,8 +268,10 @@ class SvNodeTreeExporter(bpy.types.Operator):
 
         self.auto_postfix_filename()
         write_json(layout_dict, self.filepath)
-        self.notify(2, 'INFO')
 
+        msg = 'exported to: ' + self.filepath
+        self.report({"INFO"}, msg)
+        print(msg)
         return {'FINISHED'}
 
     def invoke(self, context, event):
