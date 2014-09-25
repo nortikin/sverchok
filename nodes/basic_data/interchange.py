@@ -19,6 +19,8 @@
 import json
 import os
 import re
+import traceback
+from itertools import chain
 
 import bpy
 from bpy.types import EnumProperty
@@ -115,15 +117,11 @@ def create_dict_of_tree(ng):
                 if socket.links:
                     links_out.append(compile_socket(socket.links[0]))
         layout_dict['update_lists'] = links_out
-    except:
-        print('no update lists found! - trigger an update and retry')
+    except Exception as err:
+        print(traceback.format_exc())
+        print('no update lists found or other error!')
+        print(' - trigger an update and retry')
         return
-
-    try:
-        layout_dict['update_partials'] = list(ng.get_update_lists()[1])
-    except:
-        print('no partial lists found! - this is OK..')
-        layout_dict['update_partials'] = {}
 
     layout_dict['export_version'] = '0.01 pre alpha'
     return layout_dict
@@ -167,8 +165,6 @@ def import_tree(ng, fullpath):
 
         update_lists = nodes_json['update_lists']
         print('update lists', update_lists)
-        update_partials = nodes_json['update_partials']
-        print('update partials', update_partials)
 
         ''' now connect them '''
         connections = nodes_json['connections']
