@@ -52,6 +52,10 @@ def write_json(layout_dict, destination_path):
         node_tree.writelines(m)
 
 
+def has_a_current_mode(node):
+    return node.bl_idname in {'SvGenFloatRange, GenListRangeIntNode'}
+
+
 def create_dict_of_tree(ng):
     nodes = ng.nodes
     layout_dict = {}
@@ -73,6 +77,10 @@ def create_dict_of_tree(ng):
             if k in {'typ', 'newsock'}:
                 ''' these are reserved variables for changeable socks '''
                 continue
+
+            if has_a_current_mode(node):
+                if k == 'current_mode':
+                    continue
 
             if isinstance(v, (float, int, str)):
                 node_items[k] = v
@@ -127,7 +135,7 @@ def create_dict_of_tree(ng):
         print(' - trigger an update and retry')
         return
 
-    layout_dict['export_version'] = '0.02 pre alpha'
+    layout_dict['export_version'] = '0.03 pre alpha'
     return layout_dict
 
 
@@ -165,8 +173,6 @@ def import_tree(ng, fullpath):
             for p in params:
                 val = params[p]
                 setattr(node, p, val)
-
-            perform_special_ops_if_tagged(node, bl_idname, params)
 
             node.location = node_ref['location']
             node.height = node_ref['height']
@@ -206,22 +212,6 @@ def import_tree(ng, fullpath):
             ng.nodes[node_name].parent = ng.nodes[parent]
 
         bpy.ops.node.sverchok_update_current(node_group=ng.name)
-
-
-def perform_special_ops_if_tagged(node, bl_idname, params):
-
-    # this can be generalized if we notice this is a trend for enum props
-
-    if bl_idname in {'SvGenFloatRange'}:
-        mode = params.get('mode', None)
-        if mode:
-            # get any other mode first, then back again.
-            # not cool hacks.
-            mode_cur = {mode, }
-            options = {"FRANGE", "FRANGE_COUNT", "FRANGE_STEP"}
-            any_other_mode = list(mode_cur ^ options)[0]
-            node.mode = any_other_mode
-            node.mode = mode
 
 
 class SvNodeTreeExporter(bpy.types.Operator):
