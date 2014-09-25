@@ -30,7 +30,7 @@ Doing these things will break old layouts and or create very ugly code in the no
 
 3. Adding new socket without updating upgrade.py
 
-4. _typ_, _newsock_, _current_mode_ names of properties are reserved for nodes, not use for anything else
+4. 'typ', 'newsock', 'current_mode' names of properties are reserved for nodes, not use for anything else
 
 
 TO MAKE YOUR NODE:
