@@ -138,7 +138,7 @@ def create_dict_of_tree(ng):
         print(' - trigger an update and retry')
         return
 
-    layout_dict['export_version'] = '0.033 pre alpha'
+    layout_dict['export_version'] = '0.034 pre alpha'
     return layout_dict
 
 
