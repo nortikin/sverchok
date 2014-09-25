@@ -220,9 +220,6 @@ def perform_special_ops_if_tagged(node, bl_idname, params):
             node.mode = any_other_mode
             node.mode = mode
 
-    #if bl_idname in {'ListJoinNode'}:
-    #    pass
-
 
 def hit_update(node):
     if node.bl_idname in {'ListJoinNode'}:
