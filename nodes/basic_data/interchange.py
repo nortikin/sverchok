@@ -365,16 +365,86 @@ class SvImportExport(bpy.types.Node, SverchCustomTreeNode):
     def update(self):
         pass
 
+class SverchokIOLayoutsMenu(bpy.types.Panel):
+    bl_idname = "Sverchok_iolayouts_menu"
+    bl_label = "Sverchok i/o layouts"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = 'Sverchok'
+    use_pin = True
+
+    @classmethod
+    def poll(cls, context):
+        try:
+            return context.space_data.node_tree.bl_idname == 'SverchCustomTreeType'
+        except:
+            return False
+
+    def draw(self, context):
+        layout = self.layout
+        ''' export '''
+
+        col = layout.column(align=True)
+        box1 = col.box()
+        box1.label('pick file name and location')
+        imp = box1.operator(
+            'node.tree_exporter',
+            text='export tree',
+            icon='FILE_BACKUP')
+        imp.id_tree = context.space_data.node_tree.name
+
+        ''' import '''
+
+        box2 = col.box()
+        box2.label('pick file name from location')
+        col = box2.column()
+        exp1 = col.operator(
+            'node.tree_importer',
+            text='import here',
+            icon='RNA_ADD')
+        exp1.id_tree = context.space_data.node_tree.name
+
+        col.separator()
+
+        col.prop(context.space_data.node_tree, 'new_nodetree_name', text='tree name')
+        exp2 = col.operator(
+            'node.tree_importer',
+            text='import to new',
+            icon='RNA')
+        exp2.id_tree = ''
+        print(context.space_data.node_tree.new_nodetree_name)
+        exp2.new_nodetree_name = context.space_data.node_tree.new_nodetree_name
+
+        ''' import special '''
+
+        box3 = col.box()
+        box3.label('test limited python cases')
+        col = box3.column()
+        exp3 = col.operator(
+            'node.tree_test_importer',
+            text='import scenario',
+            icon='RNA_ADD')
+        exp3.id_tree = context.space_data.node_tree.name
 
 def register():
+    bpy.types.SverchCustomTreeType.new_nodetree_name = \
+        StringProperty(name='new_nodetree', default="Imp_NodeTree")
     bpy.utils.register_class(SvNodeTreeExporter)
     bpy.utils.register_class(SvNodeTreeImporter)
     bpy.utils.register_class(SvNodeTest)
     bpy.utils.register_class(SvImportExport)
+    bpy.utils.register_class(SverchokIOLayoutsMenu)
 
 
 def unregister():
+    bpy.utils.unregister_class(SverchokIOLayoutsMenu)
     bpy.utils.unregister_class(SvImportExport)
     bpy.utils.unregister_class(SvNodeTest)
     bpy.utils.unregister_class(SvNodeTreeImporter)
     bpy.utils.unregister_class(SvNodeTreeExporter)
+    del bpy.types.SverchCustomTreeType.new_nodetree_name
+
+if __name__ == '__main__':
+    register()
+
+
