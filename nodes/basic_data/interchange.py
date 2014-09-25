@@ -365,6 +365,7 @@ class SvImportExport(bpy.types.Node, SverchCustomTreeNode):
     def update(self):
         pass
 
+<<<<<<< HEAD
 class SverchokIOLayoutsMenu(bpy.types.Panel):
     bl_idname = "Sverchok_iolayouts_menu"
     bl_label = "Sverchok i/o layouts"
@@ -418,26 +419,18 @@ class SverchokIOLayoutsMenu(bpy.types.Panel):
             text='import scenario (special)',
             icon='RNA')
         exp3.id_tree = context.space_data.node_tree.name
+=======
+>>>>>>> parent of 293c769... panel instead of node
 
 def register():
-    bpy.types.SverchCustomTreeType.new_nodetree_name = \
-        StringProperty(name='new_nodetree', default="Imp_NodeTree")
     bpy.utils.register_class(SvNodeTreeExporter)
     bpy.utils.register_class(SvNodeTreeImporter)
     bpy.utils.register_class(SvNodeTest)
     bpy.utils.register_class(SvImportExport)
-    bpy.utils.register_class(SverchokIOLayoutsMenu)
 
 
 def unregister():
-    bpy.utils.unregister_class(SverchokIOLayoutsMenu)
     bpy.utils.unregister_class(SvImportExport)
     bpy.utils.unregister_class(SvNodeTest)
     bpy.utils.unregister_class(SvNodeTreeImporter)
     bpy.utils.unregister_class(SvNodeTreeExporter)
-    del bpy.types.SverchCustomTreeType.new_nodetree_name
-
-if __name__ == '__main__':
-    register()
-
-
