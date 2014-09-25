@@ -384,46 +384,39 @@ class SverchokIOLayoutsMenu(bpy.types.Panel):
         layout = self.layout
         ''' export '''
 
-        col = layout.column(align=True)
-        box1 = col.box()
-        box1.label('pick file name and location')
-        imp = box1.operator(
+        box = layout.box()
+        col = box.column(align=True)
+        col.scale_y = 1.2
+        col.prop(context.space_data.node_tree, 'new_nodetree_name', text='New tree')
+        col.separator()
+        
+        imp = col.operator(
             'node.tree_exporter',
-            text='export tree',
+            text='export current',
             icon='FILE_BACKUP')
         imp.id_tree = context.space_data.node_tree.name
 
         ''' import '''
 
-        box2 = col.box()
-        box2.label('pick file name from location')
-        col = box2.column()
         exp1 = col.operator(
             'node.tree_importer',
             text='import here',
-            icon='RNA_ADD')
+            icon='RNA')
         exp1.id_tree = context.space_data.node_tree.name
 
-        col.separator()
-
-        col.prop(context.space_data.node_tree, 'new_nodetree_name', text='tree name')
         exp2 = col.operator(
             'node.tree_importer',
-            text='import to new',
-            icon='RNA')
+            text='import new tree',
+            icon='RNA_ADD')
         exp2.id_tree = ''
-        print(context.space_data.node_tree.new_nodetree_name)
         exp2.new_nodetree_name = context.space_data.node_tree.new_nodetree_name
 
         ''' import special '''
 
-        box3 = col.box()
-        box3.label('test limited python cases')
-        col = box3.column()
         exp3 = col.operator(
             'node.tree_test_importer',
-            text='import scenario',
-            icon='RNA_ADD')
+            text='import scenario (special)',
+            icon='RNA')
         exp3.id_tree = context.space_data.node_tree.name
 
 def register():
