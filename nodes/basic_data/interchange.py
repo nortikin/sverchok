@@ -53,7 +53,9 @@ def write_json(layout_dict, destination_path):
 
 
 def has_a_current_mode(node):
-    return node.bl_idname in {'SvGenFloatRange, GenListRangeIntNode'}
+    return node.bl_idname in {
+        'SvGenFloatRange, GenListRangeIntNode', 'SvKDTreeNode'
+    }
 
 
 def create_dict_of_tree(ng):
