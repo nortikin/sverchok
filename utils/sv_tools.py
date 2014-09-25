@@ -488,9 +488,9 @@ class SverchokToolsMenu(bpy.types.Panel):
                 split = row.column(align=True)
                 split.scale_x = little_width
                 if tree.sv_show:
-                    split.prop(tree, 'sv_show', icon='UNLOCKED', text=' ')
+                    split.prop(tree, 'sv_show', icon='RESTRICT_VIEW_OFF', text=' ')
                 else:
-                    split.prop(tree, 'sv_show', icon='LOCKED', text=' ')
+                    split.prop(tree, 'sv_show', icon='RESTRICT_VIEW_ON', text=' ')
                 split = row.column(align=True)
                 split.scale_x = little_width
                 if tree.sv_animate:
@@ -546,3 +546,4 @@ def unregister():
 
 if __name__ == '__main__':
     register()
+
