@@ -194,11 +194,14 @@ def make_categories():
         ["SvRayCastNode",       "Raycast"]]
 
     node_categories = []
+    howmanynodesare = 0
     for category, nodes in node_cats.items():
         name_big = "SVERCHOK_" + category.replace(' ', '_')
         node_categories.append(SverchNodeCategory(
             name_big, category,
             items=[NodeItem(bl_idname, name) for bl_idname, name in nodes]))
+        howmanynodesare += len(nodes)
 
-    return node_categories
+    return node_categories, howmanynodesare
+
 
