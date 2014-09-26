@@ -9,7 +9,7 @@ Generates a special ordered *bounding box* from incoming Vertices.
 Inputs
 ------
 
-Vertices, or a nested list of vertices that represent separate objects.
+**Vertices**, or a nested list of vertices that represent separate objects.
 
 Outputs
 -------
