@@ -29,6 +29,9 @@ from node_tree import SverchCustomTree
 from node_tree import SverchCustomTreeNode
 
 
+_EXPORTER_REVISION_ = '0.035 pre alpha'
+
+
 def find_enumerators(node):
     ignored_enums = ['bl_icon', 'bl_static_type', 'type']
     node_props = node.bl_rna.properties[:]
@@ -146,7 +149,7 @@ def create_dict_of_tree(ng):
         print(' - trigger an update and retry')
         return
 
-    layout_dict['export_version'] = '0.034 pre alpha'
+    layout_dict['export_version'] = _EXPORTER_REVISION_
     return layout_dict
 
 
