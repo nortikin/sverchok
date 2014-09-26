@@ -53,11 +53,19 @@ def write_json(layout_dict, destination_path):
         node_tree.writelines(m)
 
 
-def has_a_current_mode(node):
-    return node.bl_idname in {
-        'SvGenFloatRange', 'GenListRangeIntNode',
-        'SvKDTreeNode', 'SvMirrorNode', 'SvRotationNode'
-    }
+def has_state_switch_protection(node, k):
+    ''' explict for debugging '''
+
+    if not (k in {'current_mode', 'current_op'}):
+        return False
+
+    if k == 'current_mode':
+        return node.bl_idname in {
+            'SvGenFloatRange', 'GenListRangeIntNode',
+            'SvKDTreeNode', 'SvMirrorNode', 'SvRotationNode'}
+
+    if k == 'current_op':
+        return node.bl_idname in {'VectorMathNode'}
 
 
 def create_dict_of_tree(ng):
@@ -82,9 +90,8 @@ def create_dict_of_tree(ng):
                 ''' these are reserved variables for changeable socks '''
                 continue
 
-            if has_a_current_mode(node):
-                if k == 'current_mode':
-                    continue
+            if has_state_switch_protection(node, k):
+                continue
 
             if isinstance(v, (float, int, str)):
                 node_items[k] = v
