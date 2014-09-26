@@ -89,6 +89,8 @@ def set_frame_change(mode):
     elif mode == "PRE":
         print("Removed Sverchok handler pre")
         pre.append(sv_update_handler)
+    print("Have a nice day with Sverchok")
+    print("****** Sverchok loaded ******\n")
 
 
 def register():
@@ -107,3 +109,8 @@ def unregister():
     bpy.app.handlers.load_pre.remove(sv_clean)
     bpy.app.handlers.load_post.remove(sv_post_load)
     set_frame_change(None)
+
+
+
+
+

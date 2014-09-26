@@ -53,8 +53,7 @@ import sys
 current_path = os.path.dirname(__file__)
 if not current_path in sys.path:
     sys.path.append(current_path)
-    print("Have a nice day with Sverchok")
-
+    print("\n***** Sverchok  loading *****")
 
 # use importlib instead of imp, which is deprecated since python 3.4
 # importing first allows to stores a list of nodes before eventually reloading
@@ -123,7 +122,7 @@ if "bpy" in locals():
 
     if 'SVERCHOK' in nodeitems_utils._node_categories:
         nodeitems_utils.unregister_node_categories("SVERCHOK")
-    nodeitems_utils.register_node_categories("SVERCHOK", menu.make_categories())
+    nodeitems_utils.register_node_categories("SVERCHOK", menu.make_categories()[0])
     # core.upgrade_nodes.upgrade_all()  # doesn't work, anyway.
     reload_event = True
 
@@ -132,6 +131,8 @@ import bpy
 
 def register():
     import nodeitems_utils
+    categors_menu = menu.make_categories()
+    print("** Sverchok has  {i} nodes **".format(i=categors_menu[1]))
     for m in imported_modules + node_list:
         if hasattr(m, "register"):
             m.register()
@@ -139,7 +140,7 @@ def register():
             pass
             #print("failed to register {}".format(m.__name__))
     if 'SVERCHOK' not in nodeitems_utils._node_categories:
-        nodeitems_utils.register_node_categories("SVERCHOK", menu.make_categories())
+        nodeitems_utils.register_node_categories("SVERCHOK", categors_menu[0])
     if reload_event:
         # tag reload event which will cause a full sverchok startup on
         # first update event
@@ -157,3 +158,10 @@ def unregister():
 
     if 'SVERCHOK' in nodeitems_utils._node_categories:
         nodeitems_utils.unregister_node_categories("SVERCHOK")
+
+
+
+
+
+
+
