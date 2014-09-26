@@ -25,6 +25,7 @@ from itertools import chain
 import bpy
 from bpy.types import EnumProperty
 from bpy.props import StringProperty
+from node_tree import SverchCustomTree
 from node_tree import SverchCustomTreeNode
 
 
@@ -290,12 +291,30 @@ class SvNodeTreeImporter(bpy.types.Operator):
         else:
             ng = bpy.data.node_groups[self.id_tree]
         import_tree(ng, self.filepath)
+        # ng.update()
+        # self.zoom_view()
         return {'FINISHED'}
 
     def invoke(self, context, event):
         wm = context.window_manager
         wm.fileselect_add(self)
         return {'RUNNING_MODAL'}
+
+    def zoom_view(self):
+        # final step to view all of the new node tree after import
+        for window in bpy.context.window_manager.windows:
+            for area in window.screen.areas:
+                if not area.type == 'NODE_EDITOR':
+                    continue
+                space = area.spaces.active
+                nt = space.node_tree
+                nt_name = nt.name
+
+                if isinstance(nt, SverchCustomTree):
+                    old_context = bpy.context.area.type
+                    bpy.context.area.type = 'NODE_EDITOR'
+                    bpy.ops.node.view_selected()
+                    bpy.context.area.type = old_context
 
 
 class SvImportExport(bpy.types.Node, SverchCustomTreeNode):
