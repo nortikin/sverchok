@@ -1,11 +1,10 @@
 #English
 ##Sverchok parametric tools
 
-version - look version file in utils folder   
-addon for: http://blender.org   
-License: GPL3   
-compatible with Blender version: `>=` 2.71  
-requires Python 3.4. and numpy (included in Blender)  
+**addon for**: [Blender](http://blender.org)  (version *2.71* and above).  
+**current sverchok version**: find this in the version file in `utils` folder, or properties panel in NodeView   
+**License**: [GPL3](http://www.gnu.org/licenses/quick-guide-gplv3.html)   
+**prerequisites**: Python 3.4. and numpy, both included in recent versions of Blender  
 
   
 ###Description
@@ -29,7 +28,7 @@ Comes with more than 100 nodes to help create and manipulate geometry. Combining
   - access to pythn API with special node EvalKnieval
   - upgrade Sverchok with pressing one button
   - make your own neuro network
-  - and even more!
+  - and much, much more!
 
 ###Installation
 Install Sverchok as you would any blender addon.  
