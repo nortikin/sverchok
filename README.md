@@ -1,10 +1,10 @@
 #English
 ##Sverchok parametric tools
 
-addon for: [Blender](http://blender.org)  
-version - look for the version file in utils folder   
+addon for: [Blender](http://blender.org)  version: from 2.71 and above.  
+sverchok version: find this in the version file in utils folder   
 License: [GPL3](http://www.gnu.org/licenses/quick-guide-gplv3.html)   
-compatible with Blender version: from 2.71 and above.
+
 requires Python 3.4. and numpy (included in Blender)  
 
   
