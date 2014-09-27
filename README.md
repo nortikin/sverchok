@@ -4,7 +4,7 @@
 **addon for**: [Blender](http://blender.org)  (version *2.71* and above).  
 **current sverchok version**: find this in the version file in `utils` folder, or properties panel in NodeView   
 **License**: [GPL3](http://www.gnu.org/licenses/quick-guide-gplv3.html)   
-**pre requisits**: Python 3.4. and numpy, both included in recent versions of Blender  
+**prerequisites**: Python 3.4. and numpy, both included in recent versions of Blender  
 
   
 ###Description
