@@ -2,7 +2,7 @@
 ##Sverchok parametric tools
 
 **addon for**: [Blender](http://blender.org)  (version *2.71* and above).  
-**current sverchok version**: find this in the version file in `utils` folder   
+**current sverchok version**: find this in the version file in `utils` folder, or properties panel in NodeView   
 **License**: [GPL3](http://www.gnu.org/licenses/quick-guide-gplv3.html)   
 
 requires Python 3.4. and numpy (included in Blender)  
