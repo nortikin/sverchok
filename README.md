@@ -1,7 +1,7 @@
 #English
 ##Sverchok parametric tools
 
-addon for: [Blender](http://blender.org)  version: from 2.71 and above.  
+addon for: [Blender](http://blender.org)  version *2.71* and above.  
 sverchok version: find this in the version file in utils folder   
 License: [GPL3](http://www.gnu.org/licenses/quick-guide-gplv3.html)   
 
