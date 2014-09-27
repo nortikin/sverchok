@@ -210,6 +210,10 @@ def display_face(options, pol, data_vector, data_matrix, k, i):
         glEnd()
 
 
+def processor(dvecs, dedges, dpoly, dmatrx):
+    pass
+
+
 def draw_geometry(n_id, options, data_vector, data_polygons, data_matrix, data_edges):
 
     show_verts = options['show_verts']
@@ -242,167 +246,11 @@ def draw_geometry(n_id, options, data_vector, data_polygons, data_matrix, data_e
             k = verlen
         return k
 
+    # processed_geometry = processor(data_vector, data_edges, data_edges, data_matrix)
+
     ''' polygons '''
 
-    if data_polygons and data_vector:
-
-        glEnable(polyholy)
-
-        for i, matrix in enumerate(data_matrix):
-            k = get_max_k(i, verlen)
-
-            mesh_edges = set()
-
-            oblen = len(data_polygons[k])
-            for j, pol in enumerate(data_polygons[k]):
-
-                if max(pol) > verlen_every[k]:
-                    pol = data_edges[k][-1]
-
-                if show_faces:
-                    display_face(options, pol, data_vector, data_matrix, k, i)
-
-                # collect raw edges, sort by index, use set to prevent dupes.
-                if show_edges:
-                    er = list(pol) + [pol[0]]
-                    kb = {tuple(sorted((e, er[i+1]))) for i, e in enumerate(er[:-1])}
-                    mesh_edges.update(kb)
-
-            if show_edges and mesh_edges:
-                # glHint(GL_LINE_SMOOTH_HINT, GL_NICEST)
-                glEnable(edgeholy)
-                glLineWidth(edge_width)
-                glColor3f(*edge_colors)
-                glBegin(GL_LINES)
-                for edge in mesh_edges:
-                    for p in edge:
-                        vec = data_matrix[i] * data_vector[k][p]
-                        glVertex3f(*vec)
-
-                glEnd()
-                glDisable(edgeholy)
-
-        glDisable(polyholy)
-
-    ''' edges '''
-
-    if data_edges and data_vector and show_edges:
-
-        glColor3f(*edge_colors)
-        glLineWidth(edge_width)
-        glEnable(edgeholy)
-
-        for i, matrix in enumerate(data_matrix):
-            k = get_max_k(i, verlen)
-
-            for line in data_edges[k]:
-
-                # i think this catches edges which refer to indices not present in
-                # the accompanying vertex list.
-                if max(line) > verlen_every[k]:
-                    line = data_edges[k][-1]
-
-                glBegin(edgeline)
-                for p in line:
-                    vec = data_matrix[i] * data_vector[k][p]
-                    glVertex3f(*vec)
-                glEnd()
-
-        glDisable(edgeholy)
-
-    ''' vertices '''
-
-    glEnable(GL_POINT_SIZE)
-    glEnable(GL_POINT_SMOOTH)
-    glHint(GL_POINT_SMOOTH_HINT, GL_NICEST)
-    # glHint(GL_POINT_SMOOTH_HINT, GL_FASTEST)
-
-    vsize = options['vertex_size']
-
-    if show_verts and data_vector:
-
-        glPointSize(vsize)
-        glColor3f(*vertex_colors)
-        glBegin(GL_POINTS)
-
-        for i, matrix in enumerate(data_matrix):
-
-            k = get_max_k(i, verlen)
-            for vert in data_vector[k]:
-                vec = data_matrix[i] * vert
-                glVertex3f(*vec)
-
-        glEnd()
-
-    glDisable(GL_POINT_SIZE)
-    glDisable(GL_POINT_SMOOTH)
-
-    ''' matrix '''
-
-    if data_matrix and not data_vector:
-        md = MatrixDraw()
-        for mat in data_matrix:
-            md.draw_matrix(mat)
-
-
-def draw_callback_view(n_id, cached_view, options):
-    # context = bpy.context
-    if options["timings"]:
-        start = time.perf_counter()
-
-    if options['draw_list'] == 0:
-
-        sl1 = cached_view[n_id + 'v']
-        sl2 = cached_view[n_id + 'ep']
-        sl3 = cached_view[n_id + 'm']
-
-        if sl1:
-            data_vector = Vector_generate(sl1)
-            verlen = len(data_vector)-1
-            options['verlen_every'] = [len(d)-1 for d in data_vector]
-        else:
-            if not sl3:
-                # end early: no matrix and no vertices
-                callback_disable(n_id)
-                return
-
-            # display matrix repr only.
-            data_vector = []
-            verlen = 0
-
-        options['verlen'] = verlen
-        data_polygons = []
-        data_edges = []
-
-        if sl2 and sl2[0]:
-            if isinstance(sl2[0], int):
-                callback_disable(n_id)
-                return
-
-            len_sl2 = len(sl2[0][0])
-            if len_sl2 == 2:
-                data_edges = sl2
-            elif len_sl2 > 2:
-                data_polygons = sl2
-
-        if sl3:
-            data_matrix = Matrix_generate(sl3)
-        else:
-            data_matrix = [Matrix() for i in range(verlen+1)]
-
-        if (data_vector, data_polygons, data_matrix, data_edges) == (0, 0, 0, 0):
-            callback_disable(n_id)
-            return
-
-        the_display_list = glGenLists(1)
-        glNewList(the_display_list, GL_COMPILE)
-        draw_geometry(n_id, options, data_vector, data_polygons, data_matrix, data_edges)
-        glEndList()
-
-        options['genlist'] = the_display_list
-
-    elif options['draw_list'] == 1:
-        the_display_list = options['genlist']
+ 
 
     glCallList(the_display_list)
     glFlush()

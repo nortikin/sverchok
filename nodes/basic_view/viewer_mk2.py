@@ -58,88 +58,15 @@ class SvObjBakeMK2(bpy.types.Operator):
         node = node_group.nodes[self.idname]
         nid = node_id(node)
 
-        matrix_cache = cache_viewer_baker[nid+'m']
-        vertex_cache = cache_viewer_baker[nid+'v']
-        edgpol_cache = cache_viewer_baker[nid+'ep']
+        matrix_cache = cache_viewer_baker[nid+'geom']
 
-        if matrix_cache and not vertex_cache:
-            return {'CANCELLED'}
+        # if matrix_cache and not vertex_cache:
+        #     return {'CANCELLED'}
 
-        v = dataCorrect(vertex_cache)
-        e = self.dataCorrect3(edgpol_cache)
-        m = self.dataCorrect2(matrix_cache, v)
-        self.makeobjects(v, e, m)
+        # self.makeobjects(v, e, m)
+        # return {'FINISHED'}
+        print('not currently implemented')
         return {'FINISHED'}
-
-    def dataCorrect2(self, destination, obj):
-        if destination:
-            return dataCorrect(destination)
-        return [Matrix() for v in obj]
-
-    def dataCorrect3(self, destination, fallback=[]):
-        if destination:
-            return dataCorrect(destination)
-        return fallback
-
-    def makeobjects(self, vers, edg_pol, mats):
-        try:
-            num_keys = len(edg_pol[0][0])
-        except:
-            num_keys = 0
-
-        vertices = Vector_generate(vers)
-        matrixes = Matrix_generate(mats)
-        edgs, pols, max_vert_index, fht = [], [], [], []
-
-        if num_keys >= 2:
-            for k in edg_pol:
-                maxi = max(max(a) for a in k)
-                fht.append(maxi)
-
-        for u, f in enumerate(fht):
-            max_vert_index.append(min(len(vertices[u]), fht[u]))
-
-        objects = {}
-        for i, m in enumerate(matrixes):
-            k = i
-            lenver = len(vertices) - 1
-            if i > lenver:
-                v = vertices[-1]
-                k = lenver
-            else:
-                v = vertices[k]
-
-            if max_vert_index:
-                if (len(v)-1) < max_vert_index[k]:
-                    continue
-
-                elif max_vert_index[k] < (len(v)-1):
-                    nonneed = (len(v)-1) - max_vert_index[k]
-                    for q in range(nonneed):
-                        v.pop((max_vert_index[k]+1))
-
-            e, p = [], []
-            if num_keys == 2:
-                e = edg_pol[k]
-            elif num_keys > 2:
-                p = edg_pol[k]
-
-            objects[str(i)] = self.makemesh(i, v, e, p, m)
-
-        for ob, me in objects.values():
-            calcedg = False if (num_keys == 2) else True
-            me.update(calc_edges=calcedg)
-            bpy.context.scene.objects.link(ob)
-
-    def makemesh(self, i, v, e, p, m):
-        name = 'Sv_' + str(i)
-        me = bpy.data.meshes.new(name)
-        me.from_pydata(v, e, p)
-        ob = bpy.data.objects.new(name, me)
-        ob.matrix_world = m
-        ob.show_name = False
-        ob.hide_select = False
-        return ob, me
 
 
 class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
@@ -218,10 +145,11 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
         update=updateNode)
 
     def init(self, context):
-        self.inputs.new('VerticesSocket', 'vertices', 'vertices')
-        self.inputs.new('StringsSocket', 'edg_pol', 'edg_pol')
-        self.inputs.new('MatrixSocket', 'matrix', 'matrix')
         self.use_custom_color = True
+        self.inputs.new('VerticesSocket', 'vertices', 'vertices')
+        self.inputs.new('StringsSocket', 'edges', 'edges')
+        self.inputs.new('StringsSocket', 'faces', 'faces')
+        self.inputs.new('MatrixSocket', 'matrix', 'matrix')
 
     def draw_main_ui_elements(self, context, layout):
         view_icon = 'RESTRICT_VIEW_' + ('OFF' if self.activate else 'ON')
@@ -287,61 +215,92 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
     def copy(self, node):
         self.n_id = ''
 
+    def get_corrected_data(self, socket_name, socket_type):
+        inputs = self.inputs
+        socket = inputs[socket_name].links[0].from_socket
+        if isinstance(socket, socket_type):
+            socket_in = SvGetSocketAnyType(self, inputs[socket_name])
+            return dataCorrect(socket_in)
+        else:
+            return []
+
+    def get_geometry_from_sockets(self):
+        inputs = self.inputs
+        get_data = lambda s, t: self.get_corrected_data(s, t) if inputs[s].links else []
+
+        mverts = get_data('vertices', VerticesSocket)
+        mmtrix = get_data('matrix', MatrixSocket)
+        medges = get_data('edges', StringsSocket)
+        mfaces = get_data('faces', StringsSocket)
+        return mverts, medges, mfaces, mmtrix
+
+    def get_structure(self, stype, sindex):
+        if not stype:
+            return []
+
+        try:
+            j = stype[sindex]
+        except IndexError:
+            j = []
+        finally:
+            return j
+
+    def set_dormant_color(self):
+        self.color = (0.5, 0.5, 0.5)
+
     def update(self):
-        if 'matrix' not in self.inputs:
+        self.set_dormant_color()
+        callback_disable(node_id(self))
+
+        # explicit statement about which states are useful to process.
+
+        if not ('matrix' in self.inputs):
             return
 
         if not (self.id_data.sv_show and self.activate):
-            callback_disable(node_id(self))
             return
 
+        self.color = (1, 0.3, 0)
         self.process()
 
     def process(self):
         n_id = node_id(self)
-
-        global cache_viewer_baker
-        vertex_ref = n_id + 'v'
-        poledg_ref = n_id + 'ep'
-        matrix_ref = n_id + 'm'
-        cache_viewer_baker[vertex_ref] = []
-        cache_viewer_baker[poledg_ref] = []
-        cache_viewer_baker[matrix_ref] = []
-
         callback_disable(n_id)
 
-        # every time you hit a dot, you pay a price, so alias and benefit
-        inputs = self.inputs
-        vertex_links = inputs['vertices'].links
-        matrix_links = inputs['matrix'].links
-        edgepol_links = inputs['edg_pol'].links
+        mverts, *mrest = self.get_geometry_from_sockets()
 
-        if (vertex_links or matrix_links):
+        def get_edges_faces_matrices(obj_index):
+            for geom in mrest:
+                yield self.get_structure(geom, obj_index)
 
-            if vertex_links:
-                if isinstance(vertex_links[0].from_socket, VerticesSocket):
-                    propv = inputs['vertices'].sv_get()
-                    if propv:
-                        cache_viewer_baker[vertex_ref] = dataCorrect(propv)
+        # extend all non empty lists to longest of mverts or *mrest
+        maxlen = max(len(mverts), *(map(len, mrest)))
+        fullList(mverts, maxlen)
+        for idx in range(3):
+            if mrest[idx]:
+                fullList(mrest[idx], maxlen)
 
-            if edgepol_links:
-                if isinstance(edgepol_links[0].from_socket, StringsSocket):
-                    prope = inputs['edg_pol'].sv_get()
-                    if prope:
-                        cache_viewer_baker[poledg_ref] = dataCorrect(prope)
+        sender_dict = {}
+        for obj_index, Verts in enumerate(mverts):
+            data = get_edges_faces_matrices(obj_index)
+            if not (Verts or data[2]):  # verts or matrix
+                continue
 
-            if matrix_links:
-                if isinstance(matrix_links[0].from_socket, MatrixSocket):
-                    propm = inputs['matrix'].sv_get()
-                    if propm:
-                        cache_viewer_baker[matrix_ref] = dataCorrect(propm)
+            sender_dict[obj_index] = {
+                'verts': Verts,
+                'topology': data
+            }
 
-        if cache_viewer_baker[vertex_ref] or cache_viewer_baker[matrix_ref]:
-            config_options = self.get_options().copy()
-            callback_enable(n_id, cache_viewer_baker, config_options)
-            self.color = (1, 1, 1)
-        else:
+        if not sender_dict:
             self.color = (0.7, 0.7, 0.7)
+            return
+
+        global cache_viewer_baker
+        cache_viewer_baker[n_id + 'geom'] = sender_dict
+
+        config_options = self.get_options().copy()
+        callback_enable(n_id, cache_viewer_baker, config_options)
+        self.color = (1, 1, 1)
 
     def get_options(self):
         return {
@@ -368,12 +327,10 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
         global cache_viewer_baker
         n_id = node_id(self)
         callback_disable(n_id)
-        cache_viewer_baker.pop(n_id+'v', None)
-        cache_viewer_baker.pop(n_id+'ep', None)
-        cache_viewer_baker.pop(n_id+'m', None)
+        cache_viewer_baker.pop(n_id+'geom', None)
 
     def bake(self):
-        if self.activate and self.inputs['edg_pol'].is_linked:
+        if self.activate and self.inputs['vertices'].links:
             bake = bpy.ops.node.sverchok_mesh_baker_mk2
             bake(idname=self.name, idtree=self.id_data.name)
 
