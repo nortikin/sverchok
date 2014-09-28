@@ -163,10 +163,15 @@ def callback_disable(n_id):
 
 def get_color_from_normal(v, p, num_verts, vectorlight, colo):
     ''' v = vectors, p = this polygon '''
+    v0 = Vector(v[p[0]])
+    v1 = Vector(v[p[1]])
+    v2 = Vector(v[p[2]])
+
     if num_verts <= 4:
-        normal_no = normal(v[p[0]], v[p[1]], v[p[2]])
+        normal_no = normal(v0, v1, v2)
     else:
-        normal_no = normal(v[p[0]], v[p[1]], v[p[2]], v[p[3]])
+        v3 = Vector(v[p[3]])
+        normal_no = normal(v0, v1, v2, v3)
 
     normal_no = (normal_no.angle(vectorlight, 0)) / pi
 
@@ -275,7 +280,7 @@ def draw_geometry(n_id, options, geom_dict):
 
         if val['edges'] and show_edges:
             ''' add any new uniqe edges to mesh_edges dict '''
-            kb = {tuple(sorted((edge[0], edge[1]))) for edges in val['edges']}
+            kb = {tuple(sorted((edge[0], edge[1]))) for edge in val['edges']}
             mesh_edges.update(kb)
 
         if show_edges and mesh_edges:
