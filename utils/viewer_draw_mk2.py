@@ -244,6 +244,9 @@ def draw_geometry(n_id, options, geom_dict):
     for key, val in geom_dict.items():
         mesh_edges = set()
 
+        if len(val['verts'][-1]) > 3:
+            return
+
         # draw matrix representations, because no verts are passed.
         ''' matrix operations or drawing '''
 
@@ -296,7 +299,11 @@ def draw_geometry(n_id, options, geom_dict):
             glLineWidth(edge_width)
             glColor3f(*edge_colors)
             glBegin(GL_LINES)
-            for edge in mesh_edges:
+            num_verts = len(val['verts'])
+
+            # edges are sorted by index, edge[1] is highest.
+            safe = (edge for edge in mesh_edges if edge[1] < num_verts)
+            for edge in safe:
                 for p in edge:
                     glVertex3f(*(val['verts'][p]))
 
