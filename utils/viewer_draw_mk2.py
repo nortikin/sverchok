@@ -224,8 +224,7 @@ def draw_geometry(n_id, options, data_vector, data_polygons, data_matrix, data_e
     shade = options['shading']
 
     verlen = options['verlen']
-    if 'verlen_every' in options:
-        verlen_every = options['verlen_every']
+    max_verts_ = [len(d) for d in data_vector]
 
     if tran:
         polyholy = GL_POLYGON_STIPPLE
@@ -276,13 +275,12 @@ def draw_geometry(n_id, options, data_vector, data_polygons, data_matrix, data_e
 
         for i, matrix in enumerate(data_matrix):
             k = get_max_k(i, verlen)
-            max_verts = len(data_vector[k])
             mesh_edges = set()
 
             oblen = len(data_polygons[k])
             for j, pol in enumerate(data_polygons[k]):
 
-                if max(pol) >= max_verts:
+                if max(pol) >= max_verts_[k]:
                     continue
 
                 if show_faces:
@@ -321,19 +319,15 @@ def draw_geometry(n_id, options, data_vector, data_polygons, data_matrix, data_e
         for i, matrix in enumerate(data_matrix):
             k = get_max_k(i, verlen)
 
-            max_verts = len(data_vector[k])
             for line in data_edges[k]:
 
                 # i think this catches edges which refer to indices not present in
                 # the accompanying vertex list.
-                if max(line) >= max_verts:
-                    # print('max_verts=', max_verts-1, 'line=', line)
+                if max(line) >= max_verts_[k]:
                     continue
 
                 glBegin(edgeline)
                 for p in line:
-                    # print('p', p)
-                    # print('dvk', data_vector[k])
                     vec = data_matrix[i] * data_vector[k][p]
                     glVertex3f(*vec)
                 glEnd()
@@ -351,6 +345,10 @@ def draw_geometry(n_id, options, data_vector, data_polygons, data_matrix, data_e
 def draw_callback_view(n_id, cached_view, options):
 
     def Vector_generate2(prop):
+        # try:
+        #     return [[Vector(v[:3]) for v in obj] for obj in prop]
+        # except ValueEror:
+        #     return []
         return [[Vector(v[:3]) for v in obj] for obj in prop]
 
     # context = bpy.context
@@ -366,7 +364,6 @@ def draw_callback_view(n_id, cached_view, options):
         if sl1:
             data_vector = Vector_generate2(sl1)
             verlen = len(data_vector)-1
-            options['verlen_every'] = [len(d)-1 for d in data_vector]
         else:
             if not sl3:
                 # end early: no matrix and no vertices
