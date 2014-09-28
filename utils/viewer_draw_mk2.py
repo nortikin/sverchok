@@ -319,6 +319,9 @@ def draw_geometry(n_id, options, data_vector, data_polygons, data_matrix, data_e
         for i, matrix in enumerate(data_matrix):
             k = get_max_k(i, verlen)
 
+            if k >= len(data_edges):
+                continue
+
             for line in data_edges[k]:
 
                 # i think this catches edges which refer to indices not present in
