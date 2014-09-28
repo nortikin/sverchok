@@ -249,7 +249,7 @@ def draw_geometry(n_id, options, geom_dict):
                 continue
             else:
                 # multiply all vectors by a matrix
-                multiplied = [mat * Vector(v).xyz for v in val['verts']]
+                multiplied = [(mat * Vector(v)) for v in val['verts']]
                 val['verts'] = multiplied
 
         ''' polygons '''
@@ -286,7 +286,7 @@ def draw_geometry(n_id, options, geom_dict):
             glBegin(GL_LINES)
             for edge in mesh_edges:
                 for p in edge:
-                    glVertex3f(*val['verts'][p])
+                    glVertex3f(*(val['verts'][p]))
 
             glEnd()
             glDisable(edgeholy)
