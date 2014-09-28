@@ -271,24 +271,15 @@ def draw_geometry(n_id, options, geom_dict):
 
             glEnable(polyholy)
 
-            if (len(val['faces'][0]) >= 3) and (len(val['faces'][-1]) >= 3):
+            for j, pol in enumerate(val['faces']):
+                if show_faces:
+                    display_face(options, pol, val['verts'])
 
-                for j, pol in enumerate(val['faces']):
-                    if show_faces:
-                        display_face(options, pol, val['verts'])
-
-                    ''' collect implicit edges from faces, sorted by v index '''
-                    if show_edges:
-                        er = list(pol) + [pol[0]]
-                        kb = {tuple(sorted((e, er[i+1]))) for i, e in enumerate(er[:-1])}
-                        mesh_edges.update(kb)
-            else:
-                ''' just collect edges'''
+                ''' collect implicit edges from faces, sorted by v index '''
                 if show_edges:
-                    for j, pol in enumerate(val['faces']):
-                        er = list(pol) + [pol[0]]
-                        kb = {tuple(sorted((e, er[i+1]))) for i, e in enumerate(er[:-1])}
-                        mesh_edges.update(kb)
+                    er = list(pol) + [pol[0]]
+                    kb = {tuple(sorted((e, er[i+1]))) for i, e in enumerate(er[:-1])}
+                    mesh_edges.update(kb)
 
             glDisable(polyholy)
 
