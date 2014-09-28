@@ -247,7 +247,9 @@ def draw_geometry(n_id, options, geom_dict):
         if val['matrix']:
             print(val['matrix'])
 
-            continue
+            def Matrix_generate2(matrix):
+                return Matrix([Vector(m) for m in matrix])
+
             mat = Matrix_generate2(val['matrix'])
             val['matrix'] = mat
 
