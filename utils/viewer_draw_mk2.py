@@ -321,12 +321,14 @@ def draw_geometry(n_id, options, data_vector, data_polygons, data_matrix, data_e
         for i, matrix in enumerate(data_matrix):
             k = get_max_k(i, verlen)
 
+            max_verts = len(data_vector[k])
             for line in data_edges[k]:
 
                 # i think this catches edges which refer to indices not present in
                 # the accompanying vertex list.
-                if max(line) > verlen_every[k]:
-                    line = data_edges[k][-1]
+                if max(line) > max_verts:
+                    print('max_verts=', max_verts-1, 'line=', line)
+                    continue
 
                 glBegin(edgeline)
                 for p in line:
