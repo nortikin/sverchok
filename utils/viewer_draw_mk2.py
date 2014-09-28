@@ -276,14 +276,14 @@ def draw_geometry(n_id, options, data_vector, data_polygons, data_matrix, data_e
 
         for i, matrix in enumerate(data_matrix):
             k = get_max_k(i, verlen)
-
+            max_verts = len(data_vector[k])
             mesh_edges = set()
 
             oblen = len(data_polygons[k])
             for j, pol in enumerate(data_polygons[k]):
 
-                if max(pol) > verlen_every[k]:
-                    pol = data_edges[k][-1]
+                if max(pol) >= max_verts:
+                    continue
 
                 if show_faces:
                     display_face(options, pol, data_vector, data_matrix, k, i)
