@@ -260,7 +260,7 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
 
         # explicit statement about which states are useful to process.
 
-        if not ('matrix' in self.inputs):
+        if not len(self.inputs) == 4:
             return
 
         if not (self.id_data.sv_show and self.activate):
