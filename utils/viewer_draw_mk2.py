@@ -161,11 +161,12 @@ def callback_disable(n_id):
     tag_redraw_all_view3d()
 
 
-def get_color_from_normal(dvk, pol, num_verts, vectorlight, colo):
+def get_color_from_normal(v, p, num_verts, vectorlight, colo):
+    ''' v = vectors, p = this polygon '''
     if num_verts <= 4:
-        normal_no = normal(dvk[pol[0]], dvk[pol[1]], dvk[pol[2]])
+        normal_no = normal(v[p[0]], v[p[1]], v[p[2]])
     else:
-        normal_no = normal(dvk[pol[0]], dvk[pol[1]], dvk[pol[2]], dvk[pol[3]])
+        normal_no = normal(v[p[0]], v[p[1]], v[p[2]], v[p[3]])
 
     normal_no = (normal_no.angle(vectorlight, 0)) / pi
 
@@ -175,18 +176,17 @@ def get_color_from_normal(dvk, pol, num_verts, vectorlight, colo):
     return (r+0.2, g+0.2, b+0.2)
 
 
-def display_face(options, pol, data_vector, data_matrix, k, i):
+def display_face(options, pol, verts):
 
     colo = options['face_colors']
     shade = options['shading']
     forced_tessellation = options['forced_tessellation']
 
     num_verts = len(pol)
-    dvk = data_vector[k]
 
     if shade:
         vectorlight = options['light_direction']
-        face_color = get_color_from_normal(dvk, pol, num_verts, vectorlight, colo)
+        face_color = get_color_from_normal(verts, pol, num_verts, vectorlight, colo)
     else:
         face_color = colo[:]
 
@@ -195,26 +195,20 @@ def display_face(options, pol, data_vector, data_matrix, k, i):
     if (num_verts in {3, 4}) or (not forced_tessellation):
         glBegin(GL_POLYGON)
         for point in pol:
-            vec = data_matrix[i] * dvk[point]
-            glVertex3f(*vec)
+            glVertex3f(*verts[point])
         glEnd()
 
     else:
         ''' ngons, we tessellate '''
         glBegin(GL_TRIANGLES)
-        v = [dvk[i] for i in pol]
-        for pol in tessellate([v]):
-            for point in pol:
-                vec = data_matrix[i]*v[point]
-                glVertex3f(*vec)
+        ngon = [[verts[i] for i in pol]]
+        for trigon in tessellate(ngon):
+            for point in trigon:
+                glVertex3f(glVertex3f(*v[point]))
         glEnd()
 
 
-def processor(dvecs, dedges, dpoly, dmatrx):
-    pass
-
-
-def draw_geometry(n_id, options, data_vector, data_polygons, data_matrix, data_edges):
+def draw_geometry(n_id, options, geom_dict):
 
     show_verts = options['show_verts']
     show_edges = options['show_edges']
@@ -227,10 +221,6 @@ def draw_geometry(n_id, options, data_vector, data_polygons, data_matrix, data_e
     tran = options['transparent']
     shade = options['shading']
 
-    verlen = options['verlen']
-    if 'verlen_every' in options:
-        verlen_every = options['verlen_every']
-
     if tran:
         polyholy = GL_POLYGON_STIPPLE
         edgeholy = GL_LINE_STIPPLE
@@ -240,17 +230,112 @@ def draw_geometry(n_id, options, data_vector, data_polygons, data_matrix, data_e
         edgeholy = GL_LINE
         edgeline = GL_LINES
 
-    def get_max_k(i, verlen):
-        k = i
-        if i > verlen:
-            k = verlen
-        return k
+    all_verts = set()
 
-    # processed_geometry = processor(data_vector, data_edges, data_edges, data_matrix)
+    # doesn't need sorting.
+    for key, val in geom_dict.items():
+        mesh_edges = set()
 
-    ''' polygons '''
+        # draw matrix representations, because no verts are passed.
+        ''' matrix operations or drawing '''
 
- 
+        if val['matrix']:
+            mat = Matrix_generate(val['matrix'])
+            val['matrix'] = mat
+
+            if not val['verts']:
+                md = MatrixDraw()
+                md.draw_matrix(mat)
+                continue
+            else:
+                # multiply all vectors by a matrix
+                multiplied = [mat * Vector(v).xyz for v in val['verts']]
+                val['verts'] = multiplied
+
+        ''' polygons '''
+
+        if val['faces']:
+
+            glEnable(polyholy)
+
+            for j, pol in enumerate(val['faces']):
+
+                if show_faces:
+                    display_face(options, pol, val['verts'])
+
+                ''' collect implicit edges from faces, sorted by v index '''
+                if show_edges:
+                    er = list(pol) + [pol[0]]
+                    kb = {tuple(sorted((e, er[i+1]))) for i, e in enumerate(er[:-1])}
+                    mesh_edges.update(kb)
+
+            glDisable(polyholy)
+
+        ''' edges '''
+
+        if val['edges'] and show_edges:
+            ''' add any new uniqe edges to mesh_edges dict '''
+            kb = {tuple(sorted((edge[0], edge[1]))) for edges in val['edges']}
+            mesh_edges.update(kb)
+
+        if show_edges and mesh_edges:
+            # glHint(GL_LINE_SMOOTH_HINT, GL_NICEST)
+            glEnable(edgeholy)
+            glLineWidth(edge_width)
+            glColor3f(*edge_colors)
+            glBegin(GL_LINES)
+            for edge in mesh_edges:
+                for p in edge:
+                    glVertex3f(*val['verts'][p])
+
+            glEnd()
+            glDisable(edgeholy)
+
+        ''' vertices '''
+
+        glEnable(GL_POINT_SIZE)
+        glEnable(GL_POINT_SMOOTH)
+        glHint(GL_POINT_SMOOTH_HINT, GL_NICEST)
+        # ---- glHint(GL_POINT_SMOOTH_HINT, GL_FASTEST)
+
+        vsize = options['vertex_size']
+
+        if show_verts and val['verts']:
+            all_verts.update({vec.xyz[:] for vec in val['verts']})
+
+    if show_verts and all_verts:
+
+        glPointSize(vsize)
+        glColor3f(*vertex_colors)
+        glBegin(GL_POINTS)
+
+        for vec in all_verts:
+            glVertex3f(*vec)
+
+        glEnd()
+
+    glDisable(GL_POINT_SIZE)
+    glDisable(GL_POINT_SMOOTH)
+
+
+def draw_callback_view(n_id, cached_view, options):
+    # context = bpy.context
+    if options["timings"]:
+        start = time.perf_counter()
+
+    if options['draw_list'] == 0:
+        geom_dict = cached_view[n_id + 'geom']
+
+        the_display_list = glGenLists(1)
+        if true:
+            glNewList(the_display_list, GL_COMPILE)
+            draw_geometry(n_id, options, geom_dict)
+        glEndList()
+
+        options['genlist'] = the_display_list
+
+    elif options['draw_list'] == 1:
+        the_display_list = options['genlist']
 
     glCallList(the_display_list)
     glFlush()

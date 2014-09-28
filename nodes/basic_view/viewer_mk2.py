@@ -282,23 +282,20 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
 
         sender_dict = {}
         for obj_index, Verts in enumerate(mverts):
-            data = get_edges_faces_matrices(obj_index)
-            if not (Verts or data[2]):  # verts or matrix
+            e, f, m = get_edges_faces_matrices(obj_index)
+            if not (Verts or m):  # verts or matrix
                 continue
 
             sender_dict[obj_index] = {
-                'verts': Verts,
-                'topology': data
-            }
+                'verts': Verts, 'edges': e, 'faces': f, 'matrix': m}
 
         if not sender_dict:
             self.color = (0.7, 0.7, 0.7)
             return
 
         global cache_viewer_baker
-        cache_viewer_baker[n_id + 'geom'] = sender_dict
-
         config_options = self.get_options().copy()
+        cache_viewer_baker[n_id + 'geom'] = sender_dict
         callback_enable(n_id, cache_viewer_baker, config_options)
         self.color = (1, 1, 1)
 
