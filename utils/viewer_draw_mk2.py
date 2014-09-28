@@ -242,6 +242,34 @@ def draw_geometry(n_id, options, data_vector, data_polygons, data_matrix, data_e
             k = verlen
         return k
 
+    ''' vertices '''
+
+    glEnable(GL_POINT_SIZE)
+    glEnable(GL_POINT_SMOOTH)
+    glHint(GL_POINT_SMOOTH_HINT, GL_NICEST)
+    # glHint(GL_POINT_SMOOTH_HINT, GL_FASTEST)
+
+    vsize = options['vertex_size']
+
+    if show_verts and data_vector:
+
+        glPointSize(vsize)
+        glColor3f(*vertex_colors)
+        glBegin(GL_POINTS)
+
+        for i, matrix in enumerate(data_matrix):
+            k = get_max_k(i, verlen)
+            for vert in data_vector[k]:
+                if len(vert) > 3:
+                    return                    # end early
+                vec = data_matrix[i] * vert
+                glVertex3f(*vec)
+
+        glEnd()
+
+    glDisable(GL_POINT_SIZE)
+    glDisable(GL_POINT_SMOOTH)
+
     ''' polygons '''
 
     if data_polygons and data_vector:
@@ -309,33 +337,6 @@ def draw_geometry(n_id, options, data_vector, data_polygons, data_matrix, data_e
                 glEnd()
 
         glDisable(edgeholy)
-
-    ''' vertices '''
-
-    glEnable(GL_POINT_SIZE)
-    glEnable(GL_POINT_SMOOTH)
-    glHint(GL_POINT_SMOOTH_HINT, GL_NICEST)
-    # glHint(GL_POINT_SMOOTH_HINT, GL_FASTEST)
-
-    vsize = options['vertex_size']
-
-    if show_verts and data_vector:
-
-        glPointSize(vsize)
-        glColor3f(*vertex_colors)
-        glBegin(GL_POINTS)
-
-        for i, matrix in enumerate(data_matrix):
-
-            k = get_max_k(i, verlen)
-            for vert in data_vector[k]:
-                vec = data_matrix[i] * vert
-                glVertex3f(*vec)
-
-        glEnd()
-
-    glDisable(GL_POINT_SIZE)
-    glDisable(GL_POINT_SMOOTH)
 
     ''' matrix '''
 
