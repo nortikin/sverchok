@@ -168,7 +168,7 @@ def make_categories():
 
     node_cats["Beta test"] = [
         # for testing convenience,
-        # ["ViewerNode2",          "Viewer draw MK2"],  investigationg serious crash - brb
+        ["ViewerNode2",         "Viewer draw MK2"],  # investigationg serious crash
         ["SvStethoscopeNode",   "Stethoscope"],
         ["SvOffsetNode",        "Offset"],
         ["SvEmptyOutNode",      "Empty out"],
@@ -202,5 +202,3 @@ def make_categories():
         howmanynodesare += len(nodes)
 
     return node_categories, howmanynodesare
-
-

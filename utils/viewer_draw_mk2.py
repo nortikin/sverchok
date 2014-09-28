@@ -242,6 +242,32 @@ def draw_geometry(n_id, options, data_vector, data_polygons, data_matrix, data_e
             k = verlen
         return k
 
+    ''' vertices '''
+
+    glEnable(GL_POINT_SIZE)
+    glEnable(GL_POINT_SMOOTH)
+    glHint(GL_POINT_SMOOTH_HINT, GL_NICEST)
+    # glHint(GL_POINT_SMOOTH_HINT, GL_FASTEST)
+
+    vsize = options['vertex_size']
+
+    if show_verts and data_vector:
+
+        glPointSize(vsize)
+        glColor3f(*vertex_colors)
+        glBegin(GL_POINTS)
+
+        for i, matrix in enumerate(data_matrix):
+            k = get_max_k(i, verlen)
+            for vert in data_vector[k]:
+                vec = data_matrix[i] * vert
+                glVertex3f(*vec)
+
+        glEnd()
+
+    glDisable(GL_POINT_SIZE)
+    glDisable(GL_POINT_SMOOTH)
+
     ''' polygons '''
 
     if data_polygons and data_vector:
@@ -250,14 +276,14 @@ def draw_geometry(n_id, options, data_vector, data_polygons, data_matrix, data_e
 
         for i, matrix in enumerate(data_matrix):
             k = get_max_k(i, verlen)
-
+            max_verts = len(data_vector[k])
             mesh_edges = set()
 
             oblen = len(data_polygons[k])
             for j, pol in enumerate(data_polygons[k]):
 
-                if max(pol) > verlen_every[k]:
-                    pol = data_edges[k][-1]
+                if max(pol) >= max_verts:
+                    continue
 
                 if show_faces:
                     display_face(options, pol, data_vector, data_matrix, k, i)
@@ -295,47 +321,24 @@ def draw_geometry(n_id, options, data_vector, data_polygons, data_matrix, data_e
         for i, matrix in enumerate(data_matrix):
             k = get_max_k(i, verlen)
 
+            max_verts = len(data_vector[k])
             for line in data_edges[k]:
 
                 # i think this catches edges which refer to indices not present in
                 # the accompanying vertex list.
-                if max(line) > verlen_every[k]:
-                    line = data_edges[k][-1]
+                if max(line) >= max_verts:
+                    # print('max_verts=', max_verts-1, 'line=', line)
+                    continue
 
                 glBegin(edgeline)
                 for p in line:
+                    # print('p', p)
+                    # print('dvk', data_vector[k])
                     vec = data_matrix[i] * data_vector[k][p]
                     glVertex3f(*vec)
                 glEnd()
 
         glDisable(edgeholy)
-
-    ''' vertices '''
-
-    glEnable(GL_POINT_SIZE)
-    glEnable(GL_POINT_SMOOTH)
-    glHint(GL_POINT_SMOOTH_HINT, GL_NICEST)
-    # glHint(GL_POINT_SMOOTH_HINT, GL_FASTEST)
-
-    vsize = options['vertex_size']
-
-    if show_verts and data_vector:
-
-        glPointSize(vsize)
-        glColor3f(*vertex_colors)
-        glBegin(GL_POINTS)
-
-        for i, matrix in enumerate(data_matrix):
-
-            k = get_max_k(i, verlen)
-            for vert in data_vector[k]:
-                vec = data_matrix[i] * vert
-                glVertex3f(*vec)
-
-        glEnd()
-
-    glDisable(GL_POINT_SIZE)
-    glDisable(GL_POINT_SMOOTH)
 
     ''' matrix '''
 
@@ -346,6 +349,10 @@ def draw_geometry(n_id, options, data_vector, data_polygons, data_matrix, data_e
 
 
 def draw_callback_view(n_id, cached_view, options):
+
+    def Vector_generate2(prop):
+        return [[Vector(v[:3]) for v in obj] for obj in prop]
+
     # context = bpy.context
     if options["timings"]:
         start = time.perf_counter()
@@ -357,7 +364,7 @@ def draw_callback_view(n_id, cached_view, options):
         sl3 = cached_view[n_id + 'm']
 
         if sl1:
-            data_vector = Vector_generate(sl1)
+            data_vector = Vector_generate2(sl1)
             verlen = len(data_vector)-1
             options['verlen_every'] = [len(d)-1 for d in data_vector]
         else:
