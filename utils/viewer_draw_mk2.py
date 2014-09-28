@@ -301,7 +301,7 @@ def draw_geometry(n_id, options, geom_dict):
         vsize = options['vertex_size']
 
         if show_verts and val['verts']:
-            all_verts.update({val['verts']})
+            all_verts.update({tuple(v) for v in val['verts']})
 
     if show_verts and all_verts:
 
