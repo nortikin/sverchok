@@ -175,7 +175,7 @@ def get_color_from_normal(dvk, pol, num_verts, vectorlight, colo):
     return (r+0.2, g+0.2, b+0.2)
 
 
-def display_face(options, pol, data_vector, data_matrix, k, i):
+def display_face(options, pol, data_vector, k, i):
 
     colo = options['face_colors']
     shade = options['shading']
@@ -195,18 +195,16 @@ def display_face(options, pol, data_vector, data_matrix, k, i):
     if (num_verts in {3, 4}) or (not forced_tessellation):
         glBegin(GL_POLYGON)
         for point in pol:
-            vec = data_matrix[i] * dvk[point]
-            glVertex3f(*vec)
+            glVertex3f(*dvk[point])
         glEnd()
 
     else:
         ''' ngons, we tessellate '''
         glBegin(GL_TRIANGLES)
-        v = [dvk[i] for i in pol]
+        v = [dvk[j] for j in pol]
         for pol in tessellate([v]):
             for point in pol:
-                vec = data_matrix[i]*v[point]
-                glVertex3f(*vec)
+                glVertex3f(*v[point])
         glEnd()
 
 
@@ -242,16 +240,28 @@ def draw_geometry(n_id, options, data_vector, data_polygons, data_matrix, data_e
             k = verlen
         return k
 
-    ''' vertices '''
+    ''' matrix '''
 
-    glEnable(GL_POINT_SIZE)
-    glEnable(GL_POINT_SMOOTH)
-    glHint(GL_POINT_SMOOTH_HINT, GL_NICEST)
-    # glHint(GL_POINT_SMOOTH_HINT, GL_FASTEST)
+    if data_matrix and not data_vector:
+        md = MatrixDraw()
+        for mat in data_matrix:
+            md.draw_matrix(mat)
 
-    vsize = options['vertex_size']
+    ''' vertices
+
+    this if-elif determines two very different execution paths, they are
+    mutually exclusive. Both perform in-place m*v , so it can be avoided lateron.
+
+    '''
 
     if show_verts and data_vector:
+
+        glEnable(GL_POINT_SIZE)
+        glEnable(GL_POINT_SMOOTH)
+        glHint(GL_POINT_SMOOTH_HINT, GL_NICEST)
+        # glHint(GL_POINT_SMOOTH_HINT, GL_FASTEST)
+
+        vsize = options['vertex_size']
 
         glPointSize(vsize)
         glColor3f(*vertex_colors)
@@ -259,16 +269,26 @@ def draw_geometry(n_id, options, data_vector, data_polygons, data_matrix, data_e
 
         for i, matrix in enumerate(data_matrix):
             k = get_max_k(i, verlen)
-            for vert in data_vector[k]:
+            for idx, vert in enumerate(data_vector[k]):
                 if len(vert) > 3:
                     return                    # end early
                 vec = data_matrix[i] * vert
+                data_vector[k][idx] = vec
                 glVertex3f(*vec)
 
         glEnd()
 
-    glDisable(GL_POINT_SIZE)
-    glDisable(GL_POINT_SMOOTH)
+        glDisable(GL_POINT_SIZE)
+        glDisable(GL_POINT_SMOOTH)
+
+    elif ((not show_verts) and data_vector):
+
+        for i, matrix in enumerate(data_matrix):
+            k = get_max_k(i, verlen)
+            for idx, vert in enumerate(data_vector[k]):
+                if len(vert) > 3:
+                    return                    # end early
+                data_vector[k][idx] = data_matrix[i] * vert
 
     ''' polygons '''
 
@@ -288,7 +308,7 @@ def draw_geometry(n_id, options, data_vector, data_polygons, data_matrix, data_e
                     pol = data_edges[k][-1]
 
                 if show_faces:
-                    display_face(options, pol, data_vector, data_matrix, k, i)
+                    display_face(options, pol, data_vector, k, i)
 
                 # collect raw edges, sort by index, use set to prevent dupes.
                 if show_edges:
@@ -304,8 +324,7 @@ def draw_geometry(n_id, options, data_vector, data_polygons, data_matrix, data_e
                 glBegin(GL_LINES)
                 for edge in mesh_edges:
                     for p in edge:
-                        vec = data_matrix[i] * data_vector[k][p]
-                        glVertex3f(*vec)
+                        glVertex3f(*data_vector[k][p])
 
                 glEnd()
                 glDisable(edgeholy)
@@ -332,18 +351,10 @@ def draw_geometry(n_id, options, data_vector, data_polygons, data_matrix, data_e
 
                 glBegin(edgeline)
                 for p in line:
-                    vec = data_matrix[i] * data_vector[k][p]
-                    glVertex3f(*vec)
+                    glVertex3f(*data_vector[k][p])
                 glEnd()
 
         glDisable(edgeholy)
-
-    ''' matrix '''
-
-    if data_matrix and not data_vector:
-        md = MatrixDraw()
-        for mat in data_matrix:
-            md.draw_matrix(mat)
 
 
 def draw_callback_view(n_id, cached_view, options):
