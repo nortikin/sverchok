@@ -245,7 +245,10 @@ def draw_geometry(n_id, options, geom_dict):
         ''' matrix operations or drawing '''
 
         if val['matrix']:
-            mat = Matrix_generate(val['matrix'])
+            print(val['matrix'])
+
+            continue
+            mat = Matrix_generate2(val['matrix'])
             val['matrix'] = mat
 
             if not val['verts']:
