@@ -326,12 +326,14 @@ def draw_geometry(n_id, options, data_vector, data_polygons, data_matrix, data_e
 
                 # i think this catches edges which refer to indices not present in
                 # the accompanying vertex list.
-                if max(line) > max_verts:
-                    print('max_verts=', max_verts-1, 'line=', line)
+                if max(line) >= max_verts:
+                    # print('max_verts=', max_verts-1, 'line=', line)
                     continue
 
                 glBegin(edgeline)
                 for p in line:
+                    # print('p', p)
+                    # print('dvk', data_vector[k])
                     vec = data_matrix[i] * data_vector[k][p]
                     glVertex3f(*vec)
                 glEnd()
