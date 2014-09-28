@@ -29,7 +29,8 @@ from node_tree import (
 
 from data_structure import (
     cache_viewer_baker, node_id, updateNode, dataCorrect,
-    Vector_generate, Matrix_generate, SvGetSocketAnyType)
+    Vector_generate, Matrix_generate, SvGetSocketAnyType,
+    fullList)
 
 from utils.viewer_draw_mk2 import callback_disable, callback_enable
 # from nodes.basic_view.viewer import SvObjBake
@@ -248,6 +249,11 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
     def set_dormant_color(self):
         self.color = (0.5, 0.5, 0.5)
 
+    def set_alive_color(self):
+        # that red/orange is quite an agrivating colour. (don't ask me why, ask my brain)
+        # I think it is obvious that this is the draw node, because it has colours.
+        self.color = (0.7, 0.7, 0.7)
+
     def update(self):
         self.set_dormant_color()
         callback_disable(node_id(self))
@@ -260,7 +266,7 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
         if not (self.id_data.sv_show and self.activate):
             return
 
-        self.color = (1, 0.3, 0)
+        self.set_alive_color()
         self.process()
 
     def process(self):
@@ -290,14 +296,13 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
                 'verts': Verts, 'edges': e, 'faces': f, 'matrix': m}
 
         if not sender_dict:
-            self.color = (0.7, 0.7, 0.7)
+            self.set_dormant_color()
             return
 
         global cache_viewer_baker
         config_options = self.get_options().copy()
         cache_viewer_baker[n_id + 'geom'] = sender_dict
         callback_enable(n_id, cache_viewer_baker, config_options)
-        self.color = (1, 1, 1)
 
     def get_options(self):
         return {

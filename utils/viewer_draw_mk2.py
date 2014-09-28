@@ -327,9 +327,8 @@ def draw_callback_view(n_id, cached_view, options):
         geom_dict = cached_view[n_id + 'geom']
 
         the_display_list = glGenLists(1)
-        if true:
-            glNewList(the_display_list, GL_COMPILE)
-            draw_geometry(n_id, options, geom_dict)
+        glNewList(the_display_list, GL_COMPILE)
+        draw_geometry(n_id, options, geom_dict)
         glEndList()
 
         options['genlist'] = the_display_list
