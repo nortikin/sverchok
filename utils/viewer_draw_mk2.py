@@ -260,8 +260,6 @@ def draw_geometry(n_id, options, data_vector, data_polygons, data_matrix, data_e
         for i, matrix in enumerate(data_matrix):
             k = get_max_k(i, verlen)
             for vert in data_vector[k]:
-                if len(vert) > 3:
-                    return                    # end early
                 vec = data_matrix[i] * vert
                 glVertex3f(*vec)
 
@@ -347,6 +345,10 @@ def draw_geometry(n_id, options, data_vector, data_polygons, data_matrix, data_e
 
 
 def draw_callback_view(n_id, cached_view, options):
+
+    def Vector_generate2(prop):
+        return [[Vector(v[:3]) for v in obj] for obj in prop]
+
     # context = bpy.context
     if options["timings"]:
         start = time.perf_counter()
@@ -358,7 +360,7 @@ def draw_callback_view(n_id, cached_view, options):
         sl3 = cached_view[n_id + 'm']
 
         if sl1:
-            data_vector = Vector_generate(sl1)
+            data_vector = Vector_generate2(sl1)
             verlen = len(data_vector)-1
             options['verlen_every'] = [len(d)-1 for d in data_vector]
         else:
