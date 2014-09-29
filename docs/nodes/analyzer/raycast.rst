@@ -12,32 +12,32 @@ Ray is casted from "start" vector to "end" vector and can hit polygons of mesh o
 Input sockets
 -------------
 
-**Start** - vertices ...
+**Start** - "start" vectors
 
-**End** - vertices ...
+**End** - "end" vectors
 
 Parameters
 ----------
 
-**object name** - name of object to analize
+**object name** - name of object to analize. (For "object_space" mode only)
 
-**match case** - enumerate property popup list ...
+**raycast modes** - in "object_space" mode: node works like "bpy.types.Object.ray_cast" (origin of object- center of coordinate for START&END). In "world_space" mode: node works like "bpy.types.Scene.ray_cast".
 
-**iterations** - enumerate property popup list ...
+**iteration modes** - method that achieve the same amount of START and END vectors. "match short"- cuts that list that was longer, "match long repeat"- repeats the last element of the list that was shorter
 
 
 Output sockets
 --------------
 
-**Hitp** - vertices ...
+**Hitp** - hit location for every raycast
 
-**Hitnorm** - vertices ...
+**Hitnorm** - normal of hited polygon (in "object_space" mode- local coordinates, in "world_space"- global)
 
-**Index** - indexes ...
+**Index/succes** - for "object_space" mode- index of hited polygon. For "world_space" mode- TRUE if ray hited mesh object, otherwise FALSE.
 
-**data object** - vertices ...
+**data object** - bpy.data.objects[hited object] or NONE type if ray doesnt hit mesh object. (only in "world_space" mode)
 
-**hitted object matrix** - matrix ...
+**hitted object matrix** - matrix of hited object. (only in "world_space" mode)
 
 
 Usage
