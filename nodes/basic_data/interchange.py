@@ -235,6 +235,7 @@ def import_tree(ng, fullpath):
 
             if (node.bl_idname == 'SvScriptNode'):
                 new_text = bpy.data.texts.new(node.script_name)
+                # maybe have to adjust to new.text.name if it is different
                 new_text.from_string(node.script_str)
                 node.load()
 
