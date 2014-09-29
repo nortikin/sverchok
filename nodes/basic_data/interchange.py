@@ -116,12 +116,19 @@ def create_dict_of_tree(ng):
         node_items = {}
         node_enums = find_enumerators(node)
 
+        ObjectsNode = (node.bl_idname == 'ObjectsNode')
+
         for k, v in node.items():
+
             if k in {'typ', 'newsock'}:
                 ''' these are reserved variables for changeable socks '''
                 continue
 
             if has_state_switch_protection(node, k):
+                continue
+
+            # this silences the import error when items now found.
+            if ObjectsNode and (k == "objects_local"):
                 continue
 
             if isinstance(v, (float, int, str)):
