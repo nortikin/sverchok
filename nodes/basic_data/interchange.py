@@ -233,6 +233,11 @@ def import_tree(ng, fullpath):
             node.hide = node_ref['hide']
             node.color = node_ref['color']
 
+            if (node.bl_idname == 'SvScriptNode'):
+                new_text = bpy.data.texts.new(node.script_name)
+                new_text.from_string(node.script_str)
+                node.load()
+
         update_lists = nodes_json['update_lists']
         print('update lists:')
         for ulist in update_lists:
