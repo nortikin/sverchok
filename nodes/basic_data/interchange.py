@@ -34,7 +34,30 @@ from node_tree import SverchCustomTree
 from node_tree import SverchCustomTreeNode
 
 
-_EXPORTER_REVISION_ = '0.035 pre alpha'
+_EXPORTER_REVISION_ = '0.036 pre alpha'
+
+
+def get_file_obj(fullpath):
+    '''
+    usage:
+        nodes_json = get_file_obj(fullpath)
+        print(nodes_json['export_version'])
+    '''
+    with zipfile.ZipFile(fullpath, "r") as jfile:
+        exported_name = ""
+        for name in jfile.namelist():
+            if name.endswith('.json'):
+                exported_name = name
+                break
+
+        if not exported_name:
+            print('zip contains no files ending with .json')
+            return
+
+        print(exported_name, '<')
+        fp = jfile.open(exported_name, 'r')
+        m = fp.read().decode()
+        return json.loads(m)
 
 
 def find_enumerators(node):
@@ -166,11 +189,7 @@ def import_tree(ng, fullpath):
         return (ng.nodes[from_node].outputs[from_socket],
                 ng.nodes[to_node].inputs[to_socket])
 
-    # deal with zip here
-
-    with open(fullpath) as fp:
-        nodes_json = json.load(fp)
-
+    def generate_layout(fullpath, nodes_json):
         print('#'*12, nodes_json['export_version'])
 
         ''' first create all nodes. '''
@@ -233,6 +252,17 @@ def import_tree(ng, fullpath):
             ng.nodes[node_name].parent = ng.nodes[parent]
 
         bpy.ops.node.sverchok_update_current(node_group=ng.name)
+
+    ''' ---- read .json or .zip ----- '''
+
+    if fullpath.endswith('.zip'):
+        nodes_json = get_file_obj(fullpath)
+        generate_layout(fullpath, nodes_json)
+
+    elif fullpath.endswith('.json'):
+        with open(fullpath) as fp:
+            nodes_json = json.load(fp)
+            generate_layout(fullpath, nodes_json)
 
 
 class SvNodeTreeExporter(bpy.types.Operator):
