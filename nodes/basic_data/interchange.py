@@ -20,11 +20,14 @@ import json
 import os
 import re
 import traceback
+from os.path import basename
+from zipfile import ZipFile
 from itertools import chain
 
 import bpy
 from bpy.types import EnumProperty
 from bpy.props import StringProperty
+from bpy.props import BoolProperty
 from node_tree import SverchCustomTree
 from node_tree import SverchCustomTreeNode
 
@@ -161,6 +164,8 @@ def import_tree(ng, fullpath):
         return (ng.nodes[from_node].outputs[from_socket],
                 ng.nodes[to_node].inputs[to_socket])
 
+    # deal with zip here
+
     with open(fullpath) as fp:
         nodes_json = json.load(fp)
 
@@ -244,6 +249,7 @@ class SvNodeTreeExporter(bpy.types.Operator):
         options={'HIDDEN'})
 
     id_tree = StringProperty()
+    compress = BoolProperty()
 
     def execute(self, context):
         ng = bpy.data.node_groups[self.id_tree]
@@ -265,6 +271,14 @@ class SvNodeTreeExporter(bpy.types.Operator):
         msg = 'exported to: ' + destination_path
         self.report({"INFO"}, msg)
         print(msg)
+
+        if self.compress:
+            zipname = destination_path + ".zip"
+            comp_mode = zipfile.ZIP_BZIP2
+            with ZipFile(zipname, 'w', compression=comp_mode) as myzip:
+                myzip.write(destination_path, arcname=basename(destination_path))
+                print('wrote:', zipname)
+
         return {'FINISHED'}
 
     def invoke(self, context, event):
@@ -319,14 +333,22 @@ class SvImportExport(bpy.types.Node, SverchCustomTreeNode):
         name='new_nodetree_name',
         default="ImportedNodeTree")
 
+    compress_output = BoolProperty(
+        default=0,
+        name='compress_output',
+        description='option to also compress')
+
     def init(self, context):
         pass
 
     def draw_buttons(self, context, layout):
+        col = layout.column(align=True)
+        col.prop(self, 'compress_output', text='compress output')
+        col.separator()
 
         ''' export '''
 
-        col = layout.column(align=True)
+        # col = layout.column(align=True)
         box1 = col.box()
         box1.label('pick file name and location')
         imp = box1.operator(
@@ -334,6 +356,7 @@ class SvImportExport(bpy.types.Node, SverchCustomTreeNode):
             text='export current',
             icon='FILE_BACKUP')
         imp.id_tree = self.id_data.name
+        imp.compress = self.compress_output
 
         ''' import '''
 
