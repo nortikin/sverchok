@@ -34,7 +34,7 @@ from node_tree import SverchCustomTree
 from node_tree import SverchCustomTreeNode
 
 
-_EXPORTER_REVISION_ = '0.036 pre alpha'
+_EXPORTER_REVISION_ = '0.037 pre alpha - no n_id'
 
 
 def get_file_obj(fullpath):
