@@ -19,9 +19,11 @@
 import json
 import os
 import re
+import zipfile
 import traceback
+
 from os.path import basename
-from zipfile import ZipFile
+from os.path import dirname
 from itertools import chain
 
 import bpy
@@ -273,11 +275,17 @@ class SvNodeTreeExporter(bpy.types.Operator):
         print(msg)
 
         if self.compress:
-            zipname = destination_path + ".zip"
-            comp_mode = zipfile.ZIP_BZIP2
-            with ZipFile(zipname, 'w', compression=comp_mode) as myzip:
-                myzip.write(destination_path, arcname=basename(destination_path))
-                print('wrote:', zipname)
+            comp_mode = zipfile.ZIP_DEFLATED
+
+            # destination path = /a../b../c../somename.json
+            base = basename(destination_path)  # somename.json
+            basedir = dirname(destination_path)  # /a../b../c../
+            final_archivename = base.replace('.json', '') + '.zip'  # somename.zip
+            fullpath = os.path.join(basedir, final_archivename)  # /a../b../c../somename.zip
+
+            with zipfile.ZipFile(fullpath, 'w', compression=comp_mode) as myzip:
+                myzip.write(destination_path, arcname=base)
+                print('wrote:', final_archivename)
 
         return {'FINISHED'}
 
