@@ -120,6 +120,11 @@ def create_dict_of_tree(ng):
 
         for k, v in node.items():
 
+            if k == 'n_id':
+                # used to store the hash of the current Node,
+                # this is created along with the Node anyway. skip.
+                continue
+
             if k in {'typ', 'newsock'}:
                 ''' these are reserved variables for changeable socks '''
                 continue
