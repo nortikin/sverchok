@@ -6,6 +6,8 @@ Viewer Draw MKII
 Functionality
 -------------
 
+.. image:: https://cloud.githubusercontent.com/assets/619340/4320381/e0cd62b6-3f36-11e4-88ff-29eb165c72ad.png
+
 Built on the core of the original ViewerDraw, this version allows all of the following features.
 
 - Vertex Size (via N-Panel)
@@ -42,7 +44,7 @@ Some info here.
 +----------+--------------------------------------------------------------------------------------+
 | Feature  | info                                                                                 |
 +==========+======================================================================================+
-| verts    | verts list of nested verts list.                                                     |
+| verts    | verts list or nested verts list.                                                     |
 +----------+--------------------------------------------------------------------------------------+
 | edge_pol | edge lists or polygon lists, if the first member of any atomic list has two keys,    |
 |          | the rest of the list is considered edges. If it finds 3 keys it assumes Faces.       |
