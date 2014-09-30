@@ -8,16 +8,16 @@ Functionality
 
 Built on the core of the original ViewerDraw, this version allows all of the following features.
 
-- Vertex Size
+- Vertex Size (via N-Panel)
 - Vertex Color
-- Edge Width
+- Edge Width (via N-Panel)
 - Edge Color
 - Face shading: Flat vs Normal
 - Vertex, Edges, Faces displays can be toggled.
-- Defining Normal of Brigtness Source (N panel)
+- Defining Normal of Brigtness Source (via N-Panel)
 - ``Faux Transparancy`` via dotted edges or checkered polygons.
-- optional forced tesselation 
-- bake and bake all.
+- optional forced tesselation (via N-Panel) 
+- bake and bake all. (via N-Panel, show bake interface is not on by default)
 
 **draws using display lists**
 
@@ -58,8 +58,16 @@ Some info here.
 Outputs
 -------
 
+Directly to 3d view. Baking produces proper meshes and objects.
+
+
 Examples
 --------
+
+development thread: `has examples <https://github.com/nortikin/sverchok/issues/401>`_
+
+.. image:: https://cloud.githubusercontent.com/assets/619340/4265296/4c9c2fb4-3c48-11e4-8999-051c56511720.png
+
 
 Notes
 -----
