@@ -1,5 +1,5 @@
 Viewer Draw MKII
-===========
+================
 
 *destination after Beta: basic view*
 
@@ -26,18 +26,26 @@ Inputs
 
 verts + edg_pol + matrices
 
+
 Parameters
 ----------
 
-========= ================
-Feature   info
-========= ================
-verts     verts list of nested verts list.
---------- ----------------
-edge_pol  edge lists or polygon lists, if the first member of any atomic list has two keys, the rest of the list is considered edges. If it finds 3 keys it assumes Faces. Some of the slowness in the algorithm is down to actively preventing invalid key access if you accidentally mix edges+faces input.
---------- ----------------
-matrices  matrices can multiply the incoming vert+edg_pol geometry. 1 set of vert+edges can be turned into 20 'clones' by passing 20 matrices. See example
---------- ----------------
+Some info here.
+
++----------+--------------------------------------------------------------------------------------+
+| Feature  | info                                                                                 |
++==========+======================================================================================+
+| verts    | verts list of nested verts list.                                                     |
++----------+--------------------------------------------------------------------------------------+
+| edge_pol | edge lists or polygon lists, if the first member of any atomic list has two keys,    |
+|          | the rest of the list is considered edges. If it finds 3 keys it assumes Faces.       |
+|          | Some of the slowness in the algorithm is down to actively preventing invalid key     |
+|          | access if you accidentally mix edges+faces input.                                    |
++----------+--------------------------------------------------------------------------------------+
+| matrices | matrices can multiply the incoming vert+edg_pol geometry. 1 set of vert+edges can be |
+|          | turned into 20 'clones' by passing 20 matrices. See example                          |
++----------+--------------------------------------------------------------------------------------+
+
 
 
 Outputs
