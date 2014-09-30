@@ -16,10 +16,17 @@ Built on the core of the original ViewerDraw, this version allows all of the fol
 - Vertex, Edges, Faces displays can be toggled.
 - Defining Normal of Brigtness Source (N panel)
 - ``Faux Transparancy`` via dotted edges or checkered polygons.
+- optional forced tesselation 
 - bake and bake all.
 
-Uses OpenGL display list to cache the drawing function. This optimizes viewport rotation speeds and behaviour. 
-Changing the geometry clears the display cache, with big geometry inputs you may notice some lag on the intial draw + cache.
+**draws using display lists**
+
+Uses OpenGL display list to cache the drawing function. This optimizes for rotating the viewport around static geometry. Changing the geometry clears the display cache, with big geometry inputs you may notice some lag on the intial draw + cache.
+
+**forced tesselation**
+
+Allows better display for concave polygons, by turning all faces with more than 4 verts into triangles. In this mode Edges will still draw
+the boundary of the original polygon and not the new tesselated polygon edges.
 
 Inputs
 ------
@@ -56,3 +63,10 @@ Examples
 
 Notes
 -----
+
+**Tips on usage**
+
+The viewer will stay responsive on larger geometry when you hide elements of the representation, especially while making updates to the geometry. If you don't need to see vertices, edges, or faces *hide them*. (how often do you need to see all topology when doing regular modeling?). If you see faces you can probably hide edges and verts. 
+
+System specs will play a big role in how well this scripted BGL drawing performs. Don't expect miracles, but if you are conscious about what you feed the Node it should perform quite well given the circumstances.
+
