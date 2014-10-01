@@ -52,7 +52,7 @@ class SvJoinTrianglesNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     limit = FloatProperty(
-        min=0.0, max=1.0, step=0.01,
+        min=0.0, max=5.0, step=0.01,
         name='limit', description='not sure',
         update=updateNode)
 
