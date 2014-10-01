@@ -46,10 +46,11 @@ def round_cube(
     # subdiv bitmasks
     CORNERS, EDGES, ALL = 0, 1, 2
     subdiv = CORNERS
-    try:
-        subdiv = ('CORNERS', 'EDGES', 'ALL').index(div_type)
-    except ValueError:
+
+    if not (div_type in {0, 1, 2}):
         subdiv = CORNERS  # fallback
+    else:
+        subdiv = div_type
 
     radius = max(radius, 0.)
     if not radius:
