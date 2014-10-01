@@ -32,16 +32,14 @@ def join_tris(verts, faces, limit):
 
     bm = bmesh_from_pydata(verts, [], faces)
 
-    # join_triangles(bm, faces, cmp_sharp, cmp_uvs, cmp_vcols, cmp_materials, limit)
     bmesh.ops.join_triangles(bm, faces=bm.faces, limit=limit)
     bm.verts.index_update()
     bm.faces.index_update()
 
-    verts_out = []
     faces_out = []
-    verts = [vert.co[:] for vert in bm.verts[:]]
-    for face in bm.faces:
-        faces.append([v.index for v in face.verts[:]])
+    verts_out = [vert.co[:] for vert in bm.verts]
+    [faces_out.append([v.index for v in face.verts]) for face in bm.faces]
+
     bm.clear()
     bm.free()
     return (verts_out, faces_out)
