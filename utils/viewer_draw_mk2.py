@@ -270,14 +270,17 @@ def draw_geometry(n_id, options, data_vector, data_polygons, data_matrix, data_e
     ''' polygons '''
 
     if data_polygons and data_vector:
+        num_datapolygon_lists = len(data_polygons)
 
         glEnable(polyholy)
-
         for i, matrix in enumerate(data_matrix):
+
             k = get_max_k(i, verlen)
             mesh_edges = set()
+            if k >= num_datapolygon_lists:
+                k = (num_datapolygon_lists-1)
+                #break
 
-            oblen = len(data_polygons[k])
             for j, pol in enumerate(data_polygons[k]):
 
                 if max(pol) >= max_verts_[k]:
