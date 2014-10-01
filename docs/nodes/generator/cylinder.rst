@@ -37,7 +37,7 @@ All parameters except **Separate** and **Caps** can be given by the node or an e
 +-------------------+---------------+-------------+--------------------------------------------------------+
 | **Subdivisions**  | Int           | 0           | number of the height subdivisions                      |
 +-------------------+---------------+-------------+--------------------------------------------------------+
-| **Separate**      | Bollean       | False       | output top and bottom polygons without connection      |
+| **Separate**      | Bollean       | False       | grouping vertices by V direction                       |
 +-------------------+---------------+-------------+--------------------------------------------------------+
 | **Caps**          | Bollean       | True        | turn on and off top and bottom cap                     |
 +-------------------+---------------+-------------+--------------------------------------------------------+

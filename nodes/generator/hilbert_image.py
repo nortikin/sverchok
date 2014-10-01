@@ -87,16 +87,14 @@ class HilbertImageNode(bpy.types.Node, SverchCustomTreeNode):
 
         # outputs
         if 'Vertices' in self.outputs and self.outputs['Vertices'].links and self.name_image:
-            if 'Vertices' in self.outputs and self.outputs['Vertices'].links:
+            img = bpy.data.images[self.name_image]
+            pixels = list(img.pixels)
+            verts = self.hilbert(0.0, 0.0, 1.0, 0.0, 0.0, 1.0, Integer, img, pixels, Sensitivity)
+            for iv, v in enumerate(verts):
+                for ip, p in enumerate(v):
+                    verts[iv][ip] *= Step
 
-                img = bpy.data.images[self.name_image]
-                pixels = list(img.pixels)
-                verts = self.hilbert(0.0, 0.0, 1.0, 0.0, 0.0, 1.0, Integer, img, pixels, Sensitivity)
-                for iv, v in enumerate(verts):
-                    for ip, p in enumerate(v):
-                        verts[iv][ip] *= Step
-
-                SvSetSocketAnyType(self, self.outputs['Vertices'])
+            self.outputs['Vertices'].sv_set(verts)
 
             if 'Edges' in self.outputs and len(self.outputs['Edges'].links) > 0:
 
@@ -106,7 +104,7 @@ class HilbertImageNode(bpy.types.Node, SverchCustomTreeNode):
                     listEdg.append((i, i+1))
 
                 edg = list(listEdg)
-                SvSetSocketAnyType(self, 'Edges', [edg])
+                self.outputs['Edges'].sv_set([edg])
         else:
             pass
             #self.outputs['Vertices'].VerticesProperty = str([[]])
@@ -146,3 +144,6 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(HilbertImageNode)
+
+if __name__ == '__main__':
+    register()

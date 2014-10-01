@@ -23,7 +23,12 @@
 #
 #  The Original Code is: all of this file.
 #
-#  Contributor(s): Nedovizin Alexander, Gorodetskiy Nikita, Linus Yng, Agustin Gimenez.
+#  Contributor(s): 
+#     Nedovizin Alexander 
+#     Gorodetskiy Nikita 
+#     Linus Yng 
+#     Agustin Gimenez
+#     Dealga McArdle
 #
 #  ***** END GPL LICENSE BLOCK *****
 #
@@ -48,8 +53,7 @@ import sys
 current_path = os.path.dirname(__file__)
 if not current_path in sys.path:
     sys.path.append(current_path)
-    print("Have a nice day with Sverchok")
-
+    print("\n***** Sverchok  loading *****")
 
 # use importlib instead of imp, which is deprecated since python 3.4
 # importing first allows to stores a list of nodes before eventually reloading
@@ -60,13 +64,12 @@ imported_modules = []
 node_list = []
 # ugly hack, should make respective dict in __init__ like nodes
 # or parse it
-root_modules = ["node_tree",
-                "data_structure", "menu"]
+root_modules = ["node_tree", "data_structure", "menu"]
 core_modules = ["handlers", "update_system", "upgrade_nodes"]
-utils_modules = ["cad_module", "sv_bmesh_utils", "text_editor_submenu",
-                 "index_viewer_draw", "sv_curve_utils", "viewer_draw",
-                 "sv_tools", "voronoi", "nodeview_bgl_viewer_draw",
-                 "text_editor_plugins"]
+utils_modules = [
+    "cad_module", "sv_bmesh_utils", "text_editor_submenu",
+    "index_viewer_draw", "sv_curve_utils", "viewer_draw", "viewer_draw_mk2",
+    "sv_tools", "voronoi", "nodeview_bgl_viewer_draw", "text_editor_plugins"]
 
 # parse the nodes/__init__.py dictionary and load all nodes
 def make_node_list():
@@ -119,7 +122,7 @@ if "bpy" in locals():
 
     if 'SVERCHOK' in nodeitems_utils._node_categories:
         nodeitems_utils.unregister_node_categories("SVERCHOK")
-    nodeitems_utils.register_node_categories("SVERCHOK", menu.make_categories())
+    nodeitems_utils.register_node_categories("SVERCHOK", menu.make_categories()[0])
     # core.upgrade_nodes.upgrade_all()  # doesn't work, anyway.
     reload_event = True
 
@@ -128,6 +131,8 @@ import bpy
 
 def register():
     import nodeitems_utils
+    categors_menu = menu.make_categories()
+    print("** Sverchok has  {i} nodes **".format(i=categors_menu[1]))
     for m in imported_modules + node_list:
         if hasattr(m, "register"):
             m.register()
@@ -135,7 +140,7 @@ def register():
             pass
             #print("failed to register {}".format(m.__name__))
     if 'SVERCHOK' not in nodeitems_utils._node_categories:
-        nodeitems_utils.register_node_categories("SVERCHOK", menu.make_categories())
+        nodeitems_utils.register_node_categories("SVERCHOK", categors_menu[0])
     if reload_event:
         # tag reload event which will cause a full sverchok startup on
         # first update event
@@ -153,3 +158,10 @@ def unregister():
 
     if 'SVERCHOK' in nodeitems_utils._node_categories:
         nodeitems_utils.unregister_node_categories("SVERCHOK")
+
+
+
+
+
+
+

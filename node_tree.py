@@ -217,6 +217,8 @@ class SverchCustomTreeNode:
     @classmethod
     def poll(cls, ntree):
         return ntree.bl_idname == 'SverchCustomTreeType'
+    def draw_buttons(self, context, layout):
+        layout.label('sverchok')
 
 
 class SverchNodeCategory(NodeCategory):
@@ -225,18 +227,10 @@ class SverchNodeCategory(NodeCategory):
         return context.space_data.tree_type == 'SverchCustomTreeType'
 
 
-#def Sverchok_nodes_count():
-#    cats = make_categories()
-#    count = []
-#    for cnt in cats:
-#        count.append(len(cnt.items))
-#    return count
-
 def register():
     bpy.utils.register_class(SvColors)
     bpy.utils.register_class(SverchCustomTree)
     bpy.utils.register_class(MatrixSocket)
-    #bpy.utils.register_class(ObjectSocket)
     bpy.utils.register_class(StringsSocket)
     bpy.utils.register_class(VerticesSocket)
 
@@ -244,8 +238,12 @@ def register():
 def unregister():
     bpy.utils.unregister_class(VerticesSocket)
     bpy.utils.unregister_class(StringsSocket)
-    #bpy.utils.unregister_class(ObjectSocket)
     bpy.utils.unregister_class(MatrixSocket)
     bpy.utils.unregister_class(SverchCustomTree)
     bpy.utils.unregister_class(SvColors)
+
+
+
+
+
 
