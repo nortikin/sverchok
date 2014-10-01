@@ -21,18 +21,19 @@ import bmesh
 
 from node_tree import SverchCustomTreeNode
 from data_structure import Vector_generate, SvSetSocketAnyType, SvGetSocketAnyType
+from utils.sv_bmesh_utils import bmesh_from_pydata
 
 
 def join_tris(verts, faces):
-    if not vertices:
+    if not verts:
         return False
 
-    bm = bmesh.new()
-    bm_verts = [bm.verts.new(v) for v in verts]
-    bm_faces = [bm.faces.new(f) for f in faces]
+    bm = bmesh_from_pydata(verts, [], faces)
+    for face in bm.faces:
+        face.select = 1
+
     # join_triangles(bm, faces, cmp_sharp, cmp_uvs, cmp_vcols, cmp_materials, limit)
-    # bmesh.ops.convex_hull(bm, input=bm_verts, use_existing_faces=False)
-    bmesh.ops.join_triangles(bm, input=bm_faces, limit=0.001)
+    bmesh.ops.join_triangles(bm, faces=bm.faces, cmp_sharp=True)
     bm.verts.index_update()
     bm.faces.index_update()
 
@@ -46,9 +47,9 @@ def join_tris(verts, faces):
     return (verts, faces)
 
 
-class SvJoinTriangles(bpy.types.Node, SverchCustomTreeNode):
+class SvJoinTrianglesNode(bpy.types.Node, SverchCustomTreeNode):
     '''Join coplanar Triangles'''
-    bl_idname = 'SvJoinTriangles'
+    bl_idname = 'SvJoinTrianglesNode'
     bl_label = 'Join Triangles'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
@@ -103,8 +104,8 @@ class SvJoinTriangles(bpy.types.Node, SverchCustomTreeNode):
 
 
 def register():
-    bpy.utils.register_class(SvJoinTriangles)
+    bpy.utils.register_class(SvJoinTrianglesNode)
 
 
 def unregister():
-    bpy.utils.unregister_class(SvJoinTriangles)
+    bpy.utils.unregister_class(SvJoinTrianglesNode)
