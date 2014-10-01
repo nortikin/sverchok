@@ -356,7 +356,7 @@ class SvBoxRoundedNode(bpy.types.Node, SverchCustomTreeNode):
 
     radius = FloatProperty(
         name='radius', description='fillet radius',
-        default=1.0, update=updateNode)
+        default=1.0, update=updateNode, min=0.0, step=0.2)
 
     arcdiv = IntProperty(
         name='arcdiv', description='number of divisions in fillet',
