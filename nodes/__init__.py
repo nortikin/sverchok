@@ -6,11 +6,8 @@ nodes_dict = {
         'distance_pp',
         'polygons_centers',
         'neuro_elman',
-        'image_components',
         'kd_tree',
-        'kd_tree_edges',
-        'weights',
-        'raycast'],
+        'kd_tree_edges'],
 
     'basic_view': [
         'bakery',
@@ -19,7 +16,6 @@ nodes_dict = {
         'viewer_indices',
         'viewer_text',
         'viewer',
-        'viewer_mk2',
         'empty_out',
         'reroute'],
 
@@ -37,11 +33,10 @@ nodes_dict = {
         'gtext',
         'note',
         '3dview_props',
-        'stethoscope'],
+        'viewer_node_editor_bgl'],
 
     'generator': [
         'box',
-        'box_rounded',
         'circle',
         'cylinder',
         'hilbert_image',
@@ -57,7 +52,7 @@ nodes_dict = {
         'basic_spline',
         'basic_3pt_arc',
         'instancer',
-        'profile'],
+        'meta_balls'],
 
     'list_basic': [
         'converter',
@@ -91,8 +86,7 @@ nodes_dict = {
         'generator',
         'input',
         'interpolation',
-        'shear',
-        'euler'],
+        'shear'],
 
     'modifier_change': [
         'delete_loose',
@@ -100,14 +94,10 @@ nodes_dict = {
         'holes_fill',
         'mesh_join',
         'mesh_separate',
-        'mirror',
         'polygons_boom',
         'polygons_to_edges',
         'remove_doubles',
-        'rotation',
-        'scale',
-        'vertices_mask',
-        'wafel'],
+        'vertices_mask'],
 
     'modifier_make': [
         'bisect',

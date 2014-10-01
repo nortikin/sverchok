@@ -106,7 +106,6 @@ def make_categories():
         ["ImageNode",           "Image"],
         ["RandomVectorNode",    "Random Vector"],
         ["SvFormulaShapeNode",  "Formula shape"],
-        ["SvProfileNode",       "ProfileParametric"],
         ["SvScriptNode",        "Scripted Node"]]
 
     node_cats["Vector"] = [
@@ -119,8 +118,7 @@ def make_categories():
         ["EvaluateLineNode",    "Vector Evaluate"],
         ["SvInterpolationNode", "Vector Interpolation"],
         ["SvVertSortNode",      "Vector Sort"],
-        ["SvNoiseNode",         "Vector Noise"],
-        ["svAxisInputNode",     "Vector X | Y | Z"]]
+        ["SvNoiseNode",         "Vector Noise"]]
 
     node_cats["Matrix"] = [
         ["MatrixApplyNode",     "Matrix Apply"],
@@ -168,37 +166,27 @@ def make_categories():
 
     node_cats["Beta test"] = [
         # for testing convenience,
-        ["ViewerNode2",         "Viewer draw MK2"],  # investigationg serious crash
-        ["SvStethoscopeNode",   "Stethoscope"],
+        ["BGLdemoNode",         "Viewer BGL debug"],
         ["SvOffsetNode",        "Offset"],
         ["SvEmptyOutNode",      "Empty out"],
         ["EvalKnievalNode",     "Eval Knieval"],
         # need to be completely reviewed
-        ["SvListDecomposeNode",   "List Decompose"],
+        ["ListDecomposeNode",   "List Decompose"],
         # should be removed...
-        ["SvImageComponentsNode", "Image Decompose"],
-        ["SvBoxRoundedNode",    "Rounded Box"],
         ["SvReRouteNode",       "Reroute Point"],
         ["SvVolumeNode",        "Volume"],
         ["SvSwitchNode",        "Switch"],
+        ["svAxisInputNode",     "Vector X | Y | Z"],
         ["SvNeuroElman1LNode",  "Neuro"],
         ["SvInstancerNode",     "mesh instancer"],
         ["SvLogicNode",         "Logic"],
-        ["SvRotationNode",      "Rotation"],
-        ["SvScaleNode",         "Scale"],
-        ["SvMatrixEulerNode",   "Matrix Euler"],
-        ["SvMirrorNode",        "Mirror"],
-        ["SvWafelNode",         "Wafel"],
-        ["SvVertexGroupNode",   "Vertext group"],
-        ["SvRayCastNode",       "Raycast"]]
+        ["SvMetaballNode",      "Metaballs"]]
 
     node_categories = []
-    howmanynodesare = 0
     for category, nodes in node_cats.items():
         name_big = "SVERCHOK_" + category.replace(' ', '_')
         node_categories.append(SverchNodeCategory(
             name_big, category,
             items=[NodeItem(bl_idname, name) for bl_idname, name in nodes]))
-        howmanynodesare += len(nodes)
 
-    return node_categories, howmanynodesare
+    return node_categories
