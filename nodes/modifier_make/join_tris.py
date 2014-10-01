@@ -19,21 +19,21 @@
 import bpy
 import bmesh
 
+from bpy.props import FloatProperty
+
 from node_tree import SverchCustomTreeNode
-from data_structure import Vector_generate, SvSetSocketAnyType, SvGetSocketAnyType
+from data_structure import Vector_generate, SvSetSocketAnyType, SvGetSocketAnyType, updateNode
 from utils.sv_bmesh_utils import bmesh_from_pydata
 
 
-def join_tris(verts, faces):
+def join_tris(verts, faces, limit):
     if not verts:
         return False
 
     bm = bmesh_from_pydata(verts, [], faces)
-    for face in bm.faces:
-        face.select = 1
 
     # join_triangles(bm, faces, cmp_sharp, cmp_uvs, cmp_vcols, cmp_materials, limit)
-    bmesh.ops.join_triangles(bm, faces=bm.faces, cmp_sharp=True)
+    bmesh.ops.join_triangles(bm, faces=bm.faces, limit=limit)
     bm.verts.index_update()
     bm.faces.index_update()
 
@@ -44,7 +44,7 @@ def join_tris(verts, faces):
         faces.append([v.index for v in face.verts[:]])
     bm.clear()
     bm.free()
-    return (verts, faces)
+    return (verts_out, faces_out)
 
 
 class SvJoinTrianglesNode(bpy.types.Node, SverchCustomTreeNode):
@@ -52,6 +52,11 @@ class SvJoinTrianglesNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvJoinTrianglesNode'
     bl_label = 'Join Triangles'
     bl_icon = 'OUTLINER_OB_EMPTY'
+
+    limit = FloatProperty(
+        min=0.0, max=1.0, step=0.01,
+        name='limit', description='not sure',
+        update=updateNode)
 
     def init(self, context):
         self.inputs.new('VerticesSocket', 'Vertices', 'Vertices')
@@ -61,6 +66,8 @@ class SvJoinTrianglesNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('StringsSocket', 'Polygons', 'Polygons')
 
     def draw_buttons(self, context, layout):
+        col = layout.column()
+        col.prop(self, 'limit', text='limit')
         pass
 
     def update(self):
@@ -81,14 +88,14 @@ class SvJoinTrianglesNode(bpy.types.Node, SverchCustomTreeNode):
         verts = Vector_generate(SvGetSocketAnyType(self, self.inputs['Vertices']))
         faces = self.inputs['Polygons'].sv_get()
 
-        if not len(verts) == len(faces):
+        if not (len(verts) == len(faces)):
             return
 
         verts_out = []
         polys_out = []
 
         for v_obj, f_obj in zip(verts, faces):
-            res = join_tris(v_obj, f_obj)
+            res = join_tris(v_obj, f_obj, self.limit)
             if not res:
                 return
             verts_out.append(res[0])
