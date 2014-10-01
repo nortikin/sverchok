@@ -176,6 +176,7 @@ class ScalarMathNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "items_", "Functions:")
 
     def draw_buttons_ext(self, context, layout):
+        layout.prop(self, "items_", "Functions:")
         layout.label(text="Change property type")
         for i,s in enumerate(self.inputs):
             row = layout.row()

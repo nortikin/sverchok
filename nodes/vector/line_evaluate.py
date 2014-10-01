@@ -18,10 +18,11 @@
 
 import bpy
 from bpy.props import FloatProperty
+from mathutils import Vector
 
 from node_tree import SverchCustomTreeNode
-from data_structure import (fullList, Vector_generate, Vector_degenerate,
-                            updateNode, SvSetSocketAnyType, SvGetSocketAnyType)
+from data_structure import (fullList, updateNode, 
+                            SvSetSocketAnyType, SvGetSocketAnyType)
 
 
 class EvaluateLine(bpy.types.Node, SverchCustomTreeNode):
@@ -50,10 +51,10 @@ class EvaluateLine(bpy.types.Node, SverchCustomTreeNode):
         factor = []
 
         if 'Vertice A' in self.inputs and self.inputs['Vertice A'].links:
-            VerticesA = Vector_generate(SvGetSocketAnyType(self, self.inputs['Vertice A']))
+            VerticesA = SvGetSocketAnyType(self, self.inputs['Vertice A'])
 
         if 'Vertice B' in self.inputs and self.inputs['Vertice B'].links:
-            VerticesB = Vector_generate(SvGetSocketAnyType(self, self.inputs['Vertice B']))
+            VerticesB = SvGetSocketAnyType(self, self.inputs['Vertice B'])
 
         if 'Factor' in self.inputs and self.inputs['Factor'].links:
             factor = SvGetSocketAnyType(self, self.inputs['Factor'])
@@ -83,14 +84,14 @@ class EvaluateLine(bpy.types.Node, SverchCustomTreeNode):
                 fullList(VerticesA[i], max_l)
                 fullList(VerticesB[i], max_l)
                 for j in range(max_l):
-                    tmp_pts = [VerticesA[i][j].lerp(VerticesB[i][j], factor[i][k])
+                    tmp_pts = [(Vector(VerticesA[i][j]).lerp(VerticesB[i][j], factor[i][k]))[:]
                                for k in range(len(factor[i]))]
                     points_.extend(tmp_pts)
                 points.append(points_)
             if not points:
                 return
 
-            SvSetSocketAnyType(self, 'EvPoint', Vector_degenerate(points))
+            SvSetSocketAnyType(self, 'EvPoint', points)
 
     def update_socket(self, context):
         self.update()

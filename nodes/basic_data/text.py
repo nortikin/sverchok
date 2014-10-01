@@ -305,9 +305,11 @@ class SvTextInNode(bpy.types.Node, SverchCustomTreeNode):
     def load_csv(self):
         n_id = node_id(self)
         self.load_csv_data()
-
-        for name in self.csv_data[n_id]:
-            self.outputs.new('StringsSocket', name, name)
+        if not n_id in self.csv_data:
+            print("Error, no data loaded")
+        else:
+            for name in self.csv_data[n_id]:
+                self.outputs.new('StringsSocket', name, name)
 
     def load_csv_data(self):
         n_id = node_id(self)

@@ -17,7 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-from bpy.props import StringProperty
+from bpy.props import StringProperty, BoolProperty
 
 from node_tree import SverchCustomTreeNode
 from data_structure import multi_socket
@@ -49,14 +49,19 @@ class WifiInNode(bpy.types.Node, SverchCustomTreeNode):
         ng = self.id_data
         wifi_in_list = [node for node in ng.nodes
                            if node.bl_idname == 'WifiInNode']
+        # verify that set var name isn't used before, if it is reset to previous
         for node in wifi_in_list:
             if node.name != self.name:
                 if node.var_name == self.var_name:
                     self.var_name = self.base_name
                     return
+        # name is unique, store it.
         self.base_name = self.var_name
-        self.inputs.clear()
-        self.inputs.new('StringsSocket', self.var_name+"[0]")
+        if self.inputs: # if we have inputs, rename
+            for i, s in enumerate(self.inputs):
+                s.name = "{0}[{1}]".format(self.var_name, i)
+        else: #create first socket
+            self.inputs.new('StringsSocket', self.var_name+"[0]")
         
     var_name = StringProperty(name='var_name', update=change_var_name)
 

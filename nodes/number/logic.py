@@ -119,6 +119,7 @@ class SvLogicNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "items_", "Functions:")
 
     def draw_buttons_ext(self, context, layout):
+        layout.prop(self, "items_", "Functions:")
         layout.label(text="Change property type")
         for i,s in enumerate(self.inputs):
             row = layout.row()
@@ -159,31 +160,31 @@ class SvLogicNode(bpy.types.Node, SverchCustomTreeNode):
         if self.items_ in self.fxy2:
             self.inputs[0].prop_name = 'i_x'
             self.inputs[1].prop_name = 'i_y'
-        else:
+        elif self.items_ in self.fxy:
             self.inputs[0].prop_name = 'x'
             self.inputs[1].prop_name = 'y'
+        elif self.items_ in self.fx:
+            self.inputs[0].prop_name = 'x'
 
         if 'X' in self.inputs:
-            x = self.inputs['X'].sv_get(deepcopy=False)[0][0]
+            x = self.inputs['X'].sv_get(deepcopy=False)
  
         if 'Y' in self.inputs:
-            y = self.inputs['Y'].sv_get(deepcopy=False)[0][0]
+            y = self.inputs['Y'].sv_get(deepcopy=False)
         
         # outputs
         if 'Gate' in self.outputs and self.outputs['Gate'].links:
+            out= []
             if self.items_ in self.constant:
-                out = [self.constant[self.items_]]
+                out = [[self.constant[self.items_]]]
             elif self.items_ in self.fx:
-                func = self.fx[self.items_]
-                out = [func(x)]
+                out = self.recurse_fx(x, self.fx[self.items_])
             elif self.items_ in self.fxy:
-                func = self.fxy[self.items_]
-                out = [func(x,y)]
+                out = self.recurse_fxy(x, y, self.fxy[self.items_])
             elif self.items_ in self.fxy2:
-                func = self.fxy2[self.items_]
-                out = [func(x,y)]
+                out = self.recurse_fxy(x, y, self.fxy2[self.items_])
 
-            SvSetSocketAnyType(self, 'Gate', [out])
+            SvSetSocketAnyType(self, 'Gate', out)
 
     def set_inputs(self, n):
         if n == len(self.inputs):
@@ -197,6 +198,37 @@ class SvLogicNode(bpy.types.Node, SverchCustomTreeNode):
             if 'Y' not in self.inputs:
                 self.inputs.new('StringsSocket', "Y")
             self.change_prop_type(None)
+
+    # apply f to all values recursively
+    def recurse_fx(self, l, f):
+        if isinstance(l, (int, float)):
+            return f(l)
+        else:
+            return [self.recurse_fx(i, f) for i in l]
+
+    # match length of lists,
+    # cases
+    # [1,2,3] + [1,2,3] -> [2,4,6]
+    # [1,2,3] + 1 -> [2,3,4]
+    # [1,2,3] + [1,2] -> [2,4,5] , list is expanded to match length, [-1] is repeated
+    # odd cases too.
+    # [1,2,[1,1,1]] + [[1,2,3],1,2] -> [[2,3,4],3,[3,3,3]]
+    def recurse_fxy(self, l1, l2, f):
+        if (isinstance(l1, (int, float)) and isinstance(l2, (int, float))):
+                return f(l1, l2)
+                
+        if (isinstance(l2, (list, tuple)) and isinstance(l1, (list, tuple))):
+            fl = l2[-1] if len(l1) > len(l2) else l1[-1]
+            res = []
+            res_append = res.append
+            for x, y in zip_longest(l1, l2, fillvalue=fl):
+                res_append(self.recurse_fxy(x, y, f))
+            return res
+            
+        if isinstance(l1, (list, tuple)) and isinstance(l2, (int, float)):
+            return self.recurse_fxy(l1, [l2], f)
+        if isinstance(l1, (int, float)) and isinstance(l2, (list, tuple)):
+            return self.recurse_fxy([l1], l2, f)
 
     def update_socket(self, context):
         self.update()

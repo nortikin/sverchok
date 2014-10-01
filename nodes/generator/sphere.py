@@ -1,24 +1,36 @@
 from math import sin, cos, radians
 
 import bpy
-from bpy.props import IntProperty, FloatProperty
+from bpy.props import IntProperty, FloatProperty, BoolProperty
 
 from node_tree import SverchCustomTreeNode
 from data_structure import updateNode, match_long_repeat, SvSetSocketAnyType
 
 
-def sphere_verts(U, V, Radius):
+def sphere_verts(U, V, Radius, Separate):
     theta = radians(360/U)
     phi = radians(180/(V-1))
-    pts = [[0, 0, Radius]]
+    if Separate:
+        pts = [[ [0, 0, Radius] for i in range(U) ]]
+    else:
+        pts = [[0, 0, Radius]]
     for i in range(1, V-1):
+        pts_u = []
         sin_phi_i = sin(phi*i)
         for j in range(U):
             X = Radius*cos(theta*j)*sin_phi_i
             Y = Radius*sin(theta*j)*sin_phi_i
             Z = Radius*cos(phi*i)
-            pts.append([X, Y, Z])
-    pts.append([0, 0, -Radius])
+            pts_u.append([X, Y, Z])
+        if Separate:
+            pts.append(pts_u)
+        else:
+            pts.extend(pts_u)
+    if Separate:
+        points_top = [ [0, 0, -Radius] for i in range(U) ]
+        pts.append(points_top)
+    else:
+        pts.append([0, 0, -Radius])
     return pts
 
 
@@ -66,6 +78,10 @@ class SphereNode(bpy.types.Node, SverchCustomTreeNode):
                      default=24, min=3,
                      options={'ANIMATABLE'}, update=updateNode)
 
+    Separate = BoolProperty(name='Separate', description='Separate UV coords',
+                            default=False,
+                            update=updateNode)
+
     def init(self, context):
         self.inputs.new('StringsSocket', "Radius").prop_name = 'rad_'
         self.inputs.new('StringsSocket', "U").prop_name = 'U_'
@@ -76,10 +92,7 @@ class SphereNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('StringsSocket', "Polygons")
 
     def draw_buttons(self, context, layout):
-        pass
-        #layout.prop(self, "rad_", text="Radius")
-        #layout.prop(self, "U_", text="U")
-        #layout.prop(self, "V_", text="V")
+        layout.prop(self, "Separate", text="Separate")
 
     def update(self):
         # inputs
@@ -94,7 +107,7 @@ class SphereNode(bpy.types.Node, SverchCustomTreeNode):
 
         # outputs
         if self.outputs['Vertices'].links:
-            verts = [sphere_verts(u, v, r) for u, v, r in zip(*params)]
+            verts = [sphere_verts(u, v, r, self.Separate) for u, v, r in zip(*params)]
             SvSetSocketAnyType(self, 'Vertices', verts)
 
         if self.outputs['Edges'].links:
@@ -115,3 +128,6 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SphereNode)
+
+if __name__ == '__main__':
+    register()

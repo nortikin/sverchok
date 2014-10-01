@@ -20,8 +20,66 @@ import bpy
 from bpy.props import BoolProperty, IntProperty, FloatProperty
 
 from node_tree import SverchCustomTreeNode
-from data_structure import (updateNode, fullList, sv_zip,
-                            SvSetSocketAnyType, SvGetSocketAnyType)
+from data_structure import updateNode, fullList, match_long_repeat
+
+from mathutils import Vector
+
+
+def make_plane(int_x, int_y, step_x, step_y, separate):
+    vertices = [(0.0, 0.0, 0.0)]
+    vertices_S = []
+    int_x = [int(int_x) if type(int_x) is not list else int(int_x[0])]
+    int_y = [int(int_y) if type(int_y) is not list else int(int_y[0])]
+
+    if type(step_x) is not list:
+        step_x = [step_x]
+    if type(step_y) is not list:
+        step_y = [step_y]
+    fullList(step_x, int_x[0])
+    fullList(step_y, int_y[0])
+
+    for i in range(int_x[0]-1):
+        v = Vector(vertices[i]) + Vector((step_x[i], 0.0, 0.0))
+        vertices.append(v[:])
+
+    a = [int_y[0] if separate else int_y[0]-1]
+    for i in range(a[0]):
+        out = []
+        for j in range(int_x[0]):
+            out.append(vertices[j+int_x[0]*i])
+        for j in out:
+            v = Vector(j) + Vector((0.0, step_y[i], 0.0))
+            vertices.append(v[:])
+        if separate:
+            vertices_S.append(out)
+
+    edges = []
+    edges_S = []
+    for i in range(int_y[0]):
+        for j in range(int_x[0]-1):
+            edges.append((int_x[0]*i+j, int_x[0]*i+j+1))
+
+    if separate:
+        out = []
+        for i in range(int_x[0]-1):
+            out.append(edges[i])
+        edges_S.append(out)
+        for i in range(int_y[0]-1):
+            edges_S.append(edges_S[0])
+    else:
+        for i in range(int_x[0]):
+            for j in range(int_y[0]-1):
+                edges.append((int_x[0]*j+i, int_x[0]*j+i+int_x[0]))
+
+    polygons = []
+    for i in range(int_x[0]-1):
+        for j in range(int_y[0]-1):
+            polygons.append((int_x[0]*j+i, int_x[0]*j+i+1, int_x[0]*j+i+int_x[0]+1, int_x[0]*j+i+int_x[0]))
+
+    if separate:
+        return vertices_S, edges_S, []
+    else:
+        return vertices, edges, polygons
 
 
 class PlaneNode(bpy.types.Node, SverchCustomTreeNode):
@@ -51,6 +109,7 @@ class PlaneNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('StringsSocket', "Nº Vertices Y").prop_name = 'int_Y'
         self.inputs.new('StringsSocket', "Step X").prop_name = 'step_X'
         self.inputs.new('StringsSocket', "Step Y").prop_name = 'step_Y'
+
         self.outputs.new('VerticesSocket', "Vertices")
         self.outputs.new('StringsSocket', "Edges")
         self.outputs.new('StringsSocket', "Polygons")
@@ -59,97 +118,29 @@ class PlaneNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "Separate", text="Separate")
 
     def update(self):
-        # inputs
-        if 'Nº Vertices X' in self.inputs and self.inputs['Nº Vertices X'].links:
-            IntegerX = int(SvGetSocketAnyType(self, self.inputs['Nº Vertices X'])[0][0])
-        else:
-            IntegerX = self.int_X
+        inputs = self.inputs
+        outputs = self.outputs
 
-        if 'Nº Vertices Y' in self.inputs and self.inputs['Nº Vertices Y'].links:
-            IntegerY = int(SvGetSocketAnyType(self, self.inputs['Nº Vertices Y'])[0][0])
-        else:
-            IntegerY = self.int_Y
+        if not 'Polygons' in outputs:
+            return
 
-        if 'Step X' in self.inputs and self.inputs['Step X'].links:
-            StepX = SvGetSocketAnyType(self, self.inputs['Step X'])[0]
+        int_x = inputs["Nº Vertices X"].sv_get()
+        int_y = inputs["Nº Vertices Y"].sv_get()
+        step_x = inputs["Step X"].sv_get()
+        step_y = inputs["Step Y"].sv_get()
 
-            listVertX = []
-            fullList(StepX, IntegerX)
-            for i in range(IntegerY):
-                listVertX.append(0.0)
-                for j in range(IntegerX-1):
-                    listVertX.append(listVertX[j]+StepX[j])
-
-        else:
-            StepX = self.step_X
-            listVertX = []
-            for i in range(IntegerY):
-                for j in range(IntegerX):
-                    listVertX.append(0.0+j)
-            listVertX = [StepX*i for i in listVertX]
-
-        if 'Step Y' in self.inputs and self.inputs['Step Y'].links:
-            StepY = SvGetSocketAnyType(self, self.inputs['Step Y'])[0]
-
-            listVertY = []
-            fullList(StepY, IntegerY)
-            for i in range(IntegerX):
-                listVertY.append(0.0)
-            for i in range(IntegerY-1):
-                for j in range(IntegerX):
-                    listVertY.append(listVertY[IntegerX*i]+StepY[i])
-        else:
-            StepY = self.step_Y
-            listVertY = []
-            for i in range(IntegerY):
-                for j in range(IntegerX):
-                    listVertY.append(0.0+i)
-            listVertY = [StepY*i for i in listVertY]
+        params = match_long_repeat([int_x, int_y, step_x, step_y, [self.Separate]])
+        out = [a for a in (zip(*[make_plane(i_x, i_y, s_x, s_y, s) for i_x, i_y, s_x, s_y, s in zip(*params)]))]
 
         # outputs
-        if 'Vertices' in self.outputs and self.outputs['Vertices'].links:
+        if outputs['Vertices'].links:
+            outputs['Vertices'].sv_set(out[0])
 
-            X = listVertX
-            Y = listVertY
-            Z = [0.0]
+        if outputs['Edges'].links:
+            outputs['Edges'].sv_set(out[1])
 
-            max_num = max(len(X), len(Y), len(Z))
-
-            fullList(X, max_num)
-            fullList(Y, max_num)
-            fullList(Z, max_num)
-
-            points = list(sv_zip(X, Y, Z))
-            if self.Separate:
-                out = []
-                for y in range(IntegerY):
-                    out_ = []
-                    for x in range(IntegerX):
-                        out_.append(points[IntegerX*y+x])
-                    out.append(out_)
-                SvSetSocketAnyType(self, 'Vertices', [out])
-            else:
-                SvSetSocketAnyType(self, 'Vertices', [points])
-
-        if 'Edges' in self.outputs and self.outputs['Edges'].links:
-            listEdg = []
-            for i in range(IntegerY):
-                for j in range(IntegerX-1):
-                    listEdg.append((IntegerX*i+j, IntegerX*i+j+1))
-            for i in range(IntegerX):
-                for j in range(IntegerY-1):
-                    listEdg.append((IntegerX*j+i, IntegerX*j+i+IntegerX))
-
-            edg = list(listEdg)
-            SvSetSocketAnyType(self, 'Edges', [edg])
-
-        if 'Polygons' in self.outputs and self.outputs['Polygons'].links:
-            listPlg = []
-            for i in range(IntegerX-1):
-                for j in range(IntegerY-1):
-                    listPlg.append((IntegerX*j+i, IntegerX*j+i+1, IntegerX*j+i+IntegerX+1, IntegerX*j+i+IntegerX))
-            plg = list(listPlg)
-            SvSetSocketAnyType(self, 'Polygons', [plg])
+        if outputs['Polygons'].links:
+            outputs['Polygons'].sv_set(out[2])
 
     def update_socket(self, context):
         self.update()

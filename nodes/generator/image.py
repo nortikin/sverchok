@@ -32,6 +32,7 @@ class ImageNode(bpy.types.Node, SverchCustomTreeNode):
 
     def images(self, context):
         return [tuple(3 * [im.name]) for im in bpy.data.images]
+        
     name_image = bpy.props.EnumProperty(items=images, name='images')
     R = FloatProperty(name='R', description='R',
                       default=0.30, min=0, max=1,
@@ -144,7 +145,9 @@ class ImageNode(bpy.types.Node, SverchCustomTreeNode):
         R, G, B = self.R, self.G, self.B
         xcoef = lenx//delitelx
         ycoef = leny//delitely
-        imag = bpy.data.images[image_name].pixels
+        # copy images data, pixels is created on every access with [i], extreme speedup.
+        # http://blender.stackexchange.com/questions/3673/why-is-accessing-image-data-so-slow
+        imag = bpy.data.images[image_name].pixels[:]
         vertices = []
         addition = 0
         for y in range(delitely+1):
@@ -153,7 +156,7 @@ class ImageNode(bpy.types.Node, SverchCustomTreeNode):
                 #  каждый пиксель кодируется RGBA, и записан строкой, без разделения на строки и столбцы.
                 middle = (imag[addition]*R+imag[addition+1]*G+imag[addition+2]*B)*imag[addition+3]
                 vertex = [x*stepx[x], y*stepy[y], middle]
-                vertices.append(vertex)
+                vertices.append(vertex) 
                 addition += int(xcoef*4)
         return vertices
 

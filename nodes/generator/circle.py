@@ -246,6 +246,7 @@ class SvCircleNode(bpy.types.Node, SverchCustomTreeNode):
 
         parameters = match_long_repeat([Angle, Vertices, Radius])
 
+        # outputs
         if 'Vertices' in self.outputs and self.outputs['Vertices'].links:
             points = [self.make_verts(a, v, r) for a, v, r in zip(*parameters)]
             SvSetSocketAnyType(self, 'Vertices', points)

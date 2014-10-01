@@ -221,18 +221,29 @@ def draw_callback_px(n_id, draw_verts, draw_edges, draw_faces, draw_matrix, draw
                     draw_index(vert_idx_color, vert_bg_color, idx, v)
 
         if data_edges and display_edge_index:
-            for edge_details in enumerate(data_edges[obj_index]):
-                edge_index, (idx1, idx2) = edge_details
+            for edge_index, (idx1, idx2) in enumerate(data_edges[obj_index]):
+                
                 v1 = Vector(final_verts[idx1])
                 v2 = Vector(final_verts[idx2])
                 loc = v1 + ((v2 - v1) / 2)
-                draw_index(edge_idx_color, edge_bg_color, edge_index, loc)
+                if text_obj:
+                    draw_index(edge_idx_color, edge_bg_color, edge_index, loc, text_obj[edge_index])
+                else:
+                    draw_index(edge_idx_color, edge_bg_color, edge_index, loc)
 
         if data_faces and display_face_index:
             for face_index, f in enumerate(data_faces[obj_index]):
                 verts = [Vector(final_verts[idx]) for idx in f]
                 median = calc_median(verts)
-                draw_index(face_idx_color, face_bg_color, face_index, median)
+                if text_obj:
+                    draw_index(face_idx_color, face_bg_color, face_index, median, text_obj[face_index])
+                else:
+                    draw_index(face_idx_color, face_bg_color, face_index, median)
+
+
+def unregister():
+    callback_disable_all()
+
 
 
 
