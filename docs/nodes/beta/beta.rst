@@ -7,3 +7,4 @@ Beta
 
    stethoscope
    viewer_draw_mk2
+   box_rounded
