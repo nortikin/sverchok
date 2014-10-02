@@ -10,7 +10,8 @@ nodes_dict = {
         'kd_tree',
         'kd_tree_edges',
         'weights',
-        'raycast'],
+        'raycast'
+    ],
 
     'basic_view': [
         'bakery',
@@ -21,7 +22,8 @@ nodes_dict = {
         'viewer',
         'viewer_mk2',
         'empty_out',
-        'reroute'],
+        'reroute'
+    ],
 
     'basic_data': [
         'objects',
@@ -29,7 +31,8 @@ nodes_dict = {
         'wifi_in',
         'wifi_out',
         'eval_knieval',
-        'switch'],
+        'switch'
+    ],
 
     'basic_debug': [
         'debug_print',
@@ -37,7 +40,8 @@ nodes_dict = {
         'gtext',
         'note',
         '3dview_props',
-        'stethoscope'],
+        'stethoscope'
+    ],
 
     'generator': [
         'box',
@@ -57,7 +61,8 @@ nodes_dict = {
         'basic_spline',
         'basic_3pt_arc',
         'instancer',
-        'profile'],
+        'profile'
+    ],
 
     'list_basic': [
         'converter',
@@ -70,7 +75,8 @@ nodes_dict = {
         'mask',
         'match',
         'sum',
-        'zip'],
+        'zip'
+    ],
 
     'list_interfere': [
         'shift',
@@ -82,7 +88,8 @@ nodes_dict = {
         'reverse',
         'shuffle',
         'sort',
-        'flip'],
+        'flip'
+    ],
 
     'matrix': [
         'apply',
@@ -92,7 +99,8 @@ nodes_dict = {
         'input',
         'interpolation',
         'shear',
-        'euler'],
+        'euler'
+    ],
 
     'modifier_change': [
         'delete_loose',
@@ -107,21 +115,24 @@ nodes_dict = {
         'rotation',
         'scale',
         'vertices_mask',
-        'wafel'],
+        'wafel'
+    ],
 
     'modifier_make': [
         'bisect',
         'convex_hull',
         'cross_section',
         'edges_adaptative',
+        'join_tris',
         'lathe',
         'line_connect',
+        'offset',
         'polygons_adaptative',
         'solidify',
         'voronoi_2d',
         'voronoi',
-        'offset',
-        'wireframe'],
+        'wireframe'
+    ],  #
 
     'number': [
         'float_to_int',
@@ -137,7 +148,8 @@ nodes_dict = {
         'range_float',
         'range_int',
         'series',
-        'logic'],
+        'logic'
+    ],
 
     'vector': [
         'drop',
@@ -151,5 +163,6 @@ nodes_dict = {
         'vector_out',
         'vertices_delete_doubles',
         'vertices_sort',
-        'axis_input']
+        'axis_input'
+    ]
 }
