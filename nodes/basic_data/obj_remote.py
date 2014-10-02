@@ -44,6 +44,11 @@ class SvObjRemoteNode(bpy.types.Node, SverchCustomTreeNode):
         description='stores the name of the obj this node references',
         update=updateNode)
 
+    input_text = StringProperty(
+        default='', update=updateNode)
+
+    show_string_box = BoolProperty()
+
     def init(self, context):
         self.inputs.new('VerticesSocket', 'location')
         self.inputs.new('VerticesSocket', 'scale')
@@ -53,6 +58,10 @@ class SvObjRemoteNode(bpy.types.Node, SverchCustomTreeNode):
         row = layout.row(align=True)
         row.prop(self, "activate", text="Update")
         row.prop_search(self, 'obj_name', bpy.data, 'objects', text='', icon='HAND')
+
+        if self.show_string_box:
+            row = layout.row(align=True)
+            row.prop(self, 'input_text', text='')
 
     def update(self):
         if not self.activate:
@@ -66,6 +75,14 @@ class SvObjRemoteNode(bpy.types.Node, SverchCustomTreeNode):
             obj.location = self.inputs['location'].sv_get()[0][0]
             obj.scale = self.inputs['scale'].sv_get()[0][0]
             obj.rotation_euler = self.inputs['rotation'].sv_get()[0][0]
+            self.show_string_box = (obj.type == 'FONT')
+
+            if self.show_string_box:
+                print('herrree!!')
+                obj.data.body = self.input_text
+
+        else:
+            self.show_string_box = 0
 
 
 def register():
