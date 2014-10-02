@@ -184,12 +184,9 @@ def make_categories():
         ["SvStethoscopeNode",   "Stethoscope"],
         ["SvOffsetNode",        "Offset"],
         ["SvEmptyOutNode",      "Empty out"],
-        ["EvalKnievalNode",     "Eval Knieval"],
         # need to be completely reviewed
         ["SvListDecomposeNode",   "List Decompose"],
         # should be removed...
-        ["SvJoinTrianglesNode", "Join Triangles"],
-        ["SvImageComponentsNode", "Image Decompose"],
         ["SvBoxRoundedNode",    "Rounded Box"],
         ["SvReRouteNode",       "Reroute Point"],
         ["SvVolumeNode",        "Volume"],
@@ -207,7 +204,10 @@ def make_categories():
     ]
 
     node_cats["Alpha test"] = [
-        ["SvObjRemoteNode",     "Scene Objects"]
+        ["SvObjRemoteNode",     "Scene Objects"],
+        ["SvImageComponentsNode", "Image Decompose"],
+        ["SvJoinTrianglesNode", "Join Triangles"],
+        ["EvalKnievalNode",     "Eval Knieval"]
     ]
 
     node_categories = []

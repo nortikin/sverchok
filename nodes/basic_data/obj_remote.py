@@ -55,13 +55,12 @@ class SvObjRemoteNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('VerticesSocket', 'rotation')
 
     def draw_buttons(self, context, layout):
-        row = layout.row(align=True)
-        row.prop(self, "activate", text="Update")
-        row.prop_search(self, 'obj_name', bpy.data, 'objects', text='', icon='HAND')
+        col = layout.column()
+        col.prop(self, "activate", text="Update")
+        col.prop_search(self, 'obj_name', bpy.data, 'objects', text='', icon='HAND')
 
         if self.show_string_box:
-            row = layout.row(align=True)
-            row.prop(self, 'input_text', text='')
+            col.prop(self, 'input_text', text='')
 
     def update(self):
         if not self.activate:
@@ -78,7 +77,6 @@ class SvObjRemoteNode(bpy.types.Node, SverchCustomTreeNode):
             self.show_string_box = (obj.type == 'FONT')
 
             if self.show_string_box:
-                print('herrree!!')
                 obj.data.body = self.input_text
 
         else:
