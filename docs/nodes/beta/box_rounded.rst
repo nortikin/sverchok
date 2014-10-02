@@ -46,5 +46,6 @@ Notes
 
 see: 
 
-**Round-Cube-real-Quadsphere-Capsule-Rounded-Cuboid-3D-Grid-Convex-Hull-Margin**
+**Round Cube, real Quadsphere, Capsule (snipped thread title):**
+
 `original thread <http://blenderartists.org/forum/showthread.php?348741-Round-Cube-real-Quadsphere-Capsule-Rounded-Cuboid-3D-Grid-Convex-Hull-Margin>`_
