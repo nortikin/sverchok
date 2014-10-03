@@ -12,23 +12,24 @@ def sv_main(v=[],e=[],tres=1):
     ]
     
 
-    
     edgV=[]
     edgH=[]
     edgX=[]
-    if tres<1:
-        tre=1
-    if tres>2:
-        tre=2
-    else:
-        tre = tres
-    for edg in e:
-        if round(v[edg[0]][2],tre) == round(v[edg[1]][2],tre):
-            edgH.append(edg)
-        elif round(v[edg[0]][0],tre) == round(v[edg[1]][0],tre) and round(v[edg[0]][1],tre) == round(v[edg[1]][1],tre):
-            edgV.append(edg)
+    if v:
+        v = v[0]
+        if tres<1:
+            tre=1
+        if tres>2:
+            tre=2
         else:
-            edgX.append(edg)
+            tre = tres
+        for edg in e[0]:
+            if round(v[edg[0]][2],tre) == round(v[edg[1]][2],tre):
+                edgH.append(edg)
+            elif round(v[edg[0]][0],tre) == round(v[edg[1]][0],tre) and round(v[edg[0]][1],tre) == round(v[edg[1]][1],tre):
+                edgV.append(edg)
+            else:
+                edgX.append(edg)
     
     out_sockets = [
         ['v', 'Vers', v],
@@ -38,3 +39,4 @@ def sv_main(v=[],e=[],tres=1):
     ]
 
     return in_sockets, out_sockets
+

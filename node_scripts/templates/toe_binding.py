@@ -3,8 +3,12 @@ def sv_main(n=[]):
     '''use note node to define toe
     l - left, r - right, t - top,
     bake, convert to curve and
-    extrude 0.3'
-    'Nikitron, 2014'''
+    extrude 0.3
+    Start always from l finish with t
+    and finish inside out
+    use live_curve script 
+    to materialize curve to tie
+    Nikitron, 2014'''
     
     in_sockets = [
         ['s', 'n', n]]
@@ -55,4 +59,5 @@ def sv_main(n=[]):
         ['v', 'out', [out]]]
 
     return in_sockets, out_sockets
+
 

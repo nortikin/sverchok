@@ -18,63 +18,60 @@
 
 import ast
 import os
+import traceback
 
 import bpy
-from bpy.props import StringProperty, EnumProperty, BoolProperty
+from bpy.props import (
+    StringProperty,
+    EnumProperty,
+    BoolProperty,
+    FloatVectorProperty,
+    IntVectorProperty
+)
 
 from utils.sv_tools import sv_get_local_path
 from node_tree import SverchCustomTreeNode
 from data_structure import (
-    dataCorrect, updateNode, SvSetSocketAnyType, SvGetSocketAnyType)
+    dataCorrect,
+    updateNode,
+    SvSetSocketAnyType,
+    SvGetSocketAnyType
+)
 
 FAIL_COLOR = (0.8, 0.1, 0.1)
 READY_COLOR = (0, 0.8, 0.95)
 
+defaults = list(range(32))
 sv_path = os.path.dirname(sv_get_local_path()[0])
 
-# utility functions
+sock_dict = {
+    'v': 'VerticesSocket',
+    's': 'StringsSocket',
+    'm': 'MatrixSocket'
+}
 
 
 def new_output_socket(node, name, stype):
-    socket_type = {
-        'v': 'VerticesSocket',
-        's': 'StringsSocket',
-        'm': 'MatrixSocket'
-    }.get(stype, None)
-
+    socket_type = sock_dict.get(stype)
     if socket_type:
-        node.outputs.new(socket_type, name, name)
+        node.outputs.new(socket_type, name)
 
 
 def new_input_socket(node, stype, name, dval):
-    socket_type = {
-        'v': 'VerticesSocket',
-        's': 'StringsSocket',
-        'm': 'MatrixSocket'
-    }.get(stype, None)
-
+    socket_type = sock_dict.get(stype)
     if socket_type:
-        node.inputs.new(socket_type, name, name).default = dval
+        socket = node.inputs.new(socket_type, name)
+        socket.default = dval
 
-
-def instrospect_py(node):
-    script_str = node.script_str
-    script = node.script
-
-    try:
-        exec(script_str)
-        f = vars()
-        node_functor = f.get('sv_main', None)
-    except UnboundLocalError:
-        print('see demo files for NodeScript')
-        return
-    finally:
-        '''
-        this will return a callable function if sv_main is found, else None
-        '''
-        if node_functor:
-            params = node_functor.__defaults__
-            return [node_functor, params, f]
+        if isinstance(dval, (float, int)):
+            offset = len(node.inputs)
+            if isinstance(dval, float):
+                socket.prop_type = "float_list"
+                node.float_list[offset] = dval
+            else:  # dval is int
+                socket.prop_type = "int_list"
+                node.int_list[offset] = dval
+            socket.prop_index = offset
 
 
 class SvDefaultScriptTemplate(bpy.types.Operator):
@@ -87,15 +84,25 @@ class SvDefaultScriptTemplate(bpy.types.Operator):
     script_name = StringProperty(name='name', default='')
 
     def execute(self, context):
-        # if a script is already in text.data list then 001 .002
-        # are automatically append by ops.text.open
+        n = context.node
         templates_path = os.path.join(sv_path, "node_scripts", "templates")
-        path_to_template = os.path.join(templates_path, self.script_name)
-        bpy.ops.text.open(filepath=path_to_template, internal=True)
+
+        fullpath = [templates_path, self.script_name]
+        if not n.user_name == 'templates':
+            fullpath.insert(1, n.user_name)
+
+        path_to_template = os.path.join(*fullpath)
+        bpy.ops.text.open(
+            filepath=path_to_template,
+            internal=True)
+
+        n.script_name = self.script_name
+
         return {'FINISHED'}
 
 
 class SvScriptUICallbackOp(bpy.types.Operator):
+    ''' Used by Scripted Operators '''
 
     bl_idname = "node.script_ui_callback"
     bl_label = "Sverchok script ui"
@@ -104,21 +111,22 @@ class SvScriptUICallbackOp(bpy.types.Operator):
     fn_name = StringProperty(default='')
 
     def execute(self, context):
+        fn_name = self.fn_name
         n = context.node
         node_function = n.node_dict[hash(n)]['node_function']
-        fn_name = self.fn_name
 
         f = getattr(node_function, fn_name, None)
         if not f:
-            msg = "{0} has no function named '{1}'".format(n.name, fn_name)
+            fmsg = "{0} has no function named '{1}'"
+            msg = fmsg.format(n.name, fn_name)
             self.report({"WARNING"}, msg)
             return {'CANCELLED'}
-
         f()
         return {'FINISHED'}
 
 
 class SvScriptNodeCallbackOp(bpy.types.Operator):
+    ''' Used by ScriptNode Operators '''
 
     bl_idname = "node.sverchok_callback"
     bl_label = "Sverchok scriptnode callback"
@@ -129,8 +137,8 @@ class SvScriptNodeCallbackOp(bpy.types.Operator):
     def execute(self, context):
         n = context.node
         fn_name = self.fn_name
-
         f = getattr(n, fn_name, None)
+
         if not f:
             msg = "{0} has no function named '{1}'".format(n.name, fn_name)
             self.report({"WARNING"}, msg)
@@ -151,19 +159,18 @@ class SvScriptNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Script Generator'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    def avail_scripts(self, context):
-        scripts = bpy.data.texts
-        items = [(t.name, t.name, "") for t in scripts]
-        # changes order for old files...
-        #items.sort(key=lambda x:x[0].upper())
+    def avail_templates(self, context):
+        fullpath = [sv_path, "node_scripts", "templates"]
+        if not self.user_name == 'templates':
+            fullpath.append(self.user_name)
+
+        templates_path = os.path.join(*fullpath)
+        items = [(t, t, "") for t in next(os.walk(templates_path))[2]]
         return items
 
-    def avail_templates(self, context):
-        templates_path = os.path.join(sv_path, "node_scripts", "templates")
-        items = [(t, t, "") for t in next(os.walk(templates_path))[2]]
-        # changes order for old files
-        #items.sort(key=lambda x:x[0].upper())
-        return items
+    def avail_users(self, context):
+        users = 'templates', 'zeffii', 'nikitron', 'ly', 'ko'
+        return [(j, j, '') for j in users]
 
     files_popup = EnumProperty(
         items=avail_templates,
@@ -171,166 +178,270 @@ class SvScriptNode(bpy.types.Node, SverchCustomTreeNode):
         description='choose file to load as template',
         update=updateNode)
 
-    script = EnumProperty(
-        items=avail_scripts,
-        name="Texts",
-        description="Choose text to load in node",
+    user_name = EnumProperty(
+        name='users',
+        items=avail_users,
         update=updateNode)
 
-    script_name = StringProperty(default="")
-    script_str = StringProperty(default="")
-    button_names = StringProperty(default="")
-    has_buttons = BoolProperty(default=False)
+    int_list = IntVectorProperty(
+        name='int_list', description="Integer list",
+        default=defaults, size=32, update=updateNode)
+
+    float_list = FloatVectorProperty(
+        name='float_list', description="Float list",
+        default=defaults, size=32, update=updateNode)
+
+    script_name = StringProperty()
+    script_str = StringProperty()
+    button_names = StringProperty()
+    has_buttons = BoolProperty(default=0)
 
     node_dict = {}
-    #in_sockets = []
-    #out_sockets = []
 
     def init(self, context):
         self.node_dict[hash(self)] = {}
-        pass
+        self.use_custom_color = False
+
+    def load(self):
+        if self.script_name:
+            self.script_str = bpy.data.texts[self.script_name].as_string()
+            self.label = self.script_name
+            self.load_function()
+
+    def load_function(self):
+        self.reset_node_dict()
+        self.load_py()
+
+    def indicate_ready_state(self):
+        self.use_custom_color = True
+        self.color = READY_COLOR
+
+    def reset_node_dict(self):
+        self.node_dict[hash(self)] = {}
+        self.button_names = ""
+        self.has_buttons = False
+        self.use_custom_color = False
 
     def nuke_me(self, context):
         in_out = [self.inputs, self.outputs]
         for socket_set in in_out:
             socket_set.clear()
 
-        if 'node_function' in self.node_dict[hash(self)]:
-            del self.node_dict[hash(self)]['node_function']
-
-        self.use_custom_color = False
+        self.reset_node_dict()
         self.script_name = ""
         self.script_str = ""
-        self.button_names = ""
-        self.has_buttons = False
+
+    def set_node_function(self, node_function):
+        self.node_dict[hash(self)]['node_function'] = node_function
+
+    def get_node_function(self):
+        return self.node_dict[hash(self)].get('node_function')
+
+    def draw_buttons_ext(self, context, layout):
+        col = layout.column()
+        col.prop(self, 'user_name')
 
     def draw_buttons(self, context, layout):
+        sv_callback = 'node.sverchok_callback'
+        sv_template = 'node.sverchok_script_template'
+        sn_callback = 'node.script_ui_callback'
 
         col = layout.column(align=True)
-        if not self.script_str:
-            row = col.row(align=True)
-            row.label(text='IMPORT PY:')
-            row = col.row(align=True)
-            row.alignment = 'RIGHT'
-            row.prop(self, 'files_popup', '')
-            row.operator(
-                'node.sverchok_script_template',
-                text='', icon='IMPORT').script_name = self.files_popup
+        row = col.row()
 
-            row = col.row(align=True)
-            row.label(text='USE PY:')
-            row = col.row(align=True)
-            # row.prop(self, "script", "")
-            row.prop_search(self, 'script', bpy.data, 'texts', text='', icon='TEXT')
-            row.operator('node.sverchok_callback', text='', icon='PLUGIN').fn_name = 'load'
+        if not self.script_str:
+            row.prop(self, 'files_popup', '')
+            import_operator = row.operator(sv_template, text='', icon='IMPORT')
+            import_operator.script_name = self.files_popup
+
+            row = col.row()
+            row.prop_search(self, 'script_name', bpy.data, 'texts', text='', icon='TEXT')
+            row.operator(sv_callback, text='', icon='PLUGIN').fn_name = 'load'
 
         else:
-            row = col.row()
-            col2 = row.column()
-            col2.scale_x = 0.05
-            col2.label(icon='TEXT', text=' ')
-            row.label(text='LOADED:')
-            row = col.row()
-            # backwards compability
-            script_name = self.script_name if self.script_name else self.script
-            row.label(text=script_name)
-            row = col.row()
-            row.operator('node.sverchok_callback', text='Reload').fn_name = 'load'
-            row.operator('node.sverchok_callback', text='Clear').fn_name = 'nuke_me'
+            row.operator(sv_callback, text='Reload').fn_name = 'load'
+            row.operator(sv_callback, text='Clear').fn_name = 'nuke_me'
 
             if self.has_buttons:
+                row = layout.row()
                 for fname in self.button_names.split('|'):
-                    row = col.row()
-                    row.operator('node.script_ui_callback', text=fname).fn_name = fname
-
-    def create_or_update_sockets(self, in_sockets, out_sockets):
-        '''
-        - desired features not fully implemented yet (only socket add so far)
-        - Load may be pressed to import an updated function
-        - tries to preserve existing sockets or add new ones if needed
-        '''
-        for socket_type, name, data in out_sockets:
-            if not (name in self.outputs):
-                new_output_socket(self, name, socket_type)
-                SvSetSocketAnyType(self, name, data)  # can output w/out input
-
-        for socket_type, name, dval in in_sockets:
-            if not (name in self.inputs):
-                new_input_socket(self, socket_type, name, dval)
-
-        self.use_custom_color = True
-        self.color = READY_COLOR
-
-    '''
-    load(_*)
-    - these are done once upon load or reload button presses
-    '''
-
-    def load(self):
-        self.script_str = bpy.data.texts[self.script].as_string()
-        self.script_name = self.script
-        self.label = self.script_name.split('.')[0]
-        self.load_function()
-
-    def load_function(self):
-        self.node_dict[hash(self)] = {}
-        self.button_names = ""
-        self.has_buttons = False
-        self.load_py()
+                    row.operator(sn_callback, text=fname).fn_name = fname
 
     def load_py(self):
-        details = instrospect_py(self)
-        if details:
+        node_functor = None
+        try:
+            exec(self.script_str)
+            f = vars()
+            node_functor = f.get('sv_main')
 
-            if None in details:
-                if not details[1]:
-                    print('sv_main() must take arguments')
-                print('should never reach here')
-                return
+        except UnboundLocalError:
+            print('no sv_main found')
 
-            node_function, params, f = details
-            del f['sv_main']
-            del f['script_str']
-            globals().update(f)
+        finally:
+            if node_functor:
+                params = node_functor.__defaults__
+                details = [node_functor, params, f]
+                self.process_introspected(details)
+            else:
+                print("load_py failed, introspection didn\'t find sv_main")
+                self.reset_node_dict()
 
-            self.node_dict[hash(self)]['node_function'] = node_function
+    def process_introspected(self, details):
+        node_function, params, f = details
+        del f['sv_main']
+        globals().update(f)
 
-            function_output = node_function(*params)
-            num_return_params = len(function_output)
+        self.set_node_function(node_function)
 
-            if num_return_params == 2:
-                in_sockets, out_sockets = function_output
-            if num_return_params == 3:
-                self.has_buttons = True
-                in_sockets, out_sockets, ui_ops = function_output
+        # no exception handling, let's get the exact error!
+        # errors here are errors in the user script. without reporting
+        # you have no idea what to fix.
+        function_output = node_function(*params)
+        num_return_params = len(function_output)
 
-            if self.has_buttons:
-                named_buttons = []
-                for button_name, button_function in ui_ops:
-                    f = self.node_dict[hash(self)]['node_function']
-                    setattr(f, button_name, button_function)
-                    named_buttons.append(button_name)
-                self.button_names = "|".join(named_buttons)
+        if num_return_params == 2:
+            in_sockets, out_sockets = function_output
+        if num_return_params == 3:
+            self.has_buttons = True
+            in_sockets, out_sockets, ui_ops = function_output
 
-            print('found {0} in sock requests'.format(len(in_sockets)))
-            print('found {0} out sock requests'.format(len(out_sockets)))
+        if self.has_buttons:
+            self.process_operator_buttons(ui_ops)
 
-            if in_sockets and out_sockets:
-                self.create_or_update_sockets(in_sockets, out_sockets)
+        if in_sockets and out_sockets:
+            self.create_or_update_sockets(in_sockets, out_sockets)
+
+        self.indicate_ready_state()
+
+    def process_operator_buttons(self, ui_ops):
+        named_buttons = []
+        for button_name, button_function in ui_ops:
+            f = self.get_node_function()
+            setattr(f, button_name, button_function)
+            named_buttons.append(button_name)
+        self.button_names = "|".join(named_buttons)
+
+    def create_or_update_sockets(self, in_sockets, out_sockets):
+        if not self.inputs:
+            for socket_type, name, dval in in_sockets:
+                new_input_socket(self, socket_type, name, dval)
+        else:
+            self.update_existing_sockets(params=in_sockets, direction='in')
+
+        if not self.outputs:
+            for socket_type, name, data in out_sockets:
+                new_output_socket(self, name, socket_type)
+        else:
+            self.update_existing_sockets(params=out_sockets, direction='out')
+
+    def update_existing_sockets(self, params, direction):
+        '''
+        this mammoth will run twice per manual reload, once for self.inputs
+        and once for self.outputs.
+
+        - if sockets didn't change, it ends early
+        - if sockets changed, but no links are found, it removes all sockets
+          and recreates them, then returns flow control. (slider values are lost)
+        - if outputs change, and some links are found they are stored,
+          sockets are removed, recreated, and returning sockets which had previous
+          connections are reconnected
+        '''
+
+        IO = self.inputs if (direction == 'in') else self.outputs
+
+        def print_debug(a, b):
+            d = direction
+            first_line = 'current {dir}puts  : {val}'.format(dir=d, val=a)
+            second_line = '\nnew required {dir} : {val}'.format(dir=d, val=b)
+            print(first_line + second_line)
+
+        def get_names_from(cur_sockets, new_sockets, direction):
+            a = [i.name for i in cur_sockets]
+            b = [name for x, name, y in new_sockets]
+            print_debug(a, b)
+            return a, b
+
+        '''
+        the following variable clarification is needed:
+        a : list of sockets currently on the UI
+        b : this is the list of sockets names wanted by the script
+        (a == b) == (user refresh didn't involve changes to sockets)
+        '''
+        a, b = get_names_from(IO, params, direction)
+        if a == b:
             return
 
-        print('load_py, failed because introspection failed')
-        self.use_custom_color = True
-        self.color = FAIL_COLOR
+        has_links = lambda: any([socket.links for socket in IO])
 
-    def load_cf(self):
-        pass
+        '''
+        [ ] collect current slider values too, i guess, but gets messy
+        '''
 
-    '''
-    update(_*)
-    - performed whenever Sverchok is scheduled to update.
-    - also triggered by socket updates
-    '''
+        if has_links:
+            io_dict = None
+            '''
+            # collect links
+            [x] nlist = get current connections
+            [x] delete from nlist any socket info not in b
+            '''
+            io_dict = self.get_connections(direction, IO)
+            _a = set(io_dict.keys())
+            _b = set(b)
+            keep = _a & _b
+            removeable = keep ^ _a
+            for k in removeable:
+                io_dict.pop(k)
+
+        '''
+        # flatten
+        [x] IO.clear()
+        [x] repopulate
+        '''
+        self.flatten_sockets(IO, direction, params)
+
+        if has_links and io_dict:
+            '''
+            # reattach
+            [X] repopulate old links
+            '''
+            ng = self.id_data
+            for key, val in io_dict.items():
+                if direction == 'in':
+                    _from = val.node.outputs[val.sock.name]
+                    _to = IO[key]
+                    ng.links.new(_from, _to)
+
+                if direction == 'out':
+                    _from = IO[key]
+                    _to = val.node.inputs[val.sock.name]
+                    ng.links.new(_from, _to)
+
+    def flatten_sockets(self, IO, direction, params):
+        IO.clear()
+        if direction == 'in':
+            for socket_type, name, dval in params:
+                new_input_socket(self, socket_type, name, dval)
+
+        elif direction == 'out':
+            for socket_type, name, data in params:
+                new_output_socket(self, name, socket_type)
+
+    def get_connections(self, direction, IO):
+        io_dict = {}
+        for s in IO:
+            if not s.links:
+                continue
+
+            r = lambda: None
+            r.nodelink = s.links[0]
+            if direction == 'in':
+                r.node = r.nodelink.from_node
+                r.sock = r.nodelink.from_socket
+            else:
+                r.node = r.nodelink.to_node
+                r.sock = r.nodelink.to_socket
+            io_dict[s.name] = r
+        return io_dict
 
     def update(self):
         if not self.inputs:
@@ -341,67 +452,84 @@ class SvScriptNode(bpy.types.Node, SverchCustomTreeNode):
                 self.load_function()
             else:
                 self.load()
-        # backwards compability
-        if self.script_str and not self.script_name:
-            self.script_name = self.script
 
-        self.update_py()
-
-    def update_py(self):
-
-        node_function = self.node_dict[hash(self)].get('node_function', None)
-        if not node_function:
+        if not self.get_node_function():
             return
 
+        self.process()
+
+    def process(self):
+        inputs = self.inputs
+
+        node_function = self.get_node_function()
         defaults = node_function.__defaults__
-        input_names = [i.name for i in self.inputs]
 
         fparams = []
-        for param_idx, name in enumerate(input_names):
-            links = self.inputs[name].links
-            this_val = defaults[param_idx]
+        input_names = [i.name for i in inputs]
+        for idx, name in enumerate(input_names):
+            self.get_input_or_default(name, defaults[idx], fparams)
 
-            if links:
-                if isinstance(this_val, list):
-                    try:
-                        this_val = SvGetSocketAnyType(self, self.inputs[param_idx])
-                        this_val = dataCorrect(this_val)
-                    except:
-                        this_val = defaults[param_idx]
-                elif isinstance(this_val, (int, float)):
-                    try:
-                        k = str(SvGetSocketAnyType(self, self.inputs[name]))
-                        kfree = k[2:-2]
-                        this_val = ast.literal_eval(kfree)
-                    except:
-                        this_val = defaults[param_idx]
+        if (len(fparams) == len(input_names)):
+            self.set_outputs(node_function, fparams)
 
-            fparams.append(this_val)
+    def get_input_or_default(self, name, this_val, fparams):
+        ''' fill up the fparams list with found or default values '''
+        socket = self.inputs[name]
 
-        if node_function and (len(fparams) == len(input_names)):
+        # this deals with incoming links only.
+        if socket.links:
+            if isinstance(this_val, list):
+                try:
+                    this_val = socket.sv_get()
+                    this_val = dataCorrect(this_val)
+                except:
+                    pass
+            elif isinstance(this_val, (int, float)):
+                try:
+                    k = str(socket.sv_get())
+                    kfree = k[2:-2]
+                    this_val = ast.literal_eval(kfree)
+                    #this_val = socket.sv_get()[0][0]
+                except:
+                    pass
 
-            fn_return_values = node_function(*fparams)
-            out_sockets = fn_return_values[1]
+        # this catches movement on UI sliders.
+        elif isinstance(this_val, (int, float)):
+            # extra pussyfooting for the load sequence.
+            t = socket.sv_get()
+            if t and t[0] and t[0][0]:
+                this_val = t[0][0]
 
-            for socket_type, name, data in out_sockets:
-                SvSetSocketAnyType(self, name, data)
+        # either found input, or uses default.
+        fparams.append(this_val)
 
-    def update_coffee(self):
-        pass
+    def set_outputs(self, node_function, fparams):
+        outputs = self.outputs
+
+        out = node_function(*fparams)
+        if len(out) == 2:
+            _, out_sockets = out
+
+            for _, name, data in out_sockets:
+                if name in outputs:
+                    outputs[name].sv_set(data)
 
     def update_socket(self, context):
         self.update()
 
+classes = [
+    SvScriptNode,
+    SvDefaultScriptTemplate,
+    SvScriptNodeCallbackOp,
+    SvScriptUICallbackOp
+]
+
 
 def register():
-    bpy.utils.register_class(SvScriptNode)
-    bpy.utils.register_class(SvDefaultScriptTemplate)
-    bpy.utils.register_class(SvScriptNodeCallbackOp)
-    bpy.utils.register_class(SvScriptUICallbackOp)
+    for class_name in classes:
+        bpy.utils.register_class(class_name)
 
 
 def unregister():
-    bpy.utils.unregister_class(SvDefaultScriptTemplate)
-    bpy.utils.unregister_class(SvScriptNode)
-    bpy.utils.unregister_class(SvScriptNodeCallbackOp)
-    bpy.utils.unregister_class(SvScriptUICallbackOp)
+    for class_name in classes:
+        bpy.utils.unregister_class(class_name)
