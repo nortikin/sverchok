@@ -190,7 +190,10 @@ def make_categories():
         ["SvMirrorNode",        "Mirror"],
         ["SvWafelNode",         "Wafel"],
         ["SvVertexGroupNode",   "Vertext group"],
-        ["SvRayCastNode",       "Raycast"]]
+        ["SvRayCastNode",       "Raycast"],
+        ["SvScriptNodeMK2",      "Script 2"],
+        
+        ]
 
     node_categories = []
     howmanynodesare = 0
