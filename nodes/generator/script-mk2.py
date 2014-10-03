@@ -177,7 +177,8 @@ class SvScriptNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                     
             for args in script.outputs:            
                 if len(args) == 2 and args[1] not in self.outputs:
-                    self.outputs.new("StringsSocket", args[1])
+                    stype = socket_types[args[0]]
+                    self.outputs.new(stype, args[1])
     
     
     def clear(self):
@@ -282,8 +283,8 @@ class SvScriptNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             col2.scale_x = 0.05
             col2.label(icon='TEXT', text=' ')
             row.label(text='LOADED: {0}'.format(self.script_file_name))
-            row = col.row()
-            row.label(text=self.script_name)
+            #row = col.row()
+            #row.label(text=self.script_name)
             row = col.row()
             row.operator("node.sverchok_text_callback", text='Reload').fn_name = 'reload'
             row.operator("node.sverchok_text_callback", text='Clear').fn_name = 'clear'
