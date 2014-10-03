@@ -176,6 +176,7 @@ def make_categories():
         # need to be completely reviewed
         ["SvListDecomposeNode",   "List Decompose"],
         # should be removed...
+        ["SvJoinTrianglesNode", "Join Triangles"],
         ["SvImageComponentsNode", "Image Decompose"],
         ["SvBoxRoundedNode",    "Rounded Box"],
         ["SvReRouteNode",       "Reroute Point"],
