@@ -84,3 +84,7 @@ Properties has also gathered values:
 **object in** - button for object in node to collect selected objects.
 
 
+Notes
+=====
+
+All this stuff including upgrade and check for updates situates on /utils/sv_tools.py file
