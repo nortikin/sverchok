@@ -119,18 +119,12 @@ class ImageComponentsOps(bpy.types.Operator):
         num_pixels = int(len(pxls) / 4)
 
         node_dict['image'] = {
-            'x': [], 'y': [],
-            'r': [], 'g': [], 'b': [], 'a': [],
-            'polygons': [], 'dimensions': [w, h]
+            'xya': [], 'rgb': [], 'polygons': [], 'dimensions': [w, h]
         }
 
         image = node_dict['image']
-        add_x = image['x'].append
-        add_y = image['y'].append
-        add_r = image['r'].append
-        add_g = image['g'].append
-        add_b = image['b'].append
-        add_a = image['a'].append
+        add_xya = image['xya'].append
+        add_rgb = image['rgb'].append
 
         # generator expression
         gen_obj = (i for i in pxls)
@@ -144,12 +138,8 @@ class ImageComponentsOps(bpy.types.Operator):
             if n.filter_mode:
                 if not eval(n.filter_str, {}, vars()):
                     return
-            add_x(x)
-            add_y(y)
-            add_r(r)
-            add_g(g)
-            add_b(b)
-            add_a(a)
+            add_xya((x, y, a))
+            add_rgb((r, g, b))
 
         if n.skip == 0:
             for idx in range(num_pixels):
@@ -249,15 +239,16 @@ class SvImageComponentsNode(bpy.types.Node, SverchCustomTreeNode):
 
         xy, z, p = 'xy_spread', 'z_spread', 'polygons'
         socket = 'StringsSocket'
+        vsocket = 'VerticesSocket'
 
         new_in = self.inputs.new
-        new_in(socket, xy, xy).prop_name = xy
-        new_in(socket, z, z).prop_name = z
+        new_in(socket, xy).prop_name = xy
+        new_in(socket, z).prop_name = z
 
         new_out = self.outputs.new
-        for i in 'xyrgba':
-            new_out(socket, i, i)
-        new_out(socket, p, p)
+        new_out(vsocket, 'xya')
+        new_out(vsocket, 'rgb')
+        new_out(socket, p)
 
     def draw_buttons(self, context, layout):
         col = layout.column()
@@ -311,9 +302,9 @@ class SvImageComponentsNode(bpy.types.Node, SverchCustomTreeNode):
 
         if not self.loaded:
             return
-        if not len(outputs) == 7:
+        if not len(outputs) == 3:
             return
-        if not (outputs['x'].links and outputs['y'].links):
+        if not (outputs['xya'].links and outputs['rgb'].links):
             return
 
         # upload reload, this avoids errors - still not perfect
@@ -328,11 +319,24 @@ class SvImageComponentsNode(bpy.types.Node, SverchCustomTreeNode):
 
         node_image = self.node_dict[hash(self)]['node_image']
         dict_data = node_image['image']
-        for name in 'xyrgba':
-            if outputs[name].links:
-                m = self.xy_spread if name in 'xy' else self.z_spread
-                data = [v * m for v in dict_data[name]]
-                outputs[name].sv_set([data])
+        xya = 'xya'
+        rgb = 'rgb'
+        m1 = self.xy_spread
+        m2 = self.z_spread
+
+        if outputs[xya].links:
+            tmul = lambda v: (v[0]*m1, v[1]*m1, v[2])
+            data = [tmul(v) for v in dict_data[xya]]
+            outputs[xya].sv_set([data])
+
+        if outputs[rgb].links:
+            if -0.001 <= m2 <= 0.001:
+                data = dict_data[rgb]
+            else:
+                tmul = lambda v: (v[0]*m2, v[1]*m2, v[2]*m2)
+                data = [tmul(v) for v in dict_data[rgb]]
+
+            outputs[rgb].sv_set([data])
 
         if self.filter_mode:
             '''

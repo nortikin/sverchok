@@ -9,3 +9,4 @@ Beta
    viewer_draw_mk2
    box_rounded
    obj_remote
+   image_decompose
