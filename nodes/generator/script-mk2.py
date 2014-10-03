@@ -85,14 +85,7 @@ class SvScript:
     
     node = None
     
-
     
-    def draw_buttons(self, node, context, layout):
-        pass
-    
-    def update(self):
-        pass
-        
     def get_data(self):
         '''Support function to get raw data from node'''
         node = self.node
@@ -106,12 +99,9 @@ class SvScript:
         Support function to set data
         '''
         node = self.node
-        for name, d in data:
+        for name, d in data.items():
             node.outputs[name].sv_set(d)
         
-        
-    def process(self):
-        pass
         
 socket_types = {
     'v': 'VerticesSocket',
@@ -185,7 +175,9 @@ class SvScriptNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                         self.script_name = script.name
                     else:
                         self.script_name = name
-            except:
+            except Err:
+                print("Script Node couldn't load {0}".format(name))
+                print(str(Err)) 
                 pass
     
     # better logic should be taken from old script node
@@ -193,6 +185,9 @@ class SvScriptNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         script = self.script
         if script:
             for args in script.inputs:
+                if args[1] in self.inputs:
+                    continue
+                    
                 socket_types
                 stype = socket_types[args[0]]
                 name = args[1]
@@ -204,11 +199,14 @@ class SvScriptNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                     offset = len(self.inputs)
                     if isinstance(default_value, int):
                         self.int_list[offset] = default_value
+                        socket.prop_type = "int_list"
                     elif isinstance(default_value, float):
                         self.float_list[offset] = default_value
-                    socket.prop_
+                        socket.prop_type = "float_list"
+                    socket.prop_index = offset
+                    
             for args in script.outputs:            
-                if len(args) == 2:
+                if len(args) == 2 and args[1] not in self.outputs:
                     self.outputs.new("StringsSocket", args[1])
     
     
@@ -239,11 +237,17 @@ class SvScriptNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         script = self.script
         if not script:
             self.reload()
+            # if create socket another update event will fire anyway
+            return
         # basic sanity
         if len(script.inputs) != len(self.inputs):
             return
         if len(script.outputs) != len(self.outputs):
             return
+        # check if no default and not linked, return
+        for data, socket in zip(script.inputs, self.inputs): 
+            if len(data) == 2 and not socket.links:
+                return
         self.process()
     
     def process(self):
@@ -256,10 +260,7 @@ class SvScriptNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     def copy(self, node):
         self.n_id = ""
         node_id(self)
-            
-    def reload(self):
-        pass
-    
+                
     def init(self, context):
         node_id(self)
     
@@ -310,7 +311,7 @@ class SvScriptNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             col2 = row.column()
             col2.scale_x = 0.05
             col2.label(icon='TEXT', text=' ')
-            row.label(text='LOADED:')
+            row.label(text='LOADED: {0}'.format(self.script_file_name))
             row = col.row()
             row.label(text=self.script_name)
             row = col.row()

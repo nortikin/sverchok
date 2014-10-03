@@ -9,4 +9,4 @@ class MyScript( SvScript):
         for obj in data:
             out.append(sum(obj))
             
-        self.set_data({'Sum':out}))
+        self.set_data({'Sum':out})
