@@ -55,6 +55,7 @@ Outputs
 Examples
 --------
 
+`The development thread <https://github.com/nortikin/sverchok/issues/405>`_ contains working examples of this Node used as preprocessor for game maps.
 
 Notes
 -----
