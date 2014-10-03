@@ -18,49 +18,26 @@
 
 # author Linus Yng
 
-
+import abc
 import ast
 import os
 
 import bpy
-from bpy.props import StringProperty, EnumProperty, BoolProperty
+from bpy.props import (
+    StringProperty,
+    EnumProperty,
+    BoolProperty,
+    FloatVectorProperty,
+    IntVectorProperty
+)
 
 from utils.sv_tools import sv_get_local_path
+from utils.sv_script import SvScript
 from node_tree import SverchCustomTreeNode
 from data_structure import (
     dataCorrect, updateNode, SvSetSocketAnyType, SvGetSocketAnyType, node_id)
 
 sv_path = os.path.dirname(sv_get_local_path()[0])
-
-
-def recursive_depth(l):
-    if isinstance(l, (list, tuple)) and l:
-        return 1 + recursive_depth(l[0])
-    elif isinstance(l, (int, float, str)):
-        return 0
-    else:
-        return None
-
-def vectorize(*args, **kwargs):
-    # find level
-    
-    if (isinstance(l1, (int, float)) and isinstance(l2, (int, float))):
-            return f(l1, l2)
-            
-    if (isinstance(l2, (list, tuple)) and isinstance(l1, (list, tuple))):
-        fl = l2[-1] if len(l1) > len(l2) else l1[-1]
-        res = []
-        res_append = res.append
-        for x, y in zip_longest(l1, l2, fillvalue=fl):
-            res_append(self.recurse_fxy(x, y, f))
-        return res
-    
-    # non matching levels    
-    if isinstance(l1, (list, tuple)) and isinstance(l2, (int, float)):
-        return self.recurse_fxy(l1, [l2], f)
-    if isinstance(l1, (int, float)) and isinstance(l2, (list, tuple)):
-        return self.recurse_fxy([l1], l2, f)
-
 
 
 class SvDefaultScript2Template(bpy.types.Operator):
@@ -81,33 +58,15 @@ class SvDefaultScript2Template(bpy.types.Operator):
         return {'FINISHED'}
 
 
-class SvScript:
-    
-    node = None
-    
-    
-    def get_data(self):
-        '''Support function to get raw data from node'''
-        node = self.node
-        if node:
-            return [(s.name, s.sv_get()) for s in node.inputs if s.links]
-        else:
-            raise Error
-    
-    def set_data(self, data):
-        '''
-        Support function to set data
-        '''
-        node = self.node
-        for name, d in data.items():
-            node.outputs[name].sv_set(d)
-        
-        
+
 socket_types = {
     'v': 'VerticesSocket',
     's': 'StringsSocket',
     'm': 'MatrixSocket'
 }
+
+# for number lists
+defaults = [0 for i in range(32)]
 
 class SvScriptNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     
@@ -149,13 +108,22 @@ class SvScriptNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     script_name = StringProperty()
     script_file_name = StringProperty()
     
-    
+    int_list = IntVectorProperty(
+        name='int_list', description="Integer list",
+        default=defaults, size=32, update=updateNode)
+
+    float_list = FloatVectorProperty(
+        name='float_list', description="Float list",
+        default=defaults, size=32, update=updateNode)
     
     def load_script(self):
         try:
             code = compile(self.script_str, '<string>', 'exec')
             global_space = {}
-            local_space = {"SvScript": SvScript}
+            # clever?
+            local_space = {cls.__name__:cls for cls in SvScript.__subclasses__()}
+            local_space["SvScript"] = SvScript
+            print(local_space)
             exec(code, global_space, local_space)
         except SyntaxError as err:
             print("Script Node, load error: {}".format(err))
@@ -170,12 +138,14 @@ class SvScriptNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                 if isinstance(script, SvScript):
                     print("Script Node found script {}".format(name))
                     self.script = script
-                    self.script_types[name] = local_space[name]
+                    
+                    #self.script_types[name] = local_space[name]
                     if hasattr(script, "name"):
                         self.script_name = script.name
                     else:
                         self.script_name = name
-            except Err:
+                    
+            except Exception as Err:
                 print("Script Node couldn't load {0}".format(name))
                 print(str(Err)) 
                 pass

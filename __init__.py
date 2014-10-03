@@ -69,7 +69,7 @@ core_modules = ["handlers", "update_system", "upgrade_nodes"]
 utils_modules = [
     "cad_module", "sv_bmesh_utils", "text_editor_submenu",
     "index_viewer_draw", "sv_curve_utils", "viewer_draw", "viewer_draw_mk2",
-    "sv_tools", "voronoi", "nodeview_bgl_viewer_draw", "text_editor_plugins"]
+    "sv_tools", "voronoi", "nodeview_bgl_viewer_draw", "text_editor_plugins", "sv_script", "sv_itertools"]
 
 # parse the nodes/__init__.py dictionary and load all nodes
 def make_node_list():
@@ -158,10 +158,3 @@ def unregister():
 
     if 'SVERCHOK' in nodeitems_utils._node_categories:
         nodeitems_utils.unregister_node_categories("SVERCHOK")
-
-
-
-
-
-
-
