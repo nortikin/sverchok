@@ -34,10 +34,25 @@ FAIL_COLOR = (0.1, 0.05, 0)
 READY_COLOR = (1, 0.3, 0)
 
 
-class TextBaker(object):
+class SvBakeText (bpy.types.Operator):
+    """3Dtext baking"""
 
-    def __init__(self, node):
-        self.node = node
+    bl_idname = "node.sv_text_baking"
+    bl_label = "bake text"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    idname = StringProperty(name='idname', description='name of parent node',
+                            default='')
+    idtree = StringProperty(name='idtree', description='name of parent tree',
+                            default='')
+
+    @property
+    def node(self):
+        return bpy.data.node_groups[self.idtree].nodes[self.idname]
+
+    def execute(self, context):
+        self.collect_text_to_bake()
+        return {'FINISHED'}
 
     def collect_text_to_bake(self):
         node = self.node
@@ -45,15 +60,19 @@ class TextBaker(object):
 
         def has_good_link(name, TypeSocket):
             if inputs[name].links:
-                if isinstance(inputs[name].links[0].from_socket, TypeSocket):
-                    return True
+                socket = inputs[name].links[0].from_socket
+                return isinstance(socket, TypeSocket)
+
+        def get_socket_type(name):
+            if name in {'edges', 'faces', 'text'}:
+                return StringsSocket
+            elif name == 'matrix':
+                return MatrixSocket
+            else:
+                return VerticesSocket
 
         def get_data(name, fallback=[]):
-            if name in {'edges', 'faces', 'text'}:
-                TypeSocket = StringsSocket
-            else:
-                TypeSocket = MatrixSocket if name == 'matrix' else VerticesSocket
-
+            TypeSocket = get_socket_type(name)
             if has_good_link(name, TypeSocket):
                 d = dataCorrect(SvGetSocketAnyType(node, inputs[name]))
                 if name == 'matrix':
@@ -86,33 +105,25 @@ class TextBaker(object):
 
             if node.display_vert_index:
                 for idx, v in enumerate(final_verts):
-                    if text_obj:
-                        self.bake(idx, v, text_obj[idx])
-                    else:
-                        self.bake(idx, v)
+                    self.bake(idx, v, text_obj)
 
             if data_edges and node.display_edge_index:
                 for edge_index, (idx1, idx2) in enumerate(data_edges[obj_index]):
-
                     v1 = Vector(final_verts[idx1])
                     v2 = Vector(final_verts[idx2])
                     loc = v1 + ((v2 - v1) / 2)
-                    if text_obj:
-                        self.bake(edge_index, loc, text_obj[edge_index])
-                    else:
-                        self.bake(edge_index, loc)
+                    self.bake(edge_index, loc, text_obj)
 
             if data_faces and node.display_face_index:
                 for face_index, f in enumerate(data_faces[obj_index]):
                     verts = [Vector(final_verts[idx]) for idx in f]
                     median = self.calc_median(verts)
-                    if text_obj:
-                        self.bake(face_index, median, text_obj[face_index])
-                    else:
-                        self.bake(face_index, median)
+                    self.bake(face_index, median, text_obj)
 
-    def bake(self, index, origin, text_=''):
+    def bake(self, index, origin, text_obj):
         node = self.node
+
+        text_ = '' if (text_obj == '') else text_obj[index]
         text = str(text_[0] if text_ else index)
 
         # Create and name TextCurve object
@@ -123,13 +134,13 @@ class TextBaker(object):
         bpy.context.scene.objects.link(obj)
 
         # TextCurve attributes
+        file_font = bpy.data.fonts.get(node.fonts)
+        if file_font:
+            # else blender defaults to using bfont,
+            # and bfont is added to data.fonts
+            tcu.font = file_font
+
         tcu.body = text
-
-        try:
-            tcu.font = bpy.data.fonts[node.fonts]
-        except:
-            tcu.font = bpy.data.fonts[0]
-
         tcu.offset_x = 0
         tcu.offset_y = 0
         tcu.resolution_u = 2
@@ -138,7 +149,6 @@ class TextBaker(object):
         tcu.space_character = 1
         tcu.space_word = 1
         tcu.align = 'CENTER'
-
         tcu.extrude = 0.0
         tcu.fill_mode = 'NONE'
 
@@ -147,18 +157,6 @@ class TextBaker(object):
         for v in vlist:
             a += v
         return a / len(vlist)
-
-
-class SvBakeText (bpy.types.Operator):
-
-    """3Dtext baking"""
-    bl_idname = "object.sv_text_baking"
-    bl_label = "bake text"
-    bl_options = {'REGISTER', 'UNDO'}
-
-    def execute(self, context):
-        context.node.bake()
-        return {'FINISHED'}
 
 
 class IndexViewerNode(bpy.types.Node, SverchCustomTreeNode):
@@ -244,7 +242,10 @@ class IndexViewerNode(bpy.types.Node, SverchCustomTreeNode):
         if self.bakebuttonshow:
             row = col.row(align=True)
             row.scale_y = 3
-            row.operator('object.sv_text_baking', text='B A K E')
+            baker = row.operator('node.sv_text_baking', text='B A K E')
+            baker.idname = self.name
+            baker.idtree = self.id_data.name
+
             row = col.row(align=True)
             row.prop(self, "font_size")
 
@@ -295,7 +296,8 @@ class IndexViewerNode(bpy.types.Node, SverchCustomTreeNode):
         colprops = [
             ['Numbers :', [
                 'numid_verts_col', 'numid_edges_col', 'numid_faces_col']],
-            ['Backgrnd :', ['bg_verts_col', 'bg_edges_col', 'bg_faces_col']]
+            ['Backgrnd :', [
+                'bg_verts_col', 'bg_edges_col', 'bg_faces_col']]
         ]
 
         # each first draws the table row heading, 'label'
@@ -382,8 +384,9 @@ class IndexViewerNode(bpy.types.Node, SverchCustomTreeNode):
         IV.callback_disable(node_id(self))
 
     def bake(self):
-        baker_obj = TextBaker(self)
-        baker_obj.collect_text_to_bake()
+        if self.activate and self.inputs['vertices'].links:
+            textbake = bpy.ops.node.sv_text_baking
+            textbake(idname=self.name, idtree=self.id_data.name)
 
 
 def register():

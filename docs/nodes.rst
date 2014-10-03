@@ -17,3 +17,5 @@ Nodes
    Modifier Change <nodes/modifier_change/modifier_change>
    Modifier Make <nodes/modifier_make/modifier_make>
    Analyzer <nodes/analyzer/analyzer>
+
+   Beta <nodes/beta/stethoscope>

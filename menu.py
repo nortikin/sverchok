@@ -106,6 +106,7 @@ def make_categories():
         ["ImageNode",           "Image"],
         ["RandomVectorNode",    "Random Vector"],
         ["SvFormulaShapeNode",  "Formula shape"],
+        ["SvProfileNode",       "ProfileParametric"],
         ["SvScriptNode",        "Scripted Node"]]
 
     node_cats["Vector"] = [
@@ -167,20 +168,22 @@ def make_categories():
 
     node_cats["Beta test"] = [
         # for testing convenience,
+        ["ViewerNode2",         "Viewer draw MK2"],  # investigationg serious crash
         ["SvStethoscopeNode",   "Stethoscope"],
         ["SvOffsetNode",        "Offset"],
         ["SvEmptyOutNode",      "Empty out"],
         ["EvalKnievalNode",     "Eval Knieval"],
         # need to be completely reviewed
-        ["ListDecomposeNode",   "List Decompose"],
+        ["SvListDecomposeNode",   "List Decompose"],
         # should be removed...
+        ["SvImageComponentsNode", "Image Decompose"],
+        ["SvBoxRoundedNode",    "Rounded Box"],
         ["SvReRouteNode",       "Reroute Point"],
         ["SvVolumeNode",        "Volume"],
         ["SvSwitchNode",        "Switch"],
         ["SvNeuroElman1LNode",  "Neuro"],
         ["SvInstancerNode",     "mesh instancer"],
         ["SvLogicNode",         "Logic"],
-        ["SvProfileNode",       "ProfileParametric"],
         ["SvRotationNode",      "Rotation"],
         ["SvScaleNode",         "Scale"],
         ["SvMatrixEulerNode",   "Matrix Euler"],
@@ -190,10 +193,12 @@ def make_categories():
         ["SvRayCastNode",       "Raycast"]]
 
     node_categories = []
+    howmanynodesare = 0
     for category, nodes in node_cats.items():
         name_big = "SVERCHOK_" + category.replace(' ', '_')
         node_categories.append(SverchNodeCategory(
             name_big, category,
             items=[NodeItem(bl_idname, name) for bl_idname, name in nodes]))
+        howmanynodesare += len(nodes)
 
-    return node_categories
+    return node_categories, howmanynodesare

@@ -30,3 +30,8 @@ Example of usage
 
 .. image:: https://cloud.githubusercontent.com/assets/5783432/4222949/c5874906-3917-11e4-9c9c-94c016560f98.jpg
   :alt: Centers_of_polygons_matrices.jpg
+
+Problems
+--------
+
+The code of matrix rotation based on Euler rotation, so when you rotate to plane X-oriented, it makes wrong. We need spherical coordinates and quaternion rotation here, needed help or something
