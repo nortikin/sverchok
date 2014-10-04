@@ -410,7 +410,7 @@ class SverchokIOLayoutsMenu(bpy.types.Panel):
         row0.split()
         col = box1.column(align=False)
         row5 = col.row(align=True)
-        row5.prop(ntree, 'compress_output', text='Compress', toggle=True)
+        row5.prop(ntree, 'compress_output', text='Zip', toggle=True)
         row1 = col.row(align=True)
         row1.scale_y=1.4
         imp = row1.operator(
@@ -431,7 +431,6 @@ class SverchokIOLayoutsMenu(bpy.types.Panel):
         col = box2.column(align=False)
         row3 = col.row(align=True)
         row3.scale_y = 1
-        row3.label(text='New name:')
         row3.prop(ntree, 'new_nodetree_name', text='')
         row2 = col.row(align=True)
         row2.scale_y = 1.4
