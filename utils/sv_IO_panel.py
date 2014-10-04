@@ -420,19 +420,16 @@ class SverchokIOLayoutsMenu(bpy.types.Panel):
 
         box2 = layout.box()
         box2.label('Import')
-        col = box2.column(align=False)
-        row3 = col.row(align=True)
-        row3.scale_y = 1
-        row3.prop(ntree, 'new_nodetree_name', text='')
-        row2 = col.row(align=True)
+        row1 = box2.row(align=False)
+        row1.prop(ntree, 'new_nodetree_name', text='')
+
+        row2 = box2.row(align=False)
         row2.scale_y = 1.4
         exp1 = row2.operator(
             'node.tree_importer',
             text='Here',
             icon='RNA')
         exp1.id_tree = ntree.name
-
-        row2.separator()
 
         exp2 = row2.operator(
             'node.tree_importer',
