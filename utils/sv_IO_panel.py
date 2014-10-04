@@ -385,6 +385,7 @@ class SverchokIOLayoutsMenu(bpy.types.Panel):
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
     bl_category = 'Sverchok'
+    bl_options = {'DEFAULT_CLOSED'}
     use_pin = True
 
     @classmethod
