@@ -402,7 +402,7 @@ class SverchokIOLayoutsMenu(bpy.types.Panel):
         ''' export '''
 
         col = layout.column(align=True)
-        col.prop(self, 'compress_output', text='compress output')
+        col.prop(ntree, 'compress_output', text='compress output')
         col.separator()
 
         # col = layout.column(align=True)
@@ -428,7 +428,7 @@ class SverchokIOLayoutsMenu(bpy.types.Panel):
 
         col.separator()
 
-        col.prop(self, 'new_nodetree_name', text='tree name')
+        col.prop(ntree, 'new_nodetree_name', text='tree name')
         exp2 = col.operator(
             'node.tree_importer',
             text='import to new',
@@ -438,13 +438,11 @@ class SverchokIOLayoutsMenu(bpy.types.Panel):
 
 
 def register():
-    svType = bpy.types.SverchCustomTreeType
-
-    svType.new_nodetree_name = StringProperty(
+    bpy.types.SverchCustomTreeType.new_nodetree_name = StringProperty(
         name='new_nodetree_name',
         default="ImportedNodeTree")
 
-    svType.compress_output = BoolProperty(
+    bpy.types.SverchCustomTreeType.compress_output = BoolProperty(
         default=0,
         name='compress_output',
         description='option to also compress')
