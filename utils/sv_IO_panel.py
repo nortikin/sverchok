@@ -39,7 +39,7 @@ _EXPORTER_REVISION_ = '0.038 pre alpha - now panel!'
 
 def get_file_obj(fullpath):
     '''
-    fullpath must be point to a zip file.
+    fullpath must point to a zip file.
     usage:
         nodes_json = get_file_obj(fullpath)
         print(nodes_json['export_version'])
