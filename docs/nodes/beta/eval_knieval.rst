@@ -86,7 +86,7 @@ and therefore nested with a collection of variables.
 
 The python file to exec shall be specified in the eval string like so:
 
-    `do_function('file_name.py') with x`
+    ``do_function('file_name.py') with x``
 
 Here x is the value of the input socket, this will automatically be in the
 scope of the function when EK calls it. First it is executed in a
