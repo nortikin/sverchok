@@ -95,7 +95,14 @@ try/except.
 
 The content of file_name.py can be anything that executes, function or
 a flat file. The following convenience variables will be present.
-
+::
+    c = bpy.context
+    scene = c.scene
+    data = bpy.data
+    objs = data.objects
+    mats = data.materials
+    meshes = data.meshes
+    texts = data.texts
 
 
 Examples
