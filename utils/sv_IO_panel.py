@@ -37,11 +37,11 @@ from node_tree import SverchCustomTreeNode
 _EXPORTER_REVISION_ = '0.038 pre alpha - now panel!'
 
 
-def get_file_obj(fullpath):
+def get_file_obj_from_zip(fullpath):
     '''
     fullpath must point to a zip file.
     usage:
-        nodes_json = get_file_obj(fullpath)
+        nodes_json = get_file_obj_from_zip(fullpath)
         print(nodes_json['export_version'])
     '''
     with zipfile.ZipFile(fullpath, "r") as jfile:
@@ -275,7 +275,7 @@ def import_tree(ng, fullpath):
     ''' ---- read .json or .zip ----- '''
 
     if fullpath.endswith('.zip'):
-        nodes_json = get_file_obj(fullpath)
+        nodes_json = get_file_obj_from_zip(fullpath)
         generate_layout(fullpath, nodes_json)
 
     elif fullpath.endswith('.json'):
