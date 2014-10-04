@@ -34,11 +34,12 @@ from node_tree import SverchCustomTree
 from node_tree import SverchCustomTreeNode
 
 
-_EXPORTER_REVISION_ = '0.037 pre alpha - no n_id'
+_EXPORTER_REVISION_ = '0.038 pre alpha - now panel!'
 
 
 def get_file_obj(fullpath):
     '''
+    fullpath must be point to a zip file.
     usage:
         nodes_json = get_file_obj(fullpath)
         print(nodes_json['export_version'])
