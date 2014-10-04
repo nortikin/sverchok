@@ -34,7 +34,7 @@ from node_tree import SverchCustomTree
 from node_tree import SverchCustomTreeNode
 
 
-_EXPORTER_REVISION_ = '0.038 pre alpha - now panel!'
+_EXPORTER_REVISION_ = '0.039 pre alpha'  # panel cosmetics
 
 
 def get_file_obj_from_zip(fullpath):
@@ -399,21 +399,17 @@ class SverchokIOLayoutsMenu(bpy.types.Panel):
     def draw(self, context):
         layout = self.layout
         ntree = context.space_data.node_tree
+        layout.label(_EXPORTER_REVISION_)
 
         ''' export '''
 
         box1 = layout.box()
-        row0 = box1.row(align=False)
-        row0.scale_y = 0.5
-        row0.split()
-        row0.label('Export')
-        row0.split()
-        col = box1.column(align=False)
-        row5 = col.row(align=True)
-        row5.prop(ntree, 'compress_output', text='Zip', toggle=True)
-        row1 = col.row(align=True)
-        row1.scale_y=1.4
-        imp = row1.operator(
+        row1 = box1.row(align=True)
+        row1.label('Export')
+        row1.prop(ntree, 'compress_output', text='Zip', toggle=True)
+        row2 = box1.row(align=True)
+        row2.scale_y = 1.4
+        imp = row2.operator(
             'node.tree_exporter',
             text='Export',
             icon='FILE_BACKUP')
@@ -423,11 +419,7 @@ class SverchokIOLayoutsMenu(bpy.types.Panel):
         ''' import '''
 
         box2 = layout.box()
-        row4 = box2.row(align=False)
-        row4.scale_y = 0.5
-        row4.split()
-        row4.label('Import')
-        row4.split()
+        box2.label('Import')
         col = box2.column(align=False)
         row3 = col.row(align=True)
         row3.scale_y = 1
@@ -440,6 +432,7 @@ class SverchokIOLayoutsMenu(bpy.types.Panel):
             icon='RNA')
         exp1.id_tree = ntree.name
 
+        row2.separator()
 
         exp2 = row2.operator(
             'node.tree_importer',
@@ -447,18 +440,18 @@ class SverchokIOLayoutsMenu(bpy.types.Panel):
             icon='RNA_ADD')
         exp2.id_tree = ''
         exp2.new_nodetree_name = ntree.new_nodetree_name
-        
 
 
 def register():
     bpy.types.SverchCustomTreeType.new_nodetree_name = StringProperty(
         name='new_nodetree_name',
-        default="Imported")
+        default="Imported",
+        description="The name to give the new NodeTree, defaults to: Imported")
 
     bpy.types.SverchCustomTreeType.compress_output = BoolProperty(
         default=0,
         name='compress_output',
-        description='option to also compress')
+        description='option to also compress the json, will generate both')
 
     bpy.utils.register_class(SvNodeTreeExporter)
     bpy.utils.register_class(SvNodeTreeImporter)
@@ -471,6 +464,7 @@ def unregister():
     bpy.utils.unregister_class(SvNodeTreeExporter)
     del bpy.types.SverchCustomTreeType.new_nodetree_name
     del bpy.types.SverchCustomTreeType.compress_output
+
 
 if __name__ == '__main__':
     register()
