@@ -29,7 +29,6 @@ from bpy.props import StringProperty, CollectionProperty
 
 from core.update_system import sverchok_update, build_update_list
 from node_tree import SverchCustomTreeNode
-#from utils import sv_IO_panel
 
 
 def sv_get_local_path():
@@ -519,8 +518,7 @@ sv_tools_classes = [
     Sv3dPropItem,
     SvSwitchToLayout,
     SvLayoutScanProperties,
-    SvClearNodesLayouts,
-    #sv_IO_panel.SverchokIOLayoutsMenu
+    SvClearNodesLayouts
 ]
 
 
