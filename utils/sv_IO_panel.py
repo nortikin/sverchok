@@ -397,7 +397,7 @@ class SverchokIOLayoutsMenu(bpy.types.Panel):
 
     def draw(self, context):
         layout = self.layout
-        node_tree = context.space_data.node_tree
+        ntree = context.space_data.node_tree
 
         ''' export '''
 
@@ -412,8 +412,8 @@ class SverchokIOLayoutsMenu(bpy.types.Panel):
             'node.tree_exporter',
             text='export current',
             icon='FILE_BACKUP')
-        imp.id_tree = node_tree.name
-        imp.compress = node_tree.compress_output
+        imp.id_tree = ntree.name
+        imp.compress = ntree.compress_output
 
         ''' import '''
 
@@ -424,7 +424,7 @@ class SverchokIOLayoutsMenu(bpy.types.Panel):
             'node.tree_importer',
             text='import here',
             icon='RNA_ADD')
-        exp1.id_tree = node_tree.name
+        exp1.id_tree = ntree.name
 
         col.separator()
 
@@ -434,7 +434,7 @@ class SverchokIOLayoutsMenu(bpy.types.Panel):
             text='import to new',
             icon='RNA')
         exp2.id_tree = ''
-        exp2.new_nodetree_name = node_tree.new_nodetree_name
+        exp2.new_nodetree_name = ntree.new_nodetree_name
 
 
 def register():
