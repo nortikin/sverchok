@@ -46,10 +46,11 @@ def round_cube(
     # subdiv bitmasks
     CORNERS, EDGES, ALL = 0, 1, 2
     subdiv = CORNERS
-    try:
-        subdiv = ('CORNERS', 'EDGES', 'ALL').index(div_type)
-    except ValueError:
+
+    if not (div_type in {0, 1, 2}):
         subdiv = CORNERS  # fallback
+    else:
+        subdiv = div_type
 
     radius = max(radius, 0.)
     if not radius:
@@ -355,7 +356,7 @@ class SvBoxRoundedNode(bpy.types.Node, SverchCustomTreeNode):
 
     radius = FloatProperty(
         name='radius', description='fillet radius',
-        default=1.0, update=updateNode)
+        default=1.0, update=updateNode, min=0.0, step=0.2)
 
     arcdiv = IntProperty(
         name='arcdiv', description='number of divisions in fillet',
@@ -363,7 +364,7 @@ class SvBoxRoundedNode(bpy.types.Node, SverchCustomTreeNode):
 
     lindiv = FloatProperty(
         name='lindiv', description='rate of linear division per surface',
-        default=0., min=0.0, step=100, precision=1, update=updateNode)
+        default=0., min=0.0, step=0.2, precision=1, update=updateNode)
 
     div_type = IntProperty(
         name='div_type', description='CORNERS, EDGES, ALL',

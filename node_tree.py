@@ -18,7 +18,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-from bpy.props import StringProperty, BoolProperty, FloatVectorProperty
+from bpy.props import StringProperty, BoolProperty, FloatVectorProperty, IntProperty
 from bpy.types import NodeTree, NodeSocket, NodeSocketStandard
 from nodeitems_utils import NodeCategory, NodeItem
 
@@ -125,6 +125,9 @@ class StringsSocket(NodeSocketStandard):
     bl_label = "Strings Socket"
 
     prop_name = StringProperty(default='')
+    
+    prop_type = StringProperty(default='')
+    prop_index = IntProperty()
 
     def sv_get(self, default=None, deepcopy=False):
         if self.links and not self.is_output:
@@ -133,7 +136,10 @@ class StringsSocket(NodeSocketStandard):
                 return out
         if self.prop_name:
             return [[getattr(self.node, self.prop_name)]]
+        if self.prop_type:
+            return [[getattr(self.node, self.prop_type)[self.prop_index]]]
         return default
+        
 
     def sv_set(self, data):
         SvSetSocket(self, data)
@@ -150,8 +156,13 @@ class StringsSocket(NodeSocketStandard):
         else:
             t = text
 
-        if not self.is_output and not self.is_linked and self.prop_name:
-            layout.prop(node, self.prop_name)
+        if not self.is_output and not self.is_linked:
+            if self.prop_name and not self.prop_type:
+                layout.prop(node, self.prop_name)
+            elif self.prop_type:
+                layout.prop(node, self.prop_type, index=self.prop_index, text=self.name)
+            else:
+                layout.label(t)
         elif self.is_linked:
             layout.label(t + '. ' + SvGetSocketInfo(self))
         else:
@@ -206,8 +217,8 @@ class SverchCustomTreeNode:
     @classmethod
     def poll(cls, ntree):
         return ntree.bl_idname == 'SverchCustomTreeType'
-    def draw_buttons(self, context, layout):
-        layout.label('sverchok')
+    #def draw_buttons(self, context, layout):
+    #    layout.label('sverchok')
 
 
 class SverchNodeCategory(NodeCategory):

@@ -18,4 +18,4 @@ Nodes
    Modifier Make <nodes/modifier_make/modifier_make>
    Analyzer <nodes/analyzer/analyzer>
 
-   Beta <nodes/beta/stethoscope>
+   Beta <nodes/beta/beta>
