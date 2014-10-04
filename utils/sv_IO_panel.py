@@ -424,7 +424,7 @@ class SverchokIOLayoutsMenu(bpy.types.Panel):
         exp1 = col.operator(
             'node.tree_importer',
             text='import here',
-            icon='RNA_ADD')
+            icon='RNA')
         exp1.id_tree = ntree.name
 
         col.separator()
@@ -433,7 +433,7 @@ class SverchokIOLayoutsMenu(bpy.types.Panel):
         exp2 = col.operator(
             'node.tree_importer',
             text='import to new',
-            icon='RNA')
+            icon='RNA_ADD')
         exp2.id_tree = ''
         exp2.new_nodetree_name = ntree.new_nodetree_name
 
