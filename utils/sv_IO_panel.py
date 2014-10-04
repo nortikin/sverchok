@@ -382,7 +382,7 @@ class SvNodeTreeImporter(bpy.types.Operator):
 
 class SverchokIOLayoutsMenu(bpy.types.Panel):
     bl_idname = "Sverchok_iolayouts_menu"
-    bl_label = "Sverchok i/o layouts"
+    bl_label = "SV import/export"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
     bl_category = 'Sverchok'
@@ -402,46 +402,59 @@ class SverchokIOLayoutsMenu(bpy.types.Panel):
 
         ''' export '''
 
-        col = layout.column(align=True)
-        col.prop(ntree, 'compress_output', text='compress output')
-        col.separator()
-
-        # col = layout.column(align=True)
-        box1 = col.box()
-        box1.label('pick file name and location')
-        imp = box1.operator(
+        box1 = layout.box()
+        row0 = box1.row(align=False)
+        row0.scale_y = 0.5
+        row0.split()
+        row0.label('Export')
+        row0.split()
+        col = box1.column(align=False)
+        row5 = col.row(align=True)
+        row5.prop(ntree, 'compress_output', text='Compress', toggle=True)
+        row1 = col.row(align=True)
+        row1.scale_y=1.4
+        imp = row1.operator(
             'node.tree_exporter',
-            text='export current',
+            text='Export',
             icon='FILE_BACKUP')
         imp.id_tree = ntree.name
         imp.compress = ntree.compress_output
 
         ''' import '''
 
-        box2 = col.box()
-        box2.label('pick file name from location')
-        col = box2.column()
-        exp1 = col.operator(
+        box2 = layout.box()
+        row4 = box2.row(align=False)
+        row4.scale_y = 0.5
+        row4.split()
+        row4.label('Import')
+        row4.split()
+        col = box2.column(align=False)
+        row3 = col.row(align=True)
+        row3.scale_y = 1
+        row3.label(text='New name:')
+        row3.prop(ntree, 'new_nodetree_name', text='')
+        row2 = col.row(align=True)
+        row2.scale_y = 1.4
+        exp1 = row2.operator(
             'node.tree_importer',
-            text='import here',
+            text='Here',
             icon='RNA')
         exp1.id_tree = ntree.name
 
-        col.separator()
 
-        col.prop(ntree, 'new_nodetree_name', text='tree name')
-        exp2 = col.operator(
+        exp2 = row2.operator(
             'node.tree_importer',
-            text='import to new',
+            text='New',
             icon='RNA_ADD')
         exp2.id_tree = ''
         exp2.new_nodetree_name = ntree.new_nodetree_name
+        
 
 
 def register():
     bpy.types.SverchCustomTreeType.new_nodetree_name = StringProperty(
         name='new_nodetree_name',
-        default="ImportedNodeTree")
+        default="Imported")
 
     bpy.types.SverchCustomTreeType.compress_output = BoolProperty(
         default=0,
@@ -459,3 +472,6 @@ def unregister():
     bpy.utils.unregister_class(SvNodeTreeExporter)
     del bpy.types.SverchCustomTreeType.new_nodetree_name
     del bpy.types.SverchCustomTreeType.compress_output
+
+if __name__ == '__main__':
+    register()

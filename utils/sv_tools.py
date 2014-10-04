@@ -361,7 +361,7 @@ class Sv3DPanel(bpy.types.Panel):
         row.operator('node.sv_scan_propertyes', text='Scan for props')
         row.operator(SverchokUpdateAll.bl_idname, text="Update all")
         row = col.row(align=True)
-        row.prop(context.scene, 'sv_do_clear', text='hard clean')
+        row.prop(context.scene, 'sv_do_clear', text='hard clean', toggle=True)
         delley = row.operator(
             'node.sv_delete_nodelayouts',
             text='Clean layouts').do_clear = context.scene.sv_do_clear
@@ -414,17 +414,15 @@ class Sv3DPanel(bpy.types.Panel):
                     elif node.bl_idname in {"IntegerNode", "FloatNode"}:
                         row = col.row(align=True)
                         row.prop(node, ver, text=tex)
-                        colo = row.column(align=True)
-                        colo.scale_x = little_width*2
-                        colo.prop(node, 'minim', text=' ', slider=True)
-                        colo = row.column(align=True)
-                        colo.scale_x = little_width*2
-                        colo.prop(node, 'maxim', text=' ', slider=True)
+                        colo = row.row(align=True)
+                        colo.scale_x = little_width*2.5
+                        colo.prop(node, 'minim', text='', slider=True, emboss=False)
+                        colo.prop(node, 'maxim', text='', slider=True, emboss=False)
 
 
 class SverchokToolsMenu(bpy.types.Panel):
     bl_idname = "Sverchok_tools_menu"
-    bl_label = "Sverchok "+sv_version_local
+    bl_label = "SV "+sv_version_local
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
     bl_category = 'Sverchok'
@@ -497,10 +495,12 @@ class SverchokToolsMenu(bpy.types.Panel):
                 split.prop(tree, 'sv_animate', icon=animate_icon, text=' ')
 
         if sv_new_version:
-            layout.column().operator(
+            row = layout.row()
+            row.alert = True
+            row.operator(
                 SverchokUpdateAddon.bl_idname, text='Upgrade Sverchok addon')
         else:
-            layout.column().operator(
+            layout.row().operator(
                 SverchokCheckForUpgrades.bl_idname, text='Check for new version')
         #       row.prop(tree, 'sv_bake',text=' ')
 
