@@ -67,7 +67,7 @@ node_list = []
 root_modules = ["node_tree", "data_structure", "menu"]
 core_modules = ["handlers", "update_system", "upgrade_nodes"]
 utils_modules = [
-    "cad_module", "sv_bmesh_utils", "text_editor_submenu",
+    "cad_module", "sv_bmesh_utils", "text_editor_submenu", "sv_IO_panel",
     "index_viewer_draw", "sv_curve_utils", "viewer_draw", "viewer_draw_mk2",
     "sv_tools", "voronoi", "nodeview_bgl_viewer_draw", "text_editor_plugins"]
 

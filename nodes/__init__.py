@@ -31,7 +31,6 @@ nodes_dict = {
         'wifi_in',
         'wifi_out',
         'eval_knieval',
-        'interchange',
         'switch'
     ],
 

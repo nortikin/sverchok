@@ -37,7 +37,6 @@ def make_categories():
 
     node_cats["Basic Data"] = [
         ["ObjectsNode",         "Objects in"],
-        ["SvImportExport",      "NodeTree IO"],
         ["SvTextInNode",        "Text in"],
         ["SvTextOutNode",       "Text out"],
         ["WifiInNode",          "Wifi in"],

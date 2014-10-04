@@ -379,30 +379,30 @@ class SvNodeTreeImporter(bpy.types.Operator):
         return {'RUNNING_MODAL'}
 
 
-class SvImportExport(bpy.types.Node, SverchCustomTreeNode):
-    ''' SvImportExportNodeTree '''
-    bl_idname = 'SvImportExport'
-    bl_label = 'Sv Import Export'
-    bl_icon = 'OUTLINER_OB_EMPTY'
+class SverchokIOLayoutsMenu(bpy.types.Panel):
+    bl_idname = "Sverchok_iolayouts_menu"
+    bl_label = "Sverchok i/o layouts"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = 'Sverchok'
+    use_pin = True
 
-    new_nodetree_name = StringProperty(
-        name='new_nodetree_name',
-        default="ImportedNodeTree")
+    @classmethod
+    def poll(cls, context):
+        try:
+            return context.space_data.node_tree.bl_idname == 'SverchCustomTreeType'
+        except:
+            return False
 
-    compress_output = BoolProperty(
-        default=0,
-        name='compress_output',
-        description='option to also compress')
+    def draw(self, context):
+        layout = self.layout
+        node_tree = context.space_data.node_tree
 
-    def init(self, context):
-        pass
+        ''' export '''
 
-    def draw_buttons(self, context, layout):
         col = layout.column(align=True)
         col.prop(self, 'compress_output', text='compress output')
         col.separator()
-
-        ''' export '''
 
         # col = layout.column(align=True)
         box1 = col.box()
@@ -411,8 +411,8 @@ class SvImportExport(bpy.types.Node, SverchCustomTreeNode):
             'node.tree_exporter',
             text='export current',
             icon='FILE_BACKUP')
-        imp.id_tree = self.id_data.name
-        imp.compress = self.compress_output
+        imp.id_tree = node_tree.name
+        imp.compress = node_tree.compress_output
 
         ''' import '''
 
@@ -423,7 +423,7 @@ class SvImportExport(bpy.types.Node, SverchCustomTreeNode):
             'node.tree_importer',
             text='import here',
             icon='RNA_ADD')
-        exp1.id_tree = self.id_data.name
+        exp1.id_tree = node_tree.name
 
         col.separator()
 
@@ -433,19 +433,29 @@ class SvImportExport(bpy.types.Node, SverchCustomTreeNode):
             text='import to new',
             icon='RNA')
         exp2.id_tree = ''
-        exp2.new_nodetree_name = self.new_nodetree_name
-
-    def update(self):
-        pass
+        exp2.new_nodetree_name = context.space_data.node_tree.new_nodetree_name
 
 
 def register():
+    svType = bpy.types.SverchCustomTreeType
+
+    svType.new_nodetree_name = StringProperty(
+        name='new_nodetree_name',
+        default="ImportedNodeTree")
+
+    svType.compress_output = BoolProperty(
+        default=0,
+        name='compress_output',
+        description='option to also compress')
+
     bpy.utils.register_class(SvNodeTreeExporter)
     bpy.utils.register_class(SvNodeTreeImporter)
-    bpy.utils.register_class(SvImportExport)
+    bpy.utils.register_class(SverchokIOLayoutsMenu)
 
 
 def unregister():
-    bpy.utils.unregister_class(SvImportExport)
+    bpy.utils.unregister_class(SverchokIOLayoutsMenu)
     bpy.utils.unregister_class(SvNodeTreeImporter)
     bpy.utils.unregister_class(SvNodeTreeExporter)
+    del bpy.types.SverchCustomTreeType.new_nodetree_name
+    del bpy.types.SverchCustomTreeType.compress_output
