@@ -434,7 +434,7 @@ class SverchokIOLayoutsMenu(bpy.types.Panel):
             text='import to new',
             icon='RNA')
         exp2.id_tree = ''
-        exp2.new_nodetree_name = context.space_data.node_tree.new_nodetree_name
+        exp2.new_nodetree_name = node_tree.new_nodetree_name
 
 
 def register():
