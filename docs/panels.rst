@@ -130,9 +130,10 @@ Import Export Panel
 location: N panel of any Sverchok Tree.
 
 Import and export of the current state of a Sverchok Tree. This tool stores 
-- Node state: location, hidden, frame parent
-- Node parameters: (internal state) like booleans, enum toggles and strings
-- connections and connection order (order is important for dynamic-socket nodes)
+
+ - Node state: location, hidden, frame parent
+ - Node parameters: (internal state) like booleans, enum toggles and strings
+ - connections and connection order (order is important for dynamic-socket nodes)
 
 Export
 ------
@@ -140,9 +141,16 @@ Export
 .. image:: https://cloud.githubusercontent.com/assets/5783432/4519326/9e4320f6-4cb6-11e4-88ba-b6dc3ce48d5a.png
   :alt: panelexport.png
 
-**Zip** - to make not only json file, also zip file to minimize space and share with Internet.
-
-**Export** - export to file, opens file browser in blender.
++---------+-------------------------------------------------------------------------------------------------+
+! feature | description                                                                                     | 
++=========+=================================================================================================+
+| Zip     | When toggled to *on* this will perform an extra zip operation when you press Export. The zip    |
+|         | can sometimes be a lot smaller that the json. These files can also be read by the import        |  
+|         | feature.                                                                                        |
++---------+-------------------------------------------------------------------------------------------------+
+| Export  | Export to file, opens file browser in blender to let you type the name of the file, Sverchok    |
+|         | will auto append the .json or .zip file extention - trust it.                                   | 
++---------+-------------------------------------------------------------------------------------------------+
 
 Import
 ------
@@ -150,11 +158,13 @@ Import
 .. image:: https://cloud.githubusercontent.com/assets/5783432/4519325/9e2f2c40-4cb6-11e4-8b03-479a411ead3d.png
   :alt: panelimport.png
 
-**Layout name** - name of layout, that will be used if import to new layout.
-
-**Here** - Import to  current layout.
-
-**New** - import to new layoutwith name, choosen upper.
++-------------+-------------------------------------------------------------------------------------------------+
+! feature     | description                                                                                     | 
++=============+=================================================================================================+
+| Layout name | name of layout to use, has a default but you might want to force a name                         |
++-------------+-------------------------------------------------------------------------------------------------+
+| Import      | import to new layout with name (described above)                                                |   
++-------------+-------------------------------------------------------------------------------------------------+
 
 **Warnings**
 
@@ -172,14 +182,14 @@ Consider this feature experimental you use it at your own risk and don't be surp
 +-------------+---------------------------------------------------------------------------------------+
 
 
-**why make it if it's so limited?**
+**Why make it if it's so limited?**
 
 Primarily this is for sharing quick setups, for showing people how to achieve a general result. The decision to not include geometry in the Object In references may change, until then consider it a challenge to avoid it. The way to exchange large complex setups will always be the ``.blend``, this loads faster and stores anything your Tree may reference. 
 
-**While importing I see lots of messages in the console**
+**While importing I see lots of messages in the console!**
 
 Relax, most of these warnings can be ignored, unless the Tree fails to import, then the last couple of lines of the warning will explain the failure.
 
 **Bug Reporting**
 
-By all means if you like using this feature, file issues in `this thread <https://github.com/nortikin/sverchok/issues/422>`_. The best way to solve issues is to share with us a screenshot of the last few lines or the error if we need more then we will ask for a copy of the `.blend`.
+By all means if you like using this feature, file issues in `this thread <https://github.com/nortikin/sverchok/issues/422>`_. The best way to solve issues is to share with us a screenshot of the last few lines of the error if we need more then we will ask for a copy of the `.blend`.
