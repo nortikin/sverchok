@@ -2,6 +2,8 @@
 Panels of Sverchok
 ***********************
 
+===============
+===============
 Node Tree Panel
 ===============
 
@@ -48,8 +50,8 @@ Check for updates
 
 **Upgrade Sverchok** - upgrades Sverchok from github with new version - button appears only if 'check for updates' finds new version.
 
-===================
-
+========
+========
 3D Panel
 ========
 
@@ -113,7 +115,7 @@ Properties has also gathered values:
 **object in** - button for object in node to collect selected objects.
 
 ===================
-
+===================
 Import Export Panel
 ===================
 
