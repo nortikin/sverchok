@@ -2,93 +2,111 @@
   "connections": {
     "0": [
       "Hilbert",
-      "Edges",
-      "Viewer Draw2",
-      "edg_pol"
-    ],
-    "1": [
-      "List Length",
-      "Length",
-      "Viewer text",
-      "edg_pol"
-    ],
-    "2": [
-      "Hilbert",
       "Vertices",
       "List Length",
       "Data"
     ],
-    "3": [
-      "List Length",
-      "Length",
-      "Line",
-      "N\u00ba Vertices"
-    ],
-    "4": [
-      "Hilbert",
-      "Vertices",
-      "EvaluateLine",
-      "Vertice A"
-    ],
-    "5": [
-      "Line",
-      "Vertices",
-      "EvaluateLine",
-      "Vertice B"
-    ],
-    "6": [
+    "1": [
       "Frame Info",
       "Current Frame",
       "Formula2",
       "X"
     ],
-    "7": [
-      "Frame Info",
-      "End Frame",
-      "Formula2",
-      "n[1]"
-    ],
-    "8": [
+    "2": [
       "Frame Info",
       "Start Frame",
       "Formula2",
       "n[0]"
     ],
-    "9": [
+    "3": [
+      "Frame Info",
+      "End Frame",
+      "Formula2",
+      "n[1]"
+    ],
+    "4": [
+      "List Length",
+      "Length",
+      "Line",
+      "N\u00ba Vertices"
+    ],
+    "5": [
       "Formula2",
       "Result",
       "EvaluateLine",
       "Factor"
     ],
-    "10": [
+    "6": [
       "List Length",
       "Length",
       "Circle",
       "N\u00ba Vertices"
     ],
-    "11": [
-      "EvaluateLine",
-      "EvPoint",
-      "EvaluateLine.001",
-      "Vertice A"
-    ],
-    "12": [
-      "Circle",
-      "Vertices",
-      "EvaluateLine.001",
-      "Vertice B"
-    ],
-    "13": [
+    "7": [
       "Formula2",
       "Result",
       "EvaluateLine.001",
       "Factor"
     ],
-    "14": [
+    "8": [
       "EvaluateLine.001",
       "EvPoint",
       "Viewer Draw2",
       "vertices"
+    ],
+    "9": [
+      "Hilbert",
+      "Edges",
+      "Viewer Draw2",
+      "edg_pol"
+    ],
+    "10": [
+      "List Length",
+      "Length",
+      "Viewer text",
+      "edg_pol"
+    ],
+    "11": [
+      "Circle",
+      "Vertices",
+      "EvaluateLine.001",
+      "Vertice A"
+    ],
+    "12": [
+      "EvaluateLine",
+      "EvPoint",
+      "EvaluateLine.001",
+      "Vertice B"
+    ],
+    "13": [
+      "Hilbert",
+      "Vertices",
+      "Vectors out",
+      "Vectors"
+    ],
+    "14": [
+      "Vectors out",
+      "Y",
+      "Vectors in",
+      "Z"
+    ],
+    "15": [
+      "Vectors in",
+      "Vectors",
+      "EvaluateLine",
+      "Vertice B"
+    ],
+    "16": [
+      "Line",
+      "Vertices",
+      "EvaluateLine",
+      "Vertice A"
+    ],
+    "17": [
+      "Vectors out",
+      "X",
+      "Vectors in",
+      "Y"
     ]
   },
   "export_version": "0.04 pre alpha",
@@ -198,7 +216,7 @@
         226.24563598632812
       ],
       "params": {
-        "level_": 3
+        "level_": 4
       },
       "width": 140.0
     },
@@ -238,6 +256,40 @@
       "params": {},
       "width": 140.0
     },
+    "Vectors in": {
+      "bl_idname": "GenVectorsNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -33.717010498046875,
+        350.1018981933594
+      ],
+      "params": {},
+      "width": 100.0
+    },
+    "Vectors out": {
+      "bl_idname": "VectorsOutNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -298.4697265625,
+        325.5558166503906
+      ],
+      "params": {},
+      "width": 140.0
+    },
     "Viewer Draw2": {
       "bl_idname": "ViewerNode2",
       "color": [
@@ -255,8 +307,13 @@
       "params": {
         "bakebuttonshow": 1,
         "display_edges": 1,
-        "display_verts": 1,
-        "edge_width": 1,
+        "display_verts": 0,
+        "edge_colors": [
+          0.7029858827590942,
+          0.7854828238487244,
+          0.8990001082420349
+        ],
+        "edge_width": 2,
         "transparant": 0
       },
       "width": 140.0
@@ -283,8 +340,20 @@
     [
       "Hilbert",
       "Vertices",
-      "List Length",
-      "Data"
+      "Vectors out",
+      "Vectors"
+    ],
+    [
+      "Vectors out",
+      "X",
+      "Vectors in",
+      "Y"
+    ],
+    [
+      "Vectors out",
+      "Y",
+      "Vectors in",
+      "Z"
     ],
     [
       "Frame Info",
@@ -305,6 +374,18 @@
       "n[1]"
     ],
     [
+      "Hilbert",
+      "Vertices",
+      "List Length",
+      "Data"
+    ],
+    [
+      "List Length",
+      "Length",
+      "Circle",
+      "N\u00ba Vertices"
+    ],
+    [
       "List Length",
       "Length",
       "Line",
@@ -317,38 +398,32 @@
       "Factor"
     ],
     [
-      "Hilbert",
+      "Line",
       "Vertices",
       "EvaluateLine",
       "Vertice A"
     ],
     [
-      "Line",
-      "Vertices",
+      "Vectors in",
+      "Vectors",
       "EvaluateLine",
       "Vertice B"
     ],
     [
-      "List Length",
-      "Length",
-      "Circle",
-      "N\u00ba Vertices"
-    ],
-    [
       "Formula2",
       "Result",
       "EvaluateLine.001",
       "Factor"
     ],
     [
-      "EvaluateLine",
-      "EvPoint",
+      "Circle",
+      "Vertices",
       "EvaluateLine.001",
       "Vertice A"
     ],
     [
-      "Circle",
-      "Vertices",
+      "EvaluateLine",
+      "EvPoint",
       "EvaluateLine.001",
       "Vertice B"
     ],
