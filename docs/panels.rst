@@ -2,11 +2,9 @@
 Panels of Sverchok
 ***********************
 
-===============
-===============
 
-Node Tree Panel
-===============
+- Node Tree Panel
+=================
 
 .. image:: https://cloud.githubusercontent.com/assets/5783432/4512957/866dacd8-4b46-11e4-9cfa-2b78d2a2f8a9.png
   :alt: nodetreepanel.ng
@@ -51,11 +49,9 @@ Check for updates
 
 **Upgrade Sverchok** - upgrades Sverchok from github with new version - button appears only if 'check for updates' finds new version.
 
-========
-========
 
-3D Panel
-========
+- 3D Panel
+==========
 
 .. image:: https://cloud.githubusercontent.com/assets/5783432/4512953/865c3962-4b46-11e4-8dbd-df445f10b808.png
   :alt: panel3d.png
@@ -116,11 +112,9 @@ Properties has also gathered values:
 
 **object in** - button for object in node to collect selected objects.
 
-===================
-===================
 
-Import Export Panel
-===================
+- Import Export Panel
+=====================
 
 .. image:: https://cloud.githubusercontent.com/assets/5783432/4519324/9e11b7be-4cb6-11e4-86c9-ee5e136ed088.png
   :alt: panelio.png
