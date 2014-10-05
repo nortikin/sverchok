@@ -73,15 +73,6 @@ class SvScriptNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Script Node 2'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-
-    # unloaded ui
-        
-    def avail_scripts(self, context):
-        scripts = bpy.data.texts
-        items = [(t.name, t.name, "") for t in scripts]
-        items.sort(key=lambda x:x[0].upper())
-        return items
-
     def avail_templates(self, context):
         templates_path = os.path.join(sv_path, "node_scripts", "SN2-templates")
         items = [(t, t, "") for t in next(os.walk(templates_path))[2]]
@@ -100,7 +91,6 @@ class SvScriptNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
 
     script_objects = {}
-    script_types = {}
     
     n_id = StringProperty()
     script_str = StringProperty()
