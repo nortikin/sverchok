@@ -33,6 +33,7 @@ Layout manager
 
 Box to quickly pick layout, switch between them with buttons instead of popup list. Has also buttons:
 
+
 +--------------------+----------------------------------------------------------------------------------------+
 | Button             | Function                                                                               |  
 +====================+========================================================================================+
@@ -44,6 +45,7 @@ Box to quickly pick layout, switch between them with buttons instead of popup li
 +--------------------+----------------------------------------------------------------------------------------+
 | **Animate layout** | to animate the layout (or not) - may preserve you time.                                |
 +--------------------+----------------------------------------------------------------------------------------+
+
 
 Check for updates
 -----------------
@@ -158,22 +160,26 @@ Import
 
 Consider this feature experimental you use it at your own risk and don't be surprised if certain node trees won't export or import (See bug reporting below). The concept of importing and exporting a node tree is not complicated, but the practical implementation of a working IO which supports dynamic nodes requires a bit of extra work behind the scenes. Certain nodes will not work yet, including (but not limited to) :
 
-| Node              | Issue
- ------ | -------
-| Object In        | the json currently doesn't store geometry but an empty shell without object 
-|            | references instead
-| SN MK1          | currently this auto imports by design, but perhaps some interruption of the import 
-|     | process will be implemented
-| ProfileNode | not done yet
+
++-------------+---------------------------------------------------------------------------------------+
+| Node        | Issue                                                                                 |
++=============+=======================================================================================+
+| Object In   | the json currently doesn't store geometry but an empty shell without object           | 
+|             | references instead                                                                    |  
++-------------+---------------------------------------------------------------------------------------+
+| SN MK1      | currently this auto imports by design, but perhaps some interruption of the import    |
+|             | process will be implemented                                                           |
++-------------+---------------------------------------------------------------------------------------+
+
 
 **why make it if it's so limited?**
 
 Primarily this is for sharing quick setups, for showing people how to achieve a general result. The decision to not include geometry in the Object In references may change, until then consider it a challenge to avoid it. The way to exchange large complex setups will always be the ``.blend``, this loads faster and stores anything your Tree may reference. 
 
-**Bug Reporting**
-
-By all means if you like using this feature, file issues in [this thread](https://github.com/nortikin/sverchok/issues/422). The best way to solve issues is to share with us a copy of the `.blend` 
-
 **While importing I see lots of messages in the console**
 
-Relax, man.
+Relax, most of these warnings can be ignored, unless the Tree fails to import, then the last couple of lines of the warning will explain the failure.
+
+**Bug Reporting**
+
+By all means if you like using this feature, file issues in `this thread <https://github.com/nortikin/sverchok/issues/422>`_. The best way to solve issues is to share with us a screenshot of the last few lines or the error if we need more then we will ask for a copy of the `.blend`.
