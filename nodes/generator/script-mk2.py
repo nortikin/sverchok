@@ -118,8 +118,8 @@ class SvScriptNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     
     def load_script(self):
         try:
-            code = compile(self.script_str, '<string>', 'exec')
-            global_space = {}
+            code = compile(self.script_str, '<string>', 'exec', optimize=2)
+            global_space = globals()
             # clever?
             local_space = {cls.__name__:cls for cls in SvScript.__subclasses__()}
             local_space["SvScript"] = SvScript
@@ -206,20 +206,25 @@ class SvScriptNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         if not self.script_name:
             return
         script = self.script
+
         if not script:
             self.reload()
             # if create socket another update event will fire anyway
+            # needs some more testing
             return
         # basic sanity
-        if len(script.inputs) != len(self.inputs):
-            return
-        if len(script.outputs) != len(self.outputs):
-            return
-        # check if no default and not linked, return
-        for data, socket in zip(script.inputs, self.inputs): 
-            if len(data) == 2 and not socket.links:
+        if hasattr(script, 'update'):
+            script.update()
+        else:
+            if len(script.inputs) != len(self.inputs):
                 return
-        self.process()
+            if len(script.outputs) != len(self.outputs):
+                return
+            # check if no default and not linked, return
+            for data, socket in zip(script.inputs, self.inputs): 
+                if len(data) == 2 and not socket.links:
+                    return
+            self.process()
     
     def process(self):
         script = self.script
@@ -259,39 +264,21 @@ class SvScriptNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         
         col = layout.column(align=True)
-        
+        row = col.row()
+        script = self.script
         if not self.script_name:
-            row = col.row(align=True)
-            row.label(text='IMPORT PY:')
-            row = col.row(align=True)
-            row.alignment = 'RIGHT'
             row.prop(self, 'files_popup', '')
-            row.operator(
-                'node.sverchok_script2_template',
-                text='', icon='IMPORT').script_name = self.files_popup
-            row = col.row(align=True)
-            row.label(text='USE PY:')
-            row = col.row(align=True)
-            #row.prop(self, "script_popup", "")
+            import_operator = row.operator('node.sverchok_script2_template', text='', icon='IMPORT')
+            import_operator.script_name = self.files_popup
+            row = col.row()
             row.prop_search(self, 'script_popup', bpy.data, 'texts', text='', icon='TEXT')
             row.operator('node.sverchok_text_callback', text='', icon='PLUGIN').fn_name = 'load'
-
         else:
-            script = self.script
-            row = col.row()
-            col2 = row.column()
-            col2.scale_x = 0.05
-            col2.label(icon='TEXT', text=' ')
-            row.label(text='LOADED: {0}'.format(self.script_file_name))
-            #row = col.row()
-            #row.label(text=self.script_name)
             row = col.row()
             row.operator("node.sverchok_text_callback", text='Reload').fn_name = 'reload'
             row.operator("node.sverchok_text_callback", text='Clear').fn_name = 'clear'
-
-                    
-    def draw_buttons_ext(self, context, layout):
-        pass
+            if hasattr(script,"draw_buttons"):
+                script.draw_buttons(context, layout)
     
     def draw_label(self):
         if self.script_name:
