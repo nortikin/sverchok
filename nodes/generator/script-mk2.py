@@ -18,8 +18,7 @@
 
 # author Linus Yng
 
-import abc
-import ast
+import inspect
 import os
 
 import bpy
@@ -120,10 +119,10 @@ class SvScriptNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         try:
             code = compile(self.script_str, '<string>', 'exec', optimize=2)
             global_space = globals()
+            
             # clever?
             local_space = {cls.__name__:cls for cls in SvScript.__subclasses__()}
             local_space["SvScript"] = SvScript
-            print(local_space)
             exec(code, global_space, local_space)
         except SyntaxError as err:
             print("Script Node, load error: {}".format(err))
@@ -133,18 +132,20 @@ class SvScriptNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             return
         
         for name in code.co_names:
+            print(name)
             try: 
-                script = local_space[name]()
-                if isinstance(script, SvScript):
-                    print("Script Node found script {}".format(name))
-                    self.script = script
-                    
-                    #self.script_types[name] = local_space[name]
-                    if hasattr(script, "name"):
-                        self.script_name = script.name
-                    else:
-                        self.script_name = name
-                    
+                if inspect.isclass(local_space[name]):
+                    script = local_space[name]()
+                    if isinstance(script, SvScript):
+                        print("Script Node found script {}".format(name))
+                        self.script = script
+                        
+                        #self.script_types[name] = local_space[name]
+                        if hasattr(script, "name"):
+                            self.script_name = script.name
+                        else:
+                            self.script_name = name
+                        
             except Exception as Err:
                 print("Script Node couldn't load {0}".format(name))
                 print(str(Err)) 
@@ -245,7 +246,7 @@ class SvScriptNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         value.node = self
         self.script_objects[n_id] = value
         
-    def del_script(self):
+    def del_script(self):       
         n_id = node_id(self)
         if n_id in self.script_objects:
             del self.script_objects[n_id]

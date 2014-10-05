@@ -1,11 +1,12 @@
 # support classes for SvScript node MK2
 # some utility functions
 
+import abc
 # basic class for Script Node MK2   
 from .sv_itertools import sv_zip_longest
 
 # base method for all scripts
-class SvScript:
+class SvScript(metaclass=abc.ABCMeta):
     def get_data(self):
         '''Support function to get raw data from node'''
         node = self.node
@@ -21,6 +22,10 @@ class SvScript:
         node = self.node
         for name, d in data.items():
             node.outputs[name].sv_set(d)
+    
+    @abc.abstractmethod
+    def process(self):
+        return
 
 def recursive_depth(l):
     if isinstance(l, (list, tuple)) and l:
@@ -79,8 +84,13 @@ def v_map(f,*args, kwargs):
     
 
     
-class SvScriptAuto(SvScript):
+class SvScriptAuto(SvScript, metaclass=abc.ABCMeta):
     """ f(x,y,z,...n) -> t"""
+    @staticmethod
+    @abc.abstractmethod
+    def function(*args):
+        return
+        
     def process(self):
         data = self.get_data()
         tmp = [d for name, d, stype in data]
