@@ -9,21 +9,21 @@ Node Tree Panel
 .. image:: https://cloud.githubusercontent.com/assets/5783432/4512957/866dacd8-4b46-11e4-9cfa-2b78d2a2f8a9.png
   :alt: nodetreepanel.ng
 
-This panel allows to manage sverchok layouts as easy as you press buttons on elevator.
+This panel allows to manage sverchok layouts as easy as you press buttons on an elevator.
 
 Update
 ------
 
 .. image:: https://cloud.githubusercontent.com/assets/5783432/4512960/868c837e-4b46-11e4-9fba-a5062fd5434f.png
   :alt: nodetreeupdate.png
-  
-**Update all**
 
-Updates all trees of sverchok.
-
-**Update layout**
-
-Updates current layout, that is active now.
++-------------------+---------------------------------+  
+| Update            | description                     |
++===================+=================================+
+| all               | Updates all trees of sverchok.  |
++-------------------+---------------------------------+  
+| Update layout     | Updates currently active layout |
++-------------------+---------------------------------+  
 
 Layout manager
 --------------
@@ -31,13 +31,19 @@ Layout manager
 .. image:: https://cloud.githubusercontent.com/assets/5783432/4512959/867d395a-4b46-11e4-9419-95ed1479ac72.png
   :alt: manager.png
 
-Box to quickly pick layout, switch between them with buttons, not popup list. Has also buttons:
+Box to quickly pick layout, switch between them with buttons instead of popup list. Has also buttons:
 
-**B** - bake this layout - will gather all layout's viewer draw and viewer text to bake them. Bake only if bakable button is active on node, else ignore.
-
-**Show layout** - show or hide all viewers - to draw or not to draw OpenGL in window, but bmesh viewer not handled for now.
-
-**Animate layout** - to animate or not what is in layout - may preserve you time.
++--------------------+----------------------------------------------------------------------------------------+
+| Button             | Function                                                                               |  
++====================+========================================================================================+
+| **B**              | bake this layout - will gather all layout's viewer draw and viewer text to bake them.  |
+|                    | Bake only if bakeable button is active on node, else ignore.                           |   
++--------------------+----------------------------------------------------------------------------------------+
+| **Show layout**    | show or hide all viewers - to draw or not to draw OpenGL in window, but bmesh viewer   |
+|                    | not handled for now.                                                                   |
++--------------------+----------------------------------------------------------------------------------------+
+| **Animate layout** | to animate the layout (or not) - may preserve you time.                                |
++--------------------+----------------------------------------------------------------------------------------+
 
 Check for updates
 -----------------
