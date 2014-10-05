@@ -48,6 +48,7 @@ Check for updates
 
 **Upgrade Sverchok** - upgrades Sverchok from github with new version - button appears only if 'check for updates' finds new version.
 
+===================
 
 3D Panel
 ========
@@ -111,19 +112,44 @@ Properties has also gathered values:
 
 **object in** - button for object in node to collect selected objects.
 
+===================
+
 Import Export Panel
-================
+===================
+
+.. image:: https://cloud.githubusercontent.com/assets/5783432/4519324/9e11b7be-4cb6-11e4-86c9-ee5e136ed088.png
+  :alt: panelio.png
 
 location: N panel of any Sverchok Tree.
-
-**features**
 
 Import and export of the current state of a Sverchok Tree. This tool stores 
 - Node state: location, hidden, frame parent
 - Node parameters: (internal state) like booleans, enum toggles and strings
 - connections and connection order (order is important for dynamic-socket nodes)
 
-**warnings**
+Export
+------
+
+.. image:: https://cloud.githubusercontent.com/assets/5783432/4519326/9e4320f6-4cb6-11e4-88ba-b6dc3ce48d5a.png
+  :alt: panelexport.png
+
+**Zip** - to make not only json file, also zip file to minimize space and share with Internet.
+
+**Export** - export to file, opens file browser in blender.
+
+Import
+------
+
+.. image:: https://cloud.githubusercontent.com/assets/5783432/4519325/9e2f2c40-4cb6-11e4-8b03-479a411ead3d.png
+  :alt: panelimport.png
+
+**Layout name** - name of layout, that will be used if import to new layout.
+
+**Here** - Import to  current layout.
+
+**New** - import to new layoutwith name, choosen upper.
+
+**Warnings**
 
 Consider this feature experimental you use it at your own risk and don't be surprised if certain node trees won't export or import (See bug reporting below). The concept of importing and exporting a node tree is not complicated, but the practical implementation of a working IO which supports dynamic nodes requires a bit of extra work behind the scenes. Certain nodes will not work yet, including (but not limited to) :
 
@@ -145,3 +171,4 @@ By all means if you like using this feature, file issues in [this thread](https:
 
 **While importing I see lots of messages in the console**
 
+Relax, man.
