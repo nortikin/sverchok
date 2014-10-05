@@ -442,17 +442,17 @@ class SverchokIOLayoutsMenu(bpy.types.Panel):
         row3.scale_y = 1
         row3.prop(ntree, 'new_nodetree_name', text='')
         row2 = col.row(align=True)
-        row2.scale_y = 1.4
-        exp1 = row2.operator(
-            'node.tree_importer',
-            text='Here',
-            icon='RNA')
-        exp1.id_tree = ntree.name
+        row2.scale_y = 1.2
+        #exp1 = row2.operator(
+        #    'node.tree_importer',
+        #    text='Here',
+        #    icon='RNA')
+        #exp1.id_tree = ntree.name
 
 
         exp2 = row2.operator(
             'node.tree_importer',
-            text='New',
+            text='Import',
             icon='RNA_ADD')
         exp2.id_tree = ''
         exp2.new_nodetree_name = ntree.new_nodetree_name
