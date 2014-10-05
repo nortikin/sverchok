@@ -423,12 +423,13 @@ class SverchokIOLayoutsMenu(bpy.types.Panel):
         ''' export '''
 
         box1 = layout.box()
-        row1 = box1.row(align=True)
-        row1.label('Export')
-        row1.prop(ntree, 'compress_output', text='Zip', toggle=True)
-        row2 = box1.row(align=True)
-        row2.scale_y = 1.4
-        imp = row2.operator(
+        col = box1.column(align=False)
+        row0 = col.row(align=True)
+        row0.label('Export')
+        row0.prop(ntree, 'compress_output', text='Zip', toggle=True)
+        row1 = col.row(align=True)
+        row1.scale_y=1.4
+        imp = row1.operator(
             'node.tree_exporter',
             text='Export',
             icon='FILE_BACKUP')
@@ -438,17 +439,23 @@ class SverchokIOLayoutsMenu(bpy.types.Panel):
         ''' import '''
 
         box2 = layout.box()
-        box2.label('Import')
-        row1 = box2.row(align=False)
-        row1.prop(ntree, 'new_nodetree_name', text='')
-
-        row2 = box2.row(align=False)
+        row4 = box2.row(align=False)
+        row4.scale_y = 0.5
+        row4.split()
+        row4.label('Import')
+        row4.split()
+        col = box2.column(align=False)
+        row3 = col.row(align=True)
+        row3.scale_y = 1
+        row3.prop(ntree, 'new_nodetree_name', text='')
+        row2 = col.row(align=True)
         row2.scale_y = 1.4
         exp1 = row2.operator(
             'node.tree_importer',
             text='Here',
             icon='RNA')
         exp1.id_tree = ntree.name
+
 
         exp2 = row2.operator(
             'node.tree_importer',
