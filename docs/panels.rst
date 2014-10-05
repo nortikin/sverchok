@@ -3,8 +3,8 @@ Panels of Sverchok
 ***********************
 
 
-- Node Tree Panel
-=================
+Node Tree Panel
+===============
 
 .. image:: https://cloud.githubusercontent.com/assets/5783432/4512957/866dacd8-4b46-11e4-9cfa-2b78d2a2f8a9.png
   :alt: nodetreepanel.ng
@@ -50,8 +50,8 @@ Check for updates
 **Upgrade Sverchok** - upgrades Sverchok from github with new version - button appears only if 'check for updates' finds new version.
 
 
-- 3D Panel
-==========
+3D Panel
+========
 
 .. image:: https://cloud.githubusercontent.com/assets/5783432/4512953/865c3962-4b46-11e4-8dbd-df445f10b808.png
   :alt: panel3d.png
