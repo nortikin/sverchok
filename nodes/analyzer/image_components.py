@@ -33,7 +33,7 @@ Premise of the node
 
 - make pixel copy of selected image using [:]
 - outputs
-    - x, y, r, g, b, a
+    - [x, y, a]  [r, g, b]
     - polygons
 
 this would allow one to combine x any y with r to show
@@ -111,6 +111,8 @@ class ImageComponentsOps(bpy.types.Operator):
         node_dict = n.node_dict[hash(n)]['node_image'] = {}
 
         img = bpy.data.images[n.image_name]
+        img.use_fake_user = True  # maybe not?
+
         w = img_width = img.size[0]
         h = img_height = img.size[1]
 
