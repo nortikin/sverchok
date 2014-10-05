@@ -361,7 +361,7 @@ class Sv3DPanel(bpy.types.Panel):
         row.operator('node.sv_scan_propertyes', text='Scan for props')
         row.operator(SverchokUpdateAll.bl_idname, text="Update all")
         row = col.row(align=True)
-        row.prop(context.scene, 'sv_do_clear', text='hard clean')
+        row.prop(context.scene, 'sv_do_clear', text='hard clean', toggle=True)
         delley = row.operator(
             'node.sv_delete_nodelayouts',
             text='Clean layouts').do_clear = context.scene.sv_do_clear
@@ -406,7 +406,9 @@ class Sv3DPanel(bpy.types.Panel):
                     if node.bl_idname == "ObjectsNode":
                         row = col.row(align=True)
                         row.label(text=node.label if node.label else no)
-                        op = row.operator("node.sverchok_object_insertion", text="Get")
+                        colo = row.row(align=True)
+                        colo.scale_x = little_width*5
+                        op = colo.operator("node.sverchok_object_insertion", text="Get")
                         op.node_name = node.name
                         op.tree_name = tree.name
                         op.grup_name = node.groupname
@@ -414,17 +416,15 @@ class Sv3DPanel(bpy.types.Panel):
                     elif node.bl_idname in {"IntegerNode", "FloatNode"}:
                         row = col.row(align=True)
                         row.prop(node, ver, text=tex)
-                        colo = row.column(align=True)
-                        colo.scale_x = little_width*2
-                        colo.prop(node, 'minim', text=' ', slider=True)
-                        colo = row.column(align=True)
-                        colo.scale_x = little_width*2
-                        colo.prop(node, 'maxim', text=' ', slider=True)
+                        colo = row.row(align=True)
+                        colo.scale_x = little_width*2.5
+                        colo.prop(node, 'minim', text='', slider=True, emboss=False)
+                        colo.prop(node, 'maxim', text='', slider=True, emboss=False)
 
 
 class SverchokToolsMenu(bpy.types.Panel):
     bl_idname = "Sverchok_tools_menu"
-    bl_label = "Sverchok "+sv_version_local
+    bl_label = "SV "+sv_version_local
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
     bl_category = 'Sverchok'
@@ -484,65 +484,62 @@ class SverchokToolsMenu(bpy.types.Panel):
                 split.scale_x = little_width
                 baka = split.operator('node.sverchok_bake_all', text='B')
                 baka.node_tree_name = name
+
                 # eye
                 split = row.column(align=True)
                 split.scale_x = little_width
-                if tree.sv_show:
-                    split.prop(tree, 'sv_show', icon='UNLOCKED', text=' ')
-                else:
-                    split.prop(tree, 'sv_show', icon='LOCKED', text=' ')
+                view_icon = 'RESTRICT_VIEW_' + ('OFF' if tree.sv_show else 'ON')
+                split.prop(tree, 'sv_show', icon=view_icon, text=' ')
+
                 split = row.column(align=True)
                 split.scale_x = little_width
-                if tree.sv_animate:
-                    split.prop(tree, 'sv_animate', icon='UNLOCKED', text=' ')
-                else:
-                    split.prop(tree, 'sv_animate', icon='LOCKED', text=' ')
+                animate_icon = ('UN' if tree.sv_animate else '') + 'LOCKED'
+                split.prop(tree, 'sv_animate', icon=animate_icon, text=' ')
 
         if sv_new_version:
-            layout.column().operator(
+            row = layout.row()
+            row.alert = True
+            row.operator(
                 SverchokUpdateAddon.bl_idname, text='Upgrade Sverchok addon')
         else:
-            layout.column().operator(
+            layout.row().operator(
                 SverchokCheckForUpgrades.bl_idname, text='Check for new version')
         #       row.prop(tree, 'sv_bake',text=' ')
+
+sv_tools_classes = [
+    SverchokUpdateCurrent,
+    SverchokUpdateAll,
+    SverchokBakeAll,
+    SverchokCheckForUpgrades,
+    SverchokUpdateAddon,
+    SverchokPurgeCache,
+    SverchokHome,
+    SverchokToolsMenu,
+    ToolsNode,
+    Sv3DPanel,
+    Sv3dPropItem,
+    SvSwitchToLayout,
+    SvLayoutScanProperties,
+    SvClearNodesLayouts
+]
 
 
 def register():
     bpy.types.Scene.sv_do_clear = bpy.props.BoolProperty(
         default=False, name='even used', description='remove even if \
         layout has one user (not fake user)')
-    bpy.utils.register_class(SverchokUpdateCurrent)
-    bpy.utils.register_class(SverchokUpdateAll)
-    bpy.utils.register_class(SverchokBakeAll)
-    bpy.utils.register_class(SverchokCheckForUpgrades)
-    bpy.utils.register_class(SverchokUpdateAddon)
-    bpy.utils.register_class(SverchokPurgeCache)
-    bpy.utils.register_class(SverchokHome)
-    bpy.utils.register_class(SverchokToolsMenu)
-    bpy.utils.register_class(ToolsNode)
-    bpy.utils.register_class(Sv3DPanel)
-    bpy.utils.register_class(Sv3dPropItem)
-    bpy.utils.register_class(SvSwitchToLayout)
-    bpy.utils.register_class(SvLayoutScanProperties)
-    bpy.utils.register_class(SvClearNodesLayouts)
+
+    for class_name in sv_tools_classes:
+        bpy.utils.register_class(class_name)
+
     bpy.types.SverchCustomTreeType.Sv3DProps = CollectionProperty(type=Sv3dPropItem)
 
 
 def unregister():
-    bpy.utils.unregister_class(SvClearNodesLayouts)
-    bpy.utils.unregister_class(SvLayoutScanProperties)
-    bpy.utils.unregister_class(SvSwitchToLayout)
-    bpy.utils.unregister_class(Sv3dPropItem)
-    bpy.utils.unregister_class(Sv3DPanel)
-    bpy.utils.unregister_class(ToolsNode)
-    bpy.utils.unregister_class(SverchokToolsMenu)
-    bpy.utils.unregister_class(SverchokHome)
-    bpy.utils.unregister_class(SverchokPurgeCache)
-    bpy.utils.unregister_class(SverchokUpdateAddon)
-    bpy.utils.unregister_class(SverchokCheckForUpgrades)
-    bpy.utils.unregister_class(SverchokBakeAll)
-    bpy.utils.unregister_class(SverchokUpdateAll)
-    bpy.utils.unregister_class(SverchokUpdateCurrent)
+    # cargo cult to unregister in reverse order? I don't think this is needed.
+    # maybe it was handy at some point?
+    for class_name in reversed(sv_tools_classes):
+        bpy.utils.unregister_class(class_name)
 
 if __name__ == '__main__':
     register()

@@ -134,8 +134,9 @@ class SvScriptNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         for name in code.co_names:
             print(name)
             try: 
-                if inspect.isclass(local_space[name]):
-                    script = local_space[name]()
+                script_class = local_space.get(name)
+                if inspect.isclass(script_class):
+                    script = script_class()
                     if isinstance(script, SvScript):
                         print("Script Node found script {}".format(name))
                         self.script = script

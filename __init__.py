@@ -23,10 +23,10 @@
 #
 #  The Original Code is: all of this file.
 #
-#  Contributor(s): 
-#     Nedovizin Alexander 
-#     Gorodetskiy Nikita 
-#     Linus Yng 
+#  Contributor(s):
+#     Nedovizin Alexander
+#     Gorodetskiy Nikita
+#     Linus Yng
 #     Agustin Gimenez
 #     Dealga McArdle
 #
@@ -36,14 +36,20 @@
 
 bl_info = {
     "name": "Sverchok",
-    "author": "(sverchok-b3d@yandex.ru) Nedovizin Alexander, Gorodetskiy Nikita, Linus Yng, Agustin Jimenez, Dealga McArdle",
+    "author": (
+        "(sverchok-b3d@yandex.ru) "
+        "Nedovizin Alexander, Gorodetskiy Nikita, Linus Yng, "
+        "Agustin Jimenez, Dealga McArdle"
+    ),
     "version": (0, 4),
     "blender": (2, 7, 0),
     "location": "Nodes > CustomNodesTree > Add user nodes",
     "description": "Do parametric node-based geometry programming",
     "warning": "",
     "wiki_url": "http://wiki.blender.org/index.php/Extensions:2.6/Py/Scripts/Nodes/Sverchok",
-    "tracker_url": "http://www.blenderartists.org/forum/showthread.php?272679-Addon-WIP-Sverchok-parametric-tool-for-architects",
+    "tracker_url": (
+        "http://www.blenderartists.org/forum/showthread.php?272679"
+        "-Addon-WIP-Sverchok-parametric-tool-for-architects"),
     "category": "Node"}
 
 
@@ -67,9 +73,16 @@ node_list = []
 root_modules = ["node_tree", "data_structure", "menu"]
 core_modules = ["handlers", "update_system", "upgrade_nodes"]
 utils_modules = [
-    "cad_module", "sv_bmesh_utils", "text_editor_submenu",
-    "index_viewer_draw", "sv_curve_utils", "viewer_draw", "viewer_draw_mk2",
-    "sv_tools", "voronoi", "nodeview_bgl_viewer_draw", "text_editor_plugins", "sv_script", "sv_itertools"]
+    # non UI tools
+    "cad_module", "sv_bmesh_utils", "sv_curve_utils", "voronoi", 
+    "sv_script", "sv_itertools",
+    # callbacks for bgl
+    "viewer_draw", "index_viewer_draw", "nodeview_bgl_viewer_draw", "viewer_draw_mk2",
+    # text editor ui
+    "text_editor_submenu", "text_editor_plugins",
+    # node_view ui tool + panels
+    "sv_tools", "sv_IO_panel"
+]
 
 # parse the nodes/__init__.py dictionary and load all nodes
 def make_node_list():
