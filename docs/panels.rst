@@ -113,8 +113,8 @@ Properties has also gathered values:
 **object in** - button for object in node to collect selected objects.
 
 
-- Import Export Panel
-=====================
+Import Export Panel
+===================
 
 .. image:: https://cloud.githubusercontent.com/assets/5783432/4519324/9e11b7be-4cb6-11e4-86c9-ee5e136ed088.png
   :alt: panelio.png
