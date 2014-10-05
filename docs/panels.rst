@@ -163,12 +163,15 @@ Import
 +=============+=================================================================================================+
 | Layout name | name of layout to use, has a default but you might want to force a name                         |
 +-------------+-------------------------------------------------------------------------------------------------+
-| Import      | import to new layout with name (described above)                                                |   
+| Import      | import to new layout with name (described above). Can import directly from zip file if there is |
+|             | only one .json in the zip. Warning to the descerned reader, only import from zip if the source  |
+|             | is trusted. If you are not sure, resist the urge and take the time to learn a little bit about  |
+|             | what you are doing.                                                                             |
 +-------------+-------------------------------------------------------------------------------------------------+
 
 **Warnings**
 
-Consider this feature experimental you use it at your own risk and don't be surprised if certain node trees won't export or import (See bug reporting below). The concept of importing and exporting a node tree is not complicated, but the practical implementation of a working IO which supports dynamic nodes requires a bit of extra work behind the scenes. Certain nodes will not work yet, including (but not limited to) :
+Consider this whole IO feature experimental for the time being. You use it at your own risk and don't be surprised if certain node trees won't export or import (See bug reporting below). The concept of importing and exporting a node tree is not complicated, but the practical implementation of a working IO which supports dynamic nodes requires a bit of extra work behind the scenes. Certain nodes will not work yet, including (but not limited to) :
 
 
 +-------------+---------------------------------------------------------------------------------------+
