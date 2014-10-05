@@ -9,6 +9,9 @@ Image Decomposer
 Functionality
 -------------
 
+To get output from this node you must connect something to the first 2 output sockets (xya and rgb), polygons is optional
+and only outputs faces when ``Filter?`` is off.
+
 Takes the ``rgba`` components of an image currently loaded in Blender and decomposes 
 them into ``xya`` and ``rgb`` Vertex-style sockets. ``xy`` are inferred by the number of pixels in the image and the image width. ``z`` doesn't make much sense in relation to a pixel and was replaced by the Alpha channel of the pixel (``a``). 
 
@@ -60,4 +63,4 @@ Examples
 Notes
 -----
 
-The imported image doesn't get a user, should it add fake user automagically?
+The loaded image gets a fake user automagically, tho perhaps this should be optional.
