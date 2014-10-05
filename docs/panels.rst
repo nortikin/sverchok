@@ -142,7 +142,7 @@ Export
   :alt: panelexport.png
 
 +---------+-------------------------------------------------------------------------------------------------+
-! feature | description                                                                                     | 
+| feature | description                                                                                     | 
 +=========+=================================================================================================+
 | Zip     | When toggled to *on* this will perform an extra zip operation when you press Export. The zip    |
 |         | can sometimes be a lot smaller that the json. These files can also be read by the import        |  
@@ -159,7 +159,7 @@ Import
   :alt: panelimport.png
 
 +-------------+-------------------------------------------------------------------------------------------------+
-! feature     | description                                                                                     | 
+| feature     | description                                                                                     | 
 +=============+=================================================================================================+
 | Layout name | name of layout to use, has a default but you might want to force a name                         |
 +-------------+-------------------------------------------------------------------------------------------------+
