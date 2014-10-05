@@ -418,17 +418,16 @@ class SverchokIOLayoutsMenu(bpy.types.Panel):
     def draw(self, context):
         layout = self.layout
         ntree = context.space_data.node_tree
-        layout.label(_EXPORTER_REVISION_)
+        row = layout.row()
+        row.scale_y=0.5
+        row.label(_EXPORTER_REVISION_)
 
         ''' export '''
 
-        box1 = layout.box()
-        col = box1.column(align=False)
-        row0 = col.row(align=True)
-        row0.label('Export')
-        row0.prop(ntree, 'compress_output', text='Zip', toggle=True)
+        col = layout.column(align=False)
         row1 = col.row(align=True)
         row1.scale_y=1.4
+        row1.prop(ntree, 'compress_output', text='Zip', toggle=True)
         imp = row1.operator(
             'node.tree_exporter',
             text='Export',
@@ -438,13 +437,7 @@ class SverchokIOLayoutsMenu(bpy.types.Panel):
 
         ''' import '''
 
-        box2 = layout.box()
-        row4 = box2.row(align=False)
-        row4.scale_y = 0.5
-        row4.split()
-        row4.label('Import')
-        row4.split()
-        col = box2.column(align=False)
+        col = layout.column(align=True)
         row3 = col.row(align=True)
         row3.scale_y = 1
         row3.prop(ntree, 'new_nodetree_name', text='')
@@ -468,7 +461,7 @@ class SverchokIOLayoutsMenu(bpy.types.Panel):
 def register():
     bpy.types.SverchCustomTreeType.new_nodetree_name = StringProperty(
         name='new_nodetree_name',
-        default="Imported",
+        default="Imported_name",
         description="The name to give the new NodeTree, defaults to: Imported")
 
     bpy.types.SverchCustomTreeType.compress_output = BoolProperty(
