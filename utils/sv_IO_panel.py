@@ -34,7 +34,13 @@ from node_tree import SverchCustomTree
 from node_tree import SverchCustomTreeNode
 
 
-_EXPORTER_REVISION_ = '0.039 pre alpha'  # panel cosmetics
+_EXPORTER_REVISION_ = '0.04 pre alpha'
+
+'''
+0.039 panel cosmetics
+0.04x support for profilenode
+
+'''
 
 
 def get_file_obj_from_zip(fullpath):
@@ -118,6 +124,7 @@ def create_dict_of_tree(ng):
         node_enums = find_enumerators(node)
 
         ObjectsNode = (node.bl_idname == 'ObjectsNode')
+        ProfileParamNode = (node.bl_idname == 'SvProfileNode')
 
         for k, v in node.items():
 
@@ -133,9 +140,13 @@ def create_dict_of_tree(ng):
             if has_state_switch_protection(node, k):
                 continue
 
-            # this silences the import error when items now found.
+            # this silences the import error when items not found.
             if ObjectsNode and (k == "objects_local"):
                 continue
+
+            if ProfileParamNode and (k == "filename"):
+                '''add file content to dict'''
+                node_dict['path_file'] = bpy.data.texts[node.filename].as_string()
 
             if isinstance(v, (float, int, str)):
                 node_items[k] = v
@@ -234,11 +245,19 @@ def import_tree(ng, fullpath):
             node.hide = node_ref['hide']
             node.color = node_ref['color']
 
+            ''' maintenance warning for the creation of new text files. If this script
+            is run in a file which contains these Text names already, then the
+            the script/file names stored in the node must be updated to reflect this.
+            '''
             if (node.bl_idname == 'SvScriptNode'):
                 new_text = bpy.data.texts.new(node.script_name)
-                # maybe have to adjust to new.text.name if it is different
                 new_text.from_string(node.script_str)
                 node.load()
+
+            elif (node.bl_idname == 'SvProfileNode'):
+                new_text = bpy.data.texts.new(node.filename)
+                new_text.from_string(node_ref['path_file'])
+                node.update()
 
         update_lists = nodes_json['update_lists']
         print('update lists:')
