@@ -4,6 +4,7 @@ Panels of Sverchok
 
 ===============
 ===============
+
 Node Tree Panel
 ===============
 
@@ -52,6 +53,7 @@ Check for updates
 
 ========
 ========
+
 3D Panel
 ========
 
@@ -116,6 +118,7 @@ Properties has also gathered values:
 
 ===================
 ===================
+
 Import Export Panel
 ===================
 
