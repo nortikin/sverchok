@@ -34,7 +34,13 @@ from node_tree import SverchCustomTree
 from node_tree import SverchCustomTreeNode
 
 
-_EXPORTER_REVISION_ = '0.038 pre alpha - now panel!'
+_EXPORTER_REVISION_ = '0.04 pre alpha'
+
+'''
+0.039 panel cosmetics
+0.04x support for profilenode
+
+'''
 
 
 def get_file_obj_from_zip(fullpath):
@@ -118,6 +124,7 @@ def create_dict_of_tree(ng):
         node_enums = find_enumerators(node)
 
         ObjectsNode = (node.bl_idname == 'ObjectsNode')
+        ProfileParamNode = (node.bl_idname == 'SvProfileNode')
 
         for k, v in node.items():
 
@@ -133,9 +140,13 @@ def create_dict_of_tree(ng):
             if has_state_switch_protection(node, k):
                 continue
 
-            # this silences the import error when items now found.
+            # this silences the import error when items not found.
             if ObjectsNode and (k == "objects_local"):
                 continue
+
+            if ProfileParamNode and (k == "filename"):
+                '''add file content to dict'''
+                node_dict['path_file'] = bpy.data.texts[node.filename].as_string()
 
             if isinstance(v, (float, int, str)):
                 node_items[k] = v
@@ -234,11 +245,19 @@ def import_tree(ng, fullpath):
             node.hide = node_ref['hide']
             node.color = node_ref['color']
 
+            ''' maintenance warning for the creation of new text files. If this script
+            is run in a file which contains these Text names already, then the
+            the script/file names stored in the node must be updated to reflect this.
+            '''
             if (node.bl_idname == 'SvScriptNode'):
                 new_text = bpy.data.texts.new(node.script_name)
-                # maybe have to adjust to new.text.name if it is different
                 new_text.from_string(node.script_str)
                 node.load()
+
+            elif (node.bl_idname == 'SvProfileNode'):
+                new_text = bpy.data.texts.new(node.filename)
+                new_text.from_string(node_ref['path_file'])
+                node.update()
 
         update_lists = nodes_json['update_lists']
         print('update lists:')
@@ -382,7 +401,7 @@ class SvNodeTreeImporter(bpy.types.Operator):
 
 class SverchokIOLayoutsMenu(bpy.types.Panel):
     bl_idname = "Sverchok_iolayouts_menu"
-    bl_label = "Sverchok i/o layouts"
+    bl_label = "SV import/export"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
     bl_category = 'Sverchok'
@@ -399,40 +418,41 @@ class SverchokIOLayoutsMenu(bpy.types.Panel):
     def draw(self, context):
         layout = self.layout
         ntree = context.space_data.node_tree
+        layout.label(_EXPORTER_REVISION_)
 
         ''' export '''
 
-        col = layout.column(align=True)
-        col.prop(ntree, 'compress_output', text='compress output')
-        col.separator()
-
-        # col = layout.column(align=True)
-        box1 = col.box()
-        box1.label('pick file name and location')
-        imp = box1.operator(
+        box1 = layout.box()
+        row1 = box1.row(align=True)
+        row1.label('Export')
+        row1.prop(ntree, 'compress_output', text='Zip', toggle=True)
+        row2 = box1.row(align=True)
+        row2.scale_y = 1.4
+        imp = row2.operator(
             'node.tree_exporter',
-            text='export current',
+            text='Export',
             icon='FILE_BACKUP')
         imp.id_tree = ntree.name
         imp.compress = ntree.compress_output
 
         ''' import '''
 
-        box2 = col.box()
-        box2.label('pick file name from location')
-        col = box2.column()
-        exp1 = col.operator(
+        box2 = layout.box()
+        box2.label('Import')
+        row1 = box2.row(align=False)
+        row1.prop(ntree, 'new_nodetree_name', text='')
+
+        row2 = box2.row(align=False)
+        row2.scale_y = 1.4
+        exp1 = row2.operator(
             'node.tree_importer',
-            text='import here',
+            text='Here',
             icon='RNA')
         exp1.id_tree = ntree.name
 
-        col.separator()
-
-        col.prop(ntree, 'new_nodetree_name', text='tree name')
-        exp2 = col.operator(
+        exp2 = row2.operator(
             'node.tree_importer',
-            text='import to new',
+            text='New',
             icon='RNA_ADD')
         exp2.id_tree = ''
         exp2.new_nodetree_name = ntree.new_nodetree_name
@@ -441,12 +461,13 @@ class SverchokIOLayoutsMenu(bpy.types.Panel):
 def register():
     bpy.types.SverchCustomTreeType.new_nodetree_name = StringProperty(
         name='new_nodetree_name',
-        default="ImportedNodeTree")
+        default="Imported",
+        description="The name to give the new NodeTree, defaults to: Imported")
 
     bpy.types.SverchCustomTreeType.compress_output = BoolProperty(
         default=0,
         name='compress_output',
-        description='option to also compress')
+        description='option to also compress the json, will generate both')
 
     bpy.utils.register_class(SvNodeTreeExporter)
     bpy.utils.register_class(SvNodeTreeImporter)
@@ -459,3 +480,7 @@ def unregister():
     bpy.utils.unregister_class(SvNodeTreeExporter)
     del bpy.types.SverchCustomTreeType.new_nodetree_name
     del bpy.types.SverchCustomTreeType.compress_output
+
+
+if __name__ == '__main__':
+    register()
