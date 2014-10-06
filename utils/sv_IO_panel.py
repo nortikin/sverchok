@@ -34,11 +34,12 @@ from node_tree import SverchCustomTree
 from node_tree import SverchCustomTreeNode
 
 
-_EXPORTER_REVISION_ = '0.04 pre alpha'
+_EXPORTER_REVISION_ = '0.042 pre alpha'
 
 '''
-0.039 panel cosmetics
+0.042 add fake user to imported layouts + switch to new tree.
 0.04x support for profilenode
+0.039 panel cosmetics
 
 '''
 
@@ -208,6 +209,7 @@ def create_dict_of_tree(ng):
 def import_tree(ng, fullpath):
 
     nodes = ng.nodes
+    ng.use_fake_user = True
 
     def resolve_socket(from_node, from_socket, to_node, to_socket):
         return (ng.nodes[from_node].outputs[from_socket],
@@ -391,6 +393,9 @@ class SvNodeTreeImporter(bpy.types.Operator):
         else:
             ng = bpy.data.node_groups[self.id_tree]
         import_tree(ng, self.filepath)
+
+        # set new node tree to active
+        context.space_data.node_tree = ng
         return {'FINISHED'}
 
     def invoke(self, context, event):
@@ -419,19 +424,16 @@ class SverchokIOLayoutsMenu(bpy.types.Panel):
         layout = self.layout
         ntree = context.space_data.node_tree
         row = layout.row()
-        row.scale_y=0.5
+        row.scale_y = 0.5
         row.label(_EXPORTER_REVISION_)
 
         ''' export '''
 
         col = layout.column(align=False)
         row1 = col.row(align=True)
-        row1.scale_y=1.4
+        row1.scale_y = 1.4
         row1.prop(ntree, 'compress_output', text='Zip', toggle=True)
-        imp = row1.operator(
-            'node.tree_exporter',
-            text='Export',
-            icon='FILE_BACKUP')
+        imp = row1.operator('node.tree_exporter', text='Export', icon='FILE_BACKUP')
         imp.id_tree = ntree.name
         imp.compress = ntree.compress_output
 
@@ -449,11 +451,7 @@ class SverchokIOLayoutsMenu(bpy.types.Panel):
         #    icon='RNA')
         #exp1.id_tree = ntree.name
 
-
-        exp2 = row2.operator(
-            'node.tree_importer',
-            text='Import',
-            icon='RNA_ADD')
+        exp2 = row2.operator('node.tree_importer', text='Import', icon='RNA_ADD')
         exp2.id_tree = ''
         exp2.new_nodetree_name = ntree.new_nodetree_name
 
