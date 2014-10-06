@@ -302,9 +302,10 @@ def import_tree(ng, fullpath):
             print('no failed connections! awesome.')
 
         ''' set frame parents '''
+        finalize = lambda name: name_remap.get(name, name)
         framed_nodes = nodes_json['framed_nodes']
         for node_name, parent in framed_nodes.items():
-            ng.nodes[node_name].parent = ng.nodes[parent]
+            ng.nodes[finalize(node_name)].parent = ng.nodes[finalize(parent)]
 
         bpy.ops.node.sverchok_update_current(node_group=ng.name)
 
@@ -467,7 +468,7 @@ class SverchokIOLayoutsMenu(bpy.types.Panel):
         exp1 = row2.operator('node.tree_importer', text='Here', icon='RNA')
         exp1.id_tree = ntree.name
 
-        exp2 = row2.operator('node.tree_importer', text='New Tree', icon='RNA_ADD')
+        exp2 = row2.operator('node.tree_importer', text='New', icon='RNA_ADD')
         exp2.id_tree = ''
         exp2.new_nodetree_name = ntree.new_nodetree_name
 
