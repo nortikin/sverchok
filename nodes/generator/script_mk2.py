@@ -87,6 +87,8 @@ class SvScriptNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     script_objects = {}
     
     n_id = StringProperty()
+    
+    # Also used to keep track if a script is loaded.
     script_str = StringProperty()
     script_file_name = StringProperty(name = "Text file", description = "Text file containing script")
     
@@ -160,11 +162,16 @@ class SvScriptNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                     self.outputs.new(stype, args[1])
     
     def clear(self):
-        self.script_file_name = ""
+        self.script_str = ""
         del self.script
         self.inputs.clear()
         self.outputs.clear()
-        
+    
+    
+    #  reload/load are very similar...
+    #  should be purged or re structured
+    #  kept for a short while more    
+    
     def reload(self):
         self.script_str = bpy.data.texts[self.script_file_name].as_string()
         print("reloading...")
@@ -178,7 +185,7 @@ class SvScriptNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         self.create_sockets()
     
     def update(self):
-        if not self.script_file_name:
+        if not self.script_str:
             return
             
         script = self.script
@@ -218,24 +225,24 @@ class SvScriptNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         node_id(self)
     
     # property function for accessing self.script
-    def set_script(self, value):
+    def _set_script(self, value):
         n_id = node_id(self)
         value.node = self
         self.script_objects[n_id] = value
         
-    def del_script(self):       
+    def _del_script(self):       
         n_id = node_id(self)
         if n_id in self.script_objects:
             del self.script_objects[n_id]
     
-    def get_script(self):
+    def _get_script(self):
         n_id = node_id(self)
         script = self.script_objects.get(n_id)
         if script:
             script.node = self # paranoid update often safety setting
         return script
         
-    script = property(get_script, set_script, del_script, "The script object for this node")
+    script = property(_get_script, _set_script, _del_script, "The script object for this node")
     
     
     
@@ -244,7 +251,7 @@ class SvScriptNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         col = layout.column(align=True)
         row = col.row()
         script = self.script
-        if not self.script_file_name:
+        if not self.script_str:
             row.prop(self, 'files_popup', '')
             import_operator = row.operator('node.sverchok_script2_template', text='', icon='IMPORT')
             import_operator.script_name = self.files_popup

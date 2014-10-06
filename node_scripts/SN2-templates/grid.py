@@ -18,6 +18,6 @@ class GridGen(SvScriptSimpleGenerator):
         edges = []       
         for i in range(sub):
             for j in range(sub - 1):
-                edges.append(((sub*i+j, sub*i+j+1)))
+                edges.append((sub*i+j, sub*i+j+1))
                 edges.append((sub*j+i, sub*j+i+sub))
         return edges
