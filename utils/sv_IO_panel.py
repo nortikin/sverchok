@@ -229,8 +229,8 @@ def import_tree(ng, fullpath):
 
         for n in sorted(nodes_to_import):
             node_ref = nodes_to_import[n]
-
             bl_idname = node_ref['bl_idname']
+
             try:
                 node = nodes.new(bl_idname)
             except Exception as err:
@@ -290,8 +290,6 @@ def import_tree(ng, fullpath):
                 ng.links.new(*resolve_socket(*link, name_dict=name_remap))
             except Exception as err:
                 print(traceback.format_exc())
-                msg = 'failure: ' + str(link)
-                print(msg)
                 failed_connections.append(link)
                 continue
 
