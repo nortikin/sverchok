@@ -84,18 +84,11 @@ class SvScriptNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         name='template_files',
         description='choose file to load as template')
 
-    script_popup = EnumProperty(
-        items=avail_scripts,
-        name="Texts",
-        description="Choose text to load in node")
-
-
     script_objects = {}
     
     n_id = StringProperty()
     script_str = StringProperty()
-    script_name = StringProperty()
-    script_file_name = StringProperty()
+    script_file_name = StringProperty(name = "Text file", description = "Text file containing script")
     
     int_list = IntVectorProperty(
         name='int_list', description="Integer list",
@@ -108,19 +101,19 @@ class SvScriptNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     def load_script(self):
         try:
             code = compile(self.script_str, '<string>', 'exec', optimize=2)
-            global_space = globals()
-            
-            # clever?
+            # insert classes that we can inherit from
             local_space = {cls.__name__:cls for cls in SvScript.__subclasses__()}
             local_space["SvScript"] = SvScript
-            exec(code, global_space, local_space)
+            
+            exec(code, globals(),local_space)
+            print(local_space)
         except SyntaxError as err:
             print("Script Node, load error: {}".format(err))
             return
         except TypeError:
             print("No script found")
             return
-        
+        locals()
         for name in code.co_names:
             print(name)
             try: 
@@ -130,13 +123,7 @@ class SvScriptNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                     if isinstance(script, SvScript):
                         print("Script Node found script {}".format(name))
                         self.script = script
-                        
-                        #self.script_types[name] = local_space[name]
-                        if hasattr(script, "name"):
-                            self.script_name = script.name
-                        else:
-                            self.script_name = name
-                        
+                        globals().update(local_space)
             except Exception as Err:
                 print("Script Node couldn't load {0}".format(name))
                 print(str(Err)) 
@@ -168,19 +155,16 @@ class SvScriptNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                     socket.prop_index = offset
                     
             for args in script.outputs:            
-                if len(args) == 2 and args[1] not in self.outputs:
+                if len(args) > 1 and args[1] not in self.outputs:
                     stype = socket_types[args[0]]
                     self.outputs.new(stype, args[1])
     
-    
     def clear(self):
-        self.script_name = ""
         self.script_file_name = ""
         del self.script
         self.inputs.clear()
         self.outputs.clear()
         
-    
     def reload(self):
         self.script_str = bpy.data.texts[self.script_file_name].as_string()
         print("reloading...")
@@ -188,26 +172,27 @@ class SvScriptNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         self.create_sockets()
     
     def load(self):
-        self.script_file_name = self.script_popup
         self.script_str = bpy.data.texts[self.script_file_name].as_string()
         print("loading...")
         self.load_script()
         self.create_sockets()
     
     def update(self):
-        if not self.script_name:
+        if not self.script_file_name:
             return
+            
         script = self.script
-
+        
         if not script:
             self.reload()
             # if create socket another update event will fire anyway
             # needs some more testing
             return
-        # basic sanity
         if hasattr(script, 'update'):
             script.update()
         else:
+            # basic sanity
+
             if len(script.inputs) != len(self.inputs):
                 return
             if len(script.outputs) != len(self.outputs):
@@ -232,6 +217,7 @@ class SvScriptNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     def init(self, context):
         node_id(self)
     
+    # property function for accessing self.script
     def set_script(self, value):
         n_id = node_id(self)
         value.node = self
@@ -258,23 +244,27 @@ class SvScriptNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         col = layout.column(align=True)
         row = col.row()
         script = self.script
-        if not self.script_name:
+        if not self.script_file_name:
             row.prop(self, 'files_popup', '')
             import_operator = row.operator('node.sverchok_script2_template', text='', icon='IMPORT')
             import_operator.script_name = self.files_popup
             row = col.row()
-            row.prop_search(self, 'script_popup', bpy.data, 'texts', text='', icon='TEXT')
+            row.prop_search(self, 'script_file_name', bpy.data, 'texts', text='', icon='TEXT')
             row.operator('node.sverchok_text_callback', text='', icon='PLUGIN').fn_name = 'load'
         else:
             row = col.row()
             row.operator("node.sverchok_text_callback", text='Reload').fn_name = 'reload'
             row.operator("node.sverchok_text_callback", text='Clear').fn_name = 'clear'
-            if hasattr(script,"draw_buttons"):
+            if hasattr(script, "draw_buttons"):
                 script.draw_buttons(context, layout)
     
     def draw_label(self):
-        if self.script_name:
-            return self.script_name
+        script = self.script
+        if script:
+            if hasattr(script, 'name'):
+                return script.name
+            else:
+                return script.__class__.__name__
         else:
             return self.bl_label
     
