@@ -180,7 +180,7 @@ def make_categories():
 
     node_cats["Beta test"] = [
         # for testing convenience,
-        ["ViewerNode2",         "Viewer draw MK2"],  # investigationg serious crash
+        ["ViewerNode2",         "Viewer draw MK2"],
         ["SvStethoscopeNode",   "Stethoscope"],
         ["SvOffsetNode",        "Offset"],
         ["SvEmptyOutNode",      "Empty out"],
