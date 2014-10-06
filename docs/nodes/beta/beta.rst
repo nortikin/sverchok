@@ -10,3 +10,4 @@ Beta
    box_rounded
    obj_remote
    image_decompose
+   eval_knieval

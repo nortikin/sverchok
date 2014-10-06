@@ -7,6 +7,16 @@ from utils import viewer_draw_mk2
 from utils import index_viewer_draw
 from utils import nodeview_bgl_viewer_draw
 
+sv_ascii_logo = """\
+      ::::::  :::   ::: :::::::: :::::::   ::::::  :::  :::  ::::::  :::  ::: 
+    :+:  :+: :+:   :+: :+:      :+:  :+: :+:  :+: :+:  :+: :+:  :+: :+: :+:   
+   +:+      +:+   +:+ +:+      +:+  +:+ +:+      +:+  +:+ +:+  +:+ +:+ :+     
+  +#+++#++ +#+   +:+ +#+++#   +#+++#:  +#+      +#+++#++ +#+  +:+ +#+++       
+      +#+  +#+ +#+  +#+      +#+  +#+ +#+      +#+  +#+ +#+  +#+ +#+ #+       
+#+#  #+#   #+#+#   #+#      #+#  #+# #+#  #+# #+#  #+# #+#  #+# #+# #+#       
+######      #     ######## ###  ###  ######  ###  ###  ######  ###  ###       
+"""
+
 
 @persistent
 def sv_update_handler(scene):
@@ -89,8 +99,9 @@ def set_frame_change(mode):
     elif mode == "PRE":
         print("Removed Sverchok handler pre")
         pre.append(sv_update_handler)
-    print("Have a nice day with Sverchok")
-    print("****** Sverchok loaded ******\n")
+    print("Have a nice day with sverchok")
+    print("****** Sverchok loaded ******\n\n")
+    print(sv_ascii_logo)    
 
 
 def register():

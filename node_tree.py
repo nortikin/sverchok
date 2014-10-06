@@ -217,8 +217,8 @@ class SverchCustomTreeNode:
     @classmethod
     def poll(cls, ntree):
         return ntree.bl_idname == 'SverchCustomTreeType'
-    def draw_buttons(self, context, layout):
-        layout.label('sverchok')
+    #def draw_buttons(self, context, layout):
+    #    layout.label('sverchok')
 
 
 class SverchNodeCategory(NodeCategory):
