@@ -238,6 +238,13 @@ def import_tree(ng, fullpath):
                 print(bl_idname, 'not currently registered, skipping')
                 continue
 
+            '''
+            When n is assigned to node.name, blender will decide whether or
+            not it can do that, if there exists already a node with that name,
+            then the assignment to node.name is not n, but n.00x. Hence on the
+            following line we check if the assignment was accepted, and store a
+            remapped name if it wasn't.
+            '''
             node.name = n
             if not (node.name == n):
                 name_remap[n] = node.name
