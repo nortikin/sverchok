@@ -203,12 +203,14 @@ def make_categories():
         ["SvRayCastNode",       "Raycast"]
     ]
 
-    node_cats["Alpha test"] = [
-        ["SvObjRemoteNode",     "Scene Objects"],
-        ["SvImageComponentsNode", "Image Decompose"],
-        ["SvJoinTrianglesNode", "Join Triangles"],
-        ["EvalKnievalNode",     "Eval Knieval"]
-    ]
+    dev_tests = False
+    if dev_tests:
+        node_cats["Alpha test"] = [
+            ["SvObjRemoteNode",     "Scene Objects"],
+            ["SvImageComponentsNode", "Image Decompose"],
+            ["SvJoinTrianglesNode", "Join Triangles"],
+            ["EvalKnievalNode",     "Eval Knieval"]
+        ]
 
     node_categories = []
     howmanynodesare = 0
