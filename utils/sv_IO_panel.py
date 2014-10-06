@@ -306,6 +306,9 @@ def import_tree(ng, fullpath):
             ng.nodes[finalize(node_name)].parent = ng.nodes[finalize(parent)]
 
         bpy.ops.node.sverchok_update_current(node_group=ng.name)
+        # bpy.ops.node.select_all(action='DESELECT')
+        # ng.update()
+        # bpy.ops.node.view_all()
 
     ''' ---- read .json or .zip ----- '''
 
