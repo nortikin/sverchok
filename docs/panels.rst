@@ -108,11 +108,17 @@ Properties
 
 Layouts by box. Every layout has buttons:
 
-**B** - bake this layout - will gather all layout's viewer draw and viewer text to bake them. Bake only if bakable button is active on node, else ignore.
-
-**Show layout** - show or hide all viewers - to draw or not to draw OpenGL in window, but bmesh viewer not handled for now.
-
-**Animate layout** - to animate or not what is in layout - may preserve you time.
++--------------------+----------------------------------------------------------------------------------------+
+| Button             | Function                                                                               |  
++====================+========================================================================================+
+| **B**              | bake this layout - will gather all layout's viewer draw and viewer text to bake them.  |
+|                    | Bake only if bakeable button is active on node, else ignore.                           |   
++--------------------+----------------------------------------------------------------------------------------+
+| **Show layout**    | show or hide all viewers - to draw or not to draw OpenGL in window, but bmesh viewer   |
+|                    | not handled for now.                                                                   |
++--------------------+----------------------------------------------------------------------------------------+
+| **Animate layout** | to animate the layout (or not) - may preserve you time.                                |
++--------------------+----------------------------------------------------------------------------------------+
 
 Properties has also gathered values:
 
