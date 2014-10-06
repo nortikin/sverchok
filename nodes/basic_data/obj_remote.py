@@ -69,11 +69,18 @@ class SvObjRemoteNode(bpy.types.Node, SverchCustomTreeNode):
         inputs = self.inputs
         objects = bpy.data.objects
 
+        def get_if_valid(sockname, fallback):
+            s = self.inputs[sockname].sv_get()
+            if s and s[0] and s[0][0]:
+                return s[0][0]
+            else:
+                return fallback
+
         if self.obj_name in objects:
             obj = objects[self.obj_name]
-            obj.location = self.inputs['location'].sv_get()[0][0]
-            obj.scale = self.inputs['scale'].sv_get()[0][0]
-            obj.rotation_euler = self.inputs['rotation'].sv_get()[0][0]
+            obj.location = get_if_valid('location', fallback=(0, 0, 0))
+            obj.scale = get_if_valid('scale', fallback=(1, 1, 1))
+            obj.rotation_euler = get_if_valid('rotation', fallback=(0, 0, 0))
             self.show_string_box = (obj.type == 'FONT')
 
             if self.show_string_box:
