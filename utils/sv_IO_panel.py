@@ -210,16 +210,20 @@ def import_tree(ng, fullpath):
 
     nodes = ng.nodes
     ng.use_fake_user = True
-
-    def resolve_socket(from_node, from_socket, to_node, to_socket):
-        return (ng.nodes[from_node].outputs[from_socket],
-                ng.nodes[to_node].inputs[to_socket])
+    
+    def resolve_socket(from_node, from_socket, to_node, to_socket, name_dict={}):
+        f_node = name_dict.get(from_node, from_node)
+        t_node = name_dict.get(to_node, to_node)
+        return (ng.nodes[f_node].outputs[from_socket],
+                ng.nodes[t_node].inputs[to_socket])
 
     def generate_layout(fullpath, nodes_json):
         print('#'*12, nodes_json['export_version'])
-
+        
         ''' first create all nodes. '''
         nodes_to_import = nodes_json['nodes']
+        name_remap = {}
+        
         for n in sorted(nodes_to_import):
             node_ref = nodes_to_import[n]
 
@@ -230,9 +234,11 @@ def import_tree(ng, fullpath):
                 print(traceback.format_exc())
                 print(bl_idname, 'not currently registered, skipping')
                 continue
-
+                
+            node.name = n
             if not (node.name == n):
-                node.name = n
+                name_remap[n] = node.name
+                
 
             params = node_ref['params']
             print(node.name, params)
@@ -272,7 +278,7 @@ def import_tree(ng, fullpath):
         failed_connections = []
         for link in update_lists:
             try:
-                ng.links.new(*resolve_socket(*link))
+                ng.links.new(*resolve_socket(*link, name_dict=name_remap))
             except Exception as err:
                 print(traceback.format_exc())
                 msg = 'failure: ' + str(link)
@@ -445,11 +451,11 @@ class SverchokIOLayoutsMenu(bpy.types.Panel):
         row3.prop(ntree, 'new_nodetree_name', text='')
         row2 = col.row(align=True)
         row2.scale_y = 1.2
-        #exp1 = row2.operator(
-        #    'node.tree_importer',
-        #    text='Here',
-        #    icon='RNA')
-        #exp1.id_tree = ntree.name
+        exp1 = row2.operator(
+            'node.tree_importer',
+            text='Here',
+            icon='RNA')
+        exp1.id_tree = ntree.name
 
         exp2 = row2.operator('node.tree_importer', text='Import', icon='RNA_ADD')
         exp2.id_tree = ''
