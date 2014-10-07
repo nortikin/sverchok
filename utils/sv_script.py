@@ -7,6 +7,24 @@ from .sv_itertools import sv_zip_longest
 
 import itertools
 
+'''
+TEMPORARY DOCUMENTATION
+
+Every SvScript needs a self.process() function.
+The node can be access via self.node
+ 
+Procsess won't be called unless all sockets without a default are conneted
+ 
+inputs = (socket_type, socket_name, default, ... )
+outputs = (socket_type, socket_name, ... )
+the ... can be additional parameters for specific node script.
+
+if the function provides a draw_buttons it will be called
+the same with update, but then the node is also responsible for calling process 
+
+if the .name parameter is set it will used as a label otherwise the class will be used
+'''
+
 # base method for all scripts
 class SvScript(metaclass=abc.ABCMeta):
     def get_data(self):
@@ -89,7 +107,11 @@ def v_map(f,*args, kwargs):
 
     
 class SvScriptAuto(SvScript, metaclass=abc.ABCMeta):
-    """ f(x,y,z,...n) -> t"""
+    """ 
+    f(x,y,z,...n) -> t
+    with unlimited depth
+    """
+
     @staticmethod
     @abc.abstractmethod
     def function(*args):
@@ -121,3 +143,31 @@ class SvScriptSimpleGenerator(SvScript, metaclass=abc.ABCMeta):
                 func = getattr(self, ref[2])
                 out = tuple(itertools.starmap(func, sv_zip_longest(*data)))
                 socket.sv_set(out)
+
+class SvScriptSimpleFunction(SvScript, metaclass=abc.ABCMeta):
+    """
+    Simple f(x0, x1, ... xN) -> y0, y1, ... ,yM
+    
+    """
+    @abc.abstractmethod
+    def function(*args, depth=None):
+        return 
+        
+    def process(self):
+        inputs = self.node.inputs
+        outputs = self.node.outputs
+        
+        data = [s.sv_get() for s in inputs]
+        # this is not used yet, I don't think flat depth is the right long
+        # term approach, but the data tree should be easily parseable
+        depth = tuple(map(recursive_depth, data))
+        links = [s.links for s in outputs]
+        result = [[] for d in data]
+        for d in zip(*data):
+            res = self.function(*d, depth=depth)
+            for i, r in enumerate(res):
+                result[i].append(r)
+        for link, res, socket in zip(links, result, outputs):
+            if link:
+                socket.sv_set(res)
+                    
