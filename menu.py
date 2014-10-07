@@ -51,7 +51,8 @@ def make_categories():
         ["SvFrameInfoNode",     "Frame info"],
         ["NoteNode",            "Note"],
         ["GTextNode",           "GText"],
-        ["SvDebugPrintNode",    "Debug print"]
+        ["SvDebugPrintNode",    "Debug print"],
+        ["SvStethoscopeNode",   "Stethoscope"]
     ]
 
     node_cats["List main"] = [
@@ -182,7 +183,6 @@ def make_categories():
     node_cats["Beta test"] = [
         # for testing convenience,
         ["ViewerNode2",         "Viewer draw MK2"],
-        ["SvStethoscopeNode",   "Stethoscope"],
         ["SvOffsetNode",        "Offset"],
         ["SvEmptyOutNode",      "Empty out"],
         # need to be completely reviewed
