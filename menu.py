@@ -92,28 +92,31 @@ def make_categories():
         ["SvMapRangeNode",      "Map Range"]
     ]
 
-    node_cats["Generator"] = [
+    node_cats["Generator Primitive"] = [
         # objects, new elements, line, plane
         ["LineNode",            "Line"],
         ["PlaneNode",           "Plane"],
         ["SvBoxNode",           "Box"],
-        ["SvBoxRoundedNode",    "Rounded Box"],
         ["SvCircleNode",        "Circle"],
         ["CylinderNode",        "Cylinder"],
         ["SphereNode",          "Sphere"],
         ["BasicSplineNode",     "2pt Spline"],
         ["svBasicArcNode",      "3pt Arc"],
+    ]
+
+    node_cats["Generator Special"] = [
+        ["SvBoxRoundedNode",    "Rounded Box"],
         ["HilbertNode",         "Hilbert"],
         ["Hilbert3dNode",       "Hilbert3d"],
         ["HilbertImageNode",    "Hilbert image"],
         ["ImageNode",           "Image"],
-        ["RandomVectorNode",    "Random Vector"],
         ["SvFormulaShapeNode",  "Formula shape"],
         ["SvProfileNode",       "ProfileParametric"],
         ["SvScriptNode",        "Scripted Node"]
     ]
 
     node_cats["Vector"] = [
+        ["RandomVectorNode",    "Random Vector"],
         ["GenVectorsNode",      "Vector in"],
         ["VectorsOutNode",      "Vector out"],
         ["VectorMathNode",      "Vector Math"],
@@ -147,14 +150,6 @@ def make_categories():
         ["SvIntersectEdgesNode", "Intersect Edges"]
     ]
 
-    node_cats["Logic"] = [
-        ["SvLogicNode",         "Logic"],
-        ["MaskListNode",        "List Mask (out)"],
-        ["SvMaskJoinNode",      "List Mask Join (in)"],
-        ["SvSwitchNode",        "Switch"],
-        ["SvNeuroElman1LNode",  "Neuro"],
-    ]
-
     node_cats["Modifier Make"] = [
         ["LineConnectNode",     "UV Connection"],
         ["AdaptivePolsNode",    "Adaptive Polygons"],
@@ -167,6 +162,14 @@ def make_categories():
         ["Voronoi2DNode",       "Voronoi 2D"],
         ["SvConvexHullNode",    "Convex Hull"],
         ["SvLatheNode",         "Lathe"]
+    ]
+
+    node_cats["Logic"] = [
+        ["SvLogicNode",         "Logic"],
+        ["MaskListNode",        "List Mask (out)"],
+        ["SvMaskJoinNode",      "List Mask Join (in)"],
+        ["SvSwitchNode",        "Switch"],
+        ["SvNeuroElman1LNode",  "Neuro"],
     ]
 
     node_cats["Analyser"] = [
