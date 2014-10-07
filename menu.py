@@ -153,6 +153,7 @@ def make_categories():
         ["SvSeparateMeshNode",  "Separate Loose Parts"],
         ["SvVertMaskNode",      "Mask Vertices"],
         ["SvFillsHoleNode",     "Fill Holes"],
+        ["SvMirrorNode",        "Mirror"],
         ["SvIntersectEdgesNode", "Intersect Edges"]
     ]
 
@@ -187,7 +188,7 @@ def make_categories():
         ["SvOffsetNode",        "Offset"],
         ["SvEmptyOutNode",      "Empty out"],
         # need to be completely reviewed
-        ["SvListDecomposeNode",   "List Decompose"],
+        ["SvListDecomposeNode", "List Decompose"],
         # should be removed...
         ["SvReRouteNode",       "Reroute Point"],
         ["SvVolumeNode",        "Volume"],
@@ -197,7 +198,6 @@ def make_categories():
         ["SvRotationNode",      "Rotation"],
         ["SvScaleNode",         "Scale"],
         ["SvMatrixEulerNode",   "Matrix Euler"],
-        ["SvMirrorNode",        "Mirror"],
         ["SvWafelNode",         "Wafel"],
         ["SvVertexGroupNode",   "Vertext group"],
         ["SvRayCastNode",       "Raycast"]
