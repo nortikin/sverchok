@@ -45,9 +45,6 @@ def make_categories():
     ]
 
     node_cats["Basic Debug"] = [
-        # ["Test1Node",         "Test1"],
-        # ["Test2Node",         "Test2"],
-        # ["ToolsNode",         "Update Button"],
         ["SvFrameInfoNode",     "Frame info"],
         ["NoteNode",            "Note"],
         ["GTextNode",           "GText"],
@@ -61,8 +58,6 @@ def make_categories():
         ["ListLevelsNode",      "List Del Levels"],
         ["ListLengthNode",      "List Length"],
         ["ListSumNode",         "List Sum"],
-        ["MaskListNode",        "List Mask (out)"],
-        ["SvMaskJoinNode",      "List Mask Join (in)"],
         ["ListMatchNode",       "List Match"],
         ["ListFuncNode",        "List Math"],
         ["ConverterNode",       "SocketConvert"]
@@ -94,7 +89,6 @@ def make_categories():
         # for newbies this is not predictable why "Formula2" renamed
         ["Formula2Node",        "Formula"],
         ["ScalarMathNode",      "Math"],
-        ["SvLogicNode",         "Logic"],
         ["SvMapRangeNode",      "Map Range"]
     ]
 
@@ -122,7 +116,6 @@ def make_categories():
     node_cats["Vector"] = [
         ["GenVectorsNode",      "Vector in"],
         ["VectorsOutNode",      "Vector out"],
-        ["VectorMoveNode",      "Vector Move"],
         ["VectorMathNode",      "Vector Math"],
         ["VectorDropNode",      "Vector Drop"],
         ["VertsDelDoublesNode", "Vector X Doubles"],
@@ -134,12 +127,10 @@ def make_categories():
     ]
 
     node_cats["Matrix"] = [
-        ["MatrixApplyNode",     "Matrix Apply"],
         ["MatrixGenNode",       "Matrix in"],
         ["MatrixOutNode",       "Matrix out"],
         ["SvMatrixValueIn",     "Matrix Input"],
         ["MatrixDeformNode",    "Matrix Deform"],
-        ["MatrixShearNode",     "Matrix Shear"],  # for uniform view renamed
         ["MatrixInterpolationNode", "Matrix Interpolation"]
     ]
 
@@ -153,8 +144,15 @@ def make_categories():
         ["SvSeparateMeshNode",  "Separate Loose Parts"],
         ["SvVertMaskNode",      "Mask Vertices"],
         ["SvFillsHoleNode",     "Fill Holes"],
-        ["SvMirrorNode",        "Mirror"],
         ["SvIntersectEdgesNode", "Intersect Edges"]
+    ]
+
+    node_cats["Logic"] = [
+        ["SvLogicNode",         "Logic"],
+        ["MaskListNode",        "List Mask (out)"],
+        ["SvMaskJoinNode",      "List Mask Join (in)"],
+        ["SvSwitchNode",        "Switch"],
+        ["SvNeuroElman1LNode",  "Neuro"],
     ]
 
     node_cats["Modifier Make"] = [
@@ -173,11 +171,13 @@ def make_categories():
 
     node_cats["Analyser"] = [
         # investigate data
+        ["SvBBoxNode",          "Bounding box"],
+        ["SvVolumeNode",        "Volume"],
+        ["AreaNode",            "Area"],
+        ["DistancePPNode",      "Distance"],
         ["CentersPolsNode",     "Centers Polygons"],
         ["VectorNormalNode",    "Vertex Normal"],
-        ["DistancePPNode",      "Distance"],
-        ["AreaNode",            "Area"],
-        ["SvBBoxNode",          "Bounding box"],
+        # proximity anaylyses.
         ["SvKDTreeNode",        "KDT Closest Verts"],
         ["SvKDTreeEdgesNode",   "KDT Closest Edges"]
     ]
@@ -191,16 +191,20 @@ def make_categories():
         ["SvListDecomposeNode", "List Decompose"],
         # should be removed...
         ["SvReRouteNode",       "Reroute Point"],
-        ["SvVolumeNode",        "Volume"],
-        ["SvSwitchNode",        "Switch"],
-        ["SvNeuroElman1LNode",  "Neuro"],
         ["SvInstancerNode",     "mesh instancer"],
-        ["SvRotationNode",      "Rotation"],
-        ["SvScaleNode",         "Scale"],
-        ["SvMatrixEulerNode",   "Matrix Euler"],
         ["SvWafelNode",         "Wafel"],
         ["SvVertexGroupNode",   "Vertext group"],
         ["SvRayCastNode",       "Raycast"]
+    ]
+
+    node_cats["Transforms"] = [
+        ["SvRotationNode",      "Rotation"],
+        ["SvScaleNode",         "Scale"],
+        ["SvMatrixEulerNode",   "Matrix Euler"],
+        ["SvMirrorNode",        "Mirror"],
+        ["MatrixShearNode",     "Matrix Shear"],  # for uniform view renamed
+        ["MatrixApplyNode",     "Matrix Apply"],
+        ["VectorMoveNode",      "Vector Move"],
     ]
 
     dev_tests = False
