@@ -94,6 +94,7 @@ def make_categories():
         # for newbies this is not predictable why "Formula2" renamed
         ["Formula2Node",        "Formula"],
         ["ScalarMathNode",      "Math"],
+        ["SvLogicNode",         "Logic"],
         ["SvMapRangeNode",      "Map Range"]
     ]
 
@@ -193,7 +194,6 @@ def make_categories():
         ["SvSwitchNode",        "Switch"],
         ["SvNeuroElman1LNode",  "Neuro"],
         ["SvInstancerNode",     "mesh instancer"],
-        ["SvLogicNode",         "Logic"],
         ["SvRotationNode",      "Rotation"],
         ["SvScaleNode",         "Scale"],
         ["SvMatrixEulerNode",   "Matrix Euler"],
