@@ -44,6 +44,4 @@ Usage
 -----
 
 .. image:: https://cloud.githubusercontent.com/assets/7894950/4437227/4ac2cc4a-4790-11e4-8359-040da4398213.png
-  :alt: reycast
-  
-
+.. image:: https://cloud.githubusercontent.com/assets/7894950/4536920/7e47f270-4dd0-11e4-97fd-7d34d56229a0.png
