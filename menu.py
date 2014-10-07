@@ -101,6 +101,7 @@ def make_categories():
         ["LineNode",            "Line"],
         ["PlaneNode",           "Plane"],
         ["SvBoxNode",           "Box"],
+        ["SvBoxRoundedNode",    "Rounded Box"],
         ["SvCircleNode",        "Circle"],
         ["CylinderNode",        "Cylinder"],
         ["SphereNode",          "Sphere"],
@@ -187,7 +188,6 @@ def make_categories():
         # need to be completely reviewed
         ["SvListDecomposeNode",   "List Decompose"],
         # should be removed...
-        ["SvBoxRoundedNode",    "Rounded Box"],
         ["SvReRouteNode",       "Reroute Point"],
         ["SvVolumeNode",        "Volume"],
         ["SvSwitchNode",        "Switch"],
