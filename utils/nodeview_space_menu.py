@@ -42,7 +42,7 @@ def layout_draw_categories(layout, node_details):
         else:
             continue
         node_op.type = bl_idname
-        node_op.use_transform=True
+        node_op.use_transform = True
 
 
 class SvNodeAddnGrab(bpy.types.Operator):
