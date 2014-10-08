@@ -28,28 +28,82 @@ def make_node_cats():
     node_cats = OrderedDict()
     '''  bl_idname, shortname, <icon> (optional) '''
 
-    node_cats["Basic Viz"] = [
-        ["ViewerNode",          "Viewer draw"],
-        ["ViewerNode_text",     "Viewer text"],
-        ["IndexViewerNode",     "Viewer INDX"],
-        ["Sv3DviewPropsNode",   "3dview Props"],
-        ["BmeshViewerNode",     "Viewer BMesh"]
+    node_cats["Generators"] = [
+        ["LineNode",            "Line",                  "GRIP"],
+        ["PlaneNode",           "Plane",           "MESH_PLANE"],
+        ["SvBoxNode",           "Box",              "MESH_CUBE"],
+        ["SvCircleNode",        "Circle",         "MESH_CIRCLE"],
+        ["CylinderNode",        "Cylinder",     "MESH_CYLINDER"],
+        ["SphereNode",          "Sphere",       "MESH_UVSPHERE"],
+        ['BasicSplineNode',     "2pt Spline",  "CURVE_BEZCURVE"],
+        ["svBasicArcNode",      "3pt Arc",        "SPHERECURVE"]
     ]
 
-    node_cats["Basic Data"] = [
-        ["ObjectsNode",         "Objects in"],
-        ["SvTextInNode",        "Text in"],
-        ["SvTextOutNode",       "Text out"],
-        ["WifiInNode",          "Wifi in"],
-        ["WifiOutNode",         "Wifi out"]
+    node_cats["Extended Generators"] = [
+        ["SvBoxRoundedNode",    "Rounded Box"],
+        ["HilbertNode",         "Hilbert"],
+        ["Hilbert3dNode",       "Hilbert3d"],
+        ["HilbertImageNode",    "Hilbert image"],
+        ["ImageNode",           "Image",                "FILE_IMAGE"],
+        ["SvFormulaShapeNode",  "Formula shape",               "IPO"],
+        ["SvProfileNode",       "ProfileParametric"],
+        ["SvScriptNode",        "Scripted Node",     "SCRIPTPLUGINS"]
     ]
 
-    node_cats["Basic Debug"] = [
-        ["SvFrameInfoNode",     "Frame info"],
-        ["NoteNode",            "Note"],
-        ["GTextNode",           "GText"],
-        ["SvDebugPrintNode",    "Debug print"],
-        ["SvStethoscopeNode",   "Stethoscope"]
+    node_cats["Analyzers"] = [
+        # investigate data
+        ["SvBBoxNode",          "Bounding box"],
+        ["SvVolumeNode",        "Volume"],
+        ["AreaNode",            "Area"],
+        ["DistancePPNode",      "Distance"],
+        ["CentersPolsNode",     "Centers Polygons"],
+        ["VectorNormalNode",    "Vertex Normal"],
+        # proximity anaylyses.
+        ["SvKDTreeNode",        "KDT Closest Verts"],
+        ["SvKDTreeEdgesNode",   "KDT Closest Edges"]
+    ]
+
+    node_cats["Transforms (Vec, Mat)"] = [
+        ["SvRotationNode",      "Rotation",    "MAN_ROT"],
+        ["SvScaleNode",         "Scale",       "MAN_SCALE"],
+        ["VectorMoveNode",      "Vector Move", "MAN_TRANS"],
+        ["SvMirrorNode",        "Mirror",      "MOD_MIRROR"],
+        ["SvMatrixEulerNode",   "Matrix Euler"],
+        ["MatrixShearNode",     "Matrix Shear"],
+        ["MatrixApplyNode",     "Matrix Apply"],
+    ]
+
+    node_cats["Modifier Change"] = [
+        # modifiers deforms and reorganize and reconstruct data
+        ["PolygonBoomNode",     "Polygon Boom"],
+        ["Pols2EdgsNode",       "Polygons to Edges"],
+        ["SvMeshJoinNode",      "Mesh Join"],
+        ["SvRemoveDoublesNode", "Remove Doubles"],
+        ["SvDeleteLooseNode",   "Delete Loose"],
+        ["SvSeparateMeshNode",  "Separate Loose Parts"],
+        ["SvVertMaskNode",      "Mask Vertices"],
+        ["SvFillsHoleNode",     "Fill Holes"],
+        ["SvIntersectEdgesNode", "Intersect Edges"]
+    ]
+
+    node_cats["Modifier Make"] = [
+        # bl_idname, shortname, <icon> (optional)
+        ['LineConnectNode',     'UV Connection'],
+        ['AdaptivePolsNode',    'Adaptive Polygons'],
+        ['SvAdaptiveEdgeNode',  'Adaptive Edges'],
+        ['CrossSectionNode',    'Cross Section'],
+        ['SvBisectNode',        'Bisect'],
+        ['SvSolidifyNode',      'Solidify'],
+        ['SvWireframeNode',     'Wireframe'],
+        ['DelaunayTriangulation2DNode', 'Delaunay 2D '],
+        ['Voronoi2DNode',       'Voronoi 2D'],
+        ['SvConvexHullNode',    'Convex Hull'],
+        ['SvLatheNode',         'Lathe',            'MOD_SCREW'],
+    ]
+
+    node_cats["List Masks"] = [
+        ["MaskListNode",        "List Mask (out)"],
+        ["SvMaskJoinNode",      "List Mask Join (in)"],
     ]
 
     node_cats["List main"] = [
@@ -89,28 +143,6 @@ def make_node_cats():
         ['SvMapRangeNode', 'Map Range'],
     ]
 
-    node_cats["Generators"] = [
-        ["LineNode",            "Line",                  "GRIP"],
-        ["PlaneNode",           "Plane",           "MESH_PLANE"],
-        ["SvBoxNode",           "Box",              "MESH_CUBE"],
-        ["SvCircleNode",        "Circle",         "MESH_CIRCLE"],
-        ["CylinderNode",        "Cylinder",     "MESH_CYLINDER"],
-        ["SphereNode",          "Sphere",       "MESH_UVSPHERE"],
-        ['BasicSplineNode',     "2pt Spline",  "CURVE_BEZCURVE"],
-        ["svBasicArcNode",      "3pt Arc",        "SPHERECURVE"]
-    ]
-
-    node_cats["Extended Generators"] = [
-        ["SvBoxRoundedNode",    "Rounded Box"],
-        ["HilbertNode",         "Hilbert"],
-        ["Hilbert3dNode",       "Hilbert3d"],
-        ["HilbertImageNode",    "Hilbert image"],
-        ["ImageNode",           "Image",                "FILE_IMAGE"],
-        ["SvFormulaShapeNode",  "Formula shape",               "IPO"],
-        ["SvProfileNode",       "ProfileParametric"],
-        ["SvScriptNode",        "Scripted Node",     "SCRIPTPLUGINS"]
-    ]
-
     node_cats["Vector"] = [
         ['RandomVectorNode',    'Random Vector',        'RNDCURVE'],
         ['GenVectorsNode',      'Vector in'],
@@ -133,56 +165,34 @@ def make_node_cats():
         ["MatrixInterpolationNode", "Matrix Interpolation"]
     ]
 
-    node_cats["Modifier Change"] = [
-        # modifiers deforms and reorganize and reconstruct data
-        ["PolygonBoomNode",     "Polygon Boom"],
-        ["Pols2EdgsNode",       "Polygons to Edges"],
-        ["SvMeshJoinNode",      "Mesh Join"],
-        ["SvRemoveDoublesNode", "Remove Doubles"],
-        ["SvDeleteLooseNode",   "Delete Loose"],
-        ["SvSeparateMeshNode",  "Separate Loose Parts"],
-        ["SvVertMaskNode",      "Mask Vertices"],
-        ["SvFillsHoleNode",     "Fill Holes"],
-        ["SvIntersectEdgesNode", "Intersect Edges"]
-    ]
-
-    node_cats["Modifier Make"] = [
-        # bl_idname, shortname, <icon> (optional)
-        ['LineConnectNode',     'UV Connection'],
-        ['AdaptivePolsNode',    'Adaptive Polygons'],
-        ['SvAdaptiveEdgeNode',  'Adaptive Edges'],
-        ['CrossSectionNode',    'Cross Section'],
-        ['SvBisectNode',        'Bisect'],
-        ['SvSolidifyNode',      'Solidify'],
-        ['SvWireframeNode',     'Wireframe'],
-        ['DelaunayTriangulation2DNode', 'Delaunay 2D '],
-        ['Voronoi2DNode',       'Voronoi 2D'],
-        ['SvConvexHullNode',    'Convex Hull'],
-        ['SvLatheNode',         'Lathe',            'MOD_SCREW'],
-    ]
-
     node_cats["Conditionals"] = [
         ["SvLogicNode",         "Logic"],
         ["SvSwitchNode",        "Switch"],
         ["SvNeuroElman1LNode",  "Neuro"],
     ]
 
-    node_cats["List Masks"] = [
-        ["MaskListNode",        "List Mask (out)"],
-        ["SvMaskJoinNode",      "List Mask Join (in)"],
+    node_cats["Basic Viz"] = [
+        ["ViewerNode",          "Viewer draw"],
+        ["ViewerNode_text",     "Viewer text"],
+        ["IndexViewerNode",     "Viewer INDX"],
+        ["Sv3DviewPropsNode",   "3dview Props"],
+        ["BmeshViewerNode",     "Viewer BMesh"]
     ]
 
-    node_cats["Analyzers"] = [
-        # investigate data
-        ["SvBBoxNode",          "Bounding box"],
-        ["SvVolumeNode",        "Volume"],
-        ["AreaNode",            "Area"],
-        ["DistancePPNode",      "Distance"],
-        ["CentersPolsNode",     "Centers Polygons"],
-        ["VectorNormalNode",    "Vertex Normal"],
-        # proximity anaylyses.
-        ["SvKDTreeNode",        "KDT Closest Verts"],
-        ["SvKDTreeEdgesNode",   "KDT Closest Edges"]
+    node_cats["Basic Data"] = [
+        ["ObjectsNode",         "Objects in"],
+        ["SvTextInNode",        "Text in"],
+        ["SvTextOutNode",       "Text out"],
+        ["WifiInNode",          "Wifi in"],
+        ["WifiOutNode",         "Wifi out"]
+    ]
+
+    node_cats["Basic Debug"] = [
+        ["SvFrameInfoNode",     "Frame info"],
+        ["NoteNode",            "Note"],
+        ["GTextNode",           "GText"],
+        ["SvDebugPrintNode",    "Debug print"],
+        ["SvStethoscopeNode",   "Stethoscope"]
     ]
 
     node_cats["Beta Nodes"] = [
@@ -198,16 +208,6 @@ def make_node_cats():
         ["SvWafelNode",         "Wafel"],
         ["SvVertexGroupNode",   "Vertex group"],
         ["SvRayCastNode",       "Raycast"]
-    ]
-
-    node_cats["Transforms (Vec, Mat)"] = [
-        ["SvRotationNode",      "Rotation",    "MAN_ROT"],
-        ["SvScaleNode",         "Scale",       "MAN_SCALE"],
-        ["VectorMoveNode",      "Vector Move", "MAN_TRANS"],
-        ["SvMirrorNode",        "Mirror",      "MOD_MIRROR"],
-        ["SvMatrixEulerNode",   "Matrix Euler"],
-        ["MatrixShearNode",     "Matrix Shear"],
-        ["MatrixApplyNode",     "Matrix Apply"],
     ]
 
     node_cats["Alpha Nodes"] = [
