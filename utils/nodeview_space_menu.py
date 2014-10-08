@@ -86,7 +86,11 @@ class NODEVIEW_MT_Dynamic_Menu(bpy.types.Menu):
         layout = self.layout
         layout.operator_context = 'INVOKE_REGION_WIN'
 
-        layout.operator("wm.search_menu", text="Search", icon='VIEWZOOM')
+        # bpy.ops.node.add_search(use_transform=True)
+        # layout.operator("wm.search_menu", text="Search", icon='VIEWZOOM')
+        s = layout.operator("node.add_search", text="Search", icon='VIEWZOOM')
+        s.use_transform=True
+
         layout.separator()
         layout.menu("NODEVIEW_MT_AddGenerators", icon='OBJECT_DATAMODE')
         layout.menu("NODEVIEW_MT_AddTransforms", icon='MANIPUL')
@@ -97,12 +101,11 @@ class NODEVIEW_MT_Dynamic_Menu(bpy.types.Menu):
         layout.menu("NODEVIEW_MT_AddVector")
         layout.menu("NODEVIEW_MT_AddMatrix")
         layout.menu("NODEVIEW_MT_AddLogic")
+        layout.menu("NODEVIEW_MT_AddListOps")
         layout.separator()
         layout.menu("NODEVIEW_MT_AddBasicViz")
         layout.menu("NODEVIEW_MT_AddBasicData")
         layout.menu("NODEVIEW_MT_AddBasicDebug")
-        layout.menu("NODEVIEW_MT_AddListmain")
-        layout.menu("NODEVIEW_MT_AddListstruct")
         layout.separator()
         layout.menu("NODEVIEW_MT_AddBetas", icon='OUTLINER_DATA_POSE')
         layout.menu("NODEVIEW_MT_AddAlphas", icon='ERROR')
@@ -177,6 +180,15 @@ class NODEVIEW_MT_AddModifiers(bpy.types.Menu):
         layout = self.layout
         layout.menu("NODEVIEW_MT_AddModifierChange")
         layout.menu("NODEVIEW_MT_AddModifierMake")
+
+
+class NODEVIEW_MT_AddListOps(bpy.types.Menu):
+    bl_label = "List operations"
+
+    def draw(self, context):
+        layout = self.layout
+        layout.menu("NODEVIEW_MT_AddListmain")
+        layout.menu("NODEVIEW_MT_AddListstruct")
 
 
 class NODEVIEW_MT_AddBetas(bpy.types.Menu):
@@ -469,6 +481,7 @@ classes = [
     NODEVIEW_MT_AddNumber,
     NODEVIEW_MT_AddVector,
     NODEVIEW_MT_AddMatrix,
+    NODEVIEW_MT_AddListOps,
     NODEVIEW_MT_AddModifierChange,
     NODEVIEW_MT_AddModifierMake,
     NODEVIEW_MT_AddLogic,
