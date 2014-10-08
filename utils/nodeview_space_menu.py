@@ -111,17 +111,17 @@ class NODEVIEW_MT_AddGenerators(bpy.types.Menu):
         # this can be in a for loop
         node_details = [
             # bl_idname, shortname, <icon> (optional)
-            ["LineNode",            "Line"],
-            ["PlaneNode",           "Plane"],
-            ["SvBoxNode",           "Box"],
-            ["SvCircleNode",        "Circle"],
-            ["CylinderNode",        "Cylinder"],
-            ["SphereNode",          "Sphere"],
-            ['BasicSplineNode',     "2pt Spline", 'CURVE_BEZCURVE'],
-            ["svBasicArcNode",      "3pt Arc"],
+            ["LineNode",            "Line",                  "GRIP"],
+            ["PlaneNode",           "Plane",           "MESH_PLANE"],
+            ["SvBoxNode",           "Box",              "MESH_CUBE"],
+            ["SvCircleNode",        "Circle",         "MESH_CIRCLE"],
+            ["CylinderNode",        "Cylinder",     "MESH_CYLINDER"],
+            ["SphereNode",          "Sphere",       "MESH_UVSPHERE"],
+            ['BasicSplineNode',     "2pt Spline",  "CURVE_BEZCURVE"],
+            ["svBasicArcNode",      "3pt Arc",        "SPHERECURVE"]
         ]
         layout_draw_categories(layout, node_details)
-        layout.menu("NODEVIEW_MT_AddGeneratorsExt", icon='OBJECT_DATAMODE')
+        layout.menu("NODEVIEW_MT_AddGeneratorsExt", icon='PLUGIN')
 
 
 class NODEVIEW_MT_AddGeneratorsExt(bpy.types.Menu):
@@ -135,10 +135,10 @@ class NODEVIEW_MT_AddGeneratorsExt(bpy.types.Menu):
             ["HilbertNode",         "Hilbert"],
             ["Hilbert3dNode",       "Hilbert3d"],
             ["HilbertImageNode",    "Hilbert image"],
-            ["ImageNode",           "Image"],
-            ["SvFormulaShapeNode",  "Formula shape"],
+            ["ImageNode",           "Image",                "FILE_IMAGE"],
+            ["SvFormulaShapeNode",  "Formula shape",               "IPO"],
             ["SvProfileNode",       "ProfileParametric"],
-            ["SvScriptNode",        "Scripted Node"]
+            ["SvScriptNode",        "Scripted Node",     "SCRIPTPLUGINS"]
         ]
         layout_draw_categories(layout, node_details)
 
