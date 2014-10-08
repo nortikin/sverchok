@@ -80,7 +80,8 @@ utils_modules = [
     # text editor ui
     "text_editor_submenu", "text_editor_plugins",
     # node_view ui tool + panels
-    "sv_tools", "sv_IO_panel"
+    "sv_tools", "sv_IO_panel",
+    "nodeview_space_menu"
 ]
 
 
