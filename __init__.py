@@ -75,7 +75,7 @@ core_modules = ["handlers", "update_system", "upgrade_nodes"]
 utils_modules = [
     # non UI tools
     "cad_module", "sv_bmesh_utils", "sv_curve_utils", "voronoi", 
-    "sv_script", "sv_itertools",
+    "sv_script", "sv_itertools", "script_importhelper",
     # callbacks for bgl
     "viewer_draw", "index_viewer_draw", "nodeview_bgl_viewer_draw", "viewer_draw_mk2",
     # text editor ui

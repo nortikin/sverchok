@@ -30,8 +30,11 @@ from bpy.props import (
     IntVectorProperty
 )
 
+FAIL_COLOR = (0.8, 0.1, 0.1)
+READY_COLOR = (0, 0.8, 0.95)
+
 from utils.sv_tools import sv_get_local_path
-from utils.sv_script import SvScript
+import utils.script_importhelper
 from node_tree import SverchCustomTreeNode
 from data_structure import (
     dataCorrect, updateNode, SvSetSocketAnyType, SvGetSocketAnyType, node_id)
@@ -100,37 +103,6 @@ class SvScriptNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         name='float_list', description="Float list",
         default=defaults, size=32, update=updateNode)
     
-    def load_script(self):
-        try:
-            code = compile(self.script_str, '<string>', 'exec', optimize=2)
-            # insert classes that we can inherit from
-            local_space = {cls.__name__:cls for cls in SvScript.__subclasses__()}
-            local_space["SvScript"] = SvScript
-            
-            exec(code, globals(),local_space)
-            print(local_space)
-        except SyntaxError as err:
-            print("Script Node, load error: {}".format(err))
-            return
-        except TypeError:
-            print("No script found")
-            return
-        locals()
-        for name in code.co_names:
-            print(name)
-            try: 
-                script_class = local_space.get(name)
-                if inspect.isclass(script_class):
-                    script = script_class()
-                    if isinstance(script, SvScript):
-                        print("Script Node found script {}".format(name))
-                        self.script = script
-                        globals().update(local_space)
-            except Exception as Err:
-                print("Script Node couldn't load {0}".format(name))
-                print(str(Err)) 
-                pass
-    
     # better logic should be taken from old script node
     def create_sockets(self):
         script = self.script
@@ -166,22 +138,16 @@ class SvScriptNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         del self.script
         self.inputs.clear()
         self.outputs.clear()
+        self.use_custom_color = False
     
-    
-    #  reload/load are very similar...
-    #  should be purged or re structured
-    #  kept for a short while more    
-    
-    def reload(self):
-        self.script_str = bpy.data.texts[self.script_file_name].as_string()
-        print("reloading...")
-        self.load_script()
-        self.create_sockets()
     
     def load(self):
         self.script_str = bpy.data.texts[self.script_file_name].as_string()
         print("loading...")
-        self.load_script()
+        self.script = utils.script_importhelper.load_script(self.script_str, self.script_file_name)
+        if self.script:
+            self.use_custom_color = True
+            self.color = READY_COLOR
         self.create_sockets()
     
     def update(self):
@@ -191,10 +157,7 @@ class SvScriptNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         script = self.script
         
         if not script:
-            self.reload()
-            # if create socket another update event will fire anyway
-            # needs some more testing
-            return
+            self.load()
         if hasattr(script, 'update'):
             script.update()
         else:
@@ -215,7 +178,6 @@ class SvScriptNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         if not script:
             return
         script.process()
-        
                         
     def copy(self, node):
         self.n_id = ""
@@ -223,6 +185,7 @@ class SvScriptNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                 
     def init(self, context):
         node_id(self)
+        self.color = FAIL_COLOR
     
     # property function for accessing self.script
     def _set_script(self, value):
@@ -244,8 +207,6 @@ class SvScriptNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         
     script = property(_get_script, _set_script, _del_script, "The script object for this node")
     
-    
-    
     def draw_buttons(self, context, layout):
         
         col = layout.column(align=True)
@@ -260,7 +221,7 @@ class SvScriptNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             row.operator('node.sverchok_text_callback', text='', icon='PLUGIN').fn_name = 'load'
         else:
             row = col.row()
-            row.operator("node.sverchok_text_callback", text='Reload').fn_name = 'reload'
+            row.operator("node.sverchok_text_callback", text='Reload').fn_name = 'load'
             row.operator("node.sverchok_text_callback", text='Clear').fn_name = 'clear'
             if hasattr(script, "draw_buttons"):
                 script.draw_buttons(context, layout)
