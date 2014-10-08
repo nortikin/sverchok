@@ -25,13 +25,9 @@ from bpy.props import (
 )
 
 '''
-        # layout.menu("INFO_MT_mesh_add", text="Add Mesh",
-        #             icon='OUTLINER_OB_MESH')
-
         # layout.operator_menu_enum("object.metaball_add", "type",
         #                           icon='OUTLINER_OB_META')
-        # layout.operator("object.text_add", text="Add Text",
-        #                 icon='OUTLINER_OB_FONT')
+
 '''
 
 
