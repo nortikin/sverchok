@@ -19,6 +19,8 @@
 
 ''' borrows heavily from insights provided by Dynamic Space Bar! '''
 
+# from sverchok import retreive_loaded_nodes
+
 import bpy
 from bpy.props import (
     StringProperty,
@@ -109,6 +111,12 @@ class NODEVIEW_MT_Dynamic_Menu(bpy.types.Menu):
 
         # node_item=enum
         # this fails when nodecats are not registered in __init__
+        #nl = make_node_list()
+        #print(nl)
+        #m = retreive_loaded_nodes()
+        print(dir(globals))
+        #print(m)
+
         s = layout.operator("node.add_search", text="Search", icon='VIEWZOOM')
         s.use_transform = True
 
