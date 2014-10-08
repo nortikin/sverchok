@@ -75,7 +75,7 @@ class SvNodeAddnGrab(bpy.types.Operator):
 
 
 class NODEVIEW_MT_Dynamic_Menu(bpy.types.Menu):
-    bl_label = "Dynamic Node Spacebar Menu"
+    bl_label = "Sverchok Nodes"
 
     @classmethod
     def poll(cls, context):
