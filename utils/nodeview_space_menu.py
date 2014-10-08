@@ -124,102 +124,67 @@ class NODEVIEW_MT_AddListOps(bpy.types.Menu):
         layout_draw_categories(self.layout, node_cats["List Masks"])
 
 
-class NODEVIEW_MT_AddBetas(bpy.types.Menu):
+class NodeViewMenuTemplate(bpy.types.Menu):
+    bl_label = ""
+
+    def draw(self, context):
+        layout_draw_categories(self.layout, node_cats[self.bl_label])
+
+
+class NODEVIEW_MT_AddBetas(NodeViewMenuTemplate):
     bl_label = "Beta Nodes"
 
-    def draw(self, context):
-        layout_draw_categories(self.layout, node_cats[self.bl_label])
 
-
-class NODEVIEW_MT_AddAlphas(bpy.types.Menu):
+class NODEVIEW_MT_AddAlphas(NodeViewMenuTemplate):
     bl_label = "Alpha Nodes"
 
-    def draw(self, context):
-        layout_draw_categories(self.layout, node_cats[self.bl_label])
 
-
-class NODEVIEW_MT_AddAnalyzers(bpy.types.Menu):
+class NODEVIEW_MT_AddAnalyzers(NodeViewMenuTemplate):
     bl_label = "Analyzers"
 
-    def draw(self, context):
-        layout_draw_categories(self.layout, node_cats[self.bl_label])
 
-
-class NODEVIEW_MT_AddBasicViz(bpy.types.Menu):
+class NODEVIEW_MT_AddBasicViz(NodeViewMenuTemplate):
     bl_label = "Basic Viz"
 
-    def draw(self, context):
-        layout_draw_categories(self.layout, node_cats[self.bl_label])
 
-
-class NODEVIEW_MT_AddBasicData(bpy.types.Menu):
+class NODEVIEW_MT_AddBasicData(NodeViewMenuTemplate):
     bl_label = "Basic Data"
 
-    def draw(self, context):
-        layout_draw_categories(self.layout, node_cats[self.bl_label])
 
-
-class NODEVIEW_MT_AddBasicDebug(bpy.types.Menu):
+class NODEVIEW_MT_AddBasicDebug(NodeViewMenuTemplate):
     bl_label = "Basic Debug"
 
-    def draw(self, context):
-        layout_draw_categories(self.layout, node_cats[self.bl_label])
 
-
-class NODEVIEW_MT_AddListmain(bpy.types.Menu):
+class NODEVIEW_MT_AddListmain(NodeViewMenuTemplate):
     bl_label = "List main"
 
-    def draw(self, context):
-        layout_draw_categories(self.layout, node_cats[self.bl_label])
 
-
-class NODEVIEW_MT_AddListstruct(bpy.types.Menu):
+class NODEVIEW_MT_AddListstruct(NodeViewMenuTemplate):
     bl_label = "List struct"
 
-    def draw(self, context):
-        layout_draw_categories(self.layout, node_cats[self.bl_label])
 
-
-class NODEVIEW_MT_AddNumber(bpy.types.Menu):
+class NODEVIEW_MT_AddNumber(NodeViewMenuTemplate):
     bl_label = "Number"
 
-    def draw(self, context):
-        layout_draw_categories(self.layout, node_cats[self.bl_label])
 
-
-class NODEVIEW_MT_AddVector(bpy.types.Menu):
+class NODEVIEW_MT_AddVector(NodeViewMenuTemplate):
     bl_label = "Vector"
 
-    def draw(self, context):
-        layout_draw_categories(self.layout, node_cats[self.bl_label])
 
-
-class NODEVIEW_MT_AddMatrix(bpy.types.Menu):
+class NODEVIEW_MT_AddMatrix(NodeViewMenuTemplate):
     bl_label = "Matrix"
 
-    def draw(self, context):
-        layout_draw_categories(self.layout, node_cats[self.bl_label])
 
-
-class NODEVIEW_MT_AddModifierChange(bpy.types.Menu):
+class NODEVIEW_MT_AddModifierChange(NodeViewMenuTemplate):
     bl_label = "Modifier Change"
 
-    def draw(self, context):
-        layout_draw_categories(self.layout, node_cats[self.bl_label])
 
-
-class NODEVIEW_MT_AddModifierMake(bpy.types.Menu):
+class NODEVIEW_MT_AddModifierMake(NodeViewMenuTemplate):
     bl_label = "Modifier Make"
 
-    def draw(self, context):
-        layout_draw_categories(self.layout, node_cats[self.bl_label])
 
-
-class NODEVIEW_MT_AddConditionals(bpy.types.Menu):
+class NODEVIEW_MT_AddConditionals(NodeViewMenuTemplate):
     bl_label = "Conditionals"
-
-    def draw(self, context):
-        layout_draw_categories(self.layout, node_cats[self.bl_label])
 
 
 classes = [
