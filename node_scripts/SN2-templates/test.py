@@ -4,7 +4,7 @@ class MyScript( SvScript):
     outputs = [("s", "Sum")]
     
     def process(self):
-        name, data = self.get_data()
+        data = self.node.inputs[0].sv_get()
         out = []
         for obj in data:
             out.append(sum(obj))

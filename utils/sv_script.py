@@ -27,21 +27,6 @@ if the .name parameter is set it will used as a label otherwise the class will b
 
 # base method for all scripts
 class SvScript(metaclass=abc.ABCMeta):
-    def get_data(self):
-        '''Support function to get raw data from node'''
-        node = self.node
-        if node:
-            return [(s.name, s.sv_get(deepcopy=False), s.bl_idname) for s in node.inputs]
-        else:
-            raise Error
-    
-    def set_data(self, data):
-        '''
-        Support function to set data
-        '''
-        node = self.node
-        for name, d in data.items():
-            node.outputs[name].sv_set(d)
     
     @abc.abstractmethod
     def process(self):
@@ -159,7 +144,7 @@ class SvScriptSimpleFunction(SvScript, metaclass=abc.ABCMeta):
         
         data = [s.sv_get() for s in inputs]
         # this is not used yet, I don't think flat depth is the right long
-        # term approach, but the data tree should be easily parseable
+        # term approach, but the data tree should be easily parseable, which it isn't right now
         depth = tuple(map(recursive_depth, data))
         links = [s.links for s in outputs]
         result = [[] for d in data]
