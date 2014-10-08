@@ -83,18 +83,15 @@ class NODEVIEW_MT_Dynamic_Menu(bpy.types.Menu):
         return (tree_type == 'SverchCustomTreeType')
 
     def draw(self, context):
-
         layout = self.layout
-        # settings = context.tool_settings
         layout.operator_context = 'INVOKE_REGION_WIN'
 
-        # Search Menu
         layout.operator("wm.search_menu", text="Search", icon='VIEWZOOM')
         layout.separator()
-
-        # Add Menu block
         layout.menu("NODEVIEW_MT_AddGenerators", icon='OBJECT_DATAMODE')
         layout.menu("NODEVIEW_MT_AddTransforms", icon='MANIPUL')
+        layout.menu("NODEVIEW_MT_AddAnalyzers", icon='BORDERMOVE')
+        layout.separator()
         layout.menu("NODEVIEW_MT_AddBetas", icon='OUTLINER_DATA_POSE')
         layout.menu("NODEVIEW_MT_AddAlphas", icon='ERROR')
 
@@ -199,12 +196,33 @@ class NODEVIEW_MT_AddAlphas(bpy.types.Menu):
         layout_draw_categories(layout, node_details)
 
 
+class NODEVIEW_MT_AddAnalyzers(bpy.types.Menu):
+    bl_label = "Analyzers"
+
+    def draw(self, context):
+        layout = self.layout
+        node_details = [
+            # bl_idname, shortname, <icon> (optional)
+            ["SvBBoxNode",          "Bounding box"],
+            ["SvVolumeNode",        "Volume"],
+            ["AreaNode",            "Area"],
+            ["DistancePPNode",      "Distance"],
+            ["CentersPolsNode",     "Centers Polygons"],
+            ["VectorNormalNode",    "Vertex Normal"],
+            # proximity anaylyses.
+            ["SvKDTreeNode",        "KDT Closest Verts"],
+            ["SvKDTreeEdgesNode",   "KDT Closest Edges"]
+        ]
+        layout_draw_categories(layout, node_details)
+
+
 classes = [
     SvNodeAddnGrab,
     NODEVIEW_MT_Dynamic_Menu,
     NODEVIEW_MT_AddGenerators,
     NODEVIEW_MT_AddGeneratorsExt,
     NODEVIEW_MT_AddTransforms,
+    NODEVIEW_MT_AddAnalyzers,
     NODEVIEW_MT_AddBetas,
     NODEVIEW_MT_AddAlphas,
 ]
