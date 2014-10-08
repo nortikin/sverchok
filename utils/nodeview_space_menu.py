@@ -26,18 +26,23 @@ from bpy.props import (
 
 
 def layout_draw_categories(layout, node_details):
-    add_n_grab = 'node.sverchok_addngrab'
+    # add_n_grab = 'node.sverchok_addngrab'
+    add_n_grab = 'node.add_node'
     add_node = layout.operator
     for node_info in node_details:
         num_items = len(node_info)
         if num_items == 3:
             bl_idname, shortname, icon = node_info
-            add_node(add_n_grab, text=shortname, icon=icon).node_name = bl_idname
+            node_op = add_node(add_n_grab, text=shortname, icon=icon)
         elif num_items == 2:
             bl_idname, shortname = node_info
-            add_node(add_n_grab, text=shortname).node_name = bl_idname
+            node_op = add_node(add_n_grab, text=shortname)
+            # node_op.type = bl_idname
+            # node_op.use_transform=True
         else:
             continue
+        node_op.type = bl_idname
+        node_op.use_transform=True
 
 
 class SvNodeAddnGrab(bpy.types.Operator):
