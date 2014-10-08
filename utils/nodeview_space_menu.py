@@ -54,8 +54,6 @@ class NODEVIEW_MT_Dynamic_Menu(bpy.types.Menu):
         layout = self.layout
         layout.operator_context = 'INVOKE_REGION_WIN'
 
-        # bpy.ops.node.add_search(use_transform=True)
-        # layout.operator("wm.search_menu", text="Search", icon='VIEWZOOM')
         s = layout.operator("node.add_search", text="Search", icon='VIEWZOOM')
         s.use_transform = True
 
