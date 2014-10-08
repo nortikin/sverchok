@@ -80,6 +80,10 @@ class SvNodeAddnGrab(bpy.types.Operator):
 
         # something wrong with transform still, some context?
         bpy.ops.node.add_node(type=self.node_name, use_transform=True)
+        bpy.ops.node.translate_attach(
+            TRANSFORM_OT_translate={
+                "remove_on_cancel": False, "release_confirm": True
+            }, NODE_OT_attach={})
 
         # this is equivalent non ops code..
         # tree_name = context.space_data.node_tree.name
@@ -103,6 +107,8 @@ class NODEVIEW_MT_Dynamic_Menu(bpy.types.Menu):
         layout = self.layout
         layout.operator_context = 'INVOKE_REGION_WIN'
 
+        # node_item=enum
+        # this fails when nodecats are not registered in __init__
         s = layout.operator("node.add_search", text="Search", icon='VIEWZOOM')
         s.use_transform = True
 
