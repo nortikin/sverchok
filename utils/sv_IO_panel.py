@@ -34,11 +34,13 @@ from node_tree import SverchCustomTree
 from node_tree import SverchCustomTreeNode
 
 
-_EXPORTER_REVISION_ = '0.04 pre alpha'
+_EXPORTER_REVISION_ = '0.043 pre alpha'
 
 '''
-0.039 panel cosmetics
+0.043 remap dict for duplicates (when importing into existing tree)
+0.042 add fake user to imported layouts + switch to new tree.
 0.04x support for profilenode
+0.039 panel cosmetics
 
 '''
 
@@ -110,6 +112,7 @@ def create_dict_of_tree(ng):
     nodes = ng.nodes
     layout_dict = {}
     nodes_dict = {}
+    texts = bpy.data.texts
 
     skip_set = {'SvImportExport', 'Sv3DviewPropsNode'}
 
@@ -146,7 +149,7 @@ def create_dict_of_tree(ng):
 
             if ProfileParamNode and (k == "filename"):
                 '''add file content to dict'''
-                node_dict['path_file'] = bpy.data.texts[node.filename].as_string()
+                node_dict['path_file'] = texts[node.filename].as_string()
 
             if isinstance(v, (float, int, str)):
                 node_items[k] = v
@@ -208,20 +211,26 @@ def create_dict_of_tree(ng):
 def import_tree(ng, fullpath):
 
     nodes = ng.nodes
+    ng.use_fake_user = True
 
-    def resolve_socket(from_node, from_socket, to_node, to_socket):
-        return (ng.nodes[from_node].outputs[from_socket],
-                ng.nodes[to_node].inputs[to_socket])
+    def resolve_socket(from_node, from_socket, to_node, to_socket, name_dict={}):
+        f_node = name_dict.get(from_node, from_node)
+        t_node = name_dict.get(to_node, to_node)
+        return (ng.nodes[f_node].outputs[from_socket],
+                ng.nodes[t_node].inputs[to_socket])
 
     def generate_layout(fullpath, nodes_json):
-        print('#'*12, nodes_json['export_version'])
+        print('#' * 12, nodes_json['export_version'])
 
         ''' first create all nodes. '''
         nodes_to_import = nodes_json['nodes']
+        name_remap = {}
+        texts = bpy.data.texts
+
         for n in sorted(nodes_to_import):
             node_ref = nodes_to_import[n]
-
             bl_idname = node_ref['bl_idname']
+
             try:
                 node = nodes.new(bl_idname)
             except Exception as err:
@@ -229,8 +238,16 @@ def import_tree(ng, fullpath):
                 print(bl_idname, 'not currently registered, skipping')
                 continue
 
+            '''
+            When n is assigned to node.name, blender will decide whether or
+            not it can do that, if there exists already a node with that name,
+            then the assignment to node.name is not n, but n.00x. Hence on the
+            following line we check if the assignment was accepted, and store a
+            remapped name if it wasn't.
+            '''
+            node.name = n
             if not (node.name == n):
-                node.name = n
+                name_remap[n] = node.name
 
             params = node_ref['params']
             print(node.name, params)
@@ -250,12 +267,12 @@ def import_tree(ng, fullpath):
             the script/file names stored in the node must be updated to reflect this.
             '''
             if (node.bl_idname == 'SvScriptNode'):
-                new_text = bpy.data.texts.new(node.script_name)
+                new_text = texts.new(node.script_name)
                 new_text.from_string(node.script_str)
                 node.load()
 
             elif (node.bl_idname == 'SvProfileNode'):
-                new_text = bpy.data.texts.new(node.filename)
+                new_text = texts.new(node.filename)
                 new_text.from_string(node_ref['path_file'])
                 node.update()
 
@@ -270,11 +287,9 @@ def import_tree(ng, fullpath):
         failed_connections = []
         for link in update_lists:
             try:
-                ng.links.new(*resolve_socket(*link))
+                ng.links.new(*resolve_socket(*link, name_dict=name_remap))
             except Exception as err:
                 print(traceback.format_exc())
-                msg = 'failure: ' + str(link)
-                print(msg)
                 failed_connections.append(link)
                 continue
 
@@ -285,11 +300,15 @@ def import_tree(ng, fullpath):
             print('no failed connections! awesome.')
 
         ''' set frame parents '''
+        finalize = lambda name: name_remap.get(name, name)
         framed_nodes = nodes_json['framed_nodes']
         for node_name, parent in framed_nodes.items():
-            ng.nodes[node_name].parent = ng.nodes[parent]
+            ng.nodes[finalize(node_name)].parent = ng.nodes[finalize(parent)]
 
         bpy.ops.node.sverchok_update_current(node_group=ng.name)
+        # bpy.ops.node.select_all(action='DESELECT')
+        # ng.update()
+        # bpy.ops.node.view_all()
 
     ''' ---- read .json or .zip ----- '''
 
@@ -304,6 +323,7 @@ def import_tree(ng, fullpath):
 
 
 class SvNodeTreeExporter(bpy.types.Operator):
+
     '''Export will let you pick a .json file name'''
 
     bl_idname = "node.tree_exporter"
@@ -348,8 +368,10 @@ class SvNodeTreeExporter(bpy.types.Operator):
             # destination path = /a../b../c../somename.json
             base = basename(destination_path)  # somename.json
             basedir = dirname(destination_path)  # /a../b../c../
-            final_archivename = base.replace('.json', '') + '.zip'  # somename.zip
-            fullpath = os.path.join(basedir, final_archivename)  # /a../b../c../somename.zip
+            final_archivename = base.replace(
+                '.json', '') + '.zip'  # somename.zip
+            # /a../b../c../somename.zip
+            fullpath = os.path.join(basedir, final_archivename)
 
             with zipfile.ZipFile(fullpath, 'w', compression=comp_mode) as myzip:
                 myzip.write(destination_path, arcname=base)
@@ -364,6 +386,7 @@ class SvNodeTreeExporter(bpy.types.Operator):
 
 
 class SvNodeTreeImporter(bpy.types.Operator):
+
     '''Importing operation will let you pick a file to import from'''
 
     bl_idname = "node.tree_importer"
@@ -391,6 +414,9 @@ class SvNodeTreeImporter(bpy.types.Operator):
         else:
             ng = bpy.data.node_groups[self.id_tree]
         import_tree(ng, self.filepath)
+
+        # set new node tree to active
+        context.space_data.node_tree = ng
         return {'FINISHED'}
 
     def invoke(self, context, event):
@@ -419,19 +445,16 @@ class SverchokIOLayoutsMenu(bpy.types.Panel):
         layout = self.layout
         ntree = context.space_data.node_tree
         row = layout.row()
-        row.scale_y=0.5
+        row.scale_y = 0.5
         row.label(_EXPORTER_REVISION_)
 
         ''' export '''
 
         col = layout.column(align=False)
         row1 = col.row(align=True)
-        row1.scale_y=1.4
+        row1.scale_y = 1.4
         row1.prop(ntree, 'compress_output', text='Zip', toggle=True)
-        imp = row1.operator(
-            'node.tree_exporter',
-            text='Export',
-            icon='FILE_BACKUP')
+        imp = row1.operator('node.tree_exporter', text='Export', icon='FILE_BACKUP')
         imp.id_tree = ntree.name
         imp.compress = ntree.compress_output
 
@@ -442,18 +465,11 @@ class SverchokIOLayoutsMenu(bpy.types.Panel):
         row3.scale_y = 1
         row3.prop(ntree, 'new_nodetree_name', text='')
         row2 = col.row(align=True)
-        row2.scale_y = 1.4
-        exp1 = row2.operator(
-            'node.tree_importer',
-            text='Here',
-            icon='RNA')
+        row2.scale_y = 1.2
+        exp1 = row2.operator('node.tree_importer', text='Here', icon='RNA')
         exp1.id_tree = ntree.name
 
-
-        exp2 = row2.operator(
-            'node.tree_importer',
-            text='New',
-            icon='RNA_ADD')
+        exp2 = row2.operator('node.tree_importer', text='New', icon='RNA_ADD')
         exp2.id_tree = ''
         exp2.new_nodetree_name = ntree.new_nodetree_name
 

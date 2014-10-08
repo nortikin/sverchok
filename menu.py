@@ -33,14 +33,16 @@ def make_categories():
         ["ViewerNode_text",     "Viewer text"],
         ["IndexViewerNode",     "Viewer INDX"],
         ["Sv3DviewPropsNode",   "3dview Props"],
-        ["BmeshViewerNode",     "Viewer BMesh"]]
+        ["BmeshViewerNode",     "Viewer BMesh"]
+    ]
 
     node_cats["Basic Data"] = [
         ["ObjectsNode",         "Objects in"],
         ["SvTextInNode",        "Text in"],
         ["SvTextOutNode",       "Text out"],
         ["WifiInNode",          "Wifi in"],
-        ["WifiOutNode",         "Wifi out"]]
+        ["WifiOutNode",         "Wifi out"]
+    ]
 
     node_cats["Basic Debug"] = [
         # ["Test1Node",         "Test1"],
@@ -49,7 +51,9 @@ def make_categories():
         ["SvFrameInfoNode",     "Frame info"],
         ["NoteNode",            "Note"],
         ["GTextNode",           "GText"],
-        ["SvDebugPrintNode",    "Debug print"]]
+        ["SvDebugPrintNode",    "Debug print"],
+        ["SvStethoscopeNode",   "Stethoscope"]
+    ]
 
     node_cats["List main"] = [
         ["ListJoinNode",        "List Join"],
@@ -61,7 +65,8 @@ def make_categories():
         ["SvMaskJoinNode",      "List Mask Join (in)"],
         ["ListMatchNode",       "List Match"],
         ["ListFuncNode",        "List Math"],
-        ["ConverterNode",       "SocketConvert"]]
+        ["ConverterNode",       "SocketConvert"]
+    ]
 
     node_cats["List struct"] = [
         ["ShiftNode",           "List Shift"],
@@ -73,7 +78,8 @@ def make_categories():
         ["ListReverseNode",     "List Reverse"],
         ["ListShuffleNode",     "List Shuffle"],
         ["ListSortNode",        "List Sort"],
-        ["ListFlipNode",        "List Flip"]]
+        ["ListFlipNode",        "List Flip"]
+    ]
 
     node_cats["Number"] = [
         # numbers, formula nodes
@@ -88,13 +94,16 @@ def make_categories():
         # for newbies this is not predictable why "Formula2" renamed
         ["Formula2Node",        "Formula"],
         ["ScalarMathNode",      "Math"],
-        ["SvMapRangeNode",      "Map Range"]]
+        ["SvLogicNode",         "Logic"],
+        ["SvMapRangeNode",      "Map Range"]
+    ]
 
     node_cats["Generator"] = [
         # objects, new elements, line, plane
         ["LineNode",            "Line"],
         ["PlaneNode",           "Plane"],
         ["SvBoxNode",           "Box"],
+        ["SvBoxRoundedNode",    "Rounded Box"],
         ["SvCircleNode",        "Circle"],
         ["CylinderNode",        "Cylinder"],
         ["SphereNode",          "Sphere"],
@@ -107,7 +116,8 @@ def make_categories():
         ["RandomVectorNode",    "Random Vector"],
         ["SvFormulaShapeNode",  "Formula shape"],
         ["SvProfileNode",       "ProfileParametric"],
-        ["SvScriptNode",        "Scripted Node"]]
+        ["SvScriptNode",        "Scripted Node"]
+    ]
 
     node_cats["Vector"] = [
         ["GenVectorsNode",      "Vector in"],
@@ -120,7 +130,8 @@ def make_categories():
         ["SvInterpolationNode", "Vector Interpolation"],
         ["SvVertSortNode",      "Vector Sort"],
         ["SvNoiseNode",         "Vector Noise"],
-        ["svAxisInputNode",     "Vector X | Y | Z"]]
+        ["svAxisInputNode",     "Vector X | Y | Z"]
+    ]
 
     node_cats["Matrix"] = [
         ["MatrixApplyNode",     "Matrix Apply"],
@@ -129,7 +140,8 @@ def make_categories():
         ["SvMatrixValueIn",     "Matrix Input"],
         ["MatrixDeformNode",    "Matrix Deform"],
         ["MatrixShearNode",     "Matrix Shear"],  # for uniform view renamed
-        ["MatrixInterpolationNode", "Matrix Interpolation"]]
+        ["MatrixInterpolationNode", "Matrix Interpolation"]
+    ]
 
     node_cats["Modifier Change"] = [
         # modifiers deforms and reorganize and reconstruct data
@@ -141,7 +153,9 @@ def make_categories():
         ["SvSeparateMeshNode",  "Separate Loose Parts"],
         ["SvVertMaskNode",      "Mask Vertices"],
         ["SvFillsHoleNode",     "Fill Holes"],
-        ["SvIntersectEdgesNode", "Intersect Edges"]]
+        ["SvMirrorNode",        "Mirror"],
+        ["SvIntersectEdgesNode", "Intersect Edges"]
+    ]
 
     node_cats["Modifier Make"] = [
         ["LineConnectNode",     "UV Connection"],
@@ -154,7 +168,8 @@ def make_categories():
         ["DelaunayTriangulation2DNode", "Delaunay 2D "],
         ["Voronoi2DNode",       "Voronoi 2D"],
         ["SvConvexHullNode",    "Convex Hull"],
-        ["SvLatheNode",         "Lathe"]]
+        ["SvLatheNode",         "Lathe"]
+    ]
 
     node_cats["Analyser"] = [
         # investigate data
@@ -164,36 +179,38 @@ def make_categories():
         ["AreaNode",            "Area"],
         ["SvBBoxNode",          "Bounding box"],
         ["SvKDTreeNode",        "KDT Closest Verts"],
-        ["SvKDTreeEdgesNode",   "KDT Closest Edges"]]
+        ["SvKDTreeEdgesNode",   "KDT Closest Edges"]
+    ]
 
     node_cats["Beta test"] = [
         # for testing convenience,
-        ["ViewerNode2",         "Viewer draw MK2"],  # investigationg serious crash
-        ["SvStethoscopeNode",   "Stethoscope"],
+        ["ViewerNode2",         "Viewer draw MK2"],
         ["SvOffsetNode",        "Offset"],
         ["SvEmptyOutNode",      "Empty out"],
-        ["EvalKnievalNode",     "Eval Knieval"],
         # need to be completely reviewed
-        ["SvListDecomposeNode",   "List Decompose"],
+        ["SvListDecomposeNode", "List Decompose"],
         # should be removed...
-        ["SvJoinTrianglesNode", "Join Triangles"],
-        ["SvImageComponentsNode", "Image Decompose"],
-        ["SvBoxRoundedNode",    "Rounded Box"],
         ["SvReRouteNode",       "Reroute Point"],
         ["SvVolumeNode",        "Volume"],
         ["SvSwitchNode",        "Switch"],
         ["SvNeuroElman1LNode",  "Neuro"],
         ["SvInstancerNode",     "mesh instancer"],
-        ["SvLogicNode",         "Logic"],
         ["SvRotationNode",      "Rotation"],
         ["SvScaleNode",         "Scale"],
         ["SvMatrixEulerNode",   "Matrix Euler"],
-        ["SvMirrorNode",        "Mirror"],
         ["SvWafelNode",         "Wafel"],
         ["SvVertexGroupNode",   "Vertext group"],
         ["SvRayCastNode",       "Raycast"],
         ["SvScriptNodeMK2",      "Script 2"],
-        
+    ]
+
+    dev_tests = False
+    if dev_tests:
+        node_cats["Alpha test"] = [
+            ["SvObjRemoteNode",     "Scene Objects"],
+            ["SvImageComponentsNode", "Image Decompose"],
+            ["SvJoinTrianglesNode", "Join Triangles"],
+            ["EvalKnievalNode",     "Eval Knieval"]
         ]
 
     node_categories = []

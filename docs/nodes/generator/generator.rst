@@ -8,6 +8,7 @@ Generator
    line
    plane
    box
+   box_rounded   
    circle
    cylinder
    sphere

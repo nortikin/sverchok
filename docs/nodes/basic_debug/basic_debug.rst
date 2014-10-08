@@ -9,3 +9,4 @@ Basic Debug
    gtext
    frame_info
    debug
+   stethoscope   
