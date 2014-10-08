@@ -24,6 +24,10 @@ from bpy.props import (
     StringProperty,
 )
 
+from sverchok.menu import make_node_cats
+
+node_cats = make_node_cats()
+
 
 def layout_draw_categories(layout, node_details):
     # add_n_grab = 'node.sverchok_addngrab'
@@ -51,6 +55,7 @@ class NODEVIEW_MT_Dynamic_Menu(bpy.types.Menu):
         return (tree_type == 'SverchCustomTreeType')
 
     def draw(self, context):
+
         layout = self.layout
         layout.operator_context = 'INVOKE_REGION_WIN'
 
@@ -78,65 +83,26 @@ class NODEVIEW_MT_Dynamic_Menu(bpy.types.Menu):
 
 
 class NODEVIEW_MT_AddGenerators(bpy.types.Menu):
-    bl_label = "Add Generators"
+    bl_label = "Generators"
 
     def draw(self, context):
         layout = self.layout
-
-        # not sure if we need this or something else...
-        layout.operator_context = 'INVOKE_REGION_WIN'
-
-        # this can be in a for loop
-        node_details = [
-            # bl_idname, shortname, <icon> (optional)
-            ["LineNode",            "Line",                  "GRIP"],
-            ["PlaneNode",           "Plane",           "MESH_PLANE"],
-            ["SvBoxNode",           "Box",              "MESH_CUBE"],
-            ["SvCircleNode",        "Circle",         "MESH_CIRCLE"],
-            ["CylinderNode",        "Cylinder",     "MESH_CYLINDER"],
-            ["SphereNode",          "Sphere",       "MESH_UVSPHERE"],
-            ['BasicSplineNode',     "2pt Spline",  "CURVE_BEZCURVE"],
-            ["svBasicArcNode",      "3pt Arc",        "SPHERECURVE"]
-        ]
-        layout_draw_categories(layout, node_details)
+        layout_draw_categories(self.layout, node_cats[self.bl_label])
         layout.menu("NODEVIEW_MT_AddGeneratorsExt", icon='PLUGIN')
 
 
 class NODEVIEW_MT_AddGeneratorsExt(bpy.types.Menu):
-    bl_label = "Extended generators"
+    bl_label = "Extended Generators"
 
     def draw(self, context):
-        layout = self.layout
-        node_details = [
-            # bl_idname, shortname, <icon> (optional)
-            ["SvBoxRoundedNode",    "Rounded Box"],
-            ["HilbertNode",         "Hilbert"],
-            ["Hilbert3dNode",       "Hilbert3d"],
-            ["HilbertImageNode",    "Hilbert image"],
-            ["ImageNode",           "Image",                "FILE_IMAGE"],
-            ["SvFormulaShapeNode",  "Formula shape",               "IPO"],
-            ["SvProfileNode",       "ProfileParametric"],
-            ["SvScriptNode",        "Scripted Node",     "SCRIPTPLUGINS"]
-        ]
-        layout_draw_categories(layout, node_details)
+        layout_draw_categories(self.layout, node_cats[self.bl_label])
 
 
 class NODEVIEW_MT_AddTransforms(bpy.types.Menu):
     bl_label = "Transforms (Vec, Mat)"
 
     def draw(self, context):
-        layout = self.layout
-        node_details = [
-            # bl_idname, shortname, <icon> (optional)
-            ["SvRotationNode",      "Rotation",    "MAN_ROT"],
-            ["SvScaleNode",         "Scale",       "MAN_SCALE"],
-            ["VectorMoveNode",      "Vector Move", "MAN_TRANS"],
-            ["SvMirrorNode",        "Mirror",      "MOD_MIRROR"],
-            ["SvMatrixEulerNode",   "Matrix Euler"],
-            ["MatrixShearNode",     "Matrix Shear"],
-            ["MatrixApplyNode",     "Matrix Apply"],
-        ]
-        layout_draw_categories(layout, node_details)
+        layout_draw_categories(self.layout, node_cats[self.bl_label])
 
 
 class NODEVIEW_MT_AddModifiers(bpy.types.Menu):
@@ -155,273 +121,105 @@ class NODEVIEW_MT_AddListOps(bpy.types.Menu):
         layout = self.layout
         layout.menu("NODEVIEW_MT_AddListmain")
         layout.menu("NODEVIEW_MT_AddListstruct")
-
-        node_details = [
-            ['MaskListNode', 'List Mask (out)'],
-            ['SvMaskJoinNode', 'List Mask Join (in)'],
-        ]
-        layout_draw_categories(layout, node_details)
+        layout_draw_categories(self.layout, node_cats["List Masks"])
 
 
 class NODEVIEW_MT_AddBetas(bpy.types.Menu):
     bl_label = "Beta Nodes"
 
     def draw(self, context):
-        layout = self.layout
-        node_details = [
-            # bl_idname, shortname, <icon> (optional)
-            # for testing convenience,
-            ["ViewerNode2",         "Viewer draw MK2", 'RETOPO'],
-            ["SvOffsetNode",        "Offset"],
-            ["SvEmptyOutNode",      "Empty out", "OUTLINER_OB_EMPTY"],
-            # need to be completely reviewed
-            ["SvListDecomposeNode", "List Decompose"],
-            # should be removed...
-            ["SvReRouteNode",       "Reroute Point"],
-            ["SvInstancerNode",     "mesh instancer"],
-            ["SvWafelNode",         "Wafel"],
-            ["SvVertexGroupNode",   "Vertex group"],
-            ["SvRayCastNode",       "Raycast"]
-        ]
-        layout_draw_categories(layout, node_details)
+        layout_draw_categories(self.layout, node_cats[self.bl_label])
 
 
 class NODEVIEW_MT_AddAlphas(bpy.types.Menu):
     bl_label = "Alpha Nodes"
 
     def draw(self, context):
-        layout = self.layout
-        node_details = [
-            # bl_idname, shortname, <icon> (optional)
-            ["SvObjRemoteNode",       "Scene Objects"],
-            ["SvImageComponentsNode", "Image Decompose",  "GROUP_VCOL"],
-            ["SvJoinTrianglesNode",   "Join Triangles"],
-            ["EvalKnievalNode",       "Eval Knieval",   'FORCE_VORTEX']
-        ]
-        layout_draw_categories(layout, node_details)
+        layout_draw_categories(self.layout, node_cats[self.bl_label])
 
 
 class NODEVIEW_MT_AddAnalyzers(bpy.types.Menu):
     bl_label = "Analyzers"
 
     def draw(self, context):
-        layout = self.layout
-        node_details = [
-            # bl_idname, shortname, <icon> (optional)
-            ["SvBBoxNode",          "Bounding box"],
-            ["SvVolumeNode",        "Volume"],
-            ["AreaNode",            "Area"],
-            ["DistancePPNode",      "Distance"],
-            ["CentersPolsNode",     "Centers Polygons"],
-            ["VectorNormalNode",    "Vertex Normal"],
-            # proximity anaylyses.
-            ["SvKDTreeNode",        "KDT Closest Verts"],
-            ["SvKDTreeEdgesNode",   "KDT Closest Edges"]
-        ]
-        layout_draw_categories(layout, node_details)
+        layout_draw_categories(self.layout, node_cats[self.bl_label])
 
 
 class NODEVIEW_MT_AddBasicViz(bpy.types.Menu):
     bl_label = "Basic Viz"
 
     def draw(self, context):
-        layout = self.layout
-        node_details = [
-            # bl_idname, shortname, <icon> (optional)
-            ['ViewerNode', 'Viewer draw'],
-            ['ViewerNode_text', 'Viewer text'],
-            ['IndexViewerNode', 'Viewer INDX'],
-            ['Sv3DviewPropsNode', '3dview Props'],
-            ['BmeshViewerNode', 'Viewer BMesh'],
-        ]
-        layout_draw_categories(layout, node_details)
+        layout_draw_categories(self.layout, node_cats[self.bl_label])
 
 
 class NODEVIEW_MT_AddBasicData(bpy.types.Menu):
     bl_label = "Basic Data"
 
     def draw(self, context):
-        layout = self.layout
-        node_details = [
-            # bl_idname, shortname, <icon> (optional)
-            ['ObjectsNode', 'Objects in'],
-            ['SvTextInNode', 'Text in'],
-            ['SvTextOutNode', 'Text out'],
-            ['WifiInNode', 'Wifi in'],
-            ['WifiOutNode', 'Wifi out'],
-        ]
-        layout_draw_categories(layout, node_details)
+        layout_draw_categories(self.layout, node_cats[self.bl_label])
 
 
 class NODEVIEW_MT_AddBasicDebug(bpy.types.Menu):
     bl_label = "Basic Debug"
 
     def draw(self, context):
-        layout = self.layout
-        node_details = [
-            # bl_idname, shortname, <icon> (optional)
-            ['SvFrameInfoNode', 'Frame info'],
-            ['NoteNode', 'Note'],
-            ['GTextNode', 'GText'],
-            ['SvDebugPrintNode', 'Debug print'],
-            ['SvStethoscopeNode', 'Stethoscope'],
-        ]
-        layout_draw_categories(layout, node_details)
+        layout_draw_categories(self.layout, node_cats[self.bl_label])
 
 
 class NODEVIEW_MT_AddListmain(bpy.types.Menu):
     bl_label = "List main"
 
     def draw(self, context):
-        layout = self.layout
-        node_details = [
-            # bl_idname, shortname, <icon> (optional)
-            ['ListJoinNode', 'List Join'],
-            ['ZipNode', 'List Zip'],
-            ['ListLevelsNode', 'List Del Levels'],
-            ['ListLengthNode', 'List Length'],
-            ['ListSumNode', 'List Sum'],
-            ['ListMatchNode', 'List Match'],
-            ['ListFuncNode', 'List Math'],
-            ['ConverterNode', 'SocketConvert'],
-        ]
-        layout_draw_categories(layout, node_details)
+        layout_draw_categories(self.layout, node_cats[self.bl_label])
 
 
 class NODEVIEW_MT_AddListstruct(bpy.types.Menu):
     bl_label = "List struct"
 
     def draw(self, context):
-        layout = self.layout
-        node_details = [
-            # bl_idname, shortname, <icon> (optional)
-            ['ShiftNode', 'List Shift'],
-            ['ListRepeaterNode', 'List Repeater'],
-            ['ListSliceNode', 'List Slice'],
-            ['SvListSplitNode', 'List Split'],
-            ['ListFLNode', 'List First&Last'],
-            ['ListItem2Node', 'List Item'],
-            ['ListReverseNode', 'List Reverse'],
-            ['ListShuffleNode', 'List Shuffle'],
-            ['ListSortNode', 'List Sort'],
-            ['ListFlipNode', 'List Flip'],
-        ]
-        layout_draw_categories(layout, node_details)
+        layout_draw_categories(self.layout, node_cats[self.bl_label])
 
 
 class NODEVIEW_MT_AddNumber(bpy.types.Menu):
     bl_label = "Number"
 
     def draw(self, context):
-        layout = self.layout
-        node_details = [
-            # bl_idname, shortname, <icon> (optional)
-            ['GenListRangeIntNode', 'Range Int'],
-            ['SvGenFloatRange', 'Range Float'],
-            ['SvListInputNode', 'List Input'],
-            ['RandomNode', 'Random', 'RNDCURVE'],
-            ['FloatNode', 'Float'],
-            ['IntegerNode', 'Int'],
-            ['Float2IntNode', 'Float 2 Int'],
-            ['Formula2Node', 'Formula'],
-            ['ScalarMathNode', 'Math'],
-            ['SvMapRangeNode', 'Map Range'],
-        ]
-        layout_draw_categories(layout, node_details)
+        layout_draw_categories(self.layout, node_cats[self.bl_label])
 
 
 class NODEVIEW_MT_AddVector(bpy.types.Menu):
     bl_label = "Vector"
 
     def draw(self, context):
-        layout = self.layout
-        node_details = [
-            # bl_idname, shortname, <icon> (optional)
-            ['RandomVectorNode', 'Random Vector', 'RNDCURVE'],
-            ['GenVectorsNode', 'Vector in'],
-            ['VectorsOutNode', 'Vector out'],
-            ['VectorMathNode', 'Vector Math'],
-            ['VectorDropNode', 'Vector Drop'],
-            ['VertsDelDoublesNode', 'Vector X Doubles'],
-            ['EvaluateLineNode', 'Vector Evaluate'],
-            ['SvInterpolationNode', 'Vector Interpolation'],
-            ['SvVertSortNode', 'Vector Sort', 'SORTSIZE'],
-            ['SvNoiseNode', 'Vector Noise', 'FORCE_TURBULENCE'],
-            ['svAxisInputNode', 'Vector X | Y | Z', 'MANIPUL'],
-        ]
-        layout_draw_categories(layout, node_details)
+        layout_draw_categories(self.layout, node_cats[self.bl_label])
 
 
 class NODEVIEW_MT_AddMatrix(bpy.types.Menu):
     bl_label = "Matrix"
 
     def draw(self, context):
-        layout = self.layout
-        node_details = [
-            # bl_idname, shortname, <icon> (optional)
-            ['MatrixGenNode', 'Matrix in'],
-            ['MatrixOutNode', 'Matrix out'],
-            ['SvMatrixValueIn', 'Matrix Input'],
-            ['MatrixDeformNode', 'Matrix Deform'],
-            ['MatrixInterpolationNode', 'Matrix Interpolation'],
-        ]
-        layout_draw_categories(layout, node_details)
+        layout_draw_categories(self.layout, node_cats[self.bl_label])
 
 
 class NODEVIEW_MT_AddModifierChange(bpy.types.Menu):
     bl_label = "Modifier Change"
 
     def draw(self, context):
-        layout = self.layout
-        node_details = [
-            # bl_idname, shortname, <icon> (optional)
-            ['PolygonBoomNode', 'Polygon Boom'],
-            ['Pols2EdgsNode', 'Polygons to Edges'],
-            ['SvMeshJoinNode', 'Mesh Join'],
-            ['SvRemoveDoublesNode', 'Remove Doubles'],
-            ['SvDeleteLooseNode', 'Delete Loose'],
-            ['SvSeparateMeshNode', 'Separate Loose Parts'],
-            ['SvVertMaskNode', 'Mask Vertices'],
-            ['SvFillsHoleNode', 'Fill Holes'],
-            ['SvIntersectEdgesNode', 'Intersect Edges'],
-        ]
-        layout_draw_categories(layout, node_details)
+        layout_draw_categories(self.layout, node_cats[self.bl_label])
 
 
 class NODEVIEW_MT_AddModifierMake(bpy.types.Menu):
     bl_label = "Modifier Make"
 
     def draw(self, context):
-        layout = self.layout
-        node_details = [
-            # bl_idname, shortname, <icon> (optional)
-            ['LineConnectNode', 'UV Connection'],
-            ['AdaptivePolsNode', 'Adaptive Polygons'],
-            ['SvAdaptiveEdgeNode', 'Adaptive Edges'],
-            ['CrossSectionNode', 'Cross Section'],
-            ['SvBisectNode', 'Bisect'],
-            ['SvSolidifyNode', 'Solidify'],
-            ['SvWireframeNode', 'Wireframe'],
-            ['DelaunayTriangulation2DNode', 'Delaunay 2D '],
-            ['Voronoi2DNode', 'Voronoi 2D'],
-            ['SvConvexHullNode', 'Convex Hull'],
-            ['SvLatheNode', 'Lathe', 'MOD_SCREW'],
-        ]
-        layout_draw_categories(layout, node_details)
+        layout_draw_categories(self.layout, node_cats[self.bl_label])
 
 
 class NODEVIEW_MT_AddConditionals(bpy.types.Menu):
     bl_label = "Conditionals"
 
     def draw(self, context):
-        layout = self.layout
-        node_details = [
-            # bl_idname, shortname, <icon> (optional)
-            ['SvLogicNode', 'Logic'],
-            ['SvSwitchNode', 'Switch'],
-            ['SvNeuroElman1LNode', 'Neuro'],
-        ]
-        layout_draw_categories(layout, node_details)
+        layout_draw_categories(self.layout, node_cats[self.bl_label])
 
 
 classes = [
