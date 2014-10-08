@@ -46,27 +46,6 @@ def layout_draw_categories(layout, node_details):
             continue
 
 
-def layout_draw_main_menu(layout):
-    layout.separator()
-    layout.menu("NODEVIEW_MT_AddGenerators", icon='OBJECT_DATAMODE')
-    layout.menu("NODEVIEW_MT_AddTransforms", icon='MANIPUL')
-    layout.menu("NODEVIEW_MT_AddAnalyzers", icon='BORDERMOVE')
-    layout.menu("NODEVIEW_MT_AddModifiers", icon='MODIFIER')
-    layout.separator()
-    layout.menu("NODEVIEW_MT_AddNumber")
-    layout.menu("NODEVIEW_MT_AddVector")
-    layout.menu("NODEVIEW_MT_AddMatrix")
-    layout.menu("NODEVIEW_MT_AddConditionals")
-    layout.menu("NODEVIEW_MT_AddListOps")
-    layout.separator()
-    layout.menu("NODEVIEW_MT_AddBasicViz")
-    layout.menu("NODEVIEW_MT_AddBasicData")
-    layout.menu("NODEVIEW_MT_AddBasicDebug")
-    layout.separator()
-    layout.menu("NODEVIEW_MT_AddBetas", icon='OUTLINER_DATA_POSE')
-    layout.menu("NODEVIEW_MT_AddAlphas", icon='ERROR')
-
-
 class SvNodeAddnGrab(bpy.types.Operator):
     ''' ops to add and grab '''
 
@@ -103,10 +82,29 @@ class NODEVIEW_MT_Dynamic_Menu(bpy.types.Menu):
         layout = self.layout
         layout.operator_context = 'INVOKE_REGION_WIN'
 
+        # bpy.ops.node.add_search(use_transform=True)
+        # layout.operator("wm.search_menu", text="Search", icon='VIEWZOOM')
         s = layout.operator("node.add_search", text="Search", icon='VIEWZOOM')
         s.use_transform = True
 
-        layout_draw_main_menu(layout)
+        layout.separator()
+        layout.menu("NODEVIEW_MT_AddGenerators", icon='OBJECT_DATAMODE')
+        layout.menu("NODEVIEW_MT_AddTransforms", icon='MANIPUL')
+        layout.menu("NODEVIEW_MT_AddAnalyzers", icon='BORDERMOVE')
+        layout.menu("NODEVIEW_MT_AddModifiers", icon='MODIFIER')
+        layout.separator()
+        layout.menu("NODEVIEW_MT_AddNumber")
+        layout.menu("NODEVIEW_MT_AddVector")
+        layout.menu("NODEVIEW_MT_AddMatrix")
+        layout.menu("NODEVIEW_MT_AddConditionals")
+        layout.menu("NODEVIEW_MT_AddListOps")
+        layout.separator()
+        layout.menu("NODEVIEW_MT_AddBasicViz")
+        layout.menu("NODEVIEW_MT_AddBasicData")
+        layout.menu("NODEVIEW_MT_AddBasicDebug")
+        layout.separator()
+        layout.menu("NODEVIEW_MT_AddBetas", icon='OUTLINER_DATA_POSE')
+        layout.menu("NODEVIEW_MT_AddAlphas", icon='ERROR')
 
 
 class NODEVIEW_MT_AddGenerators(bpy.types.Menu):
@@ -481,10 +479,6 @@ classes = [
 ]
 
 
-def menu_draw(self, context):
-    layout_draw_main_menu(self.layout)
-
-
 def register():
     for class_name in classes:
         bpy.utils.register_class(class_name)
@@ -495,8 +489,6 @@ def register():
         km = kc.keymaps.new(name='Node Editor', space_type='NODE_EDITOR')
         kmi = km.keymap_items.new('wm.call_menu', 'SPACE', 'PRESS')
         kmi.properties.name = "NODEVIEW_MT_Dynamic_Menu"
-
-    bpy.types.NODE_MT_add.append(menu_draw)
 
 
 def unregister():
@@ -512,5 +504,3 @@ def unregister():
                 if kmi.properties.name == "NODEVIEW_MT_Dynamic_Menu":
                     km.keymap_items.remove(kmi)
                     break
-
-    bpy.types.NODE_MT_add.remove(menu_draw)

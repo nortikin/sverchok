@@ -145,17 +145,16 @@ import bpy
 
 def register():
     import nodeitems_utils
-    #categors_menu = menu.make_categories()
-    # print("** Sverchok has  {i} nodes **".format(i=categors_menu[1]))
+    categors_menu = menu.make_categories()
+    print("** Sverchok has  {i} nodes **".format(i=categors_menu[1]))
     for m in imported_modules + node_list:
         if hasattr(m, "register"):
             m.register()
         else:
             pass
-
-    # if 'SVERCHOK' not in nodeitems_utils._node_categories:
-    #     nodeitems_utils.register_node_categories("SVERCHOK", categors_menu[0])
-
+            #print("failed to register {}".format(m.__name__))
+    if 'SVERCHOK' not in nodeitems_utils._node_categories:
+        nodeitems_utils.register_node_categories("SVERCHOK", categors_menu[0])
     if reload_event:
         # tag reload event which will cause a full sverchok startup on
         # first update event
@@ -171,5 +170,5 @@ def unregister():
         if hasattr(m, "unregister"):
             m.unregister()
 
-    # if 'SVERCHOK' in nodeitems_utils._node_categories:
-    #     nodeitems_utils.unregister_node_categories("SVERCHOK")
+    if 'SVERCHOK' in nodeitems_utils._node_categories:
+        nodeitems_utils.unregister_node_categories("SVERCHOK")
