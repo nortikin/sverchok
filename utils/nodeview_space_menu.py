@@ -92,6 +92,18 @@ class NODEVIEW_MT_Dynamic_Menu(bpy.types.Menu):
         layout.menu("NODEVIEW_MT_AddTransforms", icon='MANIPUL')
         layout.menu("NODEVIEW_MT_AddAnalyzers", icon='BORDERMOVE')
         layout.separator()
+        layout.menu("NODEVIEW_MT_AddBasicViz")
+        layout.menu("NODEVIEW_MT_AddBasicData")
+        layout.menu("NODEVIEW_MT_AddBasicDebug")
+        layout.menu("NODEVIEW_MT_AddListmain")
+        layout.menu("NODEVIEW_MT_AddListstruct")
+        layout.menu("NODEVIEW_MT_AddNumber")
+        layout.menu("NODEVIEW_MT_AddVector")
+        layout.menu("NODEVIEW_MT_AddMatrix")
+        layout.menu("NODEVIEW_MT_AddModifierChange")
+        layout.menu("NODEVIEW_MT_AddModifierMake")
+        layout.menu("NODEVIEW_MT_AddLogic")
+        layout.separator()
         layout.menu("NODEVIEW_MT_AddBetas", icon='OUTLINER_DATA_POSE')
         layout.menu("NODEVIEW_MT_AddAlphas", icon='ERROR')
 
@@ -188,10 +200,10 @@ class NODEVIEW_MT_AddAlphas(bpy.types.Menu):
         layout = self.layout
         node_details = [
             # bl_idname, shortname, <icon> (optional)
-            ["SvObjRemoteNode",     "Scene Objects"],
-            ["SvImageComponentsNode", "Image Decompose", "GROUP_VCOL"],
-            ["SvJoinTrianglesNode", "Join Triangles"],
-            ["EvalKnievalNode",     "Eval Knieval", 'FORCE_VORTEX']
+            ["SvObjRemoteNode",       "Scene Objects"],
+            ["SvImageComponentsNode", "Image Decompose",  "GROUP_VCOL"],
+            ["SvJoinTrianglesNode",   "Join Triangles"],
+            ["EvalKnievalNode",       "Eval Knieval",   'FORCE_VORTEX']
         ]
         layout_draw_categories(layout, node_details)
 
@@ -216,6 +228,222 @@ class NODEVIEW_MT_AddAnalyzers(bpy.types.Menu):
         layout_draw_categories(layout, node_details)
 
 
+class NODEVIEW_MT_AddBasicViz(bpy.types.Menu):
+    bl_label = "Basic Viz"
+
+    def draw(self, context):
+        layout = self.layout
+        node_details = [
+            # bl_idname, shortname, <icon> (optional)
+
+            ['ViewerNode', 'Viewer draw'],
+            ['ViewerNode_text', 'Viewer text'],
+            ['IndexViewerNode', 'Viewer INDX'],
+            ['Sv3DviewPropsNode', '3dview Props'],
+            ['BmeshViewerNode', 'Viewer BMesh'],
+        ]
+        layout_draw_categories(layout, node_details)
+
+
+class NODEVIEW_MT_AddBasicData(bpy.types.Menu):
+    bl_label = "Basic Data"
+
+    def draw(self, context):
+        layout = self.layout
+        node_details = [
+            # bl_idname, shortname, <icon> (optional)
+
+            ['ObjectsNode', 'Objects in'],
+            ['SvTextInNode', 'Text in'],
+            ['SvTextOutNode', 'Text out'],
+            ['WifiInNode', 'Wifi in'],
+            ['WifiOutNode', 'Wifi out'],
+        ]
+        layout_draw_categories(layout, node_details)
+
+
+class NODEVIEW_MT_AddBasicDebug(bpy.types.Menu):
+    bl_label = "Basic Debug"
+
+    def draw(self, context):
+        layout = self.layout
+        node_details = [
+            # bl_idname, shortname, <icon> (optional)
+
+            ['SvFrameInfoNode', 'Frame info'],
+            ['NoteNode', 'Note'],
+            ['GTextNode', 'GText'],
+            ['SvDebugPrintNode', 'Debug print'],
+            ['SvStethoscopeNode', 'Stethoscope'],
+        ]
+        layout_draw_categories(layout, node_details)
+
+
+class NODEVIEW_MT_AddListmain(bpy.types.Menu):
+    bl_label = "List main"
+
+    def draw(self, context):
+        layout = self.layout
+        node_details = [
+            # bl_idname, shortname, <icon> (optional)
+
+            ['ListJoinNode', 'List Join'],
+            ['ZipNode', 'List Zip'],
+            ['ListLevelsNode', 'List Del Levels'],
+            ['ListLengthNode', 'List Length'],
+            ['ListSumNode', 'List Sum'],
+            ['ListMatchNode', 'List Match'],
+            ['ListFuncNode', 'List Math'],
+            ['ConverterNode', 'SocketConvert'],
+        ]
+        layout_draw_categories(layout, node_details)
+
+
+class NODEVIEW_MT_AddListstruct(bpy.types.Menu):
+    bl_label = "List struct"
+
+    def draw(self, context):
+        layout = self.layout
+        node_details = [
+            # bl_idname, shortname, <icon> (optional)
+
+            ['ShiftNode', 'List Shift'],
+            ['ListRepeaterNode', 'List Repeater'],
+            ['ListSliceNode', 'List Slice'],
+            ['SvListSplitNode', 'List Split'],
+            ['ListFLNode', 'List First&Last'],
+            ['ListItem2Node', 'List Item'],
+            ['ListReverseNode', 'List Reverse'],
+            ['ListShuffleNode', 'List Shuffle'],
+            ['ListSortNode', 'List Sort'],
+            ['ListFlipNode', 'List Flip'],
+        ]
+        layout_draw_categories(layout, node_details)
+
+
+class NODEVIEW_MT_AddNumber(bpy.types.Menu):
+    bl_label = "Number"
+
+    def draw(self, context):
+        layout = self.layout
+        node_details = [
+            # bl_idname, shortname, <icon> (optional)
+
+            ['GenListRangeIntNode', 'Range Int'],
+            ['SvGenFloatRange', 'Range Float'],
+            ['SvListInputNode', 'List Input'],
+            ['RandomNode', 'Random'],
+            ['FloatNode', 'Float'],
+            ['IntegerNode', 'Int'],
+            ['Float2IntNode', 'Float 2 Int'],
+            ['Formula2Node', 'Formula'],
+            ['ScalarMathNode', 'Math'],
+            ['SvMapRangeNode', 'Map Range'],
+        ]
+        layout_draw_categories(layout, node_details)
+
+
+class NODEVIEW_MT_AddVector(bpy.types.Menu):
+    bl_label = "Vector"
+
+    def draw(self, context):
+        layout = self.layout
+        node_details = [
+            # bl_idname, shortname, <icon> (optional)
+
+            ['RandomVectorNode', 'Random Vector'],
+            ['GenVectorsNode', 'Vector in'],
+            ['VectorsOutNode', 'Vector out'],
+            ['VectorMathNode', 'Vector Math'],
+            ['VectorDropNode', 'Vector Drop'],
+            ['VertsDelDoublesNode', 'Vector X Doubles'],
+            ['EvaluateLineNode', 'Vector Evaluate'],
+            ['SvInterpolationNode', 'Vector Interpolation'],
+            ['SvVertSortNode', 'Vector Sort'],
+            ['SvNoiseNode', 'Vector Noise'],
+            ['svAxisInputNode', 'Vector X | Y | Z'],
+        ]
+        layout_draw_categories(layout, node_details)
+
+
+class NODEVIEW_MT_AddMatrix(bpy.types.Menu):
+    bl_label = "Matrix"
+
+    def draw(self, context):
+        layout = self.layout
+        node_details = [
+            # bl_idname, shortname, <icon> (optional)
+
+            ['MatrixGenNode', 'Matrix in'],
+            ['MatrixOutNode', 'Matrix out'],
+            ['SvMatrixValueIn', 'Matrix Input'],
+            ['MatrixDeformNode', 'Matrix Deform'],
+            ['MatrixInterpolationNode', 'Matrix Interpolation'],
+        ]
+        layout_draw_categories(layout, node_details)
+
+
+class NODEVIEW_MT_AddModifierChange(bpy.types.Menu):
+    bl_label = "Modifier Change"
+
+    def draw(self, context):
+        layout = self.layout
+        node_details = [
+            # bl_idname, shortname, <icon> (optional)
+
+            ['PolygonBoomNode', 'Polygon Boom'],
+            ['Pols2EdgsNode', 'Polygons to Edges'],
+            ['SvMeshJoinNode', 'Mesh Join'],
+            ['SvRemoveDoublesNode', 'Remove Doubles'],
+            ['SvDeleteLooseNode', 'Delete Loose'],
+            ['SvSeparateMeshNode', 'Separate Loose Parts'],
+            ['SvVertMaskNode', 'Mask Vertices'],
+            ['SvFillsHoleNode', 'Fill Holes'],
+            ['SvIntersectEdgesNode', 'Intersect Edges'],
+        ]
+        layout_draw_categories(layout, node_details)
+
+
+class NODEVIEW_MT_AddModifierMake(bpy.types.Menu):
+    bl_label = "Modifier Make"
+
+    def draw(self, context):
+        layout = self.layout
+        node_details = [
+            # bl_idname, shortname, <icon> (optional)
+
+            ['LineConnectNode', 'UV Connection'],
+            ['AdaptivePolsNode', 'Adaptive Polygons'],
+            ['SvAdaptiveEdgeNode', 'Adaptive Edges'],
+            ['CrossSectionNode', 'Cross Section'],
+            ['SvBisectNode', 'Bisect'],
+            ['SvSolidifyNode', 'Solidify'],
+            ['SvWireframeNode', 'Wireframe'],
+            ['DelaunayTriangulation2DNode', 'Delaunay 2D '],
+            ['Voronoi2DNode', 'Voronoi 2D'],
+            ['SvConvexHullNode', 'Convex Hull'],
+            ['SvLatheNode', 'Lathe'],
+        ]
+        layout_draw_categories(layout, node_details)
+
+
+class NODEVIEW_MT_AddLogic(bpy.types.Menu):
+    bl_label = "Logic"
+
+    def draw(self, context):
+        layout = self.layout
+        node_details = [
+            # bl_idname, shortname, <icon> (optional)
+
+            ['SvLogicNode', 'Logic'],
+            ['MaskListNode', 'List Mask (out)'],
+            ['SvMaskJoinNode', 'List Mask Join (in)'],
+            ['SvSwitchNode', 'Switch'],
+            ['SvNeuroElman1LNode', 'Neuro'],
+        ]
+        layout_draw_categories(layout, node_details)
+
+
 classes = [
     SvNodeAddnGrab,
     NODEVIEW_MT_Dynamic_Menu,
@@ -223,6 +451,17 @@ classes = [
     NODEVIEW_MT_AddGeneratorsExt,
     NODEVIEW_MT_AddTransforms,
     NODEVIEW_MT_AddAnalyzers,
+    NODEVIEW_MT_AddBasicViz,
+    NODEVIEW_MT_AddBasicData,
+    NODEVIEW_MT_AddBasicDebug,
+    NODEVIEW_MT_AddListmain,
+    NODEVIEW_MT_AddListstruct,
+    NODEVIEW_MT_AddNumber,
+    NODEVIEW_MT_AddVector,
+    NODEVIEW_MT_AddMatrix,
+    NODEVIEW_MT_AddModifierChange,
+    NODEVIEW_MT_AddModifierMake,
+    NODEVIEW_MT_AddLogic,
     NODEVIEW_MT_AddBetas,
     NODEVIEW_MT_AddAlphas,
 ]
