@@ -24,12 +24,6 @@ from bpy.props import (
     StringProperty,
 )
 
-'''
-        # layout.operator_menu_enum("object.metaball_add", "type",
-        #                           icon='OUTLINER_OB_META')
-
-'''
-
 
 def layout_draw_categories(layout, node_details):
     add_n_grab = 'node.sverchok_addngrab'
