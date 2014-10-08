@@ -35,7 +35,6 @@ node_cats = make_node_cats()
 
 
 def layout_draw_categories(layout, node_details):
-    # add_n_grab = 'node.sverchok_addngrab'
     add_n_grab = 'node.add_node'
     for node_info in node_details:
         num_items = len(node_info)
@@ -128,7 +127,7 @@ class NODEVIEW_MT_AddListOps(bpy.types.Menu):
         layout.menu("NODEVIEW_MT_AddListstruct")
         layout_draw_categories(self.layout, node_cats["List Masks"])
 
-
+# make class                   | NODEVIEW_MT_Add + class name , menu name
 NODEVIEW_MT_AddGeneratorsExt = make_class('GeneratorsExt', "Extended Generators")
 NODEVIEW_MT_AddTransforms = make_class('Transforms', "Transforms (Vec, Mat)")
 NODEVIEW_MT_AddAnalyzers = make_class('Analyzers', "Analyzers")
