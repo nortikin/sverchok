@@ -28,45 +28,18 @@ from bpy.props import (
 def layout_draw_categories(layout, node_details):
     # add_n_grab = 'node.sverchok_addngrab'
     add_n_grab = 'node.add_node'
-    add_node = layout.operator
     for node_info in node_details:
         num_items = len(node_info)
         if num_items == 3:
             bl_idname, shortname, icon = node_info
-            node_op = add_node(add_n_grab, text=shortname, icon=icon)
+            node_op = layout.operator(add_n_grab, text=shortname, icon=icon)
         elif num_items == 2:
             bl_idname, shortname = node_info
-            node_op = add_node(add_n_grab, text=shortname)
-            # node_op.type = bl_idname
-            # node_op.use_transform=True
+            node_op = layout.operator(add_n_grab, text=shortname)
         else:
             continue
         node_op.type = bl_idname
         node_op.use_transform = True
-
-
-class SvNodeAddnGrab(bpy.types.Operator):
-    ''' ops to add and grab '''
-
-    bl_idname = "node.sverchok_addngrab"
-    bl_label = "Sverchok Node AddnGrab"
-    bl_options = {'REGISTER', 'UNDO'}
-
-    node_name = StringProperty(default='')
-
-    def execute(self, context):
-
-        # something wrong with transform still, some context?
-        bpy.ops.node.add_node(type=self.node_name, use_transform=True)
-
-        # this is equivalent non ops code..
-        # tree_name = context.space_data.node_tree.name
-        # ng = bpy.data.node_groups[tree_name]
-        # n = ng.nodes.new(self.node_name)
-        # n.select = True
-
-        print('adding -- {}'.format(self.node_name))
-        return {'FINISHED'}
 
 
 class NODEVIEW_MT_Dynamic_Menu(bpy.types.Menu):
@@ -454,7 +427,6 @@ class NODEVIEW_MT_AddConditionals(bpy.types.Menu):
 
 
 classes = [
-    SvNodeAddnGrab,
     NODEVIEW_MT_Dynamic_Menu,
     NODEVIEW_MT_AddGenerators,
     NODEVIEW_MT_AddGeneratorsExt,
