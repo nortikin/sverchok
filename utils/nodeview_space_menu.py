@@ -91,18 +91,18 @@ class NODEVIEW_MT_Dynamic_Menu(bpy.types.Menu):
         layout.menu("NODEVIEW_MT_AddGenerators", icon='OBJECT_DATAMODE')
         layout.menu("NODEVIEW_MT_AddTransforms", icon='MANIPUL')
         layout.menu("NODEVIEW_MT_AddAnalyzers", icon='BORDERMOVE')
+        layout.menu("NODEVIEW_MT_AddModifiers", icon='MODIFIER')
+        layout.separator()
+        layout.menu("NODEVIEW_MT_AddNumber")
+        layout.menu("NODEVIEW_MT_AddVector")
+        layout.menu("NODEVIEW_MT_AddMatrix")
+        layout.menu("NODEVIEW_MT_AddLogic")
         layout.separator()
         layout.menu("NODEVIEW_MT_AddBasicViz")
         layout.menu("NODEVIEW_MT_AddBasicData")
         layout.menu("NODEVIEW_MT_AddBasicDebug")
         layout.menu("NODEVIEW_MT_AddListmain")
         layout.menu("NODEVIEW_MT_AddListstruct")
-        layout.menu("NODEVIEW_MT_AddNumber")
-        layout.menu("NODEVIEW_MT_AddVector")
-        layout.menu("NODEVIEW_MT_AddMatrix")
-        layout.menu("NODEVIEW_MT_AddModifierChange")
-        layout.menu("NODEVIEW_MT_AddModifierMake")
-        layout.menu("NODEVIEW_MT_AddLogic")
         layout.separator()
         layout.menu("NODEVIEW_MT_AddBetas", icon='OUTLINER_DATA_POSE')
         layout.menu("NODEVIEW_MT_AddAlphas", icon='ERROR')
@@ -168,6 +168,15 @@ class NODEVIEW_MT_AddTransforms(bpy.types.Menu):
             ["MatrixApplyNode",     "Matrix Apply"],
         ]
         layout_draw_categories(layout, node_details)
+
+
+class NODEVIEW_MT_AddModifiers(bpy.types.Menu):
+    bl_label = "Modifiers (Make, Change)"
+
+    def draw(self, context):
+        layout = self.layout
+        layout.menu("NODEVIEW_MT_AddModifierChange")
+        layout.menu("NODEVIEW_MT_AddModifierMake")
 
 
 class NODEVIEW_MT_AddBetas(bpy.types.Menu):
@@ -450,6 +459,7 @@ classes = [
     NODEVIEW_MT_AddGenerators,
     NODEVIEW_MT_AddGeneratorsExt,
     NODEVIEW_MT_AddTransforms,
+    NODEVIEW_MT_AddModifiers,
     NODEVIEW_MT_AddAnalyzers,
     NODEVIEW_MT_AddBasicViz,
     NODEVIEW_MT_AddBasicData,
