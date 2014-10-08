@@ -94,6 +94,9 @@ class NODEVIEW_MT_Dynamic_Menu(bpy.types.Menu):
 
         # Add Menu block
         layout.menu("NODEVIEW_MT_AddGenerators", icon='OBJECT_DATAMODE')
+        layout.menu("NODEVIEW_MT_AddTransforms", icon='MANIPUL')
+        layout.menu("NODEVIEW_MT_AddBetas", icon='OUTLINER_DATA_POSE')
+        layout.menu("NODEVIEW_MT_AddAlphas", icon='ERROR')
 
 
 class NODEVIEW_MT_AddGenerators(bpy.types.Menu):
@@ -108,8 +111,14 @@ class NODEVIEW_MT_AddGenerators(bpy.types.Menu):
         # this can be in a for loop
         node_details = [
             # bl_idname, shortname, <icon> (optional)
-            ['SvBoxRoundedNode', "Rounded Box", 'MATCUBE'],
-            ['BasicSplineNode', "Basic Spline", 'CURVE_BEZCURVE']
+            ["LineNode",            "Line"],
+            ["PlaneNode",           "Plane"],
+            ["SvBoxNode",           "Box"],
+            ["SvCircleNode",        "Circle"],
+            ["CylinderNode",        "Cylinder"],
+            ["SphereNode",          "Sphere"],
+            ['BasicSplineNode',     "2pt Spline", 'CURVE_BEZCURVE'],
+            ["svBasicArcNode",      "3pt Arc"],
         ]
         layout_draw_categories(layout, node_details)
         layout.menu("NODEVIEW_MT_AddGeneratorsExt", icon='OBJECT_DATAMODE')
@@ -120,11 +129,6 @@ class NODEVIEW_MT_AddGeneratorsExt(bpy.types.Menu):
 
     def draw(self, context):
         layout = self.layout
-
-        # not sure if we need this or something else...
-        # layout.operator_context = 'INVOKE_REGION_WIN'
-
-        # this can be in a for loop
         node_details = [
             # bl_idname, shortname, <icon> (optional)
             ["SvBoxRoundedNode",    "Rounded Box"],
@@ -139,11 +143,70 @@ class NODEVIEW_MT_AddGeneratorsExt(bpy.types.Menu):
         layout_draw_categories(layout, node_details)
 
 
+class NODEVIEW_MT_AddTransforms(bpy.types.Menu):
+    bl_label = "Transforms (Vec, Mat)"
+
+    def draw(self, context):
+        layout = self.layout
+        node_details = [
+            # bl_idname, shortname, <icon> (optional)
+            ["SvRotationNode",      "Rotation",    "MAN_ROT"],
+            ["SvScaleNode",         "Scale",       "MAN_SCALE"],
+            ["VectorMoveNode",      "Vector Move", "MAN_TRANS"],
+            ["SvMirrorNode",        "Mirror",      "MOD_MIRROR"],
+            ["SvMatrixEulerNode",   "Matrix Euler"],
+            ["MatrixShearNode",     "Matrix Shear"],
+            ["MatrixApplyNode",     "Matrix Apply"],
+        ]
+        layout_draw_categories(layout, node_details)
+
+
+class NODEVIEW_MT_AddBetas(bpy.types.Menu):
+    bl_label = "Beta Nodes"
+
+    def draw(self, context):
+        layout = self.layout
+        node_details = [
+            # bl_idname, shortname, <icon> (optional)
+            # for testing convenience,
+            ["ViewerNode2",         "Viewer draw MK2", 'RETOPO'],
+            ["SvOffsetNode",        "Offset"],
+            ["SvEmptyOutNode",      "Empty out"],
+            # need to be completely reviewed
+            ["SvListDecomposeNode", "List Decompose"],
+            # should be removed...
+            ["SvReRouteNode",       "Reroute Point"],
+            ["SvInstancerNode",     "mesh instancer"],
+            ["SvWafelNode",         "Wafel"],
+            ["SvVertexGroupNode",   "Vertext group"],
+            ["SvRayCastNode",       "Raycast"]
+        ]
+        layout_draw_categories(layout, node_details)
+
+
+class NODEVIEW_MT_AddAlphas(bpy.types.Menu):
+    bl_label = "Alpha Nodes"
+
+    def draw(self, context):
+        layout = self.layout
+        node_details = [
+            # bl_idname, shortname, <icon> (optional)
+            ["SvObjRemoteNode",     "Scene Objects"],
+            ["SvImageComponentsNode", "Image Decompose", "GROUP_VCOL"],
+            ["SvJoinTrianglesNode", "Join Triangles"],
+            ["EvalKnievalNode",     "Eval Knieval", 'FORCE_VORTEX']
+        ]
+        layout_draw_categories(layout, node_details)
+
+
 classes = [
     SvNodeAddnGrab,
     NODEVIEW_MT_Dynamic_Menu,
     NODEVIEW_MT_AddGenerators,
     NODEVIEW_MT_AddGeneratorsExt,
+    NODEVIEW_MT_AddTransforms,
+    NODEVIEW_MT_AddBetas,
+    NODEVIEW_MT_AddAlphas,
 ]
 
 
