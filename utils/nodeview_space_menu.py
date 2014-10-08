@@ -17,7 +17,12 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-''' borrows heavily from insights provided by Dynamic Space Bar! '''
+'''
+zeffii 2014.
+
+borrows heavily from insights provided by Dynamic Space Bar!
+but massively condensed for sanity.
+'''
 
 import bpy
 from bpy.props import (
@@ -44,6 +49,20 @@ def layout_draw_categories(layout, node_details):
             continue
         node_op.type = bl_idname
         node_op.use_transform = True
+
+
+# does not get registered
+class NodeViewMenuTemplate(bpy.types.Menu):
+    bl_label = ""
+
+    def draw(self, context):
+        layout_draw_categories(self.layout, node_cats[self.bl_label])
+
+
+# quick class factory.
+def make_class(name, node_list):
+    name = 'NODEVIEW_MT_Add' + name
+    return type(name, (NodeViewMenuTemplate,), {'bl_label': node_list})
 
 
 class NODEVIEW_MT_Dynamic_Menu(bpy.types.Menu):
@@ -91,20 +110,6 @@ class NODEVIEW_MT_AddGenerators(bpy.types.Menu):
         layout.menu("NODEVIEW_MT_AddGeneratorsExt", icon='PLUGIN')
 
 
-class NODEVIEW_MT_AddGeneratorsExt(bpy.types.Menu):
-    bl_label = "Extended Generators"
-
-    def draw(self, context):
-        layout_draw_categories(self.layout, node_cats[self.bl_label])
-
-
-class NODEVIEW_MT_AddTransforms(bpy.types.Menu):
-    bl_label = "Transforms (Vec, Mat)"
-
-    def draw(self, context):
-        layout_draw_categories(self.layout, node_cats[self.bl_label])
-
-
 class NODEVIEW_MT_AddModifiers(bpy.types.Menu):
     bl_label = "Modifiers (Make, Change)"
 
@@ -124,68 +129,26 @@ class NODEVIEW_MT_AddListOps(bpy.types.Menu):
         layout_draw_categories(self.layout, node_cats["List Masks"])
 
 
-class NodeViewMenuTemplate(bpy.types.Menu):
-    bl_label = ""
+NODEVIEW_MT_AddGeneratorsExt = make_class('GeneratorsExt', "Extended Generators")
+NODEVIEW_MT_AddTransforms = make_class('Transforms', "Transforms (Vec, Mat)")
+NODEVIEW_MT_AddAnalyzers = make_class('Analyzers', "Analyzers")
 
-    def draw(self, context):
-        layout_draw_categories(self.layout, node_cats[self.bl_label])
+NODEVIEW_MT_AddNumber = make_class('Number', "Number")
+NODEVIEW_MT_AddVector = make_class('Vector', "Vector")
+NODEVIEW_MT_AddMatrix = make_class('Matrix', "Matrix")
+NODEVIEW_MT_AddConditionals = make_class('Conditionals', "Conditionals")
 
+NODEVIEW_MT_AddListmain = make_class('Listmain', "List main")
+NODEVIEW_MT_AddListstruct = make_class('Liststruct', "List struct")
+NODEVIEW_MT_AddModifierChange = make_class('ModifierChange', "Modifier Change")
+NODEVIEW_MT_AddModifierMake = make_class('ModifierMake', "Modifier Make")
 
-class NODEVIEW_MT_AddBetas(NodeViewMenuTemplate):
-    bl_label = "Beta Nodes"
+NODEVIEW_MT_AddBasicViz = make_class('BasicViz', "Basic Viz")
+NODEVIEW_MT_AddBasicData = make_class('BasicData', "Basic Data")
+NODEVIEW_MT_AddBasicDebug = make_class('BasicDebug', "Basic Debug")
 
-
-class NODEVIEW_MT_AddAlphas(NodeViewMenuTemplate):
-    bl_label = "Alpha Nodes"
-
-
-class NODEVIEW_MT_AddAnalyzers(NodeViewMenuTemplate):
-    bl_label = "Analyzers"
-
-
-class NODEVIEW_MT_AddBasicViz(NodeViewMenuTemplate):
-    bl_label = "Basic Viz"
-
-
-class NODEVIEW_MT_AddBasicData(NodeViewMenuTemplate):
-    bl_label = "Basic Data"
-
-
-class NODEVIEW_MT_AddBasicDebug(NodeViewMenuTemplate):
-    bl_label = "Basic Debug"
-
-
-class NODEVIEW_MT_AddListmain(NodeViewMenuTemplate):
-    bl_label = "List main"
-
-
-class NODEVIEW_MT_AddListstruct(NodeViewMenuTemplate):
-    bl_label = "List struct"
-
-
-class NODEVIEW_MT_AddNumber(NodeViewMenuTemplate):
-    bl_label = "Number"
-
-
-class NODEVIEW_MT_AddVector(NodeViewMenuTemplate):
-    bl_label = "Vector"
-
-
-class NODEVIEW_MT_AddMatrix(NodeViewMenuTemplate):
-    bl_label = "Matrix"
-
-
-class NODEVIEW_MT_AddModifierChange(NodeViewMenuTemplate):
-    bl_label = "Modifier Change"
-
-
-class NODEVIEW_MT_AddModifierMake(NodeViewMenuTemplate):
-    bl_label = "Modifier Make"
-
-
-class NODEVIEW_MT_AddConditionals(NodeViewMenuTemplate):
-    bl_label = "Conditionals"
-
+NODEVIEW_MT_AddBetas = make_class('Betas', "Beta Nodes")
+NODEVIEW_MT_AddAlphas = make_class('Alphas', "Alpha Nodes")
 
 classes = [
     NODEVIEW_MT_Dynamic_Menu,
