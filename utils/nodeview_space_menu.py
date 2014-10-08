@@ -61,18 +61,16 @@ class SvNodeAddnGrab(bpy.types.Operator):
 
     def execute(self, context):
 
-        # this should be hanndled by :
-        # ops.node.new(node_name, use_transform=True)
-        tree_name = context.space_data.node_tree.name
-        ng = bpy.data.node_groups[tree_name]
-        n = ng.nodes.new(self.node_name)
-        n.select = True
+        # something wrong with transform still, some context?
+        bpy.ops.node.add_node(type=self.node_name, use_transform=True)
 
-        print('adding {}'.format(self.node_name))
-        '''
-        # location = mouse?
-        grab node ?
-        '''
+        # this is equivalent non ops code..
+        # tree_name = context.space_data.node_tree.name
+        # ng = bpy.data.node_groups[tree_name]
+        # n = ng.nodes.new(self.node_name)
+        # n.select = True
+
+        print('adding -- {}'.format(self.node_name))
         return {'FINISHED'}
 
 
