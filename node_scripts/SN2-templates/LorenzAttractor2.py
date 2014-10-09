@@ -24,6 +24,7 @@ class LorenzAttractor(SvScriptSimpleGenerator):
     @staticmethod
     def make_edges(N=1000, h=0.01, a=10.0, b=28.0, c=8.0/3.0):
         edges = [(i, i+1) for i in range(N-1)]
+        return edges
 
     inputs = [
         ['s', 'N', 1000],

@@ -16,9 +16,8 @@
 #
 # END GPL LICENSE BLOCK #####
 
-# author Linus Yng
+# author Linus Yng, partly based on script node 
 
-import inspect
 import os
 
 import bpy
@@ -36,8 +35,7 @@ READY_COLOR = (0, 0.8, 0.95)
 from utils.sv_tools import sv_get_local_path
 import utils.script_importhelper
 from node_tree import SverchCustomTreeNode
-from data_structure import (
-    dataCorrect, updateNode, SvSetSocketAnyType, SvGetSocketAnyType, node_id)
+from data_structure import updateNode , node_id
 
 sv_path = os.path.dirname(sv_get_local_path()[0])
 
@@ -87,6 +85,8 @@ class SvScriptNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         name='template_files',
         description='choose file to load as template')
 
+    #  dict used for storing SvScript objects, access with self.script
+    #  property
     script_objects = {}
     
     n_id = StringProperty()
@@ -103,22 +103,26 @@ class SvScriptNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         name='float_list', description="Float list",
         default=defaults, size=32, update=updateNode)
     
-    # better logic should be taken from old script node
+    #  better logic should be taken from old script node
+    #  should support reordering and removal
+    
     def create_sockets(self):
         script = self.script
         if script:
-            for args in script.inputs:
-                if args[1] in self.inputs:
-                    continue
-                    
+            for args in filter(lambda a: a[1] not in self.inputs, script.inputs):
                 socket_types
                 stype = socket_types[args[0]]
                 name = args[1]
                 if len(args) == 2:  
                     self.inputs.new(stype, name)
+                # has default
                 elif len(args) == 3:
                     socket = self.inputs.new(stype, name)
                     default_value = args[2]
+                    #  offset feel stupid but the conseqences are max 32
+                    #  socket of both types in 32 of both.
+                    #  but it should be possible to support
+                    #  exposing selected value in draw_buttons
                     offset = len(self.inputs)
                     if isinstance(default_value, int):
                         self.int_list[offset] = default_value
@@ -140,10 +144,10 @@ class SvScriptNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.clear()
         self.use_custom_color = False
     
-    
     def load(self):
         self.script_str = bpy.data.texts[self.script_file_name].as_string()
         print("loading...")
+        # load in a different namespace using import helper
         self.script = utils.script_importhelper.load_script(self.script_str, self.script_file_name)
         if self.script:
             self.use_custom_color = True
@@ -187,7 +191,7 @@ class SvScriptNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         node_id(self)
         self.color = FAIL_COLOR
     
-    # property function for accessing self.script
+    # property functions for accessing self.script
     def _set_script(self, value):
         n_id = node_id(self)
         value.node = self
@@ -208,7 +212,6 @@ class SvScriptNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     script = property(_get_script, _set_script, _del_script, "The script object for this node")
     
     def draw_buttons(self, context, layout):
-        
         col = layout.column(align=True)
         row = col.row()
         script = self.script
@@ -227,6 +230,10 @@ class SvScriptNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                 script.draw_buttons(context, layout)
     
     def draw_label(self):
+        '''
+        Uses script.name as label if possible, otherwise the class name.
+        If not script is loaded the .bl_label is used
+        '''
         script = self.script
         if script:
             if hasattr(script, 'name'):
@@ -235,13 +242,11 @@ class SvScriptNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                 return script.__class__.__name__
         else:
             return self.bl_label
-    
-        
+            
 
 def register():
     bpy.utils.register_class(SvScriptNodeMK2)    
     bpy.utils.register_class(SvDefaultScript2Template)
-
 
 def unregister():
     bpy.utils.unregister_class(SvScriptNodeMK2)

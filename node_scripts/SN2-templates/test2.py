@@ -1,3 +1,4 @@
+# simple demo script for atomic map
 class MyAdd(SvScriptAuto):   
     @staticmethod
     def function(*args):
