@@ -181,7 +181,7 @@ def register():
     kc = wm.keyconfigs.addon
     if kc:
         km = kc.keymaps.new(name='Node Editor', space_type='NODE_EDITOR')
-        kmi = km.keymap_items.new('wm.call_menu', 'SPACE', 'PRESS')
+        kmi = km.keymap_items.new('wm.call_menu', 'SPACE', 'PRESS', ctrl=True)
         kmi.properties.name = "NODEVIEW_MT_Dynamic_Menu"
 
 
