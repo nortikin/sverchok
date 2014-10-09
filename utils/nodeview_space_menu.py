@@ -29,42 +29,25 @@ from bpy.props import (
     StringProperty,
 )
 
-import data_structure
 from sv_nodes_menu import make_node_cats
 
 node_cats = make_node_cats()
-menu_props = {'icons': False}
 
 
 def layout_draw_categories(layout, node_details):
     add_n_grab = 'node.add_node'
-
-    icons = menu_props.get('icons')
-
-    if icons:
-        for node_info in node_details:
-            num_items = len(node_info)
-            if num_items == 3:
-                bl_idname, shortname, icon = node_info
-                node_op = layout.operator(add_n_grab, text=shortname, icon=icon)
-            elif num_items == 2:
-                bl_idname, shortname = node_info
-                node_op = layout.operator(add_n_grab, text=shortname)
-            else:
-                continue
-            node_op.type = bl_idname
-            node_op.use_transform = True
-    else:
-        print('not using icons')
-        for node_info in node_details:
-            num_items = len(node_info)
-            if num_items in {2, 3}:
-                bl_idname, shortname = node_info[:2]
-                node_op = layout.operator(add_n_grab, text=shortname)
-                node_op.type = bl_idname
-                node_op.use_transform = True
-            else:
-                continue
+    for node_info in node_details:
+        num_items = len(node_info)
+        if num_items == 3:
+            bl_idname, shortname, icon = node_info
+            node_op = layout.operator(add_n_grab, text=shortname, icon=icon)
+        elif num_items == 2:
+            bl_idname, shortname = node_info
+            node_op = layout.operator(add_n_grab, text=shortname)
+        else:
+            continue
+        node_op.type = bl_idname
+        node_op.use_transform = True
 
 
 # does not get registered
@@ -87,16 +70,7 @@ class NODEVIEW_MT_Dynamic_Menu(bpy.types.Menu):
     @classmethod
     def poll(cls, context):
         tree_type = context.space_data.tree_type
-
-        if (tree_type == 'SverchCustomTreeType'):
-            addon_name = data_structure.SVERCHOK_NAME
-            addon = context.user_preferences.addons.get(addon_name)
-
-            if addon and hasattr(addon, "preferences"):
-                icons = addon.preferences.show_icons_in_dynamic_menu
-                menu_props['icons'] = icons
-
-            return True
+        return (tree_type == 'SverchCustomTreeType')
 
     def draw(self, context):
 
