@@ -73,13 +73,15 @@ node_list = []
 root_modules = ["node_tree", "data_structure", "sv_nodes_menu"]
 core_modules = ["handlers", "update_system", "upgrade_nodes"]
 utils_modules = [
-    # non UI tools
+    # NON UI TOOLS
+    #     - geometry
     "cad_module", "sv_bmesh_utils", "sv_curve_utils", "voronoi",
-    # callbacks for bgl
+    #     - callbacks for bgl
     "viewer_draw", "index_viewer_draw", "nodeview_bgl_viewer_draw", "viewer_draw_mk2",
-    # text editor ui
+    # UI
+    #     - text editor ui
     "text_editor_submenu", "text_editor_plugins",
-    # node_view ui tool + panels
+    #     - node_view ui tool + panels + custom menu
     "sv_tools", "sv_IO_panel", "nodeview_space_menu"
 ]
 
