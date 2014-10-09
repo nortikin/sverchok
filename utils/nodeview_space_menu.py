@@ -29,7 +29,7 @@ from bpy.props import (
     StringProperty,
 )
 
-from sverchok.menu import make_node_cats
+from sv_nodes_menu import make_node_cats
 
 node_cats = make_node_cats()
 
