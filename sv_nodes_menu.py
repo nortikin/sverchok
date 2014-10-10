@@ -220,8 +220,29 @@ def make_node_cats():
     return node_cats
 
 
+def juggle_and_join(node_cats):
+    node_cats = node_cats.copy()
+
+    # join beta and alpha node cats
+    alpha = node_cats.pop('Alpha Nodes')
+    node_cats['Beta Nodes'].extend(alpha)
+
+    # put masks into list main
+    masks = node_cats.pop("List Masks")
+    node_cats["List main"].extend(masks)
+
+    # add extended gens to Gens menu
+    gen_ext = node_cats.pop("Extended Generators")
+    node_cats["Generators"].extend(gen_ext)
+
+    return node_cats
+
+
 def make_categories():
-    node_cats = make_node_cats()
+    original_categories = make_node_cats()
+    node_cats = juggle_and_join(original_categories)
+    print(node_cats)
+
     node_categories = []
     howmanynodesare = 0
     for category, nodes in node_cats.items():
