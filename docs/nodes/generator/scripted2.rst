@@ -92,6 +92,13 @@ Default can be a float or integer value, not other types are usable yet::
    | 'm'     | matrices, 4 x 4 nested lists        |
    +---------+-------------------------------------+
 
+There are a series of names that have special meaning that scripts should 
+avoid as class attributes of only used for the intended meaning
+: ``node`` ``draw_buttons`` ``update`` ``process`` ``enum_func`` ``inputs``
+``outputs``
+
+
+
 
 Templates
 ---------
