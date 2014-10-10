@@ -301,44 +301,24 @@ class SvNodeRefreshFromTextEditor(bpy.types.Operator):
         if not ngs:
             self.report({'INFO'}, "No Sverchok NodeGroups")
             return {'FINISHED'}
-
-        looking_for_script_node = self.has_sv_main(edit_text)
-        is_script2 = self.is_SN2(edit_text, ngs)
+        # could be extened to text in also
+        node_types = set(['SvScriptNode', 'SvScriptNodeMK2', 'SvProfileNode'])
         
         for ng in ngs:
-            node_types = [node.bl_idname for node in ng.nodes]
-
-            if looking_for_script_node or is_script2:
-                SN = set('SvScriptNode', 'SvScriptNodeMK2')
-                if SN in node_types:
-                    nodes = [n for n in ng.nodes if n.bl_idname in SN]
-                    for n in nodes:
-                        if n.script_name == text_file_name:
-                            n.load()
-                            ng.update()
-                            break
-            else:
-                PN = 'SvProfileNode'
-                if PN in node_types:
-                    nodes = [n for n in ng.nodes if n.bl_idname == PN]
-                    for n in nodes:
-                        if n.filename == text_file_name:
-                            ng.update()
-                            break
+            nodes = [n for n in ng.nodes if n.bl_idname in node_types]
+            if not nodes:
+                continue
+            for n in nodes:
+                if hasattr(n, "script_name") and n.script_name == text_file_name:
+                    n.load()
+                elif hasattr(n, "text_file_name"):
+                    pass # no nothing
+                else:
+                    pass
+            ng.update()
 
         return {'FINISHED'}
     
-    @staticmethod
-    def is_SN2(txt, ngs):
-        name = txt.name
-        for ng in ngs:
-            nodes = [n for n in ng.nodes if n.bl_idname ='SvScriptNodeMK2' and n.script_file_name = name]
-            if nodes return True
-        return False
-        
-    def has_sv_main(self, txt):
-        return 'def sv_main(' in txt.as_string()
-
 
 class BasicTextMenu(bpy.types.Menu):
     bl_idname = "TEXT_MT_svplug_menu"

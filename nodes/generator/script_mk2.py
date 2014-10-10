@@ -26,7 +26,8 @@ from bpy.props import (
     EnumProperty,
     BoolProperty,
     FloatVectorProperty,
-    IntVectorProperty
+    IntVectorProperty,
+    BoolVectorProperty
 )
 
 FAIL_COLOR = (0.8, 0.1, 0.1)
@@ -92,8 +93,8 @@ class SvScriptNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     n_id = StringProperty()
     
     # Also used to keep track if a script is loaded.
-    script_str = StringProperty()
-    script_file_name = StringProperty(name = "Text file", description = "Text file containing script")
+    script_str = StringProperty(description = "The acutal script as text")
+    script_name = StringProperty(name = "Text file", description = "Blender Text object containing script")
     
     int_list = IntVectorProperty(
         name='int_list', description="Integer list",
@@ -101,6 +102,11 @@ class SvScriptNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
     float_list = FloatVectorProperty(
         name='float_list', description="Float list",
+        default=defaults, size=32, update=updateNode)
+    
+    
+    bool_list = BoolVectorProperty(
+        name='bool_list', description="Boolean list",
         default=defaults, size=32, update=updateNode)
     
     #  better logic should be taken from old script node
@@ -145,10 +151,10 @@ class SvScriptNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         self.use_custom_color = False
     
     def load(self):
-        self.script_str = bpy.data.texts[self.script_file_name].as_string()
+        self.script_str = bpy.data.texts[self.script_name].as_string()
         print("loading...")
         # load in a different namespace using import helper
-        self.script = utils.script_importhelper.load_script(self.script_str, self.script_file_name)
+        self.script = utils.script_importhelper.load_script(self.script_str, self.script_name)
         if self.script:
             self.use_custom_color = True
             self.color = READY_COLOR
@@ -162,6 +168,10 @@ class SvScriptNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         
         if not script:
             self.load()
+            script = self.script
+            if not script:
+                return
+                    
         if hasattr(script, 'update'):
             script.update()
         else:
@@ -214,15 +224,15 @@ class SvScriptNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         col = layout.column(align=True)
         row = col.row()
-        script = self.script
         if not self.script_str:
             row.prop(self, 'files_popup', '')
             import_operator = row.operator('node.sverchok_script2_template', text='', icon='IMPORT')
             import_operator.script_name = self.files_popup
             row = col.row()
-            row.prop_search(self, 'script_file_name', bpy.data, 'texts', text='', icon='TEXT')
+            row.prop_search(self, 'script_name', bpy.data, 'texts', text='', icon='TEXT')
             row.operator('node.sverchok_text_callback', text='', icon='PLUGIN').fn_name = 'load'
         else:
+            script = self.script
             row = col.row()
             row.operator("node.sverchok_text_callback", text='Reload').fn_name = 'load'
             row.operator("node.sverchok_text_callback", text='Clear').fn_name = 'clear'
