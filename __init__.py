@@ -73,10 +73,10 @@ node_list = []
 root_modules = ["node_tree", "data_structure", "sv_nodes_menu"]
 core_modules = ["handlers", "update_system", "upgrade_nodes"]
 utils_modules = [
-    # NON UI TOOLS
-    #     - geometry
-    "cad_module", "sv_bmesh_utils", "sv_curve_utils", "voronoi",
-    #     - callbacks for bgl
+    # non UI tools
+    "cad_module", "sv_bmesh_utils", "sv_curve_utils", "voronoi", 
+    "sv_script", "sv_itertools", "script_importhelper",
+    # callbacks for bgl
     "viewer_draw", "index_viewer_draw", "nodeview_bgl_viewer_draw", "viewer_draw_mk2",
     # UI
     #     - text editor ui
@@ -84,7 +84,6 @@ utils_modules = [
     #     - node_view ui tool + panels + custom menu
     "sv_tools", "sv_IO_panel", "nodeview_space_menu"
 ]
-
 
 # parse the nodes/__init__.py dictionary and load all nodes
 def make_node_list():

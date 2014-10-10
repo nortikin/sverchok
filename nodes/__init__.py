@@ -57,6 +57,7 @@ nodes_dict = {
         'plane',
         'random_vector',
         'script',
+        'script_mk2',
         'formula',
         'sphere',
         'basic_spline',

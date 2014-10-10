@@ -206,6 +206,9 @@ def make_node_cats():
         ["SvReRouteNode",       "Reroute Point"],
         ["SvInstancerNode",     "mesh instancer"],
         ["SvWafelNode",         "Wafel"],
+        ["SvVertexGroupNode",   "Vertext group"],
+        ["SvRayCastNode",       "Raycast"],
+        ["SvScriptNodeMK2",     "Script 2"],
         ["SvVertexGroupNode",   "Vertex group"],
         ["SvRayCastNode",       "Raycast"]
     ]
