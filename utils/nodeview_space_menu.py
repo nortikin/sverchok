@@ -29,23 +29,45 @@ from bpy.props import (
     StringProperty,
 )
 
+import data_structure
 from sv_nodes_menu import make_node_cats
 
 node_cats = make_node_cats()
 
+addon_name = data_structure.SVERCHOK_NAME
+
+
+def get_icon_switch():
+    addon = bpy.context.user_preferences.addons.get(addon_name)
+
+    if addon and hasattr(addon, "preferences"):
+        return addon.preferences.show_icons
+
 
 def layout_draw_categories(layout, node_details):
+    show_icons = get_icon_switch()
+    print('showing', show_icons)
+
     add_n_grab = 'node.add_node'
     for node_info in node_details:
         num_items = len(node_info)
-        if num_items == 3:
-            bl_idname, shortname, icon = node_info
-            node_op = layout.operator(add_n_grab, text=shortname, icon=icon)
-        elif num_items == 2:
-            bl_idname, shortname = node_info
-            node_op = layout.operator(add_n_grab, text=shortname)
-        else:
+        if not num_items in {2, 3}:
+            print(repr(node_info), 'is incomplete')
             continue
+
+        if show_icons:
+            if num_items == 3:
+                bl_idname, shortname, icon = node_info
+                layout_params = dict(text=shortname, icon=icon)
+            else:
+                bl_idname, shortname = node_info
+                layout_params = dict(text=shortname)
+        else:
+            # explicit chop of icon data
+            bl_idname, shortname = node_info[:2]
+            layout_params = dict(text=shortname)
+
+        node_op = layout.operator(add_n_grab, **layout_params)
         node_op.type = bl_idname
         node_op.use_transform = True
 

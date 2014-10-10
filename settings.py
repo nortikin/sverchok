@@ -6,6 +6,8 @@ import data_structure
 from core import handlers
 from utils import sv_tools
 SVERCHOK_NAME = __package__
+
+
 # the way this works is backwards and should be redone
 class SverchokPreferences(AddonPreferences):
 
@@ -20,7 +22,7 @@ class SverchokPreferences(AddonPreferences):
 
     def set_frame_change(self, context):
         handlers.set_frame_change(self.frame_change_mode)
-        
+
     show_debug = BoolProperty(name="Print update timings",
                               description="Print update timings in console",
                               default=False, subtype='NONE',
@@ -38,7 +40,7 @@ class SverchokPreferences(AddonPreferences):
     heat_map_cold = FloatVectorProperty(name="Heat map cold", description='',
                                         size=3, min=0.0, max=1.0,
                                         default=(1, 1, 1), subtype='COLOR')
-    
+
     frame_change_modes = \
             [("PRE", "Pre", "Update Sverchok before frame change", 0),
              ("POST", "Post", "Update Sverchok after frame change", 1),
@@ -50,6 +52,10 @@ class SverchokPreferences(AddonPreferences):
                             default="POST",
                             update=set_frame_change)
     
+    show_icons = BoolProperty(
+        name="show_icons",
+        default=False,
+        description="Use icons in menu")
  
     def draw(self, context):
         layout = self.layout
@@ -63,6 +69,7 @@ class SverchokPreferences(AddonPreferences):
         col.label(text="Debug")
         col.prop(self, "show_debug")
         col.prop(self, "heat_map")
+        col.prop(self, "show_icons")
         row = col.row()
         row.active = self.heat_map
         row.prop(self, "heat_map_hot")
