@@ -43,9 +43,10 @@ Structure
 
 At present all scripts for SN2 must (strict list - general):
 
-- make class the inherits from SvScript
+- be subclasses SvScript
 - have a function called process in the class
 - member attributes called inputs and outputs
+- one Script class per file, if more than one, last one found will be used
 
 **process(self)**
 
@@ -56,13 +57,14 @@ for you.
 
 **inputs**
 
-::
+Default can be a float or integer value, not other types are usable yet::
 
     inputs = [
         [type, 'socket name on ui', default],
-        [type, 'socket name on ui2', default int or float],
+        [type, 'socket name on ui2', default],
         # ...
     ]
+
 
 **outputs**
 
@@ -116,7 +118,8 @@ advanced use cases. The images and animations on this `thread on github
 <https://github.com/nortikin/sverchok/issues/439>`_. 
 may also provide some insight into what's possible.
 
-A typical nodescript using the SvScriptSimplegenerator may look like this::
+A typical nodescript using the SvScriptSimplegenerator may look like this, note that
+the third argument for outputs is specific to this template::
 
     import numpy 
     import itertools
@@ -143,8 +146,10 @@ A typical nodescript using the SvScriptSimplegenerator may look like this::
 
 
 Note that here the name of the method that should be called for producing data 
-for each socket in the final last arguments to ``outputs``
-but we are not forced to have all code inside the class, we can also do::
+for each socket in the final last arguments to ``outputs`` but we are not forced 
+to have all code inside the class, we can also do::
+
+
 
     def lorenz(N, verts, h, a, b, c):
         add_vert = verts.append
@@ -161,7 +166,15 @@ but we are not forced to have all code inside the class, we can also do::
             add_vert((x1,y1,z1))
             
     class LorenzAttractor(SvScriptSimpleGenerator):
-    
+
+        inputs = [
+            ['s', 'N', 1000],
+            ['s', 'h', 0.01],
+            ['s', 'a', 10.0],
+            ['s', 'b', 28.0],
+            ['s', 'c', 8.0/3.0]
+        ]
+
         @staticmethod
         def make_verts(N, h, a, b, c):
             verts = []
@@ -173,13 +186,6 @@ but we are not forced to have all code inside the class, we can also do::
             edges = [(i, i+1) for i in range(N-1)]
             return edges
 
-        inputs = [
-            ['s', 'N', 1000],
-            ['s', 'h', 0.01],
-            ['s', 'a', 10.0],
-            ['s', 'b', 28.0],
-            ['s', 'c', 8.0/3.0]]
-
         outputs = [
             ['v','verts', "make_verts"],
             ['s','edges', "make_edges"]
@@ -189,23 +195,31 @@ but we are not forced to have all code inside the class, we can also do::
 Here is simple script for deleting loose vertices from mesh data, it also serves as an 
 illustration for a type of script that uses the ```SvScriptSimpleFunction``` template that
 has one main function that decomposes into separate sockets. The methods don't have be static
-but in general it is good practice to keep them free from side effects.
-::
+but in general it is good practice to keep them free from side effects.::
 
     from itertools import chain
 
     class DeleteLooseVerts(SvScriptSimpleFunction):
-        inputs = [("v", "verts"), ("s", "pol")]
-        outputs = [("v", "verts"), ("s", "pol")]
+        inputs = [
+            ('v', 'verts'),
+            ('s', 'pol')
+            ]
+        outputs = [
+            ('v', 'verts'),
+            ('s', 'pol')
+            ]
         
-        # note that this method 
+        # delete loose verts 
         @staticmethod
         def function(*args, **kwargs):
             ve, pe = args       
-            indx = set(chain.from_iterable(pe))
+            # find used indexes
             v_index = sorted(set(chain.from_iterable(pe)))
+            # remap the vertices
             v_out = [ve[i] for i in v_index]
+            # create a mapping from old to new vertices index
             mapping = dict(((j, i) for i, j in enumerate(v_index)))
+            # apply mapping to input polygon index
             p_out = [tuple(map(mapping.get, p)) for p in pe]
             return v_out, p_out
 
@@ -214,6 +228,7 @@ Breakout Scripts
 ----------------
 Scripts that needs to access the node can to so via the ``self.node`` variable
 that is automaticly set.
+::
 
     class Breakout(SvScript):
         def process(self):
