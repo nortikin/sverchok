@@ -20,3 +20,4 @@ Generator
    profile_parametric
    scripted
    formula_shape
+   scripted2

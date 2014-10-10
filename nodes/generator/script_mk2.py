@@ -80,6 +80,7 @@ class SvScriptNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         items = [(t, t, "") for t in next(os.walk(templates_path))[2]]
         items.sort(key=lambda x:x[0].upper())
         return items
+    
 
     files_popup = EnumProperty(
         items=avail_templates,
@@ -96,6 +97,9 @@ class SvScriptNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     script_str = StringProperty(description = "The acutal script as text")
     script_name = StringProperty(name = "Text file", description = "Blender Text object containing script")
     
+    # properties that the script can expose either in draw or as socket
+    # management needs to be reviewed.
+    
     int_list = IntVectorProperty(
         name='int_list', description="Integer list",
         default=defaults, size=32, update=updateNode)
@@ -104,10 +108,18 @@ class SvScriptNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         name='float_list', description="Float list",
         default=defaults, size=32, update=updateNode)
     
-    
     bool_list = BoolVectorProperty(
         name='bool_list', description="Boolean list",
         default=defaults, size=32, update=updateNode)
+    
+    def enum_callback(self, context):
+        script = self.script
+        return script.enum_func(context)
+        
+    generic_enum = EnumProperty(    
+        items=enum_callback,
+        name='Scripted Enum',
+        description='See script for description')
     
     #  better logic should be taken from old script node
     #  should support reordering and removal

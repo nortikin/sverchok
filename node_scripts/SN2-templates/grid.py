@@ -10,8 +10,8 @@ class GridGen(SvScriptSimpleGenerator):
     @staticmethod
     def make_verts(size, sub):
         # this is needed
-        side = tuple(numpy.linspace(-size / 2, size / 2, sub))
-        return tuple((x,y,0) for x,y, in itertools.product(side,side))
+        side = numpy.linspace(-size / 2, size / 2, sub)
+        return tuple((x,y,0) for x,y in itertools.product(side, side))
         
     @staticmethod
     def make_edges(size, sub):

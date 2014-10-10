@@ -49,64 +49,6 @@ class SvScript(metaclass=abc.ABCMeta):
     def process(self):
         return
 
-def recursive_depth(l):
-    if isinstance(l, (list, tuple)) and l:
-        return 1 + recursive_depth(l[0])
-    elif isinstance(l, (int, float, str)):
-        return 0
-    else:
-        return None
-
-        
-# this method will be renamed and moved
-        
-def atomic_map(f, args):
-    # this should support different methods for finding depth
-    types = tuple(isinstance(a, (int, float)) for a in args)
-    
-    if all(types):
-        return f(*args)
-    elif any(types):
-        tmp = [] 
-        tmp_app = tmp.append
-        for t,a in zip(types, args):
-            if t:
-                tmp_app((a,))
-            else:
-                tmp_app(a)
-        return atomic_map(f, tmp)
-    else:
-        res = []
-        res_app = res.append
-        for z_arg in sv_zip_longest(*args):
-            res_app(atomic_map(f, z_arg))
-        return res
-
-
-# not ready at all.
-def v_map(f,*args, kwargs):
-    def vector_map(f, *args):
-        # this should support different methods for finding depth   
-        types = tuple(isinstance(a, (int, float)) for a in args)
-        if all(types):
-            return f(*args)
-        elif any(types):
-            tmp = [] 
-            tmp_app
-            for t,a in zip(types, args):
-                if t:
-                    tmp_app([a])
-                else:
-                    tmp_app(a)
-            return atomic_map(f, *tmp)
-        else:
-            res = []
-            res_app = res.append
-            for z_arg in sv_zip_longest(*args):
-                res_app(atomic_map(f,*z_arg))
-            return res
-    
-
     
 class SvScriptAuto(SvScript, metaclass=abc.ABCMeta):
     """ 
@@ -172,3 +114,65 @@ class SvScriptSimpleFunction(SvScript, metaclass=abc.ABCMeta):
             if link:
                 socket.sv_set(res)
                     
+
+
+# below are helper functions
+
+def recursive_depth(l):
+    if isinstance(l, (list, tuple)) and l:
+        return 1 + recursive_depth(l[0])
+    elif isinstance(l, (int, float, str)):
+        return 0
+    else:
+        return None
+        
+
+
+        
+# this method will be renamed and moved
+        
+def atomic_map(f, args):
+    # this should support different methods for finding depth
+    types = tuple(isinstance(a, (int, float)) for a in args)
+    
+    if all(types):
+        return f(*args)
+    elif any(types):
+        tmp = [] 
+        tmp_app = tmp.append
+        for t,a in zip(types, args):
+            if t:
+                tmp_app((a,))
+            else:
+                tmp_app(a)
+        return atomic_map(f, tmp)
+    else:
+        res = []
+        res_app = res.append
+        for z_arg in sv_zip_longest(*args):
+            res_app(atomic_map(f, z_arg))
+        return res
+
+
+# not ready at all.
+def v_map(f,*args, kwargs):
+    def vector_map(f, *args):
+        # this should support different methods for finding depth   
+        types = tuple(isinstance(a, (int, float)) for a in args)
+        if all(types):
+            return f(*args)
+        elif any(types):
+            tmp = [] 
+            tmp_app
+            for t,a in zip(types, args):
+                if t:
+                    tmp_app([a])
+                else:
+                    tmp_app(a)
+            return atomic_map(f, *tmp)
+        else:
+            res = []
+            res_app = res.append
+            for z_arg in sv_zip_longest(*args):
+                res_app(atomic_map(f,*z_arg))
+            return res
