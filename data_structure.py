@@ -24,7 +24,7 @@ import ast
 import bpy
 from mathutils import Vector, Matrix
 
-from  core.update_system import sverchok_update
+from core.update_system import sverchok_update
 
 global bmesh_mapping, per_cache
 
