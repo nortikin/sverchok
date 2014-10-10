@@ -221,6 +221,17 @@ def make_node_cats():
 
 
 def juggle_and_join(node_cats):
+    '''
+    this step post processes the extended catagorization used
+    by ctrl+space dynamic menu, and attempts to merge previously
+    joined catagories. Why? Because the default menu gets very
+    long if there are too many catagories.
+
+    The only real alternative to this approach is to write a
+    replacement for nodeitems_utils which respects catagories
+    and submenus.
+
+    '''
     node_cats = node_cats.copy()
 
     # join beta and alpha node cats
@@ -241,7 +252,6 @@ def juggle_and_join(node_cats):
 def make_categories():
     original_categories = make_node_cats()
     node_cats = juggle_and_join(original_categories)
-    print(node_cats)
 
     node_categories = []
     howmanynodesare = 0
@@ -249,7 +259,7 @@ def make_categories():
         name_big = "SVERCHOK_" + category.replace(' ', '_')
         node_categories.append(SverchNodeCategory(
             name_big, category,
-            # bl_idname, name, <icon> optional :: for this list only [0,1]
+            # bl_idname, name
             items=[NodeItem(props[0], props[1]) for props in nodes]))
         howmanynodesare += len(nodes)
 
