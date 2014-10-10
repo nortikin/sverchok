@@ -302,7 +302,8 @@ class SvNodeRefreshFromTextEditor(bpy.types.Operator):
             self.report({'INFO'}, "No Sverchok NodeGroups")
             return {'FINISHED'}
         # could be extened to text in also
-        node_types = set(['SvScriptNode', 'SvScriptNodeMK2', 'SvProfileNode'])
+        node_types = set(['SvScriptNode', 'SvScriptNodeMK2',
+                         'SvProfileNode', 'SvTextInNode'])
         
         for ng in ngs:
             nodes = [n for n in ng.nodes if n.bl_idname in node_types]
@@ -311,10 +312,13 @@ class SvNodeRefreshFromTextEditor(bpy.types.Operator):
             for n in nodes:
                 if hasattr(n, "script_name") and n.script_name == text_file_name:
                     n.load()
-                elif hasattr(n, "text_file_name"):
-                    pass # no nothing
+                elif hasattr(n, "text_file_name") and n.text_file_name == text_file_name:
+                    pass # no nothing for profile node, just update ng, could use break...
+                elif hasattr(n, "current_text") and n.current_text == text_file_name:
+                    n.reload()
                 else:
                     pass
+            # update node group with affected nodes
             ng.update()
 
         return {'FINISHED'}
