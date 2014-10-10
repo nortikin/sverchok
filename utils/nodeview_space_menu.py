@@ -36,6 +36,8 @@ node_cats = make_node_cats()
 
 addon_name = data_structure.SVERCHOK_NAME
 
+menu_prefs = {}
+
 
 def get_icon_switch():
     addon = bpy.context.user_preferences.addons.get(addon_name)
@@ -45,14 +47,13 @@ def get_icon_switch():
 
 
 def layout_draw_categories(layout, node_details):
-    show_icons = get_icon_switch()
-    print('showing', show_icons)
+    show_icons = menu_prefs.get('show_icons')
 
     add_n_grab = 'node.add_node'
     for node_info in node_details:
         num_items = len(node_info)
         if not num_items in {2, 3}:
-            print(repr(node_info), 'is incomplete')
+            print(repr(node_info), 'is incomplete, or unparsable')
             continue
 
         if show_icons:
@@ -92,7 +93,10 @@ class NODEVIEW_MT_Dynamic_Menu(bpy.types.Menu):
     @classmethod
     def poll(cls, context):
         tree_type = context.space_data.tree_type
-        return (tree_type == 'SverchCustomTreeType')
+        if (tree_type == 'SverchCustomTreeType'):
+            menu_prefs['show_icons'] = get_icon_switch()
+            print('showing', menu_prefs['show_icons'])
+            return True
 
     def draw(self, context):
 
@@ -102,11 +106,20 @@ class NODEVIEW_MT_Dynamic_Menu(bpy.types.Menu):
         s = layout.operator("node.add_search", text="Search", icon='VIEWZOOM')
         s.use_transform = True
 
+        show_icons = menu_prefs.get('show_icons')
+
         layout.separator()
-        layout.menu("NODEVIEW_MT_AddGenerators", icon='OBJECT_DATAMODE')
-        layout.menu("NODEVIEW_MT_AddTransforms", icon='MANIPUL')
-        layout.menu("NODEVIEW_MT_AddAnalyzers", icon='BORDERMOVE')
-        layout.menu("NODEVIEW_MT_AddModifiers", icon='MODIFIER')
+        if show_icons:
+            layout.menu("NODEVIEW_MT_AddGenerators", icon='OBJECT_DATAMODE')
+            layout.menu("NODEVIEW_MT_AddTransforms", icon='MANIPUL')
+            layout.menu("NODEVIEW_MT_AddAnalyzers", icon='BORDERMOVE')
+            layout.menu("NODEVIEW_MT_AddModifiers", icon='MODIFIER')
+        else:
+            layout.menu("NODEVIEW_MT_AddGenerators")
+            layout.menu("NODEVIEW_MT_AddTransforms")
+            layout.menu("NODEVIEW_MT_AddAnalyzers")
+            layout.menu("NODEVIEW_MT_AddModifiers")
+
         layout.separator()
         layout.menu("NODEVIEW_MT_AddNumber")
         layout.menu("NODEVIEW_MT_AddVector")
@@ -118,8 +131,12 @@ class NODEVIEW_MT_Dynamic_Menu(bpy.types.Menu):
         layout.menu("NODEVIEW_MT_AddBasicData")
         layout.menu("NODEVIEW_MT_AddBasicDebug")
         layout.separator()
-        layout.menu("NODEVIEW_MT_AddBetas", icon='OUTLINER_DATA_POSE')
-        layout.menu("NODEVIEW_MT_AddAlphas", icon='ERROR')
+        if show_icons:
+            layout.menu("NODEVIEW_MT_AddBetas", icon='OUTLINER_DATA_POSE')
+            layout.menu("NODEVIEW_MT_AddAlphas", icon='ERROR')
+        else:
+            layout.menu("NODEVIEW_MT_AddBetas")
+            layout.menu("NODEVIEW_MT_AddAlphas")
 
 
 class NODEVIEW_MT_AddGenerators(bpy.types.Menu):
@@ -128,7 +145,10 @@ class NODEVIEW_MT_AddGenerators(bpy.types.Menu):
     def draw(self, context):
         layout = self.layout
         layout_draw_categories(self.layout, node_cats[self.bl_label])
-        layout.menu("NODEVIEW_MT_AddGeneratorsExt", icon='PLUGIN')
+        if menu_prefs.get('show_icons'):
+            layout.menu("NODEVIEW_MT_AddGeneratorsExt", icon='PLUGIN')
+        else:
+            layout.menu("NODEVIEW_MT_AddGeneratorsExt")
 
 
 class NODEVIEW_MT_AddModifiers(bpy.types.Menu):
