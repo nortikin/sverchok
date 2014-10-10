@@ -82,9 +82,9 @@ class NodeViewMenuTemplate(bpy.types.Menu):
 
 
 # quick class factory.
-def make_class(name, node_list):
+def make_class(name, bl_label):
     name = 'NODEVIEW_MT_Add' + name
-    return type(name, (NodeViewMenuTemplate,), {'bl_label': node_list})
+    return type(name, (NodeViewMenuTemplate,), {'bl_label': bl_label})
 
 
 class NODEVIEW_MT_Dynamic_Menu(bpy.types.Menu):
@@ -169,49 +169,30 @@ class NODEVIEW_MT_AddListOps(bpy.types.Menu):
         layout.menu("NODEVIEW_MT_AddListstruct")
         layout_draw_categories(self.layout, node_cats["List Masks"])
 
-# make class                   | NODEVIEW_MT_Add + class name , menu name
-NODEVIEW_MT_AddGeneratorsExt = make_class('GeneratorsExt', "Extended Generators")
-NODEVIEW_MT_AddTransforms = make_class('Transforms', "Transforms (Vec, Mat)")
-NODEVIEW_MT_AddAnalyzers = make_class('Analyzers', "Analyzers")
-
-NODEVIEW_MT_AddNumber = make_class('Number', "Number")
-NODEVIEW_MT_AddVector = make_class('Vector', "Vector")
-NODEVIEW_MT_AddMatrix = make_class('Matrix', "Matrix")
-NODEVIEW_MT_AddConditionals = make_class('Conditionals', "Conditionals")
-
-NODEVIEW_MT_AddListmain = make_class('Listmain', "List main")
-NODEVIEW_MT_AddListstruct = make_class('Liststruct', "List struct")
-NODEVIEW_MT_AddModifierChange = make_class('ModifierChange', "Modifier Change")
-NODEVIEW_MT_AddModifierMake = make_class('ModifierMake', "Modifier Make")
-
-NODEVIEW_MT_AddBasicViz = make_class('BasicViz', "Basic Viz")
-NODEVIEW_MT_AddBasicData = make_class('BasicData', "Basic Data")
-NODEVIEW_MT_AddBasicDebug = make_class('BasicDebug', "Basic Debug")
-
-NODEVIEW_MT_AddBetas = make_class('Betas', "Beta Nodes")
-NODEVIEW_MT_AddAlphas = make_class('Alphas', "Alpha Nodes")
 
 classes = [
     NODEVIEW_MT_Dynamic_Menu,
-    NODEVIEW_MT_AddGenerators,
-    NODEVIEW_MT_AddGeneratorsExt,
-    NODEVIEW_MT_AddTransforms,
-    NODEVIEW_MT_AddModifiers,
-    NODEVIEW_MT_AddAnalyzers,
-    NODEVIEW_MT_AddBasicViz,
-    NODEVIEW_MT_AddBasicData,
-    NODEVIEW_MT_AddBasicDebug,
-    NODEVIEW_MT_AddListmain,
-    NODEVIEW_MT_AddListstruct,
-    NODEVIEW_MT_AddNumber,
-    NODEVIEW_MT_AddVector,
-    NODEVIEW_MT_AddMatrix,
     NODEVIEW_MT_AddListOps,
-    NODEVIEW_MT_AddModifierChange,
-    NODEVIEW_MT_AddModifierMake,
-    NODEVIEW_MT_AddConditionals,
-    NODEVIEW_MT_AddBetas,
-    NODEVIEW_MT_AddAlphas,
+    NODEVIEW_MT_AddModifiers,
+    NODEVIEW_MT_AddGenerators,
+    # like magic.
+    # make | NODEVIEW_MT_Add + class name , menu name
+    make_class('GeneratorsExt', "Extended Generators"),
+    make_class('Transforms', "Transforms (Vec, Mat)"),
+    make_class('Analyzers', "Analyzers"),
+    make_class('BasicViz', "Basic Viz"),
+    make_class('BasicData', "Basic Data"),
+    make_class('BasicDebug', "Basic Debug"),
+    make_class('Listmain', "List main"),
+    make_class('Liststruct', "List struct"),
+    make_class('Number', "Number"),
+    make_class('Vector', "Vector"),
+    make_class('Matrix', "Matrix"),
+    make_class('ModifierChange', "Modifier Change"),
+    make_class('ModifierMake', "Modifier Make"),
+    make_class('Conditionals', "Conditionals"),
+    make_class('Betas', "Beta Nodes"),
+    make_class('Alphas', "Alpha Nodes"),
 ]
 
 
