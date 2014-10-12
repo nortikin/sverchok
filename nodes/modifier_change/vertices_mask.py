@@ -31,7 +31,7 @@ class SvVertMaskNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Mask Vertices'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    def init(self, context):
+    def sv_init(self, context):
         self.inputs.new('StringsSocket', 'Mask')
         self.inputs.new('VerticesSocket', 'Vertices', 'Vertices')
         self.inputs.new('StringsSocket', 'Poly Egde', 'Poly Egde')
@@ -39,9 +39,7 @@ class SvVertMaskNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('VerticesSocket', 'Vertices', 'Vertices')
         self.outputs.new('StringsSocket', 'Poly Egde', 'Poly Egde')
 
-    def update(self):
-        if 'Poly Egde' not in self.outputs:
-            return
+    def process(self):
         if not any((s.links for s in self.outputs)):
             return
         if self.inputs['Vertices'].links and self.inputs['Poly Egde'].links:
@@ -81,9 +79,6 @@ class SvVertMaskNode(bpy.types.Node, SverchCustomTreeNode):
             if 'Poly Egde' in self.outputs and self.outputs['Poly Egde'].links:
                 if poly_edge_out:
                     SvSetSocketAnyType(self, 'Poly Egde', poly_edge_out)
-
-    def update_socket(self, context):
-        self.update()
 
 
 def register():

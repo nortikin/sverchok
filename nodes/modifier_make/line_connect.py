@@ -51,7 +51,7 @@ class LineConnectNode(bpy.types.Node, SverchCustomTreeNode):
     base_name = 'vertices '
     multi_socket_type = 'VerticesSocket'
 
-    def init(self, context):
+    def sv_init(self, context):
         self.inputs.new('VerticesSocket', 'vertices', 'vertices')
         self.outputs.new('VerticesSocket', 'vertices', 'vertices')
         self.outputs.new('StringsSocket', 'data', 'data')
@@ -187,24 +187,27 @@ class LineConnectNode(bpy.types.Node, SverchCustomTreeNode):
         # inputs
         multi_socket(self, min=1)
 
-        if 'vertices' in self.outputs and self.outputs['vertices'].links or \
-                'data' in self.outputs and self.outputs['data'].links:
-            slots = []
-            for socket in self.inputs:
-                if socket.links and type(socket.links[0].from_socket) == VerticesSocket:
-                    slots.append(SvGetSocketAnyType(self, socket))
-            if len(slots) == 0:
-                return
-            if levelsOflist(slots) <= 4:
-                lev = 1
-            else:
-                lev = self.JoinLevel
-            result = self.connect(slots, self.dir_check, self.cicl_check, lev, self.polygons, self.slice_check)
+    def process(self):
+        if not any((s.link for s in self.outputs)):
+            return
+            
+        slots = []
+        for socket in self.inputs:
+            if socket.links and type(socket.links[0].from_socket) == VerticesSocket:
+                slots.append(SvGetSocketAnyType(self, socket))
+    
+        if len(slots) == 0:
+            return
+        if levelsOflist(slots) <= 4:
+            lev = 1
+        else:
+            lev = self.JoinLevel
+        result = self.connect(slots, self.dir_check, self.cicl_check, lev, self.polygons, self.slice_check)
 
-            if self.outputs['vertices'].links:
-                SvSetSocketAnyType(self, 'vertices', result[0])
-            if self.outputs['data'].links:
-                SvSetSocketAnyType(self, 'data', result[1])
+        if self.outputs['vertices'].links:
+            SvSetSocketAnyType(self, 'vertices', result[0])
+        if self.outputs['data'].links:
+            SvSetSocketAnyType(self, 'data', result[1])
 
 
 def register():

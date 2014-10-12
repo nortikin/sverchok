@@ -59,7 +59,7 @@ class SvLatheNode(bpy.types.Node, SverchCustomTreeNode):
     dvec = FloatVectorProperty(name='dvec', size=3, update=updateNode)
     axis = FloatVectorProperty(name='axis', size=3, update=updateNode, default=(0, 0, 1))
 
-    def init(self, context):
+    def sv_init(self, context):
         self.inputs.new('VerticesSocket', 'Verts', 'Verts')
         self.inputs.new('StringsSocket', 'Edges', 'Edges')
         self.inputs.new('VerticesSocket', 'cent', 'cent').prop_name = 'cent'
@@ -83,7 +83,7 @@ class SvLatheNode(bpy.types.Node, SverchCustomTreeNode):
         if not (self.inputs['Verts'].links and self.outputs['Verts'].links):
             return True
 
-    def update(self):
+    def process(self):
 
         if self.nothing_to_process():
             return

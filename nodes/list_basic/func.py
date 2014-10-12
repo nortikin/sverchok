@@ -53,11 +53,11 @@ class ListFuncNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "level", text="level")
         layout.prop(self, "func_", "Functions:")
 
-    def init(self, context):
+    def sv_init(self, context):
         self.inputs.new('StringsSocket', "Data", "Data")
         self.outputs.new('StringsSocket', "Function", "Function")
 
-    def update(self):
+    def process(self):
         func_dict = {
             "MIN": min,
             "MAX": max,
@@ -105,10 +105,6 @@ class ListFuncNode(bpy.types.Node, SverchCustomTreeNode):
         if flag:
             result = sum_d / len(data)
         return result
-
-    def update_socket(self, context):
-        self.update()
-
 
 def register():
     bpy.utils.register_class(ListFuncNode)

@@ -74,7 +74,7 @@ class SvNoiseNode(bpy.types.Node, SverchCustomTreeNode):
     noise_dict = {}
     noise_f = {'SCALAR': noise.noise, 'VECTOR': noise.noise_vector}
 
-    def init(self, context):
+    def sv_init(self, context):
         self.inputs.new('VerticesSocket', 'Vertices', 'Vertices')
         self.outputs.new('VerticesSocket', 'Noise V', 'Noise V')
 
@@ -82,7 +82,7 @@ class SvNoiseNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, 'out_mode', expand=True)
         layout.prop(self, 'noise_type', text="Type")
 
-    def update(self):
+    def process(self):
 
         if not self.noise_dict:
             self.noise_dict = {t[0]: t[1]
@@ -110,9 +110,6 @@ class SvNoiseNode(bpy.types.Node, SverchCustomTreeNode):
             return
 
         SvSetSocketAnyType(self, self.outputs[0].name, [[]])
-
-    def update_socket(self, context):
-        self.update()
 
 
 def register():

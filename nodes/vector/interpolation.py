@@ -112,7 +112,7 @@ class SvInterpolationNode(bpy.types.Node, SverchCustomTreeNode):
                         default="LIN", items=modes,
                         update=updateNode)
 
-    def init(self, context):
+    def sv_init(self, context):
         self.inputs.new('VerticesSocket', 'Vertices')
         self.inputs.new('StringsSocket', 'Interval').prop_name = 't_in'
         self.outputs.new('VerticesSocket', 'Vertices')
@@ -121,7 +121,7 @@ class SvInterpolationNode(bpy.types.Node, SverchCustomTreeNode):
         #pass
         layout.prop(self, 'mode', expand=True)
 
-    def update(self):
+    def process(self):
         if 'Vertices' not in self.outputs:
             return
         if not any((s.links for s in self.outputs)):
@@ -149,9 +149,6 @@ class SvInterpolationNode(bpy.types.Node, SverchCustomTreeNode):
 
             if 'Vertices' in self.outputs and self.outputs['Vertices'].links:
                 SvSetSocketAnyType(self, 'Vertices', verts_out)
-
-    def update_socket(self, context):
-        self.update()
 
 
 def register():

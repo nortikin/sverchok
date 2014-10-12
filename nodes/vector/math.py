@@ -121,7 +121,7 @@ class VectorMathNode(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         layout.prop(self, "items_", "Functions:")
 
-    def init(self, context):
+    def sv_init(self, context):
         self.inputs.new('VerticesSocket', "U", "u")
         self.inputs.new('VerticesSocket', "V", "v")
         self.outputs.new('VerticesSocket', "W", "W")
@@ -199,7 +199,7 @@ class VectorMathNode(bpy.types.Node, SverchCustomTreeNode):
         if not outputs[0].links:
             return True
 
-    def update(self):
+    def process(self):
         inputs = self.inputs
         outputs = self.outputs
         operation = self.items_
@@ -321,9 +321,6 @@ class VectorMathNode(bpy.types.Node, SverchCustomTreeNode):
             for u, v in zip_longest(l1, l2, fillvalue=fl):
                 res_append(self.recurse_fxy(u, v, f, leve-1))
         return res
-
-    def update_socket(self, context):
-        self.update()
 
 
 def register():

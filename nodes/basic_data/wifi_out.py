@@ -80,7 +80,7 @@ class WifiOutNode(bpy.types.Node, SverchCustomTreeNode):
             op = layout.operator(op_name, text='Link')
             op.fn_name = "set_var_name"
 
-    def init(self, context):
+    def sv_init(self, context):
         self.use_custom_color = True
         self.color = FAIL_COLOR
 
@@ -131,12 +131,19 @@ class WifiOutNode(bpy.types.Node, SverchCustomTreeNode):
                         s_type = 'StringsSocket'
                     s_name = socket.name
                     outputs.new(s_type, s_name)
+    
+    def process(self):
+        ng = self.id_data
+        wifi_dict = {node.var_name: node
+                     for name, node in ng.nodes.items()
+                     if node.bl_idname == 'WifiInNode'}
 
-            # transfer data
-            for in_socket, out_socket in zip(node.inputs, self.outputs):
-                if in_socket.links and out_socket.links:
-                    data = SvGetSocketAnyType(node, in_socket, deepcopy=False)
-                    SvSetSocketAnyType(self, out_socket.name, data)
+        node = wifi_dict.get(self.var_name)
+        # transfer data
+        for in_socket, out_socket in zip(node.inputs, self.outputs):
+            if in_socket.links and out_socket.links:
+                data = SvGetSocketAnyType(node, in_socket, deepcopy=False)
+                SvSetSocketAnyType(self, out_socket.name, data)
 
 
 def register():

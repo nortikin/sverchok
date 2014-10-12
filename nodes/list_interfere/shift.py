@@ -48,7 +48,7 @@ class ShiftNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "level", text="level")
         layout.prop(self, "enclose", text="enclose")
 
-    def init(self, context):
+    def sv_init(self, context):
         self.inputs.new('StringsSocket', "data", "data")
         self.inputs.new('StringsSocket', "shift", "shift").prop_name = 'shift_c'
         self.outputs.new('StringsSocket', 'data', 'data')
@@ -60,6 +60,7 @@ class ShiftNode(bpy.types.Node, SverchCustomTreeNode):
             outputsocketname = ['data']
             changable_sockets(self, inputsocketname, outputsocketname)
 
+    def process(self):
         if 'data' in self.outputs and self.outputs['data'].links:
             if 'shift' in self.inputs and self.inputs['shift'].links and \
                type(self.inputs['shift'].links[0].from_socket) == StringsSocket:

@@ -223,6 +223,7 @@ def import_tree(ng, fullpath):
         print('#' * 12, nodes_json['export_version'])
 
         ''' first create all nodes. '''
+        nodes.new("SvStopperNode")
         nodes_to_import = nodes_json['nodes']
         name_remap = {}
         texts = bpy.data.texts
@@ -311,8 +312,10 @@ def import_tree(ng, fullpath):
         framed_nodes = nodes_json['framed_nodes']
         for node_name, parent in framed_nodes.items():
             ng.nodes[finalize(node_name)].parent = ng.nodes[finalize(parent)]
-
+        for n in nodes if n.bl_idname == "SvStopperNode":
+            nodes.remove(n)
         bpy.ops.node.sverchok_update_current(node_group=ng.name)
+        
         # bpy.ops.node.select_all(action='DESELECT')
         # ng.update()
         # bpy.ops.node.view_all()

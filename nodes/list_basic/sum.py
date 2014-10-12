@@ -28,11 +28,11 @@ class ListSumNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'List summa'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    def init(self, context):
+    def sv_init(self, context):
         self.inputs.new('StringsSocket', "Data", "Data")
         self.outputs.new('StringsSocket', "Sum", "Sum")
 
-    def update(self):
+    def process(self):
         # достаём два слота - вершины и полики
         if 'Sum' in self.outputs and self.outputs['Sum'].links:
             if 'Data' in self.inputs and self.inputs['Data'].links:

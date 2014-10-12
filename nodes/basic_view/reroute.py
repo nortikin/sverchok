@@ -32,7 +32,7 @@ class SvReRouteNode(bpy.types.Node, SverchCustomTreeNode):
     typ = StringProperty(name='typ', default='')
     newsock = BoolProperty(name='newsock', default=False)
 
-    def init(self, context):
+    def sv_init(self, context):
         #self.width_hidden = 0.0 # it cause maximum width. not reduce
         self.hide = True
         self.inputs.new("StringsSocket", "In")
@@ -46,6 +46,8 @@ class SvReRouteNode(bpy.types.Node, SverchCustomTreeNode):
             in_socket = 'In'
             out_socket = ['Out']
             changable_sockets(self, in_socket, out_socket)
+    
+    def process(self):
         if self.outputs[0].links:
             data = SvGetSocketAnyType(self, self.inputs[0], deepcopy=False)
             SvSetSocketAnyType(self, 'Out', data)

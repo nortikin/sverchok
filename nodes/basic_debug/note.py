@@ -60,7 +60,7 @@ class NoteNode(bpy.types.Node, SverchCustomTreeNode):
         tl = format_text(self.text, self.width)
         self.text_cache[n_id] = (self.width, tl)
         
-    def init(self, context):
+    def sv_init(self, context):
         n_id = node_id(self)
         self.width = 400
         self.color = (0.5, 0.5, 1)
@@ -116,7 +116,7 @@ class NoteNode(bpy.types.Node, SverchCustomTreeNode):
     def from_clipboard(self):
         self.text = bpy.context.window_manager.clipboard
         
-    def update(self):
+    def process(self):
         if 'Text In' in self.inputs and self.inputs['Text In'].links:
             self.text = str(SvGetSocketAnyType(self,self.inputs['Text In']))
 

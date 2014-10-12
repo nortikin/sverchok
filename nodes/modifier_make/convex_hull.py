@@ -53,7 +53,7 @@ class SvConvexHullNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Convex Hull'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    def init(self, context):
+    def sv_init(self, context):
         self.inputs.new('VerticesSocket', 'Vertices', 'Vertices')
 
         self.outputs.new('VerticesSocket', 'Vertices', 'Vertices')
@@ -62,7 +62,7 @@ class SvConvexHullNode(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         pass
 
-    def update(self):
+    def process(self):
 
         if 'Vertices' in self.inputs and self.inputs['Vertices'].links:
 
@@ -83,9 +83,6 @@ class SvConvexHullNode(bpy.types.Node, SverchCustomTreeNode):
 
             if 'Polygons' in self.outputs and self.outputs['Polygons'].links:
                 SvSetSocketAnyType(self, 'Polygons', polys_out)
-
-    def update_socket(self, context):
-        self.update()
 
 
 def register():

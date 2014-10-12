@@ -286,18 +286,12 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
     # reset n_id on duplicate (shift-d)
     def copy(self, node):
         self.n_id = ''
-
-    def update(self):
-        if 'matrix' not in self.inputs:
-            return
-
+     
+    def process(self):
         if not (self.id_data.sv_show and self.activate):
             callback_disable(node_id(self))
             return
 
-        self.process()
-
-    def process(self):
         n_id = node_id(self)
 
         global cache_viewer_baker

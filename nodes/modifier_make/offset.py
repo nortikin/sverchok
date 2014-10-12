@@ -50,7 +50,7 @@ class SvOffsetNode(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         pass
 
-    def init(self, context):
+    def sv_init(self, context):
         self.inputs.new('VerticesSocket', 'Vers', 'Vers')
         self.inputs.new('StringsSocket', "Pols", "Pols")
         self.inputs.new('StringsSocket', "Offset", "Offset").prop_name = 'offset'
@@ -61,7 +61,7 @@ class SvOffsetNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('StringsSocket', "OutPols", "OutPols")
         self.outputs.new('StringsSocket', "InPols", "InPols")
 
-    def update(self):
+    def process(self):
         
         if self.outputs['Vers'].links and self.inputs['Vers'].links:
                 vertices = Vector_generate(SvGetSocketAnyType(self, self.inputs['Vers']))

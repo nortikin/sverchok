@@ -50,7 +50,7 @@ class ListMatchNode(bpy.types.Node, SverchCustomTreeNode):
     mode_final = EnumProperty(default='REPEAT', items=modes,
                               update=updateNode)
 
-    def init(self, context):
+    def sv_init(self, context):
         self.inputs.new('StringsSocket', 'Data 0', 'Data 0')
         self.inputs.new('StringsSocket', 'Data 1', 'Data 1')
         self.outputs.new('StringsSocket', 'Data 0', 'Data 0')
@@ -82,12 +82,6 @@ class ListMatchNode(bpy.types.Node, SverchCustomTreeNode):
     def update(self):
         # inputs
         # these functions are in util.py
-        func_dict = {
-            'SHORT': match_short,
-            'CYCLE': match_long_cycle,
-            'REPEAT': match_long_repeat,
-            'XREF': match_cross2
-            }
 
         # socket handling
         if self.inputs[-1].links:
@@ -111,7 +105,15 @@ class ListMatchNode(bpy.types.Node, SverchCustomTreeNode):
                     self.outputs.new(socket.links[0].from_socket.bl_idname, socket.name, socket.name)
                     self.outputs.move(len(self.outputs)-1, idx)
 
+    def process(self):
         # check inputs and that there is at least one output
+        func_dict = {
+            'SHORT': match_short,
+            'CYCLE': match_long_cycle,
+            'REPEAT': match_long_repeat,
+            'XREF': match_cross2
+            }
+
         if count_inputs == len(self.inputs)-1 and count_outputs:
             out = []
             lsts = []

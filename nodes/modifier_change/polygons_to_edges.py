@@ -28,11 +28,11 @@ class Pols2EdgsNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Polygons 2 Edges'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    def init(self, context):
+    def sv_init(self, context):
         self.inputs.new('StringsSocket', "pols", "pols")
         self.outputs.new('StringsSocket', "edgs", "edgs")
 
-    def update(self):
+    def process(self):
         if 'edgs' in self.outputs and len(self.outputs['edgs'].links) > 0:
             if 'pols' in self.inputs and len(self.inputs['pols'].links) > 0:
                 X_ = SvGetSocketAnyType(self, self.inputs['pols'])

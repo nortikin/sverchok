@@ -33,13 +33,13 @@ class VectorMoveNode(bpy.types.Node, SverchCustomTreeNode):
                           default=1.0,
                           options={'ANIMATABLE'}, update=updateNode)
 
-    def init(self, context):
+    def sv_init(self, context):
         self.inputs.new('VerticesSocket', "vertices", "vertices")
         self.inputs.new('VerticesSocket', "vectors", "vectors")
         self.inputs.new('StringsSocket', "multiplier", "multiplier").prop_name = 'mult_'
         self.outputs.new('VerticesSocket', "vertices", "vertices")
 
-    def update(self):
+    def process(self):
         # inputs
         if 'vertices' in self.inputs and self.inputs['vertices'].links and \
            type(self.inputs['vertices'].links[0].from_socket) == VerticesSocket:
@@ -92,8 +92,6 @@ class VectorMoveNode(bpy.types.Node, SverchCustomTreeNode):
         #print ('move', str(moved))
         return moved
 
-    def update_socket(self, context):
-        self.update()
 
 
 def register():

@@ -42,7 +42,7 @@ class SvMaskJoinNode(bpy.types.Node, SverchCustomTreeNode):
     newsock = BoolProperty(name='newsock',
                            default=False)
 
-    def init(self, context):
+    def sv_init(self, context):
         self.inputs.new('StringsSocket', 'Mask')
         self.inputs.new('StringsSocket', 'Data True')
         self.inputs.new('StringsSocket', 'Data False')
@@ -62,17 +62,18 @@ class SvMaskJoinNode(bpy.types.Node, SverchCustomTreeNode):
         outputsocketname = ['Data']
         changable_sockets(self, inputsocketname, outputsocketname)
 
+    def process(self):
         if all((s.links for s in self.inputs[1:])):
-                if self.inputs['Mask'].links:
-                    mask = SvGetSocketAnyType(self, self.inputs['Mask'])
-                else:  # to match MaskList
-                    mask = [[1, 0]]
-                data_t = SvGetSocketAnyType(self, self.inputs['Data True'])
-                data_f = SvGetSocketAnyType(self, self.inputs['Data False'])
+            if self.inputs['Mask'].links:
+                mask = SvGetSocketAnyType(self, self.inputs['Mask'])
+            else:  # to match MaskList
+                mask = [[1, 0]]
+            data_t = SvGetSocketAnyType(self, self.inputs['Data True'])
+            data_f = SvGetSocketAnyType(self, self.inputs['Data False'])
 
-                data_out = self.get_level(mask, data_t, data_f, self.level-1)
+            data_out = self.get_level(mask, data_t, data_f, self.level-1)
 
-                SvSetSocketAnyType(self, 'Data', data_out)
+            SvSetSocketAnyType(self, 'Data', data_out)
 
     def apply_choice_mask(self, mask, data_t, data_f):
         out = []

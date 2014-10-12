@@ -71,7 +71,7 @@ class SvListSplitNode(bpy.types.Node, SverchCustomTreeNode):
             layout.prop(self, "level", text="level")
         layout.prop(self, "unwrap")
 
-    def init(self, context):
+    def sv_init(self, context):
         self.inputs.new('StringsSocket', "Data")
         self.inputs.new('StringsSocket', "Split").prop_name = 'split'
         self.outputs.new('StringsSocket', "Split")
@@ -81,7 +81,8 @@ class SvListSplitNode(bpy.types.Node, SverchCustomTreeNode):
             inputsocketname = 'Data'
             outputsocketname = ['Split']
             changable_sockets(self, inputsocketname, outputsocketname)
-
+    
+    def process(self):
         if 'Split' in self.outputs and self.outputs['Split'].links:
             if 'Data' in self.inputs and self.inputs['Data'].links:
                 data = SvGetSocketAnyType(self, self.inputs['Data'])
@@ -110,8 +111,6 @@ class SvListSplitNode(bpy.types.Node, SverchCustomTreeNode):
         else:  # Fail
             return None
 
-    def update_socket(self, context):
-        self.update()
 
 
 def register():

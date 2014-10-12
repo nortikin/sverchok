@@ -35,7 +35,7 @@ class EvaluateLine(bpy.types.Node, SverchCustomTreeNode):
                             default=0.5, min=0.0, max=1.0,
                             options={'ANIMATABLE'}, update=updateNode)
 
-    def init(self, context):
+    def sv_init(self, context):
         self.inputs.new('StringsSocket', "Factor", "Factor").prop_name = 'factor_'
         self.inputs.new('VerticesSocket', "Vertice A", "Vertice A")
         self.inputs.new('VerticesSocket', "Vertice B", "Vertice B")
@@ -44,7 +44,7 @@ class EvaluateLine(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         pass
 
-    def update(self):
+    def process(self):
         # inputs
         VerticesA = []
         VerticesB = []
@@ -92,9 +92,6 @@ class EvaluateLine(bpy.types.Node, SverchCustomTreeNode):
                 return
 
             SvSetSocketAnyType(self, 'EvPoint', points)
-
-    def update_socket(self, context):
-        self.update()
 
 
 def register():

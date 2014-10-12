@@ -84,7 +84,7 @@ class SvWireframeNode(bpy.types.Node, SverchCustomTreeNode):
                             default=True,
                             update=updateNode)
 
-    def init(self, context):
+    def sv_init(self, context):
         self.inputs.new('StringsSocket', 'thickness').prop_name = 'thickness'
         self.inputs.new('StringsSocket', 'Offset').prop_name = 'offset'
         self.inputs.new('VerticesSocket', 'vertices', 'vertices')
@@ -100,7 +100,7 @@ class SvWireframeNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, 'relative_offset', text="Offset relative")
         layout.prop(self, 'replace', text="Replace")
 
-    def update(self):
+    def process(self):
         if not ('vertices' in self.outputs and self.outputs['vertices'].links or
                 'edges' in self.outputs and self.outputs['edges'].links or
                 'polygons' in self.outputs and self.outputs['polygons'].links):

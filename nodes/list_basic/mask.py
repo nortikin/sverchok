@@ -40,7 +40,7 @@ class MaskListNode(bpy.types.Node, SverchCustomTreeNode):
     newsock = BoolProperty(name='newsock',
                            default=False)
 
-    def init(self, context):
+    def sv_init(self, context):
         self.inputs.new('StringsSocket', "data", "data")
         self.inputs.new('StringsSocket', "mask", "mask")
 
@@ -63,10 +63,8 @@ class MaskListNode(bpy.types.Node, SverchCustomTreeNode):
         inputsocketname = 'data'
         outputsocketname = ['dataTrue', 'dataFalse']
         changable_sockets(self, inputsocketname, outputsocketname)
-
-        # input sockets
-        if 'data' not in self.inputs:
-            return False
+        
+    def process(self):
         data = [[]]
         mask = [[1, 0]]
 
@@ -80,25 +78,25 @@ class MaskListNode(bpy.types.Node, SverchCustomTreeNode):
         result = self.getMask(data, mask, self.Level)
 
         # outupy sockets data
-        if 'dataTrue' in self.outputs and self.outputs['dataTrue'].is_linked:
+        if self.outputs['dataTrue'].is_linked:
             SvSetSocketAnyType(self, 'dataTrue', result[0])
         else:
             SvSetSocketAnyType(self, 'dataTrue', [[]])
         # print ('всё',result)
-        if 'dataFalse' in self.outputs and self.outputs['dataFalse'].is_linked:
+        if self.outputs['dataFalse'].is_linked:
             SvSetSocketAnyType(self, 'dataFalse', result[1])
         else:
             SvSetSocketAnyType(self, 'dataFalse', [[]])
 
-        if 'mask' in self.outputs and self.outputs['mask'].is_linked:
+        if self.outputs['mask'].is_linked:
             SvSetSocketAnyType(self, 'mask', result[2])
         else:
             SvSetSocketAnyType(self, 'mask', [[]])
-        if 'ind_true' in self.outputs and self.outputs['ind_true'].is_linked:
+        if self.outputs['ind_true'].is_linked:
             SvSetSocketAnyType(self, 'ind_true', result[3])
         else:
             SvSetSocketAnyType(self, 'ind_true', [[]])
-        if 'ind_false' in self.outputs and self.outputs['ind_false'].is_linked:
+        if self.outputs['ind_false'].is_linked:
             SvSetSocketAnyType(self, 'ind_false', result[4])
         else:
             SvSetSocketAnyType(self, 'ind_false', [[]])

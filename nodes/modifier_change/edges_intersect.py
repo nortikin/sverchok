@@ -147,7 +147,7 @@ class SvIntersectEdgesNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
 
 
-    def init(self, context):
+    def sv_init(self, context):
         self.inputs.new('VerticesSocket', 'Verts_in', 'Verts_in')
         self.inputs.new('StringsSocket', 'Edges_in', 'Edges_in')
 
@@ -157,7 +157,7 @@ class SvIntersectEdgesNode(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         pass
 
-    def update(self):
+    def process(self):
         inputs = self.inputs
         outputs = self.outputs
 
@@ -197,10 +197,6 @@ class SvIntersectEdgesNode(bpy.types.Node, SverchCustomTreeNode):
 
         SvSetSocketAnyType(self, 'Verts_out', [verts_out])
         SvSetSocketAnyType(self, 'Edges_out', [edges_out])
-
-    def update_socket(self, context):
-        self.update()
-
 
 def register():
     bpy.utils.register_class(SvIntersectEdgesNode)

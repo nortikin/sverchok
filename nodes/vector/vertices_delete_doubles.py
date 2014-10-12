@@ -33,11 +33,11 @@ class VertsDelDoublesNode(bpy.types.Node, SverchCustomTreeNode):
         # will be here soon
         pass
 
-    def init(self, context):
+    def sv_init(self, context):
         self.inputs.new('VerticesSocket', "vers", "vers")
         self.outputs.new('VerticesSocket', "vers", "vers")
 
-    def update(self):
+    def process(self):
 
         if 'vers' in self.outputs and len(self.outputs['vers'].links) > 0:
             # get any type socket from input:

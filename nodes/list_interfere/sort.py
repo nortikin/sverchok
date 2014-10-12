@@ -42,7 +42,7 @@ class ListSortNode(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         layout.prop(self, "level", text="level")
 
-    def init(self, context):
+    def sv_init(self, context):
         self.inputs.new('StringsSocket', "data", "data")
         self.outputs.new('StringsSocket', "data", "data")
 
@@ -53,6 +53,7 @@ class ListSortNode(bpy.types.Node, SverchCustomTreeNode):
             outputsocketname = ['data']
             changable_sockets(self, inputsocketname, outputsocketname)
 
+    def process(self):
         # достаём два слота - вершины и полики
         if 'data' in self.outputs and len(self.outputs['data'].links) > 0 \
                 and 'data' in self.inputs and len(self.inputs['data'].links) > 0:
@@ -66,8 +67,6 @@ class ListSortNode(bpy.types.Node, SverchCustomTreeNode):
             out = dataCorrect(out_)
             SvSetSocketAnyType(self, 'data', out)
 
-    def update_socket(self, context):
-        self.update()
 
 
 def register():

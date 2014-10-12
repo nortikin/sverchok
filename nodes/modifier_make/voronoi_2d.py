@@ -34,7 +34,7 @@ class Voronoi2DNode(bpy.types.Node, SverchCustomTreeNode):
                          default=1.0, min=0,
                          options={'ANIMATABLE'}, update=updateNode)
 
-    def init(self, context):
+    def sv_init(self, context):
         self.inputs.new('VerticesSocket', "Vertices", "Vertices")
  #       self.inputs.new('StringsSocket', "Clipping", "Clipping")
         self.outputs.new('VerticesSocket', "Vertices", "Vertices")
@@ -45,7 +45,7 @@ class Voronoi2DNode(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         layout.prop(self, "clip", text="Clipping")
 
-    def update(self):
+    def process(self):
         # inputs
         if 'Edges' in self.outputs and self.outputs['Edges'].links or \
            'Vertices' in self.outputs and self.outputs['Vertices'].links:
@@ -118,12 +118,12 @@ class DelaunayTriangulation2DNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Delaunay 2D'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    def init(self, context):
+    def sv_init(self, context):
         self.inputs.new('VerticesSocket', "Vertices", "Vertices")
  #       self.outputs.new('StringsSocket', "Edges", "Edges")
         self.outputs.new('StringsSocket', "Polygons", "Polygons")
 
-    def update(self):
+    def process(self):
         points_in = []
         if not ('Polygons' in self.outputs and self.outputs['Polygons'].links):
             return
@@ -139,9 +139,6 @@ class DelaunayTriangulation2DNode(bpy.types.Node, SverchCustomTreeNode):
 
         if 'Polygons' in self.outputs and self.outputs['Polygons'].links:
             SvSetSocketAnyType(self, 'Polygons', tris_out)
-
-    def update_socket(self, context):
-        self.update()
 
 
 def register():

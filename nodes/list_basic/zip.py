@@ -47,7 +47,7 @@ class ZipNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "level", text="Level")
         layout.prop(self, "unwrap", text="UnWrap")
 
-    def init(self, context):
+    def sv_init(self, context):
         self.inputs.new('StringsSocket', "data", "data")
         self.outputs.new('StringsSocket', 'data', 'data')
 
@@ -61,7 +61,9 @@ class ZipNode(bpy.types.Node, SverchCustomTreeNode):
             outputsocketname = ['data']
             changable_sockets(self, inputsocketname, outputsocketname)
 
-        if 'data' in self.outputs and self.outputs['data'].links:
+
+    def process(self):
+        if self.outputs['data'].links:
             slots = []
             for socket in self.inputs:
                 if socket.links:

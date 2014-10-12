@@ -35,7 +35,7 @@ class SvScaleNode(bpy.types.Node, SverchCustomTreeNode):
                            default=1.0,
                            options={'ANIMATABLE'}, update=updateNode)
 
-    def init(self, context):
+    def sv_init(self, context):
         self.inputs.new('VerticesSocket', "Vertices", "Vertices")
         self.inputs.new('VerticesSocket', "Center", "Center")
         self.inputs.new('StringsSocket', "Factor", "Factor").prop_name = "factor_"
@@ -52,7 +52,7 @@ class SvScaleNode(bpy.types.Node, SverchCustomTreeNode):
             scaled.append(self.scaling(i, center, factor))
         return scaled
   
-    def update(self):
+    def process(self):
         # inputs
         if 'Vertices' in self.inputs and self.inputs['Vertices'].links:
             Vertices = SvGetSocketAnyType(self, self.inputs['Vertices'])

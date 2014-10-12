@@ -47,7 +47,7 @@ class ListShuffleNode(bpy.types.Node, SverchCustomTreeNode):
         if 'seed' not in self.inputs:
             layout.prop(self, 'seed', text="Seed")
 
-    def init(self, context):
+    def sv_init(self, context):
         self.inputs.new('StringsSocket', "data", "data")
         self.inputs.new('StringsSocket', "seed").prop_name = 'seed'
 
@@ -60,12 +60,10 @@ class ListShuffleNode(bpy.types.Node, SverchCustomTreeNode):
             outputsocketname = ['data']
             changable_sockets(self, inputsocketname, outputsocketname)
 
+    def process(self):
         if 'data' in self.outputs and self.outputs['data'].links:
 
-            if 'seed' not in self.inputs:
-                seed = self.seed
-            else:
-                seed = self.inputs['seed'].sv_get()[0][0]
+            seed = self.inputs['seed'].sv_get()[0][0]
 
             random.seed(seed)
             data = SvGetSocketAnyType(self, self.inputs['data'])

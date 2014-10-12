@@ -38,11 +38,11 @@ class ListLengthNode(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         layout.prop(self, "level", text="level")
 
-    def init(self, context):
+    def sv_init(self, context):
         self.inputs.new('StringsSocket', "Data", "Data")
         self.outputs.new('StringsSocket', "Length", "Length")
 
-    def update(self):
+    def process(self):
         # достаём два слота - вершины и полики
         if 'Length' in self.outputs and self.outputs['Length'].links:
             if 'Data' in self.inputs and self.inputs['Data'].links:
@@ -68,10 +68,8 @@ class ListLengthNode(bpy.types.Node, SverchCustomTreeNode):
         elif level > 2:  # flatten all but last level, we should preserve more detail than this
             out = [self.count(obj, level-1) for obj in data]
             return [list(itertools.chain.from_iterable(obj)) for obj in out]
-        return len(data)
-
-    def update_socket(self, context):
-        self.update()
+        else:
+            return len(data)
 
 
 def register():

@@ -23,81 +23,7 @@ from data_structure import (changable_sockets, repeat_last, updateNode,
                             SvSetSocketAnyType, SvGetSocketAnyType)
 
 
-# supports of older code, remove soon
-# Linus Yng, Feb 4, 2014
-class ListItemNode(bpy.types.Node, SverchCustomTreeNode):
-    ''' List item '''
-    bl_idname = 'ListItemNode'
-    bl_label = 'List item old'
-    bl_icon = 'OUTLINER_OB_EMPTY'
 
-    level = IntProperty(name='level_to_count',
-                        default=2, min=0,
-                        update=updateNode)
-    item = IntProperty(name='item',
-                       default=0,
-                       update=updateNode)
-    typ = StringProperty(name='typ',
-                         default='')
-    newsock = BoolProperty(name='newsock',
-                           default=False)
-
-    def draw_buttons(self, context, layout):
-        layout.prop(self, "level", text="level")
-        layout.prop(self, "item", text="item")
-
-    def init(self, context):
-        self.inputs.new('StringsSocket', "Data", "Data")
-        self.outputs.new('StringsSocket', "Item", "Item")
-        self.outputs.new('StringsSocket', "Other", "Other")
-
-    def update(self):
-        if 'Data' in self.inputs and len(self.inputs['Data'].links) > 0:
-            # адаптивный сокет
-            inputsocketname = 'Data'
-            outputsocketname = ['Item', 'Other']
-            changable_sockets(self, inputsocketname, outputsocketname)
-
-        if 'Item' in self.outputs and self.outputs['Item'].links or \
-                'Other' in self.outputs and self.outputs['Other'].links:
-
-            if 'Data' in self.inputs and self.inputs['Data'].links:
-                data = SvGetSocketAnyType(self, self.inputs['Data'])
-
-                if 'Item' in self.outputs and self.outputs['Item'].links:
-                    out = self.count(data, self.level-1, self.item, True)
-                    SvSetSocketAnyType(self, 'Item', out)
-                if 'Other' in self.outputs and self.outputs['Other'].links:
-                    out = self.count(data, self.level-1, self.item, False)
-                    SvSetSocketAnyType(self, 'Other', out)
-
-    def count(self, data, level, item, itself):
-        if level:
-            out = []
-            for obj in data:
-                out.append(self.count(obj, level-1, item, itself))
-
-        elif type(data) == tuple:
-            if item > len(data)-1:
-                item = len(data)-1
-            if itself:
-                out = [data[item]]
-            else:
-                out = [data[:item]+data[item+1:]]
-        elif type(data) == list:
-            if item > len(data)-1:
-                item = len(data)-1
-            if itself:
-                out = [data[item]]
-            else:
-                data.pop(item)
-                out = [data]
-        else:
-            out = None
-        return out
-
-    def update_socket(self, context):
-        self.update()
 
 # ListItem2
 # Allows a list of items, with both negative and positive index and repeated values
@@ -127,7 +53,7 @@ class ListItem2Node(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         layout.prop(self, "level", text="level")
 
-    def init(self, context):
+    def sv_init(self, context):
         self.inputs.new('StringsSocket', "Data", "Data")
         self.inputs.new('StringsSocket', "Item", "Item").prop_name = 'item'
         self.outputs.new('StringsSocket', "Item", "Item")
@@ -139,6 +65,7 @@ class ListItem2Node(bpy.types.Node, SverchCustomTreeNode):
             outputsocketname = ['Item', 'Other']
             changable_sockets(self, inputsocketname, outputsocketname)
 
+    def process(self):
         if 'Item' in self.outputs and self.outputs['Item'].links or \
                 'Other' in self.outputs and self.outputs['Other'].links:
 
@@ -198,15 +125,9 @@ class ListItem2Node(bpy.types.Node, SverchCustomTreeNode):
         else:
             return f(data, items)
 
-    def update_socket(self, context):
-        self.update()
-
-
 def register():
-    bpy.utils.register_class(ListItemNode)
     bpy.utils.register_class(ListItem2Node)
 
 
 def unregister():
-    bpy.utils.unregister_class(ListItemNode)
     bpy.utils.unregister_class(ListItem2Node)

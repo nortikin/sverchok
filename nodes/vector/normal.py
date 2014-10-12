@@ -28,12 +28,12 @@ class VectorNormalNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Vector Normal'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    def init(self, context):
+    def sv_init(self, context):
         self.inputs.new('VerticesSocket', "Vertices", "Vertices")
         self.inputs.new('StringsSocket', "Polygons", "Polygons")
         self.outputs.new('VerticesSocket', "Normals", "Normals")
 
-    def update(self):
+    def process(self):
         # достаём два слота - вершины и полики
         if 'Centers' in self.outputs and self.outputs['Centers'].links or self.outputs['Normals'].links:
             if 'Polygons' in self.inputs and 'Vertices' in self.inputs and self.inputs['Polygons'].links and self.inputs['Vertices'].links:
@@ -57,9 +57,6 @@ class VectorNormalNode(bpy.types.Node, SverchCustomTreeNode):
 
                 if 'Normals' in self.outputs and self.outputs['Normals'].links:
                     SvSetSocketAnyType(self, 'Normals', normalsFORout)
-
-    def update_socket(self, context):
-        self.update()
 
 
 def register():

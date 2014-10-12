@@ -45,12 +45,12 @@ class BakeryNode(bpy.types.Node, SverchCustomTreeNode):
         row.prop(self, "activate", text="Show")
         pass
 
-    def init(self, context):
+    def sv_init(self, context):
         self.inputs.new('VerticesSocket', 'vertices', 'vertices')
         self.inputs.new('StringsSocket', 'edg_pol', 'edg_pol')
         self.inputs.new('MatrixSocket', 'matrix', 'matrix')
 
-    def update(self):
+    def process(self):
         # check if running during startup, cancel if True
         try:
             l = bpy.data.node_groups[self.id_data.name]

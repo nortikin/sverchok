@@ -145,11 +145,40 @@ class ScalarMathNode(bpy.types.Node, SverchCustomTreeNode):
         'ROUND-N':  ("x","i_y"),
         }
         
+    def change_inputs(self, context):
+
+        # inputs
+        nrInputs = 1
+        if self.items_ in self.constant:
+            nrInputs = 0
+        elif self.items_ in self.fx:
+            nrInputs = 1
+        elif self.items_ in self.fxy:
+            nrInputs = 2
+            # ugly hack to verify int property, should be improved.
+            if self.items_ =='ROUND-N':
+                if 'Y' in self.inputs:
+                    self.inputs['Y'].prop_name = 'i_y'
+
+        self.set_inputs(nrInputs)
+
+    def set_inputs(self, n):
+        if n == len(self.inputs):
+            return
+        if n < len(self.inputs):
+            while n < len(self.inputs):
+                self.inputs.remove(self.inputs[-1])
+        if n > len(self.inputs):
+            if 'X' not in self.inputs:
+                self.inputs.new('StringsSocket', "X")
+            if 'Y' not in self.inputs:
+                self.inputs.new('StringsSocket', "Y")
+            self.change_prop_type(None)        
         
     # items_ is a really bad name but changing it breaks old layouts 
     items_ = EnumProperty(name="Function", description="Function choice",
                           default="SINE", items=mode_items,
-                          update=updateNode)
+                          update=change_inputs)
     x = FloatProperty(default=1, name='x', update=updateNode)
     y = FloatProperty(default=1, name='y', update=updateNode)
     
@@ -184,7 +213,7 @@ class ScalarMathNode(bpy.types.Node, SverchCustomTreeNode):
             t = "To float" if self.prop_types[i] else "To int"
             row.prop(self, "prop_types", index=i, text=t, toggle=True)
             
-    def init(self, context):
+    def sv_init(self, context):
         self.inputs.new('StringsSocket', "X").prop_name = 'x'
         self.outputs.new('StringsSocket', "float")
 
@@ -200,30 +229,17 @@ class ScalarMathNode(bpy.types.Node, SverchCustomTreeNode):
             y_label = 'Y' if self.inputs[1].links else str(round(y, 3))
             label.extend((", ", y_label))
         return " ".join(label)
-        
-    def update(self):
 
-        # inputs
-        nrInputs = 1
-        if self.items_ in self.constant:
-            nrInputs = 0
-        elif self.items_ in self.fx:
-            nrInputs = 1
-        elif self.items_ in self.fxy:
-            nrInputs = 2
-            # ugly hack to verify int property, should be improved.
-            if self.items_ =='ROUND-N':
-                if 'Y' in self.inputs:
-                    self.inputs['Y'].prop_name = 'i_y'
 
-        self.set_inputs(nrInputs)
+    
+    def process(self):
         
         if 'X' in self.inputs:
             x = self.inputs['X'].sv_get(deepcopy=False)
             
         if 'Y' in self.inputs:
             y = self.inputs['Y'].sv_get(deepcopy=False)
-        
+        nrInputs = len(self.inputs)
         # outputs
         if 'float' in self.outputs and self.outputs['float'].links:
             result = []
@@ -234,19 +250,6 @@ class ScalarMathNode(bpy.types.Node, SverchCustomTreeNode):
             elif nrInputs == 2:
                 result = self.recurse_fxy(x, y, self.fxy[self.items_])
             SvSetSocketAnyType(self, 'float', result)
-
-    def set_inputs(self, n):
-        if n == len(self.inputs):
-            return
-        if n < len(self.inputs):
-            while n < len(self.inputs):
-                self.inputs.remove(self.inputs[-1])
-        if n > len(self.inputs):
-            if 'X' not in self.inputs:
-                self.inputs.new('StringsSocket', "X")
-            if 'Y' not in self.inputs:
-                self.inputs.new('StringsSocket', "Y")
-            self.change_prop_type(None)
 
     # apply f to all values recursively
     def recurse_fx(self, l, f):

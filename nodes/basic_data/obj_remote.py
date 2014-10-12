@@ -49,7 +49,7 @@ class SvObjRemoteNode(bpy.types.Node, SverchCustomTreeNode):
 
     show_string_box = BoolProperty()
 
-    def init(self, context):
+    def sv_init(self, context):
         self.inputs.new('VerticesSocket', 'location')
         self.inputs.new('VerticesSocket', 'scale')
         self.inputs.new('VerticesSocket', 'rotation')
@@ -62,7 +62,7 @@ class SvObjRemoteNode(bpy.types.Node, SverchCustomTreeNode):
         if self.show_string_box:
             col.prop(self, 'input_text', text='')
 
-    def update(self):
+    def process(self):
         if not self.activate:
             return
 

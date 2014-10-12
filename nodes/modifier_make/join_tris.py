@@ -56,7 +56,7 @@ class SvJoinTrianglesNode(bpy.types.Node, SverchCustomTreeNode):
         name='limit', description='not sure',
         update=updateNode)
 
-    def init(self, context):
+    def sv_init(self, context):
         self.inputs.new('VerticesSocket', 'Vertices', 'Vertices')
         self.inputs.new('StringsSocket', 'Polygons', 'Polygons')
 
@@ -68,20 +68,10 @@ class SvJoinTrianglesNode(bpy.types.Node, SverchCustomTreeNode):
         col.prop(self, 'limit', text='limit')
         pass
 
-    def update(self):
-
-        if not len(self.outputs) == 2:
-            return
-
-        if not (self.inputs['Vertices'].links and self.inputs['Polygons'].links):
-            return
-
-        if not self.outputs['Polygons'].links:
-            return
-
-        self.process()
 
     def process(self):
+        if not self.outputs['Polygons'].links:
+            return
 
         verts = Vector_generate(SvGetSocketAnyType(self, self.inputs['Vertices']))
         faces = self.inputs['Polygons'].sv_get()
@@ -104,8 +94,6 @@ class SvJoinTrianglesNode(bpy.types.Node, SverchCustomTreeNode):
 
         SvSetSocketAnyType(self, 'Polygons', polys_out)
 
-    def update_socket(self, context):
-        self.update()
 
 
 def register():

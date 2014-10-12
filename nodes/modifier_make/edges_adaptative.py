@@ -40,7 +40,7 @@ class SvAdaptiveEdgeNode(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         layout.prop(self, "mesh_join")
 
-    def init(self, context):
+    def sv_init(self, context):
         self.inputs.new('VerticesSocket', 'VersR', 'VersR')
         self.inputs.new('StringsSocket', 'EdgeR', 'EdgeR')
         self.inputs.new('VerticesSocket', 'VersD', 'VersD')
@@ -49,9 +49,7 @@ class SvAdaptiveEdgeNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('VerticesSocket', 'Vertices', 'Vertices')
         self.outputs.new('StringsSocket', 'Edges', 'Edges')
 
-    def update(self):
-        if not 'Edges' in self.outputs:
-            return
+    def process(self):
         if not all((s.links for s in self.inputs)):
             return
         if not any((s.links for s in self.outputs)):
@@ -108,9 +106,6 @@ class SvAdaptiveEdgeNode(bpy.types.Node, SverchCustomTreeNode):
 
         if 'Edges' in self.outputs and self.outputs['Edges'].links:
             SvSetSocketAnyType(self, 'Edges', edges_out)
-
-    def update_socket(self, context):
-        self.update()
 
 
 def register():

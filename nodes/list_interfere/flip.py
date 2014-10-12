@@ -38,7 +38,7 @@ class ListFlipNode(bpy.types.Node, SverchCustomTreeNode):
     newsock = BoolProperty(name='newsock',
                            default=False)
 
-    def init(self, context):
+    def sv_init(self, context):
         self.inputs.new('StringsSocket', "data", "data")
         self.outputs.new('StringsSocket', 'data', 'data')
 
@@ -75,8 +75,9 @@ class ListFlipNode(bpy.types.Node, SverchCustomTreeNode):
         inputsocketname = 'data'
         outputsocketname = ['data']
         changable_sockets(self, inputsocketname, outputsocketname)
-
-        if 'data' in self.outputs and self.outputs['data'].links:
+    
+    def process(self):
+        if self.inputs['data'].links and self.outputs['data'].links:
             outEval = SvGetSocketAnyType(self, self.inputs['data'])
             outCorr = dataCorrect(outEval)  # this is bullshit, as max 3 in levels
             levels = self.level-1

@@ -59,7 +59,7 @@ class svAxisInputNode(bpy.types.Node, SverchCustomTreeNode):
         default="Z",
         update=mode_change)
 
-    def init(self, context):
+    def sv_init(self, context):
         self.width = 100
         self.outputs.new('VerticesSocket', "Vectors", "Vectors")
 
@@ -67,7 +67,7 @@ class svAxisInputNode(bpy.types.Node, SverchCustomTreeNode):
         row = layout.row()
         row.prop(self, 'selected_axis', expand=True)
 
-    def update(self):
+    def process(self):
 
         if 'Vectors' in self.outputs and self.outputs['Vectors'].links:
 
@@ -78,10 +78,6 @@ class svAxisInputNode(bpy.types.Node, SverchCustomTreeNode):
             }.get(self.current_axis, None)
 
             SvSetSocketAnyType(self, 'Vectors', [[axial_vector]])
-
-    def update_socket(self, context):
-        self.update()
-
 
 def register():
     bpy.utils.register_class(svAxisInputNode)

@@ -71,7 +71,7 @@ class WifiInNode(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         layout.prop(self, "var_name", text="Var")
 
-    def init(self, context):
+    def sv_init(self, context):
         self.use_custom_color = True
         self.color = FAIL_COLOR
         ng = self.id_data
@@ -115,6 +115,9 @@ class WifiInNode(bpy.types.Node, SverchCustomTreeNode):
         multi_socket(self, min=1, breck=True)
         if any(s.links for s in self.inputs):
             self.color = READY_COLOR
+    
+    def process(self):
+        pass
 
 def register():
     bpy.utils.register_class(WifiInNode)

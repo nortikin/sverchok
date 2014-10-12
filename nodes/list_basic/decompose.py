@@ -47,7 +47,7 @@ class SvListDecomposeNode(bpy.types.Node, SverchCustomTreeNode):
         col = layout.column(align=True)
         col.prop(self, 'level')
 
-    def init(self, context):
+    def sv_init(self, context):
         # initial socket, is defines type of output
         self.inputs.new('StringsSocket', "data", "data")
         # adaptive multy socket
@@ -67,7 +67,7 @@ class SvListDecomposeNode(bpy.types.Node, SverchCustomTreeNode):
 
             # adaptive socket - from util(mask list node)
             # list to pack and change type of multysockets in output... maybe not so quick
-            outputsocketname = [name.name for name in self.outputs]
+            outputsocketname = [socket.name for socket in self.outputs]
             changable_sockets(self, 'data', outputsocketname)
             self.multi_socket_type = get_socket_type_full(self, 'data')
 

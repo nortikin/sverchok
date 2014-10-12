@@ -114,7 +114,7 @@ class SvMirrorNode(bpy.types.Node, SverchCustomTreeNode):
                           update=mode_change)
     current_mode = StringProperty(default="VERTEX")
 
-    def init(self, context):
+    def sv_init(self, context):
         self.inputs.new('VerticesSocket', "Vertices", "Vertices")
         self.inputs.new('VerticesSocket', "Vert A", "Vert A")
         self.outputs.new('VerticesSocket', "Vertices", "Vertices")
@@ -122,7 +122,7 @@ class SvMirrorNode(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         layout.prop(self, "mode", expand=True)
 
-    def update(self):
+    def process(self):
         # inputs
         if 'Vertices' in self.inputs and self.inputs['Vertices'].links:
             Vertices = SvGetSocketAnyType(self, self.inputs['Vertices'])

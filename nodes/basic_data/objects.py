@@ -110,7 +110,7 @@ class ObjectsNode(bpy.types.Node, SverchCustomTreeNode):
         default=True,
         update=updateNode)
 
-    def init(self, context):
+    def sv_init(self, context):
         self.outputs.new('VerticesSocket', "Vertices", "Vertices")
         self.outputs.new('StringsSocket', "Edges", "Edges")
         self.outputs.new('StringsSocket', "Polygons", "Polygons")
@@ -153,17 +153,16 @@ class ObjectsNode(bpy.types.Node, SverchCustomTreeNode):
         elif not self.vergroups and ('Vers_grouped' in self.outputs):
             self.outputs.remove(self.outputs['Vers_grouped'])
         
-        name = self.name + self.id_data.name
-        handle = handle_read(name)
-        #print (handle)
         if self.objects_local:
-            # bpy.ops.node.sverchok_object_insertion(node_name=self.name, tree_name=self.id_data.name, grup_name=self.groupname)
-            # not updating. need to understand mechanic of update
             self.use_custom_color = True
             self.color = (0, 0.5, 0.2)
         else:
             self.use_custom_color = True
             self.color = (0, 0.1, 0.05)
+            
+    def process(self):
+        name = self.name + self.id_data.name
+        handle = handle_read(name)
         #reload handle if possible
         if self.objects_local and not handle[0]:
             handle_write(name, literal_eval(self.objects_local))
@@ -230,9 +229,6 @@ class ObjectsNode(bpy.types.Node, SverchCustomTreeNode):
 
             if 'Matrixes' in self.outputs and self.outputs['Matrixes'].links:
                 SvSetSocketAnyType(self, 'Matrixes', mtrx_out)
-
-    def update_socket(self, context):
-        self.update()
 
 
 def register():

@@ -333,7 +333,7 @@ def sverchok_update(start_node=None, tree=None, animation_mode=False):
     """
     global update_cache
     global partial_update_cache
-
+    
     def do_update(node_list, nods):
         for nod_name in node_list:
             if nod_name in nods:
@@ -366,8 +366,10 @@ def sverchok_update(start_node=None, tree=None, animation_mode=False):
             if not update_list:
                 update_list = make_tree_from_nodes([start_node.name], tree)
                 partial_update_cache[tree.name][start_node.name] = update_list
-            nods = tree.nodes
-            do_update(update_list, nods)
+            nodes = tree.nodes
+            if any((n.bl_idname == "SvStopperNode" for n in nodes)):
+                continue
+            do_update(update_list, nodes)
             return
         else:
             build_update_list(tree)
@@ -381,10 +383,12 @@ def sverchok_update(start_node=None, tree=None, animation_mode=False):
     else:
         node_groups = bpy.data.node_groups.items()
 
-    # update all node trees
+    
     for name, ng in node_groups:
         if ng.bl_idname == 'SverchCustomTreeType':
             update_list = update_cache.get(name)
+            if any((n.bl_idname == "SvStopperNode" for n in ng.nodes)):
+                continue
             if not update_list:
                 build_update_list(ng)
                 update_list = update_cache.get(name)

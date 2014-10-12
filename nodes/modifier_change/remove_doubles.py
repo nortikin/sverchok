@@ -80,7 +80,7 @@ class SvRemoveDoublesNode(bpy.types.Node, SverchCustomTreeNode):
                              default=0.001, precision=3, min=0,
                              update=updateNode)
 
-    def init(self, context):
+    def sv_init(self, context):
         self.inputs.new('StringsSocket', 'Distance').prop_name = 'distance'
         self.inputs.new('VerticesSocket', 'Vertices', 'Vertices')
         self.inputs.new('StringsSocket', 'PolyEdge', 'PolyEdge')
@@ -94,7 +94,7 @@ class SvRemoveDoublesNode(bpy.types.Node, SverchCustomTreeNode):
         #layout.prop(self, 'distance', text="Distance")
         pass
 
-    def update(self):
+    def process(self):
         if not any([s.links for s in self.outputs]):
             return
 
@@ -135,10 +135,6 @@ class SvRemoveDoublesNode(bpy.types.Node, SverchCustomTreeNode):
 
             if 'Doubles' in self.outputs and self.outputs['Doubles'].links:
                 SvSetSocketAnyType(self, 'Doubles', d_out)
-
-    def update_socket(self, context):
-        self.update()
-
 
 def register():
     bpy.utils.register_class(SvRemoveDoublesNode)

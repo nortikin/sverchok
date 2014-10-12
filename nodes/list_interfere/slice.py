@@ -55,7 +55,7 @@ class ListSliceNode(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         layout.prop(self, "level", text="level")
 
-    def init(self, context):
+    def sv_init(self, context):
         self.inputs.new('StringsSocket', "Data")
         self.inputs.new('StringsSocket', "Start").prop_name = 'start'
         self.inputs.new('StringsSocket', "Stop").prop_name = 'stop'
@@ -67,7 +67,8 @@ class ListSliceNode(bpy.types.Node, SverchCustomTreeNode):
             inputsocketname = 'Data'
             outputsocketname = ['Slice', 'Other']
             changable_sockets(self, inputsocketname, outputsocketname)
-
+            
+    def process(self):
         if 'Slice' in self.outputs and self.outputs['Slice'].links or \
                 'Other' in self.outputs and self.outputs['Other'].links:
 
@@ -118,9 +119,6 @@ class ListSliceNode(bpy.types.Node, SverchCustomTreeNode):
             return [f(obj, next(start_iter), next(stop_iter)) for obj in data]
         else:  # Fail
             return None
-
-    def update_socket(self, context):
-        self.update()
 
 
 def register():

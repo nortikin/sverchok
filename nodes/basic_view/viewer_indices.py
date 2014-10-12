@@ -214,7 +214,7 @@ class IndexViewerNode(bpy.types.Node, SverchCustomTreeNode):
     numid_faces_col = make_color_prop("numid_faces", (1.0, .8, .8, 1.0))
     numid_verts_col = make_color_prop("numid_verts", (1, 1, 1, 1.0))
 
-    def init(self, context):
+    def sv_init(self, context):
         self.inputs.new('VerticesSocket', 'vertices', 'vertices')
         self.inputs.new('StringsSocket', 'edges', 'edges')
         self.inputs.new('StringsSocket', 'faces', 'faces')
@@ -317,10 +317,6 @@ class IndexViewerNode(bpy.types.Node, SverchCustomTreeNode):
         inputs = self.inputs
         n_id = node_id(self)
         IV.callback_disable(n_id)
-
-        # check if UI is populated.
-        if not ('text' in inputs):
-            return
 
         # end if tree status is set to not show
         if not self.id_data.sv_show:

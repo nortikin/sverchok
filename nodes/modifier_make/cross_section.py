@@ -197,7 +197,7 @@ class CrossSectionNode(bpy.types.Node, SverchCustomTreeNode):
                        default=True,
                        update=updateNode)
 
-    def init(self, context):
+    def sv_init(self, context):
         self.inputs.new('VerticesSocket', 'vertices', 'vertices')
         self.inputs.new('StringsSocket', 'edg_pol', 'edg_pol')
         self.inputs.new('MatrixSocket', 'matrix', 'matrix')
@@ -211,7 +211,7 @@ class CrossSectionNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "fill_check", text="Fill section")
         layout.prop(self, "tri", text="alt+F / F")
 
-    def update(self):
+    def process(self):
         if 'vertices' in self.inputs and self.inputs['vertices'].links \
            and self.inputs['edg_pol'].links \
            and self.inputs['cut_matrix'].links:
@@ -264,8 +264,6 @@ class CrossSectionNode(bpy.types.Node, SverchCustomTreeNode):
         #    self.outputs['vertices'].VerticesProperty = str([])
         #    self.outputs['edges'].StringsProperty = str([])
 
-    def update_socket(self, context):
-        self.update()
 
 
 def register():

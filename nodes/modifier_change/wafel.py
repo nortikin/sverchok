@@ -60,7 +60,7 @@ class SvWafelNode(bpy.types.Node, SverchCustomTreeNode):
     rounded = BoolProperty(name='rounded', description='making rounded edges',
                            default = False)
 
-    def init(self, context):
+    def sv_init(self, context):
         self.inputs.new('VerticesSocket', 'vecLine', 'vecLine')
         self.inputs.new('VerticesSocket', 'vecPlane', 'vecPlane')
         self.inputs.new('StringsSocket', 'edgPlane', 'edgPlane')
@@ -170,9 +170,7 @@ class SvWafelNode(bpy.types.Node, SverchCustomTreeNode):
                     return True
         return False
 
-    def update(self):
-        if not 'centers' in self.outputs:
-            return
+    def process(self):
         if 'vecLine' in self.inputs and 'vecPlane' in self.inputs \
                 and 'edgPlane' in self.inputs:
             print(self.name, 'is starting')

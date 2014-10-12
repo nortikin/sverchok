@@ -42,7 +42,7 @@ class ListFLNode(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         layout.prop(self, "level", text="level")
 
-    def init(self, context):
+    def sv_init(self, context):
         
         self.inputs.new('StringsSocket', "Data", "Data")
         self.outputs.new('StringsSocket', "Middl", "Middl")
@@ -55,7 +55,8 @@ class ListFLNode(bpy.types.Node, SverchCustomTreeNode):
             inputsocketname = 'Data'
             outputsocketname = ["Middl",'First', 'Last']
             changable_sockets(self, inputsocketname, outputsocketname)
-
+    
+    def process(self):
         if 'First' in self.outputs and self.outputs['First'].links or \
                 'Last' in self.outputs and self.outputs['Last'].links or \
                 'Middl' in self.outputs and self.outputs['Middl'].links:
@@ -93,9 +94,6 @@ class ListFLNode(bpy.types.Node, SverchCustomTreeNode):
             else:
                 out = [[0]]
         return out
-
-    def update_socket(self, context):
-        self.update()
 
 
 def register():

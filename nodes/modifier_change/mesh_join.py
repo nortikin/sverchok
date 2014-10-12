@@ -30,14 +30,14 @@ class SvMeshJoinNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Mesh Join'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    def init(self, context):
+    def sv_init(self, context):
         self.inputs.new('VerticesSocket', 'Vertices', 'Vertices')
         self.inputs.new('StringsSocket', 'PolyEdge', 'PolyEdge')
 
         self.outputs.new('VerticesSocket', 'Vertices', 'Vertices')
         self.outputs.new('StringsSocket', 'PolyEdge', 'PolyEdge')
 
-    def update(self):
+    def process(self):
 
         if 'Vertices' in self.inputs and self.inputs['Vertices'].links and \
            'PolyEdge' in self.inputs and self.inputs['PolyEdge'].links:

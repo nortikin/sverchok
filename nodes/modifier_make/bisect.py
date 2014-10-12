@@ -90,7 +90,7 @@ class SvBisectNode(bpy.types.Node, SverchCustomTreeNode):
                         default=False,
                         update=updateNode)
 
-    def init(self, context):
+    def sv_init(self, context):
         self.inputs.new('VerticesSocket', 'vertices', 'vertices')
         self.inputs.new('StringsSocket', 'edg_pol', 'edg_pol')
         self.inputs.new('MatrixSocket', 'cut_matrix', 'cut_matrix')
@@ -104,7 +104,7 @@ class SvBisectNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, 'outer', text="Clear Outer")
         layout.prop(self, 'fill', text="Fill cuts")
 
-    def update(self):
+    def process(self):
         if not ('vertices' in self.outputs and self.outputs['vertices'].links or
                 'edges' in self.outputs and self.outputs['edges'].links and
                 'polygons' in self.outputs and self.outputs['polygons'].links):
@@ -141,9 +141,6 @@ class SvBisectNode(bpy.types.Node, SverchCustomTreeNode):
 
             if 'polygons' in self.outputs and self.outputs['polygons'].links:
                 SvSetSocketAnyType(self, 'polygons', polys_out)
-
-    def update_socket(self, context):
-        self.update()
 
 
 def register():

@@ -28,23 +28,19 @@ class SvFrameInfoNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Frame Info'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    def init(self, context):
+    def sv_init(self, context):
         self.outputs.new('StringsSocket', "Current Frame", "Current Frame")
         self.outputs.new('StringsSocket', "Start Frame", "Start Frame")
         self.outputs.new('StringsSocket', "End Frame", "End Frame")
 
-    def update(self):
+    def process(self):
         # outputs
-        if 'Current Frame' in self.outputs and self.outputs['Current Frame'].links:
+        if self.outputs['Current Frame'].links:
             SvSetSocketAnyType(self, 'Current Frame', [[bpy.context.scene.frame_current]])
-        if 'Start Frame' in self.outputs and self.outputs['Start Frame'].links:
+        if self.outputs['Start Frame'].links:
             SvSetSocketAnyType(self, 'Start Frame', [[bpy.context.scene.frame_start]])
-        if 'End Frame' in self.outputs and self.outputs['End Frame'].links:
+        if self.outputs['End Frame'].links:
             SvSetSocketAnyType(self, 'End Frame', [[bpy.context.scene.frame_end]])
-
-    def update_socket(self, context):
-        self.update()
-
 
 def register():
     bpy.utils.register_class(SvFrameInfoNode)

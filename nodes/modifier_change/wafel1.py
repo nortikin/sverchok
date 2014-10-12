@@ -44,7 +44,7 @@ class SvWafelNode(bpy.types.Node, SverchCustomTreeNode):
     up_down = EnumProperty(name='up_down', items=[('UP','UP','UP'),('DOWN','DOWN','DOWN')],
                            description='up or down', default = 'UP')
 
-    def init(self, context):
+    def sv_init(self, context):
         self.inputs.new('VerticesSocket', 'vec', 'vec')
         self.inputs.new('StringsSocket', 'edg', 'edg')
         self.inputs.new('VerticesSocket', 'vecplan', 'vecplan')
@@ -123,7 +123,7 @@ class SvWafelNode(bpy.types.Node, SverchCustomTreeNode):
                     return True
         return False
 
-    def update(self):
+    def process(self):
         if 'vec' in self.inputs and 'edg' in self.inputs:
             print(self.name, 'is starting')
             if self.inputs['vec'].links and self.inputs['edg'].links:

@@ -39,14 +39,14 @@ class GenVectorsNode(bpy.types.Node, SverchCustomTreeNode):
                        default=0.0, precision=3,
                        update=updateNode)
 
-    def init(self, context):
+    def sv_init(self, context):
         self.inputs.new('StringsSocket', "X").prop_name = 'x_'
         self.inputs.new('StringsSocket', "Y").prop_name = 'y_'
         self.inputs.new('StringsSocket', "Z").prop_name = 'z_'
         self.width = 100
         self.outputs.new('VerticesSocket', "Vectors", "Vectors")
 
-    def update(self):
+    def process(self):
         # inputs
         if 'X' in self.inputs and self.inputs['X'].links and \
            type(self.inputs['X'].links[0].from_socket) == StringsSocket:
@@ -96,9 +96,6 @@ class GenVectorsNode(bpy.types.Node, SverchCustomTreeNode):
         if d > 0:
             l.extend([l[-1] for a in range(d)])
         return
-
-    def update_socket(self, context):
-        self.update()
 
 
 def register():

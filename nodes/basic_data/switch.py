@@ -54,7 +54,7 @@ class SvSwitchNode(bpy.types.Node, SverchCustomTreeNode):
     switch_count = IntProperty(name="count", min=1, 
                                max=10, default=1, update=change_count)
         
-    def init(self, context):
+    def sv_init(self, context):
         self.inputs.new("StringsSocket", "State").prop_name = 'switch_state'
         self.inputs.new("StringsSocket", "T 0")
         self.inputs.new("StringsSocket", "F 0")
@@ -76,6 +76,8 @@ class SvSwitchNode(bpy.types.Node, SverchCustomTreeNode):
                     self.outputs.new(other.bl_idname, name)
                     self.outputs.move(len(self.outputs)-1, i-1) 
                 count = i
+    
+    def process(self):
         state = self.inputs[0].sv_get()[0][0]
         if state:
             sockets = self.inputs[1:count + 1]

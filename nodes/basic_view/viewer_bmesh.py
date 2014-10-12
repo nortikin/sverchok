@@ -309,14 +309,6 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
     def update(self):
 
-        # startup safety net
-        try:
-            l = bpy.data.node_groups[self.id_data.name]
-        except Exception as e:
-            print(self.name, "cannot run during startup, press update.")
-            self.set_dormant_color()
-            return
-
         # explicit statement about which states are useful to process.
         if not self.activate:
             self.set_dormant_color()
@@ -326,7 +318,7 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
         if not ('matrix' in inputs) or not self.inputs['vertices'].links:
             self.set_dormant_color()
             return
-
+            
         self.color = (1, 0.3, 0)
     
     def process(self):

@@ -28,7 +28,7 @@ class PolygonBoomNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'PolygonBoom'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    def init(self, context):
+    def sv_init(self, context):
         self.inputs.new('VerticesSocket', "vertices", "vertices")
         self.inputs.new('StringsSocket', 'edg_pol', 'edg_pol')
         self.outputs.new('VerticesSocket', 'vertices', 'vertices')
@@ -37,7 +37,7 @@ class PolygonBoomNode(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         pass
 
-    def update(self):
+    def process(self):
         # inputs
         if 'vertices' in self.outputs and self.outputs['vertices'].links or \
                 'edg_pol' in self.outputs and self.outputs['edg_pol'].links:

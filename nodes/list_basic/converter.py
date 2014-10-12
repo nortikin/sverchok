@@ -28,7 +28,7 @@ class ConverterNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Converter'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    def init(self, context):
+    def sv_init(self, context):
         self.inputs.new('StringsSocket', "data")
         self.outputs.new('VerticesSocket', 'vertices')
         self.outputs.new('StringsSocket', 'data')
@@ -37,7 +37,7 @@ class ConverterNode(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         pass
 
-    def update(self):
+    def process(self):
         if "data" in self.inputs and self.inputs[0].links:            
             out = SvGetSocketAnyType(self, self.inputs[0], deepcopy=False)
             for s in self.outputs:

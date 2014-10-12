@@ -30,17 +30,14 @@ class SvSeparateMeshNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Separate Loose'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    def init(self, context):
+    def sv_init(self, context):
         self.inputs.new('VerticesSocket', 'Vertices')
         self.inputs.new('StringsSocket', 'Poly Egde')
 
         self.outputs.new('VerticesSocket', 'Vertices')
         self.outputs.new('StringsSocket', 'Poly Egde')
 
-    def update(self):
-        # needs to check that init finished.
-        if not 'Poly Egde' in self.outputs:
-            return
+    def process(self):
         # check that there is atleast one output connected
         if not any((s.links for s in self.outputs)):
             return

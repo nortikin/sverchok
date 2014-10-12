@@ -28,13 +28,13 @@ class VectorsOutNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Vectors out'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    def init(self, context):
+    def sv_init(self, context):
         self.inputs.new('VerticesSocket', "Vectors", "Vectors")
         self.outputs.new('StringsSocket', "X", "X")
         self.outputs.new('StringsSocket', "Y", "Y")
         self.outputs.new('StringsSocket', "Z", "Z")
 
-    def update(self):
+    def process(self):
         # inputs
         if 'Vectors' in self.inputs and self.inputs['Vectors'].links:
             xyz = SvGetSocketAnyType(self, self.inputs['Vectors'])
@@ -50,9 +50,6 @@ class VectorsOutNode(bpy.types.Node, SverchCustomTreeNode):
             for i, name in enumerate(['X', 'Y', 'Z']):
                 if self.outputs[name].links:
                     SvSetSocketAnyType(self, name, [X, Y, Z][i])
-
-    def update_socket(self, context):
-        self.update()
 
 
 def register():

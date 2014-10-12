@@ -63,7 +63,7 @@ class SvStethoscopeNode(bpy.types.Node, SverchCustomTreeNode):
     #node_name = EnumProperty(items=avail_nodes, name="Node")
     #socket_name = EnumProperty(items=avail_sockets, name="Sockets",update=updateNode)
 
-    def init(self, context):
+    def sv_init(self, context):
         self.inputs.new('StringsSocket', 'Data')
 
     # reset n_id on copy
@@ -79,7 +79,7 @@ class SvStethoscopeNode(bpy.types.Node, SverchCustomTreeNode):
         #layout.prop(self, "node_name")
         #layout.prop(self, "socket_name")
 
-    def update(self):
+    def process(self):
         inputs = self.inputs
         n_id = node_id(self)
 
@@ -123,9 +123,6 @@ class SvStethoscopeNode(bpy.types.Node, SverchCustomTreeNode):
             #         nvBGL.callback_enable(n_id, draw_data)
             #         self.color = READY_COLOR
 
-    def update_socket(self, context):
-        print("update socket {0}}".format(self.name))
-        self.update()
 
     def free(self):
         nvBGL.callback_disable(node_id(self))

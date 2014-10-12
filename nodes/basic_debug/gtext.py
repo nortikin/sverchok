@@ -172,9 +172,6 @@ class GTextNode(bpy.types.Node, SverchCustomTreeNode):
                 layout.prop(gp_layer, 'line_width')
                 layout.prop(self, 'text_scale')
 
-    def init(self, context):
-        pass
-
     def update(self):
         if self.text != 'your text here':
             self.use_custom_color = True
