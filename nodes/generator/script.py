@@ -175,13 +175,11 @@ class SvScriptNode(bpy.types.Node, SverchCustomTreeNode):
     files_popup = EnumProperty(
         items=avail_templates,
         name='template_files',
-        description='choose file to load as template',
-        update=updateNode)
+        description='choose file to load as template')
 
     user_name = EnumProperty(
         name='users',
-        items=avail_users,
-        update=updateNode)
+        items=avail_users)
 
     int_list = IntVectorProperty(
         name='int_list', description="Integer list",
@@ -443,8 +441,10 @@ class SvScriptNode(bpy.types.Node, SverchCustomTreeNode):
             io_dict[s.name] = r
         return io_dict
 
-    def update(self):
-        if not self.inputs:
+    def process(self):
+        inputs = self.inputs
+
+        if not inputs:
             return
 
         if not hash(self) in self.node_dict:
@@ -456,10 +456,6 @@ class SvScriptNode(bpy.types.Node, SverchCustomTreeNode):
         if not self.get_node_function():
             return
 
-        self.process()
-
-    def process(self):
-        inputs = self.inputs
 
         node_function = self.get_node_function()
         defaults = node_function.__defaults__
