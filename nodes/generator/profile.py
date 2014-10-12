@@ -487,7 +487,7 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
         row = layout.row(align=True)
         row.prop(self, "extended_parsing", text="extended parsing")
 
-    def init(self, context):
+    def sv_init(self, context):
         self.inputs.new('StringsSocket', "a", "a")
         self.inputs.new('StringsSocket', "b", "b")
 
@@ -531,10 +531,6 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
         self.adjust_inputs()
 
         # 0 == verts, this is a minimum requirement.
-        if not self.outputs[0].links:
-            return
-
-        self.process()
 
     def homogenize_input(self, segments, longest):
         '''
@@ -550,6 +546,7 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
         - if socket has no links, then return fallback value
         - s_name can be an index instead of socket name
         '''
+        
         inputs = self.inputs
         if inputs[s_name].links:
             socket_in = SvGetSocketAnyType(self, inputs[s_name])
@@ -584,6 +581,9 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
         return segments, longest
 
     def process(self):
+        if not self.outputs[0].links:
+            return
+
         segments, longest = self.get_input()
 
         if longest < 1:

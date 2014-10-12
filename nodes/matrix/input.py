@@ -52,13 +52,11 @@ class SvMatrixValueIn(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons_ext(self, context, layout):
         pass
 
-    def update(self):
+    def process(self):
         if 'Matrix' in self.outputs and self.outputs['Matrix'].links:
             m_out = Matrix_listing([self.matrix])
             SvSetSocketAnyType(self, 'Matrix', m_out)
 
-    def update_socket(self, context):
-        self.update()
 
 
 def register():

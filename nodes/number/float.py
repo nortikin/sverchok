@@ -72,7 +72,7 @@ class FloatNode(bpy.types.Node, SverchCustomTreeNode):
     to3d = BoolProperty(name='to3d', description='show in 3d panel',
                        default=True)
 
-    def init(self, context):
+    def sv_init(self, context):
         self.inputs.new('StringsSocket', "Float").prop_name = 'float_'
         self.outputs.new('StringsSocket', "Float")
 
@@ -89,7 +89,7 @@ class FloatNode(bpy.types.Node, SverchCustomTreeNode):
         else:
             return self.bl_label
             
-    def update(self):
+    def process(self):
         # inputs
         if 'Float' in self.inputs and self.inputs['Float'].links:
             tmp = SvGetSocketAnyType(self, self.inputs['Float'])
@@ -99,10 +99,6 @@ class FloatNode(bpy.types.Node, SverchCustomTreeNode):
         # outputs
         if 'Float' in self.outputs and self.outputs['Float'].links:
             SvSetSocketAnyType(self, 'Float', [[Float]])
-
-    def update_socket(self, context):
-        self.update()
-
 
 def register():
     bpy.utils.register_class(FloatNode)

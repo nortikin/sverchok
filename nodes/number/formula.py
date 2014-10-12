@@ -39,7 +39,7 @@ class FormulaNode(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         layout.prop(self, "formula", text="formula")
 
-    def init(self, context):
+    def sv_init(self, context):
         self.inputs.new('StringsSocket', "X", "X")
         self.inputs.new('StringsSocket', "n[.]", "n[.]")
         self.outputs.new('StringsSocket', "Result", "Result")

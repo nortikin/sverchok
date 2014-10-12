@@ -157,7 +157,7 @@ class ViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
     color_view = SvColors.color
 
-    def init(self, context):
+    def sv_init(self, context):
         self.inputs.new('VerticesSocket', 'vertices', 'vertices')
         self.inputs.new('StringsSocket', 'edg_pol', 'edg_pol')
         self.inputs.new('MatrixSocket', 'matrix', 'matrix')
@@ -187,7 +187,7 @@ class ViewerNode(bpy.types.Node, SverchCustomTreeNode):
     def copy(self, node):
         self.n_id = ''
 
-    def update(self):
+    def process(self):
         global cache_viewer_baker
         # node id, used as ref
         n_id = node_id(self)

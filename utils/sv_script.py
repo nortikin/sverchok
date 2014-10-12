@@ -124,7 +124,6 @@ class SvScriptFunction(SvScript, metaclass=abc.ABCMeta):
         return 
         
     def process(self):
-        def inner(
         
         inputs = self.node.inputs
         outputs = self.node.outputs
@@ -136,7 +135,7 @@ class SvScriptFunction(SvScript, metaclass=abc.ABCMeta):
         diff = [d-wd for d,wd in zip(depth, work_depth)]
         if any(diff):
             if any((x < 0 for x in diff)):
-                print("not enough depth"):
+                print("not enough depth")
             else:
                 def wrap(data, n):
                     if n > 0:
@@ -144,7 +143,7 @@ class SvScriptFunction(SvScript, metaclass=abc.ABCMeta):
                     else:
                         return data
                         
-                for i range(len(data)):
+                for i in range(len(data)):
                     if diff[i] > 0:
                         data[i] = wrap(data[i], diff[i])
                 

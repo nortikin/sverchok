@@ -28,11 +28,11 @@ class Float2IntNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Float2int'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    def init(self, context):
+    def sv_init(self, context):
         self.inputs.new('StringsSocket', "float", "float")
         self.outputs.new('StringsSocket', "int", "int")
 
-    def update(self):
+    def process(self):
         # inputs
         if 'float' in self.inputs and self.inputs['float'].links and \
            type(self.inputs['float'].links[0].from_socket) == StringsSocket:

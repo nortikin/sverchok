@@ -49,7 +49,7 @@ class MatrixShearNode(bpy.types.Node, SverchCustomTreeNode):
                           default="XY", items=mode_items,
                           update=updateNode)
 
-    def init(self, context):
+    def sv_init(self, context):
         self.inputs.new('StringsSocket', "Factor1").prop_name = 'factor1_'
         self.inputs.new('StringsSocket', "Factor2").prop_name = 'factor2_'
         self.outputs.new('MatrixSocket', "Matrix", "Matrix")
@@ -57,7 +57,7 @@ class MatrixShearNode(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         layout.prop(self, "plane_", "Shear plane:", expand=True)
 
-    def update(self):
+    def process(self):
         # inputs
         factor1 = []
         factor2 = []

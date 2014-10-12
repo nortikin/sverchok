@@ -270,7 +270,7 @@ def do_update_heat_map(node_list, nodes):
     for name in node_list:
         if name in nodes:
             start = time.perf_counter()
-            nodes[name].update()
+            nodes[name].process()
             delta = time.perf_counter()-start
             total_test += delta
             if data_structure.DEBUG_MODE:
@@ -312,7 +312,7 @@ def do_update_debug(node_list, nods):
             delta = None
             #try:
             start = time.perf_counter()
-            nods[nod_name].update()
+            nods[nod_name].process()
             delta = time.perf_counter()-start
             #except Exception as e:
             #    nods[nod_name].color=(.9,0,0)
@@ -337,7 +337,7 @@ def sverchok_update(start_node=None, tree=None, animation_mode=False):
     def do_update(node_list, nods):
         for nod_name in node_list:
             if nod_name in nods:
-                nods[nod_name].update()
+                nods[nod_name].process()
 
     # first update event after a reload, apply sverchok startup
     if data_structure.RELOAD_EVENT:

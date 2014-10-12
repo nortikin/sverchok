@@ -56,7 +56,7 @@ class SvMapRangeNode(bpy.types.Node, SverchCustomTreeNode):
 
     clamp = BoolProperty(default=True, name='Clamp', update=updateNode)
 
-    def init(self, context):
+    def sv_init(self, context):
         self.inputs.new('StringsSocket', "Value").prop_name = 'value'
         self.inputs.new('StringsSocket', "Old Min").prop_name = 'old_min'
         self.inputs.new('StringsSocket', "Old Max").prop_name = 'old_max'
@@ -81,7 +81,7 @@ class SvMapRangeNode(bpy.types.Node, SverchCustomTreeNode):
         else:
             return [f(x) for x in x_list]
 
-    def update(self):
+    def process(self):
         inputs = self.inputs
         outputs = self.outputs
 

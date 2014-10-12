@@ -53,7 +53,7 @@ class Formula2Node(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         layout.prop(self, "formula", text="")
 
-    def init(self, context):
+    def sv_init(self, context):
         self.inputs.new('StringsSocket', "X", "X")
         self.inputs.new('StringsSocket', "n[0]", "n[0]")
         self.outputs.new('StringsSocket', "Result", "Result")
@@ -62,14 +62,19 @@ class Formula2Node(bpy.types.Node, SverchCustomTreeNode):
         # inputs
         multi_socket(self, min=2, start=-1, breck=True)
 
-        if 'X' in self.inputs and len(self.inputs['X'].links) > 0:
+        if 'X' in self.inputs and self.inputs['X'].links:
             # адаптивный сокет
             inputsocketname = 'X'
             outputsocketname = ['Result']
             changable_sockets(self, inputsocketname, outputsocketname)
+            
+        
+    def process(self):
+        if self.inputs['X'].links:
             vecs = SvGetSocketAnyType(self, self.inputs['X'])
         else:
             vecs = [[0.0]]
+
 
         # outputs
         if 'Result' in self.outputs and len(self.outputs['Result'].links) > 0:

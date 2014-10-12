@@ -201,7 +201,8 @@ class SverchCustomTree(NodeTree):
             l = bpy.data.node_groups[self.id_data.name]
         except:
             return
-
+        if any((not(n.sv_state) for n in self.nodes if hasattr(n, "sv_state"))):
+            return
         build_update_list(tree=self)
         sverchok_update(tree=self)
 
@@ -218,7 +219,13 @@ class SverchCustomTreeNode:
     def poll(cls, ntree):
         return ntree.bl_idname == 'SverchCustomTreeType'
     #def draw_buttons(self, context, layout):
-    #    layout.label('sverchok')
+    #    layout.label('sverchok')    
+    sv_state = IntProperty(default=0)
+    
+    def init(self, context):
+        if hasattr(self, "sv_init"):
+            self.sv_init(context)
+        self.sv_state = 1
 
 class SverchNodeCategory(NodeCategory):
     @classmethod

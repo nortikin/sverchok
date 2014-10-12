@@ -31,12 +31,12 @@ class MatrixApplyNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Apply matrix for vectors'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    def init(self, context):
+    def sv_init(self, context):
         self.inputs.new('VerticesSocket', "Vectors", "Vectors")
         self.inputs.new('MatrixSocket', "Matrixes", "Matrixes")
         self.outputs.new('VerticesSocket', "Vectors", "Vectors")
 
-    def update(self):
+    def process(self):
         # inputs
         if 'Vectors' in self.outputs and self.outputs['Vectors'].links:
             if not ('Vectors' in self.inputs and self.inputs['Vectors'].links):
@@ -73,8 +73,6 @@ class MatrixApplyNode(bpy.types.Node, SverchCustomTreeNode):
             out.append(out_)
         return out
 
-    def update_socket(self, context):
-        updateNode(self, context)
 
 
 def register():

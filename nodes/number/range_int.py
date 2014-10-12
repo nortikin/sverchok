@@ -101,7 +101,7 @@ class GenListRangeInt(bpy.types.Node, SverchCustomTreeNode):
 
     mode = EnumProperty(items=modes, default='LAZYRANGE', update=mode_change)
 
-    def init(self, context):
+    def sv_init(self, context):
         self.inputs.new('StringsSocket', "Start").prop_name = 'start_'
         self.inputs.new('StringsSocket', "Step").prop_name = 'step_'
         self.inputs.new('StringsSocket', "Stop").prop_name = 'stop_'
@@ -114,13 +114,9 @@ class GenListRangeInt(bpy.types.Node, SverchCustomTreeNode):
     func_dict = {'LAZYRANGE': intRange,
                  'COUNTRANGE': countRange}
 
-    def update(self):
+    def process(self):
         inputs = self.inputs
         outputs = self.outputs
-
-        # outputs, end early.
-        if 'Range' not in outputs or not outputs['Range'].links:
-            return
 
         param = [inputs[i].sv_get()[0] for i in range(3)]
         f = self.func_dict[self.mode]

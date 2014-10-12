@@ -211,7 +211,7 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
         update=updateNode,
         description="This auto sets all faces to smooth shade")
 
-    def init(self, context):
+    def sv_init(self, context):
         self.use_custom_color = True
         self.inputs.new('VerticesSocket', 'vertices', 'vertices')
         self.inputs.new('StringsSocket', 'edges', 'edges')
@@ -328,8 +328,7 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
             return
 
         self.color = (1, 0.3, 0)
-        self.process()
-
+    
     def process(self):
         mverts, *mrest = self.get_geometry_from_sockets()
 

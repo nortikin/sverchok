@@ -39,7 +39,7 @@ class GenSeriesNode(bpy.types.Node, SverchCustomTreeNode):
                           default=1,
                           options={'ANIMATABLE'}, update=updateNode)
 
-    def init(self, context):
+    def sv_init(self, context):
         self.inputs.new('StringsSocket', "Start", "Start")
         self.inputs.new('StringsSocket', "Stop", "Stop")
         self.inputs.new('StringsSocket', "Step", "Step")
@@ -50,7 +50,7 @@ class GenSeriesNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "stop_", text="stop")
         layout.prop(self, "step_", text="step")
 
-    def update(self):
+    def process(self):
         # inputs
         if 'Start' in self.inputs and self.inputs['Start'].links:
             tmp = SvGetSocketAnyType(self, self.inputs['Start'])
@@ -85,10 +85,6 @@ class GenSeriesNode(bpy.types.Node, SverchCustomTreeNode):
         while start < stop:
             yield start
             start += step
-
-    def update_socket(self, context):
-        self.update()
-
 
 def register():
     bpy.utils.register_class(GenSeriesNode)

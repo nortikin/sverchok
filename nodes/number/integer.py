@@ -76,11 +76,11 @@ class IntegerNode(bpy.types.Node, SverchCustomTreeNode):
         row = layout.row(align=True)
         row.prop(self, 'to3d')
 
-    def init(self, context):
+    def sv_init(self, context):
         self.inputs.new('StringsSocket', "Integer", "Integer").prop_name = 'int_'
         self.outputs.new('StringsSocket', "Integer", "Integer")
 
-    def update(self):
+    def process(self):
         # inputs
         if 'Integer' in self.inputs and self.inputs['Integer'].links:
             tmp = SvGetSocketAnyType(self, self.inputs['Integer'])
@@ -91,10 +91,6 @@ class IntegerNode(bpy.types.Node, SverchCustomTreeNode):
         # outputs
         if 'Integer' in self.outputs and self.outputs['Integer'].links:
             SvSetSocketAnyType(self, 'Integer', [[Integer]])
-
-    def update_socket(self, context):
-        self.update()
-
 
 def register():
     bpy.utils.register_class(IntegerNode)

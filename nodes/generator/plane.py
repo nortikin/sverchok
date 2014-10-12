@@ -104,7 +104,7 @@ class PlaneNode(bpy.types.Node, SverchCustomTreeNode):
                             default=False,
                             update=updateNode)
 
-    def init(self, context):
+    def sv_init(self, context):
         self.inputs.new('StringsSocket', "Nº Vertices X").prop_name = 'int_X'
         self.inputs.new('StringsSocket', "Nº Vertices Y").prop_name = 'int_Y'
         self.inputs.new('StringsSocket', "Step X").prop_name = 'step_X'
@@ -117,7 +117,7 @@ class PlaneNode(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         layout.prop(self, "Separate", text="Separate")
 
-    def update(self):
+    def process(self):
         inputs = self.inputs
         outputs = self.outputs
 

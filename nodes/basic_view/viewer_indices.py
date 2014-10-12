@@ -313,7 +313,7 @@ class IndexViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
         layout.prop(self, 'bakebuttonshow', text='show bake UI')
 
-    def update(self):
+    def process(self):
         inputs = self.inputs
         n_id = node_id(self)
         IV.callback_disable(n_id)
@@ -329,12 +329,12 @@ class IndexViewerNode(bpy.types.Node, SverchCustomTreeNode):
         self.use_custom_color = True
 
         if self.activate and inputs['vertices'].links:
-            self.process(n_id, IV)
+            self.process2(n_id, IV)
             self.color = READY_COLOR
         else:
             self.color = FAIL_COLOR
 
-    def process(self, n_id, IV):
+    def process2(self, n_id, IV):
         inputs = self.inputs
         iv_links = inputs['vertices'].links
         im_links = inputs['matrix'].links
@@ -376,9 +376,6 @@ class IndexViewerNode(bpy.types.Node, SverchCustomTreeNode):
         IV.callback_enable(
             n_id, draw_verts, draw_edges, draw_faces,
             draw_matrix, bg, settings.copy(), text)
-
-    def update_socket(self, context):
-        self.update()
 
     def free(self):
         IV.callback_disable(node_id(self))

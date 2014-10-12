@@ -38,7 +38,7 @@ class RandomNode(bpy.types.Node, SverchCustomTreeNode):
                          default=0,
                          options={'ANIMATABLE'}, update=updateNode)
 
-    def init(self, context):
+    def sv_init(self, context):
         self.inputs.new('StringsSocket', "Count").prop_name = 'count_inner'
         self.inputs.new('StringsSocket', "Seed").prop_name = 'seed'
 
@@ -49,7 +49,7 @@ class RandomNode(bpy.types.Node, SverchCustomTreeNode):
         #layout.prop(self, "count_inner", text="Count")
         #layout.prop(self, "seed", text="Seed")
 
-    def update(self):
+    def process(self):
         if 'Random' not in self.outputs:
             return
         # inputs
@@ -74,9 +74,6 @@ class RandomNode(bpy.types.Node, SverchCustomTreeNode):
                     Random.append([random.random() for i in range(int(c))])
 
             SvSetSocketAnyType(self, 'Random', Random)
-
-    def update_socket(self, context):
-        self.update()
 
 
 def register():

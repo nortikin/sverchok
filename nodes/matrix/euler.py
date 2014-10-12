@@ -62,7 +62,7 @@ class SvMatrixEulerNode(bpy.types.Node, SverchCustomTreeNode):
                           default="XYZ", items=orders,
                           update=change_prop)
 
-    def init(self, context):
+    def sv_init(self, context):
         self.inputs.new('StringsSocket', "pos0").prop_name = 'X'
         self.inputs.new('StringsSocket', "pos1").prop_name = 'Y'
         self.inputs.new('StringsSocket', "pos1").prop_name = 'Z'
@@ -71,7 +71,7 @@ class SvMatrixEulerNode(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         layout.prop(self, "order", text="Order:")
 
-    def update(self):
+    def process(self):
         if not 'Matrix' in self.outputs:
             return
         if not self.outputs['Matrix'].links:

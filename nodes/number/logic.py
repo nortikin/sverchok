@@ -39,7 +39,42 @@ class SvLogicNode(bpy.types.Node, SverchCustomTreeNode):
 # maybe this should be distilled to most common with the others available via Formula2 Node
 # And some constants etc.
 # Keep 4, columns number unchanged and only add new with unique number
+   
     
+    def change_type(self, context):
+        nrInputs = 1
+        if self.items_ in self.constant:
+            nrInputs = 0
+        elif self.items_ in self.fx:
+            nrInputs = 1
+        elif self.items_ in self.fxy or self.items_ in self.fxy2:
+            nrInputs = 2
+
+        self.set_inputs(nrInputs)
+        
+        if self.items_ in self.fxy2:
+            self.inputs[0].prop_name = 'i_x'
+            self.inputs[1].prop_name = 'i_y'
+        elif self.items_ in self.fxy:
+            self.inputs[0].prop_name = 'x'
+            self.inputs[1].prop_name = 'y'
+        elif self.items_ in self.fx:
+            self.inputs[0].prop_name = 'x'
+        
+    def set_inputs(self, n):
+        if n == len(self.inputs):
+            return
+        if n < len(self.inputs):
+            while n < len(self.inputs):
+                self.inputs.remove(self.inputs[-1])
+        if n > len(self.inputs):
+            if 'X' not in self.inputs:
+                self.inputs.new('StringsSocket', "X")
+            if 'Y' not in self.inputs:
+                self.inputs.new('StringsSocket', "Y")
+            self.change_prop_type(None)
+
+        
     mode_items = [
         ("AND",             "And",          "", 1),
         ("OR",              "Or",           "", 2),
@@ -94,7 +129,7 @@ class SvLogicNode(bpy.types.Node, SverchCustomTreeNode):
     # items_ is a really bad name but changing it breaks old layouts 
     items_ = EnumProperty(name="Logic Gate", description="Logic Gate choice",
                           default="AND", items=mode_items,
-                          update=updateNode)
+                          update=change_type)
     x = IntProperty(default=1, name='x', max=1, min=0, update=updateNode)
     y = IntProperty(default=1, name='y', max=1, min=0, update=updateNode)
 
@@ -127,7 +162,7 @@ class SvLogicNode(bpy.types.Node, SverchCustomTreeNode):
             t = "To int" if self.prop_types[i] else "To float"
             row.prop(self, "prop_types", index=i, text=t, toggle=True)
 
-    def init(self, context):
+    def sv_init(self, context):
         self.inputs.new('StringsSocket', "X").prop_name = 'x'
         self.outputs.new('StringsSocket', "Gate")
         
@@ -145,26 +180,9 @@ class SvLogicNode(bpy.types.Node, SverchCustomTreeNode):
             label.extend((", ", y_label))
         return " ".join(label)
   
-    def update(self):
+        
+    def process(self):
         # inputs
-        nrInputs = 1
-        if self.items_ in self.constant:
-            nrInputs = 0
-        elif self.items_ in self.fx:
-            nrInputs = 1
-        elif self.items_ in self.fxy or self.items_ in self.fxy2:
-            nrInputs = 2
-
-        self.set_inputs(nrInputs)
-
-        if self.items_ in self.fxy2:
-            self.inputs[0].prop_name = 'i_x'
-            self.inputs[1].prop_name = 'i_y'
-        elif self.items_ in self.fxy:
-            self.inputs[0].prop_name = 'x'
-            self.inputs[1].prop_name = 'y'
-        elif self.items_ in self.fx:
-            self.inputs[0].prop_name = 'x'
 
         if 'X' in self.inputs:
             x = self.inputs['X'].sv_get(deepcopy=False)
@@ -185,19 +203,6 @@ class SvLogicNode(bpy.types.Node, SverchCustomTreeNode):
                 out = self.recurse_fxy(x, y, self.fxy2[self.items_])
 
             SvSetSocketAnyType(self, 'Gate', out)
-
-    def set_inputs(self, n):
-        if n == len(self.inputs):
-            return
-        if n < len(self.inputs):
-            while n < len(self.inputs):
-                self.inputs.remove(self.inputs[-1])
-        if n > len(self.inputs):
-            if 'X' not in self.inputs:
-                self.inputs.new('StringsSocket', "X")
-            if 'Y' not in self.inputs:
-                self.inputs.new('StringsSocket', "Y")
-            self.change_prop_type(None)
 
     # apply f to all values recursively
     def recurse_fx(self, l, f):

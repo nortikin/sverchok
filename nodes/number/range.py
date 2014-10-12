@@ -39,7 +39,7 @@ class GenRangeNode(bpy.types.Node, SverchCustomTreeNode):
                              default=10, min=2,
                              options={'ANIMATABLE'}, update=updateNode)
 
-    def init(self, context):
+    def sv_init(self, context):
         self.inputs.new('StringsSocket', "Start", "Start")
         self.inputs.new('StringsSocket', "Stop", "Stop")
         self.inputs.new('StringsSocket', "Divisions", "Divisons")

@@ -89,7 +89,7 @@ class ViewerNode_text(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Viewer text'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    def init(self, context):
+    def sv_init(self, context):
         self.use_custom_color = True
         self.color = (0.05, 0.05, 0.1)
         self.inputs.new('VerticesSocket', 'vertices', 'vertices')
@@ -101,7 +101,7 @@ class ViewerNode_text(bpy.types.Node, SverchCustomTreeNode):
         row.scale_y = 4.0
         row.operator('node.sverchok_viewer_button', text='V I E W').nodename = self.name
 
-    def update(self):
+    def process(self):
         # vertices socket
 
         global cache_viewer_slot1
@@ -174,9 +174,6 @@ class ViewerNode_text(bpy.types.Node, SverchCustomTreeNode):
             else:
                 self.use_custom_color = True
                 self.color = (0.05, 0.05, 0.1)
-
-    def update_socket(self, context):
-        self.update()
 
     def edgDef(self, l):
         t = '\n\ndata: \n'

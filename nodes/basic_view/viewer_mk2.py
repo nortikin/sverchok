@@ -148,7 +148,7 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Viewer Draw2'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    n_id = StringProperty(default='', options={'SKIP_SAVE'})
+    n_id = StringProperty(default='')
 
     activate = BoolProperty(
         name='Show', description='Activate',
@@ -217,7 +217,7 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
         default=False,
         update=updateNode)
 
-    def init(self, context):
+    def sv_init(self, context):
         self.inputs.new('VerticesSocket', 'vertices', 'vertices')
         self.inputs.new('StringsSocket', 'edg_pol', 'edg_pol')
         self.inputs.new('MatrixSocket', 'matrix', 'matrix')
@@ -361,8 +361,6 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
             'timings': self.callback_timings
             }
 
-    def update_socket(self, context):
-        self.update()
 
     def free(self):
         global cache_viewer_baker

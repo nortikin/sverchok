@@ -45,13 +45,13 @@ class MatrixInterpolationNode(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         pass
 
-    def init(self, context):
+    def sv_init(self, context):
         self.inputs.new('StringsSocket', "Factor", "Factor").prop_name = 'factor_'
         self.inputs.new('MatrixSocket', "A", "A")
         self.inputs.new('MatrixSocket', "B", "B")
         self.outputs.new('MatrixSocket', "C", "C")
 
-    def update(self):
+    def process(self):
         # inputs
         A = []
         B = []
