@@ -323,8 +323,7 @@ def do_update_debug(node_list, nods):
         except ReferenceError:
             print("Cache miss in node set, abandoning")
             break
-        except Exception:
-            except Exception as e:
+        except Exception as e:
             nods[nod_name].color=(.9,0,0)
             nods[nod_name].use_custom_color=True
             print("Node {0} had exception {1}".format(nod_name,e))
@@ -362,6 +361,7 @@ def sverchok_update(start_node=None, tree=None, animation_mode=False):
     # called from updateNode
     if start_node:
         tree = start_node.id_data
+
         if tree.name in update_cache and update_cache[tree.name]:
             update_list = None
             p_u_c = partial_update_cache.get(tree.name)
@@ -371,8 +371,10 @@ def sverchok_update(start_node=None, tree=None, animation_mode=False):
                 update_list = make_tree_from_nodes([start_node.name], tree)
                 partial_update_cache[tree.name][start_node.name] = update_list
             nodes = tree.nodes
+            if not tree.sv_process:
+                return
             if any((n.bl_idname == "SvStopperNode" for n in nodes)):
-                continue
+                return
             do_update(update_list, nodes)
             return
         else:

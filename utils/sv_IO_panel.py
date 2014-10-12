@@ -312,8 +312,9 @@ def import_tree(ng, fullpath):
         framed_nodes = nodes_json['framed_nodes']
         for node_name, parent in framed_nodes.items():
             ng.nodes[finalize(node_name)].parent = ng.nodes[finalize(parent)]
-        for n in nodes if n.bl_idname == "SvStopperNode":
-            nodes.remove(n)
+        for n in nodes:
+            if n.bl_idname == "SvStopperNode":
+                nodes.remove(n)
         bpy.ops.node.sverchok_update_current(node_group=ng.name)
         
         # bpy.ops.node.select_all(action='DESELECT')
