@@ -38,7 +38,7 @@ class SvMatrixValueIn(bpy.types.Node, SverchCustomTreeNode):
                                  default=id_matrix, subtype='MATRIX',
                                  size=16, precision=3, update=updateNode)
 
-    def init(self, context):
+    def sv_init(self, context):
         self.outputs.new('MatrixSocket', "Matrix", "Matrix")
         self.width = 300
 

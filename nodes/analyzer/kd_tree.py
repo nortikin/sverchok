@@ -113,7 +113,7 @@ class SvKDTreeNode(bpy.types.Node, SverchCustomTreeNode):
         layout.label("Search mode:")
         layout.prop(self, "mode", expand=True)
 
-    def init(self, context):
+    def sv_init(self, context):
         self.inputs.new('VerticesSocket', 'Verts', 'Verts')
         self.inputs.new('VerticesSocket', 'Check Verts', 'Check Verts')
 
@@ -123,7 +123,7 @@ class SvKDTreeNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('StringsSocket', pIdxs, pIdxs)
         self.outputs.new('StringsSocket', pDists, pDists)
 
-    def update(self):
+    def process(self):
         inputs = self.inputs
         outputs = self.outputs
 

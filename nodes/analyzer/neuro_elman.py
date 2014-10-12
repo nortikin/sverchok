@@ -205,7 +205,7 @@ class SvNeuroElman1LNode(bpy.types.Node, SverchCustomTreeNode):
     
     
 
-    def init(self, context):
+    def sv_init(self, context):
         self.inputs.new('StringsSocket', "data", "data")
         self.inputs.new('StringsSocket', "etalon", "etalon")
         self.outputs.new('StringsSocket', "result", "result")
@@ -237,7 +237,7 @@ class SvNeuroElman1LNode(bpy.types.Node, SverchCustomTreeNode):
             col.prop(self, "treshold", text="treshold")
     
     
-    def update(self):
+    def process(self):
         handle_name = self.name + self.id_data.name
         handle = handle_read(handle_name)
         props = handle[1]
@@ -303,8 +303,6 @@ class SvNeuroElman1LNode(bpy.types.Node, SverchCustomTreeNode):
         handle_write(handle_name, props)
         SvSetSocketAnyType(self, 'result', result)
 
-    def update_socket(self, context):
-        self.update()
 
 
 

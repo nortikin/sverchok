@@ -235,7 +235,7 @@ class SvImageComponentsNode(bpy.types.Node, SverchCustomTreeNode):
         description='will safe eval this string',
         update=updateNode)
 
-    def init(self, context):
+    def sv_init(self, context):
         self.node_dict[hash(self)] = {}
         self.node_dict[hash(self)]['node_image'] = {}
 
@@ -299,12 +299,11 @@ class SvImageComponentsNode(bpy.types.Node, SverchCustomTreeNode):
             text='img from disk',
             icon="FILE_IMAGE").origin = origin
 
-    def update(self):
-        outputs = self.outputs
 
+    def process(self):
+        outputs = self.outputs
+        
         if not self.loaded:
-            return
-        if not len(outputs) == 3:
             return
         if not (outputs['xya'].links and outputs['rgb'].links):
             return
@@ -313,11 +312,6 @@ class SvImageComponentsNode(bpy.types.Node, SverchCustomTreeNode):
         if self.loaded and not (hash(self) in self.node_dict):
             self.node_dict[hash(self)] = {}
             self.loaded = 0
-
-        self.process()
-
-    def process(self):
-        outputs = self.outputs
 
         node_image = self.node_dict[hash(self)]['node_image']
         dict_data = node_image['image']

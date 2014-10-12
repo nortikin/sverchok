@@ -48,7 +48,7 @@ class SvKDTreeEdgesNode(bpy.types.Node, SverchCustomTreeNode):
                        default=0, min=0,
                        options={'ANIMATABLE'}, update=updateNode)
 
-    def init(self, context):
+    def sv_init(self, context):
         self.inputs.new('VerticesSocket', 'Verts', 'Verts')
         self.inputs.new('StringsSocket', 'mindist', 'mindist').prop_name = 'mindist'
         self.inputs.new('StringsSocket', 'maxdist', 'maxdist').prop_name = 'maxdist'
@@ -57,7 +57,7 @@ class SvKDTreeEdgesNode(bpy.types.Node, SverchCustomTreeNode):
 
         self.outputs.new('StringsSocket', 'Edges', 'Edges')
 
-    def update(self):
+    def process(self):
         inputs = self.inputs
         outputs = self.outputs
 
@@ -120,9 +120,6 @@ class SvKDTreeEdgesNode(bpy.types.Node, SverchCustomTreeNode):
         print(len(e), 'vs', mcount)
 
         SvSetSocketAnyType(self, 'Edges', [list(e)])
-
-    def update_socket(self, context):
-        self.update()
 
 
 def register():

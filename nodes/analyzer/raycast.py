@@ -60,18 +60,14 @@ class SvRayCastNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "Modes", "Raycast modes")
         layout.prop(self, "Iteration", "Iteration modes")
 
-    def init(self, context):
+    def sv_init(self, context):
         self.inputs.new('VerticesSocket', 'start', 'start')
         self.inputs.new('VerticesSocket', 'end', 'end')
         self.outputs.new('VerticesSocket', "HitP", "HitP")
         self.outputs.new('VerticesSocket', "HitNorm", "HitNorm")
         self.outputs.new('StringsSocket', "INDEX/Succes", "INDEX/Succes")
 
-    def update(self):
-
-        if not ('INDEX/Succes' in self.outputs):
-            return
-
+    def process(self):
         start_links = self.inputs['start'].links
         if not (start_links and (type(start_links[0].from_socket) ==
                 VerticesSocket)):
@@ -82,9 +78,6 @@ class SvRayCastNode(bpy.types.Node, SverchCustomTreeNode):
                 VerticesSocket)):
             return
 
-        self.process()
-
-    def process(self):
 
         SSSAT = SvSetSocketAnyType
         bcsrc = bpy.context.scene.ray_cast

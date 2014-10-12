@@ -30,7 +30,7 @@ class CentersPolsNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Centers polygons'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    def init(self, context):
+    def sv_init(self, context):
         self.inputs.new('VerticesSocket', "Vertices", "Vertices")
         self.inputs.new('StringsSocket', "Polygons", "Polygons")
         self.outputs.new('VerticesSocket', "Normals", "Normals")
@@ -38,7 +38,7 @@ class CentersPolsNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('VerticesSocket', "Origins", "Origins")
         self.outputs.new('MatrixSocket', "Centers", "Centers")
 
-    def update(self):
+    def process(self):
         if self.outputs['Centers'].links or self.outputs['Normals'].links or \
                 self.outputs['Origins'].links or self.outputs['Norm_abs'].links:
             if 'Polygons' in self.inputs and 'Vertices' in self.inputs \
@@ -113,9 +113,6 @@ class CentersPolsNode(bpy.types.Node, SverchCustomTreeNode):
                 SvSetSocketAnyType(self, 'Norm_abs', Vector_degenerate(norm_abs_out))
                 SvSetSocketAnyType(self, 'Origins', Vector_degenerate(origins))
                 SvSetSocketAnyType(self, 'Normals', Vector_degenerate([normals_out]))
-
-    def update_socket(self, context):
-        self.update()
 
 
 def register():

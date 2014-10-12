@@ -32,7 +32,7 @@ class SvBBoxNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Bounding box'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    def init(self, context):
+    def sv_init(self, context):
         self.inputs.new('VerticesSocket', 'Vertices')
 
         self.outputs.new('VerticesSocket', 'Vertices')
@@ -40,9 +40,7 @@ class SvBBoxNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('VerticesSocket', 'Mean')
         self.outputs.new('MatrixSocket', 'Center', 'Center')
 
-    def update(self):
-        if 'Center' not in self.outputs:
-            return
+    def process(self):
         if not self.inputs['Vertices'].links:
             return
         if not any([s.links for s in self.outputs]):
@@ -94,8 +92,6 @@ class SvBBoxNode(bpy.types.Node, SverchCustomTreeNode):
             if self.outputs['Center'].links:
                 SvSetSocketAnyType(self, 'Center', Matrix_listing(mat_out))
 
-    def update_socket(self, context):
-        self.update()
 
 
 def register():
