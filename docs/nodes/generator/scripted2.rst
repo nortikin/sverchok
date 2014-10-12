@@ -21,9 +21,9 @@ need access to imports, classes, temporary variables, and functions then you can
 write a script to load into Script Node 2. 
 
 Script Node MK2 differs from Script Node iteratrion 1 in that offers more control.
-It also has a proptotype system where you could for example reuse the behavior of 
-an generator and the template takes care of all the details leaving you to focus 
-on the function. Scripts using the templates automaticlly becomes more powerful.
+It also has a prototype system where you could for example reuse the behavior of 
+a generator and the template takes care of all the details leaving you to focus 
+on the function. Scripts using the templates automatically becomes more powerful.
 
 It's a prototype so bug reports, questions and feature request are very welcome.
 
@@ -41,12 +41,12 @@ allows:
 Structure
 ---------
 
-At present all scripts for SN2 must (strict list - general):
+At present all scripts for SN2 must:
 
 - be subclasses SvScript
-- have a function called process in the class
-- member attributes called inputs and outputs
-- one Script class per file, if more than one, last one found will be used
+- include a function called process in the class
+- have member attributes called ``inputs`` and ``outputs``
+- have one Script class per file, if more than one, last one found will be used
 
 **process(self)**
 
@@ -98,8 +98,6 @@ avoid as class attributes or only used for the intended meaning. To be described
 ``outputs``
 
 
-
-
 Templates
 ---------
 
@@ -125,7 +123,7 @@ advanced use cases. The images and animations on this `thread on github
 <https://github.com/nortikin/sverchok/issues/439>`_. 
 may also provide some insight into what's possible.
 
-A typical nodescript using the SvScriptSimplegenerator may look like this, note that
+A typical nodescript using the ``SvScriptSimplegenerator`` may look like this, note that
 the third argument for outputs is specific to this template::
 
     import numpy 
@@ -199,7 +197,7 @@ to have all code inside the class, we can also do::
         ]
 
 
-Here is simple script for deleting loose vertices from mesh data, it also serves as an 
+Here is a simple script for deleting loose vertices from mesh data, it also serves as an 
 illustration for a type of script that uses the ```SvScriptSimpleFunction``` template that
 has one main function that decomposes into separate sockets. The methods don't have be static
 but in general it is good practice to keep them free from side effects.::
@@ -233,8 +231,8 @@ but in general it is good practice to keep them free from side effects.::
 
 Breakout Scripts
 ----------------
-Scripts that needs to access the node can to so via the ``self.node`` variable
-that is automaticly set.
+Scripts that needs to access the node can do so via the ``self.node`` variable
+that is automatically set.
 ::
 
     class Breakout(SvScript):
@@ -246,7 +244,7 @@ that is automaticly set.
             node_group = self.node.id_data
             # here you can do anything to the node or node group
             # that real a real node could do including multisocket
-            # adaptive sockets etc. templates and examples for is are
+            # adaptive sockets etc. templates and examples for this are
             # coming
 
 
