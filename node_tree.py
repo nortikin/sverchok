@@ -220,7 +220,6 @@ class SverchCustomTreeNode:
     #def draw_buttons(self, context, layout):
     #    layout.label('sverchok')
 
-
 class SverchNodeCategory(NodeCategory):
     @classmethod
     def poll(cls, context):

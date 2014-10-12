@@ -113,6 +113,52 @@ class SvScriptSimpleFunction(SvScript, metaclass=abc.ABCMeta):
         for link, res, socket in zip(links, result, outputs):
             if link:
                 socket.sv_set(res)
+
+class SvScriptFunction(SvScript, metaclass=abc.ABCMeta):
+    """
+    Simple f(x0, x1, ... xN) -> y0, y1, ... ,yM
+    
+    """
+    @abc.abstractmethod
+    def function(*args):
+        return 
+        
+    def process(self):
+        def inner(
+        
+        inputs = self.node.inputs
+        outputs = self.node.outputs
+        
+        data = [s.sv_get() for s in inputs]
+
+        depth = tuple(map(recursive_depth, data))
+        work_depth = [i[-1] for i in inputs]
+        diff = [d-wd for d,wd in zip(depth, work_depth)]
+        if any(diff):
+            if any((x < 0 for x in diff)):
+                print("not enough depth"):
+            else:
+                def wrap(data, n):
+                    if n > 0:
+                        return wrap([data], n-1)
+                    else:
+                        return data
+                        
+                for i range(len(data)):
+                    if diff[i] > 0:
+                        data[i] = wrap(data[i], diff[i])
+                
+            
+        links = [s.links for s in outputs]
+        result = [[] for d in data]
+        
+        for d in zip(*data):
+            res = self.function(*d, depth=depth)
+            for i, r in enumerate(res):
+                result[i].append(r)
+        for link, res, socket in zip(links, result, outputs):
+            if link:
+                socket.sv_set(res)
                     
 
 

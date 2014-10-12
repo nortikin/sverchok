@@ -398,7 +398,7 @@ def Vector_generate(prop):
 
 
 def Vector_degenerate(prop):
-    return [[v[0:3] for v in object] for object in prop]
+    return [[v[0:3] for v in obj] for obj in prop]
 
 
 def Edg_pol_generate(prop):
