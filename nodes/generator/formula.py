@@ -365,7 +365,7 @@ class SvFormulaShapeNode(bpy.types.Node, SverchCustomTreeNode):
             out.append((X,Y,Z))
         return [out]
 
-    def init(self, context):
+    def sv_init(self, context):
         self.inputs.new('StringsSocket', "Count").prop_name = 'number'
         self.inputs.new('StringsSocket', "Scale").prop_name = 'scale'
         self.inputs.new('StringsSocket', "XX").prop_name = 'XX'
@@ -387,7 +387,7 @@ class SvFormulaShapeNode(bpy.types.Node, SverchCustomTreeNode):
         row.prop(self, 'Z_Z', text='')
         col.prop(self, 'i_override', text='i')
     
-    def update(self):
+    def process(self):
         # inputs
         Count = self.inputs['Count'].sv_get()[0][0]
         Scale = self.inputs['Scale'].sv_get()[0][0]
@@ -413,10 +413,6 @@ class SvFormulaShapeNode(bpy.types.Node, SverchCustomTreeNode):
         if self.outputs['Edges'].links:
                 edg = [[[i-1, i] for i in range(1, Count)]]
                 SvSetSocketAnyType(self, 'Edges', edg)
-
-    def update_socket(self, context):
-        self.update()
-
 
 def register():
     bpy.utils.register_class(SvFormulaShapeNode)

@@ -119,7 +119,7 @@ class SvInstancerNode(bpy.types.Node, SverchCustomTreeNode):
 
     has_instance = BoolProperty(default=False)
 
-    def init(self, context):
+    def sv_init(self, context):
         self.inputs.new('MatrixSocket', 'matrix', 'matrix')
 
     def draw_buttons(self, context, layout):
@@ -163,7 +163,7 @@ class SvInstancerNode(bpy.types.Node, SverchCustomTreeNode):
         else:
             return []
 
-    def update(self):
+    def process(self):
         if self.abort_processing() and not self.activate:
             return
 

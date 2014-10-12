@@ -56,7 +56,7 @@ class BasicSplineNode(bpy.types.Node, SverchCustomTreeNode):
     ctrl_2 = FloatVectorProperty(name='ctrl_2', description="ctrl2", update=updateNode)
     knot_2 = FloatVectorProperty(name='knot_2', description="k2", update=updateNode)
 
-    def init(self, context):
+    def sv_init(self, context):
         self.inputs.new('StringsSocket', "num_verts").prop_name = 'num_verts'
 
         self.inputs.new('VerticesSocket', "knot_1").prop_name = 'knot_1'
@@ -72,7 +72,7 @@ class BasicSplineNode(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         pass
 
-    def update(self):
+    def process(self):
         outputs = self.outputs
 
         '''
@@ -154,9 +154,6 @@ class BasicSplineNode(bpy.types.Node, SverchCustomTreeNode):
 
             if outputs['hnd Edges'].links:
                 SvSetSocketAnyType(self, 'hnd Edges', h_edges_out)
-
-    def update_socket(self, context):
-        self.update()
 
 
 def register():

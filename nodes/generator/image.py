@@ -57,7 +57,7 @@ class ImageNode(bpy.types.Node, SverchCustomTreeNode):
                           options={'ANIMATABLE'}, update=updateNode)
     #name_image = StringProperty(name='image_name', description='image name', default='', update=updateNode)
 
-    def init(self, context):
+    def sv_init(self, context):
         self.inputs.new('StringsSocket', "vecs X", "vecs X").prop_name = 'Xvecs'
         self.inputs.new('StringsSocket', "vecs Y", "vecs Y").prop_name = 'Yvecs'
         self.inputs.new('StringsSocket', "Step X", "Step X").prop_name = 'Xstep'
@@ -74,7 +74,7 @@ class ImageNode(bpy.types.Node, SverchCustomTreeNode):
         row.prop(self, "G", text="G")
         row.prop(self, "B", text="B")
 
-    def update(self):
+    def process(self):
         # inputs
         if 'vecs X' in self.inputs and self.inputs['vecs X'].links:
             IntegerX = min(int(SvGetSocketAnyType(self, self.inputs['vecs X'])[0][0]), 100)
@@ -159,9 +159,6 @@ class ImageNode(bpy.types.Node, SverchCustomTreeNode):
                 vertices.append(vertex) 
                 addition += int(xcoef*4)
         return vertices
-
-    def update_socket(self, context):
-        self.update()
 
 
 def register():

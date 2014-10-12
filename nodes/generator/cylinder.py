@@ -115,7 +115,7 @@ class CylinderNode(bpy.types.Node, SverchCustomTreeNode):
                             default=False,
                             update=updateNode)
 
-    def init(self, context):
+    def sv_init(self, context):
         self.inputs.new('StringsSocket', "RadTop").prop_name = 'radTop_'
         self.inputs.new('StringsSocket', "RadBot").prop_name = 'radBot_'
         self.inputs.new('StringsSocket', "Vertices").prop_name = 'vert_'
@@ -131,9 +131,7 @@ class CylinderNode(bpy.types.Node, SverchCustomTreeNode):
         row.prop(self, "Separate", text="Separate")
         row.prop(self, "cap_", text="Caps")
 
-    def update(self):
-        if 'Polygons' not in self.outputs:
-            return
+    def process(self):
         # inputs
 
         inputs = self.inputs

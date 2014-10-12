@@ -44,7 +44,7 @@ class SvBoxNode(bpy.types.Node, SverchCustomTreeNode):
                          default=1.0, options={'ANIMATABLE'},
                          update=updateNode)
 
-    def init(self, context):
+    def sv_init(self, context):
         self.inputs.new('StringsSocket', "Size", "Size").prop_name = 'Size'
         self.inputs.new('StringsSocket', "Divx", "Divx").prop_name = 'Divx'
         self.inputs.new('StringsSocket', "Divy", "Divy").prop_name = 'Divy'
@@ -118,7 +118,7 @@ class SvBoxNode(bpy.types.Node, SverchCustomTreeNode):
         edges = [indices(edge) for edge in bm.edges]
         return verts, edges, faces
 
-    def update(self):
+    def process(self):
 
         if 'Size' in self.inputs and self.inputs['Size'].links:
             size = SvGetSocketAnyType(self, self.inputs['Size'])[0]
@@ -146,9 +146,6 @@ class SvBoxNode(bpy.types.Node, SverchCustomTreeNode):
             SvSetSocketAnyType(self, 'Edgs', out[1])
         if 'Pols' in self.outputs and self.outputs['Pols'].links:
             SvSetSocketAnyType(self, 'Pols', out[2])
-
-    def update_socket(self, context):
-        self.update()
 
 
 def register():

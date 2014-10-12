@@ -374,7 +374,7 @@ class SvBoxRoundedNode(bpy.types.Node, SverchCustomTreeNode):
         name='odd_axis_align', description='uhh',
         default=0, min=0, max=1, update=updateNode)
 
-    def init(self, context):
+    def sv_init(self, context):
         new = self.inputs.new
         new('StringsSocket', "radius", "radius").prop_name = 'radius'
         new('StringsSocket', "arcdiv", "arcdiv").prop_name = 'arcdiv'
@@ -389,19 +389,11 @@ class SvBoxRoundedNode(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         pass
 
-    def update(self):
-
-        if not ('Pols' in self.outputs):
-            ''' ui not fully drawn yet '''
-            return
-
+    def process(self):
         if not self.inputs['vector_size'].links:
             return
 
-        self.process()
-
-    def process(self):
-
+    
         inputs = self.inputs
         outputs = self.outputs
 

@@ -52,7 +52,7 @@ class HilbertImageNode(bpy.types.Node, SverchCustomTreeNode):
                       default=0.11, min=0, max=1,
                       options={'ANIMATABLE'}, update=updateNode)
 
-    def init(self, context):
+    def sv_init(self, context):
         self.inputs.new('StringsSocket', "Level", "Level").prop_name = 'level_'
         self.inputs.new('StringsSocket', "Size", "Size").prop_name = 'size_'
         self.inputs.new('StringsSocket', "Sensitivity", "Sensitivity").prop_name = 'sensitivity_'
@@ -67,7 +67,7 @@ class HilbertImageNode(bpy.types.Node, SverchCustomTreeNode):
         row.prop(self, "G", text="G")
         row.prop(self, "B", text="B")
 
-    def update(self):
+    def process(self):
         # inputs
         if self.outputs['Edges'].links or self.outputs['Vertices'].links:
             if 'Level' in self.inputs and self.inputs['Level'].links:
@@ -133,9 +133,6 @@ class HilbertImageNode(bpy.types.Node, SverchCustomTreeNode):
             out.extend(self.hilbert(x0 + xi/2 + yi/2, y0 + xj/2 + yj/2, xi/2, xj/2, yi/2, yj/2, n - 1, img, pixels, Sensitivity))
             out.extend(self.hilbert(x0 + xi/2 + yi,   y0 + xj/2 + yj,  -yi/2,-yj/2,-xi/2,-xj/2, n - 1, img, pixels, Sensitivity))
             return out
-
-    def update_socket(self, context):
-        self.update()
 
 
 def register():

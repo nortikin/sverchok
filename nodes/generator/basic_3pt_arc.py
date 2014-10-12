@@ -115,7 +115,7 @@ class svBasicArcNode(bpy.types.Node, SverchCustomTreeNode):
         update=updateNode,
         size=3)
 
-    def init(self, context):
+    def sv_init(self, context):
         self.inputs.new('StringsSocket', "num_verts").prop_name = 'num_verts'
         self.inputs.new('VerticesSocket', "arc_pts").prop_name = 'arc_pts'
 
@@ -125,7 +125,7 @@ class svBasicArcNode(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         pass
 
-    def update(self):
+    def process(self):
         outputs = self.outputs
         inputs = self.inputs
 
@@ -188,8 +188,6 @@ class svBasicArcNode(bpy.types.Node, SverchCustomTreeNode):
         if make_edges:
             SvSetSocketAnyType(self, 'Edges', edges_out)
 
-    def update_socket(self, context):
-        self.update()
 
 
 def register():

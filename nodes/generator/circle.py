@@ -45,7 +45,7 @@ class CircleNode(bpy.types.Node, SverchCustomTreeNode):
                          default=0, options={'ANIMATABLE'},
                          update=updateNode)
 
-    def init(self, context):
+    def sv_init(self, context):
         self.inputs.new('StringsSocket', "Radius", "Radius")
         self.inputs.new('StringsSocket', "Nº Vertices", "Nº Vertices")
         self.inputs.new('StringsSocket', "Degrees", "Degrees")
@@ -108,7 +108,7 @@ class CircleNode(bpy.types.Node, SverchCustomTreeNode):
             listPlg.insert(0, Vertices)
         return [listPlg]
 
-    def update(self):
+    def process(self):
         # inputs
         if 'Radius' in self.inputs and self.inputs['Radius'].links:
             Radius = SvGetSocketAnyType(self, self.inputs['Radius'])[0]
@@ -141,9 +141,6 @@ class CircleNode(bpy.types.Node, SverchCustomTreeNode):
             plg = [self.make_faces(a, v) for a, v, r in zip(*parameters)]
             SvSetSocketAnyType(self, 'Polygons', plg)
 
-    def update_socket(self, context):
-        self.update()
-
 
 class SvCircleNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Circle '''
@@ -163,7 +160,7 @@ class SvCircleNode(bpy.types.Node, SverchCustomTreeNode):
     mode_ = BoolProperty(name='mode_', description='Mode',
                          default=0,  update=updateNode)
 
-    def init(self, context):
+    def sv_init(self, context):
         self.inputs.new('StringsSocket', "Radius").prop_name = 'rad_'
         self.inputs.new('StringsSocket', "Nº Vertices").prop_name = 'vert_'
         self.inputs.new('StringsSocket', "Degrees").prop_name = 'degr_'
@@ -224,7 +221,7 @@ class SvCircleNode(bpy.types.Node, SverchCustomTreeNode):
             listPlg.insert(0, Vertices)
         return [listPlg]
 
-    def update(self):
+    def process(self):
         # inputs
         if 'Radius' in self.inputs and self.inputs['Radius'].links:
             Radius = SvGetSocketAnyType(self, self.inputs['Radius'])[0]
@@ -258,9 +255,6 @@ class SvCircleNode(bpy.types.Node, SverchCustomTreeNode):
         if 'Polygons' in self.outputs and self.outputs['Polygons'].links:
             plg = [self.make_faces(a, v) for a, v, r in zip(*parameters)]
             SvSetSocketAnyType(self, 'Polygons', plg)
-
-    def update_socket(self, context):
-        self.update()
 
 
 def register():
