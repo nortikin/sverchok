@@ -258,6 +258,9 @@ def build_update_list(tree=None):
             partial_update_cache[name] = {}
             data_structure.reset_socket_cache(ng)
 
+def do_update(node_list, nods):
+    for nod_name in node_list:
+        nods[nod_name].process()
 
 def do_update_heat_map(node_list, nodes):
     """
@@ -308,22 +311,28 @@ def do_update_debug(node_list, nods):
     timings = []
     total_test = 0
     for nod_name in node_list:
-        if nod_name in nods:
+        try:
             delta = None
-            #try:
             start = time.perf_counter()
             nods[nod_name].process()
             delta = time.perf_counter()-start
-            #except Exception as e:
-            #    nods[nod_name].color=(.9,0,0)
-            #    nods[nod_name].use_custom_color=True
-            #    print("Node {0} had exception {1}".format(nod_name,e))
             if delta:
                 total_test += delta
                 print("Updated  {0} in: {1}".format(nod_name, round(delta, 4)))
-                timings.append((nod_name, delta)) # why we need it?
+                timings.append(delta)
+        except ReferenceError:
+            print("Cache miss in node set, abandoning")
+            break
+        except Exception:
+            except Exception as e:
+            nods[nod_name].color=(.9,0,0)
+            nods[nod_name].use_custom_color=True
+            print("Node {0} had exception {1}".format(nod_name,e))
+            return
+
     if data_structure.DEBUG_MODE:
-        print("Layout updated in: {0} seconds".format(round(total_test, 4)))
+        print("Node set updated in: {0} seconds".format(round(total_test, 4)))
+    return timings
 
 
 def sverchok_update(start_node=None, tree=None, animation_mode=False):
@@ -333,11 +342,6 @@ def sverchok_update(start_node=None, tree=None, animation_mode=False):
     """
     global update_cache
     global partial_update_cache
-    
-    def do_update(node_list, nods):
-        for nod_name in node_list:
-            if nod_name in nods:
-                nods[nod_name].process()
 
     # first update event after a reload, apply sverchok startup
     if data_structure.RELOAD_EVENT:
@@ -349,7 +353,7 @@ def sverchok_update(start_node=None, tree=None, animation_mode=False):
         do_update = do_update_debug
     if data_structure.HEAT_MAP:
         do_update = do_update_heat_map
-    
+
 
     # try to update optimized animation trees, not ready
     if animation_mode:
@@ -383,7 +387,7 @@ def sverchok_update(start_node=None, tree=None, animation_mode=False):
     else:
         node_groups = bpy.data.node_groups.items()
 
-    
+
     for name, ng in node_groups:
         if ng.bl_idname == 'SverchCustomTreeType':
             update_list = update_cache.get(name)

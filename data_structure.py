@@ -1010,6 +1010,7 @@ def SvGetSocket(socket, deepcopy=True):
             if DEBUG_MODE:
 #                traceback.print_stack()
                 print("cache miss:", socket.node.name, "->", socket.name, "from:", other.node.name, "->", other.name)
+            raise LookupError
     return None
 
 

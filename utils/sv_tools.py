@@ -239,9 +239,6 @@ class ToolsNode(bpy.types.Node, SverchCustomTreeNode):
     #color = (1,1,1)
     color_ = bpy.types.ColorRamp
 
-    def init(self, context):
-        pass
-
     def draw_buttons(self, context, layout):
         col = layout.column()
         col.scale_y = 15
@@ -262,9 +259,6 @@ class ToolsNode(bpy.types.Node, SverchCustomTreeNode):
     def update(self):
         self.use_custom_color = True
         self.color = (1.0, 0.0, 0.0)
-
-    def update_socket(self, context):
-        pass
 
 
 class SvClearNodesLayouts (bpy.types.Operator):
@@ -393,6 +387,10 @@ class Sv3DPanel(bpy.types.Panel):
                     split.prop(tree, 'sv_animate', icon='UNLOCKED', text=' ')
                 else:
                     split.prop(tree, 'sv_animate', icon='LOCKED', text=' ')
+                if tree.sv_proces: # needs icom
+                    split.prop(tree, 'sv_process', text="P!")
+                else:
+                    split.prop(tree, 'sv_process', text="!P")
 
                 # veriables
                 for item in tree.Sv3DProps:
@@ -495,6 +493,11 @@ class SverchokToolsMenu(bpy.types.Panel):
                 split.scale_x = little_width
                 animate_icon = ('UN' if tree.sv_animate else '') + 'LOCKED'
                 split.prop(tree, 'sv_animate', icon=animate_icon, text=' ')
+                if tree.sv_proces: # needs icon
+                    split.prop(tree, 'sv_process', text="P!")
+                else:
+                    split.prop(tree, 'sv_process', text="!P")
+
 
         if sv_new_version:
             row = layout.row()

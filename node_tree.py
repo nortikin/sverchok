@@ -185,6 +185,7 @@ class SverchCustomTree(NodeTree):
     sv_animate = BoolProperty(name="Animate", default=True, description='Animate this layout')
     sv_show = BoolProperty(name="Show", default=True, description='Show this layout', update=turn_off_ng)
     sv_bake = BoolProperty(name="Bake", default=True, description='Bake this layout')
+    sv_process = BoolProperty(name="Process", default=True, description='Process layout')
     sv_user_colors = StringProperty(default="")
 
     # get update list for debug info, tuple (fulllist,dictofpartiallists)
@@ -204,7 +205,8 @@ class SverchCustomTree(NodeTree):
         if any((not(n.sv_state) for n in self.nodes if hasattr(n, "sv_state"))):
             return
         build_update_list(tree=self)
-        sverchok_update(tree=self)
+        if self.sv_process:
+            sverchok_update(tree=self)
 
     def update_ani(self):
         """
