@@ -28,7 +28,7 @@ from data_structure import (SvGetSocketInfo, SvGetSocket,
 from core.update_system import (build_update_list, sverchok_update,
                                 get_update_lists)
 from core import upgrade_nodes
-
+import time
 
 class SvColors(bpy.types.PropertyGroup):
     """ Class for colors CollectionProperty """
@@ -228,6 +228,16 @@ class SverchCustomTreeNode:
         if hasattr(self, "sv_init"):
             self.sv_init(context)
         self.sv_state = 1
+    
+    def process_node(self, context):
+        a = time.perf_counter()
+        sverchok_update(start_node=self)
+        b = time.perf_counter()
+        if data_structure.DEBUG_MODE:
+            print("Partial update from node", self.name, "in", round(b-a, 4))
+        
+        
+        
 
 class SverchNodeCategory(NodeCategory):
     @classmethod

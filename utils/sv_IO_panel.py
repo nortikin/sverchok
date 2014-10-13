@@ -34,9 +34,10 @@ from node_tree import SverchCustomTree
 from node_tree import SverchCustomTreeNode
 
 
-_EXPORTER_REVISION_ = '0.043 pre alpha'
+_EXPORTER_REVISION_ = '0.05 pre alpha'
 
 '''
+0.05 fake node inserted to stop updates
 0.043 remap dict for duplicates (when importing into existing tree)
 0.042 add fake user to imported layouts + switch to new tree.
 0.04x support for profilenode
