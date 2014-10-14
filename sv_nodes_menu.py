@@ -209,8 +209,6 @@ def make_node_cats():
         ["SvVertexGroupNode",   "Vertext group"],
         ["SvRayCastNode",       "Raycast"],
         ["SvScriptNodeMK2",     "Script 2"],
-        ["SvVertexGroupNode",   "Vertex group"],
-        ["SvRayCastNode",       "Raycast"]
     ]
 
     node_cats["Alpha Nodes"] = [

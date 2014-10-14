@@ -114,7 +114,10 @@ class SvScriptNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     
     def enum_callback(self, context):
         script = self.script
-        return script.enum_func(context)
+        if hasattr(script, "enum_func"):
+            return script.enum_func(context)
+        else:
+            return None
         
     generic_enum = EnumProperty(    
         items=enum_callback,

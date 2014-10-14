@@ -265,15 +265,22 @@ def import_tree(ng, fullpath):
             ''' maintenance warning for the creation of new text files. If this script
             is run in a file which contains these Text names already, then the
             the script/file names stored in the node must be updated to reflect this.
+            
+            Also is a script/profile is used for more than one node it will lead to duplication
+            All names have to collected and then fixed at end
             '''
-            if (node.bl_idname == 'SvScriptNode'):
+            if node.bl_idname in ('SvScriptNode', 'SvScriptNodeMK2'):
                 new_text = texts.new(node.script_name)
+                #  there is no gurantee that we get the name we request
+                if new_text.name != node.script_name:
+                    node.script_name = new_text.name
                 new_text.from_string(node.script_str)
                 node.load()
 
-            elif (node.bl_idname == 'SvProfileNode'):
+            elif node.bl_idname == 'SvProfileNode':
                 new_text = texts.new(node.filename)
                 new_text.from_string(node_ref['path_file'])
+                #  update will get called many times, is this really needed?
                 node.update()
 
         update_lists = nodes_json['update_lists']
