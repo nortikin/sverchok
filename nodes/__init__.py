@@ -15,7 +15,6 @@ nodes_dict = {
 
     'basic_view': [
         'bakery',
-        'test',
         'viewer_bmesh',
         'viewer_indices',
         'viewer_text',
@@ -133,7 +132,6 @@ nodes_dict = {
         'polygons_adaptative',
         'solidify',
         'voronoi_2d',
-        'voronoi',
         'wireframe'
     ],  #
 

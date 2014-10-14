@@ -29,7 +29,6 @@ update_cache = {}
 # cache for partial update lists
 partial_update_cache = {}
 
-
 def make_dep_dict(node_tree):
     """
     Create a dependency dictionary for node group.
@@ -71,7 +70,7 @@ def make_update_list(node_tree, node_set=None, dependencies=None):
         node_set = set(ng.nodes.keys())
     if len(node_set) == 1:
         return list(node_set)
-    if node_set:
+    if node_set:  # get one name
         name = node_set.pop()
         node_set.add(name)
     else:
@@ -188,7 +187,7 @@ def make_tree_from_nodes(node_names, tree):
     current_node = out_stack.pop()
 
     # build downwards links, this should be cached perhaps
-    node_links = {name: set() for name in nodes.keys()}
+    node_links = {name: set() for name in nodes.keys()}  # should be defaultdict
     for link in ng.links:
         if not link.is_valid:
             return []
@@ -238,7 +237,8 @@ def make_animation_tree(node_types, node_list, tree_name):
 def build_update_list(tree=None):
     """
     Makes a complete update list for the tree,
-    If tree is not passed
+    If tree is not passed, all sverchok custom tree
+    are processced
     """
     global update_cache
     global partial_update_cache
@@ -258,35 +258,18 @@ def build_update_list(tree=None):
             partial_update_cache[name] = {}
             data_structure.reset_socket_cache(ng)
 
-def do_update(node_list, nods):
-    for nod_name in node_list:
-        nods[nod_name].process()
-
 def do_update_heat_map(node_list, nodes):
     """
-    Create a heat map for the node tree, under development.
+    Create a heat map for the node tree, 
+    Needs development.
     """
-    global DEBUG_MODE
-    times = []
-    total_test = 0
-    node_list = list(node_list)
-    for name in node_list:
-        if name in nodes:
-            start = time.perf_counter()
-            nodes[name].process()
-            delta = time.perf_counter()-start
-            total_test += delta
-            if data_structure.DEBUG_MODE:
-                print("Updated  {0} in: {1}".format(name, round(delta, 4)))
-            times.append(delta)
-    if data_structure.DEBUG_MODE:
-        print("Layout updated in: {0} seconds".format(round(total_test, 4)))
-    if not times:
-        return
     if not nodes.id_data.sv_user_colors:
         color_data = {node.name: (node.color[:], node.use_custom_color) for node in nodes}
         nodes.id_data.sv_user_colors = str(color_data)
 
+    times = do_update_general(node_list, nodes)
+    if not times:
+        return
     t_max = max(times)
     addon_name = data_structure.SVERCHOK_NAME
     addon = bpy.context.user_preferences.addons.get(addon_name)
@@ -304,29 +287,28 @@ def do_update_heat_map(node_list, nodes):
         nodes[name].color = cold.lerp(hot, t / t_max)
 
 
-def do_update_debug(node_list, nods):
+def do_update_general(node_list, nodes):
     """
-    Debug update, under development
+    General update function for node set
     """
     timings = []
     total_test = 0
-    for nod_name in node_list:
+    for node_name in node_list:
         try:
-            delta = None
             start = time.perf_counter()
-            nods[nod_name].process()
+            nodes[node_name].process()
             delta = time.perf_counter()-start
-            if delta:
-                total_test += delta
-                print("Updated  {0} in: {1}".format(nod_name, round(delta, 4)))
-                timings.append(delta)
+            total_test += delta
+            if data_structure.DEBUG_MODE:
+                print("Updated  {0} in: {1}".format(node_name, round(delta, 4)))
+            timings.append(delta)
         except ReferenceError:
             print("Cache miss in node set, abandoning")
             break
         except Exception as e:
-            nods[nod_name].color=(.9,0,0)
-            nods[nod_name].use_custom_color=True
-            print("Node {0} had exception {1}".format(nod_name,e))
+            nodes[node_name].color=(.9,0,0)
+            nodes[node_name].use_custom_color=True
+            print("Node {0} had exception {1}".format(node_name,e))
             return
 
     if data_structure.DEBUG_MODE:
@@ -334,10 +316,18 @@ def do_update_debug(node_list, nods):
     return timings
 
 
+# place holder for resturcture
+def process_node(node):
+    pass
+    
+def process_tree(node):
+    pass
+
 def sverchok_update(start_node=None, tree=None, animation_mode=False):
     """
     Sverchok master update function.
     Update from a given node, or a complete layout.
+    Needs restructure and clearity
     """
     global update_cache
     global partial_update_cache
@@ -348,11 +338,10 @@ def sverchok_update(start_node=None, tree=None, animation_mode=False):
         from core import handlers
         handlers.sv_post_load([])
         return
-    if data_structure.DEBUG_MODE:
-        do_update = do_update_debug
     if data_structure.HEAT_MAP:
         do_update = do_update_heat_map
-
+    else:
+        do_update = do_update_general
 
     # try to update optimized animation trees, not ready
     if animation_mode:
@@ -383,13 +372,11 @@ def sverchok_update(start_node=None, tree=None, animation_mode=False):
             for l in update_list:
                 do_update(l, tree.nodes)
             return
-    # draw the complete named tree, called from SverchokCustomTreeNode
+    # draw the complete named tree, called from SverchokCustomTreeNode.update
     if tree:
         node_groups = [(tree.name, tree)]
     else:
         node_groups = bpy.data.node_groups.items()
-
-
     for name, ng in node_groups:
         if ng.bl_idname == 'SverchCustomTreeType':
             update_list = update_cache.get(name)
