@@ -349,6 +349,7 @@ def sverchok_update(start_node=None, tree=None, animation_mode=False):
     # start from the mentioned node the which has had changed property,
     # called from updateNode
     if start_node:
+        print(start_node.name)
         tree = start_node.id_data
 
         if tree.name in update_cache and update_cache[tree.name]:
@@ -360,9 +361,10 @@ def sverchok_update(start_node=None, tree=None, animation_mode=False):
                 update_list = make_tree_from_nodes([start_node.name], tree)
                 partial_update_cache[tree.name][start_node.name] = update_list
             nodes = tree.nodes
+            print(update_list)
             if not tree.sv_process:
                 return
-            if any((n.bl_idname == "SvStopperNode" for n in nodes)):
+            if any(n.bl_idname == "SvStopperNode" for n in nodes):
                 return
             do_update(update_list, nodes)
             return
@@ -378,9 +380,9 @@ def sverchok_update(start_node=None, tree=None, animation_mode=False):
     else:
         node_groups = bpy.data.node_groups.items()
     for name, ng in node_groups:
-        if ng.bl_idname == 'SverchCustomTreeType':
+        if ng.bl_idname == 'SverchCustomTreeType' and ng.sv_process:
             update_list = update_cache.get(name)
-            if any((n.bl_idname == "SvStopperNode" for n in ng.nodes)):
+            if any(n.bl_idname == "SvStopperNode" for n in ng.nodes):
                 continue
             if not update_list:
                 build_update_list(ng)

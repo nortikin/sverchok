@@ -203,6 +203,7 @@ class SverchCustomTree(NodeTree):
         except:
             return
         if any((not(n.sv_state) for n in self.nodes if hasattr(n, "sv_state"))):
+            print("Not ready")
             return
         build_update_list(tree=self)
         if self.sv_process:
