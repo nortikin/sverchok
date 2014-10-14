@@ -203,8 +203,8 @@ class SverchCustomTree(NodeTree):
         except:
             return
         #  stop processing while sockets are being created.
-        if any(not(n.sv_state) for n in self.nodes if hasattr(n, "sv_state")):
-            return
+        #if any(not(n.sv_state) for n in self.nodes if hasattr(n, "sv_state")):
+        #    return
         build_update_list(tree=self)
         if self.sv_process:
             sverchok_update(tree=self)
@@ -229,6 +229,9 @@ class SverchCustomTreeNode:
         if hasattr(self, "sv_init"):
             self.sv_init(context)
         self.sv_state = 1
+    
+    def process(self):
+        pass
     
     def process_node(self, context):
         a = time.perf_counter()

@@ -36,45 +36,28 @@ def make_dep_dict(node_tree, down=False):
     ng = node_tree
     
     deps = collections.defaultdict(set)
-    # so these 2 modes could probably be merged quite easily
-    if down:
-        for link in ng.links:
-            if not link.is_valid:
-                return {}  # this happens more often than one might think
-            deps[link.from_node.name].add(link.to_node.name)
-
-        # create wifi out dependencies, process if needed
-        wifi_out_nodes = [(name, node.var_name)
-                          for name, node in ng.nodes.items()
-                          if node.bl_idname == 'WifiOutNode' and node.outputs]
-        if wifi_out_nodes:
-            wifi_dict = {node.var_name: name
-                         for name, node in ng.nodes.items()
-                         if node.bl_idname == 'WifiInNode'}
-            for name, var_name in wifi_out_nodes:
-                if var_name not in wifi_dict:
-                    print("Unsatisifed Wifi dependency: node, {0} var,{1}".format(name, var_name))
-                    return {}
-                deps[wifi_dict[var_name]].add(name)
-    else:
-        for link in ng.links:
-            if not link.is_valid:
-                return {}  # this happens more often than one might think
-            deps[link.to_node.name].add(link.from_node.name)
-
-        # create wifi out dependencies, process if needed
-        wifi_out_nodes = [(name, node.var_name)
-                          for name, node in ng.nodes.items()
-                          if node.bl_idname == 'WifiOutNode' and node.outputs]
-        if wifi_out_nodes:
-            wifi_dict = {node.var_name: name
-                         for name, node in ng.nodes.items()
-                         if node.bl_idname == 'WifiInNode'}
-            for name, var_name in wifi_out_nodes:
-                if var_name not in wifi_dict:
-                    print("Unsatisifed Wifi dependency: node, {0} var,{1}".format(name, var_name))
-                    return {}
-                deps[name].add(wifi_dict[var_name])
+   
+    # create wifi out dependencies, process if needed
+   
+    wifi_out_nodes = [(name, node.var_name)
+                  for name, node in ng.nodes.items()
+                  if node.bl_idname == 'WifiOutNode' and node.outputs]
+    if wifi_out_nodes:
+        wifi_dict = {node.var_name: name
+                     for name, node in ng.nodes.items()
+                     if node.bl_idname == 'WifiInNode'}
+                
+    for link in ng.links:
+        if not link.is_valid:
+            return {}  # this happens more often than one might think
+        key, value = (link.from_node.name, link.to_node.name) if down else (link.to_node.name, link.from_node.name) 
+        deps[key].add(value)
+    for name, var_name in wifi_out_nodes:
+        if var_name not in wifi_dict:
+            print("Unsatisifed Wifi dependency: node, {0} var,{1}".format(name, var_name))
+            return {}
+        key, value = (name, wifi_dict[var_name]) if down else (wifi_dict[var_name], name)
+        deps[key].add(value)
         
     return deps
 
@@ -148,7 +131,6 @@ def separate_nodes(ng, links=None):
     down = make_dep_dict(ng, down=True)
     for name, links in down.items():
         node_links[name].update(links) 
-    print(node_links)
     n = nodes.pop()
     node_set_list = [set([n])]
     node_stack = collections.deque()
@@ -171,40 +153,7 @@ def separate_nodes(ng, links=None):
 
     return [node for node in node_set_list if len(node) > 1]
 
-def make_tree_to_nodes(node_names, tree):
-    """
-    Create a partial update list from a sub-tree, node_names is a list of node that
-    should be evaluated
-    Only nodes up tree from node_name are considered
-    """
-    ng = tree
-    nodes = ng.nodes
-    if not node_names:
-        print("No nodes!")
-        return make_update_list(ng)
-
-    out_set = set(node_names)
-
-    out_stack = collections.deque(node_names)
-    current_node = out_stack.pop()
-
-    # build downwards links, this should be cached perhaps
-    node_links = make_dep_dict(ng)
-    
-    while current_node:
-        for node in node_links[current_node]:
-            if node not in out_set:
-                out_set.add(node)
-                out_stack.append(node)
-        if out_stack:
-            current_node = out_stack.pop()
-        else:
-            current_node = ''
-
-    return make_update_list(ng, out_set)
-
-
-def make_tree_from_nodes(node_names, tree):
+def make_tree_from_nodes(node_names, tree, down=True):
     """
     Create a partial update list from a sub-tree, node_names is a list of node that
     drives change for the tree
@@ -222,7 +171,7 @@ def make_tree_from_nodes(node_names, tree):
     current_node = out_stack.pop()
 
     # build downwards links, this should be cached perhaps
-    node_links = make_dep_dict(ng, down=True)
+    node_links = make_dep_dict(ng, down)
     while current_node:
         for node in node_links[current_node]:
             if node not in out_set:
@@ -258,9 +207,8 @@ def build_update_list(tree=None):
     """
     global update_cache
     global partial_update_cache
-    # clear cache on every full update
 
-    if tree is not None:
+    if tree:
         tree_list = [(tree.name, tree)]
     else:
         tree_list = bpy.data.node_groups.items()
@@ -415,4 +363,3 @@ def get_update_lists(ng):
     global update_cache
     global partial_update_cache
     return (update_cache[ng.name], partial_update_cache[ng.name])
-
