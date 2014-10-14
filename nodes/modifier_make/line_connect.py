@@ -188,7 +188,7 @@ class LineConnectNode(bpy.types.Node, SverchCustomTreeNode):
         multi_socket(self, min=1)
 
     def process(self):
-        if not any((s.link for s in self.outputs)):
+        if not any((s.links for s in self.outputs)):
             return
             
         slots = []
