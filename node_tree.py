@@ -202,8 +202,8 @@ class SverchCustomTree(NodeTree):
             l = bpy.data.node_groups[self.id_data.name]
         except:
             return
-        if any((not(n.sv_state) for n in self.nodes if hasattr(n, "sv_state"))):
-            print("Not ready")
+        #  stop processing while sockets are being created.
+        if any(not(n.sv_state) for n in self.nodes if hasattr(n, "sv_state")):
             return
         build_update_list(tree=self)
         if self.sv_process:
