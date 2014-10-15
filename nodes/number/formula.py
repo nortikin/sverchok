@@ -63,6 +63,7 @@ class FormulaNode(bpy.types.Node, SverchCustomTreeNode):
             for c in ch[:-1]:
                 self.inputs.remove(self.inputs[ch[0]])
 
+    def process(self):
         if 'X' in self.inputs and self.inputs['X'].links:
             vecs = SvGetSocketAnyType(self, self.inputs['X'])
         else:

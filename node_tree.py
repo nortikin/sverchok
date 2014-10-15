@@ -225,7 +225,8 @@ class SverchCustomTree(NodeTree):
         return "don't update" in self
         
     def unfreeze(self):
-        del self["don't update"]
+        if self.is_frozen():
+            del self["don't update"]
 
 class SverchCustomTreeNode:
     @classmethod
