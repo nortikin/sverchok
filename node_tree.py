@@ -202,9 +202,16 @@ class SverchCustomTree(NodeTree):
             l = bpy.data.node_groups[self.id_data.name]
         except:
             return
-        #  stop processing while sockets are being created.
-        #if any(not(n.sv_state) for n in self.nodes if hasattr(n, "sv_state")):
-        #    return
+        if not self.nodes:
+            return
+        n  = self.nodes[-1]
+        # for unset bpy.props the default value 
+        # return false for "name" in nodes
+        # this ignores old nodes and only takes
+        # into account newly created ones.
+        if all(("sv_state" not in n, not n.sv_state)):
+            print("update abandoned {} not ready ins{}, outs{}".format(n.name,len(n.inputs), len(n.outputs)))
+            return    
         build_update_list(tree=self)
         if self.sv_process:
             sverchok_update(tree=self)
@@ -226,6 +233,7 @@ class SverchCustomTreeNode:
     sv_state = IntProperty(default=0)
     
     def init(self, context):
+        self.sv_state = 0
         if hasattr(self, "sv_init"):
             self.sv_init(context)
         self.sv_state = 1

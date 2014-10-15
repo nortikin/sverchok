@@ -23,6 +23,7 @@ import bpy
 from mathutils import Vector
 
 import data_structure
+import traceback
 
 # cache node group update trees
 update_cache = {}
@@ -269,11 +270,12 @@ def do_update_general(node_list, nodes):
         except ReferenceError:
             print("Cache miss in node set, abandoning")
             break
-        except Exception as e:
+        except Exception as err:
             nodes[node_name].color=(.9,0,0)
             nodes[node_name].use_custom_color=True
-            print("Node {0} had exception {1}".format(node_name,e))
-            return
+            traceback.print_tb(err.__traceback__)
+            print("Node {0} had exception {1}".format(node_name, err))
+            return None
 
     if data_structure.DEBUG_MODE:
         print("Node set updated in: {0} seconds".format(round(total_test, 4)))
