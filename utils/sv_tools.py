@@ -27,7 +27,7 @@ import collections
 import bpy
 from bpy.props import StringProperty, CollectionProperty
 
-from core.update_system import sverchok_update, build_update_list
+from core.update_system import process_tree, build_update_list
 from node_tree import SverchCustomTreeNode
 
 
@@ -52,7 +52,7 @@ class SverchokUpdateAll(bpy.types.Operator):
 
     def execute(self, context):
         build_update_list()
-        sverchok_update()
+        process_tree()
         return {'FINISHED'}
 
 
@@ -91,10 +91,10 @@ class SverchokUpdateCurrent(bpy.types.Operator):
 
     def execute(self, context):
         ng = bpy.data.node_groups.get(self.node_group)
-        ng.unfreeze()
         if ng:
-            build_update_list(tree=ng)
-            sverchok_update(tree=ng)
+            ng.unfreeze()
+            build_update_list(ng)
+            process_tree(ng)
         return {'FINISHED'}
 
 
@@ -230,36 +230,6 @@ class SvSwitchToLayout (bpy.types.Operator):
         return {'FINISHED'}
 
 
-class ToolsNode(bpy.types.Node, SverchCustomTreeNode):
-    ''' NOT USED '''
-    bl_idname = 'ToolsNode'
-    bl_label = 'Tools node'
-    bl_icon = 'OUTLINER_OB_EMPTY'
-    #bl_height_default = 110
-    #bl_width_min = 20
-    #color = (1,1,1)
-    color_ = bpy.types.ColorRamp
-
-    def draw_buttons(self, context, layout):
-        col = layout.column()
-        col.scale_y = 15
-        col.template_color_picker
-        u = "Update "
-        #col.operator(SverchokUpdateAll.bl_idname, text=u)
-        op = col.operator(SverchokUpdateCurrent.bl_idname, text=u+self.id_data.name)
-        op.node_group = self.id_data.name
-        #box = layout.box()
-
-        # add back if you need
-
-        node_count = len(self.id_data.nodes)
-        tex = str(node_count) + ' | ' + str(self.id_data.name)
-        layout.label(text=tex)
-        #layout.template_color_ramp(self, 'color_', expand=True)
-
-    def update(self):
-        self.use_custom_color = True
-        self.color = (1.0, 0.0, 0.0)
 
 
 class SvClearNodesLayouts (bpy.types.Operator):
@@ -523,7 +493,6 @@ sv_tools_classes = [
     SverchokPurgeCache,
     SverchokHome,
     SverchokToolsMenu,
-    ToolsNode,
     Sv3DPanel,
     Sv3dPropItem,
     SvSwitchToLayout,

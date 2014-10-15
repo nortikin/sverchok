@@ -25,8 +25,8 @@ from nodeitems_utils import NodeCategory, NodeItem
 import data_structure
 from data_structure import (SvGetSocketInfo, SvGetSocket,
                             SvSetSocket,  updateNode)
-from core.update_system import (build_update_list, sverchok_update,
-                                get_update_lists)
+from core.update_system import (build_update_list, process_from_node,
+                                process_tree, get_update_lists)
 from core import upgrade_nodes
 import time
 
@@ -207,16 +207,16 @@ class SverchCustomTree(NodeTree):
             print("Skippiping update of {}".format( self.name))
             return
             
-        build_update_list(tree=self)
+        build_update_list(self)
         if self.sv_process:
-            sverchok_update(tree=self)
+            process_tree(self)
 
     def update_ani(self):
         """
         Updates the Sverchok node tree if animation layers show true. For animation callback
         """
         if self.sv_animate:
-            sverchok_update(tree=self)
+            process_tree(self)
 
     def freeze(self):
         self["don't update"] = 1
@@ -247,7 +247,7 @@ class SverchCustomTreeNode:
     
     def process_node(self, context):
         a = time.perf_counter()
-        sverchok_update(start_node=self)
+        process_from_node(self)
         b = time.perf_counter()
         if data_structure.DEBUG_MODE:
             print("Partial update from node", self.name, "in", round(b-a, 4))

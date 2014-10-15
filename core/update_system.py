@@ -200,29 +200,6 @@ def make_animation_tree(node_types, node_list, tree_name):
     return a_tree
 
 
-def build_update_list(tree=None):
-    """
-    Makes a complete update list for the tree,
-    If tree is not passed, all sverchok custom tree
-    are processced
-    """
-    global update_cache
-    global partial_update_cache
-
-    if tree:
-        tree_list = [(tree.name, tree)]
-    else:
-        tree_list = bpy.data.node_groups.items()
-
-    for name, ng in tree_list:
-        if ng.bl_idname == 'SverchCustomTreeType':
-            node_sets = separate_nodes(ng)
-            deps = make_dep_dict(ng)
-            out = [make_update_list(ng, s, deps) for s in node_sets]
-            update_cache[name] = out
-            partial_update_cache[name] = {}
-            data_structure.reset_socket_cache(ng)
-
 def do_update_heat_map(node_list, nodes):
     """
     Create a heat map for the node tree, 
@@ -281,77 +258,99 @@ def do_update_general(node_list, nodes):
         print("Node set updated in: {0} seconds".format(round(total_test, 4)))
     return timings
 
+def do_update(node_list, nodes):
+    if data_structure.HEAT_MAP:
+        do_update_heat_map(node_list, nodes)
+    else:
+        do_update_general(node_list, nodes)
 
-# place holder for resturcture
-def process_node(node):
-    pass
-    
-
-def process_tree(node):
-    pass
-
-
-def sverchok_update(start_node=None, tree=None, animation_mode=False):
+def build_update_list(ng=None):
     """
-    Sverchok master update function.
-    Update from a given node, or a complete layout.
-    Needs restructure and clearity
+    Makes a complete update list for the tree,
+    If tree is not passed, all sverchok custom tree
+    are processced
     """
     global update_cache
     global partial_update_cache
-
-    # first update event after a reload, apply sverchok startup
-    if data_structure.RELOAD_EVENT:
-        data_structure.RELOAD_EVENT = False
-        from core import handlers
-        handlers.sv_post_load([])
-        return
-    if data_structure.HEAT_MAP:
-        do_update = do_update_heat_map
-    else:
-        do_update = do_update_general
-
-    # try to update optimized animation trees, not ready
-    if animation_mode:
-        pass
-    # start from the mentioned node the which has had changed property,
-    # called from updateNode
-    if start_node:
-        tree = start_node.id_data
-
-        if tree.name in update_cache and update_cache[tree.name]:
-            update_list = None
-            p_u_c = partial_update_cache.get(tree.name)
-            if p_u_c:
-                update_list = p_u_c.get(start_node.name)
-            if not update_list:
-                update_list = make_tree_from_nodes([start_node.name], tree)
-                partial_update_cache[tree.name][start_node.name] = update_list
-            nodes = tree.nodes
-            if not tree.sv_process:
-                return
-            do_update(update_list, nodes)
-            return
-        else:
-            build_update_list(tree)
-            update_list = update_cache[tree.name]
-            for l in update_list:
-                do_update(l, tree.nodes)
-            return
-    # draw the complete named tree, called from SverchokCustomTreeNode.update
-    if tree:
-        node_groups = [(tree.name, tree)]
-    else:
-        node_groups = bpy.data.node_groups.items()
-    for name, ng in node_groups:
-        if ng.bl_idname == 'SverchCustomTreeType' and ng.sv_process:
-            update_list = update_cache.get(name)
-            if not update_list:
+    if not ng:
+        for ng in bpy.data.node_groups:
+            if ng.bl_idname == 'SverchCustomTreeType':
                 build_update_list(ng)
-                update_list = update_cache.get(name)
-            for l in update_list:
-                do_update(l, ng.nodes)
+    else:
+        node_sets = separate_nodes(ng)
+        deps = make_dep_dict(ng)
+        out = [make_update_list(ng, s, deps) for s in node_sets]
+        update_cache[ng.name] = out
+        partial_update_cache[ng.name] = {}
+        data_structure.reset_socket_cache(ng)
 
+
+def process_to_node(node):
+    """
+    Process nodes upstream until node
+    """
+    ng = node.id_data
+    if data_structure.RELOAD_EVENT:
+        reload_sverchok()
+        return
+    update_list = make_tree_from_nodes([node.name], ng, down=False)
+    do_update(update_list, ng.nodes)
+    
+def process_from_node(node):
+    """
+    Process downstream from a given node
+    """
+    global update_cache
+    global partial_update_cache
+    ng = node.id_data
+    if data_structure.RELOAD_EVENT:
+        reload_sverchok()
+        return
+    if update_cache.get(ng.name):
+        p_u_c = partial_update_cache.get(ng.name)
+        update_list = None
+        if p_u_c:
+            update_list = p_u_c.get(node.name)
+        if not update_list:
+            update_list = make_tree_from_nodes([node.name], ng)
+            partial_update_cache[ng.name][node.name] = update_list
+        nodes = ng.nodes
+        if not ng.sv_process:
+            return
+        do_update(update_list, nodes)
+    else:
+        process_tree(ng)
+
+def sverchok_trees():
+    for ng in bpy.data.node_groups:
+        if ng.bl_idname == "SverchCustomTreeType":
+            yield ng
+    
+def process_tree(ng=None):
+    global update_cache
+    global partial_update_cache
+
+    if data_structure.RELOAD_EVENT:
+        reload_sverchok()
+        return
+    if not ng:
+        for ng in sverchok_trees():
+            process_tree(ng)
+    elif ng.bl_idname == "SverchCustomTreeType" and ng.sv_process:
+        update_list = update_cache.get(ng.name)
+        if not update_list:
+            build_update_list(ng)
+            update_list = update_cache.get(ng.name)
+        for l in update_list:
+            do_update(l, ng.nodes)
+    else:
+        pass
+        
+        
+def reload_sverchok():
+    data_structure.RELOAD_EVENT = False
+    from core import handlers
+    handlers.sv_post_load([])    
 
 def get_update_lists(ng):
     """

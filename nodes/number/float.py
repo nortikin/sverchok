@@ -20,7 +20,7 @@ import bpy
 from bpy.props import FloatProperty, BoolProperty
 
 from node_tree import SverchCustomTreeNode
-from data_structure import updateNode, SvSetSocketAnyType, SvGetSocketAnyType
+from data_structure import SvSetSocketAnyType, SvGetSocketAnyType
 
 
 class FloatNode(bpy.types.Node, SverchCustomTreeNode):
@@ -44,7 +44,7 @@ class FloatNode(bpy.types.Node, SverchCustomTreeNode):
         if self.float_ > self.maxim:
             self.float_ = self.maxim
             return  # recursion protection
-        updateNode(self, context)
+        self.process_node(context)
         
     def update_max(self, context):
         if self.maxim < self.minim:

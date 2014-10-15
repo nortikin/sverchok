@@ -24,8 +24,6 @@ import ast
 import bpy
 from mathutils import Vector, Matrix
 
-from core.update_system import sverchok_update
-
 global bmesh_mapping, per_cache
 
 DEBUG_MODE = False
@@ -39,17 +37,11 @@ SVERCHOK_NAME = "sverchok"
 temp_handle = {}
 # cache node group update trees it not used, as i see
 # cache_nodes = {}
-# cache node group update trees
-list_nodes4update = {}
-# cache for partial update lists
-partial_update_cache = {}
-# wifi node data
-sv_Vars = {}
 # socket cache
 socket_data_cache = {}
 # for viewer baker node cache
 cache_viewer_baker = {}
-
+sv_Vars = {}
 # note used?
 
 #bmesh_mapping = {}
@@ -725,16 +717,12 @@ def heat_map_state(state):
 
 def updateNode(self, context):
     """
+    Old, use process_node instead
     When a node has changed state and need to call a partial update.
     For example a user exposed bpy.prop
     """
-    global DEBUG_MODE
-    a = time.perf_counter()
-    sverchok_update(start_node=self)
-    b = time.perf_counter()
-    if DEBUG_MODE:
-        print("Partial update from node", self.name, "in", round(b-a, 4))            
-
+    self.process_node(context)
+    
 ##############################################################
 ##############################################################
 ############## changable type of socket magic ################
@@ -1029,10 +1017,4 @@ def reset_socket_cache(ng):
 def svQsort(L):
     if L: return svQsort([x for x in L[1:] if x<L[0]]) + L[0:1] + svQsort([x for x in L[1:] if x>=L[0]])
     return []
-
-
-
-
-
-
 
