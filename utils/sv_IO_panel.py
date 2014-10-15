@@ -34,9 +34,10 @@ from node_tree import SverchCustomTree
 from node_tree import SverchCustomTreeNode
 
 
-_EXPORTER_REVISION_ = '0.05 pre alpha'
+_EXPORTER_REVISION_ = '0.051 pre alpha'
 
 '''
+0.051 fake node removed, freeze and unfreeze used instead
 0.05 fake node inserted to stop updates
 0.043 remap dict for duplicates (when importing into existing tree)
 0.042 add fake user to imported layouts + switch to new tree.
@@ -224,11 +225,10 @@ def import_tree(ng, fullpath):
         print('#' * 12, nodes_json['export_version'])
 
         ''' first create all nodes. '''
-        nodes.new("SvStopperNode")
         nodes_to_import = nodes_json['nodes']
         name_remap = {}
         texts = bpy.data.texts
-
+        
         for n in sorted(nodes_to_import):
             node_ref = nodes_to_import[n]
             bl_idname = node_ref['bl_idname']
@@ -293,7 +293,12 @@ def import_tree(ng, fullpath):
         ''' now connect them '''
 
         # naive
+        # freeze updates while connecting the tree, otherwise
+        # each connection will cause an update event
+        ng.freeze()
+        
         failed_connections = []
+        
         for link in update_lists:
             try:
                 ng.links.new(*resolve_socket(*link, name_dict=name_remap))
@@ -313,10 +318,10 @@ def import_tree(ng, fullpath):
         framed_nodes = nodes_json['framed_nodes']
         for node_name, parent in framed_nodes.items():
             ng.nodes[finalize(node_name)].parent = ng.nodes[finalize(parent)]
-        for n in nodes:
-            if n.bl_idname == "SvStopperNode":
-                nodes.remove(n)
-        bpy.ops.node.sverchok_update_current(node_group=ng.name)
+        
+        ng.unfreeze()
+        ng.update()
+        #bpy.ops.node.sverchok_update_current(node_group=ng.name)
         
         # bpy.ops.node.select_all(action='DESELECT')
         # ng.update()

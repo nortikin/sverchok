@@ -22,7 +22,6 @@ nodes_dict = {
         'viewer_mk2',
         'empty_out',
         'reroute',
-        'stopper'
     ],
 
     'basic_data': [

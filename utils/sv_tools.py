@@ -91,6 +91,7 @@ class SverchokUpdateCurrent(bpy.types.Operator):
 
     def execute(self, context):
         ng = bpy.data.node_groups.get(self.node_group)
+        ng.unfreeze()
         if ng:
             build_update_list(tree=ng)
             sverchok_update(tree=ng)

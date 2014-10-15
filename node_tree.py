@@ -202,16 +202,11 @@ class SverchCustomTree(NodeTree):
             l = bpy.data.node_groups[self.id_data.name]
         except:
             return
-        if not self.nodes:
+            
+        if self.is_frozen():
+            print("Skippiping update of {}".format( self.name))
             return
-        n  = self.nodes[-1]
-        # for unset bpy.props the default value 
-        # return false for "name" in nodes
-        # this ignores old nodes and only takes
-        # into account newly created ones.
-        if all(("sv_state" not in n, not n.sv_state)):
-            print("update abandoned {} not ready ins{}, outs{}".format(n.name,len(n.inputs), len(n.outputs)))
-            return    
+            
         build_update_list(tree=self)
         if self.sv_process:
             sverchok_update(tree=self)
@@ -223,6 +218,14 @@ class SverchCustomTree(NodeTree):
         if self.sv_animate:
             sverchok_update(tree=self)
 
+    def freeze(self):
+        self["don't update"] = 1
+        
+    def is_frozen(self):
+        return "don't update" in self
+        
+    def unfreeze(self):
+        del self["don't update"]
 
 class SverchCustomTreeNode:
     @classmethod
@@ -230,14 +233,14 @@ class SverchCustomTreeNode:
         return ntree.bl_idname == 'SverchCustomTreeType'
     #def draw_buttons(self, context, layout):
     #    layout.label('sverchok')    
-    sv_state = IntProperty(default=0)
     
     def init(self, context):
-        self.sv_state = 0
+        ng = self.id_data
+        ng.freeze()
         if hasattr(self, "sv_init"):
             self.sv_init(context)
-        self.sv_state = 1
-    
+        ng.unfreeze()
+        
     def process(self):
         pass
     
