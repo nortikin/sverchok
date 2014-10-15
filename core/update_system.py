@@ -330,8 +330,6 @@ def sverchok_update(start_node=None, tree=None, animation_mode=False):
             nodes = tree.nodes
             if not tree.sv_process:
                 return
-            if any(n.bl_idname == "SvStopperNode" for n in nodes):
-                return
             do_update(update_list, nodes)
             return
         else:
@@ -348,8 +346,6 @@ def sverchok_update(start_node=None, tree=None, animation_mode=False):
     for name, ng in node_groups:
         if ng.bl_idname == 'SverchCustomTreeType' and ng.sv_process:
             update_list = update_cache.get(name)
-            if any(n.bl_idname == "SvStopperNode" for n in ng.nodes):
-                continue
             if not update_list:
                 build_update_list(ng)
                 update_list = update_cache.get(name)
