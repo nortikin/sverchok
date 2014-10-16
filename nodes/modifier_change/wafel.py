@@ -251,6 +251,7 @@ class SvWafelNode(bpy.types.Node, SverchCustomTreeNode):
                     # vertical edges iterations
                     # every edge is object - two points, one edge
                     for v in vec_:
+                        if not v: continue
                         # sort vertices by Z value
                         # find two vertices - one lower, two upper
                         vlist = [v[0],v[1]]
