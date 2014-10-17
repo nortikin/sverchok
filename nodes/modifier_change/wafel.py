@@ -27,7 +27,8 @@ from mathutils.geometry import intersect_line_plane as IL2P
 from mathutils.geometry import normal as NM
 from mathutils import kdtree as KDT
 from data_structure import Vector_generate, Vector_degenerate, fullList, \
-                           SvSetSocketAnyType, SvGetSocketAnyType, dataCorrect
+                           SvSetSocketAnyType, SvGetSocketAnyType, dataCorrect, \
+                           updateNode
 from math import sin, atan, cos, degrees, radians
 from bpy.props import FloatProperty, BoolProperty, EnumProperty
 from node_tree import SverchCustomTreeNode
@@ -51,42 +52,55 @@ class SvWafelNode(bpy.types.Node, SverchCustomTreeNode):
     threshold = FloatProperty(name='threshold', description='threshold for intersect edge',
                            default=16)
 
-    bindCircle = BoolProperty(name='bind Circle', description='circle for leyer to bind with contras',
-                           default=False)
-
     circl_place = EnumProperty(name='place Bind', items=[('Up','Up','Up'),('Midl','Midl','Midl'),('Down','Down','Down')],
-                           description='circle placement', default='Up')
+                           description='circle placement', default='Up', update=updateNode)
+
+    out_up_down = EnumProperty(name='out_up_down', items=[('Up','Up','Up'),('Down','Down','Down')],
+                           description='out up or down sect', default='Up', update=updateNode)
 
     rounded = BoolProperty(name='rounded', description='making rounded edges',
-                           default = False)
+                           default = False, update=updateNode)
+
+    bindCircle = BoolProperty(name='Bind2', description='circle for leyer to bind with contras',
+                           default=False, update=updateNode)
+
+    do_contra = BoolProperty(name='Contra', description='making contraversion for some coplanar segment',
+                            default = False, update=updateNode)
+
+    do_tube_sect = BoolProperty(name='Tube', description='making tube section',
+                            default = False, update=updateNode)
 
     def init(self, context):
         self.inputs.new('VerticesSocket', 'vecLine', 'vecLine')
         self.inputs.new('VerticesSocket', 'vecPlane', 'vecPlane')
         self.inputs.new('StringsSocket', 'edgPlane', 'edgPlane')
-        self.inputs.new('VerticesSocket', 'vecContr', 'vecContr')
-        self.inputs.new('StringsSocket', 'edgContr', 'edgContr')
         self.inputs.new('StringsSocket', 'thick').prop_name = 'thick'
-        self.inputs.new('StringsSocket', 'radCircle').prop_name = 'circle_rad'
-        self.inputs.new('VerticesSocket', 'vecTube', 'vecTube')
-        self.inputs.new('StringsSocket', 'radTube').prop_name = 'tube_radius'
         
-        self.outputs.new('VerticesSocket', 'vertUp', 'vertUp')
-        self.outputs.new('StringsSocket', 'edgeUp', 'edgeUp')
-        self.outputs.new('VerticesSocket', 'vertLo', 'vertLo')
-        self.outputs.new('StringsSocket', 'edgeLo', 'edgeLo')
+        self.outputs.new('VerticesSocket', 'vert', 'vert')
+        self.outputs.new('StringsSocket', 'edge', 'edge')
+        #self.outputs.new('VerticesSocket', 'vertLo', 'vertLo')
+        #self.outputs.new('StringsSocket', 'edgeLo', 'edgeLo')
         self.outputs.new('VerticesSocket', 'centers', 'centers')
 
-    def draw_buttons(self, context, layout):
+    def draw_main_ui_elements(self, context, layout):
         col = layout.column(align=True)
+        col.prop(self, 'threshold')
         row = col.row(align=True)
+        row.prop(self, 'out_up_down', expand=True)
+
+    def draw_buttons(self, context, layout):
+        self.draw_main_ui_elements(context, layout)
+
+    def draw_buttons_ext(self, context, layout):
+        row = layout.row(align=True)
         row.prop(self, 'rounded')
         row.prop(self, 'bindCircle')
+        row = layout.row(align=True)
+        row.prop(self, 'do_contra')
+        row.prop(self, 'do_tube_sect')
         if self.bindCircle:
-            row = col.row(align=True)
+            row = layout.row(align=True)
             row.prop(self, 'circl_place', expand=True)
-        row = col.row(align=True)
-        row.prop(self, 'threshold')
 
     def rotation_on_axis(self, p,v,a):
         '''
@@ -170,14 +184,37 @@ class SvWafelNode(bpy.types.Node, SverchCustomTreeNode):
                     return True
         return False
 
+    def ext_draw_checking(self):
+        # check for sockets to add
+        if self.bindCircle and not ('radCircle' in self.inputs):
+            self.inputs.new('StringsSocket', 'radCircle').prop_name = 'circle_rad'
+        elif not self.bindCircle and ('radCircle' in self.inputs):
+            self.inputs.remove(self.inputs['radCircle'])
+        if self.do_tube_sect and not any([('vecTube' in self.inputs), ('radTube' in self.inputs)]):
+            self.inputs.new('VerticesSocket', 'vecTube', 'vecTube')
+            self.inputs.new('StringsSocket', 'radTube').prop_name = 'tube_radius'
+        elif not self.do_tube_sect and any([('vecTube' in self.inputs), ('radTube' in self.inputs)]):
+            self.inputs.remove(self.inputs['vecTube'])
+            self.inputs.remove(self.inputs['radTube'])
+        if self.do_contra and not ('vecContr' in self.inputs):
+            self.inputs.new('VerticesSocket', 'vecContr', 'vecContr')
+        elif not self.do_contra and ('vecContr' in self.inputs):
+            self.inputs.remove(self.inputs['vecContr'])
+
     def update(self):
-        if not 'centers' in self.outputs:
+        if not 'centers' in self.outputs or \
+                not self.inputs['vecLine'].links or \
+                not self.outputs['vert'].links:
             return
-        if 'vecLine' in self.inputs and 'vecPlane' in self.inputs \
-                and 'edgPlane' in self.inputs:
+        self.ext_draw_checking()
+            
+        if 'vecLine' in self.inputs and \
+                'vecPlane' in self.inputs and \
+                'edgPlane' in self.inputs:
             print(self.name, 'is starting')
-            if self.inputs['vecLine'].links and self.inputs['vecPlane'].links \
-                    and self.inputs['edgPlane'].links:
+            if self.inputs['vecLine'].links and \
+                    self.inputs['vecPlane'].links and \
+                    self.inputs['edgPlane'].links:
                 if self.bindCircle:
                     circle = [ (Vector((sin(radians(i)),cos(radians(i)),0))*self.circle_rad)/4 \
                               for i in range(0,360,30) ]
@@ -195,7 +232,7 @@ class SvWafelNode(bpy.types.Node, SverchCustomTreeNode):
                 threshold = self.threshold
                 if 'vecContr' in self.inputs and self.inputs['vecContr'].links:
                     vecont = self.inputs['vecContr'].sv_get()
-                    edgcont = self.inputs['edgContr'].sv_get()
+                    #edgcont = self.inputs['edgContr'].sv_get()
                     vec_cont = Vector_generate(vecont)
                     loc_cont = [ [ i[0] ] for i in vec_cont ]
                     norm_cont = [ [ NM(i[0],i[len(i)//2], i[-1]) ] for i in vec_cont ] # довести до ума
@@ -251,6 +288,7 @@ class SvWafelNode(bpy.types.Node, SverchCustomTreeNode):
                     # vertical edges iterations
                     # every edge is object - two points, one edge
                     for v in vec_:
+                        if not v: continue
                         # sort vertices by Z value
                         # find two vertices - one lower, two upper
                         vlist = [v[0],v[1]]
@@ -425,15 +463,17 @@ class SvWafelNode(bpy.types.Node, SverchCustomTreeNode):
                 vlower = Vector_degenerate(vlower)
                 centers = Vector_degenerate([centers])
                 
-                if 'vertUp' in self.outputs and self.outputs['vertUp'].links:
-                    out = dataCorrect(vupper)
-                    SvSetSocketAnyType(self, 'vertUp', out)
-                if 'edgeUp' in self.outputs and self.outputs['edgeUp'].links:
-                    SvSetSocketAnyType(self, 'edgeUp', outeup)
-                if 'vertLo' in self.outputs and self.outputs['vertLo'].links:
-                    SvSetSocketAnyType(self, 'vertLo', vlower)
-                if 'edgeLo' in self.outputs and self.outputs['edgeLo'].links:
-                    SvSetSocketAnyType(self, 'edgeLo', outelo)
+                if 'vert' in self.outputs:
+                    if self.out_up_down == 'Up':
+                        out = dataCorrect(vupper)
+                    else:
+                        out = dataCorrect(vlower)
+                    SvSetSocketAnyType(self, 'vert', out)
+                if 'edge' in self.outputs and self.outputs['edge'].links:
+                    if self.out_up_down == 'Up':
+                        SvSetSocketAnyType(self, 'edge', outeup)
+                    else:
+                        SvSetSocketAnyType(self, 'edge', outelo)
                 if 'centers' in self.outputs and self.outputs['centers'].links:
                     SvSetSocketAnyType(self, 'centers', centers)
                 print(self.name, 'is finishing')

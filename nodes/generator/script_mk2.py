@@ -33,7 +33,7 @@ from bpy.props import (
 FAIL_COLOR = (0.8, 0.1, 0.1)
 READY_COLOR = (0, 0.8, 0.95)
 
-from utils.sv_tools import sv_get_local_path
+from utils.sv_panels_tools import sv_get_local_path
 import utils.script_importhelper
 from node_tree import SverchCustomTreeNode
 from data_structure import updateNode , node_id

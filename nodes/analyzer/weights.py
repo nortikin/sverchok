@@ -27,7 +27,7 @@ from data_structure import (SvGetSocketAnyType, updateNode, match_short,
 class SvVertexGroupNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Vertex Group '''
     bl_idname = 'SvVertexGroupNode'
-    bl_label = 'weights'
+    bl_label = 'vertex group weights'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     Itermodes = [

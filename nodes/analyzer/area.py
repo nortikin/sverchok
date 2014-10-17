@@ -38,6 +38,8 @@ def unit_normal(a, b, c):
     z = Matrix.determinant(mat_z)
 
     magnitude = (x**2 + y**2 + z**2)**.5
+    if magnitude == 0:
+        magnitude = 1
     return (x/magnitude, y/magnitude, z/magnitude)
 
 # area of polygon poly
