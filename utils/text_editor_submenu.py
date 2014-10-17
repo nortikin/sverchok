@@ -21,7 +21,7 @@ import os
 import bpy
 from bpy.props import StringProperty
 
-from utils.sv_tools import sv_get_local_path
+from utils.sv_panels_tools import sv_get_local_path
 
 sv_path = os.path.dirname(sv_get_local_path()[0])
 
