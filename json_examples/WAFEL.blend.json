@@ -1,0 +1,2080 @@
+{
+  "connections": {
+    "0": [
+      "Integer",
+      "Integer",
+      "Float Series.002",
+      "Stop"
+    ],
+    "1": [
+      "Float Series.002",
+      "Range",
+      "Vectors in.002",
+      "X"
+    ],
+    "2": [
+      "Objects_in",
+      "Vertices",
+      "Bounding box",
+      "Vertices"
+    ],
+    "3": [
+      "Bounding box",
+      "Vertices",
+      "List function .001",
+      "Data"
+    ],
+    "4": [
+      "List function .001",
+      "Function",
+      "Converter",
+      "data"
+    ],
+    "5": [
+      "Converter",
+      "vertices",
+      "Vectors out",
+      "Vectors"
+    ],
+    "6": [
+      "Float",
+      "Float",
+      "Formula2.002",
+      "n[0]"
+    ],
+    "7": [
+      "Bounding box",
+      "Vertices",
+      "List function ",
+      "Data"
+    ],
+    "8": [
+      "List function ",
+      "Function",
+      "Converter.001",
+      "data"
+    ],
+    "9": [
+      "Converter.001",
+      "vertices",
+      "Vectors out.001",
+      "Vectors"
+    ],
+    "10": [
+      "Float",
+      "Float",
+      "Formula2.003",
+      "n[0]"
+    ],
+    "11": [
+      "Formula2.003",
+      "Result",
+      "Float Series.001",
+      "Start"
+    ],
+    "12": [
+      "Formula2.002",
+      "Result",
+      "Float Series.001",
+      "Step"
+    ],
+    "13": [
+      "Integer",
+      "Integer",
+      "Float Series.001",
+      "Stop"
+    ],
+    "14": [
+      "Float Series.001",
+      "Range",
+      "Vectors in.003",
+      "X"
+    ],
+    "15": [
+      "Float Series.001",
+      "Range",
+      "Vectors in.003",
+      "Y"
+    ],
+    "16": [
+      "Vectors in.003",
+      "Vectors",
+      "Matrix in.001",
+      "Location"
+    ],
+    "17": [
+      "Axis Input.001",
+      "Vectors",
+      "Matrix in.001",
+      "Rotation"
+    ],
+    "18": [
+      "Vectors in.002",
+      "Vectors",
+      "Matrix in.001",
+      "Angle"
+    ],
+    "19": [
+      "Objects_in",
+      "Vertices",
+      "Cross Section.001",
+      "vertices"
+    ],
+    "20": [
+      "Objects_in",
+      "Polygons",
+      "Cross Section.001",
+      "edg_pol"
+    ],
+    "21": [
+      "Matrix in.001",
+      "Matrix",
+      "Cross Section.001",
+      "cut_matrix"
+    ],
+    "22": [
+      "Cross Section.001",
+      "edges",
+      "Polygons 2 Edges.001",
+      "pols"
+    ],
+    "23": [
+      "Float Series.002",
+      "Range",
+      "Vectors in.001",
+      "Y"
+    ],
+    "24": [
+      "Float",
+      "Float",
+      "Formula2.001",
+      "n[0]"
+    ],
+    "25": [
+      "Float",
+      "Float",
+      "Formula2",
+      "n[0]"
+    ],
+    "26": [
+      "Formula2",
+      "Result",
+      "Float Series",
+      "Start"
+    ],
+    "27": [
+      "Formula2.001",
+      "Result",
+      "Float Series",
+      "Step"
+    ],
+    "28": [
+      "Integer",
+      "Integer",
+      "Float Series",
+      "Stop"
+    ],
+    "29": [
+      "Float Series",
+      "Range",
+      "Vectors in",
+      "X"
+    ],
+    "30": [
+      "Float Series",
+      "Range",
+      "Vectors in",
+      "Y"
+    ],
+    "31": [
+      "Float Series",
+      "Range",
+      "Vectors in",
+      "Z"
+    ],
+    "32": [
+      "Vectors in",
+      "Vectors",
+      "Matrix in",
+      "Location"
+    ],
+    "33": [
+      "Axis Input",
+      "Vectors",
+      "Matrix in",
+      "Rotation"
+    ],
+    "34": [
+      "Vectors in.001",
+      "Vectors",
+      "Matrix in",
+      "Angle"
+    ],
+    "35": [
+      "Objects_in",
+      "Vertices",
+      "Cross Section",
+      "vertices"
+    ],
+    "36": [
+      "Objects_in",
+      "Polygons",
+      "Cross Section",
+      "edg_pol"
+    ],
+    "37": [
+      "Matrix in",
+      "Matrix",
+      "Cross Section",
+      "cut_matrix"
+    ],
+    "38": [
+      "Cross Section",
+      "vertices",
+      "Cross Section.002",
+      "vertices"
+    ],
+    "39": [
+      "Cross Section",
+      "edges",
+      "Cross Section.002",
+      "edg_pol"
+    ],
+    "40": [
+      "Matrix in.001",
+      "Matrix",
+      "Cross Section.002",
+      "cut_matrix"
+    ],
+    "41": [
+      "Cross Section.001",
+      "vertices",
+      "Wafel.001",
+      "vecPlane"
+    ],
+    "42": [
+      "Polygons 2 Edges.001",
+      "edgs",
+      "Wafel.001",
+      "edgPlane"
+    ],
+    "43": [
+      "Float.001",
+      "Float",
+      "Wafel.001",
+      "thick"
+    ],
+    "44": [
+      "Cross Section.001",
+      "vertices",
+      "Centers polygons",
+      "Vertices"
+    ],
+    "45": [
+      "Cross Section.001",
+      "edges",
+      "Centers polygons",
+      "Polygons"
+    ],
+    "46": [
+      "Wafel.001",
+      "vertLo",
+      "Vector Drop",
+      "Vectors"
+    ],
+    "47": [
+      "Centers polygons",
+      "Centers",
+      "Vector Drop",
+      "Matrixes"
+    ],
+    "48": [
+      "Cross Section",
+      "edges",
+      "Polygons 2 Edges",
+      "pols"
+    ],
+    "49": [
+      "Cross Section",
+      "vertices",
+      "Centers polygons.001",
+      "Vertices"
+    ],
+    "50": [
+      "Cross Section",
+      "edges",
+      "Centers polygons.001",
+      "Polygons"
+    ],
+    "51": [
+      "Centers polygons.001",
+      "Centers",
+      "List Length.001",
+      "Data"
+    ],
+    "52": [
+      "List Length.001",
+      "Length",
+      "Float Series.004",
+      "Stop"
+    ],
+    "53": [
+      "Float Series.004",
+      "Range",
+      "Vectors in.005",
+      "Y"
+    ],
+    "54": [
+      "Vectors in.005",
+      "Vectors",
+      "Matrix in.003",
+      "Location"
+    ],
+    "55": [
+      "Cross Section",
+      "vertices",
+      "Wafel",
+      "vecPlane"
+    ],
+    "56": [
+      "Polygons 2 Edges",
+      "edgs",
+      "Wafel",
+      "edgPlane"
+    ],
+    "57": [
+      "Float.001",
+      "Float",
+      "Wafel",
+      "thick"
+    ],
+    "58": [
+      "Wafel",
+      "vertUp",
+      "Vector Drop.001",
+      "Vectors"
+    ],
+    "59": [
+      "Centers polygons.001",
+      "Centers",
+      "Vector Drop.001",
+      "Matrixes"
+    ],
+    "60": [
+      "Vector Drop.001",
+      "Vectors",
+      "Viewer Draw2.004",
+      "vertices"
+    ],
+    "61": [
+      "Wafel",
+      "edgeUp",
+      "Viewer Draw2.004",
+      "edg_pol"
+    ],
+    "62": [
+      "Matrix in.003",
+      "Matrix",
+      "Viewer Draw2.004",
+      "matrix"
+    ],
+    "63": [
+      "Centers polygons",
+      "Centers",
+      "List Length",
+      "Data"
+    ],
+    "64": [
+      "List Length",
+      "Length",
+      "Float Series.003",
+      "Stop"
+    ],
+    "65": [
+      "Float Series.003",
+      "Range",
+      "Vectors in.004",
+      "Y"
+    ],
+    "66": [
+      "Vectors in.004",
+      "Vectors",
+      "Matrix in.002",
+      "Location"
+    ],
+    "67": [
+      "Wafel",
+      "vertUp",
+      "Viewer Draw2",
+      "vertices"
+    ],
+    "68": [
+      "Wafel",
+      "edgeUp",
+      "Viewer Draw2",
+      "edg_pol"
+    ],
+    "69": [
+      "Wafel.001",
+      "vertLo",
+      "Viewer Draw2.001",
+      "vertices"
+    ],
+    "70": [
+      "Wafel.001",
+      "edgeLo",
+      "Viewer Draw2.001",
+      "edg_pol"
+    ],
+    "71": [
+      "Vector Drop",
+      "Vectors",
+      "Viewer Draw2.003",
+      "vertices"
+    ],
+    "72": [
+      "Wafel.001",
+      "edgeLo",
+      "Viewer Draw2.003",
+      "edg_pol"
+    ],
+    "73": [
+      "Matrix in.002",
+      "Matrix",
+      "Viewer Draw2.003",
+      "matrix"
+    ],
+    "74": [
+      "Cross Section.002",
+      "vertices",
+      "Wafel",
+      "vecLine"
+    ],
+    "75": [
+      "Cross Section.002",
+      "vertices",
+      "Wafel.001",
+      "vecLine"
+    ],
+    "76": [
+      "Vectors out.001",
+      "X",
+      "Formula2",
+      "X"
+    ],
+    "77": [
+      "Vectors out",
+      "X",
+      "Formula2.001",
+      "X"
+    ],
+    "78": [
+      "Vectors out.001",
+      "Y",
+      "Formula2.003",
+      "X"
+    ],
+    "79": [
+      "Vectors out",
+      "Y",
+      "Formula2.002",
+      "X"
+    ]
+  },
+  "export_version": "0.043 pre alpha",
+  "framed_nodes": {
+    "Axis Input": "Frame",
+    "Axis Input.001": "Frame",
+    "Bounding box": "Frame",
+    "Centers polygons": "Frame.004",
+    "Centers polygons.001": "Frame.003",
+    "Converter": "Frame",
+    "Converter.001": "Frame",
+    "Cross Section": "Frame.001",
+    "Cross Section.001": "Frame.001",
+    "Cross Section.002": "Frame.001",
+    "Float Series": "Frame",
+    "Float Series.001": "Frame",
+    "Float Series.002": "Frame",
+    "Float Series.003": "Frame.004",
+    "Float Series.004": "Frame.003",
+    "Formula2": "Frame",
+    "Formula2.001": "Frame",
+    "Formula2.002": "Frame",
+    "Formula2.003": "Frame",
+    "List Length": "Frame.004",
+    "List Length.001": "Frame.003",
+    "List function ": "Frame",
+    "List function .001": "Frame",
+    "Matrix in": "Frame",
+    "Matrix in.001": "Frame",
+    "Matrix in.002": "Frame.004",
+    "Matrix in.003": "Frame.003",
+    "Polygons 2 Edges": "Frame.001",
+    "Polygons 2 Edges.001": "Frame.001",
+    "Vector Drop": "Frame.004",
+    "Vector Drop.001": "Frame.003",
+    "Vectors in": "Frame",
+    "Vectors in.001": "Frame",
+    "Vectors in.002": "Frame",
+    "Vectors in.003": "Frame",
+    "Vectors in.004": "Frame.004",
+    "Vectors in.005": "Frame.003",
+    "Vectors out": "Frame",
+    "Vectors out.001": "Frame",
+    "Viewer Draw2": "Frame.002",
+    "Viewer Draw2.001": "Frame.002",
+    "Viewer Draw2.003": "Frame.004",
+    "Viewer Draw2.004": "Frame.003",
+    "Wafel": "Frame.002",
+    "Wafel.001": "Frame.002"
+  },
+  "nodes": {
+    "Axis Input": {
+      "bl_idname": "svAxisInputNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "Z",
+      "location": [
+        -1200.0,
+        -160.0
+      ],
+      "params": {
+        "current_axis": "Z",
+        "selected_axis": "Z"
+      },
+      "width": 100.0
+    },
+    "Axis Input.001": {
+      "bl_idname": "svAxisInputNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1200.0,
+        -660.0
+      ],
+      "params": {},
+      "width": 100.0
+    },
+    "Bounding box": {
+      "bl_idname": "SvBBoxNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -2200.0,
+        -260.0
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Centers polygons": {
+      "bl_idname": "CentersPolsNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -600.0,
+        -960.0
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Centers polygons.001": {
+      "bl_idname": "CentersPolsNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -600.0,
+        200.0
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Converter": {
+      "bl_idname": "ConverterNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": true,
+      "label": "",
+      "location": [
+        -1900.0,
+        -360.0
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Converter.001": {
+      "bl_idname": "ConverterNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": true,
+      "label": "",
+      "location": [
+        -1900.0,
+        -260.0
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Cross Section": {
+      "bl_idname": "CrossSectionNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -800.0,
+        -60.0
+      ],
+      "params": {
+        "fill_check": 1,
+        "tri": 1
+      },
+      "width": 148.62173461914062
+    },
+    "Cross Section.001": {
+      "bl_idname": "CrossSectionNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -800.0,
+        -560.0
+      ],
+      "params": {
+        "fill_check": 1,
+        "tri": 1
+      },
+      "width": 151.08511352539062
+    },
+    "Cross Section.002": {
+      "bl_idname": "CrossSectionNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -600.0,
+        -360.0
+      ],
+      "params": {
+        "fill_check": 0,
+        "tri": 0
+      },
+      "width": 140.0
+    },
+    "Float": {
+      "bl_idname": "FloatNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "diapason",
+      "location": [
+        -2900.0,
+        -400.0
+      ],
+      "params": {
+        "float_": 0.5,
+        "maxim": 0.9800000190734863,
+        "minim": 0.3499999940395355
+      },
+      "width": 140.0
+    },
+    "Float Series": {
+      "bl_idname": "SvGenFloatRange",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1400.0,
+        -60.0
+      ],
+      "params": {
+        "count_": 2,
+        "mode": "FRANGE_COUNT",
+        "start_": -1.0,
+        "stop_": 1.0
+      },
+      "width": 140.0
+    },
+    "Float Series.001": {
+      "bl_idname": "SvGenFloatRange",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1400.0,
+        -560.0
+      ],
+      "params": {
+        "count_": 2,
+        "mode": "FRANGE_COUNT",
+        "start_": 0.949999988079071,
+        "stop_": -0.949999988079071
+      },
+      "width": 140.0
+    },
+    "Float Series.002": {
+      "bl_idname": "SvGenFloatRange",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1600.0,
+        -360.0
+      ],
+      "params": {
+        "count_": 2,
+        "mode": "FRANGE_COUNT",
+        "start_": 0.10000000149011612,
+        "stop_": 0.20000000298023224
+      },
+      "width": 140.0
+    },
+    "Float Series.003": {
+      "bl_idname": "SvGenFloatRange",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -200.0,
+        -960.0
+      ],
+      "params": {
+        "count_": 7,
+        "mode": "FRANGE_STEP",
+        "start_": 2.0,
+        "step_": 2.5,
+        "stop_": 1.0
+      },
+      "width": 140.0
+    },
+    "Float Series.004": {
+      "bl_idname": "SvGenFloatRange",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -200.0,
+        200.0
+      ],
+      "params": {
+        "count_": 7,
+        "mode": "FRANGE_STEP",
+        "start_": 2.0,
+        "step_": 2.5,
+        "stop_": 1.0
+      },
+      "width": 140.0
+    },
+    "Float.001": {
+      "bl_idname": "FloatNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "thickness",
+      "location": [
+        -2900.0,
+        -500.0
+      ],
+      "params": {
+        "float_": 0.05999999865889549,
+        "maxim": 0.10000000149011612,
+        "minim": 0.009999999776482582
+      },
+      "width": 140.0
+    },
+    "Formula2": {
+      "bl_idname": "Formula2Node",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": true,
+      "label": "",
+      "location": [
+        -1600.0,
+        -60.0
+      ],
+      "params": {
+        "formula": "x*n[0]"
+      },
+      "width": 140.0
+    },
+    "Formula2.001": {
+      "bl_idname": "Formula2Node",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": true,
+      "label": "",
+      "location": [
+        -1600.0,
+        -160.0
+      ],
+      "params": {
+        "formula": "x*n[0]"
+      },
+      "width": 140.0
+    },
+    "Formula2.002": {
+      "bl_idname": "Formula2Node",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": true,
+      "label": "",
+      "location": [
+        -1600.0,
+        -660.0
+      ],
+      "params": {
+        "formula": "x*n[0]"
+      },
+      "width": 140.0
+    },
+    "Formula2.003": {
+      "bl_idname": "Formula2Node",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": true,
+      "label": "",
+      "location": [
+        -1600.0,
+        -560.0
+      ],
+      "params": {
+        "formula": "x*n[0]"
+      },
+      "width": 140.0
+    },
+    "Frame": {
+      "bl_idname": "NodeFrame",
+      "color": [
+        0.3908044695854187,
+        0.7540218830108643,
+        1.0
+      ],
+      "height": 972.0,
+      "hide": false,
+      "label": "building_section_planes",
+      "location": [
+        -400.0,
+        0.0
+      ],
+      "params": {},
+      "width": 1400.0
+    },
+    "Frame.001": {
+      "bl_idname": "NodeFrame",
+      "color": [
+        0.021045031026005745,
+        0.3117988109588623,
+        0.6079999804496765
+      ],
+      "height": 769.0,
+      "hide": false,
+      "label": "sections",
+      "location": [
+        0.0,
+        60.0
+      ],
+      "params": {},
+      "width": 400.0
+    },
+    "Frame.002": {
+      "bl_idname": "NodeFrame",
+      "color": [
+        0.3332301378250122,
+        0.9430019855499268,
+        1.0
+      ],
+      "height": 837.0,
+      "hide": false,
+      "label": "make wafels",
+      "location": [
+        0.0,
+        60.0
+      ],
+      "params": {},
+      "width": 400.0
+    },
+    "Frame.003": {
+      "bl_idname": "NodeFrame",
+      "color": [
+        0.1011500284075737,
+        0.6079999804496765,
+        0.07297683507204056
+      ],
+      "height": 339.0,
+      "hide": false,
+      "label": "drop for CNC",
+      "location": [
+        400.0,
+        300.0
+      ],
+      "params": {},
+      "width": 1200.0
+    },
+    "Frame.004": {
+      "bl_idname": "NodeFrame",
+      "color": [
+        0.6079999804496765,
+        0.0722552016377449,
+        0.020457817241549492
+      ],
+      "height": 337.0,
+      "hide": false,
+      "label": "drop for CNC",
+      "location": [
+        500.0,
+        -200.0
+      ],
+      "params": {},
+      "width": 1200.0
+    },
+    "Integer": {
+      "bl_idname": "IntegerNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "divisions",
+      "location": [
+        -2900.0,
+        -300.0
+      ],
+      "params": {
+        "int_": 8,
+        "maxim": 10,
+        "minim": 2
+      },
+      "width": 140.0
+    },
+    "List Length": {
+      "bl_idname": "ListLengthNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -400.0,
+        -960.0
+      ],
+      "params": {
+        "level": 0
+      },
+      "width": 140.0
+    },
+    "List Length.001": {
+      "bl_idname": "ListLengthNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -400.0,
+        200.0
+      ],
+      "params": {
+        "level": 0
+      },
+      "width": 140.0
+    },
+    "List function ": {
+      "bl_idname": "ListFuncNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": true,
+      "label": "maximum",
+      "location": [
+        -2000.0,
+        -260.0
+      ],
+      "params": {
+        "func_": "MAX",
+        "level": 1
+      },
+      "width": 140.0
+    },
+    "List function .001": {
+      "bl_idname": "ListFuncNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": true,
+      "label": "minimum",
+      "location": [
+        -2000.0,
+        -360.0
+      ],
+      "params": {
+        "func_": "MIN",
+        "level": 1
+      },
+      "width": 140.0
+    },
+    "Matrix in": {
+      "bl_idname": "MatrixGenNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1000.0,
+        -60.0
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Matrix in.001": {
+      "bl_idname": "MatrixGenNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1000.0,
+        -560.0
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Matrix in.002": {
+      "bl_idname": "MatrixGenNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        200.0,
+        -960.0
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Matrix in.003": {
+      "bl_idname": "MatrixGenNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        200.0,
+        200.0
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Objects_in": {
+      "bl_idname": "ObjectsNode",
+      "color": [
+        0.0,
+        0.5,
+        0.20000000298023224
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -2900.0,
+        0.0
+      ],
+      "params": {
+        "modifiers": 1
+      },
+      "width": 140.0
+    },
+    "Polygons 2 Edges": {
+      "bl_idname": "Pols2EdgsNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -600.0,
+        -160.0
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Polygons 2 Edges.001": {
+      "bl_idname": "Pols2EdgsNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -600.0,
+        -660.0
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Vector Drop": {
+      "bl_idname": "VectorDropNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        200.0,
+        -860.0
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Vector Drop.001": {
+      "bl_idname": "VectorDropNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        200.0,
+        300.0
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Vectors in": {
+      "bl_idname": "GenVectorsNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1200.0,
+        40.0
+      ],
+      "params": {},
+      "width": 100.0
+    },
+    "Vectors in.001": {
+      "bl_idname": "GenVectorsNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1200.0,
+        -260.0
+      ],
+      "params": {
+        "x_": 1.0,
+        "y_": -0.10000000149011612,
+        "z_": 0.0
+      },
+      "width": 100.0
+    },
+    "Vectors in.002": {
+      "bl_idname": "GenVectorsNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1200.0,
+        -760.0
+      ],
+      "params": {
+        "x_": 0.30000001192092896,
+        "y_": 1.0,
+        "z_": 0.10000000149011612
+      },
+      "width": 100.0
+    },
+    "Vectors in.003": {
+      "bl_idname": "GenVectorsNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1200.0,
+        -460.0
+      ],
+      "params": {},
+      "width": 100.0
+    },
+    "Vectors in.004": {
+      "bl_idname": "GenVectorsNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        0.0,
+        -960.0
+      ],
+      "params": {
+        "x_": 2.0
+      },
+      "width": 100.0
+    },
+    "Vectors in.005": {
+      "bl_idname": "GenVectorsNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        0.0,
+        200.0
+      ],
+      "params": {
+        "x_": -2.0
+      },
+      "width": 100.0
+    },
+    "Vectors out": {
+      "bl_idname": "VectorsOutNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": true,
+      "label": "",
+      "location": [
+        -1800.0,
+        -360.0
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Vectors out.001": {
+      "bl_idname": "VectorsOutNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": true,
+      "label": "",
+      "location": [
+        -1800.0,
+        -260.0
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Viewer Draw2": {
+      "bl_idname": "ViewerNode2",
+      "color": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        0.0,
+        -60.0
+      ],
+      "params": {
+        "activate": 1,
+        "bakebuttonshow": 1,
+        "display_edges": 1,
+        "display_verts": 0,
+        "edge_colors": [
+          0.884513795375824,
+          0.8990001082420349,
+          0.7759068608283997
+        ],
+        "edge_width": 1,
+        "transparant": 0
+      },
+      "width": 140.0
+    },
+    "Viewer Draw2.001": {
+      "bl_idname": "ViewerNode2",
+      "color": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        0.0,
+        -460.0
+      ],
+      "params": {
+        "bakebuttonshow": 1,
+        "display_edges": 1,
+        "display_verts": 0,
+        "edge_colors": [
+          0.8990001082420349,
+          0.18477745354175568,
+          0.22522729635238647
+        ],
+        "edge_width": 1
+      },
+      "width": 140.0
+    },
+    "Viewer Draw2.003": {
+      "bl_idname": "ViewerNode2",
+      "color": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        400.0,
+        -860.0
+      ],
+      "params": {
+        "activate": 1,
+        "bakebuttonshow": 1,
+        "display_edges": 1,
+        "display_faces": 0,
+        "display_verts": 0,
+        "edge_colors": [
+          0.8990001082420349,
+          0.11763980239629745,
+          0.24136437475681305
+        ],
+        "edge_width": 1,
+        "shading": 0
+      },
+      "width": 140.0
+    },
+    "Viewer Draw2.004": {
+      "bl_idname": "ViewerNode2",
+      "color": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        400.0,
+        300.0
+      ],
+      "params": {
+        "activate": 1,
+        "bakebuttonshow": 1,
+        "display_edges": 1,
+        "display_faces": 0,
+        "display_verts": 0,
+        "edge_colors": [
+          0.09839937835931778,
+          0.8990001082420349,
+          0.0534454807639122
+        ],
+        "edge_width": 1,
+        "shading": 0
+      },
+      "width": 140.0
+    },
+    "Wafel": {
+      "bl_idname": "SvWafelNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -200.0,
+        40.0
+      ],
+      "params": {
+        "bindCircle": 1,
+        "circle_rad": 0.05999999865889549,
+        "rounded": 1,
+        "thick": 0.009999999776482582,
+        "threshold": 15.0
+      },
+      "width": 135.0732421875
+    },
+    "Wafel.001": {
+      "bl_idname": "SvWafelNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -200.0,
+        -360.0
+      ],
+      "params": {
+        "bindCircle": 0,
+        "circl_place": "Up",
+        "circle_rad": 0.05999999865889549,
+        "do_contra": 0,
+        "do_tube_sect": 1,
+        "rounded": 1,
+        "thick": 0.009999999776482582,
+        "threshold": 15.0
+      },
+      "width": 140.0
+    }
+  },
+  "update_lists": [
+    [
+      "Objects_in",
+      "Vertices",
+      "Bounding box",
+      "Vertices"
+    ],
+    [
+      "Bounding box",
+      "Vertices",
+      "List function .001",
+      "Data"
+    ],
+    [
+      "List function .001",
+      "Function",
+      "Converter",
+      "data"
+    ],
+    [
+      "Converter",
+      "vertices",
+      "Vectors out",
+      "Vectors"
+    ],
+    [
+      "Vectors out",
+      "X",
+      "Formula2.001",
+      "X"
+    ],
+    [
+      "Float",
+      "Float",
+      "Formula2.001",
+      "n[0]"
+    ],
+    [
+      "Bounding box",
+      "Vertices",
+      "List function ",
+      "Data"
+    ],
+    [
+      "List function ",
+      "Function",
+      "Converter.001",
+      "data"
+    ],
+    [
+      "Converter.001",
+      "vertices",
+      "Vectors out.001",
+      "Vectors"
+    ],
+    [
+      "Vectors out.001",
+      "X",
+      "Formula2",
+      "X"
+    ],
+    [
+      "Float",
+      "Float",
+      "Formula2",
+      "n[0]"
+    ],
+    [
+      "Formula2",
+      "Result",
+      "Float Series",
+      "Start"
+    ],
+    [
+      "Formula2.001",
+      "Result",
+      "Float Series",
+      "Step"
+    ],
+    [
+      "Integer",
+      "Integer",
+      "Float Series",
+      "Stop"
+    ],
+    [
+      "Float Series",
+      "Range",
+      "Vectors in",
+      "X"
+    ],
+    [
+      "Float Series",
+      "Range",
+      "Vectors in",
+      "Y"
+    ],
+    [
+      "Float Series",
+      "Range",
+      "Vectors in",
+      "Z"
+    ],
+    [
+      "Integer",
+      "Integer",
+      "Float Series.002",
+      "Stop"
+    ],
+    [
+      "Float Series.002",
+      "Range",
+      "Vectors in.001",
+      "Y"
+    ],
+    [
+      "Vectors in",
+      "Vectors",
+      "Matrix in",
+      "Location"
+    ],
+    [
+      "Axis Input",
+      "Vectors",
+      "Matrix in",
+      "Rotation"
+    ],
+    [
+      "Vectors in.001",
+      "Vectors",
+      "Matrix in",
+      "Angle"
+    ],
+    [
+      "Objects_in",
+      "Vertices",
+      "Cross Section",
+      "vertices"
+    ],
+    [
+      "Objects_in",
+      "Polygons",
+      "Cross Section",
+      "edg_pol"
+    ],
+    [
+      "Matrix in",
+      "Matrix",
+      "Cross Section",
+      "cut_matrix"
+    ],
+    [
+      "Cross Section",
+      "edges",
+      "Polygons 2 Edges",
+      "pols"
+    ],
+    [
+      "Vectors out.001",
+      "Y",
+      "Formula2.003",
+      "X"
+    ],
+    [
+      "Float",
+      "Float",
+      "Formula2.003",
+      "n[0]"
+    ],
+    [
+      "Vectors out",
+      "Y",
+      "Formula2.002",
+      "X"
+    ],
+    [
+      "Float",
+      "Float",
+      "Formula2.002",
+      "n[0]"
+    ],
+    [
+      "Formula2.003",
+      "Result",
+      "Float Series.001",
+      "Start"
+    ],
+    [
+      "Formula2.002",
+      "Result",
+      "Float Series.001",
+      "Step"
+    ],
+    [
+      "Integer",
+      "Integer",
+      "Float Series.001",
+      "Stop"
+    ],
+    [
+      "Cross Section",
+      "vertices",
+      "Centers polygons.001",
+      "Vertices"
+    ],
+    [
+      "Cross Section",
+      "edges",
+      "Centers polygons.001",
+      "Polygons"
+    ],
+    [
+      "Centers polygons.001",
+      "Centers",
+      "List Length.001",
+      "Data"
+    ],
+    [
+      "List Length.001",
+      "Length",
+      "Float Series.004",
+      "Stop"
+    ],
+    [
+      "Float Series.004",
+      "Range",
+      "Vectors in.005",
+      "Y"
+    ],
+    [
+      "Vectors in.005",
+      "Vectors",
+      "Matrix in.003",
+      "Location"
+    ],
+    [
+      "Float Series.002",
+      "Range",
+      "Vectors in.002",
+      "X"
+    ],
+    [
+      "Float Series.001",
+      "Range",
+      "Vectors in.003",
+      "X"
+    ],
+    [
+      "Float Series.001",
+      "Range",
+      "Vectors in.003",
+      "Y"
+    ],
+    [
+      "Vectors in.003",
+      "Vectors",
+      "Matrix in.001",
+      "Location"
+    ],
+    [
+      "Axis Input.001",
+      "Vectors",
+      "Matrix in.001",
+      "Rotation"
+    ],
+    [
+      "Vectors in.002",
+      "Vectors",
+      "Matrix in.001",
+      "Angle"
+    ],
+    [
+      "Cross Section",
+      "vertices",
+      "Cross Section.002",
+      "vertices"
+    ],
+    [
+      "Cross Section",
+      "edges",
+      "Cross Section.002",
+      "edg_pol"
+    ],
+    [
+      "Matrix in.001",
+      "Matrix",
+      "Cross Section.002",
+      "cut_matrix"
+    ],
+    [
+      "Cross Section.002",
+      "vertices",
+      "Wafel",
+      "vecLine"
+    ],
+    [
+      "Cross Section",
+      "vertices",
+      "Wafel",
+      "vecPlane"
+    ],
+    [
+      "Polygons 2 Edges",
+      "edgs",
+      "Wafel",
+      "edgPlane"
+    ],
+    [
+      "Float.001",
+      "Float",
+      "Wafel",
+      "thick"
+    ],
+    [
+      "Wafel",
+      "vertUp",
+      "Vector Drop.001",
+      "Vectors"
+    ],
+    [
+      "Centers polygons.001",
+      "Centers",
+      "Vector Drop.001",
+      "Matrixes"
+    ],
+    [
+      "Vector Drop.001",
+      "Vectors",
+      "Viewer Draw2.004",
+      "vertices"
+    ],
+    [
+      "Wafel",
+      "edgeUp",
+      "Viewer Draw2.004",
+      "edg_pol"
+    ],
+    [
+      "Matrix in.003",
+      "Matrix",
+      "Viewer Draw2.004",
+      "matrix"
+    ],
+    [
+      "Objects_in",
+      "Vertices",
+      "Cross Section.001",
+      "vertices"
+    ],
+    [
+      "Objects_in",
+      "Polygons",
+      "Cross Section.001",
+      "edg_pol"
+    ],
+    [
+      "Matrix in.001",
+      "Matrix",
+      "Cross Section.001",
+      "cut_matrix"
+    ],
+    [
+      "Cross Section.001",
+      "edges",
+      "Polygons 2 Edges.001",
+      "pols"
+    ],
+    [
+      "Cross Section.002",
+      "vertices",
+      "Wafel.001",
+      "vecLine"
+    ],
+    [
+      "Cross Section.001",
+      "vertices",
+      "Wafel.001",
+      "vecPlane"
+    ],
+    [
+      "Polygons 2 Edges.001",
+      "edgs",
+      "Wafel.001",
+      "edgPlane"
+    ],
+    [
+      "Float.001",
+      "Float",
+      "Wafel.001",
+      "thick"
+    ],
+    [
+      "Cross Section.001",
+      "vertices",
+      "Centers polygons",
+      "Vertices"
+    ],
+    [
+      "Cross Section.001",
+      "edges",
+      "Centers polygons",
+      "Polygons"
+    ],
+    [
+      "Centers polygons",
+      "Centers",
+      "List Length",
+      "Data"
+    ],
+    [
+      "List Length",
+      "Length",
+      "Float Series.003",
+      "Stop"
+    ],
+    [
+      "Float Series.003",
+      "Range",
+      "Vectors in.004",
+      "Y"
+    ],
+    [
+      "Vectors in.004",
+      "Vectors",
+      "Matrix in.002",
+      "Location"
+    ],
+    [
+      "Wafel.001",
+      "vertLo",
+      "Viewer Draw2.001",
+      "vertices"
+    ],
+    [
+      "Wafel.001",
+      "edgeLo",
+      "Viewer Draw2.001",
+      "edg_pol"
+    ],
+    [
+      "Wafel",
+      "vertUp",
+      "Viewer Draw2",
+      "vertices"
+    ],
+    [
+      "Wafel",
+      "edgeUp",
+      "Viewer Draw2",
+      "edg_pol"
+    ],
+    [
+      "Wafel.001",
+      "vertLo",
+      "Vector Drop",
+      "Vectors"
+    ],
+    [
+      "Centers polygons",
+      "Centers",
+      "Vector Drop",
+      "Matrixes"
+    ],
+    [
+      "Vector Drop",
+      "Vectors",
+      "Viewer Draw2.003",
+      "vertices"
+    ],
+    [
+      "Wafel.001",
+      "edgeLo",
+      "Viewer Draw2.003",
+      "edg_pol"
+    ],
+    [
+      "Matrix in.002",
+      "Matrix",
+      "Viewer Draw2.003",
+      "matrix"
+    ]
+  ]
+}

@@ -4,7 +4,7 @@ from bpy.props import BoolProperty, FloatVectorProperty, EnumProperty
 
 import data_structure
 from core import handlers
-from utils import sv_tools
+from utils import sv_panels_tools
 SVERCHOK_NAME = __package__
 
 
@@ -84,7 +84,7 @@ class SverchokPreferences(AddonPreferences):
         col.separator()
         row = layout.row()
         row.operator('wm.url_open', text='Home!').url = 'http://nikitron.cc.ua/blend_scripts.html'
-        if sv_tools.sv_new_version:
+        if sv_panels_tools.sv_new_version:
             row.operator('node.sverchok_update_addon', text='Upgrade Sverchok addon')
         else:
             row.operator('node.sverchok_check_for_upgrades', text='Check for new version')

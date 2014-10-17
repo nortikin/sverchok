@@ -29,7 +29,7 @@ from bpy.props import (
     IntVectorProperty
 )
 
-from utils.sv_tools import sv_get_local_path
+from utils.sv_panels_tools import sv_get_local_path
 from node_tree import SverchCustomTreeNode
 from data_structure import (
     dataCorrect,
