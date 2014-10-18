@@ -84,3 +84,13 @@ Usage
 .. image:: https://cloud.githubusercontent.com/assets/7894950/4606629/51fd445c-5228-11e4-815b-d12866da7794.png
 
 .. image:: https://cloud.githubusercontent.com/assets/7894950/4688830/e1e9680a-5694-11e4-9062-6ee03356b533.png
+
+.. image:: https://cloud.githubusercontent.com/assets/5783432/4689948/6d4c9fcc-56d4-11e4-9628-22eeffed4eed.png
+
+.. image:: https://cloud.githubusercontent.com/assets/5783432/4689947/6d4be5e6-56d4-11e4-911f-86494b69f182.png
+
+.. image:: https://cloud.githubusercontent.com/assets/5783432/4689951/6d590226-56d4-11e4-9519-67b2c871e9c8.png
+
+.. image:: https://cloud.githubusercontent.com/assets/5783432/4689950/6d58321a-56d4-11e4-8ba9-1d28426b8307.png
+
+.. image:: https://cloud.githubusercontent.com/assets/5783432/4689949/6d57503e-56d4-11e4-9df9-9224b8f645cb.png
