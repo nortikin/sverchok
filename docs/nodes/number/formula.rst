@@ -4,7 +4,10 @@ Formula
 Functionality
 -------------
 
-Formula2 - support vector*vector, define hierarhy and calculate respectfully to it. Supporting additionally to formula:
+Formula2 - support next operations:
+vector*vector, define hierarhy and calculate respectfully to it.
+Vector*scalar, the same.
+Supporting expressions beside * / - +:
         - acos()
         - acosh()
         - asin()
@@ -54,6 +57,24 @@ Formula2 - support vector*vector, define hierarhy and calculate respectfully to 
         - <, >
         - for, in, if, else
         - []
+
+Inputs
+------
+
+**X** - main x that defines sequence. it can be range of vertices or range of floats/integers. 
+  If x == one number, than other veriables will be the same - one number, if two - two.
+**n[0,1,2,3,4]** - multisocket for veriables.
+
+Parameters
+----------
+
+**Formula** - the string line, defining formula, i.e. `x>n[0]` or `x**n[0]+(n[1]/n[2])` are expressions.
+  May have `x if x>n[0] else n[1]`
+
+Outputs
+-------
+
+**Result** - what we got as result.
 
 Usage
 -----
