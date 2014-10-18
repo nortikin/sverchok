@@ -5,7 +5,7 @@ Functionality
 -------------
 
 **Formula2 - support next operations:**
-  - vector*vector, define hierarhy and calculate respectfully to it.
+  - vector*vector, define hierarhy and calculate respectfully to it. 
   - Vector*scalar, the same. And output to vector.
   - Moreover, you can define lists with formula, i.e. ```0,1,2,3,4,5``` for series or ```(1,2,3),(1,2,3)``` for vertices.
   - Supporting expressions beside * / - +:
