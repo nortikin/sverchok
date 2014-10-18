@@ -5,55 +5,55 @@ Functionality
 -------------
 
 Formula2 - support vector*vector, define hierarhy and calculate respectfully to it. Supporting additionally to formula:
-acos()
-        acosh()
-        asin()
-        asinh()
-        atan()
-        atan2()
-        atanh()
-        ceil()
-        copysign()
-        cos()
-        cosh()
-        degrees()
-        e
-        erf()
-        erfc()
-        exp()
-        expm1()
-        fabs()
-        factorial()
-        floor()
-        fmod()
-        frexp()
-        fsum()
-        gamma()
-        hypot()
-        isfinite()
-        isinf()
-        isnan()
-        ldexp()
-        lgamma()
-        log()
-        log10()
-        log1p()
-        log2()
-        modf()
-        pi
-        pow()
-        radians()
-        sin()
-        sinh()
-        sqrt()
-        tan()
-        tanh()
-        trunc()
-        ==
-        !=
-        <, >
-        for, in, if, else
-        []
+        - acos()
+        - acosh()
+        - asin()
+        - asinh()
+        - atan()
+        - atan2()
+        - atanh()
+        - ceil()
+        - copysign()
+        - cos()
+        - cosh()
+        - degrees()
+        - e
+        - erf()
+        - erfc()
+        - exp()
+        - expm1()
+        - fabs()
+        - factorial()
+        - floor()
+        - fmod()
+        - frexp()
+        - fsum()
+        - gamma()
+        - hypot()
+        - isfinite()
+        - isinf()
+        - isnan()
+        - ldexp()
+        - lgamma()
+        - log()
+        - log10()
+        - log1p()
+        - log2()
+        - modf()
+        - pi
+        - pow()
+        - radians()
+        - sin()
+        - sinh()
+        - sqrt()
+        - tan()
+        - tanh()
+        - trunc()
+        - ==
+        - !=
+        - <, >
+        - for, in, if, else
+        - []
 
 Usage
 -----
