@@ -68,7 +68,7 @@ If x == one number, than other veriables will be the same - one number, if two -
 Parameters
 ----------
 
-**Formula** - the string line, defining formula, i.e. `x>n[0]` or `x**n[0]+(n[1]/n[2])` are expressions.
+**Formula** - the string line, defining formula, i.e. ```x>n[0]``` or ```x**n[0]+(n[1]/n[2])``` are expressions.
 May have ```x if x>n[0] else n[1]```
 
 Outputs
