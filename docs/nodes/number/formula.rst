@@ -62,14 +62,14 @@ Inputs
 ------
 
 **X** - main x that defines sequence. it can be range of vertices or range of floats/integers. 
-  If x == one number, than other veriables will be the same - one number, if two - two.
+If x == one number, than other veriables will be the same - one number, if two - two.
 **n[0,1,2,3,4]** - multisocket for veriables.
 
 Parameters
 ----------
 
 **Formula** - the string line, defining formula, i.e. `x>n[0]` or `x**n[0]+(n[1]/n[2])` are expressions.
-  May have `x if x>n[0] else n[1]`
+May have ```x if x>n[0] else n[1]```
 
 Outputs
 -------
