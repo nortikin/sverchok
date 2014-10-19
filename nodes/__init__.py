@@ -31,7 +31,8 @@ nodes_dict = {
         'wifi_out',
         'eval_knieval',
         'switch',
-        'obj_remote'
+        'obj_remote',
+        'group'
     ],
 
     'basic_debug': [

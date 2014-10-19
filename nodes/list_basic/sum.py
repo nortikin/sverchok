@@ -56,9 +56,6 @@ class ListSumNode(bpy.types.Node, SverchCustomTreeNode):
                 out.extend(self.summ(obj))
         return out
 
-    def update_socket(self, context):
-        self.update()
-
 
 def register():
     bpy.utils.register_class(ListSumNode)

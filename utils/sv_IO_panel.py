@@ -34,9 +34,10 @@ from node_tree import SverchCustomTree
 from node_tree import SverchCustomTreeNode
 
 
-_EXPORTER_REVISION_ = '0.051 pre alpha'
+_EXPORTER_REVISION_ = '0.052 pre alpha'
 
 '''
+0.052 respect selection
 0.051 fake node removed, freeze and unfreeze used instead
 0.05 fake node inserted to stop updates
 0.043 remap dict for duplicates (when importing into existing tree)
@@ -110,14 +111,17 @@ def has_state_switch_protection(node, k):
         return node.bl_idname in {'VectorMathNode'}
 
 
-def create_dict_of_tree(ng):
+def create_dict_of_tree(ng, skip_set={}, selected=False):
     nodes = ng.nodes
     layout_dict = {}
     nodes_dict = {}
     texts = bpy.data.texts
-
-    skip_set = {'SvImportExport', 'Sv3DviewPropsNode'}
-
+    if not skip_set:
+        skip_set = {'SvImportExport', 'Sv3DviewPropsNode'}
+        
+    if selected:
+        nodes = list(filter(lambda n:n.select, nodes))
+    
     ''' get nodes and params '''
     for node in nodes:
 
@@ -174,10 +178,10 @@ def create_dict_of_tree(ng):
 
     layout_dict['nodes'] = nodes_dict
 
-    ''' get connections '''
-    links = (compile_socket(l) for l in ng.links)
-    connections_dict = {idx: link for idx, link in enumerate(links)}
-    layout_dict['connections'] = connections_dict
+    #''' get connections '''
+    #links = (compile_socket(l) for l in ng.links)
+    #connections_dict = {idx: link for idx, link in enumerate(links)}
+    #layout_dict['connections'] = connections_dict
 
     ''' get framed nodes '''
     framed_nodes = {}
@@ -197,8 +201,13 @@ def create_dict_of_tree(ng):
         links_out = []
         for node in chain(*ng.get_update_lists()[0]):
             for socket in ng.nodes[node].inputs:
+                if selected and not ng.nodes[node].select:
+                    continue
                 if socket.links:
-                    links_out.append(compile_socket(socket.links[0]))
+                    link = socket.links[0]
+                    if selected and not link.from_node.select:
+                        continue
+                    links_out.append(compile_socket(link))
         layout_dict['update_lists'] = links_out
     except Exception as err:
         print(traceback.format_exc())
@@ -210,7 +219,7 @@ def create_dict_of_tree(ng):
     return layout_dict
 
 
-def import_tree(ng, fullpath):
+def import_tree(ng, fullpath='', nodes_json=None):
 
     nodes = ng.nodes
     ng.use_fake_user = True
@@ -284,6 +293,8 @@ def import_tree(ng, fullpath):
                 new_text.from_string(node_ref['path_file'])
                 #  update will get called many times, is this really needed?
                 node.update()
+            elif node.bl_idname in {'SvGroupInputsNode', 'SvGroupOutputsNode'}:
+                node.load()
 
         update_lists = nodes_json['update_lists']
         print('update lists:')
@@ -295,7 +306,7 @@ def import_tree(ng, fullpath):
         # naive
         # freeze updates while connecting the tree, otherwise
         # each connection will cause an update event
-        ng.freeze()
+        ng.freeze(hard=True)
         
         failed_connections = []
         
@@ -319,7 +330,7 @@ def import_tree(ng, fullpath):
         for node_name, parent in framed_nodes.items():
             ng.nodes[finalize(node_name)].parent = ng.nodes[finalize(parent)]
         
-        ng.unfreeze()
+        ng.unfreeze(hard=True)
         ng.update()
         #bpy.ops.node.sverchok_update_current(node_group=ng.name)
         
@@ -337,6 +348,9 @@ def import_tree(ng, fullpath):
         with open(fullpath) as fp:
             nodes_json = json.load(fp)
             generate_layout(fullpath, nodes_json)
+    elif nodes_json:
+        generate_layout(fullpath, nodes_json)
+        
 
 
 class SvNodeTreeExporter(bpy.types.Operator):

@@ -359,4 +359,6 @@ def get_update_lists(ng):
     """
     global update_cache
     global partial_update_cache
-    return (update_cache[ng.name], partial_update_cache[ng.name])
+    if not ng.name in update_cache:
+        build_update_list(ng)
+    return (update_cache.get(ng.name), partial_update_cache.get(ng.name))

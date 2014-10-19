@@ -70,28 +70,8 @@ class MatrixSocket(NodeSocket):
         else: '''
         return(.2, .8, .8, 1.0)
 
-'''
-class ObjectSocket(NodeSocket):
-        'ObjectSocket'
-        bl_idname = "ObjectSocket"
-        bl_label = "Object Socket"
 
-        ObjectProperty = StringProperty(name= "ObjectProperty", update=updateSlot)
-
-        def draw(self, context, layout, node, text):
-            if self.is_linked:
-                layout.label(text)
-            else:
-                col = layout.column(align=True)
-                row = col.row(align=True)
-                row.prop(self, 'ObjectProperty', text=text)
-
-        def draw_color(self, context, node):
-            return(0.8,0.8,0.2,1.0)
-'''
-
-
-class VerticesSocket(NodeSocketStandard):
+class VerticesSocket(NodeSocket):
     '''String Vertices - one string'''
     bl_idname = "VerticesSocket"
     bl_label = "Vertices Socket"
@@ -210,7 +190,7 @@ class SverchCustomTree(NodeTree):
         build_update_list(self)
         if self.sv_process:
             process_tree(self)
-
+    
     def update_ani(self):
         """
         Updates the Sverchok node tree if animation layers show true. For animation callback
@@ -218,22 +198,49 @@ class SverchCustomTree(NodeTree):
         if self.sv_animate:
             process_tree(self)
 
-    def freeze(self):
-        self["don't update"] = 1
+    def freeze(self, hard=False):
+        if hard:
+            self["don't update"] = 1
+        elif not self.is_frozen():
+            self["don't update"] = 0
         
     def is_frozen(self):
-        return "don't update" in self
+        return "don't update" in self 
         
-    def unfreeze(self):
+    def unfreeze(self, hard=False):
         if self.is_frozen():
-            del self["don't update"]
+            if hard or self["don't update"] == 0:
+                del self["don't update"]
+                
 
+
+class SverchGroupTree(NodeTree):
+    ''' Sverchok - groups '''
+    bl_idname = 'SverchGroupTreeType'
+    bl_label = 'Sverchok Group Node Tree'
+    bl_icon = 'RNA'
+    
+        
+    def get_update_lists(self):
+        build_update_list(self)
+        return get_update_lists(self)
+        
+    def freeze(self, hard=True):
+        pass
+    
+    def unfreeze(self, hard=True):
+        pass
+        
+    def is_frozen(self):
+        return True
+    
+    def update(self):
+        pass
+    
 class SverchCustomTreeNode:
     @classmethod
     def poll(cls, ntree):
-        return ntree.bl_idname == 'SverchCustomTreeType'
-    #def draw_buttons(self, context, layout):
-    #    layout.label('sverchok')    
+        return ntree.bl_idname in [ 'SverchCustomTreeType', 'SverchGroupTreeType']
     
     def init(self, context):
         ng = self.id_data
@@ -251,8 +258,7 @@ class SverchCustomTreeNode:
         b = time.perf_counter()
         if data_structure.DEBUG_MODE:
             print("Partial update from node", self.name, "in", round(b-a, 4))
-        
-        
+
         
 
 class SverchNodeCategory(NodeCategory):
@@ -264,6 +270,8 @@ class SverchNodeCategory(NodeCategory):
 def register():
     bpy.utils.register_class(SvColors)
     bpy.utils.register_class(SverchCustomTree)
+    bpy.utils.register_class(SverchGroupTree)
+
     bpy.utils.register_class(MatrixSocket)
     bpy.utils.register_class(StringsSocket)
     bpy.utils.register_class(VerticesSocket)
@@ -274,6 +282,7 @@ def unregister():
     bpy.utils.unregister_class(StringsSocket)
     bpy.utils.unregister_class(MatrixSocket)
     bpy.utils.unregister_class(SverchCustomTree)
+    bpy.utils.unregister_class(SverchGroupTree)
     bpy.utils.unregister_class(SvColors)
 
 

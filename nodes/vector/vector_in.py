@@ -48,26 +48,26 @@ class GenVectorsNode(bpy.types.Node, SverchCustomTreeNode):
 
     def process(self):
         # inputs
-        if 'X' in self.inputs and self.inputs['X'].links and \
+        if self.inputs['X'].links and \
            type(self.inputs['X'].links[0].from_socket) == StringsSocket:
             X_ = SvGetSocketAnyType(self, self.inputs['X'])
         else:
             X_ = [[self.x_]]
 
-        if 'Y' in self.inputs and self.inputs['Y'].links and \
+        if self.inputs['Y'].links and \
            type(self.inputs['Y'].links[0].from_socket) == StringsSocket:
             Y_ = SvGetSocketAnyType(self, self.inputs['Y'])
         else:
             Y_ = [[self.y_]]
 
-        if 'Z' in self.inputs and self.inputs['Z'].links and \
+        if self.inputs['Z'].links and \
            type(self.inputs['Z'].links[0].from_socket) == StringsSocket:
             Z_ = SvGetSocketAnyType(self, self.inputs['Z'])
         else:
             Z_ = [[self.z_]]
 
         # outputs
-        if 'Vectors' in self.outputs and self.outputs['Vectors'].links:
+        if self.outputs['Vectors'].links:
 
             max_obj = max(len(X_), len(Y_), len(Z_))
             self.fullList(X_, max_obj)
@@ -87,8 +87,8 @@ class GenVectorsNode(bpy.types.Node, SverchCustomTreeNode):
                 fullList(Z, max_num)
 
                 series_vec.append(list(zip(X, Y, Z)))
-
-            SvSetSocketAnyType(self, 'Vectors', series_vec)
+            self.outputs[0].sv_set(series_vec)
+            #SvSetSocketAnyType(self, 'Vectors', series_vec)
             #print (series_vec)
 
     def fullList(self, l, count):
