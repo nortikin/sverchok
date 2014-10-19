@@ -232,25 +232,25 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
         split = row.split()
         r = split.column()
         r.prop(self, "activate", text="Show", toggle=True, icon=view_icon)
+        co = row.column()
+        co.prop(self, "transparant", toggle=True, icon=trans_icon, icon_only=True, expand=True)
+        co = row.column()
+        co.prop(self, "shading", toggle=True, icon=shade_icon, icon_only=True, expand=True)
 
-        r = split.column()
-        r.active = self.activate
-        row = r.row()
-        row.prop(self, "transparant", toggle=True, icon=trans_icon, icon_only=True, expand=True)
-        row.prop(self, "shading", toggle=True, icon=shade_icon, icon_only=True, expand=True)
-
-        row = layout.row(align=True)
-        row.active = self.activate
+        col = layout.column(align=True)
+        row = col.row(align=True)
+        # not nesessery to deactivate, because we use color of node
+        #row.active = self.activate
         row.prop(self, "display_verts", toggle=True, icon='VERTEXSEL', text='')
         row.prop(self, "vertex_colors", text="")
 
-        row = layout.row(align=True)
-        row.active = self.activate
+        row = col.row(align=True)
+        #row.active = self.activate
         row.prop(self, "display_edges", toggle=True, icon='EDGESEL', text='')
         row.prop(self, "edge_colors", text="")
 
-        row = layout.row(align=True)
-        row.active = self.activate
+        row = col.row(align=True)
+        #row.active = self.activate
         row.prop(self, "display_faces", toggle=True, icon='FACESEL', text='')
         row.prop(self, "face_colors", text="")
 

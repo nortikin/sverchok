@@ -226,11 +226,15 @@ class IndexViewerNode(bpy.types.Node, SverchCustomTreeNode):
         self.n_id = ''
 
     def draw_buttons(self, context, layout):
+        view_icon = 'RESTRICT_VIEW_' + ('OFF' if self.activate else 'ON')
+        
         row = layout.row(align=True)
-        row.prop(self, "activate", text="Show")
-        row.prop(self, "draw_bg", text="Background")
+        split = row.split()
+        r = split.column()
+        r.prop(self, "activate", text="Show", toggle=True, icon=view_icon)
+        row.prop(self, "draw_bg", text="Background", toggle=True)
 
-        layout.separator()
+        #layout.separator()
         col = layout.column(align=True)
         row = col.row(align=True)
         row.active = (self.activate)

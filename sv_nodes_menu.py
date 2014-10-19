@@ -58,6 +58,9 @@ def make_node_cats():
         ["DistancePPNode",      "Distance"],
         ["CentersPolsNode",     "Centers Polygons"],
         ["VectorNormalNode",    "Vertex Normal"],
+        # making something different
+        ["SvVertexGroupNode",   "Vertext group"],
+        ["SvRayCastNode",       "Raycast"],
         # proximity anaylyses.
         ["SvKDTreeNode",        "KDT Closest Verts"],
         ["SvKDTreeEdgesNode",   "KDT Closest Edges"]
@@ -206,8 +209,6 @@ def make_node_cats():
         ["SvReRouteNode",       "Reroute Point"],
         ["SvInstancerNode",     "mesh instancer"],
         ["SvWafelNode",         "Wafel"],
-        ["SvVertexGroupNode",   "Vertext group"],
-        ["SvRayCastNode",       "Raycast"],
         ["SvScriptNodeMK2",     "Script 2"],
     ]
 
