@@ -222,6 +222,7 @@ class SvWafelNode(bpy.types.Node, SverchCustomTreeNode):
                 vecplan = self.inputs['vecPlane'].sv_get()
                 edgplan = self.inputs['edgPlane'].sv_get()
                 thick = self.inputs['thick'].sv_get()[0][0]
+                threshold_coplanar = 0.005
                 sinuso60 = 0.8660254037844386
                 sinuso60_minus = 0.133974596
                 sinuso30 = 0.5
@@ -311,7 +312,7 @@ class SvWafelNode(bpy.types.Node, SverchCustomTreeNode):
                                  and one[2]<=m1z and one[2]>=m2z
                         # if in bounds and coplanar do:
                         #print(self.name,l, cop, inside)
-                        if cop < 0.001 and inside and shortedge > thick*threshold:
+                        if cop < threshold_coplanar and inside and shortedge > thick*threshold:
                             '''
                             huge calculations. if we can reduce...
                             '''
@@ -343,6 +344,8 @@ class SvWafelNode(bpy.types.Node, SverchCustomTreeNode):
                             # print(left2, right2, l2, r2, lz2, rz2)
                             # средняя точка и её смещение по толщине материала
                             three = (one-two)/2 + two
+                            
+                            # rounded section
                             if self.rounded:
                                 '''рёбра'''
                                 # пазы формируем независимо от верх низ
@@ -381,6 +384,8 @@ class SvWafelNode(bpy.types.Node, SverchCustomTreeNode):
                                                  three-round2+round2_, three-round1+dirx,
                                                  lz1])
                                 k += 10
+                            
+                            # streight section
                             else:
                                 '''рёбра'''
                                 # пазы формируем независимо от верх низ
@@ -397,6 +402,8 @@ class SvWafelNode(bpy.types.Node, SverchCustomTreeNode):
                                 k += 4
                             newinds1.extend(outeob1)
                             newinds2.extend(outeob2)
+                            
+                            # circles to bing panels section
                             if self.bindCircle:
                                 CP = self.circl_place
                                 if CP == 'Midl':
@@ -424,24 +431,45 @@ class SvWafelNode(bpy.types.Node, SverchCustomTreeNode):
                                 vupperob.extend(circle_to_add_1+circle_to_add_2)
                                 vlowerob.extend(circle_to_add_1+circle_to_add_2)
                                 k += 24
+                                
+                            # TUBE section
                             if vec_tube and not tubes_flag_bed_solution_i_know:
                                 for v in vec_tube:
-                                    crcl_cntr = IL2P(v[0], v[1], l, n)
-                                    if crcl_cntr:
-                                        inside = crcl_cntr[0]<m1x and crcl_cntr[0]>m2x and crcl_cntr[1]<m1y \
-                                             and crcl_cntr[1]>m2y and crcl_cntr[2]<=m1z and crcl_cntr[2]>=m2z
-                                        if inside:
-                                            outeob = [ [lenvep+k+i,lenvep+k+i+1] for i in range(0,23) ]
-                                            outeob.append([lenvep+k,lenvep+k+23])
-                                            newinds1.extend(outeob)
-                                            newinds2.extend(outeob)
-                                            mat_rot_cir = n.rotation_difference(Vector((0,0,1))).to_matrix().to_4x4()
-                                            circle_to_add = [ vecir*mat_rot_cir+crcl_cntr for vecir in circle_tube ]
-                                            vupperob.extend(circle_to_add)
-                                            vlowerob.extend(circle_to_add)
-                                            k += 24
+                                    tubeverlength = len(v)
+                                    if tubeverlength == 2:
+                                        crcl_cntr = IL2P(v[0], v[1], l, n)
+                                        if crcl_cntr:
+                                            inside = crcl_cntr[0]<m1x and crcl_cntr[0]>m2x and crcl_cntr[1]<m1y \
+                                                 and crcl_cntr[1]>m2y and crcl_cntr[2]<=m1z and crcl_cntr[2]>=m2z
+                                            if inside:
+                                                outeob = [ [lenvep+k+i,lenvep+k+i+1] for i in range(0,23) ]
+                                                outeob.append([lenvep+k,lenvep+k+23])
+                                                newinds1.extend(outeob)
+                                                newinds2.extend(outeob)
+                                                mat_rot_cir = n.rotation_difference(Vector((0,0,1))).to_matrix().to_4x4()
+                                                circle_to_add = [ vecir*mat_rot_cir+crcl_cntr for vecir in circle_tube ]
+                                                vupperob.extend(circle_to_add)
+                                                vlowerob.extend(circle_to_add)
+                                                k += 24
+                                    else:
+                                        tubeshift = tubeverlength//2
+                                        crcl_cntr = IL2P(v[0], v[tubeshift], l, n)
+                                        if crcl_cntr:
+                                            inside = crcl_cntr[0]<m1x and crcl_cntr[0]>m2x and crcl_cntr[1]<m1y \
+                                                 and crcl_cntr[1]>m2y and crcl_cntr[2]<=m1z and crcl_cntr[2]>=m2z
+                                            if inside:
+                                                outeob = [ [lenvep+k+i,lenvep+k+i+1] for i in range(tubeshift-1) ]
+                                                outeob.append([lenvep+k,lenvep+k+tubeshift-1])
+                                                newinds1.extend(outeob)
+                                                newinds2.extend(outeob)
+                                                for tubevert in range(tubeshift):
+                                                    tubevert_out = IL2P(v[tubevert], v[tubevert+tubeshift], l, n)
+                                                    vupperob.append(tubevert_out)
+                                                    vlowerob.append(tubevert_out)
+                                                k += tubeshift
+                                            
                                 tubes_flag_bed_solution_i_know = True
-                        elif cop < 0.001 and inside and shortedge <= thick*threshold:
+                        elif cop < threshold_coplanar and inside and shortedge <= thick*threshold:
                             vupperob.extend([one,two])
                             vlowerob.extend([one,two])
                             newinds1.append([lenvep+k,lenvep+k+1])
