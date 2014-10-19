@@ -48,7 +48,7 @@ def sv_main(verts=[], num_u=6, num_v=10, cyclic_u=0, cyclic_v=0):
             mT1 = np.roll(mT[1] % mod, 1)
             mT2 = mT[1] % mod
             mT3 = np.roll(mT[0], -1)
-            d = np.array([mT0, mT1, mT2, mT3])
+            d = np.array([mT0, mT3, mT2, mT1])
             dT = d.T
             tp = np.concatenate((tp, dT), 0)
             
