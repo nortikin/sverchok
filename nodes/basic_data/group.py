@@ -24,18 +24,25 @@ from data_structure import multi_socket, node_id
 from core.update_system import make_tree_from_nodes, do_update
 import ast
 
+
 class StoreSockets:
     
     socket_data = StringProperty()
 
+
+    def draw_buttons(self, context, layout):
+        if self.id_data.bl_idname == "SverchCustomTreeType":
+            op = layout.operator("node.sv_node_group_done")
+            op.frame_name = self.parent.name
+            col = layout.column(align=True)
+            for s in next(self.get_sockets())[0]:
+                layout.prop(s, "name")
+        
     def collect(self):
         out = {}
-        if self.outputs:
-            data = [(s.bl_idname, s.name) for s in self.outputs]
-            out["outputs"] = data
-        if self.inputs:
-            data = [(s.bl_idname, s.name) for s in self.inputs]
-            out["inputs"] = data
+        for sockets, name in self.get_sockets():
+            data = [(s.bl_idname, s.name) for s in sockets if s.is_linked]
+            out[name] = data
         self.socket_data = str(out)
             
     def load(self):
@@ -44,11 +51,29 @@ class StoreSockets:
             sockets = getattr(self, k)
             sockets.clear()
             for s in values:
-                sockets.new(*s)
+                if not s[1] in sockets:
+                    sockets.new(*s)
+    
+    def get_stype(self, socket):
+        if socket.is_output:
+            return socket.links[0].to_node.bl_idname
+        else:
+            return socket.links[0].from_node.bl_idname
         
     def process(self):
         pass
     
+    def update(self):
+        if self.id_data.bl_idname == "SverchCustomTreeType":
+            sockets, name = next(self.get_sockets())
+            if self.socket_data and sockets[-1].links:
+                sockets.new("StringsSocket", str(len(sockets)))
+                
+    s_types = (("StringsSocket","StringsSocket", "Generic number socket"),
+              ("VerticesSocket", "VerticesSocket", "Vertex data"),
+              ("MatrixSocket", "MatrixSocket", "Matrix data"))
+            
+    s_type = EnumProperty(items=s_types)
     
 class SvGroupNode(bpy.types.Node, SverchCustomTreeNode, StoreSockets):
     '''
@@ -60,11 +85,30 @@ class SvGroupNode(bpy.types.Node, SverchCustomTreeNode, StoreSockets):
 
     group_name = StringProperty()
     
+    def update(self):
+        '''
+        Override inherited
+        '''
+        pass
+        
     def draw_buttons(self, context, layout):
         if self.id_data.bl_idname == "SverchCustomTreeType":
             op = layout.operator("node.sv_node_group_edit")
             op.group_name = self.group_name
             
+    def adjust_sockets(self, nodes):
+        swap = {"inputs":"outputs",
+                "outputs": "inputs"}
+        for n in nodes:
+            data = ast.literal_eval(n.socket_data)
+            for k, values in data.items():
+                sockets = getattr(self, swap[k])
+                for i,s in enumerate(values):
+                    if i > len(sockets):
+                        sockets.new(*s)
+                    else:
+                        sockets[i].name = s[1]
+                
     def process(self):
         group_ng = bpy.data.node_groups[self.group_name]
         in_node = find_node("SvGroupInputsNode", group_ng)
@@ -83,6 +127,11 @@ class SvGroupNode(bpy.types.Node, SverchCustomTreeNode, StoreSockets):
             if socket.links:
                 data = out_node.inputs[socket.name].sv_get(deepcopy=False)
                 socket.sv_set(data)
+    
+    def get_sockets(self):
+        yield self.inputs, "inputs"
+        yield self.outputs, "outputs"
+    
 
 def find_node(id_name, ng):
     for n in ng.nodes:
@@ -91,27 +140,23 @@ def find_node(id_name, ng):
     raise NotFoundErr
     
 
+
 class SvGroupInputsNode(bpy.types.Node, SverchCustomTreeNode, StoreSockets):
     bl_idname = 'SvGroupInputsNode'
     bl_label = 'Group Inputs'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    def draw_buttons(self, context, layout):
-        if self.id_data.bl_idname == "SverchCustomTreeType":
-            op = layout.operator("node.sv_node_group_done")
-            op.frame_name = self.parent.name
-    
+    def get_sockets(self):
+        yield self.outputs, "outputs"
+            
     
 class SvGroupOutputsNode(bpy.types.Node, SverchCustomTreeNode, StoreSockets):
     bl_idname = 'SvGroupOutputsNode'
     bl_label = 'Group outputs'
     bl_icon = 'OUTLINER_OB_EMPTY'
     
-    def draw_buttons(self, context, layout):
-        if self.id_data.bl_idname == "SverchCustomTreeType":
-            op = layout.operator("node.sv_node_group_done")
-            op.frame_name = self.parent.name
-
+    def get_sockets(self):
+        yield self.inputs, "inputs"
     
     
 def register():

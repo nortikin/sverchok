@@ -149,15 +149,25 @@ class SvNodeGroupEditDone(bpy.types.Operator):
         if not frame:
             return {'CANCELLED'}
         nodes = [n for n in ng.nodes if n.parent == frame]
+        
+        g_node = ng.nodes[ng["Group Node"]]
+        
         for n in ng.nodes:
             n.select = False
         for n in nodes:
             n.select = True
+        in_out = [n for n in nodes if n.bl_idname in {'SvGroupInputsNode', 'SvGroupOutputsNode'}]
+        
+        in_out.sort(key=lambda n:n.bl_idname)
+        for n in in_out:
+            n.collect()
+        g_node.adjust_sockets(in_out)
+            
         frame.select = True
         group_ng = bpy.data.node_groups[ng[frame.name]]
         del ng[frame.name]
         group_ng.name = frame.label
-        g_node = ng.nodes[ng["Group Node"]]
+        
         ng.freeze(hard=True)
         ng.nodes.remove(frame)
         nodes_json = create_dict_of_tree(ng, {}, selected=True)

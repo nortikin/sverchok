@@ -983,7 +983,7 @@ def SvGetSocket(socket, deepcopy=True):
     global socket_data_cache
     global DEBUG_MODE
     if socket.links:
-        other = socket.links[0].from_socket
+        other = get_other_socket(socket)
         s_id = socket_id(other)
         s_ng = other.id_data.name
         if s_ng not in socket_data_cache:

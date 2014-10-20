@@ -182,14 +182,30 @@ class SverchCustomTree(NodeTree):
             l = bpy.data.node_groups[self.id_data.name]
         except:
             return
-            
         if self.is_frozen():
             print("Skippiping update of {}".format( self.name))
             return
+        
+        reroutes = [n for n in self.nodes if n.bl_idname == 'NodeReroute']
+        for n in reroutes:
+            self.freeze(True)
+            s = n.inputs[0]
+            if s.links:
+                s_type = s.links[0].from_node.bl_idname
+                if n.outputs[0].bl_idname == s_type:
+                    socket =  n.outputs[0]
+                    out_socket = n.outputs.new(s_type)
+                    
+                    in_sockets = [l.to_socket for l in out_socket.links]
+                    print(in_socket)
+                    for i_s in in_sockets:
+                        self.links.new(i_s, out_socket)
+                n.outputs.remove(n.outputs[0])
+            self.unfreeze(False)
             
         build_update_list(self)
         if self.sv_process:
-            process_tree(self)
+            process_tree(self)  
     
     def update_ani(self):
         """
@@ -218,8 +234,7 @@ class SverchGroupTree(NodeTree):
     ''' Sverchok - groups '''
     bl_idname = 'SverchGroupTreeType'
     bl_label = 'Sverchok Group Node Tree'
-    bl_icon = 'RNA'
-    
+    bl_icon = 'NONE'
         
     def get_update_lists(self):
         build_update_list(self)
