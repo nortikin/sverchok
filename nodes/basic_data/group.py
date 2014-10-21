@@ -60,9 +60,6 @@ class StoreSockets:
         else:
             return socket.links[0].from_node.bl_idname
         
-    def process(self):
-        pass
-    
     def update(self):
         if self.id_data.bl_idname == "SverchCustomTreeType":
             sockets, name = next(self.get_sockets())

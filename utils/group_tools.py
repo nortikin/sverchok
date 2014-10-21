@@ -39,8 +39,8 @@ class SvNodeGroupCreator(bpy.types.Operator):
     '''Create a Node group from selected'''
 
     bl_idname = "node.sv_group_creator"
-    bl_label = "Create node group"
-
+    bl_label = "Create node group from selected"
+ 
     def execute(self, context):
         
         ng = context.space_data.node_tree
@@ -188,7 +188,7 @@ class SvNodeGroupEditDone(bpy.types.Operator):
 
 class SverchokGroupLayoutsMenu(bpy.types.Panel):
     bl_idname = "Sverchok_groups_menu"
-    bl_label = "SV Groups"
+    bl_label = "SV Groups Beta"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
     bl_category = 'Sverchok'
@@ -206,11 +206,11 @@ class SverchokGroupLayoutsMenu(bpy.types.Panel):
         layout = self.layout
         layout.operator("node.sv_group_creator")
         
-        for ng in bpy.data.node_groups:
-            if ng.bl_idname == 'SverchGroupTreeType':
-                layout.label(ng.name)
-                op = layout.operator("node.sv_node_group_edit", text="Edit")
-                op.group_name = ng.name
+        #for ng in bpy.data.node_groups:
+        #    if ng.bl_idname == 'SverchGroupTreeType':
+        #        layout.label(ng.name)
+        #        op = layout.operator("node.sv_node_group_edit", text="Edit")
+        #        op.group_name = ng.name
                 
 classes = [
     SverchokGroupLayoutsMenu,
