@@ -54,7 +54,10 @@ def sv_main(verts=[], num_u=6, num_v=10, cyclic_u=0, cyclic_v=0):
             
     else:
         tp = p
-        
+
+    print('num_u: {u}, num_v: {v}'.format(u=num_u, v=num_v))
+    print('num_u * num_v =', (num_u+cyclic_u)*(num_v+cyclic_v))
+    print(len(tp))        
     p = tp.tolist()
     # out boilerplate
     out_sockets = [
