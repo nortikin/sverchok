@@ -104,11 +104,11 @@ class SvGroupNode(bpy.types.Node, SverchCustomTreeNode, StoreSockets):
             for k, values in data.items():
                 sockets = getattr(self, swap[k])
                 for i,s in enumerate(values):
-                    if i > len(sockets):
-                        sockets.new(*s)
-                    else:
+                    if i < len(sockets):
                         sockets[i].name = s[1]
-                
+                    else:
+                        sockets.new(*s)
+
     def process(self):
         group_ng = bpy.data.node_groups[self.group_name]
         in_node = find_node("SvGroupInputsNode", group_ng)

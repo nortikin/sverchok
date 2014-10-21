@@ -47,18 +47,22 @@ def make_dep_dict(node_tree, down=False):
         wifi_dict = {node.var_name: name
                      for name, node in ng.nodes.items()
                      if node.bl_idname == 'WifiInNode'}
-                
+        
     for link in ng.links:
         if not link.is_valid:
             return {}  # this happens more often than one might think
         key, value = (link.from_node.name, link.to_node.name) if down else (link.to_node.name, link.from_node.name) 
         deps[key].add(value)
+
     for name, var_name in wifi_out_nodes:
-        if var_name not in wifi_dict:
+        other = wifi_dict.get(var_name)
+        if not other:
             print("Unsatisifed Wifi dependency: node, {0} var,{1}".format(name, var_name))
             return {}
-        key, value = (name, wifi_dict[var_name]) if down else (wifi_dict[var_name], name)
-        deps[key].add(value)
+        if down:
+            deps[other].add(name)
+        else:
+            deps[name].add(other)
         
     return deps
 

@@ -151,7 +151,11 @@ class SverchokToolsMenu(bpy.types.Panel):
         col2 = row.column(align=True)
         col2.scale_x = little_width
         col2.label(icon='ANIM', text=' ')
-        col2.icon
+        
+        col3 = row.column(align=True)
+        col3.scale_x = little_width
+        col3.label(text='P')
+            
 
         for name, tree in bpy.data.node_groups.items():
             if tree.bl_idname == 'SverchCustomTreeType':
@@ -179,6 +183,10 @@ class SverchokToolsMenu(bpy.types.Panel):
                 split.scale_x = little_width
                 animate_icon = ('UN' if tree.sv_animate else '') + 'LOCKED'
                 split.prop(tree, 'sv_animate', icon=animate_icon, text=' ')
+                
+                split = row.column(align=True)
+                split.scale_x = little_width
+                split.prop(tree, "sv_process", text="P")
 
         if sv_new_version:
             row = layout.row()

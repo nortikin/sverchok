@@ -80,13 +80,14 @@ class SvNodeGroupCreator(bpy.types.Operator):
         for i,l in enumerate(out_links):
             out_socket = l.from_socket
             in_socket = l.to_socket
-            s_name = "{}:{}".format(i, in_socket.name)
+            s_name = "{}:{}".format(i, out_socket.name)
             gn_socket = group_node.outputs.new(out_socket.bl_idname, s_name)
             go_socket = group_out.inputs.new(out_socket.bl_idname, s_name)
+            
             ng.links.remove(l)
-            ng.links.new(in_socket, gn_socket)
             ng.links.new(go_socket, out_socket)
-        
+            ng.links.new(in_socket, gn_socket)
+            
         group_in.collect()
         group_out.collect()
         # deselect all
@@ -106,6 +107,7 @@ class SvNodeGroupCreator(bpy.types.Operator):
         group_ng = bpy.data.node_groups.new("SvGroup", 'SverchGroupTreeType')
         
         group_node.group_name = group_ng.name
+        group_ng.use_fake_user = True
         import_tree(group_ng, "", nodes_json)
         # set new node tree to active
         #context.space_data.node_tree = group_ng
