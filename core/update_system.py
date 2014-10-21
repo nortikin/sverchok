@@ -233,6 +233,28 @@ def do_update_heat_map(node_list, nodes):
         # linear scale.
         nodes[name].color = cold.lerp(hot, t / t_max)
 
+def update_error_nodes(ng, name):
+    if "error nodes" in ng:
+        error_nodes = ast.literal_eval(ng["error nodes"])
+    else:
+        error_nodes = {}
+    node = ng.nodes.get(name)
+    if not node:
+        return
+    error_nodes[name] = (node.use_custom_color, node.color[:])
+    ng["error nodes"] = str(error_nodes)
+    node.color=(.9,0,0)
+    node.use_custom_color=True
+
+def reset_error_nodes(ng):
+    if "error nodes" in ng:
+        error_nodes = ast.literal_eval(ng["error nodes"])
+        for name, data in error_nodes.items():
+            node = ng.nodes.get(name)
+            if node:
+                node.use_custom_color = data[0]
+                node.color = data[1]
+        del ng["error nodes"]
 
 def do_update_general(node_list, nodes):
     """
@@ -253,8 +275,8 @@ def do_update_general(node_list, nodes):
             print("Cache miss in node set, abandoning")
             break
         except Exception as err:
-            nodes[node_name].color=(.9,0,0)
-            nodes[node_name].use_custom_color=True
+            ng = nodes.id_data
+            update_error_nodes(ng, node_name)
             traceback.print_tb(err.__traceback__)
             print("Node {0} had exception {1}".format(node_name, err))
             return None
@@ -343,6 +365,7 @@ def process_tree(ng=None):
             process_tree(ng)
     elif ng.bl_idname == "SverchCustomTreeType" and ng.sv_process:
         update_list = update_cache.get(ng.name)
+        reset_error_nodes(ng)
         if not update_list:
             build_update_list(ng)
             update_list = update_cache.get(ng.name)
