@@ -186,6 +186,7 @@ class SverchCustomTree(NodeTree):
             print("Skippiping update of {}".format( self.name))
             return
         
+        """
         reroutes = [n for n in self.nodes if n.bl_idname == 'NodeReroute']
         for n in reroutes:
             self.freeze(True)
@@ -202,6 +203,7 @@ class SverchCustomTree(NodeTree):
                         self.links.new(i_s, out_socket)
                 n.outputs.remove(n.outputs[0])
             self.unfreeze(False)
+        """
             
         build_update_list(self)
         if self.sv_process:
@@ -228,7 +230,8 @@ class SverchCustomTree(NodeTree):
             if hard or self["don't update"] == 0:
                 del self["don't update"]
                 
-
+    def build_update_list(self):
+        build_update_list(self)
 
 class SverchGroupTree(NodeTree):
     ''' Sverchok - groups '''
@@ -236,8 +239,12 @@ class SverchGroupTree(NodeTree):
     bl_label = 'Sverchok Group Node Tree'
     bl_icon = 'NONE'
         
-    def get_update_lists(self):
+    
+    def build_update_list(self):
         build_update_list(self)
+            
+    def get_update_lists(self):
+        self.build_update_list()
         return get_update_lists(self)
         
     def freeze(self, hard=True):

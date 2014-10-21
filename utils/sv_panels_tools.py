@@ -44,6 +44,7 @@ sv_script_paths, bl_addons_path, sv_version_local, sv_version = sv_get_local_pat
 sv_new_version = False
 
 
+
 class SverchokUpdateAll(bpy.types.Operator):
     """Sverchok update all"""
     bl_idname = "node.sverchok_update_all"
@@ -51,6 +52,9 @@ class SverchokUpdateAll(bpy.types.Operator):
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
+        sv_ngs = filter(lambda ng:ng.bl_idname == 'SverchCustomTreeType', bpy.data.node_groups)
+        for ng in sv_ngs:
+            ng.unfreeze(hard=True)
         build_update_list()
         process_tree()
         return {'FINISHED'}
@@ -92,7 +96,7 @@ class SverchokUpdateCurrent(bpy.types.Operator):
     def execute(self, context):
         ng = bpy.data.node_groups.get(self.node_group)
         if ng:
-            ng.unfreeze()
+            ng.unfreeze(hard=True)
             build_update_list(ng)
             process_tree(ng)
         return {'FINISHED'}
@@ -306,7 +310,6 @@ class SvLayoutScanProperties(bpy.types.Operator):
                     tree.Sv3DProps[-1].prop_name = prop
 
         return {'FINISHED'}
-
 
 
 sv_tools_classes = [

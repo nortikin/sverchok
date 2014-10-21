@@ -195,13 +195,14 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
     layout_dict['framed_nodes'] = framed_nodes
 
     ''' get update list (cache, order to link) '''
-    # try/except for now, it can occur after f8 that the cache is dumped.
-    # should issue an update if nodetree isn't found in the cache
+    # try/except for now, node tree links might be invalid
+    # among other things. auto rebuild on F8
     try:
+        ng.build_update_list()
         links_out = []
-        for node in chain(*ng.get_update_lists()[0]):
-            for socket in ng.nodes[node].inputs:
-                if selected and not ng.nodes[node].select:
+        for name in chain(*ng.get_update_lists()[0]):
+            for socket in ng.nodes[name].inputs:
+                if selected and not ng.nodes[name].select:
                     continue
                 if socket.links:
                     link = socket.links[0]

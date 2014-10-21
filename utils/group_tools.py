@@ -101,16 +101,18 @@ class SvNodeGroupCreator(bpy.types.Operator):
         
         nodes_json = create_dict_of_tree(ng, {}, selected=True)
         print(nodes_json)
+        
         for n in nodes:
             ng.nodes.remove(n)
-        ng.unfreeze()
         group_ng = bpy.data.node_groups.new("SvGroup", 'SverchGroupTreeType')
         
         group_node.group_name = group_ng.name
         group_ng.use_fake_user = True
         import_tree(group_ng, "", nodes_json)
-        # set new node tree to active
-        #context.space_data.node_tree = group_ng
+        
+        ng.unfreeze(hard=True)
+        ng.update()
+        
         self.report({"INFO"}, "Node group created")
         return {'FINISHED'}
 

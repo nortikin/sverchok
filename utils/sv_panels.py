@@ -197,8 +197,8 @@ class SverchokToolsMenu(bpy.types.Panel):
             layout.row().operator(
                 "node.sverchok_check_for_upgrades", text='Check for new version')
         #       row.prop(tree, 'sv_bake',text=' ')
-
-
+            
+        
 sv_tools_classes = [
     SverchokToolsMenu,
     Sv3DPanel,

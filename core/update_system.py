@@ -24,6 +24,7 @@ from mathutils import Vector
 
 import data_structure
 import traceback
+import ast
 
 # cache node group update trees
 update_cache = {}

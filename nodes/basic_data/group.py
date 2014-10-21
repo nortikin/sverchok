@@ -31,7 +31,7 @@ class StoreSockets:
 
 
     def draw_buttons(self, context, layout):
-        if self.id_data.bl_idname == "SverchCustomTreeType":
+        if self.id_data.bl_idname == "SverchCustomTreeType" and self.parent:
             op = layout.operator("node.sv_node_group_done")
             op.frame_name = self.parent.name
             col = layout.column(align=True)
