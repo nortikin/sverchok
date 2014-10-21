@@ -45,11 +45,13 @@ class SvNodeGroupCreator(bpy.types.Operator):
         
         ng = context.space_data.node_tree
         ng.freeze(hard=True)
+       
         # collect data
         nodes = {n for n in ng.nodes if n.select}
         if not nodes:
             self.report({"CANCELLED"}, "No nodes selected")
             return {'CANCELLED'}
+        # collect links outside of of selected nodes
         test_in = lambda l: bool(l.to_node in nodes) and bool(l.from_node not in nodes) 
         test_out = lambda l: bool(l.from_node in nodes) and bool(l.to_node not in nodes)
         out_links = [l for l in ng.links if test_out(l)]
@@ -57,7 +59,7 @@ class SvNodeGroupCreator(bpy.types.Operator):
         locx = [n.location.x for n in nodes]
         locy = sum(n.location.y for n in nodes)/len(nodes)
         
-        # crete node_group
+        # crete node_group nodes
         
         group_in = ng.nodes.new("SvGroupInputsNode")
         group_in.location = (min(locx)-300, locy)
@@ -66,6 +68,7 @@ class SvNodeGroupCreator(bpy.types.Operator):
         group_node = ng.nodes.new("SvGroupNode")
         group_node.location = (sum(locx)/len(nodes), locy)
 
+        # create node group links and repace with node group instead
         for i,l in enumerate(in_links):
             out_socket = l.from_socket
             in_socket = l.to_socket
@@ -87,7 +90,8 @@ class SvNodeGroupCreator(bpy.types.Operator):
             ng.links.remove(l)
             ng.links.new(go_socket, out_socket)
             ng.links.new(in_socket, gn_socket)
-            
+        
+        # collect sockets for node group in out    
         group_in.collect()
         group_out.collect()
         # deselect all
@@ -95,6 +99,7 @@ class SvNodeGroupCreator(bpy.types.Operator):
             n.select = False
         nodes.add(group_in)
         nodes.add(group_out)
+        
         # select nodes to move
         for n in nodes:
             n.select = True
@@ -104,9 +109,11 @@ class SvNodeGroupCreator(bpy.types.Operator):
         
         for n in nodes:
             ng.nodes.remove(n)
+        
         group_ng = bpy.data.node_groups.new("SvGroup", 'SverchGroupTreeType')
         
         group_node.group_name = group_ng.name
+        group_node.select = True
         group_ng.use_fake_user = True
         import_tree(group_ng, "", nodes_json)
         

@@ -202,8 +202,7 @@ def make_node_cats():
         ["SvEmptyOutNode",      "Empty out",    "OUTLINER_OB_EMPTY"],
         # need to be completely reviewed
         ["SvListDecomposeNode", "List Decompose"],
-        # should be removed...
-        ["SvReRouteNode",       "Reroute Point"],
+        ["NodeReroute",         "Reroute Point"],
         ["SvInstancerNode",     "mesh instancer"],
         ["SvWafelNode",         "Wafel"],
         ["SvVertexGroupNode",   "Vertext group"],

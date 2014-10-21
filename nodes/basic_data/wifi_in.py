@@ -115,9 +115,7 @@ class WifiInNode(bpy.types.Node, SverchCustomTreeNode):
         multi_socket(self, min=1, breck=True)
         if any(s.links for s in self.inputs):
             self.color = READY_COLOR
-    
-    def process(self):
-        pass
+
 
 def register():
     bpy.utils.register_class(WifiInNode)

@@ -24,7 +24,7 @@ from nodeitems_utils import NodeCategory, NodeItem
 
 import data_structure
 from data_structure import (SvGetSocketInfo, SvGetSocket,
-                            SvSetSocket,  updateNode)
+                            SvSetSocket,  updateNode, get_other_socket)
 from core.update_system import (build_update_list, process_from_node,
                                 process_tree, get_update_lists)
 from core import upgrade_nodes
@@ -152,72 +152,35 @@ class StringsSocket(NodeSocketStandard):
         return(0.6, 1.0, 0.6, 1.0)
 
 
-class SverchCustomTree(NodeTree):
-    ''' Sverchok - architectural node programming of geometry in low level '''
-    bl_idname = 'SverchCustomTreeType'
-    bl_label = 'Sverchok Node Tree'
-    bl_icon = 'RNA'
-
-    def turn_off_ng(self, context):
-        sverchok_update(tree=self)
-        #should turn off tree. for now it does by updating it
-
-    sv_animate = BoolProperty(name="Animate", default=True, description='Animate this layout')
-    sv_show = BoolProperty(name="Show", default=True, description='Show this layout', update=turn_off_ng)
-    sv_bake = BoolProperty(name="Bake", default=True, description='Bake this layout')
-    sv_process = BoolProperty(name="Process", default=True, description='Process layout')
-    sv_user_colors = StringProperty(default="")
-
-    # get update list for debug info, tuple (fulllist,dictofpartiallists)
-    def get_update_lists(self):
-        return get_update_lists(self)
-
-    def update(self):
-        '''
-        Rebuild and update the Sverchok node tree, used at editor changes
-        '''
-        # startup safety net, a lot things will just break if this isn't
-        # stopped...
-        try:
-            l = bpy.data.node_groups[self.id_data.name]
-        except:
-            return
-        if self.is_frozen():
-            print("Skippiping update of {}".format( self.name))
-            return
-        
-        
-        reroutes = [n for n in self.nodes if n.bl_idname == 'NodeReroute']
-        if reroutes:
-            print("Found reroutes")
-            self.freeze(True)
-            for n in reroutes:
-                s = n.inputs[0]
-                if s.links:
-                    s_type = s.links[0].from_socket.bl_idname
-                    print(s_type)
-                    if n.outputs[0].bl_idname != s_type:
-                        socket =  n.outputs[0]
-                        out_socket = n.outputs.new(s_type, "Output")
-                        print(out_socket.bl_idname)
-                        in_sockets = [l.to_socket for l in out_socket.links]
-                        #n.outputs.remove(n.outputs[0])
-                        for i_s in in_sockets:
-                            self.links.new(i_s, out_socket)
-                    
-            self.unfreeze(True)
-                
-        build_update_list(self)
-        if self.sv_process:
-            process_tree(self)  
     
-    def update_ani(self):
-        """
-        Updates the Sverchok node tree if animation layers show true. For animation callback
-        """
-        if self.sv_animate:
-            process_tree(self)
-
+class SvNodeTreeCommon(object):
+    '''
+    Common methods shared between Sverchok node trees
+    '''
+    def build_update_list(self):
+        build_update_list(self)
+    
+    def adjust_reroutes(self):
+            
+        reroutes = [n for n in self.nodes if n.bl_idname == 'NodeReroute']
+        if not reroutes:
+            return
+                        
+        self.freeze(True)
+        for n in reroutes:
+            s = n.inputs[0]
+            if s.links:
+                other = get_other_socket(s)
+                s_type = other.bl_idname
+                if n.outputs[0].bl_idname != s_type:
+                    socket =  n.outputs[0]
+                    out_socket = n.outputs.new(s_type, "Output")
+                    in_sockets = [l.to_socket for l in out_socket.links]
+                    #n.outputs.remove(n.outputs[0])
+                    for i_s in in_sockets:
+                        self.links.new(i_s, out_socket)
+        self.unfreeze(True)
+    
     def freeze(self, hard=False):
         if hard:
             self["don't update"] = 1
@@ -235,32 +198,71 @@ class SverchCustomTree(NodeTree):
     def build_update_list(self):
         build_update_list(self)
 
-class SverchGroupTree(NodeTree):
+    def get_update_lists(self):
+        return get_update_lists(self)
+
+    
+class SverchCustomTree(NodeTree, SvNodeTreeCommon):
+    ''' Sverchok - architectural node programming of geometry in low level '''
+    bl_idname = 'SverchCustomTreeType'
+    bl_label = 'Sverchok Node Tree'
+    bl_icon = 'RNA'
+
+    def turn_off_ng(self, context):
+        sverchok_update(tree=self)
+        #should turn off tree. for now it does by updating it
+
+    sv_animate = BoolProperty(name="Animate", default=True, description='Animate this layout')
+    sv_show = BoolProperty(name="Show", default=True, description='Show this layout', update=turn_off_ng)
+    sv_bake = BoolProperty(name="Bake", default=True, description='Bake this layout')
+    sv_process = BoolProperty(name="Process", default=True, description='Process layout')
+    sv_user_colors = StringProperty(default="")
+
+    # get update list for debug info, tuple (fulllist,dictofpartiallists)
+
+    def update(self):
+        '''
+        Rebuild and update the Sverchok node tree, used at editor changes
+        '''
+        # startup safety net, a lot things will just break if this isn't
+        # stopped...
+        try:
+            l = bpy.data.node_groups[self.id_data.name]
+        except:
+            return
+        if self.is_frozen():
+            print("Skippiping update of {}".format( self.name))
+            return
+            
+        self.build_update_list()
+        if self.sv_process:
+            process_tree(self)  
+    
+    def update_ani(self):
+        """
+        Updates the Sverchok node tree if animation layers show true. For animation callback
+        """
+        if self.sv_animate:
+            process_tree(self)
+
+
+
+class SverchGroupTree(NodeTree, SvNodeTreeCommon):
     ''' Sverchok - groups '''
     bl_idname = 'SverchGroupTreeType'
     bl_label = 'Sverchok Group Node Tree'
     bl_icon = 'NONE'
-        
-    
-    def build_update_list(self):
-        build_update_list(self)
-            
-    def get_update_lists(self):
-        self.build_update_list()
-        return get_update_lists(self)
-        
-    def freeze(self, hard=True):
-        pass
-    
-    def unfreeze(self, hard=True):
-        pass
-        
-    def is_frozen(self):
-        return True
     
     def update(self):
-        pass
-    
+        try:
+            l = bpy.data.node_groups[self.id_data.name]
+        except:
+            return
+        if self.is_frozen():
+            print("Skippiping update of {}".format( self.name))
+            return        
+        self.adjust_reroutes()
+            
 class SverchCustomTreeNode:
     @classmethod
     def poll(cls, ntree):

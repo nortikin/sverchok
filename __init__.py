@@ -126,7 +126,7 @@ imported_modules.append(nodes)
 node_list = make_node_list()
 reload_event = False
 
-if "bpy" in locals():
+if "bpy" in locals():   
     import nodeitems_utils
     nodes = importlib.reload(nodes)
     node_list = make_node_list()
@@ -138,7 +138,6 @@ if "bpy" in locals():
 
     from sv_nodes_menu import make_categories
     nodeitems_utils.register_node_categories("SVERCHOK", make_categories()[0])
-    # core.upgrade_nodes.upgrade_all()  # doesn't work, anyway.
     reload_event = True
 
 import bpy

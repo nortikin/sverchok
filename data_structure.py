@@ -803,13 +803,7 @@ def get_socket_type(node, inputsocketname):
 def get_socket_type_full(node, inputsocketname):
    # this is solution, universal and future proof.
     return node.inputs[inputsocketname].links[0].from_socket.bl_idname
-     # it is real solution, universal
-    #if type(node.inputs[inputsocketname].links[0].from_socket) == bpy.types.VerticesSocket:
-    #    return 'VerticesSocket'
-    #if type(node.inputs[inputsocketname].links[0].from_socket) == bpy.types.StringsSocket:
-    #    return 'StringsSocket'
-    #if type(node.inputs[inputsocketname].links[0].from_socket) == bpy.types.MatrixSocket:
-    #    return 'MatrixSocket'
+
 
 def get_other_socket(socket):
     """ 
@@ -822,7 +816,7 @@ def get_other_socket(socket):
         other = socket.links[0].from_socket
         if other.node.bl_idname == 'NodeReroute':
             return get_other_socket(other.node.inputs[0])
-        else:
+        else:  #other.node.bl_idname == 'WifiInputNode':
             return other
     return None
 
