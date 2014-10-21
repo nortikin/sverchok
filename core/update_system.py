@@ -261,19 +261,19 @@ def do_update_general(node_list, nodes):
     General update function for node set
     """
     timings = []
-    total_test = 0
+    total_time = 0
     for node_name in node_list:
         try:
+            node = nodes[node_name]
             start = time.perf_counter()
-            nodes[node_name].process()
+            if hasattr(node, "process"):
+                node.process()
             delta = time.perf_counter()-start
-            total_test += delta
+            total_time += delta
             if data_structure.DEBUG_MODE:
-                print("Updated  {0} in: {1}".format(node_name, round(delta, 4)))
+                print("Processed  {} in: {:.4f}".format(node_name, delta))
             timings.append(delta)
-        except ReferenceError:
-            print("Cache miss in node set, abandoning")
-            break
+
         except Exception as err:
             ng = nodes.id_data
             update_error_nodes(ng, node_name)
@@ -282,7 +282,7 @@ def do_update_general(node_list, nodes):
             return None
 
     if data_structure.DEBUG_MODE:
-        print("Node set updated in: {0} seconds".format(round(total_test, 4)))
+        print("Node set updated in: {:.4f} seconds".format(total_time))
     return timings
 
 def do_update(node_list, nodes):

@@ -186,25 +186,27 @@ class SverchCustomTree(NodeTree):
             print("Skippiping update of {}".format( self.name))
             return
         
-        """
+        
         reroutes = [n for n in self.nodes if n.bl_idname == 'NodeReroute']
-        for n in reroutes:
+        if reroutes:
+            print("Found reroutes")
             self.freeze(True)
-            s = n.inputs[0]
-            if s.links:
-                s_type = s.links[0].from_node.bl_idname
-                if n.outputs[0].bl_idname == s_type:
-                    socket =  n.outputs[0]
-                    out_socket = n.outputs.new(s_type)
+            for n in reroutes:
+                s = n.inputs[0]
+                if s.links:
+                    s_type = s.links[0].from_socket.bl_idname
+                    print(s_type)
+                    if n.outputs[0].bl_idname != s_type:
+                        socket =  n.outputs[0]
+                        out_socket = n.outputs.new(s_type, "Output")
+                        print(out_socket.bl_idname)
+                        in_sockets = [l.to_socket for l in out_socket.links]
+                        #n.outputs.remove(n.outputs[0])
+                        for i_s in in_sockets:
+                            self.links.new(i_s, out_socket)
                     
-                    in_sockets = [l.to_socket for l in out_socket.links]
-                    print(in_socket)
-                    for i_s in in_sockets:
-                        self.links.new(i_s, out_socket)
-                n.outputs.remove(n.outputs[0])
-            self.unfreeze(False)
-        """
-            
+            self.unfreeze(True)
+                
         build_update_list(self)
         if self.sv_process:
             process_tree(self)  

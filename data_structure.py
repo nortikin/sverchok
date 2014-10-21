@@ -943,21 +943,14 @@ def sv_deep_copy(lst):
 
 # Build string for showing in socket label
 def SvGetSocketInfo(socket):
-    def build_info(data):
-        if not data:
-            return str(data)
-        #if isinstance(data,list):
-            #return '['+build_info(data[0])
-        #elif isinstance(data,tuple):
-            #return '('+build_info(data[0])
-        else:
-            return str(data)
+
     global socket_data_cache
     ng = socket.id_data.name
+    
     if socket.is_output:
         s_id = socket_id(socket)
     elif socket.links:
-        s_id = socket_id(socket.links[0].from_socket)
+        s_id = socket_id(get_other_socket(socket))
     else:
         return ''
     if ng in socket_data_cache:
