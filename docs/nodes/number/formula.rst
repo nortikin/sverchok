@@ -50,6 +50,7 @@ Functionality
       - sin()
       - sinh()
       - sqrt()
+      - str()
       - tan()
       - tanh()
       - trunc()
@@ -94,3 +95,5 @@ Usage
 .. image:: https://cloud.githubusercontent.com/assets/5783432/4689950/6d58321a-56d4-11e4-8ba9-1d28426b8307.png
 
 .. image:: https://cloud.githubusercontent.com/assets/5783432/4689949/6d57503e-56d4-11e4-9df9-9224b8f645cb.png
+
+.. image:: https://cloud.githubusercontent.com/assets/7894950/4732337/74f49ce6-59ba-11e4-8406-77d55c55ff02.png
