@@ -731,39 +731,25 @@ def updateNode(self, context):
 ##############################################################
 ##############################################################
 
-
-
-
-# main def for changable sockets type
 def changable_sockets(node, inputsocketname, outputsocketname):
-    if self.inputs[inputsocketname].links:
-        
-        check_sockets(self, inputsocketname)
-        if self.newsock:
-            clean_sockets(self, outputsocketname)
-            self.newsock = False
-            if self.typ == 'v':
-                for n in outputsocketname:
-                    self.outputs.new('VerticesSocket', n, n)
-            if self.typ == 's':
-                for n in outputsocketname:
-                    self.outputs.new('StringsSocket', n, n)
-            if self.typ == 'm':
-                for n in outputsocketname:
-                    self.outputs.new('MatrixSocket', n, n)
-        else:
-            self.newsock = False
-    return
-
-
-def get_socket_type(node, inputsocketname):
-    if type(node.inputs[inputsocketname].links[0].from_socket) == bpy.types.VerticesSocket:
-        return 'v'
-    if type(node.inputs[inputsocketname].links[0].from_socket) == bpy.types.StringsSocket:
-        return 's'
-    if type(node.inputs[inputsocketname].links[0].from_socket) == bpy.types.MatrixSocket:
-        return 'm'
-
+    '''
+    arguments: node, name of socket to follow, list of socket to change
+    '''
+    in_socket = node.inputs[inputsocketname]
+    if in_socket.links:
+        in_other = get_other_socket(in_socket)
+        if not in_other:
+            return
+        outputs = node.outputs
+        s_type = in_other.bl_idname
+        if outputs[outputsocketname[0]].bl_idname != s_type:
+            node.id_data.freeze(hard=True)
+            for n in outputsocketname:
+                if n in outputs:
+                    outputs.remove(outputs[n])
+            for n in outputsocketname:
+                outputs.new(s_type, n)
+            node.id_data.unfreeze(hard=True)
 
 def get_socket_type_full(node, inputsocketname):
    # this is solution, universal and future proof.
