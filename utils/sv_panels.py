@@ -26,7 +26,7 @@ from node_tree import SverchCustomTreeNode
 
 # global veriables in tools
 from utils.sv_panels_tools import sv_script_paths, bl_addons_path, \
-                     sv_version_local, sv_version, sv_new_version
+                     sv_version_local, sv_version
 
 class ToolsNode(bpy.types.Node, SverchCustomTreeNode):
     ''' NOT USED '''
@@ -225,7 +225,7 @@ class SverchokToolsMenu(bpy.types.Panel):
                 animate_icon = ('UN' if tree.sv_animate else '') + 'LOCKED'
                 split.prop(tree, 'sv_animate', icon=animate_icon, text=' ')
 
-        if sv_new_version:
+        if bpy.context.scene.sv_new_version:
             row = layout.row()
             row.alert = True
             row.operator(
