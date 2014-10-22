@@ -82,14 +82,10 @@ class IntegerNode(bpy.types.Node, SverchCustomTreeNode):
 
     def process(self):
         # inputs
-        if 'Integer' in self.inputs and self.inputs['Integer'].links:
-            tmp = SvGetSocketAnyType(self, self.inputs['Integer'])
-            Integer = min(max(int(tmp[0][0]), self.minim), self.maxim)
-        else:
-            Integer = self.int_
-
+        Integer = min(max(int(self.inputs[0].sv_get()[0][0]), self.minim), self.maxim)
+        
         # outputs
-        if 'Integer' in self.outputs and self.outputs['Integer'].links:
+        if self.outputs[0].is_linked:
             SvSetSocketAnyType(self, 'Integer', [[Integer]])
 
 def register():

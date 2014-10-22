@@ -731,48 +731,13 @@ def updateNode(self, context):
 ##############################################################
 ##############################################################
 
-# node has to have self veriables:
-# self.typ = bpy.props.StringProperty(name='typ', default='')
-# self.newsock = bpy.props.BoolProperty(name='newsock', default=False)
-# and in update:
-# inputsocketname = 'data' # 'data' - name of your input socket, that defines type
-# outputsocketname = ['dataTrue','dataFalse'] # 'data...' - are names of your sockets to be changed
-# changable_sockets(self, inputsocketname, outputsocketname)
 
-
-def check_sockets(self, inputsocketname):
-    if type(self.inputs[inputsocketname].links[0].from_socket) == bpy.types.VerticesSocket:
-        if self.typ == 'v':
-            self.newsock = False
-        else:
-            self.typ = 'v'
-            self.newsock = True
-    if type(self.inputs[inputsocketname].links[0].from_socket) == bpy.types.StringsSocket:
-        if self.typ == 's':
-            self.newsock = False
-        else:
-            self.typ = 's'
-            self.newsock = True
-    if type(self.inputs[inputsocketname].links[0].from_socket) == bpy.types.MatrixSocket:
-        if self.typ == 'm':
-            self.newsock = False
-        else:
-            self.typ = 'm'
-            self.newsock = True
-    return
-
-
-# cleaning of old not fited
-def clean_sockets(self, outputsocketname):
-    for n in outputsocketname:
-        if n in self.outputs:
-            self.outputs.remove(self.outputs[n])
-    return
 
 
 # main def for changable sockets type
-def changable_sockets(self, inputsocketname, outputsocketname):
-    if len(self.inputs[inputsocketname].links) > 0:
+def changable_sockets(node, inputsocketname, outputsocketname):
+    if self.inputs[inputsocketname].links:
+        
         check_sockets(self, inputsocketname)
         if self.newsock:
             clean_sockets(self, outputsocketname)
@@ -812,7 +777,7 @@ def get_other_socket(socket):
     Will return None if there isn't a another socket connect
     so no need to check socket.links
     """
-    if socket.links and not socket.is_output:
+    if socket.is_linked and not socket.is_output:
         other = socket.links[0].from_socket
         if other.node.bl_idname == 'NodeReroute':
             return get_other_socket(other.node.inputs[0])
@@ -858,7 +823,7 @@ def multi_socket(node, min=1, start=0, breck=False, output=False):
                 name = node.base_name + '[' + str(length) + ']'
             else:
                 name = node.base_name + str(length)
-            node.inputs.new(node.multi_socket_type, name, name)
+            node.inputs.new(node.multi_socket_type, name)
         else:
             while len(node.inputs) > min and not node.inputs[-2].links:
                 node.inputs.remove(node.inputs[-1])
@@ -871,7 +836,7 @@ def multi_socket(node, min=1, start=0, breck=False, output=False):
                     name = node.base_name + '[' + str(n+lenod-1) + ']'
                 else:
                     name = node.base_name + str(n+lenod-1)
-                node.outputs.new(node.multi_socket_type, name, name)
+                node.outputs.new(node.multi_socket_type, name)
         else:
             while len(node.outputs) > output:
                 node.outputs.remove(node.outputs[-1])
@@ -885,7 +850,7 @@ def multi_socket(node, min=1, start=0, breck=False, output=False):
 # socket.name is not unique... identifier is
 def socket_id(socket):
     #return hash(socket)
-    return hash(socket.id_data.name+socket.node.name+socket.identifier)
+    return hash(socket.id_data.name + socket.node.name + socket.identifier)
 
 # For when need a key for use with dict in node
 #  create a string property like this.
@@ -943,7 +908,7 @@ def SvGetSocketInfo(socket):
     
     if socket.is_output:
         s_id = socket_id(socket)
-    elif socket.links:
+    elif socket.is_linked:
         s_id = socket_id(get_other_socket(socket))
     else:
         return ''
@@ -959,6 +924,8 @@ def SvSetSocket(socket, out):
     global socket_data_cache
     if not socket.is_output:
         print("Warning, setting input socket")
+    if not socket.is_linked:
+        print("Warning, setting unconncted socket")
     s_id = socket_id(socket)
     s_ng = socket.id_data.name
     if s_ng not in socket_data_cache:
@@ -969,7 +936,7 @@ def SvSetSocket(socket, out):
 def SvGetSocket(socket, deepcopy=True):
     global socket_data_cache
     global DEBUG_MODE
-    if socket.links:
+    if socket.is_linked:
         other = get_other_socket(socket)
         s_id = socket_id(other)
         s_ng = other.id_data.name
@@ -981,9 +948,8 @@ def SvGetSocket(socket, deepcopy=True):
                 return sv_deep_copy(out)
             else:
                 return out
-        else:  # failure, should raise error in future
+        else:
             if DEBUG_MODE:
-#                traceback.print_stack()
                 print("cache miss:", socket.node.name, "->", socket.name, "from:", other.node.name, "->", other.name)
             raise LookupError
     return None

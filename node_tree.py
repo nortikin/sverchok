@@ -48,7 +48,7 @@ class MatrixSocket(NodeSocket):
 
     # beta interface only use for debug, might change
     def sv_get(self, default=None, deepcopy=False):
-        if self.links and not self.is_output:
+        if self.is_linked and not self.is_output:
             return SvGetSocket(self, deepcopy)
         else:
             return default
@@ -57,8 +57,6 @@ class MatrixSocket(NodeSocket):
         SvSetSocket(self, data)
 
     def draw(self, context, layout, node, text):
-    #    if not self.is_output and not self.is_linked and self.prop_name:
-    #        layout.prop(node,self.prop_name,expand=False)
         if self.is_linked:
             layout.label(text + '. ' + SvGetSocketInfo(self))
         else:
@@ -79,7 +77,7 @@ class VerticesSocket(NodeSocket):
 
     # beta interface only use for debug, might change
     def sv_get(self, default=None, deepcopy=False):
-        if self.links and not self.is_output:
+        if self.is_linked and not self.is_output:
             return SvGetSocket(self, deepcopy)
         else:
             return default
@@ -98,6 +96,7 @@ class VerticesSocket(NodeSocket):
     def draw_color(self, context, node):
         return(0.9, 0.6, 0.2, 1.0)
 
+count_links = 0
 
 class StringsSocket(NodeSocketStandard):
     '''String any type - one string'''
@@ -108,9 +107,9 @@ class StringsSocket(NodeSocketStandard):
     
     prop_type = StringProperty(default='')
     prop_index = IntProperty()
-
+    
     def sv_get(self, default=None, deepcopy=False):
-        if self.links and not self.is_output:
+        if self.is_linked and not self.is_output:
             out = SvGetSocket(self, deepcopy)
             if out:
                 return out
@@ -118,7 +117,9 @@ class StringsSocket(NodeSocketStandard):
             return [[getattr(self.node, self.prop_name)]]
         if self.prop_type:
             return [[getattr(self.node, self.prop_type)[self.prop_index]]]
-        return default
+        if default:
+            return default
+        raise LookupError
         
 
     def sv_set(self, data):
@@ -166,20 +167,20 @@ class SvNodeTreeCommon(object):
         if not reroutes:
             return
                         
-        self.freeze(True)
         for n in reroutes:
             s = n.inputs[0]
             if s.links:
                 other = get_other_socket(s)
                 s_type = other.bl_idname
                 if n.outputs[0].bl_idname != s_type:
+                    self.freeze(True)
                     socket =  n.outputs[0]
                     out_socket = n.outputs.new(s_type, "Output")
                     in_sockets = [l.to_socket for l in out_socket.links]
                     #n.outputs.remove(n.outputs[0])
                     for i_s in in_sockets:
                         self.links.new(i_s, out_socket)
-        self.unfreeze(True)
+                    self.unfreeze(True)
     
     def freeze(self, hard=False):
         if hard:
@@ -274,9 +275,6 @@ class SverchCustomTreeNode:
         if hasattr(self, "sv_init"):
             self.sv_init(context)
         ng.unfreeze()
-        
-    def process(self):
-        pass
     
     def process_node(self, context):
         a = time.perf_counter()
