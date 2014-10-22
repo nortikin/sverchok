@@ -752,7 +752,6 @@ def changable_sockets(node, inputsocketname, outputsocketname):
             node.id_data.unfreeze(hard=True)
 
 def get_socket_type_full(node, inputsocketname):
-   # this is solution, universal and future proof.
     return node.inputs[inputsocketname].links[0].from_socket.bl_idname
 
 
@@ -789,11 +788,10 @@ def multi_socket(node, min=1, start=0, breck=False, output=False):
     '''
      min - integer, minimal number of sockets, at list 1 needed
      start - integer, starting socket.
-     breck - boolean, adding brecket to nmae of socket x[0] x[1] x[2] etc
+     breck - boolean, adding bracket to name of socket x[0] x[1] x[2] etc
      output - integer, deal with output, if>0 counts number of outputs multy sockets
      base name added in separated node in self.base_name = 'some_name', i.e. 'x', 'data'
-     node.multi_socket_type - type of socket, added in self.multi_socket_type
-     as one of three sverchok types 'StringsProperty', 'MatricesProperty', 'VerticesProperty'
+     node.multi_socket_type - type of socket, as .bl_idname 
 
     '''
     #probably incorrect state due or init or change of inputs

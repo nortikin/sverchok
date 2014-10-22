@@ -51,7 +51,7 @@ def make_dep_dict(node_tree, down=False):
         
     for link in ng.links:
         if not link.is_valid:
-            return {}  # this happens more often than one might think
+            return collections.defaultdict(set)  # this happens more often than one might think
         key, value = (link.from_node.name, link.to_node.name) if down else (link.to_node.name, link.from_node.name) 
         deps[key].add(value)
 
@@ -59,7 +59,7 @@ def make_dep_dict(node_tree, down=False):
         other = wifi_dict.get(var_name)
         if not other:
             print("Unsatisifed Wifi dependency: node, {0} var,{1}".format(name, var_name))
-            return {}
+            return collections.defaultdict(set)
         if down:
             deps[other].add(name)
         else:
@@ -143,7 +143,7 @@ def separate_nodes(ng, links=None):
     # find separate sets
     node_stack_append = node_stack.append
     node_stack_pop = node_stack.pop
-
+    
     while nodes:
         for node in node_links[n]:
             if node not in node_set_list[-1]:

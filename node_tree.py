@@ -169,17 +169,18 @@ class SvNodeTreeCommon(object):
         for n in reroutes:
             s = n.inputs[0]
             if s.links:
+                self.freeze(True)
+
                 other = get_other_socket(s)
                 s_type = other.bl_idname
                 if n.outputs[0].bl_idname != s_type:
-                    self.freeze(True)
                     socket =  n.outputs[0]
                     out_socket = n.outputs.new(s_type, "Output")
-                    in_sockets = [l.to_socket for l in out_socket.links]
-                    #n.outputs.remove(n.outputs[0])
+                    in_sockets = [l.to_socket for l in n.outputs[0].links]
                     for i_s in in_sockets:
-                        self.links.new(i_s, out_socket)
-                    self.unfreeze(True)
+                        l = self.links.new(i_s, out_socket)
+                    n.outputs.remove(n.outputs[0])
+                self.unfreeze(True)
     
     def freeze(self, hard=False):
         if hard:
@@ -195,9 +196,6 @@ class SvNodeTreeCommon(object):
             if hard or self["don't update"] == 0:
                 del self["don't update"]
                 
-    def build_update_list(self):
-        build_update_list(self)
-
     def get_update_lists(self):
         return get_update_lists(self)
 
@@ -213,7 +211,7 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
     
         #should turn off tree. for now it does by updating it whole
         # should work something like this
-        # outputs = filter(lambda n: isinstance(n,SvOutput))
+        # outputs = filter(lambda n: isinstance(n,SvOutput), self.nodes)
         # for node in outputs:
         #   node.disable() 
 
@@ -238,7 +236,9 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
         if self.is_frozen():
             print("Skippiping update of {}".format( self.name))
             return
-            
+        
+        self.adjust_reroutes()
+        
         self.build_update_list()
         if self.sv_process:
             process_tree(self)  
