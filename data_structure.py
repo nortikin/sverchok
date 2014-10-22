@@ -860,17 +860,18 @@ def node_id(node):
 #####################################
 
 
-def SvGetSocketAnyType(self, socket, deepcopy=True):
+def SvGetSocketAnyType(self, socket, default=None, deepcopy=True):
     out = SvGetSocket(socket, deepcopy)
-    if out:
-        return out
+    if socket.is_linked:
+        return SvGetSocket(socket, deepcopy)
+    elif default:
+        return default
     else:
-        return []
+        raise LookupError
 
 
 def SvSetSocketAnyType(self, socket_name, out):
     SvSetSocket(self.outputs[socket_name], out)
-    return
 
 # faster than builtin deep copy for us.
 # useful for our limited case
@@ -927,7 +928,7 @@ def SvGetSocket(socket, deepcopy=True):
         s_id = socket_id(other)
         s_ng = other.id_data.name
         if s_ng not in socket_data_cache:
-            return None
+            raise LookupError
         if s_id in socket_data_cache[s_ng]:
             out = socket_data_cache[s_ng][s_id]
             if deepcopy:
@@ -938,7 +939,8 @@ def SvGetSocket(socket, deepcopy=True):
             if DEBUG_MODE:
                 print("cache miss:", socket.node.name, "->", socket.name, "from:", other.node.name, "->", other.name)
             raise LookupError
-    return None
+    # not linked
+    raise LookupError
 
 
 def reset_socket_cache(ng):

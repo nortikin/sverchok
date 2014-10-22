@@ -166,7 +166,6 @@ class SvNodeTreeCommon(object):
         reroutes = [n for n in self.nodes if n.bl_idname == 'NodeReroute']
         if not reroutes:
             return
-                        
         for n in reroutes:
             s = n.inputs[0]
             if s.links:
@@ -210,8 +209,13 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
     bl_icon = 'RNA'
 
     def turn_off_ng(self, context):
-        sverchok_update(tree=self)
-        #should turn off tree. for now it does by updating it
+        process_tree(self)  
+    
+        #should turn off tree. for now it does by updating it whole
+        # should work something like this
+        # outputs = filter(lambda n: isinstance(n,SvOutput))
+        # for node in outputs:
+        #   node.disable() 
 
     sv_animate = BoolProperty(name="Animate", default=True, description='Animate this layout')
     sv_show = BoolProperty(name="Show", default=True, description='Show this layout', update=turn_off_ng)

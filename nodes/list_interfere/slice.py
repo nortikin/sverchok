@@ -90,13 +90,13 @@ class ListSliceNode(bpy.types.Node, SverchCustomTreeNode):
             SvSetSocketAnyType(self, 'Other', out)
 
     def slice(self, data, start, stop):
-        if type(data) in [tuple, list]:
+        if isinstance(data, (tuple, list)):
             return data[start:stop]
         else:
             return None
 
     def other(self, data, start, stop):
-        if type(data) in [tuple, list]:
+        if isinstance(data, (tuple, list)):
             return data[:start]+data[stop:]
         else:
             return None
