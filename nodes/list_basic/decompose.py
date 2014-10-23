@@ -21,8 +21,10 @@ from bpy.props import BoolProperty, IntProperty, StringProperty
 
 from node_tree import SverchCustomTreeNode
 from data_structure import (levelsOflist, multi_socket, changable_sockets,
-                            get_socket_type_full, SvSetSocket, SvGetSocketAnyType)
+                            get_socket_type_full, SvSetSocket, SvGetSocketAnyType,
+                            updateNode, get_other_socket)
 
+from core import update_system
 
 class SvListDecomposeNode(bpy.types.Node, SverchCustomTreeNode):
     ''' List devided to multiple sockets in some level '''
@@ -31,68 +33,74 @@ class SvListDecomposeNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     # two veriables for multi socket input
-    base_name = 'data'
-    multi_socket_type = 'StringsSocket'
-
-    # two veriables for adaptive socket
-    typ = StringProperty(name='typ',
-                         default='')
-    newsock = BoolProperty(name='newsock',
-                           default=False)
-
+    base_name = StringProperty(default='data')
+    multi_socket_type = StringProperty(default='StringsSocket')
+    
+    def auto_count(self):
+        data = self.inputs['data'].sv_get(default="not found")
+        other = get_other_socket(self.inputs['data'])
+        if other and data == "not found":
+            update_system.process_to_node(other.node)
+            data = self.inputs['data'].sv_get()
+            
+        leve = levelsOflist(data)
+        if leve+1 < self.level:
+            self.level = leve+1
+        result = self.beat(data, self.level)
+        self.count = min(len(result), 16)
+        
+    def set_count(self, context):
+        other = get_other_socket(self.inputs[0])
+        if not other:
+            return
+        self.multi_socket_type = other.bl_idname
+        multi_socket(self, min=1, start=0, breck=True, out_count=self.count)
+        
     level = IntProperty(name='level',
-                        default=1, min=0)
+                        default=1, min=1, update=updateNode)
+    
+    count = IntProperty(name='Count',
+                    default=1, min=1, max=16, update=set_count)
 
     def draw_buttons(self, context, layout):
         col = layout.column(align=True)
         col.prop(self, 'level')
-
+        row = col.row()
+        row.prop(self, 'count')
+        op = row.operator("node.sverchok_text_callback",text="Auto set")
+        op.fn_name="auto_count"
+        
     def sv_init(self, context):
-        # initial socket, is defines type of output
-        self.inputs.new('StringsSocket', "data", "data")
-        # adaptive multy socket
-        self.outputs.new('StringsSocket', "data", "data")
+        self.inputs.new('StringsSocket', "data")        
+        self.outputs.new('StringsSocket', "data[0]")
+
 
     def update(self):
-        if 'data' in self.inputs and self.inputs['data'].links:
-            # get any type socket from input:
-            data = SvGetSocketAnyType(self, self.inputs['data'])
+        other = get_other_socket(self.inputs[0])
+        if not other:
+            return
+        self.multi_socket_type = other.bl_idname
+        multi_socket(self, min=1, start=0, breck=True, out_count=self.count)
+        outputsocketname = [name.name for name in self.outputs]
+        changable_sockets(self, 'data', outputsocketname)
 
-            # Process data
-            leve = min((levelsOflist(data)-2), self.level)
-            result = self.beat(data, leve, leve)
+       
+    def process(self):
+        data = SvGetSocketAnyType(self, self.inputs['data'])
+        result = self.beat(data, self.level)
+        for out, socket in zip(result, self.outputs[:30]):
+            if socket.is_linked:
+                socket.sv_set(out)
 
-            # multisocket - from util(formula node)
-            multi_socket(self, min=1, start=2, breck=True, output=len(result))
-
-            # adaptive socket - from util(mask list node)
-            # list to pack and change type of multysockets in output... maybe not so quick
-            outputsocketname = [socket.name for socket in self.outputs]
-            changable_sockets(self, 'data', outputsocketname)
-            self.multi_socket_type = get_socket_type_full(self, 'data')
-
-            # how to assign correct property to adaptive output:
-            # in nearest future with socket's data' dictionary we will send
-            # only node_name+layout_name+socket_name in str() format
-            # and will make separate definition to easyly assign and
-            # get and recognise data from dictionary
-            for i, out in enumerate(result):
-                SvSetSocket(self.outputs[i], out)
-                if i >= 32: break
-
-    def beat(self, data, level, left):
+    def beat(self, data, level, count=1):
         out = []
-        if left:
+        if level > 1:
             for objects in data:
-                out.extend(self.beat(objects, level, left-1))
-        elif level:
-            if type(data) not in (int, float):
-                for objects in data:
-                    out.append([self.beat(objects, level-1, 0)])
-            else:
-                return data
+                out.extend(self.beat(objects, level-1, count+1))
         else:
-            out.extend([data])
+            for i in range(count):
+                data = [data]
+            return data
         return out
 
 
@@ -104,3 +112,5 @@ def unregister():
     bpy.utils.unregister_class(SvListDecomposeNode)
 
 
+if __name__ == '__main__':
+    register()

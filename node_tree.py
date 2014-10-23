@@ -177,9 +177,10 @@ class SvNodeTreeCommon(object):
                     socket =  n.outputs[0]
                     out_socket = n.outputs.new(s_type, "Output")
                     in_sockets = [l.to_socket for l in n.outputs[0].links]
+                    n.outputs.remove(n.outputs[0])
                     for i_s in in_sockets:
                         l = self.links.new(i_s, out_socket)
-                    n.outputs.remove(n.outputs[0])
+                    
                 self.unfreeze(True)
     
     def freeze(self, hard=False):

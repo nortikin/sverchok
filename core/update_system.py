@@ -194,7 +194,8 @@ def make_tree_from_nodes(node_names, tree, down=True):
 # to make update tree based on node types and node names bases
 # no used yet
 # should add a check do find animated or driven nodes.
-
+# needs some updates
+'''
 def make_animation_tree(node_types, node_list, tree_name):
     global update_cache
     ng = bpy.data.node_groups[tree_name]
@@ -203,7 +204,7 @@ def make_animation_tree(node_types, node_list, tree_name):
         node_set = node_set | {name for name, node in ng.nodes.items() if node.bl_idname == n_t}
     a_tree = make_tree_from_nodes(list(node_set), tree_name)
     return a_tree
-
+'''
 
 def do_update_heat_map(node_list, nodes):
     """
@@ -317,9 +318,12 @@ def process_to_node(node):
     Process nodes upstream until node
     """
     ng = node.id_data
+    reset_error_nodes(ng)
+
     if data_structure.RELOAD_EVENT:
         reload_sverchok()
         return
+    
     update_list = make_tree_from_nodes([node.name], ng, down=False)
     do_update(update_list, ng.nodes)
     
@@ -330,6 +334,8 @@ def process_from_node(node):
     global update_cache
     global partial_update_cache
     ng = node.id_data
+    reset_error_nodes(ng)
+
     if data_structure.RELOAD_EVENT:
         reload_sverchok()
         return

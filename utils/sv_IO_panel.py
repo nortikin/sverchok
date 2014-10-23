@@ -191,7 +191,8 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
             continue
 
         if node.parent:
-            framed_nodes[node.name] = node.parent.name
+            if select and node.parent.select:
+                framed_nodes[node.name] = node.parent.name
     layout_dict['framed_nodes'] = framed_nodes
 
     ''' get update list (cache, order to link) '''

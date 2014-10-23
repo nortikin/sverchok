@@ -73,8 +73,9 @@ class SvNodeGroupCreator(bpy.types.Operator):
             out_socket = l.from_socket
             in_socket = l.to_socket
             s_name = "{}:{}".format(i,in_socket.name)
-            gn_socket = group_node.inputs.new(in_socket.bl_idname, s_name )
-            gi_socket = group_in.outputs.new(in_socket.bl_idname, s_name)
+            other = get_other_socket(in_socket)
+            gn_socket = group_node.inputs.new(other.bl_idname, s_name )
+            gi_socket = group_in.outputs.new(other.bl_idname, s_name)
             
             ng.links.remove(l)
             ng.links.new(in_socket, gi_socket)
@@ -84,8 +85,9 @@ class SvNodeGroupCreator(bpy.types.Operator):
             out_socket = l.from_socket
             in_socket = l.to_socket
             s_name = "{}:{}".format(i, out_socket.name)
-            gn_socket = group_node.outputs.new(out_socket.bl_idname, s_name)
-            go_socket = group_out.inputs.new(out_socket.bl_idname, s_name)
+            other = get_other_socket(in_socket)
+            gn_socket = group_node.outputs.new(other.bl_idname, s_name)
+            go_socket = group_out.inputs.new(other.bl_idname, s_name)
             
             ng.links.remove(l)
             ng.links.new(go_socket, out_socket)

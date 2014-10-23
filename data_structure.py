@@ -736,6 +736,7 @@ def changable_sockets(node, inputsocketname, outputsocketname):
     arguments: node, name of socket to follow, list of socket to change
     '''
     in_socket = node.inputs[inputsocketname]
+    ng = node.id_data
     if in_socket.links:
         in_other = get_other_socket(in_socket)
         if not in_other:
@@ -744,15 +745,21 @@ def changable_sockets(node, inputsocketname, outputsocketname):
         s_type = in_other.bl_idname
         if outputs[outputsocketname[0]].bl_idname != s_type:
             node.id_data.freeze(hard=True)
+            to_links = {}
             for n in outputsocketname:
-                if n in outputs:
-                    outputs.remove(outputs[n])
+                out_socket = outputs[n]
+                to_links[n] = [l.to_socket for l in out_socket.links]
+                outputs.remove(outputs[n])
             for n in outputsocketname:
-                outputs.new(s_type, n)
+                new_out_socket = outputs.new(s_type, n)
+                for to_socket in to_links[n]:
+                    ng.links.new(to_socket, new_out_socket)
             node.id_data.unfreeze(hard=True)
 
 def get_socket_type_full(node, inputsocketname):
-    return node.inputs[inputsocketname].links[0].from_socket.bl_idname
+    socket = node.inputs[inputsocketname]
+    other = get_other_socket(socket)
+    return other.links[0].from_socket.bl_idname
 
 
 def get_other_socket(socket):
@@ -784,7 +791,7 @@ def get_other_socket(socket):
 #     multi_socket_type = StringProperty(default='StringsSocket')
 
 
-def multi_socket(node, min=1, start=0, breck=False, output=False):
+def multi_socket(node, min=1, start=0, breck=False, out_count=None):
     '''
      min - integer, minimal number of sockets, at list 1 needed
      start - integer, starting socket.
@@ -796,11 +803,13 @@ def multi_socket(node, min=1, start=0, breck=False, output=False):
     '''
     #probably incorrect state due or init or change of inputs
     # do nothing
-    if not len(node.inputs):
-        return
+    ng = node.id_data
+            
     if min < 1:
         min = 1
-    if not output:
+    if out_count is None:
+        if not len(node.inputs):
+            return
         if node.inputs[-1].links:
             length = start + len(node.inputs)
             if breck:
@@ -811,20 +820,24 @@ def multi_socket(node, min=1, start=0, breck=False, output=False):
         else:
             while len(node.inputs) > min and not node.inputs[-2].links:
                 node.inputs.remove(node.inputs[-1])
-    else:
+    elif isinstance(out_count, int):
         lenod = len(node.outputs)
-        if lenod < output:
-            length = output-lenod
-            for n in range(length):
+        ng.freeze(True)
+        print(out_count)
+        if out_count > 30:
+            out_count = 30
+        if lenod < out_count:
+            while len(node.outputs) < out_count:
+                length = start + len(node.outputs)
                 if breck:
-                    name = node.base_name + '[' + str(n+lenod-1) + ']'
+                    name = node.base_name + '[' + str(length)+ ']'
                 else:
-                    name = node.base_name + str(n+lenod-1)
+                    name = node.base_name + str(length)
                 node.outputs.new(node.multi_socket_type, name)
         else:
-            while len(node.outputs) > output:
+            while len(node.outputs) > out_count:
                 node.outputs.remove(node.outputs[-1])
-
+        ng.unfreeze(True)
 
 #####################################
 # node and socket id functions      #
@@ -908,9 +921,9 @@ def SvGetSocketInfo(socket):
 def SvSetSocket(socket, out):
     global socket_data_cache
     if not socket.is_output:
-        print("Warning, setting input socket")
+        print("Warning, {} setting input socket: {}".format(socket.node.name, socket.name))
     if not socket.is_linked:
-        print("Warning, setting unconncted socket")
+        print("Warning: {} setting unconncted socket: {}".format(socket.node.name, socket.name))
     s_id = socket_id(socket)
     s_ng = socket.id_data.name
     if s_ng not in socket_data_cache:
