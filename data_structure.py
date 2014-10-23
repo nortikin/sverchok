@@ -790,6 +790,7 @@ def get_other_socket(socket):
 #     base_name = StringProperty(default='Data ')
 #     multi_socket_type = StringProperty(default='StringsSocket')
 
+# the named argument min will be replaced soonish.
 
 def multi_socket(node, min=1, start=0, breck=False, out_count=None):
     '''
