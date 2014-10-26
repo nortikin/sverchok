@@ -27,6 +27,7 @@ from os.path import dirname
 from itertools import chain
 
 from .sv_IO_panel import create_dict_of_tree, import_tree
+from data_structure import get_other_socket
 
 import bpy
 from bpy.types import EnumProperty
@@ -68,7 +69,7 @@ class SvNodeGroupCreator(bpy.types.Operator):
         group_node = ng.nodes.new("SvGroupNode")
         group_node.location = (sum(locx)/len(nodes), locy)
 
-        # create node group links and repace with node group instead
+        # create node group links and replace with a node group instead
         for i,l in enumerate(in_links):
             out_socket = l.from_socket
             in_socket = l.to_socket
@@ -80,6 +81,11 @@ class SvNodeGroupCreator(bpy.types.Operator):
             ng.links.remove(l)
             ng.links.new(in_socket, gi_socket)
             ng.links.new(gn_socket, out_socket)
+        
+        out_links_sockets = defaultdict(set)
+        
+        #for l in out_links:
+        #    out_links_socket[l.from_socket].add(l.to_socket
         
         for i,l in enumerate(out_links):
             out_socket = l.from_socket
