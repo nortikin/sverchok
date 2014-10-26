@@ -195,8 +195,12 @@ def make_tree_from_nodes(node_names, tree, down=True):
 # no used yet
 # should add a check do find animated or driven nodes.
 # needs some updates
-'''
+
 def make_animation_tree(node_types, node_list, tree_name):
+    """
+    Create update list for specific purposes depending on which nodes are dynamic
+    node_types 
+    """
     global update_cache
     ng = bpy.data.node_groups[tree_name]
     node_set = set(node_list)
@@ -204,7 +208,7 @@ def make_animation_tree(node_types, node_list, tree_name):
         node_set = node_set | {name for name, node in ng.nodes.items() if node.bl_idname == n_t}
     a_tree = make_tree_from_nodes(list(node_set), tree_name)
     return a_tree
-'''
+
 
 def do_update_heat_map(node_list, nodes):
     """
@@ -301,9 +305,8 @@ def build_update_list(ng=None):
     global update_cache
     global partial_update_cache
     if not ng:
-        for ng in bpy.data.node_groups:
-            if ng.bl_idname == 'SverchCustomTreeType':
-                build_update_list(ng)
+        for ng in sverchok_trees():
+            build_update_list(ng)
     else:
         node_sets = separate_nodes(ng)
         deps = make_dep_dict(ng)

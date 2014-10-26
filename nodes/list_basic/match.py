@@ -113,24 +113,23 @@ class ListMatchNode(bpy.types.Node, SverchCustomTreeNode):
             'REPEAT': match_long_repeat,
             'XREF': match_cross2
             }
-
+        count_inputs = sum(s.is_linked for s in self.inputs)
+        count_outputs = sum(s.is_linked for s in self.outputs)
         if count_inputs == len(self.inputs)-1 and count_outputs:
             out = []
             lsts = []
             # get data
             for socket in self.inputs:
-                if socket.links:
+                if socket.is_linked:
                     lsts.append(SvGetSocketAnyType(self, socket))
-            try:
-                out = self.match(lsts, self.level, func_dict[self.mode], func_dict[self.mode_final])
-            except:
-                print(self.name, " failed")
+            
+            out = self.match(lsts, self.level, func_dict[self.mode], func_dict[self.mode_final])
 
             # output into linked sockets s
             for i, socket in enumerate(self.outputs):
                 if i == len(out):  # never write to last socket
                     break
-                if socket.links:
+                if socket.is_linked:
                     SvSetSocketAnyType(self, socket.name, out[i])
 
 

@@ -110,9 +110,7 @@ class StringsSocket(NodeSocketStandard):
     
     def sv_get(self, default=None, deepcopy=False):
         if self.is_linked and not self.is_output:
-            out = SvGetSocket(self, deepcopy)
-            if out:
-                return out
+            return SvGetSocket(self, deepcopy)
         if self.prop_name:
             return [[getattr(self.node, self.prop_name)]]
         if self.prop_type:
