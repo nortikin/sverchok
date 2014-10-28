@@ -23,8 +23,8 @@ from bpy.props import IntProperty, FloatProperty, FloatVectorProperty
 from mathutils.geometry import interpolate_bezier as bezlerp
 from mathutils import Vector
 
-from node_tree import SverchCustomTreeNode, VerticesSocket, StringsSocket
-from data_structure import (updateNode, fullList,
+from sv_node_tree import SverchCustomTreeNode, VerticesSocket, StringsSocket
+from sv_data_structure import (updateNode, fullList,
                             SvSetSocketAnyType, SvGetSocketAnyType)
 
 

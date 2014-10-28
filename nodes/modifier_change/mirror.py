@@ -23,8 +23,8 @@ from mathutils import Vector, Matrix
 import bpy
 from bpy.props import StringProperty, EnumProperty
 
-from node_tree import SverchCustomTreeNode
-from data_structure import updateNode, SvSetSocketAnyType, SvGetSocketAnyType, match_long_repeat
+from sv_node_tree import SverchCustomTreeNode
+from sv_data_structure import updateNode, SvSetSocketAnyType, SvGetSocketAnyType, match_long_repeat
 
 def mirrorPoint(vertex, vert_a):
     vert = []

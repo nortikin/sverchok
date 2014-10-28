@@ -21,8 +21,8 @@ from mathutils import Vector
 import bpy
 from bpy.props import FloatProperty
 
-from node_tree import SverchCustomTreeNode
-from data_structure import SvGetSocketAnyType, SvSetSocketAnyType, updateNode, match_long_repeat
+from sv_node_tree import SverchCustomTreeNode
+from sv_data_structure import SvGetSocketAnyType, SvSetSocketAnyType, updateNode, match_long_repeat
 
 
 class SvScaleNode(bpy.types.Node, SverchCustomTreeNode):

@@ -23,8 +23,8 @@ from mathutils import Matrix, Vector, Euler, Quaternion
 import bpy
 from bpy.props import FloatProperty, EnumProperty, StringProperty
 
-from node_tree import SverchCustomTreeNode
-from data_structure import (SvGetSocketAnyType, SvSetSocketAnyType,
+from sv_node_tree import SverchCustomTreeNode
+from sv_data_structure import (SvGetSocketAnyType, SvSetSocketAnyType,
                             updateNode, match_long_repeat)
 
 

@@ -19,8 +19,8 @@
 import bpy
 import parser
 from bpy.props import StringProperty, BoolProperty, EnumProperty, FloatProperty
-from node_tree import SverchCustomTreeNode, StringsSocket
-from data_structure import (SvGetSocketAnyType, updateNode, match_short,
+from sv_node_tree import SverchCustomTreeNode, StringsSocket
+from sv_data_structure import (SvGetSocketAnyType, updateNode, match_short,
                             match_long_cycle)
 
 

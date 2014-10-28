@@ -19,8 +19,8 @@
 import bpy
 from bpy.props import FloatVectorProperty
 
-from node_tree import SverchCustomTreeNode
-from data_structure import updateNode, Matrix_listing, SvSetSocketAnyType
+from sv_node_tree import SverchCustomTreeNode
+from sv_data_structure import updateNode, Matrix_listing, SvSetSocketAnyType
 
 
 class SvMatrixValueIn(bpy.types.Node, SverchCustomTreeNode):

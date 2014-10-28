@@ -17,15 +17,15 @@ Wellcome!
      for now it is refactoring, than work in.
 3. copy fitting existing node (test1 is pure template and may be the best example)
 4. change class name, class id, class description, class registration in your file
-5. add node id in node_tree.py in NodeCategory.
+5. add node id in sv_node_tree.py in NodeCategory.
 6. Add in nodes/__init__.py filename
 7. tell us to merge branches/forks
 
 	SOME RULES:
 1. all classes that are subclasses of blender classes - have to have prefix Sv, ie SvColors
-2. node_tree.py contains that classes, maybe you need to create collection property or new socket (for 
+2. sv_node_tree.py contains that classes, maybe you need to create collection property or new socket (for 
      new type of socket tell us first), you make it here
-3. data_structure.py has magic of:
+3. sv_data_structure.py has magic of:
 	a.update definitions, that works pretty well with sockets' and nodes' updates
 	b.some bmesh functiones
 	c.cache - operates with handles - we use it to operate with nodes' data, it is dictionary, 

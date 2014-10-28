@@ -19,8 +19,8 @@
 from math import degrees
 
 import bpy
-from node_tree import SverchCustomTreeNode
-from data_structure import (Matrix_generate,
+from sv_node_tree import SverchCustomTreeNode
+from sv_data_structure import (Matrix_generate,
                             Matrix_location, Matrix_scale, Matrix_rotation,
                             SvGetSocketAnyType, SvSetSocketAnyType)
 

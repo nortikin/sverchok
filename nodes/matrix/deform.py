@@ -18,9 +18,9 @@
 
 import bpy
 
-from node_tree import (SverchCustomTreeNode, VerticesSocket,
+from sv_node_tree import (SverchCustomTreeNode, VerticesSocket,
                        MatrixSocket, StringsSocket)
-from data_structure import (Vector_generate, matrixdef, Matrix_listing,
+from sv_data_structure import (Vector_generate, matrixdef, Matrix_listing,
                             Matrix_generate, updateNode,
                             SvGetSocketAnyType, SvSetSocketAnyType)
 

@@ -18,8 +18,8 @@
 
 import bpy
 from bpy.props import FloatProperty
-from node_tree import SverchCustomTreeNode, StringsSocket
-from data_structure import (updateNode, fullList,
+from sv_node_tree import SverchCustomTreeNode, StringsSocket
+from sv_data_structure import (updateNode, fullList,
                             SvSetSocketAnyType, SvGetSocketAnyType)
 
 

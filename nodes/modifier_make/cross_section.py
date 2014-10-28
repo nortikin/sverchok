@@ -20,8 +20,8 @@ import bpy
 from bpy.props import BoolProperty
 from mathutils import Vector, Matrix
 
-from node_tree import SverchCustomTreeNode
-from data_structure import (updateNode, Vector_generate, Vector_degenerate,
+from sv_node_tree import SverchCustomTreeNode
+from sv_data_structure import (updateNode, Vector_generate, Vector_degenerate,
                             SvSetSocketAnyType, SvGetSocketAnyType)
 
 

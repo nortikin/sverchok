@@ -20,8 +20,8 @@ import bpy
 from bpy.props import (EnumProperty, FloatVectorProperty,
                        IntProperty, IntVectorProperty)
 
-from node_tree import SverchCustomTreeNode
-from data_structure import updateNode, SvSetSocketAnyType
+from sv_node_tree import SverchCustomTreeNode
+from sv_data_structure import updateNode, SvSetSocketAnyType
 
 
 class SvListInputNode(bpy.types.Node, SverchCustomTreeNode):

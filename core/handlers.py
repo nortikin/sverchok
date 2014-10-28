@@ -1,6 +1,6 @@
 import bpy
 from bpy.app.handlers import persistent
-import data_structure
+import sv_data_structure
 from core import upgrade_nodes
 from utils import viewer_draw
 from utils import viewer_draw_mk2
@@ -42,8 +42,8 @@ def sv_clean(scene):
     viewer_draw_mk2.callback_disable_all()
     index_viewer_draw.callback_disable_all()
     nodeview_bgl_viewer_draw.callback_disable_all()
-    data_structure.sv_Vars = {}
-    data_structure.temp_handle = {}
+    sv_data_structure.sv_Vars = {}
+    sv_data_structure.temp_handle = {}
 
 
 @persistent
@@ -107,8 +107,8 @@ def set_frame_change(mode):
 def register():
     bpy.app.handlers.load_pre.append(sv_clean)
     bpy.app.handlers.load_post.append(sv_post_load)
-    data_structure.setup_init()
-    addon_name = data_structure.SVERCHOK_NAME
+    sv_data_structure.setup_init()
+    addon_name = sv_data_structure.SVERCHOK_NAME
     addon = bpy.context.user_preferences.addons.get(addon_name)
     if addon and hasattr(addon, "preferences"):
         set_frame_change(addon.preferences.frame_change_mode)

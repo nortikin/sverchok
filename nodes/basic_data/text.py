@@ -30,8 +30,8 @@ import pprint
 import bpy
 from bpy.props import BoolProperty, EnumProperty, StringProperty
 
-from node_tree import SverchCustomTreeNode, StringsSocket
-from data_structure import (node_id, multi_socket,
+from sv_node_tree import SverchCustomTreeNode, StringsSocket
+from sv_data_structure import (node_id, multi_socket,
                             updateNode, SvGetSocketAnyType, SvSetSocketAnyType)
 
 

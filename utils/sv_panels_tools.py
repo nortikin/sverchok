@@ -28,7 +28,7 @@ import bpy
 from bpy.props import StringProperty, CollectionProperty, BoolProperty
 
 from core.update_system import sverchok_update, build_update_list
-from node_tree import SverchCustomTreeNode
+from sv_node_tree import SverchCustomTreeNode
 
 
 def sv_get_local_path():
@@ -62,7 +62,7 @@ class SverchokBakeAll(bpy.types.Operator):
     bl_label = "Sverchok bake all"
     bl_options = {'REGISTER', 'UNDO'}
 
-    node_tree_name = StringProperty(name='tree_name', default='')
+    sv_node_tree_name = StringProperty(name='tree_name', default='')
 
     @classmethod
     def poll(cls, context):
@@ -72,7 +72,7 @@ class SverchokBakeAll(bpy.types.Operator):
             return False
 
     def execute(self, context):
-        ng = bpy.data.node_groups[self.node_tree_name]
+        ng = bpy.data.node_groups[self.sv_node_tree_name]
         nodes = filter(lambda n: hasattr(n, "bake"), ng.nodes)
         for node in nodes:
             if node.bakebuttonshow:
@@ -104,7 +104,7 @@ class SverchokPurgeCache(bpy.types.Operator):
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
-        print(bpy.context.space_data.node_tree.name)
+        print(bpy.context.space_data.sv_node_tree.name)
         return {'FINISHED'}
 
 
@@ -214,14 +214,14 @@ class SvSwitchToLayout (bpy.types.Operator):
     @classmethod
     def poll(cls, self):
         if bpy.context.space_data.type == 'NODE_EDITOR':
-            if bpy.context.space_data.node_tree.bl_rna.name == 'Sverchok Node Tree':
+            if bpy.context.space_data.sv_node_tree.bl_rna.name == 'Sverchok Node Tree':
                 return 1
         else:
             return 0
 
     def execute(self, context):
-        if context.space_data.node_tree.name != self.layout_name:
-            context.space_data.node_tree = bpy.data.node_groups[self.layout_name]
+        if context.space_data.sv_node_tree.name != self.layout_name:
+            context.space_data.sv_node_tree = bpy.data.node_groups[self.layout_name]
         else:
             return {'CANCELLED'}
         return {'FINISHED'}

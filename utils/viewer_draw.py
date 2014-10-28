@@ -24,7 +24,7 @@ import bpy
 import mathutils
 from mathutils import Vector, Matrix
 
-from data_structure import Vector_generate, Matrix_generate
+from sv_data_structure import Vector_generate, Matrix_generate
 
 callback_dict = {}
 SpaceView3D = bpy.types.SpaceView3D

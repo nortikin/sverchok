@@ -19,8 +19,8 @@
 import bpy
 from bpy.props import BoolProperty, BoolVectorProperty
 
-from node_tree import SverchCustomTreeNode
-from data_structure import multi_socket, SvGetSocketAnyType, updateNode
+from sv_node_tree import SverchCustomTreeNode
+from sv_data_structure import multi_socket, SvGetSocketAnyType, updateNode
 
 
 class SvDebugPrintNode(bpy.types.Node, SverchCustomTreeNode):

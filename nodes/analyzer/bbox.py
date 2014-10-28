@@ -21,8 +21,8 @@ from itertools import product
 import bpy
 from mathutils import Matrix
 
-from node_tree import SverchCustomTreeNode
-from data_structure import (dataCorrect, Matrix_listing, SvGetSocketAnyType,
+from sv_node_tree import SverchCustomTreeNode
+from sv_data_structure import (dataCorrect, Matrix_listing, SvGetSocketAnyType,
                             SvSetSocketAnyType)
 
 

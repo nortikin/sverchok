@@ -21,8 +21,8 @@ import bpy
 
 from bpy.props import StringProperty, IntProperty, BoolProperty
 
-from node_tree import SverchCustomTreeNode
-from data_structure import SvSetSocketAnyType, updateNode, node_id, SvGetSocketAnyType
+from sv_node_tree import SverchCustomTreeNode
+from sv_data_structure import SvSetSocketAnyType, updateNode, node_id, SvGetSocketAnyType
 
 
 TEXT_WIDTH = 6

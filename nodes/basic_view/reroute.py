@@ -19,8 +19,8 @@
 import bpy
 from bpy.props import StringProperty, BoolProperty
 
-from node_tree import SverchCustomTreeNode, SverchCustomTree
-from data_structure import changable_sockets, SvGetSocketAnyType, SvSetSocketAnyType
+from sv_node_tree import SverchCustomTreeNode, SverchCustomTree
+from sv_data_structure import changable_sockets, SvGetSocketAnyType, SvSetSocketAnyType
 
 
 class SvReRouteNode(bpy.types.Node, SverchCustomTreeNode):
