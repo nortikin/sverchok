@@ -175,7 +175,8 @@ def make_node_cats():
     ]
 
     node_cats["Basic Viz"] = [
-        ["ViewerNode",          "Viewer draw"],
+        ["ViewerNode2",         "Viewer draw MK2",         'RETOPO'],
+        #["ViewerNode",          "Viewer draw"],
         ["ViewerNode_text",     "Viewer text"],
         ["IndexViewerNode",     "Viewer INDX"],
         ["Sv3DviewPropsNode",   "3dview Props"],
@@ -187,11 +188,11 @@ def make_node_cats():
         ["SvTextInNode",        "Text in"],
         ["SvTextOutNode",       "Text out"],
         ["WifiInNode",          "Wifi in"],
-        ["WifiOutNode",         "Wifi out"]
+        ["WifiOutNode",         "Wifi out"],
+        ["SvFrameInfoNode",     "Frame info"],
     ]
 
     node_cats["Basic Debug"] = [
-        ["SvFrameInfoNode",     "Frame info"],
         ["NoteNode",            "Note"],
         ["GTextNode",           "GText"],
         ["SvDebugPrintNode",    "Debug print"],
@@ -200,7 +201,6 @@ def make_node_cats():
 
     node_cats["Beta Nodes"] = [
         # for testing convenience,
-        ["ViewerNode2",         "Viewer draw MK2",         'RETOPO'],
         ["SvOffsetNode",        "Offset"],
         ["SvEmptyOutNode",      "Empty out",    "OUTLINER_OB_EMPTY"],
         # need to be completely reviewed
