@@ -59,7 +59,6 @@ class SvDefaultScript2Template(bpy.types.Operator):
         return {'FINISHED'}
 
 
-
 socket_types = {
     'v': 'VerticesSocket',
     's': 'StringsSocket',
@@ -199,21 +198,26 @@ class SvScriptNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             script = self.script
             if not script:
                 return
-    
-        # basic sanity
+        
+        if hasattr(script, "process"):
+            script.process()
+        '''
+        # basic sanity. Shouldn't be needed
 
         if len(script.inputs) != len(self.inputs):
             return
         if len(script.outputs) != len(self.outputs):
             return
         # check if no default and not linked, return
+     
+        
         for data, socket in zip(script.inputs, self.inputs): 
             if len(data) == 2 and not socket.links:
                 return
-        script = self.script
+
         if not script:
             return
-        script.process()
+        '''
                         
     def copy(self, node):
         self.n_id = ""
