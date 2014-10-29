@@ -189,18 +189,8 @@ class SvScriptNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                     
         if hasattr(script, 'update'):
             script.update()
-        else:
-            # basic sanity
-
-            if len(script.inputs) != len(self.inputs):
-                return
-            if len(script.outputs) != len(self.outputs):
-                return
-            # check if no default and not linked, return
-            for data, socket in zip(script.inputs, self.inputs): 
-                if len(data) == 2 and not socket.links:
-                    return
-            self.process()
+        
+        self.process()
     
     def process(self):
         script = self.script
