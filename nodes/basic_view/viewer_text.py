@@ -19,8 +19,8 @@
 import bpy
 from bpy.props import StringProperty
 
-from node_tree import SverchCustomTreeNode
-from data_structure import levelsOflist, SvGetSocketAnyType
+from sv_node_tree import SverchCustomTreeNode
+from sv_data_structure import levelsOflist, SvGetSocketAnyType
 
 # global cache_viewer_slot1, cache_viewer_slot2, cache_viewer_slot3
 cache_viewer_slot1 = {}  # {'veriable':'None \n'}

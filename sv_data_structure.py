@@ -884,7 +884,11 @@ def multi_socket(node, min=1, start=0, breck=False, output=False):
         lenod = len(node.outputs)
         if lenod < output:
             length = output-lenod
+            if length > 16:
+                length = 16
             for n in range(length):
+                #if n > 30:
+                    #break
                 if breck:
                     name = node.base_name + '[' + str(n+lenod-1) + ']'
                 else:

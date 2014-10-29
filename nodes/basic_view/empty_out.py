@@ -20,8 +20,8 @@ import bpy
 from mathutils import Matrix
 from bpy.props import StringProperty, BoolProperty
 
-from node_tree import SverchCustomTreeNode
-from data_structure import SvGetSocketAnyType, node_id, Matrix_generate
+from sv_node_tree import SverchCustomTreeNode
+from sv_data_structure import SvGetSocketAnyType, node_id, Matrix_generate
 
 
 class SvEmptyOutNode(bpy.types.Node, SverchCustomTreeNode):

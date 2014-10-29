@@ -21,8 +21,8 @@ from math import sin, cos, radians
 import bpy
 from bpy.props import BoolProperty, IntProperty, FloatProperty
 
-from node_tree import SverchCustomTreeNode
-from data_structure import (match_long_repeat, sv_zip,
+from sv_node_tree import SverchCustomTreeNode
+from sv_data_structure import (match_long_repeat, sv_zip,
                             updateNode, SvSetSocketAnyType)
 
 

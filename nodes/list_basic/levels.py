@@ -20,8 +20,8 @@ from ast import literal_eval
 
 import bpy
 from bpy.props import BoolProperty, StringProperty
-from node_tree import SverchCustomTreeNode
-from data_structure import (changable_sockets, preobrazovatel, updateNode,
+from sv_node_tree import SverchCustomTreeNode
+from sv_data_structure import (changable_sockets, preobrazovatel, updateNode,
                             SvSetSocketAnyType, SvGetSocketAnyType)
 
 

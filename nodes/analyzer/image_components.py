@@ -22,8 +22,8 @@ import bpy
 from bpy.props import (
     IntProperty, FloatProperty, StringProperty, BoolProperty)
 
-from node_tree import SverchCustomTreeNode
-from data_structure import (
+from sv_node_tree import SverchCustomTreeNode
+from sv_data_structure import (
     updateNode, fullList, SvSetSocketAnyType, SvGetSocketAnyType)
 
 '''
@@ -84,8 +84,8 @@ class svImageImporterOp(bpy.types.Operator):
 
     def execute(self, context):
         a = bpy.data.images.load(self.filepath)
-        node_tree, node_name = self.origin.split('|><|')
-        node = bpy.data.node_groups[node_tree].nodes[node_name]
+        sv_node_tree, node_name = self.origin.split('|><|')
+        node = bpy.data.node_groups[sv_node_tree].nodes[node_name]
         node.image_name = a.name
         return {'FINISHED'}
 
@@ -289,9 +289,9 @@ class SvImageComponentsNode(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons_ext(self, context, layout):
 
         # poor mans origin tracker
-        node_tree = self.id_data.name
+        sv_node_tree = self.id_data.name
         node_name = self.name
-        origin = '|><|'.join([node_tree, node_name])
+        origin = '|><|'.join([sv_node_tree, node_name])
 
         col = layout.column()
         image_op = col.operator(

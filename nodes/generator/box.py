@@ -21,8 +21,8 @@ from bpy.props import IntProperty, FloatProperty
 import bmesh
 from mathutils import Vector
 
-from node_tree import SverchCustomTreeNode
-from data_structure import updateNode, SvSetSocketAnyType, SvGetSocketAnyType
+from sv_node_tree import SverchCustomTreeNode
+from sv_data_structure import updateNode, SvSetSocketAnyType, SvGetSocketAnyType
 
 
 class SvBoxNode(bpy.types.Node, SverchCustomTreeNode):

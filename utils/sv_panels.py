@@ -18,15 +18,15 @@
 
 
 import bpy
-from bpy.props import StringProperty, CollectionProperty
+from bpy.props import StringProperty, CollectionProperty, BoolProperty
 
 from core.update_system import sverchok_update, build_update_list
-from node_tree import SverchCustomTreeNode
+from sv_node_tree import SverchCustomTreeNode
 
 
 # global veriables in tools
 from utils.sv_panels_tools import sv_script_paths, bl_addons_path, \
-                     sv_version_local, sv_version, sv_new_version
+                     sv_version_local, sv_version
 
 class ToolsNode(bpy.types.Node, SverchCustomTreeNode):
     ''' NOT USED '''
@@ -93,14 +93,20 @@ class Sv3DPanel(bpy.types.Panel):
                 box = layout.box()
                 col = box.column(align=True)
                 row = col.row(align=True)
+
                 split = row.column(align=True)
-                split.label(text='Layout: '+tree.name)
+                split.scale_x = little_width
+                icoco = 'DOWNARROW_HLT' if tree.SvShowIn3D else 'RIGHTARROW'
+                split.prop(tree, 'SvShowIn3D', icon=icoco, emboss=False, text=' ')
+
+                split = row.column(align=True)
+                split.label(text=tree.name)
 
                 # bakery
                 split = row.column(align=True)
                 split.scale_x = little_width
                 baka = split.operator('node.sverchok_bake_all', text='B')
-                baka.node_tree_name = tree.name
+                baka.sv_node_tree_name = tree.name
 
                 #eye
                 split = row.column(align=True)
@@ -117,31 +123,32 @@ class Sv3DPanel(bpy.types.Panel):
                     split.prop(tree, 'sv_animate', icon='LOCKED', text=' ')
 
                 # veriables
-                for item in tree.Sv3DProps:
-                    no = item.node_name
-                    ver = item.prop_name
-                    node = tree.nodes[no]
-                    if node.label:
-                        tex = node.label
-                    else:
-                        tex = no
-                    if node.bl_idname == "ObjectsNode":
-                        row = col.row(align=True)
-                        row.label(text=node.label if node.label else no)
-                        colo = row.row(align=True)
-                        colo.scale_x = little_width*5
-                        op = colo.operator("node.sverchok_object_insertion", text="Get")
-                        op.node_name = node.name
-                        op.tree_name = tree.name
-                        op.grup_name = node.groupname
-                        op.sort = node.sort
-                    elif node.bl_idname in {"IntegerNode", "FloatNode"}:
-                        row = col.row(align=True)
-                        row.prop(node, ver, text=tex)
-                        colo = row.row(align=True)
-                        colo.scale_x = little_width*2.5
-                        colo.prop(node, 'minim', text='', slider=True, emboss=False)
-                        colo.prop(node, 'maxim', text='', slider=True, emboss=False)
+                if tree.SvShowIn3D:
+                    for item in tree.Sv3DProps:
+                        no = item.node_name
+                        ver = item.prop_name
+                        node = tree.nodes[no]
+                        if node.label:
+                            tex = node.label
+                        else:
+                            tex = no
+                        if node.bl_idname == "ObjectsNode":
+                            row = col.row(align=True)
+                            row.label(text=node.label if node.label else no)
+                            colo = row.row(align=True)
+                            colo.scale_x = little_width*5
+                            op = colo.operator("node.sverchok_object_insertion", text="Get")
+                            op.node_name = node.name
+                            op.tree_name = tree.name
+                            op.grup_name = node.groupname
+                            op.sort = node.sort
+                        elif node.bl_idname in {"IntegerNode", "FloatNode"}:
+                            row = col.row(align=True)
+                            row.prop(node, ver, text=tex)
+                            colo = row.row(align=True)
+                            colo.scale_x = little_width*2.5
+                            colo.prop(node, 'minim', text='', slider=True, emboss=False)
+                            colo.prop(node, 'maxim', text='', slider=True, emboss=False)
 
 
 class SverchokToolsMenu(bpy.types.Panel):
@@ -155,12 +162,12 @@ class SverchokToolsMenu(bpy.types.Panel):
     @classmethod
     def poll(cls, context):
         try:
-            return context.space_data.node_tree.bl_idname == 'SverchCustomTreeType'
+            return context.space_data.sv_node_tree.bl_idname == 'SverchCustomTreeType'
         except:
             return False
 
     def draw(self, context):
-        ng_name = context.space_data.node_tree.name
+        ng_name = context.space_data.sv_node_tree.name
         layout = self.layout
         #layout.scale_y=1.1
         layout.active = True
@@ -205,7 +212,7 @@ class SverchokToolsMenu(bpy.types.Panel):
                 split = row.column(align=True)
                 split.scale_x = little_width
                 baka = split.operator('node.sverchok_bake_all', text='B')
-                baka.node_tree_name = name
+                baka.sv_node_tree_name = name
 
                 # eye
                 split = row.column(align=True)
@@ -218,7 +225,7 @@ class SverchokToolsMenu(bpy.types.Panel):
                 animate_icon = ('UN' if tree.sv_animate else '') + 'LOCKED'
                 split.prop(tree, 'sv_animate', icon=animate_icon, text=' ')
 
-        if sv_new_version:
+        if bpy.context.scene.sv_new_version:
             row = layout.row()
             row.alert = True
             row.operator(
@@ -237,7 +244,8 @@ sv_tools_classes = [
 
 
 def register():
-
+    bpy.types.SverchCustomTreeType.SvShowIn3D = BoolProperty(name='show in panel',default=True, \
+            description='Show properties in 3d panel or not')
     for class_name in sv_tools_classes:
         bpy.utils.register_class(class_name)
 

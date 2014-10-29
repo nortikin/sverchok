@@ -1,7 +1,7 @@
 # check if edges/polygons are containing items, 
 # than either delete them or leave
 
-from data_structure import fullList
+from sv_data_structure import fullList
 
 
 def sv_main(p=[],m=[]):

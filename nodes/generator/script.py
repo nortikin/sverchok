@@ -30,8 +30,8 @@ from bpy.props import (
 )
 
 from utils.sv_panels_tools import sv_get_local_path
-from node_tree import SverchCustomTreeNode
-from data_structure import (
+from sv_node_tree import SverchCustomTreeNode
+from sv_data_structure import (
     dataCorrect,
     updateNode,
     SvSetSocketAnyType,

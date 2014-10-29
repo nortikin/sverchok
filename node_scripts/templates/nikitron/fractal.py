@@ -3,7 +3,7 @@
 
 import mathutils
 from mathutils import Vector, Matrix
-from data_structure import Vector_degenerate, Vector_generate
+from sv_data_structure import Vector_degenerate, Vector_generate
 
 def sv_main(vec=[],pol=[],iter=3):
 

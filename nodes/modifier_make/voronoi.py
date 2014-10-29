@@ -21,8 +21,8 @@ import math
 import bpy
 from bpy.props import FloatProperty
 
-from node_tree import SverchCustomTreeNode
-from data_structure import updateNode, SvGetSocketAnyType
+from sv_node_tree import SverchCustomTreeNode
+from sv_data_structure import updateNode, SvGetSocketAnyType
 
 
 class VoronoiNode(bpy.types.Node, SverchCustomTreeNode):

@@ -18,9 +18,9 @@
 
 import bpy
 import bmesh
-from node_tree import SverchCustomTreeNode
+from sv_node_tree import SverchCustomTreeNode
 from utils.sv_bmesh_utils import bmesh_from_pydata
-from data_structure import (dataCorrect, updateNode,
+from sv_data_structure import (dataCorrect, updateNode,
                             SvSetSocketAnyType, SvGetSocketAnyType,
                             Vector_generate)
 

@@ -70,7 +70,7 @@ imported_modules = []
 node_list = []
 # ugly hack, should make respective dict in __init__ like nodes
 # or parse it
-root_modules = ["node_tree", "data_structure", "sv_nodes_menu"]
+root_modules = ["sv_node_tree", "sv_data_structure", "sv_nodes_menu"]
 core_modules = ["handlers", "update_system", "upgrade_nodes"]
 utils_modules = [
     # non UI tools
@@ -103,8 +103,8 @@ for m in root_modules:
 menu = imported_modules[-1]
 
 # settings needs __package__ set, so we use relative import
-settings = importlib.import_module('.settings', __name__)
-imported_modules.append(settings)
+sv_settings = importlib.import_module('.sv_settings', __name__)
+imported_modules.append(sv_settings)
 
 core = importlib.import_module('core')
 imported_modules.append(core)
@@ -162,7 +162,7 @@ def register():
         # tag reload event which will cause a full sverchok startup on
         # first update event
         for m in imported_modules:
-            if m.__name__ == "data_structure":
+            if m.__name__ == "sv_data_structure":
                 m.RELOAD_EVENT = True
         print("Sverchok is reloaded, press update")
 

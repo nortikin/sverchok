@@ -21,8 +21,8 @@ from bpy.props import EnumProperty, StringProperty
 import mathutils
 from mathutils import Vector
 
-from node_tree import SverchCustomTreeNode
-from data_structure import SvSetSocketAnyType, SvGetSocketAnyType
+from sv_node_tree import SverchCustomTreeNode
+from sv_data_structure import SvSetSocketAnyType, SvGetSocketAnyType
 
 
 # documentation/blender_python_api_2_70_release/mathutils.kdtree.html

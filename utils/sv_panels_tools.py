@@ -25,10 +25,10 @@ import traceback
 import collections
 
 import bpy
-from bpy.props import StringProperty, CollectionProperty
+from bpy.props import StringProperty, CollectionProperty, BoolProperty
 
 from core.update_system import sverchok_update, build_update_list
-from node_tree import SverchCustomTreeNode
+from sv_node_tree import SverchCustomTreeNode
 
 
 def sv_get_local_path():
@@ -41,7 +41,7 @@ def sv_get_local_path():
 
 # global veriables in tools
 sv_script_paths, bl_addons_path, sv_version_local, sv_version = sv_get_local_path()
-sv_new_version = False
+
 
 
 class SverchokUpdateAll(bpy.types.Operator):
@@ -62,7 +62,7 @@ class SverchokBakeAll(bpy.types.Operator):
     bl_label = "Sverchok bake all"
     bl_options = {'REGISTER', 'UNDO'}
 
-    node_tree_name = StringProperty(name='tree_name', default='')
+    sv_node_tree_name = StringProperty(name='tree_name', default='')
 
     @classmethod
     def poll(cls, context):
@@ -72,7 +72,7 @@ class SverchokBakeAll(bpy.types.Operator):
             return False
 
     def execute(self, context):
-        ng = bpy.data.node_groups[self.node_tree_name]
+        ng = bpy.data.node_groups[self.sv_node_tree_name]
         nodes = filter(lambda n: hasattr(n, "bake"), ng.nodes)
         for node in nodes:
             if node.bakebuttonshow:
@@ -104,7 +104,7 @@ class SverchokPurgeCache(bpy.types.Operator):
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
-        print(bpy.context.space_data.node_tree.name)
+        print(bpy.context.space_data.sv_node_tree.name)
         return {'FINISHED'}
 
 
@@ -132,7 +132,6 @@ class SverchokCheckForUpgrades(bpy.types.Operator):
     bl_options = {'REGISTER'}
 
     def execute(self, context):
-        global sv_new_version
         os.curdir = sv_script_paths
         os.chdir(os.curdir)
         report = self.report
@@ -152,7 +151,7 @@ class SverchokCheckForUpgrades(bpy.types.Operator):
             return {'CANCELLED'}
 
         if version_local != version_url:
-            sv_new_version = True
+            bpy.context.scene.sv_new_version = True
             report({'INFO'}, "New version {0}".format(version_url))
         else:
             report({'INFO'}, "Your version {0} is last.".format(version_local))
@@ -166,7 +165,6 @@ class SverchokUpdateAddon(bpy.types.Operator):
     bl_options = {'REGISTER'}
 
     def execute(self, context):
-        global sv_new_version
         os.curdir = bl_addons_path
         os.chdir(os.curdir)
         bpy.data.window_managers[0].progress_begin(0, 100)
@@ -190,7 +188,7 @@ class SverchokUpdateAddon(bpy.types.Operator):
             err = 1
             os.remove(file[0])
             err = 2
-            sv_new_version = False
+            bpy.context.scene.sv_new_version = False
             bpy.data.window_managers[0].progress_update(100)
             bpy.data.window_managers[0].progress_end()
             self.report({'INFO'}, "Unzipped, reload addons with F8 button")
@@ -216,14 +214,14 @@ class SvSwitchToLayout (bpy.types.Operator):
     @classmethod
     def poll(cls, self):
         if bpy.context.space_data.type == 'NODE_EDITOR':
-            if bpy.context.space_data.node_tree.bl_rna.name == 'Sverchok Node Tree':
+            if bpy.context.space_data.sv_node_tree.bl_rna.name == 'Sverchok Node Tree':
                 return 1
         else:
             return 0
 
     def execute(self, context):
-        if context.space_data.node_tree.name != self.layout_name:
-            context.space_data.node_tree = bpy.data.node_groups[self.layout_name]
+        if context.space_data.sv_node_tree.name != self.layout_name:
+            context.space_data.sv_node_tree = bpy.data.node_groups[self.layout_name]
         else:
             return {'CANCELLED'}
         return {'FINISHED'}
@@ -331,6 +329,7 @@ def register():
         bpy.utils.register_class(class_name)
 
     bpy.types.SverchCustomTreeType.Sv3DProps = CollectionProperty(type=Sv3dPropItem)
+    bpy.types.Scene.sv_new_version = BoolProperty(default=False)
 
 
 def unregister():

@@ -21,8 +21,8 @@ import random
 import bpy
 from bpy.props import IntProperty, FloatProperty
 
-from node_tree import SverchCustomTreeNode
-from data_structure import updateNode, match_long_repeat, SvSetSocketAnyType
+from sv_node_tree import SverchCustomTreeNode
+from sv_data_structure import updateNode, match_long_repeat, SvSetSocketAnyType
 
 
 class RandomNode(bpy.types.Node, SverchCustomTreeNode):

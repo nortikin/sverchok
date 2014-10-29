@@ -19,8 +19,8 @@
 import bpy
 from bpy.props import StringProperty, EnumProperty
 
-from node_tree import SverchCustomTreeNode
-from data_structure import updateNode, SvSetSocketAnyType
+from sv_node_tree import SverchCustomTreeNode
+from sv_data_structure import updateNode, SvSetSocketAnyType
 
 
 class svAxisInputNode(bpy.types.Node, SverchCustomTreeNode):

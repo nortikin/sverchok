@@ -108,6 +108,7 @@ a flat file. The following convenience variables will be present.
 Examples
 --------
 
+.. image:: https://cloud.githubusercontent.com/assets/7894950/4715836/5513ae5c-5902-11e4-8f05-40520d57476a.png
 
 Notes
 -----

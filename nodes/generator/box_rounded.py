@@ -24,8 +24,8 @@ import bmesh
 from mathutils import Vector
 from bpy.props import IntProperty, FloatProperty
 
-from node_tree import SverchCustomTreeNode, VerticesSocket
-from data_structure import (
+from sv_node_tree import SverchCustomTreeNode, VerticesSocket
+from sv_data_structure import (
     updateNode, fullList,
     SvSetSocketAnyType, SvGetSocketAnyType)
 

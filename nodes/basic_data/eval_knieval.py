@@ -25,8 +25,8 @@ from ast import literal_eval
 import bpy
 from mathutils import Vector, Matrix, Euler, Quaternion, Color
 from bpy.props import FloatProperty, StringProperty, BoolProperty, EnumProperty
-from node_tree import SverchCustomTreeNode, StringsSocket, VerticesSocket, MatrixSocket
-from data_structure import updateNode, SvGetSocketAnyType, SvSetSocketAnyType, Matrix_generate
+from sv_node_tree import SverchCustomTreeNode, StringsSocket, VerticesSocket, MatrixSocket
+from sv_data_structure import updateNode, SvGetSocketAnyType, SvSetSocketAnyType, Matrix_generate
 
 '''
 - SET:  `path.to.prop`

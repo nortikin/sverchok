@@ -21,8 +21,8 @@ from mathutils import Vector
 from bpy.props import (BoolProperty, FloatVectorProperty, StringProperty,
                        FloatProperty, EnumProperty)
 
-from node_tree import SverchCustomTreeNode, MatrixSocket, VerticesSocket, StringsSocket
-from data_structure import (
+from sv_node_tree import SverchCustomTreeNode, MatrixSocket, VerticesSocket, StringsSocket
+from sv_data_structure import (
     dataCorrect, node_id, updateNode, SvGetSocketAnyType, fullList,
     Vector_generate, Matrix_generate)
 
@@ -226,20 +226,39 @@ class IndexViewerNode(bpy.types.Node, SverchCustomTreeNode):
         self.n_id = ''
 
     def draw_buttons(self, context, layout):
-        row = layout.row(align=True)
-        row.prop(self, "activate", text="Show")
-        row.prop(self, "draw_bg", text="Background")
+        view_icon = 'RESTRICT_VIEW_' + ('OFF' if self.activate else 'ON')
+        
+        column_all = layout.column()
+        
+        row = column_all.row(align=True)
+        split = row.split()
+        r = split.column()
+        r.prop(self, "activate", text="Show", toggle=True, icon=view_icon)
+        row.prop(self, "draw_bg", text="Background", toggle=True)
 
-        layout.separator()
-        col = layout.column(align=True)
+        col = column_all.column(align=True)
         row = col.row(align=True)
-        row.active = (self.activate)
+        row.prop(self, "display_vert_index", toggle=True, icon='VERTEXSEL', text='')
+        row.prop(self, "numid_verts_col", text="")
+        if self.draw_bg:
+            row.prop(self, "bg_verts_col", text="")
+            
 
-        row.prop(self, "display_vert_index", toggle=True)
-        row.prop(self, "display_edge_index", toggle=True)
-        row.prop(self, "display_face_index", toggle=True)
+        row = col.row(align=True)
+        row.prop(self, "display_edge_index", toggle=True, icon='EDGESEL', text='')
+        row.prop(self, "numid_edges_col", text="")
+        if self.draw_bg:
+            row.prop(self, "bg_edges_col", text="")
+
+        row = col.row(align=True)
+        row.prop(self, "display_face_index", toggle=True, icon='FACESEL', text='')
+        row.prop(self, "numid_faces_col", text="")
+        if self.draw_bg:
+            row.prop(self, "bg_faces_col", text="")
+        
 
         if self.bakebuttonshow:
+            col = column_all.column(align=True)
             row = col.row(align=True)
             row.scale_y = 3
             baker = row.operator('node.sv_text_baking', text='B A K E')

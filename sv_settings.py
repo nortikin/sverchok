@@ -2,7 +2,7 @@ import bpy
 from bpy.types import AddonPreferences
 from bpy.props import BoolProperty, FloatVectorProperty, EnumProperty
 
-import data_structure
+import sv_data_structure
 from core import handlers
 from utils import sv_panels_tools
 SVERCHOK_NAME = __package__
@@ -15,10 +15,10 @@ class SverchokPreferences(AddonPreferences):
 
     def update_debug_mode(self, context):
         #print(dir(context))
-        data_structure.DEBUG_MODE = self.show_debug
+        sv_data_structure.DEBUG_MODE = self.show_debug
 
     def update_heat_map(self, context):
-        data_structure.heat_map_state(self.heat_map)
+        sv_data_structure.heat_map_state(self.heat_map)
 
     def set_frame_change(self, context):
         handlers.set_frame_change(self.frame_change_mode)
@@ -84,7 +84,7 @@ class SverchokPreferences(AddonPreferences):
         col.separator()
         row = layout.row()
         row.operator('wm.url_open', text='Home!').url = 'http://nikitron.cc.ua/blend_scripts.html'
-        if sv_panels_tools.sv_new_version:
+        if bpy.context.scene.sv_new_version:
             row.operator('node.sverchok_update_addon', text='Upgrade Sverchok addon')
         else:
             row.operator('node.sverchok_check_for_upgrades', text='Check for new version')

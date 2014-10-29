@@ -19,8 +19,8 @@
 import bpy
 from bpy.props import BoolProperty, FloatProperty
 
-from node_tree import SverchCustomTreeNode
-from data_structure import updateNode, repeat_last
+from sv_node_tree import SverchCustomTreeNode
+from sv_data_structure import updateNode, repeat_last
 
 
 class SvMapRangeNode(bpy.types.Node, SverchCustomTreeNode):
