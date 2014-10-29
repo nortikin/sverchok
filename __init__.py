@@ -84,7 +84,6 @@ def make_node_list():
     node_list = []
     base_name = "sverchok.nodes"
     for category, names in nodes.nodes_dict.items():
-        print(category,names)
         nodes_cat = importlib.import_module('.{}'.format(category), base_name)
         for name in names:
             node = importlib.import_module('.{}'.format(name),

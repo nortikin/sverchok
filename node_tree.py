@@ -266,6 +266,11 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
             print("Skippiping update of {}".format( self.name))
             return        
         self.adjust_reroutes()
+
+    @classmethod
+    def poll(cls, context):
+        return False
+    
             
 class SverchCustomTreeNode:
     @classmethod
