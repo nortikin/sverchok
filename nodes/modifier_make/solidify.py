@@ -20,12 +20,12 @@ import bpy
 from bpy.props import FloatProperty
 import bmesh
 
-from node_tree import SverchCustomTreeNode
-from data_structure import (updateNode, Vector_generate, repeat_last,
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import (updateNode, Vector_generate, repeat_last,
                             SvSetSocketAnyType, SvGetSocketAnyType,
                             fullList)
 
-from utils.sv_bmesh_utils import bmesh_from_pydata
+from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 # by Linus Yng
 
 

@@ -20,10 +20,10 @@ import bpy
 from bpy.props import IntProperty
 import bmesh
 
-from node_tree import SverchCustomTreeNode
-from data_structure import (updateNode, repeat_last, dataCorrect,
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import (updateNode, repeat_last, dataCorrect,
                             SvSetSocketAnyType, SvGetSocketAnyType)
-from utils.sv_bmesh_utils import bmesh_from_pydata
+from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 
 
 def fill_holes(vertices, edges, s):

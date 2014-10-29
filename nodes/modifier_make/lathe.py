@@ -23,10 +23,10 @@ from bpy.props import BoolProperty, FloatProperty, FloatVectorProperty, IntPrope
 import bmesh
 from bmesh.ops import spin
 
-from node_tree import SverchCustomTreeNode
-from data_structure import (dataCorrect, updateNode,
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import (dataCorrect, updateNode,
                             SvSetSocketAnyType, SvGetSocketAnyType)
-from utils.sv_bmesh_utils import bmesh_from_pydata
+from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 
 
 def get_lathed_geometry(node, verts, edges, cent, axis, dvec, angle, steps):

@@ -20,8 +20,8 @@ import bpy
 from bpy.props import EnumProperty, FloatProperty
 from mathutils import Matrix
 
-from node_tree import SverchCustomTreeNode, StringsSocket
-from data_structure import (updateNode, fullList, Matrix_listing,
+from sverchok.node_tree import SverchCustomTreeNode, StringsSocket
+from sverchok.data_structure import (updateNode, fullList, Matrix_listing,
                             SvSetSocketAnyType, SvGetSocketAnyType)
 
 

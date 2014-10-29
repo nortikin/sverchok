@@ -21,8 +21,8 @@ from bpy.props import BoolProperty
 import bmesh
 from mathutils import Vector
 
-from node_tree import SverchCustomTreeNode
-from data_structure import (updateNode,
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import (updateNode,
                             Matrix_generate, Vector_generate,
                             SvSetSocketAnyType, SvGetSocketAnyType)
 

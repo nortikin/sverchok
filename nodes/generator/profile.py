@@ -28,9 +28,9 @@ from bpy.props import BoolProperty, StringProperty, EnumProperty, FloatVectorPro
 from mathutils import Vector
 from mathutils.geometry import interpolate_bezier
 
-from utils.sv_curve_utils import Arc
-from node_tree import SverchCustomTreeNode
-from data_structure import fullList, updateNode, dataCorrect, SvSetSocketAnyType, SvGetSocketAnyType
+from sverchok.utils.sv_curve_utils import Arc
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import fullList, updateNode, dataCorrect, SvSetSocketAnyType, SvGetSocketAnyType
 
 
 idx_map = {i: j for i, j in enumerate(ascii_lowercase)}

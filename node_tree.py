@@ -22,12 +22,12 @@ from bpy.props import StringProperty, BoolProperty, FloatVectorProperty, IntProp
 from bpy.types import NodeTree, NodeSocket, NodeSocketStandard
 from nodeitems_utils import NodeCategory, NodeItem
 
-import data_structure
-from data_structure import (SvGetSocketInfo, SvGetSocket,
+from sverchok import data_structure
+from sverchok.data_structure import (SvGetSocketInfo, SvGetSocket,
                             SvSetSocket,  updateNode, get_other_socket)
-from core.update_system import (build_update_list, process_from_node,
+from sverchok.core.update_system import (build_update_list, process_from_node,
                                 process_tree, get_update_lists)
-from core import upgrade_nodes
+from sverchok.core import upgrade_nodes
 import time
 
 class SvColors(bpy.types.PropertyGroup):

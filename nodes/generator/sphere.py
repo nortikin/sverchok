@@ -3,8 +3,8 @@ from math import sin, cos, radians
 import bpy
 from bpy.props import IntProperty, FloatProperty, BoolProperty
 
-from node_tree import SverchCustomTreeNode
-from data_structure import updateNode, match_long_repeat, SvSetSocketAnyType
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import updateNode, match_long_repeat, SvSetSocketAnyType
 
 
 def sphere_verts(U, V, Radius, Separate):

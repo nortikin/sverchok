@@ -21,8 +21,8 @@ import parser
 import bpy
 from bpy.props import BoolProperty, StringProperty
 
-from node_tree import SverchCustomTreeNode
-from data_structure import (sv_Vars, updateNode, multi_socket, changable_sockets,
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import (sv_Vars, updateNode, multi_socket, changable_sockets,
                             dataSpoil, dataCorrect, levelsOflist,
                             SvSetSocketAnyType, SvGetSocketAnyType)
 from math import acos, acosh, asin, asinh, atan, atan2, \

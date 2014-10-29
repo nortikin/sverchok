@@ -19,9 +19,9 @@
 import bpy
 from bpy.props import FloatProperty
 
-from node_tree import SverchCustomTreeNode
-from data_structure import updateNode, SvSetSocketAnyType, SvGetSocketAnyType
-from utils.voronoi import Site, computeVoronoiDiagram, computeDelaunayTriangulation
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import updateNode, SvSetSocketAnyType, SvGetSocketAnyType
+from sverchok.utils.voronoi import Site, computeVoronoiDiagram, computeDelaunayTriangulation
 
 
 class Voronoi2DNode(bpy.types.Node, SverchCustomTreeNode):

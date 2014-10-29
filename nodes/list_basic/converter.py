@@ -18,8 +18,8 @@
 
 import bpy
 
-from node_tree import SverchCustomTreeNode
-from data_structure import SvGetSocketAnyType, SvSetSocketAnyType
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import SvGetSocketAnyType, SvSetSocketAnyType
 
 
 class ConverterNode(bpy.types.Node, SverchCustomTreeNode):

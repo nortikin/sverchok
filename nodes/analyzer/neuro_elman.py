@@ -21,11 +21,11 @@
 import bpy
 from bpy.props import BoolProperty, IntProperty, StringProperty, FloatProperty
 
-from node_tree import SverchCustomTreeNode
-from data_structure import (updateNode, changable_sockets,
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import (updateNode, changable_sockets,
                             dataCorrect, svQsort,
                             SvSetSocketAnyType, SvGetSocketAnyType)
-from data_structure import handle_read, handle_write
+from sverchok.data_structure import handle_read, handle_write
 
 from random import uniform
 from copy import deepcopy

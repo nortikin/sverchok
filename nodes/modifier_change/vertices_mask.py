@@ -20,8 +20,8 @@ from itertools import cycle, islice
 
 import bpy
 
-from node_tree import SverchCustomTreeNode
-from data_structure import (dataCorrect, repeat_last,
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import (dataCorrect, repeat_last,
                             SvSetSocketAnyType, SvGetSocketAnyType)
 
 

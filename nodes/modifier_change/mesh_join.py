@@ -20,8 +20,8 @@ import operator
 
 import bpy
 
-from node_tree import SverchCustomTreeNode
-from data_structure import SvSetSocketAnyType, SvGetSocketAnyType
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import SvSetSocketAnyType, SvGetSocketAnyType
 
 
 class SvMeshJoinNode(bpy.types.Node, SverchCustomTreeNode):

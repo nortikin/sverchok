@@ -23,9 +23,9 @@ import bpy
 import bmesh
 from mathutils.geometry import intersect_line_line as LineIntersect
 
-from node_tree import SverchCustomTreeNode
-from data_structure import SvSetSocketAnyType, SvGetSocketAnyType
-from utils import cad_module as cm
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import SvSetSocketAnyType, SvGetSocketAnyType
+from sverchok.utils import cad_module as cm
 
 ''' helpers '''
 

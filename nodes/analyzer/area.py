@@ -23,8 +23,8 @@ from mathutils import Vector, Matrix
 import bpy
 from bpy.props import BoolProperty
 
-from node_tree import SverchCustomTreeNode
-from data_structure import updateNode
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import updateNode
 
 
 # unit normal vector of plane defined by points a, b, and c

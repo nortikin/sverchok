@@ -21,12 +21,12 @@ from mathutils import Vector
 from bpy.props import (BoolProperty, FloatVectorProperty, StringProperty,
                        FloatProperty, EnumProperty)
 
-from node_tree import SverchCustomTreeNode, MatrixSocket, VerticesSocket, StringsSocket
-from data_structure import (
+from sverchok.node_tree import SverchCustomTreeNode, MatrixSocket, VerticesSocket, StringsSocket
+from sverchok.data_structure import (
     dataCorrect, node_id, updateNode, SvGetSocketAnyType, fullList,
     Vector_generate, Matrix_generate)
 
-from utils import index_viewer_draw as IV
+from sverchok.utils import index_viewer_draw as IV
 
 
 # status colors

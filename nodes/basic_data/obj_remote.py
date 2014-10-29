@@ -24,8 +24,8 @@ import mathutils
 from mathutils import Vector, Matrix
 from bpy.props import BoolProperty, FloatVectorProperty, StringProperty, EnumProperty
 
-from node_tree import SverchCustomTreeNode, MatrixSocket
-from data_structure import dataCorrect, updateNode, SvGetSocketAnyType
+from sverchok.node_tree import SverchCustomTreeNode, MatrixSocket
+from sverchok.data_structure import dataCorrect, updateNode, SvGetSocketAnyType
 
 
 class SvObjRemoteNode(bpy.types.Node, SverchCustomTreeNode):

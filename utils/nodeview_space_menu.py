@@ -29,8 +29,8 @@ from bpy.props import (
     StringProperty,
 )
 
-import data_structure
-from sv_nodes_menu import make_node_cats
+from sverchok import data_structure as data_structure
+from sverchok.sv_nodes_menu import make_node_cats
 
 node_cats = make_node_cats()
 

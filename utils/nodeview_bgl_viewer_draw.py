@@ -23,7 +23,7 @@ import re
 import bpy
 import blf
 import bgl
-import node_tree
+from  sverchok import node_tree
 
 from bpy.types import SpaceNodeEditor
 

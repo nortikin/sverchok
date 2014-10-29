@@ -19,8 +19,8 @@
 import bpy
 from mathutils import Matrix
 
-from node_tree import SverchCustomTreeNode, VerticesSocket, MatrixSocket
-from data_structure import (Vector_generate, Vector_degenerate,
+from sverchok.node_tree import SverchCustomTreeNode, VerticesSocket, MatrixSocket
+from sverchok.data_structure import (Vector_generate, Vector_degenerate,
                             Matrix_generate, updateNode,
                             SvGetSocketAnyType, SvSetSocketAnyType)
 
@@ -38,7 +38,7 @@ class MatrixApplyNode(bpy.types.Node, SverchCustomTreeNode):
 
     def process(self):
         # inputs
-        if 'Vectors' in self.outputs and self.outputs['Vectors'].links:
+        if self.outputs['Vectors'].is_linked:
             if not ('Vectors' in self.inputs and self.inputs['Vectors'].links):
                 return
             if not ('Matrixes' in self.inputs and self.inputs['Matrixes'].links):
@@ -52,7 +52,7 @@ class MatrixApplyNode(bpy.types.Node, SverchCustomTreeNode):
                 mats_ = SvGetSocketAnyType(self, self.inputs['Matrixes'])
                 mats = Matrix_generate(mats_)
             else:
-                vecs = [[]]
+                vecs = [[Vector(0,0,0)]]
                 mats = [Matrix()]
 
             # outputs

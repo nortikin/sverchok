@@ -23,8 +23,8 @@ from bpy.props import EnumProperty
 from mathutils import Matrix, Vector
 from mathutils.geometry import intersect_point_line
 
-from node_tree import SverchCustomTreeNode
-from data_structure import (repeat_last, Matrix_generate, Vector_generate,
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import (repeat_last, Matrix_generate, Vector_generate,
                             updateNode, SvSetSocketAnyType, SvGetSocketAnyType)
 
 

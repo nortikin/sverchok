@@ -23,8 +23,8 @@ from bpy.props import EnumProperty, FloatProperty
 
 from mathutils import Matrix, Euler
 
-from node_tree import SverchCustomTreeNode, StringsSocket
-from data_structure import (updateNode, Matrix_listing, match_long_repeat,
+from sverchok.node_tree import SverchCustomTreeNode, StringsSocket
+from sverchok.data_structure import (updateNode, Matrix_listing, match_long_repeat,
                             SvSetSocketAnyType, SvGetSocketAnyType)
 
 

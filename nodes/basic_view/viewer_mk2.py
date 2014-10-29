@@ -23,15 +23,15 @@ from bpy.props import (
 
 from mathutils import Matrix
 
-from node_tree import (
+from sverchok.node_tree import (
     SvColors, SverchCustomTreeNode,
     StringsSocket, VerticesSocket, MatrixSocket)
 
-from data_structure import (
+from sverchok.data_structure import (
     cache_viewer_baker, node_id, updateNode, dataCorrect,
     Vector_generate, Matrix_generate, SvGetSocketAnyType)
 
-from utils.viewer_draw_mk2 import callback_disable, callback_enable
+from sverchok.utils.viewer_draw_mk2 import callback_disable, callback_enable
 # from nodes.basic_view.viewer import SvObjBake
 
 

@@ -20,11 +20,11 @@
 import bpy
 from bpy.props import StringProperty, CollectionProperty
 
-from node_tree import SverchCustomTreeNode
+from sverchok.node_tree import SverchCustomTreeNode
 
 
 # global veriables in tools
-from utils.sv_panels_tools import sv_script_paths, bl_addons_path, \
+from sverchok.utils.sv_panels_tools import sv_script_paths, bl_addons_path, \
                      sv_version_local, sv_version, sv_new_version
 
 class Sv3DPanel(bpy.types.Panel):

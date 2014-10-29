@@ -32,7 +32,8 @@ nodes_dict = {
         'eval_knieval',
         'switch',
         'obj_remote',
-        'group'
+        'group',
+        'cache'
     ],
 
     'basic_debug': [

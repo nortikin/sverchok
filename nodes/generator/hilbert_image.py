@@ -19,8 +19,8 @@
 import bpy
 from bpy.props import EnumProperty, IntProperty, FloatProperty
 
-from node_tree import SverchCustomTreeNode
-from data_structure import updateNode, SvSetSocketAnyType, SvGetSocketAnyType
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import updateNode, SvSetSocketAnyType, SvGetSocketAnyType
 
 
 class HilbertImageNode(bpy.types.Node, SverchCustomTreeNode):

@@ -1,5 +1,5 @@
 # it separates vertical and horisontal edges
-from data_structure import sv_zip
+from sverchok.data_structure import sv_zip
 from math import sin
 
 

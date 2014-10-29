@@ -2,9 +2,9 @@ import bpy
 from bpy.types import AddonPreferences
 from bpy.props import BoolProperty, FloatVectorProperty, EnumProperty
 
-import data_structure
-from core import handlers
-from utils import sv_panels_tools
+from sverchok import data_structure
+from sverchok.core import handlers
+from sverchok.utils import sv_panels_tools
 SVERCHOK_NAME = __package__
 
 

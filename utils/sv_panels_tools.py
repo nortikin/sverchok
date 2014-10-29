@@ -27,8 +27,8 @@ import collections
 import bpy
 from bpy.props import StringProperty, CollectionProperty
 
-from core.update_system import process_tree, build_update_list
-from node_tree import SverchCustomTreeNode
+from sverchok.core.update_system import process_tree, build_update_list
+from sverchok.node_tree import SverchCustomTreeNode
 
 
 def sv_get_local_path():

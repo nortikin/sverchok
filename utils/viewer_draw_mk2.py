@@ -26,7 +26,7 @@ from mathutils import Vector, Matrix
 from mathutils.geometry import normal
 from mathutils.geometry import tessellate_polygon as tessellate
 
-from data_structure import Vector_generate, Matrix_generate
+from sverchok.data_structure import Vector_generate, Matrix_generate
 
 callback_dict = {}
 SpaceView3D = bpy.types.SpaceView3D

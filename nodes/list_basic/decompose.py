@@ -19,12 +19,12 @@
 import bpy
 from bpy.props import BoolProperty, IntProperty, StringProperty
 
-from node_tree import SverchCustomTreeNode
-from data_structure import (levelsOflist, multi_socket, changable_sockets,
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import (levelsOflist, multi_socket, changable_sockets,
                             get_socket_type_full, SvSetSocket, SvGetSocketAnyType,
                             updateNode, get_other_socket)
 
-from core import update_system
+from sverchok.core import update_system
 
 class SvListDecomposeNode(bpy.types.Node, SverchCustomTreeNode):
     ''' List devided to multiple sockets in some level '''

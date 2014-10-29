@@ -29,9 +29,9 @@ from bpy.props import (
     IntVectorProperty
 )
 
-from utils.sv_panels_tools import sv_get_local_path
-from node_tree import SverchCustomTreeNode
-from data_structure import (
+from sverchok.utils.sv_panels_tools import sv_get_local_path
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import (
     dataCorrect,
     updateNode,
     SvSetSocketAnyType,

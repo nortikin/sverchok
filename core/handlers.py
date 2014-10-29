@@ -1,11 +1,11 @@
 import bpy
 from bpy.app.handlers import persistent
-import data_structure
-from core import upgrade_nodes
-from utils import viewer_draw
-from utils import viewer_draw_mk2
-from utils import index_viewer_draw
-from utils import nodeview_bgl_viewer_draw
+from sverchok import data_structure
+from sverchok.core import upgrade_nodes
+from sverchok.utils import viewer_draw
+from sverchok.utils import viewer_draw_mk2
+from sverchok.utils import index_viewer_draw
+from sverchok.utils import nodeview_bgl_viewer_draw
 
 sv_ascii_logo = """\
       ::::::  :::   ::: :::::::: :::::::   ::::::  :::  :::  ::::::  :::  ::: 

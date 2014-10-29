@@ -1,5 +1,5 @@
 import inspect
-from utils.sv_script import SvScript
+from sverchok.utils.sv_script import SvScript
 
 def load_script(source, name):
     try:

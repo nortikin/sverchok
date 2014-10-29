@@ -21,8 +21,8 @@ import itertools
 import bpy
 from bpy.props import IntProperty
 
-from node_tree import SverchCustomTreeNode
-from data_structure import updateNode, SvSetSocketAnyType, SvGetSocketAnyType
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import updateNode, SvSetSocketAnyType, SvGetSocketAnyType
 
 
 class ListLengthNode(bpy.types.Node, SverchCustomTreeNode):

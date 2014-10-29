@@ -18,8 +18,8 @@
 
 import bpy
 
-from node_tree import SverchCustomTreeNode
-from data_structure import SvSetSocketAnyType
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import SvSetSocketAnyType
 
 
 class SvFrameInfoNode(bpy.types.Node, SverchCustomTreeNode):

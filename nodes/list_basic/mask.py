@@ -20,8 +20,8 @@ from copy import copy
 
 import bpy
 from bpy.props import BoolProperty, IntProperty, StringProperty
-from node_tree import SverchCustomTreeNode, StringsSocket
-from data_structure import (updateNode, changable_sockets,
+from sverchok.node_tree import SverchCustomTreeNode, StringsSocket
+from sverchok.data_structure import (updateNode, changable_sockets,
                             SvSetSocketAnyType, SvGetSocketAnyType)
 
 

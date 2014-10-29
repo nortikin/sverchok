@@ -41,8 +41,8 @@ bl_info = {
         "Nedovizin Alexander, Gorodetskiy Nikita, Linus Yng, "
         "Agustin Jimenez, Dealga McArdle"
     ),
-    "version": (0, 4),
-    "blender": (2, 7, 0),
+    "version": (0, 5),
+    "blender": (2, 7, 2),
     "location": "Nodes > CustomNodesTree > Add user nodes",
     "description": "Do parametric node-based geometry programming",
     "warning": "",
@@ -52,18 +52,13 @@ bl_info = {
         "-Addon-WIP-Sverchok-parametric-tool-for-architects"),
     "category": "Node"}
 
-
-import os
 import sys
+import types
 
-current_path = os.path.dirname(__file__)
-if not current_path in sys.path:
-    sys.path.append(current_path)
-    print("\n***** Sverchok  loading *****")
-
-# use importlib instead of imp, which is deprecated since python 3.4
-# importing first allows to stores a list of nodes before eventually reloading
-# potential problem : are new nodes imported???
+# monkey patch the sverchok name
+if __name__ != "sverchok":
+    sys.modules["sverchok"] = sys.modules[__name__]
+    
 import importlib
 
 imported_modules = []
@@ -88,16 +83,17 @@ utils_modules = [
 # parse the nodes/__init__.py dictionary and load all nodes
 def make_node_list():
     node_list = []
+    base_name = __name__ + ".nodes"
     for category, names in nodes.nodes_dict.items():
-        nodes_cat = importlib.import_module('.{}'.format(category), 'nodes')
+        nodes_cat = importlib.import_module('.{}'.format(category), base_name)
         for name in names:
             node = importlib.import_module('.{}'.format(name),
-                                           'nodes.{}'.format(category))
+                                           '{}.{}'.format(base_name, category))
             node_list.append(node)
     return node_list
 
 for m in root_modules:
-    im = importlib.import_module('{}'.format(m), __name__)
+    im = importlib.import_module('.{}'.format(m), __name__)
     imported_modules.append(im)
 
 menu = imported_modules[-1]
@@ -106,22 +102,21 @@ menu = imported_modules[-1]
 settings = importlib.import_module('.settings', __name__)
 imported_modules.append(settings)
 
-core = importlib.import_module('core')
+core = importlib.import_module('.core', __name__)
 imported_modules.append(core)
 
-
 for m in core_modules:
-    im = importlib.import_module('.{}'.format(m), "core")
+    im = importlib.import_module('.{}'.format(m), "sverchok.core")
     imported_modules.append(im)
 
-utils = importlib.import_module('utils')
+utils = importlib.import_module('.utils', __name__)
 imported_modules.append(utils)
 
 for m in utils_modules:
-    im = importlib.import_module('.{}'.format(m), 'utils')
+    im = importlib.import_module('.{}'.format(m), 'sverchok.utils')
     imported_modules.append(im)
 
-nodes = importlib.import_module('nodes')
+nodes = importlib.import_module('.nodes', __name__)
 imported_modules.append(nodes)
 node_list = make_node_list()
 reload_event = False
@@ -136,7 +131,7 @@ if "bpy" in locals():
     if 'SVERCHOK' in nodeitems_utils._node_categories:
         nodeitems_utils.unregister_node_categories("SVERCHOK")
 
-    from sv_nodes_menu import make_categories
+    from sverchok.sv_nodes_menu import make_categories
     nodeitems_utils.register_node_categories("SVERCHOK", make_categories()[0])
     reload_event = True
 
@@ -145,10 +140,10 @@ import bpy
 
 def register():
     import nodeitems_utils
-    from sv_nodes_menu import make_categories
+    from sverchok.sv_nodes_menu import make_categories
 
-    categors_menu = make_categories()
-    print("** Sverchok has  {i} nodes **".format(i=categors_menu[1]))
+    menu, node_count = make_categories()
+    print("** Sverchok has  {i} nodes **".format(i=node_count))
     for m in imported_modules + node_list:
         if hasattr(m, "register"):
             m.register()
@@ -156,7 +151,7 @@ def register():
             pass
             #print("failed to register {}".format(m.__name__))
     if 'SVERCHOK' not in nodeitems_utils._node_categories:
-        nodeitems_utils.register_node_categories("SVERCHOK", categors_menu[0])
+        nodeitems_utils.register_node_categories("SVERCHOK", menu)
     if reload_event:
         # tag reload event which will cause a full sverchok startup on
         # first update event

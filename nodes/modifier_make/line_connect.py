@@ -19,8 +19,8 @@
 import bpy
 from bpy.props import IntProperty, BoolProperty, EnumProperty
 
-from node_tree import SverchCustomTreeNode, VerticesSocket
-from data_structure import (updateNode, fullList, multi_socket, levelsOflist,
+from sverchok.node_tree import SverchCustomTreeNode, VerticesSocket
+from sverchok.data_structure import (updateNode, fullList, multi_socket, levelsOflist,
                             SvSetSocketAnyType, SvGetSocketAnyType)
 
 

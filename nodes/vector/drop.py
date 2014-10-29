@@ -19,8 +19,8 @@
 import bpy
 
 from mathutils import Matrix, Vector
-from node_tree import SverchCustomTreeNode, MatrixSocket, VerticesSocket
-from data_structure import (dataCorrect, Matrix_generate, updateNode,
+from sverchok.node_tree import SverchCustomTreeNode, MatrixSocket, VerticesSocket
+from sverchok.data_structure import (dataCorrect, Matrix_generate, updateNode,
                             Vector_generate, Vector_degenerate,
                             SvSetSocketAnyType, SvGetSocketAnyType)
 

@@ -18,8 +18,8 @@
 
 import bpy
 
-from node_tree import SverchCustomTreeNode
-from data_structure import dataCorrect, SvSetSocketAnyType, SvGetSocketAnyType
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import dataCorrect, SvSetSocketAnyType, SvGetSocketAnyType
 
 
 class Pols2EdgsNode(bpy.types.Node, SverchCustomTreeNode):

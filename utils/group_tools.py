@@ -27,7 +27,7 @@ from os.path import dirname
 from itertools import chain
 
 from .sv_IO_panel import create_dict_of_tree, import_tree
-from data_structure import get_other_socket
+from sverchok.data_structure import get_other_socket
 
 import bpy
 from bpy.types import EnumProperty

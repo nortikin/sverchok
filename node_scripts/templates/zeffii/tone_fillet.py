@@ -27,7 +27,7 @@ import bpy
 import bmesh
 from mathutils import Matrix
 from math import cos, pi, degrees, sin, tan
-from utils.sv_bmesh_utils import bmesh_from_pydata
+from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 
 
 class f_buf(object):

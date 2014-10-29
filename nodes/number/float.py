@@ -19,8 +19,8 @@
 import bpy
 from bpy.props import FloatProperty, BoolProperty
 
-from node_tree import SverchCustomTreeNode
-from data_structure import SvSetSocketAnyType, SvGetSocketAnyType
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import SvSetSocketAnyType, SvGetSocketAnyType
 
 
 class FloatNode(bpy.types.Node, SverchCustomTreeNode):

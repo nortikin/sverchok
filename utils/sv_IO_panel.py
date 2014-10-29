@@ -30,8 +30,8 @@ import bpy
 from bpy.types import EnumProperty
 from bpy.props import StringProperty
 from bpy.props import BoolProperty
-from node_tree import SverchCustomTree
-from node_tree import SverchCustomTreeNode
+from sverchok.node_tree import SverchCustomTree
+from sverchok.node_tree import SverchCustomTreeNode
 
 
 _EXPORTER_REVISION_ = '0.052 pre alpha'

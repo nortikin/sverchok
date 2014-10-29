@@ -19,9 +19,9 @@
 import bpy
 from bpy.props import StringProperty, EnumProperty
 
-from node_tree import SverchCustomTreeNode
-from data_structure import multi_socket, node_id
-from core.update_system import make_tree_from_nodes, do_update
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import multi_socket, node_id
+from sverchok.core.update_system import make_tree_from_nodes, do_update
 import ast
 
 

@@ -18,7 +18,7 @@
 
 import bpy
 
-from node_tree import SverchCustomTreeNode
+from sverchok.node_tree import SverchCustomTreeNode
 
 
 class Sv3DviewPropsNode(bpy.types.Node, SverchCustomTreeNode):

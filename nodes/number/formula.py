@@ -21,8 +21,8 @@ import parser
 import bpy
 from bpy.props import StringProperty
 
-from node_tree import SverchCustomTreeNode, StringsSocket
-from data_structure import updateNode, SvSetSocketAnyType, SvGetSocketAnyType
+from sverchok.node_tree import SverchCustomTreeNode, StringsSocket
+from sverchok.data_structure import updateNode, SvSetSocketAnyType, SvGetSocketAnyType
 from math import cos, sin, pi, tan
 
 

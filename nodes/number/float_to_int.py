@@ -18,8 +18,8 @@
 
 import bpy
 
-from node_tree import SverchCustomTreeNode, StringsSocket
-from data_structure import SvSetSocketAnyType, SvGetSocketAnyType
+from sverchok.node_tree import SverchCustomTreeNode, StringsSocket
+from sverchok.data_structure import SvSetSocketAnyType, SvGetSocketAnyType
 
 
 class Float2IntNode(bpy.types.Node, SverchCustomTreeNode):

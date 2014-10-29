@@ -20,7 +20,7 @@
 from collections import OrderedDict
 
 from nodeitems_utils import NodeItem
-from node_tree import SverchNodeCategory
+from sverchok.node_tree import SverchNodeCategory
 
 
 def make_node_cats():

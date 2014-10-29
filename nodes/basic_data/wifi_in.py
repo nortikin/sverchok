@@ -19,8 +19,8 @@
 import bpy
 from bpy.props import StringProperty, BoolProperty
 
-from node_tree import SverchCustomTreeNode
-from data_structure import multi_socket
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import multi_socket
 
 # Warning, changing this node without modifying the update system might break functionlaity
 # bl_idname and var_name is used by the update system

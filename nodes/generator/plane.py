@@ -19,8 +19,8 @@
 import bpy
 from bpy.props import BoolProperty, IntProperty, FloatProperty
 
-from node_tree import SverchCustomTreeNode
-from data_structure import updateNode, fullList, match_long_repeat
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import updateNode, fullList, match_long_repeat
 
 from mathutils import Vector
 

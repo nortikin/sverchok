@@ -22,7 +22,7 @@ import time
 import bpy
 from mathutils import Vector
 
-import data_structure
+from sverchok import data_structure
 import traceback
 import ast
 
@@ -386,7 +386,7 @@ def process_tree(ng=None):
         
 def reload_sverchok():
     data_structure.RELOAD_EVENT = False
-    from core import handlers
+    from sverchok.core import handlers
     handlers.sv_post_load([])    
 
 def get_update_lists(ng):
