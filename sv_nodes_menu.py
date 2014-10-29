@@ -214,7 +214,9 @@ def make_node_cats():
         ["SvObjRemoteNode",       "Scene Objects"],
         ["SvImageComponentsNode", "Image Decompose",  "GROUP_VCOL"],
         ["SvJoinTrianglesNode",   "Join Triangles"],
-        ["EvalKnievalNode",       "Eval Knieval",   'FORCE_VORTEX']
+        ["EvalKnievalNode",       "Eval Knieval",   'FORCE_VORTEX'],
+        ["SvCacheNode",           "Cache",]
+    
     ]
 
     return node_cats
