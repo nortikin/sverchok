@@ -848,7 +848,7 @@ def multi_socket(node, min=1, start=0, breck=False, out_count=None):
 # socket.name is not unique... identifier is
 def socket_id(socket):
     #return hash(socket)
-    return hash(socket.id_data.name + socket.node.name + socket.identifier)
+    return str(hash(socket.id_data.name + socket.node.name + socket.identifier))+socket.node.name+socket.name
 
 # For when need a key for use with dict in node
 #  create a string property like this.

@@ -34,7 +34,7 @@ FAIL_COLOR = (0.8, 0.1, 0.1)
 READY_COLOR = (0, 0.8, 0.95)
 
 from sverchok.utils.sv_panels_tools import sv_get_local_path
-import sverchok.utils.script_importhelper
+from  sverchok.utils import script_importhelper
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode , node_id
 
@@ -168,7 +168,7 @@ class SvScriptNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         self.script_str = bpy.data.texts[self.script_name].as_string()
         print("loading...")
         # load in a different namespace using import helper
-        self.script = utils.script_importhelper.load_script(self.script_str, self.script_name)
+        self.script = script_importhelper.load_script(self.script_str, self.script_name)
         if self.script:
             self.use_custom_color = True
             self.color = READY_COLOR

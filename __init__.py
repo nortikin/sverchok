@@ -53,8 +53,7 @@ bl_info = {
     "category": "Node"}
 
 import sys
-import types
-
+    
 # monkey patch the sverchok name
 if __name__ != "sverchok":
     sys.modules["sverchok"] = sys.modules[__name__]
@@ -83,8 +82,9 @@ utils_modules = [
 # parse the nodes/__init__.py dictionary and load all nodes
 def make_node_list():
     node_list = []
-    base_name = __name__ + ".nodes"
+    base_name = "sverchok.nodes"
     for category, names in nodes.nodes_dict.items():
+        print(category,names)
         nodes_cat = importlib.import_module('.{}'.format(category), base_name)
         for name in names:
             node = importlib.import_module('.{}'.format(name),
@@ -93,31 +93,35 @@ def make_node_list():
     return node_list
 
 for m in root_modules:
-    im = importlib.import_module('.{}'.format(m), __name__)
+    im = importlib.import_module('.{}'.format(m), "sverchok")
     imported_modules.append(im)
 
 menu = imported_modules[-1]
 
 # settings needs __package__ set, so we use relative import
-settings = importlib.import_module('.settings', __name__)
+sv_settings = importlib.import_module('.settings', "sverchok")
 imported_modules.append(settings)
 
-core = importlib.import_module('.core', __name__)
+sv_core = importlib.import_module('.core', "sverchok")
 imported_modules.append(core)
 
 for m in core_modules:
     im = importlib.import_module('.{}'.format(m), "sverchok.core")
     imported_modules.append(im)
 
-utils = importlib.import_module('.utils', __name__)
-imported_modules.append(utils)
+sv_utils = importlib.import_module('.utils', "sverchok")
+imported_modules.append(sv_utils)
 
 for m in utils_modules:
     im = importlib.import_module('.{}'.format(m), 'sverchok.utils')
     imported_modules.append(im)
 
-nodes = importlib.import_module('.nodes', __name__)
-imported_modules.append(nodes)
+sv_nodes = importlib.import_module('.nodes', "sverchok")
+imported_modules.append(sv_nodes)
+
+if __name__ != "sverchok":
+    sys.modules["sverchok.nodes"] = nodes
+
 node_list = make_node_list()
 reload_event = False
 

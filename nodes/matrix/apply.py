@@ -17,7 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-from mathutils import Matrix
+from mathutils import Matrix, Vector
 
 from sverchok.node_tree import SverchCustomTreeNode, VerticesSocket, MatrixSocket
 from sverchok.data_structure import (Vector_generate, Vector_degenerate,
@@ -39,23 +39,12 @@ class MatrixApplyNode(bpy.types.Node, SverchCustomTreeNode):
     def process(self):
         # inputs
         if self.outputs['Vectors'].is_linked:
-            if not ('Vectors' in self.inputs and self.inputs['Vectors'].links):
-                return
-            if not ('Matrixes' in self.inputs and self.inputs['Matrixes'].links):
-                return
-            if type(self.inputs['Vectors'].links[0].from_socket) == VerticesSocket and \
-               type(self.inputs['Matrixes'].links[0].from_socket) == MatrixSocket:
+            vecs_ = SvGetSocketAnyType(self, self.inputs['Vectors'])
+            vecs = Vector_generate(vecs_)
 
-                vecs_ = SvGetSocketAnyType(self, self.inputs['Vectors'])
-                vecs = Vector_generate(vecs_)
+            mats_ = SvGetSocketAnyType(self, self.inputs['Matrixes'])
+            mats = Matrix_generate(mats_)
 
-                mats_ = SvGetSocketAnyType(self, self.inputs['Matrixes'])
-                mats = Matrix_generate(mats_)
-            else:
-                vecs = [[Vector(0,0,0)]]
-                mats = [Matrix()]
-
-            # outputs
             vectors_ = self.vecscorrect(vecs, mats)
             vectors = Vector_degenerate(vectors_)
             SvSetSocketAnyType(self, 'Vectors', vectors)

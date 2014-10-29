@@ -33,7 +33,6 @@ class SvReRouteNode(bpy.types.Node, SverchCustomTreeNode):
     newsock = BoolProperty(name='newsock', default=False)
 
     def sv_init(self, context):
-        #self.width_hidden = 0.0 # it cause maximum width. not reduce
         self.hide = True
         self.inputs.new("StringsSocket", "In")
         self.outputs.new("StringsSocket", "Out")

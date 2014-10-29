@@ -40,7 +40,6 @@ class VectorsOutNode(bpy.types.Node, SverchCustomTreeNode):
             xyz = SvGetSocketAnyType(self, self.inputs['Vectors'])
 
             data = dataCorrect(xyz)
-            #print (data)
             X, Y, Z = [], [], []
             for obj in data:
                 x_, y_, z_ = (list(x) for x in zip(*obj))
