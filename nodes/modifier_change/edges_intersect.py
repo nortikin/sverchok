@@ -23,8 +23,8 @@ import bpy
 import bmesh
 from mathutils.geometry import intersect_line_line as LineIntersect
 
-from sv_node_tree import SverchCustomTreeNode
-from sv_data_structure import SvSetSocketAnyType, SvGetSocketAnyType
+from node_tree import SverchCustomTreeNode
+from data_structure import SvSetSocketAnyType, SvGetSocketAnyType
 from utils import cad_module as cm
 
 ''' helpers '''

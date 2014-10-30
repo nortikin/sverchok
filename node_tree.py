@@ -22,8 +22,8 @@ from bpy.props import StringProperty, BoolProperty, FloatVectorProperty, IntProp
 from bpy.types import NodeTree, NodeSocket, NodeSocketStandard
 from nodeitems_utils import NodeCategory, NodeItem
 
-import sv_data_structure
-from sv_data_structure import (SvGetSocketInfo, SvGetSocket,
+import data_structure
+from data_structure import (SvGetSocketInfo, SvGetSocket,
                             SvSetSocket,  updateNode)
 from core.update_system import (build_update_list, sverchok_update,
                                 get_update_lists)
@@ -219,6 +219,7 @@ class SverchCustomTreeNode:
         return ntree.bl_idname == 'SverchCustomTreeType'
     #def draw_buttons(self, context, layout):
     #    layout.label('sverchok')
+
 
 class SverchNodeCategory(NodeCategory):
     @classmethod

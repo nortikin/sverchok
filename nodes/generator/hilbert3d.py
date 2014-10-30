@@ -19,8 +19,8 @@
 import bpy
 from bpy.props import IntProperty, FloatProperty
 import numpy as np
-from sv_node_tree import SverchCustomTreeNode
-from sv_data_structure import updateNode, SvSetSocketAnyType, SvGetSocketAnyType
+from node_tree import SverchCustomTreeNode
+from data_structure import updateNode, SvSetSocketAnyType, SvGetSocketAnyType
 
 
 class Hilbert3dNode(bpy.types.Node, SverchCustomTreeNode):

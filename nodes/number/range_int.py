@@ -19,8 +19,8 @@
 import bpy
 from bpy.props import IntProperty, EnumProperty, StringProperty
 
-from sv_node_tree import SverchCustomTreeNode
-from sv_data_structure import updateNode, match_long_repeat
+from node_tree import SverchCustomTreeNode
+from data_structure import updateNode, match_long_repeat
 
 
 '''

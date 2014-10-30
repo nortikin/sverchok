@@ -21,7 +21,7 @@ import bpy
 from bpy.props import StringProperty, CollectionProperty, BoolProperty
 
 from core.update_system import sverchok_update, build_update_list
-from sv_node_tree import SverchCustomTreeNode
+from node_tree import SverchCustomTreeNode
 
 
 # global veriables in tools
@@ -106,7 +106,7 @@ class Sv3DPanel(bpy.types.Panel):
                 split = row.column(align=True)
                 split.scale_x = little_width
                 baka = split.operator('node.sverchok_bake_all', text='B')
-                baka.sv_node_tree_name = tree.name
+                baka.node_tree_name = tree.name
 
                 #eye
                 split = row.column(align=True)
@@ -162,12 +162,12 @@ class SverchokToolsMenu(bpy.types.Panel):
     @classmethod
     def poll(cls, context):
         try:
-            return context.space_data.sv_node_tree.bl_idname == 'SverchCustomTreeType'
+            return context.space_data.node_tree.bl_idname == 'SverchCustomTreeType'
         except:
             return False
 
     def draw(self, context):
-        ng_name = context.space_data.sv_node_tree.name
+        ng_name = context.space_data.node_tree.name
         layout = self.layout
         #layout.scale_y=1.1
         layout.active = True
@@ -212,7 +212,7 @@ class SverchokToolsMenu(bpy.types.Panel):
                 split = row.column(align=True)
                 split.scale_x = little_width
                 baka = split.operator('node.sverchok_bake_all', text='B')
-                baka.sv_node_tree_name = name
+                baka.node_tree_name = name
 
                 # eye
                 split = row.column(align=True)

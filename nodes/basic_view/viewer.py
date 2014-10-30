@@ -20,9 +20,9 @@ import bpy
 from bpy.props import BoolProperty, StringProperty
 from mathutils import Matrix
 
-from sv_node_tree import (SverchCustomTreeNode, SvColors,
+from node_tree import (SverchCustomTreeNode, SvColors,
                        StringsSocket, VerticesSocket, MatrixSocket)
-from sv_data_structure import (cache_viewer_baker,
+from data_structure import (cache_viewer_baker,
                             dataCorrect, node_id,
                             Vector_generate, Matrix_generate,
                             updateNode, SvGetSocketAnyType)

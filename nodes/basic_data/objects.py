@@ -21,8 +21,8 @@ from ast import literal_eval
 import bpy
 from bpy.props import BoolProperty, StringProperty
 
-from sv_node_tree import SverchCustomTreeNode
-from sv_data_structure import (handle_read, handle_write, handle_delete,
+from node_tree import SverchCustomTreeNode
+from data_structure import (handle_read, handle_write, handle_delete,
                             SvSetSocketAnyType, updateNode)
 
 

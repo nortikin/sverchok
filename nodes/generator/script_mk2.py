@@ -35,8 +35,8 @@ READY_COLOR = (0, 0.8, 0.95)
 
 from utils.sv_panels_tools import sv_get_local_path
 import utils.script_importhelper
-from sv_node_tree import SverchCustomTreeNode
-from sv_data_structure import updateNode , node_id
+from node_tree import SverchCustomTreeNode
+from data_structure import updateNode , node_id
 
 sv_path = os.path.dirname(sv_get_local_path()[0])
 

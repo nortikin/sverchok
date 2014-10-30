@@ -24,8 +24,8 @@ from bpy.props import EnumProperty, BoolProperty, StringProperty
 from mathutils import Vector
 from mathutils.noise import noise_vector, cell_vector, noise, cell
 
-from sv_node_tree import SverchCustomTreeNode, VerticesSocket, StringsSocket
-from sv_data_structure import (fullList, levelsOflist, updateNode,
+from node_tree import SverchCustomTreeNode, VerticesSocket, StringsSocket
+from data_structure import (fullList, levelsOflist, updateNode,
                             SvSetSocketAnyType, SvGetSocketAnyType)
 
 '''

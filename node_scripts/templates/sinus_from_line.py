@@ -7,7 +7,7 @@ def sv_main(data=[],step=0.3):
     ]
     
     # import libreryes - your defined
-    from sv_data_structure import sv_zip
+    from data_structure import sv_zip
     from math import sin, cos
     #from random import random
     # your's code here

@@ -19,8 +19,8 @@
 import bpy
 import bmesh
 
-from sv_node_tree import SverchCustomTreeNode
-from sv_data_structure import Vector_generate, SvSetSocketAnyType, SvGetSocketAnyType
+from node_tree import SverchCustomTreeNode
+from data_structure import Vector_generate, SvSetSocketAnyType, SvGetSocketAnyType
 
 #
 # Convex Hull

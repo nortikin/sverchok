@@ -24,7 +24,7 @@ import blf
 import bgl
 from mathutils import Vector
 
-from sv_data_structure import Vector_generate, Matrix_generate
+from data_structure import Vector_generate, Matrix_generate
 
 SpaceView3D = bpy.types.SpaceView3D
 

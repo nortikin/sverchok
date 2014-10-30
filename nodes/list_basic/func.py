@@ -21,8 +21,8 @@ from itertools import accumulate
 import bpy
 from bpy.props import EnumProperty, IntProperty
 
-from sv_node_tree import SverchCustomTreeNode
-from sv_data_structure import updateNode, SvSetSocketAnyType, SvGetSocketAnyType
+from node_tree import SverchCustomTreeNode
+from data_structure import updateNode, SvSetSocketAnyType, SvGetSocketAnyType
 
 def acc(l):
     return list(accumulate(l))

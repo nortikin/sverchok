@@ -60,10 +60,10 @@ SOME RULES:
 
 1. all classes that are subclasses of blender classes - have to have prefix Sv, ie SvColors.
 
-2. sv_node_tree.py contains that classes, maybe you need to create collection property or new socket (for
+2. node_tree.py contains that classes, maybe you need to create collection property or new socket (for
    new type of socket tell us first), you make it here.
 
-3. sv_data_structure.py has magic of:
+3. data_structure.py has magic of:
 
     a. update definitions, that works pretty well with sockets' and nodes' updates
     b. some bmesh functiones

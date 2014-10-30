@@ -19,8 +19,8 @@
 import bpy
 from bpy.props import StringProperty, EnumProperty
 
-from sv_node_tree import SverchCustomTreeNode
-from sv_data_structure import updateNode, SvSetSocketAnyType, SvGetSocketAnyType
+from node_tree import SverchCustomTreeNode
+from data_structure import updateNode, SvSetSocketAnyType, SvGetSocketAnyType
 
 # Warning, changing this node without modifying the update system might break functionlaity
 # bl_idname and var_name is used by the update system

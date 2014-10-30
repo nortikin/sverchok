@@ -21,9 +21,9 @@ import parser
 import mathutils
 from mathutils import Vector
 from bpy.props import StringProperty, BoolProperty, EnumProperty
-from sv_node_tree import SverchCustomTreeNode, StringsSocket, VerticesSocket, \
+from node_tree import SverchCustomTreeNode, StringsSocket, VerticesSocket, \
     MatrixSocket
-from sv_data_structure import (updateNode, Vector_generate, SvSetSocketAnyType,
+from data_structure import (updateNode, Vector_generate, SvSetSocketAnyType,
                             SvGetSocketAnyType, match_short, match_long_repeat)
 
 

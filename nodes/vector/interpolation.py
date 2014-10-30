@@ -22,8 +22,8 @@ import numpy as np
 import bpy
 from bpy.props import EnumProperty, FloatProperty
 
-from sv_node_tree import SverchCustomTreeNode
-from sv_data_structure import (updateNode, dataCorrect, repeat_last,
+from node_tree import SverchCustomTreeNode
+from data_structure import (updateNode, dataCorrect, repeat_last,
                             SvSetSocketAnyType, SvGetSocketAnyType)
 
 # spline function modifed from

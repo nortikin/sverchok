@@ -20,8 +20,8 @@ import bpy
 from bpy.props import IntProperty
 from mathutils.noise import seed_set, random_unit_vector
 
-from sv_node_tree import SverchCustomTreeNode
-from sv_data_structure import (updateNode, match_long_repeat,
+from node_tree import SverchCustomTreeNode
+from data_structure import (updateNode, match_long_repeat,
                             SvSetSocketAnyType, SvGetSocketAnyType)
 
 

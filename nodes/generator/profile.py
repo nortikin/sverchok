@@ -29,8 +29,8 @@ from mathutils import Vector
 from mathutils.geometry import interpolate_bezier
 
 from utils.sv_curve_utils import Arc
-from sv_node_tree import SverchCustomTreeNode
-from sv_data_structure import fullList, updateNode, dataCorrect, SvSetSocketAnyType, SvGetSocketAnyType
+from node_tree import SverchCustomTreeNode
+from data_structure import fullList, updateNode, dataCorrect, SvSetSocketAnyType, SvGetSocketAnyType
 
 
 idx_map = {i: j for i, j in enumerate(ascii_lowercase)}

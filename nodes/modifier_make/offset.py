@@ -21,8 +21,8 @@ from bpy.props import BoolProperty, StringProperty, IntProperty, FloatProperty
 
 import bmesh
 from utils.sv_bmesh_utils import bmesh_from_pydata
-from sv_node_tree import SverchCustomTreeNode
-from sv_data_structure import (changable_sockets, multi_socket,
+from node_tree import SverchCustomTreeNode
+from data_structure import (changable_sockets, multi_socket,
                             fullList, dataCorrect, updateNode,
                             SvSetSocketAnyType, SvGetSocketAnyType,
                             Vector_generate)

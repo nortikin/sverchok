@@ -23,8 +23,8 @@ import bpy
 from bpy.props import (EnumProperty, FloatProperty,
                        IntProperty, BoolVectorProperty)
 
-from sv_node_tree import SverchCustomTreeNode, StringsSocket
-from sv_data_structure import (updateNode, match_long_repeat,
+from node_tree import SverchCustomTreeNode, StringsSocket
+from data_structure import (updateNode, match_long_repeat,
                             SvSetSocketAnyType, SvGetSocketAnyType)
 
 

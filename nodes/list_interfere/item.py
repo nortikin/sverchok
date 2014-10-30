@@ -18,8 +18,8 @@
 
 import bpy
 from bpy.props import BoolProperty, IntProperty, StringProperty
-from sv_node_tree import SverchCustomTreeNode
-from sv_data_structure import (changable_sockets, repeat_last, updateNode,
+from node_tree import SverchCustomTreeNode
+from data_structure import (changable_sockets, repeat_last, updateNode,
                             SvSetSocketAnyType, SvGetSocketAnyType)
 
 

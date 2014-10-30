@@ -24,8 +24,8 @@ import mathutils
 from mathutils import Vector, Matrix
 from bpy.props import BoolProperty, FloatVectorProperty, StringProperty, EnumProperty
 
-from sv_node_tree import SverchCustomTreeNode, MatrixSocket
-from sv_data_structure import dataCorrect, updateNode, SvGetSocketAnyType
+from node_tree import SverchCustomTreeNode, MatrixSocket
+from data_structure import dataCorrect, updateNode, SvGetSocketAnyType
 
 
 def get_random_init():

@@ -21,8 +21,8 @@ from itertools import cycle
 import bpy
 from bpy.props import BoolProperty, IntProperty, StringProperty
 
-from sv_node_tree import SverchCustomTreeNode
-from sv_data_structure import (changable_sockets, updateNode,
+from node_tree import SverchCustomTreeNode
+from data_structure import (changable_sockets, updateNode,
                             SvSetSocketAnyType, SvGetSocketAnyType)
 
 

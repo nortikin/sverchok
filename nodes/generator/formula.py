@@ -20,8 +20,8 @@ import bpy
 import ast
 from bpy.props import IntProperty, FloatProperty, EnumProperty
 
-from sv_node_tree import SverchCustomTreeNode
-from sv_data_structure import (updateNode,
+from node_tree import SverchCustomTreeNode
+from data_structure import (updateNode,
                             SvSetSocketAnyType, SvGetSocketAnyType)
 import bpy, math, cmath, mathutils
 from math import acos, acosh, asin, asinh, atan, atan2, \

@@ -22,7 +22,7 @@ import time
 import bpy
 from mathutils import Vector
 
-import sv_data_structure
+import data_structure
 
 # cache node group update trees
 update_cache = {}
@@ -30,11 +30,11 @@ update_cache = {}
 partial_update_cache = {}
 
 
-def make_dep_dict(sv_node_tree):
+def make_dep_dict(node_tree):
     """
     Create a dependency dictionary for node group.
     """
-    ng = sv_node_tree
+    ng = node_tree
     deps = {name: set() for name in ng.nodes.keys()}
     for link in ng.links:
         if not link.is_valid:
@@ -58,7 +58,7 @@ def make_dep_dict(sv_node_tree):
     return deps
 
 
-def make_update_list(sv_node_tree, node_set=None, dependencies=None):
+def make_update_list(node_tree, node_set=None, dependencies=None):
     """
     Makes a update list from a node_group
     if a node set is passed only the subtree defined by the node set is used. Otherwise
@@ -66,7 +66,7 @@ def make_update_list(sv_node_tree, node_set=None, dependencies=None):
     If dependencies are not passed they are built.
     """
 
-    ng = sv_node_tree
+    ng = node_tree
     if not node_set:  # if no node_set, take all
         node_set = set(ng.nodes.keys())
     if len(node_set) == 1:
@@ -256,7 +256,7 @@ def build_update_list(tree=None):
             out = [make_update_list(ng, s, deps) for s in node_sets]
             update_cache[name] = out
             partial_update_cache[name] = {}
-            sv_data_structure.reset_socket_cache(ng)
+            data_structure.reset_socket_cache(ng)
 
 
 def do_update_heat_map(node_list, nodes):
@@ -273,10 +273,10 @@ def do_update_heat_map(node_list, nodes):
             nodes[name].update()
             delta = time.perf_counter()-start
             total_test += delta
-            if sv_data_structure.DEBUG_MODE:
+            if data_structure.DEBUG_MODE:
                 print("Updated  {0} in: {1}".format(name, round(delta, 4)))
             times.append(delta)
-    if sv_data_structure.DEBUG_MODE:
+    if data_structure.DEBUG_MODE:
         print("Layout updated in: {0} seconds".format(round(total_test, 4)))
     if not times:
         return
@@ -285,7 +285,7 @@ def do_update_heat_map(node_list, nodes):
         nodes.id_data.sv_user_colors = str(color_data)
 
     t_max = max(times)
-    addon_name = sv_data_structure.SVERCHOK_NAME
+    addon_name = data_structure.SVERCHOK_NAME
     addon = bpy.context.user_preferences.addons.get(addon_name)
     if addon:
         # to use Vector.lerp
@@ -322,7 +322,7 @@ def do_update_debug(node_list, nods):
                 total_test += delta
                 print("Updated  {0} in: {1}".format(nod_name, round(delta, 4)))
                 timings.append((nod_name, delta)) # why we need it?
-    if sv_data_structure.DEBUG_MODE:
+    if data_structure.DEBUG_MODE:
         print("Layout updated in: {0} seconds".format(round(total_test, 4)))
 
 
@@ -340,14 +340,14 @@ def sverchok_update(start_node=None, tree=None, animation_mode=False):
                 nods[nod_name].update()
 
     # first update event after a reload, apply sverchok startup
-    if sv_data_structure.RELOAD_EVENT:
-        sv_data_structure.RELOAD_EVENT = False
+    if data_structure.RELOAD_EVENT:
+        data_structure.RELOAD_EVENT = False
         from core import handlers
         handlers.sv_post_load([])
         return
-    if sv_data_structure.DEBUG_MODE:
+    if data_structure.DEBUG_MODE:
         do_update = do_update_debug
-    if sv_data_structure.HEAT_MAP:
+    if data_structure.HEAT_MAP:
         do_update = do_update_heat_map
     
 
@@ -395,7 +395,7 @@ def sverchok_update(start_node=None, tree=None, animation_mode=False):
 def get_update_lists(ng):
     """
     Make update list available in blender console.
-    See the function with the same name in sv_node_tree.py
+    See the function with the same name in node_tree.py
     """
     global update_cache
     global partial_update_cache

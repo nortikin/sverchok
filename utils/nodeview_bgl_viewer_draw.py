@@ -23,7 +23,7 @@ import re
 import bpy
 import blf
 import bgl
-import sv_node_tree
+import node_tree
 
 from bpy.types import SpaceNodeEditor
 
@@ -126,7 +126,7 @@ def draw_callback_px(n_id, data):
     ng_name = space.edit_tree.name
     if not (data['tree_name'] == ng_name):
         return
-    if not isinstance(ng_view, sv_node_tree.SverchCustomTree):
+    if not isinstance(ng_view, node_tree.SverchCustomTree):
         return
 
     lines = data.get('content', 'no data')

@@ -20,8 +20,8 @@ import bpy
 from bpy.props import FloatProperty, BoolProperty
 import bmesh
 
-from sv_node_tree import SverchCustomTreeNode
-from sv_data_structure import (updateNode, Vector_generate, repeat_last,
+from node_tree import SverchCustomTreeNode
+from data_structure import (updateNode, Vector_generate, repeat_last,
                             SvSetSocketAnyType, SvGetSocketAnyType)
 
 

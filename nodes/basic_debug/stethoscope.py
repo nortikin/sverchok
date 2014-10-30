@@ -19,8 +19,8 @@
 import bpy
 from bpy.props import BoolProperty, FloatVectorProperty, StringProperty, EnumProperty
 
-from sv_node_tree import SverchCustomTreeNode, MatrixSocket, VerticesSocket, StringsSocket
-from sv_data_structure import dataCorrect, node_id, updateNode, SvGetSocketAnyType
+from node_tree import SverchCustomTreeNode, MatrixSocket, VerticesSocket, StringsSocket
+from data_structure import dataCorrect, node_id, updateNode, SvGetSocketAnyType
 from utils import nodeview_bgl_viewer_draw as nvBGL
 from mathutils import Vector
 

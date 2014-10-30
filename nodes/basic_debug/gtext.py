@@ -23,8 +23,8 @@ import bpy
 from bpy.props import IntProperty, IntVectorProperty, StringProperty
 from mathutils import Vector
 
-from sv_node_tree import SverchCustomTreeNode
-from sv_data_structure import updateNode
+from node_tree import SverchCustomTreeNode
+from data_structure import updateNode
 
 
 def info(v):

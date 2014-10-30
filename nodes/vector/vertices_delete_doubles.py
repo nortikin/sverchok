@@ -18,8 +18,8 @@
 
 import bpy
 
-from sv_node_tree import SverchCustomTreeNode
-from sv_data_structure import levelsOflist, SvSetSocketAnyType, SvGetSocketAnyType
+from node_tree import SverchCustomTreeNode
+from data_structure import levelsOflist, SvSetSocketAnyType, SvGetSocketAnyType
 
 
 class VertsDelDoublesNode(bpy.types.Node, SverchCustomTreeNode):

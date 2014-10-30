@@ -30,8 +30,8 @@ import bpy
 from bpy.types import EnumProperty
 from bpy.props import StringProperty
 from bpy.props import BoolProperty
-from sv_node_tree import SverchCustomTree
-from sv_node_tree import SverchCustomTreeNode
+from node_tree import SverchCustomTree
+from node_tree import SverchCustomTreeNode
 
 
 _EXPORTER_REVISION_ = '0.043 pre alpha'
@@ -89,8 +89,8 @@ def write_json(layout_dict, destination_path):
         flatten = lambda match: r' {}'.format(match.group(1), m)
         m = re.sub(r'\s\s+(\d+)', flatten, m)
 
-    with open(destination_path, 'w') as sv_node_tree:
-        sv_node_tree.writelines(m)
+    with open(destination_path, 'w') as node_tree:
+        node_tree.writelines(m)
 
 
 def has_state_switch_protection(node, k):
@@ -423,7 +423,7 @@ class SvNodeTreeImporter(bpy.types.Operator):
         import_tree(ng, self.filepath)
 
         # set new node tree to active
-        context.space_data.sv_node_tree = ng
+        context.space_data.node_tree = ng
         return {'FINISHED'}
 
     def invoke(self, context, event):
@@ -444,13 +444,13 @@ class SverchokIOLayoutsMenu(bpy.types.Panel):
     @classmethod
     def poll(cls, context):
         try:
-            return context.space_data.sv_node_tree.bl_idname == 'SverchCustomTreeType'
+            return context.space_data.node_tree.bl_idname == 'SverchCustomTreeType'
         except:
             return False
 
     def draw(self, context):
         layout = self.layout
-        ntree = context.space_data.sv_node_tree
+        ntree = context.space_data.node_tree
         row = layout.row()
         row.scale_y = 0.5
         row.label(_EXPORTER_REVISION_)

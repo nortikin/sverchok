@@ -23,9 +23,9 @@ import re
 import bpy
 from bpy.props import BoolProperty, StringProperty
 
-from sv_node_tree import (
+from node_tree import (
     SverchCustomTreeNode, VerticesSocket, MatrixSocket, StringsSocket)
-from sv_data_structure import dataCorrect, fullList, updateNode, SvGetSocketAnyType
+from data_structure import dataCorrect, fullList, updateNode, SvGetSocketAnyType
 from utils.sv_bmesh_utils import bmesh_from_pydata
 
 

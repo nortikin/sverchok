@@ -20,8 +20,8 @@ import bpy
 from bpy.props import IntProperty
 import bmesh
 
-from sv_node_tree import SverchCustomTreeNode
-from sv_data_structure import (updateNode, repeat_last, dataCorrect,
+from node_tree import SverchCustomTreeNode
+from data_structure import (updateNode, repeat_last, dataCorrect,
                             SvSetSocketAnyType, SvGetSocketAnyType)
 from utils.sv_bmesh_utils import bmesh_from_pydata
 

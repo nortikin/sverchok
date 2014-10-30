@@ -19,8 +19,8 @@
 import bpy
 from bpy.props import IntProperty, StringProperty, BoolProperty
 
-from sv_node_tree import SverchCustomTreeNode
-from sv_data_structure import (SvSetSocketAnyType, SvGetSocketAnyType,
+from node_tree import SverchCustomTreeNode
+from data_structure import (SvSetSocketAnyType, SvGetSocketAnyType,
                             get_other_socket, updateNode)
 
 

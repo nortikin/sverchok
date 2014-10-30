@@ -23,11 +23,11 @@ from bpy.props import (
 
 from mathutils import Matrix
 
-from sv_node_tree import (
+from node_tree import (
     SvColors, SverchCustomTreeNode,
     StringsSocket, VerticesSocket, MatrixSocket)
 
-from sv_data_structure import (
+from data_structure import (
     cache_viewer_baker, node_id, updateNode, dataCorrect,
     Vector_generate, Matrix_generate, SvGetSocketAnyType)
 
