@@ -31,6 +31,18 @@ def sv_update_handler(scene):
                 print('Failed to update:', name, str(e))
     scene.update()
 
+@persistent
+def sv_scene_handler(scene):
+    """
+    Update sverchok node groups on scene update events.
+    Not used yet.
+    """
+    for name, tree in bpy.data.node_groups.items():
+        if tree.bl_idname == 'SverchCustomTreeType' and tree.nodes:
+            try:
+                tree.update_ani()
+            except Exception as e:
+                print('Failed to update:', name, str(e))
 
 # clean up handler
 @persistent
@@ -87,17 +99,20 @@ def sv_post_load(scene):
 def set_frame_change(mode):
     post = bpy.app.handlers.frame_change_post
     pre = bpy.app.handlers.frame_change_pre
+    
+    scene = bpy.app.handlers.scene_update_post
     # remove all
     if sv_update_handler in post:
         post.remove(sv_update_handler)
     if sv_update_handler in pre:
         pre.remove(sv_update_handler)
+    if sv_scene_handler in scene:
+        scene.remove(sv_scene_handler)
+        
     # apply the right one
     if mode == "POST":
-        print("Removed Sverchok handler post")
         post.append(sv_update_handler)
     elif mode == "PRE":
-        print("Removed Sverchok handler pre")
         pre.append(sv_update_handler)
     print("Have a nice day with sverchok")
     print("****** Sverchok loaded ******\n\n")
@@ -120,8 +135,3 @@ def unregister():
     bpy.app.handlers.load_pre.remove(sv_clean)
     bpy.app.handlers.load_post.remove(sv_post_load)
     set_frame_change(None)
-
-
-
-
-

@@ -50,6 +50,7 @@ class SverchokPreferences(AddonPreferences):
         ("POST", "Post", "Update Sverchok after frame change", 1),
         ("NONE", "None", "Sverchok doesn't update on frame change", 2)
     ]
+    
 
     frame_change_mode = EnumProperty(
         items=frame_change_modes,
@@ -62,6 +63,13 @@ class SverchokPreferences(AddonPreferences):
         name="show_icons",
         default=False,
         description="Use icons in menu")
+
+    show_icons = BoolProperty(
+        name="Scene update handler",
+        default=False,
+        description="Update sverchok on scene changes. Warning can be slow!",
+        update=set_frame_change)
+
 
     def draw(self, context):
         layout = self.layout

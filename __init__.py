@@ -54,7 +54,8 @@ bl_info = {
 
 import sys
     
-# monkey patch the sverchok name
+# monkey patch the sverchok name, I am sure there is a better way to do this.
+
 if __name__ != "sverchok":
     sys.modules["sverchok"] = sys.modules[__name__]
     
@@ -64,7 +65,8 @@ imported_modules = []
 node_list = []
 # ugly hack, should make respective dict in __init__ like nodes
 # or parse it
-root_modules = ["node_tree", "data_structure", "sv_nodes_menu"]
+root_modules = ["node_tree", "data_structure","core", 
+                "utils", "settings", "utils", "sv_nodes_menu", "nodes"]
 core_modules = ["handlers", "update_system", "upgrade_nodes"]
 utils_modules = [
     # non UI tools
@@ -78,6 +80,10 @@ utils_modules = [
     #     - node_view ui tool + panels + custom menu
     "sv_panels_tools", "sv_IO_panel", "sv_panels", "nodeview_space_menu", "group_tools"
 ]
+# modules and pkg path, nodes are handels separately.
+mods_bases = [(root_modules, "sverchok"), 
+              (core_modules, "sverchok.core"), 
+              (utils_modules, "sverchok.utils")]
 
 # parse the nodes/__init__.py dictionary and load all nodes
 def make_node_list():
@@ -91,44 +97,23 @@ def make_node_list():
             node_list.append(node)
     return node_list
 
-for m in root_modules:
-    im = importlib.import_module('.{}'.format(m), "sverchok")
-    imported_modules.append(im)
+def import_modules(modules, base, im_list):
+    for m in modules:
+        im = importlib.import_module('.{}'.format(m), base)
+        im_list.append(im)
 
-menu = imported_modules[-1]
-
-# settings needs __package__ set, so we use relative import
-sv_settings = importlib.import_module('.settings', "sverchok")
-imported_modules.append(settings)
-
-sv_core = importlib.import_module('.core', "sverchok")
-imported_modules.append(core)
-
-for m in core_modules:
-    im = importlib.import_module('.{}'.format(m), "sverchok.core")
-    imported_modules.append(im)
-
-sv_utils = importlib.import_module('.utils', "sverchok")
-imported_modules.append(sv_utils)
-
-for m in utils_modules:
-    im = importlib.import_module('.{}'.format(m), 'sverchok.utils')
-    imported_modules.append(im)
-
-sv_nodes = importlib.import_module('.nodes', "sverchok")
-imported_modules.append(sv_nodes)
-
-if __name__ != "sverchok":
-    sys.modules["sverchok.nodes"] = nodes
+for mods, base in mods_bases:
+    import_modules(mods, base, imported_modules)
 
 node_list = make_node_list()
 reload_event = False
 
 if "bpy" in locals():   
     import nodeitems_utils
-    nodes = importlib.reload(nodes)
+    for im in imported_modules:
+        importlib.reload(im)
     node_list = make_node_list()
-    for im in imported_modules+node_list:
+    for im in node_list:
         importlib.reload(im)
 
     if 'SVERCHOK' in nodeitems_utils._node_categories:
@@ -139,10 +124,9 @@ if "bpy" in locals():
     reload_event = True
 
 import bpy
-
+import nodeitems_utils
 
 def register():
-    import nodeitems_utils
     from sverchok.sv_nodes_menu import make_categories
 
     menu, node_count = make_categories()
@@ -150,14 +134,12 @@ def register():
     for m in imported_modules + node_list:
         if hasattr(m, "register"):
             m.register()
-        else:
-            pass
-            #print("failed to register {}".format(m.__name__))
+
     if 'SVERCHOK' not in nodeitems_utils._node_categories:
         nodeitems_utils.register_node_categories("SVERCHOK", menu)
     if reload_event:
         # tag reload event which will cause a full sverchok startup on
-        # first update event
+        # first update event, usually done in post load handler
         for m in imported_modules:
             if m.__name__ == "data_structure":
                 m.RELOAD_EVENT = True
@@ -165,7 +147,6 @@ def register():
 
 
 def unregister():
-    import nodeitems_utils
     for m in reversed(imported_modules + node_list):
         if hasattr(m, "unregister"):
             m.unregister()
