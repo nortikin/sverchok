@@ -61,8 +61,9 @@ if __name__ != "sverchok":
     
 import importlib
 
+# to store imported modules
 imported_modules = []
-node_list = []
+
 # ugly hack, should make respective dict in __init__ like nodes
 # or parse it
 root_modules = ["node_tree", "data_structure","core", 
@@ -81,12 +82,13 @@ utils_modules = [
     "sv_panels_tools", "sv_IO_panel", "sv_panels", "nodeview_space_menu", "group_tools"
 ]
 
-# modules and pkg path, nodes are handels separately.
+# modules and pkg path, nodes are done separately.
 mods_bases = [(root_modules, "sverchok"), 
               (core_modules, "sverchok.core"), 
               (utils_modules, "sverchok.utils")]
 
-
+#  settings have to be treated separately incase the folder name
+#  is something else than sverchok...
 settings = importlib.import_module(".settings", __name__)
 imported_modules.append(settings)
 
@@ -117,8 +119,8 @@ if reload_event:
     for im in imported_modules:
         importlib.reload(im)
     node_list = make_node_list()
-    for im in node_list:
-        importlib.reload(im)
+    for node in node_list:
+        importlib.reload(node)
 
     if 'SVERCHOK' in nodeitems_utils._node_categories:
         nodeitems_utils.unregister_node_categories("SVERCHOK")
@@ -141,11 +143,7 @@ def register():
     if 'SVERCHOK' not in nodeitems_utils._node_categories:
         nodeitems_utils.register_node_categories("SVERCHOK", menu)
     if reload_event:
-        # tag reload event which will cause a full sverchok startup on
-        # first update event, usually done in post load handler
-        for m in imported_modules:
-            if m.__name__ == "data_structure":
-                m.RELOAD_EVENT = True
+        data_structure.RELOAD_EVENT = True
         print("Sverchok is reloaded, press update")
 
 
