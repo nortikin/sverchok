@@ -29,12 +29,12 @@ from bpy.props import (
     StringProperty,
 )
 
-from sverchok import data_structure as data_structure
+import sverchok
 from sverchok.sv_nodes_menu import make_node_cats
 
 node_cats = make_node_cats()
 
-addon_name = data_structure.SVERCHOK_NAME
+addon_name = sverchok.__name__
 
 menu_prefs = {}
 

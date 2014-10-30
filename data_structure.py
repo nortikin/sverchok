@@ -674,7 +674,8 @@ def setup_init():
     global DEBUG_MODE
     global HEAT_MAP
     global SVERCHOK_NAME
-    SVERCHOK_NAME = bpy.types.SverchokPreferences.bl_idname
+    import sverchok
+    SVERCHOK_NAME = sverchok.__name__
     addon = bpy.context.user_preferences.addons.get(SVERCHOK_NAME)
     if addon:
         DEBUG_MODE = addon.preferences.show_debug

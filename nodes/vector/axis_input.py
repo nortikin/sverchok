@@ -69,7 +69,7 @@ class svAxisInputNode(bpy.types.Node, SverchCustomTreeNode):
 
     def process(self):
 
-        if 'Vectors' in self.outputs and self.outputs['Vectors'].links:
+        if self.outputs['Vectors'].is_linked:
 
             axial_vector = {
                 'X': (1, 0, 0),

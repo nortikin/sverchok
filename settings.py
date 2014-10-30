@@ -7,14 +7,11 @@ from sverchok.core import handlers
 from sverchok.utils import sv_panels_tools
 SVERCHOK_NAME = __package__
 
-
-# the way this works is backwards and should be redone
 class SverchokPreferences(AddonPreferences):
 
     bl_idname = __package__
 
     def update_debug_mode(self, context):
-        #print(dir(context))
         data_structure.DEBUG_MODE = self.show_debug
 
     def update_heat_map(self, context):
@@ -64,7 +61,7 @@ class SverchokPreferences(AddonPreferences):
         default=False,
         description="Use icons in menu")
 
-    show_icons = BoolProperty(
+    scene_update = BoolProperty(
         name="Scene update handler",
         default=False,
         description="Update sverchok on scene changes. Warning can be slow!",

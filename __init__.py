@@ -66,7 +66,7 @@ node_list = []
 # ugly hack, should make respective dict in __init__ like nodes
 # or parse it
 root_modules = ["node_tree", "data_structure","core", 
-                "utils", "settings", "utils", "sv_nodes_menu", "nodes"]
+                "utils", "utils", "sv_nodes_menu", "nodes"]
 core_modules = ["handlers", "update_system", "upgrade_nodes"]
 utils_modules = [
     # non UI tools
@@ -80,35 +80,39 @@ utils_modules = [
     #     - node_view ui tool + panels + custom menu
     "sv_panels_tools", "sv_IO_panel", "sv_panels", "nodeview_space_menu", "group_tools"
 ]
+
 # modules and pkg path, nodes are handels separately.
 mods_bases = [(root_modules, "sverchok"), 
               (core_modules, "sverchok.core"), 
               (utils_modules, "sverchok.utils")]
 
-# parse the nodes/__init__.py dictionary and load all nodes
-def make_node_list():
-    node_list = []
-    base_name = "sverchok.nodes"
-    for category, names in nodes.nodes_dict.items():
-        nodes_cat = importlib.import_module('.{}'.format(category), base_name)
-        for name in names:
-            node = importlib.import_module('.{}'.format(name),
-                                           '{}.{}'.format(base_name, category))
-            node_list.append(node)
-    return node_list
+
+settings = importlib.import_module(".settings", __name__)
+imported_modules.append(settings)
 
 def import_modules(modules, base, im_list):
     for m in modules:
         im = importlib.import_module('.{}'.format(m), base)
         im_list.append(im)
 
+# parse the nodes/__init__.py dictionary and load all nodes
+
+def make_node_list():
+    node_list = []
+    base_name = "sverchok.nodes"
+    for category, names in nodes.nodes_dict.items():
+        importlib.import_module('.{}'.format(category), base_name)
+        import_modules(names, '{}.{}'.format(base_name, category), node_list)
+    return node_list
+
 for mods, base in mods_bases:
     import_modules(mods, base, imported_modules)
 
 node_list = make_node_list()
-reload_event = False
 
-if "bpy" in locals():   
+reload_event = bool("bpy" in locals())
+
+if reload_event:   
     import nodeitems_utils
     for im in imported_modules:
         importlib.reload(im)
@@ -121,7 +125,6 @@ if "bpy" in locals():
 
     from sverchok.sv_nodes_menu import make_categories
     nodeitems_utils.register_node_categories("SVERCHOK", make_categories()[0])
-    reload_event = True
 
 import bpy
 import nodeitems_utils
@@ -134,7 +137,7 @@ def register():
     for m in imported_modules + node_list:
         if hasattr(m, "register"):
             m.register()
-
+    data_structure.SVERCHOK_NAME = __name__
     if 'SVERCHOK' not in nodeitems_utils._node_categories:
         nodeitems_utils.register_node_categories("SVERCHOK", menu)
     if reload_event:
