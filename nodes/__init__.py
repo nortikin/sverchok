@@ -118,7 +118,7 @@ nodes_dict = {
         'rotation',
         'scale',
         'vertices_mask',
-    #    'wafel', to be added back once resolved
+        'wafel', 
     ],
 
     'modifier_make': [

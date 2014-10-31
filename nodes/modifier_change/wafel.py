@@ -26,12 +26,12 @@ from mathutils.geometry import intersect_line_line as IL2L
 from mathutils.geometry import intersect_line_plane as IL2P
 from mathutils.geometry import normal as NM
 from mathutils import kdtree as KDT
-from data_structure import Vector_generate, Vector_degenerate, fullList, \
+from sverchok.data_structure import Vector_generate, Vector_degenerate, fullList, \
                            SvSetSocketAnyType, SvGetSocketAnyType, dataCorrect, \
                            updateNode
 from math import sin, atan, cos, degrees, radians
 from bpy.props import FloatProperty, BoolProperty, EnumProperty
-from node_tree import SverchCustomTreeNode
+from sverchok.node_tree import SverchCustomTreeNode
 
 
 class SvWafelNode(bpy.types.Node, SverchCustomTreeNode):
@@ -207,7 +207,6 @@ class SvWafelNode(bpy.types.Node, SverchCustomTreeNode):
 
 
     def process(self):
-        self.ext_draw_checking()
             
         if 'vecLine' in self.inputs and \
                 'vecPlane' in self.inputs and \
