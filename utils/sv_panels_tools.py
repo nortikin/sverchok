@@ -25,7 +25,7 @@ import traceback
 import collections
 
 import bpy
-from bpy.props import StringProperty, CollectionProperty
+from bpy.props import StringProperty, CollectionProperty, BoolProperty
 
 from sverchok.core.update_system import process_tree, build_update_list
 from sverchok.node_tree import SverchCustomTreeNode
@@ -41,7 +41,7 @@ def sv_get_local_path():
 
 # global veriables in tools
 sv_script_paths, bl_addons_path, sv_version_local, sv_version = sv_get_local_path()
-sv_new_version = False
+
 
 
 
@@ -137,7 +137,6 @@ class SverchokCheckForUpgrades(bpy.types.Operator):
     bl_options = {'REGISTER'}
 
     def execute(self, context):
-        global sv_new_version
         os.curdir = sv_script_paths
         os.chdir(os.curdir)
         report = self.report
@@ -157,7 +156,7 @@ class SverchokCheckForUpgrades(bpy.types.Operator):
             return {'CANCELLED'}
 
         if version_local != version_url:
-            sv_new_version = True
+            bpy.context.scene.sv_new_version = True
             report({'INFO'}, "New version {0}".format(version_url))
         else:
             report({'INFO'}, "Your version {0} is last.".format(version_local))
@@ -171,7 +170,6 @@ class SverchokUpdateAddon(bpy.types.Operator):
     bl_options = {'REGISTER'}
 
     def execute(self, context):
-        global sv_new_version
         os.curdir = bl_addons_path
         os.chdir(os.curdir)
         bpy.data.window_managers[0].progress_begin(0, 100)
@@ -195,7 +193,7 @@ class SverchokUpdateAddon(bpy.types.Operator):
             err = 1
             os.remove(file[0])
             err = 2
-            sv_new_version = False
+            bpy.context.scene.sv_new_version = False
             bpy.data.window_managers[0].progress_update(100)
             bpy.data.window_managers[0].progress_end()
             self.report({'INFO'}, "Unzipped, reload addons with F8 button")
@@ -336,6 +334,7 @@ def register():
         bpy.utils.register_class(class_name)
 
     bpy.types.SverchCustomTreeType.Sv3DProps = CollectionProperty(type=Sv3dPropItem)
+    bpy.types.Scene.sv_new_version = BoolProperty(default=False)
 
 
 def unregister():

@@ -18,7 +18,7 @@
 
 
 import bpy
-from bpy.props import StringProperty, CollectionProperty
+from bpy.props import StringProperty, CollectionProperty, BoolProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 
@@ -55,8 +55,14 @@ class Sv3DPanel(bpy.types.Panel):
                 box = layout.box()
                 col = box.column(align=True)
                 row = col.row(align=True)
+
                 split = row.column(align=True)
-                split.label(text='Layout: '+tree.name)
+                split.scale_x = little_width
+                icoco = 'DOWNARROW_HLT' if tree.SvShowIn3D else 'RIGHTARROW'
+                split.prop(tree, 'SvShowIn3D', icon=icoco, emboss=False, text=' ')
+
+                split = row.column(align=True)
+                split.label(text=tree.name)
 
                 # bakery
                 split = row.column(align=True)
@@ -79,31 +85,32 @@ class Sv3DPanel(bpy.types.Panel):
                     split.prop(tree, 'sv_animate', icon='LOCKED', text=' ')
 
                 # veriables
-                for item in tree.Sv3DProps:
-                    no = item.node_name
-                    ver = item.prop_name
-                    node = tree.nodes[no]
-                    if node.label:
-                        tex = node.label
-                    else:
-                        tex = no
-                    if node.bl_idname == "ObjectsNode":
-                        row = col.row(align=True)
-                        row.label(text=node.label if node.label else no)
-                        colo = row.row(align=True)
-                        colo.scale_x = little_width*5
-                        op = colo.operator("node.sverchok_object_insertion", text="Get")
-                        op.node_name = node.name
-                        op.tree_name = tree.name
-                        op.grup_name = node.groupname
-                        op.sort = node.sort
-                    elif node.bl_idname in {"IntegerNode", "FloatNode"}:
-                        row = col.row(align=True)
-                        row.prop(node, ver, text=tex)
-                        colo = row.row(align=True)
-                        colo.scale_x = little_width*2.5
-                        colo.prop(node, 'minim', text='', slider=True, emboss=False)
-                        colo.prop(node, 'maxim', text='', slider=True, emboss=False)
+                if tree.SvShowIn3D:
+                    for item in tree.Sv3DProps:
+                        no = item.node_name
+                        ver = item.prop_name
+                        node = tree.nodes[no]
+                        if node.label:
+                            tex = node.label
+                        else:
+                            tex = no
+                        if node.bl_idname == "ObjectsNode":
+                            row = col.row(align=True)
+                            row.label(text=node.label if node.label else no)
+                            colo = row.row(align=True)
+                            colo.scale_x = little_width*5
+                            op = colo.operator("node.sverchok_object_insertion", text="Get")
+                            op.node_name = node.name
+                            op.tree_name = tree.name
+                            op.grup_name = node.groupname
+                            op.sort = node.sort
+                        elif node.bl_idname in {"IntegerNode", "FloatNode"}:
+                            row = col.row(align=True)
+                            row.prop(node, ver, text=tex)
+                            colo = row.row(align=True)
+                            colo.scale_x = little_width*2.5
+                            colo.prop(node, 'minim', text='', slider=True, emboss=False)
+                            colo.prop(node, 'maxim', text='', slider=True, emboss=False)
 
 
 class SverchokToolsMenu(bpy.types.Panel):
@@ -188,7 +195,7 @@ class SverchokToolsMenu(bpy.types.Panel):
                 split.scale_x = little_width
                 split.prop(tree, "sv_process", text="P")
 
-        if sv_new_version:
+        if bpy.context.scene.sv_new_version:
             row = layout.row()
             row.alert = True
             row.operator(

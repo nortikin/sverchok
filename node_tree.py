@@ -293,6 +293,7 @@ class SverchCustomTreeNode:
 
         
 
+
 class SverchNodeCategory(NodeCategory):
     @classmethod
     def poll(cls, context):

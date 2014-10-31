@@ -114,10 +114,44 @@ class SvScriptSimpleFunction(SvScript, metaclass=abc.ABCMeta):
             if link:
                 socket.sv_set(res)
 
+class SvMultiInput(SvScript):
+    """
+    Multi input base file. Many sockets to one socket.
+    
+    """
+    def update(self):
+        if isinstance(self.inputs, tuple):
+            self.inputs = list(self.inputs) 
+        inputs = self.node.inputs
+        if not inputs:
+            print(len(inputs))
+            return
+        if inputs[-1].links:
+            print("multi inputs")
+            length = len(inputs)
+            name = self.base_name.format(str(length))
+            socket_types = {
+                'v': 'VerticesSocket',
+                's': 'StringsSocket',
+                'm': 'MatrixSocket'
+            }
+            s_type = socket_types[self.multi_socket_type]    
+            inputs.new(s_type, name)
+            self.inputs.append((self.multi_socket_type, name))
+        else:
+            while len(inputs) > 1 and not inputs[-2].links:
+                inputs.remove(inputs[-1])
+    
+    def process(self):
+        in_data = [s.sv_get() for s in self.node.inputs if s.links]
+        if in_data and self.node.outputs[0].links:
+            out_data = self.function(in_data)
+            self.node.outputs[0].sv_set(out_data)
+
 class SvScriptFunction(SvScript, metaclass=abc.ABCMeta):
     """
-    Simple f(x0, x1, ... xN) -> y0, y1, ... ,yM
-    
+    Complex f(x0, x1, ... xN) -> y0, y1, ... ,yM
+    NOT READY
     """
     @abc.abstractmethod
     def function(*args):

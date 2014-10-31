@@ -19,7 +19,7 @@
 from mathutils import Vector
 
 import bpy
-from bpy.props import FloatProperty
+from bpy.props import FloatProperty, BoolProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import SvGetSocketAnyType, SvSetSocketAnyType, updateNode, match_long_repeat
@@ -41,6 +41,9 @@ class SvScaleNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('StringsSocket', "Factor", "Factor").prop_name = "factor_"
         self.outputs.new('VerticesSocket', "Vertices", "Vertices")
 
+    def draw_buttons(self,context,layout):
+        layout.prop(self,'Separate')
+
     def scaling(self, vertex, center, factor):
         pt = Vector(vertex)
         c = Vector(center)
@@ -48,8 +51,15 @@ class SvScaleNode(bpy.types.Node, SverchCustomTreeNode):
 
     def vert_scl(self, vertex, center, factor):
         scaled = []
-        for i in vertex:
-            scaled.append(self.scaling(i, center, factor))
+        params = match_long_repeat([center,factor])
+        for c,f in zip(*params):
+            scaled_ =[]
+            for v in vertex:
+                scaled_.append(self.scaling(v, c,f))
+            if self.Separate:
+                scaled.append(scaled_)
+            else:
+                scaled.extend(scaled_)
         return scaled
   
     def process(self):
@@ -59,13 +69,13 @@ class SvScaleNode(bpy.types.Node, SverchCustomTreeNode):
         else:
             Vertices = []
         if 'Center' in self.inputs and self.inputs['Center'].links:
-            Center = SvGetSocketAnyType(self, self.inputs['Center'])[0]
+            Center = SvGetSocketAnyType(self, self.inputs['Center'])
         else:
-            Center = [[0.0, 0.0, 0.0]]
+            Center = [[[0.0, 0.0, 0.0]]]
         if 'Factor' in self.inputs and self.inputs['Factor'].links:
-            Factor = SvGetSocketAnyType(self, self.inputs['Factor'])[0]
+            Factor = SvGetSocketAnyType(self, self.inputs['Factor'])
         else:
-            Factor = [self.factor_]
+            Factor = [[self.factor_]]
 
         parameters = match_long_repeat([Vertices, Center, Factor])
 
@@ -84,3 +94,6 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvScaleNode)
+
+if __name__ == '__main__':
+    register()

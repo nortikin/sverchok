@@ -196,7 +196,7 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
         use N-panel to pick alternative random names')
 
     material = StringProperty(default='', update=updateNode)
-    grouping = BoolProperty(default=True)
+    grouping = BoolProperty(default=False)
     state_view = BoolProperty(default=True)
     state_render = BoolProperty(default=True)
     state_select = BoolProperty(default=True)
@@ -219,10 +219,8 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('MatrixSocket', 'matrix', 'matrix')
 
     def draw_buttons(self, context, layout):
-        row = layout.row(align=True)
-        split = row.split()
-        col1 = split.column()
-        col1.prop(self, "activate", text="Update")
+        view_icon = 'RESTRICT_VIEW_' + ('OFF' if self.activate else 'ON')
+        sh = 'node.showhide_bmesh'
 
         def icons(button_type):
             icon = 'WARNING'
@@ -233,28 +231,41 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
             elif button_type == 's':
                 icon = 'RESTRICT_SELECT_' + ['ON', 'OFF'][self.state_select]
             return icon
+        
+        #split = row.split()
+        col = layout.column(align=True)
+        row = col.row(align=True)
+        #split = row.split()
+        #r = split.column()
+        row.column().prop(self, "activate", text="UPD", toggle=True, icon=view_icon)
+        
+        #row = layout.row(align=True)
+        #split = row.split()
+        #col1 = split.column()
+        #col1.prop(self, "activate", text="Update")
 
-        sh = 'node.showhide_bmesh'
-        split = split.split()
-        if split:
-            row = split.row(align=True)
-            row.operator(sh, text='', icon=icons('v')).fn_name = 'hide_view'
-            row.operator(sh, text='', icon=icons('s')).fn_name = 'hide_select'
-            row.operator(sh, text='', icon=icons('r')).fn_name = 'hide_render'
 
-        row = layout.row()
-        row.prop(self, "grouping", text="Group")
+        #split = split.split()
+        #if split:
+        #row = col.row(align=True)
+        row.operator(sh, text='', icon=icons('v')).fn_name = 'hide_view'
+        row.operator(sh, text='', icon=icons('s')).fn_name = 'hide_select'
+        row.operator(sh, text='', icon=icons('r')).fn_name = 'hide_render'
+
 
         col = layout.column(align=True)
         row = col.row(align=True)
-        row.scale_y = 1.1
+        row.prop(self, "grouping", text="Group", toggle=True)
+        #row.split()
+        row = col.row(align=True)
+        row.scale_y = 1
         row.prop(self, "basemesh_name", text="", icon='OUTLINER_OB_MESH')
 
         row = col.row(align=True)
-        row.scale_y = 0.9
+        row.scale_y = 2
         row.operator(sh, text='Select / Deselect').fn_name = 'mesh_select'
         row = col.row(align=True)
-        row.scale_y = 0.9
+        row.scale_y = 1
 
         # row.prop(self, "material", text="", icon='MATERIAL_DATA')
         row.prop_search(self, 'material', bpy.data, 'materials', text='', icon='MATERIAL_DATA')
