@@ -39,7 +39,7 @@ def sv_get_local_path():
         sv_version_local = next(sv_local_file).strip()
     return sv_script_paths, bl_addons_path, sv_version_local, sv_version
 
-# global veriables in tools
+# global variables in tools
 sv_script_paths, bl_addons_path, sv_version_local, sv_version = sv_get_local_path()
 
 
@@ -159,7 +159,7 @@ class SverchokCheckForUpgrades(bpy.types.Operator):
             bpy.context.scene.sv_new_version = True
             report({'INFO'}, "New version {0}".format(version_url))
         else:
-            report({'INFO'}, "Your version {0} is last.".format(version_local))
+            report({'INFO'}, "Your version {0} is latest.".format(version_local))
         return {'FINISHED'}
 
 

@@ -24,15 +24,18 @@ from sverchok.node_tree import SverchCustomTreeNode
 
 
 # global veriables in tools
-from sverchok.utils.sv_panels_tools import sv_script_paths, bl_addons_path, \
-                     sv_version_local, sv_version, sv_new_version
+from sverchok.utils import sv_panels_tools 
+
+sv_script_paths, bl_addons_path, sv_version_local, sv_version = sv_panels_tools.sv_get_local_path()
+
+#import sv_script_path sv_version_local, sv_version, sv_new_version
 
 class Sv3DPanel(bpy.types.Panel):
     ''' Panel to manipuplate parameters in sverchok layouts '''
 
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
-    bl_label = "Sverchok "+sv_version_local
+    bl_label = "Sverchok " + sv_version_local
     bl_options = {'DEFAULT_CLOSED'}
     bl_category = 'SV'
 
@@ -195,7 +198,7 @@ class SverchokToolsMenu(bpy.types.Panel):
                 split.scale_x = little_width
                 split.prop(tree, "sv_process", text="P")
 
-        if bpy.context.scene.sv_new_version:
+        if context.scene.sv_new_version:
             row = layout.row()
             row.alert = True
             row.operator(
