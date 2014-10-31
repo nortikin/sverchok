@@ -1,3 +1,12 @@
+from math import sin, cos, pi, degrees, radians
+
+import bpy
+from bpy.props import BoolProperty, IntProperty, FloatProperty
+
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import (fullList, match_long_repeat, updateNode,
+                            SvSetSocketAnyType, SvGetSocketAnyType)
+
 class CircleNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Circle '''
     bl_idname = 'CircleNode'

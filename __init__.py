@@ -53,21 +53,21 @@ bl_info = {
     "category": "Node"}
 
 import sys
-    
+import importlib
+
+
 # monkey patch the sverchok name, I am sure there is a better way to do this.
 
 if __name__ != "sverchok":
     sys.modules["sverchok"] = sys.modules[__name__]
     
-import importlib
-
 # to store imported modules
 imported_modules = []
 
 # ugly hack, should make respective dict in __init__ like nodes
 # or parse it
 root_modules = ["node_tree", "data_structure","core", 
-                "utils", "utils", "sv_nodes_menu", "nodes"]
+                "utils", "utils", "sv_nodes_menu", "nodes", "old_nodes"]
 core_modules = ["handlers", "update_system", "upgrade_nodes"]
 utils_modules = [
     # non UI tools
@@ -116,6 +116,8 @@ reload_event = bool("bpy" in locals())
 
 if reload_event:   
     import nodeitems_utils
+    #  reload the base modules
+    #  then reload nodes after the node module as been reloaded
     for im in imported_modules:
         importlib.reload(im)
     node_list = make_node_list()
@@ -135,13 +137,17 @@ def register():
     from sverchok.sv_nodes_menu import make_categories
 
     menu, node_count = make_categories()
-    print("** Sverchok has  {i} nodes **".format(i=node_count))
     for m in imported_modules + node_list:
         if hasattr(m, "register"):
             m.register()
+    # this is used to access preferences, should/could be hidden
+    # in an interface
     data_structure.SVERCHOK_NAME = __name__
     if 'SVERCHOK' not in nodeitems_utils._node_categories:
         nodeitems_utils.register_node_categories("SVERCHOK", menu)
+        
+    print("** Sverchok loaded with {i} nodes **".format(i=node_count))
+    
     if reload_event:
         data_structure.RELOAD_EVENT = True
         print("Sverchok is reloaded, press update")

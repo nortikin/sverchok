@@ -6,6 +6,7 @@ from sverchok.utils import viewer_draw
 from sverchok.utils import viewer_draw_mk2
 from sverchok.utils import index_viewer_draw
 from sverchok.utils import nodeview_bgl_viewer_draw
+from sverchok import old_nodes 
 
 sv_ascii_logo = """\
       ::::::  :::   ::: :::::::: :::::::   ::::::  :::  :::  ::::::  :::  ::: 
@@ -78,6 +79,13 @@ def sv_post_load(scene):
         'Formula2Node',
         'EvalKnievalNode',
     }
+    for tree in sv_trees:
+        old = [n for n in tree.nodes if n.bl_idname in old_nodes.old_bl_idnames]
+        if old:
+            node_names = [n.name for n in old]
+            node_names = "".join(node_names)
+            print("Warning old nodes found: {}".format(node_names))
+    
     unsafe = False
     for tree in sv_trees:
         if any((n.bl_idname in unsafe_nodes for n in tree.nodes)):
@@ -94,6 +102,10 @@ def sv_post_load(scene):
     for ng in bpy.data.node_groups:
         if ng.bl_idname == 'SverchCustomTreeType' and ng.nodes:
             ng.update()
+    
+    print("Have a nice day with sverchok")
+    print(sv_ascii_logo)    
+    
 
 
 def set_frame_change(mode):
@@ -114,9 +126,6 @@ def set_frame_change(mode):
         post.append(sv_update_handler)
     elif mode == "PRE":
         pre.append(sv_update_handler)
-    print("Have a nice day with sverchok")
-    print("****** Sverchok loaded ******\n\n")
-    print(sv_ascii_logo)    
 
 
 def register():
@@ -129,7 +138,6 @@ def register():
         set_frame_change(addon.preferences.frame_change_mode)
     else:
         print("Couldn't setup Sverchok frame change handler")
-
 
 def unregister():
     bpy.app.handlers.load_pre.remove(sv_clean)
