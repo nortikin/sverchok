@@ -78,21 +78,21 @@ class LineConnectNode(bpy.types.Node, SverchCustomTreeNode):
         # we will take common case of nestiness, it is not flatten as correctData is,
         # but pick in upper level bottom level of data. could be automated in future
         # to check for levelsOflist() and correct in recursion
-        lol = levelsOflist(vers)
+        # lol = levelsOflist(vers)
         # print(lol)
-        if lol == 4: # was clev - manually defined, but it is wrong way
-            for ob in vers:
-                for o in ob:
-                    vers_.append(o)
-                    lens.append(len(o))
-        elif lol == 5:
-            for ob in vers:
-                for o in ob:
-                    for v in o:
-                        vers_.append(v)
-                        lens.append(len(v))
-        else:
-            print('wrong level in UV connect')
+        #if lol == 4: # was clev - manually defined, but it is wrong way
+        for ob in vers:
+            for o in ob:
+                vers_.append(o)
+                lens.append(len(o))
+        #elif lol == 5:
+        #    for ob in vers:
+        #        for o in ob:
+        #            for v in o:
+        #                vers_.append(v)
+        #                lens.append(len(v))
+        #else:
+        #    print('wrong level in UV connect')
         lenvers = len(vers_)
         #print(lenvers, lens)
         edges = []
@@ -187,19 +187,27 @@ class LineConnectNode(bpy.types.Node, SverchCustomTreeNode):
         # inputs
         multi_socket(self, min=1)
 
-        if 'vertices' in self.outputs and self.outputs['vertices'].links or \
+        if 'vertices' in self.outputs and self.outputs['vertices'].links and \
                 'data' in self.outputs and self.outputs['data'].links:
             slots = []
             for socket in self.inputs:
                 if socket.links and type(socket.links[0].from_socket) == VerticesSocket:
                     slots.append(SvGetSocketAnyType(self, socket))
+            lol = levelsOflist(slots)
             if len(slots) == 0:
                 return
-            if levelsOflist(slots) <= 4:
-                lev = 1
-            else:
-                lev = self.JoinLevel
-            result = self.connect(slots, self.dir_check, self.cicl_check, lev, self.polygons, self.slice_check)
+            if lol == 4:
+                result = self.connect(slots, self.dir_check, self.cicl_check, lol, self.polygons, self.slice_check)
+            elif lol == 5:
+                one = []
+                two = []
+                for slo in slots:
+                    for s in slo:
+                        result = self.connect([s], self.dir_check, self.cicl_check, lol, self.polygons, self.slice_check)
+                        one.extend(result[0])
+                        two.extend(result[1])
+                result = (one,two)
+            
 
             if self.outputs['vertices'].links:
                 SvSetSocketAnyType(self, 'vertices', result[0])

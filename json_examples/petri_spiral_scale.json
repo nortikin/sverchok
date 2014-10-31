@@ -318,7 +318,7 @@
         201.21133422851562
       ],
       "params": {
-        "sides": 10
+        "sides": 7
       },
       "width": 140.0
     },
@@ -381,8 +381,8 @@
       "params": {
         "count_": 5,
         "mode": "FRANGE_COUNT",
-        "start_": 0.20000000298023224,
-        "stop_": 0.8999999761581421
+        "start_": 0.009999999776482582,
+        "stop_": 1.0
       },
       "width": 140.0
     },
@@ -404,7 +404,7 @@
         "count_": 5,
         "mode": "FRANGE_COUNT",
         "start_": 1.0,
-        "stop_": 0.10000000149011612
+        "stop_": 0.20000000298023224
       },
       "width": 140.0
     },
@@ -423,7 +423,7 @@
         -82.70304870605469
       ],
       "params": {
-        "float_": 0.5,
+        "float_": 0.07999999821186066,
         "maxim": 10.0,
         "minim": 0.07999999821186066
       },
@@ -518,8 +518,8 @@
         -211.16921997070312
       ],
       "params": {
-        "int_": 5,
-        "maxim": 50,
+        "int_": 30,
+        "maxim": 400,
         "minim": 2
       },
       "width": 140.0
@@ -539,7 +539,7 @@
         -11.712890625
       ],
       "params": {
-        "int_": 10,
+        "int_": 8,
         "maxim": 10,
         "minim": 2
       },
@@ -695,7 +695,7 @@
       ],
       "params": {
         "count_inner": 20,
-        "seed": 1
+        "seed": 13
       },
       "width": 140.0
     },
@@ -750,14 +750,14 @@
       "hide": false,
       "label": "",
       "location": [
-        2352.92529296875,
-        426.1124267578125
+        2337.98779296875,
+        431.8651428222656
       ],
       "params": {
         "cicl_check": 1,
-        "dir_check": "U_dir",
+        "dir_check": "V_dir",
         "polygons": 1,
-        "slice_check": 1
+        "slice_check": 0
       },
       "width": 140.0
     },
@@ -866,13 +866,20 @@
         "display_edges": 1,
         "display_faces": 1,
         "display_verts": 0,
+        "edge_width": 1,
         "face_colors": [
           0.8544945120811462,
-          0.32310768961906433,
-          0.36557212471961975
+          0.42757588624954224,
+          0.06662237644195557
         ],
         "shading": 1,
-        "transparant": 0
+        "transparant": 0,
+        "vertex_colors": [
+          0.9479999542236328,
+          0.12904922664165497,
+          0.17723321914672852
+        ],
+        "vertex_size": 2.0
       },
       "width": 140.0
     },
@@ -891,7 +898,7 @@
         -398.10833740234375
       ],
       "params": {
-        "activate": 0,
+        "activate": 1,
         "display_edges": 1,
         "display_verts": 1,
         "edge_colors": [
@@ -1036,12 +1043,6 @@
   },
   "update_lists": [
     [
-      "Integer.001",
-      "Integer",
-      "Float Series.002",
-      "Stop"
-    ],
-    [
       "Integer",
       "Integer",
       "Random Vector",
@@ -1058,6 +1059,30 @@
       "Float",
       "Formula2.002",
       "n[0]"
+    ],
+    [
+      "Formula2.002",
+      "Result",
+      "Vectors out",
+      "Vectors"
+    ],
+    [
+      "Vectors out",
+      "X",
+      "Vectors in.001",
+      "X"
+    ],
+    [
+      "Vectors out",
+      "Y",
+      "Vectors in.001",
+      "Y"
+    ],
+    [
+      "Integer.001",
+      "Integer",
+      "Float Series.002",
+      "Stop"
     ],
     [
       "Float.001",
@@ -1150,48 +1175,6 @@
       "Data 1"
     ],
     [
-      "Fill Holes",
-      "vertices",
-      "PolygonBoom",
-      "vertices"
-    ],
-    [
-      "Fill Holes",
-      "polygons",
-      "PolygonBoom",
-      "edg_pol"
-    ],
-    [
-      "Formula2.002",
-      "Result",
-      "Vectors out",
-      "Vectors"
-    ],
-    [
-      "Vectors out",
-      "X",
-      "Vectors in.001",
-      "X"
-    ],
-    [
-      "Vectors out",
-      "Y",
-      "Vectors in.001",
-      "Y"
-    ],
-    [
-      "PolygonBoom",
-      "vertices",
-      "List Match",
-      "Data 0"
-    ],
-    [
-      "Float Series.002",
-      "Range",
-      "List Match",
-      "Data 1"
-    ],
-    [
       "Integer.001",
       "Integer",
       "Float Series.003",
@@ -1228,6 +1211,30 @@
       "vectors"
     ],
     [
+      "Fill Holes",
+      "vertices",
+      "PolygonBoom",
+      "vertices"
+    ],
+    [
+      "Fill Holes",
+      "polygons",
+      "PolygonBoom",
+      "edg_pol"
+    ],
+    [
+      "PolygonBoom",
+      "vertices",
+      "List Match",
+      "Data 0"
+    ],
+    [
+      "Float Series.002",
+      "Range",
+      "List Match",
+      "Data 1"
+    ],
+    [
       "PolygonBoom",
       "vertices",
       "Scale",
@@ -1252,6 +1259,30 @@
       "vertices"
     ],
     [
+      "UV Connect.001",
+      "vertices",
+      "Viewer Draw2",
+      "vertices"
+    ],
+    [
+      "UV Connect.001",
+      "data",
+      "Viewer Draw2",
+      "edg_pol"
+    ],
+    [
+      "Vectors in.001",
+      "Vectors",
+      "Viewer Draw2.002",
+      "vertices"
+    ],
+    [
+      "Vectors in",
+      "Vectors",
+      "UV Connect",
+      "vertices"
+    ],
+    [
       "Voronoi",
       "Vertices",
       "Viewer Draw2.003",
@@ -1264,10 +1295,16 @@
       "edg_pol"
     ],
     [
-      "Vectors in.001",
-      "Vectors",
-      "Viewer Draw2.002",
+      "UV Connect",
+      "vertices",
+      "Viewer Draw2.001",
       "vertices"
+    ],
+    [
+      "UV Connect",
+      "data",
+      "Viewer Draw2.001",
+      "edg_pol"
     ],
     [
       "Voronoi",
@@ -1280,36 +1317,6 @@
       "vertices",
       "Viewer text.001",
       "vertices"
-    ],
-    [
-      "Vectors in",
-      "Vectors",
-      "UV Connect",
-      "vertices"
-    ],
-    [
-      "UV Connect",
-      "vertices",
-      "Viewer Draw2.001",
-      "vertices"
-    ],
-    [
-      "UV Connect",
-      "data",
-      "Viewer Draw2.001",
-      "edg_pol"
-    ],
-    [
-      "UV Connect.001",
-      "vertices",
-      "Viewer Draw2",
-      "vertices"
-    ],
-    [
-      "UV Connect.001",
-      "data",
-      "Viewer Draw2",
-      "edg_pol"
     ]
   ]
 }
