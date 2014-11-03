@@ -390,7 +390,7 @@ def Vector_generate(prop):
 
 
 def Vector_degenerate(prop):
-    return [[v[0:3] for v in object] for object in prop]
+    return [[v[0:3] for v in obj] for obj in prop]
 
 
 def Edg_pol_generate(prop):
@@ -762,7 +762,49 @@ def get_socket_type_full(node, inputsocketname):
     other = get_other_socket(socket)
     return other.links[0].from_socket.bl_idname
 
-
+def replace_socket(socket, new_type, new_name=None):
+    '''
+    Replace a socket a keep links
+    '''
+    if not new_name:
+        new_name = socket.name
+    if socket.bl_idname == new_type:
+        return socket
+    ng = socket.id_data
+    ng.freeze(hard=True)
+    if socket.is_output:
+        to_sockets = [l.to_socket for l in socket.links]
+        node_pos = -1
+        outputs = socket.node.outputs
+        for i,s in enumerate(outputs):
+            if s == socket:
+                node_pos = i
+                break
+        outputs.remove(socket)
+        new_socket = outputs.new(new_type, new_name)
+        outputs.move(len(outputs)-1, node_pos)
+        for to_socket in to_sockets:
+            ng.links.new(new_socket, to_socket)
+    else:
+        if socket.is_linked:
+            from_socket = socket.links[0].from_socket
+        else:
+            from_socket = None
+        node_pos = -1
+        inputs = socket.node.inputs
+        for i,s in enumerate(inputs):
+            if s == socket:
+                node_pos = i
+                break
+        inputs.remove(socket)
+        new_socket = inputs.new(new_type, new_name)
+        inputs.move(len(inputs)-1, node_pos)
+        if from_socket:
+            ng.links.new(from_socket, new_socket)
+    ng.unfreeze(hard=True)
+    print(new_socket)
+    return new_socket
+    
 def get_other_socket(socket):
     """ 
     Get next real upstream socket.
