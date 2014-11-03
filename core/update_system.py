@@ -161,9 +161,8 @@ def separate_nodes(ng, links=None):
 
 def make_tree_from_nodes(node_names, tree, down=True):
     """
-    Create a partial update list from a sub-tree, node_names is a list of node that
+    Create a partial update list from a sub-tree, node_names is a list of nodes that
     drives change for the tree
-    Only nodes downtree from node_name are updated
     """
     ng = tree
     nodes = ng.nodes
@@ -188,7 +187,10 @@ def make_tree_from_nodes(node_names, tree, down=True):
         else:
             current_node = ''
 
-    return make_update_list(ng, out_set)
+    if len(out_set) == 1:
+        return list(out_set)
+    else:
+        return make_update_list(ng, out_set)
 
 
 # to make update tree based on node types and node names bases
