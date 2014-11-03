@@ -82,10 +82,18 @@ class Sv3DPanel(bpy.types.Panel):
                     split.prop(tree, 'sv_show', icon='RESTRICT_VIEW_ON', text=' ')
                 split = row.column(align=True)
                 split.scale_x = little_width
-                if tree.sv_animate:
-                    split.prop(tree, 'sv_animate', icon='UNLOCKED', text=' ')
-                else:
-                    split.prop(tree, 'sv_animate', icon='LOCKED', text=' ')
+                #if tree.sv_animate:
+                split.prop(tree, 'sv_animate', icon='ANIM', text=' ')
+                #else:
+                #    split.prop(tree, 'sv_animate', icon='LOCKED', text=' ')
+                
+                split = row.column(align=True)
+                split.scale_x = little_width
+                split.prop(tree, "sv_process", toggle=True, text="P")
+                
+                split = row.column(align=True)
+                split.scale_x = little_width
+                split.prop(tree, 'use_fake_user', toggle=True, text='F')
 
                 # veriables
                 if tree.SvShowIn3D:
@@ -165,6 +173,10 @@ class SverchokToolsMenu(bpy.types.Panel):
         col3 = row.column(align=True)
         col3.scale_x = little_width
         col3.label(text='P')
+        
+        col3 = row.column(align=True)
+        col3.scale_x = little_width
+        col3.label(text='F')
             
 
         for name, tree in bpy.data.node_groups.items():
@@ -191,12 +203,16 @@ class SverchokToolsMenu(bpy.types.Panel):
 
                 split = row.column(align=True)
                 split.scale_x = little_width
-                animate_icon = ('UN' if tree.sv_animate else '') + 'LOCKED'
-                split.prop(tree, 'sv_animate', icon=animate_icon, text=' ')
-                
+                #animate_icon = ('UN' if tree.sv_animate else '') + 'LOCKED'
+                split.prop(tree, 'sv_animate', icon='ANIM', text=' ')
+
                 split = row.column(align=True)
                 split.scale_x = little_width
-                split.prop(tree, "sv_process", text="P")
+                split.prop(tree, "sv_process", toggle=True, text="P")
+
+                split = row.column(align=True)
+                split.scale_x = little_width
+                split.prop(tree, 'use_fake_user', toggle=True, text='F')
 
         if context.scene.sv_new_version:
             row = layout.row()
@@ -216,6 +232,8 @@ sv_tools_classes = [
 
 
 def register():
+    bpy.types.SverchCustomTreeType.SvShowIn3D = BoolProperty(name='show in panel',default=True, \
+            description='Show properties in 3d panel or not')
     for class_name in sv_tools_classes:
         bpy.utils.register_class(class_name)
 
