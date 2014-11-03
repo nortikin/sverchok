@@ -190,6 +190,7 @@ def make_node_cats():
         ["WifiInNode",          "Wifi in"],
         ["WifiOutNode",         "Wifi out"],
         ["SvFrameInfoNode",     "Frame info"],
+        ["NodeReroute",         "Reroute Point"],
     ]
 
     node_cats["Basic Debug"] = [
@@ -203,9 +204,7 @@ def make_node_cats():
         # for testing convenience,
         ["SvOffsetNode",        "Offset"],
         ["SvEmptyOutNode",      "Empty out",    "OUTLINER_OB_EMPTY"],
-        # need to be completely reviewed
         ["SvListDecomposeNode", "List Decompose"],
-        ["NodeReroute",         "Reroute Point"],
         ["SvInstancerNode",     "mesh instancer"],
         ["SvWafelNode",         "Wafel"],
         ["SvScriptNodeMK2",     "Script 2"],
@@ -215,7 +214,8 @@ def make_node_cats():
         ["SvObjRemoteNode",       "Scene Objects"],
         ["SvImageComponentsNode", "Image Decompose",  "GROUP_VCOL"],
         ["SvJoinTrianglesNode",   "Join Triangles"],
-        ["EvalKnievalNode",       "Eval Knieval",   'FORCE_VORTEX'],
+        ["SvGetPropNode",         "Get property",   'FORCE_VORTEX'],
+        ["SvSetPropNode",         "Set property",   'FORCE_VORTEX'],
         ["SvCacheNode",           "Cache",]
     
     ]

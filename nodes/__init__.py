@@ -33,7 +33,8 @@ nodes_dict = {
         'switch',
         'obj_remote',
         'group',
-        'cache'
+        'cache',
+        'getsetprop'
     ],
 
     'basic_debug': [
