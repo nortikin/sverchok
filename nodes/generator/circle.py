@@ -75,17 +75,7 @@ class SvCircleNode(bpy.types.Node, SverchCustomTreeNode):
             listVertX.append(0.0)
             listVertY.append(0.0)
 
-        X = listVertX
-        Y = listVertY
-        Z = [0.0]
-
-        max_num = max(len(X), len(Y), len(Z))
-
-        fullList(X, max_num)
-        fullList(Y, max_num)
-        fullList(Z, max_num)
-
-        points = list(zip(X, Y, Z))
+        points = list((x,y,0) for x,y in zip(listVertX, listVertY) )
         return points
 
     def make_edges(self, Vertices, Angle):
