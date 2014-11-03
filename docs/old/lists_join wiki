@@ -81,7 +81,8 @@ ListLevels manual
 
 
 
- ListLevel working principle:
+ DeleteLevel working principle:
+ Удаление уровня, принцип узла:
 
  *** level=  0 ***
  listA= [1, [2, 3], [4, [5], [6, [7]]], [8]]
