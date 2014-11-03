@@ -188,28 +188,33 @@ class LineConnectNode(bpy.types.Node, SverchCustomTreeNode):
         multi_socket(self, min=1)
 
     def process(self):
-        if not any((s.links for s in self.outputs)):
-            return
+        if self.outputs['vertices'].is_linked and self.outputs['data'].is_linked:
+            slots = []
+            for socket in self.inputs:
+                if socket.links and type(socket.links[0].from_socket) == VerticesSocket:
+                    slots.append(socket.sv_get())
+            if len(slots) == 0:
+                return
+            lol = levelsOflist(slots)
+            if lol == 4:
+                result = self.connect(slots, self.dir_check, self.cicl_check, lol, self.polygons, self.slice_check)
+            elif lol == 5:
+                one = []
+                two = []
+                for slo in slots:
+                    for s in slo:
+                        result = self.connect([s], self.dir_check, self.cicl_check, lol, self.polygons, self.slice_check)
+                        one.extend(result[0])
+                        two.extend(result[1])
+                result = (one,two)
             
-        slots = []
-        for socket in self.inputs:
-            if socket.links and type(socket.links[0].from_socket) == VerticesSocket:
-                slots.append(SvGetSocketAnyType(self, socket))
-    
-        if len(slots) == 0:
-            return
-        if levelsOflist(slots) <= 4:
-            lev = 1
-        else:
-            lev = self.JoinLevel
-        result = self.connect(slots, self.dir_check, self.cicl_check, lev, self.polygons, self.slice_check)
 
-        if self.outputs['vertices'].links:
-            SvSetSocketAnyType(self, 'vertices', result[0])
-        if self.outputs['data'].links:
-            SvSetSocketAnyType(self, 'data', result[1])
-
-
+            if self.outputs['vertices'].is_linked:
+                SvSetSocketAnyType(self, 'vertices', result[0])
+            if self.outputs['data'].is_linked:
+                SvSetSocketAnyType(self, 'data', result[1])
+                
+                
 def register():
     bpy.utils.register_class(LineConnectNode)
 
