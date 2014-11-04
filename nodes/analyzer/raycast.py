@@ -55,7 +55,8 @@ class SvRayCastNode(bpy.types.Node, SverchCustomTreeNode):
                              update=updateNode)
 
     def draw_buttons(self, context, layout):
-        layout.prop(self, "formula", text="")
+        if self.Modes == 'Object':
+            layout.prop(self, "formula", text="")
         row = layout.row(align=True)
         layout.prop(self, "Modes", "Raycast modes")
         layout.prop(self, "Iteration", "Iteration modes")
