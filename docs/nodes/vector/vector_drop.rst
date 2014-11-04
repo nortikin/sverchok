@@ -23,4 +23,4 @@ Examples
 --------
 
 .. image:: https://cloud.githubusercontent.com/assets/5783432/4905667/60572716-6452-11e4-98f3-296387ada7a9.png
-  :alt:vector drop
+  :alt: vector drop
