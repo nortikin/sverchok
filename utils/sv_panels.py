@@ -23,19 +23,15 @@ from bpy.props import StringProperty, CollectionProperty, BoolProperty
 from sverchok.node_tree import SverchCustomTreeNode
 
 
-# global veriables in tools
+# global variables in tools
 from sverchok.utils import sv_panels_tools 
-
-sv_script_paths, bl_addons_path, sv_version_local, sv_version = sv_panels_tools.sv_get_local_path()
-
-#import sv_script_path sv_version_local, sv_version, sv_new_version
 
 class Sv3DPanel(bpy.types.Panel):
     ''' Panel to manipuplate parameters in sverchok layouts '''
 
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
-    bl_label = "Sverchok " + sv_version_local
+    bl_label = "Sverchok " + sv_panels_tools.sv_version_local
     bl_options = {'DEFAULT_CLOSED'}
     bl_category = 'SV'
 
@@ -126,7 +122,7 @@ class Sv3DPanel(bpy.types.Panel):
 
 class SverchokToolsMenu(bpy.types.Panel):
     bl_idname = "Sverchok_tools_menu"
-    bl_label = "SV "+sv_version_local
+    bl_label = "SV "+sv_panels_tools.sv_version_local
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
     bl_category = 'Sverchok'

@@ -23,24 +23,24 @@ import urllib.request
 from zipfile import ZipFile
 import traceback
 import collections
+import ast
+import tempfile
 
 import bpy
 from bpy.props import StringProperty, CollectionProperty, BoolProperty
 
 from sverchok.core.update_system import process_tree, build_update_list
 from sverchok.node_tree import SverchCustomTreeNode
-
+import sverchok
 
 def sv_get_local_path():
     sv_script_paths = os.path.normpath(os.path.dirname(__file__))
     bl_addons_path = os.path.split(os.path.dirname(sv_script_paths))[0]
-    sv_version = os.path.normpath(os.path.join(sv_script_paths, 'version'))
-    with open(sv_version) as sv_local_file:
-        sv_version_local = next(sv_local_file).strip()
-    return sv_script_paths, bl_addons_path, sv_version_local, sv_version
+    sv_version_local = str(sverchok.bl_info["version"])[1:-1].replace(", ",".")
+    return sv_script_paths, bl_addons_path, sv_version_local
 
 # global variables in tools
-sv_script_paths, bl_addons_path, sv_version_local, sv_version = sv_get_local_path()
+sv_script_paths, bl_addons_path, sv_version_local = sv_get_local_path()
 
 
 
@@ -137,24 +137,29 @@ class SverchokCheckForUpgrades(bpy.types.Operator):
     bl_options = {'REGISTER'}
 
     def execute(self, context):
-        os.curdir = sv_script_paths
-        os.chdir(os.curdir)
         report = self.report
+        import sverchok
+        version_local = sverchok.bl_info["version"]
         try:
-            with open(sv_version) as sv_local_file:
-                version_local = next(sv_local_file).strip()
-        except:
-            report({'INFO'}, "Failed to read local version")
-            return {'CANCELLED'}
-        try:
-            # here change folder
-            url = 'https://raw.githubusercontent.com/nortikin/sverchok/master/utils/version'
-            version_url = urllib.request.urlopen(url).read().strip().decode()
+            # for testing
+            url = 'https://raw.githubusercontent.com/nortikin/sverchok/toProcess/__init__.py'
+            # when it is master
+            #url = 'https://raw.githubusercontent.com/nortikin/sverchok/master/__init__.py'
+            lines = urllib.request.urlopen(url).readlines()
+            for l in lines:
+                if '"version"' in str(l):
+                    version = str(l)
+                    break
+            v = version[version.find("("):version.find(")")+1]
+            version_url = ast.literal_eval(v) 
         except urllib.error.URLError:
             traceback.print_exc()
             report({'INFO'}, "Unable to contact github, or SSL not compiled.")
             return {'CANCELLED'}
-
+        except Error as e:
+            traceback.print_exc()
+            report({'INFO'}, "Unable to find version info")
+            return {'CANCELLED'}
         if version_local != version_url:
             bpy.context.scene.sv_new_version = True
             report({'INFO'}, "New version {0}".format(version_url))

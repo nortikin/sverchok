@@ -41,7 +41,7 @@ bl_info = {
         "Nedovizin Alexander, Gorodetskiy Nikita, Linus Yng, "
         "Agustin Jimenez, Dealga McArdle"
     ),
-    "version": (0, 5),
+    "version": (0, 5,1),
     "blender": (2, 7, 2),
     "location": "Nodes > CustomNodesTree > Add user nodes",
     "description": "Do parametric node-based geometry programming",
