@@ -123,6 +123,8 @@ new_socket_dict = {
          ['outputs', 'VerticesSocket', "Origins", 2]],
     'SvSolidifyNode':
         [['outputs', 'StringsSocket', 'newpols', 3]],
+    'IndexViewerNode':
+        [['inputs', 'StringsSocket', 'text', 3]],
     }
 
 # not used right now, didn't work for the intended purpose

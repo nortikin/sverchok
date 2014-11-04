@@ -35,8 +35,9 @@ def sv_update_handler(scene):
 @persistent
 def sv_scene_handler(scene):
     """
+    Avoid using this.
     Update sverchok node groups on scene update events.
-    Not used yet.
+    Not used yet. 
     """
     for name, tree in bpy.data.node_groups.items():
         if tree.bl_idname == 'SverchCustomTreeType' and tree.nodes:
