@@ -124,7 +124,7 @@ new_socket_dict = {
     'SvSolidifyNode':
         [['outputs', 'StringsSocket', 'newpols', 3]],
     'IndexViewerNode':
-        [['inputs', 'StringsSocket', 'text', 3]],
+        [['inputs', 'StringsSocket', 'text', 4]],
     }
 
 # not used right now, didn't work for the intended purpose
@@ -140,7 +140,8 @@ def upgrade_all():
 
 def upgrade_nodes(ng):
     ''' Apply prop_name for nodes in the node group ng for
-        upgrade to compact ui '''
+        upgrade to compact ui and create nodes that we add to
+        '''
     for node in [n for n in ng.nodes if n.bl_idname in new_socket_dict]:
         for in_out, s_type, name, pos in new_socket_dict[node.bl_idname]:
             s_list = getattr(node, in_out)
