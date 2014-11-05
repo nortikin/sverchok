@@ -31,7 +31,7 @@ from sverchok.core import upgrade_nodes
 import time
 
 def process_from_socket(self, context):
-    process_from_node(self.node, context)
+    updateNode(self.node, context)
 
 class SvColors(bpy.types.PropertyGroup):
     """ Class for colors CollectionProperty """
