@@ -30,6 +30,9 @@ from sverchok.core.update_system import (build_update_list, process_from_node,
 from sverchok.core import upgrade_nodes
 import time
 
+def process_from_socket(self, context):
+    process_from_node(self.node, context)
+
 class SvColors(bpy.types.PropertyGroup):
     """ Class for colors CollectionProperty """
     color = FloatVectorProperty(
@@ -69,26 +72,51 @@ class MatrixSocket(NodeSocket):
         return(.2, .8, .8, 1.0)
 
 
+class TestSocket(NodeSocket):
+    bl_idname = "SvTestSocket"
+    bl_label = "Test Socket"
+    
+
+    def draw(self, context, layout, node, text):
+        pass
+
+    
+    def draw_color(self, context, node):
+        return(0.9, 0.6, 0.2, 1.0)
+
+        
 class VerticesSocket(NodeSocket):
     '''String Vertices - one string'''
     bl_idname = "VerticesSocket"
     bl_label = "Vertices Socket"
+
+    prop = FloatVectorProperty(default=(0,0,0), size=3, update=process_from_socket)
     prop_name = StringProperty(default='')
+    use_prop = BoolProperty(default=False)
 
     # beta interface only use for debug, might change
     def sv_get(self, default=None, deepcopy=False):
         if self.is_linked and not self.is_output:
             return SvGetSocket(self, deepcopy)
+        elif self.prop_name:
+            return [[getattr(self.node, self.prop_name)[:]]]
+        elif self.use_prop:
+            return [[self.prop[:]]]
         else:
-            return default
+            default
 
     def sv_set(self, data):
         SvSetSocket(self, data)
 
     def draw(self, context, layout, node, text):
-    #    if not self.is_output and not self.is_linked and self.prop_name:
-    #        layout.prop(node,self.prop_name,expand=False)
-        if self.is_linked:
+        if not self.is_output and not self.is_linked:
+            if self.prop_name:
+                layout.template_component_menu(node, self.prop_name, name=self.name)
+            elif self.use_prop:
+                layout.template_component_menu(self, "prop", name=self.name)
+            else:
+                layout.label(text)
+        elif self.is_linked:
             layout.label(text + '. ' + SvGetSocketInfo(self))
         else:
             layout.label(text)
@@ -96,7 +124,6 @@ class VerticesSocket(NodeSocket):
     def draw_color(self, context, node):
         return(0.9, 0.6, 0.2, 1.0)
 
-count_links = 0
 
 class StringsSocket(NodeSocketStandard):
     '''String any type - one string'''
@@ -111,13 +138,12 @@ class StringsSocket(NodeSocketStandard):
     def sv_get(self, default=None, deepcopy=False):
         if self.is_linked and not self.is_output:
             return SvGetSocket(self, deepcopy)
-        if self.prop_name:
+        elif self.prop_name:
             return [[getattr(self.node, self.prop_name)]]
-        if self.prop_type:
+        elif self.prop_type:
             return [[getattr(self.node, self.prop_type)[self.prop_index]]]
-        if default:
+        else:
             return default
-        raise LookupError
         
 
     def sv_set(self, data):
@@ -308,6 +334,7 @@ def register():
     bpy.utils.register_class(MatrixSocket)
     bpy.utils.register_class(StringsSocket)
     bpy.utils.register_class(VerticesSocket)
+    bpy.utils.register_class(TestSocket)
 
 
 def unregister():

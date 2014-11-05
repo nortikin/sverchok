@@ -77,9 +77,6 @@ class SvLatheNode(bpy.types.Node, SverchCustomTreeNode):
 
     def nothing_to_process(self):
 
-        if not ('Poly' in self.outputs):
-            return True
-
         if not (self.inputs['Verts'].links and self.outputs['Verts'].links):
             return True
 
@@ -91,17 +88,14 @@ class SvLatheNode(bpy.types.Node, SverchCustomTreeNode):
         inputs = self.inputs
 
         def get_socket(x):
-            r = None
-            links = inputs[x].links
-            if links:
-                r = SvGetSocketAnyType(self, inputs[x])
-                r = dataCorrect(r)
+            r = inputs[x].sv_get()
+            r = dataCorrect(r)
             return r
 
         socket_names = ['Verts', 'Edges', 'cent', 'axis', 'dvec', 'Degrees', 'Steps']
         data = list(map(get_socket, socket_names))
         mverts, medges, mcent, maxis, mdvec, mDegrees, mSteps = data
-
+        
         verts_match_edges = medges and (len(medges) == len(mverts))
 
         verts_out, faces_out = [], []
@@ -159,9 +153,6 @@ class SvLatheNode(bpy.types.Node, SverchCustomTreeNode):
 
         SvSetSocketAnyType(self, 'Verts', verts_out)
         SvSetSocketAnyType(self, 'Poly', faces_out)
-
-    def update_socket(self, context):
-        self.update()
 
 
 def register():
