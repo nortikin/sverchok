@@ -165,6 +165,10 @@ class SvScriptNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         self.use_custom_color = False
     
     def load(self):
+        if not self.script_name in bpy.data.texts:
+            self.script_name = ""
+            self.clear()
+            return
         self.script_str = bpy.data.texts[self.script_name].as_string()
         print("loading...")
         # load in a different namespace using import helper
