@@ -202,21 +202,25 @@ def make_node_cats():
     node_cats["Beta Nodes"] = [
         # for testing convenience,
         ["SvOffsetNode",        "Offset"],
-        ["SvEmptyOutNode",      "Empty out",    "OUTLINER_OB_EMPTY"],
         ["SvListDecomposeNode", "List Decompose"],
-        ["SvInstancerNode",     "mesh instancer"],
         ["SvWafelNode",         "Wafel"],
         ["SvFormulaShapeNode",  "Formula shape", "IPO"],
         ["SvScriptNodeMK2",     "Script 2"],
     ]
 
     node_cats["Alpha Nodes"] = [
-        ["SvObjRemoteNode",       "Scene Objects"],
         ["SvImageComponentsNode", "Image Decompose",  "GROUP_VCOL"],
         ["SvJoinTrianglesNode",   "Join Triangles"],
+        ["SvCacheNode",           "Cache",]
+    
+    ]
+
+    node_cats["Bpy Nodes"] = [
+        ["SvEmptyOutNode",        "Empty out",    "OUTLINER_OB_EMPTY"],
+        ["SvInstancerNode",       "mesh instancer"],
+        ["SvObjRemoteNode",       "Scene Objects"],
         ["SvGetPropNode",         "Get property",   'FORCE_VORTEX'],
         ["SvSetPropNode",         "Set property",   'FORCE_VORTEX'],
-        ["SvCacheNode",           "Cache",]
     
     ]
 
