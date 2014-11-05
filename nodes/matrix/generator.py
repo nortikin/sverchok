@@ -32,42 +32,36 @@ class MatrixGenNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', "Location", "Location")
-        self.inputs.new('VerticesSocket', "Scale", "Scale")
-        self.inputs.new('VerticesSocket', "Rotation", "Rotation")
+        s = self.inputs.new('VerticesSocket', "Location", "Location")
+        s.use_prop = True
+        s = self.inputs.new('VerticesSocket', "Scale", "Scale")
+        s.use_prop = True
+        s.prop = (1, 1 , 1)
+        s = self.inputs.new('VerticesSocket', "Rotation", "Rotation")
+        s.use_prop = True
+        s.prop = (0, 0, 1)
         self.inputs.new('StringsSocket', "Angle", "Angle")
         self.outputs.new('MatrixSocket', "Matrix", "Matrix")
 
     def process(self):
         # inputs
-        if 'Location' in self.inputs and self.inputs['Location'].links and \
-           type(self.inputs['Location'].links[0].from_socket) == VerticesSocket:
+        
+        if not self.outputs['Matrix'].is_linked:
+            return
+    
+        loc_ = self.inputs['Location'].sv_get()
+        loc = Vector_generate(loc_)
 
-            loc_ = SvGetSocketAnyType(self, self.inputs['Location'])
-            loc = Vector_generate(loc_)
-        else:
-            loc = [[]]
+        scale_ = self.inputs['Scale'].sv_get()
+        scale = Vector_generate(scale_)
 
-        if 'Scale' in self.inputs and self.inputs['Scale'].links and \
-           type(self.inputs['Scale'].links[0].from_socket) == VerticesSocket:
 
-            scale_ = SvGetSocketAnyType(self, self.inputs['Scale'])
-            scale = Vector_generate(scale_)
-        else:
-            scale = [[]]
-
-        if 'Rotation' in self.inputs and self.inputs['Rotation'].links and \
-           type(self.inputs['Rotation'].links[0].from_socket) == VerticesSocket:
-
-            rot_ = SvGetSocketAnyType(self, self.inputs['Rotation'])
-            rot = Vector_generate(rot_)
-            #print ('matrix_def', str(rot_))
-        else:
-            rot = [[]]
+        rot_ = self.inputs['Rotation'].sv_get()
+        rot = Vector_generate(rot_)
 
         rotA = [[]]
         angle = [[0.0]]
-        if 'Angle' in self.inputs and self.inputs['Angle'].links:
+        if self.inputs['Angle'].is_linked:
             if type(self.inputs['Angle'].links[0].from_socket) == StringsSocket:
                 angle = SvGetSocketAnyType(self, self.inputs['Angle'])
 
@@ -75,20 +69,16 @@ class MatrixGenNode(bpy.types.Node, SverchCustomTreeNode):
                 rotA_ = SvGetSocketAnyType(self, self.inputs['Angle'])
                 rotA = Vector_generate(rotA_)
 
-        # outputs
-        if 'Matrix' in self.outputs and self.outputs['Matrix'].links:
-
-            max_l = max(len(loc[0]), len(scale[0]), len(rot[0]), len(angle[0]), len(rotA[0]))
-            orig = []
-            for l in range(max_l):
-                M = mathutils.Matrix()
-                orig.append(M)
-            if len(orig) == 0:
-                return
-            matrixes_ = matrixdef(orig, loc, scale, rot, angle, rotA)
-            matrixes = Matrix_listing(matrixes_)
-            SvSetSocketAnyType(self, 'Matrix', matrixes)
-            #print ('matrix_def', str(matrixes))
+        max_l = max(len(loc[0]), len(scale[0]), len(rot[0]), len(angle[0]), len(rotA[0]))
+        orig = []
+        for l in range(max_l):
+            M = mathutils.Matrix()
+            orig.append(M)
+        if len(orig) == 0:
+            return
+        matrixes_ = matrixdef(orig, loc, scale, rot, angle, rotA)
+        matrixes = Matrix_listing(matrixes_)
+        SvSetSocketAnyType(self, 'Matrix', matrixes)
 
 
 
