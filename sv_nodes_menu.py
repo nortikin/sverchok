@@ -45,7 +45,6 @@ def make_node_cats():
         ["Hilbert3dNode",       "Hilbert3d"],
         ["HilbertImageNode",    "Hilbert image"],
         ["ImageNode",           "Image",                "FILE_IMAGE"],
-        ["SvFormulaShapeNode",  "Formula shape",               "IPO"],
         ["SvProfileNode",       "ProfileParametric"],
         ["SvScriptNode",        "Scripted Node",     "SCRIPTPLUGINS"]
     ]
@@ -207,6 +206,7 @@ def make_node_cats():
         ["SvListDecomposeNode", "List Decompose"],
         ["SvInstancerNode",     "mesh instancer"],
         ["SvWafelNode",         "Wafel"],
+        ["SvFormulaShapeNode",  "Formula shape", "IPO"],
         ["SvScriptNodeMK2",     "Script 2"],
     ]
 
