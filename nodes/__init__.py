@@ -34,7 +34,9 @@ nodes_dict = {
         'obj_remote',
         'group',
         'cache',
-        'getsetprop'
+        'getsetprop',
+        'get_dataobject',
+        'set_dataobject'
     ],
 
     'basic_debug': [
