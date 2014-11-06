@@ -21,6 +21,8 @@ import bpy
 # bl_idname : [[socket_name0, prop_name0],
 #              [socket_name1, prop_name1]],
 
+from sverchok import old_nodes
+
 upgrade_dict = {
     'SphereNode':
         [['Radius', 'rad_'],
@@ -99,6 +101,21 @@ upgrade_dict = {
          ['Y', 'y']]
     }
 
+
+#  for new style vertices socket ~ 0.5
+#  bl_idname:
+#  socket_name, prop_name, boolean use_prop , default 3 tuple
+#  two distinct scenarios
+#  use prop_name of node
+#  or use_prop and set default
+
+vertices_socket_upgrade = {
+    'MatrixGenNode' :
+        [['Location', '', True, (0,0,0)],
+         ['Scale', '', True, (1,1,1)],
+         ['Rotation', '', True, (0,0,1)]],
+}
+
 # new sockets
 # format
 # bl_idname : [[new_socket0],[newsocket1]],
@@ -127,21 +144,13 @@ new_socket_dict = {
         [['inputs', 'StringsSocket', 'text', 4]],
     }
 
-# not used right now, didn't work for the intended purpose
-
-def upgrade_all():
-    print(bpy.data.node_groups.keys())
-    for name, tree in bpy.data.node_groups.items():
-        if tree.bl_idname == 'SverchCustomTreeType' and tree.nodes:
-            try:
-                upgrade_nodes.upgrade_nodes(tree)
-            except Exception as e:
-                print('Failed to upgrade:', name, str(e))
 
 def upgrade_nodes(ng):
     ''' Apply prop_name for nodes in the node group ng for
         upgrade to compact ui and create nodes that we add to
         '''
+    old_nodes.load_old(ng)
+
     for node in [n for n in ng.nodes if n.bl_idname in new_socket_dict]:
         for in_out, s_type, name, pos in new_socket_dict[node.bl_idname]:
             s_list = getattr(node, in_out)
@@ -155,3 +164,16 @@ def upgrade_nodes(ng):
             socket = node.inputs.get(s_name)
             if socket and not socket.prop_name:
                 socket.prop_name = p_name
+
+    for n in [n for n in ng.nodes if n.bl_idname in vertices_socket_upgrade]:
+        for s_name, p_name, use_prop, default in vertices_socket_upgrade[n.bl_idname]:
+            socket = n.inputs.get(s_name)
+            if socket: 
+                if p_name:
+                    socket.prop_name = p_name
+                elif use_prop:
+                    socket.prop = default
+                    socket.use_prop = True
+                    socket.prop_name = ""
+                else:
+                    pass
