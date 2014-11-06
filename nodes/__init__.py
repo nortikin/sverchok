@@ -138,7 +138,6 @@ nodes_dict = {
         'float',
         'integer',
         'random',
-        'formula',
         'formula2',
         'scalar',
         'list_input',

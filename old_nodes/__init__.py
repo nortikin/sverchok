@@ -42,6 +42,21 @@ import bpy
 from sverchok.node_tree import SverchCustomTreeNode
 imported_mods = {}
 
+def reload_old(ng=False):
+    if ng:
+        bl_idnames = {n.bl_idname for n in ng.nodes if n.bl_idname in old_bl_idnames} 
+        for bl_id in bl_idnames:
+            mod = register_old(bl_id)
+            if mod:
+                importlib.reload(mod)
+            else:
+                print("Couldn't reload {}".format(bl_id))
+    else:
+        for ng in bpy.data.node_groups:
+            reload_old(ng)
+            #if ng.bl_idname in { 'SverchCustomTreeType', 'SverchGroupTreeType'}:
+            #    reload_old(ng)
+    
 def load_old(ng):
     
     """
@@ -90,6 +105,7 @@ def register_old(bl_id):
                         return mod
                     
     print("Cannot find {} among old nodes".format(bl_id))
+    return None
 
 def unregister_old(bl_id):
     mod = imported_mods.get(bl_id)
