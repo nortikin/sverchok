@@ -950,7 +950,7 @@ def SvGetSocketInfo(socket):
     
     if socket.is_output:
         s_id = socket_id(socket)
-    elif socket.is_linked:
+    elif socket.links:
         s_id = socket_id(get_other_socket(socket))
     else:
         return ''
