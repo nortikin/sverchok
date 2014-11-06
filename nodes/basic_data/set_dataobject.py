@@ -23,7 +23,7 @@ import mathutils
 from mathutils import Vector
 from bpy.props import StringProperty, BoolProperty, EnumProperty
 from sverchok.node_tree import SverchCustomTreeNode, VerticesSocket
-from sverchok.data_structure import (updateNode, SvSetSocketAnyType,
+from sverchok.data_structure import (updateNode, 
                                      SvGetSocketAnyType, match_long_repeat)
 
 
