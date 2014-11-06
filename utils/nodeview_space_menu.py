@@ -137,6 +137,8 @@ class NODEVIEW_MT_Dynamic_Menu(bpy.types.Menu):
         else:
             layout.menu("NODEVIEW_MT_AddBetas")
             layout.menu("NODEVIEW_MT_AddAlphas")
+        layout.separator()
+        layout.menu("NODEVIEW_MT_AddBpy")
 
 
 class NODEVIEW_MT_AddGenerators(bpy.types.Menu):
@@ -193,6 +195,7 @@ classes = [
     make_class('Conditionals', "Conditionals"),
     make_class('Betas', "Beta Nodes"),
     make_class('Alphas', "Alpha Nodes"),
+    make_class('Bpy', "Bpy Nodes"),
 ]
 
 
