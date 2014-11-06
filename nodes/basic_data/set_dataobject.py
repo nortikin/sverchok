@@ -80,7 +80,8 @@ class SvSetDataObjectNode(bpy.types.Node, SverchCustomTreeNode):
 
             g = 0
             while g != len(ObjectID):
-                exec("ObjectID[g]."+Prop+"= Val[g]")
+                if ObjectID[g] != None:
+                    exec("ObjectID[g]."+Prop+"= Val[g]")
                 g = g+1
 
     def update_socket(self, context):
