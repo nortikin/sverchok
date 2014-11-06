@@ -74,7 +74,6 @@ class SvObjSelected(bpy.types.Operator):
         self.disable(name_no+name_tr, handle)
         self.enable(name_no, name_tr, handle, sorting)
         print('have got {0} items from scene.'.format(handle[1]))
-        bpy.data.node_groups[name_tr].nodes[name_no].set_color()
         return {'FINISHED'}
 
 

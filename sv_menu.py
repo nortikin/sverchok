@@ -25,6 +25,7 @@ def make_node_cats():
     node_cats = OrderedDict()
     '''  bl_idname, shortname, <icon> (optional) '''
 
+# blue-green
     node_cats["Generators"] = [
         ["LineNode",            "Line",                  "GRIP"],
         ["PlaneNode",           "Plane",           "MESH_PLANE"],
@@ -34,6 +35,7 @@ def make_node_cats():
         ["SphereNode",          "Sphere",       "MESH_UVSPHERE"],
         ['BasicSplineNode',     "2pt Spline",  "CURVE_BEZCURVE"],
         ["svBasicArcNode",      "3pt Arc",        "SPHERECURVE"],
+        ['RandomVectorNode',    'Random Vector',     'RNDCURVE'],
     ]
 
     node_cats["Extended Generators"] = [
@@ -54,10 +56,7 @@ def make_node_cats():
         ["DistancePPNode",      "Distance"],
         ["CentersPolsNode",     "Centers Polygons"],
         ["VectorNormalNode",    "Vertex Normal"],
-        # making something different
-        ["SvVertexGroupNode",   "Vertext group"],
-        ["SvRayCastNode",       "Raycast"],
-        # proximity anaylyses.
+        # proximity analyses.
         ["SvKDTreeNode",        "KDT Closest Verts"],
         ["SvKDTreeEdgesNode",   "KDT Closest Edges"],
     ]
@@ -65,10 +64,8 @@ def make_node_cats():
     node_cats["Transforms"] = [
         ["SvRotationNode",      "Rotation",    "MAN_ROT"],
         ["SvScaleNode",         "Scale",       "MAN_SCALE"],
-        ["VectorMoveNode",      "Vector Move", "MAN_TRANS"],
+        ["VectorMoveNode",      "Move",        "MAN_TRANS"],
         ["SvMirrorNode",        "Mirror",      "MOD_MIRROR"],
-        ["SvMatrixEulerNode",   "Matrix Euler"],
-        ["MatrixShearNode",     "Matrix Shear"],
         ["MatrixApplyNode",     "Matrix Apply"],
     ]
 
@@ -82,7 +79,7 @@ def make_node_cats():
         ["SvSeparateMeshNode",  "Separate Loose Parts"],
         ["SvVertMaskNode",      "Mask Vertices"],
         ["SvFillsHoleNode",     "Fill Holes"],
-        ["SvIntersectEdgesNode", "Intersect Edges"],
+        ["SvIntersectEdgesNode","Intersect Edges"],
     ]
 
     node_cats["Modifier Make"] = [
@@ -113,7 +110,6 @@ def make_node_cats():
         ["ListSumNode",         "List Sum"],
         ["ListMatchNode",       "List Match"],
         ["ListFuncNode",        "List Math"],
-        ["ConverterNode",       "SocketConvert"],
     ]
 
     node_cats["List struct"] = [
@@ -143,7 +139,6 @@ def make_node_cats():
     ]
 
     node_cats["Vector"] = [
-        ['RandomVectorNode',    'Random Vector',        'RNDCURVE'],
         ['GenVectorsNode',      'Vector in'],
         ['VectorsOutNode',      'Vector out'],
         ['VectorMathNode',      'Vector Math'],
@@ -159,8 +154,10 @@ def make_node_cats():
     node_cats["Matrix"] = [
         ["MatrixGenNode",       "Matrix in"],
         ["MatrixOutNode",       "Matrix out"],
-        ["SvMatrixValueIn",     "Matrix Input"],
         ["MatrixDeformNode",    "Matrix Deform"],
+        ["SvMatrixValueIn",     "Matrix Input"],
+        ["SvMatrixEulerNode",   "Matrix Euler"],
+        ["MatrixShearNode",     "Matrix Shear"],
         ["MatrixInterpolationNode", "Matrix Interpolation"],
     ]
 
@@ -198,6 +195,8 @@ def make_node_cats():
         ["SvInstancerNode",     "mesh instancer"],
         ["SvGetPropNode",       "Get property",   'FORCE_VORTEX'],
         ["SvSetPropNode",       "Set property",   'FORCE_VORTEX'],
+        ["SvVertexGroupNode",   "Vertext group"],
+        ["SvRayCastNode",       "Raycast"],
     ]
 
 # violet
@@ -205,6 +204,7 @@ def make_node_cats():
         ["WifiInNode",          "Wifi in"],
         ["WifiOutNode",         "Wifi out"],
         ["NodeReroute",         "Reroute Point"],
+        ["ConverterNode",       "SocketConvert"],
     ]
 
     node_cats["Beta Nodes"] = [

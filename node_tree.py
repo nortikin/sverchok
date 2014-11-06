@@ -312,7 +312,7 @@ def sv_colors_definition():
                     # violet
                     "Basic Layout":(0.674, 0.242, 0.363),
                     # green-blue
-                    "Generators":(0,0.5,0.4),
+                    "Generators":(0,0.5,0.5),
                     }
     sv_node_cats = make_node_cats()
     sv_cats_node = {}
