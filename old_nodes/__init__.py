@@ -42,6 +42,31 @@ import bpy
 from sverchok.node_tree import SverchCustomTreeNode
 imported_mods = {}
 
+def is_old(node_info):
+    '''
+    Check if node or node.bl_idname is among
+    the old nodes
+    '''
+    if isinstance(node_info, str):
+        # assumes bl_idname
+        return node_info in old_bl_idnames
+    elif isinstance(node_info, bpy.types.Node):
+        return node_info.bl_idname in old_bl_idnames
+    else:
+        return False
+
+def scan_for_old(ng):
+    nodes = [n for n in ng.nodes if n.bl_idname in old_bl_idnames]
+    for node in nodes:
+        frame = ng.nodes.new("NodeFrame")
+        if node.parent:
+            frame.parent = node.parent
+        node.parent = frame
+        frame.label = "Deprecated node!"
+        frame.use_custom_color = True
+        frame.color = (.8, 0, 0)
+        frame.shrink = True
+
 def reload_old(ng=False):
     if ng:
         bl_idnames = {n.bl_idname for n in ng.nodes if n.bl_idname in old_bl_idnames} 

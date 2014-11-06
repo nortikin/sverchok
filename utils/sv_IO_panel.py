@@ -32,11 +32,12 @@ from bpy.props import StringProperty
 from bpy.props import BoolProperty
 from sverchok.node_tree import SverchCustomTree
 from sverchok.node_tree import SverchCustomTreeNode
+from sverchok import old_nodes
 
-
-_EXPORTER_REVISION_ = '0.052 pre alpha'
+_EXPORTER_REVISION_ = '0.053'
 
 '''
+0.053 support old_nodes on demand
 0.052 respect selection
 0.051 fake node removed, freeze and unfreeze used instead
 0.05 fake node inserted to stop updates
@@ -243,8 +244,9 @@ def import_tree(ng, fullpath='', nodes_json=None):
         for n in sorted(nodes_to_import):
             node_ref = nodes_to_import[n]
             bl_idname = node_ref['bl_idname']
-
             try:
+                if old_nodes.is_old(bl_idname):
+                    old_nodes.register_old(bl_idname)
                 node = nodes.new(bl_idname)
             except Exception as err:
                 print(traceback.format_exc())
@@ -332,6 +334,7 @@ def import_tree(ng, fullpath='', nodes_json=None):
         for node_name, parent in framed_nodes.items():
             ng.nodes[finalize(node_name)].parent = ng.nodes[finalize(parent)]
         
+        old_nodes.scan_for_old(ng)
         ng.unfreeze(hard=True)
         ng.update()
         #bpy.ops.node.sverchok_update_current(node_group=ng.name)
