@@ -165,8 +165,6 @@ class ViewerNode_text(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     def sv_init(self, context):
-        self.use_custom_color = True
-        self.color = (0.05, 0.05, 0.1)
         self.inputs.new('VerticesSocket', 'vertices', 'vertices')
         self.inputs.new('StringsSocket', 'edg_pol', 'edg_pol')
         self.inputs.new('MatrixSocket', 'matrix', 'matrix')
@@ -181,14 +179,7 @@ class ViewerNode_text(bpy.types.Node, SverchCustomTreeNode):
     def process(self):
         pass
     def update(self):
-        if 'vertices' in self.inputs and 'edg_pol' in self.inputs and 'matrix' in self.inputs:
-            if self.inputs['matrix'].links or self.inputs['vertices'].links or \
-                        self.inputs['edg_pol'].links:
-                self.use_custom_color = True
-                self.color = (0.5, 0.5, 1)
-            else:
-                self.use_custom_color = True
-                self.color = (0.05, 0.05, 0.1)
+        pass
 
 
 

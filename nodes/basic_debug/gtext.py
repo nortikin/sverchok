@@ -173,12 +173,7 @@ class GTextNode(bpy.types.Node, SverchCustomTreeNode):
                 layout.prop(self, 'text_scale')
 
     def update(self):
-        if self.text != 'your text here':
-            self.use_custom_color = True
-            self.color = (0.5,0.5,1)
-        else:
-            self.use_custom_color = True
-            self.color = (0.05,0.05,0.1)
+        pass
 
     def set_gtest(self):
         self.text = bpy.context.window_manager.clipboard

@@ -149,18 +149,10 @@ class ObjectsNode(bpy.types.Node, SverchCustomTreeNode):
                 handle_write(self.name+self.id_data.name, literal_eval(self.objects_local))
         else:
             layout.label('--None--')
-    def set_color(self):
-        if self.objects_local:
-            self.use_custom_color = True
-            self.color = (0, 0.5, 0.2)
-        else:
-            self.use_custom_color = True
-            self.color = (0, 0.1, 0.05)
         
 
     def update(self):
-        # check for grouping socket
-        self.set_color()
+        pass
             
     def process(self):
         name = self.name + self.id_data.name

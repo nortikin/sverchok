@@ -66,7 +66,7 @@ imported_modules = []
 
 # ugly hack, should make respective dict in __init__ like nodes
 # or parse it
-root_modules = ["node_tree", "data_structure","core", 
+root_modules = ["sv_menu", "node_tree", "data_structure","core", 
                 "utils", "utils", "sv_nodes_menu", "nodes", "old_nodes"]
 core_modules = ["handlers", "update_system", "upgrade_nodes"]
 utils_modules = [

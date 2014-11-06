@@ -343,9 +343,6 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
         if cache_viewer_baker[vertex_ref] or cache_viewer_baker[matrix_ref]:
             config_options = self.get_options().copy()
             callback_enable(n_id, cache_viewer_baker, config_options)
-            self.color = (1, 1, 1)
-        else:
-            self.color = (0.7, 0.7, 0.7)
 
     def get_options(self):
         return {

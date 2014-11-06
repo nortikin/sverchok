@@ -128,8 +128,9 @@ class NODEVIEW_MT_Dynamic_Menu(bpy.types.Menu):
         layout.menu("NODEVIEW_MT_AddListOps")
         layout.separator()
         layout.menu("NODEVIEW_MT_AddBasicViz")
-        layout.menu("NODEVIEW_MT_AddBasicData")
-        layout.menu("NODEVIEW_MT_AddBasicDebug")
+        layout.menu("NODEVIEW_MT_AddBasicText")
+        layout.menu("NODEVIEW_MT_AddBasicScene")
+        layout.menu("NODEVIEW_MT_AddBasicLayout")
         layout.separator()
         if show_icons:
             layout.menu("NODEVIEW_MT_AddBetas", icon='OUTLINER_DATA_POSE')
@@ -154,7 +155,7 @@ class NODEVIEW_MT_AddGenerators(bpy.types.Menu):
 
 
 class NODEVIEW_MT_AddModifiers(bpy.types.Menu):
-    bl_label = "Modifiers (Make, Change)"
+    bl_label = "Modifiers"
 
     def draw(self, context):
         layout = self.layout
@@ -180,11 +181,12 @@ classes = [
     # like magic.
     # make | NODEVIEW_MT_Add + class name , menu name
     make_class('GeneratorsExt', "Extended Generators"),
-    make_class('Transforms', "Transforms (Vec, Mat)"),
+    make_class('Transforms', "Transforms"),
     make_class('Analyzers', "Analyzers"),
     make_class('BasicViz', "Basic Viz"),
-    make_class('BasicData', "Basic Data"),
-    make_class('BasicDebug', "Basic Debug"),
+    make_class('BasicText', "Basic Text"),
+    make_class('BasicScene', "Basic Scene"),
+    make_class('BasicLayout', "Basic Layout"),
     make_class('Listmain', "List main"),
     make_class('Liststruct', "List struct"),
     make_class('Number', "Number"),
@@ -195,7 +197,6 @@ classes = [
     make_class('Conditionals', "Conditionals"),
     make_class('Betas', "Beta Nodes"),
     make_class('Alphas', "Alpha Nodes"),
-    make_class('Bpy', "Bpy Nodes"),
 ]
 
 

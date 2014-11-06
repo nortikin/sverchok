@@ -30,6 +30,7 @@ from sverchok.core.update_system import (build_update_list, process_from_node,
 from sverchok.core import upgrade_nodes
 import time
 
+
 def process_from_socket(self, context):
     updateNode(self.node, context)
 
@@ -224,7 +225,8 @@ class SvNodeTreeCommon(object):
     def get_update_lists(self):
         return get_update_lists(self)
 
-    
+
+
 class SverchCustomTree(NodeTree, SvNodeTreeCommon):
     ''' Sverchok - architectural node programming of geometry in low level '''
     bl_idname = 'SverchCustomTreeType'
@@ -296,8 +298,34 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
     @classmethod
     def poll(cls, context):
         return False
-    
-            
+
+
+def sv_colors_definition():
+    from sverchok.sv_menu import make_node_cats
+    sv_node_colors = {
+                    # orange
+                    "Basic Viz":(1, 0.3, 0),
+                    # greish blue
+                    "Basic Text":(0.5, 0.5, 1),
+                    # green
+                    "Basic Scene":(0, 0.5, 0.2),
+                    # violet
+                    "Basic Layout":(0.674, 0.242, 0.363),
+                    # green-blue
+                    "Generators":(0,0.5,0.4),
+                    }
+    sv_node_cats = make_node_cats()
+    sv_cats_node = {}
+    for ca,no in sv_node_cats.items():
+        for n in no:
+            try:
+                sv_cats_node[n[0]] = sv_node_colors[ca]
+            except:
+                sv_cats_node[n[0]] = False
+    return sv_cats_node
+sv_cats_node = sv_colors_definition()
+
+
 class SverchCustomTreeNode:
     @classmethod
     def poll(cls, ntree):
@@ -306,16 +334,24 @@ class SverchCustomTreeNode:
     def init(self, context):
         ng = self.id_data
         ng.freeze()
+        # color
+        cat = sv_cats_node[self.bl_idname]
+        if cat:
+            self.use_custom_color = True
+            self.color = cat
         if hasattr(self, "sv_init"):
             self.sv_init(context)
         ng.unfreeze()
+        
     
     def process_node(self, context):
-        a = time.perf_counter()
-        process_from_node(self)
-        b = time.perf_counter()
         if data_structure.DEBUG_MODE:
+            a = time.perf_counter()
+            process_from_node(self)
+            b = time.perf_counter()
             print("Partial update from node", self.name, "in", round(b-a, 4))
+        else:
+            process_from_node(self)
 
         
 
@@ -330,7 +366,6 @@ def register():
     bpy.utils.register_class(SvColors)
     bpy.utils.register_class(SverchCustomTree)
     bpy.utils.register_class(SverchGroupTree)
-
     bpy.utils.register_class(MatrixSocket)
     bpy.utils.register_class(StringsSocket)
     bpy.utils.register_class(VerticesSocket)
