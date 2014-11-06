@@ -1,5 +1,8 @@
+import traceback
+
 import bpy
 from bpy.app.handlers import persistent
+
 from sverchok import data_structure
 from sverchok.core import upgrade_nodes
 from sverchok.utils import viewer_draw
@@ -7,6 +10,7 @@ from sverchok.utils import viewer_draw_mk2
 from sverchok.utils import index_viewer_draw
 from sverchok.utils import nodeview_bgl_viewer_draw
 from sverchok import old_nodes 
+
 
 sv_ascii_logo = """\
       ::::::  :::   ::: :::::::: :::::::   ::::::  :::  :::  ::::::  :::  ::: 
@@ -65,27 +69,30 @@ def sv_post_load(scene):
     """
     Upgrade nodes, apply preferences and do an update.
     """
-    sv_trees = []
-    for name, tree in bpy.data.node_groups.items():
-        if tree.bl_idname == 'SverchCustomTreeType' and tree.nodes:
-            sv_trees.append(tree)
-            try:
-                upgrade_nodes.upgrade_nodes(tree)
-            except Exception as e:
-                print('Failed to upgrade:', name, str(e))
+    sv_types = { 'SverchCustomTreeType', 'SverchGroupTreeType'}
+    sv_trees = list(ng for ng in bpy.data.node_groups if ng.bl_idname in sv_types and ng.nodes)
+    for ng in sv_trees:
+        ng.freeze(True)
+        try:
+            old_nodes.load_old(ng)
+        except:
+            traceback.print_exc()        
+        ng.freeze(True)
+        try:
+            upgrade_nodes.upgrade_nodes(ng)
+        except Exception as e:
+            traceback.print_exc()
+            #print('Failed to upgrade:', ng.name, str(e))
+        ng.unfreeze(True)
     # apply preferences
+    
+    '''
     unsafe_nodes = {
         'SvScriptNode',
         'FormulaNode',
         'Formula2Node',
         'EvalKnievalNode',
     }
-    for tree in sv_trees:
-        old = [n for n in tree.nodes if n.bl_idname in old_nodes.old_bl_idnames]
-        if old:
-            node_names = [n.name for n in old]
-            node_names = "".join(node_names)
-            print("Warning old nodes found: {}".format(node_names))
     
     unsafe = False
     for tree in sv_trees:
@@ -100,7 +107,8 @@ def sv_post_load(scene):
 
     #print("post load .update()")
     # do an update
-    for ng in bpy.data.node_groups:
+    '''
+    for ng in sv_trees:
         if ng.bl_idname == 'SverchCustomTreeType' and ng.nodes:
             ng.update()
     
