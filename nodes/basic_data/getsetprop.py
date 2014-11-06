@@ -17,6 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import ast
+import traceback
 
 import bpy
 from bpy.props import StringProperty, BoolProperty, IntProperty, FloatProperty
@@ -147,16 +148,25 @@ class SvGetPropNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvGetPropNode'
     bl_label = 'Get'
     bl_icon = 'OUTLINER_OB_EMPTY'
-        
+    
+    bad_prop = BoolProperty(default=False)
+    
     def verify_prop(self, context):
-        obj = self.obj
+        try:
+            obj = self.obj
+        except:
+            traceback.print_exc()        
+            self.bad_prop = True
+            return
+        self.bad_prop = False
         s_type = types.get(type(obj))
         outputs = self.outputs
         if s_type and outputs:
             replace_socket(outputs[0], s_type)
         elif s_type:
             outputs.new(s_type, "Data")
-            
+        
+        
     prop_name = StringProperty(name='', update=verify_prop)
 
     @property
@@ -167,6 +177,7 @@ class SvGetPropNode(bpy.types.Node, SverchCustomTreeNode):
         return get_object(path)
     
     def draw_buttons(self, context, layout):
+        layout.alert = self.bad_prop
         layout.prop(self, "prop_name", text="")
 
     def process(self):
@@ -179,6 +190,11 @@ class SvSetPropNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Set'
     bl_icon = 'OUTLINER_OB_EMPTY'
     
+    
+    ok_prop = BoolProperty(default=False)
+    bad_prop = BoolProperty(default=False)
+
+    
     @property
     def obj(self):
         eval_str = apply_alias(self.prop_name)
@@ -187,7 +203,13 @@ class SvSetPropNode(bpy.types.Node, SverchCustomTreeNode):
         return get_object(path)
         
     def verify_prop(self, context):
-        obj = self.obj
+        try:
+            obj = self.obj
+        except:
+            traceback.print_exc()        
+            self.bad_prop = True
+            return
+        self.bad_prop = False
 
         s_type = types.get(type(obj))
         inputs = self.inputs
@@ -198,12 +220,15 @@ class SvSetPropNode(bpy.types.Node, SverchCustomTreeNode):
             socket.prop_name = p_name
         elif s_type:
             inputs.new(s_type, "Data").prop_name = p_name
+        if s_type == "VerticesSocket":
+            inputs[0].use_prop = True
         
     prop_name = StringProperty(name='', update=verify_prop)
     float_prop = FloatProperty(update=updateNode, name="x")
     int_prop = IntProperty(update=updateNode, name="x")
     
     def draw_buttons(self, context, layout):
+        layout.alert = self.bad_prop
         layout.prop(self, "prop_name", text="")
 
     def process(self):
