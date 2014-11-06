@@ -191,10 +191,12 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
 
     display_edges = BoolProperty(
         name="Edges", description="Display edges",
+        default=True,
         update=updateNode)
 
     display_faces = BoolProperty(
         name="Faces", description="Display faces",
+        default=True,
         update=updateNode)
 
     vertex_size = FloatProperty(
