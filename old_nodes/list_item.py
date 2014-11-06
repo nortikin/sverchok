@@ -22,9 +22,6 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (changable_sockets, repeat_last, updateNode,
                             SvSetSocketAnyType, SvGetSocketAnyType)
 
-
-# supports of older code, remove soon
-# Linus Yng, Feb 4, 2014
 class ListItemNode(bpy.types.Node, SverchCustomTreeNode):
     ''' List item '''
     bl_idname = 'ListItemNode'
@@ -51,7 +48,7 @@ class ListItemNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('StringsSocket', "Item", "Item")
         self.outputs.new('StringsSocket', "Other", "Other")
 
-    def update(self):
+    def process(self):
         if 'Data' in self.inputs and len(self.inputs['Data'].links) > 0:
             # адаптивный сокет
             inputsocketname = 'Data'
@@ -98,3 +95,9 @@ class ListItemNode(bpy.types.Node, SverchCustomTreeNode):
 
     def update_socket(self, context):
         self.update()
+        
+def register():
+    bpy.utils.register_class(ListItemNode)
+
+def unregister():
+    bpy.utils.unregister_class(ListItemNode)

@@ -121,3 +121,9 @@ class CircleNode(bpy.types.Node, SverchCustomTreeNode):
         if self.outputs['Polygons'].links:
             plg = [self.make_faces(a, v) for a, v, r in zip(*parameters)]
             SvSetSocketAnyType(self, 'Polygons', plg)
+
+def register():
+    bpy.utils.register_class(CircleNode)
+
+def unregister():
+    bpy.utils.unregister_class(CircleNode)

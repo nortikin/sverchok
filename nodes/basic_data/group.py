@@ -117,7 +117,6 @@ class SvGroupNode(bpy.types.Node, SverchCustomTreeNode, StoreSockets):
         #  get update list
         #  could be cached
         ul = make_tree_from_nodes([out_node.name], group_ng, down=False)
-        print(ul)
         do_update(ul, group_ng.nodes)
         # set output sockets correctly
         for socket in self.outputs:

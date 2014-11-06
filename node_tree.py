@@ -27,7 +27,6 @@ from sverchok.data_structure import (SvGetSocketInfo, SvGetSocket,
                             SvSetSocket,  updateNode, get_other_socket)
 from sverchok.core.update_system import (build_update_list, process_from_node,
                                 process_tree, get_update_lists)
-from sverchok.core import upgrade_nodes
 import time
 
 def process_from_socket(self, context):
@@ -70,19 +69,6 @@ class MatrixSocket(NodeSocket):
             return(.8,.3,.75,1.0)
         else: '''
         return(.2, .8, .8, 1.0)
-
-
-class TestSocket(NodeSocket):
-    bl_idname = "SvTestSocket"
-    bl_label = "Test Socket"
-    
-
-    def draw(self, context, layout, node, text):
-        pass
-
-    
-    def draw_color(self, context, node):
-        return(0.9, 0.6, 0.2, 1.0)
 
         
 class VerticesSocket(NodeSocket):
@@ -311,6 +297,13 @@ class SverchCustomTreeNode:
         ng.unfreeze()
     
     def process_node(self, context):
+        '''
+        Doesn't work as intended, inherited functions can't be used for bpy.props
+        update=
+        Still this is called from updateNode
+        '''
+        if self.id_data.is_frozen():
+            return
         a = time.perf_counter()
         process_from_node(self)
         b = time.perf_counter()
@@ -330,11 +323,9 @@ def register():
     bpy.utils.register_class(SvColors)
     bpy.utils.register_class(SverchCustomTree)
     bpy.utils.register_class(SverchGroupTree)
-
     bpy.utils.register_class(MatrixSocket)
     bpy.utils.register_class(StringsSocket)
     bpy.utils.register_class(VerticesSocket)
-    bpy.utils.register_class(TestSocket)
 
 
 def unregister():
@@ -344,9 +335,3 @@ def unregister():
     bpy.utils.unregister_class(SverchCustomTree)
     bpy.utils.unregister_class(SverchGroupTree)
     bpy.utils.unregister_class(SvColors)
-
-
-
-
-
-
