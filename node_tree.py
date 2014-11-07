@@ -288,15 +288,19 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
 
 def sv_colors_definition():
     from sverchok.sv_menu import make_node_cats
+    bpy.types.Scene.sv_color_viz = FloatVectorProperty(
+        name="Node's color viz", description='',
+        size=3, min=0.0, max=1.0,
+        default=(1, 0.3, 0), subtype='COLOR')
     sv_node_colors = {
                     # orange
-                    "Basic Viz":(1, 0.3, 0),
+                    "Viz":(1, 0.3, 0),
                     # greish blue
-                    "Basic Text":(0.5, 0.5, 1),
+                    "Text":(0.5, 0.5, 1),
                     # green
-                    "Basic Scene":(0, 0.5, 0.2),
+                    "Scene":(0, 0.5, 0.2),
                     # violet
-                    "Basic Layout":(0.674, 0.242, 0.363),
+                    "Layout":(0.674, 0.242, 0.363),
                     # green-blue
                     "Generators":(0,0.5,0.5),
                     }

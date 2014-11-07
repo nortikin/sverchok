@@ -124,13 +124,13 @@ class NODEVIEW_MT_Dynamic_Menu(bpy.types.Menu):
         layout.menu("NODEVIEW_MT_AddNumber")
         layout.menu("NODEVIEW_MT_AddVector")
         layout.menu("NODEVIEW_MT_AddMatrix")
-        layout.menu("NODEVIEW_MT_AddConditionals")
+        layout.menu("NODEVIEW_MT_AddLogic")
         layout.menu("NODEVIEW_MT_AddListOps")
         layout.separator()
-        layout.menu("NODEVIEW_MT_AddBasicViz")
-        layout.menu("NODEVIEW_MT_AddBasicText")
-        layout.menu("NODEVIEW_MT_AddBasicScene")
-        layout.menu("NODEVIEW_MT_AddBasicLayout")
+        layout.menu("NODEVIEW_MT_AddViz")
+        layout.menu("NODEVIEW_MT_AddText")
+        layout.menu("NODEVIEW_MT_AddScene")
+        layout.menu("NODEVIEW_MT_AddLayout")
         layout.separator()
         if show_icons:
             layout.menu("NODEVIEW_MT_AddBetas", icon='OUTLINER_DATA_POSE')
@@ -138,8 +138,6 @@ class NODEVIEW_MT_Dynamic_Menu(bpy.types.Menu):
         else:
             layout.menu("NODEVIEW_MT_AddBetas")
             layout.menu("NODEVIEW_MT_AddAlphas")
-        layout.separator()
-        layout.menu("NODEVIEW_MT_AddBpy")
 
 
 class NODEVIEW_MT_AddGenerators(bpy.types.Menu):
@@ -164,7 +162,7 @@ class NODEVIEW_MT_AddModifiers(bpy.types.Menu):
 
 
 class NODEVIEW_MT_AddListOps(bpy.types.Menu):
-    bl_label = "List operations"
+    bl_label = "List"
 
     def draw(self, context):
         layout = self.layout
@@ -183,10 +181,10 @@ classes = [
     make_class('GeneratorsExt', "Extended Generators"),
     make_class('Transforms', "Transforms"),
     make_class('Analyzers', "Analyzers"),
-    make_class('BasicViz', "Basic Viz"),
-    make_class('BasicText', "Basic Text"),
-    make_class('BasicScene', "Basic Scene"),
-    make_class('BasicLayout', "Basic Layout"),
+    make_class('Viz', "Viz"),
+    make_class('Text', "Text"),
+    make_class('Scene', "Scene"),
+    make_class('Layout', "Layout"),
     make_class('Listmain', "List main"),
     make_class('Liststruct', "List struct"),
     make_class('Number', "Number"),
@@ -194,7 +192,7 @@ classes = [
     make_class('Matrix', "Matrix"),
     make_class('ModifierChange', "Modifier Change"),
     make_class('ModifierMake', "Modifier Make"),
-    make_class('Conditionals', "Conditionals"),
+    make_class('Logic', "Logic"),
     make_class('Betas', "Beta Nodes"),
     make_class('Alphas', "Alpha Nodes"),
 ]

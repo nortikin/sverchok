@@ -161,14 +161,14 @@ def make_node_cats():
         ["MatrixInterpolationNode", "Matrix Interpolation"],
     ]
 
-    node_cats["Conditionals"] = [
+    node_cats["Logic"] = [
         ["SvLogicNode",         "Logic"],
         ["SvSwitchNode",        "Switch"],
         ["SvNeuroElman1LNode",  "Neuro"],
     ]
 
 # orange
-    node_cats["Basic Viz"] = [
+    node_cats["Viz"] = [
         ["ViewerNode2",         "Viewer Draw",         'RETOPO'],
         ["BmeshViewerNode",     "Viewer BMesh"],
         ["IndexViewerNode",     "Viewer Index"],
@@ -176,7 +176,7 @@ def make_node_cats():
     ]
 
 # greish blue
-    node_cats["Basic Text"] = [
+    node_cats["Text"] = [
         ["ViewerNode_text",     "Viewer text"],
         ["SvTextInNode",        "Text in"],
         ["SvTextOutNode",       "Text out"],
@@ -187,7 +187,7 @@ def make_node_cats():
     ]
 
 # green
-    node_cats["Basic Scene"] = [
+    node_cats["Scene"] = [
         ["ObjectsNode",         "Objects in"],
         ["SvObjRemoteNode",     "Scene Objects"],
         ["SvFrameInfoNode",     "Frame info"],
@@ -200,7 +200,7 @@ def make_node_cats():
     ]
 
 # violet
-    node_cats["Basic Layout"] = [
+    node_cats["Layout"] = [
         ["WifiInNode",          "Wifi in"],
         ["WifiOutNode",         "Wifi out"],
         ["NodeReroute",         "Reroute Point"],
