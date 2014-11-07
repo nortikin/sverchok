@@ -82,15 +82,27 @@ class SvNodeGroupCreator(bpy.types.Operator):
             ng.links.new(in_socket, gi_socket)
             ng.links.new(gn_socket, out_socket)
         
-        out_links_sockets = defaultdict(set)
+        out_links_sockets = set(l.from_socket for l in out_links)
         
-        #for l in out_links:
-        #    out_links_socket[l.from_socket].add(l.to_socket
-        
-        for i,l in enumerate(out_links):
+        for i, from_socket in enumerate(out_links_sockets):
+            to_sockets = [l.to_socket for l in from_socket.links]
+            s_name = "{}:{}".format(i, from_socket.name)
+            # to account for reroutes
+            other = get_other_socket(to_sockets[0])
+            gn_socket = group_node.outputs.new(other.bl_idname, s_name)
+            go_socket = group_out.inputs.new(other.bl_idname, s_name)
+            for to_socket in to_sockets:
+                l = to_socket.links[0]
+                ng.links.remove(l)
+                ng.links.new(go_socket, from_socket)
+                ng.links.new(to_socket, gn_socket)
+                
+            '''
+            # redo
             out_socket = l.from_socket
+            
             in_socket = l.to_socket
-            s_name = "{}:{}".format(i, out_socket.name)
+            
             other = get_other_socket(in_socket)
             gn_socket = group_node.outputs.new(other.bl_idname, s_name)
             go_socket = group_out.inputs.new(other.bl_idname, s_name)
@@ -98,6 +110,7 @@ class SvNodeGroupCreator(bpy.types.Operator):
             ng.links.remove(l)
             ng.links.new(go_socket, out_socket)
             ng.links.new(in_socket, gn_socket)
+            '''
         
         # collect sockets for node group in out    
         group_in.collect()
