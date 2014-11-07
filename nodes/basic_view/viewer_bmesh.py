@@ -316,13 +316,13 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
             return j
 
     def update(self):
-
+        pass
         # explicit statement about which states are useful to process.
-        if not self.activate:
-            self.set_dormant_color()
-            return
+        #if not self.activate:
+        #    self.set_dormant_color()
+        #    return
 
-        inputs = self.inputs
+        #inputs = self.inputs
 
 
     def process(self):

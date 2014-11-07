@@ -288,22 +288,26 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
 
 def sv_colors_definition():
     from sverchok.sv_menu import make_node_cats
-    bpy.types.Scene.sv_color_viz = FloatVectorProperty(
-        name="Node's color viz", description='',
-        size=3, min=0.0, max=1.0,
-        default=(1, 0.3, 0), subtype='COLOR')
-    sv_node_colors = {
-                    # orange
-                    "Viz":(1, 0.3, 0),
-                    # greish blue
-                    "Text":(0.5, 0.5, 1),
-                    # green
-                    "Scene":(0, 0.5, 0.2),
-                    # violet
-                    "Layout":(0.674, 0.242, 0.363),
-                    # green-blue
-                    "Generators":(0,0.5,0.5),
-                    }
+    from sverchok.data_structure import SVERCHOK_NAME
+    addon_name = SVERCHOK_NAME
+    addon = bpy.context.user_preferences.addons.get(addon_name)
+    if addon:
+        prefs = addon.preferences
+        sv_node_colors = {
+            "Viz":prefs.sv_color_viz,
+            "Text":prefs.sv_color_tex,
+            "Scene":prefs.sv_color_sce,
+            "Layout":prefs.sv_color_lay,
+            "Generators":prefs.sv_color_gen,
+            }
+    else:
+        sv_node_colors = {
+            "Viz":(1, 0.3, 0),
+            "Text":(0.5, 0.5, 1),
+            "Scene":(0, 0.5, 0.2),
+            "Layout":(0.674, 0.242, 0.363),
+            "Generators":(0,0.5,0.5),
+            }
     sv_node_cats = make_node_cats()
     sv_cats_node = {}
     for ca,no in sv_node_cats.items():
@@ -313,7 +317,6 @@ def sv_colors_definition():
             except:
                 sv_cats_node[n[0]] = False
     return sv_cats_node
-sv_cats_node = sv_colors_definition()
 
 
 class SverchCustomTreeNode:
@@ -325,6 +328,7 @@ class SverchCustomTreeNode:
         ng = self.id_data
         ng.freeze()
         # color
+        sv_cats_node = sv_colors_definition()
         cat = sv_cats_node[self.bl_idname]
         if cat:
             self.use_custom_color = True

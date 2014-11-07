@@ -42,6 +42,31 @@ class SverchokPreferences(AddonPreferences):
         size=3, min=0.0, max=1.0,
         default=(1, 1, 1), subtype='COLOR')
 
+    sv_color_viz = FloatVectorProperty(
+        name="Viz", description='',
+        size=3, min=0.0, max=1.0,
+        default=(1, 0.3, 0), subtype='COLOR')
+
+    sv_color_tex = FloatVectorProperty(
+        name="Tex", description='',
+        size=3, min=0.0, max=1.0,
+        default=(0.5, 0.5, 1), subtype='COLOR')
+
+    sv_color_sce = FloatVectorProperty(
+        name="Sce", description='',
+        size=3, min=0.0, max=1.0,
+        default=(0, 0.5, 0.2), subtype='COLOR')
+
+    sv_color_lay = FloatVectorProperty(
+        name="Lay", description='',
+        size=3, min=0.0, max=1.0,
+        default=(0.674, 0.242, 0.363), subtype='COLOR')
+
+    sv_color_gen = FloatVectorProperty(
+        name="Gen", description='',
+        size=3, min=0.0, max=1.0,
+        default=(0,0.5,0.5), subtype='COLOR')
+
     frame_change_modes = [
         ("PRE", "Pre", "Update Sverchok before frame change", 0),
         ("POST", "Post", "Update Sverchok after frame change", 1),
@@ -70,29 +95,40 @@ class SverchokPreferences(AddonPreferences):
 
     def draw(self, context):
         layout = self.layout
-
-        col = layout.column()
-        col.label(text="General")
+        row = layout.split(percentage=0.33)
+        
+        col = row.column(align=True)
+        col.label(text="General:")
         col.label(text="Frame change handler:")
-        row = col.row()
-        row.prop(self, "frame_change_mode", expand=True)
-        col.separator()
-        col.label(text="Debug")
+        row1 = col.row()
+        row1.prop(self, "frame_change_mode", expand=True)
+        col.label(text='Node color scheme:')
+        split = col.split(percentage=0.20, align=True)
+        split.prop(self, 'sv_color_viz')
+        split.prop(self, 'sv_color_tex')
+        split.prop(self, 'sv_color_sce')
+        split.prop(self, 'sv_color_lay')
+        split.prop(self, 'sv_color_gen')
+        
+        col = row.column(align=True)
+        col.label(text="Debug:")
         col.prop(self, "show_debug")
         col.prop(self, "show_icons")
         col.prop(self, "heat_map")
-        row = col.row()
-        row.active = self.heat_map
-        row.prop(self, "heat_map_hot")
-        row.prop(self, "heat_map_cold")
+        col1 = col.split(percentage=0.5, align=True)
+        col1.active = self.heat_map
+        col1.prop(self, "heat_map_hot")
+        col1.prop(self, "heat_map_cold")
 
-        col.separator()
-        row = layout.row()
-        row.operator('wm.url_open', text='Home!').url = 'http://nikitron.cc.ua/blend_scripts.html'
+        col = row.column(align=True)
+        col.label(text="Misc:")
+        col1 = col.column(align=True)
+        col1.scale_y=2.0
+        col1.operator('wm.url_open', text='Home!').url = 'http://nikitron.cc.ua/blend_scripts.html'
         if context.scene.sv_new_version:
-            row.operator('node.sverchok_update_addon', text='Upgrade Sverchok addon')
+            col1.operator('node.sverchok_update_addon', text='Upgrade Sverchok addon')
         else:
-            row.operator('node.sverchok_check_for_upgrades', text='Check for new version')
+            col1.operator('node.sverchok_check_for_upgrades', text='Check for new version')
 
 
 def register():
@@ -101,3 +137,6 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SverchokPreferences)
+
+if __name__ == '__main__':
+    register()
