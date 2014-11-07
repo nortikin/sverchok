@@ -18,17 +18,18 @@
 #  The Original Code is Copyright (C) 2013-2014 by Gorodetskiy Nikita  ###
 #  All rights reserved.
 #
-#  Contact:      sverchok-b3d@yandex.ru    ###
-#  Information:  http://nikitron.cc.ua/sverchok.html   ###
+#  Contact:      sverchok-b3d@ya.ru    ###
+#  Information:  http://nikitron.cc.ua/sverchok_en.html   ###
 #
 #  The Original Code is: all of this file.
 #
 #  Contributor(s):
-#     Nedovizin Alexander
-#     Gorodetskiy Nikita
-#     Linus Yng
-#     Agustin Gimenez
-#     Dealga McArdle
+#     Nedovizin Alexander (aka Cfyzzz)
+#     Gorodetskiy Nikita (aka Nikitron)
+#     Linus Yng (aka Ly29)
+#     Agustin Jimenez (aka AgustinJB)
+#     Dealga McArdle (aka Zeffii)
+#     Konstantin Vorobiew (aka Kosvor)
 #
 #  ***** END GPL LICENSE BLOCK *****
 #
@@ -37,14 +38,14 @@
 bl_info = {
     "name": "Sverchok",
     "author": (
-        "(sverchok-b3d@yandex.ru) "
-        "Nedovizin Alexander, Gorodetskiy Nikita, Linus Yng, "
-        "Agustin Jimenez, Dealga McArdle"
+        "sverchok-b3d@ya.ru, "
+        "Cfyzzz, Nikitron, Ly29, "
+        "AgustinJB, Zeffii, Kosvor,"
     ),
     "version": (0, 5, 0, 1),
     "blender": (2, 7, 2),
     "location": "Nodes > CustomNodesTree > Add user nodes",
-    "description": "Do parametric node-based geometry programming",
+    "description": "Parametric node-based geometry programming",
     "warning": "",
     "wiki_url": "http://wiki.blender.org/index.php/Extensions:2.6/Py/Scripts/Nodes/Sverchok",
     "tracker_url": (
