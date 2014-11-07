@@ -50,7 +50,7 @@ class GenRangeNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "stop_", text="stop")
         layout.prop(self, "divisions_", text="divisons")
 
-    def update(self):
+    def process(self):
         # inputs
         if 'Start' in self.inputs and self.inputs['Start'].links:
             tmp = SvGetSocketAnyType(self, self.inputs['Start'])
@@ -87,8 +87,6 @@ class GenRangeNode(bpy.types.Node, SverchCustomTreeNode):
             count += step
             yield count
 
-    def update_socket(self, context):
-        self.update()
 
 
 def register():

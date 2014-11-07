@@ -123,6 +123,7 @@ if reload_event:
     node_list = make_node_list()
     for node in node_list:
         importlib.reload(node)
+    old_nodes.reload_old()
 
     if 'SVERCHOK' in nodeitems_utils._node_categories:
         nodeitems_utils.unregister_node_categories("SVERCHOK")

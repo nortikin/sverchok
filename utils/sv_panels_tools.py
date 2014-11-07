@@ -36,7 +36,7 @@ import sverchok
 def sv_get_local_path():
     sv_script_paths = os.path.normpath(os.path.dirname(__file__))
     bl_addons_path = os.path.split(os.path.dirname(sv_script_paths))[0]
-    sv_version_local = str(sverchok.bl_info["version"])[1:-1].replace(", ",".")
+    sv_version_local = ".".join(map(str, sverchok.bl_info["version"]))
     return sv_script_paths, bl_addons_path, sv_version_local
 
 # global variables in tools
@@ -146,12 +146,11 @@ class SverchokCheckForUpgrades(bpy.types.Operator):
             # when it is master
             #url = 'https://raw.githubusercontent.com/nortikin/sverchok/master/__init__.py'
             lines = urllib.request.urlopen(url).readlines()
-            for l in lines:
-                if '"version"' in str(l):
-                    version = str(l)
+            for l in map(str,lines):
+                if '"version"' in l:
+                    version = l[l.find("("):l.find(")")+1]    
                     break
-            v = version[version.find("("):version.find(")")+1]
-            version_url = ast.literal_eval(v) 
+            version_url = ast.literal_eval(version) 
         except urllib.error.URLError:
             traceback.print_exc()
             report({'INFO'}, "Unable to contact github, or SSL not compiled.")
@@ -162,9 +161,10 @@ class SverchokCheckForUpgrades(bpy.types.Operator):
             return {'CANCELLED'}
         if version_local != version_url:
             bpy.context.scene.sv_new_version = True
+            v_str = ".".join(map(str, version_url))
             report({'INFO'}, "New version {0}".format(version_url))
         else:
-            report({'INFO'}, "Your version {0} is latest.".format(version_local))
+            report({'INFO'}, "Your version {0} is latest.".format(sv_version_local))
         return {'FINISHED'}
 
 

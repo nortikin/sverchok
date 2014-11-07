@@ -14,14 +14,11 @@ nodes_dict = {
     ],
 
     'basic_view': [
-        'bakery',
         'viewer_bmesh',
         'viewer_indices',
         'viewer_text',
-        'viewer',
         'viewer_mk2',
         'empty_out',
-        'reroute',
     ],
 
     'basic_data': [
@@ -29,7 +26,6 @@ nodes_dict = {
         'text',
         'wifi_in',
         'wifi_out',
-        'eval_knieval',
         'switch',
         'obj_remote',
         'group',
@@ -142,7 +138,6 @@ nodes_dict = {
         'float',
         'integer',
         'random',
-        'formula',
         'formula2',
         'scalar',
         'list_input',
