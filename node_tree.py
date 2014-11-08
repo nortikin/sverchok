@@ -26,7 +26,7 @@ from bpy.types import NodeTree, NodeSocket, NodeSocketStandard
 
 from sverchok import data_structure
 from sverchok.data_structure import (SvGetSocketInfo, SvGetSocket,
-                                     SvSetSocket, updateNode, 
+                                     SvSetSocket, updateNode,
                                      get_other_socket)
 
 from sverchok.core.update_system import (build_update_list, process_from_node,
