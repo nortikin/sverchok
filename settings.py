@@ -39,7 +39,7 @@ class SverchokPreferences(AddonPreferences):
         default=(1, 0.3, 0), subtype='COLOR',
         update=update_system.update_error_colors)
 
-    expception_color = FloatVectorProperty(
+    exception_color = FloatVectorProperty(
         name="Error", description='When node has an exception',
         size=3, min=0.0, max=1.0,
         default=(0.8, 0.0, 0), subtype='COLOR',
@@ -166,7 +166,7 @@ class SverchokPreferences(AddonPreferences):
 
         col.label("Error colors")
         col1 = col.split(percentage=0.5, align=True)
-        col1.prop(self, "expception_color")
+        col1.prop(self, "exception_color")
         col1.prop(self, "no_data_color")
         
         
