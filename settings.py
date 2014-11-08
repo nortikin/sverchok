@@ -98,9 +98,9 @@ class SverchokPreferences(AddonPreferences):
         update=set_frame_change)
 
     show_icons = BoolProperty(
-        name="show_icons",
+        name="Show icons",
         default=False,
-        description="Use icons in menu")
+        description="Use icons in ctrl+space menu")
 
     scene_update = BoolProperty(
         name="Scene update handler",
@@ -118,6 +118,8 @@ class SverchokPreferences(AddonPreferences):
         col.label(text="Frame change handler:")
         row1 = col.row()
         row1.prop(self, "frame_change_mode", expand=True)
+        col.prop(self, "show_icons")
+        col.separator()
         col.label(text='Sverchok Node Theme:')
         split = col.split(percentage=0.20, align=True)
         split.prop(self, 'sv_color_viz')
@@ -132,7 +134,7 @@ class SverchokPreferences(AddonPreferences):
         col = row.column(align=True)
         col.label(text="Debug:")
         col.prop(self, "show_debug")
-        col.prop(self, "show_icons")
+
         col.prop(self, "heat_map")
         col1 = col.split(percentage=0.5, align=True)
         col1.active = self.heat_map
