@@ -23,6 +23,8 @@ import bpy
 from mathutils import Vector
 
 from sverchok import data_structure
+import sverchok
+
 import traceback
 import ast
 
@@ -413,3 +415,9 @@ def get_update_lists(ng):
     if not ng.name in update_cache:
         build_update_list(ng)
     return (update_cache.get(ng.name), partial_update_cache.get(ng.name))
+    
+def register():
+    addon_name = sverchok.__name__
+    addon = bpy.context.user_preferences.addons.get(addon_name)
+    if addon:
+        update_error_colors(addon.preferences, [])
