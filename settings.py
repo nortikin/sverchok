@@ -4,6 +4,7 @@ from bpy.props import BoolProperty, FloatVectorProperty, EnumProperty
 
 from sverchok import data_structure
 from sverchok.core import handlers
+from sverchok.core import update_system
 from sverchok.utils import sv_panels_tools
 from sverchok.utils import color_def
 
@@ -31,6 +32,18 @@ class SverchokPreferences(AddonPreferences):
         description="Print update timings in console",
         default=False, subtype='NONE',
         update=update_debug_mode)
+
+    no_data_color = FloatVectorProperty(
+        name="No data", description='When a node can not get data',
+        size=3, min=0.0, max=1.0,
+        default=(1, 0.3, 0), subtype='COLOR',
+        update=update_system.update_error_colors)
+
+    expception_color = FloatVectorProperty(
+        name="Error", description='When node has an exception',
+        size=3, min=0.0, max=1.0,
+        default=(0.8, 0.0, 0), subtype='COLOR',
+        update=update_system.update_error_colors)
 
 
     #  heat map settings
@@ -146,16 +159,25 @@ class SverchokPreferences(AddonPreferences):
         row2.prop(self, 'auto_apply_theme')
         row2.operator('node.sverchok_apply_theme')
         
+        # debug
         col = row.column(align=True)
         col.label(text="Debug:")
         col.prop(self, "show_debug")
 
+        col.label("Error colors")
+        col1 = col.split(percentage=0.5, align=True)
+        col1.prop(self, "expception_color")
+        col1.prop(self, "no_data_color")
+        
+        
         col.prop(self, "heat_map")
         col1 = col.split(percentage=0.5, align=True)
         col1.active = self.heat_map
         col1.prop(self, "heat_map_hot")
         col1.prop(self, "heat_map_cold")
-
+        
+        col.label("Error colors")
+        
         col = row.column(align=True)
         col.label(text="Misc:")
         col1 = col.column(align=True)

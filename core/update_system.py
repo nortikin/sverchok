@@ -26,6 +26,15 @@ from sverchok import data_structure
 import traceback
 import ast
 
+no_data_color = (1, 0.3, 0)
+exception_color = (0.8, 0.0, 0)
+
+def update_error_colors(self, context):
+    global no_data_color
+    global exception_color
+    no_data_color = self.no_data_color[:]
+    exception_color = self.exception_color[:]
+
 # cache node group update trees
 update_cache = {}
 # cache for partial update lists
@@ -240,7 +249,7 @@ def do_update_heat_map(node_list, nodes):
         # linear scale.
         nodes[name].color = cold.lerp(hot, t / t_max)
 
-def update_error_nodes(ng, name):
+def update_error_nodes(ng, name, err):
     if "error nodes" in ng:
         error_nodes = ast.literal_eval(ng["error nodes"])
     else:
@@ -250,7 +259,10 @@ def update_error_nodes(ng, name):
         return
     error_nodes[name] = (node.use_custom_color, node.color[:])
     ng["error nodes"] = str(error_nodes)
-    node.color=(.9,0,0)
+    if isinstance(err, LookupError):
+        node.color = no_data_color
+    else:
+        node.color = exception_color
     node.use_custom_color=True
 
 def reset_error_nodes(ng):
@@ -283,7 +295,7 @@ def do_update_general(node_list, nodes):
 
         except Exception as err:
             ng = nodes.id_data
-            update_error_nodes(ng, node_name)
+            update_error_nodes(ng, node_name, err)
             traceback.print_tb(err.__traceback__)
             print("Node {0} had exception {1}".format(node_name, err))
             return None
