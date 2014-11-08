@@ -5,12 +5,12 @@ from bpy.props import BoolProperty, FloatVectorProperty, EnumProperty
 from sverchok import data_structure
 from sverchok.core import handlers
 from sverchok.utils import sv_panels_tools
-SVERCHOK_NAME = __package__
+from sverchok.utils import color_def
 
 class SverchokPreferences(AddonPreferences):
 
     bl_idname = __package__
-
+    
     def update_debug_mode(self, context):
         data_structure.DEBUG_MODE = self.show_debug
 
@@ -19,6 +19,11 @@ class SverchokPreferences(AddonPreferences):
 
     def set_frame_change(self, context):
         handlers.set_frame_change(self.frame_change_mode)
+    
+    def update_theme(self, context):
+        color_def.rebuild_color_cache()
+        if self.auto_apply_theme:
+            color_def.apply_theme()
 
     show_debug = BoolProperty(
         name="Print update timings",
@@ -42,30 +47,41 @@ class SverchokPreferences(AddonPreferences):
         size=3, min=0.0, max=1.0,
         default=(1, 1, 1), subtype='COLOR')
 
+    
+    auto_apply_theme = BoolProperty(
+        name="Apply theme", description="Apply theme automaticlly",
+        default=False)
+        
+
     sv_color_viz = FloatVectorProperty(
         name="Viz", description='',
         size=3, min=0.0, max=1.0,
-        default=(1, 0.3, 0), subtype='COLOR')
+        default=(1, 0.3, 0), subtype='COLOR',
+        update=update_theme)
 
     sv_color_tex = FloatVectorProperty(
         name="Tex", description='',
         size=3, min=0.0, max=1.0,
-        default=(0.5, 0.5, 1), subtype='COLOR')
-
+        default=(0.5, 0.5, 1), subtype='COLOR',
+        update=update_theme)
+    
     sv_color_sce = FloatVectorProperty(
         name="Sce", description='',
         size=3, min=0.0, max=1.0,
-        default=(0, 0.5, 0.2), subtype='COLOR')
+        default=(0, 0.5, 0.2), subtype='COLOR',
+        update=update_theme)
 
     sv_color_lay = FloatVectorProperty(
         name="Lay", description='',
         size=3, min=0.0, max=1.0,
-        default=(0.674, 0.242, 0.363), subtype='COLOR')
+        default=(0.674, 0.242, 0.363), subtype='COLOR',
+        update=update_theme)
 
     sv_color_gen = FloatVectorProperty(
         name="Gen", description='',
         size=3, min=0.0, max=1.0,
-        default=(0,0.5,0.5), subtype='COLOR')
+        default=(0,0.5,0.5), subtype='COLOR',
+        update=update_theme)
 
     frame_change_modes = [
         ("PRE", "Pre", "Update Sverchok before frame change", 0),
@@ -102,13 +118,16 @@ class SverchokPreferences(AddonPreferences):
         col.label(text="Frame change handler:")
         row1 = col.row()
         row1.prop(self, "frame_change_mode", expand=True)
-        col.label(text='Node color scheme:')
+        col.label(text='Sverchok Node Theme:')
         split = col.split(percentage=0.20, align=True)
         split.prop(self, 'sv_color_viz')
         split.prop(self, 'sv_color_tex')
         split.prop(self, 'sv_color_sce')
         split.prop(self, 'sv_color_lay')
         split.prop(self, 'sv_color_gen')
+        row2 = col.row()
+        row2.prop(self, 'auto_apply_theme')
+        row2.operator('node.sverchok_apply_theme')
         
         col = row.column(align=True)
         col.label(text="Debug:")

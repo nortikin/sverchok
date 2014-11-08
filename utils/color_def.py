@@ -18,12 +18,12 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
+from bpy.props import StringProperty
 
 from sverchok.menu import make_node_cats
 import sverchok
 
 colors_cache = {}
-
 
 def sv_colors_definition():
     addon_name = sverchok.__name__
@@ -55,9 +55,61 @@ def sv_colors_definition():
                 sv_cats_node[n[0]] = False
     return sv_cats_node
 
+def rebuild_color_cache():
+    global colors_cache
+    colors_cache = sv_colors_definition()
 
 def get_color(bl_id):
-    global colors_cache
+    """
+    Get color for bl_id
+    """
     if not colors_cache:
-        colors_cache = sv_colors_definition()
+        rebuild_color_cache()
     return colors_cache.get(bl_id)
+
+def sverchok_trees():
+    for ng in bpy.data.node_groups:
+        if ng.bl_idname == "SverchCustomTreeType":
+            yield ng
+
+def apply_theme(ng=None):
+    """
+    Apply theme colors
+    """
+    global update_cache
+    global partial_update_cache
+    if not ng:
+        for ng in sverchok_trees():
+            apply_theme(ng)
+    else:
+        for n in filter(lambda n:hasattr(n, "set_color"), ng.nodes):
+            n.set_color()
+           
+           
+class SverchokApplyTheme(bpy.types.Operator):
+    """
+    Apply Sverchok themes
+    """
+    bl_idname = "node.sverchok_apply_theme"
+    bl_label = "Sverchok Apply theme"
+    bl_options = {'REGISTER', 'UNDO'}
+    
+    tree_name = StringProperty()
+
+    def execute(self, context):
+        if self.tree_name:
+            ng = bpy.data.node_groups.get(self.tree_name)
+            if ng:
+                apply_theme(ng)
+            else:
+                return {'CANCELLED'}
+        else:
+            apply_theme()
+        return {'FINISHED'}
+        
+           
+def register():
+    bpy.utils.register_class(SverchokApplyTheme)
+
+def unregister():
+    bpy.utils.unregister_class(SverchokApplyTheme)
