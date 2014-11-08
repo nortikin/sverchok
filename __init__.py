@@ -67,8 +67,8 @@ imported_modules = []
 
 # ugly hack, should make respective dict in __init__ like nodes
 # or parse it
-root_modules = ["sv_menu", "node_tree", "data_structure","core", 
-                "utils", "utils", "sv_nodes_menu", "nodes", "old_nodes"]
+root_modules = ["menu", "node_tree", "data_structure","core", 
+                "utils", "utils", "nodes", "old_nodes"]
 core_modules = ["handlers", "update_system", "upgrade_nodes"]
 utils_modules = [
     # non UI tools
@@ -125,30 +125,18 @@ if reload_event:
     for node in node_list:
         importlib.reload(node)
     old_nodes.reload_old()
-
-    if 'SVERCHOK' in nodeitems_utils._node_categories:
-        nodeitems_utils.unregister_node_categories("SVERCHOK")
-
-    from sverchok.sv_nodes_menu import make_categories
-    nodeitems_utils.register_node_categories("SVERCHOK", make_categories()[0])
+    menu.reload_menu()
 
 import bpy
-import nodeitems_utils
 
 def register():
-    from sverchok.sv_nodes_menu import make_categories
 
-    menu, node_count = make_categories()
     for m in imported_modules + node_list:
         if hasattr(m, "register"):
             m.register()
     # this is used to access preferences, should/could be hidden
     # in an interface
     data_structure.SVERCHOK_NAME = __name__
-    if 'SVERCHOK' not in nodeitems_utils._node_categories:
-        nodeitems_utils.register_node_categories("SVERCHOK", menu)
-        
-    print("** Sverchok loaded with {i} nodes **".format(i=node_count))
     
     if reload_event:
         data_structure.RELOAD_EVENT = True
@@ -159,6 +147,3 @@ def unregister():
     for m in reversed(imported_modules + node_list):
         if hasattr(m, "unregister"):
             m.unregister()
-
-    if 'SVERCHOK' in nodeitems_utils._node_categories:
-        nodeitems_utils.unregister_node_categories("SVERCHOK")

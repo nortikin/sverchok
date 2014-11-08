@@ -30,7 +30,7 @@ from bpy.props import (
 )
 
 import sverchok
-from sverchok.sv_nodes_menu import make_node_cats
+from sverchok.menu import make_node_cats
 
 node_cats = make_node_cats()
 
