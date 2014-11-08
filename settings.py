@@ -25,12 +25,15 @@ class SverchokPreferences(AddonPreferences):
         if self.auto_apply_theme:
             color_def.apply_theme()
 
+    #  debugish...
     show_debug = BoolProperty(
         name="Print update timings",
         description="Print update timings in console",
         default=False, subtype='NONE',
         update=update_debug_mode)
 
+
+    #  heat map settings
     heat_map = BoolProperty(
         name="Heat map",
         description="Color nodes according to time",
@@ -46,12 +49,19 @@ class SverchokPreferences(AddonPreferences):
         name="Heat map cold", description='',
         size=3, min=0.0, max=1.0,
         default=(1, 1, 1), subtype='COLOR')
+    
+    #  theme settings
 
+    sv_theme = EnumProperty(items=color_def.themes, 
+                         name="Theme prset",
+                         description="Select a theme preset",
+                         update=color_def.color_callback,
+                         default="default_theme")
+                          
     
     auto_apply_theme = BoolProperty(
         name="Apply theme", description="Apply theme automaticlly",
         default=False)
-        
 
     sv_color_viz = FloatVectorProperty(
         name="Viz", description='',
@@ -83,12 +93,12 @@ class SverchokPreferences(AddonPreferences):
         default=(0,0.5,0.5), subtype='COLOR',
         update=update_theme)
 
+    #  frame change
     frame_change_modes = [
         ("PRE", "Pre", "Update Sverchok before frame change", 0),
         ("POST", "Post", "Update Sverchok after frame change", 1),
         ("NONE", "None", "Sverchok doesn't update on frame change", 2)
     ]
-    
 
     frame_change_mode = EnumProperty(
         items=frame_change_modes,
@@ -97,11 +107,14 @@ class SverchokPreferences(AddonPreferences):
         default="POST",
         update=set_frame_change)
 
+    #  ctrl+space settings
+    
     show_icons = BoolProperty(
         name="Show icons",
         default=False,
         description="Use icons in ctrl+space menu")
 
+    #  not used, probably shouldn't be. leaving for now.
     scene_update = BoolProperty(
         name="Scene update handler",
         default=False,
@@ -120,7 +133,9 @@ class SverchokPreferences(AddonPreferences):
         row1.prop(self, "frame_change_mode", expand=True)
         col.prop(self, "show_icons")
         col.separator()
+        
         col.label(text='Sverchok Node Theme:')
+        col.prop(self, 'sv_theme')
         split = col.split(percentage=0.20, align=True)
         split.prop(self, 'sv_color_viz')
         split.prop(self, 'sv_color_tex')
