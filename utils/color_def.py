@@ -37,14 +37,15 @@ default_theme = {
     
 def color_callback(self, context):
     theme = self.sv_theme
-    theme_dict = getattr(globals(), theme, None)
-    sv_node_colors = {
-        "Viz": "sv_color_viz",
-        "Text": "sv_color_tex",
-        "Scene": "sv_color_sce",
-        "Layout": "sv_color_lay",
-        "Generators": "sv_color_gen",
-    }
+    theme_dict = globals().get(theme)
+    sv_node_colors = [
+        ("Viz", "sv_color_viz"),
+        ("Text", "sv_color_tex"),
+        ("Scene", "sv_color_sce"),
+        ("Layout", "sv_color_lay"),
+        ("Generators", "sv_color_gen"),
+    ]
+    # stop theme from auto updating
     auto_apply_theme = self.auto_apply_theme
     self.auto_apply_theme = False
     for name, attr in sv_node_colors:
