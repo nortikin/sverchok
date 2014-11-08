@@ -80,7 +80,8 @@ utils_modules = [
     #     - text editor ui
     "text_editor_submenu", "text_editor_plugins",
     #     - node_view ui tool + panels + custom menu
-    "sv_panels_tools", "sv_IO_panel", "sv_panels", "nodeview_space_menu", "group_tools"
+    "sv_panels_tools", "sv_IO_panel", "sv_panels", "nodeview_space_menu", "group_tools",
+    "color_def"
 ]
 
 # modules and pkg path, nodes are done separately.
