@@ -161,6 +161,8 @@ class SverchokPreferences(AddonPreferences):
         col1 = col.column(align=True)
         col1.scale_y=2.0
         col1.operator('wm.url_open', text='Home!').url = 'http://nikitron.cc.ua/blend_scripts.html'
+        col1.operator('wm.url_open', text='Documentation!').url = 'http://nikitron.cc.ua/sverch/html/main.html'
+        
         if context.scene.sv_new_version:
             col1.operator('node.sverchok_update_addon', text='Upgrade Sverchok addon')
         else:
