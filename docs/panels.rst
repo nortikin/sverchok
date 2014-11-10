@@ -31,7 +31,7 @@ Layout manager
 .. image:: https://cloud.githubusercontent.com/assets/5783432/4512959/867d395a-4b46-11e4-9419-95ed1479ac72.png
   :alt: manager.png
 
-Box to quickly pick layout, switch between them with buttons instead of popup list. Has also buttons:
+Box to quickly pick layout, switch between them with buttons instead of popup list. Also have settins:
 
 
 +--------------------+----------------------------------------------------------------------------------------+
@@ -44,8 +44,10 @@ Box to quickly pick layout, switch between them with buttons instead of popup li
 +--------------------+----------------------------------------------------------------------------------------+
 | **Animate layout** | to animate the layout (or not) - may preserve you time.                                |
 +--------------------+----------------------------------------------------------------------------------------+
-| **Process layout** | Automaticlly evaluate layout while editing, disable for large or complex layouts       |+--------------------+----------------------------------------------------------------------------------------+
-| **Fake User**      | Sets fake user so layout isn't deleted on save                                         |+--------------------+----------------------------------------------------------------------------------------+
+| **Process layout** | Automaticlly evaluate layout while editing, disable for large or complex layouts       |
++--------------------+----------------------------------------------------------------------------------------+
+| **Fake User**      | Sets fake user so layout isn't deleted on save                                         |
++--------------------+----------------------------------------------------------------------------------------+
 
 
 Check for updates
@@ -212,6 +214,6 @@ Groups Panel
 
 Crete a node group from selection.
 Sverchok groups is a beta feature, use a your own risk and please report bugs. Also while it is in beta old node groups may break.
-`Bug reports <https://github.com/nortikin/sverchok/issues/462>`
+`Bug reports <https://github.com/nortikin/sverchok/issues/462>`_.
 
 
