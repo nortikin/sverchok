@@ -30,7 +30,18 @@ Doing these things will break old layouts and or create very ugly code in the no
 
 3. Adding new socket without updating upgrade.py
 
-4. 'typ', 'newsock', 'current_mode' names of properties are reserved for nodes, not use for anything else
+4. 'current_mode' names of properties are reserved for nodes, not use for anything else
+
+
+HELPFUL HINTS
+=============
+
+In blender console you can easily inspect the sverchok system by writing:
+
+.. code-block :: python
+
+    import sverchok
+    print(dir(sverchok.nodes))
 
 
 TO MAKE YOUR NODE:
