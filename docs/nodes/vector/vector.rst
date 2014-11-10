@@ -5,7 +5,8 @@ Vector
 .. toctree::
    :maxdepth: 2
 
-   vector_in_out
+   vector_in
+   vector_out
    vector_move
    vector_math
    vector_drop

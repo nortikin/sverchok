@@ -15,6 +15,8 @@ Generator
    2pt_spline
    3pt_arc
    hilbert
+   hilbert3d
+   hilbert_image
    image
    random_vector
    profile_parametric
