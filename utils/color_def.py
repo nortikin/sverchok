@@ -25,7 +25,9 @@ import sverchok
 
 colors_cache = {}
 
-themes = [("default_theme", "Default", "Default")]
+themes = [("default_theme", "Default", "Default"),
+          ("nipon_blossom", "Nipon Blossom", "Nipon Blossom")]
+
 
 default_theme = {
     "Viz": (1, 0.3, 0),
@@ -34,6 +36,15 @@ default_theme = {
     "Layout": (0.674, 0.242, 0.363),
     "Generators": (0, 0.5, 0.5),
 }
+
+nipon_blossom = {
+    "Viz": (0.628488, 0.931008, 1.000000),
+    "Text": (1.000000, 0.899344, 0.974251),
+    "Scene": (0.904933, 1.000000, 0.883421),
+    "Layout": (0.602957, 0.674000, 0.564277),
+    "Generators": (0.700000, 0.700000, 0.7),
+}
+
     
 def color_callback(self, context):
     theme = self.sv_theme
