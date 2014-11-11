@@ -45,7 +45,8 @@ class SvNodeGroupCreator(bpy.types.Operator):
         
         ng = context.space_data.node_tree
         ng.freeze(hard=True)
-       
+        is_process = ng.sv_process
+        ng.sv_process = False
         # collect data
         nodes = {n for n in ng.nodes if n.select}
         if not nodes:
@@ -123,8 +124,8 @@ class SvNodeGroupCreator(bpy.types.Operator):
         import_tree(group_ng, "", nodes_json)
         
         ng.unfreeze(hard=True)
+        ng.sv_process = is_process
         ng.update()
-        
         self.report({"INFO"}, "Node group created")
         return {'FINISHED'}
 
