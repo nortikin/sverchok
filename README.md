@@ -21,11 +21,12 @@ Comes with more than 100 nodes to help create and manipulate geometry. Combining
   - do parametric constructions
   - easily change parameters with sliders and formulas
   - do cross sections, extrusions, other modifications with hight level flexible parametrised and vectorised node tools  
-  - calculate areas, volume and other, analize geometry and make CSV tables or import directly to Sverhok
-  - use Vector fields, create them, visualize data
+  - calculate areas, volume, and perform other geometric analysis
+  - make or import CSV tables or custom formats
+  - use Vector fields, create them, visualize data.
   - even code your own custom nodes in python with Scripted node
   - make your own 'addons' on node layouts and utilise them with Sverchok 3dview panel in your everyday pipeline
-  - access to pythn API with special node EvalKnieval
+  - access to Blender Python API (bpy) with special _Set_ and _Get_ nodes
   - upgrade Sverchok with pressing one button
   - make your own neuro network
   - and much, much more!
