@@ -104,16 +104,16 @@ class SvObjDuplivertOne(bpy.types.Node, SverchCustomTreeNode):
             obj_child = objects[self.name_child]
             obj_child.parent = obj_parent
 
-            # print('reaches here')
+            print('reaches here')
             if obj_child.use_dupli_vertices_rotation:
-                # print('should be rotating')
+                print('should be rotating')
 
-                val = self.inputs['Rotations'].fget()
+                val = self.inputs['Rotations'].sv_get()
                 if hasattr(val, 'any') and val.any():
                     verts = obj_parent.data.vertices
                     if not (len(val) == len(verts)):
-                        # print('sizes don\'t match')
-                        # print(len(val), len(verts))
+                        print('sizes don\'t match')
+                        print(len(val), len(verts))
                         return
                 else:
                     print('no array')
