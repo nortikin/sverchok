@@ -22,6 +22,7 @@ import re
 import zipfile
 import traceback
 
+
 from os.path import basename
 from os.path import dirname
 from itertools import chain
@@ -34,9 +35,10 @@ from sverchok.node_tree import SverchCustomTree
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok import old_nodes
 
-_EXPORTER_REVISION_ = '0.053'
+_EXPORTER_REVISION_ = '0.054'
 
 '''
+0.054 group support, hash of text files
 0.053 support old_nodes on demand
 0.052 respect selection
 0.051 fake node removed, freeze and unfreeze used instead
@@ -116,6 +118,7 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
     nodes = ng.nodes
     layout_dict = {}
     nodes_dict = {}
+    groups_dict = {}
     texts = bpy.data.texts
     if not skip_set:
         skip_set = {'SvImportExport', 'Sv3DviewPropsNode'}
@@ -135,6 +138,8 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
 
         ObjectsNode = (node.bl_idname == 'ObjectsNode')
         ProfileParamNode = (node.bl_idname == 'SvProfileNode')
+        IsGroupNode = (node.bl_idname == 'SvGroupNode')
+
 
         for k, v in node.items():
 
@@ -157,6 +162,14 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
             if ProfileParamNode and (k == "filename"):
                 '''add file content to dict'''
                 node_dict['path_file'] = texts[node.filename].as_string()
+            
+            if IsGroupNode and (k == "group_name"):
+                if v not in groups_dict:
+                    group_ng = bpy.data.node_groups[v]
+                    group_dict = create_dict_of_tree(group_ng)
+                    group_json = json.dumps(group_dict)
+                    groups_dict[v] = group_json
+                     
 
             if isinstance(v, (float, int, str)):
                 node_items[k] = v
@@ -178,6 +191,7 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
         nodes_dict[node.name] = node_dict
 
     layout_dict['nodes'] = nodes_dict
+    layout_dict['groups'] = groups_dict
 
     #''' get connections '''
     #links = (compile_socket(l) for l in ng.links)
@@ -225,7 +239,7 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
     return layout_dict
 
 
-def import_tree(ng, fullpath='', nodes_json=None):
+def import_tree(ng, fullpath='', nodes_json=None, create_texts=True):
 
     nodes = ng.nodes
     ng.use_fake_user = True
@@ -241,6 +255,15 @@ def import_tree(ng, fullpath='', nodes_json=None):
 
         ''' first create all nodes. '''
         nodes_to_import = nodes_json['nodes']
+        groups_to_import = nodes_json.get('groups',{})
+        
+        group_name_remap = {}
+        for name in groups_to_import:
+            group_ng = bpy.data.node_groups.new(name, 'SverchGroupTreeType')
+            if group_ng.name != name:
+                group_name_remap[name] = ng.name
+            import_tree(group_ng, '', groups_to_import[name])
+            
         name_remap = {}
         texts = bpy.data.texts
         
@@ -287,21 +310,29 @@ def import_tree(ng, fullpath='', nodes_json=None):
             Also is a script/profile is used for more than one node it will lead to duplication
             All names have to collected and then fixed at end
             '''
-            if node.bl_idname in ('SvScriptNode', 'SvScriptNodeMK2'):
-                new_text = texts.new(node.script_name)
-                #  there is no gurantee that we get the name we request
-                if new_text.name != node.script_name:
-                    node.script_name = new_text.name
-                new_text.from_string(node.script_str)
-                node.load()
+            if create_texts:
+                if node.bl_idname in ('SvScriptNode', 'SvScriptNodeMK2'):
+                    new_text = texts.new(node.script_name)
+                    #  there is no gurantee that we get the name we request
+                    if new_text.name != node.script_name:
+                        node.script_name = new_text.name
+                    new_text.from_string(node.script_str)
+                    node.load()
 
-            elif node.bl_idname == 'SvProfileNode':
-                new_text = texts.new(node.filename)
-                new_text.from_string(node_ref['path_file'])
-                #  update will get called many times, is this really needed?
-                node.update()
-            elif node.bl_idname in {'SvGroupInputsNode', 'SvGroupOutputsNode'}:
+                elif node.bl_idname == 'SvProfileNode':
+                    new_text = texts.new(node.filename)
+                    new_text.from_string(node_ref['path_file'])
+                    #  update will get called many times, is this really needed?
+                    node.update()
+            '''
+            Nodes that require post processing to work properly
+            '''
+            if node.bl_idname in {'SvGroupInputsNode', 'SvGroupOutputsNode'}:
                 node.load()
+            elif node.bl_idname in {'SvGroupNode'}:
+                node.load()
+                group_name = node.group_name
+                node.group_name = group_name_remap.get(group_name, group_name)
 
         update_lists = nodes_json['update_lists']
         print('update lists:')

@@ -163,6 +163,7 @@ class SvNodeGroupEditDone(bpy.types.Operator):
     frame_name = StringProperty()
     
     def execute(self, context):
+        print("Saving node group")
         ng = context.space_data.node_tree
         frame = ng.nodes.get(self.frame_name)
         if not frame:
@@ -197,7 +198,7 @@ class SvNodeGroupEditDone(bpy.types.Operator):
         group_ng.nodes.clear()
         import_tree(group_ng, "", nodes_json)
         
-        self.report({"INFO"}, "Node group created")
+        self.report({"INFO"}, "Node group save")
         return {'FINISHED'}
 
 
