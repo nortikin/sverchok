@@ -88,10 +88,10 @@ ui_modules = [
 ]
 
 # modules and pkg path, nodes are done separately.
-mods_bases = [(root_modules, "sverchok"), 
-              (core_modules, "sverchok.core"), 
+mods_bases = [(root_modules,  "sverchok"), 
+              (core_modules,  "sverchok.core"), 
               (utils_modules, "sverchok.utils"),
-              (ui_modules, "sverchok.ui")]
+              (ui_modules,    "sverchok.ui")]
 
 #  settings have to be treated separately incase the folder name
 #  is something else than sverchok...
