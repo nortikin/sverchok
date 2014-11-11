@@ -762,24 +762,29 @@ def get_socket_type_full(node, inputsocketname):
     other = get_other_socket(socket)
     return other.links[0].from_socket.bl_idname
 
-def replace_socket(socket, new_type, new_name=None):
+def replace_socket(socket, new_type, new_name=None, new_pos=None):
     '''
-    Replace a socket a keep links
+    Replace a socket and keep links
     '''
-    if not new_name:
+    if new_name is None:
         new_name = socket.name
-    if socket.bl_idname == new_type:
-        return socket
+    socket.name = new_name    
+    # quit early
+    #if socket.bl_idname == new_type:
+    #    return socket
     ng = socket.id_data
-    ng.freeze(hard=True)
+    ng.freeze()
     if socket.is_output:
         to_sockets = [l.to_socket for l in socket.links]
-        node_pos = -1
         outputs = socket.node.outputs
-        for i,s in enumerate(outputs):
-            if s == socket:
-                node_pos = i
-                break
+        if new_pos is None:
+            for i,s in enumerate(outputs):
+                if s == socket:
+                    node_pos = i
+                    break
+        else:
+            node_pos = new_pos
+            
         outputs.remove(socket)
         new_socket = outputs.new(new_type, new_name)
         outputs.move(len(outputs)-1, node_pos)
@@ -790,19 +795,20 @@ def replace_socket(socket, new_type, new_name=None):
             from_socket = socket.links[0].from_socket
         else:
             from_socket = None
-        node_pos = -1
         inputs = socket.node.inputs
-        for i,s in enumerate(inputs):
-            if s == socket:
-                node_pos = i
-                break
+        if new_pos is None:
+            for i,s in enumerate(inputs):
+                if s == socket:
+                    node_pos = i
+                    break
+        else:
+            node_pos = new_pos
         inputs.remove(socket)
         new_socket = inputs.new(new_type, new_name)
         inputs.move(len(inputs)-1, node_pos)
         if from_socket:
             ng.links.new(from_socket, new_socket)
-    ng.unfreeze(hard=True)
-    print(new_socket)
+    ng.unfreeze()
     return new_socket
     
 def get_other_socket(socket):
