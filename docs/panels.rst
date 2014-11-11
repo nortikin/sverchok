@@ -28,7 +28,7 @@ Update
 Layout manager
 --------------
 
-.. image:: https://cloud.githubusercontent.com/assets/5783432/4512959/867d395a-4b46-11e4-9419-95ed1479ac72.png
+.. image:: https://cloud.githubusercontent.com/assets/6241382/4993796/b6eda7ac-69b2-11e4-82e9-4448f3b4ee3a.png
   :alt: manager.png
 
 Box to quickly pick layout, switch between them with buttons instead of popup list. Also have settins:
