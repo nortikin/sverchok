@@ -68,26 +68,30 @@ imported_modules = []
 # ugly hack, should make respective dict in __init__ like nodes
 # or parse it
 root_modules = ["menu", "node_tree", "data_structure","core", 
-                "utils", "utils", "nodes", "old_nodes"]
+                "utils", "ui", "nodes", "old_nodes"]
 core_modules = ["handlers", "update_system", "upgrade_nodes"]
 utils_modules = [
     # non UI tools
     "cad_module", "sv_bmesh_utils", "sv_curve_utils", "voronoi", 
     "sv_script", "sv_itertools", "script_importhelper",
-    # callbacks for bgl
-    "viewer_draw", "index_viewer_draw", "nodeview_bgl_viewer_draw", "viewer_draw_mk2",
     # UI
     #     - text editor ui
     "text_editor_submenu", "text_editor_plugins",
-    #     - node_view ui tool + panels + custom menu
-    "sv_panels_tools", "sv_IO_panel", "sv_panels", "nodeview_space_menu", "group_tools",
-    "color_def"
+    #     - operators
+    "sv_panels_tools", "sv_IO_panel", "group_tools",
+]
+ui_modules = [
+    "color_def", "sv_panels", "nodeview_space_menu",
+    # bgl modules
+    "viewer_draw",  "viewer_draw_mk2", "nodeview_bgl_viewer_draw",
+    "index_viewer_draw"
 ]
 
 # modules and pkg path, nodes are done separately.
 mods_bases = [(root_modules, "sverchok"), 
               (core_modules, "sverchok.core"), 
-              (utils_modules, "sverchok.utils")]
+              (utils_modules, "sverchok.utils"),
+              (ui_modules, "sverchok.ui")]
 
 #  settings have to be treated separately incase the folder name
 #  is something else than sverchok...
@@ -131,7 +135,6 @@ if reload_event:
 import bpy
 
 def register():
-
     for m in imported_modules + node_list:
         if hasattr(m, "register"):
             m.register()

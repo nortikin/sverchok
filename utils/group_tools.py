@@ -22,17 +22,16 @@ import re
 import zipfile
 import traceback
 
-from os.path import basename
-from os.path import dirname
 from itertools import chain
-
-from .sv_IO_panel import create_dict_of_tree, import_tree
-from sverchok.data_structure import get_other_socket
 
 import bpy
 from bpy.types import EnumProperty
 from bpy.props import StringProperty
 from bpy.props import BoolProperty
+
+
+from .sv_IO_panel import create_dict_of_tree, import_tree
+from sverchok.data_structure import get_other_socket
 
 
 class SvNodeGroupCreator(bpy.types.Operator):
@@ -96,21 +95,6 @@ class SvNodeGroupCreator(bpy.types.Operator):
                 ng.links.remove(l)
                 ng.links.new(go_socket, from_socket)
                 ng.links.new(to_socket, gn_socket)
-                
-            '''
-            # redo
-            out_socket = l.from_socket
-            
-            in_socket = l.to_socket
-            
-            other = get_other_socket(in_socket)
-            gn_socket = group_node.outputs.new(other.bl_idname, s_name)
-            go_socket = group_out.inputs.new(other.bl_idname, s_name)
-            
-            ng.links.remove(l)
-            ng.links.new(go_socket, out_socket)
-            ng.links.new(in_socket, gn_socket)
-            '''
         
         # collect sockets for node group in out    
         group_in.collect()
@@ -154,17 +138,20 @@ class SvNodeGroupEdit(bpy.types.Operator):
         ng = context.space_data.node_tree
         node = context.node
         group_ng = bpy.data.node_groups.get(self.group_name)
+        print(group_ng.name)
         ng.freeze()
         frame = ng.nodes.new("NodeFrame")
         frame.label = group_ng.name
         for n in ng.nodes:
             n.select = False
         nodes_json = create_dict_of_tree(group_ng)
-        import_tree(ng, "", nodes_json)
+        print(nodes_json)
+        import_tree(ng, "", nodes_json, create_texts=False)
         nodes = [n for n in ng.nodes if n.select]
         locs = [n.location for n in nodes]
         for n in nodes:
-            n.parent = frame
+            if not n.parent:
+                n.parent = frame
         ng[frame.name] = self.group_name
         ng["Group Node"] = node.name
         return {'FINISHED'}

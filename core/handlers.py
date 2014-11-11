@@ -5,10 +5,10 @@ from bpy.app.handlers import persistent
 
 from sverchok import data_structure
 from sverchok.core import upgrade_nodes
-from sverchok.utils import viewer_draw
-from sverchok.utils import viewer_draw_mk2
-from sverchok.utils import index_viewer_draw
-from sverchok.utils import nodeview_bgl_viewer_draw
+from sverchok.ui import viewer_draw
+from sverchok.ui import viewer_draw_mk2
+from sverchok.ui import index_viewer_draw
+from sverchok.ui import nodeview_bgl_viewer_draw
 from sverchok import old_nodes 
 
 

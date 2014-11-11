@@ -31,7 +31,7 @@ from sverchok.data_structure import (
     cache_viewer_baker, node_id, updateNode, dataCorrect,
     Vector_generate, Matrix_generate, SvGetSocketAnyType)
 
-from sverchok.utils.viewer_draw_mk2 import callback_disable, callback_enable
+from sverchok.ui.viewer_draw_mk2 import callback_disable, callback_enable
 # from nodes.basic_view.viewer import SvObjBake
 
 # status colors
@@ -227,7 +227,6 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('VerticesSocket', 'vertices', 'vertices')
         self.inputs.new('StringsSocket', 'edg_pol', 'edg_pol')
         self.inputs.new('MatrixSocket', 'matrix', 'matrix')
-        self.use_custom_color = True
 
     def draw_main_ui_elements(self, context, layout):
         view_icon = 'RESTRICT_VIEW_' + ('OFF' if self.activate else 'ON')

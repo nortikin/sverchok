@@ -46,17 +46,19 @@ nipon_blossom = {
 }
 
     
+#  self referes to the preferences, SverchokPreferences
+
 def color_callback(self, context):
     theme = self.sv_theme
     theme_dict = globals().get(theme)
     sv_node_colors = [
-        ("Viz", "sv_color_viz"),
-        ("Text", "sv_color_tex"),
-        ("Scene", "sv_color_sce"),
-        ("Layout", "sv_color_lay"),
-        ("Generators", "sv_color_gen"),
+        ("Viz", "color_viz"),
+        ("Text", "color_tex"),
+        ("Scene", "color_sce"),
+        ("Layout", "color_lay"),
+        ("Generators", "color_gen"),
     ]
-    # stop theme from auto updating
+    # stop theme from auto updating and do one call instead of many
     auto_apply_theme = self.auto_apply_theme
     self.auto_apply_theme = False
     for name, attr in sv_node_colors:
@@ -71,11 +73,11 @@ def sv_colors_definition():
     if addon:
         prefs = addon.preferences
         sv_node_colors = {
-            "Viz": prefs.sv_color_viz,
-            "Text": prefs.sv_color_tex,
-            "Scene": prefs.sv_color_sce,
-            "Layout": prefs.sv_color_lay,
-            "Generators": prefs.sv_color_gen,
+            "Viz": prefs.color_viz,
+            "Text": prefs.color_tex,
+            "Scene": prefs.color_sce,
+            "Layout": prefs.color_lay,
+            "Generators": prefs.color_gen,
             }
     else:
         sv_node_colors = default_theme

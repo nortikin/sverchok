@@ -6,7 +6,7 @@ from sverchok import data_structure
 from sverchok.core import handlers
 from sverchok.core import update_system
 from sverchok.utils import sv_panels_tools
-from sverchok.utils import color_def
+from sverchok.ui import color_def
 
 class SverchokPreferences(AddonPreferences):
 
@@ -66,7 +66,7 @@ class SverchokPreferences(AddonPreferences):
     #  theme settings
 
     sv_theme = EnumProperty(items=color_def.themes, 
-                         name="Theme prset",
+                         name="Theme preset",
                          description="Select a theme preset",
                          update=color_def.color_callback,
                          default="default_theme")
@@ -76,32 +76,32 @@ class SverchokPreferences(AddonPreferences):
         name="Apply theme", description="Apply theme automaticlly",
         default=False)
 
-    sv_color_viz = FloatVectorProperty(
-        name="Viz", description='',
+    color_viz = FloatVectorProperty(
+        name="Visualization", description='',
         size=3, min=0.0, max=1.0,
         default=(1, 0.3, 0), subtype='COLOR',
         update=update_theme)
 
-    sv_color_tex = FloatVectorProperty(
-        name="Tex", description='',
+    color_tex = FloatVectorProperty(
+        name="Text", description='',
         size=3, min=0.0, max=1.0,
         default=(0.5, 0.5, 1), subtype='COLOR',
         update=update_theme)
     
-    sv_color_sce = FloatVectorProperty(
-        name="Sce", description='',
+    color_sce = FloatVectorProperty(
+        name="Scene", description='',
         size=3, min=0.0, max=1.0,
         default=(0, 0.5, 0.2), subtype='COLOR',
         update=update_theme)
 
-    sv_color_lay = FloatVectorProperty(
-        name="Lay", description='',
+    color_lay = FloatVectorProperty(
+        name="Layout", description='',
         size=3, min=0.0, max=1.0,
         default=(0.674, 0.242, 0.363), subtype='COLOR',
         update=update_theme)
 
-    sv_color_gen = FloatVectorProperty(
-        name="Gen", description='',
+    color_gen = FloatVectorProperty(
+        name="Generator", description='',
         size=3, min=0.0, max=1.0,
         default=(0,0.5,0.5), subtype='COLOR',
         update=update_theme)
@@ -123,17 +123,9 @@ class SverchokPreferences(AddonPreferences):
     #  ctrl+space settings
     
     show_icons = BoolProperty(
-        name="Show icons",
+        name="Show icons in ctrl+space menu",
         default=False,
         description="Use icons in ctrl+space menu")
-
-    #  not used, probably shouldn't be. leaving for now.
-    scene_update = BoolProperty(
-        name="Scene update handler",
-        default=False,
-        description="Update sverchok on scene changes. Warning can be slow!",
-        update=set_frame_change)
-
 
     def draw(self, context):
         layout = self.layout
@@ -148,17 +140,28 @@ class SverchokPreferences(AddonPreferences):
         col.prop(self, "show_icons")
         col.separator()
         
-        col.label(text='Sverchok Node Theme:')
-        col.prop(self, 'sv_theme')
-        split = col.split(percentage=0.20, align=True)
-        split.prop(self, 'sv_color_viz')
-        split.prop(self, 'sv_color_tex')
-        split.prop(self, 'sv_color_sce')
-        split.prop(self, 'sv_color_lay')
-        split.prop(self, 'sv_color_gen')
+        
+        col.label(text="Sverchok node theme settings")
+        
         row2 = col.row()
-        row2.prop(self, 'auto_apply_theme')
-        row2.operator('node.sverchok_apply_theme')
+        row2.prop(self, 'auto_apply_theme', text="Auto apply theme changes")
+        row2.operator('node.sverchok_apply_theme', text="Apply theme to layouts")
+        
+        col1 = col.split(percentage=.5, align=True)
+        col1.prop(self, 'sv_theme')
+        col.separator()
+        
+        split = col.split(percentage=0.5, align=True)
+
+        col1 = split.column()
+
+        for name in ['color_viz', 'color_tex', 'color_sce']:
+            r = col1.row()
+            r.prop(self, name)
+        col2 = split.column()
+        for name in ['color_lay', 'color_gen']:
+            r = col2.row()
+            r.prop(self, name)        
         
         # debug
         col = row.column(align=True)
@@ -166,28 +169,29 @@ class SverchokPreferences(AddonPreferences):
         col.prop(self, "show_debug")
 
         col.label("Error colors")
-        col1 = col.split(percentage=0.5, align=True)
-        col1.prop(self, "exception_color")
-        col1.prop(self, "no_data_color")
+        row1 = col.row()
+        row1.prop(self, "exception_color")
+        row1.prop(self, "no_data_color")
         
         
         col.prop(self, "heat_map")
-        col1 = col.split(percentage=0.5, align=True)
-        col1.active = self.heat_map
-        col1.prop(self, "heat_map_hot")
-        col1.prop(self, "heat_map_cold")
+        row1 = col.row()
+        row1.active = self.heat_map
+        
+        row1.prop(self, "heat_map_hot")
+        row1.prop(self, "heat_map_cold")
                 
         col = row.column(align=True)
-        col.label(text="Misc:")
-        col1 = col.column(align=True)
-        col1.scale_y=2.0
-        col1.operator('wm.url_open', text='Home!').url = 'http://nikitron.cc.ua/blend_scripts.html'
-        col1.operator('wm.url_open', text='Documentation').url = 'http://nikitron.cc.ua/sverch/html/main.html'
+        col.label(text="Links:")
+        row1 = col.row(align=True)
+        row1.scale_y=2.0
+        row1.operator('wm.url_open', text='Sverchok home page').url = 'http://nikitron.cc.ua/blend_scripts.html'
+        row1.operator('wm.url_open', text='Documentation').url = 'http://nikitron.cc.ua/sverch/html/main.html'
         
         if context.scene.sv_new_version:
-            col1.operator('node.sverchok_update_addon', text='Upgrade Sverchok addon')
+            row1.operator('node.sverchok_update_addon', text='Upgrade Sverchok addon')
         else:
-            col1.operator('node.sverchok_check_for_upgrades', text='Check for new version')
+            row1.operator('node.sverchok_check_for_upgrades', text='Check for new version')
 
 
 def register():

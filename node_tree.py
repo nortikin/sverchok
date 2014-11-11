@@ -31,13 +31,14 @@ from sverchok.data_structure import (SvGetSocketInfo, SvGetSocket,
 
 from sverchok.core.update_system import (build_update_list, process_from_node,
                                          process_tree, get_update_lists)
-from sverchok.utils import color_def
+from sverchok.ui import color_def
 
 
 def process_from_socket(self, context):
     self.node.process_node(context)
 
 
+# this property group is only used by the old viewer draw
 class SvColors(bpy.types.PropertyGroup):
     """ Class for colors CollectionProperty """
     color = FloatVectorProperty(
