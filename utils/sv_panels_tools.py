@@ -142,9 +142,9 @@ class SverchokCheckForUpgrades(bpy.types.Operator):
         version_local = sverchok.bl_info["version"]
         try:
             # for testing
-            url = 'https://raw.githubusercontent.com/nortikin/sverchok/toProcess/__init__.py'
+            #url = 'https://raw.githubusercontent.com/nortikin/sverchok/toProcess/__init__.py'
             # when it is master
-            #url = 'https://raw.githubusercontent.com/nortikin/sverchok/master/__init__.py'
+            url = 'https://raw.githubusercontent.com/nortikin/sverchok/master/__init__.py'
             lines = urllib.request.urlopen(url).readlines()
             for l in map(str,lines):
                 if '"version"' in l:
@@ -180,9 +180,7 @@ class SverchokUpdateAddon(bpy.types.Operator):
         bpy.data.window_managers[0].progress_begin(0, 100)
         bpy.data.window_managers[0].progress_update(20)
         try:
-            # here change folder
             url = 'https://github.com/nortikin/sverchok/archive/master.zip'
-            # here change folder
             to_path = os.path.normpath(os.path.join(os.curdir, 'master.zip'))
             file = urllib.request.urlretrieve(url, to_path)
             bpy.data.window_managers[0].progress_update(50)
