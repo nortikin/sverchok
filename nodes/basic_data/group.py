@@ -88,6 +88,7 @@ class SvEditSocket(bpy.types.NodeSocket):
     def draw(self, context, layout, node, text):
         split = layout.split(percentage=.50)
         split.prop(self, "name", text='')
+        split = split.split(percentage=.50)
         split.prop(self, "socket_type", text="")
         split.operator("node.sverchok_move_socket", text="",icon='TRIA_UP').pos = -1
         split.operator("node.sverchok_move_socket", text="", icon='TRIA_DOWN').pos = 1

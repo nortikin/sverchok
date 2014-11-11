@@ -76,6 +76,10 @@ class SverchokPreferences(AddonPreferences):
         name="Apply theme", description="Apply theme automaticlly",
         default=False)
 
+    apply_theme_on_open = BoolProperty(
+        name="Apply theme", description="Apply theme automaticlly",
+        default=False)
+
     color_viz = FloatVectorProperty(
         name="Visualization", description='',
         size=3, min=0.0, max=1.0,
@@ -145,6 +149,8 @@ class SverchokPreferences(AddonPreferences):
         
         row2 = col.row()
         row2.prop(self, 'auto_apply_theme', text="Auto apply theme changes")
+        row2.prop(self, 'apply_theme_on_open', text="Apply theme when opening file")
+        
         row2.operator('node.sverchok_apply_theme', text="Apply theme to layouts")
         
         col1 = col.split(percentage=.5, align=True)

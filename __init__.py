@@ -134,6 +134,16 @@ if reload_event:
 
 import bpy
 
+sv_ascii_logo = """\
+      ::::::  :::   ::: :::::::: :::::::   ::::::  :::  :::  ::::::  :::  ::: 
+    :+:  :+: :+:   :+: :+:      :+:  :+: :+:  :+: :+:  :+: :+:  :+: :+: :+:   
+   +:+      +:+   +:+ +:+      +:+  +:+ +:+      +:+  +:+ +:+  +:+ +:+ :+     
+  +#+++#++ +#+   +:+ +#+++#   +#+++#:  +#+      +#+++#++ +#+  +:+ +#+++       
+      +#+  +#+ +#+  +#+      +#+  +#+ +#+      +#+  +#+ +#+  +#+ +#+ #+       
+#+#  #+#   #+#+#   #+#      #+#  #+# #+#  #+# #+#  #+# #+#  #+# #+# #+#       
+######      #     ######## ###  ###  ######  ###  ###  ######  ###  ###       
+"""
+
 def register():
     for m in imported_modules + node_list:
         if hasattr(m, "register"):
@@ -141,6 +151,8 @@ def register():
     # this is used to access preferences, should/could be hidden
     # in an interface
     data_structure.SVERCHOK_NAME = __name__
+    print("Have a nice day with sverchok")
+    print(sv_ascii_logo)   
     
     if reload_event:
         data_structure.RELOAD_EVENT = True
