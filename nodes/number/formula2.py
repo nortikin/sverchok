@@ -84,7 +84,7 @@ class Formula2Node(bpy.types.Node, SverchCustomTreeNode):
         if self.inputs['n[0]'].is_linked:
             i = 0
             for socket in self.inputs[1:]:
-                if socket.is_linked
+                if socket.is_linked:
                     list_mult.append(SvGetSocketAnyType(self, socket))
             #print(list_mult)
         code_formula = parser.expr(self.formula).compile()
