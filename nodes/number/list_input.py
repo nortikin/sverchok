@@ -91,16 +91,16 @@ class SvListInputNode(bpy.types.Node, SverchCustomTreeNode):
                 col.prop(self, self.mode, index=i, text=str(i))
 
     def process(self):
-        if any((n in self.outputs for n in ['List', 'Vector List'])) and self.outputs[0].links:
+        if self.outputs[0].is_linked:
             if self.mode == 'int_list':
-                SvSetSocketAnyType(self, "List", [list(self.int_list[:self.int_])])
+                data = [list(self.int_list[:self.int_])]
             elif self.mode == 'float_list':
-                SvSetSocketAnyType(self, "List", [list(self.float_list[:self.int_])])
+                data [list(self.float_list[:self.int_])]
             elif self.mode == 'vector':
                 c = self.v_int*3
                 v_l = list(self.vector_list)
-                out = list(zip(v_l[0:c:3], v_l[1:c:3], v_l[2:c:3]))
-                SvSetSocketAnyType(self, "Vector List", [out])
+                data = [list(zip(v_l[0:c:3], v_l[1:c:3], v_l[2:c:3]))]
+            self.outputs[0].sv_set(data)
 
 def register():
     bpy.utils.register_class(SvListInputNode)

@@ -62,7 +62,7 @@ class Formula2Node(bpy.types.Node, SverchCustomTreeNode):
         # inputs
         multi_socket(self, min=2, start=-1, breck=True)
 
-        if 'X' in self.inputs and self.inputs['X'].links:
+        if self.inputs['X'].links:
             # адаптивный сокет
             inputsocketname = 'X'
             outputsocketname = ['Result']
@@ -70,46 +70,46 @@ class Formula2Node(bpy.types.Node, SverchCustomTreeNode):
             
         
     def process(self):
-        if self.inputs['X'].links:
+        if self.inputs['X'].is_linked:
             vecs = SvGetSocketAnyType(self, self.inputs['X'])
         else:
             vecs = [[0.0]]
 
 
         # outputs
-        if 'Result' in self.outputs and len(self.outputs['Result'].links) > 0:
-            list_mult = []
-            if 'n[0]' in self.inputs and len(self.inputs['n[0]'].links) > 0:
-                i = 0
-                for socket in self.inputs:
-                    if socket.links and i != 0:
-                        list_mult.append(SvGetSocketAnyType(self, socket))
-                    else:
-                        i = 1
-                #print(list_mult)
-            code_formula = parser.expr(self.formula).compile()
-            # finding nasty levels, make equal nastyness (canonical 0,1,2,3)
-            levels = [levelsOflist(vecs)]
-            for n in list_mult:
-                levels.append(levelsOflist(n))
-            maxlevel = max(max(levels), 3)
-            diflevel = maxlevel - levels[0]
-
-            if diflevel:
-                vecs_ = dataSpoil([vecs], diflevel-1)
-                vecs = dataCorrect(vecs_, nominal_dept=2)
-            for i, lev in enumerate(levels):
-                if i == 0:
-                    continue
-                diflevel = maxlevel-lev
-                if diflevel:
-                    list_temp = dataSpoil([list_mult[i-1]], diflevel-1)
-                    list_mult[i-1] = dataCorrect(list_temp, nominal_dept=2)
+        if not self.outputs['Result'].is_linked:
+            return
+        
+        list_mult = []
+        if self.inputs['n[0]'].is_linked:
+            i = 0
+            for socket in self.inputs[1:]:
+                if socket.is_linked
+                    list_mult.append(SvGetSocketAnyType(self, socket))
             #print(list_mult)
-            r = self.inte(vecs, code_formula, list_mult, 3)
-            result = dataCorrect(r, nominal_dept=min((levels[0]-1), 2))
+        code_formula = parser.expr(self.formula).compile()
+        # finding nasty levels, make equal nastyness (canonical 0,1,2,3)
+        levels = [levelsOflist(vecs)]
+        for n in list_mult:
+            levels.append(levelsOflist(n))
+        maxlevel = max(max(levels), 3)
+        diflevel = maxlevel - levels[0]
 
-            SvSetSocketAnyType(self, 'Result', result)
+        if diflevel:
+            vecs_ = dataSpoil([vecs], diflevel-1)
+            vecs = dataCorrect(vecs_, nominal_dept=2)
+        for i, lev in enumerate(levels):
+            if i == 0:
+                continue
+            diflevel = maxlevel-lev
+            if diflevel:
+                list_temp = dataSpoil([list_mult[i-1]], diflevel-1)
+                list_mult[i-1] = dataCorrect(list_temp, nominal_dept=2)
+        #print(list_mult)
+        r = self.inte(vecs, code_formula, list_mult, 3)
+        result = dataCorrect(r, nominal_dept=min((levels[0]-1), 2))
+
+        SvSetSocketAnyType(self, 'Result', result)
 
     def inte(self, list_x, formula, list_n, levels, index=0):
         ''' calc lists in formula '''

@@ -50,18 +50,13 @@ class RandomNode(bpy.types.Node, SverchCustomTreeNode):
         #layout.prop(self, "seed", text="Seed")
 
     def process(self):
-        if 'Random' not in self.outputs:
-            return
-        # inputs
-        if 'Count' in self.inputs:
-            Coun = self.inputs['Count'].sv_get()[0]
+        Coun = self.inputs['Count'].sv_get()[0]
 
-        if 'Seed' in self.inputs:
-            Seed = self.inputs['Seed'].sv_get()[0]
+        Seed = self.inputs['Seed'].sv_get()[0]
 
         # outputs
 
-        if 'Random' in self.outputs and self.outputs['Random'].links:
+        if self.outputs[0].is_linked:
             Random = []
             if len(Seed) == 1:
                 random.seed(Seed[0])

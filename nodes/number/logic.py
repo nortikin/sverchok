@@ -183,7 +183,9 @@ class SvLogicNode(bpy.types.Node, SverchCustomTreeNode):
         
     def process(self):
         # inputs
-
+        if  not self.outputs['Gate'].is_linked:
+            return
+            
         if 'X' in self.inputs:
             x = self.inputs['X'].sv_get(deepcopy=False)
  
@@ -191,18 +193,17 @@ class SvLogicNode(bpy.types.Node, SverchCustomTreeNode):
             y = self.inputs['Y'].sv_get(deepcopy=False)
         
         # outputs
-        if 'Gate' in self.outputs and self.outputs['Gate'].links:
-            out= []
-            if self.items_ in self.constant:
-                out = [[self.constant[self.items_]]]
-            elif self.items_ in self.fx:
-                out = self.recurse_fx(x, self.fx[self.items_])
-            elif self.items_ in self.fxy:
-                out = self.recurse_fxy(x, y, self.fxy[self.items_])
-            elif self.items_ in self.fxy2:
-                out = self.recurse_fxy(x, y, self.fxy2[self.items_])
+        out= []
+        if self.items_ in self.constant:
+            out = [[self.constant[self.items_]]]
+        elif self.items_ in self.fx:
+            out = self.recurse_fx(x, self.fx[self.items_])
+        elif self.items_ in self.fxy:
+            out = self.recurse_fxy(x, y, self.fxy[self.items_])
+        elif self.items_ in self.fxy2:
+            out = self.recurse_fxy(x, y, self.fxy2[self.items_])
 
-            SvSetSocketAnyType(self, 'Gate', out)
+        SvSetSocketAnyType(self, 'Gate', out)
 
     # apply f to all values recursively
     def recurse_fx(self, l, f):

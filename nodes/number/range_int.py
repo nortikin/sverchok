@@ -117,15 +117,13 @@ class GenListRangeInt(bpy.types.Node, SverchCustomTreeNode):
     def process(self):
         inputs = self.inputs
         outputs = self.outputs
-
+        if not outputs[0].is_linked:
+            return
+            
         param = [inputs[i].sv_get()[0] for i in range(3)]
         f = self.func_dict[self.mode]
         out = [f(*args) for args in zip(*match_long_repeat(param))]
         outputs['Range'].sv_set(out)
-
-    def socket_value_update(self, context):
-        print("scoket")
-        print(self.name)
     
 def register():
     bpy.utils.register_class(GenListRangeInt)
