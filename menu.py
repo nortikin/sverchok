@@ -34,7 +34,7 @@ def make_node_cats():
     node_cats = OrderedDict()
     '''  bl_idname, shortname, <icon> (optional) '''
 
-# blue-green
+    # blue-green
     node_cats["Generators"] = [
         ["LineNode",            "Line",                  "GRIP"],
         ["PlaneNode",           "Plane",           "MESH_PLANE"],
@@ -176,7 +176,7 @@ def make_node_cats():
         ["SvNeuroElman1LNode",  "Neuro"],
     ]
 
-# orange
+    # orange
     node_cats["Viz"] = [
         ["ViewerNode2",         "Viewer Draw",         'RETOPO'],
         ["BmeshViewerNode",     "Viewer BMesh"],
@@ -184,7 +184,7 @@ def make_node_cats():
         ["Sv3DviewPropsNode",   "3dview Props"],
     ]
 
-# greish blue
+    # greish blue
     node_cats["Text"] = [
         ["ViewerNode_text",     "Viewer text"],
         ["SvTextInNode",        "Text in"],
@@ -195,10 +195,11 @@ def make_node_cats():
         ["SvStethoscopeNode",   "Stethoscope"],
     ]
 
-# green
+    # green
     node_cats["Scene"] = [
         ["ObjectsNode",         "Objects in"],
         ["SvObjRemoteNode",     "Scene Objects"],
+        ["SvObjDuplivertOne",   "Duplivert Objects"],
         ["SvFrameInfoNode",     "Frame info"],
         ["SvEmptyOutNode",      "Empty out",    "OUTLINER_OB_EMPTY"],
         ["SvInstancerNode",     "mesh instancer"],
@@ -208,7 +209,7 @@ def make_node_cats():
         ["SvRayCastNode",       "Raycast"],
     ]
 
-# violet
+    # violet
     node_cats["Layout"] = [
         ["WifiInNode",          "Wifi in"],
         ["WifiOutNode",         "Wifi out"],

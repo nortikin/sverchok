@@ -28,6 +28,7 @@ nodes_dict = {
         'wifi_out',
         'switch',
         'obj_remote',
+        'obj_dupliverts',
         'group',
         'cache',
         'getsetprop'
