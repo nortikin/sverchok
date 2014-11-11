@@ -74,7 +74,6 @@ class SvObjSelected(bpy.types.Operator):
         self.disable(name_no+name_tr, handle)
         self.enable(name_no, name_tr, handle, sorting)
         print('have got {0} items from scene.'.format(handle[1]))
-        bpy.data.node_groups[name_tr].nodes[name_no].set_color()
         return {'FINISHED'}
 
 
@@ -149,18 +148,10 @@ class ObjectsNode(bpy.types.Node, SverchCustomTreeNode):
                 handle_write(self.name+self.id_data.name, literal_eval(self.objects_local))
         else:
             layout.label('--None--')
-    def set_color(self):
-        if self.objects_local:
-            self.use_custom_color = True
-            self.color = (0, 0.5, 0.2)
-        else:
-            self.use_custom_color = True
-            self.color = (0, 0.1, 0.05)
         
 
     def update(self):
-        # check for grouping socket
-        self.set_color()
+        pass
             
     def process(self):
         name = self.name + self.id_data.name

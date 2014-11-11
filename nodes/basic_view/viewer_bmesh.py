@@ -315,23 +315,16 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
         finally:
             return j
 
-    def set_dormant_color(self):
-        self.color = (0.5, 0.5, 0.5)
-
     def update(self):
-
+        pass
         # explicit statement about which states are useful to process.
-        if not self.activate:
-            self.set_dormant_color()
-            return
+        #if not self.activate:
+        #    self.set_dormant_color()
+        #    return
 
-        inputs = self.inputs
-        if not ('matrix' in inputs) or not self.inputs['vertices'].links:
-            self.set_dormant_color()
-            return
-            
-        self.color = (1, 0.3, 0)
-    
+        #inputs = self.inputs
+
+
     def process(self):
         mverts, *mrest = self.get_geometry_from_sockets()
 

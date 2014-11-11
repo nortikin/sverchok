@@ -19,8 +19,14 @@
 
 from collections import OrderedDict
 
-from nodeitems_utils import NodeItem
-from sverchok.node_tree import SverchNodeCategory
+from nodeitems_utils import NodeCategory, NodeItem
+import nodeitems_utils
+
+
+class SverchNodeCategory(NodeCategory):
+    @classmethod
+    def poll(cls, context):
+        return context.space_data.tree_type == 'SverchCustomTreeType'
 
 
 def make_node_cats():
@@ -28,6 +34,7 @@ def make_node_cats():
     node_cats = OrderedDict()
     '''  bl_idname, shortname, <icon> (optional) '''
 
+# blue-green
     node_cats["Generators"] = [
         ["LineNode",            "Line",                  "GRIP"],
         ["PlaneNode",           "Plane",           "MESH_PLANE"],
@@ -36,7 +43,8 @@ def make_node_cats():
         ["CylinderNode",        "Cylinder",     "MESH_CYLINDER"],
         ["SphereNode",          "Sphere",       "MESH_UVSPHERE"],
         ['BasicSplineNode',     "2pt Spline",  "CURVE_BEZCURVE"],
-        ["svBasicArcNode",      "3pt Arc",        "SPHERECURVE"]
+        ["svBasicArcNode",      "3pt Arc",        "SPHERECURVE"],
+        ['RandomVectorNode',    'Random Vector',     'RNDCURVE'],
     ]
 
     node_cats["Extended Generators"] = [
@@ -46,7 +54,7 @@ def make_node_cats():
         ["HilbertImageNode",    "Hilbert image"],
         ["ImageNode",           "Image",                "FILE_IMAGE"],
         ["SvProfileNode",       "ProfileParametric"],
-        ["SvScriptNode",        "Scripted Node",     "SCRIPTPLUGINS"]
+        ["SvScriptNode",        "Scripted Node",     "SCRIPTPLUGINS"],
     ]
 
     node_cats["Analyzers"] = [
@@ -57,35 +65,30 @@ def make_node_cats():
         ["DistancePPNode",      "Distance"],
         ["CentersPolsNode",     "Centers Polygons"],
         ["VectorNormalNode",    "Vertex Normal"],
-        # making something different
-        ["SvVertexGroupNode",   "Vertext group"],
-        ["SvRayCastNode",       "Raycast"],
-        # proximity anaylyses.
+        # proximity analyses.
         ["SvKDTreeNode",        "KDT Closest Verts"],
-        ["SvKDTreeEdgesNode",   "KDT Closest Edges"]
+        ["SvKDTreeEdgesNode",   "KDT Closest Edges"],
     ]
 
-    node_cats["Transforms (Vec, Mat)"] = [
+    node_cats["Transforms"] = [
         ["SvRotationNode",      "Rotation",    "MAN_ROT"],
         ["SvScaleNode",         "Scale",       "MAN_SCALE"],
-        ["VectorMoveNode",      "Vector Move", "MAN_TRANS"],
+        ["VectorMoveNode",      "Move",        "MAN_TRANS"],
         ["SvMirrorNode",        "Mirror",      "MOD_MIRROR"],
-        ["SvMatrixEulerNode",   "Matrix Euler"],
-        ["MatrixShearNode",     "Matrix Shear"],
         ["MatrixApplyNode",     "Matrix Apply"],
     ]
 
     node_cats["Modifier Change"] = [
         # modifiers deforms and reorganize and reconstruct data
-        ["PolygonBoomNode",     "Polygon Boom"],
-        ["Pols2EdgsNode",       "Polygons to Edges"],
-        ["SvMeshJoinNode",      "Mesh Join"],
-        ["SvRemoveDoublesNode", "Remove Doubles"],
-        ["SvDeleteLooseNode",   "Delete Loose"],
-        ["SvSeparateMeshNode",  "Separate Loose Parts"],
-        ["SvVertMaskNode",      "Mask Vertices"],
-        ["SvFillsHoleNode",     "Fill Holes"],
-        ["SvIntersectEdgesNode", "Intersect Edges"]
+        ["PolygonBoomNode",      "Polygon Boom"],
+        ["Pols2EdgsNode",        "Polygons to Edges"],
+        ["SvMeshJoinNode",       "Mesh Join"],
+        ["SvRemoveDoublesNode",  "Remove Doubles"],
+        ["SvDeleteLooseNode",    "Delete Loose"],
+        ["SvSeparateMeshNode",   "Separate Loose Parts"],
+        ["SvVertMaskNode",       "Mask Vertices"],
+        ["SvFillsHoleNode",      "Fill Holes"],
+        ["SvIntersectEdgesNode", "Intersect Edges"],
     ]
 
     node_cats["Modifier Make"] = [
@@ -116,7 +119,6 @@ def make_node_cats():
         ["ListSumNode",         "List Sum"],
         ["ListMatchNode",       "List Match"],
         ["ListFuncNode",        "List Math"],
-        ["ConverterNode",       "SocketConvert"]
     ]
 
     node_cats["List struct"] = [
@@ -129,7 +131,7 @@ def make_node_cats():
         ["ListReverseNode",     "List Reverse"],
         ["ListShuffleNode",     "List Shuffle"],
         ["ListSortNode",        "List Sort"],
-        ["ListFlipNode",        "List Flip"]
+        ["ListFlipNode",        "List Flip"],
     ]
 
     node_cats["Number"] = [
@@ -146,7 +148,6 @@ def make_node_cats():
     ]
 
     node_cats["Vector"] = [
-        ['RandomVectorNode',    'Random Vector',        'RNDCURVE'],
         ['GenVectorsNode',      'Vector in'],
         ['VectorsOutNode',      'Vector out'],
         ['VectorMathNode',      'Vector Math'],
@@ -162,41 +163,57 @@ def make_node_cats():
     node_cats["Matrix"] = [
         ["MatrixGenNode",       "Matrix in"],
         ["MatrixOutNode",       "Matrix out"],
-        ["SvMatrixValueIn",     "Matrix Input"],
         ["MatrixDeformNode",    "Matrix Deform"],
-        ["MatrixInterpolationNode", "Matrix Interpolation"]
+        ["SvMatrixValueIn",     "Matrix Input"],
+        ["SvMatrixEulerNode",   "Matrix Euler"],
+        ["MatrixShearNode",     "Matrix Shear"],
+        ["MatrixInterpolationNode", "Matrix Interpolation"],
     ]
 
-    node_cats["Conditionals"] = [
+    node_cats["Logic"] = [
         ["SvLogicNode",         "Logic"],
         ["SvSwitchNode",        "Switch"],
         ["SvNeuroElman1LNode",  "Neuro"],
     ]
 
-    node_cats["Basic Viz"] = [
-        ["ViewerNode2",         "Viewer draw MK2",         'RETOPO'],
-        #["ViewerNode",          "Viewer draw"],
-        ["ViewerNode_text",     "Viewer text"],
-        ["IndexViewerNode",     "Viewer INDX"],
+# orange
+    node_cats["Viz"] = [
+        ["ViewerNode2",         "Viewer Draw",         'RETOPO'],
+        ["BmeshViewerNode",     "Viewer BMesh"],
+        ["IndexViewerNode",     "Viewer Index"],
         ["Sv3DviewPropsNode",   "3dview Props"],
-        ["BmeshViewerNode",     "Viewer BMesh"]
     ]
 
-    node_cats["Basic Data"] = [
-        ["ObjectsNode",         "Objects in"],
+# greish blue
+    node_cats["Text"] = [
+        ["ViewerNode_text",     "Viewer text"],
         ["SvTextInNode",        "Text in"],
         ["SvTextOutNode",       "Text out"],
-        ["WifiInNode",          "Wifi in"],
-        ["WifiOutNode",         "Wifi out"],
-        ["SvFrameInfoNode",     "Frame info"],
-        ["NodeReroute",         "Reroute Point"],
-    ]
-
-    node_cats["Basic Debug"] = [
         ["NoteNode",            "Note"],
         ["GTextNode",           "GText"],
         ["SvDebugPrintNode",    "Debug print"],
-        ["SvStethoscopeNode",   "Stethoscope"]
+        ["SvStethoscopeNode",   "Stethoscope"],
+    ]
+
+# green
+    node_cats["Scene"] = [
+        ["ObjectsNode",         "Objects in"],
+        ["SvObjRemoteNode",     "Scene Objects"],
+        ["SvFrameInfoNode",     "Frame info"],
+        ["SvEmptyOutNode",      "Empty out",    "OUTLINER_OB_EMPTY"],
+        ["SvInstancerNode",     "mesh instancer"],
+        ["SvGetPropNode",       "Get property",   'FORCE_VORTEX'],
+        ["SvSetPropNode",       "Set property",   'FORCE_VORTEX'],
+        ["SvVertexGroupNode",   "Vertext group"],
+        ["SvRayCastNode",       "Raycast"],
+    ]
+
+# violet
+    node_cats["Layout"] = [
+        ["WifiInNode",          "Wifi in"],
+        ["WifiOutNode",         "Wifi out"],
+        ["NodeReroute",         "Reroute Point"],
+        ["ConverterNode",       "SocketConvert"],
     ]
 
     node_cats["Beta Nodes"] = [
@@ -214,15 +231,6 @@ def make_node_cats():
         ["SvCacheNode",           "Cache",],
         ["SvGetDataObjectNode",           "Get ObjectID",],
         ["SvSetDataObjectNode",           "Set ObjectID",]
-    ]
-
-    node_cats["Bpy Nodes"] = [
-        ["SvEmptyOutNode",        "Empty out",    "OUTLINER_OB_EMPTY"],
-        ["SvInstancerNode",       "mesh instancer"],
-        ["SvObjRemoteNode",       "Scene Objects"],
-        ["SvGetPropNode",         "Get property",   'FORCE_VORTEX'],
-        ["SvSetPropNode",         "Set property",   'FORCE_VORTEX'],
-    
     ]
 
     return node_cats
@@ -262,13 +270,34 @@ def make_categories():
     node_cats = juggle_and_join(original_categories)
 
     node_categories = []
-    howmanynodesare = 0
+    node_count = 0
     for category, nodes in node_cats.items():
         name_big = "SVERCHOK_" + category.replace(' ', '_')
         node_categories.append(SverchNodeCategory(
             name_big, category,
             # bl_idname, name
             items=[NodeItem(props[0], props[1]) for props in nodes]))
-        howmanynodesare += len(nodes)
+        node_count += len(nodes)
 
-    return node_categories, howmanynodesare
+    return node_categories, node_count
+
+
+def reload_menu():
+    menu, node_count = make_categories()
+    if 'SVERCHOK' in nodeitems_utils._node_categories:
+        nodeitems_utils.unregister_node_categories("SVERCHOK")
+    nodeitems_utils.register_node_categories("SVERCHOK", menu)
+
+
+def register():
+    menu, node_count = make_categories()
+    if 'SVERCHOK' in nodeitems_utils._node_categories:
+        nodeitems_utils.unregister_node_categories("SVERCHOK")
+    nodeitems_utils.register_node_categories("SVERCHOK", menu)
+
+    print("** Sverchok loaded with {i} nodes **".format(i=node_count))
+
+
+def unregister():
+    if 'SVERCHOK' in nodeitems_utils._node_categories:
+        nodeitems_utils.unregister_node_categories("SVERCHOK")

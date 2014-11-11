@@ -2,24 +2,20 @@
 Contribute
 **********
 
-OUR WORKFLOW:
+Our workflow:
 =============
 
 1. Freedom to code, only try to follow pep8, and avoid abuse.
 
 2. Agile software development - look http://en.wikipedia.org/wiki/Agile_software_development here.
 
-3. Discussions in github.com/nortikin/sverchok/issues and on IRC chat #blendercoders with Kaito, Lukas Tone,
-   Sergey Sharybin and others concerning to development of nodes and others. Try to follow GSOC.
-   testers are wellcome here to github
+3. Ideas from other addons to implement to sverchok. It is big deal.
 
-4. Ideas from other addons to implement to sverchok. It is big deal.
+4. If you making something it is better to say in issues before.
 
-5. If you making something it is better to say in issues before.
+5. Brainstorming and finding solutions. We are mostly new in python and programming, we are artists.
 
-6. Brainstorming and finding solutions. We are mostly new in python and programming, we are artists.
-
-WHAT NOT TO DO:
+What not to do:
 ===============
 
 Doing these things will break old layouts and or create very ugly code in the node.
@@ -30,37 +26,48 @@ Doing these things will break old layouts and or create very ugly code in the no
 
 3. Adding new socket without updating upgrade.py
 
-4. 'typ', 'newsock', 'current_mode' names of properties are reserved for nodes, not use for anything else
+4. 'current_mode' names of properties are reserved for nodes, not use for anything else
 
 
-TO MAKE YOUR NODE:
-==================
+Helpful hints
+=============
 
-1. make scripted node to test simply
+In blender console you can easily inspect the sverchok system by writing:
 
-2. show your node to us in issues or silently create branch or fork of master in github. If it
-   is huge complex job we can make you collaborator. Good to have development brench,
-   for now it is refactoring, than work in.
+.. code-block :: python
 
-3. copy fitting existing node (test1 is pure template and may be the best example)
+    import sverchok
+    print(dir(sverchok.nodes))
 
-4. change class name, class id, class description, class registration in your file
 
-5. add node id in menu.py in make_categories() in your category.
+To create a node:
+=================
+
+1. Make a scripted node to test the idea.
+
+2. Show your node to us in an issue or silently create branch or fork of master in github. If it
+   is huge complex job we can make you collaborator. 
+
+3. Copy an existing node that is similar.
+
+4. Change class name, class id, class description, class registration in your file
+
+5. Add node id in menu.py in an approritate category.
 
 6. Add file to category that you need
 
 7. Add in ``nodes/__init__.py`` filename
 
-8. tell us to merge branches/forks
+8. Tell us to merge branches/forks
 
 
 SOME RULES:
 ===========
 
-1. all classes that are subclasses of blender classes - have to have prefix Sv, ie SvColors.
+1. All classes that are subclasses of blender classes - have to have prefix Sv, ie SvColors.
 
-2. node_tree.py contains that classes, maybe you need to create collection property or new socket (for
+2. node_tree.py contains base classes of node tree and,
+   maybe you need to create collection property or new socket (for
    new type of socket tell us first), you make it here.
 
 3. data_structure.py has magic of:
@@ -131,8 +138,6 @@ SOME RULES:
 
        usage:
             1. node has to have self veriables:
-                * self.typ = bpy.props.StringProperty(name='typ', default='')
-                * self.newsock = bpy.props.BoolProperty(name='newsock', default=False)
             2. and in update:
                 * inputsocketname = 'data' # 'data' - name of your input socket, that defines type
                 * outputsocketname = ['dataTrue','dataFalse'] # 'data...' - are names of your
@@ -186,10 +191,10 @@ SOME RULES:
 
 6. **Nodes** folder for categorized nodes. not forget to write your nodes to init.py there
 
-7. to use enumerate property you have to assign index to items, never change the index of items added,
-     it will break if you more functions.
+7. To use enumerate property you have to assign index to items, never change the index of items added,
+     it will break if you add more functions.
 
-8. not make many nodes if you can do less multifunctionsl.
+8. Not make many nodes if you can do less multifunctional.
 
 9. use levels, findout how it works and use level IntProperty in draw to define what level is to operate.
    We operate with 1,2,3 - standart and additional 4... infinity. make sure, that your levels limited,
@@ -206,7 +211,5 @@ SOME RULES:
     vertex, matrix other cases may be more nasty, but not less nesty and wrapping need to be grounded on
     some reasons to be provided.
 
-13. Do not use is_linked to test if socket is linked, check links. Good: if socket.links: Bad: if socket.is_linked:
-
-14. Look at test1 node. it is canonical node. This is how all have to be organized. If you need to do new node -
-    take test1 as default template.
+13. Do not use is_linked to test if socket is linked in ``def update(self)``, check links. In ``def process(self)``
+    use ``.is_linked`` 

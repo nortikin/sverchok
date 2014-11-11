@@ -23,8 +23,19 @@ import bpy
 from mathutils import Vector
 
 from sverchok import data_structure
+import sverchok
+
 import traceback
 import ast
+
+no_data_color = (1, 0.3, 0)
+exception_color = (0.8, 0.0, 0)
+
+def update_error_colors(self, context):
+    global no_data_color
+    global exception_color
+    no_data_color = self.no_data_color[:]
+    exception_color = self.exception_color[:]
 
 # cache node group update trees
 update_cache = {}
@@ -156,8 +167,14 @@ def separate_nodes(ng, links=None):
                 n = node_stack_pop()
             nodes.discard(n)
             node_set_list[-1].add(n)
-
-    return [node for node in node_set_list if len(node) > 1]
+    """
+    if ng.bl_idname == "SverchCustomTreeType":
+        skip_types = {"SvGroupInputsNode", "SvGroupOutputsNode"}
+        skip_nodes = {n.name for n in ng.nodes if n.bl_idname in skip_types}
+        if skip_nodes:
+            node_set_list = filter(lambda ns:ns.isdisjoint(skip_nodes), node_set_list)
+    """    
+    return [ns for ns in node_set_list if len(ns) > 1]
 
 def make_tree_from_nodes(node_names, tree, down=True):
     """
@@ -240,7 +257,7 @@ def do_update_heat_map(node_list, nodes):
         # linear scale.
         nodes[name].color = cold.lerp(hot, t / t_max)
 
-def update_error_nodes(ng, name):
+def update_error_nodes(ng, name, err):
     if "error nodes" in ng:
         error_nodes = ast.literal_eval(ng["error nodes"])
     else:
@@ -250,7 +267,10 @@ def update_error_nodes(ng, name):
         return
     error_nodes[name] = (node.use_custom_color, node.color[:])
     ng["error nodes"] = str(error_nodes)
-    node.color=(.9,0,0)
+    if isinstance(err, LookupError):
+        node.color = no_data_color
+    else:
+        node.color = exception_color
     node.use_custom_color=True
 
 def reset_error_nodes(ng):
@@ -283,7 +303,7 @@ def do_update_general(node_list, nodes):
 
         except Exception as err:
             ng = nodes.id_data
-            update_error_nodes(ng, node_name)
+            update_error_nodes(ng, node_name, err)
             traceback.print_tb(err.__traceback__)
             print("Node {0} had exception {1}".format(node_name, err))
             return None
@@ -401,3 +421,9 @@ def get_update_lists(ng):
     if not ng.name in update_cache:
         build_update_list(ng)
     return (update_cache.get(ng.name), partial_update_cache.get(ng.name))
+    
+def register():
+    addon_name = sverchok.__name__
+    addon = bpy.context.user_preferences.addons.get(addon_name)
+    if addon:
+        update_error_colors(addon.preferences, [])

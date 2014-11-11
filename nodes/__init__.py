@@ -144,10 +144,8 @@ nodes_dict = {
         'scalar',
         'list_input',
         'range_map',
-        'range',
         'range_float',
         'range_int',
-        'series',
         'logic'
     ],
 

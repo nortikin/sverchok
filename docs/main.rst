@@ -15,7 +15,7 @@ Contents:
    geometry
    nodes
    contribute
-
+   panels
 
 
 Indices and tables

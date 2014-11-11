@@ -18,17 +18,18 @@
 #  The Original Code is Copyright (C) 2013-2014 by Gorodetskiy Nikita  ###
 #  All rights reserved.
 #
-#  Contact:      sverchok-b3d@yandex.ru    ###
-#  Information:  http://nikitron.cc.ua/sverchok.html   ###
+#  Contact:      sverchok-b3d@ya.ru    ###
+#  Information:  http://nikitron.cc.ua/sverchok_en.html   ###
 #
 #  The Original Code is: all of this file.
 #
 #  Contributor(s):
-#     Nedovizin Alexander
-#     Gorodetskiy Nikita
-#     Linus Yng
-#     Agustin Gimenez
-#     Dealga McArdle
+#     Nedovizin Alexander (aka Cfyzzz)
+#     Gorodetskiy Nikita (aka Nikitron)
+#     Linus Yng (aka Ly29)
+#     Agustin Jimenez (aka AgustinJB)
+#     Dealga McArdle (aka Zeffii)
+#     Konstantin Vorobiew (aka Kosvor)
 #
 #  ***** END GPL LICENSE BLOCK *****
 #
@@ -37,14 +38,14 @@
 bl_info = {
     "name": "Sverchok",
     "author": (
-        "(sverchok-b3d@yandex.ru) "
-        "Nedovizin Alexander, Gorodetskiy Nikita, Linus Yng, "
-        "Agustin Jimenez, Dealga McArdle"
+        "sverchok-b3d@ya.ru, "
+        "Cfyzzz, Nikitron, Ly29, "
+        "AgustinJB, Zeffii, Kosvor,"
     ),
     "version": (0, 5, 0, 1),
     "blender": (2, 7, 2),
     "location": "Nodes > CustomNodesTree > Add user nodes",
-    "description": "Do parametric node-based geometry programming",
+    "description": "Parametric node-based geometry programming",
     "warning": "",
     "wiki_url": "http://wiki.blender.org/index.php/Extensions:2.6/Py/Scripts/Nodes/Sverchok",
     "tracker_url": (
@@ -66,26 +67,31 @@ imported_modules = []
 
 # ugly hack, should make respective dict in __init__ like nodes
 # or parse it
-root_modules = ["node_tree", "data_structure","core", 
-                "utils", "utils", "sv_nodes_menu", "nodes", "old_nodes"]
+root_modules = ["menu", "node_tree", "data_structure","core", 
+                "utils", "ui", "nodes", "old_nodes"]
 core_modules = ["handlers", "update_system", "upgrade_nodes"]
 utils_modules = [
     # non UI tools
     "cad_module", "sv_bmesh_utils", "sv_curve_utils", "voronoi", 
     "sv_script", "sv_itertools", "script_importhelper",
-    # callbacks for bgl
-    "viewer_draw", "index_viewer_draw", "nodeview_bgl_viewer_draw", "viewer_draw_mk2",
     # UI
     #     - text editor ui
     "text_editor_submenu", "text_editor_plugins",
-    #     - node_view ui tool + panels + custom menu
-    "sv_panels_tools", "sv_IO_panel", "sv_panels", "nodeview_space_menu", "group_tools"
+    #     - operators
+    "sv_panels_tools", "sv_IO_panel", "group_tools",
+]
+ui_modules = [
+    "color_def", "sv_panels", "nodeview_space_menu",
+    # bgl modules
+    "viewer_draw",  "viewer_draw_mk2", "nodeview_bgl_viewer_draw",
+    "index_viewer_draw"
 ]
 
 # modules and pkg path, nodes are done separately.
-mods_bases = [(root_modules, "sverchok"), 
-              (core_modules, "sverchok.core"), 
-              (utils_modules, "sverchok.utils")]
+mods_bases = [(root_modules,  "sverchok"), 
+              (core_modules,  "sverchok.core"), 
+              (utils_modules, "sverchok.utils"),
+              (ui_modules,    "sverchok.ui")]
 
 #  settings have to be treated separately incase the folder name
 #  is something else than sverchok...
@@ -124,30 +130,29 @@ if reload_event:
     for node in node_list:
         importlib.reload(node)
     old_nodes.reload_old()
-
-    if 'SVERCHOK' in nodeitems_utils._node_categories:
-        nodeitems_utils.unregister_node_categories("SVERCHOK")
-
-    from sverchok.sv_nodes_menu import make_categories
-    nodeitems_utils.register_node_categories("SVERCHOK", make_categories()[0])
+    menu.reload_menu()
 
 import bpy
-import nodeitems_utils
+
+sv_ascii_logo = """\
+      ::::::  :::   ::: :::::::: :::::::   ::::::  :::  :::  ::::::  :::  ::: 
+    :+:  :+: :+:   :+: :+:      :+:  :+: :+:  :+: :+:  :+: :+:  :+: :+: :+:   
+   +:+      +:+   +:+ +:+      +:+  +:+ +:+      +:+  +:+ +:+  +:+ +:+ :+     
+  +#+++#++ +#+   +:+ +#+++#   +#+++#:  +#+      +#+++#++ +#+  +:+ +#+++       
+      +#+  +#+ +#+  +#+      +#+  +#+ +#+      +#+  +#+ +#+  +#+ +#+ #+       
+#+#  #+#   #+#+#   #+#      #+#  #+# #+#  #+# #+#  #+# #+#  #+# #+# #+#       
+######      #     ######## ###  ###  ######  ###  ###  ######  ###  ###       
+"""
 
 def register():
-    from sverchok.sv_nodes_menu import make_categories
-
-    menu, node_count = make_categories()
     for m in imported_modules + node_list:
         if hasattr(m, "register"):
             m.register()
     # this is used to access preferences, should/could be hidden
     # in an interface
     data_structure.SVERCHOK_NAME = __name__
-    if 'SVERCHOK' not in nodeitems_utils._node_categories:
-        nodeitems_utils.register_node_categories("SVERCHOK", menu)
-        
-    print("** Sverchok loaded with {i} nodes **".format(i=node_count))
+    print("Have a nice day with sverchok")
+    print(sv_ascii_logo)   
     
     if reload_event:
         data_structure.RELOAD_EVENT = True
@@ -158,6 +163,3 @@ def unregister():
     for m in reversed(imported_modules + node_list):
         if hasattr(m, "unregister"):
             m.unregister()
-
-    if 'SVERCHOK' in nodeitems_utils._node_categories:
-        nodeitems_utils.unregister_node_categories("SVERCHOK")

@@ -25,9 +25,6 @@ from sverchok.data_structure import updateNode, SvSetSocketAnyType, SvGetSocketA
 # Warning, changing this node without modifying the update system might break functionlaity
 # bl_idname and var_name is used by the update system
 
-READY_COLOR = (0.674, 0.242, 0.363)
-FAIL_COLOR =  (0.536, 0.242, 0.674)
-
 
 class WifiOutNode(bpy.types.Node, SverchCustomTreeNode):
     ''' WifiOutNode '''
@@ -64,7 +61,6 @@ class WifiOutNode(bpy.types.Node, SverchCustomTreeNode):
 
     def reset_var_name(self):
         self.var_name = ""
-        self.color = FAIL_COLOR
         self.outputs.clear()
 
     def draw_buttons(self, context, layout):
@@ -81,8 +77,7 @@ class WifiOutNode(bpy.types.Node, SverchCustomTreeNode):
             op.fn_name = "set_var_name"
 
     def sv_init(self, context):
-        self.use_custom_color = True
-        self.color = FAIL_COLOR
+        pass
 
     def gen_var_name(self):
         #from socket
@@ -100,11 +95,6 @@ class WifiOutNode(bpy.types.Node, SverchCustomTreeNode):
 
         node = wifi_dict.get(self.var_name)
         if node:
-            inputs = node.inputs
-            outputs = self.outputs
-            if any(s.links for s in outputs):
-                self.color = READY_COLOR
-            #node is the wifi node
             inputs = node.inputs
             outputs = self.outputs
 

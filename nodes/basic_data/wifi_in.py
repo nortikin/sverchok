@@ -25,10 +25,6 @@ from sverchok.data_structure import multi_socket
 # Warning, changing this node without modifying the update system might break functionlaity
 # bl_idname and var_name is used by the update system
 
-READY_COLOR = (0.674, 0.242, 0.363)
-FAIL_COLOR =  (0.536, 0.242, 0.674)
-
-
 
 def name_seq():
     for i in range(ord('a'),ord('z')): 
@@ -72,8 +68,6 @@ class WifiInNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "var_name", text="Var")
 
     def sv_init(self, context):
-        self.use_custom_color = True
-        self.color = FAIL_COLOR
         ng = self.id_data
         var_set = {node.var_name for node in ng.nodes
                            if node.bl_idname == 'WifiInNode'}
@@ -113,8 +107,6 @@ class WifiInNode(bpy.types.Node, SverchCustomTreeNode):
                 
         self.base_name = self.var_name
         multi_socket(self, min=1, breck=True)
-        if any(s.links for s in self.inputs):
-            self.color = READY_COLOR
 
 
 def register():

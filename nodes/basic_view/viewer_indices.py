@@ -26,7 +26,7 @@ from sverchok.data_structure import (
     dataCorrect, node_id, updateNode, SvGetSocketAnyType, fullList,
     Vector_generate, Matrix_generate)
 
-from sverchok.utils import index_viewer_draw as IV
+from sverchok.ui import index_viewer_draw as IV
 
 
 # status colors

@@ -22,17 +22,16 @@ import re
 import zipfile
 import traceback
 
-from os.path import basename
-from os.path import dirname
 from itertools import chain
-
-from .sv_IO_panel import create_dict_of_tree, import_tree
-from sverchok.data_structure import get_other_socket
 
 import bpy
 from bpy.types import EnumProperty
 from bpy.props import StringProperty
 from bpy.props import BoolProperty
+
+
+from .sv_IO_panel import create_dict_of_tree, import_tree
+from sverchok.data_structure import get_other_socket
 
 
 class SvNodeGroupCreator(bpy.types.Operator):
@@ -46,7 +45,8 @@ class SvNodeGroupCreator(bpy.types.Operator):
         
         ng = context.space_data.node_tree
         ng.freeze(hard=True)
-       
+        is_process = ng.sv_process
+        ng.sv_process = False
         # collect data
         nodes = {n for n in ng.nodes if n.select}
         if not nodes:
@@ -82,22 +82,20 @@ class SvNodeGroupCreator(bpy.types.Operator):
             ng.links.new(in_socket, gi_socket)
             ng.links.new(gn_socket, out_socket)
         
-        out_links_sockets = defaultdict(set)
+        out_links_sockets = set(l.from_socket for l in out_links)
         
-        #for l in out_links:
-        #    out_links_socket[l.from_socket].add(l.to_socket
-        
-        for i,l in enumerate(out_links):
-            out_socket = l.from_socket
-            in_socket = l.to_socket
-            s_name = "{}:{}".format(i, out_socket.name)
-            other = get_other_socket(in_socket)
+        for i, from_socket in enumerate(out_links_sockets):
+            to_sockets = [l.to_socket for l in from_socket.links]
+            s_name = "{}:{}".format(i, from_socket.name)
+            # to account for reroutes
+            other = get_other_socket(to_sockets[0])
             gn_socket = group_node.outputs.new(other.bl_idname, s_name)
             go_socket = group_out.inputs.new(other.bl_idname, s_name)
-            
-            ng.links.remove(l)
-            ng.links.new(go_socket, out_socket)
-            ng.links.new(in_socket, gn_socket)
+            for to_socket in to_sockets:
+                l = to_socket.links[0]
+                ng.links.remove(l)
+                ng.links.new(go_socket, from_socket)
+                ng.links.new(to_socket, gn_socket)
         
         # collect sockets for node group in out    
         group_in.collect()
@@ -126,8 +124,8 @@ class SvNodeGroupCreator(bpy.types.Operator):
         import_tree(group_ng, "", nodes_json)
         
         ng.unfreeze(hard=True)
+        ng.sv_process = is_process
         ng.update()
-        
         self.report({"INFO"}, "Node group created")
         return {'FINISHED'}
 
@@ -141,17 +139,20 @@ class SvNodeGroupEdit(bpy.types.Operator):
         ng = context.space_data.node_tree
         node = context.node
         group_ng = bpy.data.node_groups.get(self.group_name)
+        print(group_ng.name)
         ng.freeze()
         frame = ng.nodes.new("NodeFrame")
         frame.label = group_ng.name
         for n in ng.nodes:
             n.select = False
         nodes_json = create_dict_of_tree(group_ng)
-        import_tree(ng, "", nodes_json)
+        print(nodes_json)
+        import_tree(ng, "", nodes_json, create_texts=False)
         nodes = [n for n in ng.nodes if n.select]
         locs = [n.location for n in nodes]
         for n in nodes:
-            n.parent = frame
+            if not n.parent:
+                n.parent = frame
         ng[frame.name] = self.group_name
         ng["Group Node"] = node.name
         return {'FINISHED'}
@@ -163,6 +164,7 @@ class SvNodeGroupEditDone(bpy.types.Operator):
     frame_name = StringProperty()
     
     def execute(self, context):
+        print("Saving node group")
         ng = context.space_data.node_tree
         frame = ng.nodes.get(self.frame_name)
         if not frame:
@@ -197,7 +199,7 @@ class SvNodeGroupEditDone(bpy.types.Operator):
         group_ng.nodes.clear()
         import_tree(group_ng, "", nodes_json)
         
-        self.report({"INFO"}, "Node group created")
+        self.report({"INFO"}, "Node group save")
         return {'FINISHED'}
 
 

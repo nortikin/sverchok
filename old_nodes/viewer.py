@@ -26,7 +26,7 @@ from sverchok.data_structure import (cache_viewer_baker,
                             dataCorrect, node_id,
                             Vector_generate, Matrix_generate,
                             updateNode, SvGetSocketAnyType)
-from sverchok.utils.viewer_draw import callback_disable, callback_enable
+from sverchok.ui.viewer_draw import callback_disable, callback_enable
 
 
 class SvObjBake(bpy.types.Operator):

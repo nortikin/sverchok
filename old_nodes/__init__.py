@@ -58,14 +58,19 @@ def is_old(node_info):
 def scan_for_old(ng):
     nodes = [n for n in ng.nodes if n.bl_idname in old_bl_idnames]
     for node in nodes:
-        frame = ng.nodes.new("NodeFrame")
-        if node.parent:
-            frame.parent = node.parent
-        node.parent = frame
-        frame.label = "Deprecated node!"
-        frame.use_custom_color = True
-        frame.color = (.8, 0, 0)
-        frame.shrink = True
+        mark_old(node)
+    
+def mark_old(node):
+    if node.parent and node.parent.label == "Deprecated node!":
+        return
+    frame = ng.nodes.new("NodeFrame")
+    if node.parent:
+        frame.parent = node.parent
+    node.parent = frame
+    frame.label = "Deprecated node!"
+    frame.use_custom_color = True
+    frame.color = (.8, 0, 0)
+    frame.shrink = True
 
 def reload_old(ng=False):
     if ng:
@@ -98,14 +103,7 @@ def load_old(ng):
             nodes = [n for n in ng.nodes if n.bl_idname == bl_id]
             if nodes:
                 for node in nodes:
-                    frame = ng.nodes.new("NodeFrame")
-                    if node.parent:
-                        frame.parent = node.parent
-                    node.parent = frame
-                    frame.label = "Deprecated node!"
-                    frame.use_custom_color = True
-                    frame.color = (.8, 0, 0)
-                    frame.shrink = True
+                    mark_old(node)
                 not_reged_nodes = list(n for n in ng.nodes if not n.is_registered_node_type())
                 node_count = len(not_reged_nodes)
                 print("Loaded {}. {} nodes are left unregisted.".format(bl_id, node_count))
@@ -133,6 +131,7 @@ def register_old(bl_id):
     return None
 
 def unregister_old(bl_id):
+    global imported_mods
     mod = imported_mods.get(bl_id)
     if mod:
         #print("Unloaded old node type {}".format(bl_id)) 
@@ -140,6 +139,8 @@ def unregister_old(bl_id):
         del imported_mods[bl_id]
          
 def unregister():
+    global imported_mods
+    print(imported_mods)
     for mod in imported_mods.values():
         mod.unregister()
-        
+    imported_mods = {}

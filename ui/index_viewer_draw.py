@@ -243,8 +243,3 @@ def draw_callback_px(n_id, draw_verts, draw_edges, draw_faces, draw_matrix, draw
 
 def unregister():
     callback_disable_all()
-
-
-
-
-

@@ -21,9 +21,9 @@ from bpy.props import BoolProperty, FloatVectorProperty, StringProperty, EnumPro
 
 from sverchok.node_tree import SverchCustomTreeNode, MatrixSocket, VerticesSocket, StringsSocket
 from sverchok.data_structure import dataCorrect, node_id, updateNode, SvGetSocketAnyType
-from sverchok.utils import nodeview_bgl_viewer_draw as nvBGL
+from sverchok.ui import nodeview_bgl_viewer_draw as nvBGL
 from mathutils import Vector
-
+    
 # status colors
 FAIL_COLOR = (0.1, 0.05, 0)
 READY_COLOR = (1, 0.3, 0)
@@ -85,17 +85,12 @@ class SvStethoscopeNode(bpy.types.Node, SverchCustomTreeNode):
 
         # end early
         nvBGL.callback_disable(n_id)
-        if not all([inputs[0], self.id_data.sv_show]):
-            return
 
         in_links = inputs[0].links
 
-        self.use_custom_color = True
         if self.activate and in_links:
-
             # gather vertices from input
             lines = nvBGL.parse_socket(inputs[0])
-
             draw_data = {
                 'tree_name': self.id_data.name[:],
                 'content': lines,
@@ -103,26 +98,8 @@ class SvStethoscopeNode(bpy.types.Node, SverchCustomTreeNode):
                 'color': self.text_color[:],
                 }
             nvBGL.callback_enable(n_id, draw_data)
-            self.color = READY_COLOR
-        else:
-            self.color = FAIL_COLOR
-            return
 
-            # # the part below should be in the node like this.
-            # ng = self.id_data
-            # node = ng.nodes.get(self.node_name)
-            # if node:
-            #     s = self.socket_name
-            #     if s in node.inputs and node.inputs[s].links:
-            #         lines = nvBGL.parse_socket(node.inputs[s])
-            #         draw_data = {
-            #             'content': lines,
-            #             'location': (self.location + Vector((self.width+20, 0)))[:],
-            #             'color': self.text_color[:],
-            #             }
-            #         nvBGL.callback_enable(n_id, draw_data)
-            #         self.color = READY_COLOR
-
+  
 
     def free(self):
         nvBGL.callback_disable(node_id(self))

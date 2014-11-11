@@ -31,7 +31,7 @@ Layout manager
 .. image:: https://cloud.githubusercontent.com/assets/5783432/4512959/867d395a-4b46-11e4-9419-95ed1479ac72.png
   :alt: manager.png
 
-Box to quickly pick layout, switch between them with buttons instead of popup list. Has also buttons:
+Box to quickly pick layout, switch between them with buttons instead of popup list. Also have settins:
 
 
 +--------------------+----------------------------------------------------------------------------------------+
@@ -40,10 +40,13 @@ Box to quickly pick layout, switch between them with buttons instead of popup li
 | **B**              | bake this layout - will gather all layout's viewer draw and viewer text to bake them.  |
 |                    | Bake only if bakeable button is active on node, else ignore.                           |   
 +--------------------+----------------------------------------------------------------------------------------+
-| **Show layout**    | show or hide all viewers - to draw or not to draw OpenGL in window, but bmesh viewer   |
-|                    | not handled for now.                                                                   |
+| **Show layout**    | Controlls all OpenGL viewer of this layout. Viewer, Stethoscop and Viewer Indices      |
 +--------------------+----------------------------------------------------------------------------------------+
 | **Animate layout** | to animate the layout (or not) - may preserve you time.                                |
++--------------------+----------------------------------------------------------------------------------------+
+| **Process layout** | Automaticlly evaluate layout while editing, disable for large or complex layouts       |
++--------------------+----------------------------------------------------------------------------------------+
+| **Fake User**      | Sets fake user so layout isn't deleted on save                                         |
 +--------------------+----------------------------------------------------------------------------------------+
 
 
@@ -55,7 +58,7 @@ Check for updates
 
 **Check for updates** - finds if master branch on github has new version of sverchok. In future there will be releases, but now dangerouse update.
 
-**Upgrade Sverchok** - upgrades Sverchok from github with new version - button appears only if 'check for updates' finds new version.
+**Upgrade Sverchok** - upgrades Sverchok from github with new version - button appears only if 'check for updates' finds a new version.
 
 
 3D Panel
@@ -78,7 +81,7 @@ When layout is in, check for next nodes to embad them as properties:
  - int node
  - object in node
  
-Sorting them by label, that user defined in node tree panel or if no label, it takes name of node.
+Sorting them by label, that user defined in node tree panel or if no label, the name of the node is used.
 
 Update all
 ----------
@@ -86,7 +89,7 @@ Update all
 .. image:: https://cloud.githubusercontent.com/assets/5783432/4512955/866461fa-4b46-11e4-8caf-d650d15f5c5f.png
   :alt: updateall.png
 
-Forces updating all layouts.
+Forces update of all layouts.
 
 Clean
 -----
@@ -99,6 +102,9 @@ Button to remove sverchok and blendgraph layouts, that has not users (0)
 **hard clean**  - boolean flag to remove layouts even if it has users (1,2...), but not fake user (F). Fake user layout will be left.
 
 **Clean layouts** - remove layouts. Button active only if no node tree windiw around. Better to make active layout nothing or fake user layout to prevent blender crash. Easyest way - activate your Faked user layout, on 3D press **ctrl+UP** and press button. than again **ctrl+UP** to go back. No wastes left after sverchok in scene.
+
+Use with care.
+
 
 Properties
 ----------
@@ -202,3 +208,12 @@ Relax, most of these warnings can be ignored, unless the Tree fails to import, t
 **Bug Reporting**
 
 By all means if you like using this feature, file issues in `this thread <https://github.com/nortikin/sverchok/issues/422>`_. The best way to solve issues is to share with us a screenshot of the last few lines of the error if we need more then we will ask for a copy of the `.blend`.
+
+Groups Panel
+============
+
+Crete a node group from selection.
+Sverchok groups is a beta feature, use a your own risk and please report bugs. Also while it is in beta old node groups may break.
+`Bug reports <https://github.com/nortikin/sverchok/issues/462>`_.
+
+
