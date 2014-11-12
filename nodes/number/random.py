@@ -33,10 +33,10 @@ class RandomNode(bpy.types.Node, SverchCustomTreeNode):
 
     count_inner = IntProperty(name='Count',
                               default=1, min=1,
-                              options={'ANIMATABLE'}, update=updateNode)
+                               update=updateNode)
     seed = FloatProperty(name='Seed',
                          default=0,
-                         options={'ANIMATABLE'}, update=updateNode)
+                         update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', "Count").prop_name = 'count_inner'
@@ -44,31 +44,29 @@ class RandomNode(bpy.types.Node, SverchCustomTreeNode):
 
         self.outputs.new('StringsSocket', "Random", "Random")
 
-    def draw_buttons(self, context, layout):
-        pass
-        #layout.prop(self, "count_inner", text="Count")
-        #layout.prop(self, "seed", text="Seed")
-
     def process(self):
+        if not self.outputs[0].is_linked:
+            return
+            
         Coun = self.inputs['Count'].sv_get()[0]
 
         Seed = self.inputs['Seed'].sv_get()[0]
 
         # outputs
 
-        if self.outputs[0].is_linked:
-            Random = []
-            if len(Seed) == 1:
-                random.seed(Seed[0])
-                for c in Coun:
-                    Random.append([random.random() for i in range(int(c))])
-            else:
-                param = match_long_repeat([Seed, Coun])
-                for s, c in zip(*param):
-                    random.seed(s)
-                    Random.append([random.random() for i in range(int(c))])
-
-            SvSetSocketAnyType(self, 'Random', Random)
+        
+        Random = []
+        if len(Seed) == 1:
+            random.seed(Seed[0])
+            for c in Coun:
+                Random.append([random.random() for i in range(int(c))])
+        else:
+            param = match_long_repeat([Seed, Coun])
+            for s, c in zip(*param):
+                random.seed(s)
+                Random.append([random.random() for i in range(int(c))])
+        
+        self.outputs[0].sv_set(Random)
 
 
 def register():

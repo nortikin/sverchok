@@ -19,7 +19,7 @@
 import bpy
 from bpy.props import IntProperty, BoolProperty
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, SvSetSocketAnyType, SvGetSocketAnyType
+from sverchok.data_structure import updateNode
 
 
 class IntegerNode(bpy.types.Node, SverchCustomTreeNode):
@@ -86,7 +86,7 @@ class IntegerNode(bpy.types.Node, SverchCustomTreeNode):
         
         # outputs
         if self.outputs[0].is_linked:
-            SvSetSocketAnyType(self, 'Integer', [[Integer]])
+            self.outputs[0].sv_set([[Integer]])
 
 def register():
     bpy.utils.register_class(IntegerNode)
