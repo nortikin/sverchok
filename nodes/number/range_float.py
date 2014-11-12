@@ -131,11 +131,12 @@ class SvGenFloatRange(bpy.types.Node, SverchCustomTreeNode):
     def process(self):
         inputs = self.inputs
         outputs = self.outputs
-
+        if not outputs[0].is_linked:
+            return
         param = [inputs[i].sv_get()[0] for i in range(3)]
         f = self.func_dict[self.mode]
         out = [list(f(*args)) for args in zip(*match_long_repeat(param))]
-        self.outputs['Range'].sv_set(out)
+        outputs['Range'].sv_set(out)
 
 
 def register():

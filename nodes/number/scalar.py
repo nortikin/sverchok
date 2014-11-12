@@ -16,6 +16,7 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+# okay this is ugly but makes sense, somewhat
 from math import *
 from itertools import zip_longest
 
@@ -24,8 +25,7 @@ from bpy.props import (EnumProperty, FloatProperty,
                        IntProperty, BoolVectorProperty)
 
 from sverchok.node_tree import SverchCustomTreeNode, StringsSocket
-from sverchok.data_structure import (updateNode, match_long_repeat,
-                            SvSetSocketAnyType, SvGetSocketAnyType)
+from sverchok.data_structure import (updateNode, match_long_repeat)
 
 
 class ScalarMathNode(bpy.types.Node, SverchCustomTreeNode):
@@ -233,23 +233,22 @@ class ScalarMathNode(bpy.types.Node, SverchCustomTreeNode):
 
     
     def process(self):
-        
-        if 'X' in self.inputs:
+        in_count = len(self.inputs)
+        if in_count > 0:
             x = self.inputs['X'].sv_get(deepcopy=False)
             
-        if 'Y' in self.inputs:
+        if in_count > 1:
             y = self.inputs['Y'].sv_get(deepcopy=False)
-        nrInputs = len(self.inputs)
         # outputs
-        if 'float' in self.outputs and self.outputs['float'].links:
+        if self.outputs['float'].is_linked:
             result = []
-            if nrInputs == 0:
+            if in_count == 0:
                 result = [[self.constant[self.items_]]]
-            elif nrInputs == 1:
+            elif in_count == 1:
                 result = self.recurse_fx(x, self.fx[self.items_])
-            elif nrInputs == 2:
+            elif in_count == 2:
                 result = self.recurse_fxy(x, y, self.fxy[self.items_])
-            SvSetSocketAnyType(self, 'float', result)
+            self.outputs['float'].sv_set(result)
 
     # apply f to all values recursively
     def recurse_fx(self, l, f):
