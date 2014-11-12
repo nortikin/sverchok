@@ -73,7 +73,7 @@ class SvObjectSocket(NodeSocket):
         elif self.is_output:
             layout.label(text)
         else:
-            layout.prop_search(self, 'object_ref', bpy.data, 'objects', text='Object')
+            layout.prop_search(self, 'object_ref', bpy.data, 'objects', text='')
 
     def draw_color(self, context, node):
         return(.9, .8, .8, 1.0)

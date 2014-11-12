@@ -23,7 +23,8 @@ import bpy
 
 
 import mathutils
-from mathutils import Vector
+from mathutils import Matrix, Vector, Euler, Quaternion, Color
+
 from bpy.props import StringProperty, BoolProperty, EnumProperty
 from sverchok.node_tree import SverchCustomTreeNode, VerticesSocket
 from sverchok.data_structure import (updateNode, 
@@ -87,7 +88,7 @@ def assign_data(obj, data):
         else: #isinstance(obj, Matrix)
             obj[:] = mat
     else: # super optimistic guess
-        obj[:] = type(obj)(data[0][0])
+        obj[:] = type(obj)(data)
 
 
 class SvSetDataObjectNode(bpy.types.Node, SverchCustomTreeNode):
@@ -141,7 +142,9 @@ class SvSetDataObjectNode(bpy.types.Node, SverchCustomTreeNode):
             path = parse_to_path(ast_path.body[0].value)    
             for obj,val in sv_zip_longest(objs, Val):
                 real_obj = get_object(obj, path)
-                if isinstance(real_obj, (int, float)):
+                if isinstance(real_obj, (int, float,str)):
+                    if isinstance(real_obj,str):
+                        val = str(val)
                     real_obj = get_object(obj, path[:-1])
                     p_type, value = path[-1]
                     if p_type == "attr":
