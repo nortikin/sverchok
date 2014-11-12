@@ -294,9 +294,9 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
     def get_geometry_from_sockets(self):
         inputs = self.inputs
-        get_data = lambda s, t: self.get_corrected_data(s, t) if inputs[s].links else []
-
-        mverts = get_data('vertices', VerticesSocket)
+        get_data = lambda s, t: self.get_corrected_data(s, t) if inputs[s].is_linked else []
+        # if we don't have vertices we can do anything anyway, fail now.
+        mverts = dataCorrect(inputs[0].sv_get())
         mmtrix = get_data('matrix', MatrixSocket)
         medges = get_data('edges', StringsSocket)
         mfaces = get_data('faces', StringsSocket)
@@ -319,9 +319,6 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
     def process(self):
         mverts, *mrest = self.get_geometry_from_sockets()
         
-        if not mverts:
-            return
-
         def get_edges_faces_matrices(obj_index):
             for geom in mrest:
                 yield self.get_structure(geom, obj_index)
