@@ -999,10 +999,12 @@ def SvGetSocket(socket, deepcopy=True):
         else:
             if DEBUG_MODE:
                 print("cache miss:", socket.node.name, "->", socket.name, "from:", other.node.name, "->", other.name)
-            raise LookupError
+            raise SvNoDataError
     # not linked
-    raise LookupError
+    raise SvNoDataError
 
+class SvNoDataError(LookupError):
+    pass
 
 def reset_socket_cache(ng):
     """

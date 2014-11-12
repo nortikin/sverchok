@@ -27,11 +27,13 @@ from bpy.types import NodeTree, NodeSocket, NodeSocketStandard
 from sverchok import data_structure
 from sverchok.data_structure import (SvGetSocketInfo, SvGetSocket,
                                      SvSetSocket, updateNode,
-                                     get_other_socket)
+                                     get_other_socket, SvNoDataError)
 
 from sverchok.core.update_system import (build_update_list, process_from_node,
                                          process_tree, get_update_lists)
 from sverchok.ui import color_def
+
+sentinel = object()
 
 
 def process_from_socket(self, context):
@@ -54,11 +56,13 @@ class MatrixSocket(NodeSocket):
     bl_idname = "MatrixSocket"
     bl_label = "Matrix Socket"
     prop_name = StringProperty(default='')
+    
 
-    # beta interface only use for debug, might change
-    def sv_get(self, default=None, deepcopy=False):
+    def sv_get(self, default=sentinel, deepcopy=False):
         if self.is_linked and not self.is_output:
             return SvGetSocket(self, deepcopy)
+        elif default is sentinel:
+            raise SvNoDataError
         else:
             return default
 
@@ -86,18 +90,20 @@ class VerticesSocket(NodeSocket):
     prop = FloatVectorProperty(default=(0, 0, 0), size=3, update=process_from_socket)
     prop_name = StringProperty(default='')
     use_prop = BoolProperty(default=False)
-
-    # beta interface only use for debug, might change
-    def sv_get(self, default=None, deepcopy=False):
+    
+    
+    def sv_get(self, default=sentinel, deepcopy=False):
         if self.is_linked and not self.is_output:
             return SvGetSocket(self, deepcopy)
-        elif self.prop_name:
+        if self.prop_name:
             return [[getattr(self.node, self.prop_name)[:]]]
         elif self.use_prop:
             return [[self.prop[:]]]
+        elif default is sentinel:
+            raise SvNoDataError
         else:
-            default
-
+            return default
+            
     def sv_set(self, data):
         SvSetSocket(self, data)
 
@@ -128,15 +134,18 @@ class StringsSocket(NodeSocketStandard):
     prop_type = StringProperty(default='')
     prop_index = IntProperty()
 
-    def sv_get(self, default=None, deepcopy=False):
+
+    def sv_get(self, default=sentinel, deepcopy=False):
         if self.is_linked and not self.is_output:
             return SvGetSocket(self, deepcopy)
         elif self.prop_name:
             return [[getattr(self.node, self.prop_name)]]
         elif self.prop_type:
             return [[getattr(self.node, self.prop_type)[self.prop_index]]]
-        else:
+        elif default is not sentinel:
             return default
+        else:
+            raise SvNoDataError
 
     def sv_set(self, data):
         SvSetSocket(self, data)

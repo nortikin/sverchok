@@ -23,6 +23,7 @@ import bpy
 from mathutils import Vector
 
 from sverchok import data_structure
+from sverchok.data_structure import SvNoDataError
 import sverchok
 
 import traceback
@@ -267,7 +268,8 @@ def update_error_nodes(ng, name, err):
         return
     error_nodes[name] = (node.use_custom_color, node.color[:])
     ng["error nodes"] = str(error_nodes)
-    if isinstance(err, LookupError):
+
+    if isinstance(err, SvNoDataError):
         node.color = no_data_color
     else:
         node.color = exception_color
