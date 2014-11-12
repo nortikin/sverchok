@@ -48,6 +48,68 @@ class SvColors(bpy.types.PropertyGroup):
         update=updateNode)
 
 
+class SvObjectSocket(NodeSocket):
+    bl_idname = "SvObjectSocket"
+    bl_label = "Object Socket"
+    
+    object_ref = StringProperty(update=process_from_socket)
+    
+    def sv_get(self, default=None, deepcopy=False):
+        if self.is_linked and not self.is_output:
+            return SvGetSocket(self, deepcopy)
+        else:
+            obj = bpy.data.objects.get(self.object_ref)
+            if obj:
+                return [obj]
+            else:
+                return None
+
+    def sv_set(self, data):
+        SvSetSocket(self, data)
+
+    def draw(self, context, layout, node, text):
+        if self.is_linked:
+            layout.label(text + '. ' + SvGetSocketInfo(self))
+        elif self.is_output:
+            layout.label(text)
+        else:
+            layout.prop_search(self, 'object_ref', bpy.data, 'objects', text='Object')
+
+    def draw_color(self, context, node):
+        return(.9, .8, .8, 1.0)
+    
+    
+class SvTextSocket(NodeSocket):
+    bl_idname = "SvTextSocket"
+    bl_label = "Text Socket"
+    
+    text = StringProperty(update=process_from_socket)
+    
+    def sv_get(self, default=None, deepcopy=False):
+        if self.is_linked and not self.is_output:
+            return SvGetSocket(self, deepcopy)
+        else:
+            return [self.text]
+
+    def sv_set(self, data):
+        SvSetSocket(self, data)
+
+    def draw(self, context, layout, node, text):
+        if self.is_linked:
+            layout.label(text + '. ' + SvGetSocketInfo(self))
+        elif self.is_output:
+            layout.label(text)
+        else:
+            layout.prop(self.text)
+
+    def draw_color(self, context, node):
+        '''if self.is_linked:
+            return(.8,.3,.75,1.0)
+        else: '''
+        return(.9, .9, .9, 1.0)
+    
+    
+    
 class MatrixSocket(NodeSocket):
     '''4x4 matrix Socket_type'''
     # ref: http://urchn.org/post/nodal-transform-experiment
@@ -324,19 +386,22 @@ class SverchCustomTreeNode:
             process_from_node(self)
 
 
-def register():
-    bpy.utils.register_class(SvColors)
-    bpy.utils.register_class(SverchCustomTree)
-    bpy.utils.register_class(SverchGroupTree)
-    bpy.utils.register_class(MatrixSocket)
-    bpy.utils.register_class(StringsSocket)
-    bpy.utils.register_class(VerticesSocket)
+classes = [
+    SvColors,
+    SverchCustomTree,
+    SverchGroupTree,
+    MatrixSocket,
+    StringsSocket,
+    VerticesSocket,
+    SvTextSocket,
+    SvObjectSocket
+]
 
+def register():
+    for class_name in classes:
+        print(class_name)
+        bpy.utils.register_class(class_name)
 
 def unregister():
-    bpy.utils.unregister_class(VerticesSocket)
-    bpy.utils.unregister_class(StringsSocket)
-    bpy.utils.unregister_class(MatrixSocket)
-    bpy.utils.unregister_class(SverchCustomTree)
-    bpy.utils.unregister_class(SverchGroupTree)
-    bpy.utils.unregister_class(SvColors)
+    for class_name in reversed(classes):
+        bpy.utils.unregister_class(class_name)

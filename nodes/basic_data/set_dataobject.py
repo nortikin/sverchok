@@ -25,6 +25,7 @@ from bpy.props import StringProperty, BoolProperty, EnumProperty
 from sverchok.node_tree import SverchCustomTreeNode, VerticesSocket
 from sverchok.data_structure import (updateNode, 
                                      SvGetSocketAnyType, match_long_repeat)
+from sverchok.utils.sv_itertools import sv_zip_longest
 
 
 class SvSetDataObjectNode(bpy.types.Node, SverchCustomTreeNode):
@@ -57,35 +58,32 @@ class SvSetDataObjectNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "Modes", "Objects property")
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', 'Objects')
-        self.inputs.new('VerticesSocket', 'values')
+        self.inputs.new('SvObjectSocket', 'Objects')
+        self.inputs.new('VerticesSocket', 'values').use_prop = True
 
     def process(self):
         SGSAT = SvGetSocketAnyType
-        if self.inputs['Objects'].links and self.inputs['values'].links:
 
-            ObjectID = SGSAT(self, self.inputs['Objects'])[0]
-            if isinstance(SGSAT(self, self.inputs['values'])[0][0],(tuple)):
-                Val = [Vector(i) for i in SGSAT(self, self.inputs['values'])[0]]
-            else:
-                Val = SGSAT(self, self.inputs['values'])[0]
+        objs = self.inputs['Objects'].sv_get()
+        if isinstance(self.inputs['values'].sv_get()[0][0],(tuple)):
+            Val = [Vector(i) for i in self.inputs['values'].sv_get()[0]]
+        else:
+            Val = self.inputs['values'].sv_get()[0]
 
-            temp = match_long_repeat([ObjectID, Val])
-            ObjectID, Val = temp[0], temp[1]
 
-            if self.Modes != 'custom':
-                Prop = self.Modes
-            else:
-                Prop = self.formula
+        if self.Modes != 'custom':
+            Prop = self.Modes
+        else:
+            Prop = self.formula
 
-            g = 0
-            while g != len(ObjectID):
-                if ObjectID[g] != None:
-                    exec("ObjectID[g]."+Prop+"= Val[g]")
-                g = g+1
-
-    def update_socket(self, context):
-        self.update()
+        for obj,val in sv_zip_longest(objs, Val):
+            setattr(obj, Prop, val)
+        '''
+        while g != len(ObjectID):
+            if ObjectID[g] != None:
+                exec("ObjectID[g]."+Prop+"= Val[g]")
+            g = g+1
+        '''
 
 
 def register():

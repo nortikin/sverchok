@@ -114,6 +114,7 @@ class ObjectsNode(bpy.types.Node, SverchCustomTreeNode):
         update=updateNode)
 
     def sv_init(self, context):
+        self.inputs.new("SvObjectSocket", "Objects")
         self.outputs.new('VerticesSocket', "Vertices", "Vertices")
         self.outputs.new('StringsSocket', "Edges", "Edges")
         self.outputs.new('StringsSocket', "Polygons", "Polygons")
@@ -160,48 +161,51 @@ class ObjectsNode(bpy.types.Node, SverchCustomTreeNode):
         if self.objects_local and not handle[0]:
             handle_write(name, literal_eval(self.objects_local))
             handle = handle_read(name)    
-            
-        if handle[0]:
-            objs = handle[1]
-            edgs_out = []
-            vers_out = []
-            vers_out_grouped = []
-            pols_out = []
-            mtrx_out = []
-            for obj_ in objs:  # names of objects
-                edgs = []
-                vers = []
-                vers_grouped = []
-                pols = []
-                mtrx = []
-                obj = bpy.data.objects[obj_]  # objects itself
-                if obj.type == 'EMPTY':
-                    for m in obj.matrix_world:
-                        mtrx.append(m[:])
+        if self.inputs[0].is_linked:
+            objs = self.inputs[0].sv_get()
+        else:
+            objs = [bpy.data.objects[name] for name in handle[1]]
+        print(objs)
+        edgs_out = []
+        vers_out = []
+        vers_out_grouped = []
+        pols_out = []
+        mtrx_out = []
+        for obj in objs:  # objects
+            print(obj)
+            edgs = []
+            vers = []
+            vers_grouped = []
+            pols = []
+            mtrx = []
+            if obj.type == 'EMPTY':
+                for m in obj.matrix_world:
+                    mtrx.append(m[:])
 
-                else:
-                    scene = bpy.context.scene
-                    settings = 'PREVIEW'
-                    # create a temporary mesh
-                    obj_data = obj.to_mesh(scene, self.modifiers, settings)
+            else:
+                scene = bpy.context.scene
+                settings = 'PREVIEW'
+                # create a temporary mesh
+                obj_data = obj.to_mesh(scene, self.modifiers, settings)
 
-                    for m in obj.matrix_world:
-                        mtrx.append(list(m))
-                    for k, v in enumerate(obj_data.vertices):
-                        if self.vergroups and v.groups.values():
-                            vers_grouped.append(k)
-                        vers.append(list(v.co))
-                    edgs = obj_data.edge_keys
-                    for p in obj_data.polygons:
-                        pols.append(list(p.vertices))
-                    # remove the temp mesh
-                    bpy.data.meshes.remove(obj_data)
+                for m in obj.matrix_world:
+                    mtrx.append(list(m))
+                for k, v in enumerate(obj_data.vertices):
+                    if self.vergroups and v.groups.values():
+                        vers_grouped.append(k)
+                    vers.append(list(v.co))
+                edgs = obj_data.edge_keys
+                for p in obj_data.polygons:
+                    pols.append(list(p.vertices))
+                # remove the temp mesh
+                bpy.data.meshes.remove(obj_data)
 
-                edgs_out.append(edgs)
-                vers_out.append(vers)
-                vers_out_grouped.append(vers_grouped)
-                pols_out.append(pols)
-                mtrx_out.append(mtrx)
+            edgs_out.append(edgs)
+            vers_out.append(vers)
+            vers_out_grouped.append(vers_grouped)
+            pols_out.append(pols)
+            mtrx_out.append(mtrx)
+
             if vers_out[0]:
 
                 if self.outputs['Vertices'].is_linked:

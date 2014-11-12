@@ -22,7 +22,7 @@ import parser
 
 from bpy.props import StringProperty, EnumProperty
 from sverchok.node_tree import SverchCustomTreeNode, VerticesSocket
-from sverchok.data_structure import (updateNode, SvSetSocketAnyType)
+from sverchok.data_structure import (updateNode)
 
 
 class SvGetDataObjectNode(bpy.types.Node, SverchCustomTreeNode):
@@ -62,36 +62,34 @@ class SvGetDataObjectNode(bpy.types.Node, SverchCustomTreeNode):
             col.prop_search(self, 'group_name', bpy.data, 'groups', text='', icon='HAND')
 
     def sv_init(self, context):
-        self.outputs.new('VerticesSocket', "Objects", "Objects")
+        self.outputs.new('SvObjectSocket', "Objects")
 
     def process(self):
 
-        SSSAT = SvSetSocketAnyType
         outputs = self.outputs
         Objects = []
 
+        if not outputs['Objects'].is_linked:
+            return
+            
         if self.Modes == "in_group":
             if self.group_name in bpy.data.groups:
-                for i in bpy.data.groups.get(self.group_name).objects:
-                    Objects.append(i)
+                for obj in bpy.data.groups.get(self.group_name).objects:
+                    Objects.append(obj)
 
         elif self.Modes == "selected_objects":
-            for i in bpy.context.selected_objects:
-                Objects.append(i)
+            for obj in bpy.context.selected_objects:
+                Objects.append(obj)
 
         elif self.Modes == "active":
             Objects.append(bpy.context.active_object)
 
         else:
-            for i in bpy.data.objects:
-                if i.type == self.Modes:
-                    Objects.append(i)
+            for obj in bpy.data.objects:
+                if obj.type == self.Modes:
+                    Objects.append(obj)
 
-        if outputs['Objects'].links:
-            SSSAT(self, 'Objects', [Objects])
-
-    def update_socket(self, context):
-        self.update()
+        outputs['Objects'].sv_set(Objects)
 
 
 def register():
