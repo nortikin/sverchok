@@ -56,16 +56,17 @@ class SvObjectSocket(NodeSocket):
     
     object_ref = StringProperty(update=process_from_socket)
     
-    def sv_get(self, default=None, deepcopy=False):
+    def sv_get(self, default=sentinel, deepcopy=False):
         if self.is_linked and not self.is_output:
             return SvGetSocket(self, deepcopy)
-        else:
+        elif self.object_ref:
             obj = bpy.data.objects.get(self.object_ref)
-            print(obj)
             if obj:
                 return [obj]
             else:
-                return None
+                raise SvNoDataError
+        else:
+            raise SvNoDataError
 
     def sv_set(self, data):
         SvSetSocket(self, data)
