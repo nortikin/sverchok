@@ -161,9 +161,12 @@ class ObjectsNode(bpy.types.Node, SverchCustomTreeNode):
         if self.objects_local and not handle[0]:
             handle_write(name, literal_eval(self.objects_local))
             handle = handle_read(name)    
+        obj = None
         if self.inputs[0].is_linked:
             objs = self.inputs[0].sv_get()
         else:
+            objs = self.inputs[0].sv_get()
+        if not obj:
             objs = [bpy.data.objects[name] for name in handle[1]]
         print(objs)
         edgs_out = []

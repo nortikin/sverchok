@@ -33,7 +33,8 @@ nodes_dict = {
         'cache',
         'getsetprop',
         'get_dataobject',
-        'set_dataobject'
+        'set_dataobject',
+        'tomeshnode',
     ],
 
     'basic_debug': [

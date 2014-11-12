@@ -71,11 +71,11 @@ def assign_data(obj, data):
     '''
     assigns data to the object
     '''
-    if isinstance(obj, (int, float)):
+    if isinstance(obj, (int, float, str)):
         # doesn't work
-        obj = data[0][0]
+        obj = data
     elif isinstance(obj, (Vector, Color)):
-        obj[:] = data[0][0] 
+        obj[:] = data 
     elif isinstance(obj, (Matrix, Euler, Quaternion)):
         mats = Matrix_generate(data)
         mat = mats[0]

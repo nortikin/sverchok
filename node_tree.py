@@ -59,6 +59,7 @@ class SvObjectSocket(NodeSocket):
             return SvGetSocket(self, deepcopy)
         else:
             obj = bpy.data.objects.get(self.object_ref)
+            print(obj)
             if obj:
                 return [obj]
             else:
@@ -73,7 +74,7 @@ class SvObjectSocket(NodeSocket):
         elif self.is_output:
             layout.label(text)
         else:
-            layout.prop_search(self, 'object_ref', bpy.data, 'objects', text='')
+            layout.prop_search(self, 'object_ref', bpy.data, 'objects', text=text)
 
     def draw_color(self, context, node):
         return(.9, .8, .8, 1.0)
