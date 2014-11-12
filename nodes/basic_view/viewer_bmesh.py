@@ -233,19 +233,18 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
             elif button_type == 's':
                 icon = 'RESTRICT_SELECT_' + ['ON', 'OFF'][self.state_select]
             return icon
-        
+
         #split = row.split()
         col = layout.column(align=True)
         row = col.row(align=True)
         #split = row.split()
         #r = split.column()
         row.column().prop(self, "activate", text="UPD", toggle=True, icon=view_icon)
-        
+
         #row = layout.row(align=True)
         #split = row.split()
         #col1 = split.column()
         #col1.prop(self, "activate", text="Update")
-
 
         #split = split.split()
         #if split:
@@ -253,7 +252,6 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
         row.operator(sh, text='', icon=icons('v')).fn_name = 'hide_view'
         row.operator(sh, text='', icon=icons('s')).fn_name = 'hide_select'
         row.operator(sh, text='', icon=icons('r')).fn_name = 'hide_render'
-
 
         col = layout.column(align=True)
         row = col.row(align=True)
@@ -319,16 +317,12 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
     def update(self):
         pass
-        # explicit statement about which states are useful to process.
-        #if not self.activate:
-        #    self.set_dormant_color()
-        #    return
-
-        #inputs = self.inputs
-
 
     def process(self):
         mverts, *mrest = self.get_geometry_from_sockets()
+        
+        if not mverts:
+            return
 
         def get_edges_faces_matrices(obj_index):
             for geom in mrest:
@@ -350,6 +344,7 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
             make_bmesh_geometry(self, bpy.context, mesh_name, Verts, *data)
 
         self.remove_non_updated_objects(obj_index)
+
         objs = self.get_children()
         if self.outputs[0].is_linked:
             self.outputs[0].sv_set(objs)

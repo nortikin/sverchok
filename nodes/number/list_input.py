@@ -95,7 +95,7 @@ class SvListInputNode(bpy.types.Node, SverchCustomTreeNode):
             if self.mode == 'int_list':
                 data = [list(self.int_list[:self.int_])]
             elif self.mode == 'float_list':
-                data [list(self.float_list[:self.int_])]
+                data = [list(self.float_list[:self.int_])]
             elif self.mode == 'vector':
                 c = self.v_int*3
                 v_l = list(self.vector_list)

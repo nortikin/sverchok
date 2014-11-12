@@ -67,7 +67,7 @@ class SvMapRangeNode(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "clamp")
-
+    
     def map_range(self, x_list, old_min, old_max, new_min, new_max):
         old_d = old_max - old_min
         new_d = new_max - new_min
@@ -85,8 +85,8 @@ class SvMapRangeNode(bpy.types.Node, SverchCustomTreeNode):
         inputs = self.inputs
         outputs = self.outputs
 
-        # outputs, end early.
-        if 'Value' not in outputs or not outputs['Value'].links:
+        # no outputs, end early.
+        if outputs['Value'].is_linked:
             return
         value_in = iter(inputs[0].sv_get())
         param = [repeat_last(inputs[i].sv_get()[0]) for i in range(1, 5)]
