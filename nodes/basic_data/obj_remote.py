@@ -50,17 +50,25 @@ class SvObjRemoteNode(bpy.types.Node, SverchCustomTreeNode):
     show_string_box = BoolProperty()
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', 'location')
-        self.inputs.new('VerticesSocket', 'scale')
-        self.inputs.new('VerticesSocket', 'rotation')
+        self.inputs.new('SvObjectSocket', 'obj')
+
+        s = self.inputs.new('VerticesSocket', 'location')
+        s.use_prop = True
+        s.prop = (0,0,0)
+        s = self.inputs.new('VerticesSocket', 'scale')
+        s.use_prop = True
+        s.prop = (1,1,1)
+        s = self.inputs.new('VerticesSocket', 'rotation')
+        s.use_prop = True
+        s.prop = (1,1,1)
 
     def draw_buttons(self, context, layout):
         col = layout.column()
         col.prop(self, "activate", text="Update")
-        col.prop_search(self, 'obj_name', bpy.data, 'objects', text='', icon='HAND')
+        #col.prop_search(self, 'obj_name', bpy.data, 'objects', text='', icon='HAND')
 
-        if self.show_string_box:
-            col.prop(self, 'input_text', text='')
+        #if self.show_string_box:
+        #    col.prop(self, 'input_text', text='')
 
     def process(self):
         if not self.activate:
@@ -69,22 +77,14 @@ class SvObjRemoteNode(bpy.types.Node, SverchCustomTreeNode):
         inputs = self.inputs
         objects = bpy.data.objects
 
-        def get_if_valid(sockname, fallback):
-            s = self.inputs[sockname].sv_get()
-            if s and s[0] and s[0][0]:
-                return s[0][0]
-            else:
-                return fallback
+        for obj in inputs[0].sv_get():
+            obj.location = inputs[1].sv_get()[0][0]
+            obj.scale = inputs[2].sv_get()[0][0]
+            obj.rotation_euler = inputs[3].sv_get()[0][0]
+            #self.show_string_box = (obj.type == 'FONT')
 
-        if self.obj_name in objects:
-            obj = objects[self.obj_name]
-            obj.location = get_if_valid('location', fallback=(0, 0, 0))
-            obj.scale = get_if_valid('scale', fallback=(1, 1, 1))
-            obj.rotation_euler = get_if_valid('rotation', fallback=(0, 0, 0))
-            self.show_string_box = (obj.type == 'FONT')
-
-            if self.show_string_box:
-                obj.data.body = self.input_text
+            #if self.show_string_box:
+            #    obj.data.body = self.input_text
 
         else:
             self.show_string_box = 0
