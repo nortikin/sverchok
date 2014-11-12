@@ -86,7 +86,7 @@ class SvMapRangeNode(bpy.types.Node, SverchCustomTreeNode):
         outputs = self.outputs
 
         # no outputs, end early.
-        if outputs['Value'].is_linked:
+        if not outputs['Value'].is_linked:
             return
         value_in = iter(inputs[0].sv_get())
         param = [repeat_last(inputs[i].sv_get()[0]) for i in range(1, 5)]
