@@ -47,18 +47,18 @@ class SvObjDuplivertOne(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     name_parent = StringProperty(
-        description="obj's verts are used to duplicate child",
-        update=updateNode)
+        description="obj's verts are used to duplicate child")  # , update=updateNode)
     name_child = StringProperty(
-        description="name of object to duplicate",
-        update=updateNode)
+        description="name of object to duplicate")  # ,  update=updateNode)
 
     def sv_init(self, context):
+        self.inputs.new("SvObjectSocket", "Parent")
+        self.inputs.new("SvObjectSocket", "Child")
         self.inputs.new("VerticesSocket", "Rotations")
 
     def draw_buttons(self, context, layout):
         col = layout.column()
-        col.prop_search(self, 'name_parent', bpy.data, 'objects', text='parent')
+        # col.prop_search(self, 'name_parent', bpy.data, 'objects', text='parent')
 
         if self.name_child and self.name_parent:
             ob = bpy.data.objects[self.name_parent]
@@ -91,13 +91,29 @@ class SvObjDuplivertOne(bpy.types.Node, SverchCustomTreeNode):
             elif ob.dupli_type == 'GROUP':
                 layout.prop(ob, "dupli_group", text="Group")
 
-        col.prop_search(self, 'name_child', bpy.data, 'objects', text='child')
+        # col.prop_search(self, 'name_child', bpy.data, 'objects', text='child')
         col.separator()
         op_one = col.operator('node.sv_fdp_center_child', text='Center Child')
         op_one.name_child = self.name_child
 
+    def process_obj_socket(self, ref, idx, fallback=''):
+        # need something, or empty string.
+        if isinstance(ref, list):
+            ref = ref[idx]
+            if hasattr(ref, 'name'):
+                return ref.name
+        return fallback
+
     def process(self):
         objects = bpy.data.objects
+
+        p = self.inputs['Parent'].sv_get()
+        c = self.inputs['Child'].sv_get()
+
+        self.name_parent = self.process_obj_socket(p, 0)
+        self.name_child = self.process_obj_socket(c, 0)
+
+        print('parent: {0}, child: {1}'.format(self.name_parent, self.name_child))
 
         if self.name_parent and self.name_child:
             obj_parent = objects[self.name_parent]
