@@ -122,7 +122,7 @@ class SvRayCastNode(bpy.types.Node, SverchCustomTreeNode):
         if self.Modes == 'World':
 
             if 'data.object' not in outputs:
-                outputs.new("VerticesSocket", "data.object")
+                outputs.new("SvObjectSocket", "data.object")
             if 'hited object matrix' not in outputs:
                 outputs.new("MatrixSocket", "hited object matrix")
 
