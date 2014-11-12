@@ -229,8 +229,9 @@ def make_node_cats():
     node_cats["Alpha Nodes"] = [
         ["SvImageComponentsNode", "Image Decompose",  "GROUP_VCOL"],
         ["SvJoinTrianglesNode",   "Join Triangles"],
-        ["SvCacheNode",           "Cache"],
-
+        ["SvCacheNode",           "Cache",],
+        ["SvGetDataObjectNode",           "Get ObjectID",],
+        ["SvSetDataObjectNode",           "Set ObjectID",]
     ]
 
     return node_cats
