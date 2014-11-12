@@ -82,7 +82,6 @@ class SvObjectToMeshNode(bpy.types.Node, SverchCustomTreeNode):
             if obj.type == 'EMPTY':
                 for m in obj.matrix_world:
                     mtrx.append(m[:])
-
             else:
                 scene = bpy.context.scene
                 settings = 'PREVIEW'
@@ -106,7 +105,7 @@ class SvObjectToMeshNode(bpy.types.Node, SverchCustomTreeNode):
             mtrx_out.append(mtrx)
 
         data_out = [vers_out, edgs_out, pols_out, mtrx_out]
-        for s,d in zip(self.outputs, [vers_out, edgs_out, pols_out, mtrx_out]):
+        for s,d in zip(self.outputs, data_out):
             if s.is_linked:
                 s.sv_set(d)
 

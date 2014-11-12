@@ -47,26 +47,23 @@ class SvObjDuplivertOne(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     name_parent = StringProperty(
-        description="obj's verts are used to duplicate child",
-        update=updateNode)
+        description="obj's verts are used to duplicate child")  # , update=updateNode)
     name_child = StringProperty(
-        description="name of object to duplicate",
-        update=updateNode)
+        description="name of object to duplicate")  # ,  update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new("SvObjectSocket", "Child")
         self.inputs.new("SvObjectSocket", "Parent")
+        self.inputs.new("SvObjectSocket", "Child")
         self.inputs.new("VerticesSocket", "Rotations")
 
-    '''
     def draw_buttons(self, context, layout):
-        #col = layout.column()
-        #col.prop_search(self, 'name_parent', bpy.data, 'objects', text='parent')
+        col = layout.column()
+        # col.prop_search(self, 'name_parent', bpy.data, 'objects', text='parent')
 
-        if true: #self.name_child and self.name_parent:
+        if self.name_child and self.name_parent:
             ob = bpy.data.objects[self.name_parent]
 
-            #layout.prop(ob, "dupli_type", expand=True)
+            layout.prop(ob, "dupli_type", expand=True)
 
             if ob.dupli_type == 'FRAMES':
                 split = layout.split()
@@ -94,40 +91,55 @@ class SvObjDuplivertOne(bpy.types.Node, SverchCustomTreeNode):
             elif ob.dupli_type == 'GROUP':
                 layout.prop(ob, "dupli_group", text="Group")
 
-        col.prop_search(self, 'name_child', bpy.data, 'objects', text='child')
+        # col.prop_search(self, 'name_child', bpy.data, 'objects', text='child')
         col.separator()
         op_one = col.operator('node.sv_fdp_center_child', text='Center Child')
         op_one.name_child = self.name_child
-    '''
+
+    def process_obj_socket(self, ref, idx, fallback=''):
+        # need something, or empty string.
+        if isinstance(ref, list):
+            ref = ref[idx]
+            if hasattr(ref, 'name'):
+                return ref.name
+        return fallback
 
     def process(self):
         objects = bpy.data.objects
-        obj_child = self.inputs["Child"].sv_get()[0]
-        obj_parent = self.inputs["Parent"].sv_get()[0]
-        
-        obj_child = objects[self.name_child]
-        obj_child.parent = obj_parent
 
-        if obj_child.use_dupli_vertices_rotation:
+        p = self.inputs['Parent'].sv_get()
+        c = self.inputs['Child'].sv_get()
 
-            val = self.inputs['Rotations'].sv_get()
-            if val:
-                val = val[0]  # get less nested.
-                verts = obj_parent.data.vertices
-                if not (len(val) == len(verts)):
-                    print('sizes don\'t match')
-                    print(len(val), len(verts))
+        self.name_parent = self.process_obj_socket(p, 0)
+        self.name_child = self.process_obj_socket(c, 0)
+
+        print('parent: {0}, child: {1}'.format(self.name_parent, self.name_child))
+
+        if self.name_parent and self.name_child:
+            obj_parent = objects[self.name_parent]
+            obj_child = objects[self.name_child]
+            obj_child.parent = obj_parent
+
+            if obj_child.use_dupli_vertices_rotation:
+
+                val = self.inputs['Rotations'].sv_get()
+                if val:
+                    val = val[0]  # get less nested.
+                    verts = obj_parent.data.vertices
+                    if not (len(val) == len(verts)):
+                        print('sizes don\'t match')
+                        print(len(val), len(verts))
+                        return
+                else:
+                    print('no array')
                     return
-            else:
-                print('no array')
-                return
 
-            # only reaches here if they are the same size
-            for v, norm in zip(verts, val):
-                v.normal = tuple(norm[:3])
+                # only reaches here if they are the same size
+                for v, norm in zip(verts, val):
+                    v.normal = tuple(norm[:3])
 
-            # race condition with bmesh node, this should be done last..
-            # could implement priority cue.
+                # race condition with bmesh node, this should be done last..
+                # could implement priority cue.
 
         if (not self.name_parent) and self.name_child:
             objects[self.name_child].parent = None
