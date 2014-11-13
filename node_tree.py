@@ -58,7 +58,7 @@ class MatrixSocket(NodeSocket):
     prop_name = StringProperty(default='')
     
 
-    def sv_get(self, default=sentinel, deepcopy=False):
+    def sv_get(self, default=sentinel, deepcopy=True):
         if self.is_linked and not self.is_output:
             return SvGetSocket(self, deepcopy)
         elif default is sentinel:
@@ -92,7 +92,7 @@ class VerticesSocket(NodeSocket):
     use_prop = BoolProperty(default=False)
     
     
-    def sv_get(self, default=sentinel, deepcopy=False):
+    def sv_get(self, default=sentinel, deepcopy=True):
         if self.is_linked and not self.is_output:
             return SvGetSocket(self, deepcopy)
         if self.prop_name:
@@ -135,7 +135,7 @@ class StringsSocket(NodeSocketStandard):
     prop_index = IntProperty()
 
 
-    def sv_get(self, default=sentinel, deepcopy=False):
+    def sv_get(self, default=sentinel, deepcopy=True):
         if self.is_linked and not self.is_output:
             return SvGetSocket(self, deepcopy)
         elif self.prop_name:
