@@ -104,13 +104,13 @@ class SvTextSocket(NodeSocket):
         elif self.is_output:
             layout.label(text)
         else:
-            layout.prop(self.text)
+            layout.prop(self, "text")
 
     def draw_color(self, context, node):
         '''if self.is_linked:
             return(.8,.3,.75,1.0)
         else: '''
-        return(.9, .9, .9, 1.0)
+        return(.1, .1, .1, 1.0)
     
     
     
