@@ -164,6 +164,11 @@ nodes_dict = {
         'vertices_delete_doubles',
         'vertices_sort',
         'axis_input'
+    ],
+    'text': [
+        'get_attr',
+        'cmp_text',
+        'obj_by_name',
     ]
         
 }
