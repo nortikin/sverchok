@@ -87,8 +87,8 @@ class SvObjRemoteNode(bpy.types.Node, SverchCustomTreeNode):
             #    obj.data.body = self.input_text
 
         else:
-            self.show_string_box = 0
-
+            self.show_string_box = 0        
+    
 
 def register():
     bpy.utils.register_class(SvObjRemoteNode)
