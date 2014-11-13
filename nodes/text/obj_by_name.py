@@ -23,17 +23,14 @@ import bpy
 from bpy.props import StringProperty, BoolProperty, IntProperty, FloatProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode
-from sverchok.utils.sv_itertools import sv_zip_longest
 
-#
 #
 #  this is just very short demo node.
 
 class SvObjByNameNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Get obj by name '''
     bl_idname = 'SvObjByNameNode'
-    bl_label = '==s'
+    bl_label = 'Obj by name'
     bl_icon = 'OUTLINER_OB_EMPTY'
     
     
