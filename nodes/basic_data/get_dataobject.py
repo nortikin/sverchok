@@ -42,6 +42,7 @@ class SvGetDataObjectNode(bpy.types.Node, SverchCustomTreeNode):
         ("selected_objects",   "Selected_objects",   "", 8),
         ("active",   "Active",   "", 9),
         ("in_group",   "In_Group",   "", 10),
+        ("ALL",     "All",  "",     11),
     ]
 
     Modes = EnumProperty(name="getmodes", description="Get object modes",
@@ -83,7 +84,10 @@ class SvGetDataObjectNode(bpy.types.Node, SverchCustomTreeNode):
 
         elif self.Modes == "active":
             Objects.append(bpy.context.active_object)
-
+            
+        elif self.Modes == "ALL":
+            for obj in bpy.data.objects:
+                Objects.append(obj)
         else:
             for obj in bpy.data.objects:
                 if obj.type == self.Modes:
