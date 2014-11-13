@@ -142,7 +142,7 @@ class SvSetDataObjectNode(bpy.types.Node, SverchCustomTreeNode):
             path = parse_to_path(ast_path.body[0].value)    
             for obj,val in sv_zip_longest(objs, Val):
                 real_obj = get_object(obj, path)
-                if isinstance(real_obj, (int, float,str)):
+                if isinstance(real_obj, (int, float,str,list,object)):
                     if isinstance(real_obj,str):
                         val = str(val)
                     real_obj = get_object(obj, path[:-1])
