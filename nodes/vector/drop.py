@@ -38,30 +38,21 @@ class VectorDropNode(bpy.types.Node, SverchCustomTreeNode):
 
     def process(self):
         # inputs
-        if 'Vectors' in self.outputs and len(self.outputs['Vectors'].links) > 0:
-            if self.inputs['Vectors'].links and \
-                    type(self.inputs['Vectors'].links[0].from_socket) == VerticesSocket \
-                    and self.inputs['Matrixes'] and \
-                    type(self.inputs['Matrixes'].links[0].from_socket) == MatrixSocket:
+        if not self.outputs['Vectors'].is_linked:
+            return
+                        
+        vecs_ = self.inputs['Vectors'].sv_get()
 
-                vecs_ = SvGetSocketAnyType(self, self.inputs['Vectors'])
+        vecs = Vector_generate(vecs_)
+        
+        mats_ = dataCorrect(self.inputs['Matrixes'].sv_get())
+        mats = Matrix_generate(mats_)
+        
+        vectors = self.vecscorrect(vecs, mats)
+        SvSetSocketAnyType(self, 'Vectors', vectors)
 
-                vecs = Vector_generate(vecs_)
-                #print (vecs)
-
-                mats_ = dataCorrect(SvGetSocketAnyType(self, self.inputs['Matrixes']))
-                mats = Matrix_generate(mats_)
-            else:
-                vecs = [[]]
-                mats = [Matrix()]
-
-            # outputs
-
-            vectors_ = self.vecscorrect(vecs, mats)
-            vectors = Vector_degenerate(vectors_)
-            SvSetSocketAnyType(self, 'Vectors', vectors)
-
-    def vecscorrect(self, vecs, mats):
+    @staticmethod
+    def vecscorrect(vecs, mats):
         out = []
         lengthve = len(vecs)-1
         for i, m in enumerate(mats):
@@ -91,7 +82,7 @@ class VectorDropNode(bpy.types.Node, SverchCustomTreeNode):
             out_pre = []
             for v in out_:
                 v_out = (v-vec_c) * mat_rot_norm
-                out_pre.append(v_out)
+                out_pre.append(v_out[:])
 
             out.append(out_pre)
 
