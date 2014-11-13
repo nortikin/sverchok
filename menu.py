@@ -193,8 +193,11 @@ def make_node_cats():
         ["GTextNode",           "GText"],
         ["SvDebugPrintNode",    "Debug print"],
         ["SvStethoscopeNode",   "Stethoscope"],
+        ["SvGetAttrNode",      "Get Attribute"],
+        ["SvCmpNode",           "Cmp"],
+        ["SvObjByNameNode",     "Gget obj by name"],
     ]
-
+    
     # green
     node_cats["Scene"] = [
         ["ObjectsNode",         "Objects in"],
