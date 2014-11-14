@@ -42,7 +42,7 @@ bl_info = {
         "Cfyzzz, Nikitron, Ly29, "
         "AgustinJB, Zeffii, Kosvor,"
     ),
-    "version": (0, 5, 0, 4),
+    "version": (0, 5, 0, 5),
     "blender": (2, 7, 2),
     "location": "Nodes > CustomNodesTree > Add user nodes",
     "description": "Parametric node-based geometry programming",
