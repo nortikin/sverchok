@@ -18,7 +18,7 @@
 
 import parser
 import ast
-
+from itertools import chain, repeat
 import bpy
 
 
@@ -72,7 +72,7 @@ def assign_data(obj, data):
     assigns data to the object
     '''
     if isinstance(obj, (int, float, str)):
-        # doesn't work
+        # doesn't work, catched earlier
         obj = data
     elif isinstance(obj, (Vector, Color)):
         obj[:] = data 
@@ -90,6 +90,7 @@ def assign_data(obj, data):
     else: # super optimistic guess
         obj[:] = type(obj)(data)
 
+bpy_prop_array_cls = None
 
 class SvSetDataObjectNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Set Object Props '''
@@ -124,25 +125,35 @@ class SvSetDataObjectNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvObjectSocket', 'Objects')
         self.inputs.new('VerticesSocket', 'values').use_prop = True
 
-    def process(self):
+    def set_bpy_prop_array_cls(self):
+        global bpy_prop_array_cls
+        if len(bpy.data.objects):
+            bpy_prop_array_cls = type(bpy.data.objects[0].layers)
 
+    def process(self):
+        if not bpy_prop_array_cls:
+            self.set_bpy_prop_array_cls()
         objs = self.inputs['Objects'].sv_get()
-        if isinstance(self.inputs['values'].sv_get()[0][0],(tuple)):
-            Val = [Vector(i) for i in self.inputs['values'].sv_get()[0]]
-        else:
-            Val = self.inputs['values'].sv_get()[0]
+        # this is hard because it is hard to inspect data types
+        #if isinstance(self.inputs['values'].sv_get(),(tuple)):
+        #    Val = [Vector(i) for i in self.inputs['values'].sv_get()[0]]
+        #else:
+        Val = self.inputs['values'].sv_get()
 
 
         if self.Modes != 'custom':
             Prop = self.Modes
-            for obj,val in sv_zip_longest(objs, Val):
+            val_iter = iter(Val[0])
+            for obj,val in zip(objs, chain(Val[0], repeat(Val[0][-1]))):
+                print(obj, Prop, val)
                 setattr(obj, Prop, val)
         else:
             ast_path = ast.parse("obj."+self.formula)
             path = parse_to_path(ast_path.body[0].value)    
             for obj,val in sv_zip_longest(objs, Val):
                 real_obj = get_object(obj, path)
-                if isinstance(real_obj, (int, float,str,list,object)):
+                print(obj,val,path,real_obj)
+                if isinstance(real_obj, (int, float, str, bool, type(None))):
                     if isinstance(real_obj,str):
                         val = str(val)
                     real_obj = get_object(obj, path[:-1])
@@ -151,8 +162,15 @@ class SvSetDataObjectNode(bpy.types.Node, SverchCustomTreeNode):
                         setattr(real_obj, value, val)
                     else: 
                         real_obj[value] = val
+                elif isinstance(real_obj, (bpy.types.Object, type(None))):
+                    print(real_obj, val)
+                    real_obj = val
+                elif isinstance(real_obj, bpy_prop_array_cls):
+                    print(real_obj)
+                    for i in range(len(real_obj)):
+                        real_obj[i] = val[i]
                 else:
-                    assign_data(obj, val)
+                    assign_data(real_obj, val)
 
 
         '''
