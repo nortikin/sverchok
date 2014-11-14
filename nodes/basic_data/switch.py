@@ -84,9 +84,11 @@ class SvSwitchNode(bpy.types.Node, SverchCustomTreeNode):
             sockets = self.inputs[1:count + 1]
         else:
             sockets = self.inputs[1 + count:]
+        '''
         dep_sockets = [get_other_socket(in_s) for in_s,out_s in zip(sockets, self.outputs) if out_s.is_linked]
         ul = make_tree_from_nodes([s.node.name for s in dep_sockets], self.id_data, True)
         do_update(ul, self.id_data.nodes)
+        '''
         for in_s,out_s in zip(sockets, self.outputs):
             if out_s.is_linked:
                 data = in_s.sv_get(deepcopy=False)
