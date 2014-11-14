@@ -31,7 +31,7 @@ from sverchok.data_structure import (updateNode, match_long_repeat,
 class SvLogicNode(bpy.types.Node, SverchCustomTreeNode):
     ''' LogicNode '''
     bl_idname = 'SvLogicNode'
-    bl_label = 'function'
+    bl_label = 'Logic'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
 
@@ -172,11 +172,11 @@ class SvLogicNode(bpy.types.Node, SverchCustomTreeNode):
         label = [self.items_]
         if nrInputs:
             x = self.i_x if self.prop_types[0] else self.x
-            x_label = 'X' if self.inputs[0].links else str(round(x, 3))
+            x_label = 'X' if self.inputs[0].is_linked else str(round(x, 3))
             label.append(x_label)
         if nrInputs == 2:
             y = self.i_y if self.prop_types[1] else self.y
-            y_label = 'Y' if self.inputs[1].links else str(round(y, 3))
+            y_label = 'Y' if self.inputs[1].is_linked else str(round(y, 3))
             label.extend((", ", y_label))
         return " ".join(label)
   
@@ -203,7 +203,7 @@ class SvLogicNode(bpy.types.Node, SverchCustomTreeNode):
         elif self.items_ in self.fxy2:
             out = self.recurse_fxy(x, y, self.fxy2[self.items_])
 
-        SvSetSocketAnyType(self, 'Gate', out)
+        self.outputs['Gate'].sv_set(out)
 
     # apply f to all values recursively
     def recurse_fx(self, l, f):
@@ -220,10 +220,13 @@ class SvLogicNode(bpy.types.Node, SverchCustomTreeNode):
     # odd cases too.
     # [1,2,[1,1,1]] + [[1,2,3],1,2] -> [[2,3,4],3,[3,3,3]]
     def recurse_fxy(self, l1, l2, f):
-        if (isinstance(l1, (int, float)) and isinstance(l2, (int, float))):
+        lt1 = isinstance(l1, (tuple, list))
+        lt2 = isinstance(l2, (tuple, list))
+        if (not lt1) and (not lt2):
+                print(self.items_,l1,l2, f(l1,l2))
                 return f(l1, l2)
                 
-        if (isinstance(l2, (list, tuple)) and isinstance(l1, (list, tuple))):
+        if lt1 and lt2:
             fl = l2[-1] if len(l1) > len(l2) else l1[-1]
             res = []
             res_append = res.append
@@ -231,9 +234,9 @@ class SvLogicNode(bpy.types.Node, SverchCustomTreeNode):
                 res_append(self.recurse_fxy(x, y, f))
             return res
             
-        if isinstance(l1, (list, tuple)) and isinstance(l2, (int, float)):
+        if lt1 and not lt2:
             return self.recurse_fxy(l1, [l2], f)
-        if isinstance(l1, (int, float)) and isinstance(l2, (list, tuple)):
+        if not lt1 and lt2:
             return self.recurse_fxy([l1], l2, f)
 
     def update_socket(self, context):
