@@ -39,10 +39,6 @@ class GenVectorsNode(bpy.types.Node, SverchCustomTreeNode):
                        default=0.0, precision=3,
                        update=updateNode)
 
-    def draw_buttons(self, context, layout):
-        layout.prop(self, "new")
-        layout.prop(self, "szl")
-    
     def sv_init(self, context):
         self.inputs.new('StringsSocket', "X").prop_name = 'x_'
         self.inputs.new('StringsSocket', "Y").prop_name = 'y_'
