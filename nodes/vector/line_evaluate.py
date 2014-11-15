@@ -63,6 +63,7 @@ class EvaluateLine(bpy.types.Node, SverchCustomTreeNode):
         if len(factor) < max_obj:
             fullList(factor, max_obj)
 
+        points = []
         for i in range(max_obj):
             points_ = []
             max_l = max(len(VerticesA[i]), len(VerticesB[i]))

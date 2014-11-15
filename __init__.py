@@ -151,7 +151,7 @@ def register():
     # this is used to access preferences, should/could be hidden
     # in an interface
     data_structure.SVERCHOK_NAME = __name__
-    print("Have a nice day with sverchok")
+    print("** Have a nice day with sverchok  **\n")
     print(sv_ascii_logo)   
     
     if reload_event:

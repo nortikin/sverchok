@@ -294,7 +294,7 @@ def register():
         nodeitems_utils.unregister_node_categories("SVERCHOK")
     nodeitems_utils.register_node_categories("SVERCHOK", menu)
 
-    print("** Sverchok loaded with {i} nodes **".format(i=node_count))
+    print("\n** Sverchok loaded with {i} nodes **".format(i=node_count))
 
 
 def unregister():
