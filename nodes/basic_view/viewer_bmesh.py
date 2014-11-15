@@ -22,6 +22,7 @@ import re
 
 import bpy
 from bpy.props import BoolProperty, StringProperty
+from mathutils import Matrix
 
 from sverchok.node_tree import (
     SverchCustomTreeNode, VerticesSocket, MatrixSocket, StringsSocket)
@@ -131,6 +132,8 @@ def make_bmesh_geometry(node, context, name, verts, *topology):
 
     if matrix:
         sv_object.matrix_local = list(zip(*matrix))
+    else:
+        sv_object.matrix_local = Matrix.Identity(4)
 
 
 class SvBmeshViewOp(bpy.types.Operator):
