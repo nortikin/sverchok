@@ -30,7 +30,7 @@ from bpy.props import StringProperty
 from bpy.props import BoolProperty
 
 
-from .sv_IO_panel import create_dict_of_tree, import_tree
+from sverchok.ui.sv_IO_panel import create_dict_of_tree, import_tree
 from sverchok.data_structure import get_other_socket
 
 
