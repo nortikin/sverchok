@@ -392,7 +392,7 @@ class IndexViewerNode(bpy.types.Node, SverchCustomTreeNode):
         settings = self.get_settings()
         IV.callback_enable(
             n_id, draw_verts, draw_edges, draw_faces,
-            draw_matrix, bg, settings.copy(), text)
+            draw_matrix, bg, settings, text)
 
     def free(self):
         IV.callback_disable(node_id(self))

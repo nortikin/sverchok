@@ -342,7 +342,7 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
                         cache_viewer_baker[matrix_ref] = dataCorrect(propm)
 
         if cache_viewer_baker[vertex_ref] or cache_viewer_baker[matrix_ref]:
-            config_options = self.get_options().copy()
+            config_options = self.get_options()
             callback_enable(n_id, cache_viewer_baker, config_options)
 
     def get_options(self):
@@ -361,7 +361,7 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
             'edge_width': self.edge_width,
             'forced_tessellation': self.ngon_tessellate,
             'timings': self.callback_timings
-            }
+            }.copy()
 
 
     def free(self):
