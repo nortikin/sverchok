@@ -17,7 +17,6 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-import parser
 from bpy.props import StringProperty, BoolProperty, FloatProperty
 from sverchok.node_tree import SverchCustomTreeNode, StringsSocket
 from sverchok.data_structure import (SvGetSocketAnyType, updateNode,
@@ -37,13 +36,21 @@ class SvVertexGroupNode(bpy.types.Node, SverchCustomTreeNode):
     clear = BoolProperty(name='clear unused', description='clear weight of \
                          unindexed vertices', default=True, update=updateNode)
 
+    vertex_group = StringProperty(
+        default='',
+        description='group of objects',
+        update=updateNode)
+
     def draw_buttons(self, context,   layout):
 
-        row = layout.row(align=True)
-        row.prop(self,    "clear",   text="clear unused")
+        ob = self.inputs['Objects'].sv_get()[0]
+        col = layout.column()
+        if self.inputs['Objects'].sv_get()[0].type == 'MESH':
+            col.prop_search(self, 'vertex_group', ob, "vertex_groups", text="")
 
     def draw_buttons_ext(self, context, layout):
         row = layout.row(align=True)
+        row.prop(self,    "clear",   text="clear unused")
         row.prop(self, "fade_speed", text="Clearing speed")
 
     def sv_init(self, context):
@@ -53,12 +60,12 @@ class SvVertexGroupNode(bpy.types.Node, SverchCustomTreeNode):
 
     def process(self):
 
-        vertex_weight = self.inputs['Weights'].links
-        if not (vertex_weight and (type(vertex_weight[0].from_socket) ==
-                StringsSocket)):
-            return
-
         obj = self.inputs['Objects'].sv_get()[0]
+        obj.data.update()
+        if not obj.vertex_groups:
+            obj.vertex_groups.new(name='Sv_VGroup')
+        if self.vertex_group not in obj.vertex_groups:
+            return
 
         if self.inputs['VertIND'].links:
             verts = SvGetSocketAnyType(self, self.inputs['VertIND'])[0]
@@ -74,21 +81,14 @@ class SvVertexGroupNode(bpy.types.Node, SverchCustomTreeNode):
             temp = match_long_cycle([verts, wei])
             verts, wei = temp[0], temp[1]
 
-        obj.data.update()
-        if obj.vertex_groups.active and\
-           obj.vertex_groups.active.name.find('Sv_VGroup') != -1:
-
-            if self.clear:
-                obj.vertex_groups.active.add([i.index for i in
-                                              obj.data.vertices],
-                                             self.fade_speed, "SUBTRACT")
-            g = 0
-            while g != len(wei):
-                obj.vertex_groups.active.add([verts[g]], wei[g], "REPLACE")
-                g = g+1
-
-        else:
-            obj.vertex_groups.active = obj.vertex_groups.new(name='Sv_VGroup')
+        if self.clear:
+            obj.vertex_groups.get(self.vertex_group).add([i.index for i in
+                                                         obj.data.vertices],
+                                                         self.fade_speed, "SUBTRACT")
+        g = 0
+        while g != len(wei):
+            obj.vertex_groups.get(self.vertex_group).add([verts[g]], wei[g], "REPLACE")
+            g = g+1
 
 
 def register():
