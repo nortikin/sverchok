@@ -341,10 +341,7 @@ class IndexViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
         self.use_custom_color = True
 
-        if self.activate and inputs['vertices'].is_linked:
-            self.color = READY_COLOR
-        else:
-            self.color = FAIL_COLOR
+        if not (self.activate and inputs['vertices'].is_linked):
             return
 
         self.generate_callback(n_id, IV)
