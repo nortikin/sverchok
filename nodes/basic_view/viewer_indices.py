@@ -347,6 +347,7 @@ class IndexViewerNode(bpy.types.Node, SverchCustomTreeNode):
             self.color = READY_COLOR
         else:
             self.color = FAIL_COLOR
+            return
 
         self.process2(n_id, IV)
 
