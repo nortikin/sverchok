@@ -285,7 +285,7 @@ class IndexViewerNode(bpy.types.Node, SverchCustomTreeNode):
             'display_vert_index': self.display_vert_index,
             'display_edge_index': self.display_edge_index,
             'display_face_index': self.display_face_index
-        }
+        }.copy()
 
     def draw_buttons_ext(self, context, layout):
         row = layout.row(align=True)
@@ -347,6 +347,8 @@ class IndexViewerNode(bpy.types.Node, SverchCustomTreeNode):
             self.color = READY_COLOR
         else:
             self.color = FAIL_COLOR
+
+        self.process2(n_id, IV)
 
     def process2(self, n_id, IV):
         inputs = self.inputs
