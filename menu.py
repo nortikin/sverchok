@@ -209,7 +209,7 @@ def make_node_cats():
         ["SvGetPropNode",       "Get property",   'FORCE_VORTEX'],
         ["SvSetPropNode",       "Set property",   'FORCE_VORTEX'],
         ["SvVertexGroupNode",   "Vertext group"],
-        ["SvRayCastNode",       "Raycast"],
+        ["SvRayCastSceneNode",       "Scene Raycast"],
     ]
 
     # violet
