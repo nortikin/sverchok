@@ -10,7 +10,8 @@ nodes_dict = {
         'kd_tree',
         'kd_tree_edges',
         'weights',
-        'raycast'
+        'object_raycast',
+        'scene_raycast',
     ],
 
     'basic_view': [
