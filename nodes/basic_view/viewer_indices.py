@@ -227,9 +227,9 @@ class IndexViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons(self, context, layout):
         view_icon = 'RESTRICT_VIEW_' + ('OFF' if self.activate else 'ON')
-        
+
         column_all = layout.column()
-        
+
         row = column_all.row(align=True)
         split = row.split()
         r = split.column()
@@ -242,7 +242,6 @@ class IndexViewerNode(bpy.types.Node, SverchCustomTreeNode):
         row.prop(self, "numid_verts_col", text="")
         if self.draw_bg:
             row.prop(self, "bg_verts_col", text="")
-            
 
         row = col.row(align=True)
         row.prop(self, "display_edge_index", toggle=True, icon='EDGESEL', text='')
@@ -255,7 +254,6 @@ class IndexViewerNode(bpy.types.Node, SverchCustomTreeNode):
         row.prop(self, "numid_faces_col", text="")
         if self.draw_bg:
             row.prop(self, "bg_faces_col", text="")
-        
 
         if self.bakebuttonshow:
             col = column_all.column(align=True)
@@ -349,9 +347,9 @@ class IndexViewerNode(bpy.types.Node, SverchCustomTreeNode):
             self.color = FAIL_COLOR
             return
 
-        self.process2(n_id, IV)
+        self.generate_callback(n_id, IV)
 
-    def process2(self, n_id, IV):
+    def generate_callback(self, n_id, IV):
         inputs = self.inputs
         iv_links = inputs['vertices'].links
         im_links = inputs['matrix'].links
