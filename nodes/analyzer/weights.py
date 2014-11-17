@@ -38,7 +38,7 @@ class SvVertexGroupNode(bpy.types.Node, SverchCustomTreeNode):
 
     vertex_group = StringProperty(
         default='',
-        description='group of objects',
+        description='vert group',
         update=updateNode)
 
     def draw_buttons(self, context,   layout):
