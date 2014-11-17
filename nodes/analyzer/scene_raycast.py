@@ -1,0 +1,101 @@
+# ##### BEGIN GPL LICENSE BLOCK #####
+#
+#  This program is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU General Public License
+#  as published by the Free Software Foundation; either version 2
+#  of the License, or (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software Foundation,
+#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+# ##### END GPL LICENSE BLOCK #####
+
+import bpy
+import mathutils
+from mathutils import Vector
+from bpy.props import StringProperty, BoolProperty, EnumProperty
+from sverchok.node_tree import SverchCustomTreeNode, StringsSocket, VerticesSocket, \
+    MatrixSocket
+from sverchok.data_structure import (updateNode, Vector_generate, SvSetSocketAnyType,
+                                     SvGetSocketAnyType, match_long_repeat)
+
+
+class SvRayCastNode(bpy.types.Node, SverchCustomTreeNode):
+    ''' RayCast Scene '''
+    bl_idname = 'SvRayCastSceneNode'
+    bl_label = 'scene_raycast'
+    bl_icon = 'OUTLINER_OB_EMPTY'
+
+    def sv_init(self, context):
+        self.inputs.new('VerticesSocket', 'start')
+        self.inputs.new('VerticesSocket', 'end')
+        self.outputs.new('VerticesSocket', "HitP")
+        self.outputs.new('VerticesSocket', "HitNorm")
+        self.outputs.new('StringsSocket', "Succes")
+        self.outputs.new("SvObjectSocket", "data.object")
+        self.outputs.new("MatrixSocket", "hited object matrix")
+
+    def process(self):
+        start_links = self.inputs['start'].links
+        if not (start_links and (type(start_links[0].from_socket) ==
+                VerticesSocket)):
+            return
+
+        end_links = self.inputs['end'].links
+        if not (end_links and (type(end_links[0].from_socket) ==
+                VerticesSocket)):
+            return
+
+        SSSAT = SvSetSocketAnyType
+        bcsrc = bpy.context.scene.ray_cast
+        outputs = self.outputs
+        OutLoc = []
+        OutNorm = []
+        Succ = []
+        OutMatrix = []
+        ObjectID = []
+
+        st = Vector_generate(SvGetSocketAnyType(self, self.inputs['start']))
+        en = Vector_generate(SvGetSocketAnyType(self, self.inputs['end']))
+        start = [Vector(x) for x in st[0]]
+        end = [Vector(x) for x in en[0]]
+        if len(start) != len(end):
+            temp = match_long_repeat([start, end])
+            start, end = temp[0], temp[1]
+
+        for i, last in enumerate(end):
+            src = bcsrc(start[i], last)
+            OutLoc.append(src[3][:])
+            OutNorm.append(src[4][:])
+            Succ.append(src[0])
+            OutMatrix.append(src[2][:])
+            OutMatrix = [[a[:], b[:], c[:], d[:]] for a, b, c, d in OutMatrix]
+            ObjectID.append(src[1])
+
+        if outputs['HitP'].links:
+            SSSAT(self, 'HitP', [OutLoc])
+        if outputs['HitNorm'].links:
+            SSSAT(self, 'HitNorm', [OutNorm])
+        if outputs['Succes'].links:
+            SSSAT(self, 'Succes', [Succ])
+        if outputs['hited object matrix'].links:
+            SSSAT(self, 'hited object matrix', OutMatrix)
+        if outputs['data.object'].links:
+            SSSAT(self, 'data.object', [ObjectID])
+
+    def update_socket(self, context):
+        self.update()
+
+
+def register():
+    bpy.utils.register_class(SvRayCastNode)
+
+
+def unregister():
+    bpy.utils.unregister_class(SvRayCastNode)
