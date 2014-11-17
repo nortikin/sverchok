@@ -18,10 +18,10 @@
 
 import bpy
 import parser
-from bpy.props import StringProperty, BoolProperty, EnumProperty, FloatProperty
+from bpy.props import StringProperty, BoolProperty, FloatProperty
 from sverchok.node_tree import SverchCustomTreeNode, StringsSocket
-from sverchok.data_structure import (SvGetSocketAnyType, updateNode, match_short,
-                            match_long_cycle)
+from sverchok.data_structure import (SvGetSocketAnyType, updateNode,
+                                     match_short, match_long_cycle)
 
 
 class SvVertexGroupNode(bpy.types.Node, SverchCustomTreeNode):
@@ -30,18 +30,6 @@ class SvVertexGroupNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Vertex group weights'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    Itermodes = [
-        ("match_short",        "match_short",         "", 1),
-        ("match_long_cycle",   "match_long_cycle",    "", 2),
-    ]
-
-    Iteration = EnumProperty(name="iteration modes",
-                             description="Iteration modes",
-                             default="match_short", items=Itermodes,
-                             update=updateNode)
-    formula = StringProperty(name='formula',
-                             description='name of object to operate on',
-                             default='Cube', update=updateNode)
     fade_speed = FloatProperty(name='fade',
                                description='Speed of "clear unused" weights \
                                during animation', default=2,
@@ -50,19 +38,18 @@ class SvVertexGroupNode(bpy.types.Node, SverchCustomTreeNode):
                          unindexed vertices', default=True, update=updateNode)
 
     def draw_buttons(self, context,   layout):
-        layout.prop(self,  "formula", text="")
+
         row = layout.row(align=True)
         row.prop(self,    "clear",   text="clear unused")
-        layout.prop(self, "Iteration", "Iteration modes")
 
     def draw_buttons_ext(self, context, layout):
         row = layout.row(align=True)
         row.prop(self, "fade_speed", text="Clearing speed")
 
     def sv_init(self, context):
+        self.inputs.new('SvObjectSocket', 'Objects')
         self.inputs.new('StringsSocket', "VertIND")
         self.inputs.new('StringsSocket', "Weights")
-
 
     def process(self):
 
@@ -71,7 +58,7 @@ class SvVertexGroupNode(bpy.types.Node, SverchCustomTreeNode):
                 StringsSocket)):
             return
 
-        obj = bpy.data.objects[self.formula]
+        obj = self.inputs['Objects'].sv_get()[0]
 
         if self.inputs['VertIND'].links:
             verts = SvGetSocketAnyType(self, self.inputs['VertIND'])[0]
@@ -80,10 +67,10 @@ class SvVertexGroupNode(bpy.types.Node, SverchCustomTreeNode):
 
         wei = SvGetSocketAnyType(self, self.inputs['Weights'])[0]
 
-        if self.Iteration == 'match_short':
+        if len(verts) < len(wei):
             temp = match_short([verts, wei])
             verts, wei = temp[0], temp[1]
-        if self.Iteration == 'match_long_cycle':
+        if len(verts) > len(wei):
             temp = match_long_cycle([verts, wei])
             verts, wei = temp[0], temp[1]
 
