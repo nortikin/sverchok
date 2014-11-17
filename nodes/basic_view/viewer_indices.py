@@ -330,6 +330,12 @@ class IndexViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
         layout.prop(self, 'bakebuttonshow', text='show bake UI')
 
+    def update(self):
+        # used because this node should disable itself in certain scenarios
+        # : namely , no inputs.
+        n_id = node_id(self)
+        IV.callback_disable(n_id)
+
     def process(self):
         inputs = self.inputs
         n_id = node_id(self)
