@@ -1,5 +1,8 @@
 # by PKHG
 # see https://github.com/nortikin/sverchok/issues/459
+# based on
+# "author": "original for 2.49 from Andy Houston , meta-androcto, Noctumsolis, 
+# (later >= Bl. 2.5) PKHG ",
 
 from numpy import matrix as npMatrix
 from enum import Enum
