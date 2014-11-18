@@ -19,7 +19,7 @@
 import bpy
 import mathutils
 from mathutils import Vector
-from bpy.props import StringProperty, BoolProperty, EnumProperty
+from bpy.props import StringProperty
 from sverchok.node_tree import SverchCustomTreeNode, StringsSocket, VerticesSocket
 from sverchok.data_structure import (updateNode, Vector_generate, SvSetSocketAnyType,
                                      SvGetSocketAnyType, match_long_repeat)
@@ -33,22 +33,13 @@ class SvRayCastNode(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_init(self, context):
         self.inputs.new('SvObjectSocket', 'Objects')
-        self.inputs.new('VerticesSocket', 'start')
-        self.inputs.new('VerticesSocket', 'end')
+        self.inputs.new('VerticesSocket', 'start').use_prop = True
+        self.inputs.new('VerticesSocket', 'end').use_prop = True
         self.outputs.new('VerticesSocket', "HitP")
         self.outputs.new('VerticesSocket', "HitNorm")
         self.outputs.new('StringsSocket', "INDEX")
 
     def process(self):
-        start_links = self.inputs['start'].links
-        if not (start_links and (type(start_links[0].from_socket) ==
-                VerticesSocket)):
-            return
-
-        end_links = self.inputs['end'].links
-        if not (end_links and (type(end_links[0].from_socket) ==
-                VerticesSocket)):
-            return
 
         SSSAT = SvSetSocketAnyType
         bcsrc = bpy.context.scene.ray_cast
@@ -58,8 +49,8 @@ class SvRayCastNode(bpy.types.Node, SverchCustomTreeNode):
         OutNorm = []
         IND = []
 
-        st = Vector_generate(SvGetSocketAnyType(self, self.inputs['start']))
-        en = Vector_generate(SvGetSocketAnyType(self, self.inputs['end']))
+        st = Vector_generate(self.inputs['start'].sv_get())
+        en = Vector_generate(self.inputs['end'].sv_get())
         start = [Vector(x) for x in st[0]]
         end = [Vector(x) for x in en[0]]
         if len(start) != len(end):
