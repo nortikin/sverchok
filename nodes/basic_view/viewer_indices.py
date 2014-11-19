@@ -354,7 +354,6 @@ class IndexViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
     def generate_callback(self, n_id, IV):
         inputs = self.inputs
-        im_links = inputs['matrix'].links
 
         draw_verts, draw_matrix = [], []
         text = ''
@@ -367,20 +366,22 @@ class IndexViewerNode(bpy.types.Node, SverchCustomTreeNode):
         if not draw_verts:
             return
 
+        print('got vert data!')
+
         # draw text on locations instead of indices.
-        text_so = inputs['text'].sv_get()
-        if text_so:
-            text = dataCorrect(text_so)
+        text_so = inputs['text'].sv_get(default=[])
+        text = dataCorrect(text_so)
+        if text:
             fullList(text, len(draw_verts))
             for i, t in enumerate(text):
                 fullList(text[i], len(draw_verts[i]))
 
-        propm = inputs['matrix'].sv_get()
+        propm = inputs['matrix'].sv_get(default=[])
         draw_matrix = dataCorrect(propm)
 
         data_feind = []
         for socket in ['edges', 'faces']:
-            propm = inputs[socket].sv_get()
+            propm = inputs[socket].sv_get(default=[])
             input_stream = dataCorrect(propm)
             data_feind.append(input_stream)
 
