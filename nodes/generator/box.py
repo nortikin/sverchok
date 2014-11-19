@@ -71,17 +71,21 @@ class SvBoxNode(bpy.types.Node, SverchCustomTreeNode):
         faces = [[0, 1, 2, 3], [4, 7, 6, 5],
                  [0, 4, 5, 1], [1, 5, 6, 2],
                  [2, 6, 7, 3], [4, 0, 3, 7]]
-        
+
         edges = [[0, 4], [4, 5], [5, 1], [1, 0],
                  [5, 6], [6, 2], [2, 1], [6, 7],
                  [7, 3], [3, 2], [7, 4], [0, 3]]
-        
+
         if (divx, divy, divz) == (1, 1, 1):
             return verts, edges, faces
 
         bm = bmesh.new()
         [bm.verts.new(co) for co in verts]
         bm.verts.index_update()
+
+        if hasattr(bm.verts, "ensure_lookup_table"):
+            bm.verts.ensure_lookup_table()
+
         for face in faces:
             bm.faces.new(tuple(bm.verts[i] for i in face))
         bm.faces.index_update()
