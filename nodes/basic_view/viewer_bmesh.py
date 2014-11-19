@@ -286,23 +286,16 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
             box.prop(self, "fixed_verts", text="Fixed vert count")
             box.prop(self, 'autosmooth', text='smooth shade')
 
-    def get_corrected_data(self, socket_name, socket_type):
+    def get_corrected_data(self, socket_name):
         inputs = self.inputs
-        socket = inputs[socket_name].links[0].from_socket
-        if isinstance(socket, socket_type):
-            socket_in = SvGetSocketAnyType(self, inputs[socket_name])
-            return dataCorrect(socket_in)
-        else:
-            return []
+        socket_in = inputs[socket_name].sv_get(default=[])
+        return dataCorrect(socket_in)
 
     def get_geometry_from_sockets(self):
-        inputs = self.inputs
-        get_data = lambda s, t: self.get_corrected_data(s, t) if inputs[s].is_linked else []
-        # if we don't have vertices we can do anything anyway, fail now.
-        mverts = dataCorrect(inputs[0].sv_get())
-        mmtrix = get_data('matrix', MatrixSocket)
-        medges = get_data('edges', StringsSocket)
-        mfaces = get_data('faces', StringsSocket)
+        mverts = self.get_corrected_data('vertices')
+        mmtrix = self.get_corrected_data('matrix')
+        medges = self.get_corrected_data('edges')
+        mfaces = self.get_corrected_data('faces')
         return mverts, medges, mfaces, mmtrix
 
     def get_structure(self, stype, sindex):
@@ -316,12 +309,10 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
         finally:
             return j
 
-    def update(self):
-        pass
-
     def process(self):
+        # perhaps if any of mverts is [] this should already fail.
         mverts, *mrest = self.get_geometry_from_sockets()
-        
+
         def get_edges_faces_matrices(obj_index):
             for geom in mrest:
                 yield self.get_structure(geom, obj_index)

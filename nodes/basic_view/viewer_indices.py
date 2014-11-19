@@ -366,8 +366,6 @@ class IndexViewerNode(bpy.types.Node, SverchCustomTreeNode):
         if not draw_verts:
             return
 
-        print('got vert data!')
-
         # draw text on locations instead of indices.
         text_so = inputs['text'].sv_get(default=[])
         text = dataCorrect(text_so)
