@@ -123,32 +123,29 @@ class SvBoxNode(bpy.types.Node, SverchCustomTreeNode):
         return verts, edges, faces
 
     def process(self):
+        inputs = self.inputs
 
-        if 'Size' in self.inputs and self.inputs['Size'].links:
-            size = SvGetSocketAnyType(self, self.inputs['Size'])[0]
-        else:
-            size = [self.Size]
-        if 'Divx' in self.inputs and self.inputs['Divx'].links:
-            divx = int(SvGetSocketAnyType(self, self.inputs['Divx'])[0][0])
-        else:
-            divx = self.Divx
-        if 'Divy' in self.inputs and self.inputs['Divy'].links:
-            divy = int(SvGetSocketAnyType(self, self.inputs['Divy'])[0][0])
-        else:
-            divy = self.Divy
-        if 'Divz' in self.inputs and self.inputs['Divz'].links:
-            divz = int(SvGetSocketAnyType(self, self.inputs['Divz'])[0][0])
-        else:
-            divz = self.Divz
+        # I think this is analoge to preexisting code, please verify.
+        size = self.inputs['Size'].sv_get(default=[])
+        size = size[0] if size else [self.Size]
+
+        divx = self.inputs['Divx'].sv_get(default=[])
+        divx = int(divx[0][0]) if divx else self.Divx
+
+        divy = self.inputs['Divy'].sv_get(default=[])
+        divy = int(divy[0][0]) if divy else self.Divy
+
+        divz = self.inputs['Divz'].sv_get(default=[])
+        divz = int(divz[0][0]) if divz else self.Divz
 
         out = [a for a in (zip(*[self.makecube(s, divx, divy, divz) for s in size]))]
 
-        # outputs
-        if 'Vers' in self.outputs and self.outputs['Vers'].links:
+        # outputs, blindly using sv_set produces many print statements.
+        if self.outputs['Vers'].is_linked:
             SvSetSocketAnyType(self, 'Vers', out[0])
-        if 'Edgs' in self.outputs and self.outputs['Edgs'].links:
+        if self.outputs['Edgs'].is_linked:
             SvSetSocketAnyType(self, 'Edgs', out[1])
-        if 'Pols' in self.outputs and self.outputs['Pols'].links:
+        if self.outputs['Pols'].is_linked:
             SvSetSocketAnyType(self, 'Pols', out[2])
 
 
