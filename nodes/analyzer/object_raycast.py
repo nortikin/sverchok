@@ -19,7 +19,7 @@
 import bpy
 import mathutils
 from mathutils import Vector
-from bpy.props import StringProperty
+from bpy.props import StringProperty, BoolProperty
 from sverchok.node_tree import SverchCustomTreeNode, StringsSocket, VerticesSocket
 from sverchok.data_structure import (updateNode, Vector_generate, match_long_repeat)
 
@@ -30,6 +30,9 @@ class SvRayCastNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'object_raycast'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
+    mode = BoolProperty(name='mode of points', description='mode for input points',
+                        default=False, update=updateNode)
+
     def sv_init(self, context):
         self.inputs.new('SvObjectSocket', 'Objects')
         self.inputs.new('VerticesSocket', 'start').use_prop = True
@@ -38,9 +41,13 @@ class SvRayCastNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('VerticesSocket', "HitNorm")
         self.outputs.new('StringsSocket', "INDEX")
 
+    def draw_buttons_ext(self, context, layout):
+        row = layout.row(align=True)
+        row.prop(self,    "mode",   text="Mode")
+
     def process(self):
 
-        out = []
+        outfin = []
         OutLoc = []
         OutNorm = []
         IND = []
@@ -55,16 +62,25 @@ class SvRayCastNode(bpy.types.Node, SverchCustomTreeNode):
 
         obj = self.inputs['Objects'].sv_get()
         for OB in obj:
-            i = 0
-            while i < len(end):
-                out.append(OB.ray_cast(start[i], end[i]))
-                i = i+1
+            out = []
+            if self.mode:
+                i = 0
+                while i < len(end):
+                    out.append(OB.ray_cast(OB.matrix_local.inverted()*start[i], OB.matrix_local.inverted()*end[i]))
+                    i = i+1
+            else:
+                i = 0
+                while i < len(end):
+                    out.append(OB.ray_cast(start[i], end[i]))
+                    i = i+1
+            outfin.append(out)
 
         g = 0
-        while g < len(out):
-            OutNorm.append(out[g][1][:])
-            IND.append(out[g][2])
-            OutLoc.append((obj[g].matrix_world*out[g][0])[:])
+        while g < len(obj):
+            for i in outfin[g]:
+                OutNorm.append(i[1][:])
+                IND.append(i[2])
+                OutLoc.append((obj[g].matrix_world*i[0])[:])
             g = g+1
 
         self.outputs['HitP'].sv_set([OutLoc])
