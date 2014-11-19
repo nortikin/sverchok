@@ -12,6 +12,7 @@ nodes_dict = {
         'weights',
         'object_raycast',
         'scene_raycast',
+        'closest_point_on_mesh',
     ],
 
     'basic_view': [
