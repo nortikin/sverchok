@@ -21,8 +21,7 @@ import mathutils
 from mathutils import Vector
 from bpy.props import StringProperty
 from sverchok.node_tree import SverchCustomTreeNode, StringsSocket, VerticesSocket
-from sverchok.data_structure import (updateNode, Vector_generate, SvSetSocketAnyType,
-                                     SvGetSocketAnyType, match_long_repeat)
+from sverchok.data_structure import (updateNode, Vector_generate, match_long_repeat)
 
 
 class SvRayCastNode(bpy.types.Node, SverchCustomTreeNode):
@@ -41,9 +40,6 @@ class SvRayCastNode(bpy.types.Node, SverchCustomTreeNode):
 
     def process(self):
 
-        SSSAT = SvSetSocketAnyType
-        bcsrc = bpy.context.scene.ray_cast
-        outputs = self.outputs
         out = []
         OutLoc = []
         OutNorm = []
@@ -57,22 +53,23 @@ class SvRayCastNode(bpy.types.Node, SverchCustomTreeNode):
             temp = match_long_repeat([start, end])
             start, end = temp[0], temp[1]
 
-        obj = self.inputs['Objects'].sv_get()[0]
-        i = 0
-        while i < len(end):
-            out.append(obj.ray_cast(start[i], end[i]))
-            i = i+1
-        for i in out:
-            OutNorm.append(i[1][:])
-            IND.append(i[2])
-            OutLoc.append(i[0][:])
+        obj = self.inputs['Objects'].sv_get()
+        for OB in obj:
+            i = 0
+            while i < len(end):
+                out.append(OB.ray_cast(start[i], end[i]))
+                i = i+1
 
-        if outputs['HitP'].links:
-            SSSAT(self, 'HitP', [OutLoc])
-        if outputs['HitNorm'].links:
-            SSSAT(self, 'HitNorm', [OutNorm])
-        if outputs['INDEX'].links:
-            SSSAT(self, 'INDEX', [IND])
+        g = 0
+        while g < len(out):
+            OutNorm.append(out[g][1][:])
+            IND.append(out[g][2])
+            OutLoc.append((obj[g].matrix_world*out[g][0])[:])
+            g = g+1
+
+        self.outputs['HitP'].sv_set([OutLoc])
+        self.outputs['HitNorm'].sv_set([OutNorm])
+        self.outputs['INDEX'].sv_set([IND])
 
     def update_socket(self, context):
         self.update()
