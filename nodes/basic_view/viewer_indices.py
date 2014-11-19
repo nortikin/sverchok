@@ -354,38 +354,35 @@ class IndexViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
     def generate_callback(self, n_id, IV):
         inputs = self.inputs
-        iv_links = inputs['vertices'].links
         im_links = inputs['matrix'].links
 
         draw_verts, draw_matrix = [], []
         text = ''
 
         # gather vertices from input
-        if isinstance(iv_links[0].from_socket, VerticesSocket):
-            propv = SvGetSocketAnyType(self, inputs['vertices'])
-            draw_verts = dataCorrect(propv)
+        propv = inputs['vertices'].sv_get()
+        draw_verts = dataCorrect(propv)
 
-        # idea to make text in 3d
-        if inputs['text'].links:
-            text_so = SvGetSocketAnyType(self, inputs['text'])
+        # end early, no point doing anything else.
+        if not draw_verts:
+            return
+
+        # draw text on locations instead of indices.
+        text_so = inputs['text'].sv_get()
+        if text_so:
             text = dataCorrect(text_so)
             fullList(text, len(draw_verts))
             for i, t in enumerate(text):
                 fullList(text[i], len(draw_verts[i]))
 
-        if im_links and isinstance(im_links[0].from_socket, MatrixSocket):
-            propm = SvGetSocketAnyType(self, inputs['matrix'])
-            draw_matrix = dataCorrect(propm)
+        propm = inputs['matrix'].sv_get()
+        draw_matrix = dataCorrect(propm)
 
         data_feind = []
         for socket in ['edges', 'faces']:
-            try:
-                propm = SvGetSocketAnyType(self, inputs[socket])
-                input_stream = dataCorrect(propm)
-            except:
-                input_stream = []
-            finally:
-                data_feind.append(input_stream)
+            propm = inputs[socket].sv_get()
+            input_stream = dataCorrect(propm)
+            data_feind.append(input_stream)
 
         draw_edges, draw_faces = data_feind
 
