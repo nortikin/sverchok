@@ -211,6 +211,7 @@ def make_node_cats():
         ["SvVertexGroupNode",   "Vertext group"],
         ["SvRayCastSceneNode",   "Scene Raycast"],
         ["SvRayCastObjectNode",   "Object Raycast"],
+        ["SvPointOnMeshNode",   "Point on Mesh"],
     ]
 
     # violet
