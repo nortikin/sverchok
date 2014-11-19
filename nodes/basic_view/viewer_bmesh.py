@@ -235,21 +235,10 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
                 icon = 'RESTRICT_SELECT_' + ['ON', 'OFF'][self.state_select]
             return icon
 
-        #split = row.split()
         col = layout.column(align=True)
         row = col.row(align=True)
-        #split = row.split()
-        #r = split.column()
         row.column().prop(self, "activate", text="UPD", toggle=True, icon=view_icon)
 
-        #row = layout.row(align=True)
-        #split = row.split()
-        #col1 = split.column()
-        #col1.prop(self, "activate", text="Update")
-
-        #split = split.split()
-        #if split:
-        #row = col.row(align=True)
         row.operator(sh, text='', icon=icons('v')).fn_name = 'hide_view'
         row.operator(sh, text='', icon=icons('s')).fn_name = 'hide_select'
         row.operator(sh, text='', icon=icons('r')).fn_name = 'hide_render'
@@ -257,7 +246,7 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
         col = layout.column(align=True)
         row = col.row(align=True)
         row.prop(self, "grouping", text="Group", toggle=True)
-        #row.split()
+
         row = col.row(align=True)
         row.scale_y = 1
         row.prop(self, "basemesh_name", text="", icon='OUTLINER_OB_MESH')
@@ -268,8 +257,9 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
         row = col.row(align=True)
         row.scale_y = 1
 
-        # row.prop(self, "material", text="", icon='MATERIAL_DATA')
-        row.prop_search(self, 'material', bpy.data, 'materials', text='', icon='MATERIAL_DATA')
+        row.prop_search(
+            self, 'material', bpy.data, 'materials', text='',
+            icon='MATERIAL_DATA')
 
     def draw_buttons_ext(self, context, layout):
         self.draw_buttons(context, layout)
@@ -286,16 +276,16 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
             box.prop(self, "fixed_verts", text="Fixed vert count")
             box.prop(self, 'autosmooth', text='smooth shade')
 
-    def get_corrected_data(self, socket_name):
-        inputs = self.inputs
-        socket_in = inputs[socket_name].sv_get(default=[])
-        return dataCorrect(socket_in)
-
     def get_geometry_from_sockets(self):
-        mverts = self.get_corrected_data('vertices')
-        mmtrix = self.get_corrected_data('matrix')
-        medges = self.get_corrected_data('edges')
-        mfaces = self.get_corrected_data('faces')
+
+        def get(socket_name):
+            data = self.inputs[socket_name].sv_get(default=[])
+            return dataCorrect(data)
+
+        mverts = get('vertices')
+        medges = get('edges')
+        mfaces = get('faces')
+        mmtrix = get('matrix')
         return mverts, medges, mfaces, mmtrix
 
     def get_structure(self, stype, sindex):
