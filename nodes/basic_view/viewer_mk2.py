@@ -291,13 +291,13 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
     # reset n_id on duplicate (shift-d)
     def copy(self, node):
         self.n_id = ''
-     
+
     def update(self):
         if not "matrix" in self.inputs:
             return
         if self.inputs[0].links or self.inputs[2].links:
             callback_disable(node_id(self))
-         
+
     def process(self):
         if not (self.id_data.sv_show and self.activate):
             callback_disable(node_id(self))
@@ -317,29 +317,26 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
 
         # every time you hit a dot, you pay a price, so alias and benefit
         inputs = self.inputs
-        vertex_links = inputs['vertices'].links
-        matrix_links = inputs['matrix'].links
-        edgepol_links = inputs['edg_pol'].links
+        vertex_links = inputs['vertices'].is_linked
+        matrix_links = inputs['matrix'].is_linked
+        edgepol_links = inputs['edg_pol'].is_linked
 
         if (vertex_links or matrix_links):
 
             if vertex_links:
-                if isinstance(vertex_links[0].from_socket, VerticesSocket):
-                    propv = inputs['vertices'].sv_get()
-                    if propv:
-                        cache_viewer_baker[vertex_ref] = dataCorrect(propv)
+                propv = inputs['vertices'].sv_get(default=[])
+                if propv:
+                    cache_viewer_baker[vertex_ref] = dataCorrect(propv)
 
             if edgepol_links:
-                if isinstance(edgepol_links[0].from_socket, StringsSocket):
-                    prope = inputs['edg_pol'].sv_get()
-                    if prope:
-                        cache_viewer_baker[poledg_ref] = dataCorrect(prope)
+                prope = inputs['edg_pol'].sv_get(default=[])
+                if prope:
+                    cache_viewer_baker[poledg_ref] = dataCorrect(prope)
 
             if matrix_links:
-                if isinstance(matrix_links[0].from_socket, MatrixSocket):
-                    propm = inputs['matrix'].sv_get()
-                    if propm:
-                        cache_viewer_baker[matrix_ref] = dataCorrect(propm)
+                propm = inputs['matrix'].sv_get(default=[])
+                if propm:
+                    cache_viewer_baker[matrix_ref] = dataCorrect(propm)
 
         if cache_viewer_baker[vertex_ref] or cache_viewer_baker[matrix_ref]:
             config_options = self.get_options()
@@ -362,7 +359,6 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
             'forced_tessellation': self.ngon_tessellate,
             'timings': self.callback_timings
             }.copy()
-
 
     def free(self):
         global cache_viewer_baker

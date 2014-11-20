@@ -27,6 +27,9 @@ def bmesh_from_pydata(verts=[], edges=[], faces=[]):
     [add_vert(co) for co in verts]
     bm.verts.index_update()
 
+    if hasattr(bm.verts, "ensure_lookup_table"):
+        bm.verts.ensure_lookup_table()
+
     if faces:
         add_face = bm.faces.new
         for face in faces:
