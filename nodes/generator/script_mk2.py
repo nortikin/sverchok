@@ -269,6 +269,7 @@ class SvScriptNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             
 
 def register():
+    global socket_types
     socket_types = sockets.get_socket_types()
     bpy.utils.register_class(SvScriptNodeMK2)    
     bpy.utils.register_class(SvDefaultScript2Template)

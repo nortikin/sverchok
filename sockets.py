@@ -17,6 +17,7 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+import bpy
 
 from bpy.props import StringProperty, BoolProperty, FloatVectorProperty, IntProperty
 from bpy.types import NodeSocket
@@ -229,20 +230,12 @@ def get_socket_types():
     {cls.short_name:cls.bl_idname for cls in SvSocketsBase.__subclasses__()}
     
     """        
-        
 
-classes = [
-    MatrixSocket,
-    StringsSocket,
-    VerticesSocket,
-    SvTextSocket,
-    SvObjectSocket
-]
 
 def register():
-    for class_name in SvSocketCommon.__subclasses__():
+    for class_name in SvSocketsBase.__subclasses__():
         bpy.utils.register_class(class_name)
 
 def unregister():
-    for class_name in reversed(SvSocketCommon.__subclasses__()):
+    for class_name in reversed(SvSocketsBase.__subclasses__()):
         bpy.utils.unregister_class(class_name)

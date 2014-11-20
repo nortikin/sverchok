@@ -519,6 +519,7 @@ classes = [
 
 
 def register():
+    global sock_dict
     sock_dict = sockets.get_socket_types()
     for class_name in classes:
         bpy.utils.register_class(class_name)
