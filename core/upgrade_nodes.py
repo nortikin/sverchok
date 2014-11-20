@@ -162,7 +162,7 @@ def upgrade_nodes(ng):
     for node in [node for node in ng.nodes if node.bl_idname in upgrade_dict]:
         for s_name, p_name in upgrade_dict[node.bl_idname]:
             socket = node.inputs.get(s_name)
-            if socket and not socket.prop_name:
+            if socket and not hasattr(socket, "prop_name") and socket.prop_name:
                 socket.prop_name = p_name
 
     for n in [n for n in ng.nodes if n.bl_idname in vertices_socket_upgrade]:
