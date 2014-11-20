@@ -189,28 +189,18 @@ class VectorMathNode(bpy.types.Node, SverchCustomTreeNode):
                 remove_last_input()
                 add_vector_input()
 
-    def nothing_to_process(self):
-        inputs = self.inputs
-        outputs = self.outputs
-
-        if not (('out' in outputs) or ('W' in outputs)):
-            return True
-
-        if not outputs[0].links:
-            return True
-
     def process(self):
         inputs = self.inputs
         outputs = self.outputs
         operation = self.items_
         self.label = self.items_
 
-        if self.nothing_to_process():
+        if not outputs[0].is_linked:
             return
 
         # this input is shared over both.
         vector1 = []
-        if 'U' in inputs and inputs['U'].links:
+        if inputs['U'].is_linked:
             if isinstance(inputs['U'].links[0].from_socket, VerticesSocket):
                 vector1 = SvGetSocketAnyType(self, inputs['U'], deepcopy=False)
 
@@ -224,7 +214,7 @@ class VectorMathNode(bpy.types.Node, SverchCustomTreeNode):
         result = []
 
         # vector-output
-        if 'W' in outputs and outputs['W'].links:
+        if 'W' in outputs and outputs['W'].is_linked:
 
             func = vector_out[operation][0]
             if len(inputs) == 1:
@@ -268,7 +258,7 @@ class VectorMathNode(bpy.types.Node, SverchCustomTreeNode):
             SvSetSocketAnyType(self, 'W', result)
 
         # scalar-output
-        if 'out' in outputs and outputs['out'].links:
+        if 'out' in outputs and outputs['out'].is_linked:
 
             vector2, result = [], []
             func = scalar_out[operation][0]

@@ -22,6 +22,7 @@ import re
 
 import bpy
 from bpy.props import BoolProperty, StringProperty
+from mathutils import Matrix
 
 from sverchok.node_tree import (
     SverchCustomTreeNode, VerticesSocket, MatrixSocket, StringsSocket)
@@ -131,6 +132,8 @@ def make_bmesh_geometry(node, context, name, verts, *topology):
 
     if matrix:
         sv_object.matrix_local = list(zip(*matrix))
+    else:
+        sv_object.matrix_local = Matrix.Identity(4)
 
 
 class SvBmeshViewOp(bpy.types.Operator):
@@ -234,21 +237,10 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
                 icon = 'RESTRICT_SELECT_' + ['ON', 'OFF'][self.state_select]
             return icon
 
-        #split = row.split()
         col = layout.column(align=True)
         row = col.row(align=True)
-        #split = row.split()
-        #r = split.column()
         row.column().prop(self, "activate", text="UPD", toggle=True, icon=view_icon)
 
-        #row = layout.row(align=True)
-        #split = row.split()
-        #col1 = split.column()
-        #col1.prop(self, "activate", text="Update")
-
-        #split = split.split()
-        #if split:
-        #row = col.row(align=True)
         row.operator(sh, text='', icon=icons('v')).fn_name = 'hide_view'
         row.operator(sh, text='', icon=icons('s')).fn_name = 'hide_select'
         row.operator(sh, text='', icon=icons('r')).fn_name = 'hide_render'
@@ -256,7 +248,7 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
         col = layout.column(align=True)
         row = col.row(align=True)
         row.prop(self, "grouping", text="Group", toggle=True)
-        #row.split()
+
         row = col.row(align=True)
         row.scale_y = 1
         row.prop(self, "basemesh_name", text="", icon='OUTLINER_OB_MESH')
@@ -267,8 +259,9 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
         row = col.row(align=True)
         row.scale_y = 1
 
-        # row.prop(self, "material", text="", icon='MATERIAL_DATA')
-        row.prop_search(self, 'material', bpy.data, 'materials', text='', icon='MATERIAL_DATA')
+        row.prop_search(
+            self, 'material', bpy.data, 'materials', text='',
+            icon='MATERIAL_DATA')
 
     def draw_buttons_ext(self, context, layout):
         self.draw_buttons(context, layout)
@@ -285,23 +278,16 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
             box.prop(self, "fixed_verts", text="Fixed vert count")
             box.prop(self, 'autosmooth', text='smooth shade')
 
-    def get_corrected_data(self, socket_name, socket_type):
-        inputs = self.inputs
-        socket = inputs[socket_name].links[0].from_socket
-        if isinstance(socket, socket_type):
-            socket_in = SvGetSocketAnyType(self, inputs[socket_name])
-            return dataCorrect(socket_in)
-        else:
-            return []
-
     def get_geometry_from_sockets(self):
-        inputs = self.inputs
-        get_data = lambda s, t: self.get_corrected_data(s, t) if inputs[s].is_linked else []
-        # if we don't have vertices we can do anything anyway, fail now.
-        mverts = dataCorrect(inputs[0].sv_get())
-        mmtrix = get_data('matrix', MatrixSocket)
-        medges = get_data('edges', StringsSocket)
-        mfaces = get_data('faces', StringsSocket)
+
+        def get(socket_name):
+            data = self.inputs[socket_name].sv_get(default=[])
+            return dataCorrect(data)
+
+        mverts = get('vertices')
+        medges = get('edges')
+        mfaces = get('faces')
+        mmtrix = get('matrix')
         return mverts, medges, mfaces, mmtrix
 
     def get_structure(self, stype, sindex):
@@ -315,12 +301,10 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
         finally:
             return j
 
-    def update(self):
-        pass
-
     def process(self):
+        # perhaps if any of mverts is [] this should already fail.
         mverts, *mrest = self.get_geometry_from_sockets()
-        
+
         def get_edges_faces_matrices(obj_index):
             for geom in mrest:
                 yield self.get_structure(geom, obj_index)

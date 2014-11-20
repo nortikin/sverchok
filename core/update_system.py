@@ -43,6 +43,7 @@ update_cache = {}
 # cache for partial update lists
 partial_update_cache = {}
 
+
 def make_dep_dict(node_tree, down=False):
     """
     Create a dependency dictionary for node group.
@@ -76,7 +77,7 @@ def make_dep_dict(node_tree, down=False):
             deps[other].add(name)
         else:
             deps[name].add(other)
-        
+    
     return deps
 
 
@@ -285,13 +286,17 @@ def reset_error_nodes(ng):
                 node.color = data[1]
         del ng["error nodes"]
 
-def do_update_general(node_list, nodes):
+def do_update_general(node_list, nodes, procesed_nodes=set()):
     """
     General update function for node set
     """
     timings = []
     total_time = 0
+    done_nodes = set(procesed_nodes)
+    
     for node_name in node_list:
+        if node_name in done_nodes:
+            continue
         try:
             node = nodes[node_name]
             start = time.perf_counter()

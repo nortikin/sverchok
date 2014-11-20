@@ -23,7 +23,7 @@ class SvSentinel:
     def __iter__(self):
         return self
 
-class sv_zip_longest2:
+class sv_zip_longest:
     def __init__(self, *args):
         self.counter = len(args) 
         self.iterators = []
@@ -45,7 +45,7 @@ class sv_zip_longest2:
         return self    
 
 
-def sv_zip_longest(*args):
+def sv_zip_longest2(*args):
     # by zeffi
     longest = max([len(i) for i in args])
     itrs = [iter(sl) for sl in args]

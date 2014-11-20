@@ -227,9 +227,9 @@ class IndexViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons(self, context, layout):
         view_icon = 'RESTRICT_VIEW_' + ('OFF' if self.activate else 'ON')
-        
+
         column_all = layout.column()
-        
+
         row = column_all.row(align=True)
         split = row.split()
         r = split.column()
@@ -242,7 +242,6 @@ class IndexViewerNode(bpy.types.Node, SverchCustomTreeNode):
         row.prop(self, "numid_verts_col", text="")
         if self.draw_bg:
             row.prop(self, "bg_verts_col", text="")
-            
 
         row = col.row(align=True)
         row.prop(self, "display_edge_index", toggle=True, icon='EDGESEL', text='')
@@ -255,7 +254,6 @@ class IndexViewerNode(bpy.types.Node, SverchCustomTreeNode):
         row.prop(self, "numid_faces_col", text="")
         if self.draw_bg:
             row.prop(self, "bg_faces_col", text="")
-        
 
         if self.bakebuttonshow:
             col = column_all.column(align=True)
@@ -285,7 +283,7 @@ class IndexViewerNode(bpy.types.Node, SverchCustomTreeNode):
             'display_vert_index': self.display_vert_index,
             'display_edge_index': self.display_edge_index,
             'display_face_index': self.display_face_index
-        }
+        }.copy()
 
     def draw_buttons_ext(self, context, layout):
         row = layout.row(align=True)
@@ -332,6 +330,12 @@ class IndexViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
         layout.prop(self, 'bakebuttonshow', text='show bake UI')
 
+    def update(self):
+        # used because this node should disable itself in certain scenarios
+        # : namely , no inputs.
+        n_id = node_id(self)
+        IV.callback_disable(n_id)
+
     def process(self):
         inputs = self.inputs
         n_id = node_id(self)
@@ -343,53 +347,46 @@ class IndexViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
         self.use_custom_color = True
 
-        if self.activate and inputs['vertices'].is_linked:
-            self.color = READY_COLOR
-        else:
-            self.color = FAIL_COLOR
+        if not (self.activate and inputs['vertices'].is_linked):
+            return
 
-    def process2(self, n_id, IV):
+        self.generate_callback(n_id, IV)
+
+    def generate_callback(self, n_id, IV):
         inputs = self.inputs
-        iv_links = inputs['vertices'].links
-        im_links = inputs['matrix'].links
 
-        draw_verts, draw_matrix = [], []
+        verts, matrices = [], []
         text = ''
 
         # gather vertices from input
-        if isinstance(iv_links[0].from_socket, VerticesSocket):
-            propv = SvGetSocketAnyType(self, inputs['vertices'])
-            draw_verts = dataCorrect(propv)
+        propv = inputs['vertices'].sv_get()
+        verts = dataCorrect(propv)
 
-        # idea to make text in 3d
-        if inputs['text'].links:
-            text_so = SvGetSocketAnyType(self, inputs['text'])
-            text = dataCorrect(text_so)
-            fullList(text, len(draw_verts))
+        # end early, no point doing anything else.
+        if not verts:
+            return
+
+        # draw text on locations instead of indices.
+        text_so = inputs['text'].sv_get(default=[])
+        text = dataCorrect(text_so)
+        if text:
+            fullList(text, len(verts))
             for i, t in enumerate(text):
-                fullList(text[i], len(draw_verts[i]))
+                fullList(text[i], len(verts[i]))
 
-        if im_links and isinstance(im_links[0].from_socket, MatrixSocket):
-            propm = SvGetSocketAnyType(self, inputs['matrix'])
-            draw_matrix = dataCorrect(propm)
+        # read non vertex inputs in a loop and assign to data_collected
+        data_collected = []
+        for socket in ['edges', 'faces', 'matrix']:
+            propm = inputs[socket].sv_get(default=[])
+            input_stream = dataCorrect(propm)
+            data_collected.append(input_stream)
 
-        data_feind = []
-        for socket in ['edges', 'faces']:
-            try:
-                propm = SvGetSocketAnyType(self, inputs[socket])
-                input_stream = dataCorrect(propm)
-            except:
-                input_stream = []
-            finally:
-                data_feind.append(input_stream)
-
-        draw_edges, draw_faces = data_feind
+        edges, faces, matrices = data_collected
 
         bg = self.draw_bg
         settings = self.get_settings()
         IV.callback_enable(
-            n_id, draw_verts, draw_edges, draw_faces,
-            draw_matrix, bg, settings.copy(), text)
+            n_id, verts, edges, faces, matrices, bg, settings, text)
 
     def free(self):
         IV.callback_disable(node_id(self))

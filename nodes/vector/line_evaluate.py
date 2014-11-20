@@ -41,57 +41,41 @@ class EvaluateLine(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('VerticesSocket', "Vertice B", "Vertice B")
         self.outputs.new('VerticesSocket', "EvPoint", "EvPoint")
 
-    def draw_buttons(self, context, layout):
-        pass
 
     def process(self):
         # inputs
-        VerticesA = []
-        VerticesB = []
-        factor = []
-
-        if 'Vertice A' in self.inputs and self.inputs['Vertice A'].links:
-            VerticesA = SvGetSocketAnyType(self, self.inputs['Vertice A'])
-
-        if 'Vertice B' in self.inputs and self.inputs['Vertice B'].links:
-            VerticesB = SvGetSocketAnyType(self, self.inputs['Vertice B'])
-
-        if 'Factor' in self.inputs and self.inputs['Factor'].links:
-            factor = SvGetSocketAnyType(self, self.inputs['Factor'])
-
-        if not (VerticesA and VerticesB):
+        if not self.outputs['EvPoint'].is_linked:
             return
+            
+        VerticesA = self.inputs['Vertice A'].sv_get()
+        VerticesB = self.inputs['Vertice B'].sv_get()
+        factor = self.inputs['Factor'].sv_get()
 
-        if not factor:
-            factor = [[self.factor_]]
 
         # outputs
-        if 'EvPoint' in self.outputs and self.outputs['EvPoint'].links:
-            points = []
 
-# match inputs using fullList, longest list matching on A and B
-# extend factor list if necessary, it should not control length of output
+        # match inputs using fullList, longest list matching on A and B
+        # extend factor list if necessary, it should not control length of output
 
-            max_obj = max(len(VerticesA), len(VerticesB))
-            fullList(VerticesA, max_obj)
-            fullList(VerticesB, max_obj)
-            if len(factor) < max_obj:
-                fullList(factor, max_obj)
+        max_obj = max(len(VerticesA), len(VerticesB))
+        fullList(VerticesA, max_obj)
+        fullList(VerticesB, max_obj)
+        if len(factor) < max_obj:
+            fullList(factor, max_obj)
 
-            for i in range(max_obj):
-                points_ = []
-                max_l = max(len(VerticesA[i]), len(VerticesB[i]))
-                fullList(VerticesA[i], max_l)
-                fullList(VerticesB[i], max_l)
-                for j in range(max_l):
-                    tmp_pts = [(Vector(VerticesA[i][j]).lerp(VerticesB[i][j], factor[i][k]))[:]
-                               for k in range(len(factor[i]))]
-                    points_.extend(tmp_pts)
-                points.append(points_)
-            if not points:
-                return
+        points = []
+        for i in range(max_obj):
+            points_ = []
+            max_l = max(len(VerticesA[i]), len(VerticesB[i]))
+            fullList(VerticesA[i], max_l)
+            fullList(VerticesB[i], max_l)
+            for j in range(max_l):
+                tmp_pts = [(Vector(VerticesA[i][j]).lerp(VerticesB[i][j], factor[i][k]))[:]
+                           for k in range(len(factor[i]))]
+                points_.extend(tmp_pts)
+            points.append(points_)
 
-            SvSetSocketAnyType(self, 'EvPoint', points)
+        self.outputs['EvPoint'].sv_set(points)
 
 
 def register():

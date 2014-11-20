@@ -1,0 +1,360 @@
+{
+  "export_version": "0.054",
+  "framed_nodes": {},
+  "groups": {},
+  "nodes": {
+    "Bmesh Viewer Draw.001": {
+      "bl_idname": "BmeshViewerNode",
+      "color": [
+        1.0,
+        0.30000001192092896,
+        0.0
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        113.29450988769531,
+        580.2678833007812
+      ],
+      "params": {
+        "autosmooth": 0,
+        "basemesh_name": "Gamma"
+      },
+      "width": 140.0
+    },
+    "Float": {
+      "bl_idname": "FloatNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "cubscale",
+      "location": [
+        -1270.1318359375,
+        368.5112609863281
+      ],
+      "params": {
+        "float_": 0.12800000607967377,
+        "maxim": 0.20000000298023224,
+        "minim": 0.05000000074505806
+      },
+      "width": 140.0
+    },
+    "Float.002": {
+      "bl_idname": "FloatNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "radius in",
+      "location": [
+        -1270.1318359375,
+        456.05859375
+      ],
+      "params": {
+        "float_": 2.059999942779541,
+        "maxim": 3.0,
+        "minim": 0.5
+      },
+      "width": 140.0
+    },
+    "Float.003": {
+      "bl_idname": "FloatNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "radius out",
+      "location": [
+        -1270.1318359375,
+        541.4991455078125
+      ],
+      "params": {
+        "float_": 3.68999981880188,
+        "maxim": 4.0,
+        "minim": 1.5
+      },
+      "width": 140.0
+    },
+    "Integer": {
+      "bl_idname": "IntegerNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "U",
+      "location": [
+        -1270.1318359375,
+        280.50006103515625
+      ],
+      "params": {
+        "int_": 40,
+        "maxim": 40,
+        "minim": 3
+      },
+      "width": 140.0
+    },
+    "Integer.001": {
+      "bl_idname": "IntegerNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "V",
+      "location": [
+        -1270.1318359375,
+        200.65689086914062
+      ],
+      "params": {
+        "int_": 50,
+        "maxim": 50,
+        "minim": 3
+      },
+      "width": 140.0
+    },
+    "List Del Levels": {
+      "bl_idname": "ListLevelsNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -515.0376586914062,
+        436.2243347167969
+      ],
+      "params": {
+        "Sverch_LisLev": "3,4"
+      },
+      "width": 140.0
+    },
+    "List Join": {
+      "bl_idname": "ListJoinNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -751.55029296875,
+        498.5279541015625
+      ],
+      "params": {
+        "JoinLevel": 2,
+        "mix_check": 1,
+        "wrap_check": 1
+      },
+      "width": 140.0
+    },
+    "List Reverse": {
+      "bl_idname": "ListReverseNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -110.48173522949219,
+        401.21746826171875
+      ],
+      "params": {
+        "level": 3
+      },
+      "width": 140.0
+    },
+    "Sphere.001": {
+      "bl_idname": "SphereNode",
+      "color": [
+        0.0,
+        0.5,
+        0.5
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1011.825439453125,
+        561.67431640625
+      ],
+      "params": {
+        "Separate": 1,
+        "U_": 13,
+        "V_": 13,
+        "rad_": 2.0
+      },
+      "width": 140.0
+    },
+    "Sphere.002": {
+      "bl_idname": "SphereNode",
+      "color": [
+        0.0,
+        0.5,
+        0.5
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1007.1197509765625,
+        358.9403381347656
+      ],
+      "params": {
+        "Separate": 1,
+        "U_": 13,
+        "V_": 13,
+        "rad_": 1.746999979019165
+      },
+      "width": 140.0
+    },
+    "UV Connect": {
+      "bl_idname": "LineConnectNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -314.92071533203125,
+        525.2625122070312
+      ],
+      "params": {
+        "cicl_check": 1,
+        "dir_check": "V_dir",
+        "polygons": 1,
+        "slice_check": 0
+      },
+      "width": 140.0
+    },
+    "Viewer text": {
+      "bl_idname": "ViewerNode_text",
+      "color": [
+        0.5,
+        0.5,
+        1.0
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -96.75079345703125,
+        634.3973388671875
+      ],
+      "params": {},
+      "width": 140.0
+    }
+  },
+  "update_lists": [
+    [
+      "Float.003",
+      "Float",
+      "Sphere.001",
+      "Radius"
+    ],
+    [
+      "Integer",
+      "Integer",
+      "Sphere.001",
+      "U"
+    ],
+    [
+      "Integer.001",
+      "Integer",
+      "Sphere.001",
+      "V"
+    ],
+    [
+      "Float.002",
+      "Float",
+      "Sphere.002",
+      "Radius"
+    ],
+    [
+      "Integer",
+      "Integer",
+      "Sphere.002",
+      "U"
+    ],
+    [
+      "Integer.001",
+      "Integer",
+      "Sphere.002",
+      "V"
+    ],
+    [
+      "Sphere.002",
+      "Vertices",
+      "List Join",
+      "data"
+    ],
+    [
+      "Sphere.001",
+      "Vertices",
+      "List Join",
+      "data 1"
+    ],
+    [
+      "List Join",
+      "data",
+      "List Del Levels",
+      "data"
+    ],
+    [
+      "List Del Levels",
+      "data",
+      "Viewer text",
+      "vertices"
+    ],
+    [
+      "List Del Levels",
+      "data",
+      "UV Connect",
+      "vertices"
+    ],
+    [
+      "UV Connect",
+      "data",
+      "List Reverse",
+      "data"
+    ],
+    [
+      "UV Connect",
+      "vertices",
+      "Bmesh Viewer Draw.001",
+      "vertices"
+    ],
+    [
+      "List Reverse",
+      "data",
+      "Bmesh Viewer Draw.001",
+      "faces"
+    ]
+  ]
+}

@@ -71,17 +71,21 @@ class SvBoxNode(bpy.types.Node, SverchCustomTreeNode):
         faces = [[0, 1, 2, 3], [4, 7, 6, 5],
                  [0, 4, 5, 1], [1, 5, 6, 2],
                  [2, 6, 7, 3], [4, 0, 3, 7]]
-        
+
         edges = [[0, 4], [4, 5], [5, 1], [1, 0],
                  [5, 6], [6, 2], [2, 1], [6, 7],
                  [7, 3], [3, 2], [7, 4], [0, 3]]
-        
+
         if (divx, divy, divz) == (1, 1, 1):
             return verts, edges, faces
 
         bm = bmesh.new()
         [bm.verts.new(co) for co in verts]
         bm.verts.index_update()
+
+        if hasattr(bm.verts, "ensure_lookup_table"):
+            bm.verts.ensure_lookup_table()
+
         for face in faces:
             bm.faces.new(tuple(bm.verts[i] for i in face))
         bm.faces.index_update()
@@ -119,32 +123,22 @@ class SvBoxNode(bpy.types.Node, SverchCustomTreeNode):
         return verts, edges, faces
 
     def process(self):
+        inputs = self.inputs
 
-        if 'Size' in self.inputs and self.inputs['Size'].links:
-            size = SvGetSocketAnyType(self, self.inputs['Size'])[0]
-        else:
-            size = [self.Size]
-        if 'Divx' in self.inputs and self.inputs['Divx'].links:
-            divx = int(SvGetSocketAnyType(self, self.inputs['Divx'])[0][0])
-        else:
-            divx = self.Divx
-        if 'Divy' in self.inputs and self.inputs['Divy'].links:
-            divy = int(SvGetSocketAnyType(self, self.inputs['Divy'])[0][0])
-        else:
-            divy = self.Divy
-        if 'Divz' in self.inputs and self.inputs['Divz'].links:
-            divz = int(SvGetSocketAnyType(self, self.inputs['Divz'])[0][0])
-        else:
-            divz = self.Divz
+        # I think this is analoge to preexisting code, please verify.
+        size = inputs['Size'].sv_get()[0]
+        divx = int(inputs['Divx'].sv_get()[0][0])
+        divy = int(inputs['Divy'].sv_get()[0][0])
+        divz = int(inputs['Divz'].sv_get()[0][0])
 
         out = [a for a in (zip(*[self.makecube(s, divx, divy, divz) for s in size]))]
 
-        # outputs
-        if 'Vers' in self.outputs and self.outputs['Vers'].links:
+        # outputs, blindly using sv_set produces many print statements.
+        if self.outputs['Vers'].is_linked:
             SvSetSocketAnyType(self, 'Vers', out[0])
-        if 'Edgs' in self.outputs and self.outputs['Edgs'].links:
+        if self.outputs['Edgs'].is_linked:
             SvSetSocketAnyType(self, 'Edgs', out[1])
-        if 'Pols' in self.outputs and self.outputs['Pols'].links:
+        if self.outputs['Pols'].is_linked:
             SvSetSocketAnyType(self, 'Pols', out[2])
 
 
