@@ -355,41 +355,38 @@ class IndexViewerNode(bpy.types.Node, SverchCustomTreeNode):
     def generate_callback(self, n_id, IV):
         inputs = self.inputs
 
-        draw_verts, draw_matrix = [], []
+        verts, matrices = [], []
         text = ''
 
         # gather vertices from input
         propv = inputs['vertices'].sv_get()
-        draw_verts = dataCorrect(propv)
+        verts = dataCorrect(propv)
 
         # end early, no point doing anything else.
-        if not draw_verts:
+        if not verts:
             return
 
         # draw text on locations instead of indices.
         text_so = inputs['text'].sv_get(default=[])
         text = dataCorrect(text_so)
         if text:
-            fullList(text, len(draw_verts))
+            fullList(text, len(verts))
             for i, t in enumerate(text):
-                fullList(text[i], len(draw_verts[i]))
+                fullList(text[i], len(verts[i]))
 
-        propm = inputs['matrix'].sv_get(default=[])
-        draw_matrix = dataCorrect(propm)
-
-        data_feind = []
-        for socket in ['edges', 'faces']:
+        # read non vertex inputs in a loop and assign to data_collected
+        data_collected = []
+        for socket in ['edges', 'faces', 'matrix']:
             propm = inputs[socket].sv_get(default=[])
             input_stream = dataCorrect(propm)
-            data_feind.append(input_stream)
+            data_collected.append(input_stream)
 
-        draw_edges, draw_faces = data_feind
+        edges, faces, matrices = data_collected
 
         bg = self.draw_bg
         settings = self.get_settings()
         IV.callback_enable(
-            n_id, draw_verts, draw_edges, draw_faces,
-            draw_matrix, bg, settings, text)
+            n_id, verts, edges, faces, matrices, bg, settings, text)
 
     def free(self):
         IV.callback_disable(node_id(self))
