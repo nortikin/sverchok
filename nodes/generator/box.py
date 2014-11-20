@@ -126,10 +126,10 @@ class SvBoxNode(bpy.types.Node, SverchCustomTreeNode):
         inputs = self.inputs
 
         # I think this is analoge to preexisting code, please verify.
-        size = self.inputs['Size'].sv_get()[0]
-        divx = int(self.inputs['Divx'].sv_get()[0][0]) 
-        divy = int(self.inputs['Divy'].sv_get()[0][0]) 
-        divz = int(self.inputs['Divz'].sv_get()[0][0]) 
+        size = inputs['Size'].sv_get()[0]
+        divx = int(inputs['Divx'].sv_get()[0][0])
+        divy = int(inputs['Divy'].sv_get()[0][0])
+        divz = int(inputs['Divz'].sv_get()[0][0])
 
         out = [a for a in (zip(*[self.makecube(s, divx, divy, divz) for s in size]))]
 
