@@ -59,9 +59,9 @@ class SvRayCastNode(bpy.types.Node, SverchCustomTreeNode):
             OutLoc.append(src[3][:])
             OutNorm.append(src[4][:])
             Succ.append(src[0])
-            OutMatrix.append(src[2][:])
-            OutMatrix = [[a[:], b[:], c[:], d[:]] for a, b, c, d in OutMatrix]
             ObjectID.append(src[1])
+            if outputs['hited object matrix'].is_linked:
+                OutMatrix.append([[a[:], b[:], c[:], d[:]] for a, b, c, d in [src[2][:]]])
 
         outputs['HitP'].sv_set([OutLoc])
         outputs['HitNorm'].sv_set([OutNorm])
