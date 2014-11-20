@@ -19,11 +19,8 @@
 import bpy
 import mathutils
 from mathutils import Vector
-from bpy.props import StringProperty
-from sverchok.node_tree import SverchCustomTreeNode, StringsSocket, VerticesSocket, \
-    MatrixSocket
-from sverchok.data_structure import (updateNode, Vector_generate, SvSetSocketAnyType,
-                                     SvGetSocketAnyType, match_long_repeat)
+from sverchok.node_tree import SverchCustomTreeNode, StringsSocket, VerticesSocket, MatrixSocket
+from sverchok.data_structure import (updateNode, Vector_generate, match_long_repeat)
 
 
 class SvRayCastNode(bpy.types.Node, SverchCustomTreeNode):
@@ -43,15 +40,12 @@ class SvRayCastNode(bpy.types.Node, SverchCustomTreeNode):
 
     def process(self):
 
-        SSSAT = SvSetSocketAnyType
-        bcsrc = bpy.context.scene.ray_cast
         outputs = self.outputs
         OutLoc = []
         OutNorm = []
         Succ = []
-        OutMatrix = []
         ObjectID = []
-
+        OutMatrix = []
         st = Vector_generate(self.inputs['start'].sv_get())
         en = Vector_generate(self.inputs['end'].sv_get())
         start = [Vector(x) for x in st[0]]
@@ -61,7 +55,7 @@ class SvRayCastNode(bpy.types.Node, SverchCustomTreeNode):
             start, end = temp[0], temp[1]
 
         for i, last in enumerate(end):
-            src = bcsrc(start[i], last)
+            src = bpy.context.scene.ray_cast(start[i], last)
             OutLoc.append(src[3][:])
             OutNorm.append(src[4][:])
             Succ.append(src[0])
@@ -69,16 +63,11 @@ class SvRayCastNode(bpy.types.Node, SverchCustomTreeNode):
             OutMatrix = [[a[:], b[:], c[:], d[:]] for a, b, c, d in OutMatrix]
             ObjectID.append(src[1])
 
-        if outputs['HitP'].links:
-            SSSAT(self, 'HitP', [OutLoc])
-        if outputs['HitNorm'].links:
-            SSSAT(self, 'HitNorm', [OutNorm])
-        if outputs['Succes'].links:
-            SSSAT(self, 'Succes', [Succ])
-        if outputs['hited object matrix'].links:
-            SSSAT(self, 'hited object matrix', OutMatrix)
-        if outputs['data.object'].links:
-            SSSAT(self, 'data.object', [ObjectID])
+        outputs['HitP'].sv_set([OutLoc])
+        outputs['HitNorm'].sv_set([OutNorm])
+        outputs['Succes'].sv_set([Succ])
+        outputs['data.object'].sv_set(ObjectID)
+        outputs['hited object matrix'].sv_set(OutMatrix)
 
     def update_socket(self, context):
         self.update()
