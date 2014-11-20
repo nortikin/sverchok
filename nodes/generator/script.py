@@ -37,6 +37,7 @@ from sverchok.data_structure import (
     SvSetSocketAnyType,
     SvGetSocketAnyType
 )
+from sverchok import sockets
 
 FAIL_COLOR = (0.8, 0.1, 0.1)
 READY_COLOR = (0, 0.8, 0.95)
@@ -44,11 +45,7 @@ READY_COLOR = (0, 0.8, 0.95)
 defaults = list(range(32))
 sv_path = os.path.dirname(sv_get_local_path()[0])
 
-sock_dict = {
-    'v': 'VerticesSocket',
-    's': 'StringsSocket',
-    'm': 'MatrixSocket'
-}
+sock_dict = {}
 
 
 def new_output_socket(node, name, stype):
@@ -522,6 +519,7 @@ classes = [
 
 
 def register():
+    sock_dict = sockets.get_socket_types()
     for class_name in classes:
         bpy.utils.register_class(class_name)
 
