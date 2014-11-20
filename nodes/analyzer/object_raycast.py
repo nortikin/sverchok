@@ -19,10 +19,9 @@
 import bpy
 import mathutils
 from mathutils import Vector
-from bpy.props import StringProperty
+from bpy.props import StringProperty, BoolProperty
 from sverchok.node_tree import SverchCustomTreeNode, StringsSocket, VerticesSocket
-from sverchok.data_structure import (updateNode, Vector_generate, SvSetSocketAnyType,
-                                     SvGetSocketAnyType, match_long_repeat)
+from sverchok.data_structure import (updateNode, Vector_generate, match_long_repeat)
 
 
 class SvRayCastNode(bpy.types.Node, SverchCustomTreeNode):
@@ -30,6 +29,9 @@ class SvRayCastNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvRayCastObjectNode'
     bl_label = 'object_raycast'
     bl_icon = 'OUTLINER_OB_EMPTY'
+
+    mode = BoolProperty(name='mode of points', description='mode for input points',
+                        default=False, update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('SvObjectSocket', 'Objects')
@@ -39,12 +41,13 @@ class SvRayCastNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('VerticesSocket', "HitNorm")
         self.outputs.new('StringsSocket', "INDEX")
 
+    def draw_buttons_ext(self, context, layout):
+        row = layout.row(align=True)
+        row.prop(self,    "mode",   text="Mode")
+
     def process(self):
 
-        SSSAT = SvSetSocketAnyType
-        bcsrc = bpy.context.scene.ray_cast
-        outputs = self.outputs
-        out = []
+        outfin = []
         OutLoc = []
         OutNorm = []
         IND = []
@@ -57,22 +60,32 @@ class SvRayCastNode(bpy.types.Node, SverchCustomTreeNode):
             temp = match_long_repeat([start, end])
             start, end = temp[0], temp[1]
 
-        obj = self.inputs['Objects'].sv_get()[0]
-        i = 0
-        while i < len(end):
-            out.append(obj.ray_cast(start[i], end[i]))
-            i = i+1
-        for i in out:
-            OutNorm.append(i[1][:])
-            IND.append(i[2])
-            OutLoc.append(i[0][:])
+        obj = self.inputs['Objects'].sv_get()
+        for OB in obj:
+            out = []
+            if self.mode:
+                i = 0
+                while i < len(end):
+                    out.append(OB.ray_cast(OB.matrix_local.inverted()*start[i], OB.matrix_local.inverted()*end[i]))
+                    i = i+1
+            else:
+                i = 0
+                while i < len(end):
+                    out.append(OB.ray_cast(start[i], end[i]))
+                    i = i+1
+            outfin.append(out)
 
-        if outputs['HitP'].links:
-            SSSAT(self, 'HitP', [OutLoc])
-        if outputs['HitNorm'].links:
-            SSSAT(self, 'HitNorm', [OutNorm])
-        if outputs['INDEX'].links:
-            SSSAT(self, 'INDEX', [IND])
+        g = 0
+        while g < len(obj):
+            for i in outfin[g]:
+                OutNorm.append(i[1][:])
+                IND.append(i[2])
+                OutLoc.append((obj[g].matrix_world*i[0])[:])
+            g = g+1
+
+        self.outputs['HitP'].sv_set([OutLoc])
+        self.outputs['HitNorm'].sv_set([OutNorm])
+        self.outputs['INDEX'].sv_set([IND])
 
     def update_socket(self, context):
         self.update()

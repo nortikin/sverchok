@@ -19,7 +19,7 @@
 import bpy
 import mathutils
 from mathutils import Vector
-from bpy.props import FloatProperty
+from bpy.props import FloatProperty, BoolProperty
 from sverchok.node_tree import SverchCustomTreeNode, StringsSocket, VerticesSocket
 from sverchok.data_structure import (updateNode, Vector_generate)
 
@@ -33,14 +33,20 @@ class SvPointOnMeshNode(bpy.types.Node, SverchCustomTreeNode):
     Mdist = FloatProperty(name='Max_Distance',
                                description='from surface to point', default=10,
                                options={'ANIMATABLE'}, update=updateNode)
+    mode = BoolProperty(name='mode of points', description='mode for input points',
+                        default=False, update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('SvObjectSocket', 'Object')
-        self.inputs.new('VerticesSocket', "point")
+        self.inputs.new('VerticesSocket', "point").use_prop = True
         self.inputs.new('StringsSocket', "max_dist").prop_name = "Mdist"
         self.outputs.new('VerticesSocket', "Point_on_mesh")
         self.outputs.new('VerticesSocket', "Normal_on_mesh")
         self.outputs.new('StringsSocket', "INDEX")
+
+    def draw_buttons_ext(self, context, layout):
+        row = layout.row(align=True)
+        row.prop(self,    "mode",   text="Mode")
 
     def process(self):
 
@@ -53,7 +59,13 @@ class SvPointOnMeshNode(bpy.types.Node, SverchCustomTreeNode):
         obj = self.inputs['Object'].sv_get()
 
         for i in obj:
-            for i2 in [i.closest_point_on_mesh(p, max_dist) for p in point]:
+
+            if self.mode:
+                pnt = [i.closest_point_on_mesh(i.matrix_local.inverted()*p, max_dist) for p in point]
+            else:
+                pnt = [i.closest_point_on_mesh(p, max_dist) for p in point]
+
+            for i2 in pnt:
 
                 Location.append((i.matrix_world*i2[0])[:])
                 Normal.append(i2[1][:])
@@ -73,4 +85,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvPointOnMeshNode)
-    
