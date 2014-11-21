@@ -121,7 +121,7 @@ class SvObjDuplivertOne(bpy.types.Node, SverchCustomTreeNode):
             c.parent = p
 
             if p.use_dupli_vertices_rotation:
-                print('Child uses dupli verts!')
+                print('Parent Provides dupli verts!')
                 val = self.inputs['Rotations'].sv_get()[0]
                 if val:
                     verts = p.data.vertices
