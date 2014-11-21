@@ -13,6 +13,7 @@ nodes_dict = {
         'object_raycast',
         'scene_raycast',
         'closest_point_on_mesh',
+        'bmesh_verts',
     ],
 
     'basic_view': [
