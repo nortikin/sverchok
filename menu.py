@@ -68,6 +68,7 @@ def make_node_cats():
         # proximity analyses.
         ["SvKDTreeNode",        "KDT Closest Verts"],
         ["SvKDTreeEdgesNode",   "KDT Closest Edges"],
+        ["SvBMVertsNode",   "BMesh Verts Props"],
     ]
 
     node_cats["Transforms"] = [
