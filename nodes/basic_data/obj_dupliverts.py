@@ -91,47 +91,59 @@ class SvObjDuplivertOne(bpy.types.Node, SverchCustomTreeNode):
             elif ob.dupli_type == 'GROUP':
                 layout.prop(ob, "dupli_group", text="Group")
 
-        # col.prop_search(self, 'name_child', bpy.data, 'objects', text='child')
         col.separator()
         op_one = col.operator('node.sv_fdp_center_child', text='Center Child')
         op_one.name_child = self.name_child
 
+    def update(self):
+        # if disconnected, the node needs one last update.
+        p = self.inputs['Parent'].sv_get()
+        c = self.inputs['Child'].sv_get()
+
+        if not (p or c):
+            self.process()
+
+        if not (p and c):
+            self.name_child = ''
+            self.name_parent = ''
 
     def process(self):
         objects = bpy.data.objects
 
-        p = self.inputs['Parent'].sv_get()
-        c = self.inputs['Child'].sv_get()
+        p = self.inputs['Parent'].sv_get()[0]
+        c = self.inputs['Child'].sv_get()[0]
+        print('parent:', p)
+        print('child:', c)
 
+        if (p and c):
+            self.name_parent = p.name
+            self.name_child = c.name
+            c.parent = p
 
-        print('parent: {0}, child: {1}'.format(self.name_parent, self.name_child))
-
-        for obj_child, obj_parent in zip(p,c):
-            obj_child.parent = obj_parent
-
-            if obj_child.use_dupli_vertices_rotation:
-
-                val = self.inputs['Rotations'].sv_get()
+            if p.use_dupli_vertices_rotation:
+                print('Child uses dupli verts!')
+                val = self.inputs['Rotations'].sv_get()[0]
                 if val:
-                    val = val[0]  # get less nested.
-                    verts = obj_parent.data.vertices
+                    verts = p.data.vertices
+
                     if not (len(val) == len(verts)):
-                        print('sizes don\'t match')
-                        print(len(val), len(verts))
+                        print("sizes don't match", len(val), len(verts))
                         return
                 else:
                     print('no array')
                     return
 
-                # only reaches here if they are the same size
+                # reaches here iff each parent vertex has a matching rotation vertex
                 for v, norm in zip(verts, val):
                     v.normal = tuple(norm[:3])
 
-                # race condition with bmesh node, this should be done last..
-                # could implement priority cue.
+        if (not p) and c:
+            c.parent = None
+            self.name_parent = ''
 
-        if (not self.name_parent) and self.name_child:
-            objects[self.name_child].parent = None
+        if p and (not c):
+            self.name_parent = p.name
+            self.name_child = ''
 
 
 def register():
