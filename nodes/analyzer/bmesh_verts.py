@@ -18,8 +18,7 @@
 
 import bpy
 import bmesh
-from bpy.props import BoolProperty
-from sverchok.node_tree import SverchCustomTreeNode, StringsSocket, VerticesSocket
+from sverchok.node_tree import SverchCustomTreeNode, StringsSocket
 from sverchok.data_structure import (updateNode)
 
 
@@ -29,53 +28,35 @@ class SvBMVertsNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'bmesh_verts'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    invert = BoolProperty(name='invert for props', description='invert output',
-                          default=False, update=updateNode)
-
     def sv_init(self, context):
         self.inputs.new('SvObjectSocket', 'Object')
-        self.outputs.new('VerticesSocket', 'Manifold')
-        self.outputs.new('VerticesSocket', 'Wire')
-        self.outputs.new('VerticesSocket', 'Boundary')
+        self.outputs.new('StringsSocket', 'Manifold')
+        self.outputs.new('StringsSocket', 'Wire')
+        self.outputs.new('StringsSocket', 'Boundary')
         self.outputs.new('StringsSocket', 'Vertex_Sharpness')
-
-    def draw_buttons_ext(self, context, layout):
-        row = layout.row(align=True)
-        row.prop(self,    "invert",   text="Invert")
 
     def process(self):
         manifold = []
         wire = []
         bound = []
         sharpness = []
-        obj = self.inputs['Object'].sv_get()[0]
-        bm = bmesh.new()
-        bm.from_mesh(obj.data)
-        bm.verts.index_update()
-        for i in bm.verts:
-            if not self.invert:
-                if i.is_manifold:
-                    manifold.append(i.co[:])
-                if i.is_wire:
-                    wire.append(i.co[:])
-                if i.is_boundary:
-                    bound.append(i.co[:])
-            else:
-                if not i.is_manifold:
-                    manifold.append(i.co[:])
-                if not i.is_wire:
-                    wire.append(i.co[:])
-                if not i.is_boundary:
-                    bound.append(i.co[:])
+        obj = self.inputs['Object'].sv_get()
+        for OB in obj:
+            bm = bmesh.new()
+            bm.from_mesh(OB.data)
+            bm.verts.index_update()
 
-            sharpness.append(i.calc_shell_factor())
+            manifold.append([i.index for i in bm.verts if i.is_manifold])
+            wire.append([i.index for i in bm.verts if i.is_wire])
+            bound.append([i.index for i in bm.verts if i.is_boundary])
+            sharpness.append([i.calc_shell_factor() for i in bm.verts])
 
-        bm.free()
+            bm.free()
 
         self.outputs['Manifold'].sv_set(manifold)
         self.outputs['Wire'].sv_set(wire)
-        self.outputs['Boundary'].sv_set([bound])
-        self.outputs['Vertex_Sharpness'].sv_set([sharpness])
+        self.outputs['Boundary'].sv_set(bound)
+        self.outputs['Vertex_Sharpness'].sv_set(sharpness)
 
     def update_socket(self, context):
         self.update()
