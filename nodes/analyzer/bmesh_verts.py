@@ -33,6 +33,8 @@ class SvBMVertsNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('StringsSocket', 'Manifold')
         self.outputs.new('StringsSocket', 'Wire')
         self.outputs.new('StringsSocket', 'Boundary')
+        self.outputs.new('StringsSocket', 'Selected')
+        self.outputs.new('StringsSocket', 'Two Edges Angle')
         self.outputs.new('StringsSocket', 'Vertex_Sharpness')
 
     def process(self):
@@ -40,6 +42,8 @@ class SvBMVertsNode(bpy.types.Node, SverchCustomTreeNode):
         wire = []
         bound = []
         sharpness = []
+        sel = []
+        angle = []
         obj = self.inputs['Object'].sv_get()
         for OB in obj:
             bm = bmesh.new()
@@ -49,14 +53,19 @@ class SvBMVertsNode(bpy.types.Node, SverchCustomTreeNode):
             manifold.append([i.index for i in bm.verts if i.is_manifold])
             wire.append([i.index for i in bm.verts if i.is_wire])
             bound.append([i.index for i in bm.verts if i.is_boundary])
+            sel.append([i.index for i in bm.verts if i.select])
             sharpness.append([i.calc_shell_factor() for i in bm.verts])
+            angle.append([i.calc_vert_angle() for i in bm.verts])
 
             bm.free()
 
-        self.outputs['Manifold'].sv_set(manifold)
-        self.outputs['Wire'].sv_set(wire)
-        self.outputs['Boundary'].sv_set(bound)
-        self.outputs['Vertex_Sharpness'].sv_set(sharpness)
+        out = self.outputs
+        out['Manifold'].sv_set(manifold)
+        out['Wire'].sv_set(wire)
+        out['Boundary'].sv_set(bound)
+        out['Selected'].sv_set(sel)
+        out['Two Edges Angle'].sv_set(angle)
+        out['Vertex_Sharpness'].sv_set(sharpness)
 
     def update_socket(self, context):
         self.update()
