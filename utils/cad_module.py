@@ -63,6 +63,9 @@ def get_intersection_from_idxs(bm, idx1, idx2):
     > takes reference to bm and 2 indices
     < returns intersection or None
     '''
+    if hasattr(bm.verts, "ensure_lookup_table"):
+        bm.verts.ensure_lookup_table()
+
     p1, p2 = coords_tuple_from_edge_idx(bm, idx1)
     p3, p4 = coords_tuple_from_edge_idx(bm, idx2)
     a, b = LineIntersect(p1, p2, p3, p4)
@@ -118,11 +121,17 @@ def closest_vector(pt, e):
 
 def coords_tuple_from_edge_idx(bm, idx):
     ''' bm is a bmesh representation '''
+    if hasattr(bm.verts, "ensure_lookup_table"):
+        bm.verts.ensure_lookup_table()
+
     return tuple(v.co for v in bm.edges[idx].verts)
 
 
 def vectors_from_indices(bm, raw_vert_indices):
     ''' bm is a bmesh representation '''
+    if hasattr(bm.verts, "ensure_lookup_table"):
+        bm.verts.ensure_lookup_table()
+
     return [bm.verts[i].co for i in raw_vert_indices]
 
 
@@ -132,6 +141,10 @@ def vertex_indices_from_edges_tuple(bm, edge_tuple):
     > edge_tuple:   contains two edge indices.
     < returns the vertex indices of edge_tuple
     '''
+    if hasattr(bm.verts, "ensure_lookup_table"):
+        bm.verts.ensure_lookup_table()
+        bm.edges.ensure_lookup_table()
+
     k = lambda v, w: bm.edges[edge_tuple[v]].verts[w].index
     return [k(i >> 1, i % 2) for i in range(4)]
 
@@ -148,6 +161,9 @@ def find_intersecting_edges(bm, pt, idx1, idx2):
     > idx1, ix2:    edge indices,
     < returns the list of edge indices where pt is on those edges
     '''
+    if hasattr(bm.verts, "ensure_lookup_table"):
+        bm.verts.ensure_lookup_table()
+
     idxs = [idx1, idx2]
     edges = [coords_tuple_from_edge_idx(bm, idx) for idx in idxs]
     return [idx for edge, idx in zip(edges, idxs) if point_on_edge(pt, edge)]
@@ -158,5 +174,7 @@ def duplicates(indices):
 
 
 def vert_idxs_from_edge_idx(bm, idx):
+    if hasattr(bm.verts, "ensure_lookup_table"):
+        bm.verts.ensure_lookup_table()
     edge = bm.edges[idx]
     return edge.verts[0].index, edge.verts[1].index

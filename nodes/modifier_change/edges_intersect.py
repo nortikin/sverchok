@@ -26,6 +26,7 @@ from mathutils.geometry import intersect_line_line as LineIntersect
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import SvSetSocketAnyType, SvGetSocketAnyType
 from sverchok.utils import cad_module as cm
+from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 
 ''' helpers '''
 
@@ -41,6 +42,7 @@ def order_points(edge, point_list):
 
 def remove_permutations_that_share_a_vertex(bm, permutations):
     ''' Get useful Permutations '''
+
     final_permutations = []
     for edges in permutations:
         raw_vert_indices = cm.vertex_indices_from_edges_tuple(bm, edges)
@@ -109,6 +111,7 @@ def update_mesh(bm, d):
 
     oe = bm.edges
     ov = bm.verts
+
     vert_count = len(ov)
     edge_count = len(oe)
 
@@ -119,7 +122,11 @@ def update_mesh(bm, d):
         for i in range(num_edges_to_add):
             ov.new(point_list[i])
             ov.new(point_list[i+1])
-            bm.normal_update()
+            # bm.normal_update()
+
+            if hasattr(bm.verts, "ensure_lookup_table"):
+                bm.verts.ensure_lookup_table()
+                bm.edges.ensure_lookup_table()
 
             vseq = ov[vert_count], ov[vert_count+1]
             oe.new(vseq)
@@ -146,7 +153,6 @@ class SvIntersectEdgesNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Intersect Edges'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', 'Verts_in', 'Verts_in')
         self.inputs.new('StringsSocket', 'Edges_in', 'Edges_in')
@@ -168,11 +174,7 @@ class SvIntersectEdgesNode(bpy.types.Node, SverchCustomTreeNode):
         except (IndexError, KeyError) as e:
             return
 
-        bm = bmesh.new()
-        [bm.verts.new(co) for co in verts_in]
-        bm.normal_update()
-        [bm.edges.new((bm.verts[i], bm.verts[j])) for i, j in edges_in]
-        bm.normal_update()
+        bm = bmesh_from_pydata(verts_in, edges_in, [])
 
         edge_indices = [e.index for e in bm.edges]
         trim_indices = len(edge_indices)
@@ -198,12 +200,10 @@ class SvIntersectEdgesNode(bpy.types.Node, SverchCustomTreeNode):
         SvSetSocketAnyType(self, 'Verts_out', [verts_out])
         SvSetSocketAnyType(self, 'Edges_out', [edges_out])
 
+
 def register():
     bpy.utils.register_class(SvIntersectEdgesNode)
 
 
 def unregister():
     bpy.utils.unregister_class(SvIntersectEdgesNode)
-
-if __name__ == '__main__':
-    register()
