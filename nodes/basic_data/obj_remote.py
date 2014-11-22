@@ -25,7 +25,7 @@ from mathutils import Vector, Matrix
 from bpy.props import BoolProperty, FloatVectorProperty, StringProperty, EnumProperty
 
 from sverchok.node_tree import SverchCustomTreeNode, MatrixSocket
-from sverchok.data_structure import dataCorrect, updateNode, SvGetSocketAnyType
+from sverchok.data_structure import dataCorrect, updateNode, SvGetSocketAnyType, match_long_repeat
 
 
 class SvObjRemoteNode(bpy.types.Node, SverchCustomTreeNode):
@@ -76,11 +76,16 @@ class SvObjRemoteNode(bpy.types.Node, SverchCustomTreeNode):
 
         inputs = self.inputs
         objects = bpy.data.objects
-
-        for obj in inputs[0].sv_get():
-            obj.location = inputs[1].sv_get()[0][0]
-            obj.scale = inputs[2].sv_get()[0][0]
-            obj.rotation_euler = inputs[3].sv_get()[0][0]
+        obj_get = inputs[0].sv_get()
+        loc_get = inputs[1].sv_get()[0]
+        sca_get = inputs[2].sv_get()[0]
+        rot_get = inputs[3].sv_get()[0]
+        obj_get, loc_get, sca_get, rot_get = match_long_repeat([obj_get,loc_get,sca_get,rot_get])
+        print(len(obj_get),len(loc_get),len(sca_get),len(rot_get))
+        for obj,l,s,r in zip(obj_get,loc_get,sca_get,rot_get):
+            obj.location = Vector(l)
+            obj.scale = Vector(s)
+            obj.rotation_euler = Vector(r)
             #self.show_string_box = (obj.type == 'FONT')
 
             #if self.show_string_box:
@@ -98,3 +103,6 @@ def register():
 def unregister():
     bpy.utils.unregister_class(SvObjRemoteNode)
     #bpy.utils.unregister_class(SvInstancerOp)
+
+if __name__ == '__main__':
+    register()
