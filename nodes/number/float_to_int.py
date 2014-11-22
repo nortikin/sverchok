@@ -36,12 +36,12 @@ class Float2IntNode(bpy.types.Node, SverchCustomTreeNode):
             result = self.inte(Number)
             self.outputs['int'].sv_set(result)
 
-    @staticmethod
-    def inte(l):
+    @classmethod
+    def inte(cls, l):
         if isinstance(l, (int, float)):
             return round(l)
         else:
-            return [self.inte(i) for i in l]
+            return [cls.inte(i) for i in l]
 
 
 def register():
