@@ -77,6 +77,11 @@ def can_skip(closest_points, vert_vectors):
 
 
 def get_intersection_dictionary(bm, edge_indices):
+
+    if hasattr(bm.verts, "ensure_lookup_table"):
+        bm.verts.ensure_lookup_table()
+        bm.edges.ensure_lookup_table()
+
     permutations = get_valid_permutations(bm, edge_indices)
 
     k = defaultdict(list)
