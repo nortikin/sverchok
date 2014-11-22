@@ -131,9 +131,9 @@ class SverchokHome(bpy.types.Operator):
 
 
 class SverchokCheckForUpgrades(bpy.types.Operator):
-    """ Check if there new version on github """
+    """ Check for new version """
     bl_idname = "node.sverchok_check_for_upgrades"
-    bl_label = "Sverchok check for new version"
+    bl_label = "Check for new version"
     bl_options = {'REGISTER'}
 
     def execute(self, context):
@@ -169,9 +169,9 @@ class SverchokCheckForUpgrades(bpy.types.Operator):
 
 
 class SverchokUpdateAddon(bpy.types.Operator):
-    """ Sverchok update addon without any browsing and so on. After - press F8 to reload addons """
+    """ Sverchok upgrade himself. After - press F8 to reload addons """
     bl_idname = "node.sverchok_update_addon"
-    bl_label = "Sverchok update addon"
+    bl_label = "Sverchok upgrade addon"
     bl_options = {'REGISTER'}
 
     def execute(self, context):
