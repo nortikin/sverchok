@@ -98,7 +98,7 @@ upgrade_dict = {
         [['Distance', 'distance']],
     'ScalarMathNode':
         [['X', 'x'],
-         ['Y', 'y']]
+         ['Y', 'y']],
     }
 
 
@@ -142,6 +142,8 @@ new_socket_dict = {
         [['outputs', 'StringsSocket', 'newpols', 3]],
     'IndexViewerNode':
         [['inputs', 'StringsSocket', 'text', 4]],
+    'ObjectsNode':
+        [['outputs', "SvObjectSocket", 'Objects', 4]],
     }
 
 
