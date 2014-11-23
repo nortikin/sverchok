@@ -120,6 +120,8 @@ class SvObjDuplivertOne(bpy.types.Node, SverchCustomTreeNode):
             self.name_child = c.name
             c.parent = p
 
+            p.dupli_type = 'VERTS'
+
             if p.use_dupli_vertices_rotation:
                 print('Parent Provides dupli verts!')
                 val = self.inputs['Rotations'].sv_get()[0]
@@ -139,6 +141,10 @@ class SvObjDuplivertOne(bpy.types.Node, SverchCustomTreeNode):
 
         if (not p) and c:
             c.parent = None
+            if self.name_parent:
+                ob = objects.get(self.name_parent)
+                if ob:
+                    ob.dupli_type = 'NONE'
             self.name_parent = ''
 
         if p and (not c):
