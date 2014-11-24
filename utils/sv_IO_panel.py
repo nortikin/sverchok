@@ -31,6 +31,8 @@ import bpy
 from bpy.types import EnumProperty
 from bpy.props import StringProperty
 from bpy.props import BoolProperty
+from sverchok.node_tree import SverchCustomTree
+from sverchok.node_tree import SverchCustomTreeNode
 from sverchok import old_nodes
 
 _EXPORTER_REVISION_ = '0.054'
@@ -493,6 +495,55 @@ class SvNodeTreeImporter(bpy.types.Operator):
         return {'RUNNING_MODAL'}
 
 
+class SverchokIOLayoutsMenu(bpy.types.Panel):
+    bl_idname = "Sverchok_iolayouts_menu"
+    bl_label = "SV import/export"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = 'Sverchok'
+    bl_options = {'DEFAULT_CLOSED'}
+    use_pin = True
+
+    @classmethod
+    def poll(cls, context):
+        try:
+            return context.space_data.node_tree.bl_idname == 'SverchCustomTreeType'
+        except:
+            return False
+
+    def draw(self, context):
+        layout = self.layout
+        ntree = context.space_data.node_tree
+        row = layout.row()
+        row.scale_y = 0.5
+        row.label(_EXPORTER_REVISION_)
+
+        ''' export '''
+
+        col = layout.column(align=False)
+        row1 = col.row(align=True)
+        row1.scale_y = 1.4
+        row1.prop(ntree, 'compress_output', text='Zip', toggle=True)
+        imp = row1.operator('node.tree_exporter', text='Export', icon='FILE_BACKUP')
+        imp.id_tree = ntree.name
+        imp.compress = ntree.compress_output
+
+        ''' import '''
+
+        col = layout.column(align=True)
+        row3 = col.row(align=True)
+        row3.scale_y = 1
+        row3.prop(ntree, 'new_nodetree_name', text='')
+        row2 = col.row(align=True)
+        row2.scale_y = 1.2
+        exp1 = row2.operator('node.tree_importer', text='Here', icon='RNA')
+        exp1.id_tree = ntree.name
+
+        exp2 = row2.operator('node.tree_importer', text='New', icon='RNA_ADD')
+        exp2.id_tree = ''
+        exp2.new_nodetree_name = ntree.new_nodetree_name
+
+
 def register():
     bpy.types.SverchCustomTreeType.new_nodetree_name = StringProperty(
         name='new_nodetree_name',
@@ -506,9 +557,11 @@ def register():
 
     bpy.utils.register_class(SvNodeTreeExporter)
     bpy.utils.register_class(SvNodeTreeImporter)
+    bpy.utils.register_class(SverchokIOLayoutsMenu)
 
 
 def unregister():
+    bpy.utils.unregister_class(SverchokIOLayoutsMenu)
     bpy.utils.unregister_class(SvNodeTreeImporter)
     bpy.utils.unregister_class(SvNodeTreeExporter)
     del bpy.types.SverchCustomTreeType.new_nodetree_name
