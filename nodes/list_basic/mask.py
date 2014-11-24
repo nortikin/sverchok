@@ -22,7 +22,7 @@ import bpy
 from bpy.props import BoolProperty, IntProperty, StringProperty
 from sverchok.node_tree import SverchCustomTreeNode, StringsSocket
 from sverchok.data_structure import (updateNode, changable_sockets,
-                            SvSetSocketAnyType, SvGetSocketAnyType)
+                            SvSetSocketAnyType, SvGetSocketAnyType, levelsOflist)
 
 
 class MaskListNode(bpy.types.Node, SverchCustomTreeNode):
@@ -34,11 +34,6 @@ class MaskListNode(bpy.types.Node, SverchCustomTreeNode):
     Level = IntProperty(name='Level', description='Choose list level of data (see help)',
                         default=1, min=1, max=10,
                         update=updateNode)
-
-    typ = StringProperty(name='typ',
-                         default='')
-    newsock = BoolProperty(name='newsock',
-                           default=False)
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', "data", "data")
@@ -54,12 +49,6 @@ class MaskListNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "Level", text="Level lists")
 
     def update(self):
-        # changable types sockets in output
-        # you need the next:
-        # typ - needed self value
-        # newsocket - needed self value
-        # inputsocketname to get one socket to define type
-        # outputsocketname to get list of outputs, that will be changed
         inputsocketname = 'data'
         outputsocketname = ['dataTrue', 'dataFalse']
         changable_sockets(self, inputsocketname, outputsocketname)
@@ -68,12 +57,17 @@ class MaskListNode(bpy.types.Node, SverchCustomTreeNode):
         data = [[]]
         mask = [[1, 0]]
 
-        if self.inputs['data'].links:
-            data = SvGetSocketAnyType(self, self.inputs['data'])
+        data = self.inputs['data'].sv_get()
 
-        if self.inputs['mask'].links and \
-           type(self.inputs['mask'].links[0].from_socket) == StringsSocket:
-            mask = SvGetSocketAnyType(self, self.inputs['mask'])
+        if self.inputs['mask'].is_linked:
+            mask = self.inputs['mask'].sv_get()
+            n = levelsOflist(mask)
+            if n == 1:
+                mask = [mask]
+            elif n > 2:
+                raise Error("mask level to high")
+        else:
+            mask = [[1, 0]]
 
         result = self.getMask(data, mask, self.Level)
 

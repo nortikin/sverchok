@@ -220,6 +220,8 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('StringsSocket', 'edges', 'edges')
         self.inputs.new('StringsSocket', 'faces', 'faces')
         self.inputs.new('MatrixSocket', 'matrix', 'matrix')
+        
+        self.outputs.new('SvObjectSocket', 'Meshes')
 
     def draw_buttons(self, context, layout):
         view_icon = 'RESTRICT_VIEW_' + ('OFF' if self.activate else 'ON')
@@ -325,7 +327,8 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
         self.remove_non_updated_objects(obj_index)
 
         objs = self.get_children()
-
+        if self.outputs[0].is_linked:
+            self.outputs[0].sv_set(objs)
         if self.grouping:
             self.to_group(objs)
 

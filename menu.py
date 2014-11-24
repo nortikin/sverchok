@@ -34,7 +34,7 @@ def make_node_cats():
     node_cats = OrderedDict()
     '''  bl_idname, shortname, <icon> (optional) '''
 
-# blue-green
+    # blue-green
     node_cats["Generators"] = [
         ["LineNode",            "Line",                  "GRIP"],
         ["PlaneNode",           "Plane",           "MESH_PLANE"],
@@ -68,6 +68,7 @@ def make_node_cats():
         # proximity analyses.
         ["SvKDTreeNode",        "KDT Closest Verts"],
         ["SvKDTreeEdgesNode",   "KDT Closest Edges"],
+        ["SvBMVertsNode",   "BMesh Verts Props"],
     ]
 
     node_cats["Transforms"] = [
@@ -176,7 +177,7 @@ def make_node_cats():
         ["SvNeuroElman1LNode",  "Neuro"],
     ]
 
-# orange
+    # orange
     node_cats["Viz"] = [
         ["ViewerNode2",         "Viewer Draw",         'RETOPO'],
         ["BmeshViewerNode",     "Viewer BMesh"],
@@ -184,7 +185,7 @@ def make_node_cats():
         ["Sv3DviewPropsNode",   "3dview Props"],
     ]
 
-# greish blue
+    # greish blue
     node_cats["Text"] = [
         ["ViewerNode_text",     "Viewer text"],
         ["SvTextInNode",        "Text in"],
@@ -193,22 +194,28 @@ def make_node_cats():
         ["GTextNode",           "GText"],
         ["SvDebugPrintNode",    "Debug print"],
         ["SvStethoscopeNode",   "Stethoscope"],
+        ["SvGetAttrNode",      "Get Attribute"],
+        ["SvCmpNode",           "Cmp"],
+        ["SvObjByNameNode",     "Gget obj by name"],
     ]
-
-# green
+    
+    # green
     node_cats["Scene"] = [
         ["ObjectsNode",         "Objects in"],
         ["SvObjRemoteNode",     "Scene Objects"],
+        ["SvObjDuplivertOne",   "Duplivert Objects"],
         ["SvFrameInfoNode",     "Frame info"],
         ["SvEmptyOutNode",      "Empty out",    "OUTLINER_OB_EMPTY"],
         ["SvInstancerNode",     "mesh instancer"],
         ["SvGetPropNode",       "Get property",   'FORCE_VORTEX'],
         ["SvSetPropNode",       "Set property",   'FORCE_VORTEX'],
         ["SvVertexGroupNode",   "Vertext group"],
-        ["SvRayCastNode",       "Raycast"],
+        ["SvRayCastSceneNode",   "Scene Raycast"],
+        ["SvRayCastObjectNode",   "Object Raycast"],
+        ["SvPointOnMeshNode",   "Point on Mesh"],
     ]
 
-# violet
+    # violet
     node_cats["Layout"] = [
         ["WifiInNode",          "Wifi in"],
         ["WifiOutNode",         "Wifi out"],
@@ -228,8 +235,10 @@ def make_node_cats():
     node_cats["Alpha Nodes"] = [
         ["SvImageComponentsNode", "Image Decompose",  "GROUP_VCOL"],
         ["SvJoinTrianglesNode",   "Join Triangles"],
-        ["SvCacheNode",           "Cache"],
-
+        ["SvCacheNode",           "Cache",],
+        ["SvGetDataObjectNode",    "Get ObjectID",],
+        ["SvSetDataObjectNode",    "Set ObjectID",],
+        ['SvObjectToMeshNode',     "Object to Mesh",],
     ]
 
     return node_cats

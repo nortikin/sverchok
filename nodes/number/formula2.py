@@ -107,8 +107,7 @@ class Formula2Node(bpy.types.Node, SverchCustomTreeNode):
                 list_mult[i-1] = dataCorrect(list_temp, nominal_dept=2)
         #print(list_mult)
         r = self.inte(vecs, code_formula, list_mult, 3)
-        result = dataCorrect(r, nominal_dept=min((levels[0]-1), 2))
-
+        result = dataCorrect(r, nominal_dept=min(levels[0]-1, 2))
         SvSetSocketAnyType(self, 'Result', result)
 
     def inte(self, list_x, formula, list_n, levels, index=0):

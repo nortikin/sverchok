@@ -10,7 +10,10 @@ nodes_dict = {
         'kd_tree',
         'kd_tree_edges',
         'weights',
-        'raycast'
+        'object_raycast',
+        'scene_raycast',
+        'closest_point_on_mesh',
+        'bmesh_verts',
     ],
 
     'basic_view': [
@@ -28,9 +31,13 @@ nodes_dict = {
         'wifi_out',
         'switch',
         'obj_remote',
+        'obj_dupliverts',
         'group',
         'cache',
-        'getsetprop'
+        'getsetprop',
+        'get_dataobject',
+        'set_dataobject',
+        'tomeshnode',
     ],
 
     'basic_debug': [
@@ -160,6 +167,11 @@ nodes_dict = {
         'vertices_delete_doubles',
         'vertices_sort',
         'axis_input'
+    ],
+    'text': [
+        'get_attr',
+        'cmp_text',
+        'obj_by_name',
     ]
         
 }

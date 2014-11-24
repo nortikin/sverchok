@@ -37,6 +37,8 @@ from sverchok.utils.sv_panels_tools import sv_get_local_path
 from  sverchok.utils import script_importhelper
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode , node_id
+from sverchok import sockets
+
 
 sv_path = os.path.dirname(sv_get_local_path()[0])
 
@@ -59,11 +61,7 @@ class SvDefaultScript2Template(bpy.types.Operator):
         return {'FINISHED'}
 
 
-socket_types = {
-    'v': 'VerticesSocket',
-    's': 'StringsSocket',
-    'm': 'MatrixSocket'
-}
+socket_types = {}
 
 # for number lists
 defaults = [0 for i in range(32)]
@@ -150,6 +148,8 @@ class SvScriptNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                     elif isinstance(default_value, float):
                         self.float_list[offset] = default_value
                         socket.prop_type = "float_list"
+                    elif isinstance(default_value, (tuple, list)) and len(default_value)==3:
+                        socket.use_prop = True 
                     socket.prop_index = offset
                     
             for args in script.outputs:            
@@ -205,23 +205,7 @@ class SvScriptNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         
         if hasattr(script, "process"):
             script.process()
-        '''
-        # basic sanity. Shouldn't be needed
 
-        if len(script.inputs) != len(self.inputs):
-            return
-        if len(script.outputs) != len(self.outputs):
-            return
-        # check if no default and not linked, return
-     
-        
-        for data, socket in zip(script.inputs, self.inputs): 
-            if len(data) == 2 and not socket.links:
-                return
-
-        if not script:
-            return
-        '''
                         
     def copy(self, node):
         self.n_id = ""
@@ -285,6 +269,8 @@ class SvScriptNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             
 
 def register():
+    global socket_types
+    socket_types = sockets.get_socket_types()
     bpy.utils.register_class(SvScriptNodeMK2)    
     bpy.utils.register_class(SvDefaultScript2Template)
 
