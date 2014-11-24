@@ -43,58 +43,65 @@ class SvBMVertsNode(bpy.types.Node, SverchCustomTreeNode):
                          default="manifold", items=modes, update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('SvObjectSocket', 'Object')
-        self.inputs.new('VerticesSocket', 'Vert')
-        self.inputs.new('StringsSocket', 'Edge')
-        self.inputs.new('StringsSocket', 'Poly')
+        si = self.inputs.new
+        si('SvObjectSocket', 'Object')
+        si('VerticesSocket', 'Vert')
+        si('StringsSocket', 'Edge')
+        si('StringsSocket', 'Poly')
         self.outputs.new('StringsSocket', 'Value')
 
     def draw_buttons(self, context, layout):
-        row = layout.row(align=True)
         layout.prop(self, "Modes", "Get Verts")
 
     def process(self):
         Val = []
+        siob = self.inputs['Object']
+        sive = self.inputs['Vert']
+        sied = self.inputs['Edge']
+        sipo = self.inputs['Poly']
 
-        if self.inputs['Object'].is_linked or self.inputs['Object'].object_ref:
-            obj = self.inputs['Object'].sv_get()
+        if siob.is_linked or siob.object_ref:
+            obj = siob.sv_get()
             for OB in obj:
+                sm = self.Modes
                 bm = bmesh.new()
                 bm.from_mesh(OB.data)
-                bm.verts.index_update()
-                if self.Modes == 'manifold':
-                    Val.append([i.index for i in bm.verts if i.is_manifold])
-                elif self.Modes == 'wire':
-                    Val.append([i.index for i in bm.verts if i.is_wire])
-                elif self.Modes == 'bound':
-                    Val.append([i.index for i in bm.verts if i.is_boundary])
-                elif self.Modes == 'sel':
-                    Val.append([i.index for i in bm.verts if i.select])
-                elif self.Modes == 'sharpness':
-                    Val.append([i.calc_shell_factor() for i in bm.verts])
-                elif self.Modes == 'angle':
-                    Val.append([i.calc_vert_angle() for i in bm.verts])
+                bv = bm.verts
+                bv.index_update()
+                if sm == 'manifold':
+                    Val.append([i.index for i in bv if i.is_manifold])
+                elif sm == 'wire':
+                    Val.append([i.index for i in bv if i.is_wire])
+                elif sm == 'bound':
+                    Val.append([i.index for i in bv if i.is_boundary])
+                elif sm == 'sel':
+                    Val.append([i.index for i in bv if i.select])
+                elif sm == 'sharpness':
+                    Val.append([i.calc_shell_factor() for i in bv])
+                elif sm == 'angle':
+                    Val.append([i.calc_vert_angle() for i in bv])
                 bm.free()
-        if self.inputs['Vert'].is_linked:
-            V = self.inputs['Vert'].sv_get()
-            E = self.inputs['Edge'].sv_get() if self.inputs['Edge'].is_linked else [[]]
-            P = self.inputs['Poly'].sv_get() if self.inputs['Poly'].is_linked else [[]]
+        if sive.is_linked:
             g = 0
-            while g != len(V):
-                bm = bmesh_from_pydata(V[g], E[g], P[g])
-                bm.verts.index_update()
-                if self.Modes == 'manifold':
-                    Val.append([i.index for i in bm.verts if i.is_manifold])
-                elif self.Modes == 'wire':
-                    Val.append([i.index for i in bm.verts if i.is_wire])
-                elif self.Modes == 'bound':
-                    Val.append([i.index for i in bm.verts if i.is_boundary])
-                elif self.Modes == 'sel':
-                    Val.append([i.index for i in bm.verts if i.select])
-                elif self.Modes == 'sharpness':
-                    Val.append([i.calc_shell_factor() for i in bm.verts])
-                elif self.Modes == 'angle':
-                    Val.append([i.calc_vert_angle() for i in bm.verts])
+            while g != len(sive.sv_get()):
+                bm = bmesh_from_pydata(sive.sv_get()[g],
+                                       sied.sv_get()[g] if sied.is_linked else [],
+                                       sipo.sv_get()[g] if sipo.is_linked else [])
+                bv = bm.verts
+                sm = self.Modes
+                bv.index_update()
+                if sm == 'manifold':
+                    Val.append([i.index for i in bv if i.is_manifold])
+                elif sm == 'wire':
+                    Val.append([i.index for i in bv if i.is_wire])
+                elif sm == 'bound':
+                    Val.append([i.index for i in bv if i.is_boundary])
+                elif sm == 'sel':
+                    Val.append([i.index for i in bv if i.select])
+                elif sm == 'sharpness':
+                    Val.append([i.calc_shell_factor() for i in bv])
+                elif sm == 'angle':
+                    Val.append([i.calc_vert_angle() for i in bv])
                 bm.free()
                 g = g+1
 
