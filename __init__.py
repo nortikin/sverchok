@@ -78,10 +78,10 @@ utils_modules = [
     #     - text editor ui
     "text_editor_submenu", "text_editor_plugins",
     #     - operators
-    "sv_panels_tools", "sv_IO_panel", "group_tools",
+    "sv_panels_tools", "sv_IO_panel_tools", "group_tools",
 ]
 ui_modules = [
-    "color_def", "sv_panels", "nodeview_space_menu",
+    "color_def", "sv_IO_panel", "sv_panels", "nodeview_space_menu",
     # bgl modules
     "viewer_draw",  "viewer_draw_mk2", "nodeview_bgl_viewer_draw",
     "index_viewer_draw"
@@ -151,7 +151,7 @@ def register():
     # this is used to access preferences, should/could be hidden
     # in an interface
     data_structure.SVERCHOK_NAME = __name__
-    print("Have a nice day with sverchok")
+    print("** Have a nice day with sverchok  **\n")
     print(sv_ascii_logo)   
     
     if reload_event:
