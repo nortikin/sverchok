@@ -20,6 +20,7 @@ import bpy
 
 from sverchok.node_tree import SverchCustomTreeNode, StringsSocket
 
+
 class Float2IntNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Float2Int '''
     bl_idname = 'Float2IntNode'
@@ -32,16 +33,16 @@ class Float2IntNode(bpy.types.Node, SverchCustomTreeNode):
 
     def process(self):
         Number = self.inputs['float'].sv_get()
-        if  self.outputs['int'].is_linked:        
+        if self.outputs['int'].is_linked:
             result = self.inte(Number)
             self.outputs['int'].sv_set(result)
 
-    @staticmethod
-    def inte(l):
+    @classmethod
+    def inte(cls, l):
         if isinstance(l, (int, float)):
             return round(l)
         else:
-            return [self.inte(i) for i in l]
+            return [cls.inte(i) for i in l]
 
 
 def register():

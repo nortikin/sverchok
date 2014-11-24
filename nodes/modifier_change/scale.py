@@ -34,6 +34,9 @@ class SvScaleNode(bpy.types.Node, SverchCustomTreeNode):
     factor_ = FloatProperty(name='Factor', description='scaling factor',
                            default=1.0,
                            options={'ANIMATABLE'}, update=updateNode)
+    Separate = BoolProperty(name='Separate', description='Separate UV coords',
+                           default=False,
+                           update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', "Vertices", "Vertices")

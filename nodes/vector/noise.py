@@ -89,27 +89,22 @@ class SvNoiseNode(bpy.types.Node, SverchCustomTreeNode):
                                for t in inspect.getmembers(noise.types)
                                if isinstance(t[1], int)}
 
-        if self.outputs and not self.outputs[0].links:
+        if not self.outputs[0].is_linked:
             return
 
-        if 'Vertices' in self.inputs and self.inputs['Vertices'].links:
+        
+        verts = Vector_generate(self.inputs['Vertices'].sv_get())
+        out = []
+        n_t = self.noise_dict[self.noise_type]
+        n_f = self.noise_f[self.out_mode]
 
-            verts = Vector_generate(SvGetSocketAnyType(self, self.inputs['Vertices']))
-            out = []
-            n_t = self.noise_dict[self.noise_type]
-            n_f = self.noise_f[self.out_mode]
+        for obj in verts:
+            out.append([n_f(v, n_t) for v in obj])
 
-            for obj in verts:
-                out.append([n_f(v, n_t) for v in obj])
-
-            if 'Noise V' in self.outputs and self.outputs['Noise V'].links:
-                SvSetSocketAnyType(self, 'Noise V', Vector_degenerate(out))
-
-            if 'Noise S' in self.outputs and self.outputs['Noise S'].links:
-                SvSetSocketAnyType(self, 'Noise S', out)
-            return
-
-        SvSetSocketAnyType(self, self.outputs[0].name, [[]])
+        if 'Noise V' in self.outputs:
+            self.outputs['Noise V'].sv_set(Vector_degenerate(out))
+        else:
+            self.outputs['Noise S'].sv_set(out)
 
 
 def register():

@@ -48,8 +48,6 @@ class SvColors(bpy.types.PropertyGroup):
         update=updateNode)
 
 
-
-
 # Node tree 
 
 class SvNodeTreeCommon(object):
