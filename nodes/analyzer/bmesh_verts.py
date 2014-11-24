@@ -24,6 +24,25 @@ from sverchok.node_tree import SverchCustomTreeNode, StringsSocket
 from sverchok.data_structure import (updateNode)
 
 
+def get_value(self, b, V):
+        sm = self.Modes
+        bv = b.verts
+        bv.index_update()
+        if sm == 'manifold':
+            V.append([i.index for i in bv if i.is_manifold])
+        elif sm == 'wire':
+            V.append([i.index for i in bv if i.is_wire])
+        elif sm == 'bound':
+            V.append([i.index for i in bv if i.is_boundary])
+        elif sm == 'sel':
+            V.append([i.index for i in bv if i.select])
+        elif sm == 'sharpness':
+            V.append([i.calc_shell_factor() for i in bv])
+        elif sm == 'angle':
+            V.append([i.calc_vert_angle() for i in bv])
+        return V
+
+
 class SvBMVertsNode(bpy.types.Node, SverchCustomTreeNode):
     ''' BMesh Verts '''
     bl_idname = 'SvBMVertsNode'
@@ -63,23 +82,9 @@ class SvBMVertsNode(bpy.types.Node, SverchCustomTreeNode):
         if siob.is_linked or siob.object_ref:
             obj = siob.sv_get()
             for OB in obj:
-                sm = self.Modes
                 bm = bmesh.new()
                 bm.from_mesh(OB.data)
-                bv = bm.verts
-                bv.index_update()
-                if sm == 'manifold':
-                    Val.append([i.index for i in bv if i.is_manifold])
-                elif sm == 'wire':
-                    Val.append([i.index for i in bv if i.is_wire])
-                elif sm == 'bound':
-                    Val.append([i.index for i in bv if i.is_boundary])
-                elif sm == 'sel':
-                    Val.append([i.index for i in bv if i.select])
-                elif sm == 'sharpness':
-                    Val.append([i.calc_shell_factor() for i in bv])
-                elif sm == 'angle':
-                    Val.append([i.calc_vert_angle() for i in bv])
+                get_value(self, bm, Val)
                 bm.free()
         if sive.is_linked:
             g = 0
@@ -87,21 +92,7 @@ class SvBMVertsNode(bpy.types.Node, SverchCustomTreeNode):
                 bm = bmesh_from_pydata(sive.sv_get()[g],
                                        sied.sv_get()[g] if sied.is_linked else [],
                                        sipo.sv_get()[g] if sipo.is_linked else [])
-                bv = bm.verts
-                sm = self.Modes
-                bv.index_update()
-                if sm == 'manifold':
-                    Val.append([i.index for i in bv if i.is_manifold])
-                elif sm == 'wire':
-                    Val.append([i.index for i in bv if i.is_wire])
-                elif sm == 'bound':
-                    Val.append([i.index for i in bv if i.is_boundary])
-                elif sm == 'sel':
-                    Val.append([i.index for i in bv if i.select])
-                elif sm == 'sharpness':
-                    Val.append([i.calc_shell_factor() for i in bv])
-                elif sm == 'angle':
-                    Val.append([i.calc_vert_angle() for i in bv])
+                get_value(self, bm, Val)
                 bm.free()
                 g = g+1
 
