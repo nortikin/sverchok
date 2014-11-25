@@ -34,8 +34,8 @@ class ListSumNode(bpy.types.Node, SverchCustomTreeNode):
 
     def process(self):
         # достаём два слота - вершины и полики
-        if 'Sum' in self.outputs and self.outputs['Sum'].links:
-            if 'Data' in self.inputs and self.inputs['Data'].links:
+        if 'Sum' in self.outputs and self.outputs['Sum'].is_linked:
+            if 'Data' in self.inputs and self.inputs['Data'].is_linked:
                 data = SvGetSocketAnyType(self, self.inputs['Data'])
 
                 out_ = self.summ(data)

@@ -74,7 +74,7 @@ class SvMatrixEulerNode(bpy.types.Node, SverchCustomTreeNode):
     def process(self):
         if not 'Matrix' in self.outputs:
             return
-        if not self.outputs['Matrix'].links:
+        if not self.outputs['Matrix'].is_linked:
             return
         inputs = self.inputs
         param = [s.sv_get()[0] for s in inputs]

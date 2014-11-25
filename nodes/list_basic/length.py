@@ -44,8 +44,8 @@ class ListLengthNode(bpy.types.Node, SverchCustomTreeNode):
 
     def process(self):
         # достаём два слота - вершины и полики
-        if 'Length' in self.outputs and self.outputs['Length'].links:
-            if 'Data' in self.inputs and self.inputs['Data'].links:
+        if 'Length' in self.outputs and self.outputs['Length'].is_linked:
+            if 'Data' in self.inputs and self.inputs['Data'].is_linked:
                 data = SvGetSocketAnyType(self, self.inputs['Data'])
 
                 if not self.level:

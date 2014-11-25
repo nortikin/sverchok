@@ -38,10 +38,10 @@ class ConverterNode(bpy.types.Node, SverchCustomTreeNode):
         pass
 
     def process(self):
-        if "data" in self.inputs and self.inputs[0].links:            
+        if "data" in self.inputs and self.inputs[0].is_linked:            
             out = SvGetSocketAnyType(self, self.inputs[0], deepcopy=False)
             for s in self.outputs:
-                if s.links:
+                if s.is_linked:
                     SvSetSocketAnyType(self, s.name, out)
 
 def register():

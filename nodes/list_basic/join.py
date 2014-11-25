@@ -66,10 +66,10 @@ class ListJoinNode(bpy.types.Node, SverchCustomTreeNode):
             changable_sockets(self, inputsocketname, outputsocketname)
 
     def process(self):
-        if 'data' in self.outputs and self.outputs['data'].links:
+        if 'data' in self.outputs and self.outputs['data'].is_linked:
             slots = []
             for socket in self.inputs:
-                if socket.links:
+                if socket.is_linked:
                     slots.append(SvGetSocketAnyType(self, socket))
             if len(slots) == 0:
                 return

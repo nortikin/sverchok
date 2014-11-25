@@ -63,10 +63,10 @@ class ZipNode(bpy.types.Node, SverchCustomTreeNode):
 
 
     def process(self):
-        if self.outputs['data'].links:
+        if self.outputs['data'].is_linked:
             slots = []
             for socket in self.inputs:
-                if socket.links:
+                if socket.is_linked:
                     slots.append(SvGetSocketAnyType(self, socket))
             if len(slots) < 2:
                 return

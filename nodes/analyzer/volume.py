@@ -41,7 +41,7 @@ class SvVolumeNode(bpy.types.Node, SverchCustomTreeNode):
 
     def process(self):
 
-        if self.outputs['Volume'].links and self.inputs['Vers'].links:
+        if self.outputs['Volume'].is_linked and self.inputs['Vers'].is_linked:
             vertices = Vector_generate(dataCorrect(SvGetSocketAnyType(self, self.inputs['Vers'])))
             faces = dataCorrect(SvGetSocketAnyType(self, self.inputs['Pols']))
             out = []
@@ -55,7 +55,7 @@ class SvVolumeNode(bpy.types.Node, SverchCustomTreeNode):
                 bme.clear()
                 bme.free()
                 
-            if self.outputs['Volume'].links:
+            if self.outputs['Volume'].is_linked:
                 SvSetSocketAnyType(self, 'Volume', out)
 
     '''

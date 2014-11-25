@@ -53,7 +53,7 @@ class SvMatrixValueIn(bpy.types.Node, SverchCustomTreeNode):
         pass
 
     def process(self):
-        if 'Matrix' in self.outputs and self.outputs['Matrix'].links:
+        if 'Matrix' in self.outputs and self.outputs['Matrix'].is_linked:
             m_out = Matrix_listing([self.matrix])
             SvSetSocketAnyType(self, 'Matrix', m_out)
 

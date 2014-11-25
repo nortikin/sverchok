@@ -117,14 +117,14 @@ class NoteNode(bpy.types.Node, SverchCustomTreeNode):
         self.text = bpy.context.window_manager.clipboard
         
     def process(self):
-        if 'Text In' in self.inputs and self.inputs['Text In'].links:
+        if 'Text In' in self.inputs and self.inputs['Text In'].is_linked:
             self.text = str(SvGetSocketAnyType(self,self.inputs['Text In']))
 
         n_id = node_id(self)
         if not n_id in self.text_cache:
             self.format_text()
             
-        if 'Text Out' in self.outputs and self.outputs['Text Out'].links:
+        if 'Text Out' in self.outputs and self.outputs['Text Out'].is_linked:
             # I'm not sure that this makes sense, but keeping it like 
             # old note right now. Would expect one value, and optional
             # split, or split via a text processing node, 

@@ -86,7 +86,7 @@ class SvStethoscopeNode(bpy.types.Node, SverchCustomTreeNode):
         # end early
         nvBGL.callback_disable(n_id)
 
-        in_links = inputs[0].links
+        in_links = inputs[0].is_linked
 
         if self.activate and in_links:
             # gather vertices from input

@@ -46,13 +46,13 @@ class DistancePPNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "Cross_dist", text="CrossOver")
 
     def process(self):
-        if self.inputs['vertices1'].links and self.inputs['vertices2'].links:
+        if self.inputs['vertices1'].is_linked and self.inputs['vertices2'].is_linked:
             prop1_ = SvGetSocketAnyType(self, self.inputs['vertices1'])
             prop1 = Vector_generate(prop1_)
             prop2_ = SvGetSocketAnyType(self, self.inputs['vertices2'])
             prop2 = Vector_generate(prop2_)
 
-        elif self.inputs['matrix1'].links and self.inputs['matrix2'].links:
+        elif self.inputs['matrix1'].is_linked and self.inputs['matrix2'].is_linked:
             propa = SvGetSocketAnyType(self, self.inputs['matrix1'])
             prop1 = Matrix_location(Matrix_generate(propa))
             propb = SvGetSocketAnyType(self, self.inputs['matrix2'])
@@ -61,7 +61,7 @@ class DistancePPNode(bpy.types.Node, SverchCustomTreeNode):
             prop1, prop2 = [], []
 
         if prop1 and prop2:
-            if self.outputs['distances'].links:
+            if self.outputs['distances'].is_linked:
                 #print ('distances input', str(prop1), str(prop2))
                 if self.Cross_dist:
                     output = self.calcM(prop1, prop2)

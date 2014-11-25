@@ -60,7 +60,7 @@ class SvDebugPrintNode(bpy.types.Node, SverchCustomTreeNode):
         if not self.print_data:
             return        
         for i, socket in enumerate(self.inputs):
-            if socket.links and self.print_socket[i]:
+            if socket.is_linked and self.print_socket[i]:
                 print(SvGetSocketAnyType(self, socket, deepcopy=False))
        
 def register():

@@ -97,18 +97,18 @@ class SvCircleNode(bpy.types.Node, SverchCustomTreeNode):
 
     def process(self):
         # inputs
-        if self.inputs['Radius'].links:
+        if self.inputs['Radius'].is_linked:
             Radius = SvGetSocketAnyType(self, self.inputs['Radius'])[0]
         else:
             Radius = [self.rad_]
 
-        if self.inputs['Nº Vertices'].links:
+        if self.inputs['Nº Vertices'].is_linked:
             Vertices = SvGetSocketAnyType(self, self.inputs['Nº Vertices'])[0]
             Vertices = list(map(lambda x: max(3, int(x)), Vertices))
         else:
             Vertices = [self.vert_]
 
-        if self.inputs['Degrees'].links:
+        if self.inputs['Degrees'].is_linked:
             Angle = SvGetSocketAnyType(self, self.inputs['Degrees'])[0]
             Angle = list(map(lambda x: min(360, max(0, x)), Angle))
         else:
@@ -118,15 +118,15 @@ class SvCircleNode(bpy.types.Node, SverchCustomTreeNode):
         parameters = match_long_repeat([Angle, Vertices, Radius])
 
         # outputs
-        if self.outputs['Vertices'].links:
+        if self.outputs['Vertices'].is_linked:
             points = [self.make_verts(a, v, r) for a, v, r in zip(*parameters)]
             SvSetSocketAnyType(self, 'Vertices', points)
 
-        if self.outputs['Edges'].links:
+        if self.outputs['Edges'].is_linked:
             edg = [self.make_edges(v, a) for a, v, r in zip(*parameters)]
             SvSetSocketAnyType(self, 'Edges', edg)
 
-        if self.outputs['Polygons'].links:
+        if self.outputs['Polygons'].is_linked:
             plg = [self.make_faces(a, v) for a, v, r in zip(*parameters)]
             SvSetSocketAnyType(self, 'Polygons', plg)
 

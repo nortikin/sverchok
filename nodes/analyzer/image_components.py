@@ -305,7 +305,7 @@ class SvImageComponentsNode(bpy.types.Node, SverchCustomTreeNode):
         
         if not self.loaded:
             return
-        if not (outputs['xya'].links and outputs['rgb'].links):
+        if not (outputs['xya'].is_linked and outputs['rgb'].is_linked):
             return
 
         # upload reload, this avoids errors - still not perfect
@@ -320,12 +320,12 @@ class SvImageComponentsNode(bpy.types.Node, SverchCustomTreeNode):
         m1 = self.xy_spread
         m2 = self.z_spread
 
-        if outputs[xya].links:
+        if outputs[xya].is_linked:
             tmul = lambda v: (v[0]*m1, v[1]*m1, v[2])
             data = [tmul(v) for v in dict_data[xya]]
             outputs[xya].sv_set([data])
 
-        if outputs[rgb].links:
+        if outputs[rgb].is_linked:
             if -0.001 <= m2 <= 0.001:
                 data = dict_data[rgb]
             else:
@@ -341,7 +341,7 @@ class SvImageComponentsNode(bpy.types.Node, SverchCustomTreeNode):
             return
 
         polygons = 'polygons'
-        if not outputs[polygons].links:
+        if not outputs[polygons].is_linked:
             return
 
         polygon_data = dict_data[polygons]

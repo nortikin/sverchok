@@ -106,15 +106,15 @@ class SphereNode(bpy.types.Node, SverchCustomTreeNode):
         params = match_long_repeat([U, V, Radius])
 
         # outputs
-        if self.outputs['Vertices'].links:
+        if self.outputs['Vertices'].is_linked:
             verts = [sphere_verts(u, v, r, self.Separate) for u, v, r in zip(*params)]
             SvSetSocketAnyType(self, 'Vertices', verts)
 
-        if self.outputs['Edges'].links:
+        if self.outputs['Edges'].is_linked:
             edges = [sphere_edges(u, v) for u, v, r in zip(*params)]
             SvSetSocketAnyType(self, 'Edges', edges)
 
-        if self.outputs['Polygons'].links:
+        if self.outputs['Polygons'].is_linked:
             faces = [sphere_faces(u, v) for u, v, r in zip(*params)]
             SvSetSocketAnyType(self, 'Polygons', faces)
 

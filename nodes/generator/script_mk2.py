@@ -216,7 +216,7 @@ class SvScriptNodeMK2(bpy.types.Node, SverchCustomTreeNode):
      
         
         for data, socket in zip(script.inputs, self.inputs): 
-            if len(data) == 2 and not socket.links:
+            if len(data) == 2 and not socket.is_linked:
                 return
 
         if not script:

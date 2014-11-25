@@ -80,10 +80,10 @@ class LineNode(bpy.types.Node, SverchCustomTreeNode):
         out = [a for a in (zip(*[make_line(i, s) for i, s in zip(*params)]))]
             
         # outputs
-        if outputs['Vertices'].links:
+        if outputs['Vertices'].is_linked:
             outputs['Vertices'].sv_set(out[0])
 
-        if outputs['Edges'].links:
+        if outputs['Edges'].is_linked:
             outputs['Edges'].sv_set(out[1])
 
 

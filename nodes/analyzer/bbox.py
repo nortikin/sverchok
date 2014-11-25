@@ -41,13 +41,13 @@ class SvBBoxNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('MatrixSocket', 'Center', 'Center')
 
     def process(self):
-        if not self.inputs['Vertices'].links:
+        if not self.inputs['Vertices'].is_linked:
             return
-        if not any([s.links for s in self.outputs]):
+        if not any([s.is_linked for s in self.outputs]):
             return
-        has_mat_out = bool(self.outputs['Center'].links)
-        has_mean = bool(self.outputs['Mean'].links)
-        has_vert_out = bool(self.outputs['Vertices'].links)
+        has_mat_out = bool(self.outputs['Center'].is_linked)
+        has_mean = bool(self.outputs['Mean'].is_linked)
+        has_vert_out = bool(self.outputs['Vertices'].is_linked)
         vert = SvGetSocketAnyType(self, self.inputs['Vertices'])
         vert = dataCorrect(vert, nominal_dept=2)
 
@@ -80,16 +80,16 @@ class SvBBoxNode(bpy.types.Node, SverchCustomTreeNode):
                     avr = [n/len(v) for n in avr]
                     mean_out.append([avr])
 
-            if self.outputs['Vertices'].links:
+            if self.outputs['Vertices'].is_linked:
                 SvSetSocketAnyType(self, 'Vertices', verts_out)
 
-            if self.outputs['Edges'].links:
+            if self.outputs['Edges'].is_linked:
                 SvSetSocketAnyType(self, 'Edges', edges_out)
 
-            if self.outputs['Mean'].links:
+            if self.outputs['Mean'].is_linked:
                 SvSetSocketAnyType(self, 'Mean', mean_out)
 
-            if self.outputs['Center'].links:
+            if self.outputs['Center'].is_linked:
                 SvSetSocketAnyType(self, 'Center', Matrix_listing(mat_out))
 
 

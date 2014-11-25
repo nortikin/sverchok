@@ -39,20 +39,20 @@ class MatrixOutNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('MatrixSocket', "Matrix", "Matrix")
 
     def process(self):
-        if 'Matrix' in self.inputs and self.inputs['Matrix'].links:
+        if 'Matrix' in self.inputs and self.inputs['Matrix'].is_linked:
             matrixes_ = SvGetSocketAnyType(self, self.inputs['Matrix'])
             matrixes = Matrix_generate(matrixes_)
 
-            if 'Location' in self.outputs and self.outputs['Location'].links:
+            if 'Location' in self.outputs and self.outputs['Location'].is_linked:
                 locs = Matrix_location(matrixes, list=True)
                 SvSetSocketAnyType(self, 'Location', locs)
 
-            if 'Scale' in self.outputs and self.outputs['Scale'].links:
+            if 'Scale' in self.outputs and self.outputs['Scale'].is_linked:
                 locs = Matrix_scale(matrixes, list=True)
                 SvSetSocketAnyType(self, 'Scale', locs)
 
-            if ('Rotation' in self.outputs and self.outputs['Rotation'].links) \
-               or ('Angle' in self.outputs and self.outputs['Angle'].links):
+            if ('Rotation' in self.outputs and self.outputs['Rotation'].is_linked) \
+               or ('Angle' in self.outputs and self.outputs['Angle'].is_linked):
 
                 locs = Matrix_rotation(matrixes, list=True)
                 rots = []

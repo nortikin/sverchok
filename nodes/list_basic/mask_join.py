@@ -63,8 +63,8 @@ class SvMaskJoinNode(bpy.types.Node, SverchCustomTreeNode):
         changable_sockets(self, inputsocketname, outputsocketname)
 
     def process(self):
-        if all((s.links for s in self.inputs[1:])):
-            if self.inputs['Mask'].links:
+        if all((s.is_linked for s in self.inputs[1:])):
+            if self.inputs['Mask'].is_linked:
                 mask = SvGetSocketAnyType(self, self.inputs['Mask'])
             else:  # to match MaskList
                 mask = [[1, 0]]

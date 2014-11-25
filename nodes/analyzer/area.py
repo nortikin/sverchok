@@ -110,7 +110,7 @@ class AreaNode(bpy.types.Node, SverchCustomTreeNode):
         Polygons = inputs["Polygons"].sv_get()
 
         # outputs
-        if outputs['Area'].links:
+        if outputs['Area'].is_linked:
             outputs['Area'].sv_set([areas(Vertices, Polygons, self.per_face)])
 
 

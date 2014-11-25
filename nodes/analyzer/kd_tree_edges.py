@@ -63,7 +63,7 @@ class SvKDTreeEdgesNode(bpy.types.Node, SverchCustomTreeNode):
 
         try:
             verts = SvGetSocketAnyType(self, inputs['Verts'])[0]
-            linked = outputs[0].links
+            linked = outputs[0].is_linked
         except (IndexError, KeyError) as e:
             return
 
@@ -75,7 +75,7 @@ class SvKDTreeEdgesNode(bpy.types.Node, SverchCustomTreeNode):
 
         socket_inputs = []
         for s, s_default_value, dtype in optional_sockets:
-            if s in inputs and inputs[s].links:
+            if s in inputs and inputs[s].is_linked:
                 sock_input = dtype(SvGetSocketAnyType(self, inputs[s])[0][0])
             else:
                 sock_input = s_default_value

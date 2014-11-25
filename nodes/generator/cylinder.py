@@ -143,18 +143,18 @@ class CylinderNode(bpy.types.Node, SverchCustomTreeNode):
         Sub = [max(int(s), 0) for s in inputs['Subdivisions'].sv_get()[0]]
         params = match_long_repeat([Sub, Vertices, Height, RadiusBot, RadiusTop])
         # outputs
-        if self.outputs['Vertices'].links:
+        if self.outputs['Vertices'].is_linked:
 
             points = [cylinder_vertices(s, v, h, rb, rt, self.Separate)
                       for s, v, h, rb, rt in zip(*params)]
             SvSetSocketAnyType(self, 'Vertices', points)
 
-        if self.outputs['Edges'].links:
+        if self.outputs['Edges'].is_linked:
             edges = [cylinder_edges(s, v)
                      for s, v, h, rb, rt in zip(*params)]
             SvSetSocketAnyType(self, 'Edges', edges)
 
-        if self.outputs['Polygons'].links:
+        if self.outputs['Polygons'].is_linked:
             faces = [cylinder_faces(s, v, self.cap_)
                      for s, v, h, rb, rt in zip(*params)]
             SvSetSocketAnyType(self, 'Polygons', faces)

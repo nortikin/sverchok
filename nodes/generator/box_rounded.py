@@ -390,7 +390,7 @@ class SvBoxRoundedNode(bpy.types.Node, SverchCustomTreeNode):
         pass
 
     def process(self):
-        if not self.inputs['vector_size'].links:
+        if not self.inputs['vector_size'].is_linked:
             return
 
     
@@ -430,9 +430,9 @@ class SvBoxRoundedNode(bpy.types.Node, SverchCustomTreeNode):
 
         out = list(zip(*[round_cube(**kwargs) for kwargs in multi_dict]))
 
-        if outputs['Vers'].links:
+        if outputs['Vers'].is_linked:
             SvSetSocketAnyType(self, 'Vers', out[0])
-        if outputs['Pols'].links:
+        if outputs['Pols'].is_linked:
             SvSetSocketAnyType(self, 'Pols', out[1])
 
     def update_socket(self, context):

@@ -133,13 +133,13 @@ class PlaneNode(bpy.types.Node, SverchCustomTreeNode):
         out = [a for a in (zip(*[make_plane(i_x, i_y, s_x, s_y, s) for i_x, i_y, s_x, s_y, s in zip(*params)]))]
 
         # outputs
-        if outputs['Vertices'].links:
+        if outputs['Vertices'].is_linked:
             outputs['Vertices'].sv_set(out[0])
 
-        if outputs['Edges'].links:
+        if outputs['Edges'].is_linked:
             outputs['Edges'].sv_set(out[1])
 
-        if outputs['Polygons'].links:
+        if outputs['Polygons'].is_linked:
             outputs['Polygons'].sv_set(out[2])
 
     def update_socket(self, context):

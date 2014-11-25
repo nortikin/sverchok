@@ -36,7 +36,7 @@ class VectorsOutNode(bpy.types.Node, SverchCustomTreeNode):
 
     def process(self):
         # inputs
-        if 'Vectors' in self.inputs and self.inputs['Vectors'].links:
+        if 'Vectors' in self.inputs and self.inputs['Vectors'].is_linked:
             xyz = SvGetSocketAnyType(self, self.inputs['Vectors'])
 
             data = dataCorrect(xyz)
@@ -47,7 +47,7 @@ class VectorsOutNode(bpy.types.Node, SverchCustomTreeNode):
                 Y.append(y_)
                 Z.append(z_)
             for i, name in enumerate(['X', 'Y', 'Z']):
-                if self.outputs[name].links:
+                if self.outputs[name].is_linked:
                     SvSetSocketAnyType(self, name, [X, Y, Z][i])
 
 

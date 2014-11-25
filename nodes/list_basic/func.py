@@ -65,8 +65,8 @@ class ListFuncNode(bpy.types.Node, SverchCustomTreeNode):
             "SUM": sum,
             #"ACC": acc
             }
-        if 'Function' in self.outputs and self.outputs['Function'].links:
-            if 'Data' in self.inputs and self.inputs['Data'].links:
+        if 'Function' in self.outputs and self.outputs['Function'].is_linked:
+            if 'Data' in self.inputs and self.inputs['Data'].is_linked:
                 data = SvGetSocketAnyType(self, self.inputs['Data'])
                 func = func_dict[self.func_]
                 

@@ -124,10 +124,10 @@ class SvInterpolationNode(bpy.types.Node, SverchCustomTreeNode):
     def process(self):
         if 'Vertices' not in self.outputs:
             return
-        if not any((s.links for s in self.outputs)):
+        if not any((s.is_linked for s in self.outputs)):
             return
 
-        if self.inputs['Vertices'].links:
+        if self.inputs['Vertices'].is_linked:
             verts = SvGetSocketAnyType(self, self.inputs['Vertices'])
             verts = dataCorrect(verts)
             t_ins = self.inputs['Interval'].sv_get()
@@ -147,7 +147,7 @@ class SvInterpolationNode(bpy.types.Node, SverchCustomTreeNode):
                     out = eval_spline(spl, t, t_corr)
                     verts_out.append(out)
 
-            if 'Vertices' in self.outputs and self.outputs['Vertices'].links:
+            if 'Vertices' in self.outputs and self.outputs['Vertices'].is_linked:
                 SvSetSocketAnyType(self, 'Vertices', verts_out)
 
 

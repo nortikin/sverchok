@@ -581,7 +581,7 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
         return segments, longest
 
     def process(self):
-        if not self.outputs[0].links:
+        if not self.outputs[0].is_linked:
             return
 
         segments, longest = self.get_input()
@@ -611,7 +611,7 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
         if full_result_verts:
             SvSetSocketAnyType(self, 'Verts', full_result_verts)
 
-            if self.outputs['Edges'].links:
+            if self.outputs['Edges'].is_linked:
                 SvSetSocketAnyType(self, 'Edges', full_result_edges)
 
 

@@ -170,7 +170,7 @@ class SvInstancerNode(bpy.types.Node, SverchCustomTreeNode):
         inputs = self.inputs
         s_name, s_type = ['matrix', MatrixSocket]
         matrices = []
-        if s_name in inputs and inputs[s_name].links:
+        if s_name in inputs and inputs[s_name].is_linked:
             matrices = self.get_corrected_data(s_name, s_type)
 
         if not matrices:

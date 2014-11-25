@@ -39,10 +39,10 @@ class CentersPolsNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('MatrixSocket', "Centers", "Centers")
 
     def process(self):
-        if self.outputs['Centers'].links or self.outputs['Normals'].links or \
-                self.outputs['Origins'].links or self.outputs['Norm_abs'].links:
+        if self.outputs['Centers'].is_linked or self.outputs['Normals'].is_linked or \
+                self.outputs['Origins'].is_linked or self.outputs['Norm_abs'].is_linked:
             if 'Polygons' in self.inputs and 'Vertices' in self.inputs \
-                and self.inputs['Polygons'].links and self.inputs['Vertices'].links:
+                and self.inputs['Polygons'].is_linked and self.inputs['Vertices'].is_linked:
 
                 pols_ = SvGetSocketAnyType(self, self.inputs['Polygons'])
                 vers_tupls = SvGetSocketAnyType(self, self.inputs['Vertices'])
