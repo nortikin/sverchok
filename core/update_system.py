@@ -65,6 +65,8 @@ def make_dep_dict(node_tree, down=False):
     for link in ng.links:
         if not link.is_valid:
             return collections.defaultdict(set)  # this happens more often than one might think
+        if link.is_hidden:
+            continue
         key, value = (link.from_node.name, link.to_node.name) if down else (link.to_node.name, link.from_node.name) 
         deps[key].add(value)
 
