@@ -83,8 +83,8 @@ class SvListSplitNode(bpy.types.Node, SverchCustomTreeNode):
             changable_sockets(self, inputsocketname, outputsocketname)
     
     def process(self):
-        if 'Split' in self.outputs and self.outputs['Split'].links:
-            if 'Data' in self.inputs and self.inputs['Data'].links:
+        if 'Split' in self.outputs and self.outputs['Split'].is_linked:
+            if 'Data' in self.inputs and self.inputs['Data'].is_linked:
                 data = SvGetSocketAnyType(self, self.inputs['Data'])
                 sizes = self.inputs['Split'].sv_get()[0]
                 if self.unwrap:

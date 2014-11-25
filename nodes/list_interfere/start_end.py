@@ -57,9 +57,9 @@ class ListFLNode(bpy.types.Node, SverchCustomTreeNode):
             changable_sockets(self, inputsocketname, outputsocketname)
     
     def process(self):
-        if 'First' in self.outputs and self.outputs['First'].links or \
-                'Last' in self.outputs and self.outputs['Last'].links or \
-                'Middl' in self.outputs and self.outputs['Middl'].links:
+        if 'First' in self.outputs and self.outputs['First'].is_linked or \
+                'Last' in self.outputs and self.outputs['Last'].is_linked or \
+                'Middl' in self.outputs and self.outputs['Middl'].is_linked:
             data = SvGetSocketAnyType(self, self.inputs['Data'])
             
             # blocking too height values of levels, reduce
@@ -69,13 +69,13 @@ class ListFLNode(bpy.types.Node, SverchCustomTreeNode):
             elif levels < 1:
                 levels = 1
             # assign out
-            if self.outputs['First'].links:
+            if self.outputs['First'].is_linked:
                 out = self.count(data, levels, 0)
                 SvSetSocketAnyType(self, 'First', out)
-            if self.outputs['Middl'].links:
+            if self.outputs['Middl'].is_linked:
                 out = self.count(data, levels, 1)
                 SvSetSocketAnyType(self, 'Middl', out)
-            if self.outputs['Last'].links:
+            if self.outputs['Last'].is_linked:
                 out = self.count(data, levels, 2)
                 SvSetSocketAnyType(self, 'Last', out)
 

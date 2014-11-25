@@ -131,7 +131,7 @@ class WifiOutNode(bpy.types.Node, SverchCustomTreeNode):
         node = wifi_dict.get(self.var_name)
         # transfer data
         for in_socket, out_socket in zip(node.inputs, self.outputs):
-            if in_socket.links and out_socket.links:
+            if in_socket.is_linked and out_socket.is_linked:
                 data = SvGetSocketAnyType(node, in_socket, deepcopy=False)
                 SvSetSocketAnyType(self, out_socket.name, data)
 

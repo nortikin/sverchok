@@ -66,24 +66,24 @@ class ListItem2Node(bpy.types.Node, SverchCustomTreeNode):
             changable_sockets(self, inputsocketname, outputsocketname)
 
     def process(self):
-        if 'Item' in self.outputs and self.outputs['Item'].links or \
-                'Other' in self.outputs and self.outputs['Other'].links:
+        if 'Item' in self.outputs and self.outputs['Item'].is_linked or \
+                'Other' in self.outputs and self.outputs['Other'].is_linked:
 
-            if 'Data' in self.inputs and self.inputs['Data'].links:
+            if 'Data' in self.inputs and self.inputs['Data'].is_linked:
                 data = SvGetSocketAnyType(self, self.inputs['Data'])
 
-                if 'Item' in self.inputs and self.inputs['Item'].links:
+                if 'Item' in self.inputs and self.inputs['Item'].is_linked:
                     items = SvGetSocketAnyType(self, self.inputs['Item'])
                 else:
                     items = [[self.item]]
 
-                if 'Item' in self.outputs and self.outputs['Item'].links:
+                if 'Item' in self.outputs and self.outputs['Item'].is_linked:
                     if self.level-1:
                         out = self.get(data, self.level-1, items, self.get_items)
                     else:
                         out = self.get_items(data, items[0])
                     SvSetSocketAnyType(self, 'Item', out)
-                if 'Other' in self.outputs and self.outputs['Other'].links:
+                if 'Other' in self.outputs and self.outputs['Other'].is_linked:
                     if self.level-1:
                         out = self.get(data, self.level-1, items, self.get_other)
                     else:

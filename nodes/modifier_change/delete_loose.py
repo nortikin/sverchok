@@ -38,8 +38,8 @@ class SvDeleteLooseNode(bpy.types.Node, SverchCustomTreeNode):
 
     def process(self):
 
-        if 'Vertices' in self.inputs and self.inputs['Vertices'].links and \
-           'PolyEdge' in self.inputs and self.inputs['PolyEdge'].links:
+        if 'Vertices' in self.inputs and self.inputs['Vertices'].is_linked and \
+           'PolyEdge' in self.inputs and self.inputs['PolyEdge'].is_linked:
 
             verts = SvGetSocketAnyType(self, self.inputs['Vertices'])
             poly_edge = SvGetSocketAnyType(self, self.inputs['PolyEdge'])
@@ -73,10 +73,10 @@ class SvDeleteLooseNode(bpy.types.Node, SverchCustomTreeNode):
                 v_index = dict([(j, i) for i, j in enumerate(sorted(indx))])
                 poly_edge_out.append([list(map(lambda n:v_index[n], p)) for p in pe])
 
-            if 'Vertices' in self.outputs and self.outputs['Vertices'].links:
+            if 'Vertices' in self.outputs and self.outputs['Vertices'].is_linked:
                 SvSetSocketAnyType(self, 'Vertices', verts_out)
 
-            if 'PolyEdge' in self.outputs and self.outputs['PolyEdge'].links:
+            if 'PolyEdge' in self.outputs and self.outputs['PolyEdge'].is_linked:
                 if poly_edge_out:
                     SvSetSocketAnyType(self, 'PolyEdge', poly_edge_out)
                 else:

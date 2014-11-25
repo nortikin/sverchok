@@ -134,19 +134,19 @@ class SvRotationNode(bpy.types.Node, SverchCustomTreeNode):
     def process(self):
         # inputs
         if self.mode == 'AXIS':
-            if 'Vertices' in self.inputs and self.inputs['Vertices'].links:
+            if 'Vertices' in self.inputs and self.inputs['Vertices'].is_linked:
                 Vertices = SvGetSocketAnyType(self, self.inputs['Vertices'])
             else:
                 Vertices = []
-            if 'Angle' in self.inputs and self.inputs['Angle'].links:
+            if 'Angle' in self.inputs and self.inputs['Angle'].is_linked:
                 Angle = SvGetSocketAnyType(self, self.inputs['Angle'])[0]
             else:
                 Angle = [self.angle_]
-            if 'Center' in self.inputs and self.inputs['Center'].links:
+            if 'Center' in self.inputs and self.inputs['Center'].is_linked:
                 Center = SvGetSocketAnyType(self, self.inputs['Center'])[0]
             else:
                 Center = [[0.0, 0.0, 0.0]]
-            if 'Axis' in self.inputs and self.inputs['Axis'].links:
+            if 'Axis' in self.inputs and self.inputs['Axis'].is_linked:
                 Axis = SvGetSocketAnyType(self, self.inputs['Axis'])[0]
             else:
                 Axis = [[0.0, 0.0, 1.0]]
@@ -154,19 +154,19 @@ class SvRotationNode(bpy.types.Node, SverchCustomTreeNode):
             parameters = match_long_repeat([Vertices, Center, Axis, Angle])
 
         elif self.mode == 'EULER' or self.mode == 'QUAT':
-            if 'Vertices' in self.inputs and self.inputs['Vertices'].links:
+            if 'Vertices' in self.inputs and self.inputs['Vertices'].is_linked:
                 Vertices = SvGetSocketAnyType(self, self.inputs['Vertices'])
             else:
                 Vertices = []
-            if 'X' in self.inputs and self.inputs['X'].links:
+            if 'X' in self.inputs and self.inputs['X'].is_linked:
                 X = SvGetSocketAnyType(self, self.inputs['X'])[0]
             else:
                 X = [self.x_]
-            if 'Y' in self.inputs and self.inputs['Y'].links:
+            if 'Y' in self.inputs and self.inputs['Y'].is_linked:
                 Y = SvGetSocketAnyType(self, self.inputs['Y'])[0]
             else:
                 Y = [self.y_]
-            if 'Z' in self.inputs and self.inputs['Z'].links:
+            if 'Z' in self.inputs and self.inputs['Z'].is_linked:
                 Z = SvGetSocketAnyType(self, self.inputs['Z'])[0]
             else:
                 Z = [self.z_]
@@ -174,7 +174,7 @@ class SvRotationNode(bpy.types.Node, SverchCustomTreeNode):
             parameters = match_long_repeat([Vertices, X, Y, Z, [self.order]])
 
             if self.mode == 'QUAT':
-                if 'W' in self.inputs and self.inputs['W'].links:
+                if 'W' in self.inputs and self.inputs['W'].is_linked:
                     W = SvGetSocketAnyType(self, self.inputs['W'])[0]
                 else:
                     W = [self.w_]
@@ -182,7 +182,7 @@ class SvRotationNode(bpy.types.Node, SverchCustomTreeNode):
                 parameters = match_long_repeat([Vertices, X, Y, Z, W])
 
         # outputs
-        if 'Vertices' in self.outputs and self.outputs['Vertices'].links:
+        if 'Vertices' in self.outputs and self.outputs['Vertices'].is_linked:
             if self.mode == 'AXIS':
                 points = [axis_rotation(v, c, d, a) for v, c, d, a in zip(*parameters)]
                 SvSetSocketAnyType(self, 'Vertices', points)

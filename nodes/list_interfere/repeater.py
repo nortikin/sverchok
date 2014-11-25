@@ -61,16 +61,16 @@ class ListRepeaterNode(bpy.types.Node, SverchCustomTreeNode):
             changable_sockets(self, inputsocketname, outputsocketname)
     
     def process(self):
-        if self.inputs['Data'].links:
+        if self.inputs['Data'].is_linked:
             data = SvGetSocketAnyType(self, self.inputs['Data'])
 
-            if 'Number' in self.inputs and self.inputs['Number'].links:
+            if 'Number' in self.inputs and self.inputs['Number'].is_linked:
                 tmp = SvGetSocketAnyType(self, self.inputs['Number'])
                 Number = tmp[0]
             else:
                 Number = [self.number]
 
-            if 'Data' in self.outputs and self.outputs['Data'].links:
+            if 'Data' in self.outputs and self.outputs['Data'].is_linked:
                 out_ = self.count(data, self.level, Number)
                 if self.unwrap:
                     if len(out_) > 0:

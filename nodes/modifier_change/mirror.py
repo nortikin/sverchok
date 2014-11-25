@@ -124,25 +124,25 @@ class SvMirrorNode(bpy.types.Node, SverchCustomTreeNode):
 
     def process(self):
         # inputs
-        if 'Vertices' in self.inputs and self.inputs['Vertices'].links:
+        if 'Vertices' in self.inputs and self.inputs['Vertices'].is_linked:
             Vertices = SvGetSocketAnyType(self, self.inputs['Vertices'])
         else:
             Vertices = []
-        if 'Vert A' in self.inputs and self.inputs['Vert A'].links:
+        if 'Vert A' in self.inputs and self.inputs['Vert A'].is_linked:
             Vert_A = SvGetSocketAnyType(self, self.inputs['Vert A'])[0]
         else:
             Vert_A = [[0.0, 0.0, 0.0]]
-        if 'Vert B' in self.inputs and self.inputs['Vert B'].links:
+        if 'Vert B' in self.inputs and self.inputs['Vert B'].is_linked:
             Vert_B = SvGetSocketAnyType(self, self.inputs['Vert B'])[0]
         else:
             Vert_B = [[1.0, 0.0, 0.0]]
-        if 'Plane' in self.inputs and self.inputs['Plane'].links:
+        if 'Plane' in self.inputs and self.inputs['Plane'].is_linked:
             Plane = SvGetSocketAnyType(self, self.inputs['Plane'])
         else:
             Plane = [Matrix()]
 
         # outputs
-        if 'Vertices' in self.outputs and self.outputs['Vertices'].links:
+        if 'Vertices' in self.outputs and self.outputs['Vertices'].is_linked:
             if self.mode == 'VERTEX':
                 parameters = match_long_repeat([Vertices, Vert_A])
                 points = [mirrorPoint(v, a) for v, a in zip(*parameters)]

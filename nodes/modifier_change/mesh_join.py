@@ -39,8 +39,8 @@ class SvMeshJoinNode(bpy.types.Node, SverchCustomTreeNode):
 
     def process(self):
 
-        if 'Vertices' in self.inputs and self.inputs['Vertices'].links and \
-           'PolyEdge' in self.inputs and self.inputs['PolyEdge'].links:
+        if 'Vertices' in self.inputs and self.inputs['Vertices'].is_linked and \
+           'PolyEdge' in self.inputs and self.inputs['PolyEdge'].is_linked:
 
             verts = SvGetSocketAnyType(self, self.inputs['Vertices'])
             poly_edge = SvGetSocketAnyType(self, self.inputs['PolyEdge'])
@@ -56,10 +56,10 @@ class SvMeshJoinNode(bpy.types.Node, SverchCustomTreeNode):
                     poly_edge_out.extend(obj[1])
                 offset += len(obj[0])
 
-            if 'Vertices' in self.outputs and self.outputs['Vertices'].links:
+            if 'Vertices' in self.outputs and self.outputs['Vertices'].is_linked:
                 SvSetSocketAnyType(self, 'Vertices', [verts_out])
 
-            if 'PolyEdge' in self.outputs and self.outputs['PolyEdge'].links:
+            if 'PolyEdge' in self.outputs and self.outputs['PolyEdge'].is_linked:
                 SvSetSocketAnyType(self, 'PolyEdge', [poly_edge_out])
 
     def update_socket(self, context):

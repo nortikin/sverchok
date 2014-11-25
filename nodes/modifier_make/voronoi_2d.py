@@ -47,10 +47,10 @@ class Voronoi2DNode(bpy.types.Node, SverchCustomTreeNode):
 
     def process(self):
         # inputs
-        if 'Edges' in self.outputs and self.outputs['Edges'].links or \
-           'Vertices' in self.outputs and self.outputs['Vertices'].links:
+        if 'Edges' in self.outputs and self.outputs['Edges'].is_linked or \
+           'Vertices' in self.outputs and self.outputs['Vertices'].is_linked:
 
-            if 'Vertices' in self.inputs and self.inputs['Vertices'].links:
+            if 'Vertices' in self.inputs and self.inputs['Vertices'].is_linked:
                 points_in = SvGetSocketAnyType(self, self.inputs['Vertices'])
 
             pts_out = []
@@ -125,9 +125,9 @@ class DelaunayTriangulation2DNode(bpy.types.Node, SverchCustomTreeNode):
 
     def process(self):
         points_in = []
-        if not ('Polygons' in self.outputs and self.outputs['Polygons'].links):
+        if not ('Polygons' in self.outputs and self.outputs['Polygons'].is_linked):
             return
-        if 'Vertices' in self.inputs and self.inputs['Vertices'].links:
+        if 'Vertices' in self.inputs and self.inputs['Vertices'].is_linked:
             points_in = SvGetSocketAnyType(self, self.inputs['Vertices'])
         tris_out = []
 
@@ -137,7 +137,7 @@ class DelaunayTriangulation2DNode(bpy.types.Node, SverchCustomTreeNode):
             res = computeDelaunayTriangulation(pt_list)
             tris_out.append([tri for tri in res if -1 not in tri])
 
-        if 'Polygons' in self.outputs and self.outputs['Polygons'].links:
+        if 'Polygons' in self.outputs and self.outputs['Polygons'].is_linked:
             SvSetSocketAnyType(self, 'Polygons', tris_out)
 
 

@@ -85,11 +85,11 @@ class SvSolidifyNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('StringsSocket', 'newpols', 'newpols')
 
     def process(self):
-        if not any((s.links for s in self.outputs)):
+        if not any((s.is_linked for s in self.outputs)):
             return
 
-        if 'vertices' in self.inputs and self.inputs['vertices'].links and \
-           'polygons' in self.inputs and self.inputs['polygons'].links:
+        if 'vertices' in self.inputs and self.inputs['vertices'].is_linked and \
+           'polygons' in self.inputs and self.inputs['polygons'].is_linked:
 
             verts = Vector_generate(SvGetSocketAnyType(self, self.inputs['vertices']))
             polys = SvGetSocketAnyType(self, self.inputs['polygons'])
@@ -116,16 +116,16 @@ class SvSolidifyNode(bpy.types.Node, SverchCustomTreeNode):
                 polys_out.append(res[2])
                 newpo_out.append(res[3])
             
-            if 'vertices' in self.outputs and self.outputs['vertices'].links:
+            if 'vertices' in self.outputs and self.outputs['vertices'].is_linked:
                 SvSetSocketAnyType(self, 'vertices', verts_out)
             
-            if 'edges' in self.outputs and self.outputs['edges'].links:
+            if 'edges' in self.outputs and self.outputs['edges'].is_linked:
                 SvSetSocketAnyType(self, 'edges', edges_out)
             
-            if 'polygons' in self.outputs and self.outputs['polygons'].links:
+            if 'polygons' in self.outputs and self.outputs['polygons'].is_linked:
                 SvSetSocketAnyType(self, 'polygons', polys_out)
                 
-            if 'newpols' in self.outputs and self.outputs['newpols'].links:
+            if 'newpols' in self.outputs and self.outputs['newpols'].is_linked:
                 SvSetSocketAnyType(self, 'newpols', newpo_out)
 
     def update_socket(self, context):

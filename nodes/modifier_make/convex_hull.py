@@ -64,7 +64,7 @@ class SvConvexHullNode(bpy.types.Node, SverchCustomTreeNode):
 
     def process(self):
 
-        if 'Vertices' in self.inputs and self.inputs['Vertices'].links:
+        if 'Vertices' in self.inputs and self.inputs['Vertices'].is_linked:
 
             verts = Vector_generate(SvGetSocketAnyType(self, self.inputs['Vertices']))
 
@@ -78,10 +78,10 @@ class SvConvexHullNode(bpy.types.Node, SverchCustomTreeNode):
                 verts_out.append(res[0])
                 polys_out.append(res[1])
 
-            if 'Vertices' in self.outputs and self.outputs['Vertices'].links:
+            if 'Vertices' in self.outputs and self.outputs['Vertices'].is_linked:
                 SvSetSocketAnyType(self, 'Vertices', verts_out)
 
-            if 'Polygons' in self.outputs and self.outputs['Polygons'].links:
+            if 'Polygons' in self.outputs and self.outputs['Polygons'].is_linked:
                 SvSetSocketAnyType(self, 'Polygons', polys_out)
 
 

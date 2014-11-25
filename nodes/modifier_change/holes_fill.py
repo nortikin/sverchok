@@ -73,8 +73,8 @@ class SvFillHolesNode(bpy.types.Node, SverchCustomTreeNode):
 
     def process(self):
 
-        if 'vertices' in self.inputs and self.inputs['vertices'].links and \
-           'edges' in self.inputs and self.inputs['edges'].links:
+        if 'vertices' in self.inputs and self.inputs['vertices'].is_linked and \
+           'edges' in self.inputs and self.inputs['edges'].is_linked:
 
             verts = dataCorrect(SvGetSocketAnyType(self, self.inputs['vertices']))
             edges = dataCorrect(SvGetSocketAnyType(self, self.inputs['edges']))
@@ -91,13 +91,13 @@ class SvFillHolesNode(bpy.types.Node, SverchCustomTreeNode):
                 edges_out.append(res[1])
                 polys_out.append(res[2])
 
-            if 'vertices' in self.outputs and self.outputs['vertices'].links:
+            if 'vertices' in self.outputs and self.outputs['vertices'].is_linked:
                 SvSetSocketAnyType(self, 'vertices', verts_out)
 
-            if 'edges' in self.outputs and self.outputs['edges'].links:
+            if 'edges' in self.outputs and self.outputs['edges'].is_linked:
                 SvSetSocketAnyType(self, 'edges', edges_out)
 
-            if 'polygons' in self.outputs and self.outputs['polygons'].links:
+            if 'polygons' in self.outputs and self.outputs['polygons'].is_linked:
                 SvSetSocketAnyType(self, 'polygons', polys_out)
 
 

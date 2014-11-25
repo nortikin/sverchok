@@ -50,9 +50,9 @@ class SvAdaptiveEdgeNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('StringsSocket', 'Edges', 'Edges')
 
     def process(self):
-        if not all((s.links for s in self.inputs)):
+        if not all((s.is_linked for s in self.inputs)):
             return
-        if not any((s.links for s in self.outputs)):
+        if not any((s.is_linked for s in self.outputs)):
             return
 
         versR = Vector_generate(SvGetSocketAnyType(self, self.inputs['VersR']))
@@ -101,10 +101,10 @@ class SvAdaptiveEdgeNode(bpy.types.Node, SverchCustomTreeNode):
                 verts_out.append(v_out)
                 edges_out.append(e_out)
 
-        if 'Vertices' in self.outputs and self.outputs['Vertices'].links:
+        if 'Vertices' in self.outputs and self.outputs['Vertices'].is_linked:
             SvSetSocketAnyType(self, 'Vertices', verts_out)
 
-        if 'Edges' in self.outputs and self.outputs['Edges'].links:
+        if 'Edges' in self.outputs and self.outputs['Edges'].is_linked:
             SvSetSocketAnyType(self, 'Edges', edges_out)
 
 

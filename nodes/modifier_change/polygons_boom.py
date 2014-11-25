@@ -39,10 +39,10 @@ class PolygonBoomNode(bpy.types.Node, SverchCustomTreeNode):
 
     def process(self):
         # inputs
-        if 'vertices' in self.outputs and self.outputs['vertices'].links or \
-                'edg_pol' in self.outputs and self.outputs['edg_pol'].links:
-            if 'vertices' in self.inputs and self.inputs['vertices'].links and \
-                'edg_pol' in self.inputs and self.inputs['edg_pol'].links:
+        if 'vertices' in self.outputs and self.outputs['vertices'].is_linked or \
+                'edg_pol' in self.outputs and self.outputs['edg_pol'].is_linked:
+            if 'vertices' in self.inputs and self.inputs['vertices'].is_linked and \
+                'edg_pol' in self.inputs and self.inputs['edg_pol'].is_linked:
                 vertices = SvGetSocketAnyType(self, self.inputs['vertices'])
                 edgs_pols = SvGetSocketAnyType(self, self.inputs['edg_pol'])
             else:
@@ -59,9 +59,9 @@ class PolygonBoomNode(bpy.types.Node, SverchCustomTreeNode):
                     vert_out.append(new_vers)
                     edpo_out.append([new_edpo])
 
-            if 'vertices' in self.outputs and self.outputs['vertices'].links:
+            if 'vertices' in self.outputs and self.outputs['vertices'].is_linked:
                 SvSetSocketAnyType(self, 'vertices', vert_out)
-            if 'edg_pol' in self.outputs and self.outputs['edg_pol'].links:
+            if 'edg_pol' in self.outputs and self.outputs['edg_pol'].is_linked:
                 SvSetSocketAnyType(self, 'edg_pol', edpo_out)
 
 

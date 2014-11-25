@@ -40,14 +40,14 @@ class SvVertMaskNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('StringsSocket', 'Poly Egde', 'Poly Egde')
 
     def process(self):
-        if not any((s.links for s in self.outputs)):
+        if not any((s.is_linked for s in self.outputs)):
             return
-        if self.inputs['Vertices'].links and self.inputs['Poly Egde'].links:
+        if self.inputs['Vertices'].is_linked and self.inputs['Poly Egde'].is_linked:
             verts = SvGetSocketAnyType(self, self.inputs['Vertices'])
             poly = SvGetSocketAnyType(self, self.inputs['Poly Egde'])
             verts = dataCorrect(verts)
             poly = dataCorrect(poly)
-            if self.inputs['Mask'].links:
+            if self.inputs['Mask'].is_linked:
                 mask = SvGetSocketAnyType(self, self.inputs['Mask'])
             else:
                 mask = [[1, 0]]
@@ -73,10 +73,10 @@ class SvVertMaskNode(bpy.types.Node, SverchCustomTreeNode):
                     verts_out.append(ve)
                     poly_edge_out.append(pe)
 
-            if 'Vertices' in self.outputs and self.outputs['Vertices'].links:
+            if 'Vertices' in self.outputs and self.outputs['Vertices'].is_linked:
                 SvSetSocketAnyType(self, 'Vertices', verts_out)
 
-            if 'Poly Egde' in self.outputs and self.outputs['Poly Egde'].links:
+            if 'Poly Egde' in self.outputs and self.outputs['Poly Egde'].is_linked:
                 if poly_edge_out:
                     SvSetSocketAnyType(self, 'Poly Egde', poly_edge_out)
 

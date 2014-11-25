@@ -53,7 +53,7 @@ class ListReverseNode(bpy.types.Node, SverchCustomTreeNode):
             changable_sockets(self, inputsocketname, outputsocketname)
 
     def process(self):
-        if self.inputs['data'].links and self.outputs[0].links:
+        if self.inputs['data'].is_linked and self.outputs[0].is_linked:
             data = SvGetSocketAnyType(self, self.inputs['data'])
             output = self.revers(data, self.level)
             SvSetSocketAnyType(self, 'data', output)

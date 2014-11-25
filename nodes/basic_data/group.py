@@ -199,7 +199,7 @@ class SvGroupNode(bpy.types.Node, SverchCustomTreeNode, StoreSockets):
         in_node = find_node("SvGroupInputsNode", group_ng)
         out_node = find_node('SvGroupOutputsNode', group_ng)
         for socket in self.inputs:
-            if socket.links:
+            if socket.is_linked:
                 data = socket.sv_get(deepcopy=False)
                 in_node.outputs[socket.name].sv_set(data)
         #  get update list
@@ -208,7 +208,7 @@ class SvGroupNode(bpy.types.Node, SverchCustomTreeNode, StoreSockets):
         do_update(ul, group_ng.nodes)
         # set output sockets correctly
         for socket in self.outputs:
-            if socket.links:
+            if socket.is_linked:
                 data = out_node.inputs[socket.name].sv_get(deepcopy=False)
                 socket.sv_set(data)
     
@@ -272,7 +272,7 @@ class SvIterationNode(bpy.types.Node, SverchCustomTreeNode, StoreSockets):
         ul = make_tree_from_nodes([out_node.name], group_ng, down=False)
 
         for socket in self.inputs:
-            if socket.links:
+            if socket.is_linked:
                 data = socket.sv_get(deepcopy=False)
                 in_node.outputs[socket.name].sv_set(data)
         #  get update list
@@ -287,7 +287,7 @@ class SvIterationNode(bpy.types.Node, SverchCustomTreeNode, StoreSockets):
                 
         # set output sockets correctly
         for socket in self.outputs:
-            if socket.links:
+            if socket.is_linked:
                 data = out_node.inputs[socket.name].sv_get(deepcopy=False)
                 socket.sv_set(data)
     

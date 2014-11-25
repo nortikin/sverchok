@@ -76,17 +76,17 @@ class ImageNode(bpy.types.Node, SverchCustomTreeNode):
 
     def process(self):
         # inputs
-        if 'vecs X' in self.inputs and self.inputs['vecs X'].links:
+        if 'vecs X' in self.inputs and self.inputs['vecs X'].is_linked:
             IntegerX = min(int(SvGetSocketAnyType(self, self.inputs['vecs X'])[0][0]), 100)
         else:
             IntegerX = int(self.Xvecs)
 
-        if 'vecs Y' in self.inputs and self.inputs['vecs Y'].links:
+        if 'vecs Y' in self.inputs and self.inputs['vecs Y'].is_linked:
             IntegerY = min(int(SvGetSocketAnyType(self, self.inputs['vecs Y'])[0][0]), 100)
         else:
             IntegerY = int(self.Yvecs)
 
-        if 'Step X' in self.inputs and self.inputs['Step X'].links:
+        if 'Step X' in self.inputs and self.inputs['Step X'].is_linked:
             StepX = SvGetSocketAnyType(self, self.inputs['Step X'])[0]
             fullList(StepX, IntegerX)
 
@@ -94,7 +94,7 @@ class ImageNode(bpy.types.Node, SverchCustomTreeNode):
             StepX = [self.Xstep]
             fullList(StepX, IntegerX)
 
-        if 'Step Y' in self.inputs and self.inputs['Step Y'].links:
+        if 'Step Y' in self.inputs and self.inputs['Step Y'].is_linked:
             StepY = SvGetSocketAnyType(self, self.inputs['Step Y'])[0]
             fullList(StepY, IntegerY)
 
@@ -103,13 +103,13 @@ class ImageNode(bpy.types.Node, SverchCustomTreeNode):
             fullList(StepY, IntegerY)
 
         # outputs
-        if 'vecs' in self.outputs and self.outputs['vecs'].links:
+        if 'vecs' in self.outputs and self.outputs['vecs'].is_linked:
             out = self.make_vertices(IntegerX-1, IntegerY-1, StepX, StepY, self.name_image)
             SvSetSocketAnyType(self, 'vecs', [out])
         else:
             SvSetSocketAnyType(self, 'vecs', [[[]]])
 
-        if 'edgs' in self.outputs and len(self.outputs['edgs'].links) > 0:
+        if 'edgs' in self.outputs and len(self.outputs['edgs'].is_linked) > 0:
 
             listEdg = []
             for i in range(IntegerY):
@@ -124,7 +124,7 @@ class ImageNode(bpy.types.Node, SverchCustomTreeNode):
         else:
             SvSetSocketAnyType(self, 'edgs', [[[]]])
 
-        if 'pols' in self.outputs and self.outputs['pols'].links:
+        if 'pols' in self.outputs and self.outputs['pols'].is_linked:
 
             listPlg = []
             for i in range(IntegerX-1):

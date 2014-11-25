@@ -70,7 +70,7 @@ class SvJoinTrianglesNode(bpy.types.Node, SverchCustomTreeNode):
 
 
     def process(self):
-        if not self.outputs['Polygons'].links:
+        if not self.outputs['Polygons'].is_linked:
             return
 
         verts = Vector_generate(SvGetSocketAnyType(self, self.inputs['Vertices']))
@@ -89,7 +89,7 @@ class SvJoinTrianglesNode(bpy.types.Node, SverchCustomTreeNode):
             verts_out.append(res[0])
             polys_out.append(res[1])
 
-        if self.outputs['Vertices'].links:
+        if self.outputs['Vertices'].is_linked:
             SvSetSocketAnyType(self, 'Vertices', verts_out)
 
         SvSetSocketAnyType(self, 'Polygons', polys_out)

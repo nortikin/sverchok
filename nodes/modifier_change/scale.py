@@ -67,15 +67,15 @@ class SvScaleNode(bpy.types.Node, SverchCustomTreeNode):
   
     def process(self):
         # inputs
-        if 'Vertices' in self.inputs and self.inputs['Vertices'].links:
+        if 'Vertices' in self.inputs and self.inputs['Vertices'].is_linked:
             Vertices = SvGetSocketAnyType(self, self.inputs['Vertices'])
         else:
             Vertices = []
-        if 'Center' in self.inputs and self.inputs['Center'].links:
+        if 'Center' in self.inputs and self.inputs['Center'].is_linked:
             Center = SvGetSocketAnyType(self, self.inputs['Center'])
         else:
             Center = [[[0.0, 0.0, 0.0]]]
-        if 'Factor' in self.inputs and self.inputs['Factor'].links:
+        if 'Factor' in self.inputs and self.inputs['Factor'].is_linked:
             Factor = SvGetSocketAnyType(self, self.inputs['Factor'])
         else:
             Factor = [[self.factor_]]
@@ -83,7 +83,7 @@ class SvScaleNode(bpy.types.Node, SverchCustomTreeNode):
         parameters = match_long_repeat([Vertices, Center, Factor])
 
         # outputs
-        if 'Vertices' in self.outputs and self.outputs['Vertices'].links:
+        if 'Vertices' in self.outputs and self.outputs['Vertices'].is_linked:
             points = [self.vert_scl(v, c, f) for v, c, f in zip(*parameters)]
             SvSetSocketAnyType(self, 'Vertices', points)
 

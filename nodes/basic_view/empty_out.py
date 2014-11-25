@@ -96,7 +96,7 @@ class SvEmptyOutNode(bpy.types.Node, SverchCustomTreeNode):
             empty = self.create_empty()
             print("created new empty")
 
-        if self.inputs['Matrix'].links:
+        if self.inputs['Matrix'].is_linked:
             mats = SvGetSocketAnyType(self, self.inputs['Matrix'])
             mat = Matrix_generate(mats)[0]
         else:

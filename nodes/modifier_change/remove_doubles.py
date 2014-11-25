@@ -95,11 +95,11 @@ class SvRemoveDoublesNode(bpy.types.Node, SverchCustomTreeNode):
         pass
 
     def process(self):
-        if not any([s.links for s in self.outputs]):
+        if not any([s.is_linked for s in self.outputs]):
             return
 
-        if 'Vertices' in self.inputs and self.inputs['Vertices'].links and \
-           'PolyEdge' in self.inputs and self.inputs['PolyEdge'].links:
+        if 'Vertices' in self.inputs and self.inputs['Vertices'].is_linked and \
+           'PolyEdge' in self.inputs and self.inputs['PolyEdge'].is_linked:
 
             verts = Vector_generate(SvGetSocketAnyType(self, self.inputs['Vertices']))
             polys = SvGetSocketAnyType(self, self.inputs['PolyEdge'])
@@ -124,16 +124,16 @@ class SvRemoveDoublesNode(bpy.types.Node, SverchCustomTreeNode):
                 polys_out.append(res[2])
                 d_out.append(res[3])
 
-            if 'Vertices' in self.outputs and self.outputs['Vertices'].links:
+            if 'Vertices' in self.outputs and self.outputs['Vertices'].is_linked:
                 SvSetSocketAnyType(self, 'Vertices', verts_out)
 
-            if 'Edges' in self.outputs and self.outputs['Edges'].links:
+            if 'Edges' in self.outputs and self.outputs['Edges'].is_linked:
                 SvSetSocketAnyType(self, 'Edges', edges_out)
 
-            if 'Polygons' in self.outputs and self.outputs['Polygons'].links:
+            if 'Polygons' in self.outputs and self.outputs['Polygons'].is_linked:
                 SvSetSocketAnyType(self, 'Polygons', polys_out)
 
-            if 'Doubles' in self.outputs and self.outputs['Doubles'].links:
+            if 'Doubles' in self.outputs and self.outputs['Doubles'].is_linked:
                 SvSetSocketAnyType(self, 'Doubles', d_out)
 
 def register():
