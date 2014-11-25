@@ -26,7 +26,7 @@ from bpy.props import (EnumProperty, FloatProperty,
 
 from sverchok.node_tree import SverchCustomTreeNode, StringsSocket
 from sverchok.data_structure import (updateNode, match_long_repeat)
-from sverchok.sv_itertools import (recurse_fx, recurse_fxy)
+from sverchok.utils.sv_itertools import (recurse_fx, recurse_fxy)
 
 
 class ScalarMathNode(bpy.types.Node, SverchCustomTreeNode):
