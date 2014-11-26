@@ -27,5 +27,5 @@ def zipfolder(foldername, target_dir):
                 fn = os.path.join(base, file)
                 zipobj.write(fn, fn[rootlen:])
 
-zipfolder(addon_folder, target_folder)
-sys.exit()
+#zipfolder(addon_folder, target_folder)
+#sys.exit()
