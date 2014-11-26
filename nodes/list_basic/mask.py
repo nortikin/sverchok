@@ -22,7 +22,7 @@ import bpy
 from bpy.props import BoolProperty, IntProperty, StringProperty
 from sverchok.node_tree import SverchCustomTreeNode, StringsSocket
 from sverchok.data_structure import (updateNode, changable_sockets,
-                            SvSetSocketAnyType, SvGetSocketAnyType)
+                                     SvSetSocketAnyType, SvGetSocketAnyType)
 
 
 class MaskListNode(bpy.types.Node, SverchCustomTreeNode):
@@ -34,11 +34,6 @@ class MaskListNode(bpy.types.Node, SverchCustomTreeNode):
     Level = IntProperty(name='Level', description='Choose list level of data (see help)',
                         default=1, min=1, max=10,
                         update=updateNode)
-
-    typ = StringProperty(name='typ',
-                         default='')
-    newsock = BoolProperty(name='newsock',
-                           default=False)
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', "data", "data")
@@ -54,52 +49,33 @@ class MaskListNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "Level", text="Level lists")
 
     def update(self):
-        # changable types sockets in output
-        # you need the next:
-        # typ - needed self value
-        # newsocket - needed self value
-        # inputsocketname to get one socket to define type
-        # outputsocketname to get list of outputs, that will be changed
         inputsocketname = 'data'
         outputsocketname = ['dataTrue', 'dataFalse']
         changable_sockets(self, inputsocketname, outputsocketname)
         
     def process(self):
-        data = [[]]
-        mask = [[1, 0]]
-
-        if self.inputs['data'].links:
-            data = SvGetSocketAnyType(self, self.inputs['data'])
-
-        if self.inputs['mask'].links and \
-           type(self.inputs['mask'].links[0].from_socket) == StringsSocket:
-            mask = SvGetSocketAnyType(self, self.inputs['mask'])
+        inputs = self.inputs
+        outputs = self.outputs
+    
+        data = inputs['data'].sv_get()
+        mask = inputs['mask'].sv_get(default=[[1, 0]])
 
         result = self.getMask(data, mask, self.Level)
 
-        # outupy sockets data
         if self.outputs['dataTrue'].is_linked:
-            SvSetSocketAnyType(self, 'dataTrue', result[0])
-        else:
-            SvSetSocketAnyType(self, 'dataTrue', [[]])
-        # print ('всё',result)
+            outputs['dataTrue'].sv_set(result[0])
+
         if self.outputs['dataFalse'].is_linked:
-            SvSetSocketAnyType(self, 'dataFalse', result[1])
-        else:
-            SvSetSocketAnyType(self, 'dataFalse', [[]])
+            outputs['dataFalse'].sv_set(result[1])
 
         if self.outputs['mask'].is_linked:
-            SvSetSocketAnyType(self, 'mask', result[2])
-        else:
-            SvSetSocketAnyType(self, 'mask', [[]])
+            outputs['mask'].sv_set(result[2])
+
         if self.outputs['ind_true'].is_linked:
-            SvSetSocketAnyType(self, 'ind_true', result[3])
-        else:
-            SvSetSocketAnyType(self, 'ind_true', [[]])
+            outputs['ind_true'].sv_set(result[3])
+
         if self.outputs['ind_false'].is_linked:
-            SvSetSocketAnyType(self, 'ind_false', result[4])
-        else:
-            SvSetSocketAnyType(self, 'ind_false', [[]])
+            outputs['ind_false'].sv_set(result[4])
 
     # working horse
     def getMask(self, list_a, mask_l, level):
@@ -116,7 +92,7 @@ class MaskListNode(bpy.types.Node, SverchCustomTreeNode):
         ind_true = []
         ind_false = []
         if level > 1:
-            if type(list_a) in [list, tuple]:
+            if isinstance(list_a, (list, tuple)):
                 for idx, l in enumerate(list_a):
                     l2 = self.putCurrentLevelList(l, list_b, mask_l, level-1, idx)
                     result_t.append(l2[0])
@@ -151,17 +127,17 @@ class MaskListNode(bpy.types.Node, SverchCustomTreeNode):
     def getCurrentLevelList(self, list_a, level):
         list_b = []
         if level > 1:
-            if type(list_a) in [list, tuple]:
+            if isinstance(list_a, (list, tuple)):
                 for l in list_a:
                     l2 = self.getCurrentLevelList(l, level-1)
-                    if type(l2) in [list, tuple]:
+                    if isinstance(l2, (list, tuple)):
                         list_b.extend(l2)
                     else:
                         return False
             else:
                 return False
         else:
-            if type(list_a) in [list, tuple]:
+            if isinstance(list_a, (list, tuple)):
                 return copy(list_a)
             else:
                 return list_a
