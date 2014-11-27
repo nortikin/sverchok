@@ -255,8 +255,10 @@ class SvKDTreeNode(bpy.types.Node, SverchCustomTreeNode):
                 add_verts_dists(dist_list)
 
         outputs[0].sv_set(out_co_list)
-        outputs[1].sv_set(out_idx_list)
-        outputs[2].sv_set(out_dist_list)
+        if outputs[1].is_linked:
+            outputs[1].sv_set(out_idx_list)
+        if outputs[2].is_linked:
+            outputs[2].sv_set(out_dist_list)
 
 
 def register():
