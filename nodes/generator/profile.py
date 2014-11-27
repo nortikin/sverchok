@@ -30,7 +30,7 @@ from mathutils.geometry import interpolate_bezier
 
 from sverchok.utils.sv_curve_utils import Arc
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import fullList, updateNode, dataCorrect, SvSetSocketAnyType, SvGetSocketAnyType
+from sverchok.data_structure import fullList, updateNode, dataCorrect
 
 
 idx_map = {i: j for i, j in enumerate(ascii_lowercase)}
@@ -499,7 +499,7 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
         takes care of adding new inputs until reaching 26,
         '''
         inputs = self.inputs
-        if inputs[-1].links:
+        if inputs[-1].is_linked:
             new_index = len(inputs)
             new_letter = idx_map.get(new_index, None)
             if new_letter:
@@ -507,7 +507,7 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
             else:
                 print('this implementation goes up to 26 chars only, use SN or EK')
                 print('- or contact Dealga')
-        elif not inputs[-2].links:
+        elif not inputs[-2].is_linked:
             inputs.remove(inputs[-1])
 
     def update(self):
@@ -517,20 +517,17 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
         '''
 
         # keeping the file internal for now.
-        # self.filename = self.profile_file.strip()
         if not (self.filename in bpy.data.texts):
             return
 
         if not ('Edges' in self.outputs):
             return
 
-        elif len([1 for inputs in self.inputs if inputs.links]) == 0:
+        elif len([1 for inputs in self.inputs if inputs.is_linked]) == 0:
             ''' must have at least one input... '''
             return
 
         self.adjust_inputs()
-
-        # 0 == verts, this is a minimum requirement.
 
     def homogenize_input(self, segments, longest):
         '''
@@ -546,10 +543,9 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
         - if socket has no links, then return fallback value
         - s_name can be an index instead of socket name
         '''
-        
         inputs = self.inputs
-        if inputs[s_name].links:
-            socket_in = SvGetSocketAnyType(self, inputs[s_name])
+        if inputs[s_name].is_linked:
+            socket_in = inputs[s_name].sv_get()
             if level == 1:
                 data = dataCorrect(socket_in)[0]
             elif level == 2:
@@ -581,6 +577,7 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
         return segments, longest
 
     def process(self):
+
         if not self.outputs[0].is_linked:
             return
 
@@ -609,10 +606,11 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
             full_result_edges.append(edges)
 
         if full_result_verts:
-            SvSetSocketAnyType(self, 'Verts', full_result_verts)
+            outputs = self.outputs
+            outputs['Verts'].sv_set(full_result_verts)
 
-            if self.outputs['Edges'].is_linked:
-                SvSetSocketAnyType(self, 'Edges', full_result_edges)
+            if outputs['Edges'].is_linked:
+                outputs['Edges'].sv_set(full_result_edges)
 
 
 def register():

@@ -22,10 +22,10 @@ import mathutils
 from mathutils import Vector
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import SvSetSocketAnyType, SvGetSocketAnyType
 
 
 # documentation/blender_python_api_2_70_release/mathutils.kdtree.html
+
 class SvKDTreeNode(bpy.types.Node, SverchCustomTreeNode):
 
     bl_idname = 'SvKDTreeNode'
@@ -127,11 +127,11 @@ class SvKDTreeNode(bpy.types.Node, SverchCustomTreeNode):
         inputs = self.inputs
         outputs = self.outputs
 
-        if not ('Verts' in inputs and inputs['Verts'].links):
+        if not inputs['Verts'].is_linked:
             return
 
         try:
-            verts = SvGetSocketAnyType(self, inputs['Verts'])[0]
+            verts = inputs['Verts'].sv_get()[0]
         except IndexError:
             return
 
@@ -152,28 +152,44 @@ class SvKDTreeNode(bpy.types.Node, SverchCustomTreeNode):
             kd.insert(Vector(vtx), i)
         kd.balance()
 
+        '''
+        #
+        # commented out because this may not even be an issue anymore.
+        #
         reset_outs = {
             'FIND': ['proxima .co', 'proxima .idx', 'proxima dist'],
             'FIND_N': ['n proxima .co', 'n proxima .idx', 'n proxima dist'],
             'FIND_RANGE': ['grouped .co', 'grouped .idx', 'grouped dist']
-            #'EDGES': [Edges]
         }
-
-        # set sockets to [] and return early, somehow this has been triggered
-        # early.
-        if not ('Check Verts' in inputs and inputs['Check Verts']):
-            try:
-                for socket in reset_outs[self.mode]:
-                    SvSetSocketAnyType(self, socket, [])
-            except KeyError:
-                pass
-            return
+        #
+        # # set sockets to [] and return early, somehow this has been triggered
+        # # early.
+        # if not (inputs['Check Verts'].is_linked):
+        #     try:
+        #         for socket in reset_outs[self.mode]:
+        #             outputs[socket].sv_set([])
+        #     except KeyError:
+        #         pass
+        #     return
+        '''
 
         # before continuing check at least that there is one output.
         try:
-            some_output = any([outputs[i].links for i in range(3)])
+            some_output = any([outputs[i].is_linked for i in range(3)])
         except (IndexError, KeyError) as e:
             return
+
+        cVerts = inputs['Check Verts'].sv_get()[0]
+        if not cVerts:
+            return
+
+        # consumables and aliases
+        out_co_list = []
+        out_idx_list = []
+        out_dist_list = []
+        add_verts_coords = out_co_list.append
+        add_verts_idxs = out_idx_list.append
+        add_verts_dists = out_dist_list.append
 
         if self.mode == 'FIND':
             ''' [Verts.co,..] =>
@@ -182,27 +198,11 @@ class SvKDTreeNode(bpy.types.Node, SverchCustomTreeNode):
             => [Main Verts]
             => [cVert,..]
             '''
-            try:
-                cVerts = SvGetSocketAnyType(self, inputs['Check Verts'])[0]
-            except (IndexError, KeyError) as e:
-                return
-
-            verts_co_list = []
-            verts_idx_list = []
-            verts_dist_list = []
-            add_verts_coords = verts_co_list.append
-            add_verts_idxs = verts_idx_list.append
-            add_verts_dists = verts_dist_list.append
-
             for i, vtx in enumerate(cVerts):
                 co, index, dist = kd.find(vtx)
                 add_verts_coords(co.to_tuple())
                 add_verts_idxs(index)
                 add_verts_dists(dist)
-
-            SvSetSocketAnyType(self, 'proxima .co', verts_co_list)
-            SvSetSocketAnyType(self, 'proxima .idx', verts_idx_list)
-            SvSetSocketAnyType(self, 'proxima dist', verts_dist_list)
 
         elif self.mode == 'FIND_N':
             ''' [[Verts.co,..n],..c] => from MainVerts closest to v.co
@@ -212,21 +212,9 @@ class SvKDTreeNode(bpy.types.Node, SverchCustomTreeNode):
             => [cVert,..]
             => [n, max n nearest
             '''
-            try:
-                cVerts = SvGetSocketAnyType(self, inputs['Check Verts'])[0]
-                n = SvGetSocketAnyType(self, inputs['n nearest'])[0][0]
-            except (IndexError, KeyError) as e:
+            n = inputs['n nearest'].sv_get()[0][0]
+            if (not n) or (n < 1):
                 return
-
-            if n < 1:
-                return
-
-            n_proxima_co = []
-            n_proxima_idx = []
-            n_proxima_dist = []
-            add_co_proximas = n_proxima_co.append
-            add_idx_proximas = n_proxima_idx.append
-            add_dist_proximas = n_proxima_dist.append
 
             for i, vtx in enumerate(cVerts):
                 co_list = []
@@ -237,13 +225,9 @@ class SvKDTreeNode(bpy.types.Node, SverchCustomTreeNode):
                     co_list.append(co.to_tuple())
                     idx_list.append(index)
                     dist_list.append(dist)
-                add_co_proximas(co_list)
-                add_idx_proximas(idx_list)
-                add_dist_proximas(dist_list)
-
-            SvSetSocketAnyType(self, 'n proxima .co', n_proxima_co)
-            SvSetSocketAnyType(self, 'n proxima .idx', n_proxima_idx)
-            SvSetSocketAnyType(self, 'n proxima dist', n_proxima_dist)
+                add_verts_coords(co_list)
+                add_verts_idxs(idx_list)
+                add_verts_dists(dist_list)
 
         elif self.mode == 'FIND_RANGE':
             ''' [grouped [.co for p in MainVerts in r of v in cVert]] =>
@@ -253,28 +237,9 @@ class SvKDTreeNode(bpy.types.Node, SverchCustomTreeNode):
             => [cVert,..]
             => n
             '''
-            try:
-                cVerts = SvGetSocketAnyType(self, inputs['Check Verts'])[0]
-                r = SvGetSocketAnyType(self, inputs['radius'])[0][0]
-            except (IndexError, KeyError) as e:
+            r = inputs['radius'].sv_get()[0][0]
+            if (not r) or r < 0:
                 return
-
-            # for i, vtx in enumerate(verts):
-            #     num_edges = 0
-            #     for (co, index, dist) in kd.find_range(vtx, mdist):
-            #         if i == index or (num_edges > 2):
-            #             continue
-            #         e.append([i, index])
-            #         num_edges += 1
-            if r < 0:
-                return
-
-            grouped_co = []
-            grouped_idx = []
-            grouped_dist = []
-            add_co = grouped_co.append
-            add_idx = grouped_idx.append
-            add_dist = grouped_dist.append
 
             for i, vtx in enumerate(cVerts):
                 co_list = []
@@ -285,17 +250,15 @@ class SvKDTreeNode(bpy.types.Node, SverchCustomTreeNode):
                     co_list.append(co.to_tuple())
                     idx_list.append(index)
                     dist_list.append(dist)
-                add_co(co_list)
-                add_idx(idx_list)
-                add_dist(dist_list)
+                add_verts_coords(co_list)
+                add_verts_idxs(idx_list)
+                add_verts_dists(dist_list)
 
-            SvSetSocketAnyType(self, 'grouped .co', grouped_co)
-            SvSetSocketAnyType(self, 'grouped .idx', grouped_idx)
-            SvSetSocketAnyType(self, 'grouped dist', grouped_dist)
-            pass
-
-    def update_socket(self, context):
-        self.update()
+        outputs[0].sv_set(out_co_list)
+        if outputs[1].is_linked:
+            outputs[1].sv_set(out_idx_list)
+        if outputs[2].is_linked:
+            outputs[2].sv_set(out_dist_list)
 
 
 def register():
