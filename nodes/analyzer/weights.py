@@ -68,12 +68,12 @@ class SvVertexGroupNode(bpy.types.Node, SverchCustomTreeNode):
         if self.vertex_group not in obj.vertex_groups:
             return
 
-        if self.inputs['VertIND'].links:
+        if self.inputs['VertIND'].is_linked:
             verts = self.inputs['VertIND'].sv_get()[0]
         else:
             verts = [i.index for i in obj.data.vertices]
 
-        if self.inputs['Weights'].links:
+        if self.inputs['Weights'].is_linked:
             wei = self.inputs['Weights'].sv_get()[0]
             if len(verts) < len(wei):
                 temp = match_short([verts, wei])
@@ -91,7 +91,7 @@ class SvVertexGroupNode(bpy.types.Node, SverchCustomTreeNode):
                 obj.vertex_groups.get(self.vertex_group).add([verts[g]], wei[g], "REPLACE")
                 g = g+1
 
-        if self.outputs['OutWeights'].links:
+        if self.outputs['OutWeights'].is_linked:
             out = []
             for i in verts:
                 try:
