@@ -1,4 +1,4 @@
-.. _scriptnode_intro:
+.. _scripted-tutorial:
 
 An introduction and tutorial for the Scripted Nodes
 ===================================================
