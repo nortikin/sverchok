@@ -53,55 +53,32 @@ class MatrixInterpolationNode(bpy.types.Node, SverchCustomTreeNode):
 
     def process(self):
         # inputs
+        if not self.outputs['C'].is_linked:
+            return
         A = []
         B = []
-        factor = []  # 0 is valid value so I use [] as placeholder
+        id_mat = Matrix_listing([Matrix.Identity(4)])
+        A = self.inputs['A'].sv_get(default=id_mat)
+        B = self.inputs['B'].sv_get(default=id_mat)
 
-        if 'A' in self.inputs and self.inputs['A'].links and \
-           type(self.inputs['A'].links[0].from_socket) == MatrixSocket:
+        factor = self.inputs['Factor'].sv_get()
 
-            A = Matrix_generate(SvGetSocketAnyType(self, self.inputs['A']))
-        if not A:
-            A = [Matrix.Identity(4)]
 
-        if 'B' in self.inputs and self.inputs['B'].links and \
-           type(self.inputs['B'].links[0].from_socket) == MatrixSocket:
+        matrixes_ = []
+        # match inputs, first matrix A and B using fullList
+        # then extend the factor list if necessary,
+        # A and B should control length of list, not interpolation lists
+        max_l = max(len(A), len(B))
+        fullList(A, max_l)
+        fullList(B, max_l)
+        if len(factor) < max_l:
+            fullList(factor, max_l)
+        for i in range(max_l):
+            for k in range(len(factor[i])):
+                matrixes_.append(A[i].lerp(B[i], factor[i][k]))
 
-            B = Matrix_generate(SvGetSocketAnyType(self, self.inputs['B']))
-        if not B:
-            B = [Matrix.Identity(4)]
-
-        if 'Factor' in self.inputs and self.inputs['Factor'].links and \
-           type(self.inputs['Factor'].links[0].from_socket) == StringsSocket:
-
-            factor = SvGetSocketAnyType(self, self.inputs['Factor'])
-
-        if not factor:
-            factor = [[self.factor_]]
-
-        if 'C' in self.outputs and self.outputs['C'].links:
-
-            matrixes_ = []
-            # match inputs, first matrix A and B using fullList
-            # then extend the factor list if necessary,
-            # A and B should control length of list, not interpolation lists
-            max_l = max(len(A), len(B))
-            fullList(A, max_l)
-            fullList(B, max_l)
-            if len(factor) < max_l:
-                fullList(factor, max_l)
-            for i in range(max_l):
-                for k in range(len(factor[i])):
-                    matrixes_.append(A[i].lerp(B[i], factor[i][k]))
-
-            if not matrixes_:
-                return
-
-            matrixes = Matrix_listing(matrixes_)
-            SvSetSocketAnyType(self, 'C', matrixes)
-
-    def update_socket(self, context):
-        self.update()
+        matrixes = Matrix_listing(matrixes_)
+        self.outputs['C'].sv_set(matrixes)
 
 
 def register():

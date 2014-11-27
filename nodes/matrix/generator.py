@@ -21,8 +21,8 @@ import mathutils
 
 from sverchok.node_tree import SverchCustomTreeNode, StringsSocket, VerticesSocket
 from sverchok.data_structure import (matrixdef, Matrix_listing,
-                            Vector_generate,
-                            SvGetSocketAnyType, SvSetSocketAnyType)
+                                     Vector_generate, get_other_socket,
+                                     SvGetSocketAnyType, SvSetSocketAnyType)
 
 
 class MatrixGenNode(bpy.types.Node, SverchCustomTreeNode):
@@ -44,8 +44,6 @@ class MatrixGenNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('MatrixSocket', "Matrix", "Matrix")
 
     def process(self):
-        # inputs
-        
         if not self.outputs['Matrix'].is_linked:
             return
     
@@ -61,12 +59,14 @@ class MatrixGenNode(bpy.types.Node, SverchCustomTreeNode):
 
         rotA = [[]]
         angle = [[0.0]]
+        # it isn't a good idea to hide things like this
         if self.inputs['Angle'].is_linked:
-            if type(self.inputs['Angle'].links[0].from_socket) == StringsSocket:
-                angle = SvGetSocketAnyType(self, self.inputs['Angle'])
-
-            elif type(self.inputs['Angle'].links[0].from_socket) == VerticesSocket:
-                rotA_ = SvGetSocketAnyType(self, self.inputs['Angle'])
+            other = get_other_socket(self.inputs['Angle'])
+            
+            if isinstance(other, StringsSocket):
+                angle = self.inputs['Angle'].sv_get()
+            elif isinstance(other, VerticesSocket):
+                rotA_ = self.inputs['Angle'].sv_get()
                 rotA = Vector_generate(rotA_)
 
         max_l = max(len(loc[0]), len(scale[0]), len(rot[0]), len(angle[0]), len(rotA[0]))
@@ -74,8 +74,6 @@ class MatrixGenNode(bpy.types.Node, SverchCustomTreeNode):
         for l in range(max_l):
             M = mathutils.Matrix()
             orig.append(M)
-        if len(orig) == 0:
-            return
         matrixes_ = matrixdef(orig, loc, scale, rot, angle, rotA)
         matrixes = Matrix_listing(matrixes_)
         SvSetSocketAnyType(self, 'Matrix', matrixes)

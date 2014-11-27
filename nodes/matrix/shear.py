@@ -58,42 +58,28 @@ class MatrixShearNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "plane_", "Shear plane:", expand=True)
 
     def process(self):
+        if not self.outputs['Matrix'].is_linked:
+            return
         # inputs
-        factor1 = []
-        factor2 = []
-        if 'Factor1' in self.inputs and self.inputs['Factor1'].links and \
-           type(self.inputs['Factor1'].links[0].from_socket) == StringsSocket:
-
-            factor1 = SvGetSocketAnyType(self, self.inputs['Factor1'])
-        if not factor1:
-            factor1 = [[self.factor1_]]
-
-        if 'Factor2' in self.inputs and self.inputs['Factor2'].links and \
-           type(self.inputs['Factor2'].links[0].from_socket) == StringsSocket:
-
-            factor2 = SvGetSocketAnyType(self, self.inputs['Factor2'])
-        if not factor2:
-            factor2 = [[self.factor2_]]
-
+        
+        factor1 = self.inputs['Factor1'].sv_get()
+        factor2 = self.inputs['Factor2'].sv_get()
+        
         # outputs
-        if 'Matrix' in self.outputs and self.outputs['Matrix'].links:
+        
+        max_l = max(len(factor1), len(factor2))
+        fullList(factor1, max_l)
+        fullList(factor2, max_l)
+        matrixes_ = []
+        for i in range(max_l):
+            max_inner = max(len(factor1[i]), len(factor2[i]))
+            fullList(factor1[i], max_inner)
+            fullList(factor2[i], max_inner)
+            for j in range(max_inner):
+                matrixes_.append(Matrix.Shear(self.plane_, 4, (factor1[i][j], factor2[i][j])))
 
-            max_l = max(len(factor1), len(factor2))
-            fullList(factor1, max_l)
-            fullList(factor2, max_l)
-            matrixes_ = []
-            for i in range(max_l):
-                max_inner = max(len(factor1[i]), len(factor2[i]))
-                fullList(factor1[i], max_inner)
-                fullList(factor2[i], max_inner)
-                for j in range(max_inner):
-                    matrixes_.append(Matrix.Shear(self.plane_, 4, (factor1[i][j], factor2[i][j])))
-
-            matrixes = Matrix_listing(matrixes_)
-            SvSetSocketAnyType(self, 'Matrix', matrixes)
-
-    def update_socket(self, context):
-        self.update()
+        matrixes = Matrix_listing(matrixes_)
+        self.outputs['Matrix'].sv_set(matrixes)
 
 
 def register():
