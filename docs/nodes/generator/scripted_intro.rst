@@ -1,5 +1,7 @@
-An introduction and tutorial for the Scripted Nodes.
-====================================================
+.. _scriptnodeintro:
+
+An introduction and tutorial for the Scripted Nodes
+===================================================
 
 > Dealga Mcardle | 2014 | October
 
@@ -114,7 +116,7 @@ The lorenz function takes 2 arguments:
 
 In this example the ``verts`` variable is also what will be sent to the output socket, because it says so in ``out_sockets``. Notice that the lorenz function doesn't return the verts variable. All the lorenz function does is fill that list with values. Just to be clear about this example. At the time ``sv_main`` ends, the content of ``verts`` is full, but before ``lorenz()`` is called, ``verts`` is an empty list.
 
-Here is the same lorenz attractor with more parameters exposed:
+Here is the same lorenz attractor with more parameters exposed, see can you load it? 
 https://github.com/nortikin/sverchok/blob/master/node_scripts/templates/zeffii/LorenzAttractor2.py
 
 Lastly
