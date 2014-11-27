@@ -133,13 +133,7 @@ class svBasicArcNode(bpy.types.Node, SverchCustomTreeNode):
         - is Edges socket created, means all sockets exist.
         - is anything connected to the Verts socket?
         '''
-        if not 'Edges' in outputs:
-            return
-
-        # if not 'Verts' in outputs:
-        #     return
-
-        if not all([outputs['Verts'].links, inputs['arc_pts'].links]):
+        if not all([outputs['Verts'].is_linked, inputs['arc_pts'].is_linked]):
             return
 
         '''
@@ -155,21 +149,17 @@ class svBasicArcNode(bpy.types.Node, SverchCustomTreeNode):
         '''
 
         # assume they all match, reduce cycles used for checking.
-        v = []
-        if isinstance(inputs['arc_pts'].links[0].from_socket, VerticesSocket):
-            v = SvGetSocketAnyType(self, inputs['arc_pts'], deepcopy=False)[0]
+        v = inputs['arc_pts'].sv_get(deepcopy=False)[0]
 
         if not (len(v) % 3 == 0):
+            print('number of vertices input to 3pt arc must be divisible by 3')
             return
 
         num_arcs = len(v) // 3
-
-        # get vert_nums, or pad till matching quantity
         nv = []
-        nv_links = inputs['num_verts'].links
-        if nv_links:
-            if isinstance(nv_links[0].from_socket, StringsSocket):
-                nv = SvGetSocketAnyType(self, inputs['num_verts'], deepcopy=False)[0]
+        # get vert_nums, or pad till matching quantity
+        if inputs['num_verts'].is_linked:
+            nv = inputs['num_verts'].sv_get(deepcopy=False)[0]
 
             if nv and (len(nv) < num_arcs):
                 pad_num = num_arcs - len(nv)
@@ -179,15 +169,14 @@ class svBasicArcNode(bpy.types.Node, SverchCustomTreeNode):
             for i in range(num_arcs):
                 nv.append(self.num_verts)
 
-        # do arcs will generated nested lists of arcs(verts+edges)
-        make_edges = True if outputs['Edges'].links else False
+        # will generate nested lists of arcs(verts+edges)
+        make_edges = outputs['Edges'].is_linked
         verts_out, edges_out = make_all_arcs(v, nv, make_edges)
 
         # reaches here if we got usable data.
-        SvSetSocketAnyType(self, 'Verts', verts_out)
+        outputs['Verts'].sv_set(verts_out)
         if make_edges:
-            SvSetSocketAnyType(self, 'Edges', edges_out)
-
+            outputs['Edges'].sv_set(edges_out)
 
 
 def register():
