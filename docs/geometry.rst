@@ -50,7 +50,7 @@ Vertex
 
 *plural: Vertices*
 
-A vertex is a point in 3d space described by 3 or 4 values ``which represent its X, Y and Z location. Optionally a 4th value can represent a property of the vertex, usually *influence* or *weight* and is denoted by **W**.``
+A vertex is a point in 3d space described by 3 or 4 values which represent its X, Y and Z location. Optionally a 4th value can represent a property of the vertex, usually *influence* or *weight* and is denoted by **W**.
 
 A quick Python example should clarify this. The following would make 3 vertices.
 In this case each vertex has 3 components.::
@@ -60,7 +60,7 @@ In this case each vertex has 3 components.::
     v2 = (0.0, 1.0, 0.0)
 
 Mesh objects in Blender contain geometric data stored in *lists*. In Python and
-Sverchok an empty list looks like `[]`. Vertices are stored in lists too,
+Sverchok an empty list looks like ``[ ]`` (open and closed square brackets). Vertices are stored in lists too,
 a list with 3 vertices might look like::
 
     vertices = [
