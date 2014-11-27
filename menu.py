@@ -239,6 +239,7 @@ def make_node_cats():
         ["SvGetDataObjectNode",    "Get ObjectID",],
         ["SvSetDataObjectNode",    "Set ObjectID",],
         ['SvObjectToMeshNode',     "Object to Mesh",],
+        ['SvSortObjsNode',     "Sort ObjectID",],
     ]
 
     return node_cats
