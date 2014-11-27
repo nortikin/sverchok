@@ -38,6 +38,7 @@ nodes_dict = {
         'get_dataobject',
         'set_dataobject',
         'tomeshnode',
+        'sort_dataobject',
     ],
 
     'basic_debug': [
