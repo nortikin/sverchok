@@ -28,7 +28,8 @@ with algorithms. Scripts written for SN are easily converted to full PyNodes.
 
 It's a prototype so bug reports are welcome. 
 
-Here's a short tutorial to SN1: :ref:`scriptnode_intro`
+Here's a short tutorial to SN1, see :ref:`scripted-tutorial`
+
 
 Features
 --------
