@@ -58,8 +58,6 @@ class MatrixInterpolationNode(bpy.types.Node, SverchCustomTreeNode):
         id_mat = Matrix_listing([Matrix.Identity(4)])
         A = Matrix_generate(self.inputs['A'].sv_get(default=id_mat))
         B = Matrix_generate(self.inputs['B'].sv_get(default=id_mat))
-        print(A)
-        print(B)
         factor = self.inputs['Factor'].sv_get()
 
 
