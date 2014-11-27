@@ -127,11 +127,10 @@ def update_mesh(bm, d):
         for i in range(num_edges_to_add):
             ov.new(point_list[i])
             ov.new(point_list[i+1])
-            # bm.normal_update()
 
             if hasattr(bm.verts, "ensure_lookup_table"):
                 bm.verts.ensure_lookup_table()
-                bm.edges.ensure_lookup_table()
+                bm.edges.ensure_lookup_table()  # not sure this even exists..
 
             vseq = ov[vert_count], ov[vert_count+1]
             oe.new(vseq)
@@ -173,9 +172,9 @@ class SvIntersectEdgesNode(bpy.types.Node, SverchCustomTreeNode):
         outputs = self.outputs
 
         try:
-            verts_in = SvGetSocketAnyType(self, inputs['Verts_in'])[0]
-            edges_in = SvGetSocketAnyType(self, inputs['Edges_in'])[0]
-            linked = outputs[0].links
+            verts_in = inputs['Verts_in'].sv_get()[0]
+            edges_in = inputs['Edges_in'].sv_get()[0]
+            linked = outputs['Verts_out'].is_linked
         except (IndexError, KeyError) as e:
             return
 
@@ -202,8 +201,8 @@ class SvIntersectEdgesNode(bpy.types.Node, SverchCustomTreeNode):
         edges_out = edges_out[trim_indices:]
         edges_out.extend(add_back)
 
-        SvSetSocketAnyType(self, 'Verts_out', [verts_out])
-        SvSetSocketAnyType(self, 'Edges_out', [edges_out])
+        outputs['Verts_out'].sv_set([verts_out])
+        outputs['Edges_out'].sv_set([edges_out])
 
 
 def register():
