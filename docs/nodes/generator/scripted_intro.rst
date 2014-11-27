@@ -100,12 +100,12 @@ The easiest way to get started is to first load an existing script. Here are som
 - Select "attractor.py" press the button the right, the one that looks like a powersocket.
 - This changes the way the Node appears. The node will now have 1 input socket and one output socket. It might even have changed to a light blue.
 
-That's pretty much all there is to loading a script. All you do know is hook the output Verts to a Viewer Node and you'll see a classic Lorenz Attractor point set.
+That's pretty much all there is to loading a script. All you do now is hook the output Verts to a Viewer Node and you'll see a classic Lorenz Attractor point set.
 
 Study the sv_main
 -----------------
 
-If you look carefully in ``sv_main`` there's not a lot to the whole process. ``sv_main`` has two **required** lists; ``in_sockets`` and ``out_sockets``. 
+If you look carefully in ``sv_main`` there's not a lot to the whole process. ``sv_main`` has two **required** lists; ``in_sockets`` and ``out_sockets``. sv_main also has a argument list which you must fill with defaults, here the only variable is N so the argument list was ``sv_main(N=1000)``.
 
 The lorenz function takes 2 arguments: 
 
