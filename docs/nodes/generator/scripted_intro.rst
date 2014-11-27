@@ -3,11 +3,11 @@ An introduction and tutorial for the Scripted Nodes.
 
 > Dealga Mcardle | 2014 | October
 
-In my opinion new users should avoid the Script Nodes until they understand a majority of the existing nodes and the Sverchok _Eco-system_ as a concept. This suggestion applies to everyone, even competent coders.
+In my opinion new users should avoid the Script Nodes until they understand a majority of the existing nodes and the Sverchok `Eco-system` as a concept. This suggestion applies to everyone, even competent coders.
 
 Script Nodes are great when you want to encapsulate a behaviour which may not be easy to achieve with existing nodes alone. They are my prefered way to either 1) prototype code, or 2) write custom nodes that are too specific to be submitted as regular nodes. 
 
-At the moment Sverchok has 2 Scripted Node implementations: SN and SN2. Exactly how they differ from eachother will be shown later. Both offer _practical shorthand_ ways to define what a node does, which sliders and sane defaults it might have, and what socket types can connect to it. These scripts have a minimal interface, are stored inside the `.blend` file as plain text python, and can be shared easily. 
+At the moment Sverchok has 2 Scripted Node implementations: SN and SN2. Exactly how they differ from eachother will be shown later. Both offer `practical shorthand` ways to define what a node does, which sliders and sane defaults it might have, and what socket types can connect to it. These scripts have a minimal interface, are stored inside the `.blend` file as plain text python, and can be shared easily. 
 
 If you've ever written code for a Blender addon or script, you will be familiar with registration of classes. Nodes normally also need to be registered so Blender can find them, but Script Nodes don't because they are in essence a shell for your code -- and the shell is already registered, all you have to do is write code to process input into output.
 
@@ -54,7 +54,7 @@ Infact, here's the Node Interface that the script produces too
 .. image:: https://cloud.githubusercontent.com/assets/619340/5219902/a310c824-765d-11e4-9836-c34cb0d8a7b4.png
 
 Compare the code with the image of the node and you might get a fair idea where the sockets are defined and where the default comes from. Look carefully at 
-``in_sockets`` and ``out_sockets``, two of the lements are strings (socket type and socket name), and the third element is the Python variable that we automatically bind to those sockets.
+``in_sockets`` and ``out_sockets``, two of the elements are strings (socket type and socket name), and the third element is the Python variable that we automatically bind to those sockets.
 
 Brief Guided Explanation
 -------------------------
