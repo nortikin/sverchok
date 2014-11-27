@@ -38,7 +38,7 @@ class MatrixInterpolationNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Matrix Interpolation'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    factor_ = bpy.props.FloatProperty(name='factor1_', description='Factor1',
+    factor_ = bpy.props.FloatProperty(name='Factor', description='Interpolation',
                                       default=0.5, min=0.0, max=1.0,
                                       options={'ANIMATABLE'}, update=updateNode)
 
@@ -55,12 +55,11 @@ class MatrixInterpolationNode(bpy.types.Node, SverchCustomTreeNode):
         # inputs
         if not self.outputs['C'].is_linked:
             return
-        A = []
-        B = []
         id_mat = Matrix_listing([Matrix.Identity(4)])
-        A = self.inputs['A'].sv_get(default=id_mat)
-        B = self.inputs['B'].sv_get(default=id_mat)
-
+        A = Matrix_generate(self.inputs['A'].sv_get(default=id_mat))
+        B = Matrix_generate(self.inputs['B'].sv_get(default=id_mat))
+        print(A)
+        print(B)
         factor = self.inputs['Factor'].sv_get()
 
 
@@ -71,6 +70,8 @@ class MatrixInterpolationNode(bpy.types.Node, SverchCustomTreeNode):
         max_l = max(len(A), len(B))
         fullList(A, max_l)
         fullList(B, max_l)
+        print(A)
+        print(B)
         if len(factor) < max_l:
             fullList(factor, max_l)
         for i in range(max_l):
