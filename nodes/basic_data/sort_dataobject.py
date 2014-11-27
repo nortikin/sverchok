@@ -32,6 +32,7 @@ class SvSortObjsNode(bpy.types.Node, SverchCustomTreeNode):
         ("xax",   "X Axis",   "", 1),
         ("yax",   "Y Axis",   "", 2),
         ("zax",   "Z Axis",   "", 3),
+        ("cust",   "Custom Value",   "", 4),
     ]
 
     Modes = EnumProperty(name="sortmodes", description="Sorting Objects modes",
@@ -39,6 +40,7 @@ class SvSortObjsNode(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_init(self, context):
         self.inputs.new('SvObjectSocket', 'Object')
+        self.inputs.new('StringsSocket', 'CustomValue')
         self.outputs.new('SvObjectSocket', 'Object')
 
     def draw_buttons(self, context, layout):
@@ -56,6 +58,11 @@ class SvSortObjsNode(bpy.types.Node, SverchCustomTreeNode):
                 Y = [i.location.y for i in siob.sv_get()]
             elif SM == "zax":
                 Y = [i.location.z for i in siob.sv_get()]
+            elif SM == "cust":
+                if self.inputs['CustomValue'].is_linked:
+                    Y = self.inputs['CustomValue'].sv_get()[0]
+                else:
+                    Y = [0]
 
             Val = [x for y, x in sorted(zip(Y, X))]
 
