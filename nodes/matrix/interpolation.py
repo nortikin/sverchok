@@ -70,8 +70,6 @@ class MatrixInterpolationNode(bpy.types.Node, SverchCustomTreeNode):
         max_l = max(len(A), len(B))
         fullList(A, max_l)
         fullList(B, max_l)
-        print(A)
-        print(B)
         if len(factor) < max_l:
             fullList(factor, max_l)
         for i in range(max_l):
