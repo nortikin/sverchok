@@ -18,17 +18,16 @@
 
 import bpy
 from bpy.props import EnumProperty
-
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 from sverchok.utils.sv_itertools import recurse_fxy
 
-# ab -> c 
+# ab -> c
 operations_ab_c = {
-    "CMP":          lambda a,b: a == b,
-    "STARTWITH":    lambda a,b: a.startswith(b),
-    "ENDSWITH":     lambda a,b: a.endswith(b),
-    "IN":           lambda a,b : b in a,
+    "CMP": lambda a, b: a == b,
+    "STARTWITH": lambda a, b: a.startswith(b),
+    "ENDSWITH": lambda a, b: a.endswith(b),
+    "IN": lambda a, b: b in a,
 }
 
 operations = operations_ab_c.copy()
@@ -39,47 +38,49 @@ class SvTextOpNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvTextOpNode'
     bl_label = '=='
     bl_icon = 'OUTLINER_OB_EMPTY'
-    
-    
+
     # please extend this
-    
     modes = [("CMP", "==", "Compare two strings",  1),
              ("STARTWITH", "startswith",       "", 2),
              ("ENDSWITH",  "endswith",         "", 3),
              ("IN",        "in",               "", 4)
-            ]
-    
+             ]
+
     def mode_switch(self, context):
         # should have socket handling
         updateNode(self, context)
-                 
+
     mode = EnumProperty(name="Op", description="String operation",
                         default="CMP", items=modes,
                         update=mode_switch)
-    
+
+    def draw_buttons(self, context, layout):
+        layout.prop(self, "mode", "String operation")
+
     def sv_init(self, context):
         self.inputs.new("SvTextSocket", "A")
         self.inputs.new("SvTextSocket", "B")
         self.outputs.new("StringsSocket", "Res")
-    
+
     def process(self):
         # inputs
-        if  not self.outputs['Res'].is_linked:
+        if not self.outputs['Res'].is_linked:
             return
-            
+
         a = self.inputs['A'].sv_get(deepcopy=False)
- 
+
         b = self.inputs['B'].sv_get(deepcopy=False)
-        
+
         # outputs
-        out= []
-        
+        out = []
         out = recurse_fxy(a, b, operations[self.mode])
 
         self.outputs['Res'].sv_set(out)
-            
+
+
 def register():
     bpy.utils.register_class(SvTextOpNode)
+
 
 def unregister():
     bpy.utils.unregister_class(SvTextOpNode)
