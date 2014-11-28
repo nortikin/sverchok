@@ -39,10 +39,6 @@ class ShiftNode(bpy.types.Node, SverchCustomTreeNode):
     level = IntProperty(name='level',
                         default=0, min=0,
                         update=updateNode)
-    typ = StringProperty(name='typ',
-                         default='')
-    newsock = BoolProperty(name='newsock',
-                           default=False)
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "level", text="level")
@@ -54,28 +50,21 @@ class ShiftNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('StringsSocket', 'data', 'data')
 
     def update(self):
-        if 'data' in self.inputs and len(self.inputs['data'].links) > 0:
+        if 'data' in self.inputs and self.inputs['data'].links:
             # адаптивный сокет
             inputsocketname = 'data'
             outputsocketname = ['data']
             changable_sockets(self, inputsocketname, outputsocketname)
 
     def process(self):
-        if 'data' in self.outputs and self.outputs['data'].links:
-            if 'shift' in self.inputs and self.inputs['shift'].links and \
-               type(self.inputs['shift'].links[0].from_socket) == StringsSocket:
+        if not self.outputs["data"].is_linked:
+            return
+            
+        data = self.inputs['data'].sv_get()
+        number = self.inputs["shift"].sv_get()
+        output = self.shift(data, number, self.enclose, self.level)
 
-                number = SvGetSocketAnyType(self, self.inputs['shift'])
-                # не знаю насколько целесообразно
-                #if type(number)!=list or type(number[0])!=list or type(number[0][0])!=int:
-                    #number = [[0]]
-            else:
-                number = [[self.shift_c]]
-
-            data = SvGetSocketAnyType(self, self.inputs['data'])
-            output = self.shift(data, number, self.enclose, self.level)
-
-            SvSetSocketAnyType(self, 'data', output)
+        self.outputs['data'].sv_set(output)
 
     def shift(self, list_a, shift, check_enclose, level, cou=0):
         if level:

@@ -21,9 +21,7 @@ from bpy.props import BoolProperty, IntProperty, StringProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode, changable_sockets,
-                            dataCorrect, svQsort,
-                            SvSetSocketAnyType, SvGetSocketAnyType)
-
+                                     dataCorrect, svQsort)
 
 class ListSortNode(bpy.types.Node, SverchCustomTreeNode):
     ''' List Sort '''
@@ -47,25 +45,23 @@ class ListSortNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('StringsSocket', "data", "data")
 
     def update(self):
-        if 'data' in self.inputs and len(self.inputs['data'].links) > 0:
+        if 'data' in self.inputs and self.inputs['data'].links > 0:
             # адаптивный сокет
             inputsocketname = 'data'
             outputsocketname = ['data']
             changable_sockets(self, inputsocketname, outputsocketname)
 
     def process(self):
-        # достаём два слота - вершины и полики
-        if 'data' in self.outputs and len(self.outputs['data'].links) > 0 \
-                and 'data' in self.inputs and len(self.inputs['data'].links) > 0:
-            data_ = SvGetSocketAnyType(self, self.inputs['data'])
-
-            # init_level = levelsOflist(data)
-            data = dataCorrect(data_, nominal_dept=self.level)
-            out_ = []
-            for obj in data:
-                out_.append(svQsort(obj))
-            out = dataCorrect(out_)
-            SvSetSocketAnyType(self, 'data', out)
+        if not self.outputs['data'].is_linked:
+            return
+            
+        data_ = self.inputs['data'].sv_get()
+        data = dataCorrect(data_, nominal_dept=self.level)
+        out_ = []
+        for obj in data:
+            out_.append(svQsort(obj))
+        out = dataCorrect(out_)
+        self.outputs['data'].sv_set(out)
 
 
 
