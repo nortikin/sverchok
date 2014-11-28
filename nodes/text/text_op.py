@@ -26,9 +26,9 @@ from sverchok.utils.sv_itertools import recurse_fxy
 # ab -> c 
 operations_ab_c = {
     "CMP":          lambda a,b: a == b,
-    "STARTWITH":    lambda a,b: a.startswith(b)
-    "ENDSWITH":     lambda a,b: a.endswith(b)
-    "IN":           lambda a,b : b in a
+    "STARTWITH":    lambda a,b: a.startswith(b),
+    "ENDSWITH":     lambda a,b: a.endswith(b),
+    "IN":           lambda a,b : b in a,
 }
 
 operations = operations_ab_c.copy()
@@ -43,26 +43,26 @@ class SvTextOpNode(bpy.types.Node, SverchCustomTreeNode):
     
     # please extend this
     
-    modes = [("CMP", "==", "Compare two strings", "1"),
-             ("STARTWITH", "startswith", "", 2),
-             ("ENDSWITH",  "endswith",  "", 3),
-             ("IN"      ,   "in",    ,  "", 4)]
+    modes = [("CMP", "==", "Compare two strings",  1),
+             ("STARTWITH", "startswith",       "", 2),
+             ("ENDSWITH",  "endswith",         "", 3),
+             ("IN",        "in",               "", 4)
+            ]
     
     def mode_switch(self, context):
         # should have socket handling
         updateNode(self, context)
                  
     mode = EnumProperty(name="Op", description="String operation",
-                          default="CMP", items=modes,
-                          update=mode_switch)
+                        default="CMP", items=modes,
+                        update=mode_switch)
     
     def sv_init(self, context):
         self.inputs.new("SvTextSocket", "A")
         self.inputs.new("SvTextSocket", "B")
-        
         self.outputs.new("StringsSocket", "Res")
     
-   def process(self):
+    def process(self):
         # inputs
         if  not self.outputs['Res'].is_linked:
             return

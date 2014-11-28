@@ -171,7 +171,7 @@ nodes_dict = {
     ],
     'text': [
         'get_attr',
-        'cmp_text',
+        'text_op',
         'obj_by_name',
     ]
         

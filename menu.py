@@ -195,8 +195,8 @@ def make_node_cats():
         ["SvDebugPrintNode",    "Debug print"],
         ["SvStethoscopeNode",   "Stethoscope"],
         ["SvGetAttrNode",      "Get Attribute"],
-        ["SvCmpNode",           "Cmp"],
-        ["SvObjByNameNode",     "Gget obj by name"],
+        ["SvTextOpNode",           "Text ops"],
+        ["SvObjByNameNode",     "Get obj by name"],
     ]
     
     # green
