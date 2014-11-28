@@ -16,26 +16,45 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-import ast
-import traceback
-
 import bpy
-from bpy.props import StringProperty, BoolProperty, IntProperty, FloatProperty
+from bpy.props import EnumProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
-from sverchok.utils.sv_itertools import sv_zip_longest
+from sverchok.utils.sv_itertools import recurse_fxy
 
-#
-#
-#  this is just very short demo node.
+# ab -> c 
+operations_ab_c = {
+    "CMP":          lambda a,b: a == b,
+    "STARTWITH":    lambda a,b: a.startswith(b)
+    "ENDSWITH":     lambda a,b: a.endswith(b)
+    "IN":           lambda a,b : b in a
+}
 
-class SvCmpNode(bpy.types.Node, SverchCustomTreeNode):
+operations = operations_ab_c.copy()
+
+
+class SvTextOpNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Get Attribue of Obj '''
-    bl_idname = 'SvCmpNode'
+    bl_idname = 'SvTextOpNode'
     bl_label = '=='
     bl_icon = 'OUTLINER_OB_EMPTY'
     
+    
+    # please extend this
+    
+    modes = [("CMP", "==", "Compare two strings", "1"),
+             ("STARTWITH", "startswith", "", 2),
+             ("ENDSWITH",  "endswith",  "", 3),
+             ("IN"      ,   "in",    ,  "", 4)]
+    
+    def mode_switch(self, context):
+        # should have socket handling
+        updateNode(self, context)
+                 
+    mode = EnumProperty(name="Op", description="String operation",
+                          default="CMP", items=modes,
+                          update=mode_switch)
     
     def sv_init(self, context):
         self.inputs.new("SvTextSocket", "A")
@@ -43,21 +62,24 @@ class SvCmpNode(bpy.types.Node, SverchCustomTreeNode):
         
         self.outputs.new("StringsSocket", "Res")
     
+   def process(self):
+        # inputs
+        if  not self.outputs['Res'].is_linked:
+            return
+            
+        a = self.inputs['A'].sv_get(deepcopy=False)
+ 
+        b = self.inputs['B'].sv_get(deepcopy=False)
         
-    def process(self):
-        out = []
-        list_a = self.inputs[0].sv_get()
-        list_b = self.inputs[1].sv_get()
-        for a,b in sv_zip_longest(list_a, list_b):
-            res = bool(a == b)
-            out.append(res)
-        self.outputs[0].sv_set(out)
+        # outputs
+        out= []
+        
+        out = recurse_fxy(a, b, operations[self.mode])
 
+        self.outputs['Res'].sv_set(out)
             
 def register():
-    bpy.utils.register_class(SvCmpNode)
+    bpy.utils.register_class(SvTextOpNode)
 
 def unregister():
-    bpy.utils.unregister_class(SvCmpNode)
-
-
+    bpy.utils.unregister_class(SvTextOpNode)
