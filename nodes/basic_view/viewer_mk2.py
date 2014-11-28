@@ -38,6 +38,12 @@ from sverchok.ui.viewer_draw_mk2 import callback_disable, callback_enable
 FAIL_COLOR = (0.1, 0.05, 0)
 READY_COLOR = (1, 0.3, 0)
 
+sock_dict = {
+    'v': 'VerticesSocket',
+    's': 'StringsSocket',
+    'm': 'MatrixSocket'
+}
+
 
 class SvObjBakeMK2(bpy.types.Operator):
     """ B A K E   OBJECTS """
@@ -317,9 +323,17 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
 
         # every time you hit a dot, you pay a price, so alias and benefit
         inputs = self.inputs
-        vertex_links = inputs['vertices'].is_linked
-        matrix_links = inputs['matrix'].is_linked
-        edgepol_links = inputs['edg_pol'].is_linked
+
+        # this should catch accidental connections which otherwise will cause
+        # an unrecoverable crash. It might even be an idea to have step in between
+        # new connections and processing, it could auto rewire s->s v->v m->m.
+        def check_origin(to_socket, socket_type):
+            sock_string = sock_dict.get(socket_type)
+            return inputs[to_socket].links[0].from_socket.bl_idname == sock_string
+
+        vertex_links = inputs['vertices'].is_linked and check_origin('vertices', 'v')
+        matrix_links = inputs['matrix'].is_linked and check_origin('matrix', 'm')
+        edgepol_links = inputs['edg_pol'].is_linked and check_origin('edg_pol', 's')
 
         if (vertex_links or matrix_links):
 
