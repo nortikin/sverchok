@@ -47,7 +47,7 @@ class SvGetAttrNode(bpy.types.Node, SverchCustomTreeNode):
         objs = self.inputs[0].sv_get()
         attrs = self.inputs[1].sv_get()
         for obj,attr in sv_zip_longest(objs, attrs):
-            name = str(getattr(obj, attr))
+            name = str(eval("obj"+"."+attr))
             out.append(name)
         self.outputs[0].sv_set(out)
 
