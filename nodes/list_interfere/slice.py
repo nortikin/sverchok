@@ -17,11 +17,11 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-from bpy.props import BoolProperty, IntProperty, StringProperty
+from bpy.props import BoolProperty, IntProperty, StringProperty, EnumProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode, changable_sockets, repeat_last,
-                            SvSetSocketAnyType, SvGetSocketAnyType)
+                            SvSetSocketAnyType, SvGetSocketAnyType, match_long_repeat)
 
 # ListSlice
 # by Linus Yng
@@ -66,25 +66,23 @@ class ListSliceNode(bpy.types.Node, SverchCustomTreeNode):
     def process(self):
         data = SvGetSocketAnyType(self, self.inputs['Data'])
 
-        if self.inputs['Start'].is_linked:
-            start = SvGetSocketAnyType(self, self.inputs['Start'])[0]
-        else:
-            start = [self.start]
+        if self.inputs['Start'].links:
+            start = self.inputs['Start'].sv_get()[0]
 
-        if self.inputs['Stop'].is_linked:
-            stop = SvGetSocketAnyType(self, self.inputs['Stop'])[0]
-        else:
-            stop = [self.stop]
+        if self.inputs['Stop'].links:
+            stop = self.inputs['Stop'].sv_get()[0]
 
-        if self.outputs['Slice'].is_linked:
+
+        if self.outputs['Slice'].links:
             if self.level:
                 out = self.get(data, start, stop, self.level, self.slice)
             else:
                 out = self.slice(data, start[0], stop[0])
             SvSetSocketAnyType(self, 'Slice', out)
-        if self.outputs['Other'].is_linked:
+
+        if self.outputs['Other'].links:
             if self.level:
-                out = self.get(data, start, stop, self.level, self.other)
+                out = self.get(da, art, op, self.level, self.other)
             else:
                 out = self.other(data, start[0], stop[0])
             SvSetSocketAnyType(self, 'Other', out)
@@ -103,11 +101,13 @@ class ListSliceNode(bpy.types.Node, SverchCustomTreeNode):
 
     def get(self, data, start, stop, level, f):
         if level > 1:  # find level to work on
-            return [self.get(obj, start, stop, level-1, f) for obj in data]
+                return [ self.get(obj, start, stop, level-1, f) for obj in data ]
         elif level == 1:  # execute the chosen function
-            start_iter = repeat_last(start)
-            stop_iter = repeat_last(stop)
-            return [f(obj, next(start_iter), next(stop_iter)) for obj in data]
+            data,start,stop = match_long_repeat([data,start,stop])
+            out = []
+            for da, art, op in zip(data,start,stop):
+                out.append(f(da, art, op))
+            return out
         else:  # Fail
             return None
 
