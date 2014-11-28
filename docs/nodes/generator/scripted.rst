@@ -26,7 +26,10 @@ the functionality of a Node, while avoiding some of the boilerplate associated
 with a regular Node. SN can be used as an environment for experimenting 
 with algorithms. Scripts written for SN are easily converted to full PyNodes.
 
-It's a prototype so bug reports are welcome.
+It's a prototype so bug reports are welcome. 
+
+Here's a short tutorial to SN1, see :ref:`scripted-tutorial`
+
 
 Features
 --------

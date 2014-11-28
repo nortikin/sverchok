@@ -98,3 +98,4 @@ def register():
 def unregister():
     bpy.utils.unregister_class(SvObjRemoteNode)
     #bpy.utils.unregister_class(SvInstancerOp)
+

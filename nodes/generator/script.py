@@ -16,6 +16,9 @@
 #
 # END GPL LICENSE BLOCK #####
 
+# Scripted Node MK1 (this file) does not support Object Sockets yet.
+
+
 import ast
 import os
 import traceback
@@ -369,7 +372,7 @@ class SvScriptNode(bpy.types.Node, SverchCustomTreeNode):
         if a == b:
             return
 
-        has_links = lambda: any([socket.links for socket in IO])
+        has_links = lambda: any([socket.is_linked for socket in IO])
 
         '''
         [ ] collect current slider values too, i guess, but gets messy
@@ -427,7 +430,7 @@ class SvScriptNode(bpy.types.Node, SverchCustomTreeNode):
     def get_connections(self, direction, IO):
         io_dict = {}
         for s in IO:
-            if not s.links:
+            if not s.is_linked:
                 continue
 
             r = lambda: None
@@ -455,7 +458,6 @@ class SvScriptNode(bpy.types.Node, SverchCustomTreeNode):
 
         if not self.get_node_function():
             return
-
 
         node_function = self.get_node_function()
         defaults = node_function.__defaults__

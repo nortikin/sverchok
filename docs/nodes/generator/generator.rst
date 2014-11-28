@@ -21,5 +21,6 @@ Generator
    random_vector
    profile_parametric
    scripted
+   scripted_intro
    formula_shape
    scripted2
