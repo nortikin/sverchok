@@ -115,7 +115,6 @@ nodes_dict = {
         'rotation',
         'scale',
         'vertices_mask',
-        'wafel', 
     ],
 
     'modifier_make': [
@@ -130,7 +129,8 @@ nodes_dict = {
         'polygons_adaptative',
         'solidify',
         'voronoi_2d',
-        'wireframe'
+        'wireframe',
+        'wafel', 
     ],  #
 
     'number': [

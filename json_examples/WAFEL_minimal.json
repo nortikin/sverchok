@@ -1,0 +1,769 @@
+{
+  "export_version": "0.054",
+  "framed_nodes": {
+    "Axis Input.001": "Frame",
+    "Convex Hull": "Frame.003",
+    "Cross Section": "Frame.001",
+    "Cross Section.001": "Frame.001",
+    "Cross Section.002": "Frame.001",
+    "Float Series.002": "Frame",
+    "Matrix in.002": "Frame",
+    "Matrix in.003": "Frame",
+    "Polygons 2 Edges": "Frame.001",
+    "Polygons 2 Edges.001": "Frame.001",
+    "Random Vector": "Frame.003",
+    "Reroute": "Frame.003",
+    "Reroute.001": "Frame.003",
+    "Vectors in.004": "Frame",
+    "Vectors in.005": "Frame",
+    "Vectors in.006": "Frame",
+    "Vectors in.007": "Frame",
+    "Viewer Draw2": "Frame.002",
+    "Viewer Draw2.001": "Frame.002",
+    "Wafel.003": "Frame.002",
+    "Wafel.004": "Frame.002"
+  },
+  "groups": {},
+  "nodes": {
+    "Axis Input.001": {
+      "bl_idname": "svAxisInputNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": true,
+      "label": "Z",
+      "location": [
+        -1248.88916015625,
+        -385.3152770996094
+      ],
+      "params": {
+        "current_axis": "Z",
+        "selected_axis": "Z"
+      },
+      "width": 100.0
+    },
+    "Convex Hull": {
+      "bl_idname": "SvConvexHullNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1164.9332275390625,
+        -573.1614990234375
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Cross Section": {
+      "bl_idname": "CrossSectionNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -325.6512756347656,
+        -491.43939208984375
+      ],
+      "params": {
+        "fill_check": 1,
+        "tri": 1
+      },
+      "width": 148.62173461914062
+    },
+    "Cross Section.001": {
+      "bl_idname": "CrossSectionNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -325.6512756347656,
+        -991.439453125
+      ],
+      "params": {
+        "fill_check": 1,
+        "tri": 1
+      },
+      "width": 151.08511352539062
+    },
+    "Cross Section.002": {
+      "bl_idname": "CrossSectionNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        3.5394287109375,
+        -756.1075439453125
+      ],
+      "params": {
+        "fill_check": 0,
+        "tri": 0
+      },
+      "width": 140.0
+    },
+    "Float Series.002": {
+      "bl_idname": "SvGenFloatRange",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1424.158203125,
+        -261.698486328125
+      ],
+      "params": {
+        "count_": 5,
+        "mode": "FRANGE_COUNT",
+        "start_": -0.5,
+        "stop_": 0.5
+      },
+      "width": 140.0
+    },
+    "Float.001": {
+      "bl_idname": "FloatNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "thickness",
+      "location": [
+        -119.67918395996094,
+        -503.3476257324219
+      ],
+      "params": {
+        "float_": 0.009999999776482582,
+        "maxim": 0.10000000149011612,
+        "minim": 0.009999999776482582
+      },
+      "width": 140.0
+    },
+    "Frame": {
+      "bl_idname": "NodeFrame",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 387.2900390625,
+      "hide": false,
+      "label": "Section matrices",
+      "location": [
+        8.387323379516602,
+        91.90548706054688
+      ],
+      "params": {},
+      "width": 538.895263671875
+    },
+    "Frame.001": {
+      "bl_idname": "NodeFrame",
+      "color": [
+        0.021045031026005745,
+        0.3117988109588623,
+        0.6079999804496765
+      ],
+      "height": 768.0447387695312,
+      "hide": false,
+      "label": "sections",
+      "location": [
+        -300.7283935546875,
+        282.4841613769531
+      ],
+      "params": {},
+      "width": 529.190673828125
+    },
+    "Frame.002": {
+      "bl_idname": "NodeFrame",
+      "color": [
+        0.3332301378250122,
+        0.9430019855499268,
+        1.0
+      ],
+      "height": 726.1804809570312,
+      "hide": false,
+      "label": "make wafels",
+      "location": [
+        2809.515380859375,
+        277.41241455078125
+      ],
+      "params": {},
+      "width": 397.669677734375
+    },
+    "Frame.003": {
+      "bl_idname": "NodeFrame",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 175.95703125,
+      "hide": false,
+      "label": "Object_to_sect",
+      "location": [
+        8.387323379516602,
+        11.30215835571289
+      ],
+      "params": {},
+      "width": 529.6532592773438
+    },
+    "Matrix in.002": {
+      "bl_idname": "MatrixGenNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1085.262939453125,
+        -213.45396423339844
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Matrix in.003": {
+      "bl_idname": "MatrixGenNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1085.262939453125,
+        -400.4596252441406
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Note.001": {
+      "bl_idname": "NoteNode",
+      "color": [
+        0.5,
+        0.5,
+        1.0
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "2014_11_29",
+      "location": [
+        -1345.1363525390625,
+        -808.806396484375
+      ],
+      "params": {
+        "text": "This layout completely was developed by Nikitron\nWaffel layout represents power of simple math\nthat makes possible manufacturing from 3D"
+      },
+      "width": 320.0
+    },
+    "Polygons 2 Edges": {
+      "bl_idname": "Pols2EdgsNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        3.5394287109375,
+        -591.4393920898438
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Polygons 2 Edges.001": {
+      "bl_idname": "Pols2EdgsNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1.0830078125,
+        -1070.5372314453125
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Random Vector": {
+      "bl_idname": "RandomVectorNode",
+      "color": [
+        0.0,
+        0.5,
+        0.5
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1420.63818359375,
+        -578.5379638671875
+      ],
+      "params": {
+        "count_inner": 300
+      },
+      "width": 140.0
+    },
+    "Reroute": {
+      "bl_idname": "NodeReroute",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -958.9849243164062,
+        -574.39453125
+      ],
+      "params": {},
+      "width": 16.0
+    },
+    "Reroute.001": {
+      "bl_idname": "NodeReroute",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -966.8110961914062,
+        -674.3515625
+      ],
+      "params": {},
+      "width": 16.0
+    },
+    "Vectors in.004": {
+      "bl_idname": "GenVectorsNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": true,
+      "label": "",
+      "location": [
+        -1199.8572998046875,
+        -254.01251220703125
+      ],
+      "params": {
+        "y_": 0.0,
+        "z_": 0.0
+      },
+      "width": 100.0
+    },
+    "Vectors in.005": {
+      "bl_idname": "GenVectorsNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": true,
+      "label": "",
+      "location": [
+        -1208.6060791015625,
+        -439.95703125
+      ],
+      "params": {
+        "x_": 0.0,
+        "z_": 0.0
+      },
+      "width": 100.0
+    },
+    "Vectors in.006": {
+      "bl_idname": "GenVectorsNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": true,
+      "label": "",
+      "location": [
+        -1215.4105224609375,
+        -515.7440185546875
+      ],
+      "params": {
+        "x_": 0.009999999776482582,
+        "y_": 1.0,
+        "z_": 0.0
+      },
+      "width": 100.0
+    },
+    "Vectors in.007": {
+      "bl_idname": "GenVectorsNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": true,
+      "label": "",
+      "location": [
+        -1204.7177734375,
+        -320.1751403808594
+      ],
+      "params": {
+        "x_": 1.0,
+        "y_": 0.009999999776482582,
+        "z_": 0.0
+      },
+      "width": 100.0
+    },
+    "Viewer Draw2": {
+      "bl_idname": "ViewerNode2",
+      "color": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -2525.468994140625,
+        -450.23187255859375
+      ],
+      "params": {
+        "activate": 1,
+        "bakebuttonshow": 1,
+        "display_edges": 1,
+        "display_verts": 0,
+        "edge_colors": [
+          0.09839899837970734,
+          0.8989999890327454,
+          0.0534450002014637
+        ],
+        "edge_width": 1,
+        "transparant": 0
+      },
+      "width": 140.0
+    },
+    "Viewer Draw2.001": {
+      "bl_idname": "ViewerNode2",
+      "color": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -2525.468994140625,
+        -850.2318725585938
+      ],
+      "params": {
+        "bakebuttonshow": 1,
+        "display_edges": 1,
+        "display_verts": 0,
+        "edge_colors": [
+          0.8990001082420349,
+          0.18477745354175568,
+          0.22522729635238647
+        ],
+        "edge_width": 1
+      },
+      "width": 140.0
+    },
+    "Wafel.003": {
+      "bl_idname": "SvWafelNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -2723.138671875,
+        -502.08795166015625
+      ],
+      "params": {
+        "bindCircle": 0,
+        "circle_rad": 0.019999999552965164,
+        "do_contra": 0,
+        "out_up_down": "Up",
+        "rounded": 0,
+        "threshold": 10.0
+      },
+      "width": 140.0
+    },
+    "Wafel.004": {
+      "bl_idname": "SvWafelNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -2721.90966796875,
+        -854.0075073242188
+      ],
+      "params": {
+        "bindCircle": 0,
+        "circle_rad": 0.019999999552965164,
+        "do_contra": 0,
+        "out_up_down": "Down",
+        "rounded": 0,
+        "threshold": 10.0
+      },
+      "width": 140.0
+    }
+  },
+  "update_lists": [
+    [
+      "Random Vector",
+      "Random",
+      "Convex Hull",
+      "Vertices"
+    ],
+    [
+      "Convex Hull",
+      "Vertices",
+      "Reroute",
+      "Input"
+    ],
+    [
+      "Float Series.002",
+      "Range",
+      "Vectors in.004",
+      "X"
+    ],
+    [
+      "Vectors in.004",
+      "Vectors",
+      "Matrix in.002",
+      "Location"
+    ],
+    [
+      "Axis Input.001",
+      "Vectors",
+      "Matrix in.002",
+      "Rotation"
+    ],
+    [
+      "Vectors in.007",
+      "Vectors",
+      "Matrix in.002",
+      "Angle"
+    ],
+    [
+      "Convex Hull",
+      "Polygons",
+      "Reroute.001",
+      "Input"
+    ],
+    [
+      "Reroute",
+      "Output",
+      "Cross Section",
+      "vertices"
+    ],
+    [
+      "Reroute.001",
+      "Output",
+      "Cross Section",
+      "edg_pol"
+    ],
+    [
+      "Matrix in.002",
+      "Matrix",
+      "Cross Section",
+      "cut_matrix"
+    ],
+    [
+      "Float Series.002",
+      "Range",
+      "Vectors in.005",
+      "Y"
+    ],
+    [
+      "Vectors in.005",
+      "Vectors",
+      "Matrix in.003",
+      "Location"
+    ],
+    [
+      "Axis Input.001",
+      "Vectors",
+      "Matrix in.003",
+      "Rotation"
+    ],
+    [
+      "Vectors in.006",
+      "Vectors",
+      "Matrix in.003",
+      "Angle"
+    ],
+    [
+      "Cross Section",
+      "vertices",
+      "Cross Section.002",
+      "vertices"
+    ],
+    [
+      "Cross Section",
+      "edges",
+      "Cross Section.002",
+      "edg_pol"
+    ],
+    [
+      "Matrix in.003",
+      "Matrix",
+      "Cross Section.002",
+      "cut_matrix"
+    ],
+    [
+      "Cross Section",
+      "edges",
+      "Polygons 2 Edges",
+      "pols"
+    ],
+    [
+      "Cross Section.002",
+      "vertices",
+      "Wafel.003",
+      "vecLine"
+    ],
+    [
+      "Cross Section",
+      "vertices",
+      "Wafel.003",
+      "vecPlane"
+    ],
+    [
+      "Polygons 2 Edges",
+      "edgs",
+      "Wafel.003",
+      "edgPlane"
+    ],
+    [
+      "Float.001",
+      "Float",
+      "Wafel.003",
+      "thick"
+    ],
+    [
+      "Wafel.003",
+      "vert",
+      "Viewer Draw2",
+      "vertices"
+    ],
+    [
+      "Wafel.003",
+      "edge",
+      "Viewer Draw2",
+      "edg_pol"
+    ],
+    [
+      "Reroute",
+      "Output",
+      "Cross Section.001",
+      "vertices"
+    ],
+    [
+      "Reroute.001",
+      "Output",
+      "Cross Section.001",
+      "edg_pol"
+    ],
+    [
+      "Matrix in.003",
+      "Matrix",
+      "Cross Section.001",
+      "cut_matrix"
+    ],
+    [
+      "Cross Section.001",
+      "edges",
+      "Polygons 2 Edges.001",
+      "pols"
+    ],
+    [
+      "Cross Section.002",
+      "vertices",
+      "Wafel.004",
+      "vecLine"
+    ],
+    [
+      "Cross Section.001",
+      "vertices",
+      "Wafel.004",
+      "vecPlane"
+    ],
+    [
+      "Polygons 2 Edges.001",
+      "edgs",
+      "Wafel.004",
+      "edgPlane"
+    ],
+    [
+      "Float.001",
+      "Float",
+      "Wafel.004",
+      "thick"
+    ],
+    [
+      "Wafel.004",
+      "vert",
+      "Viewer Draw2.001",
+      "vertices"
+    ],
+    [
+      "Wafel.004",
+      "edge",
+      "Viewer Draw2.001",
+      "edg_pol"
+    ]
+  ]
+}
