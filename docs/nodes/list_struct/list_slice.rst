@@ -55,6 +55,9 @@ Some slice examples.
 >>> l[-1:2]
 []
 
+.. image:: https://cloud.githubusercontent.com/assets/5783432/5229789/771e02b8-7725-11e4-8970-ac33c87f55ec.png
+ :alt: slice multiple objects from one list (may be many objects also)
+
 Notes
 -----
 
