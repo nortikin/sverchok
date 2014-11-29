@@ -50,8 +50,10 @@ Outputs
 
 **centers** - polygons centers.     
   
-Notes  
------  
+Notes
+-----
+
+.. note::
   
 Always make matrices rotations not orthogonal, it will not work 100%. Making something like (1.0,0.001,0) will work for matrix sections.     
 

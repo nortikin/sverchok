@@ -82,7 +82,7 @@ class ListSliceNode(bpy.types.Node, SverchCustomTreeNode):
 
         if self.outputs['Other'].is_linked:
             if self.level:
-                out = self.get(da, art, op, self.level, self.other)
+                out = self.get(data, start, stop, self.level, self.other)
             else:
                 out = self.other(data, start[0], stop[0])
             SvSetSocketAnyType(self, 'Other', out)

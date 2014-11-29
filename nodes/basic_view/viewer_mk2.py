@@ -34,10 +34,6 @@ from sverchok.data_structure import (
 from sverchok.ui.viewer_draw_mk2 import callback_disable, callback_enable
 # from nodes.basic_view.viewer import SvObjBake
 
-# status colors
-FAIL_COLOR = (0.1, 0.05, 0)
-READY_COLOR = (1, 0.3, 0)
-
 sock_dict = {
     'v': 'VerticesSocket',
     's': 'StringsSocket',
