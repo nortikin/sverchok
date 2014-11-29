@@ -24,7 +24,7 @@ from sverchok.utils.sv_itertools import recurse_fxy
 
 # ab -> c
 operations_ab_c = {
-    "COMP": lambda a, b: a + b,
+    "CONCAT": lambda a, b: a + b,
     "CMP": lambda a, b: a == b,
     "STARTWITH": lambda a, b: a.startswith(b),
     "ENDSWITH": lambda a, b: a.endswith(b),
@@ -42,7 +42,7 @@ class SvTextOpNode(bpy.types.Node, SverchCustomTreeNode):
 
     # please extend this
     modes = [("CMP", "==", "Compare two strings",  1),
-             ("COMP", "+", "two strings to one",  5),
+             ("CONCAT", "+", "Concatenation",  5),
              ("STARTWITH", "startswith",       "", 2),
              ("ENDSWITH",  "endswith",         "", 3),
              ("IN",        "in",               "", 4)
