@@ -63,6 +63,7 @@ def scan_for_old(ng):
 def mark_old(node):
     if node.parent and node.parent.label == "Deprecated node!":
         return
+    ng = node.id_data
     frame = ng.nodes.new("NodeFrame")
     if node.parent:
         frame.parent = node.parent
