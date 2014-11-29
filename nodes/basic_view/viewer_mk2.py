@@ -336,11 +336,7 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
             if vertex_links:
                 propv = inputs['vertices'].sv_get(default=[])
                 if propv:
-                    verts = dataCorrect(propv)
-                    for v in verts:
-                        if any(l != 3 for l in map(len, v)):
-                            raise ValueError
-                    cache_viewer_baker[vertex_ref] = verts
+                    cache_viewer_baker[vertex_ref] = dataCorrect(propv)
 
             if edgepol_links:
                 prope = inputs['edg_pol'].sv_get(default=[])

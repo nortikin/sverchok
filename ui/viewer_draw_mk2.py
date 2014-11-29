@@ -205,7 +205,7 @@ def display_face(options, pol, data_vector, data_matrix, k, i):
         v = [dvk[i] for i in pol]
         for pol in tessellate([v]):
             for point in pol:
-                vec = data_matrix[i] * v[point]
+                vec = data_matrix[i]*v[point]
                 glVertex3f(*vec)
         glEnd()
 
@@ -355,7 +355,7 @@ def draw_callback_view(n_id, cached_view, options):
         #     return [[Vector(v[:3]) for v in obj] for obj in prop]
         # except ValueEror:
         #     return []
-        return [[Vector(v) for v in obj] for obj in prop]
+        return [[Vector(v[:3]) for v in obj] for obj in prop]
 
     # context = bpy.context
     if options["timings"]:
