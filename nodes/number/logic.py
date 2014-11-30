@@ -23,9 +23,9 @@ import bpy
 from bpy.props import (EnumProperty, FloatProperty,
                        IntProperty, BoolVectorProperty)
 
-from sverchok.node_tree import SverchCustomTreeNode, StringsSocket
-from sverchok.data_structure import (updateNode, match_long_repeat,
-                            SvSetSocketAnyType, SvGetSocketAnyType)
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import (updateNode)
+from sverchok.utils.sv_itertools import (recurse_fx, recurse_fxy)
 
 
 class SvLogicNode(bpy.types.Node, SverchCustomTreeNode):
@@ -164,8 +164,8 @@ class SvLogicNode(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', "X").prop_name = 'x'
+        self.inputs.new('StringsSocket', "Y").prop_name = 'y'
         self.outputs.new('StringsSocket', "Gate")
-        
 
     def draw_label(self):
         nrInputs = len(self.inputs)
@@ -197,47 +197,14 @@ class SvLogicNode(bpy.types.Node, SverchCustomTreeNode):
         if self.items_ in self.constant:
             out = [[self.constant[self.items_]]]
         elif self.items_ in self.fx:
-            out = self.recurse_fx(x, self.fx[self.items_])
+            out = recurse_fx(x, self.fx[self.items_])
         elif self.items_ in self.fxy:
-            out = self.recurse_fxy(x, y, self.fxy[self.items_])
+            out = recurse_fxy(x, y, self.fxy[self.items_])
         elif self.items_ in self.fxy2:
-            out = self.recurse_fxy(x, y, self.fxy2[self.items_])
+            out = recurse_fxy(x, y, self.fxy2[self.items_])
 
-        SvSetSocketAnyType(self, 'Gate', out)
+        self.outputs['Gate'].sv_set(out)
 
-    # apply f to all values recursively
-    def recurse_fx(self, l, f):
-        if isinstance(l, (int, float)):
-            return f(l)
-        else:
-            return [self.recurse_fx(i, f) for i in l]
-
-    # match length of lists,
-    # cases
-    # [1,2,3] + [1,2,3] -> [2,4,6]
-    # [1,2,3] + 1 -> [2,3,4]
-    # [1,2,3] + [1,2] -> [2,4,5] , list is expanded to match length, [-1] is repeated
-    # odd cases too.
-    # [1,2,[1,1,1]] + [[1,2,3],1,2] -> [[2,3,4],3,[3,3,3]]
-    def recurse_fxy(self, l1, l2, f):
-        if (isinstance(l1, (int, float)) and isinstance(l2, (int, float))):
-                return f(l1, l2)
-                
-        if (isinstance(l2, (list, tuple)) and isinstance(l1, (list, tuple))):
-            fl = l2[-1] if len(l1) > len(l2) else l1[-1]
-            res = []
-            res_append = res.append
-            for x, y in zip_longest(l1, l2, fillvalue=fl):
-                res_append(self.recurse_fxy(x, y, f))
-            return res
-            
-        if isinstance(l1, (list, tuple)) and isinstance(l2, (int, float)):
-            return self.recurse_fxy(l1, [l2], f)
-        if isinstance(l1, (int, float)) and isinstance(l2, (list, tuple)):
-            return self.recurse_fxy([l1], l2, f)
-
-    def update_socket(self, context):
-        self.update()
 
 
 def register():

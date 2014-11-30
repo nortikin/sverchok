@@ -26,6 +26,7 @@ from bpy.props import (EnumProperty, FloatProperty,
 
 from sverchok.node_tree import SverchCustomTreeNode, StringsSocket
 from sverchok.data_structure import (updateNode, match_long_repeat)
+from sverchok.utils.sv_itertools import (recurse_fx, recurse_fxy)
 
 
 class ScalarMathNode(bpy.types.Node, SverchCustomTreeNode):
@@ -245,44 +246,11 @@ class ScalarMathNode(bpy.types.Node, SverchCustomTreeNode):
             if in_count == 0:
                 result = [[self.constant[self.items_]]]
             elif in_count == 1:
-                result = self.recurse_fx(x, self.fx[self.items_])
+                result = recurse_fx(x, self.fx[self.items_])
             elif in_count == 2:
-                result = self.recurse_fxy(x, y, self.fxy[self.items_])
+                result = recurse_fxy(x, y, self.fxy[self.items_])
             self.outputs['float'].sv_set(result)
 
-    # apply f to all values recursively
-    def recurse_fx(self, l, f):
-        if isinstance(l, (int, float)):
-            return f(l)
-        else:
-            return [self.recurse_fx(i, f) for i in l]
-
-    # match length of lists,
-    # cases
-    # [1,2,3] + [1,2,3] -> [2,4,6]
-    # [1,2,3] + 1 -> [2,3,4]
-    # [1,2,3] + [1,2] -> [2,4,5] , list is expanded to match length, [-1] is repeated
-    # odd cases too.
-    # [1,2,[1,1,1]] + [[1,2,3],1,2] -> [[2,3,4],3,[3,3,3]]
-    def recurse_fxy(self, l1, l2, f):
-        if (isinstance(l1, (int, float)) and isinstance(l2, (int, float))):
-                return f(l1, l2)
-                
-        if (isinstance(l2, (list, tuple)) and isinstance(l1, (list, tuple))):
-            fl = l2[-1] if len(l1) > len(l2) else l1[-1]
-            res = []
-            res_append = res.append
-            for x, y in zip_longest(l1, l2, fillvalue=fl):
-                res_append(self.recurse_fxy(x, y, f))
-            return res
-            
-        if isinstance(l1, (list, tuple)) and isinstance(l2, (int, float)):
-            return self.recurse_fxy(l1, [l2], f)
-        if isinstance(l1, (int, float)) and isinstance(l2, (list, tuple)):
-            return self.recurse_fxy([l1], l2, f)
-
-    def update_socket(self, context):
-        self.update()
 
 
 def register():
