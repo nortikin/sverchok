@@ -90,7 +90,7 @@ class SvBoxNode(bpy.types.Node, SverchCustomTreeNode):
             bm.faces.new(tuple(bm.verts[i] for i in face))
         bm.faces.index_update()
 
-        dist = 0.0001
+        dist = 0 #0.0001
         section_dict = {0: divx, 1: divy, 2: divz}
 
         for axis in range(3):
