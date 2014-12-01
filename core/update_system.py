@@ -65,7 +65,8 @@ def make_dep_dict(node_tree, down=False):
     for i,link in enumerate(list(ng.links)):
         #  this proctects against a rare occurance where 
         #  a link is considered valid without a to_socket
-        #  and from_socket. proctects against a blender crash
+        #  or a from_socket. proctects against a blender crash
+        #  see https://github.com/nortikin/sverchok/issues/493
         if not (link.to_socket and link.from_socket):
             ng.links.remove(link)
             raise ValueError("Invalid link found!, please report this file")
