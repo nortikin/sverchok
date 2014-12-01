@@ -66,11 +66,9 @@ class ListSliceNode(bpy.types.Node, SverchCustomTreeNode):
     def process(self):
         data = SvGetSocketAnyType(self, self.inputs['Data'])
 
-        if self.inputs['Start'].is_linked:
-            start = self.inputs['Start'].sv_get()[0]
+        start = self.inputs['Start'].sv_get()[0]
 
-        if self.inputs['Stop'].is_linked:
-            stop = self.inputs['Stop'].sv_get()[0]
+        stop = self.inputs['Stop'].sv_get()[0]
 
 
         if self.outputs['Slice'].is_linked:
@@ -118,3 +116,5 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(ListSliceNode)
+    
+    
