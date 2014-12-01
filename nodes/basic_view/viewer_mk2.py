@@ -334,7 +334,7 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
         if (vertex_links or matrix_links):
 
             if vertex_links:
-                propv = inputs['vertices'].sv_get(default=[])
+                propv = inputs['vertices'].sv_get(deepcopy=False, default=[])
                 if propv:
                     verts = dataCorrect(propv)
                     for v in verts:
@@ -343,12 +343,12 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
                     cache_viewer_baker[vertex_ref] = verts
 
             if edgepol_links:
-                prope = inputs['edg_pol'].sv_get(default=[])
+                prope = inputs['edg_pol'].sv_get(deepcopy=False, default=[])
                 if prope:
                     cache_viewer_baker[poledg_ref] = dataCorrect(prope)
 
             if matrix_links:
-                propm = inputs['matrix'].sv_get(default=[])
+                propm = inputs['matrix'].sv_get(deepcopy=False, default=[])
                 if propm:
                     cache_viewer_baker[matrix_ref] = dataCorrect(propm)
 
