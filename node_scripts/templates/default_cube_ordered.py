@@ -7,10 +7,12 @@ def sv_main(size=1,divxy=1,divz=1):
         ['s', 'DivisionsZ(int)', divz],
     ]
     
+    if divxy<1: divxy=1
     divx = divy = divxy
-    if divx<1: divx=1
-    if divy<1: divy=1
-    if divz<1: divz=1
+    if divz<1: 
+        divz=1
+    if divxy>1 and divz==1: 
+        divz=2
     
     criteria = ((divx+1)*(divy+1))
     
