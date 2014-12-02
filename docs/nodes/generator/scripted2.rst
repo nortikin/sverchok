@@ -129,7 +129,7 @@ For plane, for example, you'll get next data:
  [(0.0, 0.0, 0.0), (1.0, 0.0, 0.0), (0.0, 1.0, 0.0), (1.0, 1.0, 0.0)] [(0, 1, 3, 2)]
 
 If you need Full support of Sverchok data - you'd better use ``SvScript`` 
-class and ``self.inputs[0].sv_get()`` function.
+class and ``self.node.inputs[0].sv_get()`` function.
 
 Examples
 --------
@@ -265,8 +265,8 @@ that is automatically set.
             # coming
 
 
-Admit, you can call sockets data directly when using ```SvScript``` as ```self.inputs[0].sv_get()```.
-And other ```self.``` operations possible from this class.
+Admit, you can call sockets data directly when using ```SvScript``` as ```self.node.inputs[0].sv_get()```.
+And other ```self.node.``` operations possible from this class.
 
 
 Techniques to improve Python performance
