@@ -115,9 +115,9 @@ script creation process.
 - can refresh the Script Node which currently loads that script by hitting ``Ctrl+Enter``
 
 Main classes for your subclasses are:
-- SvScript
-- SvScriptSimpleGenerator
-- SvScriptSimpleFunction
+- ``SvScript``
+- ``SvScriptSimpleGenerator``
+- ``SvScriptSimpleFunction``
 
 
 Examples
@@ -158,9 +158,8 @@ the third argument for outputs is specific to this template::
 
 Note that here the name of the method that should be called for producing data 
 for each socket in the final last arguments to ``outputs`` but we are not forced 
-to have all code inside the class, we can also do::
-
-
+to have all code inside the class, we can also do
+::
 
     def lorenz(N, verts, h, a, b, c):
         add_vert = verts.append
@@ -206,7 +205,8 @@ to have all code inside the class, we can also do::
 Here is a simple script for deleting loose vertices from mesh data, it also serves as an 
 illustration for a type of script that uses the ```SvScriptSimpleFunction``` template that
 has one main function that decomposes into separate sockets. The methods don't have be static
-but in general it is good practice to keep them free from side effects.::
+but in general it is good practice to keep them free from side effects.
+::
 
     from itertools import chain
 
@@ -237,7 +237,7 @@ but in general it is good practice to keep them free from side effects.::
 
 Breakout Scripts
 ----------------
-Scripts that needs to access the node can do so via the ``self.node`` variable
+Scripts that needs to access the node can do so via the ```self.node``` variable
 that is automatically set.
 ::
 
@@ -254,8 +254,8 @@ that is automatically set.
             # coming
 
 
-Admit, you can call sockets data directly when using `SvScript` as `self.inputs[0].sv_get()`.
-And other self. operations possible from this class.
+Admit, you can call sockets data directly when using ```SvScript``` as ```self.inputs[0].sv_get()```.
+And other ```self.``` operations possible from this class.
 
 
 Techniques to improve Python performance
