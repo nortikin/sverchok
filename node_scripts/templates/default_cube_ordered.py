@@ -1,4 +1,4 @@
-def sv_main(size=1,divxy=1,divz=1):
+def sv_main(size=1.0,divxy=1,divz=1):
     
     # in boilerplate - make your own sockets
     in_sockets = [

@@ -23,7 +23,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode,
                             SvSetSocketAnyType, SvGetSocketAnyType)
 from mathutils import Vector
-from math import sin, cos, radians
+from math import sin, cos, radians, sqrt
 
 
 class SvPipeNode(bpy.types.Node, SverchCustomTreeNode):
@@ -32,10 +32,10 @@ class SvPipeNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Pipe tube Node'
     bl_icon = 'OUTLINER_OB_EMPTY'
     
-    #nsides = IntProperty(name='nsides', description='number of sides',
-    #              default=1, min=1, max=64,
-    #              options={'ANIMATABLE'}, update=updateNode)
-    radius = FloatProperty(name='redius', description='radius',
+    nsides = IntProperty(name='nsides', description='number of sides',
+                  default=4, min=4, max=24,
+                  options={'ANIMATABLE'}, update=updateNode)
+    diameter = FloatProperty(name='diameter', description='diameter',
                   default=0.4,
                   options={'ANIMATABLE'}, update=updateNode)
     
@@ -46,7 +46,8 @@ class SvPipeNode(bpy.types.Node, SverchCustomTreeNode):
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', 'Vers', 'Vers')
         self.inputs.new('StringsSocket', "Edgs", "Edgs")
-        self.inputs.new('StringsSocket', "Radius", "Radius").prop_name = 'radius'
+        self.inputs.new('StringsSocket', "Diameter", "Diameter").prop_name = 'diameter'
+        self.inputs.new('StringsSocket', "Sides", "Sides").prop_name = 'nsides'
         self.outputs.new('VerticesSocket', 'Vers', 'Vers')
         self.outputs.new('StringsSocket', "Pols", "Pols")
 
@@ -55,10 +56,10 @@ class SvPipeNode(bpy.types.Node, SverchCustomTreeNode):
         if self.outputs['Vers'].links and self.inputs['Vers'].links:
             Vecs = SvGetSocketAnyType(self, self.inputs['Vers'])
             Edgs = SvGetSocketAnyType(self, self.inputs['Edgs'])
+            Nsides = max(self.inputs['Sides'].sv_get()[0][0], 4)
+            Diameter = self.inputs['Diameter'].sv_get()[0][0]
             
-            Radius = self.inputs['Radius'].sv_get()[0][0]
-            
-            outv, outp = self.Do_vecs(Vecs,Edgs,Radius)
+            outv, outp = self.Do_vecs(Vecs,Edgs,Diameter,Nsides)
             
             if self.outputs['Vers'].links:
                 SvSetSocketAnyType(self, 'Vers', outv)
@@ -66,9 +67,14 @@ class SvPipeNode(bpy.types.Node, SverchCustomTreeNode):
                 SvSetSocketAnyType(self, 'Pols', outp)
     
 
-    def Do_vecs(self, Vecs,Edgs,Radius):
-        circle = [ (Vector((sin(radians(i)),cos(radians(i)),0))*Radius) \
-                    for i in range(0,360,30) ]
+    def Do_vecs(self, Vecs,Edgs,Diameter,Nsides):
+        Sides = int(360/Nsides)
+        if Nsides == 4:
+            Diameter = Diameter*sqrt(2)/2
+        else:
+            Diameter = Diameter/2
+        circle = [ (Vector((sin(radians(i)),cos(radians(i)),0))*Diameter) \
+                    for i in range(45,405,Sides) ]
         outv = []
         outp = []
         for E,V in zip(Edgs,Vecs):
@@ -83,9 +89,9 @@ class SvPipeNode(bpy.types.Node, SverchCustomTreeNode):
                 verts2 = [ (ve*matrix_rot+v2)[:] for ve in circle ]
                 outv_.extend(verts1)
                 outv_.extend(verts2)
-                pols = [ [k+i+0,k+i-1,k+i+11,k+i+12] for i in range(1,12,1) ]
-                pols.append([k+0,k+11,k+23,k+12])
-                k += 24
+                pols = [ [k+i+0,k+i-1,k+i+Nsides-1,k+i+Nsides] for i in range(1,Nsides,1) ]
+                pols.append([k+0,k+Nsides-1,k+Nsides*2-1,k+Nsides])
+                k += Nsides*2
                 outp_.extend(pols)
             outv.append(outv_)
             outp.append(outp_)
