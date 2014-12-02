@@ -115,9 +115,10 @@ script creation process.
 - can refresh the Script Node which currently loads that script by hitting ``Ctrl+Enter``
 
 Main classes for your subclasses are:
-- ``SvScript``
-- ``SvScriptSimpleGenerator``
-- ``SvScriptSimpleFunction``
+
+ - ``SvScript``
+ - ``SvScriptSimpleGenerator``
+ - ``SvScriptSimpleFunction``
 
 
 Examples
