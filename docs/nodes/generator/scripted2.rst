@@ -120,6 +120,16 @@ Main classes for your subclasses are:
  - ``SvScriptSimpleGenerator``
  - ``SvScriptSimpleFunction``
 
+Limitations
+-----------
+
+Using ``SvScriptSimpleGenerator`` and ``SvScriptSimpleFunction`` you limit inputs to deal with one object. 
+For plane, for example, you'll get next data:
+
+ [(0.0, 0.0, 0.0), (1.0, 0.0, 0.0), (0.0, 1.0, 0.0), (1.0, 1.0, 0.0)] [(0, 1, 3, 2)]
+
+If you need Full support of Sverchok data - you'd better use ``SvScript`` 
+class and self.inputs[0].sv_get() function.
 
 Examples
 --------
