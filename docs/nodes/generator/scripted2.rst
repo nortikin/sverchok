@@ -101,7 +101,8 @@ avoid as class attributes or only used for the intended meaning. To be described
 Templates
 ---------
 
-Sverchok includes a series of examples for the different templates.
+Sverchok includes a series of examples for the different templates.  
+
 
 Conveniences
 ------------
@@ -113,6 +114,11 @@ script creation process.
 
 - can refresh the Script Node which currently loads that script by hitting ``Ctrl+Enter``
 
+Main classes for your subclasses are:
+- SvScript
+- SvScriptSimpleGenerator
+- SvScriptSimpleFunction
+
 
 Examples
 --------
@@ -123,7 +129,7 @@ advanced use cases. The images and animations on this `thread on github
 <https://github.com/nortikin/sverchok/issues/439>`_. 
 may also provide some insight into what's possible.
 
-A typical nodescript using the ``SvScriptSimplegenerator`` may look like this, note that
+A typical nodescript using the ``SvScriptSimpleGenerator`` may look like this, note that
 the third argument for outputs is specific to this template::
 
     import numpy 
@@ -246,6 +252,10 @@ that is automatically set.
             # that real a real node could do including multisocket
             # adaptive sockets etc. templates and examples for this are
             # coming
+
+
+Admit, you can call sockets data directly when using `SvScript` as `self.inputs[0].sv_get()`.
+And other self. operations possible from this class.
 
 
 Techniques to improve Python performance
