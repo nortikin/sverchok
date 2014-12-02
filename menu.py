@@ -217,7 +217,8 @@ def make_node_cats():
     ]
 
     node_cats["Beta Nodes"] = [
-        # for testing convenience,
+        # for testing convenience, and till no documentation
+        ['SvPipeNode',          'Pipe'],
         ["SvOffsetNode",        "Offset"],
         ["SvListDecomposeNode", "List Decompose"],
         ["SvWafelNode",         "Wafel"],
