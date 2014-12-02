@@ -858,7 +858,7 @@ def multi_socket(node, min=1, start=0, breck=False, out_count=None):
     if min < 1:
         min = 1
     if out_count is None:
-        if not len(node.inputs):
+        if not node.inputs:
             return
         if node.inputs[-1].links:
             length = start + len(node.inputs)
