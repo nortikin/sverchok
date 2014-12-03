@@ -19,6 +19,7 @@
 # author Linus Yng, partly based on script node 
 
 import os
+import traceback
 
 import bpy
 from bpy.props import (
@@ -82,12 +83,18 @@ class SvLoadScript(bpy.types.Operator):
         except SyntaxError as err:
             msg = "SyntaxError'{0}'".format(err)
             self.report({"WARNING"}, msg)
+            n.mark_error(err)
+            traceback.print_exc()
             return {'CANCELLED'}
         except TypeError as err:
-            self.report({"WARNING"}, "No script in textfile {}".format(node.script_name))
+            n.mark_error(err)
+            traceback.print_exc()
+            self.report({"WARNING"}, "No valid script in textfile {}".format(node.script_name))
             return {'CANCELLED'}
         except Exception as err:
-            self.report({"WARNING"}, "No script in textfile {}".format(node.script_name))
+            n.mark_error(err)
+            traceback.print_exc()
+            self.report({"WARNING"}, "No valid script in textfile {}".format(node.script_name))
             return {'CANCELLED'}
         return {'FINISHED'}
 
