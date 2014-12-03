@@ -268,7 +268,7 @@ def do_update_heat_map(node_list, nodes):
         # linear scale.
         nodes[name].color = cold.lerp(hot, t / t_max)
 
-def update_error_nodes(ng, name, err):
+def update_error_nodes(ng, name, err=Exception):
     if "error nodes" in ng:
         error_nodes = ast.literal_eval(ng["error nodes"])
     else:
