@@ -19,6 +19,7 @@
 import math
 import time
 from math import pi
+import traceback
 
 import bpy
 import mathutils
@@ -403,19 +404,25 @@ def draw_callback_view(n_id, cached_view, options):
         if (data_vector, data_polygons, data_matrix, data_edges) == (0, 0, 0, 0):
             callback_disable(n_id)
             return
-
-        the_display_list = glGenLists(1)
-        glNewList(the_display_list, GL_COMPILE)
-        draw_geometry(n_id, options, data_vector, data_polygons, data_matrix, data_edges)
-        glEndList()
+        try:
+            the_display_list = glGenLists(1)
+            glNewList(the_display_list, GL_COMPILE)
+            draw_geometry(n_id, options, data_vector, data_polygons, data_matrix, data_edges)
+        except Exception as err:
+            print("Error in callback!:")
+            traceback.print_exc()
+            options['error'] = True
+        finally:
+            glEndList()
 
         options['genlist'] = the_display_list
 
     elif options['draw_list'] == 1:
         the_display_list = options['genlist']
-
-    glCallList(the_display_list)
-    glFlush()
+    
+    if not 'error' in options:
+        glCallList(the_display_list)
+        glFlush()
 
     # restore to system state
     glLineWidth(1)
