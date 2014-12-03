@@ -311,7 +311,15 @@ class SvNodeRefreshFromTextEditor(bpy.types.Operator):
                 continue
             for n in nodes:
                 if hasattr(n, "script_name") and n.script_name == text_file_name:
-                    n.load()
+                    try:
+                        n.load()
+                    except SyntaxError as err:
+                        msg = "SyntaxError'{0}'".format(err)
+                        self.report({"WARNING"}, msg)
+                        return {'CANCELLED'}
+                    except:
+                        self.report({"WARNING"}, msg)
+                        return {'CANCELLED'}
                 elif hasattr(n, "text_file_name") and n.text_file_name == text_file_name:
                     pass # no nothing for profile node, just update ng, could use break...
                 elif hasattr(n, "current_text") and n.current_text == text_file_name:
