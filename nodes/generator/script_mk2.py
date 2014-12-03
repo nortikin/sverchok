@@ -176,7 +176,7 @@ class SvScriptNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         if self.script:
             self.use_custom_color = True
             self.color = READY_COLOR
-        self.create_sockets()
+            self.create_sockets()
     
     def update(self):
         if not self.script_str:
@@ -205,23 +205,7 @@ class SvScriptNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         
         if hasattr(script, "process"):
             script.process()
-        '''
-        # basic sanity. Shouldn't be needed
 
-        if len(script.inputs) != len(self.inputs):
-            return
-        if len(script.outputs) != len(self.outputs):
-            return
-        # check if no default and not linked, return
-     
-        
-        for data, socket in zip(script.inputs, self.inputs): 
-            if len(data) == 2 and not socket.is_linked:
-                return
-
-        if not script:
-            return
-        '''
                         
     def copy(self, node):
         self.n_id = ""
