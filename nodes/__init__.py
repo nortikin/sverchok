@@ -131,6 +131,7 @@ nodes_dict = {
         'voronoi_2d',
         'wireframe',
         'wafel', 
+        'pipe_tubes',
     ],  #
 
     'number': [

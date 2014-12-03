@@ -16,7 +16,7 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-# nikitron made
+# Gorodetskiy Nikita aka nikitron made this node in 2014 y.
 
 import bpy
 

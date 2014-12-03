@@ -1,17 +1,18 @@
-def sv_main(size=1,divx=1,divy=1,divz=1):
+def sv_main(size=1.0,divxy=1,divz=1):
     
     # in boilerplate - make your own sockets
     in_sockets = [
         ['s', 'Size(float)',  size],
-        ['s', 'DivisionsX(int)', divx],
-        ['s', 'DivisionsY(int)', divy],
+        ['s', 'DivisionsXY(int)', divxy],
         ['s', 'DivisionsZ(int)', divz],
     ]
     
-    # your's code here
-    if divx<1: divx=1
-    if divy<1: divy=1
-    if divz<1: divz=1
+    if divxy<1: divxy=1
+    divx = divy = divxy
+    if divz<1: 
+        divz=1
+    if divxy>1 and divz==1: 
+        divz=2
     
     criteria = ((divx+1)*(divy+1))
     

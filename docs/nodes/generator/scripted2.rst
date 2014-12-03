@@ -101,7 +101,8 @@ avoid as class attributes or only used for the intended meaning. To be described
 Templates
 ---------
 
-Sverchok includes a series of examples for the different templates.
+Sverchok includes a series of examples for the different templates.  
+
 
 Conveniences
 ------------
@@ -113,6 +114,22 @@ script creation process.
 
 - can refresh the Script Node which currently loads that script by hitting ``Ctrl+Enter``
 
+Main classes for your subclasses are:
+
+ - ``SvScript``
+ - ``SvScriptSimpleGenerator``
+ - ``SvScriptSimpleFunction``
+
+Limitations
+-----------
+
+Using ``SvScriptSimpleGenerator`` and ``SvScriptSimpleFunction`` you limit inputs to deal with one object. 
+For plane, for example, you'll get next data:
+
+ [(0.0, 0.0, 0.0), (1.0, 0.0, 0.0), (0.0, 1.0, 0.0), (1.0, 1.0, 0.0)] [(0, 1, 3, 2)]
+
+If you need Full support of Sverchok data - you'd better use ``SvScript`` 
+class and ``self.node.inputs[0].sv_get()`` function.
 
 Examples
 --------
@@ -123,7 +140,7 @@ advanced use cases. The images and animations on this `thread on github
 <https://github.com/nortikin/sverchok/issues/439>`_. 
 may also provide some insight into what's possible.
 
-A typical nodescript using the ``SvScriptSimplegenerator`` may look like this, note that
+A typical nodescript using the ``SvScriptSimpleGenerator`` may look like this, note that
 the third argument for outputs is specific to this template::
 
     import numpy 
@@ -152,9 +169,8 @@ the third argument for outputs is specific to this template::
 
 Note that here the name of the method that should be called for producing data 
 for each socket in the final last arguments to ``outputs`` but we are not forced 
-to have all code inside the class, we can also do::
-
-
+to have all code inside the class, we can also do
+::
 
     def lorenz(N, verts, h, a, b, c):
         add_vert = verts.append
@@ -200,7 +216,8 @@ to have all code inside the class, we can also do::
 Here is a simple script for deleting loose vertices from mesh data, it also serves as an 
 illustration for a type of script that uses the ```SvScriptSimpleFunction``` template that
 has one main function that decomposes into separate sockets. The methods don't have be static
-but in general it is good practice to keep them free from side effects.::
+but in general it is good practice to keep them free from side effects.
+::
 
     from itertools import chain
 
@@ -231,7 +248,7 @@ but in general it is good practice to keep them free from side effects.::
 
 Breakout Scripts
 ----------------
-Scripts that needs to access the node can do so via the ``self.node`` variable
+Scripts that needs to access the node can do so via the ```self.node``` variable
 that is automatically set.
 ::
 
@@ -246,6 +263,10 @@ that is automatically set.
             # that real a real node could do including multisocket
             # adaptive sockets etc. templates and examples for this are
             # coming
+
+
+Admit, you can call sockets data directly when using ```SvScript``` as ```self.node.inputs[0].sv_get()```.
+And other ```self.node.``` operations possible from this class.
 
 
 Techniques to improve Python performance

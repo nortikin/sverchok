@@ -16,7 +16,7 @@ Mesh and geometry programming consists of combining basic elements such as:
   - matrices (user-friendly rotation-scale-location transformations)
 
 ###Possibilities
-Comes with more than 100 nodes to help create and manipulate geometry. Combining these nodes will allow you to:
+Comes with more than 130 nodes to help create and manipulate geometry. Combining these nodes will allow you to:
 
   - do parametric constructions
   - easily change parameters with sliders and formulas
@@ -53,48 +53,52 @@ Install Sverchok as you would any blender addon.
 
 ###Troubleshooting Installation Errors
 
-In case Sverchok fails to install, we've compiled a list of reasons and known resolutions [here](/docs/installation.rst). Please let us know if you encounter other installation issues.
+In case Sverchok fails to install, we've compiled a list of reasons and known resolutions [here](http://nikitron.cc.ua/sverch/html/installation.html). Please let us know if you encounter other installation issues.
 
 ###Contact and Credit
-Homepage: http://nikitron.cc.ua/sverchok_en.html  
+Homepage: [Home](http://nikitron.cc.ua/sverchok_en.html)  
 Authors: 
 -  Alexander Nedovizin,  
 -  Nikita Gorodetskiy,  
 -  Linus Yng,  
 -  Agustin Gimenez, 
 -  Dealga McArdle  
+-  Constantin Vorobiew
 
 Email: sverchok-b3d@yandex.ru  
 
 
 #По-русски
 
-версию смотри папку utils файл version   
-дополнение для: http://blender.org   
-лицензия: GPL3   
-совместим с Blender версией: `>=` 2.71  
-требует Python 3.4. и numpy (включены в Blender)  
+**дополнение к**: [Blender](http://blender.org)  (версия *2.71* и выше).  
+**текущая версия**: Смотри настройки Сверчка или панель   
+**Лицензия**: [GPL3](http://www.gnu.org/licenses/quick-guide-gplv3.html)   
+**требования**: Python 3.4,  numpy, они оба присутствуют в Blender  
+
 
   
 ###Описание
 Сверчок - мощный инструмент для архитектора, позволяющий программировать визуально узлами. 
 Программирование сетки и геометрии состоит из "кирпичей":  
 
-  - списков Векторов являющих собой координаты (В Сверчке векторы основаны на нуле)
-  - списки групп индексов представляющие рёбра и грани.
-  - матрицы (удобный и понятный способ изменения положения-масштаба-поворота)
+  - списков Векторов являющих собой координаты вершин  
+  - списки групп индексов представляющие рёбра и грани  
+  - матрицы (удобный и понятный способ изменения положения-масштаба-поворота)  
 
 ###Возможности
-Более 100 узлов вам помогут создать и изменять геометрию. А сочетания узлов помогут вам:
+Около 130 узлов вам помогут создать и изменять геометрию. А сочетания узлов помогут вам:
 
   - делать параметрические конструкции
   - легко менять параметры слайдерами и формулами
-  - делать сечения, выдавливания, другие изменения с гибкым параметризованым и векторизованым набором узловых инструментов  
-  - считать площади, объём и прочее, анализировать геометрию и выводить в таблицы CSV или импортировать прямо в Сверчка
-  - векторные поля, создать их, визуализировать данные
+  - делать сечения, выдавливания, другие изменения с гибким параметризованым и векторизованым набором узловых инструментов  
+  - считать площади, объём и прочее
+  - анализировать геометрию
+  - выводить данные в таблицы CSV или импортировать из CSV прямо в Сверчка
+  - создавать векторные поля
+  - визуализировать данные
   - даже написать свой узел на питоне, используя Scripted node
-  - делать свои дополнения к блендеру ('addons') раскладкой узлов и затем пользоваться ими в окне 3М вида при помощи панели инструментов Сверчка для 3М окна
-  - доступ к API питона с узлом EvalKnieval
+  - делать свои дополнения к блендеру раскладкой узлов и затем пользоваться ими в окне 3М вида при помощи панели инструментов Сверчка для 3М окна
+  - доступ к API (bpy) при помощи узлов _Set_ и _Get_ 
   - обновлять сверчка одной кнопкой
   - делать свою собственную нейронную сеть
   - и даже больше   
@@ -121,15 +125,16 @@ Email: sverchok-b3d@yandex.ru
    Нажмите потом `F8` чтобы перезагрузить дополнения блендера. Должна поменяться версия  
 
 ###Известные ошибки установки
-Не установилось? Список причин [тыц](/docs/installation.rst). Если вашей ошибки там нет - пишите письма.
+Не установилось? Список причин [тыц](http://nikitron.cc.ua/sverch/html/installation.html). Если вашей ошибки там нет - пишите письма.
 
 ###Контакты и разработчики
-Домашняя страница: http://nikitron.cc.ua/sverchok_ru.html  
+Домашняя страница: [Домой](http://nikitron.cc.ua/sverchok_ru.html)  
 Разработчики: 
--  Недовизин Александр,  
--  Городецкий Никита,  
--  Инг Линус,  
--  Жименез Агустин, 
--  МакАрдле Деальга  
+-  Недовизин Александр;  
+-  Городецкий Никита;  
+-  Инг Линус;  
+-  Жименез Агустин; 
+-  МакАрдле Деальга;  
+-  Воробьёв Константин.   
 
 Email: sverchok-b3d@yandex.ru  
