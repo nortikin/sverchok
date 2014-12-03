@@ -316,5 +316,5 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvScriptNodeMK2)
-    bpy.utils.register_class(SvLoadScript)
+    bpy.utils.unregister_class(SvLoadScript)
     bpy.utils.unregister_class(SvDefaultScript2Template)
