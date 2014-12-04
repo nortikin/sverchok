@@ -303,6 +303,11 @@ class SverchCustomTreeNode:
         return ntree.bl_idname in ['SverchCustomTreeType', 'SverchGroupTreeType']
     
     def mark_error(self, err):
+        """
+        marks the with system error color
+        will automaticly be cleared and restored to
+        the old color
+        """
         ng = self.id_data
         update_error_nodes(ng, self.name, err)
 
@@ -325,7 +330,7 @@ class SverchCustomTreeNode:
     def process_node(self, context):
         '''
         Doesn't work as intended, inherited functions can't be used for bpy.props
-        update=
+        update= ...
         Still this is called from updateNode
         '''
         if self.id_data.is_frozen():
