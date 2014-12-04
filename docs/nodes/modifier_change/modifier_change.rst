@@ -13,7 +13,4 @@ Modifier Change
    mask_vertices
    fill_holes
    intersect_edges
-   rotation
-   scale
-   mirror
    delete_loose

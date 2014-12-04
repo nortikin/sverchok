@@ -1,12 +1,14 @@
-***********
-Basic Debug
-***********
+****
+Text
+****
 
 .. toctree::
    :maxdepth: 2
 
+   viewer_text
    note
    gtext
-   frame_info
    debug
    stethoscope   
+   text_inout
+   

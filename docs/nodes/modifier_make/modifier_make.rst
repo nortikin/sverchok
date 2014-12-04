@@ -17,3 +17,4 @@ Modifier Make
    convex_hull
    lathe
    wafel
+   pipe_tubes

@@ -14,4 +14,3 @@ List Main
    list_mask_in
    list_match
    list_math
-   socket_converter

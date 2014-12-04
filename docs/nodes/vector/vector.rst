@@ -7,7 +7,6 @@ Vector
 
    vector_in
    vector_out
-   vector_move
    vector_math
    vector_drop
    vector_doubles
