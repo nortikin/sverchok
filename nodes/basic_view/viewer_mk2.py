@@ -286,7 +286,7 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
         
         col.prop(self,"use_layout_light")
         if self.use_layout_light:
-            col.prop(self.id_data, 'sv_light_direction', text='')
+            col.prop(context.scene, 'sv_light_direction', text='')
         else:
             col.prop(self, 'light_direction', text='')
 
@@ -364,7 +364,12 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
             callback_enable(n_id, cache_viewer_baker, config_options)
 
     def get_options(self):
-        settings = {
+        if self.use_layout_light: 
+            ld =  bpy.context.scene.sv_light_direction    
+        else:
+            ld = self.light_direction
+
+        options = {
             'draw_list': 0,
             'show_verts': self.display_verts,
             'show_edges': self.display_edges,
@@ -377,11 +382,10 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
             'vertex_size': self.vertex_size,
             'edge_width': self.edge_width,
             'forced_tessellation': self.ngon_tessellate,
-            'timings': self.callback_timings
+            'timings': self.callback_timings,
+            'light_direction': -ld
             }
-        ld =  self.id_data.sv_light_direction if self.use_layout_light else self.light_direction
-        settings['light_direction'] = ld
-        return settings.copy()
+        return options.copy()
 
     def free(self):
         global cache_viewer_baker
@@ -397,15 +401,25 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
             bake(idname=self.name, idtree=self.id_data.name)
 
 
+def update_light(self, context):
+    is_vdmk2 = lambda n: n.bl_idname == "ViewerNode2"
+    is_sv_tree = lambda ng: ng.bl_idname == "SverchCustomTreeType"
+    for ng in filter(is_sv_tree, bpy.data.node_groups):
+        for n in filter(is_vdmk2, ng.nodes):
+            n.process()
+
 def register():
     bpy.utils.register_class(ViewerNode2)
     bpy.utils.register_class(SvObjBakeMK2)
-
+    bpy.types.Scene.sv_light_direction = FloatVectorProperty(
+        name='light_direction', subtype='DIRECTION', min=0, max=1, size=3,
+        default=(0.2, 0.6, 0.4), update=update_light)
+    
 
 def unregister():
     bpy.utils.unregister_class(ViewerNode2)
     bpy.utils.unregister_class(SvObjBakeMK2)
-
+    del bpy.types.Scene.sv_light_direction
 
 if __name__ == '__main__':
     register()
