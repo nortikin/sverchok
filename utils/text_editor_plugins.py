@@ -314,7 +314,7 @@ class SvNodeRefreshFromTextEditor(bpy.types.Operator):
                     try:
                         n.load()
                     except SyntaxError as err:
-                        msg = "SyntaxError'{0}'".format(err)
+                        msg = "SyntaxError : {0}".format(err)
                         self.report({"WARNING"}, msg)
                         return {'CANCELLED'}
                     except:
