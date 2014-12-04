@@ -169,9 +169,9 @@ def upgrade_nodes(ng):
         for s_name, p_name, use_prop, default in vertices_socket_upgrade[n.bl_idname]:
             socket = n.inputs.get(s_name)
             if socket: 
-                if p_name:
+                if p_name and not socket.prop_name:
                     socket.prop_name = p_name
-                elif use_prop:
+                elif use_prop and not socket.use_prop:
                     socket.prop = default
                     socket.use_prop = True
                     socket.prop_name = ""
