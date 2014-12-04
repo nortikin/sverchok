@@ -185,6 +185,8 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
         name='face_colors', subtype='COLOR', min=0, max=1, size=3,
         default=(0.0301, 0.488, 0.899), update=updateNode)
 
+    use_layout_light = BoolProperty(default=True, update=updateNode)
+    
     # display toggles
     display_verts = BoolProperty(
         name="Vertices", description="Display vertices",
@@ -281,7 +283,12 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
         col.separator()
 
         col.label('Light Direction')
-        col.prop(self, 'light_direction', text='')
+        
+        col.prop(self,"use_layout_light")
+        if self.use_layout_light:
+            col.prop(self.id_data, 'sv_light_direction', text='')
+        else:
+            col.prop(self, 'light_direction', text='')
 
         col.separator()
 
@@ -357,14 +364,13 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
             callback_enable(n_id, cache_viewer_baker, config_options)
 
     def get_options(self):
-        return {
+        settings = {
             'draw_list': 0,
             'show_verts': self.display_verts,
             'show_edges': self.display_edges,
             'show_faces': self.display_faces,
             'transparent': self.transparant,
             'shading': self.shading,
-            'light_direction': self.light_direction,
             'vertex_colors': self.vertex_colors,
             'face_colors': self.face_colors,
             'edge_colors': self.edge_colors,
@@ -372,7 +378,10 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
             'edge_width': self.edge_width,
             'forced_tessellation': self.ngon_tessellate,
             'timings': self.callback_timings
-            }.copy()
+            }
+        ld =  self.id_data.sv_light_direction if self.use_layout_light else self.light_direction
+        settings['light_direction'] = ld
+        return settings.copy()
 
     def free(self):
         global cache_viewer_baker

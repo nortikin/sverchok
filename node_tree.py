@@ -240,6 +240,11 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
         # for node in outputs:
         #   node.disable()
 
+    def update_light(self, context):
+        is_vdmk2 = lambda n: n.bl_idname == "ViewerNode2"
+        for n in filter(is_vdmk2, self.nodes):
+            n.process()
+
     sv_animate = BoolProperty(name="Animate", default=True, description='Animate this layout')
     sv_show = BoolProperty(name="Show", default=True, description='Show this layout',
                            update=turn_off_ng)
@@ -247,6 +252,10 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
     sv_process = BoolProperty(name="Process", default=True, description='Process layout')
     sv_user_colors = StringProperty(default="")
 
+    sv_light_direction = FloatVectorProperty(
+        name='light_direction', subtype='DIRECTION', min=0, max=1, size=3,
+        default=(0.2, 0.6, 0.4), update=update_light)
+    
     # get update list for debug info, tuple (fulllist,dictofpartiallists)
 
     def update(self):
