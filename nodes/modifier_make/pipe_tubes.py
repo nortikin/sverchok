@@ -18,11 +18,10 @@
 
 import bpy
 from bpy.props import IntProperty, FloatProperty, BoolProperty
+from mathutils import Vector
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (updateNode,
-                            SvSetSocketAnyType, SvGetSocketAnyType)
-from mathutils import Vector
+from sverchok.data_structure import updateNode
 from math import sin, cos, radians, sqrt
 
 
@@ -64,9 +63,9 @@ class SvPipeNode(bpy.types.Node, SverchCustomTreeNode):
 
     def process(self):
         
-        if self.outputs['Vers'].links and self.inputs['Vers'].links:
-            Vecs = SvGetSocketAnyType(self, self.inputs['Vers'])
-            Edgs = SvGetSocketAnyType(self, self.inputs['Edgs'])
+        if self.outputs['Vers'].is_linked and self.inputs['Vers'].is_linked:
+            Vecs = self.inputs['Vers'].sv_get()
+            Edgs = self.inputs['Edgs'].sv_get()
             Nsides = max(self.inputs['Sides'].sv_get()[0][0], 4)
             Diameter = self.inputs['Diameter'].sv_get()[0][0]
             Offset = self.inputs['Offset'].sv_get()[0][0]
@@ -74,10 +73,10 @@ class SvPipeNode(bpy.types.Node, SverchCustomTreeNode):
             
             outv, outp = self.Do_vecs(Vecs,Edgs,Diameter,Nsides,Offset,Extrude)
             
-            if self.outputs['Vers'].links:
-                SvSetSocketAnyType(self, 'Vers', outv)
-            if self.outputs['Pols'].links:
-                SvSetSocketAnyType(self, 'Pols', outp)
+            if self.outputs['Vers'].is_linked:
+                self.outputs['Vers'].sv_set(outv)
+            if self.outputs['Pols'].is_linked:
+                self.outputs['Pols'].sv_set(outp)
     
 
     def Do_vecs(self, Vecs,Edgs,Diameter,Nsides,Offset,Extrude):
