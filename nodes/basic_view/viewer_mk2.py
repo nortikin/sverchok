@@ -23,13 +23,12 @@ from bpy.props import (
 
 from mathutils import Matrix
 
-from sverchok.node_tree import (
-    SvColors, SverchCustomTreeNode,
-    StringsSocket, VerticesSocket, MatrixSocket)
+import sverchok
+from sverchok.node_tree import SverchCustomTreeNode
 
 from sverchok.data_structure import (
     cache_viewer_baker, node_id, updateNode, dataCorrect,
-    Vector_generate, Matrix_generate, SvGetSocketAnyType)
+    Vector_generate, Matrix_generate)
 
 from sverchok.ui.viewer_draw_mk2 import callback_disable, callback_enable
 # from nodes.basic_view.viewer import SvObjBake
@@ -185,6 +184,10 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
         name='face_colors', subtype='COLOR', min=0, max=1, size=3,
         default=(0.0301, 0.488, 0.899), update=updateNode)
 
+    use_scene_light = BoolProperty(name="Scene Light",
+                                   description="Lightning is the same for whole scene",
+                                   default=True, update=updateNode)
+
     # display toggles
     display_verts = BoolProperty(
         name="Vertices", description="Display vertices",
@@ -216,7 +219,7 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
         update=updateNode)
 
     bakebuttonshow = BoolProperty(
-        name='bakebuttonshow', description='show bake button on node',
+        name='bakebuttonshow', description='show bake button on node ui',
         default=False,
         update=updateNode)
 
@@ -266,8 +269,15 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
 
         if self.bakebuttonshow:
             row = layout.row()
-            row.scale_y = 4.0
-            opera = row.operator('node.sverchok_mesh_baker_mk2', text='B A K E')
+            addon = context.user_preferences.addons.get(sverchok.__name__)
+            if addon.preferences.over_sized_buttons:
+                row.scale_y = 4.0
+                bake_text = "B A K E"
+            else:
+                row.scale_y = 1
+                bake_text = "Bake"
+            
+            opera = row.operator('node.sverchok_mesh_baker_mk2', text=bake_text)
             opera.idname = self.name
             opera.idtree = self.id_data.name
 
@@ -281,10 +291,19 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
         col.separator()
 
         col.label('Light Direction')
-        col.prop(self, 'light_direction', text='')
+
+        col.prop(self, "use_scene_light")
+        if self.use_scene_light:
+            col.prop(context.scene, 'sv_light_direction', text='')
+        else:
+            col.prop(self, 'light_direction', text='')
 
         col.separator()
+        opera = col.operator('node.sverchok_mesh_baker_mk2', text="Bake")
+        opera.idname = self.name
+        opera.idtree = self.id_data.name
 
+        
         layout.prop(self, 'bakebuttonshow', text='show bake button')
 
         layout.prop(self, 'callback_timings')
@@ -336,11 +355,7 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
             if vertex_links:
                 propv = inputs['vertices'].sv_get(deepcopy=False, default=[])
                 if propv:
-                    verts = dataCorrect(propv)
-                    for v in verts:
-                        if any(l != 3 for l in map(len, v)):
-                            raise ValueError
-                    cache_viewer_baker[vertex_ref] = verts
+                    cache_viewer_baker[vertex_ref] = dataCorrect(propv)
 
             if edgepol_links:
                 prope = inputs['edg_pol'].sv_get(deepcopy=False, default=[])
@@ -357,22 +372,28 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
             callback_enable(n_id, cache_viewer_baker, config_options)
 
     def get_options(self):
-        return {
+        if self.use_scene_light:
+            ld = bpy.context.scene.sv_light_direction
+        else:
+            ld = self.light_direction
+
+        options = {
             'draw_list': 0,
             'show_verts': self.display_verts,
             'show_edges': self.display_edges,
             'show_faces': self.display_faces,
             'transparent': self.transparant,
             'shading': self.shading,
-            'light_direction': self.light_direction,
             'vertex_colors': self.vertex_colors,
             'face_colors': self.face_colors,
             'edge_colors': self.edge_colors,
             'vertex_size': self.vertex_size,
             'edge_width': self.edge_width,
             'forced_tessellation': self.ngon_tessellate,
-            'timings': self.callback_timings
-            }.copy()
+            'timings': self.callback_timings,
+            'light_direction': ld
+            }
+        return options.copy()
 
     def free(self):
         global cache_viewer_baker
@@ -388,15 +409,23 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
             bake(idname=self.name, idtree=self.id_data.name)
 
 
+def update_light(self, context):
+    is_vdmk2 = lambda n: n.bl_idname == "ViewerNode2"
+    is_sv_tree = lambda ng: ng.bl_idname == "SverchCustomTreeType"
+    for ng in filter(is_sv_tree, bpy.data.node_groups):
+        for n in filter(is_vdmk2, ng.nodes):
+            n.process()
+
+
 def register():
     bpy.utils.register_class(ViewerNode2)
     bpy.utils.register_class(SvObjBakeMK2)
+    bpy.types.Scene.sv_light_direction = FloatVectorProperty(
+        name='light_direction', subtype='DIRECTION', min=0, max=1, size=3,
+        default=(0.2, 0.6, 0.4), update=update_light)
 
 
 def unregister():
     bpy.utils.unregister_class(ViewerNode2)
     bpy.utils.unregister_class(SvObjBakeMK2)
-
-
-if __name__ == '__main__':
-    register()
+    del bpy.types.Scene.sv_light_direction
