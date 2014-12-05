@@ -130,6 +130,9 @@ class SverchokPreferences(AddonPreferences):
         name="Show icons in ctrl+space menu",
         default=False,
         description="Use icons in ctrl+space menu")
+    
+    over_sized_buttons = BoolProperty(default=False, name="Big buttons",
+                                      description="Very big buttons")
 
     def draw(self, context):
         layout = self.layout
@@ -142,6 +145,7 @@ class SverchokPreferences(AddonPreferences):
         row1 = col.row()
         row1.prop(self, "frame_change_mode", expand=True)
         col.prop(self, "show_icons")
+        col.prop(self, "over_sized_buttons")
         col.separator()
         
         

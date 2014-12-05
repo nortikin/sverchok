@@ -24,7 +24,7 @@ from bpy.props import BoolProperty, StringProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (handle_read, handle_write, handle_delete,
                             SvSetSocketAnyType, updateNode)
-
+import sverchok
 
 class SvObjSelected(bpy.types.Operator):
     """ G E T   SELECTED OBJECTS """
@@ -121,8 +121,15 @@ class ObjectsNode(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons(self, context, layout):
         row = layout.row()
-        row.scale_y = 4.0
-        opera = row.operator('node.sverchok_object_insertion', text='G E T')
+        addon = context.user_preferences.addons.get(sverchok.__name__)
+        if addon.preferences.over_sized_buttons:
+            row.scale_y = 4.0
+            op_text = "G E T"
+        else:
+            row.scale_y = 1
+            op_text = "Get selection"
+            
+        opera = row.operator('node.sverchok_object_insertion', text=op_text)
         opera.node_name = self.name
         opera.tree_name = self.id_data.name
         opera.grup_name = self.groupname

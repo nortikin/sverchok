@@ -23,6 +23,7 @@ from bpy.props import (
 
 from mathutils import Matrix
 
+import sverchok
 from sverchok.node_tree import SverchCustomTreeNode
 
 from sverchok.data_structure import (
@@ -268,8 +269,15 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
 
         if self.bakebuttonshow:
             row = layout.row()
-            row.scale_y = 4.0
-            opera = row.operator('node.sverchok_mesh_baker_mk2', text='B A K E')
+            addon = context.user_preferences.addons.get(sverchok.__name__)
+            if addon.preferences.over_sized_buttons:
+                row.scale_y = 4.0
+                bake_text = "B A K E"
+            else:
+                row.scale_y = 1
+                bake_text = "Bake"
+            
+            opera = row.operator('node.sverchok_mesh_baker_mk2', text=bake_text)
             opera.idname = self.name
             opera.idtree = self.id_data.name
 
