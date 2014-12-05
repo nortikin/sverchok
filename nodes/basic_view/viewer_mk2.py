@@ -219,7 +219,7 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
         update=updateNode)
 
     bakebuttonshow = BoolProperty(
-        name='bakebuttonshow', description='show bake button on node',
+        name='bakebuttonshow', description='show bake button on node ui',
         default=False,
         update=updateNode)
 
@@ -299,7 +299,11 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
             col.prop(self, 'light_direction', text='')
 
         col.separator()
+        opera = col.operator('node.sverchok_mesh_baker_mk2', text="Bake")
+        opera.idname = self.name
+        opera.idtree = self.id_data.name
 
+        
         layout.prop(self, 'bakebuttonshow', text='show bake button')
 
         layout.prop(self, 'callback_timings')
