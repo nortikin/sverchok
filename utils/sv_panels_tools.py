@@ -343,8 +343,12 @@ def register():
 def unregister():
     # cargo cult to unregister in reverse order? I don't think this is needed.
     # maybe it was handy at some point?
+    del bpy.types.SverchCustomTreeType.Sv3DProps
+
     for class_name in reversed(sv_tools_classes):
         bpy.utils.unregister_class(class_name)
+        
+    
 
 if __name__ == '__main__':
     register()
