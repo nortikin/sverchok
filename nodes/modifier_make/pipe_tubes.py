@@ -18,7 +18,7 @@
 
 import bpy
 from bpy.props import IntProperty, FloatProperty, BoolProperty, EnumProperty
-
+from mathutils import Vector
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 from math import sin, cos, radians, sqrt
