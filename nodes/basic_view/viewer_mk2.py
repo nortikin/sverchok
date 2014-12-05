@@ -23,13 +23,11 @@ from bpy.props import (
 
 from mathutils import Matrix
 
-from sverchok.node_tree import (
-    SvColors, SverchCustomTreeNode,
-    StringsSocket, VerticesSocket, MatrixSocket)
+from sverchok.node_tree import SverchCustomTreeNode
 
 from sverchok.data_structure import (
     cache_viewer_baker, node_id, updateNode, dataCorrect,
-    Vector_generate, Matrix_generate, SvGetSocketAnyType)
+    Vector_generate, Matrix_generate)
 
 from sverchok.ui.viewer_draw_mk2 import callback_disable, callback_enable
 # from nodes.basic_view.viewer import SvObjBake
@@ -185,8 +183,10 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
         name='face_colors', subtype='COLOR', min=0, max=1, size=3,
         default=(0.0301, 0.488, 0.899), update=updateNode)
 
-    use_layout_light = BoolProperty(default=True, update=updateNode)
-    
+    use_scene_light = BoolProperty(name="Scene Light",
+                                   description="Lightning is the same for whole scene",
+                                   default=True, update=updateNode)
+
     # display toggles
     display_verts = BoolProperty(
         name="Vertices", description="Display vertices",
@@ -283,9 +283,9 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
         col.separator()
 
         col.label('Light Direction')
-        
-        col.prop(self,"use_layout_light")
-        if self.use_layout_light:
+
+        col.prop(self, "use_scene_light")
+        if self.use_scene_light:
             col.prop(context.scene, 'sv_light_direction', text='')
         else:
             col.prop(self, 'light_direction', text='')
@@ -364,8 +364,8 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
             callback_enable(n_id, cache_viewer_baker, config_options)
 
     def get_options(self):
-        if self.use_layout_light: 
-            ld =  bpy.context.scene.sv_light_direction    
+        if self.use_scene_light:
+            ld = bpy.context.scene.sv_light_direction
         else:
             ld = self.light_direction
 
@@ -383,7 +383,7 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
             'edge_width': self.edge_width,
             'forced_tessellation': self.ngon_tessellate,
             'timings': self.callback_timings,
-            'light_direction': -ld
+            'light_direction': ld
             }
         return options.copy()
 
@@ -408,18 +408,16 @@ def update_light(self, context):
         for n in filter(is_vdmk2, ng.nodes):
             n.process()
 
+
 def register():
     bpy.utils.register_class(ViewerNode2)
     bpy.utils.register_class(SvObjBakeMK2)
     bpy.types.Scene.sv_light_direction = FloatVectorProperty(
         name='light_direction', subtype='DIRECTION', min=0, max=1, size=3,
         default=(0.2, 0.6, 0.4), update=update_light)
-    
+
 
 def unregister():
     bpy.utils.unregister_class(ViewerNode2)
     bpy.utils.unregister_class(SvObjBakeMK2)
     del bpy.types.Scene.sv_light_direction
-
-if __name__ == '__main__':
-    register()
