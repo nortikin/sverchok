@@ -33,7 +33,7 @@ def Boolean(VA, PA, VB, PB, boolean_mode):
     if not all([VA, PA, VB, PB]):
         return False, False
 
-    # bmA = bmesh_from_pydata(VA, [], PA)  
+    # bmA = bmesh_from_pydata(VA, [], PA)
     # bmB = bmesh_from_pydata(VB, [], PB)
     # magic.
     #
@@ -47,16 +47,18 @@ def Boolean(VA, PA, VB, PB, boolean_mode):
     # bmB.clear()
     # bmB.free()
 
+    a = CSG.cube()
+    b = CSG.cylinder(radius=0.5, start=[0., -2., 0.], end=[0., 2., 0.])
+
+    print(dir(a))
+
     '''
     self.faces = []
     self.normals = []
     self.vertices = []
     self.vnormals = []
     self.list = -1
-    
-    a = CSG.cube()
-    b = CSG.cylinder(radius=0.5, start=[0., -2., 0.], end=[0., 2., 0.])
-        
+
     recursionlimit = sys.getrecursionlimit()
     sys.setrecursionlimit(10000)
     try:
@@ -70,7 +72,7 @@ def Boolean(VA, PA, VB, PB, boolean_mode):
         raise RuntimeError(e)
 
     sys.setrecursionlimit(recursionlimit)
-    
+
     for polygon in polygons:
         n = polygon.plane.normal
         indices = []
@@ -84,7 +86,7 @@ def Boolean(VA, PA, VB, PB, boolean_mode):
             self.vnormals[index].append(v.normal)
         self.faces.append(indices)
         self.normals.append([n.x, n.y, n.z])
-    
+
     # setup vertex-normals
     ns = []
     for vns in self.vnormals:
@@ -145,7 +147,7 @@ class SvCSGBooleanNode(bpy.types.Node, SverchCustomTreeNode):
         VB = self.inputs['Verts B'].sv_get()
         PB = self.inputs['Polys B'].sv_get()
 
-        verts_out, polys_out = Boolean(VA, BA, VB, PB, selected_mode)
+        verts_out, polys_out = Boolean(VA, PA, VB, PB, self.selected_mode)
 
         self.outputs['Vertices'].sv_set(verts_out)
         self.outputs['Polygons'].sv_set(polys_out)
