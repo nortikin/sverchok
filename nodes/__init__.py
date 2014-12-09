@@ -130,7 +130,8 @@ nodes_dict = {
         'solidify',
         'voronoi_2d',
         'wireframe',
-        'wafel', 
+        'wafel',
+        'csg_boolean',
         'pipe_tubes',
     ],  #
 
@@ -162,5 +163,5 @@ nodes_dict = {
         'vertices_sort',
         'axis_input'
     ]
-        
+
 }

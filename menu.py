@@ -217,7 +217,7 @@ def make_node_cats():
     ]
 
     node_cats["Beta Nodes"] = [
-        # for testing convenience, and till no documentation
+        # for testing convenience, and while no documentation
         ['SvPipeNode',          'Pipe'],
         ["SvOffsetNode",        "Offset"],
         ["SvListDecomposeNode", "List Decompose"],
@@ -230,6 +230,7 @@ def make_node_cats():
         ["SvImageComponentsNode", "Image Decompose",  "GROUP_VCOL"],
         ["SvJoinTrianglesNode",   "Join Triangles"],
         ["SvCacheNode",           "Cache"],
+        ["SvCSGBooleanNode",      "GSG Boolean"],
 
     ]
 
