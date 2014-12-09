@@ -244,7 +244,9 @@ class Polygon(object):
         self.vertices = list(vertices)
         self.shared = shared
         self.plane = Plane.fromPoints(
-            vertices[0].pos, vertices[1].pos, vertices[2].pos)
+            self.vertices[0].pos, 
+            self.vertices[1].pos, 
+            self.vertices[2].pos)
 
     def clone(self):
         vertices = map(lambda v: v.clone(), self.vertices)
@@ -346,9 +348,11 @@ class Node(object):
 
     def build(self, polygons):
         if isinstance(polygons, map):
-            if not len(list(polygons)):
-                return
+            # if not len(list(polygons)):
+            #     return
             polygons = list(polygons)
+            if not len(polygons):
+                return
 
         if not self.plane:
             self.plane = polygons[0].plane.clone()

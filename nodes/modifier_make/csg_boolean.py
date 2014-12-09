@@ -67,7 +67,7 @@ def Boolean(VA, PA, VB, PB, operation):
 
         faces.append(indices)
 
-    return verts, faces
+    return [vertices], [faces]
 
 
 class SvCSGBooleanNode(bpy.types.Node, SverchCustomTreeNode):
