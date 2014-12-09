@@ -299,3 +299,12 @@ class CSG(object):
                                      point(1., t0, 1.)]))
         
         return CSG.fromPolygons(polygons)
+
+    @classmethod
+    def Obj_from_pydata(cls, verts, faces):
+        """
+
+        """
+        polygons = None
+
+        return CSG.fromPolygons(polygons)
