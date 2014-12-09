@@ -18,6 +18,7 @@
 
 import bpy
 import bmesh
+import sys
 
 from bpy.props import FloatProperty, EnumProperty
 
@@ -29,47 +30,24 @@ from sverchok.utils.csg_core import CSG
 from sverchok.utils.csg_geom import Vertex, Vector   # these may prove redundant.
 
 
-def Boolean(VA, PA, VB, PB, boolean_mode):
+def Boolean(VA, PA, VB, PB, operation):
     if not all([VA, PA, VB, PB]):
         return False, False
 
-    # bmA = bmesh_from_pydata(VA, [], PA)
-    # bmB = bmesh_from_pydata(VB, [], PB)
-    # magic.
-    #
-    #
-    # verts_out, faces_out = some operation
-    #
-    #
-    #
-    # bmA.clear()
-    # bmA.free()
-    # bmB.clear()
-    # bmB.free()
+    a = CSG.Obj_from_pydata(VA, PA)
+    b = CSG.Obj_from_pydata(VB, PB)
 
-    a = CSG.cube()
-    b = CSG.cylinder(radius=0.5, start=[0., -2., 0.], end=[0., 2., 0.])
-
-    print(a.polygons)
-
-    verts_out = []
-    faces_out = []
-
-    '''
-    self.faces = []
-    self.normals = []
-    self.vertices = []
-    self.vnormals = []
-    self.list = -1
+    faces = []
+    vertices = []
 
     recursionlimit = sys.getrecursionlimit()
     sys.setrecursionlimit(10000)
     try:
-        if operation == 'subtract':
+        if operation == 'DIFF':
             polygons = a.subtract(b).toPolygons()
-        elif operation == 'union':
+        elif operation == 'JOIN':
             polygons = a.union(b).toPolygons()
-        elif operation == 'intersect':
+        elif operation == 'ITX':
             polygons = a.intersect(b).toPolygons()
     except RuntimeError as e:
         raise RuntimeError(e)
@@ -77,31 +55,17 @@ def Boolean(VA, PA, VB, PB, boolean_mode):
     sys.setrecursionlimit(recursionlimit)
 
     for polygon in polygons:
-        n = polygon.plane.normal
         indices = []
         for v in polygon.vertices:
             pos = [v.pos.x, v.pos.y, v.pos.z]
-            if not pos in self.vertices:
-                self.vertices.append(pos)
-                self.vnormals.append([])
-            index = self.vertices.index(pos)
+            if not pos in vertices:
+                vertices.append(pos)
+            index = vertices.index(pos)
             indices.append(index)
-            self.vnormals[index].append(v.normal)
-        self.faces.append(indices)
-        self.normals.append([n.x, n.y, n.z])
 
-    # setup vertex-normals
-    ns = []
-    for vns in self.vnormals:
-        n = Vector(0.0, 0.0, 0.0)
-        for vn in vns:
-            n = n.plus(vn)
-        n = n.dividedBy(len(vns))
-        ns.append([a for a in n])
-    self.vnormals = ns
-    '''
+        faces.append(indices)
 
-    return (verts_out, faces_out)
+    return verts, faces
 
 
 class SvCSGBooleanNode(bpy.types.Node, SverchCustomTreeNode):
@@ -145,10 +109,10 @@ class SvCSGBooleanNode(bpy.types.Node, SverchCustomTreeNode):
         if not self.outputs['Vertices'].is_linked:
             return
 
-        VA = self.inputs['Verts A'].sv_get()
-        PA = self.inputs['Polys A'].sv_get()
-        VB = self.inputs['Verts B'].sv_get()
-        PB = self.inputs['Polys B'].sv_get()
+        VA = self.inputs['Verts A'].sv_get()[0]
+        PA = self.inputs['Polys A'].sv_get()[0]
+        VB = self.inputs['Verts B'].sv_get()[0]
+        PB = self.inputs['Polys B'].sv_get()[0]
 
         verts_out, polys_out = Boolean(VA, PA, VB, PB, self.selected_mode)
 

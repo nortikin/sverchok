@@ -305,6 +305,12 @@ class CSG(object):
         """
 
         """
-        polygons = None
+        polygons = []
+        for face in faces:
+            polyg = []
+            for idx in face:
+                co = verts[idx]
+                polyg.append(Vertex(co))
+            polygons.append(polyg)
 
         return CSG.fromPolygons(polygons)
