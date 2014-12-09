@@ -50,7 +50,7 @@ def Boolean(VA, PA, VB, PB, boolean_mode):
     a = CSG.cube()
     b = CSG.cylinder(radius=0.5, start=[0., -2., 0.], end=[0., 2., 0.])
 
-    print(dir(a))
+    print(a.polygons)
 
     verts_out = []
     faces_out = []
