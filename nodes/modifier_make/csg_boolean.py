@@ -33,9 +33,8 @@ def Boolean(VA, PA, VB, PB, boolean_mode):
     if not all([VA, PA, VB, PB]):
         return False, False
 
-    bmA = bmesh_from_pydata(VA, [], PA)
-    bmB = bmesh_from_pydata(VB, [], PB)
-
+    # bmA = bmesh_from_pydata(VA, [], PA)  
+    # bmB = bmesh_from_pydata(VB, [], PB)
     # magic.
     #
     #
@@ -43,11 +42,60 @@ def Boolean(VA, PA, VB, PB, boolean_mode):
     #
     #
     #
+    # bmA.clear()
+    # bmA.free()
+    # bmB.clear()
+    # bmB.free()
 
-    bmA.clear()
-    bmA.free()
-    bmB.clear()
-    bmB.free()
+    '''
+    self.faces = []
+    self.normals = []
+    self.vertices = []
+    self.vnormals = []
+    self.list = -1
+    
+    a = CSG.cube()
+    b = CSG.cylinder(radius=0.5, start=[0., -2., 0.], end=[0., 2., 0.])
+        
+    recursionlimit = sys.getrecursionlimit()
+    sys.setrecursionlimit(10000)
+    try:
+        if operation == 'subtract':
+            polygons = a.subtract(b).toPolygons()
+        elif operation == 'union':
+            polygons = a.union(b).toPolygons()
+        elif operation == 'intersect':
+            polygons = a.intersect(b).toPolygons()
+    except RuntimeError as e:
+        raise RuntimeError(e)
+
+    sys.setrecursionlimit(recursionlimit)
+    
+    for polygon in polygons:
+        n = polygon.plane.normal
+        indices = []
+        for v in polygon.vertices:
+            pos = [v.pos.x, v.pos.y, v.pos.z]
+            if not pos in self.vertices:
+                self.vertices.append(pos)
+                self.vnormals.append([])
+            index = self.vertices.index(pos)
+            indices.append(index)
+            self.vnormals[index].append(v.normal)
+        self.faces.append(indices)
+        self.normals.append([n.x, n.y, n.z])
+    
+    # setup vertex-normals
+    ns = []
+    for vns in self.vnormals:
+        n = Vector(0.0, 0.0, 0.0)
+        for vn in vns:
+            n = n.plus(vn)
+        n = n.dividedBy(len(vns))
+        ns.append([a for a in n])
+    self.vnormals = ns
+    '''
+
     return (verts_out, faces_out)
 
 
