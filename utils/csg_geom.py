@@ -327,8 +327,10 @@ class Node(object):
         return polygons
         
     def build(self, polygons):
-        if not len(polygons):
-            return
+        if isinstance(polygons, map):
+            if not len(list(polygons)):
+                return
+
         if not self.plane: self.plane = polygons[0].plane.clone()
         front = []
         back = []
