@@ -52,6 +52,9 @@ def Boolean(VA, PA, VB, PB, boolean_mode):
 
     print(dir(a))
 
+    verts_out = []
+    faces_out = []
+
     '''
     self.faces = []
     self.normals = []
