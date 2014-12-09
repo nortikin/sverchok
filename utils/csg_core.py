@@ -207,7 +207,7 @@ class CSG(object):
             polyg = []
             for idx in face:
                 co = verts[idx]
-                polyg.append(Vertex(co))
+                polyg.append(Vertex(Vector(*co)))
             polygons.append(Polygon(polyg))
 
         return CSG.fromPolygons(polygons)
