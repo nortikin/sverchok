@@ -19,7 +19,7 @@
 import bpy
 import bmesh
 
-from bpy.props import FloatProperty
+from bpy.props import FloatProperty, EnumProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
@@ -54,9 +54,16 @@ class SvCSGBooleanNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'CSG BooleanNode'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    limit = FloatProperty(
-        min=0.0, max=5.0, step=0.01,
-        name='limit', description='not sure',
+    mode_options = [
+        ("ITX", "Intersect", "", 0),
+        ("JOIN", "Join", "", 1),
+        ("DIFF", "Diff", "", 2)
+    ]
+
+    selected_mode = EnumProperty(
+        items=mode_options,
+        description="offers basic booleans using CSG",
+        default="ITX",
         update=updateNode)
 
     def sv_init(self, context):
@@ -69,8 +76,9 @@ class SvCSGBooleanNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('StringsSocket', 'Polygons', 'Polygons')
 
     def draw_buttons(self, context, layout):
-        col = layout.column()
+        row = layout.row()
         # draw operation type enum
+        row.prop(self, 'selected_mode', expand=True)
         pass
 
     def process(self):
