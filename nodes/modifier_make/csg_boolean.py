@@ -34,10 +34,10 @@ def Boolean(VA, PA, VB, PB, operation):
     if not all([VA, PA, VB, PB]):
         return False, False
 
-    # a = CSG.Obj_from_pydata(VA, PA)
-    # b = CSG.Obj_from_pydata(VB, PB)
-    a = CSG.cube()
-    b = CSG.cube([0.5, 0.5, 0.0])
+    a = CSG.Obj_from_pydata(VA, PA)
+    b = CSG.Obj_from_pydata(VB, PB)
+    # a = CSG.cube()
+    # b = CSG.cube([0.5, 0.5, 0.0])
 
     faces = []
     vertices = []
