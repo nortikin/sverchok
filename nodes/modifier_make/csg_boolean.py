@@ -99,9 +99,7 @@ class SvCSGBooleanNode(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons(self, context, layout):
         row = layout.row()
-        # draw operation type enum
         row.prop(self, 'selected_mode', expand=True)
-        pass
 
     def process(self):
         for i in range(4):
