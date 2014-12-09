@@ -29,23 +29,26 @@ from sverchok.utils.csg_core import CSG
 from sverchok.utils.csg_geom import Vertex, Vector   # these may prove redundant.
 
 
-# def join_tris(verts, faces, limit):
-#     if not verts:
-#         return False
+def Boolean(VA, PA, VB, PB, boolean_mode):
+    if not all([VA, PA, VB, PB]):
+        return False, False
 
-#     bm = bmesh_from_pydata(verts, [], faces)
+    bmA = bmesh_from_pydata(VA, [], PA)
+    bmB = bmesh_from_pydata(VB, [], PB)
 
-#     bmesh.ops.join_triangles(bm, faces=bm.faces, limit=limit)
-#     bm.verts.index_update()
-#     bm.faces.index_update()
+    # magic.
+    #
+    #
+    # verts_out, faces_out = some operation
+    #
+    #
+    #
 
-#     faces_out = []
-#     verts_out = [vert.co[:] for vert in bm.verts]
-#     [faces_out.append([v.index for v in face.verts]) for face in bm.faces]
-
-#     bm.clear()
-#     bm.free()
-#     return (verts_out, faces_out)
+    bmA.clear()
+    bmA.free()
+    bmB.clear()
+    bmB.free()
+    return (verts_out, faces_out)
 
 
 class SvCSGBooleanNode(bpy.types.Node, SverchCustomTreeNode):
@@ -94,7 +97,7 @@ class SvCSGBooleanNode(bpy.types.Node, SverchCustomTreeNode):
         VB = self.inputs['Verts B'].sv_get()
         PB = self.inputs['Polys B'].sv_get()
 
-        verts_out, polys_out = Boolean(VA, BA, VB, PB)
+        verts_out, polys_out = Boolean(VA, BA, VB, PB, selected_mode)
 
         self.outputs['Vertices'].sv_set(verts_out)
         self.outputs['Polygons'].sv_set(polys_out)
