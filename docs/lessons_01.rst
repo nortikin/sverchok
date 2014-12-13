@@ -21,11 +21,13 @@ Let's make a set of 4 vectors and combine them to represent a plane. I'll use th
 
 [image of said unit circle and four points]
 
-To begin we want to create a series of numbers, to get the range ``[0.25 pi, 0.75 pi, 1.25 pi, 1.75 pi]``. Because these aren't whole numbers, but so called ``Floats``, we want a Node that generates a range of them: Range Float. (or 'Float series' as it's called when added to the node view). We will tell the Float series Node to make ``[0.25, 0.75, 1.25, 1.75]`` and multiply them with the constant PI.  
+To begin we want to create a series of numbers, to represent the points on the unit circle above that form the square. Essentially this sequence ``[0.25 pi, 0.75 pi, 1.25 pi, 1.75 pi]``. Because these aren't whole numbers, but so called ``Floats``, we want a Node that generates a range of Floats: Range Float. (or 'Float series' as it's called when added to the node view). We will tell the Float series Node to make ``[0.25, 0.75, 1.25, 1.75]`` and multiply them later with the constant PI.  
 
 **Making a series of numbers**
 
 ``new -> numbers -> Range Float``
+
+The `Range Float` node has a set of defaults which output
 
 [ image ]
 
@@ -34,10 +36,15 @@ To begin we want to create a series of numbers, to get the range ``[0.25 pi, 0.7
 ``new -> Text -> Stethoscope``  
 Hook up the `Stethoscope` input into the `Float range` output, you'll see text printed onto the node view. You can change the color of the Stethoscope text using the color property if the background color is too similar to the text color.
 
+.. image:: https://cloud.githubusercontent.com/assets/619340/5424823/fa98153e-8300-11e4-878f-c496afbbbe2f.png
+
+**Setting up the input values of Range Float to generate the right output**
 
 
 **Multiplying the series by PI**
 
 ``new -> numbers -> Math``
+
+We know the output of the Float series now, what we will do now is multiply the series by a constant PI. This is like doing ``[0.25, 0.75, 1.25, 1.75] * pi``. 
 
 [ image ]
