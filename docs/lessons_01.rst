@@ -17,11 +17,11 @@ Lesson 01
 
 Nodes covered in this lesson: ``Math, Vector In, Float, Range Float, Viewer Draw, Stethoschope``. 
 
-Let's make a set of 4 vectors and combine them to make a plane. I'll use the Trigonometric concept of the `unit-circle` to get coordinates which are `0.5 PI appart`. 
+Let's make a set of 4 vectors and combine them to represent a plane. I'll use the Trigonometric concept of the `unit-circle` to get coordinates which are `0.5 PI appart`. 
 
 [image of said unit circle and four points]
 
-To begin we want to create a series of numbers, to get the range ``[0.25 pi, 0.75 pi, 1.25 pi, 1.75 pi]``. Because these aren't whole numbers, but so called ``Floats``, we want a Node that generates a range of them: Range Float. (or 'Float series' when added to the node view). We will tell the Float series Node to make ``[0.25, 0.75, 1.25, 1.75]`` and multiply them with the constant PI.  
+To begin we want to create a series of numbers, to get the range ``[0.25 pi, 0.75 pi, 1.25 pi, 1.75 pi]``. Because these aren't whole numbers, but so called ``Floats``, we want a Node that generates a range of them: Range Float. (or 'Float series' as it's called when added to the node view). We will tell the Float series Node to make ``[0.25, 0.75, 1.25, 1.75]`` and multiply them with the constant PI.  
 
 **Making a series of numbers**
 
