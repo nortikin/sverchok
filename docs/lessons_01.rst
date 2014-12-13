@@ -29,6 +29,13 @@ To begin we want to create a series of numbers, to get the range ``[0.25 pi, 0.7
 
 [ image ]
 
+**Seeing the output of the Range Float node**
+
+``new -> Text -> Stethoscope``  
+Hook up the `Stethoscope` input into the `Float range` output, you'll see text printed onto the node view. You can change the color of the Stethoscope text using the color property if the background color is too similar to the text color.
+
+
+
 **Multiplying the series by PI**
 
 ``new -> numbers -> Math``
