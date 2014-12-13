@@ -25,7 +25,7 @@ To begin we want to create a series of numbers, to represent the points on the u
 
 **Making a series of numbers**
 
-``new -> numbers -> Range Float``
+-  ``new -> numbers -> Range Float``  
 
 The `Range Float` node has a set of defaults which output
 
@@ -33,7 +33,8 @@ The `Range Float` node has a set of defaults which output
 
 **Seeing the output of the Range Float node**
 
-``new -> Text -> Stethoscope``  
+-  ``new -> Text -> Stethoscope``  
+
 Hook up the `Stethoscope` input into the `Float range` output, you'll see text printed onto the node view. You can change the color of the Stethoscope text using the color property if the background color is too similar to the text color.
 
 .. image:: https://cloud.githubusercontent.com/assets/619340/5424823/fa98153e-8300-11e4-878f-c496afbbbe2f.png
@@ -43,7 +44,7 @@ Hook up the `Stethoscope` input into the `Float range` output, you'll see text p
 
 **Multiplying the series by PI**
 
-``new -> numbers -> Math``
+-  ``new -> numbers -> Math``  
 
 We know the output of the Float series now, what we will do now is multiply the series by a constant PI. This is like doing ``[0.25, 0.75, 1.25, 1.75] * pi``. 
 
