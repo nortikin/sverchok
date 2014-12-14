@@ -96,7 +96,7 @@ The `Vector In` node takes as input 1 or more numbers per component. Sockets whi
 
 Sverchok draws geometry using the Viewer Nodes, there are two types of viewer nodes but we'll focus on Viewer Draw for the moment. Stethoscope is useful for showing the values of any socket, but when we're dealing with final geometric constructs like Vectors often we want to see them in 3D to get a better understanding.
 
-Connect the output of `Vectors In` into the `Vertices` on the Viewer Draw node. You should see 4 vertices appear on your 3d view:
+Connect the output of `Vectors In` into the `Vertices` on the Viewer Draw node. You should see 4 vertices appear on your 3d view (but don't worry if you don't immediately spot them):
 
 .. image:: https://cloud.githubusercontent.com/assets/619340/5428049/9cfaed4c-83b5-11e4-93d8-5d26b6f30826.png
 
@@ -120,3 +120,6 @@ Vertices Indexed:
 
 .. image:: https://cloud.githubusercontent.com/assets/619340/5428066/f9445494-83b5-11e4-9b3b-6294d732fa00.png
 
+- `` new -> Numbers -> Formula ``
+
+There are numerous ways to generate the index list for `edges`. For our basic example the simplest approach is to write them out manually. Eventually you will be making hundreds of Vertices and at that point writing them out manually is not an option, but for this lesson we won't.
