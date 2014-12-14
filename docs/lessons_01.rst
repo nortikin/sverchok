@@ -164,5 +164,5 @@ Now if you change the slider on the `Float` node, you'll notice 2 things:
 
 **End of lesson 01**
 
-We'll stop here for lesson 01, if you've most of this you'll be making crazy shapes in a matter of hours. Please continue on to `Lesson 02 - A Circle`, but take a break first. Look outside, stare at a tree -- just do something else for 10 minutes.
+We'll stop here for lesson 01, if you've followed most of this you'll be making crazy shapes in a matter of hours. Please continue on to `Lesson 02 - A Circle`, but take a break first. Look outside, stare at a tree -- just do something else for 10 minutes.
 
