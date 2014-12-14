@@ -21,7 +21,7 @@ Let's make a set of 4 vectors and combine them to represent a plane. I'll use th
 
 .. image:: https://cloud.githubusercontent.com/assets/619340/5426922/20290ef0-837b-11e4-9863-8a0a586aed7d.png
 
-To begin we want to create a series of numbers, to represent the points on the unit circle above that form the square. Essentially this sequence ``[0.25 pi, 0.75 pi, 1.25 pi, 1.75 pi]``. Because these aren't whole numbers, but so called ``Floats``, we want a Node that generates a range of Floats: Range Float. (or 'Float series' as it's called when added to the node view). We will tell the Float series Node to make ``[0.25, 0.75, 1.25, 1.75]`` and multiply them later with the constant PI.  
+We carefully pick points on the unit-circle so that when we connect them via edges it results in a square. To begin we want to create a series of numbers, to represent those points on the unit-circle. Essentially this sequence is ``[0.25 pi, 0.75 pi, 1.25 pi, 1.75 pi]``. Because these aren't whole numbers, but so called ``Floats``, we use a Node that generates a range of Floats: ``Range Float``. (or 'Float series' as it's called when added to the node view). 
 
 **Making a series of numbers**
 
@@ -29,7 +29,8 @@ To begin we want to create a series of numbers, to represent the points on the u
 
 .. image:: https://cloud.githubusercontent.com/assets/619340/5425016/91b2bd2a-8306-11e4-8c96-a2d2b4de6094.png
 
-The `Range Float` node has a set of defaults which output ``[0.000, 1.000..... 9.000]``
+This node has a set of defaults which output ``[0.000, 1.000..... 9.000]``. We will tell the  node to make ``[0.25, 0.75, 1.25, 1.75]`` and multiply them later with the constant PI.  
+
 
 **Seeing the output of the Range Float node**
 
@@ -54,7 +55,7 @@ We know the output of the Float series now, what we will do is multiply the seri
 
 1) Set one of the Math nodes to the constant ``PI`` 
 
-2) Swith the other Math node to a Multiplier node by selecting ``Multiplication (*)`` from its dropdowns.
+2) Switch the other Math node to a Multiplier node by selecting ``Multiplication (*)`` from its dropdowns.
 
 3) Connect the output of PI to one of the input sockets of the Multiply Node
 
@@ -67,5 +68,7 @@ The result should look something like this, hook up the Stethoscope to see the o
 
 **Getting the Cos and Sin of this series**
 
-// --todo
+-  ``new -> numbers -> Math``  ( add two math nodes)
+
+These new ``Math`` nodes will do the Trigonometry for us. Set one of them to a `Cos` and the other to a `Sin`. These two nodes will now output the result of taking the *cosine* or *sine* of whatever is routed into them.
 
