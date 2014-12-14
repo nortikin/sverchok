@@ -2,6 +2,8 @@
 Introduction to Visual programming with Sverchok
 ************************************************
 
+> Dealga McArdle | December | 2014
+
 You have installed the addon, if not then read **this**. The following Units will introduce no more than 10 node types per lesson. 
 
 
