@@ -143,7 +143,7 @@ Let's also reuse the Formula node by clearing the `function` field and replacing
 
 There are many ways to scale up a set of vectors, we'll use the Vector Math node.
 
-- ``new -> Vector -> Math``
+- ``new -> Vector -> Vector Math``
 
 Change the `Vector Math` node's `mode` to `Multiply Scalar`. This will let you feed a number to the Vectors to act as a multiplier. We'll add a ``Float`` node to generate the multiplier. 
 
@@ -162,7 +162,7 @@ Now if you change the slider on the `Float` node, you'll notice 2 things:
 1) the header of the Float node gets the value of the slider, and more importantly, 
 2) the Polygon will start to increase and decrease in size because you are multiplying the `x, y, and z` components of the Vectors by that amount.
 
+**End of lesson 01**
 
-
-
+We'll stop here for lesson 01, if you've most of this you'll be making crazy shapes in a matter of hours. Please continue on to `Lesson 02 - A Circle`, but take a break first. Look outside, stare at a tree -- just do something else for 10 minutes.
 
