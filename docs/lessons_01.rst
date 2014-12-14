@@ -100,6 +100,14 @@ Connect the output of `Vectors In` into the `Vertices` on the Viewer Draw node. 
 
 Notice the 3 color fields on the Viewer Draw node, they represent the color that this node gives to its Vertices, Edges, and Faces. If (after connecting Vector In to ViewerDraw) you don't see the Vertices in 3dview, it is probably because your background 3dview color is similar to the Vertex color. Adjust the color field to make them visible.
 
+**Increasing the Size of the Vertex**
+
+Sometimes, especially while introducing Sverchok, it's preferred to display Vertices a little bigger than the default values of 3 pixels. If you had difficulty spotting the vertices initially you will understand why. The N-panel (`side panel`, or `properties panel`) for the Node View will have extra panels when viewing a [Sverchok Node Tree]. Some nodes have a dedicated properties area in this panel to hold features that might otherwise complicate the node's UI.
+
+In the case of the `Viewer Draw`, there's quite a bit of extra functionality hidden away in the properties area. For now we are interested only in the Vertex Size property. In the image below it's marked with a (red) dot. This slider has a range between 1 and 10, set it to whatever is most comfortable to view.
+
+.. image:: https://cloud.githubusercontent.com/assets/619340/5427372/02a617be-839a-11e4-9af5-2c435dd5178d.png
+
 **Make some edges**
 
 // -- todo
