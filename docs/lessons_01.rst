@@ -7,17 +7,17 @@ Introduction to Visual programming with Sverchok
 You have installed the addon, if not then read **this**. The following Units will introduce no more than 10 node types per lesson. Take your time to get through the parts that are text heavy, some concepts take longer to explain not because they are difficult to understand, but because there is simply more to cover.
 
 
-Unit 01 - 4 vectors
+Unit 01 - Vectors
 ===================
 
 **prerequisites**
 
 You should have a general understanding of Vectors and Trigonometry, if not then soon enough parts of these lessons might be confusing. If you want to get the most of out Sverchok but don't have a strong Math background then work your way through related KhanAcademy content, it's a great resource and mind bogglingly comprehensive.
 
-Lesson 01
----------
+Lesson 01 - A Plane
+-------------------
 
-Nodes covered in this lesson: ``Math, Vector In, Float, Range Float, Viewer Draw, Stethoschope, Formula``. 
+Nodes covered in this lesson: ``Math, Vector In, Float, Range Float, Viewer Draw, Stethoschope, Formula, Vector Math``. 
 
 Let's make a set of 4 vectors and combine them to represent a plane. I'll use the Trigonometric concept of the `unit-circle` to get coordinates which are `0.5 PI appart`. 
 
@@ -138,4 +138,31 @@ We will reuse the Vertices, you can disconnect the Formula node from Viewer Draw
 Let's also reuse the Formula node by clearing the `function` field and replacing the content with the following sequence: ``[[0,1,2,3]]``. Connect the output of this Formula node to the EdgPol input on Viewer Draw. You should now see the following:
 
 .. image:: https://cloud.githubusercontent.com/assets/619340/5428321/ea0e4d64-83be-11e4-96c3-78a93e915012.png
+
+**Controlling the size of the Polygon**
+
+There are many ways to scale up a set of vectors, we'll use the Vector Math node.
+
+- ``new -> Vector -> Math``
+
+Change the `Vector Math` node's `mode` to `Multiply Scalar`. This will let you feed a number to the Vectors to act as a multiplier. We'll add a ``Float`` node to generate the multiplier. 
+
+- ``new -> Numbers -> Float``
+
+1) Hook up the `Float` node to the Scalar (green) input of the `Vector Math (Multiply Scalar)` node
+2) Connect the output of the `Vector In` node into the top input of the Vector Math node. 
+3) Now connect the output of the `Vector Math` node into the Vertices socket of the Viewer Draw node.
+
+You should have something like this. 
+
+.. image:: https://cloud.githubusercontent.com/assets/619340/5428874/fac67fd4-83d5-11e4-9601-1399248dddd6.png
+
+Now if you change the slider on the `Float` node, you'll notice 2 things: 
+
+1) the header of the Float node gets the value of the slider, and more importantly, 
+2) the Polygon will start to increase and decrease in size because you are multiplying the `x, y, and z` components of the Vectors by that amount.
+
+
+
+
 
