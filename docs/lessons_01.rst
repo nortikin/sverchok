@@ -70,5 +70,14 @@ The result should look something like this, hook up the Stethoscope to see the o
 
 -  ``new -> numbers -> Math``  ( add two math nodes)
 
-These new ``Math`` nodes will do the Trigonometry for us. Set one of them to a `Cos` and the other to a `Sin`. These two nodes will now output the result of taking the *cosine* or *sine* of whatever is routed into them.
+These new ``Math`` nodes will do the Trigonometry for us. Set one of them to a `Cosine` and the other to a `Sine`. These two nodes will now output the result of taking the *cosine* or *sine* of whatever is routed into them, in this case the series of Floats.
+
+.. image:: https://cloud.githubusercontent.com/assets/619340/5425497/8868cf8a-8319-11e4-8369-dd36d250e91b.png
+
+See the outputs of the Sine and Cosine node, each element represents a component of the vectors we want to make. Sine might reprsent X and Cosine could be Y. We now have enough to make the vectors we want.
+
+**Making Vectors from a series of numbers**
+
+// -- todo
+
 
