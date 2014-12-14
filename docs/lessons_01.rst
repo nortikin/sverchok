@@ -135,9 +135,7 @@ The formula node evaluates what you write into the `function` field, and then ou
 **Make a first Polygon**
 
 We will reuse the Vertices, you can disconnect the Formula node from Viewer Draw.
-Let's reuse the Formulate node by clearing the `function` field and replacing the content with the following sequence: ``[[0,1,2,3]]``. Connect the output of this Formula node to the EdgPol input on Viewer Draw.
-
-You should now see the following:
+Let's also reuse the Formula node by clearing the `function` field and replacing the content with the following sequence: ``[[0,1,2,3]]``. Connect the output of this Formula node to the EdgPol input on Viewer Draw. You should now see the following:
 
 .. image:: https://cloud.githubusercontent.com/assets/619340/5428321/ea0e4d64-83be-11e4-96c3-78a93e915012.png
 
