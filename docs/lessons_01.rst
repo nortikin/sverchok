@@ -112,6 +112,10 @@ In the case of the `Viewer Draw`, there's quite a bit of extra functionality hid
 
 .. image:: https://cloud.githubusercontent.com/assets/619340/5427696/06cd4b46-83a9-11e4-8d10-11d488d83755.png
 
+I think you'll agree that the Vertices are much easier to see now:
+
+.. image:: https://cloud.githubusercontent.com/assets/619340/5428263/75b7bdc6-83bc-11e4-85e6-caa18f79dea1.png
+
 **Make some edges**
 
 We've created vertices, now we're going to generate edges. We have 4 vertices and thus 4 indices: ``[0,1,2,3]``, the edges will be connected as ``[[0,1],[1,2],[2,3],[3,0]]``.
