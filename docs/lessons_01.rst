@@ -106,9 +106,11 @@ Notice the 3 color fields on the Viewer Draw node, they represent the color that
 
 Sometimes, especially while introducing Sverchok, it's preferred to display Vertices a little bigger than the default values of 3 pixels. If you had difficulty spotting the vertices initially you will understand why. The N-panel (`side panel`, or `properties panel`) for the Node View will have extra panels when viewing a [Sverchok Node Tree]. Some nodes have a dedicated properties area in this panel to hold features that might otherwise complicate the node's UI.
 
-In the case of the `Viewer Draw`, there's quite a bit of extra functionality hidden away in the properties area. For now we are interested only in the Vertex Size property. In the image below it's marked with a (red) dot. This slider has a range between 0 and 10, set it to whatever is most comfortable to view.
-
 .. image:: https://cloud.githubusercontent.com/assets/619340/5427372/02a617be-839a-11e4-9af5-2c435dd5178d.png
+
+In the case of the `Viewer Draw`, there's quite a bit of extra functionality hidden away in the properties area. For now we are interested only in the Vertex Size property. In the image below it's marked with a (red) dot. This slider has a range between 0 and 10, set it to whatever is most comfortable to view. Here a close up:
+
+.. image:: https://cloud.githubusercontent.com/assets/619340/5427696/06cd4b46-83a9-11e4-8d10-11d488d83755.png
 
 **Make some edges**
 
