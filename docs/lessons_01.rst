@@ -4,7 +4,7 @@ Introduction to Visual programming with Sverchok
 
 > Dealga McArdle | December | 2014
 
-You have installed the addon, if not then read **this**. The following Units will introduce no more than 10 node types per lesson. 
+You have installed the addon, if not then read **this**. The following Units will introduce no more than 10 node types per lesson. Take your time to get through the parts that are text heavy, some concepts take longer to explain not because they are difficult to understand, but because there is simply more to cover.
 
 
 Unit 01 - 4 vectors
@@ -17,7 +17,7 @@ You should have a general understanding of Vectors and Trigonometry, if not then
 Lesson 01
 ---------
 
-Nodes covered in this lesson: ``Math, Vector In, Float, Range Float, Viewer Draw, Stethoschope``. 
+Nodes covered in this lesson: ``Math, Vector In, Float, Range Float, Viewer Draw, Stethoschope, Formula``. 
 
 Let's make a set of 4 vectors and combine them to represent a plane. I'll use the Trigonometric concept of the `unit-circle` to get coordinates which are `0.5 PI appart`. 
 
@@ -106,7 +106,7 @@ Notice the 3 color fields on the Viewer Draw node, they represent the color that
 
 Sometimes, especially while introducing Sverchok, it's preferred to display Vertices a little bigger than the default values of 3 pixels. If you had difficulty spotting the vertices initially you will understand why. The N-panel (`side panel`, or `properties panel`) for the Node View will have extra panels when viewing a [Sverchok Node Tree]. Some nodes have a dedicated properties area in this panel to hold features that might otherwise complicate the node's UI.
 
-In the case of the `Viewer Draw`, there's quite a bit of extra functionality hidden away in the properties area. For now we are interested only in the Vertex Size property. In the image below it's marked with a (red) dot. This slider has a range between 1 and 10, set it to whatever is most comfortable to view.
+In the case of the `Viewer Draw`, there's quite a bit of extra functionality hidden away in the properties area. For now we are interested only in the Vertex Size property. In the image below it's marked with a (red) dot. This slider has a range between 0 and 10, set it to whatever is most comfortable to view.
 
 .. image:: https://cloud.githubusercontent.com/assets/619340/5427372/02a617be-839a-11e4-9af5-2c435dd5178d.png
 
