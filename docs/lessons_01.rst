@@ -10,7 +10,7 @@ Unit 01 - 4 vectors
 
 **prerequisites**
 
-You should have a general understanding of Vectors and Trigonometry, if not then work your way through related KhanAcademy content, they are fantastic and comprehensive. It is essential for meaningful use of Sverchok to have a grasp on these concepts, maybe not initially, but later you'll want to do cooler and complex stuff.
+You should have a general understanding of Vectors and Trigonometry, if not then soon enough parts of these lessons might be confusing. If you want to get the most of out Sverchok but don't have a strong Math background then work your way through related KhanAcademy content, it's a great resource and mind bogglingly comprehensive.
 
 Lesson 01
 ---------
