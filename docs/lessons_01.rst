@@ -124,6 +124,20 @@ Vertices Indexed:
 
 .. image:: https://cloud.githubusercontent.com/assets/619340/5428066/f9445494-83b5-11e4-9b3b-6294d732fa00.png
 
-- `` new -> Numbers -> Formula ``
+- ``new -> Numbers -> Formula``
 
-There are numerous ways to generate the index list for `edges`. For our basic example the simplest approach is to write them out manually. Eventually you will be making hundreds of Vertices and at that point writing them out manually is not an option, but for this lesson we won't.
+There are numerous ways to generate the index list for `edges`. For our basic example the simplest approach is to write them out manually. Eventually you will be making hundreds of Vertices and at that point it won't be viable to write them out manually. For this lesson we'll not touch that subject.
+
+The formula node evaluates what you write into the `function` field, and then outputs the result to its out socket. Type into that field the following sequence ``[[0,1],[1,2],[2,3],[3,0]]``. Now hook the output of Formula node into the ``EdgPol`` input of ViewerDraw. You should see the following:
+
+.. image:: https://cloud.githubusercontent.com/assets/619340/5428298/e89ce388-83bd-11e4-949e-2f416b90c5d0.png
+
+**Make a first Polygon**
+
+We will reuse the Vertices, you can disconnect the Formula node from Viewer Draw.
+Let's reuse the Formulate node by clearing the `function` field and replacing the content with the following sequence: ``[[0,1,2,3]]``. Connect the output of this Formula node to the EdgPol input on Viewer Draw.
+
+You should now see the following:
+
+.. image:: https://cloud.githubusercontent.com/assets/619340/5428321/ea0e4d64-83be-11e4-96c3-78a93e915012.png
+
