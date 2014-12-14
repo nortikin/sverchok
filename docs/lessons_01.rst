@@ -53,9 +53,13 @@ Set the Float Series mode to `Step` and make sure the `Start` value is 0.25 and 
 We know the output of the Float series now, what we will do is multiply the series by a constant PI. This is like doing ``[0.25, 0.75, 1.25, 1.75] * pi``, which is what we wanted from the beginning, namely; ``[0.25 * pi, 0.75 * pi, 1.25 * pi, 1.75 * pi]``. 
 
 1) Set one of the Math nodes to the constant ``PI`` 
+
 2) Swith the other Math node to a Multiplier node by selecting ``Multiplication (*)`` from its dropdowns.
-4) Connect the output of PI to one of the input sockets of the Multiply Node
-5) Connect the output of the Float Series into the other input of the Multiply Node. 
+
+3) Connect the output of PI to one of the input sockets of the Multiply Node
+
+4) Connect the output of the Float Series into the other input of the Multiply Node. 
+
 
 The result should look something like this, hook up the Stethoscope to see the outputs.
 
