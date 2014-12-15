@@ -164,5 +164,7 @@ Now if you change the slider on the `Float` node, you'll notice 2 things:
 
 **End of lesson 01**
 
-We'll stop here for lesson 01, if you've followed most of this you'll be making crazy shapes in a matter of hours. Please continue on to `Lesson 02 - A Circle`, but take a break first. Look outside, stare at a tree -- just do something else for 10 minutes.
+Save this .blend you've been working in now, somewhere where you will find it easily, as `Sverchok_Unit_01_Lesson_01`. We will use it as a starting point for the next lesson.
+
+We'll stop here for lesson 01, if you've followed most of this you'll be making crazy shapes in a matter of hours. Please continue on to `Lesson 02 - A Circle`, but take a break first. Look outside, stare at a tree -- do something else for 10 minutes.
 
