@@ -46,7 +46,7 @@ Notice that, besides all the square brackets, you see the length of the incoming
   range(start=0, end=n, step=1)
   >> [0,1,2,...n]
 
-To generate the index list for the polygon we need a node that outputs a sequential list of integers given `start`, `step` and `count` as parameters. This is what the `Range Integer` node does.
+To generate the index list for the polygon we need a node that outputs a sequential list of integers, Sverchok has exactly such a node and it accepts values for `start`, `step` and `count` as parameters. This is what the `Range Integer (count mode)` node does.
 
 - ``new -> Numbers -> Range Int``
 
