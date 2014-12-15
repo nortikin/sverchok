@@ -9,7 +9,7 @@ Same as lesson 01.
 Lesson 02 - A Circle
 --------------------
 
-This lesson will introduce the following nodes: ``List Length, Int Range``
+This lesson will introduce the following nodes: ``List Length, Int Range, List Shift, List Zip``
 
 This will continue from the previous lesson where we made a plane from 4 vectors. We can reuse some of these nodes in order to make a Circle. If you saved it as suggested load it up, or download from **here**. You can also create it from scratch by cross referencing this image.
 
@@ -30,7 +30,7 @@ Because this is a common task, there's a dedicated node for it called ``UV Conne
 
 In order to make the list automatically, we should know how many vertices there are at any given moment.
 
-- ``new -> List Main -> List Length``
+- ``Add -> List Main -> List Length``
 
 The `List Length` node lets you output the length of incoming data, it also lets you pick what level of the data you want to inspect. It's worth reading the **reference** of this node for a comprehensive tour of its capabilities.
 
@@ -48,7 +48,7 @@ Notice that, besides all the square brackets, you see the length of the incoming
 
 To generate the index list for the polygon we need a node that outputs a sequential list of integers, Sverchok has exactly such a node and it accepts values for `start`, `step` and `count` as parameters. This is what the `Range Integer (count mode)` node does.
 
-- ``new -> Numbers -> Range Int``
+- ``Add -> Numbers -> Range Int``
 
 1) Set the mode of List Range int to `Count`.
 2) Make sure `start` is 0 and `step` is 1
@@ -79,8 +79,8 @@ Above we have the step set to 0.2, this manually sets the distance but calculati
 
 I would want to have something like ``1 / number_vertices``, this calls for a Math node and an `Int` to represent the whole number of vertices. 
 
-- ``new -> Numbers -> Math``
-- ``new -> Numbers -> Int``
+- ``Add -> Numbers -> Math``
+- ``Add -> Numbers -> Int``
 
 1) set the Math node `mode` to ``/ (division)`` , and put 1.0 in the numerator
 2) connect the Int node into the bottom socket of the division Math node.
@@ -104,18 +104,47 @@ In future lessons you will often see minimized/hidden nodes
 
 **Polygon is easy, what about Edges?**
 
-Remember, there are nodes that can take an incoming set of vertices and generate the required Edges index lists. But we're trying to explore the modular features of Sverchok -- we'll build our own this time.
+Remember, there are nodes that can take an incoming set of vertices and generate the required Edges index lists. But we're trying to explore the modular features of Sverchok -- we'll build our own Edges generator this time.
 
 The edge index list of the square looked like ``[[0,1],[1,2],[2,3],[3,0]]``. For the Circle of a variable number of vertices that list will look like ``[[0,1],[1,2],...,[n-1,n],[n,0]]``. Notice i'm just showing the start of the list and the end, to indicate that there might be a formula for it based purely on how many verts you want to link.
 
-In python you might express this using a list comprehension.
+In python you might express this using a for loop or a list comprehension::
 
-// -- todo
+    # for loop
+    n = 5
+    for i in range(n):
+       print(i, (i+1) % n)
+
+    >> 0 1
+    >> 1 2
+    >> 2 3
+    >> 3 4
+    >> 4 0
+
+    # list comprehension
+    n = 5
+    edges = [[i, (i+1) % n] for i in range(n)]
+    print(edges)
+    >> [[0, 1], [1, 2], [2, 3], [3, 4], [4, 0]]
+
+In Sverchok the end result will be the same, but we'll arrive at the result in a differently.
+
+The second index of each edge is one higher than the first index, except for the last edge. The last edge closes the ring of edges and meets back up with the first vertex. In essenence this is a wrap-around. Or, you can think of it as two lists, one of which is shifted by one with respect the other list.
+
+Sverchok has a node for this called `List Shift`. We'll zip the two lists together using `List Zip` node.
+
+- ``add -> List Struct -> List Shift``
+- ``add -> List Main -> List Zip``
 
 
+Notice in this image I have minimized/hidden (shortcut H) a few nodes to keep the node view from getting claustrophobic. 
+
+.. image:: https://cloud.githubusercontent.com/assets/619340/5440504/6f4ddf60-8489-11e4-81f4-ead627fe710c.png
 
 
+**Addendum**
 
+``Viewer Draw`` automatically generates Edges when you pass one or more Vertices and Polygons. This means in practice when you already have the Polygons for an object then you don't need to also pass in the Edges, they are inferred purely from the indices of the incoming Polygons.
 
 
 

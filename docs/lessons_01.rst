@@ -27,7 +27,7 @@ We carefully pick points on the unit-circle so that when we connect them via edg
 
 **Making a series of numbers**
 
--  ``new -> numbers -> Range Float``  
+-  ``Add -> numbers -> Range Float``  
 
 .. image:: https://cloud.githubusercontent.com/assets/619340/5425016/91b2bd2a-8306-11e4-8c96-a2d2b4de6094.png
 
@@ -36,7 +36,7 @@ This node has a set of defaults which output ``[0.000, 1.000..... 9.000]``. We w
 
 **Seeing the output of the Range Float node**
 
--  ``new -> Text -> Stethoscope``  
+-  ``Add -> Text -> Stethoscope``  
 
 Hook up the `Stethoscope` input into the `Float range` output, you'll see text printed onto the node view. You can change the color of the Stethoscope text using the color property if the background color is too similar to the text color.
 
@@ -51,7 +51,7 @@ Set the Float Series mode to `Step` and make sure the `Start` value is 0.25 and 
 
 **Multiplying the series by PI**
 
--  ``new -> numbers -> Math``  ( add two math nodes)
+-  ``Add -> numbers -> Math``  ( add two math nodes)
 
 We know the output of the Float series now, what we will do is multiply the series by a constant PI. This is like doing ``[0.25, 0.75, 1.25, 1.75] * pi``, which is what we wanted from the beginning, namely; ``[0.25 * pi, 0.75 * pi, 1.25 * pi, 1.75 * pi]``. 
 
@@ -70,7 +70,7 @@ The result should look something like this, hook up the Stethoscope to see the o
 
 **Getting the Sine and Cosine of this series**
 
--  ``new -> numbers -> Math``  ( add two math nodes)
+-  ``Add -> numbers -> Math``  ( add two math nodes)
 
 These new `Math` nodes will do the Trigonometry for us. Set one of them to a `Cosine` and the other to a `Sine`. These two nodes will now output the *cos* or *sin* of whatever is routed into them, in this case the series of Floats.
 
@@ -80,7 +80,7 @@ See the outputs of the Sine and Cosine node, each element represents a component
 
 **Making Vectors from a series of numbers**
 
-- ``new -> Vector -> Vector In``  
+- ``Add -> Vector -> Vector In``  
 
 The `Vector In` node takes as input 1 or more numbers per component. Sockets which are not explicitely connected to will be represented by a zero. 
 
@@ -92,7 +92,7 @@ The `Vector In` node takes as input 1 or more numbers per component. Sockets whi
 
 **Display Geometry**
 
-- ``new -> Viz -> Viewer Draw``
+- ``Add -> Viz -> Viewer Draw``
 
 Sverchok draws geometry using the Viewer Nodes, there are two types of viewer nodes but we'll focus on Viewer Draw for the moment. Stethoscope is useful for showing the values of any socket, but when we're dealing with final geometric constructs like Vectors often we want to see them in 3D to get a better understanding.
 
@@ -124,7 +124,7 @@ Vertices Indexed:
 
 .. image:: https://cloud.githubusercontent.com/assets/619340/5428066/f9445494-83b5-11e4-9b3b-6294d732fa00.png
 
-- ``new -> Numbers -> Formula``
+- ``Add -> Numbers -> Formula``
 
 There are numerous ways to generate the index list for `edges`. For our basic example the simplest approach is to write them out manually. Eventually you will be making hundreds of Vertices and at that point it won't be viable to write them out manually. For this lesson we'll not touch that subject.
 
@@ -143,11 +143,11 @@ Let's also reuse the Formula node by clearing the `function` field and replacing
 
 There are many ways to scale up a set of vectors, we'll use the Vector Math node.
 
-- ``new -> Vector -> Vector Math``
+- ``Add -> Vector -> Vector Math``
 
 Change the `Vector Math` node's `mode` to `Multiply Scalar`. This will let you feed a number to the Vectors to act as a multiplier. We'll add a ``Float`` node to generate the multiplier. 
 
-- ``new -> Numbers -> Float``
+- ``Add -> Numbers -> Float``
 
 1) Hook up the `Float` node to the Scalar (green) input of the `Vector Math (Multiply Scalar)` node
 2) Connect the output of the `Vector In` node into the top input of the Vector Math node. 
