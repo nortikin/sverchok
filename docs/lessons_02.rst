@@ -63,9 +63,9 @@ To generate the index list for the polygon we need a node that outputs a sequent
 
 The 4 verts we've had from the very beginning are already points on a circular path, we can make a simple change to finally see this Circle immerge.
 
-1) Set the mode of the FLoat series node to `Range`
-2) Set the stop parameter to 2.0
-3) Set the step to 0.2 for example.
+1) Set the `mode` of the Float series node to `Range`
+2) Set the `stop` parameter to 2.0
+3) Set the `step` to 0.2 for example.
 
 ``2.0 / 0.2 = 10``, this means the Float Series node will now output ``[0.0, 0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.4, 1.6, 1.8]``. Notice that it does not output 2.0 at the end, because this mode excludes the terminating value. (called non inclusive)
 
