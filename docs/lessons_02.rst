@@ -127,7 +127,7 @@ In python you might express this using a for loop or a list comprehension::
     print(edges)
     >> [[0, 1], [1, 2], [2, 3], [3, 4], [4, 0]]
 
-In Sverchok the end result will be the same, but we'll arrive at the result in a differently.
+In Sverchok the end result will be the same, but we'll arrive at the result in a different way.
 
 The second index of each edge is one higher than the first index, except for the last edge. The last edge closes the ring of edges and meets back up with the first vertex. In essenence this is a wrap-around. Or, you can think of it as two lists, one of which is shifted by one with respect the other list.
 
@@ -136,11 +136,24 @@ Sverchok has a node for this called `List Shift`. We'll zip the two lists togeth
 - ``add -> List Struct -> List Shift``
 - ``add -> List Main -> List Zip``
 
+1) Hook the output of `List Range Int` into the first Data socket of the `List Zip` node.
+2) Hook the output of `List Range Int` also into the `List Shift` node.
+3) To make the wrap-around, simply set the `Shift slider` to 1.
+4) connect the output of `List Shift` to the second Data input of `List Zip`.
+5) Make sure the level parameter on `List Zip` is set to 1.
+6) Hook up a Stethoscope to the output of `List Zip` to verify
 
 Notice in this image I have minimized/hidden (shortcut H) a few nodes to keep the node view from getting claustrophobic. 
 
 .. image:: https://cloud.githubusercontent.com/assets/619340/5440504/6f4ddf60-8489-11e4-81f4-ead627fe710c.png
 
+7) Or hook up the output of `List Zip` straight into the EdgPol socket of`Viewer Draw`.
+
+.. image:: https://cloud.githubusercontent.com/assets/619340/5440916/bee96a1e-848c-11e4-8799-060c7f458c3e.png
+
+**End of lesson 02**
+
+// -- todo
 
 **Addendum**
 
