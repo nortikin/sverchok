@@ -104,6 +104,12 @@ In future lessons you will often see minimized/hidden nodes
 
 **Polygon is easy, what about Edges?**
 
+Remember, there are nodes that can take an incoming set of vertices and generate the required Edges index lists. But we're trying to explore the modular features of Sverchok -- we'll build our own this time.
+
+The edge index list of the square looked like ``[[0,1],[1,2],[2,3],[3,0]]``. For the Circle of a variable number of vertices that list will look like ``[[0,1],[1,2],...,[n-1,n],[n,0]]``. Notice i'm just showing the start of the list and the end, to indicate that there might be a formula for it based purely on how many verts you want to link.
+
+In python you might express this using a list comprehension.
+
 // -- todo
 
 
