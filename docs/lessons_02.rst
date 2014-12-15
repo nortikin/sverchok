@@ -79,7 +79,7 @@ Above we have the step set to 0.2, this manually sets the distance but calculati
 
 I would want to have something like ``1 / number_vertices``, this calls for a Math node and an `Int` to represent the whole number of vertices. 
 
-mode to ``Division / `` , and put 1.0 in the numerator and the Whole number of vertices in the denominator. An easy way to get whole number is to use the `Int` node
+mode to ``/ (division)`` , and put 1.0 in the numerator and the Whole number of vertices in the denominator. An easy way to get whole number is to use the `Int` node
 
 - ``new -> Numbers -> Math``
 - ``new -> Numbers -> Int``
