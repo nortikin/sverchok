@@ -73,7 +73,28 @@ The 4 verts we've had from the very beginning are already points on a circular p
 
 You can see the beginnings of a circle.
 
+**Forcing an even spread of Vertices**
 
+Above we have the step set to 0.2, this manually sets the distance but calculation this step value soon gets cumbersome. We will add nodes to do the calculation for us. Think about how you might do that.
+
+I would want to have something like ``1 / number_vertices``, this calls for a Math node and an `Int` to represent the whole number of vertices. 
+
+mode to ``Division / `` , and put 1.0 in the numerator and the Whole number of vertices in the denominator. An easy way to get whole number is to use the `Int` node
+
+- ``new -> Numbers -> Math``
+- ``new -> Numbers -> Int``
+
+1) set the Math node `mode` to ``/ (division) `` , and put 1.0 in the numerator
+2) connect the Int node into the bottom socket of the division Math node.
+3) adjust the integer value on the Int node to 18 for example.
+4) in the image below I've connected a Stethoscope to the output of the Math Node to see the value of this computation.
+5) Finally, hook up the output of the division Math node into the `step` socket of Float series.
+
+You should see something like this, if not you can by now probably figure out what to do.
+
+.. image:: https://cloud.githubusercontent.com/assets/619340/5437240/f7f80fa4-846e-11e4-8229-97a4c62c6368.png
+
+**Notice this is starting to get crowded, let's minimize nodes**
 
 
 
