@@ -19,9 +19,10 @@ Just like Blender has a Circle primitive, Sverchok also has a built in Circle pr
 
 **Dynamic Polygons**
 
-In the collection of nodes we have in the Node View at the moment, the sequence used for linking up vertices to form a `polygon` is inputted manually. As mentioned earlier, as soon as you need to link many vertices instead of the current 4, you will want to make this `list creation` automatic. You will probably also want to make it dynamic to add new segments automatically if the vertex count increases. 
+In the collection of nodes we have in the Node View at the moment, the sequence used for linking up vertices to form a `polygon` is inputted manually. As mentioned earlier, as soon as you need to link many vertices instead of the current 4, you will want to make this `list creation` automatic. You will probably also want to make it dynamic to add new segments automatically if the vertex count is changeable. 
 
 Because this is a common task, there's a dedicated node for it called ``UV Connect`` (link) , but just like the `Circle` generator nodes we will avoid using that and for the same reason. Learning how to build these things yourself is the best way to learn Visual Programming with nodes.
+
 
 **Generating an index list for the polygon**
 
@@ -31,11 +32,13 @@ In order to make the list automatically, we should know how many vertices there 
 
 The `List Length` node lets you output the length of incoming data, it also lets you pick what level of the data you want to know the length of. It's worth reading the **reference** of this node for a comprehensive tour of its capabilities.
 
-** Getting the number of Vertices**
+**Getting the number of Vertices**
 
 1) hook the Vector In output into the `Data` input of `List Length`
 2) hook a new Stethoscope up to the output of the the `List Length` node.
-3) adjust the `Level` slider to 0, you should see ``[[4]]``
+3) notice the `Level` slider is set to 1 by default, you should see Stethoscope shows output.
+
+.. image:: https://cloud.githubusercontent.com/assets/619340/5436323/15ea171e-8465-11e4-8356-ec18ae8ea19d.png
 
 Notice that, besides all the square brackets, you see the length of the incoming data is `4`, as expected.
 
