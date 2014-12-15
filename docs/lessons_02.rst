@@ -98,7 +98,7 @@ Before going any further I would like to draw attention to the fact that you can
 
 .. image:: https://cloud.githubusercontent.com/assets/619340/5438258/29b11056-8477-11e4-877d-499553dcfe0c.png
 
-In Sverchok we added special functionality that draws information about the certain types of node into their header area. This allows you to see what the node is supposed to be doing even when the UI is minimized. Currently the `Int, Float, Math, Vector Math` nodes have this behaviour because they are essential nodes and used very often.
+In Sverchok we added special functionality to certain nodes to draw information about themselves into their header area. This allows you to see what the node is supposed to be doing even when the UI is minimized. Currently the `Int, Float, Math, Vector Math` nodes have this behaviour because they are essential nodes and used very often.
 
 In future lessons you will often see minimized/hidden nodes
 
