@@ -1,14 +1,6 @@
-************************************************
-Introduction to Visual programming with Sverchok
-************************************************
-
-> Dealga McArdle | December | 2014
-
-You have installed the addon, if not then read **this**. The following Units will introduce no more than 10 node types per lesson. Take your time to get through the parts that are text heavy, some concepts take longer to explain not because they are difficult to understand, but because there is simply more to cover.
-
-
-Unit 01 - Vectors
-===================
+**********************************
+Introduction to modular components
+**********************************
 
 **prerequisites**
 

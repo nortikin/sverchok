@@ -1,5 +1,6 @@
-Unit 01 - Vectors
-===================
+**********************************
+Introduction to modular components
+**********************************
 
 **prerequisites**
 
