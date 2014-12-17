@@ -31,7 +31,7 @@ I chose a Grid because it has only a few properties, but they can be exposed in 
 
 **Decide which variables you want to expose**
 
-The upside of building generators from scratch is that you can make decisions based on what is most convenient for you. Sometimes there are so many ways to approach variables that you just have to decide and change it later if you need to. Here I'll pick what I think is the most convenient
+The upside of building generators from scratch is that you can make decisions based on what is most convenient for you. Here I'll pick what I think is the most convenient, it can always be changed later.
 
 - Division distance side X
 - Division distance side Y
