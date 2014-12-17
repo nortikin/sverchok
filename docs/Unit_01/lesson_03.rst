@@ -14,7 +14,7 @@ Grids are another common geometric primitive, and can be thought of as a Plane s
 
 **What do we know about Grids?**
 
-For simplicity let's take a subdivised `Plane` as our template. We know it's flat and therefor the 3rd dimension (z) can be excluded from our focus. We can either have a uniformly subdivided Plane or allow for x and y to be divided separately. A separate XY division is a little bit more interesting, let's go with that. The X dimension will have a total length and the Y dimension will too.
+For simplicity let's take a subdivided `Plane` as our template. We know it's flat and therefore the 3rd dimension (z) can be excluded from our focus. We can either have a uniformly subdivided Plane or allow for x and y to be divided separately. A separate XY division is a little bit more interesting, let's go with that. 
 
 **Where to start?**
 
@@ -33,7 +33,7 @@ The upside of building generators from scratch is that you can make decisions ba
 
 **Decide which variables you want to expose**
 
-Sometimes there are so many ways to approach variables that you just have to decide and change it later if you need to. Here i'll pick what I think is the most convenient
+Sometimes there are so many ways to approach variables that you just have to decide and change it later if you need to. Here I'll pick what I think is the most convenient
 
 - Division distance side X
 - Division distance side Y
