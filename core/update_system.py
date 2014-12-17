@@ -29,6 +29,8 @@ import sverchok
 import traceback
 import ast
 
+graphs = []
+
 no_data_color = (1, 0.3, 0)
 exception_color = (0.8, 0.0, 0)
 
@@ -295,11 +297,14 @@ def reset_error_nodes(ng):
                 node.color = data[1]
         del ng["error nodes"]
 
+
 def do_update_general(node_list, nodes, procesed_nodes=set()):
     """
     General update function for node set
     """
+    global graphs
     timings = []
+    graph = []
     total_time = 0
     done_nodes = set(procesed_nodes)
     
@@ -311,22 +316,27 @@ def do_update_general(node_list, nodes, procesed_nodes=set()):
             start = time.perf_counter()
             if hasattr(node, "process"):
                 node.process()
-            delta = time.perf_counter()-start
+            delta = time.perf_counter() - start
             total_time += delta
             if data_structure.DEBUG_MODE:
                 print("Processed  {} in: {:.4f}".format(node_name, delta))
             timings.append(delta)
-
+            graph.append({"name" : node_name,
+                           "bl_idname": node.bl_idname,
+                           "start": start,
+                           "duration": delta})
+            
         except Exception as err:
             ng = nodes.id_data
             update_error_nodes(ng, node_name, err)
             traceback.print_tb(err.__traceback__)
             print("Node {0} had exception {1}".format(node_name, err))
             return None
-
+    graphs.append(graph)    
     if data_structure.DEBUG_MODE:
         print("Node set updated in: {:.4f} seconds".format(total_time))
     return timings
+    
 
 def do_update(node_list, nodes):
     if data_structure.HEAT_MAP:
@@ -342,6 +352,8 @@ def build_update_list(ng=None):
     """
     global update_cache
     global partial_update_cache
+    global graphs
+    graphs = []
     if not ng:
         for ng in sverchok_trees():
             build_update_list(ng)
@@ -358,6 +370,9 @@ def process_to_node(node):
     """
     Process nodes upstream until node
     """
+    global graphs
+    graphs = []
+
     ng = node.id_data
     reset_error_nodes(ng)
 
@@ -374,6 +389,8 @@ def process_from_node(node):
     """
     global update_cache
     global partial_update_cache
+    global graphs
+    graphs = []
     ng = node.id_data
     reset_error_nodes(ng)
 
@@ -403,6 +420,8 @@ def sverchok_trees():
 def process_tree(ng=None):
     global update_cache
     global partial_update_cache
+    global graphs
+    graphs = []
 
     if data_structure.RELOAD_EVENT:
         reload_sverchok()
