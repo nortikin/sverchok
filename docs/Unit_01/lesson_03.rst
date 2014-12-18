@@ -62,7 +62,20 @@ I hope you know Python, or at the very least what `% (modulo)` and `// (int div)
 
     # 0 0 0 0 1 1 1 1 2 2 2 2
 
+    # all in one go
+    final_list = []
+    for i in range(12):
+       x = i % 4
+       y = i // 4
+       z = 0
+       final_list.append((x, y, z))
 
+    print(final_list)
+    '''
+    >> [(0, 0, 0), (1, 0, 0), (2, 0, 0), (3, 0, 0), 
+    >> (0, 1, 0), (1, 1, 0), (2, 1, 0), (3, 1, 0), 
+    >> (0, 2, 0), (1, 2, 0), (2, 2, 0), (3, 2, 0)]
+    '''
 
 // -- explain
 
