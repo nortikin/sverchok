@@ -10,7 +10,7 @@ Same as lesson 01.
 Lesson 03 - A Grid
 ------------------
 
-Grids are another common geometric primitive, and can be thought of as a Plane subdivided over its *x* and *y* axes. The ``Plane`` generator node makes a grid with edges and polygons, but we'll cover a lot of important concepts by building a grid generator using the elementary nodes. I will show practical tips to help you figure out how to construct topology dynamically.
+Grids are another common geometric primitive. A Grid can be thought of as a Plane subdivided over its *x* and *y* axes. Sverchok's `Plane` generator can also make grids (including edges and polygons). We will again avoid the convenience of the `Plane` generator, and combine the elementary nodes to build one from scratch. Doing this will cover several important concepts of parametric design, and feature practical tips to help you figure out how to construct topology dynamically.
 
 **What do we know about Grids?**
 
