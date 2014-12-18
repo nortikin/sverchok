@@ -40,9 +40,29 @@ The upside of building generators from scratch is that you can make decisions ba
 
 **Think in Whole numbers (ints) if you can**
 
-What I mean by this is, reduce the problem to something that is mathematically uncomplicated. Here's a grid drawn on an xy graph to illustrate the coordinates. 
+What I mean by this is, reduce the problem to something that is mathematically uncomplicated. Here's a grid drawn on an xy graph to illustrate the coordinates. The z-dimension could be ignored but it's included for completeness.
 
-**Using `modulo` and `floor` to get grid coordinates**
+.. image:: https://cloud.githubusercontent.com/assets/619340/5493896/39cf7002-86ef-11e4-9d30-9ab0c513236a.png
+
+The reason I pick 4 verts for the X axis and 3 for Y, is because that's the smallest useful set of vertices we can use as a reference. The reason i'm not picking 3*3 or 4*4 is because using different vertex counts makes it clear what that `X` axis might have some relation to 4 and to `Y` to 3.
+
+If you consider the sequence just by looking at the first index of each vertex, it goes ``[0,1,2,3,0,1,2,3,0,1,2,3]``. We can generate sequences like that easily. When we look at the second index of these vertices that sequence is ``[0,0,0,0,1,1,1,1,2,2,2,2]``, this also is easy to generate. 
+
+**Using `modulo` and `integer division` to get grid coordinates**
+
+I hope you know Python, or at the very least what `% (modulo)` and `// (int div)` are. The sequences above can be generated using code this way::
+
+    for i in range(12):
+       print(i % 4)
+
+    # 0 1 2 3 0 1 2 3 0 1 2 3
+
+    for i in range(12):
+       print(i // 4)
+
+    # 0 0 0 0 1 1 1 1 2 2 2 2
+
+
 
 // -- explain
 
