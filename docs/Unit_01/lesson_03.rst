@@ -38,6 +38,14 @@ The upside of building generators from scratch is that you can make decisions ba
 - Number Vertices on side X
 - Number Vertices on side Y
 
+// -- todo
+
+**Using `modulo` and `floor` to get grid coordinates**
+
+// -- explain
+
+.. image:: https://cloud.githubusercontent.com/assets/619340/5477351/e15771f0-862a-11e4-8085-289b88d4cb6a.png
+
 // -- TODO
 
 

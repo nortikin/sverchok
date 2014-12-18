@@ -14,4 +14,5 @@ Unit 01 - Introduction to modular components
 
    Lesson 01 - A Plane <Unit_01/lesson_01>
    Lesson 02 - A Circle <Unit_01/lesson_02>
+   Lesson 03 - A Grid <Unit_01/lesson_03>
    
