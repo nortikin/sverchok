@@ -38,7 +38,9 @@ The upside of building generators from scratch is that you can make decisions ba
 - Number Vertices on side X
 - Number Vertices on side Y
 
-// -- todo
+**Think in Whole numbers (ints) if you can**
+
+What I mean by this is, reduce the problem to something that is mathematically uncomplicated. Here's a grid drawn on an xy graph to illustrate the coordinates. 
 
 **Using `modulo` and `floor` to get grid coordinates**
 
