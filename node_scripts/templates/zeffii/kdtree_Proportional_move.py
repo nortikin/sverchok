@@ -33,7 +33,7 @@ def sv_main(v=[[]], point=[], mdist=0.4):
         for idx, vert in enumerate(v):
             rv = affected_verts.get(idx, 0)
             if rv > 0:
-                amp = mdist - rv
+                amp = mdist / rv
                 v2 = Vector(v[idx])
                 v3 = v1.lerp(v2, amp)
                 # make new vector
