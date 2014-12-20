@@ -51,21 +51,10 @@ If you consider the sequence just by looking at the first index of each vertex, 
 
 I hope you know Python, or at the very least what `% (modulo)` and `// (int div)` are. The sequences above can be generated using code this way -- If this code doesn't make sense keep reading, it's explained further down::
 
-    for i in range(12):
-       print(i % 4)
-
-    # 0 1 2 3 0 1 2 3 0 1 2 3
-
-    for i in range(12):
-       print(i // 4)
-
-    # 0 0 0 0 1 1 1 1 2 2 2 2
-
-    # all in one go
     final_list = []
     for i in range(12):
-       x = i % 4
-       y = i // 4
+       x = i % 4           # makes: 0 1 2 3 0 1 2 3 0 1 2 3
+       y = i // 4          # makes: 0 0 0 0 1 1 1 1 2 2 2 2
        z = 0
        final_list.append((x, y, z))
 
@@ -120,6 +109,12 @@ This might be obvious to some, so this is directed at those who've never done th
 For my example, I think of the X axis as the Columns, and I go from left to right and upwards
 
 .. image:: https://cloud.githubusercontent.com/assets/619340/5514961/5ef77828-8854-11e4-81b4-4bd30a75d177.png
+
+Notice that between polygon index 2 and 3 there is a break in the pattern. The polygon with vertex indices ``[3,7,8,4]`` doesn't exist (for a grid of x=4, y=3), if we did make that polygon it would connect one Row to the next like so:
+
+.. image:: https://cloud.githubusercontent.com/assets/619340/5515010/d58119fc-8856-11e4-837a-44beb57c3fb4.png
+
+We know how many polygons we need (let's call this number ``j``), it is useful to think of an algorithm that produces these index sequences based on a range from ``0 thru j-1`` or ``[0,1,2,3,4,5]``. We can first ignore the fact that we need to remove every n-th polygon, or avoid creating it in the first place. Whatever you decide will be a choice between convenience and efficiency - I will choose convenience here.
 
 
 // -- TODO
