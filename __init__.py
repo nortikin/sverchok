@@ -42,7 +42,7 @@ bl_info = {
         "Cfyzzz, Nikitron, Ly29, "
         "AgustinJB, Zeffii, Kosvor,"
     ),
-    "version": (0, 5, 0, 10),
+    "version": (0, 5, 0, 8),
     "blender": (2, 7, 2),
     "location": "Nodes > CustomNodesTree > Add user nodes",
     "description": "Parametric node-based geometry programming",
@@ -61,19 +61,20 @@ import importlib
 
 if __name__ != "sverchok":
     sys.modules["sverchok"] = sys.modules[__name__]
-    
+
 # to store imported modules
 imported_modules = []
 
 # ugly hack, should make respective dict in __init__ like nodes
 # or parse it
-root_modules = ["menu", "node_tree", "data_structure","core", 
+root_modules = ["menu", "node_tree", "data_structure", "core",
                 "utils", "ui", "nodes", "old_nodes"]
 core_modules = ["handlers", "update_system", "upgrade_nodes"]
 utils_modules = [
     # non UI tools
-    "cad_module", "sv_bmesh_utils", "sv_curve_utils", "voronoi", 
+    "cad_module", "sv_bmesh_utils", "sv_curve_utils", "voronoi",
     "sv_script", "sv_itertools", "script_importhelper",
+    "csg_core", "csg_geom",
     # UI
     #     - text editor ui
     "text_editor_submenu", "text_editor_plugins",
@@ -88,8 +89,8 @@ ui_modules = [
 ]
 
 # modules and pkg path, nodes are done separately.
-mods_bases = [(root_modules,  "sverchok"), 
-              (core_modules,  "sverchok.core"), 
+mods_bases = [(root_modules,  "sverchok"),
+              (core_modules,  "sverchok.core"),
               (utils_modules, "sverchok.utils"),
               (ui_modules,    "sverchok.ui")]
 
@@ -98,13 +99,14 @@ mods_bases = [(root_modules,  "sverchok"),
 settings = importlib.import_module(".settings", __name__)
 imported_modules.append(settings)
 
+
 def import_modules(modules, base, im_list):
     for m in modules:
         im = importlib.import_module('.{}'.format(m), base)
         im_list.append(im)
 
-# parse the nodes/__init__.py dictionary and load all nodes
 
+# parse the nodes/__init__.py dictionary and load all nodes
 def make_node_list():
     node_list = []
     base_name = "sverchok.nodes"
@@ -120,7 +122,7 @@ node_list = make_node_list()
 
 reload_event = bool("bpy" in locals())
 
-if reload_event:   
+if reload_event:
     import nodeitems_utils
     #  reload the base modules
     #  then reload nodes after the node module as been reloaded
@@ -135,14 +137,15 @@ if reload_event:
 import bpy
 
 sv_ascii_logo = """\
-      ::::::  :::   ::: :::::::: :::::::   ::::::  :::  :::  ::::::  :::  ::: 
-    :+:  :+: :+:   :+: :+:      :+:  :+: :+:  :+: :+:  :+: :+:  :+: :+: :+:   
-   +:+      +:+   +:+ +:+      +:+  +:+ +:+      +:+  +:+ +:+  +:+ +:+ :+     
-  +#+++#++ +#+   +:+ +#+++#   +#+++#:  +#+      +#+++#++ +#+  +:+ +#+++       
-      +#+  +#+ +#+  +#+      +#+  +#+ +#+      +#+  +#+ +#+  +#+ +#+ #+       
-#+#  #+#   #+#+#   #+#      #+#  #+# #+#  #+# #+#  #+# #+#  #+# #+# #+#       
-######      #     ######## ###  ###  ######  ###  ###  ######  ###  ###       
+      ::::::  :::   ::: :::::::: :::::::   ::::::  :::  :::  ::::::  :::  :::
+    :+:  :+: :+:   :+: :+:      :+:  :+: :+:  :+: :+:  :+: :+:  :+: :+: :+:
+   +:+      +:+   +:+ +:+      +:+  +:+ +:+      +:+  +:+ +:+  +:+ +:+ :+
+  +#+++#++ +#+   +:+ +#+++#   +#+++#:  +#+      +#+++#++ +#+  +:+ +#+++
+      +#+  +#+ +#+  +#+      +#+  +#+ +#+      +#+  +#+ +#+  +#+ +#+ #+
+#+#  #+#   #+#+#   #+#      #+#  #+# #+#  #+# #+#  #+# #+#  #+# #+# #+#
+######      #     ######## ###  ###  ######  ###  ###  ######  ###  ###
 """
+
 
 def register():
     for m in imported_modules + node_list:
@@ -152,8 +155,8 @@ def register():
     # in an interface
     data_structure.SVERCHOK_NAME = __name__
     print("** Have a nice day with sverchok  **\n")
-    print(sv_ascii_logo)   
-    
+    print(sv_ascii_logo)
+
     if reload_event:
         data_structure.RELOAD_EVENT = True
         print("Sverchok is reloaded, press update")

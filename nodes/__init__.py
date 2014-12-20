@@ -131,6 +131,7 @@ nodes_dict = {
         'voronoi_2d',
         'wireframe',
         'wafel',
+        'csg_boolean',
         'pipe_tubes',
     ],  #
 
