@@ -78,12 +78,9 @@ I hope you know Python, or at the very least what `% (modulo)` and `// (int div)
 
 With any luck you aren't lost by all this code, visual programming is very similar except with less typing. The plumbing of an algorithm is still the same whether you are clicking and dragging nodes to create a flow of information or writing code in a text editor.
 
-We can use: 
-
-- ``i % 4`` to turn ``[0,1,2,3,4,5,6,7,8,9,10,11]`` into ``[0,1,2,3,0,1,2,3,0,1,2,3]``
-- ``i // 4`` to turn ``[0,1,2,3,4,5,6,7,8,9,10,11]`` into ``[0,0,0,0,1,1,1,1,2,2,2,2]``
-
 **Operands**
+
+We introduced the Math node in lesson 01 and 02, the Math node (from the Number menu) has many operations called operands. We'll focus on these to get the vertex components.
 
 +----------------------+---------+--------------------------------------------------------+
 | Operand              |  Symbol | Behaviour                                              |  
@@ -95,9 +92,30 @@ We can use:
 |                      |         | rounded down to the nearest whole number.              |
 +----------------------+---------+--------------------------------------------------------+
 
+We can use: 
 
+- ``i % 4`` to turn ``[0,1,2,3,4,5,6,7,8,9,10,11]`` into ``[0,1,2,3,0,1,2,3,0,1,2,3]``
+- ``i // 4`` to turn ``[0,1,2,3,4,5,6,7,8,9,10,11]`` into ``[0,0,0,0,1,1,1,1,2,2,2,2]``
+
+
+**Making vertices**
+
+A recipe which you should be able to hook up yourself by seeing the example image.
+
+- ``Add -> Vector -> Vector In``
+- ``Add -> Number -> Math`` (3x) notice I minimized the Multiplication Node.
+- ``Add -> Number -> Integer`` (2x)
+- ``Add -> Number -> Range Int``
+
+We multiply ``y=3`` by ``x=4`` to get ``12`` this is the number of vertices. This parameter determines the length of the range ``[0,1..11]`` (12 vertices, remember we start counting indices at 0).
 
 .. image:: https://cloud.githubusercontent.com/assets/619340/5477351/e15771f0-862a-11e4-8085-289b88d4cb6a.png
+
+With all nodes hooked up correctly you can hook `Vector In``'s output to the `vertices` socket of a ViewerDraw node to display the vertices. To test if it works you can use the sliders on the two Integer nodes to see the grid of vertices respond to the two parameters. Remember to put these sliders back to 3 and 4 (as displayed in the image), to continue to the next step.
+
+**Making Polygons**
+
+
 
 // -- TODO
 
