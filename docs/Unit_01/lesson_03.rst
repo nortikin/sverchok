@@ -125,6 +125,14 @@ Notice that between polygon index 2 and 3 there is a break in the pattern. The p
 
 We know how many polygons we need (let's call this number ``j``), it is useful to think of an algorithm that produces these index sequences based on a range from ``0 thru j-1`` or ``[0,1,2,3,4,5]``. We can first ignore the fact that we need to remove every n-th polygon, or avoid creating it in the first place. Whatever you decide will be a choice between convenience and efficiency - I will choose convenience here.
 
+**A polygon Algorithm**
+
+Although Sverchok is visual programming using nodes, and you could use it for a lifetime without writing a single line of Python, it helps to discuss algorithms in a language like math or code which are designed to succinctly convey how an algorithm works without a language barrier (English, Russian..Chineese. You mother tongue is irrelevant, use code or math!) 
+
+WIP - NOT ELEGANT
+
+.. image:: https://cloud.githubusercontent.com/assets/619340/5515808/31552e1a-887c-11e4-9c74-0f3af2f193e6.png
+
 
 // -- TODO
 
