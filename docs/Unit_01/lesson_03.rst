@@ -129,7 +129,7 @@ We know how many polygons we need (let's call this number ``j``), it is useful t
 
 Although Sverchok is visual programming using nodes, and you could use it for a lifetime without writing a single line of Python, it helps to discuss algorithms in a language like math or code which are designed to succinctly convey how an algorithm works without a language barrier (English, Russian..Chineese. You mother tongue is irrelevant, use code or math!) 
 
-WIP - NOT ELEGANT
+**WIP - NOT ELEGANT**
 
 .. image:: https://cloud.githubusercontent.com/assets/619340/5515808/31552e1a-887c-11e4-9c74-0f3af2f193e6.png
 
