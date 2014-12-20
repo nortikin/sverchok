@@ -22,7 +22,7 @@ For simplicity let's take a subdivided `Plane` as our template. We know it's fla
 
 **Where to start?**
 
-For non trivial objects we often use a notepad (yes, actual paper -- or blender Greasepencil etc) to draw a simplified version of what we want to accomplish. On a drawing we can easily name and point to properties, see relatioships, and even solve problems in advance.
+For non trivial objects we often use a notepad (yes, actual paper -- or blender Greasepencil etc) to draw a simplified version of what we want to accomplish. On a drawing we can easily name and point to properties, see relationships, and even solve problems in advance.
 
 I chose a Grid because it has only a few properties: `X Side Length, Y Side Length, X num subdivs, Y num subdivs`. These properies can be exposed in several ways. You could expose the number of divisions (edges) per side, or the amount of vertices per side. 1 geometric property, but two ways of looking at it.
 
