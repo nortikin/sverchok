@@ -24,14 +24,9 @@ For simplicity let's take a subdivided `Plane` as our template. We know it's fla
 
 For non trivial objects we often use a notepad (yes, actual paper -- or blender Greasepencil etc) to draw a simplified version of what we want to accomplish. On a drawing we can easily name and point to properties, and even notice problems in advance.
 
-I chose a Grid because it has only a few properties, but they can be exposed in several ways.
+I chose a Grid because it has only a few properties: `X Side Length, Y Side Length, X num subdivs, Y num subdivs`. These properies can be exposed in several ways. You could expose the number of divisions per side, or the amount of vertices per side. That one property can be expressed in two different ways; if vertices is 4 then divisions per side is 3.
 
-- X Side Length 
-- Y Side Length
-- X num subdivs **or** num Vertices on Side X
-- Y num subdivs **or** num Vertices on Side Y
-- length per division X
-- length per division Y
+[ image ]
 
 **Decide which variables you want to expose**
 
