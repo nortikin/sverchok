@@ -111,10 +111,15 @@ We multiply ``y=3`` by ``x=4`` to get ``12`` this is the number of vertices. Thi
 
 .. image:: https://cloud.githubusercontent.com/assets/619340/5477351/e15771f0-862a-11e4-8085-289b88d4cb6a.png
 
-With all nodes hooked up correctly you can hook `Vector In``'s output to the `vertices` socket of a ViewerDraw node to display the vertices. To test if it works you can use the sliders on the two Integer nodes to see the grid of vertices respond to the two parameters. Remember to put these sliders back to 3 and 4 (as displayed in the image), to continue to the next step.
+With all nodes hooked up correctly you can hook ``Vector In``'s output to the `vertices` socket of a ViewerDraw node to display the vertices. To test if it works you can use the sliders on the two Integer nodes to see the grid of vertices respond to the two parameters. Remember to put these sliders back to 3 and 4 (as displayed in the image), to continue to the next step.
 
 **Making Polygons**
 
+This might be obvious to some, so this is directed at those who've never done this kind of thing before. This is where we use a notepad to write out the indexlist for the 6 polygons (two rows of 3 polygons, is the result of a x=4, y=3 grid). Viewing the vertices from above, go clockwise. The order in which you populate the the list of polygons is determined by what you find more convenient.
+
+For my example, I think of the X axis as the Columns, and I go from left to right and upwards
+
+.. image:: https://cloud.githubusercontent.com/assets/619340/5514961/5ef77828-8854-11e4-81b4-4bd30a75d177.png
 
 
 // -- TODO
