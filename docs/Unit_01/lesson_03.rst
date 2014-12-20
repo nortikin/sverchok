@@ -51,19 +51,28 @@ If you consider the sequence just by looking at the first index of each vertex, 
 
 I hope you know Python, or at the very least what `% (modulo)` and `// (int div)` are. The sequences above can be generated using code this way -- If this code doesn't make sense keep reading, it's explained further down::
 
+    # variables
+    x = 4
+    y = 3
+    j = x * y          # 12
+
+    # using for loop
     final_list = []
-    for i in range(12):
-       x = i % 4           # makes: 0 1 2 3 0 1 2 3 0 1 2 3
-       y = i // 4          # makes: 0 0 0 0 1 1 1 1 2 2 2 2
+    for i in range(j):
+       x = i % 4       # makes: 0 1 2 3 0 1 2 3 0 1 2 3
+       y = i // 4      # makes: 0 0 0 0 1 1 1 1 2 2 2 2
        z = 0
        final_list.append((x, y, z))
 
     print(final_list)
     '''
     >> [(0, 0, 0), (1, 0, 0), (2, 0, 0), (3, 0, 0), 
-    >> (0, 1, 0), (1, 1, 0), (2, 1, 0), (3, 1, 0), 
-    >> (0, 2, 0), (1, 2, 0), (2, 2, 0), (3, 2, 0)]
+    >>  (0, 1, 0), (1, 1, 0), (2, 1, 0), (3, 1, 0), 
+    >>  (0, 2, 0), (1, 2, 0), (2, 2, 0), (3, 2, 0)]
     '''
+
+    # using list comprehension
+    final_list = [(i%4, i//4, 0) for i in range(j)]
 
 With any luck you aren't lost by all this code, visual programming is very similar except with less typing. The plumbing of an algorithm is still the same whether you are clicking and dragging nodes to create a flow of information or writing code in a text editor.
 
