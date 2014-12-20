@@ -13,6 +13,7 @@ Contents:
 
    installation
    geometry
+   induction
    nodes
    contribute
    panels
