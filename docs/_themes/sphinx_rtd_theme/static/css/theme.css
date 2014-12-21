@@ -4479,9 +4479,11 @@ nav.stickynav {
   margin-bottom: 24px;
 }
 .rst-content blockquote {
-  margin-left: 24px;
+  margin-left: 12px;
   line-height: 24px;
   margin-bottom: 24px;
+  padding-left: 12px;
+  border-left: 8px solid #eeeeee;
 }
 .rst-content .note .last, .rst-content .attention .last, .rst-content .caution .last, .rst-content .danger .last, .rst-content .error .last, .rst-content .hint .last, .rst-content .important .last, .rst-content .tip .last, .rst-content .warning .last, .rst-content .seealso .last, .rst-content .admonition-todo .last {
   margin-bottom: 0;
