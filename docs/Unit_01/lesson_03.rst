@@ -127,7 +127,7 @@ We know how many polygons we need (let's call this number ``j``), it is useful t
 
 **A polygon Algorithm**
 
-> Sverchok lets you create complex geometry without writing a single line of code, but you will not get the most out of the system by avidly avoid code. Imagine living a lifetime without ever taking a left turn at a corner, you would miss out on faster more convenient ways to reach your destination.
+  Sverchok lets you create complex geometry without writing a single line of code, but you will not get the most out of the system by avidly avoiding code. Imagine living a lifetime without ever taking a left turn at a corner, you would miss out on faster more convenient ways to reach your destination.
 
 
 It's easier for me to explain how an algorithm works, and give you something to test it with, by showing the algorithm as a program, a bit of Python. Programming languages allow you to see without ambiguity how something works by running the code.
