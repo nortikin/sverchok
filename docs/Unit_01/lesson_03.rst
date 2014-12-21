@@ -131,6 +131,23 @@ Although Sverchok is visual programming using nodes, and you could use it for a 
 
 **WIP - NOT ELEGANT**
 
+this generates faces from a vertex count for x,y::
+
+  ny = 3
+  nx = 4
+
+  faces = []
+  add_face = faces.append
+
+  total_range = ((ny-1) * (nx))
+  for i in range(total_range):
+      if not ((i+1) % nx == 0):  # +1 is the shift
+          add_face([i, i+nx, i+nx+1, i+1])  # clockwise
+
+  print(faces)
+
+This is that same algorithm using the elementary nodes, can you see the similarity?
+
 .. image:: https://cloud.githubusercontent.com/assets/619340/5515808/31552e1a-887c-11e4-9c74-0f3af2f193e6.png
 
 
