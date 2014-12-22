@@ -129,9 +129,8 @@ def make_bmesh_geometry(node, context, name, verts, *topology):
         bm.to_mesh(sv_object.data)
         bm.free()
         sv_object.hide_select = False
-
-    test=True
-    if test:
+    
+    if node.explicit_matrix:
         sv_object.matrix_local = Matrix.Identity(4)
         if matrix:
             for v in sv_object.data.vertices:
@@ -224,6 +223,10 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
         update=updateNode,
         description="This auto sets all faces to smooth shade")
 
+    explicit_matrix = BoolProperty(
+        default=True,
+        description="off = use matrix_local, on = multiply all verts by the matrix individually")
+
     def sv_init(self, context):
         self.use_custom_color = True
         self.inputs.new('VerticesSocket', 'vertices', 'vertices')
@@ -285,6 +288,7 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
             box.label(text="Beta options")
             box.prop(self, "fixed_verts", text="Fixed vert count")
             box.prop(self, 'autosmooth', text='smooth shade')
+            box.prop(self, "explicit_matrix", text="explicit matrix")
 
     def get_geometry_from_sockets(self):
 
