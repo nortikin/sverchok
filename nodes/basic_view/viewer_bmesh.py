@@ -130,10 +130,20 @@ def make_bmesh_geometry(node, context, name, verts, *topology):
         bm.free()
         sv_object.hide_select = False
 
-    if matrix:
-        sv_object.matrix_local = list(zip(*matrix))
-    else:
+    test=True
+    if test:
         sv_object.matrix_local = Matrix.Identity(4)
+        if matrix:
+            for v in sv_object.data.vertices:
+                v.co = Matrix(matrix) * v.co
+            # sv_object.matrix_local = list(zip(*matrix))
+        #else:
+    else:
+        if matrix:
+            sv_object.matrix_local = list(zip(*matrix))
+        else:
+            sv_object.matrix_local = Matrix.Identity(4)
+
 
 
 class SvBmeshViewOp(bpy.types.Operator):
