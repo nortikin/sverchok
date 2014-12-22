@@ -22,12 +22,20 @@ import re
 
 import bpy
 from bpy.props import BoolProperty, StringProperty
-from mathutils import Matrix
+from mathutils import Matrix, Vector
 
 from sverchok.node_tree import (
     SverchCustomTreeNode, VerticesSocket, MatrixSocket, StringsSocket)
 from sverchok.data_structure import dataCorrect, fullList, updateNode, SvGetSocketAnyType
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
+
+
+def matrix_sanitizer(matrix):
+    #  reduces all values below threshold (+ or -) to 0.0, to avoid meaningless
+    #  wandering floats.
+    coord_strip = lambda c: 0.0 if (-1.6e-5 <= c <= 1.6e-5) else c
+    san = lambda v: Vector((coord_strip(c) for c in v[:]))
+    return Matrix([san(v) for v in matrix])
 
 
 def natural_plus_one(object_names):
@@ -129,20 +137,19 @@ def make_bmesh_geometry(node, context, name, verts, *topology):
         bm.to_mesh(sv_object.data)
         bm.free()
         sv_object.hide_select = False
-    
+
     if node.explicit_matrix:
         sv_object.matrix_local = Matrix.Identity(4)
         if matrix:
             for v in sv_object.data.vertices:
                 v.co = Matrix(matrix) * v.co
-            # sv_object.matrix_local = list(zip(*matrix))
-        #else:
     else:
         if matrix:
-            sv_object.matrix_local = list(zip(*matrix))
+            prematrix = list(zip(*matrix))
+            matrix = matrix_sanitizer(matrix)
+            sv_object.matrix_local = matrix
         else:
             sv_object.matrix_local = Matrix.Identity(4)
-
 
 
 class SvBmeshViewOp(bpy.types.Operator):
