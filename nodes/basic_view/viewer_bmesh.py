@@ -130,6 +130,7 @@ def make_bmesh_geometry(node, context, name, verts, *topology):
     if node.fixed_verts and difference == 0:
         f_v = list(itertools.chain.from_iterable(verts))
         mesh.vertices.foreach_set('co', f_v)
+        mesh.update()
     else:
 
         ''' get bmesh, write bmesh to obj, free bmesh'''
