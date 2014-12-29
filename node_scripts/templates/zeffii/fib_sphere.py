@@ -1,10 +1,10 @@
 import math, random
 
-def fibonacci_sphere(samples=1,randomize=True):
+def fibonacci_sphere(samples, rseed):
     # http://stackoverflow.com/a/26127012/1243487
     rnd = 1.
-    if randomize:
-        rnd = random.random() * samples
+    random.seed(rseed)
+    rnd = random.random() * samples
 
     points = []
     offset = 2./samples
@@ -23,13 +23,17 @@ def fibonacci_sphere(samples=1,randomize=True):
 
     return points
 
-def sv_main(samples=400):
+def sv_main(samples=400, rseed=4):
     verts_out = []
 
-    in_sockets = [['s', 'samples', samples]]
+    in_sockets = [
+        ['s', 'samples', samples],
+        ['s', 'rseed', rseed]
+       ]
+
     out_sockets = [['v', 'verts', [verts_out]]]
     
-    p = fibonacci_sphere(samples)
+    p = fibonacci_sphere(samples, rseed)
     verts_out.extend(p)
 
     return in_sockets, out_sockets
