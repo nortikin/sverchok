@@ -47,7 +47,6 @@ class SvSortObjsNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "Modes", "Sort Objs")
 
     def process(self):
-        Val = []
         siob = self.inputs['Object']
         SM = self.Modes
         if siob.is_linked or siob.object_ref:
@@ -62,11 +61,11 @@ class SvSortObjsNode(bpy.types.Node, SverchCustomTreeNode):
                 if self.inputs['CustomValue'].is_linked:
                     Y = self.inputs['CustomValue'].sv_get()[0]
                 else:
-                    Y = [0]
+                    return
 
-            Val = [x for y, x in sorted(zip(Y, X))]
+            X.sort(key=dict(zip(X, Y)).get)
 
-        self.outputs['Object'].sv_set(Val)
+        self.outputs['Object'].sv_set(X)
 
     def update_socket(self, context):
         self.update()
