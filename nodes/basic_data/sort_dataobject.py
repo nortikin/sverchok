@@ -50,13 +50,13 @@ class SvSortObjsNode(bpy.types.Node, SverchCustomTreeNode):
         siob = self.inputs['Object']
         SM = self.Modes
         if siob.is_linked or siob.object_ref:
-            X = [i for i in siob.sv_get()]
+            X = siob.sv_get()
             if SM == "xax":
-                Y = [i.location.x for i in siob.sv_get()]
+                Y = [i.location.x for i in X]
             elif SM == "yax":
-                Y = [i.location.y for i in siob.sv_get()]
+                Y = [i.location.y for i in X]
             elif SM == "zax":
-                Y = [i.location.z for i in siob.sv_get()]
+                Y = [i.location.z for i in X]
             elif SM == "cust":
                 if self.inputs['CustomValue'].is_linked:
                     Y = self.inputs['CustomValue'].sv_get()[0]
