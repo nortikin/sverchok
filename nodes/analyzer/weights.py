@@ -68,34 +68,37 @@ class SvVertexGroupNode(bpy.types.Node, SverchCustomTreeNode):
         if self.vertex_group not in obj.vertex_groups:
             return
 
+        ovgs = obj.vertex_groups.get(self.vertex_group)
+        vind = [i.index for i in obj.data.vertices]
+
         if self.inputs['VertIND'].is_linked:
             verts = self.inputs['VertIND'].sv_get()[0]
         else:
-            verts = [i.index for i in obj.data.vertices]
+            verts = vind
 
         if self.inputs['Weights'].is_linked:
             wei = self.inputs['Weights'].sv_get()[0]
-            if len(verts) < len(wei):
+            lv = len(verts)
+            lw = len(wei)
+            if lv < lw:
                 temp = match_short([verts, wei])
                 verts, wei = temp[0], temp[1]
-            if len(verts) > len(wei):
+            if lv > lw:
                 temp = match_long_cycle([verts, wei])
                 verts, wei = temp[0], temp[1]
 
             if self.clear:
-                obj.vertex_groups.get(self.vertex_group).add([i.index for i in
-                                                             obj.data.vertices],
-                                                             self.fade_speed, "SUBTRACT")
+                ovgs.add(vind, self.fade_speed, "SUBTRACT")
             g = 0
             while g != len(wei):
-                obj.vertex_groups.get(self.vertex_group).add([verts[g]], wei[g], "REPLACE")
+                ovgs.add([verts[g]], wei[g], "REPLACE")
                 g = g+1
 
         if self.outputs['OutWeights'].is_linked:
             out = []
             for i in verts:
                 try:
-                    out.append(obj.vertex_groups.get(self.vertex_group).weight(i))
+                    out.append(ovgs.weight(i))
                 except Exception:
                     out.append(0.0)
             self.outputs['OutWeights'].sv_set([out])
