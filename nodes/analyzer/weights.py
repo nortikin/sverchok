@@ -90,7 +90,7 @@ class SvVertexGroupNode(bpy.types.Node, SverchCustomTreeNode):
             if self.clear:
                 ovgs.add(vind, self.fade_speed, "SUBTRACT")
             g = 0
-            while g != len(wei):
+            while g != lv:
                 ovgs.add([verts[g]], wei[g], "REPLACE")
                 g = g+1
 
