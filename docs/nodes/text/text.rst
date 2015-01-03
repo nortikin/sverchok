@@ -10,5 +10,6 @@ Text
    gtext
    debug
    stethoscope   
-   text_inout
+   text_out   
+   text_in   
    

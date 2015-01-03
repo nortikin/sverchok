@@ -33,5 +33,5 @@ Outputs
 Examples
 --------
 
-..image:: https://cloud.githubusercontent.com/assets/5783432/5603155/cd1cc280-9386-11e4-9998-a066258ca94b.jpg
+.. image:: https://cloud.githubusercontent.com/assets/5783432/5603155/cd1cc280-9386-11e4-9998-a066258ca94b.jpg
   :alt: flip

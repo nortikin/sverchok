@@ -31,5 +31,5 @@ Outputs
 Examples
 --------
 
-..image:: https://cloud.githubusercontent.com/assets/5783432/5603102/bec2bc6e-9384-11e4-9e4a-905da01b7ac1.gif
+.. image:: https://cloud.githubusercontent.com/assets/5783432/5603102/bec2bc6e-9384-11e4-9e4a-905da01b7ac1.gif
   :alt: shift
