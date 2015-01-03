@@ -19,8 +19,7 @@
 import bpy
 from bpy.props import StringProperty, BoolProperty, FloatProperty
 from sverchok.node_tree import SverchCustomTreeNode, StringsSocket
-from sverchok.data_structure import (updateNode,
-                                     match_short, match_long_cycle)
+from sverchok.data_structure import (updateNode, match_long_cycle)
 
 
 class SvVertexGroupNode(bpy.types.Node, SverchCustomTreeNode):
@@ -79,11 +78,7 @@ class SvVertexGroupNode(bpy.types.Node, SverchCustomTreeNode):
         if self.inputs['Weights'].is_linked:
             wei = self.inputs['Weights'].sv_get()[0]
             lv = len(verts)
-            lw = len(wei)
-            if lv < lw:
-                temp = match_short([verts, wei])
-                verts, wei = temp[0], temp[1]
-            if lv > lw:
+            if lv > len(wei):
                 temp = match_long_cycle([verts, wei])
                 verts, wei = temp[0], temp[1]
 
