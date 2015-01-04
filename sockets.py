@@ -63,8 +63,28 @@ class SvObjectSocket(NodeSocket, SvSocketsBase):
 
     def draw_color(self, context, node):
         return(.9, .8, .8, 1.0)
-    
-    
+
+
+
+class SvUndefTypeSocket(NodeSocket, SvSocketsBase):
+    bl_idname = "SvUndefTypeSocket"
+    bl_label = "UndefType Socket"
+
+    def sv_get(self, default=sentinel, deepcopy=False):
+        if self.is_linked and not self.is_output:
+            return SvGetSocket(self, deepcopy)
+        else:
+            raise SvNoDataError
+
+    def draw(self, context, layout, node, text):
+        layout.label(text)
+
+
+    def draw_color(self, context, node):
+        return(1.0, .0, .0, 1.0)
+
+
+
 class SvTextSocket(NodeSocket, SvSocketsBase):
     bl_idname = "SvTextSocket"
     bl_label = "Text Socket"
@@ -220,7 +240,9 @@ def get_socket_types():
             'm': "MatrixSocket",
             'v': "VerticesSocket",
             't': "SvTextSocket",
-            'o': "SvObjectSocket"}
+            'o': "SvObjectSocket",
+            'u': "SvUndefTypeSocket"}
+
     """
     This could be done like this instead,
     also a good question if we should move to longer
