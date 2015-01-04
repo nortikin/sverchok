@@ -81,7 +81,7 @@ class SvUndefTypeSocket(NodeSocket, SvSocketsBase):
 
 
     def draw_color(self, context, node):
-        return(1.0, .0, .0, 1.0)
+        return(1.0, 1.0, .0, 1.0)
 
 
 
