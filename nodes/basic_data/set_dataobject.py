@@ -16,6 +16,92 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+
+import bpy
+import mathutils
+from mathutils import Vector
+from bpy.props import StringProperty, EnumProperty
+from sverchok.node_tree import SverchCustomTreeNode, VerticesSocket
+from sverchok.data_structure import (updateNode, match_long_cycle)
+
+
+class SvSetDataObjectNode(bpy.types.Node, SverchCustomTreeNode):
+    ''' Set Object Props '''
+    bl_idname = 'SvSetDataObjectNode'
+    bl_label = 'set_dataobject'
+    bl_icon = 'OUTLINER_OB_EMPTY'
+
+    modes = [
+        ("location",   "Location",   "", 1),
+        ("scale",   "Scale",   "", 2),
+        ("rotation_euler",   "Rotation_Euler",   "", 3),
+        ("delta_location",   "Delta_Location",   "", 4),
+        ("delta_scale",   "Delta_Scale",   "", 5),
+        ("delta_rotation_euler",   "Delta_Rotation_Euler",   "", 6),
+        ("parent",   "Parent",   "", 7),
+        ("layers",   "Layers",   "", 8),
+        ("select",   "Selection",   "", 9),
+        ("custom",   "Custom",   "", 10)
+    ]
+
+    formula = StringProperty(name='formula', description='',
+                             default='select', update=updateNode)
+    Modes = EnumProperty(name="property modes", description="Objects property",
+                         default="location", items=modes, update=updateNode)
+
+    def draw_buttons(self, context, layout):
+        if self.Modes == 'custom':
+            layout.prop(self,  "formula", text="")
+        row = layout.row(align=True)
+        layout.prop(self, "Modes", "Objects property")
+
+    def sv_init(self, context):
+        self.inputs.new('SvObjectSocket', 'Objects')
+        self.inputs.new('SvUndefTypeSocket', 'values')
+
+    def process(self):
+        objs = self.inputs['Objects'].sv_get()
+        valsoc = self.inputs['values'].sv_get()
+        lob = len(objs)
+
+        if self.Modes == 'parent':
+            Val = valsoc
+            if lob > len(Val):
+                temp = match_long_cycle([objs, Val])
+                objs, Val = temp[0], temp[1]
+        elif self.Modes == 'layers':
+            Val = [[True if i > 0 else False for i in valsoc[0]]]
+            if lob > len(Val):
+                temp = match_long_cycle([objs, Val])
+                objs, Val = temp[0], temp[1]
+        else:
+            Val = valsoc[0]
+            if isinstance(Val, (tuple)):
+                Val = [Vector(i) for i in Val]
+            if lob > len(Val):
+                temp = match_long_cycle([objs, Val])
+                objs, Val = temp[0], temp[1]
+
+        if self.Modes != 'custom':
+            Prop = self.Modes
+        else:
+            Prop = self.formula
+
+        g = 0
+        while g != lob:
+            if objs[g] != None:
+                exec("objs[g]."+Prop+"= Val[g]")
+            g = g+1
+
+
+def register():
+    bpy.utils.register_class(SvSetDataObjectNode)
+
+
+def unregister():
+    bpy.utils.unregister_class(SvSetDataObjectNode)
+
+```
 import parser
 import ast
 from itertools import chain, repeat
@@ -187,3 +273,5 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvSetDataObjectNode)
+
+```
