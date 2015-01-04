@@ -101,7 +101,7 @@ def register():
 def unregister():
     bpy.utils.unregister_class(SvSetDataObjectNode)
 
-```
+"""
 import parser
 import ast
 from itertools import chain, repeat
@@ -259,12 +259,12 @@ class SvSetDataObjectNode(bpy.types.Node, SverchCustomTreeNode):
                     assign_data(real_obj, val)
 
 
-        '''
+        
         while g != len(ObjectID):
             if ObjectID[g] != None:
                 exec("ObjectID[g]."+Prop+"= Val[g]")
             g = g+1
-        '''
+        
 
 
 def register():
@@ -274,4 +274,4 @@ def register():
 def unregister():
     bpy.utils.unregister_class(SvSetDataObjectNode)
 
-```
+"""
