@@ -79,8 +79,7 @@ class SvVertexColorNode(bpy.types.Node, SverchCustomTreeNode):
                 lidx = len(idxs)
 
                 if lidx > len(colors):
-                    temp = match_long_cycle([idxs, colors])
-                    idxs, colors = temp[0], temp[1]
+                    idxs, colors = match_long_cycle([idxs, colors])
 
                 g = 0
                 while g < lidx:
@@ -103,8 +102,7 @@ class SvVertexColorNode(bpy.types.Node, SverchCustomTreeNode):
                 lidx = len(idxs)
 
                 if lidx > len(colors):
-                    temp = match_long_cycle([idxs, colors])
-                    idxs, colors = temp[0], temp[1]
+                    idxs, colors = match_long_cycle([idxs, colors])
 
                 g = 0
                 while g < lidx:
