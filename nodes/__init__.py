@@ -10,6 +10,7 @@ nodes_dict = {
         'kd_tree',
         'kd_tree_edges',
         'weights',
+        'colors',
         'object_raycast',
         'scene_raycast',
         'closest_point_on_mesh',
