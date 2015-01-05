@@ -32,15 +32,15 @@ class SvSetDataObjectNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     modes = [
-        ("location",   "Location",   "", 1),
-        ("scale",   "Scale",   "", 2),
-        ("rotation_euler",   "Rotation_Euler",   "", 3),
-        ("delta_location",   "Delta_Location",   "", 4),
-        ("delta_scale",   "Delta_Scale",   "", 5),
-        ("delta_rotation_euler",   "Delta_Rotation_Euler",   "", 6),
-        ("parent",   "Parent",   "", 7),
-        ("layers",   "Layers",   "", 8),
-        ("select",   "Selection",   "", 9),
+        ("location",   "Location(Vec)",   "", 1),
+        ("scale",   "Scale(Vec)",   "", 2),
+        ("rotation_euler",   "Rotation_Euler(Vec)",   "", 3),
+        ("delta_location",   "Delta_Location(Vec)",   "", 4),
+        ("delta_scale",   "Delta_Scale(Vec)",   "", 5),
+        ("delta_rotation_euler",   "Delta_Rotation_Euler(Vec)",   "", 6),
+        ("parent",   "Parent(Obj)",   "", 7),
+        ("layers",   "Layers(Int20)",   "", 8),
+        ("select",   "Selection(Int)",   "", 9),
         ("custom",   "Custom",   "", 10)
     ]
 
