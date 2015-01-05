@@ -79,8 +79,7 @@ class SvVertexGroupNode(bpy.types.Node, SverchCustomTreeNode):
             wei = self.inputs['Weights'].sv_get()[0]
             lv = len(verts)
             if lv > len(wei):
-                temp = match_long_cycle([verts, wei])
-                verts, wei = temp[0], temp[1]
+                verts, wei = match_long_cycle([verts, wei])
 
             if self.clear:
                 ovgs.add(vind, self.fade_speed, "SUBTRACT")
