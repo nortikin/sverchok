@@ -67,20 +67,17 @@ class SvSetDataObjectNode(bpy.types.Node, SverchCustomTreeNode):
         if self.Modes == 'parent':
             Val = valsoc
             if lob > len(Val):
-                temp = match_long_cycle([objs, Val])
-                objs, Val = temp[0], temp[1]
+                objs, Val = match_long_cycle([objs, Val])
         elif self.Modes == 'layers':
             Val = [[True if i > 0 else False for i in valsoc[0]]]
             if lob > len(Val):
-                temp = match_long_cycle([objs, Val])
-                objs, Val = temp[0], temp[1]
+                objs, Val = match_long_cycle([objs, Val])
         else:
             Val = valsoc[0]
             if isinstance(Val, (tuple)):
                 Val = [Vector(i) for i in Val]
             if lob > len(Val):
-                temp = match_long_cycle([objs, Val])
-                objs, Val = temp[0], temp[1]
+                objs, Val = match_long_cycle([objs, Val])
 
         if self.Modes != 'custom':
             Prop = self.Modes
