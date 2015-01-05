@@ -51,8 +51,7 @@ class SvRayCastNode(bpy.types.Node, SverchCustomTreeNode):
         start = [Vector(x) for x in st[0]]
         end = [Vector(x) for x in en[0]]
         if len(start) != len(end):
-            temp = match_long_repeat([start, end])
-            start, end = temp[0], temp[1]
+            start, end = match_long_repeat([start, end])
 
         for i, last in enumerate(end):
             src = bpy.context.scene.ray_cast(start[i], last)
