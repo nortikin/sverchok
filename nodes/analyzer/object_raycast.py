@@ -57,8 +57,7 @@ class SvRayCastNode(bpy.types.Node, SverchCustomTreeNode):
         start = [Vector(x) for x in st[0]]
         end = [Vector(x) for x in en[0]]
         if len(start) != len(end):
-            temp = match_long_repeat([start, end])
-            start, end = temp[0], temp[1]
+            start, end = match_long_repeat([start, end])
 
         obj = self.inputs['Objects'].sv_get()
         for OB in obj:
