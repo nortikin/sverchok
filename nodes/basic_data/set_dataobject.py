@@ -18,11 +18,9 @@
 
 
 import bpy
-import mathutils
-from mathutils import Vector
-from bpy.props import StringProperty, EnumProperty
-from sverchok.node_tree import SverchCustomTreeNode, VerticesSocket
-from sverchok.data_structure import (updateNode, match_long_cycle)
+from bpy.props import StringProperty, EnumProperty, IntProperty
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import (updateNode, match_long_cycle, joiner)
 
 
 class SvSetDataObjectNode(bpy.types.Node, SverchCustomTreeNode):
@@ -44,6 +42,7 @@ class SvSetDataObjectNode(bpy.types.Node, SverchCustomTreeNode):
         ("custom",   "Custom",   "", 10)
     ]
 
+    Lev = IntProperty(name='lev', description='', default=1, update=updateNode)
     formula = StringProperty(name='formula', description='',
                              default='select', update=updateNode)
     Modes = EnumProperty(name="property modes", description="Objects property",
@@ -54,6 +53,7 @@ class SvSetDataObjectNode(bpy.types.Node, SverchCustomTreeNode):
             layout.prop(self,  "formula", text="")
         row = layout.row(align=True)
         layout.prop(self, "Modes", "Objects property")
+        row.prop(self, "Lev", text="input level")
 
     def sv_init(self, context):
         self.inputs.new('SvObjectSocket', 'Objects')
@@ -61,23 +61,11 @@ class SvSetDataObjectNode(bpy.types.Node, SverchCustomTreeNode):
 
     def process(self):
         objs = self.inputs['Objects'].sv_get()
-        valsoc = self.inputs['values'].sv_get()
         lob = len(objs)
 
-        if self.Modes == 'parent':
-            Val = valsoc
-            if lob > len(Val):
-                objs, Val = match_long_cycle([objs, Val])
-        elif self.Modes == 'layers':
-            Val = [[True if i > 0 else False for i in valsoc[0]]]
-            if lob > len(Val):
-                objs, Val = match_long_cycle([objs, Val])
-        else:
-            Val = valsoc[0]
-            if isinstance(Val, (tuple)):
-                Val = [Vector(i) for i in Val]
-            if lob > len(Val):
-                objs, Val = match_long_cycle([objs, Val])
+        Val = joiner(self.inputs['values'].sv_get(), self.Lev)
+        if lob > len(Val):
+            objs, Val = match_long_cycle([objs, Val])
 
         if self.Modes != 'custom':
             Prop = self.Modes
