@@ -37,9 +37,8 @@ class SvSetDataObjectNode(bpy.types.Node, SverchCustomTreeNode):
         ("delta_scale",   "Delta_Scale(Vec)",   "", 5),
         ("delta_rotation_euler",   "Delta_Rotation_Euler(Vec)",   "", 6),
         ("parent",   "Parent(Obj)",   "", 7),
-        ("layers",   "Layers(Int20)",   "", 8),
-        ("select",   "Selection(Int)",   "", 9),
-        ("custom",   "Custom",   "", 10)
+        ("select",   "Selection(Int)",   "", 8),
+        ("custom",   "Custom",   "", 9)
     ]
 
     Lev = IntProperty(name='lev', description='', default=1, update=updateNode)
@@ -62,11 +61,9 @@ class SvSetDataObjectNode(bpy.types.Node, SverchCustomTreeNode):
     def process(self):
         objs = self.inputs['Objects'].sv_get()
         lob = len(objs)
-
         Val = joiner(self.inputs['values'].sv_get(), self.Lev)
         if lob > len(Val):
             objs, Val = match_long_cycle([objs, Val])
-
         if self.Modes != 'custom':
             Prop = self.Modes
         else:
