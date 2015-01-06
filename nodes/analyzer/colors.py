@@ -31,24 +31,21 @@ class SvVertexColorNode(bpy.types.Node, SverchCustomTreeNode):
     vertex_color = StringProperty(default='', description='vert group',
                                   update=updateNode)
 
-    def draw_buttons(self, context,   layout):
-        ob = self.inputs['Objects'].sv_get()[0]
-        col = layout.column()
-        if self.inputs['Objects'].sv_get()[0].type == 'MESH':
-            col.prop_search(self, 'vertex_color', ob.data, "vertex_colors", text="")
-
     modes = [
         ("VERT", " v ", "Vcol", 1),
         ("POLY", " p ", "Pcol", 2)
     ]
 
     mode = EnumProperty(items=modes,
-                        default='VERT',
+                        default='POLY',
                         update=updateNode)
 
-    def draw_buttons_ext(self, context, layout):
-        layout.label("Search mode:")
-        layout.prop(self, "mode", expand=True)
+    def draw_buttons(self, context,   layout):
+        ob = self.inputs['Objects'].sv_get()[0]
+        col = layout.column()
+        if self.inputs['Objects'].sv_get()[0].type == 'MESH':
+            col.prop_search(self, 'vertex_color', ob.data, "vertex_colors", text="")
+            layout.prop(self, "mode", expand=True)
 
     def sv_init(self, context):
         self.inputs.new('SvObjectSocket', 'Objects')
@@ -86,8 +83,7 @@ class SvVertexColorNode(bpy.types.Node, SverchCustomTreeNode):
                     i = 0
                     for poly in objm.polygons:
                         for idx in poly.loop_indices:
-                            loop = objm.loops[idx]
-                            v = loop.vertex_index
+                            v = objm.loops[idx].vertex_index
                             if idxs[g] == v:
                                 ovgs.data[i].color = colors[g]
                             i += 1
