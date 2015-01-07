@@ -78,9 +78,17 @@ class SverchokIOLayoutsMenu(bpy.types.Panel):
         exp2.id_tree = ''
         exp2.new_nodetree_name = ntree.new_nodetree_name
 
-        # if new tree name is empty, use current else generate new.
         # ''' import into from json '''
-        # col = layout.column(align=True)
+        col = layout.column(align=True)
+        row4 = col.row()
+        row4.prop(ntree, "gist_id")
+        row5 = col.row()
+        exp4 = row5.operator(
+            'node.tree_import_from_gist',
+            text='import gist',
+            icon='RNA_ADD')
+        exp4.gist_id = ntree.gist_id
+        exp4.id_tree = ntree.name
 
 
 def register():

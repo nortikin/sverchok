@@ -21,7 +21,7 @@ import os
 import re
 import zipfile
 import traceback
-
+from urllib.request import urlopen
 
 from os.path import basename
 from os.path import dirname
@@ -299,7 +299,7 @@ def import_tree(ng, fullpath='', nodes_json=None, create_texts=True):
             node.hide = node_ref['hide']
             node.color = node_ref['color']
 
-            ''' maintenance warning: 
+            ''' maintenance warning:
             for the creation of new text files. If this script is run in a
             file which contains these Text names already, then the script/file
             names stored in the node must be updated to reflect this.
@@ -374,7 +374,7 @@ def import_tree(ng, fullpath='', nodes_json=None, create_texts=True):
         # ng.update()
         # bpy.ops.node.view_all()
 
-    ''' ---- read .json or .zip ----- '''
+    ''' ---- read files (.json or .zip) or straight json data----- '''
 
     if fullpath.endswith('.zip'):
         nodes_json = get_file_obj_from_zip(fullpath)
@@ -384,8 +384,9 @@ def import_tree(ng, fullpath='', nodes_json=None, create_texts=True):
         with open(fullpath) as fp:
             nodes_json = json.load(fp)
             generate_layout(fullpath, nodes_json)
+
     elif nodes_json:
-        generate_layout(fullpath, nodes_json)
+        generate_layout('', nodes_json)
 
 
 class SvNodeTreeExporter(bpy.types.Operator):
@@ -500,6 +501,35 @@ class SvNodeTreeImportFromGist(bpy.types.Operator):
 
     id_tree = StringProperty()
     new_nodetree_name = StringProperty()
+    gist_id = StringProperty()
+
+    def obtain_json(self, gist_id):
+
+        # if it still has the full gist path, trim down to ID
+        if '/' in gist_id:
+            gist_id = gist_id.split('/')[-1]
+
+        def get_raw_url_from_gist_id(gist_id):
+
+            gist_id = str(gist_id)
+            url = 'https://api.github.com/gists/' + gist_id
+            found_json = urlopen(url).readall().decode()
+
+            wfile = json.JSONDecoder()
+            wjson = wfile.decode(found_json)
+
+            # 'files' may contain several - this will mess up gist name.
+            files_flag = 'files'
+            file_names = list(wjson[files_flag].keys())
+            file_name = file_names[0]
+            return wjson[files_flag][file_name]['raw_url']
+
+        def get_file(gist_id):
+            url = get_raw_url_from_gist_id(gist_id)
+            conn = urlopen(url).readall().decode()
+            return conn
+
+        return get_file(gist_id)
 
     def execute(self, context):
         if not self.id_tree:
@@ -510,7 +540,11 @@ class SvNodeTreeImportFromGist(bpy.types.Operator):
             ng = bpy.data.node_groups.new(**ng_params)
         else:
             ng = bpy.data.node_groups[self.id_tree]
-        import_tree(ng, self.filepath)
+
+        found_json = self.obtain_json(self.gist_id)
+        wfile = json.JSONDecoder()
+        nodes_json = wfile.decode(found_json)
+        import_tree(ng, nodes_json=nodes_json)
 
         # set new node tree to active
         context.space_data.node_tree = ng
@@ -528,21 +562,23 @@ def register():
         name='compress_output',
         description='option to also compress the json, will generate both')
 
-    bpy.types.SverchCustomTreeType.new_gist_id = StringProperty(
+    bpy.types.SverchCustomTreeType.gist_id = StringProperty(
         name='new_gist_id',
         default="Enter Gist ID here",
         description="This gist ID will be used to obtain the RAW .json from github")
 
     bpy.utils.register_class(SvNodeTreeExporter)
     bpy.utils.register_class(SvNodeTreeImporter)
+    bpy.utils.register_class(SvNodeTreeImportFromGist)
 
 
 def unregister():
+    bpy.utils.unregister_class(SvNodeTreeImportFromGist)
     bpy.utils.unregister_class(SvNodeTreeImporter)
     bpy.utils.unregister_class(SvNodeTreeExporter)
     del bpy.types.SverchCustomTreeType.new_nodetree_name
     del bpy.types.SverchCustomTreeType.compress_output
-    del bpy.types.SverchCustomTreeType.new_gist_id
+    del bpy.types.SverchCustomTreeType.gist_id
 
 
 if __name__ == '__main__':
