@@ -1,0 +1,143 @@
+
+
+#display {
+  /*overflow:scroll;*/
+  width: 100%;
+  height: 100%;
+}
+
+body {
+  padding: 0px 0px 0px 0px;
+  margin: 0px 0px 0px 0px;
+  background: #DBDADB;
+}
+
+img {padding: 0; margin:0;}
+
+div.content_main { 
+  font-size: 0.7em;
+  line-height: 0.95em;
+  width: 100%;
+  padding: 0px 0px 0px 0px;
+  margin: 0px 0px 0px 0px;  
+}
+
+.sv_maindiv {
+  margin: 40px 0px 0px 40px;
+  width: 800px;
+  
+}
+
+.sv_header {
+  font-family: 'PT Sans', sans-serif;
+  background: #fffaf9;
+  width: 100%;
+  height: 300px;
+  margin-top: 20px;
+}
+
+.sv_header text {
+  color: #e8e9e6;
+  font-size: 7em
+}
+
+.sv_menu {
+  font-family: 'PT Sans', sans-serif;
+  display: inline-block;
+  float: left;
+  width: 12%;
+  height: 100%;
+  padding-top: 20px;
+}
+
+div {
+  padding: 0;
+  margin: 0;
+}
+
+.sv_content {
+  color: #edfbed;
+  font-family: 'PT Sans', sans-serif;
+  float: left;
+  background: #82c5ed;
+  height: auto;
+  width: 88%;
+  padding: 0;
+  margin: 0;
+}
+
+.sv_html {
+  padding: 16px 16px 16px 22px;
+  margin: 0;
+}
+
+.item {
+  cursor: pointer; cursor: hand;
+  text-align: right;
+  padding-top: 10px;
+  padding-right: 10px;
+  padding-bottom: 8px;
+  background: #fdfafe;
+  /*border: 1px solid;*/
+  /*border-right: thick #234;*/
+  border-right: thick solid #fdfafe;
+}
+
+.item:hover {
+  background: #fefefe;
+  border-right: thick solid #f5fbfe;
+}
+
+.item:hover text{
+  color: #73c6f6;
+}
+
+
+.item text {
+  color: #7f7f7f;
+  font-size: 1.2em;
+}
+
+.noselect {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.sv_content h3{
+  color: #f4f4f4;
+  font-size: 1.2em;
+}
+
+.sv_content p {
+  color: #f7f7f7;
+  font-size: 1.1em;
+  font-weight: normal;
+  line-height: 1.5em;
+}
+
+/* unvisited link */
+a:link {
+    color: #3669C2;
+}
+
+/* visited link */
+a:visited {
+    color: #333;
+}
+
+.sv_table {
+  color: #444;
+  background: #eee;
+  border: 1px solid #82c5ed;
+  border-spacing: 0;
+}
+
+.sv_table-elem {
+  color: #848484;
+  padding: 5px;
+  border: 2px solid #82c5ed;
+}
