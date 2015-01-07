@@ -5,6 +5,13 @@ from random import random, seed
 
 def poisson_disc_select(img_width, img_hight, r, n_try):
     """
+    
+    this function is with minor modicifactions a copy of:
+    BSD License
+    http://nbviewer.ipython.org/github/HyperionAnalytics/
+    PyDataNYC2014/blob/master/poisson_disc_sampling.ipynb
+    
+    
     Select points from Poisson disc
     Input:
     img_width - integer, 1 to n
@@ -14,6 +21,7 @@ def poisson_disc_select(img_width, img_hight, r, n_try):
     Output:
     sample_pts_array - floats array, shape[img_width*img_hight, 2]
     """
+
     r_square = r**2
     A = 3*r_square
     cell_size = r/math.sqrt(2)
