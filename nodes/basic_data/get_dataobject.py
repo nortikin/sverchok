@@ -17,12 +17,19 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-
-import parser
-
-from bpy.props import StringProperty, EnumProperty
-from sverchok.node_tree import SverchCustomTreeNode, VerticesSocket
+from bpy.props import EnumProperty
+from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode)
+
+
+def Obm(m):
+        o = []
+        g = 0
+        while g < len(m):
+            dg = m[g]
+            o.append((dg,dg,"",g))
+            g = g+1
+        return o
 
 
 class SvGetDataObjectNode(bpy.types.Node, SverchCustomTreeNode):
@@ -31,69 +38,41 @@ class SvGetDataObjectNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'get_dataobject'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    modes = [
-        ("MESH",   "MESH",   "", 1),
-        ("CURVE",   "CURVE",   "", 2),
-        ("CAMERA",   "CAMERA",   "", 3),
-        ("LAMP",   "LAMP",   "", 4),
-        ("META",   "METABOL",   "", 5),
-        ("EMPTY",   "EMPTY",   "", 6),
-        ("FONT",   "FONT",   "", 7),
-        ("selected_objects",   "Selected_objects",   "", 8),
-        ("active",   "Active",   "", 9),
-        ("in_group",   "In_Group",   "", 10),
-        ("ALL",     "All",  "",     11),
-    ]
+    M = ['actions','brushes','filepath','grease_pencil','groups',
+         'images','libraries','linestyles','masks','materials',
+         'movieclips','node_groups','particles','scenes','screens','shape_keys',
+         'sounds','speakers','texts','textures','worlds','objects']
+    T = ['MESH','CURVE','SURFACE','META','FONT','ARMATURE','LATTICE','EMPTY','CAMERA','LAMP','SPEAKER']
 
-    Modes = EnumProperty(name="getmodes", description="Get object modes",
-                         default="MESH", items=modes, update=updateNode)
-
-    group_name = StringProperty(
-        default='',
-        description='group of objects',
-        update=updateNode)
+    Modes = EnumProperty(name="getmodes", description="Modes",
+                         default="objects", items=Obm(M), update=updateNode)
+    Types = EnumProperty(name="getmodes", description="Types",
+                         default="EMPTY", items=Obm(T), update=updateNode)
 
     def draw_buttons(self, context, layout):
-
         row = layout.row(align=True)
-        layout.prop(self, "Modes", "Get object modes")
-
-        col = layout.column()
-        if self.Modes == "in_group":
-            col.prop_search(self, 'group_name', bpy.data, 'groups', text='', icon='HAND')
+        layout.prop(self, "Modes", "mode")
+        if self.Modes == 'objects':
+            layout.prop(self, "Types", "type")
 
     def sv_init(self, context):
         self.outputs.new('SvObjectSocket', "Objects")
 
     def process(self):
-
-        outputs = self.outputs
-        Objects = []
-
-        if not outputs['Objects'].is_linked:
+        sob = self.outputs['Objects']
+        if not sob.is_linked:
             return
-            
-        if self.Modes == "in_group":
-            if self.group_name in bpy.data.groups:
-                for obj in bpy.data.groups.get(self.group_name).objects:
-                    Objects.append(obj)
-
-        elif self.Modes == "selected_objects":
-            for obj in bpy.context.selected_objects:
-                Objects.append(obj)
-
-        elif self.Modes == "active":
-            Objects.append(bpy.context.active_object)
-            
-        elif self.Modes == "ALL":
-            for obj in bpy.data.objects:
-                Objects.append(obj)
+        Ob = []
+        L = getattr(bpy.data,self.Modes)
+        if self.Modes != 'objects':
+            for i in L:
+                Ob.append(i)
         else:
-            for obj in bpy.data.objects:
-                if obj.type == self.Modes:
-                    Objects.append(obj)
+            for i in L:
+                if i.type == self.Types:
+                    Ob.append(i)
 
-        outputs['Objects'].sv_set(Objects)
+        sob.sv_set(Ob)
 
 
 def register():
