@@ -453,6 +453,9 @@ class SvScriptNode(bpy.types.Node, SverchCustomTreeNode):
         if not hash(self) in self.node_dict:
             if self.script_str:
                 self.load_function()
+
+                # maybe reset files_popup and username here
+
             else:
                 self.load()
 
