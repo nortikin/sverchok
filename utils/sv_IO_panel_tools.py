@@ -314,6 +314,8 @@ def import_tree(ng, fullpath='', nodes_json=None, create_texts=True):
                     if new_text.name != node.script_name:
                         node.script_name = new_text.name
                     new_text.from_string(node.script_str)
+                    node.user_name = "templates"               # best would be in the node.
+                    node.files_popup = "sv_lang_template.sn"   # import to reset easy fix
                     node.load()
 
                 elif node.bl_idname == 'SvProfileNode':
