@@ -22,10 +22,12 @@ from sverchok.node_tree import SverchCustomTree
 from sverchok.node_tree import SverchCustomTreeNode
 
 from sverchok.utils.sv_IO_panel_tools import (
-		_EXPORTER_REVISION_, get_file_obj_from_zip, find_enumerators,
-		compile_socket, write_json, has_state_switch_protection,
-		create_dict_of_tree, import_tree
-		)
+    _EXPORTER_REVISION_,
+    get_file_obj_from_zip,
+    find_enumerators,
+    compile_socket, write_json,
+    has_state_switch_protection,
+    create_dict_of_tree, import_tree)
 
 
 class SverchokIOLayoutsMenu(bpy.types.Panel):
@@ -75,6 +77,10 @@ class SverchokIOLayoutsMenu(bpy.types.Panel):
         exp2 = row2.operator('node.tree_importer', text='New', icon='RNA_ADD')
         exp2.id_tree = ''
         exp2.new_nodetree_name = ntree.new_nodetree_name
+
+        # if new tree name is empty, use current else generate new.
+        # ''' import into from json '''
+        # col = layout.column(align=True)
 
 
 def register():
