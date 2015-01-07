@@ -1,0 +1,60 @@
+#Blender's cache folder
+__pycache__
+
+
+*.py[cod]
+
+# C extensions
+*.so
+
+# Packages
+*.egg
+*.egg-info
+dist
+build
+eggs
+parts
+bin
+var
+sdist
+develop-eggs
+.installed.cfg
+lib
+lib64
+__pycache__
+
+# Installer logs
+pip-log.txt
+
+# Unit test / coverage reports
+.coverage
+.tox
+nosetests.xml
+
+# Translations
+*.mo
+
+# Mr Developer
+.mr.developer.cfg
+.project
+.pydevproject
+
+#OS Specific files
+.directory
+.DS
+__MACOSX
+.kdev4/
+*.kdev4
+
+#Ignore KDE's backup files
+#thanks, i have trouobles 
+#with this sometimes in gedit
+*~
+
+
+#Ignore sphinx build folder
+docs/_build
+
+docs/.make.bat.swp
+
+nodes/generator/meta_balls.py
