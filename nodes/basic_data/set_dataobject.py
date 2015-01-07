@@ -29,29 +29,25 @@ class SvSetDataObjectNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'set_dataobject'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    modes = [
-        ("location",   "Location(Vec)",   "", 1),
-        ("scale",   "Scale(Vec)",   "", 2),
-        ("rotation_euler",   "Rotation_Euler(Vec)",   "", 3),
-        ("delta_location",   "Delta_Location(Vec)",   "", 4),
-        ("delta_scale",   "Delta_Scale(Vec)",   "", 5),
-        ("delta_rotation_euler",   "Delta_Rotation_Euler(Vec)",   "", 6),
-        ("parent",   "Parent(Obj)",   "", 7),
-        ("select",   "Selection(Int)",   "", 8),
-        ("custom",   "Custom",   "", 9)
-    ]
+    def Obm(m):
+        o = []
+        g = 0
+        while g < len(m):
+            dg = m[g]
+            o.append((dg,dg,"",g))
+            g = g+1
+        return o
 
+    M = ['delta_location','delta_rotation_euler','delta_scale','select','parent','name','custom']
     Lev = IntProperty(name='lev', description='', default=1, update=updateNode)
-    formula = StringProperty(name='formula', description='',
-                             default='select', update=updateNode)
-    Modes = EnumProperty(name="property modes", description="Objects property",
-                         default="location", items=modes, update=updateNode)
+    formula = StringProperty(name='formula', default='layers', update=updateNode)
+    Modes = EnumProperty(name="property modes", default="select", items=Obm(M), update=updateNode)
 
     def draw_buttons(self, context, layout):
         if self.Modes == 'custom':
             layout.prop(self,  "formula", text="")
         row = layout.row(align=True)
-        layout.prop(self, "Modes", "Objects property")
+        layout.prop(self, "Modes", "property")
         row.prop(self, "Lev", text="input level")
 
     def sv_init(self, context):
@@ -64,11 +60,8 @@ class SvSetDataObjectNode(bpy.types.Node, SverchCustomTreeNode):
         Val = joiner(self.inputs['values'].sv_get(), self.Lev)
         if lob > len(Val):
             objs, Val = match_long_cycle([objs, Val])
-        if self.Modes != 'custom':
-            Prop = self.Modes
-        else:
-            Prop = self.formula
-
+        Prop = self.Modes if self.Modes != 'custom' else self.formula
+        
         g = 0
         while g != lob:
             if objs[g] != None:
