@@ -1,2 +1,0 @@
-Vector X Doubles
-================
