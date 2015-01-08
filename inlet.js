@@ -32,18 +32,16 @@ var context = {
   header: "Sverchok",
   menu_items: [
     {name:"About", link: "url"},
-    {name:"Gallery", link: ""},
+    {name:"Gallery", link: "urlo"},
     {name:"Download", link: "url"},
     {name:"Manual", link: "...url to manual..."},
+    {name:"Lessons", link: "url"},
     {name:"Donate", link: "url"}
   ]
   ,  
-  About: "\
-<h3>About</h3>\
-<p>\
-Droll trickatreat streaky bacon chance jeopardy dimanche fravaol ti\
-chinchan chipchop chumchim chobchab blert braaap rabble rabble rablerable. RaBel!\
-</p>"
+  Sverchok: "\
+<h3>Sverchok</h3>\
+<img src='http://nikitron.cc.ua/sverch/skyscreapersm.jpg' />"
   ,
   
   Manual: "\
@@ -52,6 +50,14 @@ chinchan chipchop chumchim chobchab blert braaap rabble rabble rablerable. RaBel
 Read Sverchok documentation online <b>here</b><br> \
 Download for offline referencing from <b>this link</b>.</p>"
   ,
+  
+  Lessons: "\
+<h3>Lessons</h3>\
+<p>\
+Learn lessons.\
+</p>"
+  ,
+
 
   Gallery: "\
 <h3>Gallery</h3>\
@@ -74,7 +80,7 @@ werwer wer werrree wet\
 // ------ html generation --------
 
 var content_display = d3.select("#display")
-  .style({background: '#dbdadb'})
+  .style({background: '#555555'})
 
 var cmain = content_display.append("div")
   .classed("content_main", true);
@@ -103,7 +109,7 @@ function draw_content(){
     .text(function(d, i) { return d.name })
     .classed("noselect", true);
   
-  div4.html(context.About)
+  div4.html(context.Sverchok)
   
   menu.each(function(d){
     var obj = d3.select(this);
@@ -129,8 +135,16 @@ function draw_content(){
           var obtained_html = read_content("About.md");
           div4.html(obtained_html);
       } 
+      else if (d.name === 'Lessons'){
+          var obtained_html = read_content("Lessons.md");
+          div4.html(obtained_html);
+      } 
       else if (d.name === 'Donate'){
           var obtained_html = read_content("Donate.md");
+          div4.html(obtained_html);
+      } 
+      else if (d.name === 'Gallery'){
+          var obtained_html = read_content("Gallery.md");
           div4.html(obtained_html);
       } 
       else {

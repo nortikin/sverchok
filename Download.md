@@ -1,6 +1,6 @@
 ## Download
 
-Please, use github for download to happens. If you need other tools as music player for blender or tinyCAD or F2, please look at Zeffii, Cfyzzz and Nikitron githubs.
+Please, use github for download to happens. If you need other tools as music player for blender or tinyCAD or F2, please look at <a href='https://github.com/zeffii'>Zeffii</a>, <a href='https://github.com/Cfyzzz'>Cfyzzz</a> and <a href='https://github.com/nortikin'>Nikitron</a> githubs.
 
 <table class="sv_table">
   <tr>
