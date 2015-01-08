@@ -17,6 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
+import bmesh
 from bpy.props import StringProperty, EnumProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode, match_long_cycle)
@@ -74,20 +75,18 @@ class SvVertexColorNode(bpy.types.Node, SverchCustomTreeNode):
                 else:
                     idxs = [i.index for i in objm.vertices]
                 lidx = len(idxs)
-
                 if lidx > len(colors):
                     idxs, colors = match_long_cycle([idxs, colors])
 
+                bm = bmesh.new()
+                bm.from_mesh(objm)
                 g = 0
+                bm.verts.ensure_lookup_table()
                 while g < lidx:
-                    i = 0
-                    for poly in objm.polygons:
-                        for idx in poly.loop_indices:
-                            v = objm.loops[idx].vertex_index
-                            if idxs[g] == v:
-                                ovgs.data[i].color = colors[g]
-                            i += 1
+                    for i in bm.verts[idxs[g]].link_loops:
+                        ovgs.data[i.index].color = colors[g]
                     g = g+1
+                bm.free()
 
             if self.mode == 'POLY':
 
