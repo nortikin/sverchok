@@ -45,7 +45,6 @@ var context = {
   Sverchok: "\
 <h3>Sverchok</h3>\
 <img src='http://nikitron.cc.ua/sverch/skyscreapersm.jpg' />"
-  ,
 }
 
 
