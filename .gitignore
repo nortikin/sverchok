@@ -21,7 +21,6 @@ develop-eggs
 .installed.cfg
 lib
 lib64
-__pycache__
 
 # Installer logs
 pip-log.txt
@@ -52,9 +51,9 @@ __MACOSX
 *~
 
 
-#Ignore sphinx build folder
-docs/_build
+#Ignore folders
+docs/
+nodes/
+json_examples/
+node_scripts/
 
-docs/.make.bat.swp
-
-nodes/generator/meta_balls.py
