@@ -33,9 +33,12 @@ from bpy.props import StringProperty
 from bpy.props import BoolProperty
 from sverchok import old_nodes
 
-_EXPORTER_REVISION_ = '0.054'
+_EXPORTER_REVISION_ = '0.055'
 
 '''
+0.055 - (import) fix : SN reset (files_popup, username) params
+      - (import) add : deals with importing from gist id.
+
 0.054 group support, hash of text files
 0.053 support old_nodes on demand
 0.052 respect selection
@@ -43,8 +46,7 @@ _EXPORTER_REVISION_ = '0.054'
 0.05 fake node inserted to stop updates
 0.043 remap dict for duplicates (when importing into existing tree)
 0.042 add fake user to imported layouts + switch to new tree.
-0.04x support for profilenode
-0.039 panel cosmetics
+
 
 '''
 
