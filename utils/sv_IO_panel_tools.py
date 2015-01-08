@@ -21,7 +21,7 @@ import os
 import re
 import zipfile
 import traceback
-
+from urllib.request import urlopen
 
 from os.path import basename
 from os.path import dirname
@@ -33,9 +33,12 @@ from bpy.props import StringProperty
 from bpy.props import BoolProperty
 from sverchok import old_nodes
 
-_EXPORTER_REVISION_ = '0.054'
+_EXPORTER_REVISION_ = '0.055'
 
 '''
+0.055 - (import) fix : SN reset (files_popup, username) params
+      - (import) add : deals with importing from gist id.
+
 0.054 group support, hash of text files
 0.053 support old_nodes on demand
 0.052 respect selection
@@ -43,8 +46,7 @@ _EXPORTER_REVISION_ = '0.054'
 0.05 fake node inserted to stop updates
 0.043 remap dict for duplicates (when importing into existing tree)
 0.042 add fake user to imported layouts + switch to new tree.
-0.04x support for profilenode
-0.039 panel cosmetics
+
 
 '''
 
@@ -120,10 +122,10 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
     texts = bpy.data.texts
     if not skip_set:
         skip_set = {'SvImportExport', 'Sv3DviewPropsNode'}
-        
+
     if selected:
-        nodes = list(filter(lambda n:n.select, nodes))
-    
+        nodes = list(filter(lambda n: n.select, nodes))
+
     ''' get nodes and params '''
     for node in nodes:
 
@@ -137,7 +139,6 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
         ObjectsNode = (node.bl_idname == 'ObjectsNode')
         ProfileParamNode = (node.bl_idname == 'SvProfileNode')
         IsGroupNode = (node.bl_idname == 'SvGroupNode')
-
 
         for k, v in node.items():
 
@@ -160,14 +161,13 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
             if ProfileParamNode and (k == "filename"):
                 '''add file content to dict'''
                 node_dict['path_file'] = texts[node.filename].as_string()
-            
+
             if IsGroupNode and (k == "group_name"):
                 if v not in groups_dict:
                     group_ng = bpy.data.node_groups[v]
                     group_dict = create_dict_of_tree(group_ng)
                     group_json = json.dumps(group_dict)
                     groups_dict[v] = group_json
-                     
 
             if isinstance(v, (float, int, str)):
                 node_items[k] = v
@@ -208,7 +208,7 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
                 framed_nodes[node.name] = node.parent.name
             elif not selected:
                 framed_nodes[node.name] = node.parent.name
-                
+
     layout_dict['framed_nodes'] = framed_nodes
 
     ''' get update list (cache, order to link) '''
@@ -253,18 +253,18 @@ def import_tree(ng, fullpath='', nodes_json=None, create_texts=True):
 
         ''' first create all nodes. '''
         nodes_to_import = nodes_json['nodes']
-        groups_to_import = nodes_json.get('groups',{})
-        
+        groups_to_import = nodes_json.get('groups', {})
+
         group_name_remap = {}
         for name in groups_to_import:
             group_ng = bpy.data.node_groups.new(name, 'SverchGroupTreeType')
             if group_ng.name != name:
                 group_name_remap[name] = ng.name
             import_tree(group_ng, '', groups_to_import[name])
-            
+
         name_remap = {}
         texts = bpy.data.texts
-        
+
         for n in sorted(nodes_to_import):
             node_ref = nodes_to_import[n]
             bl_idname = node_ref['bl_idname']
@@ -301,12 +301,13 @@ def import_tree(ng, fullpath='', nodes_json=None, create_texts=True):
             node.hide = node_ref['hide']
             node.color = node_ref['color']
 
-            ''' maintenance warning for the creation of new text files. If this script
-            is run in a file which contains these Text names already, then the
-            the script/file names stored in the node must be updated to reflect this.
-            
-            Also is a script/profile is used for more than one node it will lead to duplication
-            All names have to collected and then fixed at end
+            ''' maintenance warning:
+            for the creation of new text files. If this script is run in a
+            file which contains these Text names already, then the script/file
+            names stored in the node must be updated to reflect this.
+
+            Also is a script/profile is used for more than one node it will lead
+            to duplication. All names have to collected and then fixed at end
             '''
             if create_texts:
                 if node.bl_idname in ('SvScriptNode', 'SvScriptNodeMK2'):
@@ -315,12 +316,14 @@ def import_tree(ng, fullpath='', nodes_json=None, create_texts=True):
                     if new_text.name != node.script_name:
                         node.script_name = new_text.name
                     new_text.from_string(node.script_str)
+                    node.user_name = "templates"               # best would be in the node.
+                    node.files_popup = "sv_lang_template.sn"   # import to reset easy fix
                     node.load()
 
                 elif node.bl_idname == 'SvProfileNode':
                     new_text = texts.new(node.filename)
                     new_text.from_string(node_ref['path_file'])
-                    #  update will get called many times, is this really needed?
+                    #  needed!
                     node.update()
             '''
             Nodes that require post processing to work properly
@@ -343,9 +346,9 @@ def import_tree(ng, fullpath='', nodes_json=None, create_texts=True):
         # freeze updates while connecting the tree, otherwise
         # each connection will cause an update event
         ng.freeze(hard=True)
-        
+
         failed_connections = []
-        
+
         for link in update_lists:
             try:
                 ng.links.new(*resolve_socket(*link, name_dict=name_remap))
@@ -365,17 +368,17 @@ def import_tree(ng, fullpath='', nodes_json=None, create_texts=True):
         framed_nodes = nodes_json['framed_nodes']
         for node_name, parent in framed_nodes.items():
             ng.nodes[finalize(node_name)].parent = ng.nodes[finalize(parent)]
-        
+
         old_nodes.scan_for_old(ng)
         ng.unfreeze(hard=True)
         ng.update()
         #bpy.ops.node.sverchok_update_current(node_group=ng.name)
-        
+
         # bpy.ops.node.select_all(action='DESELECT')
         # ng.update()
         # bpy.ops.node.view_all()
 
-    ''' ---- read .json or .zip ----- '''
+    ''' ---- read files (.json or .zip) or straight json data----- '''
 
     if fullpath.endswith('.zip'):
         nodes_json = get_file_obj_from_zip(fullpath)
@@ -385,9 +388,9 @@ def import_tree(ng, fullpath='', nodes_json=None, create_texts=True):
         with open(fullpath) as fp:
             nodes_json = json.load(fp)
             generate_layout(fullpath, nodes_json)
+
     elif nodes_json:
-        generate_layout(fullpath, nodes_json)
-        
+        generate_layout('', nodes_json)
 
 
 class SvNodeTreeExporter(bpy.types.Operator):
@@ -436,8 +439,10 @@ class SvNodeTreeExporter(bpy.types.Operator):
             # destination path = /a../b../c../somename.json
             base = basename(destination_path)  # somename.json
             basedir = dirname(destination_path)  # /a../b../c../
-            final_archivename = base.replace(
-                '.json', '') + '.zip'  # somename.zip
+
+            # somename.zip
+            final_archivename = base.replace('.json', '') + '.zip'
+
             # /a../b../c../somename.zip
             fullpath = os.path.join(basedir, final_archivename)
 
@@ -493,6 +498,63 @@ class SvNodeTreeImporter(bpy.types.Operator):
         return {'RUNNING_MODAL'}
 
 
+class SvNodeTreeImportFromGist(bpy.types.Operator):
+
+    bl_idname = "node.tree_import_from_gist"
+    bl_label = "sv NodeTree Gist Import Operator"
+
+    id_tree = StringProperty()
+    new_nodetree_name = StringProperty()
+    gist_id = StringProperty()
+
+    def obtain_json(self, gist_id):
+
+        # if it still has the full gist path, trim down to ID
+        if '/' in gist_id:
+            gist_id = gist_id.split('/')[-1]
+
+        def get_raw_url_from_gist_id(gist_id):
+
+            gist_id = str(gist_id)
+            url = 'https://api.github.com/gists/' + gist_id
+            found_json = urlopen(url).readall().decode()
+
+            wfile = json.JSONDecoder()
+            wjson = wfile.decode(found_json)
+
+            # 'files' may contain several - this will mess up gist name.
+            files_flag = 'files'
+            file_names = list(wjson[files_flag].keys())
+            file_name = file_names[0]
+            return wjson[files_flag][file_name]['raw_url']
+
+        def get_file(gist_id):
+            url = get_raw_url_from_gist_id(gist_id)
+            conn = urlopen(url).readall().decode()
+            return conn
+
+        return get_file(gist_id)
+
+    def execute(self, context):
+        if not self.id_tree:
+            ng_name = self.new_nodetree_name
+            ng_params = {
+                'name': ng_name or 'unnamed_tree',
+                'type': 'SverchCustomTreeType'}
+            ng = bpy.data.node_groups.new(**ng_params)
+        else:
+            ng = bpy.data.node_groups[self.id_tree]
+
+        found_json = self.obtain_json(self.gist_id)
+        wfile = json.JSONDecoder()
+        nodes_json = wfile.decode(found_json)
+        import_tree(ng, nodes_json=nodes_json)
+
+        # set new node tree to active
+        context.space_data.node_tree = ng
+        return {'FINISHED'}
+
+
 def register():
     bpy.types.SverchCustomTreeType.new_nodetree_name = StringProperty(
         name='new_nodetree_name',
@@ -504,15 +566,23 @@ def register():
         name='compress_output',
         description='option to also compress the json, will generate both')
 
+    bpy.types.SverchCustomTreeType.gist_id = StringProperty(
+        name='new_gist_id',
+        default="Enter Gist ID here",
+        description="This gist ID will be used to obtain the RAW .json from github")
+
     bpy.utils.register_class(SvNodeTreeExporter)
     bpy.utils.register_class(SvNodeTreeImporter)
+    bpy.utils.register_class(SvNodeTreeImportFromGist)
 
 
 def unregister():
+    bpy.utils.unregister_class(SvNodeTreeImportFromGist)
     bpy.utils.unregister_class(SvNodeTreeImporter)
     bpy.utils.unregister_class(SvNodeTreeExporter)
     del bpy.types.SverchCustomTreeType.new_nodetree_name
     del bpy.types.SverchCustomTreeType.compress_output
+    del bpy.types.SverchCustomTreeType.gist_id
 
 
 if __name__ == '__main__':
