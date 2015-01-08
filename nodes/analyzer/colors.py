@@ -29,22 +29,19 @@ class SvVertexColorNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Vertex colors'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    vertex_color = StringProperty(default='', description='vert group',
-                                  update=updateNode)
+    vertex_color = StringProperty(default='', update=updateNode)
 
     modes = [
         ("VERT", " v ", "Vcol", 1),
         ("POLY", " p ", "Pcol", 2)
     ]
 
-    mode = EnumProperty(items=modes,
-                        default='POLY',
-                        update=updateNode)
+    mode = EnumProperty(items=modes, default='POLY', update=updateNode)
 
     def draw_buttons(self, context,   layout):
         ob = self.inputs['Objects'].sv_get()[0]
         col = layout.column()
-        if self.inputs['Objects'].sv_get()[0].type == 'MESH':
+        if ob.type == 'MESH':
             col.prop_search(self, 'vertex_color', ob.data, "vertex_colors", text="")
             layout.prop(self, "mode", expand=True)
 
@@ -63,10 +60,11 @@ class SvVertexColorNode(bpy.types.Node, SverchCustomTreeNode):
             return
 
         ovgs = objm.vertex_colors.get(self.vertex_color)
-        obpol = objm.polygons
 
         if self.inputs['Color'].is_linked:
             colors = self.inputs['Color'].sv_get()[0]
+            bm = bmesh.new()
+            bm.from_mesh(objm)
 
             if self.mode == 'VERT':
 
@@ -78,32 +76,31 @@ class SvVertexColorNode(bpy.types.Node, SverchCustomTreeNode):
                 if lidx > len(colors):
                     idxs, colors = match_long_cycle([idxs, colors])
 
-                bm = bmesh.new()
-                bm.from_mesh(objm)
                 g = 0
                 bm.verts.ensure_lookup_table()
                 while g < lidx:
                     for i in bm.verts[idxs[g]].link_loops:
                         ovgs.data[i.index].color = colors[g]
                     g = g+1
-                bm.free()
 
             if self.mode == 'POLY':
 
                 if self.inputs['Index'].is_linked:
                     idxs = self.inputs['Index'].sv_get()[0]
                 else:
-                    idxs = [i.index for i in obpol]
+                    idxs = [i.index for i in objm.polygons]
                 lidx = len(idxs)
-
                 if lidx > len(colors):
                     idxs, colors = match_long_cycle([idxs, colors])
 
                 g = 0
+                bm.faces.ensure_lookup_table()
                 while g < lidx:
-                    for loop_index in range(obpol[idxs[g]].loop_start, obpol[idxs[g]].loop_start + obpol[idxs[g]].loop_total):
-                        ovgs.data[loop_index].color = colors[g]
+                    for i in bm.faces[idxs[g]].loops:
+                        ovgs.data[i.index].color = colors[g]
                     g = g+1
+
+            bm.free()
 
 
 def register():
