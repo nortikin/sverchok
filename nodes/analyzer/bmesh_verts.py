@@ -20,27 +20,20 @@ import bpy
 import bmesh
 from bpy.props import EnumProperty
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
-from sverchok.node_tree import SverchCustomTreeNode, StringsSocket
+from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode)
 
 
 def get_value(self, b, V):
-        sm = self.Modes
         bv = b.verts
         bv.index_update()
-        if sm == 'manifold':
-            V.append([i.index for i in bv if i.is_manifold])
-        elif sm == 'wire':
-            V.append([i.index for i in bv if i.is_wire])
-        elif sm == 'bound':
-            V.append([i.index for i in bv if i.is_boundary])
-        elif sm == 'sel':
-            V.append([i.index for i in bv if i.select])
-        elif sm == 'sharpness':
-            V.append([i.calc_shell_factor() for i in bv])
-        elif sm == 'angle':
-            V.append([i.calc_vert_angle() for i in bv])
+        V.append([eval("i."+self.Modes) for i in bv])
         return V
+
+
+def Obm(m):
+        m = [(i,i,"") for i in m]
+        return m
 
 
 class SvBMVertsNode(bpy.types.Node, SverchCustomTreeNode):
@@ -49,17 +42,8 @@ class SvBMVertsNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'bmesh_verts'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    modes = [
-        ("manifold",   "Manifold",   "", 1),
-        ("wire",   "Wire",   "", 2),
-        ("bound",   "Boundary",   "", 3),
-        ("sel",   "Selected",   "", 4),
-        ("sharpness",   "Verts Sharpness",   "", 5),
-        ("angle",   "Angle (Two Edges)",   "", 6),
-    ]
-
-    Modes = EnumProperty(name="getmodes", description="Get Property modes",
-                         default="manifold", items=modes, update=updateNode)
+    M = ['is_manifold','is_wire','is_boundary','hide','select','calc_shell_factor()','calc_vert_angle()']
+    Modes = EnumProperty(name="getmodes", default="is_manifold", items=Obm(M), update=updateNode)
 
     def sv_init(self, context):
         si = self.inputs.new
