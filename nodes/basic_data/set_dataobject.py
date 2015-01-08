@@ -30,13 +30,8 @@ class SvSetDataObjectNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     def Obm(m):
-        o = []
-        g = 0
-        while g < len(m):
-            dg = m[g]
-            o.append((dg,dg,"",g))
-            g = g+1
-        return o
+        m = [(i,i,"") for i in m]
+        return m
 
     M = ['delta_location','delta_rotation_euler','delta_scale','select','parent','name','custom']
     Lev = IntProperty(name='lev', description='', default=1, update=updateNode)
