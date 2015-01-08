@@ -31,11 +31,11 @@ var gh_asset_https = "https://cloud.githubusercontent.com/assets/"
 var context = {
   header: "Sverchok",
   menu_items: [
-    {name:"About", link: ""},
+    {name:"About", link: "url"},
     {name:"Gallery", link: ""},
-    {name:"Download", link: ""},
+    {name:"Download", link: "url"},
     {name:"Manual", link: "...url to manual..."},
-    {name:"Donate", link: ""}
+    {name:"Donate", link: "url"}
   ]
   ,  
   About: "\
@@ -119,6 +119,18 @@ function draw_content(){
     
       if (d.name === 'Manual'){
           var obtained_html = read_content("Manual.md");
+          div4.html(obtained_html);
+      } 
+      else if (d.name === 'Download'){
+          var obtained_html = read_content("Download.md");
+          div4.html(obtained_html);
+      } 
+      else if (d.name === 'About'){
+          var obtained_html = read_content("About.md");
+          div4.html(obtained_html);
+      } 
+      else if (d.name === 'Donate'){
+          var obtained_html = read_content("Donate.md");
           div4.html(obtained_html);
       } 
       else {
