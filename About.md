@@ -1,5 +1,6 @@
 ## About
 
+<img src='images/about.png' />
 <p>
 Sverchok - is parametric tool for an architect, designer, lets you to programm object's form without knowing program longuages.
 </p><p>

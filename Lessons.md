@@ -1,5 +1,6 @@
 ## Lessons
 
+<img src='images/lessons.png' />
 <p>
 There is many lessons.
 </p>

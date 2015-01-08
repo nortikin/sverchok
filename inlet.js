@@ -35,7 +35,10 @@ var context = {
     {name:"Gallery", link: "urlo"},
     {name:"Download", link: "url"},
     {name:"Manual", link: "...url to manual..."},
+    {name:"Video",link: "url"},
     {name:"Lessons", link: "url"},
+    {name:"Fact", link: "url"},
+    {name:"Magazines", link: "url"},
     {name:"Donate", link: "url"}
   ]
   ,  
@@ -43,37 +46,6 @@ var context = {
 <h3>Sverchok</h3>\
 <img src='http://nikitron.cc.ua/sverch/skyscreapersm.jpg' />"
   ,
-  
-  Manual: "\
-<h3>Manual</h3>\
-<p>\
-Read Sverchok documentation online <b>here</b><br> \
-Download for offline referencing from <b>this link</b>.</p>"
-  ,
-  
-  Lessons: "\
-<h3>Lessons</h3>\
-<p>\
-Learn lessons.\
-</p>"
-  ,
-
-
-  Gallery: "\
-<h3>Gallery</h3>\
-<p>\
-werwer 23 23443 wer \
-werwer wer werrree wet\
-</p>"
-  ,
-  
-  Download: "\
-<h3>Download</h3>\
-<p>\
-Sverchok development is hosted on GitHub \
-werwer wer werrree wet\
-</p>"
-  
 }
 
 
@@ -141,6 +113,18 @@ function draw_content(){
       } 
       else if (d.name === 'Donate'){
           var obtained_html = read_content("Donate.md");
+          div4.html(obtained_html);
+      } 
+      else if (d.name === 'Video'){
+          var obtained_html = read_content("Video.md");
+          div4.html(obtained_html);
+      } 
+      else if (d.name === 'Magazines'){
+          var obtained_html = read_content("Magazines.md");
+          div4.html(obtained_html);
+      } 
+      else if (d.name === 'Fact'){
+          var obtained_html = read_content("Fact.md");
           div4.html(obtained_html);
       } 
       else if (d.name === 'Gallery'){

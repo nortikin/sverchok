@@ -1,5 +1,6 @@
 ## Donate
 
+<img src='images/donate.png' />
 If you want to support project, you can make code (including scripted node templates) and share it or you can give us money. That money most likely will cover conferences participation needs or help us in other way.
 
 <p class="sv_content">
