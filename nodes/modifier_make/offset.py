@@ -142,7 +142,7 @@ class SvOffsetNode(bpy.types.Node, SverchCustomTreeNode):
                 vec1 = p - p1
                 vec2 = p - p2
                 ang = vec1.angle(vec2)
-                adj = opp / tan(ang * 0.5)
+                adj = opp / (tan(ang * 0.5) or 0.00001)
                 h = (adj ** 2 + opp ** 2) ** 0.5
                 if round(degrees(ang)) == 180 or round(degrees(ang)) == 0.0:
                     p6 = self.a_rot(
