@@ -127,6 +127,7 @@ nodes_dict = {
         'lathe',
         'line_connect',
         'offset',
+        'inset_special',
         'polygons_adaptative',
         'solidify',
         'voronoi_2d',
