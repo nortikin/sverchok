@@ -45,6 +45,7 @@ def make_node_cats():
         ['BasicSplineNode',     "2pt Spline",  "CURVE_BEZCURVE"],
         ["svBasicArcNode",      "3pt Arc",        "SPHERECURVE"],
         ['RandomVectorNode',    'Random Vector',     'RNDCURVE'],
+        ['SvNGonNode',    'NGon',     'RNDCURVE'],
     ]
 
     node_cats["Extended Generators"] = [
