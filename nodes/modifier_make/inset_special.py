@@ -24,11 +24,10 @@ import mathutils
 from mathutils import Vector
 from bpy.props import FloatProperty, FloatVectorProperty
 
-
-from node_tree import SverchCustomTreeNode
-from data_structure import (updateNode, Vector_generate, repeat_last,
-                            SvSetSocketAnyType, SvGetSocketAnyType,
-                            fullList)
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import (
+    updateNode, Vector_generate,
+    repeat_last, fullList)
 
 
 ''' very non optimal routines. beware. I know this '''
@@ -184,9 +183,6 @@ class SvInsetSpecial(bpy.types.Node, SverchCustomTreeNode):
 
         if not o['vertices'].is_linked:
             return
-
-        if all([i['vertices'].links, i['polygons'].links, o['vertices'].links]):
-            self.process()
 
         verts = Vector_generate(i['vertices'].sv_get())
         polys = i['polygons'].sv_get()

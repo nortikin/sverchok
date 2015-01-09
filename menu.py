@@ -230,7 +230,7 @@ def make_node_cats():
         ["SvImageComponentsNode", "Image Decompose",  "GROUP_VCOL"],
         ["SvJoinTrianglesNode",   "Join Triangles"],
         ["SvCacheNode",           "Cache"],
-        ["SvInsetSpecial",        "Inset Special"]
+        ["SvInsetSpecial",        "Inset Special"],
         ["SvCSGBooleanNode",      "GSG Boolean"],
 
     ]
