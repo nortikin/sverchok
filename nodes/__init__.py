@@ -148,6 +148,7 @@ nodes_dict = {
         'range_map',
         'range_float',
         'range_int',
+        'fibonacci',
         'logic'
     ],
 

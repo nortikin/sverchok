@@ -225,6 +225,7 @@ def make_node_cats():
         ["SvFormulaShapeNode",  "Formula shape", "IPO"],
         ["SvScriptNodeMK2",     "Script 2"],
         ['SvNGonNode',    'NGon',     'RNDCURVE'],
+        ["SvGenFibonacci", "Fibonacci sequence"],
     ]
 
     node_cats["Alpha Nodes"] = [
