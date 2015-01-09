@@ -46,6 +46,7 @@ nodes_dict = {
         'box',
         'box_rounded',
         'circle',
+        'ngon',
         'cylinder',
         'hilbert_image',
         'hilbert',
