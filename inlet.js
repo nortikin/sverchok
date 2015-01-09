@@ -67,7 +67,7 @@ function draw_content(){
   
   // this can be transitioned to other images using a timer.
   var header_image = "619340/5299224/1c085d8e-7bc5-11e4-8246-6951c48014ef.png"
-  div1.style({
+  div1.classed('sv_header_background', true).style({
     "background-image": url(gh_asset_https, header_image)
   })
       

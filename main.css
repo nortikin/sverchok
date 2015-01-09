@@ -34,7 +34,21 @@ div.content_main {
   width: 100%;
   height: 300px;
   margin-top: 20px;
+  position: relative;
+  //padding: 2em 0;
+  //overflow: hidden;
 }
+
+  .sv_header_background {
+    top: -50%;
+    left: -100;
+    width: 200%;
+    // blur effect should be
+    -webkit-filter: blur(100px);
+    -webkit-transform: translate3d(0, 0, 0);
+  }
+
+
 
 .sv_header text {
   color: #e8e9e6;
