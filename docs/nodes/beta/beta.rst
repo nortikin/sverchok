@@ -6,3 +6,5 @@ Beta
    :maxdepth: 2
 
    image_decompose
+   ngon
+
