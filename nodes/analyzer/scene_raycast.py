@@ -17,10 +17,8 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-import mathutils
-from mathutils import Vector
-from sverchok.node_tree import SverchCustomTreeNode, StringsSocket, VerticesSocket, MatrixSocket
-from sverchok.data_structure import (updateNode, Vector_generate, match_long_repeat)
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import (updateNode, match_long_repeat)
 
 
 class SvRayCastNode(bpy.types.Node, SverchCustomTreeNode):
@@ -30,43 +28,43 @@ class SvRayCastNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', 'start').use_prop = True
-        self.inputs.new('VerticesSocket', 'end').use_prop = True
-        self.outputs.new('VerticesSocket', "HitP")
-        self.outputs.new('VerticesSocket', "HitNorm")
-        self.outputs.new('StringsSocket', "Succes")
-        self.outputs.new("SvObjectSocket", "data.object")
-        self.outputs.new("MatrixSocket", "hited object matrix")
+        sin = self.inputs.new
+        so = self.outputs.new
+        sin('VerticesSocket', 'start').use_prop = True
+        sin('VerticesSocket', 'end').use_prop = True
+        so('VerticesSocket', "HitP")
+        so('VerticesSocket', "HitNorm")
+        so('StringsSocket', "Succes")
+        so("SvObjectSocket", "data.object")
+        so("MatrixSocket", "hited object matrix")
 
     def process(self):
-
-        outputs = self.outputs
+        so = self.outputs
         OutLoc = []
         OutNorm = []
         Succ = []
         ObjectID = []
         OutMatrix = []
-        st = Vector_generate(self.inputs['start'].sv_get())
-        en = Vector_generate(self.inputs['end'].sv_get())
-        start = [Vector(x) for x in st[0]]
-        end = [Vector(x) for x in en[0]]
-        if len(start) != len(end):
-            start, end = match_long_repeat([start, end])
+        st = self.inputs['start'].sv_get()[0]
+        en = self.inputs['end'].sv_get()[0]
 
-        for i, last in enumerate(end):
-            src = bpy.context.scene.ray_cast(start[i], last)
-            OutLoc.append(src[3][:])
-            OutNorm.append(src[4][:])
-            Succ.append(src[0])
-            ObjectID.append(src[1])
-            if outputs['hited object matrix'].is_linked:
-                OutMatrix.append([[a[:], b[:], c[:], d[:]] for a, b, c, d in [src[2][:]]])
+        if len(st) != len(en):
+            st, en = match_long_repeat([st, en])
 
-        outputs['HitP'].sv_set([OutLoc])
-        outputs['HitNorm'].sv_set([OutNorm])
-        outputs['Succes'].sv_set([Succ])
-        outputs['data.object'].sv_set(ObjectID)
-        outputs['hited object matrix'].sv_set(OutMatrix)
+        for i, last in enumerate(en):
+            rc = bpy.context.scene.ray_cast(st[i], last)
+            OutLoc.append(rc[3][:])
+            OutNorm.append(rc[4][:])
+            Succ.append(rc[0])
+            ObjectID.append(rc[1])
+            if so['hited object matrix'].is_linked:
+                OutMatrix.append([[a[:], b[:], c[:], d[:]] for a, b, c, d in [rc[2][:]]])
+
+        so['HitP'].sv_set([OutLoc])
+        so['HitNorm'].sv_set([OutNorm])
+        so['Succes'].sv_set([Succ])
+        so['data.object'].sv_set(ObjectID)
+        so['hited object matrix'].sv_set(OutMatrix)
 
     def update_socket(self, context):
         self.update()
