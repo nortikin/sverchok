@@ -18,7 +18,7 @@
 
 import bpy
 import bmesh
-from bpy.props import StringProperty, EnumProperty
+from bpy.props import StringProperty, EnumProperty, BoolProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode, match_long_cycle)
 
@@ -30,12 +30,8 @@ class SvVertexColorNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     vertex_color = StringProperty(default='', update=updateNode)
-
-    modes = [
-        ("VERT", " v ", "Vcol", 1),
-        ("POLY", " p ", "Pcol", 2)
-    ]
-
+    clear = BoolProperty(name='clear c', default=True, update=updateNode)
+    modes = [("VERT", " v ", "Vcol", 1), ("POLY", " p ", "Pcol", 2)]
     mode = EnumProperty(items=modes, default='POLY', update=updateNode)
 
     def draw_buttons(self, context,   layout):
@@ -45,29 +41,31 @@ class SvVertexColorNode(bpy.types.Node, SverchCustomTreeNode):
             col.prop_search(self, 'vertex_color', ob.data, "vertex_colors", text="")
             layout.prop(self, "mode", expand=True)
 
+    def draw_buttons_ext(self, context, layout):
+        row = layout.row(align=True)
+        row.prop(self,    "clear",   text="clear unindexed")
+
     def sv_init(self, context):
         self.inputs.new('SvObjectSocket', 'Objects')
         self.inputs.new('StringsSocket', "Index")
         self.inputs.new('VerticesSocket', "Color")
 
     def process(self):
-
         objm = self.inputs['Objects'].sv_get()[0].data
         objm.update()
         if not objm.vertex_colors:
             objm.vertex_colors.new(name='Sv_VColor')
         if self.vertex_color not in objm.vertex_colors:
             return
-
         ovgs = objm.vertex_colors.get(self.vertex_color)
-
         if self.inputs['Color'].is_linked:
             colors = self.inputs['Color'].sv_get()[0]
             bm = bmesh.new()
             bm.from_mesh(objm)
-
+            if self.clear:
+                for i in ovgs.data:
+                    i.color = (0,0,0)
             if self.mode == 'VERT':
-
                 if self.inputs['Index'].is_linked:
                     idxs = self.inputs['Index'].sv_get()[0]
                 else:
@@ -75,16 +73,13 @@ class SvVertexColorNode(bpy.types.Node, SverchCustomTreeNode):
                 lidx = len(idxs)
                 if lidx > len(colors):
                     idxs, colors = match_long_cycle([idxs, colors])
-
                 g = 0
                 bm.verts.ensure_lookup_table()
                 while g < lidx:
                     for i in bm.verts[idxs[g]].link_loops:
                         ovgs.data[i.index].color = colors[g]
                     g = g+1
-
             if self.mode == 'POLY':
-
                 if self.inputs['Index'].is_linked:
                     idxs = self.inputs['Index'].sv_get()[0]
                 else:
@@ -92,14 +87,12 @@ class SvVertexColorNode(bpy.types.Node, SverchCustomTreeNode):
                 lidx = len(idxs)
                 if lidx > len(colors):
                     idxs, colors = match_long_cycle([idxs, colors])
-
                 g = 0
                 bm.faces.ensure_lookup_table()
                 while g < lidx:
                     for i in bm.faces[idxs[g]].loops:
                         ovgs.data[i.index].color = colors[g]
                     g = g+1
-
             bm.free()
 
 
