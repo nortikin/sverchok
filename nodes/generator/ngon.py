@@ -23,8 +23,7 @@ import bpy
 from bpy.props import BoolProperty, IntProperty, FloatProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (fullList, match_long_repeat, updateNode,
-                            SvSetSocketAnyType, SvGetSocketAnyType)
+from sverchok.data_structure import (fullList, match_long_repeat, updateNode)
 
 def rotate(l, y=1):
    if len(l) == 0:
@@ -97,7 +96,6 @@ class SvNGonNode(bpy.types.Node, SverchCustomTreeNode):
 
     def make_edges(self, nsides, shift):
         vs = range(nsides)
-        # FIXME: do we really need to convert zip object to list here?
         edges = list( zip( vs, rotate(vs, shift+1) ) )
         return edges
 
@@ -112,51 +110,32 @@ class SvNGonNode(bpy.types.Node, SverchCustomTreeNode):
 
     def process(self):
         # inputs
-        if self.inputs['Radius'].is_linked:
-            radius = SvGetSocketAnyType(self, self.inputs['Radius'])[0]
-        else:
-            radius = [self.rad_]
+        radius = self.inputs['Radius'].sv_get()[0]
 
-        if self.inputs['N Sides'].is_linked:
-            nsides = SvGetSocketAnyType(self, self.inputs['N Sides'])[0]
-            nsides = list(map(lambda x: max(3, int(x)), Vertices))
-        else:
-            nsides = [self.sides_]
+        nsides = self.inputs['N Sides'].sv_get()[0]
+        nsides = list(map(lambda x: max(3, int(x)), nsides))
 
-        if self.inputs['RandomSeed'].is_linked:
-            seed = SvGetSocketAnyType(self, self.inputs['Seed'])[0]
-        else:
-            seed = [self.rand_seed_]
+        seed = self.inputs['RandomSeed'].sv_get()[0]
 
-        if self.inputs['RandomR'].is_linked:
-            rand_r = SvGetSocketAnyType(self, self.inputs['RandomR'])[0]
-        else:
-            rand_r = [self.rand_r_]
+        rand_r   = self.inputs['RandomR'].sv_get()[0]
+        rand_phi = self.inputs['RandomPhi'].sv_get()[0]
 
-        if self.inputs['RandomPhi'].is_linked:
-            rand_phi = SvGetSocketAnyType(self, self.inputs['RandomPhi'])[0]
-        else:
-            rand_phi = [self.rand_phi_]
-
-        if self.inputs['Shift'].is_linked:
-            shift = SvGetSocketAnyType(self, self.inputs['Shift'])[0]
-        else:
-            shift = [self.shift_]
+        shift = self.inputs['Shift'].sv_get()[0]
 
         parameters = match_long_repeat([radius, nsides, seed, rand_r, rand_phi, shift])
 
         # outputs
         if self.outputs['Vertices'].is_linked:
             vertices = [self.make_verts(n, r, dr, dphi, s) for r, n, s, dr, dphi, shift in zip(*parameters)]
-            SvSetSocketAnyType(self, 'Vertices', vertices)
+            self.outputs['Vertices'].sv_set(vertices)
 
         if self.outputs['Edges'].is_linked:
             edges = [self.make_edges(n, shift) for r, n, s, dr, dphi, shift in zip(*parameters)]
-            SvSetSocketAnyType(self, 'Edges', edges)
+            self.outputs['Edges'].sv_set(edges)
 
         if self.outputs['Polygons'].is_linked:
             faces = [self.make_faces(n, shift) for r, n, s, dr, dphi, shift in zip(*parameters)]
-            SvSetSocketAnyType(self, 'Polygons', faces)
+            self.outputs['Polygons'].sv_set(faces)
 
 
 def register():
