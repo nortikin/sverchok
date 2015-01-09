@@ -18,7 +18,7 @@
 
 import bpy
 from bpy.props import StringProperty, BoolProperty, FloatProperty
-from sverchok.node_tree import SverchCustomTreeNode, StringsSocket
+from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode, match_long_cycle)
 
 
@@ -28,20 +28,11 @@ class SvVertexGroupNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Vertex group weights'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    fade_speed = FloatProperty(name='fade',
-                               description='Speed of "clear unused" weights \
-                               during animation', default=2,
-                               options={'ANIMATABLE'}, update=updateNode)
-    clear = BoolProperty(name='clear unused', description='clear weight of \
-                         unindexed vertices', default=True, update=updateNode)
-
-    vertex_group = StringProperty(
-        default='',
-        description='vert group',
-        update=updateNode)
+    fade_speed = FloatProperty(name='fade', default=2, update=updateNode)
+    clear = BoolProperty(name='clear w', default=True, update=updateNode)
+    vertex_group = StringProperty(default='', update=updateNode)
 
     def draw_buttons(self, context,   layout):
-
         ob = self.inputs['Objects'].sv_get()[0]
         col = layout.column()
         if self.inputs['Objects'].sv_get()[0].type == 'MESH':
@@ -49,7 +40,7 @@ class SvVertexGroupNode(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons_ext(self, context, layout):
         row = layout.row(align=True)
-        row.prop(self,    "clear",   text="clear unused")
+        row.prop(self,    "clear",   text="clear unindexed")
         row.prop(self, "fade_speed", text="Clearing speed")
 
     def sv_init(self, context):
@@ -59,7 +50,6 @@ class SvVertexGroupNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('StringsSocket', "OutWeights")
 
     def process(self):
-
         obj = self.inputs['Objects'].sv_get()[0]
         obj.data.update()
         if not obj.vertex_groups:
