@@ -85,20 +85,20 @@ Examples
 
 Sides=5, Shift=0, RandomR=0, RandomPhi=0 (default values):
 
-![sides5shift0](https://cloud.githubusercontent.com/assets/284644/5680574/bd0ee2e8-9830-11e4-92b7-8c031fb9ff08.png)
+.. image:: https://cloud.githubusercontent.com/assets/284644/5680574/bd0ee2e8-9830-11e4-92b7-8c031fb9ff08.png
 
 Sides=6, RandomPhi=0.3:
 
-![sides6-phi](https://cloud.githubusercontent.com/assets/284644/5680573/bd0e5d5a-9830-11e4-83d2-350a03740d98.png)
+.. image:: https://cloud.githubusercontent.com/assets/284644/5680573/bd0e5d5a-9830-11e4-83d2-350a03740d98.png
 
 Sides=6, RandomR=0.3:
 
-![sides6-r](https://cloud.githubusercontent.com/assets/284644/5680571/bd0b8602-9830-11e4-993c-b7f43e4f76ec.png)
+.. image:: https://cloud.githubusercontent.com/assets/284644/5680571/bd0b8602-9830-11e4-993c-b7f43e4f76ec.png
 
 Sides=7, Shift=1, RandomR=0.24, RandomPhi=0.15:
 
-![sides7-random](https://cloud.githubusercontent.com/assets/284644/5680572/bd0d9f3c-9830-11e4-9706-0b6f15d7dc4c.png)
+.. image:: https://cloud.githubusercontent.com/assets/284644/5680572/bd0d9f3c-9830-11e4-9706-0b6f15d7dc4c.png
 
 Sides=29, Shift=9, RandomR=0, RandomPhi=0:
 
-![sides29shift9](https://cloud.githubusercontent.com/assets/284644/5680575/bd1095e8-9830-11e4-8942-a281b6ab8a8d.png)
+.. image:: https://cloud.githubusercontent.com/assets/284644/5680575/bd1095e8-9830-11e4-8942-a281b6ab8a8d.png
