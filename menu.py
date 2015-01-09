@@ -45,7 +45,6 @@ def make_node_cats():
         ['BasicSplineNode',     "2pt Spline",  "CURVE_BEZCURVE"],
         ["svBasicArcNode",      "3pt Arc",        "SPHERECURVE"],
         ['RandomVectorNode',    'Random Vector',     'RNDCURVE'],
-        ['SvNGonNode',    'NGon',     'RNDCURVE'],
     ]
 
     node_cats["Extended Generators"] = [
@@ -225,6 +224,7 @@ def make_node_cats():
         ["SvWafelNode",         "Wafel"],
         ["SvFormulaShapeNode",  "Formula shape", "IPO"],
         ["SvScriptNodeMK2",     "Script 2"],
+        ['SvNGonNode',    'NGon',     'RNDCURVE'],
     ]
 
     node_cats["Alpha Nodes"] = [
