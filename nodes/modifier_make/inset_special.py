@@ -148,7 +148,7 @@ class SvInsetSpecial(bpy.types.Node, SverchCustomTreeNode):
     '''
 
     bl_idname = 'SvInsetSpecial'
-    bl_label = 'InsetSpecial'
+    bl_label = 'Inset Special'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     inset = FloatProperty(
