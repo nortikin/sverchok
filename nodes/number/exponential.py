@@ -19,7 +19,7 @@
 from math import exp
 
 import bpy
-from bpy.props import IntProperty, FloatProperty, StringProperty, EnumProperty
+from bpy.props import IntProperty, FloatProperty, EnumProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat
@@ -81,32 +81,19 @@ class SvGenExponential(bpy.types.Node, SverchCustomTreeNode):
         name='N to', description='Maximal value of N',
         default=10, update=updateNode)
 
-    current_mode = StringProperty(default="ALPHA")
-
     modes = [
-        ("ALPHA", "Log", "Specify coefficient in exp(alpha*n)", 1),
-        ("BASE",  "Base", "Specify base in base^n", 2),
+        ("alpha_", "Log", "Specify coefficient in exp(alpha*n)", 1),
+        ("base_",  "Base", "Specify base in base^n", 2),
     ]
 
     def mode_change(self, context):
-
-        # just because click doesn't mean we need to change mode
-        mode = self.mode
-        if mode == self.current_mode:
-            return
-
-        if mode == 'ALPHA':
-            self.inputs[1].prop_name = 'alpha_'
-        else:
-            self.inputs[1].prop_name = 'base_'
-
-        self.current_mode = mode
+        self.inputs[1].prop_name = self.mode
         updateNode(self, context)
 
-    mode = EnumProperty(items=modes, default='ALPHA', update=mode_change)
+    mode = EnumProperty(items=modes, default='alpha_', update=mode_change)
 
-    func_dict = {'ALPHA': exponential_e,
-                 'BASE': exponential_b }
+    func_dict = {'alpha_': exponential_e,
+                 'base_': exponential_b }
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', "X0").prop_name = 'x0_'
