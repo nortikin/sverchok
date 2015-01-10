@@ -9,5 +9,6 @@ Beta
    fibonacci
    exponential
    ngon
+   randomize
    iterate
 
