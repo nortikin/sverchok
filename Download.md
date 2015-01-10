@@ -6,9 +6,15 @@ Sverchok is hosted and developped on GitHub.
   <tr>
     <td class="sv_table-elem">
         <a href="https://github.com/nortikin/sverchok/">
-        Go to github</a></td>
+        Go to github<svg class="github"></svg></a>
+    </td>
     <td class="sv_table-elem">
         <a href="https://github.com/nortikin/sverchok/archive/master.zip">
-        Download archive</a></td>
+        Download archive<svg class="archive"></svg></a>
+    </td>
   </tr>
 </table>
+
+## Installation instructions
+
+If you are going to be downloading and isntalling for the first time we have a handy guide to keep that process as painless as possible: [the read.me](https://github.com/nortikin/sverchok/#installation)

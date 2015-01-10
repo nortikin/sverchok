@@ -175,6 +175,10 @@ a:visited {
   font-size: 1.3em;
 }
 
+.sv_table_download {
+  margin-bottom: 3em;
+}
+
 .sv_table_download tr {
   color: #FCFCFC;
   font-size: 3em;
@@ -185,5 +189,17 @@ a:visited {
 }
 
 .sv_table_download a:visited{
-  color: #FCFCFC;
+  color: #F4F4F4;
+}
+
+svg.github {
+  background-color: #333;
+  height: 2em;
+  width: 2em;
+}
+
+svg.archive {
+  background-color: #333;
+  height: 2em;
+  width: 2em;
 }
