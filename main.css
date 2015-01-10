@@ -175,6 +175,15 @@ a:visited {
   font-size: 1.3em;
 }
 
+.sv_table_download tr {
+  color: #FCFCFC;
+  font-size: 3em;
+}
 
+.sv_table_download a:link{
+  color: #FCFCFC;
+}
 
-
+.sv_table_download a:visited{
+  color: #FCFCFC;
+}
