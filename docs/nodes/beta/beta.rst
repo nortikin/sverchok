@@ -6,6 +6,7 @@ Beta
    :maxdepth: 2
 
    image_decompose
+   fibonacci
    ngon
    iterate
 
