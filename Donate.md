@@ -17,7 +17,7 @@ To discuss how team Sverchok can deliver custom solution please fire an email to
 
 ## General Donations
  
-If you choose to send money for no particulary purpose other than appreciation, it will most likely cover conference participation or help keep us topped up in other ways. (food, internet, computers, healthcare).
+If you choose to send money to show your general appreciation, it will most likely cover conference participation or help keep us topped up in other ways. (food, internet, computers, healthcare).
 
 <p class="sv_content_donation">
 	<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top" style='margin-left: 85px;'>
