@@ -16,7 +16,9 @@ Those familiar with the visual programming systems provided by Houdini, Rhinocer
 
 ## Sverchok is not an all-in-one nodes tool.
 
-Sverchok is directed at Math and Geometry. When we started coding Sverchok the focus was not (and still isn't) on things such as Materials, Textures, Lighting, Particles or Animation. Sverchok can control all these things, but we don't offer any convenience methods unlike other animation based node systems. If you understand Python you can use the scripted node to do anything that `bpy` is capable of. If you want a high level of customization you should be learning Python and get the most out of Sverchok.
+Sverchok is directed at Math and Geometry. When we started coding Sverchok the focus was not (and still isn't) on things such as Materials, Textures, Lighting, Particles or Animation. Sverchok can control all these things, but we don't offer many convenience nodes for animation. We do have a frame change node that outputs the current frame, start frame and end frame into the nodeview. 
+
+If you want a high level of customization you should be learning Python, we encourage it and you will get the most out of Sverchok. Once you understand Python you can use the scripted node to do anything that `bpy` is capable of, or even write your own nodes (and share if you want advice).
 
 ## Sverchok future
 
