@@ -227,6 +227,7 @@ def make_node_cats():
         ["SvGenFibonacci", "Fibonacci sequence"],
         ["SvGenExponential", "Exponential sequence"],
         ['SvNGonNode',    'NGon',     'RNDCURVE'],
+        ["SvRandomizeNode", "Randomize"],
         ["SvIterateNode", "Iterate matrix transformation"],
     ]
 
