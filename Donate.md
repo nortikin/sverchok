@@ -1,8 +1,6 @@
 ## Donate
 
-If you want to support the project you have a lot of options. Money alone does not make a project succesful and we are glad to get your support in any form.
-
-You can:
+If you want to support the project you have a lot of options. Money alone does not make a project succesful and we are glad to get your support in any form. You can:  
 
 - Evangelize, spread the word.
 - Submit cool Sverchok generated content to the Gallery

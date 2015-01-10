@@ -176,6 +176,7 @@ a:visited {
 }
 
 .sv_table_download {
+  font-weight: lighter;
   margin-bottom: 3em;
 }
 
@@ -203,3 +204,9 @@ svg.archive {
   height: 2em;
   width: 2em;
 }
+
+ /* 
+ el-icon-github
+ el-icon-download
+ el-icon-download-alt
+ */
