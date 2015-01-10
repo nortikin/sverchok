@@ -7,6 +7,7 @@ Beta
 
    image_decompose
    fibonacci
+   exponential
    ngon
    iterate
 
