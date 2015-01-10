@@ -104,7 +104,7 @@ class SvIterateNode(bpy.types.Node, SverchCustomTreeNode):
         faces_s = self.inputs['Polygons'].sv_get(default=[[]])
 
 
-        if self.outputs['Vertices'].is_linked or self.outputs['Edges'].is_linked or self.outputs['Polygons'].is_linked:
+        if self.outputs['Vertices'].is_linked:
 
             result_vertices = []
             result_edges = []
