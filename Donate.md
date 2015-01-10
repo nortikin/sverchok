@@ -13,7 +13,7 @@ You can:
 
 ## Nodes on commission
 
-To discuss how team Sverchok can deliver custom solution please fire an email to: sverchok-b3d@yandex.ru
+To discuss how team Sverchok can deliver custom solutions please fire an email to: <br> sverchok-b3d@yandex.ru
 
 ## General Donations
  
