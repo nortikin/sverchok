@@ -22,21 +22,19 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode)
 
 
+def Obm(m):
+        m = [(i,i,"") for i in m]
+        return m
+
+
 class SvSortObjsNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Sort Objects '''
     bl_idname = 'SvSortObjsNode'
     bl_label = 'sort_dataobject'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    modes = [
-        ("xax",   "X Axis",   "", 1),
-        ("yax",   "Y Axis",   "", 2),
-        ("zax",   "Z Axis",   "", 3),
-        ("cust",   "Custom Value",   "", 4),
-    ]
-
-    Modes = EnumProperty(name="sortmodes", description="Sorting Objects modes",
-                         default="xax", items=modes, update=updateNode)
+    M = ['location.x','location.y','location.z','name']
+    Modes = EnumProperty(name="sortmod", default="location.x", items=Obm(M), update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('SvObjectSocket', 'Object')
@@ -44,28 +42,18 @@ class SvSortObjsNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('SvObjectSocket', 'Object')
 
     def draw_buttons(self, context, layout):
-        layout.prop(self, "Modes", "Sort Objs")
+        if not self.inputs['CustomValue'].is_linked:
+            layout.prop(self, "Modes", "Sort")
 
     def process(self):
-        siob = self.inputs['Object']
-        SM = self.Modes
-        if siob.is_linked or siob.object_ref:
-            X = siob.sv_get()
-            if SM == "xax":
-                Y = [i.location.x for i in X]
-            elif SM == "yax":
-                Y = [i.location.y for i in X]
-            elif SM == "zax":
-                Y = [i.location.z for i in X]
-            elif SM == "cust":
-                if self.inputs['CustomValue'].is_linked:
-                    Y = self.inputs['CustomValue'].sv_get()[0]
-                else:
-                    return
-
+        if self.outputs['Object'].is_linked:
+            X = self.inputs['Object'].sv_get()
+            if self.inputs['CustomValue'].is_linked:
+                Y = self.inputs['CustomValue'].sv_get()[0]
+            else:
+                Y = [eval("i."+self.Modes) for i in X]
             X.sort(key=dict(zip(X, Y)).get)
-
-        self.outputs['Object'].sv_set(X)
+            self.outputs['Object'].sv_set(X)
 
     def update_socket(self, context):
         self.update()
