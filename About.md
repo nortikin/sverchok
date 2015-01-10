@@ -1,6 +1,6 @@
 # About
 
-Sverchok is the Russian word for Cricket (СВеРЧОК). 
+СВеРЧОК, The Russian word for Cricket, is pronounced "Sverchok" in English.
 
 Those familiar with the visual programming systems provided by Houdini, Rhinoceros3D (Grasshopper), Dynamo or other modular systems should feel at home using our addon. Sverchok is not an attempt to clone any existing packages or workflows, but a chance to experiment with different approaches to similar constraints.
 
