@@ -31,50 +31,27 @@ var gh_asset_https = "https://cloud.githubusercontent.com/assets/"
 var context = {
   header: "Sverchok",
   menu_items: [
-    {name:"About", link: ""},
-    {name:"Gallery", link: ""},
-    {name:"Download", link: ""},
+    {name:"About", link: "url"},
+    {name:"Gallery", link: "urlo"},
+    {name:"Download", link: "url"},
     {name:"Manual", link: "...url to manual..."},
-    {name:"Donate", link: ""}
+    {name:"Video",link: "url"},
+    {name:"Lessons", link: "url"},
+    {name:"Fact", link: "url"},
+    {name:"Magazines", link: "url"},
+    {name:"Donate", link: "url"}
   ]
   ,  
-  About: "\
-<h3>About</h3>\
-<p>\
-Droll trickatreat streaky bacon chance jeopardy dimanche fravaol ti\
-chinchan chipchop chumchim chobchab blert braaap rabble rabble rablerable. RaBel!\
-</p>"
-  ,
-  
-  Manual: "\
-<h3>Manual</h3>\
-<p>\
-Read Sverchok documentation online <b>here</b><br> \
-Download for offline referencing from <b>this link</b>.</p>"
-  ,
-
-  Gallery: "\
-<h3>Gallery</h3>\
-<p>\
-werwer 23 23443 wer \
-werwer wer werrree wet\
-</p>"
-  ,
-  
-  Download: "\
-<h3>Download</h3>\
-<p>\
-Sverchok development is hosted on GitHub \
-werwer wer werrree wet\
-</p>"
-  
+  Sverchok: "\
+<h3>Sverchok</h3>\
+<img src='http://nikitron.cc.ua/sverch/skyscreapersm.jpg' />"
 }
 
 
 // ------ html generation --------
 
 var content_display = d3.select("#display")
-  .style({background: '#dbdadb'})
+  .style({background: '#555555'})
 
 var cmain = content_display.append("div")
   .classed("content_main", true);
@@ -90,7 +67,7 @@ function draw_content(){
   
   // this can be transitioned to other images using a timer.
   var header_image = "619340/5299224/1c085d8e-7bc5-11e4-8246-6951c48014ef.png"
-  div1.style({
+  div1.classed('sv_header_background', true).style({
     "background-image": url(gh_asset_https, header_image)
   })
       
@@ -103,7 +80,7 @@ function draw_content(){
     .text(function(d, i) { return d.name })
     .classed("noselect", true);
   
-  div4.html(context.About)
+  div4.html(context.Sverchok)
   
   menu.each(function(d){
     var obj = d3.select(this);
@@ -119,6 +96,38 @@ function draw_content(){
     
       if (d.name === 'Manual'){
           var obtained_html = read_content("Manual.md");
+          div4.html(obtained_html);
+      } 
+      else if (d.name === 'Download'){
+          var obtained_html = read_content("Download.md");
+          div4.html(obtained_html);
+      } 
+      else if (d.name === 'About'){
+          var obtained_html = read_content("About.md");
+          div4.html(obtained_html);
+      } 
+      else if (d.name === 'Lessons'){
+          var obtained_html = read_content("Lessons.md");
+          div4.html(obtained_html);
+      } 
+      else if (d.name === 'Donate'){
+          var obtained_html = read_content("Donate.md");
+          div4.html(obtained_html);
+      } 
+      else if (d.name === 'Video'){
+          var obtained_html = read_content("Video.md");
+          div4.html(obtained_html);
+      } 
+      else if (d.name === 'Magazines'){
+          var obtained_html = read_content("Magazines.md");
+          div4.html(obtained_html);
+      } 
+      else if (d.name === 'Fact'){
+          var obtained_html = read_content("Fact.md");
+          div4.html(obtained_html);
+      } 
+      else if (d.name === 'Gallery'){
+          var obtained_html = read_content("Gallery.md");
           div4.html(obtained_html);
       } 
       else {

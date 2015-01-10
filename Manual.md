@@ -1,5 +1,6 @@
 ## Manual
 
+<img src='images/manuals.png' />
 The manual is an essential reference for new and existing users. Each node has at least one page dedicated to explaining what it does, what inputs to use and what kind of output to expect. We are humans and do make mistakes, if you find any node references missing, incomplete, or factually inaccurate please make a [new issue on the issue tracker](https://github.com/nortikin/sverchok/issues). We will act on this information at our earliest convenience.
 
 <table class="sv_table">
