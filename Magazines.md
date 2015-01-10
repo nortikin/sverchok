@@ -1,16 +1,22 @@
 ## Mentions in media
 
-<img src='images/media.png' />
 <table class="sv_table">
   <tr>
     <td class="sv_table-elem">
 <p><ul>
+
 <li><a href="http://www.blendernation.com/2013/09/05/sverchok-add-on/">Blendernation first post</a></li>
+
 <li><a href="http://www.blendernation.com/2013/11/01/sverchok-add-on-new-version-and-hangout-today/">Blendernation second post</a></li>
 
 <li><a href="http://blendernation.com/2014/03/20/sverchok-modelling-in-the-real-world/">Blendernation third post</a></li>
-<li><a href="http://www.blendernation.com/2014/03/28/music-rss-feed-in-blender/">Blendernation forth post</a></li>
-<li><a href="http://www.blendernation.com/2014/04/23/embracing-the-art-of-parametric-creation-in-blender-with-sverchok/">Blendernation fifth post</a></li>
+<li>
+<a href="http://www.blendernation.com/2014/03/28/music-rss-feed-in-blender/">Blendernation forth post</a></li>
+
+<li>
+<a href="http://www.blendernation.com/2014/04/23/embracing-the-art-of-parametric-creation-in-blender-with-sverchok/">
+Blendernation fifth post</a></li>
+
 <li><a href="http://www.blendernation.com/2014/10/20/sverchok-demo-reel-2014/">Blendernation sixth post</a></li>
 
 <li><a href="http://www.hiteca.ru/2013/10/sverchok.html">Sverchok in Hiteca journal 1</a></li>

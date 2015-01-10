@@ -31,27 +31,22 @@ var gh_asset_https = "https://cloud.githubusercontent.com/assets/"
 var context = {
   header: "Sverchok",
   menu_items: [
-    {name:"About", link: "url"},
-    {name:"Gallery", link: "urlo"},
-    {name:"Download", link: "url"},
-    {name:"Manual", link: "...url to manual..."},
-    {name:"Video",link: "url"},
-    {name:"Lessons", link: "url"},
-    {name:"Fact", link: "url"},
-    {name:"Magazines", link: "url"},
-    {name:"Donate", link: "url"}
+    {name:"About", link: ""},
+    {name:"Gallery", link: ""},
+    {name:"Download", link: ""},
+    {name:"Manual", link: ""},
+    {name:"Video",link: ""},
+    {name:"Lessons", link: ""},
+    {name:"Magazines", link: ""},
+    {name:"Donate", link: ""}
   ]
-  ,  
-  Sverchok: "\
-<h3>Sverchok</h3>\
-<img src='http://nikitron.cc.ua/sverch/skyscreapersm.jpg' />"
 }
 
 
 // ------ html generation --------
 
 var content_display = d3.select("#display")
-  .style({background: '#555555'})
+  .style({background: '#dbdadb'})
 
 var cmain = content_display.append("div")
   .classed("content_main", true);
@@ -80,7 +75,7 @@ function draw_content(){
     .text(function(d, i) { return d.name })
     .classed("noselect", true);
   
-  div4.html(context.Sverchok)
+  div4.html(read_content("About.md"))
   
   menu.each(function(d){
     var obj = d3.select(this);
@@ -90,49 +85,12 @@ function draw_content(){
     // })
     // obj.on("mouseout", function(d){
     //   console.log('out', d.name);
-    // })    
+    // })
+
     obj.on("click", function(d){
-      console.log('clicked', d.name);
-    
-      if (d.name === 'Manual'){
-          var obtained_html = read_content("Manual.md");
-          div4.html(obtained_html);
-      } 
-      else if (d.name === 'Download'){
-          var obtained_html = read_content("Download.md");
-          div4.html(obtained_html);
-      } 
-      else if (d.name === 'About'){
-          var obtained_html = read_content("About.md");
-          div4.html(obtained_html);
-      } 
-      else if (d.name === 'Lessons'){
-          var obtained_html = read_content("Lessons.md");
-          div4.html(obtained_html);
-      } 
-      else if (d.name === 'Donate'){
-          var obtained_html = read_content("Donate.md");
-          div4.html(obtained_html);
-      } 
-      else if (d.name === 'Video'){
-          var obtained_html = read_content("Video.md");
-          div4.html(obtained_html);
-      } 
-      else if (d.name === 'Magazines'){
-          var obtained_html = read_content("Magazines.md");
-          div4.html(obtained_html);
-      } 
-      else if (d.name === 'Fact'){
-          var obtained_html = read_content("Fact.md");
-          div4.html(obtained_html);
-      } 
-      else if (d.name === 'Gallery'){
-          var obtained_html = read_content("Gallery.md");
-          div4.html(obtained_html);
-      } 
-      else {
-          div4.html(context[d.name]);
-      }
+     
+      var obtained_html = read_content(d.name + ".md");
+      div4.html(obtained_html);
       
     })    
   })

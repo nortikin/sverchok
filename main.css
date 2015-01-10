@@ -2,20 +2,20 @@
 
 #display {
   /*overflow:scroll;*/
-  width: 150%;
-  height: 150%;
+  width: 100%;
+  height: 100%;
 }
 
 body {
   padding: 0px 0px 0px 0px;
   margin: 0px 0px 0px 0px;
-  background: #66aabe;
+  background: #DBDADB;
 }
 
 img {padding: 0; margin:0;}
 
 div.content_main { 
-  font-size: 0.75em;
+  font-size: 0.7em;
   line-height: 0.95em;
   width: 100%;
   padding: 0px 0px 0px 0px;
@@ -34,21 +34,7 @@ div.content_main {
   width: 100%;
   height: 300px;
   margin-top: 20px;
-  position: relative;
-  //padding: 2em 0;
-  //overflow: hidden;
 }
-
-  .sv_header_background {
-    top: -50%;
-    left: -100;
-    width: 200%;
-    // blur effect should be
-    -webkit-filter: blur(100px);
-    -webkit-transform: translate3d(0, 0, 0);
-  }
-
-
 
 .sv_header text {
   color: #e8e9e6;
@@ -73,7 +59,7 @@ div {
   color: #edfbed;
   font-family: 'PT Sans', sans-serif;
   float: left;
-  background: #106783;
+  background: #82c5ed;
   height: auto;
   width: 88%;
   padding: 0;
@@ -108,8 +94,8 @@ div {
 
 
 .item text {
-  color: #333;
-  font-size: 1.3em;
+  color: #7f7f7f;
+  font-size: 1.2em;
 }
 
 .noselect {
@@ -123,51 +109,35 @@ div {
 
 .sv_content h3{
   color: #f4f4f4;
-  font-size: 1.3em;
+  font-size: 1.2em;
 }
 
 .sv_content p {
   color: #f7f7f7;
-  font-size: 1.2em;
+  font-size: 1.1em;
   font-weight: normal;
   line-height: 1.5em;
 }
 
-
-
 /* unvisited link */
 a:link {
-    color: #4fcbf4;
+    color: #3669C2;
 }
 
 /* visited link */
 a:visited {
-    color: #aaa;
+    color: #333;
 }
 
 .sv_table {
   color: #444;
   background: #eee;
-  border: 1px solid #106783;
+  border: 1px solid #82c5ed;
   border-spacing: 0;
 }
 
 .sv_table-elem {
   color: #848484;
   padding: 5px;
-  border: 2px solid #106783;
-}
-
-.sv_table-elem li {
-  color: #555;
-  font-size: 1.2em;
-  font-weight: normal;
-  line-height: 1.5em;
-}
-
-.sv_table-elem h3 {
-  color: #555;
-  font-size: 1.5em;
-  font-weight: normal;
-  line-height: 1.5em;
+  border: 2px solid #82c5ed;
 }

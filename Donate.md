@@ -1,9 +1,25 @@
 ## Donate
 
-<img src='images/donate.png' />
-If you want to support project, you can make code (including scripted node templates) and share it or you can give us money. That money most likely will cover conferences participation needs or help us in other way.
+If you want to support the project you have a lot of options. Money alone does not make a project succesful and we are glad to get your support in any form.
 
-<p class="sv_content">
+You can:
+
+- Evangelize, spread the word.
+- Submit cool Sverchok generated content to the Gallery
+- Write code (including scripted node templates) and share
+- Help improve the documentation (rst)
+- Or you can send money.  
+ 
+
+## Nodes on commission
+
+To discuss how team Sverchok can deliver custom solution please fire an email to: sverchok-b3d@yandex.ru
+
+## General Donations
+ 
+If you choose to send money for no particulary purpose other than appreciation, it will most likely cover conference participation or help keep us topped up in other ways. (food, internet, computers, healthcare).
+
+<p class="sv_content_donation">
 	<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top" style='margin-left: 85px;'>
 	<input type="hidden" name="cmd" value="_s-xclick">
 	<input type="hidden" name="hosted_button_id" value="JZESR6GN9AKNS">

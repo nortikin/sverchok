@@ -1,7 +1,6 @@
 ## Download
 
-<img src='images/downloads.png' />
-Please, use github for download to happens. If you need other tools as music player for blender or tinyCAD or F2, please look at <a href='https://github.com/zeffii'>Zeffii</a>, <a href='https://github.com/Cfyzzz'>Cfyzzz</a> and <a href='https://github.com/nortikin'>Nikitron</a> githubs.
+Sverchok is hosted and developped on GitHub.
 
 <table class="sv_table">
   <tr>
@@ -17,3 +16,37 @@ Please, use github for download to happens. If you need other tools as music pla
     <td class="sv_table-elem"></td>
   </tr>
 </table>
+
+### Links to other useful resources
+
+If you need other tools for blender please visit out friends at: 
+
+<table class="sv_table">
+  <tr>
+    <td class="sv_table-elem">
+        <a href="https://github.com/zeffii/Blender_CAD_utils">mesh_TinyCAD</a>
+    </td>
+    <td class="sv_table-elem">
+        Small collection of CAD oriented mesh editing tools
+    </td>
+  </tr>
+
+  <tr>
+    <td class="sv_table-elem">
+        <a href="https://github.com/Cfyzzz">F2</a></td>
+    <td class="sv_table-elem">
+        CFyzzz tools
+    </td>
+  </tr>
+
+  <tr>
+    <td class="sv_table-elem">
+        <a href="https://github.com/nortikin">Nikitron Tools</a></td>
+    <td class="sv_table-elem">
+        Music Player for Blender by Nikitron
+    </td>
+  </tr>
+
+</table>
+
+
