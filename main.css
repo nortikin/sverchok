@@ -107,17 +107,6 @@ div {
     user-select: none;
 }
 
-.sv_content h3{
-  color: #f4f4f4;
-  font-size: 1.2em;
-}
-
-.sv_content p {
-  color: #f7f7f7;
-  font-size: 1.1em;
-  font-weight: normal;
-  line-height: 1.5em;
-}
 
 /* unvisited link */
 a:link {
@@ -145,8 +134,7 @@ a:visited {
 /* Content parsed as html from markdown */
 
 .sv_html blockquote {
-  color: #edfbed;
-  font-size: 1.22em;
+  color: #FCFCFC;
   margin-left: 1.1em;
   line-height: 2em;
   margin-bottom: 1.7em;
@@ -155,34 +143,35 @@ a:visited {
 }
 
 .sv_html p {
-  color: #edfbed;
-  font-size: 1.28em;
+  color: #FCFCFC;
+  font-size: 1.22em;
   margin-bottom: 1.7em;
+  line-height: 1.48em;
 }
 
-.sv_content .sv_html li {
-  color: #edfbed;
+.sv_html li {
+  color: #FCFCFC;
   font-size: 1.28em;
   line-height: 1.78em;
 }
 
 .sv_html h1 {
-  color: #edfbed;
+  color: #FCFCFC;
   font-size: 1.6em;
 }
 
 .sv_html h2 {
-  color: #edfbed;
+  color: #FCFCFC;
   font-size: 1.52em;
 }
 
 .sv_html h3 {
-  color: #edfbed;
+  color: #FCFCFC;
   font-size: 1.36em;
 }
 
 .sv_html h4 {
-  color: #edfbed;
+  color: #FCFCFC;
   font-size: 1.3em;
 }
 
