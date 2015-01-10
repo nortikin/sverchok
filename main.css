@@ -141,3 +141,51 @@ a:visited {
   padding: 5px;
   border: 2px solid #82c5ed;
 }
+
+/* Content parsed as html from markdown */
+
+.sv_html blockquote {
+  color: #edfbed;
+  font-size: 1.22em;
+  margin-left: 1.1em;
+  line-height: 2em;
+  margin-bottom: 1.7em;
+  padding-left: 0.6em;
+  border-left: 0.6em solid #edfbed;  
+}
+
+.sv_html p {
+  color: #edfbed;
+  font-size: 1.28em;
+  margin-bottom: 1.7em;
+}
+
+.sv_content .sv_html li {
+  color: #edfbed;
+  font-size: 1.28em;
+  line-height: 1.78em;
+}
+
+.sv_html h1 {
+  color: #edfbed;
+  font-size: 1.6em;
+}
+
+.sv_html h2 {
+  color: #edfbed;
+  font-size: 1.52em;
+}
+
+.sv_html h3 {
+  color: #edfbed;
+  font-size: 1.36em;
+}
+
+.sv_html h4 {
+  color: #edfbed;
+  font-size: 1.3em;
+}
+
+
+
+
