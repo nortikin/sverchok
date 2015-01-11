@@ -35,10 +35,10 @@ def randomize(vertices, random_x, random_y, random_z):
     return result
 
 
-class SvRandomizeNode(bpy.types.Node, SverchCustomTreeNode):
-    ''' Randomize '''
-    bl_idname = 'SvRandomizeNode'
-    bl_label = 'Randomize'
+class SvRandomizeVerticesNode(bpy.types.Node, SverchCustomTreeNode):
+    ''' Randomize input vertices locations '''
+    bl_idname = 'SvRandomizeVerticesNode'
+    bl_label = 'Randomize Vertices'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     random_x_ = FloatProperty(name='X amplitude', description='Amplitude of randomization along X axis',
@@ -84,11 +84,11 @@ class SvRandomizeNode(bpy.types.Node, SverchCustomTreeNode):
             self.outputs['Vertices'].sv_set(result)
 
 def register():
-    bpy.utils.register_class(SvRandomizeNode)
+    bpy.utils.register_class(SvRandomizeVerticesNode)
 
 
 def unregister():
-    bpy.utils.unregister_class(SvRandomizeNode)
+    bpy.utils.unregister_class(SvRandomizeVerticesNode)
 
 if __name__ == '__main__':
     register()
