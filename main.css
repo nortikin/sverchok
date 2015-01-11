@@ -210,3 +210,9 @@ svg.archive {
  el-icon-download
  el-icon-download-alt
  */
+
+ img.gh {
+    fill: #eee;
+    stroke: none;
+    margin-left: 0.5em;
+ }
