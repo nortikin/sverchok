@@ -68,7 +68,7 @@ class SvSetDataObjectNode(bpy.types.Node, SverchCustomTreeNode):
             out = []
             for i in objs:
                 if i != None:
-                    out.append(eval("i."+Prop)[:])
+                    out.append(eval("i."+Prop))
             self.outputs['outvalues'].sv_set(out)
 
 
