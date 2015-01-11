@@ -213,6 +213,7 @@ textarea {
 table {
   border-collapse: collapse;
   border-spacing: 0;
+  width: 800;
 }
 
 td {
@@ -3280,6 +3281,10 @@ select[disabled], textarea[disabled], input[readonly], select[readonly], textare
 
 .full-width {
   width: 100%;
+}
+
+.docutils td {
+  word-break: normal;
 }
 
 .wy-table, .rst-content table.docutils, .rst-content table.field-list {
