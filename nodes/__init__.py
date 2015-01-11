@@ -116,6 +116,7 @@ nodes_dict = {
         'rotation',
         'scale',
         'vertices_mask',
+        'randomize',
         'iterate',
     ],
 
