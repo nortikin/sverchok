@@ -43,25 +43,33 @@ class SvSetDataObjectNode(bpy.types.Node, SverchCustomTreeNode):
             layout.prop(self,  "formula", text="")
         row = layout.row(align=True)
         layout.prop(self, "Modes", "property")
-        row.prop(self, "Lev", text="input level")
+        if self.inputs['values'].is_linked:
+            row.prop(self, "Lev", text="input level")
 
     def sv_init(self, context):
         self.inputs.new('SvObjectSocket', 'Objects')
         self.inputs.new('SvUndefTypeSocket', 'values')
+        self.outputs.new('SvUndefTypeSocket', 'outvalues')
 
     def process(self):
         objs = self.inputs['Objects'].sv_get()
-        lob = len(objs)
-        Val = joiner(self.inputs['values'].sv_get(), self.Lev)
-        if lob > len(Val):
-            objs, Val = match_long_cycle([objs, Val])
         Prop = self.Modes if self.Modes != 'custom' else self.formula
-        
-        g = 0
-        while g != lob:
-            if objs[g] != None:
-                exec("objs[g]."+Prop+"= Val[g]")
-            g = g+1
+        if self.inputs['values'].is_linked:
+            lob = len(objs)
+            Val = joiner(self.inputs['values'].sv_get(), self.Lev)
+            if lob > len(Val):
+                objs, Val = match_long_cycle([objs, Val])
+            g = 0
+            while g != lob:
+                if objs[g] != None:
+                    exec("objs[g]."+Prop+"= Val[g]")
+                g = g+1
+        if self.outputs['outvalues'].is_linked:
+            out = []
+            for i in objs:
+                if i != None:
+                    out.append(eval("i."+Prop)[:])
+            self.outputs['outvalues'].sv_set(out)
 
 
 def register():
@@ -70,6 +78,7 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvSetDataObjectNode)
+
 
 """
 import parser
