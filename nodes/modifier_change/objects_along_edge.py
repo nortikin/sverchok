@@ -149,6 +149,7 @@ class SvDuplicateAlongEdgeNode(bpy.types.Node, SverchCustomTreeNode):
             return rs1, rs2
 
     def duplicate_vertices(self, v1, v2, vertices, edges, faces, count):
+        count = max(count,1)
         direction = v2 - v1
         edge_length = direction.length
         one_item_length = edge_length / count
