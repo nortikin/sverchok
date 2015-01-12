@@ -119,7 +119,11 @@ class SvDuplicateAlongEdgeNode(bpy.types.Node, SverchCustomTreeNode):
 
     scale_all = BoolProperty(name="Scale all axes", description="Scale donor objects along all axes or only along orientation axis",
                              default=False,
-                        update=updateNode)
+                             update=updateNode)
+
+    apply_matrices = BoolProperty(name="Apply matrices", description="Apply generated matrices to generated objects internally",
+                             default=True,
+                             update=updateNode)
 
     def get_count(self, v1, v2, vertices, count):
         func = self.count_funcs[self.count_mode]
@@ -178,7 +182,10 @@ class SvDuplicateAlongEdgeNode(bpy.types.Node, SverchCustomTreeNode):
         else:
             matrices = [Matrix.Translation(o)*rot*scale for o in origins]
 
-        result_vertices = [[m * vertex for vertex in vertices] for m in matrices]
+        if self.apply_matrices:
+            result_vertices = [[m * vertex for vertex in vertices] for m in matrices]
+        else:
+            result_vertices = [vertices] * count
         return matrices, result_vertices
 
     def duplicate_edges(self, n_vertices, tuples, count):
@@ -218,6 +225,7 @@ class SvDuplicateAlongEdgeNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "input_mode", expand=True)
         if not self.scale_off:
             layout.prop(self, "scale_all")
+        layout.prop(self, "apply_matrices")
 
     def process(self):
         # VerticesR & EdgesR or Vertex1 & Vertex2 are necessary anyway
