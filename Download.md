@@ -1,6 +1,6 @@
 ## Download
 
-Sverchok is hosted and developped on GitHub.
+Sverchok is hosted and developed on GitHub.
 
 <table class="sv_table_download">
   <tr>
