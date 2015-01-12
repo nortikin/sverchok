@@ -16,12 +16,12 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-from math import pi, degrees
+from math import pi, degrees, floor, ceil
 from mathutils import Vector, Matrix
 import numpy as np
 
 import bpy
-from bpy.props import IntProperty
+from bpy.props import IntProperty, EnumProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat, Matrix_generate, Vector_generate, Vector_degenerate
@@ -46,31 +46,11 @@ def diameter(vertices, axis):
     m = min(xs)
     return (M-m)
 
-def duplicate_vertices(v1, v2, vertices, edges, faces, count):
-    direction = v2 - v1
-    edge_length = direction.length
-    one_item_length = edge_length / count
-    actual_length = diameter(vertices, 0)
-    x_scale = one_item_length / actual_length
-    x = Vector((1.0, 0.0, 0.0))
-    origins = [v1 + direction*x for x in np.linspace(0.0, 1.0, count+1)][:-1]
-    scale = Matrix.Scale(x_scale, 4, x)
-    rot = autorotate(x, direction).inverted()
-    result_vertices = []
-    for o in origins:
-        for vertex in vertices:
-            v = scale * vertex
-            v = rot * v
-            v = v + o
-            result_vertices.append(v)
-    return result_vertices
-
-def duplicate_edg_polys(n_vertices, tuples, offset, count):
-    result = []
-    for i in range(count):
-        r = [tuple(v + i*n_vertices + offset for v in t) for t in tuples]
-        result.extend(r)
-    return result
+all_axes = [
+        Vector((1.0, 0.0, 0.0)),
+        Vector((0.0, 1.0, 0.0)),
+        Vector((0.0, 0.0, 1.0))
+    ]
 
 class SvDuplicateAlongEdgeNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Duplicate meshes along edge '''
@@ -78,9 +58,97 @@ class SvDuplicateAlongEdgeNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'DuplicateAlongEdge'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
+    count_modes = [
+            ("count", "Count", "Specify number of donor objects per edge", 1),
+            ("up", "Up", "Calculate count of objects automatically, scaling them only up", 2),
+            ("down", "Down", "Calculate count of objects automatically, scaling them only down", 3),
+#             ("off", "Off", "Calculate count of objects automatically, do not scale them", 4),
+        ]
+
+    def count_const(self, v1, v2, vertices, count):
+        return count
+
+    def count_up(self, v1, v2, vertices, count):
+        distance = (v1-v2).length
+        donor_size = diameter(vertices, self.orient_axis)
+        return floor( distance / donor_size )
+
+    def count_down(self, v1, v2, vertices, count):
+        distance = (v1-v2).length
+        donor_size = diameter(vertices, self.orient_axis)
+        return ceil( distance / donor_size )
+
+    count_funcs = {"count": count_const,
+                   "up": count_up,
+                   "down": count_down}
+
+    def count_mode_change(self, context):
+        self.inputs["Count"].hide = self.count_mode != "count"
+        updateNode(self, context)
+
+    count_mode = EnumProperty(items = count_modes, default="count", update=count_mode_change)
+
+    axes = [
+            ("X", "X", "X axis", 1),
+            ("Y", "Y", "Y axis", 2),
+            ("Z", "Z", "Z axis", 3)
+        ]
+
+    def orient_axis_change(self, context):
+        updateNode(self, context)
+
+    orient_axis_ = EnumProperty(items = axes, default="X", update=orient_axis_change)
+
+    def get_axis_idx(self):
+        if self.orient_axis_ == "X":
+            return 0
+        elif self.orient_axis_ == "Y":
+            return 1
+        elif self.orient_axis_ == "Z":
+            return 2
+
+    orient_axis = property(get_axis_idx)
+
     count_ = IntProperty(name='Count', description='Number of copies',
                         default=3, min=1,
                         update=updateNode)
+
+    def get_count(self, v1, v2, vertices, count):
+        func = self.count_funcs[self.count_mode]
+        return func(self, v1, v2, vertices, count)
+
+    def duplicate_vertices(self, v1, v2, vertices, edges, faces, count):
+        direction = v2 - v1
+        edge_length = direction.length
+        one_item_length = edge_length / count
+        actual_length = diameter(vertices, self.orient_axis)
+        x_scale = one_item_length / actual_length
+        x = all_axes[self.orient_axis]
+        origins = [v1 + direction*x for x in np.linspace(0.0, 1.0, count+1)][:-1]
+        scale = Matrix.Scale(x_scale, 4, x)
+        rot = autorotate(x, direction).inverted()
+        result_vertices = []
+        for o in origins:
+            for vertex in vertices:
+                v = scale * vertex
+                v = rot * v
+                v = v + o
+                result_vertices.append(v)
+        return result_vertices
+
+    def duplicate_edges(self, n_vertices, tuples, offset, count):
+        result = []
+        for i in range(count):
+            r = [tuple(v + i*n_vertices + offset for v in t) for t in tuples]
+            result.extend(r)
+        return result
+
+    def duplicate_faces(self, n_vertices, tuples, offset, count):
+        result = []
+        for i in range(count):
+            r = [[v + i*n_vertices + offset for v in t] for t in tuples]
+            result.extend(r)
+        return result
 
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', "Vertices", "Vertices")
@@ -94,6 +162,10 @@ class SvDuplicateAlongEdgeNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('StringsSocket', 'Edges')
         self.outputs.new('StringsSocket', 'Polygons')
   
+    def draw_buttons(self, context, layout):
+        layout.prop(self, "count_mode", expand=True)
+        layout.prop(self, "orient_axis_", expand=True)
+
     def process(self):
         # inputs
         if not self.inputs['Vertices'].is_linked:
@@ -118,14 +190,15 @@ class SvDuplicateAlongEdgeNode(bpy.types.Node, SverchCustomTreeNode):
             meshes = match_long_repeat([vertices_s, edges_s, faces_s, vertices1_s, vertices2_s, counts])
 
             offset = 0
-            for vertices, edges, faces, vertex1, vertex2, count in zip(*meshes):
-                new_vertices = duplicate_vertices(vertex1, vertex2, vertices, edges, faces, count)
+            for vertices, edges, faces, vertex1, vertex2, inp_count in zip(*meshes):
+                count = self.get_count(vertex1, vertex2, vertices, inp_count)
+                new_vertices = self.duplicate_vertices(vertex1, vertex2, vertices, edges, faces, count)
                 n = len(vertices)
                 offset += n
                 result_edges.extend(edges)
-                result_edges.extend( duplicate_edg_polys(n, edges, offset, count) )
+                result_edges.extend( self.duplicate_edges(n, edges, offset, count) )
                 result_faces.extend(faces)
-                result_faces.extend( duplicate_edg_polys(n, faces, offset, count) )
+                result_faces.extend( self.duplicate_faces(n, faces, offset, count) )
 
                 result_vertices.extend(new_vertices)
 
