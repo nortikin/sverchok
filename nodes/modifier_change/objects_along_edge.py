@@ -52,6 +52,9 @@ all_axes = [
         Vector((0.0, 0.0, 1.0))
     ]
 
+def Matrix_degenerate(ms):
+    return [[ j[:] for j in M ] for M in ms]
+
 class SvDuplicateAlongEdgeNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Duplicate meshes along edge '''
     bl_idname = 'SvDuplicateAlongEdgeNode'
@@ -159,6 +162,8 @@ class SvDuplicateAlongEdgeNode(bpy.types.Node, SverchCustomTreeNode):
         # for actual_length = 1.0 and edge_length = 3.0, let origins be [0.5, 1.5, 2.5]
         u = direction.normalized()
         origins = [v1 + direction*x + 0.5*one_item_length*u for x in np.linspace(0.0, 1.0, count+1)][:-1]
+        assert len(origins) == count
+
         if self.scale_off:
             scale = None
         else:
@@ -167,19 +172,14 @@ class SvDuplicateAlongEdgeNode(bpy.types.Node, SverchCustomTreeNode):
             else:
                 scale = Matrix.Scale(x_scale, 4, x)
         rot = autorotate(x, direction).inverted()
-        result_vertices = []
-        for o in origins:
-            new_vertices = []
-            for vertex in vertices:
-                if scale is None:
-                    v = vertex
-                else:
-                    v = scale * vertex
-                v = rot * v
-                v = v + o
-                new_vertices.append(v)
-            result_vertices.append(new_vertices)
-        return result_vertices
+
+        if scale is None:
+            matrices = [Matrix.Translation(o)*rot for o in origins]
+        else:
+            matrices = [Matrix.Translation(o)*rot*scale for o in origins]
+
+        result_vertices = [[m * vertex for vertex in vertices] for m in matrices]
+        return matrices, result_vertices
 
     def duplicate_edges(self, n_vertices, tuples, count):
         result = []
@@ -208,6 +208,7 @@ class SvDuplicateAlongEdgeNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('VerticesSocket', 'Vertices')
         self.outputs.new('StringsSocket', 'Edges')
         self.outputs.new('StringsSocket', 'Polygons')
+        self.outputs.new('MatrixSocket', 'Matrices')
 
         self.input_mode_change(context)
   
@@ -219,11 +220,20 @@ class SvDuplicateAlongEdgeNode(bpy.types.Node, SverchCustomTreeNode):
             layout.prop(self, "scale_all")
 
     def process(self):
-        # inputs
+        # VerticesR & EdgesR or Vertex1 & Vertex2 are necessary anyway
+        # to define recipient edge
+        if self.input_mode == "edge":
+            if not (self.inputs['VerticesR'].is_linked and self.inputs['EdgesR'].is_linked):
+                return
+        elif self.input_mode == "fixed":
+            if not (self.inputs['Vertex1'].is_linked and self.inputs['Vertex2'].is_linked):
+                return
+        # Input vertices are used now to define count of objects.
+        # Theoretically it is possible to not use them in "Count" mode.
         if not self.inputs['Vertices'].is_linked:
             return
 
-        vertices_s = self.inputs['Vertices'].sv_get()
+        vertices_s = self.inputs['Vertices'].sv_get(default=[[]])
         vertices_s = Vector_generate(vertices_s)
         edges_s = self.inputs['Edges'].sv_get(default=[[]])
         faces_s = self.inputs['Polygons'].sv_get(default=[[]])
@@ -238,29 +248,34 @@ class SvDuplicateAlongEdgeNode(bpy.types.Node, SverchCustomTreeNode):
 
         vertices1_s, vertices2_s = self.get_recipient_vertices(inp_vertices1_s, inp_vertices2_s, vertices_r, edges_r)
 
-        if self.outputs['Vertices'].is_linked:
+        # It may be also useful to output just matrices, without vertices or edges/faces
+        if self.outputs['Vertices'].is_linked or self.outputs['Matrices'].is_linked:
 
+            result_matrices = []
             result_vertices = []
             result_edges = []
             result_faces = []
+
             meshes = match_long_repeat([vertices_s, edges_s, faces_s, vertices1_s, vertices2_s, counts])
 
             for vertices, edges, faces, vertex1, vertex2, inp_count in zip(*meshes):
                 count = self.get_count(vertex1, vertex2, vertices, inp_count)
-                new_vertices = self.duplicate_vertices(vertex1, vertex2, vertices, edges, faces, count)
+                new_matrices, new_vertices = self.duplicate_vertices(vertex1, vertex2, vertices, edges, faces, count)
                 result_edges.extend( [edges] * count )
                 result_faces.extend( [faces] * count )
-                result_vertices.extend( Vector_degenerate(new_vertices) )
+                result_vertices.extend( new_vertices )
+                result_matrices.extend( new_matrices )
 
-            #result_vertices = Vector_degenerate(result_vertices)
-            print("R1:", len(result_vertices))
-            print("E:", result_edges)
-            print("F:", result_faces)
+            result_vertices = Vector_degenerate(result_vertices)
+            result_matrices = Matrix_degenerate(result_matrices)
+            print(result_matrices)
             self.outputs['Vertices'].sv_set(result_vertices)
             if self.outputs['Edges'].is_linked:
                 self.outputs['Edges'].sv_set(result_edges)
             if self.outputs['Polygons'].is_linked:
                 self.outputs['Polygons'].sv_set(result_faces)
+            if self.outputs['Matrices'].is_linked:
+                self.outputs['Matrices'].sv_set(result_matrices)
 
 def register():
     bpy.utils.register_class(SvDuplicateAlongEdgeNode)
