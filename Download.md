@@ -6,11 +6,13 @@ Sverchok is hosted and developped on GitHub.
   <tr>
     <td class="sv_table-elem">
         <a href="https://github.com/nortikin/sverchok/">
-        Go to github<img class="gh" src="svg/drawing_github.svg"></img></a>
+        Visit GitHub<img class="gh" src="svg/drawing_github.svg"></img>
+        </a>
     </td>
     <td class="sv_table-elem">
         <a href="https://github.com/nortikin/sverchok/archive/master.zip">
-        Download archive<svg class="archive"></svg></a>
+        Download archive<img class="gh" src="svg/drawing_download.svg"></img>
+        </a>
     </td>
   </tr>
 </table>
