@@ -169,6 +169,7 @@ class SvDuplicateAlongEdgeNode(bpy.types.Node, SverchCustomTreeNode):
         rot = autorotate(x, direction).inverted()
         result_vertices = []
         for o in origins:
+            new_vertices = []
             for vertex in vertices:
                 if scale is None:
                     v = vertex
@@ -176,20 +177,21 @@ class SvDuplicateAlongEdgeNode(bpy.types.Node, SverchCustomTreeNode):
                     v = scale * vertex
                 v = rot * v
                 v = v + o
-                result_vertices.append(v)
+                new_vertices.append(v)
+            result_vertices.append(new_vertices)
         return result_vertices
 
-    def duplicate_edges(self, n_vertices, tuples, offset, count):
+    def duplicate_edges(self, n_vertices, tuples, count):
         result = []
         for i in range(count):
-            r = [tuple(v + i*n_vertices + offset for v in t) for t in tuples]
+            r = [tuple(v + i*n_vertices for v in t) for t in tuples]
             result.extend(r)
         return result
 
-    def duplicate_faces(self, n_vertices, tuples, offset, count):
+    def duplicate_faces(self, n_vertices, tuples, count):
         result = []
         for i in range(count):
-            r = [[v + i*n_vertices + offset for v in t] for t in tuples]
+            r = [[v + i*n_vertices for v in t] for t in tuples]
             result.extend(r)
         return result
 
@@ -241,28 +243,24 @@ class SvDuplicateAlongEdgeNode(bpy.types.Node, SverchCustomTreeNode):
             result_vertices = []
             result_edges = []
             result_faces = []
-
             meshes = match_long_repeat([vertices_s, edges_s, faces_s, vertices1_s, vertices2_s, counts])
 
-            offset = 0
             for vertices, edges, faces, vertex1, vertex2, inp_count in zip(*meshes):
                 count = self.get_count(vertex1, vertex2, vertices, inp_count)
                 new_vertices = self.duplicate_vertices(vertex1, vertex2, vertices, edges, faces, count)
-                n = len(vertices)
-                offset += n
-                result_edges.extend(edges)
-                result_edges.extend( self.duplicate_edges(n, edges, offset, count) )
-                result_faces.extend(faces)
-                result_faces.extend( self.duplicate_faces(n, faces, offset, count) )
+                result_edges.extend( [edges] * count )
+                result_faces.extend( [faces] * count )
+                result_vertices.extend( Vector_degenerate(new_vertices) )
 
-                result_vertices.extend(new_vertices)
-
-            result_vertices = Vector_degenerate([result_vertices])
+            #result_vertices = Vector_degenerate(result_vertices)
+            print("R1:", len(result_vertices))
+            print("E:", result_edges)
+            print("F:", result_faces)
             self.outputs['Vertices'].sv_set(result_vertices)
             if self.outputs['Edges'].is_linked:
-                self.outputs['Edges'].sv_set([result_edges])
+                self.outputs['Edges'].sv_set(result_edges)
             if self.outputs['Polygons'].is_linked:
-                self.outputs['Polygons'].sv_set([result_faces])
+                self.outputs['Polygons'].sv_set(result_faces)
 
 def register():
     bpy.utils.register_class(SvDuplicateAlongEdgeNode)
