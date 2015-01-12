@@ -20,8 +20,8 @@ import bpy
 import mathutils
 from mathutils import Vector
 from bpy.props import FloatProperty, BoolProperty
-from sverchok.node_tree import SverchCustomTreeNode, StringsSocket, VerticesSocket
-from sverchok.data_structure import (updateNode, Vector_generate)
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import (updateNode, match_long_repeat)
 
 
 class SvPointOnMeshNode(bpy.types.Node, SverchCustomTreeNode):
@@ -30,11 +30,8 @@ class SvPointOnMeshNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'closest_point_on_mesh'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    Mdist = FloatProperty(name='Max_Distance',
-                               description='from surface to point', default=10,
-                               options={'ANIMATABLE'}, update=updateNode)
-    mode = BoolProperty(name='mode of points', description='mode for input points',
-                        default=False, update=updateNode)
+    Mdist = FloatProperty(name='Max_Distance', default=10, update=updateNode)
+    mode = BoolProperty(name='for in points', default=False, update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('SvObjectSocket', 'Object')
@@ -46,34 +43,33 @@ class SvPointOnMeshNode(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons_ext(self, context, layout):
         row = layout.row(align=True)
-        row.prop(self,    "mode",   text="Mode")
+        row.prop(self,    "mode",   text="In Mode")
 
     def process(self):
-
         Location = []
         Normal = []
         Index = []
-        point = Vector_generate(self.inputs['point'].sv_get())
-        point = [Vector(x) for x in point[0]]
-        max_dist = self.inputs['max_dist'].sv_get()[0][0]
+        point = self.inputs['point'].sv_get()[0]
+        max_dist = self.inputs['max_dist'].sv_get()[0]
         obj = self.inputs['Object'].sv_get()
+        if len(obj) > len(max_dist):
+            obj, max_dist = match_long_repeat([obj, max_dist])
 
-        for i in obj:
-
+        g = 0
+        while g < len(obj):
+            OB = obj[g]
             if self.mode:
-                pnt = [i.closest_point_on_mesh(i.matrix_local.inverted()*p, max_dist) for p in point]
+                pnt = [OB.closest_point_on_mesh(OB.matrix_local.inverted()*Vector(p), max_dist[g]) for p in point]
             else:
-                pnt = [i.closest_point_on_mesh(p, max_dist) for p in point]
+                pnt = [OB.closest_point_on_mesh(p, max_dist[g]) for p in point]
+            Location.append([(OB.matrix_world*i2[0])[:] for i2 in pnt])
+            Normal.append([i2[1][:] for i2 in pnt])
+            Index.append([i2[2] for i2 in pnt])
+            g = g+1
 
-            for i2 in pnt:
-
-                Location.append((i.matrix_world*i2[0])[:])
-                Normal.append(i2[1][:])
-                Index.append(i2[2])
-
-        self.outputs['Point_on_mesh'].sv_set([Location])
-        self.outputs['Normal_on_mesh'].sv_set([Normal])
-        self.outputs['INDEX'].sv_set([Index])
+        self.outputs['Point_on_mesh'].sv_set(Location)
+        self.outputs['Normal_on_mesh'].sv_set(Normal)
+        self.outputs['INDEX'].sv_set(Index)
 
     def update_socket(self, context):
         self.update()
