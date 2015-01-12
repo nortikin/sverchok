@@ -156,7 +156,9 @@ class SvDuplicateAlongEdgeNode(bpy.types.Node, SverchCustomTreeNode):
         actual_length = diameter(vertices, self.orient_axis)
         x_scale = one_item_length / actual_length
         x = all_axes[self.orient_axis]
-        origins = [v1 + direction*x for x in np.linspace(0.0, 1.0, count+1)][:-1]
+        # for actual_length = 1.0 and edge_length = 3.0, let origins be [0.5, 1.5, 2.5]
+        u = direction.normalized()
+        origins = [v1 + direction*x + 0.5*one_item_length*u for x in np.linspace(0.0, 1.0, count+1)][:-1]
         if self.scale_off:
             scale = None
         else:
