@@ -2,10 +2,9 @@
 
 СВеРЧОК, The Russian word for Cricket, is pronounced "Sverchok" in English.
 
-Those familiar with the visual programming systems provided by Houdini, Rhinoceros3D (Grasshopper), Dynamo or other modular systems should feel at home using our addon. Sverchok is not an attempt to clone any existing packages or workflows, but a chance to experiment with different approaches to similar constraints.
-
 Sverchok is a parametric tool for [Blender](http://blender.org) built to help generate complex 3d shapes using a node system to control the flow of math and geometry. It is ideally suited to Architects and Designers, but anyone with highschool Math and Trigonometry will be able to produce results that are impossible to achieve unless you know text based programming languages such as Python or C.
 
+Those familiar with Houdini, Rhinoceros3D (Grasshopper), Dynamo or other modular systems should feel at home using our addon. Sverchok is not an attempt to clone existing packages or workflows, but a chance to experiment with different approaches to similar constraints.
 
 ## The things that Sverchok is good at
 
