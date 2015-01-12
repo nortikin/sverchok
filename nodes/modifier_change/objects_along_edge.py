@@ -127,6 +127,27 @@ class SvDuplicateAlongEdgeNode(bpy.types.Node, SverchCustomTreeNode):
 
     scale_off = property(get_scale_off)
 
+    input_modes = [
+            ("edge", "Edges", "Define recipient edges from set of vertices and set of edges", 1),
+            ("fixed", "Fixed", "Use two specified vertices to define recipient edge", 2),
+        ]
+
+    def input_mode_change(self, context):
+        self.inputs["Vertex1"].hide = self.input_mode != "fixed" 
+        self.inputs["Vertex2"].hide = self.input_mode != "fixed" 
+        self.inputs["VerticesR"].hide = self.input_mode != "edge"
+        self.inputs["EdgesR"].hide = self.input_mode != "edge"
+
+    input_mode = EnumProperty(items = input_modes, default="edge", update=input_mode_change)
+
+    def get_recipient_vertices(self, vs1, vs2, vertices, edges):
+        if self.input_mode == "fixed":
+            return vs1, vs2
+        elif self.input_mode == "edge":
+            rs1 = [vertices[i] for (i,j) in edges]
+            rs2 = [vertices[j] for (i,j) in edges]
+            return rs1, rs2
+
     def duplicate_vertices(self, v1, v2, vertices, edges, faces, count):
         direction = v2 - v1
         edge_length = direction.length
@@ -175,15 +196,20 @@ class SvDuplicateAlongEdgeNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('StringsSocket', 'Polygons', 'Polygons')
         self.inputs.new('VerticesSocket', "Vertex1")
         self.inputs.new('VerticesSocket', "Vertex2")
+        self.inputs.new('VerticesSocket', "VerticesR")
+        self.inputs.new('StringsSocket', 'EdgesR')
         self.inputs.new('StringsSocket', "Count").prop_name = "count_"
 
         self.outputs.new('VerticesSocket', 'Vertices')
         self.outputs.new('StringsSocket', 'Edges')
         self.outputs.new('StringsSocket', 'Polygons')
+
+        self.input_mode_change(context)
   
     def draw_buttons(self, context, layout):
         layout.prop(self, "count_mode", expand=True)
         layout.prop(self, "orient_axis_", expand=True)
+        layout.prop(self, "input_mode", expand=True)
         if not self.scale_off:
             layout.prop(self, "scale_all")
 
@@ -196,11 +222,16 @@ class SvDuplicateAlongEdgeNode(bpy.types.Node, SverchCustomTreeNode):
         vertices_s = Vector_generate(vertices_s)
         edges_s = self.inputs['Edges'].sv_get(default=[[]])
         faces_s = self.inputs['Polygons'].sv_get(default=[[]])
-        vertices1_s = self.inputs['Vertex1'].sv_get()
-        vertices1_s = Vector_generate(vertices1_s)[0]
-        vertices2_s = self.inputs['Vertex2'].sv_get()
-        vertices2_s = Vector_generate(vertices2_s)[0]
+        inp_vertices1_s = self.inputs['Vertex1'].sv_get(default=[[]])
+        inp_vertices1_s = Vector_generate(inp_vertices1_s)[0]
+        inp_vertices2_s = self.inputs['Vertex2'].sv_get(default=[[]])
+        inp_vertices2_s = Vector_generate(inp_vertices2_s)[0]
+        vertices_r = self.inputs['VerticesR'].sv_get(default=[[]])
+        vertices_r = Vector_generate(vertices_r)[0]
+        edges_r = self.inputs['EdgesR'].sv_get(default=[[]])[0]
         counts = self.inputs['Count'].sv_get()[0]
+
+        vertices1_s, vertices2_s = self.get_recipient_vertices(inp_vertices1_s, inp_vertices2_s, vertices_r, edges_r)
 
         if self.outputs['Vertices'].is_linked:
 
