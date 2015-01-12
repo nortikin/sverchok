@@ -177,7 +177,8 @@ a:visited {
 
 .sv_table_download {
   font-weight: lighter;
-  margin-bottom: 3em;
+  margin-bottom: 2.5em;
+  width: 100%;
 }
 
 .sv_table_download tr {
