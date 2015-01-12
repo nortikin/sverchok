@@ -62,7 +62,7 @@ class SvDuplicateAlongEdgeNode(bpy.types.Node, SverchCustomTreeNode):
             ("count", "Count", "Specify number of donor objects per edge", 1),
             ("up", "Up", "Calculate count of objects automatically, scaling them only up", 2),
             ("down", "Down", "Calculate count of objects automatically, scaling them only down", 3),
-#             ("off", "Off", "Calculate count of objects automatically, do not scale them", 4),
+            ("off", "Off", "Calculate count of objects automatically, do not scale them", 4),
         ]
 
     def count_const(self, v1, v2, vertices, count):
@@ -80,7 +80,8 @@ class SvDuplicateAlongEdgeNode(bpy.types.Node, SverchCustomTreeNode):
 
     count_funcs = {"count": count_const,
                    "up": count_up,
-                   "down": count_down}
+                   "down": count_down,
+                   "off": count_up}
 
     def count_mode_change(self, context):
         self.inputs["Count"].hide = self.count_mode != "count"
@@ -121,6 +122,11 @@ class SvDuplicateAlongEdgeNode(bpy.types.Node, SverchCustomTreeNode):
         func = self.count_funcs[self.count_mode]
         return func(self, v1, v2, vertices, count)
 
+    def get_scale_off(self):
+        return self.count_mode == "off"
+
+    scale_off = property(get_scale_off)
+
     def duplicate_vertices(self, v1, v2, vertices, edges, faces, count):
         direction = v2 - v1
         edge_length = direction.length
@@ -129,15 +135,21 @@ class SvDuplicateAlongEdgeNode(bpy.types.Node, SverchCustomTreeNode):
         x_scale = one_item_length / actual_length
         x = all_axes[self.orient_axis]
         origins = [v1 + direction*x for x in np.linspace(0.0, 1.0, count+1)][:-1]
-        if self.scale_all:
-            scale = Matrix.Scale(x_scale, 4)
+        if self.scale_off:
+            scale = None
         else:
-            scale = Matrix.Scale(x_scale, 4, x)
+            if self.scale_all:
+                scale = Matrix.Scale(x_scale, 4)
+            else:
+                scale = Matrix.Scale(x_scale, 4, x)
         rot = autorotate(x, direction).inverted()
         result_vertices = []
         for o in origins:
             for vertex in vertices:
-                v = scale * vertex
+                if scale is None:
+                    v = vertex
+                else:
+                    v = scale * vertex
                 v = rot * v
                 v = v + o
                 result_vertices.append(v)
@@ -172,7 +184,8 @@ class SvDuplicateAlongEdgeNode(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         layout.prop(self, "count_mode", expand=True)
         layout.prop(self, "orient_axis_", expand=True)
-        layout.prop(self, "scale_all")
+        if not self.scale_off:
+            layout.prop(self, "scale_all")
 
     def process(self):
         # inputs
