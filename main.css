@@ -187,10 +187,12 @@ a:visited {
 
 .sv_table_download a:link{
   color: #FCFCFC;
+  text-decoration:none;
 }
 
 .sv_table_download a:visited{
   color: #F4F4F4;
+  text-decoration:none;
 }
 
 svg.github {
