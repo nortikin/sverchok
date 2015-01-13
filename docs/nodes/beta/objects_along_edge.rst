@@ -7,7 +7,9 @@ Functionality
 -------------
 
 This node creates an array of copies of one (donor) mesh and aligns it along given recipient segment (edge). Count of objects in array can be specified by user or detected automatically, based on size of donor mesh and length of recipient edge. Donor mesh can be scaled automatically to fill all length of recipient edge.
+
 Donor objects are rotated so that specified axis of object is aligned to recipient edge.
+
 This node also can output transformation matrices, which should be applied to donor object to be aligned along recipient edge. By default, this node already applies that matrices to donor object; but you can turn this off, and apply matrices to donor object in another node, or apply them to different objects.
 
 Inputs
