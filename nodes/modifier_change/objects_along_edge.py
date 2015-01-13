@@ -99,7 +99,10 @@ class SvDuplicateAlongEdgeNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs["Count"].hide = self.count_mode != "count"
         updateNode(self, context)
 
-    count_mode = EnumProperty(items = count_modes, default="count", update=count_mode_change)
+    count_mode = EnumProperty(name = "Scaling mode",
+                        description = "Mode of determining number of objects in array and their scale",
+                        default = "count",
+                        items = count_modes, update=count_mode_change)
 
     axes = [
             ("X", "X", "X axis", 1),
@@ -110,7 +113,10 @@ class SvDuplicateAlongEdgeNode(bpy.types.Node, SverchCustomTreeNode):
     def orient_axis_change(self, context):
         updateNode(self, context)
 
-    orient_axis_ = EnumProperty(items = axes, default="X", update=orient_axis_change)
+    orient_axis_ = EnumProperty(name = "Orientation axis",
+                        description = "Which axis of donor objects to align with recipient edge",
+                        default = "X",
+                        items = axes, update=orient_axis_change)
 
     def get_axis_idx(self):
         if self.orient_axis_ == "X":
@@ -157,7 +163,10 @@ class SvDuplicateAlongEdgeNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs["VerticesR"].hide = self.input_mode != "edge"
         self.inputs["EdgesR"].hide = self.input_mode != "edge"
 
-    input_mode = EnumProperty(items = input_modes, default="edge", update=input_mode_change)
+    input_mode = EnumProperty(name = "Input mode",
+                    description = "Mode of specifying recipient edges",
+                    default = "edge",
+                    items = input_modes, update=input_mode_change)
 
     def get_recipient_vertices(self, vs1, vs2, vertices, edges):
         if self.input_mode == "fixed":
