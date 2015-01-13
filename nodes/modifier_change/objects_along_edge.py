@@ -30,19 +30,11 @@ def householder(u):
     x,y,z = u[0], u[1], u[2]
     m = Matrix([[x*x, x*y, x*z, 0], [x*y, y*y, y*z, 0], [x*z, y*z, z*z, 0], [0,0,0,0]])
     h = Matrix() - 2*m
-    #h = 2*m - Matrix()
     return h
 
 def autorotate(e1, xx):
-    def get_sign():
-        for x in e1:
-            if x != 0.0:
-                return copysign(1, x)
-        return 1
 
-    #s = get_sign()
-    #print("S:", s)
-    alpha = xx.length #* s
+    alpha = xx.length
     u = xx - alpha*e1
     v = u.normalized()
     q = householder(v)
@@ -285,7 +277,6 @@ class SvDuplicateAlongEdgeNode(bpy.types.Node, SverchCustomTreeNode):
 
             result_vertices = Vector_degenerate(result_vertices)
             result_matrices = Matrix_degenerate(result_matrices)
-            print(result_matrices)
             self.outputs['Vertices'].sv_set(result_vertices)
             if self.outputs['Edges'].is_linked:
                 self.outputs['Edges'].sv_set(result_edges)
