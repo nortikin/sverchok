@@ -16,7 +16,7 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-from math import pi, degrees, floor, ceil
+from math import pi, degrees, floor, ceil, copysign
 from mathutils import Vector, Matrix
 import numpy as np
 
@@ -30,11 +30,19 @@ def householder(u):
     x,y,z = u[0], u[1], u[2]
     m = Matrix([[x*x, x*y, x*z, 0], [x*y, y*y, y*z, 0], [x*z, y*z, z*z, 0], [0,0,0,0]])
     h = Matrix() - 2*m
+    #h = 2*m - Matrix()
     return h
 
 def autorotate(e1, xx):
-    alpha = xx.length
-#     e1 = Vector((1.0, 0.0, 0.0))
+    def get_sign():
+        for x in e1:
+            if x != 0.0:
+                return copysign(1, x)
+        return 1
+
+    #s = get_sign()
+    #print("S:", s)
+    alpha = xx.length #* s
     u = xx - alpha*e1
     v = u.normalized()
     q = householder(v)
@@ -177,10 +185,11 @@ class SvDuplicateAlongEdgeNode(bpy.types.Node, SverchCustomTreeNode):
                 scale = Matrix.Scale(x_scale, 4, x)
         rot = autorotate(x, direction).inverted()
 
+        flip = Matrix([[-1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1]])
         if scale is None:
-            matrices = [Matrix.Translation(o)*rot for o in origins]
+            matrices = [Matrix.Translation(o)*rot*flip for o in origins]
         else:
-            matrices = [Matrix.Translation(o)*rot*scale for o in origins]
+            matrices = [Matrix.Translation(o)*rot*scale*flip for o in origins]
 
         if self.apply_matrices:
             result_vertices = [[m * vertex for vertex in vertices] for m in matrices]
