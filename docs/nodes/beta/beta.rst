@@ -10,5 +10,6 @@ Beta
    exponential
    ngon
    randomize
+   objects_along_edge
    iterate
 

@@ -36,7 +36,14 @@ def householder(u):
 def autorotate(e1, xx):
     ''' A matrix of transformation which will transform xx vector into e1. 
     See http://en.wikipedia.org/wiki/QR_decomposition '''
-    alpha = xx.length
+
+    def get_sign():
+        for x in xx:
+            if x != 0.0:
+                return -copysign(1, x)
+        return 1
+
+    alpha = xx.length * get_sign()
     u = xx - alpha*e1
     v = u.normalized()
     q = householder(v)
