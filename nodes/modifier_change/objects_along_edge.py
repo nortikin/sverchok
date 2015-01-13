@@ -27,13 +27,15 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat, Matrix_generate, Vector_generate, Vector_degenerate
 
 def householder(u):
+    ''' Householder reflection matrix '''
     x,y,z = u[0], u[1], u[2]
     m = Matrix([[x*x, x*y, x*z, 0], [x*y, y*y, y*z, 0], [x*z, y*z, z*z, 0], [0,0,0,0]])
     h = Matrix() - 2*m
     return h
 
 def autorotate(e1, xx):
-
+    ''' A matrix of transformation which will transform xx vector into e1. 
+    See http://en.wikipedia.org/wiki/QR_decomposition '''
     alpha = xx.length
     u = xx - alpha*e1
     v = u.normalized()
@@ -58,7 +60,7 @@ def Matrix_degenerate(ms):
 class SvDuplicateAlongEdgeNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Duplicate meshes along edge '''
     bl_idname = 'SvDuplicateAlongEdgeNode'
-    bl_label = 'DuplicateAlongEdge'
+    bl_label = 'Duplicate along edge'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     count_modes = [
@@ -113,17 +115,20 @@ class SvDuplicateAlongEdgeNode(bpy.types.Node, SverchCustomTreeNode):
 
     orient_axis = property(get_axis_idx)
 
-    count_ = IntProperty(name='Count', description='Number of copies',
+    count_ = IntProperty(name='Count',
+                        description='Number of copies',
                         default=3, min=1,
                         update=updateNode)
 
-    scale_all = BoolProperty(name="Scale all axes", description="Scale donor objects along all axes or only along orientation axis",
-                             default=False,
-                             update=updateNode)
+    scale_all = BoolProperty(name="Scale all axes",
+                        description="Scale donor objects along all axes or only along orientation axis",
+                        default=False,
+                        update=updateNode)
 
-    apply_matrices = BoolProperty(name="Apply matrices", description="Apply generated matrices to generated objects internally",
-                             default=True,
-                             update=updateNode)
+    apply_matrices = BoolProperty(name="Apply matrices",
+                        description="Apply generated matrices to generated objects internally",
+                        default=True,
+                        update=updateNode)
 
     def get_count(self, v1, v2, vertices, count):
         func = self.count_funcs[self.count_mode]
@@ -177,6 +182,7 @@ class SvDuplicateAlongEdgeNode(bpy.types.Node, SverchCustomTreeNode):
                 scale = Matrix.Scale(x_scale, 4, x)
         rot = autorotate(x, direction).inverted()
 
+        # Since Householder transformation is reflection, we need to reflect things back
         flip = Matrix([[-1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1]])
         if scale is None:
             matrices = [Matrix.Translation(o)*rot*flip for o in origins]
@@ -188,20 +194,6 @@ class SvDuplicateAlongEdgeNode(bpy.types.Node, SverchCustomTreeNode):
         else:
             result_vertices = [vertices] * count
         return matrices, result_vertices
-
-    def duplicate_edges(self, n_vertices, tuples, count):
-        result = []
-        for i in range(count):
-            r = [tuple(v + i*n_vertices for v in t) for t in tuples]
-            result.extend(r)
-        return result
-
-    def duplicate_faces(self, n_vertices, tuples, count):
-        result = []
-        for i in range(count):
-            r = [[v + i*n_vertices for v in t] for t in tuples]
-            result.extend(r)
-        return result
 
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', "Vertices", "Vertices")
