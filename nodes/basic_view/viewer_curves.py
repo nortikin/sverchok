@@ -85,7 +85,7 @@ def live_curve(curve_name, verts, edges, matrix, node):
         segment.points.foreach_set('co', full_flat)
         print(cu.name)
 
-    print(curves[:])
+    # print(curves[:])
     return obj
 
 
