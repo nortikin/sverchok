@@ -228,6 +228,7 @@ def make_node_cats():
         ["SvGenExponential", "Exponential sequence"],
         ['SvNGonNode',    'NGon',     'RNDCURVE'],
         ["SvRandomizeVerticesNode", "Randomize input vertices"],
+        ["SvDuplicateAlongEdgeNode", "Duplicate objects along edge"],
         ["SvIterateNode", "Iterate matrix transformation"],
     ]
 
