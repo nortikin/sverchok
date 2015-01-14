@@ -54,33 +54,27 @@ def live_curve(curve_name, verts, edges, matrix, node):
     objects = bpy.data.objects
     scene = bpy.context.scene
 
-    # if exists, pick up else make new
+    # if curve data exists, pick it up else make new curve
     cu = curves.get(curve_name, curves.new(name=curve_name, type='CURVE'))
+
+    # if object reference exists, pick it up else make a new one
+    obj = objects.get(curve_name, objects.new(curve_name, cu))
+
+    # break down existing splines entirely.
+    if cu.splines:
+        cu.splines.clear()
 
     cu.bevel_depth = node.depth
     cu.bevel_resolution = node.resolution
     cu.dimensions = '3D'
     cu.fill_mode = 'FULL'
-    tie = cu.splines.new('POLY')
-    obj = objects.get(curve_name, objects.new(curve_name, cu))
-
-    # break down existing splines entirely.
-    if cu.splines:
-        num_splines = len(cu.splines)
-        for i in range(num_splines):
-            cu.splines.remove(cu.splines[-1])
 
     # and rebuild
     for edge in edges:
-        # flattens the list for foreach_set
         v0, v1 = verts[edge[0]], verts[edge[1]]
-        full_flat = [
-            v0[0], v0[1], v0[2], 0.0,
-            v1[0], v1[1], v1[2], 0.0
-        ]
+        full_flat = [v0[0], v0[1], v0[2], 0.0, v1[0], v1[1], v1[2], 0.0]
 
-        # each spline has a default first coordinate
-        # but we need two.
+        # each spline has a default first coordinate but we need two.
         segment = cu.splines.new('POLY')
         segment.points.add(1)
         segment.points.foreach_set('co', full_flat)
