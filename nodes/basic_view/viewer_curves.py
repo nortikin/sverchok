@@ -21,13 +21,27 @@ import random
 import re
 
 import bpy
-from bpy.props import BoolProperty, StringProperty
+from bpy.props import (
+    BoolProperty,
+    StringProperty,
+    FloatProperty,
+    IntProperty)
+
 from mathutils import Matrix, Vector
 
-from sverchok.node_tree import (
-    SverchCustomTreeNode, VerticesSocket, MatrixSocket, StringsSocket)
-from sverchok.data_structure import dataCorrect, fullList, updateNode, SvGetSocketAnyType
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
+
+from sverchok.node_tree import (
+    SverchCustomTreeNode,
+    VerticesSocket,
+    MatrixSocket,
+    StringsSocket)
+
+from sverchok.data_structure import (
+    dataCorrect,
+    fullList,
+    updateNode,
+    SvGetSocketAnyType)
 
 from sverchok.nodes.basic_view.viewer_bmesh import (
     matrix_sanitizer,
@@ -35,7 +49,7 @@ from sverchok.nodes.basic_view.viewer_bmesh import (
     get_random_init)
 
 
-def live_curve(name, verts, edges, matrix):
+def live_curve(curve_name, verts, edges, matrix, node):
     curves = bpy.data.curves
     objects = bpy.data.objects
     scene = bpy.context.scene
@@ -43,38 +57,44 @@ def live_curve(name, verts, edges, matrix):
     # if exists, pick up else make new
     cu = curves.get(curve_name, curves.new(name=curve_name, type='CURVE'))
 
+    cu.bevel_depth = node.depth
+    cu.bevel_resolution = node.resolution
     cu.dimensions = '3D'
     cu.fill_mode = 'FULL'
-    cu.bevel_depth = 0.01
     tie = cu.splines.new('POLY')
     obj = objects.get(curve_name, objects.new(curve_name, cu))
-     
-    # flattens the list for foreach_set
-    out2 = []
-    [out2.extend(list(i)+[0.0]) for i in out] 
-    
-    # break down and rebuild
+
+    # break down existing splines entirely.
     if cu.splines:
         num_splines = len(cu.splines)
         for i in range(num_splines):
             cu.splines.remove(cu.splines[-1])
 
-    tie = cu.splines.new('POLY')
-    tie.points.add(len(out)-1)
-    tie.points.foreach_set('co', out2)
-    cu.extrude = 0.4
- 
+    # and rebuild
+    for edge in edges:
+        # flattens the list for foreach_set
+        v0, v1 = verts[edge[0]], verts[edge[1]]
+        full_flat = [
+            v0[0], v0[1], v0[2], 0.0,
+            v1[0], v1[1], v1[2], 0.0
+        ]
+
+        # each spline has a default first coordinate
+        # but we need two.
+        segment = cu.splines.new('POLY')
+        segment.points.add(1)
+        segment.points.foreach_set('co', full_flat)
+
     if not curve_name in scene.objects:
-        scene.objects.link(obj)    
+        scene.objects.link(obj)
+
+    return obj
 
 
-def make_bmesh_geometry(node, context, name, verts, *topology):
-    scene = context.scene
-    objects = bpy.data.objects
+def make_curve_geometry(node, context, name, verts, *topology):
     edges, matrix = topology
 
-    live_curve(name, verts, edges, matrix)
-
+    sv_object = live_curve(name, verts, edges, matrix, node)
     sv_object.hide_select = False
 
     if matrix:
@@ -84,7 +104,7 @@ def make_bmesh_geometry(node, context, name, verts, *topology):
         sv_object.matrix_local = Matrix.Identity(4)
 
 
-# could be imported from bmeshviewr directly.
+# could be imported from bmeshviewr directly, it's almost identical
 class SvCurveViewOp(bpy.types.Operator):
 
     bl_idname = "node.showhide_svcurve"
@@ -92,13 +112,14 @@ class SvCurveViewOp(bpy.types.Operator):
     bl_options = {'REGISTER', 'UNDO'}
 
     fn_name = StringProperty(default='')
+    # obj_type = StringProperty(default='MESH')
 
     def hide_unhide(self, context, type_op):
         n = context.node
         k = n.basemesh_name + "_"
 
         # maybe do hash+(obj_name + treename)
-        child = lambda obj: obj.type == "MESH" and obj.name.startswith(k)
+        child = lambda obj: obj.type == "CURVE" and obj.name.startswith(k)
         objs = list(filter(child, bpy.data.objects))
 
         if type_op == 'hide_view':
@@ -129,10 +150,11 @@ class SvCurveViewOp(bpy.types.Operator):
         return {'FINISHED'}
 
 
-class CurveViewerNode(bpy.types.Node, SverchCustomTreeNode):
+# should inherit from bmeshviewer, many of these methods are largely identical.
+class SvCurveViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
-    bl_idname = 'CurveViewerNode'
-    bl_label = 'Curve Viewer Draw'
+    bl_idname = 'SvCurveViewerNode'
+    bl_label = 'SvCurve Viewer Draw'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     activate = BoolProperty(
@@ -153,6 +175,9 @@ class CurveViewerNode(bpy.types.Node, SverchCustomTreeNode):
     state_render = BoolProperty(default=True)
     state_select = BoolProperty(default=True)
     select_state_mesh = BoolProperty(default=False)
+
+    depth = FloatProperty(default=0.4, update=updateNode)
+    resolution = IntProperty(default=3, update=updateNode)
 
     def sv_init(self, context):
         self.use_custom_color = True
@@ -200,6 +225,10 @@ class CurveViewerNode(bpy.types.Node, SverchCustomTreeNode):
             self, 'material', bpy.data, 'materials', text='',
             icon='MATERIAL_DATA')
 
+        col = layout.column()
+        col.prop(self, 'depth', text='depth radius')
+        col.prop(self, 'resolution', text='surface resolution')
+
     def draw_buttons_ext(self, context, layout):
         self.draw_buttons(context, layout)
         layout.separator()
@@ -207,13 +236,6 @@ class CurveViewerNode(bpy.types.Node, SverchCustomTreeNode):
         row = layout.row(align=True)
         sh = 'node.showhide_svcurve'
         row.operator(sh, text='Random Name').fn_name = 'random_mesh_name'
-
-        # col = layout.column(align=True)
-        # box = col.box()
-        # if box:
-        #     box.label(text="Beta options")
-        #     box.prop(self, "fixed_verts", text="Fixed vert count")
-        #     box.prop(self, 'autosmooth', text='smooth shade')
 
     def get_geometry_from_sockets(self):
 
@@ -248,7 +270,7 @@ class CurveViewerNode(bpy.types.Node, SverchCustomTreeNode):
         # extend all non empty lists to longest of mverts or *mrest
         maxlen = max(len(mverts), *(map(len, mrest)))
         fullList(mverts, maxlen)
-        for idx in range(3):
+        for idx in range(2):
             if mrest[idx]:
                 fullList(mrest[idx], maxlen)
 
@@ -258,7 +280,7 @@ class CurveViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
             data = get_edges_faces_matrices(obj_index)
             mesh_name = self.basemesh_name + "_" + str(obj_index)
-            make_bmesh_geometry(self, bpy.context, mesh_name, Verts, *data)
+            make_curve_geometry(self, bpy.context, mesh_name, Verts, *data)
 
         self.remove_non_updated_objects(obj_index)
 
@@ -273,7 +295,7 @@ class CurveViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
     def get_children(self):
         objects = bpy.data.objects
-        objs = [obj for obj in objects if obj.type == 'MESH']
+        objs = [obj for obj in objects if obj.type == 'CURVE']
         return [o for o in objs if o.name.startswith(self.basemesh_name + "_")]
 
     def remove_non_updated_objects(self, obj_index):
@@ -282,7 +304,7 @@ class CurveViewerNode(bpy.types.Node, SverchCustomTreeNode):
         if not objs:
             return
 
-        meshes = bpy.data.meshes
+        curves = bpy.data.curves
         objects = bpy.data.objects
         scene = bpy.context.scene
 
@@ -295,7 +317,7 @@ class CurveViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
         # delete associated meshes
         for object_name in objs:
-            meshes.remove(meshes[object_name])
+            curves.remove(curves[object_name])
 
     def to_group(self, objs):
         groups = bpy.data.groups
@@ -314,11 +336,10 @@ class CurveViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
 
 def register():
-    bpy.utils.register_class(CurveViewerNode)
+    bpy.utils.register_class(SvCurveViewerNode)
     bpy.utils.register_class(SvCurveViewOp)
 
 
 def unregister():
-    bpy.utils.unregister_class(CurveViewerNode)
+    bpy.utils.unregister_class(SvCurveViewerNode)
     bpy.utils.unregister_class(SvCurveViewOp)
-
