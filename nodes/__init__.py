@@ -16,7 +16,6 @@ nodes_dict = {
     'basic_view': [
         'viewer_bmesh',
         'viewer_indices',
-        'viewer_curves',
         'viewer_text',
         'viewer_mk2',
         'empty_out',
