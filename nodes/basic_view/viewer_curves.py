@@ -254,6 +254,10 @@ class SvCurveViewerNode(bpy.types.Node, SverchCustomTreeNode):
             return j
 
     def process(self):
+        if not (self.inputs['vertices'].is_linked and self.inputs['edges'].is_linked):
+            # possible remove any potential existing geometry here too
+            return
+
         # perhaps if any of mverts is [] this should already fail.
         mverts, *mrest = self.get_geometry_from_sockets()
 
