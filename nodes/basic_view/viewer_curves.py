@@ -81,9 +81,11 @@ def live_curve(curve_name, verts, edges, matrix, node):
         segment = cu.splines.new('POLY')
         segment.points.add(1)
         segment.points.foreach_set('co', full_flat)
+        print(cu.name)
 
     if not curve_name in scene.objects:
         scene.objects.link(obj)
+        scene.update()
 
     print(curves[:])
     return obj
