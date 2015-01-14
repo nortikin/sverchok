@@ -25,6 +25,7 @@ This node has the following inputs:
 - **VerticesR**. Vertices of the recipient mesh. This input is used only when "Edges" input mode is used.
 - **EdgesR**. Edges of the recipient mesh. These edges will be actually used as recipient edges.  This input is used only when "Edges" input mode is used.
 - **Count**. Number of objects in array. This input is used only in "Count" scaling mode (see description of ``Scale mode`` parameter below).
+- **Padding**. Portion of the recipient edge length that should be left empty from both sides. Default value of zero means fill whole available length.
 
 Parameters
 ----------
@@ -67,6 +68,10 @@ This node has the following parameters:
 |                  |                |             | from the corresponding input. It is used only in "Count" scaling |
 |                  |                |             | mode.                                                            |
 +------------------+----------------+-------------+------------------------------------------------------------------+
+| **Padding**      | Float          | 0.0         | Portion of the recipient edge length that should be left empty   |
+|                  |                |             | from both sides. Default value of zero means fill whole length   |
+|                  |                |             | available. Maximum value 0.49 means use only central 1% of edge. |
++------------------+----------------+-------------+------------------------------------------------------------------+
 
 Outputs
 -------
@@ -85,11 +90,11 @@ Examples of usage
 
 Cylinders duplicated along the segment between two specified points:
 
-.. image:: https://cloud.githubusercontent.com/assets/284644/5726029/fb0774a6-9b79-11e4-9f39-2fac5bd65e29.png
+.. image:: https://cloud.githubusercontent.com/assets/284644/5741079/bcfcd4e2-9c2a-11e4-9f89-95ba59be8bd9.png
 
 Spheres duplicated along the edges of Box:
 
-.. image:: https://cloud.githubusercontent.com/assets/284644/5726028/fa98ffee-9b79-11e4-9795-e7066004f5cb.png
+.. image:: https://cloud.githubusercontent.com/assets/284644/5741080/bd30e0ac-9c2a-11e4-95f3-aa075ef3d7eb.png
 
 You can also find more examples and some discussion `in the development thread <https://github.com/portnov/sverchok/issues/6>`_.
 
