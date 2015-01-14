@@ -55,13 +55,15 @@ def live_curve(curve_name, verts, edges, matrix, node):
     scene = bpy.context.scene
 
     # if curve data exists, pick it up else make new curve
-    cu = curves.get(curve_name, curves.new(name=curve_name, type='CURVE'))
-    print('curve_name: ', curve_name)
-    print(cu)
+    cu = curves.get(curve_name)
+    if not cu:
+        cu = curves.new(name=curve_name, type='CURVE'))
 
     # if object reference exists, pick it up else make a new one
-    obj = objects.get(curve_name, objects.new(curve_name, cu))
-    print('obj name: ', obj.name)
+    obj = objects.get(curve_name)
+    if not obj:
+        obj = objects.new(curve_name, cu))
+        scene.objects.link(obj)
 
     # break down existing splines entirely.
     if cu.splines:
@@ -83,9 +85,6 @@ def live_curve(curve_name, verts, edges, matrix, node):
         segment.points.foreach_set('co', full_flat)
         print(cu.name)
 
-    if not curve_name in scene.objects:
-        scene.objects.link(obj)
-        scene.update()
 
     print(curves[:])
     return obj
