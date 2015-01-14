@@ -83,7 +83,7 @@ def live_curve(curve_name, verts, edges, matrix, node):
         segment = cu.splines.new('POLY')
         segment.points.add(1)
         segment.points.foreach_set('co', full_flat)
-        print(cu.name)
+        # print(cu.name)
 
     # print(curves[:])
     return obj
@@ -174,8 +174,8 @@ class SvCurveViewerNode(bpy.types.Node, SverchCustomTreeNode):
     state_select = BoolProperty(default=True)
     select_state_mesh = BoolProperty(default=False)
 
-    depth = FloatProperty(default=0.4, update=updateNode)
-    resolution = IntProperty(default=3, update=updateNode)
+    depth = FloatProperty(min=0.0, default=0.2, update=updateNode)
+    resolution = IntProperty(min=0, default=3, update=updateNode)
 
     def sv_init(self, context):
         self.use_custom_color = True
@@ -284,11 +284,11 @@ class SvCurveViewerNode(bpy.types.Node, SverchCustomTreeNode):
             mesh_name = self.basemesh_name + "_" + str(obj_index)
             make_curve_geometry(self, bpy.context, mesh_name, Verts, *data)
 
-        print('object index:', obj_index)
+        # print('object index:', obj_index)
         self.remove_non_updated_objects(obj_index)
 
         objs = self.get_children()
-        print('objs:', objs)
+        # print('objs:', objs)
 
         if self.grouping:
             self.to_group(objs)

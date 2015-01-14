@@ -181,6 +181,7 @@ def make_node_cats():
         ["ViewerNode2",         "Viewer Draw",         'RETOPO'],
         ["BmeshViewerNode",     "Viewer BMesh"],
         ["IndexViewerNode",     "Viewer Index"],
+        ["SvCurveViewerNode",   "Curve Viewer",     'MOD_CURVE'],
         ["Sv3DviewPropsNode",   "3dview Props"],
     ]
 
@@ -235,7 +236,6 @@ def make_node_cats():
         ["SvImageComponentsNode", "Image Decompose",  "GROUP_VCOL"],
         ["SvJoinTrianglesNode",   "Join Triangles"],
         ["SvCacheNode",           "Cache"],
-        ["SvCurveViewerNode",     "Curve Viewer"],
         ["SvInsetSpecial",        "Inset Special"],
         ["SvCSGBooleanNode",      "GSG Boolean"],
 
