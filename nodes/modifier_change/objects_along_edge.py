@@ -21,7 +21,7 @@ from mathutils import Vector, Matrix
 import numpy as np
 
 import bpy
-from bpy.props import IntProperty, EnumProperty, BoolProperty
+from bpy.props import IntProperty, EnumProperty, BoolProperty, FloatProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat, Matrix_generate, Vector_generate, Vector_degenerate
@@ -77,18 +77,16 @@ class SvDuplicateAlongEdgeNode(bpy.types.Node, SverchCustomTreeNode):
             ("off", "Off", "Calculate count of objects automatically, do not scale them", 4),
         ]
 
-    def count_const(self, v1, v2, vertices, count):
+    def count_const(self, edge_length, vertices, count):
         return count
 
-    def count_up(self, v1, v2, vertices, count):
-        distance = (v1-v2).length
+    def count_up(self, edge_length, vertices, count):
         donor_size = diameter(vertices, self.orient_axis)
-        return floor( distance / donor_size )
+        return floor( edge_length / donor_size )
 
-    def count_down(self, v1, v2, vertices, count):
-        distance = (v1-v2).length
+    def count_down(self, edge_length, vertices, count):
         donor_size = diameter(vertices, self.orient_axis)
-        return ceil( distance / donor_size )
+        return ceil( edge_length / donor_size )
 
     count_funcs = {"count": count_const,
                    "up": count_up,
@@ -133,6 +131,11 @@ class SvDuplicateAlongEdgeNode(bpy.types.Node, SverchCustomTreeNode):
                         default=3, min=1,
                         update=updateNode)
 
+    padding_ = FloatProperty(name='Padding',
+                        description='Fraction of destination edge length to keep empty from each side',
+                        default=0.0, min=0.0, max=0.49,
+                        update=updateNode)
+
     scale_all = BoolProperty(name="Scale all axes",
                         description="Scale donor objects along all axes or only along orientation axis",
                         default=False,
@@ -143,9 +146,10 @@ class SvDuplicateAlongEdgeNode(bpy.types.Node, SverchCustomTreeNode):
                         default=True,
                         update=updateNode)
 
-    def get_count(self, v1, v2, vertices, count):
+    def get_count(self, v1, v2, vertices, count, padding):
         func = self.count_funcs[self.count_mode]
-        return func(self, v1, v2, vertices, count)
+        edge_length = (1.0 - 2*padding) * (v1-v2).length
+        return func(self, edge_length, vertices, count)
 
     def get_scale_off(self):
         return self.count_mode == "off"
@@ -176,16 +180,17 @@ class SvDuplicateAlongEdgeNode(bpy.types.Node, SverchCustomTreeNode):
             rs2 = [vertices[j] for (i,j) in edges]
             return rs1, rs2
 
-    def duplicate_vertices(self, v1, v2, vertices, edges, faces, count):
+    def duplicate_vertices(self, v1, v2, vertices, edges, faces, count, p):
         direction = v2 - v1
-        edge_length = direction.length
+        edge_length = (1.0 - 2*p) * direction.length
         one_item_length = edge_length / count
         actual_length = diameter(vertices, self.orient_axis)
         x_scale = one_item_length / actual_length
         x = all_axes[self.orient_axis]
         # for actual_length = 1.0 and edge_length = 3.0, let origins be [0.5, 1.5, 2.5]
         u = direction.normalized()
-        origins = [v1 + direction*x + 0.5*one_item_length*u for x in np.linspace(0.0, 1.0, count+1)][:-1]
+        alphas = np.linspace(0.0, 1.0, count+1)
+        origins = [v1 + (1-2*p)*direction*alpha + p*direction + 0.5*one_item_length*u for alpha in alphas][:-1]
         assert len(origins) == count
 
         if self.scale_off:
@@ -219,6 +224,7 @@ class SvDuplicateAlongEdgeNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('VerticesSocket', "VerticesR")
         self.inputs.new('StringsSocket', 'EdgesR')
         self.inputs.new('StringsSocket', "Count").prop_name = "count_"
+        self.inputs.new('StringsSocket', "Padding").prop_name = "padding_"
 
         self.outputs.new('VerticesSocket', 'Vertices')
         self.outputs.new('StringsSocket', 'Edges')
@@ -261,6 +267,7 @@ class SvDuplicateAlongEdgeNode(bpy.types.Node, SverchCustomTreeNode):
         vertices_r = Vector_generate(vertices_r)[0]
         edges_r = self.inputs['EdgesR'].sv_get(default=[[]])[0]
         counts = self.inputs['Count'].sv_get()[0]
+        paddings = self.inputs['Padding'].sv_get()[0]
 
         vertices1_s, vertices2_s = self.get_recipient_vertices(inp_vertices1_s, inp_vertices2_s, vertices_r, edges_r)
 
@@ -272,12 +279,12 @@ class SvDuplicateAlongEdgeNode(bpy.types.Node, SverchCustomTreeNode):
             result_edges = []
             result_faces = []
 
-            meshes = match_long_repeat([vertices_s, edges_s, faces_s, vertices1_s, vertices2_s, counts])
+            meshes = match_long_repeat([vertices_s, edges_s, faces_s, vertices1_s, vertices2_s, counts, paddings])
 
-            for vertices, edges, faces, vertex1, vertex2, inp_count in zip(*meshes):
-                count = self.get_count(vertex1, vertex2, vertices, inp_count)
+            for vertices, edges, faces, vertex1, vertex2, inp_count, padding in zip(*meshes):
+                count = self.get_count(vertex1, vertex2, vertices, inp_count, padding)
                 count = max(count,1)
-                new_matrices, new_vertices = self.duplicate_vertices(vertex1, vertex2, vertices, edges, faces, count)
+                new_matrices, new_vertices = self.duplicate_vertices(vertex1, vertex2, vertices, edges, faces, count, padding)
                 result_edges.extend( [edges] * count )
                 result_faces.extend( [faces] * count )
                 result_vertices.extend( new_vertices )
