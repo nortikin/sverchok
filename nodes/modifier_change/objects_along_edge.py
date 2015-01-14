@@ -95,6 +95,7 @@ class SvDuplicateAlongEdgeNode(bpy.types.Node, SverchCustomTreeNode):
 
     def count_mode_change(self, context):
         self.inputs["Count"].hide = self.count_mode != "count"
+        self.inputs["Padding"].hide = self.count_mode == "off"
         updateNode(self, context)
 
     count_mode = EnumProperty(name = "Scaling mode",
