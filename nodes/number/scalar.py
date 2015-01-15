@@ -24,8 +24,8 @@ import bpy
 from bpy.props import (EnumProperty, FloatProperty,
                        IntProperty, BoolVectorProperty)
 
-from sverchok.node_tree import SverchCustomTreeNode, StringsSocket
-from sverchok.data_structure import (updateNode, match_long_repeat)
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import (updateNode, enum_item)
 from sverchok.utils.sv_itertools import (recurse_fx, recurse_fxy)
 
 
@@ -39,54 +39,12 @@ class ScalarMathNode(bpy.types.Node, SverchCustomTreeNode):
 # Math functions from http://docs.python.org/3.3/library/math.html
 # maybe this should be distilled to most common with the others available via Formula2 Node
 # And some constants etc.
-# Keep 4, columns number unchanged and only add new with unique number
-    
-    mode_items = [
-        ("SINE",            "Sine",         "", 1),
-        ("COSINE",          "Cosine",       "", 2),
-        ("TANGENT",         "Tangent",      "", 3),
-        ("ARCSINE",         "Arcsine",      "", 4),
-        ("ARCCOSINE",       "Arccosine",    "", 5),
-        ("ARCTANGENT",      "Arctangent",   "", 6),
-        ("SQRT",            "Squareroot",   "", 11),
-        ("NEG",             "Negate",       "", 12),
-        ("DEGREES",         "Degrees",      "", 13),
-        ("RADIANS",         "Radians",      "", 14),
-        ("ABS",             "Absolute",     "", 15),
-        ("CEIL",            "Ceiling",      "", 16),
-        ("ROUND",           "Round",        "", 17),
-        ("ROUND-N",         "Round N",      "", 18),
-        ("FMOD",            "Fmod",         "", 19),
-        ("MODULO",          "modulo",       "", 20),
-        ("FLOOR",           "floor",        "", 21),
-        ("EXP",             "Exponent",     "", 30),
-        ("LN",              "log",          "", 31),
-        ("LOG1P",           "log1p",        "", 32),
-        ("LOG10",           "log10",        "", 33),
-        ("ACOSH",           "acosh",        "", 40),
-        ("ASINH",           "asinh",        "", 41),
-        ("ATANH",           "atanh",        "", 42),
-        ("COSH",            "cosh",         "", 43),
-        ("SINH",            "sinh",         "", 44),
-        ("TANH",            "tanh",         "", 45),
-        ("ADD",              "+",           "", 50),
-        ("SUB",              "-",           "", 51),
-        ("MUL",              "*",           "", 52),
-        ("DIV",              "/",           "", 53),
-        ("INTDIV",           "//",          "", 54),
-        ("POW",              "**",          "", 55),
-        ("PI",               "pi",          "", 60),
-        ("E",                "e",           "", 61),
-        ("PHI",              "phi",         "", 62),
-        ("TAU",              "tau",         "", 63),
-        ("MIN",              "min",         "", 70),
-        ("MAX",              "max",         "", 71),
-        ("-1",               "x-1",         "", 80),
-        ("+1",               "x+1",         "", 81),
-        ("*2",               "x*2",         "", 82),
-        ("/2",               "x/2",         "", 83),
-        ("POW2",             "x**2",        "", 84),
-        ]
+
+    mode_items = ["SINE", "COSINE", "TANGENT", "ARCSINE", "ARCCOSINE", "ARCTANGENT",
+                  "SQRT", "NEG", "DEGREES", "RADIANS", "ABS", "CEIL", "ROUND", "ROUND-N",
+                  "FMOD", "MODULO", "FLOOR", "EXP", "LN", "LOG1P", "LOG10", "ACOSH", "ASINH",
+                  "ATANH", "COSH", "SINH", "TANH", "ADD", "SUB", "MUL", "DIV", "INTDIV", "POW",
+                  "PI", "E", "PHI", "TAU", "MIN", "MAX", "-1", "+1", "*2", "/2", "POW2"]
 
     fx = {
         'SINE':       sin,
@@ -141,11 +99,11 @@ class ScalarMathNode(bpy.types.Node, SverchCustomTreeNode):
         'E':        e,
         'PHI':      1.61803398875,
     }
-    
+
     int_prop ={
         'ROUND-N':  ("x","i_y"),
         }
-        
+
     def change_inputs(self, context):
 
         # inputs
@@ -174,34 +132,34 @@ class ScalarMathNode(bpy.types.Node, SverchCustomTreeNode):
                 self.inputs.new('StringsSocket', "X")
             if 'Y' not in self.inputs:
                 self.inputs.new('StringsSocket', "Y")
-            self.change_prop_type(None)        
-        
-    # items_ is a really bad name but changing it breaks old layouts 
+            self.change_prop_type(None)
+
+    # items_ is a really bad name but changing it breaks old layouts
     items_ = EnumProperty(name="Function", description="Function choice",
-                          default="SINE", items=mode_items,
+                          default="SINE", items=enum_item(mode_items),
                           update=change_inputs)
     x = FloatProperty(default=1, name='x', update=updateNode)
     y = FloatProperty(default=1, name='y', update=updateNode)
-    
+
     # only used for round-n, for completeness right now.
     # perhaps make it switchable via draw buttons ext
     i_x = IntProperty(default=1, name='x', update=updateNode)
     i_y = IntProperty(default=1, name='y', update=updateNode)
-    
+
     # boolvector to control prop type
     def change_prop_type(self, context):
         inputs = self.inputs
         if inputs:
             inputs[0].prop_name = 'i_x' if self.prop_types[0] else 'x'
         if len(inputs)>1:
-            if not self.items_ in self.int_prop: 
+            if not self.items_ in self.int_prop:
                 inputs[1].prop_name = 'i_y' if self.prop_types[1] else 'y'
             else:
                 inputs[1].prop_name = 'i_y'
-            
+
     prop_types = BoolVectorProperty(size=2, default=(False, False),
                                     update=change_prop_type)
-        
+
     def draw_buttons(self, context, layout):
         layout.prop(self, "items_", "Functions:")
 
@@ -213,7 +171,7 @@ class ScalarMathNode(bpy.types.Node, SverchCustomTreeNode):
             row.label(text=s.name)
             t = "To float" if self.prop_types[i] else "To int"
             row.prop(self, "prop_types", index=i, text=t, toggle=True)
-            
+
     def sv_init(self, context):
         self.inputs.new('StringsSocket', "X").prop_name = 'x'
         self.outputs.new('StringsSocket', "float")
@@ -231,13 +189,11 @@ class ScalarMathNode(bpy.types.Node, SverchCustomTreeNode):
             label.extend((", ", y_label))
         return " ".join(label)
 
-
-    
     def process(self):
         in_count = len(self.inputs)
         if in_count > 0:
             x = self.inputs['X'].sv_get(deepcopy=False)
-            
+
         if in_count > 1:
             y = self.inputs['Y'].sv_get(deepcopy=False)
         # outputs
@@ -250,7 +206,6 @@ class ScalarMathNode(bpy.types.Node, SverchCustomTreeNode):
             elif in_count == 2:
                 result = recurse_fxy(x, y, self.fxy[self.items_])
             self.outputs['float'].sv_set(result)
-
 
 
 def register():
