@@ -37,7 +37,6 @@ var context = {
     {name:"Manual", link: ""},
     {name:"Video",link: ""},
     {name:"Lessons", link: ""},
-    {name:"Magazines", link: ""},
     {name:"Donate", link: ""}
   ]
 }
@@ -103,16 +102,6 @@ window.addEventListener("popstate", function(e) {
     _div4.html(obtained_html);
 });
 
-// window.addEventListener("hashchange", function(e) {
-//     var thash = window.location.hash;
-//     console.log(thash);
-//     var pagename = thash.slice(1);
-//     var _div4 = d3.select("div.sv_html");
-//     var obtained_html = read_content(pagename + '.md');
-//     _div4.html(obtained_html);
-
-// }, false);
-
 function get_url_page(lpath) {
     var lmatch = lpath.match(/sverchok\/([^&]*)/);
     var pagename = "About";  // a default
@@ -122,8 +111,12 @@ function get_url_page(lpath) {
     return pagename;
 }
 
+// This only actuates after the DOM content is loaded, and the
+// URL  location contains a hash symbol. This event should occur by 
+// - a refresh 
+// - a hotlink to a section (ie sending a user to ".../sverchok/#Download" )
 document.addEventListener("DOMContentLoaded", function(event) { 
-  //do work
+
     var thash = window.location.hash;
     if (thash) {
         console.log(thash);
