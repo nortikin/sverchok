@@ -76,6 +76,7 @@ function draw_content(){
     .classed("noselect", true);
   
   div4.html(read_content("About.md"))
+  history.pushState(null, null, 'page=' + 'About')
   
   menu.each(function(d){
     var obj = d3.select(this);
@@ -103,5 +104,17 @@ function draw_content(){
 draw_content()
 
 window.addEventListener("popstate", function(e) {
-    console.log('going back: ' + location.pathname);
+    var pagename = get_url_page(location.pathname)
+    var _div4 = d3.select("div.sv_html");
+    var obtained_html = read_content(pagename + '.md');
+    _div4.html(obtained_html);
 });
+
+function get_url_page(lpath) {
+    var lmatch = lpath.match(/sverchok\/page=([^&]*)/);
+    var pagename = "About";  // a default
+    if (lmatch) {
+        pagename = lmatch[1]
+    }
+    return pagename;
+}
