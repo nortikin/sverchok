@@ -87,7 +87,7 @@ function draw_content(){
     //   console.log('out', d.name);
     // })
 
-    var _div4 = d3.select("div").classed("sv_html");  //  op
+    var _div4 = d3.select("div.sv_html");  //  op
     
     obj.on("click", function(d){
      
