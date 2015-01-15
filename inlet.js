@@ -87,7 +87,7 @@ function draw_content(){
       var markdown_refname = d.name + ".md";
       var obtained_html = read_content(markdown_refname);
       _div4.html(obtained_html);
-      history.pushState(null, null, 'p=' + d.name);
+      history.pushState(null, null, d.name + '.html');
       
     })    
   })
@@ -103,7 +103,7 @@ window.addEventListener("popstate", function(e) {
 });
 
 function get_url_page(lpath) {
-    var lmatch = lpath.match(/sverchok\/p=([^&]*)/);
+    var lmatch = lpath.match(/sverchok\/([^&]*).html/);
     var pagename = "About";  // a default
     if (lmatch) {
         pagename = lmatch[1]
