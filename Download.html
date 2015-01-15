@@ -9,34 +9,10 @@
         <link rel="stylesheet" href="main.css">
         <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
         <link href='http://fonts.googleapis.com/css?family=PT+Sans:400,700,400italic' rel='stylesheet' type='text/css'>
-        <script type="text/javascript" src="jquery-1.7.2.min.js"></script>
-        <script type="text/javascript" src="showdown.js"></script>
     </head>
     <body>
     <script>
-
     window.location.replace("http://nortikin.github.io/sverchok");
-
-    function read_content(myUrl) {
-      var result = null;
-      $.ajax({
-        url: myUrl, 
-        type: 'get', 
-        dataType: 'html',
-        async: false,
-        success: function(data) { result = data; } 
-      });
-      FileReady = true;
-
-      var converter = new Showdown.converter();
-      return converter.makeHtml(result);
-    }
-
-    $(function() {
-        console.log( "ready!" );
-        d3.select("div.sv_html").html(read_content('Download.md'));
-    });
-
     </script>
     </body>
 </html>
