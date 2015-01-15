@@ -89,8 +89,10 @@ function draw_content(){
 
     obj.on("click", function(d){
      
-      var obtained_html = read_content(d.name + ".md");
+      var markdown_refname = d.name + ".md";
+      var obtained_html = read_content(markdown_refname);
       div4.html(obtained_html);
+      history.pushState(null, null, '/subpages/' + markdown_refname);
       
     })    
   })
