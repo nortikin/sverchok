@@ -87,7 +87,7 @@ function draw_content(){
       var markdown_refname = d.name + ".md";
       var obtained_html = read_content(markdown_refname);
       _div4.html(obtained_html);
-      history.pushState(null, null, d.name);
+      history.pushState(null, null, 'cgi.html#' + d.name);
       
     })    
   })
@@ -107,7 +107,7 @@ window.addEventListener("popstate", function(e) {
 // }, false);
 
 function get_url_page(lpath) {
-    var lmatch = lpath.match(/sverchok\/([^&]*)/);
+    var lmatch = lpath.match(/sverchok\/cgi.html#([^&]*)/);
     var pagename = "About";  // a default
     if (lmatch) {
         pagename = lmatch[1]
