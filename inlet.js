@@ -79,18 +79,11 @@ function draw_content(){
   
   menu.each(function(d){
     var obj = d3.select(this);
-    
-    // obj.on("mouseover", function(d){
-    //   console.log('over', d.name);
-    // })
-    // obj.on("mouseout", function(d){
-    //   console.log('out', d.name);
-    // })
-
     var _div4 = d3.select("div.sv_html");  //  op
     
+    // obj.on("mouseover", function(d){
+    // obj.on("mouseout", function(d){
     obj.on("click", function(d){
-     
       var markdown_refname = d.name + ".md";
       var obtained_html = read_content(markdown_refname);
       _div4.html(obtained_html);

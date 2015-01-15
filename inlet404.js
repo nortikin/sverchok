@@ -1,0 +1,1 @@
+console.log(location.pathname, location.pathname, location.pathname)
