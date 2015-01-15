@@ -121,3 +121,11 @@ function get_url_page(lpath) {
     }
     return pagename;
 }
+
+document.addEventListener("DOMContentLoaded", function(event) { 
+  //do work
+    var thash = window.location.hash;
+    if (thash) {
+        console.log(thash);
+    }
+});
