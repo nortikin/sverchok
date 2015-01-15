@@ -104,7 +104,7 @@ window.addEventListener("popstate", function(e) {
 
 window.addEventListener("hashchange", function(e) {
     console.log(window.location.hash);
-}, false});
+}, false);
 
 function get_url_page(lpath) {
     var lmatch = lpath.match(/sverchok\/#([^&]*)/);
