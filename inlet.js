@@ -76,7 +76,6 @@ function draw_content(){
     .classed("noselect", true);
   
   div4.html(read_content("About.md"))
-  // history.pushState(null, null, 'page=' + 'About')
   
   menu.each(function(d){
     var obj = d3.select(this);
