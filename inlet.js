@@ -101,3 +101,7 @@ function draw_content(){
 }
 
 draw_content()
+
+window.addEventListener("popstate", function(e) {
+    console.log('going back: ' + location.pathname);
+});
