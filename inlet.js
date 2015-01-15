@@ -94,7 +94,7 @@ function draw_content(){
       var markdown_refname = d.name + ".md";
       var obtained_html = read_content(markdown_refname);
       _div4.html(obtained_html);
-      history.pushState(null, null, d.name);
+      history.pushState(null, null, 'page=' + d.name);
       
     })    
   })
