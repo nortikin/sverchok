@@ -79,7 +79,7 @@ function draw_content(){
   
   menu.each(function(d){
     var obj = d3.select(this);
-    var _div4 = d3.select("div.sv_html");  //  op
+    var _div4 = d3.select("div.sv_html");
     
     // obj.on("mouseover", function(d){
     // obj.on("mouseout", function(d){
@@ -87,8 +87,8 @@ function draw_content(){
       var markdown_refname = d.name + ".md";
       var obtained_html = read_content(markdown_refname);
       _div4.html(obtained_html);
-      // history.pushState(null, null, 'cgi?=' + d.name);
       history.pushState(null, null, d.name);
+      // history.pushState(null, null, d.name);
       
     })    
   })
@@ -108,7 +108,6 @@ window.addEventListener("popstate", function(e) {
 // }, false);
 
 function get_url_page(lpath) {
-    // var lmatch = lpath.match(/sverchok\/cgi?=([^&]*)/);
     var lmatch = lpath.match(/sverchok\/([^&]*)/);
     var pagename = "About";  // a default
     if (lmatch) {
