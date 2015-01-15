@@ -104,7 +104,12 @@ window.addEventListener("popstate", function(e) {
 });
 
 window.addEventListener("hashchange", function(e) {
-    console.log(window.location.hash);
+    var thash = window.location.hash;
+    var pagename = thash.slice(1);
+    var _div4 = d3.select("div.sv_html");
+    var obtained_html = read_content(pagename + '.md');
+    _div4.html(obtained_html);
+
 }, false);
 
 function get_url_page(lpath) {
