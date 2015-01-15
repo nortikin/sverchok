@@ -32,7 +32,10 @@
       return converter.makeHtml(result);
     }
 
-    d3.select("div.sv_html").html(read_content('Download.md'));
+    $(function() {
+        console.log( "ready!" );
+        d3.select("div.sv_html").html(read_content('Download.md'));
+    });
 
     </script>
     </body>
