@@ -19,4 +19,4 @@ Sverchok is hosted and developed on GitHub.
 
 ## Installation instructions
 
-If you are going to be downloading and installing for the first time we have a handy guide to keep that process as painless as possible: [the read.me](https://github.com/nortikin/sverchok/#installation)
+Downloading and installing for the first time? We have a handy guide to keep that process as painless as possible: [the read.me](https://github.com/nortikin/sverchok/#installation)
