@@ -69,6 +69,12 @@ def iterate(matrices, matrix, vertices, edges, faces, count, offset, r=0):
 
     return result_vertices, result_edges, result_faces
 
+def shift_edges(edges, offset):
+    return [(v1+offset, v2+offset) for (v1,v2) in edges]
+
+def shift_faces(faces, offset):
+    return [[v+offset for v in face] for face in faces]
+
 class SvIterateNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Iterate matrix transformation '''
     bl_idname = 'SvIterateNode'
@@ -122,8 +128,9 @@ class SvIterateNode(bpy.types.Node, SverchCustomTreeNode):
             offset = 0
             for vertices, edges, faces, count in zip(*meshes):
                 result_vertices.extend( vertices )
-                result_edges.extend( edges )
-                result_faces.extend( faces )
+
+                result_edges.extend( shift_edges(edges, offset) )
+                result_faces.extend( shift_faces(faces, offset) )
                 offset += len(vertices)
 
                 new_vertices, new_edges, new_faces = iterate_matrices(matrices, vertices, edges, faces, count, offset)

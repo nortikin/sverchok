@@ -225,10 +225,11 @@ def make_node_cats():
         ["SvWafelNode",         "Wafel"],
         ["SvFormulaShapeNode",  "Formula shape", "IPO"],
         ["SvScriptNodeMK2",     "Script 2"],
-        ["SvGenFibonacci",      "Fibonacci sequence"],
-        ["SvGenExponential",    "Exponential sequence"],
+        ["SvGenFibonacci", "Fibonacci sequence"],
+        ["SvGenExponential", "Exponential sequence"],
         ['SvNGonNode',    'NGon',     'RNDCURVE'],
         ["SvRandomizeVerticesNode", "Randomize input vertices"],
+        ["SvDuplicateAlongEdgeNode", "Duplicate objects along edge"],
         ["SvIterateNode", "Iterate matrix transformation"],
     ]
 

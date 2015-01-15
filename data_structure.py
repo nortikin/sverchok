@@ -458,6 +458,11 @@ def create_list(x, y):
         return x.append(y) or x
 
 
+def enum_item(s):
+    s = [(i,i,"") for i in s]
+    return s
+
+
 def preobrazovatel(list_a, levels, level2=1):
     list_tmp = []
     level = levels[0]
