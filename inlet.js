@@ -110,7 +110,7 @@ window.addEventListener("popstate", function(e) {
 });
 
 function get_url_page(lpath) {
-    var lmatch = lpath.match(/sverchok\/#=([^&]*)/);
+    var lmatch = lpath.match(/sverchok\/#([^&]*)/);
     var pagename = "About";  // a default
     if (lmatch) {
         pagename = lmatch[1]
