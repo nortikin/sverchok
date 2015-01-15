@@ -127,5 +127,8 @@ document.addEventListener("DOMContentLoaded", function(event) {
     var thash = window.location.hash;
     if (thash) {
         console.log(thash);
+        var pagename = thash.slice(1);
+        var obtained_html = read_content(pagename + '.md');
+        d3.select("div.sv_html").html(obtained_html);
     }
 });
