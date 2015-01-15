@@ -87,13 +87,14 @@ function draw_content(){
     //   console.log('out', d.name);
     // })
 
+    var _div4 = d3.select("div").classed("sv_html");  //  op
+    
     obj.on("click", function(d){
-      var _div4 = d3.select("div").classed("sv_html");  //  op
      
       var markdown_refname = d.name + ".md";
       var obtained_html = read_content(markdown_refname);
       _div4.html(obtained_html);
-      history.pushState(null, null, '/subpages/' + markdown_refname);
+      history.pushState(null, null, d.name);
       
     })    
   })
