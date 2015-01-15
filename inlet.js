@@ -103,15 +103,15 @@ window.addEventListener("popstate", function(e) {
     _div4.html(obtained_html);
 });
 
-window.addEventListener("hashchange", function(e) {
-    var thash = window.location.hash;
-    console.log(thash);
-    var pagename = thash.slice(1);
-    var _div4 = d3.select("div.sv_html");
-    var obtained_html = read_content(pagename + '.md');
-    _div4.html(obtained_html);
+// window.addEventListener("hashchange", function(e) {
+//     var thash = window.location.hash;
+//     console.log(thash);
+//     var pagename = thash.slice(1);
+//     var _div4 = d3.select("div.sv_html");
+//     var obtained_html = read_content(pagename + '.md');
+//     _div4.html(obtained_html);
 
-}, false);
+// }, false);
 
 function get_url_page(lpath) {
     var lmatch = lpath.match(/sverchok\/([^&]*)/);
