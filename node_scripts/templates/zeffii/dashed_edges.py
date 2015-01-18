@@ -27,21 +27,11 @@ def produce(verts, edg_pol, on, off):
         _a = on/M
         _b = off/M
 
+        if diff > 0:
+            rounded +=1 
+
         for i in range(rounded):
             a = i*(_a+_b)
-            b = a + _a
-            
-            va = v1.lerp(v2, a)[:]
-            vb = v1.lerp(v2, b)[:]
-
-            add_v(va)
-            add_v(vb)
-            add_e([vert_indices, vert_indices+1])
-            
-            vert_indices += 2
-
-        if diff > 0:
-            a = (rounded * (_a+_b))
             b = a + _a
             
             va = v1.lerp(v2, a)[:]
@@ -49,9 +39,9 @@ def produce(verts, edg_pol, on, off):
 
             add_v(va)
             add_v(vb)
-            add_e([vert_indices, vert_indices+1])            
+            add_e([vert_indices, vert_indices+1])
             
-            vert_indices += 2            
+            vert_indices += 2
         
 
     for ep in edg_pol:
