@@ -1,6 +1,3 @@
-# zeffii / 2015 / for obtaining dashed edges from incoming vert+edges
-# the node version would include a filter to deal with polygons (no double edges)
-
 from mathutils import Vector as V
 from math import floor
 
@@ -36,6 +33,7 @@ def produce(verts, edg_pol, on, off):
             
             va = v1.lerp(v2, a)[:]
             vb = v1.lerp(v2, b)[:]
+
             add_v(va)
             add_v(vb)
             add_e([vert_indices, vert_indices+1])
@@ -44,17 +42,16 @@ def produce(verts, edg_pol, on, off):
 
         if diff > 0:
             a = (rounded * (_a+_b))
-            va = v1.lerp(v2, a)
-            add_v(va[:])
-            if (diff-off) >= 0:
-                vb = v1.lerp(v2, a + _a)
-                add_v(vb[:])                
-            else:
-                add_v(v2[:])
+            b = a + _a
+            
+            va = v1.lerp(v2, a)[:]
+            vb = v1.lerp(v2, min(1, b))[:]
+
+            add_v(va)
+            add_v(vb)
             add_e([vert_indices, vert_indices+1])            
             
             vert_indices += 2            
-
         
 
     for ep in edg_pol:
