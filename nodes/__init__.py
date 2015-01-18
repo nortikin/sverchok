@@ -100,6 +100,7 @@ nodes_dict = {
 
     'matrix': [
         'apply',
+        'apply_and_join',
         'deform',
         'destructor',
         'generator',
