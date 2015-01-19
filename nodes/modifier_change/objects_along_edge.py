@@ -38,7 +38,7 @@ def autorotate(e1, xx):
     See http://en.wikipedia.org/wiki/QR_decomposition '''
 
     def get_sign():
-        for x in xx:
+        for x in e1:
             if x != 0.0:
                 return -copysign(1, x)
         return 1
@@ -204,6 +204,7 @@ class SvDuplicateAlongEdgeNode(bpy.types.Node, SverchCustomTreeNode):
             else:
                 scale = Matrix.Scale(x_scale, 4, x)
         rot = autorotate(x, direction).inverted()
+        #rot = direction.rotation_difference(x).to_matrix().to_4x4()
 
         # Since Householder transformation is reflection, we need to reflect things back
         flip = Matrix([[-1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1]])
