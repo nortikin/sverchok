@@ -38,7 +38,7 @@ def autorotate(e1, xx):
     See http://en.wikipedia.org/wiki/QR_decomposition '''
 
     def get_sign():
-        for x in xx:
+        for x in e1:
             if x != 0.0:
                 return -copysign(1, x)
         return 1
@@ -82,10 +82,14 @@ class SvDuplicateAlongEdgeNode(bpy.types.Node, SverchCustomTreeNode):
 
     def count_up(self, edge_length, vertices, count):
         donor_size = diameter(vertices, self.orient_axis)
+        if donor_size == 0.0:
+            return 1
         return floor( edge_length / donor_size )
 
     def count_down(self, edge_length, vertices, count):
         donor_size = diameter(vertices, self.orient_axis)
+        if donor_size == 0.0:
+            return 1
         return ceil( edge_length / donor_size )
 
     count_funcs = {"count": count_const,
@@ -95,6 +99,7 @@ class SvDuplicateAlongEdgeNode(bpy.types.Node, SverchCustomTreeNode):
 
     def count_mode_change(self, context):
         self.inputs["Count"].hide = self.count_mode != "count"
+        self.inputs["Padding"].hide = self.count_mode == "off"
         updateNode(self, context)
 
     count_mode = EnumProperty(name = "Scaling mode",
@@ -180,7 +185,10 @@ class SvDuplicateAlongEdgeNode(bpy.types.Node, SverchCustomTreeNode):
         edge_length = (1.0 - 2*p) * direction.length
         one_item_length = edge_length / count
         actual_length = diameter(vertices, self.orient_axis)
-        x_scale = one_item_length / actual_length
+        if actual_length != 0.0:
+            x_scale = one_item_length / actual_length
+        else:
+            x_scale = 1.0
         x = all_axes[self.orient_axis]
         # for actual_length = 1.0 and edge_length = 3.0, let origins be [0.5, 1.5, 2.5]
         u = direction.normalized()
@@ -196,6 +204,7 @@ class SvDuplicateAlongEdgeNode(bpy.types.Node, SverchCustomTreeNode):
             else:
                 scale = Matrix.Scale(x_scale, 4, x)
         rot = autorotate(x, direction).inverted()
+        #rot = direction.rotation_difference(x).to_matrix().to_4x4()
 
         # Since Householder transformation is reflection, we need to reflect things back
         flip = Matrix([[-1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1]])
