@@ -49,6 +49,49 @@ from sverchok.nodes.basic_view.viewer_bmesh import (
     get_random_init)
 
 
+def make_merged_live_curve(node, curve_name, verts, edges, matrices):
+    curves = bpy.data.curves
+    objects = bpy.data.objects
+    scene = bpy.context.scene
+
+    # if curve data exists, pick it up else make new curve
+    cu = curves.get(curve_name)
+    if not cu:
+        cu = curves.new(name=curve_name, type='CURVE')
+
+    # if object reference exists, pick it up else make a new one
+    obj = objects.get(curve_name)
+    if not obj:
+        obj = objects.new(curve_name, cu)
+        scene.objects.link(obj)
+
+    # break down existing splines entirely.
+    if cu.splines:
+        cu.splines.clear()
+
+    cu.bevel_depth = node.depth
+    cu.bevel_resolution = node.resolution
+    cu.dimensions = '3D'
+    cu.fill_mode = 'FULL'
+
+    for matrix in matrices:
+        m = matrix_sanitizer(matrix)
+
+        # and rebuild
+        for edge in edges:
+            v0, v1 = m*Vector(verts[edge[0]]), m*Vector(verts[edge[1]])
+
+            full_flat = [v0[0], v0[1], v0[2], 0.0, v1[0], v1[1], v1[2], 0.0]
+
+            # each spline has a default first coordinate but we need two.
+            segment = cu.splines.new('POLY')
+            segment.points.add(1)
+            segment.points.foreach_set('co', full_flat)
+            # print(cu.name)
+
+    pass
+
+
 def live_curve(curve_name, verts, edges, matrix, node):
     curves = bpy.data.curves
     objects = bpy.data.objects
@@ -274,24 +317,28 @@ class SvCurveViewerNode(bpy.types.Node, SverchCustomTreeNode):
         # perhaps if any of mverts is [] this should already fail.
         mverts, *mrest = self.get_geometry_from_sockets()
 
-        def get_edges_faces_matrices(obj_index):
-            for geom in mrest:
-                yield self.get_structure(geom, obj_index)
+        if (len(mverts) == 1) and (len(mrest[-1]) > 1) and self.merge:
+            obj_index = 0
+            self.output_merged_geomtry(mverts, *mrest)
+        else:
+            def get_edges_matrices(obj_index):
+                for geom in mrest:
+                    yield self.get_structure(geom, obj_index)
 
-        # extend all non empty lists to longest of mverts or *mrest
-        maxlen = max(len(mverts), *(map(len, mrest)))
-        fullList(mverts, maxlen)
-        for idx in range(2):
-            if mrest[idx]:
-                fullList(mrest[idx], maxlen)
+            # extend all non empty lists to longest of mverts or *mrest
+            maxlen = max(len(mverts), *(map(len, mrest)))
+            fullList(mverts, maxlen)
+            for idx in range(2):
+                if mrest[idx]:
+                    fullList(mrest[idx], maxlen)
 
-        for obj_index, Verts in enumerate(mverts):
-            if not Verts:
-                continue
+            for obj_index, Verts in enumerate(mverts):
+                if not Verts:
+                    continue
 
-            data = get_edges_faces_matrices(obj_index)
-            mesh_name = self.basemesh_name + "_" + str(obj_index)
-            make_curve_geometry(self, bpy.context, mesh_name, Verts, *data)
+                data = get_edges_matrices(obj_index)
+                curve_name = self.basemesh_name + "_" + str(obj_index)
+                make_curve_geometry(self, bpy.context, curve_name, Verts, *data)
 
         self.remove_non_updated_objects(obj_index)
         objs = self.get_children()
@@ -301,6 +348,20 @@ class SvCurveViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
         if bpy.data.materials.get(self.material):
             self.set_corresponding_materials(objs)
+
+    def output_merged_geomtry(self, mverts, *mrest):
+        '''
+        this should probably be shared in the main process function but
+        for prototyping convenience and logistics i will keep this separate
+        for the time-being. Upon further consideration, i might suggest keeping this
+        entirely separate to keep function length shorter.
+        '''
+        verts = mverts[0]
+        edges = mrest[0][0]
+        print(verts, edges)
+        matrices = mrest[1]
+        curve_name = self.basemesh_name + "_0"
+        make_merged_live_curve(self, curve_name, verts, edges, matrices)
 
     def get_children(self):
         objects = bpy.data.objects
