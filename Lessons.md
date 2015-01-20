@@ -136,7 +136,7 @@ There are many lessons. Please note that not all of these links are english or w
 <ul>
 	<li><a href="http://www.blenderartists.org/forum/showthread.php?272679">Blenderartist thread</a></li>
 	<li><a href="https://github.com/nortikin/sverchok/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc">GitHub issue tracker and discussion board (broad scope)</a></li>
-	<li><a href='https://vk.com/club35076122'>Vk (Russian)</a></li>
+	<li><a href='http://vk.com/public35076122'>Vk (Russian)</a></li>
 	<li><a href='https://plus.google.com/communities/113245231013159497850'>
 	G+</a></li>
 	<li><a href='http://blender.stackexchange.com'>	Blender and bpy questions
