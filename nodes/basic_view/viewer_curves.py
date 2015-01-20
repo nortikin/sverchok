@@ -105,14 +105,14 @@ def make_curve_geometry(node, context, name, verts, *topology):
 # could be imported from bmeshviewr directly, it's almost identical
 class SvCurveViewOp(bpy.types.Operator):
 
-    bl_idname = "node.showhide_svcurve"
+    bl_idname = "node.sv_callback_curve_viewer"
     bl_label = "Sverchok curve showhide"
     bl_options = {'REGISTER', 'UNDO'}
 
     fn_name = StringProperty(default='')
     # obj_type = StringProperty(default='MESH')
 
-    def hide_unhide(self, context, type_op):
+    def dispatch(self, context, type_op):
         n = context.node
         k = n.basemesh_name + "_"
 
@@ -143,8 +143,14 @@ class SvCurveViewOp(bpy.types.Operator):
         elif type_op == 'random_mesh_name':
             n.basemesh_name = get_random_init()
 
+        elif type_op == 'add_material':
+            mat = bpy.data.materials.new('sv_material')
+            mat.use_nodes = True
+            n.material = mat.name
+            print(mat.name)
+
     def execute(self, context):
-        self.hide_unhide(context, self.fn_name)
+        self.dispatch(context, self.fn_name)
         return {'FINISHED'}
 
 
@@ -169,6 +175,7 @@ class SvCurveViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
     material = StringProperty(default='', update=updateNode)
     grouping = BoolProperty(default=False)
+    merge = BoolProperty(default=False)
     state_view = BoolProperty(default=True)
     state_render = BoolProperty(default=True)
     state_select = BoolProperty(default=True)
@@ -185,7 +192,7 @@ class SvCurveViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons(self, context, layout):
         view_icon = 'RESTRICT_VIEW_' + ('OFF' if self.activate else 'ON')
-        sh = 'node.showhide_svcurve'
+        sh = 'node.sv_callback_curve_viewer'
 
         def icons(button_type):
             icon = 'WARNING'
@@ -208,6 +215,7 @@ class SvCurveViewerNode(bpy.types.Node, SverchCustomTreeNode):
         col = layout.column(align=True)
         row = col.row(align=True)
         row.prop(self, "grouping", text="Group", toggle=True)
+        row.prop(self, "merge", text="Merge", toggle=True)
 
         row = col.row(align=True)
         row.scale_y = 1
@@ -232,8 +240,9 @@ class SvCurveViewerNode(bpy.types.Node, SverchCustomTreeNode):
         layout.separator()
 
         row = layout.row(align=True)
-        sh = 'node.showhide_svcurve'
-        row.operator(sh, text='Random Name').fn_name = 'random_mesh_name'
+        sh = 'node.sv_callback_curve_viewer'
+        row.operator(sh, text='Rnd Name').fn_name = 'random_mesh_name'
+        row.operator(sh, text='+Material').fn_name = 'add_material'
 
     def get_geometry_from_sockets(self):
 
@@ -284,16 +293,12 @@ class SvCurveViewerNode(bpy.types.Node, SverchCustomTreeNode):
             mesh_name = self.basemesh_name + "_" + str(obj_index)
             make_curve_geometry(self, bpy.context, mesh_name, Verts, *data)
 
-        # print('object index:', obj_index)
         self.remove_non_updated_objects(obj_index)
-
         objs = self.get_children()
-        # print('objs:', objs)
 
         if self.grouping:
             self.to_group(objs)
 
-        # truthy if self.material is in .materials
         if bpy.data.materials.get(self.material):
             self.set_corresponding_materials(objs)
 
