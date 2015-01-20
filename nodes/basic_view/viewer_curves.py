@@ -358,7 +358,7 @@ class SvCurveViewerNode(bpy.types.Node, SverchCustomTreeNode):
         '''
         verts = mverts[0]
         edges = mrest[0][0]
-        print(verts, edges)
+
         matrices = mrest[1]
         curve_name = self.basemesh_name + "_0"
         make_merged_live_curve(self, curve_name, verts, edges, matrices)
