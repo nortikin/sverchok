@@ -49,6 +49,54 @@ from sverchok.nodes.basic_view.viewer_bmesh import (
     get_random_init)
 
 
+# -- DUPLICATES --
+def make_duplicates_live_curve(node, curve_name, verts, edges, matrices):
+    curves = bpy.data.curves
+    objects = bpy.data.objects
+    scene = bpy.context.scene
+
+    # if curve data exists, pick it up else make new curve
+    # this curve is then used as a data.curve for all objects.
+    # objects still have slow creation time, but storage is very good due to
+    # reuse of curve data and applying matrices to objects instead.
+    cu = curves.get(curve_name)
+    if not cu:
+        cu = curves.new(name=curve_name, type='CURVE')
+        cu.bevel_depth = node.depth
+        cu.bevel_resolution = node.resolution
+        cu.dimensions = '3D'
+        cu.fill_mode = 'FULL'
+
+    # wipe!
+    if cu.splines:
+        cu.splines.clear()
+
+    # rebuild!
+    for edge in edges:
+        v0, v1 = verts[edge[0]], verts[edge[1]]
+        full_flat = [v0[0], v0[1], v0[2], 0.0, v1[0], v1[1], v1[2], 0.0]
+
+        # each spline has a default first coordinate but we need two.
+        segment = cu.splines.new('POLY')
+        segment.points.add(1)
+        segment.points.foreach_set('co', full_flat)
+
+    # to proceed we need to add or update objects.
+    obj_base_name = curve_name[:-1]
+
+    # if object reference exists, pick it up else make a new one
+    # assign the same curve to all Objects.
+    for idx, matrix in enumerate(matrices):
+        m = matrix_sanitizer(matrix)
+        obj_name = obj_base_name + str(idx)
+        obj = objects.get(obj_name)
+        if not obj:
+            obj = objects.new(obj_name, cu)
+            scene.objects.link(obj)
+        obj.matrix_local = m
+
+
+# -- MERGE --
 def make_merged_live_curve(node, curve_name, verts, edges, matrices):
     curves = bpy.data.curves
     objects = bpy.data.objects
@@ -87,11 +135,9 @@ def make_merged_live_curve(node, curve_name, verts, edges, matrices):
             segment = cu.splines.new('POLY')
             segment.points.add(1)
             segment.points.foreach_set('co', full_flat)
-            # print(cu.name)
-
-    pass
 
 
+# -- UNIQUE --
 def live_curve(curve_name, verts, edges, matrix, node):
     curves = bpy.data.curves
     objects = bpy.data.objects
@@ -221,8 +267,8 @@ class SvCurveViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
     mode_options = [
         ("Merge", "Merge", "", 0),
-        ("Duplicate", "Duplicate", "", 1)
-        ("Unique", "Unique", "", 1)
+        ("Duplicate", "Duplicate", "", 1),
+        ("Unique", "Unique", "", 2)
     ]
 
     selected_mode = bpy.props.EnumProperty(
@@ -271,6 +317,7 @@ class SvCurveViewerNode(bpy.types.Node, SverchCustomTreeNode):
         col = layout.column(align=True)
         row = col.row(align=True)
         row.prop(self, "grouping", text="Group", toggle=True)
+        row.separator()
         row.prop(self, "selected_mode", expand=True)
 
         row = col.row(align=True)
@@ -332,11 +379,14 @@ class SvCurveViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
         mode = self.selected_mode
         single_set = (len(mverts) == 1) and (len(mrest[-1]) > 1)
-        has_matrices = self.inputs['matrices'].is_linked
+        has_matrices = self.inputs['matrix'].is_linked
 
         if single_set and (mode in {'Merge', 'Duplicate'}) and has_matrices:
             obj_index = 0
             self.output_dupe_or_merged_geometry(mode, mverts, *mrest)
+
+            if mode == "Duplicate":
+                obj_index = len(mrest[1]) - 2
         else:
             def get_edges_matrices(obj_index):
                 for geom in mrest:
@@ -378,7 +428,7 @@ class SvCurveViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
         matrices = mrest[1]
         curve_name = self.basemesh_name + "_0"
-        if TYPE == 'Merged':
+        if TYPE == 'Merge':
             make_merged_live_curve(self, curve_name, verts, edges, matrices)
         elif TYPE == 'Duplicate':
             make_duplicates_live_curve(self, curve_name, verts, edges, matrices)
@@ -407,7 +457,8 @@ class SvCurveViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
         # delete associated meshes
         for object_name in objs:
-            curves.remove(curves[object_name])
+            if not (object_name == self.basemesh_name + "_0"):
+                curves.remove(curves[object_name])
 
     def to_group(self, objs):
         groups = bpy.data.groups
