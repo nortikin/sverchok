@@ -93,17 +93,20 @@ class VectorPolarInNode(bpy.types.Node, SverchCustomTreeNode):
         if not self.outputs['Vectors'].is_linked:
             return
         inputs = self.inputs
-        rhos = inputs['rho'].sv_get()[0]
-        phis = inputs['phi'].sv_get()[0]
-        zs = inputs['Z'].sv_get()[0]
+        rhoss = inputs['rho'].sv_get()
+        phiss = inputs['phi'].sv_get()
+        zss = inputs['Z'].sv_get()
 
-        parameters = match_long_repeat([rhos, phis, zs])
+        parameters = match_long_repeat([rhoss, phiss, zss])
         result = []
-        for rho, phi, z in zip(*parameters):
-            v = self.func_dict[self.coordinates](rho, phi, z, self.angles_mode)
-            result.append(v)
+        for rhos, phis, zs in zip(*parameters):
+            vs = []
+            for rho, phi, z in zip(rhos, phis, zs):
+                v = self.func_dict[self.coordinates](rho, phi, z, self.angles_mode)
+                vs.append(v)
+            result.append(vs)
 
-        self.outputs['Vectors'].sv_set([result])
+        self.outputs['Vectors'].sv_set(result)
     
     
 def register():
