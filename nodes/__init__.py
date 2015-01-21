@@ -165,6 +165,8 @@ nodes_dict = {
         'move',
         'noise',
         'normal',
+        'vector_polar_in',
+        'vector_polar_out',
         'vector_in',
         'vector_out',
         'vertices_delete_doubles',
