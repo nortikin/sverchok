@@ -465,8 +465,11 @@ class SvCurveViewerNode(bpy.types.Node, SverchCustomTreeNode):
         if (self.selected_mode == 'Duplicate'):
             objs = self.get_children()
             objs = [obj.name for obj in objs if int(obj.name.split("_")[-1]) > 0]
-            # it's necessary to remove existing curves, when a previous mode may have
-            # generated an excess of curves, which need to be removed in Duplicate mode.
+            # it's necessary to remove existing curves above index 0. A previous mode may
+            # have generated curves which need to be removed in Duplicate mode.
+            # instead of get_children, it might make sense to have a get_child_curves
+            # function that searches only for curves, with the basename_suffix.
+
             for object_name in objs:
                 if curves.get(object_name):
                     curves.remove(curves[object_name])
