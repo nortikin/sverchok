@@ -62,10 +62,11 @@ def make_duplicates_live_curve(node, curve_name, verts, edges, matrices):
     cu = curves.get(curve_name)
     if not cu:
         cu = curves.new(name=curve_name, type='CURVE')
-        cu.bevel_depth = node.depth
-        cu.bevel_resolution = node.resolution
-        cu.dimensions = '3D'
-        cu.fill_mode = 'FULL'
+
+    cu.bevel_depth = node.depth
+    cu.bevel_resolution = node.resolution
+    cu.dimensions = '3D'
+    cu.fill_mode = 'FULL'
 
     # wipe!
     if cu.splines:
