@@ -101,7 +101,8 @@ class VectorPolarInNode(bpy.types.Node, SverchCustomTreeNode):
         result = []
         for rhos, phis, zs in zip(*parameters):
             vs = []
-            for rho, phi, z in zip(rhos, phis, zs):
+            ps = match_long_repeat([rhos, phis, zs])
+            for rho, phi, z in zip(*ps):
                 v = self.func_dict[self.coordinates](rho, phi, z, self.angles_mode)
                 vs.append(v)
             result.append(vs)
