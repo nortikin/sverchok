@@ -35,7 +35,7 @@ def spherical(rho, phi, theta, mode):
         theta = radians(theta)
     x = rho * sin(theta) * cos(phi)
     y = rho * sin(theta) * sin(phi)
-    z = rho * cos(phi)
+    z = rho * cos(theta)
     return x, y, z
 
 class VectorPolarInNode(bpy.types.Node, SverchCustomTreeNode):
