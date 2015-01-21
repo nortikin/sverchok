@@ -46,17 +46,17 @@ class VectorPolarInNode(bpy.types.Node, SverchCustomTreeNode):
 
 
     rho_ = FloatProperty(name='rho', description='Rho coordinate',
-                       default=0.0, precision=3,
-                       update=updateNode)
+            default=0.0, precision=3,
+            update=updateNode)
     phi_ = FloatProperty(name='phi', description='Phi coordinate',
-                       default=0.0, precision=3,
-                       update=updateNode)
+            default=0.0, precision=3,
+            update=updateNode)
     theta_ = FloatProperty(name='theta', description='Theta coordinate',
-                       default=0.0, precision=3,
-                       update=updateNode)
+            default=0.0, precision=3,
+            update=updateNode)
     z_ = FloatProperty(name='Z', description='Z coordinate',
-                       default=0.0, precision=3,
-                       update=updateNode)
+            default=0.0, precision=3,
+            update=updateNode)
 
     coord_modes = [
         ("z_", "Cyl", "Use cylindrical coordinates", 1),
