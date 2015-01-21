@@ -441,7 +441,11 @@ class SvCurveViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
     def remove_non_updated_objects(self, obj_index):
         objs = self.get_children()
+        print('found', [o.name for o in objs])
+
         objs = [obj.name for obj in objs if int(obj.name.split("_")[-1]) > obj_index]
+        print('want to remove:', objs)
+
         if not objs:
             return
 
@@ -457,8 +461,16 @@ class SvCurveViewerNode(bpy.types.Node, SverchCustomTreeNode):
             objects.remove(obj)
 
         # delete associated meshes
-        for object_name in objs:
-            if not (object_name == self.basemesh_name + "_0"):
+        if (self.selected_mode == 'Duplicate'):
+            objs = self.get_children()
+            objs = [obj.name for obj in objs if int(obj.name.split("_")[-1]) > 0]
+            # it's necessary to remove existing curves, when a previous mode may have
+            # generated an excess of curves, which need to be removed in Duplicate mode.
+            for object_name in objs:
+                if curves.get(object_name):
+                    curves.remove(curves[object_name])
+        else:
+            for object_name in objs:
                 curves.remove(curves[object_name])
 
     def to_group(self, objs):
