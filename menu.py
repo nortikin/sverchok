@@ -224,6 +224,7 @@ def make_node_cats():
         ["SvWafelNode",         "Wafel"],
         ["SvFormulaShapeNode",  "Formula shape", "IPO"],
         ["SvScriptNodeMK2",     "Script 2"],
+        ["VectorPolarInNode", "Vector polar input"],
         ["SvGenFibonacci", "Fibonacci sequence"],
         ["SvGenExponential", "Exponential sequence"],
         ['SvNGonNode',    'NGon',     'RNDCURVE'],
