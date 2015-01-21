@@ -59,12 +59,12 @@ class VectorPolarInNode(bpy.types.Node, SverchCustomTreeNode):
             update=updateNode)
 
     coord_modes = [
-        ("z_", "Cyl", "Use cylindrical coordinates", 1),
+        ("z_", "Cylinder", "Use cylindrical coordinates", 1),
         ("theta_",  "Sphere", "Use spherical coordinates", 2),
     ]
 
     def coordinate_changed(self, context):
-        self.inputs[2].prop_name = self.mode
+        self.inputs[2].prop_name = self.coordinates
         updateNode(self, context)
 
     coordinates = EnumProperty(items=coord_modes, default='z_', update=coordinate_changed)

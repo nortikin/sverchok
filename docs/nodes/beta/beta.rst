@@ -8,6 +8,8 @@ Beta
    image_decompose
    fibonacci
    exponential
+   vector_polar_in
+   vector_polar_out
    ngon
    randomize
    objects_along_edge

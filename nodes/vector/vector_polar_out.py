@@ -47,7 +47,7 @@ class VectorPolarOutNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     coord_modes = [
-        ("z", "Cyl", "Use cylindrical coordinates", 1),
+        ("z", "Cylinder", "Use cylindrical coordinates", 1),
         ("theta",  "Sphere", "Use spherical coordinates", 2),
     ]
 
