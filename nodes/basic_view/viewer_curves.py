@@ -218,7 +218,20 @@ class SvCurveViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
     material = StringProperty(default='', update=updateNode)
     grouping = BoolProperty(default=False)
-    merge = BoolProperty(default=False)
+
+    mode_options = [
+        ("Merge", "Merge", "", 0),
+        ("Duplicate", "Duplicate", "", 1)
+        ("Unique", "Unique", "", 1)
+    ]
+
+    selected_mode = bpy.props.EnumProperty(
+        items=mode_options,
+        description="merge or use duplicates",
+        default="Unique",
+        update=updateNode
+    )
+
     state_view = BoolProperty(default=True)
     state_render = BoolProperty(default=True)
     state_select = BoolProperty(default=True)
@@ -258,7 +271,7 @@ class SvCurveViewerNode(bpy.types.Node, SverchCustomTreeNode):
         col = layout.column(align=True)
         row = col.row(align=True)
         row.prop(self, "grouping", text="Group", toggle=True)
-        row.prop(self, "merge", text="Merge", toggle=True)
+        row.prop(self, "selected_mode", expand=True)
 
         row = col.row(align=True)
         row.scale_y = 1
@@ -317,9 +330,13 @@ class SvCurveViewerNode(bpy.types.Node, SverchCustomTreeNode):
         # perhaps if any of mverts is [] this should already fail.
         mverts, *mrest = self.get_geometry_from_sockets()
 
-        if (len(mverts) == 1) and (len(mrest[-1]) > 1) and self.merge:
+        mode = self.selected_mode
+        single_set = (len(mverts) == 1) and (len(mrest[-1]) > 1)
+        has_matrices = self.inputs['matrices'].is_linked
+
+        if single_set and (mode in {'Merge', 'Duplicate'}) and has_matrices:
             obj_index = 0
-            self.output_merged_geomtry(mverts, *mrest)
+            self.output_dupe_or_merged_geometry(mode, mverts, *mrest)
         else:
             def get_edges_matrices(obj_index):
                 for geom in mrest:
@@ -349,7 +366,7 @@ class SvCurveViewerNode(bpy.types.Node, SverchCustomTreeNode):
         if bpy.data.materials.get(self.material):
             self.set_corresponding_materials(objs)
 
-    def output_merged_geomtry(self, mverts, *mrest):
+    def output_dupe_or_merged_geometry(self, TYPE, mverts, *mrest):
         '''
         this should probably be shared in the main process function but
         for prototyping convenience and logistics i will keep this separate
@@ -361,7 +378,10 @@ class SvCurveViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
         matrices = mrest[1]
         curve_name = self.basemesh_name + "_0"
-        make_merged_live_curve(self, curve_name, verts, edges, matrices)
+        if TYPE == 'Merged':
+            make_merged_live_curve(self, curve_name, verts, edges, matrices)
+        elif TYPE == 'Duplicate':
+            make_duplicates_live_curve(self, curve_name, verts, edges, matrices)
 
     def get_children(self):
         objects = bpy.data.objects
