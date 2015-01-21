@@ -386,7 +386,8 @@ class SvCurveViewerNode(bpy.types.Node, SverchCustomTreeNode):
             self.output_dupe_or_merged_geometry(mode, mverts, *mrest)
 
             if mode == "Duplicate":
-                obj_index = len(mrest[1]) - 2
+                obj_index = len(mrest[1]) - 1
+                print(obj_index, ': len-1')
         else:
             def get_edges_matrices(obj_index):
                 for geom in mrest:
