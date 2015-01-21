@@ -1,6 +1,8 @@
 Vector Polar Input
 ==================
 
+*destination after Beta: Vector*
+
 Functionality
 -------------
 

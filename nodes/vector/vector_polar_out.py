@@ -33,6 +33,8 @@ def cylindrical(v, mode):
 def spherical(v, mode):
     x,y,z = v
     rho = sqrt(x*x + y*y + z*z)
+    if rho == 0.0:
+        return 0.0, 0.0, 0.0
     theta = acos(z/rho)
     phi = atan2(y,x)
     if mode == "degrees":
@@ -82,8 +84,8 @@ class VectorPolarOutNode(bpy.types.Node, SverchCustomTreeNode):
     def process(self):
         if not (self.outputs['rho'].is_linked or self.outputs['phi'].is_linked or self.outputs[self.coordinates].is_linked):
             return
-        inputs = self.inputs
-        vss = inputs['Vectors'].sv_get()
+
+        vss = self.inputs['Vectors'].sv_get()
 
         result_rhos = []
         result_phis = []
@@ -101,9 +103,12 @@ class VectorPolarOutNode(bpy.types.Node, SverchCustomTreeNode):
             result_phis.append(ps)
             result_zs.append(zs)
 
-        self.outputs['rho'].sv_set(result_rhos)
-        self.outputs['phi'].sv_set(result_phis)
-        self.outputs[self.coordinates].sv_set(result_zs)
+        if self.outputs['rho'].is_linked:
+            self.outputs['rho'].sv_set(result_rhos)
+        if self.outputs['phi'].is_linked:
+            self.outputs['phi'].sv_set(result_phis)
+        if self.outputs[self.coordinates].is_linked:
+            self.outputs[self.coordinates].sv_set(result_zs)
     
 def register():
     bpy.utils.register_class(VectorPolarOutNode)
