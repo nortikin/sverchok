@@ -39,9 +39,9 @@ def spherical(rho, phi, theta, mode):
     return x, y, z
 
 class VectorPolarInNode(bpy.types.Node, SverchCustomTreeNode):
-    ''' Generator vectors '''
+    '''Generate vectors by spherical or cylindrical coordinates'''
     bl_idname = 'VectorPolarInNode'
-    bl_label = 'Vectors in'
+    bl_label = 'Vectors polar in'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
 
@@ -76,7 +76,7 @@ class VectorPolarInNode(bpy.types.Node, SverchCustomTreeNode):
             ("degrees", "Degree", "Use angles in degrees", 2)
         ]
 
-    angles_mode = EnumProperty(items=angle_modes, default="radians")
+    angles_mode = EnumProperty(items=angle_modes, default="radians", update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', "rho").prop_name = 'rho_'
