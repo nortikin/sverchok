@@ -103,8 +103,16 @@ def make_bmesh_geometry(node, context, name, geometry):
     else:
         # at this point the mesh is always fresh and empty
         force_pydata(obj.data, verts, edges)
-        obj.update_tag(refresh={'DATA'})
+        obj.update_tag(refresh={'OBJECT', 'DATA'})
         context.scene.update()
+        if not obj.data.skin_vertices:
+            # if modifier present, remove
+            if 'sv_skin' in obj.modifiers:
+                sk = obj.modifiers['sv_skin']
+                obj.modifiers.remove(sk)
+
+            # (re)add.
+            obj.modifiers.new(type='SKIN', name='sv_skin')
 
     if matrix:
         matrix = matrix_sanitizer(matrix)
