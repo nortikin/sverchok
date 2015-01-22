@@ -48,20 +48,50 @@ def default_mesh(name):
     return mesh_data
 
 
+def assign_empty_mesh():
+    mt_name = 'empty_skin_mesh_sv'
+    if mt_name in bpy.data.meshes:
+        return bpy.data.meshes[mt_name]
+    else:
+        return bpy.data.meshes.new(mt_name)
+
+
+def force_pydata(mesh, verts, edges):
+    mesh.vertices.add(len(verts))
+    f_v = list(itertools.chain.from_iterable(verts))
+    mesh.vertices.foreach_set('co', f_v)
+    mesh.update()
+
+    mesh.edges.add(len(edges))
+    f_e = list(itertools.chain.from_iterable(edges))
+    mesh.edges.foreach_set('vertices', f_e)
+    mesh.update(calc_edges=True)
+
+
 def make_bmesh_geometry(node, context, name, geometry):
     scene = context.scene
     meshes = bpy.data.meshes
     objects = bpy.data.objects
     verts, edges, matrix = geometry
 
+    # remove object
     if name in objects:
-        sv_object = objects[name]
-    else:
-        temp_mesh = default_mesh(name)
-        sv_object = objects.new(name, temp_mesh)
-        scene.objects.link(sv_object)
+        obj = objects[name]
+        # assign the object an empty mesh, this allows the current mesh
+        # to be uncoupled and removed from bpy.data.meshes
+        obj.data = assign_empty_mesh()
 
-    mesh = sv_object.data
+        # remove mesh uncoupled mesh, and add it straight back.
+        if name in meshes:
+            meshes.remove(meshes[name])
+        mesh = meshes.new(name)
+        obj.data = mesh
+    else:
+        # this is only executed once, upon the first run.
+        mesh = meshes.new(name)
+        obj = objects.new(name, mesh)
+        scene.objects.link(obj)
+
     current_count = len(mesh.vertices)
     propose_count = len(verts)
     difference = (propose_count - current_count)
@@ -71,17 +101,16 @@ def make_bmesh_geometry(node, context, name, geometry):
         mesh.vertices.foreach_set('co', f_v)
         mesh.update()
     else:
-        ''' get bmesh, write bmesh to obj, free bmesh'''
-        bm = bmesh_from_pydata(verts, edges, [])
-        bm.to_mesh(sv_object.data)
-        bm.free()
-        sv_object.hide_select = False
+        # at this point the mesh is always fresh and empty
+        force_pydata(obj.data, verts, edges)
+        obj.update_tag(refresh={'DATA'})
+        context.scene.update()
 
     if matrix:
         matrix = matrix_sanitizer(matrix)
-        sv_object.matrix_local = matrix
+        obj.matrix_local = matrix
     else:
-        sv_object.matrix_local = Matrix.Identity(4)
+        obj.matrix_local = Matrix.Identity(4)
 
 
 class SkinViewerNode(bpy.types.Node, SverchCustomTreeNode):
@@ -99,8 +128,8 @@ class SkinViewerNode(bpy.types.Node, SverchCustomTreeNode):
     basemesh_name = StringProperty(
         default='Alpha',
         update=updateNode,
-        description='sets which base name the object will use, \
-        use N-panel to pick alternative random names')
+        description="sets which base name the object will use, "
+        "use N-panel to pick alternative random names")
 
     material = StringProperty(default='', update=updateNode)
 
@@ -121,10 +150,10 @@ class SkinViewerNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('MatrixSocket', 'matrix', 'matrix')
 
     def draw_buttons(self, context, layout):
-        view_icon = 'RESTRICT_VIEW_' + ('OFF' if self.activate else 'ON')
-        col = layout.column(align=True)
-        col.prop(self, "activate", text="UPD", toggle=True, icon=view_icon)
-        col.prop(self, "basemesh_name", text="", icon='OUTLINER_OB_MESH')
+        view_icon = 'MOD_ARMATURE' if self.activate else 'ARMATURE_DATA'
+        r = layout.row(align=True)
+        r.prop(self, "activate", text="", toggle=True, icon=view_icon)
+        r.prop(self, "basemesh_name", text="", icon='OUTLINER_OB_MESH')
 
     def draw_buttons_ext(self, context, layout):
         col = layout.column(align=True)
@@ -142,10 +171,11 @@ class SkinViewerNode(bpy.types.Node, SverchCustomTreeNode):
         return mverts, medges, mmtrix
 
     def process(self):
+        if not self.activate:
+            return
 
         # only interested in the first
         geometry = self.get_geometry_from_sockets()
-        print(geometry)
         make_bmesh_geometry(self, bpy.context, self.basemesh_name, geometry)
 
         obj = bpy.data.objects[self.basemesh_name]
