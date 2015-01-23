@@ -240,6 +240,7 @@ def make_node_cats():
         ["SvCurveViewerNode",   "Curve Viewer",     'MOD_CURVE'],
         ["SvCacheNode",           "Cache"],
         ["SvInsetSpecial",        "Inset Special"],
+        ["SkinViewerNode",        "Skin Mesher"],
         ["SvCSGBooleanNode",      "GSG Boolean"],
 
     ]
