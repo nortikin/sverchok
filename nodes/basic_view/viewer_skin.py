@@ -81,7 +81,7 @@ def make_bmesh_geometry(node, context, name, geometry):
         # to be uncoupled and removed from bpy.data.meshes
         obj.data = assign_empty_mesh()
 
-        # remove mesh uncoupled mesh, and add it straight back.
+        # remove uncoupled mesh, and add it straight back.
         if name in meshes:
             meshes.remove(meshes[name])
         mesh = meshes.new(name)
