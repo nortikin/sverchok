@@ -21,12 +21,11 @@ import random
 import re
 
 import bpy
-from bpy.props import BoolProperty, StringProperty
+from bpy.props import BoolProperty, StringProperty, FloatProperty
 from mathutils import Matrix, Vector
 
-from sverchok.node_tree import (
-    SverchCustomTreeNode, VerticesSocket, MatrixSocket, StringsSocket)
-from sverchok.data_structure import dataCorrect, fullList, updateNode, SvGetSocketAnyType
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import updateNode
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 
 
@@ -49,11 +48,12 @@ def default_mesh(name):
 
 
 def assign_empty_mesh():
+    meshes = bpy.data.meshes
     mt_name = 'empty_skin_mesh_sv'
-    if mt_name in bpy.data.meshes:
-        return bpy.data.meshes[mt_name]
+    if mt_name in meshes:
+        return meshes[mt_name]
     else:
-        return bpy.data.meshes.new(mt_name)
+        return meshes.new(mt_name)
 
 
 def force_pydata(mesh, verts, edges):
@@ -92,27 +92,18 @@ def make_bmesh_geometry(node, context, name, geometry):
         obj = objects.new(name, mesh)
         scene.objects.link(obj)
 
-    current_count = len(mesh.vertices)
-    propose_count = len(verts)
-    difference = (propose_count - current_count)
+    # at this point the mesh is always fresh and empty
+    force_pydata(obj.data, verts, edges)
+    obj.update_tag(refresh={'OBJECT', 'DATA'})
+    context.scene.update()
 
-    if node.fixed_verts and difference == 0:
-        f_v = list(itertools.chain.from_iterable(verts))
-        mesh.vertices.foreach_set('co', f_v)
-        mesh.update()
-    else:
-        # at this point the mesh is always fresh and empty
-        force_pydata(obj.data, verts, edges)
-        obj.update_tag(refresh={'OBJECT', 'DATA'})
-        context.scene.update()
-        if not obj.data.skin_vertices:
-            # if modifier present, remove
-            if 'sv_skin' in obj.modifiers:
-                sk = obj.modifiers['sv_skin']
-                obj.modifiers.remove(sk)
+    if node.live_updates:
+        # if modifier present, remove
+        if 'sv_skin' in obj.modifiers:
+            sk = obj.modifiers['sv_skin']
+            obj.modifiers.remove(sk)
 
-            # (re)add.
-            obj.modifiers.new(type='SKIN', name='sv_skin')
+        obj.modifiers.new(type='SKIN', name='sv_skin')
 
     if matrix:
         matrix = matrix_sanitizer(matrix)
@@ -139,37 +130,34 @@ class SkinViewerNode(bpy.types.Node, SverchCustomTreeNode):
         description="sets which base name the object will use, "
         "use N-panel to pick alternative random names")
 
-    material = StringProperty(default='', update=updateNode)
-
-    fixed_verts = BoolProperty(
-        default=False,
-        name="Fixed vertices",
-        description="Use only with unchanging topology")
-
-    autosmooth = BoolProperty(
-        default=False,
+    live_updates = BoolProperty(
+        default=0,
         update=updateNode,
-        description="This auto sets all faces to smooth shade")
+        description="This auto updates the modifier (by removing and adding it)")
+
+    general_radius = FloatProperty(
+        name='general_radius',
+        default=0.25,
+        description='value used to uniformly set the radii of skin vertices',
+        min=0.01, step=0.05,
+        update=updateNode)
 
     def sv_init(self, context):
         self.use_custom_color = True
-        self.inputs.new('VerticesSocket', 'vertices', 'vertices')
-        self.inputs.new('StringsSocket', 'edges', 'edges')
-        self.inputs.new('MatrixSocket', 'matrix', 'matrix')
+        self.inputs.new('VerticesSocket', 'vertices')
+        self.inputs.new('StringsSocket', 'edges')
+        self.inputs.new('MatrixSocket', 'matrix')
+        self.inputs.new('StringsSocket', 'radii').prop_name = "general_radius"
 
     def draw_buttons(self, context, layout):
         view_icon = 'MOD_ARMATURE' if self.activate else 'ARMATURE_DATA'
+
         r = layout.row(align=True)
         r.prop(self, "activate", text="", toggle=True, icon=view_icon)
         r.prop(self, "basemesh_name", text="", icon='OUTLINER_OB_MESH')
 
-    def draw_buttons_ext(self, context, layout):
-        col = layout.column(align=True)
-        box = col.box()
-        if box:
-            box.label(text="Beta options")
-            box.prop(self, "fixed_verts", text="Fixed vert count")
-            box.prop(self, 'autosmooth', text='smooth shade')
+        r2 = layout.row(align=True)
+        r2.prop(self, "live_updates", text="Live Modifier", toggle=True)
 
     def get_geometry_from_sockets(self):
         i = self.inputs
@@ -186,22 +174,24 @@ class SkinViewerNode(bpy.types.Node, SverchCustomTreeNode):
         geometry = self.get_geometry_from_sockets()
         make_bmesh_geometry(self, bpy.context, self.basemesh_name, geometry)
 
+        if not self.live_updates:
+            return
+
+        # assign radii after creation
         obj = bpy.data.objects[self.basemesh_name]
+        i = self.inputs
+        if i['radii'].is_linked:
+            radii = i['radii'].sv_get()[0]
+            # perhaps extend to fullList if given list length doesn't match.
+            # maybe also indicate this failure somehow in the UI?
+        else:
+            ntimes = len(geometry[0])
+            radii = list(itertools.repeat(self.general_radius, ntimes))
 
-        if bpy.data.materials.get(self.material):
-            self.set_corresponding_materials(obj)
-
-        if self.autosmooth:
-            self.set_autosmooth(obj)
-
-    def set_corresponding_materials(self, obj):
-        obj.active_material = bpy.data.materials[self.material]
-
-    def set_autosmooth(self, obj):
-        mesh = obj.data
-        smooth_states = [True] * len(mesh.polygons)
-        mesh.polygons.foreach_set('use_smooth', smooth_states)
-        mesh.update()
+        # for now don't update unless
+        if len(radii) == len(geometry[0]):
+            f_r = list(itertools.chain(*zip(radii, radii)))
+            obj.data.skin_vertices[0].data.foreach_set('radius', f_r)
 
 
 def register():
