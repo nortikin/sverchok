@@ -120,6 +120,7 @@ nodes_dict = {
         'vertices_mask',
         'objects_along_edge',
         'randomize',
+        'extrude_separate',
         'iterate',
     ],
 

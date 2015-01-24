@@ -220,6 +220,7 @@ def make_node_cats():
         # for testing convenience, and while no documentation
         ['SvPipeNode',          'Pipe'],
         ["SvOffsetNode",        "Offset"],
+        ["SvExtrudeSeparateNode", "Extrude Separate Faces"],
         ["SvListDecomposeNode", "List Decompose"],
         ["SvWafelNode",         "Wafel"],
         ["SvFormulaShapeNode",  "Formula shape", "IPO"],
