@@ -88,14 +88,13 @@ class SvExtrudeSeparateNode(bpy.types.Node, SverchCustomTreeNode):
             for face, height, scale in zip(extruded_faces, heights, scales):
                 dr = face.normal * height
                 center = face.calc_center_median()
-                print(center)
                 translation = Matrix.Translation(center)
                 rotation = face.normal.rotation_difference((0,0,1)).to_matrix().to_4x4()
                 #z = Vector((0,0,1))
                 #rotation = autorotate(z, face.normal).inverted()
                 m = translation * rotation
                 new_matrices.append(m)
-                bmesh.ops.scale(bm, vec=(scale, scale, 1.0), space=m.inverted(), verts=face.verts)
+                bmesh.ops.scale(bm, vec=(scale, scale, scale), space=m.inverted(), verts=face.verts)
                 bmesh.ops.translate(bm, verts=face.verts, vec=dr)
 
             new_vertices, new_edges, new_faces = pydata_from_bmesh(bm)
