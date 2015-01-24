@@ -180,18 +180,22 @@ class SkinViewerNode(bpy.types.Node, SverchCustomTreeNode):
         # assign radii after creation
         obj = bpy.data.objects[self.basemesh_name]
         i = self.inputs
+        ntimes = len(geometry[0])
         if i['radii'].is_linked:
             radii = i['radii'].sv_get()[0]
             # perhaps extend to fullList if given list length doesn't match.
             # maybe also indicate this failure somehow in the UI?
         else:
-            ntimes = len(geometry[0])
             radii = list(itertools.repeat(self.general_radius, ntimes))
 
         # for now don't update unless
         if len(radii) == len(geometry[0]):
             f_r = list(itertools.chain(*zip(radii, radii)))
             obj.data.skin_vertices[0].data.foreach_set('radius', f_r)
+
+        # set all to root
+        all_yes = list(itertools.repeat(True, ntimes))
+        obj.data.skin_vertices[0].data.foreach_set('use_root', all_yes)
 
 
 def register():
