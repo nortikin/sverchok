@@ -16,7 +16,8 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-from mathutils import Matrix
+from mathutils import Matrix, Vector
+#from math import copysign
 
 import bpy
 from bpy.props import IntProperty, FloatProperty
@@ -25,6 +26,9 @@ import bmesh.ops
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat, fullList
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
+
+def Matrix_degenerate(ms):
+    return [[ j[:] for j in M ] for M in ms]
 
 class SvExtrudeSeparateNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Extrude separate faces '''
@@ -49,12 +53,13 @@ class SvExtrudeSeparateNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('VerticesSocket', 'Vertices')
         self.outputs.new('StringsSocket', 'Edges')
         self.outputs.new('StringsSocket', 'Polygons')
+        self.outputs.new('MatrixSocket', 'Matrices')
   
     def process(self):
         # inputs
         if not (self.inputs['Vertices'].is_linked and self.inputs['Polygons'].is_linked):
             return
-        if not any(self.outputs[name].is_linked for name in ['Vertices', 'Edges', 'Polygons']):
+        if not any(self.outputs[name].is_linked for name in ['Vertices', 'Edges', 'Polygons', 'Matrices']):
             return
 
         vertices_s = self.inputs['Vertices'].sv_get()
@@ -66,6 +71,7 @@ class SvExtrudeSeparateNode(bpy.types.Node, SverchCustomTreeNode):
         result_vertices = []
         result_edges = []
         result_faces = []
+        result_matrices = []
 
         meshes = match_long_repeat([vertices_s, edges_s, faces_s, heights_s, scales_s])
 
@@ -77,26 +83,35 @@ class SvExtrudeSeparateNode(bpy.types.Node, SverchCustomTreeNode):
             bm = bmesh_from_pydata(vertices, edges, faces)
             extruded_faces = bmesh.ops.extrude_discrete_faces(bm, faces=bm.faces)['faces']
 
+            new_matrices = []
+
             for face, height, scale in zip(extruded_faces, heights, scales):
                 dr = face.normal * height
                 center = face.calc_center_median()
+                print(center)
                 translation = Matrix.Translation(center)
                 rotation = face.normal.rotation_difference((0,0,1)).to_matrix().to_4x4()
-                m = rotation * translation
+                #z = Vector((0,0,1))
+                #rotation = autorotate(z, face.normal).inverted()
+                m = translation * rotation
+                new_matrices.append(m)
+                bmesh.ops.scale(bm, vec=(scale, scale, 1.0), space=m.inverted(), verts=face.verts)
                 bmesh.ops.translate(bm, verts=face.verts, vec=dr)
-                bmesh.ops.scale(bm, vec=(scale, scale, 1.0), space=m, verts=face.verts)
 
             new_vertices, new_edges, new_faces = pydata_from_bmesh(bm)
 
             result_vertices.append(new_vertices)
             result_edges.append(new_edges)
             result_faces.append(new_faces)
+            result_matrices.append(Matrix_degenerate(new_matrices))
 
         self.outputs['Vertices'].sv_set(result_vertices)
         if self.outputs['Edges'].is_linked:
             self.outputs['Edges'].sv_set(result_edges)
         if self.outputs['Polygons'].is_linked:
             self.outputs['Polygons'].sv_set(result_faces)
+        if self.outputs['Matrices'].is_linked:
+            self.outputs['Matrices'].sv_set(result_matrices)
 
 def register():
     bpy.utils.register_class(SvExtrudeSeparateNode)
