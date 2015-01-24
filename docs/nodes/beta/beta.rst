@@ -6,6 +6,7 @@ Beta
    :maxdepth: 2
 
    image_decompose
+   bevel
    fibonacci
    exponential
    vector_polar_in
