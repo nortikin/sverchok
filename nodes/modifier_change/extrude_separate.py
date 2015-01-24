@@ -105,6 +105,7 @@ class SvExtrudeSeparateNode(bpy.types.Node, SverchCustomTreeNode):
                 new_extruded_faces.append([v.index for v in face.verts])
 
             new_vertices, new_edges, new_faces = pydata_from_bmesh(bm)
+            bm.free()
             new_other_faces = [f for f in new_faces if f not in new_extruded_faces]
 
             result_vertices.append(new_vertices)
