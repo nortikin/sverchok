@@ -53,13 +53,12 @@ class SvExtrudeSeparateNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('VerticesSocket', 'Vertices')
         self.outputs.new('StringsSocket', 'Edges')
         self.outputs.new('StringsSocket', 'Polygons')
-        self.outputs.new('MatrixSocket', 'Matrices')
   
     def process(self):
         # inputs
         if not (self.inputs['Vertices'].is_linked and self.inputs['Polygons'].is_linked):
             return
-        if not any(self.outputs[name].is_linked for name in ['Vertices', 'Edges', 'Polygons', 'Matrices']):
+        if not any(self.outputs[name].is_linked for name in ['Vertices', 'Edges', 'Polygons']):
             return
 
         vertices_s = self.inputs['Vertices'].sv_get()
@@ -109,8 +108,6 @@ class SvExtrudeSeparateNode(bpy.types.Node, SverchCustomTreeNode):
             self.outputs['Edges'].sv_set(result_edges)
         if self.outputs['Polygons'].is_linked:
             self.outputs['Polygons'].sv_set(result_faces)
-        if self.outputs['Matrices'].is_linked:
-            self.outputs['Matrices'].sv_set(result_matrices)
 
 def register():
     bpy.utils.register_class(SvExtrudeSeparateNode)
