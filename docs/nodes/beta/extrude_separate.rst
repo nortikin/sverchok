@@ -17,6 +17,7 @@ This node has the following inputs:
 - **Vertices**
 - **Edges**
 - **Polygons**
+- **Mask**. List of boolean or integer flags. Zero means do not process face with corresponding index. If this input is not connected, then by default all faces will be processed.
 - **Height**. Extrude factor.
 - **Scale**. Scaling factor.
 
@@ -44,12 +45,18 @@ This node has the following outputs:
 
 - **Vertices**
 - **Edges**
-- **Polygons**
+- **Polygons**. All faces of resulting mesh.
+- **ExtrudedPolys**. Only extruded faces of resulting mesh.
+- **OtherPolys**. All other faces of resulting mesh.
 
 Example of usage
 ----------------
 
-Extruded faces of sphere:
+Extruded faces of sphere, extruding factor depending on Z coordinate of face:
 
-.. image:: https://cloud.githubusercontent.com/assets/284644/5887778/1c180640-a405-11e4-8b21-35c7b4229d8b.png
+.. image:: https://cloud.githubusercontent.com/assets/284644/5888213/f8c4c4b8-a417-11e4-9a6d-4ee891744587.png
+
+Sort of cage:
+
+.. image:: https://cloud.githubusercontent.com/assets/284644/5888237/978cdc66-a418-11e4-89d4-a17d325426c0.png
 
