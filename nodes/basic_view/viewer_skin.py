@@ -21,7 +21,7 @@ import random
 import re
 
 import bpy
-from bpy.props import BoolProperty, StringProperty, FloatProperty
+from bpy.props import BoolProperty, StringProperty, FloatProperty, IntProperty
 from mathutils import Matrix, Vector
 
 from sverchok.node_tree import SverchCustomTreeNode
@@ -68,11 +68,12 @@ def force_pydata(mesh, verts, edges):
     mesh.update(calc_edges=True)
 
 
-def make_bmesh_geometry(node, context, name, geometry):
+def make_bmesh_geometry(node, context, geometry):
     scene = context.scene
     meshes = bpy.data.meshes
     objects = bpy.data.objects
     verts, edges, matrix = geometry
+    name = node.basemesh_name
 
     # remove object
     if name in objects:
@@ -103,7 +104,14 @@ def make_bmesh_geometry(node, context, name, geometry):
             sk = obj.modifiers['sv_skin']
             obj.modifiers.remove(sk)
 
-        obj.modifiers.new(type='SKIN', name='sv_skin')
+        if 'sv_subsurf' in obj.modifiers:
+            sd = obj.modifiers['sv_subsurf']
+            obj.modifiers.remove(sd)
+
+        a = obj.modifiers.new(type='SKIN', name='sv_skin')
+        b = obj.modifiers.new(type='SUBSURF', name='sv_subsurf')
+        b.levels = node.levels
+        b.render_levels = node.render_levels
 
     if matrix:
         matrix = matrix_sanitizer(matrix)
@@ -142,6 +150,9 @@ class SkinViewerNode(bpy.types.Node, SverchCustomTreeNode):
         min=0.01, step=0.05,
         update=updateNode)
 
+    levels = IntProperty(min=0, default=1, max=3, update=updateNode)
+    render_levels = IntProperty(min=0, default=1, max=3, update=updateNode)
+
     def sv_init(self, context):
         self.use_custom_color = True
         self.inputs.new('VerticesSocket', 'vertices')
@@ -159,6 +170,11 @@ class SkinViewerNode(bpy.types.Node, SverchCustomTreeNode):
         r2 = layout.row(align=True)
         r2.prop(self, "live_updates", text="Live Modifier", toggle=True)
 
+        layout.label('SubSurf')
+        r3 = layout.row(align=True)
+        r3.prop(self, 'levels', text="View")
+        r3.prop(self, 'render_levels', text="Render")
+
     def get_geometry_from_sockets(self):
         i = self.inputs
         mverts = i['vertices'].sv_get(default=[])[0]
@@ -172,7 +188,7 @@ class SkinViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
         # only interested in the first
         geometry = self.get_geometry_from_sockets()
-        make_bmesh_geometry(self, bpy.context, self.basemesh_name, geometry)
+        make_bmesh_geometry(self, bpy.context, geometry)
 
         if not self.live_updates:
             return
