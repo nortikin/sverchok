@@ -193,9 +193,9 @@ class SkinViewerNode(bpy.types.Node, SverchCustomTreeNode):
             f_r = list(itertools.chain(*zip(radii, radii)))
             obj.data.skin_vertices[0].data.foreach_set('radius', f_r)
 
-        # set all to root
-        all_yes = list(itertools.repeat(True, ntimes))
-        obj.data.skin_vertices[0].data.foreach_set('use_root', all_yes)
+            # set all to root
+            all_yes = list(itertools.repeat(True, ntimes))
+            obj.data.skin_vertices[0].data.foreach_set('use_root', all_yes)
 
 
 def register():
