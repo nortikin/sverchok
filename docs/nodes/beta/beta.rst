@@ -13,5 +13,6 @@ Beta
    ngon
    randomize
    objects_along_edge
+   extrude_separate
    iterate
 

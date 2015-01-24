@@ -40,7 +40,7 @@ class SvExtrudeSeparateNode(bpy.types.Node, SverchCustomTreeNode):
                 default=0.0,
                 update=updateNode)
     scale_ = FloatProperty(name="Scale", description="Extruded faces scale",
-                default=1.0,
+                default=1.0, min=0.0,
                 update=updateNode)
 
     def sv_init(self, context):
