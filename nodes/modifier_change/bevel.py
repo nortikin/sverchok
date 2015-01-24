@@ -115,14 +115,12 @@ class SvBevelNode(bpy.types.Node, SverchCustomTreeNode):
         for vertices, edges, faces, bevel_edges, offset, segments, profile in zip(*meshes):
 
             bm = bmesh_from_pydata(vertices, edges, faces)
-            print(bevel_edges)
 
             if bevel_edges:
                 b_edges = []
                 for edge in bevel_edges:
                     b_edge = [e for e in bm.edges if set([v.index for v in e.verts]) == set(edge)]
                     b_edges.append(b_edge[0])
-                print(b_edges)
             else:
                 b_edges = bm.edges
 
