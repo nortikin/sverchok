@@ -164,6 +164,9 @@ class SvOffsetNode(bpy.types.Node, SverchCustomTreeNode):
                 if round(degrees(ang_)) == 180 or round(degrees(ang_)) == 0.0:
                     bme.verts.new(q)
                     bme.verts.index_update()
+                    if hasattr(bme.verts, "ensure_lookup_table"):
+                        bme.verts.ensure_lookup_table()
+
                     list_2.append(bme.verts[-1])
                     dict_0[j].append(bme.verts[-1])
                 else:
@@ -184,35 +187,43 @@ class SvOffsetNode(bpy.types.Node, SverchCustomTreeNode):
                     vec4_ = rp_ - q4
                     rot_ang = vec3_.angle(vec4_)
                     list_3 = []
-                    
+
                     for o in range(n_ + 1):
                         q5 = self.a_rot((rot_ang * o / n_), rp_, axis_, q4)
                         bme.verts.new(q5)
                         bme.verts.index_update()
+                        if hasattr(bme.verts, "ensure_lookup_table"):
+                            bme.verts.ensure_lookup_table()
+
                         dict_0[j].append(bme.verts[-1])
                         list_3.append(bme.verts[-1])
                     list_3.reverse()
                     list_2.extend(list_3)
 
-            
             # if kp == True: #not solved
             bme.faces.new(list_2)
-            bme.faces.index_update()
+            # bme.faces.index_update()
+            if hasattr(bme.faces, "ensure_lookup_table"):
+                bme.faces.ensure_lookup_table()
             bme.faces[-1].select_set(1)
 
             n2_ = len(dict_0)
             for o in range(n2_):
                 list_a = dict_0[o]
                 list_b = dict_0[(o + 1) % n2_]
-                bme.faces.new( [ list_a[0], list_b[0], list_b[-1], list_a[1] ] )
+                bme.faces.new([list_a[0], list_b[0], list_b[-1], list_a[1]])
                 bme.faces.index_update()
-            
+
             # keeping triangulation of polygons commented
             #if en0 == 'opt0':
             for k in dict_0:
                 if len(dict_0[k]) > 2:
                     bme.faces.new(dict_0[k])
                     bme.faces.index_update()
+
+                    if hasattr(bme.faces, "ensure_lookup_table"):
+                        # print('yep')
+                        bme.faces.ensure_lookup_table()
             #if en0 == 'opt1':
             #    for k_ in dict_0:
             #        q_ = dict_0[k_][0]
