@@ -13,12 +13,21 @@ All parameters of bricks can be randomized with separate control over randomizat
 Inputs & Parameters
 -------------------
 
-All parameters can be given by the node or an external input.
+All parameters except for ``Faces mode`` can be given by the node or an external input.
 All inputs are vectorized and they will accept single or multiple values.
 
 +-----------------+---------------+-------------+-------------------------------------------------------------+
 | Param           | Type          | Default     | Description                                                 |
 +=================+===============+=============+=============================================================+
+| **Faces mode**  | Flat or       | Flat        | What kind of polygons to generate:                          |
+|                 |               |             |                                                             |
+|                 | Stitch or     |             | * Flat - generate one polygon (n-gon, in general) for each  |
+|                 |               |             |   brick.                                                    |
+|                 | Center        |             | * Stitch - split each brick into several triangles, with    |
+|                 |               |             |   edges going across brick.                                 |
+|                 |               |             | * Center - split each brick into triangles by adding new    |
+|                 |               |             |   vertex in the center of the brick.                        |
++-----------------+---------------+-------------+-------------------------------------------------------------+
 | **Unit width**  | Float         | 2.0         | Width of one unit (brick).                                  |
 +-----------------+---------------+-------------+-------------------------------------------------------------+
 | **Unit height** | Float         | 1.0         | Height of one unit (brick).                                 |
@@ -55,29 +64,36 @@ Outputs
 This node has the following outputs:
 
 - **Vertices**
-- **Edges**
+- **Edges**. Note that this output will contain only edges that are between bricks, not that splitting bricks into triangles.
 - **Polygons**
+- **Centers**. Centers of bricks.
 
 Examples of usage
 -----------------
 
 Default settings:
 
-.. image:: https://cloud.githubusercontent.com/assets/284644/5963876/c0610f16-a811-11e4-9522-b04235965b9e.png
+.. image:: https://cloud.githubusercontent.com/assets/284644/5981695/2fd5badc-a8de-11e4-858e-10ce590b19ec.png
+
+The same with Stitch faces mode:
+
+.. image:: https://cloud.githubusercontent.com/assets/284644/5981673/06e0c5fe-a8de-11e4-822f-b1b44681982c.png
+
+The same with Centers faces mode:
+
+.. image:: https://cloud.githubusercontent.com/assets/284644/5981672/0693c66e-a8de-11e4-8326-a75a15e37e74.png
 
 Using ``toothing`` parameter together with randomization, it is possible to generate something like stone wall:
 
-.. image:: https://cloud.githubusercontent.com/assets/284644/5963875/c060de42-a811-11e4-8690-555df7cceae9.png
+.. image:: https://cloud.githubusercontent.com/assets/284644/5981643/bb85d572-a8dd-11e4-88c0-ebd018bfcdd1.png
 
 A honeycomb structure:
 
-.. image:: https://cloud.githubusercontent.com/assets/284644/5963535/0b8c62f4-a80f-11e4-91be-f1406a470dbb.png
+.. image:: https://cloud.githubusercontent.com/assets/284644/5981635/a75e5a74-a8dd-11e4-9d1f-64e19da8f01a.png
 
-Wood floor:
+Wooden floor:
 
-.. image:: https://cloud.githubusercontent.com/assets/284644/5963877/c062022c-a811-11e4-88cc-0f24380a4324.png
+.. image:: https://cloud.githubusercontent.com/assets/284644/5981642/bb7ceda4-a8dd-11e4-9319-c9728199d44e.png
 
-An example of more complex setup:
-
-.. image:: https://cloud.githubusercontent.com/assets/284644/5963534/0b561d5c-a80f-11e4-88a7-f5f54a277c81.png
+You can also find some more examples `in the development thread <https://github.com/portnov/sverchok/issues/19>`_.
 
