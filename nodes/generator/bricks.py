@@ -17,9 +17,11 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import random
+import numpy as np
 
 import bpy
-from bpy.props import BoolProperty, IntProperty, FloatProperty
+from bpy.props import BoolProperty, IntProperty, FloatProperty, EnumProperty
+from mathutils import Vector
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (fullList, match_long_repeat, updateNode)
@@ -29,17 +31,65 @@ class Vertex(object):
         self.index = None
         self.u = u
         self.v = v
+
+    def __str__(self):
+        if self.index:
+            return "<" + str(self.index) + ">"
+        else:
+            return "<>"
     
     def __lt__(self, other):
         return self.u < other.u
+    
+# #     def vector(self):
+#         return Vector((self.u, self.v, 0.0))
 
 class VEdge(object):
     def __init__(self, v1, v2):
         self.v1 = v1
         self.v2 = v2
+    
+    def __str__(self):
+        return str(self.v1) + " - " + str(self.v2)
+
+class ULine(object):
+    def __init__(self, lst):
+        self.list = sorted(lst, key=lambda v: v.u)
+        self.coords = [v.u for v in self.list]
+
+    def __str__(self):
+        return str(self.list)
+    
+    def iter(self):
+        return self.list.iter()
+
+    def __getitem__(self, i):
+        return self.list[i]
+
+    def select(self, v1, v2):
+        start = np.searchsorted(self.coords, v1.u, 'left')
+        end = np.searchsorted(self.coords, v2.u, 'right')
+        r = [self[i].index for i in np.arange(start,end)]
+        return r
+
+    def select_v(self, v1, v2):
+        start = np.searchsorted(self.coords, v1.u, 'left')
+        end = np.searchsorted(self.coords, v2.u, 'right')
+        r = [self[i] for i in np.arange(start,end)]
+        return r
+
+
+def get_center(vertices):
+    n = float(len(vertices))
+    cu = sum([v.u for v in vertices]) / n
+    cv = sum([v.v for v in vertices]) / n
+    return Vertex(cu, cv)
 
 def select(line, v1, v2):
-    return [v.index for v in sorted(line) if v.u > v1.u and v.u < v2.u]
+    return [v.index for v in line if v.u > v1.u and v.u < v2.u]
+
+def select_v(line, v1, v2):
+    return [v for v in line if v.u > v1.u and v.u < v2.u]
 
 class SvBricksNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Bricks '''
@@ -82,6 +132,21 @@ class SvBricksNode(bpy.types.Node, SverchCustomTreeNode):
     rand_seed_ = IntProperty(name='Seed', description='Random seed',
             default=0,
             update=updateNode)
+
+    faces_modes = [
+            ("flat", "Flat", "Flat polygons", 0),
+            ("stitch", "Stitch", "Stitch with triangles", 1),
+            ("centers", "Centers", "Connect each edge with face center", 2)
+        ]
+
+    faces_mode = EnumProperty(name="Faces",
+            description="Faces triangularization mode",
+            items=faces_modes,
+            default="flat",
+            update=updateNode)
+
+    def draw_buttons(self, context, layout):
+        layout.prop(self, "faces_mode", expand=True)
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', "DU").prop_name = 'du_'
@@ -152,18 +217,19 @@ class SvBricksNode(bpy.types.Node, SverchCustomTreeNode):
                     u += random.uniform(-rdu, rdu)
                     j += 1
 
-            idx = 0
+            ulines = [(ULine(line)) for line in ulines]
+
+            vertex_idx = 0
             vertices = []
             for line in ulines:
                 for vt in line:
-                    vt.index = idx
-                    idx += 1
+                    vt.index = vertex_idx
+                    vertex_idx += 1
                     vertices.append((vt.u, vt.v, 0.0))
 
             edges = []
             for line in ulines:
-                lst = sorted(line)
-                for v1,v2 in zip(lst, lst[1:]):
+                for v1,v2 in zip(line, line[1:]):
                     edges.append((v1.index, v2.index))
 
             for lst in vedges:
@@ -175,11 +241,52 @@ class SvBricksNode(bpy.types.Node, SverchCustomTreeNode):
                 line1 = ulines[i]
                 line2 = ulines[i+1]
                 for e1,e2 in zip(lst, lst[1:]):
-                    face = [e1.v2.index, e1.v1.index]
-                    face.extend(select(line1, e1.v1, e2.v1)) 
-                    face.extend([e2.v1.index, e2.v2.index])
-                    face.extend(reversed(select(line2, e1.v2, e2.v2)))
-                    faces.append(face)
+                    face_vertices = [e1.v2, e1.v1]
+                    face_vertices.extend(line1.select_v(e1.v1, e2.v1))
+                    face_vertices.extend([e2.v1, e2.v2])
+                    face_vertices.extend(reversed(line2.select_v(e1.v2, e2.v2)))
+                    center = get_center(face_vertices)
+
+                    if self.faces_mode == "flat":
+                        face = [v.index for v in face_vertices]
+                        faces.append(face)
+                    elif self.faces_mode == "stitch":
+                        vs1 = line1.select(e1.v1, e2.v1) + [e2.v1.index]
+                        vs2 = [e1.v2.index] + line2.select(e1.v2, e2.v2) + [e2.v2.index]
+                        prev = e1.v1.index
+                        alt = e1.v2.index
+                        i = 0
+                        j = 0
+                        first = True
+                        while i < len(vs1) and j < len(vs2):
+                            vt1 = vs1[i]
+                            vt2 = vs2[j]
+                            face = [prev, vt1, vt2]
+                            faces.append(face)
+                            if not first:
+                                if i < len(vs1)-1:
+                                    prev = vs1[i]
+                                    i += 1
+                                else:
+                                    prev = vs2[j]
+                                    j += 1
+                            else:
+                                if j < len(vs2)-1:
+                                    prev = vs2[j]
+                                    j += 1
+                                else:
+                                    prev = vs1[i]
+                                    i += 1
+                            first = not first
+                    elif self.faces_mode == "centers":
+                        vertices.append((center.u, center.v, 0.0))
+                        center.index = vertex_idx
+                        vertex_idx += 1
+                        for v1, v2 in zip(face_vertices, face_vertices[1:]):
+                            face = [v1.index, v2.index, center.index]
+                            faces.append(face)
+                        face = [face_vertices[-1].index, face_vertices[0].index, center.index]
+                        faces.append(face)
 
             result_vertices.append(vertices)
             result_edges.append(edges)
