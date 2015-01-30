@@ -175,10 +175,10 @@ class SvBricksNode(bpy.types.Node, SverchCustomTreeNode):
                 line1 = ulines[i]
                 line2 = ulines[i+1]
                 for e1,e2 in zip(lst, lst[1:]):
-                    face = [e2.v2.index, e2.v1.index]
-                    face.extend(reversed( select(line1, e1.v1, e2.v1) ))
-                    face.extend([e1.v1.index, e1.v2.index])
-                    face.extend( select(line2, e1.v2, e2.v2) )
+                    face = [e1.v2.index, e1.v1.index]
+                    face.extend(select(line1, e1.v1, e2.v1)) 
+                    face.extend([e2.v1.index, e2.v2.index])
+                    face.extend(reversed(select(line2, e1.v2, e2.v2)))
                     faces.append(face)
 
             result_vertices.append(vertices)
