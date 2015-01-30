@@ -17,7 +17,6 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import random
-import numpy as np
 
 import bpy
 from bpy.props import BoolProperty, IntProperty, FloatProperty, EnumProperty
@@ -67,16 +66,10 @@ class ULine(object):
         return self.list[i]
 
     def select(self, v1, v2):
-        start = np.searchsorted(self.coords, v1.u, 'left')
-        end = np.searchsorted(self.coords, v2.u, 'right')
-        r = [self[i].index for i in np.arange(start,end)]
-        return r
+        return [v.index for v in self.list if v.u > v1.u and v.u < v2.u]
 
     def select_v(self, v1, v2):
-        start = np.searchsorted(self.coords, v1.u, 'left')
-        end = np.searchsorted(self.coords, v2.u, 'right')
-        r = [self[i] for i in np.arange(start,end)]
-        return r
+        return [v for v in self.list if v.u > v1.u and v.u < v2.u]
 
 
 def get_center(vertices):
