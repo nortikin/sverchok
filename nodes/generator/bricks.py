@@ -163,6 +163,7 @@ class SvBricksNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('VerticesSocket', "Vertices")
         self.outputs.new('StringsSocket', "Edges")
         self.outputs.new('StringsSocket', "Polygons")
+        self.outputs.new('VerticesSocket', "Centers")
 
     def process(self):
         if not self.outputs['Vertices'].is_linked:
@@ -184,6 +185,7 @@ class SvBricksNode(bpy.types.Node, SverchCustomTreeNode):
         result_vertices = []
         result_edges = []
         result_faces = []
+        result_centers = []
 
         parameters = match_long_repeat([dus, dvs, sizeus, sizevs, toothings, toothingrs, rdus, rdvs, shifts, seeds])
         for du,dv,sizeu,sizev,toothing,toothing_r, rdu, rdv, shift, seed in zip(*parameters):
@@ -237,6 +239,7 @@ class SvBricksNode(bpy.types.Node, SverchCustomTreeNode):
                     edges.append((edge.v1.index, edge.v2.index))
 
             faces = []
+            centers = []
             for i, lst in enumerate(vedges):
                 line1 = ulines[i]
                 line2 = ulines[i+1]
@@ -246,6 +249,7 @@ class SvBricksNode(bpy.types.Node, SverchCustomTreeNode):
                     face_vertices.extend([e2.v1, e2.v2])
                     face_vertices.extend(reversed(line2.select_v(e1.v2, e2.v2)))
                     center = get_center(face_vertices)
+                    centers.append((center.u, center.v, 0.0))
 
                     if self.faces_mode == "flat":
                         face = [v.index for v in face_vertices]
@@ -291,6 +295,7 @@ class SvBricksNode(bpy.types.Node, SverchCustomTreeNode):
             result_vertices.append(vertices)
             result_edges.append(edges)
             result_faces.append(faces)
+            result_centers.append(centers)
 
         # outputs
         if self.outputs['Vertices'].is_linked:
@@ -301,6 +306,9 @@ class SvBricksNode(bpy.types.Node, SverchCustomTreeNode):
 
         if self.outputs['Polygons'].is_linked:
             self.outputs['Polygons'].sv_set(result_faces)
+
+        if self.outputs['Centers'].is_linked:
+            self.outputs['Centers'].sv_set(result_centers)
 
 
 def register():
