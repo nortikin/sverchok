@@ -61,7 +61,7 @@ class SvBricksNode(bpy.types.Node, SverchCustomTreeNode):
             update=updateNode)
     toothing_ = FloatProperty(name='Toothing',
             description='Bricks toothing amount',
-            default=0.0, min=0.0,
+            default=0.0,
             update=updateNode)
     toothing_r_ = FloatProperty(name='Toothing Random',
             description='Bricks toothing randomization factor',
