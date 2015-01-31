@@ -9,6 +9,7 @@ Beta
    bevel
    fibonacci
    exponential
+   calc_normals
    vector_polar_in
    vector_polar_out
    ngon
