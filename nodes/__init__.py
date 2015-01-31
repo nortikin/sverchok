@@ -1,6 +1,7 @@
 nodes_dict = {
     'analyzer': [
         'area',
+        'normals',
         'volume',
         'bbox',
         'distance_pp',
