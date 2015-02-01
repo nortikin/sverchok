@@ -57,6 +57,7 @@ nodes_dict = {
         'image',
         'line',
         'plane',
+        'bricks',
         'random_vector',
         'script',
         'script_mk2',
