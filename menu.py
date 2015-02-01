@@ -228,6 +228,7 @@ def make_node_cats():
         ["SvScriptNodeMK2",     "Script 2"],
         ["VectorPolarInNode", "Vector polar input"],
         ["VectorPolarOutNode", "Vector polar output"],
+        ["GetNormalsNode", "Calculate normals"],
         ["SvGenFibonacci", "Fibonacci sequence"],
         ["SvGenExponential", "Exponential sequence"],
         ['SvNGonNode',    'NGon',     'RNDCURVE'],
