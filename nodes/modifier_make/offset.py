@@ -209,19 +209,19 @@ class SvOffsetNode(bpy.types.Node, SverchCustomTreeNode):
                     list_2.extend(list_3)
 
             # if kp == True: #not solved
-            bm_faces.new(list_2)
+            new_face = bm_faces.new(list_2)
 
-            if hasattr(bm_faces, "ensure_lookup_table"):
-                bm_faces.ensure_lookup_table()
-
-            bm_faces[-1].select_set(1)
+            # if hasattr(bm_faces, "ensure_lookup_table"):
+            #     bm_faces.ensure_lookup_table()
+            # bm_faces[-1].select_set(1)
+            new_face.select_set(1)
 
             n2_ = len(dict_0)
             for o in range(n2_):
                 list_a = dict_0[o]
                 list_b = dict_0[(o + 1) % n2_]
                 bm_faces.new([list_a[0], list_b[0], list_b[-1], list_a[1]])
-                bm_faces.index_update()
+                # bm_faces.index_update()
 
             # keeping triangulation of polygons commented
             #if en0 == 'opt0':
