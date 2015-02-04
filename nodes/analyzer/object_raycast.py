@@ -79,7 +79,7 @@ class SvRayCastNode(bpy.types.Node, SverchCustomTreeNode):
         while g < len(obj):
             omw = obj[g].matrix_world
             for i in outfin[g]:
-                OutNorm.append((i[1][:])
+                OutNorm.append(i[1][:])
                 IND.append(i[2])
                 OutLoc.append((omw*i[0])[:] if self.mode2 else i[0][:])
             g = g+1
