@@ -10,6 +10,7 @@ Beta
    fibonacci
    exponential
    calc_normals
+   mesh_filter
    vector_polar_in
    vector_polar_out
    ngon
