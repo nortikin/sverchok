@@ -25,9 +25,10 @@ from sverchok.data_structure import (updateNode)
 
 
 def get_value(self, b, V):
-        bv = b.verts
+        bv = getattr(b, self.Mod)
         bv.index_update()
-        V.append([eval("i."+self.Modes) for i in bv])
+        elem = getattr(self, self.Mod)
+        V.append([eval("i."+elem) for i in bv])
         return V
 
 
@@ -42,8 +43,15 @@ class SvBMVertsNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'bmesh_verts'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    M = ['is_manifold','is_wire','is_boundary','hide','select','calc_shell_factor()','calc_vert_angle()']
-    Modes = EnumProperty(name="getmodes", default="is_manifold", items=Obm(M), update=updateNode)
+    Modes = ['verts','faces','edges']
+    Mod = EnumProperty(name="getmodes", default="verts", items=Obm(Modes), update=updateNode)
+    a = ['hide','select']
+    PV = a + ['is_manifold','is_wire','is_boundary','calc_shell_factor()','calc_vert_angle()']
+    PF = a + ['calc_area()','calc_perimeter()','material_index','smooth']
+    PE = a + ['calc_face_angle()','calc_face_angle_signed()','calc_length()','is_boundary','is_contiguous','is_convex','is_manifold','is_wire','seam']
+    verts = EnumProperty(name="getmodes", default="is_manifold", items=Obm(PV), update=updateNode)
+    faces = EnumProperty(name="getmodes", default="select", items=Obm(PF), update=updateNode)
+    edges = EnumProperty(name="getmodes", default="select", items=Obm(PE), update=updateNode)
 
     def sv_init(self, context):
         si = self.inputs.new
@@ -54,7 +62,13 @@ class SvBMVertsNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('StringsSocket', 'Value')
 
     def draw_buttons(self, context, layout):
-        layout.prop(self, "Modes", "Get Verts")
+        layout.prop(self, "Mod", "Get")
+        if self.Mod == 'verts':
+            layout.prop(self, "verts", "")
+        elif self.Mod == 'faces':
+            layout.prop(self, "faces", "")
+        elif self.Mod == 'edges':
+            layout.prop(self, "edges", "")
 
     def process(self):
         Val = []
