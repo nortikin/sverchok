@@ -31,6 +31,7 @@ class Vertices(object):
     outputs = [
             ('VerticesSocket', 'YesVertices'),
             ('VerticesSocket', 'NoVertices'),
+            ('StringsSocket', 'VerticesMask'),
             ('StringsSocket', 'YesEdges'),
             ('StringsSocket', 'NoEdges'),
             ('StringsSocket', 'YesFaces'),
@@ -76,15 +77,18 @@ class Vertices(object):
 
         good_idx = 0
         bad_idx = 0
+        mask = []
 
         for v in bm.verts:
             co = tuple(v.co)
-            if is_good(v):
+            ok = is_good(v)
+            if ok:
                 good.append((co, v.index, good_idx))
                 good_idx += 1
             else:
                 bad.append((co, v.index, bad_idx))
                 bad_idx += 1
+            mask.append(ok)
 
         good_vertices = [x[0] for x in good]
         bad_vertices = [x[0] for x in bad]
@@ -113,7 +117,7 @@ class Vertices(object):
             if bad_face:
                 bad_faces.append(bad_face)
 
-        return [good_vertices, bad_vertices,
+        return [good_vertices, bad_vertices, mask,
                 good_edges, bad_edges,
                 good_faces, bad_faces]
 
@@ -121,6 +125,7 @@ class Edges(object):
     outputs = [
             ('StringsSocket', 'YesEdges'),
             ('StringsSocket', 'NoEdges'),
+            ('StringsSocket', 'Mask'),
         ]
     
     submodes = [
@@ -139,6 +144,7 @@ class Edges(object):
 
         good = []
         bad = []
+        mask = []
 
         def is_good(e):
             if submode == "Wire":
@@ -156,12 +162,14 @@ class Edges(object):
 
         for e in bm.edges:
             idxs = (e.verts[0].index, e.verts[1].index)
-            if is_good(e):
+            ok = is_good(e)
+            if ok:
                 good.append(idxs)
             else:
                 bad.append(idxs)
+            mask.append(ok)
 
-        return [good, bad]
+        return [good, bad, mask]
 
 class Faces(object):
     outputs = [
