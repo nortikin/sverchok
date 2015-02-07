@@ -40,7 +40,6 @@ class Vertices(object):
 
     submodes = [
             ("Wire", "Wire", "Wire", 1),
-            #("Manifold", "Manifold", "Manifold", 2),
             ("Boundary", "Boundary", "Boundary", 2),
             ("Interior", "Interior", "Interior", 3)
         ]
@@ -242,7 +241,7 @@ class MeshFilterNode(bpy.types.Node, SverchCustomTreeNode):
         else:
             return []
 
-    submode = EnumProperty(name="Submode",
+    submode = EnumProperty(name="Filter",
                 items = get_submodes,
                 update = update_submode)
 
