@@ -16,6 +16,7 @@ Beta
    ngon
    bricks
    randomize
+   matrix_apply_and_join
    objects_along_edge
    extrude_separate
    iterate
