@@ -199,9 +199,9 @@ class Faces(object):
         return [interior, boundary, mask]
 
 
-class MeshFilterNode(bpy.types.Node, SverchCustomTreeNode):
+class SvMeshFilterNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Filter mesh elements: manifold vs boundary etc. '''
-    bl_idname = 'MeshFilterNode'
+    bl_idname = 'SvMeshFilterNode'
     bl_label = 'Mesh Filter'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
@@ -284,10 +284,10 @@ class MeshFilterNode(bpy.types.Node, SverchCustomTreeNode):
                 self.outputs[oname].sv_set(result)
 
 def register():
-    bpy.utils.register_class(MeshFilterNode)
+    bpy.utils.register_class(SvMeshFilterNode)
 
 
 def unregister():
-    bpy.utils.unregister_class(MeshFilterNode)
+    bpy.utils.unregister_class(SvMeshFilterNode)
 
 
