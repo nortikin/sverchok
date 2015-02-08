@@ -28,8 +28,8 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import dataCorrect, fullList, updateNode
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 from sverchok.utils.sv_viewer_utils import (
-    matrix_sanitizer
-    natural_plus_one
+    matrix_sanitizer,
+    natural_plus_one,
     get_random_init
 )
 
