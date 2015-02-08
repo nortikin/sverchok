@@ -16,15 +16,16 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+# MK2
+
 import itertools
 
 import bpy
-from bpy.props import BoolProperty, StringProperty
+from bpy.props import BoolProperty, StringProperty, BoolVectorProperty
 from mathutils import Matrix, Vector
 
-from sverchok.node_tree import (
-    SverchCustomTreeNode, VerticesSocket, MatrixSocket, StringsSocket)
-from sverchok.data_structure import dataCorrect, fullList, updateNode, SvGetSocketAnyType
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import dataCorrect, fullList, updateNode
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 from sverchok.utils.sv_viewer_utils import (
     matrix_sanitizer,
@@ -34,20 +35,19 @@ from sverchok.utils.sv_viewer_utils import (
 
 
 def default_mesh(name):
-    verts = [(1, 1, -1), (1, -1, -1), (-1, -1, -1)]
-    faces = [(0, 1, 2)]
-
+    verts, faces = [(1, 1, -1), (1, -1, -1), (-1, -1, -1)], [(0, 1, 2)]
     mesh_data = bpy.data.meshes.new(name)
     mesh_data.from_pydata(verts, [], faces)
     mesh_data.update()
     return mesh_data
 
 
-def make_bmesh_geometry(node, context, name, verts, *topology):
+def make_bmesh_geometry(node, idx, context, verts, *topology):
     scene = context.scene
     meshes = bpy.data.meshes
     objects = bpy.data.objects
     edges, faces, matrix = topology
+    name = node.basemesh_name + "_" + str(idx)
 
     if name in objects:
         sv_object = objects[name]
@@ -56,7 +56,10 @@ def make_bmesh_geometry(node, context, name, verts, *topology):
         sv_object = objects.new(name, temp_mesh)
         scene.objects.link(sv_object)
 
-    ''' There is overalapping code here for testing! '''
+    # book-keeping via ID-props!? even this is can be broken by renames
+    sv_object['idx'] = idx
+    sv_object['madeby'] = node.name
+    sv_object['basename'] = node.basemesh_name
 
     mesh = sv_object.data
     current_count = len(mesh.vertices)
@@ -81,6 +84,7 @@ def make_bmesh_geometry(node, context, name, verts, *topology):
         bm = bmesh_from_pydata(verts, edges, faces)
         bm.to_mesh(sv_object.data)
         bm.free()
+
         sv_object.hide_select = False
 
     if matrix:
@@ -90,10 +94,60 @@ def make_bmesh_geometry(node, context, name, verts, *topology):
         sv_object.matrix_local = Matrix.Identity(4)
 
 
-class SvBmeshViewOp(bpy.types.Operator):
+def make_bmesh_geometry_merged(node, idx, context, yielder_object):
+    scene = context.scene
+    meshes = bpy.data.meshes
+    objects = bpy.data.objects
+    name = node.basemesh_name + "_" + str(idx)
 
-    bl_idname = "node.showhide_bmesh"
-    bl_label = "Sverchok bmesh showhide"
+    if name in objects:
+        sv_object = objects[name]
+    else:
+        temp_mesh = default_mesh(name)
+        sv_object = objects.new(name, temp_mesh)
+        scene.objects.link(sv_object)
+
+    # book-keeping via ID-props!
+    sv_object['idx'] = idx
+    sv_object['madeby'] = node.name
+    sv_object['basename'] = node.basemesh_name
+
+    vert_count = 0
+    big_verts = []
+    big_edges = []
+    big_faces = []
+
+    while (True):
+        result = next(yielder_object)
+        if result == 'FINAL':
+            break
+
+        verts, topology = result
+        edges, faces, matrix = topology
+
+        if matrix:
+            matrix = matrix_sanitizer(matrix)
+            verts = [matrix * Vector(v) for v in verts]
+
+        big_verts.extend(verts)
+        big_edges.extend([[a+vert_count, b+vert_count] for a, b in edges])
+        big_faces.extend([[j+vert_count for j in f] for f in faces])
+
+        vert_count += len(verts)
+
+    ''' get bmesh, write bmesh to obj, free bmesh'''
+    bm = bmesh_from_pydata(big_verts, big_edges, big_faces)
+    bm.to_mesh(sv_object.data)
+    bm.free()
+
+    sv_object.hide_select = False
+    sv_object.matrix_local = Matrix.Identity(4)
+
+
+class SvBmeshViewOp2(bpy.types.Operator):
+
+    bl_idname = "node.sv_callback_bmesh_viewer"
+    bl_label = "Sverchok bmesh general callback"
     bl_options = {'REGISTER', 'UNDO'}
 
     fn_name = StringProperty(default='')
@@ -102,24 +156,14 @@ class SvBmeshViewOp(bpy.types.Operator):
         n = context.node
         k = n.basemesh_name + "_"
 
-        # maybe do hash+(obj_name + treename)
         child = lambda obj: obj.type == "MESH" and obj.name.startswith(k)
         objs = list(filter(child, bpy.data.objects))
 
-        if type_op == 'hide_view':
+        if type_op in {'hide', 'hide_render', 'hide_select'}:
+            op_value = getattr(n, type_op)
             for obj in objs:
-                obj.hide = n.state_view
-            n.state_view = not n.state_view
-
-        elif type_op == 'hide_render':
-            for obj in objs:
-                obj.hide_render = n.state_render
-            n.state_render = not n.state_render
-
-        elif type_op == 'hide_select':
-            for obj in objs:
-                obj.hide_select = n.state_select
-            n.state_select = not n.state_select
+                setattr(obj, type_op, op_value)
+            setattr(n, type_op, not op_value)
 
         elif type_op == 'mesh_select':
             for obj in objs:
@@ -129,44 +173,75 @@ class SvBmeshViewOp(bpy.types.Operator):
         elif type_op == 'random_mesh_name':
             n.basemesh_name = get_random_init()
 
+        elif type_op == 'add_material':
+            mat = bpy.data.materials.new('sv_material')
+            mat.use_nodes = True
+            mat.use_fake_user = True  # usually handy
+            n.material = mat.name
+
     def execute(self, context):
         self.hide_unhide(context, self.fn_name)
         return {'FINISHED'}
 
 
-class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
+class SvBmeshViewerNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
-    bl_idname = 'BmeshViewerNode'
-    bl_label = 'Bmesh Viewer Draw'
+    bl_idname = 'SvBmeshViewerNodeMK2'
+    bl_label = 'Bmesh Viewer Draw 2'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
+    # hints found at ba.org/forum/showthread.php?290106
+    # - this will not allow objects on multiple layers, yet.
+    def g(self):
+        self['lp'] = self.get('lp', [False] * 20)
+        return self['lp']
+
+    def s(self, value):
+        val = []
+        for b in zip(self['lp'], value):
+            val.append(b[0] != b[1])
+        self['lp'] = val
+
+    def layer_updateNode(self, context):
+        '''will update in place without geometry updates'''
+        for obj in self.get_children():
+            obj.layers = self.layer_choice[:]
+
+    material = StringProperty(default='', update=updateNode)
+    grouping = BoolProperty(default=False)
+    merge = BoolProperty(default=False, update=updateNode)
+
+    hide = BoolProperty(default=True)
+    hide_render = BoolProperty(default=True)
+    hide_select = BoolProperty(default=True)
+
+    select_state_mesh = BoolProperty(default=False)
+
     activate = BoolProperty(
-        name='Show',
-        description='When enabled this will process incoming data',
         default=True,
+        description='When enabled this will process incoming data',
         update=updateNode)
 
     basemesh_name = StringProperty(
         default='Alpha',
         update=updateNode,
-        description='sets which base name the object will use, \
-        use N-panel to pick alternative random names')
-
-    material = StringProperty(default='', update=updateNode)
-    grouping = BoolProperty(default=False)
-    state_view = BoolProperty(default=True)
-    state_render = BoolProperty(default=True)
-    state_select = BoolProperty(default=True)
-    select_state_mesh = BoolProperty(default=False)
+        description="sets which base name the object will use, "
+        "use N-panel to pick alternative random names")
 
     fixed_verts = BoolProperty(
         default=False,
-        name="Fixed vertices",
         description="Use only with unchanging topology")
+
     autosmooth = BoolProperty(
         default=False,
         update=updateNode,
         description="This auto sets all faces to smooth shade")
+
+    layer_choice = BoolVectorProperty(
+        subtype='LAYER', size=20,
+        update=layer_updateNode,
+        description="This sets which layer objects are placed on",
+        get=g, set=s)
 
     def sv_init(self, context):
         self.use_custom_color = True
@@ -176,52 +251,58 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('MatrixSocket', 'matrix', 'matrix')
 
     def draw_buttons(self, context, layout):
-        view_icon = 'RESTRICT_VIEW_' + ('OFF' if self.activate else 'ON')
-        sh = 'node.showhide_bmesh'
+        view_icon = 'BLENDER' if self.activate else 'ERROR'
+        sh = 'node.sv_callback_bmesh_viewer'
 
-        def icons(button_type):
-            icon = 'WARNING'
-            if button_type == 'v':
-                icon = 'RESTRICT_VIEW_' + ['ON', 'OFF'][self.state_view]
-            elif button_type == 'r':
-                icon = 'RESTRICT_RENDER_' + ['ON', 'OFF'][self.state_render]
-            elif button_type == 's':
-                icon = 'RESTRICT_SELECT_' + ['ON', 'OFF'][self.state_select]
-            return icon
+        def icons(TYPE):
+            NAMED_ICON = {
+                'hide': 'RESTRICT_VIEW',
+                'hide_render': 'RESTRICT_RENDER',
+                'hide_select': 'RESTRICT_SELECT'}.get(TYPE)
+            if not NAMED_ICON:
+                return 'WARNING'
+            return NAMED_ICON + ['_ON', '_OFF'][getattr(self, TYPE)]
 
         col = layout.column(align=True)
         row = col.row(align=True)
         row.column().prop(self, "activate", text="UPD", toggle=True, icon=view_icon)
-
-        row.operator(sh, text='', icon=icons('v')).fn_name = 'hide_view'
-        row.operator(sh, text='', icon=icons('s')).fn_name = 'hide_select'
-        row.operator(sh, text='', icon=icons('r')).fn_name = 'hide_render'
+        row.separator()
+        row.operator(sh, text='', icon=icons('hide')).fn_name = 'hide'
+        row.operator(sh, text='', icon=icons('hide_select')).fn_name = 'hide_select'
+        row.operator(sh, text='', icon=icons('hide_render')).fn_name = 'hide_render'
 
         col = layout.column(align=True)
-        row = col.row(align=True)
-        row.prop(self, "grouping", text="Group", toggle=True)
+        if col:
+            row = col.row(align=True)
+            row.prop(self, "grouping", text="Group", toggle=True)
+            row.separator()
+            row.prop(self, "merge", text="Merge", toggle=True)
 
-        row = col.row(align=True)
-        row.scale_y = 1
-        row.prop(self, "basemesh_name", text="", icon='OUTLINER_OB_MESH')
+            row = col.row(align=True)
+            row.scale_y = 1
+            row.prop(self, "basemesh_name", text="", icon='OUTLINER_OB_MESH')
 
-        row = col.row(align=True)
-        row.scale_y = 2
-        row.operator(sh, text='Select / Deselect').fn_name = 'mesh_select'
-        row = col.row(align=True)
-        row.scale_y = 1
+            row = col.row(align=True)
+            row.scale_y = 1.62
+            row.operator(sh, text='Select Toggle').fn_name = 'mesh_select'
 
-        row.prop_search(
-            self, 'material', bpy.data, 'materials', text='',
-            icon='MATERIAL_DATA')
+            col.separator()
+            row = col.row(align=True)
+            row.scale_y = 1
+            row.prop_search(
+                self, 'material', bpy.data, 'materials', text='',
+                icon='MATERIAL_DATA')
+            row.operator(sh, text='', icon='ZOOMIN').fn_name = 'add_material'
 
     def draw_buttons_ext(self, context, layout):
         self.draw_buttons(context, layout)
         layout.separator()
 
         row = layout.row(align=True)
-        sh = 'node.showhide_bmesh'
-        row.operator(sh, text='Random Name').fn_name = 'random_mesh_name'
+        sh = 'node.sv_callback_bmesh_viewer'
+        row.operator(sh, text='Rnd Name').fn_name = 'random_mesh_name'
+        row.separator()
+        row.operator(sh, text='+Material').fn_name = 'add_material'
 
         col = layout.column(align=True)
         box = col.box()
@@ -229,6 +310,7 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
             box.label(text="Beta options")
             box.prop(self, "fixed_verts", text="Fixed vert count")
             box.prop(self, 'autosmooth', text='smooth shade')
+            box.prop(self, 'layer_choice', text='layer')
 
     def get_geometry_from_sockets(self):
 
@@ -254,7 +336,10 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
             return j
 
     def process(self):
-        # perhaps if any of mverts is [] this should already fail.
+
+        if not self.activate:
+            return
+
         mverts, *mrest = self.get_geometry_from_sockets()
 
         def get_edges_faces_matrices(obj_index):
@@ -268,13 +353,29 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
             if mrest[idx]:
                 fullList(mrest[idx], maxlen)
 
-        for obj_index, Verts in enumerate(mverts):
-            if not Verts:
-                continue
+        if self.merge:
+            obj_index = 0
 
-            data = get_edges_faces_matrices(obj_index)
-            mesh_name = self.basemesh_name + "_" + str(obj_index)
-            make_bmesh_geometry(self, bpy.context, mesh_name, Verts, *data)
+            def keep_yielding():
+                # this will yield all in one go.
+                for idx, Verts in enumerate(mverts):
+                    if not Verts:
+                        continue
+
+                    data = get_edges_faces_matrices(idx)
+                    yield (Verts, data)
+                yield 'FINAL'
+
+            yielder_object = keep_yielding()
+            make_bmesh_geometry_merged(self, obj_index, bpy.context, yielder_object)
+
+        else:
+            for obj_index, Verts in enumerate(mverts):
+                if not Verts:
+                    continue
+
+                data = get_edges_faces_matrices(obj_index)
+                make_bmesh_geometry(self, obj_index, bpy.context, Verts, *data)
 
         self.remove_non_updated_objects(obj_index)
 
@@ -293,11 +394,11 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
     def get_children(self):
         objects = bpy.data.objects
         objs = [obj for obj in objects if obj.type == 'MESH']
-        return [o for o in objs if o.name.startswith(self.basemesh_name + "_")]
+        return [o for o in objs if o['basename'] == self.basemesh_name]
 
     def remove_non_updated_objects(self, obj_index):
         objs = self.get_children()
-        objs = [obj.name for obj in objs if int(obj.name.split("_")[-1]) > obj_index]
+        objs = [obj.name for obj in objs if obj['idx'] > obj_index]
         if not objs:
             return
 
@@ -343,13 +444,10 @@ class BmeshViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
 
 def register():
-    bpy.utils.register_class(BmeshViewerNode)
-    bpy.utils.register_class(SvBmeshViewOp)
+    bpy.utils.register_class(SvBmeshViewerNodeMK2)
+    bpy.utils.register_class(SvBmeshViewOp2)
 
 
 def unregister():
-    bpy.utils.unregister_class(BmeshViewerNode)
-    bpy.utils.unregister_class(SvBmeshViewOp)
-
-if __name__ == '__main__':
-    register()
+    bpy.utils.unregister_class(SvBmeshViewerNodeMK2)
+    bpy.utils.unregister_class(SvBmeshViewOp2)

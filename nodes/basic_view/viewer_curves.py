@@ -17,8 +17,6 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import itertools
-import random
-import re
 
 import bpy
 from bpy.props import (
@@ -43,10 +41,11 @@ from sverchok.data_structure import (
     updateNode,
     SvGetSocketAnyType)
 
-from sverchok.nodes.basic_view.viewer_bmesh import (
+from sverchok.utils.sv_viewer_utils import (
     matrix_sanitizer,
     natural_plus_one,
-    get_random_init)
+    get_random_init
+)
 
 
 # -- DUPLICATES --
@@ -442,10 +441,10 @@ class SvCurveViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
     def remove_non_updated_objects(self, obj_index):
         objs = self.get_children()
-        print('found', [o.name for o in objs])
+        # print('found', [o.name for o in objs])
 
         objs = [obj.name for obj in objs if int(obj.name.split("_")[-1]) > obj_index]
-        print('want to remove:', objs)
+        # print('want to remove:', objs)
 
         if not objs:
             return
