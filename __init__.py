@@ -72,8 +72,8 @@ root_modules = ["menu", "node_tree", "data_structure", "core",
 core_modules = ["handlers", "update_system", "upgrade_nodes"]
 utils_modules = [
     # non UI tools
-    "cad_module", "sv_bmesh_utils", "sv_curve_utils", "voronoi",
-    "sv_script", "sv_itertools", "script_importhelper",
+    "cad_module", "sv_bmesh_utils", "sv_viewer_utils", "sv_curve_utils",
+    "voronoi", "sv_script", "sv_itertools", "script_importhelper",
     "csg_core", "csg_geom",
     # UI
     #     - text editor ui
