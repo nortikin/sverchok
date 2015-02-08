@@ -22,6 +22,7 @@ import bpy
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import SvSetSocketAnyType, SvGetSocketAnyType
+from sverchok.utils.sv_mesh_utils import mesh_join
 
 
 class SvMeshJoinNode(bpy.types.Node, SverchCustomTreeNode):
@@ -42,25 +43,16 @@ class SvMeshJoinNode(bpy.types.Node, SverchCustomTreeNode):
         if 'Vertices' in self.inputs and self.inputs['Vertices'].is_linked and \
            'PolyEdge' in self.inputs and self.inputs['PolyEdge'].is_linked:
 
-            verts = SvGetSocketAnyType(self, self.inputs['Vertices'])
-            poly_edge = SvGetSocketAnyType(self, self.inputs['PolyEdge'])
-            verts_out = []
-            poly_edge_out = []
-            offset = 0
-            for obj in zip(verts, poly_edge):
-                verts_out.extend(obj[0])
-                if offset:
-                    res = [list(map(lambda x:operator.add(offset, x), ep)) for ep in obj[1]]
-                    poly_edge_out.extend(res)
-                else:
-                    poly_edge_out.extend(obj[1])
-                offset += len(obj[0])
+            verts = self.inputs['Vertices'].sv_get()
+            poly_edge = self.inputs['PolyEdge'].sv_get()
+
+            verts_out, dummy, poly_edge_out = mesh_join(verts, [], poly_edge)
 
             if 'Vertices' in self.outputs and self.outputs['Vertices'].is_linked:
-                SvSetSocketAnyType(self, 'Vertices', [verts_out])
+                self.outputs['Vertices'].sv_set([verts_out])
 
             if 'PolyEdge' in self.outputs and self.outputs['PolyEdge'].is_linked:
-                SvSetSocketAnyType(self, 'PolyEdge', [poly_edge_out])
+                self.outputs['PolyEdge'].sv_set([poly_edge_out])
 
     def update_socket(self, context):
         self.update()
