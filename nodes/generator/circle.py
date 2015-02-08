@@ -85,7 +85,7 @@ class SvCircleNode(bpy.types.Node, SverchCustomTreeNode):
             listEdg.append((0, Vertices))
             listEdg.append((Vertices-1, Vertices))
         else:
-            listEdg.append((0, Vertices-1))
+            listEdg.append((Vertices-1, 0))
         return listEdg
 
     def make_faces(self, Angle, Vertices):
