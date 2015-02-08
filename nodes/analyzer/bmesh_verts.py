@@ -49,9 +49,9 @@ class SvBMVertsNode(bpy.types.Node, SverchCustomTreeNode):
     PV = a + ['is_manifold','is_wire','is_boundary','calc_shell_factor()','calc_vert_angle()']
     PF = a + ['calc_area()','calc_perimeter()','material_index','smooth']
     PE = a + ['calc_face_angle()','calc_face_angle_signed()','calc_length()','is_boundary','is_contiguous','is_convex','is_manifold','is_wire','seam']
-    verts = EnumProperty(name="getmodes", default="is_manifold", items=Obm(PV), update=updateNode)
-    faces = EnumProperty(name="getmodes", default="select", items=Obm(PF), update=updateNode)
-    edges = EnumProperty(name="getmodes", default="select", items=Obm(PE), update=updateNode)
+    verts = EnumProperty(name="Vprop", default="is_manifold", items=Obm(PV), update=updateNode)
+    faces = EnumProperty(name="Fprop", default="select", items=Obm(PF), update=updateNode)
+    edges = EnumProperty(name="Eprop", default="select", items=Obm(PE), update=updateNode)
 
     def sv_init(self, context):
         si = self.inputs.new
@@ -63,12 +63,7 @@ class SvBMVertsNode(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "Mod", "Get")
-        if self.Mod == 'verts':
-            layout.prop(self, "verts", "")
-        elif self.Mod == 'faces':
-            layout.prop(self, "faces", "")
-        elif self.Mod == 'edges':
-            layout.prop(self, "edges", "")
+        layout.prop(self, self.Mod, "")
 
     def process(self):
         Val = []
