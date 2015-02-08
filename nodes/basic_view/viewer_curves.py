@@ -17,8 +17,6 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import itertools
-import random
-import re
 
 import bpy
 from bpy.props import (
@@ -43,10 +41,11 @@ from sverchok.data_structure import (
     updateNode,
     SvGetSocketAnyType)
 
-from sverchok.nodes.basic_view.viewer_bmesh import (
-    matrix_sanitizer,
-    natural_plus_one,
-    get_random_init)
+from sverchok.utils.sv_viewer_utils import (
+    matrix_sanitizer
+    natural_plus_one
+    get_random_init
+)
 
 
 # -- DUPLICATES --

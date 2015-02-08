@@ -232,6 +232,7 @@ def make_node_cats():
         ["SvGenFibonacci", "Fibonacci sequence"],
         ["SvGenExponential", "Exponential sequence"],
         ['SvNGonNode',    'NGon',     'RNDCURVE'],
+        ['BmeshViewerNodeMK2', 'BMeshView2'],
         ['SvBricksNode', 'Bricks grid'],
         ["SvRandomizeVerticesNode", "Randomize input vertices"],
         ["SvDuplicateAlongEdgeNode", "Duplicate objects along edge"],
