@@ -229,6 +229,7 @@ def make_node_cats():
         ["VectorPolarInNode", "Vector polar input"],
         ["VectorPolarOutNode", "Vector polar output"],
         ["GetNormalsNode", "Calculate normals"],
+        ["SvMeshFilterNode", "Mesh filter"],
         ["SvGenFibonacci", "Fibonacci sequence"],
         ["SvGenExponential", "Exponential sequence"],
         ['SvNGonNode',    'NGon',     'RNDCURVE'],
