@@ -20,8 +20,6 @@ def mesh_join(vertices_s, edges_s, faces_s):
     '''Given list of meshes represented by lists of vertices, edges and faces,
     produce one joined mesh.'''
 
-    print("Mesh_join")
-
     offset = 0
     result_vertices = []
     result_edges = []
