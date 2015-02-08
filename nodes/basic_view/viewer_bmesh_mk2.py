@@ -85,10 +85,6 @@ def make_bmesh_geometry(node, idx, context, verts, *topology):
         bm.to_mesh(sv_object.data)
         bm.free()
 
-        # optional hardcore for skin modifier.
-        # sv_object.update_tag(refresh={'DATA'})
-        # scene.update()
-
         sv_object.hide_select = False
 
     if matrix:
@@ -99,7 +95,6 @@ def make_bmesh_geometry(node, idx, context, verts, *topology):
 
 
 def make_bmesh_geometry_merged(node, idx, context, yielder_object):
-    # verts, *topology
     scene = context.scene
     meshes = bpy.data.meshes
     objects = bpy.data.objects
@@ -112,7 +107,7 @@ def make_bmesh_geometry_merged(node, idx, context, yielder_object):
         sv_object = objects.new(name, temp_mesh)
         scene.objects.link(sv_object)
 
-    # book-keeping via ID-props!? even this is can be broken by renames
+    # book-keeping via ID-props!
     sv_object['idx'] = idx
     sv_object['madeby'] = node.name
     sv_object['basename'] = node.basemesh_name
@@ -189,9 +184,9 @@ class SvBmeshViewOp2(bpy.types.Operator):
         return {'FINISHED'}
 
 
-class BmeshViewerNodeMK2(bpy.types.Node, SverchCustomTreeNode):
+class SvBmeshViewerNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
-    bl_idname = 'BmeshViewerNodeMK2'
+    bl_idname = 'SvBmeshViewerNodeMK2'
     bl_label = 'Bmesh Viewer Draw 2'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
@@ -256,7 +251,7 @@ class BmeshViewerNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('MatrixSocket', 'matrix', 'matrix')
 
     def draw_buttons(self, context, layout):
-        view_icon = 'RESTRICT_VIEW_' + ('OFF' if self.activate else 'ON')
+        view_icon = 'BLENDER' if self.activate else 'ERROR'
         sh = 'node.sv_callback_bmesh_viewer'
 
         def icons(TYPE):
@@ -271,7 +266,7 @@ class BmeshViewerNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         col = layout.column(align=True)
         row = col.row(align=True)
         row.column().prop(self, "activate", text="UPD", toggle=True, icon=view_icon)
-
+        row.separator()
         row.operator(sh, text='', icon=icons('hide')).fn_name = 'hide'
         row.operator(sh, text='', icon=icons('hide_select')).fn_name = 'hide_select'
         row.operator(sh, text='', icon=icons('hide_render')).fn_name = 'hide_render'
@@ -280,7 +275,8 @@ class BmeshViewerNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         if col:
             row = col.row(align=True)
             row.prop(self, "grouping", text="Group", toggle=True)
-            row.prop(self, "merge", text="Merge")
+            row.separator()
+            row.prop(self, "merge", text="Merge", toggle=True)
 
             row = col.row(align=True)
             row.scale_y = 1
@@ -448,10 +444,10 @@ class BmeshViewerNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
 
 def register():
-    bpy.utils.register_class(BmeshViewerNodeMK2)
+    bpy.utils.register_class(SvBmeshViewerNodeMK2)
     bpy.utils.register_class(SvBmeshViewOp2)
 
 
 def unregister():
-    bpy.utils.unregister_class(BmeshViewerNodeMK2)
+    bpy.utils.unregister_class(SvBmeshViewerNodeMK2)
     bpy.utils.unregister_class(SvBmeshViewOp2)
