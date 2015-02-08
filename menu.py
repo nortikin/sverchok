@@ -237,7 +237,7 @@ def make_node_cats():
         ['SvBricksNode', 'Bricks grid'],
         ["SvRandomizeVerticesNode", "Randomize input vertices"],
         ["SvDuplicateAlongEdgeNode", "Duplicate objects along edge"],
-        ["MatrixApplyJoinNode", "Apply matrix to mesh"],
+        ["SvMatrixApplyJoinNode", "Apply matrix to mesh"],
         ["SvIterateNode", "Iterate matrix transformation"],
     ]
 

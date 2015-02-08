@@ -21,14 +21,13 @@ from mathutils import Matrix, Vector
 
 from sverchok.node_tree import SverchCustomTreeNode, VerticesSocket, MatrixSocket
 from sverchok.data_structure import (Vector_generate, Vector_degenerate,
-                            Matrix_generate, updateNode,
-                            SvGetSocketAnyType, SvSetSocketAnyType)
+                            Matrix_generate, updateNode)
 
 
-class MatrixApplyJoinNode(bpy.types.Node, SverchCustomTreeNode):
+class SvMatrixApplyJoinNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Multiply vectors on matrices with several objects in output,
         and process edges & faces too '''
-    bl_idname = 'MatrixApplyJoinNode'
+    bl_idname = 'SvMatrixApplyJoinNode'
     bl_label = 'Apply matrix to mesh'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
@@ -81,9 +80,9 @@ class MatrixApplyJoinNode(bpy.types.Node, SverchCustomTreeNode):
         return out
 
 def register():
-    bpy.utils.register_class(MatrixApplyJoinNode)
+    bpy.utils.register_class(SvMatrixApplyJoinNode)
 
 
 def unregister():
-    bpy.utils.unregister_class(MatrixApplyJoinNode)
+    bpy.utils.unregister_class(SvMatrixApplyJoinNode)
 
