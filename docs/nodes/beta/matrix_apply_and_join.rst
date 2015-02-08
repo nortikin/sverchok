@@ -6,6 +6,8 @@ Functionality
 
 Applies a Transform Matrix to a list or nested lists of vertices, edges and faces. If several matrices are provided on the input, then this node will produce several meshes.
 
+**Note**. Unless there is further processing going on which explicitly require the duplicated topology, then letting the ``Viewer Draw`` or ``BMesh Viewer`` nodes automatically repeat the index lists for the edges and faces is slightly more efficient than use of this node.
+
 
 Inputs
 ------
