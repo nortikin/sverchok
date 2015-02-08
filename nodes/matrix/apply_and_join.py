@@ -17,11 +17,13 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
+from bpy.props import BoolProperty
 from mathutils import Matrix, Vector
 
 from sverchok.node_tree import SverchCustomTreeNode, VerticesSocket, MatrixSocket
 from sverchok.data_structure import (Vector_generate, Vector_degenerate,
                             Matrix_generate, updateNode)
+from sverchok.utils.sv_mesh_utils import mesh_join
 
 
 class SvMatrixApplyJoinNode(bpy.types.Node, SverchCustomTreeNode):
@@ -30,6 +32,11 @@ class SvMatrixApplyJoinNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvMatrixApplyJoinNode'
     bl_label = 'Apply matrix to mesh'
     bl_icon = 'OUTLINER_OB_EMPTY'
+
+    do_join = BoolProperty(name='Join',
+            description = 'Join resulting meshes to one mesh',
+            default=True,
+            update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', "Vertices")
@@ -40,6 +47,9 @@ class SvMatrixApplyJoinNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('VerticesSocket', "Vertices")
         self.outputs.new('StringsSocket', "Edges")
         self.outputs.new('StringsSocket', "Faces")
+
+    def draw_buttons(self, context, layout):
+        layout.prop(self, "do_join")
 
     def process(self):
         if not self.outputs['Vertices'].is_linked:
@@ -59,6 +69,9 @@ class SvMatrixApplyJoinNode(bpy.types.Node, SverchCustomTreeNode):
 
         result_edges = edges * n
         result_faces = faces * n
+
+        if self.do_join:
+            result_vertices, result_edges, result_faces = mesh_join(result_vertices, result_edges, result_faces)
 
         self.outputs['Vertices'].sv_set(result_vertices)
         if self.outputs['Edges'].is_linked:
