@@ -19,6 +19,14 @@ This node has the following inputs:
 - **Faces**
 - **Matrices**. One or more, never empty.
 
+Parameters
+----------
+
+This node has the following parameter:
+
+**Join**. If set, then this node will join output meshes into one mesh, the same way as ``Mesh Join`` node does. 
+Otherwise, if N matrices are provided at the input, this node will produce N lists of vertices, N lists of edges and N lists of faces.
+
 Outputs
 -------
 
@@ -27,8 +35,6 @@ This node has the following outputs:
 - **Vertices**.  Nested list of vectors / vertices, matching the number nested incoming *matrices*.
 - **Edges**. Input edges list, repeated the number of incoming matrices. Empty if corresponding input is empty.
 - **Faces**. Input faces list, repeated the number of incoming matrices. Empty if corresponding input is empty.
-
-So if N matrices are provided at the input, then this node will produce N lists of vertices, N lists of edges and N lists of faces.
 
 Examples
 --------
