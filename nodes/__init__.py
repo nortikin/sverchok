@@ -4,6 +4,7 @@ nodes_dict = {
         'normals',
         'volume',
         'bbox',
+        'mesh_filter',
         'distance_pp',
         'polygons_centers',
         'neuro_elman',
