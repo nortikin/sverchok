@@ -26,7 +26,6 @@ from sverchok.data_structure import (updateNode)
 
 def get_value(self, b, V):
         bv = getattr(b, self.Mod)
-        bv.index_update()
         elem = getattr(self, self.Mod)
         V.append([eval("i."+elem) for i in bv])
         return V
