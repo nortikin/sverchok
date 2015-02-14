@@ -248,7 +248,7 @@ def make_node_cats():
         ["SvCacheNode",           "Cache"],
         ["SvInsetSpecial",        "Inset Special"],
         ["SkinViewerNode",        "Skin Mesher"],
-        ["SvCSGBooleanNode",      "GSG Boolean"],
+        ["SvCSGBooleanNode",      "CSG Boolean"],
 
     ]
 
