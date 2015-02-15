@@ -38,6 +38,7 @@ def make_node_cats():
     node_cats["Generators"] = [
         ["LineNode",            "Line",                  "GRIP"],
         ["PlaneNode",           "Plane",           "MESH_PLANE"],
+        ['SvNGonNode',          'NGon',              'RNDCURVE'],
         ["SvBoxNode",           "Box",              "MESH_CUBE"],
         ["SvCircleNode",        "Circle",         "MESH_CIRCLE"],
         ["CylinderNode",        "Cylinder",     "MESH_CYLINDER"],
@@ -52,6 +53,8 @@ def make_node_cats():
         ["HilbertNode",         "Hilbert"],
         ["Hilbert3dNode",       "Hilbert3d"],
         ["HilbertImageNode",    "Hilbert image"],
+        ["SvGenFibonacci",      "Fibonacci sequence"],
+        ["SvGenExponential",    "Exponential sequence"],
         ["ImageNode",           "Image",                "FILE_IMAGE"],
         ["SvProfileNode",       "ProfileParametric"],
         ["SvScriptNode",        "Scripted Node",     "SCRIPTPLUGINS"],
@@ -64,6 +67,7 @@ def make_node_cats():
         ["AreaNode",            "Area"],
         ["DistancePPNode",      "Distance"],
         ["CentersPolsNode",     "Centers Polygons"],
+        ["GetNormalsNode",      "Calculate normals"],
         ["VectorNormalNode",    "Vertex Normal"],
         # proximity analyses.
         ["SvKDTreeNode",        "KDT Closest Verts"],
@@ -86,6 +90,8 @@ def make_node_cats():
         ["SvRemoveDoublesNode",  "Remove Doubles"],
         ["SvDeleteLooseNode",    "Delete Loose"],
         ["SvSeparateMeshNode",   "Separate Loose Parts"],
+        ["SvExtrudeSeparateNode", "Extrude Separate Faces"],
+        ["SvRandomizeVerticesNode", "Randomize input vertices"],
         ["SvVertMaskNode",       "Mask Vertices"],
         ["SvFillsHoleNode",      "Fill Holes"],
         ["SvIntersectEdgesNode", "Intersect Edges"],
@@ -102,6 +108,9 @@ def make_node_cats():
         ['SvWireframeNode',     'Wireframe'],
         ['DelaunayTriangulation2DNode', 'Delaunay 2D '],
         ['Voronoi2DNode',       'Voronoi 2D'],
+        ['SvPipeNode',          'Pipe'],
+        ["SvDuplicateAlongEdgeNode", "Duplicate objects along edge"],
+        ["SvWafelNode",         "Wafel"],
         ['SvConvexHullNode',    'Convex Hull'],
         ['SvLatheNode',         'Lathe',            'MOD_SCREW'],
     ]
@@ -152,6 +161,8 @@ def make_node_cats():
         ['VectorsOutNode',      'Vector out'],
         ['VectorMathNode',      'Vector Math'],
         ['VectorDropNode',      'Vector Drop'],
+        ["VectorPolarInNode",   "Vector polar input"],
+        ["VectorPolarOutNode",  "Vector polar output"],
         ['VertsDelDoublesNode', 'Vector X Doubles'],
         ['EvaluateLineNode',    'Vector Evaluate'],
         ['SvInterpolationNode', 'Vector Interpolation'],
@@ -218,25 +229,14 @@ def make_node_cats():
 
     node_cats["Beta Nodes"] = [
         # for testing convenience, and while no documentation
-        ['SvPipeNode',          'Pipe'],
         ['SvBevelNode',         "Bevel"],
         ["SvOffsetNode",        "Offset"],
-        ["SvExtrudeSeparateNode", "Extrude Separate Faces"],
         ["SvListDecomposeNode", "List Decompose"],
-        ["SvWafelNode",         "Wafel"],
         ["SvFormulaShapeNode",  "Formula shape", "IPO"],
         ["SvScriptNodeMK2",     "Script 2"],
-        ["VectorPolarInNode", "Vector polar input"],
-        ["VectorPolarOutNode", "Vector polar output"],
-        ["GetNormalsNode", "Calculate normals"],
         ["SvMeshFilterNode", "Mesh filter"],
-        ["SvGenFibonacci", "Fibonacci sequence"],
-        ["SvGenExponential", "Exponential sequence"],
-        ['SvNGonNode',    'NGon',     'RNDCURVE'],
         ['SvBmeshViewerNodeMK2', 'BMeshView2'],
         ['SvBricksNode', 'Bricks grid'],
-        ["SvRandomizeVerticesNode", "Randomize input vertices"],
-        ["SvDuplicateAlongEdgeNode", "Duplicate objects along edge"],
         ["SvMatrixApplyJoinNode", "Apply matrix to mesh"],
         ["SvIterateNode", "Iterate matrix transformation"],
     ]
@@ -244,12 +244,11 @@ def make_node_cats():
     node_cats["Alpha Nodes"] = [
         ["SvImageComponentsNode", "Image Decompose",  "GROUP_VCOL"],
         ["SvJoinTrianglesNode",   "Join Triangles"],
-        ["SvCurveViewerNode",   "Curve Viewer",     'MOD_CURVE'],
+        ["SvCurveViewerNode",     "Curve Viewer",      'MOD_CURVE'],
         ["SvCacheNode",           "Cache"],
         ["SvInsetSpecial",        "Inset Special"],
         ["SkinViewerNode",        "Skin Mesher"],
         ["SvCSGBooleanNode",      "CSG Boolean"],
-
     ]
 
     return node_cats
