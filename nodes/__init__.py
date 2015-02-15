@@ -63,6 +63,7 @@ nodes_dict = {
         'random_vector',
         'script',
         'script_mk2',
+        'prototyper_js',
         'formula',
         'sphere',
         'basic_spline',
