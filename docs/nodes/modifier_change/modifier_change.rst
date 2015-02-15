@@ -5,12 +5,15 @@ Modifier Change
 .. toctree::
    :maxdepth: 2
 
-   polygon_boom
-   polygons_to_edges
-   mesh_join
-   remove_doubles
-   separate_loose_parts
-   mask_vertices
+   delete_loose
+   extrude_separate
    fill_holes
    intersect_edges
-   delete_loose
+   mask_vertices
+   mesh_join
+   objects_along_edge
+   polygon_boom
+   polygons_to_edges
+   randomize
+   remove_doubles
+   separate_loose_parts

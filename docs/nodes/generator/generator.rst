@@ -5,22 +5,25 @@ Generator
 .. toctree::
    :maxdepth: 2
 
-   line
-   plane
+   2pt_spline
+   3pt_arc
    box
    box_rounded   
    circle
    cylinder
-   sphere
-   2pt_spline
-   3pt_arc
+   exponential
+   fibonacci
+   formula_shape
    hilbert
    hilbert3d
    hilbert_image
    image
-   random_vector
+   line
+   ngon
+   plane
    profile_parametric
+   random_vector
    scripted
-   scripted_intro
-   formula_shape
    scripted2
+   scripted_intro
+   sphere

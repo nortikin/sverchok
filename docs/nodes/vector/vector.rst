@@ -15,3 +15,5 @@ Vector
    vector_sort
    vector_noise
    vector_xyz
+   vector_polar_in
+   vector_polar_out

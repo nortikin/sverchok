@@ -5,16 +5,16 @@ Modifier Make
 .. toctree::
    :maxdepth: 2
 
-   uv_connection
-   adaptative_polygons
    adaptative_edges
-   cross_section
+   adaptative_polygons
    bisect
-   solidify
-   wireframe
-   delaunay
-   voronoi
    convex_hull
+   cross_section
+   delaunay
    lathe
-   wafel
    pipe_tubes
+   solidify
+   uv_connection
+   voronoi
+   wafel
+   wireframe

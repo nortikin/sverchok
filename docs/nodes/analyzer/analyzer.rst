@@ -14,3 +14,4 @@ Analyzer
    raycast
    volume
    weights
+   calc_normals
