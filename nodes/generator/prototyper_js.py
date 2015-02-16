@@ -26,16 +26,19 @@ show what can be done in this arena.
 
 '''
 
+import importlib
+
+# necessary for import checking
+if importlib.find_loader('execjs'):
+    import execjs
+    print('execjs will be available')
+else:
+    print('execjs will not be available, prototype node will not function.')
+    print('obtain execjs from: https://github.com/doloopwhile/PyExecJS')
+
 import ast
 import os
 import traceback
-
-try:
-    import execjs
-    print('execjs will be available')
-except:
-    print('execjs will not be available, prototype node will not function.')
-    print('obtain execjs from: https://github.com/doloopwhile/PyExecJS')
 
 import bpy
 from bpy.props import (
@@ -48,12 +51,8 @@ from bpy.props import (
 
 from sverchok.utils.sv_panels_tools import sv_get_local_path
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (
-    dataCorrect,
-    updateNode,
-    SvSetSocketAnyType,
-    SvGetSocketAnyType
-)
+from sverchok.data_structure import (dataCorrect, updateNode)
+
 
 FAIL_COLOR = (0.8, 0.1, 0.1)
 READY_COLOR = (0, 0.8, 0.95)
@@ -70,12 +69,13 @@ class SvPrototypeCB(bpy.types.Operator):
         n = context.node
 
         if type_op == 'LOAD':
-            local_file = bpy.data.texts[n.script_name].as_string()
-            ctx = execjs.compile(local_file)
-            n.set_node_function(ctx.call)
+            n.import_script()
 
-        if type_op == 'PLAY':
+        if type_op == 'PLAY':  # temp testing
             n.process()
+
+        if type_op == 'PLAY2':  # temp testing
+            print('wtf..')
 
     def execute(self, context):
         self.dispatch(context, self.fn_name)
@@ -88,21 +88,21 @@ class SvPrototypeJS(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvPrototypeJS'
     bl_label = 'JS Generator'
 
+    node_dict = {}
     script_name = StringProperty()
+    STATE = StringProperty(default='UNLOADED')
 
     mode_options = [
         ("Internal", "Internal", "", 0),
         ("External", "External", "", 1),
     ]
 
-    origin = bpy.props.EnumProperty(
+    origin = EnumProperty(
         items=mode_options,
         description="pick where to load the js from",
         default="Internal",
         update=updateNode
     )
-
-    node_dict = {}
 
     def set_node_function(self, node_function):
         self.node_dict[hash(self)]['node_function'] = node_function
@@ -121,24 +121,39 @@ class SvPrototypeJS(bpy.types.Node, SverchCustomTreeNode):
         row = col.row()
         row.prop(self, "origin", expand=True)
 
-        if self.origin == 'Internal':
-            row2 = col.row()
-            row2.prop_search(self, 'script_name', D, 'texts', text='', icon='TEXT')
-            if self.script_name:
-                row2.operator(sv_callback, text='', icon='PLUGIN').fn_name = 'LOAD'
+        if self.STATE == 'UNLOADED':
+            if self.origin == 'Internal':
+                row2 = col.row()
+                row2.prop_search(self, 'script_name', D, 'texts', text='', icon='TEXT')
+                if self.script_name:
+                    row2.operator(sv_callback, text='', icon='PLUGIN').fn_name = 'LOAD'
+            else:
+                # show file loading, this will import to bpy.data.texts
+                pass
         else:
-            # show file loading, this will import to bpy.data.texts
-            pass
 
-        if self.get_node_function():
             row = layout.row()
-            row.operator(sv_callback, text='do stuff').fn_name = 'PLAY'
+            f1 = row.operator(sv_callback, text='do stuff')
+            f1.fn_name = 'PLAY'
+
+            f2 = row.operator(sv_callback, text='other')
+            f2.fn_name = 'PLAY2'
+
+    def import_script(self):
+        try:
+            local_file = bpy.data.texts[self.script_name].as_string()
+            ctx = execjs.compile(local_file)
+            self.set_node_function(ctx.call)
+            self.STATE = 'LOADED'
+        except:
+            self.STATE = 'UNLOADED'
+        print(self.STATE)
 
     def process(self):
         this_func = self.get_node_function()
 
         args = (10, 20, 30)
-        v, e = this_func("jazz", *args)
+        v, e = this_func("sv_proto_main", *args)
         print(v, e)
 
         fg = this_func('inputs', '')
