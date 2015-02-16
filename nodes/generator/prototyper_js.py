@@ -71,11 +71,11 @@ class SvPrototypeCB(bpy.types.Operator):
         if type_op == 'LOAD':
             n.import_script()
 
-        if type_op == 'PLAY':  # temp testing
-            n.process()
+        if type_op == 'RELOAD':  # temp testing
+            n.import_script()
 
-        if type_op == 'PLAY2':  # temp testing
-            print('wtf..')
+        if type_op == 'CLEAR':  # temp testing
+            n.deport_script()
 
     def execute(self, context):
         self.dispatch(context, self.fn_name)
@@ -133,11 +133,8 @@ class SvPrototypeJS(bpy.types.Node, SverchCustomTreeNode):
         else:
 
             row = layout.row()
-            f1 = row.operator(sv_callback, text='do stuff')
-            f1.fn_name = 'PLAY'
-
-            f2 = row.operator(sv_callback, text='other')
-            f2.fn_name = 'PLAY2'
+            for action in ['RELOAD', 'CLEAR']:
+                row.operator(sv_callback, text=action).fn_name = action
 
     def import_script(self):
         try:
@@ -148,6 +145,11 @@ class SvPrototypeJS(bpy.types.Node, SverchCustomTreeNode):
         except:
             self.STATE = 'UNLOADED'
         print(self.STATE)
+
+    def deport_script(self):
+        self.set_node_function({})
+        self.STATE = 'UNLOADED'
+        print('unloaded: '.format(self.script_name))
 
     def process(self):
         this_func = self.get_node_function()
