@@ -394,7 +394,8 @@ class SvBmeshViewerNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     def get_children(self):
         objects = bpy.data.objects
         objs = [obj for obj in objects if obj.type == 'MESH']
-        return [o for o in objs if o['basename'] == self.basemesh_name]
+        # critera, basename must be in object.keys and the value must be self.basemesh_name
+        return [o for o in objs if ('basename' in o.keys() and o['basename'] == self.basemesh_name)]
 
     def remove_non_updated_objects(self, obj_index):
         objs = self.get_children()
