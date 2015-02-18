@@ -59,6 +59,7 @@ This node has the following outputs:
 - **Vertices**
 - **Edges**
 - **Polygons**
+- **Matrices**. Matrices that are applied to generated copies of source mesh.
 
 If ``Edges`` or ``Polygons`` input is not connected, then corresponding output will be empty.
 
@@ -76,3 +77,8 @@ One object as input, Iterations = 4; one matrix specifies scale by 0.6 along X a
 One Box as input, Iteration = 3, two matrices:
 
 .. image:: https://cloud.githubusercontent.com/assets/284644/5691509/04d79802-98ec-11e4-9560-e6346c6ab7c8.png
+
+Iterate cubes along with pentagons:
+
+.. image:: https://cloud.githubusercontent.com/assets/284644/6249157/241a50c2-b7a7-11e4-9937-adb096f1d694.png
+
