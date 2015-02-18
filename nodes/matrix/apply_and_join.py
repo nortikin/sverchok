@@ -67,8 +67,6 @@ class SvMatrixApplyJoinNode(bpy.types.Node, SverchCustomTreeNode):
         result_vertices = self.apply(vertices, matrices)
         result_vertices = Vector_degenerate(result_vertices)
 
-        self.outputs['Vertices'].sv_set(result_vertices)
-
         if self.outputs['Edges'].is_linked or self.outputs['Faces'].is_linked:
             result_edges = edges * n
             result_faces = faces * n
@@ -80,6 +78,8 @@ class SvMatrixApplyJoinNode(bpy.types.Node, SverchCustomTreeNode):
                 self.outputs['Edges'].sv_set(result_edges)
             if self.outputs['Faces'].is_linked:
                 self.outputs['Faces'].sv_set(result_faces)
+
+        self.outputs['Vertices'].sv_set(result_vertices)
 
     def apply(self, vecs, mats):
         out = []
