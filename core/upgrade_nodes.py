@@ -142,6 +142,8 @@ new_socket_dict = {
         [['outputs', 'StringsSocket', 'newpols', 3]],
     'IndexViewerNode':
         [['inputs', 'StringsSocket', 'text', 4]],
+    'SvIterateNode':
+        [['outputs', 'MatrixSocket', 'Matrices', 3]],
     }
 
 
