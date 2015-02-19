@@ -26,11 +26,14 @@ from bpy.props import IntProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat, Matrix_generate, Vector_generate, Vector_degenerate
 
+
 def concat(lists):
     return reduce(iadd, lists)
 
+
 def Matrix_degenerate(ms):
-    return [[ j[:] for j in M ] for M in ms]
+    return [[j[:] for j in M] for M in ms]
+
 
 def iterate_matrices(matrices, vertices, edges, faces, count, offset, r=0):
     result_vertices = []
@@ -72,11 +75,14 @@ def iterate(matrices, matrix, vertices, edges, faces, count, offset, r=0):
 
     return result_vertices, result_edges, result_faces
 
+
 def shift_edges(edges, offset):
-    return [(v1+offset, v2+offset) for (v1,v2) in edges]
+    return [(v1+offset, v2+offset) for (v1, v2) in edges]
+
 
 def shift_faces(faces, offset):
     return [[v+offset for v in face] for face in faces]
+
 
 def calc_matrix_powers(matrices, count):
     if count == 0:
@@ -87,9 +93,10 @@ def calc_matrix_powers(matrices, count):
     result = []
     result.extend(matrices)
     for m in matrices:
-        result.extend( [m*n for n in calc_matrix_powers(matrices, count-1)] )
+        result.extend([m*n for n in calc_matrix_powers(matrices, count-1)])
 
     return result
+
 
 class SvIterateNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Iterate matrix transformation '''
@@ -97,9 +104,9 @@ class SvIterateNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Iterate'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    count_ = IntProperty(name='Iterations', description='Number of iterations',
-                        default=1, min=0,
-                        update=updateNode)
+    count_ = IntProperty(
+        name='Iterations', description='Number of iterations',
+        default=1, min=0, update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('MatrixSocket', "Matrix", "Matrix")
@@ -111,8 +118,8 @@ class SvIterateNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('VerticesSocket', 'Vertices')
         self.outputs.new('StringsSocket', 'Edges')
         self.outputs.new('StringsSocket', 'Polygons')
-        self.outputs.new('StringsSocket', 'Matrices')
-  
+        self.outputs.new('MatrixSocket', 'Matrices')
+
     def process(self):
         # inputs
         if not self.inputs['Matrix'].is_linked:
@@ -120,12 +127,11 @@ class SvIterateNode(bpy.types.Node, SverchCustomTreeNode):
 
         matrices = self.inputs['Matrix'].sv_get()
         matrices = Matrix_generate(matrices)
-        counts   = self.inputs['Iterations'].sv_get()[0]
+        counts = self.inputs['Iterations'].sv_get()[0]
         vertices_s = self.inputs['Vertices'].sv_get(default=[[]])
         vertices_s = Vector_generate(vertices_s)
         edges_s = self.inputs['Edges'].sv_get(default=[[]])
         faces_s = self.inputs['Polygons'].sv_get(default=[[]])
-
 
         if self.outputs['Vertices'].is_linked or self.outputs['Matrices'].is_linked:
 
@@ -136,19 +142,24 @@ class SvIterateNode(bpy.types.Node, SverchCustomTreeNode):
 
             if edges_s[0]:
                 if len(edges_s) != len(vertices_s):
-                    raise Exception( "Invalid number of edges: {} != {}".format(len(edges_s), len(vertices_s)) )
+                    raise Exception(
+                        "Invalid number of edges: {} != {}".format(len(edges_s), len(vertices_s))
+                    )
+
             if faces_s[0]:
                 if len(faces_s) != len(vertices_s):
-                    raise Exception( "Invalid number of polygons: {} != {}".format(len(faces_s), len(vertices_s)) )
+                    raise Exception(
+                        "Invalid number of polygons: {} != {}".format(len(faces_s), len(vertices_s))
+                    )
 
             meshes = match_long_repeat([vertices_s, edges_s, faces_s, counts])
 
             offset = 0
             for vertices, edges, faces, count in zip(*meshes):
-                result_vertices.extend( vertices )
+                result_vertices.extend(vertices)
 
-                result_edges.extend( shift_edges(edges, offset) )
-                result_faces.extend( shift_faces(faces, offset) )
+                result_edges.extend(shift_edges(edges, offset))
+                result_faces.extend(shift_faces(faces, offset))
                 #result_matrices.extend([Matrix()] * len(matrices))
                 result_matrices.append(Matrix())
                 offset += len(vertices)
@@ -172,12 +183,14 @@ class SvIterateNode(bpy.types.Node, SverchCustomTreeNode):
             if self.outputs['Matrices'].is_linked:
                 self.outputs['Matrices'].sv_set(Matrix_degenerate(result_matrices))
 
+
 def register():
     bpy.utils.register_class(SvIterateNode)
 
 
 def unregister():
     bpy.utils.unregister_class(SvIterateNode)
+
 
 if __name__ == '__main__':
     register()
