@@ -130,6 +130,7 @@ nodes_dict = {
         'objects_along_edge',
         'randomize',
         'extrude_separate',
+        'extrude_edges',
         'iterate',
     ],
 

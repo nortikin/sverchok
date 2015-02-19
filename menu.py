@@ -230,6 +230,7 @@ def make_node_cats():
     node_cats["Beta Nodes"] = [
         # for testing convenience, and while no documentation
         ['SvBevelNode',         "Bevel"],
+        ['SvExtrudeEdgesNode',  "Extrude Edges"],
         ["SvOffsetNode",        "Offset"],
         ["SvRecalcNormalsNode", "Recalc normals"],
         ["SvListDecomposeNode", "List Decompose"],
