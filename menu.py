@@ -235,6 +235,7 @@ def make_node_cats():
         ["SvFormulaShapeNode",  "Formula shape", "IPO"],
         ["SvScriptNodeMK2",     "Script 2"],
         ["SvMeshFilterNode", "Mesh filter"],
+        ["SvTriangulateNode", "Triangulate mesh"],
         ['SvBmeshViewerNodeMK2', 'BMeshView2'],
         ['SvBricksNode', 'Bricks grid'],
         ["SvMatrixApplyJoinNode", "Apply matrix to mesh"],

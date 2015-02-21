@@ -120,6 +120,7 @@ nodes_dict = {
         'mirror',
         'polygons_boom',
         'polygons_to_edges',
+        'triangulate',
         'remove_doubles',
         'rotation',
         'scale',
