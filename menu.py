@@ -213,8 +213,8 @@ def make_node_cats():
         ["SvFrameInfoNode",     "Frame info"],
         ["SvEmptyOutNode",      "Empty out",    "OUTLINER_OB_EMPTY"],
         ["SvInstancerNode",     "mesh instancer"],
-        ["SvGetPropNode",       "Get property",   'FORCE_VORTEX'],
-        ["SvSetPropNode",       "Set property",   'FORCE_VORTEX'],
+        ["SvGetPropNode",       "Get property",      'FORCE_VORTEX'],
+        ["SvSetPropNode",       "Set property",      'FORCE_VORTEX'],
         ["SvVertexGroupNode",   "Vertext group"],
         ["SvRayCastNode",       "Raycast"],
     ]
@@ -229,16 +229,17 @@ def make_node_cats():
 
     node_cats["Beta Nodes"] = [
         # for testing convenience, and while no documentation
-        ['SvBevelNode',         "Bevel"],
-        ["SvOffsetNode",        "Offset"],
-        ["SvListDecomposeNode", "List Decompose"],
-        ["SvFormulaShapeNode",  "Formula shape", "IPO"],
-        ["SvScriptNodeMK2",     "Script 2"],
-        ["SvMeshFilterNode", "Mesh filter"],
-        ['SvBmeshViewerNodeMK2', 'BMeshView2'],
-        ['SvBricksNode', 'Bricks grid'],
+        ['SvBevelNode',           "Bevel"],
+        ["SvOffsetNode",          "Offset"],
+        ["SvListDecomposeNode",   "List Decompose"],
+        ["SvFormulaShapeNode",    "Formula shape",          "IPO"],
+        ["SvScriptNodeMK2",       "Script 2"],
+        ["SvMeshFilterNode",      "Mesh filter"],
+        ['SvBmeshViewerNodeMK2',  'BMeshView2'],
+        ['SvBricksNode',          'Bricks grid'],
+        ['SvTypeViewerNode',      'Typography Viewer'],
         ["SvMatrixApplyJoinNode", "Apply matrix to mesh"],
-        ["SvIterateNode", "Iterate matrix transformation"],
+        ["SvIterateNode",         "Iterate matrix transformation"],
     ]
 
     node_cats["Alpha Nodes"] = [

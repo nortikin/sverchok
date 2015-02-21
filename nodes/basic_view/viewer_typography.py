@@ -19,25 +19,22 @@
 import itertools
 
 import bpy
-from bpy.props import BoolProperty, StringProperty, BoolVectorProperty
+from bpy.props import BoolProperty, StringProperty, BoolVectorProperty, FloatProperty
 from mathutils import Matrix, Vector
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import dataCorrect, fullList, updateNode
-from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 from sverchok.utils.sv_viewer_utils import (
-    matrix_sanitizer,
-    natural_plus_one,
-    get_random_init
+    matrix_sanitizer, natural_plus_one, get_random_init
 )
 
 
-def make_bmesh_geometry(node, idx, context, *data):
+def make_text_object(node, idx, context, *data):
     scene = context.scene
-    # meshes = bpy.data.meshes
     curves = bpy.data.curves
     objects = bpy.data.objects
-    str_info, matrix = data
+    print('data:', data)
+    txt, matrix = data
 
     name = node.basemesh_name + "_" + str(idx)
 
@@ -54,8 +51,10 @@ def make_bmesh_geometry(node, idx, context, *data):
         sv_object = objects.new(name, f)
         scene.objects.link(sv_object)
 
-    f.size = 0.3
-    f.body = 'chance'
+    f.size = self.fsize
+    f.body = self.txt
+    f.offset_x = self.xoffset
+    f.offset_y = self.yoffset
 
     sv_object['idx'] = idx
     sv_object['madeby'] = node.name
@@ -69,10 +68,10 @@ def make_bmesh_geometry(node, idx, context, *data):
         sv_object.matrix_local = Matrix.Identity(4)
 
 
-class SvBmeshViewOp2(bpy.types.Operator):
+class SvTypeViewOp2(bpy.types.Operator):
 
-    bl_idname = "node.sv_callback_bmesh_viewer"
-    bl_label = "Sverchok bmesh general callback"
+    bl_idname = "node.sv_callback_type_viewer"
+    bl_label = "Sverchok Type general callback"
     bl_options = {'REGISTER', 'UNDO'}
 
     fn_name = StringProperty(default='')
@@ -109,10 +108,10 @@ class SvBmeshViewOp2(bpy.types.Operator):
         return {'FINISHED'}
 
 
-class SvBmeshViewerNodeMK2(bpy.types.Node, SverchCustomTreeNode):
+class SvTypeViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
-    bl_idname = 'SvBmeshViewerNodeMK2'
-    bl_label = 'Bmesh Viewer Draw 2'
+    bl_idname = 'SvTypeViewerNode'
+    bl_label = 'Bmesh Typer Draw 2'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     # hints found at ba.org/forum/showthread.php?290106
@@ -158,16 +157,18 @@ class SvBmeshViewerNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         description="This sets which layer objects are placed on",
         get=g, set=s)
 
+    fsize = FloatProperty(default=1.0, update=updateNode)
+    yoffset = FloatProperty(default=0.0, update=updateNode)
+    xoffset = FloatProperty(default=0.0, update=updateNode)
+
     def sv_init(self, context):
         self.use_custom_color = True
-        self.inputs.new('VerticesSocket', 'vertices', 'vertices')
-        self.inputs.new('StringsSocket', 'edges', 'edges')
-        self.inputs.new('StringsSocket', 'faces', 'faces')
+        self.inputs.new('StringsSocket', 'text', 'text')
         self.inputs.new('MatrixSocket', 'matrix', 'matrix')
 
     def draw_buttons(self, context, layout):
         view_icon = 'BLENDER' if self.activate else 'ERROR'
-        sh = 'node.sv_callback_bmesh_viewer'
+        sh = 'node.sv_callback_type_viewer'
 
         def icons(TYPE):
             NAMED_ICON = {
@@ -195,6 +196,11 @@ class SvBmeshViewerNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             row = col.row(align=True)
             row.prop(self, "basemesh_name", text="", icon='OUTLINER_OB_MESH')
 
+            col = layout.column(align=True)
+            col.prop(self, 'fsize')
+            col.prop(self, 'xoffset')
+            col.prop(self, 'yoffset')
+
             row = col.row(align=True)
             row.prop_search(self, 'material', bpy.data, 'materials', text='', icon='MATERIAL_DATA')
             row.operator(sh, text='', icon='ZOOMIN').fn_name = 'add_material'
@@ -204,7 +210,7 @@ class SvBmeshViewerNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         layout.separator()
 
         row = layout.row(align=True)
-        sh = 'node.sv_callback_bmesh_viewer'
+        sh = 'node.sv_callback_type_viewer'
         row.operator(sh, text='Rnd Name').fn_name = 'random_mesh_name'
 
         col = layout.column(align=True)
@@ -218,8 +224,15 @@ class SvBmeshViewerNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         if not self.activate:
             return
 
-        for obj_index, Verts in enumerate(mverts):
-            make_text_object(self, obj_index, bpy.context, info)
+        if not self.inputs['text'].is_linked:
+            return
+
+        text = self.inputs['text'].sv_get(default=['sv_text'])[0]
+        matrices = self.inputs['matrix'].sv_get(default=[[]])
+
+        for obj_index, txt_content in enumerate(text):
+            matrix = matrices[obj_index]
+            make_text_object(self, obj_index, bpy.context, (txt_content, matrix))
 
         self.remove_non_updated_objects(obj_index)
         objs = self.get_children()
@@ -273,10 +286,10 @@ class SvBmeshViewerNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
 
 def register():
-    bpy.utils.register_class(SvBmeshViewerNodeMK2)
-    bpy.utils.register_class(SvBmeshViewOp2)
+    bpy.utils.register_class(SvTypeViewerNode)
+    bpy.utils.register_class(SvTypeViewOp2)
 
 
 def unregister():
-    bpy.utils.unregister_class(SvBmeshViewerNodeMK2)
-    bpy.utils.unregister_class(SvBmeshViewOp2)
+    bpy.utils.unregister_class(SvTypeViewerNode)
+    bpy.utils.unregister_class(SvTypeViewOp2)

@@ -23,6 +23,7 @@ nodes_dict = {
         'viewer_skin',
         'viewer_text',
         'viewer_mk2',
+        'viewer_typography',
         'empty_out',
     ],
 
