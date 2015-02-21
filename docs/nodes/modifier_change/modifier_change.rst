@@ -14,6 +14,7 @@ Modifier Change
    objects_along_edge
    polygon_boom
    polygons_to_edges
+   triangulate
    randomize
    remove_doubles
    separate_loose_parts
