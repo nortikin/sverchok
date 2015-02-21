@@ -51,8 +51,6 @@ class SvExtrudeEdgesNode(bpy.types.Node, SverchCustomTreeNode):
         # inputs
         if not (self.inputs['Vertices'].is_linked and self.inputs['Polygons'].is_linked):
             return
-        #if not any(self.outputs[name].is_linked for name in ['Vertices', 'Edges', 'Polygons', 'ExtrudedPolys', 'OtherPolys']):
-        #    return
 
         vertices_s = self.inputs['Vertices'].sv_get()
         edges_s = self.inputs['Edges'].sv_get(default=[[]])
