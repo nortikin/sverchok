@@ -32,31 +32,34 @@ from sverchok.utils.sv_viewer_utils import (
 )
 
 
-def make_bmesh_geometry(node, idx, context, *topology):
+def make_bmesh_geometry(node, idx, context, *data):
     scene = context.scene
-    meshes = bpy.data.meshes
+    # meshes = bpy.data.meshes
+    curves = bpy.data.curves
     objects = bpy.data.objects
-    str_info, matrix = topology
+    str_info, matrix = data
 
     name = node.basemesh_name + "_" + str(idx)
 
+    # CURVES
+    if not (name in curves):
+        f = curves.new(name, 'FONT')
+    else:
+        f = curves[name]
+
+    # CONTAINER OBJECTS
     if name in objects:
         sv_object = objects[name]
     else:
-        temp_mesh = default_mesh(name)
-        sv_object = objects.new(name, temp_mesh)
+        sv_object = objects.new(name, f)
         scene.objects.link(sv_object)
 
-    # book-keeping via ID-props!? even this is can be broken by renames
+    f.size = 0.3
+    f.body = 'chance'
+
     sv_object['idx'] = idx
     sv_object['madeby'] = node.name
     sv_object['basename'] = node.basemesh_name
-
-    mesh = sv_object.data
-
-    ''' get bmesh, write bmesh to obj, free bmesh'''
-    # TEXT HERE
-
     sv_object.hide_select = False
 
     if matrix:
@@ -187,21 +190,13 @@ class SvBmeshViewerNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         if col:
             row = col.row(align=True)
             row.prop(self, "grouping", text="Group", toggle=True)
+            row.operator(sh, text='Select Toggle').fn_name = 'mesh_select'
 
             row = col.row(align=True)
-            row.scale_y = 1
             row.prop(self, "basemesh_name", text="", icon='OUTLINER_OB_MESH')
 
             row = col.row(align=True)
-            row.scale_y = 1.62
-            row.operator(sh, text='Select Toggle').fn_name = 'mesh_select'
-
-            col.separator()
-            row = col.row(align=True)
-            row.scale_y = 1
-            row.prop_search(
-                self, 'material', bpy.data, 'materials', text='',
-                icon='MATERIAL_DATA')
+            row.prop_search(self, 'material', bpy.data, 'materials', text='', icon='MATERIAL_DATA')
             row.operator(sh, text='', icon='ZOOMIN').fn_name = 'add_material'
 
     def draw_buttons_ext(self, context, layout):
