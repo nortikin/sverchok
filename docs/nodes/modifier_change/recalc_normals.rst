@@ -33,3 +33,10 @@ This node has the following outputs:
 - **Edges**.
 - **Polygons**.
 
+Example of usage
+----------------
+
+Visualisation of cube normals turned inside:
+
+.. image:: https://cloud.githubusercontent.com/assets/284644/6315650/6e5f9d88-ba2a-11e4-84db-624d670ee04d.png
+
