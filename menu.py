@@ -231,6 +231,7 @@ def make_node_cats():
         # for testing convenience, and while no documentation
         ['SvBevelNode',         "Bevel"],
         ["SvOffsetNode",        "Offset"],
+        ["SvRecalcNormalsNode", "Recalc normals"],
         ["SvListDecomposeNode", "List Decompose"],
         ["SvFormulaShapeNode",  "Formula shape", "IPO"],
         ["SvScriptNodeMK2",     "Script 2"],
