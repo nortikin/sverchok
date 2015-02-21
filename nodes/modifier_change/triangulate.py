@@ -98,7 +98,6 @@ class SvTriangulateNode(bpy.types.Node, SverchCustomTreeNode):
             for m, face in zip(mask,bm.faces):
                 if m:
                     b_faces.append(face)
-            print(len(b_faces))
 
             res = bmesh.ops.triangulate(bm, faces=b_faces,
                             quad_method=int(self.quad_mode),
