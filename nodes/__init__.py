@@ -122,6 +122,7 @@ nodes_dict = {
         'polygons_to_edges',
         'triangulate',
         'remove_doubles',
+        'recalc_normals',
         'rotation',
         'scale',
         'vertices_mask',
