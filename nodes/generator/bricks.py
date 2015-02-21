@@ -159,7 +159,7 @@ class SvBricksNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('VerticesSocket', "Centers")
 
     def process(self):
-        if not self.outputs['Vertices'].is_linked:
+        if not (self.outputs['Vertices'].is_linked or self.outputs['Centers'].is_linked):
             return
 
         # inputs
