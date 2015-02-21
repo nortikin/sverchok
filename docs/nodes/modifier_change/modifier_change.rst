@@ -15,6 +15,7 @@ Modifier Change
    polygon_boom
    polygons_to_edges
    triangulate
+   recalc_normals
    randomize
    remove_doubles
    separate_loose_parts
