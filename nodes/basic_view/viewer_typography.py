@@ -28,6 +28,10 @@ from sverchok.utils.sv_viewer_utils import (
     matrix_sanitizer, natural_plus_one, get_random_init
 )
 
+# <zeffii feb 2015>
+# there are many ways to implement features but for now i'm keeping
+# it conservative UI wise.
+
 
 def make_text_object(node, idx, context, data):
     scene = context.scene
@@ -201,15 +205,16 @@ class SvTypeViewerNode(bpy.types.Node, SverchCustomTreeNode):
         sh = 'node.sv_callback_type_viewer'
 
         def icons(TYPE):
-            NAMED_ICON = {
+            ICON = {
                 'hide': 'RESTRICT_VIEW',
                 'hide_render': 'RESTRICT_RENDER',
                 'hide_select': 'RESTRICT_SELECT'}.get(TYPE)
-            return 'WARNING' if not NAMED_ICON else NAMED_ICON + ['_ON', '_OFF'][getattr(self, TYPE)]
+            return 'WARNING' if not ICON else ICON + ['_ON', '_OFF'][getattr(self, TYPE)]
 
         col = layout.column(align=True)
         row = col.row(align=True)
         row.column().prop(self, "activate", text="UPD", toggle=True, icon=view_icon)
+
         row.separator()
         row.operator(sh, text='', icon=icons('hide')).fn_name = 'hide'
         row.operator(sh, text='', icon=icons('hide_select')).fn_name = 'hide_select'
@@ -263,6 +268,7 @@ class SvTypeViewerNode(bpy.types.Node, SverchCustomTreeNode):
         if (not self.activate) or (not self.inputs['text'].is_linked):
             return
 
+        # no autorepeat yet.
         text = self.inputs['text'].sv_get(default=[['sv_text']])[0]
         matrices = self.inputs['matrix'].sv_get(default=[[]])
 
@@ -331,7 +337,7 @@ class SvTypeViewerNode(bpy.types.Node, SverchCustomTreeNode):
         group = groups.get(named, groups.new(named))
 
         for obj in objs:
-            if obj.name not in group.objects:
+            if not (obj.name in group.objects):
                 group.objects.link(obj)
 
     def set_corresponding_materials(self, objs):
