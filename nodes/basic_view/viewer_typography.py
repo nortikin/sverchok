@@ -51,7 +51,10 @@ def make_text_object(node, idx, context, data):
         sv_object = objects.new(name, f)
         scene.objects.link(sv_object)
 
+    default = bpy.data.fonts.get('Bfont')
+
     f.size = node.fsize
+    f.font = bpy.data.fonts.get(node.fontname, default)
     f.body = txt
     f.offset_x = node.xoffset
     f.offset_y = node.yoffset
@@ -66,6 +69,29 @@ def make_text_object(node, idx, context, data):
         sv_object.matrix_local = matrix
     else:
         sv_object.matrix_local = Matrix.Identity(4)
+
+
+class SvFontFileImporterOp(bpy.types.Operator):
+
+    bl_idname = "node.sv_fontfile_importer"
+    bl_label = "sv FontFile Importer"
+
+    filepath = StringProperty(
+        name="File Path",
+        description="Filepath used for importing the font file",
+        maxlen=1024, default="", subtype='FILE_PATH')
+
+    def execute(self, context):
+        n = self.node
+        t = bpy.data.fonts.load(self.filepath)
+        n.fontname = t.name
+        return {'FINISHED'}
+
+    def invoke(self, context, event):
+        self.node = context.node
+        wm = context.window_manager
+        wm.fileselect_add(self)
+        return {'RUNNING_MODAL'}
 
 
 class SvTypeViewOp2(bpy.types.Operator):
@@ -102,6 +128,12 @@ class SvTypeViewOp2(bpy.types.Operator):
             mat.use_nodes = True
             mat.use_fake_user = True  # usually handy
             n.material = mat.name
+
+        elif type_op == 'pick_font':
+            # fp = "SourceCodePro-Regular.ttf"
+            # bpy.ops.font.open(filepath=fp)
+            print('should pick font')
+            pass
 
     def execute(self, context):
         self.hide_unhide(context, self.fn_name)
@@ -157,6 +189,7 @@ class SvTypeViewerNode(bpy.types.Node, SverchCustomTreeNode):
         description="This sets which layer objects are placed on",
         get=g, set=s)
 
+    fontname = StringProperty(default='', update=updateNode)
     fsize = FloatProperty(default=1.0, update=updateNode)
     yoffset = FloatProperty(default=0.0, update=updateNode)
     xoffset = FloatProperty(default=0.0, update=updateNode)
@@ -168,6 +201,7 @@ class SvTypeViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons(self, context, layout):
         view_icon = 'BLENDER' if self.activate else 'ERROR'
+
         sh = 'node.sv_callback_type_viewer'
 
         def icons(TYPE):
@@ -206,14 +240,20 @@ class SvTypeViewerNode(bpy.types.Node, SverchCustomTreeNode):
             row.operator(sh, text='', icon='ZOOMIN').fn_name = 'add_material'
 
     def draw_buttons_ext(self, context, layout):
-        self.draw_buttons(context, layout)
-        layout.separator()
-
-        row = layout.row(align=True)
         sh = 'node.sv_callback_type_viewer'
+        shf = 'node.sv_fontfile_importer'
+
+        self.draw_buttons(context, layout)
+
+        layout.separator()
+        row = layout.row(align=True)
         row.operator(sh, text='Rnd Name').fn_name = 'random_mesh_name'
 
         col = layout.column(align=True)
+        row = col.row(align=True)
+        row.prop_search(self, 'fontname', bpy.data, 'fonts', text='', icon='FONT_DATA')
+        row.operator(shf, text='', icon='ZOOMIN')
+
         box = col.box()
         if box:
             box.label(text="Beta options")
@@ -293,8 +333,10 @@ class SvTypeViewerNode(bpy.types.Node, SverchCustomTreeNode):
 def register():
     bpy.utils.register_class(SvTypeViewerNode)
     bpy.utils.register_class(SvTypeViewOp2)
+    bpy.utils.register_class(SvFontFileImporterOp)
 
 
 def unregister():
+    bpy.utils.unregister_class(SvFontFileImporterOp)
     bpy.utils.unregister_class(SvTypeViewerNode)
     bpy.utils.unregister_class(SvTypeViewOp2)
