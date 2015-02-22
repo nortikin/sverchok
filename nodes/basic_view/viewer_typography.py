@@ -264,6 +264,15 @@ class SvTypeViewerNode(bpy.types.Node, SverchCustomTreeNode):
         text = self.inputs['text'].sv_get(default=[['sv_text']])[0]
         matrices = self.inputs['matrix'].sv_get(default=[[]])
 
+        mtname = 'Empty_' + self.basemesh_name  # ##################
+        scene = bpy.context.scene  # ###############################
+
+        if True:  # ################################################
+            if not (mtname in bpy.data.objects):  # ################
+                empty = bpy.data.objects.new(mtname, None)  # ######
+                scene.objects.link(empty)   # ######################
+                scene.update()  # ##################################
+
         for obj_index, txt_content in enumerate(text):
             matrix = matrices[obj_index]
             if isinstance(txt_content, list) and (len(txt_content) == 1):
@@ -282,6 +291,10 @@ class SvTypeViewerNode(bpy.types.Node, SverchCustomTreeNode):
         # truthy if self.material is in .materials
         if bpy.data.materials.get(self.material):
             self.set_corresponding_materials(objs)
+
+        if True:  # ###############################################
+            for obj in objs:  # ###################################
+                obj.parent = bpy.data.objects[mtname]  # ##########
 
     def get_children(self):
         objs = [obj for obj in bpy.data.objects if obj.type == 'FONT']
