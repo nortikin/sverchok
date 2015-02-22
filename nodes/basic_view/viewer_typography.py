@@ -187,6 +187,8 @@ class SvTypeViewerNode(bpy.types.Node, SverchCustomTreeNode):
     fsize = FloatProperty(default=1.0, update=updateNode)
     yoffset = FloatProperty(default=0.0, update=updateNode)
     xoffset = FloatProperty(default=0.0, update=updateNode)
+    parent_to_empty = BoolProperty(default=False, update=updateNode)
+    parent_name = StringProperty()  # calling updateNode would recurse.
 
     def sv_init(self, context):
         self.use_custom_color = True
@@ -203,9 +205,7 @@ class SvTypeViewerNode(bpy.types.Node, SverchCustomTreeNode):
                 'hide': 'RESTRICT_VIEW',
                 'hide_render': 'RESTRICT_RENDER',
                 'hide_select': 'RESTRICT_SELECT'}.get(TYPE)
-            if not NAMED_ICON:
-                return 'WARNING'
-            return NAMED_ICON + ['_ON', '_OFF'][getattr(self, TYPE)]
+            return 'WARNING' if not NAMED_ICON else NAMED_ICON + ['_ON', '_OFF'][getattr(self, TYPE)]
 
         col = layout.column(align=True)
         row = col.row(align=True)
@@ -253,25 +253,27 @@ class SvTypeViewerNode(bpy.types.Node, SverchCustomTreeNode):
             box.label(text="Beta options")
             box.prop(self, 'layer_choice', text='layer')
 
+        row = layout.row()
+        row.prop(self, 'parent_to_empty', text='parented')
+        if self.parent_to_empty:
+            row.label(self.parent_name)
+
     def process(self):
 
-        if not self.activate:
-            return
-
-        if not self.inputs['text'].is_linked:
+        if (not self.activate) or (not self.inputs['text'].is_linked):
             return
 
         text = self.inputs['text'].sv_get(default=[['sv_text']])[0]
         matrices = self.inputs['matrix'].sv_get(default=[[]])
 
-        mtname = 'Empty_' + self.basemesh_name  # ##################
-        scene = bpy.context.scene  # ###############################
-
-        if True:  # ################################################
-            if not (mtname in bpy.data.objects):  # ################
-                empty = bpy.data.objects.new(mtname, None)  # ######
-                scene.objects.link(empty)   # ######################
-                scene.update()  # ##################################
+        if self.parent_to_empty:
+            mtname = 'Empty_' + self.basemesh_name
+            self.parent_name = mtname
+            scene = bpy.context.scene
+            if not (mtname in bpy.data.objects):
+                empty = bpy.data.objects.new(mtname, None)
+                scene.objects.link(empty)
+                scene.update()
 
         for obj_index, txt_content in enumerate(text):
             matrix = matrices[obj_index]
@@ -292,9 +294,9 @@ class SvTypeViewerNode(bpy.types.Node, SverchCustomTreeNode):
         if bpy.data.materials.get(self.material):
             self.set_corresponding_materials(objs)
 
-        if True:  # ###############################################
-            for obj in objs:  # ###################################
-                obj.parent = bpy.data.objects[mtname]  # ##########
+        if self.parent_to_empty:
+            for obj in objs:
+                obj.parent = bpy.data.objects[mtname]
 
     def get_children(self):
         objs = [obj for obj in bpy.data.objects if obj.type == 'FONT']
