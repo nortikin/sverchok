@@ -29,11 +29,11 @@ from sverchok.utils.sv_viewer_utils import (
 )
 
 
-def make_text_object(node, idx, context, *data):
+def make_text_object(node, idx, context, data):
     scene = context.scene
     curves = bpy.data.curves
     objects = bpy.data.objects
-    print('data:', data)
+
     txt, matrix = data
 
     name = node.basemesh_name + "_" + str(idx)
@@ -51,10 +51,10 @@ def make_text_object(node, idx, context, *data):
         sv_object = objects.new(name, f)
         scene.objects.link(sv_object)
 
-    f.size = self.fsize
-    f.body = self.txt
-    f.offset_x = self.xoffset
-    f.offset_y = self.yoffset
+    f.size = node.fsize
+    f.body = txt
+    f.offset_x = node.xoffset
+    f.offset_y = node.yoffset
 
     sv_object['idx'] = idx
     sv_object['madeby'] = node.name
@@ -80,7 +80,7 @@ class SvTypeViewOp2(bpy.types.Operator):
         n = context.node
         k = n.basemesh_name + "_"
 
-        child = lambda obj: obj.type == "MESH" and obj.name.startswith(k)
+        child = lambda obj: obj.type == "FONT" and obj.name.startswith(k)
         objs = list(filter(child, bpy.data.objects))
 
         if type_op in {'hide', 'hide_render', 'hide_select'}:
@@ -89,7 +89,7 @@ class SvTypeViewOp2(bpy.types.Operator):
                 setattr(obj, type_op, op_value)
             setattr(n, type_op, not op_value)
 
-        elif type_op == 'mesh_select':
+        elif type_op == 'typography_select':
             for obj in objs:
                 obj.select = n.select_state_mesh
             n.select_state_mesh = not n.select_state_mesh
@@ -111,7 +111,7 @@ class SvTypeViewOp2(bpy.types.Operator):
 class SvTypeViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
     bl_idname = 'SvTypeViewerNode'
-    bl_label = 'Bmesh Typer Draw 2'
+    bl_label = 'Type Draw'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     # hints found at ba.org/forum/showthread.php?290106
@@ -191,10 +191,10 @@ class SvTypeViewerNode(bpy.types.Node, SverchCustomTreeNode):
         if col:
             row = col.row(align=True)
             row.prop(self, "grouping", text="Group", toggle=True)
-            row.operator(sh, text='Select Toggle').fn_name = 'mesh_select'
+            row.operator(sh, text='Select').fn_name = 'typography_select'
 
             row = col.row(align=True)
-            row.prop(self, "basemesh_name", text="", icon='OUTLINER_OB_MESH')
+            row.prop(self, "basemesh_name", text="", icon='OUTLINER_OB_CURVE')
 
             col = layout.column(align=True)
             col.prop(self, 'fsize')
@@ -227,11 +227,16 @@ class SvTypeViewerNode(bpy.types.Node, SverchCustomTreeNode):
         if not self.inputs['text'].is_linked:
             return
 
-        text = self.inputs['text'].sv_get(default=['sv_text'])[0]
+        text = self.inputs['text'].sv_get(default=[['sv_text']])[0]
         matrices = self.inputs['matrix'].sv_get(default=[[]])
 
         for obj_index, txt_content in enumerate(text):
             matrix = matrices[obj_index]
+            if isinstance(txt_content, list) and (len(txt_content) == 1):
+                txt_content = txt_content[0]
+            else:
+                txt_content = str(txt_content)
+
             make_text_object(self, obj_index, bpy.context, (txt_content, matrix))
 
         self.remove_non_updated_objects(obj_index)
@@ -245,7 +250,7 @@ class SvTypeViewerNode(bpy.types.Node, SverchCustomTreeNode):
             self.set_corresponding_materials(objs)
 
     def get_children(self):
-        objs = [obj for obj in bpy.data.objects if obj.type == 'MESH']
+        objs = [obj for obj in bpy.data.objects if obj.type == 'FONT']
         return [o for o in objs if o.get('basename') == self.basemesh_name]
 
     def remove_non_updated_objects(self, obj_index):
@@ -254,7 +259,7 @@ class SvTypeViewerNode(bpy.types.Node, SverchCustomTreeNode):
         if not objs:
             return
 
-        meshes = bpy.data.meshes
+        curves = bpy.data.curves
         objects = bpy.data.objects
         scene = bpy.context.scene
 
@@ -267,7 +272,7 @@ class SvTypeViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
         # delete associated meshes
         for object_name in objs:
-            meshes.remove(meshes[object_name])
+            curves.remove(curves[object_name])
 
     def to_group(self, objs):
         groups = bpy.data.groups
