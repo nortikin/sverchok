@@ -338,6 +338,9 @@ class SvTypeViewerNode(bpy.types.Node, SverchCustomTreeNode):
         for obj in objs:
             obj.active_material = bpy.data.materials[self.material]
 
+    def copy(new_node, node):
+        new_node.basemesh_name = get_random_init()
+
 
 def register():
     bpy.utils.register_class(SvTypeViewerNode)
