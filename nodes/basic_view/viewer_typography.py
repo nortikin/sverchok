@@ -129,12 +129,6 @@ class SvTypeViewOp2(bpy.types.Operator):
             mat.use_fake_user = True  # usually handy
             n.material = mat.name
 
-        elif type_op == 'pick_font':
-            # fp = "SourceCodePro-Regular.ttf"
-            # bpy.ops.font.open(filepath=fp)
-            print('should pick font')
-            pass
-
     def execute(self, context):
         self.hide_unhide(context, self.fn_name)
         return {'FINISHED'}
