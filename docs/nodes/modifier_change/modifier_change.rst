@@ -7,6 +7,7 @@ Modifier Change
 
    delete_loose
    extrude_separate
+   extrude_edges
    fill_holes
    intersect_edges
    mask_vertices
