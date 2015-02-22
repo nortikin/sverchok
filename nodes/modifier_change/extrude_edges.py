@@ -24,8 +24,11 @@ from bpy.props import IntProperty, FloatProperty
 import bmesh.ops
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, match_long_repeat, fullList
+from sverchok.data_structure import updateNode, match_long_repeat, fullList, Matrix_generate
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
+
+def is_matrix(lst):
+    return len(lst) == 4 and len(lst[0]) == 4
 
 class SvExtrudeEdgesNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Extrude edges '''
@@ -38,7 +41,7 @@ class SvExtrudeEdgesNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('StringsSocket', 'Edges', 'Edges')
         self.inputs.new('StringsSocket', 'Polygons', 'Polygons')
         self.inputs.new('StringsSocket', 'ExtrudeEdges')
-        self.inputs.new('VerticesSocket', "Vectors")
+        self.inputs.new('MatrixSocket', "Matrices")
 
         self.outputs.new('VerticesSocket', 'Vertices')
         self.outputs.new('StringsSocket', 'Edges')
@@ -55,8 +58,11 @@ class SvExtrudeEdgesNode(bpy.types.Node, SverchCustomTreeNode):
         vertices_s = self.inputs['Vertices'].sv_get()
         edges_s = self.inputs['Edges'].sv_get(default=[[]])
         faces_s = self.inputs['Polygons'].sv_get(default=[[]])
-        zero = Vector((0,0,0))
-        vectors_s = self.inputs['Vectors'].sv_get(default=[[zero]])
+        matrices_s = self.inputs['Matrices'].sv_get(default=[[]])
+        if is_matrix(matrices_s[0]):
+            matrices_s = [Matrix_generate(matrices_s)]
+        else:
+            matrices_s = [Matrix_generate(matrices) for matrices in matrices_s]
         extrude_edges_s = self.inputs['ExtrudeEdges'].sv_get(default=[[]])
 
         result_vertices = []
@@ -66,9 +72,12 @@ class SvExtrudeEdgesNode(bpy.types.Node, SverchCustomTreeNode):
         result_ext_edges = []
         result_ext_faces = []
 
-        meshes = match_long_repeat([vertices_s, edges_s, faces_s, vectors_s, extrude_edges_s])
 
-        for vertices, edges, faces, vectors, extrude_edges in zip(*meshes):
+        meshes = match_long_repeat([vertices_s, edges_s, faces_s, matrices_s, extrude_edges_s])
+
+        for vertices, edges, faces, matrices, extrude_edges in zip(*meshes):
+            if not matrices:
+                matrices = [Matrix()]
             
             bm = bmesh_from_pydata(vertices, edges, faces)
             if extrude_edges:
@@ -83,8 +92,8 @@ class SvExtrudeEdgesNode(bpy.types.Node, SverchCustomTreeNode):
 
             extruded_verts = [v for v in new_geom if isinstance(v, bmesh.types.BMVert)]
 
-            for vertex, vector in zip(*match_long_repeat([extruded_verts, vectors])):
-                bmesh.ops.translate(bm, verts=[vertex], vec=vector)
+            for vertex, matrix in zip(*match_long_repeat([extruded_verts, matrices])):
+                bmesh.ops.transform(bm, verts=[vertex], matrix=matrix, space=Matrix())
 
             extruded_verts = [tuple(v.co) for v in extruded_verts]
 
