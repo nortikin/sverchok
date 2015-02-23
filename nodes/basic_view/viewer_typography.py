@@ -19,7 +19,13 @@
 import itertools
 
 import bpy
-from bpy.props import BoolProperty, StringProperty, BoolVectorProperty, FloatProperty
+from bpy.props import (
+    BoolProperty,
+    StringProperty,
+    BoolVectorProperty,
+    FloatProperty,
+    IntProperty
+)
 from mathutils import Matrix, Vector
 
 from sverchok.node_tree import SverchCustomTreeNode
@@ -27,10 +33,6 @@ from sverchok.data_structure import dataCorrect, fullList, updateNode
 from sverchok.utils.sv_viewer_utils import (
     matrix_sanitizer, natural_plus_one, get_random_init
 )
-
-# <zeffii feb 2015>
-# there are many ways to implement features but for now i'm keeping
-# it conservative UI wise.
 
 
 def make_text_object(node, idx, context, data):
@@ -57,11 +59,23 @@ def make_text_object(node, idx, context, data):
 
     default = bpy.data.fonts.get('Bfont')
 
+    f.body = txt
+
+    # misc
     f.size = node.fsize
     f.font = bpy.data.fonts.get(node.fontname, default)
-    f.body = txt
     f.offset_x = node.xoffset
     f.offset_y = node.yoffset
+
+    # modifications
+    f.offset = node.offset
+    f.extrude = node.extrude
+
+    # bevel
+    f.bevel_depth = node.bevel_depth
+    f.bevel_resolution = node.bevel_resolution
+
+    f.align = node.align  # artifical restriction l/r/c
 
     sv_object['idx'] = idx
     sv_object['madeby'] = node.name
@@ -187,10 +201,34 @@ class SvTypeViewerNode(bpy.types.Node, SverchCustomTreeNode):
         description="This sets which layer objects are placed on",
         get=g, set=s)
 
+    show_options = BoolProperty(default=0)
     fontname = StringProperty(default='', update=updateNode)
     fsize = FloatProperty(default=1.0, update=updateNode)
     yoffset = FloatProperty(default=0.0, update=updateNode)
     xoffset = FloatProperty(default=0.0, update=updateNode)
+
+    # modifications
+    offset = FloatProperty(default=0.0, update=updateNode)
+    extrude = FloatProperty(default=0.0, update=updateNode)
+
+    # bevel
+    bevel_depth = FloatProperty(default=0.0, update=updateNode)
+    bevel_resolution = IntProperty(default=0, update=updateNode)
+
+    # orientation
+    mode_options = [
+        # having element 0 and 1 helps reduce code.
+        ("LEFT", "LEFT", "", 0),
+        ("CENTER", "CENTER", "", 1),
+        ("RIGHT", "RIGHT", "", 2)
+    ]
+
+    align = bpy.props.EnumProperty(
+        items=mode_options,
+        description="left, center. right",
+        default="LEFT", update=updateNode
+    )
+
     parent_to_empty = BoolProperty(default=False, update=updateNode)
     parent_name = StringProperty()  # calling updateNode would recurse.
 
@@ -231,8 +269,19 @@ class SvTypeViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
             col = layout.column(align=True)
             col.prop(self, 'fsize')
-            col.prop(self, 'xoffset')
-            col.prop(self, 'yoffset')
+            col.prop(self, 'show_options', toggle=True)
+            if self.show_options:
+                col.label('position')
+                col.prop(self, 'xoffset')
+                col.prop(self, 'yoffset')
+                col.label('modifications')
+                col.prop(self, 'offset')
+                col.prop(self, 'extrude')
+                col.label('bevel')
+                col.prop(self, 'bevel_depth')
+                col.prop(self, 'bevel_resolution')
+                col.label('align')
+                col.prop(self, 'align')
 
             row = col.row(align=True)
             row.prop_search(self, 'material', bpy.data, 'materials', text='', icon='MATERIAL_DATA')
