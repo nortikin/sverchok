@@ -37,7 +37,7 @@ def untangle_edges(orig_edges, bmesh_edges, angles):
 class SvEdgeAnglesNode(bpy.types.Node, SverchCustomTreeNode):
     '''Calculate angles between faces at edges'''
     bl_idname = 'SvEdgeAnglesNode'
-    bl_label = 'Edge Angles'
+    bl_label = 'Angles at Edges'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     signed = BoolProperty(name="Signed",
@@ -62,7 +62,6 @@ class SvEdgeAnglesNode(bpy.types.Node, SverchCustomTreeNode):
             ("pi",   "Pi",   "Return Pi as angle", 2),
             ("pi2",  "Pi/2", "Return Pi/2 as angle", 3),
             ("none", "None", "Return None as angle", 4),
-            ("skip", "Skip", "Skip degenerated edges", 5),
             ("default", "Default", "Use value returned by bmesh", 6)
         ]
 
@@ -79,9 +78,6 @@ class SvEdgeAnglesNode(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons_ext(self, context, layout):
         layout.prop(self, "degenerated_mode")
-
-    def to_skip_degenerated(self):
-        return self.degenerated_mode == "skip"
 
     def get_degenerated_angle(self, angle):
         if self.degenerated_mode == "zero":
@@ -121,8 +117,6 @@ class SvEdgeAnglesNode(bpy.types.Node, SverchCustomTreeNode):
             bm = bmesh_from_pydata(vertices, edges, faces)
             bm.normal_update()
             for edge in bm.edges:
-                if self.is_degenerated(edge) and self.to_skip_degenerated():
-                    continue
 
                 if self.signed:
                     angle = edge.calc_face_angle_signed()

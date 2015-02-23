@@ -14,4 +14,5 @@ Analyzer
    raycast
    volume
    weights
+   edge_angles
    calc_normals
