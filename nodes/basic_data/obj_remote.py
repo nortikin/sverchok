@@ -78,9 +78,16 @@ class SvObjRemoteNode(bpy.types.Node, SverchCustomTreeNode):
 
         if self.obj_name in objects:
             obj = objects[self.obj_name]
-            obj.location = get_if_valid('location', fallback=(0, 0, 0))
-            obj.scale = get_if_valid('scale', fallback=(1, 1, 1))
-            obj.rotation_euler = get_if_valid('rotation', fallback=(0, 0, 0))
+
+            sockets = ['location', 'scale', 'rotation']
+            fallbacks = [(0, 0, 0), (1, 1, 1), (0, 0, 0)]
+            for socket, fb in zip(sockets, fallbacks):
+                if inputs[socket].is_linked:
+                    attribute = socket.replace('rotation', 'rotation_euler')
+                    if hasattr(obj, attribute):
+                        new_val = get_if_valid(socket, fallback=fb)
+                        setattr(obj, attribute, new_val)
+
             self.show_string_box = (obj.type == 'FONT')
 
             if self.show_string_box:
@@ -92,10 +99,7 @@ class SvObjRemoteNode(bpy.types.Node, SverchCustomTreeNode):
 
 def register():
     bpy.utils.register_class(SvObjRemoteNode)
-    #bpy.utils.register_class(SvInstancerOp)
 
 
 def unregister():
     bpy.utils.unregister_class(SvObjRemoteNode)
-    #bpy.utils.unregister_class(SvInstancerOp)
-

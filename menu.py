@@ -213,8 +213,8 @@ def make_node_cats():
         ["SvFrameInfoNode",     "Frame info"],
         ["SvEmptyOutNode",      "Empty out",    "OUTLINER_OB_EMPTY"],
         ["SvInstancerNode",     "mesh instancer"],
-        ["SvGetPropNode",       "Get property",   'FORCE_VORTEX'],
-        ["SvSetPropNode",       "Set property",   'FORCE_VORTEX'],
+        ["SvGetPropNode",       "Get property",      'FORCE_VORTEX'],
+        ["SvSetPropNode",       "Set property",      'FORCE_VORTEX'],
         ["SvVertexGroupNode",   "Vertext group"],
         ["SvRayCastNode",       "Raycast"],
     ]
@@ -241,13 +241,14 @@ def make_node_cats():
         ['SvBmeshViewerNodeMK2', 'BMeshView2'],
         ['SvBricksNode', 'Bricks grid'],
         ["SvMatrixApplyJoinNode", "Apply matrix to mesh"],
-        ["SvIterateNode", "Iterate matrix transformation"],
+        ["SvIterateNode",         "Iterate matrix transformation"],
     ]
 
     node_cats["Alpha Nodes"] = [
         ["SvImageComponentsNode", "Image Decompose",  "GROUP_VCOL"],
         ["SvJoinTrianglesNode",   "Join Triangles"],
         ["SvCurveViewerNode",     "Curve Viewer",      'MOD_CURVE'],
+        ['SvTypeViewerNode',      'Typography Viewer'],
         ["SvPrototypeJS",         "Prototype JS"],
         ["SvCacheNode",           "Cache"],
         ["SvInsetSpecial",        "Inset Special"],
