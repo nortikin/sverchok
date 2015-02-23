@@ -7,6 +7,7 @@ Modifier Change
 
    delete_loose
    extrude_separate
+   extrude_edges
    fill_holes
    intersect_edges
    mask_vertices
@@ -14,6 +15,8 @@ Modifier Change
    objects_along_edge
    polygon_boom
    polygons_to_edges
+   triangulate
+   recalc_normals
    randomize
    remove_doubles
    separate_loose_parts

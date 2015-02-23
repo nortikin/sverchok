@@ -121,7 +121,9 @@ nodes_dict = {
         'mirror',
         'polygons_boom',
         'polygons_to_edges',
+        'triangulate',
         'remove_doubles',
+        'recalc_normals',
         'rotation',
         'scale',
         'vertices_mask',
@@ -129,6 +131,7 @@ nodes_dict = {
         'objects_along_edge',
         'randomize',
         'extrude_separate',
+        'extrude_edges',
         'iterate',
     ],
 
