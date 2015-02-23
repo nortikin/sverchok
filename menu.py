@@ -233,6 +233,7 @@ def make_node_cats():
         ['SvExtrudeEdgesNode',  "Extrude Edges"],
         ["SvOffsetNode",        "Offset"],
         ["SvRecalcNormalsNode", "Recalc normals"],
+        ["SvEdgeAnglesNode",    "Angles at the edges"],
         ["SvListDecomposeNode", "List Decompose"],
         ["SvFormulaShapeNode",  "Formula shape", "IPO"],
         ["SvScriptNodeMK2",     "Script 2"],
