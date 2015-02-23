@@ -64,6 +64,12 @@ def make_text_object(node, idx, context, data):
     # misc
     f.size = node.fsize
     f.font = bpy.data.fonts.get(node.fontname, default)
+
+    # space
+    f.space_character = node.space_character
+    f.space_word = node.space_word
+    f.space_line = node.space_line
+
     f.offset_x = node.xoffset
     f.offset_y = node.yoffset
 
@@ -204,6 +210,11 @@ class SvTypeViewerNode(bpy.types.Node, SverchCustomTreeNode):
     show_options = BoolProperty(default=0)
     fontname = StringProperty(default='', update=updateNode)
     fsize = FloatProperty(default=1.0, update=updateNode)
+
+    # space
+    space_character = FloatProperty(default=1.0, update=updateNode)
+    space_word = FloatProperty(default=1.0, update=updateNode)
+    space_line = FloatProperty(default=1.0, update=updateNode)
     yoffset = FloatProperty(default=0.0, update=updateNode)
     xoffset = FloatProperty(default=0.0, update=updateNode)
 
@@ -272,8 +283,15 @@ class SvTypeViewerNode(bpy.types.Node, SverchCustomTreeNode):
             col.prop(self, 'show_options', toggle=True)
             if self.show_options:
                 col.label('position')
-                col.prop(self, 'xoffset')
-                col.prop(self, 'yoffset')
+                split = col.split()
+                col1 = split.column()
+                col2 = split.column()
+                col1.prop(self, 'space_character', text='CH')
+                col1.prop(self, 'space_word', text='W')
+                col1.prop(self, 'space_line', text='L')
+                col2.prop(self, 'xoffset', text='XOFF')
+                col2.prop(self, 'yoffset', text='YOFF')
+
                 col.label('modifications')
                 col.prop(self, 'offset')
                 col.prop(self, 'extrude')
