@@ -5,6 +5,7 @@ nodes_dict = {
         'volume',
         'bbox',
         'mesh_filter',
+        'edge_angles',
         'distance_pp',
         'polygons_centers',
         'neuro_elman',
