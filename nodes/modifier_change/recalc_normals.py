@@ -69,6 +69,7 @@ class SvRecalcNormalsNode(bpy.types.Node, SverchCustomTreeNode):
         for vertices, edges, faces, mask in zip(*meshes):
 
             bm = bmesh_from_pydata(vertices, edges, faces)
+            bm.normal_update()
             fullList(mask, len(faces))
 
             b_faces = []
