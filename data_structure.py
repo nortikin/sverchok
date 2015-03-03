@@ -264,6 +264,39 @@ def sv_zip(*iterables):
             result.append(elem)
         yield result
 
+def checking_links(process):
+    def real_process(node):
+        # check_mandatory_links() node method should return True
+        # if all mandatory inputs and outputs are linked.
+        # If it returns False then node will just skip processing.
+        if hasattr(node, "check_mandatory_links"):
+            if not node.check_mandatory_links():
+                return
+        else:
+            # If check_mandatory_links() method is not defined, then node can
+            # define list of mandatory inputs and/or outputs.
+            # Node will skip processing if any of mandatory inputs is not linked.
+            # It will also skip processing if none of mandatory outputs is linked.
+            if hasattr(node, "mandatory_inputs"):
+                if not all([node.inputs[name].is_linked for name in node.mandatory_inputs]):
+                    return
+            if hasattr(node, "mandatory_outputs"):
+                if not any([node.outputs[name].is_linked for name in node.mandatory_inputs]):
+                    return
+        return process(node)
+    return real_process
+
+def iterate_process(method, matcher, *inputs):
+    data = matcher(inputs)
+    results = [list(method(*d)) for d in zip(*data)]
+    return list(zip(*results))
+
+def using_matcher(matcher):
+    def decorator(process):
+        def real_process(node):
+            pass
+        return checking_links(real_process)
+    return decorator
 
 #####################################################
 ################# list levels magic #################

@@ -21,8 +21,8 @@ from bpy.props import IntProperty, EnumProperty, BoolProperty, FloatProperty
 import bmesh.ops
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, match_long_repeat, fullList
-from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
+from sverchok.data_structure import updateNode, match_long_repeat, fullList, checking_links, iterate_process
+from sverchok.utils.sv_bmesh_utils import with_bmesh
 
 class SvTriangulateNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Triangulate mesh '''
@@ -54,6 +54,9 @@ class SvTriangulateNode(bpy.types.Node, SverchCustomTreeNode):
         default="0",
         update=updateNode)
 
+    mandatory_inputs = ['Vertices', 'Polygons']
+    mandatory_outputs = ['Vertices', 'Edges', 'Polygons', 'NewEdges', 'NewPolys']
+
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', "Vertices", "Vertices")
         self.inputs.new('StringsSocket', 'Edges', 'Edges')
@@ -70,50 +73,38 @@ class SvTriangulateNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "quad_mode")
         layout.prop(self, "ngon_mode")
 
+    @with_bmesh
+    def triangulate(self, bm, mask):
+        fullList(mask, len(bm.faces))
+
+        b_faces = []
+        for m, face in zip(mask,bm.faces):
+            if m:
+                b_faces.append(face)
+
+        res = bmesh.ops.triangulate(bm, faces=b_faces,
+                        quad_method=int(self.quad_mode),
+                        ngon_method=int(self.ngon_mode))
+
+        b_new_edges = [tuple(v.index for v in edge.verts) for edge in res['edges']]
+        b_new_faces = [[v.index for v in face.verts] for face in res['faces']]
+
+        return bm, b_new_edges, b_new_faces
+
+    @checking_links
     def process(self):
-        if not (self.inputs['Vertices'].is_linked and self.inputs['Polygons'].is_linked):
-            return
-        if not (any(self.outputs[name].is_linked for name in ['Vertices', 'Edges', 'Polygons', 'NewEdges', 'NewPolys'])):
-            return
 
         vertices_s = self.inputs['Vertices'].sv_get(default=[[]])
         edges_s = self.inputs['Edges'].sv_get(default=[[]])
         faces_s = self.inputs['Polygons'].sv_get(default=[[]])
         mask_s = self.inputs['Mask'].sv_get(default=[[True]])
 
-        result_vertices = []
-        result_edges = []
-        result_faces = []
-        result_new_edges = []
-        result_new_faces = []
-
-        meshes = match_long_repeat([vertices_s, edges_s, faces_s, mask_s])
-
-        for vertices, edges, faces, mask in zip(*meshes):
-
-            bm = bmesh_from_pydata(vertices, edges, faces)
-            fullList(mask, len(faces))
-
-            b_faces = []
-            for m, face in zip(mask,bm.faces):
-                if m:
-                    b_faces.append(face)
-
-            res = bmesh.ops.triangulate(bm, faces=b_faces,
-                            quad_method=int(self.quad_mode),
-                            ngon_method=int(self.ngon_mode))
-
-            b_new_edges = [tuple(v.index for v in edge.verts) for edge in res['edges']]
-            b_new_faces = [[v.index for v in face.verts] for face in res['faces']]
-
-            new_vertices, new_edges, new_faces = pydata_from_bmesh(bm)
-            bm.free()
-
-            result_vertices.append(new_vertices)
-            result_edges.append(new_edges)
-            result_faces.append(new_faces)
-            result_new_edges.append(b_new_edges)
-            result_new_faces.append(b_new_faces)
+        results = iterate_process(self.triangulate, match_long_repeat, vertices_s, edges_s, faces_s, mask_s)
+        result_vertices = results[0]
+        result_edges = results[1]
+        result_faces = results[2]
+        result_new_edges = results[3]
+        result_new_faces = results[4]
 
         if self.outputs['Vertices'].is_linked:
             self.outputs['Vertices'].sv_set(result_vertices)
