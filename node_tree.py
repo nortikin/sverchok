@@ -319,6 +319,10 @@ class SverchCustomTreeNode:
             self.color = color
 
     def create_sockets(self):
+        '''Create node input and output sockets from
+        their descriptions in self.input_descriptors and self.output_descriptors.
+        '''
+
         if hasattr(self, "input_descriptors"):
             for descriptor in self.input_descriptors:
                 descriptor.create(self)

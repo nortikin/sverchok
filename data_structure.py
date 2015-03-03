@@ -300,6 +300,7 @@ def checking_links(process):
 
 def iterate_process(method, matcher, *inputs, node=None):
     '''Shortcut function for usual iteration over set of input lists.
+
     This is shortcut for boilerplate code like
 
         res1 = []
@@ -320,6 +321,8 @@ def iterate_process(method, matcher, *inputs, node=None):
     return list(zip(*results))
 
 class Input(object):
+    '''Node input socket metainformation descriptor.'''
+
     def __init__(self, socktype, name, identifier=None, is_mandatory=True, default=sentinel, deepcopy=True):
         self.socktype = socktype
         self.name = name
@@ -338,6 +341,8 @@ class Input(object):
         return node.inputs[self.name].sv_get(default=self.default, deepcopy=self.deepcopy)
 
 class Output(object):
+    '''Node output socket metainformation descriptor.'''
+
     def __init__(self, socktype, name, is_mandatory=True):
         self.socktype = socktype
         self.name = name
@@ -354,6 +359,37 @@ class Output(object):
             node.outputs[self.name].sv_set(value)
 
 def match_inputs(matcher, inputs, outputs):
+    '''Decorator for inputs/outputs boilerplate.
+
+    Usage:
+
+    @match_inputs(match_long_repeat,
+                  inputs=[Input(...), Input(...)],
+                  outputs=[Output(...), Output(...)])
+    def process(self, i1, i2):
+        ...
+        return res1, res2
+
+    This is shortcut for code like
+
+    def process(self):
+        i1s = self.inputs['i1'].sv_get(..)
+        i2s = self.inputs['i2'].sv_get(..)
+        res1 = []
+        res2 = []
+
+        params = match_long_repeat([i1s, i2s])
+        for i1,i2 in zip(*params):
+            ...
+            res1.append(r1)
+            res2.append(r2)
+
+        if self.outputs['r1'].is_linked:
+            self.outputs['r1'].sv_set(res1)
+        if self.outputs['r2'].is_linked:
+            self.outputs['r2'].sv_set(res2)
+    '''
+
     def decorator(process):
         def real_process(node):
             inputs_data = [input_descriptor.get(node) for input_descriptor in inputs]
@@ -369,6 +405,13 @@ def match_inputs(matcher, inputs, outputs):
     return decorator
 
 def std_links_processing(matcher):
+    '''Shortcut decorator for "standard" inputs/outputs sockets processing routine.
+
+    This is shortcut for combination of @checking_links and @match_inputs.
+    Inputs and outputs descriptors are taken from node.input_descriptors and
+    node.output_descriptors correspondingly.
+    '''
+
     def decorator(process):
         def real_process(node):
             nonlocal process
