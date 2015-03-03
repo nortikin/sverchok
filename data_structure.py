@@ -265,6 +265,10 @@ def sv_zip(*iterables):
         yield result
 
 def checking_links(process):
+    '''Decorator for process method of node.
+    This decorator does stanard checks for mandatory input and output links.
+    '''
+
     def real_process(node):
         # check_mandatory_links() node method should return True
         # if all mandatory inputs and outputs are linked.
@@ -287,6 +291,19 @@ def checking_links(process):
     return real_process
 
 def iterate_process(method, matcher, *inputs):
+    '''Shortcut function for usual iteration over set of input lists.
+    This is shortcut for boilerplate code like
+
+        res1 = []
+        res2 = []
+        params = match_long_repeat([input1,input2])
+        for i1, i2 in zip(*params):
+            r1,r2 = self.method(i1,i2)
+            res1.append(r1)
+            res2.append(r2)
+        return res1, res2
+    '''
+
     data = matcher(inputs)
     results = [list(method(*d)) for d in zip(*data)]
     return list(zip(*results))
