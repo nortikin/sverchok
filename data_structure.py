@@ -47,6 +47,7 @@ sv_Vars = {}
 #bmesh_mapping = {}
 #per_cache = {}
 
+sentinel = object()
 
 #####################################################
 ################### update magic ####################
@@ -253,7 +254,6 @@ def fullList(l, count):
 def sv_zip(*iterables):
     # zip('ABCD', 'xy') --> Ax By
     # like standard zip but list instead of tuple
-    sentinel = object()
     iterators = [iter(it) for it in iterables]
     while iterators:
         result = []
@@ -281,16 +281,24 @@ def checking_links(process):
             # define list of mandatory inputs and/or outputs.
             # Node will skip processing if any of mandatory inputs is not linked.
             # It will also skip processing if none of mandatory outputs is linked.
-            if hasattr(node, "mandatory_inputs"):
-                if not all([node.inputs[name].is_linked for name in node.mandatory_inputs]):
+            if hasattr(node, "input_descriptors"):
+                mandatory_inputs = [descriptor.name for descriptor in node.input_descriptors if descriptor.is_mandatory]
+                if not all([node.inputs[name].is_linked for name in mandatory_inputs]):
+                    print("Node {}: skip processing: not all of mandatory inputs {} are linked.".format(node.name, mandatory_inputs))
                     return
-            if hasattr(node, "mandatory_outputs"):
-                if not any([node.outputs[name].is_linked for name in node.mandatory_inputs]):
+            if hasattr(node, "output_descriptors"):
+                mandatory_outputs = [descriptor.name for descriptor in node.output_descriptors if descriptor.is_mandatory]
+                if not any([node.outputs[name].is_linked for name in mandatory_outputs]):
+                    print("Node {}: skip processing: none of mandatory outputs {} are linked.".format(node.name, mandatory_outputs))
                     return
+
         return process(node)
+
+    real_process.__name__ = process.__name__
+    real_process.__doc__ = process.__doc__
     return real_process
 
-def iterate_process(method, matcher, *inputs):
+def iterate_process(method, matcher, *inputs, node=None):
     '''Shortcut function for usual iteration over set of input lists.
     This is shortcut for boilerplate code like
 
@@ -305,14 +313,74 @@ def iterate_process(method, matcher, *inputs):
     '''
 
     data = matcher(inputs)
-    results = [list(method(*d)) for d in zip(*data)]
+    if node is None:
+        results = [list(method(*d)) for d in zip(*data)]
+    else:
+        results = [list(method(node, *d)) for d in zip(*data)]
     return list(zip(*results))
 
-def using_matcher(matcher):
+class Input(object):
+    def __init__(self, socktype, name, identifier=None, is_mandatory=True, default=sentinel, deepcopy=True):
+        self.socktype = socktype
+        self.name = name
+        self.identifier = identifier if identifier is not None else name
+        self.default = default
+        self.deepcopy = deepcopy
+        self.is_mandatory = is_mandatory
+
+    def __str__(self):
+        return self.name
+
+    def create(self, node):
+        return node.inputs.new(self.socktype, self.name, self.identifier)
+    
+    def get(self, node):
+        return node.inputs[self.name].sv_get(default=self.default, deepcopy=self.deepcopy)
+
+class Output(object):
+    def __init__(self, socktype, name, is_mandatory=True):
+        self.socktype = socktype
+        self.name = name
+        self.is_mandatory = is_mandatory
+
+    def __str__(self):
+        return self.name
+
+    def create(self, node):
+        node.outputs.new(self.socktype, self.name)
+
+    def set(self, node, value):
+        if node.outputs[self.name].is_linked:
+            node.outputs[self.name].sv_set(value)
+
+def match_inputs(matcher, inputs, outputs):
     def decorator(process):
         def real_process(node):
-            pass
-        return checking_links(real_process)
+            inputs_data = [input_descriptor.get(node) for input_descriptor in inputs]
+            results = iterate_process(process, matcher, *inputs_data, node=node)
+            for result, output_descriptor in zip(results, outputs):
+                output_descriptor.set(node, result)
+
+        real_process.__name__ = process.__name__
+        real_process.__doc__ = process.__doc__
+
+        return real_process
+
+    return decorator
+
+def std_links_processing(matcher):
+    def decorator(process):
+        def real_process(node):
+            nonlocal process
+            process = match_inputs(matcher, node.input_descriptors, node.output_descriptors)(process)
+            process = checking_links(process)
+            return process(node)
+
+        real_process.__name__ = process.__name__
+        real_process.__doc__ = process.__doc__
+
+        return real_process
+
     return decorator
 
 #####################################################

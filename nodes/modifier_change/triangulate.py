@@ -21,7 +21,7 @@ from bpy.props import IntProperty, EnumProperty, BoolProperty, FloatProperty
 import bmesh.ops
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, match_long_repeat, fullList, checking_links, iterate_process
+from sverchok.data_structure import updateNode, match_long_repeat, fullList, checking_links, iterate_process, Input, Output, match_inputs, std_links_processing
 from sverchok.utils.sv_bmesh_utils import with_bmesh
 
 class SvTriangulateNode(bpy.types.Node, SverchCustomTreeNode):
@@ -54,27 +54,28 @@ class SvTriangulateNode(bpy.types.Node, SverchCustomTreeNode):
         default="0",
         update=updateNode)
 
-    mandatory_inputs = ['Vertices', 'Polygons']
-    mandatory_outputs = ['Vertices', 'Edges', 'Polygons', 'NewEdges', 'NewPolys']
+    input_descriptors = [
+         Input('VerticesSocket', 'Vertices', default=[[]]),
+         Input('StringsSocket',  'Edges',    default=[[]], is_mandatory=False),
+         Input('StringsSocket',  'Polygons', default=[[]]),
+         Input('StringsSocket',  'Mask',     default=[[True]], is_mandatory=False)
+        ]
 
-    def sv_init(self, context):
-        self.inputs.new('VerticesSocket', "Vertices", "Vertices")
-        self.inputs.new('StringsSocket', 'Edges', 'Edges')
-        self.inputs.new('StringsSocket', 'Polygons', 'Polygons')
-        self.inputs.new('StringsSocket', 'Mask')
-
-        self.outputs.new('VerticesSocket', 'Vertices')
-        self.outputs.new('StringsSocket', 'Edges')
-        self.outputs.new('StringsSocket', 'Polygons')
-        self.outputs.new('StringsSocket', 'NewEdges')
-        self.outputs.new('StringsSocket', 'NewPolys')
+    output_descriptors = [
+         Output('VerticesSocket', 'Vertices'),
+         Output('StringsSocket',  'Edges'),
+         Output('StringsSocket',  'Polygons'),
+         Output('StringsSocket',  'NewEdges'),
+         Output('StringsSocket',  'NewPolys')
+        ]
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "quad_mode")
         layout.prop(self, "ngon_mode")
 
+    @std_links_processing(match_long_repeat)
     @with_bmesh
-    def triangulate(self, bm, mask):
+    def process(self, bm, mask):
         fullList(mask, len(bm.faces))
 
         b_faces = []
@@ -90,32 +91,6 @@ class SvTriangulateNode(bpy.types.Node, SverchCustomTreeNode):
         b_new_faces = [[v.index for v in face.verts] for face in res['faces']]
 
         return bm, b_new_edges, b_new_faces
-
-    @checking_links
-    def process(self):
-
-        vertices_s = self.inputs['Vertices'].sv_get(default=[[]])
-        edges_s = self.inputs['Edges'].sv_get(default=[[]])
-        faces_s = self.inputs['Polygons'].sv_get(default=[[]])
-        mask_s = self.inputs['Mask'].sv_get(default=[[True]])
-
-        results = iterate_process(self.triangulate, match_long_repeat, vertices_s, edges_s, faces_s, mask_s)
-        result_vertices = results[0]
-        result_edges = results[1]
-        result_faces = results[2]
-        result_new_edges = results[3]
-        result_new_faces = results[4]
-
-        if self.outputs['Vertices'].is_linked:
-            self.outputs['Vertices'].sv_set(result_vertices)
-        if self.outputs['Edges'].is_linked:
-            self.outputs['Edges'].sv_set(result_edges)
-        if self.outputs['Polygons'].is_linked:
-            self.outputs['Polygons'].sv_set(result_faces)
-        if self.outputs['NewEdges'].is_linked:
-            self.outputs['NewEdges'].sv_set(result_new_edges)
-        if self.outputs['NewPolys'].is_linked:
-            self.outputs['NewPolys'].sv_set(result_new_faces)
 
 def register():
     bpy.utils.register_class(SvTriangulateNode)
