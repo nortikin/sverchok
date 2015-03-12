@@ -23,7 +23,7 @@ class Vector(object):
             self.x = args[0][0]
             self.y = args[0][1]
             self.z = args[0][2]
-        elif len(args) == 1 and isinstance(args[0], list):
+        elif len(args) == 1 and isinstance(args[0], (list, tuple)):
             self.x = args[0][0]
             self.y = args[0][1]
             self.z = args[0][2]
@@ -244,8 +244,8 @@ class Polygon(object):
         self.vertices = list(vertices)
         self.shared = shared
         self.plane = Plane.fromPoints(
-            self.vertices[0].pos, 
-            self.vertices[1].pos, 
+            self.vertices[0].pos,
+            self.vertices[1].pos,
             self.vertices[2].pos)
 
     def clone(self):
