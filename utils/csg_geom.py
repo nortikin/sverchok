@@ -225,8 +225,8 @@ class CSGPolygon(object):
         self.vertices = list(vertices)
         self.shared = shared
         self.plane = CSGPlane.fromPoints(
-            self.vertices[0].pos, 
-            self.vertices[1].pos, 
+            self.vertices[0].pos,
+            self.vertices[1].pos,
             self.vertices[2].pos)
 
     def clone(self):
@@ -329,8 +329,6 @@ class CSGNode(object):
 
     def build(self, polygons):
         if isinstance(polygons, map):
-            # if not len(list(polygons)):
-            #     return
             polygons = list(polygons)
             if not len(polygons):
                 return
