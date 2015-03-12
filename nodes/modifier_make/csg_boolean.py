@@ -27,8 +27,6 @@ from sverchok.data_structure import updateNode
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 
 from sverchok.utils.csg_core import CSG
-from sverchok.utils.csg_geom import Vertex, Vector   # these may prove redundant.
-
 
 def Boolean(VA, PA, VB, PB, operation):
     if not all([VA, PA, VB, PB]):
@@ -36,8 +34,6 @@ def Boolean(VA, PA, VB, PB, operation):
 
     a = CSG.Obj_from_pydata(VA, PA)
     b = CSG.Obj_from_pydata(VB, PB)
-    # a = CSG.cube()
-    # b = CSG.cube([0.5, 0.5, 0.0])
 
     faces = []
     vertices = []

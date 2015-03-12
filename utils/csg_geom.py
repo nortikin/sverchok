@@ -1,58 +1,39 @@
 import math
 
 
-class Vector(object):
+class CSGVector(object):
 
     """
-    class Vector
+    class CSGVector
 
     Represents a 3D vector.
 
     Example usage:
-         Vector(1, 2, 3);
-         Vector([1, 2, 3]);
-         Vector({ 'x': 1, 'y': 2, 'z': 3 });
+         CSGVector(1, 2, 3);
     """
 
     def __init__(self, *args):
-        if len(args) == 3:
-            self.x = args[0]
-            self.y = args[1]
-            self.z = args[2]
-        elif len(args) == 1 and isinstance(args[0], Vector):
-            self.x = args[0][0]
-            self.y = args[0][1]
-            self.z = args[0][2]
-        elif len(args) == 1 and isinstance(args[0], list):
-            self.x = args[0][0]
-            self.y = args[0][1]
-            self.z = args[0][2]
-        elif len(args) == 1 and args[0] and 'x' in args[0]:
-            self.x = args[0]['x']
-            self.y = args[0]['y']
-            self.z = args[0]['z']
-        else:
-            self.x = 0.0
-            self.y = 0.0
-            self.z = 0.0
+        self.x = args[0]
+        self.y = args[1]
+        self.z = args[2]
 
     def clone(self):
-        return Vector(self.x, self.y, self.z)
+        return CSGVector(self.x, self.y, self.z)
 
     def negated(self):
-        return Vector(-self.x, -self.y, -self.z)
+        return CSGVector(-self.x, -self.y, -self.z)
 
     def plus(self, a):
-        return Vector(self.x + a.x, self.y + a.y, self.z + a.z)
+        return CSGVector(self.x + a.x, self.y + a.y, self.z + a.z)
 
     def minus(self, a):
-        return Vector(self.x - a.x, self.y - a.y, self.z - a.z)
+        return CSGVector(self.x - a.x, self.y - a.y, self.z - a.z)
 
     def times(self, a):
-        return Vector(self.x * a, self.y * a, self.z * a)
+        return CSGVector(self.x * a, self.y * a, self.z * a)
 
     def dividedBy(self, a):
-        return Vector(self.x / a, self.y / a, self.z / a)
+        return CSGVector(self.x / a, self.y / a, self.z / a)
 
     def dot(self, a):
         return self.x * a.x + self.y * a.y + self.z * a.z
@@ -68,7 +49,7 @@ class Vector(object):
         return self.dividedBy(self.length())
 
     def cross(self, a):
-        return Vector(
+        return CSGVector(
             self.y * a.z - self.z * a.y,
             self.z * a.x - self.x * a.z,
             self.x * a.y - self.y * a.x)
@@ -88,13 +69,13 @@ class Vector(object):
         return iter((self.x, self.y, self.z))
 
     def __repr__(self):
-        return 'Vector(%.2f, %.2f, %0.2f)' % (self.x, self.y, self.z)
+        return 'CSGVector(%.2f, %.2f, %0.2f)' % (self.x, self.y, self.z)
 
 
-class Vertex(object):
+class CSGVertex(object):
 
     """
-    Class Vertex
+    Class CSGVertex
 
     Represents a vertex of a polygon. Use your own vertex class instead of this
     one to provide additional features like texture coordinates and vertex
@@ -105,12 +86,12 @@ class Vertex(object):
     is not used anywhere else.
     """
 
-    def __init__(self, pos, normal=None):
-        self.pos = Vector(pos)
-        self.normal = Vector(normal)
+    def __init__(self, pos, normal=[0.0, 0.0, 0.0]):
+        self.pos = CSGVector(pos[0], pos[1], pos[2])
+        self.normal = CSGVector(normal[0], normal[1], normal[2])
 
     def clone(self):
-        return Vertex(self.pos.clone(), self.normal.clone())
+        return CSGVertex(self.pos.clone(), self.normal.clone())
 
     def flip(self):
         """
@@ -125,19 +106,19 @@ class Vertex(object):
         interpolating all properties using a parameter of `t`. Subclasses should
         override this to interpolate additional properties.
         """
-        return Vertex(self.pos.lerp(other.pos, t), self.normal.lerp(other.normal, t))
+        return CSGVertex(self.pos.lerp(other.pos, t), self.normal.lerp(other.normal, t))
 
 
-class Plane(object):
+class CSGPlane(object):
 
     """
-    class Plane
+    class CSGPlane
 
     Represents a plane in 3D space.
     """
 
     """
-    `Plane.EPSILON` is the tolerance used by `splitPolygon()` to decide if a
+    `CSGPlane.EPSILON` is the tolerance used by `splitPolygon()` to decide if a
     point is on the plane.
     """
     EPSILON = 1e-5
@@ -149,10 +130,10 @@ class Plane(object):
     @classmethod
     def fromPoints(cls, a, b, c):
         n = b.minus(a).cross(c.minus(a)).unit()
-        return Plane(n, n.dot(a))
+        return CSGPlane(n, n.dot(a))
 
     def clone(self):
-        return Plane(self.normal.clone(), self.w)
+        return CSGPlane(self.normal.clone(), self.w)
 
     def flip(self):
         self.normal = self.normal.negated()
@@ -179,9 +160,9 @@ class Plane(object):
         for i in range(0, len(polygon.vertices)):
             t = self.normal.dot(polygon.vertices[i].pos) - self.w
             type = -1
-            if t < -Plane.EPSILON:
+            if t < -CSGPlane.EPSILON:
                 type = BACK
-            elif t > Plane.EPSILON:
+            elif t > CSGPlane.EPSILON:
                 type = FRONT
             else:
                 type = COPLANAR
@@ -220,15 +201,15 @@ class Plane(object):
                     f.append(v)
                     b.append(v.clone())
             if len(f) >= 3:
-                front.append(Polygon(f, polygon.shared))
+                front.append(CSGPolygon(f, polygon.shared))
             if len(b) >= 3:
-                back.append(Polygon(b, polygon.shared))
+                back.append(CSGPolygon(b, polygon.shared))
 
 
-class Polygon(object):
+class CSGPolygon(object):
 
     """
-    class Polygon
+    class CSGPolygon
 
     Represents a convex polygon. The vertices used to initialize a polygon must
     be coplanar and form a convex loop. They do not have to be `Vertex`
@@ -243,14 +224,14 @@ class Polygon(object):
     def __init__(self, vertices, shared=None):
         self.vertices = list(vertices)
         self.shared = shared
-        self.plane = Plane.fromPoints(
+        self.plane = CSGPlane.fromPoints(
             self.vertices[0].pos, 
             self.vertices[1].pos, 
             self.vertices[2].pos)
 
     def clone(self):
         vertices = map(lambda v: v.clone(), self.vertices)
-        return Polygon(vertices, self.shared)
+        return CSGPolygon(vertices, self.shared)
 
     def flip(self):
         self.vertices.reverse()
@@ -258,10 +239,10 @@ class Polygon(object):
         self.plane.flip()
 
 
-class Node(object):
+class CSGNode(object):
 
     """
-    class Node
+    class CSGNode
 
     Holds a node in a BSP tree. A BSP tree is built from a collection of polygons
     by picking a polygon to split along. That polygon (and all other coplanar
@@ -279,7 +260,7 @@ class Node(object):
             self.build(polygons)
 
     def clone(self):
-        node = Node()
+        node = CSGNode()
         if self.plane:
             node.plane = self.plane.clone()
         if self.front:
@@ -363,9 +344,9 @@ class Node(object):
                 poly, self.polygons, self.polygons, front, back)
         if len(front):
             if not self.front:
-                self.front = Node()
+                self.front = CSGNode()
             self.front.build(front)
         if len(back):
             if not self.back:
-                self.back = Node()
+                self.back = CSGNode()
             self.back.build(back)

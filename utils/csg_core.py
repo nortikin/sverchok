@@ -26,8 +26,8 @@ class CSG(object):
         return self.polygons
 
     def union(self, csg):
-        a = Node(self.clone().polygons)
-        b = Node(csg.clone().polygons)
+        a = CSGNode(self.clone().polygons)
+        b = CSGNode(csg.clone().polygons)
         a.clipTo(b)
         b.clipTo(a)
         b.invert()
@@ -37,8 +37,8 @@ class CSG(object):
         return CSG.fromPolygons(a.allPolygons())
 
     def subtract(self, csg):
-        a = Node(self.clone().polygons)
-        b = Node(csg.clone().polygons)
+        a = CSGNode(self.clone().polygons)
+        b = CSGNode(csg.clone().polygons)
         a.invert()
         a.clipTo(b)
         b.clipTo(a)
@@ -50,8 +50,8 @@ class CSG(object):
         return CSG.fromPolygons(a.allPolygons())
 
     def intersect(self, csg):
-        a = Node(self.clone().polygons)
-        b = Node(csg.clone().polygons)
+        a = CSGNode(self.clone().polygons)
+        b = CSGNode(csg.clone().polygons)
         a.invert()
         b.clipTo(a)
         b.invert()
@@ -80,7 +80,7 @@ class CSG(object):
             polyg = []
             for idx in face:
                 co = verts[idx]
-                polyg.append(Vertex(Vector(*co)))
-            polygons.append(Polygon(polyg))
+                polyg.append(CSGVertex(co))
+            polygons.append(CSGPolygon(polyg))
 
         return CSG.fromPolygons(polygons)
