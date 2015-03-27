@@ -159,7 +159,12 @@ class ObjectsNode(bpy.types.Node, SverchCustomTreeNode):
 
     def update(self):
         pass
-            
+
+    def copy(self, node):
+        if self.objects_local:
+            name = self.name + self.id_data.name
+            handle_write(name, literal_eval(self.objects_local))
+
     def process(self):
         name = self.name + self.id_data.name
         handle = handle_read(name)
