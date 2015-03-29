@@ -30,6 +30,8 @@
 #     Agustin Jimenez (aka AgustinJB)
 #     Dealga McArdle (aka Zeffii)
 #     Konstantin Vorobiew (aka Kosvor)
+#     Ilya Portnov (aka portnov)
+#     
 #
 #  ***** END GPL LICENSE BLOCK *****
 #
@@ -40,9 +42,10 @@ bl_info = {
     "author": (
         "sverchok-b3d@ya.ru, "
         "Cfyzzz, Nikitron, Ly29, "
-        "AgustinJB, Zeffii, Kosvor,"
+        "AgustinJB, Zeffii, Kosvor, "
+        "Portnov, "
     ),
-    "version": (0, 5, 1, 0),
+    "version": (0, 5, 1, 1),
     "blender": (2, 7, 2),
     "location": "Nodes > CustomNodesTree > Add user nodes",
     "description": "Parametric node-based geometry programming",
