@@ -16,7 +16,7 @@ Mesh and geometry programming consists of combining basic elements such as:
   - matrices (user-friendly rotation-scale-location transformations)
 
 ###Possibilities
-Comes with more than 130 nodes to help create and manipulate geometry. Combining these nodes will allow you to:
+Comes with more than 150 nodes to help create and manipulate geometry. Combining these nodes will allow you to:
 
   - do parametric constructions
   - easily change parameters with sliders and formulas
@@ -48,8 +48,9 @@ Install Sverchok as you would any blender addon.
    Enable permanently in the startup.blend using `Ctrl + U` and `Save User Settings` from the Addons menu.   
 
 -  _Upgrade Sverchok on fly_   
-   Use button `Check for new version` in sverchok panel in node editor (press `N` for panel)  
-   And at the end press `F8` button to reload addons. In next blender run in panel will appear new version number  
+   Use button `Check for new version` in sverchok panel in node editor (press `N` for panel).    
+   Press `Update Sverchok` button.   
+   And at the end press `F8` button to reload addons. In next blender run in panel will appear new version number.   
 
 ###Troubleshooting Installation Errors
 
@@ -62,8 +63,9 @@ Authors:
 -  Nikita Gorodetskiy,  
 -  Linus Yng,  
 -  Agustin Gimenez, 
--  Dealga McArdle  
--  Constantin Vorobiew
+-  Dealga McArdle,  
+-  Constantin Vorobiew, 
+-  Ilya Protnov  
 
 Email: sverchok-b3d@yandex.ru  
 
@@ -78,7 +80,7 @@ Email: sverchok-b3d@yandex.ru
 
   
 ###Описание
-Сверчок - мощный инструмент для архитектора, позволяющий программировать визуально узлами. 
+Сверчок - мощный инструмент для архитектора, позволяющий визуально программировать узлами. 
 Программирование сетки и геометрии состоит из "кирпичей":  
 
   - списков Векторов являющих собой координаты вершин  
@@ -86,7 +88,7 @@ Email: sverchok-b3d@yandex.ru
   - матрицы (удобный и понятный способ изменения положения-масштаба-поворота)  
 
 ###Возможности
-Около 130 узлов вам помогут создать и изменять геометрию. А сочетания узлов помогут вам:
+Более 150 узлов вам помогут создать и изменять геометрию. А сочетания узлов помогут вам:
 
   - делать параметрические конструкции
   - легко менять параметры слайдерами и формулами
@@ -121,8 +123,9 @@ Email: sverchok-b3d@yandex.ru
    Подтвердите выбор в файле startup.blend используя `Ctrl + U` и `Save User Settings`в меню Addons.  
 
 -  _Обновление Сверчка_   
-   Используйте кнопку `Check for new version` в панели Сверчка в раскладке узлов (`N` чтобы вызвать)  
-   Нажмите потом `F8` чтобы перезагрузить дополнения блендера. Должна поменяться версия  
+   Используйте кнопку `Check for new version` в панели Сверчка в раскладке узлов (`N` чтобы вызвать). 
+   Нажмите кнопку `Update Sverchok` там же.  
+   Нажмите потом `F8` чтобы перезагрузить дополнения блендера. Должна поменяться версия.  
 
 ###Известные ошибки установки
 Не установилось? Список причин [тыц](http://nikitron.cc.ua/sverch/html/installation.html). Если вашей ошибки там нет - пишите письма.
@@ -135,6 +138,7 @@ Email: sverchok-b3d@yandex.ru
 -  Инг Линус;  
 -  Жименез Агустин; 
 -  МакАрдле Деальга;  
--  Воробьёв Константин.   
+-  Воробьёв Константин;  
+-  Портнов Илья. 
 
 Email: sverchok-b3d@yandex.ru  
