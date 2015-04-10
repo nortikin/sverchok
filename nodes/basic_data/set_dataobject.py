@@ -20,7 +20,7 @@
 import bpy
 from bpy.props import StringProperty, EnumProperty, IntProperty
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (updateNode, match_long_cycle, joiner)
+from sverchok.data_structure import (updateNode, match_long_cycle)
 
 
 class SvSetDataObjectNode(bpy.types.Node, SverchCustomTreeNode):
@@ -34,7 +34,6 @@ class SvSetDataObjectNode(bpy.types.Node, SverchCustomTreeNode):
         return m
 
     M = ['delta_location','delta_rotation_euler','delta_scale','select','parent','name','custom']
-    Lev = IntProperty(name='lev', description='', default=1, update=updateNode)
     formula = StringProperty(name='formula', default='layers', update=updateNode)
     Modes = EnumProperty(name="property modes", default="select", items=Obm(M), update=updateNode)
 
@@ -43,8 +42,6 @@ class SvSetDataObjectNode(bpy.types.Node, SverchCustomTreeNode):
             layout.prop(self,  "formula", text="")
         row = layout.row(align=True)
         layout.prop(self, "Modes", "property")
-        if self.inputs['values'].is_linked:
-            row.prop(self, "Lev", text="input level")
 
     def sv_init(self, context):
         self.inputs.new('SvObjectSocket', 'Objects')
@@ -53,16 +50,19 @@ class SvSetDataObjectNode(bpy.types.Node, SverchCustomTreeNode):
 
     def process(self):
         objs = self.inputs['Objects'].sv_get()
+        va = self.inputs['values']
         Prop = self.Modes if self.Modes != 'custom' else self.formula
-        if self.inputs['values'].is_linked:
+        if va.is_linked:
+            v = va.sv_get()
             lob = len(objs)
-            Val = joiner(self.inputs['values'].sv_get(), self.Lev)
-            if lob > len(Val):
-                objs, Val = match_long_cycle([objs, Val])
+            if isinstance(v[0], (list,tuple)):
+                v = v[0]
+            if lob > len(v):
+                objs, v = match_long_cycle([objs, v])
             g = 0
             while g != lob:
                 if objs[g] != None:
-                    exec("objs[g]."+Prop+"= Val[g]")
+                    exec("objs[g]."+Prop+"= v[g]")
                 g = g+1
         if self.outputs['outvalues'].is_linked:
             out = []
