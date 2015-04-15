@@ -81,7 +81,7 @@ class SvVertexColorNode(bpy.types.Node, SverchCustomTreeNode):
                     for i in bm.verts[idxs[g]].link_loops:
                         ovgs.data[i.index].color = colors[g]
                     g = g+1
-            if self.mode == 'POLY':
+            elif self.mode == 'POLY':
                 if self.inputs['Index'].is_linked:
                     idxs = self.inputs['Index'].sv_get()[0]
                 else:
