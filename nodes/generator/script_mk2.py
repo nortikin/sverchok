@@ -89,12 +89,12 @@ class SvLoadScript(bpy.types.Operator):
         except TypeError as err:
             n.mark_error(err)
             traceback.print_exc()
-            self.report({"WARNING"}, "No valid script in textfile {}".format(node.script_name))
+            self.report({"WARNING"}, "No valid script in textfile {}".format(n.script_name))
             return {'CANCELLED'}
         except Exception as err:
             n.mark_error(err)
             traceback.print_exc()
-            self.report({"WARNING"}, "No valid script in textfile {}".format(node.script_name))
+            self.report({"WARNING"}, "No valid script in textfile {}".format(n.script_name))
             return {'CANCELLED'}
         return {'FINISHED'}
 
