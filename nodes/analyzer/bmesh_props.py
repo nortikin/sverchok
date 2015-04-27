@@ -39,7 +39,7 @@ def Obm(m):
 class SvBMVertsNode(bpy.types.Node, SverchCustomTreeNode):
     ''' BMesh Verts '''
     bl_idname = 'SvBMVertsNode'
-    bl_label = 'bmesh_verts'
+    bl_label = 'bmesh_props'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     Modes = ['verts','faces','edges']
