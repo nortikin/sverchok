@@ -37,7 +37,9 @@ nodes_dict = {
         'obj_remote',
         'group',
         'cache',
-        'getsetprop'
+        'getsetprop',
+        'get_blenddata',
+        'set_blenddata'
     ],
 
     'basic_debug': [

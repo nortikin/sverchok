@@ -255,6 +255,8 @@ def make_node_cats():
         ["SvInsetSpecial",        "Inset Special"],
         ["SkinViewerNode",        "Skin Mesher"],
         ["SvCSGBooleanNode",      "CSG Boolean"],
+        ["SvGetDataObjectNode",    "Get ObjectID"],
+        ["SvSetDataObjectNode",    "Set ObjectID"],
     ]
 
     return node_cats
