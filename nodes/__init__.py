@@ -13,7 +13,8 @@ nodes_dict = {
         'kd_tree',
         'kd_tree_edges',
         'weights',
-        'raycast'
+        'raycast',
+        'bmesh_props'
     ],
 
     'basic_view': [
