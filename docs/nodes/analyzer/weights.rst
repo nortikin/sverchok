@@ -15,13 +15,9 @@ Input sockets
 Parameters
 ----------
 
-**clear unused** - zero weights for all vertices which is not indexed in the list of indexes
+**clear unused** - (on side panel) zero weights for all vertices which is not indexed in the list of indexes
 
 **object name** - name of object to create vertex group for.
-
-**iteration modes** - method that achieve the same amount of vertIND and weights values. "match short"- cuts that list that was longer, "match long cycle"- cycle through elements of the list that was shorter
-
-
 
 
 Usage
