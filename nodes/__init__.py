@@ -39,7 +39,8 @@ nodes_dict = {
         'cache',
         'getsetprop',
         'get_blenddata',
-        'set_blenddata'
+        'set_blenddata',
+        'sort_blenddata'
     ],
 
     'basic_debug': [
