@@ -64,7 +64,7 @@ def converted(test_str):
         shorttype = socket_mapping.get(stype, 's')
         list_item = str([shorttype, sname, {0}])
         l = list_item.format(sname)
-        socket_members.append(indent*2 + l)
+        socket_members.append(indent * 2 + l)
     socket_items = ",\n".join(socket_members)
     declaration = "\n" + indent + 'in_sockets = [\n'
     declaration += socket_items
@@ -137,12 +137,13 @@ class SN_Parser(object):
                 edges: s [[]] ui_name_on_socket <- optional 3rd param
                 edges: s [[]]                   <- default socket name
                 '''
+
                 var = lambda: None
                 var.name = leftside.strip()
                 args = rightside.split(' ')
                 args = [v for v in args if v]
                 num_args = len(args)
-                if not num_args in {2, 3}:
+                if not (num_args in {2, 3}):
                     return
 
                 args = [v.strip() for v in args]
@@ -231,8 +232,8 @@ class SN_Parser(object):
 
 class SvVarnamesToSockets(bpy.types.Operator):
 
-    bl_label = ""
-    bl_idname = "txt.varname_rewriter"
+    bl_label = "sv_varname_rewriter"
+    bl_idname = "text.varname_rewriter"
 
     def execute(self, context):
         bpy.ops.text.select_line()
@@ -255,8 +256,8 @@ class SvVarnamesToSockets(bpy.types.Operator):
 
 class SvLangConverter(bpy.types.Operator):
 
-    bl_label = ""
-    bl_idname = "txt.svlang_converter"
+    bl_label = "Convert SvLang to Script"
+    bl_idname = "text.svlang_converter"
 
     def execute(self, context):
         edit_text = bpy.context.edit_text
@@ -284,8 +285,8 @@ class SvLangConverter(bpy.types.Operator):
 
 class SvNodeRefreshFromTextEditor(bpy.types.Operator):
 
-    bl_label = ""
-    bl_idname = "txt.noderefresh_from_texteditor"
+    bl_label = "Refesh Current Script"
+    bl_idname = "text.noderefresh_from_texteditor"
 
     def execute(self, context):
         ngs = bpy.data.node_groups
@@ -304,7 +305,7 @@ class SvNodeRefreshFromTextEditor(bpy.types.Operator):
         # could be extened to text in also
         node_types = set(['SvScriptNode', 'SvScriptNodeMK2',
                          'SvProfileNode', 'SvTextInNode'])
-        
+
         for ng in ngs:
             nodes = [n for n in ng.nodes if n.bl_idname in node_types]
             if not nodes:
@@ -321,7 +322,7 @@ class SvNodeRefreshFromTextEditor(bpy.types.Operator):
                         self.report({"WARNING"}, msg)
                         return {'CANCELLED'}
                 elif hasattr(n, "text_file_name") and n.text_file_name == text_file_name:
-                    pass # no nothing for profile node, just update ng, could use break...
+                    pass  # no nothing for profile node, just update ng, could use break...
                 elif hasattr(n, "current_text") and n.current_text == text_file_name:
                     n.reload()
                 else:
@@ -330,20 +331,45 @@ class SvNodeRefreshFromTextEditor(bpy.types.Operator):
             ng.update()
 
         return {'FINISHED'}
-    
+
 
 class BasicTextMenu(bpy.types.Menu):
     bl_idname = "TEXT_MT_svplug_menu"
     bl_label = "Plugin Menu"
 
+    @property
+    def text_selected(self):
+        text = bpy.context.edit_text
+        return not (text.current_character == text.select_end_character)
+
     def draw(self, context):
         layout = self.layout
 
-        text = bpy.context.edit_text
-        no_selection = (text.current_character == text.select_end_character)
-        if no_selection:
-            layout.operator("txt.varname_rewriter", text='generate in_sockets')
-        layout.operator("txt.svlang_converter", text='convert svlang')
+        if not self.text_selected:
+            layout.operator("text.varname_rewriter", text='generate in_sockets')
+        layout.operator("text.svlang_converter", text='convert svlang')
+
+
+def add_keymap():
+    wm = bpy.context.window_manager
+    text_editor = wm.keyconfigs.user.keymaps.get('Text')
+
+    if not text_editor:
+        print('Text Editor keymap not available to add to.')
+        return
+
+    keymaps = text_editor.keymap_items
+
+    ''' SHORTCUT 1 Node Refresh: Ctrl + Return '''
+    ident_str = 'text.noderefresh_from_texteditor'
+    if not (ident_str in keymaps):
+        keymaps.new(ident_str, 'RET', 'PRESS', ctrl=1, head=0)
+
+    ''' SHORTCUT 2 Show svplugMenu Ctrl + I (no text selected) '''
+    new_shortcut = keymaps.new('wm.call_menu', 'I', 'PRESS', ctrl=1, head=0)
+    new_shortcut.properties.name = 'TEXT_MT_svplug_menu'
+
+    print('added keyboard items to Text Editor.')
 
 
 def register():
@@ -351,27 +377,7 @@ def register():
     bpy.utils.register_class(SvVarnamesToSockets)
     bpy.utils.register_class(SvLangConverter)
     bpy.utils.register_class(SvNodeRefreshFromTextEditor)
-
-    wm = bpy.context.window_manager
-    kc = wm.keyconfigs.addon
-    try:
-        shortcut_name = "Text"
-        if not (shortcut_name in kc.keymaps):
-            km = kc.keymaps.new(name=shortcut_name, space_type="TEXT_EDITOR")
-
-            # Sets the keymap to Ctrl + I for inside the text editor, will only
-            # appear if no selection is set.
-            new_shortcut = km.keymap_items.new(
-                'wm.call_menu', 'I', 'PRESS', ctrl=True)
-            new_shortcut.properties.name = 'TEXT_MT_svplug_menu'
-
-            # ctrl Enter for profile node
-            new_shortcut2 = km.keymap_items.new(
-                'txt.noderefresh_from_texteditor',
-                'RET', 'PRESS', ctrl=True)
-
-    except KeyError:
-        print("Text key not found in keymap, that's ok")
+    add_keymap()
 
 
 def unregister():
