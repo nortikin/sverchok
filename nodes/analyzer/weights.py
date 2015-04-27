@@ -17,11 +17,9 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-import parser
-from bpy.props import StringProperty, BoolProperty, EnumProperty, FloatProperty
-from sverchok.node_tree import SverchCustomTreeNode, StringsSocket
-from sverchok.data_structure import (SvGetSocketAnyType, updateNode, match_short,
-                            match_long_cycle)
+from bpy.props import StringProperty, BoolProperty, FloatProperty
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import (updateNode, match_long_cycle)
 
 
 class SvVertexGroupNode(bpy.types.Node, SverchCustomTreeNode):
@@ -30,78 +28,65 @@ class SvVertexGroupNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Vertex group weights'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    Itermodes = [
-        ("match_short",        "match_short",         "", 1),
-        ("match_long_cycle",   "match_long_cycle",    "", 2),
-    ]
-
-    Iteration = EnumProperty(name="iteration modes",
-                             description="Iteration modes",
-                             default="match_short", items=Itermodes,
-                             update=updateNode)
-    formula = StringProperty(name='formula',
-                             description='name of object to operate on',
-                             default='Cube', update=updateNode)
-    fade_speed = FloatProperty(name='fade',
-                               description='Speed of "clear unused" weights \
-                               during animation', default=2,
-                               options={'ANIMATABLE'}, update=updateNode)
-    clear = BoolProperty(name='clear unused', description='clear weight of \
-                         unindexed vertices', default=True, update=updateNode)
+    fade_speed = FloatProperty(name='fade', default=2, update=updateNode)
+    clear = BoolProperty(name='clear w', default=True, update=updateNode)
+    vertex_group = StringProperty(default='', update=updateNode)
+    object_ref = StringProperty(default='', update=updateNode)
 
     def draw_buttons(self, context,   layout):
-        layout.prop(self,  "formula", text="")
-        row = layout.row(align=True)
-        row.prop(self,    "clear",   text="clear unused")
-        layout.prop(self, "Iteration", "Iteration modes")
+        layout.prop_search(self, 'object_ref', bpy.data, 'objects')
+        ob = bpy.data.objects[self.object_ref]
+        if ob.type == 'MESH':
+            layout.prop_search(self, 'vertex_group', ob, "vertex_groups", text="")
 
     def draw_buttons_ext(self, context, layout):
         row = layout.row(align=True)
+        row.prop(self,    "clear",   text="clear unindexed")
         row.prop(self, "fade_speed", text="Clearing speed")
 
     def sv_init(self, context):
+
         self.inputs.new('StringsSocket', "VertIND")
         self.inputs.new('StringsSocket', "Weights")
-
+        self.outputs.new('StringsSocket', "OutWeights")
 
     def process(self):
-
-        vertex_weight = self.inputs['Weights'].links
-        if not (vertex_weight and (type(vertex_weight[0].from_socket) ==
-                StringsSocket)):
+        obj = bpy.data.objects[self.object_ref]
+        obj.data.update()
+        if not obj.vertex_groups:
+            obj.vertex_groups.new(name='Sv_VGroup')
+        if self.vertex_group not in obj.vertex_groups:
             return
 
-        obj = bpy.data.objects[self.formula]
+        ovgs = obj.vertex_groups.get(self.vertex_group)
+        vind = [i.index for i in obj.data.vertices]
 
-        if self.inputs['VertIND'].links:
-            verts = SvGetSocketAnyType(self, self.inputs['VertIND'])[0]
+        if self.inputs['VertIND'].is_linked:
+            verts = self.inputs['VertIND'].sv_get()[0]
         else:
-            verts = [i.index for i in obj.data.vertices]
+            verts = vind
 
-        wei = SvGetSocketAnyType(self, self.inputs['Weights'])[0]
-
-        if self.Iteration == 'match_short':
-            temp = match_short([verts, wei])
-            verts, wei = temp[0], temp[1]
-        if self.Iteration == 'match_long_cycle':
-            temp = match_long_cycle([verts, wei])
-            verts, wei = temp[0], temp[1]
-
-        obj.data.update()
-        if obj.vertex_groups.active and\
-           obj.vertex_groups.active.name.find('Sv_VGroup') != -1:
+        if self.inputs['Weights'].is_linked:
+            wei = self.inputs['Weights'].sv_get()[0]
+            lv = len(verts)
+            if lv > len(wei):
+                verts, wei = match_long_cycle([verts, wei])
 
             if self.clear:
-                obj.vertex_groups.active.add([i.index for i in
-                                              obj.data.vertices],
-                                             self.fade_speed, "SUBTRACT")
+                ovgs.add(vind, self.fade_speed, "SUBTRACT")
             g = 0
-            while g != len(wei):
-                obj.vertex_groups.active.add([verts[g]], wei[g], "REPLACE")
+            while g != lv:
+                ovgs.add([verts[g]], wei[g], "REPLACE")
                 g = g+1
 
-        else:
-            obj.vertex_groups.active = obj.vertex_groups.new(name='Sv_VGroup')
+        if self.outputs['OutWeights'].is_linked:
+            out = []
+            for i in verts:
+                try:
+                    out.append(ovgs.weight(i))
+                except Exception:
+                    out.append(0.0)
+            self.outputs['OutWeights'].sv_set([out])
 
 
 def register():
