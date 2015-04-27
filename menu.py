@@ -257,6 +257,7 @@ def make_node_cats():
         ["SvCSGBooleanNode",      "CSG Boolean"],
         ["SvGetDataObjectNode",    "Get ObjectID"],
         ["SvSetDataObjectNode",    "Set ObjectID"],
+        ['SvSortObjsNode',     "Sort ObjectID"],
     ]
 
     return node_cats
