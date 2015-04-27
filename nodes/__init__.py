@@ -15,7 +15,8 @@ nodes_dict = {
         'weights',
         'raycast',
         'bmesh_props',
-        'closest_point_on_mesh'
+        'closest_point_on_mesh',
+        'colors'
     ],
 
     'basic_view': [
