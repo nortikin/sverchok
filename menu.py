@@ -217,6 +217,7 @@ def make_node_cats():
         ["SvSetPropNode",       "Set property",      'FORCE_VORTEX'],
         ["SvVertexGroupNode",   "Vertext group"],
         ["SvRayCastNode",       "Raycast"],
+        ["SvVertexColorNode",   "Vertext color"],
     ]
 
 # violet
