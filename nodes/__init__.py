@@ -14,7 +14,8 @@ nodes_dict = {
         'kd_tree_edges',
         'weights',
         'raycast',
-        'bmesh_props'
+        'bmesh_props',
+        'closest_point_on_mesh'
     ],
 
     'basic_view': [
