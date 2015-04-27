@@ -258,6 +258,7 @@ def make_node_cats():
         ["SvGetDataObjectNode",    "Get ObjectID"],
         ["SvSetDataObjectNode",    "Set ObjectID"],
         ['SvSortObjsNode',     "Sort ObjectID"],
+        ["SvBMVertsNode",   "BMesh Props"],
     ]
 
     return node_cats
