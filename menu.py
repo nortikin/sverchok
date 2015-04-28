@@ -262,6 +262,7 @@ def make_node_cats():
         ['SvSortObjsNode',     "Sort ObjectID"],
         ["SvBMVertsNode",   "BMesh Props"],
         ["SvPointOnMeshNode",   "Point on Mesh"],
+        ["SvFilterObjsNode",   "Filter ObjectID"],
     ]
 
     return node_cats
