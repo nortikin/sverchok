@@ -36,7 +36,7 @@ class SvRayCastNode(bpy.types.Node, SverchCustomTreeNode):
     def sv_init(self, context):
         si = self.inputs.new
         so = self.outputs.new
-        si('SvObjectSocket', 'Objects')
+        si('StringsSocket', 'Objects')
         si('VerticesSocket', 'start').use_prop = True
         si('VerticesSocket', 'end').use_prop = True
         so('VerticesSocket', "HitP")
