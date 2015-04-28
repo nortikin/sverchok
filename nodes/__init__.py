@@ -44,7 +44,8 @@ nodes_dict = {
         'getsetprop',
         'get_blenddata',
         'set_blenddata',
-        'sort_blenddata'
+        'sort_blenddata',
+        'filter_blenddata'
     ],
 
     'basic_debug': [
