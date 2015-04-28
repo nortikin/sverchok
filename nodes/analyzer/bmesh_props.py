@@ -71,7 +71,7 @@ class SvBMVertsNode(bpy.types.Node, SverchCustomTreeNode):
         sied = self.inputs['Edge']
         sipo = self.inputs['Poly']
 
-        if siob.is_linked or siob.object_ref:
+        if siob.is_linked: # or siob.object_ref:
             obj = siob.sv_get()
             for OB in obj:
                 bm = bmesh.new()
