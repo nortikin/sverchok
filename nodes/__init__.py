@@ -106,7 +106,8 @@ nodes_dict = {
         'reverse',
         'shuffle',
         'sort',
-        'flip'
+        'flip',
+        'numpy_array'
     ],
 
     'matrix': [
