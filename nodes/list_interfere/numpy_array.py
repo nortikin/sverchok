@@ -34,9 +34,10 @@ class SvNumpyArrayNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'numpy_props'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    Modes = ['tolist','conj','flatten','reshape','item','itemset','fill','resize',
+    Modes = ['tolist','conj','flatten','reshape','repeat','resize',
              'transpose','swapaxes','squeeze','partition','searchsorted','round',
-             'take','clip']
+             'take','clip','ptp','all','any','choose','sort','sum','cumsum','mean',
+             'var','std','prod','cumprod']
     Mod = EnumProperty(name="getmodes", default="tolist", items=Obm(Modes), update=updateNode)
     st = StringProperty(default='', update=updateNode)
 
