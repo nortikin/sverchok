@@ -263,6 +263,7 @@ def make_node_cats():
         ["SvBMVertsNode",   "BMesh Props"],
         ["SvPointOnMeshNode",   "Point on Mesh"],
         ["SvFilterObjsNode",   "Filter ObjectID"],
+        ["SvNumpyArrayNode",   "Numpy Array"],
     ]
 
     return node_cats
