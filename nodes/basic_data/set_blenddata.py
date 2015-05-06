@@ -18,7 +18,7 @@
 
 
 import bpy
-from bpy.props import StringProperty, EnumProperty, IntProperty
+from bpy.props import StringProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode, match_long_cycle)
 
@@ -29,19 +29,10 @@ class SvSetDataObjectNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'set_dataobject'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    def Obm(m):
-        m = [(i,i,"") for i in m]
-        return m
-
-    M = ['delta_location','delta_rotation_euler','delta_scale','select','parent','name','custom']
-    formula = StringProperty(name='formula', default='layers', update=updateNode)
-    Modes = EnumProperty(name="property modes", default="select", items=Obm(M), update=updateNode)
+    formula = StringProperty(name='formula', default='delta_location', update=updateNode)
 
     def draw_buttons(self, context, layout):
-        if self.Modes == 'custom':
-            layout.prop(self,  "formula", text="")
-        row = layout.row(align=True)
-        layout.prop(self, "Modes", "property")
+        layout.prop(self,  "formula", text="")
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', 'Objects')
@@ -49,11 +40,11 @@ class SvSetDataObjectNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('StringsSocket', 'outvalues')
 
     def process(self):
-        objs = self.inputs['Objects'].sv_get()
-        va = self.inputs['values']
-        Prop = self.Modes if self.Modes != 'custom' else self.formula
-        if va.is_linked:
-            v = va.sv_get()
+        objs = [i for i in self.inputs['Objects'].sv_get() if i != None]
+        Prop = self.formula
+
+        if self.inputs['values'].is_linked:
+            v = self.inputs['values'].sv_get()
             lob = len(objs)
             if isinstance(v[0], list):
                 v = v[0]
@@ -61,11 +52,13 @@ class SvSetDataObjectNode(bpy.types.Node, SverchCustomTreeNode):
                 objs, v = match_long_cycle([objs, v])
             g = 0
             while g != lob:
-                if objs[g] != None:
-                    exec("objs[g]."+Prop+"= v[g]")
+                exec("objs[g]."+Prop+"= v[g]")
                 g = g+1
-        if self.outputs['outvalues'].is_linked:
-            self.outputs['outvalues'].sv_set(eval("[i."+Prop+" for i in objs if i != None]"))
+        elif self.outputs['outvalues'].is_linked:
+            self.outputs['outvalues'].sv_set(eval("[i."+Prop+" for i in objs]"))
+        else:
+            for i in objs:
+                exec("i."+Prop)
 
 
 def register():
