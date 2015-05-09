@@ -35,10 +35,10 @@ Comes with more than 150 nodes to help create and manipulate geometry. Combining
 Install Sverchok as you would any blender addon.  
   
 -  _Installation from Preferences_  
-   Download Sverchok from github  
-   User Preferences > Addons > install from file >   
-   choose zip-archive > activate flag beside Sverchok  
-   If appears error - close and run blender again and activate again.  
+   Download Sverchok archive (zip) from github  
+   If the zip is named `sverchok-something-x.y.z` rename it to `sverchok` before proceeding.  
+   User Preferences > Addons > install from file >  choose zip-archive > activate flag beside Sverchok  
+   If any errors appear - close and run blender again and activate again.  
    Enable permanently in the startup.blend using `Ctrl + U` and `Save User Settings` from the Addons menu.  
   
 -  _Manual installation_  
