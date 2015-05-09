@@ -17,7 +17,8 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-from bpy.props import EnumProperty
+import numpy
+from bpy.props import EnumProperty,StringProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode)
 
@@ -27,42 +28,41 @@ def Obm(m):
         return m
 
 
-class SvSortObjsNode(bpy.types.Node, SverchCustomTreeNode):
-    ''' Sort Objects '''
-    bl_idname = 'SvSortObjsNode'
-    bl_label = 'sort_dataobject'
+class SvNumpyArrayNode(bpy.types.Node, SverchCustomTreeNode):
+    ''' Numpy Props '''
+    bl_idname = 'SvNumpyArrayNode'
+    bl_label = 'numpy_props'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    M = ['location.x','location.y','location.z','name']
-    Modes = EnumProperty(name="sortmod", default="location.x", items=Obm(M), update=updateNode)
+    Modes = ['tolist','conj','flatten','reshape','repeat','resize',
+             'transpose','swapaxes','squeeze','partition','searchsorted','round',
+             'take','clip','ptp','all','any','choose','sort','sum','cumsum','mean',
+             'var','std','prod','cumprod']
+    Mod = EnumProperty(name="getmodes", default="tolist", items=Obm(Modes), update=updateNode)
+    st = StringProperty(default='', update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('StringsSocket', 'Object')
-        self.inputs.new('StringsSocket', 'CustomValue')
-        self.outputs.new('StringsSocket', 'Object')
+        self.inputs.new('StringsSocket', 'List')
+        self.outputs.new('StringsSocket', 'Value')
 
     def draw_buttons(self, context, layout):
-        if not self.inputs['CustomValue'].is_linked:
-            layout.prop(self, "Modes", "Sort")
+        layout.prop(self, "Mod", "Get")
+        layout.prop(self, "st", text="args")
 
     def process(self):
-        if self.outputs['Object'].is_linked:
-            X = self.inputs['Object'].sv_get()
-            if self.inputs['CustomValue'].is_linked:
-                CV = self.inputs['CustomValue'].sv_get()
-                Y = CV[0] if isinstance(CV[0],list) else CV
-            else:
-                Y = eval("[i."+self.Modes+" for i in X]")
-            X.sort(key=dict(zip(X, Y)).get)
-            self.outputs['Object'].sv_set(X)
+        if self.outputs['Value'].is_linked:
+            L = self.inputs['List'].sv_get()
+            L = numpy.array(L) if not isinstance(L,numpy.ndarray) else L
+            Ln = eval("L."+self.Mod+"("+self.st+")")
+            self.outputs['Value'].sv_set(Ln)
 
     def update_socket(self, context):
         self.update()
 
 
 def register():
-    bpy.utils.register_class(SvSortObjsNode)
+    bpy.utils.register_class(SvNumpyArrayNode)
 
 
 def unregister():
-    bpy.utils.unregister_class(SvSortObjsNode)
+    bpy.utils.unregister_class(SvNumpyArrayNode)

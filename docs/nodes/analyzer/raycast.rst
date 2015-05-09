@@ -33,9 +33,6 @@ Parameters
 |                 |                                                                                                  |
 |                 | In **world_space** mode: node works like ``bpy.types.Scene.ray_cast``.                           |
 +-----------------+--------------------------------------------------------------------------------------------------+
-| iteration modes | Method that achieve the same amount of Start and End vectors. "match short"- cuts that list that |
-|                 | was longer, "match long repeat"- repeats the last element of the list that was shorter           |
-+-----------------+--------------------------------------------------------------------------------------------------+
 
 
 Output sockets
