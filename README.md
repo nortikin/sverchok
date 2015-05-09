@@ -36,7 +36,7 @@ Install Sverchok as you would any blender addon.
   
 -  _Installation from Preferences_  
    Download Sverchok archive (zip) from github  
-   If the zip is named `sverchok-something-x.y.z` rename it to `sverchok` before proceeding.  
+   If you are installing from a release zip, please be aware that it contains a folder named `sverchok-master.x.y.z`, you will need to rename that folder to `sverchok` because folder names with dots are not valid python package names.  
    User Preferences > Addons > install from file >  choose zip-archive > activate flag beside Sverchok  
    If any errors appear - close and run blender again and activate again.  
    Enable permanently in the startup.blend using `Ctrl + U` and `Save User Settings` from the Addons menu.  
