@@ -136,7 +136,7 @@ if reload_event:
     menu.reload_menu()
 
 import bpy
-from sverchok import ascii_print
+from sverchok.utils import ascii_print
 
 
 def register():
