@@ -13,7 +13,7 @@ def sv_main(radius=0.3):
 
     bm = bmesh.new()
     objname = "Plane"
-    obj = bpy.data.objects[objname]
+    obj = bpy.data.objects.get(objname)
 
     if obj:
 
