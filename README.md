@@ -52,9 +52,9 @@ Install Sverchok as you would any blender addon.
 
 ###Troubleshooting Installation Errors
 
-In case Sverchok fails to install, we've compiled a list of reasons and known resolutions [here](http://nikitron.cc.ua/sverch/html/installation.html). Please let us know if you encounter other installation issues.
+In case Sverchok fails to install, we've compiled a list of reasons and known resolutions [here](http://nikitron.cc.ua/sverch/html/installation.html). Please let us know if you encounter other installation issues.   
 If you are installing from a release zip, please be aware that it contains a folder named `sverchok-master.x.y.z`, you will need to rename that folder to `sverchok` because folder names with dots are not valid python package names.  
-If any errors appear - close and run blender again and activate again.    
+During install from preferences, if any errors appear, till not saved blender settings- close and run blender again and activate again. It can help    
 
 ###Contact and Credit
 Homepage: [Home](http://nikitron.cc.ua/sverchok_en.html)  
@@ -126,9 +126,9 @@ Email: sverchok-b3d@yandex.ru
    Нажмите потом `F8` чтобы перезагрузить дополнения блендера. Должна поменяться версия.  
 
 ###Известные ошибки установки
-Не установилось? Список причин [тыц](http://nikitron.cc.ua/sverch/html/installation.html). Если вашей ошибки там нет - пишите письма.
+Не установилось? Список причин [тыц](http://nikitron.cc.ua/sverch/html/installation.html). Если вашей ошибки там нет - пишите письма.  
 Если вы устанавливаете из архива типа release, опасайтесь имени папки типа sverchok-master.x.y.z, в таком случае переименуйте её в sverchok, потому что имена папок с точками не читаются в именах пакетов питона.   
-При установке из пользовательских настроек, при получении ошибки - закрыть блендер и снова активировать Сверчка.  
+При установке из пользовательских настроек, при получении ошибки - закрыть блендер и снова активировать Сверчка, всё до сохранения настроек блендера.  
 
 ###Контакты и разработчики
 Домашняя страница: [Домой](http://nikitron.cc.ua/sverchok_ru.html)  
