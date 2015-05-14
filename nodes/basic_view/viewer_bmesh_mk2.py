@@ -89,7 +89,11 @@ def make_bmesh_geometry(node, idx, context, verts, *topology):
 
     if matrix:
         matrix = matrix_sanitizer(matrix)
-        sv_object.matrix_local = matrix
+        if node.extended_matrix:
+            sv_object.data.transform(matrix)
+            sv_object.matrix_local = Matrix.Identity(4)
+        else:
+            sv_object.matrix_local = matrix
     else:
         sv_object.matrix_local = Matrix.Identity(4)
 
@@ -130,8 +134,8 @@ def make_bmesh_geometry_merged(node, idx, context, yielder_object):
             verts = [matrix * Vector(v) for v in verts]
 
         big_verts.extend(verts)
-        big_edges.extend([[a+vert_count, b+vert_count] for a, b in edges])
-        big_faces.extend([[j+vert_count for j in f] for f in faces])
+        big_edges.extend([[a + vert_count, b + vert_count] for a, b in edges])
+        big_faces.extend([[j + vert_count for j in f] for f in faces])
 
         vert_count += len(verts)
 
@@ -243,6 +247,10 @@ class SvBmeshViewerNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         description="This sets which layer objects are placed on",
         get=g, set=s)
 
+    extended_matrix = BoolProperty(
+        default=False,
+        description='Allows mesh.transform(matrix) operation, quite fast!')
+
     def sv_init(self, context):
         self.use_custom_color = True
         self.inputs.new('VerticesSocket', 'vertices', 'vertices')
@@ -308,6 +316,7 @@ class SvBmeshViewerNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         box = col.box()
         if box:
             box.label(text="Beta options")
+            box.prop(self, "extended_matrix", text="Extended Matrix")
             box.prop(self, "fixed_verts", text="Fixed vert count")
             box.prop(self, 'autosmooth', text='smooth shade')
             box.prop(self, 'layer_choice', text='layer')

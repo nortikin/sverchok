@@ -54,7 +54,7 @@ Install Sverchok as you would any blender addon.
 
 In case Sverchok fails to install, we've compiled a list of reasons and known resolutions [here](http://nikitron.cc.ua/sverch/html/installation.html). Please let us know if you encounter other installation issues.   
 If you are installing from a release zip, please be aware that it contains a folder named `sverchok-master.x.y.z`, you will need to rename that folder to `sverchok` because folder names with dots are not valid python package names.  
-During install from preferences, if any errors appear, till not saved blender settings- close and run blender again and activate again. It can help    
+During install from preferences, if rise an error - close and run blender again and activate sverchok than. It can help.    
 
 ###Contact and Credit
 Homepage: [Home](http://nikitron.cc.ua/sverchok_en.html)  
