@@ -31,7 +31,6 @@
 #     Dealga McArdle (aka Zeffii)
 #     Konstantin Vorobiew (aka Kosvor)
 #     Ilya Portnov (aka portnov)
-#     
 #
 #  ***** END GPL LICENSE BLOCK *****
 #
@@ -78,24 +77,23 @@ utils_modules = [
     "cad_module", "sv_bmesh_utils", "sv_viewer_utils", "sv_curve_utils",
     "voronoi", "sv_script", "sv_itertools", "script_importhelper",
     "csg_core", "csg_geom",
-    # UI
-    #     - text editor ui
+    # UI text editor ui
     "text_editor_submenu", "text_editor_plugins",
-    #     - operators
+    # UI operators
     "sv_panels_tools", "sv_IO_panel_tools", "group_tools",
 ]
 ui_modules = [
     "color_def", "sv_IO_panel", "sv_panels", "nodeview_space_menu",
     # bgl modules
-    "viewer_draw",  "viewer_draw_mk2", "nodeview_bgl_viewer_draw",
+    "viewer_draw", "viewer_draw_mk2", "nodeview_bgl_viewer_draw",
     "index_viewer_draw"
 ]
 
 # modules and pkg path, nodes are done separately.
-mods_bases = [(root_modules,  "sverchok"),
-              (core_modules,  "sverchok.core"),
+mods_bases = [(root_modules, "sverchok"),
+              (core_modules, "sverchok.core"),
               (utils_modules, "sverchok.utils"),
-              (ui_modules,    "sverchok.ui")]
+              (ui_modules, "sverchok.ui")]
 
 #  settings have to be treated separately incase the folder name
 #  is something else than sverchok...
@@ -138,8 +136,7 @@ if reload_event:
     menu.reload_menu()
 
 import bpy
-
-sv_ascii_logo = """--sverch--"""
+from sverchok.utils import ascii_print
 
 
 def register():
@@ -150,7 +147,7 @@ def register():
     # in an interface
     data_structure.SVERCHOK_NAME = __name__
     print("** Have a nice day with sverchok  **\n")
-    print(sv_ascii_logo)
+    ascii_print.logo()
 
     if reload_event:
         data_structure.RELOAD_EVENT = True

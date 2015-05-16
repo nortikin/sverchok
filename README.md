@@ -35,10 +35,8 @@ Comes with more than 150 nodes to help create and manipulate geometry. Combining
 Install Sverchok as you would any blender addon.  
   
 -  _Installation from Preferences_  
-   Download Sverchok from github  
-   User Preferences > Addons > install from file >   
-   choose zip-archive > activate flag beside Sverchok  
-   If appears error - close and run blender again and activate again.  
+   Download Sverchok archive (zip) from github   
+   User Preferences > Addons > install from file >  choose zip-archive > activate flag beside Sverchok  
    Enable permanently in the startup.blend using `Ctrl + U` and `Save User Settings` from the Addons menu.  
   
 -  _Manual installation_  
@@ -54,7 +52,9 @@ Install Sverchok as you would any blender addon.
 
 ###Troubleshooting Installation Errors
 
-In case Sverchok fails to install, we've compiled a list of reasons and known resolutions [here](http://nikitron.cc.ua/sverch/html/installation.html). Please let us know if you encounter other installation issues.
+In case Sverchok fails to install, we've compiled a list of reasons and known resolutions [here](http://nikitron.cc.ua/sverch/html/installation.html). Please let us know if you encounter other installation issues.   
+If you are installing from a release zip, please be aware that it contains a folder named `sverchok-master.x.y.z`, you will need to rename that folder to `sverchok` because folder names with dots are not valid python package names.  
+During install from preferences, if rise an error - close and run blender again and activate sverchok than. It can help.    
 
 ###Contact and Credit
 Homepage: [Home](http://nikitron.cc.ua/sverchok_en.html)  
@@ -111,9 +111,7 @@ Email: sverchok-b3d@yandex.ru
   
 -  _Установка из пользовательских настроек_  
    Скачать Сверчка с github  
-   User Preferences > Addons > install from file >   
-   выбрать zip-архив > активировать Сверчка  
-   При получении ошибки - закрыть блендер и снова активировать Сверчка.  
+   User Preferences > Addons > install from file >   выбрать zip-архив > активировать Сверчка  
    Подтвердите выбор в файле startup.blend используя `Ctrl + U` и `Save User Settings`в меню Addons.  
   
 -  _Ручная установка_  
@@ -128,7 +126,9 @@ Email: sverchok-b3d@yandex.ru
    Нажмите потом `F8` чтобы перезагрузить дополнения блендера. Должна поменяться версия.  
 
 ###Известные ошибки установки
-Не установилось? Список причин [тыц](http://nikitron.cc.ua/sverch/html/installation.html). Если вашей ошибки там нет - пишите письма.
+Не установилось? Список причин [тыц](http://nikitron.cc.ua/sverch/html/installation.html). Если вашей ошибки там нет - пишите письма.  
+Если вы устанавливаете из архива типа release, опасайтесь имени папки типа sverchok-master.x.y.z, в таком случае переименуйте её в sverchok, потому что имена папок с точками не читаются в именах пакетов питона.   
+При установке из пользовательских настроек, при получении ошибки - закрыть блендер и снова активировать Сверчка, всё до сохранения настроек блендера.  
 
 ###Контакты и разработчики
 Домашняя страница: [Домой](http://nikitron.cc.ua/sverchok_ru.html)  

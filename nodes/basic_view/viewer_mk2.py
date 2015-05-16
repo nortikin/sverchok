@@ -63,9 +63,9 @@ class SvObjBakeMK2(bpy.types.Operator):
         node = node_group.nodes[self.idname]
         nid = node_id(node)
 
-        matrix_cache = cache_viewer_baker[nid+'m']
-        vertex_cache = cache_viewer_baker[nid+'v']
-        edgpol_cache = cache_viewer_baker[nid+'ep']
+        matrix_cache = cache_viewer_baker[nid + 'm']
+        vertex_cache = cache_viewer_baker[nid + 'v']
+        edgpol_cache = cache_viewer_baker[nid + 'ep']
 
         if matrix_cache and not vertex_cache:
             return {'CANCELLED'}
@@ -73,6 +73,7 @@ class SvObjBakeMK2(bpy.types.Operator):
         v = dataCorrect(vertex_cache)
         e = self.dataCorrect3(edgpol_cache)
         m = self.dataCorrect2(matrix_cache, v)
+        self.config = node
         self.makeobjects(v, e, m)
         return {'FINISHED'}
 
@@ -115,13 +116,13 @@ class SvObjBakeMK2(bpy.types.Operator):
                 v = vertices[k]
 
             if max_vert_index:
-                if (len(v)-1) < max_vert_index[k]:
+                if (len(v) - 1) < max_vert_index[k]:
                     continue
 
-                elif max_vert_index[k] < (len(v)-1):
-                    nonneed = (len(v)-1) - max_vert_index[k]
+                elif max_vert_index[k] < (len(v) - 1):
+                    nonneed = (len(v) - 1) - max_vert_index[k]
                     for q in range(nonneed):
-                        v.pop((max_vert_index[k]+1))
+                        v.pop((max_vert_index[k] + 1))
 
             e, p = [], []
             if num_keys == 2:
@@ -141,7 +142,10 @@ class SvObjBakeMK2(bpy.types.Operator):
         me = bpy.data.meshes.new(name)
         me.from_pydata(v, e, p)
         ob = bpy.data.objects.new(name, me)
-        ob.matrix_world = m
+        if self.config.extended_matrix:
+            ob.data.transform(m)
+        else:
+            ob.matrix_world = m
         ob.show_name = False
         ob.hide_select = False
         return ob, me
@@ -184,9 +188,10 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
         name='face_colors', subtype='COLOR', min=0, max=1, size=3,
         default=(0.0301, 0.488, 0.899), update=updateNode)
 
-    use_scene_light = BoolProperty(name="Scene Light",
-                                   description="Lightning is the same for whole scene",
-                                   default=True, update=updateNode)
+    use_scene_light = BoolProperty(
+        name="Scene Light",
+        description="Lightning is the same for whole scene",
+        default=True, update=updateNode)
 
     # display toggles
     display_verts = BoolProperty(
@@ -228,6 +233,10 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
         default=False,
         update=updateNode)
 
+    extended_matrix = BoolProperty(
+        default=False,
+        description='Allows mesh.transform(matrix) operation, quite fast!')
+
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', 'vertices', 'vertices')
         self.inputs.new('StringsSocket', 'edg_pol', 'edg_pol')
@@ -249,18 +258,15 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
 
         col = layout.column(align=True)
         row = col.row(align=True)
-        # not nesessery to deactivate, because we use color of node
-        #row.active = self.activate
+
         row.prop(self, "display_verts", toggle=True, icon='VERTEXSEL', text='')
         row.prop(self, "vertex_colors", text="")
 
         row = col.row(align=True)
-        #row.active = self.activate
         row.prop(self, "display_edges", toggle=True, icon='EDGESEL', text='')
         row.prop(self, "edge_colors", text="")
 
         row = col.row(align=True)
-        #row.active = self.activate
         row.prop(self, "display_faces", toggle=True, icon='FACESEL', text='')
         row.prop(self, "face_colors", text="")
 
@@ -276,7 +282,7 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
             else:
                 row.scale_y = 1
                 bake_text = "Bake"
-            
+
             opera = row.operator('node.sverchok_mesh_baker_mk2', text=bake_text)
             opera.idname = self.name
             opera.idtree = self.id_data.name
@@ -287,6 +293,7 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
         col.prop(self, 'vertex_size', text='vertex size')
         col.prop(self, 'edge_width', text='edge width')
         col.prop(self, 'ngon_tessellate', text='ngons tessellation', toggle=True)
+        col.prop(self, 'extended_matrix', text='Extended Matrix')
 
         col.separator()
 
@@ -303,9 +310,7 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
         opera.idname = self.name
         opera.idtree = self.id_data.name
 
-        
         layout.prop(self, 'bakebuttonshow', text='show bake button')
-
         layout.prop(self, 'callback_timings')
         self.draw_main_ui_elements(context, layout)
 
@@ -314,7 +319,7 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
         self.n_id = ''
 
     def update(self):
-        if not "matrix" in self.inputs:
+        if not ("matrix" in self.inputs):
             return
         if self.inputs[0].links or self.inputs[2].links:
             callback_disable(node_id(self))
@@ -392,16 +397,16 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
             'forced_tessellation': self.ngon_tessellate,
             'timings': self.callback_timings,
             'light_direction': ld
-            }
+        }
         return options.copy()
 
     def free(self):
         global cache_viewer_baker
         n_id = node_id(self)
         callback_disable(n_id)
-        cache_viewer_baker.pop(n_id+'v', None)
-        cache_viewer_baker.pop(n_id+'ep', None)
-        cache_viewer_baker.pop(n_id+'m', None)
+        cache_viewer_baker.pop(n_id + 'v', None)
+        cache_viewer_baker.pop(n_id + 'ep', None)
+        cache_viewer_baker.pop(n_id + 'm', None)
 
     def bake(self):
         if self.activate and self.inputs['edg_pol'].is_linked:

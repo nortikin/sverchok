@@ -360,16 +360,17 @@ def add_keymap():
 
     keymaps = text_editor.keymap_items
 
-    ''' SHORTCUT 1 Node Refresh: Ctrl + Return '''
-    ident_str = 'text.noderefresh_from_texteditor'
-    if not (ident_str in keymaps):
-        keymaps.new(ident_str, 'RET', 'PRESS', ctrl=1, head=0)
+    if 'noderefresh_from_texteditor' in dir(bpy.ops.text):
+        ''' SHORTCUT 1 Node Refresh: Ctrl + Return '''
+        ident_str = 'text.noderefresh_from_texteditor'
+        if not (ident_str in keymaps):
+            keymaps.new(ident_str, 'RET', 'PRESS', ctrl=1, head=0)
 
-    ''' SHORTCUT 2 Show svplugMenu Ctrl + I (no text selected) '''
-    new_shortcut = keymaps.new('wm.call_menu', 'I', 'PRESS', ctrl=1, head=0)
-    new_shortcut.properties.name = 'TEXT_MT_svplug_menu'
+        ''' SHORTCUT 2 Show svplugMenu Ctrl + I (no text selected) '''
+        new_shortcut = keymaps.new('wm.call_menu', 'I', 'PRESS', ctrl=1, head=0)
+        new_shortcut.properties.name = 'TEXT_MT_svplug_menu'
 
-    print('added keyboard items to Text Editor.')
+        print('added keyboard items to Text Editor.')
 
 
 def register():
