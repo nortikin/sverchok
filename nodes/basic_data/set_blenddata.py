@@ -40,18 +40,17 @@ class SvSetDataObjectNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('StringsSocket', 'outvalues')
 
     def process(self):
-        objs = [i for i in self.inputs['Objects'].sv_get() if i != None]
+        objs = self.inputs['Objects'].sv_get()
+        if isinstance(objs[0], list):
+            objs = objs[0]
         Prop = self.formula
-
         if self.inputs['values'].is_linked:
             v = self.inputs['values'].sv_get()
-            lob = len(objs)
             if isinstance(v[0], list):
                 v = v[0]
-            if lob > len(v):
-                objs, v = match_long_cycle([objs, v])
+            objs, v = match_long_cycle([objs, v])
             g = 0
-            while g != lob:
+            while g != len(objs):
                 exec("objs[g]."+Prop+"= v[g]")
                 g = g+1
         elif self.outputs['outvalues'].is_linked:

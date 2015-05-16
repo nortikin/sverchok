@@ -49,7 +49,6 @@ class SvVertexColorNode(bpy.types.Node, SverchCustomTreeNode):
         row.prop(self, "clear_c", text="")
 
     def sv_init(self, context):
-        
         self.inputs.new('StringsSocket', "Index")
         self.inputs.new('VerticesSocket', "Color")
 
@@ -73,12 +72,10 @@ class SvVertexColorNode(bpy.types.Node, SverchCustomTreeNode):
                     idxs = self.inputs['Index'].sv_get()[0]
                 else:
                     idxs = [i.index for i in objm.vertices]
-                lidx = len(idxs)
-                if lidx > len(colors):
-                    idxs, colors = match_long_cycle([idxs, colors])
+                idxs, colors = match_long_cycle([idxs, colors])
                 g = 0
                 bm.verts.ensure_lookup_table()
-                while g < lidx:
+                while g < len(idxs):
                     for i in bm.verts[idxs[g]].link_loops:
                         ovgs.data[i.index].color = colors[g]
                     g = g+1
@@ -87,12 +84,10 @@ class SvVertexColorNode(bpy.types.Node, SverchCustomTreeNode):
                     idxs = self.inputs['Index'].sv_get()[0]
                 else:
                     idxs = [i.index for i in objm.polygons]
-                lidx = len(idxs)
-                if lidx > len(colors):
-                    idxs, colors = match_long_cycle([idxs, colors])
+                idxs, colors = match_long_cycle([idxs, colors])
                 g = 0
                 bm.faces.ensure_lookup_table()
-                while g < lidx:
+                while g < len(idxs):
                     for i in bm.faces[idxs[g]].loops:
                         ovgs.data[i.index].color = colors[g]
                     g = g+1
