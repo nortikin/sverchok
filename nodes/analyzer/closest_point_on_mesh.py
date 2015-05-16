@@ -52,8 +52,7 @@ class SvPointOnMeshNode(bpy.types.Node, SverchCustomTreeNode):
         point = self.inputs['point'].sv_get()[0]
         max_dist = self.inputs['max_dist'].sv_get()[0]
         obj = self.inputs['Objects'].sv_get()
-        if len(obj) > len(max_dist):
-            obj, max_dist = match_long_repeat([obj, max_dist])
+        obj, max_dist = match_long_repeat([obj, max_dist])
 
         g = 0
         while g < len(obj):
