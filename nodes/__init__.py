@@ -79,7 +79,8 @@ nodes_dict = {
         'basic_spline',
         'basic_3pt_arc',
         'instancer',
-        'profile'
+        'profile',
+	'generative_art'
     ],
 
     'list_basic': [
@@ -162,6 +163,7 @@ nodes_dict = {
         'wafel',
         'csg_boolean',
         'pipe_tubes',
+	'matrix_tube',
     ],  #
 
     'number': [
