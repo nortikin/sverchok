@@ -12,6 +12,7 @@ Modifier Make
    cross_section
    delaunay
    lathe
+   matrix_tube
    pipe_tubes
    solidify
    uv_connection

@@ -31,6 +31,7 @@
 #     Dealga McArdle (aka Zeffii)
 #     Konstantin Vorobiew (aka Kosvor)
 #     Ilya Portnov (aka portnov)
+#     Eleanor Howick (aka elfnor)
 #
 #  ***** END GPL LICENSE BLOCK *****
 #
@@ -42,9 +43,9 @@ bl_info = {
         "sverchok-b3d@ya.ru, "
         "Cfyzzz, Nikitron, Ly29, "
         "AgustinJB, Zeffii, Kosvor, "
-        "Portnov, "
+        "Portnov, Elfnor"
     ),
-    "version": (0, 5, 1, 1),
+    "version": (0, 5, 1, 5),
     "blender": (2, 7, 2),
     "location": "Nodes > CustomNodesTree > Add user nodes",
     "description": "Parametric node-based geometry programming",

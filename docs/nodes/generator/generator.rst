@@ -14,6 +14,7 @@ Generator
    exponential
    fibonacci
    formula_shape
+   generative_art	
    hilbert
    hilbert3d
    hilbert_image
