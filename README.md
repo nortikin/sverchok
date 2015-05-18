@@ -65,7 +65,8 @@ Authors:
 -  Agustin Gimenez, 
 -  Dealga McArdle,  
 -  Constantin Vorobiew, 
--  Ilya Protnov  
+-  Ilya Protnov,  
+-  Eleanor Howick    
 
 Email: sverchok-b3d@yandex.ru  
 
@@ -139,6 +140,7 @@ Email: sverchok-b3d@yandex.ru
 -  Жименез Агустин; 
 -  МакАрдле Деальга;  
 -  Воробьёв Константин;  
--  Портнов Илья. 
+-  Портнов Илья;  
+-  Ховик Элеонора.   
 
 Email: sverchok-b3d@yandex.ru  
