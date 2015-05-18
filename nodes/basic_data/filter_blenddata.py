@@ -39,9 +39,12 @@ class SvFilterObjsNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self,  "formula", text="")
 
     def process(self):
+        objs = self.inputs['Objects'].sv_get()
+        if isinstance(objs[0],list):
+            objs = objs[0]
         out1 = []
         out2 = []
-        for i in self.inputs['Objects'].sv_get():
+        for i in objs:
             if self.formula in i.name:
                 out1.append(i)
             else:
