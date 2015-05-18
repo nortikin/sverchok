@@ -172,7 +172,7 @@ class SvScriptNode(bpy.types.Node, SverchCustomTreeNode):
         return items
 
     def avail_users(self, context):
-        users = 'templates', 'zeffii', 'nikitron', 'ly', 'ko'
+        users = 'templates', 'zeffii', 'nikitron', 'ly', 'ko', 'elfnor'
         return [(j, j, '') for j in users]
 
     files_popup = EnumProperty(
