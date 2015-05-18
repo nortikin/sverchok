@@ -97,7 +97,7 @@ Clean
 .. image:: https://cloud.githubusercontent.com/assets/5783432/4512954/8662fbf8-4b46-11e4-8f67-243a56c48856.png
   :alt: cleanlayout.png
 
-Button to remove sverchok and blendgraph layouts, that has not users (0)
+Button to remove sverchok layouts, that has not users (0)
 
 **hard clean**  - boolean flag to remove layouts even if it has users (1,2...), but not fake user (F). Fake user layout will be left.
 
@@ -124,6 +124,11 @@ Layouts by box. Every layout has buttons:
 |                    | not handled for now.                                                                   |
 +--------------------+----------------------------------------------------------------------------------------+
 | **Animate layout** | to animate the layout (or not) - may preserve you time.                                |
++--------------------+----------------------------------------------------------------------------------------+
+| **P**              | Process layout, allows safely manupilate monsterouse layouts.                          |
++--------------------+----------------------------------------------------------------------------------------+
+| **F**              | Fake user of layout to preserve from removing with reloading file or                   |
+|                    | with **clean layouts** button.                                                         |
 +--------------------+----------------------------------------------------------------------------------------+
 
 Properties has also gathered values:
