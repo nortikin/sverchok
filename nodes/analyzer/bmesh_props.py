@@ -21,7 +21,7 @@ import bmesh
 from bpy.props import EnumProperty
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (updateNode)
+from sverchok.data_structure import (updateNode, match_long_repeat)
 
 
 def get_value(self, b, V):
@@ -67,6 +67,7 @@ class SvBMVertsNode(bpy.types.Node, SverchCustomTreeNode):
     def process(self):
         Val = []
         siob = self.inputs['Objects']
+        v, e, p = self.inputs['Vert'], self.inputs['Edge'], self.inputs['Poly']
         if siob.is_linked:
             obj = siob.sv_get()
             for OB in obj:
@@ -74,17 +75,12 @@ class SvBMVertsNode(bpy.types.Node, SverchCustomTreeNode):
                 bm.from_mesh(OB.data)
                 get_value(self, bm, Val)
                 bm.free()
-        if self.inputs['Vert'].is_linked:
-            sive = self.inputs['Vert'].sv_get()
-            sied = self.inputs['Edge'].sv_get(default=[[]])
-            sipo = self.inputs['Poly'].sv_get(default=[[]])
-            g = 0
-            while g != len(sive):
-                bm = bmesh_from_pydata(sive[g], sied[g], sipo[g])
+        if v.is_linked:
+            sive, sied, sipo = match_long_repeat([v.sv_get(), e.sv_get([[]]), p.sv_get([[]])])
+            for i in zip(sive, sied, sipo):
+                bm = bmesh_from_pydata(i[0], i[1], i[2])
                 get_value(self, bm, Val)
                 bm.free()
-                g = g+1
-
         self.outputs['Value'].sv_set(Val)
 
     def update_socket(self, context):
