@@ -76,7 +76,7 @@ class SvPipeNode(bpy.types.Node, SverchCustomTreeNode):
             Shape = self.shape
             #Diameter = self.inputs['Diameter'].sv_get()[0][0]
             Diameter = 1.0
-            Size = self.inputs['Size'].sv_get()[0][0]
+            Size = self.inputs['Size'].sv_get()[0]
             #Offset = self.inputs['Offset'].sv_get()[0][0]
             #Extrude = self.inputs['Extrude'].sv_get()[0][0]
             outv, outp = self.Do_vecs(Vecs,Edgs,Diameter,Shape,Size) #Nsides,Offset,Extrude)
@@ -88,8 +88,6 @@ class SvPipeNode(bpy.types.Node, SverchCustomTreeNode):
     
 
     def Do_vecs(self, Vecs,Edgs,Diameter,Shape,Size): #Offset,Extrude):
-        S0,S1,S2 = Size
-        S2 = (S2-1)/2
         if Shape == 'Square':
             Nsides = 4
             Diameter = Diameter*sqrt(2)/2
@@ -98,15 +96,18 @@ class SvPipeNode(bpy.types.Node, SverchCustomTreeNode):
             Nsides = 12
             Diameter = Diameter/2
             Sides = 30
-        circle = [ (Vector((sin(radians(i))*S0,cos(radians(i))*S1,0))*Diameter) \
-                    for i in range(45,405,Sides) ]
+
         outv = []
         outp = []
         for E,V in zip(Edgs,Vecs):
             outv_ = []
             outp_ = []
             k = 0
-            for e in E:
+            for e,S in zip(E,Size):
+                S0,S1,S2 = S
+                S2 = (S2-1)/2
+                circle = [ (Vector((sin(radians(i))*S0,cos(radians(i))*S1,0))*Diameter) \
+                            for i in range(45,405,Sides) ]
                 v2,v1 = Vector(V[e[1]]),Vector(V[e[0]])
                 vecdi = v2-v1
                 matrix_rot = vecdi.rotation_difference(Vector((0,0,1))).to_matrix().to_4x4()
