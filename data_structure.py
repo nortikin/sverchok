@@ -226,7 +226,7 @@ def second_as_first_cycle(F,S):
     if len(F)>len(S):
         return list(map(list, zip(*zip(*[F, itertools.cycle(S)]))))
     else:
-        return
+        return [F,S]
 
 
 # cross matching
