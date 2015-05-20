@@ -222,6 +222,13 @@ def match_long_cycle(lsts):
     return list(map(list, zip(*zip(*tmp))))
 
 
+def second_as_first_cycle(F,S):
+    if len(F)>len(S):
+        return list(map(list, zip(*zip(*[F, itertools.cycle(S)]))))
+    else:
+        return [F,S]
+
+
 # cross matching
 # [[1,2], [5,6,7]] -> [[1,1,1,2,2,2], [5,6,7,5,6,7]]
 def match_cross(lsts):

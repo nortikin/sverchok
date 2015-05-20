@@ -20,7 +20,7 @@
 import bpy
 from bpy.props import StringProperty
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (updateNode, match_long_cycle)
+from sverchok.data_structure import (updateNode, second_as_first_cycle)
 
 
 class SvSetDataObjectNode(bpy.types.Node, SverchCustomTreeNode):
@@ -48,7 +48,7 @@ class SvSetDataObjectNode(bpy.types.Node, SverchCustomTreeNode):
             v = self.inputs['values'].sv_get()
             if isinstance(v[0], list):
                 v = v[0]
-            objs, v = match_long_cycle([objs, v])
+            objs, v = second_as_first_cycle(objs, v)
             g = 0
             while g != len(objs):
                 exec("objs[g]."+Prop+"= v[g]")
