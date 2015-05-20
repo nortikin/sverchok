@@ -20,7 +20,7 @@ import bpy
 import bmesh
 from bpy.props import StringProperty, EnumProperty, BoolProperty, FloatVectorProperty
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (updateNode, match_long_cycle)
+from sverchok.data_structure import (updateNode, second_as_first_cycle)
 
 
 class SvVertexColorNode(bpy.types.Node, SverchCustomTreeNode):
@@ -72,7 +72,7 @@ class SvVertexColorNode(bpy.types.Node, SverchCustomTreeNode):
                     idxs = self.inputs['Index'].sv_get()[0]
                 else:
                     idxs = [i.index for i in objm.vertices]
-                idxs, colors = match_long_cycle([idxs, colors])
+                idxs, colors = second_as_first_cycle(idxs, colors)
                 g = 0
                 bm.verts.ensure_lookup_table()
                 while g < len(idxs):
@@ -84,7 +84,7 @@ class SvVertexColorNode(bpy.types.Node, SverchCustomTreeNode):
                     idxs = self.inputs['Index'].sv_get()[0]
                 else:
                     idxs = [i.index for i in objm.polygons]
-                idxs, colors = match_long_cycle([idxs, colors])
+                idxs, colors = second_as_first_cycle(idxs, colors)
                 g = 0
                 bm.faces.ensure_lookup_table()
                 while g < len(idxs):
