@@ -21,7 +21,7 @@ import mathutils
 from mathutils import Vector
 from bpy.props import FloatProperty, BoolProperty
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (updateNode, match_long_repeat)
+from sverchok.data_structure import (updateNode, second_as_first_cycle)
 
 
 class SvPointOnMeshNode(bpy.types.Node, SverchCustomTreeNode):
@@ -52,7 +52,7 @@ class SvPointOnMeshNode(bpy.types.Node, SverchCustomTreeNode):
         point = self.inputs['point'].sv_get()[0]
         max_dist = self.inputs['max_dist'].sv_get()[0]
         obj = self.inputs['Objects'].sv_get()
-        obj, max_dist = match_long_repeat([obj, max_dist])
+        obj, max_dist = second_as_first_cycle(obj, max_dist)
 
         g = 0
         while g < len(obj):
