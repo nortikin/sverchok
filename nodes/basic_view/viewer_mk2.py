@@ -225,7 +225,7 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
 
     bakebuttonshow = BoolProperty(
         name='bakebuttonshow', description='show bake button on node ui',
-        default=False,
+        default=True,
         update=updateNode)
 
     callback_timings = BoolProperty(
