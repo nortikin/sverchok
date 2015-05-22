@@ -68,6 +68,8 @@ class SvMaskJoinNode(bpy.types.Node, SverchCustomTreeNode):
                 mask = SvGetSocketAnyType(self, self.inputs['Mask'])
             else:  # to match MaskList
                 mask = [[1, 0]]
+            if not isinstance(mask[0],list):
+                mask = [mask]
             data_t = SvGetSocketAnyType(self, self.inputs['Data True'])
             data_f = SvGetSocketAnyType(self, self.inputs['Data False'])
 
