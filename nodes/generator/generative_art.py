@@ -16,6 +16,8 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+''' by Eleanor Howick | 2015 https://github.com/elfnor
+    LSystem code from Philip Rideout  https://github.com/prideout/lsystem '''
 
 
 import string
@@ -296,7 +298,7 @@ class SvGenerativeArtNode(bpy.types.Node, SverchCustomTreeNode):
                        update=updateNode)
 
     maxmats = IntProperty(name='maxmats', description='maximum nunber of matrices',
-                       default=5000, min=1, options={'ANIMATABLE'},
+                       default=1000, min=1, options={'ANIMATABLE'},
                        update=updateNode)
 
     typ = StringProperty(name='typ',
