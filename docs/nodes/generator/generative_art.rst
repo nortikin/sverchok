@@ -52,24 +52,24 @@ A simple example of an xml design file:
 6 Spirals
 ::
 
-    <rules max_depth="400">
-        <rule name="entry">
-            <call count="3" transforms="rz 120" rule="R1"/>
-            <call count="3" transforms="rz 120" rule="R2"/>
-        </rule>
-        <rule name="R1">
-            <call transforms="tx 1.3 rx 1.57 rz 6 ry 3 sa 0.99" rule="R1"/>
-            <instance transforms="sa 4" shape="sphere"/>
-        </rule>
-        <rule name="R2">
-            <call transforms="tx -1.3 rz 6 ry 3 sa 0.99" rule="R2"/>
-            <instance transforms="sa 4" shape="sphere"/>
-        </rule>
-    </rules>
+	<rules max_depth="150">
+		<rule name="entry">
+		    <call count="3" transforms="rz 120" rule="R1"/>
+		    <call count="3" transforms="rz 120" rule="R2"/>
+		</rule>
+		<rule name="R1">
+		    <call transforms="tx 2.6 rx 3.14 rz 12 ry 6 sa 0.97" rule="R1"/>
+		    <instance  transforms="sa 2.6" shape="sphere"/>
+		</rule>
+		<rule name="R2">
+		    <call transforms="tx -2.6 rz 12 ry 6 sa 0.97" rule="R2"/>
+		    <instance transforms="sx 2.6" shape="sphere"/>
+		</rule>
+	</rules>
 
 This specifies the following design with 6 spirals.
 
-.. image:: https://cloud.githubusercontent.com/assets/7930130/7629796/d0ec1802-fa83-11e4-9693-2d346aa726cc.png
+.. image:: https://cloud.githubusercontent.com/assets/7930130/7782288/471b8c4e-0162-11e5-93fe-873668b69f71.png
   :alt: 6 spiral screen shot with node diagram and text file and structure
 
 The xml file consists of a list of rules. There must be at least one rule called entry. This is the starting point for the processor. Each rule consists of a list of instructions. These instructions can either be a call to another rule or an instruction to place an instance of an object. 
@@ -101,36 +101,36 @@ For example
 Tree
 ::
 
-    <rules max_depth="200">
-        <rule name="entry">
-            <call  rule="spiral"/>
-        </rule>
-        <rule name="spiral" weight="100">
-            <instance shape="tubey"/>
-            <call transforms="tz 0.4 rx 1 sa 0.995" rule="spiral"/>
-        </rule>
-        <rule name="spiral" weight="100">
-            <instance shape="tubey"/>
-            <call transforms="tz 0.4 rx 1 ry 1 sa 0.995" rule="spiral"/>
-        </rule>
-        <rule name="spiral" weight="100">
-            <instance shape="tubey"/>
-            <call transforms="tz 0.4 rx 1 rz -1 sa 0.995" rule="spiral"/>
-        </rule>
-        <rule name="spiral" weight="6">
-            <call transforms="rx 15" rule="spiral"/>
-            <call transforms="rz 180" rule="spiral"/>
-        </rule>
-    </rules>
+	<rules max_depth="100">
+	    <rule name="entry">
+		<call  rule="spiral"/>
+	    </rule>
+	    <rule name="spiral" weight="100">
+		<call transforms="tz 0.1 rx 1 sa 0.995" rule="spiral"/>
+		<instance transforms="s 0.1 0.1 0.15" shape="tubey"/>
+	    </rule>
+	    <rule name="spiral" weight="100">
+		<call transforms="tz 0.1 rx 1 ry 4 sa 0.995" rule="spiral"/>
+		<instance transforms="s 0.1 0.1 0.15" shape="tubey"/>
+	    </rule>
+	    <rule name="spiral" weight="100">
+		<call transforms="tz 0.1 rx 1 rz -4 sa 0.995" rule="spiral"/>
+		<instance transforms="s 0.1 0.1 0.15" shape="tubey"/>
+	    </rule>
+	    <rule name="spiral" weight="20">
+		<call transforms="rx 15" rule="spiral"/>
+		<call transforms="rz 180" rule="spiral"/>
+	    </rule>
+	</rules>
 
-.. image:: https://cloud.githubusercontent.com/assets/7930130/7629794/cdde5404-fa83-11e4-9d21-d767fe885cdf.png
+.. image:: https://cloud.githubusercontent.com/assets/7930130/7782285/25164a80-0162-11e5-9feb-32c4f3908f1e.png
   :alt: tree structure image
 
 In the above xml file there are four definitions of the ``spiral`` rule. Each rule version has a weight attribute. The processor will call each version of the ``spiral`` rule in a random manner. The weight attribute will determine the probability a particular rule version is called. 
 
 The first three definitions of the ``spiral`` rule all place an object instance and then call the ``spiral`` rule with the same translation along the ``z`` axis and rotation about the ``x`` axis but different amounts of rotation about the ``y`` and ``z`` axis. The fourth definition calls the ``spiral`` rule twice without placing an instance. This causes the branches in the tree structure. Changing the value of the weight attribute for this rule version will change how often the tree branches. Larger value, the rule gets called more often and there are more branches.
 
-If the weight attribute is omitted each version will have equal weight. Changing the value of ``r seed`` in the node interface will change the generated structure for xml files with multiple rule definitions.
+If the weight attribute is omitted each version will have equal weight. Changing the value of ``r seed`` in the node interface will change the generated structure for xml files with multiple rule definitions. This example had rseed = 1.
 
 
 Successor Rule Example
@@ -162,6 +162,8 @@ Nouveau variation
 
 .. image:: https://cloud.githubusercontent.com/assets/7930130/7629793/cb2d4a30-fa83-11e4-8c75-2fa6488f65fe.png
   :alt: nouveau variation structure
+
+This example needs "max matrices" set to 5000 to get the above result.
 
 Mask Example
 ~~~~~~~~~~~~
@@ -266,6 +268,7 @@ Fern 2
 .. image:: https://cloud.githubusercontent.com/assets/7930130/7629783/bbe99588-fa83-11e4-8d70-92cc2909675e.png
   :alt: image fern right
 
+Again these were both done with max mats set to 5000.
 
 Variables Example
 ~~~~~~~~~~~~~~~~~~~
