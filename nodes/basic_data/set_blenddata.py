@@ -49,10 +49,8 @@ class SvSetDataObjectNode(bpy.types.Node, SverchCustomTreeNode):
             if isinstance(v[0], list):
                 v = v[0]
             objs, v = second_as_first_cycle(objs, v)
-            g = 0
-            while g != len(objs):
-                exec("objs[g]."+Prop+"= v[g]")
-                g = g+1
+            for i, i2 in zip(objs, v):
+                exec("i."+Prop+"= i2")
         elif self.outputs['outvalues'].is_linked:
             self.outputs['outvalues'].sv_set(eval("[i."+Prop+" for i in objs]"))
         else:
