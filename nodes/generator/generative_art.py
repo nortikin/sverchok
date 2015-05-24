@@ -16,6 +16,8 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+''' by Eleanor Howick | 2015 https://github.com/elfnor
+    LSystem code from Philip Rideout  https://github.com/prideout/lsystem '''
 
 
 import string
@@ -131,8 +133,8 @@ class LSystem:
                         shapes.append(shape)
                                                   
                     else:
-                        print("malformed xml")
-                        quit()
+                        raise ValueError("bad xml", statement.tag)
+
     
         print("\nGenerated %d shapes." % len(shapes))
         return shapes
@@ -191,8 +193,7 @@ def _pickRule(tree, name):
             elements.append(r)
 
     if len(elements) == 0:
-        print("Error, no rules found with name '%s'" % name)
-        quit()
+        raise ValueError("bad xml",  "no rules found with name '%s'" % name)
 
     sum, tuples = 0, []
     for e in elements:
@@ -270,8 +271,7 @@ def _parseXform(xform_string):
                 matrix *= mxyz
 
             else:
-                print("unrecognized transformation: '%s' at position %d in '%s'" % (command, t, xform_string))
-                quit()
+                raise ValueError("bad xml", "unrecognized transformation: '%s' at position %d in '%s'" % (command, t, xform_string))
 
     _xformCache[xform_string] = matrix
     return matrix
@@ -298,7 +298,7 @@ class SvGenerativeArtNode(bpy.types.Node, SverchCustomTreeNode):
                        update=updateNode)
 
     maxmats = IntProperty(name='maxmats', description='maximum nunber of matrices',
-                       default=5000, min=1, options={'ANIMATABLE'},
+                       default=1000, min=1, options={'ANIMATABLE'},
                        update=updateNode)
 
     typ = StringProperty(name='typ',
