@@ -8,13 +8,13 @@ Functionality
 
 *It works with a list of objects and a list of Values*
 
-*can be combines multiple lists into one with the help of ListJoin node*
+*multiple lists can be combined into one with the help of ListJoin node*
 
-Когда подключен только один Objects сокет, выполняет **(Объект.текст)**
+When there is only one socket Objects- performs ** (Object.str) **
 
-Если подключен Value сокет, выполняет **(Объект.текст=Value)**
+If the second socket is connected Value- performs **(Object.str=Value)**
 
-Если подключен OutValue сокет, выполняет **(OutValue=Объект.текст)**
+If the second socket is connected OutValue- performs **(OutValue=Object.str)**
 
 *нельзя подключать оба Values сокета одновременно*
 
