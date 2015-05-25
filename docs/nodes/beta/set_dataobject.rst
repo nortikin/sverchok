@@ -12,9 +12,9 @@ Functionality
 
 When there is only one socket Objects- performs **(Object.str)**
 
-If the second socket is connected Value- performs **(Object.str=Value)**
+If the second socket is connected Values- performs **(Object.str=Value)**
 
-If the second socket is connected OutValue- performs **(OutValue=Object.str)**
+If the second socket is connected OutValues- performs **(OutValue=Object.str)**
 
 *Do not connect both the Values sockets at the same time*
 
@@ -32,7 +32,7 @@ Outputs
 
 This node has the following outputs:
 
-- **outvalues**
+- **outvalues** - the list of values returned by the **str** expression for each object
 
 Examples of usage
 -----------------
