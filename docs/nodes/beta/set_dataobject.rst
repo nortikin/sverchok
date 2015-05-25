@@ -8,7 +8,7 @@ Functionality
 
 *It works with a list of objects and a list of Values*
 
-*можно обьединять несколько списков в один с помощью ListJoin node*
+*can be combines multiple lists into one with the help of ListJoin node*
 
 Когда подключен только один Objects сокет, выполняет **(Объект.текст)**
 
