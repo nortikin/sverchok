@@ -6,7 +6,7 @@ Set_dataobject
 Functionality
 -------------
 
-*Работает с одним списком объектов и одним списком Values*
+*It works with a list of objects and a list of Values*
 
 *можно обьединять несколько списков в один с помощью ListJoin node*
 
