@@ -10,13 +10,13 @@ Functionality
 
 *multiple lists can be combined into one with the help of ListJoin node*
 
-When there is only one socket Objects- performs ** (Object.str) **
+When there is only one socket Objects- performs **(Object.str)**
 
 If the second socket is connected Value- performs **(Object.str=Value)**
 
 If the second socket is connected OutValue- performs **(OutValue=Object.str)**
 
-*нельзя подключать оба Values сокета одновременно*
+*Do not connect both the Values sockets at the same time*
 
 Inputs
 ------
