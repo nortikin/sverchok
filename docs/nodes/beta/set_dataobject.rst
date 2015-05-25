@@ -23,8 +23,8 @@ Inputs
 
 This node has the following inputs:
 
-- **Objects** 
-- **values**
+- **Objects** - only one list of python objects, like **bpy.data.objects** or **mathutils.Vector**
+- **values** - only one list of any type values like **tupple** or **float** or **bpy.data.objects**
 
 
 Outputs
