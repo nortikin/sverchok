@@ -37,7 +37,7 @@ class SvSortObjsNode(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons(self, context, layout):
         if not self.inputs['CustomValue'].is_linked:
-            layout.prop(self,  "Modes", text="")
+            layout.prop(self, "Modes", text="")
 
     def process(self):
         if self.outputs['Objects'].is_linked:
