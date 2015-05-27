@@ -18,6 +18,10 @@ If the second socket is connected OutValues- performs **(OutValue=Object.str)**
 
 *Do not connect both the Values sockets at the same time*
 
+*First word in str must be property or metod of object*
+
+*Use i. prefix in str to bring second property of same object*
+
 Inputs
 ------
 
