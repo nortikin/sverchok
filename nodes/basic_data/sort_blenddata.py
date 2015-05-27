@@ -17,14 +17,9 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-from bpy.props import EnumProperty
+from bpy.props import StringProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode)
-
-
-def Obm(m):
-        m = [(i,i,"") for i in m]
-        return m
 
 
 class SvSortObjsNode(bpy.types.Node, SverchCustomTreeNode):
@@ -33,8 +28,7 @@ class SvSortObjsNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'sort_dataobject'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    M = ['location.x','location.y','location.z','name']
-    Modes = EnumProperty(name="sortmod", default="location.x", items=Obm(M), update=updateNode)
+    Modes = StringProperty(name='formula', default='location.x', update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', 'Objects')
@@ -43,7 +37,7 @@ class SvSortObjsNode(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons(self, context, layout):
         if not self.inputs['CustomValue'].is_linked:
-            layout.prop(self, "Modes", "Sort")
+            layout.prop(self, "Modes", text="")
 
     def process(self):
         if self.outputs['Objects'].is_linked:

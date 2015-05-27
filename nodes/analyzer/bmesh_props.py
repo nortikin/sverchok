@@ -21,7 +21,7 @@ import bmesh
 from bpy.props import EnumProperty
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (updateNode, match_long_repeat)
+from sverchok.data_structure import (updateNode, match_long_repeat, enum_item as e)
 
 
 def get_value(self, b, V):
@@ -31,11 +31,6 @@ def get_value(self, b, V):
         return V
 
 
-def Obm(m):
-        m = [(i,i,"") for i in m]
-        return m
-
-
 class SvBMVertsNode(bpy.types.Node, SverchCustomTreeNode):
     ''' BMesh Verts '''
     bl_idname = 'SvBMVertsNode'
@@ -43,14 +38,14 @@ class SvBMVertsNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     Modes = ['verts','faces','edges']
-    Mod = EnumProperty(name="getmodes", default="verts", items=Obm(Modes), update=updateNode)
+    Mod = EnumProperty(name="getmodes", default="verts", items=e(Modes), update=updateNode)
     a = ['hide','select']
     PV = a + ['is_manifold','is_wire','is_boundary','calc_shell_factor()','calc_edge_angle(-1)']
     PF = a + ['calc_area()','calc_perimeter()','material_index','smooth']
     PE = a + ['calc_face_angle()','calc_face_angle_signed()','calc_length()','is_boundary','is_contiguous','is_convex','is_manifold','is_wire','seam']
-    verts = EnumProperty(name="Vprop", default="is_manifold", items=Obm(PV), update=updateNode)
-    faces = EnumProperty(name="Fprop", default="select", items=Obm(PF), update=updateNode)
-    edges = EnumProperty(name="Eprop", default="select", items=Obm(PE), update=updateNode)
+    verts = EnumProperty(name="Vprop", default="is_manifold", items=e(PV), update=updateNode)
+    faces = EnumProperty(name="Fprop", default="select", items=e(PF), update=updateNode)
+    edges = EnumProperty(name="Eprop", default="select", items=e(PE), update=updateNode)
 
     def sv_init(self, context):
         si = self.inputs.new
