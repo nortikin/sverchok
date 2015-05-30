@@ -49,19 +49,18 @@ class SvObjectToMeshNode(bpy.types.Node, SverchCustomTreeNode):
         vers_out = []
         pols_out = []
         mtrx_out = []
+        scene = bpy.context.scene
+        ot = objs[0].type not in ['MESH', 'CURVE', 'FONT', 'SURFACE']
         for obj in objs:
-            print(obj)
             edgs = []
             vers = []
             pols = []
             mtrx = []
-            if obj.type != 'MESH':
+            if ot:
                 for m in obj.matrix_world:
                     mtrx.append(m[:])
             else:
-                scene = bpy.context.scene
-                settings = 'PREVIEW'
-                obj_data = obj.to_mesh(scene, self.modifiers, settings)
+                obj_data = obj.to_mesh(scene, self.modifiers, 'PREVIEW')
                 for m in obj.matrix_world:
                     mtrx.append(list(m))
                 for v in obj_data.vertices:
@@ -70,12 +69,10 @@ class SvObjectToMeshNode(bpy.types.Node, SverchCustomTreeNode):
                 for p in obj_data.polygons:
                     pols.append(p.vertices[:])
                 bpy.data.meshes.remove(obj_data)
-
             edgs_out.append(edgs)
             vers_out.append(vers)
             pols_out.append(pols)
             mtrx_out.append(mtrx)
-
         data_out = [vers_out, edgs_out, pols_out, mtrx_out]
         for s,d in zip(self.outputs, data_out):
             if s.is_linked:
