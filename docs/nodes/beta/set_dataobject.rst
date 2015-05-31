@@ -46,3 +46,5 @@ Examples of usage
 .. image:: https://cloud.githubusercontent.com/assets/7894950/7807387/d2ddd2d6-0393-11e5-9c6b-1a6880fd3c65.png
 
 .. image:: https://cloud.githubusercontent.com/assets/7894950/7807409/0b8ad44e-0394-11e5-930f-2416debba804.png
+
+.. image:: https://cloud.githubusercontent.com/assets/7894950/7901468/a50b74ba-0791-11e5-8fb7-296e866e7db4.png
