@@ -47,7 +47,10 @@ class SvFilterObjsNode(bpy.types.Node, SverchCustomTreeNode):
         out1 = []
         out2 = []
         if self.inputs['mask'].is_linked:
-            for i, i2 in zip(objs, self.inputs['mask'].sv_get()):
+            m = self.inputs['mask'].sv_get()
+            if isinstance(m[0], list):
+                m = m[0]
+            for i, i2 in zip(objs, m):
                 if i2 == 1:
                     out1.append(i)
                 else:
