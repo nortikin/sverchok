@@ -19,7 +19,6 @@
 import bpy
 from bpy.props import BoolProperty
 from mathutils import Matrix, Vector
-
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (Matrix_generate, updateNode)
 from sverchok.utils.sv_mesh_utils import mesh_join
@@ -53,16 +52,14 @@ class SvMatrixApplyJoinNode(bpy.types.Node, SverchCustomTreeNode):
         matrices = self.inputs['Matrices'].sv_get()
         matrices = Matrix_generate(matrices)
         n = len(matrices)
-        result_vertices = vertices*n if len(vertices) != n else vertices
+        result_vertices = (vertices*n)[:n]
         outV = []
-        g = 0
-        while g < n:
-            outV.append([(matrices[g]*Vector(v))[:] for v in result_vertices[g]])
-            g = g+1
+        for i, i2 in zip(matrices, result_vertices):
+            outV.append([(i*Vector(v))[:] for v in i2])
         edges = self.inputs['Edges'].sv_get(default=[[]])
         faces = self.inputs['Faces'].sv_get(default=[[]])
-        result_edges = edges * n if len(edges) != n else edges
-        result_faces = faces * n if len(faces) != n else faces
+        result_edges = (edges * n)[:n]
+        result_faces = (faces * n)[:n]
         if self.do_join:
             outV, result_edges, result_faces = mesh_join(outV, result_edges, result_faces)
             outV, result_edges, result_faces = [outV], [result_edges], [result_faces]
