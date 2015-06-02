@@ -81,7 +81,7 @@ nodes_dict = {
         'basic_3pt_arc',
         'instancer',
         'profile',
-	'generative_art'
+        'generative_art'
     ],
 
     'list_basic': [
@@ -164,7 +164,7 @@ nodes_dict = {
         'wafel',
         'csg_boolean',
         'pipe_tubes',
-	'matrix_tube',
+        'matrix_tube',
     ],  #
 
     'number': [
