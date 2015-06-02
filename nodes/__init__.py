@@ -46,7 +46,8 @@ nodes_dict = {
         'set_blenddata',
         'sort_blenddata',
         'filter_blenddata',
-        'blenddata_to_svdata'
+        'blenddata_to_svdata',
+        'BMOperators'
     ],
 
     'basic_debug': [
