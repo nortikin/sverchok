@@ -39,11 +39,11 @@ class SvBMOpsNode(bpy.types.Node, SverchCustomTreeNode):
           'dissolve_verts(bm,verts=Vidx,use_face_split=b[0],use_boundary_tear=b[1])',
           'dissolve_edges(bm,edges=Eidx,use_verts=b[0],use_face_split=b[1])',
           'dissolve_faces(bm,faces=Pidx,use_verts=b[0])',
-          'triangulate(bm,faces=Pidx,quad_method=v[0],ngon_method=v[1])'
-          'join_triangles(bm,faces=Pidx,cmp_sharp=b[0],cmp_uvs=b[1],cmp_vcols=b[2],cmp_materials=b[3],limit=v[0])'
-          'connect_verts_concave(bm,faces=Pidx)'
-          'connect_verts_nonplanar(bm,angle_limit=v[0],faces=Pidx)'
-          'subdivide_edgering(bm,edges=Eidx,interp_mode=v[0],smooth=v[1],cuts=v[2],profile_shape=v[3],profile_shape_factor=v[4])'
+          'triangulate(bm,faces=Pidx,quad_method=v[0],ngon_method=v[1])',
+          'join_triangles(bm,faces=Pidx,cmp_sharp=b[0],cmp_uvs=b[1],cmp_vcols=b[2],cmp_materials=b[3],limit=v[0])',
+          'connect_verts_concave(bm,faces=Pidx)',
+          'connect_verts_nonplanar(bm,angle_limit=v[0],faces=Pidx)',
+          'subdivide_edgering(bm,edges=Eidx,interp_mode=v[0],smooth=v[1],cuts=v[2],profile_shape=v[3],profile_shape_factor=v[4])',
           'inset_individual(bm,faces=Pidx,thickness=v[0],depth=v[1],use_even_offset=b[0],use_interpolate=b[1],use_relative_offset=b[2])'
           ]
 
