@@ -267,6 +267,7 @@ def make_node_cats():
         ["SvFilterObjsNode",   "Filter ObjectID"],
         ["SvNumpyArrayNode",   "Numpy Array"],
         ["SvObjectToMeshNode",   "ObjectID to Mesh"],
+        ["SvBMOpsNode",   "BMesh Operators"],
     ]
 
     return node_cats
