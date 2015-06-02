@@ -66,8 +66,8 @@ class SvBMOpsNode(bpy.types.Node, SverchCustomTreeNode):
         if not self.outputs['Verts'].is_linked:
             return
         si = self.inputs
-        b = si['Bool(b)'].sv_get([[0]])
-        v = si['Value(v)'].sv_get([[0]])
+        b = si['Bool(b)'].sv_get([[0,0,0,0,0,0]])
+        v = si['Value(v)'].sv_get([[1,1,1,1,1]])
         obj = si['Objects'].sv_get()
         idx = si['idx'].sv_get([[0]])
         Sidx = si['idx'].is_linked
