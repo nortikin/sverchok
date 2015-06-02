@@ -21,7 +21,7 @@ import bmesh
 from bpy.props import EnumProperty, BoolProperty
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (updateNode, enum_item as e)
+from sverchok.data_structure import (updateNode, match_long_cycle, enum_item as e)
 
 
 class SvBMOpsNode(bpy.types.Node, SverchCustomTreeNode):
@@ -39,11 +39,11 @@ class SvBMOpsNode(bpy.types.Node, SverchCustomTreeNode):
           'dissolve_verts(bm,verts=Vidx,use_face_split=b[0],use_boundary_tear=b[1])',
           'dissolve_edges(bm,edges=Eidx,use_verts=b[0],use_face_split=b[1])',
           'dissolve_faces(bm,faces=Pidx,use_verts=b[0])',
-          'triangulate(bm,faces=Pidx,quad_method=v[0],ngon_method=v[1])'
-          'join_triangles(bm,faces=Pidx,cmp_sharp=b[0],cmp_uvs=b[1],cmp_vcols=b[2],cmp_materials=b[3],limit=v[0])'
-          'connect_verts_concave(bm,faces=Pidx)'
-          'connect_verts_nonplanar(bm,angle_limit=v[0],faces=Pidx)'
-          'subdivide_edgering(bm,edges=Eidx,interp_mode=v[0],smooth=v[1],cuts=v[2],profile_shape=v[3],profile_shape_factor=v[4])'
+          'triangulate(bm,faces=Pidx,quad_method=v[0],ngon_method=v[1])',
+          'join_triangles(bm,faces=Pidx,cmp_sharp=b[0],cmp_uvs=b[1],cmp_vcols=b[2],cmp_materials=b[3],limit=v[0])',
+          'connect_verts_concave(bm,faces=Pidx)',
+          'connect_verts_nonplanar(bm,angle_limit=v[0],faces=Pidx)',
+          'subdivide_edgering(bm,edges=Eidx,interp_mode=v[0],smooth=v[1],cuts=v[2],profile_shape=v[3],profile_shape_factor=v[4])',
           'inset_individual(bm,faces=Pidx,thickness=v[0],depth=v[1],use_even_offset=b[0],use_interpolate=b[1],use_relative_offset=b[2])'
           ]
 
@@ -66,30 +66,29 @@ class SvBMOpsNode(bpy.types.Node, SverchCustomTreeNode):
         if not self.outputs['Verts'].is_linked:
             return
         si = self.inputs
-        if si['Bool(b)'].is_linked:
-            b = si['Bool(b)'].sv_get()[0]
-        if si['Value(v)'].is_linked:
-            v = si['Value(v)'].sv_get()[0]
-        outv=[]
-        oute=[]
-        outp=[]
-        obj = si['Objects'].sv_get()[0]
-        bm= bmesh.new()
-        bm.from_mesh(obj.data)
-        bm.verts.ensure_lookup_table()
-        bm.edges.ensure_lookup_table()
-        bm.faces.ensure_lookup_table()
+        b = si['Bool(b)'].sv_get([[0]])
+        v = si['Value(v)'].sv_get([[0]])
+        obj = si['Objects'].sv_get()
+        idx = si['idx'].sv_get([[0]])
         Sidx = si['idx'].is_linked
-        Gidx = si['idx'].sv_get()[0]
-        Vidx = [bm.verts[i] for i in Gidx] if Sidx else bm.verts
-        Eidx = [bm.edges[i] for i in Gidx] if Sidx else bm.edges
-        Pidx = [bm.faces[i] for i in Gidx] if Sidx else bm.faces
-        exec("bmesh.ops."+self.oper)
-        outv.append([i.co[:] for i in bm.verts])
-        oute.append([[i.index for i in e.verts] for e in bm.edges[:]])
-        outp.append([[i.index for i in p.verts] for p in bm.faces[:]])
-        bm.free()
-
+        outv = []
+        oute = []
+        outp = []
+        lists = match_long_cycle([obj, b, v, idx])
+        for ob, b, v, idx in zip(lists[0],lists[1],lists[2],lists[3]):
+            bm = bmesh.new()
+            bm.from_mesh(ob.data)
+            bm.verts.ensure_lookup_table()
+            bm.edges.ensure_lookup_table()
+            bm.faces.ensure_lookup_table()
+            Vidx = [bm.verts[i] for i in idx] if Sidx else bm.verts
+            Eidx = [bm.edges[i] for i in idx] if Sidx else bm.edges
+            Pidx = [bm.faces[i] for i in idx] if Sidx else bm.faces
+            exec("bmesh.ops."+self.oper)
+            outv.append([i.co[:] for i in bm.verts])
+            oute.append([[i.index for i in e.verts] for e in bm.edges[:]])
+            outp.append([[i.index for i in p.verts] for p in bm.faces[:]])
+            bm.free()
         self.outputs['Verts'].sv_set(outv)
         self.outputs['Edges'].sv_set(oute)
         self.outputs['Polys'].sv_set(outp)
