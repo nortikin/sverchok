@@ -21,7 +21,7 @@ import bmesh
 from bpy.props import EnumProperty, BoolProperty
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (updateNode, match_long_cycle, enum_item as e)
+from sverchok.data_structure import (updateNode, enum_item as e)
 
 
 class SvBMOpsNode(bpy.types.Node, SverchCustomTreeNode):
@@ -66,28 +66,30 @@ class SvBMOpsNode(bpy.types.Node, SverchCustomTreeNode):
         if not self.outputs['Verts'].is_linked:
             return
         si = self.inputs
-        b = si['Bool(b)'].sv_get([[0,0,0,0,0,0]])
-        v = si['Value(v)'].sv_get([[1,1,1,1,1]])
         obj = si['Objects'].sv_get()
-        idx = si['idx'].sv_get([[0]])
+        obl = len(obj)
+        b = (si['Bool(b)'].sv_get([[0,0,0,0,0,0]])*obl)[:obl]
+        v = (si['Value(v)'].sv_get([[1,1,1,1,1]])*obl)[:obl]
+        idx = (si['idx'].sv_get([[0]])*obl)[:obl]
         Sidx = si['idx'].is_linked
         outv = []
         oute = []
         outp = []
-        lists = match_long_cycle([obj, b, v, idx])
-        for ob, b, v, idx in zip(lists[0],lists[1],lists[2],lists[3]):
+        op = "bmesh.ops."+self.oper
+        for ob, b, v, idx in zip(obj,b,v,idx):
             bm = bmesh.new()
             bm.from_mesh(ob.data)
             bm.verts.ensure_lookup_table()
             bm.edges.ensure_lookup_table()
             bm.faces.ensure_lookup_table()
-            Vidx = [bm.verts[i] for i in idx] if Sidx else bm.verts
-            Eidx = [bm.edges[i] for i in idx] if Sidx else bm.edges
-            Pidx = [bm.faces[i] for i in idx] if Sidx else bm.faces
-            exec("bmesh.ops."+self.oper)
+            if Sidx:
+                Vidx,Eidx,Pidx=[bm.verts[i] for i in idx],[bm.edges[i] for i in idx],[bm.faces[i] for i in idx]
+            else:
+                Vidx,Eidx,Pidx=bm.verts,bm.edges,bm.faces
+            exec(op)
             outv.append([i.co[:] for i in bm.verts])
-            oute.append([[i.index for i in e.verts] for e in bm.edges[:]])
-            outp.append([[i.index for i in p.verts] for p in bm.faces[:]])
+            oute.append([[i.index for i in e.verts] for e in bm.edges])
+            outp.append([[i.index for i in p.verts] for p in bm.faces])
             bm.free()
         self.outputs['Verts'].sv_set(outv)
         self.outputs['Edges'].sv_set(oute)
