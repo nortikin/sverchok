@@ -59,7 +59,7 @@ During install from preferences, if an error is raised - close and run blender a
 
 In case Sverchok still fails to install, we've compiled a list of reasons and known resolutions [here](http://nikitron.cc.ua/sverch/html/installation.html). Please let us know if you encounter other installation issues.   
 
-If you update with update button in sverchok panel it can rise error in case of renaming folder, so follow [this](https://github.com/nortikin/sverchok/issues/669)   
+If you update with update button in sverchok panel it can raise an error if you renamed a folder, so follow [this](https://github.com/nortikin/sverchok/issues/669) (a bootstrap script you can run from TextEditor)  
 
 ###Contact and Credit
 Homepage: [Home](http://nikitron.cc.ua/sverchok_en.html)  
