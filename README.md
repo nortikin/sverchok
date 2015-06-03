@@ -5,6 +5,7 @@
 **current sverchok version**: Find version in addon settings or in the node Sverchok panel   
 **License**: [GPL3](http://www.gnu.org/licenses/quick-guide-gplv3.html)   
 **prerequisites**: Python 3.4. and numpy, both included in recent versions of Blender  
+**manual**: [In English](http://nikitron.cc.ua/sverch/html/main.html)
 
   
 ###Description
