@@ -54,8 +54,9 @@ Install Sverchok as you would any blender addon.
 ###Troubleshooting Installation Errors
 
 In case Sverchok fails to install, we've compiled a list of reasons and known resolutions [here](http://nikitron.cc.ua/sverch/html/installation.html). Please let us know if you encounter other installation issues.   
-If you are installing from a release zip, please be aware that it contains a folder named `sverchok-master.x.y.z`, you will need to rename that folder to `sverchok` because folder names with dots are not valid python package names.  
-During install from preferences, if rise an error - close and run blender again and activate sverchok than. It can help.    
+If you are installing from a release zip, please be aware that it contains a folder named `sverchok-master.x.y.z`, you will need to rename that folder to `sverchok-master` because folder names with dots are not valid python package names.  
+During install from preferences, if rise an error - close and run blender again and activate sverchok than. It can help.   
+If you update with update button in sverchok panel it can rise error in case of renaming folder, so follow [this](https://github.com/nortikin/sverchok/issues/669)   
 
 ###Contact and Credit
 Homepage: [Home](http://nikitron.cc.ua/sverchok_en.html)  
@@ -129,8 +130,9 @@ Email: sverchok-b3d@yandex.ru
 
 ###Известные ошибки установки
 Не установилось? Список причин [тыц](http://nikitron.cc.ua/sverch/html/installation.html). Если вашей ошибки там нет - пишите письма.  
-Если вы устанавливаете из архива типа release, опасайтесь имени папки типа sverchok-master.x.y.z, в таком случае переименуйте её в sverchok, потому что имена папок с точками не читаются в именах пакетов питона.   
+Если вы устанавливаете из архива типа release, опасайтесь имени папки типа `sverchok-master.x.y.z`, в таком случае переименуйте её в `sverchok-master`, потому что имена папок с точками не читаются в именах пакетов питона.   
 При установке из пользовательских настроек, при получении ошибки - закрыть блендер и снова активировать Сверчка, всё до сохранения настроек блендера.  
+Также если вы обновляете Сверчка с кнопкой автообновления, будьте осторожны, в связи с названием папки, блендер может не подхватить её, следуйте указаниям [здесь](https://github.com/nortikin/sverchok/issues/669)   
 
 ###Контакты и разработчики
 Домашняя страница: [Домой](http://nikitron.cc.ua/sverchok_ru.html)  
