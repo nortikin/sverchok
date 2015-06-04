@@ -18,8 +18,7 @@
 
 import bpy
 import bmesh
-from bpy.props import EnumProperty, BoolProperty
-from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
+from bpy.props import EnumProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode, enum_item as e)
 
@@ -84,10 +83,10 @@ class SvBMOpsNode(bpy.types.Node, SverchCustomTreeNode):
         for ob, b, v, idx in zip(obj,b,v,idx):
             bm = bmesh.new()
             bm.from_mesh(ob.data)
-            bm.verts.ensure_lookup_table()
-            bm.edges.ensure_lookup_table()
-            bm.faces.ensure_lookup_table()
             if Sidx:
+                bm.verts.ensure_lookup_table()
+                bm.edges.ensure_lookup_table()
+                bm.faces.ensure_lookup_table()
                 Vidx,Eidx,Pidx=[bm.verts[i] for i in idx],[bm.edges[i] for i in idx],[bm.faces[i] for i in idx]
             else:
                 Vidx,Eidx,Pidx=bm.verts,bm.edges,bm.faces
