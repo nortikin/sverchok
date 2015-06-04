@@ -43,7 +43,10 @@ class SvBMOpsNode(bpy.types.Node, SverchCustomTreeNode):
           'connect_verts_concave(bm,faces=Pidx)',
           'connect_verts_nonplanar(bm,angle_limit=v[0],faces=Pidx)',
           'subdivide_edgering(bm,edges=Eidx,interp_mode=v[0],smooth=v[1],cuts=v[2],profile_shape=v[3],profile_shape_factor=v[4])',
-          'inset_individual(bm,faces=Pidx,thickness=v[0],depth=v[1],use_even_offset=b[0],use_interpolate=b[1],use_relative_offset=b[2])'
+          'inset_individual(bm,faces=Pidx,thickness=v[0],depth=v[1],use_even_offset=b[0],use_interpolate=b[1],use_relative_offset=b[2])',
+          'grid_fill(bm,edges=Eidx,mat_nr=v[0],use_smooth=b[0],use_interp_simple=b[1])',
+          'edgenet_fill(bm, edges=Eidx, mat_nr=v[0], use_smooth=b[0], sides=v[1])',
+          'rotate_edges(bm, edges=Eidx, use_ccw=b[0])'
           ]
 
     oper = EnumProperty(name="BMop", default=PV[0], items=e(PV), update=updateNode)
@@ -80,14 +83,25 @@ class SvBMOpsNode(bpy.types.Node, SverchCustomTreeNode):
         oute = []
         outp = []
         op = "bmesh.ops."+self.oper
+        if "verts=Vidx" in op:
+            cur = 1
+        elif "edges=Eidx" in op:
+            cur = 2
+        elif "faces=Pidx" in op:
+            cur = 3
         for ob, b, v, idx in zip(obj,b,v,idx):
             bm = bmesh.new()
             bm.from_mesh(ob.data)
             if Sidx:
-                bm.verts.ensure_lookup_table()
-                bm.edges.ensure_lookup_table()
-                bm.faces.ensure_lookup_table()
-                Vidx,Eidx,Pidx=[bm.verts[i] for i in idx],[bm.edges[i] for i in idx],[bm.faces[i] for i in idx]
+                if cur == 1:
+                    bm.verts.ensure_lookup_table()
+                    Vidx = [bm.verts[i] for i in idx]
+                elif cur == 2:
+                    bm.edges.ensure_lookup_table()
+                    Eidx = [bm.edges[i] for i in idx]
+                elif cur == 3:
+                    bm.faces.ensure_lookup_table()
+                    Pidx = [bm.faces[i] for i in idx]
             else:
                 Vidx,Eidx,Pidx=bm.verts,bm.edges,bm.faces
             exec(op)
