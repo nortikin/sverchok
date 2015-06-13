@@ -18,24 +18,21 @@
 
 import bpy
 from mathutils import Matrix, Vector
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import (Vector_generate, Matrix_generate, updateNode)
 
-from sverchok.node_tree import SverchCustomTreeNode, VerticesSocket, MatrixSocket
-from sverchok.data_structure import (Vector_generate, Vector_degenerate,
-                            Matrix_generate, updateNode)
 
 class SvMatrixTubeNode(bpy.types.Node, SverchCustomTreeNode):
     ''' takes a list of vertices and a list of matrices
-        the vertices are to be joined in a ring, copied and transformed by the 1st matrix 
+        the vertices are to be joined in a ring, copied and transformed by the 1st matrix
         and this ring joined to the previous ring.
-
         The ring dosen't have to be planar.
         outputs lists of vertices, edges and faces
-        ends are capped	
+        ends are capped
     '''
     bl_idname = 'SvMatrixTubeNode'
     bl_label = 'Matrix Tube'
     bl_icon = 'OUTLINER_OB_EMPTY'
-
 
     def sv_init(self, context):
         self.inputs.new('MatrixSocket', "Matrices")
@@ -44,59 +41,48 @@ class SvMatrixTubeNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('StringsSocket', "Edges")
         self.outputs.new('StringsSocket', "Faces")
 
-    def draw_buttons(self, context, layout):
-        pass
-
     def process(self):
         if not self.outputs['Vertices'].is_linked:
             return
-
-        if self.inputs['Matrices'].is_linked and self.inputs['Vertices'].is_linked:
-            vertices = self.inputs['Vertices'].sv_get()
-            vertices = Vector_generate(vertices)
-            matrices = self.inputs['Matrices'].sv_get()
-            matrices = Matrix_generate(matrices)
-            verts_out, edges_out, faces_out = self.make_tube(matrices, vertices)
-            self.outputs['Vertices'].sv_set(verts_out)
-
-            if self.outputs['Edges'].is_linked:
-                self.outputs['Edges'].sv_set(edges_out)
-            if self.outputs['Faces'].is_linked:
-                self.outputs['Faces'].sv_set(faces_out)       
+        vertices = Vector_generate(self.inputs['Vertices'].sv_get())
+        matrices = Matrix_generate(self.inputs['Matrices'].sv_get())
+        verts_out, edges_out, faces_out = self.make_tube(matrices, vertices)
+        self.outputs['Vertices'].sv_set([verts_out])
+        self.outputs['Edges'].sv_set([edges_out])
+        self.outputs['Faces'].sv_set([faces_out])
 
     def make_tube(self, mats, verts):
         edges_out = []
-        verts_out = [] 
+        verts_out = []
         faces_out = []
         vID = 0
-        #print('len mats', len(mats))
-        #print(mats[0])
         nring = len(verts[0])
-        #end face
+        # end face
         faces_out.append(list(range(nring)))
         for i,m in enumerate(mats):
             for j,v in enumerate(verts[0]):
                 vout = Matrix(m) * Vector(v)
                 verts_out.append(vout.to_tuple())
                 vID = j + i*nring
-                #rings
+                # rings
                 if j != 0:
                     edges_out.append([vID, vID - 1])
-                else: 
-                    edges_out.append([vID, vID + nring-1]) 
-                #lines
+                else:
+                    edges_out.append([vID, vID + nring-1])
+                # lines
                 if i != 0:
-                    edges_out.append([vID, vID - nring]) 
-                    #faces
+                    edges_out.append([vID, vID - nring])
+                    # faces
                     if j != 0:
                         faces_out.append([vID, vID - nring, vID - nring - 1, vID-1,])
                     else:
                         faces_out.append([vID, vID - nring,  vID-1, vID + nring-1])
-        #end face
-        #reversing list fixes face normal direction keeps mesh manifold
+        # end face
+        # reversing list fixes face normal direction keeps mesh manifold
         f = list(range(vID, vID-nring, -1))
         faces_out.append(f)
         return verts_out, edges_out, faces_out
+
 
 def register():
     bpy.utils.register_class(SvMatrixTubeNode)
@@ -104,4 +90,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvMatrixTubeNode)
-

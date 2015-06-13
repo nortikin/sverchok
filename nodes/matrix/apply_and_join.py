@@ -19,10 +19,8 @@
 import bpy
 from bpy.props import BoolProperty
 from mathutils import Matrix, Vector
-
-from sverchok.node_tree import SverchCustomTreeNode, VerticesSocket, MatrixSocket
-from sverchok.data_structure import (Vector_generate, Vector_degenerate,
-                            Matrix_generate, updateNode)
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import (Matrix_generate, updateNode)
 from sverchok.utils.sv_mesh_utils import mesh_join
 
 
@@ -33,17 +31,13 @@ class SvMatrixApplyJoinNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Apply matrix to mesh'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    do_join = BoolProperty(name='Join',
-            description = 'Join resulting meshes to one mesh',
-            default=True,
-            update=updateNode)
+    do_join = BoolProperty(name='Join', default=True, update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', "Vertices")
         self.inputs.new('StringsSocket', "Edges")
         self.inputs.new('StringsSocket', "Faces")
         self.inputs.new('MatrixSocket', "Matrices")
-
         self.outputs.new('VerticesSocket', "Vertices")
         self.outputs.new('StringsSocket', "Edges")
         self.outputs.new('StringsSocket', "Faces")
@@ -52,47 +46,27 @@ class SvMatrixApplyJoinNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "do_join")
 
     def process(self):
-        if not self.outputs['Vertices'].is_linked:
+        if not self.inputs['Matrices'].is_linked:
             return
-
         vertices = self.inputs['Vertices'].sv_get()
-        vertices = Vector_generate(vertices)
-        edges = self.inputs['Edges'].sv_get(default=[[]])
-        faces = self.inputs['Faces'].sv_get(default=[[]])
-
         matrices = self.inputs['Matrices'].sv_get()
         matrices = Matrix_generate(matrices)
         n = len(matrices)
+        result_vertices = (vertices*n)[:n]
+        outV = []
+        for i, i2 in zip(matrices, result_vertices):
+            outV.append([(i*Vector(v))[:] for v in i2])
+        edges = self.inputs['Edges'].sv_get(default=[[]])
+        faces = self.inputs['Faces'].sv_get(default=[[]])
+        result_edges = (edges * n)[:n]
+        result_faces = (faces * n)[:n]
+        if self.do_join:
+            outV, result_edges, result_faces = mesh_join(outV, result_edges, result_faces)
+            outV, result_edges, result_faces = [outV], [result_edges], [result_faces]
+        self.outputs['Edges'].sv_set(result_edges)
+        self.outputs['Faces'].sv_set(result_faces)
+        self.outputs['Vertices'].sv_set(outV)
 
-        result_vertices = self.apply(vertices, matrices)
-        result_vertices = Vector_degenerate(result_vertices)
-
-        if self.outputs['Edges'].is_linked or self.outputs['Faces'].is_linked:
-            result_edges = edges * n
-            result_faces = faces * n
-
-            if self.do_join:
-                result_vertices, result_edges, result_faces = mesh_join(result_vertices, result_edges, result_faces)
-
-            if self.outputs['Edges'].is_linked:
-                self.outputs['Edges'].sv_set(result_edges)
-            if self.outputs['Faces'].is_linked:
-                self.outputs['Faces'].sv_set(result_faces)
-
-        self.outputs['Vertices'].sv_set(result_vertices)
-
-    def apply(self, vecs, mats):
-        out = []
-        lengthve = len(vecs)-1
-        for i, m in enumerate(mats):
-            out_ = []
-            k = i
-            if k > lengthve:
-                k = lengthve
-            for v in vecs[k]:
-                out_.append(m*v)
-            out.append(out_)
-        return out
 
 def register():
     bpy.utils.register_class(SvMatrixApplyJoinNode)
@@ -100,4 +74,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvMatrixApplyJoinNode)
-
