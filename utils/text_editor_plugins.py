@@ -304,7 +304,7 @@ class SvNodeRefreshFromTextEditor(bpy.types.Operator):
             return {'FINISHED'}
         # could be extened to text in also
         node_types = set(['SvScriptNode', 'SvScriptNodeMK2',
-                         'SvProfileNode', 'SvTextInNode'])
+                         'SvProfileNode', 'SvTextInNode', 'SvGenerativeArtNode'])
 
         for ng in ngs:
             nodes = [n for n in ng.nodes if n.bl_idname in node_types]

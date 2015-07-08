@@ -5,6 +5,7 @@
 **current sverchok version**: Find version in addon settings or in the node Sverchok panel   
 **License**: [GPL3](http://www.gnu.org/licenses/quick-guide-gplv3.html)   
 **prerequisites**: Python 3.4. and numpy, both included in recent versions of Blender  
+**manual**: [In English](http://nikitron.cc.ua/sverch/html/main.html) - This is an introduction to Sverchok and contains 3 lessons, and documentation on almost all nodes. If anything isn't clear (or missing) in this document please ask about it on the [Issue Tracker](https://github.com/nortikin/sverchok/issues), we want to get these lessons right and you can help us! 
 
   
 ###Description
@@ -52,9 +53,13 @@ Install Sverchok as you would any blender addon.
 
 ###Troubleshooting Installation Errors
 
-In case Sverchok fails to install, we've compiled a list of reasons and known resolutions [here](http://nikitron.cc.ua/sverch/html/installation.html). Please let us know if you encounter other installation issues.   
-If you are installing from a release zip, please be aware that it contains a folder named `sverchok-master.x.y.z`, you will need to rename that folder to `sverchok` because folder names with dots are not valid python package names.  
-During install from preferences, if rise an error - close and run blender again and activate sverchok than. It can help.    
+If you are installing from a release zip, please be aware that if it contains a folder named `sverchok-master.x.y.z`, you will need to rename that folder to `sverchok-master` because folder names with dots are not valid python package names. But it's best to just name it `sverchok`.  
+
+During install from preferences, if an error is raised - close and run blender again and activate sverchok.  
+
+In case Sverchok still fails to install, we've compiled a list of reasons and known resolutions [here](http://nikitron.cc.ua/sverch/html/installation.html). Please let us know if you encounter other installation issues.   
+
+If you update with update button in sverchok panel it can raise an error if you renamed a folder, so follow [this](https://github.com/nortikin/sverchok/issues/669) (a bootstrap script you can run from TextEditor)  
 
 ###Contact and Credit
 Homepage: [Home](http://nikitron.cc.ua/sverchok_en.html)  
@@ -70,6 +75,7 @@ Authors:
 
 Email: sverchok-b3d@yandex.ru  
 
+[![Please donate](https://www.paypalobjects.com/en_US/GB/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=JZESR6GN9AKNS)
 
 #По-русски
 
@@ -128,8 +134,9 @@ Email: sverchok-b3d@yandex.ru
 
 ###Известные ошибки установки
 Не установилось? Список причин [тыц](http://nikitron.cc.ua/sverch/html/installation.html). Если вашей ошибки там нет - пишите письма.  
-Если вы устанавливаете из архива типа release, опасайтесь имени папки типа sverchok-master.x.y.z, в таком случае переименуйте её в sverchok, потому что имена папок с точками не читаются в именах пакетов питона.   
+Если вы устанавливаете из архива типа release, опасайтесь имени папки типа `sverchok-master.x.y.z`, в таком случае переименуйте её в `sverchok-master`, потому что имена папок с точками не читаются в именах пакетов питона.   
 При установке из пользовательских настроек, при получении ошибки - закрыть блендер и снова активировать Сверчка, всё до сохранения настроек блендера.  
+Также если вы обновляете Сверчка с кнопкой автообновления, будьте осторожны, в связи с названием папки, блендер может не подхватить её, следуйте указаниям [здесь](https://github.com/nortikin/sverchok/issues/669)   
 
 ###Контакты и разработчики
 Домашняя страница: [Домой](http://nikitron.cc.ua/sverchok_ru.html)  
@@ -144,3 +151,6 @@ Email: sverchok-b3d@yandex.ru
 -  Ховик Элеонора.   
 
 Email: sverchok-b3d@yandex.ru  
+
+
+[![Please donate](https://www.paypalobjects.com/en_US/GB/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=JZESR6GN9AKNS)

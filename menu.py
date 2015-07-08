@@ -53,8 +53,6 @@ def make_node_cats():
         ["HilbertNode",         "Hilbert"],
         ["Hilbert3dNode",       "Hilbert3d"],
         ["HilbertImageNode",    "Hilbert image"],
-        ["SvGenFibonacci",      "Fibonacci sequence"],
-        ["SvGenExponential",    "Exponential sequence"],
         ["ImageNode",           "Image",                "FILE_IMAGE"],
         ["SvProfileNode",       "ProfileParametric"],
         ["SvScriptNode",        "Scripted Node",     "SCRIPTPLUGINS"],
@@ -154,6 +152,8 @@ def make_node_cats():
         ['Formula2Node', 'Formula'],
         ['ScalarMathNode', 'Math'],
         ['SvMapRangeNode', 'Map Range'],
+        ["SvGenFibonacci",      "Fibonacci sequence"],
+        ["SvGenExponential",    "Exponential sequence"],
     ]
 
     node_cats["Vector"] = [
@@ -266,6 +266,8 @@ def make_node_cats():
         ["SvPointOnMeshNode",   "Point on Mesh"],
         ["SvFilterObjsNode",   "Filter ObjectID"],
         ["SvNumpyArrayNode",   "Numpy Array"],
+        ["SvObjectToMeshNode",   "ObjectID to Mesh"],
+        ["SvBMOpsNode",   "BMesh Operators"],
     ]
 
     return node_cats

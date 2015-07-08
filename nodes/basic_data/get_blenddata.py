@@ -19,12 +19,7 @@
 import bpy
 from bpy.props import EnumProperty
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (updateNode)
-
-
-def Obm(m):
-        m = [(i,i,"") for i in m]
-        return m
+from sverchok.data_structure import (updateNode, enum_item as e)
 
 
 class SvGetDataObjectNode(bpy.types.Node, SverchCustomTreeNode):
@@ -39,8 +34,8 @@ class SvGetDataObjectNode(bpy.types.Node, SverchCustomTreeNode):
          'sounds','speakers','texts','textures','worlds','objects']
     T = ['MESH','CURVE','SURFACE','META','FONT','ARMATURE','LATTICE','EMPTY','CAMERA','LAMP','SPEAKER']
 
-    Modes = EnumProperty(name="getmodes", default="objects", items=Obm(M), update=updateNode)
-    Types = EnumProperty(name="getmodes", default="EMPTY", items=Obm(T), update=updateNode)
+    Modes = EnumProperty(name="getmodes", default="objects", items=e(M), update=updateNode)
+    Types = EnumProperty(name="getmodes", default="EMPTY", items=e(T), update=updateNode)
 
     def draw_buttons(self, context, layout):
         row = layout.row(align=True)

@@ -222,6 +222,16 @@ def match_long_cycle(lsts):
     return list(map(list, zip(*zip(*tmp))))
 
 
+# when you intent to use lenght of first list to control WHILE loop duration
+# and you do not want to change the length of the first list, but you want the second list
+# lenght to by not less than the length of the first
+def second_as_first_cycle(F,S):
+    if len(F)>len(S):
+        return list(map(list, zip(*zip(*[F, itertools.cycle(S)]))))
+    else:
+        return [F,S]
+
+
 # cross matching
 # [[1,2], [5,6,7]] -> [[1,1,1,2,2,2], [5,6,7,5,6,7]]
 def match_cross(lsts):

@@ -48,10 +48,14 @@ class SvPipeNode(bpy.types.Node, SverchCustomTreeNode):
     close = BoolProperty(name='close', description='close ends',
                   default=True,
                   options={'ANIMATABLE'}, update=updateNode)
+    cup_fill = BoolProperty(name='close', description='close ends',
+                  default=True,
+                  options={'ANIMATABLE'}, update=updateNode)
 
 
     def draw_buttons(self, context, layout):
         layout.prop(self,'close',text='close')
+        layout.prop(self,'cup_fill',text='cup_fill')
         layout.prop(self,'shape',expand=True)
 
     def sv_init(self, context):
@@ -74,12 +78,13 @@ class SvPipeNode(bpy.types.Node, SverchCustomTreeNode):
             Edgs = self.inputs['Edgs'].sv_get()
             #Nsides = max(self.inputs['Sides'].sv_get()[0][0], 4)
             Shape = self.shape
+            Cup = self.cup_fill
             #Diameter = self.inputs['Diameter'].sv_get()[0][0]
             Diameter = 1.0
-            Size = self.inputs['Size'].sv_get()[0][0]
+            Size = self.inputs['Size'].sv_get()[0]
             #Offset = self.inputs['Offset'].sv_get()[0][0]
             #Extrude = self.inputs['Extrude'].sv_get()[0][0]
-            outv, outp = self.Do_vecs(Vecs,Edgs,Diameter,Shape,Size) #Nsides,Offset,Extrude)
+            outv, outp = self.Do_vecs(Vecs,Edgs,Diameter,Shape,Size,Cup) #Nsides,Offset,Extrude)
 
             if self.outputs['Vers'].is_linked:
                 self.outputs['Vers'].sv_set(outv)
@@ -87,9 +92,7 @@ class SvPipeNode(bpy.types.Node, SverchCustomTreeNode):
                 self.outputs['Pols'].sv_set(outp)
     
 
-    def Do_vecs(self, Vecs,Edgs,Diameter,Shape,Size): #Offset,Extrude):
-        S0,S1,S2 = Size
-        S2 = (S2-1)/2
+    def Do_vecs(self, Vecs,Edgs,Diameter,Shape,Size,Cup): #Offset,Extrude):
         if Shape == 'Square':
             Nsides = 4
             Diameter = Diameter*sqrt(2)/2
@@ -98,15 +101,18 @@ class SvPipeNode(bpy.types.Node, SverchCustomTreeNode):
             Nsides = 12
             Diameter = Diameter/2
             Sides = 30
-        circle = [ (Vector((sin(radians(i))*S0,cos(radians(i))*S1,0))*Diameter) \
-                    for i in range(45,405,Sides) ]
+
         outv = []
         outp = []
         for E,V in zip(Edgs,Vecs):
             outv_ = []
             outp_ = []
             k = 0
-            for e in E:
+            for e,S in zip(E,Size):
+                S0,S1,S2 = S
+                S2 = (S2-1)/2
+                circle = [ (Vector((sin(radians(i))*S0,cos(radians(i))*S1,0))*Diameter) \
+                            for i in range(45,405,Sides) ]
                 v2,v1 = Vector(V[e[1]]),Vector(V[e[0]])
                 vecdi = v2-v1
                 matrix_rot = vecdi.rotation_difference(Vector((0,0,1))).to_matrix().to_4x4()
@@ -116,6 +122,14 @@ class SvPipeNode(bpy.types.Node, SverchCustomTreeNode):
                 outv_.extend(verts2)
                 pols = [ [k+i+0,k+i-1,k+i+Nsides-1,k+i+Nsides] for i in range(1,Nsides,1) ]
                 pols.append([k+0,k+Nsides-1,k+Nsides*2-1,k+Nsides])
+                if Cup:
+                    p1 = [ k+i-Nsides for i in reversed(range(1,Nsides,1)) ]
+                    p2 = [ k+i for i in range(1,Nsides,1) ]
+                    p2.append(k)
+                    p1.append(k-Nsides)
+                    pols.append(p1)
+                    pols.append(p2)
+                    
                 if self.close and k!=0:
                     p = [ [k+i+0-Nsides,k+i-1-Nsides,k+i-1,k+i] for i in range(1,Nsides,1) ]
                     pols.extend(p)
