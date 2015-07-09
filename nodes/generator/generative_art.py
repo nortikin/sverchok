@@ -368,7 +368,7 @@ class SvGenerativeArtNode(bpy.types.Node, SverchCustomTreeNode):
        
             names = [shape[0] for shape in shapes if shape]
             #convert names to integer list
-            iddict = {k:v for v,k in enumerate(set(names))} 
+            iddict = {k:v for v,k in enumerate( sorted( set(names) ) )} 
             
             mat_sublist = []
             mat_list = []
