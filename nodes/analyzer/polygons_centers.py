@@ -121,7 +121,7 @@ class CentersPolsNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                         lM = [ j[:] for j in M ]
                         mat_collect_.append(lM)
                     mat_collect.extend(mat_collect_)
-                print(normals_out)
+
                 if not self.Separate:
                     SvSetSocketAnyType(self, 'Centers', mat_collect)
                     SvSetSocketAnyType(self, 'Norm_abs', Vector_degenerate([norm_abs_out]))

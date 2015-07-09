@@ -373,6 +373,34 @@ def add_keymap():
         print('added keyboard items to Text Editor.')
 
 
+def remove_keymap():
+
+    wm = bpy.context.window_manager
+    text_editor = wm.keyconfigs.user.keymaps.get('Text')
+
+    if not text_editor:
+        print('tried removing sverchok text keymaps, but Text keymap is gone')
+        return
+
+    keymaps = text_editor.keymap_items
+
+    # remove shortcut 1
+    this_km = keymaps.get("text.noderefresh_from_texteditor")
+    if this_km:
+        keymaps.remove(this_km)
+        print('removed: TEXT_OT_noderefresh_from_texteditor')
+
+    # remove shortcut 2
+    this_km = None
+    for k, v in keymaps.items():
+        if k == 'wm.call_menu' and v.properties.name == 'TEXT_MT_svplug_menu':
+            this_km = v
+            break
+    if this_km:
+        keymaps.remove(this_km)
+        print('removed: TEXT_MT_svplug_menu')
+
+
 def register():
     bpy.utils.register_class(BasicTextMenu)
     bpy.utils.register_class(SvVarnamesToSockets)
@@ -382,6 +410,7 @@ def register():
 
 
 def unregister():
+    remove_keymap()
     bpy.utils.unregister_class(SvVarnamesToSockets)
     bpy.utils.unregister_class(SvLangConverter)
     bpy.utils.unregister_class(BasicTextMenu)
