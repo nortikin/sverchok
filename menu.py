@@ -64,7 +64,7 @@ def make_node_cats():
         ["SvVolumeNode",        "Volume"],
         ["AreaNode",            "Area"],
         ["DistancePPNode",      "Distance"],
-        ["CentersPolsNode",     "Centers Polygons"],
+        ["CentersPolsNodeMK2",  "Centers Polygons"],
         ["GetNormalsNode",      "Calculate normals"],
         ["VectorNormalNode",    "Vertex Normal"],
         # proximity analyses.
