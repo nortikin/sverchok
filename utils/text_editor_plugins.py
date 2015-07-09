@@ -388,6 +388,7 @@ def remove_keymap():
     this_km = keymaps.get("text.noderefresh_from_texteditor")
     if this_km:
         keymaps.remove(this_km)
+        print('removed: TEXT_OT_noderefresh_from_texteditor')
 
     # remove shortcut 2
     this_km = None
@@ -397,6 +398,7 @@ def remove_keymap():
             break
     if this_km:
         keymaps.remove(this_km)
+        print('removed: TEXT_MT_svplug_menu')
 
 
 def register():
