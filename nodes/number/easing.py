@@ -18,7 +18,7 @@
 
 
 import bpy
-from bpy.props import FloatProperty, BoolProperty
+from bpy.props import FloatProperty, BoolProperty, EnumProperty
 
 from sverchok.data_structure import updateNode
 from sverchok.node_tree import SverchCustomTreeNode
