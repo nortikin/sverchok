@@ -23,28 +23,21 @@ from bpy.props import FloatProperty, BoolProperty
 from sverchok.data_structure import updateNode
 from sverchok.node_tree import SverchCustomTreeNode
 
-from sverchok.utils import sv_easing_functions
-
-from sv_easing_functions import *
+from sverchok.utils.sv_easing_functions import *
 # star imports easing_dict and all easing functions.
 
-
-def get_options():
-    easing_list = []
-    for k in sorted(easing_dict.keys()):
-        fname = easing_dict[k].__name__
-        easing_list.append([str(k), fname, "", k])
-    return easing_list
+easing_list = []
+for k in sorted(easing_dict.keys()):
+    fname = easing_dict[k].__name__
+    easing_list.append([str(k), fname, "", k])
 
 
 class SvEasingNode(bpy.types.Node, SverchCustomTreeNode):
-    ''' Float '''
-    bl_idname = 'FloatNode'
-    bl_label = 'Float'
-    bl_icon = 'OUTLINER_OB_EMPTY'
+    bl_idname = 'SvEasingNode'
+    bl_label = 'Easing'
 
     selected_mode = bpy.props.EnumProperty(
-        items=get_options,
+        items=easing_list,
         description="offers easing choice",
         default="0",
         update=updateNode
