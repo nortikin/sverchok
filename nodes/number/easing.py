@@ -53,12 +53,13 @@ class SvEasingNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('StringsSocket', "Float")
 
     def process(self):
-        p = self.inputs['Float'].sv_get()[0]
+        p = self.inputs['Float'].sv_get()[0][0]
 
         float_out = self.outputs['Float']
         if float_out.is_linked:
-            easing_func = easing_dict.get(self.selected_mode)
-            float_out.sv_set([easing_func(p)])
+            easing_func = easing_dict.get(int(self.selected_mode))
+            r = easing_func(p)
+            float_out.sv_set([[r]])
 
 
 def register():
