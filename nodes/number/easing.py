@@ -36,7 +36,7 @@ class SvEasingNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvEasingNode'
     bl_label = 'Easing'
 
-    selected_mode = bpy.props.EnumProperty(
+    selected_mode = EnumProperty(
         items=easing_list,
         description="offers easing choice",
         default="0",
@@ -57,7 +57,7 @@ class SvEasingNode(bpy.types.Node, SverchCustomTreeNode):
 
         float_out = self.outputs['Float']
         if float_out.is_linked:
-            easing_func = easing_dict.get(selected_mode)
+            easing_func = easing_dict.get(self.selected_mode)
             float_out.sv_set([easing_func(p)])
 
 
