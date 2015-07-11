@@ -43,10 +43,10 @@ class SvEasingNode(bpy.types.Node, SverchCustomTreeNode):
         update=updateNode
     )
 
-    def draw(self, context):
-        l = self.layout
+    def draw_buttons(self, context, l):
         c = l.column()
-        c.prop(self, "selected_mode", text="set easing function")
+        c.label(text="set easing function")
+        c.prop(self, "selected_mode", text="")
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', "Float").prop_name = 'float'
