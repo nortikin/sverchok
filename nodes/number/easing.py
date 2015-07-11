@@ -46,7 +46,7 @@ class SvEasingNode(bpy.types.Node, SverchCustomTreeNode):
     selected_mode = bpy.props.EnumProperty(
         items=get_options,
         description="offers easing choice",
-        default="0"
+        default="0",
         update=updateNode
     )
 
