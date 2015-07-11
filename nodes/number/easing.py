@@ -29,7 +29,7 @@ from sverchok.utils.sv_easing_functions import *
 easing_list = []
 for k in sorted(easing_dict.keys()):
     fname = easing_dict[k].__name__
-    easing_list.append(tuple(str(k), fname, "", k))
+    easing_list.append(tuple([str(k), fname, "", k]))
 
 
 class SvEasingNode(bpy.types.Node, SverchCustomTreeNode):
