@@ -20,7 +20,7 @@ import bpy
 from bpy.props import IntProperty, FloatProperty, BoolProperty, EnumProperty
 from mathutils import Vector
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode
+from sverchok.data_structure import updateNode, match_long_cycle
 from math import sin, cos, radians, sqrt
 
 
@@ -108,6 +108,7 @@ class SvPipeNode(bpy.types.Node, SverchCustomTreeNode):
             outv_ = []
             outp_ = []
             k = 0
+            Size, E = match_long_cycle([Size,E])
             for e,S in zip(E,Size):
                 S0,S1,S2 = S
                 S2 = (S2-1)/2
