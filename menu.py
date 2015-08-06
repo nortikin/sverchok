@@ -166,6 +166,7 @@ def make_node_cats():
         ['VertsDelDoublesNode', 'Vector X Doubles'],
         ['EvaluateLineNode',    'Vector Evaluate'],
         ['SvInterpolationNode', 'Vector Interpolation'],
+        ['SvInterpolationNodeMK2', 'Vector Interpolation mk2'],
         ['SvVertSortNode',      'Vector Sort',          'SORTSIZE'],
         ['SvNoiseNode',         'Vector Noise', 'FORCE_TURBULENCE'],
         ['svAxisInputNode',     'Vector X | Y | Z',      'MANIPUL'],

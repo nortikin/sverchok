@@ -187,6 +187,7 @@ nodes_dict = {
     'vector': [
         'drop',
         'interpolation',
+        'interpolation_mk2',
         'line_evaluate',
         'math',
         'move',
