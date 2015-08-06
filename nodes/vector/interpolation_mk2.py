@@ -103,18 +103,18 @@ class SvInterpolationNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
 
 
-    t_in_x = FloatProperty(name="tx",
+    t_in_x = FloatProperty(name="tU",
                         default=.5, min=0, max=1, precision=5,
                         update=updateNode)
-    t_in_y = FloatProperty(name="ty",
+    t_in_y = FloatProperty(name="tV",
                         default=.5, min=0, max=1, precision=5,
                         update=updateNode)
     defgrid = BoolProperty(name='default_grid', default=True,
                         update=updateNode)
-    directions = [('TWO', 'TwoDirs', "Two directions", 0),
-             ('ONE', 'OneDir', "One direction", 1)]
+    directions = [('UV', 'UV', "Two directions", 0),
+             ('U', 'U', "One direction", 1)]
     direction = EnumProperty(name='Direction',
-                        default='ONE', items=directions,
+                        default='U', items=directions,
                         update=updateNode)
     modes = [('SPL', 'Cubic', "Cubic Spline", 0),
              ('LIN', 'Linear', "Linear Interpolation", 1)]
@@ -174,7 +174,7 @@ class SvInterpolationNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                 t_ins_y = [[i/10 for i in range(11)]]
             vertsX = self.interpol(verts, t_ins_x)
             print(vertsX)
-            if self.direction == 'TWO':
+            if self.direction == 'UV':
                 verts_T = np.swapaxes(np.array(vertsX),0,1).tolist()
                 verts_out = self.interpol(verts_T, t_ins_y)
                 
