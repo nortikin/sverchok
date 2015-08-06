@@ -53,22 +53,20 @@ class SvBMOpsNode(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_init(self, context):
         si = self.inputs.new
-        si('StringsSocket', 'Objects')
+        si('StringsSocket', 'bmesh_list')
         si('StringsSocket', 'Value(v)')
         si('StringsSocket', 'Bool(b)')
         si('StringsSocket', 'idx')
-        self.outputs.new('VerticesSocket', 'Verts')
-        self.outputs.new('StringsSocket', 'Edges')
-        self.outputs.new('StringsSocket', 'Polys')
+        self.outputs.new('StringsSocket', 'bmesh_list')
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "oper", "Get")
 
     def process(self):
-        if not self.outputs['Verts'].is_linked:
+        if not self.outputs['bmesh_list'].is_linked:
             return
         si = self.inputs
-        obj = si['Objects'].sv_get()
+        obj = si['bmesh_list'].sv_get()
         obl = len(obj)
         if obl>1:
             b = (si['Bool(b)'].sv_get([[0,0,0,0,0,0]])*obl)[:obl]
@@ -79,8 +77,6 @@ class SvBMOpsNode(bpy.types.Node, SverchCustomTreeNode):
             v = si['Value(v)'].sv_get([[1,1,1,1,1]])
             idx = si['idx'].sv_get([[0]])
         Sidx = si['idx'].is_linked
-        outv = []
-        oute = []
         outp = []
         op = "bmesh.ops."+self.oper
         if "verts=Vidx" in op:
@@ -89,9 +85,7 @@ class SvBMOpsNode(bpy.types.Node, SverchCustomTreeNode):
             cur = 2
         elif "faces=Pidx" in op:
             cur = 3
-        for ob, b, v, idx in zip(obj,b,v,idx):
-            bm = bmesh.new()
-            bm.from_mesh(ob.data)
+        for bm, b, v, idx in zip(obj,b,v,idx):
             if Sidx:
                 if cur == 1:
                     bm.verts.ensure_lookup_table()
@@ -105,13 +99,8 @@ class SvBMOpsNode(bpy.types.Node, SverchCustomTreeNode):
             else:
                 Vidx,Eidx,Pidx=bm.verts,bm.edges,bm.faces
             exec(op)
-            outv.append([i.co[:] for i in bm.verts])
-            oute.append([[i.index for i in e.verts] for e in bm.edges])
-            outp.append([[i.index for i in p.verts] for p in bm.faces])
-            bm.free()
-        self.outputs['Verts'].sv_set(outv)
-        self.outputs['Edges'].sv_set(oute)
-        self.outputs['Polys'].sv_set(outp)
+            outp.append(bm)
+        self.outputs['bmesh_list'].sv_set(outp)
 
     def update_socket(self, context):
         self.update()
