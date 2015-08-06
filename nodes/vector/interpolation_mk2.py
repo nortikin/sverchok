@@ -20,9 +20,8 @@ import bisect
 import numpy as np
 
 import bpy
-from bpy.props import EnumProperty, FloatProperty
+from bpy.props import EnumProperty, FloatProperty, BoolProperty
 
-from sverchok.nodes.list_interfere.flip import flip
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode, dataCorrect, repeat_last,
                             SvSetSocketAnyType, SvGetSocketAnyType)
@@ -103,12 +102,15 @@ class SvInterpolationNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Vector Interpolation'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
+
     t_in_x = FloatProperty(name="tx",
-                         default=.5, min=0, max=1, precision=5,
-                         update=updateNode)
+                        default=.5, min=0, max=1, precision=5,
+                        update=updateNode)
     t_in_y = FloatProperty(name="ty",
-                         default=.5, min=0, max=1, precision=5,
-                         update=updateNode)
+                        default=.5, min=0, max=1, precision=5,
+                        update=updateNode)
+    defgrid = BoolProperty(name='default_grid', default=True,
+                        update=updateNode)
     directions = [('TWO', 'TwoDirs', "Two directions", 0),
              ('ONE', 'OneDir', "One direction", 1)]
     direction = EnumProperty(name='Direction',
@@ -128,8 +130,13 @@ class SvInterpolationNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons(self, context, layout):
         #pass
-        layout.prop(self, 'mode', expand=True)
-        layout.prop(self, 'direction', expand=True)
+        col = layout.column(align=True)
+        row = col.row(align=True)
+        row.prop(self, 'mode', expand=True)
+        row = col.row(align=True)
+        row.prop(self, 'direction', expand=True)
+        col.prop(self, 'defgrid')
+        
 
     def interpol(self, verts, t_ins):
         verts_out = []
@@ -162,11 +169,12 @@ class SvInterpolationNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             verts = dataCorrect(verts)
             t_ins_x = self.inputs['IntervalX'].sv_get()
             t_ins_y = self.inputs['IntervalY'].sv_get()
+            if self.defgrid:
+                t_ins_x = [[i/10 for i in range(11)]]
+                t_ins_y = [[i/10 for i in range(11)]]
             vertsX = self.interpol(verts, t_ins_x)
             print(vertsX)
             if self.direction == 'TWO':
-                #verts_T = flip(vertsX,3)
-                #verts_T = np.array(vertsX).T.tolist()
                 verts_T = np.swapaxes(np.array(vertsX),0,1).tolist()
                 verts_out = self.interpol(verts_T, t_ins_y)
                 
