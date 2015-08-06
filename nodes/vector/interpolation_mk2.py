@@ -163,9 +163,11 @@ class SvInterpolationNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             t_ins_x = self.inputs['IntervalX'].sv_get()
             t_ins_y = self.inputs['IntervalY'].sv_get()
             vertsX = self.interpol(verts, t_ins_x)
+            print(vertsX)
             if self.direction == 'TWO':
                 #verts_T = flip(vertsX,3)
-                verts_T = np.array(vertsX).T.tolist()
+                #verts_T = np.array(vertsX).T.tolist()
+                verts_T = np.swapaxes(np.array(vertsX),0,1).tolist()
                 verts_out = self.interpol(verts_T, t_ins_y)
                 
             else:
