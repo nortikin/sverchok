@@ -19,16 +19,8 @@
 import bpy
 import bmesh
 from bpy.props import EnumProperty
-from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (updateNode, match_long_repeat, enum_item as e)
-
-
-def get_value(self, b, V):
-        bv = getattr(b, self.Mod)
-        elem = getattr(self, self.Mod)
-        V.append(eval("[i."+elem+" for i in bv]"))
-        return V
+from sverchok.data_structure import (updateNode, enum_item as e)
 
 
 class SvBMVertsNode(bpy.types.Node, SverchCustomTreeNode):
@@ -48,11 +40,7 @@ class SvBMVertsNode(bpy.types.Node, SverchCustomTreeNode):
     edges = EnumProperty(name="Eprop", default="select", items=e(PE), update=updateNode)
 
     def sv_init(self, context):
-        si = self.inputs.new
-        si('StringsSocket', 'Objects')
-        si('VerticesSocket', 'Vert')
-        si('StringsSocket', 'Edge')
-        si('StringsSocket', 'Poly')
+        self.inputs.new('StringsSocket', 'bmesh_list')
         self.outputs.new('StringsSocket', 'Value')
 
     def draw_buttons(self, context, layout):
@@ -60,23 +48,11 @@ class SvBMVertsNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, self.Mod, "")
 
     def process(self):
-        Val = []
-        siob = self.inputs['Objects']
-        v, e, p = self.inputs['Vert'], self.inputs['Edge'], self.inputs['Poly']
-        if siob.is_linked:
-            obj = siob.sv_get()
-            for OB in obj:
-                bm = bmesh.new()
-                bm.from_mesh(OB.data)
-                get_value(self, bm, Val)
-                bm.free()
-        if v.is_linked:
-            sive, sied, sipo = match_long_repeat([v.sv_get(), e.sv_get([[]]), p.sv_get([[]])])
-            for i in zip(sive, sied, sipo):
-                bm = bmesh_from_pydata(i[0], i[1], i[2])
-                get_value(self, bm, Val)
-                bm.free()
-        self.outputs['Value'].sv_set(Val)
+        V = []
+        bm = self.inputs['bmesh_list'].sv_get()
+        elem = getattr(self, self.Mod)
+        exec("for b in bm:\n    bv = getattr(b, self.Mod)\n    V.append([i."+elem+" for i in bv])")
+        self.outputs['Value'].sv_set(V)
 
     def update_socket(self, context):
         self.update()
