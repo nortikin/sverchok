@@ -47,6 +47,7 @@ class SvBMoutputNode(bpy.types.Node, SverchCustomTreeNode):
                 vlist.append(V)
                 elist.append(E)
                 plist.append(P)
+                i.free()
         v.sv_set(vlist)
         e.sv_set(elist)
         p.sv_set(plist)
