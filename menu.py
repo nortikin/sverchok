@@ -269,6 +269,7 @@ def make_node_cats():
         ["SvObjectToMeshNode",   "ObjectID to Mesh"],
         ["SvBMOpsNode",   "BMesh Operators"],
         ["SvBMinputNode",   "BMesh Input"],
+        ["SvBMoutputNode",   "BMesh Output"],
     ]
 
     return node_cats
