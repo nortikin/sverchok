@@ -47,7 +47,9 @@ nodes_dict = {
         'sort_blenddata',
         'filter_blenddata',
         'blenddata_to_svdata',
-        'BMOperators'
+        'BMOperators',
+        'bmesh_in',
+        'bmesh_out'
     ],
 
     'basic_debug': [
