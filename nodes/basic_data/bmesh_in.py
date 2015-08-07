@@ -39,7 +39,6 @@ class SvBMinputNode(bpy.types.Node, SverchCustomTreeNode):
 
     def process(self):
         Val = []
-        siob = self.inputs['Objects']
         siob, v, e, p = self.inputs
         if siob.is_linked:
             obj = siob.sv_get()
