@@ -96,7 +96,8 @@ class SvBMOpsNode(bpy.types.Node, SverchCustomTreeNode):
             else:
                 Vidx,Eidx,Pidx=bm.verts,bm.edges,bm.faces
             exec(op)
-            outp.append(bm)
+            outp.append(bm.copy())
+            bm.free()
         self.outputs['bmesh_list'].sv_set(outp)
 
     def update_socket(self, context):
