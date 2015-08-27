@@ -50,7 +50,8 @@ nodes_dict = {
         'BMOperators',
         'bmesh_in',
         'bmesh_out',
-        'create_bvh_tree'
+        'create_bvh_tree',
+        'bmesh_to_element'
     ],
 
     'basic_debug': [
