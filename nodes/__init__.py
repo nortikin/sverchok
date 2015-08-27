@@ -49,7 +49,8 @@ nodes_dict = {
         'blenddata_to_svdata',
         'BMOperators',
         'bmesh_in',
-        'bmesh_out'
+        'bmesh_out',
+        'create_bvh_tree'
     ],
 
     'basic_debug': [

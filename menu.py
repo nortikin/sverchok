@@ -271,6 +271,7 @@ def make_node_cats():
         ["SvBMOpsNode",   "BMesh Operators"],
         ["SvBMinputNode",   "BMesh Input"],
         ["SvBMoutputNode",   "BMesh Output"],
+        ["SvBVHtreeNode",   "BVH Tree In"],
     ]
 
     return node_cats
