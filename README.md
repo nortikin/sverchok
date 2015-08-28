@@ -39,12 +39,6 @@ Install Sverchok as you would any blender addon.
    Download Sverchok archive (zip) from github   
    User Preferences > Addons > install from file >  choose zip-archive > activate flag beside Sverchok  
    Enable permanently in the startup.blend using `Ctrl + U` and `Save User Settings` from the Addons menu.  
-  
--  _Manual installation_  
-   Download Sverchok from github  
-   Drop the `sverchok-master` folder into `/scripts/addons`.  
-   User Preferences > Addons > Community > (search Sverchok) > activate flag beside Sverchok  
-   Enable permanently in the startup.blend using `Ctrl + U` and `Save User Settings` from the Addons menu.   
 
 -  _Upgrade Sverchok on fly_   
    Use button `Check for new version` in sverchok panel in node editor (press `N` for panel).    
@@ -119,12 +113,6 @@ Email: sverchok-b3d@yandex.ru
 -  _Установка из пользовательских настроек_  
    Скачать Сверчка с github  
    User Preferences > Addons > install from file >   выбрать zip-архив > активировать Сверчка  
-   Подтвердите выбор в файле startup.blend используя `Ctrl + U` и `Save User Settings`в меню Addons.  
-  
--  _Ручная установка_  
-   Скачать Сверчка с github  
-   Киньте папку `sverchok-master` в `/scripts/addons`.  
-   User Preferences > Addons > Community > (Ищите Сверчка) > Активируйте его  
    Подтвердите выбор в файле startup.blend используя `Ctrl + U` и `Save User Settings`в меню Addons.  
 
 -  _Обновление Сверчка_   
