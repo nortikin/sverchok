@@ -111,6 +111,11 @@ class SvInterpolationNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                         update=updateNode)
     defgrid = BoolProperty(name='default_grid', default=True,
                         update=updateNode)
+    regimes = [('P', 'Pattern', "Pattern", 0),
+               ('G', 'Grid', "Grid", 1)]
+    regime = EnumProperty(name='regime',
+                        default='G', items=regimes,
+                        update=updateNode)
     directions = [('UV', 'UV', "Two directions", 0),
              ('U', 'U', "One direction", 1)]
     direction = EnumProperty(name='Direction',
@@ -134,7 +139,10 @@ class SvInterpolationNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         row = col.row(align=True)
         row.prop(self, 'mode', expand=True)
         row = col.row(align=True)
-        row.prop(self, 'direction', expand=True)
+        row.prop(self, 'regime', expand=True)
+        if self.regime == 'G':
+            row = col.row(align=True)
+            row.prop(self, 'direction', expand=True)
         col.prop(self, 'defgrid')
         
 
@@ -169,18 +177,29 @@ class SvInterpolationNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             verts = dataCorrect(verts)
             t_ins_x = self.inputs['IntervalX'].sv_get()
             t_ins_y = self.inputs['IntervalY'].sv_get()
+            
+            if self.regime == 'P' and self.direction == 'U':
+                self.direction = 'UV'
             if self.defgrid:
                 t_ins_x = [[i/10 for i in range(11)]]
                 t_ins_y = [[i/10 for i in range(11)]]
-            vertsX = self.interpol(verts, t_ins_x)
-            print(vertsX)
-            if self.direction == 'UV':
-                verts_T = np.swapaxes(np.array(vertsX),0,1).tolist()
-                verts_out = self.interpol(verts_T, t_ins_y)
-                
+            if self.regime == 'G':
+                vertsX = self.interpol(verts, t_ins_x)
+                if self.direction == 'UV':
+                    verts_T = np.swapaxes(np.array(vertsX),0,1).tolist()
+                    verts_out = self.interpol(verts_T, t_ins_y)
+                    
+                else:
+                    verts_out = vertsX
             else:
-                verts_out = vertsX
+                verts_out_ = []
+                for x,y in zip(t_ins_x[0],t_ins_y[0]):
+                    vertsX = self.interpol(verts, [[x]])
+                    verts_T = np.swapaxes(np.array(vertsX),0,1).tolist()
+                    vertsY = self.interpol(verts_T, [[y]])
+                    verts_out_.extend(vertsY)
 
+                verts_out = [[i[0] for i in verts_out_]]
             if 'Vertices' in self.outputs and self.outputs['Vertices'].is_linked:
                 SvSetSocketAnyType(self, 'Vertices', verts_out)
 
