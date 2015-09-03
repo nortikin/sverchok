@@ -192,6 +192,8 @@ nodes_dict = {
         'drop',
         'interpolation',
         'interpolation_mk2',
+        'interpolation_mk3',
+
         'line_evaluate',
         'math',
         'move',
