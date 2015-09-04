@@ -73,25 +73,29 @@ def cubic_spline(locs, tknots):
             d[i] = (c[i+1]-c[i]) / (3*h[i])
         for i in range(n-1):
             result.append([a[i], b[i], c[i], d[i], x[i]])
-    splines = []
+    splines = np.zeros((len(knots)-1, 5, 3))
     for i in range(len(knots)-1):
-        splines.append([result[i], result[i+n-1], result[i+(n-1)*2]])
-    return(splines)
+        splines[i]= np.array([result[i], result[i+n-1], result[i+(n-1)*2]]).T
+    return splines
 
 
 def eval_spline(splines, tknots, t_in):
 
     index = tknots.searchsorted(t_in, side='left') - 1
     index = index.clip(0, len(splines) - 1)
+    to_calc = splines[index]
+    ax, bx, cx, dx, tx = np.swapaxes(to_calc, 0, 1)
+    t_r = t_in[:,np.newaxis] - tx
+    out = ax + t_r * (bx + t_r * (cx + t_r * dx))
+
+    '''
     out = np.zeros((len(t_in), 3))
     for j, n in enumerate(index):
-        for i in range(3):
-            #print(i,j,n)
-            ax, bx, cx, dx, tx = splines[n][i]
-            t_r = t_in[j] - tx
-            out[j,i] = ax + t_r * (bx + t_r * (cx + t_r * dx))
+        ax, bx, cx, dx, tx = splines[n,:]
+        t_r = t_in[j] - tx
+        out[j] = ax + t_r * (bx + t_r * (cx + t_r * dx))
+    '''
     return out
-
 
 class SvInterpolationNodeMK3(bpy.types.Node, SverchCustomTreeNode):
     '''Vector Interpolate'''
@@ -149,18 +153,19 @@ class SvInterpolationNodeMK3(bpy.types.Node, SverchCustomTreeNode):
             tanget_out = []
             norm_tanget_out = []
             for v, t_in in zip(verts, repeat_last(t_ins)):
-                pts = np.array(v).T
-                tmp = np.apply_along_axis(np.linalg.norm, 0, pts[:, :-1]-pts[:, 1:])
+                pts = np.array(v)
+                tmp = np.linalg.norm(pts[:-1]-pts[1:], axis=1)
                 t = np.insert(tmp, 0, 0).cumsum()
                 t = t/t[-1]
                 t_corr = np.array(t_in).clip(0, 1)
-                # this should also be numpy
+
                 if self.mode == 'LIN':
+                    pts = pts.T
                     out = [np.interp(t_corr, t, pts[i]) for i in range(3)]
                     verts_out.append(list(zip(*out)))
                 else:  # SPL
 
-                    spl = cubic_spline(v, t)
+                    spl = cubic_spline(pts, t)
                     out = eval_spline(spl, t, t_corr)
                     verts_out.append(out.tolist())
                     if calc_tanget:
