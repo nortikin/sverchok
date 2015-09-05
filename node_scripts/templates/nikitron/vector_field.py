@@ -1,5 +1,6 @@
 from mathutils import Vector
 import numpy as np
+from sverchok.data_structure import Vector_generate, Vector_degenerate
 
 def sv_main(powers=[],pow_str=[],points=[],lent=0.1,subs=30):
 
@@ -21,35 +22,34 @@ def sv_main(powers=[],pow_str=[],points=[],lent=0.1,subs=30):
         return in_sockets, out_sockets()
 
 
-    powers = [np.array(i) for i in powers[0]]
-    points = [np.array(i) for i in points[0]]
+    #powers = [np.array(i) for i in powers[0]]
+    #points = [np.array(i) for i in points[0]]
 
-    #points = Vector_generate(points)
-    #powers = Vector_generate(powers)
+    points = Vector_generate(points)[0]
+    powers = Vector_generate(powers)[0]
 
     def nextpoint(poi,powers):
-        verts = []
-        for pow in powers:
-            ve = poi-pow
-            verts.append(ve.tolist())
-        return np.array(verts)
-
+        verts_ = [poi-pow for pow in powers]
+        vect = Vector()
+        for i in verts_:
+            vect+=i*(1/i.length**2)
+        vect.normalize()
+        vertnext = poi + vect*(1/lent)
+        return vertnext
+        
+    v = []
     for poi in points:
         vers = []
         edgs = []
         for k in range(subs):
+            vertnext = nextpoint(poi,powers)
+            vers.append(poi)
+            poi = vertnext
             if k > 0:
                 edgs.append([k-1,k])
-            else:
-                vers.append(poi.tolist())
-            verts = nextpoint(poi,powers)
-            vect = verts.sum(axis=0)
-            vect = vect/vect.max()
-            vertnext = poi+(1/(vect*lent))
-            vers.append(vertnext.tolist())
-            poi = vertnext
+            
         edges_out.append(edgs)
         verts_out.append(vers)
-    
+    verts_out = Vector_degenerate(verts_out)
 
     return in_sockets, out_sockets()
