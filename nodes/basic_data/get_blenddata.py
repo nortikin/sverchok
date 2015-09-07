@@ -35,7 +35,7 @@ class SvGetDataObjectNode(bpy.types.Node, SverchCustomTreeNode):
     T = ['MESH','CURVE','SURFACE','META','FONT','ARMATURE','LATTICE','EMPTY','CAMERA','LAMP','SPEAKER']
 
     Modes = EnumProperty(name="getmodes", default="objects", items=e(M), update=updateNode)
-    Types = EnumProperty(name="getmodes", default="EMPTY", items=e(T), update=updateNode)
+    Types = EnumProperty(name="getmodes", default="MESH", items=e(T), update=updateNode)
 
     def draw_buttons(self, context, layout):
         row = layout.row(align=True)
@@ -50,17 +50,11 @@ class SvGetDataObjectNode(bpy.types.Node, SverchCustomTreeNode):
         sob = self.outputs['Objects']
         if not sob.is_linked:
             return
-        Ob = []
         L = getattr(bpy.data,self.Modes)
         if self.Modes != 'objects':
-            for i in L:
-                Ob.append(i)
+            sob.sv_set(L[:])
         else:
-            for i in L:
-                if i.type == self.Types:
-                    Ob.append(i)
-
-        sob.sv_set(Ob)
+            sob.sv_set([i for i in L if i.type == self.Types])
 
 
 def register():
