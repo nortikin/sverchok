@@ -45,7 +45,6 @@ class SvVertexGroupNode(bpy.types.Node, SverchCustomTreeNode):
         row.prop(self, "fade_speed", text="Clearing speed")
 
     def sv_init(self, context):
-
         self.inputs.new('StringsSocket', "VertIND")
         self.inputs.new('StringsSocket', "Weights")
         self.outputs.new('StringsSocket', "OutWeights")
