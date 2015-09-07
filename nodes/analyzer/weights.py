@@ -45,7 +45,6 @@ class SvVertexGroupNode(bpy.types.Node, SverchCustomTreeNode):
         row.prop(self, "fade_speed", text="Clearing speed")
 
     def sv_init(self, context):
-
         self.inputs.new('StringsSocket', "VertIND")
         self.inputs.new('StringsSocket', "Weights")
         self.outputs.new('StringsSocket', "OutWeights")
@@ -53,35 +52,32 @@ class SvVertexGroupNode(bpy.types.Node, SverchCustomTreeNode):
     def process(self):
         obj = bpy.data.objects[self.object_ref]
         obj.data.update()
+        Ve, We, Owe = self.inputs[:] + self.outputs[:]
         if not obj.vertex_groups:
             obj.vertex_groups.new(name='Sv_VGroup')
         if self.vertex_group not in obj.vertex_groups:
             return
         ovgs = obj.vertex_groups.get(self.vertex_group)
-        vind = [i.index for i in obj.data.vertices]
-        if self.inputs['VertIND'].is_linked:
-            verts = self.inputs['VertIND'].sv_get()[0]
+        Vi = [i.index for i in obj.data.vertices]
+        if Ve.is_linked:
+            verts = Ve.sv_get()[0]
         else:
-            verts = vind
-
-        if self.inputs['Weights'].is_linked:
-            wei = self.inputs['Weights'].sv_get()[0]
+            verts = Vi
+        if self.clear:
+            ovgs.add(Vi, self.fade_speed, "SUBTRACT")
+        if We.is_linked:
+            wei = We.sv_get()[0]
             verts, wei = second_as_first_cycle(verts, wei)
-            if self.clear:
-                ovgs.add(vind, self.fade_speed, "SUBTRACT")
-            g = 0
-            while g != len(verts):
-                ovgs.add([verts[g]], wei[g], "REPLACE")
-                g = g+1
-
-        elif self.outputs['OutWeights'].is_linked:
+            for i, i2 in zip(verts, wei):
+                ovgs.add([i], i2, "REPLACE")
+        elif Owe.is_linked:
             out = []
             for i in verts:
                 try:
                     out.append(ovgs.weight(i))
                 except Exception:
                     out.append(0.0)
-            self.outputs['OutWeights'].sv_set([out])
+            Owe.sv_set([out])
 
 
 def register():
