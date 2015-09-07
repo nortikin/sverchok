@@ -47,7 +47,11 @@ nodes_dict = {
         'sort_blenddata',
         'filter_blenddata',
         'blenddata_to_svdata',
-        'BMOperators'
+        'BMOperators',
+        'bmesh_in',
+        'bmesh_out',
+       # 'create_bvh_tree',
+        'bmesh_to_element'
     ],
 
     'basic_debug': [
@@ -187,6 +191,7 @@ nodes_dict = {
     'vector': [
         'drop',
         'interpolation',
+        'interpolation_mk2',
         'line_evaluate',
         'math',
         'move',

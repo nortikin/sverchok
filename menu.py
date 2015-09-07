@@ -53,8 +53,6 @@ def make_node_cats():
         ["HilbertNode",         "Hilbert"],
         ["Hilbert3dNode",       "Hilbert3d"],
         ["HilbertImageNode",    "Hilbert image"],
-        ["SvGenFibonacci",      "Fibonacci sequence"],
-        ["SvGenExponential",    "Exponential sequence"],
         ["ImageNode",           "Image",                "FILE_IMAGE"],
         ["SvProfileNode",       "ProfileParametric"],
         ["SvScriptNode",        "Scripted Node",     "SCRIPTPLUGINS"],
@@ -66,7 +64,7 @@ def make_node_cats():
         ["SvVolumeNode",        "Volume"],
         ["AreaNode",            "Area"],
         ["DistancePPNode",      "Distance"],
-        ["CentersPolsNode",     "Centers Polygons"],
+        ["CentersPolsNodeMK2",  "Centers Polygons"],
         ["GetNormalsNode",      "Calculate normals"],
         ["VectorNormalNode",    "Vertex Normal"],
         # proximity analyses.
@@ -154,6 +152,8 @@ def make_node_cats():
         ['Formula2Node', 'Formula'],
         ['ScalarMathNode', 'Math'],
         ['SvMapRangeNode', 'Map Range'],
+        ["SvGenFibonacci",      "Fibonacci sequence"],
+        ["SvGenExponential",    "Exponential sequence"],
     ]
 
     node_cats["Vector"] = [
@@ -166,6 +166,7 @@ def make_node_cats():
         ['VertsDelDoublesNode', 'Vector X Doubles'],
         ['EvaluateLineNode',    'Vector Evaluate'],
         ['SvInterpolationNode', 'Vector Interpolation'],
+        ['SvInterpolationNodeMK2', 'Vector Interpolation mk2'],
         ['SvVertSortNode',      'Vector Sort',          'SORTSIZE'],
         ['SvNoiseNode',         'Vector Noise', 'FORCE_TURBULENCE'],
         ['svAxisInputNode',     'Vector X | Y | Z',      'MANIPUL'],
@@ -268,6 +269,10 @@ def make_node_cats():
         ["SvNumpyArrayNode",   "Numpy Array"],
         ["SvObjectToMeshNode",   "ObjectID to Mesh"],
         ["SvBMOpsNode",   "BMesh Operators"],
+        ["SvBMinputNode",   "BMesh Input"],
+        ["SvBMoutputNode",   "BMesh Output"],
+      #  ["SvBVHtreeNode",   "BVH Tree In"],
+        ["SvBMtoElementNode",   "BM Elements"],
     ]
 
     return node_cats

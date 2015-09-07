@@ -17,6 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 old_bl_idnames = {
+     'CentersPolsNode' : "centers",
 #    'BakeryNode' : "bakery",
     'CircleNode' : "circle",
     'ListItemNode' : "list_item",

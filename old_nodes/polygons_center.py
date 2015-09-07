@@ -18,25 +18,17 @@
 
 import bpy
 from mathutils import Vector, Matrix, geometry
-from bpy.props import BoolProperty
-from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (SvSetSocketAnyType, SvGetSocketAnyType,
-                        Vector_generate, Vector_degenerate, updateNode)
 
-class CentersPolsNodeMK2(bpy.types.Node, SverchCustomTreeNode):
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import SvSetSocketAnyType, SvGetSocketAnyType, \
+                        Vector_generate, Vector_degenerate
+
+
+class CentersPolsNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Centers of polygons of mesh (not including matrixes, so apply scale-rot-loc ctrl+A) '''
-    bl_idname = 'CentersPolsNodeMK2'
+    bl_idname = 'CentersPolsNode'
     bl_label = 'Centers polygons'
     bl_icon = 'OUTLINER_OB_EMPTY'
-
-    Separate = BoolProperty(name="Separate", 
-                            description="separate by objects", 
-                            default=True,
-                            update=updateNode)
-
-
-    def draw_buttons(self, context, layout):
-        layout.prop(self, "Separate", text="Separate")
 
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', "Vertices", "Vertices")
@@ -99,14 +91,9 @@ class CentersPolsNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                         # это совершенно нормально!!! ;-)
                         norm_abs.append(current_center+norm)
                         
-                        if self.Separate:
-                            norm_abs_out.append(norm_abs)    
-                            origins.append(centrs)
-                            normals_out.append(normals)
-                        else:
-                            norm_abs_out.extend(norm_abs)    
-                            origins.extend(centrs)
-                            normals_out.extend(normals)
+                    norm_abs_out.append(norm_abs)    
+                    origins.append(centrs)
+                    normals_out.extend(normals)
                     mat_collect_ = []
                     for cen, med, nor in zip(centrs, medians, normals):
                         loc = Matrix.Translation(cen)
@@ -121,25 +108,19 @@ class CentersPolsNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                         lM = [ j[:] for j in M ]
                         mat_collect_.append(lM)
                     mat_collect.extend(mat_collect_)
-
-                if not self.Separate:
-                    SvSetSocketAnyType(self, 'Centers', mat_collect)
-                    SvSetSocketAnyType(self, 'Norm_abs', Vector_degenerate([norm_abs_out]))
-                    SvSetSocketAnyType(self, 'Origins', Vector_degenerate([origins]))
-                    SvSetSocketAnyType(self, 'Normals', Vector_degenerate([normals_out]))
-                else:
-                    SvSetSocketAnyType(self, 'Centers', mat_collect)
-                    SvSetSocketAnyType(self, 'Norm_abs', Vector_degenerate(norm_abs_out))
-                    SvSetSocketAnyType(self, 'Origins', Vector_degenerate(origins))
-                    SvSetSocketAnyType(self, 'Normals', Vector_degenerate(normals_out))
+                
+                SvSetSocketAnyType(self, 'Centers', mat_collect)
+                SvSetSocketAnyType(self, 'Norm_abs', Vector_degenerate(norm_abs_out))
+                SvSetSocketAnyType(self, 'Origins', Vector_degenerate(origins))
+                SvSetSocketAnyType(self, 'Normals', Vector_degenerate([normals_out]))
 
 
 def register():
-    bpy.utils.register_class(CentersPolsNodeMK2)
+    bpy.utils.register_class(CentersPolsNode)
 
 
 def unregister():
-    bpy.utils.unregister_class(CentersPolsNodeMK2)
+    bpy.utils.unregister_class(CentersPolsNode)
     
 if __name__ == '__main__':
     register()

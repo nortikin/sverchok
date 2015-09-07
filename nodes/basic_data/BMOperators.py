@@ -20,7 +20,7 @@ import bpy
 import bmesh
 from bpy.props import EnumProperty
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (updateNode, enum_item as e)
+from sverchok.data_structure import (updateNode, enum_item as e, second_as_first_cycle as safc)
 
 
 class SvBMOpsNode(bpy.types.Node, SverchCustomTreeNode):
@@ -29,89 +29,66 @@ class SvBMOpsNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'bmesh_ops'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    PV = ['remove_doubles(bm,verts=Vidx,dist=v[0])',
-          'collapse(bm,edges=Eidx)',
-          'unsubdivide(bm,verts=Vidx,iterations=v[0])',
-          'holes_fill(bm,edges=Eidx,sides=v[0])',
-          'bridge_loops(bm,edges=Eidx,use_pairs=b[0],use_cyclic=b[1],use_merge=b[2],merge_factor=v[0],twist_offset=v[1])',
-          'smooth_vert(bm,verts=Vidx,factor=v[0],mirror_clip_x=b[0],mirror_clip_y=b[1],mirror_clip_z=b[2],clip_dist=v[1],use_axis_x=b[3],use_axis_y=b[4],use_axis_z=b[5])',
-          'dissolve_verts(bm,verts=Vidx,use_face_split=b[0],use_boundary_tear=b[1])',
-          'dissolve_edges(bm,edges=Eidx,use_verts=b[0],use_face_split=b[1])',
-          'dissolve_faces(bm,faces=Pidx,use_verts=b[0])',
-          'triangulate(bm,faces=Pidx,quad_method=v[0],ngon_method=v[1])',
-          'join_triangles(bm,faces=Pidx,cmp_sharp=b[0],cmp_uvs=b[1],cmp_vcols=b[2],cmp_materials=b[3],limit=v[0])',
-          'connect_verts_concave(bm,faces=Pidx)',
-          'connect_verts_nonplanar(bm,angle_limit=v[0],faces=Pidx)',
-          'subdivide_edgering(bm,edges=Eidx,interp_mode=v[0],smooth=v[1],cuts=v[2],profile_shape=v[3],profile_shape_factor=v[4])',
-          'inset_individual(bm,faces=Pidx,thickness=v[0],depth=v[1],use_even_offset=b[0],use_interpolate=b[1],use_relative_offset=b[2])',
-          'grid_fill(bm,edges=Eidx,mat_nr=v[0],use_smooth=b[0],use_interp_simple=b[1])',
-          'edgenet_fill(bm, edges=Eidx, mat_nr=v[0], use_smooth=b[0], sides=v[1])',
-          'rotate_edges(bm, edges=Eidx, use_ccw=b[0])'
+    PV = ['remove_doubles(bm,verts=e,dist=v[0])',
+          'collapse(bm,edges=e,uvs=v[0])',
+          'unsubdivide(bm,verts=e,iterations=v[0])',
+          'holes_fill(bm,edges=e,sides=v[0])',
+          'dissolve_faces(bm,faces=e,use_verts=v[0])',
+          'connect_verts_concave(bm,faces=e)',
+          'recalc_face_normals(bm,faces=e)',
+          'rotate_edges(bm, edges=e, use_ccw=v[0])',
+          'connect_verts_nonplanar(bm,angle_limit=v[0],faces=e)',
+          'triangulate(bm,faces=e,quad_method=v[0],ngon_method=v[1])',
+          'dissolve_edges(bm,edges=e,use_verts=v[0],use_face_split=v[1])',
+          'dissolve_verts(bm,verts=e,use_face_split=v[0],use_boundary_tear=v[1])',
+          'grid_fill(bm,edges=e,mat_nr=v[0],use_smooth=v[1],use_interp_simple=v[2])',
+          'poke(bm,faces=e,offset=v[0],center_mode=v[1],use_relative_offset=v[2])',
+          'bridge_loops(bm,edges=e,use_pairs=v[0],use_cyclic=v[1],use_merge=v[2],merge_factor=v[3],twist_offset=v[4])',
+          'smooth_vert(bm,verts=e,factor=v[0],mirror_clip_x=v[1],mirror_clip_y=v[2],mirror_clip_z=v[3],clip_dist=v[4],use_axis_x=v[5],use_axis_y=v[6],use_axis_z=v[7])',
+          'join_triangles(bm,faces=e,cmp_seam=v[0],cmp_sharp=v[1],cmp_uvs=v[2],cmp_vcols=v[3],cmp_materials=v[4],angle_face_threshold=v[5],angle_shape_threshold=v[6])',
+          'subdivide_edgering(bm,edges=e,interp_mode=v[0],smooth=v[1],cuts=v[2],profile_shape=v[3],profile_shape_factor=v[4])',
+          'inset_individual(bm,faces=e,thickness=v[0],depth=v[1],use_even_offset=v[2],use_interpolate=v[3],use_relative_offset=v[4])',
+          'inset_region(bm,faces=e,use_boundary=v[0],use_even_offset=v[1],use_interpolate=v[2],use_relative_offset=v[3],use_edge_rail=v[4],thickness=v[5],depth=v[6],use_outset=v[7])',
           ]
 
     oper = EnumProperty(name="BMop", default=PV[0], items=e(PV), update=updateNode)
 
     def sv_init(self, context):
         si = self.inputs.new
-        si('StringsSocket', 'Objects')
+        si('StringsSocket', 'bmesh_list')
         si('StringsSocket', 'Value(v)')
-        si('StringsSocket', 'Bool(b)')
-        si('StringsSocket', 'idx')
-        self.outputs.new('VerticesSocket', 'Verts')
-        self.outputs.new('StringsSocket', 'Edges')
-        self.outputs.new('StringsSocket', 'Polys')
+        si('StringsSocket', 'BM_element(e)')
+        self.outputs.new('StringsSocket', 'bmesh_list')
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "oper", "Get")
 
     def process(self):
-        if not self.outputs['Verts'].is_linked:
+        if not self.outputs['bmesh_list'].is_linked:
             return
-        si = self.inputs
-        obj = si['Objects'].sv_get()
-        obl = len(obj)
-        if obl>1:
-            b = (si['Bool(b)'].sv_get([[0,0,0,0,0,0]])*obl)[:obl]
-            v = (si['Value(v)'].sv_get([[1,1,1,1,1]])*obl)[:obl]
-            idx = (si['idx'].sv_get([[0]])*obl)[:obl]
-        else:
-            b = si['Bool(b)'].sv_get([[0,0,0,0,0,0]])
-            v = si['Value(v)'].sv_get([[1,1,1,1,1]])
-            idx = si['idx'].sv_get([[0]])
-        Sidx = si['idx'].is_linked
-        outv = []
-        oute = []
+        bml, val, e = self.inputs
+        obj, v = safc(bml.sv_get(), val.sv_get([[1]*12]))
         outp = []
         op = "bmesh.ops."+self.oper
-        if "verts=Vidx" in op:
-            cur = 1
-        elif "edges=Eidx" in op:
-            cur = 2
-        elif "faces=Pidx" in op:
-            cur = 3
-        for ob, b, v, idx in zip(obj,b,v,idx):
-            bm = bmesh.new()
-            bm.from_mesh(ob.data)
-            if Sidx:
-                if cur == 1:
-                    bm.verts.ensure_lookup_table()
-                    Vidx = [bm.verts[i] for i in idx]
-                elif cur == 2:
-                    bm.edges.ensure_lookup_table()
-                    Eidx = [bm.edges[i] for i in idx]
-                elif cur == 3:
-                    bm.faces.ensure_lookup_table()
-                    Pidx = [bm.faces[i] for i in idx]
-            else:
-                Vidx,Eidx,Pidx=bm.verts,bm.edges,bm.faces
-            exec(op)
-            outv.append([i.co[:] for i in bm.verts])
-            oute.append([[i.index for i in e.verts] for e in bm.edges])
-            outp.append([[i.index for i in p.verts] for p in bm.faces])
-            bm.free()
-        self.outputs['Verts'].sv_set(outv)
-        self.outputs['Edges'].sv_set(oute)
-        self.outputs['Polys'].sv_set(outp)
+        if e.is_linked:
+            element = e.sv_get()
+            for bm, v, e in zip(obj,v, element):
+                exec(op)
+                outp.append(bm.copy())
+                bm.free()
+        else:
+            if "verts=e" in op:
+                cur = "verts"
+            elif "edges=e" in op:
+                cur = "edges"
+            elif "faces=e" in op:
+                cur = "faces"
+            for bm, v in zip(obj,v):
+                e = getattr(bm, cur)
+                exec(op)
+                outp.append(bm.copy())
+                bm.free()
+        self.outputs['bmesh_list'].sv_set(outp)
 
     def update_socket(self, context):
         self.update()
