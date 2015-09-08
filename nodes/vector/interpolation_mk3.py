@@ -84,6 +84,19 @@ def eval_spline(splines, tknots, t_in):
     out = ax + t_r * (bx + t_r * (cx + t_r * dx))
     return out
 
+def calc_tanget(splines, tknots, t_in, h):
+    t_ph = t_corr + h
+    t_mh = t_corr - h
+    t_less_than_0 = t_mh < 0.0
+    t_great_than_1 = t_ph > 1.0
+    t_mh[t_less_than_0] = 0.0
+    t_ph[t_great_than_1] = 1.0
+    tanget_ph = eval_spline(spl, t, t_ph)
+    tanget_mh = eval_spline(spl, t, t_mh)
+    tanget = tanget_ph - tanget_mh
+    tanget[t_less_than_0 + t_great_than_1] *= 2
+    return tanget
+
 class SvInterpolationNodeMK3(bpy.types.Node, SverchCustomTreeNode):
     '''Vector Interpolate'''
     bl_idname = 'SvInterpolationNodeMK3'
@@ -161,28 +174,19 @@ class SvInterpolationNodeMK3(bpy.types.Node, SverchCustomTreeNode):
                     out = eval_spline(spl, t, t_corr)
                     verts_out.append(out.tolist())
                     if calc_tanget:
-                        t_ph = t_corr + h
-                        t_mh = t_corr - h
-                        t_less_than_0 = t_mh < 0.0
-                        t_great_than_1 = t_ph > 1.0
-                        t_mh[t_less_than_0] = 0.0
-                        t_ph[t_great_than_1] = 1.0
-
-                        tanget_ph = eval_spline(spl, t, t_ph)
-                        tanget_mh = eval_spline(spl, t, t_mh)
-                        tanget = tanget_ph - tanget_mh
-                        tanget[t_less_than_0 + t_great_than_1] *= 2
+                        tanget = calc_tanget(spl, t, t_corr, h)
                         if norm_tanget:
                             norm = np.linalg.norm(tanget, axis=1)
                             norm_tanget_out.append((tanget/norm[:,np.newaxis]).tolist())
                         tanget_out.append(tanget.tolist())
 
-            if self.outputs['Vertices'].is_linked:
-                SvSetSocketAnyType(self, 'Vertices', verts_out)
-            if self.outputs['Tanget'].is_linked:
-                SvSetSocketAnyType(self, 'Tanget', tanget_out)
-            if self.outputs['Norm Tanget'].is_linked:
-                SvSetSocketAnyType(self, 'Norm Tanget', norm_tanget_out)
+            outputs = self.outputs
+            if outputs['Vertices'].is_linked:
+                outputs['Vertices'].sv_set(verts_out)
+            if outputs['Tanget'].is_linked:
+                outputs['Tanget'].sv_set(tanget_out)
+            if outputs['Norm Tanget'].is_linked:
+                outputs['Norm Tanget'].sv_set(norm_tanget_out)
 
 
 
