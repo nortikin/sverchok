@@ -32,50 +32,45 @@ from sverchok.data_structure import (updateNode, dataCorrect, repeat_last,
 
 # calculates natural cubic splines through all given knots
 def cubic_spline(locs, tknots):
-    knots = list(range(len(locs)))
 
-    n = len(knots)
+    n = len(locs)
     if n < 2:
         return False
-    x = tknots[:]
+
     result = []
-    for j in range(3):
-        a = []
-        for i in locs:
-            a.append(i[j])
-        h = []
-        for i in range(n-1):
-            if x[i+1] - x[i] == 0:
-                h.append(1e-8)
-            else:
-                h.append(x[i+1] - x[i])
-        q = [False]
-        for i in range(1, n-1):
-            q.append(3/h[i]*(a[i+1]-a[i]) - 3/h[i-1]*(a[i]-a[i-1]))
-        l = [1.0]
-        u = [0.0]
-        z = [0.0]
-        for i in range(1, n-1):
-            l.append(2*(x[i+1]-x[i-1]) - h[i-1]*u[i-1])
-            if l[i] == 0:
-                l[i] = 1e-8
-            u.append(h[i] / l[i])
-            z.append((q[i] - h[i-1] * z[i-1]) / l[i])
-        l.append(1.0)
-        z.append(0.0)
-        b = [False for i in range(n-1)]
-        c = [False for i in range(n)]
-        d = [False for i in range(n-1)]
-        c[n-1] = 0.0
-        for i in range(n-2, -1, -1):
-            c[i] = z[i] - u[i]*c[i+1]
-            b[i] = (a[i+1]-a[i])/h[i] - h[i]*(c[i+1]+2*c[i])/3
-            d[i] = (c[i+1]-c[i]) / (3*h[i])
-        for i in range(n-1):
-            result.append([a[i], b[i], c[i], d[i], x[i]])
-    splines = np.zeros((len(knots)-1, 5, 3))
-    for i in range(len(knots)-1):
-        splines[i]= np.array([result[i], result[i+n-1], result[i+(n-1)*2]]).T
+    # a = locs
+    h = tknots[1:]-tknots[:-1]
+    h[h==0] = 1e-8
+    q = np.zeros((n-1,3))
+    q[1:] = 3/h[1:,np.newaxis] * (locs[2:] - locs[1:-1]) - 3/h[:-1,np.newaxis] * (locs[1:-1]-locs[:-2])
+
+    l = np.zeros((n, 3 ))
+    l[0,:] = 1.0
+    u = np.zeros((n-1, 3))
+    z = np.zeros((n, 3))
+
+    for i in range(1, n-1):
+        l[i] = 2*(tknots[i+1]-tknots[i-1]) - h[i-1]*u[i-1]
+        tmp = l[i]
+        tmp[tmp==0] = 1e-8
+        u[i] = h[i] / l[i]
+        z[i] = (q[i] - h[i-1] * z[i-1]) / l[i]
+    l[-1,:] = 1.0
+    z[-1] = 0.0
+
+    b = np.zeros((n-1, 3))
+    c = np.zeros((n, 3))
+    for i in range(n-2, -1, -1):
+        c[i] = z[i] - u[i]*c[i+1]
+    b = (locs[1:]-locs[:-1])/h[:,np.newaxis] - h[:,np.newaxis]*(c[1:]+2*c[:-1])/3
+    d = (c[1:]-c[:-1]) / (3*h[:,np.newaxis])
+
+    splines = np.zeros((n -1, 5, 3))
+    splines[:, 0] = locs[:-1]
+    splines[:,1] = b
+    splines[:,2] = c[:-1]
+    splines[:,3] = d
+    splines[:,4] = tknots[:-1,np.newaxis]
     return splines
 
 
@@ -87,14 +82,6 @@ def eval_spline(splines, tknots, t_in):
     ax, bx, cx, dx, tx = np.swapaxes(to_calc, 0, 1)
     t_r = t_in[:,np.newaxis] - tx
     out = ax + t_r * (bx + t_r * (cx + t_r * dx))
-
-    '''
-    out = np.zeros((len(t_in), 3))
-    for j, n in enumerate(index):
-        ax, bx, cx, dx, tx = splines[n,:]
-        t_r = t_in[j] - tx
-        out[j] = ax + t_r * (bx + t_r * (cx + t_r * dx))
-    '''
     return out
 
 class SvInterpolationNodeMK3(bpy.types.Node, SverchCustomTreeNode):
@@ -154,15 +141,20 @@ class SvInterpolationNodeMK3(bpy.types.Node, SverchCustomTreeNode):
             norm_tanget_out = []
             for v, t_in in zip(verts, repeat_last(t_ins)):
                 pts = np.array(v)
+                # t is the knots
                 tmp = np.linalg.norm(pts[:-1]-pts[1:], axis=1)
                 t = np.insert(tmp, 0, 0).cumsum()
                 t = t/t[-1]
+
+                # the t values to evaluate
                 t_corr = np.array(t_in).clip(0, 1)
 
                 if self.mode == 'LIN':
                     pts = pts.T
-                    out = [np.interp(t_corr, t, pts[i]) for i in range(3)]
-                    verts_out.append(list(zip(*out)))
+                    out = np.zeros((3, len(t_corr)))
+                    for i in range(3):
+                        out[i] = np.interp(t_corr, t, pts[i])
+                    verts_out.append(pts.T.tolist())
                 else:  # SPL
 
                     spl = cubic_spline(pts, t)
