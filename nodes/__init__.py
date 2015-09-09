@@ -19,7 +19,8 @@ nodes_dict = {
         'closest_point_on_mesh',
         'colors',
        # 'bvh_raycast',
-       # 'bvh_overlap'
+       # 'bvh_overlap',
+       # 'bvh_nearest'
     ],
 
     'basic_view': [
