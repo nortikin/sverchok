@@ -274,6 +274,7 @@ def make_node_cats():
       #  ["SvBVHtreeNode",   "BVH Tree In"],
       #  ["SvBVHRaycastNode",   "BVH Tree Raycast"],
       #  ["SvBvhOverlapNode",   "BVH Tree Overlap"],
+      #  ["SvBVHnearNode",   "BVH Tree Nearest"],
         ["SvBMtoElementNode",   "BM Elements"],
     ]
 
