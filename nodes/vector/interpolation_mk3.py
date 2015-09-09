@@ -20,7 +20,7 @@ import bisect
 import numpy as np
 
 import bpy
-from bpy.props import EnumProperty, FloatProperty
+from bpy.props import EnumProperty, FloatProperty, BoolProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode, dataCorrect, repeat_last,
@@ -32,7 +32,11 @@ from sverchok.data_structure import (updateNode, dataCorrect, repeat_last,
 
 # calculates natural cubic splines through all given knots
 def cubic_spline(locs, tknots):
+    """
+    locs is and np.array with shape (n,3) and tknots has shape (n-1,)
+    creates a cubic spline thorugh the locations given in locs
 
+    """
     n = len(locs)
     if n < 2:
         return False
@@ -75,7 +79,11 @@ def cubic_spline(locs, tknots):
 
 
 def eval_spline(splines, tknots, t_in):
-
+    """
+    Evaluate the spline at the points in t_in, which must be an array
+    with values in [0,1]
+    returns and np array with the corresponding points
+    """
     index = tknots.searchsorted(t_in, side='left') - 1
     index = index.clip(0, len(splines) - 1)
     to_calc = splines[index]
@@ -84,18 +92,51 @@ def eval_spline(splines, tknots, t_in):
     out = ax + t_r * (bx + t_r * (cx + t_r * dx))
     return out
 
-def calc_tanget(splines, tknots, t_in, h):
-    t_ph = t_corr + h
-    t_mh = t_corr - h
+def calc_spline_tanget(spline, tknots, t_in, h):
+    """
+    Calc numerical tangents for spline at t_in
+    """
+    t_ph = t_in + h
+    t_mh = t_in - h
     t_less_than_0 = t_mh < 0.0
     t_great_than_1 = t_ph > 1.0
-    t_mh[t_less_than_0] = 0.0
-    t_ph[t_great_than_1] = 1.0
-    tanget_ph = eval_spline(spl, t, t_ph)
-    tanget_mh = eval_spline(spl, t, t_mh)
+    t_mh[t_less_than_0] += h
+    t_ph[t_great_than_1] -= h
+    tanget_ph = eval_spline(spline, tknots, t_ph)
+    tanget_mh = eval_spline(spline, tknots, t_mh)
     tanget = tanget_ph - tanget_mh
-    tanget[t_less_than_0 + t_great_than_1] *= 2
+    tanget[t_less_than_0 | t_great_than_1] *= 2
     return tanget
+
+def create_knots(pts, metric="DISTANCE"):
+    if metric == "DISTANCE":
+        tmp = np.linalg.norm(pts[:-1]-pts[1:], axis=1)
+        tknots = np.insert(tmp, 0, 0).cumsum()
+        tknots = tknots/tknots[-1]
+    elif metric == "MANHATTAN":
+        tmp = np.sum(np.absolute(pts[:-1]-pts[1:]), 1)
+        tknots = np.insert(tmp, 0, 0).cumsum()
+        tknots = tknots/tknots[-1]
+    elif metric == "POINTS":
+        tknots = np.linspace(0,1,len(pts))
+    elif metric == "CHEBYSHEV":
+        tknots = np.max(np.absolute(pts[1:]-pts[:-1]),1)
+        tmp = np.insert(tmp, 0, 0).cumsum()
+        tknots = tknots/tknots[-1]
+
+    return tknots
+
+def eval_linear_spline(pts, tknots, t_in):
+    """
+    Eval the liner spline f(t) = x,y,z through the points
+    in pts given the knots in tknots at the point in t_in
+    """
+    ptsT = pts.T
+    out = np.zeros((3, len(t_in)))
+    for i in range(3):
+        out[i] = np.interp(t_in, tknots, ptsT[i])
+    return out.T
+
 
 class SvInterpolationNodeMK3(bpy.types.Node, SverchCustomTreeNode):
     '''Vector Interpolate'''
@@ -115,6 +156,18 @@ class SvInterpolationNodeMK3(bpy.types.Node, SverchCustomTreeNode):
                         default="LIN", items=modes,
                         update=updateNode)
 
+    knot_modes = [('MANHATTAN', 'Manhattan', "Manhattan distance metric", 0),
+                  ('DISTANCE', 'Euclidan', "Eudlcian distance metric", 1),
+                  ('POINTS', 'Points', "Points based", 2),
+                  ('CHEBYSHEV', 'Chebyshev', "Chebyshev distance", 3)]
+
+
+    knot_mode = EnumProperty(name='Knot Mode',
+                        default="DISTANCE", items=knot_modes,
+                        update=updateNode)
+
+    is_cyclic = BoolProperty(name="Is Cyclic", default=False)
+
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', 'Vertices')
         self.inputs.new('StringsSocket', 'Interval').prop_name = 't_in'
@@ -127,10 +180,11 @@ class SvInterpolationNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         #pass
 
         layout.prop(self, 'mode', expand=True)
+        layout.prop(self, 'is_cyclic')
 
     def draw_buttons_ext(self, context, layout):
         layout.prop(self, 'h')
-
+        layout.prop(self, 'knot_mode')
 
     def process(self):
         if 'Norm Tanget' not in self.outputs:
@@ -146,35 +200,31 @@ class SvInterpolationNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         h = self.h
 
         if self.inputs['Vertices'].is_linked:
-            verts = SvGetSocketAnyType(self, self.inputs['Vertices'])
+            verts = self.inputs['Vertices'].sv_get()
             verts = dataCorrect(verts)
             t_ins = self.inputs['Interval'].sv_get()
             verts_out = []
             tanget_out = []
             norm_tanget_out = []
             for v, t_in in zip(verts, repeat_last(t_ins)):
-                pts = np.array(v)
-                # t is the knots
-                tmp = np.linalg.norm(pts[:-1]-pts[1:], axis=1)
-                t = np.insert(tmp, 0, 0).cumsum()
-                t = t/t[-1]
+                if self.is_cyclic:
+                    # doesn't really work
+                    pts = np.array(v[-4:]+ v + v[:4])
+                else:
+                    pts = np.array(v)
 
-                # the t values to evaluate
+                tknots = create_knots(pts, metric=self.knot_mode)
                 t_corr = np.array(t_in).clip(0, 1)
 
                 if self.mode == 'LIN':
-                    pts = pts.T
-                    out = np.zeros((3, len(t_corr)))
-                    for i in range(3):
-                        out[i] = np.interp(t_corr, t, pts[i])
-                    verts_out.append(pts.T.tolist())
+                    out = eval_linear_spline(pts, tknots, t_corr)
+                    verts_out.append(out.tolist())
                 else:  # SPL
-
-                    spl = cubic_spline(pts, t)
-                    out = eval_spline(spl, t, t_corr)
+                    spl = cubic_spline(pts, tknots)
+                    out = eval_spline(spl, tknots, t_corr)
                     verts_out.append(out.tolist())
                     if calc_tanget:
-                        tanget = calc_tanget(spl, t, t_corr, h)
+                        tanget = calc_spline_tanget(spl, tknots, t_corr, h)
                         if norm_tanget:
                             norm = np.linalg.norm(tanget, axis=1)
                             norm_tanget_out.append((tanget/norm[:,np.newaxis]).tolist())
