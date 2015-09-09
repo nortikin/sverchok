@@ -17,7 +17,8 @@ nodes_dict = {
         'scene_raycast',
         'bmesh_props',
         'closest_point_on_mesh',
-        'colors'
+        'colors',
+       # 'bvh_raycast'
     ],
 
     'basic_view': [
