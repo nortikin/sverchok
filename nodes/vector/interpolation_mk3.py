@@ -148,7 +148,7 @@ class SvInterpolationNodeMK3(bpy.types.Node, SverchCustomTreeNode):
                          default=.5, min=0, max=1, precision=5,
                          update=updateNode)
 
-    h = FloatProperty(default=.0001, precision=7, update=updateNode)
+    h = FloatProperty(default=.001, precision=5, update=updateNode)
 
     modes = [('SPL', 'Cubic', "Cubic Spline", 0),
              ('LIN', 'Linear', "Linear Interpolation", 1)]
@@ -173,7 +173,7 @@ class SvInterpolationNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('StringsSocket', 'Interval').prop_name = 't_in'
         self.outputs.new('VerticesSocket', 'Vertices')
         self.outputs.new('VerticesSocket', 'Tanget')
-        self.outputs.new('VerticesSocket', 'Norm Tanget')
+        self.outputs.new('VerticesSocket', 'Unit Tanget')
 
 
     def draw_buttons(self, context, layout):
@@ -187,15 +187,15 @@ class SvInterpolationNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, 'knot_mode')
 
     def process(self):
-        if 'Norm Tanget' not in self.outputs:
+        if 'Unit Tanget' not in self.outputs:
             return
         if not any((s.is_linked for s in self.outputs)):
             return
 
-        calc_tanget =  self.outputs['Tanget'].is_linked or self.outputs['Norm Tanget'].is_linked
+        calc_tanget =  self.outputs['Tanget'].is_linked or self.outputs['Unit Tanget'].is_linked
 
 
-        norm_tanget = self.outputs['Norm Tanget'].is_linked
+        norm_tanget = self.outputs['Unit Tanget'].is_linked
 
         h = self.h
 
@@ -207,9 +207,13 @@ class SvInterpolationNodeMK3(bpy.types.Node, SverchCustomTreeNode):
             tanget_out = []
             norm_tanget_out = []
             for v, t_in in zip(verts, repeat_last(t_ins)):
-                if self.is_cyclic:
-                    # doesn't really work
+                if self.is_cyclic and self.mode == "SPL":
+                    # doesn't really work becauase other
+                    # parts also has to be aware and clean up
+                    # tomorrow.
                     pts = np.array(v[-4:]+ v + v[:4])
+                elif self.is_cyclic and self.mode == "LIN":
+                    pts = np.array(v + [v[0]])
                 else:
                     pts = np.array(v)
 
@@ -235,8 +239,8 @@ class SvInterpolationNodeMK3(bpy.types.Node, SverchCustomTreeNode):
                 outputs['Vertices'].sv_set(verts_out)
             if outputs['Tanget'].is_linked:
                 outputs['Tanget'].sv_set(tanget_out)
-            if outputs['Norm Tanget'].is_linked:
-                outputs['Norm Tanget'].sv_set(norm_tanget_out)
+            if outputs['Unit Tanget'].is_linked:
+                outputs['Unit Tanget'].sv_set(norm_tanget_out)
 
 
 
