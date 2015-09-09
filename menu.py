@@ -273,6 +273,7 @@ def make_node_cats():
         ["SvBMoutputNode",   "BMesh Output"],
       #  ["SvBVHtreeNode",   "BVH Tree In"],
       #  ["SvBVHRaycastNode",   "BVH Tree Raycast"],
+      #  ["SvBvhOverlapNode",   "BVH Tree Overlap"],
         ["SvBMtoElementNode",   "BM Elements"],
     ]
 
