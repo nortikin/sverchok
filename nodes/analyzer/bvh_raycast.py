@@ -18,7 +18,7 @@
 
 import bpy
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (updateNode)
+from sverchok.data_structure import (updateNode, second_as_first_cycle as C)
 
 
 class SvBVHRaycastNode(bpy.types.Node, SverchCustomTreeNode):
@@ -29,8 +29,8 @@ class SvBVHRaycastNode(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', 'BVH_tree_list')
-        self.inputs.new('VerticesSocket', 'Start')
-        self.inputs.new('VerticesSocket', 'Direction')
+        self.inputs.new('VerticesSocket', 'Start').use_prop=True
+        self.inputs.new('VerticesSocket', 'Direction').use_prop=True
         self.outputs.new('VerticesSocket', 'Location')
         self.outputs.new('VerticesSocket', 'Normal')
         self.outputs.new('StringsSocket', 'Index')
@@ -38,7 +38,9 @@ class SvBVHRaycastNode(bpy.types.Node, SverchCustomTreeNode):
 
     def process(self):
         outL,outN,outI,outD = [],[],[],[]
-        for bvh, st, di in zip(self.inputs[0].sv_get(), self.inputs[1].sv_get(), self.inputs[2].sv_get()):
+        bvhl, st, di = self.inputs
+        st,di = C(st.sv_get()[0], di.sv_get()[0])
+        for bvh in bvhl.sv_get():
             L,N,I,D = [],[],[],[]
             for i,i2 in zip(st,di):
                 r = bvh.ray_cast(i, i2)
