@@ -58,3 +58,5 @@ docs/_build
 docs/.make.bat.swp
 
 nodes/generator/meta_balls.py
+
+nodes/vector/mesh_looptools.py

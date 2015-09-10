@@ -16,15 +16,13 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-import bisect
 import numpy as np
 
 import bpy
 from bpy.props import EnumProperty, FloatProperty, BoolProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (updateNode, dataCorrect, repeat_last,
-                            SvSetSocketAnyType, SvGetSocketAnyType)
+from sverchok.data_structure import updateNode, dataCorrect, repeat_last
 
 # spline function modifed from
 # from looptools 4.5.2 done by Bart Crouch
@@ -41,40 +39,40 @@ def cubic_spline(locs, tknots):
     if n < 2:
         return False
 
-    result = []
     # a = locs
-    h = tknots[1:]-tknots[:-1]
-    h[h==0] = 1e-8
-    q = np.zeros((n-1,3))
-    q[1:] = 3/h[1:,np.newaxis] * (locs[2:] - locs[1:-1]) - 3/h[:-1,np.newaxis] * (locs[1:-1]-locs[:-2])
+    h = tknots[1:] - tknots[:-1]
+    h[h == 0] = 1e-8
+    q = np.zeros((n - 1, 3))
+    q[1:] = 3 / h[1:, np.newaxis] * (locs[2:] - locs[1:-1]) - 3 / \
+        h[:-1, np.newaxis] * (locs[1:-1] - locs[:-2])
 
-    l = np.zeros((n, 3 ))
-    l[0,:] = 1.0
-    u = np.zeros((n-1, 3))
+    l = np.zeros((n, 3))
+    l[0, :] = 1.0
+    u = np.zeros((n - 1, 3))
     z = np.zeros((n, 3))
 
-    for i in range(1, n-1):
-        l[i] = 2*(tknots[i+1]-tknots[i-1]) - h[i-1]*u[i-1]
-        tmp = l[i]
-        tmp[tmp==0] = 1e-8
+    for i in range(1, n - 1):
+        l[i] = 2 * (tknots[i + 1] - tknots[i - 1]) - h[i - 1] * u[i - 1]
+        l[i, l[i] == 0] = 1e-8
         u[i] = h[i] / l[i]
-        z[i] = (q[i] - h[i-1] * z[i-1]) / l[i]
-    l[-1,:] = 1.0
+        z[i] = (q[i] - h[i - 1] * z[i - 1]) / l[i]
+    l[-1, :] = 1.0
     z[-1] = 0.0
 
-    b = np.zeros((n-1, 3))
+    b = np.zeros((n - 1, 3))
     c = np.zeros((n, 3))
-    for i in range(n-2, -1, -1):
-        c[i] = z[i] - u[i]*c[i+1]
-    b = (locs[1:]-locs[:-1])/h[:,np.newaxis] - h[:,np.newaxis]*(c[1:]+2*c[:-1])/3
-    d = (c[1:]-c[:-1]) / (3*h[:,np.newaxis])
 
-    splines = np.zeros((n -1, 5, 3))
+    for i in range(n - 2, -1, -1):
+        c[i] = z[i] - u[i] * c[i + 1]
+    b = (locs[1:] - locs[:-1]) / h[:, np.newaxis] - h[:, np.newaxis] * (c[1:] + 2 * c[:-1]) / 3
+    d = (c[1:] - c[:-1]) / (3 * h[:, np.newaxis])
+
+    splines = np.zeros((n - 1, 5, 3))
     splines[:, 0] = locs[:-1]
-    splines[:,1] = b
-    splines[:,2] = c[:-1]
-    splines[:,3] = d
-    splines[:,4] = tknots[:-1,np.newaxis]
+    splines[:, 1] = b
+    splines[:, 2] = c[:-1]
+    splines[:, 3] = d
+    splines[:, 4] = tknots[:-1, np.newaxis]
     return splines
 
 
@@ -88,9 +86,10 @@ def eval_spline(splines, tknots, t_in):
     index = index.clip(0, len(splines) - 1)
     to_calc = splines[index]
     ax, bx, cx, dx, tx = np.swapaxes(to_calc, 0, 1)
-    t_r = t_in[:,np.newaxis] - tx
+    t_r = t_in[:, np.newaxis] - tx
     out = ax + t_r * (bx + t_r * (cx + t_r * dx))
     return out
+
 
 def calc_spline_tanget(spline, tknots, t_in, h):
     """
@@ -108,23 +107,25 @@ def calc_spline_tanget(spline, tknots, t_in, h):
     tanget[t_less_than_0 | t_great_than_1] *= 2
     return tanget
 
+
 def create_knots(pts, metric="DISTANCE"):
     if metric == "DISTANCE":
-        tmp = np.linalg.norm(pts[:-1]-pts[1:], axis=1)
+        tmp = np.linalg.norm(pts[:-1] - pts[1:], axis=1)
         tknots = np.insert(tmp, 0, 0).cumsum()
-        tknots = tknots/tknots[-1]
+        tknots = tknots / tknots[-1]
     elif metric == "MANHATTAN":
-        tmp = np.sum(np.absolute(pts[:-1]-pts[1:]), 1)
+        tmp = np.sum(np.absolute(pts[:-1] - pts[1:]), 1)
         tknots = np.insert(tmp, 0, 0).cumsum()
-        tknots = tknots/tknots[-1]
+        tknots = tknots / tknots[-1]
     elif metric == "POINTS":
-        tknots = np.linspace(0,1,len(pts))
+        tknots = np.linspace(0, 1, len(pts))
     elif metric == "CHEBYSHEV":
-        tknots = np.max(np.absolute(pts[1:]-pts[:-1]),1)
+        tknots = np.max(np.absolute(pts[1:] - pts[:-1]), 1)
         tmp = np.insert(tmp, 0, 0).cumsum()
-        tknots = tknots/tknots[-1]
+        tknots = tknots / tknots[-1]
 
     return tknots
+
 
 def eval_linear_spline(pts, tknots, t_in):
     """
@@ -161,10 +162,9 @@ class SvInterpolationNodeMK3(bpy.types.Node, SverchCustomTreeNode):
                   ('POINTS', 'Points', "Points based", 2),
                   ('CHEBYSHEV', 'Chebyshev', "Chebyshev distance", 3)]
 
-
     knot_mode = EnumProperty(name='Knot Mode',
-                        default="DISTANCE", items=knot_modes,
-                        update=updateNode)
+                             default="DISTANCE", items=knot_modes,
+                             update=updateNode)
 
     is_cyclic = BoolProperty(name="Is Cyclic", default=False)
 
@@ -175,9 +175,8 @@ class SvInterpolationNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('VerticesSocket', 'Tanget')
         self.outputs.new('VerticesSocket', 'Unit Tanget')
 
-
     def draw_buttons(self, context, layout):
-        #pass
+        # pass
 
         layout.prop(self, 'mode', expand=True)
         layout.prop(self, 'is_cyclic')
@@ -192,8 +191,7 @@ class SvInterpolationNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         if not any((s.is_linked for s in self.outputs)):
             return
 
-        calc_tanget =  self.outputs['Tanget'].is_linked or self.outputs['Unit Tanget'].is_linked
-
+        calc_tanget = self.outputs['Tanget'].is_linked or self.outputs['Unit Tanget'].is_linked
 
         norm_tanget = self.outputs['Unit Tanget'].is_linked
 
@@ -207,23 +205,30 @@ class SvInterpolationNodeMK3(bpy.types.Node, SverchCustomTreeNode):
             tanget_out = []
             norm_tanget_out = []
             for v, t_in in zip(verts, repeat_last(t_ins)):
-                if self.is_cyclic and self.mode == "SPL":
-                    # doesn't really work becauase other
-                    # parts also has to be aware and clean up
-                    # tomorrow.
-                    pts = np.array(v[-4:]+ v + v[:4])
-                elif self.is_cyclic and self.mode == "LIN":
-                    pts = np.array(v + [v[0]])
-                else:
-                    pts = np.array(v)
 
-                tknots = create_knots(pts, metric=self.knot_mode)
                 t_corr = np.array(t_in).clip(0, 1)
 
                 if self.mode == 'LIN':
+                    if self.is_cyclic:
+                        pts = np.array(v + [v[0]])
+                    else:
+                        pts = np.array(v)
+                    tknots = create_knots(pts, metric=self.knot_mode)
                     out = eval_linear_spline(pts, tknots, t_corr)
                     verts_out.append(out.tolist())
                 else:  # SPL
+                    if self.is_cyclic:
+
+                        pts = np.array(v[-4:] + v + v[:4])
+                        tknots = create_knots(pts, metric=self.knot_mode)
+                        scale = 1 / (tknots[-4] - tknots[4])
+                        base = tknots[4]
+                        tknots -= base
+                        tknots *= scale
+                    else:
+                        pts = np.array(v)
+                        tknots = create_knots(pts, metric=self.knot_mode)
+
                     spl = cubic_spline(pts, tknots)
                     out = eval_spline(spl, tknots, t_corr)
                     verts_out.append(out.tolist())
@@ -231,7 +236,7 @@ class SvInterpolationNodeMK3(bpy.types.Node, SverchCustomTreeNode):
                         tanget = calc_spline_tanget(spl, tknots, t_corr, h)
                         if norm_tanget:
                             norm = np.linalg.norm(tanget, axis=1)
-                            norm_tanget_out.append((tanget/norm[:,np.newaxis]).tolist())
+                            norm_tanget_out.append((tanget / norm[:, np.newaxis]).tolist())
                         tanget_out.append(tanget.tolist())
 
             outputs = self.outputs
@@ -241,8 +246,6 @@ class SvInterpolationNodeMK3(bpy.types.Node, SverchCustomTreeNode):
                 outputs['Tanget'].sv_set(tanget_out)
             if outputs['Unit Tanget'].is_linked:
                 outputs['Unit Tanget'].sv_set(norm_tanget_out)
-
-
 
 
 def register():
