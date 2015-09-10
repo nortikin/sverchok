@@ -30,13 +30,16 @@ class SvBvhOverlapNode(bpy.types.Node, SverchCustomTreeNode):
     def sv_init(self, context):
         self.inputs.new('StringsSocket', 'BVH_tree_list(A)')
         self.inputs.new('StringsSocket', 'BVH_tree_list(B)')
-        self.outputs.new('StringsSocket', 'outlist')
+        self.outputs.new('StringsSocket', 'outlistA')
+        self.outputs.new('StringsSocket', 'outlistB')
 
     def process(self):
-        out = []
-        for i, i2 in zip(self.inputs[0].sv_get(), self.inputs[1].sv_get()):
-            out.append(i.overlap(i2))
-        self.outputs[0].sv_set(out)
+        A,B = self.inputs
+        outA, outB = self.outputs
+        if outA.is_linked:
+            outA.sv_set([[i[0] for i in i.overlap(i2)] for i, i2 in zip(A.sv_get(), B.sv_get())])
+        if outB.is_linked:
+            outB.sv_set([[i[1] for i in i.overlap(i2)] for i, i2 in zip(A.sv_get(), B.sv_get())])
 
     def update_socket(self, context):
         self.update()
