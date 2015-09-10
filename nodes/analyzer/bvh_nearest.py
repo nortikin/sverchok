@@ -36,30 +36,19 @@ class SvBVHnearNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('StringsSocket', 'Distance')
 
     def process(self):
-        L,N,I,D,out,outFin = [],[],[],[],[],[]
+        outFin = []
         bvhl, p = self.inputs
         oL,oN,oI,oD = self.outputs
         for BV in bvhl.sv_get():
-            out = []
-            for i in p.sv_get()[0]:
-                out.append(BV.find(i))
-            outFin.append(out)
+            outFin.append([BV.find(i) for i in p.sv_get()[0]])
         if oL.is_linked:
-            for out in outFin:
-                L.append([i[0] for i in out])
-            oL.sv_set(L)
+            oL.sv_set([[i[0] for i in o] for o in outFin])
         if oN.is_linked:
-            for out in outFin:
-                N.append([i[1] for i in out])
-            oN.sv_set(N)
+            oN.sv_set([[i[1] for i in o] for o in outFin])
         if oI.is_linked:
-            for out in outFin:
-                I.append([i[2] for i in out])
-            oI.sv_set(I)
+            oI.sv_set([[i[2] for i in o] for o in outFin])
         if oD.is_linked:
-            for out in outFin:
-                D.append([i[3] for i in out])
-            oD.sv_set(D)
+            oD.sv_set([[i[3] for i in o] for o in outFin])
 
     def update_socket(self, context):
         self.update()
