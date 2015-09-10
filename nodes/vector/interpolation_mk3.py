@@ -166,7 +166,7 @@ class SvInterpolationNodeMK3(bpy.types.Node, SverchCustomTreeNode):
                              default="DISTANCE", items=knot_modes,
                              update=updateNode)
 
-    is_cyclic = BoolProperty(name="Is Cyclic", default=False)
+    is_cyclic = BoolProperty(name="Is Cyclic", default=False, update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', 'Vertices')
