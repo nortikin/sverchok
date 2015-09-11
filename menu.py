@@ -247,7 +247,8 @@ def make_node_cats():
         ["SvMatrixApplyJoinNode", "Apply matrix to mesh"],
         ["SvIterateNode",         "Iterate matrix transformation"],
         ["SvMatrixTubeNode", "Matrix Tube"],
-	["SvGenerativeArtNode", "Generative Art"],
+	    ["SvGenerativeArtNode", "Generative Art"],
+        ["EvalNode", "Eval Node"]
     ]
 
     node_cats["Alpha Nodes"] = [

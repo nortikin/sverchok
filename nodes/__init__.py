@@ -54,7 +54,8 @@ nodes_dict = {
         'bmesh_in',
         'bmesh_out',
        # 'create_bvh_tree',
-        'bmesh_to_element'
+        'bmesh_to_element',
+        'eval'
     ],
 
     'basic_debug': [
