@@ -219,7 +219,7 @@ def make_node_cats():
         ["SvSetPropNode",       "Set property",      'FORCE_VORTEX'],
         ["SvVertexGroupNode",   "Vertext group"],
         ["SvRayCastSceneNode",   "Scene Raycast"],
-        ["SvRayCastObjectNode",   "Object Raycast"],
+        ["SvRayCastObjectNode",  "Object Raycast"],
         ["SvVertexColorNode",   "Vertext color"],
     ]
 
