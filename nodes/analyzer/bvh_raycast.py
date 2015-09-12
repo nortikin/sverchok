@@ -37,23 +37,20 @@ class SvBVHRaycastNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('StringsSocket', 'Distance')
 
     def process(self):
-        outL,outN,outI,outD = [],[],[],[]
+        L,N,I,D = self.outputs
         bvhl, st, di = self.inputs
+        RL = []
         st,di = C(st.sv_get()[0], di.sv_get()[0])
         for bvh in bvhl.sv_get():
-            L,N,I,D = [],[],[],[]
-            for i,i2 in zip(st,di):
-                r = bvh.ray_cast(i, i2)
-                L.append(r[0])
-                N.append(r[1])
-                I.append(r[2])
-                D.append(r[3])
-            outL.append(L)
-            outN.append(N)
-            outI.append(I)
-            outD.append(D)
-        for i, i2 in zip([outL,outN,outI,outD], self.outputs):
-            i2.sv_set(i)
+            RL.append([bvh.ray_cast(i, i2) for i, i2 in zip(st,di)])
+        if L.is_linked:
+            L.sv_set([[r[0] for r in L] for L in RL])
+        if N.is_linked:
+            N.sv_set([[r[1] for r in L] for L in RL])
+        if I.is_linked:
+            I.sv_set([[r[2] for r in L] for L in RL])
+        if D.is_linked:
+            D.sv_set([[r[3] for r in L] for L in RL])
 
     def update_socket(self, context):
         self.update()
