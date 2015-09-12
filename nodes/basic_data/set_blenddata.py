@@ -41,7 +41,7 @@ class SvSetDataObjectNode(bpy.types.Node, SverchCustomTreeNode):
 
     def process(self):
         O, V = self.inputs
-        Ov = self.outputs
+        Ov = self.outputs[0]
         objs = O.sv_get()
         if isinstance(objs[0], list):
             objs = objs[0]
