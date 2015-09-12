@@ -188,6 +188,7 @@ nodes_dict = {
         'range_int',
         'fibonacci',
         'exponential',
+        'easing',
         'logic'
     ],
 
