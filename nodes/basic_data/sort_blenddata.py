@@ -41,7 +41,7 @@ class SvSortObjsNode(bpy.types.Node, SverchCustomTreeNode):
 
     def process(self):
         Io, Cv = self.inputs
-        Oo = self.outputs
+        Oo = self.outputs[0]
         if Oo.is_linked:
             X = Io.sv_get()
             if isinstance(X[0], list):
