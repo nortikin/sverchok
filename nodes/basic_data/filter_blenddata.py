@@ -41,13 +41,14 @@ class SvFilterObjsNode(bpy.types.Node, SverchCustomTreeNode):
             layout.prop(self,  "formula", text="")
 
     def process(self):
-        objs = self.inputs['Objects'].sv_get()
+        In1,In2 = self.inputs
+        O1,O2 = self.outputs
+        objs = In1.sv_get()
         if isinstance(objs[0], list):
             objs = objs[0]
-        out1 = []
-        out2 = []
-        if self.inputs['mask'].is_linked:
-            m = self.inputs['mask'].sv_get()
+        out1,out2 = [],[]
+        if In2.is_linked:
+            m = In2.sv_get()
             if isinstance(m[0], list):
                 m = m[0]
             for i, i2 in zip(objs, m):
@@ -56,13 +57,14 @@ class SvFilterObjsNode(bpy.types.Node, SverchCustomTreeNode):
                 else:
                     out2.append(i)
         else:
+            S = self.formula
             for i in objs:
-                if self.formula in i.name:
+                if S in i.name:
                     out1.append(i)
                 else:
                     out2.append(i)
-        self.outputs['Objects(have)'].sv_set(out1)
-        self.outputs['Objects(not)'].sv_set(out2)
+        O1.sv_set(out1)
+        O2.sv_set(out2)
 
     def update_socket(self, context):
         self.update()
