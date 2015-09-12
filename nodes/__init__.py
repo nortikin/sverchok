@@ -18,7 +18,9 @@ nodes_dict = {
         'bmesh_props',
         'closest_point_on_mesh',
         'colors',
-       # 'bvh_raycast'
+       # 'bvh_raycast',
+       # 'bvh_overlap',
+       # 'bvh_nearest'
     ],
 
     'basic_view': [
@@ -186,6 +188,7 @@ nodes_dict = {
         'range_int',
         'fibonacci',
         'exponential',
+        'easing',
         'logic'
     ],
 

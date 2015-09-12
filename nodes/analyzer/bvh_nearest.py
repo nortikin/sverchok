@@ -18,47 +18,45 @@
 
 import bpy
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (updateNode, second_as_first_cycle as C)
+from sverchok.data_structure import (updateNode)
 
 
-class SvBVHRaycastNode(bpy.types.Node, SverchCustomTreeNode):
-    ''' BVH Tree Raycast '''
-    bl_idname = 'SvBVHRaycastNode'
-    bl_label = 'bvh_raycast'
+class SvBVHnearNode(bpy.types.Node, SverchCustomTreeNode):
+    ''' BVH Find Nearest '''
+    bl_idname = 'SvBVHnearNode'
+    bl_label = 'bvh_nearest'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', 'BVH_tree_list')
-        self.inputs.new('VerticesSocket', 'Start').use_prop=True
-        self.inputs.new('VerticesSocket', 'Direction').use_prop=True
+        self.inputs.new('VerticesSocket', 'Points')
         self.outputs.new('VerticesSocket', 'Location')
         self.outputs.new('VerticesSocket', 'Normal')
         self.outputs.new('StringsSocket', 'Index')
         self.outputs.new('StringsSocket', 'Distance')
 
     def process(self):
-        L,N,I,D = self.outputs
-        bvhl, st, di = self.inputs
-        RL = []
-        st,di = C(st.sv_get()[0], di.sv_get()[0])
-        for bvh in bvhl.sv_get():
-            RL.append([bvh.ray_cast(i, i2) for i, i2 in zip(st,di)])
-        if L.is_linked:
-            L.sv_set([[r[0] for r in L] for L in RL])
-        if N.is_linked:
-            N.sv_set([[r[1] for r in L] for L in RL])
-        if I.is_linked:
-            I.sv_set([[r[2] for r in L] for L in RL])
-        if D.is_linked:
-            D.sv_set([[r[3] for r in L] for L in RL])
+        outFin = []
+        bvhl, p = self.inputs
+        oL,oN,oI,oD = self.outputs
+        for BV in bvhl.sv_get():
+            outFin.append([BV.find(i) for i in p.sv_get()[0]])
+        if oL.is_linked:
+            oL.sv_set([[i[0] for i in o] for o in outFin])
+        if oN.is_linked:
+            oN.sv_set([[i[1] for i in o] for o in outFin])
+        if oI.is_linked:
+            oI.sv_set([[i[2] for i in o] for o in outFin])
+        if oD.is_linked:
+            oD.sv_set([[i[3] for i in o] for o in outFin])
 
     def update_socket(self, context):
         self.update()
 
 
 def register():
-    bpy.utils.register_class(SvBVHRaycastNode)
+    bpy.utils.register_class(SvBVHnearNode)
 
 
 def unregister():
-    bpy.utils.unregister_class(SvBVHRaycastNode)
+    bpy.utils.unregister_class(SvBVHnearNode)
