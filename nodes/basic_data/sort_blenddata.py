@@ -51,7 +51,8 @@ class SvSortObjsNode(bpy.types.Node, SverchCustomTreeNode):
                 Y = CV[0] if isinstance(CV[0],list) else CV
             else:
                 Y = eval("[i."+self.Modes+" for i in X]")
-            Oo.sv_set(X.sort(key=dict(zip(X, Y)).get))
+            X.sort(key=dict(zip(X, Y)).get)
+            Oo.sv_set(X)
 
     def update_socket(self, context):
         self.update()
