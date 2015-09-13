@@ -231,6 +231,10 @@ def make_node_cats():
         ["ConverterNode",       "SocketConvert"],
     ]
 
+    node_cats['Network'] = [
+        ["UdpClientNode", "UDP Client"]
+    ]
+
     node_cats["Beta Nodes"] = [
         # for testing convenience, and while no documentation
         ['SvBevelNode',           "Bevel"],
