@@ -56,7 +56,7 @@ class MatrixOutNode(bpy.types.Node, SverchCustomTreeNode):
                     for pair in lists:
                         angles.append(degrees(pair[1]))
                 R.sv_set(rots)
-                A._sv_set([angles])
+                A.sv_set([angles])
 
     def update_socket(self, context):
         self.update()
