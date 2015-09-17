@@ -34,6 +34,10 @@ def sv_main(powers=[],pow_str=[],points=[],lent=0.1,subs=30):
         for i in verts_:
             vect+=i*(1/i.length**2)
         vect.normalize()
+        # additional power:
+        #cos(x)
+        #sin
+        #3*exp(-(x**2+3**2)**2)
         vertnext = poi + vect*(1/lent)
         return vertnext
         
