@@ -58,10 +58,7 @@ class MatrixDeformNode(bpy.types.Node, SverchCustomTreeNode):
                 rot = [[]]
             rotA, angle = [[]], [[0.0]]
             if A.is_linked:
-                if type(A.links[0].from_socket) == "StringsSocket":
-                    angle = A.sv_get()
-                elif type(A.links[0].from_socket) == "VerticesSocket":
-                    rotA = Vector_generate(A.sv_get())
+                angle = A.sv_get()
             matrixes_ = matrixdef(orig, loc, scale, rot, angle, rotA)
             matrixes = Matrix_listing(matrixes_)
             Om.sv_set(matrixes)
