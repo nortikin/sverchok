@@ -19,8 +19,7 @@
 import bpy
 import mathutils
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (matrixdef, Matrix_listing,
-                                     Vector_generate, get_other_socket)
+from sverchok.data_structure import (matrixdef, Matrix_listing, Vector_generate)
 
 
 class MatrixGenNode(bpy.types.Node, SverchCustomTreeNode):
@@ -51,12 +50,7 @@ class MatrixGenNode(bpy.types.Node, SverchCustomTreeNode):
         rot = Vector_generate(R.sv_get())
         rotA, angle = [[]], [[0.0]]
         if A.is_linked:
-            other = get_other_socket(A)
-            if isinstance(other, StringsSocket):
-                angle = A.sv_get()
-            elif isinstance(other, VerticesSocket):
-                rotA_ = A.sv_get()
-                rotA = Vector_generate(rotA_)
+            angle = A.sv_get()
         max_l = max(len(loc[0]), len(scale[0]), len(rot[0]), len(angle[0]), len(rotA[0]))
         orig = []
         for l in range(max_l):
