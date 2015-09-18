@@ -20,9 +20,7 @@ from math import degrees
 
 import bpy
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (Matrix_generate,
-                            Matrix_location, Matrix_scale, Matrix_rotation,
-                            SvGetSocketAnyType, SvSetSocketAnyType)
+from sverchok.data_structure import (Matrix_generate, Matrix_location, Matrix_scale, Matrix_rotation)
 
 
 class MatrixOutNode(bpy.types.Node, SverchCustomTreeNode):
@@ -32,39 +30,33 @@ class MatrixOutNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     def sv_init(self, context):
-        self.outputs.new('VerticesSocket', "Location", "Location")
-        self.outputs.new('VerticesSocket', "Scale", "Scale")
-        self.outputs.new('VerticesSocket', "Rotation", "Rotation")
-        self.outputs.new('StringsSocket', "Angle", "Angle")
-        self.inputs.new('MatrixSocket', "Matrix", "Matrix")
+        self.outputs.new('VerticesSocket', "Location")
+        self.outputs.new('VerticesSocket', "Scale")
+        self.outputs.new('VerticesSocket', "Rotation")
+        self.outputs.new('StringsSocket', "Angle")
+        self.inputs.new('MatrixSocket', "Matrix")
 
     def process(self):
-        if 'Matrix' in self.inputs and self.inputs['Matrix'].is_linked:
-            matrixes_ = SvGetSocketAnyType(self, self.inputs['Matrix'])
+        L,S,R,A = self.outputs
+        M = self.inputs[0]
+        if M.is_linked:
+            matrixes_ = M.sv_get()
             matrixes = Matrix_generate(matrixes_)
-
-            if 'Location' in self.outputs and self.outputs['Location'].is_linked:
+            if L.is_linked:
                 locs = Matrix_location(matrixes, list=True)
-                SvSetSocketAnyType(self, 'Location', locs)
-
-            if 'Scale' in self.outputs and self.outputs['Scale'].is_linked:
+                L.sv_set(locs)
+            if S.is_linked:
                 locs = Matrix_scale(matrixes, list=True)
-                SvSetSocketAnyType(self, 'Scale', locs)
-
-            if ('Rotation' in self.outputs and self.outputs['Rotation'].is_linked) \
-               or ('Angle' in self.outputs and self.outputs['Angle'].is_linked):
-
+                S.sv_set(locs)
+            if R.is_linked or A.is_linked:
                 locs = Matrix_rotation(matrixes, list=True)
-                rots = []
-                angles = []
+                rots, angles = [],[]
                 for lists in locs:
                     rots.append([pair[0] for pair in lists])
                     for pair in lists:
                         angles.append(degrees(pair[1]))
-                SvSetSocketAnyType(self, 'Rotation', rots)
-                SvSetSocketAnyType(self, 'Angle', [angles])
-        else:
-            matrixes = [[]]
+                R.sv_set(rots)
+                A.sv_set([angles])
 
     def update_socket(self, context):
         self.update()
