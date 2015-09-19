@@ -48,9 +48,9 @@ class SvBVHRaycastNode(bpy.types.Node, SverchCustomTreeNode):
         if N.is_linked:
             N.sv_set([[r[1][:] if r[1] != None else (0,0,0) for r in L] for L in RL])
         if I.is_linked:
-            I.sv_set([[r[2] for r in L] for L in RL])
+            I.sv_set([[r[2] if r[2] != None else -1 for r in L] for L in RL])
         if D.is_linked:
-            D.sv_set([[r[3] for r in L] for L in RL])
+            D.sv_set([[r[3] if r[3] != None else 0 for r in L] for L in RL])
 
     def update_socket(self, context):
         self.update()
