@@ -29,7 +29,7 @@ class SvBVHnearNode(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', 'BVH_tree_list')
-        self.inputs.new('VerticesSocket', 'Points')
+        self.inputs.new('VerticesSocket', 'Points').use_prop=True
         self.outputs.new('VerticesSocket', 'Location')
         self.outputs.new('VerticesSocket', 'Normal')
         self.outputs.new('StringsSocket', 'Index')
@@ -42,9 +42,9 @@ class SvBVHnearNode(bpy.types.Node, SverchCustomTreeNode):
         for BV in bvhl.sv_get():
             outFin.append([BV.find(i) for i in p.sv_get()[0]])
         if oL.is_linked:
-            oL.sv_set([[i[0] for i in o] for o in outFin])
+            oL.sv_set([[i[0][:] for i in o] for o in outFin])
         if oN.is_linked:
-            oN.sv_set([[i[1] for i in o] for o in outFin])
+            oN.sv_set([[i[1][:] for i in o] for o in outFin])
         if oI.is_linked:
             oI.sv_set([[i[2] for i in o] for o in outFin])
         if oD.is_linked:
