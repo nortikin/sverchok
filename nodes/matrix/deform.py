@@ -17,12 +17,9 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-
-from sverchok.node_tree import (SverchCustomTreeNode, VerticesSocket,
-                       MatrixSocket, StringsSocket)
+from sverchok.node_tree import (SverchCustomTreeNode)
 from sverchok.data_structure import (Vector_generate, matrixdef, Matrix_listing,
-                            Matrix_generate, updateNode,
-                            SvGetSocketAnyType, SvSetSocketAnyType)
+                            Matrix_generate, updateNode)
 
 
 class MatrixDeformNode(bpy.types.Node, SverchCustomTreeNode):
@@ -32,66 +29,39 @@ class MatrixDeformNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     def sv_init(self, context):
-        self.inputs.new('MatrixSocket', "Original", "Original")
-        self.inputs.new('VerticesSocket', "Location", "Location")
-        self.inputs.new('VerticesSocket', "Scale", "Scale")
-        self.inputs.new('VerticesSocket', "Rotation", "Rotation")
-        self.inputs.new('StringsSocket', "Angle", "Angle")
-        self.outputs.new('MatrixSocket', "Matrix", "Matrix")
+        self.inputs.new('MatrixSocket', "Original")
+        self.inputs.new('VerticesSocket', "Location")
+        self.inputs.new('VerticesSocket', "Scale")
+        self.inputs.new('VerticesSocket', "Rotation")
+        self.inputs.new('StringsSocket', "Angle")
+        self.outputs.new('MatrixSocket', "Matrix")
 
     def process(self):
-        # inputs
-        if 'Matrix' in self.outputs and self.outputs['Matrix'].links:
-            if self.inputs['Original'].links and \
-               type(self.inputs['Original'].links[0].from_socket) == MatrixSocket:
-
-                orig_ = SvGetSocketAnyType(self, self.inputs['Original'])
-                orig = Matrix_generate(orig_)
+        O,L,S,R,A = self.inputs
+        Om = self.outputs[0]
+        if Om.is_linked:
+            if O.is_linked:
+                orig = Matrix_generate(O.sv_get())
             else:
                 return
-
-            if 'Location' in self.inputs and self.inputs['Location'].links and \
-               type(self.inputs['Location'].links[0].from_socket) == VerticesSocket:
-
-                loc_ = SvGetSocketAnyType(self, self.inputs['Location'])
-                loc = Vector_generate(loc_)
+            if L.is_linked:
+                loc = Vector_generate(L.sv_get())
             else:
                 loc = [[]]
-
-            if 'Scale' in self.inputs and self.inputs['Scale'].links and \
-               type(self.inputs['Scale'].links[0].from_socket) == VerticesSocket:
-
-                scale_ = SvGetSocketAnyType(self, self.inputs['Scale'])
-                scale = Vector_generate(scale_)
+            if S.is_linked:
+                scale = Vector_generate(S.sv_get())
             else:
                 scale = [[]]
-
-            if 'Rotation' in self.inputs and self.inputs['Rotation'].links and \
-               type(self.inputs['Rotation'].links[0].from_socket) == VerticesSocket:
-
-                rot_ = SvGetSocketAnyType(self, self.inputs['Rotation'])
-                rot = Vector_generate(rot_)
-                #print ('matrix_def', str(rot_))
+            if R.is_linked:
+                rot = Vector_generate(R.sv_get())
             else:
                 rot = [[]]
-
-            rotA = [[]]
-            angle = [[0.0]]
-            if 'Angle' in self.inputs and self.inputs['Angle'].links:
-
-                if type(self.inputs['Angle'].links[0].from_socket) == StringsSocket:
-                    angle = SvGetSocketAnyType(self, self.inputs['Angle'])
-
-                elif type(self.inputs['Angle'].links[0].from_socket) == VerticesSocket:
-                    rotA_ = SvGetSocketAnyType(self, self.inputs['Angle'])
-                    rotA = Vector_generate(rotA_)
-
-            # outputs
-            #print(loc)
+            rotA, angle = [[]], [[0.0]]
+            if A.is_linked:
+                angle = A.sv_get()
             matrixes_ = matrixdef(orig, loc, scale, rot, angle, rotA)
             matrixes = Matrix_listing(matrixes_)
-            SvSetSocketAnyType(self, 'Matrix', matrixes)
-            #print ('matrix_def', str(matrixes))
+            Om.sv_set(matrixes)
 
     def update_socket(self, context):
         updateNode(self, context)
