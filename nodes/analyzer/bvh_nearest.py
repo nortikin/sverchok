@@ -29,7 +29,7 @@ class SvBVHnearNode(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', 'BVH_tree_list')
-        self.inputs.new('VerticesSocket', 'Points')
+        self.inputs.new('VerticesSocket', 'Points').use_prop=True
         self.outputs.new('VerticesSocket', 'Location')
         self.outputs.new('VerticesSocket', 'Normal')
         self.outputs.new('StringsSocket', 'Index')
