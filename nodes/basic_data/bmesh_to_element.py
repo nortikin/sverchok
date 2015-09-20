@@ -25,7 +25,7 @@ from sverchok.data_structure import (updateNode)
 class SvBMtoElementNode(bpy.types.Node, SverchCustomTreeNode):
     ''' BMesh Decompose '''
     bl_idname = 'SvBMtoElementNode'
-    bl_label = 'bmesh_elements'
+    bl_label = 'BMesh Elements'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     def sv_init(self, context):

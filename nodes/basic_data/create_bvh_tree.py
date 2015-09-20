@@ -27,7 +27,7 @@ from sverchok.data_structure import (updateNode, enum_item as e)
 class SvBVHtreeNode(bpy.types.Node, SverchCustomTreeNode):
     ''' BVH Tree '''
     bl_idname = 'SvBVHtreeNode'
-    bl_label = 'bvh_tree_in'
+    bl_label = 'BVH Tree In'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     def mode_change(self, context):
