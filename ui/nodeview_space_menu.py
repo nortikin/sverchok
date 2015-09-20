@@ -132,6 +132,7 @@ class NODEVIEW_MT_Dynamic_Menu(bpy.types.Menu):
         layout.menu("NODEVIEW_MT_AddScene")
         layout.menu("NODEVIEW_MT_AddLayout")
         layout.separator()
+        layout.menu("NODEVIEW_MT_AddNetwork")
         if show_icons:
             layout.menu("NODEVIEW_MT_AddBetas", icon='OUTLINER_DATA_POSE')
             layout.menu("NODEVIEW_MT_AddAlphas", icon='ERROR')
@@ -193,6 +194,7 @@ classes = [
     make_class('ModifierChange', "Modifier Change"),
     make_class('ModifierMake', "Modifier Make"),
     make_class('Logic', "Logic"),
+    make_class('Network', "Network"),
     make_class('Betas', "Beta Nodes"),
     make_class('Alphas', "Alpha Nodes"),
 ]

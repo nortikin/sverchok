@@ -25,7 +25,7 @@ from sverchok.data_structure import (updateNode)
 class SvFilterObjsNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Filter Objects '''
     bl_idname = 'SvFilterObjsNode'
-    bl_label = 'filter_dataobject'
+    bl_label = 'Object ID Filter'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     formula = StringProperty(name='formula', default='name', update=updateNode)

@@ -25,7 +25,7 @@ from sverchok.data_structure import (updateNode)
 class SvSortObjsNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Sort Objects '''
     bl_idname = 'SvSortObjsNode'
-    bl_label = 'sort_dataobject'
+    bl_label = 'Object ID Sort'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     Modes = StringProperty(name='formula', default='location.x', update=updateNode)

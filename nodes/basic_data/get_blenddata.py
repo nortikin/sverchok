@@ -25,7 +25,7 @@ from sverchok.data_structure import (updateNode, enum_item as e)
 class SvGetDataObjectNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Get Object Props '''
     bl_idname = 'SvGetDataObjectNode'
-    bl_label = 'get_dataobject'
+    bl_label = 'Object ID Get'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     M = ['actions','brushes','filepath','grease_pencil','groups',
