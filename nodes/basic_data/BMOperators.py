@@ -26,7 +26,7 @@ from sverchok.data_structure import (updateNode, enum_item as e, second_as_first
 class SvBMOpsNode(bpy.types.Node, SverchCustomTreeNode):
     ''' BMesh Ops '''
     bl_idname = 'SvBMOpsNode'
-    bl_label = 'bmesh_ops'
+    bl_label = 'BMesh Ops'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     PV = ['remove_doubles(bm,verts=e,dist=v[0])',

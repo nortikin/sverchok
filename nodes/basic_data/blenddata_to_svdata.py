@@ -25,7 +25,7 @@ from sverchok.data_structure import (updateNode)
 
 class SvObjectToMeshNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvObjectToMeshNode'
-    bl_label = 'Objects to Mesh'
+    bl_label = 'Object ID Out'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     modifiers = BoolProperty(name='Modifiers', default=False, update=updateNode)

@@ -26,7 +26,7 @@ from sverchok.data_structure import (updateNode, second_as_first_cycle)
 class SvSetDataObjectNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Set Object Props '''
     bl_idname = 'SvSetDataObjectNode'
-    bl_label = 'set_dataobject'
+    bl_label = 'Object ID Set'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     formula = StringProperty(name='formula', default='delta_location', update=updateNode)
