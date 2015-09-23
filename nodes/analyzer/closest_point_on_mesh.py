@@ -27,7 +27,7 @@ from sverchok.data_structure import (updateNode, second_as_first_cycle)
 class SvPointOnMeshNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Point on Mesh '''
     bl_idname = 'SvPointOnMeshNode'
-    bl_label = 'closest_point_on_mesh'
+    bl_label = 'Object ID Point on Mesh'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     Mdist = FloatProperty(name='Max_Distance', default=10, update=updateNode)

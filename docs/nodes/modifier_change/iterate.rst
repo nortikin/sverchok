@@ -1,7 +1,6 @@
 Iterate
 =======
 
-*destination after Beta: Modifier Change*
 
 Functionality
 -------------

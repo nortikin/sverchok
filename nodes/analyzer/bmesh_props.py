@@ -26,7 +26,7 @@ from sverchok.data_structure import (updateNode, enum_item as e)
 class SvBMVertsNode(bpy.types.Node, SverchCustomTreeNode):
     ''' BMesh Verts '''
     bl_idname = 'SvBMVertsNode'
-    bl_label = 'bmesh_props'
+    bl_label = 'BMesh props'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     Modes = ['verts','faces','edges']
