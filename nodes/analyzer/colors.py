@@ -51,7 +51,7 @@ class SvVertexColorNode(bpy.types.Node, SverchCustomTreeNode):
     def sv_init(self, context):
         self.inputs.new('StringsSocket', "Index")
         self.inputs.new('VerticesSocket', "Color")
-        #self.outputs.new('StringsSocket', "OutColor")
+        self.outputs.new('VerticesSocket', "OutColor")
 
     def process(self):
         objm = bpy.data.objects[self.object_ref].data
@@ -63,8 +63,13 @@ class SvVertexColorNode(bpy.types.Node, SverchCustomTreeNode):
         ovgs = objm.vertex_colors.get(self.vertex_color)
         print('------')
         print(type(ovgs))
+        print(type(ovgs.data))
+        print(len(ovgs.data))
+        print(ovgs.data[0].color)
         print('------')
-        Ind, Col, OutCol = self.inputs + + self.outputs
+        Ind, Col = self.inputs
+        OutCol = self.outputs
+        print(self.outputs, type(self.outputs))
         if Col.is_linked:
             sm, colors = self.mode, Col.sv_get()[0]
             idxs = Ind.sv_get()[0] if Ind.is_linked else [i.index for i in getattr(objm,sm)]
@@ -85,10 +90,27 @@ class SvVertexColorNode(bpy.types.Node, SverchCustomTreeNode):
                     for i in bf[i].loops:
                         ovgs.data[i.index].color = i2
             bm.free()
-        elif OutCol.is_linked:
-            out = []
-
-            OutCol.sv_set([out])
+        #elif OutCol.is_linked:
+        out = []
+        sm, colors = self.mode, Col.sv_get()[0]
+        bm = bmesh.new()
+        bm.from_mesh(objm)
+        if sm == 'vertices':
+            #output one color per vertex
+            for v in bm.verts[:]:
+                c = ovgs.data[v.link_loops[0].index].color
+                print(c)
+                out.append(list(c))
+                
+            
+        elif sm == 'polygons':
+            #output one color per face
+            for f in bm.faces[:]:
+                c = ovgs.data[f.loops[0].index].color
+                print(c)
+                out.append(list(c))                    
+        
+        self.outputs["OutColor"].sv_set([out])
 
 
 def register():
