@@ -18,7 +18,7 @@
 
 import bpy
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (updateNode, second_as_first_cycle as C)
+from sverchok.data_structure import (updateNode, match_long_cycle as C)
 
 
 class SvBVHRaycastNode(bpy.types.Node, SverchCustomTreeNode):
@@ -28,19 +28,20 @@ class SvBVHRaycastNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     def sv_init(self, context):
-        self.inputs.new('StringsSocket', 'BVH_tree_list')
-        self.inputs.new('VerticesSocket', 'Start').use_prop=True
-        self.inputs.new('VerticesSocket', 'Direction').use_prop=True
-        self.outputs.new('VerticesSocket', 'Location')
-        self.outputs.new('VerticesSocket', 'Normal')
-        self.outputs.new('StringsSocket', 'Index')
-        self.outputs.new('StringsSocket', 'Distance')
+        si,so = self.inputs.new,self.outputs.new
+        si('StringsSocket', 'BVH_tree_list')
+        si('VerticesSocket', 'Start').use_prop=True
+        si('VerticesSocket', 'Direction').use_prop=True
+        so('VerticesSocket', 'Location')
+        so('VerticesSocket', 'Normal')
+        so('StringsSocket', 'Index')
+        so('StringsSocket', 'Distance')
 
     def process(self):
         L,N,I,D = self.outputs
         bvhl, st, di = self.inputs
         RL = []
-        st,di = C(st.sv_get()[0], di.sv_get()[0])
+        st,di = C([st.sv_get()[0], di.sv_get()[0]])
         for bvh in bvhl.sv_get():
             RL.append([bvh.ray_cast(i, i2) for i, i2 in zip(st,di)])
         if L.is_linked:

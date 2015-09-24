@@ -34,8 +34,7 @@ class SvRayCastNode(bpy.types.Node, SverchCustomTreeNode):
     mode2 = BoolProperty(name='output mode', default=False, update=updateNode)
 
     def sv_init(self, context):
-        si = self.inputs.new
-        so = self.outputs.new
+        si,so = self.inputs.new,self.outputs.new
         si('StringsSocket', 'Objects')
         si('VerticesSocket', 'start').use_prop = True
         si('VerticesSocket', 'end').use_prop = True
@@ -49,17 +48,12 @@ class SvRayCastNode(bpy.types.Node, SverchCustomTreeNode):
         row.prop(self,    "mode2",   text="Out Mode")
 
     def process(self):
-        outfin = []
-        OutLoc = []
-        OutNorm = []
-        IND = []
-        st = self.inputs['start'].sv_get()[0]
-        en = self.inputs['end'].sv_get()[0]
-        st, en = match_long_repeat([st, en])
-        obj = self.inputs['Objects'].sv_get()
+        o,s,e = self.inputs
+        outfin,OutLoc,OutNorm,IND,obj,sm1,sm2 = [],[],[],[],o.sv_get(),self.mode,self.mode2
+        st, en = match_long_repeat([s.sv_get()[0], e.sv_get()[0]])
         for OB in obj:
             out = []
-            if self.mode:
+            if sm1:
                 i = 0
                 obmat = OB.matrix_local.inverted()
                 while i < len(en):
@@ -71,20 +65,15 @@ class SvRayCastNode(bpy.types.Node, SverchCustomTreeNode):
                     out.append(OB.ray_cast(st[i], en[i]))
                     i = i+1
             outfin.append(out)
-
-        g = 0
-        while g < len(obj):
-            omw = obj[g].matrix_world
-            for i in outfin[g]:
+        for i,i2 in zip(obj,outfin):
+            omw = i.matrix_world
+            for i in i2:
                 OutNorm.append(i[1][:])
                 IND.append(i[2])
-                OutLoc.append((omw*i[0])[:] if self.mode2 else i[0][:])
-            g = g+1
-
-        so = self.outputs
-        so['HitP'].sv_set([OutLoc])
-        so['HitNorm'].sv_set([OutNorm])
-        so['FaceINDEX'].sv_set([IND])
+                OutLoc.append((omw*i[0])[:] if sm2 else i[0][:])
+        for i,i2 in zip(self.outputs,[[OutLoc],[OutNorm],[IND]]):
+            if i.is_linked:
+                i.sv_set(i2)
 
     def update_socket(self, context):
         self.update()

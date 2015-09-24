@@ -28,10 +28,9 @@ class SvRayCastNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     def sv_init(self, context):
-        sin = self.inputs.new
-        so = self.outputs.new
-        sin('VerticesSocket', 'start').use_prop = True
-        sin('VerticesSocket', 'end').use_prop = True
+        si,so = self.inputs.new,self.outputs.new
+        si('VerticesSocket', 'start').use_prop = True
+        si('VerticesSocket', 'end').use_prop = True
         so('VerticesSocket', "HitP")
         so('VerticesSocket', "HitNorm")
         so('StringsSocket', "Succes")
@@ -39,30 +38,23 @@ class SvRayCastNode(bpy.types.Node, SverchCustomTreeNode):
         so("MatrixSocket", "hited object matrix")
 
     def process(self):
-        so = self.outputs
-        OutLoc = []
-        OutNorm = []
-        Succ = []
-        ObjectID = []
-        OutMatrix = []
+        P,N,S,O,M = self.outputs
+        rc = []
         st = self.inputs['start'].sv_get()[0]
         en = self.inputs['end'].sv_get()[0]
         st, en = match_long_repeat([st, en])
-
-        for i, last in enumerate(en):
-            rc = bpy.context.scene.ray_cast(st[i], last)
-            OutLoc.append(rc[3][:])
-            OutNorm.append(rc[4][:])
-            Succ.append(rc[0])
-            ObjectID.append(rc[1])
-            if so['hited object matrix'].is_linked:
-                OutMatrix.append([[a[:], b[:], c[:], d[:]] for a, b, c, d in [rc[2][:]]])
-
-        so['HitP'].sv_set([OutLoc])
-        so['HitNorm'].sv_set([OutNorm])
-        so['Succes'].sv_set([Succ])
-        so['Objects'].sv_set(ObjectID)
-        so['hited object matrix'].sv_set(OutMatrix)
+        for i,i2 in zip(st,en):
+            rc.append(bpy.context.scene.ray_cast(i, i2))
+        if P.is_linked:
+            P.sv_set([[i[3][:] for i in rc]])
+        if N.is_linked:
+            N.sv_set([[i[4][:] for i in rc]])
+        if S.is_linked:
+            S.sv_set([[i[0] for i in rc]])
+        if O.is_linked:
+            O.sv_set([i[1] for i in rc])
+        if M.is_linked:
+            M.sv_set([[v[:] for v in i[2]] for i in rc])
 
     def update_socket(self, context):
         self.update()
