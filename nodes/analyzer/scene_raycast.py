@@ -52,7 +52,7 @@ class SvRayCastNode(bpy.types.Node, SverchCustomTreeNode):
         if S.is_linked:
             S.sv_set([[i[0] for i in rc]])
         if O.is_linked:
-            O.sv_set([[i[1] for i in rc]])
+            O.sv_set([i[1] for i in rc])
         if M.is_linked:
             M.sv_set([[v[:] for v in i[2]] for i in rc])
 
