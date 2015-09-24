@@ -49,31 +49,28 @@ class SvRayCastNode(bpy.types.Node, SverchCustomTreeNode):
 
     def process(self):
         o,s,e = self.inputs
-        outfin,OutLoc,OutNorm,IND,obj,sm1,sm2 = [],[],[],[],o.sv_get(),self.mode,self.mode2
+        P,N,I = self.outputs
+        outfin,OutLoc,obj,sm1,sm2 = [],[],o.sv_get(),self.mode,self.mode2
         st, en = match_long_repeat([s.sv_get()[0], e.sv_get()[0]])
         for OB in obj:
-            out = []
             if sm1:
-                i = 0
-                obmat = OB.matrix_local.inverted()
-                while i < len(en):
-                    out.append(OB.ray_cast(obmat*Vector(st[i]), obmat*Vector(en[i])))
-                    i = i+1
+                obm = OB.matrix_local.inverted()
+                outfin.append([OB.ray_cast(obm*Vector(i), obm*Vector(i2)) for i,i2 in zip(st,en)])
             else:
-                i = 0
-                while i < len(en):
-                    out.append(OB.ray_cast(st[i], en[i]))
-                    i = i+1
-            outfin.append(out)
-        for i,i2 in zip(obj,outfin):
-            omw = i.matrix_world
-            for i in i2:
-                OutNorm.append(i[1][:])
-                IND.append(i[2])
-                OutLoc.append((omw*i[0])[:] if sm2 else i[0][:])
-        for i,i2 in zip(self.outputs,[[OutLoc],[OutNorm],[IND]]):
-            if i.is_linked:
-                i.sv_set(i2)
+                outfin.append([OB.ray_cast(i,i2) for i,i2 in zip(st,en)])
+        if sm2:
+            if P.is_linked:
+                for i,i2 in zip(obj,outfin):
+                    omw = i.matrix_world
+                    OutLoc.append([(omw*i[0])[:] for i in i2])
+                P.sv_set(OutLoc)
+        else:
+            if P.is_linked:
+                P.sv_set([[i[0][:] for i in i2] for i2 in outfin])
+        if N.is_linked:
+            N.sv_set([[i[1][:] for i in i2] for i2 in outfin])
+        if I.is_linked:
+            I.sv_set([[i[2] for i in i2] for i2 in outfin])
 
     def update_socket(self, context):
         self.update()
