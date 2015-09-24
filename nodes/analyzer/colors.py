@@ -51,6 +51,7 @@ class SvVertexColorNode(bpy.types.Node, SverchCustomTreeNode):
     def sv_init(self, context):
         self.inputs.new('StringsSocket', "Index")
         self.inputs.new('VerticesSocket', "Color")
+        #self.outputs.new('StringsSocket', "OutColor")
 
     def process(self):
         objm = bpy.data.objects[self.object_ref].data
@@ -60,7 +61,10 @@ class SvVertexColorNode(bpy.types.Node, SverchCustomTreeNode):
         if self.vertex_color not in objm.vertex_colors:
             return
         ovgs = objm.vertex_colors.get(self.vertex_color)
-        Ind, Col = self.inputs
+        print('------')
+        print(type(ovgs))
+        print('------')
+        Ind, Col, OutCol = self.inputs + + self.outputs
         if Col.is_linked:
             sm, colors = self.mode, Col.sv_get()[0]
             idxs = Ind.sv_get()[0] if Ind.is_linked else [i.index for i in getattr(objm,sm)]
@@ -81,6 +85,10 @@ class SvVertexColorNode(bpy.types.Node, SverchCustomTreeNode):
                     for i in bf[i].loops:
                         ovgs.data[i.index].color = i2
             bm.free()
+        elif OutCol.is_linked:
+            out = []
+
+            OutCol.sv_set([out])
 
 
 def register():
