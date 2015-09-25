@@ -55,6 +55,7 @@ def make_node_cats():
         ["HilbertImageNode",    "Hilbert image"],
         ["ImageNode",           "Image",                "FILE_IMAGE"],
         ["SvProfileNode",       "ProfileParametric"],
+        ["SvGenerativeArtNode", "Generative Art"],
         ["SvScriptNode",        "Scripted Node",     "SCRIPTPLUGINS"],
     ]
 
@@ -82,17 +83,18 @@ def make_node_cats():
 
     node_cats["Modifier Change"] = [
         # modifiers deforms and reorganize and reconstruct data
-        ["PolygonBoomNode",      "Polygon Boom"],
-        ["Pols2EdgsNode",        "Polygons to Edges"],
-        ["SvMeshJoinNode",       "Mesh Join"],
-        ["SvRemoveDoublesNode",  "Remove Doubles"],
-        ["SvDeleteLooseNode",    "Delete Loose"],
-        ["SvSeparateMeshNode",   "Separate Loose Parts"],
-        ["SvExtrudeSeparateNode", "Extrude Separate Faces"],
+        ["PolygonBoomNode",         "Polygon Boom"],
+        ["Pols2EdgsNode",           "Polygons to Edges"],
+        ["SvMeshJoinNode",          "Mesh Join"],
+        ["SvRemoveDoublesNode",     "Remove Doubles"],
+        ["SvDeleteLooseNode",       "Delete Loose"],
+        ["SvSeparateMeshNode",      "Separate Loose Parts"],
+        ["SvExtrudeSeparateNode",   "Extrude Separate Faces"],
         ["SvRandomizeVerticesNode", "Randomize input vertices"],
-        ["SvVertMaskNode",       "Mask Vertices"],
-        ["SvFillsHoleNode",      "Fill Holes"],
-        ["SvIntersectEdgesNode", "Intersect Edges"],
+        ["SvVertMaskNode",          "Mask Vertices"],
+        ["SvFillsHoleNode",         "Fill Holes"],
+        ["SvIntersectEdgesNode",    "Intersect Edges"],
+        ["SvIterateNode",           "Iterate matrix transformation"],
     ]
 
     node_cats["Modifier Make"] = [
@@ -192,7 +194,7 @@ def make_node_cats():
 # orange
     node_cats["Viz"] = [
         ["ViewerNode2",         "Viewer Draw",         'RETOPO'],
-        ["BmeshViewerNode",     "Viewer BMesh"],
+        #["BmeshViewerNode",     "Viewer BMesh"],
         ["SvBmeshViewerNodeMK2","Viewer BMeshMK2"],
         ["IndexViewerNode",     "Viewer Index"],
         ["Sv3DviewPropsNode",   "3dview Props"],
@@ -220,7 +222,7 @@ def make_node_cats():
         ["SvSetPropNode",       "Set property",      'FORCE_VORTEX'],
         ["SvVertexGroupNode",   "Vertext group"],
         ["SvRayCastSceneNode",   "Scene Raycast"],
-        ["SvRayCastObjectNode",  "Object Raycast"],
+        ["SvRayCastObjectNode",  "Object ID Raycast"],
         ["SvVertexColorNode",   "Vertext color"],
     ]
 
@@ -250,37 +252,35 @@ def make_node_cats():
         ["SvTriangulateNode",     "Triangulate mesh"],
         ["SvBricksNode",          "Bricks grid"],
         ["SvMatrixApplyJoinNode", "Apply matrix to mesh"],
-        ["SvIterateNode",         "Iterate matrix transformation"],
         ["SvMatrixTubeNode",      "Matrix Tube"],
-        ["SvGenerativeArtNode",   "Generative Art"],
     ]
 
     node_cats["Alpha Nodes"] = [
-        ["SvImageComponentsNode", "Image Decompose",  "GROUP_VCOL"],
-        ["SvJoinTrianglesNode",   "Join Triangles"],
         ["SvCurveViewerNode",     "Curve Viewer",      'MOD_CURVE'],
         ['SvTypeViewerNode',      'Typography Viewer'],
+        ["SvImageComponentsNode", "Image Decompose",  "GROUP_VCOL"],
+        ["SvJoinTrianglesNode",   "Join Triangles"],
         ["SvPrototypeJS",         "Prototype JS"],
         ["SvCacheNode",           "Cache"],
         ["SvInsetSpecial",        "Inset Special"],
         ["SkinViewerNode",        "Skin Mesher"],
         ["SvCSGBooleanNode",      "CSG Boolean"],
+        ["SvNumpyArrayNode",      "Numpy Array"],
         ["SvGetDataObjectNode",   "Object ID Get"],
         ["SvSetDataObjectNode",   "Object ID Set"],
         ['SvSortObjsNode',        "Object ID Sort"],
         ["SvObjectToMeshNode",    "Object ID Out"],
         ["SvFilterObjsNode",      "Object ID Filter"],
+        ["SvPointOnMeshNode",     "Object ID Point on Mesh"],
         ["SvBMVertsNode",         "BMesh Props"],
         ["SvBMOpsNode",           "BMesh Ops"],
         ["SvBMinputNode",         "BMesh In"],
         ["SvBMoutputNode",        "BMesh Out"],
         ["SvBMtoElementNode",     "BMesh Elements"],
-        ["SvPointOnMeshNode",     "Point on Mesh"],
       #  ["SvBVHtreeNode",        "BVH Tree In"],
       #  ["SvBVHRaycastNode",     "BVH Tree Raycast"],
       #  ["SvBvhOverlapNode",     "BVH Tree Overlap"],
       #  ["SvBVHnearNode",        "BVH Tree Nearest"],
-        ["SvNumpyArrayNode",      "Numpy Array"],
     ]
 
     return node_cats
