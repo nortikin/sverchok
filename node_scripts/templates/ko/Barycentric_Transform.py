@@ -1,33 +1,27 @@
-def sv_main(Points=[], SourceTri=[], TargetTri=[]):
+import mathutils
+from sverchok.data_structure import (match_long_cycle)
+
+
+def sv_main(V=[], P=[[]], S=[], T=[]):
 
     in_sockets = [
-        ['v', 'Points', Points],
-        ['v', 'SourceTri', SourceTri],
-        ['v', 'TargetTri', TargetTri]
+        ['v', 'Points', V],
+        ['s', 'Polys', P],
+        ['v', 'SourceTri', S],
+        ['v', 'TargetTri', T]
 
         ]
 
-    import mathutils
-    from sverchok.data_structure import (match_long_cycle)
-
-    out = []
-    if SourceTri and TargetTri and Points:
-
-        Points, SourceTri, TargetTri = match_long_cycle([Points, SourceTri, TargetTri])
-
-        g = 0
-        while g < len(Points):
-
-            st = SourceTri[g][:3]
-            tt = TargetTri[g][:3]
-            P = Points[g]
-
-            out.append([mathutils.geometry.barycentric_transform(i, st[0], st[1], st[2], tt[0], tt[1], tt[2])[:] for i in P])
-
-            g = g+1
+    outV,outP = [],[]
+    if V and S and T:
+        v,p,s,t = match_long_cycle([V,P,S,T])
+        for v,p,s,t in zip(v,p,s,t):
+            outV.append([mathutils.geometry.barycentric_transform(i, s[0], s[1], s[2], t[0], t[1], t[2])[:] for i in v])
+            outP.append(p)
 
     out_sockets = [
-        ['v', 'TransformedPoints', out]
+        ['v', 'TransformedPoints', outV],
+        ['s', 'Polygons', outP]
     ]
 
     return in_sockets, out_sockets
