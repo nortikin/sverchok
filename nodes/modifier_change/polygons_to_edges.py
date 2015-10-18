@@ -21,6 +21,16 @@ import bpy
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import dataCorrect, SvSetSocketAnyType, SvGetSocketAnyType
 
+def pols_edges(obj):
+    out = []
+    for faces in obj:
+        out_edges = [] #set() #[]
+        for face in faces:
+            for edge in zip(face, list(face[1:])+list([face[0]])):
+                #out_edges.add(tuple(sorted(edge)))
+                out_edges.append(list(edge))
+        out.append(out_edges)
+    return out
 
 class Pols2EdgsNode(bpy.types.Node, SverchCustomTreeNode):
     ''' take polygon and to edges '''
@@ -35,25 +45,16 @@ class Pols2EdgsNode(bpy.types.Node, SverchCustomTreeNode):
     def process(self):
         if 'edgs' in self.outputs and len(self.outputs['edgs'].links) > 0:
             if 'pols' in self.inputs and len(self.inputs['pols'].links) > 0:
-                X_ = SvGetSocketAnyType(self, self.inputs['pols'])
+                X_ = self.inputs['pols'].sv_get() #SvGetSocketAnyType(self, self.inputs['pols'])
                 X = dataCorrect(X_)
                 #print('p2e-X',str(X))
-                result = self.pols_edges(X)
+                result = pols_edges(X)
                 #result = self.polstoedgs(X)
                 SvSetSocketAnyType(self, 'edgs', result)
 
-    def pols_edges(self, obj):
-        out = []
-        for faces in obj:
-            out_edges = [] #set() #[]
-            for face in faces:
-                for edge in zip(face, face[1:]+[face[0]]):
-                    #out_edges.add(tuple(sorted(edge)))
-                    out_edges.append(list(edge))
-            out.append(out_edges)
-        return out
 
     def polstoedgs(self, pols):
+        # outdated
         out = []
         for obj in pols:
             object = []

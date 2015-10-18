@@ -44,6 +44,9 @@ class LineConnectNode(bpy.types.Node, SverchCustomTreeNode):
     cicl_check = BoolProperty(name='cycle', description='cycle line',
                               default=False,
                               update=updateNode)
+    cup_opposite_check = BoolProperty(name='cup', description='cup opposite',
+                              default=False,
+                              update=updateNode)
     slice_check = BoolProperty(name='slice', description='slice polygon',
                                default=True,
                                update=updateNode)
@@ -58,7 +61,9 @@ class LineConnectNode(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "dir_check", text="direction", expand=True)
-        layout.prop(self, "cicl_check", text="cycle")
+        row = layout.row(align=True)
+        row.prop(self, "cicl_check", text="cycle")
+        row.prop(self, "cup_opposite_check", text="cup")
         row = layout.row(align=True)
         row.prop(self, "polygons", text="polygons")
         row.prop(self, "slice_check", text="slice")
@@ -133,6 +138,9 @@ class LineConnectNode(bpy.types.Node, SverchCustomTreeNode):
                                           for k in range((len(indexes)-1)//2)]
                                 objecto.extend(quaded)
                         indexes__ = indexes_
+                    if self.cup_opposite_check:
+                        cupholes = [[j*ml+i for j in range(lenvers)] for i in (0, ml-1)]
+                        objecto.extend(cupholes)
                 vers_ = [newobject]
                 edges = [objecto]
             elif not polygons:
@@ -168,6 +176,9 @@ class LineConnectNode(bpy.types.Node, SverchCustomTreeNode):
                             objecto.append([i*lenvers+k, (i+1)*lenvers+k, (i+1)*lenvers+k+1, i*lenvers+k+1])
                             if i == 0 and cicl:
                                 objecto.append([k+1, (ml-1)*lenvers+k+1, (ml-1)*lenvers+k, k])
+                    if self.cup_opposite_check:
+                        cupholes = [[j*lenvers+i for j in range(ml)] for i in (0, lenvers-1)]# for i in (0, len(vers_)-1)]
+                        objecto.extend(cupholes)
             elif not polygons:
                 joinvers = joinvers(vers_)
                 for i, ve in enumerate(vers_[0][:]):
