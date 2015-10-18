@@ -45,7 +45,7 @@ bl_info = {
         "AgustinJB, Zeffii, Kosvor, "
         "Portnov, Elfnor"
     ),
-    "version": (0, 5, 3, 0),
+    "version": (0, 5, 3, 1),
     "blender": (2, 7, 2),
     "location": "Nodes > CustomNodesTree > Add user nodes",
     "description": "Parametric node-based geometry programming",
@@ -147,6 +147,7 @@ def register():
     # this is used to access preferences, should/could be hidden
     # in an interface
     data_structure.SVERCHOK_NAME = __name__
+    print("** version: ", bl_info['version']," **")
     print("** Have a nice day with sverchok  **\n")
     ascii_print.logo()
 

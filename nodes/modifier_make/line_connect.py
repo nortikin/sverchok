@@ -33,18 +33,25 @@ class LineConnectNode(bpy.types.Node, SverchCustomTreeNode):
     JoinLevel = IntProperty(name='JoinLevel', description='Choose connect level of data (see help)',
                             default=1, min=1, max=2,
                             update=updateNode)
-    polygons = BoolProperty(name='polygons', description='Do polygons or not?',
-                            default=True,
-                            update=updateNode)
+    polsORedges = [('Pols', 'Pols', 'Pols'), ('Edges', 'Edges', 'Edges')]
+    polygons = EnumProperty(name='polsORedges',
+                             items=polsORedges,
+                             options={'ANIMATABLE'}, update=updateNode)
     direction = [('U_dir', 'U_dir', 'u direction'), ('V_dir', 'V_dir', 'v direction')]
     dir_check = EnumProperty(name='direction',
                              items=direction,
                              options={'ANIMATABLE'}, update=updateNode)
     # as cyclic too have to have U cyclic and V cyclic flags - two flags
-    cicl_check = BoolProperty(name='cycle', description='cycle line',
+    cicl_check_U = BoolProperty(name='cycleU', description='cycle U',
                               default=False,
                               update=updateNode)
-    cup_opposite_check = BoolProperty(name='cup', description='cup opposite',
+    cicl_check_V = BoolProperty(name='cycleV', description='cycle V',
+                              default=False,
+                              update=updateNode)
+    cup_U = BoolProperty(name='cup U', description='cup U',
+                              default=False,
+                              update=updateNode)
+    cup_V = BoolProperty(name='cup V', description='cup V',
                               default=False,
                               update=updateNode)
     slice_check = BoolProperty(name='slice', description='slice polygon',
@@ -60,55 +67,64 @@ class LineConnectNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('StringsSocket', 'data', 'data')
 
     def draw_buttons(self, context, layout):
-        layout.prop(self, "dir_check", text="direction", expand=True)
-        row = layout.row(align=True)
-        row.prop(self, "cicl_check", text="cycle")
-        row.prop(self, "cup_opposite_check", text="cup")
-        row = layout.row(align=True)
-        row.prop(self, "polygons", text="polygons")
+        col = layout.column(align=True)
+        row = col.row(align=True)
+        row.prop(self, "dir_check", text="direction", expand=True)
+        row = col.row(align=True)
+        row.prop(self, "cicl_check_U", text="cycle U", toggle=True)
+        row.prop(self, "cicl_check_V", text="cycle V", toggle=True)
+        row = col.row(align=True)
+        row.prop(self, "cup_U", text="cup U", toggle=True)
+        row.prop(self, "cup_V", text="cup V", toggle=True)
+        row = col.row(align=True)
+        row.prop(self, "polygons", text="polygons", expand=True)
+        row = col.row(align=True)
         row.prop(self, "slice_check", text="slice")
         #layout.prop(self, "JoinLevel", text="level")
 
-    def connect(self, vers, dirn, cicl, clev, polygons, slice):
-        vers_ = []
-        lens = []
-
-        # for joinvers to one object
+    def connect(self, vers, dirn, ciclU, ciclV, clev, polygons, slice, cupU, cupV):
+        ''' doing all job to connect '''
+        
         def joinvers(ver):
+            ''' for joinvers to one object '''
             joinvers = []
             for ob in ver:
-                fullList(list(ob), ml)
+                fullList(list(ob), lenvers)
                 joinvers.extend(ob)
             return joinvers
-        # we will take common case of nestiness, it is not flatten as correctData is,
-        # but pick in upper level bottom level of data. could be automated in future
-        # to check for levelsOflist() and correct in recursion
-        # lol = levelsOflist(vers)
-        # print(lol)
-        #if lol == 4: # was clev - manually defined, but it is wrong way
+        
+        def cupends(lenobjs,lenvers,flip=False):
+            if not flip:
+                out = [[j*lenvers for j in reversed(range(lenobjs))]]
+                out.extend( [[j*lenvers+lenvers-1 for j in range(lenobjs)]])
+            else:
+                out = [[j for j in reversed(range(lenobjs))]]
+                out.extend( [[j+lenobjs*(lenvers-1) for j in range(lenobjs)]])
+            return out
+            
+        vers_ = []
+        lens = []
+        edges = []
+
         for ob in vers:
+            ''' prepate standard levels (correcting for default state) 
+                and calc everage length of each object'''
             for o in ob:
                 vers_.append(o)
                 lens.append(len(o))
-        #elif lol == 5:
-        #    for ob in vers:
-        #        for o in ob:
-        #            for v in o:
-        #                vers_.append(v)
-        #                lens.append(len(v))
-        #else:
-        #    print('wrong level in UV connect')
-        lenvers = len(vers_)
-        #print(lenvers, lens)
-        edges = []
-        ml = max(lens)
+
+        # lenobjs == количество объектов
+        lenobjs = len(vers_)
+        # lenvers == длина одного объекта
+        lenvers = max(lens)
+        
         if dirn == 'U_dir':
-            if polygons:
+            if polygons == "Pols":
 
                 # joinvers to implement
                 length_ob = []
                 newobject = []
-                for k, ob in enumerate(vers_):
+                for ob in vers_:
                     length_ob.append(len(ob))
                     newobject.extend(ob)
                 # joinvers to implement
@@ -117,7 +133,7 @@ class LineConnectNode(bpy.types.Node, SverchCustomTreeNode):
                 objecto = []
                 indexes__ = []
                 if slice:
-                    indexes__ = [[j*ml+i for j in range(lenvers)] for i in range(ml)]
+                    indexes__ = [[j*lenvers+i for j in range(lenobjs)] for i in range(lenvers)]
                     objecto = [a for a in zip(*indexes__)]
                 else:
                     for i, ob in enumerate(length_ob):
@@ -125,44 +141,51 @@ class LineConnectNode(bpy.types.Node, SverchCustomTreeNode):
                         for w in range(ob):
                             indexes_.append(curr)
                             curr += 1
-                        if i == 0 and cicl:
-                            cicle_firstrow = indexes_
                         if i > 0:
                             indexes = indexes_ + indexes__[::-1]
                             quaded = [(indexes[k], indexes[k+1], indexes[-(k+2)], indexes[-(k+1)])
                                       for k in range((len(indexes)-1)//2)]
                             objecto.extend(quaded)
-                            if i == len(length_ob)-1 and cicl:
+                            if i == len(length_ob)-1 and ciclU:
                                 indexes = cicle_firstrow + indexes_[::-1]
                                 quaded = [(indexes[k], indexes[k+1], indexes[-(k+2)], indexes[-(k+1)])
                                           for k in range((len(indexes)-1)//2)]
                                 objecto.extend(quaded)
+
+                            if i == len(length_ob)-1 and ciclV:
+                                quaded = [ [ (k-1)*lenvers, k*lenvers-1, (k+1)*lenvers-1, k*lenvers ]
+                                          for k in range(lenobjs) if k > 0 ]
+                                objecto.extend(quaded)
+                        if i == 0 and ciclU:
+                            cicle_firstrow = indexes_
+                            if ciclV:
+                                objecto.append([ 0, (lenobjs-1)*lenvers, lenobjs*lenvers-1, lenvers-1 ])
                         indexes__ = indexes_
-                    if self.cup_opposite_check:
-                        cupholes = [[j*ml+i for j in range(lenvers)] for i in (0, ml-1)]
-                        objecto.extend(cupholes)
+                    if cupU:
+                        objecto.extend(cupends(lenobjs,lenvers))
+                    if cupV:
+                        objecto.extend(cupends(lenvers,lenobjs,flip=True))
                 vers_ = [newobject]
                 edges = [objecto]
-            elif not polygons:
+            elif polygons == "Edges":
                 for k, ob in enumerate(vers_):
                     objecto = []
                     for i, ve in enumerate(ob[:-1]):
                         objecto.append([i, i+1])
-                    if cicl:
+                    if ciclU:
                         objecto.append([0, len(ob)-1])
                     edges.append(objecto)
 
-        # not direction:
         elif dirn == 'V_dir':
             objecto = []
-            # it making not direction order, but one-edged polygon instead of two rows
+            # it making V direction order, but one-edged polygon instead of two rows
             # to remake - yet one flag that operates slicing. because the next is slicing,
             # not direction for polygons
-            if polygons:
+            if polygons == "Pols":
                 if slice:
                     joinvers = joinvers(vers_)
                     for i, ve in enumerate(vers_[0][:]):
-                        inds = [j*ml+i for j in range(lenvers)]
+                        inds = [j*lenvers+i for j in range(lenobjs)]
                         objecto.append(inds)
                 else:
                     # flip matrix transpose:
@@ -173,18 +196,26 @@ class LineConnectNode(bpy.types.Node, SverchCustomTreeNode):
                     joinvers = joinvers(vers_)
                     for i, ob in enumerate(vers_[:-1]):
                         for k, ve in enumerate(ob[:-1]):
-                            objecto.append([i*lenvers+k, (i+1)*lenvers+k, (i+1)*lenvers+k+1, i*lenvers+k+1])
-                            if i == 0 and cicl:
-                                objecto.append([k+1, (ml-1)*lenvers+k+1, (ml-1)*lenvers+k, k])
-                    if self.cup_opposite_check:
-                        cupholes = [[j*lenvers+i for j in range(ml)] for i in (0, lenvers-1)]# for i in (0, len(vers_)-1)]
-                        objecto.extend(cupholes)
-            elif not polygons:
+                            objecto.append([i*lenobjs+k, (i+1)*lenobjs+k, (i+1)*lenobjs+k+1, i*lenobjs+k+1])
+                            if i > 0 and ciclU:
+                                quaded = [ [ (k-1)*lenobjs, k*lenobjs-1, (k+1)*lenobjs-1, k*lenobjs ]
+                                          for k in range(lenvers) if k > 0 ]
+                                objecto.extend(quaded)
+                            if i == 0 and ciclV:
+                                objecto.append([k+1, (lenvers-1)*lenobjs+k+1, (lenvers-1)*lenobjs+k, k])
+                            if i == 0 and ciclU and ciclV:
+                                objecto.append([ 0, (lenvers-1)*lenobjs, lenvers*lenobjs-1, lenobjs-1 ])
+
+                    if cupV:
+                        objecto.extend(cupends(lenvers,lenobjs))
+                    if cupU:
+                        objecto.extend(cupends(lenobjs,lenvers,flip=True))
+            elif polygons == "Edges":
                 joinvers = joinvers(vers_)
                 for i, ve in enumerate(vers_[0][:]):
-                    inds = [j*ml+i for j in range(lenvers)]
+                    inds = [j*lenvers+i for j in range(lenobjs)]
                     for i, item in enumerate(inds):
-                        if i == 0 and cicl:
+                        if i == 0 and ciclV:
                             objecto.append([inds[0], inds[-1]])
                         elif i == 0:
                             continue
@@ -208,13 +239,13 @@ class LineConnectNode(bpy.types.Node, SverchCustomTreeNode):
                 return
             lol = levelsOflist(slots)
             if lol == 4:
-                result = self.connect(slots, self.dir_check, self.cicl_check, lol, self.polygons, self.slice_check)
+                result = self.connect(slots, self.dir_check, self.cicl_check_U, self.cicl_check_V, lol, self.polygons, self.slice_check, self.cup_U, self.cup_V)
             elif lol == 5:
                 one = []
                 two = []
                 for slo in slots:
                     for s in slo:
-                        result = self.connect([s], self.dir_check, self.cicl_check, lol, self.polygons, self.slice_check)
+                        result = self.connect([s], self.dir_check, self.cicl_check_U, self.cicl_check_V, lol, self.polygons, self.slice_check, self.cup_U, self.cup_V)
                         one.extend(result[0])
                         two.extend(result[1])
                 result = (one,two)
