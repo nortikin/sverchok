@@ -132,6 +132,7 @@ def make_node_cats():
 
     node_cats["List struct"] = [
         ["ShiftNode",           "List Shift"],
+        ["ShiftNodeMK2",           "List Shift MK2"],
         ["ListRepeaterNode",    "List Repeater"],
         ["ListSliceNode",       "List Slice"],
         ["SvListSplitNode",     "List Split"],

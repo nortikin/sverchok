@@ -108,6 +108,7 @@ nodes_dict = {
 
     'list_interfere': [
         'shift',
+        'shift_mk2',
         'repeater',
         'slice',
         'split',
