@@ -43,7 +43,7 @@ class ShiftNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "level", text="level")
-        layout.prop(self, "enclose", text="enclose")
+        #layout.prop(self, "enclose", text="enclose")
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', "data", "data")
@@ -62,47 +62,15 @@ class ShiftNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             return
             
         data = self.inputs['data'].sv_get()
-        number = self.inputs["shift"].sv_get()
-        # old case
-        #output = self.shift(data, number, self.enclose, self.level)
+        number = self.inputs["shift"].sv_get()[0][0]
         # numpy case:
         dat = np.array(data)
         # levelsOfList replacement:
-        depth = len(np.shape(dat))
-        # roll with enclose (we need case of declose)
-        output = np.roll(dat,number[0][0],axis=min(self.level,depth)).tolist()
+        depth = dat.ndim #len(np.shape(dat))-1
+        # roll with enclose (we need case of declose and vectorization)
+        output = np.roll(dat,number,axis=min(self.level,depth)).tolist()
 
         self.outputs['data'].sv_set(output)
-
-    def shift(self, list_a, shift, check_enclose, level, cou=0):
-        if level:
-            list_all = []
-            for idx, obj in enumerate(list_a):
-                list_all.append(self.shift(obj, shift, check_enclose, level-1, idx))
-
-        else:
-            list_all = []
-            if type(list_a) == list:
-                indx = min(cou, len(shift)-1)
-                for i, l in enumerate(list_a):
-                    if type(l) == tuple:
-                        l = list(l[:])
-                    k = min(len(shift[indx])-1, i)
-                    n = shift[indx][k]
-                    n_ = min(abs(n), len(l))
-                    if n < 0:
-                        list_out = l[:-n_]
-                        if check_enclose:
-                            list_out = l[-n_:]+list_out
-                    else:
-                        list_out = l[n_:]
-                        if check_enclose:
-                            list_out.extend(l[:n_])
-                    #print('\nn list_out', n,list_out)
-                    list_all.append(list_out)
-            if list_all == []:
-                list_all = [[]]
-        return list_all
 
 
 def register():

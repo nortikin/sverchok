@@ -38,9 +38,9 @@ class SvExtrudeEdgesNode(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', "Vertices", "Vertices")
-        self.inputs.new('StringsSocket', 'Edges', 'Edges')
-        self.inputs.new('StringsSocket', 'Polygons', 'Polygons')
-        self.inputs.new('StringsSocket', 'ExtrudeEdges')
+        self.inputs.new('StringsSocket', 'Edg_Pol', 'Edg_Pol')
+        #self.inputs.new('StringsSocket', 'Polygons', 'Polygons')
+        #self.inputs.new('StringsSocket', 'ExtrudeEdges')
         self.inputs.new('MatrixSocket', "Matrices")
 
         self.outputs.new('VerticesSocket', 'Vertices')
@@ -52,18 +52,18 @@ class SvExtrudeEdgesNode(bpy.types.Node, SverchCustomTreeNode):
   
     def process(self):
         # inputs
-        if not (self.inputs['Vertices'].is_linked and self.inputs['Polygons'].is_linked):
+        if not (self.inputs['Vertices'].is_linked):
             return
 
         vertices_s = self.inputs['Vertices'].sv_get()
-        edges_s = self.inputs['Edges'].sv_get(default=[[]])
-        faces_s = self.inputs['Polygons'].sv_get(default=[[]])
+        edges_s = self.inputs['Edg_Pol'].sv_get(default=[[]])
+        #faces_s = self.inputs['Polygons'].sv_get(default=[[]])
         matrices_s = self.inputs['Matrices'].sv_get(default=[[]])
         if is_matrix(matrices_s[0]):
             matrices_s = [Matrix_generate(matrices_s)]
         else:
             matrices_s = [Matrix_generate(matrices) for matrices in matrices_s]
-        extrude_edges_s = self.inputs['ExtrudeEdges'].sv_get(default=[[]])
+        #extrude_edges_s = self.inputs['ExtrudeEdges'].sv_get(default=[[]])
 
         result_vertices = []
         result_edges = []
@@ -73,20 +73,26 @@ class SvExtrudeEdgesNode(bpy.types.Node, SverchCustomTreeNode):
         result_ext_faces = []
 
 
-        meshes = match_long_repeat([vertices_s, edges_s, faces_s, matrices_s, extrude_edges_s])
-
-        for vertices, edges, faces, matrices, extrude_edges in zip(*meshes):
+        meshes = match_long_repeat([vertices_s, edges_s, matrices_s]) #, extrude_edges_s])
+        
+        for vertices, edges, matrices in zip(*meshes):
+            if len(edges[0]) == 2:
+                faces = []
+            else:
+                faces = edges.copy()
+                edges = []
             if not matrices:
                 matrices = [Matrix()]
             
             bm = bmesh_from_pydata(vertices, edges, faces)
-            if extrude_edges:
-                b_edges = []
-                for edge in extrude_edges:
-                    b_edge = [e for e in bm.edges if set([v.index for v in e.verts]) == set(edge)]
-                    b_edges.append(b_edge[0])
-            else:
-                b_edges = bm.edges
+            # better to do it in separate node, not integrate by default.
+            #if extrude_edges:
+            #    b_edges = []
+            #    for edge in extrude_edges:
+            #        b_edge = [e for e in bm.edges if set([v.index for v in e.verts]) == set(edge)]
+            #        b_edges.append(b_edge[0])
+            #else:
+            b_edges = bm.edges
 
             new_geom = bmesh.ops.extrude_edge_only(bm, edges=b_edges, use_select_history=False)['geom']
 
