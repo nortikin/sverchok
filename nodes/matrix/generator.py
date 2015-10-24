@@ -49,8 +49,14 @@ class MatrixGenNode(bpy.types.Node, SverchCustomTreeNode):
         scale = Vector_generate(S.sv_get())
         rot = Vector_generate(R.sv_get())
         rotA, angle = [[]], [[0.0]]
+        # ability to add vector & vector difference instead of only rotation values
         if A.is_linked:
-            angle = A.sv_get()
+            if A.links[0].from_socket.bl_idname == 'VerticesSocket':
+                rotA = Vector_generate(A.sv_get())
+                angle = [[]]
+            else:
+                angle = A.sv_get()
+                rotA = [[]]
         max_l = max(len(loc[0]), len(scale[0]), len(rot[0]), len(angle[0]), len(rotA[0]))
         orig = []
         for l in range(max_l):
@@ -67,3 +73,6 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(MatrixGenNode)
+
+if __name__ == '__main__':
+    register()

@@ -36,7 +36,7 @@ class svAxisInputNode(bpy.types.Node, SverchCustomTreeNode):
     '''
 
     bl_idname = 'svAxisInputNode'
-    bl_label = 'Axis Input'
+    bl_label = 'Z axis'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     def mode_change(self, context):
@@ -85,3 +85,6 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(svAxisInputNode)
+
+if __name__ == '__main__':
+    register()
