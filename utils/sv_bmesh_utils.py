@@ -17,6 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bmesh
+from sverchok.data_structure import iterate_process
 
 
 def bmesh_from_pydata(verts=[], edges=[], faces=[]):
@@ -56,3 +57,51 @@ def pydata_from_bmesh(bm):
     e = [[i.index for i in e.verts] for e in bm.edges[:]]
     p = [[i.index for i in p.verts] for p in bm.faces[:]]
     return v, e, p
+
+def with_bmesh(method):
+    '''Decorator for methods which can work with BMesh.
+    Usage:
+        @with_bmesh
+        def do_something(self, bm, other_args):
+            ...
+            return new_bmesh, other_results
+
+        This will be transformed to method like
+
+        def do_something(self, verts, edges, faces, other_args):
+            bm = bmesh_from_pydata(..)
+            ...
+            return pydata_from_bmesh(bm), other_results
+    '''
+
+    def real_process(*args):
+        if len(args) == 2 and isinstance(args[1], bmesh.types.BMesh):
+            bm = args[1]
+            other_args = []
+        elif len(args) >= 4 and all([isinstance(arg, list) for arg in args[1:4]]):
+            bm = bmesh_from_pydata(*args[1:4])
+            other_args = args[4:]
+        else:
+            raise TypeError("{} must be called with one BMesh or with at least 3 lists (verts, edges, faces); but called with {}".format(method.__name__, list(map(type, args))))
+
+        method_result = method(args[0], bm, *other_args)
+        if method_result is None:
+            return None
+        elif isinstance(method_result, bmesh.types.BMesh):
+            result = pydata_from_bmesh(method_result)
+        elif isinstance(method_result, (list,tuple)) and len(method_result) >= 1 and isinstance(method_result[0], bmesh.types.BMesh):
+            result_bmesh = pydata_from_bmesh(method_result[0])
+            result_other = method_result[1:]
+            result = list(result_bmesh) + list(result_other)
+            if isinstance(method_result, tuple):
+                result = tuple(result)
+        else:
+            raise ValueError("{} returned unexpected type of result: {}".format(method.__name__, type(method_result)))
+        bm.free()
+
+        return result
+
+    real_process.__name__ = method.__name__
+    real_process.__doc__ = method.__doc__
+    return real_process
+

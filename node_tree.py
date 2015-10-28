@@ -27,15 +27,13 @@ from bpy.types import NodeTree, NodeSocket, NodeSocketStandard
 from sverchok import data_structure
 from sverchok.data_structure import (SvGetSocketInfo, SvGetSocket,
                                      SvSetSocket, updateNode,
-                                     get_other_socket, SvNoDataError)
+                                     get_other_socket, SvNoDataError,
+                                     sentinel)
 
 from sverchok.core.update_system import (build_update_list, process_from_node,
                                          process_tree, get_update_lists,
                                          update_error_nodes)
 from sverchok.ui import color_def
-
-sentinel = object()
-
 
 def process_from_socket(self, context):
     self.node.process_node(context)
@@ -319,6 +317,21 @@ class SverchCustomTreeNode:
         if color:
             self.use_custom_color = True
             self.color = color
+
+    def create_sockets(self):
+        '''Create node input and output sockets from
+        their descriptions in self.input_descriptors and self.output_descriptors.
+        '''
+
+        if hasattr(self, "input_descriptors"):
+            for descriptor in self.input_descriptors:
+                descriptor.create(self)
+        if hasattr(self, "output_descriptors"):
+            for descriptor in self.output_descriptors:
+                descriptor.create(self)
+
+    def sv_init(self, context):
+        self.create_sockets()
 
     def init(self, context):
         ng = self.id_data
