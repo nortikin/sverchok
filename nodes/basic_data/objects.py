@@ -26,6 +26,28 @@ from sverchok.data_structure import (handle_read, handle_write, handle_delete,
                             SvSetSocketAnyType, updateNode)
 import sverchok
 
+class SvObjSelectObjectInItemsInScene(bpy.types.Operator):
+    """ SELECT NODE'S OBJECTS from object in node at scene 3d """
+    bl_idname = "node.sverchok_object_in_selector"
+    bl_label = "Sv objectin selector"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    node_name = StringProperty(name='name node', description='it is name of node',
+                               default='')
+    tree_name = StringProperty(name='name tree', description='it is name of tree',
+                               default='')
+
+    def execute(self, context):
+        name_no = self.node_name
+        name_tr = self.tree_name
+        handle = handle_read(name_no+name_tr)
+        if handle[0]:
+            for o in handle[1]:
+                bpy.data.objects[o].select = True
+            bpy.context.active_object = bpy.data.objects[o]
+        return {'FINISHED'}
+
+
 class SvObjSelected(bpy.types.Operator):
     """ G E T   SELECTED OBJECTS """
     bl_idname = "node.sverchok_object_insertion"
@@ -134,6 +156,12 @@ class ObjectsNode(bpy.types.Node, SverchCustomTreeNode):
         opera.tree_name = self.id_data.name
         opera.grup_name = self.groupname
         opera.sort = self.sort
+
+        row = layout.row(align=True)
+        opera = row.operator('node.sverchok_object_in_selector', text='Select')
+        opera.node_name = self.name
+        opera.tree_name = self.id_data.name
+        
         row = layout.row(align=True)
         row.prop(self, 'groupname', text='')
         row.prop(self, 'sort', text='Sort objects')
@@ -233,6 +261,7 @@ class ObjectsNode(bpy.types.Node, SverchCustomTreeNode):
 
 
 def register():
+    bpy.utils.register_class(SvObjSelectObjectInItemsInScene)
     bpy.utils.register_class(SvObjSelected)
     bpy.utils.register_class(ObjectsNode)
 
@@ -240,6 +269,7 @@ def register():
 def unregister():
     bpy.utils.unregister_class(ObjectsNode)
     bpy.utils.unregister_class(SvObjSelected)
+    bpy.utils.unregister_class(SvObjSelectObjectInItemsInScene)
 
 if __name__ == '__main__':
     register()

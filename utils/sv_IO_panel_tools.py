@@ -457,7 +457,25 @@ class SvNodeTreeExporter(bpy.types.Operator):
         wm.fileselect_add(self)
         return {'RUNNING_MODAL'}
 
+class SvNodeTreeImporterSilent(bpy.types.Operator):
 
+    '''Importing operation just do it!'''
+
+    bl_idname = "node.tree_importer_silent"
+    bl_label = "sv NodeTree Import Silent"
+
+    filepath = StringProperty(
+        name="File Path",
+        description="Filepath used to import from",
+        maxlen=1024, default="", subtype='FILE_PATH')
+
+    id_tree = StringProperty()
+
+    def execute(self, context):
+        ng = bpy.data.node_groups[self.id_tree]
+        import_tree(ng, self.filepath)
+        return {'FINISHED'}
+    
 class SvNodeTreeImporter(bpy.types.Operator):
 
     '''Importing operation will let you pick a file to import from'''
@@ -573,11 +591,13 @@ def register():
 
     bpy.utils.register_class(SvNodeTreeExporter)
     bpy.utils.register_class(SvNodeTreeImporter)
+    bpy.utils.register_class(SvNodeTreeImporterSilent)
     bpy.utils.register_class(SvNodeTreeImportFromGist)
 
 
 def unregister():
     bpy.utils.unregister_class(SvNodeTreeImportFromGist)
+    bpy.utils.unregister_class(SvNodeTreeImporterSilent)
     bpy.utils.unregister_class(SvNodeTreeImporter)
     bpy.utils.unregister_class(SvNodeTreeExporter)
     del bpy.types.SverchCustomTreeType.new_nodetree_name
