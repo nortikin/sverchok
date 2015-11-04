@@ -139,6 +139,7 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
         ObjectsNode = (node.bl_idname == 'ObjectsNode')
         ProfileParamNode = (node.bl_idname == 'SvProfileNode')
         IsGroupNode = (node.bl_idname == 'SvGroupNode')
+        TextInput = (node.bl_idname == 'SvTextInNode')
 
         for k, v in node.items():
 
@@ -157,6 +158,11 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
             # this silences the import error when items not found.
             if ObjectsNode and (k == "objects_local"):
                 continue
+            if TextInput and (k == 'current_text'):
+                node_dict['current_text'] = node.text
+                node_dict['text_lines'] = texts[node.text].as_string()
+                node_dict['textmode'] = node.textmode
+                
 
             if ProfileParamNode and (k == "filename"):
                 '''add file content to dict'''
@@ -277,29 +283,7 @@ def import_tree(ng, fullpath='', nodes_json=None, create_texts=True):
                 print(bl_idname, 'not currently registered, skipping')
                 continue
 
-            '''
-            When n is assigned to node.name, blender will decide whether or
-            not it can do that, if there exists already a node with that name,
-            then the assignment to node.name is not n, but n.00x. Hence on the
-            following line we check if the assignment was accepted, and store a
-            remapped name if it wasn't.
-            '''
-            node.name = n
-            if not (node.name == n):
-                name_remap[n] = node.name
 
-            params = node_ref['params']
-            print(node.name, params)
-            for p in params:
-                val = params[p]
-                setattr(node, p, val)
-
-            node.location = node_ref['location']
-            node.height = node_ref['height']
-            node.width = node_ref['width']
-            node.label = node_ref['label']
-            node.hide = node_ref['hide']
-            node.color = node_ref['color']
 
             ''' maintenance warning:
             for the creation of new text files. If this script is run in a
@@ -325,6 +309,38 @@ def import_tree(ng, fullpath='', nodes_json=None, create_texts=True):
                     new_text.from_string(node_ref['path_file'])
                     #  needed!
                     node.update()
+                elif node.bl_idname == 'SvTextInNode':
+                    if node_ref['current_text'] not in [a.name for a in texts]:
+                        new_text = texts.new(node.current_text)
+                        new_text.name = node_ref['current_text']
+                        new_text.from_string(node_ref['text_lines'])
+                    else:
+                        texts[node_ref['current_text']].from_string(node_ref['text_lines'])
+
+            '''
+            When n is assigned to node.name, blender will decide whether or
+            not it can do that, if there exists already a node with that name,
+            then the assignment to node.name is not n, but n.00x. Hence on the
+            following line we check if the assignment was accepted, and store a
+            remapped name if it wasn't.
+            '''
+            node.name = n
+            if not (node.name == n):
+                name_remap[n] = node.name
+
+            params = node_ref['params']
+            print(node.name, params)
+            for p in params:
+                val = params[p]
+                setattr(node, p, val)
+
+            node.location = node_ref['location']
+            node.height = node_ref['height']
+            node.width = node_ref['width']
+            node.label = node_ref['label']
+            node.hide = node_ref['hide']
+            node.color = node_ref['color']
+
             '''
             Nodes that require post processing to work properly
             '''
@@ -334,6 +350,10 @@ def import_tree(ng, fullpath='', nodes_json=None, create_texts=True):
                 node.load()
                 group_name = node.group_name
                 node.group_name = group_name_remap.get(group_name, group_name)
+            elif node.bl_idname == 'SvTextInNode':
+                node.reload()
+                #node.reset()
+                #node.load()
 
         update_lists = nodes_json['update_lists']
         print('update lists:')

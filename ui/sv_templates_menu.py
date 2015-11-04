@@ -27,7 +27,7 @@ sv_path = os.path.dirname(sv_get_local_path()[0])
 class SV_MT_layouts_templates(bpy.types.Menu):
     bl_idname = 'SV_MT_layouts_templates'
     bl_space_type = 'NODE_EDITOR'
-    bl_label = "Sv_layouts_Templates"
+    bl_label = "Templates"
     bl_description = "List of Sverchok Templates"
 
     
@@ -35,6 +35,7 @@ class SV_MT_layouts_templates(bpy.types.Menu):
         fullpath = [sv_path, "json_examples"]
         templates_path = os.path.join(*fullpath)
         items = [[os.path.join(templates_path,t),t] for t in next(os.walk(templates_path))[2]]
+        items.sort()
         return items
 
     sv_templates = avail_templates()
@@ -42,7 +43,7 @@ class SV_MT_layouts_templates(bpy.types.Menu):
     @classmethod
     def poll(cls, context):
         try:
-            return context.space_data.node_tree.bl_idname == 'SverchCustomTreeType'
+            return context.space_data.node_tree.bl_idname == 'SverchCustomTreeType' and context.scene.node_tree
         except:
             return False
 

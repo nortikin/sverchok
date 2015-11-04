@@ -1,0 +1,253 @@
+{
+  "export_version": "0.055",
+  "framed_nodes": {},
+  "groups": {},
+  "nodes": {
+    "Float": {
+      "bl_idname": "FloatNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "z",
+      "location": [
+        -1792.6473388671875,
+        -63.035308837890625
+      ],
+      "params": {
+        "float_": 15.5595703125
+      },
+      "width": 140.0
+    },
+    "Float.001": {
+      "bl_idname": "FloatNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "y",
+      "location": [
+        -1794.3074951171875,
+        46.81354522705078
+      ],
+      "params": {
+        "float_": 13.880859375
+      },
+      "width": 140.0
+    },
+    "Float.002": {
+      "bl_idname": "FloatNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "x",
+      "location": [
+        -1796.4080810546875,
+        161.64935302734375
+      ],
+      "params": {
+        "float_": -7.2802734375
+      },
+      "width": 140.0
+    },
+    "Random Vector": {
+      "bl_idname": "RandomVectorNode",
+      "color": [
+        0.0,
+        0.5,
+        0.5
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1621.0777587890625,
+        292.61962890625
+      ],
+      "params": {
+        "count_inner": 214,
+        "seed": 5
+      },
+      "width": 140.0
+    },
+    "Vector Math": {
+      "bl_idname": "VectorMathNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "CROSS",
+      "location": [
+        -1356.569091796875,
+        169.81610107421875
+      ],
+      "params": {
+        "items_": "CROSS",
+        "scalar_output_socket": 0
+      },
+      "width": 140.0
+    },
+    "Vectors in": {
+      "bl_idname": "GenVectorsNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1585.8079833984375,
+        86.33602905273438
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Viewer Draw2": {
+      "bl_idname": "ViewerNode2",
+      "color": [
+        1.0,
+        0.30000001192092896,
+        0.0
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1094.7808837890625,
+        510.3867492675781
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Viewer Draw2.001": {
+      "bl_idname": "ViewerNode2",
+      "color": [
+        1.0,
+        0.30000001192092896,
+        0.0
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -834.1950073242188,
+        301.5809326171875
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Viewer text": {
+      "bl_idname": "ViewerNode_text",
+      "color": [
+        0.5,
+        0.5,
+        1.0
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1355.9915771484375,
+        409.2108459472656
+      ],
+      "params": {},
+      "width": 147.91943359375
+    },
+    "Voronoi": {
+      "bl_idname": "Voronoi2DNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1123.8056640625,
+        142.76254272460938
+      ],
+      "params": {
+        "clip": 5.319999694824219
+      },
+      "width": 140.0
+    }
+  },
+  "update_lists": [
+    [
+      "Float.002",
+      "Float",
+      "Vectors in",
+      "X"
+    ],
+    [
+      "Float.001",
+      "Float",
+      "Vectors in",
+      "Y"
+    ],
+    [
+      "Float",
+      "Float",
+      "Vectors in",
+      "Z"
+    ],
+    [
+      "Random Vector",
+      "Random",
+      "Vector Math",
+      "U"
+    ],
+    [
+      "Vectors in",
+      "Vectors",
+      "Vector Math",
+      "V"
+    ],
+    [
+      "Random Vector",
+      "Random",
+      "Viewer text",
+      "vertices"
+    ],
+    [
+      "Vector Math",
+      "W",
+      "Voronoi",
+      "Vertices"
+    ],
+    [
+      "Voronoi",
+      "Vertices",
+      "Viewer Draw2.001",
+      "vertices"
+    ],
+    [
+      "Voronoi",
+      "Edges",
+      "Viewer Draw2.001",
+      "edg_pol"
+    ],
+    [
+      "Vector Math",
+      "W",
+      "Viewer Draw2",
+      "vertices"
+    ]
+  ]
+}
