@@ -126,6 +126,7 @@ def make_node_cats():
         ["ListLevelsNode",      "List Del Levels"],
         ["ListLengthNode",      "List Length"],
         ["ListSumNode",         "List Sum"],
+        ["ListSumNodeMK2",         "List Sum MK2"],
         ["ListMatchNode",       "List Match"],
         ["ListFuncNode",        "List Math"],
     ]

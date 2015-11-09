@@ -103,6 +103,7 @@ nodes_dict = {
         'mask',
         'match',
         'sum',
+        'sum_mk2',
         'zip'
     ],
 
