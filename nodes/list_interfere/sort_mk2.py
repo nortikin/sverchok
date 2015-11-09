@@ -23,10 +23,10 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode, changable_sockets,
                                      dataCorrect, svQsort)
 
-class ListSortNode(bpy.types.Node, SverchCustomTreeNode):
-    ''' List Sort '''
-    bl_idname = 'ListSortNode'
-    bl_label = 'List Sort'
+class ListSortNodeMK2(bpy.types.Node, SverchCustomTreeNode):
+    ''' List Sort MK2 '''
+    bl_idname = 'ListSortNodeMK2'
+    bl_label = 'List Sort MK2'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     level = IntProperty(name='level_to_count',
@@ -55,20 +55,30 @@ class ListSortNode(bpy.types.Node, SverchCustomTreeNode):
     def process(self):
         if not self.outputs['data'].is_linked:
             return
-            
+
         data_ = self.inputs['data'].sv_get()
-        data = dataCorrect(data_, nominal_dept=self.level)
+        data = dataCorrect(data_, nominal_dept=self.level).copy()
         out_ = []
-        for obj in data:
-            out_.append(svQsort(obj))
+        if not self.inputs['keys'].is_linked:
+            for obj in data:
+                out_.append(svQsort(obj))
+        else:
+            keys_ = self.inputs['keys'].sv_get()
+            keys = dataCorrect(keys_, nominal_dept=1)
+            for d,k in zip(data,keys):
+                d.sort(key = lambda x: k.pop(0))
+                out_.append(d)
         out = dataCorrect(out_)
         self.outputs['data'].sv_set(out)
 
 
 
 def register():
-    bpy.utils.register_class(ListSortNode)
+    bpy.utils.register_class(ListSortNodeMK2)
 
 
 def unregister():
-    bpy.utils.unregister_class(ListSortNode)
+    bpy.utils.unregister_class(ListSortNodeMK2)
+
+if __name__ == '__main__':
+    register()

@@ -822,7 +822,7 @@
       ],
       "params": {
         "dir_check": "U_dir",
-        "polygons": 0,
+        "polygons": "Pols",
         "slice_check": 0
       },
       "width": 140.0
@@ -844,7 +844,7 @@
       "params": {
         "cicl_check": 1,
         "dir_check": "V_dir",
-        "polygons": 1,
+        "polygons": "Pols",
         "slice_check": 0
       },
       "width": 140.0

@@ -117,6 +117,7 @@ nodes_dict = {
         'reverse',
         'shuffle',
         'sort',
+        'sort_mk2',
         'flip',
         'numpy_array'
     ],
