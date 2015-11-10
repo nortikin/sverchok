@@ -39,7 +39,7 @@ class SvNodePickup(bpy.types.Operator):
     nodegroup_name = bpy.props.StringProperty(default='')
 
     def execute(self, context):
-        active = bpy.data.node_groups[self.nodegroup_name].nodes.active
+        active = bpy.data.node_groups[nodegroup_name].nodes.active
         n = context.node
         n.node_name = active.name
         return {'FINISHED'}
@@ -81,10 +81,10 @@ class SvNodeRemoteNode(bpy.types.Node, SverchCustomTreeNode):
         col.prop_search(self, 'nodegroup_name', bpy.data, 'node_groups', text='', icon='NODETREE')
         if self.nodegroup_name and (self.nodegroup_name in bpy.data.node_groups):
             node_group = bpy.data.node_groups[self.nodegroup_name]
+
             row = col.row(align=True)
             row.prop_search(self, 'node_name', node_group, 'nodes', text='', icon='SETTINGS')
-            eyedropper = row.operator('node.pickup_active_node', text='', icon='EYEDROPPER')
-            eyedropper.nodegroup_name = self.nodegroup_name
+            row.operator('node.pickup_active_node', text='', icon='EYEDROPPER')
 
             if self.node_name:
                 node = node_group.nodes[self.node_name]
