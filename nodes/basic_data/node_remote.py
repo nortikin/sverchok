@@ -100,20 +100,15 @@ class SvNodeRemoteNode(bpy.types.Node, SverchCustomTreeNode):
         if not self.activate:
             return
 
-        print('1')
         node_group = bpy.data.node_groups.get(self.nodegroup_name)
         if node_group:
-            print('2')
             node = node_group.nodes.get(self.node_name)
             if node:
-                print('3')
                 named_input = node.inputs.get(self.input_idx)
                 if named_input:
 
                     # [ ] switch socket type if needed
-                    print('4')
                     data = self.inputs[0].sv_get()
-                    print(data)
                     assign_data(named_input.value, data)
 
 
