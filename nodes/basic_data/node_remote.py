@@ -79,8 +79,10 @@ class SvNodeRemoteNode(bpy.types.Node, SverchCustomTreeNode):
         col = layout.column()
         col.prop(self, "activate", text="Update")
         col.prop_search(self, 'nodegroup_name', bpy.data, 'node_groups', text='', icon='NODETREE')
-        if self.nodegroup_name and (self.nodegroup_name in bpy.data.node_groups):
-            node_group = bpy.data.node_groups[self.nodegroup_name]
+
+        # if self.nodegroup_name and (self.nodegroup_name in bpy.data.node_groups):
+        node_group = bpy.data.node_groups.get(self.nodegroup_name)
+        if node_group:
 
             row = col.row(align=True)
             row.prop_search(self, 'node_name', node_group, 'nodes', text='', icon='SETTINGS')
@@ -91,8 +93,17 @@ class SvNodeRemoteNode(bpy.types.Node, SverchCustomTreeNode):
                 col.prop_search(self, 'input_idx', node, 'inputs', text='', icon='DRIVER')
 
     def process(self):
-        # if not self.activate:
-        #     return
+        if not self.activate:
+            return
+
+        node_group = bpy.data.node_groups.get(self.nodegroup_name)
+        if node_group:
+            node = node_group.get(self.node_name)
+            if node:
+                named_input = node.inputs.get(self.input_idx)
+                if named_input:
+                    if isinstance(named_input, Vector):
+                        print('yey vector!')
 
         # inputs = self.inputs
         # objects = bpy.data.objects
@@ -107,22 +118,6 @@ class SvNodeRemoteNode(bpy.types.Node, SverchCustomTreeNode):
         # if self.obj_name in objects:
         #     obj = objects[self.obj_name]
 
-        #     sockets = ['location', 'scale', 'rotation']
-        #     fallbacks = [(0, 0, 0), (1, 1, 1), (0, 0, 0)]
-        #     for socket, fb in zip(sockets, fallbacks):
-        #         if inputs[socket].is_linked:
-        #             attribute = socket.replace('rotation', 'rotation_euler')
-        #             if hasattr(obj, attribute):
-        #                 new_val = get_if_valid(socket, fallback=fb)
-        #                 setattr(obj, attribute, new_val)
-
-        #     self.show_string_box = (obj.type == 'FONT')
-
-        #     if self.show_string_box:
-        #         obj.data.body = self.input_text
-
-        # else:
-        #     self.show_string_box = 0
         ...
 
 
