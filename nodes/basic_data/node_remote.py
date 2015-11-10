@@ -27,7 +27,12 @@ from bpy.props import (
 )
 
 from sverchok.node_tree import SverchCustomTreeNode, MatrixSocket
-from sverchok.data_structure import dataCorrect, updateNode, SvGetSocketAnyType
+from sverchok.data_structure import (
+    dataCorrect, updateNode, SvGetSocketAnyType
+)
+from sverchok.nodes.basic_data.getsetprop import (
+    assign_data, wrap_output_data, types
+)
 
 
 class SvNodePickup(bpy.types.Operator):
@@ -70,7 +75,7 @@ class SvNodeRemoteNode(bpy.types.Node, SverchCustomTreeNode):
     execstr = StringProperty(default='', update=updateNode)
 
     def sv_init(self, context):
-        # self.inputs.new('VerticesSocket', 'location')
+        self.inputs.new('VerticesSocket', 'auto_convert')
         # self.inputs.new('VerticesSocket', 'scale')
         # self.inputs.new('VerticesSocket', 'rotation')
         ...
@@ -80,7 +85,6 @@ class SvNodeRemoteNode(bpy.types.Node, SverchCustomTreeNode):
         col.prop(self, "activate", text="Update")
         col.prop_search(self, 'nodegroup_name', bpy.data, 'node_groups', text='', icon='NODETREE')
 
-        # if self.nodegroup_name and (self.nodegroup_name in bpy.data.node_groups):
         node_group = bpy.data.node_groups.get(self.nodegroup_name)
         if node_group:
 
@@ -96,29 +100,21 @@ class SvNodeRemoteNode(bpy.types.Node, SverchCustomTreeNode):
         if not self.activate:
             return
 
+        print('1')
         node_group = bpy.data.node_groups.get(self.nodegroup_name)
         if node_group:
-            node = node_group.get(self.node_name)
+            print('2')
+            node = node_group.nodes.get(self.node_name)
             if node:
+                print('3')
                 named_input = node.inputs.get(self.input_idx)
                 if named_input:
-                    if isinstance(named_input, Vector):
-                        print('yey vector!')
 
-        # inputs = self.inputs
-        # objects = bpy.data.objects
-
-        # def get_if_valid(sockname, fallback):
-        #     s = self.inputs[sockname].sv_get()
-        #     if s and s[0] and s[0][0]:
-        #         return s[0][0]
-        #     else:
-        #         return fallback
-
-        # if self.obj_name in objects:
-        #     obj = objects[self.obj_name]
-
-        ...
+                    # [ ] switch socket type if needed
+                    print('4')
+                    data = self.inputs[0].sv_get()
+                    print(data)
+                    assign_data(named_input.value, data)
 
 
 def register():
