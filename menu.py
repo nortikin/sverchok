@@ -196,11 +196,11 @@ def make_node_cats():
 
 # orange
     node_cats["Viz"] = [
-        ["ViewerNode2",         "Viewer Draw",         'RETOPO'],
-        #["BmeshViewerNode",     "Viewer BMesh"],
-        ["SvBmeshViewerNodeMK2","Viewer BMeshMK2"],
-        ["IndexViewerNode",     "Viewer Index"],
-        ["Sv3DviewPropsNode",   "3dview Props"],
+        ["ViewerNode2",          "Viewer Draw",         'RETOPO'],
+        # ["BmeshViewerNode",     "Viewer BMesh"],
+        ["SvBmeshViewerNodeMK2", "Viewer BMeshMK2"],
+        ["IndexViewerNode",      "Viewer Index"],
+        ["Sv3DviewPropsNode",    "3dview Props"],
     ]
 
 # greish blue
@@ -218,6 +218,7 @@ def make_node_cats():
     node_cats["Scene"] = [
         ["ObjectsNode",         "Objects in"],
         ["SvObjRemoteNode",     "Scene Objects"],
+        ["SvNodeRemoteNode",     "Node Remote"],
         ["SvFrameInfoNode",     "Frame info"],
         ["SvEmptyOutNode",      "Empty out",    "OUTLINER_OB_EMPTY"],
         ["SvInstancerNode",     "mesh instancer"],
@@ -280,10 +281,10 @@ def make_node_cats():
         ["SvBMinputNode",         "BMesh In"],
         ["SvBMoutputNode",        "BMesh Out"],
         ["SvBMtoElementNode",     "BMesh Elements"],
-      #  ["SvBVHtreeNode",        "BVH Tree In"],
-      #  ["SvBVHRaycastNode",     "BVH Tree Raycast"],
-      #  ["SvBvhOverlapNode",     "BVH Tree Overlap"],
-      #  ["SvBVHnearNode",        "BVH Tree Nearest"],
+        #  ["SvBVHtreeNode",        "BVH Tree In"],
+        #  ["SvBVHRaycastNode",     "BVH Tree Raycast"],
+        #  ["SvBvhOverlapNode",     "BVH Tree Overlap"],
+        #  ["SvBVHnearNode",        "BVH Tree Nearest"],
     ]
 
     return node_cats

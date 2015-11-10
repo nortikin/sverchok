@@ -18,9 +18,9 @@ nodes_dict = {
         'bmesh_props',
         'closest_point_on_mesh',
         'colors',
-       # 'bvh_raycast',
-       # 'bvh_overlap',
-       # 'bvh_nearest'
+        # 'bvh_raycast',
+        # 'bvh_overlap',
+        # 'bvh_nearest'
     ],
 
     'basic_view': [
@@ -45,6 +45,7 @@ nodes_dict = {
         'group',
         'cache',
         'getsetprop',
+        'node_remote',
         'get_blenddata',
         'set_blenddata',
         'sort_blenddata',
@@ -53,7 +54,7 @@ nodes_dict = {
         'BMOperators',
         'bmesh_in',
         'bmesh_out',
-       # 'create_bvh_tree',
+        # 'create_bvh_tree',
         'bmesh_to_element'
     ],
 
