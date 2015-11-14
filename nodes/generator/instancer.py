@@ -52,8 +52,6 @@ def make_or_update_instance(node, obj_name, matrix):
         mesh = meshes[mesh_name]
         sv_object = objects.new(obj_name, mesh)
         scene.objects.link(sv_object)
-        # this get called anyway at a later stage
-        scene.update()
 
     # apply matrices
     if matrix:
