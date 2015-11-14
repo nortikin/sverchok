@@ -24,7 +24,6 @@ nodes_dict = {
     ],
 
     'basic_view': [
-        'viewer_bmesh',
         'viewer_bmesh_mk2',
         'viewer_indices',
         'viewer_curves',
@@ -97,18 +96,16 @@ nodes_dict = {
         'decompose',
         'func',
         'join',
-        'length',
+        'length_mk2',
         'levels',
         'mask_join',
         'mask',
         'match',
-        'sum',
         'sum_mk2',
         'zip'
     ],
 
     'list_interfere': [
-        'shift',
         'shift_mk2',
         'repeater',
         'slice',
@@ -117,7 +114,6 @@ nodes_dict = {
         'item',
         'reverse',
         'shuffle',
-        'sort',
         'sort_mk2',
         'flip',
         'numpy_array'
@@ -165,7 +161,7 @@ nodes_dict = {
         'edges_adaptative',
         'join_tris',
         'lathe',
-        'line_connect',
+        'uv_connect',
         'offset',
         'inset_special',
         'polygons_adaptative',
