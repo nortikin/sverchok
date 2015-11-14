@@ -83,6 +83,7 @@ nodes_dict = {
         'script',
         'script_mk2',
         'prototyper_js',
+        'dupli_instances',
         'formula',
         'sphere',
         'basic_spline',
