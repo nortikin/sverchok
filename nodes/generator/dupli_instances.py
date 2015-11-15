@@ -16,14 +16,17 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+import math
 from random import random
 
 import bpy
 from bpy.props import StringProperty, BoolProperty, EnumProperty
 import bmesh
+from mathutils import Vector
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
+from sverchok.utils.sv_viewer_utils import matrix_sanitizer
 
 
 def wipe_object(ob):
@@ -67,8 +70,7 @@ class SvDupliInstancesMK3(bpy.types.Node, SverchCustomTreeNode):
             wipe_object(ob)
 
         # minimum requirements.
-        if (not locations) or (not self.name_child):
-            # also remove dupli-status
+        if (not any([locations, transforms])) or (not self.name_child):
             if ob:
                 ob.dupli_type = 'NONE'
             return
@@ -82,23 +84,41 @@ class SvDupliInstancesMK3(bpy.types.Node, SverchCustomTreeNode):
         # at this point there's a reference to an ob, and the mesh is empty.
         child = objects.get(self.name_child)
 
-        locations = locations[0]
-
-        if (locations and not transforms):
-            # this mode will vertex duplicate (make a vert based mesh)
+        if locations and locations[0] and (not transforms):
+            locations = locations[0]
+            # -- this mode will vertex duplicate --
             ob.data.from_pydata(locations, [], [])
             ob.dupli_type = 'VERTS'
             child.parent = ob
 
-        elif (locations and transforms):
-            # this mode will face duplicate
-            # verts and faces need to be generated per location+transform combo
-            # per vert -> triangle -> transforms.  20 locations becomes 20 faces and 60 verts
-            # ob.data.from_pydata(verts, [], faces)
-            # ob.dupli_type = 'FACES'
-            # ob.use_dupli_faces_scale = True
-            # child.parent = ob
-            ...
+        elif transforms:
+            # -- this mode will face duplicate --
+            # i expect this can be done faster using numpy
+            # please view this only as exploratory
+            scale = 1
+            theta = 2 * math.pi / 3
+            thetb = theta * 2
+            ofs = 0.5 * math.pi + theta
+            A = math.cos(0 + ofs) * scale, math.sin(0 + ofs) * scale, 0
+            B = math.cos(theta + ofs) * scale, math.sin(theta + ofs) * scale, 0
+            C = math.cos(thetb + ofs) * scale, math.sin(thetb + ofs) * scale, 0
+            verts = []
+            add_verts = verts.extend
+            num_matrices = len(transforms)
+            for m in transforms:
+                M = matrix_sanitizer(m)
+                a = (M * Vector(A))[:]
+                b = (M * Vector(B))[:]
+                c = (M * Vector(C))[:]
+                add_verts([a, b, c])
+
+            strides = range(0, num_matrices * 3, 3)
+            faces = [[i, i + 1, i + 2] for i in strides]
+
+            ob.data.from_pydata(verts, [], faces)
+            ob.dupli_type = 'FACES'
+            ob.use_dupli_faces_scale = True
+            child.parent = ob
 
 
 def register():
