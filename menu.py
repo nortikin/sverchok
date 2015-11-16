@@ -142,7 +142,7 @@ def make_node_cats():
         ["ListReverseNode",     "List Reverse"],
         ["ListShuffleNode",     "List Shuffle"],
         ["ListSortNode",        "List Sort"],
-        ["ListSortNodeMK2",        "List Sort MK2"],
+        ["ListSortNodeMK2",     "List Sort MK2"],
         ["ListFlipNode",        "List Flip"],
     ]
 
@@ -197,8 +197,8 @@ def make_node_cats():
 # orange
     node_cats["Viz"] = [
         ["ViewerNode2",         "Viewer Draw",         'RETOPO'],
-        #["BmeshViewerNode",     "Viewer BMesh"],
-        ["SvBmeshViewerNodeMK2","Viewer BMeshMK2"],
+        # ["BmeshViewerNode",     "Viewer BMesh"],
+        ["SvBmeshViewerNodeMK2", "Viewer BMeshMK2"],
         ["IndexViewerNode",     "Viewer Index"],
         ["Sv3DviewPropsNode",   "3dview Props"],
     ]
@@ -220,7 +220,6 @@ def make_node_cats():
         ["SvObjRemoteNode",     "Scene Objects"],
         ["SvFrameInfoNode",     "Frame info"],
         ["SvEmptyOutNode",      "Empty out",    "OUTLINER_OB_EMPTY"],
-        ["SvInstancerNode",     "mesh instancer"],
         ["SvDupliInstancesMK3", "dupli instancer"],
         ["SvGetPropNode",       "Get property",      'FORCE_VORTEX'],
         ["SvSetPropNode",       "Set property",      'FORCE_VORTEX'],
@@ -281,10 +280,10 @@ def make_node_cats():
         ["SvBMinputNode",         "BMesh In"],
         ["SvBMoutputNode",        "BMesh Out"],
         ["SvBMtoElementNode",     "BMesh Elements"],
-      #  ["SvBVHtreeNode",        "BVH Tree In"],
-      #  ["SvBVHRaycastNode",     "BVH Tree Raycast"],
-      #  ["SvBvhOverlapNode",     "BVH Tree Overlap"],
-      #  ["SvBVHnearNode",        "BVH Tree Nearest"],
+        # ["SvBVHtreeNode",        "BVH Tree In"],
+        # ["SvBVHRaycastNode",     "BVH Tree Raycast"],
+        # ["SvBvhOverlapNode",     "BVH Tree Overlap"],
+        # ["SvBVHnearNode",        "BVH Tree Nearest"],
     ]
 
     return node_cats
