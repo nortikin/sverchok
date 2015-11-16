@@ -99,7 +99,7 @@ def make_node_cats():
 
     node_cats["Modifier Make"] = [
         # bl_idname, shortname, <icon> (optional)
-        ['LineConnectNode',     'UV Connection'],
+        ['LineConnectNodeMK2',     'UV Connection'],
         ['AdaptivePolsNode',    'Adaptive Polygons'],
         ['SvAdaptiveEdgeNode',  'Adaptive Edges'],
         ['CrossSectionNode',    'Cross Section'],
@@ -124,16 +124,14 @@ def make_node_cats():
         ["ListJoinNode",        "List Join"],
         ["ZipNode",             "List Zip"],
         ["ListLevelsNode",      "List Del Levels"],
-        ["ListLengthNode",      "List Length"],
-        ["ListSumNode",         "List Sum"],
-        ["ListSumNodeMK2",         "List Sum MK2"],
+        ["ListLengthNodeMK2",   "List Length"],
+        ["ListSumNodeMK2",      "List Sum"],
         ["ListMatchNode",       "List Match"],
         ["ListFuncNode",        "List Math"],
     ]
 
     node_cats["List struct"] = [
-        ["ShiftNode",           "List Shift"],
-        ["ShiftNodeMK2",        "List Shift MK2"],
+        ["ShiftNodeMK2",        "List Shift"],
         ["ListRepeaterNode",    "List Repeater"],
         ["ListSliceNode",       "List Slice"],
         ["SvListSplitNode",     "List Split"],
@@ -141,8 +139,7 @@ def make_node_cats():
         ["ListItem2Node",       "List Item"],
         ["ListReverseNode",     "List Reverse"],
         ["ListShuffleNode",     "List Shuffle"],
-        ["ListSortNode",        "List Sort"],
-        ["ListSortNodeMK2",     "List Sort MK2"],
+        ["ListSortNodeMK2",     "List Sort"],
         ["ListFlipNode",        "List Flip"],
     ]
 
@@ -197,8 +194,7 @@ def make_node_cats():
 # orange
     node_cats["Viz"] = [
         ["ViewerNode2",         "Viewer Draw",         'RETOPO'],
-        # ["BmeshViewerNode",     "Viewer BMesh"],
-        ["SvBmeshViewerNodeMK2", "Viewer BMeshMK2"],
+        ["SvBmeshViewerNodeMK2", "Viewer BMesh"],
         ["IndexViewerNode",     "Viewer Index"],
         ["Sv3DviewPropsNode",   "3dview Props"],
     ]

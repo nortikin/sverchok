@@ -18,6 +18,12 @@
 
 old_bl_idnames = {
      'CentersPolsNode' : "centers",
+     'LineConnectNode' : 'uvconnectmk1',
+     'ShiftNode' : 'shift',
+     'ListSortNode' : 'sort',
+     'ListLengthNode' : 'length',
+     'ListSumNode' : 'sum',
+     'BmeshViewerNode' : 'viewer_bmesh',
 #    'BakeryNode' : "bakery",
     'CircleNode' : "circle",
     'ListItemNode' : "list_item",
