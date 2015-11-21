@@ -30,8 +30,7 @@ from sverchok.data_structure import updateNode, dataCorrect, repeat_last
 
 # calculates natural cubic splines through all given knots
 def cubic_spline(locs, tknots):
-    """
-    locs is and np.array with shape (n,3) and tknots has shape (n-1,)
+    """    locs is and np.array with shape (n,3) and tknots has shape (n-1,)
     creates a cubic spline thorugh the locations given in locs
 
     """
