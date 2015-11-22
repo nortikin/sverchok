@@ -114,7 +114,10 @@ class CentersPolsNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                         vecz = Vector((0, 1e-6, 1))
                         q_rot0 = vecz.rotation_difference(nor).to_matrix().to_4x4()
                         q_rot2 = nor.rotation_difference(vecz).to_matrix().to_4x4()
-                        vecy = Vector((1e-6, 1, 0)) * q_rot2
+                        if med[1]>med[0]:
+                            vecy = Vector((1e-6, 1, 0)) * q_rot2
+                        else:
+                            vecy = Vector((1, 1e-6, 0)) * q_rot2
                         q_rot1 = vecy.rotation_difference(med).to_matrix().to_4x4()
                         # loc is matrix * rot vector * rot vector
                         M = loc*q_rot1*q_rot0
