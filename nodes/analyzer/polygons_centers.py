@@ -62,34 +62,19 @@ class CentersPolsNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                 origins = []
                 norm_abs_out = []
                 for verst, versv, pols in zip(vers_tupls, vers_vects, pols_):
-                    # medians в векторах
-                    medians = []
                     normals = []
                     centrs = []
                     norm_abs = []
+                    p0_xdirs = []
                     for p in pols:
-                        # medians
-                        # it calcs middle point of opposite edges, 
-                        # than finds length vector between this two points
                         v0 = versv[p[0]]
                         v1 = versv[p[1]]
                         v2 = versv[p[2]]
-                        lp=len(p)
-                        if lp >= 4:
-                            l = ((lp-2)//2) + 2
-                            v3 = versv[p[l]]
-                            poi_2 = (v2+v3)/2
-                            # normals
-                            norm = geometry.normal(v0, v1, v2, v3)
-                            normals.append(norm)
-                        else:
-                            poi_2 = v2
-                            # normals
-                            norm = geometry.normal(v0, v1, v2)
-                            normals.append(norm)
-                        poi_1 = (v0+v1)/2
-                        vm = poi_2 - poi_1
-                        medians.append(vm)
+                        # save direction of 1st point in polygon
+                        p0_xdirs.append(v0)
+                        # normals
+                        norm = geometry.normal(v0, v1, v2)
+                        normals.append(norm)                       
                         # centrs
                         x,y,z = zip(*[verst[poi] for poi in p])
                         x,y,z = sum(x)/len(x), sum(y)/len(y), sum(z)/len(z)
@@ -108,20 +93,15 @@ class CentersPolsNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                             origins.extend(centrs)
                             normals_out.extend(normals)
                     mat_collect_ = []
-                    for cen, med, nor in zip(centrs, medians, normals):
-                        loc = Matrix.Translation(cen)
-                        # need better solution for Z,Y vectors + may be X vector correction
-                        vecz = Vector((0, 1e-6, 1))
-                        q_rot0 = vecz.rotation_difference(nor).to_matrix().to_4x4()
-                        q_rot2 = nor.rotation_difference(vecz).to_matrix().to_4x4()
-                        if med[1]>med[0]:
-                            vecy = Vector((1e-6, 1, 0)) * q_rot2
-                        else:
-                            vecy = Vector((1, 1e-6, 0)) * q_rot2
-                        q_rot1 = vecy.rotation_difference(med).to_matrix().to_4x4()
-                        # loc is matrix * rot vector * rot vector
-                        M = loc*q_rot1*q_rot0
-                        lM = [ j[:] for j in M ]
+
+                    for cen, nor, p0 in zip(centrs, normals, p0_xdirs):
+                        zdir = nor
+                        xdir = (Vector(p0) - cen).normalized()
+                        ydir = zdir.cross(xdir)
+                        lM = [(xdir[0], ydir[0], zdir[0], cen[0]),
+                              (xdir[1], ydir[1], zdir[1], cen[1]),
+                              (xdir[2], ydir[2], zdir[2], cen[2]),
+                              (0.0, 0.0, 0.0, 1.0)]
                         mat_collect_.append(lM)
                     mat_collect.extend(mat_collect_)
 
