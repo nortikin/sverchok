@@ -21,7 +21,7 @@ old_bl_idnames = {
      'LineConnectNode' : 'uvconnectmk1',
      'ShiftNode' : 'shift',
      'ListSortNode' : 'sort',
-     'ListLengthNode' : 'length',
+#     'ListLengthNode' : 'length',
      'ListSumNode' : 'sum',
      'BmeshViewerNode' : 'viewer_bmesh',
 #    'BakeryNode' : "bakery",

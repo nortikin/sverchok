@@ -124,7 +124,7 @@ def make_node_cats():
         ["ListJoinNode",        "List Join"],
         ["ZipNode",             "List Zip"],
         ["ListLevelsNode",      "List Del Levels"],
-        ["ListLengthNodeMK2",   "List Length"],
+        ["ListLengthNode",   "List Length"],
         ["ListSumNodeMK2",      "List Sum"],
         ["ListMatchNode",       "List Match"],
         ["ListFuncNode",        "List Math"],

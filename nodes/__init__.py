@@ -96,7 +96,7 @@ nodes_dict = {
         'decompose',
         'func',
         'join',
-        'length_mk2',
+        'length',
         'levels',
         'mask_join',
         'mask',
