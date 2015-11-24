@@ -8,6 +8,7 @@ nodes_dict = {
         'edge_angles',
         'distance_pp',
         'polygons_centers',
+        'polygons_centers_mk3',
         'neuro_elman',
         'image_components',
         'kd_tree',
