@@ -34,7 +34,7 @@ def info(v):
 
     x, y, z = zip(*combo)
     minx, maxx = min(x), max(x)
-    return minx, maxx, (maxx-minx)
+    return minx, maxx, (maxx - minx)
 
 
 def openjson_asdict(fname):
@@ -114,9 +114,10 @@ def generate_greasepencil(node, text, col, pos, fontdict):
                 x, y = ap[:2]
                 xyz = ((x + bcx + xof), (y + bcy + yof), 0)
                 s.points[idx].co = xyz
+                s.points[idx].pressure = 1.0
 
         # xof += char_width
-        xof += ((xwide*scalar) + spacing)
+        xof += ((xwide * scalar) + spacing)
 
 
 class SverchokGText(bpy.types.Operator):
@@ -164,7 +165,7 @@ class GTextNode(bpy.types.Node, SverchCustomTreeNode):
         row = layout.row(align=True)
         row.operator(
             'node.sverchok_gtext_button', text='Get from Clipboard'
-            ).mode = 'clipboard'
+        ).mode = 'clipboard'
         if self.id_data.grease_pencil:
             gp_layer = self.id_data.grease_pencil.layers.get(self.name)
             if gp_layer:
@@ -200,7 +201,7 @@ class GTextNode(bpy.types.Node, SverchCustomTreeNode):
 
         x_offset = 0
         y_offset = -90
-        offset = lambda x, y: (x+x_offset, y+y_offset)
+        offset = lambda x, y: (x + x_offset, y + y_offset)
         pos = offset(*pos)
         generate_greasepencil(self, text, col, pos, fdict)
 
