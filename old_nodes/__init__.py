@@ -17,7 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 old_bl_idnames = {
-     'CentersPolsNode' : "centers",
+     'CentersPolsNode' : "polygons_center",
      'LineConnectNode' : 'uvconnectmk1',
      'ShiftNode' : 'shift',
      'ListSortNode' : 'sort',
