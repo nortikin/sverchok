@@ -350,55 +350,43 @@ class BasicTextMenu(bpy.types.Menu):
         layout.operator("text.svlang_converter", text='convert svlang')
 
 
-def add_keymap():
-    wm = bpy.context.window_manager
-    text_editor = wm.keyconfigs.user.keymaps.get('Text')
+# store keymaps here to access after registration
+addon_keymaps = []
 
-    if not text_editor:
-        print('Text Editor keymap not available to add to.')
+
+def add_keymap():
+
+    # handle the keymap
+    wm = bpy.context.window_manager
+    kc = wm.keyconfigs.addon
+
+    if not kc:
+        print('no keyconfig path found. that\'s ok')
         return
 
-    keymaps = text_editor.keymap_items
+    km = kc.keymaps.new(name='Text', space_type='TEXT_EDITOR')
+    keymaps = km.keymap_items
 
     if 'noderefresh_from_texteditor' in dir(bpy.ops.text):
         ''' SHORTCUT 1 Node Refresh: Ctrl + Return '''
         ident_str = 'text.noderefresh_from_texteditor'
         if not (ident_str in keymaps):
-            keymaps.new(ident_str, 'RET', 'PRESS', ctrl=1, head=0)
+            new_shortcut = keymaps.new(ident_str, 'RET', 'PRESS', ctrl=1, head=0)
+            addon_keymaps.append((km, new_shortcut))
 
         ''' SHORTCUT 2 Show svplugMenu Ctrl + I (no text selected) '''
         new_shortcut = keymaps.new('wm.call_menu', 'I', 'PRESS', ctrl=1, head=0)
         new_shortcut.properties.name = 'TEXT_MT_svplug_menu'
+        addon_keymaps.append((km, new_shortcut))
 
         print('added keyboard items to Text Editor.')
 
 
 def remove_keymap():
 
-    wm = bpy.context.window_manager
-    text_editor = wm.keyconfigs.user.keymaps.get('Text')
-
-    if not text_editor:
-        print('tried removing sverchok text keymaps, but Text keymap is gone')
-        return
-
-    keymaps = text_editor.keymap_items
-
-    # remove shortcut 1
-    this_km = keymaps.get("text.noderefresh_from_texteditor")
-    if this_km:
-        keymaps.remove(this_km)
-        print('removed: TEXT_OT_noderefresh_from_texteditor')
-
-    # remove shortcut 2
-    this_km = None
-    for k, v in keymaps.items():
-        if k == 'wm.call_menu' and v.properties.name == 'TEXT_MT_svplug_menu':
-            this_km = v
-            break
-    if this_km:
-        keymaps.remove(this_km)
-        print('removed: TEXT_MT_svplug_menu')
+    for km, kmi in addon_keymaps:
+        km.keymap_items.remove(kmi)
+    addon_keymaps.clear()
 
 
 def register():
