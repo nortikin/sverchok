@@ -9,3 +9,4 @@ Scene
    frame_info
    eval_knieval
    obj_remote
+   dupli_instances
