@@ -1,254 +1,9 @@
 {
-  "connections": {
-    "0": [
-      "Float",
-      "Float",
-      "ProfileNode",
-      "a"
-    ],
-    "1": [
-      "Float.001",
-      "Float",
-      "ProfileNode",
-      "b"
-    ],
-    "2": [
-      "Float.002",
-      "Float",
-      "ProfileNode",
-      "c"
-    ],
-    "3": [
-      "Float.003",
-      "Float",
-      "ProfileNode",
-      "d"
-    ],
-    "4": [
-      "Float.004",
-      "Float",
-      "ProfileNode",
-      "e"
-    ],
-    "5": [
-      "Float.005",
-      "Float",
-      "ProfileNode",
-      "f"
-    ],
-    "6": [
-      "Float.006",
-      "Float",
-      "ProfileNode",
-      "g"
-    ],
-    "7": [
-      "Float.007",
-      "Float",
-      "ProfileNode",
-      "h"
-    ],
-    "8": [
-      "Float.008",
-      "Float",
-      "ProfileNode",
-      "i"
-    ],
-    "9": [
-      "Float.009",
-      "Float",
-      "ProfileNode",
-      "j"
-    ],
-    "10": [
-      "Float.010",
-      "Float",
-      "ProfileNode",
-      "k"
-    ],
-    "11": [
-      "Float.011",
-      "Float",
-      "ProfileNode",
-      "l"
-    ],
-    "12": [
-      "Axis Input",
-      "Vectors",
-      "Matrix in",
-      "Rotation"
-    ],
-    "13": [
-      "Float.012",
-      "Float",
-      "Matrix in",
-      "Angle"
-    ],
-    "14": [
-      "ProfileNode",
-      "Verts",
-      "Apply matrix for vectors",
-      "Vectors"
-    ],
-    "15": [
-      "Matrix in",
-      "Matrix",
-      "Apply matrix for vectors",
-      "Matrixes"
-    ],
-    "16": [
-      "Apply matrix for vectors",
-      "Vectors",
-      "Vector Math",
-      "U"
-    ],
-    "17": [
-      "Vectors in",
-      "Vectors",
-      "Vector Math",
-      "V"
-    ],
-    "18": [
-      "Apply matrix for vectors",
-      "Vectors",
-      "List Join",
-      "data"
-    ],
-    "19": [
-      "Vector Math",
-      "W",
-      "List Join",
-      "data 1"
-    ],
-    "20": [
-      "List Join",
-      "data",
-      "UV Connect",
-      "vertices"
-    ],
-    "21": [
-      "Frame Info",
-      "Current Frame",
-      "function.001",
-      "X"
-    ],
-    "22": [
-      "function",
-      "float",
-      "function.002",
-      "X"
-    ],
-    "23": [
-      "function.002",
-      "float",
-      "Float.012",
-      "Float"
-    ],
-    "24": [
-      "Frame Info",
-      "End Frame",
-      "function.003",
-      "X"
-    ],
-    "25": [
-      "Frame Info",
-      "Start Frame",
-      "function.003",
-      "Y"
-    ],
-    "26": [
-      "function.005",
-      "float",
-      "function",
-      "X"
-    ],
-    "27": [
-      "function.003",
-      "float",
-      "function.001",
-      "Y"
-    ],
-    "28": [
-      "function.001",
-      "float",
-      "function.005",
-      "X"
-    ],
-    "29": [
-      "UV Connect",
-      "vertices",
-      "Mesh Join",
-      "Vertices"
-    ],
-    "30": [
-      "UV Connect",
-      "data",
-      "Mesh Join",
-      "PolyEdge"
-    ],
-    "31": [
-      "Mesh Join",
-      "Vertices",
-      "Viewer Draw2",
-      "vertices"
-    ],
-    "32": [
-      "Mesh Join",
-      "PolyEdge",
-      "Viewer Draw2",
-      "edg_pol"
-    ],
-    "33": [
-      "Matrix in.001",
-      "Matrix",
-      "Viewer Draw2",
-      "matrix"
-    ],
-    "34": [
-      "Hilbert3d",
-      "Vertices",
-      "Vector Interpolation",
-      "Vertices"
-    ],
-    "35": [
-      "Frame Info",
-      "Current Frame",
-      "function.004",
-      "X"
-    ],
-    "36": [
-      "function.004",
-      "float",
-      "Vector Interpolation",
-      "Interval"
-    ],
-    "37": [
-      "Vector Interpolation",
-      "Vertices",
-      "Vector Math.001",
-      "U"
-    ],
-    "38": [
-      "Vector Math.001",
-      "W",
-      "Matrix in.001",
-      "Location"
-    ],
-    "39": [
-      "Float.013",
-      "Float",
-      "Vector Math.001",
-      "S"
-    ],
-    "40": [
-      "Frame Info",
-      "End Frame",
-      "function.004",
-      "Y"
-    ]
+  "export_version": "0.055",
+  "framed_nodes": {
+    "UV Connect": "Frame"
   },
-  "export_version": "0.04 pre alpha",
-  "framed_nodes": {},
+  "groups": {},
   "nodes": {
     "Apply matrix for vectors": {
       "bl_idname": "MatrixApplyNode",
@@ -553,6 +308,23 @@
       },
       "width": 140.0
     },
+    "Frame": {
+      "bl_idname": "NodeFrame",
+      "color": [
+        0.800000011920929,
+        0.0,
+        0.0
+      ],
+      "height": 90.0,
+      "hide": false,
+      "label": "Deprecated node!",
+      "location": [
+        0.0,
+        0.0
+      ],
+      "params": {},
+      "width": 147.0
+    },
     "Frame Info": {
       "bl_idname": "SvFrameInfoNode",
       "color": [
@@ -677,7 +449,7 @@
         295.1617736816406
       ],
       "params": {
-        "filename": "wingprofile.path"
+        "filename": "Untitled"
       },
       "path_file": "M 0,0\nC a,b c,d e,f 10 0\nC g,h i,j k,l 10 0\n",
       "width": 140.0
@@ -880,8 +652,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -42.031707763671875,
-        -336.64605712890625
+        43.26646423339844,
+        -352.0082092285156
       ],
       "params": {
         "items_": "SUB"
@@ -930,6 +702,78 @@
     }
   },
   "update_lists": [
+    [
+      "Frame Info",
+      "Current Frame",
+      "function.004",
+      "X"
+    ],
+    [
+      "Frame Info",
+      "End Frame",
+      "function.004",
+      "Y"
+    ],
+    [
+      "Hilbert3d",
+      "Vertices",
+      "Vector Interpolation",
+      "Vertices"
+    ],
+    [
+      "function.004",
+      "float",
+      "Vector Interpolation",
+      "Interval"
+    ],
+    [
+      "Frame Info",
+      "End Frame",
+      "function.003",
+      "X"
+    ],
+    [
+      "Frame Info",
+      "Start Frame",
+      "function.003",
+      "Y"
+    ],
+    [
+      "Frame Info",
+      "Current Frame",
+      "function.001",
+      "X"
+    ],
+    [
+      "function.003",
+      "float",
+      "function.001",
+      "Y"
+    ],
+    [
+      "function.001",
+      "float",
+      "function.005",
+      "X"
+    ],
+    [
+      "function.005",
+      "float",
+      "function",
+      "X"
+    ],
+    [
+      "function",
+      "float",
+      "function.002",
+      "X"
+    ],
+    [
+      "function.002",
+      "float",
+      "Float.012",
+      "Float"
+    ],
     [
       "Float",
       "Float",
@@ -997,60 +841,6 @@
       "k"
     ],
     [
-      "Float.011",
-      "Float",
-      "ProfileNode",
-      "l"
-    ],
-    [
-      "Frame Info",
-      "End Frame",
-      "function.003",
-      "X"
-    ],
-    [
-      "Frame Info",
-      "Start Frame",
-      "function.003",
-      "Y"
-    ],
-    [
-      "Frame Info",
-      "Current Frame",
-      "function.001",
-      "X"
-    ],
-    [
-      "function.003",
-      "float",
-      "function.001",
-      "Y"
-    ],
-    [
-      "function.001",
-      "float",
-      "function.005",
-      "X"
-    ],
-    [
-      "function.005",
-      "float",
-      "function",
-      "X"
-    ],
-    [
-      "function",
-      "float",
-      "function.002",
-      "X"
-    ],
-    [
-      "function.002",
-      "float",
-      "Float.012",
-      "Float"
-    ],
-    [
       "Axis Input",
       "Vectors",
       "Matrix in",
@@ -1115,30 +905,6 @@
       "data",
       "Mesh Join",
       "PolyEdge"
-    ],
-    [
-      "Frame Info",
-      "Current Frame",
-      "function.004",
-      "X"
-    ],
-    [
-      "Frame Info",
-      "End Frame",
-      "function.004",
-      "Y"
-    ],
-    [
-      "Hilbert3d",
-      "Vertices",
-      "Vector Interpolation",
-      "Vertices"
-    ],
-    [
-      "function.004",
-      "float",
-      "Vector Interpolation",
-      "Interval"
     ],
     [
       "Vector Interpolation",
