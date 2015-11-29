@@ -10,7 +10,7 @@ This node exposes the functionality of the Duplication types ``VERTS`` and ``FAC
 | Features        | Description                                                              |
 +=================+==========================================================================+
 | Locations       | the node generates a proper blender mesh internally, based on vertices.  |
-|                 | The duplication is set to VERTS.Vertices of objects                      | 
+|                 | The duplication is set to VERTS.                                         | 
 +-----------------+--------------------------------------------------------------------------+
 | Matrices        | the node generates a vertex+face mesh using the transforms contained in  |
 |                 | individual matrices. First it makes a unit 1 triangle, then multiplies   |
@@ -45,6 +45,12 @@ Parameters
 ----------
 
 The only parameter is the Object selection, it needs to duplicate something
+
+
+Limitations
+--------
+
+It's worth mentioning that because the faces duplication relies on the area of the triangle to determin the scale, that the scale is a scalar, and therefor uniform (x,y,z are scaled equally).
 
 
 
