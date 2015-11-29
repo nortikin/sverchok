@@ -1,0 +1,505 @@
+{
+  "export_version": "0.055",
+  "framed_nodes": {
+    "Delete Loose": "Frame.001",
+    "Float Series": "Frame.001",
+    "Float Series.001": "Frame.001",
+    "Offset Node": "Frame.002",
+    "Pipe tube Node": "Frame",
+    "Polygons 2 Edges": "Frame",
+    "Randomize Vertices": "Frame.002",
+    "Scale": "Frame.001",
+    "Skin Viewer Draw": "Frame.002",
+    "UV Connect": "Frame.001",
+    "Vectors in": "Frame.001",
+    "Viewer Draw2": "Frame.001",
+    "Viewer Draw2.001": "Frame"
+  },
+  "groups": {},
+  "nodes": {
+    "Delete Loose": {
+      "bl_idname": "SvDeleteLooseNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -28.553237915039062,
+        419.25146484375
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Float Series": {
+      "bl_idname": "SvGenFloatRange",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -421.59906005859375,
+        237.2158660888672
+      ],
+      "params": {
+        "mode": "FRANGE_COUNT",
+        "start_": -10.139999389648438,
+        "stop_": -1.0
+      },
+      "width": 140.0
+    },
+    "Float Series.001": {
+      "bl_idname": "SvGenFloatRange",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -47.87931823730469,
+        145.23046875
+      ],
+      "params": {
+        "mode": "FRANGE_COUNT",
+        "start_": 1.0,
+        "stop_": 0.10000000149011612
+      },
+      "width": 140.0
+    },
+    "Frame": {
+      "bl_idname": "NodeFrame",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 403.62255859375,
+      "hide": false,
+      "label": "tubes",
+      "location": [
+        0.0,
+        60.0
+      ],
+      "params": {},
+      "width": 630.8404541015625
+    },
+    "Frame.001": {
+      "bl_idname": "NodeFrame",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 523.9999389648438,
+      "hide": false,
+      "label": "inner",
+      "location": [
+        33.686588287353516,
+        -497.80474853515625
+      ],
+      "params": {},
+      "width": 1527.997802734375
+    },
+    "Frame.002": {
+      "bl_idname": "NodeFrame",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 528.0948486328125,
+      "hide": false,
+      "label": "outer",
+      "location": [
+        71.95600128173828,
+        145.89927673339844
+      ],
+      "params": {},
+      "width": 723.83154296875
+    },
+    "NGon": {
+      "bl_idname": "SvNGonNode",
+      "color": [
+        0.0,
+        0.5,
+        0.5
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -650.8619995117188,
+        363.25933837890625
+      ],
+      "params": {
+        "rad_": 7.809999942779541,
+        "rand_phi_": 0.06000000238418579,
+        "rand_r_": 3.0899999141693115,
+        "rand_seed_": 0.38999998569488525,
+        "sides_": 15
+      },
+      "width": 140.0
+    },
+    "Offset Node": {
+      "bl_idname": "SvOffsetNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -282.8179931640625,
+        180.4645538330078
+      ],
+      "params": {
+        "nsides": 1,
+        "offset": 1.4800000190734863,
+        "radius": 9.999999747378752e-05
+      },
+      "width": 140.0
+    },
+    "Pipe tube Node": {
+      "bl_idname": "SvPipeNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1466.856689453125,
+        220.53826904296875
+      ],
+      "params": {
+        "close": 1,
+        "cup_fill": 0,
+        "shape": "Square"
+      },
+      "width": 140.0
+    },
+    "Polygons 2 Edges": {
+      "bl_idname": "Pols2EdgsNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1244.6368408203125,
+        64.27951049804688
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Randomize Vertices": {
+      "bl_idname": "SvRandomizeVerticesNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -502.8179931640625,
+        108.90162658691406
+      ],
+      "params": {
+        "random_z_": 1.313999891281128
+      },
+      "width": 140.0
+    },
+    "Scale": {
+      "bl_idname": "SvScaleNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        240.7054901123047,
+        353.06475830078125
+      ],
+      "params": {
+        "Separate": 1
+      },
+      "width": 140.0
+    },
+    "Skin Viewer Draw": {
+      "bl_idname": "SkinViewerNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        21.013565063476562,
+        414.195556640625
+      ],
+      "params": {
+        "general_radius": 0.16449999809265137,
+        "live_updates": 1
+      },
+      "width": 140.0
+    },
+    "UV Connect": {
+      "bl_idname": "LineConnectNodeMK2",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        604.9419555664062,
+        445.1912841796875
+      ],
+      "params": {
+        "cicl_check_U": 0,
+        "cicl_check_V": 1,
+        "cup_U": 0,
+        "cup_V": 0,
+        "slice_check": 0
+      },
+      "width": 140.0
+    },
+    "Vectors in": {
+      "bl_idname": "GenVectorsNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -184.58718872070312,
+        222.66757202148438
+      ],
+      "params": {},
+      "width": 100.0
+    },
+    "Vectors in.001": {
+      "bl_idname": "GenVectorsNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1261.1663818359375,
+        -6.560211181640625
+      ],
+      "params": {
+        "x_": 0.10000000149011612,
+        "y_": 0.10000000149011612,
+        "z_": 0.6000000238418579
+      },
+      "width": 100.0
+    },
+    "Viewer Draw2": {
+      "bl_idname": "ViewerNode2",
+      "color": [
+        1.0,
+        0.30000001192092896,
+        0.0
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        906.3987426757812,
+        467.8046875
+      ],
+      "params": {
+        "activate": 1,
+        "display_edges": 0,
+        "display_verts": 0,
+        "shading": 1,
+        "transparant": 0
+      },
+      "width": 140.0
+    },
+    "Viewer Draw2.001": {
+      "bl_idname": "ViewerNode2",
+      "color": [
+        1.0,
+        0.30000001192092896,
+        0.0
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1675.477294921875,
+        337.62255859375
+      ],
+      "params": {
+        "activate": 1,
+        "display_edges": 0,
+        "display_verts": 0,
+        "face_colors": [
+          0.018425043672323227,
+          0.8990001082420349,
+          0.0
+        ],
+        "shading": 0,
+        "transparant": 1
+      },
+      "width": 140.0
+    }
+  },
+  "update_lists": [
+    [
+      "NGon",
+      "Vertices",
+      "Randomize Vertices",
+      "Vertices"
+    ],
+    [
+      "Randomize Vertices",
+      "Vertices",
+      "Offset Node",
+      "Vers"
+    ],
+    [
+      "NGon",
+      "Polygons",
+      "Offset Node",
+      "Pols"
+    ],
+    [
+      "Offset Node",
+      "Vers",
+      "Skin Viewer Draw",
+      "vertices"
+    ],
+    [
+      "Offset Node",
+      "Edgs",
+      "Skin Viewer Draw",
+      "edges"
+    ],
+    [
+      "Float Series",
+      "Range",
+      "Vectors in",
+      "Z"
+    ],
+    [
+      "Offset Node",
+      "Vers",
+      "Delete Loose",
+      "Vertices"
+    ],
+    [
+      "Offset Node",
+      "InPols",
+      "Delete Loose",
+      "PolyEdge"
+    ],
+    [
+      "Delete Loose",
+      "Vertices",
+      "Scale",
+      "Vertices"
+    ],
+    [
+      "Vectors in",
+      "Vectors",
+      "Scale",
+      "Center"
+    ],
+    [
+      "Float Series.001",
+      "Range",
+      "Scale",
+      "Factor"
+    ],
+    [
+      "Scale",
+      "Vertices",
+      "UV Connect",
+      "vertices"
+    ],
+    [
+      "UV Connect",
+      "vertices",
+      "Viewer Draw2",
+      "vertices"
+    ],
+    [
+      "UV Connect",
+      "data",
+      "Viewer Draw2",
+      "edg_pol"
+    ],
+    [
+      "UV Connect",
+      "data",
+      "Polygons 2 Edges",
+      "pols"
+    ],
+    [
+      "UV Connect",
+      "vertices",
+      "Pipe tube Node",
+      "Vers"
+    ],
+    [
+      "Polygons 2 Edges",
+      "edgs",
+      "Pipe tube Node",
+      "Edgs"
+    ],
+    [
+      "Vectors in.001",
+      "Vectors",
+      "Pipe tube Node",
+      "Size"
+    ],
+    [
+      "Pipe tube Node",
+      "Vers",
+      "Viewer Draw2.001",
+      "vertices"
+    ],
+    [
+      "Pipe tube Node",
+      "Pols",
+      "Viewer Draw2.001",
+      "edg_pol"
+    ]
+  ]
+}

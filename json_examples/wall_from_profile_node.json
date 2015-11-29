@@ -1,0 +1,680 @@
+{
+  "export_version": "0.055",
+  "framed_nodes": {
+    "Extrude Edges": "Frame.001",
+    "Matrix in": "Frame.001",
+    "Matrix value input.001": "Frame.001",
+    "Recalc Normals": "Frame.001",
+    "Solidify": "Frame.001",
+    "Solidify.001": "Frame.001",
+    "Solidify.002": "Frame.001",
+    "Solidify.003": "Frame.001",
+    "UV Connect": "Frame",
+    "Vectors in": "Frame.001",
+    "Viewer Draw2.002": "Frame.001",
+    "Viewer Draw2.003": "Frame.001",
+    "Viewer Draw2.004": "Frame.001"
+  },
+  "groups": {},
+  "nodes": {
+    "Extrude Edges": {
+      "bl_idname": "SvExtrudeEdgesNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -486.7811279296875,
+        -1062.3343505859375
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Float": {
+      "bl_idname": "FloatNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "\u043e\u0441\u044c \u0432\u043d\u0443\u0442\u0440\u044c",
+      "location": [
+        -553.684326171875,
+        152.5745849609375
+      ],
+      "params": {
+        "float_": 0.3100000023841858,
+        "maxim": 1.0,
+        "minim": 0.009999999776482582
+      },
+      "width": 140.0
+    },
+    "Float.001": {
+      "bl_idname": "FloatNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "\u0441\u043b\u043e\u0439 \u0443\u0442\u0435\u043f\u043b\u0438\u0442\u0435\u043b\u044c",
+      "location": [
+        -283.1075134277344,
+        71.70278930664062
+      ],
+      "params": {
+        "float_": 0.7400000095367432,
+        "maxim": 1.0,
+        "minim": 0.009999999776482582
+      },
+      "width": 140.0
+    },
+    "Float.002": {
+      "bl_idname": "FloatNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "\u0441\u043b\u043e\u0439 \u043a\u0438\u0440\u043f\u0438\u0447",
+      "location": [
+        -554.4776611328125,
+        -10.759448051452637
+      ],
+      "params": {
+        "float_": 0.9099999666213989,
+        "maxim": 1.0,
+        "minim": 0.009999999776482582
+      },
+      "width": 140.0
+    },
+    "Float.003": {
+      "bl_idname": "FloatNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "\u0441\u043b\u043e\u0439 \u043e\u0431\u043b\u0438\u0446\u043e\u0432\u043a\u0430",
+      "location": [
+        -287.23260498046875,
+        -111.17338562011719
+      ],
+      "params": {
+        "float_": 0.6700000166893005,
+        "maxim": 1.0,
+        "minim": 0.009999999776482582
+      },
+      "width": 140.0
+    },
+    "Float.004": {
+      "bl_idname": "FloatNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "\u0432\u044b\u0441\u043e\u0442\u0430 \u0441\u0442\u0435\u043d\u044b",
+      "location": [
+        -563.703369140625,
+        -157.91696166992188
+      ],
+      "params": {
+        "float_": 2.4700000286102295
+      },
+      "width": 140.0
+    },
+    "Frame": {
+      "bl_idname": "NodeFrame",
+      "color": [
+        0.800000011920929,
+        0.0,
+        0.0
+      ],
+      "height": 251.1405029296875,
+      "hide": false,
+      "label": "Deprecated node!",
+      "location": [
+        0.0,
+        0.0
+      ],
+      "params": {},
+      "width": 200.0
+    },
+    "Frame.001": {
+      "bl_idname": "NodeFrame",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 706.1326904296875,
+      "hide": false,
+      "label": "\u0412\u0430\u0440\u0438\u0430\u043d\u0442 \u044d\u043a\u0441\u0442\u0440\u0443\u0434\u0430 2",
+      "location": [
+        283.18609619140625,
+        353.8287048339844
+      ],
+      "params": {},
+      "width": 1697.931640625
+    },
+    "Matrix in": {
+      "bl_idname": "MatrixGenNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -544.2159423828125,
+        -1402.7724609375
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Matrix value input.001": {
+      "bl_idname": "SvMatrixValueIn",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -85.603515625,
+        -1364.307861328125
+      ],
+      "params": {
+        "matrix": [
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          -6.0,
+          0.0,
+          1.0
+        ]
+      },
+      "width": 300.0
+    },
+    "ProfileNode": {
+      "bl_idname": "SvProfileNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -550.698486328125,
+        -335.7137756347656
+      ],
+      "params": {
+        "filename": "Untitled"
+      },
+      "path_file": "M 0,0\nL 8,0 7,4 0,3\nX",
+      "width": 140.0
+    },
+    "Recalc Normals": {
+      "bl_idname": "SvRecalcNormalsNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": true,
+      "label": "",
+      "location": [
+        -294.94879150390625,
+        -1077.654541015625
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Solidify": {
+      "bl_idname": "SvSolidifyNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -161.05523681640625,
+        -1057.22900390625
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Solidify.001": {
+      "bl_idname": "SvSolidifyNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        38.5028076171875,
+        -1035.2020263671875
+      ],
+      "params": {
+        "thickness": 0.05000000074505806
+      },
+      "width": 140.0
+    },
+    "Solidify.002": {
+      "bl_idname": "SvSolidifyNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        305.6278076171875,
+        -1246.0316162109375
+      ],
+      "params": {
+        "thickness": -0.25
+      },
+      "width": 140.0
+    },
+    "Solidify.003": {
+      "bl_idname": "SvSolidifyNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        561.7535400390625,
+        -1417.5272216796875
+      ],
+      "params": {
+        "thickness": 0.10000000149011612
+      },
+      "width": 140.0
+    },
+    "UV Connect": {
+      "bl_idname": "LineConnectNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -301.9100646972656,
+        -308.8594970703125
+      ],
+      "params": {
+        "cicl_check": 1,
+        "polygons": 0
+      },
+      "width": 140.0
+    },
+    "Vectors in": {
+      "bl_idname": "GenVectorsNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -677.26318359375,
+        -1422.296630859375
+      ],
+      "params": {},
+      "width": 100.0
+    },
+    "Viewer Draw2.002": {
+      "bl_idname": "ViewerNode2",
+      "color": [
+        1.0,
+        0.30000001192092896,
+        0.0
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        412.1241455078125,
+        -945.696044921875
+      ],
+      "params": {
+        "display_edges": 0,
+        "display_verts": 0,
+        "shading": 1,
+        "transparant": 0
+      },
+      "width": 140.0
+    },
+    "Viewer Draw2.003": {
+      "bl_idname": "ViewerNode2",
+      "color": [
+        1.0,
+        0.30000001192092896,
+        0.0
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        616.396240234375,
+        -1090.444580078125
+      ],
+      "params": {
+        "activate": 1,
+        "display_edges": 0,
+        "display_verts": 0,
+        "face_colors": [
+          0.08234398066997528,
+          0.8589417338371277,
+          0.8990001082420349
+        ],
+        "shading": 1,
+        "transparant": 0
+      },
+      "width": 140.0
+    },
+    "Viewer Draw2.004": {
+      "bl_idname": "ViewerNode2",
+      "color": [
+        1.0,
+        0.30000001192092896,
+        0.0
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        820.6683959960938,
+        -1243.06005859375
+      ],
+      "params": {
+        "activate": 1,
+        "display_edges": 0,
+        "display_verts": 0,
+        "face_colors": [
+          0.06282440572977066,
+          0.8990001082420349,
+          0.4204562306404114
+        ],
+        "shading": 1,
+        "transparant": 0
+      },
+      "width": 140.0
+    },
+    "function": {
+      "bl_idname": "ScalarMathNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": true,
+      "label": "",
+      "location": [
+        -250.11004638671875,
+        125.57858276367188
+      ],
+      "params": {
+        "items_": "NEG"
+      },
+      "width": 140.0
+    },
+    "function.001": {
+      "bl_idname": "ScalarMathNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": true,
+      "label": "",
+      "location": [
+        -271.1857604980469,
+        -31.3546142578125
+      ],
+      "params": {
+        "items_": "NEG"
+      },
+      "width": 140.0
+    }
+  },
+  "update_lists": [
+    [
+      "Float",
+      "Float",
+      "function",
+      "X"
+    ],
+    [
+      "Float.004",
+      "Float",
+      "Vectors in",
+      "Z"
+    ],
+    [
+      "Vectors in",
+      "Vectors",
+      "Matrix in",
+      "Location"
+    ],
+    [
+      "ProfileNode",
+      "Verts",
+      "UV Connect",
+      "vertices"
+    ],
+    [
+      "UV Connect",
+      "vertices",
+      "Extrude Edges",
+      "Vertices"
+    ],
+    [
+      "UV Connect",
+      "data",
+      "Extrude Edges",
+      "Edg_Pol"
+    ],
+    [
+      "Matrix in",
+      "Matrix",
+      "Extrude Edges",
+      "Matrices"
+    ],
+    [
+      "Extrude Edges",
+      "Vertices",
+      "Recalc Normals",
+      "Vertices"
+    ],
+    [
+      "Extrude Edges",
+      "NewFaces",
+      "Recalc Normals",
+      "Polygons"
+    ],
+    [
+      "function",
+      "float",
+      "Solidify",
+      "thickness"
+    ],
+    [
+      "Recalc Normals",
+      "Vertices",
+      "Solidify",
+      "vertices"
+    ],
+    [
+      "Recalc Normals",
+      "Polygons",
+      "Solidify",
+      "polygons"
+    ],
+    [
+      "Float.001",
+      "Float",
+      "Solidify.001",
+      "thickness"
+    ],
+    [
+      "Solidify",
+      "vertices",
+      "Solidify.001",
+      "vertices"
+    ],
+    [
+      "Solidify",
+      "newpols",
+      "Solidify.001",
+      "polygons"
+    ],
+    [
+      "Float.002",
+      "Float",
+      "function.001",
+      "X"
+    ],
+    [
+      "function.001",
+      "float",
+      "Solidify.002",
+      "thickness"
+    ],
+    [
+      "Solidify.001",
+      "vertices",
+      "Solidify.002",
+      "vertices"
+    ],
+    [
+      "Solidify.001",
+      "newpols",
+      "Solidify.002",
+      "polygons"
+    ],
+    [
+      "Float.003",
+      "Float",
+      "Solidify.003",
+      "thickness"
+    ],
+    [
+      "Solidify.002",
+      "vertices",
+      "Solidify.003",
+      "vertices"
+    ],
+    [
+      "Solidify.002",
+      "newpols",
+      "Solidify.003",
+      "polygons"
+    ],
+    [
+      "Solidify.002",
+      "vertices",
+      "Viewer Draw2.003",
+      "vertices"
+    ],
+    [
+      "Solidify.002",
+      "polygons",
+      "Viewer Draw2.003",
+      "edg_pol"
+    ],
+    [
+      "Matrix value input.001",
+      "Matrix",
+      "Viewer Draw2.003",
+      "matrix"
+    ],
+    [
+      "Solidify.003",
+      "vertices",
+      "Viewer Draw2.004",
+      "vertices"
+    ],
+    [
+      "Solidify.003",
+      "polygons",
+      "Viewer Draw2.004",
+      "edg_pol"
+    ],
+    [
+      "Matrix value input.001",
+      "Matrix",
+      "Viewer Draw2.004",
+      "matrix"
+    ],
+    [
+      "Solidify.001",
+      "vertices",
+      "Viewer Draw2.002",
+      "vertices"
+    ],
+    [
+      "Solidify.001",
+      "polygons",
+      "Viewer Draw2.002",
+      "edg_pol"
+    ],
+    [
+      "Matrix value input.001",
+      "Matrix",
+      "Viewer Draw2.002",
+      "matrix"
+    ]
+  ]
+}
