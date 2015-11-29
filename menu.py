@@ -260,7 +260,6 @@ def make_node_cats():
         ['SvTypeViewerNode',      'Typography Viewer'],
         ["SvImageComponentsNode", "Image Decompose",  "GROUP_VCOL"],
         ["SvJoinTrianglesNode",   "Join Triangles"],
-        ["SvPrototypeJS",         "Prototype JS"],
         ["SvCacheNode",           "Cache"],
         ["SvInsetSpecial",        "Inset Special"],
         ["SkinViewerNode",        "Skin Mesher"],
