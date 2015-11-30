@@ -87,8 +87,7 @@ class SvObjRemoteNode(bpy.types.Node, SverchCustomTreeNode):
                     if hasattr(obj, attribute):
                         new_val = get_if_valid(socket, fallback=fb)
 
-                        # prevent setting scale to somethign that can't be
-                        # recovered from
+                        # don't set scale to 0,0,0 you can not recover from it.
                         if (socket == 'scale') and (new_val == (0, 0, 0)):
                             new_val = 0.000001, 0.000001, 0.000001
                         setattr(obj, attribute, new_val)
