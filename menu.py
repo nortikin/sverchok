@@ -214,7 +214,7 @@ def make_node_cats():
 # green
     node_cats["Scene"] = [
         ["ObjectsNode",         "Objects in"],
-        ["SvObjRemoteNode",     "Scene Objects"],
+        ["SvObjRemoteNode",     "Object Remote (control)"],
         ["SvFrameInfoNode",     "Frame info"],
         ["SvEmptyOutNode",      "Empty out",    "OUTLINER_OB_EMPTY"],
         ["SvDupliInstancesMK3", "dupli instancer"],
