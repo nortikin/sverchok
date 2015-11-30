@@ -220,10 +220,10 @@ def make_node_cats():
         ["SvDupliInstancesMK3", "dupli instancer"],
         ["SvGetPropNode",       "Get property",      'FORCE_VORTEX'],
         ["SvSetPropNode",       "Set property",      'FORCE_VORTEX'],
-        ["SvVertexGroupNode",   "Vertext group"],
-        ["SvRayCastSceneNode",   "Scene Raycast"],
-        ["SvRayCastObjectNode",  "Object ID Raycast"],
-        ["SvVertexColorNode",   "Vertext color"],
+        ["SvVertexGroupNode",   "Vertex group"],
+        ["SvRayCastSceneNode",  "Scene Raycast"],
+        ["SvRayCastObjectNode", "Object ID Raycast"],
+        ["SvVertexColorNode",   "Vertex color"],
     ]
 
 # violet
