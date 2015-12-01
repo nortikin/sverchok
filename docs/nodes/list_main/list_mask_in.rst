@@ -4,7 +4,10 @@ List Mask In
 Functionality
 -------------
 
-This node use the mask list as switch to mix two data list together. **0** means false, an item from the **Data False** will be appended to the output data; mask list item other than **0** will be considered as true, an item from the **Data True** will be appended to the output data. If the mask list is not long enough to cover all the inputs, it will be repeated as the mask for the rest of inputs. 
+This node use the mask list i.e. 1,0,0,0 as switch to mix two data list together.   
+**0** means false, an item from the **Data False** will be appended to the output data;   
+**1** will be considered as true, an item from the **Data True** will be appended to the output data. If the mask list is not long enough to cover all the inputs, it will be repeated as the mask for the rest of inputs.  
+Length of mask list affect output because every item (without Choise activated) corresponding to Inputs several times. 
 
 Inputs
 ------
@@ -20,7 +23,8 @@ Inputs
 Parameters
 ----------
 
-**Level:** Set the level at which the items to be masked.
+**Level** Set the level at which the items to be masked.
+**Choise** Make length of out list the same as length of input list
 
 
 Outputs
