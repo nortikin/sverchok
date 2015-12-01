@@ -26,9 +26,9 @@ Inputs
 Parameters
 ----------
 
-**Level** Set the level at which the items to be masked.      
+**Level:** Set the level at which the items to be masked.      
 
-**Choise** Make length of out list the same as length of input list
+**Choise:** Make length of out list the same as length of input list
 
 
 Outputs
