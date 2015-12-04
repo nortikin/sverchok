@@ -21,8 +21,9 @@ from bpy.props import IntProperty, EnumProperty, BoolProperty, FloatProperty
 import bmesh.ops
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, match_long_repeat, fullList, checking_links, iterate_process, Input, Output, match_inputs, std_links_processing
-from sverchok.utils.sv_bmesh_utils import with_bmesh
+from sverchok.data_structure import updateNode, match_long_repeat, fullList
+from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
+
 
 class SvTriangulateNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Triangulate mesh '''
@@ -31,66 +32,104 @@ class SvTriangulateNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     quad_modes = [
-            ("0", "Beauty", "Split the quads in nice triangles, slower method", 1),
-            ("1", "Fixed", "Split the quads on the 1st and 3rd vertices", 2),
-            ("2", "Fixed Alternate", "Split the quads on the 2nd and 4th vertices", 3),
-            ("3", "Shortest Diagonal", "Split the quads based on the distance between the vertices", 4)
-        ]
+        ("0", "Beauty", "Split the quads in nice triangles, slower method", 1),
+        ("1", "Fixed", "Split the quads on the 1st and 3rd vertices", 2),
+        ("2", "Fixed Alternate", "Split the quads on the 2nd and 4th vertices", 3),
+        ("3", "Shortest Diagonal", "Split the quads based on the distance between the vertices", 4)
+    ]
 
     ngon_modes = [
-            ("0", "Beauty", "Arrange the new triangles nicely, slower method", 1),
-            ("1", "Clip", "Split the ngons using a scanfill algorithm", 2)
-        ]
-    
-    quad_mode = EnumProperty(name='Quads mode',
+        ("0", "Beauty", "Arrange the new triangles nicely, slower method", 1),
+        ("1", "Clip", "Split the ngons using a scanfill algorithm", 2)
+    ]
+
+    quad_mode = EnumProperty(
+        name='Quads mode',
         description="Quads processing mode",
-        items = quad_modes,
+        items=quad_modes,
         default="0",
         update=updateNode)
 
-    ngon_mode = EnumProperty(name="Polygons mode",
+    ngon_mode = EnumProperty(
+        name="Polygons mode",
         description="Polygons processing mode",
-        items = ngon_modes,
+        items=ngon_modes,
         default="0",
         update=updateNode)
 
-    input_descriptors = [
-         Input('VerticesSocket', 'Vertices', default=[[]]),
-         Input('StringsSocket',  'Edges',    default=[[]], is_mandatory=False),
-         Input('StringsSocket',  'Polygons', default=[[]]),
-         Input('StringsSocket',  'Mask',     default=[[True]], is_mandatory=False)
-        ]
+    def sv_init(self, context):
+        self.inputs.new('VerticesSocket', "Vertices", "Vertices")
+        self.inputs.new('StringsSocket', 'Edges', 'Edges')
+        self.inputs.new('StringsSocket', 'Polygons', 'Polygons')
+        self.inputs.new('StringsSocket', 'Mask')
 
-    output_descriptors = [
-         Output('VerticesSocket', 'Vertices'),
-         Output('StringsSocket',  'Edges'),
-         Output('StringsSocket',  'Polygons'),
-         Output('StringsSocket',  'NewEdges'),
-         Output('StringsSocket',  'NewPolys')
-        ]
+        self.outputs.new('VerticesSocket', 'Vertices')
+        self.outputs.new('StringsSocket', 'Edges')
+        self.outputs.new('StringsSocket', 'Polygons')
+        self.outputs.new('StringsSocket', 'NewEdges')
+        self.outputs.new('StringsSocket', 'NewPolys')
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "quad_mode")
         layout.prop(self, "ngon_mode")
 
-    @std_links_processing(match_long_repeat)
-    @with_bmesh
-    def process(self, bm, mask):
-        fullList(mask, len(bm.faces))
+    def process(self):
+        if not (self.inputs['Vertices'].is_linked and self.inputs['Polygons'].is_linked):
+            return
+        if not (any(self.outputs[name].is_linked for name in ['Vertices', 'Edges', 'Polygons', 'NewEdges', 'NewPolys'])):
+            return
 
-        b_faces = []
-        for m, face in zip(mask,bm.faces):
-            if m:
-                b_faces.append(face)
+        vertices_s = self.inputs['Vertices'].sv_get(default=[[]])
+        edges_s = self.inputs['Edges'].sv_get(default=[[]])
+        faces_s = self.inputs['Polygons'].sv_get(default=[[]])
+        mask_s = self.inputs['Mask'].sv_get(default=[[True]])
 
-        res = bmesh.ops.triangulate(bm, faces=b_faces,
-                        quad_method=int(self.quad_mode),
-                        ngon_method=int(self.ngon_mode))
+        result_vertices = []
+        result_edges = []
+        result_faces = []
+        result_new_edges = []
+        result_new_faces = []
 
-        b_new_edges = [tuple(v.index for v in edge.verts) for edge in res['edges']]
-        b_new_faces = [[v.index for v in face.verts] for face in res['faces']]
+        meshes = match_long_repeat([vertices_s, edges_s, faces_s, mask_s])
 
-        return bm, b_new_edges, b_new_faces
+        for vertices, edges, faces, mask in zip(*meshes):
+
+            bm = bmesh_from_pydata(vertices, edges, faces)
+            fullList(mask, len(faces))
+
+            b_faces = []
+            for m, face in zip(mask, bm.faces):
+                if m:
+                    b_faces.append(face)
+
+            res = bmesh.ops.triangulate(
+                bm, faces=b_faces,
+                quad_method=int(self.quad_mode),
+                ngon_method=int(self.ngon_mode))
+
+            b_new_edges = [tuple(v.index for v in edge.verts) for edge in res['edges']]
+            b_new_faces = [[v.index for v in face.verts] for face in res['faces']]
+
+            new_vertices, new_edges, new_faces = pydata_from_bmesh(bm)
+            bm.free()
+
+            result_vertices.append(new_vertices)
+            result_edges.append(new_edges)
+            result_faces.append(new_faces)
+            result_new_edges.append(b_new_edges)
+            result_new_faces.append(b_new_faces)
+
+        if self.outputs['Vertices'].is_linked:
+            self.outputs['Vertices'].sv_set(result_vertices)
+        if self.outputs['Edges'].is_linked:
+            self.outputs['Edges'].sv_set(result_edges)
+        if self.outputs['Polygons'].is_linked:
+            self.outputs['Polygons'].sv_set(result_faces)
+        if self.outputs['NewEdges'].is_linked:
+            self.outputs['NewEdges'].sv_set(result_new_edges)
+        if self.outputs['NewPolys'].is_linked:
+            self.outputs['NewPolys'].sv_set(result_new_faces)
+
 
 def register():
     bpy.utils.register_class(SvTriangulateNode)
@@ -98,9 +137,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvTriangulateNode)
-
-if __name__ == '__main__':
-    register()
-
-
-

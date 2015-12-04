@@ -86,6 +86,10 @@ class SvObjRemoteNode(bpy.types.Node, SverchCustomTreeNode):
                     attribute = socket.replace('rotation', 'rotation_euler')
                     if hasattr(obj, attribute):
                         new_val = get_if_valid(socket, fallback=fb)
+
+                        # don't set scale to 0,0,0 you can not recover from it.
+                        if (socket == 'scale') and (new_val == (0, 0, 0)):
+                            new_val = 0.000001, 0.000001, 0.000001
                         setattr(obj, attribute, new_val)
 
             self.show_string_box = (obj.type == 'FONT')

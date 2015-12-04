@@ -52,12 +52,11 @@ def make_or_update_instance(node, obj_name, matrix):
         mesh = meshes[mesh_name]
         sv_object = objects.new(obj_name, mesh)
         scene.objects.link(sv_object)
-        # this get called anyway at a later stage
-        #scene.update()
 
     # apply matrices
     if matrix:
         sv_object.matrix_local = list(zip(*matrix))
+        sv_object.data.update()   # for some reason this _is_ necessary.
 
 
 class SvInstancerOp(bpy.types.Operator):
@@ -89,6 +88,9 @@ class SvInstancerNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     def obj_available(self, context):
+        if not bpy.data.meshes:
+            return [('None', 'None', "", 0)]
+
         objs = bpy.data.objects
         display = lambda i: (not i.name.startswith(self.basemesh_name)) and i.type == "MESH"
         sorted_named_objects = sorted([i.name for i in objs if display(i)])
@@ -148,6 +150,10 @@ class SvInstancerNode(bpy.types.Node, SverchCustomTreeNode):
         row.prop(self, "basemesh_name", text="")
 
     def abort_processing(self):
+
+        if not bpy.data.meshes:
+            return True
+
         try:
             l = bpy.data.node_groups[self.id_data.name]
         except Exception as e:
@@ -176,6 +182,8 @@ class SvInstancerNode(bpy.types.Node, SverchCustomTreeNode):
         if not matrices:
             return
 
+        print(matrices)
+
         # we have matrices, we can process, go go go!
         for obj_index, matrix in enumerate(matrices):
             obj_name = self.basemesh_name + "_" + str(obj_index)
@@ -188,28 +196,8 @@ class SvInstancerNode(bpy.types.Node, SverchCustomTreeNode):
             self.to_group()
 
     def remove_non_updated_objects(self, obj_index, _name):
-
         meshes = bpy.data.meshes
         objects = bpy.data.objects
-
-        # objects_to_reselect = []
-        # for i in (i for i in objects if i.select):
-        #     objects_to_reselect.append(i.name)
-        #     i.select = False
-
-        # objs = [obj for obj in objects if obj.type == 'MESH']
-        # objs = [obj for obj in objs if obj.name.startswith(_name)]
-        # objs = [obj.name for obj in objs if int(
-        #     obj.name.split("_")[-1]) > obj_index]
-
-        # # select and finally remove all excess objects
-        # for object_name in objs:
-        #     objects[object_name].select = True
-        # bpy.ops.object.delete()
-
-        # # reselect
-        # for name in objects_to_reselect:
-        #     bpy.data.objects[name].select = True
 
         objs = [obj for obj in objects if obj.type == 'MESH']
         objs = [obj for obj in objs if obj.name.startswith(_name)]
@@ -226,12 +214,10 @@ class SvInstancerNode(bpy.types.Node, SverchCustomTreeNode):
             scene.objects.unlink(obj)
             objects.remove(obj)
 
-        # fingers crossed.
-
     def to_group(self):
 
         objs = bpy.data.objects
-        if not self.basemesh_name in bpy.data.groups:
+        if not (self.basemesh_name in bpy.data.groups):
             newgroup = bpy.data.groups.new(self.basemesh_name)
         else:
             newgroup = bpy.data.groups[self.basemesh_name]

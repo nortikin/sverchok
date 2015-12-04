@@ -65,7 +65,8 @@ def make_node_cats():
         ["SvVolumeNode",        "Volume"],
         ["AreaNode",            "Area"],
         ["DistancePPNode",      "Distance"],
-        ["CentersPolsNodeMK2",  "Centers Polygons"],
+        ["CentersPolsNodeMK2",  "Centers Polygons 2"],
+        ["CentersPolsNodeMK3",  "Centers Polygons 3"],
         ["GetNormalsNode",      "Calculate normals"],
         ["VectorNormalNode",    "Vertex Normal"],
         # proximity analyses.
@@ -99,7 +100,7 @@ def make_node_cats():
 
     node_cats["Modifier Make"] = [
         # bl_idname, shortname, <icon> (optional)
-        ['LineConnectNode',     'UV Connection'],
+        ['LineConnectNodeMK2',     'UV Connection'],
         ['AdaptivePolsNode',    'Adaptive Polygons'],
         ['SvAdaptiveEdgeNode',  'Adaptive Edges'],
         ['CrossSectionNode',    'Cross Section'],
@@ -124,16 +125,14 @@ def make_node_cats():
         ["ListJoinNode",        "List Join"],
         ["ZipNode",             "List Zip"],
         ["ListLevelsNode",      "List Del Levels"],
-        ["ListLengthNode",      "List Length"],
-        ["ListSumNode",         "List Sum"],
-        ["ListSumNodeMK2",         "List Sum MK2"],
+        ["ListLengthNode",   "List Length"],
+        ["ListSumNodeMK2",      "List Sum"],
         ["ListMatchNode",       "List Match"],
         ["ListFuncNode",        "List Math"],
     ]
 
     node_cats["List struct"] = [
-        ["ShiftNode",           "List Shift"],
-        ["ShiftNodeMK2",        "List Shift MK2"],
+        ["ShiftNodeMK2",        "List Shift"],
         ["ListRepeaterNode",    "List Repeater"],
         ["ListSliceNode",       "List Slice"],
         ["SvListSplitNode",     "List Split"],
@@ -141,8 +140,7 @@ def make_node_cats():
         ["ListItem2Node",       "List Item"],
         ["ListReverseNode",     "List Reverse"],
         ["ListShuffleNode",     "List Shuffle"],
-        ["ListSortNode",        "List Sort"],
-        ["ListSortNodeMK2",        "List Sort MK2"],
+        ["ListSortNodeMK2",     "List Sort"],
         ["ListFlipNode",        "List Flip"],
     ]
 
@@ -197,7 +195,6 @@ def make_node_cats():
 # orange
     node_cats["Viz"] = [
         ["ViewerNode2",          "Viewer Draw",         'RETOPO'],
-        # ["BmeshViewerNode",     "Viewer BMesh"],
         ["SvBmeshViewerNodeMK2", "Viewer BMeshMK2"],
         ["IndexViewerNode",      "Viewer Index"],
         ["Sv3DviewPropsNode",    "3dview Props"],
@@ -217,17 +214,18 @@ def make_node_cats():
 # green
     node_cats["Scene"] = [
         ["ObjectsNode",         "Objects in"],
-        ["SvObjRemoteNode",     "Scene Objects"],
-        ["SvNodeRemoteNode",     "Node Remote"],
+        ["SvObjRemoteNode",     "Object Remote (Control)"],
+        # ["SvNodeRemoteNode",    "Node Remote (Control)"],
         ["SvFrameInfoNode",     "Frame info"],
         ["SvEmptyOutNode",      "Empty out",    "OUTLINER_OB_EMPTY"],
-        ["SvInstancerNode",     "mesh instancer"],
+        ["SvDupliInstancesMK3", "Dupli instancer"],
+        ["SvInstancerNode",     "Mesh instancer"],
         ["SvGetPropNode",       "Get property",      'FORCE_VORTEX'],
         ["SvSetPropNode",       "Set property",      'FORCE_VORTEX'],
-        ["SvVertexGroupNode",   "Vertext group"],
-        ["SvRayCastSceneNode",   "Scene Raycast"],
-        ["SvRayCastObjectNode",  "Object ID Raycast"],
-        ["SvVertexColorNode",   "Vertext color"],
+        ["SvVertexGroupNode",   "Vertex group"],
+        ["SvRayCastSceneNode",  "Scene Raycast"],
+        ["SvRayCastObjectNode", "Object ID Raycast"],
+        ["SvVertexColorNode",   "Vertex color"],
     ]
 
 # violet
@@ -264,12 +262,12 @@ def make_node_cats():
         ['SvTypeViewerNode',      'Typography Viewer'],
         ["SvImageComponentsNode", "Image Decompose",  "GROUP_VCOL"],
         ["SvJoinTrianglesNode",   "Join Triangles"],
-        ["SvPrototypeJS",         "Prototype JS"],
         ["SvCacheNode",           "Cache"],
         ["SvInsetSpecial",        "Inset Special"],
         ["SkinViewerNode",        "Skin Mesher"],
         ["SvCSGBooleanNode",      "CSG Boolean"],
         ["SvNumpyArrayNode",      "Numpy Array"],
+        ["SvNodeRemoteNode",    "Node Remote (Control)"],
         ["SvGetDataObjectNode",   "Object ID Get"],
         ["SvSetDataObjectNode",   "Object ID Set"],
         ['SvSortObjsNode',        "Object ID Sort"],

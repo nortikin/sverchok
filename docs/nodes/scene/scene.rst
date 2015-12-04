@@ -7,5 +7,6 @@ Scene
 
    object_in
    frame_info
-   eval_knieval
+   get_set_properties
    obj_remote
+   dupli_instances

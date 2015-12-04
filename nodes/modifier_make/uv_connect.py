@@ -24,9 +24,9 @@ from sverchok.data_structure import (updateNode, fullList, multi_socket, levelsO
                             SvSetSocketAnyType, SvGetSocketAnyType)
 
 
-class LineConnectNode(bpy.types.Node, SverchCustomTreeNode):
+class LineConnectNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     ''' UV Connect node '''
-    bl_idname = 'LineConnectNode'
+    bl_idname = 'LineConnectNodeMK2'
     bl_label = 'UV Connect'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
@@ -258,11 +258,11 @@ class LineConnectNode(bpy.types.Node, SverchCustomTreeNode):
                 
                 
 def register():
-    bpy.utils.register_class(LineConnectNode)
+    bpy.utils.register_class(LineConnectNodeMK2)
 
 
 def unregister():
-    bpy.utils.unregister_class(LineConnectNode)
+    bpy.utils.unregister_class(LineConnectNodeMK2)
 
 if __name__ == '__main__':
     register()

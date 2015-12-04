@@ -1,128 +1,7 @@
 {
-  "connections": {
-    "0": [
-      "Circle",
-      "Vertices",
-      "Vectors Move",
-      "vertices"
-    ],
-    "1": [
-      "Vectors in",
-      "Vectors",
-      "Vectors Move",
-      "vectors"
-    ],
-    "2": [
-      "Vectors Move",
-      "vertices",
-      "Apply matrix for vectors",
-      "Vectors"
-    ],
-    "3": [
-      "Matrix in",
-      "Matrix",
-      "Apply matrix for vectors",
-      "Matrixes"
-    ],
-    "4": [
-      "Axis Input",
-      "Vectors",
-      "Matrix in",
-      "Rotation"
-    ],
-    "5": [
-      "Float Series",
-      "Range",
-      "Matrix in",
-      "Angle"
-    ],
-    "6": [
-      "Circle",
-      "Edges",
-      "List repeater",
-      "Data"
-    ],
-    "7": [
-      "Integer",
-      "Integer",
-      "Float Series",
-      "Stop"
-    ],
-    "8": [
-      "Integer",
-      "Integer",
-      "List repeater",
-      "Number"
-    ],
-    "9": [
-      "Apply matrix for vectors",
-      "Vectors",
-      "Mesh Join",
-      "Vertices"
-    ],
-    "10": [
-      "List repeater",
-      "Data",
-      "Mesh Join",
-      "PolyEdge"
-    ],
-    "11": [
-      "Mesh Join",
-      "Vertices",
-      "Viewer Draw2",
-      "vertices"
-    ],
-    "12": [
-      "Mesh Join",
-      "Vertices",
-      "Index Viewer Draw",
-      "vertices"
-    ],
-    "13": [
-      "Script Generator",
-      "Polygons",
-      "Viewer Draw2",
-      "edg_pol"
-    ],
-    "14": [
-      "Mesh Join",
-      "Vertices",
-      "Script Generator",
-      "verts"
-    ],
-    "15": [
-      "Integer.001",
-      "Integer",
-      "Circle",
-      "N\u00ba Vertices"
-    ],
-    "16": [
-      "Integer.001",
-      "Integer",
-      "Script Generator",
-      "num_u"
-    ],
-    "17": [
-      "Integer",
-      "Integer",
-      "Script Generator",
-      "num_v"
-    ],
-    "18": [
-      "Integer",
-      "Integer",
-      "function",
-      "Y"
-    ],
-    "19": [
-      "function",
-      "float",
-      "Float Series",
-      "Step"
-    ]
-  },
-  "export_version": "0.043 pre alpha",
+  "export_version": "0.055",
   "framed_nodes": {},
+  "groups": {},
   "nodes": {
     "Apply matrix for vectors": {
       "bl_idname": "MatrixApplyNode",
@@ -135,8 +14,8 @@
       "hide": true,
       "label": "",
       "location": [
-        47.3509521484375,
-        95.33321380615234
+        209.71124267578125,
+        115.32705688476562
       ],
       "params": {},
       "width": 140.0
@@ -152,8 +31,8 @@
       "hide": true,
       "label": "X",
       "location": [
-        -177.0379180908203,
-        -6.43353271484375
+        -124.58305358886719,
+        47.29991912841797
       ],
       "params": {
         "current_axis": "X",
@@ -181,6 +60,25 @@
       },
       "width": 140.0
     },
+    "Float": {
+      "bl_idname": "FloatNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -693.4865112304688,
+        44.08028793334961
+      ],
+      "params": {
+        "float_": 1.7999999523162842
+      },
+      "width": 140.0
+    },
     "Float Series": {
       "bl_idname": "SvGenFloatRange",
       "color": [
@@ -192,14 +90,33 @@
       "hide": false,
       "label": "",
       "location": [
-        -195.29660034179688,
-        -47.37416076660156
+        -142.84173583984375,
+        -6.136859893798828
       ],
       "params": {
         "count_": 6,
         "mode": "FRANGE_STEP",
         "step_": 60.0,
         "stop_": 360.0
+      },
+      "width": 140.0
+    },
+    "Float.001": {
+      "bl_idname": "FloatNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -691.677001953125,
+        220.50314331054688
+      ],
+      "params": {
+        "float_": 0.6399999856948853
       },
       "width": 140.0
     },
@@ -214,8 +131,8 @@
       "hide": true,
       "label": "",
       "location": [
-        240.0873260498047,
-        280.15093994140625
+        388.0321960449219,
+        235.33934020996094
       ],
       "params": {},
       "width": 140.0
@@ -231,8 +148,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -428.4913330078125,
-        4.779560089111328
+        -693.2634887695312,
+        -46.45466613769531
       ],
       "params": {
         "int_": 16
@@ -250,31 +167,11 @@
       "hide": false,
       "label": "",
       "location": [
-        -581.8828735351562,
-        68.49917602539062
+        -695.5350952148438,
+        134.72879028320312
       ],
       "params": {
         "int_": 8
-      },
-      "width": 140.0
-    },
-    "List repeater": {
-      "bl_idname": "ListRepeaterNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
-      "height": 100.0,
-      "hide": true,
-      "label": "",
-      "location": [
-        -126.89308166503906,
-        60.24123001098633
-      ],
-      "params": {
-        "level": 1,
-        "unwrap": 1
       },
       "width": 140.0
     },
@@ -289,86 +186,34 @@
       "hide": true,
       "label": "",
       "location": [
-        -49.681732177734375,
-        -2.9243240356445312
+        93.94467163085938,
+        83.29912567138672
       ],
       "params": {},
       "width": 140.0
     },
-    "Mesh Join": {
-      "bl_idname": "SvMeshJoinNode",
+    "UV Connect": {
+      "bl_idname": "LineConnectNodeMK2",
       "color": [
         0.6079999804496765,
         0.6079999804496765,
         0.6079999804496765
       ],
       "height": 100.0,
-      "hide": true,
+      "hide": false,
       "label": "",
       "location": [
-        144.257080078125,
-        67.2596206665039
-      ],
-      "params": {},
-      "width": 140.0
-    },
-    "Script Generator": {
-      "bl_idname": "SvScriptNode",
-      "color": [
-        0.0,
-        0.800000011920929,
-        0.949999988079071
-      ],
-      "height": 100.0,
-      "hide": false,
-      "label": "cyclic_surface.py",
-      "location": [
-        293.1385192871094,
-        121.22503662109375
+        406.2325439453125,
+        162.01609802246094
       ],
       "params": {
-        "button_names": "",
-        "files_popup": "names_sum.py",
-        "has_buttons": 0,
-        "int_list": [
-          0,
-          30,
-          6,
-          6,
-          1,
-          1,
-          6,
-          7,
-          8,
-          9,
-          10,
-          11,
-          12,
-          13,
-          14,
-          15,
-          16,
-          17,
-          18,
-          19,
-          20,
-          21,
-          22,
-          23,
-          24,
-          25,
-          26,
-          27,
-          28,
-          29,
-          30,
-          31
-        ],
-        "script_name": "cyclic_surface.py",
-        "script_str": "import numpy as np\n\ndef sv_main(verts=[], num_u=6, num_v=10, cyclic_u=0, cyclic_v=0):\n\n    in_sockets = [\n        ['v', 'verts', verts],\n        ['s', 'num_u', num_u],\n        ['s', 'num_v', num_v],\n        ['s', 'cyclic_u', cyclic_u],\n        ['s', 'cyclic_v', cyclic_v]]\n\n    # arbitrary user code\n    if not (cyclic_u in {0, 1}):\n        cyclic_u = 0\n\n    if not (cyclic_v in {0, 1}):\n        cyclic_v = 0\n        \n    # adjust_to_index\n    num_u -= 1\n    num_v -= 1    \n    num_u = max(2, num_u)\n    num_v = max(2, num_v)\n\n    # perform U polygon make\n    _Up = np.array([(i, i+1, i+num_u+2, i+num_u+1) for i in range(num_u)])\n    if cyclic_u:\n        _UpClose = np.array([[num_u, 0, num_u+1, 2*(num_u+1)-1]])\n        p = np.concatenate((_Up, _UpClose), 0)\n    else:\n        p = _Up\n\n    # perform V polygon make\n    if True:\n        tp = p\n        for j in range(1, num_v):\n            offset = j*(num_u+1)\n            next_level = p+offset\n            tp = np.concatenate((tp, next_level), 0)\n            \n        if cyclic_v:\n            offset = num_u+1\n            m = next_level+offset\n            mod = m[0][0]\n            # print(m.T)\n            mT = m.T\n            mT0 = mT[0]\n            mT1 = np.roll(mT[1] % mod, 1)\n            mT2 = mT[1] % mod\n            mT3 = np.roll(mT[0], -1)\n            d = np.array([mT0, mT3, mT2, mT1])\n            dT = d.T\n            tp = np.concatenate((tp, dT), 0)\n            \n    else:\n        tp = p\n        \n    p = tp.tolist()\n    # out boilerplate\n    out_sockets = [\n        ['s', 'Polygons', p]\n    ]\n\n    return in_sockets, out_sockets\n",
-        "user_name": "templates"
+        "cicl_check_U": 1,
+        "cicl_check_V": 1,
+        "dir_check": "U_dir",
+        "polygons": "Pols",
+        "slice_check": 0
       },
-      "width": 177.40399169921875
+      "width": 140.0
     },
     "Vectors Move": {
       "bl_idname": "VectorMoveNode",
@@ -381,8 +226,8 @@
       "hide": true,
       "label": "",
       "location": [
-        -122.14805603027344,
-        102.35157775878906
+        86.42247009277344,
+        128.59349060058594
       ],
       "params": {},
       "width": 140.0
@@ -398,8 +243,8 @@
       "hide": true,
       "label": "",
       "location": [
-        -246.891357421875,
-        145.6063232421875
+        -126.99453735351562,
+        119.36439514160156
       ],
       "params": {
         "y_": 2.5799999237060547
@@ -417,8 +262,8 @@
       "hide": false,
       "label": "",
       "location": [
-        593.1516723632812,
-        212.30642700195312
+        717.2861938476562,
+        298.9686584472656
       ],
       "params": {
         "display_edges": 1,
@@ -428,31 +273,6 @@
           0.0,
           0.14438757300376892,
           0.8989997506141663
-        ],
-        "shading": 1
-      },
-      "width": 140.0
-    },
-    "Viewer Draw2.001": {
-      "bl_idname": "ViewerNode2",
-      "color": [
-        0.699999988079071,
-        0.699999988079071,
-        0.699999988079071
-      ],
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        586.138427734375,
-        -45.03472900390625
-      ],
-      "params": {
-        "display_edges": 1,
-        "edge_colors": [
-          0.8989997506141663,
-          0.23481446504592896,
-          0.23481446504592896
         ],
         "shading": 1
       },
@@ -469,8 +289,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -412.924560546875,
-        -82.92090606689453
+        -394.1907043457031,
+        -6.69438362121582
       ],
       "params": {
         "items_": "DIV",
@@ -480,24 +300,6 @@
     }
   },
   "update_lists": [
-    [
-      "Integer.001",
-      "Integer",
-      "Circle",
-      "N\u00ba Vertices"
-    ],
-    [
-      "Circle",
-      "Edges",
-      "List repeater",
-      "Data"
-    ],
-    [
-      "Integer",
-      "Integer",
-      "List repeater",
-      "Number"
-    ],
     [
       "Integer",
       "Integer",
@@ -529,6 +331,24 @@
       "Angle"
     ],
     [
+      "Float.001",
+      "Float",
+      "Circle",
+      "Radius"
+    ],
+    [
+      "Integer.001",
+      "Integer",
+      "Circle",
+      "N\u00ba Vertices"
+    ],
+    [
+      "Float",
+      "Float",
+      "Vectors in",
+      "Y"
+    ],
+    [
       "Circle",
       "Vertices",
       "Vectors Move",
@@ -555,50 +375,26 @@
     [
       "Apply matrix for vectors",
       "Vectors",
-      "Mesh Join",
-      "Vertices"
-    ],
-    [
-      "List repeater",
-      "Data",
-      "Mesh Join",
-      "PolyEdge"
-    ],
-    [
-      "Mesh Join",
-      "Vertices",
-      "Script Generator",
-      "verts"
-    ],
-    [
-      "Integer.001",
-      "Integer",
-      "Script Generator",
-      "num_u"
-    ],
-    [
-      "Integer",
-      "Integer",
-      "Script Generator",
-      "num_v"
-    ],
-    [
-      "Mesh Join",
-      "Vertices",
-      "Viewer Draw2",
-      "vertices"
-    ],
-    [
-      "Script Generator",
-      "Polygons",
-      "Viewer Draw2",
-      "edg_pol"
-    ],
-    [
-      "Mesh Join",
-      "Vertices",
       "Index Viewer Draw",
       "vertices"
+    ],
+    [
+      "Apply matrix for vectors",
+      "Vectors",
+      "UV Connect",
+      "vertices"
+    ],
+    [
+      "UV Connect",
+      "vertices",
+      "Viewer Draw2",
+      "vertices"
+    ],
+    [
+      "UV Connect",
+      "data",
+      "Viewer Draw2",
+      "edg_pol"
     ]
   ]
 }

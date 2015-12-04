@@ -8,6 +8,7 @@ nodes_dict = {
         'edge_angles',
         'distance_pp',
         'polygons_centers',
+        'polygons_centers_mk3',
         'neuro_elman',
         'image_components',
         'kd_tree',
@@ -24,7 +25,6 @@ nodes_dict = {
     ],
 
     'basic_view': [
-        'viewer_bmesh',
         'viewer_bmesh_mk2',
         'viewer_indices',
         'viewer_curves',
@@ -42,6 +42,8 @@ nodes_dict = {
         'wifi_out',
         'switch',
         'obj_remote',
+        'dupli_instances',
+        'instancer',  # this is the mesh instancer (can I rename it? 'mesh_instances')
         'group',
         'cache',
         'getsetprop',
@@ -83,12 +85,10 @@ nodes_dict = {
         'random_vector',
         'script',
         'script_mk2',
-        'prototyper_js',
         'formula',
         'sphere',
         'basic_spline',
         'basic_3pt_arc',
-        'instancer',
         'profile',
         'generative_art'
     ],
@@ -103,13 +103,11 @@ nodes_dict = {
         'mask_join',
         'mask',
         'match',
-        'sum',
         'sum_mk2',
         'zip'
     ],
 
     'list_interfere': [
-        'shift',
         'shift_mk2',
         'repeater',
         'slice',
@@ -118,7 +116,6 @@ nodes_dict = {
         'item',
         'reverse',
         'shuffle',
-        'sort',
         'sort_mk2',
         'flip',
         'numpy_array'
@@ -166,7 +163,7 @@ nodes_dict = {
         'edges_adaptative',
         'join_tris',
         'lathe',
-        'line_connect',
+        'uv_connect',
         'offset',
         'inset_special',
         'polygons_adaptative',
