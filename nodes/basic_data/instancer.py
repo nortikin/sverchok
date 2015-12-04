@@ -182,8 +182,6 @@ class SvInstancerNode(bpy.types.Node, SverchCustomTreeNode):
         if not matrices:
             return
 
-        print(matrices)
-
         # we have matrices, we can process, go go go!
         for obj_index, matrix in enumerate(matrices):
             obj_name = self.basemesh_name + "_" + str(obj_index)
