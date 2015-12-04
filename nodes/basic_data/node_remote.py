@@ -71,10 +71,8 @@ class SvNodeRemoteNode(bpy.types.Node, SverchCustomTreeNode):
         description='stores the name of the node referenced by this node',
         update=updateNode)
 
-    input_idx = StringProperty()
+    input_idx = StringProperty(default='None', update=update_label)
     execstr = StringProperty(default='', update=updateNode)
-
-    # kind = StringProperty()
 
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', 'auto_convert')
@@ -96,7 +94,6 @@ class SvNodeRemoteNode(bpy.types.Node, SverchCustomTreeNode):
             if self.node_name:
                 node = node_group.nodes[self.node_name]
                 col.prop_search(self, 'input_idx', node, 'inputs', text='', icon='DRIVER')
-                # col.label(self.kind)
 
     def process(self):
         if not self.activate:
@@ -108,7 +105,6 @@ class SvNodeRemoteNode(bpy.types.Node, SverchCustomTreeNode):
             if node:
                 named_input = node.inputs.get(self.input_idx)
                 if named_input:
-                    # self.kind = str(node.inputs[self.input_idx].bl_idname)
                     # [ ] switch socket type if needed
                     data = self.inputs[0].sv_get()
                     assign_data(named_input.value, data)
