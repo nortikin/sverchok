@@ -71,7 +71,7 @@ class SvNodeRemoteNode(bpy.types.Node, SverchCustomTreeNode):
         description='stores the name of the node referenced by this node',
         update=updateNode)
 
-    input_idx = StringProperty(default='None', update=update_label)
+    input_idx = StringProperty()
     execstr = StringProperty(default='', update=updateNode)
 
     def sv_init(self, context):
