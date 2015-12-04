@@ -43,6 +43,7 @@ nodes_dict = {
         'switch',
         'obj_remote',
         'dupli_instances',
+        'instancer',  # this is the mesh instancer (can I rename it? 'mesh_instances')
         'group',
         'cache',
         'getsetprop',
