@@ -41,13 +41,26 @@ class SvDupliInstancesMK3(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Dupli Instances MK3'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
+    def set_child_quota(self, context):
+        updateNode(self, context)
+
+        # post update check
+        if self.auto_release:
+            parent = self.name_node_generated_parent
+            if parent:
+                for obj in bpy.data.objects[parent].children:
+                    if not obj.name == self.name_child:
+                        obj.parent = None
+
     name_node_generated_parent = StringProperty(
         description="name of the parent that this node generates",
         update=updateNode)
 
     name_child = StringProperty(
         description="name of object to duplicate",
-        update=updateNode)
+        update=set_child_quota)
+
+    auto_release = BoolProperty(update=set_child_quota)
 
     def sv_init(self, context):
         self.inputs.new("VerticesSocket", "Locations")
@@ -58,6 +71,7 @@ class SvDupliInstancesMK3(bpy.types.Node, SverchCustomTreeNode):
         col = layout.column()
         col.prop(self, 'name_node_generated_parent', text='', icon='LOOPSEL')
         col.prop_search(self, 'name_child', bpy.data, 'objects', text='')
+        col.prop(self, 'auto_release', text='One Object only')
 
     def process(self):
         locations = self.inputs['Locations'].sv_get(default=None)
