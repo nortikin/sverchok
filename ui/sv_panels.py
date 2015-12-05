@@ -21,6 +21,7 @@ import bpy
 from bpy.props import StringProperty, CollectionProperty, BoolProperty, FloatProperty
 
 # global variables in tools
+import sverchok
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils import sv_panels_tools
 from sverchok.core.update_system import process_from_node
@@ -102,12 +103,16 @@ class Sv3DPanel(bpy.types.Panel):
         layout = self.layout
         little_width = 0.12
 
-        # Live Update Modal trigger. Verbose for now.
-        row = layout.row()
-        if context.scene.SvShowIn3D_active:
-            row.operator('wm.sv_obj_modal_update', text='Press to stop live update').mode = 'end'
-        else:
-            row.operator('wm.sv_obj_modal_update', text='Press to start live update').mode = 'start'
+        addon = context.user_preferences.addons.get(sverchok.__name__)
+        if addon.preferences.enable_live_objin:
+
+            # Live Update Modal trigger.
+            row = layout.row()
+            OP = 'wm.sv_obj_modal_update'
+            if context.scene.SvShowIn3D_active:
+                row.operator(OP, text='Stop live update', icon='CANCEL').mode = 'end'
+            else:
+                row.operator(OP, text='Start live update', icon='EDIT').mode = 'start'
 
         col = layout.column(align=True)
         row = col.row(align=True)

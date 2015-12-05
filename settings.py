@@ -8,10 +8,11 @@ from sverchok.core import update_system
 from sverchok.utils import sv_panels_tools
 from sverchok.ui import color_def
 
+
 class SverchokPreferences(AddonPreferences):
 
     bl_idname = __package__
-    
+
     def update_debug_mode(self, context):
         data_structure.DEBUG_MODE = self.show_debug
 
@@ -20,7 +21,7 @@ class SverchokPreferences(AddonPreferences):
 
     def set_frame_change(self, context):
         handlers.set_frame_change(self.frame_change_mode)
-    
+
     def update_theme(self, context):
         color_def.rebuild_color_cache()
         if self.auto_apply_theme:
@@ -45,7 +46,6 @@ class SverchokPreferences(AddonPreferences):
         default=(0.8, 0.0, 0), subtype='COLOR',
         update=update_system.update_error_colors)
 
-
     #  heat map settings
     heat_map = BoolProperty(
         name="Heat map",
@@ -62,16 +62,16 @@ class SverchokPreferences(AddonPreferences):
         name="Heat map cold", description='',
         size=3, min=0.0, max=1.0,
         default=(1, 1, 1), subtype='COLOR')
-    
+
     #  theme settings
 
-    sv_theme = EnumProperty(items=color_def.themes, 
-                         name="Theme preset",
-                         description="Select a theme preset",
-                         update=color_def.color_callback,
-                         default="default_theme")
-                          
-    
+    sv_theme = EnumProperty(
+        items=color_def.themes,
+        name="Theme preset",
+        description="Select a theme preset",
+        update=color_def.color_callback,
+        default="default_theme")
+
     auto_apply_theme = BoolProperty(
         name="Apply theme", description="Apply theme automaticlly",
         default=False)
@@ -91,7 +91,7 @@ class SverchokPreferences(AddonPreferences):
         size=3, min=0.0, max=1.0,
         default=(0.5, 0.5, 1), subtype='COLOR',
         update=update_theme)
-    
+
     color_sce = FloatVectorProperty(
         name="Scene", description='',
         size=3, min=0.0, max=1.0,
@@ -107,7 +107,7 @@ class SverchokPreferences(AddonPreferences):
     color_gen = FloatVectorProperty(
         name="Generator", description='',
         size=3, min=0.0, max=1.0,
-        default=(0,0.5,0.5), subtype='COLOR',
+        default=(0, 0.5, 0.5), subtype='COLOR',
         update=update_theme)
 
     #  frame change
@@ -125,20 +125,23 @@ class SverchokPreferences(AddonPreferences):
         update=set_frame_change)
 
     #  ctrl+space settings
-    
+
     show_icons = BoolProperty(
         name="Show icons in ctrl+space menu",
         default=False,
         description="Use icons in ctrl+space menu")
-    
+
     over_sized_buttons = BoolProperty(default=False, name="Big buttons",
                                       description="Very big buttons")
 
+    enable_live_objin = BoolProperty(
+        description="Objects in edit mode will be updated in object-in Node")
+
     def draw(self, context):
         layout = self.layout
-        #row = layout.split(percentage=0.33)
+        # row = layout.split(percentage=0.33)
         row = layout
-        
+
         col = row.column(align=True)
         col.label(text="General:")
         col.label(text="Frame change handler:")
@@ -146,21 +149,21 @@ class SverchokPreferences(AddonPreferences):
         row1.prop(self, "frame_change_mode", expand=True)
         col.prop(self, "show_icons")
         col.prop(self, "over_sized_buttons")
+        col.prop(self, "enable_live_objin", text='Enable Live Object-In')
         col.separator()
-        
-        
+
         col.label(text="Sverchok node theme settings")
-        
+
         row2 = col.row()
         row2.prop(self, 'auto_apply_theme', text="Auto apply theme changes")
         row2.prop(self, 'apply_theme_on_open', text="Apply theme when opening file")
-        
+
         row2.operator('node.sverchok_apply_theme', text="Apply theme to layouts")
-        
+
         col1 = col.split(percentage=.5, align=True)
         col1.prop(self, 'sv_theme')
         col.separator()
-        
+
         split = col.split(percentage=0.5, align=True)
 
         col1 = split.column()
@@ -171,8 +174,8 @@ class SverchokPreferences(AddonPreferences):
         col2 = split.column()
         for name in ['color_lay', 'color_gen']:
             r = col2.row()
-            r.prop(self, name)        
-        
+            r.prop(self, name)
+
         # debug
         col = row.column(align=True)
         col.label(text="Debug:")
@@ -182,22 +185,21 @@ class SverchokPreferences(AddonPreferences):
         row1 = col.row()
         row1.prop(self, "exception_color")
         row1.prop(self, "no_data_color")
-        
-        
+
         col.prop(self, "heat_map")
         row1 = col.row()
         row1.active = self.heat_map
-        
+
         row1.prop(self, "heat_map_hot")
         row1.prop(self, "heat_map_cold")
-                
+
         col = row.column(align=True)
         col.label(text="Links:")
         row1 = col.row(align=True)
-        row1.scale_y=2.0
+        row1.scale_y = 2.0
         row1.operator('wm.url_open', text='Sverchok home page').url = 'http://nikitron.cc.ua/blend_scripts.html'
         row1.operator('wm.url_open', text='Documentation').url = 'http://nikitron.cc.ua/sverch/html/main.html'
-        
+
         if context.scene.sv_new_version:
             row1.operator('node.sverchok_update_addon', text='Upgrade Sverchok addon')
         else:
