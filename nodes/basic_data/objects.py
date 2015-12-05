@@ -21,26 +21,36 @@ from ast import literal_eval
 import bpy
 from bpy.props import BoolProperty, StringProperty
 
-from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (handle_read, handle_write, handle_delete,
-                            SvSetSocketAnyType, updateNode)
 import sverchok
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import (
+    handle_read, handle_write, handle_delete,
+    SvSetSocketAnyType, updateNode
+)
+
 
 class SvObjSelectObjectInItemsInScene(bpy.types.Operator):
-    """ SELECT NODE'S OBJECTS from object in node at scene 3d """
+
+    """ select node's Objects from object-in Node at scene 3d"""
+
     bl_idname = "node.sverchok_object_in_selector"
     bl_label = "Sv objectin selector"
     bl_options = {'REGISTER', 'UNDO'}
 
-    node_name = StringProperty(name='name node', description='it is name of node',
-                               default='')
-    tree_name = StringProperty(name='name tree', description='it is name of tree',
-                               default='')
+    node_name = StringProperty(
+        name='name node',
+        description='it is name of node',
+        default='')
+
+    tree_name = StringProperty(
+        name='name tree',
+        description='it is name of tree',
+        default='')
 
     def execute(self, context):
         name_no = self.node_name
         name_tr = self.tree_name
-        handle = handle_read(name_no+name_tr)
+        handle = handle_read(name_no + name_tr)
         if handle[0]:
             for o in handle[1]:
                 bpy.data.objects[o].select = True
@@ -54,14 +64,17 @@ class SvObjSelected(bpy.types.Operator):
     bl_label = "Sverchok object selector"
     bl_options = {'REGISTER', 'UNDO'}
 
-    node_name = StringProperty(name='name node', description='it is name of node',
-                               default='')
-    tree_name = StringProperty(name='name tree', description='it is name of tree',
-                               default='')
-    grup_name = StringProperty(name='grup tree', description='it is name of grup',
-                               default='')
-    sort = BoolProperty(name='sort objects', description='to sort objects by name or not',
-                               default=True)
+    node_name = StringProperty(
+        name='name node', description='it is name of node', default='')
+
+    tree_name = StringProperty(
+        name='name tree', description='it is name of tree', default='')
+
+    grup_name = StringProperty(
+        name='grup tree', description='it is name of group', default='')
+
+    sort = BoolProperty(
+        name='sort objects', description='to sort objects by name or not', default=True)
 
     def enable(self, name_no, name_tr, handle, sorting):
         objects = []
@@ -70,17 +83,16 @@ class SvObjSelected(bpy.types.Operator):
         elif bpy.context.selected_objects:
             objs = bpy.context.selected_objects
         else:
-            self.report({'WARNING'},'No object selected')
+            self.report({'WARNING'}, 'No object selected')
             return
         for o in objs:
             objects.append(o.name)
         if sorting:
             objects.sort()
-        handle_write(name_no+name_tr, objects)
-        # временное решение с группой. надо решать, как достать имя группы узлов
+        handle_write(name_no + name_tr, objects)
+
         if bpy.data.node_groups[name_tr]:
-            handle = handle_read(name_no+name_tr)
-            #print ('exec',name)
+            handle = handle_read(name_no + name_tr)
             bpy.data.node_groups[name_tr].nodes[name_no].objects_local = str(handle[1])
 
     def disable(self, name, handle):
@@ -92,8 +104,8 @@ class SvObjSelected(bpy.types.Operator):
         name_no = self.node_name
         name_tr = self.tree_name
         sorting = self.sort
-        handle = handle_read(name_no+name_tr)
-        self.disable(name_no+name_tr, handle)
+        handle = handle_read(name_no + name_tr)
+        self.disable(name_no + name_tr, handle)
         self.enable(name_no, name_tr, handle, sorting)
         print('have got {0} items from scene.'.format(handle[1]))
         return {'FINISHED'}
@@ -110,7 +122,7 @@ class ObjectsNode(bpy.types.Node, SverchCustomTreeNode):
             self.outputs.new('StringsSocket', "Vers_grouped", "Vers_grouped")
         elif not self.vergroups and ('Vers_grouped' in self.outputs):
             self.outputs.remove(self.outputs['Vers_grouped'])
-        
+
     objects_local = StringProperty(
         name='local objects in', description='objects, binded to current node',
         default='', update=updateNode)
@@ -150,7 +162,7 @@ class ObjectsNode(bpy.types.Node, SverchCustomTreeNode):
         else:
             row.scale_y = 1
             op_text = "Get selection"
-            
+
         opera = row.operator('node.sverchok_object_insertion', text=op_text)
         opera.node_name = self.name
         opera.tree_name = self.id_data.name
@@ -161,29 +173,28 @@ class ObjectsNode(bpy.types.Node, SverchCustomTreeNode):
         opera = row.operator('node.sverchok_object_in_selector', text='Select')
         opera.node_name = self.name
         opera.tree_name = self.id_data.name
-        
+
         row = layout.row(align=True)
         row.prop(self, 'groupname', text='')
         row.prop(self, 'sort', text='Sort objects')
-        
+
         row = layout.row(align=True)
         row.prop(self, "modifiers", text="Post modifiers")
         # row = layout.row(align=True)
         row.prop(self, "vergroups", text="Vert groups")
-        
-        handle = handle_read(self.name+self.id_data.name)
+
+        handle = handle_read(self.name + self.id_data.name)
         if self.objects_local:
             if handle[0]:
                 for i, o in enumerate(handle[1]):
                     if i > 4:
-                        layout.label('. . . more '+str(len(handle[1])-5)+' items')
+                        layout.label('. . . more ' + str(len(handle[1]) - 5) + ' items')
                         break
                     layout.label(o)
             else:
-                handle_write(self.name+self.id_data.name, literal_eval(self.objects_local))
+                handle_write(self.name + self.id_data.name, literal_eval(self.objects_local))
         else:
             layout.label('--None--')
-        
 
     def update(self):
         pass
@@ -196,11 +207,11 @@ class ObjectsNode(bpy.types.Node, SverchCustomTreeNode):
     def process(self):
         name = self.name + self.id_data.name
         handle = handle_read(name)
-        #reload handle if possible
+        # reload handle if possible
         if self.objects_local and not handle[0]:
             handle_write(name, literal_eval(self.objects_local))
-            handle = handle_read(name)    
-            
+            handle = handle_read(name)
+
         if handle[0]:
             objs = handle[1]
             edgs_out = []
@@ -273,5 +284,3 @@ def unregister():
 
 if __name__ == '__main__':
     register()
-
-
