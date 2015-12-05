@@ -260,7 +260,7 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
         except:
             return
         if self.is_frozen():
-            print("Skippiping update of {}".format(self.name))
+            print("Skipping update of {}".format(self.name))
             return
 
         self.adjust_reroutes()
