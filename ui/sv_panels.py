@@ -45,6 +45,9 @@ class Sv3DViewObjInUpdater(bpy.types.Operator, object):
             self.cancel(context)
             return {'FINISHED'}
 
+        if not (event.type == 'TIMER'):
+            return {'PASS_THROUGH'}
+
         nodes = []
         for ng in bpy.data.node_groups:
             if ng.bl_idname == 'SverchCustomTreeType':
@@ -52,9 +55,6 @@ class Sv3DViewObjInUpdater(bpy.types.Operator, object):
                     for n in ng.nodes:
                         if n.bl_idname == 'ObjectsNode':
                             nodes.append(n)
-
-        if not (event.type == 'TIMER'):
-            return {'PASS_THROUGH'}
 
         ''' reaches here only if event is TIMER and self.active '''
         for n in nodes:
