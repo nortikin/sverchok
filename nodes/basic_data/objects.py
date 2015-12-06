@@ -27,7 +27,7 @@ from sverchok.data_structure import (handle_read, handle_write, handle_delete,
 import sverchok
 
 class SvObjSelectObjectInItemsInScene(bpy.types.Operator):
-    """ SELECT NODE'S OBJECTS from object in node at scene 3d """
+    """ Select nodes's Objects from object_in node at scene 3d """
     bl_idname = "node.sverchok_object_in_selector"
     bl_label = "Sv objectin selector"
     bl_options = {'REGISTER', 'UNDO'}
