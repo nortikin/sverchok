@@ -24,7 +24,7 @@ from bpy.props import StringProperty, CollectionProperty, BoolProperty, FloatPro
 import sverchok
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils import sv_panels_tools
-from sverchok.core.update_system import process_from_node
+from sverchok.core.update_system import process_from_node, process_from_nodes
 
 
 class Sv3DViewObjInUpdater(bpy.types.Operator, object):
@@ -48,18 +48,21 @@ class Sv3DViewObjInUpdater(bpy.types.Operator, object):
         if not (event.type == 'TIMER'):
             return {'PASS_THROUGH'}
 
-        nodes = []
+        obj_nodes = []
         for ng in bpy.data.node_groups:
             if ng.bl_idname == 'SverchCustomTreeType':
                 if ng.sv_process:
+                    nodes = []
                     for n in ng.nodes:
                         if n.bl_idname == 'ObjectsNode':
                             nodes.append(n)
+                    if nodes:
+                        obj_nodes.append(nodes)
 
         ''' reaches here only if event is TIMER and self.active '''
-        for n in nodes:
+        for n in obj_nodes:
             # print('calling process on:', n.name, n.id_data)
-            process_from_node(n)
+            process_from_nodes(n)
 
         return {'PASS_THROUGH'}
 
