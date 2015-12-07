@@ -326,7 +326,7 @@ def import_tree(ng, fullpath='', nodes_json=None, create_texts=True):
                         node.load()
 
                 elif node.bl_idname == 'SvProfileNode':
-                    new_text = texts.new(node.filename)
+                    new_text = texts.new(node_ref['params']['filename'])
                     new_text.from_string(node_ref['path_file'])
                     node.update()
 
