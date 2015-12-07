@@ -204,10 +204,15 @@ class SvScriptNode(bpy.types.Node, SverchCustomTreeNode):
         self.use_custom_color = False
 
     def load(self):
+        # print('in load')
         if self.script_name:
-            self.script_str = bpy.data.texts[self.script_name].as_string()
-            self.label = self.script_name
-            self.load_function()
+            # print('self script_name', self.script_name)
+            if self.script_name in bpy.data.texts:
+                # print('yep, it is in texts')
+                self.script_str = bpy.data.texts[self.script_name].as_string()
+                self.label = self.script_name
+                self.load_function()
+        # print('end of load')
 
     def load_function(self):
         self.reset_node_dict()
@@ -490,7 +495,7 @@ class SvScriptNode(bpy.types.Node, SverchCustomTreeNode):
                     k = str(socket.sv_get())
                     kfree = k[2:-2]
                     this_val = ast.literal_eval(kfree)
-                    #this_val = socket.sv_get()[0][0]
+                    # this_val = socket.sv_get()[0][0]
                 except:
                     pass
 

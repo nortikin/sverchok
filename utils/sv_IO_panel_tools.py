@@ -33,9 +33,15 @@ from bpy.props import StringProperty
 from bpy.props import BoolProperty
 from sverchok import old_nodes
 
-_EXPORTER_REVISION_ = '0.055'
+SCRIPTED_NODES = {'SvScriptNode', 'SvScriptNodeMK2'}
+
+_EXPORTER_REVISION_ = '0.056'
 
 '''
+0.056 fixing SN1 script importing upon json load, will not duplicate
+      existing .py files by the same name. This tends to be preferred, one should
+      never have two files named the same which perform different operations.
+
 0.055 - (import) fix : SN reset (files_popup, username) params
       - (import) add : deals with importing from gist id.
 
@@ -79,7 +85,7 @@ def find_enumerators(node):
     ignored_enums = ['bl_icon', 'bl_static_type', 'type']
     node_props = node.bl_rna.properties[:]
     f = filter(lambda p: isinstance(p, EnumProperty), node_props)
-    return [p.identifier for p in f if not p.identifier in ignored_enums]
+    return [p.identifier for p in f if not (p.identifier in ignored_enums)]
 
 
 def compile_socket(link):
@@ -158,11 +164,11 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
             # this silences the import error when items not found.
             if ObjectsNode and (k == "objects_local"):
                 continue
+
             if TextInput and (k == 'current_text'):
                 node_dict['current_text'] = node.text
                 node_dict['text_lines'] = texts[node.text].as_string()
                 node_dict['textmode'] = node.textmode
-                
 
             if ProfileParamNode and (k == "filename"):
                 '''add file content to dict'''
@@ -197,10 +203,10 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
     layout_dict['nodes'] = nodes_dict
     layout_dict['groups'] = groups_dict
 
-    #''' get connections '''
-    #links = (compile_socket(l) for l in ng.links)
-    #connections_dict = {idx: link for idx, link in enumerate(links)}
-    #layout_dict['connections'] = connections_dict
+    # ''' get connections '''
+    # links = (compile_socket(l) for l in ng.links)
+    # connections_dict = {idx: link for idx, link in enumerate(links)}
+    # layout_dict['connections'] = connections_dict
 
     ''' get framed nodes '''
     framed_nodes = {}
@@ -274,6 +280,7 @@ def import_tree(ng, fullpath='', nodes_json=None, create_texts=True):
         for n in sorted(nodes_to_import):
             node_ref = nodes_to_import[n]
             bl_idname = node_ref['bl_idname']
+
             try:
                 if old_nodes.is_old(bl_idname):
                     old_nodes.register_old(bl_idname)
@@ -283,32 +290,46 @@ def import_tree(ng, fullpath='', nodes_json=None, create_texts=True):
                 print(bl_idname, 'not currently registered, skipping')
                 continue
 
-
-
-            ''' maintenance warning:
-            for the creation of new text files. If this script is run in a
-            file which contains these Text names already, then the script/file
-            names stored in the node must be updated to reflect this.
-
-            Also is a script/profile is used for more than one node it will lead
-            to duplication. All names have to collected and then fixed at end
-            '''
             if create_texts:
-                if node.bl_idname in ('SvScriptNode', 'SvScriptNodeMK2'):
-                    new_text = texts.new(node.script_name)
-                    #  there is no gurantee that we get the name we request
-                    if new_text.name != node.script_name:
-                        node.script_name = new_text.name
-                    new_text.from_string(node.script_str)
-                    node.user_name = "templates"               # best would be in the node.
-                    node.files_popup = "sv_lang_template.sn"   # import to reset easy fix
-                    node.load()
+                if node.bl_idname in SCRIPTED_NODES:
+
+                    '''
+                    Scripted Node will no longer create alternative versions of a file.
+                    If a scripted node wants to make a file called 'inverse.py' and the
+                    current .blend already contains such a file, then for simplicity the
+                    importer will not try to create 'inverse.001.py' and reference that.
+                    It will instead do nothing and assume the existing python file is
+                    functionally the same.
+
+                    If you have files that work differently but have the same name, stop.
+
+                    '''
+                    params = node_ref.get('params')
+                    if params:
+
+                        script_name = params.get('script_name')
+                        script_content = params.get('script_str')
+
+                        if script_name and not (script_name in texts):
+                            new_text = texts.new(script_name)
+                            new_text.from_string(script_content)
+
+                        node.script_name = script_name
+                        node.script_str = script_content
+
+                    if node.bl_idname == 'SvScriptNode':
+                        node.user_name = "templates"               # best would be in the node.
+                        node.files_popup = "sv_lang_template.sn"   # import to reset easy fix
+                        node.load()
+                    else:
+                        node.files_popup = node.avail_templates(None)[0][0]
+                        node.load()
 
                 elif node.bl_idname == 'SvProfileNode':
                     new_text = texts.new(node.filename)
                     new_text.from_string(node_ref['path_file'])
-                    #  needed!
                     node.update()
+
                 elif node.bl_idname == 'SvTextInNode':
                     if node_ref['current_text'] not in [a.name for a in texts]:
                         new_text = texts.new(node.current_text)
@@ -352,8 +373,8 @@ def import_tree(ng, fullpath='', nodes_json=None, create_texts=True):
                 node.group_name = group_name_remap.get(group_name, group_name)
             elif node.bl_idname == 'SvTextInNode':
                 node.reload()
-                #node.reset()
-                #node.load()
+                # node.reset()
+                # node.load()
 
         update_lists = nodes_json['update_lists']
         print('update lists:')
@@ -392,7 +413,7 @@ def import_tree(ng, fullpath='', nodes_json=None, create_texts=True):
         old_nodes.scan_for_old(ng)
         ng.unfreeze(hard=True)
         ng.update()
-        #bpy.ops.node.sverchok_update_current(node_group=ng.name)
+        # bpy.ops.node.sverchok_update_current(node_group=ng.name)
 
         # bpy.ops.node.select_all(action='DESELECT')
         # ng.update()
@@ -477,6 +498,7 @@ class SvNodeTreeExporter(bpy.types.Operator):
         wm.fileselect_add(self)
         return {'RUNNING_MODAL'}
 
+
 class SvNodeTreeImporterSilent(bpy.types.Operator):
 
     '''Importing operation just do it!'''
@@ -495,7 +517,8 @@ class SvNodeTreeImporterSilent(bpy.types.Operator):
         ng = bpy.data.node_groups[self.id_tree]
         import_tree(ng, self.filepath)
         return {'FINISHED'}
-    
+
+
 class SvNodeTreeImporter(bpy.types.Operator):
 
     '''Importing operation will let you pick a file to import from'''
