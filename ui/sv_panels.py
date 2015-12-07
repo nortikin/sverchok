@@ -27,6 +27,30 @@ from sverchok.utils import sv_panels_tools
 from sverchok.core.update_system import process_from_node, process_from_nodes
 
 
+class SverchokUpdateObjectIn(bpy.types.Operator):
+    """Sverchok update all object in"""
+    bl_idname = "object.sverchok_update_object_in"
+    bl_label = "Sverchok update all"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    def execute(self, context):
+        obj_nodes = []
+        for ng in bpy.data.node_groups:
+            if ng.bl_idname == 'SverchCustomTreeType':
+                if ng.sv_process:
+                    nodes = []
+                    for n in ng.nodes:
+                        if n.bl_idname == 'ObjectsNode':
+                            nodes.append(n)
+                    if nodes:
+                        obj_nodes.append(nodes)
+
+        for n in obj_nodes:
+            process_from_nodes(n)
+        return {'FINISHED'}
+
+
+
 class Sv3DViewObjInUpdater(bpy.types.Operator, object):
 
     """Operator which runs its self from a timer"""
@@ -303,6 +327,7 @@ sv_tools_classes = [
     Sv3DViewObjInUpdater,
     SverchokToolsMenu,
     Sv3DPanel,
+    SverchokUpdateObjectIn
 ]
 
 
