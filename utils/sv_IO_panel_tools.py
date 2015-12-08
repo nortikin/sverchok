@@ -41,6 +41,7 @@ _EXPORTER_REVISION_ = '0.056'
 0.056 fixing SN1 script importing upon json load, will not duplicate
       existing .py files by the same name. This tends to be preferred, one should
       never have two files named the same which perform different operations.
+      main fixes SN1, SN2, ProfileNode, TextInput (json-mode only verified)
 
 0.055 - (import) fix : SN reset (files_popup, username) params
       - (import) add : deals with importing from gist id.
