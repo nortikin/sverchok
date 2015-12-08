@@ -392,9 +392,10 @@ def import_tree(ng, fullpath='', nodes_json=None, create_texts=True):
                 group_name = node.group_name
                 node.group_name = group_name_remap.get(group_name, group_name)
             elif node.bl_idname == 'SvTextInNode':
-                node.reload()
+                # node.reload()
                 # node.reset()
-                # node.load()
+                # node.reload()
+                node.load()
 
         update_lists = nodes_json['update_lists']
         print('update lists:')
