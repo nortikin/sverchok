@@ -167,8 +167,15 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
 
             if TextInput and (k == 'current_text'):
                 node_dict['current_text'] = node.text
-                node_dict['text_lines'] = texts[node.text].as_string()
                 node_dict['textmode'] = node.textmode
+                if node.textmode == 'JSON':
+                    # let us add the json as full member to the tree :)
+                    text_str = texts[node.text].as_string()
+                    json_as_dict = json.loads(text_str)
+                    node_dict['text_lines'] = {}
+                    node_dict['text_lines']['stored_as_json'] = json_as_dict
+                else:
+                    node_dict['text_lines'] = texts[node.text].as_string()
 
             if ProfileParamNode and (k == "filename"):
                 '''add file content to dict'''
@@ -330,13 +337,26 @@ def import_tree(ng, fullpath='', nodes_json=None, create_texts=True):
                     new_text.from_string(node_ref['path_file'])
                     node.update()
 
+                # as it's a beta service, old IO json may not be compatible - in this interest
+                # of neat code we assume it finds everything.
                 elif node.bl_idname == 'SvTextInNode':
-                    if node_ref['current_text'] not in [a.name for a in texts]:
-                        new_text = texts.new(node.current_text)
-                        new_text.name = node_ref['current_text']
-                        new_text.from_string(node_ref['text_lines'])
+                    params = node_ref.get('params')
+                    current_text = params['current_text']
+                    node.textmode = params['textmode']
+
+                    if not current_text:
+                        print(node.name, "doesn't store a current_text in params")
+
+                    elif not (current_text in texts):
+                        new_text = texts.new(current_text)
+                        if node.textmode == 'JSON':
+                            json_str = json.dumps(node_ref['text_lines']['stored_as_json'])
+                            new_text.from_string(json_str)
+                        else:
+                            new_text.from_string(node_ref['text_lines'])
+
                     else:
-                        texts[node_ref['current_text']].from_string(node_ref['text_lines'])
+                        texts[current_text].from_string(node_ref['text_lines'])
 
             '''
             When n is assigned to node.name, blender will decide whether or
