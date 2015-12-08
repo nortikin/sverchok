@@ -91,7 +91,7 @@ class Sv3DViewObjInUpdater(bpy.types.Operator, object):
 
 
 class Sv3DPanel(bpy.types.Panel):
-    ''' Panel to manipuplate parameters in sverchok layouts '''
+    ''' Panel to manipuplate parameters in Sverchok layouts '''
 
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
