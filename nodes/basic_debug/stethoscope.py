@@ -23,10 +23,17 @@ from sverchok.node_tree import SverchCustomTreeNode, MatrixSocket, VerticesSocke
 from sverchok.data_structure import dataCorrect, node_id, updateNode, SvGetSocketAnyType
 from sverchok.ui import nodeview_bgl_viewer_draw as nvBGL
 from mathutils import Vector
-    
+
+
 # status colors
 FAIL_COLOR = (0.1, 0.05, 0)
 READY_COLOR = (1, 0.3, 0)
+
+
+def high_contrast_color(c):
+    g = 2.2  # gamma
+    L = 0.2126 * (c.r**g) + 0.7152 * (c.g**g) + 0.0722 * (c.b**g)
+    return [(.1, .1, .1), (.95, .95, .95)][int(L < 0.5)]
 
 
 class SvStethoscopeNode(bpy.types.Node, SverchCustomTreeNode):
@@ -60,11 +67,17 @@ class SvStethoscopeNode(bpy.types.Node, SverchCustomTreeNode):
         else:
             return [("", "", "")]
 
-    #node_name = EnumProperty(items=avail_nodes, name="Node")
-    #socket_name = EnumProperty(items=avail_sockets, name="Sockets",update=updateNode)
+    # node_name = EnumProperty(items=avail_nodes, name="Node")
+    # socket_name = EnumProperty(items=avail_sockets, name="Sockets",update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', 'Data')
+        try:
+            current_theme = bpy.context.user_preferences.themes.items()[0][0]
+            editor = bpy.context.user_preferences.themes[current_theme].node_editor
+            self.text_color = high_contrast_color(editor.space.back)
+        except:
+            print('-', end='')
 
     # reset n_id on copy
     def copy(self, node):
@@ -76,8 +89,8 @@ class SvStethoscopeNode(bpy.types.Node, SverchCustomTreeNode):
         row.separator()
         row.prop(self, "activate", icon=icon, text='')
         row.prop(self, "text_color", text='')
-        #layout.prop(self, "node_name")
-        #layout.prop(self, "socket_name")
+        # layout.prop(self, "node_name")
+        # layout.prop(self, "socket_name")
 
     def process(self):
         inputs = self.inputs
@@ -94,12 +107,10 @@ class SvStethoscopeNode(bpy.types.Node, SverchCustomTreeNode):
             draw_data = {
                 'tree_name': self.id_data.name[:],
                 'content': lines,
-                'location': (self.location + Vector((self.width+20, 0)))[:],
+                'location': (self.location + Vector((self.width + 20, 0)))[:],
                 'color': self.text_color[:],
-                }
+            }
             nvBGL.callback_enable(n_id, draw_data)
-
-  
 
     def free(self):
         nvBGL.callback_disable(node_id(self))

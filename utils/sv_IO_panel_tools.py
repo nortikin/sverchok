@@ -35,9 +35,11 @@ from sverchok import old_nodes
 
 SCRIPTED_NODES = {'SvScriptNode', 'SvScriptNodeMK2'}
 
-_EXPORTER_REVISION_ = '0.056'
+_EXPORTER_REVISION_ = '0.060'
 
 '''
+0.060 understands sockets with props <o/
+
 0.056 fixing SN1 script importing upon json load, will not duplicate
       existing .py files by the same name. This tends to be preferred, one should
       never have two files named the same which perform different operations.
@@ -197,6 +199,14 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
             if k in node_enums:
                 v = getattr(node, k)
                 node_items[k] = v
+
+        # collect socket properties
+        # inputs = node.inputs
+        # for s in inputs:
+        #     if (s.bl_label == 'Vertices') and hasattr(node, s.prop_name):
+        #         prop = s.prop_name
+        #         if prop:
+        #            node_dict['custom_socket_props'][prop] = getattr(node, prop)[:]
 
         node_dict['params'] = node_items
         node_dict['location'] = node.location[:]
@@ -371,7 +381,7 @@ def import_tree(ng, fullpath='', nodes_json=None, create_texts=True):
                 name_remap[n] = node.name
 
             params = node_ref['params']
-            print(node.name, params)
+            # print(node.name, params)
             for p in params:
                 val = params[p]
                 setattr(node, p, val)
