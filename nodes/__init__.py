@@ -28,6 +28,7 @@ nodes_dict = {
         'viewer_bmesh_mk2',
         'viewer_indices',
         'viewer_curves',
+        'viewer_curves_2d',
         'viewer_skin',
         'viewer_text',
         'viewer_mk2',

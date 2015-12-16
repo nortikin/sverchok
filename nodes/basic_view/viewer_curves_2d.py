@@ -138,6 +138,7 @@ def make_merged_live_curve(node, curve_name, verts, edges, matrices):
 
 
 # -- UNIQUE --
+# remade by nikitron_ making one spline for each object 2015-12
 def live_curve(curve_name, verts, edges, matrix, node):
     curves = bpy.data.curves
     objects = bpy.data.objects
@@ -160,21 +161,24 @@ def live_curve(curve_name, verts, edges, matrix, node):
 
     cu.bevel_depth = node.depth
     cu.bevel_resolution = node.resolution
-    cu.dimensions = '3D'
-    cu.fill_mode = 'FULL'
+    cu.dimensions = '2D'
+    cu.fill_mode = 'BOTH'
+    # cu.dimensions = '3D'
+    # cu.fill_mode = 'FULL'
 
     # and rebuild
-    for edge in edges:
-        v0, v1 = verts[edge[0]], verts[edge[1]]
-        full_flat = [v0[0], v0[1], v0[2], 0.0, v1[0], v1[1], v1[2], 0.0]
-
-        # each spline has a default first coordinate but we need two.
+    for v_obj, e_obj in zip(verts, edges):
         segment = cu.splines.new('POLY')
-        segment.points.add(1)
-        segment.points.foreach_set('co', full_flat)
-        # print(cu.name)
+        segment.points.add(len(e_obj))
+        v1, v2, v3 = v_obj[e_obj[0][0]]
+        points = [v1, v2, v3, 0.0]
+        for edge in e_obj:
+            v1 = v_obj[edge[1]]
+            points.extend([v1[0], v1[1], v1[2], 0.0])
+        segment.points.foreach_set('co', points)
+        segment.use_cyclic_u = True
 
-    # print(curves[:])
+        # print(curves[:])
     return obj
 
 
@@ -192,9 +196,9 @@ def make_curve_geometry(node, context, name, verts, *topology):
 
 
 # could be imported from bmeshviewr directly, it's almost identical
-class SvCurveViewOp(bpy.types.Operator):
+class SvCurveViewOp2D(bpy.types.Operator):
 
-    bl_idname = "node.sv_callback_curve_viewer"
+    bl_idname = "node.sv_callback_curve_viewer_alt"
     bl_label = "Sverchok curve showhide"
     bl_options = {'REGISTER', 'UNDO'}
 
@@ -244,10 +248,10 @@ class SvCurveViewOp(bpy.types.Operator):
 
 
 # should inherit from bmeshviewer, many of these methods are largely identical.
-class SvCurveViewerNode(bpy.types.Node, SverchCustomTreeNode):
+class SvCurveViewerNode2D(bpy.types.Node, SverchCustomTreeNode):
 
-    bl_idname = 'SvCurveViewerNode'
-    bl_label = 'SvCurve Viewer Draw'
+    bl_idname = 'SvCurveViewerNodeAlt'
+    bl_label = 'Curve Draw 2D'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     activate = BoolProperty(
@@ -400,6 +404,13 @@ class SvCurveViewerNode(bpy.types.Node, SverchCustomTreeNode):
                 if mrest[idx]:
                     fullList(mrest[idx], maxlen)
 
+            # remade by nikitron for one-object and multyspline solution,
+            # can be switched in future 2015-12
+            obj_index = 0
+            data = mrest  # get_edges_matrices(obj_index)
+            curve_name = self.basemesh_name + "_" + str(obj_index)
+            make_curve_geometry(self, bpy.context, curve_name, mverts, *data)
+            '''
             for obj_index, Verts in enumerate(mverts):
                 if not Verts:
                     continue
@@ -407,7 +418,7 @@ class SvCurveViewerNode(bpy.types.Node, SverchCustomTreeNode):
                 data = get_edges_matrices(obj_index)
                 curve_name = self.basemesh_name + "_" + str(obj_index)
                 make_curve_geometry(self, bpy.context, curve_name, Verts, *data)
-
+            '''
         self.remove_non_updated_objects(obj_index)
         objs = self.get_children()
 
@@ -491,10 +502,10 @@ class SvCurveViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
 
 def register():
-    bpy.utils.register_class(SvCurveViewerNode)
-    bpy.utils.register_class(SvCurveViewOp)
+    bpy.utils.register_class(SvCurveViewerNode2D)
+    bpy.utils.register_class(SvCurveViewOp2D)
 
 
 def unregister():
-    bpy.utils.unregister_class(SvCurveViewerNode)
-    bpy.utils.unregister_class(SvCurveViewOp)
+    bpy.utils.unregister_class(SvCurveViewerNode2D)
+    bpy.utils.unregister_class(SvCurveViewOp2D)
