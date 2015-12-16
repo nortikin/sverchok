@@ -23,10 +23,11 @@ from bpy.props import BoolProperty, FloatProperty, FloatVectorProperty, IntPrope
 import bmesh
 from bmesh.ops import spin
 
-from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (dataCorrect, updateNode,
-                            SvSetSocketAnyType, SvGetSocketAnyType)
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import (
+    dataCorrect, updateNode, SvSetSocketAnyType, SvGetSocketAnyType
+)
 
 
 def get_lathed_geometry(node, verts, edges, cent, axis, dvec, angle, steps):
@@ -95,7 +96,7 @@ class SvLatheNode(bpy.types.Node, SverchCustomTreeNode):
         socket_names = ['Verts', 'Edges', 'cent', 'axis', 'dvec', 'Degrees', 'Steps']
         data = list(map(get_socket, socket_names))
         mverts, medges, mcent, maxis, mdvec, mDegrees, mSteps = data
-        
+
         verts_match_edges = medges and (len(medges) == len(mverts))
 
         verts_out, faces_out = [], []
@@ -117,33 +118,33 @@ class SvLatheNode(bpy.types.Node, SverchCustomTreeNode):
 
             ''' [], or by idx, if idx present'''
             if medges:
-                if verts_match_edges or (idx <= len(medges)-1):
+                if verts_match_edges or (idx <= len(medges) - 1):
                     final_values['edges'] = medges[idx]
 
             ''' by idx, if idx present, else last. if none then default'''
             if mcent:
-                idxr = idx if (idx <= len(mcent[0])-1) else -1
+                idxr = idx if (idx <= len(mcent[0]) - 1) else -1
                 final_values['cent'] = mcent[0][idxr]
 
             if maxis:
-                idxr = idx if (idx <= len(maxis[0])-1) else -1
+                idxr = idx if (idx <= len(maxis[0]) - 1) else -1
                 final_values['axis'] = maxis[0][idxr]
 
             if mdvec:
-                idxr = idx if (idx <= len(mdvec[0])-1) else -1
+                idxr = idx if (idx <= len(mdvec[0]) - 1) else -1
                 final_values['dvec'] = mdvec[0][idxr]
 
             if mDegrees:
                 if isinstance(mDegrees, list):
                     neatList = mDegrees[0][0]
-                    idxr = min(len(neatList)-1, idx)
+                    idxr = min(len(neatList) - 1, idx)
                     angle = neatList[idxr]
                     final_values['angle'] = radians(float(angle))
 
             if mSteps:
                 if isinstance(mSteps, list):
                     neatList = mSteps[0][0]
-                    idxr = min(len(neatList)-1, idx)
+                    idxr = min(len(neatList) - 1, idx)
                     steps = neatList[idxr]
                     final_values['steps'] = max(0, int(steps))
 
