@@ -1,10 +1,10 @@
-Text Out
+Text In
 ========
 
 Functionality
 -------------
 
-Inserting data from text editor in formats csv, json or plain sverchok text.
+Import data from text editor in formats csv, json or plain sverchok text.
 
 Properties
 ----------
