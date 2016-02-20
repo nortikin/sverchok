@@ -35,6 +35,8 @@ import mathutils as mu
 import xml.etree.cElementTree as etree
 from xml.etree.cElementTree import fromstring
 
+import math
+import random
 
 
 def flat(*args):
@@ -76,18 +78,13 @@ class LSystem:
     def _evaluate(self, entry):
         stack = [entry]
         shapes = []
+        nobjects = 0
         while len(stack) > 0:
             
-            if len(shapes) > self._maxObjects:
+            if nobjects > self._maxObjects:
                 print('max objects reached')
                 break
     
-            if len(shapes) > self._progressCount + 1000:
-                print(len(shapes), "curve segments so far")
-                print(self._maxObjects)
-                self._progressCount = len(shapes)
-                
-            
             rule, depth, matrix = stack.pop()
 
     
@@ -95,18 +92,21 @@ class LSystem:
             if "max_depth" in rule.attrib:
                 local_max_depth = int(rule.get("max_depth"))
     
-            if len(stack) >= self._maxDepth:
+            if len(stack) > self._maxDepth:
                 shapes.append(None)
+                print('len(stack) None')
                 continue
-    
-            if depth >= local_max_depth:
+            
+            if depth > local_max_depth:
                 if "successor" in rule.attrib:
                     successor = rule.get("successor")
                     rule = _pickRule(self._tree, successor)
                     stack.append((rule, 0, matrix))
                 shapes.append(None)
+                print('depth None')
                 continue
-        
+            
+            base_matrix = matrix.copy()
             for statement in rule:              
                 tstr = statement.get("transforms","")
                 if not(tstr):
@@ -118,8 +118,10 @@ class LSystem:
                             tstr += "{} {:f} ".format(t,n) 
                 xform = _parseXform(tstr)
                 count = int(statement.get("count", 1))
+                count_xform = mu.Matrix.Identity(4)
                 for n in range(count):
-                    matrix *= xform
+                    count_xform *= xform
+                    matrix = base_matrix * count_xform
                     
                     if statement.tag == "call":
                         rule = _pickRule(self._tree, statement.get("rule"))
@@ -131,10 +133,14 @@ class LSystem:
                         name = statement.get("shape")
                         shape = (name, matrix)
                         shapes.append(shape)
+                        nobjects += 1
                                                   
                     else:
                         raise ValueError("bad xml", statement.tag)
-
+                
+                if count > 1:
+                    shapes.append(None)
+                    
     
         print("\nGenerated %d shapes." % len(shapes))
         return shapes
@@ -154,9 +160,10 @@ class LSystem:
         verts_out = [] 
         faces_out = []
         vID = 0
+        #print('len mats', len(mats))
         if len(mats) > 1:
-            #print('len mats', len(mats))
-            #print(mats[0])
+            
+            print(mats[0])
             nring = len(verts[0])
             #end face
             faces_out.append(list(range(nring)))
@@ -214,7 +221,7 @@ def _parseXform(xform_string):
         return _xformCache[xform_string]
         
     matrix = mu.Matrix.Identity(4)
-    tokens = xform_string.split(' ')
+    tokens = xform_string.split()
     t = 0
     while t < len(tokens) - 1:
             command, t = tokens[t], t + 1
@@ -377,7 +384,8 @@ class SvGenerativeArtNode(bpy.types.Node, SverchCustomTreeNode):
             edges_out = []
             verts_out = [] 
             faces_out = [] 
-            #make last entry in shapes None to allow make tube to finish last tube	
+            #make last entry in shapes None to allow make tube to finish last tube
+            #print(shapes)
             if shapes[-1]:
                 shapes.append(None)            
             for i, shape in enumerate(shapes):
@@ -389,7 +397,10 @@ class SvGenerativeArtNode(bpy.types.Node, SverchCustomTreeNode):
                     if len(mat_sublist) > 0:
                         if self.inputs['Vertices'].is_linked:
                             verts = Vector_generate(SvGetSocketAnyType(self, self.inputs['Vertices']))
+                            #print(mat_sublist)
+                            #print(verts)
                             v, e, f = lsys.make_tube(mat_sublist, verts)
+                            #print(v)
                             if v:
                                 verts_out.append(v)
                                 edges_out.append(e)
