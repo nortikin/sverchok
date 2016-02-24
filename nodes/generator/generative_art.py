@@ -20,23 +20,21 @@
     LSystem code from Philip Rideout  https://github.com/prideout/lsystem '''
 
 
-import string
 import bpy
 from bpy.props import BoolProperty, IntProperty, StringProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (changable_sockets, multi_socket, 
-                            SvSetSocketAnyType, SvGetSocketAnyType, updateNode, 
-                            fullList, Vector_generate, Matrix_listing)
-
+from sverchok.data_structure import (changable_sockets, multi_socket,
+                                     SvSetSocketAnyType, SvGetSocketAnyType,
+                                     updateNode, fullList, Vector_generate,
+                                     Matrix_listing, dataCorrect)
+import string
 import random
 import mathutils as mu
 
-import xml.etree.cElementTree as etree
 from xml.etree.cElementTree import fromstring
 
 import math
-import random
 
 
 def flat(*args):
@@ -46,20 +44,20 @@ def flat(*args):
                 yield y
         else:
             yield x
-            
-"""   
+"""
 ---------------------------------------------------
     LSystem
 ---------------------------------------------------
-"""            
-            
+"""
+
+
 class LSystem:
 
     """
     Takes an XML string.
     """
-    def __init__(self, rules, maxObjects):
-        self._tree = fromstring(rules)
+    def __init__(self, xml_text, maxObjects):
+        self._tree = fromstring(xml_text)
         self._maxDepth = int(self._tree.get("max_depth"))
         self._progressCount = 0
         self._maxObjects = maxObjects
@@ -68,129 +66,134 @@ class LSystem:
     Returns a list of "shapes".
     Each shape is a 2-tuple: (shape name, transform matrix).
     """
-    def evaluate(self, seed = 0 ):
+    def evaluate(self, seed=0):
         random.seed(seed)
         rule = _pickRule(self._tree, "entry")
         entry = (rule, 0, mu.Matrix.Identity(4))
         shapes = self._evaluate(entry)
         return shapes
-        
+
     def _evaluate(self, entry):
         stack = [entry]
         shapes = []
         nobjects = 0
         while len(stack) > 0:
-            
             if nobjects > self._maxObjects:
                 print('max objects reached')
                 break
-    
+
             rule, depth, matrix = stack.pop()
 
-    
             local_max_depth = self._maxDepth
             if "max_depth" in rule.attrib:
                 local_max_depth = int(rule.get("max_depth"))
-    
+
             if len(stack) > self._maxDepth:
                 shapes.append(None)
-                print('len(stack) None')
+                # print('len(stack) None')
                 continue
-            
+
             if depth > local_max_depth:
                 if "successor" in rule.attrib:
                     successor = rule.get("successor")
                     rule = _pickRule(self._tree, successor)
                     stack.append((rule, 0, matrix))
                 shapes.append(None)
-                print('depth None')
+                # print('depth None')
                 continue
-            
+
             base_matrix = matrix.copy()
-            for statement in rule:              
-                tstr = statement.get("transforms","")
+            for statement in rule:
+                tstr = statement.get("transforms", "")
                 if not(tstr):
                     tstr = ''
-                    for t in ['tx', 'ty', 'tz', 'rx', 'ry', 'rz', 'sa', 'sx', 'sy', 'sz']:
+                    for t in ['tx', 'ty', 'tz', 'rx', 'ry', 'rz',
+                              'sa', 'sx', 'sy', 'sz']:
                         tvalue = statement.get(t)
                         if tvalue:
                             n = eval(tvalue)
-                            tstr += "{} {:f} ".format(t,n) 
+                            tstr += "{} {:f} ".format(t, n)
                 xform = _parseXform(tstr)
                 count = int(statement.get("count", 1))
                 count_xform = mu.Matrix.Identity(4)
                 for n in range(count):
                     count_xform *= xform
                     matrix = base_matrix * count_xform
-                    
+
                     if statement.tag == "call":
                         rule = _pickRule(self._tree, statement.get("rule"))
                         cloned_matrix = matrix.copy()
-                        entry = (rule, depth + 1, cloned_matrix)     
+                        entry = (rule, depth + 1, cloned_matrix)
                         stack.append(entry)
-                  
+
                     elif statement.tag == "instance":
                         name = statement.get("shape")
                         shape = (name, matrix)
                         shapes.append(shape)
                         nobjects += 1
-                                                  
+
                     else:
                         raise ValueError("bad xml", statement.tag)
-                
+
                 if count > 1:
                     shapes.append(None)
-                    
-    
-        print("\nGenerated %d shapes." % len(shapes))
+
+        # print("\nGenerated %d shapes." % len(shapes))
         return shapes
         # end of _evaluate
-        
+
     def make_tube(self, mats, verts):
         """
         takes a list of vertices and a list of matrices
-        the vertices are to be joined in a ring, copied and transformed by the 1st matrix 
-        and this ring joined to the previous ring.
+        the vertices are to be joined in a ring, copied and transformed
+        by the 1st matrix and this ring joined to the previous ring.
 
         The ring dosen't have to be planar.
         outputs lists of vertices, edges and faces
         """
-        
+
         edges_out = []
-        verts_out = [] 
+        verts_out = []
         faces_out = []
         vID = 0
-        #print('len mats', len(mats))
+        # print('len mats', len(mats))
         if len(mats) > 1:
-            
+
             print(mats[0])
             nring = len(verts[0])
-            #end face
+            # end face
             faces_out.append(list(range(nring)))
-            for i,m in enumerate(mats):
-                for j,v in enumerate(verts[0]):
+            for i, m in enumerate(mats):
+                for j, v in enumerate(verts[0]):
                     vout = mu.Matrix(m) * mu.Vector(v)
                     verts_out.append(vout.to_tuple())
                     vID = j + i*nring
-                    #rings
+                    # rings
                     if j != 0:
                         edges_out.append([vID, vID - 1])
-                    else: 
-                        edges_out.append([vID, vID + nring-1]) 
-                    #lines
+                    else:
+                        edges_out.append([vID, vID + nring-1])
+                    # lines
                     if i != 0:
-                        edges_out.append([vID, vID - nring]) 
-                        #faces
+                        edges_out.append([vID, vID - nring])
+                        # faces
                         if j != 0:
-                            faces_out.append([vID, vID - nring, vID - nring - 1, vID-1,])
+                            faces_out.append([vID,
+                                              vID - nring,
+                                              vID - nring - 1,
+                                              vID-1])
                         else:
-                            faces_out.append([vID, vID - nring,  vID-1, vID + nring-1])
-            #end face
-            #reversing list fixes face normal direction keeps mesh manifold
+                            faces_out.append([vID,
+                                              vID - nring,
+                                              vID-1,
+                                              vID + nring-1])
+            # end face
+            # reversing list fixes face normal direction keeps mesh manifold
             f = list(range(vID, vID-nring, -1))
             faces_out.append(f)
         return verts_out, edges_out, faces_out
-                            
+
+
 def _pickRule(tree, name):
 
     rules = tree.findall("rule")
@@ -216,16 +219,17 @@ def _pickRule(tree, name):
 
 _xformCache = {}
 
+
 def _parseXform(xform_string):
     if xform_string in _xformCache:
         return _xformCache[xform_string]
-        
+
     matrix = mu.Matrix.Identity(4)
     tokens = xform_string.split()
     t = 0
     while t < len(tokens) - 1:
             command, t = tokens[t], t + 1
-    
+
             # Translation
             if command == 'tx':
                 x, t = eval(tokens[t]), t + 1
@@ -241,19 +245,19 @@ def _parseXform(xform_string):
                 y, t = eval(tokens[t]), t + 1
                 z, t = eval(tokens[t]), t + 1
                 matrix *= mu.Matrix.Translation(mu.Vector((x, y, z)))
-    
+
             # Rotation
             elif command == 'rx':
                 theta, t = _radians(eval(tokens[t])), t + 1
                 matrix *= mu.Matrix.Rotation(theta, 4, 'X')
-                
+
             elif command == 'ry':
                 theta, t = _radians(eval(tokens[t])), t + 1
                 matrix *= mu.Matrix.Rotation(theta, 4, 'Y')
             elif command == 'rz':
                 theta, t = _radians(eval(tokens[t])), t + 1
                 matrix *= mu.Matrix.Rotation(theta, 4, 'Z')
-    
+
             # Scale
             elif command == 'sx':
                 x, t = eval(tokens[t]), t + 1
@@ -278,19 +282,22 @@ def _parseXform(xform_string):
                 matrix *= mxyz
 
             else:
-                raise ValueError("bad xml", "unrecognized transformation: '%s' at position %d in '%s'" % (command, t, xform_string))
+                err_str = "unrecognized transform: '%s' at position %d in '%s'" % (command, t, xform_string)
+                raise ValueError("bad xml", err_str)
 
     _xformCache[xform_string] = matrix
     return matrix
 
+
 def _radians(d):
     return float(d * 3.141 / 180.0)
-    
-"""   
+
+"""
 ---------------------------------------------------
     SvGenerativeArtNode
 ---------------------------------------------------
 """
+
 
 class SvGenerativeArtNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Generative Art or LSystem node'''
@@ -301,12 +308,13 @@ class SvGenerativeArtNode(bpy.types.Node, SverchCustomTreeNode):
     filename = StringProperty(default="", update=updateNode)
 
     rseed = IntProperty(name='rseed', description='random seed',
-                       default=21, min=0, options={'ANIMATABLE'},
-                       update=updateNode)
+                        default=21, min=0, options={'ANIMATABLE'},
+                        update=updateNode)
 
-    maxmats = IntProperty(name='maxmats', description='maximum nunber of matrices',
-                       default=1000, min=1, options={'ANIMATABLE'},
-                       update=updateNode)
+    maxmats = IntProperty(name='maxmats',
+                          description='maximum nunber of matrices',
+                          default=1000, min=1, options={'ANIMATABLE'},
+                          update=updateNode)
 
     typ = StringProperty(name='typ',
                          default='')
@@ -317,102 +325,122 @@ class SvGenerativeArtNode(bpy.types.Node, SverchCustomTreeNode):
     multi_socket_type = 'StringsSocket'
 
     def draw_buttons(self, context, layout):
-        layout.prop_search(self, 'filename', bpy.data, 'texts', text='', icon='TEXT') 
+        layout.prop_search(self, 'filename', bpy.data,
+                           'texts', text='', icon='TEXT')
         layout.prop(self, "rseed", text="r seed")
         layout.prop(self, "maxmats", text="max mats")
-      
 
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', "Vertices")
-        self.inputs.new('StringsSocket', "data", "data")
+        # self.inputs.new('StringsSocket', "data", "data")
 
         self.outputs.new('MatrixSocket', "Matrices")
         self.outputs.new('StringsSocket', "Mask")
-        
+
         self.outputs.new('VerticesSocket', "Vertices")
         self.outputs.new('StringsSocket', "Edges")
         self.outputs.new('StringsSocket', "Faces")
 
-
     def update(self):
+        print('update called')
         # inputs
-        multi_socket(self, min=2)
+        #multi_socket(self, min=1)
 
-        if 'data' in self.inputs and self.inputs['data'].links:
+       # if 'data' in self.inputs and self.inputs['data'].links:
             # adaptive socket
-            inputsocketname = 'data'
-            outputsocketname = ['data']
-            changable_sockets(self, inputsocketname, outputsocketname)
+       #     inputsocketname = 'data'
+       #     outputsocketname = ['data']
+       #     changable_sockets(self, inputsocketname, outputsocketname)
 
     def process(self):
+        print('process called')
         if not self.filename:
             return
-        #xml text must be an internal file     
+        # xml text must be an internal file
         if not (self.filename in bpy.data.texts):
             return
         internal_file = bpy.data.texts[self.filename]
-        self.xml_text = internal_file.as_string()     
-        #nvars = len(set([name for text, name, spec, conv in string.Formatter().parse(self.xml_text)]))    
+        self.xml_text = internal_file.as_string()
+
+        # make xml constants dictionary
+        xml_tree = fromstring(self.xml_text)
+        d_constants = {}
+        for elem in xml_tree.findall("constants"):
+            d_constants.update(elem.attrib)
+
+        field_ids = [v[1] for v in string.Formatter().parse(self.xml_text)]
+        field_ids = set(field_ids) - set([None])
+        constant_ids = set(d_constants.keys())
+        socket_ids = field_ids - constant_ids
         
-        nvars = self.xml_text.count('{') #this may be too large because of repeats        
-        
+        # add new input sockets to node
+        for s_name in socket_ids:
+            if s_name not in self.inputs:
+                self.inputs.new('StringsSocket', s_name, s_name)
+
+        # remove any sockets with no field_ids in xml
+        old_sockets = [socket
+                       for socket in self.inputs[1:]
+                       if socket.name not in socket_ids]
+        for socket in old_sockets:
+            self.inputs.remove(socket)
+        # add input socket values to constants dict
+        for s_name in socket_ids:
+            socket = self.inputs[s_name]
+            if socket.is_linked:
+                d_constants[s_name] = SvGetSocketAnyType(self, socket)[0][0]
+            else:
+                d_constants[s_name] = 0
+
+        while '{' in self.xml_text:
+            # this allows constants to be defined using other constants
+            self.xml_text = self.xml_text.format(**d_constants)
+
         if ((self.outputs['Matrices'].is_linked) or (self.outputs['Vertices'].is_linked)):
-            slots = []
-            for socket in self.inputs[1:]:
-                if socket.is_linked:
-                    slots.append(SvGetSocketAnyType(self, socket))
-            #flatten vars
-            if slots: 
-                slots = list(flat(slots))
-                fullList(slots, nvars)
-            else: 
-                slots = [0]*nvars
-
-            self.xml_text = self.xml_text.format(*slots)
-
             lsys = LSystem(self.xml_text, self.maxmats)
-            shapes = lsys.evaluate(seed = self.rseed)
-       
+            shapes = lsys.evaluate(seed=self.rseed)
+
             names = [shape[0] for shape in shapes if shape]
-            #convert names to integer list
-            iddict = {k:v for v,k in enumerate( sorted( set(names) ) )} 
-            
+            # convert names to integer list
+            iddict = {k: v for v, k in enumerate(sorted(set(names)))}
+
             mat_sublist = []
             mat_list = []
             mask_list = []
-            
+
             edges_out = []
-            verts_out = [] 
-            faces_out = [] 
-            #make last entry in shapes None to allow make tube to finish last tube
-            #print(shapes)
+            verts_out = []
+            faces_out = []
+            # make last entry in shapes None
+            # to allow make tube to finish last tube
+
             if shapes[-1]:
-                shapes.append(None)            
+                shapes.append(None)
             for i, shape in enumerate(shapes):
                 if shape:
                     mat_sublist.append(shape[1])
                     mat_list.append(shape[1])
                     mask_list.append(iddict[shape[0]])
-                else: 
+                else:
                     if len(mat_sublist) > 0:
                         if self.inputs['Vertices'].is_linked:
                             verts = Vector_generate(SvGetSocketAnyType(self, self.inputs['Vertices']))
-                            #print(mat_sublist)
-                            #print(verts)
+                            # print(mat_sublist)
+                            # print(verts)
                             v, e, f = lsys.make_tube(mat_sublist, verts)
-                            #print(v)
+                            # print(v)
                             if v:
                                 verts_out.append(v)
                                 edges_out.append(e)
                                 faces_out.append(f)
-                            
+
                     mat_sublist = []
-                    
+
             if self.outputs['Matrices'].is_linked:
                 SvSetSocketAnyType(self, 'Matrices', Matrix_listing(mat_list))
             if self.outputs['Mask'].is_linked:
                 SvSetSocketAnyType(self, 'Mask', [mask_list])
-                
+
             if self.outputs['Vertices'].is_linked:
                 SvSetSocketAnyType(self, 'Vertices', verts_out)
             if self.outputs['Edges'].is_linked:
@@ -433,5 +461,3 @@ def unregister():
 
 if __name__ == '__main__':
     register()
-
-
