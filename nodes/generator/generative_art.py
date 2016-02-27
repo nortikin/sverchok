@@ -21,13 +21,12 @@
 
 
 import bpy
-from bpy.props import BoolProperty, IntProperty, StringProperty
+from bpy.props import IntProperty, StringProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (changable_sockets, multi_socket,
-                                     SvSetSocketAnyType, SvGetSocketAnyType,
-                                     updateNode, fullList, Vector_generate,
-                                     Matrix_listing, dataCorrect)
+from sverchok.data_structure import (SvSetSocketAnyType, SvGetSocketAnyType,
+                                     updateNode, Vector_generate,
+                                     Matrix_listing)
 import string
 import random
 import mathutils as mu
@@ -36,14 +35,6 @@ from xml.etree.cElementTree import fromstring
 
 import math
 
-
-def flat(*args):
-    for x in args:
-        if hasattr(x, '__iter__'):
-            for y in flat(*x):
-                yield y
-        else:
-            yield x
 """
 ---------------------------------------------------
     LSystem
@@ -90,7 +81,6 @@ class LSystem:
 
             if len(stack) > self._maxDepth:
                 shapes.append(None)
-                # print('len(stack) None')
                 continue
 
             if depth > local_max_depth:
@@ -99,7 +89,6 @@ class LSystem:
                     rule = _pickRule(self._tree, successor)
                     stack.append((rule, 0, matrix))
                 shapes.append(None)
-                # print('depth None')
                 continue
 
             base_matrix = matrix.copy()
@@ -128,9 +117,12 @@ class LSystem:
 
                     elif statement.tag == "instance":
                         name = statement.get("shape")
-                        shape = (name, matrix)
-                        shapes.append(shape)
-                        nobjects += 1
+                        if name == "None":
+                            shapes.append(None)
+                        else:
+                            shape = (name, matrix)
+                            shapes.append(shape)
+                            nobjects += 1
 
                     else:
                         raise ValueError("bad xml", statement.tag)
@@ -138,7 +130,6 @@ class LSystem:
                 if count > 1:
                     shapes.append(None)
 
-        # print("\nGenerated %d shapes." % len(shapes))
         return shapes
         # end of _evaluate
 
@@ -158,8 +149,6 @@ class LSystem:
         vID = 0
         # print('len mats', len(mats))
         if len(mats) > 1:
-
-            print(mats[0])
             nring = len(verts[0])
             # end face
             faces_out.append(list(range(nring)))
@@ -316,14 +305,6 @@ class SvGenerativeArtNode(bpy.types.Node, SverchCustomTreeNode):
                           default=1000, min=1, options={'ANIMATABLE'},
                           update=updateNode)
 
-    typ = StringProperty(name='typ',
-                         default='')
-    newsock = BoolProperty(name='newsock',
-                           default=False)
-
-    base_name = 'data '
-    multi_socket_type = 'StringsSocket'
-
     def draw_buttons(self, context, layout):
         layout.prop_search(self, 'filename', bpy.data,
                            'texts', text='', icon='TEXT')
@@ -332,28 +313,13 @@ class SvGenerativeArtNode(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', "Vertices")
-        # self.inputs.new('StringsSocket', "data", "data")
-
-        self.outputs.new('MatrixSocket', "Matrices")
-        self.outputs.new('StringsSocket', "Mask")
 
         self.outputs.new('VerticesSocket', "Vertices")
         self.outputs.new('StringsSocket', "Edges")
         self.outputs.new('StringsSocket', "Faces")
+        self.outputs.new('MatrixSocket', "Matrices")
 
     def update(self):
-        print('update called')
-        # inputs
-        #multi_socket(self, min=1)
-
-       # if 'data' in self.inputs and self.inputs['data'].links:
-            # adaptive socket
-       #     inputsocketname = 'data'
-       #     outputsocketname = ['data']
-       #     changable_sockets(self, inputsocketname, outputsocketname)
-
-    def process(self):
-        print('process called')
         if not self.filename:
             return
         # xml text must be an internal file
@@ -361,22 +327,28 @@ class SvGenerativeArtNode(bpy.types.Node, SverchCustomTreeNode):
             return
         internal_file = bpy.data.texts[self.filename]
         self.xml_text = internal_file.as_string()
+        self.xml_tree = fromstring(self.xml_text)
 
-        # make xml constants dictionary
-        xml_tree = fromstring(self.xml_text)
+        d_constants, shape_names = self.redo_sockets()
+
+    def redo_sockets(self):
+        """
+        insert input sockets named after variables in xml
+        output sockets named after shape attribute values in xml
+        """
         d_constants = {}
-        for elem in xml_tree.findall("constants"):
+        for elem in self.xml_tree.findall("constants"):
             d_constants.update(elem.attrib)
 
         field_ids = [v[1] for v in string.Formatter().parse(self.xml_text)]
         field_ids = set(field_ids) - set([None])
         constant_ids = set(d_constants.keys())
         socket_ids = field_ids - constant_ids
-        
+
         # add new input sockets to node
-        for s_name in socket_ids:
+        for s_name in sorted(socket_ids):
             if s_name not in self.inputs:
-                self.inputs.new('StringsSocket', s_name, s_name)
+                self.inputs.new('StringsSocket', s_name)
 
         # remove any sockets with no field_ids in xml
         old_sockets = [socket
@@ -392,43 +364,65 @@ class SvGenerativeArtNode(bpy.types.Node, SverchCustomTreeNode):
             else:
                 d_constants[s_name] = 0
 
+        # output sockets to match shape attribute values
+        shape_names = set([x.attrib.get('shape')
+                           for x in self.xml_tree.iter('instance')])
+        # new output sockets
+        for s_name in sorted(shape_names):
+            if s_name not in self.outputs:
+                self.outputs.new('MatrixSocket', s_name)
+
+        # remove old output sockets
+        old_sockets = [out_socket
+                       for out_socket in self.outputs[3:]
+                       if out_socket.name not in shape_names]
+        for socket in old_sockets:
+            self.outputs.remove(socket)
+        return d_constants, shape_names
+
+    def process(self):
+
+        if not self.filename:
+            return
+        # xml text must be an internal file
+        if not (self.filename in bpy.data.texts):
+            return
+        internal_file = bpy.data.texts[self.filename]
+        self.xml_text = internal_file.as_string()
+        self.xml_tree = fromstring(self.xml_text)
+
+        d_constants, shape_names = self.redo_sockets()
         while '{' in self.xml_text:
-            # this allows constants to be defined using other constants
+            # using while loop
+            # allows constants to be defined using other constants
             self.xml_text = self.xml_text.format(**d_constants)
 
-        if ((self.outputs['Matrices'].is_linked) or (self.outputs['Vertices'].is_linked)):
+        if any(output.is_linked for output in self.outputs):
             lsys = LSystem(self.xml_text, self.maxmats)
             shapes = lsys.evaluate(seed=self.rseed)
 
-            names = [shape[0] for shape in shapes if shape]
-            # convert names to integer list
-            iddict = {k: v for v, k in enumerate(sorted(set(names)))}
-
             mat_sublist = []
-            mat_list = []
-            mask_list = []
 
             edges_out = []
             verts_out = []
             faces_out = []
+
             # make last entry in shapes None
             # to allow make tube to finish last tube
-
             if shapes[-1]:
                 shapes.append(None)
+            # dictionary for matrix lists
+            mat_dict = {s: [] for s in shape_names}
             for i, shape in enumerate(shapes):
                 if shape:
                     mat_sublist.append(shape[1])
-                    mat_list.append(shape[1])
-                    mask_list.append(iddict[shape[0]])
+                    mat_dict[shape[0]].append(shape[1])
                 else:
                     if len(mat_sublist) > 0:
                         if self.inputs['Vertices'].is_linked:
                             verts = Vector_generate(SvGetSocketAnyType(self, self.inputs['Vertices']))
-                            # print(mat_sublist)
-                            # print(verts)
                             v, e, f = lsys.make_tube(mat_sublist, verts)
-                            # print(v)
+
                             if v:
                                 verts_out.append(v)
                                 edges_out.append(e)
@@ -436,17 +430,17 @@ class SvGenerativeArtNode(bpy.types.Node, SverchCustomTreeNode):
 
                     mat_sublist = []
 
-            if self.outputs['Matrices'].is_linked:
-                SvSetSocketAnyType(self, 'Matrices', Matrix_listing(mat_list))
-            if self.outputs['Mask'].is_linked:
-                SvSetSocketAnyType(self, 'Mask', [mask_list])
-
             if self.outputs['Vertices'].is_linked:
                 SvSetSocketAnyType(self, 'Vertices', verts_out)
             if self.outputs['Edges'].is_linked:
                 SvSetSocketAnyType(self, 'Edges', edges_out)
             if self.outputs['Faces'].is_linked:
                 SvSetSocketAnyType(self, 'Faces', faces_out)
+
+            for shape in shape_names:
+                if self.outputs[shape].is_linked:
+                    SvSetSocketAnyType(self, shape,
+                                       Matrix_listing(mat_dict[shape]))
 
     def update_socket(self, context):
         self.update()
