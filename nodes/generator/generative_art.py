@@ -45,10 +45,10 @@ import math
 class LSystem:
 
     """
-    Takes an XML string.
+    Takes an XML tree.
     """
-    def __init__(self, xml_text, maxObjects):
-        self._tree = fromstring(xml_text)
+    def __init__(self, xml_tree, maxObjects):
+        self._tree = xml_tree
         self._maxDepth = int(self._tree.get("max_depth"))
         self._progressCount = 0
         self._maxObjects = maxObjects
@@ -294,7 +294,12 @@ class SvGenerativeArtNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Generative Art'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    filename = StringProperty(default="", update=updateNode)
+    def updateNode_filename(self, context):
+        self.process_node(context)
+        self.read_xml()
+        self.make_sockets()
+
+    filename = StringProperty(default="", update=updateNode_filename)
 
     rseed = IntProperty(name='rseed', description='random seed',
                         default=21, min=0, options={'ANIMATABLE'},
@@ -320,20 +325,43 @@ class SvGenerativeArtNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('MatrixSocket', "Matrices")
 
     def update(self):
-        if not self.filename:
-            return
-        # xml text must be an internal file
-        if not (self.filename in bpy.data.texts):
-            return
-        internal_file = bpy.data.texts[self.filename]
-        self.xml_text = internal_file.as_string()
+        self.read_xml()
+        self.make_sockets()
+
+    def read_xml(self):
+        """
+        read xml from  bpy.data.texts
+        """
+        if self.filename and (self.filename in bpy.data.texts):
+            internal_file = bpy.data.texts[self.filename]
+            self.xml_text = internal_file.as_string()
+            self.xml_tree = fromstring(self.xml_text)
+
+    def xml_text_format(self):
+        """
+        substitute constants from xml
+        and variables from socket inputs
+        """
+        # get constants from xml
+        format_dict = {}
+        for elem in self.xml_tree.findall("constants"):
+            format_dict.update(elem.attrib)
+
+        # add input socket values to constants dict
+        for socket in self.inputs[1:]:
+            if socket.is_linked:
+                format_dict[socket.name] = SvGetSocketAnyType(self, socket)[0][0]
+            else:
+                format_dict[socket.name] = 0
+        while '{' in self.xml_text:
+            # using while loop
+            # allows constants to be defined using other constants
+            self.xml_text = self.xml_text.format(**format_dict)
         self.xml_tree = fromstring(self.xml_text)
 
-        d_constants, shape_names = self.redo_sockets()
-
-    def redo_sockets(self):
+    def make_sockets(self):
         """
-        insert input sockets named after variables in xml
+        insert input sockets named after variables in xml,
         output sockets named after shape attribute values in xml
         """
         d_constants = {}
@@ -356,13 +384,6 @@ class SvGenerativeArtNode(bpy.types.Node, SverchCustomTreeNode):
                        if socket.name not in socket_ids]
         for socket in old_sockets:
             self.inputs.remove(socket)
-        # add input socket values to constants dict
-        for s_name in socket_ids:
-            socket = self.inputs[s_name]
-            if socket.is_linked:
-                d_constants[s_name] = SvGetSocketAnyType(self, socket)[0][0]
-            else:
-                d_constants[s_name] = 0
 
         # output sockets to match shape attribute values
         shape_names = set([x.attrib.get('shape')
@@ -378,27 +399,14 @@ class SvGenerativeArtNode(bpy.types.Node, SverchCustomTreeNode):
                        if out_socket.name not in shape_names]
         for socket in old_sockets:
             self.outputs.remove(socket)
-        return d_constants, shape_names
 
     def process(self):
-
-        if not self.filename:
-            return
-        # xml text must be an internal file
-        if not (self.filename in bpy.data.texts):
-            return
-        internal_file = bpy.data.texts[self.filename]
-        self.xml_text = internal_file.as_string()
-        self.xml_tree = fromstring(self.xml_text)
-
-        d_constants, shape_names = self.redo_sockets()
-        while '{' in self.xml_text:
-            # using while loop
-            # allows constants to be defined using other constants
-            self.xml_text = self.xml_text.format(**d_constants)
+        self.read_xml()
+        self.make_sockets()
+        self.xml_text_format()
 
         if any(output.is_linked for output in self.outputs):
-            lsys = LSystem(self.xml_text, self.maxmats)
+            lsys = LSystem(self.xml_tree, self.maxmats)
             shapes = lsys.evaluate(seed=self.rseed)
 
             mat_sublist = []
@@ -412,6 +420,8 @@ class SvGenerativeArtNode(bpy.types.Node, SverchCustomTreeNode):
             if shapes[-1]:
                 shapes.append(None)
             # dictionary for matrix lists
+            shape_names = set([x.attrib.get('shape')
+                               for x in self.xml_tree.iter('instance')])
             mat_dict = {s: [] for s in shape_names}
             for i, shape in enumerate(shapes):
                 if shape:
@@ -441,9 +451,6 @@ class SvGenerativeArtNode(bpy.types.Node, SverchCustomTreeNode):
                 if self.outputs[shape].is_linked:
                     SvSetSocketAnyType(self, shape,
                                        Matrix_listing(mat_dict[shape]))
-
-    def update_socket(self, context):
-        self.update()
 
 
 def register():

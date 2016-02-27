@@ -288,7 +288,7 @@ Fern 3
         </rule>    
     </rules>
 
-For this animation the index number of the current frame in the animation is translated from the range 1 to 250 to the range 16 to 6 via the formula node and wired into the ``curl_angle`` input of the "Generative Art" node. This cause the fern to unwind as the animation proceeds.
+For this animation the index number of the current frame in the animation is translated from the range 1 to 250 to the range 16 to 6 via the "Map Range" node and wired into the ``curl_angle`` input of the "Generative Art" node. This cause the fern to unwind as the animation proceeds.
 
 Simple maths can also be use in the transforms definition. This has been used above in the ``curlsmall`` rule. The ``rx`` rotation of the transform will always be twice that of the ``rx`` rotation in the ``curl1`` and ``curl2`` rules. There cannot be any spaces in any maths expressions for the rotation, translation or scale parameters when using a single transforms attribute string. To allow for more complicated expressions each transform can be separated out into its own attribute. 
 
