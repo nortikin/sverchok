@@ -35,6 +35,11 @@ from xml.etree.cElementTree import fromstring
 
 import math
 
+import resource
+import sys
+
+
+
 """
 ---------------------------------------------------
     LSystem
@@ -401,14 +406,15 @@ class SvGenerativeArtNode(bpy.types.Node, SverchCustomTreeNode):
             self.outputs.remove(socket)
 
     def process(self):
+        print('begin process: {} (Mb)'.format(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss/1000))
         self.read_xml()
         self.make_sockets()
         self.xml_text_format()
-
         if any(output.is_linked for output in self.outputs):
+            print('before lsystem: {} (Mb)'.format(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss/1000))
             lsys = LSystem(self.xml_tree, self.maxmats)
             shapes = lsys.evaluate(seed=self.rseed)
-
+            print('after lsystem: {} (Mb)'.format(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss/1000))	
             mat_sublist = []
 
             edges_out = []
@@ -423,23 +429,24 @@ class SvGenerativeArtNode(bpy.types.Node, SverchCustomTreeNode):
             shape_names = set([x.attrib.get('shape')
                                for x in self.xml_tree.iter('instance')])
             mat_dict = {s: [] for s in shape_names}
+            print('before shapes: {} (Mb)'.format(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss/1000))
+            if self.inputs['Vertices'].is_linked:
+                verts = Vector_generate(SvGetSocketAnyType(self, self.inputs['Vertices']))            
             for i, shape in enumerate(shapes):
                 if shape:
                     mat_sublist.append(shape[1])
-                    mat_dict[shape[0]].append(shape[1])
+                    mat_dict[shape[0]].append(shape[1])	
                 else:
                     if len(mat_sublist) > 0:
                         if self.inputs['Vertices'].is_linked:
-                            verts = Vector_generate(SvGetSocketAnyType(self, self.inputs['Vertices']))
                             v, e, f = lsys.make_tube(mat_sublist, verts)
-
                             if v:
                                 verts_out.append(v)
                                 edges_out.append(e)
                                 faces_out.append(f)
 
                     mat_sublist = []
-
+            print('after shapes: {} (Mb)'.format(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss/1000))	
             if self.outputs['Vertices'].is_linked:
                 SvSetSocketAnyType(self, 'Vertices', verts_out)
             if self.outputs['Edges'].is_linked:
@@ -452,6 +459,10 @@ class SvGenerativeArtNode(bpy.types.Node, SverchCustomTreeNode):
                     SvSetSocketAnyType(self, shape,
                                        Matrix_listing(mat_dict[shape]))
 
+            mat_dict = {}
+            mat_sublist = []
+
+        print('end process: {} (Mb)'.format(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss/1000))	
 
 def register():
     bpy.utils.register_class(SvGenerativeArtNode)
