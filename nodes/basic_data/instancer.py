@@ -102,7 +102,7 @@ class SvInstancerNode(bpy.types.Node, SverchCustomTreeNode):
         description="Choose Object to take mesh from",
         update=updateNode)
 
-    grouping = BoolProperty(default=False)
+    grouping = BoolProperty(default=False, update=updateNode)
 
     activate = BoolProperty(
         default=True,
@@ -227,6 +227,9 @@ class SvInstancerNode(bpy.types.Node, SverchCustomTreeNode):
 
     def update_socket(self, context):
         self.update()
+
+    def free(self):
+        self.remove_non_updated_objects(-1, self.basemesh_name)
 
 
 def register():
