@@ -46,10 +46,13 @@ def make_or_update_instance(node, obj_name, matrix):
     objects = bpy.data.objects
     mesh_name = node.mesh_to_clone
 
+    if not mesh_name:
+        return
+
     if obj_name in objects:
         sv_object = objects[obj_name]
     else:
-        mesh = meshes[mesh_name]
+        mesh = meshes.get(mesh_name)
         sv_object = objects.new(obj_name, mesh)
         scene.objects.link(sv_object)
 
