@@ -240,6 +240,7 @@ class SvInstancerNode(bpy.types.Node, SverchCustomTreeNode):
 
     def free(self):
         self.remove_non_updated_objects(-1, self.basemesh_name)
+        self.ungroup()
 
 
 def register():
