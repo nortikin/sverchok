@@ -252,6 +252,7 @@ def make_node_cats():
         ["SvScriptNodeMK2",       "Script 2"],
         ["SvMeshFilterNode",      "Mesh filter"],
         ["SvTriangulateNode",     "Triangulate mesh"],
+        ["SvHeavyTriangulateNode","Triangulate mesh (heavy)"],
         ["SvBricksNode",          "Bricks grid"],
         ["SvMatrixApplyJoinNode", "Apply matrix to mesh"],
         ["SvMatrixTubeNode",      "Matrix Tube"],
