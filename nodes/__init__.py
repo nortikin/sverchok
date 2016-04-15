@@ -144,6 +144,7 @@ nodes_dict = {
         'polygons_boom',
         'polygons_to_edges',
         'triangulate',
+        'triangulate_heavy',
         'remove_doubles',
         'recalc_normals',
         'rotation',
