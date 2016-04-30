@@ -171,6 +171,7 @@ def make_node_cats():
         ['EvaluateLineNode',    'Vector Evaluate'],
         ['SvInterpolationNode', 'Vector Interpolation'],
         ['SvInterpolationNodeMK2', 'Vector Interpolation mk2'],
+        ['SvInterpolationNodeMK3', 'Vector Interpolation mk3'],
         ['SvVertSortNode',      'Vector Sort',          'SORTSIZE'],
         ['SvNoiseNode',         'Vector Noise', 'FORCE_TURBULENCE'],
         ['svAxisInputNode',     'Vector X | Y | Z',      'MANIPUL'],
