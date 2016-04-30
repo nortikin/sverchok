@@ -153,6 +153,14 @@ class SkinViewerNode(bpy.types.Node, SverchCustomTreeNode):
     levels = IntProperty(min=0, default=1, max=3, update=updateNode)
     render_levels = IntProperty(min=0, default=1, max=3, update=updateNode)
 
+    remove_doubles = BoolProperty(
+    	default=0,
+    	name='remove doubles',
+    	description="removes coinciding verts, also aims to remove double radii data",
+    	update=updateNode)
+
+    # https://github.com/nortikin/sverchok/blob/master/nodes/basic_view/viewer_bmesh_mk2.py
+
     def sv_init(self, context):
         self.use_custom_color = True
         self.inputs.new('VerticesSocket', 'vertices')
@@ -174,6 +182,10 @@ class SkinViewerNode(bpy.types.Node, SverchCustomTreeNode):
         r3 = layout.row(align=True)
         r3.prop(self, 'levels', text="View")
         r3.prop(self, 'render_levels', text="Render")
+
+        layout.label('extras')
+        r4 = layout.row(align=True)
+        r4.prop(self, 'remove_doubles', text='rm doubles')
 
     def get_geometry_from_sockets(self):
         i = self.inputs
