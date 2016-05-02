@@ -178,10 +178,10 @@ class SkinViewerNode(bpy.types.Node, SverchCustomTreeNode):
     render_levels = IntProperty(min=0, default=1, max=3, update=updateNode)
 
     remove_doubles = BoolProperty(
-    	default=0,
-    	name='remove doubles',
-    	description="removes coinciding verts, also aims to remove double radii data",
-    	update=updateNode)
+        default=0,
+        name='remove doubles',
+        description="removes coinciding verts, also aims to remove double radii data",
+        update=updateNode)
 
     material = StringProperty(default='', update=updateNode)
 
@@ -267,7 +267,7 @@ class SkinViewerNode(bpy.types.Node, SverchCustomTreeNode):
             obj.active_material = bpy.data.materials[self.material]
 
 def register():
-	bpy.utils.register_class(SvSkinmodViewOp)
+    bpy.utils.register_class(SvSkinmodViewOp)
     bpy.utils.register_class(SkinViewerNode)
 
 
