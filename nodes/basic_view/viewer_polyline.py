@@ -47,57 +47,8 @@ from sverchok.utils.sv_viewer_utils import (
     get_random_init
 )
 
-
-# -- DUPLICATES --
-def make_duplicates_live_curve(node, curve_name, verts, edges, matrices):
-    curves = bpy.data.curves
-    objects = bpy.data.objects
-    scene = bpy.context.scene
-
-    # if curve data exists, pick it up else make new curve
-    # this curve is then used as a data.curve for all objects.
-    # objects still have slow creation time, but storage is very good due to
-    # reuse of curve data and applying matrices to objects instead.
-    cu = curves.get(curve_name)
-    if not cu:
-        cu = curves.new(name=curve_name, type='CURVE')
-
-    cu.bevel_depth = node.depth
-    cu.bevel_resolution = node.resolution
-    cu.dimensions = '3D'
-    cu.fill_mode = 'FULL'
-
-    # wipe!
-    if cu.splines:
-        cu.splines.clear()
-
-    # rebuild!
-    for edge in edges:
-        v0, v1 = verts[edge[0]], verts[edge[1]]
-        full_flat = [v0[0], v0[1], v0[2], 0.0, v1[0], v1[1], v1[2], 0.0]
-
-        # each spline has a default first coordinate but we need two.
-        segment = cu.splines.new('POLY')
-        segment.points.add(1)
-        segment.points.foreach_set('co', full_flat)
-
-    # to proceed we need to add or update objects.
-    obj_base_name = curve_name[:-1]
-
-    # if object reference exists, pick it up else make a new one
-    # assign the same curve to all Objects.
-    for idx, matrix in enumerate(matrices):
-        m = matrix_sanitizer(matrix)
-        obj_name = obj_base_name + str(idx)
-        obj = objects.get(obj_name)
-        if not obj:
-            obj = objects.new(obj_name, cu)
-            scene.objects.link(obj)
-        obj.matrix_local = m
-
-
-# -- MERGE --
-def make_merged_live_curve(node, curve_name, verts, edges, matrices):
+# -- POLYLINE --
+def live_curve(node, curve_name, verts, edges, matrices):
     curves = bpy.data.curves
     objects = bpy.data.objects
     scene = bpy.context.scene
@@ -137,51 +88,10 @@ def make_merged_live_curve(node, curve_name, verts, edges, matrices):
             segment.points.foreach_set('co', full_flat)
 
 
-# -- UNIQUE --
-def live_curve(curve_name, verts, edges, matrix, node):
-    curves = bpy.data.curves
-    objects = bpy.data.objects
-    scene = bpy.context.scene
 
-    # if curve data exists, pick it up else make new curve
-    cu = curves.get(curve_name)
-    if not cu:
-        cu = curves.new(name=curve_name, type='CURVE')
+def make_curve_geometry(node, context, name, verts, matrix):
 
-    # if object reference exists, pick it up else make a new one
-    obj = objects.get(curve_name)
-    if not obj:
-        obj = objects.new(curve_name, cu)
-        scene.objects.link(obj)
-
-    # break down existing splines entirely.
-    if cu.splines:
-        cu.splines.clear()
-
-    cu.bevel_depth = node.depth
-    cu.bevel_resolution = node.resolution
-    cu.dimensions = '3D'
-    cu.fill_mode = 'FULL'
-
-    # and rebuild
-    for edge in edges:
-        v0, v1 = verts[edge[0]], verts[edge[1]]
-        full_flat = [v0[0], v0[1], v0[2], 0.0, v1[0], v1[1], v1[2], 0.0]
-
-        # each spline has a default first coordinate but we need two.
-        segment = cu.splines.new('POLY')
-        segment.points.add(1)
-        segment.points.foreach_set('co', full_flat)
-        # print(cu.name)
-
-    # print(curves[:])
-    return obj
-
-
-def make_curve_geometry(node, context, name, verts, *topology):
-    edges, matrix = topology
-
-    sv_object = live_curve(name, verts, edges, matrix, node)
+    sv_object = live_curve(name, verts, matrix, node)
     sv_object.hide_select = False
 
     if matrix:
@@ -194,8 +104,8 @@ def make_curve_geometry(node, context, name, verts, *topology):
 # could be imported from bmeshviewr directly, it's almost identical
 class SvPolylineViewOp(bpy.types.Operator):
 
-    bl_idname = "node.sv_callback_curve_viewer"
-    bl_label = "Sverchok curve showhide"
+    bl_idname = "node.sv_callback_polyline_viewer"
+    bl_label = "Sverchok polyline showhide"
     bl_options = {'REGISTER', 'UNDO'}
 
     fn_name = StringProperty(default='')
@@ -209,25 +119,11 @@ class SvPolylineViewOp(bpy.types.Operator):
         child = lambda obj: obj.type == "CURVE" and obj.name.startswith(k)
         objs = list(filter(child, bpy.data.objects))
 
-        if type_op == 'hide_view':
+        # find a simpler way to do this :)
+        if type_op in {'hide', 'hide_render', 'hide_select', 'select'}:
             for obj in objs:
-                obj.hide = n.state_view
-            n.state_view = not n.state_view
-
-        elif type_op == 'hide_render':
-            for obj in objs:
-                obj.hide_render = n.state_render
-            n.state_render = not n.state_render
-
-        elif type_op == 'hide_select':
-            for obj in objs:
-                obj.hide_select = n.state_select
-            n.state_select = not n.state_select
-
-        elif type_op == 'mesh_select':
-            for obj in objs:
-                obj.select = n.select_state_mesh
-            n.select_state_mesh = not n.select_state_mesh
+                setattr(obj, type_op, getattr(n, type_op))
+            setattr(n, type_op, not getattr(n, type_op))
 
         elif type_op == 'random_mesh_name':
             n.basemesh_name = get_random_init()
@@ -263,12 +159,11 @@ class SvPolylineViewerNode(bpy.types.Node, SverchCustomTreeNode):
     )
 
     material = StringProperty(default='', update=updateNode)
-    polyline_mode = BoolProperty(default=True, update=updateNode)
 
-    state_view = BoolProperty(default=True)
-    state_render = BoolProperty(default=True)
-    state_select = BoolProperty(default=True)
-    select_state_mesh = BoolProperty(default=False)
+    hide = BoolProperty(default=True)
+    hide_render = BoolProperty(default=True)
+    select = BoolProperty(default=True)
+    hide_select = BoolProperty(default=False)
 
     depth = FloatProperty(min=0.0, default=0.2, update=updateNode)
     resolution = IntProperty(min=0, default=3, update=updateNode)
@@ -276,46 +171,39 @@ class SvPolylineViewerNode(bpy.types.Node, SverchCustomTreeNode):
     def sv_init(self, context):
         self.use_custom_color = True
         self.inputs.new('VerticesSocket', 'vertices', 'vertices')
-        self.inputs.new('StringsSocket', 'edges', 'edges')
         self.inputs.new('MatrixSocket', 'matrix', 'matrix')
 
     def icons(self, button_type):
 
         icon = 'WARNING'
         if button_type == 'v':
-            icon = 'RESTRICT_VIEW_' + ['ON', 'OFF'][self.state_view]
+            icon = 'RESTRICT_VIEW_' + ['ON', 'OFF'][self.hide]
         elif button_type == 'r':
-            icon = 'RESTRICT_RENDER_' + ['ON', 'OFF'][self.state_render]
+            icon = 'RESTRICT_RENDER_' + ['ON', 'OFF'][self.hide_render]
         elif button_type == 's':
-            icon = 'RESTRICT_SELECT_' + ['ON', 'OFF'][self.state_select]
+            icon = 'RESTRICT_SELECT_' + ['ON', 'OFF'][self.select]
         return icon
 
     def draw_buttons(self, context, layout):
         view_icon = 'RESTRICT_VIEW_' + ('OFF' if self.activate else 'ON')
-        sh = 'node.sv_callback_curve_viewer'
+        sh = 'node.sv_callback_polyline_viewer'
 
         col = layout.column(align=True)
         row = col.row(align=True)
         row.column().prop(self, "activate", text="UPD", toggle=True, icon=view_icon)
 
-        row.operator(sh, text='', icon=self.icons('v')).fn_name = 'hide_view'
+        row.operator(sh, text='', icon=self.icons('v')).fn_name = 'hide'
         row.operator(sh, text='', icon=self.icons('s')).fn_name = 'hide_select'
         row.operator(sh, text='', icon=self.icons('r')).fn_name = 'hide_render'
 
-
         col = layout.column(align=True)
-        row = col.row(align=True)
-        row.prop(self, "grouping", text="Group", toggle=True)
-        row.separator()
-        row.prop(self, "selected_mode", expand=True)
-
         row = col.row(align=True)
         row.scale_y = 1
         row.prop(self, "basemesh_name", text="", icon='OUTLINER_OB_MESH')
 
         row = col.row(align=True)
         row.scale_y = 2
-        row.operator(sh, text='Select / Deselect').fn_name = 'mesh_select'
+        row.operator(sh, text='Select / Deselect').fn_name = 'select'
         row = col.row(align=True)
         row.scale_y = 1
 
@@ -345,9 +233,8 @@ class SvPolylineViewerNode(bpy.types.Node, SverchCustomTreeNode):
             return dataCorrect(data)
 
         mverts = get('vertices')
-        medges = get('edges')
         mmtrix = get('matrix')
-        return mverts, medges, mmtrix
+        return mverts, mmtrix
 
     def get_structure(self, stype, sindex):
         if not stype:
@@ -361,43 +248,31 @@ class SvPolylineViewerNode(bpy.types.Node, SverchCustomTreeNode):
             return j
 
     def process(self):
-        if not (self.inputs['vertices'].is_linked and self.inputs['edges'].is_linked):
-            # possible remove any potential existing geometry here too
+        if not (self.inputs['vertices'].is_linked):
             return
 
         # perhaps if any of mverts is [] this should already fail.
-        mverts, *mrest = self.get_geometry_from_sockets()
-
-        mode = self.selected_mode
-        single_set = (len(mverts) == 1) and (len(mrest[-1]) > 1)
+        mverts, mrest = self.get_geometry_from_sockets()
         has_matrices = self.inputs['matrix'].is_linked
 
-        if single_set and (mode in {'Merge', 'Duplicate'}) and has_matrices:
-            obj_index = 0
-            self.output_dupe_or_merged_geometry(mode, mverts, *mrest)
+        def get_edges_matrices(obj_index):
+            for geom in mrest:
+                yield self.get_structure(geom, obj_index)
 
-            if mode == "Duplicate":
-                obj_index = len(mrest[1]) - 1
-                print(obj_index, ': len-1')
-        else:
-            def get_edges_matrices(obj_index):
-                for geom in mrest:
-                    yield self.get_structure(geom, obj_index)
+        # extend all non empty lists to longest of mverts or *mrest
+        maxlen = max(len(mverts), *(map(len, mrest)))
+        fullList(mverts, maxlen)
+        for idx in range(2):
+            if mrest[idx]:
+                fullList(mrest[idx], maxlen)
 
-            # extend all non empty lists to longest of mverts or *mrest
-            maxlen = max(len(mverts), *(map(len, mrest)))
-            fullList(mverts, maxlen)
-            for idx in range(2):
-                if mrest[idx]:
-                    fullList(mrest[idx], maxlen)
+        for obj_index, Verts in enumerate(mverts):
+            if not Verts:
+                continue
 
-            for obj_index, Verts in enumerate(mverts):
-                if not Verts:
-                    continue
-
-                data = get_edges_matrices(obj_index)
-                curve_name = self.basemesh_name + "_" + str(obj_index)
-                make_curve_geometry(self, bpy.context, curve_name, Verts, *data)
+            data = get_edges_matrices(obj_index)
+            curve_name = self.basemesh_name + "_" + str(obj_index)
+            make_curve_geometry(self, bpy.context, curve_name, Verts, *data)
 
         self.remove_non_updated_objects(obj_index)
         objs = self.get_children()
