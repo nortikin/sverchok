@@ -119,6 +119,30 @@ def make_bmesh_geometry(node, context, geometry):
     else:
         obj.matrix_local = Matrix.Identity(4)
 
+class SvSkinmodViewOp(bpy.types.Operator):
+
+    bl_idname = "node.sv_callback_skinmod_viewer"
+    bl_label = "Sverchok skinmod general callback"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    fn_name = StringProperty(default='')
+
+    def skin_ops(self, context, type_op):
+        n = context.node
+        k = n.basemesh_name + "_"
+
+        if type_op == 'add_material':
+            mat = bpy.data.materials.new('sv_material')
+            mat.use_nodes = True
+            mat.use_fake_user = True  # usually handy
+            n.material = mat.name
+
+    def execute(self, context):
+        self.skin_ops(context, self.fn_name)
+        return {'FINISHED'}
+
+
+
 
 class SkinViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
@@ -153,6 +177,16 @@ class SkinViewerNode(bpy.types.Node, SverchCustomTreeNode):
     levels = IntProperty(min=0, default=1, max=3, update=updateNode)
     render_levels = IntProperty(min=0, default=1, max=3, update=updateNode)
 
+    remove_doubles = BoolProperty(
+        default=0,
+        name='remove doubles',
+        description="removes coinciding verts, also aims to remove double radii data",
+        update=updateNode)
+
+    material = StringProperty(default='', update=updateNode)
+
+    # https://github.com/nortikin/sverchok/blob/master/nodes/basic_view/viewer_bmesh_mk2.py
+
     def sv_init(self, context):
         self.use_custom_color = True
         self.inputs.new('VerticesSocket', 'vertices')
@@ -174,6 +208,17 @@ class SkinViewerNode(bpy.types.Node, SverchCustomTreeNode):
         r3 = layout.row(align=True)
         r3.prop(self, 'levels', text="View")
         r3.prop(self, 'render_levels', text="Render")
+
+        layout.label('extras')
+        r4 = layout.row(align=True)
+        r4.prop(self, 'remove_doubles', text='rm doubles')
+
+        sh = "node.sv_callback_skinmod_viewer"
+        r5 = layout.row(align=True)
+        r5.prop_search(
+            self, 'material', bpy.data, 'materials', text='',
+            icon='MATERIAL_DATA')
+        r5.operator(sh, text='', icon='ZOOMIN').fn_name = 'add_material'
 
     def get_geometry_from_sockets(self):
         i = self.inputs
@@ -213,10 +258,19 @@ class SkinViewerNode(bpy.types.Node, SverchCustomTreeNode):
             all_yes = list(itertools.repeat(True, ntimes))
             obj.data.skin_vertices[0].data.foreach_set('use_root', all_yes)
 
+        # truthy if self.material is in .materials
+        if bpy.data.materials.get(self.material):
+            self.set_corresponding_materials([obj])
+
+    def set_corresponding_materials(self, objs):
+        for obj in objs:
+            obj.active_material = bpy.data.materials[self.material]
 
 def register():
+    bpy.utils.register_class(SvSkinmodViewOp)
     bpy.utils.register_class(SkinViewerNode)
 
 
 def unregister():
     bpy.utils.unregister_class(SkinViewerNode)
+    bpy.utils.unregister_class(SvSkinmodViewOp)
