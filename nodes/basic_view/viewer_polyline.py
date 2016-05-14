@@ -77,22 +77,21 @@ def live_curve(node, curve_name, verts):
     # for edge in edges:
     # v0, v1 = m * Vector(verts[edge[0]]), m * Vector(verts[edge[1]])
     # full_flat = [v0[0], v0[1], v0[2], 0.0, v1[0], v1[1], v1[2], 0.0]
-    # full_flat = []
-    # for v in verts:
-    #    full_flat.extend([v[0], v[1], v[2], 0])
+    full_flat = []
+    for v in verts:
+        full_flat.extend([v[0], v[1], v[2], 1.0])
 
     # each spline has a default first coordinate but we need two.
     kind = ["POLY","NURBS"][bool(node.bspline)]
     polyline = cu.splines.new(kind)
-    # polyline.points.add(len(verts)-1)
-    # polyline.points.foreach_set('co', full_flat)
+    polyline.points.add(len(verts)-1)
+    polyline.points.foreach_set('co', full_flat)
+        
+    # for idx, v in enumerate(verts):  
+    #    polyline.points[idx].co = (v[0], v[1], v[2], 1.0)
 
     if node.bspline:
         polyline.order_u = len(polyline.points)-1
-    
-    polyline.points.add(len(verts)-1)  
-    for idx, v in enumerate(verts):  
-        polyline.points[idx].co = [v[0], v[1], v[2], 0]
 
     return obj
 
