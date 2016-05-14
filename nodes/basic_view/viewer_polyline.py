@@ -77,14 +77,22 @@ def live_curve(node, curve_name, verts):
     # for edge in edges:
     # v0, v1 = m * Vector(verts[edge[0]]), m * Vector(verts[edge[1]])
     # full_flat = [v0[0], v0[1], v0[2], 0.0, v1[0], v1[1], v1[2], 0.0]
-    full_flat = []
-    for v in verts:
-        full_flat.extend([v[0], v[1], v[2], 0])
+    # full_flat = []
+    # for v in verts:
+    #    full_flat.extend([v[0], v[1], v[2], 0])
 
     # each spline has a default first coordinate but we need two.
-    segment = cu.splines.new('POLY')
-    segment.points.add(len(verts)-1)
-    segment.points.foreach_set('co', full_flat)
+    kind = ["POLY","NURBS"][bool(node.bspline)]
+    polyline = cu.splines.new(kind)
+    # polyline.points.add(len(verts)-1)
+    # polyline.points.foreach_set('co', full_flat)
+
+    if node.bspline:
+        polyline.order_u = len(polyline.points)-1
+    
+    polyline.points.add(len(verts)-1)  
+    for idx, v in enumerate(verts):  
+        polyline.points[idx].co = [v[0], v[1], v[2], 0]
 
     return obj
 
@@ -167,6 +175,7 @@ class SvPolylineViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
     depth = FloatProperty(min=0.0, default=0.2, update=updateNode)
     resolution = IntProperty(min=0, default=3, update=updateNode)
+    bspline = BoolProperty(default=False, update=updateNode)
 
     def sv_init(self, context):
         self.use_custom_color = True
@@ -214,7 +223,7 @@ class SvPolylineViewerNode(bpy.types.Node, SverchCustomTreeNode):
         col = layout.column()
         col.prop(self, 'depth', text='depth radius')
         col.prop(self, 'resolution', text='surface resolution')
-
+        col.prop(self, 'bspline', text='bspline')
 
 
     def draw_buttons_ext(self, context, layout):
@@ -304,19 +313,8 @@ class SvPolylineViewerNode(bpy.types.Node, SverchCustomTreeNode):
             scene.objects.unlink(obj)
             objects.remove(obj)
 
-        # delete associated meshes
-        if (self.selected_mode == 'Duplicate'):
-            objs = self.get_children()
-            objs = [obj.name for obj in objs if int(obj.name.split("_")[-1]) > 0]
-            # in Duplicate mode it's necessary to remove existing curves above index 0.
-            # A previous mode may have generated such curves.
-
-            for object_name in objs:
-                if curves.get(object_name):
-                    curves.remove(curves[object_name])
-        else:
-            for object_name in objs:
-                curves.remove(curves[object_name])
+        for object_name in objs:
+            curves.remove(curves[object_name])
 
 
     def set_corresponding_materials(self, objs):
