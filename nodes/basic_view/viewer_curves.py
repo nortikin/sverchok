@@ -258,9 +258,9 @@ class SvCurveViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
     basemesh_name = StringProperty(
         default='Alpha',
-        update=updateNode,
-        description='sets which base name the object will use, \
-        use N-panel to pick alternative random names')
+        description="which base name the object will use",
+        update=updateNode
+    )
 
     material = StringProperty(default='', update=updateNode)
     grouping = BoolProperty(default=False)
