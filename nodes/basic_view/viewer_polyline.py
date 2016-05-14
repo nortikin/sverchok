@@ -48,7 +48,7 @@ from sverchok.utils.sv_viewer_utils import (
 )
 
 # -- POLYLINE --
-def live_curve(node, curve_name, verts, edges, matrices):
+def live_curve(node, curve_name, verts):
     curves = bpy.data.curves
     objects = bpy.data.objects
     scene = bpy.context.scene
@@ -73,25 +73,26 @@ def live_curve(node, curve_name, verts, edges, matrices):
     cu.dimensions = '3D'
     cu.fill_mode = 'FULL'
 
-    for matrix in matrices:
-        m = matrix_sanitizer(matrix)
+    # and rebuild
+    # for edge in edges:
+    # v0, v1 = m * Vector(verts[edge[0]]), m * Vector(verts[edge[1]])
+    # full_flat = [v0[0], v0[1], v0[2], 0.0, v1[0], v1[1], v1[2], 0.0]
+    full_flat = []
+    for v in verts:
+        full_flat.extend([v[0], v[1], v[2], 0])
 
-        # and rebuild
-        for edge in edges:
-            v0, v1 = m * Vector(verts[edge[0]]), m * Vector(verts[edge[1]])
+    # each spline has a default first coordinate but we need two.
+    segment = cu.splines.new('POLY')
+    segment.points.add(len(verts)-1)
+    segment.points.foreach_set('co', full_flat)
 
-            full_flat = [v0[0], v0[1], v0[2], 0.0, v1[0], v1[1], v1[2], 0.0]
-
-            # each spline has a default first coordinate but we need two.
-            segment = cu.splines.new('POLY')
-            segment.points.add(1)
-            segment.points.foreach_set('co', full_flat)
+    return obj
 
 
 
 def make_curve_geometry(node, context, name, verts, matrix):
 
-    sv_object = live_curve(name, verts, matrix, node)
+    sv_object = live_curve(node, name, verts)
     sv_object.hide_select = False
 
     if matrix:
@@ -109,7 +110,6 @@ class SvPolylineViewOp(bpy.types.Operator):
     bl_options = {'REGISTER', 'UNDO'}
 
     fn_name = StringProperty(default='')
-    # obj_type = StringProperty(default='MESH')
 
     def dispatch(self, context, type_op):
         n = context.node
@@ -252,53 +252,31 @@ class SvPolylineViewerNode(bpy.types.Node, SverchCustomTreeNode):
             return
 
         # perhaps if any of mverts is [] this should already fail.
-        mverts, mrest = self.get_geometry_from_sockets()
         has_matrices = self.inputs['matrix'].is_linked
-
-        def get_edges_matrices(obj_index):
-            for geom in mrest:
-                yield self.get_structure(geom, obj_index)
+        mverts, mmatrices = self.get_geometry_from_sockets()
 
         # extend all non empty lists to longest of mverts or *mrest
-        maxlen = max(len(mverts), *(map(len, mrest)))
-        fullList(mverts, maxlen)
-        for idx in range(2):
-            if mrest[idx]:
-                fullList(mrest[idx], maxlen)
+        maxlen = max(len(mverts), len(mmatrices))
+        if has_matrices:
+            fullList(mmatrices, maxlen)
 
         for obj_index, Verts in enumerate(mverts):
             if not Verts:
                 continue
 
-            data = get_edges_matrices(obj_index)
             curve_name = self.basemesh_name + "_" + str(obj_index)
-            make_curve_geometry(self, bpy.context, curve_name, Verts, *data)
+            if has_matrices:
+                matrix = mmatrices[obj_index]
+            else:
+                matrix = []
+
+            make_curve_geometry(self, bpy.context, curve_name, Verts, matrix)
 
         self.remove_non_updated_objects(obj_index)
         objs = self.get_children()
 
-        if self.grouping:
-            self.to_group(objs)
-
         if bpy.data.materials.get(self.material):
             self.set_corresponding_materials(objs)
-
-    def output_dupe_or_merged_geometry(self, TYPE, mverts, *mrest):
-        '''
-        this should probably be shared in the main process function but
-        for prototyping convenience and logistics i will keep this separate
-        for the time-being. Upon further consideration, i might suggest keeping this
-        entirely separate to keep function length shorter.
-        '''
-        verts = mverts[0]
-        edges = mrest[0][0]
-
-        matrices = mrest[1]
-        curve_name = self.basemesh_name + "_0"
-        if TYPE == 'Merge':
-            make_merged_live_curve(self, curve_name, verts, edges, matrices)
-        elif TYPE == 'Duplicate':
-            make_duplicates_live_curve(self, curve_name, verts, edges, matrices)
 
     def get_children(self):
         objects = bpy.data.objects
@@ -340,16 +318,6 @@ class SvPolylineViewerNode(bpy.types.Node, SverchCustomTreeNode):
             for object_name in objs:
                 curves.remove(curves[object_name])
 
-    def to_group(self, objs):
-        groups = bpy.data.groups
-        named = self.basemesh_name
-
-        # alias group, or generate new group and alias that
-        group = groups.get(named, groups.new(named))
-
-        for obj in objs:
-            if obj.name not in group.objects:
-                group.objects.link(obj)
 
     def set_corresponding_materials(self, objs):
         for obj in objs:
