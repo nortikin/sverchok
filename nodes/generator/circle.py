@@ -39,7 +39,7 @@ class SvCircleNode(bpy.types.Node, SverchCustomTreeNode):
                         default=24, min=3,
                         update=updateNode)
     degr_ = FloatProperty(name='Degrees', description='Degrees',
-                          default=360, min=0, max=pi*2, subtype='ANGLE',
+                          default=pi*2, min=0, max=pi*2, subtype='ANGLE',
                           options={'ANIMATABLE'}, update=updateNode)
     mode_ = BoolProperty(name='mode_', description='Mode',
                          default=0,  update=updateNode)
