@@ -173,6 +173,9 @@ class SvTextInNode(bpy.types.Node, SverchCustomTreeNode):
 
     #interesting but dangerous, TODO
     reload_on_update = BoolProperty(default=False, description="Reload text file on every update")
+    
+    # to have one socket output
+    one_sock = BoolProperty(name='one_sock', default=False)
 
     def draw_buttons(self, context, layout):
 
@@ -185,6 +188,7 @@ class SvTextInNode(bpy.types.Node, SverchCustomTreeNode):
             layout.prop(self, "text", "Select Text")
         #    layout.prop(self,"file","File") external file, TODO
             layout.prop(self, 'textmode', 'textmode', expand=True)
+            layout.prop(self, 'one_sock', 'one_sock')
             if self.textmode == 'CSV':
                 layout.prop(self, 'csv_header', 'Header fields')
                 layout.prop(self, 'csv_dialect', 'Dialect')
@@ -290,9 +294,13 @@ class SvTextInNode(bpy.types.Node, SverchCustomTreeNode):
         self.use_custom_color = True
         self.color = READY_COLOR
         csv_data = self.csv_data[n_id]
-        for name in csv_data.keys():
-            if name in self.outputs and self.outputs[name].links:
-                SvSetSocketAnyType(self, name, [csv_data[name]])
+        if not self.one_sock:
+            for name in csv_data.keys():
+                if name in self.outputs and self.outputs[name].links:
+                    SvSetSocketAnyType(self, name, [csv_data[name]])
+        else:
+            name = 'one_sock'
+            SvSetSocketAnyType(self, 'one_sock', list(csv_data.values()))
 
     def reload_csv(self):
         n_id = node_id(self)
@@ -308,7 +316,11 @@ class SvTextInNode(bpy.types.Node, SverchCustomTreeNode):
         if not n_id in self.csv_data:
             print("Error, no data loaded")
         else:
-            for name in self.csv_data[n_id]:
+            if not self.one_sock:
+                for name in self.csv_data[n_id]:
+                    self.outputs.new('StringsSocket', name, name)
+            else:
+                name = 'one_sock'
                 self.outputs.new('StringsSocket', name, name)
 
     def load_csv_data(self):
