@@ -25,9 +25,6 @@ but massively condensed for sanity.
 '''
 
 import bpy
-from bpy.props import (
-    StringProperty,
-)
 
 import sverchok
 from sverchok.menu import make_node_cats
@@ -93,7 +90,7 @@ class NODEVIEW_MT_Dynamic_Menu(bpy.types.Menu):
     @classmethod
     def poll(cls, context):
         tree_type = context.space_data.tree_type
-        if (tree_type == 'SverchCustomTreeType'):
+        if tree_type == 'SverchCustomTreeType':
             menu_prefs['show_icons'] = get_icon_switch()
             # print('showing', menu_prefs['show_icons'])
             return True
@@ -199,29 +196,29 @@ classes = [
     make_class('Alphas', "Alpha Nodes"),
 ]
 
+nodeview_keymaps = []
 
-def register():
-    for class_name in classes:
-        bpy.utils.register_class(class_name)
-
+def add_keymap():
     wm = bpy.context.window_manager
     kc = wm.keyconfigs.addon
     if kc:
         km = kc.keymaps.new(name='Node Editor', space_type='NODE_EDITOR')
         kmi = km.keymap_items.new('wm.call_menu', 'SPACE', 'PRESS', ctrl=True)
         kmi.properties.name = "NODEVIEW_MT_Dynamic_Menu"
+        nodeview_keymaps.append((km, kmi))
+    
+def remove_keymap():
+    for km, kmi in nodeview_keymaps:
+        km.keymap_items.remove(kmi)
+    nodeview_keymaps.clear()
+
+def register():
+    for class_name in classes:
+        bpy.utils.register_class(class_name)
+    add_keymap()
 
 
 def unregister():
     for class_name in classes:
         bpy.utils.unregister_class(class_name)
-
-    wm = bpy.context.window_manager
-    kc = wm.keyconfigs.addon
-    if kc:
-        km = kc.keymaps['Node Editor']
-        for kmi in km.keymap_items:
-            if kmi.idname == 'wm.call_menu':
-                if kmi.properties.name == "NODEVIEW_MT_Dynamic_Menu":
-                    km.keymap_items.remove(kmi)
-                    break
+    remove_keymap()
