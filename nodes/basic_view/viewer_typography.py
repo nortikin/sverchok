@@ -33,6 +33,7 @@ from sverchok.data_structure import dataCorrect, fullList, updateNode
 from sverchok.utils.sv_viewer_utils import (
     matrix_sanitizer, natural_plus_one, get_random_init
 )
+from sverchok.utils.sv_viewer_utils import greek_alphabet
 
 
 def make_text_object(node, idx, context, data):
@@ -244,6 +245,9 @@ class SvTypeViewerNode(bpy.types.Node, SverchCustomTreeNode):
     parent_name = StringProperty()  # calling updateNode would recurse.
 
     def sv_init(self, context):
+        gai = bpy.context.scene.SvGreekAlphabet_index
+        self.basemesh_name = greek_alphabet[gai]
+        bpy.context.scene.SvGreekAlphabet_index += 1
         self.use_custom_color = True
         self.inputs.new('StringsSocket', 'text', 'text')
         self.inputs.new('MatrixSocket', 'matrix', 'matrix')

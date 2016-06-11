@@ -44,7 +44,8 @@ from sverchok.data_structure import (
 from sverchok.utils.sv_viewer_utils import (
     matrix_sanitizer,
     natural_plus_one,
-    get_random_init
+    get_random_init,
+    greek_alphabet
 )
 
 # -- POLYLINE --
@@ -177,6 +178,9 @@ class SvPolylineViewerNode(bpy.types.Node, SverchCustomTreeNode):
     bspline = BoolProperty(default=False, update=updateNode)
 
     def sv_init(self, context):
+        gai = bpy.context.scene.SvGreekAlphabet_index
+        self.basemesh_name = greek_alphabet[gai]
+        bpy.context.scene.SvGreekAlphabet_index += 1
         self.use_custom_color = True
         self.inputs.new('VerticesSocket', 'vertices', 'vertices')
         self.inputs.new('MatrixSocket', 'matrix', 'matrix')

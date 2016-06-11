@@ -27,7 +27,7 @@ from mathutils import Matrix, Vector
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
-
+from sverchok.utils.sv_viewer_utils import greek_alphabet
 
 def matrix_sanitizer(matrix):
     #  reduces all values below threshold (+ or -) to 0.0, to avoid meaningless
@@ -188,6 +188,9 @@ class SkinViewerNode(bpy.types.Node, SverchCustomTreeNode):
     # https://github.com/nortikin/sverchok/blob/master/nodes/basic_view/viewer_bmesh_mk2.py
 
     def sv_init(self, context):
+        gai = bpy.context.scene.SvGreekAlphabet_index
+        self.basemesh_name = greek_alphabet[gai]
+        bpy.context.scene.SvGreekAlphabet_index += 1
         self.use_custom_color = True
         self.inputs.new('VerticesSocket', 'vertices')
         self.inputs.new('StringsSocket', 'edges')

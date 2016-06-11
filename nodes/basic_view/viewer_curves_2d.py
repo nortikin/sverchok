@@ -44,7 +44,8 @@ from sverchok.data_structure import (
 from sverchok.utils.sv_viewer_utils import (
     matrix_sanitizer,
     natural_plus_one,
-    get_random_init
+    get_random_init,
+    greek_alphabet
 )
 
 
@@ -291,6 +292,9 @@ class SvCurveViewerNode2D(bpy.types.Node, SverchCustomTreeNode):
     resolution = IntProperty(min=0, default=3, update=updateNode)
 
     def sv_init(self, context):
+        gai = bpy.context.scene.SvGreekAlphabet_index
+        self.basemesh_name = greek_alphabet[gai]
+        bpy.context.scene.SvGreekAlphabet_index += 1
         self.use_custom_color = True
         self.inputs.new('VerticesSocket', 'vertices', 'vertices')
         self.inputs.new('StringsSocket', 'edges', 'edges')
