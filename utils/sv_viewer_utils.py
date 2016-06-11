@@ -2,8 +2,19 @@ import re
 import random
 
 import bpy
+from bpy.props import IntProperty
 import mathutils
 from mathutils import Vector, Matrix
+
+
+bpy.types.Scene.SvGreekAlphabet_index = IntProperty(default=0, min=0, max=23)
+greek_alphabet = [
+    'Alpha', 'Beta', 'Gamma', 'Delta',
+    'Epsilon', 'Zeta', 'Eta', 'Theta',
+    'Iota', 'Kappa', 'Lamda', 'Mu',
+    'Nu', 'Xi', 'Omicron', 'Pi',
+    'Rho', 'Sigma', 'Tau', 'Upsilon',
+    'Phi', 'Chi', 'Psi', 'Omega']
 
 
 def matrix_sanitizer(matrix):
@@ -34,14 +45,6 @@ def natural_plus_one(object_names):
 
 def get_random_init():
     objects = bpy.data.objects
-
-    greek_alphabet = [
-        'Alpha', 'Beta', 'Gamma', 'Delta',
-        'Epsilon', 'Zeta', 'Eta', 'Theta',
-        'Iota', 'Kappa', 'Lamda', 'Mu',
-        'Nu', 'Xi', 'Omicron', 'Pi',
-        'Rho', 'Sigma', 'Tau', 'Upsilon',
-        'Phi', 'Chi', 'Psi', 'Omega']
 
     with_underscore = lambda obj: '_' in obj.name and obj.type == 'MESH'
     names_with_underscores = list(filter(with_underscore, objects))

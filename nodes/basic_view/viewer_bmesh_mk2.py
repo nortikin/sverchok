@@ -30,7 +30,8 @@ from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 from sverchok.utils.sv_viewer_utils import (
     matrix_sanitizer,
     natural_plus_one,
-    get_random_init
+    get_random_init,
+    greek_alphabet
 )
 
 
@@ -252,6 +253,9 @@ class SvBmeshViewerNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         description='Allows mesh.transform(matrix) operation, quite fast!')
 
     def sv_init(self, context):
+        gai = bpy.context.scene.SvGreekAlphabet_index
+        self.basemesh_name = greek_alphabet[gai]
+        bpy.context.scene.SvGreekAlphabet_index += 1
         self.use_custom_color = True
         self.inputs.new('VerticesSocket', 'vertices', 'vertices')
         self.inputs.new('StringsSocket', 'edges', 'edges')
@@ -461,3 +465,6 @@ def register():
 def unregister():
     bpy.utils.unregister_class(SvBmeshViewerNodeMK2)
     bpy.utils.unregister_class(SvBmeshViewOp2)
+
+if __name__ == '__main__':
+    register()
