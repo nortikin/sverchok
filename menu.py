@@ -272,6 +272,7 @@ def make_node_cats():
         ["SvCSGBooleanNode",      "CSG Boolean"],
         ["SvNumpyArrayNode",      "Numpy Array"],
         ["SvNodeRemoteNode",      "Node Remote (Control)"],
+        ['SvGroupNodeExp',        "GroupNode Exp"],
         ["SvGetDataObjectNode",   "Object ID Get"],
         ["SvSetDataObjectNode",   "Object ID Set"],
         ['SvSortObjsNode',        "Object ID Sort"],
