@@ -62,13 +62,30 @@ class SvGroupEdit(bpy.types.Operator):
         parent_tree_name = node.id_data.name
         path = context.space_data.path
         path.clear()
-        path.append(ng[parent_tree_name])
-        path.append(ng[self.group_name])
+        path.append(ng[parent_tree_name]) # below the green opacity layer
+        path.append(ng[self.group_name])  # top level
 
         # this should happen in the `tree_path_parent` operator, but the doesn't seem to.
         # context.space_data.node_tree = bpy.data.node_groups[self.group_name]
         return {"FINISHED"}
-                
+
+class SvTreePathParent(bpy.types.Operator):
+    '''Go to parent node tree'''
+    bl_idname = "node.sv_tree_path_parent"
+    bl_label = "Parent Sv Node Tree"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    @classmethod
+    def poll(cls, context):
+        space = context.space_data
+        return space.type == 'NODE_EDITOR' and len(space.path) > 1
+
+    def execute(self, context):
+        space = context.space_data
+        space.path.pop()
+        context.space_data.node_tree = space.path[0]
+        return {'FINISHED'}
+
 
 class SvGroupNodeExp(bpy.types.NodeCustomGroup, SverchCustomTreeNode):
     bl_idname = 'SvGroupNodeExp'
@@ -100,7 +117,7 @@ class SvGroupNodeExp(bpy.types.NodeCustomGroup, SverchCustomTreeNode):
         pass
     
 
-classes = [SvGroupEdit, SvGroupNodeExp]
+classes = [SvGroupEdit, SvTreePathParent, SvGroupNodeExp]
     
 def register():
     for cls in classes:
