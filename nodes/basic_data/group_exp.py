@@ -39,7 +39,7 @@ def group_make(self, new_group_name):
     inputnode = nodes.new('SvGroupInputsNode')
     outputnode = nodes.new('SvGroupOutputsNode')
     inputnode.location = (-300, 0)
-    outputnode.location = (300, 0)    
+    outputnode.location = (300, 0)
 
 class SvGroupEdit(bpy.types.Operator):
     bl_idname = "node.sv_group_edit"
@@ -60,6 +60,7 @@ class SvGroupEdit(bpy.types.Operator):
         path.clear()
         path.append(bpy.data.node_groups[parent_tree_name])
         path.append(bpy.data.node_groups[self.group_name])
+        # context.space_data.node_tree = bpy.data.node_groups[self.group_name]
         return {"FINISHED"}
                 
 
