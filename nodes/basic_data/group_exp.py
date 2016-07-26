@@ -54,14 +54,12 @@ class SvGroupEdit(bpy.types.Operator):
         
         bpy.ops.node.sv_switch_layout(layout_name=self.group_name)
         
+        # by switching, space_data is now different
         parent_tree_name = node.id_data.name
         path = context.space_data.path
-        path.pop()
+        path.clear()
         path.append(bpy.data.node_groups[parent_tree_name])
         path.append(bpy.data.node_groups[self.group_name])
-
-        print(path)
-
         return {"FINISHED"}
                 
 
