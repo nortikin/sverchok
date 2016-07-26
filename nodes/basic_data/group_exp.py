@@ -31,15 +31,37 @@ socket_types = [
     ("MatrixSocket", "m", "Matrix")
 ]
 
+def group_make(self, new_group_name):
+    self.node_tree = bpy.data.node_groups.new(new_group_name, 'SverchCustomTreeType')
+    self.group_name = self.node_tree.name
 
-class SvExpCallbackOperator(bpy.types.Operator):  
-    bl_idname = "node.sverchok_exp_cb"
-    bl_label = "general cb"
+    nodes = self.node_tree.nodes
+    inputnode = nodes.new('SvGroupInputsNode')
+    outputnode = nodes.new('SvGroupOutputsNode')
+    inputnode.location = (-300, 0)
+    outputnode.location = (300, 0)    
+
+class SvGroupEdit(bpy.types.Operator):
+    bl_idname = "node.sv_group_edit"
+    bl_label = "edits an sv group"
     
     group_name = StringProperty()
     
     def execute(self, context):
+        node = context.node
+        if not self.group_name in bpy.data.node_groups:
+            group_make(node, new_group_name=self.group_name)
+        
         bpy.ops.node.sv_switch_layout(layout_name=self.group_name)
+        
+        parent_tree_name = node.id_data.name
+        path = context.space_data.path
+        path.pop()
+        path.append(bpy.data.node_groups[parent_tree_name])
+        path.append(bpy.data.node_groups[self.group_name])
+
+        print(path)
+
         return {"FINISHED"}
                 
 
@@ -50,24 +72,8 @@ class SvGroupNodeExp(bpy.types.NodeCustomGroup, SverchCustomTreeNode):
 
     group_name = StringProperty()
  
-    def init(self, context):
-
-        self.node_tree = bpy.data.node_groups.new('nooobgroup', 'SverchCustomTreeType')
-        self.group_name = self.node_tree.name
-        self.node_tree.parent = self
-        # space = context.space_data
-        nodes = self.node_tree.nodes
-
-        inputnode = nodes.new('SvGroupInputsNode')
-        outputnode = nodes.new('SvGroupOutputsNode')
-        inputnode.location = (-300, 0)
-        outputnode.location = (300, 0)
-
-
     def update(self):
-        '''
-        Override inherited
-        '''
+        ''' Override inherited '''
         pass
         
     def draw_buttons_ext(self, context, layout):
@@ -75,18 +81,21 @@ class SvGroupNodeExp(bpy.types.NodeCustomGroup, SverchCustomTreeNode):
             
     def draw_buttons(self, context, layout):
         c = layout.column()
-        f = c.operator(SvExpCallbackOperator.bl_idname, text='print stuff')
+        c.prop(self, 'group_name', text='name')
+
+        d = layout.column()
+        d.active = bool(self.group_name)
+        f = d.operator('node.sv_group_edit', text='edit!')
         f.group_name = self.group_name
 
     def process(self):
         pass
-
     
     def load(self):
         pass
     
 
-classes = [SvExpCallbackOperator, SvGroupNodeExp]
+classes = [SvGroupEdit, SvGroupNodeExp]
     
 def register():
     for cls in classes:
