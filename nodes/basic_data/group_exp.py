@@ -40,6 +40,7 @@ def group_make(self, new_group_name):
     outputnode = nodes.new('SvGroupOutputsNode')
     inputnode.location = (-300, 0)
     outputnode.location = (300, 0)
+    return self.node_tree
 
 class SvGroupEdit(bpy.types.Operator):
     bl_idname = "node.sv_group_edit"
@@ -49,8 +50,11 @@ class SvGroupEdit(bpy.types.Operator):
     
     def execute(self, context):
         node = context.node
-        if not self.group_name in bpy.data.node_groups:
-            group_make(node, new_group_name=self.group_name)
+        ng = bpy.data.node_groups
+
+        group_node = ng.get(self.group_name)
+        if not group_node:
+            group_node = group_make(node, new_group_name=self.group_name)
         
         bpy.ops.node.sv_switch_layout(layout_name=self.group_name)
         
@@ -58,8 +62,10 @@ class SvGroupEdit(bpy.types.Operator):
         parent_tree_name = node.id_data.name
         path = context.space_data.path
         path.clear()
-        path.append(bpy.data.node_groups[parent_tree_name])
-        path.append(bpy.data.node_groups[self.group_name])
+        path.append(ng[parent_tree_name])
+        path.append(ng[self.group_name])
+
+        # this should happen in the `tree_path_parent` operator, but the doesn't seem to.
         # context.space_data.node_tree = bpy.data.node_groups[self.group_name]
         return {"FINISHED"}
                 
