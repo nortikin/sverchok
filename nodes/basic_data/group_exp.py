@@ -83,7 +83,7 @@ class SvTreePathParent(bpy.types.Operator):
     def execute(self, context):
         space = context.space_data
         space.path.pop()
-        context.space_data.node_tree = space.path[0]
+        context.space_data.node_tree = space.path[0].node_tree
         return {'FINISHED'}
 
 
