@@ -31,6 +31,14 @@ socket_types = [
     ("MatrixSocket", "m", "Matrix")
 ]
 
+
+def find_node(id_name, ng):
+    for n in ng.nodes:
+        if n.bl_idname == id_name:
+            return n
+    raise NotFoundErr
+
+
 def group_make(self, new_group_name):
     self.node_tree = bpy.data.node_groups.new(new_group_name, 'SverchCustomTreeType')
     self.group_name = self.node_tree.name
@@ -43,8 +51,10 @@ def group_make(self, new_group_name):
     inputnode.parent_node_name = self.name
     inputnode.parent_tree_name = self.id_data.name
 
-    outputnode = nodes.new('NodeGroupOutput')
+    outputnode = nodes.new('SvGroupOutputsNodeExp')
     outputnode.location = (300, 0)
+    outputnode.parent_node_name = self.name
+    outputnode.parent_tree_name = self.id_data.name
 
     return self.node_tree
 
@@ -115,7 +125,25 @@ class SvGroupNodeExp(bpy.types.Node, SverchCustomTreeNode):
         f.group_name = self.group_name
 
     def process(self):
-        pass
+        if not self.group_name:
+            return
+
+        group_ng = bpy.data.node_groups[self.group_name]
+        in_node = find_node("SvGroupInputsNodeExp", group_ng)
+        out_node = find_node("SvGroupOutputsNodeExp", group_ng)
+        for socket in self.inputs:
+            if socket.is_linked:
+                data = socket.sv_get(deepcopy=False)
+                in_node.outputs[socket.name].sv_set(data)
+        #  get update list
+        #  could be cached
+        ul = make_tree_from_nodes([out_node.name], group_ng, down=False)
+        do_update(ul, group_ng.nodes)
+        # set output sockets correctly
+        for socket in self.outputs:
+            if socket.is_linked:
+                data = out_node.inputs[socket.name].sv_get(deepcopy=False)
+                socket.sv_set(data)
     
     def load(self):
         pass
@@ -134,12 +162,12 @@ class SvGroupInputsNodeExp(bpy.types.Node, SverchCustomTreeNode):
         si('SvDummySocket', 'connect me')
 
     def process(self):
-        outputs = self.outputs
+        puts = self.outputs
 
-        if outputs[-1].is_linked:
+        if puts[-1].is_linked:
 
             # first switch socket type
-            socket = outputs[-1]
+            socket = puts[-1]
             new_type = socket.links[0].to_socket.bl_idname
             new_name = socket.links[0].to_socket.name
             replace_socket(socket, new_type, new_name=new_name)
@@ -150,18 +178,57 @@ class SvGroupInputsNodeExp(bpy.types.Node, SverchCustomTreeNode):
             parent_node.inputs.new(new_type, new_name)
 
             # add new dangling dummy
-            outputs.new('SvDummySocket', 'connect me')
+            puts.new('SvDummySocket', 'connect me')
 
+        # set socket links ?
 
     def get_sockets(self):
         yield self.outputs, "outputs"
+
+
+class SvGroupOutputsNodeExp(bpy.types.Node, SverchCustomTreeNode):
+    bl_idname = 'SvGroupOutputsNodeExp'
+    bl_label = 'Group Outputs Exp'
+    bl_icon = 'OUTLINER_OB_EMPTY'
+
+    parent_node_name = bpy.props.StringProperty()
+    parent_tree_name = bpy.props.StringProperty()
+
+    def sv_init(self, context):
+        si = self.inputs.new
+        si('SvDummySocket', 'connect me')
+
+    def process(self):
+        puts = self.inputs
+
+        if puts[-1].is_linked:
+
+            # first switch socket type
+            socket = puts[-1]
+            new_type = socket.links[0].from_socket.bl_idname
+            new_name = socket.links[0].from_socket.name
+            replace_socket(socket, new_type, new_name=new_name)
+
+            # add new input socket to parent node
+            parent_tree = bpy.data.node_groups[self.parent_tree_name].nodes
+            parent_node = parent_tree[self.parent_node_name]
+            parent_node.outputs.new(new_type, new_name)
+
+            # add new dangling dummy
+            puts.new('SvDummySocket', 'connect me')
+
+        # set socket links ?
+
+    def get_sockets(self):
+        yield self.inputs, "inputs"
 
 
 classes = [
     SvGroupEdit,
     SvTreePathParent,
     SvGroupNodeExp,
-    SvGroupInputsNodeExp
+    SvGroupInputsNodeExp,
+    SvGroupOutputsNodeExp
 ]
 
 
