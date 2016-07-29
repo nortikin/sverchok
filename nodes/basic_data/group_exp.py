@@ -39,9 +39,13 @@ def group_make(self, new_group_name):
     # inputnode = nodes.new('SvGroupInputsNode')
     # outputnode = nodes.new('SvGroupOutputsNode')
     inputnode = nodes.new('SvGroupInputsNodeExp')
-    outputnode = nodes.new('NodeGroupOutput')
     inputnode.location = (-300, 0)
+    inputnode.parent_node_name = self.name
+    inputnode.parent_tree_name = self.id_data.name
+
+    outputnode = nodes.new('NodeGroupOutput')
     outputnode.location = (300, 0)
+
     return self.node_tree
 
 class SvGroupEdit(bpy.types.Operator):
@@ -52,6 +56,7 @@ class SvGroupEdit(bpy.types.Operator):
     
     def execute(self, context):
         node = context.node
+        parent_tree_name = node.id_data.name
         ng = bpy.data.node_groups
 
         group_node = ng.get(self.group_name)
@@ -61,14 +66,11 @@ class SvGroupEdit(bpy.types.Operator):
         bpy.ops.node.sv_switch_layout(layout_name=self.group_name)
         
         # by switching, space_data is now different
-        parent_tree_name = node.id_data.name
         path = context.space_data.path
         path.clear()
         path.append(ng[parent_tree_name]) # below the green opacity layer
         path.append(ng[self.group_name])  # top level
 
-        # this should happen in the `tree_path_parent` operator, but the doesn't seem to.
-        # context.space_data.node_tree = bpy.data.node_groups[self.group_name]
         return {"FINISHED"}
 
 class SvTreePathParent(bpy.types.Operator):
@@ -124,6 +126,9 @@ class SvGroupInputsNodeExp(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Group Inputs Exp'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
+    parent_node_name = bpy.props.StringProperty()
+    parent_tree_name = bpy.props.StringProperty()
+
     def sv_init(self, context):
         si = self.outputs.new
         si('SvDummySocket', 'connect me')
@@ -132,10 +137,19 @@ class SvGroupInputsNodeExp(bpy.types.Node, SverchCustomTreeNode):
         outputs = self.outputs
 
         if outputs[-1].is_linked:
+
+            # first switch socket type
             socket = outputs[-1]
             new_type = socket.links[0].to_socket.bl_idname
             new_name = socket.links[0].to_socket.name
             replace_socket(socket, new_type, new_name=new_name)
+
+            # add new input socket to parent node
+            parent_tree = bpy.data.node_groups[self.parent_tree_name].nodes
+            parent_node = parent_tree[self.parent_node_name]
+            parent_node.inputs.new(new_type, new_name)
+
+            # add new dangling dummy
             outputs.new('SvDummySocket', 'connect me')
 
 
