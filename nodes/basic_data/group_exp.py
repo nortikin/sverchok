@@ -36,8 +36,10 @@ def group_make(self, new_group_name):
     self.group_name = self.node_tree.name
 
     nodes = self.node_tree.nodes
-    inputnode = nodes.new('SvGroupInputsNode')
-    outputnode = nodes.new('SvGroupOutputsNode')
+    # inputnode = nodes.new('SvGroupInputsNode')
+    # outputnode = nodes.new('SvGroupOutputsNode')
+    inputnode = nodes.new('SvGroupInputsNodeExp')
+    outputnode = nodes.new('NodeGroupOutput')
     inputnode.location = (-300, 0)
     outputnode.location = (300, 0)
     return self.node_tree
@@ -87,7 +89,7 @@ class SvTreePathParent(bpy.types.Operator):
         return {'FINISHED'}
 
 
-class SvGroupNodeExp(bpy.types.NodeCustomGroup, SverchCustomTreeNode):
+class SvGroupNodeExp(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvGroupNodeExp'
     bl_label = 'Group Exp'
     bl_icon = 'OUTLINER_OB_EMPTY'
@@ -117,8 +119,38 @@ class SvGroupNodeExp(bpy.types.NodeCustomGroup, SverchCustomTreeNode):
         pass
     
 
-classes = [SvGroupEdit, SvTreePathParent, SvGroupNodeExp]
-    
+class SvGroupInputsNodeExp(bpy.types.Node, SverchCustomTreeNode):
+    bl_idname = 'SvGroupInputsNodeExp'
+    bl_label = 'Group Inputs Exp'
+    bl_icon = 'OUTLINER_OB_EMPTY'
+
+    def sv_init(self, context):
+        si = self.outputs.new
+        si('SvDummySocket', 'connect me')
+
+    def process(self):
+        outputs = self.outputs
+
+        if outputs[-1].is_linked:
+            socket = outputs[-1]
+            new_type = socket.links[0].to_socket.bl_idname
+            new_name = socket.links[0].to_socket.name
+            replace_socket(socket, new_type, new_name=new_name)
+            outputs.new('SvDummySocket', 'connect me')
+
+
+    def get_sockets(self):
+        yield self.outputs, "outputs"
+
+
+classes = [
+    SvGroupEdit,
+    SvTreePathParent,
+    SvGroupNodeExp,
+    SvGroupInputsNodeExp
+]
+
+
 def register():
     for cls in classes:
         bpy.utils.register_class(cls)

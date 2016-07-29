@@ -25,14 +25,19 @@ from bpy.props import StringProperty, BoolProperty, FloatVectorProperty, IntProp
 from bpy.types import NodeTree, NodeSocket, NodeSocketStandard
 
 from sverchok import data_structure
-from sverchok.data_structure import (SvGetSocketInfo, SvGetSocket,
-                                     SvSetSocket, updateNode,
-                                     get_other_socket, SvNoDataError,
-                                     sentinel)
+from sverchok.data_structure import (
+    SvGetSocketInfo,
+    SvGetSocket,
+    SvSetSocket,
+    updateNode,
+    get_other_socket, SvNoDataError, sentinel)
 
-from sverchok.core.update_system import (build_update_list, process_from_node,
-                                         process_tree, get_update_lists,
-                                         update_error_nodes)
+from sverchok.core.update_system import (
+    build_update_list,
+    process_from_node,
+    process_tree, 
+    get_update_lists, update_error_nodes)
+
 from sverchok.ui import color_def
 
 def process_from_socket(self, context):
@@ -78,7 +83,7 @@ class MatrixSocket(NodeSocket):
         '''if self.is_linked:
             return(.8,.3,.75,1.0)
         else: '''
-        return(.2, .8, .8, 1.0)
+        return (.2, .8, .8, 1.0)
 
 
 class VerticesSocket(NodeSocket):
@@ -120,7 +125,42 @@ class VerticesSocket(NodeSocket):
             layout.label(text)
 
     def draw_color(self, context, node):
-        return(0.9, 0.6, 0.2, 1.0)
+        return (0.9, 0.6, 0.2, 1.0)
+
+
+class SvDummySocket(NodeSocket):
+    '''Dummy Socket for sockets awaiting assignment of type'''
+    bl_idname = "SvDummySocket"
+    bl_label = "Dummys Socket"
+
+    prop = FloatVectorProperty(default=(0, 0, 0), size=3, update=process_from_socket)
+    prop_name = StringProperty(default='')
+    use_prop = BoolProperty(default=False)
+    
+    
+    def sv_get(self):
+        if self.is_linked:
+            return self.links[0].bl_idname
+            
+    def sv_type_conversion(self, new_self):
+        self = new_self
+
+    def draw(self, context, layout, node, text):
+        # if not self.is_output and not self.is_linked:
+        #     if self.prop_name:
+        #         layout.template_component_menu(node, self.prop_name, name=self.name)
+        #     elif self.use_prop:
+        #         layout.template_component_menu(self, "prop", name=self.name)
+        #     else:
+        #         layout.label(text)
+        # elif self.is_linked:
+        #     layout.label(text + '. ' + SvGetSocketInfo(self))
+        # else:
+        #     layout.label(text)
+        layout.label(text)
+
+    def draw_color(self, context, node):
+        return (0.8, 0.8, 0.8, 0.3)
 
 
 class StringsSocket(NodeSocketStandard):
@@ -174,7 +214,7 @@ class StringsSocket(NodeSocketStandard):
             layout.label(t)
 
     def draw_color(self, context, node):
-        return(0.6, 1.0, 0.6, 1.0)
+        return (0.6, 1.0, 0.6, 1.0)
 
 
 class SvNodeTreeCommon(object):
@@ -366,9 +406,11 @@ def register():
     bpy.utils.register_class(MatrixSocket)
     bpy.utils.register_class(StringsSocket)
     bpy.utils.register_class(VerticesSocket)
+    bpy.utils.register_class(SvDummySocket)
 
 
 def unregister():
+    bpy.utils.unregister_class(SvDummySocket)
     bpy.utils.unregister_class(VerticesSocket)
     bpy.utils.unregister_class(StringsSocket)
     bpy.utils.unregister_class(MatrixSocket)
