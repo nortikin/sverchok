@@ -162,18 +162,18 @@ class SvGroupNodeExp(bpy.types.Node, SverchCustomTreeNode):
         group_ng = bpy.data.node_groups[self.group_name]
         in_node = find_node("SvGroupInputsNodeExp", group_ng)
         out_node = find_node("SvGroupOutputsNodeExp", group_ng)
-        for socket in self.inputs:
+        for index, socket in enumerate(self.inputs):
             if socket.is_linked:
                 data = socket.sv_get(deepcopy=False)
-                in_node.outputs[socket.index].sv_set(data)
+                in_node.outputs[index].sv_set(data)
         #  get update list
         #  could be cached
         ul = make_tree_from_nodes([out_node.name], group_ng, down=False)
         do_update(ul, group_ng.nodes)
         # set output sockets correctly
-        for socket in self.outputs:
+        for index, socket in enumerate(self.outputs):
             if socket.is_linked:
-                data = out_node.inputs[socket.index].sv_get(deepcopy=False)
+                data = out_node.inputs[index].sv_get(deepcopy=False)
                 socket.sv_set(data)
     
     def load(self):
