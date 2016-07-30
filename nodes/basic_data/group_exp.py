@@ -135,6 +135,7 @@ class SvSocketAquisition:
             socket_list.new('SvDummySocket', 'connect me')
 
 
+
 class SvGroupNodeExp(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvGroupNodeExp'
     bl_label = 'Group Exp'
