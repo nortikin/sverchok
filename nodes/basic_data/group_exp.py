@@ -101,6 +101,37 @@ class SvTreePathParent(bpy.types.Operator):
         return {'FINISHED'}
 
 
+class SvSocketAquisition:
+
+    socket_map = {'outputs': 'to_socket', 'inputs': 'from_socket'}
+    other_map = {'outputs': 'inputs', 'inputs': 'outputs'}
+    node_kind = StringProperty()
+
+    def update(self):
+        kind = self.node_kind
+        socket_list = getattr(self, kind)
+        _socket = self.socket_map.get(kind) # from_socket, to_socket
+        _puts = self.other_map.get(kind) # inputs, outputs
+
+        if socket_list[-1].is_linked:
+
+            # first switch socket type
+            socket = socket_list[-1]
+            links = socket.links[0]
+            new_type = getattr(links, _socket).bl_idname
+            new_name = getattr(links, _socket).name
+            replace_socket(socket, new_type, new_name=new_name)
+
+            # add new input socket to parent node
+            parent_tree = bpy.data.node_groups[self.parent_tree_name].nodes
+            parent_node = parent_tree[self.parent_node_name]
+            getattr(parent_node, _puts).new(new_type, new_name)
+
+            # add new dangling dummy
+            socket_list.new('SvDummySocket', 'connect me')
+
+
+
 class SvGroupNodeExp(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvGroupNodeExp'
     bl_label = 'Group Exp'
@@ -149,7 +180,7 @@ class SvGroupNodeExp(bpy.types.Node, SverchCustomTreeNode):
         pass
     
 
-class SvGroupInputsNodeExp(bpy.types.Node, SverchCustomTreeNode):
+class SvGroupInputsNodeExp(bpy.types.Node, SverchCustomTreeNode, SvSocketAquisition):
     bl_idname = 'SvGroupInputsNodeExp'
     bl_label = 'Group Inputs Exp'
     bl_icon = 'OUTLINER_OB_EMPTY'
@@ -161,32 +192,34 @@ class SvGroupInputsNodeExp(bpy.types.Node, SverchCustomTreeNode):
         si = self.outputs.new
         si('SvDummySocket', 'connect me')
 
-    def process(self):
-        puts = self.outputs
+        self.node_kind = 'outputs'
 
-        if puts[-1].is_linked:
+    # def process(self):
+    #     puts = self.outputs
 
-            # first switch socket type
-            socket = puts[-1]
-            new_type = socket.links[0].to_socket.bl_idname
-            new_name = socket.links[0].to_socket.name
-            replace_socket(socket, new_type, new_name=new_name)
+    #     if puts[-1].is_linked:
 
-            # add new input socket to parent node
-            parent_tree = bpy.data.node_groups[self.parent_tree_name].nodes
-            parent_node = parent_tree[self.parent_node_name]
-            parent_node.inputs.new(new_type, new_name)
+    #         # first switch socket type
+    #         socket = puts[-1]
+    #         new_type = socket.links[0].to_socket.bl_idname
+    #         new_name = socket.links[0].to_socket.name
+    #         replace_socket(socket, new_type, new_name=new_name)
 
-            # add new dangling dummy
-            puts.new('SvDummySocket', 'connect me')
+    #         # add new input socket to parent node
+    #         parent_tree = bpy.data.node_groups[self.parent_tree_name].nodes
+    #         parent_node = parent_tree[self.parent_node_name]
+    #         parent_node.inputs.new(new_type, new_name)
 
-        # set socket links ?
+    #         # add new dangling dummy
+    #         puts.new('SvDummySocket', 'connect me')
+
+    #     # set socket links ?
 
     def get_sockets(self):
         yield self.outputs, "outputs"
 
 
-class SvGroupOutputsNodeExp(bpy.types.Node, SverchCustomTreeNode):
+class SvGroupOutputsNodeExp(bpy.types.Node, SverchCustomTreeNode, SvSocketAquisition):
     bl_idname = 'SvGroupOutputsNodeExp'
     bl_label = 'Group Outputs Exp'
     bl_icon = 'OUTLINER_OB_EMPTY'
@@ -198,26 +231,28 @@ class SvGroupOutputsNodeExp(bpy.types.Node, SverchCustomTreeNode):
         si = self.inputs.new
         si('SvDummySocket', 'connect me')
 
-    def process(self):
-        puts = self.inputs
+        self.node_kind = 'inputs'
 
-        if puts[-1].is_linked:
+    # def process(self):
+    #     puts = self.inputs
 
-            # first switch socket type
-            socket = puts[-1]
-            new_type = socket.links[0].from_socket.bl_idname
-            new_name = socket.links[0].from_socket.name
-            replace_socket(socket, new_type, new_name=new_name)
+    #     if puts[-1].is_linked:
 
-            # add new input socket to parent node
-            parent_tree = bpy.data.node_groups[self.parent_tree_name].nodes
-            parent_node = parent_tree[self.parent_node_name]
-            parent_node.outputs.new(new_type, new_name)
+    #         # first switch socket type
+    #         socket = puts[-1]
+    #         new_type = socket.links[0].from_socket.bl_idname
+    #         new_name = socket.links[0].from_socket.name
+    #         replace_socket(socket, new_type, new_name=new_name)
 
-            # add new dangling dummy
-            puts.new('SvDummySocket', 'connect me')
+    #         # add new input socket to parent node
+    #         parent_tree = bpy.data.node_groups[self.parent_tree_name].nodes
+    #         parent_node = parent_tree[self.parent_node_name]
+    #         parent_node.outputs.new(new_type, new_name)
 
-        # set socket links ?
+    #         # add new dangling dummy
+    #         puts.new('SvDummySocket', 'connect me')
+
+    #     # set socket links ?
 
     def get_sockets(self):
         yield self.inputs, "inputs"
