@@ -254,19 +254,22 @@ class SvCustomGroupInterface(bpy.types.Panel):
 
         row = layout.row()
         split = row.split(percentage=0.5)
-        column1 = split.column()
-        split = split.split(percentage=0.5)
-        column2 = split.column()
+        column1 = split.box().column()
+        split = split.split()
+        column2 = split.box().column()
+
+        def draw_socket_row(_column, s):
+            if s.bl_idname == 'SvDummySocket':
+                return
+            r = _column.row()
+            r.prop(s, 'name', text='')
+            r.label(s.bl_idname[0])
 
         for s in in_node.outputs:
-            if s.bl_idname == 'SvDummySocket':
-                continue
-            column1.label(s.name + ',' + s.bl_idname[0])
+            draw_socket_row(column1, s)
 
         for s in out_node.inputs:
-            if s.bl_idname == 'SvDummySocket':
-                continue
-            column2.label(s.name + ',' + s.bl_idname[0])
+            draw_socket_row(column2, s)
 
 
 classes = [
