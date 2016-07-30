@@ -41,6 +41,7 @@ def find_node(id_name, ng):
 
 def group_make(self, new_group_name):
     self.node_tree = bpy.data.node_groups.new(new_group_name, 'SverchCustomTreeType')
+    self.node_tree['sub_group'] = True
     self.group_name = self.node_tree.name
 
     nodes = self.node_tree.nodes
@@ -57,6 +58,7 @@ def group_make(self, new_group_name):
     outputnode.parent_tree_name = self.id_data.name
 
     return self.node_tree
+
 
 class SvGroupEdit(bpy.types.Operator):
     bl_idname = "node.sv_group_edit"
@@ -82,6 +84,7 @@ class SvGroupEdit(bpy.types.Operator):
         path.append(ng[self.group_name])  # top level
 
         return {"FINISHED"}
+
 
 class SvTreePathParent(bpy.types.Operator):
     '''Go to parent node tree'''
@@ -118,8 +121,9 @@ class SvSocketAquisition:
             # first switch socket type
             socket = socket_list[-1]
             links = socket.links[0]
-            new_type = getattr(links, _socket).bl_idname
-            new_name = getattr(links, _socket).name
+            linked_socket = getattr(links, _socket)
+            new_type = linked_socket.bl_idname
+            new_name = linked_socket.name
             replace_socket(socket, new_type, new_name=new_name)
 
             # add new input socket to parent node
@@ -129,7 +133,6 @@ class SvSocketAquisition:
 
             # add new dangling dummy
             socket_list.new('SvDummySocket', 'connect me')
-
 
 
 class SvGroupNodeExp(bpy.types.Node, SverchCustomTreeNode):
@@ -216,12 +219,40 @@ class SvGroupOutputsNodeExp(bpy.types.Node, SverchCustomTreeNode, SvSocketAquisi
         yield self.inputs, "inputs"
 
 
+class SvCustomGroupInterface(bpy.types.Panel):
+    bl_idname = "SvCustomGroupInterface"
+    bl_label = "Sv Custom Group Interface"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = 'Sverchok'
+    bl_options = {'DEFAULT_CLOSED'}
+    use_pin = True
+
+    @classmethod
+    def poll(cls, context):
+        print('wtf')
+        try:
+            path = context.space_data.path
+            return len(path) == 2 and path[1].node_tree.get('sub_group')
+        except:
+            return False
+
+    def draw(self, context):
+        layout = self.layout
+        # ntree = context.space_data.node_tree
+        # ntree = path[1].node_tree
+        row = layout.row()
+        row.scale_y = 0.5
+        row.label('WOOOOP')
+
+
 classes = [
     SvGroupEdit,
     SvTreePathParent,
     SvGroupNodeExp,
     SvGroupInputsNodeExp,
-    SvGroupOutputsNodeExp
+    SvGroupOutputsNodeExp,
+    SvCustomGroupInterface
 ]
 
 
