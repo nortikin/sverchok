@@ -238,12 +238,35 @@ class SvCustomGroupInterface(bpy.types.Panel):
             return False
 
     def draw(self, context):
+        # ntree = context.space_data.node_tree   # <-- None because the dropdown will show [+ New]
+        ntree = context.space_data.path[1].node_tree
+        nodes = ntree.nodes
+
         layout = self.layout
-        # ntree = context.space_data.node_tree
-        # ntree = path[1].node_tree
         row = layout.row()
-        row.scale_y = 0.5
-        row.label('WOOOOP')
+
+        # draw left and right columns corresponding to sockets_types, display_name, move_operator
+        in_node = nodes.get('Group Inputs Exp')
+        out_node = nodes.get('Group Outputs Exp')
+        
+        if not (in_node and out_node):
+            return
+
+        row = layout.row()
+        split = row.split(percentage=0.5)
+        column1 = split.column()
+        split = split.split(percentage=0.5)
+        column2 = split.column()
+
+        for s in in_node.outputs:
+            if s.bl_idname == 'SvDummySocket':
+                continue
+            column1.label(s.name + ',' + s.bl_idname[0])
+
+        for s in out_node.inputs:
+            if s.bl_idname == 'SvDummySocket':
+                continue
+            column2.label(s.name + ',' + s.bl_idname[0])
 
 
 classes = [
