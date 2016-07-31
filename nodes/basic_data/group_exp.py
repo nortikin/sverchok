@@ -41,6 +41,11 @@ def find_node(id_name, ng):
     raise NotFoundErr
 
 
+def set_multiple_attrs(cls_ref, **kwargs):
+    for arg_name, value in kwargs.items():
+        setattr(cls_ref, arg_name, value)
+
+
 def group_make(self, new_group_name):
     self.node_tree = bpy.data.node_groups.new(new_group_name, 'SverchCustomTreeType')
     self.node_tree['sub_group'] = True
@@ -91,6 +96,11 @@ class SvRenameSocketOpExp(Operator):
         kind = node.node_kind
         socket = getattr(node, kind)[self.pos]
         return node, kind, socket
+
+    def draw(self, context):
+        layout = self.layout
+        row = layout.row()
+        row.prop(self, 'new_name', text='(new) name')
 
     def execute(self, context):
         # make changes to this node tree
@@ -337,21 +347,21 @@ class SvCustomGroupInterface(Panel):
 
             r1 = split.row(align=True)
             m = r1.operator(edit, text=s.bl_idname[0])
-            m.pos = index; m.node_name = s.node.name
+            set_multiple_attrs(m, pos=index, node_name=s.node.name)
 
             m = r1.operator(rename, text=s.name)
-            m.pos = index; m.node_name = s.node.name
+            set_multiple_attrs(m, pos=index, node_name=s.node.name)
             
             split = split.split()
             r2 = split.row(align=True)
             m = r2.operator(move, icon='TRIA_UP', text='')
-            m.pos = index; m.node_name = s.node.name; m.direction = -1
+            set_multiple_attrs(m, pos=index, node_name=s.node.name, direction=-1)
             
             m = r2.operator(move, icon='TRIA_DOWN', text='')
-            m.pos = index; m.node_name = s.node.name; m.direction = 1
+            set_multiple_attrs(m, pos=index, node_name=s.node.name, direction=1)
 
             m = r2.operator(move, icon='X', text='')
-            m.pos = index; m.node_name = s.node.name; m.direction = 0
+            set_multiple_attrs(m, pos=index, node_name=s.node.name, direction=0)
 
         column1.label('inputs')
         for i, s in enumerate(in_node.outputs):
