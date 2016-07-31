@@ -32,6 +32,7 @@ socket_types = [
     ("MatrixSocket", "m", "Matrix")
 ]
 
+reverse_lookup = {'outputs': 'inputs', 'inputs': 'outputs'}
 
 def find_node(id_name, ng):
     for n in ng.nodes:
@@ -83,10 +84,31 @@ class SvRenameSocketOpExp(Operator):
 
     pos = IntProperty()
     node_name = StringProperty()
+    new_name = StringProperty()
+
+    def get_data(self, context):
+        node = context.space_data.path[1].node_tree.nodes[self.node_name]
+        kind = node.node_kind
+        socket = getattr(node, kind)[self.pos]
+        return node, kind, socket
 
     def execute(self, context):
-        print(self.pos)
+        # make changes to this node tree
+        node, kind, socket = self.get_data(context)
+        socket.name = self.new_name
+
+        # make changes to parent node tree
+        ntree = bpy.data.node_groups[node.parent_tree_name]
+        parent_node = ntree.nodes[node.parent_node_name]
+        sockets = getattr(parent_node, reverse_lookup.get(kind))
+        sockets[self.pos].name = self.new_name
+
         return {"FINISHED"}
+ 
+    def invoke(self, context, event):
+        _, _, socket = self.get_data(context)
+        self.new_name = socket.name
+        return context.window_manager.invoke_props_dialog(self)
 
 
 class SvEditSocketOpExp(Operator):
@@ -150,14 +172,13 @@ class SvTreePathParent(Operator):
 class SvSocketAquisition:
 
     socket_map = {'outputs': 'to_socket', 'inputs': 'from_socket'}
-    other_map = {'outputs': 'inputs', 'inputs': 'outputs'}
     node_kind = StringProperty()
 
     def update(self):
         kind = self.node_kind
         socket_list = getattr(self, kind)
         _socket = self.socket_map.get(kind) # from_socket, to_socket
-        _puts = self.other_map.get(kind) # inputs, outputs
+        _puts = reverse_lookup.get(kind) # inputs, outputs
 
         if socket_list[-1].is_linked:
 
@@ -313,30 +334,24 @@ class SvCustomGroupInterface(Panel):
 
             r = _column.row()
             split = r.split(percentage=0.67)
+
             r1 = split.row(align=True)
             m = r1.operator(edit, text=s.bl_idname[0])
-            m.pos = index
-            m.node_name = s.node.name
+            m.pos = index; m.node_name = s.node.name
+
             m = r1.operator(rename, text=s.name)
-            m.pos = index
-            m.node_name = s.node.name
+            m.pos = index; m.node_name = s.node.name
             
             split = split.split()
             r2 = split.row(align=True)
             m = r2.operator(move, icon='TRIA_UP', text='')
-            m.pos = index
-            m.node_name = s.node.name
-            m.direction = -1
+            m.pos = index; m.node_name = s.node.name; m.direction = -1
             
             m = r2.operator(move, icon='TRIA_DOWN', text='')
-            m.pos = index
-            m.node_name = s.node.name
-            m.direction = 1
+            m.pos = index; m.node_name = s.node.name; m.direction = 1
 
             m = r2.operator(move, icon='X', text='')
-            m.pos = index
-            m.node_name = s.node.name
-            m.direction = 0
+            m.pos = index; m.node_name = s.node.name; m.direction = 0
 
         column1.label('inputs')
         for i, s in enumerate(in_node.outputs):
