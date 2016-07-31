@@ -101,20 +101,23 @@ class SvMoveSocketOpExp(Operator):
 
     def execute(self, context):
         node, kind, socket = get_data(self, context)
-        sockets = get_parent_data(node, kind)
+        parent_sockets = get_parent_data(node, kind)
+        IO_node_sockets = getattr(node, kind)
+        pos = self.pos
 
         if self.direction == 0:
-            print('remove')
-
-            # remove socket from the subgroup I/O interface
-            IO_node_sockets = getattr(node, kind)
-            IO_node_sockets.remove(socket)
-
-            # remove socket from the parent interface
-            sockets.remove(sockets[self.pos])
+            IO_node_sockets.remove(socket)     # I/O interface (subgroup)
+            parent_sockets.remove(parent_sockets[pos])
         else:
-            print('move')
-            pass
+            def wrap_around(current_idx, direction, member_count):
+                return (current_idx + direction) % member_count
+
+            # -1 becomes subgroup IO interface has a dummysocket appendix
+            IO_new_pos = wrap_around(pos, self.direction, len(IO_node_sockets)-1)
+            IO_node_sockets.move(pos, IO_new_pos)
+
+            parent_new_pos = wrap_around(pos, self.direction, len(parent_sockets))
+            parent_sockets.move(pos, parent_new_pos)
 
         return {"FINISHED"}
 
