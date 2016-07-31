@@ -58,6 +58,17 @@ def get_data(self, context):
     return node, kind, socket
 
 
+def get_parent_data(node, kind):
+    """
+        gets the correct set of sockets on the external (parent) node
+    """
+    ntree = bpy.data.node_groups[node.parent_tree_name]
+    parent_node = ntree.nodes[node.parent_node_name]
+    sockets = getattr(parent_node, reverse_lookup.get(kind))
+    return sockets
+
+
+
 def group_make(self, new_group_name):
     self.node_tree = bpy.data.node_groups.new(new_group_name, 'SverchCustomTreeType')
     self.node_tree['sub_group'] = True
@@ -114,11 +125,8 @@ class SvRenameSocketOpExp(Operator):
         socket.name = self.new_name
 
         # make changes to parent node tree
-        ntree = bpy.data.node_groups[node.parent_tree_name]
-        parent_node = ntree.nodes[node.parent_node_name]
-        sockets = getattr(parent_node, reverse_lookup.get(kind))
+        sockets = get_parent_data(node, kind)
         sockets[self.pos].name = self.new_name
-
         return {"FINISHED"}
  
     def invoke(self, context, event):
