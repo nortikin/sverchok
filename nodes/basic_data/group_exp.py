@@ -405,25 +405,20 @@ class SvCustomGroupInterface(Panel):
             r1 = split.row(align=True)
             r1.template_node_socket(color=s.draw_color(s.node, context))
             m = r1.operator(edit, icon='PLUGIN', text='')
-            # set_multiple_attrs(m, pos=index, node_name=s.node.name)
             set_multiple_attrs(m, **socket_ref)
 
             m = r1.operator(rename, text=s.name)
-            # set_multiple_attrs(m, pos=index, node_name=s.node.name)
             set_multiple_attrs(m, **socket_ref)
             
             split = split.split()
             r2 = split.row(align=True)
             m = r2.operator(move, icon='TRIA_UP', text='')
-            # set_multiple_attrs(m, pos=index, node_name=s.node.name, direction=-1)
             set_multiple_attrs(m, **socket_ref, direction=-1)
             
             m = r2.operator(move, icon='TRIA_DOWN', text='')
-            # set_multiple_attrs(m, pos=index, node_name=s.node.name, direction=1)
             set_multiple_attrs(m, **socket_ref, direction=1)
 
             m = r2.operator(move, icon='X', text='')
-            # set_multiple_attrs(m, pos=index, node_name=s.node.name, direction=0)
             set_multiple_attrs(m, **socket_ref, direction=0)
 
         column1.label('inputs')
