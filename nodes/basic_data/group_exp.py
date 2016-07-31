@@ -18,6 +18,7 @@
 
 import bpy
 from bpy.props import StringProperty, EnumProperty, IntProperty
+from bpy.types import Operator, Node, Panel
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import multi_socket, node_id, replace_socket
@@ -60,7 +61,49 @@ def group_make(self, new_group_name):
     return self.node_tree
 
 
-class SvGroupEdit(bpy.types.Operator):
+class SvMoveSocketOpExp(Operator):
+    """Move a socket in the direction of the arrow, will wrap around"""
+    bl_idname = "node.sverchok_move_socket_exp"
+    bl_label = "Move Socket"
+
+    pos = IntProperty()
+    direction = IntProperty()
+    node_name = StringProperty()
+
+    def execute(self, context):
+        print(self.direction, self.pos, context)
+        print(context.space_data.path[1].node_tree)
+        return {"FINISHED"}
+
+
+class SvRenameSocketOpExp(Operator):
+    """Rename a socket"""
+    bl_idname = "node.sverchok_rename_socket_exp"
+    bl_label = "Rename Socket"
+
+    pos = IntProperty()
+    node_name = StringProperty()
+
+    def execute(self, context):
+        print(self.pos)
+        return {"FINISHED"}
+
+
+class SvEditSocketOpExp(Operator):
+    """Edit a socket signature"""
+    bl_idname = "node.sverchok_edit_socket_exp"
+    bl_label = "Edit Socket"
+
+    pos = IntProperty()
+    node_name = StringProperty()
+
+    def execute(self, context):
+        print(self.pos)
+        return {"FINISHED"}
+
+
+
+class SvGroupEdit(Operator):
     bl_idname = "node.sv_group_edit"
     bl_label = "edits an sv group"
     
@@ -86,7 +129,7 @@ class SvGroupEdit(bpy.types.Operator):
         return {"FINISHED"}
 
 
-class SvTreePathParent(bpy.types.Operator):
+class SvTreePathParent(Operator):
     '''Go to parent node tree'''
     bl_idname = "node.sv_tree_path_parent"
     bl_label = "Parent Sv Node Tree"
@@ -136,7 +179,7 @@ class SvSocketAquisition:
 
 
 
-class SvGroupNodeExp(bpy.types.Node, SverchCustomTreeNode):
+class SvGroupNodeExp(Node, SverchCustomTreeNode):
     bl_idname = 'SvGroupNodeExp'
     bl_label = 'Group Exp'
     bl_icon = 'OUTLINER_OB_EMPTY'
@@ -184,7 +227,7 @@ class SvGroupNodeExp(bpy.types.Node, SverchCustomTreeNode):
         pass
     
 
-class SvGroupInputsNodeExp(bpy.types.Node, SverchCustomTreeNode, SvSocketAquisition):
+class SvGroupInputsNodeExp(Node, SverchCustomTreeNode, SvSocketAquisition):
     bl_idname = 'SvGroupInputsNodeExp'
     bl_label = 'Group Inputs Exp'
     bl_icon = 'OUTLINER_OB_EMPTY'
@@ -195,14 +238,13 @@ class SvGroupInputsNodeExp(bpy.types.Node, SverchCustomTreeNode, SvSocketAquisit
     def sv_init(self, context):
         si = self.outputs.new
         si('SvDummySocket', 'connect me')
-
         self.node_kind = 'outputs'
 
     def get_sockets(self):
         yield self.outputs, "outputs"
 
 
-class SvGroupOutputsNodeExp(bpy.types.Node, SverchCustomTreeNode, SvSocketAquisition):
+class SvGroupOutputsNodeExp(Node, SverchCustomTreeNode, SvSocketAquisition):
     bl_idname = 'SvGroupOutputsNodeExp'
     bl_label = 'Group Outputs Exp'
     bl_icon = 'OUTLINER_OB_EMPTY'
@@ -213,14 +255,13 @@ class SvGroupOutputsNodeExp(bpy.types.Node, SverchCustomTreeNode, SvSocketAquisi
     def sv_init(self, context):
         si = self.inputs.new
         si('SvDummySocket', 'connect me')
-
         self.node_kind = 'inputs'
 
     def get_sockets(self):
         yield self.inputs, "inputs"
 
 
-class SvCustomGroupInterface(bpy.types.Panel):
+class SvCustomGroupInterface(Panel):
     bl_idname = "SvCustomGroupInterface"
     bl_label = "Sv Custom Group Interface"
     bl_space_type = 'NODE_EDITOR'
@@ -231,7 +272,6 @@ class SvCustomGroupInterface(bpy.types.Panel):
 
     @classmethod
     def poll(cls, context):
-        print('wtf')
         try:
             path = context.space_data.path
             return len(path) == 2 and path[1].node_tree.get('sub_group')
@@ -259,21 +299,58 @@ class SvCustomGroupInterface(bpy.types.Panel):
         split = split.split()
         column2 = split.box().column()
 
-        def draw_socket_row(_column, s):
+        move = 'node.sverchok_move_socket_exp'
+        rename = 'node.sverchok_rename_socket_exp'
+        edit = 'node.sverchok_edit_socket_exp'
+
+        def draw_socket_row(_column, s, index):
             if s.bl_idname == 'SvDummySocket':
                 return
+
+            """ type | (re)name     | /\  \/  X  """
+            
+            # lots of repetition here...
+
             r = _column.row()
-            r.prop(s, 'name', text='')
-            r.label(s.bl_idname[0])
+            split = r.split(percentage=0.67)
+            r1 = split.row(align=True)
+            m = r1.operator(edit, text=s.bl_idname[0])
+            m.pos = index
+            m.node_name = s.node.name
+            m = r1.operator(rename, text=s.name)
+            m.pos = index
+            m.node_name = s.node.name
+            
+            split = split.split()
+            r2 = split.row(align=True)
+            m = r2.operator(move, icon='TRIA_UP', text='')
+            m.pos = index
+            m.node_name = s.node.name
+            m.direction = -1
+            
+            m = r2.operator(move, icon='TRIA_DOWN', text='')
+            m.pos = index
+            m.node_name = s.node.name
+            m.direction = 1
 
-        for s in in_node.outputs:
-            draw_socket_row(column1, s)
+            m = r2.operator(move, icon='X', text='')
+            m.pos = index
+            m.node_name = s.node.name
+            m.direction = 0
 
-        for s in out_node.inputs:
-            draw_socket_row(column2, s)
+        column1.label('inputs')
+        for i, s in enumerate(in_node.outputs):
+            draw_socket_row(column1, s, i)
+
+        column2.label('outputs')
+        for i, s in enumerate(out_node.inputs):
+            draw_socket_row(column2, s, i)
 
 
 classes = [
+    SvMoveSocketOpExp,
+    SvRenameSocketOpExp,
+    SvEditSocketOpExp,
     SvGroupEdit,
     SvTreePathParent,
     SvGroupNodeExp,
