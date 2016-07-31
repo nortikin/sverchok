@@ -100,11 +100,18 @@ class SvMoveSocketOpExp(Operator):
     node_name = StringProperty()
 
     def execute(self, context):
+        node, kind, socket = get_data(self, context)
+        sockets = get_parent_data(node, kind)
 
         if self.direction == 0:
-            # means remove it.
             print('remove')
-            pass
+
+            # remove socket from the subgroup I/O interface
+            IO_node_sockets = getattr(node, kind)
+            IO_node_sockets.remove(socket)
+
+            # remove socket from the parent interface
+            sockets.remove(sockets[self.pos])
         else:
             print('move')
             pass
@@ -220,7 +227,9 @@ class SvSocketAquisition:
             new_type = linked_socket.bl_idname
 
             # if no 'linked_socket.prop_name' then use 'linked_socket.name'
-            new_name = getattr(linked_socket, 'prop_name', linked_socket.name)
+            new_name = getattr(linked_socket, 'prop_name')
+            if not new_name:
+                new_name = linked_socket.name
             new_name = new_name.replace('_', ' ') # more elaborate sanitizing needed?
             replace_socket(socket, new_type, new_name=new_name)
 
