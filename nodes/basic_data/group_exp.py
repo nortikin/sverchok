@@ -100,8 +100,15 @@ class SvMoveSocketOpExp(Operator):
     node_name = StringProperty()
 
     def execute(self, context):
-        print(self.direction, self.pos, context)
-        print(context.space_data.path[1].node_tree)
+
+        if self.direction == 0:
+            # means remove it.
+            print('remove')
+            pass
+        else:
+            print('move')
+            pass
+
         return {"FINISHED"}
 
 
@@ -120,11 +127,11 @@ class SvRenameSocketOpExp(Operator):
         row.prop(self, 'new_name', text='(new) name')
 
     def execute(self, context):
-        # make changes to this node tree
+        # make changes to this node's socket name
         node, kind, socket = get_data(self, context)
         socket.name = self.new_name
 
-        # make changes to parent node tree
+        # make changes to parent node's socket name in parent tree
         sockets = get_parent_data(node, kind)
         sockets[self.pos].name = self.new_name
         return {"FINISHED"}
@@ -211,7 +218,10 @@ class SvSocketAquisition:
             links = socket.links[0]
             linked_socket = getattr(links, _socket)
             new_type = linked_socket.bl_idname
-            new_name = linked_socket.name
+
+            # if no 'linked_socket.prop_name' then use 'linked_socket.name'
+            new_name = getattr(linked_socket, 'prop_name', linked_socket.name)
+            new_name = new_name.replace('_', ' ') # more elaborate sanitizing needed?
             replace_socket(socket, new_type, new_name=new_name)
 
             # add new input socket to parent node
