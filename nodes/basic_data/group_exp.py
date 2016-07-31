@@ -112,7 +112,7 @@ class SvMoveSocketOpExp(Operator):
             def wrap_around(current_idx, direction, member_count):
                 return (current_idx + direction) % member_count
 
-            # -1 becomes subgroup IO interface has a dummysocket appendix
+            # -1 because subgroup IO interface has a dummysocket appendix
             IO_new_pos = wrap_around(pos, self.direction, len(IO_node_sockets)-1)
             IO_node_sockets.move(pos, IO_new_pos)
 
@@ -157,14 +157,34 @@ class SvEditSocketOpExp(Operator):
     bl_idname = "node.sverchok_edit_socket_exp"
     bl_label = "Edit Socket"
 
-    pos = IntProperty()
     node_name = StringProperty()
+    pos = IntProperty()
+    socket_type = EnumProperty(
+        items=socket_types, default="StringsSocket")
+
+    def draw(self, context):
+        layout = self.layout
+        row = layout.row()
+        row.prop(self, 'socket_type', text='Socket Type')
 
     def execute(self, context):
-        print(self.pos)
+        # make changes to this node's socket name
+        node, kind, socket = get_data(self, context)
+
+        # make changes to parent node's socket name in parent tree
+        parent_sockets = get_parent_data(node, kind)
+        parent_socket = parent_sockets[self.pos]
+
+        # replace socket types of subgroup IO and parent node
+        for s in [socket, parent_socket]:
+            replace_socket(s, self.socket_type)
+
         return {"FINISHED"}
 
-
+    def invoke(self, context, event):
+        _, _, socket = get_data(self, context)
+        self.socket_type = socket.bl_idname
+        return context.window_manager.invoke_props_dialog(self)
 
 class SvGroupEdit(Operator):
     bl_idname = "node.sv_group_edit"
