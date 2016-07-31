@@ -402,10 +402,11 @@ class SvCustomGroupInterface(Panel):
             split = r.split(percentage=0.67)
 
             r1 = split.row(align=True)
-            m = r1.operator(edit, text=s.bl_idname[0])
+            r1.template_node_socket(color=s.draw_color(s.node, context))
+            m = r1.operator(edit, icon='PLUGIN', text='')
             set_multiple_attrs(m, pos=index, node_name=s.node.name)
 
-            m = r1.operator(rename, text=s.name)
+            m = r1.operator(rename, text=s.name, emboss=True)
             set_multiple_attrs(m, pos=index, node_name=s.node.name)
             
             split = split.split()
