@@ -46,6 +46,18 @@ def set_multiple_attrs(cls_ref, **kwargs):
         setattr(cls_ref, arg_name, value)
 
 
+def get_data(self, context):
+    """ expects:
+            - self.node_name
+            - and self.pos
+            - space_data.path to have 2 members, ([1] being the upper visible)
+    """
+    node = context.space_data.path[1].node_tree.nodes[self.node_name]
+    kind = node.node_kind
+    socket = getattr(node, kind)[self.pos]
+    return node, kind, socket
+
+
 def group_make(self, new_group_name):
     self.node_tree = bpy.data.node_groups.new(new_group_name, 'SverchCustomTreeType')
     self.node_tree['sub_group'] = True
@@ -91,12 +103,6 @@ class SvRenameSocketOpExp(Operator):
     node_name = StringProperty()
     new_name = StringProperty()
 
-    def get_data(self, context):
-        node = context.space_data.path[1].node_tree.nodes[self.node_name]
-        kind = node.node_kind
-        socket = getattr(node, kind)[self.pos]
-        return node, kind, socket
-
     def draw(self, context):
         layout = self.layout
         row = layout.row()
@@ -104,7 +110,7 @@ class SvRenameSocketOpExp(Operator):
 
     def execute(self, context):
         # make changes to this node tree
-        node, kind, socket = self.get_data(context)
+        node, kind, socket = get_data(self, context)
         socket.name = self.new_name
 
         # make changes to parent node tree
@@ -116,7 +122,7 @@ class SvRenameSocketOpExp(Operator):
         return {"FINISHED"}
  
     def invoke(self, context, event):
-        _, _, socket = self.get_data(context)
+        _, _, socket = get_data(self, context)
         self.new_name = socket.name
         return context.window_manager.invoke_props_dialog(self)
 
