@@ -380,11 +380,18 @@ class SvCustomGroupInterface(Panel):
         if not (in_node and out_node):
             return
 
-        row = layout.row()
-        split = row.split(percentage=0.5)
-        column1 = split.box().column()
-        split = split.split()
-        column2 = split.box().column()
+        width = context.region.width
+        # should ideally take dpi into account, 
+        if width > 310:
+            row = layout.row()
+            split = row.split(percentage=0.5)
+            column1 = split.box().column()
+            split = split.split()
+            column2 = split.box().column()
+        else:
+            column1 = layout.row().box().column()
+            layout.separator()
+            column2 = layout.row().box().column()
 
         move = 'node.sverchok_move_socket_exp'
         rename = 'node.sverchok_rename_socket_exp'
