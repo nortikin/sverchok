@@ -70,7 +70,7 @@ class SvVertexGroupNode(bpy.types.Node, SverchCustomTreeNode):
             verts, wei = second_as_first_cycle(verts, wei)
             for i, i2 in zip(verts, wei):
                 ovgs.add([i], i2, "REPLACE")
-        elif Owe.is_linked:
+        if Owe.is_linked:
             out = []
             for i in verts:
                 try:
