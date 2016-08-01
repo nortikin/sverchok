@@ -406,27 +406,24 @@ class SvCustomGroupInterface(Panel):
             # lots of repetition here...
             socket_ref = dict(pos=index, node_name=s.node.name)
 
-            r = _column.row()
-            split = r.split(percentage=0.67)
+            r = _column.row(align=True)
+            r.template_node_socket(color=s.draw_color(s.node, context))
 
-            r1 = split.row(align=True)
-            r1.template_node_socket(color=s.draw_color(s.node, context))
-            m = r1.operator(edit, icon='PLUGIN', text='')
+            m = r.operator(edit, icon='PLUGIN', text='')
             set_multiple_attrs(m, **socket_ref)
 
-            m = r1.operator(rename, text=s.name)
+            m = r.operator(rename, text=s.name)
             set_multiple_attrs(m, **socket_ref)
-            
-            split = split.split()
-            r2 = split.row(align=True)
-            m = r2.operator(move, icon='TRIA_UP', text='')
+
+            m = r.operator(move, icon='TRIA_UP', text='')
             set_multiple_attrs(m, **socket_ref, direction=-1)
             
-            m = r2.operator(move, icon='TRIA_DOWN', text='')
+            m = r.operator(move, icon='TRIA_DOWN', text='')
             set_multiple_attrs(m, **socket_ref, direction=1)
 
-            m = r2.operator(move, icon='X', text='')
+            m = r.operator(move, icon='X', text='')
             set_multiple_attrs(m, **socket_ref, direction=0)
+
 
         column1.label('inputs')
         for i, s in enumerate(in_node.outputs):
