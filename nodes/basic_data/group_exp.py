@@ -40,9 +40,11 @@ class SvNodeGroupInputList(bpy.types.UIList):
 
     def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index, flt_flag):
         s = item
+        node = s.node
+        sockets = getattr(node, 'outputs')
 
         # not an attempt make this fully featured yet..
-        if index == (len(s.node.outputs) - 1):
+        if index == (len(sockets) - 1):
             return
         
         layout.template_node_socket(color=s.draw_color(s.node, context))
@@ -456,10 +458,16 @@ class SvCustomGroupInterface(Panel):
         for i, s in enumerate(out_node.inputs):
             draw_socket_row(column2, s, i)
 
-        # UI templates. 
+        # UI templates.... 
         row = layout.row()
         col = row.column()
-        col.template_list(SvNodeGroupInputList.bl_idname, "inputs", in_node, "outputs", ntree, "active_input")
+        col.template_list(
+            SvNodeGroupInputList.bl_idname, 
+            "inputs", in_node, "outputs", ntree, "active_input"
+        )
+
+
+
 
 classes = [
     SvNodeGroupInputList,
