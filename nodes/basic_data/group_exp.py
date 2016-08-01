@@ -34,6 +34,7 @@ socket_types = [
 
 reverse_lookup = {'outputs': 'inputs', 'inputs': 'outputs'}
 
+
 def find_node(id_name, ng):
     for n in ng.nodes:
         if n.bl_idname == id_name:
@@ -237,6 +238,9 @@ class SvSocketAquisition:
 
     def update(self):
         kind = self.node_kind
+        if not kind:
+            return
+
         socket_list = getattr(self, kind)
         _socket = self.socket_map.get(kind) # from_socket, to_socket
         _puts = reverse_lookup.get(kind) # inputs, outputs
@@ -250,10 +254,14 @@ class SvSocketAquisition:
             new_type = linked_socket.bl_idname
 
             # if no 'linked_socket.prop_name' then use 'linked_socket.name'
-            new_name = getattr(linked_socket, 'prop_name')
-            if not new_name:
+            socket_prop_name = getattr(linked_socket, 'prop_name')
+            
+            if not socket_prop_name or len(socket_prop_name) == 0:
                 new_name = linked_socket.name
-            new_name = new_name.replace('_', ' ') # more elaborate sanitizing needed?
+            else:
+                new_name = socket_prop_name
+
+            new_name = new_name.replace('_', ' ').strip() # more elaborate sanitizing needed?
             replace_socket(socket, new_type, new_name=new_name)
 
             # add new input socket to parent node
@@ -263,7 +271,6 @@ class SvSocketAquisition:
 
             # add new dangling dummy
             socket_list.new('SvDummySocket', 'connect me')
-
 
 
 class SvGroupNodeExp(Node, SverchCustomTreeNode):
@@ -366,8 +373,7 @@ class SvCustomGroupInterface(Panel):
             return False
 
     def draw(self, context):
-        # ntree = context.space_data.node_tree   # <-- None because the dropdown will show [+ New]
-        ntree = context.space_data.path[1].node_tree
+        ntree = context.space_data.edit_tree
         nodes = ntree.nodes
 
         layout = self.layout
