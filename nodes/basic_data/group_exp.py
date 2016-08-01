@@ -68,9 +68,9 @@ def get_parent_data(node, kind):
     return sockets
 
 
-
 def group_make(self, new_group_name):
-    self.node_tree = bpy.data.node_groups.new(new_group_name, 'SverchCustomTreeType')
+    # 'SverchCustomTreeType'
+    self.node_tree = bpy.data.node_groups.new(new_group_name, 'SverchGroupTreeType')
     self.node_tree['sub_group'] = True
     self.group_name = self.node_tree.name
 
@@ -78,12 +78,12 @@ def group_make(self, new_group_name):
     # inputnode = nodes.new('SvGroupInputsNode')
     # outputnode = nodes.new('SvGroupOutputsNode')
     inputnode = nodes.new('SvGroupInputsNodeExp')
-    inputnode.location = (-300, 0)
+    inputnode.location = (-200, 0)
     inputnode.parent_node_name = self.name
     inputnode.parent_tree_name = self.id_data.name
 
     outputnode = nodes.new('SvGroupOutputsNodeExp')
-    outputnode.location = (300, 0)
+    outputnode.location = (200, 0)
     outputnode.parent_node_name = self.name
     outputnode.parent_tree_name = self.id_data.name
 
