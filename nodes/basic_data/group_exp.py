@@ -35,6 +35,24 @@ socket_types = [
 reverse_lookup = {'outputs': 'inputs', 'inputs': 'outputs'}
 
 
+class SvNodeGroupInputList(bpy.types.UIList):
+    bl_idname = "SvNodeGroupInputList"
+
+    def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index, flt_flag):
+        s = item
+
+        # not an attempt make this fully featured yet..
+        if index == (len(s.node.outputs) - 1):
+            return
+        
+        layout.template_node_socket(color=s.draw_color(s.node, context))
+        layout.prop(item, "name", text="", emboss=False)
+        # layout.prop(item, "base_type", text="")
+        # props = layout.operator(NodeGroupItemRemove.bl_idname, text="", icon='X')
+        # props.index = index
+        # props.in_out = 'IN'
+
+
 def find_node(id_name, ng):
     for n in ng.nodes:
         if n.bl_idname == id_name:
@@ -70,14 +88,11 @@ def get_parent_data(node, kind):
 
 
 def group_make(self, new_group_name):
-    # 'SverchCustomTreeType'
     self.node_tree = bpy.data.node_groups.new(new_group_name, 'SverchGroupTreeType')
     self.node_tree['sub_group'] = True
     self.group_name = self.node_tree.name
-
     nodes = self.node_tree.nodes
-    # inputnode = nodes.new('SvGroupInputsNode')
-    # outputnode = nodes.new('SvGroupOutputsNode')
+
     inputnode = nodes.new('SvGroupInputsNodeExp')
     inputnode.location = (-200, 0)
     inputnode.parent_node_name = self.name
@@ -256,7 +271,8 @@ class SvSocketAquisition:
             # if no 'linked_socket.prop_name' then use 'linked_socket.name'
             socket_prop_name = getattr(linked_socket, 'prop_name')
             
-            if not socket_prop_name or len(socket_prop_name) == 0:
+            no_prop_name = (not socket_prop_name or len(socket_prop_name) == 0)
+            if no_prop_name:
                 new_name = linked_socket.name
             else:
                 new_name = socket_prop_name
@@ -267,7 +283,8 @@ class SvSocketAquisition:
             # add new input socket to parent node
             parent_tree = bpy.data.node_groups[self.parent_tree_name].nodes
             parent_node = parent_tree[self.parent_node_name]
-            getattr(parent_node, _puts).new(new_type, new_name)
+            sok = getattr(parent_node, _puts).new(new_type, new_name)
+
 
             # add new dangling dummy
             socket_list.new('SvDummySocket', 'connect me')
@@ -439,8 +456,13 @@ class SvCustomGroupInterface(Panel):
         for i, s in enumerate(out_node.inputs):
             draw_socket_row(column2, s, i)
 
+        # UI templates. 
+        row = layout.row()
+        col = row.column()
+        col.template_list(SvNodeGroupInputList.bl_idname, "inputs", in_node, "outputs", ntree, "active_input")
 
 classes = [
+    SvNodeGroupInputList,
     SvMoveSocketOpExp,
     SvRenameSocketOpExp,
     SvEditSocketOpExp,
