@@ -45,9 +45,15 @@ def propose_io_locations(nodes):
     This make a bounding 2d and returns suggested
     optimal input and output node locations for the monad
     '''
-    return
+    x_locs = [n.location[0] for n in nodes]
+    y_locs = [n.location[1] for n in nodes]
+    min_x, max_x = min(*x_locs), max(*x_locs)
+    min_y, max_y = min(*y_locs), max(*y_locs)
+    y = (min_y + max_y) / 2
+    offset = 210
 
-
+    return (min_x - offset, y), (max_x + offset - 30, y)
+  
 
 def find_node(id_name, ng):
     for n in ng.nodes:

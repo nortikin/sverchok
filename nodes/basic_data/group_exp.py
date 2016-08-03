@@ -248,13 +248,17 @@ class SvMonadCreateFromSelected(bpy.types.Operator):
         path.append(monad)  # top level
 
         bpy.ops.node.clipboard_paste()
+        
+        # get optimal location for IO nodes..
+        # move monad IO nodes to bounding box of pasted nodes.
+        i_loc, o_loc = propose_io_locations(nodes)
+        monad.nodes.get('Group Inputs Exp').location = i_loc
+        monad.nodes.get('Group Outputs Exp').location = o_loc
 
         # remove nodes from parent_tree
         for n in reversed(nodes):
             parent_tree.nodes.remove(n)
 
-        # move monad IO nodes to bounding box of pasted nodes, and beyond.
-        # propose_io_locations(nodes)
 
         return {'FINISHED'}
 
