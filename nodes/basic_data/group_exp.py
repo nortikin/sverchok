@@ -199,9 +199,9 @@ class SvGroupEdit(Operator):
     group_name = StringProperty()
     
     def execute(self, context):
-        node = context.node
-        parent_tree_name = node.id_data.name
         ng = bpy.data.node_groups
+        node = context.node
+        parent_tree = node.id_data
 
         monad = ng.get(self.group_name)
         if not monad:
@@ -212,8 +212,8 @@ class SvGroupEdit(Operator):
         # by switching, space_data is now different
         path = context.space_data.path
         path.clear()
-        path.append(ng[parent_tree_name]) # below the green opacity layer
-        path.append(ng[self.group_name])  # top level
+        path.append(parent_tree) # below the green opacity layer
+        path.append(monad)       # top level
 
         return {"FINISHED"}
 
