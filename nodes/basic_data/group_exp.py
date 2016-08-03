@@ -286,6 +286,10 @@ class SvGroupNodeExp(Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     group_name = StringProperty()
+
+    def sv_init(self, context):
+        self.use_custom_color = True
+        self.color = (1,1,1)
  
     def update(self):
         ''' Override inherited '''
@@ -343,6 +347,9 @@ class SvGroupInputsNodeExp(Node, SverchCustomTreeNode, SvSocketAquisition):
         si('SvDummySocket', 'connect me')
         self.node_kind = 'outputs'
 
+        self.use_custom_color = True
+        self.color = (1,1,1)
+
     def get_sockets(self):
         yield self.outputs, "outputs"
 
@@ -359,6 +366,10 @@ class SvGroupOutputsNodeExp(Node, SverchCustomTreeNode, SvSocketAquisition):
         si = self.inputs.new
         si('SvDummySocket', 'connect me')
         self.node_kind = 'inputs'
+
+        self.use_custom_color = True
+        self.color = (1,1,1)
+
 
     def get_sockets(self):
         yield self.inputs, "inputs"
