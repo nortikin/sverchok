@@ -21,15 +21,13 @@ from bpy.props import StringProperty, EnumProperty, IntProperty
 from bpy.types import Operator, Node, Panel
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import multi_socket, node_id, replace_socket
 from sverchok.core.update_system import make_tree_from_nodes, do_update
-import ast
 
 from sverchok.utils.sv_monad_tools import (
     socket_types, reverse_lookup, find_node, 
     average_of_selected, 
     group_make, SvSocketAquisition,
-    set_multiple_attrs, get_data, get_parent_data,
+    set_multiple_attrs,
     SvMoveSocketOpExp,
     SvRenameSocketOpExp,
     SvEditSocketOpExp,

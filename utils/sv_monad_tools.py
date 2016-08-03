@@ -21,6 +21,8 @@ import bpy
 from bpy.types import Operator
 from bpy.props import StringProperty, EnumProperty, IntProperty
 
+from sverchok.data_structure import node_id, replace_socket
+
 socket_types = [
     ("StringsSocket", "s", "Numbers, polygon data, generic"),
     ("VerticesSocket", "v", "Vertices, point and vector data"),
@@ -188,6 +190,7 @@ class SvEditSocketOpExp(Operator):
         _, _, socket = get_data(self, context)
         self.socket_type = socket.bl_idname
         return context.window_manager.invoke_props_dialog(self)
+
 
 class SvGroupEdit(Operator):
     bl_idname = "node.sv_group_edit"
