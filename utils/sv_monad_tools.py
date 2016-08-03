@@ -40,6 +40,15 @@ def average_of_selected(nodes):
     return x / num_nodes, y / num_nodes
 
 
+def propose_io_locations(nodes):
+    '''
+    This make a bounding 2d and returns suggested
+    optimal input and output node locations for the monad
+    '''
+    return
+
+
+
 def find_node(id_name, ng):
     for n in ng.nodes:
         if n.bl_idname == id_name:

@@ -25,7 +25,7 @@ from sverchok.core.update_system import make_tree_from_nodes, do_update
 
 from sverchok.utils.sv_monad_tools import (
     socket_types, reverse_lookup, find_node, 
-    average_of_selected, 
+    average_of_selected, propose_io_locations,
     group_make, SvSocketAquisition,
     set_multiple_attrs,
     SvMoveSocketOpExp,
@@ -254,6 +254,7 @@ class SvMonadCreateFromSelected(bpy.types.Operator):
             parent_tree.nodes.remove(n)
 
         # move monad IO nodes to bounding box of pasted nodes, and beyond.
+        # propose_io_locations(nodes)
 
         return {'FINISHED'}
 
