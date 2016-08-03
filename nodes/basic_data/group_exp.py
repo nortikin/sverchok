@@ -34,6 +34,14 @@ socket_types = [
 
 reverse_lookup = {'outputs': 'inputs', 'inputs': 'outputs'}
 
+def average_of_selected(nodes):
+    x, y = 0, 0
+    for n in nodes:
+        x += n.location[0]
+        y += n.location[1]
+    num_nodes = len(nodes)
+    return x / num_nodes, y / num_nodes
+
 
 def find_node(id_name, ng):
     for n in ng.nodes:
@@ -195,9 +203,9 @@ class SvGroupEdit(Operator):
         parent_tree_name = node.id_data.name
         ng = bpy.data.node_groups
 
-        group_node = ng.get(self.group_name)
-        if not group_node:
-            group_node = group_make(node, new_group_name=self.group_name)
+        monad = ng.get(self.group_name)
+        if not monad:
+            monad = group_make(node, new_group_name=self.group_name)
         
         bpy.ops.node.sv_switch_layout(layout_name=self.group_name)
         
@@ -362,7 +370,7 @@ class SvCustomGroupInterface(Panel):
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
     bl_category = 'Sverchok'
-    bl_options = {'DEFAULT_CLOSED'}
+    # bl_options = {'DEFAULT_CLOSED'}
     use_pin = True
 
     @classmethod
@@ -441,6 +449,47 @@ class SvCustomGroupInterface(Panel):
             draw_socket_row(column2, s, i)
 
 
+class SvMonadCreateFromSelected(bpy.types.Operator):
+
+    bl_idname = "node.sv_monad_from_selected"
+    bl_label = "Create monad from selected nodes (sub graph)"
+
+    group_name = StringProperty(default="Monad")
+
+    def execute(self, context):
+
+        ng = context.space_data.edit_tree
+        nodes = [n for n in ng.nodes if n.select]
+
+        if not nodes:
+            self.report({"CANCELLED"}, "No nodes selected")
+            return {'CANCELLED'}
+
+        parent_node = ng.nodes.new('SvGroupNodeExp')
+        parent_node.select = False
+        parent_tree = parent_node.id_data
+        parent_node.location = average_of_selected(nodes)
+        bpy.ops.node.clipboard_copy()
+
+        monad = group_make(parent_node, self.group_name)
+        bpy.ops.node.sv_switch_layout(layout_name=monad.name)
+        
+        # by switching, space_data is now different
+        path = context.space_data.path
+        path.clear()
+        path.append(parent_tree) # below the green opacity layer
+        path.append(monad)  # top level
+
+        bpy.ops.node.clipboard_paste()
+
+        # remove nodes from parent_tree
+        for n in reversed(nodes):
+            parent_tree.nodes.remove(n)
+
+        return {'FINISHED'}
+
+
+
 classes = [
     SvMoveSocketOpExp,
     SvRenameSocketOpExp,
@@ -450,7 +499,8 @@ classes = [
     SvGroupNodeExp,
     SvGroupInputsNodeExp,
     SvGroupOutputsNodeExp,
-    SvCustomGroupInterface
+    SvCustomGroupInterface,
+    SvMonadCreateFromSelected
 ]
 
 
