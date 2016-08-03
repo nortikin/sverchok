@@ -80,8 +80,9 @@ utils_modules = [
     "csg_core", "csg_geom", "sv_easing_functions",
     # UI text editor ui
     "text_editor_submenu", "text_editor_plugins",
-    # UI operators
-    "sv_panels_tools", "sv_IO_panel_tools", "group_tools",
+    # UI operators and tools
+    "sv_panels_tools", "sv_IO_panel_tools",
+    "group_tools", "sv_monad_tools"
 ]
 ui_modules = [
     "color_def", "sv_IO_panel", "sv_header", "sv_templates_menu",
