@@ -89,6 +89,31 @@ def get_parent_data(node, kind):
     return sockets
 
 
+def get_relinks(ng):
+    '''
+    ng = bpy.data.node_groups['NodeTree']
+    print(get_relinks(ng))
+    '''
+    nodes = [n for n in ng.nodes if n.select]
+    relinks = dict(inputs=[], outputs=[])
+    if not nodes:
+        return relinks
+
+    def get_links(node=node, kind='inputs', link_kind='from_node'):
+        for idx, s in enumerate(getattr(node, kind)):
+            if s.is_linked:
+                link = s.links[0]
+                linked_node = getattr(link, link_kind)
+                if not linked_node in nodes:
+                    relinks[kind].append(dict(socket_index=idx, linked_node=linked_node.name))
+
+    for n in nodes:
+        get_links(node=node, kind='inputs', link_kind='from_node')
+        get_links(node=node, kind='outputs', link_kind='to_node')
+    
+    return relinks
+
+
 def group_make(self, new_group_name):
     self.node_tree = bpy.data.node_groups.new(new_group_name, 'SverchGroupTreeType')
     self.node_tree['sub_group'] = True
@@ -272,6 +297,10 @@ class SvMonadCreateFromSelected(Operator):
         parent_tree = parent_node.id_data
         parent_node.location = average_of_selected(nodes)
         bpy.ops.node.clipboard_copy()
+
+        # get links for relinking sockets in monad IO
+
+
 
         monad = group_make(parent_node, self.group_name)
         bpy.ops.node.sv_switch_layout(layout_name=monad.name)
