@@ -106,8 +106,13 @@ def get_relinks(ng):
                 linked_node = getattr(link, link_kind)
                 if linked_node in nodes:
                     continue
-                lnode_name = linked_node.name if kind == 'inputs' else node.name
-                relinks[kind].append(dict(socket_index=idx, linked_node=lnode_name))
+                relinks[kind].append(
+                    dict(
+                        from_node=link.from_node.name,
+                        from_socket=link.from_socket.name,
+                        to_node=link.to_node.name,
+                        to_socket=link.to_socket.name)
+                    )
 
     for node in nodes:
         get_links(node=node, kind='inputs', link_kind='from_node')
@@ -118,6 +123,7 @@ def get_relinks(ng):
 
 
 def relink(links, monad):
+    '''
     for k, v in links.items():
         for L in v:
             idx, node_name = L['socket_index'], L['linked_node']
@@ -128,7 +134,8 @@ def relink(links, monad):
                 monad.links.new(nodes[input_node].outputs[-1], node.inputs[idx])
             else:
                 monad.links.new(node.outputs[idx], nodes[output_node].inputs[-1])
-
+    '''
+    pass
 
 def group_make(self, new_group_name):
     self.node_tree = bpy.data.node_groups.new(new_group_name, 'SverchGroupTreeType')
