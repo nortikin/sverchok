@@ -114,6 +114,10 @@ def get_relinks(ng):
     return relinks
 
 
+def relink(links, monad):
+    pass
+
+
 def group_make(self, new_group_name):
     self.node_tree = bpy.data.node_groups.new(new_group_name, 'SverchGroupTreeType')
     self.node_tree['sub_group'] = True
@@ -299,8 +303,7 @@ class SvMonadCreateFromSelected(Operator):
         bpy.ops.node.clipboard_copy()
 
         # get links for relinking sockets in monad IO
-
-
+        # links = get_relinks(ng)
 
         monad = group_make(parent_node, self.group_name)
         bpy.ops.node.sv_switch_layout(layout_name=monad.name)
@@ -322,6 +325,8 @@ class SvMonadCreateFromSelected(Operator):
         # remove nodes from parent_tree
         for n in reversed(nodes):
             parent_tree.nodes.remove(n)
+
+        # relink(links, monad)
 
 
         return {'FINISHED'}
