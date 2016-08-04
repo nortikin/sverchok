@@ -113,6 +113,7 @@ def get_relinks(ng):
         get_links(node=node, kind='inputs', link_kind='from_node')
         get_links(node=node, kind='outputs', link_kind='to_node')
     
+    print(relinks)
     return relinks
 
 
@@ -337,7 +338,7 @@ class SvMonadCreateFromSelected(Operator):
         for n in reversed(nodes):
             parent_tree.nodes.remove(n)
 
-        relink(links, monad)
+        # relink(links, monad)
 
         return {'FINISHED'}
 
