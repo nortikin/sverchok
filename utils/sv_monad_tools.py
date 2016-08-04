@@ -99,15 +99,17 @@ def get_relinks(ng):
     if not nodes:
         return relinks
 
-    def get_links(node=node, kind='inputs', link_kind='from_node'):
+    def get_links(node, kind='inputs', link_kind='from_node'):
         for idx, s in enumerate(getattr(node, kind)):
             if s.is_linked:
                 link = s.links[0]
                 linked_node = getattr(link, link_kind)
-                if not linked_node in nodes:
-                    relinks[kind].append(dict(socket_index=idx, linked_node=linked_node.name))
+                if linked_node in nodes:
+                    continue
+                lnode_name = linked_node.name if kind == 'inputs' else node.name
+                relinks[kind].append(dict(socket_index=idx, linked_node=lnode_name))
 
-    for n in nodes:
+    for node in nodes:
         get_links(node=node, kind='inputs', link_kind='from_node')
         get_links(node=node, kind='outputs', link_kind='to_node')
     
@@ -115,7 +117,16 @@ def get_relinks(ng):
 
 
 def relink(links, monad):
-    pass
+    for k, v in links.items():
+        for L in v:
+            idx, node_name = L['socket_index'], L['linked_node']
+            nodes = monad.nodes
+            node = nodes[node_name]
+            input_node, output_node = 'Group Inputs Exp', 'Group Outputs Exp'
+            if k == 'inputs':
+                monad.links.new(nodes[input_node].outputs[-1], node.inputs[idx])
+            else:
+                monad.links.new(node.outputs[idx], nodes[output_node].inputs[-1])
 
 
 def group_make(self, new_group_name):
@@ -303,7 +314,7 @@ class SvMonadCreateFromSelected(Operator):
         bpy.ops.node.clipboard_copy()
 
         # get links for relinking sockets in monad IO
-        # links = get_relinks(ng)
+        links = get_relinks(ng)
 
         monad = group_make(parent_node, self.group_name)
         bpy.ops.node.sv_switch_layout(layout_name=monad.name)
@@ -326,8 +337,7 @@ class SvMonadCreateFromSelected(Operator):
         for n in reversed(nodes):
             parent_tree.nodes.remove(n)
 
-        # relink(links, monad)
-
+        relink(links, monad)
 
         return {'FINISHED'}
 
