@@ -108,6 +108,8 @@ def get_relinks(ng):
                     continue
                 relinks[kind].append(
                     dict(
+                        socket_idx=idx,
+                        link=link,
                         from_node=link.from_node.name,
                         from_socket=link.from_socket.name,
                         to_node=link.to_node.name,
