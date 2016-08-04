@@ -251,6 +251,53 @@ class SvTreePathParent(Operator):
         return {'FINISHED'}
 
 
+class SvMonadCreateFromSelected(Operator):
+
+    bl_idname = "node.sv_monad_from_selected"
+    bl_label = "Create monad from selected nodes (sub graph)"
+
+    group_name = StringProperty(default="Monad")
+
+    def execute(self, context):
+
+        ng = context.space_data.edit_tree
+        nodes = [n for n in ng.nodes if n.select]
+
+        if not nodes:
+            self.report({"CANCELLED"}, "No nodes selected")
+            return {'CANCELLED'}
+
+        parent_node = ng.nodes.new('SvGroupNodeExp')
+        parent_node.select = False
+        parent_tree = parent_node.id_data
+        parent_node.location = average_of_selected(nodes)
+        bpy.ops.node.clipboard_copy()
+
+        monad = group_make(parent_node, self.group_name)
+        bpy.ops.node.sv_switch_layout(layout_name=monad.name)
+        
+        # by switching, space_data is now different
+        path = context.space_data.path
+        path.clear()
+        path.append(parent_tree) # below the green opacity layer
+        path.append(monad)  # top level
+
+        bpy.ops.node.clipboard_paste()
+        
+        # get optimal location for IO nodes..
+        # move monad IO nodes to bounding box of pasted nodes.
+        i_loc, o_loc = propose_io_locations(nodes)
+        monad.nodes.get('Group Inputs Exp').location = i_loc
+        monad.nodes.get('Group Outputs Exp').location = o_loc
+
+        # remove nodes from parent_tree
+        for n in reversed(nodes):
+            parent_tree.nodes.remove(n)
+
+
+        return {'FINISHED'}
+
+
 class SvSocketAquisition:
 
     socket_map = {'outputs': 'to_socket', 'inputs': 'from_socket'}
