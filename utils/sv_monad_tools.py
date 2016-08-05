@@ -162,11 +162,23 @@ def relink(links, monad):
            when connecting to dummy socket subsequent connects with 
            the same key shall connect to [-2] isntead of the initial [-1]
     
-            if k == 'inputs':
-                monad.links.new(nodes[input_node].outputs[-1], node.inputs[idx])
-            else:
-                monad.links.new(node.outputs[idx], nodes[output_node].inputs[-1])
     '''
+    input_links = links['inputs']
+    output_links = links['outputs']
+
+    for k, v in input_links:
+        from_periphery_socket = k
+        for monad_node_name, idx in v:
+            to_socket = monad[monad_node_name].inputs[idx]
+            # monad.links.new(nodes[input_node].outputs[-1], node.inputs[idx])
+            ...
+
+    for k, v in outut_links:
+        mona_node_name, idx = k
+        for to_socket in v:
+            # monad.links.new(node.outputs[idx], nodes[output_node].inputs[-1])
+            ...
+
     print(links)
 
 
