@@ -93,25 +93,6 @@ def get_relinks(ng):
     '''
     ng = bpy.data.node_groups['NodeTree']
     print(get_relinks(ng))
-
-    get_relinks(ng):
-
-        for idx, socket of (inputs, outputs) on peripheral nodes
-            if socket not linked: skip
-            - if socket is incoming (ie connected to pre monad .inputs)
-                - peripheral: - store 'from_socket' (direct object)
-                - pre_monad:  - store get_socket_index_from('to_socket') (idx)
-                              - store node name
-            - if socket is outgoing (... .outputs)
-                for each link in socket.links
-                    - peripheral:  - store get_socket_index_from('from_socket') (idx)
-                                   - store node name
-                    - pre_monad:   - store 'to_socket' (direct object)
-
-    relink(links)
-
-        connect peripherals to parent_node, then from monad IO to monad nodes.
-
     '''
     nodes = [n for n in ng.nodes if n.select]
     relinks = dict(inputs=[], outputs=[])
@@ -145,6 +126,8 @@ def get_relinks(ng):
 
 def relink(links, monad):
     '''
+    connect peripherals to parent_node, then from monad IO to monad nodes.
+
     for k, v in links.items():
         for L in v:
             idx, node_name = L['socket_index'], L['linked_node']
