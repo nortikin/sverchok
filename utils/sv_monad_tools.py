@@ -180,8 +180,8 @@ def relink(links, monad, parent_node):
         monad.links.new(from_socket, monad_out_socket)
 
         # connect the parent node output to all previously connected sockets.
-        for to_socket in v:
-            parent_tree.links.new(parent_node.outputs[m_idx], to_socket)
+        for to_periphery_socket in v:
+            parent_tree.links.new(parent_node.outputs[m_idx], to_periphery_socket)
 
     print(links)
 
