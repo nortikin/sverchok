@@ -153,28 +153,24 @@ def relink(links, monad):
             bpy.data...nodes["Vectors out"].inputs[0]
         ]})
     }
-
-    connect peripherals to parent_node, then from monad IO to monad nodes.
-    inputs and outputs have a different key signature.
-        for inputs:  expect an object (a reference to a socket on the parent_tree)
-        for outputs: expect a tuple with node.name and socket.index.
-        inputs and outputs may have multiple members per value:
-           when connecting to dummy socket subsequent connects with 
-           the same key shall connect to [-2] isntead of the initial [-1]
-    
     '''
+
+    monad_in = 'Group Inputs Exp'
+    monad_out = 'Group Outputs Exp'
     input_links = links['inputs']
     output_links = links['outputs']
 
-    for k, v in input_links:
+    for k, v in input_links.items():
+        # connect periphery to parent_node_inputs last.
         from_periphery_socket = k
         for monad_node_name, idx in v:
             to_socket = monad[monad_node_name].inputs[idx]
             # monad.links.new(nodes[input_node].outputs[-1], node.inputs[idx])
             ...
 
-    for k, v in outut_links:
-        mona_node_name, idx = k
+    for k, v in output_links.items():
+        # connect parent_node_outputs to periphery last.
+        monad_node_name, idx = k
         for to_socket in v:
             # monad.links.new(node.outputs[idx], nodes[output_node].inputs[-1])
             ...
