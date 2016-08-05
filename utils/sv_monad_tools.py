@@ -172,14 +172,16 @@ def relink(links, monad, parent_node):
         parent_tree.links.new(from_periphery_socket, parent_node.inputs[m_idx])
 
     for m_idx, (k, v) in enumerate(output_links.items()):
-        # connect parent_node_outputs to periphery last.
+
+        # connect a single link to monad output
         monad_node_name, idx = k
-        for f_idx, to_socket in enumerate(v):
-            dynamic_idx = -1 if f_idx == 0 else -2
-            from_socket = monad.nodes[monad_node_name].outputs[idx]
-            monad_out_socket = monad.nodes[monad_out].inputs[dynamic_idx]
-            monad.links.new(from_socket, monad_out_socket)
-        parent_tree.links.new(parent_node.outputs[m_idx], to_socket)
+        from_socket = monad.nodes[monad_node_name].outputs[idx]
+        monad_out_socket = monad.nodes[monad_out].inputs[-1]
+        monad.links.new(from_socket, monad_out_socket)
+
+        # connect the parent node output to all previously connected sockets.
+        for to_socket in v:
+            parent_tree.links.new(parent_node.outputs[m_idx], to_socket)
 
     print(links)
 
