@@ -99,7 +99,7 @@ def get_relinks(ng):
     if not nodes:
         return relinks
 
-    def gobble_links(link, link_kind, idx):
+    def gobble_links(link, link_kind, idx, kind):
         linked_node = getattr(link, link_kind)
         if not linked_node in nodes:
             relinks[kind].append(dict(socket_idx=idx, link=link))
@@ -111,10 +111,10 @@ def get_relinks(ng):
 
             if kind == 'inputs':
                 link = s.links[0]
-                gobble_links(link, link_kind, idx)
+                gobble_links(link, link_kind, idx, kind)
             else:
                 for link in s.links:
-                    gobble_links(link, link_kind, idx)
+                    gobble_links(link, link_kind, idx, kind)
 
     for node in nodes:
         get_links(node=node, kind='inputs', link_kind='from_node')
