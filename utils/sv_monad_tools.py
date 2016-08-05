@@ -96,15 +96,15 @@ def get_relinks(ng):
 
     get_relinks(ng):
 
-        for socket on peripheral nodes
+        for idx, socket of (inputs, outputs) on peripheral nodes
             if socket not linked: skip
             - if socket is incoming (ie connected to pre monad .inputs)
                 - peripheral: - store 'from_socket' (direct object)
-                - pre_monad:  - store get_socket_index_from('to_socket')
+                - pre_monad:  - store get_socket_index_from('to_socket') (idx)
                               - store node name
             - if socket is outgoing (... .outputs)
                 for each link in socket.links
-                    - peripheral:  - store get_socket_index_from('from_socket')
+                    - peripheral:  - store get_socket_index_from('from_socket') (idx)
                                    - store node name
                     - pre_monad:   - store 'to_socket' (direct object)
 
@@ -120,20 +120,22 @@ def get_relinks(ng):
 
     def get_links(node, kind='inputs', link_kind='from_node'):
         for idx, s in enumerate(getattr(node, kind)):
-            if s.is_linked:
-                link = s.links[0]
+            if not s.is_linked:
+                continue
+
+            def gobble_links(link, link_kind, idx):
                 linked_node = getattr(link, link_kind)
                 if linked_node in nodes:
-                    continue
-                relinks[kind].append(
-                    dict(
-                        socket_idx=idx,
-                        link=link,
-                        from_node=link.from_node.name,
-                        from_socket=link.from_socket.name,
-                        to_node=link.to_node.name,
-                        to_socket=link.to_socket.name)
-                    )
+                    return
+
+                relinks[kind].append(dict(socket_idx=idx, link=link))
+
+            if kind == 'inputs':
+                link = s.links[0]
+                gobble_links(link, link_kind, idx)
+            else:
+                for link in s.links:
+                    gobble_links(link, link_kind, idx)
 
     for node in nodes:
         get_links(node=node, kind='inputs', link_kind='from_node')
