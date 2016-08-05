@@ -98,7 +98,7 @@ def reduce_links(links):
             if k == 'inputs':
                 reduced_links['inputs'][link.from_socket].append([link.to_node.name, item['socket_idx']])
             else:
-                reduced_links['outputs'][(link.from_socket.name, item['socket_idx'])].append(link.to_socket)
+                reduced_links['outputs'][(link.from_node.name, item['socket_idx'])].append(link.to_socket)
     return reduced_links    
 
 
@@ -136,7 +136,7 @@ def get_relinks(ng):
     return reduce_links(relinks)
 
 
-def relink(links, monad):
+def relink(links, monad, parent_node):
     '''
     expects input like:
 
@@ -157,23 +157,29 @@ def relink(links, monad):
 
     monad_in = 'Group Inputs Exp'
     monad_out = 'Group Outputs Exp'
+    parent_tree = parent_node.id_data
     input_links = links['inputs']
     output_links = links['outputs']
 
-    for k, v in input_links.items():
-        # connect periphery to parent_node_inputs last.
-        from_periphery_socket = k
-        for monad_node_name, idx in v:
-            to_socket = monad[monad_node_name].inputs[idx]
-            # monad.links.new(nodes[input_node].outputs[-1], node.inputs[idx])
-            ...
+    for m_idx, (k, v) in enumerate(input_links.items()):
 
-    for k, v in output_links.items():
+        from_periphery_socket = k
+        for f_idx, (monad_node_name, idx) in enumerate(v):
+            dynamic_idx = -1 if f_idx == 0 else -2
+            to_socket = monad.nodes[monad_node_name].inputs[idx]
+            monad_in_socket = monad.nodes[monad_in].outputs[dynamic_idx]
+            monad.links.new(monad_in_socket, to_socket)
+        parent_tree.links.new(from_periphery_socket, parent_node.inputs[m_idx])
+
+    for m_idx, (k, v) in enumerate(output_links.items()):
         # connect parent_node_outputs to periphery last.
         monad_node_name, idx = k
-        for to_socket in v:
-            # monad.links.new(node.outputs[idx], nodes[output_node].inputs[-1])
-            ...
+        for f_idx, to_socket in enumerate(v):
+            dynamic_idx = -1 if f_idx == 0 else -2
+            from_socket = monad.nodes[monad_node_name].outputs[idx]
+            monad_out_socket = monad.nodes[monad_out].inputs[dynamic_idx]
+            monad.links.new(from_socket, monad_out_socket)
+        parent_tree.links.new(parent_node.outputs[m_idx], to_socket)
 
     print(links)
 
@@ -386,7 +392,7 @@ class SvMonadCreateFromSelected(Operator):
         for n in reversed(nodes):
             parent_tree.nodes.remove(n)
 
-        # relink(links, monad)
+        relink(links, monad, parent_node)
 
         return {'FINISHED'}
 
