@@ -16,6 +16,7 @@
 #
 # END GPL LICENSE BLOCK #####
 
+from collections import defaultdict
 
 import bpy
 from bpy.types import Operator
@@ -89,6 +90,18 @@ def get_parent_data(node, kind):
     return sockets
 
 
+def reduce_links(links):
+    reduced_links = dict(inputs=defaultdict(list), outputs=defaultdict(list))
+    for k, v in links.items():
+        for item in v:
+            link = item['link']
+            if k == 'inputs':
+                reduced_links['inputs'][link.from_socket].append([link.to_node.name, item['socket_idx']])
+            else:
+                reduced_links['outputs'][(link.from_socket.name, item['socket_idx'])].append(link.to_socket)
+    return reduced_links    
+
+
 def get_relinks(ng):
     '''
     ng = bpy.data.node_groups['NodeTree']
@@ -120,26 +133,26 @@ def get_relinks(ng):
         get_links(node=node, kind='inputs', link_kind='from_node')
         get_links(node=node, kind='outputs', link_kind='to_node')
     
-    print(relinks)
-    return relinks
+    return reduce_links(relinks)
 
 
 def relink(links, monad):
     '''
     connect peripherals to parent_node, then from monad IO to monad nodes.
-
-    for k, v in links.items():
-        for L in v:
-            idx, node_name = L['socket_index'], L['linked_node']
-            nodes = monad.nodes
-            node = nodes[node_name]
-            input_node, output_node = 'Group Inputs Exp', 'Group Outputs Exp'
+    inputs and outputs have a different key signature.
+        for inputs:  expect an object (a reference to a socket on the parent_tree)
+        for outputs: expect a tuple with node.name and socket.index.
+        inputs and outputs may have multiple members per value:
+           when connecting to dummy socket subsequent connects with 
+           the same key shall connect to [-2] isntead of the initial [-1]
+    
             if k == 'inputs':
                 monad.links.new(nodes[input_node].outputs[-1], node.inputs[idx])
             else:
                 monad.links.new(node.outputs[idx], nodes[output_node].inputs[-1])
     '''
-    pass
+    print(links)
+
 
 def group_make(self, new_group_name):
     self.node_tree = bpy.data.node_groups.new(new_group_name, 'SverchGroupTreeType')
