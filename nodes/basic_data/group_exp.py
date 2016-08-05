@@ -36,6 +36,8 @@ from sverchok.utils.sv_monad_tools import (
     SvMonadCreateFromSelected
 )
 
+MONAD_COLOR = (0.4, 0.9, 1)
+
 
 class SvGroupNodeExp(Node, SverchCustomTreeNode):
     bl_idname = 'SvGroupNodeExp'
@@ -46,7 +48,7 @@ class SvGroupNodeExp(Node, SverchCustomTreeNode):
 
     def sv_init(self, context):
         self.use_custom_color = True
-        self.color = (0.7, 0.7, 1)
+        self.color = MONAD_COLOR
  
     def update(self):
         ''' Override inherited '''
@@ -105,7 +107,7 @@ class SvGroupInputsNodeExp(Node, SverchCustomTreeNode, SvSocketAquisition):
         self.node_kind = 'outputs'
 
         self.use_custom_color = True
-        self.color = (0.7, 0.7, 1)
+        self.color = MONAD_COLOR
 
     def get_sockets(self):
         yield self.outputs, "outputs"
@@ -125,7 +127,7 @@ class SvGroupOutputsNodeExp(Node, SverchCustomTreeNode, SvSocketAquisition):
         self.node_kind = 'inputs'
 
         self.use_custom_color = True
-        self.color = (0.7, 0.7, 1)
+        self.color = MONAD_COLOR
 
 
     def get_sockets(self):
