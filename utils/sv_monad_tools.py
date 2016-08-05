@@ -138,6 +138,22 @@ def get_relinks(ng):
 
 def relink(links, monad):
     '''
+    expects input like:
+
+    {'inputs': defaultdict(<class 'list'>,
+        {bpy.data...nodes["Float"].outputs[0]: [
+            ['function.003', 1], ['Vectors in.001', 0]
+        ],
+        bpy.data...nodes["Integer"].outputs[0]: [
+            ['Float Series', 2]
+        ]}),
+    'outputs': defaultdict(<class 'list'>,
+        {('Vectors', 0): [
+            bpy.data...nodes["Viewer Draw2"].inputs[0],
+            bpy.data...nodes["Vectors out"].inputs[0]
+        ]})
+    }
+
     connect peripherals to parent_node, then from monad IO to monad nodes.
     inputs and outputs have a different key signature.
         for inputs:  expect an object (a reference to a socket on the parent_tree)
