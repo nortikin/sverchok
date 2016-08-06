@@ -89,7 +89,6 @@ utils_modules = [
     # UI operators and tools
     "sv_panels_tools", "sv_IO_panel_tools",
     "group_tools", "sv_monad_tools",
-    "sv_bpy_helpers"
 ]
 
 ui_modules = [
