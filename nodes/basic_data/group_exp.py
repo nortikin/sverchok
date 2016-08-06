@@ -129,7 +129,6 @@ class SvGroupOutputsNodeExp(Node, SverchCustomTreeNode, SvSocketAquisition):
         self.use_custom_color = True
         self.color = MONAD_COLOR
 
-
     def get_sockets(self):
         yield self.inputs, "inputs"
 
@@ -139,8 +138,9 @@ def draw_node_ops(self, context):
     layout.separator()
     # layout.operator("node.sv_group_edit")
     # layout.operator("node.group_ungroup")
-    layout.operator("node.sv_monad_from_selected", text='make group (+relink)', icon='RNA')
-    layout.operator("node.sv_monad_from_selected", text='make group', icon='RNA').use_relinks = False
+    make_monad = "node.sv_monad_from_selected"
+    layout.operator(make_monad, text='make group (+relink)', icon='RNA')
+    layout.operator(make_monad, text='make group', icon='RNA').use_relinks = False
     # layout.operator("node.group_insert")
     layout.separator()    
 
