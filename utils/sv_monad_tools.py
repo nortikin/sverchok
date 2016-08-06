@@ -356,6 +356,12 @@ class SvMonadCreateFromSelected(Operator):
     group_name = StringProperty(default="Monad")
     use_relinking = BoolProperty(default=True)
 
+    @classmethod
+    def poll(cls, context):
+        tree_type = context.space_data.tree_type
+        if tree_type == 'SverchCustomTreeType':
+            return True
+
     def execute(self, context):
 
         ng = context.space_data.edit_tree

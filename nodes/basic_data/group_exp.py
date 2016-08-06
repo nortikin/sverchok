@@ -135,6 +135,11 @@ class SvGroupOutputsNodeExp(Node, SverchCustomTreeNode, SvSocketAquisition):
 
 
 def draw_node_ops(self, context):
+
+    tree_type = context.space_data.tree_type
+    if not (tree_type == 'SverchCustomTreeType'):
+        return
+
     layout = self.layout
     layout.separator()
     # layout.operator("node.sv_group_edit")
@@ -164,10 +169,10 @@ def register():
     for cls in classes:
         bpy.utils.register_class(cls)
     bpy.types.NODE_MT_add.prepend(draw_node_ops)
-    # add_keymap()
+    add_keymap()
  
 def unregister():
-    # remove_keymap()
+    remove_keymap()
     bpy.types.NODE_MT_add.remove(draw_node_ops)
     for cls in classes:
         bpy.utils.unregister_class(cls)
