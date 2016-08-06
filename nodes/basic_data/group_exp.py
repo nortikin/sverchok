@@ -24,6 +24,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.core.update_system import make_tree_from_nodes, do_update
 
 from sverchok.ui.sv_monad_panel import SvCustomGroupInterface
+from sverchok.ui.nodeview_keymaps import add_keymap, remove_keymap
 
 from sverchok.utils.sv_monad_tools import (
     find_node,
@@ -140,7 +141,7 @@ def draw_node_ops(self, context):
     # layout.operator("node.group_ungroup")
     make_monad = "node.sv_monad_from_selected"
     layout.operator(make_monad, text='make group (+relink)', icon='RNA')
-    layout.operator(make_monad, text='make group', icon='RNA').use_relinks = False
+    layout.operator(make_monad, text='make group', icon='RNA').use_relinking = False
     # layout.operator("node.group_insert")
     layout.separator()    
 
@@ -163,9 +164,10 @@ def register():
     for cls in classes:
         bpy.utils.register_class(cls)
     bpy.types.NODE_MT_add.prepend(draw_node_ops)
- 
+    # add_keymap()
  
 def unregister():
+    # remove_keymap()
     bpy.types.NODE_MT_add.remove(draw_node_ops)
     for cls in classes:
         bpy.utils.unregister_class(cls)

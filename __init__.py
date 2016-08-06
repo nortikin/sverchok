@@ -56,6 +56,7 @@ bl_info = {
         "-Addon-WIP-Sverchok-parametric-tool-for-architects"),
     "category": "Node"}
 
+
 import sys
 import importlib
 
@@ -93,7 +94,7 @@ utils_modules = [
 
 ui_modules = [
     "color_def", "sv_IO_panel", "sv_header", "sv_templates_menu",
-    "sv_panels", "nodeview_space_menu",
+    "sv_panels", "nodeview_space_menu", "nodeview_keymaps",
     # bgl modules
     "viewer_draw", "viewer_draw_mk2", "nodeview_bgl_viewer_draw",
     "index_viewer_draw", "sv_monad_panel"
