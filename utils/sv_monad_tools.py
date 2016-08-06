@@ -20,7 +20,7 @@ from collections import defaultdict
 
 import bpy
 from bpy.types import Operator
-from bpy.props import StringProperty, EnumProperty, IntProperty
+from bpy.props import StringProperty, EnumProperty, IntProperty, BoolProperty
 
 from sverchok.data_structure import node_id, replace_socket
 
@@ -349,11 +349,12 @@ class SvTreePathParent(Operator):
 
 
 class SvMonadCreateFromSelected(Operator):
-
+    '''Makes node group, relink will enforce peripheral connections'''
     bl_idname = "node.sv_monad_from_selected"
     bl_label = "Create monad from selected nodes (sub graph)"
 
     group_name = StringProperty(default="Monad")
+    use_relinking = BoolProperty(default=True)
 
     def execute(self, context):
 
@@ -370,8 +371,9 @@ class SvMonadCreateFromSelected(Operator):
         parent_node.location = average_of_selected(nodes)
         bpy.ops.node.clipboard_copy()
 
-        # get links for relinking sockets in monad IO
-        links = get_relinks(ng)
+        if self.use_relinking:
+            # get links for relinking sockets in monad IO
+            links = get_relinks(ng)
 
         monad = group_make(parent_node, self.group_name)
         bpy.ops.node.sv_switch_layout(layout_name=monad.name)
@@ -385,7 +387,6 @@ class SvMonadCreateFromSelected(Operator):
         bpy.ops.node.clipboard_paste()
         
         # get optimal location for IO nodes..
-        # move monad IO nodes to bounding box of pasted nodes.
         i_loc, o_loc = propose_io_locations(nodes)
         monad.nodes.get('Group Inputs Exp').location = i_loc
         monad.nodes.get('Group Outputs Exp').location = o_loc
@@ -394,7 +395,8 @@ class SvMonadCreateFromSelected(Operator):
         for n in reversed(nodes):
             parent_tree.nodes.remove(n)
 
-        relink(links, monad, parent_node)
+        if self.use_relinking:
+            relink(links, monad, parent_node)
 
         return {'FINISHED'}
 

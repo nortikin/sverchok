@@ -134,6 +134,17 @@ class SvGroupOutputsNodeExp(Node, SverchCustomTreeNode, SvSocketAquisition):
         yield self.inputs, "inputs"
 
 
+def draw_node_ops(self, context):
+    layout = self.layout
+    layout.separator()
+    # layout.operator("node.sv_group_edit")
+    # layout.operator("node.group_ungroup")
+    layout.operator("node.sv_monad_from_selected", text='make group (+relink)', icon='RNA')
+    layout.operator("node.sv_monad_from_selected", text='make group', icon='RNA').use_relinks = False
+    # layout.operator("node.group_insert")
+    layout.separator()    
+
+
 classes = [
     SvMoveSocketOpExp,
     SvRenameSocketOpExp,
@@ -151,9 +162,11 @@ classes = [
 def register():
     for cls in classes:
         bpy.utils.register_class(cls)
+    bpy.types.NODE_MT_add.prepend(draw_node_ops)
  
  
 def unregister():
+    bpy.types.NODE_MT_add.remove(draw_node_ops)
     for cls in classes:
         bpy.utils.unregister_class(cls)
  
