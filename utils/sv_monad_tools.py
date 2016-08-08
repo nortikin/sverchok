@@ -22,6 +22,7 @@ import bpy
 from bpy.types import Operator
 from bpy.props import StringProperty, EnumProperty, IntProperty, BoolProperty
 
+from sverchok.nodes.basic_data.group_exp import make_class_from_monad
 from sverchok.data_structure import node_id, replace_socket
 
 socket_types = [
@@ -363,7 +364,7 @@ class SvMonadCreateFromSelected(Operator):
         # by switching, space_data is now different
         path = context.space_data.path
         path.clear()
-        path.append(parent_tree) # below the green opacity layer
+        path.append(ng) # below the green opacity layer
         path.append(monad)  # top level
 
         bpy.ops.node.clipboard_paste()
@@ -402,14 +403,10 @@ def monad_make(new_group_name):
     inputnode = nodes.new('SvGroupInputsNodeExp')
     inputnode.location = (-200, 0)
     inputnode.selected = False
-    inputnode.parent_node_name = self.name
-    inputnode.parent_tree_name = self.id_data.name
 
     outputnode = nodes.new('SvGroupOutputsNodeExp')
     outputnode.location = (200, 0)
     outputnode.selected = False
-    outputnode.parent_node_name = self.name
-    outputnode.parent_tree_name = self.id_data.name
 
     return monad
 
