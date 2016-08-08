@@ -31,10 +31,8 @@ class SvCustomGroupInterface(Panel):
 
     @classmethod
     def poll(cls, context):
-        print('edit_tree: ', context.space_data.edit_tree)
         try:
-            path = context.space_data.path
-            return len(path) == 2 and path[1].node_tree.get('sub_group')
+            return context.space_data.node_tree.bl_idname == 'SverchGroupTreeType'
         except:
             return False
 
@@ -48,12 +46,12 @@ class SvCustomGroupInterface(Panel):
         # draw left and right columns corresponding to sockets_types, display_name, move_operator
         in_node = nodes.get('Group Inputs Exp')
         out_node = nodes.get('Group Outputs Exp')
-        
+
         if not (in_node and out_node):
             return
 
         width = context.region.width
-        # should ideally take dpi into account, 
+        # should ideally take dpi into account,
         if width > 310:
             row = layout.row()
             split = row.split(percentage=0.5)
@@ -74,7 +72,7 @@ class SvCustomGroupInterface(Panel):
                 return
 
             # < type | (re)name     | /\  \/  X >
-            
+
             # lots of repetition here...
             socket_ref = dict(pos=index, node_name=s.node.name)
 
@@ -89,7 +87,7 @@ class SvCustomGroupInterface(Panel):
 
             m = r.operator(move, icon='TRIA_UP', text='')
             set_multiple_attrs(m, **socket_ref, direction=-1)
-            
+
             m = r.operator(move, icon='TRIA_DOWN', text='')
             set_multiple_attrs(m, **socket_ref, direction=1)
 

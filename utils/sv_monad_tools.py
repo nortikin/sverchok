@@ -48,13 +48,13 @@ def propose_io_locations(nodes):
     '''
     x_locs = [n.location[0] for n in nodes]
     y_locs = [n.location[1] for n in nodes]
-    min_x, max_x = min(*x_locs), max(*x_locs)
-    min_y, max_y = min(*y_locs), max(*y_locs)
+    min_x, max_x = min(x_locs), max(x_locs)
+    min_y, max_y = min(y_locs), max(y_locs)
     y = (min_y + max_y) / 2
     offset = 210
 
     return (min_x - offset, y), (max_x + offset - 30, y)
-  
+
 
 def find_node(id_name, ng):
     for n in ng.nodes:
@@ -99,7 +99,7 @@ def reduce_links(links):
                 reduced_links['inputs'][link.from_socket].append([link.to_node.name, item['socket_idx']])
             else:
                 reduced_links['outputs'][(link.from_node.name, item['socket_idx'])].append(link.to_socket)
-    return reduced_links    
+    return reduced_links
 
 
 def get_relinks(ng):
@@ -132,7 +132,7 @@ def get_relinks(ng):
     for node in nodes:
         get_links(node=node, kind='inputs', link_kind='from_node')
         get_links(node=node, kind='outputs', link_kind='to_node')
-    
+
     return reduce_links(relinks)
 
 
@@ -185,26 +185,6 @@ def relink(links, monad, parent_node):
 
     print(links)
 
-
-def group_make(self, new_group_name):
-    self.node_tree = bpy.data.node_groups.new(new_group_name, 'SverchGroupTreeType')
-    self.node_tree['sub_group'] = True
-    self.group_name = self.node_tree.name
-    nodes = self.node_tree.nodes
-
-    inputnode = nodes.new('SvGroupInputsNodeExp')
-    inputnode.location = (-200, 0)
-    inputnode.selected = False
-    inputnode.parent_node_name = self.name
-    inputnode.parent_tree_name = self.id_data.name
-
-    outputnode = nodes.new('SvGroupOutputsNodeExp')
-    outputnode.location = (200, 0)
-    outputnode.selected = False
-    outputnode.parent_node_name = self.name
-    outputnode.parent_tree_name = self.id_data.name
-
-    return self.node_tree
 
 
 class SvMoveSocketOpExp(Operator):
@@ -262,7 +242,7 @@ class SvRenameSocketOpExp(Operator):
         sockets = get_parent_data(node, kind)
         sockets[self.pos].name = self.new_name
         return {"FINISHED"}
- 
+
     def invoke(self, context, event):
         _, _, socket = get_data(self, context)
         self.new_name = socket.name
@@ -307,9 +287,9 @@ class SvEditSocketOpExp(Operator):
 class SvGroupEdit(Operator):
     bl_idname = "node.sv_group_edit"
     bl_label = "edits an sv group"
-    
+
     group_name = StringProperty()
-    
+
     def execute(self, context):
         ng = bpy.data.node_groups
         node = context.node
@@ -317,10 +297,10 @@ class SvGroupEdit(Operator):
 
         monad = ng.get(self.group_name)
         if not monad:
-            monad = group_make(node, new_group_name=self.group_name)
-        
+            monad = monad_make(new_group_name=self.group_name)
+
         bpy.ops.node.sv_switch_layout(layout_name=self.group_name)
-        
+
         # by switching, space_data is now different
         path = context.space_data.path
         path.clear()
@@ -371,19 +351,15 @@ class SvMonadCreateFromSelected(Operator):
             self.report({"CANCELLED"}, "No nodes selected")
             return {'CANCELLED'}
 
-        parent_node = ng.nodes.new('SvGroupNodeExp')
-        parent_node.select = False
-        parent_tree = parent_node.id_data
-        parent_node.location = average_of_selected(nodes)
         bpy.ops.node.clipboard_copy()
 
         if self.use_relinking:
             # get links for relinking sockets in monad IO
             links = get_relinks(ng)
 
-        monad = group_make(parent_node, self.group_name)
+        monad = monad_make(self.group_name)
         bpy.ops.node.sv_switch_layout(layout_name=monad.name)
-        
+
         # by switching, space_data is now different
         path = context.space_data.path
         path.clear()
@@ -391,11 +367,19 @@ class SvMonadCreateFromSelected(Operator):
         path.append(monad)  # top level
 
         bpy.ops.node.clipboard_paste()
-        
+
         # get optimal location for IO nodes..
         i_loc, o_loc = propose_io_locations(nodes)
         monad.nodes.get('Group Inputs Exp').location = i_loc
         monad.nodes.get('Group Outputs Exp').location = o_loc
+
+
+        cls_ref = make_class_from_monad(monad.name)
+        parent_node = ng.nodes.new(cls_ref.bl_idname)
+        parent_node.select = False
+        parent_tree = parent_node.id_data
+        parent_node.location = average_of_selected(nodes)
+
 
         # remove nodes from parent_tree
         for n in reversed(nodes):
@@ -406,6 +390,28 @@ class SvMonadCreateFromSelected(Operator):
 
         return {'FINISHED'}
 
+def set_up_node(node, monad):
+    self.group_name = self.monad.name
+
+
+def monad_make(new_group_name):
+
+    monad = bpy.data.node_groups.new(new_group_name, 'SverchGroupTreeType')
+    nodes = monad.nodes
+
+    inputnode = nodes.new('SvGroupInputsNodeExp')
+    inputnode.location = (-200, 0)
+    inputnode.selected = False
+    inputnode.parent_node_name = self.name
+    inputnode.parent_tree_name = self.id_data.name
+
+    outputnode = nodes.new('SvGroupOutputsNodeExp')
+    outputnode.location = (200, 0)
+    outputnode.selected = False
+    outputnode.parent_node_name = self.name
+    outputnode.parent_tree_name = self.id_data.name
+
+    return monad
 
 class SvSocketAquisition:
 
@@ -431,7 +437,7 @@ class SvSocketAquisition:
 
             # if no 'linked_socket.prop_name' then use 'linked_socket.name'
             socket_prop_name = getattr(linked_socket, 'prop_name')
-            
+
             no_prop_name = (not socket_prop_name or len(socket_prop_name) == 0)
             if no_prop_name:
                 new_name = linked_socket.name
