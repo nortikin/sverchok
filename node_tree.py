@@ -35,7 +35,7 @@ from sverchok.data_structure import (
 from sverchok.core.update_system import (
     build_update_list,
     process_from_node,
-    process_tree, 
+    process_tree,
     get_update_lists, update_error_nodes)
 
 from sverchok.ui import color_def
@@ -60,7 +60,7 @@ class MatrixSocket(NodeSocket):
     bl_idname = "MatrixSocket"
     bl_label = "Matrix Socket"
     prop_name = StringProperty(default='')
-    
+
 
     def sv_get(self, default=sentinel, deepcopy=True):
         if self.is_linked and not self.is_output:
@@ -94,8 +94,8 @@ class VerticesSocket(NodeSocket):
     prop = FloatVectorProperty(default=(0, 0, 0), size=3, update=process_from_socket)
     prop_name = StringProperty(default='')
     use_prop = BoolProperty(default=False)
-    
-    
+
+
     def sv_get(self, default=sentinel, deepcopy=True):
         if self.is_linked and not self.is_output:
             return SvGetSocket(self, deepcopy)
@@ -107,7 +107,7 @@ class VerticesSocket(NodeSocket):
             raise SvNoDataError
         else:
             return default
-            
+
     def sv_set(self, data):
         SvSetSocket(self, data)
 
@@ -136,12 +136,12 @@ class SvDummySocket(NodeSocket):
     prop = FloatVectorProperty(default=(0, 0, 0), size=3, update=process_from_socket)
     prop_name = StringProperty(default='')
     use_prop = BoolProperty(default=False)
-    
-    
+
+
     def sv_get(self):
         if self.is_linked:
             return self.links[0].bl_idname
-            
+
     def sv_type_conversion(self, new_self):
         self = new_self
 
@@ -286,7 +286,13 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
     sv_process = BoolProperty(name="Process", default=True, description='Process layout')
     sv_user_colors = StringProperty(default="")
 
-    
+    @property
+    def sv_trees(self):
+        res = []
+        for ng in bpy.data.node_groups:
+            if ng.bl_idname in {'SverchCustomTreeType', 'SverchGroupTreeType'}
+                res.append(ng)
+        return res
     # get update list for debug info, tuple (fulllist,dictofpartiallists)
 
     def update(self):
@@ -336,12 +342,22 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
     def poll(cls, context):
         return False
 
+    @property
+    def node_instances(self):
+        res = []
+        for ng in self.sv_trees():
+            for node in ng.nodes:
+                if hasattr(node, "monad_name") and node.monad_name == self.name:
+                    res.append(node)
+        return res
+
 
 class SverchCustomTreeNode:
     @classmethod
     def poll(cls, ntree):
         return ntree.bl_idname in ['SverchCustomTreeType', 'SverchGroupTreeType']
-    
+
+
     def mark_error(self, err):
         """
         marks the with system error color
