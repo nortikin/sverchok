@@ -123,7 +123,7 @@ def make_class_from_monad(monad_name):
 
     cls_name = "SvGroupNodeExp{}".format(make_valid_identifier(monad_name))
     cls_dict["bl_idname"] = cls_name
-    old_cls_ref = getattr(bpy.types, cls_name)
+    old_cls_ref = getattr(bpy.types, cls_name, None)
 
     in_socket = []
 
