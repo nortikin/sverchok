@@ -290,7 +290,7 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
     def sv_trees(self):
         res = []
         for ng in bpy.data.node_groups:
-            if ng.bl_idname in {'SverchCustomTreeType', 'SverchGroupTreeType'}
+            if ng.bl_idname in {'SverchCustomTreeType', 'SverchGroupTreeType'}:
                 res.append(ng)
         return res
     # get update list for debug info, tuple (fulllist,dictofpartiallists)
