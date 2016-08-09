@@ -102,6 +102,9 @@ def make_class_from_monad(monad_name):
 
 
 class SvGroupNodeExp:
+    """
+    Base class for all monad nodes
+    """
     bl_label = 'Group Exp'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
