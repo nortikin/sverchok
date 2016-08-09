@@ -545,6 +545,10 @@ class SvMonadCreateFromSelected(Operator):
         if self.use_relinking:
             relink_monad(links, monad)
 
+        """
+         the monad is created, create a the class and then with class
+         create the node, place and linked it up
+        """
         cls_ref = make_class_from_monad(monad.name)
         parent_node = ng.nodes.new(cls_ref.bl_idname)
         parent_node.select = False
@@ -556,6 +560,7 @@ class SvMonadCreateFromSelected(Operator):
         for n in reversed(nodes):
             parent_tree.nodes.remove(n)
 
+        # relink the new node
         if self.use_relinking:
             relink_parent(links, parent_node)
 
