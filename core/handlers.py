@@ -8,7 +8,7 @@ from sverchok.core import upgrade_nodes
 from sverchok.ui import (viewer_draw, viewer_draw_mk2, index_viewer_draw,
                          nodeview_bgl_viewer_draw, color_def)
 from sverchok import old_nodes
-from sverchok.nodes.basic_data.group_exp import make_class_from_monad
+from sverchok.utils.sv_monad_tools import make_class_from_monad
 
 
 @persistent
