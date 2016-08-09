@@ -19,8 +19,11 @@
 import bpy
 from bpy.types import Panel
 
-from sverchok.utils.sv_monad_tools import set_multiple_attrs
+def set_multiple_attrs(cls_ref, **kwargs):
+    for arg_name, value in kwargs.items():
+        setattr(cls_ref, arg_name, value)
 
+        
 class SvCustomGroupInterface(Panel):
     bl_idname = "SvCustomGroupInterface"
     bl_label = "Sv Custom Group Interface"
