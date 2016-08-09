@@ -149,9 +149,8 @@ class SvGroupNodeExp:
         out_node = find_node("SvGroupOutputsNodeExp", group_ng)
 
         for index, socket in enumerate(self.inputs):
-            if socket.is_linked:
-                data = socket.sv_get(deepcopy=False)
-                in_node.outputs[index].sv_set(data)
+            data = socket.sv_get(deepcopy=False)
+            in_node.outputs[index].sv_set(data)
 
         #  get update list
         #  could be cached
