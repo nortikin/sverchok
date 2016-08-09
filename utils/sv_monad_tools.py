@@ -21,9 +21,17 @@ from collections import defaultdict
 import bpy
 from bpy.types import Operator
 from bpy.props import StringProperty, EnumProperty, IntProperty, BoolProperty
+from bpy.types import Node
 
-from sverchok.nodes.basic_data.group_exp import make_class_from_monad
-from sverchok.data_structure import node_id, replace_socket
+
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import node_id, replace_socket, get_other_socket
+from sverchok.core.update_system import make_tree_from_nodes, do_update
+
+
+# this should NOT be defined here but in the node file.
+MONAD_COLOR = (0.4, 0.9, 1)
+
 
 socket_types = [
     ("StringsSocket", "s", "Numbers, polygon data, generic"),
@@ -32,6 +40,128 @@ socket_types = [
 ]
 
 reverse_lookup = {'outputs': 'inputs', 'inputs': 'outputs'}
+
+def find_node(id_name, ng):
+    for n in ng.nodes:
+        if n.bl_idname == id_name:
+            return n
+    raise LookupError
+
+def make_valid_identifier(name):
+    return "".join(ch for ch in name if ch.isalnum() or ch=="_")
+
+def make_class_from_monad(monad_name):
+    monad = bpy.data.node_groups.get(monad_name)
+    if not monad:
+        return None
+
+    monad_inputs = find_node("SvGroupInputsNodeExp", monad)
+    if not monad_inputs:
+        return None
+    monad_outputs = find_node("SvGroupOutputsNodeExp", monad)
+    if not monad_outputs:
+        return None
+
+
+    cls_dict = {}
+
+
+    cls_name = "SvGroupNodeExp{}".format(make_valid_identifier(monad_name))
+    cls_dict["bl_idname"] = cls_name
+    old_cls_ref = getattr(bpy.types, cls_name, None)
+
+    in_socket = []
+
+    for socket in monad_inputs.outputs:
+        if socket.is_linked:
+            other = get_other_socket(socket)
+            prop_name = getattr(other, "prop_name")
+            if prop_name:
+                cls_dict[prop_name] = getattr(other.node.rna_type, prop_name)
+            data = [socket.name, socket.bl_idname, prop_name if prop_name else None]
+            in_socket.append(data)
+
+    out_socket = []
+    for socket in monad_outputs.inputs:
+        if socket.is_linked:
+            data = [socket.name, socket.bl_idname]
+            out_socket.append(data)
+
+    cls_dict["input_template"] = in_socket
+    cls_dict["output_template"] = out_socket
+
+    bases = (Node, SvGroupNodeExp, SverchCustomTreeNode)
+
+    cls_ref = type(cls_name, bases, cls_dict)
+
+    if old_cls_ref:
+        bpy.utils.unregister_class(old_cls_ref)
+    bpy.utils.register_class(cls_ref)
+
+    return cls_ref
+
+
+class SvGroupNodeExp:
+    bl_label = 'Group Exp'
+    bl_icon = 'OUTLINER_OB_EMPTY'
+
+    group_name = StringProperty()
+
+    def sv_init(self, context):
+        print("group exp sv_init for {}".format(self.bl_idname))
+        self.use_custom_color = True
+        self.color = MONAD_COLOR
+
+        for socket_name, socket_bl_idname, prop_name in self.input_template:
+            print(socket_name, socket_bl_idname, prop_name)
+            s = self.inputs.new(socket_bl_idname, socket_name)
+            if prop_name:
+                s.prop_name = prop_name
+        for socket_name, socket_bl_idname in self.output_template:
+            self.outputs.new(socket_bl_idname, socket_name)
+
+
+    def update(self):
+        ''' Override inherited '''
+        pass
+
+    def draw_buttons_ext(self, context, layout):
+        pass
+
+    def draw_buttons(self, context, layout):
+        c = layout.column()
+        c.prop(self, 'group_name', text='name')
+
+        d = layout.column()
+        d.active = bool(self.group_name)
+        f = d.operator('node.sv_group_edit', text='edit!')
+        f.group_name = self.group_name
+
+    def process(self):
+        if not self.group_name:
+            return
+
+        group_ng = bpy.data.node_groups[self.group_name]
+        in_node = find_node("SvGroupInputsNodeExp", group_ng)
+        out_node = find_node("SvGroupOutputsNodeExp", group_ng)
+
+        for index, socket in enumerate(self.inputs):
+            if socket.is_linked:
+                data = socket.sv_get(deepcopy=False)
+                in_node.outputs[index].sv_set(data)
+
+        #  get update list
+        #  could be cached
+        ul = make_tree_from_nodes([out_node.name], group_ng, down=False)
+        do_update(ul, group_ng.nodes)
+        # set output sockets correctly
+        for index, socket in enumerate(self.outputs):
+            if socket.is_linked:
+                data = out_node.inputs[index].sv_get(deepcopy=False)
+                socket.sv_set(data)
+
+    def load(self):
+        pass
 
 def average_of_selected(nodes):
     x, y = 0, 0
@@ -57,16 +187,6 @@ def propose_io_locations(nodes):
     return (min_x - offset, y), (max_x + offset - 30, y)
 
 
-def find_node(id_name, ng):
-    for n in ng.nodes:
-        if n.bl_idname == id_name:
-            return n
-    raise NotFoundErr
-
-
-def set_multiple_attrs(cls_ref, **kwargs):
-    for arg_name, value in kwargs.items():
-        setattr(cls_ref, arg_name, value)
 
 
 def get_data(self, context):
@@ -137,7 +257,44 @@ def get_relinks(ng):
     return reduce_links(relinks)
 
 
-def relink(links, monad, parent_node):
+def relink_parent(links, parent_node):
+    '''
+    expects input like:
+
+    {'inputs': defaultdict(<class 'list'>,
+        {bpy.data...nodes["Float"].outputs[0]: [
+            ['function.003', 1], ['Vectors in.001', 0]
+        ],
+        bpy.data...nodes["Integer"].outputs[0]: [
+            ['Float Series', 2]
+        ]}),
+    'outputs': defaultdict(<class 'list'>,
+        {('Vectors', 0): [
+            bpy.data...nodes["Viewer Draw2"].inputs[0],
+            bpy.data...nodes["Vectors out"].inputs[0]
+        ]})
+    }
+    '''
+
+    parent_tree = parent_node.id_data
+    input_links = links['inputs']
+    output_links = links['outputs']
+
+    for m_idx, (k, v) in enumerate(input_links.items()):
+
+        from_periphery_socket = k
+        parent_tree.links.new(from_periphery_socket, parent_node.inputs[m_idx])
+
+    for m_idx, (k, v) in enumerate(output_links.items()):
+
+        # connect a single link to monad output
+            # connect the parent node output to all previously connected sockets.
+        for to_periphery_socket in v:
+            parent_tree.links.new(parent_node.outputs[m_idx], to_periphery_socket)
+
+    print(links)
+
+def relink_monad(links, monad):
     '''
     expects input like:
 
@@ -158,7 +315,7 @@ def relink(links, monad, parent_node):
 
     monad_in = 'Group Inputs Exp'
     monad_out = 'Group Outputs Exp'
-    parent_tree = parent_node.id_data
+    #parent_tree = parent_node.id_data
     input_links = links['inputs']
     output_links = links['outputs']
 
@@ -170,7 +327,7 @@ def relink(links, monad, parent_node):
             to_socket = monad.nodes[monad_node_name].inputs[idx]
             monad_in_socket = monad.nodes[monad_in].outputs[dynamic_idx]
             monad.links.new(monad_in_socket, to_socket)
-        parent_tree.links.new(from_periphery_socket, parent_node.inputs[m_idx])
+        #parent_tree.links.new(from_periphery_socket, parent_node.inputs[m_idx])
 
     for m_idx, (k, v) in enumerate(output_links.items()):
 
@@ -181,8 +338,8 @@ def relink(links, monad, parent_node):
         monad.links.new(from_socket, monad_out_socket)
 
         # connect the parent node output to all previously connected sockets.
-        for to_periphery_socket in v:
-            parent_tree.links.new(parent_node.outputs[m_idx], to_periphery_socket)
+        #for to_periphery_socket in v:
+        #    parent_tree.links.new(parent_node.outputs[m_idx], to_periphery_socket)
 
     print(links)
 
@@ -374,25 +531,27 @@ class SvMonadCreateFromSelected(Operator):
         monad.nodes.get('Group Inputs Exp').location = i_loc
         monad.nodes.get('Group Outputs Exp').location = o_loc
 
+        if self.use_relinking:
+            relink_monad(links, monad)
 
         cls_ref = make_class_from_monad(monad.name)
         parent_node = ng.nodes.new(cls_ref.bl_idname)
         parent_node.select = False
         parent_tree = parent_node.id_data
         parent_node.location = average_of_selected(nodes)
-
+        parent_node.group_name = monad.name
 
         # remove nodes from parent_tree
         for n in reversed(nodes):
             parent_tree.nodes.remove(n)
 
         if self.use_relinking:
-            relink(links, monad, parent_node)
+            relink_parent(links, parent_node)
 
         return {'FINISHED'}
 
 def set_up_node(node, monad):
-    self.group_name = self.monad.name
+    node.group_name = monad.name
 
 
 def monad_make(new_group_name):
@@ -445,9 +604,11 @@ class SvSocketAquisition:
             replace_socket(socket, new_type, new_name=new_name)
 
             # add new input socket to parent node
-            parent_tree = bpy.data.node_groups[self.parent_tree_name].nodes
-            parent_node = parent_tree[self.parent_node_name]
-            sok = getattr(parent_node, _puts).new(new_type, new_name)
+            # needs new logic
+
+            #parent_tree = bpy.data.node_groups[self.parent_tree_name].nodes
+            #parent_node = parent_tree[self.parent_node_name]
+            #sok = getattr(parent_node, _puts).new(new_type, new_name)
 
 
             # add new dangling dummy

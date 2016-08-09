@@ -25,6 +25,7 @@ from sverchok.core.update_system import make_tree_from_nodes, do_update
 
 from sverchok.ui.sv_monad_panel import SvCustomGroupInterface
 from sverchok.ui.nodeview_keymaps import add_keymap, remove_keymap
+from sverchok.data_structure import get_other_socket
 
 from sverchok.utils.sv_monad_tools import (
     find_node,
@@ -38,124 +39,6 @@ from sverchok.utils.sv_monad_tools import (
 )
 
 MONAD_COLOR = (0.4, 0.9, 1)
-
-
-
-class SvGroupNodeExp:
-    bl_label = 'Group Exp'
-    bl_icon = 'OUTLINER_OB_EMPTY'
-
-    group_name = StringProperty()
-
-    def sv_init(self, context):
-        self.use_custom_color = True
-        self.color = MONAD_COLOR
-
-        for socket_name, socket_bl_idname, prop_name in self.input_template:
-            s = self.inputs.new(socket_bl_idname, socket_name)
-            if prop_name:
-                s.prop_name = prop_name
-        for socket_name, socket_bl_idname in self.output_template:
-            self.inputs.new(socket_bl_idname, socket_name)
-
-
-    def update(self):
-        ''' Override inherited '''
-        pass
-
-    def draw_buttons_ext(self, context, layout):
-        pass
-
-    def draw_buttons(self, context, layout):
-        c = layout.column()
-        c.prop(self, 'group_name', text='name')
-
-        d = layout.column()
-        d.active = bool(self.group_name)
-        f = d.operator('node.sv_group_edit', text='edit!')
-        f.group_name = self.group_name
-
-    def process(self):
-        if not self.group_name:
-            return
-
-        group_ng = bpy.data.node_groups[self.group_name]
-        in_node = find_node("SvGroupInputsNodeExp", group_ng)
-        out_node = find_node("SvGroupOutputsNodeExp", group_ng)
-
-        for index, socket in enumerate(self.inputs):
-            if socket.is_linked:
-                data = socket.sv_get(deepcopy=False)
-                in_node.outputs[index].sv_set(data)
-
-        #  get update list
-        #  could be cached
-        ul = make_tree_from_nodes([out_node.name], group_ng, down=False)
-        do_update(ul, group_ng.nodes)
-        # set output sockets correctly
-        for index, socket in enumerate(self.outputs):
-            if socket.is_linked:
-                data = out_node.inputs[index].sv_get(deepcopy=False)
-                socket.sv_set(data)
-
-    def load(self):
-        pass
-
-def make_valid_identifier(name):
-    return "".join(ch for ch in name if ch.isalnum() or ch=="_")
-
-def make_class_from_monad(monad_name):
-    monad = bpy.data.node_groups.get(monad_name)
-    if not monad:
-        return None
-    def find_node(id_name, ng):
-        for n in ng.nodes:
-            if n.bl_idname == id_name:
-                return n
-        raise NotFoundErr
-
-    monad_inputs = find_node(SvGroupInputsNodeExp.bl_idname, monad)
-
-    monad_outputs = find_node(SvGroupOutputsNodeExp.bl_idname, monad)
-
-    cls_dict = {}
-
-
-    cls_name = "SvGroupNodeExp{}".format(make_valid_identifier(monad_name))
-    cls_dict["bl_idname"] = cls_name
-    old_cls_ref = getattr(bpy.types, cls_name, None)
-
-    in_socket = []
-
-    for socket in monad_inputs.outputs:
-        if socket.is_linked:
-            other = get_other_socket(socket)
-            prop_name = getattr(other, "prop_name")
-            if prop_name:
-                cls_dict[prop_name] = getattr(other.node.rna_type, prop_name)
-            data = [socket.name, socket.bl_idname, prop_name if prop_name else None]
-            in_socket.append(data)
-
-    out_socket = []
-    for socket in monad_outputs.inputs:
-        if socket.is_linked:
-            data = [socket.name, socket.bl_idname]
-            out_socket.append(data)
-
-    cls_dict["input_template"] = in_socket
-    cls_dict["output_template"] = out_socket
-
-    bases = (Node, SverchCustomTreeNode, SvGroupNodeExp)
-
-    cls_ref = type(cls_name, bases, cls_dict)
-
-    if old_cls_ref:
-        bpy.utils.unregister_class(old_cls_ref)
-    bpy.utils.register_class(cls_ref)
-
-    return cls_ref
-
-
 
 
 class SvGroupInputsNodeExp(Node, SverchCustomTreeNode, SvSocketAquisition):
