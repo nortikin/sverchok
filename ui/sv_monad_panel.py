@@ -23,7 +23,7 @@ def set_multiple_attrs(cls_ref, **kwargs):
     for arg_name, value in kwargs.items():
         setattr(cls_ref, arg_name, value)
 
-        
+
 class SvCustomGroupInterface(Panel):
     bl_idname = "SvCustomGroupInterface"
     bl_label = "Sv Custom Group Interface"
@@ -35,7 +35,7 @@ class SvCustomGroupInterface(Panel):
     @classmethod
     def poll(cls, context):
         try:
-            return context.space_data.node_tree.bl_idname == 'SverchGroupTreeType'
+            return context.space_data.edit_tree.bl_idname == 'SverchGroupTreeType'
         except:
             return False
 
