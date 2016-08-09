@@ -79,7 +79,9 @@ def make_class_from_monad(monad_name):
             if prop_name:
                 prop_data = getattr(other.node.rna_type, prop_name)
                 if prop_name in cls_dict:
-                    for i in range(100):
+                    # all properties need unique names,
+                    # if 'x' is taken 'x2' etc.
+                    for i in range(2,100):
                         new_name = "{}{}".format(prop_name, i)
                         if new_name in cls_dict:
                             continue
