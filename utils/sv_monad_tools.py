@@ -573,6 +573,7 @@ def set_up_node(node, monad):
 def monad_make(new_group_name):
 
     monad = bpy.data.node_groups.new(new_group_name, 'SverchGroupTreeType')
+    monad.use_fake_user = True
     nodes = monad.nodes
 
     inputnode = nodes.new('SvGroupInputsNodeExp')
