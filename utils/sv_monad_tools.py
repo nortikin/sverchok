@@ -77,7 +77,16 @@ def make_class_from_monad(monad_name):
             other = get_other_socket(socket)
             prop_name = getattr(other, "prop_name")
             if prop_name:
-                cls_dict[prop_name] = getattr(other.node.rna_type, prop_name)
+                prop_data = getattr(other.node.rna_type, prop_name)
+                if prop_name in cls_dict:
+                    for i in range(100):
+                        new_name = "{}{}".format(prop_name, i)
+                        if new_name in cls_dict:
+                            continue
+                        prop_name = new_name
+                        break
+
+                cls_dict[prop_name] = prop_data
             data = [socket.name, socket.bl_idname, prop_name if prop_name else None]
             in_socket.append(data)
 
@@ -111,12 +120,10 @@ class SvGroupNodeExp:
     group_name = StringProperty()
 
     def sv_init(self, context):
-        print("group exp sv_init for {}".format(self.bl_idname))
         self.use_custom_color = True
         self.color = MONAD_COLOR
 
         for socket_name, socket_bl_idname, prop_name in self.input_template:
-            print(socket_name, socket_bl_idname, prop_name)
             s = self.inputs.new(socket_bl_idname, socket_name)
             if prop_name:
                 s.prop_name = prop_name
