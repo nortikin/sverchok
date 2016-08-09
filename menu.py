@@ -322,6 +322,42 @@ def juggle_and_join(node_cats):
     return node_cats
 
 
+
+def sv_group_items(context):
+    """
+    Based on the built in node_group_items in the blender distrubution
+    somewhat edited to fit.
+    """
+    if context is None:
+        return
+    space = context.space_data
+    if not space:
+        return
+    ntree = space.edit_tree
+    if not ntree:
+        return
+
+    def contains_group(nodetree, group):
+        if nodetree == group:
+            return True
+        else:
+            for node in nodetree.nodes:
+                if node.bl_idname in node_tree_group_type.values() and node.node_tree is not None:
+                    if contains_group(node.node_tree, group):
+                        return True
+        return False
+
+    for group in context.blend_data.node_groups:
+        if group.bl_idname != "SverchGroupTreeType":
+            continue
+        # filter out recursive groups,
+        #    if contains_group(group, ntree):
+        #    continue
+        # my note, not sure about what this does
+        yield NodeItem("SvGroupNodeExp",
+                       group.name,
+                       {"group_name": group.name})
+
 def make_categories():
     original_categories = make_node_cats()
     node_cats = juggle_and_join(original_categories)
@@ -335,8 +371,11 @@ def make_categories():
             # bl_idname, name
             items=[NodeItem(props[0], props[1]) for props in nodes]))
         node_count += len(nodes)
+    node_categories.append(SverchNodeCategory("SVERCHOK_GROUPS", "Groups",items=sv_group_items))
 
     return node_categories, node_count
+
+
 
 
 def reload_menu():
