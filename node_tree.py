@@ -262,6 +262,14 @@ class SvNodeTreeCommon(object):
     def get_update_lists(self):
         return get_update_lists(self)
 
+    @property
+    def sv_trees(self):
+        res = []
+        for ng in bpy.data.node_groups:
+            if ng.bl_idname in {'SverchCustomTreeType', 'SverchGroupTreeType'}:
+                res.append(ng)
+        return res
+
 
 class SverchCustomTree(NodeTree, SvNodeTreeCommon):
     ''' Sverchok - architectural node programming of geometry in low level '''
@@ -286,13 +294,7 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
     sv_process = BoolProperty(name="Process", default=True, description='Process layout')
     sv_user_colors = StringProperty(default="")
 
-    @property
-    def sv_trees(self):
-        res = []
-        for ng in bpy.data.node_groups:
-            if ng.bl_idname in {'SverchCustomTreeType', 'SverchGroupTreeType'}:
-                res.append(ng)
-        return res
+
     # get update list for debug info, tuple (fulllist,dictofpartiallists)
 
     def update(self):
@@ -345,9 +347,9 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
     @property
     def node_instances(self):
         res = []
-        for ng in self.sv_trees():
+        for ng in self.sv_trees:
             for node in ng.nodes:
-                if hasattr(node, "monad_name") and node.monad_name == self.name:
+                if hasattr(node, "group_name") and node.group_name == self.name:
                     res.append(node)
         return res
 
