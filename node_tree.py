@@ -331,6 +331,8 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
     bl_label = 'Sverchok Group Node Tree'
     bl_icon = 'NONE'
 
+    cls_bl_idname = StringProperty()
+
     def update(self):
         try:
             l = bpy.data.node_groups[self.id_data.name]
@@ -345,7 +347,7 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
         return False
 
     @property
-    def node_instances(self):
+    def instances(self):
         res = []
         for ng in self.sv_trees:
             for node in ng.nodes:
