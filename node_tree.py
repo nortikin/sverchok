@@ -38,7 +38,7 @@ from sverchok.core.update_system import (
     process_tree,
     get_update_lists, update_error_nodes)
 
-from sverchok.utils.sv_monad_tools import make_class_from_monad
+#from sverchok.utils.sv_monad_tools import make_class_from_monad
 
 from sverchok.ui import color_def
 
