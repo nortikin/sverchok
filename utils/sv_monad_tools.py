@@ -618,28 +618,22 @@ class SvSocketAquisition:
 
             # first switch socket type
             socket = socket_list[-1]
-            links = socket.links[0]
-            linked_socket = getattr(links, _socket)
+            linked_socket = get_other_socket(socket)
             new_type = linked_socket.bl_idname
 
             # if no 'linked_socket.prop_name' then use 'linked_socket.name'
             socket_prop_name = getattr(linked_socket, 'prop_name')
-
-            no_prop_name = (not socket_prop_name or len(socket_prop_name) == 0)
-            if no_prop_name:
-                new_name = linked_socket.name
-            else:
-                new_name = socket_prop_name
-
-            new_name = new_name.replace('_', ' ').strip() # more elaborate sanitizing needed?
+            new_name = linked_socket.name
             replace_socket(socket, new_type, new_name=new_name)
 
             # add new input socket to parent node
             # needs new logic
-
-            #parent_tree = bpy.data.node_groups[self.parent_tree_name].nodes
-            #parent_node = parent_tree[self.parent_node_name]
-            #sok = getattr(parent_node, _puts).new(new_type, new_name)
+            monad = self.id_data
+            for instance in monad.instances:
+                sockets = getattr(instance, reverse_lookup[kind])
+                new_socket = sockets.new(new_type, new_name)
+                if linked_socket.prop_name:
+                    new_socket.prop_name = linked_socket.prop_name
 
 
             # add new dangling dummy
