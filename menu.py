@@ -354,7 +354,7 @@ def sv_group_items(context):
         #    if contains_group(group, ntree):
         #    continue
         # my note, not sure about what this does
-        yield NodeItem("SvGroupNodeExp",
+        yield NodeItem(group.cls_bl_idname,
                        group.name,
                        {"group_name": group.name})
 
