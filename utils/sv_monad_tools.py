@@ -104,7 +104,7 @@ def make_class_from_monad(monad_name):
     bases = (Node, SvGroupNodeExp, SverchCustomTreeNode)
 
     cls_ref = type(cls_name, bases, cls_dict)
-
+    monad.cls_bl_idname = cls_ref.bl_idname
     if old_cls_ref:
         bpy.utils.unregister_class(old_cls_ref)
     bpy.utils.register_class(cls_ref)
@@ -142,7 +142,9 @@ class SvGroupNodeExp:
 
     def draw_buttons(self, context, layout):
         c = layout.column()
+
         c.prop(self, 'group_name', text='name')
+        c.prop(bpy.data.node_groups[self.group_name], "name", text='name')
 
         d = layout.column()
         d.active = bool(self.group_name)
@@ -200,26 +202,6 @@ def propose_io_locations(nodes):
 
 
 
-def get_data(self, context):
-    """ expects:
-            - self.node_name
-            - and self.pos
-            - space_data.path to have 2 members, ([1] being the upper visible)
-    """
-    node = context.space_data.path[1].node_tree.nodes[self.node_name]
-    kind = node.node_kind
-    socket = getattr(node, kind)[self.pos]
-    return node, kind, socket
-
-
-def get_parent_data(node, kind):
-    """
-        gets the correct set of sockets on the external (parent) node
-    """
-    ntree = bpy.data.node_groups[node.parent_tree_name]
-    parent_node = ntree.nodes[node.parent_node_name]
-    sockets = getattr(parent_node, reverse_lookup.get(kind))
-    return sockets
 
 
 def reduce_links(links):
@@ -356,6 +338,30 @@ def relink_monad(links, monad):
 
 
 
+
+def get_data(self, context):
+    """ expects:
+            - self.node_name
+            - and self.pos
+            - space_data.path to have 2 members, ([1] being the upper visible)
+    """
+    node = context.space_data.path[1].node_tree.nodes[self.node_name]
+    kind = node.node_kind
+    socket = getattr(node, kind)[self.pos]
+    return node, kind, socket
+
+
+def get_parent_data(node, kind):
+    """
+        gets the correct set of sockets on the external (parent) node
+    """
+    ntree = bpy.data.node_groups[node.parent_tree_name]
+    parent_node = ntree.nodes[node.parent_node_name]
+    sockets = getattr(parent_node, reverse_lookup.get(kind))
+    return sockets
+
+
+
 class SvMoveSocketOpExp(Operator):
     """Move a socket in the direction of the arrow, will wrap around"""
     bl_idname = "node.sverchok_move_socket_exp"
@@ -366,14 +372,17 @@ class SvMoveSocketOpExp(Operator):
     node_name = StringProperty()
 
     def execute(self, context):
+        print(dir(context))
         node, kind, socket = get_data(self, context)
-        parent_sockets = get_parent_data(node, kind)
+        monad = node.id_data
         IO_node_sockets = getattr(node, kind)
         pos = self.pos
 
         if self.direction == 0:
             IO_node_sockets.remove(socket)     # I/O interface (subgroup)
-            parent_sockets.remove(parent_sockets[pos])
+            for instance in monad.instances:
+                sockets = getattr(instance, reverse_lookup[kind])
+                sockets.remove(sockets[pos])
         else:
             def wrap_around(current_idx, direction, member_count):
                 return (current_idx + direction) % member_count
@@ -382,8 +391,11 @@ class SvMoveSocketOpExp(Operator):
             IO_new_pos = wrap_around(pos, self.direction, len(IO_node_sockets)-1)
             IO_node_sockets.move(pos, IO_new_pos)
 
-            parent_new_pos = wrap_around(pos, self.direction, len(parent_sockets))
-            parent_sockets.move(pos, parent_new_pos)
+            for instance in monad.instances:
+
+                sockets = getattr(instance, reverse_lookup[kind])
+                new_pos = wrap_around(pos, self.direction, len(sockets))
+                sockets.move(pos, new_pos)
 
         return {"FINISHED"}
 
@@ -405,11 +417,14 @@ class SvRenameSocketOpExp(Operator):
     def execute(self, context):
         # make changes to this node's socket name
         node, kind, socket = get_data(self, context)
-        socket.name = self.new_name
+        monad = node.id_data
 
+        socket.name = self.new_name
         # make changes to parent node's socket name in parent tree
-        sockets = get_parent_data(node, kind)
-        sockets[self.pos].name = self.new_name
+        for instance in monad.instances:
+            sockets = getattr(instance, reverse_lookup[kind])
+            sockets[self.pos].name = self.new_name
+
         return {"FINISHED"}
 
     def invoke(self, context, event):
@@ -436,14 +451,13 @@ class SvEditSocketOpExp(Operator):
     def execute(self, context):
         # make changes to this node's socket name
         node, kind, socket = get_data(self, context)
+        monad = node.id_data
 
-        # make changes to parent node's socket name in parent tree
-        parent_sockets = get_parent_data(node, kind)
-        parent_socket = parent_sockets[self.pos]
+        replace_socket(socket, self.socket_type)
 
-        # replace socket types of subgroup IO and parent node
-        for s in [socket, parent_socket]:
-            replace_socket(s, self.socket_type)
+        for instance in monad.instances:
+            sockets = getattr(instance, reverse_lookup[kind])
+            replace_socket(sockets[self.pos], self.socket_type)
 
         return {"FINISHED"}
 
