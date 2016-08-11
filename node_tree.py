@@ -38,6 +38,8 @@ from sverchok.core.update_system import (
     process_tree,
     get_update_lists, update_error_nodes)
 
+from sverchok.utils.sv_monad_tools import make_class_from_monad
+
 from sverchok.ui import color_def
 
 def process_from_socket(self, context):
@@ -354,6 +356,9 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
                 if hasattr(node, "group_name") and node.group_name == self.name:
                     res.append(node)
         return res
+
+    def update_cls(self):
+        make_class_from_monad(self.name)
 
 
 class SverchCustomTreeNode:
