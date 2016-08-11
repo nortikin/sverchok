@@ -49,7 +49,7 @@ from sverchok.utils.sv_viewer_utils import (
 )
 
 # -- POLYLINE --
-def live_curve(node, curve_name, verts):
+def live_curve(node, curve_name, verts, close):
     curves = bpy.data.curves
     objects = bpy.data.objects
     scene = bpy.context.scene
@@ -88,6 +88,8 @@ def live_curve(node, curve_name, verts):
     polyline.points.add(len(verts)-1)
     polyline.points.foreach_set('co', full_flat)
         
+    if close:
+        cu.splines[0].use_cyclic_u = True
     # for idx, v in enumerate(verts):  
     #    polyline.points[idx].co = (v[0], v[1], v[2], 1.0)
 
@@ -98,9 +100,9 @@ def live_curve(node, curve_name, verts):
 
 
 
-def make_curve_geometry(node, context, name, verts, matrix):
+def make_curve_geometry(node, context, name, verts, matrix, close):
 
-    sv_object = live_curve(node, name, verts)
+    sv_object = live_curve(node, name, verts, close)
     sv_object.hide_select = False
 
     if matrix:
@@ -176,6 +178,7 @@ class SvPolylineViewerNode(bpy.types.Node, SverchCustomTreeNode):
     depth = FloatProperty(min=0.0, default=0.2, update=updateNode)
     resolution = IntProperty(min=0, default=3, update=updateNode)
     bspline = BoolProperty(default=False, update=updateNode)
+    close = BoolProperty(default=False, update=updateNode)
 
     def sv_init(self, context):
         gai = bpy.context.scene.SvGreekAlphabet_index
@@ -226,7 +229,9 @@ class SvPolylineViewerNode(bpy.types.Node, SverchCustomTreeNode):
         col = layout.column()
         col.prop(self, 'depth', text='depth radius')
         col.prop(self, 'resolution', text='surface resolution')
-        col.prop(self, 'bspline', text='bspline')
+        row = col.row(align=True)
+        row.prop(self, 'bspline', text='bspline')
+        row.prop(self, 'close', text='close')
 
 
     def draw_buttons_ext(self, context, layout):
@@ -282,7 +287,7 @@ class SvPolylineViewerNode(bpy.types.Node, SverchCustomTreeNode):
             else:
                 matrix = []
 
-            make_curve_geometry(self, bpy.context, curve_name, Verts, matrix)
+            make_curve_geometry(self, bpy.context, curve_name, Verts, matrix, self.close)
 
         self.remove_non_updated_objects(obj_index)
         objs = self.get_children()
@@ -333,3 +338,7 @@ def register():
 def unregister():
     bpy.utils.unregister_class(SvPolylineViewerNode)
     bpy.utils.unregister_class(SvPolylineViewOp)
+
+
+if __name__ == '__main__':
+    register()
