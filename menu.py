@@ -355,8 +355,7 @@ def sv_group_items(context):
         #    continue
         # my note, not sure about what this does
         yield NodeItem(group.cls_bl_idname,
-                       group.name,
-                       {"group_name": group.name})
+                       group.name)
 
 def make_categories():
     original_categories = make_node_cats()
