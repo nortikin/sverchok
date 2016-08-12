@@ -642,12 +642,14 @@ class SvSocketAquisition:
             # add new input socket to parent node
             # needs new logic
             monad = self.id_data
+            print("make class from monad")
+            make_class_from_monad(monad)
+            
             for instance in monad.instances:
                 sockets = getattr(instance, reverse_lookup[kind])
                 new_socket = sockets.new(new_type, new_name)
                 if linked_socket.prop_name:
                     new_socket.prop_name = linked_socket.prop_name
-            print("make class from monad")
-            make_class_from_monad(monad)
+
             # add new dangling dummy
             socket_list.new('SvDummySocket', 'connect me')
