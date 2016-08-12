@@ -24,7 +24,7 @@ from bpy.props import StringProperty, EnumProperty, IntProperty, BoolProperty
 from bpy.types import Node
 
 
-from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.node_tree import SverchCustomTreeNode, SverchGroupTree
 from sverchok.data_structure import node_id, replace_socket, get_other_socket
 from sverchok.core.update_system import make_tree_from_nodes, do_update
 
@@ -50,23 +50,29 @@ def find_node(id_name, ng):
 def make_valid_identifier(name):
     return "".join(ch for ch in name if ch.isalnum() or ch=="_")
 
-def make_class_from_monad(monad_name):
-    monad = bpy.data.node_groups.get(monad_name)
+def make_class_from_monad(monad):
+    if isinstance(monad, str):
+        monad = bpy.data.node_groups.get(monad)
     if not monad:
         return None
+    print("making class from {}".format(monad.name))
 
-    monad_inputs = find_node("SvGroupInputsNodeExp", monad)
+    monad_inputs = monad.input_node
     if not monad_inputs:
         return None
-    monad_outputs = find_node("SvGroupOutputsNodeExp", monad)
+    monad_outputs = monad.output_node
     if not monad_outputs:
         return None
 
 
     cls_dict = {}
 
+    if not monad.cls_bl_idname:
+        # this should perhaps be made more random
+        cls_name = "SvGroupNodeExp{}".format(make_valid_identifier(monad.name))
+    else:
+        cls_name = monad.cls_bl_idname
 
-    cls_name = "SvGroupNodeExp{}".format(make_valid_identifier(monad_name))
     cls_dict["bl_idname"] = cls_name
     old_cls_ref = getattr(bpy.types, cls_name, None)
 
@@ -102,7 +108,7 @@ def make_class_from_monad(monad_name):
     cls_dict["output_template"] = out_socket
 
     bases = (Node, SvGroupNodeExp, SverchCustomTreeNode)
-
+    print(cls_dict)
     cls_ref = type(cls_name, bases, cls_dict)
     monad.cls_bl_idname = cls_ref.bl_idname
     if old_cls_ref:
@@ -114,12 +120,19 @@ def make_class_from_monad(monad_name):
 
 class SvGroupNodeExp:
     """
-    Base class for all monad nodes
+    Base class for all monad instances
     """
     bl_label = 'Group Exp'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     group_name = StringProperty()
+
+    @property
+    def monad(self):
+        for tree in bpy.data.node_groups:
+            if tree.bl_idname == 'SverchGroupTreeType' and self.bl_idname == tree.cls_bl_idname:
+               return tree
+        return None # or raise LookupError or something
 
     def sv_init(self, context):
         self.use_custom_color = True
@@ -143,21 +156,22 @@ class SvGroupNodeExp:
     def draw_buttons(self, context, layout):
         c = layout.column()
 
-        c.prop(self, 'group_name', text='name')
-        c.prop(bpy.data.node_groups[self.group_name], "name", text='name')
+        #c.prop(self, 'group_name', text='name')
+        monad = self.monad
+        c.prop(monad, "name", text='name')
 
         d = layout.column()
-        d.active = bool(self.group_name)
+        d.active = bool(monad)
         f = d.operator('node.sv_group_edit', text='edit!')
-        f.group_name = self.group_name
+        f.group_name = monad.name
 
     def process(self):
-        if not self.group_name:
+        if not self.monad:
             return
 
-        group_ng = bpy.data.node_groups[self.group_name]
-        in_node = find_node("SvGroupInputsNodeExp", group_ng)
-        out_node = find_node("SvGroupOutputsNodeExp", group_ng)
+        monad = self.monad
+        in_node = monad.input_node
+        out_node = monad.output_node
 
         for index, socket in enumerate(self.inputs):
             data = socket.sv_get(deepcopy=False)
@@ -165,8 +179,8 @@ class SvGroupNodeExp:
 
         #  get update list
         #  could be cached
-        ul = make_tree_from_nodes([out_node.name], group_ng, down=False)
-        do_update(ul, group_ng.nodes)
+        ul = make_tree_from_nodes([out_node.name], monad, down=False)
+        do_update(ul, monad.nodes)
         # set output sockets correctly
         for index, socket in enumerate(self.outputs):
             if socket.is_linked:
@@ -372,7 +386,6 @@ class SvMoveSocketOpExp(Operator):
     node_name = StringProperty()
 
     def execute(self, context):
-        print(dir(context))
         node, kind, socket = get_data(self, context)
         monad = node.id_data
         IO_node_sockets = getattr(node, kind)
@@ -397,6 +410,7 @@ class SvMoveSocketOpExp(Operator):
                 new_pos = wrap_around(pos, self.direction, len(sockets))
                 sockets.move(pos, new_pos)
 
+        make_class_from_monad(monad.name)
         return {"FINISHED"}
 
 
@@ -425,6 +439,7 @@ class SvRenameSocketOpExp(Operator):
             sockets = getattr(instance, reverse_lookup[kind])
             sockets[self.pos].name = self.new_name
 
+        make_class_from_monad(monad.name)
         return {"FINISHED"}
 
     def invoke(self, context, event):
@@ -459,6 +474,7 @@ class SvEditSocketOpExp(Operator):
             sockets = getattr(instance, reverse_lookup[kind])
             replace_socket(sockets[self.pos], self.socket_type)
 
+        make_class_from_monad(monad.name)
         return {"FINISHED"}
 
     def invoke(self, context, event):
@@ -580,9 +596,6 @@ class SvMonadCreateFromSelected(Operator):
 
         return {'FINISHED'}
 
-def set_up_node(node, monad):
-    node.group_name = monad.name
-
 
 def monad_make(new_group_name):
 
@@ -634,7 +647,7 @@ class SvSocketAquisition:
                 new_socket = sockets.new(new_type, new_name)
                 if linked_socket.prop_name:
                     new_socket.prop_name = linked_socket.prop_name
-
-
+            print("make class from monad")
+            make_class_from_monad(monad)
             # add new dangling dummy
             socket_list.new('SvDummySocket', 'connect me')
