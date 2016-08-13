@@ -259,9 +259,6 @@ def propose_io_locations(nodes):
 
 
 
-
-
-
 def reduce_links(links):
     reduced_links = dict(inputs=defaultdict(list), outputs=defaultdict(list))
     for k, v in links.items():
@@ -407,16 +404,6 @@ def get_data(self, context):
     kind = node.node_kind
     socket = getattr(node, kind)[self.pos]
     return node, kind, socket
-
-
-def get_parent_data(node, kind):
-    """
-        gets the correct set of sockets on the external (parent) node
-    """
-    ntree = bpy.data.node_groups[node.parent_tree_name]
-    parent_node = ntree.nodes[node.parent_node_name]
-    sockets = getattr(parent_node, reverse_lookup.get(kind))
-    return sockets
 
 
 
