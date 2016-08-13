@@ -326,46 +326,7 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
             process_tree(self)
 
 
-class SverchGroupTree(NodeTree, SvNodeTreeCommon):
-    ''' Sverchok - groups '''
-    bl_idname = 'SverchGroupTreeType'
-    bl_label = 'Sverchok Group Node Tree'
-    bl_icon = 'NONE'
 
-    cls_bl_idname = StringProperty()
-
-    def update(self):
-        try:
-            l = bpy.data.node_groups[self.id_data.name]
-        except:
-            return
-        if self.is_frozen():
-            return
-        self.adjust_reroutes()
-
-    @classmethod
-    def poll(cls, context):
-        return False
-
-    @property
-    def instances(self):
-        res = []
-        for ng in self.sv_trees:
-            for node in ng.nodes:
-                if hasattr(node, "group_name") and node.group_name == self.name:
-                    res.append(node)
-        return res
-
-    @property
-    def input_node(self):
-        return self.nodes.get("Group Inputs Exp")
-
-    @property
-    def output_node(self):
-        return self.nodes.get("Group Outputs Exp")
-
-    def update_cls(self):
-        make_class_from_monad(self.name)
 
 
 class SverchCustomTreeNode:

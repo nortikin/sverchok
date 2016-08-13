@@ -21,10 +21,10 @@ from collections import defaultdict
 import bpy
 from bpy.types import Operator
 from bpy.props import StringProperty, EnumProperty, IntProperty, BoolProperty
-from bpy.types import Node
+from bpy.types import Node, NodeTree
 
 
-from sverchok.node_tree import SverchCustomTreeNode, SverchGroupTree
+from sverchok.node_tree import SverchCustomTreeNode, SvNodeTreeCommon
 from sverchok.data_structure import node_id, replace_socket, get_other_socket
 from sverchok.core.update_system import make_tree_from_nodes, do_update
 
@@ -116,6 +116,48 @@ def make_class_from_monad(monad):
     bpy.utils.register_class(cls_ref)
 
     return cls_ref
+
+class SverchGroupTree(NodeTree, SvNodeTreeCommon):
+    ''' Sverchok - groups '''
+    bl_idname = 'SverchGroupTreeType'
+    bl_label = 'Sverchok Group Node Tree'
+    bl_icon = 'NONE'
+
+    cls_bl_idname = StringProperty()
+    # if class needs updating
+    need_update = BoolProperty(default=False)
+
+    def update(self):
+        print("update {}".format(self.name))
+        if self.need_update:
+            self.update_cls()
+            self.need_update = False
+
+    @classmethod
+    def poll(cls, context):
+        return False
+
+    @property
+    def instances(self):
+        res = []
+        for ng in self.sv_trees:
+            for node in ng.nodes:
+                if hasattr(node, "group_name") and node.group_name == self.name:
+                    res.append(node)
+        return res
+
+    @property
+    def input_node(self):
+        return self.nodes.get("Group Inputs Exp")
+
+    @property
+    def output_node(self):
+        return self.nodes.get("Group Outputs Exp")
+
+    def update_cls(self):
+        res = make_class_from_monad(self)
+        print(res)
+
 
 
 class SvGroupNodeExp:
@@ -639,12 +681,9 @@ class SvSocketAquisition:
             new_name = linked_socket.name
             replace_socket(socket, new_type, new_name=new_name)
 
-            # add new input socket to parent node
-            # needs new logic
             monad = self.id_data
-            print("make class from monad")
-            make_class_from_monad(monad)
-            
+            monad.need_update = True
+
             for instance in monad.instances:
                 sockets = getattr(instance, reverse_lookup[kind])
                 new_socket = sockets.new(new_type, new_name)
