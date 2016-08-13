@@ -59,6 +59,9 @@ class SvSocketCommon:
     def other(self):
         return get_other_socket(self)
 
+    def sv_set(self, data):
+        SvSetSocket(self, data)
+
 class MatrixSocket(NodeSocket, SvSocketCommon):
     '''4x4 matrix Socket type'''
     # ref: http://urchn.org/post/nodal-transform-experiment
@@ -76,9 +79,6 @@ class MatrixSocket(NodeSocket, SvSocketCommon):
             raise SvNoDataError
         else:
             return default
-
-    def sv_set(self, data):
-        SvSetSocket(self, data)
 
     def draw(self, context, layout, node, text):
         if self.is_linked:
@@ -124,8 +124,7 @@ class VerticesSocket(NodeSocket, SvSocketCommon):
         else:
             return default
 
-    def sv_set(self, data):
-        SvSetSocket(self, data)
+
 
     def draw(self, context, layout, node, text):
         if not self.is_output and not self.is_linked:
@@ -200,9 +199,6 @@ class StringsSocket(NodeSocket, SvSocketCommon):
             return default
         else:
             raise SvNoDataError
-
-    def sv_set(self, data):
-        SvSetSocket(self, data)
 
     def draw(self, context, layout, node, text):
         if self.prop_name:
