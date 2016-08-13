@@ -54,14 +54,20 @@ class SvColors(bpy.types.PropertyGroup):
         step=1, precision=3, subtype='COLOR_GAMMA', size=3,
         update=updateNode)
 
+class SvSocketCommon:
+    @property
+    def other(self):
+        return get_other_socket(self)
 
-class MatrixSocket(NodeSocket):
-    '''4x4 matrix Socket_type'''
+class MatrixSocket(NodeSocket, SvSocketCommon):
+    '''4x4 matrix Socket type'''
     # ref: http://urchn.org/post/nodal-transform-experiment
     bl_idname = "MatrixSocket"
     bl_label = "Matrix Socket"
     prop_name = StringProperty(default='')
 
+    def get_prop_data(self):
+        return {}
 
     def sv_get(self, default=sentinel, deepcopy=True):
         if self.is_linked and not self.is_output:
@@ -87,14 +93,23 @@ class MatrixSocket(NodeSocket):
         return (.2, .8, .8, 1.0)
 
 
-class VerticesSocket(NodeSocket):
-    '''String Vertices - one string'''
+class VerticesSocket(NodeSocket, SvSocketCommon):
+    '''For vertex data'''
     bl_idname = "VerticesSocket"
     bl_label = "Vertices Socket"
 
     prop = FloatVectorProperty(default=(0, 0, 0), size=3, update=process_from_socket)
     prop_name = StringProperty(default='')
     use_prop = BoolProperty(default=False)
+
+    def get_prop_data(self):
+        if self.prop_name:
+            return {"prop_name": socket.prop_name}
+        elif self.use_prop:
+            return {"use_prop" : True,
+                    "prop": self.prop[:]}
+        else:
+            return {}
 
 
     def sv_get(self, default=sentinel, deepcopy=True):
@@ -129,7 +144,7 @@ class VerticesSocket(NodeSocket):
         return (0.9, 0.6, 0.2, 1.0)
 
 
-class SvDummySocket(NodeSocket):
+class SvDummySocket(NodeSocket, SvSocketCommon):
     '''Dummy Socket for sockets awaiting assignment of type'''
     bl_idname = "SvDummySocket"
     bl_label = "Dummys Socket"
@@ -138,6 +153,8 @@ class SvDummySocket(NodeSocket):
     prop_name = StringProperty(default='')
     use_prop = BoolProperty(default=False)
 
+    def get_prop_data(self):
+        return self.other.get_prop_data()
 
     def sv_get(self):
         if self.is_linked:
@@ -147,25 +164,14 @@ class SvDummySocket(NodeSocket):
         self = new_self
 
     def draw(self, context, layout, node, text):
-        # if not self.is_output and not self.is_linked:
-        #     if self.prop_name:
-        #         layout.template_component_menu(node, self.prop_name, name=self.name)
-        #     elif self.use_prop:
-        #         layout.template_component_menu(self, "prop", name=self.name)
-        #     else:
-        #         layout.label(text)
-        # elif self.is_linked:
-        #     layout.label(text + '. ' + SvGetSocketInfo(self))
-        # else:
-        #     layout.label(text)
         layout.label(text)
 
     def draw_color(self, context, node):
         return (0.8, 0.8, 0.8, 0.3)
 
 
-class StringsSocket(NodeSocketStandard):
-    '''String any type - one string'''
+class StringsSocket(NodeSocket, SvSocketCommon):
+    '''Generic, mostly numbers, socket type'''
     bl_idname = "StringsSocket"
     bl_label = "Strings Socket"
 
@@ -174,6 +180,14 @@ class StringsSocket(NodeSocketStandard):
     prop_type = StringProperty(default='')
     prop_index = IntProperty()
 
+    def get_prop_data(self):
+        if self.prop_name:
+            return {"prop_name": self.prop_name}
+        elif self.prop_type:
+            return {"prop_type": self.prop_type,
+                    "prop_index": self.prop_index}
+        else:
+            return {}
 
     def sv_get(self, default=sentinel, deepcopy=True):
         if self.is_linked and not self.is_output:

@@ -75,20 +75,21 @@ def make_class_from_monad(monad):
     def get_socket_data(socket):
         other = get_other_socket(socket)
         if socket.bl_idname == "SvDummySocket":
-            socket_bl_idname = other.bl_idname
-            socket_name = other.name
-        else:
-            socket_bl_idname = socket.bl_idname
-            socket_name = socket.name
+            socket = get_other_socket(socket)
+
+        socket_bl_idname = socket.bl_idname
+        socket_name = socket.name
         return socket_name, socket_bl_idname
+
 
     # if socket is dummysocket use the other for data
     for socket in monad_inputs.outputs:
         if socket.is_linked:
 
             other = get_other_socket(socket)
-            prop_name = getattr(other, "prop_name")
-            if prop_name:
+            prop_data = other.get_prop_data()
+            if "prop_name" in prop_data:
+                prop_name = prop_data["prop_name"]
                 prop_data = getattr(other.node.rna_type, prop_name)
                 if prop_name in cls_dict:
                     # all properties need unique names,
@@ -99,11 +100,11 @@ def make_class_from_monad(monad):
                             continue
                         prop_name = new_name
                         break
-
                 cls_dict[prop_name] = prop_data
+
             socket_name, socket_bl_idname = get_socket_data(socket)
 
-            data = [socket_name, socket_bl_idname, prop_name if prop_name else None]
+            data = [socket_name, socket_bl_idname, prop_data]
             in_socket.append(data)
 
     out_socket = []
@@ -182,10 +183,11 @@ class SvGroupNodeExp:
         self.use_custom_color = True
         self.color = MONAD_COLOR
 
-        for socket_name, socket_bl_idname, prop_name in self.input_template:
+        for socket_name, socket_bl_idname, prop_data in self.input_template:
             s = self.inputs.new(socket_bl_idname, socket_name)
-            if prop_name:
-                s.prop_name = prop_name
+            for name, value in prop_data.items():
+                setattr(s, name, value)
+
         for socket_name, socket_bl_idname in self.output_template:
             self.outputs.new(socket_bl_idname, socket_name)
 
@@ -665,10 +667,10 @@ class SvSocketAquisition:
             monad = self.id_data
             cls = make_class_from_monad(monad)
             if kind == "outputs":
-                new_name, new_type, prop_name = cls.input_template[-1]
+                new_name, new_type, prop_data = cls.input_template[-1]
             else:
                 new_name, new_type = cls.output_template[-1]
-                prop_name = ""
+                prop_data = {}
 
             # if no 'linked_socket.prop_name' then use 'linked_socket.name'
             replace_socket(socket, new_type, new_name=new_name)
@@ -676,8 +678,8 @@ class SvSocketAquisition:
             for instance in monad.instances:
                 sockets = getattr(instance, reverse_lookup[kind])
                 new_socket = sockets.new(new_type, new_name)
-                if prop_name:
-                    new_socket.prop_name = prop_name
+                for name, value in prop_data.items():
+                    setattr(new_socket, name, value)
 
             # add new dangling dummy
             socket_list.new('SvDummySocket', 'connect me')
