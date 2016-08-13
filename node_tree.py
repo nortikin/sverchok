@@ -395,7 +395,6 @@ class SverchCustomTreeNode:
 def register():
     bpy.utils.register_class(SvColors)
     bpy.utils.register_class(SverchCustomTree)
-    bpy.utils.register_class(SverchGroupTree)
     bpy.utils.register_class(MatrixSocket)
     bpy.utils.register_class(StringsSocket)
     bpy.utils.register_class(VerticesSocket)
@@ -408,5 +407,4 @@ def unregister():
     bpy.utils.unregister_class(StringsSocket)
     bpy.utils.unregister_class(MatrixSocket)
     bpy.utils.unregister_class(SverchCustomTree)
-    bpy.utils.unregister_class(SverchGroupTree)
     bpy.utils.unregister_class(SvColors)

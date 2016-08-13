@@ -28,14 +28,15 @@ from sverchok.ui.nodeview_keymaps import add_keymap, remove_keymap
 from sverchok.data_structure import get_other_socket
 
 from sverchok.utils.sv_monad_tools import (
-    find_node,
     SvSocketAquisition,
     SvMoveSocketOpExp,
     SvRenameSocketOpExp,
     SvEditSocketOpExp,
     SvGroupEdit,
     SvTreePathParent,
-    SvMonadCreateFromSelected
+    SvMonadCreateFromSelected,
+    SverchGroupTree,
+
 )
 
 MONAD_COLOR = (0.4, 0.9, 1)
@@ -101,7 +102,8 @@ classes = [
     SvGroupInputsNodeExp,
     SvGroupOutputsNodeExp,
     SvCustomGroupInterface,
-    SvMonadCreateFromSelected
+    SvMonadCreateFromSelected,
+    SverchGroupTree
 ]
 
 

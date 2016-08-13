@@ -41,12 +41,6 @@ socket_types = [
 
 reverse_lookup = {'outputs': 'inputs', 'inputs': 'outputs'}
 
-def find_node(id_name, ng):
-    for n in ng.nodes:
-        if n.bl_idname == id_name:
-            return n
-    raise LookupError
-
 def make_valid_identifier(name):
     return "".join(ch for ch in name if ch.isalnum() or ch=="_")
 
@@ -55,7 +49,7 @@ def make_class_from_monad(monad):
         monad = bpy.data.node_groups.get(monad)
     if not monad:
         return None
-    print("making class from {}".format(monad.name))
+    #print("making class from {}".format(monad.name))
 
     monad_inputs = monad.input_node
     if not monad_inputs:
@@ -78,8 +72,20 @@ def make_class_from_monad(monad):
 
     in_socket = []
 
+    def get_socket_data(socket):
+        other = get_other_socket(socket)
+        if socket.bl_idname == "SvDummySocket":
+            socket_bl_idname = other.bl_idname
+            socket_name = other.name
+        else:
+            socket_bl_idname = socket.bl_idname
+            socket_name = socket.name
+        return socket_name, socket_bl_idname
+
+    # if socket is dummysocket use the other for data
     for socket in monad_inputs.outputs:
         if socket.is_linked:
+
             other = get_other_socket(socket)
             prop_name = getattr(other, "prop_name")
             if prop_name:
@@ -95,20 +101,21 @@ def make_class_from_monad(monad):
                         break
 
                 cls_dict[prop_name] = prop_data
-            data = [socket.name, socket.bl_idname, prop_name if prop_name else None]
+            socket_name, socket_bl_idname = get_socket_data(socket)
+
+            data = [socket_name, socket_bl_idname, prop_name if prop_name else None]
             in_socket.append(data)
 
     out_socket = []
     for socket in monad_outputs.inputs:
         if socket.is_linked:
-            data = [socket.name, socket.bl_idname]
+            data = get_socket_data(socket)
             out_socket.append(data)
 
     cls_dict["input_template"] = in_socket
     cls_dict["output_template"] = out_socket
 
     bases = (Node, SvGroupNodeExp, SverchCustomTreeNode)
-    print(cls_dict)
     cls_ref = type(cls_name, bases, cls_dict)
     monad.cls_bl_idname = cls_ref.bl_idname
     if old_cls_ref:
@@ -125,13 +132,9 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
 
     cls_bl_idname = StringProperty()
     # if class needs updating
-    need_update = BoolProperty(default=False)
 
     def update(self):
-        print("update {}".format(self.name))
-        if self.need_update:
-            self.update_cls()
-            self.need_update = False
+        pass
 
     @classmethod
     def poll(cls, context):
@@ -156,7 +159,6 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
 
     def update_cls(self):
         res = make_class_from_monad(self)
-        print(res)
 
 
 
@@ -667,28 +669,28 @@ class SvSocketAquisition:
 
         socket_list = getattr(self, kind)
         _socket = self.socket_map.get(kind) # from_socket, to_socket
-        _puts = reverse_lookup.get(kind) # inputs, outputs
 
         if socket_list[-1].is_linked:
 
             # first switch socket type
             socket = socket_list[-1]
-            linked_socket = get_other_socket(socket)
-            new_type = linked_socket.bl_idname
-
-            # if no 'linked_socket.prop_name' then use 'linked_socket.name'
-            socket_prop_name = getattr(linked_socket, 'prop_name')
-            new_name = linked_socket.name
-            replace_socket(socket, new_type, new_name=new_name)
 
             monad = self.id_data
-            monad.need_update = True
+            cls = make_class_from_monad(monad)
+            if kind == "outputs":
+                new_name, new_type, prop_name = cls.input_template[-1]
+            else:
+                new_name, new_type = cls.output_template[-1]
+                prop_name = ""
+
+            # if no 'linked_socket.prop_name' then use 'linked_socket.name'
+            replace_socket(socket, new_type, new_name=new_name)
 
             for instance in monad.instances:
                 sockets = getattr(instance, reverse_lookup[kind])
                 new_socket = sockets.new(new_type, new_name)
-                if linked_socket.prop_name:
-                    new_socket.prop_name = linked_socket.prop_name
+                if prop_name:
+                    new_socket.prop_name = prop_name
 
             # add new dangling dummy
             socket_list.new('SvDummySocket', 'connect me')
