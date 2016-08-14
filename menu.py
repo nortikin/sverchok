@@ -19,7 +19,7 @@
 
 from collections import OrderedDict
 
-from nodeitems_utils import NodeCategory, NodeItem
+from nodeitems_utils import NodeCategory, NodeItem, NodeItemCustom
 import nodeitems_utils
 
 
@@ -337,6 +337,8 @@ def sv_group_items(context):
     if not ntree:
         return
 
+    yield NodeItemCustom(draw=draw_node_ops)
+
     def contains_group(nodetree, group):
         if nodetree == group:
             return True
@@ -356,6 +358,15 @@ def sv_group_items(context):
         # my note, not sure about what this does
         yield NodeItem(group.cls_bl_idname,
                        group.name)
+
+
+
+def draw_node_ops(self,layout, context):
+
+    make_monad = "node.sv_monad_from_selected"
+    layout.operator(make_monad, text='make group (+relink)', icon='RNA')
+    layout.operator(make_monad, text='make group', icon='RNA').use_relinking = False
+    layout.separator()
 
 def make_categories():
     original_categories = make_node_cats()
