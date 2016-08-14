@@ -90,7 +90,7 @@ def make_class_from_monad(monad):
             prop_data = other.get_prop_data()
             if "prop_name" in prop_data:
                 prop_name = prop_data["prop_name"]
-                prop_data = getattr(other.node.rna_type, prop_name)
+                prop_rna = getattr(other.node.rna_type, prop_name)
                 if prop_name in cls_dict:
                     # all properties need unique names,
                     # if 'x' is taken 'x2' etc.
@@ -100,7 +100,7 @@ def make_class_from_monad(monad):
                             continue
                         prop_name = new_name
                         break
-                cls_dict[prop_name] = prop_data
+                cls_dict[prop_name] = prop_rna
 
             socket_name, socket_bl_idname = get_socket_data(socket)
 
