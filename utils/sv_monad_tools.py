@@ -633,6 +633,7 @@ class SvMonadCreateFromSelected(Operator):
         if self.use_relinking:
             relink_parent(links, parent_node)
 
+        bpy.ops.node.view_all()
         return {'FINISHED'}
 
 
