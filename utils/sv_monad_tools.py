@@ -557,7 +557,9 @@ class SvTreePathParent(Operator):
     @classmethod
     def poll(cls, context):
         space = context.space_data
-        return space.type == 'NODE_EDITOR' and len(space.path) > 1
+        return all((space.type == 'NODE_EDITOR',
+                    len(space.path) > 1,
+                    space.path[-1].node_tree.bl_idname == "SverchGroupTreeType"))
 
     def execute(self, context):
         space = context.space_data
