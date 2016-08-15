@@ -585,8 +585,9 @@ class SvMonadEnter(Operator):
             return {'FINISHED'}
 
         else:
-            bpy.ops.node.sv_tree_path_parent()
-            return {'FINISHED'}
+            if len(context.space_data.path) == 2:
+                bpy.ops.node.sv_tree_path_parent()
+                return {'FINISHED'}
 
         return {'CANCELLED'}
 
