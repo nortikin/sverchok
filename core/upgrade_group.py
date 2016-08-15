@@ -32,7 +32,7 @@ def upgrade_group(monad):
     old_node_input_idname = 'SvGroupInputsNode'
     old_node_output_idname = 'SvGroupOutputsNode'
     new_node_input_idname = 'SvGroupInputsNodeExp'
-    new_node_output_idname = 'SvGroupOutputsNode'
+    new_node_output_idname = 'SvGroupOutputsNodeExp'
 
     input_node = [node for node in monad.nodes if node.bl_idname == old_node_input_idname]
     output_node = [node for node in monad.nodes if node.bl_idname == old_node_output_idname]
@@ -45,9 +45,9 @@ def upgrade_group(monad):
         return
 
     new_input_node = monad.nodes.new(new_node_input_idname)
-    new_ouput_node = monad.nodes.new(new_node_output_idname)
+    new_output_node = monad.nodes.new(new_node_output_idname)
     new_input_node.location = input_node.location
-    new_ouput_node.location = input_node.location
+    new_output_node.location = input_node.location
 
     new_input_node.outputs.clear()
     for s in input_node.outputs:
@@ -55,11 +55,11 @@ def upgrade_group(monad):
         for link in s.links:
             monad.links.new(new_input_node.outputs[-1], link.to_socket)
 
-    output_node.inputs.clear()
+    new_output_node.inputs.clear()
     for s in output_node.inputs:
-        new_ouput_node.inputs.new(s.bl_idname, s.name)
+        new_output_node.inputs.new(s.bl_idname, s.name)
         for link in s.links:
-            monad.link(link.from_socket, new_ouput_node[-1])
+            monad.links.new(link.from_socket, new_output_node.inputs[-1])
 
     cls_ref = monad.update_cls()
 
