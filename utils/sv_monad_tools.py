@@ -531,14 +531,14 @@ class SvGroupEdit(Operator):
 
         # if this operator is triggered from nodeview / TAB
         if self.short_cut:
-            if context.active_node:
-                node = context.active_node
+            node = context.active_node
+            if node:
                 if not hasattr(node, 'monad'):
                     self.report({"WARNING"}, 'Active node is not a monad instance')
                     return 
                 self.group_name = node.monad.name
             else:
-                msg = 'Select 1 node to enter the monad'
+                msg = 'Select 1 monad instance node to enter the monad'
                 self.report({"WARNING"}, msg)
                 return
         else:
