@@ -562,6 +562,36 @@ class SvGroupEdit(Operator):
         return {"FINISHED"}
 
 
+class SvMonadEnter(Operator):
+    '''Makes node group, relink will enforce peripheral connections'''
+    bl_idname = "node.sv_monad_enter"
+    bl_label = "Exit or Enter a monad"
+
+    # group_name = StringProperty(default="Monad")
+    # use_relinking = BoolProperty(default=True)
+
+    @classmethod
+    def poll(cls, context):
+        tree_type = context.space_data.tree_type
+        if tree_type in {'SverchCustomTreeType', 'SverchGroupTreeType'}:
+            return True
+
+    def execute(self, context):
+        tree_type = context.space_data.tree_type
+        node = context.active_node
+        
+        if node and hasattr(node, 'monad'):
+            bpy.ops.node.sv_group_edit(short_cut=True)
+            return {'FINISHED'}
+
+        else:
+            bpy.ops.node.sv_tree_path_parent()
+            return {'FINISHED'}
+
+        return {'CANCELLED'}
+
+
+
 class SvTreePathParent(Operator):
     '''Go to parent node tree'''
     bl_idname = "node.sv_tree_path_parent"

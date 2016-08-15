@@ -26,8 +26,6 @@ def add_keymap():
     kc = wm.keyconfigs.addon
     if kc:
         make_monad = 'node.sv_monad_from_selected'
-        return_to_parent = 'node.sv_tree_path_parent'
-        enter_monad = 'node.sv_group_edit'
 
         km = kc.keymaps.new(name='Node Editor', space_type='NODE_EDITOR')
 
@@ -40,14 +38,10 @@ def add_keymap():
         kmi.properties.use_relinking = False
         nodeview_keymaps.append((km, kmi))
 
-        # TAB           | restore the parent view
-        kmi = km.keymap_items.new(return_to_parent, 'TAB', 'PRESS')
+        # TAB           | enter or exit monad depending on selection and edit_tree type
+        kmi = km.keymap_items.new('node.sv_monad_enter', 'TAB', 'PRESS')
         nodeview_keymaps.append((km, kmi))
-
-        # TAB           | enter the monad's view
-        kmi = km.keymap_items.new(enter_monad, 'TAB', 'PRESS', ctrl=True)
-        kmi.properties.short_cut = True
-        nodeview_keymaps.append((km, kmi))             
+        
     
 def remove_keymap():
     for km, kmi in nodeview_keymaps:
