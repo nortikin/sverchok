@@ -51,13 +51,11 @@ def upgrade_group(monad):
 
     new_input_node.outputs.clear()
     for s in input_node.outputs:
-        new_input_node.outputs.new(s.bl_idname, s.name)
         for link in s.links:
             monad.links.new(new_input_node.outputs[-1], link.to_socket)
 
     new_output_node.inputs.clear()
     for s in output_node.inputs:
-        new_output_node.inputs.new(s.bl_idname, s.name)
         for link in s.links:
             monad.links.new(link.from_socket, new_output_node.inputs[-1])
 
