@@ -49,12 +49,10 @@ def upgrade_group(monad):
     new_input_node.location = input_node.location
     new_output_node.location = output_node.location
 
-    new_input_node.outputs.clear()
     for s in input_node.outputs:
         for link in s.links:
             monad.links.new(new_input_node.outputs[-1], link.to_socket)
 
-    new_output_node.inputs.clear()
     for s in output_node.inputs:
         for link in s.links:
             monad.links.new(link.from_socket, new_output_node.inputs[-1])
