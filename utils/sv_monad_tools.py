@@ -52,13 +52,14 @@ def make_class_from_monad(monad):
     if isinstance(monad, str):
         monad = bpy.data.node_groups.get(monad)
     if not monad:
+        print("no monad found")
         return None
 
     monad_inputs = monad.input_node
-    if not monad_inputs:
-        return None
     monad_outputs = monad.output_node
-    if not monad_outputs:
+
+    if all((monad_outputs, monad_inputs)):
+        print("Monad {} not setup correctly".format(monad.name))
         return None
 
     cls_dict = {}
@@ -721,6 +722,11 @@ class SvSocketAquisition:
         if not kind:
             return
 
+        monad = self.id_data
+        # still being manipulated
+        if not monad.cls_bl_idname:
+            return
+
         socket_list = getattr(self, kind)
         _socket = self.socket_map.get(kind) # from_socket, to_socket
 
@@ -729,7 +735,6 @@ class SvSocketAquisition:
             # first switch socket type
             socket = socket_list[-1]
 
-            monad = self.id_data
             cls = make_class_from_monad(monad)
             if kind == "outputs":
                 new_name, new_type, prop_data = cls.input_template[-1]
