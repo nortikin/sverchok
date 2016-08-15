@@ -27,6 +27,7 @@ def add_keymap():
     if kc:
         make_monad = 'node.sv_monad_from_selected'
         return_to_parent = 'node.sv_tree_path_parent'
+        enter_monad = 'node.sv_group_edit'
 
         km = kc.keymaps.new(name='Node Editor', space_type='NODE_EDITOR')
 
@@ -41,7 +42,12 @@ def add_keymap():
 
         # TAB           | restore the parent view
         kmi = km.keymap_items.new(return_to_parent, 'TAB', 'PRESS')
-        nodeview_keymaps.append((km, kmi))        
+        nodeview_keymaps.append((km, kmi))
+
+        # TAB           | enter the monad's view
+        kmi = km.keymap_items.new(enter_monad, 'TAB', 'PRESS', ctrl=True)
+        kmi.properties.short_cut = True
+        nodeview_keymaps.append((km, kmi))             
     
 def remove_keymap():
     for km, kmi in nodeview_keymaps:

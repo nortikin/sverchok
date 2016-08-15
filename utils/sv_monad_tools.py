@@ -524,10 +524,27 @@ class SvGroupEdit(Operator):
     bl_label = "edits an sv group"
 
     group_name = StringProperty()
+    short_cut = BoolProperty()
 
     def execute(self, context):
         ng = bpy.data.node_groups
-        node = context.node
+
+        # if this operator is triggered from nodeview / TAB
+        if self.short_cut:
+            if context.active_node:
+                node = context.active_node
+                if not hasattr(node, 'monad'):
+                    self.report({"WARNING"}, 'Active node is not a monad instance')
+                    return 
+                self.group_name = node.monad.name
+            else:
+                msg = 'Select 1 node to enter the monad'
+                self.report({"WARNING"}, msg)
+                return
+        else:
+            # else it is triggered from directly on the node by the button
+            node = context.node
+
         parent_tree = node.id_data
 
         monad = ng.get(self.group_name)
