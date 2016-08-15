@@ -26,6 +26,8 @@ def add_keymap():
     kc = wm.keyconfigs.addon
     if kc:
         make_monad = 'node.sv_monad_from_selected'
+        return_to_parent = 'node.sv_tree_path_parent'
+
         km = kc.keymaps.new(name='Node Editor', space_type='NODE_EDITOR')
 
         # ctrl+G        | make group from selected with periphery links
@@ -36,6 +38,10 @@ def add_keymap():
         kmi = km.keymap_items.new(make_monad, 'G', 'PRESS', ctrl=True, shift=True)
         kmi.properties.use_relinking = False
         nodeview_keymaps.append((km, kmi))
+
+        # TAB           | restore the parent view
+        kmi = km.keymap_items.new(return_to_parent, 'TAB', 'PRESS')
+        nodeview_keymaps.append((km, kmi))        
     
 def remove_keymap():
     for km, kmi in nodeview_keymaps:
