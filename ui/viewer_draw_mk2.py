@@ -395,7 +395,7 @@ def draw_callback_view(n_id, cached_view, options):
 
         if sl2 and sl2[0]:
             if isinstance(sl2[0], int):
-                callback_disable(n_id)
+                #callback_disable(n_id)
                 return
 
             len_sl2 = len(sl2[0][0])
@@ -410,7 +410,7 @@ def draw_callback_view(n_id, cached_view, options):
             data_matrix = [Matrix() for i in range(verlen+1)]
 
         if (data_vector, data_polygons, data_matrix, data_edges) == (0, 0, 0, 0):
-            callback_disable(n_id)
+            #callback_disable(n_id)
             return
         try:
             the_display_list = glGenLists(1)
@@ -427,7 +427,7 @@ def draw_callback_view(n_id, cached_view, options):
 
     elif options['draw_list'] == 1:
         the_display_list = options['genlist']
-    
+
     if not 'error' in options:
         glCallList(the_display_list)
         glFlush()
