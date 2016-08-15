@@ -554,9 +554,11 @@ class SvTreePathParent(Operator):
     @classmethod
     def poll(cls, context):
         space = context.space_data
-        return all((space.type == 'NODE_EDITOR',
-                    len(space.path) > 1,
-                    space.path[-1].node_tree.bl_idname == "SverchGroupTreeType"))
+        if space.type == 'NODE_EDITOR':
+            if len(space.path) > 1:
+                if space.path[-1].node_tree.bl_idname == "SverchGroupTreeType":
+                    return True
+        return False
 
     def execute(self, context):
         space = context.space_data
@@ -725,8 +727,8 @@ class SvSocketAquisition:
 
         monad = self.id_data
         # still being manipulated
-        if not monad.cls_bl_idname:
-            return
+        #if not monad.cls_bl_idname:
+        #    return
 
         socket_list = getattr(self, kind)
         _socket = self.socket_map.get(kind) # from_socket, to_socket
