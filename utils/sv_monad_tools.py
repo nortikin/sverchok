@@ -58,7 +58,7 @@ def make_class_from_monad(monad):
     monad_inputs = monad.input_node
     monad_outputs = monad.output_node
 
-    if all((monad_outputs, monad_inputs)):
+    if not all((monad_outputs, monad_inputs)):
         print("Monad {} not setup correctly".format(monad.name))
         return None
 
@@ -165,6 +165,7 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
 
     def update_cls(self):
         res = make_class_from_monad(self)
+        return res
 
 
 
