@@ -535,12 +535,12 @@ class SvGroupEdit(Operator):
             if node:
                 if not hasattr(node, 'monad'):
                     self.report({"WARNING"}, 'Active node is not a monad instance')
-                    return 
+                    return {'CANCELLED'}
                 self.group_name = node.monad.name
             else:
                 msg = 'Select 1 monad instance node to enter the monad'
                 self.report({"WARNING"}, msg)
-                return
+                return {'CANCELLED'}
         else:
             # else it is triggered from directly on the node by the button
             node = context.node
