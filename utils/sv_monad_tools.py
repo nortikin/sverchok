@@ -280,11 +280,6 @@ def reduce_links(links):
     return reduced_links
 
 
-def get_relinks_new(ng):
-    nodes = {n for n in ng.nodes if n.select}
-    in_links = [l for l in ng.links if (not l.from_node.select) and (l.to_node.select)]
-    out_links = [l for l in ng.links if (l.from_node.select) and (not l.to_node.select)]
-    return reduce_links(dict(inputs=in_links, outputs=out_links))
 
 def get_relinks(ng):
     '''
@@ -568,6 +563,69 @@ class SvTreePathParent(Operator):
         return {'FINISHED'}
 
 
+
+# methods for collecting links
+
+def get_socket_index(socket):
+    try:
+        return socket.index
+    # for reroutes, since they don't have .index property/attribute
+    except AttributeError:
+        return 0
+
+def collect_links(ng):
+    in_links = [l for l in ng.links if (not l.from_node.select) and (l.to_node.select)]
+    out_links = [l for l in ng.links if (l.from_node.select) and (not l.to_node.select)]
+    return dict(input=in_links, output=out_links)
+
+def sort_keys_out(link):
+     return (get_socket_index(link.to_socket), link.from_node.location.y)
+
+def sort_keys_in(link):
+     return (get_socket_index(link.to_socket) , link.from_node.location.y)
+
+def compile_link_monad(link):
+    return link.from_node.name, link.from_socket.index, link.to_node.name, link.to_socket.index
+
+def link_monad(monad, links):
+    in_links = sorted(links["input"], key=sort_keys_in)
+    out_links = sorted(links["output"], key=sort_keys_out)
+    nodes = monad.nodes
+    input_node = monad.input_node
+    output_node = monad.output_node
+    remap_inputs = {}
+    relink_in = []
+    for idx, link in enumerate(in_links):
+        to_socket = nodes[link.to_node.name].inputs[link.to_socket.index]
+        original_from_socket = link.from_socket
+        if original_from_socket in remap_inputs:
+            from_socket = input_node.outputs[remap_inputs[original_from_socket]]
+            l = monad.links.new(from_socket, to_socket)
+        else:
+            remap_inputs[original_from_socket] = len(input_node.outputs) - 1
+            l = monad.links.new(input_node.outputs[-1], to_socket)
+        relink_in.append((original_from_socket, remap_inputs[original_from_socket]))
+
+    relink_out = []
+    for idx, link in enumerate(out_links):
+        from_socket = nodes[link.from_node.name].outputs[link.from_socket.index]
+        monad.links.new(from_socket, output_node.inputs[-1])
+        # here we can't just use the to_socket since with dynamic socket count
+        # it might not exist when we get around to relinking it.
+        relink_out.append((idx, link.to_node.name, get_socket_index(link.to_socket)))
+
+    return relink_in, relink_out
+
+def link_monad_instance(instance, re_links):
+    ng = instance.id_data
+    relink_in, relink_out = re_links
+    for socket, idx in relink_in:
+        ng.links.new(socket, instance.inputs[idx])
+
+    for idx, node_name, socket_idx in relink_out:
+        ng.links.new(instance.outputs[idx], ng.nodes[node_name].inputs[socket_idx])
+
+
 class SvMonadCreateFromSelected(Operator):
     '''Makes node group, relink will enforce peripheral connections'''
     bl_idname = "node.sv_monad_from_selected"
@@ -595,7 +653,7 @@ class SvMonadCreateFromSelected(Operator):
 
         if self.use_relinking:
             # get links for relinking sockets in monad IO
-            links = get_relinks(ng)
+            links = collect_links(ng)
 
         monad = monad_make(self.group_name)
         bpy.ops.node.sv_switch_layout(layout_name=monad.name)
@@ -614,11 +672,11 @@ class SvMonadCreateFromSelected(Operator):
         monad.output_node.location = o_loc
 
         if self.use_relinking:
-            relink_monad(links, monad)
+            re_links = link_monad(monad, links)
 
         """
          the monad is created, create a the class and then with class
-         create the node, place and linked it up
+         create the node, place and link it up
         """
         cls_ref = make_class_from_monad(monad.name)
         parent_node = ng.nodes.new(cls_ref.bl_idname)
@@ -631,7 +689,7 @@ class SvMonadCreateFromSelected(Operator):
 
         # relink the new node
         if self.use_relinking:
-            relink_parent(links, parent_node)
+            link_monad_instance(parent_node, re_links)
 
         bpy.ops.node.view_all()
         return {'FINISHED'}
