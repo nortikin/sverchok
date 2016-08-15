@@ -170,12 +170,20 @@ def live_curve(curve_name, verts, edges, matrix, node):
     # and rebuild
     for v_obj, e_obj in zip(verts, edges):
         segment = cu.splines.new('POLY')
+        #v1, v2, v3 = v_obj[e_obj[0][0]]
+        #points = [v1, v2, v3, 0.0]
+        points = []
+        prev = []
+        if len(v_obj) == len(e_obj):
+            e_obj.pop(-1)
+        e_obj.sort()
         segment.points.add(len(e_obj))
-        v1, v2, v3 = v_obj[e_obj[0][0]]
-        points = [v1, v2, v3, 0.0]
         for edge in e_obj:
-            v1 = v_obj[edge[1]]
-            points.extend([v1[0], v1[1], v1[2], 0.0])
+            for e in edge:
+                if e not in prev:
+                    prev.append(e)
+                    v1 = v_obj[e]
+                    points.extend([v1[0], v1[1], v1[2], 0.0])
         segment.points.foreach_set('co', points)
         segment.use_cyclic_u = True
 
@@ -387,9 +395,8 @@ class SvCurveViewerNode2D(bpy.types.Node, SverchCustomTreeNode):
 
         mode = self.selected_mode
         single_set = (len(mverts) == 1) and (len(mrest[-1]) > 1)
-        has_matrices = self.inputs['matrix'].is_linked
 
-        if single_set and (mode in {'Merge', 'Duplicate'}) and has_matrices:
+        if single_set and (mode in {'Merge', 'Duplicate'}):
             obj_index = 0
             self.output_dupe_or_merged_geometry(mode, mverts, *mrest)
 
@@ -414,6 +421,7 @@ class SvCurveViewerNode2D(bpy.types.Node, SverchCustomTreeNode):
             data = mrest  # get_edges_matrices(obj_index)
             curve_name = self.basemesh_name + "_" + str(obj_index)
             make_curve_geometry(self, bpy.context, curve_name, mverts, *data)
+
             '''
             for obj_index, Verts in enumerate(mverts):
                 if not Verts:
@@ -513,3 +521,6 @@ def register():
 def unregister():
     bpy.utils.unregister_class(SvCurveViewerNode2D)
     bpy.utils.unregister_class(SvCurveViewOp2D)
+
+if __name__ == '__main__':
+    register()
