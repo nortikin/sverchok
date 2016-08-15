@@ -4,7 +4,7 @@ import bpy
 from bpy.app.handlers import persistent
 
 from sverchok import data_structure
-from sverchok.core import upgrade_nodes, upgrade_groups
+from sverchok.core import upgrade_nodes, upgrade_group
 from sverchok.ui import (viewer_draw, viewer_draw_mk2, index_viewer_draw,
                          nodeview_bgl_viewer_draw, color_def)
 from sverchok import old_nodes
