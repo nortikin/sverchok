@@ -779,21 +779,19 @@ class SvMonadExpand(Operator):
         - 12 deselect all
 
         '''
-        ng = context.space_data.edit_tree
+        monad = context.space_data.edit_tree
 
         # 1 - (in monad) select all nodes
         bpy.ops.node.select_all()
 
         # 2 - (in monad) deselect I/O nodes
-        for n in ng.nodes:
-            if n.bl_idname in {'SvGroupInputsNodeExp', 'SvGroupOutputsNodeExp'}:
-                n.select = False
+        for n in monad.nodes:
+            n.select = not (n.bl_idname in {'SvGroupInputsNodeExp', 'SvGroupOutputsNodeExp'})
 
         # 3 - (in monad) copy selection
         bpy.ops.node.clipboard_copy()
 
         # 4 - (in monad) acquire links between selected / non selected
-        # inner_links = collect_internal_links(monad)
         inner_links = collect_links(monad)
         print(inner_links)
 
