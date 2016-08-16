@@ -148,9 +148,9 @@ class SverchokCheckForUpgrades(bpy.types.Operator):
             lines = urllib.request.urlopen(url).readlines()
             for l in map(str,lines):
                 if '"version"' in l:
-                    version = l[l.find("("):l.find(")")+1]    
+                    version = l[l.find("("):l.find(")")+1]
                     break
-            version_url = ast.literal_eval(version) 
+            version_url = ast.literal_eval(version)
         except urllib.error.URLError:
             traceback.print_exc()
             report({'INFO'}, "Unable to contact github, or SSL not compiled.")
@@ -220,16 +220,17 @@ class SvSwitchToLayout (bpy.types.Operator):
         description='layout name to change layout by button')
 
     @classmethod
-    def poll(cls, self):
-        if bpy.context.space_data.type == 'NODE_EDITOR':
-            if bpy.context.space_data.node_tree.bl_rna.name == 'Sverchok Node Tree':
-                return 1
+    def poll(cls, context):
+        if context.space_data.type == 'NODE_EDITOR':
+            if bpy.context.space_data.tree_type == 'SverchCustomTreeType':
+                return True
         else:
-            return 0
+            return False
 
     def execute(self, context):
-        if context.space_data.node_tree.name != self.layout_name:
-            context.space_data.node_tree = bpy.data.node_groups[self.layout_name]
+        ng = bpy.data.node_groups.get(self.layout_name)
+        if ng and context.space_data.edit_tree.name != self.layout_name:
+            context.space_data.path.start(bpy.data.node_groups[self.layout_name])
         else:
             return {'CANCELLED'}
         return {'FINISHED'}
@@ -347,8 +348,8 @@ def unregister():
 
     for class_name in reversed(sv_tools_classes):
         bpy.utils.unregister_class(class_name)
-        
-    
+
+
 
 if __name__ == '__main__':
     register()
