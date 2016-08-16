@@ -70,22 +70,16 @@ def node_templates_pulldown(self, context):
 
 from sverchok.ui import sv_panels
 
-def node_show_branch(self, context):
-    if context.space_data.tree_type in  {'SverchCustomTreeType', 'SverchGroupTreeType'}:
-        if sv_panels.BRANCH:
-            layout = self.layout
-            layout.label("GIT: {}".format(sv_panels.BRANCH))
+
 
 
 def register():
     bpy.utils.register_class(SV_MT_layouts_templates)
     bpy.types.NODE_HT_header.append(node_templates_pulldown)
-    bpy.types.NODE_HT_header.append(node_show_branch)
 
 
 def unregister():
     bpy.types.NODE_HT_header.remove(node_templates_pulldown)
-    bpy.types.NODE_HT_header.remove(node_show_branch)
     bpy.utils.unregister_class(SV_MT_layouts_templates)
 
 if __name__ == '__main__':

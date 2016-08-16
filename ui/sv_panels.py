@@ -16,9 +16,6 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-import subprocess
-import os
-
 import bpy
 from bpy.props import StringProperty, CollectionProperty, BoolProperty, FloatProperty
 
@@ -28,20 +25,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils import sv_panels_tools
 from sverchok.core.update_system import process_from_node, process_from_nodes
 
-BRANCH = ""
 
-def get_branch():
-    global BRANCH
-    try:
-        res = subprocess.run(["git", "rev-parse", "--abbrev-ref", "HEAD"],
-                              stdout=subprocess.PIPE,
-                              cwd=os.path.dirname(sverchok.__file__),
-                              timeout=2)
-
-        branch = str(res.stdout.decode("utf-8"))
-        BRANCH = branch.rstrip()
-    except: # if does not work ignore it
-        BRANCH = ""
 
 
 class SverchokUpdateObjectIn(bpy.types.Operator):
@@ -259,8 +243,6 @@ class SverchokToolsMenu(bpy.types.Panel):
 
         ng_name = context.space_data.node_tree.name
         layout = self.layout
-        if BRANCH:
-            layout.label("Current branch: {}".format(BRANCH))
         # layout.scale_y=1.1
         layout.active = True
         row = layout.row(align=True)
@@ -352,7 +334,6 @@ sv_tools_classes = [
 
 
 def register():
-    get_branch()
     bpy.types.SverchCustomTreeType.SvShowIn3D = BoolProperty(
         name='show in panel',
         default=True,
@@ -366,7 +347,6 @@ def register():
     for class_name in sv_tools_classes:
         bpy.utils.register_class(class_name)
 
-    get_branch()
 
 
 def unregister():
