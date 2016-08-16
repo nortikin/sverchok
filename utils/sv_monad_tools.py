@@ -687,7 +687,8 @@ class SvMonadExpand(Operator):
 
         # 5 - (in parent) aquire direct links to/from monad_instance_node
         ng = context.space_data.path[0].node_tree
-        monad_instance_node = ng.nodes.get(monad.cls_bl_idname)  # fails
+        print(dir(context.space_data.path[-1]))  # ???
+        monad_instance_node = context.space_data.path[-1][1]  # ???
 
         def collect_outer_links(node):
             outer_links = dict(inputs=defaultdict(list), outputs=defaultdict(list))
