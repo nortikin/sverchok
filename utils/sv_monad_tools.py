@@ -649,18 +649,21 @@ class SvMonadExpand(Operator):
     def poll(cls, context):
         space_data = context.space_data
         tree_type = space_data.tree_type
-        multiple_paths = len(space_data.path) > 1
+        
+        if not tree_type == 'SverchCustomTreeType':
+            return
+
         node = context.active_node
         if node:
             return hasattr(node, 'monad')
 
     def execute(self, context):
         '''
-        1. [ ] get the node to expand, via context or as argument, verify that it is a monad instance
-        2. [ ] get the monad and append into it
+        1. [x] get the node to expand, via context or as argument, verify that it is a monad instance
+        2. [x] get the monad and append into it
         3. [x] select all and copy all
-        4. [ ] pop the path back
-        5. [ ] deselect all and paste
+        4. [x] pop the path back
+        5. [x] deselect all and paste
         6. [ ] find the input/output nodes
         7. [ ] now we have whole monad and monad instance
         8. [ ] replace the links one by one by parsing instance/input and then instance/output
@@ -668,8 +671,24 @@ class SvMonadExpand(Operator):
         10. [ ] Finished
 
         '''
-        monad = context.space_data.edit_tree
 
+        # 1
+        monad_instance_node = context.active_node
+
+        # 2
+        group_name = monad_instance_node.group_name
+        monad = bpy.data.node_groups.get(group_name)
+        bpy.ops.node.sv_group_edit(short_cut=True)
+
+        # 3
+        bpy.ops.node.select_all()
+        bpy.ops.node.clipboard_copy()
+
+        # 4 
+        bpy.ops.node.sv_tree_path_parent()
+
+        # 5
+        bpy.ops.node.select_all(action='DESELECT')
 
         return {'FINISHED'}
 
