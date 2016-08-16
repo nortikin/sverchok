@@ -704,7 +704,7 @@ class SvMonadExpand(Operator):
         # 6
         ng = context.space_data.edit_tree
         response = self.get_io_nodes(ng)
-        if not response
+        if not response:
             return {'CANCELLED'}
         else:
             input_node, output_node = response
