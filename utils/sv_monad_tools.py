@@ -183,9 +183,8 @@ class SvGroupNodeExp:
     """
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    label = StringProperty(get=_get_monad_name, set=_set_monad_name)
-    #group_name = StringProperty()
-
+    # fun experiment
+    #label = StringProperty(get=_get_monad_name, set=_set_monad_name)
     def draw_label(self):
         return self.monad.name
 
@@ -480,11 +479,9 @@ class SvTreePathParent(Operator):
     @classmethod
     def poll(cls, context):
         space = context.space_data
-        print(space.type, space.path, space.edit_tree.bl_idname)
         if space.type == 'NODE_EDITOR':
             if len(space.path) > 1:
                 if space.edit_tree.bl_idname == "SverchGroupTreeType":
-                    print("poll true ".format(cls.__name__))
                     return True
         return False
 
