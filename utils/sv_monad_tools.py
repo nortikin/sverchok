@@ -563,12 +563,8 @@ class SvGroupEdit(Operator):
 
 
 class SvMonadEnter(Operator):
-    '''Makes node group, relink will enforce peripheral connections'''
     bl_idname = "node.sv_monad_enter"
     bl_label = "Exit or Enter a monad"
-
-    # group_name = StringProperty(default="Monad")
-    # use_relinking = BoolProperty(default=True)
 
     @classmethod
     def poll(cls, context):
@@ -793,10 +789,21 @@ class SvMonadExpand(Operator):
 
         # 4 - (in monad) acquire links between selected / non selected
         inner_links = collect_links(monad)
-        print(inner_links)
 
         # 5 - (in parent) aquire direct links to/from monad_instance_node
-        # outer_links = collect_external_links(monad_instance_node)
+        ng = context.space_data.path[0]
+        monad_instance_node = ng.nodes.get(monad.cls_bl_idname)
+
+        def collect_outer_links(node):
+            outer_links = dict(inputs=defaultdict(list), outputs=defaultdict(list))
+            for socket in node.inputs:
+                if len(socket.links):
+                    outer_links['inputs'].append(socket.links[0])
+
+            for socket in node.outputs:
+                ...
+
+        outer_links = collect_external_links(monad_instance_node)
 
         # 6 - (in parent) unlink periphery of monad_instance_node
         #     or let the monad_instance_node removal take care of this?
