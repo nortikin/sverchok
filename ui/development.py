@@ -29,6 +29,8 @@ BRANCH = ""
 
 def get_branch():
     global BRANCH
+
+    # first use git to find branch
     try:
         res = subprocess.run(["git", "rev-parse", "--abbrev-ref", "HEAD"],
                               stdout=subprocess.PIPE,
@@ -39,15 +41,18 @@ def get_branch():
         BRANCH = branch.rstrip()
     except: # if does not work ignore it
         BRANCH = ""
-    if not BRANCH:
-        try:
-            head = os.path.join(os.path.dirname(sverchok.__file__), '.git', 'HEAD')
-            branch = ""
-            with open(head) as headfile:
-                branch = headfile.readlines()[0].split("/")[-1]
-            BRANCH = branch.rstrip()
-        except:
-            BRANCH = ""
+    if BRANCH:
+        return
+
+    # if the above failed we can dig deeper, if this failed we concede victory.
+    try:
+        head = os.path.join(os.path.dirname(sverchok.__file__), '.git', 'HEAD')
+        branch = ""
+        with open(head) as headfile:
+            branch = headfile.readlines()[0].split("/")[-1]
+        BRANCH = branch.rstrip()
+    except:
+        BRANCH = ""
 
 def node_show_branch(self, context):
     if context.space_data.tree_type in  {'SverchCustomTreeType', 'SverchGroupTreeType'}:
