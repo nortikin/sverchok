@@ -43,7 +43,7 @@ reverse_lookup = {'outputs': 'inputs', 'inputs': 'outputs'}
 
 def make_valid_identifier(name):
     """Create a valid python identifier from name for use a a part of class name"""
-    return "".join(ch for ch in name if ch.isalnum() or ch=="_")
+    return "".join(ch for ch in name if ch.isalnum() or ch == "_")
 
 def make_class_from_monad(monad):
     """
@@ -711,10 +711,16 @@ class SvMonadExpand(Operator):
         
         # 8
         for idx, socket in enumerate(monad_instance_node.inputs):
-            # .links.new(from_socket, to_socket)
+                links = input_node.outputs[idx].links
+                if links:
+                    for link in links:
+                        ...
+            # ng.links.new(from_socket, to_socket)
             ...
 
         for idx, socket in enumerate(monad_instance_node.outputs):
+                links = output_node.inputs[idx].links
+                ...
             # .links.new(from_socket, to_socket)
             ...
 
