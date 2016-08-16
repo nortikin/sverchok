@@ -85,6 +85,18 @@ def make_class_from_monad(monad):
         socket_name = socket.name
         return socket_name, socket_bl_idname
 
+    def generate_name(prop_name, cls_dict):
+        if prop_name in cls_dict:
+            # all properties need unique names,
+            # if 'x' is taken 'x2' etc.
+            for i in range(2, 100):
+                new_name = "{}{}".format(prop_name, i)
+                if new_name in cls_dict:
+                    continue
+                return prop_name
+        else:
+            return prop_name
+
 
     # if socket is dummysocket use the other for data
     for socket in monad_inputs.outputs:
@@ -95,16 +107,19 @@ def make_class_from_monad(monad):
             if "prop_name" in prop_data:
                 prop_name = prop_data["prop_name"]
                 prop_rna = getattr(other.node.rna_type, prop_name)
-                if prop_name in cls_dict:
-                    # all properties need unique names,
-                    # if 'x' is taken 'x2' etc.
-                    for i in range(2, 100):
-                        new_name = "{}{}".format(prop_name, i)
-                        if new_name in cls_dict:
-                            continue
-                        prop_name = new_name
-                        break
+                prop_name = generate_name(prop_name, cls_dict)
                 cls_dict[prop_name] = prop_rna
+
+            if "prop_type" in prop_data:
+                # I think only scriptnode uses this interface
+                # anyway replace the prop data with new prop data
+                if "float" in prop_data["prop_type"]:
+                    prop_rna = FloatProperty(name=other.name)
+                elif "int" in prop_data["prop_type"]:
+                    prop_rna = IntProperty(name=other.name)
+                prop_name = generate_name(make_valid_identifier(other.name), cls_dict)
+                cls_dict[prop_name] = prop_rna
+                prop_data = {"prop_name": prop_name}
 
             socket_name, socket_bl_idname = get_socket_data(socket)
 
