@@ -665,7 +665,7 @@ class SvMonadExpand(Operator):
         4. [x] pop the path back
         5. [x] deselect all and paste
         6. [ ] find the input/output nodes
-        7. [ ] now we have whole monad and monad instance
+        7.     now we have whole monad and monad instance
         8. [ ] replace the links one by one by parsing instance/input and then instance/output
         9. [ ] remove the instance, input, and output
         10. [ ] Finished
@@ -677,7 +677,6 @@ class SvMonadExpand(Operator):
 
         # 2
         group_name = monad_instance_node.group_name
-        monad = bpy.data.node_groups.get(group_name)
         bpy.ops.node.sv_group_edit(short_cut=True)
 
         # 3
@@ -689,6 +688,20 @@ class SvMonadExpand(Operator):
 
         # 5
         bpy.ops.node.select_all(action='DESELECT')
+
+        # 6  -- clever way to do this ??
+        ng = context.space_data.edit_tree
+        IO_nodes = []
+        for n in ng.nodes:
+            if n.bl_idname in {'SvGroupInputsNodeExp', 'SvGroupOutputsNodeExp'}:
+                IO_nodes.append(n)
+
+        if len(IO_nodes) >2:
+            print('arggggh')
+
+
+        # 7
+
 
         return {'FINISHED'}
 
