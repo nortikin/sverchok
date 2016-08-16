@@ -703,7 +703,12 @@ class SvMonadExpand(Operator):
             print('failure. was inevitable')
             return {'CANCELLED'}
 
-        # 7
+        # 8
+
+
+        # 9
+        # ng.nodes.remove(input_node)
+        # ng.nodes.remove(output_node)
 
 
         return {'FINISHED'}
