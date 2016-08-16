@@ -598,11 +598,9 @@ class SvMonadCreateFromSelected(Operator):
             links = collect_links(ng)
 
         monad = monad_make(self.group_name)
-        #bpy.ops.node.sv_switch_layout(layout_name=monad.name)
 
         # by switching, space_data is now different
         path = context.space_data.path
-
         path.append(monad)  # top level
 
         bpy.ops.node.clipboard_paste()
@@ -703,7 +701,7 @@ class SvMonadExpand(Operator):
         # 5
         # bpy.ops.node.select_all(action='DESELECT')
 
-        # 6  -- clever way to do this ??
+        # 6
         ng = context.space_data.edit_tree
         response = self.get_io_nodes(ng)
         if not response
@@ -712,7 +710,13 @@ class SvMonadExpand(Operator):
             input_node, output_node = response
         
         # 8
+        for idx, socket in enumerate(monad_instance_node.inputs):
+            # .links.new(from_socket, to_socket)
+            ...
 
+        for idx, socket in enumerate(monad_instance_node.outputs):
+            # .links.new(from_socket, to_socket)
+            ...
 
         # 9
         # ng.nodes.remove(input_node)
