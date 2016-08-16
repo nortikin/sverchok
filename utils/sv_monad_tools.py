@@ -530,11 +530,13 @@ def compile_link_monad(link):
 def link_monad(monad, links):
     in_links = sorted(links["input"], key=sort_keys_in)
     out_links = sorted(links["output"], key=sort_keys_out)
+
     nodes = monad.nodes
     input_node = monad.input_node
     output_node = monad.output_node
     remap_inputs = {}
     relink_in = []
+
     for idx, link in enumerate(in_links):
         to_socket = nodes[link.to_node.name].inputs[link.to_socket.index]
         original_from_socket = link.from_socket
@@ -648,82 +650,26 @@ class SvMonadExpand(Operator):
         space_data = context.space_data
         tree_type = space_data.tree_type
         multiple_paths = len(space_data.path) > 1
-
-        if tree_type == 'SverchCustomTreeType' and multiple_paths:
-            return True
+        node = context.active_node
+        if node:
+            return hasattr(node, 'monad')
 
     def execute(self, context):
         '''
-        first possibly an ugly, but functional implementation.
-
-        - 1 (in monad) select all nodes
-        - 2 (in monad) deselect I/O nodes
-        - 3 (in monad) copy selection
-        - 4 (in monad) acquire links between selected / non selected
-        - 5 (in parent) aquire direct links to/from monad_instance_node
-        - 6 (in parent) unlink periphery of monad_instance_node
-        - 7 (in monad) pop to parent
-        - 8 (in parent) paste selection
-        - 9 (in parent) move selection to logical position
-        - 10 (in parent) relink periphery
-        - 11 (in parent) delete monad_instance_node
-        - 12 deselect all
+        1. [ ] get the node to expand, via context or as argument, verify that it is a monad instance
+        2. [ ] get the monad and append into it
+        3. [x] select all and copy all
+        4. [ ] pop the path back
+        5. [ ] deselect all and paste
+        6. [ ] find the input/output nodes
+        7. [ ] now we have whole monad and monad instance
+        8. [ ] replace the links one by one by parsing instance/input and then instance/output
+        9. [ ] remove the instance, input, and output
+        10. [ ] Finished
 
         '''
         monad = context.space_data.edit_tree
 
-        # 1 - (in monad) select all nodes
-        bpy.ops.node.select_all()
-
-        # 2 - (in monad) deselect I/O nodes
-        for n in monad.nodes:
-            n.select = not (n.bl_idname in {'SvGroupInputsNodeExp', 'SvGroupOutputsNodeExp'})
-
-        # 3 - (in monad) copy selection
-        bpy.ops.node.clipboard_copy()
-
-        # 4 - (in monad) acquire links between selected / non selected
-        inner_links = collect_links(monad)
-
-        # 5 - (in parent) aquire direct links to/from monad_instance_node
-        ng = context.space_data.path[0].node_tree
-        print(dir(context.space_data.path[-1]))  # ???
-        monad_instance_node = context.space_data.path[-1][1]  # ???
-
-        def collect_outer_links(node):
-            outer_links = dict(inputs=defaultdict(list), outputs=defaultdict(list))
-            for socket in node.inputs:
-                if len(socket.links):
-                    outer_links['inputs'].append(socket.links[0])
-
-            for socket in node.outputs:
-                if len(socket.links):
-                    for link in socket.links:
-                        outer_links['outputs'].append(link)
-
-        outer_links = collect_outer_links(monad_instance_node)
-        print(outer_links)
-
-        # 6 - (in parent) unlink periphery of monad_instance_node
-        #     or let the monad_instance_node removal take care of this?
-
-        # 7 - (in monad) pop to parent
-        # path = context.space_data.path
-        # path.pop()
-
-        # 7.5 - (in parent) deselect all
-
-        # 8 - (in parent) paste selection
-        # bpy.ops.node.clipboard_paste()
-
-        # 9 - (in parent) move selection to logical position
-
-        # 10 - (in parent) relink periphery
-
-        # 11 - (in parent) delete monad_instance_node
-        # ng.nodes.remove(monad_instance_node)
-
-        # 12 - deselect all
 
         return {'FINISHED'}
 
