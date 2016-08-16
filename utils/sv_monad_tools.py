@@ -766,6 +766,7 @@ class SvMonadExpand(Operator):
         - (in monad) acquire links between selected / non selected
         - (in parent) aquire direct links to/from monad_instance_node
         - (in parent) unlink periphery of monad_instance_node
+        - (in monad) pop to parent
         - (in parent) paste selection
         - (in parent) move selection to logical position
         - (in parent) relink periphery
