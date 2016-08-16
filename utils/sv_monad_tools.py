@@ -524,10 +524,27 @@ class SvGroupEdit(Operator):
     bl_label = "edits an sv group"
 
     group_name = StringProperty()
+    short_cut = BoolProperty()
 
     def execute(self, context):
         ng = bpy.data.node_groups
-        node = context.node
+
+        # if this operator is triggered from nodeview / TAB
+        if self.short_cut:
+            node = context.active_node
+            if node:
+                if not hasattr(node, 'monad'):
+                    self.report({"WARNING"}, 'Active node is not a monad instance')
+                    return {'CANCELLED'}
+                self.group_name = node.monad.name
+            else:
+                msg = 'Select 1 monad instance node to enter the monad'
+                self.report({"WARNING"}, msg)
+                return {'CANCELLED'}
+        else:
+            # else it is triggered from directly on the node by the button
+            node = context.node
+
         parent_tree = node.id_data
 
         monad = ng.get(self.group_name)
@@ -543,6 +560,37 @@ class SvGroupEdit(Operator):
         path.append(monad) # top level
 
         return {"FINISHED"}
+
+
+class SvMonadEnter(Operator):
+    '''Makes node group, relink will enforce peripheral connections'''
+    bl_idname = "node.sv_monad_enter"
+    bl_label = "Exit or Enter a monad"
+
+    # group_name = StringProperty(default="Monad")
+    # use_relinking = BoolProperty(default=True)
+
+    @classmethod
+    def poll(cls, context):
+        tree_type = context.space_data.tree_type
+        if tree_type in {'SverchCustomTreeType', 'SverchGroupTreeType'}:
+            return True
+
+    def execute(self, context):
+        tree_type = context.space_data.tree_type
+        node = context.active_node
+        
+        if node and hasattr(node, 'monad'):
+            bpy.ops.node.sv_group_edit(short_cut=True)
+            return {'FINISHED'}
+
+        else:
+            if len(context.space_data.path) == 2:
+                bpy.ops.node.sv_tree_path_parent()
+                return {'FINISHED'}
+
+        return {'CANCELLED'}
+
 
 
 class SvTreePathParent(Operator):
