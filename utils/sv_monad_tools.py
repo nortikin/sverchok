@@ -763,71 +763,62 @@ class SvMonadExpand(Operator):
 
     def execute(self, context):
         '''
-        - (in monad) select all nodes
-        - (in monad) deselect I/O nodes
-        - (in monad) copy selection
-        - (in monad) acquire links between selected / non selected
-        - (in parent) aquire direct links to/from monad_instance_node
-        - (in parent) unlink periphery of monad_instance_node
-        - (in monad) pop to parent
-        - (in parent) paste selection
-        - (in parent) move selection to logical position
-        - (in parent) relink periphery
-        - (in parent) delete monad_instance_node
-        - deselect all
+        first possibly an ugly, but functional implementation.
+
+        - 1 (in monad) select all nodes
+        - 2 (in monad) deselect I/O nodes
+        - 3 (in monad) copy selection
+        - 4 (in monad) acquire links between selected / non selected
+        - 5 (in parent) aquire direct links to/from monad_instance_node
+        - 6 (in parent) unlink periphery of monad_instance_node
+        - 7 (in monad) pop to parent
+        - 8 (in parent) paste selection
+        - 9 (in parent) move selection to logical position
+        - 10 (in parent) relink periphery
+        - 11 (in parent) delete monad_instance_node
+        - 12 deselect all
 
         '''
+        ng = context.space_data.edit_tree
 
-        # ng = context.space_data.edit_tree
-        # nodes = [n for n in ng.nodes if n.select]
+        # 1 - (in monad) select all nodes
+        bpy.ops.node.select_all()
 
-        # if not nodes:
-        #     self.report({"CANCELLED"}, "No nodes selected")
-        #     return {'CANCELLED'}
+        # 2 - (in monad) deselect I/O nodes
+        for n in ng.nodes:
+            if n.bl_idname in {'SvGroupInputsNodeExp', 'SvGroupOutputsNodeExp'}:
+                n.select = False
 
-        # bpy.ops.node.clipboard_copy()
+        # 3 - (in monad) copy selection
+        bpy.ops.node.clipboard_copy()
 
-        # if self.use_relinking:
-        #     # get links for relinking sockets in monad IO
-        #     links = collect_links(ng)
+        # 4 - (in monad) acquire links between selected / non selected
+        # inner_links = collect_internal_links(monad)
 
-        # monad = monad_make(self.group_name)
-        # bpy.ops.node.sv_switch_layout(layout_name=monad.name)
+        # 5 - (in parent) aquire direct links to/from monad_instance_node
+        # outer_links = collect_external_links(monad_instance_node)
 
-        # # by switching, space_data is now different
+        # 6 - (in parent) unlink periphery of monad_instance_node
+        #     or let the monad_instance_node removal take care of this?
+
+        # 7 - (in monad) pop to parent
         # path = context.space_data.path
-        # path.clear()
-        # path.append(ng) # below the green opacity layer
-        # path.append(monad)  # top level
+        # path.pop()
 
+        # 7.5 - (in parent) deselect all
+
+        # 8 - (in parent) paste selection
         # bpy.ops.node.clipboard_paste()
 
-        # # get optimal location for IO nodes..
-        # i_loc, o_loc = propose_io_locations(nodes)
-        # monad.input_node.location = i_loc
-        # monad.output_node.location = o_loc
+        # 9 - (in parent) move selection to logical position
 
-        # if self.use_relinking:
-        #     re_links = link_monad(monad, links)
+        # 10 - (in parent) relink periphery
 
-        # """
-        #  the monad is created, create a the class and then with class
-        #  create the node, place and link it up
-        # """
-        # cls_ref = make_class_from_monad(monad.name)
-        # parent_node = ng.nodes.new(cls_ref.bl_idname)
-        # parent_node.select = False
-        # parent_node.location = average_of_selected(nodes)
+        # 11 - (in parent) delete monad_instance_node
+        # ng.nodes.remove(monad_instance_node)
 
-        # # remove nodes from parent_tree
-        # for n in nodes:
-        #     ng.nodes.remove(n)
+        # 12 - deselect all
 
-        # # relink the new node
-        # if self.use_relinking:
-        #     link_monad_instance(parent_node, re_links)
-
-        # bpy.ops.node.view_all()
         return {'FINISHED'}
 
 
