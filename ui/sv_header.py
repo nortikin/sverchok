@@ -2,8 +2,8 @@ import bpy
 from sverchok.utils.sv_monad_tools import SvTreePathParent
 
 def sv_back_to_parent(self, context):
-    op_poll = SvTreePathParent.poll(context)
-    if context.space_data.tree_type == 'SverchCustomTreeType' and op_poll:
+    op_poll = SvTreePathParent.poll
+    if op_poll(context):
         layout = self.layout
         layout.operator("node.sv_tree_path_parent", text='sv parent', icon='FILE_PARENT')
 
