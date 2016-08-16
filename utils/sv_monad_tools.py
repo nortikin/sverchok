@@ -641,7 +641,7 @@ class SvMonadCreateFromSelected(Operator):
 class SvMonadExpand(Operator):
     '''Expands monad into parent Layout will enforce peripheral connections'''
     bl_idname = "node.sv_monad_expand"
-    bl_label = "Create monad from selected nodes (sub graph)"
+    bl_label = "Expand monad into parent tree/layout (ungroup)"
 
     @classmethod
     def poll(cls, context):
