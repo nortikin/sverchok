@@ -794,6 +794,8 @@ class SvMonadExpand(Operator):
 
         # 4 - (in monad) acquire links between selected / non selected
         # inner_links = collect_internal_links(monad)
+        inner_links = collect_links(monad)
+        print(inner_links)
 
         # 5 - (in parent) aquire direct links to/from monad_instance_node
         # outer_links = collect_external_links(monad_instance_node)

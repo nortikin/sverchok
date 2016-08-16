@@ -41,6 +41,10 @@ def add_keymap():
         # TAB           | enter or exit monad depending on selection and edit_tree type
         kmi = km.keymap_items.new('node.sv_monad_enter', 'TAB', 'PRESS')
         nodeview_keymaps.append((km, kmi))
+
+        # alt+G         | expand current monad into original state
+        kmi = km.keymap_items.new('node.sv_monad_expand', 'G', 'PRESS', alt=True)
+        nodeview_keymaps.append((km, kmi))
         
     
 def remove_keymap():
