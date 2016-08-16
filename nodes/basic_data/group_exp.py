@@ -37,7 +37,7 @@ from sverchok.utils.sv_monad_tools import (
     SvTreePathParent,
     SvMonadCreateFromSelected,
     SverchGroupTree,
-
+    SvMonadExpand
 )
 
 MONAD_COLOR = (0.4, 0.9, 1)
@@ -76,6 +76,7 @@ classes = [
     SvEditSocketOpExp,
     SvGroupEdit,
     SvMonadEnter,
+    SvMonadExpand,
     SvTreePathParent,
     SvGroupInputsNodeExp,
     SvGroupOutputsNodeExp,

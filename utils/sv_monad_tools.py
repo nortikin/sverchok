@@ -754,8 +754,11 @@ class SvMonadExpand(Operator):
 
     @classmethod
     def poll(cls, context):
-        tree_type = context.space_data.tree_type
-        if tree_type == 'SverchCustomTreeType':
+        space_data = context.space_data
+        tree_type = space_data.tree_type
+        multiple_paths = len(space_data.path) > 1
+
+        if tree_type == 'SverchCustomTreeType' and multiple_paths:
             return True
 
     def execute(self, context):
