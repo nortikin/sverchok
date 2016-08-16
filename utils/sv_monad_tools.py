@@ -791,8 +791,8 @@ class SvMonadExpand(Operator):
         inner_links = collect_links(monad)
 
         # 5 - (in parent) aquire direct links to/from monad_instance_node
-        ng = context.space_data.path[0]
-        monad_instance_node = ng.nodes.get(monad.cls_bl_idname)
+        ng = context.space_data.path[0].node_tree
+        monad_instance_node = ng.nodes.get(monad.cls_bl_idname)  # fails
 
         def collect_outer_links(node):
             outer_links = dict(inputs=defaultdict(list), outputs=defaultdict(list))
@@ -801,9 +801,12 @@ class SvMonadExpand(Operator):
                     outer_links['inputs'].append(socket.links[0])
 
             for socket in node.outputs:
-                ...
+                if len(socket.links):
+                    for link in socket.links:
+                        outer_links['outputs'].append(link)
 
-        outer_links = collect_external_links(monad_instance_node)
+        outer_links = collect_outer_links(monad_instance_node)
+        print(outer_links)
 
         # 6 - (in parent) unlink periphery of monad_instance_node
         #     or let the monad_instance_node removal take care of this?
