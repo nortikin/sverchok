@@ -71,6 +71,7 @@ def make_class_from_monad(monad):
         cls_name = monad.cls_bl_idname
 
     cls_dict["bl_idname"] = cls_name
+    cls_dict["bl_label"] = monad.name
     old_cls_ref = getattr(bpy.types, cls_name, None)
 
     in_socket = []
@@ -119,7 +120,7 @@ def make_class_from_monad(monad):
     cls_dict["input_template"] = in_socket
     cls_dict["output_template"] = out_socket
 
-    bases = (Node, SvGroupNodeExp, SverchCustomTreeNode)
+    bases = (SvGroupNodeExp, Node, SverchCustomTreeNode)
     cls_ref = type(cls_name, bases, cls_dict)
     monad.cls_bl_idname = cls_ref.bl_idname
     if old_cls_ref:
@@ -169,13 +170,20 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
 
 
 
+def _get_monad_name(self):
+    return self.monad.name
+
+def _set_monad_name(self, value):
+    print("set value", value)
+    self.monad.name = value
+
 class SvGroupNodeExp:
     """
     Base class for all monad instances
     """
-    bl_label = 'Group Exp'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
+    label = StringProperty(get=_get_monad_name, set=_set_monad_name)
     #group_name = StringProperty()
 
     def draw_label(self):
@@ -269,160 +277,32 @@ def propose_io_locations(nodes):
     return (min_x - offset, y), (max_x + offset - 30, y)
 
 
+class MonadOpCommon():
+    node_name = StringProperty()
+    pos = IntProperty()
 
-def reduce_links(links):
-    reduced_links = dict(inputs=defaultdict(list), outputs=defaultdict(list))
-    for k, v in links.items():
-        for item in v:
-            link = item['link']
-            if k == 'inputs':
-                reduced_links['inputs'][link.from_socket].append([link.to_node.name, item['socket_idx']])
-            else:
-                reduced_links['outputs'][(link.from_node.name, item['socket_idx'])].append(link.to_socket)
-    return reduced_links
-
-
-
-def get_relinks(ng):
-    '''
-    ng = bpy.data.node_groups['NodeTree']
-    print(get_relinks(ng))
-    '''
-    nodes = [n for n in ng.nodes if n.select]
-    relinks = dict(inputs=[], outputs=[])
-    if not nodes:
-        return relinks
-
-    def gobble_links(link, link_kind, idx, kind):
-        linked_node = getattr(link, link_kind)
-        if not linked_node in nodes:
-            relinks[kind].append(dict(socket_idx=idx, link=link))
-
-    def get_links(node, kind='inputs', link_kind='from_node'):
-        for idx, s in enumerate(getattr(node, kind)):
-            if not s.is_linked:
-                continue
-
-            if kind == 'inputs':
-                link = s.links[0]
-                gobble_links(link, link_kind, idx, kind)
-            else:
-                for link in s.links:
-                    gobble_links(link, link_kind, idx, kind)
-
-    for node in nodes:
-        get_links(node=node, kind='inputs', link_kind='from_node')
-        get_links(node=node, kind='outputs', link_kind='to_node')
-
-    return reduce_links(relinks)
-
-
-def relink_parent(links, parent_node):
-    '''
-    expects input like:
-
-    {'inputs': defaultdict(<class 'list'>,
-        {bpy.data...nodes["Float"].outputs[0]: [
-            ['function.003', 1], ['Vectors in.001', 0]
-        ],
-        bpy.data...nodes["Integer"].outputs[0]: [
-            ['Float Series', 2]
-        ]}),
-    'outputs': defaultdict(<class 'list'>,
-        {('Vectors', 0): [
-            bpy.data...nodes["Viewer Draw2"].inputs[0],
-            bpy.data...nodes["Vectors out"].inputs[0]
-        ]})
-    }
-    '''
-
-    parent_tree = parent_node.id_data
-    input_links = links['inputs']
-    output_links = links['outputs']
-
-    for m_idx, (k, v) in enumerate(input_links.items()):
-
-        from_periphery_socket = k
-        parent_tree.links.new(from_periphery_socket, parent_node.inputs[m_idx])
-
-    for m_idx, (k, v) in enumerate(output_links.items()):
-
-        # connect a single link to monad output
-        # connect the parent node output to all previously connected sockets.
-        for to_periphery_socket in v:
-            parent_tree.links.new(parent_node.outputs[m_idx], to_periphery_socket)
-
-    print(links)
-
-def relink_monad(links, monad):
-    '''
-    expects input like:
-
-    {'inputs': defaultdict(<class 'list'>,
-        {bpy.data...nodes["Float"].outputs[0]: [
-            ['function.003', 1], ['Vectors in.001', 0]
-        ],
-        bpy.data...nodes["Integer"].outputs[0]: [
-            ['Float Series', 2]
-        ]}),
-    'outputs': defaultdict(<class 'list'>,
-        {('Vectors', 0): [
-            bpy.data...nodes["Viewer Draw2"].inputs[0],
-            bpy.data...nodes["Vectors out"].inputs[0]
-        ]})
-    }
-    '''
-
-    monad_in = monad.input_node
-    monad_out = monad.output_node
-
-    input_links = links['inputs']
-    output_links = links['outputs']
-
-    for m_idx, (k, v) in enumerate(input_links.items()):
-
-        from_periphery_socket = k
-        for f_idx, (monad_node_name, idx) in enumerate(v):
-            dynamic_idx = -1 if f_idx == 0 else -2
-            to_socket = monad.nodes[monad_node_name].inputs[idx]
-            monad_in_socket = monad_in.outputs[dynamic_idx]
-            monad.links.new(monad_in_socket, to_socket)
-
-    for m_idx, (k, v) in enumerate(output_links.items()):
-
-        # connect a single link to monad output
-        monad_node_name, idx = k
-        from_socket = monad.nodes[monad_node_name].outputs[idx]
-        monad_out_socket = monad_out.inputs[-1]
-        monad.links.new(from_socket, monad_out_socket)
-
-
-    #print(links)
-
-def get_data(self, context):
-    """ expects:
-            - self.node_name
-            - and self.pos
-            - space_data.path to have 2 members, ([1] being the upper visible)
-    """
-    node = context.space_data.path[1].node_tree.nodes[self.node_name]
-    kind = node.node_kind
-    socket = getattr(node, kind)[self.pos]
-    return node, kind, socket
+    def get_data(self, context):
+        """ expects:
+                - self.node_name
+                - and self.pos
+                - space_data.path to have 2 members, ([1] being the upper visible)
+        """
+        node = context.space_data.edit_tree.nodes[self.node_name]
+        kind = node.node_kind
+        socket = getattr(node, kind)[self.pos]
+        return node, kind, socket
 
 
 
-class SvMoveSocketOpExp(Operator):
+class SvMoveSocketOpExp(Operator, MonadOpCommon):
     """Move a socket in the direction of the arrow, will wrap around"""
     bl_idname = "node.sverchok_move_socket_exp"
     bl_label = "Move Socket"
 
-    pos = IntProperty()
     direction = IntProperty()
-    node_name = StringProperty()
 
     def execute(self, context):
-        node, kind, socket = get_data(self, context)
+        node, kind, socket = self.get_data(context)
         monad = node.id_data
         IO_node_sockets = getattr(node, kind)
         pos = self.pos
@@ -450,13 +330,11 @@ class SvMoveSocketOpExp(Operator):
         return {"FINISHED"}
 
 
-class SvRenameSocketOpExp(Operator):
+class SvRenameSocketOpExp(Operator, MonadOpCommon):
     """Rename a socket"""
     bl_idname = "node.sverchok_rename_socket_exp"
     bl_label = "Rename Socket"
 
-    pos = IntProperty()
-    node_name = StringProperty()
     new_name = StringProperty()
 
     def draw(self, context):
@@ -466,7 +344,7 @@ class SvRenameSocketOpExp(Operator):
 
     def execute(self, context):
         # make changes to this node's socket name
-        node, kind, socket = get_data(self, context)
+        node, kind, socket = self.get_data(context)
         monad = node.id_data
 
         socket.name = self.new_name
@@ -479,18 +357,16 @@ class SvRenameSocketOpExp(Operator):
         return {"FINISHED"}
 
     def invoke(self, context, event):
-        _, _, socket = get_data(self, context)
+        _, _, socket = self.get_data(context)
         self.new_name = socket.name
         return context.window_manager.invoke_props_dialog(self)
 
 
-class SvEditSocketOpExp(Operator):
+class SvEditSocketOpExp(Operator, MonadOpCommon):
     """Edit a socket signature"""
     bl_idname = "node.sverchok_edit_socket_exp"
     bl_label = "Edit Socket"
 
-    node_name = StringProperty()
-    pos = IntProperty()
     socket_type = EnumProperty(
         items=socket_types, default="StringsSocket")
 
@@ -501,7 +377,7 @@ class SvEditSocketOpExp(Operator):
 
     def execute(self, context):
         # make changes to this node's socket name
-        node, kind, socket = get_data(self, context)
+        node, kind, socket = self.get_data(context)
         monad = node.id_data
 
         replace_socket(socket, self.socket_type)
@@ -514,7 +390,7 @@ class SvEditSocketOpExp(Operator):
         return {"FINISHED"}
 
     def invoke(self, context, event):
-        _, _, socket = get_data(self, context)
+        _, _, socket = self.get_data(context)
         self.socket_type = socket.bl_idname
         return context.window_manager.invoke_props_dialog(self)
 
@@ -551,13 +427,16 @@ class SvGroupEdit(Operator):
         if not monad:
             monad = monad_make(new_group_name=self.group_name)
 
-        bpy.ops.node.sv_switch_layout(layout_name=self.group_name)
 
         # by switching, space_data is now different
+
         path = context.space_data.path
-        path.clear()
-        path.append(parent_tree) # below the green opacity layer
-        path.append(monad) # top level
+        space_data = context.space_data
+        if len(path) == 1:
+            path.start(parent_tree)
+            path.append(monad, node=node)
+        else:
+            path.append(monad, node=node)
 
         return {"FINISHED"}
 
@@ -567,8 +446,7 @@ class SvMonadEnter(Operator):
     bl_idname = "node.sv_monad_enter"
     bl_label = "Exit or Enter a monad"
 
-    # group_name = StringProperty(default="Monad")
-    # use_relinking = BoolProperty(default=True)
+
 
     @classmethod
     def poll(cls, context):
@@ -579,7 +457,7 @@ class SvMonadEnter(Operator):
     def execute(self, context):
         tree_type = context.space_data.tree_type
         node = context.active_node
-        
+
         if node and hasattr(node, 'monad'):
             bpy.ops.node.sv_group_edit(short_cut=True)
             return {'FINISHED'}
@@ -602,16 +480,17 @@ class SvTreePathParent(Operator):
     @classmethod
     def poll(cls, context):
         space = context.space_data
+        print(space.type, space.path, space.edit_tree.bl_idname)
         if space.type == 'NODE_EDITOR':
             if len(space.path) > 1:
-                if space.path[-1].node_tree.bl_idname == "SverchGroupTreeType":
+                if space.edit_tree.bl_idname == "SverchGroupTreeType":
+                    print("poll true ".format(cls.__name__))
                     return True
         return False
 
     def execute(self, context):
         space = context.space_data
         space.path.pop()
-        context.space_data.node_tree = space.path[0].node_tree
         return {'FINISHED'}
 
 
@@ -708,12 +587,11 @@ class SvMonadCreateFromSelected(Operator):
             links = collect_links(ng)
 
         monad = monad_make(self.group_name)
-        bpy.ops.node.sv_switch_layout(layout_name=monad.name)
+        #bpy.ops.node.sv_switch_layout(layout_name=monad.name)
 
         # by switching, space_data is now different
         path = context.space_data.path
-        path.clear()
-        path.append(ng) # below the green opacity layer
+
         path.append(monad)  # top level
 
         bpy.ops.node.clipboard_paste()
@@ -739,9 +617,13 @@ class SvMonadCreateFromSelected(Operator):
         for n in nodes:
             ng.nodes.remove(n)
 
+
         # relink the new node
         if self.use_relinking:
             link_monad_instance(parent_node, re_links)
+
+        path.pop()
+        path.append(monad, node=parent_node)
 
         bpy.ops.node.view_all()
         return {'FINISHED'}
@@ -774,9 +656,6 @@ class SvSocketAquisition:
             return
 
         monad = self.id_data
-        # still being manipulated
-        #if not monad.cls_bl_idname:
-        #    return
 
         socket_list = getattr(self, kind)
         _socket = self.socket_map.get(kind) # from_socket, to_socket
@@ -786,7 +665,8 @@ class SvSocketAquisition:
             # first switch socket type
             socket = socket_list[-1]
 
-            cls = make_class_from_monad(monad)
+            cls = monad.update_cls()
+
             if kind == "outputs":
                 new_name, new_type, prop_data = cls.input_template[-1]
             else:
