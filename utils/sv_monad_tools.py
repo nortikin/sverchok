@@ -25,7 +25,7 @@ from bpy.types import Node, NodeTree
 
 
 from sverchok.node_tree import SverchCustomTreeNode, SvNodeTreeCommon
-from sverchok.data_structure import node_id, replace_socket, get_other_socket
+from sverchok.data_structure import replace_socket, get_other_socket, updateNode
 from sverchok.core.update_system import make_tree_from_nodes, do_update
 
 
@@ -114,9 +114,9 @@ def make_class_from_monad(monad):
                 # I think only scriptnode uses this interface
                 # anyway replace the prop data with new prop data
                 if "float" in prop_data["prop_type"]:
-                    prop_rna = FloatProperty(name=other.name)
+                    prop_rna = FloatProperty(name=other.name, update=updateNode)
                 elif "int" in prop_data["prop_type"]:
-                    prop_rna = IntProperty(name=other.name)
+                    prop_rna = IntProperty(name=other.name, update=updateNode)
                 prop_name = generate_name(make_valid_identifier(other.name), cls_dict)
                 cls_dict[prop_name] = prop_rna
                 prop_data = {"prop_name": prop_name}
