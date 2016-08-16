@@ -747,6 +747,86 @@ class SvMonadCreateFromSelected(Operator):
         return {'FINISHED'}
 
 
+class SvMonadExpand(Operator):
+    '''Expands monad into parent Layout will enforce peripheral connections'''
+    bl_idname = "node.sv_monad_expand"
+    bl_label = "Create monad from selected nodes (sub graph)"
+
+    @classmethod
+    def poll(cls, context):
+        tree_type = context.space_data.tree_type
+        if tree_type == 'SverchCustomTreeType':
+            return True
+
+    def execute(self, context):
+        '''
+        - (in monad) select all nodes
+        - (in monad) deselect I/O nodes
+        - (in monad) copy selection
+        - (in monad) acquire links between selected / non selected
+        - (in parent) aquire direct links to/from monad_instance_node
+        - (in parent) unlink periphery of monad_instance_node
+        - (in parent) paste selection
+        - (in parent) move selection to logical position
+        - (in parent) relink periphery
+        - (in parent) delete monad_instance_node
+        - deselect all
+
+        '''
+
+        # ng = context.space_data.edit_tree
+        # nodes = [n for n in ng.nodes if n.select]
+
+        # if not nodes:
+        #     self.report({"CANCELLED"}, "No nodes selected")
+        #     return {'CANCELLED'}
+
+        # bpy.ops.node.clipboard_copy()
+
+        # if self.use_relinking:
+        #     # get links for relinking sockets in monad IO
+        #     links = collect_links(ng)
+
+        # monad = monad_make(self.group_name)
+        # bpy.ops.node.sv_switch_layout(layout_name=monad.name)
+
+        # # by switching, space_data is now different
+        # path = context.space_data.path
+        # path.clear()
+        # path.append(ng) # below the green opacity layer
+        # path.append(monad)  # top level
+
+        # bpy.ops.node.clipboard_paste()
+
+        # # get optimal location for IO nodes..
+        # i_loc, o_loc = propose_io_locations(nodes)
+        # monad.input_node.location = i_loc
+        # monad.output_node.location = o_loc
+
+        # if self.use_relinking:
+        #     re_links = link_monad(monad, links)
+
+        # """
+        #  the monad is created, create a the class and then with class
+        #  create the node, place and link it up
+        # """
+        # cls_ref = make_class_from_monad(monad.name)
+        # parent_node = ng.nodes.new(cls_ref.bl_idname)
+        # parent_node.select = False
+        # parent_node.location = average_of_selected(nodes)
+
+        # # remove nodes from parent_tree
+        # for n in nodes:
+        #     ng.nodes.remove(n)
+
+        # # relink the new node
+        # if self.use_relinking:
+        #     link_monad_instance(parent_node, re_links)
+
+        # bpy.ops.node.view_all()
+        return {'FINISHED'}
+
+
 def monad_make(new_group_name):
 
     monad = bpy.data.node_groups.new(new_group_name, 'SverchGroupTreeType')
