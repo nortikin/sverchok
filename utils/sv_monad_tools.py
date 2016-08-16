@@ -657,6 +657,19 @@ class SvMonadExpand(Operator):
         if node:
             return hasattr(node, 'monad')
 
+    def get_io_nodes(self, ng):
+        input_node, output_node = None, None
+        for n in ng.nodes:
+            if n.select:
+                if n.bl_idname == 'SvGroupInputsNodeExp':
+                    input_node = n
+                elif n.bl_idname == 'SvGroupOutputsNodeExp':
+                    output_node = n
+        if not all([input_node, output_node]):
+            print('failure. was inevitable')
+            return
+        return input_node, output_node
+
     def execute(self, context):
         '''
         1. [x] get the node to expand, via context or as argument, verify that it is a monad instance
@@ -688,21 +701,16 @@ class SvMonadExpand(Operator):
         bpy.ops.node.sv_tree_path_parent()
 
         # 5
-        bpy.ops.node.select_all(action='DESELECT')
+        # bpy.ops.node.select_all(action='DESELECT')
 
         # 6  -- clever way to do this ??
         ng = context.space_data.edit_tree
-        input_node, output_node = None, None
-        for n in ng.nodes:
-            if n.select:
-                if n.bl_idname == 'SvGroupInputsNodeExp':
-                    input_node = n
-                elif n.bl_idname == 'SvGroupOutputsNodeExp':
-                    output_node = n
-        if not all([input_node, output_node]):
-            print('failure. was inevitable')
+        response = self.get_io_nodes(ng)
+        if not response
             return {'CANCELLED'}
-
+        else:
+            input_node, output_node = response
+        
         # 8
 
 
@@ -712,6 +720,9 @@ class SvMonadExpand(Operator):
 
 
         return {'FINISHED'}
+
+
+
 
 
 def monad_make(new_group_name):
