@@ -93,7 +93,7 @@ def make_class_from_monad(monad):
                 new_name = "{}{}".format(prop_name, i)
                 if new_name in cls_dict:
                     continue
-                return prop_name
+                return new_name
         else:
             return prop_name
 
