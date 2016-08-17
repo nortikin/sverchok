@@ -272,7 +272,6 @@ def make_node_cats():
         ["SvCSGBooleanNode",      "CSG Boolean"],
         ["SvNumpyArrayNode",      "Numpy Array"],
         ["SvNodeRemoteNode",      "Node Remote (Control)"],
-        ['SvGroupNodeExp',        "GroupNode Exp"],
         ["SvGetDataObjectNode",   "Object ID Get"],
         ["SvSetDataObjectNode",   "Object ID Set"],
         ['SvSortObjsNode',        "Object ID Sort"],
@@ -364,8 +363,10 @@ def sv_group_items(context):
 def draw_node_ops(self,layout, context):
 
     make_monad = "node.sv_monad_from_selected"
+    ungroup_monad = "node.sv_monad_expand"
     layout.operator(make_monad, text='make group (+relink)', icon='RNA')
     layout.operator(make_monad, text='make group', icon='RNA').use_relinking = False
+    layout.operator(ungroup_monad, text='ungroup', icon='RNA')
     layout.separator()
 
 def make_categories():
