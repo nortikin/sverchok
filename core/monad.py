@@ -91,9 +91,8 @@ def make_class_from_monad(monad):
             # if 'x' is taken 'x2' etc.
             for i in range(2, 100):
                 new_name = "{}{}".format(prop_name, i)
-                if new_name in cls_dict:
-                    continue
-                return new_name
+                if not new_name in cls_dict:
+                    return new_name
         else:
             return prop_name
 
@@ -106,9 +105,13 @@ def make_class_from_monad(monad):
             prop_data = other.get_prop_data()
             if "prop_name" in prop_data:
                 prop_name = prop_data["prop_name"]
-                prop_rna = getattr(other.node.rna_type, prop_name)
+                prop_func, prop_dict = getattr(other.node.rna_type, prop_name)
+                prop_dict = prop_dict.copy()
                 prop_name = generate_name(prop_name, cls_dict)
-                cls_dict[prop_name] = prop_rna
+                if "attr" in prop_dict:
+                    del prop_dict["attr"]
+                cls_dict[prop_name] = prop_func(**prop_dict)
+                prop_data = {"prop_name": prop_name}
 
             if "prop_type" in prop_data:
                 # I think only scriptnode uses this interface, if not true might
@@ -120,6 +123,7 @@ def make_class_from_monad(monad):
                     prop_rna = IntProperty(name=other.name, update=updateNode)
                 prop_name = generate_name(make_valid_identifier(other.name), cls_dict)
                 cls_dict[prop_name] = prop_rna
+
                 prop_data = {"prop_name": prop_name}
 
             socket_name, socket_bl_idname = get_socket_data(socket)
