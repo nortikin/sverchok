@@ -16,6 +16,7 @@
 #
 # END GPL LICENSE BLOCK #####
 
+import random
 
 import bpy
 from bpy.props import StringProperty, IntProperty, BoolProperty
@@ -28,7 +29,7 @@ from sverchok.core.update_system import make_tree_from_nodes, do_update
 
 
 # this should NOT be defined here but in the node file.
-MONAD_COLOR = (0.4, 0.9, 1)
+MONAD_COLOR = (0.196, 0.92, 1.0)
 
 
 socket_types = [
@@ -63,8 +64,9 @@ def make_class_from_monad(monad):
     cls_dict = {}
 
     if not monad.cls_bl_idname:
-        # this should perhaps be made more random
-        cls_name = "SvGroupNodeExp{}".format(make_valid_identifier(monad.name))
+        # the monad cls_bl_idname needs to be unique and cannot change
+        cls_name = "SvGroupNode{}_{}".format(make_valid_identifier(monad.name),
+                                             id(monad)^random.randint(0, 4294967296))
     else:
         cls_name = monad.cls_bl_idname
 
@@ -109,7 +111,8 @@ def make_class_from_monad(monad):
                 cls_dict[prop_name] = prop_rna
 
             if "prop_type" in prop_data:
-                # I think only scriptnode uses this interface
+                # I think only scriptnode uses this interface, if not true might
+                # need more testing and proctection.
                 # anyway replace the prop data with new prop data
                 if "float" in prop_data["prop_type"]:
                     prop_rna = FloatProperty(name=other.name, update=updateNode)
@@ -149,7 +152,7 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
     bl_label = 'Sverchok Group Node Tree'
     bl_icon = 'NONE'
 
-    #
+    # unique and non chaning identifier set upon first creation
     cls_bl_idname = StringProperty()
 
     def update(self):
