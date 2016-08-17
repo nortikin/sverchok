@@ -24,11 +24,9 @@ from bpy.props import StringProperty
 
 from sverchok.data_structure import replace_socket
 from sverchok.node_tree import SverchCustomTreeNode
-
+from sverchok.core import monad
 reverse_lookup = {'outputs': 'inputs', 'inputs': 'outputs'}
 
-
-MONAD_COLOR = (0.4, 0.9, 1)
 
 
 class SvSocketAquisition:
@@ -86,7 +84,7 @@ class SvGroupInputsNodeExp(Node, SverchCustomTreeNode, SvSocketAquisition):
         self.node_kind = 'outputs'
 
         self.use_custom_color = True
-        self.color = MONAD_COLOR
+        self.color = monad.MONAD_COLOR
 
 class SvGroupOutputsNodeExp(Node, SverchCustomTreeNode, SvSocketAquisition):
     bl_idname = 'SvGroupOutputsNodeExp'
@@ -99,7 +97,7 @@ class SvGroupOutputsNodeExp(Node, SverchCustomTreeNode, SvSocketAquisition):
         self.node_kind = 'inputs'
 
         self.use_custom_color = True
-        self.color = MONAD_COLOR
+        self.color = monad.MONAD_COLOR
 
 
 classes = [
