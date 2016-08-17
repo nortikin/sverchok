@@ -43,7 +43,7 @@ reverse_lookup = {'outputs': 'inputs', 'inputs': 'outputs'}
 
 def make_valid_identifier(name):
     """Create a valid python identifier from name for use a a part of class name"""
-    return "".join(ch for ch in name if ch.isalnum() or ch=="_")
+    return "".join(ch for ch in name if ch.isalnum() or ch == "_")
 
 def make_class_from_monad(monad):
     """
@@ -598,11 +598,9 @@ class SvMonadCreateFromSelected(Operator):
             links = collect_links(ng)
 
         monad = monad_make(self.group_name)
-        #bpy.ops.node.sv_switch_layout(layout_name=monad.name)
 
         # by switching, space_data is now different
         path = context.space_data.path
-
         path.append(monad)  # top level
 
         bpy.ops.node.clipboard_paste()
@@ -657,6 +655,19 @@ class SvMonadExpand(Operator):
         if node:
             return hasattr(node, 'monad')
 
+    def get_io_nodes(self, ng):
+        input_node, output_node = None, None
+        for n in ng.nodes:
+            if n.select:
+                if n.bl_idname == 'SvGroupInputsNodeExp':
+                    input_node = n
+                elif n.bl_idname == 'SvGroupOutputsNodeExp':
+                    output_node = n
+        if not all([input_node, output_node]):
+            print('failure. was inevitable')
+            return
+        return input_node, output_node
+
     def execute(self, context):
         '''
         1. [x] get the node to expand, via context or as argument, verify that it is a monad instance
@@ -691,21 +702,15 @@ class SvMonadExpand(Operator):
         path.pop()
         # 5
 
-        bpy.ops.node.select_all(action='DESELECT')
-        bpy.ops.node.clipboard_paste()
-        # 6  -- clever way to do this ??
-        ng = context.space_data.edit_tree
-        input_node, output_node = None, None
-        for n in ng.nodes:
-            if n.select:
-                if n.bl_idname == 'SvGroupInputsNodeExp':
-                    input_node = n
-                elif n.bl_idname == 'SvGroupOutputsNodeExp':
-                    output_node = n
-        if not all([input_node, output_node]):
-            print('failure. was inevitable')
-            return {'CANCELLED'}
+        # bpy.ops.node.select_all(action='DESELECT')
 
+        # 6
+        ng = context.space_data.edit_tree
+        response = self.get_io_nodes(ng)
+        if not response:
+            return {'CANCELLED'}
+        else:
+            input_node, output_node = response
 
         # 7
 
@@ -731,6 +736,9 @@ class SvMonadExpand(Operator):
 
         # order the nodes nicely...
         return {'FINISHED'}
+
+
+
 
 
 def monad_make(new_group_name):
