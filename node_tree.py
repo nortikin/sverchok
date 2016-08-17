@@ -25,14 +25,20 @@ from bpy.props import StringProperty, BoolProperty, FloatVectorProperty, IntProp
 from bpy.types import NodeTree, NodeSocket, NodeSocketStandard
 
 from sverchok import data_structure
-from sverchok.data_structure import (SvGetSocketInfo, SvGetSocket,
-                                     SvSetSocket, updateNode,
-                                     get_other_socket, SvNoDataError,
-                                     sentinel)
+from sverchok.data_structure import (
+    SvGetSocketInfo,
+    SvGetSocket,
+    SvSetSocket,
+    updateNode,
+    get_other_socket, SvNoDataError, sentinel)
 
-from sverchok.core.update_system import (build_update_list, process_from_node,
-                                         process_tree, get_update_lists,
-                                         update_error_nodes)
+from sverchok.core.update_system import (
+    build_update_list,
+    process_from_node,
+    process_tree,
+    get_update_lists, update_error_nodes)
+
+
 from sverchok.ui import color_def
 
 def process_from_socket(self, context):
@@ -48,14 +54,31 @@ class SvColors(bpy.types.PropertyGroup):
         step=1, precision=3, subtype='COLOR_GAMMA', size=3,
         update=updateNode)
 
+class SvSocketCommon:
+    @property
+    def other(self):
+        return get_other_socket(self)
 
-class MatrixSocket(NodeSocket):
-    '''4x4 matrix Socket_type'''
+    @property
+    def index(self):
+        node = self.node
+        sockets = node.outputs if self.is_output else node.inputs
+        for i, s in enumerate(sockets):
+             if s == self:
+                 return i
+
+    def sv_set(self, data):
+        SvSetSocket(self, data)
+
+class MatrixSocket(NodeSocket, SvSocketCommon):
+    '''4x4 matrix Socket type'''
     # ref: http://urchn.org/post/nodal-transform-experiment
     bl_idname = "MatrixSocket"
     bl_label = "Matrix Socket"
     prop_name = StringProperty(default='')
-    
+
+    def get_prop_data(self):
+        return {}
 
     def sv_get(self, default=sentinel, deepcopy=True):
         if self.is_linked and not self.is_output:
@@ -64,9 +87,6 @@ class MatrixSocket(NodeSocket):
             raise SvNoDataError
         else:
             return default
-
-    def sv_set(self, data):
-        SvSetSocket(self, data)
 
     def draw(self, context, layout, node, text):
         if self.is_linked:
@@ -78,19 +98,28 @@ class MatrixSocket(NodeSocket):
         '''if self.is_linked:
             return(.8,.3,.75,1.0)
         else: '''
-        return(.2, .8, .8, 1.0)
+        return (.2, .8, .8, 1.0)
 
 
-class VerticesSocket(NodeSocket):
-    '''String Vertices - one string'''
+class VerticesSocket(NodeSocket, SvSocketCommon):
+    '''For vertex data'''
     bl_idname = "VerticesSocket"
     bl_label = "Vertices Socket"
 
     prop = FloatVectorProperty(default=(0, 0, 0), size=3, update=process_from_socket)
     prop_name = StringProperty(default='')
     use_prop = BoolProperty(default=False)
-    
-    
+
+    def get_prop_data(self):
+        if self.prop_name:
+            return {"prop_name": socket.prop_name}
+        elif self.use_prop:
+            return {"use_prop" : True,
+                    "prop": self.prop[:]}
+        else:
+            return {}
+
+
     def sv_get(self, default=sentinel, deepcopy=True):
         if self.is_linked and not self.is_output:
             return SvGetSocket(self, deepcopy)
@@ -102,9 +131,8 @@ class VerticesSocket(NodeSocket):
             raise SvNoDataError
         else:
             return default
-            
-    def sv_set(self, data):
-        SvSetSocket(self, data)
+
+
 
     def draw(self, context, layout, node, text):
         if not self.is_output and not self.is_linked:
@@ -120,11 +148,37 @@ class VerticesSocket(NodeSocket):
             layout.label(text)
 
     def draw_color(self, context, node):
-        return(0.9, 0.6, 0.2, 1.0)
+        return (0.9, 0.6, 0.2, 1.0)
 
 
-class StringsSocket(NodeSocketStandard):
-    '''String any type - one string'''
+class SvDummySocket(NodeSocket, SvSocketCommon):
+    '''Dummy Socket for sockets awaiting assignment of type'''
+    bl_idname = "SvDummySocket"
+    bl_label = "Dummys Socket"
+
+    prop = FloatVectorProperty(default=(0, 0, 0), size=3, update=process_from_socket)
+    prop_name = StringProperty(default='')
+    use_prop = BoolProperty(default=False)
+
+    def get_prop_data(self):
+        return self.other.get_prop_data()
+
+    def sv_get(self):
+        if self.is_linked:
+            return self.links[0].bl_idname
+
+    def sv_type_conversion(self, new_self):
+        self = new_self
+
+    def draw(self, context, layout, node, text):
+        layout.label(text)
+
+    def draw_color(self, context, node):
+        return (0.8, 0.8, 0.8, 0.3)
+
+
+class StringsSocket(NodeSocket, SvSocketCommon):
+    '''Generic, mostly numbers, socket type'''
     bl_idname = "StringsSocket"
     bl_label = "Strings Socket"
 
@@ -133,6 +187,14 @@ class StringsSocket(NodeSocketStandard):
     prop_type = StringProperty(default='')
     prop_index = IntProperty()
 
+    def get_prop_data(self):
+        if self.prop_name:
+            return {"prop_name": self.prop_name}
+        elif self.prop_type:
+            return {"prop_type": self.prop_type,
+                    "prop_index": self.prop_index}
+        else:
+            return {}
 
     def sv_get(self, default=sentinel, deepcopy=True):
         if self.is_linked and not self.is_output:
@@ -145,9 +207,6 @@ class StringsSocket(NodeSocketStandard):
             return default
         else:
             raise SvNoDataError
-
-    def sv_set(self, data):
-        SvSetSocket(self, data)
 
     def draw(self, context, layout, node, text):
         if self.prop_name:
@@ -174,7 +233,7 @@ class StringsSocket(NodeSocketStandard):
             layout.label(t)
 
     def draw_color(self, context, node):
-        return(0.6, 1.0, 0.6, 1.0)
+        return (0.6, 1.0, 0.6, 1.0)
 
 
 class SvNodeTreeCommon(object):
@@ -222,6 +281,14 @@ class SvNodeTreeCommon(object):
     def get_update_lists(self):
         return get_update_lists(self)
 
+    @property
+    def sv_trees(self):
+        res = []
+        for ng in bpy.data.node_groups:
+            if ng.bl_idname in {'SverchCustomTreeType', 'SverchGroupTreeType'}:
+                res.append(ng)
+        return res
+
 
 class SverchCustomTree(NodeTree, SvNodeTreeCommon):
     ''' Sverchok - architectural node programming of geometry in low level '''
@@ -246,7 +313,7 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
     sv_process = BoolProperty(name="Process", default=True, description='Process layout')
     sv_user_colors = StringProperty(default="")
 
-    
+
     # get update list for debug info, tuple (fulllist,dictofpartiallists)
 
     def update(self):
@@ -277,31 +344,15 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
             process_tree(self)
 
 
-class SverchGroupTree(NodeTree, SvNodeTreeCommon):
-    ''' Sverchok - groups '''
-    bl_idname = 'SverchGroupTreeType'
-    bl_label = 'Sverchok Group Node Tree'
-    bl_icon = 'NONE'
 
-    def update(self):
-        try:
-            l = bpy.data.node_groups[self.id_data.name]
-        except:
-            return
-        if self.is_frozen():
-            return
-        self.adjust_reroutes()
-
-    @classmethod
-    def poll(cls, context):
-        return False
 
 
 class SverchCustomTreeNode:
     @classmethod
     def poll(cls, ntree):
         return ntree.bl_idname in ['SverchCustomTreeType', 'SverchGroupTreeType']
-    
+
+
     def mark_error(self, err):
         """
         marks the with system error color
@@ -362,16 +413,16 @@ class SverchCustomTreeNode:
 def register():
     bpy.utils.register_class(SvColors)
     bpy.utils.register_class(SverchCustomTree)
-    bpy.utils.register_class(SverchGroupTree)
     bpy.utils.register_class(MatrixSocket)
     bpy.utils.register_class(StringsSocket)
     bpy.utils.register_class(VerticesSocket)
+    bpy.utils.register_class(SvDummySocket)
 
 
 def unregister():
+    bpy.utils.unregister_class(SvDummySocket)
     bpy.utils.unregister_class(VerticesSocket)
     bpy.utils.unregister_class(StringsSocket)
     bpy.utils.unregister_class(MatrixSocket)
     bpy.utils.unregister_class(SverchCustomTree)
-    bpy.utils.unregister_class(SverchGroupTree)
     bpy.utils.unregister_class(SvColors)

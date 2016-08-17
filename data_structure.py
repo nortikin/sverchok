@@ -168,7 +168,7 @@ def handle_read(handle):
 
 def handle_write(handle, prop):
     handle_delete(handle)
-    
+
     temp_handle[handle] = {"prop" : prop}
 
 def handle_check(handle, prop):
@@ -346,7 +346,7 @@ class Input(object):
 
     def create(self, node):
         return node.inputs.new(self.socktype, self.name, self.identifier)
-    
+
     def get(self, node):
         return node.inputs[self.name].sv_get(default=self.default, deepcopy=self.deepcopy)
 
@@ -447,7 +447,7 @@ def std_links_processing(matcher):
 def dataCorrect(data, nominal_dept=2):
     dept = levelsOflist(data)
     output = []
-    if not dept: # for empty lists 
+    if not dept: # for empty lists
         return []
     if dept < 2:
         return [dept, data]
@@ -858,8 +858,8 @@ def setup_init():
         HEAT_MAP = addon.preferences.heat_map
     else:
         print("Setup of preferences failed")
-    
-    
+
+
 #####################################################
 ###############  heat map system     ################
 #####################################################
@@ -886,7 +886,7 @@ def heat_map_state(state):
                     setattr(node, 'color', color)
                     setattr(node, 'use_custom_color', use)
             ng.sv_user_colors = ""
-            
+
 #####################################################
 ############### update system magic! ################
 #####################################################
@@ -899,7 +899,7 @@ def updateNode(self, context):
     For example a user exposed bpy.prop
     """
     self.process_node(context)
-    
+
 ##############################################################
 ##############################################################
 ############## changable type of socket magic ################
@@ -944,7 +944,7 @@ def replace_socket(socket, new_type, new_name=None, new_pos=None):
     '''
     if new_name is None:
         new_name = socket.name
-    socket.name = new_name    
+    socket.name = new_name
     # quit early
     #if socket.bl_idname == new_type:
     #    return socket
@@ -960,7 +960,7 @@ def replace_socket(socket, new_type, new_name=None, new_pos=None):
                     break
         else:
             node_pos = new_pos
-            
+
         outputs.remove(socket)
         new_socket = outputs.new(new_type, new_name)
         outputs.move(len(outputs)-1, node_pos)
@@ -986,21 +986,29 @@ def replace_socket(socket, new_type, new_name=None, new_pos=None):
             ng.links.new(from_socket, new_socket)
     ng.unfreeze()
     return new_socket
-    
+
 def get_other_socket(socket):
-    """ 
+    """
     Get next real upstream socket.
     This should be expanded to support wifi nodes also.
     Will return None if there isn't a another socket connect
     so no need to check socket.links
     """
-    if socket.is_linked and not socket.is_output:
+    if not socket.is_linked:
+        return None
+    if not socket.is_output:
         other = socket.links[0].from_socket
-        if other.node.bl_idname == 'NodeReroute':
+    else:
+        other = socket.links[0].to_socket
+
+    if other.node.bl_idname == 'NodeReroute':
+        if not socket.is_output:
             return get_other_socket(other.node.inputs[0])
-        else:  #other.node.bl_idname == 'WifiInputNode':
-            return other
-    return None
+        else:
+            return get_other_socket(other.node.outputs[0])
+    else:  #other.node.bl_idname == 'WifiInputNode':
+        return other
+
 
 ###########################################
 # Multysocket magic / множественный сокет #
@@ -1024,13 +1032,13 @@ def multi_socket(node, min=1, start=0, breck=False, out_count=None):
      breck - boolean, adding bracket to name of socket x[0] x[1] x[2] etc
      output - integer, deal with output, if>0 counts number of outputs multy sockets
      base name added in separated node in self.base_name = 'some_name', i.e. 'x', 'data'
-     node.multi_socket_type - type of socket, as .bl_idname 
+     node.multi_socket_type - type of socket, as .bl_idname
 
     '''
     #probably incorrect state due or init or change of inputs
     # do nothing
     ng = node.id_data
-            
+
     if min < 1:
         min = 1
     if out_count is None:
@@ -1129,7 +1137,7 @@ def SvGetSocketInfo(socket):
 
     global socket_data_cache
     ng = socket.id_data.name
-    
+
     if socket.is_output:
         s_id = socket_id(socket)
     elif socket.links:
@@ -1188,7 +1196,7 @@ def reset_socket_cache(ng):
     """
     global socket_data_cache
     socket_data_cache[ng.name] = {}
-        
+
 
 ####################################
 # быстрый сортировщик / quick sorter
@@ -1197,4 +1205,3 @@ def reset_socket_cache(ng):
 def svQsort(L):
     if L: return svQsort([x for x in L[1:] if x<L[0]]) + L[0:1] + svQsort([x for x in L[1:] if x>=L[0]])
     return []
-

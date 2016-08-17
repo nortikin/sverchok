@@ -19,7 +19,7 @@
 
 from collections import OrderedDict
 
-from nodeitems_utils import NodeCategory, NodeItem
+from nodeitems_utils import NodeCategory, NodeItem, NodeItemCustom
 import nodeitems_utils
 
 
@@ -321,6 +321,54 @@ def juggle_and_join(node_cats):
     return node_cats
 
 
+
+def sv_group_items(context):
+    """
+    Based on the built in node_group_items in the blender distrubution
+    somewhat edited to fit.
+    """
+    if context is None:
+        return
+    space = context.space_data
+    if not space:
+        return
+    ntree = space.edit_tree
+    if not ntree:
+        return
+
+    yield NodeItemCustom(draw=draw_node_ops)
+
+    def contains_group(nodetree, group):
+        if nodetree == group:
+            return True
+        else:
+            for node in nodetree.nodes:
+                if node.bl_idname in node_tree_group_type.values() and node.node_tree is not None:
+                    if contains_group(node.node_tree, group):
+                        return True
+        return False
+
+    for group in context.blend_data.node_groups:
+        if group.bl_idname != "SverchGroupTreeType":
+            continue
+        # filter out recursive groups,
+        #    if contains_group(group, ntree):
+        #    continue
+        # my note, not sure about what this does
+        yield NodeItem(group.cls_bl_idname,
+                       group.name)
+
+
+
+def draw_node_ops(self,layout, context):
+
+    make_monad = "node.sv_monad_from_selected"
+    ungroup_monad = "node.sv_monad_expand"
+    layout.operator(make_monad, text='make group (+relink)', icon='RNA')
+    layout.operator(make_monad, text='make group', icon='RNA').use_relinking = False
+    layout.operator(ungroup_monad, text='ungroup', icon='RNA')
+    layout.separator()
+
 def make_categories():
     original_categories = make_node_cats()
     node_cats = juggle_and_join(original_categories)
@@ -334,8 +382,11 @@ def make_categories():
             # bl_idname, name
             items=[NodeItem(props[0], props[1]) for props in nodes]))
         node_count += len(nodes)
+    node_categories.append(SverchNodeCategory("SVERCHOK_GROUPS", "Groups",items=sv_group_items))
 
     return node_categories, node_count
+
+
 
 
 def reload_menu():
