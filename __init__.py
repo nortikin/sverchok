@@ -99,6 +99,8 @@ ui_modules = [
     # bgl modules
     "viewer_draw", "viewer_draw_mk2", "nodeview_bgl_viewer_draw",
     "index_viewer_draw",
+    # show git info
+    "development",
 ]
 
 # modules and pkg path, nodes are done separately.

@@ -16,7 +16,6 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-
 import bpy
 from bpy.props import StringProperty, CollectionProperty, BoolProperty, FloatProperty
 
@@ -25,6 +24,8 @@ import sverchok
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils import sv_panels_tools
 from sverchok.core.update_system import process_from_node, process_from_nodes
+
+
 
 
 class SverchokUpdateObjectIn(bpy.types.Operator):
@@ -239,6 +240,7 @@ class SverchokToolsMenu(bpy.types.Panel):
             return False
 
     def draw(self, context):
+
         ng_name = context.space_data.node_tree.name
         layout = self.layout
         # layout.scale_y=1.1
@@ -344,6 +346,7 @@ def register():
 
     for class_name in sv_tools_classes:
         bpy.utils.register_class(class_name)
+
 
 
 def unregister():
