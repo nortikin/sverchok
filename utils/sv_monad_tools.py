@@ -43,7 +43,7 @@ reverse_lookup = {'outputs': 'inputs', 'inputs': 'outputs'}
 
 def make_valid_identifier(name):
     """Create a valid python identifier from name for use a a part of class name"""
-    return "".join(ch for ch in name if ch.isalnum() or ch=="_")
+    return "".join(ch for ch in name if ch.isalnum() or ch == "_")
 
 def make_class_from_monad(monad):
     """
@@ -456,11 +456,8 @@ class SvGroupEdit(Operator):
 
 
 class SvMonadEnter(Operator):
-    '''Makes node group, relink will enforce peripheral connections'''
     bl_idname = "node.sv_monad_enter"
     bl_label = "Exit or Enter a monad"
-
-
 
     @classmethod
     def poll(cls, context):
@@ -533,11 +530,13 @@ def compile_link_monad(link):
 def link_monad(monad, links):
     in_links = sorted(links["input"], key=sort_keys_in)
     out_links = sorted(links["output"], key=sort_keys_out)
+
     nodes = monad.nodes
     input_node = monad.input_node
     output_node = monad.output_node
     remap_inputs = {}
     relink_in = []
+
     for idx, link in enumerate(in_links):
         to_socket = nodes[link.to_node.name].inputs[link.to_socket.index]
         original_from_socket = link.from_socket
@@ -599,11 +598,9 @@ class SvMonadCreateFromSelected(Operator):
             links = collect_links(ng)
 
         monad = monad_make(self.group_name)
-        #bpy.ops.node.sv_switch_layout(layout_name=monad.name)
 
         # by switching, space_data is now different
         path = context.space_data.path
-
         path.append(monad)  # top level
 
         bpy.ops.node.clipboard_paste()
@@ -639,6 +636,109 @@ class SvMonadCreateFromSelected(Operator):
 
         bpy.ops.node.view_all()
         return {'FINISHED'}
+
+
+class SvMonadExpand(Operator):
+    '''Expands monad into parent Layout will enforce peripheral connections'''
+    bl_idname = "node.sv_monad_expand"
+    bl_label = "Expand monad into parent tree/layout (ungroup)"
+
+    @classmethod
+    def poll(cls, context):
+        space_data = context.space_data
+        tree_type = space_data.tree_type
+
+        if not tree_type == 'SverchCustomTreeType':
+            return
+
+        node = context.active_node
+        if node:
+            return hasattr(node, 'monad')
+
+    def get_io_nodes(self, ng):
+        input_node, output_node = None, None
+        for n in ng.nodes:
+            if n.select:
+                if n.bl_idname == 'SvGroupInputsNodeExp':
+                    input_node = n
+                elif n.bl_idname == 'SvGroupOutputsNodeExp':
+                    output_node = n
+        if not all([input_node, output_node]):
+            print('failure. was inevitable')
+            return None
+        return input_node, output_node
+
+    def execute(self, context):
+        '''
+        1. [x] get the node to expand, via context or as argument, verify that it is a monad instance
+        2. [x] get the monad and append into it
+        3. [x] select all and copy all
+        4. [x] pop the path back
+        5. [x] deselect all and paste
+        6. [x] find the input/output nodes
+        7.     now we have whole monad and monad instance
+        8. [ ] replace the links one by one by parsing instance/input and then instance/output
+        9. [ ] remove the instance, input, and output
+
+        '''
+
+        # 1 (make sure only the monad_instance node is selected)
+        monad_instance_node = context.active_node
+        bpy.ops.node.select_all(action='DESELECT')
+
+        # 2
+        monad = monad_instance_node.monad
+        group_name = monad.name
+        path = context.space_data.path
+        path.append(monad)
+        # 3
+        #bpy.ops.node.select_all() does not work?
+        for n in monad.nodes:
+            n.select = True
+
+        bpy.ops.node.clipboard_copy()
+
+        # 4
+        path.pop()
+        # 5
+        bpy.ops.node.clipboard_paste()
+        # bpy.ops.node.select_all(action='DESELECT')
+
+        # 6
+        ng = context.space_data.edit_tree
+        response = self.get_io_nodes(ng)
+        if not response:
+            return {'CANCELLED'}
+        else:
+            input_node, output_node = response
+
+        # 7
+
+        # 8
+        for min_socket, in_socket in zip(monad_instance_node.inputs, input_node.outputs):
+            # check that both are linked
+            if min_socket.is_linked and in_socket.is_linked:
+                # only one from link per input
+                from_socket = min_socket.links[0].from_socket
+                for link in in_socket.links:
+                    to_socket = link.to_socket
+                    ng.links.new(from_socket, to_socket)
+
+        for on_socket, min_socket in zip(output_node.inputs, monad_instance_node.outputs):
+            if on_socket.is_linked and min_socket.is_linked:
+                from_socket = on_socket.links[0].from_socket
+                for link in min_socket.links:
+                    to_socket = link.to_socket
+                    ng.links.new(from_socket, to_socket)
+        # 9
+        for node in (monad_instance_node, input_node, output_node):
+            ng.nodes.remove(node)
+
+        # order the nodes nicely...
+        return {'FINISHED'}
+
+
+
 
 
 def monad_make(new_group_name):
