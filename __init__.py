@@ -77,7 +77,7 @@ root_modules = [
 ]
 
 core_modules = [
-    "handlers", "update_system", "upgrade_nodes"
+    "handlers", "update_system", "upgrade_nodes", "upgrade_group", "monad",
 ]
 
 utils_modules = [
@@ -89,15 +89,16 @@ utils_modules = [
     "text_editor_submenu", "text_editor_plugins",
     # UI operators and tools
     "sv_panels_tools", "sv_IO_panel_tools",
-    "group_tools", "sv_monad_tools",
+    "group_tools", "monad",
 ]
 
 ui_modules = [
-    "color_def", "sv_IO_panel", "sv_header", "sv_templates_menu",
+    "color_def", "sv_IO_panel", "sv_templates_menu",
     "sv_panels", "nodeview_space_menu", "nodeview_keymaps",
+    "monad",
     # bgl modules
     "viewer_draw", "viewer_draw_mk2", "nodeview_bgl_viewer_draw",
-    "index_viewer_draw", "sv_monad_panel"
+    "index_viewer_draw",
 ]
 
 # modules and pkg path, nodes are done separately.
