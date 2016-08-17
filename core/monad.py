@@ -28,8 +28,7 @@ from sverchok.data_structure import replace_socket, get_other_socket, updateNode
 from sverchok.core.update_system import make_tree_from_nodes, do_update
 
 
-# this should NOT be defined here but in the node file.
-MONAD_COLOR = (0.196, 0.92, 1.0)
+MONAD_COLOR = (0.830819, 0.911391, 0.754562)
 
 
 socket_types = [
