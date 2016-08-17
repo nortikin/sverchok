@@ -62,8 +62,10 @@ def node_show_branch(self, context):
 
 def register():
     get_branch()
-    bpy.types.NODE_HT_header.append(node_show_branch)
+    if BRANCH:
+        bpy.types.NODE_HT_header.append(node_show_branch)
 
 
 def unregister():
-    bpy.types.NODE_HT_header.remove(node_show_branch)
+    if BRANCH:
+        bpy.types.NODE_HT_header.remove(node_show_branch)
