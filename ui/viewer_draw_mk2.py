@@ -282,6 +282,10 @@ def draw_geometry(n_id, options, data_vector, data_polygons, data_matrix, data_e
                 k = (num_datapolygon_lists-1)
                 #break
 
+            if len(data_vector[k]) < 3:
+                print("can't make faces between fewer than 3 vertices")
+                continue
+
             for j, pol in enumerate(data_polygons[k]):
 
                 if max(pol) >= max_verts_[k]:
@@ -324,6 +328,10 @@ def draw_geometry(n_id, options, data_vector, data_polygons, data_matrix, data_e
             k = get_max_k(i, verlen)
 
             if k >= len(data_edges):
+                continue
+
+            if len(data_vector[k]) < 2:
+                print("can't make edges between fewer than 2 vertices")
                 continue
 
             for line in data_edges[k]:
@@ -387,7 +395,7 @@ def draw_callback_view(n_id, cached_view, options):
 
         if sl2 and sl2[0]:
             if isinstance(sl2[0], int):
-                callback_disable(n_id)
+                #callback_disable(n_id)
                 return
 
             len_sl2 = len(sl2[0][0])
@@ -402,7 +410,7 @@ def draw_callback_view(n_id, cached_view, options):
             data_matrix = [Matrix() for i in range(verlen+1)]
 
         if (data_vector, data_polygons, data_matrix, data_edges) == (0, 0, 0, 0):
-            callback_disable(n_id)
+            #callback_disable(n_id)
             return
         try:
             the_display_list = glGenLists(1)
@@ -419,7 +427,7 @@ def draw_callback_view(n_id, cached_view, options):
 
     elif options['draw_list'] == 1:
         the_display_list = options['genlist']
-    
+
     if not 'error' in options:
         glCallList(the_display_list)
         glFlush()
