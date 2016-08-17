@@ -46,8 +46,8 @@ nodes_dict = {
         'obj_remote',
         'dupli_instances',
         'instancer',  # this is the mesh instancer (can I rename it? 'mesh_instances')
-        'group',
-        'group_exp',
+        'group', # old group
+        'monad',
         'cache',
         'getsetprop',
         'node_remote',
