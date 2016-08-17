@@ -80,4 +80,4 @@ def upgrade_group(monad):
             ng.links.new(from_socket, link.to_socket)
 
         ng.nodes.remove(node)
-    print("upgrade node group {} with {} groups nodes".format(monad.name, len(nodes_to_upgrade)))
+    print("upgrade node group {} with # {} groups nodes".format(monad.name, len(nodes_to_upgrade)))
