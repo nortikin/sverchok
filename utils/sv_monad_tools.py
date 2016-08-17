@@ -665,7 +665,7 @@ class SvMonadExpand(Operator):
                     output_node = n
         if not all([input_node, output_node]):
             print('failure. was inevitable')
-            return
+            return None
         return input_node, output_node
 
     def execute(self, context):
@@ -701,7 +701,7 @@ class SvMonadExpand(Operator):
         # 4
         path.pop()
         # 5
-
+        bpy.ops.node.clipboard_paste()
         # bpy.ops.node.select_all(action='DESELECT')
 
         # 6
