@@ -649,7 +649,7 @@ class SvMonadExpand(Operator):
     def poll(cls, context):
         space_data = context.space_data
         tree_type = space_data.tree_type
-        
+
         if not tree_type == 'SverchCustomTreeType':
             return
 
@@ -674,22 +674,25 @@ class SvMonadExpand(Operator):
         # 1 (make sure only the monad_instance node is selected)
         monad_instance_node = context.active_node
         bpy.ops.node.select_all(action='DESELECT')
-        context.active_node = monad_instance_node
 
         # 2
-        group_name = monad_instance_node.group_name
-        bpy.ops.node.sv_group_edit(short_cut=True)
-
+        monad = monad_instance_node.monad
+        group_name = monad.name
+        path = context.space_data.path
+        path.append(monad)
         # 3
-        bpy.ops.node.select_all()
+        #bpy.ops.node.select_all() does not work?
+        for n in monad.nodes:
+            n.select = True
+
         bpy.ops.node.clipboard_copy()
 
-        # 4 
-        bpy.ops.node.sv_tree_path_parent()
-
+        # 4
+        path.pop()
         # 5
-        bpy.ops.node.select_all(action='DESELECT')
 
+        bpy.ops.node.select_all(action='DESELECT')
+        bpy.ops.node.clipboard_paste()
         # 6  -- clever way to do this ??
         ng = context.space_data.edit_tree
         input_node, output_node = None, None
@@ -703,9 +706,30 @@ class SvMonadExpand(Operator):
             print('failure. was inevitable')
             return {'CANCELLED'}
 
+
         # 7
 
+        # 8
+        for min_socket, in_socket in zip(monad_instance_node.inputs, input_node.outputs):
+            # check that both are linked
+            if min_socket.is_linked and in_socket.is_linked:
+                # only one from link per input
+                from_socket = min_socket.links[0].from_socket
+                for link in in_socket.links:
+                    to_socket = link.to_socket
+                    ng.links.new(from_socket, to_socket)
 
+        for on_socket, min_socket in zip(output_node.inputs, monad_instance_node.outputs):
+            if on_socket.is_linked and min_socket.is_linked:
+                from_socket = on_socket.links[0].from_socket
+                for link in min_socket.links:
+                    to_socket = link.to_socket
+                    ng.links.new(from_socket, to_socket)
+        # 9
+        for node in (monad_instance_node, input_node, output_node):
+            ng.nodes.remove(node)
+
+        # order the nodes nicely...
         return {'FINISHED'}
 
 
