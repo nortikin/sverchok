@@ -33,7 +33,7 @@ def add_keymap():
         kmi = km.keymap_items.new(make_monad, 'G', 'PRESS', ctrl=True)
         nodeview_keymaps.append((km, kmi))
 
-        # ctrl+shift+G  | make group from selected without periphery links  
+        # ctrl+shift+G  | make group from selected without periphery links
         kmi = km.keymap_items.new(make_monad, 'G', 'PRESS', ctrl=True, shift=True)
         kmi.properties.use_relinking = False
         nodeview_keymaps.append((km, kmi))
@@ -45,9 +45,16 @@ def add_keymap():
         # alt+G         | expand current monad into original state
         kmi = km.keymap_items.new('node.sv_monad_expand', 'G', 'PRESS', alt=True)
         nodeview_keymaps.append((km, kmi))
-        
-    
+
+
 def remove_keymap():
     for km, kmi in nodeview_keymaps:
         km.keymap_items.remove(kmi)
     nodeview_keymaps.clear()
+
+
+def register():
+    add_keymap()
+
+def unregister():
+    remove_keymap()

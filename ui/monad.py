@@ -19,6 +19,18 @@
 import bpy
 from bpy.types import Panel
 
+from sverchok.utils.monad import SvTreePathParent
+
+def sv_back_to_parent(self, context):
+    """
+    Draw the back to parent operator in node view header
+    """
+    op_poll = SvTreePathParent.poll
+    if op_poll(context):
+        layout = self.layout
+        layout.operator("node.sv_tree_path_parent", text='sv parent', icon='FILE_PARENT')
+
+
 def set_multiple_attrs(cls_ref, **kwargs):
     for arg_name, value in kwargs.items():
         setattr(cls_ref, arg_name, value)
@@ -40,15 +52,14 @@ class SvCustomGroupInterface(Panel):
             return False
 
     def draw(self, context):
-        ntree = context.space_data.edit_tree
-        nodes = ntree.nodes
+        monad = context.space_data.edit_tree
 
         layout = self.layout
         row = layout.row()
 
         # draw left and right columns corresponding to sockets_types, display_name, move_operator
-        in_node = nodes.get('Group Inputs Exp')
-        out_node = nodes.get('Group Outputs Exp')
+        in_node = monad.input_node
+        out_node = monad.output_node
 
         if not (in_node and out_node):
             return
@@ -105,3 +116,14 @@ class SvCustomGroupInterface(Panel):
         column2.label('outputs')
         for i, s in enumerate(out_node.inputs):
             draw_socket_row(column2, s, i)
+
+
+
+def register():
+    bpy.types.NODE_HT_header.prepend(sv_back_to_parent)
+    bpy.utils.register_class(SvCustomGroupInterface)
+
+
+def unregister():
+    bpy.utils.unregister_class(SvCustomGroupInterface)
+    bpy.types.NODE_HT_header.remove(sv_back_to_parent)
