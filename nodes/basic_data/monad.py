@@ -16,31 +16,63 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+# the concrete monad classes plus common base
+
 import bpy
-from bpy.props import StringProperty, EnumProperty, IntProperty
 from bpy.types import Node
+from bpy.props import StringProperty
 
+from sverchok.data_structure import replace_socket
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.core.update_system import make_tree_from_nodes, do_update
 
-from sverchok.ui.sv_monad_panel import SvCustomGroupInterface
-from sverchok.ui.nodeview_keymaps import add_keymap, remove_keymap
-from sverchok.data_structure import get_other_socket
+reverse_lookup = {'outputs': 'inputs', 'inputs': 'outputs'}
 
-from sverchok.utils.sv_monad_tools import (
-    SvSocketAquisition,
-    SvMoveSocketOpExp,
-    SvRenameSocketOpExp,
-    SvEditSocketOpExp,
-    SvGroupEdit,
-    SvMonadEnter,
-    SvTreePathParent,
-    SvMonadCreateFromSelected,
-    SverchGroupTree,
-    SvMonadExpand
-)
 
 MONAD_COLOR = (0.4, 0.9, 1)
+
+
+class SvSocketAquisition:
+
+    socket_map = {'outputs': 'to_socket', 'inputs': 'from_socket'}
+    node_kind = StringProperty()
+
+    def update(self):
+        kind = self.node_kind
+        if not kind:
+            return
+
+        monad = self.id_data
+        if monad.bl_idname == "SverchCustomTreeType":
+            return
+
+        socket_list = getattr(self, kind)
+        _socket = self.socket_map.get(kind) # from_socket, to_socket
+
+        if socket_list[-1].is_linked:
+
+            # first switch socket type
+            socket = socket_list[-1]
+
+            cls = monad.update_cls()
+
+            if kind == "outputs":
+                new_name, new_type, prop_data = cls.input_template[-1]
+            else:
+                new_name, new_type = cls.output_template[-1]
+                prop_data = {}
+
+            # if no 'linked_socket.prop_name' then use 'linked_socket.name'
+            replace_socket(socket, new_type, new_name=new_name)
+
+            for instance in monad.instances:
+                sockets = getattr(instance, reverse_lookup[kind])
+                new_socket = sockets.new(new_type, new_name)
+                for name, value in prop_data.items():
+                    setattr(new_socket, name, value)
+
+            # add new dangling dummy
+            socket_list.new('SvDummySocket', 'connect me')
+
 
 
 class SvGroupInputsNodeExp(Node, SverchCustomTreeNode, SvSocketAquisition):
@@ -71,27 +103,15 @@ class SvGroupOutputsNodeExp(Node, SverchCustomTreeNode, SvSocketAquisition):
 
 
 classes = [
-    SvMoveSocketOpExp,
-    SvRenameSocketOpExp,
-    SvEditSocketOpExp,
-    SvGroupEdit,
-    SvMonadEnter,
-    SvMonadExpand,
-    SvTreePathParent,
     SvGroupInputsNodeExp,
     SvGroupOutputsNodeExp,
-    SvCustomGroupInterface,
-    SvMonadCreateFromSelected,
-    SverchGroupTree
 ]
 
 
 def register():
     for cls in classes:
         bpy.utils.register_class(cls)
-    add_keymap()
 
 def unregister():
-    remove_keymap()
     for cls in classes:
         bpy.utils.unregister_class(cls)
