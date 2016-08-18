@@ -217,7 +217,8 @@ nodes_dict = {
     ],
 
     'network': [
-        'udp_client'
+        'udp_client',
+        'pyaudio_client',
     ]
 
 }
