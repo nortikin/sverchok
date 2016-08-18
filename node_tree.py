@@ -18,7 +18,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import time
-
+import math
 
 import bpy
 from bpy.props import StringProperty, BoolProperty, FloatVectorProperty, IntProperty
@@ -200,6 +200,11 @@ class StringsSocket(NodeSocket, SvSocketCommon):
         if self.is_linked and not self.is_output:
             return SvGetSocket(self, deepcopy)
         elif self.prop_name:
+            # to deal with subtype ANGLE, this solution should be considered temporary...
+            _, prop_dict = getattr(self.node.rna_type, self.prop_name, (None, {}))
+            subtype = prop_dict.get("subtype", "")
+            if subtype == "ANGLE":
+                return [[math.degrees(getattr(self.node, self.prop_name))]]
             return [[getattr(self.node, self.prop_name)]]
         elif self.prop_type:
             return [[getattr(self.node, self.prop_type)[self.prop_index]]]
