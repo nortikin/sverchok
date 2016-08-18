@@ -354,15 +354,7 @@ def sv_group_items(context):
             continue
         # make sure class exists
         cls_ref = getattr(bpy.types, monad.cls_bl_idname, None)
-        # We couldn't find the class and it has a cls_bl_idname,
-        # that is needed since we cannot write to it from here.
-        # But we can register the class...
-        if not cls_ref and monad.cls_bl_idname:
-            try:
-                cls_ref = monad.update_cls()
-            except Exception as err:
-                print(err)
-                print("{} group class could not be found".format(monad.name))
+
         if cls_ref and monad.cls_bl_idname:
             yield NodeItem(monad.cls_bl_idname, monad.name)
 
@@ -372,9 +364,11 @@ def draw_node_ops(self,layout, context):
 
     make_monad = "node.sv_monad_from_selected"
     ungroup_monad = "node.sv_monad_expand"
+    update_import = "node.sv_monad_class_update"
     layout.operator(make_monad, text='make group (+relink)', icon='RNA')
     layout.operator(make_monad, text='make group', icon='RNA').use_relinking = False
     layout.operator(ungroup_monad, text='ungroup', icon='RNA')
+    layout.operator(update_import, text='update appended/linked', icon='RNA')
     layout.separator()
 
 def make_categories():

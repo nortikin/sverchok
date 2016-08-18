@@ -47,7 +47,8 @@ class SvCustomGroupInterface(Panel):
     @classmethod
     def poll(cls, context):
         try:
-            return context.space_data.edit_tree.bl_idname == 'SverchGroupTreeType'
+            if context.space_data.edit_tree.bl_idname == 'SverchGroupTreeType':
+                return not context.space_data.edit_tree.library 
         except:
             return False
 
