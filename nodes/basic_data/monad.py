@@ -17,6 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 # the concrete monad classes plus common base
+import ast
 
 import bpy
 from bpy.types import Node
@@ -100,9 +101,74 @@ class SvGroupOutputsNodeExp(Node, SverchCustomTreeNode, SvSocketAquisition):
         self.color = monad.MONAD_COLOR
 
 
+
+class SvMonadGenericNode(Node, SverchCustomTreeNode,  monad.SvGroupNodeExp):
+    bl_idname = 'SvMonadGenericNode'
+    bl_label = 'Group'
+    bl_icon = 'OUTLINER_OB_EMPTY'
+
+    data_storage = StringProperty()
+    cls_bl_idname = StringProperty()
+
+    @property
+    def input_template(self):
+        if not self.data_storage:
+            return []
+        data = ast.literal_eval(self.data_storage)
+        return data.get("input_template", {})
+
+    @input_template.setter
+    def input_template(self, value):
+        if self.data_storage:
+            data = ast.literal_eval(self.data_storage)
+        else:
+            data = {}
+        data["input_template"] = value
+        self.data_storage = str(data)
+        self.inputs.clear()
+        for socket_name, socket_bl_idname, _ in value:
+            self.inputs.new(socket_bl_idname, socket_name)
+
+    @property
+    def output_template(self):
+        if not self.data_storage:
+            return []
+        data = ast.literal_eval(self.data_storage)
+        return data.get("output_template", [])
+
+    @output_template.setter
+    def output_template(self, value):
+        if self.data_storage:
+            data = ast.literal_eval(self.data_storage)
+        else:
+            data = {}
+        data["output_template"] = value
+        self.data_storage = str(data)
+        self.outputs.clear()
+        for socket_name, socket_bl_idname in value:
+            self.outputs.new(socket_bl_idname, socket_name)
+
+    @property
+    def monad(self):
+        if not self.cls_bl_idname:
+            return None
+
+        for monad in bpy.data.node_groups:
+            if hasattr(monad, "cls_bl_idname"):
+                if monad.cls_bl_idname == self.cls_bl_idname:
+                    return monad
+
+        return None
+
+    def sv_init(self, context):
+        self.use_custom_color = True
+        self.color = monad.MONAD_COLOR
+
+
 classes = [
     SvGroupInputsNodeExp,
     SvGroupOutputsNodeExp,
+    SvMonadGenericNode
 ]
 
 
