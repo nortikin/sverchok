@@ -19,6 +19,7 @@
 
 from collections import OrderedDict
 
+import bpy
 from nodeitems_utils import NodeCategory, NodeItem, NodeItemCustom
 import nodeitems_utils
 
@@ -348,15 +349,22 @@ def sv_group_items(context):
                         return True
         return False
 
-    for group in context.blend_data.node_groups:
-        if group.bl_idname != "SverchGroupTreeType":
+    for monad in context.blend_data.node_groups:
+        if monad.bl_idname != "SverchGroupTreeType":
             continue
-        # filter out recursive groups,
-        #    if contains_group(group, ntree):
-        #    continue
-        # my note, not sure about what this does
-        yield NodeItem(group.cls_bl_idname,
-                       group.name)
+        # make sure class exists
+        cls_ref = getattr(bpy.types, monad.cls_bl_idname, None)
+        # We couldn't find the class and it has a cls_bl_idname,
+        # that is needed since we cannot write to it from here.
+        # But we can register the class...
+        if not cls_ref and monad.cls_bl_idname:
+            try:
+                cls_ref = monad.update_cls()
+            except Exception as err:
+                print(err)
+                print("{} group class could not be found".format(monad.name))
+        if cls_ref and monad.cls_bl_idname:
+            yield NodeItem(monad.cls_bl_idname, monad.name)
 
 
 
