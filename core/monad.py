@@ -248,12 +248,13 @@ class SvGroupNodeExp:
 
         #c.prop(self, 'group_name', text='name')
         monad = self.monad
-        c.prop(monad, "name", text='name')
+        if monad:
+            c.prop(monad, "name", text='name')
 
-        d = layout.column()
-        d.active = bool(monad)
-        f = d.operator('node.sv_group_edit', text='edit!')
-        f.group_name = monad.name
+            d = layout.column()
+            d.active = bool(monad)
+            f = d.operator('node.sv_group_edit', text='edit!')
+            f.group_name = monad.name
 
     def process(self):
         if not self.monad:
