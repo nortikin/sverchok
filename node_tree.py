@@ -399,15 +399,23 @@ class SverchCustomTreeNode:
         update= ...
         Still this is called from updateNode
         '''
-        if self.id_data.is_frozen():
-            return
-        if data_structure.DEBUG_MODE:
-            a = time.perf_counter()
-            process_from_node(self)
-            b = time.perf_counter()
-            print("Partial update from node", self.name, "in", round(b-a, 4))
+        if self.id_data.bl_idname == "SverchCustomTreeType":
+            if self.id_data.is_frozen():
+                return
+
+            if data_structure.DEBUG_MODE:
+                a = time.perf_counter()
+                process_from_node(self)
+                b = time.perf_counter()
+                print("Partial update from node", self.name, "in", round(b-a, 4))
+            else:
+                process_from_node(self)
+        elif self.id_data.bl_idname == "SverchGroupTreeType":
+            monad = self.id_data
+            for instance in monad.instances:
+                instance.process_node(context)
         else:
-            process_from_node(self)
+            pass
 
 
 def register():
