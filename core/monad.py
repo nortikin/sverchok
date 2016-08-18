@@ -66,12 +66,17 @@ def make_class_from_monad(monad):
         # the monad cls_bl_idname needs to be unique and cannot change
         cls_name = "SvGroupNode{}_{}".format(make_valid_identifier(monad.name),
                                              id(monad)^random.randint(0, 4294967296))
+        # set the unique name for the class, depending on context this might fail
+        # then we cannot do the setup of the class properly so abandon
+        try:
+            monad.cls_bl_idname = cls_name
+        except Exception:
+            return None
     else:
         cls_name = monad.cls_bl_idname
 
     cls_dict["bl_idname"] = cls_name
     cls_dict["bl_label"] = monad.name
-    old_cls_ref = getattr(bpy.types, cls_name, None)
 
     in_socket = []
 
@@ -139,9 +144,13 @@ def make_class_from_monad(monad):
     cls_dict["input_template"] = in_socket
     cls_dict["output_template"] = out_socket
 
+    # done with setup
+
+    old_cls_ref = getattr(bpy.types, cls_name, None)
+
     bases = (SvGroupNodeExp, Node, SverchCustomTreeNode)
+
     cls_ref = type(cls_name, bases, cls_dict)
-    monad.cls_bl_idname = cls_ref.bl_idname
     if old_cls_ref:
         bpy.utils.unregister_class(old_cls_ref)
     bpy.utils.register_class(cls_ref)
