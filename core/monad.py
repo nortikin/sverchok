@@ -168,7 +168,9 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
     cls_bl_idname = StringProperty()
 
     def update(self):
-        pass
+        affected_trees = {instance.id_data for instance in self.instances}
+        for tree in affected_trees:
+            tree.update()
 
     @classmethod
     def poll(cls, context):
