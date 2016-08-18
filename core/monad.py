@@ -114,6 +114,7 @@ def make_class_from_monad(monad):
                 prop_name = generate_name(prop_name, cls_dict)
                 if "attr" in prop_dict:
                     del prop_dict["attr"]
+                prop_dict["update"] = updateNode
                 cls_dict[prop_name] = prop_func(**prop_dict)
                 prop_data = {"prop_name": prop_name}
 
