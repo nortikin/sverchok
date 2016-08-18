@@ -183,13 +183,13 @@ class SvGroupEdit(Operator):
             node = context.node
 
         parent_tree = node.id_data
+        if not node:
+            monad = ng.get(self.group_name)
+            if not monad:
+                monad = monad_make(new_group_name=self.group_name)
+        else:
+            monad = node.monad
 
-        monad = ng.get(self.group_name)
-        if not monad:
-            monad = monad_make(new_group_name=self.group_name)
-
-
-        # by switching, space_data is now different
 
         path = context.space_data.path
         space_data = context.space_data
@@ -221,7 +221,7 @@ class SvMonadEnter(Operator):
             return {'FINISHED'}
 
         else:
-            if len(context.space_data.path) == 2:
+            if len(context.space_data.path) > 1:
                 bpy.ops.node.sv_tree_path_parent()
                 return {'FINISHED'}
 
@@ -536,6 +536,31 @@ class SvMonadExpand(Operator):
         return {'FINISHED'}
 
 
+class SvUpdateMonadClasses(Operator):
+    '''Import update'''
+    bl_idname = "node.sv_monad_class_update"
+    bl_label = "Expand monad into parent tree/layout (ungroup)"
+
+    @classmethod
+    def poll(cls, context):
+        for monad in context.blend_data.node_groups:
+            if monad.bl_idname == "SverchGroupTreeType":
+                cls_ref = getattr(bpy.types, monad.cls_bl_idname, None)
+                if not cls_ref:
+                    return True
+        return False
+
+    def execute(self, context):
+        for monad in context.blend_data.node_groups:
+            if monad.bl_idname == "SverchGroupTreeType":
+                if not getattr(bpy.types, monad.cls_bl_idname, None):
+                    try:
+                        monad.update_cls()
+                    except Exception as err:
+                        print(err)
+                        print("{} group class could not be created".format(monad.name))
+        return {'FINISHED'}
+
 
 classes = [
     SvMoveSocketOpExp,
@@ -546,6 +571,7 @@ classes = [
     SvMonadExpand,
     SvTreePathParent,
     SvMonadCreateFromSelected,
+    SvUpdateMonadClasses
 ]
 
 
