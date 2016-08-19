@@ -49,6 +49,8 @@ def make_class_from_monad(monad):
     """
     if isinstance(monad, str):
         monad = bpy.data.node_groups.get(monad)
+        if monad.bl_idname != "SverchGroupTreeType":
+            return None
     if not monad:
         print("no monad found")
         return None
@@ -78,71 +80,9 @@ def make_class_from_monad(monad):
     cls_dict["bl_idname"] = cls_name
     cls_dict["bl_label"] = monad.name
 
-    in_socket = []
 
-    def get_socket_data(socket):
-        other = get_other_socket(socket)
-        if socket.bl_idname == "SvDummySocket":
-            socket = get_other_socket(socket)
-
-        socket_bl_idname = socket.bl_idname
-        socket_name = socket.name
-        return socket_name, socket_bl_idname
-
-    def generate_name(prop_name, cls_dict):
-        if prop_name in cls_dict:
-            # all properties need unique names,
-            # if 'x' is taken 'x2' etc.
-            for i in range(2, 100):
-                new_name = "{}{}".format(prop_name, i)
-                if not new_name in cls_dict:
-                    return new_name
-        else:
-            return prop_name
-
-
-    # if socket is dummysocket use the other for data
-    for socket in monad_inputs.outputs:
-        if socket.is_linked:
-
-            other = get_other_socket(socket)
-            prop_data = other.get_prop_data()
-            if "prop_name" in prop_data:
-                prop_name = prop_data["prop_name"]
-                prop_func, prop_dict = getattr(other.node.rna_type, prop_name)
-                prop_dict = prop_dict.copy()
-                prop_name = generate_name(prop_name, cls_dict)
-                if "attr" in prop_dict:
-                    del prop_dict["attr"]
-                cls_dict[prop_name] = prop_func(**prop_dict)
-                prop_data = {"prop_name": prop_name}
-
-            if "prop_type" in prop_data:
-                # I think only scriptnode uses this interface, if not true might
-                # need more testing and proctection.
-                # anyway replace the prop data with new prop data
-                if "float" in prop_data["prop_type"]:
-                    prop_rna = FloatProperty(name=other.name, update=updateNode)
-                elif "int" in prop_data["prop_type"]:
-                    prop_rna = IntProperty(name=other.name, update=updateNode)
-                prop_name = generate_name(make_valid_identifier(other.name), cls_dict)
-                cls_dict[prop_name] = prop_rna
-
-                prop_data = {"prop_name": prop_name}
-
-            socket_name, socket_bl_idname = get_socket_data(socket)
-
-            data = [socket_name, socket_bl_idname, prop_data]
-            in_socket.append(data)
-
-    out_socket = []
-    for socket in monad_outputs.inputs:
-        if socket.is_linked:
-            data = get_socket_data(socket)
-            out_socket.append(data)
-
-    cls_dict["input_template"] = in_socket
-    cls_dict["output_template"] = out_socket
+    cls_dict["input_template"] = generate_inputs(monad, cls_dict)
+    cls_dict["output_template"] = generte_outputs(monad, cls_dict)
 
     # done with setup
 
@@ -156,6 +96,72 @@ def make_class_from_monad(monad):
     bpy.utils.register_class(cls_ref)
 
     return cls_ref
+
+def get_socket_data(socket):
+    other = get_other_socket(socket)
+    if socket.bl_idname == "SvDummySocket":
+        socket = get_other_socket(socket)
+
+    socket_bl_idname = socket.bl_idname
+    socket_name = socket.name
+    return socket_name, socket_bl_idname
+
+def generate_name(prop_name, cls_dict):
+    if prop_name in cls_dict:
+        # all properties need unique names,
+        # if 'x' is taken 'x2' etc.
+        for i in range(2, 100):
+            new_name = "{}{}".format(prop_name, i)
+            if not new_name in cls_dict:
+                return new_name
+    else:
+        return prop_name
+
+def generate_inputs(monad, cls_dict):
+        in_socket = []
+        # if socket is dummysocket use the other for data
+        for socket in monad_inputs.outputs:
+            if socket.is_linked:
+
+                other = get_other_socket(socket)
+                prop_data = other.get_prop_data()
+                if "prop_name" in prop_data:
+                    prop_name = prop_data["prop_name"]
+                    prop_func, prop_dict = getattr(other.node.rna_type, prop_name)
+                    prop_dict = prop_dict.copy()
+                    prop_name = generate_name(prop_name, cls_dict)
+                    if "attr" in prop_dict:
+                        del prop_dict["attr"]
+                    cls_dict[prop_name] = prop_func(**prop_dict)
+                    prop_data = {"prop_name": prop_name}
+
+                if "prop_type" in prop_data:
+                    # I think only scriptnode uses this interface, if not true might
+                    # need more testing and proctection.
+                    # anyway replace the prop data with new prop data
+                    if "float" in prop_data["prop_type"]:
+                        prop_rna = FloatProperty(name=other.name, update=updateNode)
+                    elif "int" in prop_data["prop_type"]:
+                        prop_rna = IntProperty(name=other.name, update=updateNode)
+                    prop_name = generate_name(make_valid_identifier(other.name), cls_dict)
+                    cls_dict[prop_name] = prop_rna
+
+                    prop_data = {"prop_name": prop_name}
+
+                socket_name, socket_bl_idname = get_socket_data(socket)
+
+                data = [socket_name, socket_bl_idname, prop_data]
+                in_socket.append(data)
+    return in_socket
+
+
+def generate_outputs(monad, cls_dict):
+    out_socket = []
+    for socket in monad_outputs.inputs:
+        if socket.is_linked:
+            data = get_socket_data(socket)
+            out_socket.append(data)
+    return out_socket
 
 
 class SverchGroupTree(NodeTree, SvNodeTreeCommon):
@@ -182,6 +188,8 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
             for node in ng.nodes:
                 if node.bl_idname == self.cls_bl_idname:
                     res.append(node)
+                if hasattr(node, "cls_bl_idname") and node.cls_bl_idname = self.bl_idname:
+                    res.append(node)
         return res
 
     @property
@@ -196,7 +204,11 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
         res = make_class_from_monad(self)
         return res
 
+    def generate_inputs(self, cls_dict={}):
+        return generate_inputs(self, cls_dict)
 
+    def generte_outputs(self, cls_dict={})
+        return generate_outputs(self, cls_dict)
 
 def _get_monad_name(self):
     return self.monad.name
