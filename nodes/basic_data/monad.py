@@ -164,6 +164,10 @@ class SvMonadGenericNode(Node, SverchCustomTreeNode,  monad.SvGroupNodeExp):
         self.use_custom_color = True
         self.color = monad.MONAD_COLOR
 
+        if self.cls_bl_idname:
+            self.input_template = self.monad.generate_inputs()
+            self.output_template = self.monad.generate_outputs()
+
 
 classes = [
     SvGroupInputsNodeExp,
