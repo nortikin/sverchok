@@ -18,7 +18,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import time
-
+import math
 
 import bpy
 from bpy.props import StringProperty, BoolProperty, FloatVectorProperty, IntProperty
@@ -200,6 +200,11 @@ class StringsSocket(NodeSocket, SvSocketCommon):
         if self.is_linked and not self.is_output:
             return SvGetSocket(self, deepcopy)
         elif self.prop_name:
+            # to deal with subtype ANGLE, this solution should be considered temporary...
+            _, prop_dict = getattr(self.node.rna_type, self.prop_name, (None, {}))
+            subtype = prop_dict.get("subtype", "")
+            if subtype == "ANGLE":
+                return [[math.degrees(getattr(self.node, self.prop_name))]]
             return [[getattr(self.node, self.prop_name)]]
         elif self.prop_type:
             return [[getattr(self.node, self.prop_type)[self.prop_index]]]
@@ -399,15 +404,23 @@ class SverchCustomTreeNode:
         update= ...
         Still this is called from updateNode
         '''
-        if self.id_data.is_frozen():
-            return
-        if data_structure.DEBUG_MODE:
-            a = time.perf_counter()
-            process_from_node(self)
-            b = time.perf_counter()
-            print("Partial update from node", self.name, "in", round(b-a, 4))
+        if self.id_data.bl_idname == "SverchCustomTreeType":
+            if self.id_data.is_frozen():
+                return
+
+            if data_structure.DEBUG_MODE:
+                a = time.perf_counter()
+                process_from_node(self)
+                b = time.perf_counter()
+                print("Partial update from node", self.name, "in", round(b-a, 4))
+            else:
+                process_from_node(self)
+        elif self.id_data.bl_idname == "SverchGroupTreeType":
+            monad = self.id_data
+            for instance in monad.instances:
+                instance.process_node(context)
         else:
-            process_from_node(self)
+            pass
 
 
 def register():

@@ -44,7 +44,6 @@ def make_valid_identifier(name):
     return "".join(ch for ch in name if ch.isalnum() or ch == "_")
 
 
-
 def get_socket_data(socket):
     other = get_other_socket(socket)
     if socket.bl_idname == "SvDummySocket":
@@ -78,7 +77,9 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
     cls_bl_idname = StringProperty()
 
     def update(self):
-        pass
+        affected_trees = {instance.id_data for instance in self.instances}
+        for tree in affected_trees:
+            tree.update()
 
     @classmethod
     def poll(cls, context):
