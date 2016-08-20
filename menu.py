@@ -358,7 +358,7 @@ def sv_group_items(context):
         if cls_ref and monad.cls_bl_idname:
             yield NodeItem(monad.cls_bl_idname, monad.name)
         elif monad.cls_bl_idname:
-            yeild NodeItem("SvMonadGenericNode",
+            yield NodeItem("SvMonadGenericNode",
                            monad.name,
                            {"cls_bl_idname": "str('{}')".format(monad.cls_bl_idname)})
 

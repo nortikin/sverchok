@@ -25,7 +25,7 @@ from bpy.props import StringProperty
 
 from sverchok.data_structure import replace_socket
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.core import monad
+from sverchok.core import monad as monad_def
 reverse_lookup = {'outputs': 'inputs', 'inputs': 'outputs'}
 
 
@@ -85,7 +85,7 @@ class SvGroupInputsNodeExp(Node, SverchCustomTreeNode, SvSocketAquisition):
         self.node_kind = 'outputs'
 
         self.use_custom_color = True
-        self.color = monad.MONAD_COLOR
+        self.color = monad_def.MONAD_COLOR
 
 class SvGroupOutputsNodeExp(Node, SverchCustomTreeNode, SvSocketAquisition):
     bl_idname = 'SvGroupOutputsNodeExp'
@@ -98,17 +98,23 @@ class SvGroupOutputsNodeExp(Node, SverchCustomTreeNode, SvSocketAquisition):
         self.node_kind = 'inputs'
 
         self.use_custom_color = True
-        self.color = monad.MONAD_COLOR
+        self.color = monad_def.MONAD_COLOR
 
 
+def call_init(self, context):
+    monad = self.monad
+    if self.monad:
+        self.input_template = monad.generate_inputs()
+        self.output_template = monad.generate_outputs()
 
-class SvMonadGenericNode(Node, SverchCustomTreeNode,  monad.SvGroupNodeExp):
+
+class SvMonadGenericNode(Node, SverchCustomTreeNode,  monad_def.SvGroupNodeExp):
     bl_idname = 'SvMonadGenericNode'
     bl_label = 'Group'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     data_storage = StringProperty()
-    cls_bl_idname = StringProperty()
+    cls_bl_idname = StringProperty(update=call_init)
 
     @property
     def input_template(self):
@@ -162,11 +168,7 @@ class SvMonadGenericNode(Node, SverchCustomTreeNode,  monad.SvGroupNodeExp):
 
     def sv_init(self, context):
         self.use_custom_color = True
-        self.color = monad.MONAD_COLOR
-
-        if self.cls_bl_idname:
-            self.input_template = self.monad.generate_inputs()
-            self.output_template = self.monad.generate_outputs()
+        self.color = monad_def.MONAD_COLOR
 
 
 classes = [
