@@ -89,9 +89,9 @@ class SvFFTCallback(Operator):
 
         if type_op == 'on':
             n.active = True
-            wik = n.node_dict[hash(n)].get('FFT')
-            if wik:
-                wik.open_dataframe()
+            wik = SpectrumAnalyzer()
+            n.node_dict[hash(n)] = {'FFT': wik}
+            wik.open_dataframe()
         elif type_op == 'off':
             n.active = False
             n.end_updates()
@@ -114,9 +114,6 @@ class SvFFTClientNode(bpy.types.Node, SverchCustomTreeNode):
         layout.operator('node.fft_callback', text=state).fn_name = state
 
     def sv_init(self, context):
-        wik = SpectrumAnalyzer()
-        self.node_dict[hash(self)] = {'FFT': wik}
-
         self.inputs.new('StringsSocket', 'frame')
         self.outputs.new('StringsSocket', 'wave_x')
         self.outputs.new('StringsSocket', 'wave_y')
@@ -131,8 +128,10 @@ class SvFFTClientNode(bpy.types.Node, SverchCustomTreeNode):
  
         input_value = self.inputs[0].sv_get()
         if input_value:
-            wik = self.node_dict[hash(self)].get('FFT')
-            if wik:
+            current_node_dict = self.node_dict.get(hash(self))
+            if current_node_dict:
+                # at this point FFT must be present..
+                wik = self.node_dict[hash(self)].get('FFT')
                 data = wik.do_dataframe()
                 print('updated')
             else:
