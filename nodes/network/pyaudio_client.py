@@ -136,6 +136,7 @@ class SvFFTClientNode(bpy.types.Node, SverchCustomTreeNode):
                 print('updated')
             else:
                 print('failed?')
+                self.active = not self.active
                 return
 
         outputs = self.outputs
