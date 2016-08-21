@@ -118,7 +118,7 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
 
         if not self.cls_bl_idname:
             # the monad cls_bl_idname needs to be unique and cannot change
-            cls_name = "SvGroupNode{}_{}".format(make_valid_identifier(monad.name),
+            cls_name = "SvGroupNode{}_{}".format(make_valid_identifier(self.name),
                                                  id(monad)^random.randint(0, 4294967296))
             # set the unique name for the class, depending on context this might fail
             # then we cannot do the setup of the class properly so abandon
