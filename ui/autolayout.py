@@ -78,7 +78,7 @@ def collect_links_up(ng):
     return links, from_set, to_set
 
 def generate_weights(ng):
-    links, f, t = collect_links(ng)
+    links, f, t = collect_links_up(ng)
     nodes = list(f | t)
     tot_weights = [topo_sort(nodes, links, start) for start in (t - f)]
     out = collections.defaultdict(lambda :0)
