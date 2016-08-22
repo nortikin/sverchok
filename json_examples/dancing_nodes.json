@@ -71,7 +71,7 @@
   "framed_nodes": {},
   "nodes": {
     "Bmesh Viewer Draw": {
-      "bl_idname": "BmeshViewerNode",
+      "bl_idname": "SvBmeshViewerNodeMK2",
       "color": [
         1.0,
         0.30000001192092896,
