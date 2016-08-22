@@ -1,9 +1,6 @@
 {
   "export_version": "0.055",
-  "framed_nodes": {
-    "Bmesh Viewer Draw": "Frame",
-    "UV Connect": "Frame.001"
-  },
+  "framed_nodes": {},
   "groups": {},
   "nodes": {
     "Bmesh Viewer Draw": {
@@ -166,40 +163,6 @@
         "formula": "x/2"
       },
       "width": 140.0
-    },
-    "Frame": {
-      "bl_idname": "NodeFrame",
-      "color": [
-        0.800000011920929,
-        0.0,
-        0.0
-      ],
-      "height": 303.62945556640625,
-      "hide": false,
-      "label": "Deprecated node!",
-      "location": [
-        0.0,
-        0.0
-      ],
-      "params": {},
-      "width": 200.0
-    },
-    "Frame.001": {
-      "bl_idname": "NodeFrame",
-      "color": [
-        0.800000011920929,
-        0.0,
-        0.0
-      ],
-      "height": 251.7731170654297,
-      "hide": false,
-      "label": "Deprecated node!",
-      "location": [
-        0.0,
-        0.0
-      ],
-      "params": {},
-      "width": 200.0
     },
     "Integer": {
       "bl_idname": "IntegerNode",
