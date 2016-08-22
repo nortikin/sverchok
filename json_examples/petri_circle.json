@@ -366,7 +366,7 @@
       "width": 140.0
     },
     "UV Connect": {
-      "bl_idname": "LineConnectNode",
+      "bl_idname": "LineConnectNodeMK2",
       "color": [
         0.6079999804496765,
         0.6079999804496765,
@@ -382,7 +382,7 @@
       "params": {
         "cicl_check": 0,
         "dir_check": "U_dir",
-        "polygons": 1,
+        "polygons": "Pols",
         "slice_check": 1
       },
       "width": 140.0
