@@ -24,11 +24,10 @@ class SvAutoLayoutPanel(Panel):
         layout = self.layout
         layout.label("Autolayout options")
         op = layout.operator("node.sverchok_autolayout")
-        layout.prop(op, "x_spread")
 
-def update_value(self, context):
-    tree = context.space_data.edit_tree
-    order_nodes(tree, self.x_spread)
+#def update_value(self, context):
+#    tree = context.space_data.edit_tree
+#    order_nodes(tree, self.x_spread)
 
 class SvAutoLayoutOp(Operator):
     """Sort layout"""
@@ -69,7 +68,7 @@ def topo_sort(nodes, links, start):
     visit(start, 0)
     return sorted(weights.items(), key= lambda x:x[1])
 
-def collect_links(ng):
+def collect_links_up(ng):
     rawlinks = [(l.from_node.name, l.to_node.name) for l in ng.links]
     links = collections.defaultdict(list)
     for from_node, to_node in rawlinks:
@@ -84,10 +83,10 @@ def generate_weights(ng):
     tot_weights = [topo_sort(nodes, links, start) for start in (t - f)]
     out = collections.defaultdict(lambda :0)
     for res in tot_weights:
-        print(res)
+        #print(res)
         for node, weight in res:
             out[node] = max(weight, out[node])
-        print(sorted(out.items(), key=lambda x:x[1]))
+        #print(sorted(out.items(), key=lambda x:x[1]))
     return out
 
 def order_nodes(ng, delta=300):
