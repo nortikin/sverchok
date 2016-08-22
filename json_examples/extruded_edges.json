@@ -7,7 +7,7 @@
   "groups": {},
   "nodes": {
     "Bmesh Viewer Draw": {
-      "bl_idname": "BmeshViewerNode",
+      "bl_idname": "SvBmeshViewerNodeMK2",
       "color": [
         1.0,
         0.30000001192092896,
@@ -321,7 +321,7 @@
       "width": 140.0
     },
     "UV Connect": {
-      "bl_idname": "LineConnectNode",
+      "bl_idname": "LineConnectNodeMK2",
       "color": [
         0.6079999804496765,
         0.6079999804496765,
@@ -337,7 +337,7 @@
       "params": {
         "cicl_check": 1,
         "dir_check": "U_dir",
-        "polygons": 1,
+        "polygons": "Pols",
         "slice_check": 0
       },
       "width": 140.0
