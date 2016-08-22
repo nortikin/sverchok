@@ -54,18 +54,51 @@ def get_branch():
     except:
         BRANCH = ""
 
+def displaying_sverchok_nodes(context):
+    return context.space_data.tree_type in {'SverchCustomTreeType', 'SverchGroupTreeType'}
+
 def node_show_branch(self, context):
-    if context.space_data.tree_type in  {'SverchCustomTreeType', 'SverchGroupTreeType'}:
-        if BRANCH:
-            layout = self.layout
-            layout.label("GIT: {}".format(BRANCH))
+    if not displaying_sverchok_nodes(context):
+        return
+    if BRANCH:
+        layout = self.layout
+        layout.label("GIT: {}".format(BRANCH))
+
+class SvCopyIDName(bpy.types.Operator):
+
+    bl_idname = "node.copy_bl_idname"
+    bl_label = "copy bl idname to clipboard"
+    # bl_options = {'REGISTER', 'UNDO'}
+
+    name = bpy.props.StringProperty(default='')
+
+    def execute(self, context):
+        context.window_manager.clipboard = self.name
+        return {'FINISHED'}
+
+
+
+def idname_draw(self, context):
+    if not displaying_sverchok_nodes(context):
+        return
+    layout = self.layout
+    node = context.active_node
+    if not node:
+        return
+    bl_idname = node.bl_idname
+    layout.operator('node.copy_bl_idname', text=bl_idname + ' (copy)').name = bl_idname
 
 def register():
     get_branch()
     if BRANCH:
         bpy.types.NODE_HT_header.append(node_show_branch)
 
+    bpy.utils.register_class(SvCopyIDName)
+    bpy.types.NODE_PT_active_node_generic.append(idname_draw)
+
 
 def unregister():
     if BRANCH:
         bpy.types.NODE_HT_header.remove(node_show_branch)
+    bpy.types.NODE_PT_active_node_generic.remove(idname_draw)
+    bpy.utils.unregister_class(SvCopyIDName)
