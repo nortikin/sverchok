@@ -46,8 +46,7 @@ class ListSortNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('StringsSocket', "data", "data")
 
     def update(self):
-        if 'data' in self.inputs and self.inputs['data'].links > 0:
-            # адаптивный сокет
+        if 'data' in self.outputs and self.inputs['data'].links:
             inputsocketname = 'data'
             outputsocketname = ['data']
             changable_sockets(self, inputsocketname, outputsocketname)
