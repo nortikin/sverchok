@@ -384,6 +384,7 @@ def import_tree(ng, fullpath='', nodes_json=None, create_texts=True):
             # print(node.name, params)
             for p in params:
                 val = params[p]
+                print('setting: ', p, val, type(val))
                 setattr(node, p, val)
 
             node.location = node_ref['location']
