@@ -1,27 +1,8 @@
 {
   "export_version": "0.055",
-  "framed_nodes": {
-    "UV Connect": "Frame"
-  },
+  "framed_nodes": {},
   "groups": {},
   "nodes": {
-    "Frame": {
-      "bl_idname": "NodeFrame",
-      "color": [
-        0.800000011920929,
-        0.0,
-        0.0
-      ],
-      "height": 254.52359008789062,
-      "hide": false,
-      "label": "Deprecated node!",
-      "location": [
-        0.0,
-        0.0
-      ],
-      "params": {},
-      "width": 199.99993896484375
-    },
     "List Join": {
       "bl_idname": "ListJoinNode",
       "color": [
@@ -125,7 +106,7 @@
       "width": 140.0
     },
     "UV Connect": {
-      "bl_idname": "LineConnectNode",
+      "bl_idname": "LineConnectNodeMK2",
       "color": [
         0.6079999804496765,
         0.6079999804496765,
@@ -141,7 +122,7 @@
       "params": {
         "cicl_check": 1,
         "dir_check": "U_dir",
-        "polygons": 1,
+        "polygons": "Pols",
         "slice_check": 1
       },
       "width": 140.0

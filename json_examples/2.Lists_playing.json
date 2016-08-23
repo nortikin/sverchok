@@ -238,7 +238,7 @@
       "width": 140.0
     },
     "List Shift": {
-      "bl_idname": "ShiftNode",
+      "bl_idname": "ShiftNodeMK2",
       "color": [
         0.6079999804496765,
         0.6079999804496765,
@@ -289,7 +289,7 @@
       "width": 140.0
     },
     "List Sort": {
-      "bl_idname": "ListSortNode",
+      "bl_idname": "ListSortNodeMK2",
       "color": [
         0.6079999804496765,
         0.6079999804496765,
@@ -359,7 +359,7 @@
       "width": 140.0
     },
     "List summa": {
-      "bl_idname": "ListSumNode",
+      "bl_idname": "ListSumNodeMK2",
       "color": [
         0.6079999804496765,
         0.6079999804496765,

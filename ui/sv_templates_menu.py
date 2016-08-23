@@ -35,6 +35,7 @@ class SV_MT_layouts_templates(bpy.types.Menu):
         fullpath = [sv_path, "json_examples"]
         templates_path = os.path.join(*fullpath)
         items = [[os.path.join(templates_path,t),t] for t in next(os.walk(templates_path))[2]]
+        items = [item for item in items if not item[0].endswith(".zip")]
         items.sort()
         return items
 
