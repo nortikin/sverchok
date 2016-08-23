@@ -103,6 +103,7 @@ class SvAutoLayoutPanel(Panel):
 
     @classmethod
     def poll(cls, context):
+        return True
         try:
             return context.space_data.tree_type == 'SverchCustomTreeType'
         except:
@@ -132,10 +133,8 @@ class SvAutoLayoutTween(Operator):
 
     @classmethod
     def poll(cls, context):
-        try:
-            return context.space_data.tree_type == 'SverchCustomTreeType'
-        except:
-            return False
+        return context.space_data.type == 'NODE_EDITOR'
+
 
     x_spread = FloatProperty(default=300, soft_min=0)
     func_name = StringProperty(default="Topo up")
