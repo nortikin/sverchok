@@ -180,7 +180,7 @@ class SvAutoLayoutTween(Operator):
             return {'FINISHED'}
 
         if not (event.type == 'TIMER'):
-            print("not time resign")
+            #print("not time resign")
             return {'PASS_THROUGH'}
 
 
@@ -201,7 +201,7 @@ class SvAutoLayoutTween(Operator):
         global start_time
         wm = context.window_manager
         self._timer = wm.event_timer_add(self.speed, context.window)
-        print(self._timer)
+        #print(self._timer)
         start_time = time.perf_counter()
         wm.modal_handler_add(self)
 
