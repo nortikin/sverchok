@@ -415,7 +415,6 @@ def import_tree(ng, fullpath='', nodes_json=None, create_texts=True):
             import_tree(group_ng, '', groups_to_import[name])
 
         name_remap = {}
-        texts = bpy.data.texts
 
         for n in sorted(nodes_to_import):
             node_ref = nodes_to_import[n]
