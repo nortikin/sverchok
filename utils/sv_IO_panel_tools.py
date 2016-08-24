@@ -441,6 +441,13 @@ def print_update_lists(update_lists):
         print(ulist)
 
 
+def place_frames(ng, nodes_json, name_remap):
+    finalize = lambda name: name_remap.get(name, name)
+    framed_nodes = nodes_json['framed_nodes']
+    for node_name, parent in framed_nodes.items():
+        ng.nodes[finalize(node_name)].parent = ng.nodes[finalize(parent)]
+
+
 def import_tree(ng, fullpath='', nodes_json=None, create_texts=True):
 
     nodes = ng.nodes
@@ -452,31 +459,10 @@ def import_tree(ng, fullpath='', nodes_json=None, create_texts=True):
         return (ng.nodes[f_node].outputs[from_socket],
                 ng.nodes[t_node].inputs[to_socket])
 
-    def generate_layout(fullpath, nodes_json):
-        '''
-        first create all nodes.
-        '''
-
-        print('#' * 12, nodes_json['export_version'])
-
-        update_lists = nodes_json['update_lists']
-        nodes_to_import = nodes_json['nodes']
-        groups_to_import = nodes_json.get('groups', {})
-        
-        group_name_remap = add_groups(groups_to_import)  # this return is not used yet
-        name_remap = add_nodes(nodes_to_import, nodes)
-
+    def make_links(update_lists, name_remap):
         print_update_lists(update_lists)
-
-        '''
-        now connect them
-        '''
-
-        # prevent unnecessary updates
-        ng.freeze(hard=True)
-
+    
         failed_connections = []
-
         for link in update_lists:
             try:
                 ng.links.new(*resolve_socket(*link, name_dict=name_remap))
@@ -491,11 +477,32 @@ def import_tree(ng, fullpath='', nodes_json=None, create_texts=True):
         else:
             print('no failed connections! awesome.')
 
+
+    def generate_layout(fullpath, nodes_json):
+        '''cummulative function ''' 
+                
+        print('#' * 12, nodes_json['export_version'])
+
+        ''' create all nodes and groups '''
+
+        update_lists = nodes_json['update_lists']
+        nodes_to_import = nodes_json['nodes']
+        groups_to_import = nodes_json.get('groups', {})
+        
+        add_groups(groups_to_import)  # this return is not used yet
+        name_remap = add_nodes(nodes_to_import, nodes)
+
+        ''' now connect them '''
+
+        # prevent unnecessary updates
+        ng.freeze(hard=True)
+        make_links(update_lists, name_remap)
+
         ''' set frame parents '''
-        finalize = lambda name: name_remap.get(name, name)
-        framed_nodes = nodes_json['framed_nodes']
-        for node_name, parent in framed_nodes.items():
-            ng.nodes[finalize(node_name)].parent = ng.nodes[finalize(parent)]
+
+        place_frames(ng, nodes_json, name_remap)
+
+        ''' clean up '''
 
         old_nodes.scan_for_old(ng)
         ng.unfreeze(hard=True)
