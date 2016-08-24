@@ -61,6 +61,8 @@ def add_weights(links, nodes, start_nodes):
 new_locs = {}
 old_locs = {}
 
+def key_value(node):
+    return -old_locs[node].y
 
 def order_nodes_1(ng, delta=300):
     global new_locs
@@ -71,7 +73,8 @@ def order_nodes_1(ng, delta=300):
     max_x = max(n.location.x for n in ng.nodes)
     max_y = max(n.location.y for n in ng.nodes)
     y_count = [0 for n in range(len(ng.nodes))]
-    for node, weight in weights.items():
+    for node in sorted(weights.keys(), key=key_value):
+        weight = weights[node]
         x = max_x - weight * delta
         y = max_y - y_count[weight] * delta
         y_count[weight] += 1
@@ -86,11 +89,13 @@ def order_nodes_2(ng, delta=300):
     min_x = min(n.location.x for n in ng.nodes)
     max_y = max(n.location.y for n in ng.nodes)
     y_count = [0 for n in range(len(ng.nodes))]
-    for node, weight in weights.items():
+    for node in sorted(weights.keys(), key=key_value):
+        weight = weights[node]
         x = min_x + weight * delta
         y = max_y - y_count[weight] * delta
         y_count[weight] += 1
         new_locs[node] = Vector((x, y))
+
 
 def order_nodes_3(ng, delta=300):
     global new_locs
@@ -104,31 +109,7 @@ def order_nodes_3(ng, delta=300):
     max_val = max(weights_down.values())
     min_x = min(n.location.x for n in ng.nodes)
     max_y = max(n.location.y for n in ng.nodes)
-    for node in nodes:
-        w_d = weights_down[node]
-        w_u = max_val - weights_up[node]
-        weight = int(round((w_d + w_u) / 2, 0))
-        weights[node] = weight
-    y_count = [0 for n in range(max_val + 1)]
-    for node, weight in weights.items():
-        x = min_x + weight * delta
-        y = max_y - y_count[weight] * delta
-        y_count[weight] += 1
-        new_locs[node] = Vector((x, y))
 
-def order_nodes_3(ng, delta=300):
-    global new_locs
-    global old_locs
-    old_locs = {n.name:n.location for n in ng.nodes}
-    new_locs = {}
-    weights_down = add_weights(*collect_links_down(ng))
-    weights_up = add_weights(*collect_links_up(ng))
-    _, nodes, __ = collect_links_up(ng)
-    weights = {}
-    max_val = max(weights_down.values())
-    min_x = min(n.location.x for n in ng.nodes)
-    max_y = max(n.location.y for n in ng.nodes)
-    
     for node in nodes:
         w_d = weights_down[node]
         w_u = max_val - weights_up[node]
@@ -144,6 +125,40 @@ def order_nodes_3(ng, delta=300):
         y_count[weight] += 1
         new_locs[node] = Vector((x, y))
 
+
+def order_nodes_4(ng, delta=300):
+    global new_locs
+    global old_locs
+    old_locs = {n.name:n.location for n in ng.nodes}
+    new_locs = {}
+    def weight_func(n0, n1):
+        return (n0.location - n1.location).magnitude
+    weights_down = add_weights(*collect_links_down(ng, weight_func=weight_func))
+    weights_up = add_weights(*collect_links_up(ng, weight_func=weight_func))
+
+    links, nodes, start = collect_links_up(ng)
+    max_link_length = max(add_weights(links, nodes, start).values())
+    weights = {}
+    max_val = max(weights_down.values())
+    min_x = min(n.location.x for n in ng.nodes)
+    max_y = max(n.location.y for n in ng.nodes)
+
+    for node in nodes:
+        w_d = weights_down[node]
+        w_u = max_val - weights_up[node]
+        w_avg = (w_d + w_u) / 2.0
+        w_avg = (w_avg/max_val)*max_link_length
+        weight = int(round(w_avg, 0))
+        weights[node] = weight
+    y_count = [0 for n in range(max_link_length + 1)]
+    def key_value(node):
+        return -old_locs[node].y
+    for node in sorted(weights.keys(), key=key_value):
+        weight = weights[node]
+        x = min_x + weight * delta
+        y = max_y - y_count[weight] * delta
+        y_count[weight] += 1
+        new_locs[node] = Vector((x, y))
 
 
 
@@ -197,6 +212,7 @@ class SvAutoLayoutTween(Operator):
                    "Topo up":   order_nodes_1,
                    "Topo down": order_nodes_2,
                    "Topo avg":  order_nodes_3,
+                   "Topo dist": order_nodes_4,
                    }
 
 
@@ -292,6 +308,7 @@ class SvAutoLayoutOp(Operator):
                    "Topo up":   order_nodes_1,
                    "Topo down": order_nodes_2,
                    "Topo avg":  order_nodes_3,
+                   "Topo dist": order_nodes_4,
                    }
 
     def execute(self, context):
@@ -306,6 +323,23 @@ class SvAutoLayoutOp(Operator):
 
     def invoke(self, context, event):
         return context.window_manager.invoke_props_dialog(self)
+
+
+import numpy as np
+
+def node_to_index(ng):
+    return {node.name:i for i, node in enumerate(ng.nodes)}
+
+def node_as_matrix(ng):
+    name_lookup = node_to_index(ng)
+    count = len(ng.nodes)
+    adj_mat = np.zeros((count, count))
+    for link in ng.links:
+        i = name_lookup[link.from_node.name]
+        j = name_lookup[link.to_node.name]
+        adj_mat[i,j] += 1
+        #adj_mat[j,i] += 1
+    return adj_mat
 
 
 
