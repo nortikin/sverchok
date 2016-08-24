@@ -390,7 +390,7 @@ def apply_post_processing(node, node_ref):
         node.load()
 
 
-def add_node_to_tree(n, nodes_to_import, name_remap):
+def add_node_to_tree(nodes, n, nodes_to_import, name_remap):
     node_ref = nodes_to_import[n]
     bl_idname = node_ref['bl_idname']
 
@@ -442,7 +442,7 @@ def import_tree(ng, fullpath='', nodes_json=None, create_texts=True):
 
         name_remap = {}
         for n in sorted(nodes_to_import):
-            add_node_to_tree(n, nodes_to_import, name_remap):
+            add_node_to_tree(nodes, n, nodes_to_import, name_remap):
 
         update_lists = nodes_json['update_lists']
         print('update lists:')
