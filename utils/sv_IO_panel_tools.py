@@ -401,7 +401,7 @@ def add_node_to_tree(nodes, n, nodes_to_import, name_remap):
     except Exception as err:
         print(traceback.format_exc())
         print(bl_idname, 'not currently registered, skipping')
-        continue
+        return
 
     if create_texts:
         add_texts(node, node_ref)
