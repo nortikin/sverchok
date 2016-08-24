@@ -375,6 +375,7 @@ def add_texts(node, node_ref):
     elif node.bl_idname == 'SvTextInNode':
         perform_svtextin_node_object(node, node_ref)
 
+
 def apply_post_processing(node, node_ref):
     '''
     Nodes that require post processing to work properly
@@ -389,6 +390,28 @@ def apply_post_processing(node, node_ref):
         node.load()
 
 
+def add_node_to_tree(n, nodes_to_import, name_remap):
+    node_ref = nodes_to_import[n]
+    bl_idname = node_ref['bl_idname']
+
+    try:
+        if old_nodes.is_old(bl_idname):
+            old_nodes.register_old(bl_idname)
+        node = nodes.new(bl_idname)
+    except Exception as err:
+        print(traceback.format_exc())
+        print(bl_idname, 'not currently registered, skipping')
+        continue
+
+    if create_texts:
+        add_texts(node, node_ref)
+
+    gather_remapped_names(node, n, name_remap)
+    apply_core_props(node, node_ref)
+    apply_superficial_props(node, node_ref)
+    apply_post_processing(node, node_ref)
+
+
 def import_tree(ng, fullpath='', nodes_json=None, create_texts=True):
 
     nodes = ng.nodes
@@ -401,9 +424,12 @@ def import_tree(ng, fullpath='', nodes_json=None, create_texts=True):
                 ng.nodes[t_node].inputs[to_socket])
 
     def generate_layout(fullpath, nodes_json):
+
+        ''' 
+        first create all nodes. 
+        '''
         print('#' * 12, nodes_json['export_version'])
 
-        ''' first create all nodes. '''
         nodes_to_import = nodes_json['nodes']
         groups_to_import = nodes_json.get('groups', {})
 
@@ -415,27 +441,8 @@ def import_tree(ng, fullpath='', nodes_json=None, create_texts=True):
             import_tree(group_ng, '', groups_to_import[name])
 
         name_remap = {}
-
         for n in sorted(nodes_to_import):
-            node_ref = nodes_to_import[n]
-            bl_idname = node_ref['bl_idname']
-
-            try:
-                if old_nodes.is_old(bl_idname):
-                    old_nodes.register_old(bl_idname)
-                node = nodes.new(bl_idname)
-            except Exception as err:
-                print(traceback.format_exc())
-                print(bl_idname, 'not currently registered, skipping')
-                continue
-
-            if create_texts:
-                add_texts(node, node_ref)
-
-            gather_remapped_names(node, n, name_remap)
-            apply_core_props(node, node_ref)
-            apply_superficial_props(node, node_ref)
-            apply_post_processing(node, node_ref)
+            add_node_to_tree(n, nodes_to_import, name_remap):
 
         update_lists = nodes_json['update_lists']
         print('update lists:')
