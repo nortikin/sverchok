@@ -412,14 +412,20 @@ def add_node_to_tree(nodes, n, nodes_to_import, name_remap):
     apply_post_processing(node, node_ref)
 
 
-def add_nodes_and_track_name_remaps(nodes_to_import, nodes)
+def add_nodes(nodes_to_import, nodes):
+    '''
+    return the dictionary that tracks which nodes got renamed due to conflicts
+    '''
     name_remap = {}
     for n in sorted(nodes_to_import):
         add_node_to_tree(nodes, n, nodes_to_import, name_remap)
     return name_remap
 
 
-def add_groups_and_track_name_remaps(groups_to_import):
+def add_groups(groups_to_import):
+    '''
+    return the dictionary that tracks which groups got renamed due to conflicts
+    '''
     group_name_remap = {}
     for name in groups_to_import:
         group_ng = bpy.data.node_groups.new(name, 'SverchGroupTreeType')
@@ -447,26 +453,26 @@ def import_tree(ng, fullpath='', nodes_json=None, create_texts=True):
                 ng.nodes[t_node].inputs[to_socket])
 
     def generate_layout(fullpath, nodes_json):
-
-        ''' 
-        first create all nodes. 
         '''
+        first create all nodes.
+        '''
+
         print('#' * 12, nodes_json['export_version'])
 
         update_lists = nodes_json['update_lists']
         nodes_to_import = nodes_json['nodes']
         groups_to_import = nodes_json.get('groups', {})
         
-        group_name_remap = add_groups_and_track_name_remaps(groups_to_import)
-        name_remap = add_nodes_and_track_name_remaps(nodes_to_import, nodes)
+        group_name_remap = add_groups(groups_to_import)
+        name_remap = add_nodes(nodes_to_import, nodes)
 
         print_update_lists(update_lists)
 
-        ''' now connect them '''
+        '''
+        now connect them
+        '''
 
-        # naive
-        # freeze updates while connecting the tree, otherwise
-        # each connection will cause an update event
+        # prevent unnecessary updates
         ng.freeze(hard=True)
 
         failed_connections = []
