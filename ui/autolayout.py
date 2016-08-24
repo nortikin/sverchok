@@ -92,6 +92,60 @@ def order_nodes_2(ng, delta=300):
         y_count[weight] += 1
         new_locs[node] = Vector((x, y))
 
+def order_nodes_3(ng, delta=300):
+    global new_locs
+    global old_locs
+    old_locs = {n.name:n.location for n in ng.nodes}
+    new_locs = {}
+    weights_down = add_weights(*collect_links_down(ng))
+    weights_up = add_weights(*collect_links_up(ng))
+    _, nodes, __ = collect_links_up(ng)
+    weights = {}
+    max_val = max(weights_down.values())
+    min_x = min(n.location.x for n in ng.nodes)
+    max_y = max(n.location.y for n in ng.nodes)
+    for node in nodes:
+        w_d = weights_down[node]
+        w_u = max_val - weights_up[node]
+        weight = int(round((w_d + w_u) / 2, 0))
+        weights[node] = weight
+    y_count = [0 for n in range(max_val + 1)]
+    for node, weight in weights.items():
+        x = min_x + weight * delta
+        y = max_y - y_count[weight] * delta
+        y_count[weight] += 1
+        new_locs[node] = Vector((x, y))
+
+def order_nodes_3(ng, delta=300):
+    global new_locs
+    global old_locs
+    old_locs = {n.name:n.location for n in ng.nodes}
+    new_locs = {}
+    weights_down = add_weights(*collect_links_down(ng))
+    weights_up = add_weights(*collect_links_up(ng))
+    _, nodes, __ = collect_links_up(ng)
+    weights = {}
+    max_val = max(weights_down.values())
+    min_x = min(n.location.x for n in ng.nodes)
+    max_y = max(n.location.y for n in ng.nodes)
+    
+    for node in nodes:
+        w_d = weights_down[node]
+        w_u = max_val - weights_up[node]
+        weight = int(round((w_d + w_u) / 2, 0))
+        weights[node] = weight
+    y_count = [0 for n in range(max_val + 1)]
+    def key_value(node):
+        return -old_locs[node].y
+    for node in sorted(weights.keys(), key=key_value):
+        weight = weights[node]
+        x = min_x + weight * delta
+        y = max_y - y_count[weight] * delta
+        y_count[weight] += 1
+        new_locs[node] = Vector((x, y))
+
+
+
 
 class SvAutoLayoutPanel(Panel):
     bl_idname = "SvAutoLayoutPanel"
@@ -142,6 +196,7 @@ class SvAutoLayoutTween(Operator):
     order_funcs = {
                    "Topo up":   order_nodes_1,
                    "Topo down": order_nodes_2,
+                   "Topo avg":  order_nodes_3,
                    }
 
 
@@ -233,9 +288,11 @@ class SvAutoLayoutOp(Operator):
     x_spread = FloatProperty(default=300, soft_min=0, update=update_value)
     func_name = StringProperty(default="Topo up")
 
-    order_funcs = {"Topo up": order_nodes_1,
+    order_funcs = {
+                   "Topo up":   order_nodes_1,
                    "Topo down": order_nodes_2,
-                }
+                   "Topo avg":  order_nodes_3,
+                   }
 
     def execute(self, context):
         func = self.order_funcs.get(self.func_name)
