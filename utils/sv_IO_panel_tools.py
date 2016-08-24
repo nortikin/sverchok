@@ -342,6 +342,7 @@ def apply_superficial_props(node, node_ref):
     for p in props:
         setattr(node, p, node_ref[p])
 
+
 def gather_remapped_names(node, n, name_remap):
     '''
     When n is assigned to node.name, blender will decide whether or
@@ -354,12 +355,37 @@ def gather_remapped_names(node, n, name_remap):
     if not (node.name == n):
         name_remap[n] = node.name
 
+
 def apply_core_props(node, node_ref):
     params = node_ref['params']
     # print(node.name, params)
     for p in params:
         val = params[p]
         setattr(node, p, val)
+
+
+def add_texts(node, node_ref):
+    if node.bl_idname in SCRIPTED_NODES:
+        perform_scripted_node_inject(node, node_ref)
+
+    elif node.bl_idname == 'SvProfileNode':
+        perform_profile_node_inject(node, node_ref)
+
+    elif node.bl_idname == 'SvTextInNode':
+        perform_svtextin_node_object(node, node_ref)
+
+def apply_post_processing(node, node_ref):
+    '''
+    Nodes that require post processing to work properly
+    '''
+    if node.bl_idname in {'SvGroupInputsNode', 'SvGroupOutputsNode'}:
+        node.load()
+    elif node.bl_idname in {'SvGroupNode'}:
+        node.load()
+        group_name = node.group_name
+        node.group_name = group_name_remap.get(group_name, group_name)
+    elif node.bl_idname == 'SvTextInNode':
+        node.load()
 
 
 def import_tree(ng, fullpath='', nodes_json=None, create_texts=True):
@@ -404,30 +430,12 @@ def import_tree(ng, fullpath='', nodes_json=None, create_texts=True):
                 continue
 
             if create_texts:
-                if node.bl_idname in SCRIPTED_NODES:
-                    perform_scripted_node_inject(node, node_ref)
-
-                elif node.bl_idname == 'SvProfileNode':
-                    perform_profile_node_inject(node, node_ref)
-
-                elif node.bl_idname == 'SvTextInNode':
-                    perform_svtextin_node_object(node, node_ref)
+                add_texts(node, node_ref)
 
             gather_remapped_names(node, n, name_remap)
             apply_core_props(node, node_ref)
             apply_superficial_props(node, node_ref)
-            
-            '''
-            Nodes that require post processing to work properly
-            '''
-            if node.bl_idname in {'SvGroupInputsNode', 'SvGroupOutputsNode'}:
-                node.load()
-            elif node.bl_idname in {'SvGroupNode'}:
-                node.load()
-                group_name = node.group_name
-                node.group_name = group_name_remap.get(group_name, group_name)
-            elif node.bl_idname == 'SvTextInNode':
-                node.load()
+            apply_post_processing(node, node_ref)
 
         update_lists = nodes_json['update_lists']
         print('update lists:')
