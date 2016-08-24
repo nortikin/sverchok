@@ -412,6 +412,29 @@ def add_node_to_tree(nodes, n, nodes_to_import, name_remap):
     apply_post_processing(node, node_ref)
 
 
+def add_nodes_and_track_name_remaps(nodes_to_import, nodes)
+    name_remap = {}
+    for n in sorted(nodes_to_import):
+        add_node_to_tree(nodes, n, nodes_to_import, name_remap)
+    return name_remap
+
+
+def add_groups_and_track_name_remaps(groups_to_import):
+    group_name_remap = {}
+    for name in groups_to_import:
+        group_ng = bpy.data.node_groups.new(name, 'SverchGroupTreeType')
+        if group_ng.name != name:
+            group_name_remap[name] = ng.name
+        import_tree(group_ng, '', groups_to_import[name])
+    return group_name_remap
+
+
+def print_update_lists(update_lists):
+    print('update lists:')
+    for ulist in update_lists:
+        print(ulist)
+
+
 def import_tree(ng, fullpath='', nodes_json=None, create_texts=True):
 
     nodes = ng.nodes
@@ -430,25 +453,15 @@ def import_tree(ng, fullpath='', nodes_json=None, create_texts=True):
         '''
         print('#' * 12, nodes_json['export_version'])
 
+        update_lists = nodes_json['update_lists']
         nodes_to_import = nodes_json['nodes']
         groups_to_import = nodes_json.get('groups', {})
+        
+        group_name_remap = add_groups_and_track_name_remaps(groups_to_import):
+        name_remap = add_nodes_and_track_name_remaps(nodes_to_import, nodes)
 
-        group_name_remap = {}
-        for name in groups_to_import:
-            group_ng = bpy.data.node_groups.new(name, 'SverchGroupTreeType')
-            if group_ng.name != name:
-                group_name_remap[name] = ng.name
-            import_tree(group_ng, '', groups_to_import[name])
-
-        name_remap = {}
-        for n in sorted(nodes_to_import):
-            add_node_to_tree(nodes, n, nodes_to_import, name_remap):
-
-        update_lists = nodes_json['update_lists']
-        print('update lists:')
-        for ulist in update_lists:
-            print(ulist)
-
+        print_update_lists(update_lists)
+        
         ''' now connect them '''
 
         # naive
