@@ -334,6 +334,14 @@ def perform_svtextin_node_object(node, node_ref):
         texts[current_text].from_string(node_ref['text_lines'])
 
 
+def apply_superficial_props(node, node_ref):
+    '''
+    copies the stored values from the json onto the new node's corresponding values.
+    '''
+    props = ['location', 'height', 'width', 'label', 'hide', 'color']
+    for p in props:
+        setattr(node, p, node_ref[p])
+
 
 def import_tree(ng, fullpath='', nodes_json=None, create_texts=True):
 
@@ -404,13 +412,9 @@ def import_tree(ng, fullpath='', nodes_json=None, create_texts=True):
                 val = params[p]
                 setattr(node, p, val)
 
-            node.location = node_ref['location']
-            node.height = node_ref['height']
-            node.width = node_ref['width']
-            node.label = node_ref['label']
-            node.hide = node_ref['hide']
-            node.color = node_ref['color']
-
+            # location, color, width ...
+            apply_superficial_props(node, node_ref)
+            
             '''
             Nodes that require post processing to work properly
             '''
