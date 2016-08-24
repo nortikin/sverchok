@@ -111,8 +111,7 @@ class SvCircleNode(bpy.types.Node, SverchCustomTreeNode):
         Angle = self.inputs['Degrees'].sv_get()[0]
         if self.inputs['Degrees'].is_linked:
             Angle = list(map(lambda x: min(360, max(0, x)), Angle))
-        #else:
-            #Angle = [self.degr_]
+            
 
         parameters = match_long_repeat([Angle, Vertices, Radius])
 
