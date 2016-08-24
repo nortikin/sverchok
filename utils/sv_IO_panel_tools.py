@@ -35,9 +35,10 @@ from sverchok import old_nodes
 
 SCRIPTED_NODES = {'SvScriptNode', 'SvScriptNodeMK2'}
 
-_EXPORTER_REVISION_ = '0.060'
+_EXPORTER_REVISION_ = '0.061'
 
 '''
+0.061 codeshuffle 76f04f9
 0.060 understands sockets with props <o/
 
 0.056 fixing SN1 script importing upon json load, will not duplicate
