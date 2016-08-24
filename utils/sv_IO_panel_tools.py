@@ -267,6 +267,74 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
     return layout_dict
 
 
+def perform_scripted_node_inject(node, node_ref):
+    '''
+    Scripted Node will no longer create alternative versions of a file.
+    If a scripted node wants to make a file called 'inverse.py' and the
+    current .blend already contains such a file, then for simplicity the
+    importer will not try to create 'inverse.001.py' and reference that.
+    It will instead do nothing and assume the existing python file is
+    functionally the same.
+
+    If you have files that work differently but have the same name, stop.
+
+    '''
+    texts = bpy.data.texts
+    params = node_ref.get('params')
+    if params:
+
+        script_name = params.get('script_name')
+        script_content = params.get('script_str')
+
+        if script_name and not (script_name in texts):
+            new_text = texts.new(script_name)
+            new_text.from_string(script_content)
+
+        node.script_name = script_name
+        node.script_str = script_content
+
+    if node.bl_idname == 'SvScriptNode':
+        node.user_name = "templates"               # best would be in the node.
+        node.files_popup = "sv_lang_template.sn"   # import to reset easy fix
+        node.load()
+    else:
+        node.files_popup = node.avail_templates(None)[0][0]
+        node.load()
+
+
+def perform_profile_node_inject(node, node_ref):
+    texts = bpy.data.texts
+    new_text = texts.new(node_ref['params']['filename'])
+    new_text.from_string(node_ref['path_file'])
+    node.update()
+
+
+def perform_svtextin_node_object(node, node_ref):
+    '''
+    as it's a beta service, old IO json may not be compatible - in this interest
+    of neat code we assume it finds everything.
+    '''
+    texts = bpy.data.texts    
+    params = node_ref.get('params')
+    current_text = params['current_text']
+    node.textmode = params['textmode']
+
+    if not current_text:
+        print(node.name, "doesn't store a current_text in params")
+
+    elif not (current_text in texts):
+        new_text = texts.new(current_text)
+        if node.textmode == 'JSON':
+            json_str = json.dumps(node_ref['text_lines']['stored_as_json'])
+            new_text.from_string(json_str)
+        else:
+            new_text.from_string(node_ref['text_lines'])
+
+    else:
+        texts[current_text].from_string(node_ref['text_lines'])
+
+
+
 def import_tree(ng, fullpath='', nodes_json=None, create_texts=True):
 
     nodes = ng.nodes
@@ -310,64 +378,13 @@ def import_tree(ng, fullpath='', nodes_json=None, create_texts=True):
 
             if create_texts:
                 if node.bl_idname in SCRIPTED_NODES:
-
-                    '''
-                    Scripted Node will no longer create alternative versions of a file.
-                    If a scripted node wants to make a file called 'inverse.py' and the
-                    current .blend already contains such a file, then for simplicity the
-                    importer will not try to create 'inverse.001.py' and reference that.
-                    It will instead do nothing and assume the existing python file is
-                    functionally the same.
-
-                    If you have files that work differently but have the same name, stop.
-
-                    '''
-                    params = node_ref.get('params')
-                    if params:
-
-                        script_name = params.get('script_name')
-                        script_content = params.get('script_str')
-
-                        if script_name and not (script_name in texts):
-                            new_text = texts.new(script_name)
-                            new_text.from_string(script_content)
-
-                        node.script_name = script_name
-                        node.script_str = script_content
-
-                    if node.bl_idname == 'SvScriptNode':
-                        node.user_name = "templates"               # best would be in the node.
-                        node.files_popup = "sv_lang_template.sn"   # import to reset easy fix
-                        node.load()
-                    else:
-                        node.files_popup = node.avail_templates(None)[0][0]
-                        node.load()
+                    perform_scripted_node_inject(node, node_ref)
 
                 elif node.bl_idname == 'SvProfileNode':
-                    new_text = texts.new(node_ref['params']['filename'])
-                    new_text.from_string(node_ref['path_file'])
-                    node.update()
+                    perform_profile_node_inject(node, node_ref)
 
-                # as it's a beta service, old IO json may not be compatible - in this interest
-                # of neat code we assume it finds everything.
                 elif node.bl_idname == 'SvTextInNode':
-                    params = node_ref.get('params')
-                    current_text = params['current_text']
-                    node.textmode = params['textmode']
-
-                    if not current_text:
-                        print(node.name, "doesn't store a current_text in params")
-
-                    elif not (current_text in texts):
-                        new_text = texts.new(current_text)
-                        if node.textmode == 'JSON':
-                            json_str = json.dumps(node_ref['text_lines']['stored_as_json'])
-                            new_text.from_string(json_str)
-                        else:
-                            new_text.from_string(node_ref['text_lines'])
-
-                    else:
-                        texts[current_text].from_string(node_ref['text_lines'])
+                    perform_svtextin_node_object(node, node_ref)
 
             '''
             When n is assigned to node.name, blender will decide whether or
@@ -376,6 +393,7 @@ def import_tree(ng, fullpath='', nodes_json=None, create_texts=True):
             following line we check if the assignment was accepted, and store a
             remapped name if it wasn't.
             '''
+
             node.name = n
             if not (node.name == n):
                 name_remap[n] = node.name
@@ -403,9 +421,6 @@ def import_tree(ng, fullpath='', nodes_json=None, create_texts=True):
                 group_name = node.group_name
                 node.group_name = group_name_remap.get(group_name, group_name)
             elif node.bl_idname == 'SvTextInNode':
-                # node.reload()
-                # node.reset()
-                # node.reload()
                 node.load()
 
         update_lists = nodes_json['update_lists']
@@ -445,11 +460,6 @@ def import_tree(ng, fullpath='', nodes_json=None, create_texts=True):
         old_nodes.scan_for_old(ng)
         ng.unfreeze(hard=True)
         ng.update()
-        # bpy.ops.node.sverchok_update_current(node_group=ng.name)
-
-        # bpy.ops.node.select_all(action='DESELECT')
-        # ng.update()
-        # bpy.ops.node.view_all()
 
     ''' ---- read files (.json or .zip) or straight json data----- '''
 
