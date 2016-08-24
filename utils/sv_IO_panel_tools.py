@@ -457,11 +457,11 @@ def import_tree(ng, fullpath='', nodes_json=None, create_texts=True):
         nodes_to_import = nodes_json['nodes']
         groups_to_import = nodes_json.get('groups', {})
         
-        group_name_remap = add_groups_and_track_name_remaps(groups_to_import):
+        group_name_remap = add_groups_and_track_name_remaps(groups_to_import)
         name_remap = add_nodes_and_track_name_remaps(nodes_to_import, nodes)
 
         print_update_lists(update_lists)
-        
+
         ''' now connect them '''
 
         # naive
