@@ -342,6 +342,25 @@ def apply_superficial_props(node, node_ref):
     for p in props:
         setattr(node, p, node_ref[p])
 
+def gather_remapped_names(node, n, name_remap):
+    '''
+    When n is assigned to node.name, blender will decide whether or
+    not it can do that, if there exists already a node with that name,
+    then the assignment to node.name is not n, but n.00x. Hence on the
+    following line we check if the assignment was accepted, and store a
+    remapped name if it wasn't.
+    '''
+    node.name = n
+    if not (node.name == n):
+        name_remap[n] = node.name
+
+def apply_core_props(node, node_ref):
+    params = node_ref['params']
+    # print(node.name, params)
+    for p in params:
+        val = params[p]
+        setattr(node, p, val)
+
 
 def import_tree(ng, fullpath='', nodes_json=None, create_texts=True):
 
@@ -394,25 +413,8 @@ def import_tree(ng, fullpath='', nodes_json=None, create_texts=True):
                 elif node.bl_idname == 'SvTextInNode':
                     perform_svtextin_node_object(node, node_ref)
 
-            '''
-            When n is assigned to node.name, blender will decide whether or
-            not it can do that, if there exists already a node with that name,
-            then the assignment to node.name is not n, but n.00x. Hence on the
-            following line we check if the assignment was accepted, and store a
-            remapped name if it wasn't.
-            '''
-
-            node.name = n
-            if not (node.name == n):
-                name_remap[n] = node.name
-
-            params = node_ref['params']
-            # print(node.name, params)
-            for p in params:
-                val = params[p]
-                setattr(node, p, val)
-
-            # location, color, width ...
+            gather_remapped_names(node, n, name_remap)
+            apply_core_props(node, node_ref)
             apply_superficial_props(node, node_ref)
             
             '''
