@@ -323,7 +323,7 @@ def perform_svtextin_node_object(node, node_ref):
     if not current_text:
         print(node.name, "doesn't store a current_text in params")
 
-    elif not (current_text in texts):
+    elif not current_text in texts:
         new_text = texts.new(current_text)
         if node.textmode == 'JSON':
             json_str = json.dumps(node_ref['text_lines']['stored_as_json'])
@@ -332,7 +332,11 @@ def perform_svtextin_node_object(node, node_ref):
             new_text.from_string(node_ref['text_lines'])
 
     else:
-        texts[current_text].from_string(node_ref['text_lines'])
+        # reaches here if  (current_text) and (current_text in texts)
+        # can probably skip this..
+        # texts[current_text].from_string(node_ref['text_lines'])
+        print(node.name, 'seems to reuse a text block loaded by another node - skipping')
+
 
 
 def apply_superficial_props(node, node_ref):
