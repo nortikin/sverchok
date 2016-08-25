@@ -35,9 +35,10 @@ from sverchok import old_nodes
 
 SCRIPTED_NODES = {'SvScriptNode', 'SvScriptNodeMK2'}
 
-_EXPORTER_REVISION_ = '0.060'
+_EXPORTER_REVISION_ = '0.061'
 
 '''
+0.061 codeshuffle 76f04f9
 0.060 understands sockets with props <o/
 
 0.056 fixing SN1 script importing upon json load, will not duplicate
@@ -267,6 +268,186 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
     return layout_dict
 
 
+def perform_scripted_node_inject(node, node_ref):
+    '''
+    Scripted Node will no longer create alternative versions of a file.
+    If a scripted node wants to make a file called 'inverse.py' and the
+    current .blend already contains such a file, then for simplicity the
+    importer will not try to create 'inverse.001.py' and reference that.
+    It will instead do nothing and assume the existing python file is
+    functionally the same.
+
+    If you have files that work differently but have the same name, stop.
+
+    '''
+    texts = bpy.data.texts
+    params = node_ref.get('params')
+    if params:
+
+        script_name = params.get('script_name')
+        script_content = params.get('script_str')
+
+        if script_name and not (script_name in texts):
+            new_text = texts.new(script_name)
+            new_text.from_string(script_content)
+
+        node.script_name = script_name
+        node.script_str = script_content
+
+    if node.bl_idname == 'SvScriptNode':
+        node.user_name = "templates"               # best would be in the node.
+        node.files_popup = "sv_lang_template.sn"   # import to reset easy fix
+        node.load()
+    else:
+        node.files_popup = node.avail_templates(None)[0][0]
+        node.load()
+
+
+def perform_profile_node_inject(node, node_ref):
+    texts = bpy.data.texts
+    new_text = texts.new(node_ref['params']['filename'])
+    new_text.from_string(node_ref['path_file'])
+    node.update()
+
+
+def perform_svtextin_node_object(node, node_ref):
+    '''
+    as it's a beta service, old IO json may not be compatible - in this interest
+    of neat code we assume it finds everything.
+    '''
+    texts = bpy.data.texts    
+    params = node_ref.get('params')
+    current_text = params['current_text']
+    node.textmode = params['textmode']
+
+    if not current_text:
+        print(node.name, "doesn't store a current_text in params")
+
+    elif not (current_text in texts):
+        new_text = texts.new(current_text)
+        if node.textmode == 'JSON':
+            json_str = json.dumps(node_ref['text_lines']['stored_as_json'])
+            new_text.from_string(json_str)
+        else:
+            new_text.from_string(node_ref['text_lines'])
+
+    else:
+        texts[current_text].from_string(node_ref['text_lines'])
+
+
+def apply_superficial_props(node, node_ref):
+    '''
+    copies the stored values from the json onto the new node's corresponding values.
+    '''
+    props = ['location', 'height', 'width', 'label', 'hide', 'color']
+    for p in props:
+        setattr(node, p, node_ref[p])
+
+
+def gather_remapped_names(node, n, name_remap):
+    '''
+    When n is assigned to node.name, blender will decide whether or
+    not it can do that, if there exists already a node with that name,
+    then the assignment to node.name is not n, but n.00x. Hence on the
+    following line we check if the assignment was accepted, and store a
+    remapped name if it wasn't.
+    '''
+    node.name = n
+    if not (node.name == n):
+        name_remap[n] = node.name
+
+
+def apply_core_props(node, node_ref):
+    params = node_ref['params']
+    # print(node.name, params)
+    for p in params:
+        val = params[p]
+        setattr(node, p, val)
+
+
+def add_texts(node, node_ref):
+    if node.bl_idname in SCRIPTED_NODES:
+        perform_scripted_node_inject(node, node_ref)
+
+    elif node.bl_idname == 'SvProfileNode':
+        perform_profile_node_inject(node, node_ref)
+
+    elif node.bl_idname == 'SvTextInNode':
+        perform_svtextin_node_object(node, node_ref)
+
+
+def apply_post_processing(node, node_ref):
+    '''
+    Nodes that require post processing to work properly
+    '''
+    if node.bl_idname in {'SvGroupInputsNode', 'SvGroupOutputsNode'}:
+        node.load()
+    elif node.bl_idname in {'SvGroupNode'}:
+        node.load()
+        group_name = node.group_name
+        node.group_name = group_name_remap.get(group_name, group_name)
+    elif node.bl_idname == 'SvTextInNode':
+        node.load()
+
+
+def add_node_to_tree(nodes, n, nodes_to_import, name_remap, create_texts):
+    node_ref = nodes_to_import[n]
+    bl_idname = node_ref['bl_idname']
+
+    try:
+        if old_nodes.is_old(bl_idname):
+            old_nodes.register_old(bl_idname)
+        node = nodes.new(bl_idname)
+    except Exception as err:
+        print(traceback.format_exc())
+        print(bl_idname, 'not currently registered, skipping')
+        return
+
+    if create_texts:
+        add_texts(node, node_ref)
+
+    gather_remapped_names(node, n, name_remap)
+    apply_core_props(node, node_ref)
+    apply_superficial_props(node, node_ref)
+    apply_post_processing(node, node_ref)
+
+
+def add_nodes(nodes_to_import, nodes, create_texts):
+    '''
+    return the dictionary that tracks which nodes got renamed due to conflicts
+    '''
+    name_remap = {}
+    for n in sorted(nodes_to_import):
+        add_node_to_tree(nodes, n, nodes_to_import, name_remap, create_texts)
+    return name_remap
+
+
+def add_groups(groups_to_import):
+    '''
+    return the dictionary that tracks which groups got renamed due to conflicts
+    '''
+    group_name_remap = {}
+    for name in groups_to_import:
+        group_ng = bpy.data.node_groups.new(name, 'SverchGroupTreeType')
+        if group_ng.name != name:
+            group_name_remap[name] = ng.name
+        import_tree(group_ng, '', groups_to_import[name])
+    return group_name_remap
+
+
+def print_update_lists(update_lists):
+    print('update lists:')
+    for ulist in update_lists:
+        print(ulist)
+
+
+def place_frames(ng, nodes_json, name_remap):
+    finalize = lambda name: name_remap.get(name, name)
+    framed_nodes = nodes_json['framed_nodes']
+    for node_name, parent in framed_nodes.items():
+        ng.nodes[finalize(node_name)].parent = ng.nodes[finalize(parent)]
+
+
 def import_tree(ng, fullpath='', nodes_json=None, create_texts=True):
 
     nodes = ng.nodes
@@ -278,150 +459,10 @@ def import_tree(ng, fullpath='', nodes_json=None, create_texts=True):
         return (ng.nodes[f_node].outputs[from_socket],
                 ng.nodes[t_node].inputs[to_socket])
 
-    def generate_layout(fullpath, nodes_json):
-        print('#' * 12, nodes_json['export_version'])
-
-        ''' first create all nodes. '''
-        nodes_to_import = nodes_json['nodes']
-        groups_to_import = nodes_json.get('groups', {})
-
-        group_name_remap = {}
-        for name in groups_to_import:
-            group_ng = bpy.data.node_groups.new(name, 'SverchGroupTreeType')
-            if group_ng.name != name:
-                group_name_remap[name] = ng.name
-            import_tree(group_ng, '', groups_to_import[name])
-
-        name_remap = {}
-        texts = bpy.data.texts
-
-        for n in sorted(nodes_to_import):
-            node_ref = nodes_to_import[n]
-            bl_idname = node_ref['bl_idname']
-
-            try:
-                if old_nodes.is_old(bl_idname):
-                    old_nodes.register_old(bl_idname)
-                node = nodes.new(bl_idname)
-            except Exception as err:
-                print(traceback.format_exc())
-                print(bl_idname, 'not currently registered, skipping')
-                continue
-
-            if create_texts:
-                if node.bl_idname in SCRIPTED_NODES:
-
-                    '''
-                    Scripted Node will no longer create alternative versions of a file.
-                    If a scripted node wants to make a file called 'inverse.py' and the
-                    current .blend already contains such a file, then for simplicity the
-                    importer will not try to create 'inverse.001.py' and reference that.
-                    It will instead do nothing and assume the existing python file is
-                    functionally the same.
-
-                    If you have files that work differently but have the same name, stop.
-
-                    '''
-                    params = node_ref.get('params')
-                    if params:
-
-                        script_name = params.get('script_name')
-                        script_content = params.get('script_str')
-
-                        if script_name and not (script_name in texts):
-                            new_text = texts.new(script_name)
-                            new_text.from_string(script_content)
-
-                        node.script_name = script_name
-                        node.script_str = script_content
-
-                    if node.bl_idname == 'SvScriptNode':
-                        node.user_name = "templates"               # best would be in the node.
-                        node.files_popup = "sv_lang_template.sn"   # import to reset easy fix
-                        node.load()
-                    else:
-                        node.files_popup = node.avail_templates(None)[0][0]
-                        node.load()
-
-                elif node.bl_idname == 'SvProfileNode':
-                    new_text = texts.new(node_ref['params']['filename'])
-                    new_text.from_string(node_ref['path_file'])
-                    node.update()
-
-                # as it's a beta service, old IO json may not be compatible - in this interest
-                # of neat code we assume it finds everything.
-                elif node.bl_idname == 'SvTextInNode':
-                    params = node_ref.get('params')
-                    current_text = params['current_text']
-                    node.textmode = params['textmode']
-
-                    if not current_text:
-                        print(node.name, "doesn't store a current_text in params")
-
-                    elif not (current_text in texts):
-                        new_text = texts.new(current_text)
-                        if node.textmode == 'JSON':
-                            json_str = json.dumps(node_ref['text_lines']['stored_as_json'])
-                            new_text.from_string(json_str)
-                        else:
-                            new_text.from_string(node_ref['text_lines'])
-
-                    else:
-                        texts[current_text].from_string(node_ref['text_lines'])
-
-            '''
-            When n is assigned to node.name, blender will decide whether or
-            not it can do that, if there exists already a node with that name,
-            then the assignment to node.name is not n, but n.00x. Hence on the
-            following line we check if the assignment was accepted, and store a
-            remapped name if it wasn't.
-            '''
-            node.name = n
-            if not (node.name == n):
-                name_remap[n] = node.name
-
-            params = node_ref['params']
-            # print(node.name, params)
-            for p in params:
-                val = params[p]
-                setattr(node, p, val)
-
-            node.location = node_ref['location']
-            node.height = node_ref['height']
-            node.width = node_ref['width']
-            node.label = node_ref['label']
-            node.hide = node_ref['hide']
-            node.color = node_ref['color']
-
-            '''
-            Nodes that require post processing to work properly
-            '''
-            if node.bl_idname in {'SvGroupInputsNode', 'SvGroupOutputsNode'}:
-                node.load()
-            elif node.bl_idname in {'SvGroupNode'}:
-                node.load()
-                group_name = node.group_name
-                node.group_name = group_name_remap.get(group_name, group_name)
-            elif node.bl_idname == 'SvTextInNode':
-                # node.reload()
-                # node.reset()
-                # node.reload()
-                node.load()
-
-        update_lists = nodes_json['update_lists']
-        print('update lists:')
-        for ulist in update_lists:
-            print(ulist)
-
-        ''' now connect them '''
-
-        # naive
-        # freeze updates while connecting the tree, otherwise
-        # each connection will cause an update event
-        ng.freeze(hard=True)
-
+    def make_links(update_lists, name_remap):
+        print_update_lists(update_lists)
+    
         failed_connections = []
-
         for link in update_lists:
             try:
                 ng.links.new(*resolve_socket(*link, name_dict=name_remap))
@@ -436,20 +477,36 @@ def import_tree(ng, fullpath='', nodes_json=None, create_texts=True):
         else:
             print('no failed connections! awesome.')
 
+
+    def generate_layout(fullpath, nodes_json):
+        '''cummulative function ''' 
+                
+        print('#' * 12, nodes_json['export_version'])
+
+        ''' create all nodes and groups '''
+
+        update_lists = nodes_json['update_lists']
+        nodes_to_import = nodes_json['nodes']
+        groups_to_import = nodes_json.get('groups', {})
+        
+        add_groups(groups_to_import)  # this return is not used yet
+        name_remap = add_nodes(nodes_to_import, nodes, create_texts)
+
+        ''' now connect them '''
+
+        # prevent unnecessary updates
+        ng.freeze(hard=True)
+        make_links(update_lists, name_remap)
+
         ''' set frame parents '''
-        finalize = lambda name: name_remap.get(name, name)
-        framed_nodes = nodes_json['framed_nodes']
-        for node_name, parent in framed_nodes.items():
-            ng.nodes[finalize(node_name)].parent = ng.nodes[finalize(parent)]
+
+        place_frames(ng, nodes_json, name_remap)
+
+        ''' clean up '''
 
         old_nodes.scan_for_old(ng)
         ng.unfreeze(hard=True)
         ng.update()
-        # bpy.ops.node.sverchok_update_current(node_group=ng.name)
-
-        # bpy.ops.node.select_all(action='DESELECT')
-        # ng.update()
-        # bpy.ops.node.view_all()
 
     ''' ---- read files (.json or .zip) or straight json data----- '''
 
