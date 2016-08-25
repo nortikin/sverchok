@@ -390,7 +390,7 @@ def apply_post_processing(node, node_ref):
         node.load()
 
 
-def add_node_to_tree(nodes, n, nodes_to_import, name_remap):
+def add_node_to_tree(nodes, n, nodes_to_import, name_remap, create_texts):
     node_ref = nodes_to_import[n]
     bl_idname = node_ref['bl_idname']
 
@@ -412,13 +412,13 @@ def add_node_to_tree(nodes, n, nodes_to_import, name_remap):
     apply_post_processing(node, node_ref)
 
 
-def add_nodes(nodes_to_import, nodes):
+def add_nodes(nodes_to_import, nodes, create_texts):
     '''
     return the dictionary that tracks which nodes got renamed due to conflicts
     '''
     name_remap = {}
     for n in sorted(nodes_to_import):
-        add_node_to_tree(nodes, n, nodes_to_import, name_remap)
+        add_node_to_tree(nodes, n, nodes_to_import, name_remap, create_texts)
     return name_remap
 
 
@@ -490,7 +490,7 @@ def import_tree(ng, fullpath='', nodes_json=None, create_texts=True):
         groups_to_import = nodes_json.get('groups', {})
         
         add_groups(groups_to_import)  # this return is not used yet
-        name_remap = add_nodes(nodes_to_import, nodes)
+        name_remap = add_nodes(nodes_to_import, nodes, create_texts)
 
         ''' now connect them '''
 
