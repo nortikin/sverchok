@@ -25,12 +25,11 @@ from sverchok.data_structure import (changable_sockets, dataCorrect, updateNode,
 
 def flip(list, level):
     level -= 1
-    if level:
-        out = []
+    out = []
+    if not level:
         for l in list:
-            out.extend(flip(l, level))
+            out.append(flip(l, level))
     else:
-        out = []
         length = maxlen(list)
         for i in range(length):
             out_ = []
@@ -38,7 +37,7 @@ def flip(list, level):
                 try:
                     out_.append(l[i])
                 except:
-                    out_.append(l[0])
+                    continue
             out.append(out_)
     return out
 
@@ -55,7 +54,7 @@ class ListFlipNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     level = IntProperty(name='level_to_count',
-                        default=2, min=0, max=3,
+                        default=2, min=0, max=4,
                         update=updateNode)
     typ = StringProperty(name='typ',
                          default='')
@@ -80,9 +79,9 @@ class ListFlipNode(bpy.types.Node, SverchCustomTreeNode):
     def process(self):
         if self.inputs['data'].is_linked and self.outputs['data'].is_linked:
             outEval = SvGetSocketAnyType(self, self.inputs['data'])
-            outCorr = dataCorrect(outEval)  # this is bullshit, as max 3 in levels
+            #outCorr = dataCorrect(outEval)  # this is bullshit, as max 3 in levels
             levels = self.level-1
-            out = flip(outCorr, levels)
+            out = flip(outEval, levels)
             SvSetSocketAnyType(self, 'data', out)
 
 
@@ -92,3 +91,6 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(ListFlipNode)
+
+if __name__ == '__main__':
+    register()
