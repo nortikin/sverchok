@@ -4,6 +4,7 @@ import numpy as np
 """
 Sample an image at u,v coordinates.
 Images can either be selected by name or int.
+Outputs image data at uv as rgb
 """
 
 def clip(low, high, val):
