@@ -1,14 +1,15 @@
 import bpy
 import numpy as np
 
+
+
+
 """
-Sample an image at u,v coordinates.
+Sample an image at u,v coordinates, repeatin the texture
 Images can either be selected by name or int.
 Outputs image data at uv as rgb
 """
 
-def clip(low, high, val):
-    return min(high, max(low, val))
 
 def sv_main(img_name=0, p=[[[0,0,0]]]):
     in_sockets = [
@@ -32,12 +33,12 @@ def sv_main(img_name=0, p=[[[0,0,0]]]):
     image = tmp.reshape(dim_y, dim_x, 4)
     out = []
     if p:
-        for point in p[0]:
-            x,y, _ = point
-            u_i = clip(0, dim_x - 1, int(x * dim_x))
-            v_i = clip(0, dim_y - 1, int(y*dim_y))
-            color = image[v_i, u_i][:3]
-            out.append(color)
+        points = np.array(p[0])
+        uv = points * (dim_x, dim_y, 0)
+        #
+        for u, v, _ in uv:
+            color = image[v % dim_y, u % dim_x][:3]
+            out.append(color.tolist())
 
 
     out_sockets = [
