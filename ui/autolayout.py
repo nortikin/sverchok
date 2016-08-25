@@ -338,7 +338,7 @@ def node_as_matrix(ng):
         i = name_lookup[link.from_node.name]
         j = name_lookup[link.to_node.name]
         adj_mat[i,j] += 1
-        #adj_mat[j,i] += 1
+        adj_mat[j,i] += 1
     return adj_mat
 
 
