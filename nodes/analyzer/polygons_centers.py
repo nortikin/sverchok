@@ -99,14 +99,14 @@ class CentersPolsNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                         # это совершенно нормально!!! ;-)
                         norm_abs.append(current_center+norm)
                         
-                        if self.Separate:
-                            norm_abs_out.append(norm_abs)    
-                            origins.append(centrs)
-                            normals_out.append(normals)
-                        else:
-                            norm_abs_out.extend(norm_abs)    
-                            origins.extend(centrs)
-                            normals_out.extend(normals)
+                    if self.Separate:
+                        norm_abs_out.append(norm_abs)    
+                        origins.append(centrs)
+                        normals_out.append(normals)
+                    else:
+                        norm_abs_out.extend(norm_abs)    
+                        origins.extend(centrs)
+                        normals_out.extend(normals)
                     mat_collect_ = []
                     for cen, med, nor in zip(centrs, medians, normals):
                         loc = Matrix.Translation(cen)
