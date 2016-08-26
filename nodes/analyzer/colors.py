@@ -64,6 +64,7 @@ class SvVertexColorNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('VerticesSocket', "OutColor")
 
     def process_foreach(self):
+        print("foreach")
         obj = bpy.data.objects[self.object_ref]
         loops = obj.data.loops
         loop_count = len(loops)
@@ -110,7 +111,6 @@ class SvVertexColorNode(bpy.types.Node, SverchCustomTreeNode):
             vertex_color.data.foreach_set("color", colors)
 
         elif input_colors: # generate index
-
             colors.shape = (loop_count, 3)
             if self.mode =="vertices":
                 vertex_index = np.empty(loop_count, dtype=int) # would be good to check exackt type
@@ -142,14 +142,17 @@ class SvVertexColorNode(bpy.types.Node, SverchCustomTreeNode):
                     fullList(input_colors, loop_count)
                 elif len(input_colors) > loop_count:
                     input_colors = input_colors[:loop_count]
-                colors = np.array(input_colors, dtype=np.float32)
+                colors[:] = input_colors
 
             colors.shape = (loop_count * 3,)
             vertex_color.data.foreach_set("color", colors)
+            obj.data.update()
+
 
         # done
         if not self.outputs[0].is_linked:
             return
+
         colors.shape = (loop_count * 3)
         vertex_color.data.foreach_get("color", colors)
         colors.shape = (loop_count, 3)
@@ -222,7 +225,7 @@ class SvVertexColorNode(bpy.types.Node, SverchCustomTreeNode):
                 #bf = bm.faces[:]
                 bm.faces.ensure_lookup_table()
                 for i, i2 in zip(idxs, colors):
-                    for loop in bf[i].loops:
+                    for loop in bm.faces[i].loops:
                         ovgs.data[loop.index].color = i2
             elif sm == 'loops':
                 for idx, color in zip(idxs, colors):
