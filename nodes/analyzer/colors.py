@@ -75,7 +75,6 @@ class SvVertexColorNode(bpy.types.Node, SverchCustomTreeNode):
         color_socket = self.inputs["Color"]
         index_socket = self.inputs["Index"]
 
-
         if index_socket.is_linked:
             indices = index_socket.sv_get()[0]
 
@@ -86,73 +85,64 @@ class SvVertexColorNode(bpy.types.Node, SverchCustomTreeNode):
 
         colors = np.empty(loop_count * 3, dtype=np.float32)
 
-
-        if index_socket.is_linked and input_colors:
+        if input_colors:
             # we have index and colors, set colors of incoming index
             # first get all colors so we can write to them
-
-            vertex_color.data.foreach_get("color", colors)
-
-            if self.mode == "vertices":
-                vertex_index = np.zero(loop_count, dtype=int) # would be good to check exackt type
-                loops.foreach_get("vertex_index", vertex_index)
-                idx_lookup = collections.defaultdict(list)
-                for idx, v_idx in enumerate(vertex_index):
-                    idx_lookup[v_idx].append(idx)
-
-                for idx, col in zip(indices, input_colors):
-                    colors[idx_lookup[idx]] = col
-
-            elif self.mode == "polygons":
-
-                for idx, col in zip(indices, input_colors):
-                    colors[polygons[idx].indices] = col
-            elif self.mode == "loops":
-                for idx, col in zip(indices, input_colors):
-                    colors[idx] = col
-
-            colors.shape = (loop_count * 3,)
-            vertex_color.data.foreach_set("color", colors)
-            obj.data.update()
-
-        elif input_colors: # generate index
+            if index_socket.is_linked:
+                vertex_color.data.foreach_get("color", colors)
             colors.shape = (loop_count, 3)
-            if self.mode =="vertices":
-                vertex_index = np.empty(loop_count, dtype=int) # would be good to check exackt type
+            if self.mode == "vertices":
+                vertex_index = np.zeros(loop_count, dtype=int) # would be good to check exackt type
                 loops.foreach_get("vertex_index", vertex_index)
-                if len(obj.data.vertices) > len(input_colors):
-                    fullList(input_colors, len(obj.data.vertices))
-                for idx, v_idx in enumerate(vertex_index):
-                    colors[idx] = input_colors[v_idx]
+                if index_socket.is_linked:
+                    idx_lookup = collections.defaultdict(list)
+                    for idx, v_idx in enumerate(vertex_index):
+                        idx_lookup[v_idx].append(idx)
+
+                    for idx, col in zip(indices, input_colors):
+                        colors[idx_lookup[idx]] = col
+                else:
+                    if len(obj.data.vertices) > len(input_colors):
+                        fullList(input_colors, len(obj.data.vertices))
+                    for idx, v_idx in enumerate(vertex_index):
+                        colors[idx] = input_colors[v_idx]
 
             elif self.mode == "polygons":
-
                 polygon_count = len(obj.data.polygons)
-                if len(input_colors) < polygon_count:
-                    fullList(input_colors, polygon_count)
-
                 p_start = np.empty(polygon_count,dtype=int)
                 p_total = np.empty(polygon_count,dtype=int)
                 obj.data.polygons.foreach_get("loop_start", p_start)
                 obj.data.polygons.foreach_get("loop_total", p_total)
 
-                for i in range(polygon_count):
-                    color = input_colors[i]
-                    start_slice = p_start[i]
-                    stop_slice = start_slice + p_total[i]
-                    colors[start_slice : stop_slice] = color
+                if index_socket.is_linked:
+                    for idx, color in zip(indices, input_colors):
+                        start_slice = p_start[idx]
+                        stop_slice = start_slice + p_total[idx]
+                        colors[start_slice : stop_slice] = color
+                else:
+                    if len(input_colors) < polygon_count:
+                        fullList(input_colors, polygon_count)
+
+                    for idx in range(polygon_count):
+                        color = input_colors[idx]
+                        start_slice = p_start[idx]
+                        stop_slice = start_slice + p_total[idx]
+                        colors[start_slice : stop_slice] = color
 
             elif self.mode == "loops":
-                if len(input_colors) < loop_count:
-                    fullList(input_colors, loop_count)
-                elif len(input_colors) > loop_count:
-                    input_colors = input_colors[:loop_count]
-                colors[:] = input_colors
-
+                if index_socket.is_linked:
+                    for idx, color in zip(indices, input_colors):
+                        colors[idx] = color
+                else:
+                    if len(input_colors) < loop_count:
+                        fullList(input_colors, loop_count)
+                    elif len(input_colors) > loop_count:
+                        input_colors = input_colors[:loop_count]
+                    colors[:] = input_colors
+            # write out data
             colors.shape = (loop_count * 3,)
             vertex_color.data.foreach_set("color", colors)
             obj.data.update()
-
 
         # if no output, we are done
         if not self.outputs[0].is_linked:
@@ -161,42 +151,35 @@ class SvVertexColorNode(bpy.types.Node, SverchCustomTreeNode):
         colors.shape = (loop_count * 3)
         vertex_color.data.foreach_get("color", colors)
         colors.shape = (loop_count, 3)
+        out = []
+        if self.mode == "vertices":
+            vert_loopup = {l.vertex_index : idx for idx, l in enumerate(obj.data.loops)}
 
-        if index_socket.is_linked:
-            if self.mode == "vertices":
-                vert_loopup = {l.vertex_index : idx for idx, l in enumerate(obj.data.loops)}
-                out = []
-                for idx in indices:
-                    loop_idx = vert_loopup[idx]
-                    out.append(colors[loop_idx].tolist())
+            if index_socket.is_linked:
+                index_seq = indices
+            else:
+                index_seq = range(len(obj.data.vertices))
 
-            elif self.mode == "polygons":
-                out = []
-                for idx in indices:
-                    polygon = obj.data.polygons[idx]
-                    out.append(colors[polygon.loop_start].tolist())
-            elif self.mode == "loops":
+            for idx in index_seq:
+                loop_idx = vert_loopup[idx]
+                out.append(colors[loop_idx].tolist())
+
+        elif self.mode == "polygons":
+            polygons = obj.data.polygons
+            if index_socket.is_linked:
+                index_seq = indices
+            else:
+                range(len(polygons))
+
+            for idx in index_seq:
+                out.append(colors[polygons[idx].loop_start].tolist())
+
+        elif self.mode == "loops":
+            if index_socket.is_linked:
                 for idx in indices:
                     out.append(colors[idx].tolist())
             else:
-                pass
-        else:
-
-            if self.mode == "vertices":
-                vert_loopup = {l.vertex_index : idx for idx, l in enumerate(obj.data.loops)}
-                out = []
-                for idx in range(len(obj.data.vertices)):
-                    loop_idx = vert_loopup[idx]
-                    color = colors[loop_idx].tolist()
-                    out.append(color)
-            elif self.mode == "polygons":
-                out = []
-                for polygon in obj.data.polygons:
-                    out.append(colors[polygon.loop_start].tolist())
-            elif self.mode == "loops":
                 out = colors.tolist()
-            else:
-                pass
 
         self.outputs[0].sv_set([out])
 
