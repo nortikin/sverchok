@@ -37,9 +37,9 @@ class SvVertexColorNode(bpy.types.Node, SverchCustomTreeNode):
     vertex_color = StringProperty(default='', update=updateNode)
     clear = BoolProperty(name='clear c', default=True, update=updateNode)
     clear_c = FloatVectorProperty(name='cl_color', subtype='COLOR', min=0, max=1, size=3, default=(0, 0, 0), update=updateNode)
-    modes = [("vertices", " v ", "Vcol - color per vertex", 1),
-             ("polygons", " p ", "Pcol - color per face", 2),
-             ("loops", " l ", "Color per loop", 3)]
+    modes = [("vertices", "Vert", "Vcol - color per vertex", 1),
+             ("polygons", "Face", "Pcol - color per face", 2),
+             ("loops", "Loop", "Color per loop", 3)]
     mode = EnumProperty(items=modes, default='vertices', update=updateNode)
     object_ref = StringProperty(default='', update=updateNode)
 
@@ -68,6 +68,8 @@ class SvVertexColorNode(bpy.types.Node, SverchCustomTreeNode):
         obj = bpy.data.objects[self.object_ref]
         loops = obj.data.loops
         loop_count = len(loops)
+        if not obj.data.vertex_colors:
+            objm.vertex_colors.new(name='Sv_VColor')
         vertex_color = obj.data.vertex_colors[self.vertex_color]
 
         color_socket = self.inputs["Color"]
@@ -86,18 +88,20 @@ class SvVertexColorNode(bpy.types.Node, SverchCustomTreeNode):
 
 
         if index_socket.is_linked and input_colors:
+            # we have index and colors, set colors of incoming index
+            # first get all colors so we can write to them
+
             vertex_color.data.foreach_get("color", colors)
 
             if self.mode == "vertices":
-                vertex_index = np.zero(len(loops), dtype=int) # would be good to check exackt type
+                vertex_index = np.zero(loop_count, dtype=int) # would be good to check exackt type
                 loops.foreach_get("vertex_index", vertex_index)
                 idx_lookup = collections.defaultdict(list)
                 for idx, v_idx in enumerate(vertex_index):
                     idx_lookup[v_idx].append(idx)
 
                 for idx, col in zip(indices, input_colors):
-                    for loop_idx in idx_lookup[idx]:
-                        colors[loop_idx] = col
+                    colors[idx_lookup[idx]] = col
 
             elif self.mode == "polygons":
 
@@ -109,6 +113,7 @@ class SvVertexColorNode(bpy.types.Node, SverchCustomTreeNode):
 
             colors.shape = (loop_count * 3,)
             vertex_color.data.foreach_set("color", colors)
+            obj.data.update()
 
         elif input_colors: # generate index
             colors.shape = (loop_count, 3)
@@ -149,7 +154,7 @@ class SvVertexColorNode(bpy.types.Node, SverchCustomTreeNode):
             obj.data.update()
 
 
-        # done
+        # if no output, we are done
         if not self.outputs[0].is_linked:
             return
 
@@ -217,10 +222,11 @@ class SvVertexColorNode(bpy.types.Node, SverchCustomTreeNode):
                 for i in ovgs.data:
                     i.color = self.clear_c
             if sm == 'vertices':
-                bv = bm.verts[:]
-                for i, i2 in zip(idxs, colors):
-                    for i in bv[i].link_loops:
-                        ovgs.data[i.index].color = i2
+                bv = bm.verts
+                bm.verts.ensure_lookup_table()
+                for i, col in zip(idxs, colors):
+                    for l in bv[i].link_loops:
+                        ovgs.data[l.index].color = col
             elif sm == 'polygons':
                 #bf = bm.faces[:]
                 bm.faces.ensure_lookup_table()
