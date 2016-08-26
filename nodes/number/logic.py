@@ -39,8 +39,8 @@ class SvLogicNode(bpy.types.Node, SverchCustomTreeNode):
 # maybe this should be distilled to most common with the others available via Formula2 Node
 # And some constants etc.
 # Keep 4, columns number unchanged and only add new with unique number
-   
-    
+
+
     def change_type(self, context):
         nrInputs = 1
         if self.items_ in self.constant:
@@ -51,7 +51,7 @@ class SvLogicNode(bpy.types.Node, SverchCustomTreeNode):
             nrInputs = 2
 
         self.set_inputs(nrInputs)
-        
+
         if self.items_ in self.fxy2:
             self.inputs[0].prop_name = 'i_x'
             self.inputs[1].prop_name = 'i_y'
@@ -60,7 +60,7 @@ class SvLogicNode(bpy.types.Node, SverchCustomTreeNode):
             self.inputs[1].prop_name = 'y'
         elif self.items_ in self.fx:
             self.inputs[0].prop_name = 'x'
-        
+
     def set_inputs(self, n):
         if n == len(self.inputs):
             return
@@ -70,11 +70,11 @@ class SvLogicNode(bpy.types.Node, SverchCustomTreeNode):
         if n > len(self.inputs):
             if 'X' not in self.inputs:
                 self.inputs.new('StringsSocket', "X")
-            if 'Y' not in self.inputs:
+            if 'Y' not in self.inputs and n == 2:
                 self.inputs.new('StringsSocket', "Y")
             self.change_prop_type(None)
 
-        
+
     mode_items = [
         ("AND",             "And",          "", 1),
         ("OR",              "Or",           "", 2),
@@ -124,9 +124,9 @@ class SvLogicNode(bpy.types.Node, SverchCustomTreeNode):
 
     int_prop ={
         'ROUND-N':  ("x","i_y"),
-        }        
-        
-    # items_ is a really bad name but changing it breaks old layouts 
+        }
+
+    # items_ is a really bad name but changing it breaks old layouts
     items_ = EnumProperty(name="Logic Gate", description="Logic Gate choice",
                           default="AND", items=mode_items,
                           update=change_type)
@@ -142,14 +142,14 @@ class SvLogicNode(bpy.types.Node, SverchCustomTreeNode):
         if inputs:
             inputs[0].prop_name = 'i_x' if self.prop_types[0] else 'x'
         if len(inputs)>1:
-            if not self.items_ in self.int_prop: 
+            if not self.items_ in self.int_prop:
                 inputs[1].prop_name = 'i_y' if self.prop_types[1] else 'y'
             else:
                 inputs[1].prop_name = 'i_y'
-            
+
     prop_types = BoolVectorProperty(size=2, default=(False, False),
                                     update=change_prop_type)
-        
+
     def draw_buttons(self, context, layout):
         layout.prop(self, "items_", "Functions:")
 
@@ -179,19 +179,19 @@ class SvLogicNode(bpy.types.Node, SverchCustomTreeNode):
             y_label = 'Y' if self.inputs[1].links else str(round(y, 3))
             label.extend((", ", y_label))
         return " ".join(label)
-  
-        
+
+
     def process(self):
         # inputs
         if  not self.outputs['Gate'].is_linked:
             return
-            
+
         if 'X' in self.inputs:
             x = self.inputs['X'].sv_get(deepcopy=False)
- 
+
         if 'Y' in self.inputs:
             y = self.inputs['Y'].sv_get(deepcopy=False)
-        
+
         # outputs
         out= []
         if self.items_ in self.constant:

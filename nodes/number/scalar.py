@@ -40,7 +40,7 @@ class ScalarMathNode(bpy.types.Node, SverchCustomTreeNode):
 # maybe this should be distilled to most common with the others available via Formula2 Node
 # And some constants etc.
 # Keep 4, columns number unchanged and only add new with unique number
-    
+
     mode_items = [
         ("SINE",            "Sine",         "", 1),
         ("COSINE",          "Cosine",       "", 2),
@@ -141,11 +141,11 @@ class ScalarMathNode(bpy.types.Node, SverchCustomTreeNode):
         'E':        e,
         'PHI':      1.61803398875,
     }
-    
+
     int_prop ={
         'ROUND-N':  ("x","i_y"),
         }
-        
+
     def change_inputs(self, context):
 
         # inputs
@@ -172,36 +172,36 @@ class ScalarMathNode(bpy.types.Node, SverchCustomTreeNode):
         if n > len(self.inputs):
             if 'X' not in self.inputs:
                 self.inputs.new('StringsSocket', "X")
-            if 'Y' not in self.inputs:
+            if 'Y' not in self.inputs and n == 2:
                 self.inputs.new('StringsSocket', "Y")
-            self.change_prop_type(None)        
-        
-    # items_ is a really bad name but changing it breaks old layouts 
+            self.change_prop_type(None)
+
+    # items_ is a really bad name but changing it breaks old layouts
     items_ = EnumProperty(name="Function", description="Function choice",
                           default="SINE", items=mode_items,
                           update=change_inputs)
     x = FloatProperty(default=1, name='x', update=updateNode)
     y = FloatProperty(default=1, name='y', update=updateNode)
-    
+
     # only used for round-n, for completeness right now.
     # perhaps make it switchable via draw buttons ext
     i_x = IntProperty(default=1, name='x', update=updateNode)
     i_y = IntProperty(default=1, name='y', update=updateNode)
-    
+
     # boolvector to control prop type
     def change_prop_type(self, context):
         inputs = self.inputs
         if inputs:
             inputs[0].prop_name = 'i_x' if self.prop_types[0] else 'x'
         if len(inputs)>1:
-            if not self.items_ in self.int_prop: 
+            if not self.items_ in self.int_prop:
                 inputs[1].prop_name = 'i_y' if self.prop_types[1] else 'y'
             else:
                 inputs[1].prop_name = 'i_y'
-            
+
     prop_types = BoolVectorProperty(size=2, default=(False, False),
                                     update=change_prop_type)
-        
+
     def draw_buttons(self, context, layout):
         layout.prop(self, "items_", "Functions:")
 
@@ -213,7 +213,7 @@ class ScalarMathNode(bpy.types.Node, SverchCustomTreeNode):
             row.label(text=s.name)
             t = "To float" if self.prop_types[i] else "To int"
             row.prop(self, "prop_types", index=i, text=t, toggle=True)
-            
+
     def sv_init(self, context):
         self.inputs.new('StringsSocket', "X").prop_name = 'x'
         self.outputs.new('StringsSocket', "float")
@@ -232,12 +232,12 @@ class ScalarMathNode(bpy.types.Node, SverchCustomTreeNode):
         return " ".join(label)
 
 
-    
+
     def process(self):
         in_count = len(self.inputs)
         if in_count > 0:
             x = self.inputs['X'].sv_get(deepcopy=False)
-            
+
         if in_count > 1:
             y = self.inputs['Y'].sv_get(deepcopy=False)
         # outputs
