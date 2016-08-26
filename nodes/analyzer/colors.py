@@ -19,10 +19,10 @@
 import collections
 import numpy as np
 
-
 import bpy
 import bmesh
 from bpy.props import StringProperty, EnumProperty, BoolProperty, FloatVectorProperty
+
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode, second_as_first_cycle, fullList)
 
@@ -88,9 +88,14 @@ class SvVertexColorNode(bpy.types.Node, SverchCustomTreeNode):
         if input_colors:
             # we have index and colors, set colors of incoming index
             # first get all colors so we can write to them
-            if index_socket.is_linked:
+            if self.clear:
+                colors.shape = (loop_count, 3)
+                colors[:] = self.clear_c
+            elif index_socket.is_linked:
+                print(self.clear , "clear?")
                 vertex_color.data.foreach_get("color", colors)
             colors.shape = (loop_count, 3)
+
             if self.mode == "vertices":
                 vertex_index = np.zeros(loop_count, dtype=int) # would be good to check exackt type
                 loops.foreach_get("vertex_index", vertex_index)
@@ -169,7 +174,7 @@ class SvVertexColorNode(bpy.types.Node, SverchCustomTreeNode):
             if index_socket.is_linked:
                 index_seq = indices
             else:
-                range(len(polygons))
+                index_seq = range(len(polygons))
 
             for idx in index_seq:
                 out.append(colors[polygons[idx].loop_start].tolist())
@@ -202,8 +207,9 @@ class SvVertexColorNode(bpy.types.Node, SverchCustomTreeNode):
             bm = bmesh.new()
             bm.from_mesh(objm)
             if self.clear:
-                for i in ovgs.data:
-                    i.color = self.clear_c
+                clear_c = self.clear_c[:]
+                for i in range(len(ovgs.data)):
+                    ovgs.data[i].color = clear_c
             if sm == 'vertices':
                 bv = bm.verts
                 bm.verts.ensure_lookup_table()
@@ -230,7 +236,6 @@ class SvVertexColorNode(bpy.types.Node, SverchCustomTreeNode):
                 for v in bm.verts[:]:
                     c = ovgs.data[v.link_loops[0].index].color
                     out.append(list(c))
-
 
             elif sm == 'polygons':
                 #output one color per face
