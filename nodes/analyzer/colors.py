@@ -44,7 +44,7 @@ class SvVertexColorNode(bpy.types.Node, SverchCustomTreeNode):
     object_ref = StringProperty(default='', update=updateNode)
 
     def draw_buttons(self, context,   layout):
-        layout.prop(self, 'use_foreach')
+        #layout.prop(self, 'use_foreach')
         layout.prop_search(self, 'object_ref', bpy.data, 'objects')
         ob = bpy.data.objects.get(self.object_ref)
         if ob and ob.type == 'MESH':
