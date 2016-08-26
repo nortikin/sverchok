@@ -29,8 +29,8 @@ class CentersPolsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Centers polygons'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    Separate = BoolProperty(name="Separate", 
-                            description="separate by objects", 
+    Separate = BoolProperty(name="Separate",
+                            description="separate by objects",
                             default=True,
                             update=updateNode)
 
@@ -55,7 +55,7 @@ class CentersPolsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
                 pols_ = SvGetSocketAnyType(self, self.inputs['Polygons'])
                 vers_tupls = SvGetSocketAnyType(self, self.inputs['Vertices'])
                 vers_vects = Vector_generate(vers_tupls)
-                
+
                 # make mesh temp утилитарно - удалить в конце
                 mat_collect = []
                 normals_out = []
@@ -74,7 +74,7 @@ class CentersPolsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
                         p0_xdirs.append(v0)
                         # normals
                         norm = geometry.normal(v0, v1, v2)
-                        normals.append(norm)                       
+                        normals.append(norm)
                         # centrs
                         x,y,z = zip(*[verst[poi] for poi in p])
                         x,y,z = sum(x)/len(x), sum(y)/len(y), sum(z)/len(z)
@@ -83,15 +83,16 @@ class CentersPolsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
                         # normal absolute !!!
                         # это совершенно нормально!!! ;-)
                         norm_abs.append(current_center+norm)
+
+                    if self.Separate:
+                        norm_abs_out.append(norm_abs)
+                        origins.append(centrs)
+                        normals_out.append(normals)
+                    else:
+                        norm_abs_out.extend(norm_abs)
+                        origins.extend(centrs)
+                        normals_out.extend(normals)
                         
-                        if self.Separate:
-                            norm_abs_out.append(norm_abs)    
-                            origins.append(centrs)
-                            normals_out.append(normals)
-                        else:
-                            norm_abs_out.extend(norm_abs)    
-                            origins.extend(centrs)
-                            normals_out.extend(normals)
                     mat_collect_ = []
 
                     for cen, nor, p0 in zip(centrs, normals, p0_xdirs):
@@ -123,9 +124,6 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(CentersPolsNodeMK3)
-    
+
 if __name__ == '__main__':
     register()
-
-
-

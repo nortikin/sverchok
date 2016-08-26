@@ -27,12 +27,14 @@ def sv_main(img_name=0, p=[[[0,0,0]]]):
     img_name = get_name(img_name)
     # if you want to look to a specific image
     #img_name = "Emperor_Penguin_Manchot_empereur.jpg"
+    bpy_image = bpy.data.images.get(img_name)
+    if bpy_image
+        dim_x, dim_y = bpy_image.size
+        tmp = np.array(bpy_image.pixels)
+        image = tmp.reshape(dim_y, dim_x, 4)
 
-    dim_x, dim_y = bpy.data.images[img_name].size
-    tmp = np.array(bpy.data.images[img_name].pixels)
-    image = tmp.reshape(dim_y, dim_x, 4)
-    out = []
-    if p:
+    if p and bpy_image:
+        out = []
         points = np.array(p[0])
         uv = points * (dim_x, dim_y, 0)
         #
