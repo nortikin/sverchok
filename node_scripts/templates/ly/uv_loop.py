@@ -3,9 +3,8 @@ import numpy as np
 
 
 
-def sv_main(idx=0, obj_name=0):
+def sv_main(obj_name=0):
     in_sockets = [
-       ['s', "Index", idx],
        ['s', "Object name", obj_name]
     ]
 
@@ -19,18 +18,22 @@ def sv_main(idx=0, obj_name=0):
     obj_name = get_name(obj_name)
     # if you want to look to a specific image
     #obj_name = "Suzanne"
+    uv_layer = None
     if str(obj_name) in bpy.data.objects:
 
         obj = bpy.data.objects[obj_name]
-        print(obj.name)
         mesh = obj.data
         uv_layer = mesh.uv_layers.active
     out = []
-    if idx:
-
-        for i in idx:
-            u, v = uv_layer.data[i].uv
-            out.append((u,v, 0))
+    if uv_layer:
+        uv_count = len(uv_layer.data)
+        uvs = np.empty((uv_count, 3), dtype=np.float32)
+        uvs_tmp = np.empty((uv_count, 2), dtype=np.float32)
+        uvs_tmp.shape = uv_count * 2
+        uv_layer.data.foreach_get("uv", uvs_tmp)
+        uvs_tmp.shape = (uv_count, 2)
+        uvs[:, :2] = uvs_tmp
+        out = uvs.tolist()
 
     out_sockets = [
         ['v', 'UV', [out]]

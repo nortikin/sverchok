@@ -26,7 +26,7 @@ def sv_main(img_name=0, p=[[[0,0,0]]]):
             0
     img_name = get_name(img_name)
     # if you want to look to a specific image
-    #img_name = "Emperor_Penguin_Manchot_empereur.jpg"
+    #img_name = "name.jpg"
     bpy_image = bpy.data.images.get(img_name)
     if bpy_image:
         dim_x, dim_y = bpy_image.size
