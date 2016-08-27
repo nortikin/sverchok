@@ -33,8 +33,9 @@ def sv_main(img_name=0, p=[[[0,0,0]]]):
         tmp = np.array(bpy_image.pixels)
         image = tmp.reshape(dim_y, dim_x, 4)
 
+    out = []
+
     if p and bpy_image:
-        out = []
         points = np.array(p[0])
         uv = points * (dim_x, dim_y, 0)
         #
