@@ -17,7 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-from bpy.props import IntProperty, FloatProperty
+from bpy.props import IntProperty, FloatProperty, StringProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode, fullList,
@@ -30,10 +30,9 @@ class ImageNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Image'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    def images(self, context):
-        return [tuple(3 * [im.name]) for im in bpy.data.images]
-        
-    name_image = bpy.props.EnumProperty(items=images, name='images')
+
+    name_image = StringProperty(name='image_name', description='image name', default='', update=updateNode)
+
     R = FloatProperty(name='R', description='R',
                       default=0.30, min=0, max=1,
                       options={'ANIMATABLE'}, update=updateNode)
@@ -55,7 +54,6 @@ class ImageNode(bpy.types.Node, SverchCustomTreeNode):
     Ystep = FloatProperty(name='Ystep', description='Ystep',
                           default=1.0, min=0.01, max=100,
                           options={'ANIMATABLE'}, update=updateNode)
-    #name_image = StringProperty(name='image_name', description='image name', default='', update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', "vecs X", "vecs X").prop_name = 'Xvecs'
@@ -67,7 +65,7 @@ class ImageNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('StringsSocket', "pols", "pols")
 
     def draw_buttons(self, context, layout):
-        layout.prop(self, "name_image", text="image")
+        layout.prop_search(self, "name_image", bpy.data, 'images', text="image")
         row = layout.row(align=True)
         row.scale_x = 10.0
         row.prop(self, "R", text="R")
