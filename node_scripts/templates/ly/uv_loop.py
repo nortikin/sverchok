@@ -27,7 +27,7 @@ def sv_main(obj_name=0):
     out = []
     if uv_layer:
         uv_count = len(uv_layer.data)
-        uvs = np.empty((uv_count, 3), dtype=np.float32)
+        uvs = np.zeros((uv_count, 3), dtype=np.float32)
         uvs_tmp = np.empty((uv_count, 2), dtype=np.float32)
         uvs_tmp.shape = uv_count * 2
         uv_layer.data.foreach_get("uv", uvs_tmp)
@@ -36,7 +36,7 @@ def sv_main(obj_name=0):
         out = uvs.tolist()
 
     out_sockets = [
-        ['v', 'UV', [out]]
+        ['v', 'UV loops', [out]]
     ]
 
     return in_sockets, out_sockets
