@@ -211,12 +211,16 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
             if name not in groups_dict:
                 group_ng = bpy.data.node_groups[name]
                 group_dict = create_dict_of_tree(group_ng)
+                group_dict['bl_idname'] = group_ng.bl_idname  # uhmm..
+                group_dict['cls_dict'] = {}
+                group_dict['cls_dict']['cls_bl_idname'] = group_ng.cls_bl_idname
+                group_dict['cls_dict']['bl_label'] = group_ng.bl_label
+
+                for template in ['input_template', 'output_template']:
+                    group_dict['cls_dict'][template] = getattr(node, template)
+
                 group_json = json.dumps(group_dict)
                 groups_dict[name] = group_json
-
-            for template in ['input_template', 'output_template']:
-                # node_items[template] = json.dumps(getattr(node, template))  # save space
-                node_items[template] = getattr(node, template)
 
             # [['Y', 'StringsSocket', {'prop_name': 'y'}], [....
             for socket_name, socket_type, prop_dict in node.input_template:
@@ -437,7 +441,10 @@ def add_node_to_tree(nodes, n, nodes_to_import, name_remap, create_texts):
     try:
         if old_nodes.is_old(bl_idname):
             old_nodes.register_old(bl_idname)
-        node = nodes.new(bl_idname)
+        if bl_idname == 'SvMonadGenericNode':
+            node = nodes.new(bl_idname)
+        else:
+            node = nodes.new(bl_idname)
     except Exception as err:
         print(traceback.format_exc())
         print(bl_idname, 'not currently registered, skipping')
