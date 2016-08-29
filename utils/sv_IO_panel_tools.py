@@ -149,10 +149,12 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
         ObjectsNode = (node.bl_idname == 'ObjectsNode')
         ProfileParamNode = (node.bl_idname == 'SvProfileNode')
         IsGroupNode = (node.bl_idname == 'SvGroupNode')
+        IsMonadInstanceNode = (node.bl_idname.startswith('SvGroupNodeMonad'))
         TextInput = (node.bl_idname == 'SvTextInNode')
+        print(node.bl_idname, IsMonadInstanceNode)
 
         for k, v in node.items():
-
+            print(k, v)
             if k == 'n_id':
                 # used to store the hash of the current Node,
                 # this is created along with the Node anyway. skip.
@@ -191,6 +193,15 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
                     group_dict = create_dict_of_tree(group_ng)
                     group_json = json.dumps(group_dict)
                     groups_dict[v] = group_json
+
+            # maybe can be merged later ... or replace the above
+            if IsMonadInstanceNode and (k == "monad"):
+                print('meee!')
+                if v.name not in groups_dict:
+                    group_ng = bpy.data.node_groups[v.name]
+                    group_dict = create_dict_of_tree(group_ng)
+                    group_json = json.dumps(group_dict)
+                    groups_dict[v.name] = group_json
 
             if isinstance(v, (float, int, str)):
                 node_items[k] = v
