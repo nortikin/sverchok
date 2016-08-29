@@ -35,9 +35,10 @@ from sverchok import old_nodes
 
 SCRIPTED_NODES = {'SvScriptNode', 'SvScriptNodeMK2'}
 
-_EXPORTER_REVISION_ = '0.061'
+_EXPORTER_REVISION_ = '0.062'
 
 '''
+0.062 monad export properly
 0.061 codeshuffle 76f04f9
 0.060 understands sockets with props <o/
 
