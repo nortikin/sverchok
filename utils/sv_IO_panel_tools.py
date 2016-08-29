@@ -213,6 +213,22 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
                 group_json = json.dumps(group_dict)
                 groups_dict[name] = group_json
 
+            for template in ['input_template', 'output_template']:
+                node_items[template] = getattr(node, template)
+
+            # [['Y', 'StringsSocket', {'prop_name': 'y'}], [....
+            for socket_name, socket_type, prop_dict in node.input_template:
+                socket = node.inputs[socket_name]
+                if not socket.is_linked and prop_dict:
+
+                    prop_name = prop_dict['prop_name']
+                    v = getattr(node, prop_name)
+                    if not isinstance(v, (float, int, str)):
+                        v = v[:]
+
+                    node_items[prop_name] = v
+        
+
         # collect socket properties
         # inputs = node.inputs
         # for s in inputs:
