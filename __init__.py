@@ -73,7 +73,7 @@ imported_modules = []
 # or parse it
 root_modules = [
     "menu", "node_tree", "data_structure", "core",
-    "utils", "ui", "nodes", "old_nodes"
+    "utils", "ui", "nodes", "old_nodes", "sockets",
 ]
 
 core_modules = [

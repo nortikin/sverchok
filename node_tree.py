@@ -59,6 +59,11 @@ class SvSocketCommon:
     def other(self):
         return get_other_socket(self)
 
+    def set_default(self, value):
+        if self.prop_name:
+            setattr(self.node, self.prop_name, value) 
+
+
     @property
     def index(self):
         node = self.node

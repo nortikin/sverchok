@@ -20,6 +20,7 @@ Vertex = "vert"
 Matrix = "matrix"
 Face = "face"
 Edge = "edge"
+
 socket_types = {
     Float : "StringsSocket",
     Int : "StringsSocket",
