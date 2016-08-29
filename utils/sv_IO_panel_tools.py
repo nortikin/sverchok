@@ -203,8 +203,8 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
                 v = getattr(node, k)
                 node_items[k] = v
 
-        # monad instance nodes which have no unconnected sockets will not contain
-        # any .items()
+        # we can not rely on .items() to be present for various reasons, so we must gather
+        # something to fill .params with - due to dynamic nature of node. 
         if IsMonadInstanceNode and node.monad:
             name = node.monad.name
             if name not in groups_dict:
@@ -222,12 +222,18 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
         #            node_dict['custom_socket_props'][prop] = getattr(node, prop)[:]
 
         node_dict['params'] = node_items
-        node_dict['location'] = node.location[:]
-        node_dict['bl_idname'] = node.bl_idname
+
         node_dict['height'] = node.height
         node_dict['width'] = node.width
         node_dict['label'] = node.label
         node_dict['hide'] = node.hide
+        
+        if IsMonadInstanceNode:
+            node_dict['bl_idname'] = 'SvMonadGenericNode'
+        else:
+            node_dict['bl_idname'] = node.bl_idname
+
+        node_dict['location'] = node.location[:]
         node_dict['color'] = node.color[:]
         nodes_dict[node.name] = node_dict
 
