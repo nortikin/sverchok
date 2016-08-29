@@ -34,18 +34,19 @@ def sv_main(img_name=0, p=[[[0,0,0]]]):
         image = tmp.reshape(dim_y, dim_x, 4)
 
     out = []
-
+    alpha = []
     if p and bpy_image:
         points = np.array(p[0])
         uv = points * (dim_x, dim_y, 0)
         #
         for u, v, _ in uv:
-            color = image[v % dim_y, u % dim_x][:3]
-            out.append(color.tolist())
-
+            color = image[v % dim_y, u % dim_x]
+            out.append(color[:3].tolist())
+            alpha.append(color[-1])
 
     out_sockets = [
-        ['v', 'Color', [out]]
+        ['v', 'Color', [out]],
+        ['s', 'Alpha', [alpha]]
     ]
 
     return in_sockets, out_sockets
