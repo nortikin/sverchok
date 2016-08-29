@@ -214,6 +214,7 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
                 groups_dict[name] = group_json
 
             for template in ['input_template', 'output_template']:
+                # node_items[template] = json.dumps(getattr(node, template))  # save space
                 node_items[template] = getattr(node, template)
 
             # [['Y', 'StringsSocket', {'prop_name': 'y'}], [....
