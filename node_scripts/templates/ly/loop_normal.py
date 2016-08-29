@@ -16,7 +16,7 @@ def sv_main(obj_name=0):
         else:
             0
     obj_name = get_name(obj_name)
-    # if you want to look to a specific image
+    # if you want to lock to a specific obj
     #obj_name = "Suzanne"
     loops = None
     if str(obj_name) in bpy.data.objects:
@@ -29,7 +29,7 @@ def sv_main(obj_name=0):
     if loops:
         loop_count = len(loops)
         polygon_count = len(mesh.polygons)
-        mesh.calc_tanget()
+        mesh.calc_tangents()
         normals = np.empty((loop_count * 3), dtype=np.float32)
         tangets = np.empty((loop_count * 3), dtype=np.float32)
         loops.foreach_get("normal", normals)
@@ -40,8 +40,8 @@ def sv_main(obj_name=0):
         out_tangent = tangets.tolist()
 
     out_sockets = [
-        ['v', 'Normal', [out_normal],
-        ['v', 'Tangent',[out_tangent],
+        ['v', 'Normal', [out_normal]],
+        ['v', 'Tangent', [out_tangent]],
     ]
 
     return in_sockets, out_sockets
