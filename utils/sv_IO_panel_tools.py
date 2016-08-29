@@ -527,8 +527,12 @@ def import_tree(ng, fullpath='', nodes_json=None, create_texts=True):
 
     def generate_layout(fullpath, nodes_json):
         '''cummulative function ''' 
-                
-        print('#' * 12, nodes_json['export_version'])
+        
+        try:        
+            print('#' * 12, nodes_json['export_version'])
+        except:
+            print('loading monad, probably..')
+            nodes_json = json.loads(nodes_json)
 
         ''' create all nodes and groups '''
 
