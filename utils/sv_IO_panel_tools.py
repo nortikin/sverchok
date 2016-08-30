@@ -528,6 +528,8 @@ def import_tree(ng, fullpath='', nodes_json=None, create_texts=True):
     def generate_layout(fullpath, nodes_json):
         '''cummulative function ''' 
         
+        # it may be necessary to store monads as dicts instead of string/json
+        # this will handle both scenarios
         if isinstance(nodes_json, str):
             nodes_json = json.loads(nodes_json)
             print('==== loading monad ====')
