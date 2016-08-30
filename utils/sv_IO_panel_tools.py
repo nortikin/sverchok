@@ -404,6 +404,8 @@ def gather_remapped_names(node, n, name_remap):
 def apply_core_props(node, node_ref):
     params = node_ref['params']
     # print(node.name, params)
+    if 'cls_dict' in params:
+        return
     for p in params:
         val = params[p]
         setattr(node, p, val)
@@ -437,14 +439,15 @@ def apply_post_processing(node, node_ref):
 def add_node_to_tree(nodes, n, nodes_to_import, name_remap, create_texts):
     node_ref = nodes_to_import[n]
     bl_idname = node_ref['bl_idname']
-    monad_name = node_ref['monad']
 
     try:
         if old_nodes.is_old(bl_idname):
             old_nodes.register_old(bl_idname)
         if bl_idname == 'SvMonadGenericNode':
             node = nodes.new(bl_idname)
-            cls_dict = node_ref['cls_dict']
+            params = node_ref.get('params')
+            cls_dict = params.get('cls_dict')
+            monad_name = params.get('monad')
             node.input_template = cls_dict['input_template']
             node.output_template = cls_dict['output_template']
             node.cls_bl_idname = cls_dict['cls_bl_idname']
