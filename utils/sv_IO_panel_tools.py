@@ -255,6 +255,13 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
         else:
             node_dict['bl_idname'] = node.bl_idname
 
+        if node.bl_idname in {'SvGroupInputsNodeExp', 'SvGroupOutputsNodeExp'}:
+            puts = node.node_kind
+            node_dict[puts] = []
+            for s in getattr(node, puts):
+                if not s.bl_idname == 'SvDummySocket':
+                    node_dict[puts].append([s.name, s.bl_idname])
+
         node_dict['location'] = node.location[:]
         node_dict['color'] = node.color[:]
         nodes_dict[node.name] = node_dict
@@ -434,6 +441,11 @@ def apply_post_processing(node, node_ref):
         node.group_name = group_name_remap.get(group_name, group_name)
     elif node.bl_idname == 'SvTextInNode':
         node.load()
+    elif node.bl_idname in {'SvGroupInputsNodeExp', 'SvGroupOutputsNodeExp'}:
+        kind = node.node_kind
+        sockets = node_ref.get(kind)
+        for s, stype in sockets:
+            print('add', s, stype, 'to', node.name)
 
 
 def add_node_to_tree(nodes, n, nodes_to_import, name_remap, create_texts):
