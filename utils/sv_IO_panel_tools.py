@@ -451,6 +451,7 @@ def add_node_to_tree(nodes, n, nodes_to_import, name_remap, create_texts):
             node.input_template = cls_dict['input_template']
             node.output_template = cls_dict['output_template']
             node.cls_bl_idname = cls_dict['cls_bl_idname']
+            # node.monad = bpy.data.node_groups[monad_name]
         else:
             node = nodes.new(bl_idname)
     except Exception as err:
