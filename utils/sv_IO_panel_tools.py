@@ -208,6 +208,7 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
         # something to fill .params with - due to dynamic nature of node. 
         if IsMonadInstanceNode and node.monad:
             name = node.monad.name
+            node_items['monad'] = node.monad
             if name not in groups_dict:
                 group_ng = bpy.data.node_groups[name]
                 group_dict = create_dict_of_tree(group_ng)
