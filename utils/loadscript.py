@@ -53,7 +53,7 @@ def get_signature(func):
 
 def class_factory(func):
     cls_dict = {}
-
+    module_name = func.__module__.split(".")[-1]
     cls_name = "SvScriptMK3_{}".format(func.__name__)
 
     input_template, output_template = get_signature(func)
@@ -75,7 +75,7 @@ def class_factory(func):
 class SvScriptBase:
     """Base class for Script nodes"""
 
-    # def draw etc
+    module = StringProperty()
 
     def process(self):
         args = [s.sv_get() for s in self.inputs]
@@ -183,6 +183,24 @@ def unregister():
 """
 
 
+def script_preprocessor(text):
+    lines = []
+    inserted_header = False
+    # try to be clever not upset line no reporting in exceptions
+    for line in text.lines:
+        if "@node_func" in line.body and not inserted_header:
+            lines.append(standard_header)
+            inserted_header = True
+
+        if not line.body.strip() and not inserted_header:
+            lines.append(inserted_header)
+            inserted_header = True
+            continue
+
+        lines.append(line.body)
+
+    lines.append(standard_footer)
+    return "\n".join(lines)
 
 class SvLoader(importlib.abc.SourceLoader):
 
