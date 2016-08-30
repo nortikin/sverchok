@@ -443,9 +443,14 @@ def apply_post_processing(node, node_ref):
         node.load()
     elif node.bl_idname in {'SvGroupInputsNodeExp', 'SvGroupOutputsNodeExp'}:
         kind = node.node_kind
-        sockets = node_ref.get(kind)
-        for s, stype in sockets:
+        socket_kinds = node_ref.get(kind)
+        sockets = getattr(node, kind)
+        sockets.remove(sockets[0]) # remove dummy, it will be added anyway. during the final update
+        for idx, (s, stype) in enumerate(socket_kinds):
             print('add', s, stype, 'to', node.name)
+            sockets.new(stype, s)
+            sockets.move(-1, idx)
+
 
 
 def add_node_to_tree(nodes, n, nodes_to_import, name_remap, create_texts):
