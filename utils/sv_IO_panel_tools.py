@@ -209,17 +209,16 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
         if IsMonadInstanceNode and node.monad:
             name = node.monad.name
             node_items['monad'] = name
+            node_items['cls_dict'] = {}
+            node_items['cls_dict']['cls_bl_idname'] = node.bl_idname
+
+            for template in ['input_template', 'output_template']:
+                node_items['cls_dict'][template] = getattr(node, template)
+
             if name not in groups_dict:
                 group_ng = bpy.data.node_groups[name]
                 group_dict = create_dict_of_tree(group_ng)
                 group_dict['bl_idname'] = group_ng.bl_idname  # uhmm..
-                group_dict['cls_dict'] = {}
-                group_dict['cls_dict']['cls_bl_idname'] = group_ng.cls_bl_idname
-                group_dict['cls_dict']['bl_label'] = group_ng.bl_label
-
-                for template in ['input_template', 'output_template']:
-                    group_dict['cls_dict'][template] = getattr(node, template)
-
                 group_json = json.dumps(group_dict)
                 groups_dict[name] = group_json
 
@@ -438,12 +437,17 @@ def apply_post_processing(node, node_ref):
 def add_node_to_tree(nodes, n, nodes_to_import, name_remap, create_texts):
     node_ref = nodes_to_import[n]
     bl_idname = node_ref['bl_idname']
+    monad_name = node_ref['monad']
 
     try:
         if old_nodes.is_old(bl_idname):
             old_nodes.register_old(bl_idname)
         if bl_idname == 'SvMonadGenericNode':
             node = nodes.new(bl_idname)
+            cls_dict = node_ref['cls_dict']
+            node.input_template = cls_dict['input_template']
+            node.output_template = cls_dict['output_template']
+            node.cls_bl_idname = cls_dict['cls_bl_idname']
         else:
             node = nodes.new(bl_idname)
     except Exception as err:
