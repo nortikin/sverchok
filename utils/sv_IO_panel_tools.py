@@ -194,7 +194,6 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
                     group_json = json.dumps(group_dict)
                     groups_dict[v] = group_json
 
-
             if isinstance(v, (float, int, str)):
                 node_items[k] = v
             else:
@@ -219,6 +218,7 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
                 group_ng = bpy.data.node_groups[name]
                 group_dict = create_dict_of_tree(group_ng)
                 group_dict['bl_idname'] = group_ng.bl_idname  # uhmm..
+                group_dict['cls_bl_idname'] = node.bl_idname
                 group_json = json.dumps(group_dict)
                 groups_dict[name] = group_json
 
@@ -451,7 +451,7 @@ def add_node_to_tree(nodes, n, nodes_to_import, name_remap, create_texts):
             monad_name = params.get('monad')
             node.input_template = cls_dict['input_template']
             node.output_template = cls_dict['output_template']
-            node.cls_bl_idname = cls_dict['cls_bl_idname']
+            setattr(node, 'cls_bl_idname', cls_dict['cls_bl_idname'])
             # node.bl_idname = node.cls_bl_idname
         else:
             node = nodes.new(bl_idname)
