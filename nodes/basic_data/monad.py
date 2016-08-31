@@ -47,6 +47,10 @@ class SvSocketAquisition:
         socket_list = getattr(self, kind)
         _socket = self.socket_map.get(kind) # from_socket, to_socket
 
+        if len(socket_list) == 0:
+            print('sockets wiped, skipped update')
+            return
+
         if socket_list[-1].is_linked:
 
             # first switch socket type
