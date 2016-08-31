@@ -449,7 +449,6 @@ def apply_post_processing(node, node_ref):
         for idx, (s, stype) in enumerate(socket_kinds):
             print('add', s, stype, 'to', node.name)
             sockets.new(stype, s)
-            sockets.move(-1, idx)
 
 
 
