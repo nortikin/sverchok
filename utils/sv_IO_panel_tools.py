@@ -256,11 +256,7 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
             node_dict['bl_idname'] = node.bl_idname
 
         if node.bl_idname in {'SvGroupInputsNodeExp', 'SvGroupOutputsNodeExp'}:
-            puts = node.node_kind
-            node_dict[puts] = []
-            for s in getattr(node, puts):
-                if not s.bl_idname == 'SvDummySocket':
-                    node_dict[puts].append([s.name, s.bl_idname])
+            node_dict[node.node_kind] = node.stash()
 
         node_dict['location'] = node.location[:]
         node_dict['color'] = node.color[:]
@@ -442,14 +438,8 @@ def apply_post_processing(node, node_ref):
     elif node.bl_idname == 'SvTextInNode':
         node.load()
     elif node.bl_idname in {'SvGroupInputsNodeExp', 'SvGroupOutputsNodeExp'}:
-        kind = node.node_kind
-        socket_kinds = node_ref.get(kind)
-        sockets = getattr(node, kind)
-        sockets.remove(sockets[0]) # remove dummy, it will be added anyway. during the final update
-        for idx, (s, stype) in enumerate(socket_kinds):
-            print('add', s, stype, 'to', node.name)
-            sockets.new(stype, s)
-
+        socket_kinds = node_ref.get(node.node_kind)
+        node.repopulate(socket_kinds)
 
 
 def add_node_to_tree(nodes, n, nodes_to_import, name_remap, create_texts):
