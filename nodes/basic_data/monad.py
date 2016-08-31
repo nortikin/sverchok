@@ -47,6 +47,10 @@ class SvSocketAquisition:
         socket_list = getattr(self, kind)
         _socket = self.socket_map.get(kind) # from_socket, to_socket
 
+        if len(socket_list) == 0:
+            print('sockets wiped, skipped update')
+            return
+
         if socket_list[-1].is_linked:
 
             # first switch socket type
@@ -71,6 +75,23 @@ class SvSocketAquisition:
 
             # add new dangling dummy
             socket_list.new('SvDummySocket', 'connect me')
+
+    # stashing and repopulate are used for iojson 
+
+    def stash(self):
+        socket_kinds = []
+        for s in getattr(self, self.node_kind):
+            if not s.bl_idname == 'SvDummySocket':
+                socket_kinds.append([s.name, s.bl_idname])
+        return socket_kinds
+
+    def repopulate(self, socket_kinds):
+        sockets = getattr(self, self.node_kind)
+        sockets.remove(sockets[0])
+        for idx, (s, stype) in enumerate(socket_kinds):
+            # print('add', s, stype, 'to', self.name)
+            sockets.new(stype, s)
+
 
 
 
