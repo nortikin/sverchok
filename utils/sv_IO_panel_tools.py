@@ -35,9 +35,10 @@ from sverchok import old_nodes
 
 SCRIPTED_NODES = {'SvScriptNode', 'SvScriptNodeMK2'}
 
-_EXPORTER_REVISION_ = '0.061'
+_EXPORTER_REVISION_ = '0.062'
 
 '''
+0.062 monad export properly
 0.061 codeshuffle 76f04f9
 0.060 understands sockets with props <o/
 
@@ -149,6 +150,7 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
         ObjectsNode = (node.bl_idname == 'ObjectsNode')
         ProfileParamNode = (node.bl_idname == 'SvProfileNode')
         IsGroupNode = (node.bl_idname == 'SvGroupNode')
+        IsMonadInstanceNode = (node.bl_idname.startswith('SvGroupNodeMonad'))
         TextInput = (node.bl_idname == 'SvTextInNode')
 
         for k, v in node.items():
@@ -201,6 +203,38 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
                 v = getattr(node, k)
                 node_items[k] = v
 
+        # we can not rely on .items() to be present for various reasons, so we must gather
+        # something to fill .params with - due to dynamic nature of node. 
+        if IsMonadInstanceNode and node.monad:
+            name = node.monad.name
+            node_items['monad'] = name
+            node_items['cls_dict'] = {}
+            node_items['cls_dict']['cls_bl_idname'] = node.bl_idname
+
+            for template in ['input_template', 'output_template']:
+                node_items['cls_dict'][template] = getattr(node, template)
+
+            if name not in groups_dict:
+                group_ng = bpy.data.node_groups[name]
+                group_dict = create_dict_of_tree(group_ng)
+                group_dict['bl_idname'] = group_ng.bl_idname  # uhmm..
+                group_dict['cls_bl_idname'] = node.bl_idname
+                group_json = json.dumps(group_dict)
+                groups_dict[name] = group_json
+
+            # [['Y', 'StringsSocket', {'prop_name': 'y'}], [....
+            for socket_name, socket_type, prop_dict in node.input_template:
+                socket = node.inputs[socket_name]
+                if not socket.is_linked and prop_dict:
+
+                    prop_name = prop_dict['prop_name']
+                    v = getattr(node, prop_name)
+                    if not isinstance(v, (float, int, str)):
+                        v = v[:]
+
+                    node_items[prop_name] = v
+        
+
         # collect socket properties
         # inputs = node.inputs
         # for s in inputs:
@@ -210,12 +244,21 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
         #            node_dict['custom_socket_props'][prop] = getattr(node, prop)[:]
 
         node_dict['params'] = node_items
-        node_dict['location'] = node.location[:]
-        node_dict['bl_idname'] = node.bl_idname
+
         node_dict['height'] = node.height
         node_dict['width'] = node.width
         node_dict['label'] = node.label
         node_dict['hide'] = node.hide
+        
+        if IsMonadInstanceNode:
+            node_dict['bl_idname'] = 'SvMonadGenericNode'
+        else:
+            node_dict['bl_idname'] = node.bl_idname
+
+        if node.bl_idname in {'SvGroupInputsNodeExp', 'SvGroupOutputsNodeExp'}:
+            node_dict[node.node_kind] = node.stash()
+
+        node_dict['location'] = node.location[:]
         node_dict['color'] = node.color[:]
         nodes_dict[node.name] = node_dict
 
@@ -364,6 +407,8 @@ def gather_remapped_names(node, n, name_remap):
 def apply_core_props(node, node_ref):
     params = node_ref['params']
     # print(node.name, params)
+    if 'cls_dict' in params:
+        return
     for p in params:
         val = params[p]
         setattr(node, p, val)
@@ -392,6 +437,9 @@ def apply_post_processing(node, node_ref):
         node.group_name = group_name_remap.get(group_name, group_name)
     elif node.bl_idname == 'SvTextInNode':
         node.load()
+    elif node.bl_idname in {'SvGroupInputsNodeExp', 'SvGroupOutputsNodeExp'}:
+        socket_kinds = node_ref.get(node.node_kind)
+        node.repopulate(socket_kinds)
 
 
 def add_node_to_tree(nodes, n, nodes_to_import, name_remap, create_texts):
@@ -401,7 +449,21 @@ def add_node_to_tree(nodes, n, nodes_to_import, name_remap, create_texts):
     try:
         if old_nodes.is_old(bl_idname):
             old_nodes.register_old(bl_idname)
-        node = nodes.new(bl_idname)
+
+        if bl_idname == 'SvMonadGenericNode':
+            node = nodes.new(bl_idname)
+            params = node_ref.get('params')
+            cls_dict = params.get('cls_dict')
+            monad_name = params.get('monad')
+            monad = bpy.data.node_groups[monad_name]
+            node.input_template = cls_dict['input_template']
+            node.output_template = cls_dict['output_template']
+            setattr(node, 'cls_bl_idname', cls_dict['cls_bl_idname'])
+            setattr(monad, 'cls_bl_idname', cls_dict['cls_bl_idname'])
+
+            # node.bl_idname = node.cls_bl_idname
+        else:
+            node = nodes.new(bl_idname)
     except Exception as err:
         print(traceback.format_exc())
         print(bl_idname, 'not currently registered, skipping')
@@ -484,7 +546,12 @@ def import_tree(ng, fullpath='', nodes_json=None, create_texts=True):
 
     def generate_layout(fullpath, nodes_json):
         '''cummulative function ''' 
-                
+        
+        # it may be necessary to store monads as dicts instead of string/json
+        # this will handle both scenarios
+        if isinstance(nodes_json, str):
+            nodes_json = json.loads(nodes_json)
+            print('==== loading monad ====')
         print('#' * 12, nodes_json['export_version'])
 
         ''' create all nodes and groups '''
