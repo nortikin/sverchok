@@ -43,6 +43,8 @@ class Face():
 class Edge():
     bl_idname = "StringsSocket"
 
+# to allow Int instead Int() syntax
+socket_types = {SvBaseType.__subclasses__()}
 
 Node = "node"
 
@@ -82,7 +84,7 @@ def get_signature(func):
     for name, parameter in sig.parameters.items():
         annotation = parameter.annotation
         print(name, parameter, annotation)
-        if isinstance(annotation, SvBaseType):
+        if isinstance(annotation, SvBaseType):# or annotation in socket_types:
             func._parameters.append(SocketGetter(len(func._inputs_template)))
             if not parameter.default is None:
                 socket_settings = {"default", parameter.default}
