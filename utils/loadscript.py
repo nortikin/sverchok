@@ -8,47 +8,105 @@ import inspect
 import bpy
 import bpy.types
 from .. import nodes
-from bpy.props import FloatProperty, IntProperty
+from bpy.props import FloatProperty, IntProperty, StringProperty
 from bpy.types import Node
 
+import sverchok
 from sverchok.node_tree import SverchCustomTreeNode
 
 
-Float = FloatProperty
-Int = IntProperty
-Vertex = "vert"
-Matrix = "matrix"
-Face = "face"
-Edge = "edge"
+class SvBaseType:
+    def __init__(self, name=None):
+        self.name = name
 
-socket_types = {
-    Float : "StringsSocket",
-    Int : "StringsSocket",
-    Vertex: "VerticesSocket",
-    Matrix : "MatrixSocket",
-    Face: "StringsSocket",
-    Edge: "StringsSocket"
-}
+class SvValueType(SvBaseType):
+    pass
+
+class Vertex(SvBaseType):
+    bl_idname = "VerticesSocket"
+
+class Int(SvBaseType):
+    bl_idname = "SvIntSocket"
+
+class uInt(SvBaseType):
+    bl_idname = "SvUnsignedIntSocket"
+
+class Float(SvBaseType):
+    bl_idname = "SvFloatSocket"
+
+class Matrix(SvBaseType):
+    bl_idname = "MatrixSocket"
+
+class Face():
+    bl_idname = "StringsSocket"
+
+class Edge():
+    bl_idname = "StringsSocket"
+
+
+Node = "node"
+
+
+# get different types of parameters to the node
+
+class SocketGetter:
+    def __init__(self, index):
+        self.index = index
+
+    def get_value(self, node):
+        return node.inputs[self.index].sv_get()
+
+class PropertyGetter:
+    def __init__(self, name):
+        self.name = name
+
+    def get_value(self, node):
+        return getattr(node, self.name)
+
+class NodeGetter:
+
+    @staticmethod
+    def get_value(node):
+        return node
 
 def get_signature(func):
     """
-    Return two lists of tuple value with (type, name, dict_of_parameters)
-    inputs, outputs
+    Return three lists of tuple value with (type, name, dict_of_parameters)
+    inputs, properties, node, outputs
     """
     sig = inspect.signature(func)
-    inputs_template = []
-    for name, parameter in sig.parameter.items():
-        if not parameter.default is None:
-            socket_settings = {"default", parameter.default}
-        else:
-            socket_settings = {}
-        socket_type = socket_types[parameter.annotation]
-        inputs_template.append((name, socket_type, socket_settings))
+    func._inputs_template = []
+    func._parameters = []
+    func._sv_properties = {}
+    func._outputs_template = []
+    for name, parameter in sig.parameters.items():
+        annotation = parameter.annotation
+        print(name, parameter, annotation)
+        if isinstance(annotation, SvBaseType):
+            func._parameters.append(SocketGetter(len(func._inputs_template)))
+            if not parameter.default is None:
+                socket_settings = {"default", parameter.default}
+            else:
+                socket_settings = {}
+            print(annotation)
+            if annotation.name:
+                socket_name = annotation.name
+            else:
+                socket_name = name
+            func._inputs_template.append((socket_name, annotation.bl_idname, socket_settings))
 
-    outputs_template = []
+        elif annotation == "Node":
+            func._parameters.append(NodeGetter())
+        elif isinstance(annotation, tuple):
+            func._parameters.append(PropertyGetter(name))
+            func._sv_properties[name] = parameter.annotation
+        else:
+            raise SyntaxError
+
+    print(sig.return_annotation)
     for name, s_type in sig.return_annotation:
-        socket_type = socket_types[s_type]
-        outputs_template.append((name, socket_type))
+        socket_type = s_type.bl_idname
+        func._outputs_template.append((name, socket_type))
 
 
 def class_factory(func):
@@ -56,19 +114,35 @@ def class_factory(func):
     module_name = func.__module__.split(".")[-1]
     cls_name = "SvScriptMK3_{}".format(func.__name__)
 
-    input_template, output_template = get_signature(func)
-
     cls_dict["bl_idname"] = cls_name
 
     # draw etc
     cls_dict["bl_label"] = func.label if hasattr(func, "label") else func.__name__
 
-    cls_dict["input_template"] = input_template
-    cls_dict["output_template"] = output_template
-    cls_dict["node_function"] = func
+    supported_overides = ["process", "draw_buttons", "update"] # etc?
+    for name in supported_overides:
+        value = getattr(func, name, None)
+        if value:
+            cls_dict[name] = value
 
-    bases = (SvScriptBase, SverchCustomTreeNode, Node)
+    cls_dict["input_template"] = func.input_template
+    cls_dict["output_template"] = func.output_template
+    for prop in func.properties:
+        cls[prop.name] = prop.data
+
+    cls_dict["func"] = func
+
+    bases = (SvScriptBase, SverchCustomTreeNode, bpy.types.Node)
+
     cls = type(cls_name, bases, cls_dict)
+
+    old_cls = getattr(bpy.types, cls_name, None)
+    if old_cls_ref:
+            bpy.utils.unregister_class(old_cls_ref)
+    bpy.utils.register_class(cls_ref)
+
+    func.cls = cls
+    return cls
 
 
 
@@ -76,11 +150,24 @@ class SvScriptBase:
     """Base class for Script nodes"""
 
     module = StringProperty()
+    func = None
+
+    def draw_buttons(self, layout, context):
+        func = self.func
+        if func:
+            if hasattr(func, "draw_buttons"):
+                func.draw_buttons(self, context, layout)
+            elif func._sv_properties:
+                for prop in func._sv_properties:
+                    layout.prop(self, prop)
 
     def process(self):
-        args = [s.sv_get() for s in self.inputs]
-        # also have to deal with properties
-        results = self.node_function(*args)
+        func = self.func
+        if not func:
+            return
+
+        param = [p.get_value(self) for p in func.parameters]
+        results = func(*param)
 
         for s, data in zip(self.outputs, results):
             if s.is_linked:
@@ -97,22 +184,28 @@ class SvScriptBase:
 
 
 
-def node_func(*args, **values):
+def node_script(*args, **values):
     def real_node_func(func):
         def annotate(func):
             for key, value in values.items():
                 setattr(func, key, value)
-            return func
         annotate(func)
+        print("annotating")
+        get_signature(func)
+        print("got sig")
+        module_name = func.__module__.split(".")[-1]
+        print("module:", module_name)
+        _func_lookup[module_name] = func
         return func
     if args and callable(args[0]):
         return real_node_func(args[0])
     else:
+        print(args, values)
         return real_node_func
-
 
 _script_modules = {}
 _name_lookup = {}
+_func_lookup = {}
 
 def make_valid_identifier(name):
     """Create a valid python identifier from name for use a a part of class name"""
@@ -147,8 +240,17 @@ def load_script(text):
         mod = importlib.import_module("sverchok.nodes.script.{}".format(name))
         _script_modules[name] = mod
 
-    return
-    # here we need to deal with module, class registration and similar things
+    func = _func_lookup[name]
+    setattr(mod, "_func", func)
+    if func._sv_properties:
+        cls = class_factory(func)
+        setattr(mod, "_class", cls)
+    else:
+        setattr(mod, "_class", None)
+
+
+
+
 
 class SvFinder(importlib.abc.MetaPathFinder):
 
@@ -156,12 +258,10 @@ class SvFinder(importlib.abc.MetaPathFinder):
         if fullname.startswith("sverchok.nodes.script."):
             name = fullname.split(".")[-1]
             text_name = _name_lookup.get(name, "")
-            print(name, text_name)
             if text_name in bpy.data.texts:
-                print("what")
                 return importlib.util.spec_from_loader(fullname, SvLoader(text_name))
             else:
-                print("noep")
+                print("couldn't find file")
 
         elif fullname == "sverchok.nodes.script":
             # load Module, right now uses real but empty module, will perhaps change
@@ -170,23 +270,22 @@ class SvFinder(importlib.abc.MetaPathFinder):
         return None
 
 standard_header = """
-from sverchok.utils.loadscript import (node_func, Int, Float, Vertex, Matrix, Face, Edge)
+from sverchok.utils.loadscript import (node_script, Int, Float, Vertex, Matrix, Face, Edge, uInt)
 """
 # should be auto created .format(socket_types.keys())
 
 standard_footer = """
-def register():
-    bpy.utils.register_class(_class)
 
 def unregister():
-    bpy.utils.unregister_class(_class)
+    if _class:
+        bpy.utils.unregister_class(_class)
 """
 
 
 def script_preprocessor(text):
     lines = []
     inserted_header = False
-    # try to be clever not upset line no reporting in exceptions
+    # try to be clever not upset line number reporting in exceptions
     for line in text.lines:
         if "@node_func" in line.body and not inserted_header:
             lines.append(standard_header)
@@ -209,7 +308,10 @@ class SvLoader(importlib.abc.SourceLoader):
 
     def get_data(self, path):
         # here we should insert things and preprocss the file to make it valid
-        source = "".join(standard_header, bpy.data.texts[self._text].as_string(), standard_footer)
+        # this will upset line numbers...
+        source = "".join((standard_header,
+                          bpy.data.texts[self._text].as_string(),
+                          standard_footer))
         return source
 
     def get_filename(self, fullname):
