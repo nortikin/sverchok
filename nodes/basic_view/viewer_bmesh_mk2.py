@@ -425,7 +425,7 @@ class SvBmeshViewerNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             obj = objects[object_name]
             obj.hide_select = False
             scene.objects.unlink(obj)
-            objects.remove(obj)
+            objects.remove(obj, do_unlink=True)
 
         # delete associated meshes
         for object_name in objs:
