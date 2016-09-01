@@ -93,7 +93,8 @@ nodes_dict = {
         'basic_spline',
         'basic_3pt_arc',
         'profile',
-        'generative_art'
+        'generative_art',
+        'script3',
     ],
 
     'list_basic': [

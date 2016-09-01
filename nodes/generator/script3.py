@@ -36,6 +36,7 @@ from sverchok.data_structure import (
 )
 
 from sverchok.utils.loadscript import SvScriptBase
+import sverchok.utils.loadscript as loadscript
 
 FAIL_COLOR = (0.8, 0.1, 0.1)
 READY_COLOR = (0, 0.8, 0.95)
@@ -53,7 +54,7 @@ class SvScriptNodeGenericCallbackOp(bpy.types.Operator):
 
     def execute(self, context):
         n = context.node
-        module getattr(sverchok.nodes.script, node.module, None)
+        module = getattr(sverchok.nodes.script, node.module, None)
         fn_name = self.fn_name
 
         f = getattr(module, fn_name, None)
@@ -78,9 +79,18 @@ class SvScriptNodeMK3(SvScriptBase, bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
 
 
-    module = StringProperty()
+    has_script = StringProperty()
+    script_name = StringProperty()
 
     data_storage = StringProperty()
+
+    @property
+    def func(self):
+        module = loadscript._script_modules.get(self.script_name)
+        if module:
+            return module._func
+        else:
+            return None
 
 
     """
@@ -125,13 +135,25 @@ class SvScriptNodeMK3(SvScriptBase, bpy.types.Node, SverchCustomTreeNode):
             self.outputs.new(socket_bl_idname, socket_name)
 
 
+    def load(self):
+        cls = loadscript.load_script(self.script_name)
+        if cls.bl_idname != self.bl_idname:
+            self.id_data.nodes.new(cls.bl_idname)
+            self.id_data.nodes.remove(self)
+            return
+        else:
+            self.input_template = cls.input_template
+            self.output_template = cls.outputs_template
 
     def draw_buttons(self, context, layout):
-        if self.module:
-
+        func = self.func
+        if func:
+            super().draw_buttons(self, context, layout)
         else:
+            col = layout.column(align=True)
+            row = col.row()
             row.prop_search(self, 'script_name', bpy.data, 'texts', text='', icon='TEXT')
-            row.operator(sv_callback, text='', icon='PLUGIN').fn_name = 'load'
+            row.operator("node.sverchok_callback", text='', icon='PLUGIN').fn_name = 'load'
 
 
 

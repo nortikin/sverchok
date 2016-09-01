@@ -58,6 +58,8 @@ def make_node_cats():
         ["SvProfileNode",       "ProfileParametric"],
         ["SvGenerativeArtNode", "Generative Art"],
         ["SvScriptNode",        "Scripted Node",     "SCRIPTPLUGINS"],
+        ["SvScriptNodeMK3",     "Script 3 Node",     "SCRIPTPLUGINS"],
+
     ]
 
     node_cats["Analyzers"] = [
