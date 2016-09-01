@@ -84,7 +84,7 @@ def get_signature(func):
     for name, parameter in sig.parameters.items():
         annotation = parameter.annotation
         print(name, parameter, annotation)
-        if isinstance(annotation, SvBaseType):# or annotation in socket_types:
+        if isinstance(annotation, SvBaseType):
             func._parameters.append(SocketGetter(len(func._inputs_template)))
             if not parameter.default is None:
                 socket_settings = {"default", parameter.default}
@@ -96,7 +96,11 @@ def get_signature(func):
             else:
                 socket_name = name
             func._inputs_template.append((socket_name, annotation.bl_idname, socket_settings))
-
+        elif annotation in socket_types: # when used with Int syntax instead of Int()
+            func._parameters.append(SocketGetter(len(func._inputs_template)))
+            socket_settings = {"default", parameter.default}
+            socket_name = name
+            func._inputs_template.append((socket_name, annotation.bl_idname, socket_settings))
         elif annotation == "Node":
             func._parameters.append(NodeGetter())
         elif isinstance(annotation, tuple):
