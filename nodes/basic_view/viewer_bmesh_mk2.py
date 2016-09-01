@@ -425,7 +425,7 @@ class SvBmeshViewerNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             obj = objects[object_name]
             obj.hide_select = False
             scene.objects.unlink(obj)
-            objects.remove(obj)
+            objects.remove(obj, do_unlink=True)
 
         # delete associated meshes
         for object_name in objs:
@@ -436,7 +436,9 @@ class SvBmeshViewerNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         named = self.basemesh_name
 
         # alias group, or generate new group and alias that
-        group = groups.get(named, groups.new(named))
+        group = groups.get(named)
+        if not group:
+            group = groups.new(named)
 
         for obj in objs:
             if obj.name not in group.objects:
