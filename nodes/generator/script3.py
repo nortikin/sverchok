@@ -79,7 +79,7 @@ class SvScriptNodeMK3(SvScriptBase, bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
 
 
-    has_script = StringProperty()
+    is_loaded = BoolProperty()
     script_name = StringProperty()
 
     data_storage = StringProperty()
@@ -136,19 +136,22 @@ class SvScriptNodeMK3(SvScriptBase, bpy.types.Node, SverchCustomTreeNode):
 
 
     def load(self):
-        cls = loadscript.load_script(self.script_name)
-        if cls.bl_idname != self.bl_idname:
+        loadscript.load_script(self.script_name)
+        func = self.func
+        if hasattr(func, "cls"):
+            cls = func.cls
             self.id_data.nodes.new(cls.bl_idname)
             self.id_data.nodes.remove(self)
             return
         else:
-            self.input_template = cls.input_template
-            self.output_template = cls.outputs_template
+            self.input_template = func._inputs_template
+            self.output_template = func._outputs_template
+            self.is_loaded = True
 
     def draw_buttons(self, context, layout):
         func = self.func
-        if func:
-            super().draw_buttons(self, context, layout)
+        if func and self.is_loaded:
+            super().draw_buttons(context, layout)
         else:
             col = layout.column(align=True)
             row = col.row()
