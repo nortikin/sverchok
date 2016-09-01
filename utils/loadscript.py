@@ -166,7 +166,7 @@ class SvScriptBase:
         if not func:
             return
 
-        param = [p.get_value(self) for p in func.parameters]
+        param = [p.get_value(self) for p in func._parameters]
         results = func(*param)
 
         for s, data in zip(self.outputs, results):
@@ -232,8 +232,8 @@ def load_script(text):
     name = make_valid_identifier(name)
     _name_lookup[name] = text
 
-    # we should introduce simple auto renamning or name mangling system
     if name in _script_modules:
+        print("reloading")
         mod = _script_modules[name]
         importlib.reload(mod)
     else:
