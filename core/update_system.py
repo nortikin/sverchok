@@ -187,7 +187,13 @@ def separate_nodes(ng, links=None):
         if skip_nodes:
             node_set_list = filter(lambda ns:ns.isdisjoint(skip_nodes), node_set_list)
     """
-    return [ns for ns in node_set_list if len(ns) > 1]
+    node_sets = [ns for ns in node_set_list if len(ns) > 1]
+    def average_node(nodes):
+        center = sum(ng.nodes[n].location.y for n in nodes)
+        return -center/len(nodes)
+
+    node_sets.sort(key=average_node)
+    return node_sets
 
 def make_tree_from_nodes(node_names, tree, down=True):
     """
