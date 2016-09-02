@@ -84,6 +84,13 @@ class SvScriptNodeMK3(SvScriptBase, bpy.types.Node, SverchCustomTreeNode):
 
     data_storage = StringProperty()
 
+    def draw_label(self):
+        func = self.func
+        if func:
+            return func.label
+        else:
+            return self.bl_label
+
     @property
     def func(self):
         module = loadscript._script_modules.get(self.script_name)
@@ -136,11 +143,19 @@ class SvScriptNodeMK3(SvScriptBase, bpy.types.Node, SverchCustomTreeNode):
 
 
     def load(self):
+        if not self.script_name:
+            return
+
         loadscript.load_script(self.script_name)
+
         func = self.func
+        if not func:
+            raise ImportError("No script found")
+
         if hasattr(func, "cls"):
             cls = func.cls
-            self.id_data.nodes.new(cls.bl_idname)
+            node = self.id_data.nodes.new(cls.bl_idname)
+            node.location = self.location
             self.id_data.nodes.remove(self)
             return
         else:

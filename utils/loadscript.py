@@ -4,15 +4,36 @@ import importlib.util
 import keyword
 import sys
 import inspect
+from itertools import chain
 
 import bpy
 import bpy.types
 from .. import nodes
-from bpy.props import FloatProperty, IntProperty, StringProperty
+from bpy.props import FloatProperty, IntProperty, StringProperty, FloatVectorProperty
 from bpy.types import Node
 
 import sverchok
 from sverchok.node_tree import SverchCustomTreeNode
+
+class SvBaseTypeP:
+    def __init__(self, **kwargs):
+        self.kwargs = kwargs
+
+    def add(self, key, value):
+        self.kwargs[key] = value
+
+    def get_prop(self):
+        return self.prop_func(**self.kwargs)
+
+class FloatP(SvBaseTypeP):
+    prop_func = FloatProperty
+
+class IntP(SvBaseTypeP):
+    prop_func = IntProperty
+
+class VectorP(SvBaseTypeP):
+    prop_func = FloatVectorProperty
+
 
 
 class SvBaseType:
@@ -44,7 +65,7 @@ class Edge():
     bl_idname = "StringsSocket"
 
 # to allow Int instead Int() syntax
-socket_types = {SvBaseType.__subclasses__()}
+socket_types = set(SvBaseType.__subclasses__())
 
 Node = "node"
 
@@ -73,52 +94,66 @@ class NodeGetter:
 
 def get_signature(func):
     """
-    Return three lists of tuple value with (type, name, dict_of_parameters)
-    inputs, properties, node, outputs
+    annotate the function with meta data from the signature
     """
     sig = inspect.signature(func)
     func._inputs_template = []
     func._parameters = []
     func._sv_properties = {}
     func._outputs_template = []
+    if not hasattr(func, "label"):
+        func.label = func.__name__
+
     for name, parameter in sig.parameters.items():
         annotation = parameter.annotation
         print(name, parameter, annotation)
-        if isinstance(annotation, SvBaseType):
+        if isinstance(annotation, SvBaseType): # Socket type parameter
             func._parameters.append(SocketGetter(len(func._inputs_template)))
-            if not parameter.default is None:
-                socket_settings = {"default", parameter.default}
+            if parameter.default == inspect.Signature.empty or parameter.default is None:
+                socket_settings = dict()
             else:
-                socket_settings = {}
-            print(annotation)
+                socket_settings = {"default_value": parameter.default}
+
             if annotation.name:
                 socket_name = annotation.name
             else:
                 socket_name = name
+
             func._inputs_template.append((socket_name, annotation.bl_idname, socket_settings))
-        elif annotation in socket_types: # when used with Int syntax instead of Int()
-            func._parameters.append(SocketGetter(len(func._inputs_template)))
-            socket_settings = {"default", parameter.default}
-            socket_name = name
-            func._inputs_template.append((socket_name, annotation.bl_idname, socket_settings))
+        elif isinstance(annotation, SvBaseTypeP):
+            func._parameters.append(PropertyGetter(name))
+            if not (parameter.default == inspect.Signature.empty or parameter.default is None):
+                annotation.add("default", parameter.default)
+            func._sv_properties[name] = annotation.get_prop()
         elif annotation == "Node":
             func._parameters.append(NodeGetter())
-        elif isinstance(annotation, tuple):
-            func._parameters.append(PropertyGetter(name))
-            func._sv_properties[name] = parameter.annotation
+        elif isinstance(annotation, type) and issubclass(annotation, SvBaseType): # Socket used with Int syntax instead of Int()
+            func._parameters.append(SocketGetter(len(func._inputs_template)))
+            if parameter.default == inspect.Signature.empty or parameter.default is None:
+                socket_settings = {}
+            else:
+                socket_settings = {"default_value": parameter.default}
+            socket_name = name
+            func._inputs_template.append((socket_name, annotation.bl_idname, socket_settings))
+
+
         else:
             raise SyntaxError
 
     print(sig.return_annotation)
-    for name, s_type in sig.return_annotation:
+    for s_type in sig.return_annotation:
         socket_type = s_type.bl_idname
+        if isinstance(s_type, SvBaseType):
+            name = s_type.name
+        else:
+            name = s_type.__name__
         func._outputs_template.append((name, socket_type))
 
 
 def class_factory(func):
     cls_dict = {}
     module_name = func.__module__.split(".")[-1]
-    cls_name = "SvScriptMK3_{}".format(func.__name__)
+    cls_name = "SvScriptMK3_{}".format((module_name, func.__name__))
 
     cls_dict["bl_idname"] = cls_name
 
@@ -131,10 +166,10 @@ def class_factory(func):
         if value:
             cls_dict[name] = value
 
-    cls_dict["input_template"] = func.input_template
-    cls_dict["output_template"] = func.output_template
-    for prop in func.properties:
-        cls[prop.name] = prop.data
+    cls_dict["input_template"] = func._inputs_template
+    cls_dict["output_template"] = func._outputs_template
+    for name, prop in func._sv_properties.items():
+        cls_dict[name] = prop
 
     cls_dict["func"] = func
 
@@ -143,9 +178,9 @@ def class_factory(func):
     cls = type(cls_name, bases, cls_dict)
 
     old_cls = getattr(bpy.types, cls_name, None)
-    if old_cls_ref:
-            bpy.utils.unregister_class(old_cls_ref)
-    bpy.utils.register_class(cls_ref)
+    if old_cls:
+        bpy.utils.unregister_class(old_cls)
+    bpy.utils.register_class(cls)
 
     func.cls = cls
     return cls
@@ -158,13 +193,16 @@ class SvScriptBase:
     module = StringProperty()
     func = None
 
-    def draw_buttons(self, layout, context):
+
+
+    def draw_buttons(self, context, layout):
         func = self.func
         if func:
             if hasattr(func, "draw_buttons"):
                 func.draw_buttons(self, context, layout)
             elif func._sv_properties:
-                for prop in func._sv_properties:
+                for prop in func._sv_properties.keys():
+                    #print(prop)
                     layout.prop(self, prop)
 
     def process(self):
@@ -172,7 +210,7 @@ class SvScriptBase:
         if not func:
             return
 
-        param = [p.get_value(self) for p in func._parameters]
+        param = tuple(p.get_value(self) for p in func._parameters)
         results = func(*param)
 
         for s, data in zip(self.outputs, results):
@@ -180,6 +218,9 @@ class SvScriptBase:
                 s.sv_set(data)
 
     def sv_init(self, context):
+        func = self.func
+        if not func:
+            return
         for socket_name, socket_bl_idname, prop_data in self.input_template:
             s = self.inputs.new(socket_bl_idname, socket_name)
             for name, value in prop_data.items():
@@ -256,8 +297,6 @@ def load_script(text):
 
 
 
-
-
 class SvFinder(importlib.abc.MetaPathFinder):
 
     def find_spec(self, fullname, path, target=None):
@@ -275,10 +314,12 @@ class SvFinder(importlib.abc.MetaPathFinder):
 
         return None
 
+socket_type_names = (t.__name__ for t in  chain(SvBaseType.__subclasses__(),
+                                                SvBaseTypeP.__subclasses__()))
+
 standard_header = """
-from sverchok.utils.loadscript import (node_script, Int, Float, Vertex, Matrix, Face, Edge, uInt)
-"""
-# should be auto created .format(socket_types.keys())
+from sverchok.utils.loadscript import (node_script, Node, {})
+""".format("{}".format(", ".join(socket_type_names)))
 
 standard_footer = """
 
