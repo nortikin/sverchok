@@ -61,3 +61,4 @@ nodes/generator/meta_balls.py
 
 # IDE
 .idea
+.DS_Store
