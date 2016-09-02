@@ -171,7 +171,7 @@ def class_factory(func):
     for name, prop in func._sv_properties.items():
         cls_dict[name] = prop
 
-    cls_dict["func"] = func
+    cls_dict["func"] = staticmethod(func)
 
     bases = (SvScriptBase, SverchCustomTreeNode, bpy.types.Node)
 
@@ -211,6 +211,7 @@ class SvScriptBase:
             return
 
         param = tuple(p.get_value(self) for p in func._parameters)
+        print(param, len(param))
         results = func(*param)
 
         for s, data in zip(self.outputs, results):
