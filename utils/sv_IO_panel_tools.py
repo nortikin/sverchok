@@ -728,6 +728,18 @@ class SvNodeTreeImportFromGist(bpy.types.Operator):
     new_nodetree_name = StringProperty()
     gist_id = StringProperty()
 
+    def read_n_decode(self, url):
+        content_at_url = urlopen(url)
+
+        try:
+            # posix
+            found_json = content_at_url.readall().decode()
+        except:
+            # windows..
+            found_json = content_at_url.read().decode()
+        finally:
+            return found_json        
+
     def obtain_json(self, gist_id):
 
         # if it still has the full gist path, trim down to ID
@@ -738,7 +750,7 @@ class SvNodeTreeImportFromGist(bpy.types.Operator):
 
             gist_id = str(gist_id)
             url = 'https://api.github.com/gists/' + gist_id
-            found_json = urlopen(url).readall().decode()
+            found_json = self.read_n_decode(url)
 
             wfile = json.JSONDecoder()
             wjson = wfile.decode(found_json)
@@ -751,8 +763,7 @@ class SvNodeTreeImportFromGist(bpy.types.Operator):
 
         def get_file(gist_id):
             url = get_raw_url_from_gist_id(gist_id)
-            conn = urlopen(url).readall().decode()
-            return conn
+            found_json = self.read_n_decode(url)            
 
         return get_file(gist_id)
 
