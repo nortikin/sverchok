@@ -779,6 +779,14 @@ class SvNodeTreeImportFromGist(bpy.types.Operator):
         context.space_data.node_tree = ng
         return {'FINISHED'}
 
+classes = [
+    SvNodeTreeExporter,
+    SvNodeTreeExportToGist,
+    SvNodeTreeImporter,
+    SvNodeTreeImporterSilent,
+    SvNodeTreeImportFromGist
+]
+
 
 def register():
     bpy.types.SverchCustomTreeType.new_nodetree_name = StringProperty(
@@ -796,17 +804,14 @@ def register():
         default="Enter Gist ID here",
         description="This gist ID will be used to obtain the RAW .json from github")
 
-    bpy.utils.register_class(SvNodeTreeExporter)
-    bpy.utils.register_class(SvNodeTreeImporter)
-    bpy.utils.register_class(SvNodeTreeImporterSilent)
-    bpy.utils.register_class(SvNodeTreeImportFromGist)
+    for cls in classes:
+        bpy.utils.register_class(cls)
 
 
 def unregister():
-    bpy.utils.unregister_class(SvNodeTreeImportFromGist)
-    bpy.utils.unregister_class(SvNodeTreeImporterSilent)
-    bpy.utils.unregister_class(SvNodeTreeImporter)
-    bpy.utils.unregister_class(SvNodeTreeExporter)
+    for cls in classes[::-1]:
+        bpy.utils.unregister_class(cls)
+
     del bpy.types.SverchCustomTreeType.new_nodetree_name
     del bpy.types.SverchCustomTreeType.compress_output
     del bpy.types.SverchCustomTreeType.gist_id
