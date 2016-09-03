@@ -44,8 +44,7 @@ def main_upload_function(gist_filename, gist_description, gist_body, show_browse
             print(gist_url)
             webbrowser.open(gist_url)
 
-        # context.window_manager.clipboard = wjson['id']   # just id
-        context.window_manager.clipboard = gist_url   # full destination url
+        return gist_url
 
     def upload_gist():
         print('sending')
@@ -54,6 +53,6 @@ def main_upload_function(gist_filename, gist_description, gist_body, show_browse
         
         print('received response from server')
         found_json = json_to_parse.read().decode()
-        get_gist_url(found_json)
+        return get_gist_url(found_json)
 
-    upload_gist()
+    return upload_gist()
