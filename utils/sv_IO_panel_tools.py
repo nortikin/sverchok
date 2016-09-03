@@ -796,7 +796,31 @@ class SvNodeTreeExportToGist(bpy.types.Operator):
             return {'FINISHED'}
 
 
+class SvIOPanelProperties(bpy.types.PropertyGroup):
+
+    new_nodetree_name = StringProperty(
+        name='new_nodetree_name',
+        default="Imported_name",
+        description="The name to give the new NodeTree, defaults to: Imported")
+
+    compress_output = BoolProperty(
+        default=0,
+        name='compress_output',
+        description='option to also compress the json, will generate both')
+
+    gist_id = StringProperty(
+        name='new_gist_id',
+        default="Enter Gist ID here",
+        description="This gist ID will be used to obtain the RAW .json from github")
+
+    io_options_enum = bpy.props.EnumProperty(
+        items=[("Import", "Import", "", 0), ("Export", "Export", "", 1)],
+        description="display import or export",
+        default="Export"
+    )
+
 classes = [
+    SvIOPanelProperties,
     SvNodeTreeExporter,
     SvNodeTreeExportToGist,
     SvNodeTreeImporter,
@@ -806,45 +830,20 @@ classes = [
 
 
 def register():
-    bpy.types.SverchCustomTreeType.new_nodetree_name = StringProperty(
-        name='new_nodetree_name',
-        default="Imported_name",
-        description="The name to give the new NodeTree, defaults to: Imported")
-
-    bpy.types.SverchCustomTreeType.compress_output = BoolProperty(
-        default=0,
-        name='compress_output',
-        description='option to also compress the json, will generate both')
-
-    bpy.types.SverchCustomTreeType.gist_id = StringProperty(
-        name='new_gist_id',
-        default="Enter Gist ID here",
-        description="This gist ID will be used to obtain the RAW .json from github")
-
-    display_io_options = [
-        # having element 0 and 1 helps reduce code.
-        ("Import", "Import", "", 0),
-        ("Export", "Export", "", 1)
-    ]
-    
-    bpy.types.SverchCustomTreeType.io_options_enum = bpy.props.EnumProperty(
-        items=display_io_options,
-        description="display import or export",
-        default="Export"
-    )
 
     for cls in classes:
         bpy.utils.register_class(cls)
 
+    bpy.types.SverchCustomTreeType.io_panel_properties = bpy.props.PointerProperty(
+        name="io_panel_properties", type=IOPanelProperties)
 
 def unregister():
+    del bpy.types.SverchCustomTreeType.io_panel_properties
+
     for cls in classes[::-1]:
         bpy.utils.unregister_class(cls)
 
-    del bpy.types.SverchCustomTreeType.new_nodetree_name
-    del bpy.types.SverchCustomTreeType.compress_output
-    del bpy.types.SverchCustomTreeType.gist_id
-    del bpy.types.SverchCustomTreeType.io_options_enum
+
 
 if __name__ == '__main__':
     register()

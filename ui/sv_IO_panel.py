@@ -54,8 +54,9 @@ class SverchokIOLayoutsMenu(bpy.types.Panel):
         row.label(_EXPORTER_REVISION_)
 
         box = layout.box()
-        type_display = ntree.io_options_enum
-        box.row().prop(ntree, 'io_options_enum', expand=True)
+        io_props = ntree.io_panel_properties
+        type_display = io_props.io_options_enum
+        box.row().prop(io_props, 'io_options_enum', expand=True)
 
         if type_display == 'Export':
             ''' export '''
@@ -63,10 +64,10 @@ class SverchokIOLayoutsMenu(bpy.types.Panel):
             col = box.column(align=False)
             row1 = col.row(align=True)
             row1.scale_y = 1.4
-            row1.prop(ntree, 'compress_output', text='Zip', toggle=True)
+            row1.prop(io_props, 'compress_output', text='Zip', toggle=True)
             imp = row1.operator('node.tree_exporter', text='Export', icon='FILE_BACKUP')
             imp.id_tree = ntree.name
-            imp.compress = ntree.compress_output
+            imp.compress = io_props.compress_output
 
             row1b = box.row()
             row1b.operator('node.tree_export_to_gist', text='Export to gist', icon='URL')
@@ -76,7 +77,7 @@ class SverchokIOLayoutsMenu(bpy.types.Panel):
             col = box.column(align=True)
             row3 = col.row(align=True)
             row3.scale_y = 1
-            row3.prop(ntree, 'new_nodetree_name', text='')
+            row3.prop(io_props, 'new_nodetree_name', text='')
             row2 = col.row(align=True)
             row2.scale_y = 1.2
             exp1 = row2.operator('node.tree_importer', text='Here', icon='RNA')
@@ -84,17 +85,17 @@ class SverchokIOLayoutsMenu(bpy.types.Panel):
 
             exp2 = row2.operator('node.tree_importer', text='New', icon='RNA_ADD')
             exp2.id_tree = ''
-            exp2.new_nodetree_name = ntree.new_nodetree_name
+            exp2.new_nodetree_name = io_props.new_nodetree_name
 
             # ''' import into from json '''
             col = box.column(align=True)
             row4 = col.row(align=True)
-            row4.prop(ntree, "gist_id", text='')
+            row4.prop(io_props, "gist_id", text='')
             exp4 = row4.operator(
                 'node.tree_import_from_gist',
                 text='Import',
                 icon='RNA_ADD')
-            exp4.gist_id = ntree.gist_id
+            exp4.gist_id = io_props.gist_id
             exp4.id_tree = ntree.name
 
 
