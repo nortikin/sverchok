@@ -835,7 +835,8 @@ def register():
         bpy.utils.register_class(cls)
 
     bpy.types.SverchCustomTreeType.io_panel_properties = bpy.props.PointerProperty(
-        name="io_panel_properties", type=IOPanelProperties)
+        name="io_panel_properties", type=SvIOPanelProperties)
+
 
 def unregister():
     del bpy.types.SverchCustomTreeType.io_panel_properties
