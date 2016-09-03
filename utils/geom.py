@@ -37,17 +37,15 @@ N = identity_matrix
 def circle(radius=(1,), phase=(0,), angle=(TAU,), verts=(20,), matrix=(N,), output='vep', np=False, merge=False):
     '''
     variables: 
-        : radius, : phase, : angle, : verts, : matrix
-        will be wrapped to a tuple if the input was an int, 
-        shorter tuples will repeat to match length of longest input
+        : radius, phase, angle, verts, matrix
+            will be wrapped to a tuple if the input was an int, 
+            shorter tuples will repeat to match length of longest input
     switches:
-        : output, : np, : merge
-        will effect the entirity of the output of this function.
-        - merge will produce 
-
-    output can be 'v', 've', 'vep', or 'bm'
-
-    np means it would output a numpy array instead of lists.
+        : output, np, merge
+            - will effect the entirity of the output of this function.
+            - :merge will produce a topplogical mesh join of all geometry lists
+            - :np means it would output a numpy array instead of lists.
+            - :output can be 'v', 've', 'vep', or 'bm'
 
     '''
     ...
