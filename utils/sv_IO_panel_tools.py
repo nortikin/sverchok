@@ -773,8 +773,6 @@ class SvNodeTreeImportFromGist(bpy.types.Operator):
             ng = bpy.data.node_groups[self.id_tree]
 
         nodes_json = self.obtain_json(self.gist_id)
-        # wfile = json.JSONDecoder()
-        # nodes_json = wfile.decode(found_json)
         import_tree(ng, nodes_json=nodes_json)
 
         # set new node tree to active
