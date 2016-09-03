@@ -54,8 +54,9 @@ class SverchokIOLayoutsMenu(bpy.types.Panel):
         row.label(_EXPORTER_REVISION_)
 
         ''' export '''
-
-        col = layout.column(align=False)
+        box = layout.box()
+        box.label('Export')
+        col = box.column(align=False)
         row1 = col.row(align=True)
         row1.scale_y = 1.4
         row1.prop(ntree, 'compress_output', text='Zip', toggle=True)
@@ -63,12 +64,13 @@ class SverchokIOLayoutsMenu(bpy.types.Panel):
         imp.id_tree = ntree.name
         imp.compress = ntree.compress_output
 
-        row1b = layout.row()
+        row1b = box.row()
         row1b.operator('node.tree_export_to_gist', text='Export to gist', icon='URL')
 
         ''' import '''
-
-        col = layout.column(align=True)
+        box = layout.box()
+        box.label('Import')
+        col = box.column(align=True)
         row3 = col.row(align=True)
         row3.scale_y = 1
         row3.prop(ntree, 'new_nodetree_name', text='')
@@ -82,7 +84,7 @@ class SverchokIOLayoutsMenu(bpy.types.Panel):
         exp2.new_nodetree_name = ntree.new_nodetree_name
 
         # ''' import into from json '''
-        col = layout.column(align=True)
+        col = box.column(align=True)
         row4 = col.row()
         row4.prop(ntree, "gist_id")
         row5 = col.row()
