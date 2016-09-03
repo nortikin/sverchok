@@ -732,15 +732,8 @@ class SvNodeTreeImportFromGist(bpy.types.Operator):
 
     def read_n_decode(self, url):
         content_at_url = urlopen(url)
-
-        try:
-            # posix
-            found_json = content_at_url.readall().decode()
-        except:
-            # windows..
-            found_json = content_at_url.read().decode()
-        finally:
-            return found_json        
+        found_json = content_at_url.read().decode()
+        return found_json        
 
     def obtain_json(self, gist_id):
 
