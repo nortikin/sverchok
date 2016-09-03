@@ -32,6 +32,8 @@ from bpy.types import EnumProperty
 from bpy.props import StringProperty
 from bpy.props import BoolProperty
 from sverchok import old_nodes
+from sverchok.utils import sv_gist_tools
+
 
 SCRIPTED_NODES = {'SvScriptNode', 'SvScriptNodeMK2'}
 
@@ -785,12 +787,13 @@ class SvNodeTreeExportToGist(bpy.types.Operator):
     bl_idname = "node.tree_export_to_gist"
     bl_label = "sv NodeTree Gist Export Operator"
 
-    id_tree = StringProperty()
-    new_nodetree_name = StringProperty()
-    gist_id = StringProperty()
-
     def execute(self, context):
-        context.space_data.node_tree = ng
+        ng = context.space_data.node_tree
+        gist_filename = ng.name
+        gist_description = 'to do later?'
+        layout_dict = create_dict_of_tree(ng, skip_set={}, selected=False)
+        gist_body = json.dumps(layout_dict, sort_keys=True, indent=2)
+        sv_gist_tools.main_upload_function(gist_filename, gist_description, gist_body, show_browser=False)
         return {'FINISHED'}
 
 
