@@ -779,6 +779,21 @@ class SvNodeTreeImportFromGist(bpy.types.Operator):
         context.space_data.node_tree = ng
         return {'FINISHED'}
 
+
+class SvNodeTreeExportToGist(bpy.types.Operator):
+
+    bl_idname = "node.tree_export_to_gist"
+    bl_label = "sv NodeTree Gist Export Operator"
+
+    id_tree = StringProperty()
+    new_nodetree_name = StringProperty()
+    gist_id = StringProperty()
+
+    def execute(self, context):
+        context.space_data.node_tree = ng
+        return {'FINISHED'}
+
+
 classes = [
     SvNodeTreeExporter,
     SvNodeTreeExportToGist,
