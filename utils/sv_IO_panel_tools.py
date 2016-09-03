@@ -791,7 +791,7 @@ class SvNodeTreeExportToGist(bpy.types.Operator):
             context.window_manager.clipboard = gist_url   # full destination url
             self.report({'WARNING'}, "Copied gistURL to clipboad")
         except:
-            self.report({'WARNING'}, "Error uploading the gist, check your internet connection!")
+            self.report({'ERROR'}, "Error uploading the gist, check your internet connection!")
         finally:
             return {'FINISHED'}
 
