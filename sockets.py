@@ -21,6 +21,8 @@ import bpy
 from bpy.props import StringProperty, BoolProperty, FloatVectorProperty, IntProperty, FloatProperty
 from bpy.types import NodeTree, NodeSocket
 
+
+from sverchok.data_structure import SvGetSocket
 from sverchok.node_tree import SvSocketCommon, process_from_socket, sentinel
 
 
@@ -69,7 +71,7 @@ class SvUnsignedIntSocket(SvSocketStandard, NodeSocket):
 
 
 
-class ObjectSocket(NodeSocket, SvSocketCommon):
+class SvObjectSocket(NodeSocket, SvSocketCommon):
     bl_idname = "SvObjectSocket"
     bl_label = "Object Socket"
 
@@ -97,7 +99,7 @@ class ObjectSocket(NodeSocket, SvSocketCommon):
         else:
             return default
 
-class TextSocket(NodeSocket, SvSocketCommon):
+class SvTextSocket(NodeSocket, SvSocketCommon):
     bl_idname = "SvTextSocket"
     bl_label = "Text Socket"
 
@@ -129,8 +131,8 @@ classes = [
     SvFloatSocket,
     SvIntSocket,
     SvUnsignedIntSocket,
-    TextSocket,
-    ObjectSocket
+    SvTextSocket,
+    SvObjectSocket,
 ]
 
 def register():

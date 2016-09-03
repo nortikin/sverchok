@@ -19,6 +19,7 @@ nodes_dict = {
         'bmesh_props',
         'closest_point_on_mesh',
         'colors',
+        'colors2',
         # 'bvh_raycast',
         # 'bvh_overlap',
         # 'bvh_nearest'

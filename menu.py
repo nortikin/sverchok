@@ -230,6 +230,7 @@ def make_node_cats():
         ["SvRayCastSceneNode",  "Scene Raycast"],
         ["SvRayCastObjectNode", "Object ID Raycast"],
         ["SvVertexColorNode",   "Vertex color"],
+        ["SvVertexColorNodeMK2",   "Vertex color new"],
     ]
 
 # violet
