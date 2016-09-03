@@ -44,7 +44,8 @@ def main_upload_function(gist_filename, gist_description, gist_body, show_browse
             print(gist_url)
             webbrowser.open(gist_url)
 
-        context.window_manager.clipboard = wjson['id']
+        # context.window_manager.clipboard = wjson['id']   # just id
+        context.window_manager.clipboard = gist_url   # full destination url
 
     def upload_gist():
         print('sending')

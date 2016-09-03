@@ -63,6 +63,9 @@ class SverchokIOLayoutsMenu(bpy.types.Panel):
         imp.id_tree = ntree.name
         imp.compress = ntree.compress_output
 
+        row1b = layout.row()
+        row1b.operator('node.tree_export_to_gist', text='Export To Gist')
+
         ''' import '''
 
         col = layout.column(align=True)

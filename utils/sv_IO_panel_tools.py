@@ -783,7 +783,7 @@ class SvNodeTreeImportFromGist(bpy.types.Operator):
 
 
 class SvNodeTreeExportToGist(bpy.types.Operator):
-
+    """Export to anonymous gist and copy id to clipboard"""
     bl_idname = "node.tree_export_to_gist"
     bl_label = "sv NodeTree Gist Export Operator"
 
