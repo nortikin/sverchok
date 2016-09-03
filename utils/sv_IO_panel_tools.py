@@ -821,6 +821,18 @@ def register():
         default="Enter Gist ID here",
         description="This gist ID will be used to obtain the RAW .json from github")
 
+    display_io_options = [
+        # having element 0 and 1 helps reduce code.
+        ("Import", "Import", "", 0),
+        ("Export", "Export", "", 1)
+    ]
+    
+    bpy.types.SverchCustomTreeType.io_options_enum = bpy.props.EnumProperty(
+        items=display_io_options,
+        description="display import or export",
+        default="Export"
+    )
+
     for cls in classes:
         bpy.utils.register_class(cls)
 
@@ -832,7 +844,7 @@ def unregister():
     del bpy.types.SverchCustomTreeType.new_nodetree_name
     del bpy.types.SverchCustomTreeType.compress_output
     del bpy.types.SverchCustomTreeType.gist_id
-
+    del bpy.types.SverchCustomTreeType.io_options_enum
 
 if __name__ == '__main__':
     register()

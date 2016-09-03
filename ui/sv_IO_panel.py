@@ -53,47 +53,50 @@ class SverchokIOLayoutsMenu(bpy.types.Panel):
         row.scale_y = 0.5
         row.label(_EXPORTER_REVISION_)
 
-        ''' export '''
         box = layout.box()
-        box.label('Export')
-        col = box.column(align=False)
-        row1 = col.row(align=True)
-        row1.scale_y = 1.4
-        row1.prop(ntree, 'compress_output', text='Zip', toggle=True)
-        imp = row1.operator('node.tree_exporter', text='Export', icon='FILE_BACKUP')
-        imp.id_tree = ntree.name
-        imp.compress = ntree.compress_output
+        type_display = ntree.io_options_enum
+        box.row().prop(ntree, 'io_options_enum', expand=True)
 
-        row1b = box.row()
-        row1b.operator('node.tree_export_to_gist', text='Export to gist', icon='URL')
+        if type_display == 'Export':
+            ''' export '''
 
-        ''' import '''
-        box = layout.box()
-        box.label('Import')
-        col = box.column(align=True)
-        row3 = col.row(align=True)
-        row3.scale_y = 1
-        row3.prop(ntree, 'new_nodetree_name', text='')
-        row2 = col.row(align=True)
-        row2.scale_y = 1.2
-        exp1 = row2.operator('node.tree_importer', text='Here', icon='RNA')
-        exp1.id_tree = ntree.name
+            col = box.column(align=False)
+            row1 = col.row(align=True)
+            row1.scale_y = 1.4
+            row1.prop(ntree, 'compress_output', text='Zip', toggle=True)
+            imp = row1.operator('node.tree_exporter', text='Export', icon='FILE_BACKUP')
+            imp.id_tree = ntree.name
+            imp.compress = ntree.compress_output
 
-        exp2 = row2.operator('node.tree_importer', text='New', icon='RNA_ADD')
-        exp2.id_tree = ''
-        exp2.new_nodetree_name = ntree.new_nodetree_name
+            row1b = box.row()
+            row1b.operator('node.tree_export_to_gist', text='Export to gist', icon='URL')
 
-        # ''' import into from json '''
-        col = box.column(align=True)
-        row4 = col.row()
-        row4.prop(ntree, "gist_id")
-        row5 = col.row()
-        exp4 = row5.operator(
-            'node.tree_import_from_gist',
-            text='Import from gist',
-            icon='RNA_ADD')
-        exp4.gist_id = ntree.gist_id
-        exp4.id_tree = ntree.name
+        else:
+            ''' import '''
+            col = box.column(align=True)
+            row3 = col.row(align=True)
+            row3.scale_y = 1
+            row3.prop(ntree, 'new_nodetree_name', text='')
+            row2 = col.row(align=True)
+            row2.scale_y = 1.2
+            exp1 = row2.operator('node.tree_importer', text='Here', icon='RNA')
+            exp1.id_tree = ntree.name
+
+            exp2 = row2.operator('node.tree_importer', text='New', icon='RNA_ADD')
+            exp2.id_tree = ''
+            exp2.new_nodetree_name = ntree.new_nodetree_name
+
+            # ''' import into from json '''
+            col = box.column(align=True)
+            row4 = col.row()
+            row4.prop(ntree, "gist_id")
+            row5 = col.row()
+            exp4 = row5.operator(
+                'node.tree_import_from_gist',
+                text='Import from gist',
+                icon='RNA_ADD')
+            exp4.gist_id = ntree.gist_id
+            exp4.id_tree = ntree.name
 
 
 def register():
