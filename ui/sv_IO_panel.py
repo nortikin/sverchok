@@ -88,12 +88,11 @@ class SverchokIOLayoutsMenu(bpy.types.Panel):
 
             # ''' import into from json '''
             col = box.column(align=True)
-            row4 = col.row()
-            row4.prop(ntree, "gist_id")
-            row5 = col.row()
-            exp4 = row5.operator(
+            row4 = col.row(align=True)
+            row4.prop(ntree, "gist_id", text='')
+            exp4 = row4.operator(
                 'node.tree_import_from_gist',
-                text='Import from gist',
+                text='Import',
                 icon='RNA_ADD')
             exp4.gist_id = ntree.gist_id
             exp4.id_tree = ntree.name

@@ -767,7 +767,7 @@ class SvNodeTreeImportFromGist(bpy.types.Operator):
         else:
             ng = bpy.data.node_groups[self.id_tree]
 
-        nodes_json = self.obtain_json(self.gist_id)
+        nodes_json = self.obtain_json(self.gist_id.strip())
         import_tree(ng, nodes_json=nodes_json)
 
         # set new node tree to active
