@@ -69,10 +69,68 @@ class SvUnsignedIntSocket(SvSocketStandard, NodeSocket):
 
 
 
+class ObjectSocket(NodeSocket, SvSocketCommon):
+    bl_idname = "SvObjectSocket"
+    bl_label = "Object Socket"
+
+    object_ref = StringProperty(update=process_from_socket)
+
+    def draw(self, context, layout, node, text):
+        if self.is_linked and not self.is_output:
+            layout.label(text)
+        if not self.is_linked and not self.is_output:
+            layout.prop_search(self, 'object_ref', bpy.data, 'objects')
+
+    def draw_color(self, context, node):
+        return (0.69,  0.74,  0.73, 1.0)
+
+    def sv_get(self, default=sentinel, deepcopy=True):
+        if self.is_linked and not self.is_output:
+            return SvGetSocket(self, deepcopy)
+        elif self.object_ref:
+            obj_ref = bpy.data.objects.get(self.object_ref)
+            if not obj_ref:
+                raise SvNoDataError
+            return [obj_ref]
+        elif default is sentinel:
+            raise SvNoDataError
+        else:
+            return default
+
+class TextSocket(NodeSocket, SvSocketCommon):
+    bl_idname = "SvTextSocket"
+    bl_label = "Text Socket"
+
+    text = StringProperty(update=process_from_socket)
+
+    def draw(self, context, layout, node, text):
+        if self.is_linked and not self.is_output:
+            layout.label(text)
+        if not self.is_linked and not self.is_output:
+            layout.prop(self, 'text')
+
+    def draw_color(self, context, node):
+        return (0.68,  0.85,  0.90, 1)
+
+    def sv_get(self, default=sentinel, deepcopy=True):
+        if self.is_linked and not self.is_output:
+            return SvGetSocket(self, deepcopy)
+        elif self.text:
+            return [self.text]
+        elif default is sentinel:
+            raise SvNoDataError
+        else:
+            return default
+
+
+
+
 classes = [
     SvFloatSocket,
     SvIntSocket,
-    SvUnsignedIntSocket
+    SvUnsignedIntSocket,
+    TextSocket,
+    ObjectSocket
 ]
 
 def register():
