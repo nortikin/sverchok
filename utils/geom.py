@@ -17,7 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 '''
-purpose of this file is to store the convenience function which can be used for regular nodes
+purpose of this file is to store the convenience functions which can be used for regular nodes
 or as part of recipes for script nodes. These functions will be optimized only for speed, never
 for aesthetics or line count or cleverness.
 
@@ -37,7 +37,7 @@ N = identity_matrix
 def circle(radius=(1,), phase=(0,), angle=(TAU,), verts=(20,), matrix=(N,), output='vep', np=False, merge=False):
 	'''
     variables: 
-        : radius, : phase, : angle, : verts : matrix
+        : radius, : phase, : angle, : verts, : matrix
         will be wrapped to a tuple if the input was an int, 
         shorter tuples will repeat to match length of longest input
     switches:
