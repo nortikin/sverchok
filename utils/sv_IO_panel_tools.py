@@ -746,7 +746,7 @@ class SvNodeTreeImportFromGist(bpy.types.Operator):
         if '/' in gist_id:
             gist_id = gist_id.split('/')[-1]
 
-        def get_raw_url_from_gist_id(gist_id):
+        def get_file(gist_id):
 
             gist_id = str(gist_id)
             url = 'https://api.github.com/gists/' + gist_id
@@ -755,15 +755,10 @@ class SvNodeTreeImportFromGist(bpy.types.Operator):
             wfile = json.JSONDecoder()
             wjson = wfile.decode(found_json)
 
-            # 'files' may contain several - this will mess up gist name.
-            files_flag = 'files'
-            file_names = list(wjson[files_flag].keys())
-            file_name = file_names[0]
-            return wjson[files_flag][file_name]['raw_url']
-
-        def get_file(gist_id):
-            url = get_raw_url_from_gist_id(gist_id)
-            found_json = self.read_n_decode(url)            
+            # 'files' may contain several names, we pick the first (index=0)
+            file_name = list(wjson['files'].keys())[0]
+            nodes_str = wjson['files'][file_name]['content']
+            return json.loads(nodes_str)
 
         return get_file(gist_id)
 
@@ -777,9 +772,9 @@ class SvNodeTreeImportFromGist(bpy.types.Operator):
         else:
             ng = bpy.data.node_groups[self.id_tree]
 
-        found_json = self.obtain_json(self.gist_id)
-        wfile = json.JSONDecoder()
-        nodes_json = wfile.decode(found_json)
+        nodes_json = self.obtain_json(self.gist_id)
+        # wfile = json.JSONDecoder()
+        # nodes_json = wfile.decode(found_json)
         import_tree(ng, nodes_json=nodes_json)
 
         # set new node tree to active
