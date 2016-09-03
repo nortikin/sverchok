@@ -43,7 +43,7 @@ def circle(radius=(1,), phase=(0,), angle=(TAU,), verts=(20,), matrix=(N,), outp
     switches:
         : output, np, merge
             - will effect the entirity of the output of this function.
-            - :merge will produce a topplogical mesh join of all geometry lists
+            - :merge will produce a topological mesh join of all geometry lists
             - :np means it would output a numpy array instead of lists.
             - :output can be 'v', 've', 'vep', or 'bm'
 
