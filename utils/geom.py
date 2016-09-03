@@ -21,6 +21,8 @@ purpose of this file is to store the convenience functions which can be used for
 or as part of recipes for script nodes. These functions will be optimized only for speed, never
 for aesthetics or line count or cleverness.
 
+or maybe it makes sense to turn this into a giant class
+
 '''
 
 # constants 
@@ -43,12 +45,18 @@ def circle(radius=(1,), phase=(0,), angle=(TAU,), verts=(20,), matrix=(N,), outp
     switches:
         : output, np, merge
             - will effect the entirity of the output of this function.
+            - :output can be 'v', 've', 'vep', or 'bm'
             - :merge will produce a topological mesh join of all geometry lists
             - :np means it would output a numpy array instead of lists.
-            - :output can be 'v', 've', 'vep', or 'bm'
 
     '''
     ...
 
+def rect(w=(1,), h=(1.654,), dim=None, matrix=(N,), radius=0.0, radius_segs=6, edge_segs=1, output='vep', np=False, merge=False):
+    '''
+    if dim, then uniform, 
+    if w, h then 
+    '''
+    ...
 
 # shapes 3d
