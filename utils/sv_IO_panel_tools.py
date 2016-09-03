@@ -32,6 +32,8 @@ from bpy.types import EnumProperty
 from bpy.props import StringProperty
 from bpy.props import BoolProperty
 from sverchok import old_nodes
+from sverchok.utils import sv_gist_tools
+
 
 SCRIPTED_NODES = {'SvScriptNode', 'SvScriptNodeMK2'}
 
@@ -728,31 +730,30 @@ class SvNodeTreeImportFromGist(bpy.types.Operator):
     new_nodetree_name = StringProperty()
     gist_id = StringProperty()
 
+    def read_n_decode(self, url):
+        content_at_url = urlopen(url)
+        found_json = content_at_url.read().decode()
+        return found_json        
+
     def obtain_json(self, gist_id):
 
         # if it still has the full gist path, trim down to ID
         if '/' in gist_id:
             gist_id = gist_id.split('/')[-1]
 
-        def get_raw_url_from_gist_id(gist_id):
+        def get_file(gist_id):
 
             gist_id = str(gist_id)
             url = 'https://api.github.com/gists/' + gist_id
-            found_json = urlopen(url).readall().decode()
+            found_json = self.read_n_decode(url)
 
             wfile = json.JSONDecoder()
             wjson = wfile.decode(found_json)
 
-            # 'files' may contain several - this will mess up gist name.
-            files_flag = 'files'
-            file_names = list(wjson[files_flag].keys())
-            file_name = file_names[0]
-            return wjson[files_flag][file_name]['raw_url']
-
-        def get_file(gist_id):
-            url = get_raw_url_from_gist_id(gist_id)
-            conn = urlopen(url).readall().decode()
-            return conn
+            # 'files' may contain several names, we pick the first (index=0)
+            file_name = list(wjson['files'].keys())[0]
+            nodes_str = wjson['files'][file_name]['content']
+            return json.loads(nodes_str)
 
         return get_file(gist_id)
 
@@ -766,9 +767,7 @@ class SvNodeTreeImportFromGist(bpy.types.Operator):
         else:
             ng = bpy.data.node_groups[self.id_tree]
 
-        found_json = self.obtain_json(self.gist_id)
-        wfile = json.JSONDecoder()
-        nodes_json = wfile.decode(found_json)
+        nodes_json = self.obtain_json(self.gist_id.strip())
         import_tree(ng, nodes_json=nodes_json)
 
         # set new node tree to active
@@ -776,36 +775,75 @@ class SvNodeTreeImportFromGist(bpy.types.Operator):
         return {'FINISHED'}
 
 
-def register():
-    bpy.types.SverchCustomTreeType.new_nodetree_name = StringProperty(
+class SvNodeTreeExportToGist(bpy.types.Operator):
+    """Export to anonymous gist and copy id to clipboard"""
+    bl_idname = "node.tree_export_to_gist"
+    bl_label = "sv NodeTree Gist Export Operator"
+
+    def execute(self, context):
+        ng = context.space_data.node_tree
+        gist_filename = ng.name
+        gist_description = 'to do later?'
+        layout_dict = create_dict_of_tree(ng, skip_set={}, selected=False)
+        gist_body = json.dumps(layout_dict, sort_keys=True, indent=2)
+        try:
+            gist_url = sv_gist_tools.main_upload_function(gist_filename, gist_description, gist_body, show_browser=False)
+            context.window_manager.clipboard = gist_url   # full destination url
+            self.report({'WARNING'}, "Copied gistURL to clipboad")
+        except:
+            self.report({'ERROR'}, "Error uploading the gist, check your internet connection!")
+        finally:
+            return {'FINISHED'}
+
+
+class SvIOPanelProperties(bpy.types.PropertyGroup):
+
+    new_nodetree_name = StringProperty(
         name='new_nodetree_name',
         default="Imported_name",
         description="The name to give the new NodeTree, defaults to: Imported")
 
-    bpy.types.SverchCustomTreeType.compress_output = BoolProperty(
+    compress_output = BoolProperty(
         default=0,
         name='compress_output',
         description='option to also compress the json, will generate both')
 
-    bpy.types.SverchCustomTreeType.gist_id = StringProperty(
+    gist_id = StringProperty(
         name='new_gist_id',
         default="Enter Gist ID here",
         description="This gist ID will be used to obtain the RAW .json from github")
 
-    bpy.utils.register_class(SvNodeTreeExporter)
-    bpy.utils.register_class(SvNodeTreeImporter)
-    bpy.utils.register_class(SvNodeTreeImporterSilent)
-    bpy.utils.register_class(SvNodeTreeImportFromGist)
+    io_options_enum = bpy.props.EnumProperty(
+        items=[("Import", "Import", "", 0), ("Export", "Export", "", 1)],
+        description="display import or export",
+        default="Export"
+    )
+
+classes = [
+    SvIOPanelProperties,
+    SvNodeTreeExporter,
+    SvNodeTreeExportToGist,
+    SvNodeTreeImporter,
+    SvNodeTreeImporterSilent,
+    SvNodeTreeImportFromGist
+]
+
+
+def register():
+
+    for cls in classes:
+        bpy.utils.register_class(cls)
+
+    bpy.types.SverchCustomTreeType.io_panel_properties = bpy.props.PointerProperty(
+        name="io_panel_properties", type=SvIOPanelProperties)
 
 
 def unregister():
-    bpy.utils.unregister_class(SvNodeTreeImportFromGist)
-    bpy.utils.unregister_class(SvNodeTreeImporterSilent)
-    bpy.utils.unregister_class(SvNodeTreeImporter)
-    bpy.utils.unregister_class(SvNodeTreeExporter)
-    del bpy.types.SverchCustomTreeType.new_nodetree_name
-    del bpy.types.SverchCustomTreeType.compress_output
-    del bpy.types.SverchCustomTreeType.gist_id
+    del bpy.types.SverchCustomTreeType.io_panel_properties
+
+    for cls in classes[::-1]:
+        bpy.utils.unregister_class(cls)
+
 
 
 if __name__ == '__main__':
