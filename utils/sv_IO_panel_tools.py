@@ -786,9 +786,13 @@ class SvNodeTreeExportToGist(bpy.types.Operator):
         gist_description = 'to do later?'
         layout_dict = create_dict_of_tree(ng, skip_set={}, selected=False)
         gist_body = json.dumps(layout_dict, sort_keys=True, indent=2)
-        gist_url = sv_gist_tools.main_upload_function(gist_filename, gist_description, gist_body, show_browser=False)
-        context.window_manager.clipboard = gist_url   # full destination url
-        return {'FINISHED'}
+        try:
+            gist_url = sv_gist_tools.main_upload_function(gist_filename, gist_description, gist_body, show_browser=False)
+            context.window_manager.clipboard = gist_url   # full destination url
+        except:
+            self.report({'WARNING'}, "Error uploading the gist, check your internet connection!")
+        finally:
+            return {'FINISHED'}
 
 
 classes = [
