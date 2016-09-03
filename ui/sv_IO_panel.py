@@ -64,7 +64,7 @@ class SverchokIOLayoutsMenu(bpy.types.Panel):
         imp.compress = ntree.compress_output
 
         row1b = layout.row()
-        row1b.operator('node.tree_export_to_gist', text='Export To Gist')
+        row1b.operator('node.tree_export_to_gist', text='Export to gist', icon='URL')
 
         ''' import '''
 
@@ -88,7 +88,7 @@ class SverchokIOLayoutsMenu(bpy.types.Panel):
         row5 = col.row()
         exp4 = row5.operator(
             'node.tree_import_from_gist',
-            text='import gist',
+            text='Import from gist',
             icon='RNA_ADD')
         exp4.gist_id = ntree.gist_id
         exp4.id_tree = ntree.name
