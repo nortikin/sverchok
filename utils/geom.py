@@ -35,7 +35,7 @@ N = identity_matrix
 # shapes 2d
 
 def circle(radius=(1,), phase=(0,), angle=(TAU,), verts=(20,), matrix=(N,), output='vep', np=False, merge=False):
-	'''
+    '''
     variables: 
         : radius, : phase, : angle, : verts, : matrix
         will be wrapped to a tuple if the input was an int, 
@@ -49,7 +49,7 @@ def circle(radius=(1,), phase=(0,), angle=(TAU,), verts=(20,), matrix=(N,), outp
 
     np means it would output a numpy array instead of lists.
 
-	'''
+    '''
     ...
 
 
