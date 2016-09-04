@@ -8,6 +8,7 @@ from sverchok.core import upgrade_nodes, upgrade_group
 from sverchok.ui import (viewer_draw, viewer_draw_mk2, index_viewer_draw,
                          nodeview_bgl_viewer_draw, color_def)
 from sverchok import old_nodes
+from sverchok.utils import loadscript
 
 
 @persistent
@@ -58,11 +59,21 @@ def sv_post_load(scene):
     Upgrade nodes, apply preferences and do an update.
     """
 
+    # create node groups as needed
     for monad in (ng for ng in bpy.data.node_groups if ng.bl_idname == 'SverchGroupTreeType'):
         if monad.input_node and monad.output_node:
             monad.update_cls()
         else:
             upgrade_group.upgrade_group(monad)
+
+
+    for text in bpy.data.texts:
+        if "@node_script" in text.as_string():
+            try:
+                loadscript.load_script(text.name)
+            except:
+                print("Failed to load {} text file".format(text.name))
+
 
 
     sv_types = {'SverchCustomTreeType', 'SverchGroupTreeType'}
