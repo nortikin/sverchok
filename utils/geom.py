@@ -57,6 +57,16 @@ def generic_output_handler(_bm, output, kind, merge):
 
     I elect to compartmentalize this function, a bit of repeat code but easier to reason about for now.
 
+    switches:
+        : output, kind, merge
+            - will effect the entirity of the output of this function.
+            - :output can be 'v', 've', 'vep', 'vp'
+            - :merge will produce a topological mesh join of all geometry lists
+            - :kind gives opportunity to output bmesh, np, or pydata (default)
+               -- np: means it would output a numpy array instead of lists, will return vectors as n*4
+               -- bm would output a bm object
+               -- pydata would output [n*[[verts],[edges],[faces]], ... ]
+
     '''
 
     # ignore v, ve, vp, vep
@@ -96,15 +106,6 @@ def circle(radius=(1,), phase=(0,), angle=(TAU,), verts=(20,), matrix=(N,), outp
         : radius, phase, angle, verts, matrix
             will be wrapped to a tuple if the input was an int, 
             shorter tuples will repeat to match length of longest input
-    switches:
-        : output, np, merge
-            - will effect the entirity of the output of this function.
-            - :output can be 'v', 've', 'vep', 'vp'
-            - :merge will produce a topological mesh join of all geometry lists
-            - :kind gives opportunity to output bmesh, np, or pydata (default)
-               -- np: means it would output a numpy array instead of lists, will return vectors as n*4
-               -- bm would output a bm object
-               -- pydata would output [n*[[verts],[edges],[faces]], ... ]
 
     '''
     ...
