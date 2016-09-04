@@ -219,6 +219,8 @@ nodes_dict = {
 
     'network': [
         'udp_client'
-    ]
+    ],
+
+    'script': [], # special empty
 
 }
