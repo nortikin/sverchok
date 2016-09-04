@@ -17,6 +17,8 @@
 # ##### END GPL LICENSE BLOCK #####
 
 '''
+None of this file is in a working condition. skip this file.
+
 purpose of this file is to store the convenience functions which can be used for regular nodes
 or as part of recipes for script nodes. These functions will be optimized only for speed, never
 for aesthetics or line count or cleverness.
@@ -24,17 +26,27 @@ for aesthetics or line count or cleverness.
 or maybe it makes sense to turn this into a giant class
 
 '''
+import math
 
-# constants 
+import bpy
+import bmesh
 
-from math import pi as PI 
+from sverchok.utils import sv_mesh_utils  # mesh_join
+from sverchok.utils import sv_bmesh_utils
+
+from sv_bmesh_utils import bmesh_from_pydata
+from sv_bmesh_utils import pydata_from_bmesh
+from sv_bmesh_utils import with_bmesh  # a decorator
+
+# constants
+PI = math.pi
 HALF_PI = PI / 2
 QUARTER_PI = PI / 4
 TAU = PI * 2
 TWO_PI = TAU
 N = identity_matrix
 
-# shapes 2d
+
 
 def circle(radius=(1,), phase=(0,), angle=(TAU,), verts=(20,), matrix=(N,), output='vep', np=False, merge=False):
     '''
@@ -47,7 +59,7 @@ def circle(radius=(1,), phase=(0,), angle=(TAU,), verts=(20,), matrix=(N,), outp
             - will effect the entirity of the output of this function.
             - :output can be 'v', 've', 'vep', or 'bm'
             - :merge will produce a topological mesh join of all geometry lists
-            - :np means it would output a numpy array instead of lists.
+            - :np means it would output a numpy array instead of lists, will return vectors as n*4
 
     '''
     ...
@@ -60,3 +72,34 @@ def rect(w=(1,), h=(1.654,), dim=None, matrix=(N,), radius=0.0, radius_segs=6, e
     ...
 
 # shapes 3d
+
+def uv_sphere(u=(5,), v=(4,), radius=(0.5,), output='vep', np=False, merge=False):
+    '''
+    by default we can yield, but maybe new users won't be expecting a generator, this we can fix with
+    good documentation.
+
+    '''
+    matching = (len(u) == len(v) == len(radius))
+    if not matching:
+        return
+
+    if not merge:
+        for _u, _v, _radius in zip((u, v, radius)):
+            bm = bmesh.new()
+            bmesh.ops.create_uvsphere(bm, u_segments=_u, v_segments=_v, diameter=_radius*2)
+            yield pydata_from_bmesh(bm)
+            bm.free()
+
+    else:
+        _v = []
+        _e = []
+        _f = []
+        for _u, _v, _radius in zip((u, v, radius)):
+            bm = bmesh.new()
+            bmesh.ops.create_uvsphere(bm, u_segments=_u, v_segments=_v, diameter=_radius*2)
+            v, e, p = pydata_from_bmesh(bm)
+            _v.append(v)
+            _e.append(e)
+            _p.append(p)
+            bm.free()
+        return sv_mesh_utils.mesh_join(_v, _e, _p)
