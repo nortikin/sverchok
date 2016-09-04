@@ -85,7 +85,7 @@ def generic_output_handler(_bm, output, kind, merge):
                 return sv_mesh_utils.mesh_join2(output, generated_geom)
             else:
                 return [g for g in generated_geom if g]
-        elif kind == 'np':
+        else:
             ...            
 
 
