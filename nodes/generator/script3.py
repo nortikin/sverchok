@@ -141,6 +141,10 @@ class SvScriptNodeMK3(SvScriptBase, bpy.types.Node, SverchCustomTreeNode):
         for socket_name, socket_bl_idname in value:
             self.outputs.new(socket_bl_idname, socket_name)
 
+    def reset(self):
+        self.inputs.clear()
+        self.outputs.clear()
+        self.script_name = ""
 
     def load(self):
         if not self.script_name:
