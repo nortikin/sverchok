@@ -34,4 +34,4 @@ def sample_image(
         out.append(color[:3].tolist())
         alpha.append(color[-1])
 
-    return out, alpha
+    return [out], [alpha]
