@@ -71,8 +71,9 @@ def sv_post_load(scene):
         if "@node_script" in text.as_string():
             try:
                 loadscript.load_script(text.name)
-            except:
+            except Exception as err:
                 print("Failed to load {} text file".format(text.name))
+                print(err)
 
 
 
@@ -143,8 +144,16 @@ def set_frame_change(mode):
     elif mode == "PRE":
         pre.append(sv_update_handler)
 
+# this feels unclean
+@persistent
+def sv_post_load_fix(scene):
+    if data_structure.RELOAD_EVENT:
+        sv_post_load(scene)
+        data_structure.RELOAD_EVENT = false
+
 
 def register():
+    bpy.app.handlers.scene_update_pre.append(sv_post_load_fix)
     bpy.app.handlers.load_pre.append(sv_clean)
     bpy.app.handlers.load_post.append(sv_post_load)
     data_structure.setup_init()
