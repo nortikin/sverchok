@@ -30,6 +30,8 @@ import math
 
 import bpy
 import bmesh
+import mathutils
+from mathutils import Matrix
 
 from sverchok.utils import sv_mesh_utils  # mesh_join
 from sverchok.utils import sv_bmesh_utils
@@ -38,6 +40,8 @@ from sv_bmesh_utils import bmesh_from_pydata
 from sv_bmesh_utils import pydata_from_bmesh
 from sv_bmesh_utils import with_bmesh  # a decorator
 
+identity_matrix = Matrix()
+
 # constants
 PI = math.pi
 HALF_PI = PI / 2
@@ -45,6 +49,43 @@ QUARTER_PI = PI / 4
 TAU = PI * 2
 TWO_PI = TAU
 N = identity_matrix
+
+
+def generic_output_handler(_bm, output, kind, merge):
+    ''' 
+    This function is not working yet, don't try it.
+
+    I elect to compartmentalize this function, a bit of repeat code but easier to reason about for now.
+
+    '''
+
+    # ignore v, ve, vp, vep
+    if kind == 'bm':
+        return _bm if not merge else bm_merger(_bm)
+
+
+    if kind in {'pydata', 'np'}:
+        _verts = []
+        _edges = []
+        _polygons = []
+        for bm in _bm:
+            verts, edges, polygons = pydata_from_bmesh(bm)
+            _verts.append(verts)
+            if 'e' in output:
+                _edges.append(edges)
+            if 'p' in output:
+                _polygons.append(polygons)
+        for bm in reversed(_bm):
+            bm.free()
+        
+        if kind == 'pydata':
+            generated_geom = _verts, _edges, _polygons
+            if merge:
+                return sv_mesh_utils.mesh_join2(output, generated_geom)
+            else:
+                return [g for g in generated_geom if g]
+        elif kind == 'np':
+            ...            
 
 
 
@@ -78,45 +119,18 @@ def rect(w=(1,), h=(1.654,), dim=None, matrix=(N,), radius=0.0, radius_segs=6, e
 
 def uv_sphere(u=(5,), v=(4,), radius=(0.5,), output='vep', kind='pydata', merge=False):
     '''
-    i'd like to yield by default, but for now just return all.
-    
+    using the bmesh.ops we can quikly create some primtives    
     '''
+
     matching = (len(u) == len(v) == len(radius))
     if not matching:
         return
 
-    _verts = []
-    _edges = []
-    _polygons = []
     _bm = []
     for _u, _v, _radius in zip((u, v, radius)):
         bm = bmesh.new()
         bmesh.ops.create_uvsphere(bm, u_segments=_u, v_segments=_v, diameter=_radius*2)
+        _bm.append(bm)
 
-        if kind == 'bm':
-            _bm.append(bm)
-            # user must remember to bm.free() ?
-        else:
-            verts, edges, polygons = pydata_from_bmesh(bm)
-            
-            _verts.append(verts)
-            if output in {'ve', 'vep'}:
-                _edges.append(edges)
-            if output in {'vp', 'vep'}:
-                _polygons.append(polygons)
-            
-            bm.free()
+    return generic_output_handler(_bm, outputs, kind, merge)
 
-    if kind == 'pydata':
-        if output == 'v':
-            return _verts if not merge else sv_mesh_utils.mesh_join2('v', _verts)
-        elif output == 've':
-            return _verts, _edges if not merge else sv_mesh_utils.mesh_join2('ve', _verts, _edges)
-        elif output == 'vp':
-            return _verts, _polygons if not merge else sv_mesh_utils.mesh_join2('vp', _verts, _polygons)
-        elif output == 'vep':
-            return _verts, _edges, _polygons if not merge else sv_mesh_utils.mesh_join(_verts, _edges, _polygons)
-    elif kind == 'bm':
-        return _bm
-
-    return sv_mesh_utils.mesh_join(_v, _e, _p)
