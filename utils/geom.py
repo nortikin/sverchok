@@ -78,8 +78,9 @@ def generic_output_handler(_bm, output, kind, merge):
         for bm in reversed(_bm):
             bm.free()
         
+        generated_geom = _verts, _edges, _polygons
+        
         if kind == 'pydata':
-            generated_geom = _verts, _edges, _polygons
             if merge:
                 return sv_mesh_utils.mesh_join2(output, generated_geom)
             else:
@@ -119,7 +120,8 @@ def rect(w=(1,), h=(1.654,), dim=None, matrix=(N,), radius=0.0, radius_segs=6, e
 
 def uv_sphere(u=(5,), v=(4,), radius=(0.5,), output='vep', kind='pydata', merge=False):
     '''
-    using the bmesh.ops we can quikly create some primtives    
+    using the bmesh.ops we can quikly create some primtives
+    - todo deal with minimum maximum vals before passing. 
     '''
 
     matching = (len(u) == len(v) == len(radius))
