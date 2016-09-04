@@ -90,16 +90,15 @@ def generic_output_handler(_bm, output, kind, merge):
         
         generated_geom = _verts, _edges, _polygons
         
-        if kind == 'pydata':
-            if merge:
-                return sv_mesh_utils.mesh_join_extended(output, generated_geom)
+        NP = (kind == 'np')
+
+        if merge:
+            return sv_mesh_utils.mesh_join_extended(output, generated_geom, np=NP)
+        else:
+            if NP:
+                return sv_mesh_utils.as_np(output, generated_geom)
             else:
                 return [g for g in generated_geom if g]
-        else:
-            if merge:
-                return sv_mesh_utils.mesh_join_extended(output, generated_geom, np=True)
-            else:
-                return sv_mesh_utils.as_np(output, generated_geom)
 
 
 
