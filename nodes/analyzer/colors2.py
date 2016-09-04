@@ -69,16 +69,16 @@ class SvVertexColorNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         for obj in self.inputs["Object"].sv_get():
             loops = obj.data.loops
             loop_count = len(loops)
-            if not hasattr(obj.data, "vertex_colors"):
-                vertex_color =obj.data.vertex_colors.new(name=self.vertex_color)
-            elif obj.data.vertex_colors.active and self.use_active:
-                vertex_color = obj.data.vertex_colors.active
-            elif not obj.data.vertex_colors.active and self.use_active:
-                vertex_color = obj.data.vertex_colors.new(name=self.vertex_color)
-            elif not obj.data.vertex_colors:
-                vertex_color = obj.data.vertex_colors.new(name=self.vertex_color)
-            #
-            #vertex_color = obj.data.vertex_colors[self.vertex_color]
+            if obj.data.vertex_colors:
+                if self.use_active and obj.data.vertex_colors.active:
+                    vertex_color = obj.data.vertex_colors.active
+                else:
+                    vertex_color = obj.data.vertex_colors.get(self.vertex_color)
+                    if not vertex_color:
+                        vertex_color = obj.data.vertex_colors.add(name=self.vertex_color)
+            else:
+                vertex_color = obj.data.vertex_colors.add(name=self.vertex_color)
+
 
             color_socket = self.inputs["Color"]
             index_socket = self.inputs["Index"]
@@ -100,8 +100,8 @@ class SvVertexColorNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                     colors.shape = (loop_count, 3)
                     colors[:] = self.clear_c
                 elif index_socket.is_linked:
-                    print(self.clear , "clear?")
                     vertex_color.data.foreach_get("color", colors)
+
                 colors.shape = (loop_count, 3)
 
                 if self.mode == "vertices":
@@ -197,9 +197,7 @@ class SvVertexColorNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         self.outputs[0].sv_set([out])
 
     def process_old(self):
-        if self.use_foreach:
-            self.process_foreach()
-            return
+
         objm = bpy.data.objects[self.object_ref].data
         objm.update()
         if not objm.vertex_colors:
