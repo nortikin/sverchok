@@ -57,7 +57,7 @@ def circle(radius=(1,), phase=(0,), angle=(TAU,), verts=(20,), matrix=(N,), outp
     switches:
         : output, np, merge
             - will effect the entirity of the output of this function.
-            - :output can be 'v', 've', 'vep'
+            - :output can be 'v', 've', 'vep', 'vp'
             - :merge will produce a topological mesh join of all geometry lists
             - :kind gives opportunity to output bmesh, np, or pydata (default)
                -- np: means it would output a numpy array instead of lists, will return vectors as n*4
@@ -78,31 +78,31 @@ def rect(w=(1,), h=(1.654,), dim=None, matrix=(N,), radius=0.0, radius_segs=6, e
 
 def uv_sphere(u=(5,), v=(4,), radius=(0.5,), output='vep', kind='pydata', merge=False):
     '''
-    by default we can yield, but maybe new users won't be expecting a generator, this we can fix with
-    good documentation.
-
+    i'd like to yield by default, but for now just return all.
+    
     '''
     matching = (len(u) == len(v) == len(radius))
     if not matching:
         return
 
-    if not merge:
-        for _u, _v, _radius in zip((u, v, radius)):
-            bm = bmesh.new()
-            bmesh.ops.create_uvsphere(bm, u_segments=_u, v_segments=_v, diameter=_radius*2)
-            yield pydata_from_bmesh(bm)
-            bm.free()
+    _verts = []
+    _edges = []
+    _polygons = []
+    for _u, _v, _radius in zip((u, v, radius)):
+        bm = bmesh.new()
+        bmesh.ops.create_uvsphere(bm, u_segments=_u, v_segments=_v, diameter=_radius*2)
+        verts, edges, polygons = pydata_from_bmesh(bm)
+        
+        _verts.append(verts)
+        if output in {'ve', 'vep'}:
+            _edges.append(edges)
+        if output in {'vp', 'vep'}:
+            _polygons.append(polygons)
+        
+        bm.free()
+        
+        if output == 'v':
+            return _verts if not merge else 
 
-    else:
-        _v = []
-        _e = []
-        _f = []
-        for _u, _v, _radius in zip((u, v, radius)):
-            bm = bmesh.new()
-            bmesh.ops.create_uvsphere(bm, u_segments=_u, v_segments=_v, diameter=_radius*2)
-            v, e, p = pydata_from_bmesh(bm)
-            _v.append(v)
-            _e.append(e)
-            _p.append(p)
-            bm.free()
-        return sv_mesh_utils.mesh_join(_v, _e, _p)
+
+    return sv_mesh_utils.mesh_join(_v, _e, _p)
