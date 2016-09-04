@@ -34,6 +34,9 @@ class IntP(SvBaseTypeP):
 class VectorP(SvBaseTypeP):
     prop_func = FloatVectorProperty
 
+class StringP(SvBaseTypeP):
+    prop_func = StringProperty
+
 
 
 class SvBaseType:
