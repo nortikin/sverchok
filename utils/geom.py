@@ -48,7 +48,7 @@ N = identity_matrix
 
 
 
-def circle(radius=(1,), phase=(0,), angle=(TAU,), verts=(20,), matrix=(N,), output='vep', np=False, merge=False):
+def circle(radius=(1,), phase=(0,), angle=(TAU,), verts=(20,), matrix=(N,), output='vep', kind='pydata', merge=False):
     '''
     variables: 
         : radius, phase, angle, verts, matrix
@@ -57,14 +57,17 @@ def circle(radius=(1,), phase=(0,), angle=(TAU,), verts=(20,), matrix=(N,), outp
     switches:
         : output, np, merge
             - will effect the entirity of the output of this function.
-            - :output can be 'v', 've', 'vep', or 'bm'
+            - :output can be 'v', 've', 'vep'
             - :merge will produce a topological mesh join of all geometry lists
-            - :np means it would output a numpy array instead of lists, will return vectors as n*4
+            - :kind gives opportunity to output bmesh, np, or pydata (default)
+               -- np: means it would output a numpy array instead of lists, will return vectors as n*4
+               -- bm would output a bm object
+               -- pydata would output [n*[[verts],[edges],[faces]], ... ]
 
     '''
     ...
 
-def rect(w=(1,), h=(1.654,), dim=None, matrix=(N,), radius=0.0, radius_segs=6, edge_segs=1, output='vep', np=False, merge=False):
+def rect(w=(1,), h=(1.654,), dim=None, matrix=(N,), radius=0.0, radius_segs=6, edge_segs=1, output='vep', kind='pydata', merge=False):
     '''
     if dim, then uniform, 
     if w, h then 
@@ -73,7 +76,7 @@ def rect(w=(1,), h=(1.654,), dim=None, matrix=(N,), radius=0.0, radius_segs=6, e
 
 # shapes 3d
 
-def uv_sphere(u=(5,), v=(4,), radius=(0.5,), output='vep', np=False, merge=False):
+def uv_sphere(u=(5,), v=(4,), radius=(0.5,), output='vep', kind='pydata', merge=False):
     '''
     by default we can yield, but maybe new users won't be expecting a generator, this we can fix with
     good documentation.
