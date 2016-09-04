@@ -88,21 +88,35 @@ def uv_sphere(u=(5,), v=(4,), radius=(0.5,), output='vep', kind='pydata', merge=
     _verts = []
     _edges = []
     _polygons = []
+    _bm = []
     for _u, _v, _radius in zip((u, v, radius)):
         bm = bmesh.new()
         bmesh.ops.create_uvsphere(bm, u_segments=_u, v_segments=_v, diameter=_radius*2)
-        verts, edges, polygons = pydata_from_bmesh(bm)
-        
-        _verts.append(verts)
-        if output in {'ve', 'vep'}:
-            _edges.append(edges)
-        if output in {'vp', 'vep'}:
-            _polygons.append(polygons)
-        
-        bm.free()
-        
-        if output == 'v':
-            return _verts if not merge else 
 
+        if kind == 'bm':
+            _bm.append(bm)
+            # user must remember to bm.free() ?
+        else:
+            verts, edges, polygons = pydata_from_bmesh(bm)
+            
+            _verts.append(verts)
+            if output in {'ve', 'vep'}:
+                _edges.append(edges)
+            if output in {'vp', 'vep'}:
+                _polygons.append(polygons)
+            
+            bm.free()
+
+    if kind == 'pydata':
+        if output == 'v':
+            return _verts if not merge else sv_mesh_utils.mesh_join2('v', _verts)
+        elif output == 've':
+            return _verts, _edges if not merge else sv_mesh_utils.mesh_join2('ve', _verts, _edges)
+        elif output == 'vp':
+            return _verts, _polygons if not merge else sv_mesh_utils.mesh_join2('vp', _verts, _polygons)
+        elif output == 'vep':
+            return _verts, _edges, _polygons if not merge else sv_mesh_utils.mesh_join(_verts, _edges, _polygons)
+    elif kind == 'bm':
+        return _bm
 
     return sv_mesh_utils.mesh_join(_v, _e, _p)
