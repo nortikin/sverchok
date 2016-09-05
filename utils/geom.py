@@ -20,7 +20,7 @@
 None of this file is in a working condition. skip this file.
 
 purpose of this file is to store the convenience functions which can be used for regular nodes
-or as part of recipes for script nodes. These functions will be initially be sub optimal quick 
+or as part of recipes for script nodes. These functions will initially be sub optimal quick 
 implementations, then optimized only for speed, never for aesthetics or line count or cleverness.
 
 
