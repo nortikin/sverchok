@@ -107,6 +107,13 @@ def get_signature(func):
     if not hasattr(func, "label"):
         func.label = func.__name__
 
+    def add_socket(func, name, sv_type):
+        pass
+
+    def add_property(func, name, sv_typep):
+        pass
+
+
     for name, parameter in sig.parameters.items():
         annotation = parameter.annotation
         print(name, parameter, annotation)
@@ -116,20 +123,12 @@ def get_signature(func):
                 socket_settings = dict()
             else:
                 socket_settings = {"default_value": parameter.default}
-
             if annotation.name:
                 socket_name = annotation.name
             else:
                 socket_name = name
-
             func._inputs_template.append((socket_name, annotation.bl_idname, socket_settings))
-        elif isinstance(annotation, SvBaseTypeP):
-            func._parameters.append(PropertyGetter(name))
-            if not (parameter.default == inspect.Signature.empty or parameter.default is None):
-                annotation.add("default", parameter.default)
-            func._sv_properties[name] = annotation.get_prop()
-        elif annotation == "Node":
-            func._parameters.append(NodeGetter())
+
         elif isinstance(annotation, type) and issubclass(annotation, SvBaseType): # Socket used with Int syntax instead of Int()
             func._parameters.append(SocketGetter(len(func._inputs_template)))
             if parameter.default == inspect.Signature.empty or parameter.default is None:
@@ -138,6 +137,18 @@ def get_signature(func):
                 socket_settings = {"default_value": parameter.default}
             socket_name = name
             func._inputs_template.append((socket_name, annotation.bl_idname, socket_settings))
+
+        elif isinstance(annotation, type) and issubclass(annotation, SvBaseTypeP):
+            pass # todo relaunch
+
+        elif isinstance(annotation, SvBaseTypeP):
+            func._parameters.append(PropertyGetter(name))
+            if not (parameter.default == inspect.Signature.empty or parameter.default is None):
+                annotation.add("default", parameter.default)
+            func._sv_properties[name] = annotation.get_prop()
+
+        elif annotation == "Node":
+            func._parameters.append(NodeGetter())
 
 
         else:
@@ -156,7 +167,7 @@ def get_signature(func):
 def class_factory(func):
     cls_dict = {}
     module_name = func.__module__.split(".")[-1]
-    cls_name = "SvScriptMK3_{}".format((module_name, func.__name__))
+    cls_name = "SvScriptMK3_{}{}".format(module_name, func.__name__)
 
     cls_dict["bl_idname"] = cls_name
 
@@ -166,8 +177,8 @@ def class_factory(func):
     supported_overides = ["process", "draw_buttons", "update"] # etc?
     for name in supported_overides:
         value = getattr(func, name, None)
-        if value:
-            cls_dict[name] = value
+        #if value:
+        #    cls_dict[name] = value
 
     cls_dict["input_template"] = func._inputs_template
     cls_dict["output_template"] = func._outputs_template
@@ -196,11 +207,24 @@ class SvScriptBase:
     module = StringProperty()
     func = None
 
+    def reset(self):
+        ng = self.id_data
+        print("into reset")
+        node = ng.nodes.new("SvScriptNodeMK3")
+        node.location = self.location
+        ng.nodes.remove(self)
+        return
 
+    def load(self):
+        text_name = _name_lookup[self.func.__module__.split(".")[-1]]
+        load_script(text_name)
 
     def draw_buttons(self, context, layout):
         func = self.func
         if func:
+            row = layout.row()
+            row.operator("node.sverchok_callback", text='Reload').fn_name = 'load'
+            row.operator("node.sverchok_callback", text='Reset').fn_name = 'reset'
             if hasattr(func, "draw_buttons"):
                 func.draw_buttons(self, context, layout)
             elif func._sv_properties:
@@ -214,7 +238,6 @@ class SvScriptBase:
             return
 
         param = tuple(p.get_value(self) for p in func._parameters)
-        print(param, len(param))
         results = func(*param)
 
         for s, data in zip(self.outputs, results):
@@ -246,6 +269,9 @@ def node_script(*args, **values):
         print("got sig")
         module_name = func.__module__.split(".")[-1]
         print("module:", module_name)
+        script_list = sverchok.nodes.nodes_dict['script']
+        if not module_name in script_list:
+            script_list.append(module_name)
         _func_lookup[module_name] = func
         return func
     if args and callable(args[0]):
@@ -284,7 +310,7 @@ def load_script(text):
     _name_lookup[name] = text
 
     if name in _script_modules:
-        print("reloading")
+        print("reloading".format(name))
         mod = _script_modules[name]
         importlib.reload(mod)
     else:
@@ -326,6 +352,11 @@ from sverchok.utils.loadscript import (node_script, Node, {})
 """.format("{}".format(", ".join(socket_type_names)))
 
 standard_footer = """
+def register():
+    if _class:
+        cls_ref = getattr(bpy.types, _class.bl_idname, None)
+        if not cls_ref:
+            bpy.utils.register_class(_class)
 
 def unregister():
     if _class:
@@ -371,6 +402,8 @@ class SvLoader(importlib.abc.SourceLoader):
 
 def register():
     sys.meta_path.append(SvFinder())
+    for mod in _script_modules.values():
+        mod.register()
 
 
 def unregister():
