@@ -1,10 +1,10 @@
 #English
 ##Sverchok parametric tools
 
-**addon for**: [Blender](http://blender.org)  (version *2.71* and above).  
+**addon for**: [Blender](http://blender.org)  (version *2.77* and above).  
 **current sverchok version**: Find version in addon settings or in the node Sverchok panel   
 **License**: [GPL3](http://www.gnu.org/licenses/quick-guide-gplv3.html)   
-**prerequisites**: Python 3.4. and numpy, both included in recent versions of Blender  
+**prerequisites**: Python 3.5. and numpy, both included in recent versions of Blender  
 **manual**: [In English](http://nikitron.cc.ua/sverch/html/main.html) - This is an introduction to Sverchok and contains 3 lessons, and documentation on almost all nodes. If anything isn't clear (or missing) in this document please ask about it on the [Issue Tracker](https://github.com/nortikin/sverchok/issues), we want to get these lessons right and you can help us! 
 
   
@@ -73,10 +73,10 @@ Email: sverchok-b3d@yandex.ru
 
 #По-русски
 
-**дополнение к**: [Blender](http://blender.org)  (версия *2.71* и выше).  
+**дополнение к**: [Blender](http://blender.org)  (версия *2.77* и выше).  
 **текущая версия**: Смотри настройки Сверчка или панель   
 **Лицензия**: [GPL3](http://www.gnu.org/licenses/quick-guide-gplv3.html)   
-**требования**: Python 3.4,  numpy, они оба присутствуют в Blender  
+**требования**: Python 3.5,  numpy, они оба присутствуют в Blender  
 
 
   
