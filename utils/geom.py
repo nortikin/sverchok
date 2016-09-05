@@ -57,7 +57,6 @@ def as_np(output, generated_geom):
 
 def bm_merger(_bm):
     ''' written for convenience, not speed '''
-    bm_out = bmesh.new()
     _verts = []
     _edges = []
     _polygons = []
