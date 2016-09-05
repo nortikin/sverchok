@@ -49,6 +49,13 @@ TAU = PI * 2
 TWO_PI = TAU
 N = identity_matrix
 
+def mesh_join_extended(output, generated_geom, np):
+    ...
+
+
+def as_np(output, generated_geom):
+    ...
+
 
 def switches(kwargs):
     output = kwargs.get('output', 'vep')
@@ -100,10 +107,10 @@ def generic_output_handler(_bm, kwargs):
         NP = (kind == 'np')
 
         if merge:
-            return sv_mesh_utils.mesh_join_extended(output, generated_geom, np=NP)
+            return mesh_join_extended(output, generated_geom, np=NP)
         else:
             if NP:
-                return sv_mesh_utils.as_np(output, generated_geom)
+                return as_np(output, generated_geom)
             else:
                 return [g for g in generated_geom if g]
 
