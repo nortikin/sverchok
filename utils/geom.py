@@ -51,7 +51,14 @@ TWO_PI = TAU
 N = identity_matrix
 
 
-def generic_output_handler(_bm, output, kind, merge):
+def switches(kwargs):
+    output = kwargs.get('output', 'vep')
+    kind = kwargs.get('kind', 'pydata')
+    merge = kwargs.get('merge', False)
+    return output, kind, merge
+
+
+def generic_output_handler(_bm, kwargs):
     ''' 
     This function is not working yet, don't try it.
 
@@ -68,6 +75,7 @@ def generic_output_handler(_bm, output, kind, merge):
                -- pydata would output [n*[[verts],[edges],[faces]], ... ]
 
     '''
+    output, kind, merge = switches(kwargs)
 
     # ignore v, ve, vp, vep
     if kind == 'bm':
@@ -102,7 +110,7 @@ def generic_output_handler(_bm, output, kind, merge):
 
 
 
-def circle(radius=(1,), phase=(0,), angle=(TAU,), verts=(20,), matrix=(N,), output='vep', kind='pydata', merge=False):
+def circle(radius=(1,), phase=(0,), angle=(TAU,), verts=(20,), matrix=(N,), **kwargs):
     '''
     variables: 
         : radius, phase, angle, verts, matrix
@@ -110,23 +118,25 @@ def circle(radius=(1,), phase=(0,), angle=(TAU,), verts=(20,), matrix=(N,), outp
             shorter tuples will repeat to match length of longest input
 
     '''
+    
     ...
 
-def rect(w=(1,), h=(1.654,), dim=None, matrix=(N,), radius=0.0, radius_segs=6, edge_segs=1, output='vep', kind='pydata', merge=False):
+def rect(w=(1,), h=(1.654,), dim=None, matrix=(N,), radius=0.0, radius_segs=6, edge_segs=1, **kwargs):
     '''
     if dim, then uniform, 
     if w, h then 
     '''
+    
     ...
+    
 
 # shapes 3d
 
-def uv_sphere(u=(5,), v=(4,), radius=(0.5,), output='vep', kind='pydata', merge=False):
+def uv_sphere(u=(5,), v=(4,), radius=(0.5,), matrix=(N,), **kwargs):
     '''
     using the bmesh.ops we can quikly create some primtives
     - todo deal with minimum maximum vals before passing. 
     '''
-
     matching = (len(u) == len(v) == len(radius))
     if not matching:
         return
@@ -137,5 +147,5 @@ def uv_sphere(u=(5,), v=(4,), radius=(0.5,), output='vep', kind='pydata', merge=
         bmesh.ops.create_uvsphere(bm, u_segments=_u, v_segments=_v, diameter=_radius*2)
         _bm.append(bm)
 
-    return generic_output_handler(_bm, outputs, kind, merge)
+    return generic_output_handler(_bm, kwargs)
 
