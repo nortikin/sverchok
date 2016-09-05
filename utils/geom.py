@@ -145,6 +145,7 @@ def uv_sphere(u=(5,), v=(4,), radius=(0.5,), matrix=(N,), **kwargs):
     '''
     matching = (len(u) == len(v) == len(radius))
     if not matching:
+        # currently a dumb function.
         return
 
     _bm = []
