@@ -54,6 +54,22 @@ N = identity_matrix
 def as_np(output, generated_geom):
     ...
 
+
+def bm_merger(_bm):
+    ''' written for convenience, not speed '''
+    bm_out = bmesh.new()
+    _verts = []
+    _edges = []
+    _polygons = []
+    for bm in _bm:
+        verts, edges, polygons = pydata_from_bmesh(bm)
+        _verts.append(verts)
+        _edges.append(edges)
+        _polygons.append(polygons)
+     summed_geom = sv_mesh_utils.mesh_join(_verts, _edges, _polygons)
+     return bmesh_from_pydata(summed_geom)
+
+
 def mesh_join_extended(output, generated_geom, np):
     '''Given list of meshes represented by lists of vertices, edges and faces,
     produce one joined mesh. -- partial lift from portnov's mesh_utils'''
@@ -88,8 +104,6 @@ def mesh_join_extended(output, generated_geom, np):
     return generated_geom
 
 
-def bm_merger(_bm):
-    ...
 
 
 def switches(kwargs):
@@ -187,6 +201,7 @@ def uv_sphere(u=(5,), v=(4,), radius=(0.5,), matrix=(N,), **kwargs):
     for _u, _v, _radius in zip((u, v, radius)):
         bm = bmesh.new()
         bmesh.ops.create_uvsphere(bm, u_segments=_u, v_segments=_v, diameter=_radius*2)
+        # bmesh.ops.transform(bm, matrix, space, verts)
         _bm.append(bm)
 
     return generic_output_handler(_bm, kwargs)
