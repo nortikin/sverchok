@@ -66,8 +66,8 @@ def bm_merger(_bm):
         _verts.append(verts)
         _edges.append(edges)
         _polygons.append(polygons)
-     summed_geom = sv_mesh_utils.mesh_join(_verts, _edges, _polygons)
-     return bmesh_from_pydata(summed_geom)
+    summed_geom = sv_mesh_utils.mesh_join(_verts, _edges, _polygons)
+    return bmesh_from_pydata(summed_geom)
 
 
 def mesh_join_extended(output, generated_geom, np):
