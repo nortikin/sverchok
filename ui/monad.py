@@ -48,7 +48,7 @@ class SvCustomGroupInterface(Panel):
     def poll(cls, context):
         try:
             if context.space_data.edit_tree.bl_idname == 'SverchGroupTreeType':
-                return not context.space_data.edit_tree.library 
+                return not context.space_data.edit_tree.library
         except:
             return False
 
@@ -101,13 +101,13 @@ class SvCustomGroupInterface(Panel):
             set_multiple_attrs(m, **socket_ref)
 
             m = r.operator(move, icon='TRIA_UP', text='')
-            set_multiple_attrs(m, **socket_ref, direction=-1)
+            set_multiple_attrs(m, direction=-1, **socket_ref)
 
             m = r.operator(move, icon='TRIA_DOWN', text='')
-            set_multiple_attrs(m, **socket_ref, direction=1)
+            set_multiple_attrs(m, direction=1, **socket_ref)
 
             m = r.operator(move, icon='X', text='')
-            set_multiple_attrs(m, **socket_ref, direction=0)
+            set_multiple_attrs(m, direction=0, **socket_ref)
 
 
         column1.label('inputs')
