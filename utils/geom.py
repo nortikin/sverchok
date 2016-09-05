@@ -19,12 +19,13 @@
 '''
 None of this file is in a working condition. skip this file.
 
-purpose of this file is to store the convenience functions which can be used for regular nodes
-or as part of recipes for script nodes. These functions will initially be sub optimal quick 
-implementations, then optimized only for speed, never for aesthetics or line count or cleverness.
-
+Eventual purpose of this file is to store the convenience functions which
+can be used for regular nodes or as part of recipes for script nodes. These
+functions will initially be sub optimal quick implementations, then optimized
+only for speed, never for aesthetics or line count or cleverness.
 
 '''
+
 import math
 
 import bpy
@@ -32,7 +33,7 @@ import bmesh
 import mathutils
 from mathutils import Matrix
 
-from sverchok.utils import sv_mesh_utils  # mesh_join
+from sverchok.utils import sv_mesh_utils
 from sverchok.utils import sv_bmesh_utils
 
 from sv_bmesh_utils import bmesh_from_pydata
@@ -49,11 +50,45 @@ TAU = PI * 2
 TWO_PI = TAU
 N = identity_matrix
 
-def mesh_join_extended(output, generated_geom, np):
-    ...
-
 
 def as_np(output, generated_geom):
+    ...
+
+def mesh_join_extended(output, generated_geom, np):
+    '''Given list of meshes represented by lists of vertices, edges and faces,
+    produce one joined mesh. -- partial lift from portnov's mesh_utils'''
+
+    vertices_s, edges_s, faces_s = generated_geom
+
+    offset = 0
+    
+    result_vertices = []
+    result_edges = []
+    result_faces = []
+
+    if len(edges_s) == 0:
+        edges_s = [[]] * len(faces_s)
+    
+    for vertices, edges, faces in zip(vertices_s, edges_s, faces_s):
+        result_vertices.extend(vertices)
+        if 'e' in output:
+            new_edges = [tuple(i + offset for i in edge) for edge in edges]
+        if 'p' in output:
+            new_faces = [[i + offset for i in face] for face in faces]
+        result_edges.extend(new_edges)
+        result_faces.extend(new_faces)
+        offset += len(vertices)
+    
+    generated_geom = result_vertices, result_edges, result_faces
+    generated_geom = [g for g in generated_geom if g]
+
+    if np:
+        generated_geom = as_np(generated_geom)
+    
+    return generated_geom
+
+
+def bm_merger(_bm):
     ...
 
 
