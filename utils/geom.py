@@ -167,7 +167,7 @@ def generic_output_handler(_bm, kwargs):
 # @vectorize
 # for now circle is hardcoded
 
-def circle(radius=(1,), phase=(0,), angle=(TAU,), verts=(20,), matrix=(N,), **kwargs):
+def circle(radius=(1,), phase=(0,), verts=(20,), matrix=(N,), **kwargs):
     '''
     variables: 
         : radius, phase, angle, verts, matrix
@@ -175,18 +175,19 @@ def circle(radius=(1,), phase=(0,), angle=(TAU,), verts=(20,), matrix=(N,), **kw
             shorter tuples will repeat to match length of longest input
 
     '''
-    matching = (len(radius) == len(phase) == len(angle) == len(verts) == len(matrix))
+    matching = (len(radius) == len(phase) == len(verts) == len(matrix))
     if not matching:
         # currently a dumb function.
         return
 
     _bm = []
-    for _radius, _phase, _angle, _verts, _matrix in zip((radius, phase, angle, verts, matrix)):
+    for _radius, _phase, _verts, _matrix in zip((radius, phase, verts, matrix)):
         bm = bmesh.new()
         bmesh.ops.create_circle(bm, cap_ends=True, cap_tris=False, segments=_verts, diameter=_radius*2)
-        # rot_matrix = matrix_from_angle(_angle)
-        # bmesh.ops.rotate(bm, cent, rot_matrix, verts=bm.verts[:])
-        # bmesh.ops.transform(bm, matrix, space, verts)
+        mat_rot = mathutils.Matrix.Rotation(_phase, 4, 'Z')
+        bmesh.ops.rotate(bm, cent=(0, 0, 0), matrix=mat_rot, verts=bm.verts[:])
+        # bmesh.ops.transform(bm, matrix=_matrix, space=space, verts=bm.verts[:])
+        bmesh.ops.transform(bm, matrix=_matrix, verts=bm.verts[:])
         _bm.append(bm)
 
     return generic_output_handler(_bm, kwargs)
