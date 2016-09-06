@@ -130,8 +130,7 @@ class AdaptivePolsNode(bpy.types.Node, SverchCustomTreeNode):
                             new_pols.append([id for id in p])
                         pols_out.append(new_pols)
                         vers_out.append(new_vers)
-                    bpy.data.meshes.remove(new_me)  # cleaning and washing
-                    del(new_ve)
+                bpy.data.meshes.remove(new_me)  # cleaning and washing
 
                 #print (Vector_degenerate(vers_out))
 
