@@ -89,7 +89,8 @@ utils_modules = [
     "text_editor_submenu", "text_editor_plugins",
     # UI operators and tools
     "sv_panels_tools", "sv_IO_panel_tools",
-    "monad", "loadscript",
+    "monad",
+    #"loadscript",
 ]
 
 ui_modules = [
