@@ -24,7 +24,7 @@ from bpy.types import Node, NodeTree
 
 
 from sverchok.node_tree import SverchCustomTreeNode, SvNodeTreeCommon
-from sverchok.data_structure import replace_socket, get_other_socket, updateNode
+from sverchok.data_structure import replace_socket, get_other_socket, updateNode, match_long_repeat
 from sverchok.core.update_system import make_tree_from_nodes, do_update
 
 
@@ -211,6 +211,9 @@ class SvGroupNodeExp:
     """
     bl_icon = 'OUTLINER_OB_EMPTY'
 
+    split_input = BoolProperty(name="Split input",
+                               description="Calls monad many times")
+
     # fun experiment
     #label = StringProperty(get=_get_monad_name, set=_set_monad_name)
     def draw_label(self):
@@ -241,10 +244,11 @@ class SvGroupNodeExp:
         pass
 
     def draw_buttons_ext(self, context, layout):
-        pass
+        self.draw_buttons(context, layout)
 
     def draw_buttons(self, context, layout):
         c = layout.column()
+        layout.prop(self, "split_input")
 
         #c.prop(self, 'group_name', text='name')
         monad = self.monad
@@ -258,6 +262,9 @@ class SvGroupNodeExp:
 
     def process(self):
         if not self.monad:
+            return
+        if self.split_input:
+            self.process_split()
             return
 
         monad = self.monad
@@ -277,6 +284,28 @@ class SvGroupNodeExp:
             if socket.is_linked:
                 data = out_node.inputs[index].sv_get(deepcopy=False)
                 socket.sv_set(data)
+
+    def process_split(self):
+        monad = self.monad
+        in_node = monad.input_node
+        out_node = monad.output_node
+        ul = make_tree_from_nodes([out_node.name], monad, down=False)
+
+        data_out = [[] for s in self.outputs]
+
+        data = [s.sv_get(deepcopy=False) for s in self.inputs]
+
+        for data in zip(*match_long_repeat(data)):
+            for idx, d in enumerate(data):
+                in_node.outputs[idx].sv_set([d])
+            do_update(ul, monad.nodes)
+            for idx, s in enumerate(out_node.inputs[:-1]):
+                data_out[idx].extend(s.sv_get(deepcopy=False))
+
+        for idx, socket in enumerate(self.outputs):
+            if socket.is_linked:
+                socket.sv_set(data_out[idx])
+
 
     def load(self):
         pass
