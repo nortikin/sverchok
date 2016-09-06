@@ -78,9 +78,9 @@ class SvObjectSocket(NodeSocket, SvSocketCommon):
     object_ref = StringProperty(update=process_from_socket)
 
     def draw(self, context, layout, node, text):
-        if self.is_linked and not self.is_output:
+        if self.is_output or self.is_linked:
             layout.label(text)
-        if not self.is_linked and not self.is_output:
+        else:
             layout.prop_search(self, 'object_ref', bpy.data, 'objects')
 
     def draw_color(self, context, node):

@@ -294,10 +294,10 @@ class SvGroupNodeExp:
 
         data_out = [[] for s in self.outputs]
 
-        data = [s.sv_get(deepcopy=False) for s in self.inputs]
+        data = match_long_repeat([s.sv_get(deepcopy=False) for s in self.inputs])
         monad["current_total"] = len(data[0])
 
-        for master_idx, data in enumerate(zip(*match_long_repeat(data))):
+        for master_idx, data in enumerate(zip(*data)):
             for idx, d in enumerate(data):
                 in_node.outputs[idx].sv_set([d])
             monad["current_index"] = master_idx
