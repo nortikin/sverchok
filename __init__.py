@@ -73,7 +73,7 @@ imported_modules = []
 # or parse it
 root_modules = [
     "menu", "node_tree", "data_structure", "core",
-    "utils", "ui", "nodes", "old_nodes"
+    "utils", "ui", "nodes", "old_nodes", "sockets",
 ]
 
 core_modules = [
@@ -90,6 +90,7 @@ utils_modules = [
     # UI operators and tools
     "sv_panels_tools", "sv_gist_tools", "sv_IO_panel_tools",
     "monad",
+    #"loadscript",
 ]
 
 ui_modules = [

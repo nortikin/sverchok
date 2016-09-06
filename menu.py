@@ -58,6 +58,8 @@ def make_node_cats():
         ["SvProfileNode",       "ProfileParametric"],
         ["SvGenerativeArtNode", "Generative Art"],
         ["SvScriptNode",        "Scripted Node",     "SCRIPTPLUGINS"],
+        ["SvScriptNodeMK3",     "Script 3 Node",     "SCRIPTPLUGINS"],
+
     ]
 
     node_cats["Analyzers"] = [
@@ -228,6 +230,7 @@ def make_node_cats():
         ["SvRayCastSceneNode",  "Scene Raycast"],
         ["SvRayCastObjectNode", "Object ID Raycast"],
         ["SvVertexColorNode",   "Vertex color"],
+        ["SvVertexColorNodeMK2",   "Vertex color new"],
     ]
 
 # violet

@@ -144,6 +144,8 @@ new_socket_dict = {
         [['inputs', 'StringsSocket', 'text', 4]],
     'SvIterateNode':
         [['outputs', 'MatrixSocket', 'Matrices', 3]],
+    'SvBmeshViewerNodeMK2':
+        [['outputs', 'SvObjectSocket', 'Objects', 0]],
     }
 
 
@@ -170,7 +172,7 @@ def upgrade_nodes(ng):
     for n in [n for n in ng.nodes if n.bl_idname in vertices_socket_upgrade]:
         for s_name, p_name, use_prop, default in vertices_socket_upgrade[n.bl_idname]:
             socket = n.inputs.get(s_name)
-            if socket: 
+            if socket:
                 if p_name and not socket.prop_name:
                     socket.prop_name = p_name
                 elif use_prop and not socket.use_prop:

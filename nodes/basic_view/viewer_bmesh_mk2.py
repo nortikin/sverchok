@@ -262,6 +262,8 @@ class SvBmeshViewerNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('StringsSocket', 'faces', 'faces')
         self.inputs.new('MatrixSocket', 'matrix', 'matrix')
 
+        self.outputs.new('SvObjectSocket', "Objects")
+
     def draw_buttons(self, context, layout):
         view_icon = 'BLENDER' if self.activate else 'ERROR'
         sh = 'node.sv_callback_bmesh_viewer'
@@ -403,6 +405,8 @@ class SvBmeshViewerNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
         if self.autosmooth:
             self.set_autosmooth(objs)
+
+        self.outputs[0].sv_set(objs)
 
     def get_children(self):
         objects = bpy.data.objects
