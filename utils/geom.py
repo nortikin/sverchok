@@ -70,8 +70,10 @@ def bm_merger(_bm):
 
 
 def mesh_join_extended(output, generated_geom, np):
-    '''Given list of meshes represented by lists of vertices, edges and faces,
-    produce one joined mesh. -- partial lift from portnov's mesh_utils'''
+    '''
+    Given list of meshes represented by lists of vertices, edges and faces,
+    produce one joined mesh. -- partial lift from portnov's mesh_utils
+    '''
 
     vertices_s, edges_s, faces_s = generated_geom
 
@@ -101,8 +103,6 @@ def mesh_join_extended(output, generated_geom, np):
         generated_geom = as_np(generated_geom)
     
     return generated_geom
-
-
 
 
 def switches(kwargs):
@@ -163,6 +163,9 @@ def generic_output_handler(_bm, kwargs):
                 return [g for g in generated_geom if g]
 
 
+# write a decorator to add the boilerplate around the bm generators
+# @vectorize
+# for now circle is hardcoded
 
 def circle(radius=(1,), phase=(0,), angle=(TAU,), verts=(20,), matrix=(N,), **kwargs):
     '''
@@ -172,10 +175,23 @@ def circle(radius=(1,), phase=(0,), angle=(TAU,), verts=(20,), matrix=(N,), **kw
             shorter tuples will repeat to match length of longest input
 
     '''
-    
-    ...
+    matching = (len(radius) == len(phase) == len(angle) == len(verts))
+    if not matching:
+        # currently a dumb function.
+        return
 
-def rect(w=(1,), h=(1.654,), dim=None, matrix=(N,), radius=0.0, radius_segs=6, edge_segs=1, **kwargs):
+    _bm = []
+    for _radius, _phase, _angle, _verts in zip((radius, phase, angle, verts)):
+        bm = bmesh.new()
+        bmesh.ops.create_circle(bm, cap_ends=True, cap_tris=False, segments=verts, diameter=_radius*2)
+        # bmesh.ops.rotate(bm, cent, matrix, verts=bm.verts[:])
+        # bmesh.ops.transform(bm, matrix, space, verts)
+        _bm.append(bm)
+
+    return generic_output_handler(_bm, kwargs)
+
+
+def rect(w=(1,), h=(1.654,), dim=None, radius=(0.0,), matrix=(N,), radius_segs=6, edge_segs=1, **kwargs):
     '''
     if dim, then uniform, 
     if w, h then 
