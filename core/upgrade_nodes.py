@@ -156,12 +156,13 @@ def upgrade_nodes(ng):
     old_nodes.load_old(ng)
 
     for node in [n for n in ng.nodes if n.bl_idname in new_socket_dict]:
+        print(node.name)
+
         for in_out, s_type, name, pos in new_socket_dict[node.bl_idname]:
             s_list = getattr(node, in_out)
-            if s_list:
-                if name not in s_list:
-                    s_list.new(s_type, name)
-                    s_list.move(len(s_list)-1, pos)
+            if name not in s_list:
+                s_list.new(s_type, name)
+                s_list.move(len(s_list)-1, pos)
 
     for node in [node for node in ng.nodes if node.bl_idname in upgrade_dict]:
         for s_name, p_name in upgrade_dict[node.bl_idname]:

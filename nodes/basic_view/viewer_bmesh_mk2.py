@@ -406,7 +406,8 @@ class SvBmeshViewerNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         if self.autosmooth:
             self.set_autosmooth(objs)
 
-        self.outputs[0].sv_set(objs)
+        if self.outputs[0].is_linked:
+            self.outputs[0].sv_set(objs)
 
     def get_children(self):
         objects = bpy.data.objects

@@ -75,9 +75,9 @@ class SvVertexColorNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                 else:
                     vertex_color = obj.data.vertex_colors.get(self.vertex_color)
                     if not vertex_color:
-                        vertex_color = obj.data.vertex_colors.add(name=self.vertex_color)
+                        vertex_color = obj.data.vertex_colors.new(name=self.vertex_color)
             else:
-                vertex_color = obj.data.vertex_colors.add(name=self.vertex_color)
+                vertex_color = obj.data.vertex_colors.new(name=self.vertex_color)
 
 
             color_socket = self.inputs["Color"]
