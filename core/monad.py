@@ -213,7 +213,8 @@ class SvGroupNodeExp:
 
     vectorize = BoolProperty(name="Vectorize",
                              description="Vectorize using monad",
-                             default=False)
+                             default=False,
+                             update=updateNode)
 
     # fun experiment
     #label = StringProperty(get=_get_monad_name, set=_set_monad_name)
@@ -294,10 +295,10 @@ class SvGroupNodeExp:
 
         data_out = [[] for s in self.outputs]
 
-        data = match_long_repeat([s.sv_get(deepcopy=False) for s in self.inputs])
-        monad["current_total"] = len(data[0])
+        data_in = match_long_repeat([s.sv_get(deepcopy=False) for s in self.inputs])
+        monad["current_total"] = len(data_in[0])
 
-        for master_idx, data in enumerate(zip(*data)):
+        for master_idx, data in enumerate(zip(*data_in)):
             for idx, d in enumerate(data):
                 in_node.outputs[idx].sv_set([d])
             monad["current_index"] = master_idx
