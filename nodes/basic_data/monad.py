@@ -76,7 +76,7 @@ class SvSocketAquisition:
             # add new dangling dummy
             socket_list.new('SvDummySocket', 'connect me')
 
-    # stashing and repopulate are used for iojson 
+    # stashing and repopulate are used for iojson
 
     def stash(self):
         socket_kinds = []
@@ -192,10 +192,33 @@ class SvMonadGenericNode(Node, SverchCustomTreeNode,  monad_def.SvGroupNodeExp):
         self.color = monad_def.MONAD_COLOR
 
 
+
+class SvMonadInfoNode(bpy.types.Node, SverchCustomTreeNode):
+    ''' Monad Info '''
+    bl_idname = 'SvMonadInfoNode'
+    bl_label = 'Monad Info'
+    bl_icon = 'OUTLINER_OB_EMPTY'
+
+    def sv_init(self, context):
+        self.outputs.new('StringsSocket', "Loop Idx")
+        self.outputs.new('StringsSocket', "Loop Total")
+
+        if self.id_data.bl_idname == "SverchCustomTreeType":
+            self.color = (0.9, 0, 0)
+
+    def process(self):
+        # outputs
+        idx = getattr(self.id_data, "current_index", 0)
+        total = getattr(self.id_data, "current_total", 0)
+        for socket, data in zip(self.outputs, [idx, total]):
+            if socket.is_linked:
+                socket.sv_set([[data]])
+
 classes = [
     SvGroupInputsNodeExp,
     SvGroupOutputsNodeExp,
-    SvMonadGenericNode
+    SvMonadGenericNode,
+    SvMonadInfoNode
 ]
 
 

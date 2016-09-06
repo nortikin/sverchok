@@ -211,8 +211,9 @@ class SvGroupNodeExp:
     """
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    split_input = BoolProperty(name="Split input",
-                               description="Calls monad many times")
+    vectorize = BoolProperty(name="Vectorize",
+                             description="Vectorize using monad",
+                             default=False)
 
     # fun experiment
     #label = StringProperty(get=_get_monad_name, set=_set_monad_name)
@@ -248,7 +249,7 @@ class SvGroupNodeExp:
 
     def draw_buttons(self, context, layout):
         c = layout.column()
-        layout.prop(self, "split_input")
+        layout.prop(self, "vectorize")
 
         #c.prop(self, 'group_name', text='name')
         monad = self.monad
@@ -263,8 +264,8 @@ class SvGroupNodeExp:
     def process(self):
         if not self.monad:
             return
-        if self.split_input:
-            self.process_split()
+        if self.vectorize:
+            self.process_vectorize()
             return
 
         monad = self.monad
@@ -285,7 +286,7 @@ class SvGroupNodeExp:
                 data = out_node.inputs[index].sv_get(deepcopy=False)
                 socket.sv_set(data)
 
-    def process_split(self):
+    def process_vectorize(self):
         monad = self.monad
         in_node = monad.input_node
         out_node = monad.output_node
@@ -294,10 +295,12 @@ class SvGroupNodeExp:
         data_out = [[] for s in self.outputs]
 
         data = [s.sv_get(deepcopy=False) for s in self.inputs]
+        monad["current_total"] = len(data[0])
 
-        for data in zip(*match_long_repeat(data)):
+        for master_idx, data in enumerate(zip(*match_long_repeat(data))):
             for idx, d in enumerate(data):
                 in_node.outputs[idx].sv_set([d])
+            monad["current_index"] = master_idx
             do_update(ul, monad.nodes)
             for idx, s in enumerate(out_node.inputs[:-1]):
                 data_out[idx].extend(s.sv_get(deepcopy=False))

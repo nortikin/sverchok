@@ -349,6 +349,9 @@ def sv_group_items(context):
                         return True
         return False
 
+    if ntree.bl_idname ==  "SverchGroupTreeType":
+        yield NodeItem("SvMonadInfoNode", "Monad Info")
+
     for monad in context.blend_data.node_groups:
         if monad.bl_idname != "SverchGroupTreeType":
             continue
