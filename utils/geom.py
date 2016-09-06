@@ -34,11 +34,9 @@ import mathutils
 from mathutils import Matrix
 
 from sverchok.utils import sv_mesh_utils
-from sverchok.utils import sv_bmesh_utils
+from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
+from sverchok.utils.sv_bmesh_utils import pydata_from_bmesh
 
-from sv_bmesh_utils import bmesh_from_pydata
-from sv_bmesh_utils import pydata_from_bmesh
-from sv_bmesh_utils import with_bmesh  # a decorator
 
 identity_matrix = Matrix()
 
@@ -181,7 +179,7 @@ def circle(radius=(1,), phase=(0,), verts=(20,), matrix=(N,), **kwargs):
         return
 
     _bm = []
-    for _radius, _phase, _verts, _matrix in zip((radius, phase, verts, matrix)):
+    for _radius, _phase, _verts, _matrix in zip(radius, phase, verts, matrix):
         bm = bmesh.new()
         bmesh.ops.create_circle(bm, cap_ends=True, cap_tris=False, segments=_verts, diameter=_radius*2)
         mat_rot = mathutils.Matrix.Rotation(_phase, 4, 'Z')
@@ -218,7 +216,7 @@ def uv_sphere(u=(5,), v=(4,), radius=(0.5,), matrix=(N,), **kwargs):
         return
 
     _bm = []
-    for _u, _v, _radius in zip((u, v, radius)):
+    for _u, _v, _radius in zip(u, v, radius):
         bm = bmesh.new()
         bmesh.ops.create_uvsphere(bm, u_segments=_u, v_segments=_v, diameter=_radius*2)
         # bmesh.ops.transform(bm, matrix, space, verts)
