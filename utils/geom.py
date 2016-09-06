@@ -183,7 +183,7 @@ def circle(radius=(1,), phase=(0,), angle=(TAU,), verts=(20,), matrix=(N,), **kw
     _bm = []
     for _radius, _phase, _angle, _verts in zip((radius, phase, angle, verts)):
         bm = bmesh.new()
-        bmesh.ops.create_circle(bm, cap_ends=True, cap_tris=False, segments=verts, diameter=_radius*2)
+        bmesh.ops.create_circle(bm, cap_ends=True, cap_tris=False, segments=_verts, diameter=_radius*2)
         # bmesh.ops.rotate(bm, cent, matrix, verts=bm.verts[:])
         # bmesh.ops.transform(bm, matrix, space, verts)
         _bm.append(bm)
@@ -196,6 +196,9 @@ def rect(w=(1,), h=(1.654,), dim=None, radius=(0.0,), matrix=(N,), radius_segs=6
     if dim, then uniform, 
     if w, h then 
     '''
+    ########################################################################################
+    # before writing this fix the boilerplate that's emerging with the other two functions.#
+    ########################################################################################
     
     ...
     
