@@ -52,7 +52,7 @@ N = identity_matrix
 
 
 def as_np(output, generated_geom):
-    ...
+    return None, output, generated_geom
 
 
 def bm_merger(_bm):
@@ -100,7 +100,7 @@ def mesh_join_extended(output, generated_geom, np):
     generated_geom = [g for g in generated_geom if g]
 
     if np:
-        generated_geom = as_np(generated_geom)
+        return as_np(output, generated_geom)
     
     return generated_geom
 
@@ -175,32 +175,33 @@ def circle(radius=(1,), phase=(0,), angle=(TAU,), verts=(20,), matrix=(N,), **kw
             shorter tuples will repeat to match length of longest input
 
     '''
-    matching = (len(radius) == len(phase) == len(angle) == len(verts))
+    matching = (len(radius) == len(phase) == len(angle) == len(verts) == len(matrix))
     if not matching:
         # currently a dumb function.
         return
 
     _bm = []
-    for _radius, _phase, _angle, _verts in zip((radius, phase, angle, verts)):
+    for _radius, _phase, _angle, _verts, _matrix in zip((radius, phase, angle, verts, matrix)):
         bm = bmesh.new()
         bmesh.ops.create_circle(bm, cap_ends=True, cap_tris=False, segments=_verts, diameter=_radius*2)
-        # bmesh.ops.rotate(bm, cent, matrix, verts=bm.verts[:])
+        # rot_matrix = matrix_from_angle(_angle)
+        # bmesh.ops.rotate(bm, cent, rot_matrix, verts=bm.verts[:])
         # bmesh.ops.transform(bm, matrix, space, verts)
         _bm.append(bm)
 
     return generic_output_handler(_bm, kwargs)
 
 
-def rect(w=(1,), h=(1.654,), dim=None, radius=(0.0,), matrix=(N,), radius_segs=6, edge_segs=1, **kwargs):
-    '''
-    if dim, then uniform, 
-    if w, h then 
-    '''
-    ########################################################################################
-    # before writing this fix the boilerplate that's emerging with the other two functions.#
-    ########################################################################################
+# def rect(w=(1,), h=(1.654,), dim=None, radius=(0.0,), matrix=(N,), radius_segs=6, edge_segs=1, **kwargs):
+#     '''
+#     if dim, then uniform, 
+#     if w, h then 
+#     '''
+#     ########################################################################################
+#     # before writing this fix the boilerplate that's emerging with the other two functions.#
+#     ########################################################################################
     
-    ...
+#     pass
     
 
 # shapes 3d
@@ -210,7 +211,7 @@ def uv_sphere(u=(5,), v=(4,), radius=(0.5,), matrix=(N,), **kwargs):
     using the bmesh.ops we can quikly create some primtives
     - todo deal with minimum maximum vals before passing. 
     '''
-    matching = (len(u) == len(v) == len(radius))
+    matching = (len(u) == len(v) == len(radius) == len(matrix))
     if not matching:
         # currently a dumb function.
         return
