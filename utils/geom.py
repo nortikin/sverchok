@@ -52,6 +52,13 @@ N = identity_matrix
 
 
 def circle(radius=1.0, phase=0, verts=20, matrix=None, mode='pydata'):
+    vertices = []
+    theta = TAU / verts
+    for i in range(verts)
+        rad = i * theta
+        vertices.append((math.sin(rad + phase) , math.cos(rad + phase), 0))
+    edges = [[i, i+1] for i in range(verts-1)] + [verts-1, 0]
+    faces = [[i for i in range(verts)]]
     pass
 
 def arc(radius=1.0, phase=0, angle=TAU, verts=20, matrix=None, mode='pydata'):
