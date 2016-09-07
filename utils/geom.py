@@ -33,7 +33,6 @@ import bmesh
 import mathutils
 from mathutils import Matrix
 
-from sverchok.utils import sv_mesh_utils
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 from sverchok.utils.sv_bmesh_utils import pydata_from_bmesh
 
@@ -184,7 +183,6 @@ def circle(radius=(1,), phase=(0,), verts=(20,), matrix=(N,), **kwargs):
         bmesh.ops.create_circle(bm, cap_ends=True, cap_tris=False, segments=_verts, diameter=_radius*2)
         mat_rot = mathutils.Matrix.Rotation(_phase, 4, 'Z')
         bmesh.ops.rotate(bm, cent=(0, 0, 0), matrix=mat_rot, verts=bm.verts[:])
-        # bmesh.ops.transform(bm, matrix=_matrix, space=space, verts=bm.verts[:])
         bmesh.ops.transform(bm, matrix=_matrix, verts=bm.verts[:])
         _bm.append(bm)
 
@@ -219,7 +217,7 @@ def uv_sphere(u=(5,), v=(4,), radius=(0.5,), matrix=(N,), **kwargs):
     for _u, _v, _radius in zip(u, v, radius):
         bm = bmesh.new()
         bmesh.ops.create_uvsphere(bm, u_segments=_u, v_segments=_v, diameter=_radius*2)
-        # bmesh.ops.transform(bm, matrix, space, verts)
+        # bmesh.ops.transform(bm, matrix=_matrix, verts=bm.verts[:])
         _bm.append(bm)
 
     return generic_output_handler(_bm, kwargs)
