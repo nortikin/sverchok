@@ -164,7 +164,7 @@ def generic_output_handler(_bm, kwargs):
 # @vectorize
 # for now circle is hardcoded
 
-def circle(radius=(1,), phase=(0,), verts=(20,), matrix=(N,), **kwargs):
+def circle2(radius=(1,), phase=(0,), verts=(20,), matrix=(N,), **kwargs):
     '''
     variables: 
         : radius, phase, angle, verts, matrix
@@ -189,7 +189,7 @@ def circle(radius=(1,), phase=(0,), verts=(20,), matrix=(N,), **kwargs):
     return generic_output_handler(_bm, kwargs)
 
 
-# def rect(w=(1,), h=(1.654,), dim=None, radius=(0.0,), matrix=(N,), radius_segs=6, edge_segs=1, **kwargs):
+# def rect2(w=(1,), h=(1.654,), dim=None, radius=(0.0,), matrix=(N,), radius_segs=6, edge_segs=1, **kwargs):
 #     '''
 #     if dim, then uniform, 
 #     if w, h then 
@@ -203,7 +203,7 @@ def circle(radius=(1,), phase=(0,), verts=(20,), matrix=(N,), **kwargs):
 
 # shapes 3d
 
-def uv_sphere(u=(5,), v=(4,), radius=(0.5,), matrix=(N,), **kwargs):
+def uv_sphere2(u=(5,), v=(4,), radius=(0.5,), matrix=(N,), **kwargs):
     '''
     using the bmesh.ops we can quikly create some primtives
     - todo deal with minimum maximum vals before passing. 

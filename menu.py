@@ -97,6 +97,7 @@ def make_node_cats():
         ["SvRandomizeVerticesNode", "Randomize input vertices"],
         ["SvVertMaskNode",          "Mask Vertices"],
         ["SvFillsHoleNode",         "Fill Holes"],
+        ["SvLimitedDissolve",       "Limited Dissolve"],
         ["SvIntersectEdgesNode",    "Intersect Edges"],
         ["SvIterateNode",           "Iterate matrix transformation"],
     ]
