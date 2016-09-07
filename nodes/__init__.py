@@ -157,6 +157,7 @@ nodes_dict = {
         'bevel',
         'objects_along_edge',
         'randomize',
+        'limited_dissolve',
         'extrude_separate',
         'extrude_edges',
         'iterate',
