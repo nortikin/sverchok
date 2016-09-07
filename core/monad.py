@@ -208,7 +208,7 @@ def _set_monad_name(self, value):
 
 def split_list(data, size=1):
     size = max(1, int(size))
-    return [data[i:i+size] for i in range(0, len(data), size)]
+    return (data[i:i+size] for i in range(0, len(data), size))
 
 def unwrap(data):
     return list(chain.from_iterable(data))
@@ -313,7 +313,6 @@ class SvGroupNodeExp:
         if self.split:
             for idx, data in enumerate(data_in):
                 new_data = unwrap(split_list(d) for d in data)
-                print(new_data, "\n-----\n",data)
                 data_in[idx] = new_data
             data_in = match_long_repeat(data_in)
 
