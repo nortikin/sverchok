@@ -48,6 +48,21 @@ TWO_PI = TAU
 N = identity_matrix
 
 
+# ----------------- light weight functions ---------------
+
+
+def circle(radius=1.0, phase=0, verts=20, matrix=None, mode='pydata'):
+    pass
+
+def arc(radius=1.0, phase=0, angle=TAU, verts=20, matrix=None, mode='pydata'):
+    pass
+
+
+
+# ------------------- heavier vectorized -------------------------
+
+
+
 def as_np(output, generated_geom):
     return None, output, generated_geom
 
@@ -221,4 +236,5 @@ def uv_sphere2(u=(5,), v=(4,), radius=(0.5,), matrix=(N,), **kwargs):
         _bm.append(bm)
 
     return generic_output_handler(_bm, kwargs)
+
 
