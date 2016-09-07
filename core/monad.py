@@ -17,6 +17,7 @@
 # END GPL LICENSE BLOCK #####
 
 import random
+from itertools import chain
 
 import bpy
 from bpy.props import StringProperty, IntProperty, BoolProperty
@@ -205,6 +206,13 @@ def _set_monad_name(self, value):
     print("set value", value)
     self.monad.name = value
 
+def split_list(data, size=1):
+    size = max(1, int(size))
+    return [data[i:i+size] for i in range(0, len(data), size)]
+
+def unwrap(data):
+    return list(chain.from_iterable(data))
+
 class SvGroupNodeExp:
     """
     Base class for all monad instances
@@ -215,6 +223,10 @@ class SvGroupNodeExp:
                              description="Vectorize using monad",
                              default=False,
                              update=updateNode)
+    split = BoolProperty(name="Split",
+                         description="Split inputs into lenght 1",
+                         default=False,
+                         update=updateNode)
 
     # fun experiment
     #label = StringProperty(get=_get_monad_name, set=_set_monad_name)
@@ -250,9 +262,11 @@ class SvGroupNodeExp:
 
     def draw_buttons(self, context, layout):
         c = layout.column()
-        layout.prop(self, "vectorize")
+        c.prop(self, "vectorize", expand=True)
+        row = c.row()
+        row.prop(self, "split", expand=True)# = self.vectorize
+        row.active = self.vectorize
 
-        #c.prop(self, 'group_name', text='name')
         monad = self.monad
         if monad:
             c.prop(monad, "name", text='name')
@@ -296,7 +310,16 @@ class SvGroupNodeExp:
         data_out = [[] for s in self.outputs]
 
         data_in = match_long_repeat([s.sv_get(deepcopy=False) for s in self.inputs])
+        if self.split:
+            for idx, data in enumerate(data_in):
+                new_data = unwrap(split_list(d) for d in data)
+                print(new_data, "\n-----\n",data)
+                data_in[idx] = new_data
+            data_in = match_long_repeat(data_in)
+
         monad["current_total"] = len(data_in[0])
+
+
 
         for master_idx, data in enumerate(zip(*data_in)):
             for idx, d in enumerate(data):
