@@ -208,8 +208,14 @@ class SvMonadInfoNode(bpy.types.Node, SverchCustomTreeNode):
 
     def process(self):
         # outputs
-        idx = getattr(self.id_data, "current_index", 0)
-        total = getattr(self.id_data, "current_total", 0)
+        monad = self.id_data
+        try:
+            idx = monad["current_index"]
+            total = monad["current_total"]
+        except:
+            idx, total = 0 , 0
+            print("couldn't find monad info")
+
         for socket, data in zip(self.outputs, [idx, total]):
             if socket.is_linked:
                 socket.sv_set([[data]])
