@@ -319,10 +319,11 @@ class SvGroupNodeExp:
         monad["current_total"] = len(data_in[0])
 
 
-
         for master_idx, data in enumerate(zip(*data_in)):
             for idx, d in enumerate(data):
-                in_node.outputs[idx].sv_set([d])
+                socket = in_node.outputs[idx]
+                if socket.is_linked:
+                    socket.sv_set([d])
             monad["current_index"] = master_idx
             do_update(ul, monad.nodes)
             for idx, s in enumerate(out_node.inputs[:-1]):
