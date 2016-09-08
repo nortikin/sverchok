@@ -75,9 +75,9 @@ def circle(radius=1.0, phase=0, verts=20, matrix=None, mode='pydata'):
 
         t = np.linspace(0, np.pi*2, verts)
         circ = np.array([np.sin(t + phase) * radius, np.cos(t + phase) * radius, np.zeros(verts), np.zeros(verts)])
-        g = np.transpose(circ)
+        vertices = np.transpose(circ)
 
-        return g, [], []
+        return vertices, [], []
 
 
 def arc(radius=1.0, phase=0, angle=TAU, verts=20, matrix=None, mode='pydata'):
