@@ -78,8 +78,9 @@ def circle(radius=1.0, phase=0, verts=20, matrix=None, mode='pydata'):
         Verts = Verts[:,:3].tolist()
         '''
 
-        t = np.linspace(0, np.pi*2, verts)
-        circ = np.array([np.sin(t + phase) * radius, np.cos(t + phase) * radius, np.zeros(verts), np.zeros(verts)])
+        # t = np.linspace(0, np.pi*2, verts+1)[:20]
+        t = np.linspace(0, np.pi * 2 * (verts - 1 / verts), verts)
+        circ = np.array([np.cos(t + phase) * radius, np.sin(t + phase) * radius, np.zeros(verts), np.zeros(verts)])
         vertices = np.transpose(circ)
         edges = np.array([[i, i+1] for i in range(verts-1)] + [[verts-1, 0]])
         faces = np.array([[i for i in range(verts)] + [0]])
