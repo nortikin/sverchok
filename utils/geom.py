@@ -27,6 +27,7 @@ only for speed, never for aesthetics or line count or cleverness.
 '''
 
 import math
+import numpy as np
 
 import bpy
 import bmesh
@@ -48,177 +49,67 @@ TWO_PI = TAU
 N = identity_matrix
 
 
-def as_np(output, generated_geom):
-    return None, output, generated_geom
+# ----------------- light weight functions ---------------
 
 
-def bm_merger(_bm):
-    ''' written for convenience, not speed '''
-    _verts = []
-    _edges = []
-    _polygons = []
-    for bm in _bm:
-        verts, edges, polygons = pydata_from_bmesh(bm)
-        _verts.append(verts)
-        _edges.append(edges)
-        _polygons.append(polygons)
-    summed_geom = sv_mesh_utils.mesh_join(_verts, _edges, _polygons)
-    return bmesh_from_pydata(summed_geom)
-
-
-def mesh_join_extended(output, generated_geom, np):
+def circle(radius=1.0, phase=0, nverts=20, matrix=None, mode='pydata'):
     '''
-    Given list of meshes represented by lists of vertices, edges and faces,
-    produce one joined mesh. -- partial lift from portnov's mesh_utils
-    '''
+    parameters:
+        radius: float
+        phase:  where to start the unit circle
+        nverts: number of verts of the circle
+        matrix: transformation matrix
+        mode:   'np' or 'pydata'
 
-    vertices_s, edges_s, faces_s = generated_geom
+        :  'pydata'
+        usage:
+            Verts, Edges, Faces = circle(nverts=20, radius=1.6, mode='pydata')
+        info:
+            Each return type will be a nested list.
+            Verts: will generate [[x0,y0,z0],[x1,y1,z1], ....[xN,yN,zN]]
+            Edges: will generate [[a,yb],[b,c], ....[n,a]]
+            Faces: a single wrapped polygon around the bounds of the shape
 
-    offset = 0
-    
-    result_vertices = []
-    result_edges = []
-    result_faces = []
-
-    if len(edges_s) == 0:
-        edges_s = [[]] * len(faces_s)
-    
-    for vertices, edges, faces in zip(vertices_s, edges_s, faces_s):
-        result_vertices.extend(vertices)
-        if 'e' in output:
-            new_edges = [tuple(i + offset for i in edge) for edge in edges]
-        if 'p' in output:
-            new_faces = [[i + offset for i in face] for face in faces]
-        result_edges.extend(new_edges)
-        result_faces.extend(new_faces)
-        offset += len(vertices)
-    
-    generated_geom = result_vertices, result_edges, result_faces
-    generated_geom = [g for g in generated_geom if g]
-
-    if np:
-        return as_np(output, generated_geom)
-    
-    return generated_geom
-
-
-def switches(kwargs):
-    output = kwargs.get('output', 'vep')
-    kind = kwargs.get('kind', 'pydata')
-    merge = kwargs.get('merge', False)
-    return output, kind, merge
-
-
-def generic_output_handler(_bm, kwargs):
-    ''' 
-    This function is not working yet, don't try it.
-
-    I elect to compartmentalize this function, a bit of repeat code but easier to reason about for now.
-
-    switches:
-        : output, kind, merge
-            - will effect the entirity of the output of this function.
-            - :output can be 'v', 've', 'vep', 'vp'
-            - :merge will produce a topological mesh join of all geometry lists
-            - :kind gives opportunity to output bmesh, np, or pydata (default)
-               -- np: means it would output a numpy array instead of lists, will return vectors as n*4
-               -- bm would output a bm object
-               -- pydata would output [n*[[verts],[edges],[faces]], ... ]
+        :  'np'
+        usage:
+            Verts, Edges, Faces = circle(nverts=20, radius=1.6, mode='np')
+        info:
+            Each return type will be a numpy array
+            Verts: generates [n*4] - Array([[x0,y0,z0,w0],[x1,y1,z1,w1], ....[xN,yN,zN,wN]])
+            Edges: will be a [n*2] - Array([[a,yb],[b,c], ....[n,a]])
+            Faces: a single wrapped polygon around the bounds of the shape
+      
+            to convert to pydata please consult the numpy manual.
 
     '''
-    output, kind, merge = switches(kwargs)
 
-    # ignore v, ve, vp, vep
-    if kind == 'bm':
-        return _bm if not merge else bm_merger(_bm)
+    if mode in {'pydata', 'bm'}:
 
+        vertices = []
+        theta = TAU / nverts
+        for i in range(nverts):
+            rad = i * theta
+            vertices.append((math.sin(rad + phase) * radius, math.cos(rad + phase) * radius, 0))
 
-    if kind in {'pydata', 'np'}:
-        _verts = []
-        _edges = []
-        _polygons = []
-        for bm in _bm:
-            verts, edges, polygons = pydata_from_bmesh(bm)
-            _verts.append(verts)
-            if 'e' in output:
-                _edges.append(edges)
-            if 'p' in output:
-                _polygons.append(polygons)
-        for bm in reversed(_bm):
-            bm.free()
-        
-        generated_geom = _verts, _edges, _polygons
-        
-        NP = (kind == 'np')
+        edges = [[i, i+1] for i in range(nverts-1)] + [[nverts-1, 0]]
+        faces = [i for i in range(nverts)] + [0]
 
-        if merge:
-            return mesh_join_extended(output, generated_geom, np=NP)
+        if mode == 'pydata':
+            return vertices, edges, [faces]
         else:
-            if NP:
-                return as_np(output, generated_geom)
-            else:
-                return [g for g in generated_geom if g]
+            return bmesh_from_pydata(vertices, edges, [faces])
+
+    if mode == 'np':
+
+        # t = np.linspace(0, np.pi*2, verts+1)[:20]
+        t = np.linspace(0, np.pi * 2 * (nverts - 1 / nverts), nverts)
+        circ = np.array([np.cos(t + phase) * radius, np.sin(t + phase) * radius, np.zeros(nverts), np.zeros(nverts)])
+        vertices = np.transpose(circ)
+        edges = np.array([[i, i+1] for i in range(nverts-1)] + [[nverts-1, 0]])
+        faces = np.array([[i for i in range(nverts)] + [0]])
+        return vertices, edges, faces
 
 
-# write a decorator to add the boilerplate around the bm generators
-# @vectorize
-# for now circle is hardcoded
-
-def circle2(radius=(1,), phase=(0,), verts=(20,), matrix=(N,), **kwargs):
-    '''
-    variables: 
-        : radius, phase, angle, verts, matrix
-            will be wrapped to a tuple if the input was an int, 
-            shorter tuples will repeat to match length of longest input
-
-    '''
-    matching = (len(radius) == len(phase) == len(verts) == len(matrix))
-    if not matching:
-        # currently a dumb function.
-        return
-
-    _bm = []
-    for _radius, _phase, _verts, _matrix in zip(radius, phase, verts, matrix):
-        bm = bmesh.new()
-        bmesh.ops.create_circle(bm, cap_ends=True, cap_tris=False, segments=_verts, diameter=_radius*2)
-        mat_rot = mathutils.Matrix.Rotation(_phase, 4, 'Z')
-        bmesh.ops.rotate(bm, cent=(0, 0, 0), matrix=mat_rot, verts=bm.verts[:])
-        bmesh.ops.transform(bm, matrix=_matrix, verts=bm.verts[:])
-        _bm.append(bm)
-
-    return generic_output_handler(_bm, kwargs)
-
-
-# def rect2(w=(1,), h=(1.654,), dim=None, radius=(0.0,), matrix=(N,), radius_segs=6, edge_segs=1, **kwargs):
-#     '''
-#     if dim, then uniform, 
-#     if w, h then 
-#     '''
-#     ########################################################################################
-#     # before writing this fix the boilerplate that's emerging with the other two functions.#
-#     ########################################################################################
-    
-#     pass
-    
-
-# shapes 3d
-
-def uv_sphere2(u=(5,), v=(4,), radius=(0.5,), matrix=(N,), **kwargs):
-    '''
-    using the bmesh.ops we can quikly create some primtives
-    - todo deal with minimum maximum vals before passing. 
-    '''
-    matching = (len(u) == len(v) == len(radius) == len(matrix))
-    if not matching:
-        # currently a dumb function.
-        return
-
-    _bm = []
-    for _u, _v, _radius in zip(u, v, radius):
-        bm = bmesh.new()
-        bmesh.ops.create_uvsphere(bm, u_segments=_u, v_segments=_v, diameter=_radius*2)
-        # bmesh.ops.transform(bm, matrix=_matrix, verts=bm.verts[:])
-        _bm.append(bm)
-
-    return generic_output_handler(_bm, kwargs)
+def arc(radius=1.0, phase=0, angle=TAU, verts=20, matrix=None, mode='pydata'):
+    pass
 
