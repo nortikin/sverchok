@@ -58,7 +58,7 @@ def circle(radius=1.0, phase=0, verts=20, matrix=None, mode='pydata'):
         theta = TAU / verts
         for i in range(verts):
             rad = i * theta
-            vertices.append((math.sin(rad + phase) , math.cos(rad + phase), 0))
+            vertices.append((math.sin(rad + phase) * radius, math.cos(rad + phase) * radius, 0))
         edges = [[i, i+1] for i in range(verts-1)] + [[verts-1, 0]]
         faces = [i for i in range(verts)] + [0]
         if mode == 'pydata':
@@ -66,10 +66,17 @@ def circle(radius=1.0, phase=0, verts=20, matrix=None, mode='pydata'):
         else:
             return bmesh_from_pydata(vertices, edges, [faces])
     if mode == 'np':
+        '''
+        generate n*4 ( x,y,z,w )
+
+        Verts, Edges, Faces = circle(verts=20, radius=1.6, mode='np')
+        Verts = Verts[:,:3].tolist()
+        '''
 
         t = np.linspace(0, np.pi*2, verts)
-        circ = np.array([np.sin(t), np.cos(t), np.zeros(verts), np.zeros(verts)])
+        circ = np.array([np.sin(t + phase) * radius, np.cos(t + phase) * radius, np.zeros(verts), np.zeros(verts)])
         g = np.transpose(circ)
+
         return g, [], []
 
 
