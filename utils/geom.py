@@ -67,7 +67,7 @@ def circle(radius=1.0, phase=0, verts=20, matrix=None, mode='pydata'):
             return bmesh_from_pydata(vertices, edges, [faces])
     if mode == 'np':
         '''
-        generate n*4 ( x,y,z,w )
+        generate n*4 ( x, y, z, w )
 
         Verts, Edges, Faces = circle(verts=20, radius=1.6, mode='np')
         Verts = Verts[:,:3].tolist()
@@ -76,8 +76,9 @@ def circle(radius=1.0, phase=0, verts=20, matrix=None, mode='pydata'):
         t = np.linspace(0, np.pi*2, verts)
         circ = np.array([np.sin(t + phase) * radius, np.cos(t + phase) * radius, np.zeros(verts), np.zeros(verts)])
         vertices = np.transpose(circ)
-
-        return vertices, [], []
+        edges = np.array([[i, i+1] for i in range(verts-1)] + [[verts-1, 0]])
+        faces = np.array([[i for i in range(verts)] + [0]])
+        return vertices, edges, faces
 
 
 def arc(radius=1.0, phase=0, angle=TAU, verts=20, matrix=None, mode='pydata'):
