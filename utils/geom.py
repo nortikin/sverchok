@@ -54,17 +54,22 @@ N = identity_matrix
 
 def circle(radius=1.0, phase=0, verts=20, matrix=None, mode='pydata'):
     if mode in {'pydata', 'bm'}:
+
         vertices = []
         theta = TAU / verts
+
         for i in range(verts):
             rad = i * theta
             vertices.append((math.sin(rad + phase) * radius, math.cos(rad + phase) * radius, 0))
+
         edges = [[i, i+1] for i in range(verts-1)] + [[verts-1, 0]]
         faces = [i for i in range(verts)] + [0]
+
         if mode == 'pydata':
             return vertices, edges, [faces]
         else:
             return bmesh_from_pydata(vertices, edges, [faces])
+
     if mode == 'np':
         '''
         generate n*4 ( x, y, z, w )
