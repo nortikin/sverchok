@@ -52,18 +52,47 @@ N = identity_matrix
 # ----------------- light weight functions ---------------
 
 
-def circle(radius=1.0, phase=0, verts=20, matrix=None, mode='pydata'):
+def circle(radius=1.0, phase=0, nverts=20, matrix=None, mode='pydata'):
+    '''
+    parameters:
+        radius: float
+        phase:  where to start the unit circle
+        nverts: number of verts of the circle
+        matrix: transformation matrix
+        mode:   'np' or 'pydata'
+
+        :  'pydata'
+        usage:
+            Verts, Edges, Faces = circle(nverts=20, radius=1.6, mode='pydata')
+        info:
+            Each return type will be a nested list.
+            Verts: will generate [[x0,y0,z0],[x1,y1,z1], ....[xN,yN,zN]]
+            Edges: will generate [[a,yb],[b,c], ....[n,a]]
+            Faces: a single wrapped polygon around the bounds of the shape
+
+        :  'np'
+        usage:
+            Verts, Edges, Faces = circle(nverts=20, radius=1.6, mode='np')
+        info:
+            Each return type will be a numpy array
+            Verts: generates [n*4] - Array([[x0,y0,z0,w0],[x1,y1,z1,w1], ....[xN,yN,zN,wN]])
+            Edges: will be a [n*2] - Array([[a,yb],[b,c], ....[n,a]])
+            Faces: a single wrapped polygon around the bounds of the shape
+      
+            to convert to pydata please consult the numpy manual.
+
+    '''
+
     if mode in {'pydata', 'bm'}:
 
         vertices = []
-        theta = TAU / verts
-
-        for i in range(verts):
+        theta = TAU / nverts
+        for i in range(nverts):
             rad = i * theta
             vertices.append((math.sin(rad + phase) * radius, math.cos(rad + phase) * radius, 0))
 
-        edges = [[i, i+1] for i in range(verts-1)] + [[verts-1, 0]]
-        faces = [i for i in range(verts)] + [0]
+        edges = [[i, i+1] for i in range(nverts-1)] + [[nverts-1, 0]]
+        faces = [i for i in range(nverts)] + [0]
 
         if mode == 'pydata':
             return vertices, edges, [faces]
@@ -71,19 +100,13 @@ def circle(radius=1.0, phase=0, verts=20, matrix=None, mode='pydata'):
             return bmesh_from_pydata(vertices, edges, [faces])
 
     if mode == 'np':
-        '''
-        generate n*4 ( x, y, z, w )
-
-        Verts, Edges, Faces = circle(verts=20, radius=1.6, mode='np')
-        Verts = Verts[:,:3].tolist()
-        '''
 
         # t = np.linspace(0, np.pi*2, verts+1)[:20]
-        t = np.linspace(0, np.pi * 2 * (verts - 1 / verts), verts)
-        circ = np.array([np.cos(t + phase) * radius, np.sin(t + phase) * radius, np.zeros(verts), np.zeros(verts)])
+        t = np.linspace(0, np.pi * 2 * (nverts - 1 / nverts), nverts)
+        circ = np.array([np.cos(t + phase) * radius, np.sin(t + phase) * radius, np.zeros(nverts), np.zeros(nverts)])
         vertices = np.transpose(circ)
-        edges = np.array([[i, i+1] for i in range(verts-1)] + [[verts-1, 0]])
-        faces = np.array([[i for i in range(verts)] + [0]])
+        edges = np.array([[i, i+1] for i in range(nverts-1)] + [[nverts-1, 0]])
+        faces = np.array([[i for i in range(nverts)] + [0]])
         return vertices, edges, faces
 
 
