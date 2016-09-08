@@ -271,10 +271,14 @@ def do_update_heat_map(node_list, nodes):
         nodes[name].color = cold.lerp(hot, t / t_max)
 
 def update_error_nodes(ng, name, err=Exception):
+    if ng.bl_idname == "SverchGroupTreeType":
+        return # ignore error color inside of monad
     if "error nodes" in ng:
         error_nodes = ast.literal_eval(ng["error nodes"])
     else:
         error_nodes = {}
+    if ng.bl_idname == "SverchGroupTreeType":
+        return
     node = ng.nodes.get(name)
     if not node:
         return
