@@ -67,10 +67,10 @@ def circle(radius=1.0, phase=0, verts=20, matrix=None, mode='pydata'):
             return bmesh_from_pydata(vertices, edges, [faces])
     if mode == 'np':
 
-        # t = np.linspace(0, np.pi*2, num)
-        # circ = np.array([np.sin(t), np.cos(t), np.zeros(num), np.zeros(num)])
-
-        pass
+        t = np.linspace(0, np.pi*2, verts)
+        circ = np.array([np.sin(t), np.cos(t), np.zeros(verts), np.zeros(verts)])
+        g = np.transpose(circ)
+        return g, [], []
 
 
 def arc(radius=1.0, phase=0, angle=TAU, verts=20, matrix=None, mode='pydata'):
