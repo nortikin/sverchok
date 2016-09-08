@@ -27,6 +27,7 @@ only for speed, never for aesthetics or line count or cleverness.
 '''
 
 import math
+import numpy as np
 
 import bpy
 import bmesh
@@ -65,16 +66,9 @@ def circle(radius=1.0, phase=0, verts=20, matrix=None, mode='pydata'):
         else:
             return bmesh_from_pydata(vertices, edges, [faces])
     if mode == 'np':
-        # import math
-        # import numpy as np
 
-        # num = 10
-        # def cpoint(a):
-        #     return math.sin(a[0]), math.cos(a[0]), 0, 0
-
-        # f = np.mgrid[:4, :num]
-        # g = np.apply_along_axis(cpoint, 1, f)
-        # print(g)   # flip! 
+        # t = np.linspace(0, np.pi*2, num)
+        # circ = np.array([np.sin(t), np.cos(t), np.zeros(num), np.zeros(num)])
 
         pass
 
