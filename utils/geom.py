@@ -116,28 +116,28 @@ def circle(radius=1.0, phase=0, nverts=20, matrix=None, mode='pydata'):
 
     if mode in {'pydata', 'bm'}:
 
-        vertices = []
+        verts = []
         theta = TAU / nverts
         for i in range(nverts):
             rad = i * theta
-            vertices.append((math.sin(rad + phase) * radius, math.cos(rad + phase) * radius, 0))
+            verts.append((math.sin(rad + phase) * radius, math.cos(rad + phase) * radius, 0))
 
         edges = [[i, i+1] for i in range(nverts-1)] + [[nverts-1, 0]]
         faces = [i for i in range(nverts)]
 
         if mode == 'pydata':
-            return vertices, edges, [faces]
+            return verts, edges, [faces]
         else:
-            return bmesh_from_pydata(vertices, edges, [faces])
+            return bmesh_from_pydata(verts, edges, [faces])
 
     if mode == 'np':
 
         t = np.linspace(0, np.pi * 2 * (nverts - 1 / nverts), nverts)
         circ = np.array([np.cos(t + phase) * radius, np.sin(t + phase) * radius, np.zeros(nverts), np.zeros(nverts)])
-        vertices = np.transpose(circ)
+        verts = np.transpose(circ)
         edges = np.array([[i, i+1] for i in range(nverts-1)] + [[nverts-1, 0]])
         faces = np.array([[i for i in range(nverts)]])
-        return vertices, edges, faces
+        return verts, edges, faces
 
 
 
@@ -156,28 +156,28 @@ def arc(radius=1.0, phase=0, angle=PI, nverts=20, matrix=None, mode='pydata'):
 
     if mode in {'pydata', 'bm'}:
 
-        vertices = []
+        verts = []
         theta = angle / nverts
         for i in range(nverts):
             rad = i * theta
-            vertices.append((math.sin(rad + phase) * radius, math.cos(rad + phase) * radius, 0))
+            verts.append((math.sin(rad + phase) * radius, math.cos(rad + phase) * radius, 0))
 
         edges = [[i, i+1] for i in range(nverts-1)]
         faces = [i for i in range(nverts)]
 
         if mode == 'pydata':
-            return vertices, edges, [faces]
+            return verts, edges, [faces]
         else:
-            return bmesh_from_pydata(vertices, edges, [faces])
+            return bmesh_from_pydata(verts, edges, [faces])
 
     if mode == 'np':
 
         t = np.linspace(0, angle, nverts)
         circ = np.array([np.cos(t + phase) * radius, np.sin(t + phase) * radius, np.zeros(nverts), np.zeros(nverts)])
-        vertices = np.transpose(circ)
+        verts = np.transpose(circ)
         edges = np.array([[i, i+1] for i in range(nverts-1)])
         faces = np.array([[i for i in range(nverts)]])
-        return vertices, edges, faces
+        return verts, edges, faces
 
 
 def quad(side=1.0, radius=0.0, nverts=5, matrix=None, mode='pydata'):
@@ -195,18 +195,25 @@ def quad(side=1.0, radius=0.0, nverts=5, matrix=None, mode='pydata'):
         dim = side / 2
 
         if mode == 'pydata':
+            edges, faces = [], []
+
             if radius > 0.0 and radius < dim:
                 ...
             elif radius > 0.0 and radius == dim:
-                ...
+                verts, edges, faces = circle(radius=dim, nverts=((nverts*4)-4))
             elif radius == 0.0 or (radius > 0.0 and radius > dim):
-                verts = [[-dim, dim, 0],[dim, dim, 0],[dim, -dim, 0],[-dim, -dim, 0]]
-            edges = [[i, i+1] for i in range(nverts-1)]
-            faces = [i for i in range(nverts)]
-            return vertices, edges, [faces]
+                verts = [[-dim, dim, 0], [dim, dim, 0], [dim, -dim, 0], [-dim, -dim, 0]]
+            
+            num_verts = len(verts)
+            if not edges:
+                edges = [[i, i+1] for i in range(num_verts-1)]
+                faces = [i for i in range(num_verts)]
+
+            return verts, edges, [faces]
+
         else:
-            return bmesh_from_pydata(vertices, edges, [faces])
-            pass
+
+            return bmesh_from_pydata(verts, edges, [faces])
 
     if mode == 'np':
         pass
