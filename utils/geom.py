@@ -88,7 +88,7 @@ def circle(radius=1.0, phase=0, nverts=20, matrix=None, mode='pydata'):
         radius: float
         phase:  where to start the unit circle
         nverts: number of verts of the circle
-        matrix: transformation matrix
+        matrix: transformation matrix [not implemented yet]
         mode:   'np' or 'pydata'
 
         :  'pydata'
@@ -143,9 +143,17 @@ def circle(radius=1.0, phase=0, nverts=20, matrix=None, mode='pydata'):
 
 def arc(radius=1.0, phase=0, angle=PI, nverts=20, matrix=None, mode='pydata'):
     '''
-    
+    arc is similar to circle, with the exception that it does not close.
+
+    parameters:
+        radius: float
+        phase:  where to start the arc
+        nverts: number of verts of the arc
+        matrix: transformation matrix [not implemented yet]
+        mode:   'np' or 'pydata'
 
     '''
+
     if mode in {'pydata', 'bm'}:
 
         vertices = []
@@ -170,8 +178,6 @@ def arc(radius=1.0, phase=0, angle=PI, nverts=20, matrix=None, mode='pydata'):
         edges = np.array([[i, i+1] for i in range(nverts-1)]) # + [[nverts-1, 0]])
         faces = np.array([[i for i in range(nverts)] + [0]])
         return vertices, edges, faces
-
-    pass
 
 
 def quad(dim=1.0, radius=0.0, nverts=5, matrix=None, mode='pydata'):
