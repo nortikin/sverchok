@@ -139,10 +139,38 @@ def circle(radius=1.0, phase=0, nverts=20, matrix=None, mode='pydata'):
         faces = np.array([[i for i in range(nverts)] + [0]])
         return vertices, edges, faces
 
-circles = vectorize(circle)
 
 
-def arc(radius=1.0, phase=0, angle=TAU, nverts=20, matrix=None, mode='pydata'):
+def arc(radius=1.0, phase=0, angle=PI, nverts=20, matrix=None, mode='pydata'):
+    '''
+    
+
+    '''
+    if mode in {'pydata', 'bm'}:
+
+        vertices = []
+        theta = angle / nverts
+        for i in range(nverts):
+            rad = i * theta
+            vertices.append((math.sin(rad + phase) * radius, math.cos(rad + phase) * radius, 0))
+
+        edges = [[i, i+1] for i in range(nverts-1)] # + [[nverts-1, 0]]
+        faces = [i for i in range(nverts)] + [0]
+
+        if mode == 'pydata':
+            return vertices, edges, [faces]
+        else:
+            return bmesh_from_pydata(vertices, edges, [faces])
+
+    if mode == 'np':
+
+        t = np.linspace(0, angle, nverts)
+        circ = np.array([np.cos(t + phase) * radius, np.sin(t + phase) * radius, np.zeros(nverts), np.zeros(nverts)])
+        vertices = np.transpose(circ)
+        edges = np.array([[i, i+1] for i in range(nverts-1)]) # + [[nverts-1, 0]])
+        faces = np.array([[i for i in range(nverts)] + [0]])
+        return vertices, edges, faces
+
     pass
 
 
@@ -164,3 +192,10 @@ def line(p1=((0,0,0)), p2=((1,0,0)), nverts=2, mode='pydata'):
 
 def slice(outer_radius=1.0, inner_radius=0.8, phase=0, angle=PI, nverts=20, matrix=None, mode='pydata'):
     pass
+
+
+# ----------- vectorized forms
+
+
+circles = vectorize(circle)
+arcs = vectorize(arc)
