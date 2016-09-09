@@ -184,7 +184,7 @@ def quad(dim=1.0, radius=0.0, nverts=5, matrix=None, mode='pydata'):
     pass
 
 
-def rect(x=1.0, y=1.0, radius=0.0, nverts=5, matrix=None, mode='pydata'):
+def rect(dim_x=1.0, dim_y=1.62, radius=0.0, nverts=5, matrix=None, mode='pydata'):
     pass
 
 
