@@ -163,7 +163,7 @@ def arc(radius=1.0, phase=0, angle=PI, nverts=20, matrix=None, mode='pydata'):
             rad = i * theta
             vertices.append((math.sin(rad + phase) * radius, math.cos(rad + phase) * radius, 0))
 
-        edges = [[i, i+1] for i in range(nverts-1)] # + [[nverts-1, 0]]
+        edges = [[i, i+1] for i in range(nverts-1)]
         faces = [i for i in range(nverts)]
 
         if mode == 'pydata':
@@ -176,7 +176,7 @@ def arc(radius=1.0, phase=0, angle=PI, nverts=20, matrix=None, mode='pydata'):
         t = np.linspace(0, angle, nverts)
         circ = np.array([np.cos(t + phase) * radius, np.sin(t + phase) * radius, np.zeros(nverts), np.zeros(nverts)])
         vertices = np.transpose(circ)
-        edges = np.array([[i, i+1] for i in range(nverts-1)]) # + [[nverts-1, 0]])
+        edges = np.array([[i, i+1] for i in range(nverts-1)])
         faces = np.array([[i for i in range(nverts)]])
         return vertices, edges, faces
 
