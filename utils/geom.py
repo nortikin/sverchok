@@ -141,5 +141,25 @@ def circle(radius=1.0, phase=0, nverts=20, matrix=None, mode='pydata'):
         return vertices, edges, faces
 
 
-def arc(radius=1.0, phase=0, angle=TAU, verts=20, matrix=None, mode='pydata'):
+def arc(radius=1.0, phase=0, angle=TAU, nverts=20, matrix=None, mode='pydata'):
+    pass
+
+
+def quad(dim=1.0, radius=0.0, nverts=5, matrix=None, mode='pydata'):
+    pass
+
+
+def rect(x=1.0, y=1.0, radius=0.0, nverts=5, matrix=None, mode='pydata'):
+    pass
+
+
+def iso_grid(numx=5, numy=5, dim=0.5, mode='pydata'):
+    pass
+
+
+def line(p1=((0,0,0)), p2=((1,0,0)), nverts=2, mode='pydata'):
+    pass
+
+
+def slice(outer_radius=1.0, inner_radius=0.8, phase=0, angle=PI, nverts=20, matrix=None, mode='pydata'):
     pass
