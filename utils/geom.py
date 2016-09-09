@@ -82,7 +82,6 @@ def sn1_autowrap(*params):
 # ----------------- light weight functions ---------------
 
 
-@vectorize
 def circle(radius=1.0, phase=0, nverts=20, matrix=None, mode='pydata'):
     '''
     parameters:
@@ -139,6 +138,8 @@ def circle(radius=1.0, phase=0, nverts=20, matrix=None, mode='pydata'):
         edges = np.array([[i, i+1] for i in range(nverts-1)] + [[nverts-1, 0]])
         faces = np.array([[i for i in range(nverts)] + [0]])
         return vertices, edges, faces
+
+circles = vectorize(circle)
 
 
 def arc(radius=1.0, phase=0, angle=TAU, nverts=20, matrix=None, mode='pydata'):
