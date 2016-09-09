@@ -56,18 +56,22 @@ def vectorize(func):
     '''
     Will create a yeilding vectorized generator of the
     function it is applied to.
-    Note: parameters must be passed as kw arguments
+    Note: arguments must be list or similar OR str, float or int
     '''
+    def wrap_param(p):
+        if isinstance(p, (float, int, str)):
+            return [p]
+        else:
+            return p
     @wraps(func)
-    def inner(**kwargs):
-        names, values = kwargs.keys(), kwargs.values()
-        values = match_long_repeat(values)
-        multiplex = {k:v for k, v in zip(names, values)}
-        for i in range(len(values[0])):
-            single_kwargs = {k:v[i] for k, v in multiplex.items()}
-            yield func(**single_kwargs)
+    def inner(*args, **kwargs):
+        split = len(args)
+        keys = kwargs.keys()
+        parameters = [wrap_param(p) for p in args + tuple(kwargs.values())]
+        for param in zip(*match_long_repeat(parameters)):
+            kw_args = {k: v for k, v in zip(keys, param[split:])}
+            yield func(*param[:split+1], **kw_args)
     return inner
-
 
 # ----------------- sn1 specific helper for autowrapping to iterables ----
 # this will be moved to elsewhere.
@@ -122,7 +126,7 @@ def circle(radius=1.0, phase=0, nverts=20, matrix=None, mode='pydata'):
             vertices.append((math.sin(rad + phase) * radius, math.cos(rad + phase) * radius, 0))
 
         edges = [[i, i+1] for i in range(nverts-1)] + [[nverts-1, 0]]
-        faces = [i for i in range(nverts)] + [0]
+        faces = [i for i in range(nverts)]
 
         if mode == 'pydata':
             return vertices, edges, [faces]
@@ -136,7 +140,7 @@ def circle(radius=1.0, phase=0, nverts=20, matrix=None, mode='pydata'):
         circ = np.array([np.cos(t + phase) * radius, np.sin(t + phase) * radius, np.zeros(nverts), np.zeros(nverts)])
         vertices = np.transpose(circ)
         edges = np.array([[i, i+1] for i in range(nverts-1)] + [[nverts-1, 0]])
-        faces = np.array([[i for i in range(nverts)] + [0]])
+        faces = np.array([[i for i in range(nverts)]])
         return vertices, edges, faces
 
 
@@ -163,7 +167,7 @@ def arc(radius=1.0, phase=0, angle=PI, nverts=20, matrix=None, mode='pydata'):
             vertices.append((math.sin(rad + phase) * radius, math.cos(rad + phase) * radius, 0))
 
         edges = [[i, i+1] for i in range(nverts-1)] # + [[nverts-1, 0]]
-        faces = [i for i in range(nverts)] + [0]
+        faces = [i for i in range(nverts)]
 
         if mode == 'pydata':
             return vertices, edges, [faces]
@@ -176,7 +180,7 @@ def arc(radius=1.0, phase=0, angle=PI, nverts=20, matrix=None, mode='pydata'):
         circ = np.array([np.cos(t + phase) * radius, np.sin(t + phase) * radius, np.zeros(nverts), np.zeros(nverts)])
         vertices = np.transpose(circ)
         edges = np.array([[i, i+1] for i in range(nverts-1)]) # + [[nverts-1, 0]])
-        faces = np.array([[i for i in range(nverts)] + [0]])
+        faces = np.array([[i for i in range(nverts)]])
         return vertices, edges, faces
 
 
