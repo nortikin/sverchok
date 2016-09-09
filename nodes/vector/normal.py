@@ -17,9 +17,11 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
+import bmesh
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import SvSetSocketAnyType, SvGetSocketAnyType
+from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 
 
 class VectorNormalNode(bpy.types.Node, SverchCustomTreeNode):
@@ -45,14 +47,25 @@ class VectorNormalNode(bpy.types.Node, SverchCustomTreeNode):
                 vers = SvGetSocketAnyType(self, self.inputs['Vertices'])
                 normalsFORout = []
                 for i, obj in enumerate(vers):
+                    """
                     mesh_temp = bpy.data.meshes.new('temp')
                     mesh_temp.from_pydata(obj, [], pols[i])
                     mesh_temp.update(calc_edges=True)
+                    """
+                    bm = bmesh_from_pydata(obj, [], pols[i])
+
+                    bmesh.ops.recalc_face_normals(bm, faces=bm.faces[:])
+                    bm.verts.ensure_lookup_table()
+                    verts = bm.verts
                     tempobj = []
-                    for v in mesh_temp.vertices:
-                        tempobj.append(v.normal[:])
+
+                    for idx in range(len(verts)):
+                        tempobj.append(verts[idx].normal[:])
+
                     normalsFORout.append(tempobj)
-                    bpy.data.meshes.remove(mesh_temp)
+
+                    bm.free()
+                    #bpy.data.meshes.remove(mesh_temp)
                 #print (normalsFORout)
 
                 if 'Normals' in self.outputs and self.outputs['Normals'].links:

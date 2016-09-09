@@ -18,11 +18,13 @@
 
 import bpy
 from bpy.props import FloatProperty
+import bmesh
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode, Vector_generate, Vector_degenerate,
                             SvSetSocketAnyType, SvGetSocketAnyType)
 
+from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 # "coauthor": "Alessandro Zomparelli (sketchesofcode)"
 
 
@@ -85,10 +87,17 @@ class AdaptivePolsNode(bpy.types.Node, SverchCustomTreeNode):
                 versD_ = SvGetSocketAnyType(self, self.inputs['VersD'])  # donor
                 versD = Vector_generate(versD_)
                 ##### it is needed for normals of vertices
-                new_me = bpy.data.meshes.new('recepient')
-                new_me.from_pydata(versR, [], polsR)
-                new_me.update(calc_edges=True)
-                new_ve = new_me.vertices
+                bm = bmesh_from_pydata(versR, [], polsR)
+
+                bmesh.ops.recalc_face_normals(bm, faces=bm.faces[:])
+                bm.verts.ensure_lookup_table()
+                new_ve = bm.verts
+                
+                #new_me = bpy.data.meshes.new('recepient')
+                #new_me.from_pydata(versR, [], polsR)
+                #new_me.update(calc_edges=True)
+
+                #new_ve = new_me.vertices
                 #print (new_ve[0].normal, 'normal')
 
                 for i, vD in enumerate(versD):
@@ -130,8 +139,8 @@ class AdaptivePolsNode(bpy.types.Node, SverchCustomTreeNode):
                             new_pols.append([id for id in p])
                         pols_out.append(new_pols)
                         vers_out.append(new_vers)
-                bpy.data.meshes.remove(new_me)  # cleaning and washing
-
+                #bpy.data.meshes.remove(new_me)  # cleaning and washing
+                bm.free()
                 #print (Vector_degenerate(vers_out))
 
                 output = Vector_degenerate(vers_out)
