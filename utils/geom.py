@@ -56,7 +56,7 @@ def vectorize(func):
     '''
     Will create a yeilding vectorized generator of the
     function it is applied to.
-    Note: arguments must be list or similar type
+    Note: parameters must be passed as kw arguments
     '''
     @wraps(func)
     def inner(**kwargs):
