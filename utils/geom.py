@@ -180,7 +180,7 @@ def arc(radius=1.0, phase=0, angle=PI, nverts=20, matrix=None, mode='pydata'):
         return vertices, edges, faces
 
 
-def quad(dim=1.0, radius=0.0, nverts=5, matrix=None, mode='pydata'):
+def quad(side=1.0, radius=0.0, nverts=5, matrix=None, mode='pydata'):
     '''
     parameters:
         dim:    ---
@@ -192,12 +192,20 @@ def quad(dim=1.0, radius=0.0, nverts=5, matrix=None, mode='pydata'):
     '''
 
     if mode in {'pydata', 'bm'}:
+        dim = side / 2
 
         if mode == 'pydata':
-            # return vertices, edges, [faces]
-            pass
+            if radius > 0.0 and radius < dim:
+                ...
+            elif radius > 0.0 and radius == dim:
+                ...
+            elif radius == 0.0 or (radius > 0.0 and radius > dim):
+                verts = [[-dim, dim, 0],[dim, dim, 0],[dim, -dim, 0],[-dim, -dim, 0]]
+            edges = [[i, i+1] for i in range(nverts-1)]
+            faces = [i for i in range(nverts)]
+            return vertices, edges, [faces]
         else:
-            # return bmesh_from_pydata(vertices, edges, [faces])
+            return bmesh_from_pydata(vertices, edges, [faces])
             pass
 
     if mode == 'np':
