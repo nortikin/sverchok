@@ -63,6 +63,7 @@ def vectorize(func):
             return [p]
         else:
             return p
+
     @wraps(func)
     def inner(*args, **kwargs):
         split = len(args)
@@ -71,16 +72,8 @@ def vectorize(func):
         for param in zip(*match_long_repeat(parameters)):
             kw_args = {k: v for k, v in zip(keys, param[split:])}
             yield func(*param[:split+1], **kw_args)
+
     return inner
-
-# ----------------- sn1 specific helper for autowrapping to iterables ----
-# this will be moved to elsewhere.
-
-def sn1_autowrap(*params):
-    for p in params:
-        if isinstance(p, (float, int)):
-            p = [p]
-        yield p
 
 
 # ----------------- light weight functions ---------------
