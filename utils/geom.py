@@ -28,6 +28,7 @@ only for speed, never for aesthetics or line count or cleverness.
 
 import math
 import numpy as np
+from functools import wraps
 
 import bpy
 import bmesh
@@ -36,7 +37,7 @@ from mathutils import Matrix
 
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 from sverchok.utils.sv_bmesh_utils import pydata_from_bmesh
-
+from sverchok.data_structure import match_long_repeat
 
 identity_matrix = Matrix()
 
@@ -48,10 +49,27 @@ TAU = PI * 2
 TWO_PI = TAU
 N = identity_matrix
 
+# ----------------- vectorize wrapper ---------------
+
+
+def vectorize(func):
+    '''
+    Will create a yeilding vectorized generator of the
+    function it is applied to.
+    Note: arguments must be list or similar type
+    '''
+    @wraps(func)
+    def inner(*args):
+        values = match_long_repeat(args)
+        for param in zip(*values):
+            yield func(*param)
+    return inner
+
 
 # ----------------- light weight functions ---------------
 
 
+@vectorize
 def circle(radius=1.0, phase=0, nverts=20, matrix=None, mode='pydata'):
     '''
     parameters:
@@ -78,7 +96,7 @@ def circle(radius=1.0, phase=0, nverts=20, matrix=None, mode='pydata'):
             Verts: generates [n*4] - Array([[x0,y0,z0,w0],[x1,y1,z1,w1], ....[xN,yN,zN,wN]])
             Edges: will be a [n*2] - Array([[a,yb],[b,c], ....[n,a]])
             Faces: a single wrapped polygon around the bounds of the shape
-      
+
             to convert to pydata please consult the numpy manual.
 
     '''
@@ -112,4 +130,3 @@ def circle(radius=1.0, phase=0, nverts=20, matrix=None, mode='pydata'):
 
 def arc(radius=1.0, phase=0, angle=TAU, verts=20, matrix=None, mode='pydata'):
     pass
-
