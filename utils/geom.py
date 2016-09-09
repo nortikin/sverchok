@@ -132,7 +132,6 @@ def circle(radius=1.0, phase=0, nverts=20, matrix=None, mode='pydata'):
 
     if mode == 'np':
 
-        # t = np.linspace(0, np.pi*2, verts+1)[:20]
         t = np.linspace(0, np.pi * 2 * (nverts - 1 / nverts), nverts)
         circ = np.array([np.cos(t + phase) * radius, np.sin(t + phase) * radius, np.zeros(nverts), np.zeros(nverts)])
         vertices = np.transpose(circ)
