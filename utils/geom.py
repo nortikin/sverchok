@@ -59,11 +59,24 @@ def vectorize(func):
     Note: arguments must be list or similar type
     '''
     @wraps(func)
-    def inner(*args):
-        values = match_long_repeat(args)
-        for param in zip(*values):
-            yield func(*param)
+    def inner(**kwargs):
+        names, values = kwargs.keys(), kwargs.values()
+        values = match_long_repeat(values)
+        multiplex = {k:v for k, v in zip(names, values)}
+        for i in range(len(values[0])):
+            single_kwargs = {k:v[i] for k, v in multiplex.items()}
+            yield func(**single_kwargs)
     return inner
+
+
+# ----------------- sn1 specific helper for autowrapping to iterables ----
+# this will be moved to elsewhere.
+
+def sn1_autowrap(*params):
+    for p in params:
+        if isinstance(p, (float, int)):
+            p = [p]
+        yield p
 
 
 # ----------------- light weight functions ---------------
