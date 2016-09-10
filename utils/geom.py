@@ -246,6 +246,7 @@ def quad(side=1.0, radius=0.0, nverts=5, matrix=None, mode='pydata'):
 
         else:
             # path not tested
+            # verts, edges, faces = quad(side, radius, nverts, matrix)
             return bmesh_from_pydata(verts, edges, [faces])
 
     if mode == 'np':
