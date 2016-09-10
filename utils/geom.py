@@ -250,6 +250,39 @@ def quad(side=1.0, radius=0.0, nverts=5, matrix=None, mode='pydata'):
         pass
 
 
+def arc_slice(outer_radius=1.0, inner_radius=0.8, phase=0, angle=PI, nverts=20, matrix=None, mode='pydata'):
+    if mode in {'pydata', 'bm'}:
+
+        # if outer_radius == inner_radius:
+        #    return arc ? :)  or [], [], []
+
+        if outer_radius < inner_radius:
+            outer_radius, inner_radius = inner_radius, outer_radius
+
+        verts = []
+        theta = angle / (nverts-1)
+
+        for i in range(nverts):
+            rad = i * theta
+            verts.append((math.sin(rad + phase) * outer_radius, math.cos(rad + phase) * outer_radius, 0))
+
+        for i in reversed(range(nverts)):                
+            rad = i * theta
+            verts.append((math.sin(rad + phase) * inner_radius, math.cos(rad + phase) * inner_radius, 0))
+
+        num_verts = len(verts)
+        edges = [[i, i+1] for i in range(num_verts-1)] + [[num_verts-1, 0]]
+        faces = [i for i in range(num_verts)]
+
+        if mode == 'pydata':
+            return verts, edges, [faces]
+        else:
+            return bmesh_from_pydata(verts, edges, [faces])
+
+    if mode == 'np':
+        pass
+
+
 def rect(dim_x=1.0, dim_y=1.62, radius=0.0, nverts=5, matrix=None, mode='pydata'):
     if mode in {'pydata', 'bm'}:
 
@@ -292,39 +325,6 @@ def line(p1=((0,0,0)), p2=((1,0,0)), nverts=2, mode='pydata'):
         else:
             # return bmesh_from_pydata(vertices, edges, [faces])
             pass
-
-    if mode == 'np':
-        pass
-
-
-def arc_slice(outer_radius=1.0, inner_radius=0.8, phase=0, angle=PI, nverts=20, matrix=None, mode='pydata'):
-    if mode in {'pydata', 'bm'}:
-
-        # if outer_radius == inner_radius:
-        #    return arc ? :)  or [], [], []
-
-        if outer_radius < inner_radius:
-            outer_radius, inner_radius = inner_radius, outer_radius
-
-        verts = []
-        theta = angle / (nverts-1)
-
-        for i in range(nverts):
-            rad = i * theta
-            verts.append((math.sin(rad + phase) * outer_radius, math.cos(rad + phase) * outer_radius, 0))
-
-        for i in reversed(range(nverts)):                
-            rad = i * theta
-            verts.append((math.sin(rad + phase) * inner_radius, math.cos(rad + phase) * inner_radius, 0))
-
-        num_verts = len(verts)
-        edges = [[i, i+1] for i in range(num_verts-1)] + [[num_verts-1, 0]]
-        faces = [i for i in range(num_verts)]
-
-        if mode == 'pydata':
-            return verts, edges, [faces]
-        else:
-            return bmesh_from_pydata(verts, edges, [faces])
 
     if mode == 'np':
         pass
