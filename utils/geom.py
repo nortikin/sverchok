@@ -198,6 +198,7 @@ def quad(side=1.0, radius=0.0, nverts=5, matrix=None, mode='pydata'):
             edges, faces = [], []
 
             if radius > 0.0 and radius < dim and nverts >= 2:
+                verts = []
                 theta = HALF_PI / (nverts-1)
                 ext = dim - radius
                 coords = [[ext, ext], [ext, -ext], [-ext, -ext], [-ext, ext]]
@@ -215,7 +216,7 @@ def quad(side=1.0, radius=0.0, nverts=5, matrix=None, mode='pydata'):
             
             num_verts = len(verts)
             if not edges:
-                edges = [[i, i+1] for i in range(num_verts-1)]
+                edges = [[i, i+1] for i in range(num_verts-1)] + [[num_verts-1, 0]]
                 faces = [i for i in range(num_verts)]
 
             return verts, edges, [faces]
