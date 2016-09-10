@@ -295,12 +295,36 @@ def line(p1=((0,0,0)), p2=((1,0,0)), nverts=2, mode='pydata'):
         pass
 
 
-def slice(outer_radius=1.0, inner_radius=0.8, phase=0, angle=PI, nverts=20, matrix=None, mode='pydata'):
+def arc_slice(outer_radius=1.0, inner_radius=0.8, phase=0, angle=PI, nverts=20, matrix=None, mode='pydata'):
     if mode in {'pydata', 'bm'}:
 
+        # if outer_radius == inner_radius:
+        #    return arc ? :)  or [], [], []
+
+        if outer_radius < inner_radius:
+            outer_radius, inner_radius = inner_radius, outer_radius
+
         if mode == 'pydata':
-            # return vertices, edges, [faces]
-            pass
+            verts = []
+            theta = angle / nverts
+
+            for i in range(nverts):
+                rad = i * theta
+                verts.append((math.sin(rad + phase) * outer_radius, math.cos(rad + phase) * outer_radius, 0))
+
+            for i in reversed(range(nverts)):                
+                rad = i * theta
+                verts.append((math.sin(rad + phase) * inner_radius, math.cos(rad + phase) * inner_radius, 0))
+
+            num_verts = len(verts)
+            edges = [[i, i+1] for i in range(num_verts-1)] + [[num_verts-1, 0]]
+            faces = [i for i in range(num_verts)]
+
+            if mode == 'pydata':
+                return verts, edges, [faces]
+            else:
+                return bmesh_from_pydata(verts, edges, [faces])
+
         else:
             # return bmesh_from_pydata(vertices, edges, [faces])
             pass
@@ -315,3 +339,4 @@ def slice(outer_radius=1.0, inner_radius=0.8, phase=0, angle=PI, nverts=20, matr
 circles = vectorize(circle)
 arcs = vectorize(arc)
 quads = vectorize(quad)
+arc_slices = vectorize(arc_slice)
