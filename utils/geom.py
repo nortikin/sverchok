@@ -197,12 +197,22 @@ def quad(side=1.0, radius=0.0, nverts=5, matrix=None, mode='pydata'):
         if mode == 'pydata':
             edges, faces = [], []
 
-            if radius > 0.0 and radius < dim:
-                ...
-            elif radius > 0.0 and radius == dim:
+            if radius > 0.0 and radius < dim and nverts >= 2:
+                theta = HALF_PI / (nverts-1)
+                ext = dim - radius
+                coords = [[ext, ext], [ext, -ext], [-ext, -ext], [-ext, ext]]
+                for (x, y), corner in zip(coords, range(4)):
+                    for i in range(nverts):
+                        rad = theta * i
+                        verts.append(((math.sin(rad + (corner*HALF_PI)) * radius) + x, (math.cos(rad + (corner*HALF_PI)) * radius) + y, 0))
+                num_verts = len(verts)
+
+            elif radius > 0.0 and radius == dim and nverts >= 2:
                 verts, edges, faces = circle(radius=dim, nverts=((nverts*4)-4))
-            elif radius == 0.0 or (radius > 0.0 and radius > dim):
+
+            else:
                 verts = [[-dim, dim, 0], [dim, dim, 0], [dim, -dim, 0], [-dim, -dim, 0]]
+            # elif radius == 0.0 or (radius > 0.0 and radius > dim):
             
             num_verts = len(verts)
             if not edges:
@@ -281,3 +291,4 @@ def slice(outer_radius=1.0, inner_radius=0.8, phase=0, angle=PI, nverts=20, matr
 
 circles = vectorize(circle)
 arcs = vectorize(arc)
+quads = vectorize(quad)
