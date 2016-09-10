@@ -168,7 +168,7 @@ def arc(radius=1.0, phase=0, angle=PI, nverts=20, matrix=None, mode='pydata'):
     if mode in {'pydata', 'bm'}:
 
         verts = []
-        theta = angle / nverts
+        theta = angle / (nverts-1)
         for i in range(nverts):
             rad = i * theta
             verts.append((math.sin(rad + phase) * radius, math.cos(rad + phase) * radius, 0))
@@ -306,7 +306,7 @@ def arc_slice(outer_radius=1.0, inner_radius=0.8, phase=0, angle=PI, nverts=20, 
 
         if mode == 'pydata':
             verts = []
-            theta = angle / nverts
+            theta = angle / (nverts-1)
 
             for i in range(nverts):
                 rad = i * theta
