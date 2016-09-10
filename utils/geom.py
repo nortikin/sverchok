@@ -245,7 +245,7 @@ def quad(side=1.0, radius=0.0, nverts=5, matrix=None, mode='pydata'):
             return verts, edges, [faces]
 
         else:
-
+            # path not tested
             return bmesh_from_pydata(verts, edges, [faces])
 
     if mode == 'np':
@@ -255,7 +255,11 @@ def quad(side=1.0, radius=0.0, nverts=5, matrix=None, mode='pydata'):
 def rect(dim_x=1.0, dim_y=1.62, radius=0.0, nverts=5, matrix=None, mode='pydata'):
     if mode in {'pydata', 'bm'}:
 
+        xdim = dim_x / 2
+        ydim = dim_y / 2
         if mode == 'pydata':
+            if radius == 0.0:
+                verts = [[-xdim, ydim, 0], [xdim, ydim, 0], [xdim, -ydim, 0], [-xdim, -ydim, 0]]
             # return vertices, edges, [faces]
             pass
         else:
