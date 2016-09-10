@@ -98,7 +98,7 @@ def circle(radius=1.0, phase=0, nverts=20, matrix=None, mode='pydata'):
         info:
             Each return type will be a nested list.
             Verts: will generate [[x0,y0,z0],[x1,y1,z1], ....[xN,yN,zN]]
-            Edges: will generate [[a,yb],[b,c], ....[n,a]]
+            Edges: will generate [[a,b],[b,c], ....[n,a]]
             Faces: a single wrapped polygon around the bounds of the shape
 
         :  'np'
@@ -110,7 +110,7 @@ def circle(radius=1.0, phase=0, nverts=20, matrix=None, mode='pydata'):
         info:
             Each return type will be a numpy array
             Verts: generates [n*4] - Array([[x0,y0,z0,w0],[x1,y1,z1,w1], ....[xN,yN,zN,wN]])
-            Edges: will be a [n*2] - Array([[a,yb],[b,c], ....[n,a]])
+            Edges: will be a [n*2] - Array([[a,b],[b,c], ....[n,a]])
             Faces: a single wrapped polygon around the bounds of the shape
 
             to convert to pydata please consult the numpy manual.
@@ -160,7 +160,7 @@ def arc(radius=1.0, phase=0, angle=PI, nverts=20, matrix=None, mode='pydata'):
         info:
             Each return type will be a nested list.
             Verts: will generate [[x0,y0,z0],[x1,y1,z1], ....[xN,yN,zN]]
-            Edges: will generate [[a,yb],[b,c], ...] (not cyclic)
+            Edges: will generate [[a,b],[b,c], ...] (not cyclic)
             Faces: a single wrapped polygon around the bounds of the shape
 
     '''
@@ -208,7 +208,7 @@ def quad(side=1.0, radius=0.0, nverts=5, matrix=None, mode='pydata'):
         info:
             Each return type will be a nested list.
             Verts: will generate [[x0,y0,z0],[x1,y1,z1], ....[xN,yN,zN]]
-            Edges: will generate [[a,yb],[b,c], ....[n,a]]
+            Edges: will generate [[a,b],[b,c], ....[n,a]]
             Faces: a single wrapped polygon around the bounds of the shape
 
 
