@@ -205,7 +205,6 @@ def quad(side=1.0, radius=0.0, nverts=5, matrix=None, mode='pydata'):
                     for i in range(nverts):
                         rad = theta * i
                         verts.append(((math.sin(rad + (corner*HALF_PI)) * radius) + x, (math.cos(rad + (corner*HALF_PI)) * radius) + y, 0))
-                num_verts = len(verts)
 
             elif radius > 0.0 and radius == dim and nverts >= 2:
                 verts, edges, faces = circle(radius=dim, nverts=((nverts*4)-4))
