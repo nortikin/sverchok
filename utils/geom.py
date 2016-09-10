@@ -104,6 +104,9 @@ def circle(radius=1.0, phase=0, nverts=20, matrix=None, mode='pydata'):
         :  'np'
         usage:
             Verts, Edges, Faces = circle(nverts=20, radius=1.6, mode='np')
+
+    outputs Verts, Edges, Faces
+
         info:
             Each return type will be a numpy array
             Verts: generates [n*4] - Array([[x0,y0,z0,w0],[x1,y1,z1,w1], ....[xN,yN,zN,wN]])
@@ -152,6 +155,14 @@ def arc(radius=1.0, phase=0, angle=PI, nverts=20, matrix=None, mode='pydata'):
         matrix: transformation matrix [not implemented yet]
         mode:   'np' or 'pydata'
 
+    outputs Verts, Edges, Faces
+
+        info:
+            Each return type will be a nested list.
+            Verts: will generate [[x0,y0,z0],[x1,y1,z1], ....[xN,yN,zN]]
+            Edges: will generate [[a,yb],[b,c], ...] (not cyclic)
+            Faces: a single wrapped polygon around the bounds of the shape
+
     '''
 
     if mode in {'pydata', 'bm'}:
@@ -183,11 +194,23 @@ def arc(radius=1.0, phase=0, angle=PI, nverts=20, matrix=None, mode='pydata'):
 def quad(side=1.0, radius=0.0, nverts=5, matrix=None, mode='pydata'):
     '''
     parameters:
-        dim:    ---
-        radius: ---
-        nverts: ---
+        side:   gives the length of side of the rect
+        radius: gives the radius of the rounded corners. 
+                - If the passed radius is equal to side/2 then you'll get a circle
+                - if the passed radius exceeds side/2, then you will get rect
+        nverts: if nverts is equal or greater than 2 then you will get rounded courners
+                if the above radius is smaller or equal to side/2.
         matrix: ---
         mode:   ---
+
+    outputs Verts, Edges, Faces
+
+        info:
+            Each return type will be a nested list.
+            Verts: will generate [[x0,y0,z0],[x1,y1,z1], ....[xN,yN,zN]]
+            Edges: will generate [[a,yb],[b,c], ....[n,a]]
+            Faces: a single wrapped polygon around the bounds of the shape
+
 
     '''
 
