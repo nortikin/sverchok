@@ -299,6 +299,8 @@ def rect(dim_x=1.0, dim_y=1.62, radius=0.0, nverts=5, matrix=None, mode='pydata'
 
         elif radius > 0.0 and radius < min(dim_x, dim_y) and nverts >= 2:
             theta = HALF_PI / (nverts-1)
+            xdim = xdim - radius
+            ydim = ydim - radius
             coords = [[xdim, ydim], [xdim, -ydim], [-xdim, -ydim], [-xdim, ydim]]
             for (x, y), corner in zip(coords, range(4)):
                 for i in range(nverts):
