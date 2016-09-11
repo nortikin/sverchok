@@ -79,6 +79,9 @@ def sn1_autowrap(*params):
             p = [p]
         yield p
 
+def sn1_autodict(names, var_dict):
+    return {k:v for k, v in var_dict.items() if k in set(names.split(' '))}    
+
 
 # ----------------- light weight functions ---------------
 
