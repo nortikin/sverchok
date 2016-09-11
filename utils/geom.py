@@ -341,6 +341,16 @@ def iso_grid(numx=5, numy=5, dim=0.5, mode='pydata'):
 
 
 def line(p1=[(0,0,0)], p2=[(1,0,0)], nverts=2, mode='pydata'):
+    '''
+    line(p1=[(0,0,0)], p2=[(1,0,0)], nverts=2, mode='pydata')
+    not finished..
+
+    '''
+
+    # if len(p1) == len(p2) == 1:
+    #     if isinstance(nverts, int):
+    #         nverts = [nverts]
+
     if mode in {'pydata', 'bm'}:
         verts = []
         edges = []
