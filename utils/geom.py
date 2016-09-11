@@ -284,18 +284,23 @@ def arc_slice(outer_radius=1.0, inner_radius=0.8, phase=0, angle=PI, nverts=20, 
 
 
 def rect(dim_x=1.0, dim_y=1.62, radius=0.0, nverts=5, matrix=None, mode='pydata'):
+
+    xdim = dim_x / 2
+    ydim = dim_y / 2
+
     if mode in {'pydata', 'bm'}:
 
-        xdim = dim_x / 2
-        ydim = dim_y / 2
+        if radius == 0.0:
+            verts = [[-xdim, ydim, 0], [xdim, ydim, 0], [xdim, -ydim, 0], [-xdim, -ydim, 0]]
+
+        num_verts = len(verts)
+        edges = [[i, i+1] for i in range(num_verts-1)] + [[num_verts-1, 0]]
+        faces = [i for i in range(num_verts)]
+        
         if mode == 'pydata':
-            if radius == 0.0:
-                verts = [[-xdim, ydim, 0], [xdim, ydim, 0], [xdim, -ydim, 0], [-xdim, -ydim, 0]]
-            # return vertices, edges, [faces]
-            pass
+            return verts, edges, [faces]
         else:
-            # return bmesh_from_pydata(vertices, edges, [faces])
-            pass
+            return bmesh_from_pydata(verts, edges, [faces])
 
     if mode == 'np':
         pass
@@ -333,7 +338,8 @@ def line(p1=((0,0,0)), p2=((1,0,0)), nverts=2, mode='pydata'):
 # ----------- vectorized forms
 
 
-circles = vectorize(circle)
 arcs = vectorize(arc)
-quads = vectorize(quad)
 arc_slices = vectorize(arc_slice)
+circles = vectorize(circle)
+quads = vectorize(quad)
+rects = vectorize(rect)
