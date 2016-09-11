@@ -254,6 +254,11 @@ def quad(side=1.0, radius=0.0, nverts=5, matrix=None, mode='pydata'):
 
 
 def arc_slice(outer_radius=1.0, inner_radius=0.8, phase=0, angle=PI, nverts=20, matrix=None, mode='pydata'):
+    '''
+    this generator makes a flat donut section. Like arc, but with a inner and outer radius to determine
+    the thickness of the slice.
+
+    '''
     if mode in {'pydata', 'bm'}:
 
         # if outer_radius == inner_radius:
@@ -297,7 +302,7 @@ def rect(dim_x=1.0, dim_y=1.62, radius=0.0, nverts=5, matrix=None, mode='pydata'
         if radius == 0.0 or nverts < 2:
             verts = [[-xdim, ydim, 0], [xdim, ydim, 0], [xdim, -ydim, 0], [-xdim, -ydim, 0]]
 
-        elif radius > 0.0 and radius < min(dim_x, dim_y) and nverts >= 2:
+        elif radius > 0.0 and radius < min(abs(dim_x), abs(dim_y)) and nverts >= 2:
             theta = HALF_PI / (nverts-1)
             xdim = xdim - radius
             ydim = ydim - radius
