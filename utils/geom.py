@@ -340,12 +340,18 @@ def iso_grid(numx=5, numy=5, dim=0.5, mode='pydata'):
         pass
 
 
-def line(p1=((0,0,0)), p2=((1,0,0)), nverts=2, mode='pydata'):
+def line(p1=[(0,0,0)], p2=[(1,0,0)], nverts=2, mode='pydata'):
     if mode in {'pydata', 'bm'}:
+        verts = []
+        edges = []
 
         if mode == 'pydata':
-            # return vertices, edges, [faces]
-            pass
+            num_verts = 0
+            for v1, v2 in zip(p1, p2):
+                verts.extend([v1, v2])
+                edges.extend([[i + num_verts, i + 1 + num_verts] for i in range(nverts-1)])
+                num_verts = len(verts)
+            return verts, edges
         else:
             # return bmesh_from_pydata(vertices, edges, [faces])
             pass
@@ -362,3 +368,4 @@ arc_slices = vectorize(arc_slice)
 circles = vectorize(circle)
 quads = vectorize(quad)
 rects = vectorize(rect)
+lines = vectorize(line)
