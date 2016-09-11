@@ -348,7 +348,12 @@ def line(p1=[(0,0,0)], p2=[(1,0,0)], nverts=2, mode='pydata'):
         if mode == 'pydata':
             num_verts = 0
             for v1, v2 in zip(p1, p2):
-                verts.extend([v1, v2])
+                if nverts == 2:
+                    verts.extend([v1, v2])
+                elif nverts > 2:
+                    # verts.extend([v1, ..., v2])
+                    pass
+
                 edges.extend([[i + num_verts, i + 1 + num_verts] for i in range(nverts-1)])
                 num_verts = len(verts)
             return verts, edges
