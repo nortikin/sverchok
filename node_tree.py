@@ -61,7 +61,7 @@ class SvSocketCommon:
 
     def set_default(self, value):
         if self.prop_name:
-            setattr(self.node, self.prop_name, value) 
+            setattr(self.node, self.prop_name, value)
 
 
     @property

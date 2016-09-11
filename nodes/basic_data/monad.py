@@ -55,6 +55,7 @@ class SvSocketAquisition:
 
             # first switch socket type
             socket = socket_list[-1]
+            monad.add_prop_from(socket)
 
             cls = monad.update_cls()
 

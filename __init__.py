@@ -77,6 +77,7 @@ root_modules = [
 ]
 
 core_modules = [
+    "monad_properties",
     "handlers", "update_system", "upgrade_nodes", "upgrade_group", "monad",
 ]
 
