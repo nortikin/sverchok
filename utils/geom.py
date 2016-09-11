@@ -292,9 +292,18 @@ def rect(dim_x=1.0, dim_y=1.62, radius=0.0, nverts=5, matrix=None, mode='pydata'
     ydim = dim_y / 2
 
     if mode in {'pydata', 'bm'}:
+        verts = []
 
-        if radius == 0.0:
+        if radius == 0.0 or nverts < 2:
             verts = [[-xdim, ydim, 0], [xdim, ydim, 0], [xdim, -ydim, 0], [-xdim, -ydim, 0]]
+
+        elif radius > 0.0 and radius < min(dim_x, dim_y) and nverts >= 2:
+            theta = HALF_PI / (nverts-1)
+            coords = [[xdim, ydim], [xdim, -ydim], [-xdim, -ydim], [-xdim, ydim]]
+            for (x, y), corner in zip(coords, range(4)):
+                for i in range(nverts):
+                    rad = theta * i
+                    verts.append(((math.sin(rad + (corner*HALF_PI)) * radius) + x, (math.cos(rad + (corner*HALF_PI)) * radius) + y, 0))
 
         num_verts = len(verts)
         edges = [[i, i+1] for i in range(num_verts-1)] + [[num_verts-1, 0]]
