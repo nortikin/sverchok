@@ -340,24 +340,20 @@ def iso_grid(numx=5, numy=5, dim=0.5, mode='pydata'):
         pass
 
 
-def line(p1=[(0,0,0)], p2=[(1,0,0)], nverts=2, mode='pydata'):
+def line(p1=(0,0,0), p2=(1,0,0), nverts=2, mode='pydata'):
     '''
     line(p1=[(0,0,0)], p2=[(1,0,0)], nverts=2, mode='pydata')
     not finished..
 
     '''
-
-    if isinstance(nverts, int):
-        nverts = [nverts]
-
-    p1, p2, nverts = match_long_repeat(p1, p2, nverts)
+    nv = nverts
 
     if mode in {'pydata', 'bm'}:
         verts = []
         edges = []
 
         num_verts = 0
-        for v1, v2, nv in zip(p1, p2, nverts):
+        for v1, v2 in zip(p1, p2):
             if nv == 2:
                 verts.extend([v1, v2])
             elif nv > 2:
