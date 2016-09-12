@@ -347,27 +347,28 @@ def line(p1=[(0,0,0)], p2=[(1,0,0)], nverts=2, mode='pydata'):
 
     '''
 
-    # if len(p1) == len(p2) == 1:
-    #     if isinstance(nverts, int):
-    #         nverts = [nverts]
+    if isinstance(nverts, int):
+        nverts = [nverts]
+
+    p1, p2, nverts = match_long_repeat(p1, p2, nverts)
 
     if mode in {'pydata', 'bm'}:
         verts = []
         edges = []
 
         num_verts = 0
-        for v1, v2 in zip(p1, p2):
-            if nverts == 2:
+        for v1, v2, nv in zip(p1, p2, nverts):
+            if nv == 2:
                 verts.extend([v1, v2])
-            elif nverts > 2:
-                x_seg = (v2[0] - v1[0]) / (nverts-1)
-                y_seg = (v2[1] - v1[1]) / (nverts-1)
-                z_seg = (v2[2] - v1[2]) / (nverts-1)
+            elif nv > 2:
+                x_seg = (v2[0] - v1[0]) / (nv-1)
+                y_seg = (v2[1] - v1[1]) / (nv-1)
+                z_seg = (v2[2] - v1[2]) / (nv-1)
                 verts.append(v1)
-                verts.extend([[v1[0] + (x_seg * i), v1[1] + (y_seg * i), v1[2] + (z_seg * i)] for i in range(1, nverts-1)])
+                verts.extend([[v1[0] + (x_seg * i), v1[1] + (y_seg * i), v1[2] + (z_seg * i)] for i in range(1, nv-1)])
                 verts.append(v2)
 
-            edges.extend([[i + num_verts, i + 1 + num_verts] for i in range(nverts-1)])
+            edges.extend([[i + num_verts, i + 1 + num_verts] for i in range(nv-1)])
             num_verts = len(verts)
 
         if mode == 'pydata':
