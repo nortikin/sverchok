@@ -326,8 +326,36 @@ def rect(dim_x=1.0, dim_y=1.62, radius=0.0, nverts=5, matrix=None, mode='pydata'
 
 
 
-def iso_grid(numx=5, numy=5, dim=0.5, mode='pydata'):
+def iso_grid(dim_x=1.0, dim_y=1.62, dx=2, dy=2, anchor=0, matrix=None, mode='pydata'):
+    '''
+
+    dim_x   -   total dimension on x side
+    dim_y   -   total dimension on y side
+    dx      -   num verts on x side
+    dy      -   num verts on y side
+    anchor  -   1 --- 2 --- 3
+                -           -
+                8     0     4
+                -           -
+                7 --- 6 --- 5
+                default is centered (0)
+
+    '''
+
+    xdim = dim_x / 2
+    ydim = dim_y / 2
+
     if mode in {'pydata', 'bm'}:
+        verts = []
+
+        if (dx == dy == 2):
+            verts = [[-xdim, ydim, 0], [xdim, ydim, 0], [xdim, -ydim, 0], [-xdim, -ydim, 0]]
+        else:
+            xside = dimx / 2
+            yside = dimy / 2
+            x = np.linspace(-xside, xside, dx)
+            y = np.linspace(-yside, yside, dy)
+            f = np.vstack(np.meshgrid(x, y, 0)).reshape(3,-1).T
 
         if mode == 'pydata':
             # return vertices, edges, [faces]
