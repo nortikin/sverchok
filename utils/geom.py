@@ -340,7 +340,7 @@ def iso_grid(numx=5, numy=5, dim=0.5, mode='pydata'):
         pass
 
 
-def line(p1=(0,0,0), p2=(1,0,0), nverts=2, mode='pydata'):
+def line(p1=[(0,0,0)], p2=[(1,0,0)], nverts=2, mode='pydata'):
     '''
     line(p1=[(0,0,0)], p2=[(1,0,0)], nverts=2, mode='pydata')
     not finished..
