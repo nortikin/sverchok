@@ -32,7 +32,7 @@ class PropsBase:
     # ignored /internal names
     internal_names  = {"prop_name", "attr", "update"}
     def get_settings(self):
-        return {k:v for k, v in self.items() if key not in self.internal_names}
+        return {k:v for k, v in self.items() if k not in self.internal_names}
 
     def set_settings(self, settings):
         for key, value in settings.items():

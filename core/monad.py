@@ -20,7 +20,10 @@ import random
 from itertools import chain
 
 import bpy
-from bpy.props import StringProperty, IntProperty, BoolProperty
+from bpy.props import (StringProperty, FloatProperty,
+                       IntProperty, BoolProperty,
+                       CollectionProperty)
+
 from bpy.types import Node, NodeTree
 
 
@@ -42,6 +45,10 @@ reverse_lookup = {'outputs': 'inputs', 'inputs': 'outputs'}
 
 def make_valid_identifier(name):
     """Create a valid python identifier from name for use a a part of class name"""
+    while name and not name[0].isalpha():
+        name = name[1:]
+    if not name:
+        return "generic"
     return "".join(ch for ch in name if ch.isalnum() or ch == "_")
 
 
@@ -52,7 +59,7 @@ def get_socket_data(socket):
 
     socket_bl_idname = socket.bl_idname
     socket_name = socket.name
-    return socket_name, socket_bl_idname
+    return socket_name, socket_bl_idname, socket.prop_name
 
 def generate_name(prop_name, cls_dict):
     if prop_name in cls_dict:
@@ -82,12 +89,12 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
 
     def add_prop_from(self, socket):
         other = socket.other
-        cls = getattr(bpy.types, self.cls_bl_idname)
+        cls = getattr(bpy.types, self.cls_bl_idname, None)
         cls_dict = cls.__dict__ if cls else {}
 
         if other.prop_name:
             prop_name = other.prop_name
-            prop_func, prop_dict = getattr(other.node.rna_type, other.prop_name)
+            prop_func, prop_dict = getattr(other.node.rna_type, prop_name, ("", {}))
             if prop_func.__name__ == "FloatProperty":
                 prop_settings = self.float_props.add()
             elif prop_func.__name__ == "IntProperty":
@@ -96,32 +103,42 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
                 pass # etc
             else:
                 pass
-            if "update" in prop_dict:
-                prop_dict.pop("update")
 
             prop_settings.prop_name = generate_name(prop_name, cls_dict)
             prop_settings.set_settings(prop_dict)
-            prop_settings.socket_index = socket.index
-        elif other.prop_type:
+        elif hasattr(other, "prop_type"):
             if "float" in other.prop_type:
                 prop_settings = self.float_props.add()
             elif "int" in other.prop_type:
                 prop_settings = self.int_props.add()
+
             prop_settings.prop_name = generate_name(make_valid_identifier(other.name), cls_dict)
-            prop_settings.socket_index = socket.index
+            prop_settings.set_settings({"name": other.name})
 
 
     def remove_prop(self, socket):
-        index = socket.index
+        prop_name = socket.prop_name
         for prop_list in ("float_props", "int_props"):
             p_list = getattr(self, prop_list)
             for setting in p_list:
-                if setting.socket_index == index:
+                if setting.prop_name == prop_name:
                     p_list.remove(setting)
                     return
 
-    def move_prop(self, old_index, new_index):
-        pass
+    def find_prop(self, socket):
+        prop_name = socket.prop_name
+        for prop_list in ("float_props", "int_props"):
+            p_list = getattr(self, prop_list)
+            for setting in p_list:
+                if setting.prop_name == prop_name:
+                    return setting
+
+    def verify_props(self):
+        if self.float_props or self.int_props:
+            return
+        for socket in self.input_node.outputs:
+            if socket.is_linked:
+                other = socket.other
 
     def update(self):
         affected_trees = {instance.id_data for instance in self.instances}
@@ -212,13 +229,14 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
 
     def generate_inputs(self):
         in_socket = []
-        props = chain(self.float_props, self.int_props)
-        prop_dict = {s.socket_index: {"prop_name": s.prop_name} for s in props}
 
         # if socket is dummysocket use the other for data
         for idx, socket in enumerate(self.input_node.outputs):
-            socket_name, socket_bl_idname = get_socket_data(socket)
-            prop_data = prop_dict.get(idx, {})
+            socket_name, socket_bl_idname, prop_name = get_socket_data(socket)
+            if prop_name:
+                prop_data = {"prop_name": prop_name}
+            else:
+                prop_data = {}
             data = [socket_name, socket_bl_idname, prop_data]
             in_socket.append(data)
 
