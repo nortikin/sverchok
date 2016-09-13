@@ -121,6 +121,35 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
 
         return ""
 
+    def get_all_props(self):
+        """
+        return a dict with all data needed to setup monad
+        """
+        monad_data  = {"name": self.name, "cls_bl_idname": self.cls_bl_idname}
+        float_props = {}
+        for prop in self.float_props:
+            float_props[prop.prop_name] = prop.get_settings()
+        monad_data["float_props"] = float_props
+
+        monad_data["int_props"] = {prop.prop_name: prop.get_settings() for prop in self.int_props}
+
+        return monad_data
+
+    def set_all_props(self, data):
+
+        self.cls_bl_idname = data["cls_bl_idname"]
+
+        for prop_name, values in data["float_props"].items():
+            settings = self.float_props.add()
+            settings.set_settings(values)
+            settings.prop_name = prop_name
+
+        for prop_name, values in data["int_props"].items():
+            settings = self.int_props.add()
+            settings.set_settings(values)
+            settings.prop_name = prop_name
+
+
 
     def remove_prop(self, socket):
         prop_name = socket.prop_name
@@ -276,12 +305,7 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
                 out_socket.append((socket_name, socket_bl_idname))
         return out_socket
 
-def _get_monad_name(self):
-    return self.monad.name
 
-def _set_monad_name(self, value):
-    print("set value", value)
-    self.monad.name = value
 
 def split_list(data, size=1):
     size = max(1, int(size))
