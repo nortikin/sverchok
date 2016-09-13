@@ -106,6 +106,7 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
 
             prop_settings.prop_name = generate_name(prop_name, cls_dict)
             prop_settings.set_settings(prop_dict)
+            return prop_settings.prop_name
         elif hasattr(other, "prop_type"):
             if "float" in other.prop_type:
                 prop_settings = self.float_props.add()
@@ -114,6 +115,7 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
 
             prop_settings.prop_name = generate_name(make_valid_identifier(other.name), cls_dict)
             prop_settings.set_settings({"name": other.name})
+            return prop_settings.prop_name
 
 
     def remove_prop(self, socket):
