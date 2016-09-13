@@ -31,6 +31,9 @@ from bpy.types import PropertyGroup
 class PropsBase:
     # ignored /internal names
     internal_names  = {"prop_name", "attr", "update", "bl_rna", "rna_type"}
+
+    prop_name = StringProperty(description="Internal name")
+
     def get_settings(self):
         return {k:v for k, v in self.items() if k not in self.internal_names}
 
@@ -44,12 +47,15 @@ class PropsBase:
         self.prop_name = socket.prop_name
 
     def draw(self, context, layout):
+        """
         names = [name for name in dir(self) if not name in self.internal_names and not name.startswith("__")]
         for name in sorted(names):
             layout.prop(self, name)
-
-    prop_name = StringProperty(description="Internal name")
-
+        """
+        layout.prop(self, "default")
+        layout.prop(self, "soft_min")
+        layout.prop(self, "soft_max")
+        layout.prop(self, "description")
 
 
 # FloatProperty
@@ -151,7 +157,6 @@ class SvIntPropertySettingsGroup(PropertyGroup, PropsBase):
 
 
 classes = [
-    #SverchGroupTree,
     SvFloatPropertySettingsGroup,
     SvIntPropertySettingsGroup
 ]
