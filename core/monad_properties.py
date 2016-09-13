@@ -46,8 +46,7 @@ class PropsBase:
     def draw(self, context, layout):
         names = [name for name in dir(self) if not name in self.internal_names and not name.startswith("__")]
         for name in sorted(names):
-            layout.prop(self, name)    
-
+            layout.prop(self, name)
 
     prop_name = StringProperty(description="Internal name")
 
