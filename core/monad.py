@@ -246,8 +246,8 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
         out_socket = []
         for socket in self.output_node.inputs:
             if socket.is_linked:
-                data = get_socket_data(socket)
-                out_socket.append(data)
+                socket_name, socket_bl_idname, _ = get_socket_data(socket)
+                out_socket.append((socket_name, socket_bl_idname))
         return out_socket
 
 def _get_monad_name(self):

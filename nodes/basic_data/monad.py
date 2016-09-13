@@ -50,13 +50,15 @@ class SvSocketAquisition:
         if len(socket_list) == 0:
             print('sockets wiped, skipped update')
             return
-
+        print(self.name, len(socket_list))
         if socket_list[-1].is_linked:
 
             # first switch socket type
             socket = socket_list[-1]
             if kind == "outputs":
                 prop_name = monad.add_prop_from(socket)
+            else:
+                prop_name = ""
 
             cls = monad.update_cls()
 
@@ -68,7 +70,8 @@ class SvSocketAquisition:
 
             # if no 'linked_socket.prop_name' then use 'linked_socket.name'
             replace_socket(socket, new_type, new_name=new_name)
-            socket_list[-1].prop_name = prop_name
+            if prop_name:
+                socket_list[-1].prop_name = prop_name
 
             for instance in monad.instances:
                 sockets = getattr(instance, reverse_lookup[kind])
