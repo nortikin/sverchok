@@ -232,13 +232,14 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
 
         # if socket is dummysocket use the other for data
         for idx, socket in enumerate(self.input_node.outputs):
-            socket_name, socket_bl_idname, prop_name = get_socket_data(socket)
-            if prop_name:
-                prop_data = {"prop_name": prop_name}
-            else:
-                prop_data = {}
-            data = [socket_name, socket_bl_idname, prop_data]
-            in_socket.append(data)
+            if socket.is_linked:
+                socket_name, socket_bl_idname, prop_name = get_socket_data(socket)
+                if prop_name:
+                    prop_data = {"prop_name": prop_name}
+                else:
+                    prop_data = {}
+                data = [socket_name, socket_bl_idname, prop_data]
+                in_socket.append(data)
 
         return in_socket
 
