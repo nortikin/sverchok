@@ -148,10 +148,10 @@ class SvIntPropertySettingsGroup(PropertyGroup, PropsBase):
     name = StringProperty(description="Show name")
     description = StringProperty()
     default = IntProperty(default=0)
-    min = FloatProperty(default=-2**31)
-    max = FloatProperty(default=2**31-1)
-    soft_min = FloatProperty(default=-2**31)
-    soft_max = FloatProperty(default=2**31-1)
+    min = IntProperty(default=-2**31)
+    max = IntProperty(default=2**31-1)
+    soft_min = IntProperty(default=-2**31)
+    soft_max = IntProperty(default=2**31-1)
     step = IntProperty(default=1) # not used
     subtype = EnumProperty(items=float_items, name="Subtype", default='NONE')
 
