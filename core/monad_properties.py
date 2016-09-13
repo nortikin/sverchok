@@ -29,7 +29,8 @@ from bpy.types import PropertyGroup
 
 
 class PropsBase:
-    internal_names  = {"prop_name", "socket_index", "attr"}
+    # ignored /internal names
+    internal_names  = {"prop_name", "attr", "update"}
     def get_settings(self):
         return {k:v for k, v in self.items() if key not in self.internal_names}
 
@@ -43,7 +44,6 @@ class PropsBase:
         self.prop_name = socket.prop_name
 
     prop_name = StringProperty(description="Internal name")
-    socket_index = IntProperty()
 
 
 
