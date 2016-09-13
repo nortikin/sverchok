@@ -106,6 +106,7 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
 
             prop_settings.prop_name = generate_name(prop_name, cls_dict)
             prop_settings.set_settings(prop_dict)
+            socket.prop_name = prop_settings.prop_name
             return prop_settings.prop_name
         elif hasattr(other, "prop_type"):
             if "float" in other.prop_type:
@@ -115,16 +116,19 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
 
             prop_settings.prop_name = generate_name(make_valid_identifier(other.name), cls_dict)
             prop_settings.set_settings({"name": other.name})
+            socket.prop_name = prop_settings.prop_name
             return prop_settings.prop_name
+
+        return ""
 
 
     def remove_prop(self, socket):
         prop_name = socket.prop_name
         for prop_list in ("float_props", "int_props"):
             p_list = getattr(self, prop_list)
-            for setting in p_list:
+            for idx, setting in enumerate(p_list):
                 if setting.prop_name == prop_name:
-                    p_list.remove(setting)
+                    p_list.remove(idx)
                     return
 
     def find_prop(self, socket):
@@ -134,13 +138,22 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
             for setting in p_list:
                 if setting.prop_name == prop_name:
                     return setting
+        return None
 
     def verify_props(self):
-        if self.float_props or self.int_props:
-            return
+        '''
+        parse sockets and add any props as
+        for backwarads compablility
+        '''
+        prop_names = {s.prop_name for s in chain(self.float_props, self.int_props)}
         for socket in self.input_node.outputs:
             if socket.is_linked:
-                other = socket.other
+                if socket.prop_name and socket.prop_name in prop_names:
+                    continue
+                if socket.other.prop_name:
+                    self.add_prop_from(socket)
+
+
 
     def update(self):
         affected_trees = {instance.id_data for instance in self.instances}
@@ -194,6 +207,8 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
                 return None
         else:
             cls_name = self.cls_bl_idname
+
+        self.verify_props()
 
         cls_dict["bl_idname"] = cls_name
         cls_dict["bl_label"] = self.name
