@@ -220,11 +220,8 @@ class StringsSocket(NodeSocket, SvSocketCommon):
 
     def draw(self, context, layout, node, text):
         if self.prop_name:
-            if self.is_output:
-                pass # will only be drawn inside of node groups?
-            else:
-                prop = node.rna_type.properties.get(self.prop_name, None)
-                t = prop.name if prop else text
+            prop = node.rna_type.properties.get(self.prop_name, None)
+            t = prop.name if prop else text
         else:
             t = text
 
