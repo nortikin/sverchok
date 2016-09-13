@@ -326,13 +326,13 @@ def rect(dim_x=1.0, dim_y=1.62, radius=0.0, nverts=5, matrix=None, mode='pydata'
 
 
 
-def iso_grid(dim_x=1.0, dim_y=1.62, dx=2, dy=2, anchor=0, matrix=None, mode='pydata'):
+def grid(dim_x=1.0, dim_y=1.62, nx=2, ny=2, anchor=0, matrix=None, mode='pydata'):
     '''
 
     dim_x   -   total dimension on x side
     dim_y   -   total dimension on y side
-    dx      -   num verts on x side
-    dy      -   num verts on y side
+    nx      -   num verts on x side
+    ny      -   num verts on y side
     anchor  -   1 --- 2 --- 3
                 -           -
                 8     0     4
@@ -342,27 +342,31 @@ def iso_grid(dim_x=1.0, dim_y=1.62, dx=2, dy=2, anchor=0, matrix=None, mode='pyd
 
     '''
 
-    xdim = dim_x / 2
-    ydim = dim_y / 2
+    xside = dim_x / 2
+    yside = dim_y / 2
+    nx = max(2, nx)
+    ny = max(2, ny)
 
     if mode in {'pydata', 'bm'}:
         verts = []
+        faces = []
+        add_face = faces.append
+        total_range = ((ny-1) * (nx))
 
-        if (dx == dy == 2):
-            verts = [[-xdim, ydim, 0], [xdim, ydim, 0], [xdim, -ydim, 0], [-xdim, -ydim, 0]]
-        else:
-            xside = dimx / 2
-            yside = dimy / 2
-            x = np.linspace(-xside, xside, dx)
-            y = np.linspace(-yside, yside, dy)
-            f = np.vstack(np.meshgrid(x, y, 0)).reshape(3,-1).T
+        x = np.linspace(-xside, xside, nx)
+        y = np.linspace(-yside, yside, ny)
+        f = np.vstack(np.meshgrid(x, y, 0)).reshape(3,-1).T
+        verts = f.tolist()
+
+        for i in range(total_range):
+            if not ((i+1) % nx == 0):  # +1 is the shift
+                add_face([i, i+nx, i+nx+1, i+1])  # clockwise
 
         if mode == 'pydata':
-            # return vertices, edges, [faces]
-            pass
+            return verts, [], faces
         else:
-            # return bmesh_from_pydata(vertices, edges, [faces])
-            pass
+            return bmesh_from_pydata(vert, [], faces)
+
 
     if mode == 'np':
         pass
@@ -413,3 +417,4 @@ circles = vectorize(circle)
 quads = vectorize(quad)
 rects = vectorize(rect)
 lines = vectorize(line)
+grids = vectorize(grid)
