@@ -30,7 +30,7 @@ from bpy.types import PropertyGroup
 
 class PropsBase:
     # ignored /internal names
-    internal_names  = {"prop_name", "attr", "update"}
+    internal_names  = {"prop_name", "attr", "update", "bl_rna", "rna_type"}
     def get_settings(self):
         return {k:v for k, v in self.items() if k not in self.internal_names}
 
@@ -42,6 +42,12 @@ class PropsBase:
         p_type, p_dict = getattr(socket.node.rna_type, socket.prop_name)
         self.set_settings(p_dict)
         self.prop_name = socket.prop_name
+
+    def draw(self, context, layout):
+        names = [name for name in dir(self) if not name in self.internal_names and not name.startswith("__")]
+        for name in sorted(names):
+            layout.prop(self, name)    
+
 
     prop_name = StringProperty(description="Internal name")
 

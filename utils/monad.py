@@ -101,20 +101,33 @@ class SvRenameSocketOpExp(Operator, MonadOpCommon):
     def draw(self, context):
         layout = self.layout
         row = layout.row()
-        row.prop(self, 'new_name', text='(new) name')
+        _, _, socket = self.get_data(context)
+        if socket.prop_name:
+            monad = socket.id_data
+            settings = monad.find_prop(socket)
+            row.prop(settings, 'name', text='(new) name')
+            settings.draw(context, layout)
+        else:
+            row.prop(self, 'new_name', text='(new) name')
+
 
     def execute(self, context):
         # make changes to this node's socket name
         node, kind, socket = self.get_data(context)
         monad = node.id_data
+        monad.update_cls()
+        if socket.prop_name:
+            settings = monad.find_prop(socket)
+            new_name = settings.name
+        else:
+            self.new_name = socket.name
 
-        socket.name = self.new_name
+        socket.name = new_name
         # make changes to parent node's socket name in parent tree
         for instance in monad.instances:
             sockets = getattr(instance, reverse_lookup[kind])
-            sockets[self.pos].name = self.new_name
+            sockets[self.pos].name = new_name
 
-        monad.update_cls()
         return {"FINISHED"}
 
     def invoke(self, context, event):
