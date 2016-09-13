@@ -69,6 +69,8 @@ class SvMoveSocketOpExp(Operator, MonadOpCommon):
         pos = self.pos
 
         if self.direction == 0:
+            if socket.prop_name:
+                monad.remove_prop(socket)
             IO_node_sockets.remove(socket)     # I/O interface (subgroup)
             for instance in monad.instances:
                 sockets = getattr(instance, reverse_lookup[kind])
@@ -120,7 +122,7 @@ class SvRenameSocketOpExp(Operator, MonadOpCommon):
             settings = monad.find_prop(socket)
             new_name = settings.name
         else:
-            self.new_name = socket.name
+            new_name = self.new_name
 
         socket.name = new_name
         # make changes to parent node's socket name in parent tree
