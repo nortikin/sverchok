@@ -347,19 +347,34 @@ def grid(dim_x=1.0, dim_y=1.62, nx=2, ny=2, anchor=0, matrix=None, mode='pydata'
     nx = max(2, nx)
     ny = max(2, ny)
 
+    anchors = {
+        1: (0,      dim_x, 0,      dim_y),
+        2: (-xside, xside, 0,      dim_y),
+        3: (-dim_x, 0,     0,      dim_y),
+        4: (-dim_x, 0,     -yside, yside),
+        5: (-dim_x, 0,     0,     -dim_y),
+        6: (-xside, xside, 0,     -dim_y),
+        7: (0,      dim_x, 0,     -dim_y),
+        8: (0,      dim_x, -yside, yside),
+        0: (-xside, xside, -yside, yside)
+    }.get(anchor, (-xside, xside, -yside, yside))
+
+
     if mode in {'pydata', 'bm'}:
         verts = []
         faces = []
         add_face = faces.append
         total_range = ((ny-1) * (nx))
-
-        x = np.linspace(-xside, xside, nx)
-        y = np.linspace(-yside, yside, ny)
-        f = np.vstack(np.meshgrid(x, y, 0)).reshape(3,-1).T
+        
+        a, b = anchors[:2]
+        c, d = anchors[2:]
+        x = np.linspace(a, b, nx)
+        y = np.linspace(c, d, ny)
+        f = np.vstack(np.meshgrid(x, y, 0)).reshape(3, -1).T
         verts = f.tolist()
 
         for i in range(total_range):
-            if not ((i+1) % nx == 0):  # +1 is the shift
+            if not ((i + 1) % nx == 0):  # +1 is the shift
                 add_face([i, i+nx, i+nx+1, i+1])  # clockwise
 
         if mode == 'pydata':
