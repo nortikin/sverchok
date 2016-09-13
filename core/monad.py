@@ -148,10 +148,18 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
         prop_names = {s.prop_name for s in chain(self.float_props, self.int_props)}
         for socket in self.input_node.outputs:
             if socket.is_linked:
-                if socket.prop_name and socket.prop_name in prop_names:
-                    continue
+                if socket.prop_name:
+                    if socket.prop_name in prop_names:
+                        continue
+                    else:
+                        self.add_prop_from(socket)
+                        continue
+
                 if socket.other.prop_name:
-                    self.add_prop_from(socket)
+                    if socket.other.prop_name not in prop_names:
+                        self.add_prop_from(socket)
+                    else:
+                        socket.prop_name = socket.other.prop_name
 
 
 
