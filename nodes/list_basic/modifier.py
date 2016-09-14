@@ -26,18 +26,19 @@ from sverchok.data_structure import updateNode, SvSetSocketAnyType, SvGetSocketA
 
 
 node_item_list = [
-    ("Set", lambda i: set(i)),
-    ("Ordered Set",   ),
-    ("Sequential Set",  ),
-    ("Unique Consecutives",  ),
-    ("Accumulating Sum", lambda a: list(accumulate(a))),
-    ("Intersection", lambda a, b: set(a) & set(b)),
-    ("Union", lambda a, b: set(a) | set(b)),
-    ("Difference", lambda a, b: set(a) - set(b)),
-    ("Symmetric Diff", lambda a, b: set(a) ^ set(b))
+    (1, "Set", lambda i: set(i)),
+    (1, "Ordered Set",   ),
+    (1, "Sequential Set",  ),
+    (1, "Unique Consecutives",  ),
+    (1, "Accumulating Sum", lambda a: list(accumulate(a))),
+    (2, "Intersection", lambda a, b: set(a) & set(b)),
+    (2, "Union", lambda a, b: set(a) | set(b)),
+    (2, "Difference", lambda a, b: set(a) - set(b)),
+    (2, "Symmetric Diff", lambda a, b: set(a) ^ set(b))
 ]
 
-func_dict = {k: v for k, v in node_item_list}
+func_dict = {k: v for _, k, v in node_item_list}
+num_inputs = {k: v for v, k, _ in node_item_list}
 
 class ListModifierNode(bpy.types.Node, SverchCustomTreeNode):
     ''' List Modifier'''
@@ -45,7 +46,7 @@ class ListModifierNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'List Modifier'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    mode_items = [(name, name, "", idx) for idx, (name, _) in enumerate(node_item_list)
+    mode_items = [(name, name, "", idx) for idx, (_, name, _) in enumerate(node_item_list)
 
     func_ = EnumProperty(
         name="Modes",
@@ -75,12 +76,18 @@ class ListModifierNode(bpy.types.Node, SverchCustomTreeNode):
 
         # no logic applied yet
         if outputs[0].is_linked:
-            if inputs['Data2'].is_linked:
-                data1 = inputs['Data1'].sv_get()
+
+            data1 = inputs['Data1'].sv_get()
+            func = func_dict[self.func_]
+
+            if num_inputs[self.func_] == 1:
+                out = [func(data1)]
+            else:
                 data2 = inputs['Data2'].sv_get()
-                func = func_dict[self.func_]
-                out = [func(data)]
-                outputs[0].sv_set([out])
+                out = [func(data1, data2)]
+
+
+            outputs[0].sv_set([out])
 
 
 def register():
