@@ -25,17 +25,42 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, SvSetSocketAnyType, SvGetSocketAnyType
 
 
-def normalize(input):
+def normalize(a):
     # or numpy version..
-    max_value = max(input)
-    return [n/max_value for n in input]
+    max_value = max(a)
+    return [n/max_value for n in a]
+
+def ordered_set(a):
+    seen = set()
+    b = []
+    for x in a:
+        if not x in seen:
+            b.append(x)
+            seen.add(x)
+    return b
+
+# def sequential_set(a):
+#     prev = ''
+#     for x in a:
+#         if not x == prev:
+#             b.append(x)
+#         prev = x
+#     return b
+
+# def unique_consecutives(a):
+#     prev = ''
+#     for x in a:
+#         if not x == prev:
+#             b.append(x)
+#         prev = x
+#     return b
 
 node_item_list = [
     (1, "Set", lambda i: set(i)),
-    (1, "Ordered Set",   ),
-    (1, "Sequential Set",  ),
-    (1, "Unique Consecutives",  ),
-    (1, "Normalize",  ),
+    (1, "Ordered Set by input", ordered_set),
+    (1, "Sequential Set", sequential_set),
+    (1, "Unique Consecutives", unique_consecutives),
+    (1, "Normalize", normalize),
     (1, "Accumulating Sum", lambda a: list(accumulate(a))),
     (2, "Intersection", lambda a, b: set(a) & set(b)),
     (2, "Union", lambda a, b: set(a) | set(b)),
@@ -82,6 +107,15 @@ class ListModifierNode(bpy.types.Node, SverchCustomTreeNode):
         func = func_dict[self.func_]
 
         # no logic applied yet
+        # data = self.inputs[0].sv_get()
+        # def f(d):
+        #     if isinstance(d[0], (int, float)):
+        #          return operation(d)
+        #     else:
+        #          return [f(x) for x in d]
+        # out = f(data)
+        # self.outputs[0].sv_set(data)
+
         if outputs[0].is_linked:
 
             if num_inputs[self.func_] == 1:
