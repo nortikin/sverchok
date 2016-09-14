@@ -85,7 +85,7 @@ class ListModifierNode(bpy.types.Node, SverchCustomTreeNode):
     func_ = EnumProperty(
         name="Modes",
         description="Mode Choices",
-        default="AVR", items=mode_items,
+        default=SET, items=mode_items,
         update=updateNode
     )
 
