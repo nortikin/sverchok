@@ -41,6 +41,7 @@ def ordered_set(a):
 
 def unique_consecutives(a):
     prev = ''
+    b = []
     for x in a:
         if not x == prev:
             b.append(x)
