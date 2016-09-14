@@ -73,19 +73,18 @@ class ListModifierNode(bpy.types.Node, SverchCustomTreeNode):
 
         inputs = self.inputs
         outputs = self.outputs
+        func = func_dict[self.func_]
 
         # no logic applied yet
         if outputs[0].is_linked:
 
-            data1 = inputs['Data1'].sv_get()
-            func = func_dict[self.func_]
-
             if num_inputs[self.func_] == 1:
+                data1 = inputs['Data1'].sv_get()
                 out = [func(data1)]
             else:
+                data1 = inputs['Data1'].sv_get()
                 data2 = inputs['Data2'].sv_get()
                 out = [func(data1, data2)]
-
 
             outputs[0].sv_set([out])
 
