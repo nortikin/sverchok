@@ -39,27 +39,27 @@ def ordered_set(a):
             seen.add(x)
     return b
 
-# def sequential_set(a):
-#     prev = ''
-#     for x in a:
-#         if not x == prev:
-#             b.append(x)
-#         prev = x
-#     return b
+def sequential_set(a):
+    return list(sorted(list(set(a))))
 
-# def unique_consecutives(a):
-#     prev = ''
-#     for x in a:
-#         if not x == prev:
-#             b.append(x)
-#         prev = x
-#     return b
+def sequential_set_reversed(a):
+    return list(reversed(sorted(list(set(a)))))
+
+def unique_consecutives(a):
+    prev = ''
+    for x in a:
+        if not x == prev:
+            b.append(x)
+            prev = x
+    return b
+
 
 node_item_list = [
     (1, "Set", lambda i: set(i)),
     (1, "Ordered Set by input", ordered_set),
-    (1, "Sequential Set", sequential_set),
     (1, "Unique Consecutives", unique_consecutives),
+    (1, "Sequential Set", sequential_set),
+    (1, "Sequential Set Rev", sequential_set_reversed),
     (1, "Normalize", normalize),
     (1, "Accumulating Sum", lambda a: list(accumulate(a))),
     (2, "Intersection", lambda a, b: set(a) & set(b)),
@@ -68,8 +68,10 @@ node_item_list = [
     (2, "Symmetric Diff", lambda a, b: set(a) ^ set(b))
 ]
 
+
 func_dict = {k: v for _, k, v in node_item_list}
 num_inputs = {k: v for v, k, _ in node_item_list}
+
 
 class ListModifierNode(bpy.types.Node, SverchCustomTreeNode):
     ''' List Modifier'''
