@@ -60,7 +60,7 @@ node_item_list = [
     (1, "Ordered Set by input", ordered_set),
     (1, "Unique Consecutives", unique_consecutives),
     (1, "Sequential Set", lambda a: sorted(set(a))),
-    (1, "Sequential Set Rev", sorted(set(a), reverse=True)),
+    (1, "Sequential Set Rev", lambda a: sorted(set(a), reverse=True)),
     (1, "Normalize", normalize),
     (1, "Accumulating Sum", lambda a: list(accumulate(a))),
     (2, INTX, lambda a, b: set(a) & set(b)),
