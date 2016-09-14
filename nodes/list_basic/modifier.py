@@ -39,12 +39,6 @@ def ordered_set(a):
             seen.add(x)
     return b
 
-def sequential_set(a):
-    return list(sorted(list(set(a))))
-
-def sequential_set_reversed(a):
-    return list(reversed(sorted(list(set(a)))))
-
 def unique_consecutives(a):
     prev = ''
     for x in a:
@@ -65,8 +59,8 @@ node_item_list = [
     (1, SET, lambda i: set(i)),
     (1, "Ordered Set by input", ordered_set),
     (1, "Unique Consecutives", unique_consecutives),
-    (1, "Sequential Set", sequential_set),
-    (1, "Sequential Set Rev", sequential_set_reversed),
+    (1, "Sequential Set", lambda a: sorted(set(a))),
+    (1, "Sequential Set Rev", sorted(set(a), reverse=True)),
     (1, "Normalize", normalize),
     (1, "Accumulating Sum", lambda a: list(accumulate(a))),
     (2, INTX, lambda a, b: set(a) & set(b)),
