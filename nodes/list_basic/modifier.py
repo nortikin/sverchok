@@ -56,7 +56,7 @@ SET_OPS = [SET, INTX, UNION, DIFF, SYMDIFF]
 
 
 node_item_list = [
-    (1, SET, lambda i: set(i)),
+    (1, SET, lambda a: set(a)),
     (1, "Ordered Set by input", ordered_set),
     (1, "Unique Consecutives", unique_consecutives),
     (1, "Sequential Set", lambda a: sorted(set(a))),
