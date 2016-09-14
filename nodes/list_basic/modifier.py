@@ -25,11 +25,17 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, SvSetSocketAnyType, SvGetSocketAnyType
 
 
+def normalize(input):
+    # or numpy version..
+    max_value = max(input)
+    return [n/max_value for n in input]
+
 node_item_list = [
     (1, "Set", lambda i: set(i)),
     (1, "Ordered Set",   ),
     (1, "Sequential Set",  ),
     (1, "Unique Consecutives",  ),
+    (1, "Normalize",  ),
     (1, "Accumulating Sum", lambda a: list(accumulate(a))),
     (2, "Intersection", lambda a, b: set(a) & set(b)),
     (2, "Union", lambda a, b: set(a) | set(b)),
