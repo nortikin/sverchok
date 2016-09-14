@@ -54,24 +54,24 @@ DIFF = 'Difference'
 SYMDIFF = 'Symmetric Diff'
 SET_OPS = [SET, INTX, UNION, DIFF, SYMDIFF]
 
-
+# using a purposely broad indexing value range incase other functinos get into this..
 node_item_list = [
-    (1, SET, lambda a: set(a)),
-    (1, "Ordered Set by input", ordered_set),
-    (1, "Unique Consecutives", unique_consecutives),
-    (1, "Sequential Set", lambda a: sorted(set(a))),
-    (1, "Sequential Set Rev", lambda a: sorted(set(a), reverse=True)),
-    (1, "Normalize", normalize),
-    (1, "Accumulating Sum", lambda a: list(accumulate(a))),
-    (2, INTX, lambda a, b: set(a) & set(b)),
-    (2, UNION, lambda a, b: set(a) | set(b)),
-    (2, DIFF, lambda a, b: set(a) - set(b)),
-    (2, SYMDIFF, lambda a, b: set(a) ^ set(b))
+    (1, 1, SET, lambda a: set(a)),
+    (1, 10, "Ordered Set by input", ordered_set),
+    (1, 20, "Unique Consecutives", unique_consecutives),
+    (1, 30, "Sequential Set", lambda a: sorted(set(a))),
+    (1, 40, "Sequential Set Rev", lambda a: sorted(set(a), reverse=True)),
+    (1, 50, "Normalize", normalize),
+    (1, 60, "Accumulating Sum", lambda a: list(accumulate(a))),
+    (2, 70, INTX, lambda a, b: set(a) & set(b)),
+    (2, 80, UNION, lambda a, b: set(a) | set(b)),
+    (2, 90, DIFF, lambda a, b: set(a) - set(b)),
+    (2, 100, SYMDIFF, lambda a, b: set(a) ^ set(b))
 ]
 
 
-func_dict = {k: v for _, k, v in node_item_list}
-num_inputs = {k: v for v, k, _ in node_item_list}
+func_dict = {k: v for _, _, k, v in node_item_list}
+num_inputs = {k: v for v, _, k, _ in node_item_list}
 
 
 class ListModifierNode(bpy.types.Node, SverchCustomTreeNode):
@@ -80,7 +80,7 @@ class ListModifierNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'List Modifier'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    mode_items = [(name, name, "", idx) for idx, (_, name, _) in enumerate(node_item_list)
+    mode_items = [(name, name, "", idx) for _, idx, name, _ in node_item_list]
 
     func_ = EnumProperty(
         name="Modes",
