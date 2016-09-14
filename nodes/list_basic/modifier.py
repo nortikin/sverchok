@@ -22,7 +22,7 @@ import bpy
 from bpy.props import EnumProperty, IntProperty, BoolProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, SvSetSocketAnyType, SvGetSocketAnyType
+from sverchok.data_structure import updateNode
 
 
 def normalize(a):
@@ -88,8 +88,8 @@ class ListModifierNode(bpy.types.Node, SverchCustomTreeNode):
 
     listify = BoolProperty(
         default=True,
-        description='Output lists or proper sets',
-        )
+        description='Output lists or proper sets'
+    )
 
 
     def draw_buttons(self, context, layout):
