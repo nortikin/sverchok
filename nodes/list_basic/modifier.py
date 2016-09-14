@@ -53,19 +53,26 @@ def unique_consecutives(a):
             prev = x
     return b
 
+SET = 'Set'
+INTX = 'Intersection'
+UNION = 'Union'
+DIFF = 'Difference'
+SYMDIFF = 'Symmetric Diff'
+SET_OPS = [SET, INTX, UNION, DIFF, SYMDIFF]
+
 
 node_item_list = [
-    (1, "Set", lambda i: set(i)),
+    (1, SET, lambda i: set(i)),
     (1, "Ordered Set by input", ordered_set),
     (1, "Unique Consecutives", unique_consecutives),
     (1, "Sequential Set", sequential_set),
     (1, "Sequential Set Rev", sequential_set_reversed),
     (1, "Normalize", normalize),
     (1, "Accumulating Sum", lambda a: list(accumulate(a))),
-    (2, "Intersection", lambda a, b: set(a) & set(b)),
-    (2, "Union", lambda a, b: set(a) | set(b)),
-    (2, "Difference", lambda a, b: set(a) - set(b)),
-    (2, "Symmetric Diff", lambda a, b: set(a) ^ set(b))
+    (2, INTX, lambda a, b: set(a) & set(b)),
+    (2, UNION, lambda a, b: set(a) | set(b)),
+    (2, DIFF, lambda a, b: set(a) - set(b)),
+    (2, SYMDIFF, lambda a, b: set(a) ^ set(b))
 ]
 
 
@@ -107,6 +114,9 @@ class ListModifierNode(bpy.types.Node, SverchCustomTreeNode):
         inputs = self.inputs
         outputs = self.outputs
         func = func_dict[self.func_]
+
+        # if func_ in SET_OPS and self.listify:
+        #    maybe define a function to return list only.
 
         # no logic applied yet
         # data = self.inputs[0].sv_get()
