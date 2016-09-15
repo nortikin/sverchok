@@ -97,7 +97,7 @@ class ListModifierNode(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "func_", text='')
-        layout.prop(self, "listify")
+        layout.prop(self, "listify", text='output as list')
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', "Data1")
