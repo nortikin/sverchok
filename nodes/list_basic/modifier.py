@@ -70,7 +70,6 @@ node_item_list = [
     (2, 100, SYMDIFF, lambda a, b: set(a) ^ set(b))
 ]
 
-
 func_dict = {k: v for _, _, k, v in node_item_list}
 num_inputs = {k: v for v, _, k, _ in node_item_list}
 
@@ -98,6 +97,7 @@ class ListModifierNode(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "func_")
+        layout.prop(self, "listify")
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', "Data1")
@@ -108,32 +108,33 @@ class ListModifierNode(bpy.types.Node, SverchCustomTreeNode):
 
         inputs = self.inputs
         outputs = self.outputs
-        func = func_dict[self.func_]
+        operation = func_dict[self.func_]
 
-        # if func_ in SET_OPS and self.listify:
-        #    maybe define a function to return list only.
+        if not outputs[0].is_linked:
+            return
+        
+        if self.func_ in SET_OPS and self.listify:
+            def f(d):
+                if isinstance(d[0], (int, float)):
+                    return list(operation(d))
+                else:
+                    return [f(x) for x in d]
+        else:
+            def f(d):
+                if isinstance(d[0], (int, float)):
+                    return operation(d)
+                else:
+                    return [f(x) for x in d]
 
-        # no logic applied yet
-        # data = self.inputs[0].sv_get()
-        # def f(d):
-        #     if isinstance(d[0], (int, float)):
-        #          return operation(d)
-        #     else:
-        #          return [f(x) for x in d]
-        # out = f(data)
-        # self.outputs[0].sv_set(data)
+        if num_inputs[self.func_] == 1:
+            data1 = inputs['Data1'].sv_get()
+            out = [f(data1)]
+        else:
+            data1 = inputs['Data1'].sv_get()
+            data2 = inputs['Data2'].sv_get()
+            out = [f(data1, data2)]
 
-        if outputs[0].is_linked:
-
-            if num_inputs[self.func_] == 1:
-                data1 = inputs['Data1'].sv_get()
-                out = [func(data1)]
-            else:
-                data1 = inputs['Data1'].sv_get()
-                data2 = inputs['Data2'].sv_get()
-                out = [func(data1, data2)]
-
-            outputs[0].sv_set([out])
+        outputs[0].sv_set([out])
 
 
 def register():
