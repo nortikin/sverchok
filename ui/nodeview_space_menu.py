@@ -167,6 +167,7 @@ class NODEVIEW_MT_AddListOps(bpy.types.Menu):
         layout.menu("NODEVIEW_MT_AddListmain")
         layout.menu("NODEVIEW_MT_AddListstruct")
         layout_draw_categories(self.layout, node_cats["List Masks"])
+        layout_draw_categories(self.layout, node_cats["List Mutators"])
 
 
 classes = [

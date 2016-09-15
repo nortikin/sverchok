@@ -125,11 +125,15 @@ def make_node_cats():
         ["SvMaskJoinNode",      "List Mask Join (in)"],
     ]
 
+    node_cats["List Mutators"] = [
+        ["ListModifierNode",    "List Modifier"]
+    ]
+
     node_cats["List main"] = [
         ["ListJoinNode",        "List Join"],
         ["ZipNode",             "List Zip"],
         ["ListLevelsNode",      "List Del Levels"],
-        ["ListLengthNode",   "List Length"],
+        ["ListLengthNode",      "List Length"],
         ["ListSumNodeMK2",      "List Sum"],
         ["ListMatchNode",       "List Match"],
         ["ListFuncNode",        "List Math"],
@@ -316,8 +320,9 @@ def juggle_and_join(node_cats):
     node_cats['Beta Nodes'].extend(alpha)
 
     # put masks into list main
-    masks = node_cats.pop("List Masks")
-    node_cats["List main"].extend(masks)
+    for ltype in ["List Masks", "List Mutators"]:
+        node_refs = node_cats.pop(ltype)
+        node_cats["List main"].extend(node_refs)
 
     # add extended gens to Gens menu
     gen_ext = node_cats.pop("Extended Generators")

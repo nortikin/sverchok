@@ -96,7 +96,7 @@ class ListModifierNode(bpy.types.Node, SverchCustomTreeNode):
 
 
     def draw_buttons(self, context, layout):
-        layout.prop(self, "func_")
+        layout.prop(self, "func_", text='')
         layout.prop(self, "listify")
 
     def sv_init(self, context):

@@ -102,6 +102,7 @@ nodes_dict = {
         'converter',
         'decompose',
         'func',
+        'modifier',
         'join',
         'length',
         'levels',
