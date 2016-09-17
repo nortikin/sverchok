@@ -20,7 +20,6 @@
     SvGenerativeArtNode,          Generative Art
     SvScriptNode,                 Scripted Node,                  SCRIPTPLUGINS
     SvScriptNodeMK3,              Script 3 Node,                  SCRIPTPLUGINS
-    
 
 ## Analyzers
     SvBBoxNode,                   Bounding box
@@ -33,7 +32,6 @@
     VectorNormalNode,             Vertex Normal
     SvKDTreeNode,                 KDT Closest Verts
     SvKDTreeEdgesNode,            KDT Closest Edges
-    
 
 ## Transforms
     SvRotationNode,               Rotation,                             MAN_ROT
@@ -41,7 +39,6 @@
     VectorMoveNode,               Move,                               MAN_TRANS
     SvMirrorNode,                 Mirror,                            MOD_MIRROR
     MatrixApplyNode,              Matrix Apply
-    
 
 ## Modifier Change
     PolygonBoomNode,              Polygon Boom
@@ -57,7 +54,6 @@
     SvLimitedDissolve,            Limited Dissolve
     SvIntersectEdgesNode,         Intersect Edges
     SvIterateNode,                Iterate matrix transformation
-    
 
 ## Modifier Make
     LineConnectNodeMK2,           UV Connection
@@ -74,12 +70,10 @@
     SvWafelNode,                  Wafel
     SvConvexHullNode,             Convex Hull
     SvLatheNode,                  Lathe,                              MOD_SCREW
-    
 
 ## List Masks
     MaskListNode,                 List Mask (out)
     SvMaskJoinNode,               List Mask Join (in)
-    
 
 ## List main
     ListJoinNode,                 List Join
@@ -89,7 +83,6 @@
     ListSumNodeMK2,               List Sum
     ListMatchNode,                List Match
     ListFuncNode,                 List Math
-    
 
 ## List struct
     ShiftNodeMK2,                 List Shift
@@ -102,7 +95,6 @@
     ListShuffleNode,              List Shuffle
     ListSortNodeMK2,              List Sort
     ListFlipNode,                 List Flip
-    
 
 ## Number
     GenListRangeIntNode,          Range Int
@@ -118,7 +110,6 @@
     SvEasingNode,                 Easing 0..1
     SvGenFibonacci,               Fibonacci sequence
     SvGenExponential,             Exponential sequence
-    
 
 ## Vector
     GenVectorsNode,               Vector in
@@ -135,7 +126,6 @@
     SvVertSortNode,               Vector Sort,                         SORTSIZE
     SvNoiseNode,                  Vector Noise,                FORCE_TURBULENCE
     svAxisInputNode,              Vector X | Y | Z,                     MANIPUL
-    
 
 ## Matrix
     MatrixGenNode,                Matrix in
@@ -145,20 +135,17 @@
     SvMatrixEulerNode,            Matrix Euler
     MatrixShearNode,              Matrix Shear
     MatrixInterpolationNode,      Matrix Interpolation
-    
 
 ## Logic
     SvLogicNode,                  Logic
     SvSwitchNode,                 Switch
     SvNeuroElman1LNode,           Neuro
-    
 
 ## Viz
     ViewerNode2,                  Viewer Draw,                           RETOPO
     SvBmeshViewerNodeMK2,         Viewer BMeshMK2
     IndexViewerNode,              Viewer Index
     Sv3DviewPropsNode,            3dview Props
-    
 
 ## Text
     ViewerNode_text,              Viewer text
@@ -168,10 +155,10 @@
     GTextNode,                    GText
     SvDebugPrintNode,             Debug print
     SvStethoscopeNode,            Stethoscope
-    
 
 ## Scene
     ObjectsNode,                  Objects in
+    SvObjRemoteNode,              Object Remote (Control)
     SvFrameInfoNode,              Frame info
     SvEmptyOutNode,               Empty out,                  OUTLINER_OB_EMPTY
     SvDupliInstancesMK3,          Dupli instancer
@@ -183,14 +170,12 @@
     SvRayCastObjectNode,          Object ID Raycast
     SvVertexColorNode,            Vertex color
     SvVertexColorNodeMK2,         Vertex color new
-    
 
 ## Layout
     WifiInNode,                   Wifi in
     WifiOutNode,                  Wifi out
     NodeReroute,                  Reroute Point
     ConverterNode,                SocketConvert
-    
 
 ## Network
     UdpClientNode,                UDP Client
@@ -210,7 +195,6 @@
     SvBricksNode,                 Bricks grid
     SvMatrixApplyJoinNode,        Apply matrix to mesh
     SvMatrixTubeNode,             Matrix Tube
-    
 
 ## Alpha Nodes
     SvCurveViewerNode,            Curve Viewer,                       MOD_CURVE
@@ -236,5 +220,3 @@
     SvBMinputNode,                BMesh In
     SvBMoutputNode,               BMesh Out
     SvBMtoElementNode,            BMesh Elements
-
-    
