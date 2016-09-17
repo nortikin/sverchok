@@ -5,6 +5,7 @@ Modifier Change
 .. toctree::
    :maxdepth: 2
 
+   bevel
    delete_loose
    extrude_separate
    extrude_edges
@@ -14,6 +15,7 @@ Modifier Change
    mask_vertices
    mesh_join
    objects_along_edge
+   offset
    polygon_boom
    polygons_to_edges
    triangulate
@@ -21,5 +23,3 @@ Modifier Change
    randomize
    remove_doubles
    separate_loose_parts
-   offset
-   bevel

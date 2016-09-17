@@ -37,28 +37,30 @@ def make_node_cats():
 
 # blue-green
     node_cats["Generators"] = [
-        ["LineNode",            "Line",                  "GRIP"],
-        ["PlaneNode",           "Plane",           "MESH_PLANE"],
-        ['SvNGonNode',          'NGon',              'RNDCURVE'],
-        ["SvBoxNode",           "Box",              "MESH_CUBE"],
-        ["SvCircleNode",        "Circle",         "MESH_CIRCLE"],
-        ["CylinderNode",        "Cylinder",     "MESH_CYLINDER"],
-        ["SphereNode",          "Sphere",       "MESH_UVSPHERE"],
-        ['BasicSplineNode',     "2pt Spline",  "CURVE_BEZCURVE"],
-        ["svBasicArcNode",      "3pt Arc",        "SPHERECURVE"],
-        ['RandomVectorNode',    'Random Vector',     'RNDCURVE'],
+        ["LineNode",              "Line",                  "GRIP"],
+        ["PlaneNode",             "Plane",                 "MESH_PLANE"],
+        ['SvNGonNode',            'NGon',                  'RNDCURVE'],
+        ["SvBoxNode",             "Box",                   "MESH_CUBE"],
+        ["SvCircleNode",          "Circle",                "MESH_CIRCLE"],
+        ["CylinderNode",          "Cylinder",              "MESH_CYLINDER"],
+        ["SphereNode",            "Sphere",                "MESH_UVSPHERE"],
+        ['BasicSplineNode',       "2pt Spline",            "CURVE_BEZCURVE"],
+        ["svBasicArcNode",        "3pt Arc",               "SPHERECURVE"],
+        ['RandomVectorNode',      'Random Vector',         'RNDCURVE'],
+        ["SvBricksNode",          "Bricks grid"],
+        ["SvImageComponentsNode", "Image Decompose",       "GROUP_VCOL"],
     ]
 
     node_cats["Extended Generators"] = [
-        ["SvBoxRoundedNode",    "Rounded Box"],
-        ["HilbertNode",         "Hilbert"],
-        ["Hilbert3dNode",       "Hilbert3d"],
-        ["HilbertImageNode",    "Hilbert image"],
-        ["ImageNode",           "Image",                "FILE_IMAGE"],
-        ["SvProfileNode",       "ProfileParametric"],
-        ["SvGenerativeArtNode", "Generative Art"],
-        ["SvScriptNode",        "Scripted Node",     "SCRIPTPLUGINS"],
-        ["SvScriptNodeMK3",     "Script 3 Node",     "SCRIPTPLUGINS"],
+        ["SvBoxRoundedNode",      "Rounded Box"],
+        ["HilbertNode",           "Hilbert"],
+        ["Hilbert3dNode",         "Hilbert3d"],
+        ["HilbertImageNode",      "Hilbert image"],
+        ["ImageNode",             "Image",                 "FILE_IMAGE"],
+        ["SvProfileNode",         "ProfileParametric"],
+        ["SvGenerativeArtNode",   "Generative Art"],
+        ["SvScriptNode",          "Scripted Node",         "SCRIPTPLUGINS"],
+        ["SvScriptNodeMK3",       "Script 3 Node",         "SCRIPTPLUGINS"],
 
     ]
 
@@ -75,6 +77,8 @@ def make_node_cats():
         # proximity analyses.
         ["SvKDTreeNode",        "KDT Closest Verts"],
         ["SvKDTreeEdgesNode",   "KDT Closest Edges"],
+        ["SvMeshFilterNode",    "Mesh filter"],
+        ["SvEdgeAnglesNode",    "Angles at the edges"],
     ]
 
     node_cats["Transforms"] = [
@@ -103,6 +107,8 @@ def make_node_cats():
         ["SvBevelNode",             "Bevel"],
         ["SvExtrudeEdgesNode",      "Extrude Edges"],
         ["SvOffsetNode",            "Offset"],
+        ["SvTriangulateNode",       "Triangulate mesh"],
+        ["SvRecalcNormalsNode",     "Recalc normals"],
     ]
 
     node_cats["Modifier Make"] = [
@@ -121,6 +127,7 @@ def make_node_cats():
         ["SvWafelNode",         "Wafel"],
         ['SvConvexHullNode',    'Convex Hull'],
         ['SvLatheNode',         'Lathe',            'MOD_SCREW'],
+        ["SvMatrixTubeNode",      "Matrix Tube"],
     ]
 
     node_cats["List Masks"] = [
@@ -132,10 +139,11 @@ def make_node_cats():
         ["ListJoinNode",        "List Join"],
         ["ZipNode",             "List Zip"],
         ["ListLevelsNode",      "List Del Levels"],
-        ["ListLengthNode",   "List Length"],
+        ["ListLengthNode",      "List Length"],
         ["ListSumNodeMK2",      "List Sum"],
         ["ListMatchNode",       "List Match"],
         ["ListFuncNode",        "List Math"],
+        ["SvListDecomposeNode", "List Decompose"],
     ]
 
     node_cats["List struct"] = [
@@ -185,13 +193,14 @@ def make_node_cats():
     ]
 
     node_cats["Matrix"] = [
-        ["MatrixGenNode",       "Matrix in"],
-        ["MatrixOutNode",       "Matrix out"],
-        ["MatrixDeformNode",    "Matrix Deform"],
-        ["SvMatrixValueIn",     "Matrix Input"],
-        ["SvMatrixEulerNode",   "Matrix Euler"],
-        ["MatrixShearNode",     "Matrix Shear"],
+        ["MatrixGenNode",           "Matrix in"],
+        ["MatrixOutNode",           "Matrix out"],
+        ["MatrixDeformNode",        "Matrix Deform"],
+        ["SvMatrixValueIn",         "Matrix Input"],
+        ["SvMatrixEulerNode",       "Matrix Euler"],
+        ["MatrixShearNode",         "Matrix Shear"],
         ["MatrixInterpolationNode", "Matrix Interpolation"],
+        ["SvMatrixApplyJoinNode",   "Apply matrix to mesh"],
     ]
 
     node_cats["Logic"] = [
@@ -251,17 +260,9 @@ def make_node_cats():
 
     node_cats["Beta Nodes"] = [
         # for testing convenience, and while no documentation
-        ["SvRecalcNormalsNode",   "Recalc normals"],
-        ["SvEdgeAnglesNode",      "Angles at the edges"],
-        ["SvListDecomposeNode",   "List Decompose"],
         ["SvFormulaShapeNode",    "Formula shape", "IPO"],
         ["SvScriptNodeMK2",       "Script 2"],
-        ["SvMeshFilterNode",      "Mesh filter"],
-        ["SvTriangulateNode",     "Triangulate mesh"],
         ["SvHeavyTriangulateNode","Triangulate mesh (heavy)"],
-        ["SvBricksNode",          "Bricks grid"],
-        ["SvMatrixApplyJoinNode", "Apply matrix to mesh"],
-        ["SvMatrixTubeNode",      "Matrix Tube"],
     ]
 
     node_cats["Alpha Nodes"] = [
@@ -269,7 +270,6 @@ def make_node_cats():
         ["SvCurveViewerNodeAlt",  "Curve Viewer 2D",        'MOD_CURVE'],
         ["SvPolylineViewerNode",  "Polyline Viewer",        'MOD_CURVE'],
         ['SvTypeViewerNode',      'Typography Viewer'],
-        ["SvImageComponentsNode", "Image Decompose",       "GROUP_VCOL"],
         ["SvJoinTrianglesNode",   "Join Triangles"],
         ["SvCacheNode",           "Cache"],
         ["SvInsetSpecial",        "Inset Special"],
