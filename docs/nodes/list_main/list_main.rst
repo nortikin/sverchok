@@ -5,6 +5,7 @@ List Main
 .. toctree::
    :maxdepth: 2
 
+   list_decompose
    list_join
    list_zip
    list_del_levels
