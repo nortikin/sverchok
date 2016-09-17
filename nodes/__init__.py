@@ -1,3 +1,13 @@
+try:
+    import pyaudio
+    netw = [
+        'udp_client',
+        'pyaudio_client',
+    ]
+except:
+    netw = [
+        'udp_client',
+    ]
 nodes_dict = {
     'analyzer': [
         'area',
@@ -219,8 +229,7 @@ nodes_dict = {
         'axis_input'
     ],
 
-    'network': [
-        'udp_client'
-    ]
+
+    'network': netw
 
 }

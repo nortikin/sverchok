@@ -255,7 +255,8 @@ def make_node_cats():
     ]
 
     node_cats['Network'] = [
-        ["UdpClientNode", "UDP Client"]
+        ["UdpClientNode", "UDP Client"],
+        ["SvFFTClientNode", "FFT Client"],
     ]
 
     node_cats["Beta Nodes"] = [
