@@ -11,4 +11,6 @@ Beta
    bricks
    matrix_apply_and_join
    iterate
+   extrude_edges
+   offset
 

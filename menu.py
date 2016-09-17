@@ -100,6 +100,9 @@ def make_node_cats():
         ["SvLimitedDissolve",       "Limited Dissolve"],
         ["SvIntersectEdgesNode",    "Intersect Edges"],
         ["SvIterateNode",           "Iterate matrix transformation"],
+        ["SvBevelNode",             "Bevel"],
+        ["SvExtrudeEdgesNode",      "Extrude Edges"],
+        ["SvOffsetNode",            "Offset"],
     ]
 
     node_cats["Modifier Make"] = [
@@ -248,9 +251,6 @@ def make_node_cats():
 
     node_cats["Beta Nodes"] = [
         # for testing convenience, and while no documentation
-        ["SvBevelNode",           "Bevel"],
-        ["SvExtrudeEdgesNode",    "Extrude Edges"],
-        ["SvOffsetNode",          "Offset"],
         ["SvRecalcNormalsNode",   "Recalc normals"],
         ["SvEdgeAnglesNode",      "Angles at the edges"],
         ["SvListDecomposeNode",   "List Decompose"],

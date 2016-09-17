@@ -8,6 +8,7 @@ Modifier Change
    delete_loose
    extrude_separate
    extrude_edges
+   extrude_edges_old
    fill_holes
    intersect_edges
    mask_vertices
@@ -20,3 +21,5 @@ Modifier Change
    randomize
    remove_doubles
    separate_loose_parts
+   offset
+   bevel

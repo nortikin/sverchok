@@ -160,6 +160,7 @@ nodes_dict = {
         'limited_dissolve',
         'extrude_separate',
         'extrude_edges',
+        'offset',
         'iterate',
     ],
 
@@ -171,7 +172,6 @@ nodes_dict = {
         'join_tris',
         'lathe',
         'uv_connect',
-        'offset',
         'inset_special',
         'polygons_adaptative',
         'solidify',
