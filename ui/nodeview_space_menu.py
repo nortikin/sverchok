@@ -57,7 +57,13 @@ def layout_draw_categories(layout, node_details):
             bl_idname, shortname = node_info
 
             node_ref = getattr(bpy.types, bl_idname)
-            icon = getattr(node_ref, 'bl_icon')
+
+            # some nodes don't declare a bl_icon, but most do so try/except is fine.
+            try:
+                icon = getattr(node_ref, 'bl_icon')
+            except:
+                icon = None
+
             if icon and (not icon == 'OUTLINER_OB_EMPTY'):
                 layout_params = dict(text=shortname, icon=icon)
             else:
