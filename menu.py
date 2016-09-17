@@ -65,8 +65,11 @@ def make_node_cats():
                 temp_list = []
             else:
                 line_without_padding = line.strip()
-                non_padded_list = [i.strip() for i in line_without_padding.split(',')]
-                temp_list.append(non_padded_list)
+                f = line_without_padding.split(' ', 1)
+                bl_idname = f[0].strip()
+                shortname = f[1].strip()
+                temp_list.append([bl_idname, shortname])
+
         # final append
         node_cats[category] = temp_list
     
