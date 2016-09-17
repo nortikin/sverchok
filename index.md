@@ -1,3 +1,16 @@
+> 
+> The following strict rules apply to editing this file:
+>
+> - do not use tabs, anywhere
+> - indent the Node's line using 4 spaces
+> - if using an icon then the line must be 80 chars long
+> - set the icon right-aligned to the last character
+> - if you aren't sure, follow the existing convention
+> - use `>` to add a comment, place it at the start of the line.
+> 
+> Failing to follow these points will break the node category parser. 
+
+
 ## Generators
     LineNode,                     Line,                                    GRIP
     PlaneNode,                    Plane,                             MESH_PLANE
