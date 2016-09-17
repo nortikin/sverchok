@@ -16,3 +16,4 @@ Analyzer
    weights
    edge_angles
    calc_normals
+   vector_normal

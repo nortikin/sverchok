@@ -79,3 +79,6 @@ Another sort of cage:
 
 .. image:: https://cloud.githubusercontent.com/assets/284644/5888727/dc332794-a42c-11e4-9007-d86610405164.png
 
+You can work with multiple objects:
+
+.. image:: https://cloud.githubusercontent.com/assets/5783432/18603141/322847ce-7c80-11e6-8357-6ef4673add4d.png

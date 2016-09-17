@@ -20,6 +20,7 @@ import webbrowser
 import os
 import urllib
 import urllib.request
+import ssl
 from zipfile import ZipFile
 import traceback
 import collections
@@ -145,7 +146,10 @@ class SverchokCheckForUpgrades(bpy.types.Operator):
             #url = 'https://raw.githubusercontent.com/nortikin/sverchok/toProcess/__init__.py'
             # when it is master
             url = 'https://raw.githubusercontent.com/nortikin/sverchok/master/__init__.py'
-            lines = urllib.request.urlopen(url).readlines()
+            ctx = ssl.create_default_context()
+            ctx.check_hostname = False
+            ctx.verify_mode = ssl.CERT_NONE
+            lines = urllib.request.urlopen(url, context=ctx).readlines()
             for l in map(str,lines):
                 if '"version"' in l:
                     version = l[l.find("("):l.find(")")+1]
