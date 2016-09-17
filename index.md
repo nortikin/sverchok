@@ -22,6 +22,8 @@
     BasicSplineNode,              2pt Spline,                    CURVE_BEZCURVE
     svBasicArcNode,               3pt Arc,                          SPHERECURVE
     RandomVectorNode,             Random Vector,                       RNDCURVE
+    SvBricksNode,                 Bricks grid
+    SvImageComponentsNode,        Image Decompose,                   GROUP_VCOL
 
 ## Extended Generators
     SvBoxRoundedNode,             Rounded Box
@@ -45,6 +47,8 @@
     VectorNormalNode,             Vertex Normal
     SvKDTreeNode,                 KDT Closest Verts
     SvKDTreeEdgesNode,            KDT Closest Edges
+    SvMeshFilterNode,             Mesh filter
+    SvEdgeAnglesNode,             Angles at the edges
 
 ## Transforms
     SvRotationNode,               Rotation,                             MAN_ROT
@@ -67,6 +71,11 @@
     SvLimitedDissolve,            Limited Dissolve
     SvIntersectEdgesNode,         Intersect Edges
     SvIterateNode,                Iterate matrix transformation
+    SvBevelNode,                  Bevel
+    SvExtrudeEdgesNode,           Extrude Edges
+    SvOffsetNode,                 Offset
+    SvTriangulateNode,            Triangulate mesh
+    SvRecalcNormalsNode,          Recalc normals
 
 ## Modifier Make
     LineConnectNodeMK2,           UV Connection
@@ -83,6 +92,7 @@
     SvWafelNode,                  Wafel
     SvConvexHullNode,             Convex Hull
     SvLatheNode,                  Lathe,                              MOD_SCREW
+    SvMatrixTubeNode,             Matrix Tube
 
 ## List Masks
     MaskListNode,                 List Mask (out)
@@ -96,6 +106,7 @@
     ListSumNodeMK2,               List Sum
     ListMatchNode,                List Match
     ListFuncNode,                 List Math
+    SvListDecomposeNode,          List Decompose
 
 ## List struct
     ShiftNodeMK2,                 List Shift
@@ -148,6 +159,7 @@
     SvMatrixEulerNode,            Matrix Euler
     MatrixShearNode,              Matrix Shear
     MatrixInterpolationNode,      Matrix Interpolation
+    SvMatrixApplyJoinNode,        Apply matrix to mesh
 
 ## Logic
     SvLogicNode,                  Logic
@@ -194,27 +206,15 @@
     UdpClientNode,                UDP Client
 
 ## Beta Nodes
-    SvBevelNode,                  Bevel
-    SvExtrudeEdgesNode,           Extrude Edges
-    SvOffsetNode,                 Offset
-    SvRecalcNormalsNode,          Recalc normals
-    SvEdgeAnglesNode,             Angles at the edges
-    SvListDecomposeNode,          List Decompose
     SvFormulaShapeNode,           Formula shape,                            IPO
     SvScriptNodeMK2,              Script 2
-    SvMeshFilterNode,             Mesh filter
-    SvTriangulateNode,            Triangulate mesh
     SvHeavyTriangulateNode,       Triangulate mesh (heavy)
-    SvBricksNode,                 Bricks grid
-    SvMatrixApplyJoinNode,        Apply matrix to mesh
-    SvMatrixTubeNode,             Matrix Tube
 
 ## Alpha Nodes
     SvCurveViewerNode,            Curve Viewer,                       MOD_CURVE
     SvCurveViewerNodeAlt,         Curve Viewer 2D,                    MOD_CURVE
     SvPolylineViewerNode,         Polyline Viewer,                    MOD_CURVE
     SvTypeViewerNode,             Typography Viewer
-    SvImageComponentsNode,        Image Decompose,                   GROUP_VCOL
     SvJoinTrianglesNode,          Join Triangles
     SvCacheNode,                  Cache
     SvInsetSpecial,               Inset Special
