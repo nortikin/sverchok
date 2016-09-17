@@ -56,6 +56,8 @@ def make_node_cats():
         for line in md:
             if not line.strip():
                 continue
+            if line.strip().startswith('>'):
+                continue
             elif line.startswith('##'):
                 if category:
                     node_cats[category] = temp_list
@@ -68,10 +70,7 @@ def make_node_cats():
         # final append
         node_cats[category] = temp_list
     
-
-
-    pprint.pprint(node_cats)
-
+    # pprint.pprint(node_cats)
     return node_cats
 
 
