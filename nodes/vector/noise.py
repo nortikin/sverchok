@@ -42,7 +42,7 @@ class SvNoiseNode(bpy.types.Node, SverchCustomTreeNode):
     '''Vector Noise node'''
     bl_idname = 'SvNoiseNode'
     bl_label = 'Vector Noise'
-    bl_icon = 'OUTLINER_OB_EMPTY'
+    bl_icon = 'FORCE_TURBULENCE'
 
     def changeMode(self, context):
         if self.out_mode == 'SCALAR':

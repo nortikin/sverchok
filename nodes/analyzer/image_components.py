@@ -36,7 +36,7 @@ Premise of the node
     - [x, y, a]  [r, g, b]
     - polygons
 
-this would allow one to combine x any y with r to show
+this would allow one to combine x and y with r to show
 a strength table of r over x,y
 
 '''
@@ -190,7 +190,7 @@ class SvImageComponentsNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Image Components'''
     bl_idname = 'SvImageComponentsNode'
     bl_label = 'Image Components'
-    bl_icon = 'OUTLINER_OB_EMPTY'
+    bl_icon = 'GROUP_VCOL'
 
     # node storage, reference by the hash of self.
     node_dict = {}

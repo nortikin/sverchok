@@ -28,7 +28,7 @@ class ImageNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Image '''
     bl_idname = 'ImageNode'
     bl_label = 'Image'
-    bl_icon = 'OUTLINER_OB_EMPTY'
+    bl_icon = 'FILE_IMAGE'
 
 
     name_image = StringProperty(name='image_name', description='image name', default='', update=updateNode)

@@ -86,7 +86,7 @@ class PlaneNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Plane '''
     bl_idname = 'PlaneNode'
     bl_label = 'Plane'
-    bl_icon = 'OUTLINER_OB_EMPTY'
+    bl_icon = 'MESH_PLANE'
 
     int_X = IntProperty(name='N Vert X', description='Nº Vertices X',
                         default=2, min=2,

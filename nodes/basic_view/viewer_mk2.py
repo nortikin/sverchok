@@ -155,7 +155,7 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
     ''' ViewerNode2 '''
     bl_idname = 'ViewerNode2'
     bl_label = 'Viewer Draw2'
-    bl_icon = 'OUTLINER_OB_EMPTY'
+    bl_icon = 'RETOPO'
 
     n_id = StringProperty(default='')
 

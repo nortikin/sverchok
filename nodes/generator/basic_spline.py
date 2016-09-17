@@ -43,7 +43,7 @@ class BasicSplineNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Line '''
     bl_idname = 'BasicSplineNode'
     bl_label = 'BasicSpline'
-    bl_icon = 'OUTLINER_OB_EMPTY'
+    bl_icon = 'CURVE_BEZCURVE'
 
     num_verts = IntProperty(
         name='num_verts',

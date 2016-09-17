@@ -3,38 +3,36 @@
 >
 > - do not use tabs, anywhere
 > - indent the Node's line using 4 spaces
-> - if using an icon then the line must be 80 chars long
-> - set the icon right-aligned to the last character
-> - if you aren't sure, follow the existing convention
 > - use `>` to add a comment, place it at the start of the line.
+> - if you aren't sure, follow the existing convention
 > 
 > Failing to follow these points will break the node category parser. 
 
 
 ## Generators
-    LineNode,                     Line,                                    GRIP
-    PlaneNode,                    Plane,                             MESH_PLANE
-    SvNGonNode,                   NGon,                                RNDCURVE
-    SvBoxNode,                    Box,                                MESH_CUBE
-    SvCircleNode,                 Circle,                           MESH_CIRCLE
-    CylinderNode,                 Cylinder,                       MESH_CYLINDER
-    SphereNode,                   Sphere,                         MESH_UVSPHERE
-    BasicSplineNode,              2pt Spline,                    CURVE_BEZCURVE
-    svBasicArcNode,               3pt Arc,                          SPHERECURVE
-    RandomVectorNode,             Random Vector,                       RNDCURVE
+    LineNode,                     Line
+    PlaneNode,                    Plane
+    SvNGonNode,                   NGon
+    SvBoxNode,                    Box
+    SvCircleNode,                 Circle
+    CylinderNode,                 Cylinder
+    SphereNode,                   Sphere
+    BasicSplineNode,              2pt Spline
+    svBasicArcNode,               3pt Arc
+    RandomVectorNode,             Random Vector
     SvBricksNode,                 Bricks grid
-    SvImageComponentsNode,        Image Decompose,                   GROUP_VCOL
+    ImageNode,                    Image
 
 ## Extended Generators
     SvBoxRoundedNode,             Rounded Box
     HilbertNode,                  Hilbert
     Hilbert3dNode,                Hilbert3d
     HilbertImageNode,             Hilbert image
-    ImageNode,                    Image,                             FILE_IMAGE
     SvProfileNode,                ProfileParametric
     SvGenerativeArtNode,          Generative Art
-    SvScriptNode,                 Scripted Node,                  SCRIPTPLUGINS
-    SvScriptNodeMK3,              Script 3 Node,                  SCRIPTPLUGINS
+    SvImageComponentsNode,        Image Decompose
+    SvScriptNode,                 Scripted Node
+    SvScriptNodeMK3,              Script 3 Node
 
 ## Analyzers
     SvBBoxNode,                   Bounding box
@@ -51,10 +49,10 @@
     SvEdgeAnglesNode,             Angles at the edges
 
 ## Transforms
-    SvRotationNode,               Rotation,                             MAN_ROT
-    SvScaleNode,                  Scale,                              MAN_SCALE
-    VectorMoveNode,               Move,                               MAN_TRANS
-    SvMirrorNode,                 Mirror,                            MOD_MIRROR
+    SvRotationNode,               Rotation
+    SvScaleNode,                  Scale
+    VectorMoveNode,               Move
+    SvMirrorNode,                 Mirror
     MatrixApplyNode,              Matrix Apply
 
 ## Modifier Change
@@ -91,7 +89,7 @@
     SvDuplicateAlongEdgeNode,     Duplicate objects along edge
     SvWafelNode,                  Wafel
     SvConvexHullNode,             Convex Hull
-    SvLatheNode,                  Lathe,                              MOD_SCREW
+    SvLatheNode,                  Lathe
     SvMatrixTubeNode,             Matrix Tube
 
 ## List Masks
@@ -124,7 +122,7 @@
     GenListRangeIntNode,          Range Int
     SvGenFloatRange,              Range Float
     SvListInputNode,              List Input
-    RandomNode,                   Random,                              RNDCURVE
+    RandomNode,                   Random
     FloatNode,                    Float
     IntegerNode,                  Int
     Float2IntNode,                Float 2 Int
@@ -147,9 +145,9 @@
     SvInterpolationNode,          Vector Interpolation
     SvInterpolationNodeMK2,       Vector Interpolation mk2
     SvInterpolationNodeMK3,       Vector Interpolation mk3
-    SvVertSortNode,               Vector Sort,                         SORTSIZE
-    SvNoiseNode,                  Vector Noise,                FORCE_TURBULENCE
-    svAxisInputNode,              Vector X | Y | Z,                     MANIPUL
+    SvVertSortNode,               Vector Sort
+    SvNoiseNode,                  Vector Noise
+    svAxisInputNode,              Vector X | Y | Z
 
 ## Matrix
     MatrixGenNode,                Matrix in
@@ -167,7 +165,7 @@
     SvNeuroElman1LNode,           Neuro
 
 ## Viz
-    ViewerNode2,                  Viewer Draw,                           RETOPO
+    ViewerNode2,                  Viewer Draw
     SvBmeshViewerNodeMK2,         Viewer BMeshMK2
     IndexViewerNode,              Viewer Index
     Sv3DviewPropsNode,            3dview Props
@@ -185,11 +183,11 @@
     ObjectsNode,                  Objects in
     SvObjRemoteNode,              Object Remote (Control)
     SvFrameInfoNode,              Frame info
-    SvEmptyOutNode,               Empty out,                  OUTLINER_OB_EMPTY
+    SvEmptyOutNode,               Empty out
     SvDupliInstancesMK3,          Dupli instancer
     SvInstancerNode,              Mesh instancer
-    SvGetPropNode,                Get property,                    FORCE_VORTEX
-    SvSetPropNode,                Set property,                    FORCE_VORTEX
+    SvGetPropNode,                Get property
+    SvSetPropNode,                Set property
     SvVertexGroupNode,            Vertex group
     SvRayCastSceneNode,           Scene Raycast
     SvRayCastObjectNode,          Object ID Raycast
@@ -206,14 +204,14 @@
     UdpClientNode,                UDP Client
 
 ## Beta Nodes
-    SvFormulaShapeNode,           Formula shape,                            IPO
+    SvFormulaShapeNode,           Formula shape
     SvScriptNodeMK2,              Script 2
     SvHeavyTriangulateNode,       Triangulate mesh (heavy)
 
 ## Alpha Nodes
-    SvCurveViewerNode,            Curve Viewer,                       MOD_CURVE
-    SvCurveViewerNodeAlt,         Curve Viewer 2D,                    MOD_CURVE
-    SvPolylineViewerNode,         Polyline Viewer,                    MOD_CURVE
+    SvCurveViewerNode,            Curve Viewer
+    SvCurveViewerNodeAlt,         Curve Viewer 2D
+    SvPolylineViewerNode,         Polyline Viewer
     SvTypeViewerNode,             Typography Viewer
     SvJoinTrianglesNode,          Join Triangles
     SvCacheNode,                  Cache

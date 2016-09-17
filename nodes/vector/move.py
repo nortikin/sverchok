@@ -27,7 +27,7 @@ class VectorMoveNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Vector Move vectors '''
     bl_idname = 'VectorMoveNode'
     bl_label = 'Vectors Move'
-    bl_icon = 'OUTLINER_OB_EMPTY'
+    bl_icon = 'MAN_TRANS'
 
     mult_ = FloatProperty(name='multiplier',
                           default=1.0,

@@ -54,11 +54,13 @@ def layout_draw_categories(layout, node_details):
             continue
 
         if show_icons:
-            if num_items == 3:
-                bl_idname, shortname, icon = node_info
+            bl_idname, shortname = node_info
+
+            node_ref = getattr(bpy.types, bl_idname)
+            icon = getattr(node_ref, 'bl_icon')
+            if icon and (not icon == 'OUTLINER_OB_EMPTY'):
                 layout_params = dict(text=shortname, icon=icon)
             else:
-                bl_idname, shortname = node_info
                 layout_params = dict(text=shortname)
         else:
             # explicit chop of icon data
