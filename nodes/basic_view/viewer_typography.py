@@ -162,7 +162,7 @@ class SvTypeViewOp2(bpy.types.Operator):
 class SvTypeViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
     bl_idname = 'SvTypeViewerNode'
-    bl_label = 'Type Draw'
+    bl_label = 'Typography Viewer'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     # hints found at ba.org/forum/showthread.php?290106

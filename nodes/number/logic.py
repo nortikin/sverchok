@@ -31,7 +31,7 @@ from sverchok.utils.sv_itertools import (recurse_fx, recurse_fxy)
 class SvLogicNode(bpy.types.Node, SverchCustomTreeNode):
     ''' LogicNode '''
     bl_idname = 'SvLogicNode'
-    bl_label = 'function'
+    bl_label = 'Logic functions'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
 

@@ -260,7 +260,7 @@ class SvCurveViewOp2D(bpy.types.Operator):
 class SvCurveViewerNode2D(bpy.types.Node, SverchCustomTreeNode):
 
     bl_idname = 'SvCurveViewerNodeAlt'
-    bl_label = 'Curve Draw 2D'
+    bl_label = 'Curve Viewer 2D'
     bl_icon = 'MOD_CURVE'
 
     activate = BoolProperty(

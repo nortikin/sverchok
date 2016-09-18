@@ -45,7 +45,7 @@ def spherical(v, mode):
 class VectorPolarOutNode(bpy.types.Node, SverchCustomTreeNode):
     '''Get cylindrical or spherical coordinates from vectors'''
     bl_idname = 'VectorPolarOutNode'
-    bl_label = 'Vectors polar out'
+    bl_label = 'Vector polar output'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     coord_modes = [

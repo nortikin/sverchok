@@ -192,7 +192,7 @@ class SvBmeshViewOp2(bpy.types.Operator):
 class SvBmeshViewerNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
     bl_idname = 'SvBmeshViewerNodeMK2'
-    bl_label = 'Bmesh Viewer Draw 2'
+    bl_label = 'Viewer BMeshMK2'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     # hints found at ba.org/forum/showthread.php?290106

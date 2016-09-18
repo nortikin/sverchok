@@ -41,7 +41,7 @@ def spherical(rho, phi, theta, mode):
 class VectorPolarInNode(bpy.types.Node, SverchCustomTreeNode):
     '''Generate vectors by spherical or cylindrical coordinates'''
     bl_idname = 'VectorPolarInNode'
-    bl_label = 'Vectors polar in'
+    bl_label = 'Vector polar input'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
 

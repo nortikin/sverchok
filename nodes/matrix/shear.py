@@ -28,7 +28,7 @@ from sverchok.data_structure import (updateNode, fullList, Matrix_listing,
 class MatrixShearNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Construct a Shear Matirx '''
     bl_idname = 'MatrixShearNode'
-    bl_label = 'Shear Matrix'
+    bl_label = 'Matrix Shear'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     # select Shear plane

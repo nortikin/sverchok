@@ -31,7 +31,7 @@ from sverchok.data_structure import dataCorrect, updateNode, SvGetSocketAnyType
 class SvObjRemoteNode(bpy.types.Node, SverchCustomTreeNode):
 
     bl_idname = 'SvObjRemoteNode'
-    bl_label = 'Sv Obj Remote'
+    bl_label = 'Object Remote (Control)'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     activate = BoolProperty(

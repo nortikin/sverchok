@@ -189,7 +189,7 @@ class SvImageComponentsNode(bpy.types.Node, SverchCustomTreeNode):
 
     ''' Image Components'''
     bl_idname = 'SvImageComponentsNode'
-    bl_label = 'Image Components'
+    bl_label = 'Image Decompose'
     bl_icon = 'GROUP_VCOL'
 
     # node storage, reference by the hash of self.

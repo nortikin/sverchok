@@ -48,7 +48,7 @@ sv_no_ed = [[[12, 11],  [5, 1],  [11, 3],  [5, 4],  [6, 1],  [7, 2],
 class SvFormulaShapeNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Formula shape '''
     bl_idname = 'SvFormulaShapeNode'
-    bl_label = 'Formula Shape'
+    bl_label = 'Formula shape'
     bl_icon = 'IPO'
     
     # vertex numers

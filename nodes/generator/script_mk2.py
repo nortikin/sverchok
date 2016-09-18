@@ -111,7 +111,7 @@ defaults = [0 for i in range(32)]
 class SvScriptNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     
     bl_idname = 'SvScriptNodeMK2'
-    bl_label = 'Script Node 2'
+    bl_label = 'Script 2'
     bl_icon = 'SCRIPTPLUGINS'
 
     def avail_templates(self, context):

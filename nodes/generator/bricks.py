@@ -87,7 +87,7 @@ def select_v(line, v1, v2):
 class SvBricksNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Bricks '''
     bl_idname = 'SvBricksNode'
-    bl_label = 'Bricks'
+    bl_label = 'Bricks grid'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     du_ = FloatProperty(name='Unit width', description='One brick width',

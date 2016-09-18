@@ -35,7 +35,7 @@ from math import tan, sin, cos, degrees, radians
 class SvOffsetNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Doing offset of polygons '''
     bl_idname = 'SvOffsetNode'
-    bl_label = 'Offset Node'
+    bl_label = 'Offset'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     offset = FloatProperty(

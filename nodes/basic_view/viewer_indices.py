@@ -163,7 +163,7 @@ class IndexViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
     ''' IDX ViewerNode '''
     bl_idname = 'IndexViewerNode'
-    bl_label = 'Index Viewer Draw'
+    bl_label = 'Viewer Index'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     # node id

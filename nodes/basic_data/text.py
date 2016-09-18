@@ -103,7 +103,7 @@ class SvTextInOp(bpy.types.Operator):
 class SvTextInNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Text Input '''
     bl_idname = 'SvTextInNode'
-    bl_label = 'Text Input'
+    bl_label = 'Text in'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     csv_data = {}
@@ -539,7 +539,7 @@ class SvTextInNode(bpy.types.Node, SverchCustomTreeNode):
 class SvTextOutNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Text Output Node '''
     bl_idname = 'SvTextOutNode'
-    bl_label = 'Text Output'
+    bl_label = 'Text out'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     def avail_texts(self, context):

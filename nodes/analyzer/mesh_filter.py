@@ -202,7 +202,7 @@ class Faces(object):
 class SvMeshFilterNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Filter mesh elements: manifold vs boundary etc. '''
     bl_idname = 'SvMeshFilterNode'
-    bl_label = 'Mesh Filter'
+    bl_label = 'Mesh filter'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     modes = [
