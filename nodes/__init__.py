@@ -5,21 +5,14 @@ from os.path import dirname
 from os.path import basename
 from collections import defaultdict
 
+directory = dirname(__file__)
+
 ignore_list = {}
 ignore_list['analyzer'] = ['bvh_raycast', 'bvh_overlap', 'bvh_nearest']
 ignore_list['basic_data'] = ['create_bvh_tree']
 
 nodes_dict = defaultdict(list)
 
-# def path_iterator(path_name):
-#     for fp in os.listdir(path_name):
-#         if fp.lower().endswith(".py"):
-#             if not fp == '__init__.py':
-#                 yield fp
-
-directory = dirname(__file__)
-# for i in path_iterator(directory):
-#     print(i)
 def automatic_collection():
     for subdir, dirs, files in os.walk(directory):
         current_dir = basename(subdir)
