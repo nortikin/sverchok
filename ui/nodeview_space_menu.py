@@ -48,15 +48,15 @@ def layout_draw_categories(layout, node_details):
 
     add_n_grab = 'node.add_node'
     for node_info in node_details:
-        num_items = len(node_info)
-        if not num_items in {2, 3}:
+
+        if not node_info:
             print(repr(node_info), 'is incomplete, or unparsable')
             continue
 
-        if show_icons:
-            bl_idname, shortname = node_info
+        bl_idname = node_info[0]
+        node_ref = getattr(bpy.types, bl_idname)
 
-            node_ref = getattr(bpy.types, bl_idname)
+        if show_icons:
 
             # some nodes don't declare a bl_icon, but most do so try/except is fine.
             try:
@@ -65,13 +65,11 @@ def layout_draw_categories(layout, node_details):
                 icon = None
 
             if icon and (not icon == 'OUTLINER_OB_EMPTY'):
-                layout_params = dict(text=shortname, icon=icon)
+                layout_params = dict(text=node_ref.bl_label, icon=icon)
             else:
-                layout_params = dict(text=shortname)
+                layout_params = dict(text=node_ref.bl_label)
         else:
-            # explicit chop of icon data
-            bl_idname, shortname = node_info[:2]
-            layout_params = dict(text=shortname)
+            layout_params = dict(text=node_ref.bl_label)
 
         node_op = layout.operator(add_n_grab, **layout_params)
         node_op.type = bl_idname
