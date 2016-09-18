@@ -260,8 +260,8 @@ class SvCurveViewOp2D(bpy.types.Operator):
 class SvCurveViewerNode2D(bpy.types.Node, SverchCustomTreeNode):
 
     bl_idname = 'SvCurveViewerNodeAlt'
-    bl_label = 'Curve Draw 2D'
-    bl_icon = 'OUTLINER_OB_EMPTY'
+    bl_label = 'Curve Viewer 2D'
+    bl_icon = 'MOD_CURVE'
 
     activate = BoolProperty(
         name='Show',
@@ -272,8 +272,8 @@ class SvCurveViewerNode2D(bpy.types.Node, SverchCustomTreeNode):
     basemesh_name = StringProperty(
         default='Alpha',
         update=updateNode,
-        description='sets which base name the object will use, \
-        use N-panel to pick alternative random names')
+        description='sets which base name the object will use, use N-panel to pick alternative random names'
+    )
 
     material = StringProperty(default='', update=updateNode)
     grouping = BoolProperty(default=False)

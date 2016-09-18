@@ -25,7 +25,7 @@ from sverchok.data_structure import dataCorrect, SvSetSocketAnyType, SvGetSocket
 class VectorsOutNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Vectors out '''
     bl_idname = 'VectorsOutNode'
-    bl_label = 'Vectors out'
+    bl_label = 'Vector out'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     def sv_init(self, context):

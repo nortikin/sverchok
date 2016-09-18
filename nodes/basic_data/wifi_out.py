@@ -29,7 +29,7 @@ from sverchok.data_structure import updateNode, SvSetSocketAnyType, SvGetSocketA
 class WifiOutNode(bpy.types.Node, SverchCustomTreeNode):
     ''' WifiOutNode '''
     bl_idname = 'WifiOutNode'
-    bl_label = 'Wifi output'
+    bl_label = 'Wifi out'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     var_name = StringProperty(name='var_name',

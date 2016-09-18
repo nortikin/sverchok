@@ -68,7 +68,7 @@ class SvMirrorNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Mirroring  '''
     bl_idname = 'SvMirrorNode'
     bl_label = 'Mirror'
-    bl_icon = 'OUTLINER_OB_EMPTY'
+    bl_icon = 'MOD_MIRROR'
 
     def mode_change(self, context):
         # just because click doesn't mean we need to change mode

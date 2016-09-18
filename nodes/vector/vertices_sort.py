@@ -37,7 +37,7 @@ class SvVertSortNode(bpy.types.Node, SverchCustomTreeNode):
     '''Vector sort'''
     bl_idname = 'SvVertSortNode'
     bl_label = 'Vector Sort'
-    bl_icon = 'OUTLINER_OB_EMPTY'
+    bl_icon = 'SORTSIZE'
 
     def mode_change(self, context):
         if self.mode == 'XYZ':

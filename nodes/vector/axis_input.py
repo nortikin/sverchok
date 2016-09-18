@@ -36,8 +36,8 @@ class svAxisInputNode(bpy.types.Node, SverchCustomTreeNode):
     '''
 
     bl_idname = 'svAxisInputNode'
-    bl_label = 'Z axis'
-    bl_icon = 'OUTLINER_OB_EMPTY'
+    bl_label = 'Vector X | Y | Z'    # shall default to Z Axis in svint.
+    bl_icon = 'MANIPUL'
 
     def mode_change(self, context):
         if not (self.selected_axis == self.current_axis):

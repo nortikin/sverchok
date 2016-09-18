@@ -28,7 +28,7 @@ from sverchok.data_structure import (updateNode, changable_sockets,
 class MaskListNode(bpy.types.Node, SverchCustomTreeNode):
     ''' MaskList node '''
     bl_idname = 'MaskListNode'
-    bl_label = 'MaskList'
+    bl_label = 'List Mask (out)'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     Level = IntProperty(name='Level', description='Choose list level of data (see help)',

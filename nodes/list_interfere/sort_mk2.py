@@ -26,7 +26,7 @@ from sverchok.data_structure import (updateNode, changable_sockets,
 class ListSortNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     ''' List Sort MK2 '''
     bl_idname = 'ListSortNodeMK2'
-    bl_label = 'List Sort MK2'
+    bl_label = 'List Sort'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     level = IntProperty(name='level_to_count',

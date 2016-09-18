@@ -36,7 +36,7 @@ from sverchok.data_structure import (changable_sockets, repeat_last, updateNode,
 class ListItem2Node(bpy.types.Node, SverchCustomTreeNode):
     ''' List item '''
     bl_idname = 'ListItem2Node'
-    bl_label = 'List item'
+    bl_label = 'List Item'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     level = IntProperty(name='level_to_count',

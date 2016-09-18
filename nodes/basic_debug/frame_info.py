@@ -25,7 +25,7 @@ from sverchok.data_structure import SvSetSocketAnyType
 class SvFrameInfoNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Frame Info '''
     bl_idname = 'SvFrameInfoNode'
-    bl_label = 'Frame Info'
+    bl_label = 'Frame info'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     def sv_init(self, context):

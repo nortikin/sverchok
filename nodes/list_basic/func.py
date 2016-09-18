@@ -30,7 +30,7 @@ def acc(l):
 class ListFuncNode(bpy.types.Node, SverchCustomTreeNode):
     ''' List function '''
     bl_idname = 'ListFuncNode'
-    bl_label = 'List function '
+    bl_label = 'List Math'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     mode_items = [

@@ -38,7 +38,7 @@ def randomize(vertices, random_x, random_y, random_z):
 class SvRandomizeVerticesNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Randomize input vertices locations '''
     bl_idname = 'SvRandomizeVerticesNode'
-    bl_label = 'Randomize Vertices'
+    bl_label = 'Randomize input vertices'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     random_x_ = FloatProperty(name='X amplitude', description='Amplitude of randomization along X axis',

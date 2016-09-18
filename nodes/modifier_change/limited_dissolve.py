@@ -29,6 +29,7 @@ class SvLimitedDissolve(bpy.types.Node, SverchCustomTreeNode):
     ''' Limited Dissolve '''
     bl_idname = 'SvLimitedDissolve'
     bl_label = 'Limited Dissolve'
+    bl_icon = 'OUTLINER_OB_EMPTY'
 
     angle = FloatProperty(default=5.0, min=0.0, update=updateNode)
     use_dissolve_boundaries = BoolProperty(update=updateNode)

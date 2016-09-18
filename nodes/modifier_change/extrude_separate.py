@@ -33,7 +33,7 @@ def Matrix_degenerate(ms):
 class SvExtrudeSeparateNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Extrude separate faces '''
     bl_idname = 'SvExtrudeSeparateNode'
-    bl_label = 'Extrude Separate'
+    bl_label = 'Extrude Separate Faces'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     height_ = FloatProperty(name="Height", description="Extrusion amount",

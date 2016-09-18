@@ -69,7 +69,7 @@ def Boolean(VA, PA, VB, PB, operation):
 class SvCSGBooleanNode(bpy.types.Node, SverchCustomTreeNode):
     '''CSG Boolean Node'''
     bl_idname = 'SvCSGBooleanNode'
-    bl_label = 'CSG BooleanNode'
+    bl_label = 'CSG Boolean'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     mode_options = [

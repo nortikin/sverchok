@@ -351,7 +351,7 @@ def round_cube(
 class SvBoxRoundedNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Box '''
     bl_idname = 'SvBoxRoundedNode'
-    bl_label = 'RoundBox'
+    bl_label = 'Rounded Box'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     radius = FloatProperty(

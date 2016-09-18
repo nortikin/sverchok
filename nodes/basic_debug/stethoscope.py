@@ -38,7 +38,7 @@ def high_contrast_color(c):
 
 class SvStethoscopeNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvStethoscopeNode'
-    bl_label = 'Sv Stethoscope Node'
+    bl_label = 'Stethoscope'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     # node id

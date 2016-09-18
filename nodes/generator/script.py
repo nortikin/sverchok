@@ -159,8 +159,8 @@ class SvScriptNode(bpy.types.Node, SverchCustomTreeNode):
 
     ''' Script node '''
     bl_idname = 'SvScriptNode'
-    bl_label = 'Script Generator'
-    bl_icon = 'OUTLINER_OB_EMPTY'
+    bl_label = 'Scripted Node'
+    bl_icon = 'SCRIPTPLUGINS'
 
     def avail_templates(self, context):
         fullpath = [sv_path, "node_scripts", "templates"]

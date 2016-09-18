@@ -26,7 +26,7 @@ from sverchok.data_structure import updateNode, Matrix_listing, SvSetSocketAnyTy
 class SvMatrixValueIn(bpy.types.Node, SverchCustomTreeNode):
     ''' MatrixValueIn '''
     bl_idname = 'SvMatrixValueIn'
-    bl_label = 'Matrix value input'
+    bl_label = 'Matrix Input'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     id_matrix = (1.0, 0.0, 0.0, 0.0,

@@ -25,7 +25,7 @@ from sverchok.utils.sv_itertools import sv_zip_longest
 class GenVectorsNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Generator vectors '''
     bl_idname = 'GenVectorsNode'
-    bl_label = 'Vectors in'
+    bl_label = 'Vector in'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
 

@@ -30,7 +30,7 @@ from sverchok.data_structure import (updateNode, second_as_first_cycle, fullList
 class SvVertexColorNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Vertex Colors '''
     bl_idname = 'SvVertexColorNode'
-    bl_label = 'Vertex colors'
+    bl_label = 'Vertex color'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     use_foreach = BoolProperty(default=False)

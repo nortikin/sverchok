@@ -52,7 +52,7 @@ def exponential_b(x0, base, nmin, nmax, maxValue):
 class SvGenExponential(bpy.types.Node, SverchCustomTreeNode):
     ''' Generate exponential sequence '''
     bl_idname = 'SvGenExponential'
-    bl_label = 'Exponential series'
+    bl_label = 'Exponential sequence'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     x0_ = FloatProperty(

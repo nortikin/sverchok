@@ -53,7 +53,7 @@ class SvNodePickup(bpy.types.Operator):
 class SvNodeRemoteNode(bpy.types.Node, SverchCustomTreeNode):
 
     bl_idname = 'SvNodeRemoteNode'
-    bl_label = 'Sv Node Remote'
+    bl_label = 'Node Remote (Control)'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     activate = BoolProperty(

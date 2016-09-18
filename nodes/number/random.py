@@ -29,7 +29,7 @@ class RandomNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Random numbers 0-1'''
     bl_idname = 'RandomNode'
     bl_label = 'Random'
-    bl_icon = 'OUTLINER_OB_EMPTY'
+    bl_icon = 'RNDCURVE'
 
     count_inner = IntProperty(name='Count',
                               default=1, min=1,

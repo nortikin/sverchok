@@ -31,7 +31,7 @@ from sverchok.data_structure import (updateNode, Matrix_listing, match_long_repe
 class SvMatrixEulerNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Construct a Matirx from Euler '''
     bl_idname = 'SvMatrixEulerNode'
-    bl_label = 'Euler Matrix'
+    bl_label = 'Matrix Euler'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
 

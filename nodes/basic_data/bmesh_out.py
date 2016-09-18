@@ -26,7 +26,7 @@ from sverchok.data_structure import (updateNode)
 class SvBMoutputNode(bpy.types.Node, SverchCustomTreeNode):
     ''' BMesh Out '''
     bl_idname = 'SvBMoutputNode'
-    bl_label = 'Bmesh Out'
+    bl_label = 'BMesh out'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     def sv_init(self, context):

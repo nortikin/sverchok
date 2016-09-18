@@ -25,7 +25,7 @@ from sverchok.data_structure import levelsOflist, SvSetSocketAnyType, SvGetSocke
 class VertsDelDoublesNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Delete doubles vertices '''
     bl_idname = 'VertsDelDoublesNode'
-    bl_label = 'Delete Double vertices'
+    bl_label = 'Vector X Doubles'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     def draw_buttons(self, context, layout):

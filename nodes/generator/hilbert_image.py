@@ -26,7 +26,7 @@ from sverchok.data_structure import updateNode, SvSetSocketAnyType, SvGetSocketA
 class HilbertImageNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Hilbert Image '''
     bl_idname = 'HilbertImageNode'
-    bl_label = 'HilbertImage'
+    bl_label = 'Hilbert image'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     def images(self, context):

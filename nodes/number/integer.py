@@ -25,7 +25,7 @@ from sverchok.data_structure import updateNode
 class IntegerNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Integer '''
     bl_idname = 'IntegerNode'
-    bl_label = 'Integer'
+    bl_label = 'Int'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     def update_value(self, context):

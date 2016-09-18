@@ -28,7 +28,7 @@ from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
 class SvRecalcNormalsNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Recalc face normals '''
     bl_idname = 'SvRecalcNormalsNode'
-    bl_label = 'Recalc Normals'
+    bl_label = 'Recalc normals'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     invert = BoolProperty(name="Inside",

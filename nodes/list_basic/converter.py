@@ -25,7 +25,7 @@ from sverchok.data_structure import SvGetSocketAnyType, SvSetSocketAnyType
 class ConverterNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Converter node temporery solution '''
     bl_idname = 'ConverterNode'
-    bl_label = 'Converter'
+    bl_label = 'Socket Converter'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     def sv_init(self, context):

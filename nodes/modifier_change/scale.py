@@ -29,7 +29,7 @@ class SvScaleNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Scale '''
     bl_idname = 'SvScaleNode'
     bl_label = 'Scale'
-    bl_icon = 'OUTLINER_OB_EMPTY'
+    bl_icon = 'MAN_SCALE'
 
     factor_ = FloatProperty(name='Factor', description='scaling factor',
                            default=1.0,

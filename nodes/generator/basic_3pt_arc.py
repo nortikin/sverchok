@@ -100,8 +100,8 @@ class svBasicArcNode(bpy.types.Node, SverchCustomTreeNode):
 
     ''' Arc from 3 points '''
     bl_idname = 'svBasicArcNode'
-    bl_label = 'Basic 3point Arc'
-    bl_icon = 'OUTLINER_OB_EMPTY'
+    bl_label = '3pt Arc'
+    bl_icon = 'SPHERECURVE'
 
     num_verts = IntProperty(
         name='num_verts',

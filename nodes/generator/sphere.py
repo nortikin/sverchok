@@ -66,7 +66,7 @@ class SphereNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Sphere '''
     bl_idname = 'SphereNode'
     bl_label = 'Sphere'
-    bl_icon = 'OUTLINER_OB_EMPTY'
+    bl_icon = 'MESH_UVSPHERE'
 
     rad_ = FloatProperty(name='Radius', description='Radius',
                          default=1.0,

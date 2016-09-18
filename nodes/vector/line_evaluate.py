@@ -28,7 +28,7 @@ from sverchok.data_structure import (fullList, updateNode,
 class EvaluateLine(bpy.types.Node, SverchCustomTreeNode):
     ''' EvaluateLine '''
     bl_idname = 'EvaluateLineNode'
-    bl_label = 'EvaluateLine'
+    bl_label = 'Vector Evaluate'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     factor_ = FloatProperty(name='factor', description='Step length',
