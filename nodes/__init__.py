@@ -1,5 +1,3 @@
-# you may supply a list of `directory/node_name.py` to ignore
-# this is about the only manual thing in this file.
 import os
 from os.path import dirname
 from os.path import basename
@@ -7,6 +5,8 @@ from collections import defaultdict
 
 directory = dirname(__file__)
 
+# you may supply a list of `directory/node_name.py` to ignore
+# this is about the only manual thing in this file.
 ignore_list = {}
 ignore_list['analyzer'] = ['bvh_raycast', 'bvh_overlap', 'bvh_nearest']
 ignore_list['basic_data'] = ['create_bvh_tree']
