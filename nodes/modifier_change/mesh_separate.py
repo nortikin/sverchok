@@ -27,7 +27,7 @@ from sverchok.data_structure import SvSetSocketAnyType, SvGetSocketAnyType
 class SvSeparateMeshNode(bpy.types.Node, SverchCustomTreeNode):
     '''Separate Loose mesh parts'''
     bl_idname = 'SvSeparateMeshNode'
-    bl_label = 'Separate Loose'
+    bl_label = 'Separate Loose Parts'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     def sv_init(self, context):

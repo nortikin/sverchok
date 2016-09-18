@@ -26,7 +26,7 @@ from sverchok.data_structure import (SvSetSocketAnyType, SvGetSocketAnyType,
 class CentersPolsNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     ''' Centers of polygons of mesh (not including matrixes, so apply scale-rot-loc ctrl+A) '''
     bl_idname = 'CentersPolsNodeMK2'
-    bl_label = 'Centers polygons'
+    bl_label = 'Centers polygons 2'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     Separate = BoolProperty(name="Separate", 

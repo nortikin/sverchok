@@ -27,7 +27,7 @@ from sverchok.utils.voronoi import Site, computeVoronoiDiagram, computeDelaunayT
 class Voronoi2DNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Voronoi 2d line '''
     bl_idname = 'Voronoi2DNode'
-    bl_label = 'Voronoi'
+    bl_label = 'Voronoi 2D'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     clip = FloatProperty(name='clip', description='Clipping Distance',

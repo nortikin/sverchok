@@ -24,7 +24,7 @@ from sverchok.node_tree import SverchCustomTreeNode, StringsSocket
 class Float2IntNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Float2Int '''
     bl_idname = 'Float2IntNode'
-    bl_label = 'Float2int'
+    bl_label = 'Float to Int'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     def sv_init(self, context):

@@ -62,7 +62,7 @@ def frange_step(start, step, count):
 class SvGenFloatRange(bpy.types.Node, SverchCustomTreeNode):
     ''' Generator range list of floats'''
     bl_idname = 'SvGenFloatRange'
-    bl_label = 'Float Series'
+    bl_label = 'Range Float'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     start_ = FloatProperty(

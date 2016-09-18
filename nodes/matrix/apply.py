@@ -28,7 +28,7 @@ from sverchok.data_structure import (Vector_generate, Vector_degenerate,
 class MatrixApplyNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Multiply vectors on matrixes with several objects in output '''
     bl_idname = 'MatrixApplyNode'
-    bl_label = 'Apply matrix for vectors'
+    bl_label = 'Matrix Apply'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     def sv_init(self, context):

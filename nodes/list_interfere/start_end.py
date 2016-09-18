@@ -28,7 +28,7 @@ from sverchok.data_structure import (updateNode, changable_sockets,
 class ListFLNode(bpy.types.Node, SverchCustomTreeNode):
     ''' List First and last item of list '''
     bl_idname = 'ListFLNode'
-    bl_label = 'List First Last'
+    bl_label = 'List First & Last'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     level = IntProperty(name='level_to_count',

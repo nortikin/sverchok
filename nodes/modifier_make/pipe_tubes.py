@@ -27,7 +27,7 @@ from math import sin, cos, radians, sqrt
 class SvPipeNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Pipe from edges '''
     bl_idname = 'SvPipeNode'
-    bl_label = 'Pipe tube Node'
+    bl_label = 'Pipe'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     #nsides = IntProperty(name='nsides', description='number of sides',

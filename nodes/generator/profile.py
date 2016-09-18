@@ -448,7 +448,7 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
     - The longest input array will be used to extend the shorter ones, using last value repeat.
     '''
     bl_idname = 'SvProfileNode'
-    bl_label = 'ProfileNode'
+    bl_label = 'Profile Parametric'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     def mode_change(self, context):

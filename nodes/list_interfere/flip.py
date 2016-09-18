@@ -50,7 +50,7 @@ def maxlen(list):
 class ListFlipNode(bpy.types.Node, SverchCustomTreeNode):
     ''' ListFlipNode '''
     bl_idname = 'ListFlipNode'
-    bl_label = 'List Flip Node'
+    bl_label = 'List Flip'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     level = IntProperty(name='level_to_count',

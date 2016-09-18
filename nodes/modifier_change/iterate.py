@@ -101,7 +101,7 @@ def calc_matrix_powers(matrices, count):
 class SvIterateNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Iterate matrix transformation '''
     bl_idname = 'SvIterateNode'
-    bl_label = 'Iterate'
+    bl_label = 'Iterate matrix transformation'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     count_ = IntProperty(

@@ -28,7 +28,7 @@ from sverchok.data_structure import (dataCorrect, updateNode,
 class SvVolumeNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Volume '''
     bl_idname = 'SvVolumeNode'
-    bl_label = 'Volume Node'
+    bl_label = 'Volume'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     def draw_buttons(self, context, layout):

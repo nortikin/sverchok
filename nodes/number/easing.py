@@ -34,7 +34,7 @@ for k in sorted(easing_dict.keys()):
 
 class SvEasingNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvEasingNode'
-    bl_label = 'Easing'
+    bl_label = 'Easing 0..1'
 
     selected_mode = EnumProperty(
         items=easing_list,

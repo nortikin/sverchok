@@ -29,7 +29,7 @@ from sverchok.data_structure import (changable_sockets, updateNode,
 class SvMaskJoinNode(bpy.types.Node, SverchCustomTreeNode):
     '''Mask Join'''
     bl_idname = 'SvMaskJoinNode'
-    bl_label = 'Mask Join'
+    bl_label = 'List Mask Join (in)'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     level = IntProperty(name="Level",

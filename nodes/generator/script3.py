@@ -75,7 +75,7 @@ class SvScriptNodeMK3(SvScriptBase, bpy.types.Node, SverchCustomTreeNode):
 
     ''' Script node loader'''
     bl_idname = 'SvScriptNodeMK3'
-    bl_label = 'Script Generator'
+    bl_label = 'Script 3 Node'
     bl_icon = 'SCRIPTPLUGINS'
 
 

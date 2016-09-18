@@ -32,7 +32,7 @@ from sverchok.utils.sv_itertools import (recurse_fx, recurse_fxy)
 class ScalarMathNode(bpy.types.Node, SverchCustomTreeNode):
     ''' ScalarMathNode '''
     bl_idname = 'ScalarMathNode'
-    bl_label = 'function'
+    bl_label = 'Math'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
 

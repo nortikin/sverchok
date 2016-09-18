@@ -159,7 +159,7 @@ class SvScriptNode(bpy.types.Node, SverchCustomTreeNode):
 
     ''' Script node '''
     bl_idname = 'SvScriptNode'
-    bl_label = 'Script Generator'
+    bl_label = 'Scripted Node'
     bl_icon = 'SCRIPTPLUGINS'
 
     def avail_templates(self, context):
