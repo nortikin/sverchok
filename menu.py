@@ -38,12 +38,12 @@ def make_node_cats():
     this loads the index.md file and converts it to an OrderedDict of node categories.
 
     ## category name
-        bl_idname,      shortname,       <icon> (optional)
+        bl_idname      shortname
         ...             ...              ...
 
     becomes
 
-        node_cats[category name] = [['bl_idname', 'shortname' <, 'icon' >],...... ]
+        node_cats[category name] = [['bl_idname', 'shortname'],...... ]
 
     '''
 
