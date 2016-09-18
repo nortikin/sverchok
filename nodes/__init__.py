@@ -2,7 +2,6 @@ import os
 from os.path import dirname
 from os.path import basename
 from collections import defaultdict
-import pprint
 
 directory = dirname(__file__)
 
