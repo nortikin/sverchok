@@ -30,9 +30,7 @@ import sverchok
 from sverchok.menu import make_node_cats
 
 node_cats = make_node_cats()
-
 addon_name = sverchok.__name__
-
 menu_prefs = {}
 
 
@@ -111,37 +109,32 @@ class NODEVIEW_MT_Dynamic_Menu(bpy.types.Menu):
 
         show_icons = menu_prefs.get('show_icons')
 
+        def icon(display_icon):
+            '''returns empty dict if show_icons is False, else the icon passed'''
+            return {'icon': display_icon for i in [1] if show_icons}
+
         layout.separator()
-        if show_icons:
-            layout.menu("NODEVIEW_MT_AddGenerators", icon='OBJECT_DATAMODE')
-            layout.menu("NODEVIEW_MT_AddTransforms", icon='MANIPUL')
-            layout.menu("NODEVIEW_MT_AddAnalyzers", icon='VIEWZOOM')
-            layout.menu("NODEVIEW_MT_AddModifiers", icon='MODIFIER')
-        else:
-            layout.menu("NODEVIEW_MT_AddGenerators")
-            layout.menu("NODEVIEW_MT_AddTransforms")
-            layout.menu("NODEVIEW_MT_AddAnalyzers")
-            layout.menu("NODEVIEW_MT_AddModifiers")
+
+        layout.menu("NODEVIEW_MT_AddGenerators", **icon('OBJECT_DATAMODE'))
+        layout.menu("NODEVIEW_MT_AddTransforms", **icon('MANIPUL'))
+        layout.menu("NODEVIEW_MT_AddAnalyzers", **icon('VIEWZOOM'))
+        layout.menu("NODEVIEW_MT_AddModifiers", **icon('MODIFIER'))
 
         layout.separator()
         layout.menu("NODEVIEW_MT_AddNumber")
         layout.menu("NODEVIEW_MT_AddVector")
         layout.menu("NODEVIEW_MT_AddMatrix")
         layout.menu("NODEVIEW_MT_AddLogic")
-        layout.menu("NODEVIEW_MT_AddListOps", icon='NLA')
+        layout.menu("NODEVIEW_MT_AddListOps", **icon('NLA'))
         layout.separator()
-        layout.menu("NODEVIEW_MT_AddViz", icon='RESTRICT_VIEW_OFF')
+        layout.menu("NODEVIEW_MT_AddViz", **icon('RESTRICT_VIEW_OFF'))
         layout.menu("NODEVIEW_MT_AddText")
         layout.menu("NODEVIEW_MT_AddScene")
         layout.menu("NODEVIEW_MT_AddLayout")
         layout.separator()
         layout.menu("NODEVIEW_MT_AddNetwork")
-        if show_icons:
-            layout.menu("NODEVIEW_MT_AddBetas", icon='OUTLINER_DATA_POSE')
-            layout.menu("NODEVIEW_MT_AddAlphas", icon='ERROR')
-        else:
-            layout.menu("NODEVIEW_MT_AddBetas")
-            layout.menu("NODEVIEW_MT_AddAlphas")
+        layout.menu("NODEVIEW_MT_AddBetas", **icon('OUTLINER_DATA_POSE'))
+        layout.menu("NODEVIEW_MT_AddAlphas", **icon('ERROR'))
 
 
 class NODEVIEW_MT_AddGenerators(bpy.types.Menu):
