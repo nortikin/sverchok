@@ -27,7 +27,7 @@ from sverchok.data_structure import (updateNode, changable_sockets,
 class ListRepeaterNode(bpy.types.Node, SverchCustomTreeNode):
     ''' List repeater '''
     bl_idname = 'ListRepeaterNode'
-    bl_label = 'List repeater'
+    bl_label = 'List Repeater'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     level = IntProperty(name='level',

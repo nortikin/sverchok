@@ -26,7 +26,7 @@ from sverchok.node_tree import SverchCustomTreeNode, StringsSocket
 class UdpClientNode(bpy.types.Node, SverchCustomTreeNode):
 
     bl_idname = 'UdpClientNode'
-    bl_label = 'UdpClient'
+    bl_label = 'UDP Client'
 
     def send(self, context):
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)

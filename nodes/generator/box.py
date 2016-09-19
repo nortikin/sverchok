@@ -29,7 +29,7 @@ class SvBoxNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Box '''
     bl_idname = 'SvBoxNode'
     bl_label = 'Box'
-    bl_icon = 'OUTLINER_OB_EMPTY'
+    bl_icon = 'MESH_CUBE'
 
     Divx = IntProperty(name='Divx', description='divisions x',
                        default=1, min=1, options={'ANIMATABLE'},

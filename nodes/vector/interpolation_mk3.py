@@ -141,7 +141,7 @@ def eval_linear_spline(pts, tknots, t_in):
 class SvInterpolationNodeMK3(bpy.types.Node, SverchCustomTreeNode):
     '''Vector Interpolate'''
     bl_idname = 'SvInterpolationNodeMK3'
-    bl_label = 'Vector Interpolation 3'
+    bl_label = 'Vector Interpolation mk3'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     t_in = FloatProperty(name="t",

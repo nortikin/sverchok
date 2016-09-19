@@ -248,8 +248,8 @@ class SvCurveViewOp(bpy.types.Operator):
 class SvCurveViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
     bl_idname = 'SvCurveViewerNode'
-    bl_label = 'SvCurve Viewer Draw'
-    bl_icon = 'OUTLINER_OB_EMPTY'
+    bl_label = 'Curve Viewer'
+    bl_icon = 'MOD_CURVE'
 
     activate = BoolProperty(
         name='Show',

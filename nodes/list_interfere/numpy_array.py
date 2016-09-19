@@ -31,7 +31,7 @@ def Obm(m):
 class SvNumpyArrayNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Numpy Props '''
     bl_idname = 'SvNumpyArrayNode'
-    bl_label = 'numpy_props'
+    bl_label = 'Numpy Array'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     Modes = ['tolist','conj','flatten','reshape','repeat','resize',

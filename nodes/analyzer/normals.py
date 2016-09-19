@@ -42,7 +42,7 @@ def calc_mesh_normals(vertices, edges, faces):
 class GetNormalsNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Calculate normals of faces and vertices '''
     bl_idname = 'GetNormalsNode'
-    bl_label = 'Calc Normals'
+    bl_label = 'Calculate normals'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     def sv_init(self, context):

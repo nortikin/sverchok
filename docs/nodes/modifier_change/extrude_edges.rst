@@ -1,13 +1,12 @@
-Extrude Edges
-=============
+Extrude edges
+=====
 
-*This node testing is in progress, so it can be found under Beta menu*
+*destination after Beta: Modifier Change*
 
 Functionality
 -------------
 
-This node applies Extrude operator to edges of input mesh. After that, matrix transformation can be applied to new vertices.
-It is possible to provide specific transformation matrix for each of extruded vertices.
+You can extrude edges along matrices. Every matrix influence on separate vertex of initial mesh.
 
 Inputs
 ------
@@ -15,10 +14,13 @@ Inputs
 This node has the following inputs:
 
 - **Vertices**
-- **Edges**
-- **Polygons**
-- **ExtrudeEdges**. Edges of input mesh that are to be extruded. If this input is empty or not connected, then by default all edges will be processed.
-- **Matrices**. Transformation matrices to be applied to extruded vertices. This input can contain separate matrix for each vertex. In simplest case, it can contain one matrix to be applied to all vertices.
+- **Edgs/Pols**
+- **Matrices**
+
+Parameters
+----------
+
+Nope
 
 Outputs
 -------
@@ -27,19 +29,26 @@ This node has the following outputs:
 
 - **Vertices**
 - **Edges**
-- **Polygons**. All faces of resulting mesh.
-- **NewVertices**. Newly created vertices only.
-- **NewEdges**. Newly created edges only.
-- **NewFaces**. Newly created faces only.
+- **Polygons**
+- **NewVertices** - only new vertices
+- **NewEdges** - only new edges
+- **NewPolys** - only new faces.
 
 Examples of usage
 -----------------
 
-Extrude only boundary edges of plane grid, along Z axis:
+Extruded circle in Z direction by sinus, drived by pi*N:
 
-.. image:: https://cloud.githubusercontent.com/assets/284644/6318599/6ee0d474-babc-11e4-8d3a-f9f86963bf10.png
+.. image:: https://cloud.githubusercontent.com/assets/5783432/18603880/8d81f272-7c86-11e6-8514-e241557730b0.png
 
-Extrude all edges of bitted circle, and scale new vertices:
+Extruded circle in XY directions by sinus and cosinus drived by pi*N:
 
-.. image:: https://cloud.githubusercontent.com/assets/284644/6318598/6eb0c3ba-babc-11e4-8cab-ccb2d4fe39a9.png
+.. image:: https://cloud.githubusercontent.com/assets/5783432/18603878/8d80896e-7c86-11e6-8f4a-8d7024ae597b.png
 
+Matrix input node can make skew in one or another direction:
+
+.. image:: https://cloud.githubusercontent.com/assets/5783432/18603891/9fbcc44e-7c86-11e6-8f43-e48ef1eacd59.png
+
+Matrix input node can also scale extruded edges, so you will get bell:
+
+.. image:: https://github.com/nortikin/sverchok/issues/394

@@ -27,7 +27,7 @@ from sverchok.data_structure import (updateNode, fullList, multi_socket, levelsO
 class LineConnectNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     ''' UV Connect node '''
     bl_idname = 'LineConnectNodeMK2'
-    bl_label = 'UV Connect'
+    bl_label = 'UV Connection'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     JoinLevel = IntProperty(name='JoinLevel', description='Choose connect level of data (see help)',

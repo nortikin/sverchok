@@ -49,8 +49,8 @@ def get_lathed_geometry(node, verts, edges, cent, axis, dvec, angle, steps):
 class SvLatheNode(bpy.types.Node, SverchCustomTreeNode):
 
     bl_idname = 'SvLatheNode'
-    bl_label = 'Sv Lathe Node'
-    bl_icon = 'OUTLINER_OB_EMPTY'
+    bl_label = 'Lathe'
+    bl_icon = 'MOD_SCREW'
 
     remove_doubles = BoolProperty(name='merge', description='Remove doubles', update=updateNode)
     dist = FloatProperty(name="merge distance", default=0.0001, update=updateNode)

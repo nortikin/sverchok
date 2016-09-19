@@ -29,7 +29,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 class SvKDTreeNode(bpy.types.Node, SverchCustomTreeNode):
 
     bl_idname = 'SvKDTreeNode'
-    bl_label = 'Kdtree search'
+    bl_label = 'KDT Closest Verts'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     current_mode = StringProperty(default="FIND")

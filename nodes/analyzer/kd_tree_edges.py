@@ -29,7 +29,7 @@ from sverchok.data_structure import updateNode, SvSetSocketAnyType, SvGetSocketA
 class SvKDTreeEdgesNode(bpy.types.Node, SverchCustomTreeNode):
 
     bl_idname = 'SvKDTreeEdgesNode'
-    bl_label = 'Kdtree Edges'
+    bl_label = 'KDT Closest Edges'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     mindist = FloatProperty(

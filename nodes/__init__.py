@@ -1,227 +1,41 @@
-nodes_dict = {
-    'analyzer': [
-        'area',
-        'normals',
-        'volume',
-        'bbox',
-        'mesh_filter',
-        'edge_angles',
-        'distance_pp',
-        'polygons_centers',
-        'polygons_centers_mk3',
-        'neuro_elman',
-        'image_components',
-        'kd_tree',
-        'kd_tree_edges',
-        'weights',
-        'object_raycast',
-        'scene_raycast',
-        'bmesh_props',
-        'closest_point_on_mesh',
-        'colors',
-        'colors2',
-        # 'bvh_raycast',
-        # 'bvh_overlap',
-        # 'bvh_nearest'
-    ],
+import os
+from os.path import dirname
+from os.path import basename
+from collections import defaultdict
 
-    'basic_view': [
-        'viewer_bmesh_mk2',
-        'viewer_indices',
-        'viewer_curves',
-        'viewer_curves_2d',
-        'viewer_polyline',
-        'viewer_skin',
-        'viewer_text',
-        'viewer_mk2',
-        'viewer_typography',
-        'empty_out',
-    ],
+directory = dirname(__file__)
 
-    'basic_data': [
-        'objects',
-        'text',
-        'wifi_in',
-        'wifi_out',
-        'switch',
-        'obj_remote',
-        'dupli_instances',
-        'instancer',  # this is the mesh instancer (can I rename it? 'mesh_instances')
-        'group', # old group
-        'monad',
-        'cache',
-        'getsetprop',
-        'node_remote',
-        'get_blenddata',
-        'set_blenddata',
-        'sort_blenddata',
-        'filter_blenddata',
-        'blenddata_to_svdata',
-        'BMOperators',
-        'bmesh_in',
-        'bmesh_out',
-        # 'create_bvh_tree',
-        'bmesh_to_element'
-    ],
+# you may supply a list of `directory/node_name.py` to ignore
+# this is about the only manual thing in this file.
+ignore_list = {}
+ignore_list['analyzer'] = ['bvh_raycast', 'bvh_overlap', 'bvh_nearest']
+ignore_list['basic_data'] = ['create_bvh_tree']
 
-    'basic_debug': [
-        'debug_print',
-        'frame_info',
-        'gtext',
-        'note',
-        '3dview_props',
-        'stethoscope'
-    ],
+nodes_dict = defaultdict(list)
 
-    'generator': [
-        'box',
-        'box_rounded',
-        'circle',
-        'ngon',
-        'cylinder',
-        'hilbert_image',
-        'hilbert',
-        'hilbert3d',
-        'image',
-        'line',
-        'plane',
-        'bricks',
-        'random_vector',
-        'script',
-        'script_mk2',
-        'formula',
-        'sphere',
-        'basic_spline',
-        'basic_3pt_arc',
-        'profile',
-        'generative_art',
-        'script3',
-    ],
+def automatic_collection():
+    for subdir, dirs, files in os.walk(directory):
+        current_dir = basename(subdir)
+        if current_dir == '__pycache__':
+            continue
+        for file in files:
+            if file == '__init__.py':
+                continue
+            if not file.endswith('.py'):
+                continue
+            nodes_dict[current_dir].append(file[:-3])
 
-    'list_basic': [
-        'converter',
-        'decompose',
-        'func',
-        'modifier',
-        'join',
-        'length',
-        'levels',
-        'mask_join',
-        'mask',
-        'match',
-        'sum_mk2',
-        'zip'
-    ],
+    # remove items found in ignore_list
+    for k, v in ignore_list.items():
+        items = nodes_dict.get(k)
+        if items:
+            for filename in v:
+                try:
+                    items.remove(filename)
+                except:
+                    print('failed to remove', filename, 'from', k, ' : check your spelling')
 
-    'list_interfere': [
-        'shift_mk2',
-        'repeater',
-        'slice',
-        'split',
-        'start_end',
-        'item',
-        'reverse',
-        'shuffle',
-        'sort_mk2',
-        'flip',
-        'numpy_array'
-    ],
+    # may not be used, but can be.
+    return nodes_dict
 
-    'matrix': [
-        'apply',
-        'apply_and_join',
-        'deform',
-        'destructor',
-        'generator',
-        'input',
-        'interpolation',
-        'shear',
-        'euler'
-    ],
-
-    'modifier_change': [
-        'delete_loose',
-        'edges_intersect',
-        'holes_fill',
-        'mesh_join',
-        'mesh_separate',
-        'mirror',
-        'polygons_boom',
-        'polygons_to_edges',
-        'triangulate',
-        'triangulate_heavy',
-        'remove_doubles',
-        'recalc_normals',
-        'rotation',
-        'scale',
-        'vertices_mask',
-        'bevel',
-        'objects_along_edge',
-        'randomize',
-        'limited_dissolve',
-        'extrude_separate',
-        'extrude_edges',
-        'iterate',
-    ],
-
-    'modifier_make': [
-        'bisect',
-        'convex_hull',
-        'cross_section',
-        'edges_adaptative',
-        'join_tris',
-        'lathe',
-        'uv_connect',
-        'offset',
-        'inset_special',
-        'polygons_adaptative',
-        'solidify',
-        'voronoi_2d',
-        'wireframe',
-        'wafel',
-        'csg_boolean',
-        'pipe_tubes',
-        'matrix_tube',
-    ],  #
-
-    'number': [
-        'float_to_int',
-        'float',
-        'integer',
-        'random',
-        'formula2',
-        'scalar',
-        'list_input',
-        'range_map',
-        'range_float',
-        'range_int',
-        'fibonacci',
-        'exponential',
-        'easing',
-        'logic'
-    ],
-
-    'vector': [
-        'drop',
-        'interpolation',
-        'interpolation_mk2',
-        'interpolation_mk3',
-        'line_evaluate',
-        'math',
-        'move',
-        'noise',
-        'normal',
-        'vector_polar_in',
-        'vector_polar_out',
-        'vector_in',
-        'vector_out',
-        'vertices_delete_doubles',
-        'vertices_sort',
-        'axis_input'
-    ],
-
-    'network': [
-        'udp_client'
-    ]
-
-}
+automatic_collection()

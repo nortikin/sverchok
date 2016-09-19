@@ -17,26 +17,31 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import parser
+from math import (
+    acos, acosh, asin, asinh, atan, atan2,
+    atanh, ceil, copysign, cos, cosh, degrees, e,
+    erf, erfc, exp, expm1, fabs, factorial, floor,
+    fmod, frexp, fsum, gamma, hypot, isfinite, isinf,
+    isnan, ldexp, lgamma, log, log10, log1p, log2, modf,
+    pi, pow, radians, sin, sinh, sqrt, tan, tanh, trunc
+)
 
 import bpy
 from bpy.props import BoolProperty, StringProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (sv_Vars, updateNode, multi_socket, changable_sockets,
-                            dataSpoil, dataCorrect, levelsOflist,
-                            SvSetSocketAnyType, SvGetSocketAnyType)
-from math import acos, acosh, asin, asinh, atan, atan2, \
-                            atanh,ceil,copysign,cos,cosh,degrees,e, \
-                            erf,erfc,exp,expm1,fabs,factorial,floor, \
-                            fmod,frexp,fsum,gamma,hypot,isfinite,isinf, \
-                            isnan,ldexp,lgamma,log,log10,log1p,log2,modf, \
-                            pi,pow,radians,sin,sinh,sqrt,tan,tanh,trunc
+from sverchok.data_structure import (
+    sv_Vars, updateNode, multi_socket, changable_sockets,
+    dataSpoil, dataCorrect, levelsOflist,
+    SvSetSocketAnyType, SvGetSocketAnyType
+)
+
 
 
 class Formula2Node(bpy.types.Node, SverchCustomTreeNode):
     ''' Formula2 '''
     bl_idname = 'Formula2Node'
-    bl_label = 'Formula2'
+    bl_label = 'Formula'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     formula = StringProperty(name='formula',

@@ -28,7 +28,7 @@ from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
 class SvTriangulateNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Triangulate mesh '''
     bl_idname = 'SvTriangulateNode'
-    bl_label = 'Triangulate'
+    bl_label = 'Triangulate mesh'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     quad_modes = [

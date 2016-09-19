@@ -27,8 +27,8 @@ from sverchok.data_structure import SvGetSocketAnyType, node_id, Matrix_generate
 class SvEmptyOutNode(bpy.types.Node, SverchCustomTreeNode):
     '''Create a blender empty object'''
     bl_idname = 'SvEmptyOutNode'
-    bl_label = 'Set Empty'
-    bl_icon = 'OUTLINER_OB_EMPTY'
+    bl_label = 'Empty out'
+    bl_icon = 'OUTLINER_DATA_EMPTY'
 
     def rename_empty(self, context):
         empty = self.find_empty()

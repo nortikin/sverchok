@@ -112,7 +112,7 @@ class SvObjSelected(bpy.types.Operator):
 class ObjectsNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Objects Input slot '''
     bl_idname = 'ObjectsNode'
-    bl_label = 'Objects_in'
+    bl_label = 'Objects in'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     def hide_show_versgroups(self, context):

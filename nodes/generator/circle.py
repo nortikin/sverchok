@@ -30,7 +30,7 @@ class SvCircleNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Circle '''
     bl_idname = 'SvCircleNode'
     bl_label = 'Circle'
-    bl_icon = 'OUTLINER_OB_EMPTY'
+    bl_icon = 'MESH_CIRCLE'
 
     rad_ = FloatProperty(name='Radius', description='Radius',
                          default=1.0,

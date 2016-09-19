@@ -55,6 +55,10 @@ class SvSocketAquisition:
 
             # first switch socket type
             socket = socket_list[-1]
+            if kind == "outputs":
+                prop_name = monad.add_prop_from(socket)
+            else:
+                prop_name = ""
 
             cls = monad.update_cls()
 
@@ -64,8 +68,12 @@ class SvSocketAquisition:
                 new_name, new_type = cls.output_template[-1]
                 prop_data = {}
 
+            new_socket = replace_socket(socket, new_type, new_name=new_name)
+            if prop_name:
+                new_socket.prop_name = prop_name
+
             # if no 'linked_socket.prop_name' then use 'linked_socket.name'
-            replace_socket(socket, new_type, new_name=new_name)
+
 
             for instance in monad.instances:
                 sockets = getattr(instance, reverse_lookup[kind])

@@ -20,14 +20,17 @@ import random
 from itertools import chain
 
 import bpy
-from bpy.props import StringProperty, IntProperty, BoolProperty
+from bpy.props import (StringProperty, FloatProperty,
+                       IntProperty, BoolProperty,
+                       CollectionProperty)
+
 from bpy.types import Node, NodeTree
 
 
 from sverchok.node_tree import SverchCustomTreeNode, SvNodeTreeCommon
 from sverchok.data_structure import replace_socket, get_other_socket, updateNode, match_long_repeat
 from sverchok.core.update_system import make_tree_from_nodes, do_update
-
+from sverchok.core.monad_properties import SvIntPropertySettingsGroup, SvFloatPropertySettingsGroup
 
 MONAD_COLOR = (0.830819, 0.911391, 0.754562)
 
@@ -42,6 +45,10 @@ reverse_lookup = {'outputs': 'inputs', 'inputs': 'outputs'}
 
 def make_valid_identifier(name):
     """Create a valid python identifier from name for use a a part of class name"""
+    while name and not name[0].isalpha():
+        name = name[1:]
+    if not name:
+        return "generic"
     return "".join(ch for ch in name if ch.isalnum() or ch == "_")
 
 
@@ -52,7 +59,7 @@ def get_socket_data(socket):
 
     socket_bl_idname = socket.bl_idname
     socket_name = socket.name
-    return socket_name, socket_bl_idname
+    return socket_name, socket_bl_idname, socket.prop_name
 
 def generate_name(prop_name, cls_dict):
     if prop_name in cls_dict:
@@ -76,6 +83,114 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
 
     # unique and non chaning identifier set upon first creation
     cls_bl_idname = StringProperty()
+
+    float_props = CollectionProperty(type=SvFloatPropertySettingsGroup)
+    int_props = CollectionProperty(type=SvIntPropertySettingsGroup)
+
+    def add_prop_from(self, socket):
+        other = socket.other
+        cls = getattr(bpy.types, self.cls_bl_idname, None)
+        cls_dict = cls.__dict__ if cls else {}
+
+        if other.prop_name:
+            prop_name = other.prop_name
+            prop_func, prop_dict = getattr(other.node.rna_type, prop_name, ("", {}))
+            if prop_func.__name__ == "FloatProperty":
+                prop_settings = self.float_props.add()
+            elif prop_func.__name__ == "IntProperty":
+                prop_settings = self.int_props.add()
+            elif prop_func.__name__ == "FloatVectorProperty":
+                pass # etc
+            else:
+                pass
+
+            prop_settings.prop_name = generate_name(prop_name, cls_dict)
+            prop_settings.set_settings(prop_dict)
+            socket.prop_name = prop_settings.prop_name
+            return prop_settings.prop_name
+        elif hasattr(other, "prop_type"):
+            if "float" in other.prop_type:
+                prop_settings = self.float_props.add()
+            elif "int" in other.prop_type:
+                prop_settings = self.int_props.add()
+
+            prop_settings.prop_name = generate_name(make_valid_identifier(other.name), cls_dict)
+            prop_settings.set_settings({"name": other.name})
+            socket.prop_name = prop_settings.prop_name
+            return prop_settings.prop_name
+
+        return ""
+
+    def get_all_props(self):
+        """
+        return a dict with all data needed to setup monad
+        """
+        monad_data  = {"name": self.name, "cls_bl_idname": self.cls_bl_idname}
+        float_props = {}
+        for prop in self.float_props:
+            float_props[prop.prop_name] = prop.get_settings()
+        monad_data["float_props"] = float_props
+
+        monad_data["int_props"] = {prop.prop_name: prop.get_settings() for prop in self.int_props}
+
+        return monad_data
+
+    def set_all_props(self, data):
+
+        self.cls_bl_idname = data["cls_bl_idname"]
+
+        for prop_name, values in data["float_props"].items():
+            settings = self.float_props.add()
+            settings.set_settings(values)
+            settings.prop_name = prop_name
+
+        for prop_name, values in data["int_props"].items():
+            settings = self.int_props.add()
+            settings.set_settings(values)
+            settings.prop_name = prop_name
+
+
+
+    def remove_prop(self, socket):
+        prop_name = socket.prop_name
+        for prop_list in ("float_props", "int_props"):
+            p_list = getattr(self, prop_list)
+            for idx, setting in enumerate(p_list):
+                if setting.prop_name == prop_name:
+                    p_list.remove(idx)
+                    return
+
+    def find_prop(self, socket):
+        prop_name = socket.prop_name
+        for prop_list in ("float_props", "int_props"):
+            p_list = getattr(self, prop_list)
+            for setting in p_list:
+                if setting.prop_name == prop_name:
+                    return setting
+        return None
+
+    def verify_props(self):
+        '''
+        parse sockets and add any props as
+        for backwarads compablility
+        '''
+        prop_names = {s.prop_name for s in chain(self.float_props, self.int_props)}
+        for socket in self.input_node.outputs:
+            if socket.is_linked:
+                if socket.prop_name:
+                    if socket.prop_name in prop_names:
+                        continue
+                    else:
+                        self.add_prop_from(socket)
+                        continue
+
+                if socket.other.prop_name:
+                    if socket.other.prop_name not in prop_names:
+                        self.add_prop_from(socket)
+                    else:
+                        socket.prop_name = socket.other.prop_name
+
+
 
     def update(self):
         affected_trees = {instance.id_data for instance in self.instances}
@@ -130,11 +245,15 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
         else:
             cls_name = self.cls_bl_idname
 
+        self.verify_props()
+
         cls_dict["bl_idname"] = cls_name
         cls_dict["bl_label"] = self.name
 
-        cls_dict["input_template"] = self.generate_inputs(cls_dict)
+        cls_dict["input_template"] = self.generate_inputs()
         cls_dict["output_template"] = self.generate_outputs()
+
+        self.make_props(cls_dict)
 
         # done with setup
 
@@ -150,42 +269,29 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
 
         return cls_ref
 
-    def generate_inputs(self, cls_dict={}):
+    def make_props(self, cls_dict):
+        for s in self.float_props:
+            prop_dict = s.get_settings()
+            prop_dict["update"] = updateNode
+            cls_dict[s.prop_name] = FloatProperty(**prop_dict)
+
+        for s in self.int_props:
+            prop_dict = s.get_settings()
+            prop_dict["update"] = updateNode
+            cls_dict[s.prop_name] = IntProperty(**prop_dict)
+
+
+    def generate_inputs(self):
         in_socket = []
+
         # if socket is dummysocket use the other for data
-        for socket in self.input_node.outputs:
+        for idx, socket in enumerate(self.input_node.outputs):
             if socket.is_linked:
-
-                other = get_other_socket(socket)
-                prop_data = other.get_prop_data()
-                if "prop_name" in prop_data:
-                    prop_name = prop_data["prop_name"]
-                    prop_func, prop_dict = getattr(other.node.rna_type, prop_name)
-                    prop_dict = prop_dict.copy()
-                    prop_name = generate_name(prop_name, cls_dict)
-                    if "attr" in prop_dict:
-                        del prop_dict["attr"]
-                    # some nodes (int and float) have custom functions in place,
-                    # replace with standard functiong
-                    prop_dict["update"] = updateNode
-                    cls_dict[prop_name] = prop_func(**prop_dict)
+                socket_name, socket_bl_idname, prop_name = get_socket_data(socket)
+                if prop_name:
                     prop_data = {"prop_name": prop_name}
-
-                if "prop_type" in prop_data:
-                    # I think only scriptnode uses this interface, if not true might
-                    # need more testing and proctection.
-                    # anyway replace the prop data with new prop data
-                    if "float" in prop_data["prop_type"]:
-                        prop_rna = FloatProperty(name=other.name, update=updateNode)
-                    elif "int" in prop_data["prop_type"]:
-                        prop_rna = IntProperty(name=other.name, update=updateNode)
-                    prop_name = generate_name(make_valid_identifier(other.name), cls_dict)
-                    cls_dict[prop_name] = prop_rna
-
-                    prop_data = {"prop_name": prop_name}
-
-                socket_name, socket_bl_idname = get_socket_data(socket)
-
+                else:
+                    prop_data = {}
                 data = [socket_name, socket_bl_idname, prop_data]
                 in_socket.append(data)
 
@@ -195,16 +301,11 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
         out_socket = []
         for socket in self.output_node.inputs:
             if socket.is_linked:
-                data = get_socket_data(socket)
-                out_socket.append(data)
+                socket_name, socket_bl_idname, _ = get_socket_data(socket)
+                out_socket.append((socket_name, socket_bl_idname))
         return out_socket
 
-def _get_monad_name(self):
-    return self.monad.name
 
-def _set_monad_name(self, value):
-    print("set value", value)
-    self.monad.name = value
 
 def split_list(data, size=1):
     size = max(1, int(size))

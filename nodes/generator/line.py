@@ -47,7 +47,7 @@ class LineNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Line '''
     bl_idname = 'LineNode'
     bl_label = 'Line'
-    bl_icon = 'OUTLINER_OB_EMPTY'
+    bl_icon = 'GRIP'
     
     int_ = IntProperty(name='N Verts', description='Nº Vertices',
                        default=2, min=2,

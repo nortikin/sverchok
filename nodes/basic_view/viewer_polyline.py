@@ -153,8 +153,8 @@ class SvPolylineViewOp(bpy.types.Operator):
 class SvPolylineViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
     bl_idname = 'SvPolylineViewerNode'
-    bl_label = 'SvPolyline Viewer Draw'
-    bl_icon = 'OUTLINER_OB_EMPTY'
+    bl_label = 'Polyline Viewer'
+    bl_icon = 'MOD_CURVE'
 
     activate = BoolProperty(
         name='Show',

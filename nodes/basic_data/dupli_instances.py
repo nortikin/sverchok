@@ -38,7 +38,7 @@ def wipe_object(ob):
 
 class SvDupliInstancesMK3(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvDupliInstancesMK3'
-    bl_label = 'Dupli Instances MK3'
+    bl_label = 'Dupli instancer'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     def set_child_quota(self, context):

@@ -80,7 +80,7 @@ def sn1_autowrap(*params):
         yield p
 
 def sn1_autodict(names, var_dict):
-    return {k:v for k, v in var_dict.items() if k in set(names.split(' '))}    
+    return {k:v for k, v in var_dict.items() if k in set(names.split(' '))}
 
 
 # ----------------- light weight functions ---------------
@@ -198,7 +198,7 @@ def quad(side=1.0, radius=0.0, nverts=5, matrix=None, mode='pydata'):
     '''
     parameters:
         side:   gives the length of side of the rect
-        radius: gives the radius of the rounded corners. 
+        radius: gives the radius of the rounded corners.
                 - If the passed radius is equal to side/2 then you'll get a circle
                 - if the passed radius exceeds side/2, then you will get rect
         nverts: if nverts is equal or greater than 2 then you will get rounded courners
@@ -238,7 +238,7 @@ def quad(side=1.0, radius=0.0, nverts=5, matrix=None, mode='pydata'):
         else:
             verts = [[-dim, dim, 0], [dim, dim, 0], [dim, -dim, 0], [-dim, -dim, 0]]
         # elif radius == 0.0 or (radius > 0.0 and radius > dim):
-        
+
         num_verts = len(verts)
         if not edges:
             edges = [[i, i+1] for i in range(num_verts-1)] + [[num_verts-1, 0]]
@@ -274,7 +274,7 @@ def arc_slice(outer_radius=1.0, inner_radius=0.8, phase=0, angle=PI, nverts=20, 
             rad = i * theta
             verts.append((math.sin(rad + phase) * outer_radius, math.cos(rad + phase) * outer_radius, 0))
 
-        for i in reversed(range(nverts)):                
+        for i in reversed(range(nverts)):
             rad = i * theta
             verts.append((math.sin(rad + phase) * inner_radius, math.cos(rad + phase) * inner_radius, 0))
 
@@ -315,7 +315,7 @@ def rect(dim_x=1.0, dim_y=1.62, radius=0.0, nverts=5, matrix=None, mode='pydata'
         num_verts = len(verts)
         edges = [[i, i+1] for i in range(num_verts-1)] + [[num_verts-1, 0]]
         faces = [i for i in range(num_verts)]
-        
+
         if mode == 'pydata':
             return verts, edges, [faces]
         else:
@@ -365,7 +365,7 @@ def grid(dim_x=1.0, dim_y=1.62, nx=2, ny=2, anchor=0, matrix=None, mode='pydata'
         faces = []
         add_face = faces.append
         total_range = ((ny-1) * (nx))
-        
+
         a, b = anchors[:2]
         c, d = anchors[2:]
         x = np.linspace(a, b, nx)
@@ -433,3 +433,137 @@ quads = vectorize(quad)
 rects = vectorize(rect)
 lines = vectorize(line)
 grids = vectorize(grid)
+
+
+# ---------- Spline
+
+# spline function modifed from
+# from looptools 4.5.2 done by Bart Crouch
+
+
+# calculates natural cubic splines through all given knots
+
+class CubicSpline:
+    def __init__(self, locs, tknots=None, metric='DISTANCE'):
+        """    locs is and np.array with shape (n,3) and tknots has shape (n-1,)
+        creates a cubic spline thorugh the locations given in locs
+
+        """
+        n = len(locs)
+        if n < 2:
+            return False
+
+        if tknots is None:
+            tknots = create_knots(locs, metric)
+
+        self.tknots = tknots
+
+        h = tknots[1:] - tknots[:-1]
+        h[h == 0] = 1e-8
+        q = np.zeros((n - 1, 3))
+        q[1:] = 3 / h[1:, np.newaxis] * (locs[2:] - locs[1:-1]) - 3 / \
+            h[:-1, np.newaxis] * (locs[1:-1] - locs[:-2])
+
+        l = np.zeros((n, 3))
+        l[0, :] = 1.0
+        u = np.zeros((n - 1, 3))
+        z = np.zeros((n, 3))
+
+        for i in range(1, n - 1):
+            l[i] = 2 * (tknots[i + 1] - tknots[i - 1]) - h[i - 1] * u[i - 1]
+            l[i, l[i] == 0] = 1e-8
+            u[i] = h[i] / l[i]
+            z[i] = (q[i] - h[i - 1] * z[i - 1]) / l[i]
+        l[-1, :] = 1.0
+        z[-1] = 0.0
+
+        b = np.zeros((n - 1, 3))
+        c = np.zeros((n, 3))
+
+        for i in range(n - 2, -1, -1):
+            c[i] = z[i] - u[i] * c[i + 1]
+        b = (locs[1:] - locs[:-1]) / h[:, np.newaxis] - h[:, np.newaxis] * (c[1:] + 2 * c[:-1]) / 3
+        d = (c[1:] - c[:-1]) / (3 * h[:, np.newaxis])
+
+        splines = np.zeros((n - 1, 5, 3))
+        splines[:, 0] = locs[:-1]
+        splines[:, 1] = b
+        splines[:, 2] = c[:-1]
+        splines[:, 3] = d
+        splines[:, 4] = tknots[:-1, np.newaxis]
+
+        self.splines = splines
+
+
+    def eval(self, t_in):
+        """
+        Evaluate the spline at the points in t_in, which must be an array
+        with values in [0,1]
+        returns and np array with the corresponding points
+        """
+        splines = self.splines
+        tknots = self.tknots
+        index = tknots.searchsorted(t_in, side='left') - 1
+        index = index.clip(0, len(splines) - 1)
+        to_calc = splines[index]
+        ax, bx, cx, dx, tx = np.swapaxes(to_calc, 0, 1)
+        t_r = t_in[:, np.newaxis] - tx
+        out = ax + t_r * (bx + t_r * (cx + t_r * dx))
+        return out
+
+
+    def tangent(self, t_in, h=0.001):
+        """
+        Calc numerical tangents for spline at t_in
+        """
+        t_ph = t_in + h
+        t_mh = t_in - h
+        t_less_than_0 = t_mh < 0.0
+        t_great_than_1 = t_ph > 1.0
+        t_mh[t_less_than_0] += h
+        t_ph[t_great_than_1] -= h
+        tanget_ph = self.eval(t_ph)
+        tanget_mh = self.eval(t_mh)
+        tanget = tanget_ph - tanget_mh
+        tanget[t_less_than_0 | t_great_than_1] *= 2
+        return tanget
+
+def create_knots(pts, metric="DISTANCE"):
+    if metric == "DISTANCE":
+        tmp = np.linalg.norm(pts[:-1] - pts[1:], axis=1)
+        tknots = np.insert(tmp, 0, 0).cumsum()
+        tknots = tknots / tknots[-1]
+    elif metric == "MANHATTAN":
+        tmp = np.sum(np.absolute(pts[:-1] - pts[1:]), 1)
+        tknots = np.insert(tmp, 0, 0).cumsum()
+        tknots = tknots / tknots[-1]
+    elif metric == "POINTS":
+        tknots = np.linspace(0, 1, len(pts))
+    elif metric == "CHEBYSHEV":
+        tknots = np.max(np.absolute(pts[1:] - pts[:-1]), 1)
+        tmp = np.insert(tmp, 0, 0).cumsum()
+        tknots = tknots / tknots[-1]
+
+    return tknots
+
+
+class LinearSpline:
+    def __init__(self, pts, tknots=None, metric='DISTANCE'):
+        self.pts = np.array(pts).T
+        if tknots is None:
+            tknots = create_knots(locs, metric)
+
+        self.tknots = tknots
+
+
+    def eval(self, t_in):
+        """
+        Eval the liner spline f(t) = x,y,z through the points
+        in pts given the knots in tknots at the point in t_in
+        """
+        ptsT = self.pts
+        tknots = self.tknots
+        out = np.empty((3, len(t_in)))
+        for i in range(3):
+            out[i] = np.interp(t_in, tknots, ptsT[i])
+        return out.T

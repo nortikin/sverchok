@@ -8,7 +8,8 @@ Generator
    2pt_spline
    3pt_arc
    box
-   box_rounded   
+   box_rounded
+   bricks
    circle
    cylinder
    exponential
@@ -19,6 +20,7 @@ Generator
    hilbert3d
    hilbert_image
    image
+   image_decompose
    line
    ngon
    plane

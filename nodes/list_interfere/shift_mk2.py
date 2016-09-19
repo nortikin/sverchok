@@ -28,7 +28,7 @@ import numpy as np
 class ShiftNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     ''' Shift node mk2 '''
     bl_idname = 'ShiftNodeMK2'
-    bl_label = 'List Shift mk2'
+    bl_label = 'List Shift'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     shift_c = IntProperty(name='Shift',

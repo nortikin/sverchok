@@ -61,7 +61,7 @@ class SvSocketCommon:
 
     def set_default(self, value):
         if self.prop_name:
-            setattr(self.node, self.prop_name, value) 
+            setattr(self.node, self.prop_name, value)
 
 
     @property
@@ -220,13 +220,8 @@ class StringsSocket(NodeSocket, SvSocketCommon):
 
     def draw(self, context, layout, node, text):
         if self.prop_name:
-            if self.is_output:
-                t = text
-                msg = "Warning output socket: {name} in node: {node} has property attached"
-                print(msg.format(name=self.name, node=node.name))
-            else:
-                prop = node.rna_type.properties.get(self.prop_name, None)
-                t = prop.name if prop else text
+            prop = node.rna_type.properties.get(self.prop_name, None)
+            t = prop.name if prop else text
         else:
             t = text
 

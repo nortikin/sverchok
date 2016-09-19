@@ -35,7 +35,7 @@ class SvNGonNode(bpy.types.Node, SverchCustomTreeNode):
     ''' NGon '''
     bl_idname = 'SvNGonNode'
     bl_label = 'NGon'
-    bl_icon = 'OUTLINER_OB_EMPTY'
+    bl_icon = 'RNDCURVE'
 
     rad_ = FloatProperty(name='Radius', description='Radius',
                          default=1.0,

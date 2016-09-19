@@ -45,7 +45,7 @@ bl_info = {
         "AgustinJB, Zeffii, Kosvor, "
         "Portnov, Elfnor"
     ),
-    "version": (0, 5, 6, 3),
+    "version": (0, 5, 6, 4),
     "blender": (2, 7, 2),
     "location": "Nodes > CustomNodesTree > Add user nodes",
     "description": "Parametric node-based geometry programming",
@@ -77,6 +77,7 @@ root_modules = [
 ]
 
 core_modules = [
+    "monad_properties",
     "handlers", "update_system", "upgrade_nodes", "upgrade_group", "monad",
 ]
 

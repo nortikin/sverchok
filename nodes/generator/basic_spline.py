@@ -42,8 +42,8 @@ def generate_bezier(verts=[], num_verts=20):
 class BasicSplineNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Line '''
     bl_idname = 'BasicSplineNode'
-    bl_label = 'BasicSpline'
-    bl_icon = 'OUTLINER_OB_EMPTY'
+    bl_label = '2pt Spline'
+    bl_icon = 'CURVE_BEZCURVE'
 
     num_verts = IntProperty(
         name='num_verts',

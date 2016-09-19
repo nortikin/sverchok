@@ -25,7 +25,7 @@ from sverchok.data_structure import SvSetSocketAnyType, SvGetSocketAnyType
 class PolygonBoomNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Destroy object to many object of polygons '''
     bl_idname = 'PolygonBoomNode'
-    bl_label = 'PolygonBoom'
+    bl_label = 'Polygon Boom'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     def sv_init(self, context):

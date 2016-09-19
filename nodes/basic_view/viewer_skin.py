@@ -147,7 +147,7 @@ class SvSkinmodViewOp(bpy.types.Operator):
 class SkinViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
     bl_idname = 'SkinViewerNode'
-    bl_label = 'Skin Viewer Draw'
+    bl_label = 'Skin Mesher'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     activate = BoolProperty(

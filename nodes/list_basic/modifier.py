@@ -74,9 +74,9 @@ func_dict = {k: v for _, _, k, v in node_item_list}
 num_inputs = {k: v for v, _, k, _ in node_item_list}
 
 
-class ListModifierNode(bpy.types.Node, SverchCustomTreeNode):
+class SvListModifierNode(bpy.types.Node, SverchCustomTreeNode):
     ''' List Modifier'''
-    bl_idname = 'ListModifierNode'
+    bl_idname = 'SvListModifierNode'
     bl_label = 'List Modifier'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
@@ -134,12 +134,12 @@ class ListModifierNode(bpy.types.Node, SverchCustomTreeNode):
             data2 = inputs['Data2'].sv_get()
             out = [f(data1, data2)]
 
-        outputs[0].sv_set([out])
+        outputs[0].sv_set(out)
 
 
 def register():
-    bpy.utils.register_class(ListModifierNode)
+    bpy.utils.register_class(SvListModifierNode)
 
 
 def unregister():
-    bpy.utils.unregister_class(ListModifierNode)
+    bpy.utils.unregister_class(SvListModifierNode)

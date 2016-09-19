@@ -18,7 +18,7 @@
 
 
 import bpy
-from bpy.props import FloatProperty, BoolProperty, EnumProperty
+from bpy.props import FloatProperty, EnumProperty
 
 from sverchok.data_structure import updateNode
 from sverchok.node_tree import SverchCustomTreeNode
@@ -34,7 +34,7 @@ for k in sorted(easing_dict.keys()):
 
 class SvEasingNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvEasingNode'
-    bl_label = 'Easing'
+    bl_label = 'Easing 0..1'
 
     selected_mode = EnumProperty(
         items=easing_list,
@@ -43,13 +43,18 @@ class SvEasingNode(bpy.types.Node, SverchCustomTreeNode):
         update=updateNode
     )
 
+    in_float = FloatProperty(
+        min=0.0, max=1.0, default=0.0, name='Float Input',
+        description='input to the easy function', update=updateNode
+    )
+
     def draw_buttons(self, context, l):
         c = l.column()
         c.label(text="set easing function")
         c.prop(self, "selected_mode", text="")
 
     def sv_init(self, context):
-        self.inputs.new('StringsSocket', "Float").prop_name = 'float'
+        self.inputs.new('StringsSocket', "Float").prop_name = 'in_float'
         self.outputs.new('StringsSocket', "Float")
 
     def process(self):

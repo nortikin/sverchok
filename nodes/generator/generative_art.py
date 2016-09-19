@@ -344,6 +344,10 @@ class SvGenerativeArtNode(bpy.types.Node, SverchCustomTreeNode):
         """
         # get constants from xml
         format_dict = {}
+
+        if not hasattr(self, 'xml_text'):
+            return
+
         for elem in self.xml_tree.findall("constants"):
             format_dict.update(elem.attrib)
 
@@ -365,6 +369,9 @@ class SvGenerativeArtNode(bpy.types.Node, SverchCustomTreeNode):
         output sockets named after shape attribute values in xml
         """
         d_constants = {}
+        if not hasattr(self, 'xml_tree'):
+            return
+
         for elem in self.xml_tree.findall("constants"):
             d_constants.update(elem.attrib)
 
@@ -401,9 +408,14 @@ class SvGenerativeArtNode(bpy.types.Node, SverchCustomTreeNode):
             self.outputs.remove(socket)
 
     def process(self):
+      
         self.read_xml()
         self.make_sockets()
         self.xml_text_format()
+
+        if not hasattr(self, 'xml_tree'):
+            return
+        
         if any(output.is_linked for output in self.outputs):
             lsys = LSystem(self.xml_tree, self.maxmats)
             shapes = lsys.evaluate(seed=self.rseed)

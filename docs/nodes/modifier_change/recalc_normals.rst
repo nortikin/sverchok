@@ -40,3 +40,6 @@ Visualisation of cube normals turned inside:
 
 .. image:: https://cloud.githubusercontent.com/assets/284644/6315650/6e5f9d88-ba2a-11e4-84db-624d670ee04d.png
 
+Making normals normal:
+
+.. image:: https://cloud.githubusercontent.com/assets/5783432/18610773/c0c1ec8c-7d35-11e6-8a0a-b59fda738faf.png

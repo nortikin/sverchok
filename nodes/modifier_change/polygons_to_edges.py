@@ -35,7 +35,7 @@ def pols_edges(obj):
 class Pols2EdgsNode(bpy.types.Node, SverchCustomTreeNode):
     ''' take polygon and to edges '''
     bl_idname = 'Pols2EdgsNode'
-    bl_label = 'Polygons 2 Edges'
+    bl_label = 'Polygons to Edges'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     def sv_init(self, context):

@@ -21,15 +21,16 @@ from bpy.props import BoolProperty
 from mathutils import Vector
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (Matrix_generate, Matrix_location,
-                            SvGetSocketAnyType, SvSetSocketAnyType,
-                            Vector_generate)
+from sverchok.data_structure import (
+    Matrix_generate, Matrix_location,
+    SvGetSocketAnyType, SvSetSocketAnyType, Vector_generate
+)
 
 
 class DistancePPNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Distance Point to Point '''
     bl_idname = 'DistancePPNode'
-    bl_label = 'Distances'
+    bl_label = 'Distance'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     Cross_dist = BoolProperty(name='Cross_dist', description='DANGEROUS! If crossover dimension calculation, be sure',
