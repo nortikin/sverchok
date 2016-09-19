@@ -44,6 +44,20 @@ def get_icon_switch():
 def layout_draw_categories(layout, node_details):
     show_icons = menu_prefs.get('show_icons')
 
+    def icon(display_icon):
+        '''returns empty dict if show_icons is False, else the icon passed'''
+        return {'icon': display_icon for i in [1] if show_icons and display_icon}
+
+    def get_icon(node_ref):
+        # some nodes don't declare a bl_icon, but most do so try/except is fine.
+        try:
+            _icon = getattr(node_ref, 'bl_icon')
+            if _icon == 'OUTLINER_OB_EMPTY':
+                _icon = None
+        except:
+            _icon = None
+        return _icon
+
     add_n_grab = 'node.add_node'
     for node_info in node_details:
 
@@ -54,20 +68,8 @@ def layout_draw_categories(layout, node_details):
         bl_idname = node_info[0]
         node_ref = getattr(bpy.types, bl_idname)
 
-        if show_icons:
-
-            # some nodes don't declare a bl_icon, but most do so try/except is fine.
-            try:
-                icon = getattr(node_ref, 'bl_icon')
-            except:
-                icon = None
-
-            if icon and (not icon == 'OUTLINER_OB_EMPTY'):
-                layout_params = dict(text=node_ref.bl_label, icon=icon)
-            else:
-                layout_params = dict(text=node_ref.bl_label)
-        else:
-            layout_params = dict(text=node_ref.bl_label)
+        display_icon = get_icon(node_ref)
+        layout_params = dict(text=node_ref.bl_label, **icon(display_icon))
 
         node_op = layout.operator(add_n_grab, **layout_params)
         node_op.type = bl_idname
