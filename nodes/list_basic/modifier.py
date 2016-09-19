@@ -30,6 +30,7 @@ def normalize(a):
     max_value = max(a)
     return [n/max_value for n in a]
 
+
 def ordered_set(a):
     seen = set()
     b = []
@@ -38,6 +39,7 @@ def ordered_set(a):
             b.append(x)
             seen.add(x)
     return b
+
 
 def unique_consecutives(a):
     prev = ''
@@ -48,6 +50,11 @@ def unique_consecutives(a):
             prev = x
     return b
 
+
+def mask_subset(a, b):
+    return [(_ in b) for _ in a]
+
+
 SET = 'Set'
 INTX = 'Intersection'
 UNION = 'Union'
@@ -57,13 +64,14 @@ SET_OPS = [SET, INTX, UNION, DIFF, SYMDIFF]
 
 # using a purposely broad indexing value range incase other functinos get into this..
 node_item_list = [
-    (1, 1, SET, lambda a: set(a)),
+    (1, 1, SET, set),
     (1, 10, "Ordered Set by input", ordered_set),
     (1, 20, "Unique Consecutives", unique_consecutives),
     (1, 30, "Sequential Set", lambda a: sorted(set(a))),
     (1, 40, "Sequential Set Rev", lambda a: sorted(set(a), reverse=True)),
     (1, 50, "Normalize", normalize),
     (1, 60, "Accumulating Sum", lambda a: list(accumulate(a))),
+    (2, 69, "Mask subset (A in B)", mask_subset),
     (2, 70, INTX, lambda a, b: set(a) & set(b)),
     (2, 80, UNION, lambda a, b: set(a) | set(b)),
     (2, 90, DIFF, lambda a, b: set(a) - set(b)),
