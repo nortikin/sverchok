@@ -62,6 +62,7 @@ class svAxisInputNode(bpy.types.Node, SverchCustomTreeNode):
     def sv_init(self, context):
         self.width = 100
         self.outputs.new('VerticesSocket', "Vectors", "Vectors")
+        self.bl_label = 'Z'
 
     def draw_buttons(self, context, layout):
         row = layout.row()
