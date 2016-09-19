@@ -86,7 +86,7 @@ class SvListModifierNode(bpy.types.Node, SverchCustomTreeNode):
     ''' List Modifier'''
     bl_idname = 'SvListModifierNode'
     bl_label = 'List Modifier'
-    bl_icon = 'OUTLINER_OB_EMPTY'
+    bl_icon = 'MODIFIER'
 
     mode_items = [(name, name, "", idx) for _, idx, name, _ in node_item_list]
 

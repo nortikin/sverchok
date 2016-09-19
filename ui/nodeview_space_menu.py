@@ -106,7 +106,7 @@ class NODEVIEW_MT_Dynamic_Menu(bpy.types.Menu):
         layout = self.layout
         layout.operator_context = 'INVOKE_REGION_WIN'
 
-        s = layout.operator("node.add_search", text="Search", icon='VIEWZOOM')
+        s = layout.operator("node.add_search", text="Search", icon='OUTLINER_DATA_FONT')
         s.use_transform = True
 
         show_icons = menu_prefs.get('show_icons')
@@ -115,7 +115,7 @@ class NODEVIEW_MT_Dynamic_Menu(bpy.types.Menu):
         if show_icons:
             layout.menu("NODEVIEW_MT_AddGenerators", icon='OBJECT_DATAMODE')
             layout.menu("NODEVIEW_MT_AddTransforms", icon='MANIPUL')
-            layout.menu("NODEVIEW_MT_AddAnalyzers", icon='BORDERMOVE')
+            layout.menu("NODEVIEW_MT_AddAnalyzers", icon='VIEWZOOM')
             layout.menu("NODEVIEW_MT_AddModifiers", icon='MODIFIER')
         else:
             layout.menu("NODEVIEW_MT_AddGenerators")
@@ -128,9 +128,9 @@ class NODEVIEW_MT_Dynamic_Menu(bpy.types.Menu):
         layout.menu("NODEVIEW_MT_AddVector")
         layout.menu("NODEVIEW_MT_AddMatrix")
         layout.menu("NODEVIEW_MT_AddLogic")
-        layout.menu("NODEVIEW_MT_AddListOps")
+        layout.menu("NODEVIEW_MT_AddListOps", icon='NLA')
         layout.separator()
-        layout.menu("NODEVIEW_MT_AddViz")
+        layout.menu("NODEVIEW_MT_AddViz", icon='RESTRICT_VIEW_OFF')
         layout.menu("NODEVIEW_MT_AddText")
         layout.menu("NODEVIEW_MT_AddScene")
         layout.menu("NODEVIEW_MT_AddLayout")
