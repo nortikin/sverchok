@@ -132,7 +132,8 @@ class SvListModifierNode(bpy.types.Node, SverchCustomTreeNode):
 
     listify = BoolProperty(
         default=True,
-        description='Output lists or proper sets'
+        description='Output lists or proper sets',
+        update=updateNode
     )
 
 
