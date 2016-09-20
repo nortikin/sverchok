@@ -1,4 +1,5 @@
-> *This file is parsed by menu.py*  
+> ### This file is parsed by menu.py
+> 
 > The following strict rules apply to editing this file:
 >
 > - do not use tabs, anywhere
