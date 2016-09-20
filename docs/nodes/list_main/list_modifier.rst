@@ -5,7 +5,7 @@ This node offers an assortment of list modification functions. The node has both
 
 -  In Unary mode it will use the input of either sockets, it will use data1 first, then check data2
 -  If both are linked data1 is used.
--  The node will draw the name of the current mode into the node header, useful for minized nodes.
+-  The node will draw the name of the current mode into the node header, useful for minimized nodes.
 
 Behaviour
 ~~~~~~~~~
