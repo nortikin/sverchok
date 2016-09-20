@@ -144,14 +144,14 @@ class SvListModifierNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('StringsSocket', "Data1")
         self.inputs.new('StringsSocket', "Data2")        
         self.outputs.new('StringsSocket', "Result")
-        self.bl_label = 'Set'
+        # self.bl_label = 'Set'
+
+    def draw_label(self):
+        return self.func_
 
     def process(self):
         inputs = self.inputs
         outputs = self.outputs
-
-        if not (self.bl_label == self.func_):
-            self.bl_label = self.func_
 
         if not outputs[0].is_linked:
             return
