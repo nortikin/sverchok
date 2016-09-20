@@ -146,15 +146,14 @@ class SvListModifierNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('StringsSocket', "Result")
 
     def process(self):
-
         inputs = self.inputs
         outputs = self.outputs
-        operation = func_dict[self.func_]
-        unary = (num_inputs[self.func_] == 1)
 
         if not outputs[0].is_linked:
             return
         
+        operation = func_dict[self.func_]
+        unary = (num_inputs[self.func_] == 1)
         f = get_f(self, operation, unary)
 
         if unary:
