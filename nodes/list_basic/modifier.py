@@ -160,7 +160,12 @@ class SvListModifierNode(bpy.types.Node, SverchCustomTreeNode):
         f = get_f(self, operation, unary)
 
         if unary:
-            data1 = inputs['Data1'].sv_get()
+            if inputs['Data1'].is_linked:
+                data1 = inputs['Data1'].sv_get()
+            elif inputs['Data2'].is_linked:
+                data1 = inputs['Data2'].sv_get()
+            else:
+                return
             out = f(data1)
         else:
             data1 = inputs['Data1'].sv_get()
