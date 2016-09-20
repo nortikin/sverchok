@@ -60,22 +60,22 @@ Behaviour
 +----------------------+----------+--------------------------------------------------------------------------+
 | Intersection         | binary   | returns the set of items that appear in both A and B                     |
 |                      |          |                                                                          |
-|                      |          | |image|                                                                  |
+|                      |          | |image1|                                                                 |
 |                      |          |                                                                          |
 +----------------------+----------+--------------------------------------------------------------------------+
 | Union                | binary   | returns the set of items A joined with B                                 |
 |                      |          |                                                                          |
-|                      |          | |image|                                                                  |
+|                      |          | |image2|                                                                 |
 |                      |          |                                                                          |
 +----------------------+----------+--------------------------------------------------------------------------+
 | Difference           | binary   | returns the set of items from A that don’t appear in B                   |
 |                      |          |                                                                          |
-|                      |          | |image|                                                                  |
+|                      |          | |image3|                                                                 |
 |                      |          |                                                                          |
 +----------------------+----------+--------------------------------------------------------------------------+
 | Symmetric Diff       | binary   | returns the set of elements of A and B that don’t appear in Both         |
 |                      |          |                                                                          |
-|                      |          | |image|                                                                  |
+|                      |          | |image4|                                                                 |
 |                      |          |                                                                          |
 +----------------------+----------+--------------------------------------------------------------------------+
 
@@ -85,7 +85,7 @@ The boolean switch to *output as list* will be on by default,
 essentially it will wrap the output as a list because true sets don’t
 have a defined order (which we do need most of the time).
 
-.. |image| image:: https://cloud.githubusercontent.com/assets/619340/18662881/733c219c-7f1c-11e6-85fc-fcfc1ea7768d.png
-.. |image| image:: https://cloud.githubusercontent.com/assets/619340/18662921/a24aac7e-7f1c-11e6-80c1-684e513607a2.png
-.. |image| image:: https://cloud.githubusercontent.com/assets/619340/18663232/ec821d80-7f1d-11e6-83bc-3fd64ff037b4.png
-.. |image| image:: https://cloud.githubusercontent.com/assets/619340/18662983/f252aeba-7f1c-11e6-963b-e2b7d7111e17.png
+.. |image1| image:: https://cloud.githubusercontent.com/assets/619340/18662881/733c219c-7f1c-11e6-85fc-fcfc1ea7768d.png
+.. |image2| image:: https://cloud.githubusercontent.com/assets/619340/18662921/a24aac7e-7f1c-11e6-80c1-684e513607a2.png
+.. |image3| image:: https://cloud.githubusercontent.com/assets/619340/18663232/ec821d80-7f1d-11e6-83bc-3fd64ff037b4.png
+.. |image4| image:: https://cloud.githubusercontent.com/assets/619340/18662983/f252aeba-7f1c-11e6-963b-e2b7d7111e17.png
