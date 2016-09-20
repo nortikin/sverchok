@@ -85,6 +85,15 @@ The boolean switch to *output as list* will be on by default,
 essentially it will wrap the output as a list because true sets don’t
 have a defined order (which we do need most of the time).
 
+Example
+-------
+
+See the pullrequest for details : https://github.com/nortikin/sverchok/pull/884
+
+also see the original thread : https://github.com/nortikin/sverchok/issues/865
+
+
+
 .. |image1| image:: https://cloud.githubusercontent.com/assets/619340/18662881/733c219c-7f1c-11e6-85fc-fcfc1ea7768d.png
 .. |image2| image:: https://cloud.githubusercontent.com/assets/619340/18662921/a24aac7e-7f1c-11e6-80c1-684e513607a2.png
 .. |image3| image:: https://cloud.githubusercontent.com/assets/619340/18663232/ec821d80-7f1d-11e6-83bc-3fd64ff037b4.png
