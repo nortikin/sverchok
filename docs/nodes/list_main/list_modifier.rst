@@ -1,12 +1,10 @@
 List Modifier
 ~~~~~~~~~~~~~
 
-This node offers an assortment of list modification functions. The node
-has both Unary and Binary modes.
+This node offers an assortment of list modification functions. The node has both Unary and Binary modes.
 
--  In Unary mode the input socket is the linked one
--  if data1 isn’t linked then data2 is used as the input if it is linked
--  if both are linked data1 is used.
+-  In Unary mode it will use the input of either sockets, it will use data1 first, then check data2
+-  If both are linked data1 is used.
 
 Behaviour
 ~~~~~~~~~
