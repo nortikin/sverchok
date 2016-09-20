@@ -35,8 +35,8 @@ class SvVertexGroupNode(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons(self, context,   layout):
         layout.prop_search(self, 'object_ref', bpy.data, 'objects')
-        ob = bpy.data.objects[self.object_ref]
-        if ob.type == 'MESH':
+        ob = bpy.data.objects.get(self.object_ref)
+        if ob and ob.type == 'MESH':
             layout.prop_search(self, 'vertex_group', ob, "vertex_groups", text="")
 
     def draw_buttons_ext(self, context, layout):
@@ -51,7 +51,7 @@ class SvVertexGroupNode(bpy.types.Node, SverchCustomTreeNode):
 
     def process(self):
         obj = bpy.data.objects[self.object_ref]
-        obj.data.update()
+        obj.data.update() 
         Ve, We, Owe = self.inputs[:] + self.outputs[:]
         if not obj.vertex_groups:
             obj.vertex_groups.new(name='Sv_VGroup')
