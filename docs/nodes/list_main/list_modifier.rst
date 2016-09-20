@@ -46,7 +46,9 @@ Behaviour
 |                      |          | ``output = [False, False, True, True, True, True, False, False]``        |
 +----------------------+----------+--------------------------------------------------------------------------+
 | Intersection         | binary   | returns the set of items that appear in both A and B \                   |
+|                      |          |                                                                          |
 |                      |          | |image|                                                                  |
+|                      |          |                                                                          |
 +----------------------+----------+--------------------------------------------------------------------------+
 | Union                | binary   | returns the set of items A joined with B \                               |
 |                      |          | |image|                                                                  |
