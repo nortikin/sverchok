@@ -82,6 +82,39 @@ func_dict = {k: v for _, _, k, v in node_item_list}
 num_inputs = {k: v for v, _, k, _ in node_item_list}
 
 
+def  get_f(self, operation):
+    input_count = num_inputs[self.func_]
+    makes_lists = self.listify
+
+    if input_count == 1:
+        if self.func_ in SET_OPS and makes_lists:
+            def f(d):
+                if isinstance(d[0], (int, float)):
+                    return list(operation(d))
+                else:
+                    return [f(x) for x in d]
+        else:
+            def f(d):
+                if isinstance(d[0], (int, float)):
+                    return operation(d)
+                else:
+                    return [f(x) for x in d]
+    else:
+        if self.func_ in SET_OPS and makes_lists:
+            def f(a, b):
+                if isinstance(a[0], (int, float)):
+                    return list(operation(a, b))
+                else:
+                    return [f(*_) for _ in zip(a, b)]
+        else:
+            def f(a, b):
+                if isinstance(a[0], (int, float)):
+                    return operation(a, b)
+                else:
+                    return [f(*_) for _ in zip(a, b)]
+
+    return f
+
 class SvListModifierNode(bpy.types.Node, SverchCustomTreeNode):
     ''' List Modifier'''
     bl_idname = 'SvListModifierNode'
@@ -121,26 +154,15 @@ class SvListModifierNode(bpy.types.Node, SverchCustomTreeNode):
         if not outputs[0].is_linked:
             return
         
-        if self.func_ in SET_OPS and self.listify:
-            def f(d):
-                if isinstance(d[0], (int, float)):
-                    return list(operation(d))
-                else:
-                    return [f(x) for x in d]
-        else:
-            def f(d):
-                if isinstance(d[0], (int, float)):
-                    return operation(d)
-                else:
-                    return [f(x) for x in d]
+        f = get_f(self, operation)
 
         if num_inputs[self.func_] == 1:
             data1 = inputs['Data1'].sv_get()
-            out = [f(data1)]
+            out = f(data1)
         else:
             data1 = inputs['Data1'].sv_get()
             data2 = inputs['Data2'].sv_get()
-            out = [f(data1, data2)]
+            out = f(data1, data2)
 
         outputs[0].sv_set(out)
 
