@@ -18,7 +18,6 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import os
-import pprint
 from os.path import dirname
 from collections import OrderedDict
 
@@ -62,7 +61,6 @@ def make_node_cats():
         # final append
         node_cats[category] = temp_list
     
-    # pprint.pprint(node_cats)
     return node_cats
 
 
