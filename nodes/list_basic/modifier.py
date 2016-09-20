@@ -82,11 +82,10 @@ func_dict = {k: v for _, _, k, v in node_item_list}
 num_inputs = {k: v for v, _, k, _ in node_item_list}
 
 
-def  get_f(self, operation):
-    input_count = num_inputs[self.func_]
+def  get_f(self, operation, unary):
     makes_lists = self.listify
 
-    if input_count == 1:
+    if unary:
         if self.func_ in SET_OPS and makes_lists:
             def f(d):
                 if isinstance(d[0], (int, float)):
@@ -151,13 +150,14 @@ class SvListModifierNode(bpy.types.Node, SverchCustomTreeNode):
         inputs = self.inputs
         outputs = self.outputs
         operation = func_dict[self.func_]
+        unary = (num_inputs[self.func_] == 1)
 
         if not outputs[0].is_linked:
             return
         
-        f = get_f(self, operation)
+        f = get_f(self, operation, unary)
 
-        if num_inputs[self.func_] == 1:
+        if unary:
             data1 = inputs['Data1'].sv_get()
             out = f(data1)
         else:
