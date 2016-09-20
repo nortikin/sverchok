@@ -82,7 +82,7 @@ func_dict = {k: v for _, _, k, v in node_item_list}
 num_inputs = {k: v for v, _, k, _ in node_item_list}
 
 
-def  get_f(self, operation, unary):
+def get_f(self, operation, unary):
     makes_lists = self.listify
 
     if unary:
