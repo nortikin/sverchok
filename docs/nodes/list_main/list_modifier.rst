@@ -1,3 +1,8 @@
+.. |br| raw:: html
+
+   <br />
+
+
 List Modifier
 ~~~~~~~~~~~~~
 
@@ -14,13 +19,12 @@ Behaviour
 +----------------------+----------+--------------------------------------------------------------------------+
 | Modes                | inputs   | Behaviour Description                                                    |
 +======================+==========+==========================================================================+
-| Set                  | unary    | turns the valid input into a set                                         |
-|                      |          |                                                                          |
-|                      |          | ``input = [0,0,0,1,1,1,3,3,3,5,5,5,6,7,8,4,4,4,6,6,6,7,7,7,8]``          |
-|                      |          | ``output = [set(input)]``                                                |
+| Set                  | unary    | turns the valid input into a set |br|                                    |
+|                      |          | ``input = [0,0,0,1,1,1,3,3,3,5,5,5,6,7,8,4,4,4,6,6,6,7,7,7,8]`` |br|     |
+|                      |          | ``output = [set(input)]``                                       |br|     |
 +----------------------+----------+--------------------------------------------------------------------------+
-| Ordered Set by input | unary    | only unique numbers but ordered by the original input sequence           |
-|                      |          | ``input = [0,0,0,1,1,1,3,3,3,5,5,5,6,7,8,4,4,4,6,6,6,7,7,7,8]``          |
+| Ordered Set by input | unary    | only unique numbers but ordered by the original input sequence  |br|     |
+|                      |          | ``input = [0,0,0,1,1,1,3,3,3,5,5,5,6,7,8,4,4,4,6,6,6,7,7,7,8]`` |br|     |
 |                      |          | ``output = [0,1,3,5,6,7,8,4]``                                           |
 +----------------------+----------+--------------------------------------------------------------------------+
 | Unique Consecutives  | unary    | no consecutive repeats                                                   |
