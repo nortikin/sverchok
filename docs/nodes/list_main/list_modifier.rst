@@ -45,16 +45,16 @@ Behaviour
 |                      |          | ``B = [2,3,4,5]``                                                        |
 |                      |          | ``output = [False, False, True, True, True, True, False, False]``        |
 +----------------------+----------+--------------------------------------------------------------------------+
-| Intersection         | binary   | returns the set of items that appear in both A and B                     |
+| Intersection         | binary   | returns the set of items that appear in both A and B \                   |
 |                      |          | |image|                                                                  |
 +----------------------+----------+--------------------------------------------------------------------------+
-| Union                | binary   | returns the set of items A joined with B                                 |
+| Union                | binary   | returns the set of items A joined with B \                               |
 |                      |          | |image|                                                                  |
 +----------------------+----------+--------------------------------------------------------------------------+
-| Difference           | binary   | returns the set of items from A that don’t appear in B                   |
+| Difference           | binary   | returns the set of items from A that don’t appear in B \                 |
 |                      |          | |image|                                                                  |
 +----------------------+----------+--------------------------------------------------------------------------+
-| Symmetric Diff       | binary   | returns the set of elements of A and B that don’t appear in Both         |
+| Symmetric Diff       | binary   | returns the set of elements of A and B that don’t appear in Both \       |
 |                      |          | |image|                                                                  |
 +----------------------+----------+--------------------------------------------------------------------------+
 
