@@ -82,38 +82,6 @@ func_dict = {k: v for _, _, k, v in node_item_list}
 num_inputs = {k: v for v, _, k, _ in node_item_list}
 
 
-def get_f(self, operation, unary):
-    makes_lists = self.listify
-
-    if unary:
-        if self.func_ in SET_OPS and makes_lists:
-            def f(d):
-                if isinstance(d[0], (int, float)):
-                    return list(operation(d))
-                else:
-                    return [f(x) for x in d]
-        else:
-            def f(d):
-                if isinstance(d[0], (int, float)):
-                    return operation(d)
-                else:
-                    return [f(x) for x in d]
-    else:
-        if self.func_ in SET_OPS and makes_lists:
-            def f(a, b):
-                if isinstance(a[0], (int, float)):
-                    return list(operation(a, b))
-                else:
-                    return [f(*_) for _ in zip(a, b)]
-        else:
-            def f(a, b):
-                if isinstance(a[0], (int, float)):
-                    return operation(a, b)
-                else:
-                    return [f(*_) for _ in zip(a, b)]
-
-    return f
-
 class SvListModifierNode(bpy.types.Node, SverchCustomTreeNode):
     ''' List Modifier'''
     bl_idname = 'SvListModifierNode'
@@ -155,9 +123,8 @@ class SvListModifierNode(bpy.types.Node, SverchCustomTreeNode):
         if not outputs[0].is_linked:
             return
         
-        operation = func_dict[self.func_]
         unary = (num_inputs[self.func_] == 1)
-        f = get_f(self, operation, unary)
+        f = self.get_f(unary)
 
         if unary:
             if inputs['Data1'].is_linked:
@@ -173,6 +140,27 @@ class SvListModifierNode(bpy.types.Node, SverchCustomTreeNode):
             out = f(data1, data2)
 
         outputs[0].sv_set(out)
+
+    def get_f(self, unary):
+        operation = func_dict[self.func_]
+
+        do_post = (self.func_ in SET_OPS) and self.listify
+        post_process = list if do_post else lambda x: x # identity function
+
+        if unary:
+            def f(d):
+                if isinstance(d[0], (int, float)):
+                    return post_process(operation(d))
+                else:
+                    return [f(x) for x in d]
+        else: 
+            def f(a, b):
+                if isinstance(a[0], (int, float)):
+                    return post_process(operation(a, b))
+                else:
+                    return [f(*_) for _ in zip(a, b)]
+
+        return f
 
 
 def register():
