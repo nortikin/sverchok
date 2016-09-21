@@ -1,3 +1,4 @@
+> ### This file is parsed by menu.py
 > 
 > The following strict rules apply to editing this file:
 >
@@ -94,6 +95,9 @@
 ## List Masks
     MaskListNode
     SvMaskJoinNode
+
+## List Mutators
+    SvListModifierNode
 
 ## List main
     ListJoinNode

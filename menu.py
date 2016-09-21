@@ -18,7 +18,6 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import os
-import pprint
 from os.path import dirname
 from collections import OrderedDict
 
@@ -36,14 +35,6 @@ class SverchNodeCategory(NodeCategory):
 def make_node_cats():
     '''
     this loads the index.md file and converts it to an OrderedDict of node categories.
-
-    ## category name
-        bl_idname      shortname
-        ...             ...              ...
-
-    becomes
-
-        node_cats[category name] = [['bl_idname', 'shortname'],...... ]
 
     '''
 
@@ -70,7 +61,6 @@ def make_node_cats():
         # final append
         node_cats[category] = temp_list
     
-    # pprint.pprint(node_cats)
     return node_cats
 
 
@@ -93,8 +83,9 @@ def juggle_and_join(node_cats):
     node_cats['Beta Nodes'].extend(alpha)
 
     # put masks into list main
-    masks = node_cats.pop("List Masks")
-    node_cats["List main"].extend(masks)
+    for ltype in ["List Masks", "List Mutators"]:
+        node_refs = node_cats.pop(ltype)
+        node_cats["List main"].extend(node_refs)
 
     # add extended gens to Gens menu
     gen_ext = node_cats.pop("Extended Generators")

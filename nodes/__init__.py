@@ -39,4 +39,3 @@ def automatic_collection():
     return nodes_dict
 
 automatic_collection()
-
