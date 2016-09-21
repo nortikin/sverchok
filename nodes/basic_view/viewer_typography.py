@@ -31,9 +31,8 @@ from mathutils import Matrix, Vector
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import dataCorrect, fullList, updateNode
 from sverchok.utils.sv_viewer_utils import (
-    matrix_sanitizer, natural_plus_one, get_random_init
+    matrix_sanitizer, natural_plus_one, get_random_init, greek_alphabet
 )
-from sverchok.utils.sv_viewer_utils import greek_alphabet
 
 
 def make_text_object(node, idx, context, data):
@@ -82,7 +81,7 @@ def make_text_object(node, idx, context, data):
     f.bevel_depth = node.bevel_depth
     f.bevel_resolution = node.bevel_resolution
 
-    f.align = node.align  # artifical restriction l/r/c
+    f.align_x = node.align_x  # artifical restriction l/r/c
 
     sv_object['idx'] = idx
     sv_object['madeby'] = node.name
@@ -235,9 +234,9 @@ class SvTypeViewerNode(bpy.types.Node, SverchCustomTreeNode):
         ("RIGHT", "RIGHT", "", 2)
     ]
 
-    align = bpy.props.EnumProperty(
+    align_x = bpy.props.EnumProperty(
         items=mode_options,
-        description="left, center. right",
+        description="left, center, right",
         default="LEFT", update=updateNode
     )
 
@@ -302,8 +301,8 @@ class SvTypeViewerNode(bpy.types.Node, SverchCustomTreeNode):
                 col.label('bevel')
                 col.prop(self, 'bevel_depth')
                 col.prop(self, 'bevel_resolution')
-                col.label('align')
-                col.prop(self, 'align')
+                col.label('align horizontal')
+                col.prop(self, 'align_x')
 
             row = col.row(align=True)
             row.prop_search(self, 'material', bpy.data, 'materials', text='', icon='MATERIAL_DATA')
