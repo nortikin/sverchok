@@ -138,8 +138,8 @@ class SvListModifierNode(bpy.types.Node, SverchCustomTreeNode):
             data1 = inputs['Data1'].sv_get()
             data2 = inputs['Data2'].sv_get()
             out = f(data1, data2)
-            # param = match_long_repeat([data1, data2])
-            # out = f(*param)
+            # params = match_long_repeat([data1, data2])
+            # out = f(*params)
 
         outputs[0].sv_set(out)
 
