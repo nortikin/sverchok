@@ -498,7 +498,7 @@ def add_groups(groups_to_import):
     for name in groups_to_import:
         group_ng = bpy.data.node_groups.new(name, 'SverchGroupTreeType')
         if group_ng.name != name:
-            group_name_remap[name] = ng.name
+            group_name_remap[name] = group_ng.name
         import_tree(group_ng, '', groups_to_import[name])
     return group_name_remap
 
