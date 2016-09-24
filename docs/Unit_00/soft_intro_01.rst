@@ -1,9 +1,6 @@
-**********************************
-Orientation for Blender Newcomers
-**********************************
-
+*********************************************************
 Unit 00. Introduction to Blender, the NodeView and 3DView
----------------------------------------------------------
+*********************************************************
 
 Sverchok Installed, what now?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -21,13 +18,13 @@ have a 3DView open at the same time.
    leftclicking into the little triangle/diagonal lines in the bottom
    left of the 3dview, and dragging to the right.
 
-|splittingawindow|
+   |splittingawindow|
 
 #. Switch a View:
    Then you switch the resulting second 3DView to a NodeView (Node
    Editor)
 
-|switchview|
+   |switchview|
 
 #. | Sverchok Node Tree:
    | This icon |image2| shows that Sverchok Nodes can be loaded, you’ll
@@ -37,16 +34,16 @@ have a 3DView open at the same time.
    | When you start out you will have to press the New button to make a
      new node tree called (by default) NodeTree
 
-|image4|
+   |image4|
 
-becomes
+   becomes
 
-|image5|
+   |image5|
 
 #. Adding Nodes to the View:
    This View is a NodeView, from here you can use the Add Menu.
 
-|image6|
+   |image6|
 
 .. |image1| image:: https://cloud.githubusercontent.com/assets/619340/18806338/172b3e68-822a-11e6-8231-545a0a484a8a.png
 .. |splittingawindow| image:: https://cloud.githubusercontent.com/assets/619340/18806709/f7659ea6-8234-11e6-9ac8-b566bf8b2eca.gif
