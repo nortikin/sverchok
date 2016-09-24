@@ -10,8 +10,10 @@ User Preferences, then it’s safe to assume the add-on is enabled. To
 show the basics you need to have a NodeView open, and it’s useful to
 have a 3DView open at the same time.
 
-| **NodeView and 3DView**
-| |image1|
+NodeView and 3DView
+-------------------
+
+|image1|
 
 1. **Split a View**:
 
