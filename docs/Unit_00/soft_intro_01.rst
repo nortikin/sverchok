@@ -34,11 +34,11 @@ have a 3DView open at the same time.
    | When you start out you will have to press the New button to make a
      new node tree called (by default) NodeTree
 
-   |image4|
+     |image4|
 
-   becomes
+     becomes
 
-   |image5|
+     |image5|
 
 #. Adding Nodes to the View:
    This View is a NodeView, from here you can use the Add Menu.
