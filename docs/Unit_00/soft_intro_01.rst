@@ -49,6 +49,7 @@ NodeView and 3DView
 
 
 5. **Adding Nodes to the View**:
+
    This View is a NodeView, from here you can use the Add Menu.
 
    |image6|
