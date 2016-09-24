@@ -51,4 +51,4 @@ Matrix input node can make skew in one or another direction:
 
 Matrix input node can also scale extruded edges, so you will get bell:
 
-.. image:: https://github.com/nortikin/sverchok/issues/394
+.. image:: https://cloud.githubusercontent.com/assets/5783432/18603881/8d81e9e4-7c86-11e6-9a77-a9104bd234cc.png

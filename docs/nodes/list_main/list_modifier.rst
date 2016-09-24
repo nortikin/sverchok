@@ -1,5 +1,5 @@
 List Modifier
-~~~~~~~~~~~~~
+=============
 
 This node offers an assortment of list modification functions. The node has both Unary and Binary modes.
 
@@ -8,7 +8,7 @@ This node offers an assortment of list modification functions. The node has both
 -  The node will draw the name of the current mode into the node header, useful for minimized nodes.
 
 Behaviour
-~~~~~~~~~
+---------
 
 +----------------------+----------+--------------------------------------------------------------------------+
 | Modes                | inputs   | Behaviour Description                                                    |
