@@ -13,34 +13,34 @@ have a 3DView open at the same time.
 | **NodeView and 3DView**
 | |image1|
 
-#. Split a View:
+1. Split a View:
    To do this we can split the existing 3DView into two views, by
    leftclicking into the little triangle/diagonal lines in the bottom
    left of the 3dview, and dragging to the right.
 
    |splittingawindow|
 
-#. Switch a View:
+2. Switch a View:
    Then you switch the resulting second 3DView to a NodeView (Node
    Editor)
 
    |switchview|
 
-#. | Sverchok Node Tree:
+3. | Sverchok Node Tree:
    | This icon |image2| shows that Sverchok Nodes can be loaded, you’ll
      see it among the other Node Tree types. |image3|
 
-#. | Make a new Tree:
+4. | Make a new Tree:
    | When you start out you will have to press the New button to make a
      new node tree called (by default) NodeTree
 
-     |image4|
+   |image4|
 
-     becomes
+   becomes
 
-     |image5|
+   |image5|
 
-#. Adding Nodes to the View:
+5. Adding Nodes to the View:
    This View is a NodeView, from here you can use the Add Menu.
 
    |image6|
