@@ -1,4 +1,3 @@
-<div class='outer'>
 <table class="sv_table2">
   <tr>
     <td class="sv_elem2">
@@ -80,4 +79,4 @@
 	<li><a href='http://doraemonarchitecture.tumblr.com/'>Doraemon's blog</a></li>
 </ul>
   
-</div>
+
