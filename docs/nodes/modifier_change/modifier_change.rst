@@ -12,6 +12,7 @@ Modifier Change
    extrude_edges_old
    fill_holes
    intersect_edges
+   iterate
    mask_vertices
    mesh_join
    objects_along_edge
