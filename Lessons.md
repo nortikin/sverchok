@@ -1,7 +1,8 @@
+<div class='outer'>
 <table class="sv_table2">
   <tr>
     <td class="sv_elem2">
-	<h3 class='tofu'>BlenderSushi series on sverchok by Jimmy Gunawan</h3>
+	<h3 class='tofu'>BlenderSushi series on sverchok</h3>
 	<ul>
 	<li><a href='http://blendersushi.blogspot.ru/2014/01/sverchok-basic-of-procedural-city.html'>Basic of procedural city</a></li>
 	<li><a href='http://blendersushi.blogspot.ru/2014/04/sverchok-embracing-art-of-parametric.html'>Embracing The Art of Parametric Creation</a></li>
@@ -11,7 +12,7 @@
 	<li><a href='http://blendersushi.blogspot.com/2014/06/sverchok-flower-and-snake_474.html'>Flower and snake (+18)</a></li>
 	</ul>
 	You'll find many exploratory posts on blendersushi's blog, above is a small sampling.
-	<h3 class='tofu'>Luis Chavez. Sverchok+Unreal Engine 4.</h3>
+	<h3 class='tofu'>Luis Chavez. Sverchok + Unreal 4</h3>
 	<ul>
 	<li><a href='http://www.timefirevr.com/2014/10/13/sverchok-unreal-engine-4-part-1/'>From Sverchok to UE4 1</a></li>
 	<li><a href='http://www.timefirevr.com/2014/10/14/sverchok-unreal-engine-4-part-2/'>From Sverchok to UE4 2</a></li>
@@ -21,7 +22,7 @@
 	</ul>
 
 
-	<h3 class='tofu'>Elfnor. Work with Matrix.</h3>
+	<h3 class='tofu'>Elfnor. Work with Matrix</h3>
 	<ul>
 	<li><a href='http://elfnor.com/simple-sverchok-01-centers-polygons.html'>Matrices on polygons 1</a></li>
 	<li><a href='http://elfnor.com/simple-sverchok-02-matrix-deform.html'>Matrices on polygons 2</a></li>
@@ -78,3 +79,5 @@
 
 	<li><a href='http://doraemonarchitecture.tumblr.com/'>Doraemon's blog</a></li>
 </ul>
+  
+</div>
