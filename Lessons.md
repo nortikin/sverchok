@@ -1,10 +1,6 @@
-## Lessons
-
-There are many lessons. Please note that not all of these links are english or written by native english speakers.
-
-<table class="sv_table">
+<table class="sv_table2">
   <tr>
-    <td class="sv_table-elem">
+    <td class="sv_elem2">
 	<h3 class='tofu'>BlenderSushi series on sverchok by Jimmy Gunawan</h3>
 	<ul>
 	<li><a href='http://blendersushi.blogspot.ru/2014/01/sverchok-basic-of-procedural-city.html'>Basic of procedural city</a></li>
@@ -15,7 +11,7 @@ There are many lessons. Please note that not all of these links are english or w
 	<li><a href='http://blendersushi.blogspot.com/2014/06/sverchok-flower-and-snake_474.html'>Flower and snake (+18)</a></li>
 	</ul>
 	You'll find many exploratory posts on blendersushi's blog, above is a small sampling.
-	<h3>Luis Chavez. Sverchok+Unreal Engine 4.</h3>
+	<h3 class='tofu'>Luis Chavez. Sverchok+Unreal Engine 4.</h3>
 	<ul>
 	<li><a href='http://www.timefirevr.com/2014/10/13/sverchok-unreal-engine-4-part-1/'>From Sverchok to UE4 1</a></li>
 	<li><a href='http://www.timefirevr.com/2014/10/14/sverchok-unreal-engine-4-part-2/'>From Sverchok to UE4 2</a></li>
@@ -25,7 +21,7 @@ There are many lessons. Please note that not all of these links are english or w
 	</ul>
 
 
-	<h3>Elfnor. Work with Matrix.</h3>
+	<h3 class='tofu'>Elfnor. Work with Matrix.</h3>
 	<ul>
 	<li><a href='http://elfnor.com/simple-sverchok-01-centers-polygons.html'>Matrices on polygons 1</a></li>
 	<li><a href='http://elfnor.com/simple-sverchok-02-matrix-deform.html'>Matrices on polygons 2</a></li>
@@ -34,8 +30,8 @@ There are many lessons. Please note that not all of these links are english or w
 	<br>
 	
     </td>
-    <td class="sv_table-elem">
-	<h3>Original lessons in Russian</h3>
+    <td class="sv_elem2">
+	<h3 class='tofu'>Original lessons in Russian</h3>
 	<ul>
 	<li><a href='http://nikitron.cc.ua/Sverchok_man_00.html'> 00. Installation.</a></li>
 	<li><a href='http://nikitron.cc.ua/Sverchok_man_01.html'> 01. Sverchok and line. Way of Sverchok.</a></li>
@@ -54,7 +50,7 @@ There are many lessons. Please note that not all of these links are english or w
 	<li><a href="http://nikitron.cc.ua/Sverchok_man_14_IO.html"> 14. Import/Export layouts.</a></li>
 	</ul>
 	
-	<h3>zeffii blogs and lessons</h3>
+	<h3 class='tofu'>zeffii blogs and lessons</h3>
 	<ul>
 	<li><a href='http://blenderscripting.blogspot.com/2014/08/sverchok-basics.html'>Sverchok the basics, recommended</a></li>
 	<li><a href='http://blenderpython.tumblr.com/post/91852059604/sverchok-a-brief-introduction-to-parametric-modelling'>
