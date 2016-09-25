@@ -219,3 +219,23 @@ svg.archive {
     stroke: none;
     margin-left: 0.5em;
  }
+
+/* ... lessons specific formatting  ...*/
+
+.sv_table2 {
+  padding: 12px;
+  background: #f1f2f3;
+  color: #aaa;  
+}
+
+.tofu {
+  color: #eeaa33;
+  padding-left: 9px;
+}
+
+.sv_elem2 {
+  vertical-align: top;
+  width: 50%;
+  padding: 15px;
+  border: 1px solid black;
+}
