@@ -18,6 +18,7 @@
 
 import subprocess
 import os
+import webbrowser
 
 import bpy
 from bpy.props import StringProperty, CollectionProperty, BoolProperty, FloatProperty
@@ -77,6 +78,17 @@ class SvCopyIDName(bpy.types.Operator):
         return {'FINISHED'}
 
 
+class SvViewHelpForNode(bpy.types.Operator):
+
+    bl_idname = "node.view_node_help"
+    bl_label = "display a browser with compiled html"
+
+    def execute(self, context):
+        n = context.active_node
+        prefix = 'http://nikitron.cc.ua/sverch/html/nodes/' + n.help_url + '.html'
+        webbrowser.open(prefix)
+        return {'FINISHED'}
+
 
 def idname_draw(self, context):
     if not displaying_sverchok_nodes(context):
@@ -88,12 +100,17 @@ def idname_draw(self, context):
     bl_idname = node.bl_idname
     layout.operator('node.copy_bl_idname', text=bl_idname + ' (copy)').name = bl_idname
 
+    if hasattr(node, 'help_url'):
+        layout.operator('node.view_node_help', text='view node help')
+
+
 def register():
     get_branch()
     if BRANCH:
         bpy.types.NODE_HT_header.append(node_show_branch)
 
     bpy.utils.register_class(SvCopyIDName)
+    bpy.utils.register_class(SvViewHelpForNode)
     bpy.types.NODE_PT_active_node_generic.append(idname_draw)
 
 
@@ -102,3 +119,4 @@ def unregister():
         bpy.types.NODE_HT_header.remove(node_show_branch)
     bpy.types.NODE_PT_active_node_generic.remove(idname_draw)
     bpy.utils.unregister_class(SvCopyIDName)
+    bpy.utils.unregister_class(SvViewHelpForNode)
