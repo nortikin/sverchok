@@ -82,11 +82,20 @@ class SvViewHelpForNode(bpy.types.Operator):
 
     bl_idname = "node.view_node_help"
     bl_label = "display a browser with compiled html"
-
+    kind = StringProperty(default='online')
+    
     def execute(self, context):
         n = context.active_node
-        prefix = 'http://nikitron.cc.ua/sverch/html/nodes/' + n.help_url + '.html'
-        webbrowser.open(prefix)
+        if self.kind == 'online':
+            destination = 'http://nikitron.cc.ua/sverch/html/nodes/' + n.help_url + '.html'
+        else:
+            # destination = r'file:///C:/Users/zeffi/Desktop/GITHUB/sverchok/docs/nodes/list_main/list_modifier.rst'
+            basepath = os.path.dirname(sverchok.__file__) + '/docs/nodes/'
+            destination = r'file:///' + basepath + n.help_url + '.rst'
+            # print(destination)
+            # return {'CANCELLED'}
+
+        webbrowser.open(destination)
         return {'FINISHED'}
 
 
@@ -101,7 +110,10 @@ def idname_draw(self, context):
     layout.operator('node.copy_bl_idname', text=bl_idname + ' (copy)').name = bl_idname
 
     if hasattr(node, 'help_url'):
-        layout.operator('node.view_node_help', text='view node help')
+        row = layout.row(align=True)
+        row.label('help')
+        row.operator('node.view_node_help', text='online').kind = 'online'
+        row.operator('node.view_node_help', text='offline').kind = 'offline'
 
 
 def register():
