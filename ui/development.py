@@ -89,7 +89,6 @@ class SvViewHelpForNode(bpy.types.Operator):
         if self.kind == 'online':
             destination = 'http://nikitron.cc.ua/sverch/html/nodes/' + n.help_url + '.html'
         else:
-            # destination = r'file:///C:/Users/zeffi/Desktop/GITHUB/sverchok/docs/nodes/list_main/list_modifier.rst'
             basepath = os.path.dirname(sverchok.__file__) + '/docs/nodes/'
             destination = r'file:///' + basepath + n.help_url + '.rst'
             # print(destination)
