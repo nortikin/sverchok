@@ -17,7 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-from bpy.props import StringProperty
+from bpy.props import StringProperty, BoolProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import levelsOflist, SvGetSocketAnyType
@@ -164,10 +164,40 @@ class ViewerNode_text(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Viewer text'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
+    autoupdate = BoolProperty(name='update', default=False)
+
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', 'vertices', 'vertices')
         self.inputs.new('StringsSocket', 'edg_pol', 'edg_pol')
         self.inputs.new('MatrixSocket', 'matrix', 'matrix')
+
+        nTree = bpy.data.node_groups[bpy.context.space_data.node_tree.name]
+        print(nTree)
+        #this part can be than removed from node text viewer:
+        texts = bpy.data.texts.items()
+        for t in texts:
+            exists = False
+            if bpy.data.texts[t[0]].name == 'Sverchok_viewer':
+                exists = True
+                break
+        if not exists:
+            bpy.data.texts.new('Sverchok_viewer')
+        labls = [n.label for n in nTree.nodes]
+        if 'Sverchok_viewer' in [n.label for n in nTree.nodes]:
+            print()
+            return
+        else:
+            a = nTree.nodes.new('NodeFrame')
+            a.width = 800
+            a.height = 1500
+            locx = [n.location[0] for n in nTree.nodes]
+            locy = [n.location[1] for n in nTree.nodes]
+            mx, my = min(locx), max(locy)
+            a.location[0] = mx-a.width-10
+            a.location[1] = my
+            a.text = bpy.data.texts['Sverchok_viewer']
+            a.label = 'Sverchok_viewer'
+            a.shrink = False
 
     def draw_buttons(self, context, layout):
         row = layout.row()
@@ -175,9 +205,13 @@ class ViewerNode_text(bpy.types.Node, SverchCustomTreeNode):
         do_text = row.operator('node.sverchok_viewer_button', text='V I E W')
         do_text.nodename = self.name
         do_text.treename = self.id_data.name
+        layout.prop(self, "autoupdate", text="autoupdate")
 
     def process(self):
-        pass
+        if not self.autoupdate:
+            pass
+        else:
+            bpy.ops.node.sverchok_viewer_button(nodename=self.name, treename=bpy.context.space_data.node_tree.name)
     def update(self):
         pass
 
@@ -194,5 +228,3 @@ def unregister():
 
 if __name__ == '__main__':
     register()
-
-
