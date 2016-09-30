@@ -25,6 +25,7 @@ from bpy.props import StringProperty, CollectionProperty, BoolProperty, FloatPro
 
 # global variables in tools
 import sverchok
+from sverchok.utils.sv_help import remapper
 
 BRANCH = ""
 
@@ -86,11 +87,19 @@ class SvViewHelpForNode(bpy.types.Operator):
     
     def execute(self, context):
         n = context.active_node
+
+        string_dir = remapper.get(n.bl_idname)
+        if not string_dir:
+            return {'CANCELLED'}
+        else:
+            filename = n.__module__.split('.')[-1]
+            help_url = string_dir + '/' + filename
+
         if self.kind == 'online':
-            destination = 'http://nikitron.cc.ua/sverch/html/nodes/' + n.help_url + '.html'
+            destination = 'http://nikitron.cc.ua/sverch/html/nodes/' + help_url + '.html'
         else:
             basepath = os.path.dirname(sverchok.__file__) + '/docs/nodes/'
-            destination = r'file:///' + basepath + n.help_url + '.rst'
+            destination = r'file:///' + basepath + help_url + '.rst'
             # print(destination)
             # return {'CANCELLED'}
 
@@ -108,11 +117,11 @@ def idname_draw(self, context):
     bl_idname = node.bl_idname
     layout.operator('node.copy_bl_idname', text=bl_idname + ' (copy)').name = bl_idname
 
-    if hasattr(node, 'help_url'):
-        row = layout.row(align=True)
-        row.label('help')
-        row.operator('node.view_node_help', text='online').kind = 'online'
-        row.operator('node.view_node_help', text='offline').kind = 'offline'
+    # show these anyway, can fail and let us know..
+    row = layout.row(align=True)
+    row.label('help')
+    row.operator('node.view_node_help', text='online').kind = 'online'
+    row.operator('node.view_node_help', text='offline').kind = 'offline'
 
 
 def register():
