@@ -85,10 +85,10 @@ def juggle_and_join(node_cats):
     # put masks into list main
     for ltype in ["List Masks", "List Mutators"]:
         node_refs = node_cats.pop(ltype)
-        node_cats["List main"].extend(node_refs)
+        node_cats["List Main"].extend(node_refs)
 
     # add extended gens to Gens menu
-    gen_ext = node_cats.pop("Extended Generators")
+    gen_ext = node_cats.pop("Generators Extended")
     node_cats["Generators"].extend(gen_ext)
 
     return node_cats
