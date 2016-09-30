@@ -21,6 +21,5 @@ remapper = {}
 
 def build_help_remap(fdict):
     for k, v in fdict.items():
-        print(fdict)
         for bl_idname in v:
             remapper[bl_idname[0]] = k.lower().replace('_', ' ')
