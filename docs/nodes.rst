@@ -19,7 +19,7 @@ Nodes
    List Main <nodes/list_main/list_main_index>
    List Structure <nodes/list_struct/list_struct_index>
    List Masks <nodes/list_masks/list_masks_index>
-   List Mutators <nodes/list_struct/list_mutators_index>
+   List Mutators <nodes/list_mutators/list_mutators_index>
 
    Viz <nodes/viz/viz_index>
    Text <nodes/text/text_index>
