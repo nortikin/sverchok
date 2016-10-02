@@ -88,7 +88,35 @@ class SverchokViewer(bpy.types.Operator):
         self.do_text(out_verts, out_edgpol, out_matrix, edpotype)
         return {'FINISHED'}
 
+    def makeframe(self, nTree,):
+        '''
+        Making frame to show text to user. appears in left corner
+        Todo - make more organized layout with button making 
+        lines in up and between Frame and nodes and text of user and layout name
+        '''
+        labls = [n.label for n in nTree.nodes]
+        if 'Sverchok_viewer' in [n.label for n in nTree.nodes]:
+            return
+        else:
+            a = nTree.nodes.new('NodeFrame')
+            a.width = 800
+            a.height = 1500
+            locx = [n.location[0] for n in nTree.nodes]
+            locy = [n.location[1] for n in nTree.nodes]
+            mx, my = min(locx), max(locy)
+            a.location[0] = mx-a.width-10
+            a.location[1] = my
+            a.text = bpy.data.texts['Sverchok_viewer']
+            a.label = 'Sverchok_viewer'
+            a.shrink = False
+            a.use_custom_color = True
+            # this trick allows us to negative color, so user accept it as grey!!!
+            color = [1-i for i in bpy.context.user_preferences.themes['Default'].node_editor.space.back[:]]
+            a.color[:] = color
+
     def do_text(self,vertices,edgspols,matrices,edpotype):
+        nTree = bpy.data.node_groups[bpy.context.space_data.node_tree.name]
+        #this part can be than removed from node text viewer:
         texts = bpy.data.texts.items()
         exists = False
         for t in texts:
@@ -111,6 +139,7 @@ class SverchokViewer(bpy.types.Operator):
                     + podpis
         bpy.data.texts['Sverchok_viewer'].clear()
         bpy.data.texts['Sverchok_viewer'].write(for_file)
+        self.makeframe(nTree)
 
     def edgDef(self, l):
         t = '\n\ndata: \n'
@@ -170,34 +199,6 @@ class ViewerNode_text(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('VerticesSocket', 'vertices', 'vertices')
         self.inputs.new('StringsSocket', 'edg_pol', 'edg_pol')
         self.inputs.new('MatrixSocket', 'matrix', 'matrix')
-
-        nTree = bpy.data.node_groups[bpy.context.space_data.node_tree.name]
-        print(nTree)
-        #this part can be than removed from node text viewer:
-        texts = bpy.data.texts.items()
-        for t in texts:
-            exists = False
-            if bpy.data.texts[t[0]].name == 'Sverchok_viewer':
-                exists = True
-                break
-        if not exists:
-            bpy.data.texts.new('Sverchok_viewer')
-        labls = [n.label for n in nTree.nodes]
-        if 'Sverchok_viewer' in [n.label for n in nTree.nodes]:
-            print()
-            return
-        else:
-            a = nTree.nodes.new('NodeFrame')
-            a.width = 800
-            a.height = 1500
-            locx = [n.location[0] for n in nTree.nodes]
-            locy = [n.location[1] for n in nTree.nodes]
-            mx, my = min(locx), max(locy)
-            a.location[0] = mx-a.width-10
-            a.location[1] = my
-            a.text = bpy.data.texts['Sverchok_viewer']
-            a.label = 'Sverchok_viewer'
-            a.shrink = False
 
     def draw_buttons(self, context, layout):
         row = layout.row()
