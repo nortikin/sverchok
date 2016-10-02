@@ -19,6 +19,7 @@
 import subprocess
 import os
 import webbrowser
+from pathlib import Path
 
 import bpy
 from bpy.props import StringProperty, CollectionProperty, BoolProperty, FloatProperty
@@ -89,12 +90,24 @@ class SvViewHelpForNode(bpy.types.Operator):
         n = context.active_node
 
         string_dir = remapper.get(n.bl_idname)
-        if not string_dir:
-            return {'CANCELLED'}
-        else:
-            filename = n.__module__.split('.')[-1]
-            help_url = string_dir + '/' + filename
+        filename = n.__module__.split('.')[-1]
+        help_url = string_dir + '/' + filename
 
+        # first let's find if this is a valid doc file, by inspecting locally for the rst file.
+        VALID = False
+        try:
+            tk = os.path.join(os.path.dirname(sverchok.__file__), 'docs', 'nodes', string_dir.replace(' ', '_'), filename + '.rst')
+            my_file = Path(tk)
+            VALID = my_file.is_file()
+        except:
+            pass
+
+        if not VALID:
+            local_404 = os.path.join(os.path.dirname(sverchok.__file__), 'docs', '404.html')
+            webbrowser.open(local_404)
+            return {'CANCELLED'}
+
+        # valid doc link! 
         if self.kind == 'online':
             destination = 'http://nikitron.cc.ua/sverch/html/nodes/' + help_url + '.html'
         else:
