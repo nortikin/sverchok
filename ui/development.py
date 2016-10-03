@@ -103,10 +103,7 @@ class SvViewHelpForNode(bpy.types.Operator):
             pass
 
         if not VALID:
-            # bl_label of some nodes is edited by us, but those nodes do have docs ..
-            local_404 = 'file:///' + os.path.join(os.path.dirname(sverchok.__file__), 'docs', '404.html?bl_label=' + n.bl_idname)
-            print(local_404)
-            webbrowser.open(local_404)
+            self.throw_404(n)
             return {'CANCELLED'}
 
         # valid doc link! 
@@ -115,11 +112,25 @@ class SvViewHelpForNode(bpy.types.Operator):
         else:
             basepath = os.path.dirname(sverchok.__file__) + '/docs/nodes/'
             destination = r'file:///' + basepath + help_url + '.rst'
-            # print(destination)
-            # return {'CANCELLED'}
 
         webbrowser.open(destination)
         return {'FINISHED'}
+
+    def throw_404(self, n):
+        # bl_label of some nodes is edited by us, but those nodes do have docs ..
+        _dirname = os.path.dirname(sverchok.__file__)
+        path1 = os.path.join(_dirname, 'docs', '404.html')
+        path2 = os.path.join(_dirname, 'docs', '404_custom.html')
+
+        with open(path1) as origin:
+            with open(path2, 'w') as destination:
+                for line in origin:
+                    if '{{variable}}' in line:
+                        destination.write(line.replace("{{variable}}", n.bl_label))
+                    else:
+                        destination.write(line)
+        
+        webbrowser.open(path2)
 
 
 def idname_draw(self, context):

@@ -11,30 +11,11 @@
     <body>
 
         <div id="vh" class="box">
-            Sorry! It appears that <span id="label">{{bl_label}}</span> doesn't have a document associated with it. 
+            Sorry! It appears that <span id="label">{{variable}}</span> doesn't have a document associated with it. 
             <br/><br/>
             Please contact us on the <a href="https://github.com/nortikin/sverchok/issues">GitHub issue tracker</a> or any of the following social sites: 
             <a href="https://plus.google.com/communities/113245231013159497850">G+</a>, <a href="http://vk.com/public35076122">VK</a> or <a href="http://www.blenderartists.org/forum/showthread.php?272679">Blenderartists</a>.
         </div>
-
-        <script language="JavaScript">
-            function processUser()
-            {
-                var parameters = location.search.substring(1).split("&");
-                console.log(parameters);
-
-                var temp = parameters[0].split("=");
-                var bl_label = unescape(temp[1]);
-                var element = document.getElementById('label')
-                var current_value = element.textContent;
-                element.textContent = current_value.replace('{{bl_label}}', bl_label);
-            }
-            
-            window.onload = function() {
-                processUser()
-            };
-        </script>
-
 
     </body>
 </html>
