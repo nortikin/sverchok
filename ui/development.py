@@ -103,7 +103,9 @@ class SvViewHelpForNode(bpy.types.Operator):
             pass
 
         if not VALID:
-            local_404 = os.path.join(os.path.dirname(sverchok.__file__), 'docs', '404.html')
+            # bl_label of some nodes is edited by us, but those nodes do have docs ..
+            local_404 = 'file:///' + os.path.join(os.path.dirname(sverchok.__file__), 'docs', '404.html?bl_label=' + n.bl_idname)
+            print(local_404)
             webbrowser.open(local_404)
             return {'CANCELLED'}
 
