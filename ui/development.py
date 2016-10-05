@@ -16,10 +16,10 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-import subprocess
 import os
+from os.path import exists, isfile
+import subprocess
 import webbrowser
-from pathlib import Path
 
 import bpy
 from bpy.props import StringProperty, CollectionProperty, BoolProperty, FloatProperty
@@ -97,8 +97,7 @@ class SvViewHelpForNode(bpy.types.Operator):
         VALID = False
         try:
             tk = os.path.join(os.path.dirname(sverchok.__file__), 'docs', 'nodes', string_dir.replace(' ', '_'), filename + '.rst')
-            my_file = Path(tk)
-            VALID = my_file.is_file()
+            VALID = exists(tk) and isfile(tk)
         except:
             pass
 
