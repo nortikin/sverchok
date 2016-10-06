@@ -38,6 +38,7 @@ class SvRayCastNode(bpy.types.Node, SverchCustomTreeNode):
         si('StringsSocket', 'Objects')
         si('VerticesSocket', 'start').use_prop = True
         si('VerticesSocket', 'end').use_prop = True
+        so('StringsSocket', "succes")
         so('VerticesSocket', "HitP")
         so('VerticesSocket', "HitNorm")
         so('StringsSocket', "FaceINDEX")
@@ -49,7 +50,7 @@ class SvRayCastNode(bpy.types.Node, SverchCustomTreeNode):
 
     def process(self):
         o,s,e = self.inputs
-        P,N,I = self.outputs
+        S,P,N,I = self.outputs
         outfin,OutLoc,obj,sm1,sm2 = [],[],o.sv_get(),self.mode,self.mode2
         st, en = match_long_repeat([s.sv_get()[0], e.sv_get()[0]])
         for OB in obj:
@@ -62,15 +63,17 @@ class SvRayCastNode(bpy.types.Node, SverchCustomTreeNode):
             if P.is_linked:
                 for i,i2 in zip(obj,outfin):
                     omw = i.matrix_world
-                    OutLoc.append([(omw*i[0])[:] for i in i2])
+                    OutLoc.append([(omw*i[1])[:] for i in i2])
                 P.sv_set(OutLoc)
         else:
             if P.is_linked:
-                P.sv_set([[i[0][:] for i in i2] for i2 in outfin])
+                P.sv_set([[i[1][:] for i in i2] for i2 in outfin])
+        if S.is_linked:
+            S.sv_set([[i[0] for i in i2] for i2 in outfin])
         if N.is_linked:
-            N.sv_set([[i[1][:] for i in i2] for i2 in outfin])
+            N.sv_set([[i[2][:] for i in i2] for i2 in outfin])
         if I.is_linked:
-            I.sv_set([[i[2] for i in i2] for i2 in outfin])
+            I.sv_set([[i[3] for i in i2] for i2 in outfin])
 
     def update_socket(self, context):
         self.update()
