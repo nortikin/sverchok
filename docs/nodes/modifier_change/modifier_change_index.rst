@@ -7,20 +7,20 @@ Modifier Change
 
    bevel
    delete_loose
-   extrude_separate
+   edges_intersect
    extrude_edges
    extrude_edges_old
-   fill_holes
-   intersect_edges
+   extrude_separate
+   holes_fill
    iterate
-   mask_vertices
    mesh_join
+   mesh_separate
    objects_along_edge
    offset
-   polygon_boom
+   polygons_boom
    polygons_to_edges
-   triangulate
-   recalc_normals
    randomize
+   recalc_normals
    remove_doubles
-   separate_loose_parts
+   triangulate
+   vertices_mask
