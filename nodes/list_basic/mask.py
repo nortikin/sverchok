@@ -56,9 +56,10 @@ class MaskListNode(bpy.types.Node, SverchCustomTreeNode):
     def process(self):
         inputs = self.inputs
         outputs = self.outputs
-    
         data = inputs['data'].sv_get()
         mask = inputs['mask'].sv_get(default=[[1, 0]])
+        if not isinstance(mask[0], list):
+            mask = [mask]
 
         result = self.getMask(data, mask, self.Level)
 
