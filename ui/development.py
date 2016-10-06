@@ -105,7 +105,8 @@ class SvViewHelpForNode(bpy.types.Operator):
             self.throw_404(n)
             return {'CANCELLED'}
 
-        # valid doc link! 
+        # valid doc link!
+        help_url = help_url.replace(' ', '_')
         if self.kind == 'online':
             destination = 'http://nikitron.cc.ua/sverch/html/nodes/' + help_url + '.html'
         else:
