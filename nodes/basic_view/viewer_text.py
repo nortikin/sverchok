@@ -17,6 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
+import sverchok
 from bpy.props import StringProperty, BoolProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
@@ -201,8 +202,13 @@ class ViewerNode_text(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('MatrixSocket', 'matrix', 'matrix')
 
     def draw_buttons(self, context, layout):
+
+        addon = context.user_preferences.addons.get(sverchok.__name__)
         row = layout.row()
-        row.scale_y = 4.0
+        if addon.preferences.over_sized_buttons:
+            row.scale_y = 4.0
+        else:
+            row.scale_y = 1
         do_text = row.operator('node.sverchok_viewer_button', text='V I E W')
         do_text.nodename = self.name
         do_text.treename = self.id_data.name

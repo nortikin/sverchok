@@ -281,7 +281,7 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
                 bake_text = "B A K E"
             else:
                 row.scale_y = 1
-                bake_text = "Bake"
+                bake_text = "B A K E"
 
             opera = row.operator('node.sverchok_mesh_baker_mk2', text=bake_text)
             opera.idname = self.name
@@ -434,3 +434,6 @@ def unregister():
     bpy.utils.unregister_class(ViewerNode2)
     bpy.utils.unregister_class(SvObjBakeMK2)
     del bpy.types.Scene.sv_light_direction
+
+if __name__ == '__main__':
+    register()
