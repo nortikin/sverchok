@@ -215,5 +215,6 @@ SOME RULES:
     use ``.is_linked`` 
 
 14. to **CHANGE** some node, please, follow next:
+
     a. Put old node file to ../old_nodes add the corresponding bl_idname in __init__.py in the table. (there is README file also);
     b. Make new changed node as mk2(3,4...n) and place to where old node was placed with all changes as new node, change name and bl_idname (look 'To create a node:' in current instructions).
