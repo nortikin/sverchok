@@ -39,6 +39,7 @@ class SvPointOnMeshNode(bpy.types.Node, SverchCustomTreeNode):
         si('StringsSocket', 'Objects')
         si('VerticesSocket', "point").use_prop = True
         si('StringsSocket', "max_dist").prop_name = "Mdist"
+        so('StringsSocket', "succes")
         so('VerticesSocket', "Point_on_mesh")
         so('VerticesSocket', "Normal_on_mesh")
         so('StringsSocket', "FaceINDEX")
@@ -50,7 +51,7 @@ class SvPointOnMeshNode(bpy.types.Node, SverchCustomTreeNode):
 
     def process(self):
         o,p,md = self.inputs
-        P,N,I = self.outputs
+        S,P,N,I = self.outputs
         Out,point,sm1,sm2 = [],p.sv_get()[0],self.mode,self.mode2
         obj, max_dist = second_as_first_cycle(o.sv_get(), md.sv_get()[0])
         for i,i2 in zip(obj,max_dist):
@@ -62,14 +63,16 @@ class SvPointOnMeshNode(bpy.types.Node, SverchCustomTreeNode):
             if sm2:
                 out =[]
                 for i,i2 in zip(obj,Out):
-                    out.append([(i.matrix_world*i3[0])[:] for i3 in i2])
+                    out.append([(i.matrix_world*i3[1])[:] for i3 in i2])
                 P.sv_set(out)
             else:
-                P.sv_set([[i2[0][:] for i2 in o] for o in Out])
+                P.sv_set([[i2[1][:] for i2 in o] for o in Out])
+        if S.is_linked:
+            S.sv_set([[i2[0] for i2 in o] for o in Out])
         if N.is_linked:
-            N.sv_set([[i2[1][:] for i2 in o] for o in Out])
+            N.sv_set([[i2[2][:] for i2 in o] for o in Out])
         if I.is_linked:
-            I.sv_set([[i2[2] for i2 in o] for o in Out])
+            I.sv_set([[i2[3] for i2 in o] for o in Out])
 
     def update_socket(self, context):
         self.update()
