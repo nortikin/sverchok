@@ -69,14 +69,23 @@ def inset_special(vertices, faces, inset_rates, axis, distances, make_inner):
     def do_ngon(face, lv_idx, make_inner):
         '''
         setting up the forloop only makes sense for ngons
-        idx0, idx1, last_vertex_idx-(n-1), last_vertex_idx-n
-        idx1, idxn, last_vertex_idx-(n-2), last_vertex_idx-(n-1)
-        .. ,.. ,.. ,..
-        idxn, idx0, last_vertex_idx-n, last_vertex_idx-(n-2)
-
         '''
-        print('ngons are not yet supported')
-        return []
+        num_elements = len(face)
+        face_elements = list(face)
+        inner_elements = [lv_idx-n for n in range(num_elements-1, -1, -1)]
+        # padding, wrap-around
+        face_elements.append(face_elements[0])
+        inner_elements.append(inner_elements[0])
+
+        out_faces = []
+        add_face = out_faces.append
+        for j in range(num_elements):
+            add_face([face_elements[j], face_elements[j+1], inner_elements[j+1], inner_elements[j]])
+
+        if make_inner:
+            add_face([idx[-1] for idx in out_faces])
+
+        return out_faces
 
     def new_inner_from(face, inset_by, axis, distance, make_inner):
         '''
