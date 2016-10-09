@@ -127,15 +127,11 @@ def inset_special(vertices, faces, inset_rates, distances, ignores, make_inners)
     for idx, face in enumerate(faces):
         inset_by = inset_rates[idx]
 
-        if ignores[idx]:
-            # generate just the original face --- not done yet
-            continue
-
-        if inset_by > 0:
+        if (inset_by > 0) or (not ignores[idx]):
             new_inner_from(face, inset_by, distances[idx], make_inners[idx])
         else:
-            # generate just the original face --- not done yet
-            pass
+            new_faces.append(face)
+
 
     new_verts = [v[:] for v in vertices]
     # print('new_faces=', new_faces)
