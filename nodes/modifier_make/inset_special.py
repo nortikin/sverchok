@@ -210,7 +210,7 @@ class SvInsetSpecial(bpy.types.Node, SverchCustomTreeNode):
                 'inset_rates': inset_rates,
                 'distances': distance_vals,
                 'make_inners': make_inners,
-                'ignores', ignores
+                'ignores': ignores
             }
 
             res = inset_special(**func_args)
