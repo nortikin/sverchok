@@ -111,9 +111,6 @@ def inset_special(vertices, faces, inset_rates, distances, ignores, make_inners)
 
         if distance:
             local_normal = mathutils.geometry.normal(*new_verts_prime[:3])
-            if axis:
-                local_normal = (avg_vec + local_normal + Vector(axis)).normalized()
-
             new_verts_prime = [v.lerp(v+local_normal, distance) for v in new_verts_prime]
 
         vertices.extend(new_verts_prime)
@@ -127,7 +124,7 @@ def inset_special(vertices, faces, inset_rates, distances, ignores, make_inners)
     for idx, face in enumerate(faces):
         inset_by = inset_rates[idx]
 
-        if (inset_by > 0) or (not ignores[idx]):
+        if (inset_by > 0) and (not ignores[idx]):
             new_inner_from(face, inset_by, distances[idx], make_inners[idx])
         else:
             new_faces.append(face)
