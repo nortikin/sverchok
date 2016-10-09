@@ -33,7 +33,7 @@ from sverchok.data_structure import (
 ''' very non optimal routines. beware. I know this '''
 
 
-def inset_special(vertices, faces, inset_rates, axis, distances, ignore, make_inner):
+def inset_special(vertices, faces, inset_rates, distances, ignores, make_inners):
 
     new_faces = []
 
@@ -87,7 +87,7 @@ def inset_special(vertices, faces, inset_rates, axis, distances, ignore, make_in
 
         return out_faces
 
-    def new_inner_from(face, inset_by, axis, distance, make_inner):
+    def new_inner_from(face, inset_by, distance, make_inner):
         '''
         face:       (idx list) face to work on
         inset_by:   (scalar) amount to open the face
@@ -125,15 +125,14 @@ def inset_special(vertices, faces, inset_rates, axis, distances, ignore, make_in
         new_faces.extend(new_faces_prime)
 
     for idx, face in enumerate(faces):
-        inset_by = inset_rates[idx][0]  # WARNING, levels issue
+        inset_by = inset_rates[idx]
+
+        if ignores[idx]:
+            continue
+
         if inset_by > 0:
-
-            push_by = distances[idx][0]  # WARNING, levels issue
-
-            axial = None
-
-            # axial = (random.random(),random.random(), 0.0)
-            new_inner_from(face, inset_by, axial, push_by, make_inner)
+            push_by = distances[idx]
+            new_inner_from(face, inset_by, push_by, make_inners[idx])
 
     new_verts = [v[:] for v in vertices]
     # print('new_faces=', new_faces)
@@ -167,7 +166,6 @@ class SvInsetSpecial(bpy.types.Node, SverchCustomTreeNode):
         i = self.inputs
         i.new('StringsSocket', 'inset').prop_name = 'inset'
         i.new('StringsSocket', 'distance').prop_name = 'distance'
-        # self.inputs.new('VerticesSocket', 'axis').prop_name = 'axis'
         i.new('VerticesSocket', 'vertices')
         i.new('StringsSocket', 'polygons')
         i.new('StringsSocket', 'ignore')
@@ -211,10 +209,9 @@ class SvInsetSpecial(bpy.types.Node, SverchCustomTreeNode):
                 'vertices': v,
                 'faces': p,
                 'inset_rates': inset_rates,
-                'axis': None,
                 'distances': distance_vals,
-                'make_inner': make_inners,
-                'ignore', ignores
+                'make_inners': make_inners,
+                'ignores', ignores
             }
 
             res = inset_special(**func_args)
