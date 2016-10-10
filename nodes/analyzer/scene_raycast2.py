@@ -24,7 +24,7 @@ from sverchok.data_structure import (updateNode, match_long_repeat)
 class SvSCNRayCastNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     ''' RayCast Scene '''
     bl_idname = 'SvSCNRayCastNodeMK2'
-    bl_label = 'Scene Raycast'
+    bl_label = 'Scene Raycast new'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     def sv_init(self, context):
