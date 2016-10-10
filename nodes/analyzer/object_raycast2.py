@@ -27,7 +27,7 @@ from sverchok.data_structure import (updateNode, match_long_repeat)
 class SvOBJRayCastNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     ''' RayCast Object '''
     bl_idname = 'SvOBJRayCastNodeMK2'
-    bl_label = 'Object ID Raycast'
+    bl_label = 'Object ID Raycast new'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     mode = BoolProperty(name='input mode', default=False, update=updateNode)
