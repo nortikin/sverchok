@@ -36,7 +36,7 @@ class SvPointOnMeshNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_init(self, context):
         si,so = self.inputs.new,self.outputs.new
-        si('StringsSocket', 'Objects')
+        si('SvObjectSocket', 'Objects')
         si('VerticesSocket', "point").use_prop = True
         si('StringsSocket', "max_dist").prop_name = "Mdist"
         so('StringsSocket', "succes")
