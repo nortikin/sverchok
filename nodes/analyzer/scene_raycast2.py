@@ -35,7 +35,7 @@ class SvSCNRayCastNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         so('VerticesSocket', "HitNorm")
         so('StringsSocket', "Succes")
         so('StringsSocket', "FaceIndex")
-        so("StringsSocket", "Objects")
+        so("SvObjectSocket", "Objects")
         so("MatrixSocket", "hited object matrix")
 
     def process(self):
