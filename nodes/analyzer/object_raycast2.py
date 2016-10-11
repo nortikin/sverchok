@@ -35,7 +35,7 @@ class SvOBJRayCastNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_init(self, context):
         si,so = self.inputs.new,self.outputs.new
-        si('StringsSocket', 'Objects')
+        si('SvObjectSocket', 'Objects')
         si('VerticesSocket', 'origin').use_prop = True
         si('VerticesSocket', 'direction').use_prop = True
         so('StringsSocket', "succes")
