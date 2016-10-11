@@ -210,6 +210,9 @@
     SvFormulaShapeNode
     SvScriptNodeMK2
     SvHeavyTriangulateNode
+    SvPointOnMeshNodeMK2
+    SvOBJRayCastNodeMK2
+    SvSCNRayCastNodeMK2
 
 ## Alpha Nodes
     SvCurveViewerNode
@@ -229,9 +232,6 @@
     SvObjectToMeshNode
     SvFilterObjsNode
     SvPointOnMeshNode
-    SvPointOnMeshNodeMK2
-    SvOBJRayCastNodeMK2
-    SvSCNRayCastNodeMK2
     SvBMVertsNode
     SvBMOpsNode
     SvBMinputNode
