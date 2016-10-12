@@ -178,15 +178,15 @@ classes = [
     NODEVIEW_MT_AddGenerators,
     # like magic.
     # make | NODEVIEW_MT_Add + class name , menu name
-    make_class('GeneratorsExt', "Extended Generators"),
+    make_class('GeneratorsExt', "Generators Extended"),
     make_class('Transforms', "Transforms"),
     make_class('Analyzers', "Analyzers"),
     make_class('Viz', "Viz"),
     make_class('Text', "Text"),
     make_class('Scene', "Scene"),
     make_class('Layout', "Layout"),
-    make_class('Listmain', "List main"),
-    make_class('Liststruct', "List struct"),
+    make_class('Listmain', "List Main"),
+    make_class('Liststruct', "List Struct"),
     make_class('Number', "Number"),
     make_class('Vector', "Vector"),
     make_class('Matrix', "Matrix"),
