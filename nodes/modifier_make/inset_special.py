@@ -33,9 +33,11 @@ from sverchok.data_structure import (
 ''' very non optimal routines. beware. I know this '''
 
 
-def inset_special(vertices, faces, inset_rates, axis, distances, make_inner):
+def inset_special(vertices, faces, inset_rates, distances, ignores, make_inners):
 
     new_faces = []
+    new_ignores = []
+    new_insets = []
 
     def get_average_vector(verts, n):
         dummy_vec = Vector()
@@ -52,6 +54,7 @@ def inset_special(vertices, faces, inset_rates, axis, distances, make_inner):
         out_faces.append([c, a, d, f])
         if make_inner:
             out_faces.append([d, e, f])
+            new_insets.append([d, e, f])
         return out_faces
 
     def do_quad(face, lv_idx, make_inner):
@@ -64,21 +67,32 @@ def inset_special(vertices, faces, inset_rates, axis, distances, make_inner):
         out_faces.append([d, a, e, h])
         if make_inner:
             out_faces.append([e, f, g, h])
+            new_insets.append([e, f, g, h])
         return out_faces
 
     def do_ngon(face, lv_idx, make_inner):
         '''
         setting up the forloop only makes sense for ngons
-        idx0, idx1, last_vertex_idx-(n-1), last_vertex_idx-n
-        idx1, idxn, last_vertex_idx-(n-2), last_vertex_idx-(n-1)
-        .. ,.. ,.. ,..
-        idxn, idx0, last_vertex_idx-n, last_vertex_idx-(n-2)
-
         '''
-        print('ngons are not yet supported')
-        return []
+        num_elements = len(face)
+        face_elements = list(face)
+        inner_elements = [lv_idx-n for n in range(num_elements-1, -1, -1)]
+        # padding, wrap-around
+        face_elements.append(face_elements[0])
+        inner_elements.append(inner_elements[0])
 
-    def new_inner_from(face, inset_by, axis, distance, make_inner):
+        out_faces = []
+        add_face = out_faces.append
+        for j in range(num_elements):
+            add_face([face_elements[j], face_elements[j+1], inner_elements[j+1], inner_elements[j]])
+
+        if make_inner:
+            add_face([idx[-1] for idx in out_faces])
+            new_insets.append([idx[-1] for idx in out_faces])
+
+        return out_faces
+
+    def new_inner_from(face, inset_by, distance, make_inner):
         '''
         face:       (idx list) face to work on
         inset_by:   (scalar) amount to open the face
@@ -102,9 +116,6 @@ def inset_special(vertices, faces, inset_rates, axis, distances, make_inner):
 
         if distance:
             local_normal = mathutils.geometry.normal(*new_verts_prime[:3])
-            if axis:
-                local_normal = (avg_vec + local_normal + Vector(axis)).normalized()
-
             new_verts_prime = [v.lerp(v+local_normal, distance) for v in new_verts_prime]
 
         vertices.extend(new_verts_prime)
@@ -116,28 +127,16 @@ def inset_special(vertices, faces, inset_rates, axis, distances, make_inner):
         new_faces.extend(new_faces_prime)
 
     for idx, face in enumerate(faces):
-        inset_by = inset_rates[idx][0]  # WARNING, levels issue
-        if inset_by > 0:
+        inset_by = inset_rates[idx]
 
-            push_by = distances[idx][0]  # WARNING, levels issue
-            # if axis:
-            #     axial = axis[idx][0]
-
-            #     # print(axial)
-            #     if (axial[0] == axial[1] == axial[2]) == 0.0:
-            #         axial = None
-            # else:
-            #     axial = None
-
-            # print(axial)
-            axial = None
-
-            # axial = (random.random(),random.random(), 0.0)
-            new_inner_from(face, inset_by, axial, push_by, make_inner)
+        if (inset_by > 0) and (not ignores[idx]):
+            new_inner_from(face, inset_by, distances[idx], make_inners[idx])
+        else:
+            new_faces.append(face)
+            new_ignores.append(face)
 
     new_verts = [v[:] for v in vertices]
-    # print('new_faces=', new_faces)
-    return new_verts, new_faces
+    return new_verts, new_faces, new_ignores, new_insets
 
 
 class SvInsetSpecial(bpy.types.Node, SverchCustomTreeNode):
@@ -163,19 +162,25 @@ class SvInsetSpecial(bpy.types.Node, SverchCustomTreeNode):
     #   name='axis', description='axis relative to normal',
     #   default=(0,0,1), update=updateNode)
 
-    def init(self, context):
+    def sv_init(self, context):
+        i = self.inputs
+        i.new('StringsSocket', 'inset').prop_name = 'inset'
+        i.new('StringsSocket', 'distance').prop_name = 'distance'
+        i.new('VerticesSocket', 'vertices')
+        i.new('StringsSocket', 'polygons')
+        i.new('StringsSocket', 'ignore')
+        i.new('StringsSocket', 'make_inner')
 
-        self.inputs.new('StringsSocket', 'inset').prop_name = 'inset'
-        self.inputs.new('StringsSocket', 'distance').prop_name = 'distance'
-        # self.inputs.new('VerticesSocket', 'axis').prop_name = 'axis'
-        self.inputs.new('VerticesSocket', 'vertices', 'vertices')
-        self.inputs.new('StringsSocket', 'polygons', 'polygons')
+        o = self.outputs
+        o.new('VerticesSocket', 'vertices')
+        o.new('StringsSocket', 'polygons')
+        o.new('StringsSocket', 'ignored')
+        o.new('StringsSocket', 'inset')
 
-        self.outputs.new('VerticesSocket', 'vertices', 'vertices')
-        self.outputs.new('StringsSocket', 'polygons', 'polygons')
 
     def get_value_for(self, param, fallback):
         return self.inputs[param].sv_get() if self.inputs[param].links else fallback
+
 
     def process(self):
         i = self.inputs
@@ -184,49 +189,59 @@ class SvInsetSpecial(bpy.types.Node, SverchCustomTreeNode):
         if not o['vertices'].is_linked:
             return
 
-        verts = Vector_generate(i['vertices'].sv_get())
-        polys = i['polygons'].sv_get()
+        all_verts = Vector_generate(i['vertices'].sv_get())
+        all_polys = i['polygons'].sv_get()
 
         ''' get_value_for( param name, fallback )'''
-        inset_rates = self.get_value_for('inset', [[self.inset]])
-        distance_vals = self.get_value_for('distance', [[self.distance]])
+        all_inset_rates = self.get_value_for('inset', [[self.inset]])
+        all_distance_vals = self.get_value_for('distance', [[self.distance]])
+        all_ignores = self.get_value_for('ignore', [[False]])
+        all_make_inners = self.get_value_for('make_inner', [[True]])
 
-        #if self.inputs['axis'].links:
-        #    axees = self.get_value_for('axis', [[self.axis]])
-        #else:
-        #    axees = None
+        data = all_verts, all_polys, all_inset_rates, all_distance_vals, all_ignores, all_make_inners
 
-        # print(inset_rates)
-        # unvectorized implementation, expects only one set of verts + faces + etc
-        fullList(inset_rates, len(polys[0]))
-        fullList(distance_vals, len(polys[0]))
-        #fullList(axees, len(polys[0]))
-
-        #verts, faces, axis=None, distance=0, make_inner=False
         verts_out = []
         polys_out = []
+        ignored_out = []
+        inset_out = []
 
-        func_args = {
-            'vertices': verts[0],
-            'faces': polys[0],
-            'inset_rates': inset_rates,
-            'axis': None,
-            'distances': distance_vals,
-            'make_inner': False
-        }
+        for v, p, inset_rates, distance_vals, ignores, make_inners in zip(*data):
+            fullList(inset_rates, len(p))
+            fullList(distance_vals, len(p))
+            fullList(ignores, len(p))
+            fullList(make_inners, len(p))
 
-        res = inset_special(**func_args)
+            func_args = {
+                'vertices': v,
+                'faces': p,
+                'inset_rates': inset_rates,
+                'distances': distance_vals,
+                'make_inners': make_inners,
+                'ignores': ignores
+            }
 
-        if not res:
-            return
+            res = inset_special(**func_args)
 
-        verts_out, polys_out = res
+            if not res:
+                res = v, p, [], []
+
+            verts_out.append(res[0])
+            polys_out.append(res[1])
+            ignored_out.append(res[2])
+            inset_out.append(res[3])
 
         # deal  with hooking up the processed data to the outputs
-        o['vertices'].sv_set([verts_out])
+        o['vertices'].sv_set(verts_out)
 
         if o['polygons'].is_linked:
-            o['polygons'].sv_set([polys_out])
+            o['polygons'].sv_set(polys_out)
+
+        if o['ignored'].is_linked:
+            o['ignored'].sv_set(ignored_out)
+
+        if o['inset'].is_linked:
+            o['inset'].sv_set(inset_out)
+
 
 
 def register():

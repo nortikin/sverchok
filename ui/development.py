@@ -16,14 +16,17 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-import subprocess
 import os
+from os.path import exists, isfile
+import subprocess
+import webbrowser
 
 import bpy
 from bpy.props import StringProperty, CollectionProperty, BoolProperty, FloatProperty
 
 # global variables in tools
 import sverchok
+from sverchok.utils.sv_help import remapper
 
 BRANCH = ""
 
@@ -77,6 +80,58 @@ class SvCopyIDName(bpy.types.Operator):
         return {'FINISHED'}
 
 
+class SvViewHelpForNode(bpy.types.Operator):
+
+    bl_idname = "node.view_node_help"
+    bl_label = "display a browser with compiled html"
+    kind = StringProperty(default='online')
+    
+    def execute(self, context):
+        n = context.active_node
+
+        string_dir = remapper.get(n.bl_idname)
+        filename = n.__module__.split('.')[-1]
+        help_url = string_dir + '/' + filename
+
+        # first let's find if this is a valid doc file, by inspecting locally for the rst file.
+        VALID = False
+        try:
+            tk = os.path.join(os.path.dirname(sverchok.__file__), 'docs', 'nodes', string_dir.replace(' ', '_'), filename + '.rst')
+            VALID = exists(tk) and isfile(tk)
+        except:
+            pass
+
+        if not VALID:
+            self.throw_404(n)
+            return {'CANCELLED'}
+
+        # valid doc link!
+        help_url = help_url.replace(' ', '_')
+        if self.kind == 'online':
+            destination = 'http://nikitron.cc.ua/sverch/html/nodes/' + help_url + '.html'
+        else:
+            basepath = os.path.dirname(sverchok.__file__) + '/docs/nodes/'
+            destination = r'file:///' + basepath + help_url + '.rst'
+
+        webbrowser.open(destination)
+        return {'FINISHED'}
+
+    def throw_404(self, n):
+        # bl_label of some nodes is edited by us, but those nodes do have docs ..
+        _dirname = os.path.dirname(sverchok.__file__)
+        path1 = os.path.join(_dirname, 'docs', '404.html')
+        path2 = os.path.join(_dirname, 'docs', '404_custom.html')
+
+        with open(path1) as origin:
+            with open(path2, 'w') as destination:
+                for line in origin:
+                    if '{{variable}}' in line:
+                        destination.write(line.replace("{{variable}}", n.bl_label))
+                    else:
+                        destination.write(line)
+        
+        webbrowser.open(path2)
+
 
 def idname_draw(self, context):
     if not displaying_sverchok_nodes(context):
@@ -88,12 +143,20 @@ def idname_draw(self, context):
     bl_idname = node.bl_idname
     layout.operator('node.copy_bl_idname', text=bl_idname + ' (copy)').name = bl_idname
 
+    # show these anyway, can fail and let us know..
+    row = layout.row(align=True)
+    row.label('help')
+    row.operator('node.view_node_help', text='online').kind = 'online'
+    row.operator('node.view_node_help', text='offline').kind = 'offline'
+
+
 def register():
     get_branch()
     if BRANCH:
         bpy.types.NODE_HT_header.append(node_show_branch)
 
     bpy.utils.register_class(SvCopyIDName)
+    bpy.utils.register_class(SvViewHelpForNode)
     bpy.types.NODE_PT_active_node_generic.append(idname_draw)
 
 
@@ -102,3 +165,4 @@ def unregister():
         bpy.types.NODE_HT_header.remove(node_show_branch)
     bpy.types.NODE_PT_active_node_generic.remove(idname_draw)
     bpy.utils.unregister_class(SvCopyIDName)
+    bpy.utils.unregister_class(SvViewHelpForNode)

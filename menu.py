@@ -25,6 +25,8 @@ import bpy
 from nodeitems_utils import NodeCategory, NodeItem, NodeItemCustom
 import nodeitems_utils
 
+from sverchok.utils.sv_help import build_help_remap
+
 
 class SverchNodeCategory(NodeCategory):
     @classmethod
@@ -85,10 +87,10 @@ def juggle_and_join(node_cats):
     # put masks into list main
     for ltype in ["List Masks", "List Mutators"]:
         node_refs = node_cats.pop(ltype)
-        node_cats["List main"].extend(node_refs)
+        node_cats["List Main"].extend(node_refs)
 
     # add extended gens to Gens menu
-    gen_ext = node_cats.pop("Extended Generators")
+    gen_ext = node_cats.pop("Generators Extended")
     node_cats["Generators"].extend(gen_ext)
 
     return node_cats
@@ -152,6 +154,7 @@ def draw_node_ops(self,layout, context):
 
 def make_categories():
     original_categories = make_node_cats()
+
     node_cats = juggle_and_join(original_categories)
 
     node_categories = []
@@ -164,23 +167,25 @@ def make_categories():
         node_count += len(nodes)
     node_categories.append(SverchNodeCategory("SVERCHOK_GROUPS", "Groups", items=sv_group_items))
 
-    return node_categories, node_count
-
-
+    return node_categories, node_count, original_categories
 
 
 def reload_menu():
-    menu, node_count = make_categories()
+    menu, node_count, original_categories = make_categories()
     if 'SVERCHOK' in nodeitems_utils._node_categories:
         nodeitems_utils.unregister_node_categories("SVERCHOK")
     nodeitems_utils.register_node_categories("SVERCHOK", menu)
+    
+    build_help_remap(original_categories)
 
 
 def register():
-    menu, node_count = make_categories()
+    menu, node_count, original_categories = make_categories()
     if 'SVERCHOK' in nodeitems_utils._node_categories:
         nodeitems_utils.unregister_node_categories("SVERCHOK")
     nodeitems_utils.register_node_categories("SVERCHOK", menu)
+
+    build_help_remap(original_categories)
 
     print("\n** Sverchok loaded with {i} nodes **".format(i=node_count))
 

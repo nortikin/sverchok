@@ -5,8 +5,8 @@ Transforms
 .. toctree::
    :maxdepth: 2
 
-   scale
-   rotation
+   apply
    mirror
    move
-   matrix_apply
+   rotation
+   scale

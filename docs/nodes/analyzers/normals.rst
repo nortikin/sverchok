@@ -1,8 +1,6 @@
 Calculate Normals
 =================
 
-*destination after Beta: Analyzers*
-
 Functionality
 -------------
 
