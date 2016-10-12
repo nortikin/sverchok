@@ -17,7 +17,6 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-import sverchok
 from bpy.props import StringProperty, BoolProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
@@ -86,7 +85,22 @@ class SverchokViewer(bpy.types.Operator):
                     c = 'None \n'
                 out_matrix = str(c)
 
-        self.do_text(out_verts, out_edgpol, out_matrix, edpotype)
+        # object socket
+        out_object = 'None \n'
+        if inputs['object'].links:
+            if type(inputs['object'].links[0].from_socket) == bpy.types.SvObjectSocket:
+                eva = inputs['object'].sv_get()
+
+                deptl = levelsOflist(eva)
+                if deptl and deptl > 2:
+                    d = self.readFORviewer_sockets_data(eva, deptl, len(eva))
+                elif deptl:
+                    d = self.readFORviewer_sockets_data_small(eva, deptl, len(eva))
+                else:
+                    d = 'None \n'
+                out_object = str(d)
+
+        self.do_text(out_verts, out_edgpol, out_matrix, edpotype, out_object)
         return {'FINISHED'}
 
     def makeframe(self, nTree,):
@@ -115,7 +129,7 @@ class SverchokViewer(bpy.types.Operator):
             color = [1-i for i in bpy.context.user_preferences.themes['Default'].node_editor.space.back[:]]
             a.color[:] = color
 
-    def do_text(self,vertices,edgspols,matrices,edpotype):
+    def do_text(self,vertices,edgspols,matrices,edpotype,object):
         nTree = bpy.data.node_groups[bpy.context.space_data.node_tree.name]
         #this part can be than removed from node text viewer:
         texts = bpy.data.texts.items()
@@ -137,6 +151,8 @@ class SverchokViewer(bpy.types.Operator):
                     + edgspols \
                     + '\n\nmatrixes: \n' \
                     + matrices \
+                    + '\n\nobjects: \n' \
+                    + object \
                     + podpis
         bpy.data.texts['Sverchok_viewer'].clear()
         bpy.data.texts['Sverchok_viewer'].write(for_file)
@@ -200,15 +216,11 @@ class ViewerNode_text(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('VerticesSocket', 'vertices', 'vertices')
         self.inputs.new('StringsSocket', 'edg_pol', 'edg_pol')
         self.inputs.new('MatrixSocket', 'matrix', 'matrix')
+        self.inputs.new('SvObjectSocket', 'object', 'object')
 
     def draw_buttons(self, context, layout):
-
-        addon = context.user_preferences.addons.get(sverchok.__name__)
         row = layout.row()
-        if addon.preferences.over_sized_buttons:
-            row.scale_y = 4.0
-        else:
-            row.scale_y = 1
+        row.scale_y = 4.0
         do_text = row.operator('node.sverchok_viewer_button', text='V I E W')
         do_text.nodename = self.name
         do_text.treename = self.id_data.name
