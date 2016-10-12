@@ -98,6 +98,10 @@ class SverchokIOLayoutsMenu(bpy.types.Panel):
             exp4.gist_id = io_props.gist_id
             exp4.id_tree = ntree.name
 
+            exp5 = row4.operator('node.tree_import_from_gist', text='', icon='URL')
+            exp5.gist_id = 'clipboard'
+            exp5.id_tree = ntree.name
+
 
 def register():
     bpy.utils.register_class(SverchokIOLayoutsMenu)
