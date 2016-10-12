@@ -46,7 +46,8 @@ from bgl import (
     GL_POINTS, GL_POINT_SIZE, GL_POINT_SMOOTH, GL_POINT_SMOOTH_HINT,
     GL_LINE, GL_LINES, GL_LINE_STRIP, GL_LINE_LOOP, GL_LINE_STIPPLE,
     GL_POLYGON, GL_POLYGON_STIPPLE, GL_TRIANGLES, GL_QUADS,
-    GL_NICEST, GL_FASTEST, GL_FLAT, GL_SMOOTH, GL_LINE_SMOOTH_HINT)
+    GL_NICEST, GL_FASTEST, GL_FLAT, GL_SMOOTH, GL_LINE_SMOOTH, GL_LINE_SMOOTH_HINT
+)
 
 # ------------------------------------------------------------------------ #
 # parts taken from  "Math Vis (Console)" addon, author Campbell Barton     #
@@ -320,9 +321,12 @@ def draw_geometry(n_id, options, data_vector, data_polygons, data_matrix, data_e
 
     if data_edges and data_vector and show_edges:
 
+
         glColor3f(*edge_colors)
         glLineWidth(edge_width)
+        # glEnable(GL_LINE_SMOOTH)
         glEnable(edgeholy)
+        # glHint(GL_LINE_SMOOTH_HINT, GL_NICEST)
 
         for i, matrix in enumerate(data_matrix):
             k = get_max_k(i, verlen)
@@ -348,6 +352,7 @@ def draw_geometry(n_id, options, data_vector, data_polygons, data_matrix, data_e
                 glEnd()
 
         glDisable(edgeholy)
+        # glDisable(GL_LINE_SMOOTH)
 
     ''' matrix '''
 

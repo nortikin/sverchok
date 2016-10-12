@@ -36,6 +36,8 @@ from sverchok.data_structure import (
 def inset_special(vertices, faces, inset_rates, distances, ignores, make_inners):
 
     new_faces = []
+    new_ignores = []
+    new_insets = []
 
     def get_average_vector(verts, n):
         dummy_vec = Vector()
@@ -52,6 +54,7 @@ def inset_special(vertices, faces, inset_rates, distances, ignores, make_inners)
         out_faces.append([c, a, d, f])
         if make_inner:
             out_faces.append([d, e, f])
+            new_insets.append([d, e, f])
         return out_faces
 
     def do_quad(face, lv_idx, make_inner):
@@ -64,6 +67,7 @@ def inset_special(vertices, faces, inset_rates, distances, ignores, make_inners)
         out_faces.append([d, a, e, h])
         if make_inner:
             out_faces.append([e, f, g, h])
+            new_insets.append([e, f, g, h])
         return out_faces
 
     def do_ngon(face, lv_idx, make_inner):
@@ -84,6 +88,7 @@ def inset_special(vertices, faces, inset_rates, distances, ignores, make_inners)
 
         if make_inner:
             add_face([idx[-1] for idx in out_faces])
+            new_insets.append([idx[-1] for idx in out_faces])
 
         return out_faces
 
@@ -128,11 +133,10 @@ def inset_special(vertices, faces, inset_rates, distances, ignores, make_inners)
             new_inner_from(face, inset_by, distances[idx], make_inners[idx])
         else:
             new_faces.append(face)
-
+            new_ignores.append(face)
 
     new_verts = [v[:] for v in vertices]
-    # print('new_faces=', new_faces)
-    return new_verts, new_faces
+    return new_verts, new_faces, new_ignores, new_insets
 
 
 class SvInsetSpecial(bpy.types.Node, SverchCustomTreeNode):
@@ -170,9 +174,13 @@ class SvInsetSpecial(bpy.types.Node, SverchCustomTreeNode):
         o = self.outputs
         o.new('VerticesSocket', 'vertices')
         o.new('StringsSocket', 'polygons')
+        o.new('StringsSocket', 'ignored')
+        o.new('StringsSocket', 'inset')
+
 
     def get_value_for(self, param, fallback):
         return self.inputs[param].sv_get() if self.inputs[param].links else fallback
+
 
     def process(self):
         i = self.inputs
@@ -194,6 +202,8 @@ class SvInsetSpecial(bpy.types.Node, SverchCustomTreeNode):
 
         verts_out = []
         polys_out = []
+        ignored_out = []
+        inset_out = []
 
         for v, p, inset_rates, distance_vals, ignores, make_inners in zip(*data):
             fullList(inset_rates, len(p))
@@ -213,16 +223,25 @@ class SvInsetSpecial(bpy.types.Node, SverchCustomTreeNode):
             res = inset_special(**func_args)
 
             if not res:
-                res = v, p
+                res = v, p, [], []
 
             verts_out.append(res[0])
             polys_out.append(res[1])
+            ignored_out.append(res[2])
+            inset_out.append(res[3])
 
         # deal  with hooking up the processed data to the outputs
         o['vertices'].sv_set(verts_out)
 
         if o['polygons'].is_linked:
             o['polygons'].sv_set(polys_out)
+
+        if o['ignored'].is_linked:
+            o['ignored'].sv_set(ignored_out)
+
+        if o['inset'].is_linked:
+            o['inset'].sv_set(inset_out)
+
 
 
 def register():
