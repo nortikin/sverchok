@@ -767,6 +767,9 @@ class SvNodeTreeImportFromGist(bpy.types.Operator):
         else:
             ng = bpy.data.node_groups[self.id_tree]
 
+        if self.gist_id == 'clipboard':
+            self.gist_id = context.window_manager.clipboard
+
         nodes_json = self.obtain_json(self.gist_id.strip())
         import_tree(ng, nodes_json=nodes_json)
 
