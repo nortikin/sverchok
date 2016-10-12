@@ -324,9 +324,9 @@ def draw_geometry(n_id, options, data_vector, data_polygons, data_matrix, data_e
 
         glColor3f(*edge_colors)
         glLineWidth(edge_width)
-        glEnable(GL_LINE_SMOOTH)
+        # glEnable(GL_LINE_SMOOTH)
         glEnable(edgeholy)
-        glHint(GL_LINE_SMOOTH_HINT, GL_NICEST)
+        # glHint(GL_LINE_SMOOTH_HINT, GL_NICEST)
 
         for i, matrix in enumerate(data_matrix):
             k = get_max_k(i, verlen)
@@ -352,7 +352,7 @@ def draw_geometry(n_id, options, data_vector, data_polygons, data_matrix, data_e
                 glEnd()
 
         glDisable(edgeholy)
-        glDisable(GL_LINE_SMOOTH)
+        # glDisable(GL_LINE_SMOOTH)
 
     ''' matrix '''
 
