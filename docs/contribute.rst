@@ -196,20 +196,25 @@ SOME RULES:
 
 8. Not make many nodes if you can do less multifunctional.
 
-9. use levels, findout how it works and use level IntProperty in draw to define what level is to operate.
+9. Use levels, findout how it works and use level IntProperty in draw to define what level is to operate.
    We operate with 1,2,3 - standart and additional 4... infinity. make sure, that your levels limited,
    dropped down by levelsOflist as maximum value
 
-10. keep order in node' update definition as if output: if input. To count input only if you have output socket
+10. Keep order in node' update definition as if output: if input. To count input only if you have output socket
     assembled.
 
-11. look at todo list to know what is happening on and what you can do.
+11. Look at todo list to know what is happening on and what you can do.
     use your nodes and test them.
 
-12. there is no reason to auto wrap or make less levels of wrapping, than needed to proceed in other nodes.
+12. There is no reason to auto wrap or make less levels of wrapping, than needed to proceed in other nodes.
     So, for now canonical will be [[0,1,2,3]] for simple data and [[[0,1,2,3]]] for real data as edge,
     vertex, matrix other cases may be more nasty, but not less nesty and wrapping need to be grounded on
     some reasons to be provided.
 
 13. Do not use is_linked to test if socket is linked in ``def update(self)``, check links. In ``def process(self)``
     use ``.is_linked`` 
+
+14. to **CHANGE** some node, please, follow next:
+
+    a. Put old node file to ../old_nodes add the corresponding bl_idname in __init__.py in the table. (there is README file also);
+    b. Make new changed node as mk2(3,4...n) and place to where old node was placed with all changes as new node, change name and bl_idname (look 'To create a node:' in current instructions).

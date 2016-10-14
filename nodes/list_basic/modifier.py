@@ -19,7 +19,7 @@
 from itertools import accumulate
 
 import bpy
-from bpy.props import EnumProperty, IntProperty, BoolProperty
+from bpy.props import EnumProperty, IntProperty, BoolProperty, StringProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
@@ -103,6 +103,7 @@ class SvListModifierNode(bpy.types.Node, SverchCustomTreeNode):
         update=updateNode
     )
 
+    help_url = StringProperty(default='list_main/list_modifier')
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "func_", text='')

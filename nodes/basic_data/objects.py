@@ -150,6 +150,7 @@ class ObjectsNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('StringsSocket', "Edges", "Edges")
         self.outputs.new('StringsSocket', "Polygons", "Polygons")
         self.outputs.new('MatrixSocket', "Matrixes", "Matrixes")
+        self.outputs.new('SvObjectSocket', "Object", "Object")
 
     def draw_buttons(self, context, layout):
         row = layout.row()
@@ -217,6 +218,7 @@ class ObjectsNode(bpy.types.Node, SverchCustomTreeNode):
             vers_out_grouped = []
             pols_out = []
             mtrx_out = []
+            objs_out = []
             for obj_ in objs:  # names of objects
                 edgs = []
                 vers = []
@@ -251,6 +253,7 @@ class ObjectsNode(bpy.types.Node, SverchCustomTreeNode):
                 vers_out_grouped.append(vers_grouped)
                 pols_out.append(pols)
                 mtrx_out.append(mtrx)
+                objs_out.append(obj)
             if vers_out[0]:
 
                 if self.outputs['Vertices'].is_linked:
@@ -267,6 +270,9 @@ class ObjectsNode(bpy.types.Node, SverchCustomTreeNode):
 
             if self.outputs['Matrixes'].is_linked:
                 SvSetSocketAnyType(self, 'Matrixes', mtrx_out)
+            if self.outputs['Object'].is_linked:
+                print(objs_out)
+                SvSetSocketAnyType(self, 'Object', objs_out)
 
 
 def register():

@@ -23,7 +23,7 @@
     SvBricksNode
     ImageNode
 
-## Extended Generators
+## Generators Extended
     SvBoxRoundedNode
     HilbertNode
     Hilbert3dNode
@@ -99,7 +99,7 @@
 ## List Mutators
     SvListModifierNode
 
-## List main
+## List Main
     ListJoinNode
     ZipNode
     ListLevelsNode
@@ -109,7 +109,7 @@
     ListFuncNode
     SvListDecomposeNode
 
-## List struct
+## List Struct
     ShiftNodeMK2
     ListRepeaterNode
     ListSliceNode
