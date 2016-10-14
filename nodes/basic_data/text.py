@@ -182,7 +182,7 @@ class SvTextInNode(bpy.types.Node, SverchCustomTreeNode):
 
         addon = context.user_preferences.addons.get(sverchok.__name__)
         col = layout.column(align=True)
-        col.prop(self, 'autoreload', 'auto reload', toggle=True)
+        col.prop(self, 'autoreload', 'auto reload', toggle=True)# reload() not work properly somehow 2016.10.07
         if self.current_text:
             col.label(text="File: {0} loaded".format(self.current_text))
             #layout.prop(self,'reload_on_update','Reload every update')
@@ -494,12 +494,6 @@ class SvTextInNode(bpy.types.Node, SverchCustomTreeNode):
     def reload_json(self):
         n_id = node_id(self)
         self.load_json_data()
-
-        json_data = self.json_data[n_id]
-        for item in json_data:
-            if item in self.outputs and self.outputs[item].links:
-                out = json_data[item][1]
-                SvSetSocketAnyType(self, item, out)
 
         if n_id in self.json_data:
             self.use_custom_color = True

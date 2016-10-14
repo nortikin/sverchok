@@ -162,3 +162,6 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvLatheNode)
+
+if __name__ == '__main__':
+    register()

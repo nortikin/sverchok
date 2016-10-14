@@ -29,9 +29,12 @@ from sverchok.data_structure import (SvGetSocketAnyType, SvSetSocketAnyType,
 
 
 def axis_rotation(vertex, center, axis, angle):
-    mat = Matrix.Rotation(radians(angle), 4,  axis)
-    c = Vector(center)
-    rotated = [ (c + mat * ( Vector(i) - c))[:] for i in vertex ]
+    vertex,center,axis,angle = match_long_repeat([vertex, center, axis, angle])
+    rotated = []
+    for ve,ce,ax,an in zip(vertex, center, axis, angle):
+        mat = Matrix.Rotation(radians(an), 4,  ax)
+        c = Vector(ce)
+        rotated.append((c + mat * ( Vector(ve) - c))[:])
     return rotated
 
 def euler_rotation(vertex, x, y, z, order):
@@ -139,17 +142,17 @@ class SvRotationNode(bpy.types.Node, SverchCustomTreeNode):
             else:
                 Vertices = []
             if 'Angle' in self.inputs and self.inputs['Angle'].is_linked:
-                Angle = SvGetSocketAnyType(self, self.inputs['Angle'])[0]
+                Angle = SvGetSocketAnyType(self, self.inputs['Angle'])
             else:
-                Angle = [self.angle_]
+                Angle = [[self.angle_]]
             if 'Center' in self.inputs and self.inputs['Center'].is_linked:
-                Center = SvGetSocketAnyType(self, self.inputs['Center'])[0]
+                Center = SvGetSocketAnyType(self, self.inputs['Center'])
             else:
-                Center = [[0.0, 0.0, 0.0]]
+                Center = [[[0.0, 0.0, 0.0]]]
             if 'Axis' in self.inputs and self.inputs['Axis'].is_linked:
-                Axis = SvGetSocketAnyType(self, self.inputs['Axis'])[0]
+                Axis = SvGetSocketAnyType(self, self.inputs['Axis'])
             else:
-                Axis = [[0.0, 0.0, 1.0]]
+                Axis = [[[0.0, 0.0, 1.0]]]
 
             parameters = match_long_repeat([Vertices, Center, Axis, Angle])
 
