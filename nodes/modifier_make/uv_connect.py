@@ -197,7 +197,7 @@ class LineConnectNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                     for i, ob in enumerate(vers_[:-1]):
                         for k, ve in enumerate(ob[:-1]):
                             objecto.append([i*lenobjs+k, (i+1)*lenobjs+k, (i+1)*lenobjs+k+1, i*lenobjs+k+1])
-                            if i > 0 and ciclU:
+                            if i == 0 and ciclU:
                                 quaded = [ [ (k-1)*lenobjs, k*lenobjs-1, (k+1)*lenobjs-1, k*lenobjs ]
                                           for k in range(lenvers) if k > 0 ]
                                 objecto.extend(quaded)
