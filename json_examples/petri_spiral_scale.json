@@ -1,313 +1,5 @@
 {
-  "connections": {
-    "0": [
-      "Float Series",
-      "Range",
-      "Formula2.001",
-      "X"
-    ],
-    "1": [
-      "Float Series",
-      "Range",
-      "Formula2",
-      "X"
-    ],
-    "2": [
-      "Formula2",
-      "Result",
-      "Vectors in",
-      "X"
-    ],
-    "3": [
-      "Formula2.001",
-      "Result",
-      "Vectors in",
-      "Y"
-    ],
-    "4": [
-      "Vectors in",
-      "Vectors",
-      "UV Connect",
-      "vertices"
-    ],
-    "5": [
-      "UV Connect",
-      "vertices",
-      "Viewer Draw2.001",
-      "vertices"
-    ],
-    "6": [
-      "UV Connect",
-      "data",
-      "Viewer Draw2.001",
-      "edg_pol"
-    ],
-    "7": [
-      "Random Vector",
-      "Random",
-      "Formula2.002",
-      "X"
-    ],
-    "8": [
-      "Float",
-      "Float",
-      "Formula2.002",
-      "n[0]"
-    ],
-    "9": [
-      "Formula2.002",
-      "Result",
-      "Vectors out",
-      "Vectors"
-    ],
-    "10": [
-      "Vectors in",
-      "Vectors",
-      "List Join",
-      "data"
-    ],
-    "11": [
-      "Formula2.002",
-      "Result",
-      "List Join",
-      "data 1"
-    ],
-    "12": [
-      "List Join",
-      "data",
-      "Voronoi",
-      "Vertices"
-    ],
-    "13": [
-      "Voronoi",
-      "Vertices",
-      "Fill Holes",
-      "vertices"
-    ],
-    "14": [
-      "Voronoi",
-      "Edges",
-      "Fill Holes",
-      "edges"
-    ],
-    "15": [
-      "Vectors out",
-      "X",
-      "Vectors in.001",
-      "X"
-    ],
-    "16": [
-      "Vectors out",
-      "Y",
-      "Vectors in.001",
-      "Y"
-    ],
-    "17": [
-      "Vectors in.001",
-      "Vectors",
-      "Viewer Draw2.002",
-      "vertices"
-    ],
-    "18": [
-      "Voronoi",
-      "Vertices",
-      "Viewer text",
-      "vertices"
-    ],
-    "19": [
-      "Voronoi",
-      "Vertices",
-      "Viewer Draw2.003",
-      "vertices"
-    ],
-    "20": [
-      "Voronoi",
-      "Edges",
-      "Viewer Draw2.003",
-      "edg_pol"
-    ],
-    "21": [
-      "Integer",
-      "Integer",
-      "Random Vector",
-      "Count"
-    ],
-    "22": [
-      "Fill Holes",
-      "vertices",
-      "PolygonBoom",
-      "vertices"
-    ],
-    "23": [
-      "Fill Holes",
-      "polygons",
-      "PolygonBoom",
-      "edg_pol"
-    ],
-    "24": [
-      "Float.001",
-      "Float",
-      "Float Series",
-      "Stop"
-    ],
-    "25": [
-      "Fill Holes",
-      "polygons",
-      "Centers polygons",
-      "Polygons"
-    ],
-    "26": [
-      "Fill Holes",
-      "vertices",
-      "Centers polygons",
-      "Vertices"
-    ],
-    "27": [
-      "Scale",
-      "Vertices",
-      "UV Connect.001",
-      "vertices"
-    ],
-    "28": [
-      "Centers polygons",
-      "Origins",
-      "List Flip Node",
-      "data"
-    ],
-    "29": [
-      "PolygonBoom",
-      "vertices",
-      "List Match",
-      "Data 0"
-    ],
-    "30": [
-      "List Flip Node",
-      "data",
-      "List Match.001",
-      "Data 1"
-    ],
-    "31": [
-      "Float Series.002",
-      "Range",
-      "List Match.001",
-      "Data 0"
-    ],
-    "32": [
-      "List Match",
-      "Data 1",
-      "Scale",
-      "Factor"
-    ],
-    "33": [
-      "PolygonBoom",
-      "vertices",
-      "Scale",
-      "Vertices"
-    ],
-    "34": [
-      "UV Connect.001",
-      "vertices",
-      "Viewer Draw2",
-      "vertices"
-    ],
-    "35": [
-      "UV Connect.001",
-      "data",
-      "Viewer Draw2",
-      "edg_pol"
-    ],
-    "36": [
-      "List Flip Node",
-      "data",
-      "List Match.002",
-      "Data 0"
-    ],
-    "37": [
-      "Vectors in.002",
-      "Vectors",
-      "List Match.002",
-      "Data 1"
-    ],
-    "38": [
-      "List Match.002",
-      "Data 1",
-      "Vectors Move",
-      "vectors"
-    ],
-    "39": [
-      "List Match.001",
-      "Data 1",
-      "Vectors Move",
-      "vertices"
-    ],
-    "40": [
-      "Vectors Move",
-      "vertices",
-      "Scale",
-      "Center"
-    ],
-    "41": [
-      "Float Series.002",
-      "Range",
-      "List Match",
-      "Data 1"
-    ],
-    "42": [
-      "Float Series.003",
-      "Range",
-      "Vectors in.002",
-      "Z"
-    ],
-    "43": [
-      "Integer.001",
-      "Integer",
-      "Float Series.002",
-      "Stop"
-    ],
-    "44": [
-      "Integer.001",
-      "Integer",
-      "Float Series.003",
-      "Stop"
-    ],
-    "45": [
-      "UV Connect.001",
-      "vertices",
-      "Bmesh Viewer Draw",
-      "vertices"
-    ],
-    "46": [
-      "UV Connect.001",
-      "data",
-      "Bmesh Viewer Draw",
-      "faces"
-    ],
-    "47": [
-      "Fill Holes",
-      "vertices",
-      "Area",
-      "Vertices"
-    ],
-    "48": [
-      "Fill Holes",
-      "polygons",
-      "Area",
-      "Polygons"
-    ],
-    "49": [
-      "Area",
-      "Area",
-      "Formula2.003",
-      "X"
-    ],
-    "50": [
-      "Formula2.003",
-      "Result",
-      "Float Series.003",
-      "Start"
-    ]
-  },
-  "export_version": "0.043 pre alpha",
+  "export_version": "0.062",
   "framed_nodes": {
     "UV Connect": "Frame",
     "Vectors in.001": "Frame",
@@ -315,6 +7,7 @@
     "Viewer Draw2.001": "Frame",
     "Viewer Draw2.002": "Frame"
   },
+  "groups": {},
   "nodes": {
     "Area": {
       "bl_idname": "AreaNode",
@@ -341,7 +34,7 @@
         0.5
       ],
       "height": 100.0,
-      "hide": false,
+      "hide": true,
       "label": "",
       "location": [
         2741.582763671875,
@@ -351,7 +44,29 @@
         "activate": 0,
         "autosmooth": 0,
         "basemesh_name": "Lamda",
-        "state_view": 0
+        "hide": 1,
+        "lp": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
       },
       "width": 140.0
     },
@@ -581,7 +296,7 @@
         0.6079999804496765,
         0.6079999804496765
       ],
-      "height": 459.90936279296875,
+      "height": 484.89166259765625,
       "hide": false,
       "label": "",
       "location": [
@@ -590,6 +305,23 @@
       ],
       "params": {},
       "width": 471.8885498046875
+    },
+    "Frame.001": {
+      "bl_idname": "NodeFrame",
+      "color": [
+        0.7764705419540405,
+        0.7764705419540405,
+        0.7764705419540405
+      ],
+      "height": 1500.0,
+      "hide": false,
+      "label": "Sverchok_viewer",
+      "location": [
+        -2711.5380859375,
+        573.704833984375
+      ],
+      "params": {},
+      "width": 800.0
     },
     "Integer": {
       "bl_idname": "IntegerNode",
@@ -647,7 +379,9 @@
         1494.1607666015625,
         263.39935302734375
       ],
-      "params": {},
+      "params": {
+        "level": 1
+      },
       "width": 140.0
     },
     "List Join": {
@@ -817,8 +551,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -555.9266967773438,
-        -453.7139587402344
+        -1858.594970703125,
+        -735.731689453125
       ],
       "params": {
         "dir_check": "U_dir",
@@ -842,8 +576,9 @@
         426.1124267578125
       ],
       "params": {
-        "cicl_check": 1,
-        "dir_check": "V_dir",
+        "cicl_check_U": 0,
+        "cicl_check_V": 1,
+        "dir_check": "U_dir",
         "polygons": "Pols",
         "slice_check": 0
       },
@@ -894,8 +629,8 @@
       "hide": true,
       "label": "",
       "location": [
-        -479.5791320800781,
-        -735.1405029296875
+        -1782.2474365234375,
+        -1017.158203125
       ],
       "params": {},
       "width": 100.0
@@ -928,8 +663,8 @@
       "hide": true,
       "label": "",
       "location": [
-        -598.86962890625,
-        -735.1404418945312
+        -1901.5379638671875,
+        -1017.1581420898438
       ],
       "params": {},
       "width": 140.0
@@ -987,8 +722,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -326.98101806640625,
-        -398.10833740234375
+        -1629.6494140625,
+        -680.1260375976562
       ],
       "params": {
         "activate": 1,
@@ -1022,8 +757,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -329.48602294921875,
-        -616.9995727539062
+        -1632.154296875,
+        -899.0172729492188
       ],
       "params": {
         "activate": 0,
@@ -1108,8 +843,8 @@
       "hide": false,
       "label": "",
       "location": [
-        1651.520263671875,
-        -231.35728454589844
+        2452.111572265625,
+        180.17393493652344
       ],
       "params": {},
       "width": 128.9937744140625
@@ -1136,42 +871,6 @@
   },
   "update_lists": [
     [
-      "Integer.001",
-      "Integer",
-      "Float Series.002",
-      "Stop"
-    ],
-    [
-      "Float.001",
-      "Float",
-      "Float Series",
-      "Stop"
-    ],
-    [
-      "Float Series",
-      "Range",
-      "Formula2",
-      "X"
-    ],
-    [
-      "Float Series",
-      "Range",
-      "Formula2.001",
-      "X"
-    ],
-    [
-      "Formula2",
-      "Result",
-      "Vectors in",
-      "X"
-    ],
-    [
-      "Formula2.001",
-      "Result",
-      "Vectors in",
-      "Y"
-    ],
-    [
       "Integer",
       "Integer",
       "Random Vector",
@@ -1188,6 +887,36 @@
       "Float",
       "Formula2.002",
       "n[0]"
+    ],
+    [
+      "Float.001",
+      "Float",
+      "Float Series",
+      "Stop"
+    ],
+    [
+      "Float Series",
+      "Range",
+      "Formula2.001",
+      "X"
+    ],
+    [
+      "Float Series",
+      "Range",
+      "Formula2",
+      "X"
+    ],
+    [
+      "Formula2",
+      "Result",
+      "Vectors in",
+      "X"
+    ],
+    [
+      "Formula2.001",
+      "Result",
+      "Vectors in",
+      "Y"
     ],
     [
       "Vectors in",
@@ -1222,6 +951,24 @@
     [
       "Fill Holes",
       "vertices",
+      "Centers polygons",
+      "Vertices"
+    ],
+    [
+      "Fill Holes",
+      "polygons",
+      "Centers polygons",
+      "Polygons"
+    ],
+    [
+      "Centers polygons",
+      "Origins",
+      "List Flip Node",
+      "data"
+    ],
+    [
+      "Fill Holes",
+      "vertices",
       "Area",
       "Vertices"
     ],
@@ -1250,64 +997,10 @@
       "Stop"
     ],
     [
-      "Fill Holes",
-      "vertices",
-      "PolygonBoom",
-      "vertices"
-    ],
-    [
-      "Fill Holes",
-      "polygons",
-      "PolygonBoom",
-      "edg_pol"
-    ],
-    [
-      "PolygonBoom",
-      "vertices",
-      "List Match",
-      "Data 0"
-    ],
-    [
-      "Float Series.002",
-      "Range",
-      "List Match",
-      "Data 1"
-    ],
-    [
-      "Fill Holes",
-      "vertices",
-      "Centers polygons",
-      "Vertices"
-    ],
-    [
-      "Fill Holes",
-      "polygons",
-      "Centers polygons",
-      "Polygons"
-    ],
-    [
-      "Voronoi",
-      "Vertices",
-      "Viewer text",
-      "vertices"
-    ],
-    [
-      "Vectors in",
-      "Vectors",
-      "UV Connect",
-      "vertices"
-    ],
-    [
       "Float Series.003",
       "Range",
       "Vectors in.002",
       "Z"
-    ],
-    [
-      "Centers polygons",
-      "Origins",
-      "List Flip Node",
-      "data"
     ],
     [
       "List Flip Node",
@@ -1320,6 +1013,12 @@
       "Vectors",
       "List Match.002",
       "Data 1"
+    ],
+    [
+      "Integer.001",
+      "Integer",
+      "Float Series.002",
+      "Stop"
     ],
     [
       "Float Series.002",
@@ -1344,6 +1043,30 @@
       "Data 1",
       "Vectors Move",
       "vectors"
+    ],
+    [
+      "Fill Holes",
+      "vertices",
+      "PolygonBoom",
+      "vertices"
+    ],
+    [
+      "Fill Holes",
+      "polygons",
+      "PolygonBoom",
+      "edg_pol"
+    ],
+    [
+      "PolygonBoom",
+      "vertices",
+      "List Match",
+      "Data 0"
+    ],
+    [
+      "Float Series.002",
+      "Range",
+      "List Match",
+      "Data 1"
     ],
     [
       "PolygonBoom",
@@ -1382,16 +1105,22 @@
       "edg_pol"
     ],
     [
-      "UV Connect",
-      "vertices",
-      "Viewer Draw2.001",
+      "Formula2.002",
+      "Result",
+      "Vectors out",
+      "Vectors"
+    ],
+    [
+      "Voronoi",
+      "Vertices",
+      "Viewer text",
       "vertices"
     ],
     [
+      "Vectors in",
+      "Vectors",
       "UV Connect",
-      "data",
-      "Viewer Draw2.001",
-      "edg_pol"
+      "vertices"
     ],
     [
       "Voronoi",
@@ -1406,22 +1135,22 @@
       "edg_pol"
     ],
     [
-      "UV Connect.001",
+      "UV Connect",
       "vertices",
-      "Bmesh Viewer Draw",
+      "Viewer Draw2.001",
       "vertices"
     ],
     [
-      "UV Connect.001",
+      "UV Connect",
       "data",
-      "Bmesh Viewer Draw",
-      "faces"
+      "Viewer Draw2.001",
+      "edg_pol"
     ],
     [
-      "Formula2.002",
-      "Result",
-      "Vectors out",
-      "Vectors"
+      "Float Series.002",
+      "Range",
+      "Viewer text.001",
+      "edg_pol"
     ],
     [
       "Vectors out",
@@ -1440,6 +1169,18 @@
       "Vectors",
       "Viewer Draw2.002",
       "vertices"
+    ],
+    [
+      "UV Connect.001",
+      "vertices",
+      "Bmesh Viewer Draw",
+      "vertices"
+    ],
+    [
+      "UV Connect.001",
+      "data",
+      "Bmesh Viewer Draw",
+      "faces"
     ]
   ]
 }
