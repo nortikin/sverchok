@@ -36,6 +36,8 @@ class SvObjectToMeshNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('VerticesSocket', "VertexNormals")
         self.outputs.new('StringsSocket', "Edges")
         self.outputs.new('StringsSocket', "Polygons")
+        self.outputs.new('StringsSocket', "PolygonAreas")
+        self.outputs.new('VerticesSocket', "PolygonCenters")
         self.outputs.new('VerticesSocket', "PolygonNormals")
         self.outputs.new('MatrixSocket', "Matrixes")
 
@@ -47,12 +49,12 @@ class SvObjectToMeshNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         objs = self.inputs[0].sv_get()
         if isinstance(objs[0], list):
             objs = objs[0]
-        o1,o2,o3,o4,o5,o6 = self.outputs
-        vs,vn,es,ps,pn,ms = [],[],[],[],[],[]
+        o1,o2,o3,o4,o5,o6,o7,o8 = self.outputs
+        vs,vn,es,ps,pa,pc,pn,ms = [],[],[],[],[],[],[],[]
         scene, mod = bpy.context.scene, self.modifiers
         ot = objs[0].type in ['MESH', 'CURVE', 'FONT', 'SURFACE']
         for obj in objs:
-            if o6.is_linked:
+            if o8.is_linked:
                 ms.append([m[:] for m in obj.matrix_world])
             if ot:
                 obj_data = obj.to_mesh(scene, mod, 'PREVIEW')
@@ -65,9 +67,13 @@ class SvObjectToMeshNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                 if o4.is_linked:
                     ps.append([p.vertices[:] for p in obj_data.polygons])
                 if o5.is_linked:
+                    pa.append([p.area for p in obj_data.polygons])
+                if o6.is_linked:
+                    pc.append([p.center[:] for p in obj_data.polygons])
+                if o7.is_linked:
                     pn.append([p.normal[:] for p in obj_data.polygons])
                 bpy.data.meshes.remove(obj_data)
-        for i,i2 in zip(self.outputs, [vs,vn,es,ps,pn,ms]):
+        for i,i2 in zip(self.outputs, [vs,vn,es,ps,pa,pc,pn,ms]):
             if i.is_linked:
                 i.sv_set(i2)
 
