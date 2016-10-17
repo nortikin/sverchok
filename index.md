@@ -213,6 +213,7 @@
     SvPointOnMeshNodeMK2
     SvOBJRayCastNodeMK2
     SvSCNRayCastNodeMK2
+    SvObjectToMeshNodeMK2
 
 ## Alpha Nodes
     SvCurveViewerNode
@@ -229,9 +230,8 @@
     SvGetDataObjectNode
     SvSetDataObjectNode
     SvSortObjsNode
-    SvObjectToMeshNode
-    SvObjectToMeshNodeMK2
     SvFilterObjsNode
+    SvObjectToMeshNode
     SvPointOnMeshNode
     SvBMVertsNode
     SvBMOpsNode
