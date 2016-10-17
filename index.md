@@ -230,6 +230,7 @@
     SvSetDataObjectNode
     SvSortObjsNode
     SvObjectToMeshNode
+    SvObjectToMeshNodeMK2
     SvFilterObjsNode
     SvPointOnMeshNode
     SvBMVertsNode
