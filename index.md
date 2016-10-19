@@ -229,7 +229,6 @@
     SvSetDataObjectNode
     SvSortObjsNode
     SvFilterObjsNode
-    SvObjectToMeshNode
     SvBMVertsNode
     SvBMOpsNode
     SvBMinputNode
