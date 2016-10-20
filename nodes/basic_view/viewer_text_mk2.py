@@ -204,10 +204,10 @@ class SverchokViewer(bpy.types.Operator):
                 output += ('\n' + str(val))
         return cache + output
 
-class ViewerNode_text(bpy.types.Node, SverchCustomTreeNode):
-    ''' Viewer Node text '''
-    bl_idname = 'ViewerNode_text'
-    bl_label = 'Viewer text'
+class ViewerNodeTextMK2(bpy.types.Node, SverchCustomTreeNode):
+    ''' Viewer Node text MK2 '''
+    bl_idname = 'ViewerNodeTextMK2'
+    bl_label = 'Viewer text mk2'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     autoupdate = BoolProperty(name='update', default=False)
@@ -238,11 +238,11 @@ class ViewerNode_text(bpy.types.Node, SverchCustomTreeNode):
 
 def register():
     bpy.utils.register_class(SverchokViewer)
-    bpy.utils.register_class(ViewerNode_text)
+    bpy.utils.register_class(ViewerNodeTextMK2)
 
 
 def unregister():
-    bpy.utils.unregister_class(ViewerNode_text)
+    bpy.utils.unregister_class(ViewerNodeTextMK2)
     bpy.utils.unregister_class(SverchokViewer)
 
 if __name__ == '__main__':

@@ -35,6 +35,7 @@ old_bl_idnames = {
     'SvReRouteNode': "reroute",
     'VoronoiNode': "voronoi",
     'ViewerNode': "viewer",
+    'ViewerNode_text': "viewer_text",
     'EvalKnievalNode': "eval_knieval",
     'FormulaNode': 'formula',
     'SvPointOnMeshNode': 'closest_point_on_mesh',
