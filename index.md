@@ -183,7 +183,7 @@
     SvStethoscopeNode
 
 ## Scene
-    ObjectsNode
+    ObjectsNodeMK2
     SvObjRemoteNode
     SvFrameInfoNode
     SvEmptyOutNode
