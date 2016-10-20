@@ -26,6 +26,7 @@ import locale
 import json
 import itertools
 import pprint
+import sverchok
 
 import bpy
 from bpy.props import BoolProperty, EnumProperty, StringProperty
@@ -172,45 +173,57 @@ class SvTextInNode(bpy.types.Node, SverchCustomTreeNode):
     socket_type = EnumProperty(items=socket_types, default='s')
 
     #interesting but dangerous, TODO
-    reload_on_update = BoolProperty(default=False, description="Reload text file on every update")
+    autoreload = BoolProperty(default=False, description="Reload text file on every update")
     
     # to have one socket output
     one_sock = BoolProperty(name='one_sock', default=False)
 
     def draw_buttons(self, context, layout):
 
+        addon = context.user_preferences.addons.get(sverchok.__name__)
+        col = layout.column(align=True)
+        col.prop(self, 'autoreload', 'auto reload', toggle=True)# reload() not work properly somehow 2016.10.07
         if self.current_text:
-            layout.label(text="File: {0} loaded".format(self.current_text))
+            col.label(text="File: {0} loaded".format(self.current_text))
             #layout.prop(self,'reload_on_update','Reload every update')
-            layout.operator('node.sverchok_text_callback', text='Reload').fn_name = 'reload'
-            layout.operator('node.sverchok_text_callback', text='Reset').fn_name = 'reset'
+            row = col.row(align=True)
+            if not self.autoreload:
+                if addon.preferences.over_sized_buttons:
+                    row.scale_y = 4.0
+                else:
+                    row.scale_y = 1
+                row.operator('node.sverchok_text_callback', text='R E L O A D').fn_name = 'reload'
+            col.operator('node.sverchok_text_callback', text='R E S E T').fn_name = 'reset'
         else:
-            layout.prop(self, "text", "Select Text")
+            col.prop(self, "text", "Select Text")
         #    layout.prop(self,"file","File") external file, TODO
-            layout.prop(self, 'textmode', 'textmode', expand=True)
-            layout.prop(self, 'one_sock', 'one_sock')
+            row = col.row(align=True)
+            row.prop(self, 'textmode', 'textmode', expand=True)
+            col.prop(self, 'one_sock', 'one_sock')
             if self.textmode == 'CSV':
-                layout.prop(self, 'csv_header', 'Header fields')
-                layout.prop(self, 'csv_dialect', 'Dialect')
+                col.prop(self, 'csv_header', 'Header fields')
+                col.prop(self, 'csv_dialect', 'Dialect')
                 if self.csv_dialect == 'user':
-                    layout.label(text="Delimiter")
-                    layout.prop(self, 'csv_delimiter', "Delimiter", expand=True)
+                    col.label(text="Delimiter")
+                    row = col.row(align=True)
+                    row.prop(self, 'csv_delimiter', "Delimiter", expand=True)
                     if self.csv_delimiter == 'CUSTOM':
-                        layout.prop(self, 'csv_custom_delimiter', "Custom")
+                        col.prop(self, 'csv_custom_delimiter', "Custom")
 
-                    layout.label(text="Decimalmark")
-                    layout.prop(self, 'csv_decimalmark', "Decimalmark", expand=True)
+                    col.label(text="Decimalmark")
+                    row = col.row(align=True)
+                    row.prop(self, 'csv_decimalmark', "Decimalmark", expand=True)
                     if self.csv_decimalmark == 'CUSTOM':
-                        layout.prop(self, 'csv_custom_decimalmark', "Custom")
+                        col.prop(self, 'csv_custom_decimalmark', "Custom")
 
             if self.textmode == 'SV':
-                layout.label(text="Select data type")
-                layout.prop(self, 'socket_type', expand=True)
+                col.label(text="Select data type")
+                row = col.row(align=True)
+                row.prop(self, 'socket_type', expand=True)
 
             if self.textmode == 'JSON':  # self documenting format
                 pass
-
-            layout.operator('node.sverchok_text_callback', text='Load').fn_name = 'load'
+            col.operator('node.sverchok_text_callback', text='Load').fn_name = 'load'
 
     def copy(self, node):
         self.n_id = ''
@@ -279,7 +292,7 @@ class SvTextInNode(bpy.types.Node, SverchCustomTreeNode):
     def update_csv(self):
         n_id = node_id(self)
 
-        if self.reload_on_update:
+        if self.autoreload:
             self.reload_csv()
 
         if self.current_text and n_id not in self.csv_data:
@@ -438,7 +451,7 @@ class SvTextInNode(bpy.types.Node, SverchCustomTreeNode):
     def update_sv(self):
         n_id = node_id(self)
 
-        if self.reload_on_update:
+        if self.autoreload:
             self.reload_sv()
         # nothing loaded, try to load and if it doesn't work fail
         if n_id not in self.list_data and self.current_text:
@@ -481,6 +494,7 @@ class SvTextInNode(bpy.types.Node, SverchCustomTreeNode):
     def reload_json(self):
         n_id = node_id(self)
         self.load_json_data()
+
         if n_id in self.json_data:
             self.use_custom_color = True
             self.color = READY_COLOR
@@ -509,8 +523,8 @@ class SvTextInNode(bpy.types.Node, SverchCustomTreeNode):
     def update_json(self):
         n_id = node_id(self)
 
-        if self.reload_on_update:
-            self.reload_csv()
+        if self.autoreload:
+            self.reload_json()
 
         if n_id not in self.json_data and self.current_text:
             self.reload_json()
@@ -590,30 +604,42 @@ class SvTextOutNode(bpy.types.Node, SverchCustomTreeNode):
     append = BoolProperty(default=False, description="Append to output file")
 
     # interesting bug dangerous, will think a bit more
-    dump_on_update = BoolProperty(default=False, description="Dump file on every update")
+    autodump = BoolProperty(default=False, description="autodump")
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', 'Col 0', 'Col 0')
 
     def draw_buttons(self, context, layout):
 
-        layout.prop(self, 'text', "Select text")
+        addon = context.user_preferences.addons.get(sverchok.__name__)
+        col = layout.column(align=True)
+        col.prop(self, 'autodump', "auto dump", toggle=True)
+        row = col.row(align=True)
+        row.prop(self, 'text', "Select text")
 
-        layout.label("Select output format")
-        layout.prop(self, 'text_mode', "Text format", expand=True)
+        #layout.label("Select output format")
+        row = col.row(align=True)
+        row.prop(self, 'text_mode', "Text format", expand=True)
 
+        row = col.row(align=True)
         if self.text_mode == 'CSV':
-            layout.prop(self, 'csv_dialect', "Dialect")
+            row.prop(self, 'csv_dialect', "Dialect")
 
         if self.text_mode == 'SV':
-            layout.prop(self, 'sv_mode', "Format", expand=True)
+            row.prop(self, 'sv_mode', "Format", expand=True)
 
         if self.text_mode == 'JSON':
-            layout.prop(self, 'json_mode', "Format", expand=True)
+            row.prop(self, 'json_mode', "Format", expand=True)
 
-        layout.operator('node.sverchok_text_callback', text='Dump').fn_name = 'dump'
-        layout.prop(self, 'append', "Append")
-        #layout.prop(self,'dump_on_update', "Dump on every update")
+        col2 = col.column(align=True)
+        row = col2.row(align=True)
+        if not self.autodump:
+            if addon.preferences.over_sized_buttons:
+                row.scale_y = 4.0
+            else:
+                row.scale_y = 1
+            row.operator('node.sverchok_text_callback', text='D U M P').fn_name = 'dump'
+            col2.prop(self, 'append', "Append")
 
     def update_socket(self, context):
         self.update()
@@ -621,12 +647,13 @@ class SvTextOutNode(bpy.types.Node, SverchCustomTreeNode):
     # manage sockets
     # does not do anything with data until dump is executed
 
-    def update(self):
+    def process(self):
         if self.text_mode == 'CSV' or self.text_mode == 'JSON':
             multi_socket(self, min=1)
         elif self.text_mode == 'SV':
             pass  # only one input, do nothing
-        if self.dump_on_update:
+        if self.autodump:
+            self.append = False
             self.dump()
 
     # build a string with data from sockets

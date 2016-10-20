@@ -19,7 +19,7 @@
     SphereNode
     BasicSplineNode
     svBasicArcNode
-    RandomVectorNode
+    RandomVectorNodeMK2
     SvBricksNode
     ImageNode
 
@@ -174,7 +174,7 @@
     Sv3DviewPropsNode
 
 ## Text
-    ViewerNode_text
+    ViewerNodeTextMK2
     SvTextInNode
     SvTextOutNode
     NoteNode
