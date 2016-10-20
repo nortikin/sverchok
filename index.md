@@ -19,7 +19,7 @@
     SphereNode
     BasicSplineNode
     svBasicArcNode
-    RandomVectorNode
+    RandomVectorNodeMK2
     SvBricksNode
     ImageNode
 
