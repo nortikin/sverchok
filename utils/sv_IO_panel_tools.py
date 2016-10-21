@@ -19,6 +19,7 @@
 import json
 import os
 import re
+import time
 import zipfile
 import traceback
 from urllib.request import urlopen
@@ -799,6 +800,31 @@ class SvNodeTreeExportToGist(bpy.types.Operator):
             return {'FINISHED'}
 
 
+class SvBlendToZip(bpy.types.Operator):
+
+    bl_idname = "node.blend_to_zip"
+    bl_label = "Save Blend as Zip"
+
+    def execute(self, context):
+
+        f = time.gmtime()
+        finfo = [f.tm_year, f.tm_mon, f.tm_mday, f.tm_hour, f.tm_min]
+        finfo = [str(i) for i in finfo]
+        raw_time_stamp = ('_').join(finfo)
+
+        blendpath = bpy.data.filepath
+        blendname = os.path.basename(bpy.data.filepath)
+        blendbasename = blendname.split('.')[0]
+        zipname = blendbasename + '_' + raw_time_stamp + '.zip'
+        blendzippath = os.path.join(os.path.dirname(blendpath), zipname)
+        with zipfile.ZipFile(blendzippath, 'w', zipfile.ZIP_DEFLATED) as myzip:
+            myzip.write(blendpath, blendname)
+
+        context.window_manager.clipboard = blendzippath
+
+        return {'FINISHED'}
+
+
 class SvIOPanelProperties(bpy.types.PropertyGroup):
 
     new_nodetree_name = StringProperty(
@@ -828,7 +854,8 @@ classes = [
     SvNodeTreeExportToGist,
     SvNodeTreeImporter,
     SvNodeTreeImporterSilent,
-    SvNodeTreeImportFromGist
+    SvNodeTreeImportFromGist,
+    SvBlendToZip
 ]
 
 
