@@ -192,8 +192,6 @@
     SvGetPropNode
     SvSetPropNode
     SvVertexGroupNode
-    SvRayCastSceneNode
-    SvRayCastObjectNode
     SvVertexColorNode
     SvVertexColorNodeMK2
 
@@ -213,6 +211,7 @@
     SvPointOnMeshNodeMK2
     SvOBJRayCastNodeMK2
     SvSCNRayCastNodeMK2
+    SvObjectToMeshNodeMK2
 
 ## Alpha Nodes
     SvCurveViewerNode
@@ -229,9 +228,7 @@
     SvGetDataObjectNode
     SvSetDataObjectNode
     SvSortObjsNode
-    SvObjectToMeshNode
     SvFilterObjsNode
-    SvPointOnMeshNode
     SvBMVertsNode
     SvBMOpsNode
     SvBMinputNode
