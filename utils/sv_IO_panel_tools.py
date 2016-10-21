@@ -820,7 +820,7 @@ class SvBlendToZip(bpy.types.Operator):
         with zipfile.ZipFile(blendzippath, 'w', zipfile.ZIP_DEFLATED) as myzip:
             myzip.write(blendpath, blendname)
 
-        context.window_manager.clipboard = blendname
+        context.window_manager.clipboard = blendzippath
 
         return {'FINISHED'}
 
