@@ -26,6 +26,9 @@ Incoming nested lists can be made less nested.
     [[5], [5], [5], [5], [5], [5]]
     >>> [5, 5, 5, 5, 5, 5]
 
+Usage
+-----
+Type 1,2 or 2,3 or 1,3 or 1,2,3 or 3,4 etc to leave this levels and remove others.
 
 Throughput
 ----------

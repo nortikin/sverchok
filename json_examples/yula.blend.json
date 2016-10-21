@@ -1,0 +1,536 @@
+{
+  "export_version": "0.062",
+  "framed_nodes": {
+    "Frame info": "Frame.001",
+    "Lathe": "Frame.001",
+    "List Reverse": "Frame",
+    "List Reverse.001": "Frame.001",
+    "List Zip": "Frame",
+    "Math.001": "Frame.001",
+    "Math.002": "Frame.001",
+    "Mirror": "Frame",
+    "Random Vector": "Frame",
+    "Rotation": "Frame.001",
+    "UV Connection": "Frame",
+    "Vector in": "Frame.001",
+    "Vector in.001": "Frame",
+    "Vector out": "Frame",
+    "Viewer BMeshMK2": "Frame.001",
+    "Viewer Draw": "Frame"
+  },
+  "groups": {},
+  "nodes": {
+    "Frame": {
+      "bl_idname": "NodeFrame",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 317.57806396484375,
+      "hide": false,
+      "label": "",
+      "location": [
+        0.0,
+        60.0
+      ],
+      "params": {},
+      "width": 1689.4569091796875
+    },
+    "Frame info": {
+      "bl_idname": "SvFrameInfoNode",
+      "color": [
+        0.904932975769043,
+        1.0,
+        0.883421003818512
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -620.247314453125,
+        -250.50379943847656
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Frame.001": {
+      "bl_idname": "NodeFrame",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 474.27838134765625,
+      "hide": false,
+      "label": "",
+      "location": [
+        152.76092529296875,
+        19.008968353271484
+      ],
+      "params": {},
+      "width": 1517.106689453125
+    },
+    "Lathe": {
+      "bl_idname": "SvLatheNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        436.8083801269531,
+        34.25679016113281
+      ],
+      "params": {
+        "Degrees": 370.0,
+        "Steps": 24,
+        "axis": [
+          0.0,
+          -0.05999999865889549,
+          1.0
+        ],
+        "cent": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "dvec": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "remove_doubles": 0
+      },
+      "width": 140.0
+    },
+    "List Reverse": {
+      "bl_idname": "ListReverseNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -766.9852905273438,
+        239.56991577148438
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "List Reverse.001": {
+      "bl_idname": "ListReverseNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        216.80838012695312,
+        -34.081809997558594
+      ],
+      "params": {
+        "level": 3
+      },
+      "width": 140.0
+    },
+    "List Zip": {
+      "bl_idname": "ZipNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -488.4935302734375,
+        365.2684631347656
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Math.001": {
+      "bl_idname": "ScalarMathNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -186.50100708007812,
+        -208.35693359375
+      ],
+      "params": {
+        "items_": "MUL",
+        "y": 10.0
+      },
+      "width": 140.0
+    },
+    "Math.002": {
+      "bl_idname": "ScalarMathNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -408.2643737792969,
+        -147.0565948486328
+      ],
+      "params": {
+        "items_": "DIV",
+        "y": 20.0
+      },
+      "width": 140.0
+    },
+    "Mirror": {
+      "bl_idname": "SvMirrorNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -748.0174560546875,
+        392.57806396484375
+      ],
+      "params": {
+        "mode": "PLANE"
+      },
+      "width": 131.364013671875
+    },
+    "Note": {
+      "bl_idname": "NoteNode",
+      "color": [
+        1.0,
+        0.8993440270423889,
+        0.9742509722709656
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1502.654296875,
+        77.0308837890625
+      ],
+      "params": {
+        "text": "Animation of rotated lathe faces. Nikitron 2016"
+      },
+      "width": 400.0
+    },
+    "Random Vector": {
+      "bl_idname": "RandomVectorNode",
+      "color": [
+        0.9200000166893005,
+        0.9200000166893005,
+        0.9200000166893005
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1516.087890625,
+        352.8890380859375
+      ],
+      "params": {
+        "count_inner": 4,
+        "seed": 48
+      },
+      "width": 140.0
+    },
+    "Rotation": {
+      "bl_idname": "SvRotationNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        23.38824462890625,
+        -39.22859191894531
+      ],
+      "params": {
+        "mode": "EULER",
+        "x_": 0.0,
+        "y_": 0.0,
+        "z_": 0.0
+      },
+      "width": 140.0
+    },
+    "UV Connection": {
+      "bl_idname": "LineConnectNodeMK2",
+      "color": [
+        0.9942967891693115,
+        0.9714840650558472,
+        0.9714840650558472
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -273.6197509765625,
+        359.0244445800781
+      ],
+      "params": {
+        "cicl_check_U": 0,
+        "cicl_check_V": 0,
+        "cup_U": 0,
+        "cup_V": 0,
+        "dir_check": "V_dir",
+        "polygons": "Edges",
+        "slice_check": 0
+      },
+      "width": 140.0
+    },
+    "Vector in": {
+      "bl_idname": "GenVectorsNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -187.88021850585938,
+        -44.694061279296875
+      ],
+      "params": {
+        "x_": 0.0,
+        "y_": 0.0,
+        "z_": 1.0
+      },
+      "width": 100.0
+    },
+    "Vector in.001": {
+      "bl_idname": "GenVectorsNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1076.087890625,
+        366.24957275390625
+      ],
+      "params": {},
+      "width": 100.0
+    },
+    "Vector out": {
+      "bl_idname": "VectorsOutNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1296.087890625,
+        377.9667663574219
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Viewer BMeshMK2": {
+      "bl_idname": "SvBmeshViewerNodeMK2",
+      "color": [
+        0.6284880042076111,
+        0.931007981300354,
+        1.0
+      ],
+      "height": 100.0,
+      "hide": true,
+      "label": "",
+      "location": [
+        696.859375,
+        77.26939392089844
+      ],
+      "params": {
+        "autosmooth": 1,
+        "basemesh_name": "Alpha",
+        "hide": 1
+      },
+      "width": 140.0
+    },
+    "Viewer Draw": {
+      "bl_idname": "ViewerNode2",
+      "color": [
+        0.6284880042076111,
+        0.931007981300354,
+        1.0
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -26.630996704101562,
+        385.51513671875
+      ],
+      "params": {},
+      "width": 140.0
+    }
+  },
+  "update_lists": [
+    [
+      "Random Vector",
+      "Random",
+      "Vector out",
+      "Vectors"
+    ],
+    [
+      "Vector out",
+      "X",
+      "Vector in.001",
+      "X"
+    ],
+    [
+      "Vector out",
+      "Z",
+      "Vector in.001",
+      "Z"
+    ],
+    [
+      "Vector in.001",
+      "Vectors",
+      "List Reverse",
+      "data"
+    ],
+    [
+      "Vector in.001",
+      "Vectors",
+      "Mirror",
+      "Vertices"
+    ],
+    [
+      "Mirror",
+      "Vertices",
+      "List Zip",
+      "data"
+    ],
+    [
+      "List Reverse",
+      "data",
+      "List Zip",
+      "data 1"
+    ],
+    [
+      "List Zip",
+      "data",
+      "UV Connection",
+      "vertices"
+    ],
+    [
+      "UV Connection",
+      "vertices",
+      "Viewer Draw",
+      "vertices"
+    ],
+    [
+      "UV Connection",
+      "data",
+      "Viewer Draw",
+      "edg_pol"
+    ],
+    [
+      "Frame info",
+      "Current Frame",
+      "Math.002",
+      "X"
+    ],
+    [
+      "Frame info",
+      "Current Frame",
+      "Math.001",
+      "X"
+    ],
+    [
+      "Vector in",
+      "Vectors",
+      "Rotation",
+      "Vertices"
+    ],
+    [
+      "Math.002",
+      "float",
+      "Rotation",
+      "X"
+    ],
+    [
+      "Math.002",
+      "float",
+      "Rotation",
+      "Y"
+    ],
+    [
+      "Math.001",
+      "float",
+      "Rotation",
+      "Z"
+    ],
+    [
+      "UV Connection",
+      "data",
+      "List Reverse.001",
+      "data"
+    ],
+    [
+      "UV Connection",
+      "vertices",
+      "Lathe",
+      "Verts"
+    ],
+    [
+      "List Reverse.001",
+      "data",
+      "Lathe",
+      "Edges"
+    ],
+    [
+      "Rotation",
+      "Vertices",
+      "Lathe",
+      "axis"
+    ],
+    [
+      "Lathe",
+      "Verts",
+      "Viewer BMeshMK2",
+      "vertices"
+    ],
+    [
+      "Lathe",
+      "Poly",
+      "Viewer BMeshMK2",
+      "faces"
+    ]
+  ]
+}
