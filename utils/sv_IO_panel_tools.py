@@ -19,9 +19,9 @@
 import json
 import os
 import re
-import time
 import zipfile
 import traceback
+from time import gmtime, strftime
 from urllib.request import urlopen
 
 from os.path import basename
@@ -807,10 +807,7 @@ class SvBlendToZip(bpy.types.Operator):
 
     def execute(self, context):
 
-        f = time.gmtime()
-        finfo = [f.tm_year, f.tm_mon, f.tm_mday, f.tm_hour, f.tm_min]
-        finfo = [str(i) for i in finfo]
-        raw_time_stamp = ('_').join(finfo)
+        raw_time_stamp = strftime("%Y_%m_%d_%H_%M", gmtime())
 
         blendpath = bpy.data.filepath
         blendname = os.path.basename(bpy.data.filepath)
@@ -819,8 +816,8 @@ class SvBlendToZip(bpy.types.Operator):
         blendzippath = os.path.join(os.path.dirname(blendpath), zipname)
         with zipfile.ZipFile(blendzippath, 'w', zipfile.ZIP_DEFLATED) as myzip:
             myzip.write(blendpath, blendname)
-
-        context.window_manager.clipboard = blendzippath
+            context.window_manager.clipboard = blendzippath
+            print('saved: ', blendzippath)
 
         return {'FINISHED'}
 
