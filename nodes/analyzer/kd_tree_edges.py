@@ -91,8 +91,8 @@ class SvKDTreeEdgesNode(bpy.types.Node, SverchCustomTreeNode):
         size = len(verts)
         kd = mathutils.kdtree.KDTree(size)
 
-        for i, vtx in enumerate(verts):
-            kd.insert(Vector(vtx), i)
+        for i, xyz in enumerate(verts):
+            kd.insert(xyz, i)
         kd.balance()
 
         # set minimum values

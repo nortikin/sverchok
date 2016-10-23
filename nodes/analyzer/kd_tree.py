@@ -148,30 +148,9 @@ class SvKDTreeNode(bpy.types.Node, SverchCustomTreeNode):
         size = len(verts)
         kd = mathutils.kdtree.KDTree(size)
 
-        for i, vtx in enumerate(verts):
-            kd.insert(Vector(vtx), i)
+        for i, xyz in enumerate(verts):
+            kd.insert(xyz, i)
         kd.balance()
-
-        '''
-        #
-        # commented out because this may not even be an issue anymore.
-        #
-        reset_outs = {
-            'FIND': ['proxima .co', 'proxima .idx', 'proxima dist'],
-            'FIND_N': ['n proxima .co', 'n proxima .idx', 'n proxima dist'],
-            'FIND_RANGE': ['grouped .co', 'grouped .idx', 'grouped dist']
-        }
-        #
-        # # set sockets to [] and return early, somehow this has been triggered
-        # # early.
-        # if not (inputs['Check Verts'].is_linked):
-        #     try:
-        #         for socket in reset_outs[self.mode]:
-        #             outputs[socket].sv_set([])
-        #     except KeyError:
-        #         pass
-        #     return
-        '''
 
         # before continuing check at least that there is one output.
         try:
