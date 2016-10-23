@@ -46,7 +46,7 @@ bl_info = {
         "Portnov, Elfnor"
     ),
     "version": (0, 5, 6, 7),
-    "blender": (2, 8, 1),
+    "blender": (2, 7, 8),
     "location": "Nodes > CustomNodesTree > Add user nodes",
     "description": "Parametric node-based geometry programming",
     "warning": "",
