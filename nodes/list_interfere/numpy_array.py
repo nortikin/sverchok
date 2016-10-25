@@ -17,15 +17,10 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-import numpy
+import numpy as np
 from bpy.props import EnumProperty,StringProperty
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (updateNode)
-
-
-def Obm(m):
-        m = [(i,i,"") for i in m]
-        return m
+from sverchok.data_structure import (updateNode, enum_item as e)
 
 
 class SvNumpyArrayNode(bpy.types.Node, SverchCustomTreeNode):
@@ -34,27 +29,41 @@ class SvNumpyArrayNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Numpy Array'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    Modes = ['tolist','conj','flatten','reshape','repeat','resize',
-             'transpose','swapaxes','squeeze','partition','searchsorted','round',
-             'take','clip','ptp','all','any','choose','sort','sum','cumsum','mean',
-             'var','std','prod','cumprod']
-    Mod = EnumProperty(name="getmodes", default="tolist", items=Obm(Modes), update=updateNode)
-    st = StringProperty(default='', update=updateNode)
+    Modes = ['x.tolist()','x.conj()','x.flatten()','x.reshape(Args)','x.repeat(Args)','x.resize()',
+             'x.transpose()','x.swapaxes()','x.squeeze()','x.partition()','x.searchsorted()',
+             'x.round()','x.take()','x.clip()','x.ptp()','x.all()','x.any()','x.choose(Args)',
+             'x.sort()','x.sum()','x.cumsum()','x.mean()','x.var()','x.std()','x.prod()',
+             'x.cumprod()','np.array(x)','np.array_equal(x,y)','np.invert(x)','np.rot90(x,Args)',
+             'x[y]','x+y','x*y','Custom']
+    Mod = EnumProperty(name="getmodes", default="np.array(x)", items=e(Modes), update=updateNode)
+    Cust = StringProperty(default='x[y.argsort()]', update=updateNode)
+    Args = StringProperty(default='1', update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('StringsSocket', 'List')
+        self.inputs.new('StringsSocket', 'x')
+        self.inputs.new('StringsSocket', 'y')
         self.outputs.new('StringsSocket', 'Value')
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "Mod", "Get")
-        layout.prop(self, "st", text="args")
+        if "Args" in self.Mod:
+            layout.prop(self, "Args", text="Args")
+        elif self.Mod == 'Custom':
+            layout.prop(self, "Cust", text="")
 
     def process(self):
-        if self.outputs['Value'].is_linked:
-            L = self.inputs['List'].sv_get()
-            L = numpy.array(L) if not isinstance(L,numpy.ndarray) else L
-            Ln = eval("L."+self.Mod+"("+self.st+")")
-            self.outputs['Value'].sv_set(Ln)
+        out = self.outputs[0]
+        if out.is_linked:
+            X,Y = self.inputs
+            L, Mod = [], self.Mod
+            string = self.Cust if Mod == 'Custom' else Mod
+            Args = eval(self.Args)
+            if X.is_linked and Y.is_linked:
+                out.sv_set(eval("["+string+" for x,y in zip(X.sv_get(),Y.sv_get())]"))
+            elif X.is_linked:
+                out.sv_set(eval("["+string+" for x in X.sv_get()]"))
+            else:
+                out.sv_set([eval(string)])
 
     def update_socket(self, context):
         self.update()
