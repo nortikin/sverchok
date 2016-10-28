@@ -914,6 +914,8 @@ def changable_sockets(node, inputsocketname, outputsocketname):
     '''
     in_socket = node.inputs[inputsocketname]
     ng = node.id_data
+    if ng.bl_idname == 'SverchGroupTreeType':
+        return
     if in_socket.links:
         in_other = get_other_socket(in_socket)
         if not in_other:
