@@ -914,14 +914,14 @@ def changable_sockets(node, inputsocketname, outputsocketname):
     '''
     in_socket = node.inputs[inputsocketname]
     ng = node.id_data
-    if ng.bl_idname == 'SverchGroupTreeType':
-        return
     if in_socket.links:
         in_other = get_other_socket(in_socket)
         if not in_other:
             return
         outputs = node.outputs
         s_type = in_other.bl_idname
+        if s_type == 'SvDummySocket':
+            return #
         if outputs[outputsocketname[0]].bl_idname != s_type:
             node.id_data.freeze(hard=True)
             to_links = {}
