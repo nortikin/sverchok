@@ -88,6 +88,9 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
     int_props = CollectionProperty(type=SvIntPropertySettingsGroup)
 
     def add_prop_from(self, socket):
+        """
+        Add a property if possible
+        """
         other = socket.other
         cls = getattr(bpy.types, self.cls_bl_idname, None)
         cls_dict = cls.__dict__ if cls else {}
@@ -100,9 +103,9 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
             elif prop_func.__name__ == "IntProperty":
                 prop_settings = self.int_props.add()
             elif prop_func.__name__ == "FloatVectorProperty":
-                pass # etc
-            else:
-                pass
+                return None # for now etc
+            else: # no way to handle it
+                return None
 
             prop_settings.prop_name = generate_name(prop_name, cls_dict)
             prop_settings.set_settings(prop_dict)
@@ -113,13 +116,14 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
                 prop_settings = self.float_props.add()
             elif "int" in other.prop_type:
                 prop_settings = self.int_props.add()
-
+            else:
+                return None
             prop_settings.prop_name = generate_name(make_valid_identifier(other.name), cls_dict)
             prop_settings.set_settings({"name": other.name})
             socket.prop_name = prop_settings.prop_name
             return prop_settings.prop_name
 
-        return ""
+        return None
 
     def get_all_props(self):
         """
