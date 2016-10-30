@@ -31,7 +31,7 @@ class SvNumpyArrayNode(bpy.types.Node, SverchCustomTreeNode):
 
     Modes = ['x.tolist()','x.conj()','x.flatten()','np.add(x,y)','np.subtract(x,y)','x.resize()',
              'x.transpose()','np.trunc(x)','x.squeeze()','np.ones_like(x)','np.minimum(x,y)',
-             'x.round()','np.maximum(x,y)','x.clip()','x.ptp()','x.all()','x.any()','np.remainder(x,y)',
+             'x.round()','np.maximum(x,y)','np.sin(x)','x.ptp()','x.all()','x.any()','np.remainder(x,y)',
              'np.unique(x)','x.sum()','x.cumsum()','x.mean()','x.var()','x.std()','x.prod()',
              'x.cumprod()','np.array(x)','np.array_equal(x,y)','np.invert(x)','np.rot90(x,1)',
              'x[y]','x+y','x*y','Custom']
