@@ -29,15 +29,14 @@ class SvNumpyArrayNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Numpy Array'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    Modes = ['x.tolist()','x.conj()','x.flatten()','x.reshape(Args)','x.repeat(Args)','x.resize()',
+    Modes = ['x.tolist()','x.conj()','x.flatten()','np.add(x,y)','np.subtract(x,y)','x.resize()',
              'x.transpose()','x.swapaxes()','x.squeeze()','x.partition()','x.searchsorted()',
-             'x.round()','x.take()','x.clip()','x.ptp()','x.all()','x.any()','x.choose(Args)',
+             'x.round()','x.take()','x.clip()','x.ptp()','x.all()','x.any()','np.remainder(x,y)',
              'x.sort()','x.sum()','x.cumsum()','x.mean()','x.var()','x.std()','x.prod()',
-             'x.cumprod()','np.array(x)','np.array_equal(x,y)','np.invert(x)','np.rot90(x,Args)',
+             'x.cumprod()','np.array(x)','np.array_equal(x,y)','np.invert(x)','np.rot90(x,1)',
              'x[y]','x+y','x*y','Custom']
     Mod = EnumProperty(name="getmodes", default="np.array(x)", items=e(Modes), update=updateNode)
     Cust = StringProperty(default='x[y.argsort()]', update=updateNode)
-    Args = StringProperty(default='1', update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', 'x')
@@ -46,18 +45,15 @@ class SvNumpyArrayNode(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "Mod", "Get")
-        if "Args" in self.Mod:
-            layout.prop(self, "Args", text="Args")
-        elif self.Mod == 'Custom':
+        if self.Mod == 'Custom':
             layout.prop(self, "Cust", text="")
 
     def process(self):
         out = self.outputs[0]
         if out.is_linked:
             X,Y = self.inputs
-            L, Mod = [], self.Mod
+            Mod = self.Mod
             string = self.Cust if Mod == 'Custom' else Mod
-            Args = eval(self.Args)
             if X.is_linked and Y.is_linked:
                 out.sv_set(eval("["+string+" for x,y in zip(X.sv_get(),Y.sv_get())]"))
             elif X.is_linked:
