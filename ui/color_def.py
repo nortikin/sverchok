@@ -45,7 +45,7 @@ nipon_blossom = {
     "Generators": (0.92, 0.92, 0.92),
 }
 
-    
+
 #  self referes to the preferences, SverchokPreferences
 
 def color_callback(self, context):
@@ -62,14 +62,15 @@ def color_callback(self, context):
     auto_apply_theme = self.auto_apply_theme
     self.auto_apply_theme = False
     for name, attr in sv_node_colors:
-        setattr(self, attr, theme_dict[name]) 
+        setattr(self, attr, theme_dict[name])
     self.auto_apply_theme = auto_apply_theme
     if self.auto_apply_theme:
         apply_theme()
-    
+
 def sv_colors_definition():
     addon_name = sverchok.__name__
     addon = bpy.context.user_preferences.addons.get(addon_name)
+    print("got addon")
     if addon:
         prefs = addon.preferences
         sv_node_colors = {
@@ -100,6 +101,7 @@ def get_color(bl_id):
     Get color for bl_id
     """
     if not colors_cache:
+        print("building color cache")
         rebuild_color_cache()
     return colors_cache.get(bl_id)
 
@@ -120,8 +122,8 @@ def apply_theme(ng=None):
     else:
         for n in filter(lambda n:hasattr(n, "set_color"), ng.nodes):
             n.set_color()
-           
-           
+
+
 class SverchokApplyTheme(bpy.types.Operator):
     """
     Apply Sverchok themes
@@ -129,7 +131,7 @@ class SverchokApplyTheme(bpy.types.Operator):
     bl_idname = "node.sverchok_apply_theme"
     bl_label = "Sverchok Apply theme"
     bl_options = {'REGISTER', 'UNDO'}
-    
+
     tree_name = StringProperty()
 
     def execute(self, context):
@@ -142,8 +144,8 @@ class SverchokApplyTheme(bpy.types.Operator):
         else:
             apply_theme()
         return {'FINISHED'}
-        
-           
+
+
 def register():
     bpy.utils.register_class(SverchokApplyTheme)
 

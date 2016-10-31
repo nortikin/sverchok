@@ -393,9 +393,12 @@ class SverchCustomTreeNode:
         ng = self.id_data
         ng.freeze()
         # color
+        print("calling sv_init for {}".format(self.bl_idname))
         if hasattr(self, "sv_init"):
             self.sv_init(context)
+        print("calling set color")
         self.set_color()
+        print("color set")
         ng.unfreeze()
 
     def process_node(self, context):
