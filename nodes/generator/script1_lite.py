@@ -107,7 +107,6 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
 
     def update_sockets(self, sockets):
         for line in self.script_str.split('\n'):
-            print(line)
             if line.startswith('# in'):
                 sockets['inputs'].append(parse_socket_line(line))
             elif line.startswith('# out'):
@@ -118,11 +117,8 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
         if not sockets['inputs']:
             return
 
-        print(sockets)
-
         for k, v in sockets.items():
             for idx, (socket_description) in enumerate(v):
-                print(idx, socket_description)
                 if socket_description is UNPARSABLE:
                     return
 
