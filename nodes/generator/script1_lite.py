@@ -83,6 +83,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
         if not self.script_name:
             return
         self.script_str = bpy.data.texts.get(self.script_name).as_string()
+        self.process(context)
 
     def nuke_me(self, context):
         self.script_str = ''
@@ -106,10 +107,11 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
 
     def update_sockets(self, sockets):
         for line in self.script_str.split('\n'):
+            print(line)
             if line.startswith('# in'):
-                sockets['inputs'] = parse_socket_line(line)
+                sockets['inputs'].append(parse_socket_line(line))
             elif line.startswith('# out'):
-                sockets['outputs'] = parse_socket_line(line)
+                sockets['outputs'].append(parse_socket_line(line))
             else:
                 break
 
@@ -119,7 +121,8 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
         print(sockets)
 
         for k, v in sockets.items():
-            for idx, socket_description in enumerate(v):
+            for idx, (socket_description) in enumerate(v):
+                print(idx, socket_description)
                 if socket_description is UNPARSABLE:
                     return
 
