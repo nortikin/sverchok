@@ -83,13 +83,13 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
         if not self.script_name:
             return
         self.script_str = bpy.data.texts.get(self.script_name).as_string()
-        self.process(context)
+        self.process()
 
     def nuke_me(self, context):
         self.script_str = ''
         self.script_name = ''
 
-    def process(self, context):
+    def process(self):
         if not all([self.script_name, self.script_str]):
             return
 
@@ -99,7 +99,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
 
     def process_script(self, sockets):
         # make inputs local, do function with inputs, return outputs if present
-        locals.update({s.name: s.sv_get() for s in self.inputs})
+        locals().update({s.name: s.sv_get() for s in self.inputs})
         exec(self.script_str)
         for idx, val in sockets['outputs']:
             self.outputs[idx].sv_set(dict(locals()).get(val))
