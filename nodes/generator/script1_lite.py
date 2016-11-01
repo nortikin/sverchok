@@ -16,6 +16,7 @@
 #
 # END GPL LICENSE BLOCK #####
 
+import sys
 import ast
 import os
 import traceback
@@ -60,7 +61,7 @@ class SvScriptNodeLiteCallBack(bpy.types.Operator):
     fn_name = bpy.props.StringProperty(default='')
 
     def execute(self, context):
-        getattr(context.node, self.fn_name)(context)
+        getattr(context.node, self.fn_name)()
         return {'FINISHED'}
 
 
@@ -79,13 +80,13 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
         self.use_custom_color = False
 
 
-    def load(self, context):
+    def load(self):
         if not self.script_name:
             return
         self.script_str = bpy.data.texts.get(self.script_name).as_string()
         self.process()
 
-    def nuke_me(self, context):
+    def nuke_me(self):
         self.script_str = ''
         self.script_name = ''
 
@@ -99,10 +100,19 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
 
     def process_script(self, sockets):
         # make inputs local, do function with inputs, return outputs if present
-        locals().update({s.name: s.sv_get() for s in self.inputs})
-        exec(self.script_str)
-        for idx, val in sockets['outputs']:
-            self.outputs[idx].sv_set(dict(locals()).get(val))
+        locals().update({s.name: s.sv_get(default=[[]]) for s in self.inputs if s.is_linked})
+
+        try:
+            exec(self.script_str)
+            for idx, (socket_type, socket_name) in enumerate(sockets['outputs']):
+                vals = locals()[socket_name]
+                self.outputs[idx].sv_set(vals)
+
+        except Exception as err:
+            sys.stderr.write('ERROR: %s\n' % str(err))
+            print(sys.exc_info()[-1].tb_frame.f_code)
+            print('Error on line {}'.format(sys.exc_info()[-1].tb_lineno))
+            print('failed execution')
 
 
     def update_sockets(self, sockets):
@@ -123,6 +133,9 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
                     return
 
                 sock_ = getattr(self, k)
+                if len(sock_) > len(v):
+                    break
+
                 if len(sock_) < idx:
                     if not are_matched(sock_[idx], socket_description):
                         modify_socket(sock_, idx, socket_description)
