@@ -75,46 +75,10 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
     script_name = StringProperty()
     script_str = StringProperty()
 
-    def sv_init(self, context):
-        self.use_custom_color = False
 
-
-    def load(self):
-        if not self.script_name:
-            return
-        self.script_str = bpy.data.texts.get(self.script_name).as_string()
-        self.process()
-
-    def nuke_me(self):
-        self.script_str = ''
-        self.script_name = ''
-
-    def process(self):
-        if not all([self.script_name, self.script_str]):
-            return
-
+    def update_sockets(self):
         sockets = {'inputs': [], 'outputs': []}
-        if self.update_sockets(sockets):
-            self.process_script(sockets)
 
-    def process_script(self, sockets):
-        # make inputs local, do function with inputs, return outputs if present
-        locals().update({s.name: s.sv_get(default=[[]]) for s in self.inputs if s.is_linked})
-
-        try:
-            exec(self.script_str)
-            for idx, (socket_type, socket_name) in enumerate(sockets['outputs']):
-                vals = locals()[socket_name]
-                self.outputs[idx].sv_set(vals)
-
-        except Exception as err:
-            sys.stderr.write('ERROR: %s\n' % str(err))
-            print(sys.exc_info()[-1].tb_frame.f_code)
-            print('Error on line {}'.format(sys.exc_info()[-1].tb_lineno))
-            print('failed execution')
-
-
-    def update_sockets(self, sockets):
         for line in self.script_str.split('\n'):
             if line.startswith('# in'):
                 sockets['inputs'].append(parse_socket_line(line))
@@ -143,6 +107,50 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
                     sock_.new(*socket_description)
         
         return True
+
+
+    def sv_init(self, context):
+        self.use_custom_color = False
+
+
+    def load(self):
+        if not self.script_name:
+            return
+        self.script_str = bpy.data.texts.get(self.script_name).as_string()
+
+        if self.update_sockets():
+            self.process()
+
+
+    def nuke_me(self):
+        self.script_str = ''
+        self.script_name = ''
+
+
+    def process(self):
+        if not all([self.script_name, self.script_str]):
+            return
+
+        self.process_script()
+
+
+    def process_script(self):
+        # make inputs local, do function with inputs, return outputs if present
+        locals().update({s.name: s.sv_get(default=[[]]) for s in self.inputs if s.is_linked})
+
+        try:
+            exec(self.script_str)
+            for idx, _socket in enumerate(self.outputs):
+                vals = locals()[_socket.name]
+                self.outputs[idx].sv_set(vals)
+
+        except Exception as err:
+            # this does not find the line in the exec string ( I KNOW )
+            sys.stderr.write('ERROR: %s\n' % str(err))
+            print(sys.exc_info()[-1].tb_frame.f_code)
+            print('Error on line {}'.format(sys.exc_info()[-1].tb_lineno))
+            print('failed execution')
+
 
 
     def draw_buttons(self, context, layout):
