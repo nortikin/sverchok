@@ -133,13 +133,14 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
                     return
 
                 sock_ = getattr(self, k)
-                if len(sock_) > len(v):
-                    break
 
                 if len(sock_) < idx:
                     if not are_matched(sock_[idx], socket_description):
                         modify_socket(sock_, idx, socket_description)
                 else:
+                    if len(sock_) >= len(v):
+                        break
+
                     sock_.new(*socket_description)
         
         return True
