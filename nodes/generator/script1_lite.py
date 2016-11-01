@@ -26,8 +26,7 @@ from bpy.props import StringProperty
 
 from sverchok.utils.sv_panels_tools import sv_get_local_path
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import dataCorrect, updateNode
-
+from sverchok.data_structure import dataCorrect, updateNode, replace_socket
 
 UNPARSABLE = None, None
 FAIL_COLOR = (0.8, 0.1, 0.1)
@@ -136,7 +135,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
 
                 if len(sock_) < idx:
                     if not are_matched(sock_[idx], socket_description):
-                        modify_socket(sock_, idx, socket_description)
+                        replace_socket(sock_[idx], *socket_description)
                 else:
                     if len(sock_) >= len(v):
                         break
