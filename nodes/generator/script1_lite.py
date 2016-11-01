@@ -125,6 +125,8 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
     def nuke_me(self):
         self.script_str = ''
         self.script_name = ''
+        for socket_set in [self.inputs, self.outputs]:
+            socket_set.clear()        
 
 
     def process(self):
