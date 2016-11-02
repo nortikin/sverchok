@@ -320,7 +320,7 @@ class SvNodeRefreshFromTextEditor(bpy.types.Operator):
                         self.report({"WARNING"}, msg)
                         return {'CANCELLED'}
                     except:
-                        self.report({"WARNING"}, msg)
+                        self.report({"WARNING"}, 'unspecified error in load()')
                         return {'CANCELLED'}
                 elif hasattr(n, "text_file_name") and n.text_file_name == text_file_name:
                     pass  # no nothing for profile node, just update ng, could use break...

@@ -49,6 +49,8 @@ def parse_socket_line(line):
         return socket_type, lsp[2]
 
 def are_matched(sock_, socket_description):
+    val = ((sock_.bl_idname, sock_.name) == socket_description)
+    print(sock_.bl_idname, sock_.name , '==',  socket_description, '==', val)
     return (sock_.bl_idname, sock_.name) == socket_description
 
 
@@ -99,6 +101,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
 
                 if len(sock_) < idx:
                     if not are_matched(sock_[idx], socket_description):
+                        print('should be replacing...')
                         replace_socket(sock_[idx], *socket_description)
                 else:
                     if len(sock_) >= len(v):
