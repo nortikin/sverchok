@@ -49,10 +49,8 @@ def parse_socket_line(line):
         socket_type = sock_dict.get(lsp[3])
         if not socket_type:
             return UNPARSABLE
-
         elif len(lsp) == 4:
             return socket_type, lsp[2], None, None
-
         else:
             #      socket_type, socket_name, default=x, nested=x
             #                                           nested=0 means var
@@ -69,7 +67,6 @@ class SvScriptNodeLiteCallBack(bpy.types.Operator):
 
     bl_idname = "node.scriptlite_ui_callback"
     bl_label = "SNLite callback"
-
     fn_name = bpy.props.StringProperty(default='')
 
     def execute(self, context):
@@ -77,18 +74,15 @@ class SvScriptNodeLiteCallBack(bpy.types.Operator):
         return {'FINISHED'}
 
 
-
 class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
 
-    ''' Script node '''
+    ''' Script node Lite'''
     bl_idname = 'SvScriptNodeLite'
     bl_label = 'Scripted Node Lite'
     bl_icon = 'SCRIPTPLUGINS'
 
     script_name = StringProperty()
     script_str = StringProperty()
-
-    # self.node_dict[hash(self)] = {}
     node_dict = {}
 
     def update_sockets(self):
@@ -122,6 +116,8 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
 
                     sock_.new(*socket_description[:2])
         
+        self.node_dict[hash(self)] = {}
+        self.node_dict[hash(self)]['sockets'] = sockets
         return True
 
 
@@ -152,10 +148,25 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
 
         self.process_script()
 
+    def make_new_locals(self):
+        # make inputs local, do function with inputs, return outputs if present
+        sockets = self.node_dict[hash(self)]['sockets']
+        local_dict = {}
+        for idx, s in enumerate(self.inputs):
+            sock_desc = sockets['inputs'][idx]
+            
+            if s.is_linked:
+                val = s.sv_get(default=[[]])
+                if sock_desc[3]:
+                    val = {0: val, 1: val[0], 2: val[0][0]}.get(sock_desc[3])
+            else:
+                val = sock_desc[2]
+            local_dict[s.name] = val
+
+        return local_dict
 
     def process_script(self):
-        # make inputs local, do function with inputs, return outputs if present
-        locals().update({s.name: s.sv_get(default=[[]]) for s in self.inputs if s.is_linked})
+        locals().update(self.make_new_locals())
 
         try:
             exec(self.script_str)
