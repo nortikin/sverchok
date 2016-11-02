@@ -28,7 +28,7 @@ from sverchok.utils.sv_panels_tools import sv_get_local_path
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import dataCorrect, updateNode, replace_socket
 
-UNPARSABLE = None, None
+UNPARSABLE = None, None, None, None
 FAIL_COLOR = (0.8, 0.1, 0.1)
 READY_COLOR = (0, 0.8, 0.95)
 
@@ -36,22 +36,33 @@ sock_dict = {
     'v': 'VerticesSocket', 's': 'StringsSocket', 'm': 'MatrixSocket', 'o': 'SvObjectSocket'
 }
 
+def processed(str_in):
+    a, b = str_in.split('=')
+    return ast.literal_eval(b)
 
 def parse_socket_line(line):
     lsp = line.strip().split()
-    if not len(lsp) == 4:
+    if not len(lsp) in {4,6}:
         print(line, 'is malformed')
         return UNPARSABLE
     else:
         socket_type = sock_dict.get(lsp[3])
         if not socket_type:
             return UNPARSABLE
-        return socket_type, lsp[2]
+
+        elif len(lsp) == 4:
+            return socket_type, lsp[2], None, None
+
+        else:
+            #      socket_type, socket_name, default=x, nested=x
+            #                                           nested=0 means var
+            #                                           nested=1 means var[0]
+            #                                           nested=2 means var[0][0]
+            #                                default is used when socket not connected
+            return socket_type, lsp[2], processed(lsp[4]), processed(lsp[5])
 
 def are_matched(sock_, socket_description):
-    val = ((sock_.bl_idname, sock_.name) == socket_description)
-    print(sock_.bl_idname, sock_.name , '==',  socket_description, '==', val)
-    return (sock_.bl_idname, sock_.name) == socket_description
+    return (sock_.bl_idname, sock_.name) == socket_description[:2]
 
 
 class SvScriptNodeLiteCallBack(bpy.types.Operator):
@@ -77,6 +88,8 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
     script_name = StringProperty()
     script_str = StringProperty()
 
+    # self.node_dict[hash(self)] = {}
+    node_dict = {}
 
     def update_sockets(self):
         sockets = {'inputs': [], 'outputs': []}
@@ -102,12 +115,12 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
                 if len(sock_) < idx:
                     if not are_matched(sock_[idx], socket_description):
                         print('should be replacing...')
-                        replace_socket(sock_[idx], *socket_description)
+                        replace_socket(sock_[idx], *socket_description[:2])
                 else:
                     if len(sock_) >= len(v):
                         break
 
-                    sock_.new(*socket_description)
+                    sock_.new(*socket_description[:2])
         
         return True
 
@@ -128,6 +141,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
     def nuke_me(self):
         self.script_str = ''
         self.script_name = ''
+        self.node_dict[hash(self)] = {}
         for socket_set in [self.inputs, self.outputs]:
             socket_set.clear()        
 
