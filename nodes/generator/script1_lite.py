@@ -37,27 +37,27 @@ sock_dict = {
 }
 
 def processed(str_in):
-    a, b = str_in.split('=')
+    _, b = str_in.split('=')
     return ast.literal_eval(b)
 
 def parse_socket_line(line):
     lsp = line.strip().split()
-    if not len(lsp) in {4,6}:
+    if not len(lsp) in {3, 5}:
         print(line, 'is malformed')
         return UNPARSABLE
     else:
-        socket_type = sock_dict.get(lsp[3])
+        socket_type = sock_dict.get(lsp[2])
         if not socket_type:
             return UNPARSABLE
-        elif len(lsp) == 4:
-            return socket_type, lsp[2], None, None
+        elif len(lsp) == 3:
+            return socket_type, lsp[1], None, None
         else:
             #      socket_type, socket_name, default=x, nested=x
             #                                           nested=0 means var
             #                                           nested=1 means var[0]
             #                                           nested=2 means var[0][0]
             #                                default is used when socket not connected
-            return socket_type, lsp[2], processed(lsp[4]), processed(lsp[5])
+            return socket_type, lsp[1], processed(lsp[3]), processed(lsp[4])
 
 def are_matched(sock_, socket_description):
     return (sock_.bl_idname, sock_.name) == socket_description[:2]
@@ -88,10 +88,17 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
     def update_sockets(self):
         sockets = {'inputs': [], 'outputs': []}
 
+        reading = False
         for line in self.script_str.split('\n'):
-            if line.startswith('# in'):
+            if line.startswith('"""'):
+                reading = not reading
+                if not reading:
+                    break
+                else:
+                    continue
+            if line.startswith('in'):
                 sockets['inputs'].append(parse_socket_line(line))
-            elif line.startswith('# out'):
+            elif line.startswith('out'):
                 sockets['outputs'].append(parse_socket_line(line))
             else:
                 break
