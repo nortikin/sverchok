@@ -88,21 +88,20 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
 
     def parse_sockets(self):
         sockets = {'inputs': [], 'outputs': []}
-        reading = False
+        smap = {'in': 'inputs', 'out': 'outputs'}
+
+        quotes = 0
         for line in self.script_str.split('\n'):
             L = line.strip()
             if L.startswith('"""'):
-                reading = not reading
-                if not reading:
+                quotes += 1
+                if quotes == 2:
                     break
-                else:
-                    continue
-            if L.startswith('in'):
-                sockets['inputs'].append(parse_socket_line(L))
-            elif L.startswith('out'):
-                sockets['outputs'].append(parse_socket_line(L))
-            else:
-                break
+            elif L.startswith('in') or L.startswith('out'):
+                socket_type = L.split(' ')[0]
+                sid = smap.get(socket_type)
+                sockets[sid].append(parse_socket_line(L))
+
         return sockets
 
 
