@@ -156,6 +156,11 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
 
 
     def make_new_locals(self):
+
+        # make .blend reload event work, without this the self.node_dict is empty.
+        if not self.node_dict:
+            self.update_sockets()
+
         # make inputs local, do function with inputs, return outputs if present
         sockets = self.node_dict[hash(self)]['sockets']
         local_dict = {}
