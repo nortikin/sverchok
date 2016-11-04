@@ -18,7 +18,6 @@
 
 import sys
 import ast
-import os
 import traceback
 
 import bpy
@@ -35,6 +34,7 @@ READY_COLOR = (0, 0.8, 0.95)
 sock_dict = {
     'v': 'VerticesSocket', 's': 'StringsSocket', 'm': 'MatrixSocket', 'o': 'SvObjectSocket'
 }
+
 
 def processed(str_in):
     _, b = str_in.split('=')
@@ -85,9 +85,9 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
     script_str = StringProperty()
     node_dict = {}
 
-    def update_sockets(self):
-        sockets = {'inputs': [], 'outputs': []}
 
+    def parse_sockets(self):
+        sockets = {'inputs': [], 'outputs': []}
         reading = False
         for line in self.script_str.split('\n'):
             L = line.strip()
@@ -103,7 +103,11 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
                 sockets['outputs'].append(parse_socket_line(L))
             else:
                 break
+        return sockets
 
+
+    def update_sockets(self):
+        sockets = self.parse_sockets()
         if not sockets['inputs']:
             return
 
@@ -152,8 +156,8 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
     def process(self):
         if not all([self.script_name, self.script_str]):
             return
-
         self.process_script()
+
 
     def make_new_locals(self):
         # make inputs local, do function with inputs, return outputs if present
@@ -171,6 +175,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
             local_dict[s.name] = val
 
         return local_dict
+
 
     def process_script(self):
         locals().update(self.make_new_locals())
