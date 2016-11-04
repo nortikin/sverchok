@@ -145,6 +145,7 @@
     VectorPolarOutNode
     VertsDelDoublesNode
     EvaluateLineNode
+    SvInterpolationStripesNode
     SvInterpolationNode
     SvInterpolationNodeMK2
     SvInterpolationNodeMK3
