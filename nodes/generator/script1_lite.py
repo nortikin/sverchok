@@ -40,6 +40,7 @@ def processed(str_in):
     _, b = str_in.split('=')
     return ast.literal_eval(b)
 
+
 def parse_socket_line(line):
     lsp = line.strip().split()
     if not len(lsp) in {3, 5}:
@@ -47,17 +48,16 @@ def parse_socket_line(line):
         return UNPARSABLE
     else:
         socket_type = sock_dict.get(lsp[2])
+        socket_name = lsp[1]
         if not socket_type:
             return UNPARSABLE
         elif len(lsp) == 3:
-            return socket_type, lsp[1], None, None
+            return socket_type, socket_name, None, None
         else:
-            #      socket_type, socket_name, default=x, nested=x
-            #                                           nested=0 means var
-            #                                           nested=1 means var[0]
-            #                                           nested=2 means var[0][0]
-            #                                default is used when socket not connected
-            return socket_type, lsp[1], processed(lsp[3]), processed(lsp[4])
+            default = processed(lsp[3])
+            nested = processed(lsp[4])
+            return socket_type, socket_name, default, nested
+
 
 def are_matched(sock_, socket_description):
     return (sock_.bl_idname, sock_.name) == socket_description[:2]
@@ -90,16 +90,17 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
 
         reading = False
         for line in self.script_str.split('\n'):
-            if line.startswith('"""'):
+            L = line.strip()
+            if L.startswith('"""'):
                 reading = not reading
                 if not reading:
                     break
                 else:
                     continue
-            if line.startswith('in'):
-                sockets['inputs'].append(parse_socket_line(line))
-            elif line.startswith('out'):
-                sockets['outputs'].append(parse_socket_line(line))
+            if L.startswith('in'):
+                sockets['inputs'].append(parse_socket_line(L))
+            elif L.startswith('out'):
+                sockets['outputs'].append(parse_socket_line(L))
             else:
                 break
 
@@ -115,7 +116,6 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
 
                 if len(sock_) < idx:
                     if not are_matched(sock_[idx], socket_description):
-                        print('should be replacing...')
                         replace_socket(sock_[idx], *socket_description[:2])
                 else:
                     if len(sock_) >= len(v):
