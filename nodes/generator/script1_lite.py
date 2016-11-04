@@ -87,7 +87,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
 
 
     def parse_sockets(self):
-        sockets = {'inputs': [], 'outputs': []}
+        socket_info = {'inputs': [], 'outputs': []}
         quotes = 0
         for line in self.script_str.split('\n'):
             L = line.strip()
@@ -97,34 +97,35 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
                     break
             elif L.startswith('in ') or L.startswith('out '):
                 socket_dir = L.split(' ')[0] + 'puts'
-                sockets[socket_dir].append(parse_socket_line(L))
+                socket_info[socket_dir].append(parse_socket_line(L))
 
-        return sockets
+        return socket_info
 
 
     def update_sockets(self):
-        sockets = self.parse_sockets()
-        if not sockets['inputs']:
+        socket_info = self.parse_sockets()
+        if not socket_info['inputs']:
             return
 
-        for k, v in sockets.items():
+        for k, v in socket_info.items():
+
+            sockets = getattr(self, k)  #  == self.inputs / self.outputs
+
             for idx, (socket_description) in enumerate(v):
                 if socket_description is UNPARSABLE:
                     return
 
-                sock_ = getattr(self, k)
-
-                if len(sock_) < idx:
-                    if not are_matched(sock_[idx], socket_description):
-                        replace_socket(sock_[idx], *socket_description[:2])
+                if len(sockets) < idx:
+                    if not are_matched(sockets[idx], socket_description):
+                        replace_socket(sockets[idx], *socket_description[:2])
                 else:
-                    if len(sock_) >= len(v):
+                    if len(sockets) >= len(v):
                         break
 
-                    sock_.new(*socket_description[:2])
+                    sockets.new(*socket_description[:2])
         
         self.node_dict[hash(self)] = {}
-        self.node_dict[hash(self)]['sockets'] = sockets
+        self.node_dict[hash(self)]['sockets'] = socket_info
         return True
 
 
@@ -162,10 +163,10 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
             self.update_sockets()
 
         # make inputs local, do function with inputs, return outputs if present
-        sockets = self.node_dict[hash(self)]['sockets']
+        socket_info = self.node_dict[hash(self)]['sockets']
         local_dict = {}
         for idx, s in enumerate(self.inputs):
-            sock_desc = sockets['inputs'][idx]
+            sock_desc = socket_info['inputs'][idx]
             
             if s.is_linked:
                 val = s.sv_get(default=[[]])
