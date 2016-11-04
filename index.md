@@ -33,6 +33,7 @@
     SvImageComponentsNode
     SvScriptNode
     SvScriptNodeMK3
+    SvScriptNodeLite
 
 ## Analyzers
     SvBBoxNode
