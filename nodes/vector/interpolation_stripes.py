@@ -98,11 +98,18 @@ def eval_spline(splines, tknots, t_in):
 
 vector_out = {
     #func(dists_np,maxidist,t_ins_y,factor)
-    "MULT":         lambda dists_np,maxidist,t_ins_y,factor: max(min(dists_np*factor/(maxidist*len(t_ins_y)),-1),1),
-    "SIN":          lambda dists_np,maxidist,t_ins_y,factor: max(min(sin(dists_np*factor)/(maxidist*len(t_ins_y)),-1),1),
-    "COS":          lambda dists_np,maxidist,t_ins_y,factor: max(min(cos(dists_np*factor)/(maxidist*len(t_ins_y)),-1),1),
-    "X**2":         lambda dists_np,maxidist,t_ins_y,factor: max(min((dists_np*factor)**2/(maxidist*len(t_ins_y)),-1),1),
-    "SQRT":         lambda dists_np,maxidist,t_ins_y,factor: max(min(sqrt(dists_np*factor)/(maxidist*len(t_ins_y)),-1),1),
+    "SIMPLE":       (lambda dists_np,maxidist,t_ins_y,factor,scale,minimum,maximum: \
+                            (dists_np/(maxidist*len(t_ins_y))).clip(min=minimum,max=maximum)),
+    "MULT":         (lambda dists_np,maxidist,t_ins_y,factor,scale,minimum,maximum: \
+                            (dists_np*scale*factor/(maxidist*len(t_ins_y))).clip(min=minimum,max=maximum)),
+    "SIN":          (lambda dists_np,maxidist,t_ins_y,factor,scale,minimum,maximum: \
+                            (np.sin(dists_np*scale)*factor/(maxidist*len(t_ins_y))).clip(min=minimum,max=maximum)),
+    "COS":          (lambda dists_np,maxidist,t_ins_y,factor,scale,minimum,maximum: \
+                            (np.cos(dists_np*scale)*factor/(maxidist*len(t_ins_y))).clip(min=minimum,max=maximum)),
+    "POW":          (lambda dists_np,maxidist,t_ins_y,factor,scale,minimum,maximum: \
+                            (np.pow((dists_np*scale)*factor,2)/(maxidist*len(t_ins_y))).clip(min=minimum,max=maximum)),
+    "SQRT":         (lambda dists_np,maxidist,t_ins_y,factor,scale,minimum,maximum: \
+                            (np.sqrt(dists_np*scale)*factor/(maxidist*len(t_ins_y))).clip(min=minimum,max=maximum)),
 }
 
 
@@ -116,14 +123,15 @@ class SvInterpolationStripesNode(bpy.types.Node, SverchCustomTreeNode):
 
     # vector math functions
     mode_items = [
-        ("MULT",         "Mult",        "", 0),
-        ("SIN",          "Sin",         "", 1),
-        ("COS",          "Cos",         "", 2),
-        ("X**2",         "X**2",        "", 3),
-        ("SQRT",         "Sqrt",        "", 4),
+        ("SIMPLE",       "Simple",      "", 0),
+        ("MULT",         "Mult",        "", 1),
+        ("SIN",          "Sin",         "", 2),
+        ("COS",          "Cos",         "", 3),
+        ("X**2",         "X**2",        "", 4),
+        ("SQRT",         "Sqrt",        "", 5),
     ]
 
-    current_op = StringProperty(default="MULT")
+    current_op = StringProperty(default="SIMPLE")
 
     def mode_change(self, context):
 
@@ -136,10 +144,19 @@ class SvInterpolationStripesNode(bpy.types.Node, SverchCustomTreeNode):
         items=mode_items,
         name="Function",
         description="Function choice",
-        default="MULT",
+        default="SIMPLE",
         update=mode_change)
 
     factor = FloatProperty(name="factor",
+                        default=1.0, precision=5,
+                        update=updateNode)
+    minimum = FloatProperty(name="minimum",
+                        default=0.0, min=0.0, max=0.5, precision=5,
+                        update=updateNode)
+    maximum = FloatProperty(name="maximum",
+                        default=1.0, min=0.5, max=1.0, precision=5,
+                        update=updateNode)
+    scale = FloatProperty(name="scale",
                         default=1.0, precision=5,
                         update=updateNode)
     t_in_x = FloatProperty(name="tU",
@@ -166,7 +183,16 @@ class SvInterpolationStripesNode(bpy.types.Node, SverchCustomTreeNode):
         row = col.row(align=True)
         row.prop(self, 'factor')
         row = col.row(align=True)
+        row.prop(self, 'scale')
+        row = col.row(align=True)
         row.prop(self, 'operations')
+
+    def draw_buttons_ext(self, context, layout):
+        col = layout.column(align=True)
+        row = col.row(align=True)
+        row.prop(self, 'minimum')
+        row = col.row(align=True)
+        row.prop(self, 'maximum')
 
     def interpol(self, verts, t_ins):
         verts_out = []
@@ -199,6 +225,11 @@ class SvInterpolationStripesNode(bpy.types.Node, SverchCustomTreeNode):
             t_ins_x = self.inputs['IntervalX'].sv_get()
             t_ins_y = self.inputs['IntervalY'].sv_get()
             factor = self.factor
+            scale = self.scale
+            minimum = self.minimum
+            maximum = self.maximum
+            operations = self.operations
+            func = vector_out[operations]
 
             # initial interpolation            
             vertsX = self.interpol(verts, t_ins_x)
@@ -222,11 +253,10 @@ class SvInterpolationStripesNode(bpy.types.Node, SverchCustomTreeNode):
             #factor = eval(self.factor)
             # vector-output
 
-            operations = self.operations
-            func = vector_out(operations)
             try:
                 #dists_normalized = dists_np/(maxidist*len(t_ins_y))
-                dists_normalized = func(dists_np,maxidist,t_ins_y,factor)
+                dists_normalized = func(dists_np,maxidist,t_ins_y,factor,scale,minimum,maximum)
+                print(dists_normalized)
             except ZeroDivisionError:
                 print ("division by zero!")
                 return
