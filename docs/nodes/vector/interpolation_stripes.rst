@@ -1,5 +1,5 @@
-Vector Interpolation
-====================
+Vector Interpolation Stripes
+============================
 Functionality
 -------------
 
