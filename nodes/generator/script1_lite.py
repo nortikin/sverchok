@@ -85,6 +85,12 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
     script_str = StringProperty()
     node_dict = {}
 
+    def draw_buttons(self, context):
+        ref = self.node_dict.get(hash(self))
+        if ref:
+            _info = ref['sockets']
+            draw = _info.get('drawfunc')
+
 
     def parse_sockets(self):
         socket_info = {'inputs': [], 'outputs': []}
@@ -98,6 +104,10 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
             elif L.startswith('in ') or L.startswith('out '):
                 socket_dir = L.split(' ')[0] + 'puts'
                 socket_info[socket_dir].append(parse_socket_line(L))
+            elif L.startswith('draw '):
+                drawfunc_line = L.split(' ')
+                if len(drawfunc_line) == 2:
+                    socket_info['drawfunc_name'] = drawfunc_line[1]
 
         return socket_info
 
@@ -108,6 +118,8 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
             return
 
         for k, v in socket_info.items():
+            if k == 'drawfunc_name':
+                continue
 
             sockets = getattr(self, k)  #  == self.inputs / self.outputs
 
@@ -183,10 +195,15 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
         locals().update(self.make_new_locals())
 
         try:
-            exec(self.script_str)
+            exec(self.script_str, locals(), locals())
             for idx, _socket in enumerate(self.outputs):
                 vals = locals()[_socket.name]
                 self.outputs[idx].sv_set(vals)
+
+            socket_info = self.node_dict[hash(self)]['sockets']
+            __fnamex = socket_info.get('drawfunc_name')
+            if __fnamex:
+                socket_info['drawfunc'] = locals()[__fnamex]
 
         except Exception as err:
             # this does not find the line in the exec string ( I KNOW )
@@ -195,6 +212,17 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
             print('Error on line {}'.format(sys.exc_info()[-1].tb_lineno))
             print('failed execution')
 
+
+    def custom_draw(self, context, layout):
+        tk = self.node_dict.get(hash(self))
+        if not tk or not tk.get('sockets'):
+            return
+
+        socket_info = tk['sockets']
+        if socket_info:
+            f = socket_info.get('drawfunc')
+            if f:
+                f(self, context, layout)
 
 
     def draw_buttons(self, context, layout):
@@ -210,6 +238,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
             row.operator(sn_callback, text='Reload').fn_name = 'load'
             row.operator(sn_callback, text='Clear').fn_name = 'nuke_me'
 
+        self.custom_draw(context, layout)
 
 
 classes = [SvScriptNodeLiteCallBack, SvScriptNodeLite]
