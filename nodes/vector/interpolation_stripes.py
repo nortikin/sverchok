@@ -96,22 +96,57 @@ def eval_spline(splines, tknots, t_in):
         out.append(pt)
     return out
 
+vector_out = {
+    #func(dists_np,maxidist,t_ins_y,factor)
+    "MULT":         lambda dists_np,maxidist,t_ins_y,factor: max(min(dists_np*factor/(maxidist*len(t_ins_y)),-1),1),
+    "SIN":          lambda dists_np,maxidist,t_ins_y,factor: max(min(sin(dists_np*factor)/(maxidist*len(t_ins_y)),-1),1),
+    "COS":          lambda dists_np,maxidist,t_ins_y,factor: max(min(cos(dists_np*factor)/(maxidist*len(t_ins_y)),-1),1),
+    "X**2":         lambda dists_np,maxidist,t_ins_y,factor: max(min((dists_np*factor)**2/(maxidist*len(t_ins_y)),-1),1),
+    "SQRT":         lambda dists_np,maxidist,t_ins_y,factor: max(min(sqrt(dists_np*factor)/(maxidist*len(t_ins_y)),-1),1),
+}
+
+
 
 class SvInterpolationStripesNode(bpy.types.Node, SverchCustomTreeNode):
     '''Vector Interpolate Stripes'''
     bl_idname = 'SvInterpolationStripesNode'
-    bl_label = 'Vector Interpolation Stripes'
+    bl_label = 'Stripes Mult'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
 
+    # vector math functions
+    mode_items = [
+        ("MULT",         "Mult",        "", 0),
+        ("SIN",          "Sin",         "", 1),
+        ("COS",          "Cos",         "", 2),
+        ("X**2",         "X**2",        "", 3),
+        ("SQRT",         "Sqrt",        "", 4),
+    ]
+
+    current_op = StringProperty(default="MULT")
+
+    def mode_change(self, context):
+
+        if not (self.operations == self.current_op):
+            self.label = 'Stripes ' + self.operations
+            self.current_op = self.operations
+            updateNode(self, context)
+
+    operations = EnumProperty(
+        items=mode_items,
+        name="Function",
+        description="Function choice",
+        default="MULT",
+        update=mode_change)
+
+    factor = FloatProperty(name="factor",
+                        default=1.0, precision=5,
+                        update=updateNode)
     t_in_x = FloatProperty(name="tU",
                         default=.5, min=0, max=1, precision=5,
                         update=updateNode)
     t_in_y = FloatProperty(name="tV",
                         default=.5, min=0, max=1, precision=5,
-                        update=updateNode)
-    factor = FloatProperty(name="factor",
-                        default=.5, min=-1000, max=1000, precision=5,
                         update=updateNode)
 
     def sv_init(self, context):
@@ -130,6 +165,8 @@ class SvInterpolationStripesNode(bpy.types.Node, SverchCustomTreeNode):
         col = layout.column(align=True)
         row = col.row(align=True)
         row.prop(self, 'factor')
+        row = col.row(align=True)
+        row.prop(self, 'operations')
 
     def interpol(self, verts, t_ins):
         verts_out = []
@@ -161,6 +198,7 @@ class SvInterpolationStripesNode(bpy.types.Node, SverchCustomTreeNode):
             attrs = dataCorrect(attrs)
             t_ins_x = self.inputs['IntervalX'].sv_get()
             t_ins_y = self.inputs['IntervalY'].sv_get()
+            factor = self.factor
 
             # initial interpolation            
             vertsX = self.interpol(verts, t_ins_x)
@@ -182,7 +220,19 @@ class SvInterpolationStripesNode(bpy.types.Node, SverchCustomTreeNode):
             # normalize distances to coefficients for every vertex
             # can be extended with formula evaluation... next step
             #factor = eval(self.factor)
-            dists_normalized = dists_np/(maxidist*len(t_ins_y))
+            # vector-output
+
+            operations = self.operations
+            func = vector_out(operations)
+            try:
+                #dists_normalized = dists_np/(maxidist*len(t_ins_y))
+                dists_normalized = func(dists_np,maxidist,t_ins_y,factor)
+            except ZeroDivisionError:
+                print ("division by zero!")
+                return
+            #except:
+            #    print('stripes cannot calc function')
+            #    return
 
             # calculate vertex moving coefficient
             # simmetrically mirrored
