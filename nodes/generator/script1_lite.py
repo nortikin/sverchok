@@ -127,14 +127,15 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
                 if socket_description is UNPARSABLE:
                     return
 
-                if len(sockets) < idx:
-                    if not are_matched(sockets[idx], socket_description):
-                        replace_socket(sockets[idx], *socket_description[:2])
-                else:
-                    if len(sockets) >= len(v):
-                        break
-
-                    sockets.new(*socket_description[:2])
+                # ---rubbish , needs logic rewrite ----------------------------#
+                if len(sockets) < idx:                                         #
+                    if not are_matched(sockets[idx], socket_description):      #
+                        replace_socket(sockets[idx], *socket_description[:2])  #
+                else:                                                          #
+                    if len(sockets) >= len(v):                                 #
+                        break                                                  #
+                                                                               #
+                    sockets.new(*socket_description[:2])                       #
         
         self.node_dict[hash(self)] = {}
         self.node_dict[hash(self)]['sockets'] = socket_info
@@ -172,6 +173,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
 
         # make .blend reload event work, without this the self.node_dict is empty.
         if not self.node_dict:
+            # self.load()
             self.update_sockets()
 
         # make inputs local, do function with inputs, return outputs if present
