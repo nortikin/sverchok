@@ -112,13 +112,25 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
         return socket_info
 
 
+    def update_or_create_socket(self, sockets, idx, socket_description):
+        # ---rubbish , needs logic rewrite ----------------------------#
+        if len(sockets) < idx:                                         #
+            if not are_matched(sockets[idx], socket_description):      #
+                replace_socket(sockets[idx], *socket_description[:2])  #
+        else:                                                          #
+            if len(sockets) >= len(v):                                 #
+                break                                                  #
+                                                                       #
+            sockets.new(*socket_description[:2])                       #
+
+
     def update_sockets(self):
         socket_info = self.parse_sockets()
         if not socket_info['inputs']:
             return
 
         for k, v in socket_info.items():
-            if k == 'drawfunc_name':
+            if not k in {'inputs', 'ouputs'}:
                 continue
 
             sockets = getattr(self, k)  #  == self.inputs / self.outputs
@@ -126,16 +138,8 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
             for idx, (socket_description) in enumerate(v):
                 if socket_description is UNPARSABLE:
                     return
+                self.update_or_create_socket(sockets, idx, socket_description)
 
-                # ---rubbish , needs logic rewrite ----------------------------#
-                if len(sockets) < idx:                                         #
-                    if not are_matched(sockets[idx], socket_description):      #
-                        replace_socket(sockets[idx], *socket_description[:2])  #
-                else:                                                          #
-                    if len(sockets) >= len(v):                                 #
-                        break                                                  #
-                                                                               #
-                    sockets.new(*socket_description[:2])                       #
         
         self.node_dict[hash(self)] = {}
         self.node_dict[hash(self)]['sockets'] = socket_info
