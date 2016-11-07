@@ -119,9 +119,11 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
                 replace_socket(sockets[idx], *socket_description[:2])  #
         else:                                                          #
             if len(sockets) >= len(v):                                 #
-                break                                                  #
+                return  # break                                        #
                                                                        #
             sockets.new(*socket_description[:2])                       #
+
+        return True
 
 
     def update_sockets(self):
@@ -138,7 +140,8 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
             for idx, (socket_description) in enumerate(v):
                 if socket_description is UNPARSABLE:
                     return
-                self.update_or_create_socket(sockets, idx, socket_description)
+                if not self.update_or_create_socket(sockets, idx, socket_description):
+                    break
 
         
         self.node_dict[hash(self)] = {}
