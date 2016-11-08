@@ -112,7 +112,8 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
         return socket_info
 
 
-    def update_or_create_socket(self, sockets, idx, socket_description):
+    def update_or_create_socket(self, k, v, idx, socket_description):
+        sockets = getattr(self, k)  #  == self.inputs / self.outputs
         # ---rubbish , needs logic rewrite ----------------------------#
         if len(sockets) < idx:                                         #
             if not are_matched(sockets[idx], socket_description):      #
@@ -132,15 +133,12 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
             return
 
         for k, v in socket_info.items():
-            if not k in {'inputs', 'ouputs'}:
-                continue
-
-            sockets = getattr(self, k)  #  == self.inputs / self.outputs
+            if not (k in {'inputs', 'ouputs'}): continue
 
             for idx, (socket_description) in enumerate(v):
                 if socket_description is UNPARSABLE:
                     return
-                if not self.update_or_create_socket(sockets, idx, socket_description):
+                if not self.update_or_create_socket(k, v, idx, socket_description):
                     break
 
         
