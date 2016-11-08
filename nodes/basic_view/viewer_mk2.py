@@ -137,9 +137,32 @@ class SvObjBakeMK2(bpy.types.Operator):
             me.update(calc_edges=calcedg)
             bpy.context.scene.objects.link(ob)
 
+
+    def validate_indices(self, ident_num, v, idx_list, kind_list):
+        outlist = []
+        n = len(v)
+        for idx, sublist in enmerate(idx_list):
+            tlist = sublist
+            if min(sublist) < 0:
+                tlist = [(i if i>=0 else n+i) for i in sublist]
+
+            if max(tlist) >= n:
+                self.report({'INFO'}, 'writing vdmk2_debug.log to a text block')
+                print('vdmk2 input failure', kind_list, ':\n')
+                print('    =', ident_num, 'index:', idx, 'content:', tlist)
+                print('    ^ this contains an out of bounds index, largest available index is', n)
+
+                continue
+
+            outlist.append(tlist)
+        return outlist
+
+
     def makemesh(self, i, v, e, p, m):
         name = 'Sv_' + str(i)
         me = bpy.data.meshes.new(name)
+        e = self.validate_indices(i, v, e, "edges")
+        p = self.validate_indices(i, v, p, "polygons")
         me.from_pydata(v, e, p)
         ob = bpy.data.objects.new(name, me)
         if self.config.extended_matrix:
