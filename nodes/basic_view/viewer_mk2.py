@@ -117,6 +117,8 @@ class SvObjBakeMK2(bpy.types.Operator):
 
             if max_vert_index:
                 if (len(v) - 1) < max_vert_index[k]:
+                    print('skipped object ', i, 'index out of bounds')
+                    print('largest available vertex index:', len(v) - 1, 'first larger reference:', max_vert_index[k])
                     continue
 
                 elif max_vert_index[k] < (len(v) - 1):
@@ -147,14 +149,6 @@ class SvObjBakeMK2(bpy.types.Operator):
                 tlist = [(i if i>=0 else n+i) for i in sublist]
                 print('vdmk2 input fixing, converted negative indices to positive')
                 print(sublist, ' ---> ', tlist)
-
-            if max(tlist) >= n:
-                self.report({'INFO'}, 'writing vdmk2_debug.log to a text block')
-                print('vdmk2 input failure', kind_list, ':\n')
-                print('    =', ident_num, 'index:', idx, 'content:', tlist)
-                print('    ^ this contains an out of bounds index, largest available index is', n)
-
-                continue
 
             outlist.append(tlist)
         return outlist
