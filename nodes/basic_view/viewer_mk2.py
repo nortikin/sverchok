@@ -141,7 +141,7 @@ class SvObjBakeMK2(bpy.types.Operator):
     def validate_indices(self, ident_num, v, idx_list, kind_list):
         outlist = []
         n = len(v)
-        for idx, sublist in enmerate(idx_list):
+        for idx, sublist in enumerate(idx_list):
             tlist = sublist
             if min(sublist) < 0:
                 tlist = [(i if i>=0 else n+i) for i in sublist]
