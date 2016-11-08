@@ -144,7 +144,6 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
                     return
                 if not self.update_or_create_socket(k, v, idx, socket_description):
                     break
-
         
         self.node_dict[hash(self)] = {}
         self.node_dict[hash(self)]['sockets'] = socket_info
@@ -256,10 +255,8 @@ classes = [SvScriptNodeLiteCallBack, SvScriptNodeLite]
 
 
 def register():
-    for class_name in classes:
-        bpy.utils.register_class(class_name)
+    [bpy.utils.register_class(name) for name in classes]
 
 
 def unregister():
-    for class_name in classes:
-        bpy.utils.unregister_class(class_name)
+    [bpy.utils.unregister_class(name) for name in classes]
