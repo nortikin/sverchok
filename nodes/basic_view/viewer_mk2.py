@@ -145,6 +145,8 @@ class SvObjBakeMK2(bpy.types.Operator):
             tlist = sublist
             if min(sublist) < 0:
                 tlist = [(i if i>=0 else n+i) for i in sublist]
+                print('vdmk2 input fixing, converted negative indices to positive')
+                print(sublist, ' ---> ', tlist)
 
             if max(tlist) >= n:
                 self.report({'INFO'}, 'writing vdmk2_debug.log to a text block')
