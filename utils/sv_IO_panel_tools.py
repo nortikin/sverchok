@@ -677,8 +677,18 @@ class SvNodeTreeImporterSilent(bpy.types.Operator):
     id_tree = StringProperty()
 
     def execute(self, context):
-        ng = bpy.data.node_groups[self.id_tree]
+
+        # if triggered from a non-initialized tree, we first make a tree
+        if self.id_tree == '____make_new____':
+            ng_params = {
+                'name': basename(self.filepath),
+                'type': 'SverchCustomTreeType'}
+            ng = bpy.data.node_groups.new(**ng_params)
+        else:
+            ng = bpy.data.node_groups[self.id_tree]
+
         import_tree(ng, self.filepath)
+        context.space_data.node_tree = ng
         return {'FINISHED'}
 
 
