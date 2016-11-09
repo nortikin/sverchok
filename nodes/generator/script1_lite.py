@@ -136,7 +136,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
             return
 
         for k, v in socket_info.items():
-            if not (k in {'inputs', 'ouputs'}): continue
+            if not (k in {'inputs', 'outputs'}): continue
 
             for idx, (socket_description) in enumerate(v):
                 if socket_description is UNPARSABLE:
