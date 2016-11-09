@@ -118,7 +118,6 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
         '''
         sockets = getattr(self, k)
 
-        # needs logic rewrite -----------------------------------------#
         if len(sockets) < idx:                                         #
             if not are_matched(sockets[idx], socket_description):      #
                 replace_socket(sockets[idx], *socket_description[:2])  #
