@@ -27,6 +27,7 @@ from sverchok.utils.sv_panels_tools import sv_get_local_path
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import dataCorrect, updateNode, replace_socket
 
+TRIPPLE_QUOTES = '"""'
 UNPARSABLE = None, None, None, None
 FAIL_COLOR = (0.8, 0.1, 0.1)
 READY_COLOR = (0, 0.8, 0.95)
@@ -97,7 +98,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
         quotes = 0
         for line in self.script_str.split('\n'):
             L = line.strip()
-            if L.startswith('"""'):
+            if L.startswith(TRIPPLE_QUOTES):
                 quotes += 1
                 if quotes == 2:
                     break
@@ -142,7 +143,6 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
         if not socket_info['inputs']:
             return
 
-        print('am called')
         for k, v in socket_info.items():
             if not (k in {'inputs', 'outputs'}): continue
 
