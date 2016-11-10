@@ -179,6 +179,9 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
         for socket_set in [self.inputs, self.outputs]:
             socket_set.clear()        
 
+    def copy(self, node):
+        self.node_dict[hash(self)] = {}
+        self.load()
 
     def process(self):
         if not all([self.script_name, self.script_str]):
