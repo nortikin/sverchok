@@ -224,12 +224,17 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
             if __fnamex:
                 socket_info['drawfunc'] = locals()[__fnamex]
 
+            self.use_custom_color = True
+            self.color = READY_COLOR
+
         except Exception as err:
             # this does not find the line in the exec string ( I KNOW )
             sys.stderr.write('ERROR: %s\n' % str(err))
             print(sys.exc_info()[-1].tb_frame.f_code)
             print('Error on line {}'.format(sys.exc_info()[-1].tb_lineno))
             print('failed execution')
+            self.use_custom_color = True
+            self.color = FAIL_COLOR
 
 
     def custom_draw(self, context, layout):
