@@ -118,16 +118,23 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
         '''
         sockets = getattr(self, k)
 
-        if len(sockets) < idx:                                         #
-            if not are_matched(sockets[idx], socket_description):      #
-                replace_socket(sockets[idx], *socket_description[:2])  #
-        else:                                                          #
-            if len(sockets) >= len(v):                                 #
-                return  # break                                        #
-                                                                       #
-            sockets.new(*socket_description[:2])                       #
+        if len(sockets) < idx or len(sockets) == len(v):
+            if not are_matched(sockets[idx], socket_description):
+                replace_socket(sockets[idx], *socket_description[:2])
+        else:
+            if len(sockets) >= len(v):
+                return  # break
+            sockets.new(*socket_description[:2])
 
         return True
+
+    
+    def flush_excess_sockets(self, k, v):
+        sockets = getattr(self, k)
+        if len(sockets) > len(v):
+            num_to_remove = (len(sockets) - len(v))
+            for i in range(num_to_remove):
+                sockets.remove(sockets[-1])
 
 
     def update_sockets(self):
@@ -135,6 +142,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
         if not socket_info['inputs']:
             return
 
+        print('am called')
         for k, v in socket_info.items():
             if not (k in {'inputs', 'outputs'}): continue
 
@@ -143,6 +151,8 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
                     return
                 if not self.update_or_create_socket(k, v, idx, socket_description):
                     break
+
+            self.flush_excess_sockets(k, v)
         
         self.node_dict[hash(self)] = {}
         self.node_dict[hash(self)]['sockets'] = socket_info
