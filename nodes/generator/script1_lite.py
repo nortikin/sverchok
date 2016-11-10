@@ -86,6 +86,14 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
     script_str = StringProperty()
     node_dict = {}
 
+
+    def draw_label(self):
+        if self.script_name:
+            return 'SN: ' + self.script_name
+        else:
+            return self.bl_label
+
+
     def draw_buttons(self, context):
         ref = self.node_dict.get(hash(self))
         if ref:
