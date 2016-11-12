@@ -41,6 +41,7 @@ SCRIPTED_NODES = {'SvScriptNode', 'SvScriptNodeMK2'}
 _EXPORTER_REVISION_ = '0.062'
 
 '''
+0.062 (no revision change) - looks in multiple places for textmode param.
 0.062 monad export properly
 0.061 codeshuffle 76f04f9
 0.060 understands sockets with props <o/
@@ -364,7 +365,13 @@ def perform_svtextin_node_object(node, node_ref):
     texts = bpy.data.texts    
     params = node_ref.get('params')
     current_text = params['current_text']
-    node.textmode = params['textmode']
+
+    # it's not clear from the exporter code why textmode parameter isn't stored
+    # in params.. for now this lets us look in both places. ugly but whatever.
+    textmode = params.get('textmode')
+    if not textmode:
+        textmode = node_ref.get('textmode')
+    node.textmode = textmode
 
     if not current_text:
         print(node.name, "doesn't store a current_text in params")
