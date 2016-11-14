@@ -124,10 +124,8 @@ class SvPipeNode(bpy.types.Node, SverchCustomTreeNode):
                 pols = [ [k+i+0,k+i-1,k+i+Nsides-1,k+i+Nsides] for i in range(1,Nsides,1) ]
                 pols.append([k+0,k+Nsides-1,k+Nsides*2-1,k+Nsides])
                 if Cup:
-                    p1 = [ k+i-Nsides for i in reversed(range(1,Nsides,1)) ]
-                    p2 = [ k+i for i in range(1,Nsides,1) ]
-                    p2.append(k)
-                    p1.append(k-Nsides)
+                    p1 = [ k+i for i in reversed(range(Nsides,Nsides*2,1)) ]
+                    p2 = [ k+i for i in range(0,Nsides,1) ]
                     pols.append(p1)
                     pols.append(p2)
                     

@@ -51,6 +51,9 @@ class SV_MT_layouts_templates(bpy.types.Menu):
     def draw(self, context):
         layout = self.layout
         ntree = context.space_data.node_tree
+        if not ntree:
+            ntree = lambda: None
+            ntree.name = '____make_new____'
 
         for svt in self.sv_templates:
             a = layout.operator(

@@ -1,5 +1,5 @@
 {
-  "export_version": "0.055",
+  "export_version": "0.062",
   "framed_nodes": {},
   "groups": {},
   "nodes": {
@@ -18,7 +18,9 @@
         97.62944030761719
       ],
       "params": {
-        "autosmooth": 1
+        "autosmooth": 1,
+        "basemesh_name": "Alpha",
+        "hide": 0
       },
       "width": 140.0
     },
@@ -239,7 +241,9 @@
         971.416015625,
         147.0869903564453
       ],
-      "params": {},
+      "params": {
+        "level": 1
+      },
       "width": 140.0
     },
     "List Join": {
@@ -298,7 +302,6 @@
         -14.226886749267578
       ],
       "params": {
-        "cicl_check": 1,
         "dir_check": "U_dir",
         "polygons": "Pols",
         "slice_check": 0
@@ -448,24 +451,6 @@
       "V"
     ],
     [
-      "Integer",
-      "Integer",
-      "Float Series",
-      "Stop"
-    ],
-    [
-      "Vector Math.002",
-      "W",
-      "Vector Math",
-      "U"
-    ],
-    [
-      "Box",
-      "Vers",
-      "Vector Math",
-      "V"
-    ],
-    [
       "Vector Math.001",
       "W",
       "Randomize Vertices",
@@ -494,6 +479,18 @@
       "Integer",
       "Randomize Vertices",
       "Seed"
+    ],
+    [
+      "Vector Math.002",
+      "W",
+      "Vector Math",
+      "U"
+    ],
+    [
+      "Box",
+      "Vers",
+      "Vector Math",
+      "V"
     ],
     [
       "Vector Math",
@@ -530,6 +527,12 @@
       "Range",
       "Vector Interpolation.001",
       "Interval"
+    ],
+    [
+      "Integer",
+      "Integer",
+      "Float Series",
+      "Stop"
     ],
     [
       "Vector Interpolation.001",
