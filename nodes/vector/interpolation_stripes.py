@@ -107,7 +107,7 @@ vector_out = {
     "COS":          (lambda dists_np,maxidist,t_ins_y,factor,scale,minimum,maximum: \
                             (np.cos(dists_np*scale)*factor/(maxidist*len(t_ins_y))).clip(min=minimum,max=maximum)),
     "POW":          (lambda dists_np,maxidist,t_ins_y,factor,scale,minimum,maximum: \
-                            (np.pow((dists_np*scale)*factor,2)/(maxidist*len(t_ins_y))).clip(min=minimum,max=maximum)),
+                            (np.pow((dists_np*scale*factor),2)/(maxidist*len(t_ins_y))).clip(min=minimum,max=maximum)),
     "SQRT":         (lambda dists_np,maxidist,t_ins_y,factor,scale,minimum,maximum: \
                             (np.sqrt(dists_np*scale)*factor/(maxidist*len(t_ins_y))).clip(min=minimum,max=maximum)),
 }
@@ -127,7 +127,7 @@ class SvInterpolationStripesNode(bpy.types.Node, SverchCustomTreeNode):
         ("MULT",         "Mult",        "", 1),
         ("SIN",          "Sin",         "", 2),
         ("COS",          "Cos",         "", 3),
-        ("X**2",         "X**2",        "", 4),
+        ("POW",         "POW",        "", 4),
         ("SQRT",         "Sqrt",        "", 5),
     ]
 

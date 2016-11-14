@@ -235,3 +235,4 @@
     SvBMinputNode
     SvBMoutputNode
     SvBMtoElementNode
+    SvParticlesNode
