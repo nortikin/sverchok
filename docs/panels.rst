@@ -217,8 +217,15 @@ By all means if you like using this feature, file issues in `this thread <https:
 Groups Panel
 ============
 
-Crete a node group from selection.
+Crete a node group (Monad) from selection.
+It can have vectorized inputs, adding or removing sockets.
 Sverchok groups is a beta feature, use a your own risk and please report bugs. Also while it is in beta old node groups may break.
 `Bug reports <https://github.com/nortikin/sverchok/issues/462>`_.
 
+Templates in menu panel of nodes area
+=====================================
 
+You can use embedded templates in Sverchok. They are stored in json folder as jsons for import to Sverchok.
+
+.. image:: https://cloud.githubusercontent.com/assets/5783432/19623205/245bcab2-98d2-11e6-810c-ace33de8499b.gif
+  :alt: templates.gif

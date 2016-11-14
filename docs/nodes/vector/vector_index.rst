@@ -7,6 +7,7 @@ Vector
 
    axis_input
    drop
+   interpolation_stripes
    interpolation_mk3
    line_evaluate
    math
