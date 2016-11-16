@@ -145,6 +145,8 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
             if len(sockets) >= len(v):
                 return  # break
 
+            print('going to add a socket')
+
             # add props to socket if the default was int / float, else leave it.
             dval = socket_description[2]
             if isinstance(dval, (float, int)) and k == 'inputs':
@@ -152,12 +154,15 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
                     sockets.new(*socket_description[:2]).prop_type = "float_list"
                     sockets[idx].prop_index = idx
                     self.float_list[idx] = dval
+                    print('added float_list socket')
                 else:
                     sockets.new(*socket_description[:2]).prop_type = "int_list"
                     sockets[idx].prop_index = idx
                     self.int_list[idx] = dval
+                    print('added int_list socket')
 
             else:
+                print('added plain socket')
                 sockets.new(*socket_description[:2])
 
         return True
@@ -169,8 +174,6 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
             num_to_remove = (len(sockets) - len(v))
             for i in range(num_to_remove):
                 sockets.remove(sockets[-1])
-
-
 
 
     def update_sockets(self):
