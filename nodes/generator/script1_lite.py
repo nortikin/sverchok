@@ -21,7 +21,7 @@ import ast
 import traceback
 
 import bpy
-from bpy.props import StringProperty
+from bpy.props import StringProperty, IntVectorProperty, FloatVectorProperty
 
 from sverchok.utils.sv_panels_tools import sv_get_local_path
 from sverchok.node_tree import SverchCustomTreeNode
@@ -32,6 +32,7 @@ UNPARSABLE = None, None, None, None
 FAIL_COLOR = (0.8, 0.1, 0.1)
 READY_COLOR = (0, 0.8, 0.95)
 
+defaults = list(range(32))
 sock_dict = {
     'v': 'VerticesSocket', 's': 'StringsSocket', 'm': 'MatrixSocket', 'o': 'SvObjectSocket'
 }
@@ -86,6 +87,14 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
     script_str = StringProperty()
     node_dict = {}
 
+    int_list = IntVectorProperty(
+        name='int_list', description="Integer list",
+        default=defaults, size=32, update=updateNode)
+
+    float_list = FloatVectorProperty(
+        name='float_list', description="Float list",
+        default=defaults, size=32, update=updateNode)
+
 
     def draw_label(self):
         if self.script_name:
@@ -133,7 +142,27 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
         else:
             if len(sockets) >= len(v):
                 return  # break
-            sockets.new(*socket_description[:2])
+
+            s = sockets.new(*socket_description[:2])
+
+            # this makes sliders and sets a default if available
+            if s and k == 'inputs':
+                dval = socket_description[2]
+                s.default = dval
+
+                if isinstance(dval, (float, int)):
+                    offset = len(sockets)
+                    var_type = type(dval).__name__
+
+                    s.prop_type = var_type + "_list"
+                    listvar = getattr(self, s.prop_type)
+                    listvar[offset] = dval
+                    #if var_type == 'float':
+                    #    self.float_list[offset] = dval
+                    #else:
+                    #    self.int_list[offset] = dval
+
+                    s.prop_index = offset
 
         return True
 
