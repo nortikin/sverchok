@@ -130,6 +130,8 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
         return socket_info
 
 
+
+
     def update_or_create_socket(self, k, v, idx, socket_description):
         '''
         'sockets' are either 'self.inputs' or 'self.outputs'
@@ -143,21 +145,20 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
             if len(sockets) >= len(v):
                 return  # break
 
-            s = sockets.new(*socket_description[:2])
+            # add props to socket if the default was int / float, else leave it.
+            dval = socket_description[2]
+            if isinstance(dval, (float, int)) and k == 'inputs':
+                if isinstance(dval, float):
+                    sockets.new(*socket_description[:2]).prop_type = "float_list"
+                    sockets[idx].prop_index = idx
+                    self.float_list[idx] = dval
+                else:
+                    sockets.new(*socket_description[:2]).prop_type = "int_list"
+                    sockets[idx].prop_index = idx
+                    self.int_list[idx] = dval
 
-            # this makes sliders and sets a default if available
-            if s and k == 'inputs':
-                dval = socket_description[2]
-                s.default = dval
-
-                if isinstance(dval, (float, int)):
-                    offset = len(sockets)
-                    var_type = type(dval).__name__
-
-                    s.prop_type = var_type + "_list"
-                    listvar = getattr(self, s.prop_type)
-                    listvar[offset] = dval
-                    s.prop_index = offset
+            else:
+                sockets.new(*socket_description[:2])
 
         return True
 
@@ -168,6 +169,8 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
             num_to_remove = (len(sockets) - len(v))
             for i in range(num_to_remove):
                 sockets.remove(sockets[-1])
+
+
 
 
     def update_sockets(self):
@@ -242,7 +245,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
                 val = sock_desc[2]
                 if isinstance(val, (int, float)):
                     # extra pussyfooting for the load sequence.
-                    t = s.sv_get()
+                    t = s.sv_get(default=[[val]])
                     if t and t[0] and t[0][0]:
                         val = t[0][0]
 
