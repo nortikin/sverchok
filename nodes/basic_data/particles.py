@@ -63,6 +63,11 @@ class SvParticlesNode(bpy.types.Node, SverchCustomTreeNode):
     def process(self):
         if self.inputs and self.inputs[0].is_linked:
             obj = bpy.data.objects[self.objects]
+            if not self.particles:
+                print ('!!! for node:',self.name,'!!! object',self.objects,'have no particle system')
+                if self.outputs and self.outputs[0].is_linked:
+                    self.outputs[0].sv_set([[]])
+                return
             particles = obj.particle_systems[self.particles].particles
             locs = []
             add_loc = locs.append
