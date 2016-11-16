@@ -157,11 +157,6 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
                     s.prop_type = var_type + "_list"
                     listvar = getattr(self, s.prop_type)
                     listvar[offset] = dval
-                    #if var_type == 'float':
-                    #    self.float_list[offset] = dval
-                    #else:
-                    #    self.int_list[offset] = dval
-
                     s.prop_index = offset
 
         return True
@@ -245,6 +240,12 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
                     val = {0: val, 1: val[0], 2: val[0][0]}.get(sock_desc[3])
             else:
                 val = sock_desc[2]
+                if isinstance(val, (int, float)):
+                    # extra pussyfooting for the load sequence.
+                    t = s.sv_get()
+                    if t and t[0] and t[0][0]:
+                        val = t[0][0]
+
             local_dict[s.name] = val
 
         return local_dict
