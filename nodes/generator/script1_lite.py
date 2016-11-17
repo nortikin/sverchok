@@ -61,6 +61,26 @@ def parse_socket_line(line):
             return socket_type, socket_name, default, nested
 
 
+def parse_sockets(node):
+    socket_info = {'inputs': [], 'outputs': []}
+    quotes = 0
+    for line in node.script_str.split('\n'):
+        L = line.strip()
+        if L.startswith(TRIPPLE_QUOTES):
+            quotes += 1
+            if quotes == 2:
+                break
+        elif L.startswith('in ') or L.startswith('out '):
+            socket_dir = L.split(' ')[0] + 'puts'
+            socket_info[socket_dir].append(parse_socket_line(L))
+        elif L.startswith('draw '):
+            drawfunc_line = L.split(' ')
+            if len(drawfunc_line) == 2:
+                socket_info['drawfunc_name'] = drawfunc_line[1]
+
+    return socket_info
+
+
 def are_matched(sock_, socket_description):
     return (sock_.bl_idname, sock_.name) == socket_description[:2]
 
@@ -108,26 +128,6 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
         if ref:
             _info = ref['sockets']
             draw = _info.get('drawfunc')
-
-
-    def parse_sockets(self):
-        socket_info = {'inputs': [], 'outputs': []}
-        quotes = 0
-        for line in self.script_str.split('\n'):
-            L = line.strip()
-            if L.startswith(TRIPPLE_QUOTES):
-                quotes += 1
-                if quotes == 2:
-                    break
-            elif L.startswith('in ') or L.startswith('out '):
-                socket_dir = L.split(' ')[0] + 'puts'
-                socket_info[socket_dir].append(parse_socket_line(L))
-            elif L.startswith('draw '):
-                drawfunc_line = L.split(' ')
-                if len(drawfunc_line) == 2:
-                    socket_info['drawfunc_name'] = drawfunc_line[1]
-
-        return socket_info
 
 
     def add_or_update_sockets(self, k, v):
@@ -184,15 +184,14 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
 
 
     def update_sockets(self):
-        socket_info = self.parse_sockets()
+        socket_info = parse_sockets(self)
         if not socket_info['inputs']:
             return
 
         for k, v in socket_info.items():
             if not (k in {'inputs', 'outputs'}): continue
 
-            success = self.add_or_update_sockets(k, v)
-            if not success:
+            if not self.add_or_update_sockets(k, v):
                 print('failed to load sockets for ', k)
                 return
 
