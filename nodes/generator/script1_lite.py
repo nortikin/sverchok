@@ -157,23 +157,18 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
             print(idx, socket_description)
 
             s = self.inputs[idx]
-
             self.id_data.freeze(hard=True)
+
             if isinstance(dval, float):
-                if not s.prop_type == "float_list":
-                    s.prop_type = "float_list"
-                if not s.prop_index == idx:
-                    s.prop_index = idx
-                if not self.float_list[idx] == dval:
-                    self.float_list[idx] = dval
+                s.prop_type = "float_list"
+                s.prop_index = idx
+                self.float_list[idx] = dval
 
             elif isinstance(dval, int):
-                if not s.prop_type == "int_list":
-                    s.prop_type = "int_list"
-                if not s.prop_index == idx:
-                    s.prop_index = idx
-                if not self.int_list[idx] == dval:
-                    self.int_list[idx] = dval
+                s.prop_type = "int_list"
+                s.prop_index = idx
+                self.int_list[idx] = dval
+
             self.id_data.unfreeze(hard=True)
 
     
