@@ -130,42 +130,51 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
         return socket_info
 
 
-
-
-    def update_or_create_socket(self, k, v, idx, socket_description):
+    def add_or_update_sockets(self, k, v):
         '''
         'sockets' are either 'self.inputs' or 'self.outputs'
         '''
         sockets = getattr(self, k)
 
-        if len(sockets) < idx or len(sockets) == len(v):
-            if not are_matched(sockets[idx], socket_description):
-                replace_socket(sockets[idx], *socket_description[:2])
-        else:
-            if len(sockets) >= len(v):
-                return  # break
+        for idx, (socket_description) in enumerate(v):
+            if socket_description is UNPARSABLE: 
+                print(socket_description, idx, 'was unparsable')
+                return
 
-            print('going to add a socket')
-
-            # add props to socket if the default was int / float, else leave it.
-            dval = socket_description[2]
-            if isinstance(dval, (float, int)) and k == 'inputs':
-                if isinstance(dval, float):
-                    sockets.new(*socket_description[:2]).prop_type = "float_list"
-                    sockets[idx].prop_index = idx
-                    self.float_list[idx] = dval
-                    print('added float_list socket')
-                else:
-                    sockets.new(*socket_description[:2]).prop_type = "int_list"
-                    sockets[idx].prop_index = idx
-                    self.int_list[idx] = dval
-                    print('added int_list socket')
-
+            if len(sockets) > 0 and idx in set(range(len(sockets))):
+                if not are_matched(sockets[idx], socket_description):
+                    replace_socket(sockets[idx], *socket_description[:2])
             else:
-                print('added plain socket')
                 sockets.new(*socket_description[:2])
 
         return True
+
+
+    def add_props_to_sockets(self, socket_info):
+
+        for idx, (socket_description) in enumerate(socket_info['inputs']):
+            dval = socket_description[2]
+            print(idx, socket_description)
+
+            s = self.inputs[idx]
+
+            self.id_data.freeze(hard=True)
+            if isinstance(dval, float):
+                if not s.prop_type == "float_list":
+                    s.prop_type = "float_list"
+                if not s.prop_index == idx:
+                    s.prop_index = idx
+                if not self.float_list[idx] == dval:
+                    self.float_list[idx] = dval
+
+            elif isinstance(dval, int):
+                if not s.prop_type == "int_list":
+                    s.prop_type = "int_list"
+                if not s.prop_index == idx:
+                    s.prop_index = idx
+                if not self.int_list[idx] == dval:
+                    self.int_list[idx] = dval
+            self.id_data.unfreeze(hard=True)
 
     
     def flush_excess_sockets(self, k, v):
@@ -184,16 +193,17 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
         for k, v in socket_info.items():
             if not (k in {'inputs', 'outputs'}): continue
 
-            for idx, (socket_description) in enumerate(v):
-                if socket_description is UNPARSABLE:
-                    return
-                if not self.update_or_create_socket(k, v, idx, socket_description):
-                    break
+            success = self.add_or_update_sockets(k, v)
+            if not success:
+                print('failed to load sockets for ', k)
+                return
 
             self.flush_excess_sockets(k, v)
-        
+
+        self.add_props_to_sockets(socket_info)
         self.node_dict[hash(self)] = {}
         self.node_dict[hash(self)]['sockets'] = socket_info
+
         return True
 
 
