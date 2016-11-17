@@ -152,24 +152,27 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
 
     def add_props_to_sockets(self, socket_info):
 
-        for idx, (socket_description) in enumerate(socket_info['inputs']):
-            dval = socket_description[2]
-            print(idx, socket_description)
+        self.id_data.freeze(hard=True)
+        try:
+            for idx, (socket_description) in enumerate(socket_info['inputs']):
+                dval = socket_description[2]
+                print(idx, socket_description)
 
-            s = self.inputs[idx]
-            self.id_data.freeze(hard=True)
+                s = self.inputs[idx]
 
-            if isinstance(dval, float):
-                s.prop_type = "float_list"
-                s.prop_index = idx
-                self.float_list[idx] = dval
+                if isinstance(dval, float):
+                    s.prop_type = "float_list"
+                    s.prop_index = idx
+                    self.float_list[idx] = dval
 
-            elif isinstance(dval, int):
-                s.prop_type = "int_list"
-                s.prop_index = idx
-                self.int_list[idx] = dval
+                elif isinstance(dval, int):
+                    s.prop_type = "int_list"
+                    s.prop_index = idx
+                    self.int_list[idx] = dval
+        except:
+            print('some failure in the add_props_to_sockets function. ouch.')
 
-            self.id_data.unfreeze(hard=True)
+        self.id_data.unfreeze(hard=True)
 
     
     def flush_excess_sockets(self, k, v):
