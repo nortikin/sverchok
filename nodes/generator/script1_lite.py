@@ -16,6 +16,7 @@
 #
 # END GPL LICENSE BLOCK #####
 
+import os
 import sys
 import ast
 import traceback
@@ -31,6 +32,9 @@ TRIPPLE_QUOTES = '"""'
 UNPARSABLE = None, None, None, None
 FAIL_COLOR = (0.8, 0.1, 0.1)
 READY_COLOR = (0, 0.8, 0.95)
+
+sv_path = os.path.dirname(sv_get_local_path()[0])
+snlite_template_path = os.path.join(sv_path, 'node_scripts', 'SNLite-templates')
 
 defaults = list(range(32))
 sock_dict = {
@@ -85,6 +89,18 @@ def are_matched(sock_, socket_description):
     return (sock_.bl_idname, sock_.name) == socket_description[:2]
 
 
+class SvScriptNodeLitePyMenu(bpy.types.Menu):
+    bl_label = "SN-Lite templates"
+    bl_idname = "SvScriptNodeLitePyMenu"
+
+    def draw(self, context):
+        self.path_menu(
+            bpy.utils.script_paths(snlite_template_path),
+            "text.open",
+            {"internal": True},
+        )
+
+
 class SvScriptNodeLiteCallBack(bpy.types.Operator):
 
     bl_idname = "node.scriptlite_ui_callback"
@@ -128,6 +144,10 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
         if ref:
             _info = ref['sockets']
             draw = _info.get('drawfunc')
+
+
+    def draw_buttons_ext(self, context, layout):
+        layout.menu(SvScriptNodeLitePyMenu.bl_idname)
 
 
     def add_or_update_sockets(self, k, v):
@@ -319,7 +339,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
         self.custom_draw(context, layout)
 
 
-classes = [SvScriptNodeLiteCallBack, SvScriptNodeLite]
+classes = [SvScriptNodeLitePyMenu, SvScriptNodeLiteCallBack, SvScriptNodeLite]
 
 
 def register():
