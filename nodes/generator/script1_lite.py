@@ -94,7 +94,8 @@ class SvScriptNodeLitePyMenu(bpy.types.Menu):
     bl_idname = "SvScriptNodeLitePyMenu"
 
     def draw(self, context):
-        self.path_menu([snlite_template_path], "text.open", {"internal": True})
+        # self.path_menu([snlite_template_path], "text.open", {"internal": True})
+        self.path_menu([snlite_template_path], "node.scriptlite_import")
 
 
 class SvScriptNodeLiteCallBack(bpy.types.Operator):
@@ -105,6 +106,19 @@ class SvScriptNodeLiteCallBack(bpy.types.Operator):
 
     def execute(self, context):
         getattr(context.node, self.fn_name)()
+        return {'FINISHED'}
+
+
+class SvScriptNodeLiteTextImport(bpy.types.Operator):
+
+    bl_idname = "node.scriptlite_import"
+    bl_label = "SNLite load"
+    filepath = bpy.props.StringProperty()
+
+    def execute(self, context):
+        txt = bpy.data.texts.load(self.filepath)
+        context.node.script_name = os.path.basename(txt.name)
+        context.node.load()
         return {'FINISHED'}
 
 
@@ -335,7 +349,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
         self.custom_draw(context, layout)
 
 
-classes = [SvScriptNodeLitePyMenu, SvScriptNodeLiteCallBack, SvScriptNodeLite]
+classes = [SvScriptNodeLiteTextImport, SvScriptNodeLitePyMenu, SvScriptNodeLiteCallBack, SvScriptNodeLite]
 
 
 def register():
