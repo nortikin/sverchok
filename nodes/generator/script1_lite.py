@@ -34,7 +34,7 @@ FAIL_COLOR = (0.8, 0.1, 0.1)
 READY_COLOR = (0, 0.8, 0.95)
 
 sv_path = os.path.dirname(sv_get_local_path()[0])
-snlite_template_path = os.path.join(sv_path, 'node_scripts', 'SNLite-templates')
+snlite_template_path = os.path.join(sv_path, 'node_scripts', 'SNLite_templates')
 
 defaults = list(range(32))
 sock_dict = {
@@ -90,15 +90,11 @@ def are_matched(sock_, socket_description):
 
 
 class SvScriptNodeLitePyMenu(bpy.types.Menu):
-    bl_label = "SN-Lite templates"
+    bl_label = "SNLite templates"
     bl_idname = "SvScriptNodeLitePyMenu"
 
     def draw(self, context):
-        self.path_menu(
-            bpy.utils.script_paths(snlite_template_path),
-            "text.open",
-            {"internal": True},
-        )
+        self.path_menu([snlite_template_path], "text.open", {"internal": True})
 
 
 class SvScriptNodeLiteCallBack(bpy.types.Operator):
