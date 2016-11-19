@@ -36,7 +36,7 @@ from sverchok import old_nodes
 from sverchok.utils import sv_gist_tools
 
 
-SCRIPTED_NODES = {'SvScriptNode', 'SvScriptNodeMK2'}
+SCRIPTED_NODES = {'SvScriptNode', 'SvScriptNodeMK2', 'SvScriptNodeLite'}
 
 _EXPORTER_REVISION_ = '0.062'
 
@@ -343,6 +343,8 @@ def perform_scripted_node_inject(node, node_ref):
     if node.bl_idname == 'SvScriptNode':
         node.user_name = "templates"               # best would be in the node.
         node.files_popup = "sv_lang_template.sn"   # import to reset easy fix
+        node.load()
+    elif node.bl_idname == 'SvScriptNodeLite':
         node.load()
     else:
         node.files_popup = node.avail_templates(None)[0][0]
