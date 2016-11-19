@@ -331,6 +331,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
             self.color = READY_COLOR
 
         except Exception as err:
+            # maybe http://stackoverflow.com/a/28836286/1243487
             # this does not find the line in the exec string ( I KNOW )
             sys.stderr.write('ERROR: %s\n' % str(err))
             print(sys.exc_info()[-1].tb_frame.f_code)
