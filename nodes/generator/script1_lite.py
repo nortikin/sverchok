@@ -94,11 +94,13 @@ class SvScriptNodeLitePyMenu(bpy.types.Menu):
     bl_idname = "SvScriptNodeLitePyMenu"
 
     def draw(self, context):
-        # load simply as Text File into a textblok
-        # self.path_menu([snlite_template_path], "text.open", {"internal": True})
-        
-        # load straight into current SNlite
-        self.path_menu([snlite_template_path], "node.scriptlite_import")
+        if context.active_node:
+            node = context.active_node
+            if node.selected_mode == 'To TextBlok':
+                self.path_menu([snlite_template_path], "text.open", {"internal": True})
+            else:
+                self.path_menu([snlite_template_path], "node.scriptlite_import")
+
 
 
 class SvScriptNodeLiteCallBack(bpy.types.Operator):
@@ -144,6 +146,17 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
         name='float_list', description="Float list",
         default=defaults, size=32, update=updateNode)
 
+    mode_options = [
+        ("To TextBlok", "To TextBlok", "", 0),
+        ("To Node", "To Node", "", 1),
+    ]
+
+    selected_mode = bpy.props.EnumProperty(
+        items=mode_options,
+        description="load the template directly to the node or add to textblocks",
+        default="To Node",
+        update=updateNode
+    )
 
     def draw_label(self):
         if self.script_name:
@@ -160,7 +173,10 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
 
 
     def draw_buttons_ext(self, context, layout):
-        layout.menu(SvScriptNodeLitePyMenu.bl_idname)
+        row = layout.row()
+        row.prop(self, 'selected_mode', expand=True)
+        col = layout.column()
+        col.menu(SvScriptNodeLitePyMenu.bl_idname)
 
 
     def add_or_update_sockets(self, k, v):
@@ -352,7 +368,12 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
         self.custom_draw(context, layout)
 
 
-classes = [SvScriptNodeLiteTextImport, SvScriptNodeLitePyMenu, SvScriptNodeLiteCallBack, SvScriptNodeLite]
+classes = [
+    SvScriptNodeLiteTextImport,
+    SvScriptNodeLitePyMenu,
+    SvScriptNodeLiteCallBack,
+    SvScriptNodeLite
+]
 
 
 def register():
