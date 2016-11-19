@@ -36,7 +36,7 @@ from sverchok import old_nodes
 from sverchok.utils import sv_gist_tools
 
 
-SCRIPTED_NODES = {'SvScriptNode', 'SvScriptNodeMK2'}
+SCRIPTED_NODES = {'SvScriptNode', 'SvScriptNodeMK2', 'SvScriptNodeLite'}
 
 _EXPORTER_REVISION_ = '0.062'
 
@@ -345,6 +345,8 @@ def perform_scripted_node_inject(node, node_ref):
         node.user_name = "templates"               # best would be in the node.
         node.files_popup = "sv_lang_template.sn"   # import to reset easy fix
         node.load()
+    elif node.bl_idname == 'SvScriptNodeLite':
+        node.load()
     else:
         node.files_popup = node.avail_templates(None)[0][0]
         node.load()
@@ -399,6 +401,79 @@ def apply_superficial_props(node, node_ref):
     props = ['location', 'height', 'width', 'label', 'hide', 'color']
     for p in props:
         setattr(node, p, node_ref[p])
+# taken from http://stackoverflow.com/a/29354206/1243487
+# translated to python for sverchok.
+
+from math import sqrt, cos, sin, pi as M_PI
+from random import random as rand
+RAND_MAX = 32767
+
+
+def crossp(u, v):
+    w = [0, 0, 0]
+    w[0] = (u[1] * v[2]) - (u[2] * v[1])
+    w[1] = (u[2] * v[0]) - (u[0] * v[2])
+    w[2] = (u[0] * v[1]) - (u[1] * v[0])
+    return w  # vec3
+
+def dotp(u, v):
+    return (u[0] * v[0]) + (u[1] * v[1]) + (u[2] * v[2])  # float
+
+def norm2(u):
+    return dotp(u, u)  # float
+
+def norm(u):
+    return sqrt(norm2(u))  # float
+
+def scale(u, s):
+    u[0] *= s
+    u[1] *= s
+    u[2] *= s
+    return u  # vec3
+
+def add(u, v):
+    u[0] += v[0]
+    u[1] += v[1]
+    u[2] += v[2]
+    return u  # vec3
+
+def normalize(u):
+    return scale(u, 1/norm(u)) # vec3
+
+
+def random_on_plane(r, n, co):
+    """
+    generates a random point on the plane ax + by + cz = d
+    """
+    d = dotp(n, co)
+    xorz = (1, 0, 0) if (n[0] == 0) else (0, 0, 1)
+    w = crossp(n, xorz)
+
+    theta = (rand() / RAND_MAX) * M_PI
+    k = normalize(n)
+    w = add(scale(w, cos(theta)), 
+            scale(crossp(k, w), sin(theta)))
+
+    # Scale the vector fill our disk. If the radius is zero, generate unit vectors
+    if r == 0:
+        w = scale(w, r/norm(w))
+    else:
+        rand_r = (rand() / RAND_MAX) * r
+        w = scale(w, rand_r/norm(w))
+
+    # now translate the vector from ax + by + cz = 0
+    # to the plane ax + by + cz = d
+    if d != 0:
+        t = scale(n, d / norm2(n))  # vec3
+        w = add(w, t)
+
+    return w
+
+def main():
+    for _ in range(100):
+        r = random_on_plane(10, 1, 1, 1, 1)
+        print(r)
+
 
 
 def gather_remapped_names(node, n, name_remap):
