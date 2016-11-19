@@ -94,7 +94,10 @@ class SvScriptNodeLitePyMenu(bpy.types.Menu):
     bl_idname = "SvScriptNodeLitePyMenu"
 
     def draw(self, context):
+        # load simply as Text File into a textblok
         # self.path_menu([snlite_template_path], "text.open", {"internal": True})
+        
+        # load straight into current SNlite
         self.path_menu([snlite_template_path], "node.scriptlite_import")
 
 
