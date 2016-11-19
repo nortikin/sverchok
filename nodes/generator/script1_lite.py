@@ -42,6 +42,17 @@ sock_dict = {
 }
 
 
+def set_autocolor(node, use_me, color_me):
+    node.use_custom_color = use_me
+    node.color = color_me
+
+
+def error_and_detail(err):
+    error_class = err.__class__.__name__
+    detail = err.args[0]
+    return error_class, detail
+
+
 def processed(str_in):
     _, b = str_in.split('=')
     return ast.literal_eval(b)
@@ -316,6 +327,8 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
     def process_script(self):
         locals().update(self.make_new_locals())
 
+        # exception handling inspired by http://stackoverflow.com/a/28836286/1243487
+
         try:
             exec(self.script_str, locals(), locals())
             for idx, _socket in enumerate(self.outputs):
@@ -327,18 +340,17 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
             if __fnamex:
                 socket_info['drawfunc'] = locals()[__fnamex]
 
-            self.use_custom_color = True
-            self.color = READY_COLOR
+            set_autocolor(self, True, READY_COLOR)
 
-        except Exception as err:
-            # maybe http://stackoverflow.com/a/28836286/1243487
-            # this does not find the line in the exec string ( I KNOW )
-            sys.stderr.write('ERROR: %s\n' % str(err))
-            print(sys.exc_info()[-1].tb_frame.f_code)
-            print('Error on line {}'.format(sys.exc_info()[-1].tb_lineno))
-            print('failed execution')
-            self.use_custom_color = True
-            self.color = FAIL_COLOR
+        except:
+            print("Unexpected error:", sys.exc_info()[0])
+            _, _, tb = sys.exc_info()
+            lineno = traceback.extract_tb(tb)[-1][1]
+            print('on line: ', lineno, '\n', tb)
+            set_autocolor(self, True, FAIL_COLOR)
+            raise
+        else:
+            return
 
 
     def custom_draw(self, context, layout):
