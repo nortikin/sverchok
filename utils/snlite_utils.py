@@ -42,6 +42,8 @@ def get_valid_evaluate_node(mat_name, node_name):
         node = m.node_tree.nodes.new('ShaderNodeRGBCurve')
         node.name = node_name
 
+    m.use_fake_user = True
+
     curve = node.mapping.curves[3]
     try: curve.evaluate(0.0)
     except: node.mapping.initialize()
