@@ -49,9 +49,14 @@ class SvRndNumGen(bpy.types.Node, SverchCustomTreeNode):
         default=10,
         options={'ANIMATABLE'}, update=updateNode)
 
-    count = FloatProperty(
+    count = IntProperty(
         name='Count', description='number of values to output',
         default=10,
+        options={'ANIMATABLE'}, update=updateNode)
+
+    seed = IntProperty(
+        name='Seed', description='seed, grow',
+        default=0,
         options={'ANIMATABLE'}, update=updateNode)
 
     as_list = BoolProperty(
@@ -59,18 +64,54 @@ class SvRndNumGen(bpy.types.Node, SverchCustomTreeNode):
         default=True, 
         update=updateNode)
 
-    def sv_init(self, context):
-        self.inputs.new('StringsSocket', "Value").prop_name = 'value'
-        self.inputs.new('StringsSocket', "Old Min").prop_name = 'old_min'
-        self.inputs.new('StringsSocket', "Old Max").prop_name = 'old_max'
-        self.inputs.new('StringsSocket', "New Min").prop_name = 'new_min'
-        self.inputs.new('StringsSocket', "New Max").prop_name = 'new_max'
+    mode_options = [
+        ("Simple", "Simple", "", 0),
+        ("Advanced", "Advanced", "", 1)
+    ]
+    
+    selected_mode = bpy.props.EnumProperty(
+        items=mode_options,
+        description="offers....",
+        default="Simple", update=updateNode
+    )
 
-        self.outputs.new('StringsSocket', "Value")
+    type_mode_options = [
+        ("Int", "Int", "", 0),
+        ("Float", "Float", "", 1)
+    ]
+    
+    type_selected_mode = bpy.props.EnumProperty(
+        items=type_mode_options,
+        description="offers....",
+        default="Int", update=updateNode
+    )
+
+
+    def sv_init(self, context):
+        si = self.inputs
+        si.new('StringsSocket', "Count").prop_name = 'count'
+        si.new('StringsSocket', "Seed").prop_name = 'seed'
+        si.new('StringsSocket', "Low").prop_name = 'low_i'
+        si.new('StringsSocket', "High").prop_name = 'high_i'
+        so = self.outputs
+        so.new('StringsSocket', "Value")
+
 
     def draw_buttons(self, context, layout):
-        layout.prop(self, "clamp")
+        
+        row = layout.row()
+        row.prop(self, 'type_selected_mode', expand=True)
+        row = layout.row()
+        row.prop(self, 'selected_mode', expand=True)
+
+        if self.selected_mode == 'Simple':
+            ...
+        else:
+            ...
+        
+        layout.prop(self, "as_list")
     
+
     def map_range(self, x_list, old_min, old_max, new_min, new_max):
         old_d = old_max - old_min
         new_d = new_max - new_min
@@ -83,6 +124,7 @@ class SvRndNumGen(bpy.types.Node, SverchCustomTreeNode):
             return [min(new_max, max(new_min, f(x))) for x in x_list]
         else:
             return [f(x) for x in x_list]
+
 
     def process(self):
         inputs = self.inputs
