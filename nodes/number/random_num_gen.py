@@ -112,20 +112,6 @@ class SvRndNumGen(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "as_list")
     
 
-    def map_range(self, x_list, old_min, old_max, new_min, new_max):
-        old_d = old_max - old_min
-        new_d = new_max - new_min
-        scale = new_d/old_d
-
-        def f(x):
-            return new_min + (x-old_min)*scale
-
-        if self.clamp:
-            return [min(new_max, max(new_min, f(x))) for x in x_list]
-        else:
-            return [f(x) for x in x_list]
-
-
     def process(self):
         inputs = self.inputs
         outputs = self.outputs
@@ -133,10 +119,12 @@ class SvRndNumGen(bpy.types.Node, SverchCustomTreeNode):
         # no outputs, end early.
         if not outputs['Value'].is_linked:
             return
+        
         value_in = iter(inputs[0].sv_get())
         param = [repeat_last(inputs[i].sv_get()[0]) for i in range(1, 5)]
         out = [self.map_range(*args) for args in zip(value_in, *param)]
-        self.outputs['Value'].sv_set(out)
+        
+        outputs['Value'].sv_set(out)
 
 
 def register():
