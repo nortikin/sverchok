@@ -176,14 +176,6 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
             return self.bl_label
 
 
-    # why do I have two draw buttons fnctions?!?! ..
-    # def draw_buttons(self, context):
-    #     ref = self.node_dict.get(hash(self))
-    #     if ref:
-    #         _info = ref['sockets']
-    #         draw = _info.get('drawfunc')
-
-
     def draw_buttons_ext(self, context, layout):
         row = layout.row()
         row.prop(self, 'selected_mode', expand=True)
