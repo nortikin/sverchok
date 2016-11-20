@@ -176,6 +176,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
             return self.bl_label
 
 
+    # why do I have two draw buttons fnctions?!?! ..
     def draw_buttons(self, context):
         ref = self.node_dict.get(hash(self))
         if ref:
