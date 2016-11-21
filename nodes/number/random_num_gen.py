@@ -34,12 +34,12 @@ class SvRndNumGen(bpy.types.Node, SverchCustomTreeNode):
 
     low_f = FloatProperty(
         name='Float Low', description='Minimum float value',
-        default=1.0,
+        default=0.0,
         options={'ANIMATABLE'}, update=updateNode)
 
     high_f = FloatProperty(
         name='Float High', description='Maximum float value',
-        default=1,
+        default=1.0,
         options={'ANIMATABLE'}, update=updateNode)
 
     low_i = IntProperty(
