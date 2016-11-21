@@ -112,9 +112,9 @@ class SvRndNumGen(bpy.types.Node, SverchCustomTreeNode):
         np.random.seed(seed)
 
         if self.type_selected_mode == 'Int':
-            result = np.random_integers(low, high, size)
+            result = np.random.random_integers(low, high, size)
         else:
-            result = np.ranf(size)
+            result = np.random.ranf(size)
             epsilon_relative = 1e-06
             if isclose(low, 0.0, epsilon_relative) and isclose(high, 1.0, epsilon_relative):
                 pass
