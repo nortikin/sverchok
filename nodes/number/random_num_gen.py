@@ -17,7 +17,6 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import numpy as np
-from np import random_integers, ranf, interp, random, apply_along_axis
 from math import isclose
 
 import bpy
@@ -110,18 +109,18 @@ class SvRndNumGen(bpy.types.Node, SverchCustomTreeNode):
     def produce_range(self, *params):
         size, seed, low, high = params
 
-        random.seed(seed)
+        np.random.seed(seed)
 
         if self.type_selected_mode == 'Int':
-            result = random_integers(low, high, size)
+            result = np.random_integers(low, high, size)
         else:
-            result = ranf(size)
+            result = np.ranf(size)
             epsilon_relative = 1e-06
             if isclose(low, 0.0, epsilon_relative) and isclose(high, 1.0, epsilon_relative):
                 pass
             else:
-                my_func = lambda inval: interp(inval, [0.0, 1.0], [low, high])
-                result = apply_along_axis(my_func, 0, result)
+                my_func = lambda inval: np.interp(inval, [0.0, 1.0], [low, high])
+                result = np.apply_along_axis(my_func, 0, result)
 
         if self.as_list:
             result = result.tolist()
