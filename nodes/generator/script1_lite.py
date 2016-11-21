@@ -26,8 +26,7 @@ from bpy.props import StringProperty, IntVectorProperty, FloatVectorProperty
 
 from sverchok.utils.sv_panels_tools import sv_get_local_path
 from sverchok.utils.snlite_importhelper import (
-    TRIPPLE_QUOTES, UNPARSABLE, sock_dict, set_autocolor, error_and_detail,
-    processed, parse_socket_line, parse_ui_line, parse_sockets, are_matched
+    UNPARSABLE, set_autocolor, parse_sockets, are_matched
 )
 
 from sverchok.node_tree import SverchCustomTreeNode
@@ -54,7 +53,6 @@ class SvScriptNodeLitePyMenu(bpy.types.Menu):
                 self.path_menu([snlite_template_path], "text.open", {"internal": True})
             else:
                 self.path_menu([snlite_template_path], "node.scriptlite_import")
-
 
 
 class SvScriptNodeLiteCallBack(bpy.types.Operator):
