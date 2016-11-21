@@ -109,6 +109,9 @@ class SvRndNumGen(bpy.types.Node, SverchCustomTreeNode):
     def produce_range(self, *params):
         size, seed, low, high = params
 
+        size = max(size, 1)
+        seed = max(seed, 0)
+
         np.random.seed(seed)
 
         if self.type_selected_mode == 'Int':
