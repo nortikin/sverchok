@@ -78,6 +78,23 @@ class SvRndNumGen(bpy.types.Node, SverchCustomTreeNode):
         default="Simple", update=updateNode
     )
 
+
+    def adjust_inputs(self, context):
+        m = self.type_selected_mode
+        si = self.inputs
+
+        # first does this work? then streamline.
+        if m == 'Int' and si[2].prop_name[-1] == 'f':
+            si[2].prop_name = 'low_i'
+            si[3].prop_name = 'high_i'
+        
+        elif m == 'Float' and si[2].prop_name[-1] == 'i':
+            si[2].prop_name = 'low_f'
+            si[3].prop_name = 'high_f'
+        
+        self.process()
+
+
     type_mode_options = [
         ("Int", "Int", "", 0),
         ("Float", "Float", "", 1)
@@ -86,7 +103,7 @@ class SvRndNumGen(bpy.types.Node, SverchCustomTreeNode):
     type_selected_mode = bpy.props.EnumProperty(
         items=type_mode_options,
         description="offers....",
-        default="Int", update=updateNode
+        default="Int", update=adjust_inputs
     )
 
 
@@ -130,22 +147,9 @@ class SvRndNumGen(bpy.types.Node, SverchCustomTreeNode):
 
         return result
 
-    def adjust_inputs(self):
-        m = self.type_selected_mode
-        si = self.inputs
-
-        # first does this work? then streamline.
-        if m == 'Int' and si[2].prop_name[-1] == 'f':
-            si[2].prop_name = 'low_i'
-            si[3].prop_name = 'high_i'
-        elif m == 'Float' and si[2].prop_name[-1] == 'i':
-            si[2].prop_name = 'low_f'
-            si[3].prop_name = 'high_f'
-
 
     def process(self):
         outputs = self.outputs
-        self.adjust_inputs()
 
         if outputs['Value'].is_linked:
             params = [self.inputs[i].sv_get()[0] for i in range(4)]
