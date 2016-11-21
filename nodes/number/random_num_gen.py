@@ -116,7 +116,7 @@ class SvRndNumGen(bpy.types.Node, SverchCustomTreeNode):
         else:
             result = np.random.ranf(size)
             epsilon_relative = 1e-06
-            if isclose(low, 0.0, epsilon_relative) and isclose(high, 1.0, epsilon_relative):
+            if isclose(low, 0.0, rel_tol=epsilon_relative) and isclose(high, 1.0, rel_tol=epsilon_relative):
                 pass
             else:
                 my_func = lambda inval: np.interp(inval, [0.0, 1.0], [low, high])
