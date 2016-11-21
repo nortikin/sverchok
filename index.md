@@ -214,6 +214,7 @@
     SvOBJRayCastNodeMK2
     SvSCNRayCastNodeMK2
     SvObjectToMeshNodeMK2
+    SvRndNumGen
 
 ## Alpha Nodes
     SvCurveViewerNode
