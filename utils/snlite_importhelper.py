@@ -1,0 +1,110 @@
+# ##### BEGIN GPL LICENSE BLOCK #####
+#
+#  This program is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU General Public License
+#  as published by the Free Software Foundation; either version 2
+#  of the License, or (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software Foundation,
+#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+# ##### END GPL LICENSE BLOCK #####
+
+
+import bpy
+import ast
+
+TRIPPLE_QUOTES = '"""'
+UNPARSABLE = None, None, None, None
+
+sock_dict = {
+    'v': 'VerticesSocket', 's': 'StringsSocket', 'm': 'MatrixSocket', 'o': 'SvObjectSocket'
+}
+
+
+def set_autocolor(node, use_me, color_me):
+    node.use_custom_color = use_me
+    node.color = color_me
+
+
+def error_and_detail(err):
+    error_class = err.__class__.__name__
+    detail = err.args[0]
+    return error_class, detail
+
+
+def processed(str_in):
+    _, b = str_in.split('=')
+    return ast.literal_eval(b)
+
+
+def parse_socket_line(line):
+    lsp = line.strip().split()
+    if not len(lsp) in {3, 5}:
+        print(line, 'is malformed')
+        return UNPARSABLE
+    else:
+        socket_type = sock_dict.get(lsp[2])
+        socket_name = lsp[1]
+        if not socket_type:
+            return UNPARSABLE
+        elif len(lsp) == 3:
+            return socket_type, socket_name, None, None
+        else:
+            default = processed(lsp[3])
+            nested = processed(lsp[4])
+            return socket_type, socket_name, default, nested
+
+def parse_ui_line(L):
+    """ 
+    :    the bl_idname is needed only if it isn't ShaderNodeRGBCurve
+    :    expects the following format, comma separated
+
+    ui = material_name, node_name
+    ui = material_name, node_name, bl_idname
+
+    something like:
+    ui = MyMaterial, RGB Curves
+
+    """
+    l = L[4:].strip()
+    items = [sl.strip() for sl in l.split(',')]
+    if len(items) == 2:
+        return dict(material=items[0], node_name=items[1], bl_idname='ShaderNodeRGBCurve')
+    elif len(items) == 3:
+        return dict(material=items[0], node_name=items[1], bl_idname=items[2])
+
+
+def parse_sockets(node):
+    # maybe a better local name is snlife_info
+    socket_info = {'inputs': [], 'outputs': [], 'ui': []}
+    quotes = 0
+    for line in node.script_str.split('\n'):
+        L = line.strip()
+        if L.startswith(TRIPPLE_QUOTES):
+            quotes += 1
+            if quotes == 2:
+                break
+        elif L.startswith('in ') or L.startswith('out '):
+            socket_dir = L.split(' ')[0] + 'puts'
+            socket_info[socket_dir].append(parse_socket_line(L))
+        elif L.startswith('draw '):
+            drawfunc_line = L.split(' ')
+            if len(drawfunc_line) == 2:
+                socket_info['drawfunc_name'] = drawfunc_line[1]
+        elif L.startswith('ui = '):
+            ui_dict = parse_ui_line(L)
+            if isinstance(ui_dict, dict):
+                socket_info['ui'].append(ui_dict)
+
+    return socket_info
+
+
+def are_matched(sock_, socket_description):
+    return (sock_.bl_idname, sock_.name) == socket_description[:2]

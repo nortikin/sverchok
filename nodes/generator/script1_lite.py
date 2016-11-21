@@ -25,11 +25,15 @@ import bpy
 from bpy.props import StringProperty, IntVectorProperty, FloatVectorProperty
 
 from sverchok.utils.sv_panels_tools import sv_get_local_path
+from sverchok.utils.snlite_importhelper import (
+    TRIPPLE_QUOTES, UNPARSABLE, sock_dict, set_autocolor, error_and_detail,
+    processed, parse_socket_line, parse_ui_line, parse_sockets, are_matched
+)
+
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import dataCorrect, updateNode, replace_socket
 
-TRIPPLE_QUOTES = '"""'
-UNPARSABLE = None, None, None, None
+
 FAIL_COLOR = (0.8, 0.1, 0.1)
 READY_COLOR = (0, 0.8, 0.95)
 
@@ -37,89 +41,6 @@ sv_path = os.path.dirname(sv_get_local_path()[0])
 snlite_template_path = os.path.join(sv_path, 'node_scripts', 'SNLite_templates')
 
 defaults = list(range(32))
-sock_dict = {
-    'v': 'VerticesSocket', 's': 'StringsSocket', 'm': 'MatrixSocket', 'o': 'SvObjectSocket'
-}
-
-
-def set_autocolor(node, use_me, color_me):
-    node.use_custom_color = use_me
-    node.color = color_me
-
-
-def error_and_detail(err):
-    error_class = err.__class__.__name__
-    detail = err.args[0]
-    return error_class, detail
-
-
-def processed(str_in):
-    _, b = str_in.split('=')
-    return ast.literal_eval(b)
-
-
-def parse_socket_line(line):
-    lsp = line.strip().split()
-    if not len(lsp) in {3, 5}:
-        print(line, 'is malformed')
-        return UNPARSABLE
-    else:
-        socket_type = sock_dict.get(lsp[2])
-        socket_name = lsp[1]
-        if not socket_type:
-            return UNPARSABLE
-        elif len(lsp) == 3:
-            return socket_type, socket_name, None, None
-        else:
-            default = processed(lsp[3])
-            nested = processed(lsp[4])
-            return socket_type, socket_name, default, nested
-
-def parse_ui_line(L):
-    """ 
-    :    expects the following format
-    :    the bl_idname is needed only if it isn't ShaderNodeRGBCurve
-
-    ui = material_name, node_name
-    ui = material_name, node_name, bl_idname
-
-    something like:
-    ui = MyMaterial, RGB Curves
-
-    """
-    l = L[4:].strip()
-    l_items = [sl.strip() for sl in l.split(',')]
-    if len(l_items) == 2:
-        return dict(material=l_items[0], node_name=l_items[0], bl_idname='ShaderNodeRGBCurve')
-
-
-def parse_sockets(node):
-    # maybe a better local name is snlife_info
-    socket_info = {'inputs': [], 'outputs': []}
-    quotes = 0
-    for line in node.script_str.split('\n'):
-        L = line.strip()
-        if L.startswith(TRIPPLE_QUOTES):
-            quotes += 1
-            if quotes == 2:
-                break
-        elif L.startswith('in ') or L.startswith('out '):
-            socket_dir = L.split(' ')[0] + 'puts'
-            socket_info[socket_dir].append(parse_socket_line(L))
-        elif L.startswith('draw '):
-            drawfunc_line = L.split(' ')
-            if len(drawfunc_line) == 2:
-                socket_info['drawfunc_name'] = drawfunc_line[1]
-        elif L.startswith('ui = '):
-
-             
-            socket_info['ui'] = ast.literal_eval(L[:12])
-
-    return socket_info
-
-
-def are_matched(sock_, socket_description):
-    return (sock_.bl_idname, sock_.name) == socket_description[:2]
 
 
 class SvScriptNodeLitePyMenu(bpy.types.Menu):
@@ -198,13 +119,6 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
             return self.bl_label
 
 
-    def draw_buttons_ext(self, context, layout):
-        row = layout.row()
-        row.prop(self, 'selected_mode', expand=True)
-        col = layout.column()
-        col.menu(SvScriptNodeLitePyMenu.bl_idname)
-
-
     def add_or_update_sockets(self, k, v):
         '''
         'sockets' are either 'self.inputs' or 'self.outputs'
@@ -254,7 +168,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
         sockets = getattr(self, k)
         if len(sockets) > len(v):
             num_to_remove = (len(sockets) - len(v))
-            for i in range(num_to_remove):
+            for _ in range(num_to_remove):
                 sockets.remove(sockets[-1])
 
 
@@ -264,7 +178,8 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
             return
 
         for k, v in socket_info.items():
-            if not (k in {'inputs', 'outputs'}): continue
+            if not (k in {'inputs', 'outputs'}):
+                continue
 
             if not self.add_or_update_sockets(k, v):
                 print('failed to load sockets for ', k)
@@ -394,6 +309,14 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
             row.operator(sn_callback, text='Clear').fn_name = 'nuke_me'
 
         self.custom_draw(context, layout)
+
+
+    def draw_buttons_ext(self, _, layout):
+        row = layout.row()
+        row.prop(self, 'selected_mode', expand=True)
+        col = layout.column()
+        col.menu(SvScriptNodeLitePyMenu.bl_idname)
+
 
 
 classes = [
