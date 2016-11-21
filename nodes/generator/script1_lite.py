@@ -30,7 +30,7 @@ from sverchok.utils.snlite_importhelper import (
 )
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import dataCorrect, updateNode, replace_socket
+from sverchok.data_structure import updateNode, replace_socket
 
 
 FAIL_COLOR = (0.8, 0.1, 0.1)
@@ -326,8 +326,8 @@ classes = [
 
 
 def register():
-    [bpy.utils.register_class(name) for name in classes]
+    _ = [bpy.utils.register_class(name) for name in classes]
 
 
 def unregister():
-    [bpy.utils.unregister_class(name) for name in classes]
+    _ = [bpy.utils.unregister_class(name) for name in classes]
