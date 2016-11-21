@@ -16,11 +16,15 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+import numpy as np
+from np import random_integers, ranf, interp, random, apply_along_axis
+from math import isclose
+
 import bpy
 from bpy.props import BoolProperty, FloatProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, repeat_last
+from sverchok.data_structure import updateNode, match_long_repeat
 
 
 class SvRndNumGen(bpy.types.Node, SverchCustomTreeNode):
@@ -49,8 +53,8 @@ class SvRndNumGen(bpy.types.Node, SverchCustomTreeNode):
         default=10,
         options={'ANIMATABLE'}, update=updateNode)
 
-    count = IntProperty(
-        name='Count', description='number of values to output',
+    size = IntProperty(
+        name='Size', description='number of values to output (count.. or size)',
         default=10,
         options={'ANIMATABLE'}, update=updateNode)
 
@@ -89,7 +93,7 @@ class SvRndNumGen(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_init(self, context):
         si = self.inputs
-        si.new('StringsSocket', "Count").prop_name = 'count'
+        si.new('StringsSocket', "Size").prop_name = 'size'
         si.new('StringsSocket', "Seed").prop_name = 'seed'
         si.new('StringsSocket', "Low").prop_name = 'low_i'
         si.new('StringsSocket', "High").prop_name = 'high_i'
@@ -97,35 +101,54 @@ class SvRndNumGen(bpy.types.Node, SverchCustomTreeNode):
         so.new('StringsSocket', "Value")
 
 
-    def draw_buttons(self, context, layout):
-        
+    def draw_buttons(self, _, layout):
         row = layout.row()
         row.prop(self, 'type_selected_mode', expand=True)
-        row = layout.row()
-        row.prop(self, 'selected_mode', expand=True)
-
-        if self.selected_mode == 'Simple':
-            ...
-        else:
-            ...
-        
         layout.prop(self, "as_list")
     
 
+    def produce_range(self, *params):
+        size, seed, low, high = params
+
+        random.seed(seed)
+
+        if self.type_selected_mode == 'Int':
+            result = random_integers(low, high, size)
+        else:
+            result = ranf(size)
+            epsilon_relative = 1e-06
+            if isclose(low, 0.0, epsilon_relative) and isclose(high, 1.0, epsilon_relative):
+                pass
+            else:
+                my_func = lambda inval: interp(inval, [0.0, 1.0], [low, high])
+                result = apply_along_axis(my_func, 0, result)
+
+        if self.as_list:
+            result = result.tolist()
+
+        return result
+
+    def adjust_inputs(self):
+        m = self.type_selected_mode
+        si = self.inputs
+
+        # first does this work? then streamline.
+        if m == 'Int' and si[2].prop_name[-1] == 'f':
+            si[2].prop_name = 'low_i'
+            si[3].prop_name = 'high_i'
+        elif m == 'Float' and si[2].prop_name[-1] == 'i':
+            si[2].prop_name = 'low_f'
+            si[3].prop_name = 'high_f'
+
+
     def process(self):
-        inputs = self.inputs
         outputs = self.outputs
+        self.adjust_inputs()
 
-        # no outputs, end early.
-        if not outputs['Value'].is_linked:
-            return
-        
-        value_in = iter(inputs[0].sv_get())
-        param = [repeat_last(inputs[i].sv_get()[0]) for i in range(1, 5)]
-        out = [self.map_range(*args) for args in zip(value_in, *param)]
-        
-        outputs['Value'].sv_set(out)
-
+        if outputs['Value'].is_linked:
+            params = [self.inputs[i].sv_get()[0] for i in range(4)]
+            out = [self.produce_range(*args) for args in zip(*match_long_repeat(params))]
+            outputs['Value'].sv_set(out)
 
 def register():
     bpy.utils.register_class(SvRndNumGen)
