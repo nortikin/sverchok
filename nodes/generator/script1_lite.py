@@ -75,8 +75,26 @@ def parse_socket_line(line):
             nested = processed(lsp[4])
             return socket_type, socket_name, default, nested
 
+def parse_ui_line(L):
+    """ 
+    :    expects the following format
+    :    the bl_idname is needed only if it isn't ShaderNodeRGBCurve
+
+    ui = material_name, node_name
+    ui = material_name, node_name, bl_idname
+
+    something like:
+    ui = MyMaterial, RGB Curves
+
+    """
+    l = L[4:].strip()
+    l_items = [sl.strip() for sl in l.split(',')]
+    if len(l_items) == 2:
+        return dict(material=l_items[0], node_name=l_items[0], bl_idname='ShaderNodeRGBCurve')
+
 
 def parse_sockets(node):
+    # maybe a better local name is snlife_info
     socket_info = {'inputs': [], 'outputs': []}
     quotes = 0
     for line in node.script_str.split('\n'):
@@ -92,6 +110,10 @@ def parse_sockets(node):
             drawfunc_line = L.split(' ')
             if len(drawfunc_line) == 2:
                 socket_info['drawfunc_name'] = drawfunc_line[1]
+        elif L.startswith('ui = '):
+
+             
+            socket_info['ui'] = ast.literal_eval(L[:12])
 
     return socket_info
 
