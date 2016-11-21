@@ -33,12 +33,6 @@ def set_autocolor(node, use_me, color_me):
     node.color = color_me
 
 
-def error_and_detail(err):
-    error_class = err.__class__.__name__
-    detail = err.args[0]
-    return error_class, detail
-
-
 def processed(str_in):
     _, b = str_in.split('=')
     return ast.literal_eval(b)
