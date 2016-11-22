@@ -237,7 +237,9 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
                         v = v[:]
 
                     node_items[prop_name] = v
-        
+
+        if node.bl_idname == 'SvScriptNodeLite':
+            node.storage_get_data(node_dict)
 
         # collect socket properties
         # inputs = node.inputs

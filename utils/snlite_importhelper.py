@@ -77,7 +77,7 @@ def parse_ui_line(L):
 
 def parse_sockets(node):
     # maybe a better local name is snlife_info
-    socket_info = {'inputs': [], 'outputs': [], 'ui': []}
+    socket_info = {'inputs': [], 'outputs': [], 'snlite_ui': []}
     quotes = 0
     for line in node.script_str.split('\n'):
         L = line.strip()
@@ -95,7 +95,7 @@ def parse_sockets(node):
         elif L.startswith('ui = '):
             ui_dict = parse_ui_line(L)
             if isinstance(ui_dict, dict):
-                socket_info['ui'].append(ui_dict)
+                socket_info['snlite_ui'].append(ui_dict)
 
     return socket_info
 
