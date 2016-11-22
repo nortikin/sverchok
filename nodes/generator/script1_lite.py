@@ -316,6 +316,13 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
         col.menu(SvScriptNodeLitePyMenu.bl_idname)
 
 
+    def storage_load(self):
+        pass
+
+    def storage_write(self):
+        pass
+
+
 
 classes = [
     SvScriptNodeLiteTextImport,
