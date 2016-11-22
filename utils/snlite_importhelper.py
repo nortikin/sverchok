@@ -113,14 +113,41 @@ def get_rgb_curve(material_name, node_name):
         points = curve.points
         out_list.append([(p.handle_type, p.location[:]) for p in points])
     
-    return out_list
+    x = 'ShaderNodeRGBCurve'
+    return dict(matname=material_name, node_name=node_name, bl_idname=x, data=out_list)
 
 
-def set_rgb_curve(material_name, node_name):
+def set_rgb_curve(data_dict):
+    materials = bpy.data.materials
 
-    m = bpy.data.materials.get(material_name)
-    node = m.node_tree.nodes.get(node_name)
+    m_name = data_dict['matname']
+    n_name = data_dict['node_name']
+    bl_id = data_dict['bl_idname']
 
-    pass
+    m = materials.get(m_name)
+    if not m:
+        m = materials.new(m_name)
 
+    m.use_nodes = True
+    m.use_fake_user = True
 
+    node = m.node_tree.nodes.get(n_name)
+    if not node:
+        node = m.node_tree.nodes.new(bl_id)
+        node.name = n_name
+
+    node.mapping.initialize()
+    data = data_dict['data']
+    for idx, curve in enumerate(node.mapping.curves):
+
+        # default is two points, how many more are needed? = extra
+        num_existing_points = len(curve.points)
+        extra = len(data[idx]) - num_existing_points
+
+        # add extra points
+        _ = [curve.extend() for _ in range(extra)]
+
+        # set points to correspond with stored collection
+        for pidx, (handle_type, location) in data[idx]:
+            curve.points[pidx].handle_type = handle_type
+            curve.points[pidx].location = location
