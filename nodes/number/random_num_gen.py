@@ -83,7 +83,6 @@ class SvRndNumGen(bpy.types.Node, SverchCustomTreeNode):
         m = self.type_selected_mode
         si = self.inputs
 
-        # first does this work? then streamline.
         if m == 'Int' and si[2].prop_name[-1] == 'f':
             si[2].prop_name = 'low_i'
             si[3].prop_name = 'high_i'
@@ -91,8 +90,8 @@ class SvRndNumGen(bpy.types.Node, SverchCustomTreeNode):
         elif m == 'Float' and si[2].prop_name[-1] == 'i':
             si[2].prop_name = 'low_f'
             si[3].prop_name = 'high_f'
-        
-        self.process()
+
+        updateNode(self, context)
 
 
     type_mode_options = [
@@ -132,6 +131,7 @@ class SvRndNumGen(bpy.types.Node, SverchCustomTreeNode):
         np.random.seed(seed)
 
         if self.type_selected_mode == 'Int':
+            low, high = sorted([low, high])
             result = np.random.random_integers(low, high, size)
         else:
             result = np.random.ranf(size)
