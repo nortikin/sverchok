@@ -102,3 +102,25 @@ def parse_sockets(node):
 
 def are_matched(sock_, socket_description):
     return (sock_.bl_idname, sock_.name) == socket_description[:2]
+
+
+def get_rgb_curve(material_name, node_name):
+    m = bpy.data.materials.get(material_name)
+    node = m.node_tree.nodes.get(node_name)
+
+    out_list = []
+    for curve in node.mapping.curves:
+        points = curve.points
+        out_list.append([(p.handle_type, p.location[:]) for p in points])
+    
+    return out_list
+
+
+def set_rgb_curve(material_name, node_name):
+
+    m = bpy.data.materials.get(material_name)
+    node = m.node_tree.nodes.get(node_name)
+
+    pass
+
+
