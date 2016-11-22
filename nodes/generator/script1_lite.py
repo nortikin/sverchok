@@ -19,6 +19,7 @@
 import os
 import sys
 import ast
+import json
 import traceback
 
 import bpy
@@ -320,18 +321,22 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
 
     def storage_set_data(self, ui_elements):
         self.node_dict[hash(self)]['sockets']['snlite_ui'] = ui_elements
+        # data = json.loads(data_json_str)
         pass
 
     def storage_get_data(self, node_dict):
         ui_info = self.node_dict[hash(self)]['sockets']['snlite_ui']
-        for idx, info in enumerate(ui_info):
-            mat_name = info['matname']
+        node_dict['snlite_ui'] = []
+        print(ui_info)
+        for _, info in enumerate(ui_info):
+            mat_name = info['mat_name']
             node_name = info['node_name']
             bl_idname = info['bl_idname']
-            ui_info[idx]['data'] = get_rgb_curve(material_name, node_name)
-        node_dict['snlite_ui'] = ui_info
-        print(ui_info)
-
+            if bl_idname == 'ShaderNodeRGBCurve':
+                data = get_rgb_curve(mat_name, node_name)
+                print(data)
+                # data_json_str = json.dumps(data)
+                node_dict['snlite_ui'].append(data)
 
 
 classes = [

@@ -70,9 +70,9 @@ def parse_ui_line(L):
     l = L[4:].strip()
     items = [sl.strip() for sl in l.split(',')]
     if len(items) == 2:
-        return dict(material=items[0], node_name=items[1], bl_idname='ShaderNodeRGBCurve')
+        return dict(mat_name=items[0], node_name=items[1], bl_idname='ShaderNodeRGBCurve')
     elif len(items) == 3:
-        return dict(material=items[0], node_name=items[1], bl_idname=items[2])
+        return dict(mat_name=items[0], node_name=items[1], bl_idname=items[2])
 
 
 def parse_sockets(node):
@@ -117,7 +117,7 @@ def get_rgb_curve(material_name, node_name):
         out_list.append([(p.handle_type, p.location[:]) for p in points])
     
     x = 'ShaderNodeRGBCurve'
-    return dict(matname=material_name, node_name=node_name, bl_idname=x, data=out_list)
+    return dict(mat_name=material_name, node_name=node_name, bl_idname=x, data=out_list)
 
 
 def set_rgb_curve(data_dict):
@@ -126,7 +126,7 @@ def set_rgb_curve(data_dict):
     '''
     materials = bpy.data.materials
 
-    m_name = data_dict['matname']
+    m_name = data_dict['mat_name']
     n_name = data_dict['node_name']
     bl_id = data_dict['bl_idname']
 
