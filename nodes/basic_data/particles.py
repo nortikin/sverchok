@@ -53,7 +53,6 @@ class SvParticlesNode(bpy.types.Node, SverchCustomTreeNode):
         description="Choose Particles to load", update=updateNode)
 
     def draw_buttons(self, context, layout):
-        layout.prop(self, 'objects', 'objects')
         layout.prop(self, 'particles', 'particles')
 
 
