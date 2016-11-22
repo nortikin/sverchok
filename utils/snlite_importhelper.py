@@ -110,6 +110,7 @@ def get_rgb_curve(material_name, node_name):
     '''
     m = bpy.data.materials.get(material_name)
     node = m.node_tree.nodes.get(node_name)
+    node.mapping.initialize()
 
     out_list = []
     for curve in node.mapping.curves:
@@ -154,6 +155,6 @@ def set_rgb_curve(data_dict):
         _ = [curve.points.new(0.5, 0.5) for _ in range(extra)]
 
         # set points to correspond with stored collection
-        for pidx, (handle_type, location) in data[idx]:
+        for pidx, (handle_type, location) in enumerate(data[idx]):
             curve.points[pidx].handle_type = handle_type
             curve.points[pidx].location = location
