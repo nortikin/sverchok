@@ -255,8 +255,6 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
     def process_script(self):
         locals().update(self.make_new_locals())
 
-        # exception handling inspired by http://stackoverflow.com/a/28836286/1243487
-
         try:
             exec(self.script_str, locals(), locals())
             for idx, _socket in enumerate(self.outputs):
@@ -272,11 +270,12 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
 
         except:
             print("Unexpected error:", sys.exc_info()[0])
-            _, _, tb = sys.exc_info()
-            lineno = traceback.extract_tb(tb)[-1][1]
-            print('on line: ', lineno, '\n', tb)
+            exc_type, exc_value, exc_traceback = sys.exc_info()
+            lineno = traceback.extract_tb(exc_traceback)[-1][1]
+            print('on line: ', lineno)
+            show = traceback.print_exception
+            show(exc_type, exc_value, exc_traceback, limit=2, file=sys.stdout)
             set_autocolor(self, True, FAIL_COLOR)
-            raise
         else:
             return
 
