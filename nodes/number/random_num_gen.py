@@ -132,6 +132,7 @@ class SvRndNumGen(bpy.types.Node, SverchCustomTreeNode):
         np.random.seed(seed)
 
         if self.type_selected_mode == 'Int':
+            low, high = sorted([low, high])
             result = np.random.random_integers(low, high, size)
         else:
             result = np.random.ranf(size)
