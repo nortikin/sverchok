@@ -145,7 +145,7 @@ def set_rgb_curve(data_dict):
         extra = len(data[idx]) - num_existing_points
 
         # add extra points
-        _ = [curve.extend() for _ in range(extra)]
+        _ = [curve.points.new(0.5, 0.5) for _ in range(extra)]
 
         # set points to correspond with stored collection
         for pidx, (handle_type, location) in data[idx]:
