@@ -348,6 +348,9 @@ def perform_scripted_node_inject(node, node_ref):
         node.files_popup = "sv_lang_template.sn"   # import to reset easy fix
         node.load()
     elif node.bl_idname == 'SvScriptNodeLite':
+        data_list = node_ref.get('snlite_ui')
+        if data_list:
+            node.storage_set_data(data_list)
         node.load()
     else:
         node.files_popup = node.avail_templates(None)[0][0]

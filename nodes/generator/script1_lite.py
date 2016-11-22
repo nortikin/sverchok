@@ -27,7 +27,8 @@ from bpy.props import StringProperty, IntVectorProperty, FloatVectorProperty
 
 from sverchok.utils.sv_panels_tools import sv_get_local_path
 from sverchok.utils.snlite_importhelper import (
-    UNPARSABLE, set_autocolor, parse_sockets, are_matched, get_rgb_curve
+    UNPARSABLE, set_autocolor, parse_sockets, are_matched,
+    get_rgb_curve, set_rgb_curve
 )
 
 from sverchok.node_tree import SverchCustomTreeNode
@@ -319,10 +320,13 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
     # ---- IO Json storage is handled in this node locally ----
 
 
-    def storage_set_data(self, data_json_str):
+    def storage_set_data(self, data_list):
         # self.node_dict[hash(self)]['sockets']['snlite_ui'] = ui_elements
-        data = json.loads(data_json_str)
-        pass
+        for data_json_str in data_list:
+            data_dict = json.loads(data_json_str)
+            if data_dict['bl_idname'] == 'ShaderNodeRGBCurve':
+                set_rgb_curve(data_dict)
+
 
     def storage_get_data(self, node_dict):
         ui_info = self.node_dict[hash(self)]['sockets']['snlite_ui']
