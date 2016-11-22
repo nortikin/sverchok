@@ -226,6 +226,8 @@
     SvInsetSpecial
     SkinViewerNode
     SvCSGBooleanNode
+    SvParticlesNode
+    SvUVtextureNode
     SvNumpyArrayNode
     SvNodeRemoteNode
     SvGetDataObjectNode
@@ -237,4 +239,3 @@
     SvBMinputNode
     SvBMoutputNode
     SvBMtoElementNode
-    SvParticlesNode
