@@ -315,10 +315,10 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
         col.menu(SvScriptNodeLitePyMenu.bl_idname)
 
 
-    def storage_load(self):
+    def storage_set_data(self):
         pass
 
-    def storage_write(self):
+    def storage_get_data(self):
         pass
 
 
