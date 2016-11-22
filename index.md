@@ -193,7 +193,7 @@
     SvInstancerNode
     SvGetPropNode
     SvSetPropNode
-    SvVertexGroupNode
+    SvVertexGroupNodeMK2
     SvVertexColorNode
     SvVertexColorNodeMK2
 
