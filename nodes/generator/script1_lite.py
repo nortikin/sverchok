@@ -319,9 +319,9 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
     # ---- IO Json storage is handled in this node locally ----
 
 
-    def storage_set_data(self, ui_elements):
-        self.node_dict[hash(self)]['sockets']['snlite_ui'] = ui_elements
-        # data = json.loads(data_json_str)
+    def storage_set_data(self, data_json_str):
+        # self.node_dict[hash(self)]['sockets']['snlite_ui'] = ui_elements
+        data = json.loads(data_json_str)
         pass
 
     def storage_get_data(self, node_dict):
@@ -335,8 +335,8 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
             if bl_idname == 'ShaderNodeRGBCurve':
                 data = get_rgb_curve(mat_name, node_name)
                 print(data)
-                # data_json_str = json.dumps(data)
-                node_dict['snlite_ui'].append(data)
+                data_json_str = json.dumps(data)
+                node_dict['snlite_ui'].append(data_json_str)
 
 
 classes = [
