@@ -105,6 +105,9 @@ def are_matched(sock_, socket_description):
 
 
 def get_rgb_curve(material_name, node_name):
+    '''
+    ShaderNodeRGBCurve support only
+    '''
     m = bpy.data.materials.get(material_name)
     node = m.node_tree.nodes.get(node_name)
 
@@ -118,6 +121,9 @@ def get_rgb_curve(material_name, node_name):
 
 
 def set_rgb_curve(data_dict):
+    '''
+    ShaderNodeRGBCurve support only
+    '''
     materials = bpy.data.materials
 
     m_name = data_dict['matname']
