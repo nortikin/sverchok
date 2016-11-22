@@ -110,7 +110,6 @@ def get_rgb_curve(material_name, node_name):
     '''
     m = bpy.data.materials.get(material_name)
     node = m.node_tree.nodes.get(node_name)
-    node.mapping.initialize()
 
     out_list = []
     for curve in node.mapping.curves:
