@@ -128,8 +128,8 @@ def set_rgb_curve(data_dict):
     ShaderNodeRGBCurve support only
     '''
 
-    m_name = data_dict['mat_name']
-    n_name = data_dict['node_name']
+    mat_name = data_dict['mat_name']
+    node_name = data_dict['node_name']
     bl_id = data_dict['bl_idname']
 
     node = get_valid_node(mat_name, node_name, bl_id)
