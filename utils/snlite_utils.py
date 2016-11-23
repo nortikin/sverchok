@@ -19,13 +19,8 @@
 
 import bpy
 
-def get_valid_evaluate_node(mat_name, node_name):
-    ''' 
-    Takes a material name (cycles) and a Node name it expects to find.
-    The node will be of type ShaderNodeRGBCurve and this function
-    will force its existence, then return the evaluate function for the last
-    component of RGBA - allowing us to use this as a float modifier.
-    '''
+def get_valid_node(mat_name, node_name, bl_idname):
+
     materials = bpy.data.materials
 
     # make sure the Material is present
@@ -35,6 +30,7 @@ def get_valid_evaluate_node(mat_name, node_name):
 
     # if it doesn't use nodes force that (and cycles ?! )
     m.use_nodes = True
+    m.use_fake_user = True
 
     # make sure the CurveNode we want to use is present too
     node = m.node_tree.nodes.get(node_name)
@@ -42,7 +38,18 @@ def get_valid_evaluate_node(mat_name, node_name):
         node = m.node_tree.nodes.new('ShaderNodeRGBCurve')
         node.name = node_name
 
-    m.use_fake_user = True
+    return node
+
+
+def get_valid_evaluate_function(mat_name, node_name):
+    ''' 
+    Takes a material name (cycles) and a Node name it expects to find.
+    The node will be of type ShaderNodeRGBCurve and this function
+    will force its existence, then return the evaluate function for the last
+    component of RGBA - allowing us to use this as a float modifier.
+    '''
+
+    node = get_valid_node(mat_name, node_name, 'ShaderNodeRGBCurve')
 
     curve = node.mapping.curves[3]
     try: curve.evaluate(0.0)

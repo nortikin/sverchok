@@ -237,7 +237,9 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
                         v = v[:]
 
                     node_items[prop_name] = v
-        
+
+        if node.bl_idname == 'SvScriptNodeLite':
+            node.storage_get_data(node_dict)
 
         # collect socket properties
         # inputs = node.inputs
@@ -347,6 +349,9 @@ def perform_scripted_node_inject(node, node_ref):
         node.load()
     elif node.bl_idname == 'SvScriptNodeLite':
         node.load()
+        data_list = node_ref.get('snlite_ui')
+        if data_list:
+            node.storage_set_data(data_list)
     else:
         node.files_popup = node.avail_templates(None)[0][0]
         node.load()

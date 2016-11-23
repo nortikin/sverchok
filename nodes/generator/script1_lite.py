@@ -19,17 +19,22 @@
 import os
 import sys
 import ast
+import json
 import traceback
 
 import bpy
 from bpy.props import StringProperty, IntVectorProperty, FloatVectorProperty
 
 from sverchok.utils.sv_panels_tools import sv_get_local_path
-from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import dataCorrect, updateNode, replace_socket
+from sverchok.utils.snlite_importhelper import (
+    UNPARSABLE, set_autocolor, parse_sockets, are_matched,
+    get_rgb_curve, set_rgb_curve
+)
 
-TRIPPLE_QUOTES = '"""'
-UNPARSABLE = None, None, None, None
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import updateNode, replace_socket
+
+
 FAIL_COLOR = (0.8, 0.1, 0.1)
 READY_COLOR = (0, 0.8, 0.95)
 
@@ -37,67 +42,6 @@ sv_path = os.path.dirname(sv_get_local_path()[0])
 snlite_template_path = os.path.join(sv_path, 'node_scripts', 'SNLite_templates')
 
 defaults = list(range(32))
-sock_dict = {
-    'v': 'VerticesSocket', 's': 'StringsSocket', 'm': 'MatrixSocket', 'o': 'SvObjectSocket'
-}
-
-
-def set_autocolor(node, use_me, color_me):
-    node.use_custom_color = use_me
-    node.color = color_me
-
-
-def error_and_detail(err):
-    error_class = err.__class__.__name__
-    detail = err.args[0]
-    return error_class, detail
-
-
-def processed(str_in):
-    _, b = str_in.split('=')
-    return ast.literal_eval(b)
-
-
-def parse_socket_line(line):
-    lsp = line.strip().split()
-    if not len(lsp) in {3, 5}:
-        print(line, 'is malformed')
-        return UNPARSABLE
-    else:
-        socket_type = sock_dict.get(lsp[2])
-        socket_name = lsp[1]
-        if not socket_type:
-            return UNPARSABLE
-        elif len(lsp) == 3:
-            return socket_type, socket_name, None, None
-        else:
-            default = processed(lsp[3])
-            nested = processed(lsp[4])
-            return socket_type, socket_name, default, nested
-
-
-def parse_sockets(node):
-    socket_info = {'inputs': [], 'outputs': []}
-    quotes = 0
-    for line in node.script_str.split('\n'):
-        L = line.strip()
-        if L.startswith(TRIPPLE_QUOTES):
-            quotes += 1
-            if quotes == 2:
-                break
-        elif L.startswith('in ') or L.startswith('out '):
-            socket_dir = L.split(' ')[0] + 'puts'
-            socket_info[socket_dir].append(parse_socket_line(L))
-        elif L.startswith('draw '):
-            drawfunc_line = L.split(' ')
-            if len(drawfunc_line) == 2:
-                socket_info['drawfunc_name'] = drawfunc_line[1]
-
-    return socket_info
-
-
-def are_matched(sock_, socket_description):
-    return (sock_.bl_idname, sock_.name) == socket_description[:2]
 
 
 class SvScriptNodeLitePyMenu(bpy.types.Menu):
@@ -111,7 +55,6 @@ class SvScriptNodeLitePyMenu(bpy.types.Menu):
                 self.path_menu([snlite_template_path], "text.open", {"internal": True})
             else:
                 self.path_menu([snlite_template_path], "node.scriptlite_import")
-
 
 
 class SvScriptNodeLiteCallBack(bpy.types.Operator):
@@ -176,13 +119,6 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
             return self.bl_label
 
 
-    def draw_buttons_ext(self, context, layout):
-        row = layout.row()
-        row.prop(self, 'selected_mode', expand=True)
-        col = layout.column()
-        col.menu(SvScriptNodeLitePyMenu.bl_idname)
-
-
     def add_or_update_sockets(self, k, v):
         '''
         'sockets' are either 'self.inputs' or 'self.outputs'
@@ -232,7 +168,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
         sockets = getattr(self, k)
         if len(sockets) > len(v):
             num_to_remove = (len(sockets) - len(v))
-            for i in range(num_to_remove):
+            for _ in range(num_to_remove):
                 sockets.remove(sockets[-1])
 
 
@@ -242,7 +178,8 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
             return
 
         for k, v in socket_info.items():
-            if not (k in {'inputs', 'outputs'}): continue
+            if not (k in {'inputs', 'outputs'}):
+                continue
 
             if not self.add_or_update_sockets(k, v):
                 print('failed to load sockets for ', k)
@@ -320,8 +257,6 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
     def process_script(self):
         locals().update(self.make_new_locals())
 
-        # exception handling inspired by http://stackoverflow.com/a/28836286/1243487
-
         try:
             exec(self.script_str, locals(), locals())
             for idx, _socket in enumerate(self.outputs):
@@ -337,11 +272,12 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
 
         except:
             print("Unexpected error:", sys.exc_info()[0])
-            _, _, tb = sys.exc_info()
-            lineno = traceback.extract_tb(tb)[-1][1]
-            print('on line: ', lineno, '\n', tb)
+            exc_type, exc_value, exc_traceback = sys.exc_info()
+            lineno = traceback.extract_tb(exc_traceback)[-1][1]
+            print('on line: ', lineno)
+            show = traceback.print_exception
+            show(exc_type, exc_value, exc_traceback, limit=2, file=sys.stdout)
             set_autocolor(self, True, FAIL_COLOR)
-            raise
         else:
             return
 
@@ -374,6 +310,39 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
         self.custom_draw(context, layout)
 
 
+    def draw_buttons_ext(self, _, layout):
+        row = layout.row()
+        row.prop(self, 'selected_mode', expand=True)
+        col = layout.column()
+        col.menu(SvScriptNodeLitePyMenu.bl_idname)
+
+
+    # ---- IO Json storage is handled in this node locally ----
+
+
+    def storage_set_data(self, data_list):
+        # self.node_dict[hash(self)]['sockets']['snlite_ui'] = ui_elements
+        for data_json_str in data_list:
+            data_dict = json.loads(data_json_str)
+            if data_dict['bl_idname'] == 'ShaderNodeRGBCurve':
+                set_rgb_curve(data_dict)
+
+
+    def storage_get_data(self, node_dict):
+        ui_info = self.node_dict[hash(self)]['sockets']['snlite_ui']
+        node_dict['snlite_ui'] = []
+        print(ui_info)
+        for _, info in enumerate(ui_info):
+            mat_name = info['mat_name']
+            node_name = info['node_name']
+            bl_idname = info['bl_idname']
+            if bl_idname == 'ShaderNodeRGBCurve':
+                data = get_rgb_curve(mat_name, node_name)
+                print(data)
+                data_json_str = json.dumps(data)
+                node_dict['snlite_ui'].append(data_json_str)
+
+
 classes = [
     SvScriptNodeLiteTextImport,
     SvScriptNodeLitePyMenu,
@@ -383,8 +352,8 @@ classes = [
 
 
 def register():
-    [bpy.utils.register_class(name) for name in classes]
+    _ = [bpy.utils.register_class(name) for name in classes]
 
 
 def unregister():
-    [bpy.utils.unregister_class(name) for name in classes]
+    _ = [bpy.utils.unregister_class(name) for name in classes]
