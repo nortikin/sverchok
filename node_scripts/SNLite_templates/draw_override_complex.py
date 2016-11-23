@@ -9,6 +9,9 @@ import bpy
 
 from sverchok.utils.snlite_utils import get_valid_evaluate_function as get_evaluator
 
+# currently the node noame (here 'RGB Curves') must be uniqe per material.
+# copying nodes within the same nodetree  does not automatically 'bump' the nodename
+# to the next available. You must be aware of this current implementation limitation.
 evaluate = get_evaluator('my_temp_material', 'RGB Curves')
 
 def curve_draw(self, context, layout):
