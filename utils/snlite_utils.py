@@ -35,7 +35,7 @@ def get_valid_node(mat_name, node_name, bl_idname):
     # make sure the CurveNode we want to use is present too
     node = m.node_tree.nodes.get(node_name)
     if not node:
-        node = m.node_tree.nodes.new('ShaderNodeRGBCurve')
+        node = m.node_tree.nodes.new(bl_idname)
         node.name = node_name
 
     return node
