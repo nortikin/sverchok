@@ -146,14 +146,12 @@ def set_rgb_curve(data_dict):
     data = data_dict['data']
     for idx, curve in enumerate(node.mapping.curves):
 
-        # default is two points, how many more are needed? = extra
-        num_existing_points = len(curve.points)
-        extra = len(data[idx]) - num_existing_points
-
-        # add extra points
+        # add extra points, if needed
+        extra = len(data[idx]) - len(curve.points)
         _ = [curve.points.new(0.5, 0.5) for _ in range(extra)]
 
         # set points to correspond with stored collection
         for pidx, (handle_type, location) in enumerate(data[idx]):
             curve.points[pidx].handle_type = handle_type
             curve.points[pidx].location = location
+    node.mapping.update()
