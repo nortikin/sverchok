@@ -20,6 +20,9 @@
 import bpy
 import ast
 
+from sverchok.utils.snlite_utils import get_valid_node
+
+
 TRIPPLE_QUOTES = '"""'
 UNPARSABLE = None, None, None, None
 
@@ -124,23 +127,12 @@ def set_rgb_curve(data_dict):
     '''
     ShaderNodeRGBCurve support only
     '''
-    materials = bpy.data.materials
 
     m_name = data_dict['mat_name']
     n_name = data_dict['node_name']
     bl_id = data_dict['bl_idname']
 
-    m = materials.get(m_name)
-    if not m:
-        m = materials.new(m_name)
-
-    m.use_nodes = True
-    m.use_fake_user = True
-
-    node = m.node_tree.nodes.get(n_name)
-    if not node:
-        node = m.node_tree.nodes.new(bl_id)
-        node.name = n_name
+    node = get_valid_node(mat_name, node_name, bl_id)
 
     node.mapping.initialize()
     data = data_dict['data']
