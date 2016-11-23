@@ -169,12 +169,13 @@ class SvInterpolationStripesNode(bpy.types.Node, SverchCustomTreeNode):
     def sv_init(self, context):
         s = self.inputs.new('VerticesSocket', 'Vertices')
         s.use_prop = True
-        self.inputs.new('StringsSocket', 'IntervalX').prop_name = 't_in_x'
-        self.inputs.new('StringsSocket', 'IntervalY').prop_name = 't_in_y'
+        self.inputs.new('StringsSocket', 'IntervalX')
+        self.inputs.new('StringsSocket', 'IntervalY')
         a = self.inputs.new('VerticesSocket', 'Attractor')
         a.use_prop = True
         s.prop = (0, 0, 1)
-        self.outputs.new('VerticesSocket', 'vStripes')
+        self.outputs.new('VerticesSocket', 'vStripesOut')
+        self.outputs.new('VerticesSocket', 'vStripesIn')
         self.outputs.new('VerticesSocket', 'vShape')
         self.outputs.new('StringsSocket',  'sCoefs')
 
@@ -212,7 +213,7 @@ class SvInterpolationStripesNode(bpy.types.Node, SverchCustomTreeNode):
         return vec.length
 
     def process(self):
-        if 'vStripes' not in self.outputs:
+        if 'vStripesOut' not in self.outputs:
             return
         if not any((s.is_linked for s in self.outputs)):
             return
@@ -222,8 +223,14 @@ class SvInterpolationStripesNode(bpy.types.Node, SverchCustomTreeNode):
             verts = dataCorrect(verts)
             attrs = self.inputs['Attractor'].sv_get()
             attrs = dataCorrect(attrs)
-            t_ins_x = self.inputs['IntervalX'].sv_get()
-            t_ins_y = self.inputs['IntervalY'].sv_get()
+            if not self.inputs['IntervalX'].is_linked:
+                t_ins_x = [[i/10 for i in range(0,11)]]
+            else:
+                t_ins_x = self.inputs['IntervalX'].sv_get()
+            if not self.inputs['IntervalY'].is_linked:
+                t_ins_y = [[i/10 for i in range(0,11)]]
+            else:
+                t_ins_y = self.inputs['IntervalY'].sv_get()
             factor = self.factor
             scale = self.scale
             minimum = self.minimum
@@ -256,7 +263,7 @@ class SvInterpolationStripesNode(bpy.types.Node, SverchCustomTreeNode):
             try:
                 #dists_normalized = dists_np/(maxidist*len(t_ins_y))
                 dists_normalized = func(dists_np,maxidist,t_ins_y,factor,scale,minimum,maximum)
-                print(dists_normalized)
+                #print(dists_normalized)
             except ZeroDivisionError:
                 print ("division by zero!")
                 return
@@ -290,9 +297,14 @@ class SvInterpolationStripesNode(bpy.types.Node, SverchCustomTreeNode):
             # zipping for UVconnect node to "eat" this
             # mirrors on left and right side from initial interpolation
             verts_out = [[M,P] for M,P in zip(verts_X_mins,verts_X_plus)]
+            vm,vp = verts_X_mins[1:],verts_X_plus[:-1]
+            #print('mnis----------',verts_X_mins[0])
+            verts_inner_out = [[M,P] for M,P in zip(vm,vp)]
 
-            if self.outputs['vStripes'].is_linked:
-                SvSetSocketAnyType(self, 'vStripes', verts_out)
+            if self.outputs['vStripesOut'].is_linked:
+                SvSetSocketAnyType(self, 'vStripesOut', verts_out)
+            if self.outputs['vStripesIn'].is_linked:
+                SvSetSocketAnyType(self, 'vStripesIn', verts_inner_out)
             if self.outputs['vShape'].is_linked:
                 SvSetSocketAnyType(self, 'vShape', verts_int)
             if self.outputs['sCoefs'].is_linked:
