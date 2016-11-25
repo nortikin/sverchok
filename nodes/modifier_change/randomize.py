@@ -24,7 +24,8 @@ from bpy.props import FloatProperty, IntProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat
 
-def randomize(vertices, random_x, random_y, random_z):
+def randomize(vertices, random_x, random_y, random_z, seed):
+    random.seed(seed)
     result = []
     for x,y,z in vertices:
         rx = random.uniform(-random_x, random_x)
@@ -72,14 +73,13 @@ class SvRandomizeVerticesNode(bpy.types.Node, SverchCustomTreeNode):
         random_x = self.inputs['RandomX'].sv_get()[0]
         random_y = self.inputs['RandomY'].sv_get()[0]
         random_z = self.inputs['RandomZ'].sv_get()[0]
-        seed = self.inputs['Seed'].sv_get()[0][0]
+        seed = self.inputs['Seed'].sv_get()[0]
 
         if self.outputs['Vertices'].is_linked:
-            random.seed(seed)
 
-            parameters = match_long_repeat([vertices, random_x, random_y, random_z])
+            parameters = match_long_repeat([vertices, random_x, random_y, random_z, seed])
 
-            result = [randomize(vs, rx, ry, rz) for vs, rx, ry, rz in zip(*parameters)]
+            result = [randomize(vs, rx, ry, rz, se) for vs, rx, ry, rz, se in zip(*parameters)]
 
             self.outputs['Vertices'].sv_set(result)
 
