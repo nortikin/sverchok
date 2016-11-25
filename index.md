@@ -153,6 +153,7 @@
     SvVertSortNode
     SvNoiseNode
     svAxisInputNode
+    SvAxisInputNodeMK2
 
 ## Matrix
     MatrixGenNode
