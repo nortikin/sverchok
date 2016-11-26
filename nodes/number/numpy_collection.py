@@ -16,6 +16,8 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+import json
+
 import bpy
 from bpy.props import StringProperty, EnumProperty
 
@@ -95,21 +97,50 @@ node_details['transpose'] = {
 
 ### Class Factory for numpy suite.
 
+def gen_prop_overwrites(prop_dict, name):
+    return {
+        'descriptor': json.dumps(prop_dict[name]),
+        'bl_idname': "SvNP" + name,
+        'bl_label': name
+    }
+
+def generate_socket(node, kind, item)
+    socket = getattr(node, kind)
+    socket.new("StringsSocket", 'Result')
+
+
 class SvNumpyBaseNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = ""
     bl_label = ""
 
+    node_dict = {}
+    descriptor = bpy.props.StringProperty()
+    sig = bpy.props.StringProperty()
+    info = bpy.props.StringProperty()
+
+    def get_node_dict(self):
+        self.node_dict[hash(self)] = json.loads(self.descriptor)
+
     def sv_init(self, context):
-        self.outputs.new("StringsSocket", 'Result')
+        self.get_node_dict()
+        ND = self.node_dict[hash(self)]
+
+        for direction in 'inputs', 'outputs':
+            sockets = ND.get(direction)
+            if sockets:
+                for item in sockets:
+                    generate_socket(self, direction, item)
 
     def draw_buttons_ext(self, context, l):
         l.label(self.sig)
         l.label('web: ' + self.info)
 
 
-def make_ugen_class(name, property_overwrites):
-    return type(name, (SvNumpyBaseNode,), property_overwrites)
+def make_ugen_class(name, node_details)
+    generated_classname = "SvNP" + name
+    override = gen_prop_overwrites(node_details, name)
+    return type(generated_classname, (SvNumpyBaseNode,), override)
 
 
-
+SvNPlinspace = make_ugen_class('linspace', node_details)
 
