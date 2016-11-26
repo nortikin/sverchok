@@ -41,7 +41,7 @@ node_details['func_name'] = {
 ### Generators of array from primitive values ###################
 
 node_details['linspace'] = {
-    'sig': 'np.linspace(start, stop, num=50, endpoint=True, retstep=False)'
+    'sig': 'np.linspace(start, stop, num=50, endpoint=True, retstep=False)',
     'inputs': [
         ['starts', 'scalar', None],
         ['stop', 'scalar', None],
@@ -49,42 +49,41 @@ node_details['linspace'] = {
         ['endpoints', 'bool', True],
         ['retstep', 'bool', False]
     ],
-    'outputs': [ ['result': 'nd.array', []] ],
+    'outputs': [['result', 'nd.array', []]],
     'info': readthedocs + 'generated/numpy.linspace.html'
 }
 
 ### Modifiers of array ##########################################
 
 node_details['roll'] = {
-    'sig': 'np.roll(a, shift, axis=None)'
+    'sig': 'np.roll(a, shift, axis=None)',
     'inputs': [
         ['a', 'array', None],
         ['shift', 'int', 0],
         ['axis', 'int', None] # Optional
     ],
-    'outputs': [ ['result': 'nd.array', []] ],
+    'outputs': [['result', 'nd.array', []]],
     'info': readthedocs + 'generated/numpy.roll.html'
 }
 
 node_details['reshape'] = {
-    'sig': "np.reshape(a, newshape, order='C')"
+    'sig': "np.reshape(a, newshape, order='C')",
     'inputs': [
         ['a', 'array', None],
         ['newshape', 'modes: int int-tuple', None],
         ['order', 'enum: C F A', 'C'],
     ],
-    'outputs': [ ['result': 'nd.array', []] ],
+    'outputs': [['result', 'nd.array', []]],
     'info': readthedocs + 'generated/numpy.reshape.html'
 }
 
-# np.T
 node_details['transpose'] = {
-    'sig': 'np.transpose(a, axes=None)'
+    'sig': 'np.transpose(a, axes=None)',
     'inputs': [
         ['a', 'array', None],
         ['axes', 'modes: int int-list', None]
     ],
-    'outputs': [ ['result': 'nd.array', []] ],
+    'outputs': [['result', 'nd.array', []]],
     'info': readthedocs + 'generated/numpy.transpose.html'
 }
 
@@ -94,7 +93,22 @@ node_details['transpose'] = {
 
 # np.meshgrid(x,y,z))
 
+### Class Factory for numpy suite.
 
+class SvNumpyBaseNode(bpy.types.Node, SverchCustomTreeNode):
+    bl_idname = ""
+    bl_label = ""
+
+    def sv_init(self, context):
+        self.outputs.new("StringsSocket", 'Result')
+
+    def draw_buttons_ext(self, context, l):
+        l.label(self.sig)
+        l.label('web: ' + self.info)
+
+
+def make_ugen_class(name, property_overwrites):
+    return type(name, (SvNumpyBaseNode,), property_overwrites)
 
 
 
