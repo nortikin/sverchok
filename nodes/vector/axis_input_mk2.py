@@ -52,7 +52,7 @@ class SvAxisInputNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         return int(self.axis_x), int(self.axis_y), int(self.axis_z)
 
     def draw_label(self):
-        return str('{0}, {1}, {2}'.format(*self.get_axis()))
+        return str('[{0}, {1}, {2}]'.format(*self.get_axis()))
 
     def process(self):
         vec_out = self.outputs[0]
