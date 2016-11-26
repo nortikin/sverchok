@@ -89,8 +89,6 @@ node_details['transpose'] = {
 }
 
 
-
-
 ### Combiner of array ###########################################
 
 
