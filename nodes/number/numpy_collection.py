@@ -104,7 +104,7 @@ def gen_prop_overwrites(prop_dict, name):
         'bl_label': name
     }
 
-def generate_socket(node, kind, item)
+def generate_socket(node, kind, item):
     socket = getattr(node, kind)
     socket.new("StringsSocket", 'Result')
 
@@ -120,6 +120,7 @@ class SvNumpyBaseNode(bpy.types.Node, SverchCustomTreeNode):
 
     def get_node_dict(self):
         self.node_dict[hash(self)] = json.loads(self.descriptor)
+        return self.node_dict[hash(self)]
 
     def sv_init(self, context):
         self.get_node_dict()
@@ -131,12 +132,19 @@ class SvNumpyBaseNode(bpy.types.Node, SverchCustomTreeNode):
                 for item in sockets:
                     generate_socket(self, direction, item)
 
+    def process(self):
+        ND = self.node_dict.get(hash(self))
+        if not ND:
+            ND = self.get_node_dict()
+            sig = ND['sig']
+
+
     def draw_buttons_ext(self, context, l):
         l.label(self.sig)
         l.label('web: ' + self.info)
 
 
-def make_ugen_class(name, node_details)
+def make_ugen_class(name, node_details):
     generated_classname = "SvNP" + name
     override = gen_prop_overwrites(node_details, name)
     return type(generated_classname, (SvNumpyBaseNode,), override)
@@ -144,3 +152,15 @@ def make_ugen_class(name, node_details)
 
 SvNPlinspace = make_ugen_class('linspace', node_details)
 
+classes = [
+    SvNPlinspace,
+
+]
+
+
+def register():
+    _ = [bpy.utils.register_class(name) for name in classes]
+
+
+def unregister():
+    _ = [bpy.utils.unregister_class(name) for name in classes]

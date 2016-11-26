@@ -343,17 +343,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
                 node_dict['snlite_ui'].append(data_json_str)
 
 
-classes = [
-    SvScriptNodeLiteTextImport,
-    SvScriptNodeLitePyMenu,
-    SvScriptNodeLiteCallBack,
-    SvScriptNodeLite
-]
-
-
-def register():
-    _ = [bpy.utils.register_class(name) for name in classes]
-
-
-def unregister():
-    _ = [bpy.utils.unregister_class(name) for name in classes]
+        inputs = ND.get('inputs')
+        if inputs:
+            for item in inputs:
+                generate_socket(self, 'inputs', item)
