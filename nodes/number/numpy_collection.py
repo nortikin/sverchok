@@ -16,151 +16,104 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-import json
+import numpy as np
 
 import bpy
 from bpy.props import StringProperty, EnumProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode
+from sverchok.data_structure import (updateNode, enum_item as e)
+from sverchok.utils.numpy_nodify_helper import (
+    node_details, augment_node_dict, all_linked,
+    generate_classes, register_multiple, unregister_multiple
+)
 
-readthedocs = 'http://numpy.readthedocs.io/en/latest/reference/'
-node_details = {}
+NODE_LINSPACE = True
+NODE_ROLL = False
+NODE_RESHAPE = False
+NODE_TRANSPOSE = False
 
-"""
-node_details['func_name'] = {
-    'sig': 'full_signature'
-    'inputs': [
-        [name, allowed type, default], ...
-    ],
-    'outputs': [ 
-        ['result': 'nd.array', []], ... 
-    ],
-    'info': readthedocs + specific html link
-}
-"""
-
-### Generators of array from primitive values ###################
-
-node_details['linspace'] = {
-    'sig': 'np.linspace(start, stop, num=50, endpoint=True, retstep=False)',
-    'inputs': [
-        ['starts', 'scalar', None],
-        ['stop', 'scalar', None],
-        ['num', 'int', 50],
-        ['endpoints', 'bool', True],
-        ['retstep', 'bool', False]
-    ],
-    'outputs': [['result', 'nd.array', []]],
-    'info': readthedocs + 'generated/numpy.linspace.html'
-}
-
-### Modifiers of array ##########################################
-
-node_details['roll'] = {
-    'sig': 'np.roll(a, shift, axis=None)',
-    'inputs': [
-        ['a', 'array', None],
-        ['shift', 'int', 0],
-        ['axis', 'int', None] # Optional
-    ],
-    'outputs': [['result', 'nd.array', []]],
-    'info': readthedocs + 'generated/numpy.roll.html'
-}
-
-node_details['reshape'] = {
-    'sig': "np.reshape(a, newshape, order='C')",
-    'inputs': [
-        ['a', 'array', None],
-        ['newshape', 'modes: int int-tuple', None],
-        ['order', 'enum: C F A', 'C'],
-    ],
-    'outputs': [['result', 'nd.array', []]],
-    'info': readthedocs + 'generated/numpy.reshape.html'
-}
-
-node_details['transpose'] = {
-    'sig': 'np.transpose(a, axes=None)',
-    'inputs': [
-        ['a', 'array', None],
-        ['axes', 'modes: int int-list', None]
-    ],
-    'outputs': [['result', 'nd.array', []]],
-    'info': readthedocs + 'generated/numpy.transpose.html'
-}
+# readthedocs = 'http://numpy.readthedocs.io/en/latest/reference/'
 
 
-### Combiner of array ###########################################
+if NODE_LINSPACE:
 
+    #     'inputs': [
+    #         ['start', 'scalar', None, {}],
+    #         ['stop', 'scalar', None],
+    #         ['num', 'int', 50],
+    #         ['endpoints', 'bool', True],
+    #         ['retstep', 'bool', False]
+    #     ],
+    #     'outputs': [['result', 'nd.array', []]],
 
-# np.meshgrid(x,y,z))
-
-### Class Factory for numpy suite.
-
-def gen_prop_overwrites(prop_dict, name):
-    return {
-        'descriptor': json.dumps(prop_dict[name]),
-        'bl_idname': "SvNP" + name,
-        'bl_label': name
-    }
-
-def generate_socket(node, kind, item):
-    socket = getattr(node, kind)
-    socket.new("StringsSocket", 'Result')
-
-
-class SvNumpyBaseNode(bpy.types.Node, SverchCustomTreeNode):
-    bl_idname = ""
-    bl_label = ""
-
-    node_dict = {}
-    descriptor = bpy.props.StringProperty()
-    sig = bpy.props.StringProperty()
-    info = bpy.props.StringProperty()
-
-    def get_node_dict(self):
-        self.node_dict[hash(self)] = json.loads(self.descriptor)
-        return self.node_dict[hash(self)]
 
     def sv_init(self, context):
-        self.get_node_dict()
-        ND = self.node_dict[hash(self)]
-
-        for direction in 'inputs', 'outputs':
-            sockets = ND.get(direction)
-            if sockets:
-                for item in sockets:
-                    generate_socket(self, direction, item)
+        self.inputs.new("StringsSocket", "start")
+        self.inputs.new("StringsSocket", "stop")
+        self.inputs.new("StringsSocket", "num")
+        self.outputs.new("StringsSocket", "nd.array")
 
     def process(self):
-        ND = self.node_dict.get(hash(self))
-        if not ND:
-            ND = self.get_node_dict()
-            sig = ND['sig']
+        inputs = self.inputs
+        outputs = self.outputs
+        if not all_linked(outputs[0], inputs[0], inputs[1]): return
+    
+    temp_dict = {
+        'sv_init': sv_init,
+        'process': process,
+        'sig': 'np.linspace(start, stop, num=50, endpoint=True, retstep=False)',
+        'info': readthedocs + 'generated/numpy.linspace.html'
+    }
+
+    augment_node_dict('linspace', temp_dict)
+
+#     T = ['MESH', 'CURVE', 'SURFACE']
+#        'sig': EnumProperty(default='MESH', items=e(T), update=updateNode),
 
 
-    def draw_buttons_ext(self, context, l):
-        l.label(self.sig)
-        l.label('web: ' + self.info)
+# node_details['roll'] = {
+#     'sig': 'np.roll(a, shift, axis=None)',
+#     'inputs': [
+#         ['a', 'array', None],
+#         ['shift', 'int', 0],
+#         ['axis', 'int', None] # Optional
+#     ],
+#     'outputs': [['result', 'nd.array', []]],
+#     'info': readthedocs + 'generated/numpy.roll.html'
+# }
+
+# T = ['MESH','CURVE','SURFACE']
+# node_details['reshape'] = {
+#     'sig': "np.reshape(a, newshape, order='C')",
+#     'inputs': [
+#         ['a', 'array', None],
+#         ['newshape', 'modes: int int-tuple', None],
+#         ['order', 'enum: C F A', 'C'],
+#     ],
+#     'props': EnumProperty(default='MESH', items=e(T), update=updateNode),
+#     'outputs': [['result', 'nd.array', []]],
+#     'info': readthedocs + 'generated/numpy.reshape.html'
+# }
+
+# node_details['transpose'] = {
+#     'sig': 'np.transpose(a, axes=None)',
+#     'inputs': [
+#         ['a', 'array', None],
+#         ['axes', 'modes: int int-list', None]
+#     ],
+#     'outputs': [['result', 'nd.array', []]],
+#     'info': readthedocs + 'generated/numpy.transpose.html'
+# }
+
+# # np.meshgrid(x,y,z))
 
 
-def make_ugen_class(name, node_details):
-    generated_classname = "SvNP" + name
-    override = gen_prop_overwrites(node_details, name)
-    return type(generated_classname, (SvNumpyBaseNode,), override)
 
-
-SvNPlinspace = make_ugen_class('linspace', node_details)
-
-classes = [
-    SvNPlinspace,
-
-]
-
+classes = generate_classes(node_details)
 
 def register():
-    _ = [bpy.utils.register_class(name) for name in classes]
-
+    register_multiple(classes)
 
 def unregister():
-    _ = [bpy.utils.unregister_class(name) for name in classes]
+    unregister_multiple(classes)
