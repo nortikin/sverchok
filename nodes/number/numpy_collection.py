@@ -19,7 +19,7 @@
 import numpy as np
 
 import bpy
-from bpy.props import StringProperty, EnumProperty
+from bpy.props import StringProperty, EnumProperty, BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode, enum_item as e)
@@ -33,37 +33,52 @@ NODE_ROLL = False
 NODE_RESHAPE = False
 NODE_TRANSPOSE = False
 
-# readthedocs = 'http://numpy.readthedocs.io/en/latest/reference/'
+readthedocs = 'http://numpy.readthedocs.io/en/latest/reference/'
 
+S = StringProperty
 
 if NODE_LINSPACE:
-
-    #     'inputs': [
-    #         ['start', 'scalar', None, {}],
-    #         ['stop', 'scalar', None],
-    #         ['num', 'int', 50],
-    #         ['endpoints', 'bool', True],
-    #         ['retstep', 'bool', False]
-    #     ],
-    #     'outputs': [['result', 'nd.array', []]],
-
 
     def sv_init(self, context):
         self.inputs.new("StringsSocket", "start")
         self.inputs.new("StringsSocket", "stop")
-        self.inputs.new("StringsSocket", "num")
+        num = self.inputs.new("StringsSocket", "num")
+        num.prop_name = 'num'
         self.outputs.new("StringsSocket", "nd.array")
+
+    def draw_buttons(self, context, layout):
+        r = layout.row()
+        r.prop(self, 'endpoint', toggle=True)
+        r.prop(self, 'retstep', toggle=True)
 
     def process(self):
         inputs = self.inputs
         outputs = self.outputs
-        if not all_linked(outputs[0], inputs[0], inputs[1]): return
+        if not all_linked(outputs[0], inputs[0], inputs[1]):
+            return
+
+        start, stop, num = [s.sv_get()[0][0] for s in inputs]
+        outputs[0].sv_set([np.linspace(start, stop, num, self.endpoint, self.retstep)])
     
     temp_dict = {
+        'sv_doc': S(default="""
+            inputs
+                start    (scalar)  (default=None)
+                stop     (scalar)  (default=None)
+                num      (int)     (default=50)
+                endpoint (bool)    (default=True)
+                retstep  (bool)    (default=False)
+            outputs
+                result   (nd.array)
+        """),
+        'endpoint': BoolProperty(default=True),
+        'retstept': BoolProperty(default=False),
+        'num': IntProperty(default=50),
         'sv_init': sv_init,
         'process': process,
-        'sig': 'np.linspace(start, stop, num=50, endpoint=True, retstep=False)',
-        'info': readthedocs + 'generated/numpy.linspace.html'
+        'draw_buttons': draw_buttons,
+        'sig': S(default='np.linspace(start, stop, num=50, endpoint=True, retstep=False)'),
+        'info': S(default=readthedocs + 'generated/numpy.linspace.html')
     }
 
     augment_node_dict('linspace', temp_dict)

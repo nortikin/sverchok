@@ -20,7 +20,7 @@
 
 import bpy
 from sverchok.node_tree import SverchCustomTreeNode
-
+from bpy.props import StringProperty
 
 node_details = {}
 
@@ -32,9 +32,6 @@ def make_ugen_class(name, node_details):
 class SvNumpyBaseNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = ""
     bl_label = ""
-    
-    def draw_buttons(self, context, layout):
-        layout.prop(self, 'sig')
 
     def draw_buttons_ext(self, context, layout):
         layout.prop(self, 'sig')
