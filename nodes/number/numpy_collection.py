@@ -72,7 +72,7 @@ if NODE_LINSPACE:
                 result   (nd.array)
         """),
         'endpoint': BoolProperty(default=True),
-        'retstept': BoolProperty(default=False),
+        'retstep': BoolProperty(default=False),
         'num': IntProperty(default=50),
         'sv_init': sv_init,
         'process': process,
