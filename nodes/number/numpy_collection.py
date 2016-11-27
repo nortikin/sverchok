@@ -40,10 +40,9 @@ S = StringProperty
 if NODE_LINSPACE:
 
     def sv_init(self, context):
-        self.inputs.new("StringsSocket", "start")
-        self.inputs.new("StringsSocket", "stop")
-        num = self.inputs.new("StringsSocket", "num")
-        num.prop_name = 'num'
+        self.inputs.new("StringsSocket", "start").prop_name = 'start'
+        self.inputs.new("StringsSocket", "stop").prop_name = 'stop'
+        self.inputs.new("StringsSocket", "num").prop_name = 'num'
         self.outputs.new("StringsSocket", "nd.array")
 
     def draw_buttons(self, context, layout):
@@ -54,26 +53,29 @@ if NODE_LINSPACE:
     def process(self):
         inputs = self.inputs
         outputs = self.outputs
-        if not all_linked(outputs[0], inputs[0], inputs[1]):
+        if not outputs[0].is_linked():
             return
 
         start, stop, num = [s.sv_get()[0][0] for s in inputs]
-        outputs[0].sv_set([np.linspace(start, stop, num, self.endpoint, self.retstep)])
+        out = np.linspace(start, stop, num, self.endpoint, self.retstep)
+        outputs[0].sv_set([out])
     
     temp_dict = {
         'sv_doc': S(default="""
             inputs
-                start    (scalar)  (default=None)
-                stop     (scalar)  (default=None)
+                start    (scalar)  (default=0)
+                stop     (scalar)  (default=10)
                 num      (int)     (default=50)
                 endpoint (bool)    (default=True)
                 retstep  (bool)    (default=False)
             outputs
                 result   (nd.array)
         """),
-        'endpoint': BoolProperty(default=True),
-        'retstep': BoolProperty(default=False),
-        'num': IntProperty(default=50),
+        'start': IntProperty(default=0, update=updateNode),
+        'stop': IntProperty(default=10, update=updateNode),
+        'endpoint': BoolProperty(default=True, update=updateNode),
+        'retstep': BoolProperty(default=False, update=updateNode),
+        'num': IntProperty(default=50, update=updateNode),
         'sv_init': sv_init,
         'process': process,
         'draw_buttons': draw_buttons,
