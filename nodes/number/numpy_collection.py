@@ -53,7 +53,7 @@ if NODE_LINSPACE:
     def process(self):
         inputs = self.inputs
         outputs = self.outputs
-        if not outputs[0].is_linked():
+        if not outputs[0].is_linked:
             return
 
         start, stop, num = [s.sv_get()[0][0] for s in inputs]
@@ -62,14 +62,12 @@ if NODE_LINSPACE:
     
     temp_dict = {
         'sv_doc': S(default="""
-            inputs
-                start    (scalar)  (default=0)
-                stop     (scalar)  (default=10)
-                num      (int)     (default=50)
-                endpoint (bool)    (default=True)
-                retstep  (bool)    (default=False)
-            outputs
-                result   (nd.array)
+            =>  start    (scalar)  (default=0)
+            =>  stop     (scalar)  (default=10)
+            =>  num      (int)     (default=50)
+            ==  endpoint (bool)    (default=True)
+            ==  retstep  (bool)    (default=False)
+            <=  result   (nd.array)
         """),
         'start': IntProperty(default=0, update=updateNode),
         'stop': IntProperty(default=10, update=updateNode),
