@@ -240,3 +240,4 @@
     SvBMinputNode
     SvBMoutputNode
     SvBMtoElementNode
+    SvObjRemoteNodeMK2
