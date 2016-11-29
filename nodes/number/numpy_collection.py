@@ -24,7 +24,7 @@ from bpy.props import StringProperty, EnumProperty, BoolProperty, IntProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode, enum_item as e)
 from sverchok.utils.numpy_nodify_helper import (
-    node_details, augment_node_dict, all_linked,
+    node_details, augment_node_dict, all_linked, inject_attrs,
     generate_classes, register_multiple, unregister_multiple
 )
 
@@ -43,7 +43,8 @@ if NODE_LINSPACE:
         self.inputs.new("StringsSocket", "start").prop_name = 'start'
         self.inputs.new("StringsSocket", "stop").prop_name = 'stop'
         self.inputs.new("StringsSocket", "num").prop_name = 'num'
-        self.outputs.new("StringsSocket", "nd.array")
+        self.outputs.new("StringsSocket", "result")
+        self.outputs.new("StringsSocket", "step")
 
     def draw_buttons(self, context, layout):
         r = layout.row()
@@ -53,34 +54,37 @@ if NODE_LINSPACE:
     def process(self):
         inputs = self.inputs
         outputs = self.outputs
+
         if not outputs[0].is_linked:
             return
 
         start, stop, num = [s.sv_get()[0][0] for s in inputs]
         out = np.linspace(start, stop, num, self.endpoint, self.retstep)
-        outputs[0].sv_set([out])
+        if self.retstep:
+            outputs[0].sv_set([out[0]])
+            outputs[1].sv_set([out[1]])
+        else:
+            outputs[0].sv_set([out])
     
+    descriptor = """\
+            =>  start    , scalar   , default=0
+            =>  stop     , scalar   , default=10
+            =>  num      , int      , default=50
+            ==  endpoint , bool     , default=True   , (r1 toggle)
+            ==  retstep  , bool     , default=False  , (r1 toggle)
+            <   result   , nd.array , default=list
+            <   step     , scalar   , default=0
+    """
+
     temp_dict = {
-        'sv_doc': S(default="""
-            =>  start    (scalar)  (default=0)
-            =>  stop     (scalar)  (default=10)
-            =>  num      (int)     (default=50)
-            ==  endpoint (bool)    (default=True)
-            ==  retstep  (bool)    (default=False)
-            <=  result   (nd.array)
-        """),
-        'start': IntProperty(default=0, update=updateNode),
-        'stop': IntProperty(default=10, update=updateNode),
-        'endpoint': BoolProperty(default=True, update=updateNode),
-        'retstep': BoolProperty(default=False, update=updateNode),
-        'num': IntProperty(default=50, update=updateNode),
         'sv_init': sv_init,
         'process': process,
         'draw_buttons': draw_buttons,
         'sig': S(default='np.linspace(start, stop, num=50, endpoint=True, retstep=False)'),
         'info': S(default=readthedocs + 'generated/numpy.linspace.html')
     }
-
+    
+    inject_attrs('linspace', descriptor, temp_dict)
     augment_node_dict('linspace', temp_dict)
 
 #     T = ['MESH', 'CURVE', 'SURFACE']
@@ -125,7 +129,7 @@ if NODE_LINSPACE:
 
 
 
-classes = generate_classes(node_details)
+classes = generate_classes()
 
 def register():
     register_multiple(classes)
