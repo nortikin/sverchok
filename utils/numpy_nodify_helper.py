@@ -104,6 +104,13 @@ def inject_attrs(name, descriptor, temp_dict):
         if g:
             sockets.append(g)
 
+        if 'Prop' == element_types and _ui_info:
+            ui_content = _ui_info[1:-1]
+            if ' ' in ui_content:
+                ui_content = ui_content.split(' ')
+
+
+
     
     temp_dict['sv_doc'] = StringProperty(default=descriptor)
     temp_dict.update(props)
