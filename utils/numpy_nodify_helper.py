@@ -115,7 +115,7 @@ def inject_attrs(name, descriptor, temp_dict):
             sockets.insert(0, 'def sv_init(self, context):')
             sock_string = '\n'.join(sockets)
             exec(sock_string)
-            temp_dict['sv_init'] = sv_init
+            temp_dict['sv_init'] = locals()['sv_init']
 
     if 'draw_buttons' in temp_dict:
         print('skipped auto generate draw_buttons')
