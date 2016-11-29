@@ -39,11 +39,6 @@ S = StringProperty
 
 if NODE_LINSPACE:
 
-    def draw_buttons(self, context, layout):
-        r = layout.row()
-        r.prop(self, 'endpoint', toggle=True)
-        r.prop(self, 'retstep', toggle=True)
-
     def process(self):
         inputs = self.inputs
         outputs = self.outputs
@@ -71,7 +66,6 @@ if NODE_LINSPACE:
 
     temp_dict = {
         'process': process,
-        'draw_buttons': draw_buttons,
         'sig': S(default='np.linspace(start, stop, num=50, endpoint=True, retstep=False)'),
         'info': S(default=readthedocs + 'generated/numpy.linspace.html')
     }

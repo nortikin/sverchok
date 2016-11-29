@@ -104,10 +104,22 @@ def inject_attrs(name, descriptor, temp_dict):
         if g:
             sockets.append(g)
 
-        if 'Prop' == element_types and _ui_info:
+        if element_types == ['Prop'] and _ui_info:
             ui_content = _ui_info[1:-1]
             if ' ' in ui_content:
                 ui_content = ui_content.split(' ')
+
+                # currently just r1 is supported.
+
+                if ui_content[0].startswith('r'):
+                    if len(ui_info) == 0:
+                        ui_info.append('    ' + ui_content[0] + ' = layout.row()')
+                    newline = '    ' + ui_content[0] + ".prop(self, '{0}'".format(_name)
+                    if ui_content[1] == 'toggle':
+                        newline += ', toggle=True)'
+                    else:
+                        newline += ')'
+                    ui_info.append(newline)
 
 
 
@@ -126,7 +138,12 @@ def inject_attrs(name, descriptor, temp_dict):
 
     if 'draw_buttons' in temp_dict:
         print('skipped auto generate draw_buttons')
-
+    else:
+        if ui_info:
+            ui_info.insert(0, 'def draw_buttons(self, context, layout):')
+            draw_func = '\n'.join(ui_info)
+            exec(draw_func)
+            temp_dict['draw_buttons'] = locals()['draw_buttons']
 
 
 def augment_node_dict(name, extend_dict):
