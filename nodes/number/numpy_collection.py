@@ -39,12 +39,12 @@ S = StringProperty
 
 if NODE_LINSPACE:
 
-    def sv_init(self, context):
-        self.inputs.new("StringsSocket", "start").prop_name = 'start'
-        self.inputs.new("StringsSocket", "stop").prop_name = 'stop'
-        self.inputs.new("StringsSocket", "num").prop_name = 'num'
-        self.outputs.new("StringsSocket", "result")
-        self.outputs.new("StringsSocket", "step")
+    # def sv_init(self, context):
+    #     self.inputs.new("StringsSocket", "start").prop_name = 'start'
+    #     self.inputs.new("StringsSocket", "stop").prop_name = 'stop'
+    #     self.inputs.new("StringsSocket", "num").prop_name = 'num'
+    #     self.outputs.new("StringsSocket", "result")
+    #     self.outputs.new("StringsSocket", "step")
 
     def draw_buttons(self, context, layout):
         r = layout.row()
@@ -77,7 +77,7 @@ if NODE_LINSPACE:
     """
 
     temp_dict = {
-        'sv_init': sv_init,
+        # 'sv_init': sv_init,
         'process': process,
         'draw_buttons': draw_buttons,
         'sig': S(default='np.linspace(start, stop, num=50, endpoint=True, retstep=False)'),

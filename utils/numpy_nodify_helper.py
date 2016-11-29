@@ -50,6 +50,17 @@ kind_dict = {
     '<=': ['Socket Out', 'Prop']
 }
 
+
+def parse_cleaned_elements(cleaned_elements):
+    num_elements = len(cleaned_elements)
+    _ui_info = None
+    if num_elements == 3:
+        _name, _type, _prop_args = cleaned_elements
+    elif num_elements == 4:
+        _name, _type, _prop_args, _ui_info = cleaned_elements
+    return _name, _type, _prop_args, _ui_info
+
+
 def inject_attrs(name, descriptor, temp_dict):
     print('adding', name, 'to tempdict')
 
@@ -64,18 +75,12 @@ def inject_attrs(name, descriptor, temp_dict):
         kind = clean_line[:2].strip()
         elements = clean_line[3:].strip().split(',')
         element_types = kind_dict.get(kind)
-        print(element_types)
+        # print(element_types)
+
+        cleaned_elements = [s.strip() for s in elements]
+        _name, _type, _prop_args, _ui_info = parse_cleaned_elements(cleaned_elements)
 
         if 'Prop' in element_types:
-            cleaned_elements = [s.strip() for s in elements]
-            num_elements = len(cleaned_elements)
-            _ui_info = None
-            if num_elements == 3:
-                _name, _type, _prop_args = cleaned_elements
-                # print('name=', _name, ', type=', _type, ', prop_args=', _prop_args)
-            elif num_elements == 4:
-                _name, _type, _prop_args, _ui_info = cleaned_elements
-                # print('name=', _name, ', type=', _type, ', prop_args=', _prop_args, ', ui_info=', _ui_info)
 
             f = ''
             if _type in {'scalar', 'int'}:
@@ -89,8 +94,31 @@ def inject_attrs(name, descriptor, temp_dict):
 
             props[_name] = f
 
+        g = ""
+        if 'Socket In' in element_types:
+            g = "    self.inputs.new('StringsSocket', '{0}')".format(_name)
+            if 'Prop' in element_types:
+                g += ".prop_name = '{0}'".format(_name)
+        elif 'Socket Out' in element_types:
+            g = "    self.outputs.new('StringsSocket', '{0}')".format(_name)
+        if g:
+            sockets.append(g)
+
+    
     temp_dict['sv_doc'] = StringProperty(default=descriptor)
     temp_dict.update(props)
+
+    if 'sv_init' in temp_dict:
+        print('skipped auto generate sv_init')
+    else:
+        if sockets:
+            sockets.insert(0, 'def sv_init(self, context):')
+            sock_string = '\n'.join(sockets)
+            exec(sock_string)
+            temp_dict['sv_init'] = sv_init
+
+    if 'draw_buttons' in temp_dict:
+        print('skipped auto generate draw_buttons')
 
 
 
