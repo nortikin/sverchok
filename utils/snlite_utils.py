@@ -64,7 +64,6 @@ def get_valid_evaluate_function(mat_name, node_name):
 def vectorize(all_data):
 
     def listify(data):
-        print(data)
         if isinstance(data, (int, float)):
             data = [data]
         return data
