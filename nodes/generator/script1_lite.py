@@ -23,7 +23,7 @@ import json
 import traceback
 
 import bpy
-from bpy.props import StringProperty, IntVectorProperty, FloatVectorProperty
+from bpy.props import StringProperty, IntVectorProperty, FloatVectorProperty, BoolProperty
 
 from sverchok.utils.sv_panels_tools import sv_get_local_path
 from sverchok.utils.snlite_importhelper import (
@@ -111,6 +111,8 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
         default="To Node",
         update=updateNode
     )
+
+    inject_params = BoolProperty()
 
     def draw_label(self):
         if self.script_name:
@@ -201,7 +203,13 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
     def load(self):
         if not self.script_name:
             return
-        self.script_str = bpy.data.texts.get(self.script_name).as_string()
+
+        if self.script_name in bpy.data.texts:
+            self.script_str = bpy.data.texts.get(self.script_name).as_string()
+        else:
+            print('bpy.data.texts not read yet')
+            if self.script_str:
+                print('but script loaded locally anyway.')
 
         if self.update_sockets():
             self.process()
@@ -232,7 +240,14 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
             self.update_sockets()
 
         # make inputs local, do function with inputs, return outputs if present
-        socket_info = self.node_dict[hash(self)]['sockets']
+        ND = self.node_dict.get(hash(self))
+        if not ND:
+            print('hash invalidated')
+            self.update_sockets()
+            ND = self.node_dict.get(hash(self))
+            self.load()
+
+        socket_info = ND['sockets']
         local_dict = {}
         for idx, s in enumerate(self.inputs):
             sock_desc = socket_info['inputs'][idx]
@@ -258,6 +273,11 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
         locals().update(self.make_new_locals())
 
         try:
+
+            if hasattr(self, 'inject_params'):
+                if self.inject_params:
+                    parameters = eval("[" + ", ".join([i.name for i in self.inputs]) + "]")
+
             exec(self.script_str, locals(), locals())
             for idx, _socket in enumerate(self.outputs):
                 vals = locals()[_socket.name]
@@ -316,6 +336,9 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
         col = layout.column()
         col.menu(SvScriptNodeLitePyMenu.bl_idname)
 
+        if hasattr(self, 'inject_params'):
+            row = layout.row()
+            row.prop(self, 'inject_params', text='inject parameters')
 
     # ---- IO Json storage is handled in this node locally ----
 
