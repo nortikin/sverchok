@@ -19,6 +19,9 @@
 
 import bpy
 
+from sverchok.data_structure import match_long_repeat
+
+
 def get_valid_node(mat_name, node_name, bl_idname):
 
     materials = bpy.data.materials
@@ -57,3 +60,16 @@ def get_valid_evaluate_function(mat_name, node_name):
 
     return curve.evaluate
 
+
+def vectorize(all_data):
+
+    def listify(data):
+        print(data)
+        if isinstance(data, (int, float)):
+            data = [data]
+        return data
+
+    for idx, d in enumerate(all_data):
+        all_data[idx] = listify(d)
+
+    return match_long_repeat(all_data)
