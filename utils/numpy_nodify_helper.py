@@ -100,7 +100,12 @@ def inject_attrs(name, descriptor, temp_dict):
             if 'Prop' in element_types:
                 g += ".prop_name = '{0}'".format(_name)
         elif 'Socket Out' in element_types:
+            # if _type in {'scalar', 'int', 'float', 'bool'}:
+            #    g = "    self.outputs.new('StringsSocket', '{0}')".format(_name)
+            #elif _type in {'nd.array'}:
+            #    g = "    self.outputs.new('SvNumpyArraySocket', '{0}')".format(_name)
             g = "    self.outputs.new('StringsSocket', '{0}')".format(_name)
+
         if g:
             sockets.append(g)
 

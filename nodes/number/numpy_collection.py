@@ -39,6 +39,16 @@ S = StringProperty
 
 if NODE_LINSPACE:
 
+    descriptor = """\
+            =>  start    , scalar   , default=0
+            =>  stop     , scalar   , default=10
+            =>  num      , int      , default=50
+            ==  endpoint , bool     , default=True   , (r1 toggle)
+            ==  retstep  , bool     , default=False  , (r1 toggle)
+            <   result   , nd.array , default=list
+            <   step     , scalar   , default=0
+    """
+
     def process(self):
         inputs = self.inputs
         outputs = self.outputs
@@ -54,16 +64,6 @@ if NODE_LINSPACE:
         else:
             outputs[0].sv_set([out])
     
-    descriptor = """\
-            =>  start    , scalar   , default=0
-            =>  stop     , scalar   , default=10
-            =>  num      , int      , default=50
-            ==  endpoint , bool     , default=True   , (r1 toggle)
-            ==  retstep  , bool     , default=False  , (r1 toggle)
-            <   result   , nd.array , default=list
-            <   step     , scalar   , default=0
-    """
-
     temp_dict = {
         'process': process,
         'sig': S(default='np.linspace(start, stop, num=50, endpoint=True, retstep=False)'),
