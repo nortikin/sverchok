@@ -339,6 +339,14 @@ def perform_scripted_node_inject(node, node_ref):
         if script_name and not (script_name in texts):
             new_text = texts.new(script_name)
             new_text.from_string(script_content)
+        # elif script_name and (script_name in texts):
+        #     if texts[script_name].as_string() == script_content:
+        #         print('SN skipping text named', script_name, '- their content are the same')
+        #     else:
+        #         print('SN text named', script_name, 'already found, but content differs')
+        #         new_text = texts.new(script_name)
+        #         new_text.from_string(script_content)
+        #         script_name = new_text.name
 
         node.script_name = script_name
         node.script_str = script_content
