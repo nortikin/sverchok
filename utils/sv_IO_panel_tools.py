@@ -41,6 +41,7 @@ SCRIPTED_NODES = {'SvScriptNode', 'SvScriptNodeMK2', 'SvScriptNodeLite'}
 _EXPORTER_REVISION_ = '0.062'
 
 '''
+0.062 (no revision change) - fixes import of sn texts that are present already in .blend
 0.062 (no revision change) - looks in multiple places for textmode param.
 0.062 monad export properly
 0.061 codeshuffle 76f04f9
@@ -339,6 +340,16 @@ def perform_scripted_node_inject(node, node_ref):
         if script_name and not (script_name in texts):
             new_text = texts.new(script_name)
             new_text.from_string(script_content)
+        elif script_name and (script_name in texts):
+            # This was added to fix existing texts with the same name but no / different content.
+            if texts[script_name].as_string() == script_content:
+                print('SN skipping text named', script_name, '- their content are the same')
+            else:
+                print('SN text named', script_name, 'already found in current, but content differs')
+                new_text = texts.new(script_name)
+                new_text.from_string(script_content)
+                script_name = new_text.name
+                print('SN text named replaced with', script_name)        
 
         node.script_name = script_name
         node.script_str = script_content
