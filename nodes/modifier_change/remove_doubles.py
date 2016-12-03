@@ -30,23 +30,24 @@ from sverchok.data_structure import (updateNode, Vector_generate, repeat_last,
 
 
 def remove_doubles(vertices, faces, d, find_doubles=False):
-    if not faces or not vertices:
-        return False
 
-    EdgeMode = (len(faces[0]) == 2)
+    if faces:
+        EdgeMode = (len(faces[0]) == 2)
 
     bm = bmesh.new()
     bm_verts = [bm.verts.new(v) for v in vertices]
-    if EdgeMode:
-        for edge in faces:
-            bm.edges.new([bm_verts[i] for i in edge])
-    else:
-        for face in faces:
-            bm.faces.new([bm_verts[i] for i in face])
+
+    if faces:
+        if EdgeMode:
+            for edge in faces:
+                bm.edges.new([bm_verts[i] for i in edge])
+        else:
+            for face in faces:
+                bm.faces.new([bm_verts[i] for i in face])
 
     if find_doubles:
         res = bmesh.ops.find_doubles(bm, verts=bm_verts, dist=d)
-        res['targetmap']
+        res['targetmap']  # is this supposed to fail on purpose or is accidental?
         doubles = [vert.co[:] for vert in res['targetmap'].keys()]
     else:
         doubles = []
@@ -55,13 +56,15 @@ def remove_doubles(vertices, faces, d, find_doubles=False):
     edges = []
     faces = []
     bm.verts.index_update()
+    verts = [vert.co[:] for vert in bm.verts[:]]
+
     bm.edges.index_update()
     bm.faces.index_update()
     for edge in bm.edges[:]:
         edges.append([v.index for v in edge.verts[:]])
-    verts = [vert.co[:] for vert in bm.verts[:]]
     for face in bm.faces:
         faces.append([v.index for v in face.verts[:]])
+
     bm.clear()
     bm.free()
     return (verts, edges, faces, doubles)
@@ -121,16 +124,18 @@ class SvRemoveDoublesNode(bpy.types.Node, SverchCustomTreeNode):
                 d_out.append(res[3])
 
             if self.outputs['Vertices'].is_linked:
-                SvSetSocketAnyType(self, 'Vertices', verts_out)
+                self.outputs['Vertices'].sv_set(verts_out)
 
-            if self.outputs['Edges'].is_linked:
-                SvSetSocketAnyType(self, 'Edges', edges_out)
+            # restrict setting this output when there is no such input
+            if self.inputs['PolyEdge'].is_linked:
+                if self.outputs['Edges'].is_linked:
+                    self.outputs['Edges'].sv_set(edges_out)
 
-            if self.outputs['Polygons'].is_linked:
-                SvSetSocketAnyType(self, 'Polygons', polys_out)
+                if self.outputs['Polygons'].is_linked:
+                    self.outputs['Polygons'].sv_set(polys_out)
 
             if self.outputs['Doubles'].is_linked:
-                SvSetSocketAnyType(self, 'Doubles', d_out)
+                self.outputs['Doubles'].sv_set(d_out)
 
 def register():
     bpy.utils.register_class(SvRemoveDoublesNode)
