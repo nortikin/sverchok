@@ -33,10 +33,7 @@ def remove_doubles(vertices, faces, d, find_doubles=False):
     if not faces or not vertices:
         return False
 
-    if len(faces[0]) == 2:
-        EdgeMode = True
-    else:
-        EdgeMode = False
+    EdgeMode = (len(faces[0]) == 2)
 
     bm = bmesh.new()
     bm_verts = [bm.verts.new(v) for v in vertices]
@@ -76,9 +73,10 @@ class SvRemoveDoublesNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Remove Doubles'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    distance = FloatProperty(name='Distance', description='Remove distance',
-                             default=0.001, precision=3, min=0,
-                             update=updateNode)
+    distance = FloatProperty(
+        name='Distance', description='Remove distance',
+        default=0.001, precision=3, min=0, update=updateNode
+    )
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', 'Distance').prop_name = 'distance'
@@ -98,15 +96,13 @@ class SvRemoveDoublesNode(bpy.types.Node, SverchCustomTreeNode):
         if not any([s.is_linked for s in self.outputs]):
             return
 
-        if 'Vertices' in self.inputs and self.inputs['Vertices'].is_linked and \
-           'PolyEdge' in self.inputs and self.inputs['PolyEdge'].is_linked:
+        if self.inputs['Vertices'].is_linked:
+            # @@ self.inputs['PolyEdge'].is_linked
 
-            verts = Vector_generate(SvGetSocketAnyType(self, self.inputs['Vertices']))
-            polys = SvGetSocketAnyType(self, self.inputs['PolyEdge'])
-            if 'Distance' in self.inputs:
-                distance = self.inputs['Distance'].sv_get()[0]
-            else:
-                distance = [self.distance]
+            verts = Vector_generate(self.inputs['Vertices'].sv_get())
+            polys = self.inputs['PolyEdge'].sv_get(default=[[]])
+            distance = self.inputs['Distance'].sv_get(default=[self.distance])[0]
+
             if 'Doubles' in self.outputs:
                 has_double_out = bool('Doubles' in self.outputs)
 
@@ -124,16 +120,16 @@ class SvRemoveDoublesNode(bpy.types.Node, SverchCustomTreeNode):
                 polys_out.append(res[2])
                 d_out.append(res[3])
 
-            if 'Vertices' in self.outputs and self.outputs['Vertices'].is_linked:
+            if self.outputs['Vertices'].is_linked:
                 SvSetSocketAnyType(self, 'Vertices', verts_out)
 
-            if 'Edges' in self.outputs and self.outputs['Edges'].is_linked:
+            if self.outputs['Edges'].is_linked:
                 SvSetSocketAnyType(self, 'Edges', edges_out)
 
-            if 'Polygons' in self.outputs and self.outputs['Polygons'].is_linked:
+            if self.outputs['Polygons'].is_linked:
                 SvSetSocketAnyType(self, 'Polygons', polys_out)
 
-            if 'Doubles' in self.outputs and self.outputs['Doubles'].is_linked:
+            if self.outputs['Doubles'].is_linked:
                 SvSetSocketAnyType(self, 'Doubles', d_out)
 
 def register():
@@ -142,7 +138,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvRemoveDoublesNode)
-
-if __name__ == '__main__':
-    register()
-
