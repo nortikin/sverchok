@@ -9,7 +9,7 @@ directory = dirname(__file__)
 # this is about the only manual thing in this file.
 ignore_list = {}
 ignore_list['analyzer'] = ['bvh_raycast', 'bvh_overlap', 'bvh_nearest']
-ignore_list['basic_data'] = ['create_bvh_tree']
+ignore_list['scene'] = ['create_bvh_tree']
 
 nodes_dict = defaultdict(list)
 

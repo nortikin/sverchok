@@ -48,6 +48,7 @@ class SvVertexColorNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context,   layout):
         layout.prop(self, 'use_active')
         layout.prop(self, 'vertex_color')
+        #layout.prop_search(self, 'vertex_color', bpy.data.objects[self.object_ref], 'vertex_colors', text='', icon='HAND')
         layout.prop(self, "mode", expand=True)
 
 
@@ -64,7 +65,7 @@ class SvVertexColorNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         #self.outputs.new('VerticesSocket', "OutColor")
 
     def process(self):
-        print("foreach")
+        #print("foreach")
         #obj = bpy.data.objects[self.object_ref]
         for obj in self.inputs["Object"].sv_get():
             loops = obj.data.loops
@@ -268,3 +269,6 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvVertexColorNodeMK2)
+
+if __name__ == '__main__':
+    register()
