@@ -36,10 +36,13 @@ class ScalarMathNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
 
 
-# Math functions from http://docs.python.org/3.3/library/math.html
-# maybe this should be distilled to most common with the others available via Formula2 Node
-# And some constants etc.
-# Keep 4, columns number unchanged and only add new with unique number
+    # Math functions from http://docs.python.org/3.3/library/math.html
+    # maybe this should be distilled to most common with the others 
+    # available via Formula2 Node And some constants etc.
+    #
+    # Rules for modification:
+    #     1) Keep 4 items per column
+    #     2) only add new function with unique number
 
     mode_items = [
         ("SINE",            "Sine",         "", 1),
@@ -148,6 +151,7 @@ class ScalarMathNode(bpy.types.Node, SverchCustomTreeNode):
 
     def change_inputs(self, context):
 
+        self.id_data.freeze(hard=True)
         # inputs
         nrInputs = 1
         if self.items_ in self.constant:
@@ -162,6 +166,8 @@ class ScalarMathNode(bpy.types.Node, SverchCustomTreeNode):
                     self.inputs['Y'].prop_name = 'i_y'
 
         self.set_inputs(nrInputs)
+        self.id_data.unfreeze(hard=True)
+        updateNode(self, context)
 
     def set_inputs(self, n):
         if n == len(self.inputs):
@@ -177,9 +183,10 @@ class ScalarMathNode(bpy.types.Node, SverchCustomTreeNode):
             self.change_prop_type(None)
 
     # items_ is a really bad name but changing it breaks old layouts
-    items_ = EnumProperty(name="Function", description="Function choice",
-                          default="SINE", items=mode_items,
-                          update=change_inputs)
+    items_ = EnumProperty(
+        name="Function", description="Function choice",
+        default="SINE", items=mode_items, update=change_inputs)
+
     x = FloatProperty(default=1, name='x', update=updateNode)
     y = FloatProperty(default=1, name='y', update=updateNode)
 
