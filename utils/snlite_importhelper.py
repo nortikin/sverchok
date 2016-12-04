@@ -101,7 +101,7 @@ def parse_sockets(node):
             ui_dict = parse_ui_line(L)
             if isinstance(ui_dict, dict):
                 socket_info['snlite_ui'].append(ui_dict)
-        elif L.startswith('inject '):
+        elif L.startswith('inject'):
             if hasattr(node, 'inject_params'):
                 node.inject_params = True
 
