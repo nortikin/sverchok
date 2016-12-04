@@ -187,15 +187,16 @@
 
 ## Scene
     ObjectsNodeMK2
-    SvObjRemoteNode
+    SvObjRemoteNodeMK2
     SvFrameInfoNode
     SvEmptyOutNode
-    SvDupliInstancesMK2
     SvInstancerNode
+    SvDupliInstancesMK4
     SvGetPropNode
     SvSetPropNode
+
+## Objects
     SvVertexGroupNodeMK2
-    SvVertexColorNode
     SvVertexColorNodeMK2
 
 ## Layout
@@ -240,4 +241,3 @@
     SvBMinputNode
     SvBMoutputNode
     SvBMtoElementNode
-    SvObjRemoteNodeMK2

@@ -30,7 +30,7 @@ from sverchok.node_tree import SverchCustomTreeNode, MatrixSocket
 from sverchok.data_structure import (
     dataCorrect, updateNode, SvGetSocketAnyType
 )
-from sverchok.nodes.basic_data.getsetprop import (
+from sverchok.nodes.object_nodes.getsetprop import (
     assign_data, wrap_output_data, types
 )
 

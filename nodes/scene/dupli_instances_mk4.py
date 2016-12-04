@@ -36,12 +36,13 @@ def wipe_object(ob):
     bm.free()
 
 
-class SvDupliInstancesMK2(bpy.types.Node, SverchCustomTreeNode):
-    bl_idname = 'SvDupliInstancesMK2'
-    bl_label = 'Dupli instancer mk2'
+class SvDupliInstancesMK4(bpy.types.Node, SverchCustomTreeNode):
+    bl_idname = 'SvDupliInstancesMK4'
+    bl_label = 'Dupli instancer mk4'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     def set_child_quota(self, context):
+        # was used for string child property
         updateNode(self, context)
 
         # post update check
@@ -56,36 +57,38 @@ class SvDupliInstancesMK2(bpy.types.Node, SverchCustomTreeNode):
         description="name of the parent that this node generates",
         update=updateNode)
 
-    name_child = StringProperty(
-        description="name of object to duplicate",
-        update=set_child_quota)
+    scale = BoolProperty(default=False,
+        description="scale children", update=updateNode)
 
     auto_release = BoolProperty(update=set_child_quota)
 
     def sv_init(self, context):
-        self.inputs.new("SvObjectSocket", "parent")
+        #self.inputs.new("SvObjectSocket", "parent")
         self.inputs.new("SvObjectSocket", "child")
-        self.inputs.new("MatrixSocket", "matrices")
-        self.name_node_generated_parent = 'booom'
+        self.inputs.new("MatrixSocket", "matr/vert")
+        self.name_node_generated_parent = 'parant'
 
     def draw_buttons(self, context, layout):
         col = layout.column(align=True)
-        #col.prop(self, 'name_node_generated_parent', text='', icon='LOOPSEL')
+        col.prop(self, 'name_node_generated_parent', text='', icon='LOOPSEL')
         #col.prop_search(self, 'name_child', bpy.data, 'objects', text='')
+        col.prop(self, 'scale', text='Scale children', toggle=True)
         col.prop(self, 'auto_release', text='One Object only', toggle=True)
 
     def process(self):
-        objectsP = self.inputs['parent'].sv_get(default=None)
-        objectsC = self.inputs['child'].sv_get(default=None)
-        transforms = self.inputs['matrices'].sv_get(default=None)
-        ob = objectsP[0]
-        self.name_node_generated_parent = ob.name
+        #objectsP = self.inputs['parent'].sv_get(default=None)
+        objectsC = self.inputs['child'].sv_get()
+        transforms = self.inputs['matr/vert'].sv_get()
+        objects = bpy.data.objects
+        #if any([x.name == self.name_node_generated_parent for x in objects]):
+        ob = objects.get(self.name_node_generated_parent)
+        #self.name_node_generated_parent = ob.name
 
         if ob:
             wipe_object(ob)
 
         # minimum requirements.
-        if (not transforms) or (not self.name_child):
+        if (not transforms) and (not objectsC):
             if ob:
                 ob.dupli_type = 'NONE'
             return
@@ -97,23 +100,23 @@ class SvDupliInstancesMK2(bpy.types.Node, SverchCustomTreeNode):
             bpy.context.scene.objects.link(ob)
 
         # at this point there's a reference to an ob, and the mesh is empty.
-        child = self.inputs['child'].sv_get(default=None)
-        self.name_child = child.name
+        child = self.inputs['child'].sv_get()[0]
+        #print('проверка',child)
 
 
-        if transforms:
+        if transforms and transforms[0]:
             # -- this mode will face duplicate --
             # i expect this can be done faster using numpy
             # please view this only as exploratory
 
-            if self.inputs['matrices'].links[0].from_socket.bl_idname == 'VerticesSocket':
+            if self.inputs['matr/vert'].links[0].from_socket.bl_idname == 'VerticesSocket':
                 transforms = transforms[0]
                 # -- this mode will vertex duplicate --
                 ob.data.from_pydata(transforms, [], [])
                 ob.dupli_type = 'VERTS'
                 child.parent = ob
 
-            elif self.inputs['matrices'].links[0].from_socket.bl_idname == 'MatrixSocket':
+            elif self.inputs['matr/vert'].links[0].from_socket.bl_idname == 'MatrixSocket':
                 sin, cos = math.sin, math.cos
 
                 theta = 2 * math.pi / 3
@@ -137,16 +140,16 @@ class SvDupliInstancesMK2(bpy.types.Node, SverchCustomTreeNode):
 
                 ob.data.from_pydata(verts, [], faces)
                 ob.dupli_type = 'FACES'
-                ob.use_dupli_faces_scale = True
+                ob.use_dupli_faces_scale = self.scale
                 child.parent = ob
 
 
 def register():
-    bpy.utils.register_class(SvDupliInstancesMK2)
+    bpy.utils.register_class(SvDupliInstancesMK4)
 
 
 def unregister():
-    bpy.utils.unregister_class(SvDupliInstancesMK2)
+    bpy.utils.unregister_class(SvDupliInstancesMK4)
 
 if __name__ == '__main__':
     register()
