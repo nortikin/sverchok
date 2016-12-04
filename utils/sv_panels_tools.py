@@ -293,7 +293,6 @@ class SvLayoutScanProperties(bpy.types.Operator):
             if tree.bl_idname == 'SverchCustomTreeType':
                 templist = []
                 for no in tree.nodes:
-                    print(no.bl_idname)
                     if no.bl_idname == "IntegerNode":
                         if no.inputs and no.outputs:
                             if not no.inputs[0].links \
@@ -304,13 +303,15 @@ class SvLayoutScanProperties(bpy.types.Operator):
                             if not no.inputs[0].links \
                                     and no.outputs[0].links and no.to3d:
                                 templist.append([no.label, no.name, 'float_'])
-                    if no.bl_idname == "ObjectsNode":
+                    if no.bl_idname == 'ObjectsNodeMK2':
+                        print('scans for get option ', no.label, no.name)
                         if any((s.links for s in no.outputs)):
                             templist.append([no.label, no.name, ""])
                 templist.sort()
                 templ = [[t[1], t[2]] for t in templist]
                 tree.Sv3DProps.clear()
                 for name, prop in templ:
+                    print(name,prop)
                     tree.Sv3DProps.add()
                     tree.Sv3DProps[-1].node_name = name
                     tree.Sv3DProps[-1].prop_name = prop
