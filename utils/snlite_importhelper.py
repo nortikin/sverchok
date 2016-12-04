@@ -80,6 +80,8 @@ def parse_ui_line(L):
 
 def parse_sockets(node):
     # maybe a better local name is snlife_info
+    if hasattr(node, 'inject_params'):
+        node.inject_params = False
     socket_info = {'inputs': [], 'outputs': [], 'snlite_ui': []}
     quotes = 0
     for line in node.script_str.split('\n'):
@@ -99,6 +101,9 @@ def parse_sockets(node):
             ui_dict = parse_ui_line(L)
             if isinstance(ui_dict, dict):
                 socket_info['snlite_ui'].append(ui_dict)
+        elif L.startswith('inject'):
+            if hasattr(node, 'inject_params'):
+                node.inject_params = True
 
     return socket_info
 
