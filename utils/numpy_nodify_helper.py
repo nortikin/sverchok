@@ -96,7 +96,7 @@ def inject_attrs(name, descriptor, temp_dict):
 
         g = ""
         if 'Socket In' in element_types:
-            g = "    self.inputs.new('StringsSocket', '{0}')".format(_name)
+            g = "    self.inputs.new('SvGenericSocket', '{0}')".format(_name)
             if 'Prop' in element_types:
                 g += ".prop_name = '{0}'".format(_name)
         elif 'Socket Out' in element_types:
@@ -104,7 +104,7 @@ def inject_attrs(name, descriptor, temp_dict):
             #    g = "    self.outputs.new('StringsSocket', '{0}')".format(_name)
             #elif _type in {'nd.array'}:
             #    g = "    self.outputs.new('SvNumpyArraySocket', '{0}')".format(_name)
-            g = "    self.outputs.new('StringsSocket', '{0}')".format(_name)
+            g = "    self.outputs.new('SvGenericSocket', '{0}')".format(_name)
 
         if g:
             sockets.append(g)
@@ -118,7 +118,7 @@ def inject_attrs(name, descriptor, temp_dict):
 
                 if ui_content[0].startswith('r'):
                     if len(ui_info) == 0:
-                        ui_info.append('    ' + ui_content[0] + ' = layout.row()')
+                        ui_info.append('    ' + ui_content[0] + ' = layout.row(align=True)')
                     newline = '    ' + ui_content[0] + ".prop(self, '{0}'".format(_name)
                     if ui_content[1] == 'toggle':
                         newline += ', toggle=True)'
