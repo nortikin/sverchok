@@ -338,9 +338,6 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
         col = layout.column()
         col.menu(SvScriptNodeLitePyMenu.bl_idname)
 
-        if hasattr(self, 'inject_params'):
-            row = layout.row()
-            row.prop(self, 'inject_params', text='inject parameters')
 
     # ---- IO Json storage is handled in this node locally ----
 
@@ -382,3 +379,4 @@ def register():
 
 def unregister():
     _ = [bpy.utils.unregister_class(name) for name in classes]
+ 
