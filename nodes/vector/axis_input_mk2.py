@@ -30,25 +30,29 @@ class SvAxisInputNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Vector X | Y | Z MK2'    # shall default to Z Axis in svint.
     bl_icon = 'MANIPUL'
 
-    axis_x = bpy.props.BoolProperty(update=updateNode, name='X')
-    axis_y = bpy.props.BoolProperty(update=updateNode, name='Y')
-    axis_z = bpy.props.BoolProperty(update=updateNode, name='Z')
+    m = [
+        ("-1", "-1", "", 0), ("0", "0", "", 1), ("1", "1", "", 2)
+    ]
+
+    axis_x = EnumProperty(items=m, update=updateNode, name='X', default='1')
+    axis_y = EnumProperty(items=m, update=updateNode, name='Y', default='1')
+    axis_z = EnumProperty(items=m, update=updateNode, name='Z', default='1')
 
     def sv_init(self, context):
         self.width = 100
         self.outputs.new('VerticesSocket', "Vector")
 
     def draw_buttons(self, context, layout):
-        row = layout.row(align=True)
-        row.prop(self, 'axis_x', toggle=True)
-        row.prop(self, 'axis_y', toggle=True)
-        row.prop(self, 'axis_z', toggle=True)
+        row = layout.row()
+        row.prop(self, 'axis_x', text='')
+        row.prop(self, 'axis_y', text='')
+        row.prop(self, 'axis_z', text='')
 
     def get_axis(self):
         return int(self.axis_x), int(self.axis_y), int(self.axis_z)
 
     def draw_label(self):
-        return str('{0}, {1}, {2}'.format(*self.get_axis()))
+        return str('[{0}, {1}, {2}]'.format(*self.get_axis()))
 
     def process(self):
         vec_out = self.outputs[0]

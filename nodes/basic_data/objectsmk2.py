@@ -19,7 +19,7 @@
 from ast import literal_eval
 
 import bpy
-from bpy.props import BoolProperty, StringProperty
+from bpy.props import BoolProperty, StringProperty, EnumProperty
 
 import sverchok
 from sverchok.node_tree import SverchCustomTreeNode
@@ -52,12 +52,12 @@ class SvObjSelectObjectInItemsInScene(bpy.types.Operator):
         if handle[0]:
             for o in handle[1]:
                 bpy.data.objects[o].select = True
-            bpy.context.active_object = bpy.data.objects[o]
+            #bpy.context.active_object = bpy.data.objects[o]
         return {'FINISHED'}
 
 
 class SvObjSelected(bpy.types.Operator):
-    """ G E T   SELECTED OBJECTS """
+    """ G E T  selected or grouped objects """
     bl_idname = "node.sverchok_object_insertion"
     bl_label = "Sverchok object selector"
     bl_options = {'REGISTER', 'UNDO'}
@@ -153,7 +153,12 @@ class ObjectsNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('SvObjectSocket', "Object", "Object")
 
     def draw_buttons(self, context, layout):
-        row = layout.row()
+        #row.prop(self, 'groupname', text='')
+        col = layout.column(align=True)
+        row = col.row(align=True)
+        row.prop_search(self, 'groupname', bpy.data, 'groups', text='', icon='HAND')
+
+        row = col.row()
         addon = context.user_preferences.addons.get(sverchok.__name__)
         if addon.preferences.over_sized_buttons:
             row.scale_y = 4.0
@@ -168,19 +173,17 @@ class ObjectsNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         opera.grup_name = self.groupname
         opera.sort = self.sort
 
-        row = layout.row(align=True)
+        col = layout.column(align=True)
+        row = col.row(align=True)
+        row.prop(self, 'sort', text='Sort', toggle=True)
+        row.prop(self, "modifiers", text="Post", toggle=True)
+        # row = layout.row(align=True)
+        row.prop(self, "vergroups", text="VeGr", toggle=True)
+
+        row = col.row(align=True)
         opera = row.operator('node.sverchok_object_in_selector', text='Select')
         opera.node_name = self.name
         opera.tree_name = self.id_data.name
-
-        row = layout.row(align=True)
-        row.prop(self, 'groupname', text='')
-        row.prop(self, 'sort', text='Sort objects')
-
-        row = layout.row(align=True)
-        row.prop(self, "modifiers", text="Post modifiers")
-        # row = layout.row(align=True)
-        row.prop(self, "vergroups", text="Vert groups")
 
         handle = handle_read(self.name + self.id_data.name)
         if self.objects_local:
@@ -271,7 +274,7 @@ class ObjectsNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             if self.outputs['Matrixes'].is_linked:
                 SvSetSocketAnyType(self, 'Matrixes', mtrx_out)
             if self.outputs['Object'].is_linked:
-                print(objs_out)
+                #print(objs_out)
                 SvSetSocketAnyType(self, 'Object', objs_out)
 
 

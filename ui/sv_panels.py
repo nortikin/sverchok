@@ -205,7 +205,7 @@ class Sv3DPanel(bpy.types.Panel):
                             tex = node.label
                         else:
                             tex = no
-                        if node.bl_idname == "ObjectsNode":
+                        if node.bl_idname == "ObjectsNodeMK2":
                             row = col.row(align=True)
                             row.label(text=node.label if node.label else no)
                             colo = row.row(align=True)

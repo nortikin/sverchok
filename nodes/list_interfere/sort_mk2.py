@@ -21,7 +21,7 @@ from bpy.props import BoolProperty, IntProperty, StringProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode, changable_sockets,
-                                     dataCorrect, svQsort)
+                                     dataCorrect, svQsort, levelsOflist)
 
 class ListSortNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     ''' List Sort MK2 '''
@@ -57,6 +57,7 @@ class ListSortNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             return
 
         data_ = self.inputs['data'].sv_get()
+        levelinit = levelsOflist(data_)
         data = dataCorrect(data_, nominal_dept=self.level).copy()
         out_ = []
         if not self.inputs['keys'].is_linked:
@@ -68,7 +69,7 @@ class ListSortNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             for d,k in zip(data,keys):
                 d.sort(key = lambda x: k.pop(0))
                 out_.append(d)
-        out = dataCorrect(out_)
+        out = dataCorrect(out_,nominal_dept=levelinit-1)
         self.outputs['data'].sv_set(out)
 
 

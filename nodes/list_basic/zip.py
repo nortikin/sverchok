@@ -30,16 +30,17 @@ class ZipNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'List Zip'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    level = IntProperty(name='level',
-                        default=1, min=1)
-    typ = StringProperty(name='typ',
-                         default='')
-    newsock = BoolProperty(name='newsock',
-                           default=False)
-    unwrap = BoolProperty(name='unwrap', 
-                description='unwrap objects?',
-                default=False,
-                update=updateNode)
+    level = IntProperty(name='level', default=1, min=1, update=updateNode)
+    typ = StringProperty(name='typ', default='')
+    newsock = BoolProperty(name='newsock', default=False)
+    
+    unwrap = BoolProperty(
+        name='unwrap',
+        description='unwrap objects?',
+        default=False,
+        update=updateNode
+    )
+    
     base_name = 'data '
     multi_socket_type = 'StringsSocket'
 
@@ -48,15 +49,15 @@ class ZipNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "unwrap", text="UnWrap")
 
     def sv_init(self, context):
-        self.inputs.new('StringsSocket', "data", "data")
-        self.outputs.new('StringsSocket', 'data', 'data')
+        self.inputs.new('StringsSocket', 'data')
+        self.outputs.new('StringsSocket', 'data')
 
     def update(self):
         # inputs
         multi_socket(self, min=1)
 
         if 'data' in self.inputs and self.inputs['data'].links:
-            # адаптивный сокет
+            # Adaptive socket
             inputsocketname = 'data'
             outputsocketname = ['data']
             changable_sockets(self, inputsocketname, outputsocketname)
@@ -72,16 +73,16 @@ class ZipNode(bpy.types.Node, SverchCustomTreeNode):
                 return
             output = self.myZip(slots, self.level)
             if self.unwrap:
-                output = preobrazovatel(output, [2,3])
+                output = preobrazovatel(output, [2, 3])
             SvSetSocketAnyType(self, 'data', output)
 
     def myZip(self, list_all, level, level2=0):
         if level == level2:
-            if type(list_all) in [list, tuple]:
+            if isinstance(list_all, (list, tuple)):
                 list_lens = []
                 list_res = []
                 for l in list_all:
-                    if type(l) in [list, tuple]:
+                    if isinstance(l, (list, tuple)):
                         list_lens.append(len(l))
                     else:
                         list_lens.append(0)
@@ -97,14 +98,14 @@ class ZipNode(bpy.types.Node, SverchCustomTreeNode):
             else:
                 return False
         elif level > level2:
-            if type(list_all) in [list, tuple]:
+            if isinstance(list_all, (list, tuple)):
                 list_res = []
                 list_tr = self.myZip(list_all, level, level2+1)
                 if list_tr is False:
                     list_tr = list_all
                 t = []
                 for tr in list_tr:
-                    if type(list_tr) in [list, tuple]:
+                    if isinstance(list_tr, (list, tuple)):
                         list_tl = self.myZip(tr, level, level2+1)
                         if list_tl is False:
                             list_tl = list_tr
@@ -125,5 +126,5 @@ def register():
 def unregister():
     bpy.utils.unregister_class(ZipNode)
 
-if __name__ == '__main__':
-    register()
+# if __name__ == '__main__':
+#    register()
