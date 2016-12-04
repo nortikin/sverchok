@@ -190,7 +190,7 @@
     SvObjRemoteNode
     SvFrameInfoNode
     SvEmptyOutNode
-    SvDupliInstancesMK3
+    SvDupliInstancesMK2
     SvInstancerNode
     SvGetPropNode
     SvSetPropNode
