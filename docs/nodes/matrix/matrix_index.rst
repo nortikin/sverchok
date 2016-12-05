@@ -10,5 +10,6 @@ Matrix
    euler
    input
    interpolation
-   matrix_in_out
+   matrix_in
+   matrix_out
    shear

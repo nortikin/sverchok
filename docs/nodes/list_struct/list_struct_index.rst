@@ -7,8 +7,8 @@ List Struct
 
    flip
    item
-   list_reverse
    repeater
+   reverse
    shift_mk2
    shuffle
    slice

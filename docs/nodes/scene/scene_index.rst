@@ -8,5 +8,5 @@ Scene
    dupli_instances
    frame_info
    getsetprop
-   objects
+   objects_mk2
    obj_remote

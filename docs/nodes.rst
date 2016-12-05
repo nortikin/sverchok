@@ -5,7 +5,7 @@ Nodes
 .. toctree::
    :maxdepth: 3
 
-   Generators <nodes/generators/generators_index>
+   Generators <nodes/generator/generator_index>
    Generators Extended<nodes/generators_extended/generators_extended_index>
    Transforms <nodes/transforms/transforms_index>
    Analyzers <nodes/analyzers/analyzers_index>
@@ -13,7 +13,7 @@ Nodes
    Modifier Make <nodes/modifier_make/modifier_make_index>
 
    Number <nodes/number/number_index>
-   Vector <nodes/vector/vector_index>
+   Vertex <nodes/vector/vertex_index>
    Matrix <nodes/matrix/matrix_index>
    Logic <nodes/logic/logic_index>
    List Main <nodes/list_main/list_main_index>

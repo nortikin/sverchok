@@ -11,4 +11,4 @@ Text
    stethoscope
    text_in
    text_out
-   viewer_text
+   viewer_text_mk2

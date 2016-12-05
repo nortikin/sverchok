@@ -18,4 +18,3 @@ Analyzers
    polygons_centers_mk3
    raycast
    volume
-   weights
