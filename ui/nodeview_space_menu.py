@@ -69,7 +69,12 @@ def layout_draw_categories(layout, node_details):
         node_ref = getattr(bpy.types, bl_idname)
 
         display_icon = get_icon(node_ref)
-        layout_params = dict(text=node_ref.bl_label, **icon(display_icon))
+        if hasattr(node_ref, "bl_label"):
+            layout_params = dict(text=node_ref.bl_label, **icon(display_icon))
+        elif bl_idname == 'NodeReroute':
+            layout_params = dict(text='Reroute')
+        else:
+            continue
 
         node_op = layout.operator(add_n_grab, **layout_params)
         node_op.type = bl_idname
