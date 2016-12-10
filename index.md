@@ -216,6 +216,7 @@
     SvOBJRayCastNodeMK2
     SvSCNRayCastNodeMK2
     SvObjectToMeshNodeMK2
+    SvObjInLite
     SvRndNumGen
 
 ## Alpha Nodes
