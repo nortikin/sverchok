@@ -62,15 +62,12 @@ class SvObjInLite(bpy.types.Node, SverchCustomTreeNode):
         obj = bpy.context.active_object
         if obj:
             self.obj_name = obj.name
-            self.node_dict = {}
-            # create a temporary mesh
             obj_data = obj.to_mesh(bpy.context.scene, self.modifiers, 'PREVIEW')
-            self.node_dict[hash(self)] = {'geom': {
+            self.node_dict[hash(self)] = {
                 'verts': list([v.co[:] for v in obj_data.vertices]),
                 'edges': obj_data.edge_keys,
                 'faces': [list(p.vertices) for p in obj_data.polygons],
-                'matrix': list(obj.matrix_world)
-                }
+                'matrix': [list(m) for m in obj.matrix_world]
             }
             
             bpy.data.meshes.remove(obj_data)
@@ -113,17 +110,16 @@ class SvObjInLite(bpy.types.Node, SverchCustomTreeNode):
             print('not ending early')
             mesh_data = self.node_dict.get(hash(self))
 
-        Vertices, Edges, Polygons, Matrices = self.outputs
+        Vertices, Edges, Polygons, Matrix = self.outputs
 
         if Vertices.is_linked:
-            print(mesh_data['verts'])
-            Vertices.sv_set(mesh_data['verts'])
+            Vertices.sv_set([mesh_data['verts']])
         if Edges.is_linked:
-            Edges.sv_set(mesh_data['edges'])
+            Edges.sv_set([mesh_data['edges']])
         if Polygons.is_linked:
-            Polygons.sv_set(mesh_data['faces'])
+            Polygons.sv_set([mesh_data['faces']])
         if Matrix.is_linked:
-            Matrices.sv_set(mesh_data['matrix'])
+            Matrix.sv_set([mesh_data['matrix']])
 
 
 def register():
