@@ -102,9 +102,9 @@ class SvObjInLite(bpy.types.Node, SverchCustomTreeNode):
 
 
     def process(self):
-        print(self.node_dict)
 
         if not hash(self) in self.node_dict:
+            print('ending early, no node_dict')
             return
         else:
             print('not ending early')
