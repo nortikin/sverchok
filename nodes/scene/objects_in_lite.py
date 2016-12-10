@@ -50,7 +50,7 @@ class SvObjInLite(bpy.types.Node, SverchCustomTreeNode):
         name='Modifiers', default=False, update=updateNode)
 
     currently_storing = BoolProperty()
-    obj_name = StringProperty()
+    obj_name = StringProperty(update=updateNode)
     node_dict = {}
 
     def drop(self):
@@ -58,21 +58,24 @@ class SvObjInLite(bpy.types.Node, SverchCustomTreeNode):
         self.currently_storing = False
         self.node_dict = {}
 
-    def get(self):
+    def dget(self):
         obj = bpy.context.active_object
         if obj:
             self.obj_name = obj.name
             self.node_dict = {}
             # create a temporary mesh
             obj_data = obj.to_mesh(bpy.context.scene, self.modifiers, 'PREVIEW')
-            self.node_dict[hash(self)] = {
+            self.node_dict[hash(self)] = {'geom': {
                 'verts': list([v.co[:] for v in obj_data.vertices]),
                 'edges': obj_data.edge_keys,
                 'faces': [list(p.vertices) for p in obj_data.polygons],
                 'matrix': list(obj.matrix_world)
+                }
             }
+            
             bpy.data.meshes.remove(obj_data)
             self.currently_storing = True
+
         else:
             self.report({'WARNING'}, 'No object selected')
 
@@ -94,7 +97,7 @@ class SvObjInLite(bpy.types.Node, SverchCustomTreeNode):
         row.scale_y = 4.0 if prefs.over_sized_buttons else 1
         
         if not self.currently_storing:
-            row.operator(callback, text='G E T').cmd = 'get'
+            row.operator(callback, text='G E T').cmd = 'dget'
             layout.label('--None--')
         else:
             row.operator(callback, text='D R O P').cmd = 'drop'
@@ -102,14 +105,13 @@ class SvObjInLite(bpy.types.Node, SverchCustomTreeNode):
 
 
     def process(self):
+        print(self.node_dict)
 
-        if not self.node_dict or not hash(self) in self.node_dict:
-            print('ending early', self.node_dict)
+        if not hash(self) in self.node_dict:
             return
         else:
             print('not ending early')
             mesh_data = self.node_dict.get(hash(self))
-            print('mesh_data', mesh_data)
 
         Vertices, Edges, Polygons, Matrices = self.outputs
 
