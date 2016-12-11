@@ -90,20 +90,24 @@ class SvObjInLite(bpy.types.Node, SverchCustomTreeNode):
         callback = 'node.sverchok_objectinlite_cb'
 
         col = layout.column(align=True)
-        row = col.row()
+        row = col.row(align=True)
         row.scale_y = 4.0 if prefs.over_sized_buttons else 1
         
         if not self.currently_storing:
             row.operator(callback, text='G E T').cmd = 'dget'
+            row.prop(self, 'modifiers', text='', icon='MODIFIER')
             layout.label('--None--')
         else:
             row.operator(callback, text='D R O P').cmd = 'drop'
+            row.prop(self, 'modifiers', text='', icon='MODIFIER')
             layout.label(self.obj_name)
 
 
     def process(self):
 
         if not hash(self) in self.node_dict:
+            # this is not perfect, should probably handle the F8 loss of object node_dict if
+            # obj_name is not empty.
             print('ending early, no node_dict')
             return
         else:
