@@ -58,10 +58,14 @@ class SvObjInLite(bpy.types.Node, SverchCustomTreeNode):
         self.currently_storing = False
         self.node_dict = {}
 
-    def dget(self):
-        obj = bpy.context.active_object
-        if obj:
+    def dget(self, obj_name=None):
+        if not obj_name:
+            obj = bpy.context.active_object
             self.obj_name = obj.name
+        else:
+            obj = bpy.data.objects.get(obj_name)
+
+        if obj:
             obj_data = obj.to_mesh(bpy.context.scene, self.modifiers, 'PREVIEW')
             self.node_dict[hash(self)] = {
                 'verts': list([v.co[:] for v in obj_data.vertices]),
@@ -106,14 +110,15 @@ class SvObjInLite(bpy.types.Node, SverchCustomTreeNode):
     def process(self):
 
         if not hash(self) in self.node_dict:
-            # this is not perfect, should probably handle the F8 loss of object node_dict if
-            # obj_name is not empty.
-            print('ending early, no node_dict')
-            return
+            if self.obj_name and bpy.data.objects.get(self.obj_name):
+                self.dget(self.obj_name)
+            else:
+                print('ending early, no node_dict')
+                return
         else:
             print('not ending early')
-            mesh_data = self.node_dict.get(hash(self))
-
+        
+        mesh_data = self.node_dict.get(hash(self))
         Vertices, Edges, Polygons, Matrix = self.outputs
 
         if Vertices.is_linked:
