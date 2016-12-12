@@ -27,6 +27,8 @@ def xjoined(structure):
                      |           |           |
                      polygon length tokens
     """
+    if not structure:
+        return []
     faces = []
     fex = faces.extend
     fap = faces.append
@@ -36,11 +38,13 @@ def xjoined(structure):
 
 
 def flatten(data):
+    # WARNING : Assumes edges and polygons contain data..
+    # should test if the structure contains topology in Edges / Polygons
     return {
-        'Vertices': itertools.chain.from_iterable(data['Vertices']),
-        'Edges': itertools.chain.from_iterable(data['Edges']),
+        'Vertices': list(itertools.chain.from_iterable(data['Vertices'])),
+        'Edges': list(itertools.chain.from_iterable(data['Edges'])),
         'Polygons': xjoined(data['Polygons']),
-        'Matrix': itertools.chain.from_iterable(data['Matrix'])
+        'Matrix': list(itertools.chain.from_iterable(data['Matrix']))
     }
 
 
@@ -63,7 +67,13 @@ def unroll(data, stride=None, constant=True):
 
 
 def unflatten(data):
-    pass
+    return {
+        'Vertices': unroll(data['Vertices'], stride=3),
+        'Edges': [] or unroll(data['Edges'], stride=2),
+        'Polygons': [] or unroll(data['Polygons'], constant=False),
+        'Matrix': unroll(data['Matrix'], stride=4)
+
+    }
 
 
 if __name__ == "__main__":
@@ -80,4 +90,18 @@ if __name__ == "__main__":
     some_edges = [3, 0, 1, 2, 3, 1, 2, 3, 4, 2, 3, 4]
     xe = unroll(some_edges, stride=2)
     print(xe)
+
+    data = {
+        'Vertices': [0.3, 0.3, 0.2, 0.1, 0.3, 0.6, 0.1, 0.6, 0.2, 0.3, 0.5, 0.6],
+        'Edges' : [0, 1, 3, 6, 2, 5, 3, 6],
+        'Polygons': [3, 0, 1, 2, 3, 1, 2, 3, 4, 2, 3, 4, 5],
+        'Matrix': [0.3, 0.3, 0.2, 0.2, 0.3, 0.3, 0.2, 0.2, 0.3, 0.3, 0.2, 0.2, 0.3, 0.3, 0.2, 0.2]
+
+    }
+    undata = unflatten(data)
+    print(undata)
+
+    
+
+
 
