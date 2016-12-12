@@ -38,8 +38,7 @@ def xjoined(structure):
 
 
 def flatten(data):
-    # WARNING : Assumes edges and polygons contain data..
-    # should test if the structure contains topology in Edges / Polygons
+    # returns empty lists if the data[x] input is empty
     return {
         'Vertices': list(itertools.chain.from_iterable(data['Vertices'])),
         'Edges': list(itertools.chain.from_iterable(data['Edges'])),
