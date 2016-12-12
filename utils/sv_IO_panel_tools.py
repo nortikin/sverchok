@@ -38,9 +38,10 @@ from sverchok.utils import sv_gist_tools
 
 SCRIPTED_NODES = {'SvScriptNode', 'SvScriptNodeMK2', 'SvScriptNodeLite'}
 
-_EXPORTER_REVISION_ = '0.062'
+_EXPORTER_REVISION_ = '0.063'
 
 '''
+0.063 add support for obj_in_lite obj serialization \o/ .
 0.062 (no revision change) - fixes import of sn texts that are present already in .blend
 0.062 (no revision change) - looks in multiple places for textmode param.
 0.062 monad export properly
@@ -52,17 +53,7 @@ _EXPORTER_REVISION_ = '0.062'
       never have two files named the same which perform different operations.
       main fixes SN1, SN2, ProfileNode, TextInput (json-mode only verified)
 
-0.055 - (import) fix : SN reset (files_popup, username) params
-      - (import) add : deals with importing from gist id.
-
-0.054 group support, hash of text files
-0.053 support old_nodes on demand
-0.052 respect selection
-0.051 fake node removed, freeze and unfreeze used instead
-0.05 fake node inserted to stop updates
-0.043 remap dict for duplicates (when importing into existing tree)
-0.042 add fake user to imported layouts + switch to new tree.
-
+revisions below this are your own problem.
 
 '''
 
@@ -153,6 +144,8 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
         node_enums = find_enumerators(node)
 
         ObjectsNode = (node.bl_idname == 'ObjectsNode')
+        ObjNodeLite = (node.bl_idname == 'SvObjInLite')
+        ScriptNodeLite = (node.bl_idname == 'SvScriptNodeLite')
         ProfileParamNode = (node.bl_idname == 'SvProfileNode')
         IsGroupNode = (node.bl_idname == 'SvGroupNode')
         IsMonadInstanceNode = (node.bl_idname.startswith('SvGroupNodeMonad'))
@@ -239,8 +232,9 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
 
                     node_items[prop_name] = v
 
-        if node.bl_idname == 'SvScriptNodeLite':
+        if ScriptNodeLite or ObjNodeLite:
             node.storage_get_data(node_dict)
+
 
         # collect socket properties
         # inputs = node.inputs
