@@ -147,6 +147,9 @@ class SvObjInLite(bpy.types.Node, SverchCustomTreeNode):
         # rename if obj existed
         if not obj.name == name:
             storage['params']["obj_name"] = obj.name
+            self.id_data.freeze(hard=True)
+            self.obj_name = obj.name
+            self.id_data.unfreeze(hard=True)
 
 
     def storage_get_data(self, storage):
