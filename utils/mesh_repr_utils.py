@@ -16,7 +16,7 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-
+import bpy
 import itertools
 
 
@@ -72,6 +72,17 @@ def unflatten(data):
         'Polygons': [] or unroll(data['Polygons'], constant=False),
         'Matrix': unroll(data['Matrix'], stride=4)
     }
+
+
+def generate_object(name, bm):
+    mesh = bpy.data.meshes.new(name)
+    bm.to_mesh(mesh)
+    bm.free()
+
+    # create object and link to scene
+    obj = bpy.data.objects.new(name, mesh)
+    bpy.context.scene.objects.link(obj)
+    return obj 
 
 
 if __name__ == "__main__":

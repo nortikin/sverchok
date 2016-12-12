@@ -493,6 +493,9 @@ def add_node_to_tree(nodes, n, nodes_to_import, name_remap, create_texts):
 
     if create_texts:
         add_texts(node, node_ref)
+    
+    if bl_idname == 'SvObjInLite':
+        node.storage_set_data(node_ref)
 
     gather_remapped_names(node, n, name_remap)
     apply_core_props(node, node_ref)

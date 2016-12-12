@@ -20,9 +20,11 @@ import bpy
 from bpy.props import BoolProperty, StringProperty, EnumProperty
 
 import sverchok
-from sverchok.utils.mesh_repr_utils import flatten, unflatten
+from sverchok.utils.mesh_repr_utils import flatten, unflatten, generate_object
+from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
+
 
 import json
 
@@ -124,7 +126,24 @@ class SvObjInLite(bpy.types.Node, SverchCustomTreeNode):
 
 
     def storage_set_data(self, storage):
-        ...
+        geom = storage['geom']
+        name = storage['params']["obj_name"]
+        geom_dict = json.loads(geom)
+
+        if not geom_dict:
+            print(self.name, 'contains no flatten geom')
+            return
+
+        unrolled_geom = unflatten(geom_dict)
+        verts = unrolled_geom['Vertices']
+        edges = unrolled_geom['Edges']
+        polygons = unrolled_geom['Polygons']
+        matrix = unrolled_geom['Matrix']
+
+        bm = bmesh_from_pydata(verts, edges, polygons)
+        obj = generate_object(name, bm)
+        obj.matrix_world = matrix
+
 
     def storage_get_data(self, storage):
         # generate flat data, and inject into incoming storage variable
