@@ -144,6 +144,10 @@ class SvObjInLite(bpy.types.Node, SverchCustomTreeNode):
         obj = generate_object(name, bm)
         obj.matrix_world = matrix
 
+        # rename if obj existed
+        if not obj.name == name:
+            storage['params']["obj_name"] = obj.name
+
 
     def storage_get_data(self, storage):
         # generate flat data, and inject into incoming storage variable
