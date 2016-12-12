@@ -41,7 +41,7 @@ class SverchokUpdateObjectIn(bpy.types.Operator):
                 if ng.sv_process:
                     nodes = []
                     for n in ng.nodes:
-                        if n.bl_idname == 'ObjectsNode':
+                        if n.bl_idname in {'ObjectsNode','ObjectsNodeMK2'}:
                             nodes.append(n)
                     if nodes:
                         obj_nodes.append(nodes)
@@ -79,7 +79,7 @@ class Sv3DViewObjInUpdater(bpy.types.Operator, object):
                 if ng.sv_process:
                     nodes = []
                     for n in ng.nodes:
-                        if n.bl_idname == 'ObjectsNode':
+                        if n.bl_idname in {'ObjectsNode','ObjectsNodeMK2'}:
                             nodes.append(n)
                     if nodes:
                         obj_nodes.append(nodes)
