@@ -72,7 +72,6 @@ def unflatten(data):
         'Edges': [] or unroll(data['Edges'], stride=2),
         'Polygons': [] or unroll(data['Polygons'], constant=False),
         'Matrix': unroll(data['Matrix'], stride=4)
-
     }
 
 
