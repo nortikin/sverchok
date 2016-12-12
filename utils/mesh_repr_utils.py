@@ -44,7 +44,7 @@ def flatten(data):
     }
 
 
-def unflatten(data, stride=None, constant=True):
+def unroll(data, stride=None, constant=True):
     if constant == False:
         # stride is variable, means we are unrolling polygons
         polygons = []
@@ -52,18 +52,32 @@ def unflatten(data, stride=None, constant=True):
         index = 0
         while(index < len(data)):
             length = data[index]
-            segment = data[index+1: index+1+length]
+            index += 1
+            segment = data[index: index+length]
             pap(segment)
-            index += length+1
+            index += length
         return polygons
+    if stride and stride in {2, 3, 4}:
+        # 2 = edges, 3 = vertex, 4 = matrix
+        return [data[i:i+stride] for i in range(0, len(data), stride)]
 
 
-Test = True
-if Test:
+def unflatten(data):
+    pass
+
+
+if __name__ == "__main__":
+
+    # polygons
     somelist = [[0,1,2], [1,2,3], [2,3,4,5]]
 
     f = xjoined(somelist)
+    xf = unroll(f, constant=False)
     print(f)
-
-    xf = unflatten(f, constant=False)
     print(xf)
+
+    # edges
+    some_edges = [3, 0, 1, 2, 3, 1, 2, 3, 4, 2, 3, 4]
+    xe = unroll(some_edges, stride=2)
+    print(xe)
+
