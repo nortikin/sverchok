@@ -16,12 +16,11 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-# from ast import literal_eval
-
 import bpy
 from bpy.props import BoolProperty, StringProperty, EnumProperty
 
 import sverchok
+from sverchok.utils.mesh_repr_utils import flatten, unflatten
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 
@@ -122,10 +121,19 @@ class SvObjInLite(bpy.types.Node, SverchCustomTreeNode):
             if socket.is_linked:
                 socket.sv_set([mesh_data[socket.name]])
 
-    def io_get(self):
-        ...
 
-    def io_set(self):
+    def io_from_data_input(self, storage):
+        obj = self.node_dict.get(hash(self))
+        if not obj:
+            print('failed to obtain local geometry, can not add to json')
+            return
+        
+        flatten = lambda a: a
+        storage['geom'] = flatten(obj)
+
+
+    def io_to_data_output(self, storage):
+        # generate flat data, and inject into incoming storage variable
         ...
 
 
