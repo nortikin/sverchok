@@ -68,10 +68,10 @@ class SvObjInLite(bpy.types.Node, SverchCustomTreeNode):
         if obj:
             obj_data = obj.to_mesh(bpy.context.scene, self.modifiers, 'PREVIEW')
             self.node_dict[hash(self)] = {
-                'verts': list([v.co[:] for v in obj_data.vertices]),
-                'edges': obj_data.edge_keys,
-                'faces': [list(p.vertices) for p in obj_data.polygons],
-                'matrix': [list(m) for m in obj.matrix_world]
+                'Vertices': list([v.co[:] for v in obj_data.vertices]),
+                'Edges': obj_data.edge_keys,
+                'Polygons': [list(p.vertices) for p in obj_data.polygons],
+                'Matrix': [list(m) for m in obj.matrix_world]
             }
             
             bpy.data.meshes.remove(obj_data)
@@ -83,10 +83,10 @@ class SvObjInLite(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_init(self, context):
         out = self.outputs.new
-        out('VerticesSocket', "Vertices")
-        out('StringsSocket', "Edges")
-        out('StringsSocket', "Polygons")
-        out('MatrixSocket', "Matrix")
+        out('VerticesSocket', 'Vertices')
+        out('StringsSocket', 'Edges')
+        out('StringsSocket', 'Polygons')
+        out('MatrixSocket', 'Matrix')
 
     def draw_buttons(self, context, layout):
         addon = context.user_preferences.addons.get(sverchok.__name__)
@@ -115,20 +115,18 @@ class SvObjInLite(bpy.types.Node, SverchCustomTreeNode):
             else:
                 print('ending early, no node_dict')
                 return
-        else:
-            print('not ending early')
         
         mesh_data = self.node_dict.get(hash(self))
-        Vertices, Edges, Polygons, Matrix = self.outputs
+        
+        for socket in self.outputs:
+            if socket.is_linked:
+                socket.sv_set([mesh_data[socket.name]])
 
-        if Vertices.is_linked:
-            Vertices.sv_set([mesh_data['verts']])
-        if Edges.is_linked:
-            Edges.sv_set([mesh_data['edges']])
-        if Polygons.is_linked:
-            Polygons.sv_set([mesh_data['faces']])
-        if Matrix.is_linked:
-            Matrix.sv_set([mesh_data['matrix']])
+    def io_get(self):
+        ...
+
+    def io_set(self):
+        ...
 
 
 def register():
