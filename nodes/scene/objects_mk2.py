@@ -66,7 +66,7 @@ class SvObjSelected(bpy.types.Operator):
     def enable(self, context, handle):
         groups = bpy.data.groups
         
-        node = context.active_node
+        node = context.node
         name_no = node.name
         name_tr = node.id_data.name
         group_name = node.groupname
@@ -90,9 +90,7 @@ class SvObjSelected(bpy.types.Operator):
 
         if bpy.data.node_groups[name_tr]:
             handle = handle_read(name_no + name_tr)
-            # node.id_data.freeze(hard=True)
             node.objects_local = str(handle[1])
-            # node.id_data.unfreeze(hard=True)
 
 
     def disable(self, context, handle):
@@ -104,7 +102,7 @@ class SvObjSelected(bpy.types.Operator):
 
     def execute(self, context):
 
-        node = context.active_node
+        node = context.node
         name_no = node.name
         name_tr = node.id_data.name
 
@@ -246,39 +244,34 @@ class ObjectsNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                 pols = []
                 mtrx = []
 
-                if obj.type == 'EMPTY':
-                    for m in obj.matrix_world:
-                        mtrx.append(m[:])
+                self.id_data.freeze(hard=True)
 
-                else:
-                    # create a temporary mesh
-                    obj_data = obj.to_mesh(scene, self.modifiers, 'PREVIEW')
-                    print(obj_data)
+                try:
+                    if obj.type == 'EMPTY':
+                        for m in obj.matrix_world:
+                            mtrx.append(m[:])
 
-                    for m in obj.matrix_world:
-                        mtrx.append(list(m))
-                    print('r1')
-        
-                    for k, v in enumerate(obj_data.vertices):
-                        if self.vergroups and v.groups.values():
-                            vers_grouped.append(k)
-                        vers.append(list(v.co))
-                    print('r2')
-        
-                    edgs = obj_data.edge_keys
-        
-                    for p in obj_data.polygons:
-                        pols.append(list(p.vertices))
-                    print('r3')
+                    else:
+                        # create a temporary mesh
+                        obj_data = obj.to_mesh(scene, self.modifiers, 'PREVIEW')
+                        edgs = obj_data.edge_keys
 
-                    print(obj_data.users)
-                    try:
-                        bpy.data.meshes.remove(obj_data)
-                        print('r2.5 ok..removed mesh!')
-                    except:
-                        print('r4')
-                        print('failed remove', obj.name, 'temp mesh')
-                    print('r5')
+                        for m in obj.matrix_world:
+                            mtrx.append(list(m))
+            
+                        for k, v in enumerate(obj_data.vertices):
+                            if self.vergroups and v.groups.values():
+                                vers_grouped.append(k)
+                            vers.append(list(v.co))
+            
+                        for p in obj_data.polygons:
+                            pols.append(list(p.vertices))
+
+                        bpy.data.meshes.remove(obj_data, do_unlink=True)
+                except:
+                    print('failure in process between freezed area')
+
+                self.id_data.unfreeze(hard=True)
 
                 vers_out.append(vers)
                 edgs_out.append(edgs)
@@ -292,9 +285,8 @@ class ObjectsNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                 Vertices = self.outputs['Vertices']
                 Edges = self.outputs['Edges']
                 Polygons = self.outputs['Polygons']
-                Vers_grouped = self.outputs['Vers_grouped']
                 Matrixes = self.outputs['Matrixes']
-                Object = self.outputs['Object']
+                Objects = self.outputs['Object']
 
                 if Vertices.is_linked:
                     Vertices.sv_set(vers_out)
@@ -305,13 +297,15 @@ class ObjectsNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                 if Polygons.is_linked:
                     Polygons.sv_set(pols_out)
 
-                if self.vergroups and Vers_grouped.is_linked:
-                    Vers_grouped.sv_set(vers_out_grouped)
+                if 'Vers_grouped' in self.outputs:
+                    Vers_grouped = self.outputs['Vers_grouped']
+                    if self.vergroups and Vers_grouped.is_linked:
+                        Vers_grouped.sv_set(vers_out_grouped)
 
             if Matrixes.is_linked:
                 Matrixes.sv_set(mtrx_out)
-            if Object.is_linked:
-                Object.sv_set(objs_out)
+            if Objects.is_linked:
+                Objects.sv_set(objs_out)
 
 
 def register():
