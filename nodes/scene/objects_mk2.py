@@ -62,49 +62,55 @@ class SvObjSelected(bpy.types.Operator):
     bl_label = "Sverchok object selector"
     bl_options = {'REGISTER', 'UNDO'}
 
-    node_name = StringProperty(
-        name='name node', description='it is name of node', default='')
 
-    tree_name = StringProperty(
-        name='name tree', description='it is name of tree', default='')
+    def enable(self, context, handle):
+        groups = bpy.data.groups
+        
+        node = context.active_node
+        name_no = node.name
+        name_tr = node.id_data.name
+        group_name = node.groupname
 
-    grup_name = StringProperty(
-        name='grup tree', description='it is name of group', default='')
 
-    sort = BoolProperty(
-        name='sort objects', description='to sort objects by name or not', default=True)
-
-    def enable(self, name_no, name_tr, handle, sorting):
         objects = []
-        if self.grup_name and bpy.data.groups[self.grup_name].objects:
-            objs = bpy.data.groups[self.grup_name].objects
+        if group_name and groups[group_name].objects:
+            objs = groups[group_name].objects
         elif bpy.context.selected_objects:
             objs = bpy.context.selected_objects
         else:
             self.report({'WARNING'}, 'No object selected')
             return
+
         for o in objs:
             objects.append(o.name)
-        if sorting:
+
+        if node.sort:
             objects.sort()
         handle_write(name_no + name_tr, objects)
 
         if bpy.data.node_groups[name_tr]:
             handle = handle_read(name_no + name_tr)
-            bpy.data.node_groups[name_tr].nodes[name_no].objects_local = str(handle[1])
+            # node.id_data.freeze(hard=True)
+            node.objects_local = str(handle[1])
+            # node.id_data.unfreeze(hard=True)
 
-    def disable(self, name, handle):
+
+    def disable(self, context, handle):
         if not handle[0]:
             return
-        handle_delete(name)
+        node = context.active_node
+        handle_delete(node.name + node.id_data.name)
+
 
     def execute(self, context):
-        name_no = self.node_name
-        name_tr = self.tree_name
-        sorting = self.sort
+
+        node = context.active_node
+        name_no = node.name
+        name_tr = node.id_data.name
+
         handle = handle_read(name_no + name_tr)
-        self.disable(name_no + name_tr, handle)
-        self.enable(name_no, name_tr, handle, sorting)
+        self.disable(context, handle)
+        self.enable(context, handle)
         print('have got {0} items from scene.'.format(handle[1]))
         return {'FINISHED'}
 
@@ -129,16 +135,19 @@ class ObjectsNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         name='groupname', description='group of objects (green outline CTRL+G)',
         default='',
         update=updateNode)
+
     modifiers = BoolProperty(
         name='Modifiers',
         description='Apply modifier geometry to import (original untouched)',
         default=False,
         update=updateNode)
+
     vergroups = BoolProperty(
         name='Vergroups',
         description='Use vertex groups to nesty insertion',
         default=False,
         update=hide_show_versgroups)
+
     sort = BoolProperty(
         name='sort by name',
         description='sorting inserted objects by names',
@@ -146,11 +155,11 @@ class ObjectsNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         update=updateNode)
 
     def sv_init(self, context):
-        self.outputs.new('VerticesSocket', "Vertices", "Vertices")
-        self.outputs.new('StringsSocket', "Edges", "Edges")
-        self.outputs.new('StringsSocket', "Polygons", "Polygons")
-        self.outputs.new('MatrixSocket', "Matrixes", "Matrixes")
-        self.outputs.new('SvObjectSocket', "Object", "Object")
+        self.outputs.new('VerticesSocket', "Vertices")
+        self.outputs.new('StringsSocket', "Edges")
+        self.outputs.new('StringsSocket', "Polygons")
+        self.outputs.new('MatrixSocket', "Matrixes")
+        self.outputs.new('SvObjectSocket', "Object")
 
     def draw_buttons(self, context, layout):
         #row.prop(self, 'groupname', text='')
@@ -167,11 +176,7 @@ class ObjectsNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             row.scale_y = 1
             op_text = "Get selection"
 
-        opera = row.operator('node.sverchok_object_insertion', text=op_text)
-        opera.node_name = self.name
-        opera.tree_name = self.id_data.name
-        opera.grup_name = self.groupname
-        opera.sort = self.sort
+        row.operator('node.sverchok_object_insertion', text=op_text)
 
         col = layout.column(align=True)
         row = col.row(align=True)
@@ -193,8 +198,6 @@ class ObjectsNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                         layout.label('. . . more ' + str(len(handle[1]) - 5) + ' items')
                         break
                     layout.label(o)
-            else:
-                handle_write(self.name + self.id_data.name, literal_eval(self.objects_local))
         else:
             layout.label('--None--')
 
@@ -207,49 +210,63 @@ class ObjectsNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             handle_write(name, literal_eval(self.objects_local))
 
     def process(self):
+        if not self.objects_local:
+            return
+
+        scene = bpy.context.scene
+        
         name = self.name + self.id_data.name
         handle = handle_read(name)
+
         # reload handle if possible
         if self.objects_local and not handle[0]:
             handle_write(name, literal_eval(self.objects_local))
             handle = handle_read(name)
 
         if handle[0]:
-            objs = handle[1]
+
+            objs = [o for o in bpy.data.objects if o.name in handle[1]]
+
             edgs_out = []
             vers_out = []
             vers_out_grouped = []
             pols_out = []
             mtrx_out = []
             objs_out = []
-            for obj_ in objs:  # names of objects
+
+            # iterate through references
+            for obj in objs:
+                print(obj, obj.name)
+
                 edgs = []
                 vers = []
                 vers_grouped = []
                 pols = []
                 mtrx = []
-                obj = bpy.data.objects[obj_]  # objects itself
+
                 if obj.type == 'EMPTY':
                     for m in obj.matrix_world:
                         mtrx.append(m[:])
 
                 else:
-                    scene = bpy.context.scene
-                    settings = 'PREVIEW'
                     # create a temporary mesh
-                    obj_data = obj.to_mesh(scene, self.modifiers, settings)
+                    obj_data = obj.to_mesh(scene, self.modifiers, 'PREVIEW')
 
                     for m in obj.matrix_world:
                         mtrx.append(list(m))
+        
                     for k, v in enumerate(obj_data.vertices):
                         if self.vergroups and v.groups.values():
                             vers_grouped.append(k)
                         vers.append(list(v.co))
+        
                     edgs = obj_data.edge_keys
+        
                     for p in obj_data.polygons:
                         pols.append(list(p.vertices))
-                    # remove the temp mesh
+
                     bpy.data.meshes.remove(obj_data)
+                    print('removed', obj.name, 'temp mesh')
 
                 edgs_out.append(edgs)
                 vers_out.append(vers)
@@ -257,25 +274,32 @@ class ObjectsNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                 pols_out.append(pols)
                 mtrx_out.append(mtrx)
                 objs_out.append(obj)
+
             if vers_out[0]:
 
-                if self.outputs['Vertices'].is_linked:
-                    SvSetSocketAnyType(self, 'Vertices', vers_out)
+                Vertices = self.outputs['Vertices']
+                Edges = self.outputs['Edges']
+                Polygons = self.outputs['Polygons']
+                Vers_grouped = self.outputs['Vers_grouped']
+                Matrixes = self.outputs['Matrixes']
+                Object = self.outputs['Object']
 
-                if self.outputs['Edges'].is_linked:
-                    SvSetSocketAnyType(self, 'Edges', edgs_out)
+                if Vertices.is_linked:
+                    Vertices.sv_set(vers_out)
 
-                if self.outputs['Polygons'].is_linked:
-                    SvSetSocketAnyType(self, 'Polygons', pols_out)
+                if Edges.is_linked:
+                    Edges.sv_set(edgs_out)
 
-                if self.vergroups and self.outputs['Vers_grouped'].is_linked:
-                    SvSetSocketAnyType(self, 'Vers_grouped', vers_out_grouped)
+                if Polygons.is_linked:
+                    Polygons.sv_set(pols_out)
 
-            if self.outputs['Matrixes'].is_linked:
-                SvSetSocketAnyType(self, 'Matrixes', mtrx_out)
-            if self.outputs['Object'].is_linked:
-                #print(objs_out)
-                SvSetSocketAnyType(self, 'Object', objs_out)
+                if self.vergroups and Vers_grouped.is_linked:
+                    Vers_grouped.sv_set(vers_out_grouped)
+
+            if Matrixes.is_linked:
+                Matrixes.sv_set(mtrx_out)
+            if Object.is_linked:
+                Object.sv_set(objs_out)
 
 
 def register():
