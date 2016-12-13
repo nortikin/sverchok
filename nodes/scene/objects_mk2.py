@@ -190,16 +190,18 @@ class ObjectsNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         opera.node_name = self.name
         opera.tree_name = self.id_data.name
 
-        handle = handle_read(self.name + self.id_data.name)
+        # handle = handle_read(self.name + self.id_data.name)
+        # if self.objects_local:
+        #     if handle[0]:
+        #         for i, o in enumerate(handle[1]):
+        #             if i > 4:
+        #                 layout.label('. . . more ' + str(len(handle[1]) - 5) + ' items')
+        #                 break
+        #             layout.label(o)
+        # else:
+        #     layout.label('--None--')
         if self.objects_local:
-            if handle[0]:
-                for i, o in enumerate(handle[1]):
-                    if i > 4:
-                        layout.label('. . . more ' + str(len(handle[1]) - 5) + ' items')
-                        break
-                    layout.label(o)
-        else:
-            layout.label('--None--')
+            layout.label(self.objects_local)
 
     def update(self):
         pass
@@ -251,31 +253,41 @@ class ObjectsNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                 else:
                     # create a temporary mesh
                     obj_data = obj.to_mesh(scene, self.modifiers, 'PREVIEW')
+                    print(obj_data)
 
                     for m in obj.matrix_world:
                         mtrx.append(list(m))
+                    print('r1')
         
                     for k, v in enumerate(obj_data.vertices):
                         if self.vergroups and v.groups.values():
                             vers_grouped.append(k)
                         vers.append(list(v.co))
+                    print('r2')
         
                     edgs = obj_data.edge_keys
         
                     for p in obj_data.polygons:
                         pols.append(list(p.vertices))
+                    print('r3')
 
-                    bpy.data.meshes.remove(obj_data)
-                    print('removed', obj.name, 'temp mesh')
+                    print(obj_data.users)
+                    try:
+                        bpy.data.meshes.remove(obj_data)
+                        print('r2.5 ok..removed mesh!')
+                    except:
+                        print('r4')
+                        print('failed remove', obj.name, 'temp mesh')
+                    print('r5')
 
-                edgs_out.append(edgs)
                 vers_out.append(vers)
-                vers_out_grouped.append(vers_grouped)
+                edgs_out.append(edgs)
                 pols_out.append(pols)
                 mtrx_out.append(mtrx)
+                vers_out_grouped.append(vers_grouped)
                 objs_out.append(obj)
 
-            if vers_out[0]:
+            if vers_out and vers_out[0]:
 
                 Vertices = self.outputs['Vertices']
                 Edges = self.outputs['Edges']
