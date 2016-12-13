@@ -109,6 +109,7 @@ class SvObjSelected(bpy.types.Operator):
         handle = handle_read(name_no + name_tr)
         self.disable(context, handle)
         self.enable(context, handle)
+        handle = handle_read(name_no + name_tr)
         print('have got {0} items from scene.'.format(handle[1]))
         return {'FINISHED'}
 
