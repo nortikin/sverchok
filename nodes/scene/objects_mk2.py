@@ -231,11 +231,9 @@ class ObjectsNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             vers_out_grouped = []
             pols_out = []
             mtrx_out = []
-            objs_out = []
 
             # iterate through references
             for obj in objs:
-                print(obj, obj.name)
 
                 edgs = []
                 vers = []
@@ -277,7 +275,6 @@ class ObjectsNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                 pols_out.append(pols)
                 mtrx_out.append(mtrx)
                 vers_out_grouped.append(vers_grouped)
-                objs_out.append(obj)
 
             if vers_out and vers_out[0]:
 
@@ -304,7 +301,7 @@ class ObjectsNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             if Matrixes.is_linked:
                 Matrixes.sv_set(mtrx_out)
             if Objects.is_linked:
-                Objects.sv_set(objs_out)
+                Objects.sv_set(objs)
 
 
 def register():
