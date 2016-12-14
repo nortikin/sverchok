@@ -193,7 +193,7 @@ class ObjectsNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         opera.node_name = self.name
         opera.tree_name = self.id_data.name
 
-        # Construct Node UI display of names currently being tracked, stop at the first 5..
+        # display names currently being tracked, stop at the first 5..
         handle = handle_read(self.name + self.id_data.name)
         if self.objects_local and handle[0]:
             for i, o in enumerate(handle[1]):
