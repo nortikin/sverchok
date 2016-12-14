@@ -79,6 +79,7 @@ class SvObjSelected(bpy.types.Operator):
             objs = bpy.context.selected_objects
         else:
             self.report({'WARNING'}, 'No object selected')
+            self.disable(node, handle)
             return
 
         for o in objs:
@@ -95,6 +96,7 @@ class SvObjSelected(bpy.types.Operator):
 
     def disable(self, node, handle):
         node.objects_local = ''
+        bpy.ops.node.sverchok_update_current(node_group=node.id_data.name)
         if not handle[0]:
             return
         handle_delete(node.name + node.id_data.name)
@@ -115,6 +117,7 @@ class SvObjSelected(bpy.types.Operator):
         self.disable(node, handle)
         self.enable(node, handle)
         handle = handle_read(name_no + name_tr)
+        print('end of execute', handle)
         print('have got {0} items from scene.'.format(handle[1]))
         return {'FINISHED'}
 
@@ -225,10 +228,6 @@ class ObjectsNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             handle_write(name, literal_eval(self.objects_local))
 
     def process(self):
-        if not self.objects_local:
-            print('|' + self.objects_local + '|')
-            return
-
         scene = bpy.context.scene
         
         name = self.name + self.id_data.name
