@@ -20,7 +20,7 @@
 import bpy
 from bpy.props import StringProperty
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (updateNode, second_as_first_cycle)
+from sverchok.data_structure import (updateNode, second_as_first_cycle as safc)
 
 
 class SvSetDataObjectNodeMK2(bpy.types.Node, SverchCustomTreeNode):
@@ -44,12 +44,12 @@ class SvSetDataObjectNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         Ov = self.outputs[0]
         Prop = self.formula
         objs = O.sv_get()
-
         if isinstance(objs[0], list):
             if V.is_linked:
                 v = V.sv_get()
+                objs, v = safc(objs, v)
                 for OBL, VALL in zip(objs, v):
-                    OBL, VALL = second_as_first_cycle(OBL, VALL)
+                    OBL, VALL = safc(OBL, VALL)
                     exec("for i, i2 in zip(OBL, VALL):\n    i."+Prop+"= i2")
             elif Ov.is_linked:
                 Ov.sv_set(eval("[[i."+Prop+" for i in OBL] for OBL in objs]"))
@@ -60,7 +60,7 @@ class SvSetDataObjectNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                 v = V.sv_get()
                 if isinstance(v[0], list):
                     v = v[0]
-                objs, v = second_as_first_cycle(objs, v)
+                objs, v = safc(objs, v)
                 exec("for i, i2 in zip(objs, v):\n    i."+Prop+"= i2")
             elif Ov.is_linked:
                 Ov.sv_set(eval("[i."+Prop+" for i in objs]"))
