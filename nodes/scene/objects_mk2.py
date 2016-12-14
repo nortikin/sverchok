@@ -199,7 +199,7 @@ class ObjectsNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             remain = len(handle[1]) - 5
             for i, o in enumerate(handle[1]):
                 layout.label(o)                
-                if i > 3 and remain > 0:
+                if i > 4 and remain > 0:
                     dots = ' . . . '
                     s = '' if remain == 1 else 's'
                     layout.label(dots + str(remain) + ' more item' + s)
