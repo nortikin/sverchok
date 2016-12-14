@@ -103,7 +103,7 @@ class SvObjSelected(bpy.types.Operator):
 
         if self.node_name and self.tree_name:
             ng = bpy.data.node_groups[self.tree_name]
-            node = ng.node_tree.nodes[self.node_name]
+            node = ng.nodes[self.node_name]
         else:
             node = context.node
 
