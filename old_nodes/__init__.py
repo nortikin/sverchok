@@ -43,7 +43,8 @@ old_bl_idnames = {
     'SvPointOnMeshNode': 'closest_point_on_mesh',
     'SvRayCastObjectNode': 'object_raycast',
     'SvRayCastSceneNode': 'scene_raycast',
-    'SvObjectToMeshNode': 'blenddata_to_svdata'
+    'SvObjectToMeshNode': 'blenddata_to_svdata',
+    'SvSetDataObjectNode': 'set_blenddata'
 }
 
 # we should add some functions to load things there
