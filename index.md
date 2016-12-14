@@ -234,7 +234,7 @@
     SvNumpyArrayNode
     SvNodeRemoteNode
     SvGetDataObjectNode
-    SvSetDataObjectNode
+    SvSetDataObjectNodeMK2
     SvSortObjsNode
     SvFilterObjsNode
     SvBMVertsNode
