@@ -94,6 +94,7 @@ class SvObjSelected(bpy.types.Operator):
 
 
     def disable(self, node, handle):
+        node.objects_local = ''
         if not handle[0]:
             return
         handle_delete(node.name + node.id_data.name)
@@ -125,10 +126,13 @@ class ObjectsNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     def hide_show_versgroups(self, context):
-        if self.vergroups and not ('Vers_grouped' in self.outputs):
-            self.outputs.new('StringsSocket', "Vers_grouped")
-        elif not self.vergroups and ('Vers_grouped' in self.outputs):
-            self.outputs.remove(self.outputs['Vers_grouped'])
+        outs = self.outputs
+        showing_vg = 'Vers_grouped' in outs
+
+        if self.vergroups and not showing_vg:
+            outs.new('StringsSocket', 'Vers_grouped')
+        elif not self.vergroups and showing_vg:
+            outs.remove(outs['Vers_grouped'])
 
     objects_local = StringProperty(
         name='local objects in', description='objects, binded to current node',
@@ -157,12 +161,28 @@ class ObjectsNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         default=True,
         update=updateNode)
 
+
     def sv_init(self, context):
         self.outputs.new('VerticesSocket', "Vertices")
         self.outputs.new('StringsSocket', "Edges")
         self.outputs.new('StringsSocket', "Polygons")
         self.outputs.new('MatrixSocket', "Matrixes")
         self.outputs.new('SvObjectSocket', "Object")
+
+    def draw_obj_names(self, layout):
+        # display names currently being tracked, stop at the first 5..
+        handle = handle_read(self.name + self.id_data.name)
+        if self.objects_local and handle[0]:
+            remain = len(handle[1]) - 5
+            for i, o in enumerate(handle[1]):
+                layout.label(o)                
+                if i > 4 and remain > 0:
+                    dots = ' . . . '
+                    s = '' if remain == 1 else 's'
+                    layout.label(dots + str(remain) + ' more item' + s)
+                    break
+        else:
+            layout.label('--None--')
 
     def draw_buttons(self, context, layout):
         #row.prop(self, 'groupname', text='')
@@ -192,20 +212,9 @@ class ObjectsNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         opera = row.operator('node.sverchok_object_in_selector', text='Select')
         opera.node_name = self.name
         opera.tree_name = self.id_data.name
+        
+        self.draw_obj_names(layout)
 
-        # display names currently being tracked, stop at the first 5..
-        handle = handle_read(self.name + self.id_data.name)
-        if self.objects_local and handle[0]:
-            remain = len(handle[1]) - 5
-            for i, o in enumerate(handle[1]):
-                layout.label(o)                
-                if i > 4 and remain > 0:
-                    dots = ' . . . '
-                    s = '' if remain == 1 else 's'
-                    layout.label(dots + str(remain) + ' more item' + s)
-                    break
-        else:
-            layout.label('--None--')
 
     def update(self):
         pass
@@ -217,6 +226,7 @@ class ObjectsNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
     def process(self):
         if not self.objects_local:
+            print('|' + self.objects_local + '|')
             return
 
         scene = bpy.context.scene
@@ -273,7 +283,7 @@ class ObjectsNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
                         bpy.data.meshes.remove(obj_data, do_unlink=True)
                 except:
-                    print('failure in process between freezed area')
+                    print('failure in process between frozen area', self.name)
 
                 self.id_data.unfreeze(hard=True)
 
