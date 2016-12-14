@@ -143,27 +143,22 @@ class ObjectsNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
     groupname = StringProperty(
         name='groupname', description='group of objects (green outline CTRL+G)',
-        default='',
-        update=updateNode)
+        default='', update=updateNode)
 
     modifiers = BoolProperty(
         name='Modifiers',
         description='Apply modifier geometry to import (original untouched)',
-        default=False,
-        update=updateNode)
+        default=False, update=updateNode)
 
     vergroups = BoolProperty(
         name='Vergroups',
         description='Use vertex groups to nesty insertion',
-        default=False,
-        update=hide_show_versgroups)
+        default=False, update=hide_show_versgroups)
 
     sort = BoolProperty(
         name='sort by name',
         description='sorting inserted objects by names',
-        default=True,
-        update=updateNode)
-
+        default=True, update=updateNode)
 
     def sv_init(self, context):
         self.outputs.new('VerticesSocket', "Vertices")
@@ -208,7 +203,6 @@ class ObjectsNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         row = col.row(align=True)
         row.prop(self, 'sort', text='Sort', toggle=True)
         row.prop(self, "modifiers", text="Post", toggle=True)
-        # row = layout.row(align=True)
         row.prop(self, "vergroups", text="VeGr", toggle=True)
 
         row = col.row(align=True)
@@ -229,7 +223,6 @@ class ObjectsNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
     def process(self):
         scene = bpy.context.scene
-        
         name = self.name + self.id_data.name
         handle = handle_read(name)
 
