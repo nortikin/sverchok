@@ -62,15 +62,15 @@ class SvObjSelected(bpy.types.Operator):
     bl_label = "Sverchok object selector"
     bl_options = {'REGISTER', 'UNDO'}
 
+    node_name = StringProperty()
+    tree_name = StringProperty()
 
-    def enable(self, context, handle):
+    def enable(self, node, handle):
         groups = bpy.data.groups
         
-        node = context.node
         name_no = node.name
         name_tr = node.id_data.name
         group_name = node.groupname
-
 
         objects = []
         if group_name and groups[group_name].objects:
@@ -93,22 +93,26 @@ class SvObjSelected(bpy.types.Operator):
             node.objects_local = str(handle[1])
 
 
-    def disable(self, context, handle):
+    def disable(self, node, handle):
         if not handle[0]:
             return
-        node = context.active_node
         handle_delete(node.name + node.id_data.name)
 
 
     def execute(self, context):
 
-        node = context.node
+        if self.node_name and self.tree_name:
+            ng = bpy.data.node_groups[self.name_tr]
+            node = ng.node_tree.nodes[self.name_no]
+        else:
+            node = context.node
+
         name_no = node.name
         name_tr = node.id_data.name
 
         handle = handle_read(name_no + name_tr)
-        self.disable(context, handle)
-        self.enable(context, handle)
+        self.disable(node, handle)
+        self.enable(node, handle)
         handle = handle_read(name_no + name_tr)
         print('have got {0} items from scene.'.format(handle[1]))
         return {'FINISHED'}
@@ -122,7 +126,7 @@ class ObjectsNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
     def hide_show_versgroups(self, context):
         if self.vergroups and not ('Vers_grouped' in self.outputs):
-            self.outputs.new('StringsSocket', "Vers_grouped", "Vers_grouped")
+            self.outputs.new('StringsSocket', "Vers_grouped")
         elif not self.vergroups and ('Vers_grouped' in self.outputs):
             self.outputs.remove(self.outputs['Vers_grouped'])
 
