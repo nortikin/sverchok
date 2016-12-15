@@ -171,7 +171,7 @@ class SkinViewerNode(bpy.types.Node, SverchCustomTreeNode):
         name='general_radius',
         default=0.25,
         description='value used to uniformly set the radii of skin vertices',
-        min=0.01, step=0.05,
+        min=0.0001, step=0.05,
         update=updateNode)
 
     levels = IntProperty(min=0, default=1, max=3, update=updateNode)
