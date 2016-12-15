@@ -80,7 +80,6 @@ class Sv3DViewObjInUpdater(bpy.types.Operator, object):
                     nodes = []
                     for n in ng.nodes:
                         if n.bl_idname in {'ObjectsNode','ObjectsNodeMK2'}:
-                            print('adding', n.name, 'to process_from_nodes')
                             nodes.append(n)
                     if nodes:
                         obj_nodes.append(nodes)
@@ -202,9 +201,10 @@ class Sv3DPanel(bpy.types.Panel):
                         no = item.node_name
                         ver = item.prop_name
                         node = tree.nodes[no]
-
-                        tex = node.label if node.label else no
-
+                        if node.label:
+                            tex = node.label
+                        else:
+                            tex = no
                         if node.bl_idname == "ObjectsNodeMK2":
                             row = col.row(align=True)
                             row.label(text=node.label if node.label else no)
@@ -213,7 +213,8 @@ class Sv3DPanel(bpy.types.Panel):
                             op = colo.operator("node.sverchok_object_insertion", text="Get")
                             op.node_name = node.name
                             op.tree_name = tree.name
-
+                            op.grup_name = node.groupname
+                            op.sort = node.sort
                         elif node.bl_idname in {"IntegerNode", "FloatNode"}:
                             row = col.row(align=True)
                             row.prop(node, ver, text=tex)
