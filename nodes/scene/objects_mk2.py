@@ -171,13 +171,14 @@ class ObjectsNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         # display names currently being tracked, stop at the first 5..
         handle = handle_read(self.name + self.id_data.name)
         if self.objects_local and handle[0]:
+            
             remain = len(handle[1]) - 5
-            for i, o in enumerate(handle[1]):
-                layout.label(o)                
+            more_items = '... {0} more item' + ('' if remain == 1 else 's')
+
+            for i, obj_name in enumerate(handle[1]):
+                layout.label(obj_name)
                 if i > 4 and remain > 0:
-                    dots = ' . . . '
-                    s = '' if remain == 1 else 's'
-                    layout.label(dots + str(remain) + ' more item' + s)
+                    layout.label(more_items.format(remain))
                     break
         else:
             layout.label('--None--')
