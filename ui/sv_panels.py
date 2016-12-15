@@ -80,6 +80,7 @@ class Sv3DViewObjInUpdater(bpy.types.Operator, object):
                     nodes = []
                     for n in ng.nodes:
                         if n.bl_idname in {'ObjectsNode','ObjectsNodeMK2'}:
+                            print('adding', n.name, 'to process_from_nodes')
                             nodes.append(n)
                     if nodes:
                         obj_nodes.append(nodes)
