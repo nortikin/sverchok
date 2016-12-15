@@ -25,7 +25,7 @@ from bpy.props import BoolProperty, StringProperty, FloatProperty, IntProperty
 from mathutils import Matrix, Vector
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode
+from sverchok.data_structure import updateNode, match_long_repeat
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 from sverchok.utils.sv_viewer_utils import greek_alphabet
 
@@ -247,6 +247,7 @@ class SkinViewerNode(bpy.types.Node, SverchCustomTreeNode):
         ntimes = len(geometry[0])
         if i['radii'].is_linked:
             radii = i['radii'].sv_get()[0]
+            radii, delete = match_long_repeat([radii,geometry[0]])
             # perhaps extend to fullList if given list length doesn't match.
             # maybe also indicate this failure somehow in the UI?
         else:
