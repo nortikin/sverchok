@@ -22,7 +22,7 @@ import bmesh
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode, Vector_generate, Vector_degenerate,
-                            SvSetSocketAnyType, SvGetSocketAnyType)
+                            SvSetSocketAnyType, SvGetSocketAnyType, match_long_repeat)
 
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 # "coauthor": "Alessandro Zomparelli (sketchesofcode)"
@@ -87,6 +87,7 @@ class AdaptivePolsNode(bpy.types.Node, SverchCustomTreeNode):
                 versD_ = SvGetSocketAnyType(self, self.inputs['VersD'])  # donor
                 versD = Vector_generate(versD_)
                 ##### it is needed for normals of vertices
+                polsR,polsD,versD = match_long_repeat([polsR,polsD,versD])
                 bm = bmesh_from_pydata(versR, [], polsR)
 
                 bmesh.ops.recalc_face_normals(bm, faces=bm.faces[:])
@@ -100,8 +101,12 @@ class AdaptivePolsNode(bpy.types.Node, SverchCustomTreeNode):
                 #new_ve = new_me.vertices
                 #print (new_ve[0].normal, 'normal')
 
-                for i, vD in enumerate(versD):
-
+                vers_out = []
+                pols_out = []
+                i = 0
+                for vD, pR in zip(versD,polsR):
+                    # part of donor to make limits
+                    j = i
                     pD = polsD[i]
                     n_verts = len(vD)
                     n_faces = len(pD)
@@ -118,27 +123,25 @@ class AdaptivePolsNode(bpy.types.Node, SverchCustomTreeNode):
                         z0 = 0
                     #print (x0, y0, z0)
 
-                    vers_out = []
-                    pols_out = []
+                    # part of recipient polygons to reciev donor
 
-                    for j, pR in enumerate(polsR):
+                    last = len(pR)-1
+                    vs = [new_ve[v] for v in pR]  # new_ve  - temporery data
+                    if z_coef:
+                        if j < len(z_coef):
+                            z1 = z0 * z_coef[j]
+                    else:
+                        z1 = z0
 
-                        last = len(pR)-1
-                        vs = [new_ve[v] for v in pR]  # new_ve  - temporery data
-                        if z_coef:
-                            if j < len(z_coef):
-                                z1 = z0 * z_coef[j]
-                        else:
-                            z1 = z0
-
-                        new_vers = []
-                        new_pols = []
-                        for v in vD:
-                            new_vers.append(self.lerp3(vs[0], vs[1], vs[2], vs[last], v, x0, y0, z1))
-                        for p in pD:
-                            new_pols.append([id for id in p])
-                        pols_out.append(new_pols)
-                        vers_out.append(new_vers)
+                    new_vers = []
+                    new_pols = []
+                    for v in vD:
+                        new_vers.append(self.lerp3(vs[0], vs[1], vs[2], vs[last], v, x0, y0, z1))
+                    for p in pD:
+                        new_pols.append([id for id in p])
+                    pols_out.append(new_pols)
+                    vers_out.append(new_vers)
+                    i += 1
                 #bpy.data.meshes.remove(new_me)  # cleaning and washing
                 bm.free()
                 #print (Vector_degenerate(vers_out))
@@ -161,3 +164,6 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(AdaptivePolsNode)
+
+#if __name__ == '__main__':
+#    register()
