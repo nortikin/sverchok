@@ -57,7 +57,7 @@ class SvSetDataObjectNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             elif Ov.is_linked:
                 Ov.sv_set(eval("[[i."+Prop+" for i in OBL] for OBL in objs]"))
             else:
-                exec("for i in objs:\n    for i2 in i:\n        i2."+Prop)
+                exec("for OL in objs:\n    for i in OL:\n        i."+Prop)
         else:
             if V.is_linked:
                 v = V.sv_get()
