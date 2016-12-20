@@ -10,6 +10,8 @@ Functionality
 
 *multiple lists can be combined into one with the help of ListJoin node*
 
+MK2 version can work with multiple nested lists
+
 When there is only one socket Objects- performs **(Object.str)**
 
 If the second socket is connected Values- performs **(Object.str=Value)**
@@ -48,3 +50,5 @@ Examples of usage
 .. image:: https://cloud.githubusercontent.com/assets/7894950/7807409/0b8ad44e-0394-11e5-930f-2416debba804.png
 
 .. image:: https://cloud.githubusercontent.com/assets/7894950/7901468/a50b74ba-0791-11e5-8fb7-296e866e7db4.png
+
+.. image:: https://cloud.githubusercontent.com/assets/22656834/21178380/56ea8b88-c200-11e6-8c38-be16d880f105.png
