@@ -99,6 +99,7 @@ class SvExecNodeMod(bpy.types.Node, SverchCustomTreeNode):
         self.dynamic_strings.add().line = lines[0]
         self.dynamic_strings.add().line = lines[1]
         self.dynamic_strings.add().line = ""
+        self.width = 289
 
 
     def process(self):
