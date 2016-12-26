@@ -37,7 +37,6 @@ def update_wrapper(self, context):
         ...
 
 
-# Assign a collection
 class SvExecNodeDynaStringItem(bpy.types.PropertyGroup):
     line = bpy.props.StringProperty(name="line to eval", default="", update=update_wrapper)
 
@@ -55,7 +54,7 @@ class SvExecNodeModCallback(bpy.types.Operator):
 
 
 class SvExecNodeMod(bpy.types.Node, SverchCustomTreeNode):
-    ''' Objects Input Lite'''
+    ''' Exec Node Mod'''
     bl_idname = 'SvExecNodeMod'
     bl_label = 'Exec Node Mod'
     bl_icon = 'OUTLINER_OB_EMPTY'
