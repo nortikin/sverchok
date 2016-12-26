@@ -80,6 +80,7 @@ class SvExecNodeMod(bpy.types.Node, SverchCustomTreeNode):
         row.operator('node.callback_execnodemod', text='', icon='ZOOMIN').cmd = 'add_new_line'
         row.operator('node.callback_execnodemod', text='', icon='ZOOMOUT').cmd = 'remove_last_line'
         row.operator('node.callback_execnodemod', text='', icon='TRIA_UP').cmd = 'shift_up'
+        row.operator('node.callback_execnodemod', text='', icon='TRIA_DOWN').cmd = 'shift_down'
 
     def add_new_line(self, context):
         self.dynamic_strings.add().line = ""
@@ -92,6 +93,12 @@ class SvExecNodeMod(bpy.types.Node, SverchCustomTreeNode):
         sds = self.dynamic_strings
         for i in range(len(sds)):
             sds.move(i+1,i)
+
+    def shift_down(self, context):
+        sds = self.dynamic_strings
+        L = len(sds)
+        for i in range(L):
+            sds.move(L-i, i-1)
 
 
     def sv_init(self, context):
