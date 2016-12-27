@@ -44,7 +44,8 @@ old_bl_idnames = {
     'SvRayCastObjectNode': 'object_raycast',
     'SvRayCastSceneNode': 'scene_raycast',
     'SvObjectToMeshNode': 'blenddata_to_svdata',
-    'SvSetDataObjectNode': 'set_blenddata'
+    'SvSetDataObjectNode': 'set_blenddata',
+    'SvVertexGroupNode': 'weights'
 }
 
 # we should add some functions to load things there

@@ -30,57 +30,51 @@ class SvVertexGroupNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
     fade_speed = FloatProperty(name='fade', default=2, update=updateNode)
     clear = BoolProperty(name='clear w', default=True, update=updateNode)
-    vertex_group = StringProperty(default='', update=updateNode)
-    object_ref = StringProperty(default='', update=updateNode)
+    group_name = StringProperty(default='Sv_VGroup', update=updateNode)
 
     def draw_buttons(self, context,   layout):
-        #layout.prop_search(self, 'object_ref', bpy.data, 'objects')
-        ob = bpy.data.objects.get(self.object_ref)
-        if ob and ob.type == 'MESH':
-            layout.prop_search(self, 'vertex_group', ob, "vertex_groups", text="")
+        layout.prop(self, "group_name", text="")
 
     def draw_buttons_ext(self, context, layout):
-        row = layout.row(align=True)
-        row.prop(self,    "clear",   text="clear unindexed")
-        row.prop(self, "fade_speed", text="Clearing speed")
+        lp = layout.prop
+        lp(self,    "clear",   text="clear unindexed")
+        lp(self, "fade_speed", text="Clearing speed")
 
     def sv_init(self, context):
+        self.inputs.new('SvObjectSocket', "Object")
         self.inputs.new('StringsSocket', "VertIND")
         self.inputs.new('StringsSocket', "Weights")
-        self.inputs.new('SvObjectSocket', "Object")
         self.outputs.new('StringsSocket', "OutWeights")
 
     def process(self):
-        obj = self.inputs['Object'].sv_get()[0]
-        print(obj)
-        self.object_ref = obj.name
-        obj.data.update() 
-        Ve, We, Owe = self.inputs[:2] + self.outputs[:]
-        if not obj.vertex_groups:
-            obj.vertex_groups.new(name='Sv_VGroup')
-        if self.vertex_group not in obj.vertex_groups:
-            return
-        ovgs = obj.vertex_groups.get(self.vertex_group)
-        Vi = [i.index for i in obj.data.vertices]
-        if Ve.is_linked:
-            verts = Ve.sv_get()[0]
-        else:
-            verts = Vi
-        if We.is_linked:
-            if self.clear:
-                ovgs.add(Vi, self.fade_speed, "SUBTRACT")
-            wei = We.sv_get()[0]
-            verts, wei = second_as_first_cycle(verts, wei)
-            for i, i2 in zip(verts, wei):
-                ovgs.add([i], i2, "REPLACE")
-        if Owe.is_linked:
-            out = []
-            for i in verts:
+        Objs, Ve, We = self.inputs
+        Owe = self.outputs[0]
+        out = []
+        for obj in self.inputs['Object'].sv_get():
+            if not obj.vertex_groups:
+                obj.vertex_groups.new(name=self.group_name)
+            if self.group_name not in obj.vertex_groups:
+                return
+            ovgs = obj.vertex_groups.get(self.group_name)
+            Vi = [i.index for i in obj.data.vertices]
+            if Ve.is_linked:
+                verts = Ve.sv_get()[0]
+            else:
+                verts = Vi
+            if We.is_linked:
+                if self.clear:
+                    ovgs.add(Vi, self.fade_speed, "SUBTRACT")
+                wei = We.sv_get()[0]
+                verts, wei = second_as_first_cycle(verts, wei)
+                for i, i2 in zip(verts, wei):
+                    ovgs.add([i], i2, "REPLACE")
+            obj.data.update()
+            if Owe.is_linked:
                 try:
-                    out.append(ovgs.weight(i))
+                    out.append([ovgs.weight(i) for i in verts])
                 except Exception:
-                    out.append(0.0)
-            Owe.sv_set([out])
+                    out.append([0.0 for i in verts])
+        Owe.sv_set(out)
 
 
 def register():

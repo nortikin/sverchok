@@ -37,7 +37,6 @@ def update_wrapper(self, context):
         ...
 
 
-# Assign a collection
 class SvExecNodeDynaStringItem(bpy.types.PropertyGroup):
     line = bpy.props.StringProperty(name="line to eval", default="", update=update_wrapper)
 
@@ -55,7 +54,7 @@ class SvExecNodeModCallback(bpy.types.Operator):
 
 
 class SvExecNodeMod(bpy.types.Node, SverchCustomTreeNode):
-    ''' Objects Input Lite'''
+    ''' Exec Node Mod'''
     bl_idname = 'SvExecNodeMod'
     bl_label = 'Exec Node Mod'
     bl_icon = 'OUTLINER_OB_EMPTY'
@@ -80,6 +79,8 @@ class SvExecNodeMod(bpy.types.Node, SverchCustomTreeNode):
         # add() remove() clear() move()
         row.operator('node.callback_execnodemod', text='', icon='ZOOMIN').cmd = 'add_new_line'
         row.operator('node.callback_execnodemod', text='', icon='ZOOMOUT').cmd = 'remove_last_line'
+        row.operator('node.callback_execnodemod', text='', icon='TRIA_UP').cmd = 'shift_up'
+        row.operator('node.callback_execnodemod', text='', icon='TRIA_DOWN').cmd = 'shift_down'
 
     def add_new_line(self, context):
         self.dynamic_strings.add().line = ""
@@ -87,6 +88,17 @@ class SvExecNodeMod(bpy.types.Node, SverchCustomTreeNode):
     def remove_last_line(self, context):
         if len(self.dynamic_strings) > 1:
             self.dynamic_strings.remove(len(self.dynamic_strings)-1)
+
+    def shift_up(self, context):
+        sds = self.dynamic_strings
+        for i in range(len(sds)):
+            sds.move(i+1,i)
+
+    def shift_down(self, context):
+        sds = self.dynamic_strings
+        L = len(sds)
+        for i in range(L):
+            sds.move(L-i, i-1)
 
 
     def sv_init(self, context):
