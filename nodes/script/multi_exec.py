@@ -122,6 +122,12 @@ class SvExecNodeMod(bpy.types.Node, SverchCustomTreeNode):
         exec('\n'.join([j.line for j in self.dynamic_strings]))
         
         self.outputs[0].sv_set(out)
+
+
+    def storage_get_data(self, node_dict):
+        node_dict['string_storage'] = []
+        for item in self.dynamic_strings:
+            node_dict['string_storage'].append(item.line)        
         
 
 def register():
