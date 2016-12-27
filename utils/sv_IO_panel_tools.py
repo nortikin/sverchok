@@ -150,7 +150,7 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
         IsGroupNode = (node.bl_idname == 'SvGroupNode')
         IsMonadInstanceNode = (node.bl_idname.startswith('SvGroupNodeMonad'))
         TextInput = (node.bl_idname == 'SvTextInNode')
-        ExecNodeMod = (node.bl_idname == 'SvExecNodeMod')
+        SvExecNodeMod = (node.bl_idname == 'SvExecNodeMod')
 
         for k, v in node.items():
 
@@ -161,6 +161,10 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
 
             if k in {'typ', 'newsock'}:
                 ''' these are reserved variables for changeable socks '''
+                continue
+
+            if k == 'dynamic_strings':
+                ''' reserved by exec node '''
                 continue
 
             if has_state_switch_protection(node, k):
