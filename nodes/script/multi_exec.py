@@ -16,6 +16,7 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+import json
 import bpy
 from bpy.props import StringProperty
 import numpy as np
@@ -114,7 +115,7 @@ class SvExecNodeMod(bpy.types.Node, SverchCustomTreeNode):
 
 
     def process(self):
-        v1,v2,v3 = self.inputs
+        v1, v2, v3 = self.inputs
         V1, V2, V3 = v1.sv_get(0), v2.sv_get(0), v3.sv_get(0)
         out = []
         extend = out.extend
@@ -122,7 +123,27 @@ class SvExecNodeMod(bpy.types.Node, SverchCustomTreeNode):
         exec('\n'.join([j.line for j in self.dynamic_strings]))
         
         self.outputs[0].sv_set(out)
+
+
+    def storage_set_data(self, storage):
+        strings_json = storage['string_storage']
+        lines_list = json.loads(strings_json)['lines']
         
+        self.id_data.freeze(hard=True)
+        
+        self.dynamic_strings.clear()
+        for line in lines_list:
+            self.dynamic_strings.add().line = line
+
+        self.id_data.unfreeze(hard=True)
+
+
+    def storage_get_data(self, node_dict):
+        local_storage = {'lines': []}
+        for item in self.dynamic_strings:
+            local_storage['lines'].append(item.line)
+        node_dict['string_storage'] = json.dumps(local_storage)
+
 
 def register():
     bpy.utils.register_class(SvExecNodeDynaStringItem)
