@@ -150,6 +150,7 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
         IsGroupNode = (node.bl_idname == 'SvGroupNode')
         IsMonadInstanceNode = (node.bl_idname.startswith('SvGroupNodeMonad'))
         TextInput = (node.bl_idname == 'SvTextInNode')
+        ExecNodeMod = (node.bl_idname == 'SvExecNodeMod')
 
         for k, v in node.items():
 
@@ -232,7 +233,7 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
 
                     node_items[prop_name] = v
 
-        if ScriptNodeLite or ObjNodeLite:
+        if any([ScriptNodeLite, ObjNodeLite, SvExecNodeMod]):
             node.storage_get_data(node_dict)
 
 
