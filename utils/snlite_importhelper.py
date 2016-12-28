@@ -85,7 +85,7 @@ def parse_sockets(node):
 
     snlite_info = {
         'inputs': [], 'outputs': [], 
-        'snlite_ui': [], 'includes': []
+        'snlite_ui': [], 'includes': {}
     }
 
     quotes = 0
@@ -119,7 +119,7 @@ def parse_sockets(node):
             filename = L[9:-1]
             file = bpy.data.texts.get(filename)
             if file:
-                snlite_info['includes']
+                snlite_info['includes'][filename] = file.as_string()
 
 
     return snlite_info
