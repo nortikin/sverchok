@@ -59,6 +59,7 @@ class SvExecNodeMod(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Exec Node Mod'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
+    text = StringProperty(default='', update=updateNode)
     dynamic_strings = bpy.props.CollectionProperty(type=SvExecNodeDynaStringItem)
 
     def draw_buttons(self, context, layout):
@@ -82,6 +83,11 @@ class SvExecNodeMod(bpy.types.Node, SverchCustomTreeNode):
         row.operator('node.callback_execnodemod', text='', icon='TRIA_UP').cmd = 'shift_up'
         row.operator('node.callback_execnodemod', text='', icon='TRIA_DOWN').cmd = 'shift_down'
 
+    def draw_buttons_ext(self, context, layout):
+        col = layout.column(align=True)
+        col.operator('node.callback_execnodemod', text='copy to node').cmd = 'copy_from_text'
+        col.prop_search(self, 'text', bpy.data, "texts", text="")
+
     def add_new_line(self, context):
         self.dynamic_strings.add().line = ""
 
@@ -92,7 +98,7 @@ class SvExecNodeMod(bpy.types.Node, SverchCustomTreeNode):
     def shift_up(self, context):
         sds = self.dynamic_strings
         for i in range(len(sds)):
-            sds.move(i+1,i)
+            sds.move(i+1, i)
 
     def shift_down(self, context):
         sds = self.dynamic_strings
@@ -100,6 +106,9 @@ class SvExecNodeMod(bpy.types.Node, SverchCustomTreeNode):
         for i in range(L):
             sds.move(L-i, i-1)
 
+    def copy_from_text(self, context):
+        for i, i2 in zip(self.dynamic_strings, bpy.data.texts[self.text].lines):
+            i.line = i2.body
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', 'V1')
@@ -113,7 +122,6 @@ class SvExecNodeMod(bpy.types.Node, SverchCustomTreeNode):
         self.dynamic_strings.add().line = ""
         self.width = 289
 
-
     def process(self):
         v1, v2, v3 = self.inputs
         V1, V2, V3 = v1.sv_get(0), v2.sv_get(0), v3.sv_get(0)
@@ -121,22 +129,17 @@ class SvExecNodeMod(bpy.types.Node, SverchCustomTreeNode):
         extend = out.extend
         append = out.append
         exec('\n'.join([j.line for j in self.dynamic_strings]))
-        
         self.outputs[0].sv_set(out)
-
 
     def storage_set_data(self, storage):
         strings_json = storage['string_storage']
         lines_list = json.loads(strings_json)['lines']
-        
         self.id_data.freeze(hard=True)
-        
         self.dynamic_strings.clear()
         for line in lines_list:
             self.dynamic_strings.add().line = line
 
         self.id_data.unfreeze(hard=True)
-
 
     def storage_get_data(self, node_dict):
         local_storage = {'lines': []}
