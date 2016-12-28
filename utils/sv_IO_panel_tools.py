@@ -150,6 +150,7 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
         IsGroupNode = (node.bl_idname == 'SvGroupNode')
         IsMonadInstanceNode = (node.bl_idname.startswith('SvGroupNodeMonad'))
         TextInput = (node.bl_idname == 'SvTextInNode')
+        SvExecNodeMod = (node.bl_idname == 'SvExecNodeMod')
 
         for k, v in node.items():
 
@@ -160,6 +161,10 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
 
             if k in {'typ', 'newsock'}:
                 ''' these are reserved variables for changeable socks '''
+                continue
+
+            if k == 'dynamic_strings':
+                ''' reserved by exec node '''
                 continue
 
             if has_state_switch_protection(node, k):
@@ -232,7 +237,7 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
 
                     node_items[prop_name] = v
 
-        if ScriptNodeLite or ObjNodeLite:
+        if any([ScriptNodeLite, ObjNodeLite, SvExecNodeMod]):
             node.storage_get_data(node_dict)
 
 
@@ -494,7 +499,7 @@ def add_node_to_tree(nodes, n, nodes_to_import, name_remap, create_texts):
     if create_texts:
         add_texts(node, node_ref)
     
-    if bl_idname == 'SvObjInLite':
+    if bl_idname in {'SvObjInLite', 'SvExecNodeMod'}:
         node.storage_set_data(node_ref)
 
     gather_remapped_names(node, n, name_remap)
