@@ -342,16 +342,39 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
     # ---- IO Json storage is handled in this node locally ----
 
 
-    def storage_set_data(self, data_list):
-        # self.node_dict[hash(self)]['sockets']['snlite_ui'] = ui_elements
-        for data_json_str in data_list:
-            data_dict = json.loads(data_json_str)
-            if data_dict['bl_idname'] == 'ShaderNodeRGBCurve':
-                set_rgb_curve(data_dict)
+    def storage_set_data(self, node_ref):
+
+        texts = bpy.data.texts
+
+        data_list = node_ref.get('snlite_ui')
+        if data_list:
+            # self.node_dict[hash(self)]['sockets']['snlite_ui'] = ui_elements
+            for data_json_str in data_list:
+                data_dict = json.loads(data_json_str)
+                if data_dict['bl_idname'] == 'ShaderNodeRGBCurve':
+                    set_rgb_curve(data_dict)
+
+        includes = node_ref.get('includes')
+        if includes:
+            for include_name, include_content in includes.items():
+                new_text = texts.new(include_name)
+                new_text.from_string(include_content)
+
+                if include_name == new_text.name:
+                    continue
+
+                print('| in', node_ref.name, 'the importer encountered')
+                print('| an include called', include_name, '. While trying')
+                print('| to write this file to bpy.data.texts another file')
+                print('| with the same name was encountered. The importer')
+                print('| automatically made a datablock called', new_text.name)
 
 
     def storage_get_data(self, node_dict):
-        ui_info = self.node_dict[hash(self)]['sockets']['snlite_ui']
+
+        storage = self.node_dict[hash(self)]['sockets']
+
+        ui_info = storage['snlite_ui']
         node_dict['snlite_ui'] = []
         print(ui_info)
         for _, info in enumerate(ui_info):
@@ -363,6 +386,12 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
                 print(data)
                 data_json_str = json.dumps(data)
                 node_dict['snlite_ui'].append(data_json_str)
+
+        includes = storage['includes']
+        if includes:
+            node_dict['includes'] = {}
+            for k, v in includes.items():
+                node_dict['includes'][k] = v
 
 
 classes = [
