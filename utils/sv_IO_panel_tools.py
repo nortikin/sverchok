@@ -359,9 +359,7 @@ def perform_scripted_node_inject(node, node_ref):
         node.load()
     elif node.bl_idname == 'SvScriptNodeLite':
         node.load()
-        data_list = node_ref.get('snlite_ui')
-        if data_list:
-            node.storage_set_data(data_list)
+        node.storage_set_data(node_ref)
     else:
         node.files_popup = node.avail_templates(None)[0][0]
         node.load()
