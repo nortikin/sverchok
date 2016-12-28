@@ -364,6 +364,11 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
                 data_json_str = json.dumps(data)
                 node_dict['snlite_ui'].append(data_json_str)
 
+        includes = self.node_dict[hash(self)]['includes']
+        if includes:
+            for k, v in includes.items():
+                node_dict['includes'][k] = v
+
 
 classes = [
     SvScriptNodeLiteTextImport,

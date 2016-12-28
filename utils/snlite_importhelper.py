@@ -121,7 +121,6 @@ def parse_sockets(node):
             if file:
                 snlite_info['includes'][filename] = file.as_string()
 
-
     return snlite_info
 
 
