@@ -371,7 +371,10 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
 
 
     def storage_get_data(self, node_dict):
-        ui_info = self.node_dict[hash(self)]['sockets']['snlite_ui']
+
+        storage = self.node_dict[hash(self)]['sockets']
+
+        ui_info = storage['snlite_ui']
         node_dict['snlite_ui'] = []
         print(ui_info)
         for _, info in enumerate(ui_info):
@@ -384,8 +387,9 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
                 data_json_str = json.dumps(data)
                 node_dict['snlite_ui'].append(data_json_str)
 
-        includes = self.node_dict[hash(self)]['includes']
+        includes = storage['includes']
         if includes:
+            node_dict['includes'] = {}
             for k, v in includes.items():
                 node_dict['includes'][k] = v
 
