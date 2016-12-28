@@ -33,7 +33,6 @@
     SvImageComponentsNode
     SvScriptNode
     SvScriptNodeMK3
-    SvScriptNodeLite
 
 ## Analyzers
     SvBBoxNode
@@ -217,6 +216,7 @@
     SvSCNRayCastNodeMK2
     SvObjectToMeshNodeMK2
     SvObjInLite
+    SvScriptNodeLite
     SvRndNumGen
 
 ## Alpha Nodes

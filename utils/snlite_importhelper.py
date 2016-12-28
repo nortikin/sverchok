@@ -79,33 +79,50 @@ def parse_ui_line(L):
 
 
 def parse_sockets(node):
-    # maybe a better local name is snlife_info
+
     if hasattr(node, 'inject_params'):
         node.inject_params = False
-    socket_info = {'inputs': [], 'outputs': [], 'snlite_ui': []}
+
+    snlite_info = {
+        'inputs': [], 'outputs': [], 
+        'snlite_ui': [], 'includes': []
+    }
+
     quotes = 0
     for line in node.script_str.split('\n'):
         L = line.strip()
+
         if L.startswith(TRIPPLE_QUOTES):
             quotes += 1
             if quotes == 2:
                 break
+
         elif L.startswith('in ') or L.startswith('out '):
             socket_dir = L.split(' ')[0] + 'puts'
-            socket_info[socket_dir].append(parse_socket_line(L))
+            snlite_info[socket_dir].append(parse_socket_line(L))
+
         elif L.startswith('draw '):
             drawfunc_line = L.split(' ')
             if len(drawfunc_line) == 2:
-                socket_info['drawfunc_name'] = drawfunc_line[1]
+                snlite_info['drawfunc_name'] = drawfunc_line[1]
+
         elif L.startswith('ui = '):
             ui_dict = parse_ui_line(L)
             if isinstance(ui_dict, dict):
-                socket_info['snlite_ui'].append(ui_dict)
+                snlite_info['snlite_ui'].append(ui_dict)
+
         elif L.startswith('inject'):
             if hasattr(node, 'inject_params'):
                 node.inject_params = True
 
-    return socket_info
+        elif L.startswith('include <') and L.endswith('>'):
+            filename = L[9:-1]
+            file = bpy.data.texts.get(filename)
+            if file:
+                snlite_info['includes']
+
+
+    return snlite_info
 
 
 def are_matched(sock_, socket_description):
