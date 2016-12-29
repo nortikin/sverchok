@@ -69,7 +69,7 @@ def parse_socket(socket):
 
     out = []
     for line in display_text:
-        out.append(re.sub(rounded_vals, mround, line))
+        out.append(re.sub(rounded_vals, mround, line) if not "bpy." in line else line)
     return out
 
 
