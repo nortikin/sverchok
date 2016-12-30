@@ -1,0 +1,226 @@
+{
+  "export_version": "0.062",
+  "framed_nodes": {},
+  "groups": {},
+  "nodes": {
+    "List First & Last": {
+      "bl_idname": "ListFLNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -179.83038330078125,
+        80.55524444580078
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Range Float": {
+      "bl_idname": "SvGenFloatRange",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -213.85110473632812,
+        -89.84713745117188
+      ],
+      "params": {
+        "count_": 20,
+        "mode": "FRANGE_COUNT",
+        "stop_": 1.0
+      },
+      "width": 140.0
+    },
+    "Sphere": {
+      "bl_idname": "SphereNode",
+      "color": [
+        0.9200000166893005,
+        0.9200000166893005,
+        0.9200000166893005
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -467.8513488769531,
+        82.01992797851562
+      ],
+      "params": {
+        "Separate": 1,
+        "U_": 5,
+        "V_": 5
+      },
+      "width": 140.0
+    },
+    "Stripes Mult": {
+      "bl_idname": "SvInterpolationStripesNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        80.2149658203125,
+        -491.60443115234375
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Vector Interpolation": {
+      "bl_idname": "SvInterpolationNode",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        87.43902587890625,
+        -135.64794921875
+      ],
+      "params": {
+        "mode": "SPL"
+      },
+      "width": 140.0
+    },
+    "Vector Interpolation mk2": {
+      "bl_idname": "SvInterpolationNodeMK2",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        83.05290222167969,
+        -273.3243103027344
+      ],
+      "params": {
+        "defgrid": 0
+      },
+      "width": 140.0
+    },
+    "Vector Interpolation mk3": {
+      "bl_idname": "SvInterpolationNodeMK3",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        83.33602905273438,
+        73.2320556640625
+      ],
+      "params": {
+        "knot_mode": "CHEBYSHEV",
+        "mode": "SPL"
+      },
+      "width": 140.0
+    },
+    "Viewer Draw": {
+      "bl_idname": "ViewerNode2",
+      "color": [
+        0.6284880042076111,
+        0.931007981300354,
+        1.0
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        485.395751953125,
+        115.7066650390625
+      ],
+      "params": {},
+      "width": 140.0
+    }
+  },
+  "update_lists": [
+    [
+      "Sphere",
+      "Vertices",
+      "List First & Last",
+      "Data"
+    ],
+    [
+      "List First & Last",
+      "Middl",
+      "Vector Interpolation mk3",
+      "Vertices"
+    ],
+    [
+      "Range Float",
+      "Range",
+      "Vector Interpolation mk3",
+      "Interval"
+    ],
+    [
+      "Vector Interpolation mk3",
+      "Vertices",
+      "Viewer Draw",
+      "vertices"
+    ],
+    [
+      "List First & Last",
+      "Middl",
+      "Vector Interpolation mk2",
+      "Vertices"
+    ],
+    [
+      "Range Float",
+      "Range",
+      "Vector Interpolation mk2",
+      "IntervalX"
+    ],
+    [
+      "Range Float",
+      "Range",
+      "Vector Interpolation mk2",
+      "IntervalY"
+    ],
+    [
+      "Range Float",
+      "Range",
+      "Vector Interpolation",
+      "Interval"
+    ],
+    [
+      "List First & Last",
+      "Middl",
+      "Stripes Mult",
+      "Vertices"
+    ],
+    [
+      "Range Float",
+      "Range",
+      "Stripes Mult",
+      "IntervalX"
+    ],
+    [
+      "Range Float",
+      "Range",
+      "Stripes Mult",
+      "IntervalY"
+    ]
+  ]
+}

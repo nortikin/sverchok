@@ -438,6 +438,80 @@ class PathParser(object):
         return temp_edges
 
 
+class SvPrifilizer(bpy.types.Operator):
+    """SvPrifilizer"""
+    bl_idname = "node.sverchok_profilizer"
+    bl_label = "SvPrifilizer"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    nodename = StringProperty(name='nodename')
+    treename = StringProperty(name='treename')
+
+    def stringadd(self, x):
+        a = str(round(x[0],8)) + ',' + str(round(x[1],8)) + ' '
+        return a
+
+    def execute(self, context):
+        if not bpy.context.selected_objects[0].type == 'CURVE':
+            print('Pofiler: NOT a curve selected')
+            self.report({'INFO'}, 'It is not a curve selected for profiler')
+            return
+        ob_points = bpy.context.selected_objects[0].data.splines[0].bezier_points
+        # handles preperation
+        curves_left  = [i.handle_left_type for i in ob_points]
+        curves_right = ['v']+[i.handle_right_type for i in ob_points][:-1]
+        types = ['FREE','ALIGNED','AUTO']
+        curves = ['C ' if x in types or c in types else 'L ' for x,c in zip(curves_left,curves_right)]
+        values = ''
+        values += 'M '
+        co = ob_points[0].co[:]
+        values += self.stringadd(co)
+        values += '\n'
+        line = False
+        for i,c in zip(range(len(ob_points)),curves):
+            co = ob_points[i].co
+            if not i:
+                continue
+            else:
+                if c == 'C ':
+                    values += '\n'
+                    line = False
+                    values += c
+                    hr = ob_points[i-1].handle_right[:]
+                    hl = ob_points[i].handle_left[:]
+                    # hr[0]hr[1]hl[0]hl[1]co[0]co[1] 20 0
+                    values += self.stringadd(hr)
+                    values += self.stringadd(hl)
+                    values += self.stringadd(co)
+                    values += '20 0 '
+                    values += '\n'
+                elif c == 'L ' and not line:
+                    line = True
+                    values += c
+                    values += self.stringadd(co)
+                elif c == 'L ' and line:
+                    values += self.stringadd(co)
+        self.write_values(self.nodename, values)
+        print(values)
+        bpy.data.node_groups[self.treename].nodes[self.nodename].filename = self.nodename
+        return{'FINISHED'}
+
+    def write_values(self,text,values):
+        texts = bpy.data.texts.items()
+        exists = False
+        for t in texts:
+            if bpy.data.texts[t[0]].name == text:
+                exists = True
+                break
+
+        if not exists:
+            bpy.data.texts.new(text)
+        bpy.data.texts[text].clear()
+        bpy.data.texts[text].write(values)
+
+                
+
+
 class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
     '''
     SvProfileNode generates one or more profiles / elevation segments using;
@@ -477,9 +551,14 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
     extended_parsing = BoolProperty(default=False)
 
     def draw_buttons(self, context, layout):
-        row = layout.row()
+        col = layout.column(align=True)
+        row = col.row()
+        do_text = row.operator('node.sverchok_profilizer', text='from selection')
+        do_text.nodename = self.name
+        do_text.treename = self.id_data.name
+        row = col.row()
         row.prop(self, 'selected_axis', expand=True)
-        row = layout.row(align=True)
+        row = col.row(align=True)
         # row.prop(self, "profile_file", text="")
         row.prop_search(self, 'filename', bpy.data, 'texts', text='', icon='TEXT')
 
@@ -615,7 +694,12 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
 
 def register():
     bpy.utils.register_class(SvProfileNode)
+    bpy.utils.register_class(SvPrifilizer)
 
 
 def unregister():
+    bpy.utils.unregister_class(SvPrifilizer)
     bpy.utils.unregister_class(SvProfileNode)
+
+if __name__ == '__main__':
+    register()
