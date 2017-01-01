@@ -1181,8 +1181,6 @@ def get_matrices_from_locs(data):
                 get_all(item)
 
     get_all(data)
-
-    print(location_matrices)
     return location_matrices
 
 
