@@ -6,8 +6,8 @@ from contextlib import contextmanager
 @contextmanager
 def hard_freeze(self):
     '''
-    This prevents properties from calling updateNode when edited.
-    it Freezes the node-tree until control flow leaves the context.
+    Use this when you don't want modifications to node properties 
+    to trigger the node's `process()` function. 
 
     usage  (when self is a reference to a node)
 
