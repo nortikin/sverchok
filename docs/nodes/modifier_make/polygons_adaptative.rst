@@ -6,7 +6,7 @@ Functionality
 
 Share one object's **verts+faces** to another object's **verts+faces**. Donor spreads itself onto recipient polygons, every polygon recieves a copy of the donor object and deforms according to the recipients face **normals**. 
 
-*Limitations:* This node was created primarily with Quads (quadrilateral polygons) in mind, and will output unusual meshes if you feed it Tris or Ngons. Original code taken with permission from https://sketchesofcode.wordpress.com/2013/11/11/ by Alessandro Zomparelli (sketchesofcode).
+*Limitations:* This node was created primarily with Quads (quadrilateral polygons) in mind, and will output unusual meshes if you feed it Tris or Ngons in the recipient Mesh. Original code taken with permission from https://sketchesofcode.wordpress.com/2013/11/11/ by Alessandro Zomparelli (sketchesofcode).
 
 Inputs
 ------
