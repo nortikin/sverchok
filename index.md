@@ -235,6 +235,7 @@
     SvNodeRemoteNode
     SvGetDataObjectNode
     SvSetDataObjectNodeMK2
+    SvObjEdit
     SvSortObjsNode
     SvFilterObjsNode
     SvBMVertsNode
