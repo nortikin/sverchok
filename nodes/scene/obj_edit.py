@@ -102,10 +102,6 @@ class SvObjEdit(bpy.types.Node, SverchCustomTreeNode):
                 self.obj_passed_in = objlist[0].name
 
 
-
-
-
-
 def register():
     bpy.utils.register_class(SvObjEditCallback)
     bpy.utils.register_class(SvObjEdit)
