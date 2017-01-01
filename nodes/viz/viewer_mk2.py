@@ -316,17 +316,17 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
         col.prop(self, 'ngon_tessellate', text='ngons tessellation', toggle=True)
         col.prop(self, 'extended_matrix', text='Extended Matrix')
 
-        col.separator()
+        col.separator() # --------------------------------------------
 
         col.label('Light Direction')
-
         col.prop(self, "use_scene_light")
         if self.use_scene_light:
             col.prop(context.scene, 'sv_light_direction', text='')
         else:
             col.prop(self, 'light_direction', text='')
 
-        col.separator()
+        col.separator() # ---------------------------------------------
+
         opera = col.operator('node.sverchok_mesh_baker_mk2', text="Bake")
         opera.idname = self.name
         opera.idtree = self.id_data.name
