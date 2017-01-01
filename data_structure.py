@@ -1180,6 +1180,9 @@ def get_matrices_from_locs(data):
             else:
                 get_all(item)
 
+    get_all(data)
+
+    print(location_matrices)
     return location_matrices
 
 
@@ -1195,10 +1198,11 @@ def SvGetSocket(socket, deepcopy=True):
         if s_id in socket_data_cache[s_ng]:
             out = socket_data_cache[s_ng][s_id]
 
-            if socket.sock_type == 'm' and other.sock_type == 'v':
+            if socket.bl_idname == 'MatrixSocket' and other.bl_idname == 'VerticesSocket':
                 # this means we're going to get a flat list of the incoming 
                 # locations and convert those into matrices proper.
-                out = get_matrices_from_locs(out)
+                print('i am triggered')
+                return get_matrices_from_locs(out)
 
             if deepcopy:
                 return sv_deep_copy(out)
