@@ -1167,6 +1167,22 @@ def SvSetSocket(socket, out):
     socket_data_cache[s_ng][s_id] = out
 
 
+def get_matrices_from_locs(data):
+    location_matrices = []
+    collect_matrix = location_matrices.append
+
+    def get_all(data):
+        for item in data:
+            if isinstance(item, (tuple, list)) and len(item)==3 and isinstance(item[0], (float, int)):
+                # generate location matrix from location
+                x, y, z = item
+                collect_matrix([(1., .0, .0, x), (.0, 1., .0, y), (.0, .0, 1., z), (.0, .0, .0, 1.)])
+            else:
+                get_all(item)
+
+    return location_matrices
+
+
 def SvGetSocket(socket, deepcopy=True):
     global socket_data_cache
     global DEBUG_MODE
@@ -1178,6 +1194,12 @@ def SvGetSocket(socket, deepcopy=True):
             raise LookupError
         if s_id in socket_data_cache[s_ng]:
             out = socket_data_cache[s_ng][s_id]
+
+            if socket.sock_type == 'm' and other.sock_type == 'v':
+                # this means we're going to get a flat list of the incoming 
+                # locations and convert those into matrices proper.
+                out = [get_matrices_from_locs(out)]
+
             if deepcopy:
                 return sv_deep_copy(out)
             else:
