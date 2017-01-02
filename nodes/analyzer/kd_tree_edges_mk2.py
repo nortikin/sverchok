@@ -35,11 +35,11 @@ class SvKDTreeEdgesNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     mindist = FloatProperty(
-        name='mindist', description='Minimum dist',
+        name='mindist', description='Minimum dist', min=0.0,
         default=0.1, update=updateNode)
 
     maxdist = FloatProperty(
-        name='maxdist', description='Maximum dist',
+        name='maxdist', description='Maximum dist', min=0.0,
         default=2.0, update=updateNode)
 
     maxNum = IntProperty(
@@ -111,9 +111,9 @@ class SvKDTreeEdgesNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             num_edges = 0
 
             # this always returns closest first followed by next closest, etc.
-            for (co, index, dist) in kd.find_range(vtx, maxdist):
+            for (co, index, dist) in kd.find_range(vtx, abs(maxdist)):
 
-                if (dist <= mindist) or (i == index):
+                if (dist <= abs(mindist)) or (i == index):
                     continue
 
                 edge = tuple(sorted([i, index]))
