@@ -106,8 +106,10 @@ class SvKDTreeEdgesNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
         for i, vtx in enumerate(verts):
             num_edges = 0
+
+            # this always return closest first followed by next closest, etc.
             for item_idx, (co, index, dist) in enumerate(kd.find_range(vtx, maxdist)):
-                print(dist)
+
                 if (dist <= mindist) or (i == index):
                     continue
                 if (num_edges > maxNum):
