@@ -16,6 +16,8 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+from collections import defaultdict
+
 import bpy
 from bpy.props import IntProperty, FloatProperty
 import mathutils
@@ -49,13 +51,13 @@ class SvKDTreeEdgesNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         default=0, min=0, update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', 'Verts', 'Verts')
-        self.inputs.new('StringsSocket', 'mindist', 'mindist').prop_name = 'mindist'
-        self.inputs.new('StringsSocket', 'maxdist', 'maxdist').prop_name = 'maxdist'
-        self.inputs.new('StringsSocket', 'maxNum', 'maxNum').prop_name = 'maxNum'
-        self.inputs.new('StringsSocket', 'skip', 'skip').prop_name = 'skip'
+        self.inputs.new('VerticesSocket', 'Verts')
+        self.inputs.new('StringsSocket', 'mindist').prop_name = 'mindist'
+        self.inputs.new('StringsSocket', 'maxdist').prop_name = 'maxdist'
+        self.inputs.new('StringsSocket', 'maxNum').prop_name = 'maxNum'
+        self.inputs.new('StringsSocket', 'skip').prop_name = 'skip'
 
-        self.outputs.new('StringsSocket', 'Edges', 'Edges')
+        self.outputs.new('StringsSocket', 'Edges')
 
     def process(self):
         inputs = self.inputs
@@ -103,6 +105,7 @@ class SvKDTreeEdgesNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         e = set()
 
         # skip shall skip the first n closest verts.
+        distances = {}
 
         for i, vtx in enumerate(verts):
             num_edges = 0
@@ -117,16 +120,41 @@ class SvKDTreeEdgesNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                 if not edge in e:
                     e.add(edge)
                     num_edges += 1
+                    if skip > 0:
+                        distances[edge] = dist
 
-                if num_edges == maxNum:
+                if num_edges == maxNum and skip == 0:
                     break
 
         if skip > 0:
-            # visit each vertex and cull the first n shortest edges
-            ...
+            # consider this feature permanently jazz-broken.
 
+            skip_dict = defaultdict(list)
 
-        self.outputs['Edges'].sv_set([list(e)])
+            # get all edges that start with idx1
+            for idx1, idx2 in sorted(e, key=lambda a: (a[0], distances[a])):
+                skip_dict[idx1].append((idx1, idx2))
+
+            
+            reval = []
+            extend = reval.extend
+            for k, v in skip_dict.items():
+
+                # ditch all first n-skip items from each list
+                if len(v) > skip:
+                    skip_dict[k] = skip_dict[k][skip:]
+
+                # cap items past maxNum
+                if len(skip_dict[k]) >= maxNum:
+                    skip_dict[k] = skip_dict[k][:maxNum]
+
+                if len(skip_dict[k]):
+                    extend(skip_dict[k])
+
+            self.outputs['Edges'].sv_set([reval])
+            return
+        else:
+            self.outputs['Edges'].sv_set([list(e)])
 
 
 def register():
