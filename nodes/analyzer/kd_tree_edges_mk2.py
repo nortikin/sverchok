@@ -104,14 +104,16 @@ class SvKDTreeEdgesNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         # makes edges
         e = set()
 
-        # skip shall skip the first n closest verts.
-        distances = {}
-
         for i, vtx in enumerate(verts):
             num_edges = 0
 
             # this always returns closest first followed by next closest, etc.
-            for (co, index, dist) in kd.find_range(vtx, abs(maxdist)):
+            #              co  index  dist
+            for edge_idx, (_, index, dist) in enumerate(kd.find_range(vtx, abs(maxdist))):
+
+                if skip > 0:
+                    if edge_idx < skip:
+                        continue
 
                 if (dist <= abs(mindist)) or (i == index):
                     continue
@@ -120,41 +122,12 @@ class SvKDTreeEdgesNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                 if not edge in e:
                     e.add(edge)
                     num_edges += 1
-                    if skip > 0:
-                        distances[edge] = dist
 
-                if num_edges == maxNum and skip == 0:
+                if num_edges == maxNum:
                     break
 
-        if skip > 0:
-            # consider this feature permanently jazz-broken.
 
-            skip_dict = defaultdict(list)
-
-            # get all edges that start with idx1
-            for idx1, idx2 in sorted(e, key=lambda a: (a[0], distances[a])):
-                skip_dict[idx1].append((idx1, idx2))
-
-            
-            reval = []
-            extend = reval.extend
-            for k, v in skip_dict.items():
-
-                # ditch all first n-skip items from each list
-                if len(v) > skip:
-                    skip_dict[k] = skip_dict[k][skip:]
-
-                # cap items past maxNum
-                if len(skip_dict[k]) >= maxNum:
-                    skip_dict[k] = skip_dict[k][:maxNum]
-
-                if len(skip_dict[k]):
-                    extend(skip_dict[k])
-
-            self.outputs['Edges'].sv_set([reval])
-            return
-        else:
-            self.outputs['Edges'].sv_set([list(e)])
+        self.outputs['Edges'].sv_set([list(e)])
 
 
 def register():
