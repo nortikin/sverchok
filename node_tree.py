@@ -95,7 +95,7 @@ class MatrixSocket(NodeSocket, SvSocketCommon):
             if self.bl_idname == 'MatrixSocket' and other.bl_idname == 'VerticesSocket':
                 # this means we're going to get a flat list of the incoming 
                 # locations and convert those into matrices proper.
-                return get_matrices_from_locs(out)
+                return get_matrices_from_locs(SvGetSocket(self, deepcopy))
 
             return SvGetSocket(self, deepcopy)
         elif default is sentinel:
