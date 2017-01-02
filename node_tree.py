@@ -30,7 +30,10 @@ from sverchok.data_structure import (
     SvGetSocket,
     SvSetSocket,
     updateNode,
-    get_other_socket, SvNoDataError, sentinel)
+    get_matrices_from_locs,
+    get_other_socket,
+    SvNoDataError,
+    sentinel)
 
 from sverchok.core.update_system import (
     build_update_list,
@@ -87,6 +90,13 @@ class MatrixSocket(NodeSocket, SvSocketCommon):
 
     def sv_get(self, default=sentinel, deepcopy=True):
         if self.is_linked and not self.is_output:
+
+            other = get_other_socket(self)
+            if self.bl_idname == 'MatrixSocket' and other.bl_idname == 'VerticesSocket':
+                # this means we're going to get a flat list of the incoming 
+                # locations and convert those into matrices proper.
+                return get_matrices_from_locs(out)
+
             return SvGetSocket(self, deepcopy)
         elif default is sentinel:
             raise SvNoDataError

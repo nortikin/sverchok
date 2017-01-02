@@ -1195,13 +1195,6 @@ def SvGetSocket(socket, deepcopy=True):
             raise LookupError
         if s_id in socket_data_cache[s_ng]:
             out = socket_data_cache[s_ng][s_id]
-
-            if socket.bl_idname == 'MatrixSocket' and other.bl_idname == 'VerticesSocket':
-                # this means we're going to get a flat list of the incoming 
-                # locations and convert those into matrices proper.
-                print('i am triggered')
-                return get_matrices_from_locs(out)
-
             if deepcopy:
                 return sv_deep_copy(out)
             else:
