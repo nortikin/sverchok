@@ -116,8 +116,11 @@ class SvKDTreeEdgesNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                     num_edges += 1
                     continue
 
-                e.add(tuple(sorted([i, index])))
-                num_edges += 1
+                edge = tuple(sorted([i, index]))
+                if not edge in e:
+                    e.add(edge)
+                    num_edges += 1
+
 
         self.outputs['Edges'].sv_set([list(e)])
 
