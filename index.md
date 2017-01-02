@@ -44,7 +44,7 @@
     GetNormalsNode
     VectorNormalNode
     SvKDTreeNode
-    SvKDTreeEdgesNode
+    SvKDTreeEdgesNodeMK2
     SvMeshFilterNode
     SvEdgeAnglesNode
 
