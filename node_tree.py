@@ -96,7 +96,7 @@ class MatrixSocket(NodeSocket, SvSocketCommon):
             if is_vector_to_matrix(self):
                 # this means we're going to get a flat list of the incoming 
                 # locations and convert those into matrices proper.
-                out = get_matrices_from_locs(SvGetSocket(self))
+                out = get_matrices_from_locs(SvGetSocket(self, deepcopy=True))
                 self.num_matrices = len(out)
                 return out
 
