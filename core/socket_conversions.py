@@ -63,6 +63,8 @@ def is_matrix(mat):
                 pass
             else:
                 return
+        else:
+            return
     return True
 
 
