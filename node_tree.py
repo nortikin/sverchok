@@ -30,8 +30,6 @@ from sverchok.data_structure import (
     SvGetSocket,
     SvSetSocket,
     updateNode,
-    get_matrices_from_locs,
-    is_vector_to_matrix,
     SvNoDataError,
     sentinel)
 
@@ -41,6 +39,10 @@ from sverchok.core.update_system import (
     process_tree,
     get_update_lists, update_error_nodes)
 
+from sverchok.core.socket_conversions import (
+    get_matrices_from_locs,
+    is_vector_to_matrix,
+    is_matrix_to_vector)
 
 from sverchok.ui import color_def
 

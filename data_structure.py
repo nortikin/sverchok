@@ -1166,38 +1166,6 @@ def SvSetSocket(socket, out):
         socket_data_cache[s_ng] = {}
     socket_data_cache[s_ng][s_id] = out
 
-## conversion tests, to be used in sv_get! 
-
-def cross_test_socket(self, A, B):
-    """ A is origin type, B is destination type """
-    other = get_other_socket(self)
-    get_type = {'v': 'VerticesSocket', 'm': 'MatrixSocket'}
-    return other.bl_idname == get_type[A] and self.bl_idname == get_type[B]
-
-def is_vector_to_matrix(self):
-    return cross_test_socket(self, 'v', 'm')
-
-def is_matrix_to_vector(self):
-    return cross_test_socket(self, 'm', 'v')
-
-# ---
-
-def get_matrices_from_locs(data):
-    location_matrices = []
-    collect_matrix = location_matrices.append
-
-    def get_all(data):
-        for item in data:
-            if isinstance(item, (tuple, list)) and len(item) == 3 and isinstance(item[0], (float, int)):
-                # generate location matrix from location
-                x, y, z = item
-                collect_matrix([(1., .0, .0, x), (.0, 1., .0, y), (.0, .0, 1., z), (.0, .0, .0, 1.)])
-            else:
-                get_all(item)
-
-    get_all(data)
-    return location_matrices
-
 
 def SvGetSocket(socket, deepcopy=True):
     global socket_data_cache
