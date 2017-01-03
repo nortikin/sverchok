@@ -59,9 +59,7 @@ def is_matrix(mat):
 
     for i in range(4):
         if isinstance(mat[i], (tuple, list)):
-            if len(mat[i]) == 4 and all([isinstance(j, (float, int)) for j in mat[i]]):
-                pass
-            else:
+            if not (len(mat[i]) == 4 and all([isinstance(j, (float, int)) for j in mat[i]])):
                 return
         else:
             return
