@@ -143,7 +143,13 @@ class VerticesSocket(NodeSocket, SvSocketCommon):
 
     def sv_get(self, default=sentinel, deepcopy=True):
         if self.is_linked and not self.is_output:
+            # if is_matrix_to_vector(self):
+            #     out = get_locs_from_matrices(SvGetSocket(self, deepcopy))
+            #     return out
+            
             return SvGetSocket(self, deepcopy)
+
+
         if self.prop_name:
             return [[getattr(self.node, self.prop_name)[:]]]
         elif self.use_prop:

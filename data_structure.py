@@ -1166,7 +1166,7 @@ def SvSetSocket(socket, out):
         socket_data_cache[s_ng] = {}
     socket_data_cache[s_ng][s_id] = out
 
-## conversion tests
+## conversion tests, to be used in sv_get! 
 
 def cross_test_socket(self, A, B):
     """ A is origin type, B is destination type """
