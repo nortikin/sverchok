@@ -50,3 +50,35 @@ def get_matrices_from_locs(data):
 
     get_all(data)
     return location_matrices
+
+
+def is_matrix(mat):
+    ''' expensive function call? '''
+    if not isinstance(mat, (tuple, list)) or not len(mat) == 4:
+        return
+
+    for i in range(4):
+        if isinstance(mat[i], (tuple, list)):
+            if len(mat[i]) == 4 and all([isinstance(j, (float, int)) for j in mat[i]]):
+                pass
+            else:
+                return
+    return True
+
+
+def get_locs_from_matrices(data):
+    locations = []
+
+    def get_all(m, container):
+
+        for sublist in m:
+            if is_matrix(sublist):
+                # matrix_to_vector
+                container.append((sublist[0][3], sublist[1][3], sublist[2][3]))
+            else:
+                new_sublist = []
+                get_all(sublist, new_sublist)
+
+    get_all(data, locations)
+    return locations
+
