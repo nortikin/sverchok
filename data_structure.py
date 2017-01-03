@@ -1166,11 +1166,21 @@ def SvSetSocket(socket, out):
         socket_data_cache[s_ng] = {}
     socket_data_cache[s_ng][s_id] = out
 
+## conversion tests
+
+def cross_test_socket(self, A, B):
+    """ A is origin type, B is destination type """
+    other = get_other_socket(self)
+    get_type = {'v': 'VerticesSocket', 'm': 'MatrixSocket'}
+    return other.bl_idname == get_type[A] and self.bl_idname == get_type[B]
 
 def is_vector_to_matrix(self):
-    other = get_other_socket(self)
-    return self.bl_idname == 'MatrixSocket' and other.bl_idname == 'VerticesSocket'
+    return cross_test_socket(self, 'v', 'm')
 
+def is_matrix_to_vector(self):
+    return cross_test_socket(self, 'm', 'v')
+
+# ---
 
 def get_matrices_from_locs(data):
     location_matrices = []
