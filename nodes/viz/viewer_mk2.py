@@ -376,7 +376,7 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
             else:
                 return reverse_sock_dict.get(origin_socket_bl_idname) in socket_type
 
-        vertex_links = inputs['vertices'].is_linked and check_origin('vertices', 'v')
+        vertex_links = inputs['vertices'].is_linked and check_origin('vertices', ('v', 'm'))
         matrix_links = inputs['matrix'].is_linked and check_origin('matrix', ('m', 'v'))
         edgepol_links = inputs['edg_pol'].is_linked and check_origin('edg_pol', 's')
 

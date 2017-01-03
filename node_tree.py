@@ -41,6 +41,7 @@ from sverchok.core.update_system import (
 
 from sverchok.core.socket_conversions import (
     get_matrices_from_locs,
+    get_locs_from_matrices,
     is_vector_to_matrix,
     is_matrix_to_vector)
 
@@ -145,9 +146,9 @@ class VerticesSocket(NodeSocket, SvSocketCommon):
 
     def sv_get(self, default=sentinel, deepcopy=True):
         if self.is_linked and not self.is_output:
-            # if is_matrix_to_vector(self):
-            #     out = get_locs_from_matrices(SvGetSocket(self, deepcopy))
-            #     return out
+            if is_matrix_to_vector(self):
+                out = get_locs_from_matrices(SvGetSocket(self, deepcopy=True))
+                return out
             
             return SvGetSocket(self, deepcopy)
 
