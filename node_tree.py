@@ -31,7 +31,7 @@ from sverchok.data_structure import (
     SvSetSocket,
     updateNode,
     get_matrices_from_locs,
-    get_other_socket,
+    is_vector_to_matrix,
     SvNoDataError,
     sentinel)
 
@@ -84,18 +84,21 @@ class MatrixSocket(NodeSocket, SvSocketCommon):
     bl_idname = "MatrixSocket"
     bl_label = "Matrix Socket"
     prop_name = StringProperty(default='')
+    num_matrices = IntProperty(default=0)
 
     def get_prop_data(self):
         return {}
 
     def sv_get(self, default=sentinel, deepcopy=True):
+        self.num_matrices = 0
         if self.is_linked and not self.is_output:
-
-            other = get_other_socket(self)
-            if self.bl_idname == 'MatrixSocket' and other.bl_idname == 'VerticesSocket':
+            
+            if is_vector_to_matrix(self):
                 # this means we're going to get a flat list of the incoming 
                 # locations and convert those into matrices proper.
-                return get_matrices_from_locs(SvGetSocket(self))
+                out = get_matrices_from_locs(SvGetSocket(self))
+                self.num_matrices = len(out)
+                return out
 
             return SvGetSocket(self, deepcopy)
         elif default is sentinel:
@@ -105,7 +108,10 @@ class MatrixSocket(NodeSocket, SvSocketCommon):
 
     def draw(self, context, layout, node, text):
         if self.is_linked:
-            layout.label(text + '. ' + SvGetSocketInfo(self))
+            draw_string = text + '. ' + SvGetSocketInfo(self)
+            if is_vector_to_matrix(self):
+                draw_string += (" (" + str(self.num_matrices) + ")")
+            layout.label(draw_string)
         else:
             layout.label(text)
 

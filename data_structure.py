@@ -1167,6 +1167,11 @@ def SvSetSocket(socket, out):
     socket_data_cache[s_ng][s_id] = out
 
 
+def is_vector_to_matrix(self):
+    other = get_other_socket(self)
+    return self.bl_idname == 'MatrixSocket' and other.bl_idname == 'VerticesSocket'
+
+
 def get_matrices_from_locs(data):
     location_matrices = []
     collect_matrix = location_matrices.append
