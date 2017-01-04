@@ -761,32 +761,6 @@ def multi_socket(node, min=1, start=0, breck=False, out_count=None):
                 node.outputs.remove(node.outputs[-1])
         ng.unfreeze(True)
 
-#####################################
-# node and socket id functions      #
-#####################################
-
-
-# socket.name is not unique... identifier is
-def socket_id(socket):
-    #return hash(socket)
-    return str(hash(socket.id_data.name + socket.node.name + socket.identifier))+socket.node.name+socket.name
-
-# For when need a key for use with dict in node
-#  create a string property like this.
-#  n_id =  StringProperty(default='')
-# And a copy function
-#  def copy(self,node)
-#      self.n_id=''
-# the always use like this
-# n_id = node_id(self)
-# node_dict[n_id]['key']
-
-
-def node_id(node):
-    if not node.n_id:
-        node.n_id = str(hash(node) ^ hash(time.monotonic()))
-    return node.n_id
-
 
 #####################################
 # socket data cache                 #
@@ -802,13 +776,3 @@ def SvSetSocketAnyType(self, socket_name, out):
     """Old interface, don't use"""
 
     self.outputs[socket_name].sv_set(out)
-
-
-
-####################################
-# быстрый сортировщик / quick sorter
-####################################
-
-def svQsort(L):
-    if L: return svQsort([x for x in L[1:] if x<L[0]]) + L[0:1] + svQsort([x for x in L[1:] if x>=L[0]])
-    return []
