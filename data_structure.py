@@ -33,15 +33,7 @@ RELOAD_EVENT = False
 # this is set correctly later.
 SVERCHOK_NAME = "sverchok"
 
-#handle for object in node
-temp_handle = {}
-# cache node group update trees it not used, as i see
-# cache_nodes = {}
-# socket cache
-socket_data_cache = {}
-# for viewer baker node cache
 cache_viewer_baker = {}
-
 
 sentinel = object()
 
@@ -51,6 +43,8 @@ sentinel = object()
 ################### cache magic #####################
 #####################################################
 
+#handle for object in node
+temp_handle = {}
 
 def handle_delete(handle):
     if handle in temp_handle:
@@ -518,222 +512,13 @@ def matrixdef(orig, loc, scale, rot, angle, vec_angle=[[]]):
     return modif
 
 
-#####################################################
-#################### lists magic ####################
-#####################################################
-
-
-def create_list(x, y):
-    if type(y) in [list, tuple]:
-        return reduce(create_list, y, x)
-    else:
-        return x.append(y) or x
-
+####
+#### random stuff
+####
 
 def enum_item(s):
     s = [(i,i,"") for i in s]
     return s
-
-
-def preobrazovatel(list_a, levels, level2=1):
-    list_tmp = []
-    level = levels[0]
-
-    if level > level2:
-        if type(list_a)in [list, tuple]:
-            for l in list_a:
-                if type(l) in [list, tuple]:
-                    tmp = preobrazovatel(l, levels, level2+1)
-                    if type(tmp) in [list, tuple]:
-                        list_tmp.extend(tmp)
-                    else:
-                        list_tmp.append(tmp)
-                else:
-                    list_tmp.append(l)
-
-    elif level == level2:
-        if type(list_a) in [list, tuple]:
-            for l in list_a:
-                if len(levels) == 1:
-                    tmp = preobrazovatel(l, levels, level2+1)
-                else:
-                    tmp = preobrazovatel(l, levels[1:], level2+1)
-                list_tmp.append(tmp if tmp else l)
-
-    else:
-        if type(list_a) in [list, tuple]:
-            list_tmp = reduce(create_list, list_a, [])
-
-    return list_tmp
-
-
-def myZip(list_all, level, level2=0):
-    if level == level2:
-        if type(list_all) in [list, tuple]:
-            list_lens = []
-            list_res = []
-            for l in list_all:
-                if type(l) in [list, tuple]:
-                    list_lens.append(len(l))
-                else:
-                    list_lens.append(0)
-            if list_lens == []:
-                return False
-            min_len = min(list_lens)
-            for value in range(min_len):
-                lt = []
-                for l in list_all:
-                    lt.append(l[value])
-                t = list(lt)
-                list_res.append(t)
-            return list_res
-        else:
-            return False
-    elif level > level2:
-        if type(list_all) in [list, tuple]:
-            list_res = []
-            list_tr = myZip(list_all, level, level2+1)
-            if list_tr is False:
-                list_tr = list_all
-            t = []
-            for tr in list_tr:
-                if type(list_tr) in [list, tuple]:
-                    list_tl = myZip(tr, level, level2+1)
-                    if list_tl is False:
-                        list_tl = list_tr
-                    t.extend(list_tl)
-            list_res.append(list(t))
-            return list_res
-        else:
-            return False
-
-
-#####################################################
-################### update List join magic ##########
-#####################################################
-
-
-def myZip_2(list_all, level, level2=1):
-    def create_listDown(list_all, level):
-        def subDown(list_a, level):
-            list_b = []
-            for l2 in list_a:
-                if type(l2) in [list, tuple]:
-                    list_b.extend(l2)
-                else:
-                    list_b.append(l2)
-            if level > 1:
-                list_b = subDown(list_b, level-1)
-            return list_b
-
-        list_tmp = []
-        if type(list_all) in [list, tuple]:
-            for l in list_all:
-                list_b = subDown(l, level-1)
-                list_tmp.append(list_b)
-        else:
-            list_tmp = list_all
-        return list_tmp
-
-    list_tmp = list_all.copy()
-    for x in range(level-1):
-        list_tmp = create_listDown(list_tmp, level)
-
-    list_r = []
-    l_min = []
-
-    for el in list_tmp:
-        if type(el) not in [list, tuple]:
-            break
-
-        l_min.append(len(el))
-
-    if l_min == []:
-        l_min = [0]
-    lm = min(l_min)
-    for elm in range(lm):
-        for el in list_tmp:
-            list_r.append(el[elm])
-
-    list_tmp = list_r
-
-    for lev in range(level-1):
-        list_tmp = [list_tmp]
-
-    return list_tmp
-
-
-def joiner(list_all, level, level2=1):
-    list_tmp = []
-
-    if level > level2:
-        if type(list_all) in [list, tuple]:
-            for list_a in list_all:
-                if type(list_a) in [list, tuple]:
-                    list_tmp.extend(list_a)
-                else:
-                    list_tmp.append(list_a)
-        else:
-            list_tmp = list_all
-
-        list_res = joiner(list_tmp, level, level2=level2+1)
-        list_tmp = [list_res]
-
-    if level == level2:
-        if type(list_all) in [list, tuple]:
-            for list_a in list_all:
-                if type(list_a) in [list, tuple]:
-                    list_tmp.extend(list_a)
-                else:
-                    list_tmp.append(list_a)
-        else:
-            list_tmp.append(list_all)
-
-    if level < level2:
-        if type(list_all) in [list, tuple]:
-            for l in list_all:
-                list_tmp.append(l)
-        else:
-            list_tmp.append(l)
-
-    return list_tmp
-
-
-def wrapper_2(l_etalon, list_a, level):
-    def subWrap(list_a, level, count):
-        list_b = []
-        if level == 1:
-            if len(list_a) == count:
-                for l in list_a:
-                    list_b.append([l])
-            else:
-                dc = len(list_a)//count
-                for l in range(count):
-                    list_c = []
-                    for j in range(dc):
-                        list_c.append(list_a[l*dc+j])
-                    list_b.append(list_c)
-        else:
-            for l in list_a:
-                list_b = subWrap(l, level-1, count)
-        return list_b
-
-    def subWrap_2(l_etalon, len_l, level):
-        len_r = len_l
-        if type(l_etalon) in [list, tuple]:
-            len_r = len(l_etalon) * len_l
-            if level > 1:
-                len_r = subWrap_2(l_etalon[0], len_r, level-1)
-
-        return len_r
-
-    len_l = len(l_etalon)
-    lens_l = subWrap_2(l_etalon, 1, level)
-    list_tmp = subWrap(list_a, level, lens_l)
-
-    for l in range(level-1):
-        list_tmp = [list_tmp]
-    return list_tmp
 
 
 #####################################################
@@ -1009,96 +794,15 @@ def node_id(node):
 
 
 def SvGetSocketAnyType(self, socket, default=None, deepcopy=True):
-    out = SvGetSocket(socket, deepcopy)
-    if socket.is_linked:
-        return SvGetSocket(socket, deepcopy)
-    elif default:
-        return default
-    else:
-        raise LookupError
+    """Old interface, don't use"""
+    return socket.sv_get(default, deepcopy)
 
 
 def SvSetSocketAnyType(self, socket_name, out):
-    SvSetSocket(self.outputs[socket_name], out)
+    """Old interface, don't use"""
 
-# faster than builtin deep copy for us.
-# useful for our limited case
-# we should be able to specify vectors here to get them create
-# or stop destroying them when in vector socket.
+    self.outputs[socket_name].sv_set(out)
 
-
-def sv_deep_copy(lst):
-    if isinstance(lst, (list, tuple)):
-        if lst and not isinstance(lst[0], (list, tuple)):
-            return lst[:]
-        return [sv_deep_copy(l) for l in lst]
-    return lst
-
-
-# Build string for showing in socket label
-def SvGetSocketInfo(socket):
-
-    global socket_data_cache
-    ng = socket.id_data.name
-
-    if socket.is_output:
-        s_id = socket_id(socket)
-    elif socket.links:
-        s_id = socket_id(get_other_socket(socket))
-    else:
-        return ''
-    if ng in socket_data_cache:
-        if s_id in socket_data_cache[ng]:
-            data = socket_data_cache[ng][s_id]
-            if data:
-                return str(len(data))
-    return ''
-
-
-def SvSetSocket(socket, out):
-    global socket_data_cache
-    if not socket.is_output:
-        print("Warning, {} setting input socket: {}".format(socket.node.name, socket.name))
-    if not socket.is_linked:
-        print("Warning: {} setting unconncted socket: {}".format(socket.node.name, socket.name))
-    s_id = socket_id(socket)
-    s_ng = socket.id_data.name
-    if s_ng not in socket_data_cache:
-        socket_data_cache[s_ng] = {}
-    socket_data_cache[s_ng][s_id] = out
-
-
-def SvGetSocket(socket, deepcopy=True):
-    global socket_data_cache
-    global DEBUG_MODE
-    if socket.is_linked:
-        other = get_other_socket(socket)
-        s_id = socket_id(other)
-        s_ng = other.id_data.name
-        if s_ng not in socket_data_cache:
-            raise LookupError
-        if s_id in socket_data_cache[s_ng]:
-            out = socket_data_cache[s_ng][s_id]
-            if deepcopy:
-                return sv_deep_copy(out)
-            else:
-                return out
-        else:
-            if DEBUG_MODE:
-                print("cache miss:", socket.node.name, "->", socket.name, "from:", other.node.name, "->", other.name)
-            raise SvNoDataError
-    # not linked
-    raise SvNoDataError
-
-class SvNoDataError(LookupError):
-    pass
-
-def reset_socket_cache(ng):
-    """
-    Reset socket cache either for node group.
-    """
-    global socket_data_cache
-    socket_data_cache[ng.name] = {}
 
 
 ####################################

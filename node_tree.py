@@ -25,11 +25,12 @@ from bpy.props import StringProperty, BoolProperty, FloatVectorProperty, IntProp
 from bpy.types import NodeTree, NodeSocket, NodeSocketStandard
 
 from sverchok import data_structure
-from sverchok.data_structure import (
+from sverchok.data_structure import updateNode
+
+from sverchok.core.socket_data import (
     SvGetSocketInfo,
     SvGetSocket,
     SvSetSocket,
-    updateNode,
     SvNoDataError,
     sentinel)
 
@@ -95,9 +96,9 @@ class MatrixSocket(NodeSocket, SvSocketCommon):
     def sv_get(self, default=sentinel, deepcopy=True):
         self.num_matrices = 0
         if self.is_linked and not self.is_output:
-            
+
             if is_vector_to_matrix(self):
-                # this means we're going to get a flat list of the incoming 
+                # this means we're going to get a flat list of the incoming
                 # locations and convert those into matrices proper.
                 out = get_matrices_from_locs(SvGetSocket(self, deepcopy=True))
                 self.num_matrices = len(out)
@@ -149,7 +150,7 @@ class VerticesSocket(NodeSocket, SvSocketCommon):
             if is_matrix_to_vector(self):
                 out = get_locs_from_matrices(SvGetSocket(self, deepcopy=True))
                 return out
-            
+
             return SvGetSocket(self, deepcopy)
 
 
