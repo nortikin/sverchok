@@ -4,12 +4,16 @@ Adaptative Polygons
 Functionality
 -------------
 
-Share one object to other. Donor spreading himself to recipient polygons. every polygon recieve one object and deform as normals say to him. 
+Share one object's **verts+faces** to another object's **verts+faces**. Donor spreads itself onto recipient polygons, every polygon recieves a copy of the donor object and deforms according to the recipients face **normals**. 
+
+*Limitations:* This node was created primarily with Quads (quadrilateral polygons) in mind, and will output unusual meshes if you feed it Tris or Ngons in the recipient Mesh. Original code taken with permission from https://sketchesofcode.wordpress.com/2013/11/11/ by Alessandro Zomparelli (sketchesofcode).
 
 Inputs
 ------
 
-**VersR** and **PolsR** is Recipient object's data. **VersD** and **PolsD** is donor's object data. **Z_Coef** is coefficient of height, can be vectorized.
+- **VersR** and **PolsR** is Recipient object's data. 
+- **VersD** and **PolsD** is donor's object data. 
+- **Z_Coef** is coefficient of height, can be vectorized.
 
 Parameters
 ----------
@@ -19,7 +23,7 @@ table
 +------------------+---------------+-------------------------------------------------------------------+
 | Param            | Type          | Description                                                       |  
 +==================+===============+===================================================================+
-| **Donor width**  | Float         | Width of spreaded donors is part from recipient's polygon's width | 
+| **Donor width**  | Float         | Donor's spread width is part from recipient's polygons width      | 
 +------------------+---------------+-------------------------------------------------------------------+
 
 Outputs

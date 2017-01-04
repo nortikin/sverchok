@@ -44,7 +44,7 @@
     GetNormalsNode
     VectorNormalNode
     SvKDTreeNode
-    SvKDTreeEdgesNode
+    SvKDTreeEdgesNodeMK2
     SvMeshFilterNode
     SvEdgeAnglesNode
 
@@ -235,6 +235,7 @@
     SvNodeRemoteNode
     SvGetDataObjectNode
     SvSetDataObjectNodeMK2
+    SvObjEdit
     SvSortObjsNode
     SvFilterObjsNode
     SvBMVertsNode

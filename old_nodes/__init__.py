@@ -29,6 +29,7 @@ old_bl_idnames = {
     'ListItemNode' : "list_item",
     'GenRangeNode' : "range",
     'GenSeriesNode' : "series",
+    'SvKDTreeEdgesNode': "kd_tree_edges",
 #    'Test1Node' : "test",
 #    'Test2Node' : "test",
 #    'ToolsNode' : "tools",
