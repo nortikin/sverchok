@@ -30,7 +30,8 @@ from sverchok.data_structure import (
     SvGetSocket,
     SvSetSocket,
     updateNode,
-    get_other_socket, SvNoDataError, sentinel)
+    SvNoDataError,
+    sentinel)
 
 from sverchok.core.update_system import (
     build_update_list,
@@ -38,6 +39,11 @@ from sverchok.core.update_system import (
     process_tree,
     get_update_lists, update_error_nodes)
 
+from sverchok.core.socket_conversions import (
+    get_matrices_from_locs,
+    get_locs_from_matrices,
+    is_vector_to_matrix,
+    is_matrix_to_vector)
 
 from sverchok.ui import color_def
 
@@ -81,12 +87,22 @@ class MatrixSocket(NodeSocket, SvSocketCommon):
     bl_idname = "MatrixSocket"
     bl_label = "Matrix Socket"
     prop_name = StringProperty(default='')
+    num_matrices = IntProperty(default=0)
 
     def get_prop_data(self):
         return {}
 
     def sv_get(self, default=sentinel, deepcopy=True):
+        self.num_matrices = 0
         if self.is_linked and not self.is_output:
+            
+            if is_vector_to_matrix(self):
+                # this means we're going to get a flat list of the incoming 
+                # locations and convert those into matrices proper.
+                out = get_matrices_from_locs(SvGetSocket(self, deepcopy=True))
+                self.num_matrices = len(out)
+                return out
+
             return SvGetSocket(self, deepcopy)
         elif default is sentinel:
             raise SvNoDataError
@@ -95,7 +111,10 @@ class MatrixSocket(NodeSocket, SvSocketCommon):
 
     def draw(self, context, layout, node, text):
         if self.is_linked:
-            layout.label(text + '. ' + SvGetSocketInfo(self))
+            draw_string = text + '. ' + SvGetSocketInfo(self)
+            if is_vector_to_matrix(self):
+                draw_string += (" (" + str(self.num_matrices) + ")")
+            layout.label(draw_string)
         else:
             layout.label(text)
 
@@ -127,7 +146,13 @@ class VerticesSocket(NodeSocket, SvSocketCommon):
 
     def sv_get(self, default=sentinel, deepcopy=True):
         if self.is_linked and not self.is_output:
+            if is_matrix_to_vector(self):
+                out = get_locs_from_matrices(SvGetSocket(self, deepcopy=True))
+                return out
+            
             return SvGetSocket(self, deepcopy)
+
+
         if self.prop_name:
             return [[getattr(self.node, self.prop_name)[:]]]
         elif self.use_prop:

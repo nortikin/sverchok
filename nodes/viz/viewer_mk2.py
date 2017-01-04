@@ -39,6 +39,13 @@ sock_dict = {
     'm': 'MatrixSocket'
 }
 
+reverse_sock_dict = {
+    'VerticesSocket': 'v',
+    'StringsSocket': 's',
+    'MatrixSocket': 'm'
+}
+
+
 
 class SvObjBakeMK2(bpy.types.Operator):
     """ B A K E   OBJECTS """
@@ -295,14 +302,9 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
         if self.bakebuttonshow:
             row = layout.row()
             addon = context.user_preferences.addons.get(sverchok.__name__)
-            if addon.preferences.over_sized_buttons:
-                row.scale_y = 4.0
-                bake_text = "B A K E"
-            else:
-                row.scale_y = 1
-                bake_text = "B A K E"
+            row.scale_y = 4.0 if addon.preferences.over_sized_buttons else 1
 
-            opera = row.operator('node.sverchok_mesh_baker_mk2', text=bake_text)
+            opera = row.operator('node.sverchok_mesh_baker_mk2', text="B A K E")
             opera.idname = self.name
             opera.idtree = self.id_data.name
 
@@ -314,17 +316,17 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
         col.prop(self, 'ngon_tessellate', text='ngons tessellation', toggle=True)
         col.prop(self, 'extended_matrix', text='Extended Matrix')
 
-        col.separator()
+        col.separator() # --------------------------------------------
 
         col.label('Light Direction')
-
         col.prop(self, "use_scene_light")
         if self.use_scene_light:
             col.prop(context.scene, 'sv_light_direction', text='')
         else:
             col.prop(self, 'light_direction', text='')
 
-        col.separator()
+        col.separator() # ---------------------------------------------
+
         opera = col.operator('node.sverchok_mesh_baker_mk2', text="Bake")
         opera.idname = self.name
         opera.idtree = self.id_data.name
@@ -367,14 +369,18 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
         # an unrecoverable crash. It might even be an idea to have step in between
         # new connections and processing, it could auto rewire s->s v->v m->m.
         def check_origin(to_socket, socket_type):
-            sock_string = sock_dict.get(socket_type)
-            return inputs[to_socket].links[0].from_socket.bl_idname == sock_string
+            origin_socket_bl_idname = inputs[to_socket].links[0].from_socket.bl_idname
+    
+            if isinstance(socket_type, str):
+                return origin_socket_bl_idname == sock_dict.get(socket_type)
+            else:
+                return reverse_sock_dict.get(origin_socket_bl_idname) in socket_type
 
-        vertex_links = inputs['vertices'].is_linked and check_origin('vertices', 'v')
-        matrix_links = inputs['matrix'].is_linked and check_origin('matrix', 'm')
+        vertex_links = inputs['vertices'].is_linked and check_origin('vertices', ('v', 'm'))
+        matrix_links = inputs['matrix'].is_linked and check_origin('matrix', ('m', 'v'))
         edgepol_links = inputs['edg_pol'].is_linked and check_origin('edg_pol', 's')
 
-        if (vertex_links or matrix_links):
+        if vertex_links or matrix_links:
 
             if vertex_links:
                 propv = inputs['vertices'].sv_get(deepcopy=False, default=[])
