@@ -133,7 +133,7 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
             outs.remove(outs['Vers_grouped'])
 
     objects_local = StringProperty(
-        name='local objects in', description='objects, binded to current node',
+        name='local objects in', description='objects, bound to current node',
         default='', update=updateNode)
 
     groupname = StringProperty(
