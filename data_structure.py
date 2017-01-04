@@ -41,11 +41,7 @@ temp_handle = {}
 socket_data_cache = {}
 # for viewer baker node cache
 cache_viewer_baker = {}
-sv_Vars = {}
-# note used?
 
-#bmesh_mapping = {}
-#per_cache = {}
 
 sentinel = object()
 
@@ -172,6 +168,11 @@ def sv_zip(*iterables):
                 return
             result.append(elem)
         yield result
+
+
+###############
+# decorators!
+###############
 
 def checking_links(process):
     '''Decorator for process method of node.
@@ -399,7 +400,7 @@ def levelsOflist(lst):
 
 
 def Matrix_listing(prop):
-    # matrix degenerate
+    """Convert Matrix() into Sverchok data"""
     mat_out = []
     for i, matrix in enumerate(prop):
         unit = []
@@ -411,6 +412,7 @@ def Matrix_listing(prop):
 
 
 def Matrix_generate(prop):
+    """Generate Matrix() data from Sverchok data"""
     mat_out = []
     for i, matrix in enumerate(prop):
         unit = Matrix()
