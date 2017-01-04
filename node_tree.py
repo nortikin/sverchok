@@ -70,6 +70,10 @@ class SvSocketCommon:
         if self.prop_name:
             setattr(self.node, self.prop_name, value)
 
+    @property
+    def socket_id(self):
+        return str(hash(socket.id_data.name + socket.node.name + socket.identifier)) +
+               socket.node.name + socket.name
 
     @property
     def index(self):
@@ -383,6 +387,11 @@ class SverchCustomTreeNode:
     def poll(cls, ntree):
         return ntree.bl_idname in ['SverchCustomTreeType', 'SverchGroupTreeType']
 
+    @property
+    def node_id(self):
+        if not self.n_id:
+            self.n_id = str(hash(self) ^ hash(time.monotonic()))
+        return self.n_id
 
     def mark_error(self, err):
         """
