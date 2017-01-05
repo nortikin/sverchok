@@ -621,10 +621,6 @@ def changable_sockets(node, inputsocketname, outputsocketname):
                     ng.links.new(to_socket, new_out_socket)
             node.id_data.unfreeze(hard=True)
 
-def get_socket_type_full(node, inputsocketname):
-    socket = node.inputs[inputsocketname]
-    other = get_other_socket(socket)
-    return other.links[0].from_socket.bl_idname
 
 def replace_socket(socket, new_type, new_name=None, new_pos=None):
     '''
@@ -776,3 +772,10 @@ def SvSetSocketAnyType(self, socket_name, out):
     """Old interface, don't use"""
 
     self.outputs[socket_name].sv_set(out)
+
+
+def socket_id(socket):
+    return socket.socket_id
+
+def node_id(node):
+    return node.node_id
