@@ -218,7 +218,8 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
 
                 try:
                     obj_data = obj.to_mesh(scene, self.modifiers, 'PREVIEW')
-                    pols = [list(p.vertices) for p in obj_data.polygons]
+                    if obj_data.polygons:
+                        pols = [list(p.vertices) for p in obj_data.polygons]
                     vers, vers_grouped = self.get_verts_and_vertgroups(obj_data)
                     edgs = obj_data.edge_keys
 
