@@ -107,6 +107,9 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
 
         if not self.object_names:
             ops.report({'WARNING'}, "Warning, no selected objects in the scene")
+            return
+
+        self.process()   # must process from node too.. doesn't
 
 
     def select_objs(self, ops):
