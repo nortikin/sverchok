@@ -202,8 +202,6 @@ class Sv3DPanel(bpy.types.Panel):
                         ver = item.prop_name
                         node = tree.nodes[no]
 
-                        print('-----', node.bl_idname, no)
-
                         if node.label:
                             tex = node.label
                         else:
