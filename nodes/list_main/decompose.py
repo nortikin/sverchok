@@ -21,7 +21,7 @@ from bpy.props import BoolProperty, IntProperty, StringProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (levelsOflist, multi_socket, changable_sockets,
-                            ,updateNode, get_other_socket)
+                                     updateNode, get_other_socket)
 
 from sverchok.core import update_system
 
