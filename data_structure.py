@@ -72,9 +72,12 @@ def handle_check(handle, prop):
 #####################################################
 
 
-# creates an infinite iterator
-# use with terminating input
 def repeat_last(lst):
+    """
+    creates an infinite iterator the first each element in lst
+    and then keep repeating the last element,
+    use with terminating input
+    """
     i = -1
     while lst:
         i += 1
@@ -84,8 +87,10 @@ def repeat_last(lst):
             yield lst[-1]
 
 
-# longest list matching [[1,2,3,4,5], [10,11]] -> [[1,2,3,4,5], [10,11,11,11,11]]
 def match_long_repeat(lsts):
+    """return matched list, using the last value to fill lists as needed
+    longest list matching [[1,2,3,4,5], [10,11]] -> [[1,2,3,4,5], [10,11,11,11,11]]
+    """"
     max_l = 0
     tmp = []
     for l in lsts:
@@ -98,8 +103,10 @@ def match_long_repeat(lsts):
     return list(map(list, zip(*zip(*tmp))))
 
 
-# longest list matching, cycle [[1,2,3,4,5] ,[10,11]] -> [[1,2,3,4,5] ,[10,11,10,11,10]]
 def match_long_cycle(lsts):
+    """return matched list, cycling the shorter lists
+    longest list matching, cycle [[1,2,3,4,5] ,[10,11]] -> [[1,2,3,4,5] ,[10,11,10,11,10]]
+    """
     max_l = 0
     tmp = []
     for l in lsts:
@@ -115,35 +122,37 @@ def match_long_cycle(lsts):
 # when you intent to use lenght of first list to control WHILE loop duration
 # and you do not want to change the length of the first list, but you want the second list
 # lenght to by not less than the length of the first
-def second_as_first_cycle(F,S):
-    if len(F)>len(S):
+def second_as_first_cycle(F, S):
+    if len(F) > len(S):
         return list(map(list, zip(*zip(*[F, itertools.cycle(S)]))))
     else:
-        return [F,S]
+        return [F, S]
 
-
-# cross matching
-# [[1,2], [5,6,7]] -> [[1,1,1,2,2,2], [5,6,7,5,6,7]]
 def match_cross(lsts):
+    """ return cross matched lists
+    [[1,2], [5,6,7]] -> [[1,1,1,2,2,2], [5,6,7,5,6,7]]
+    """
     return list(map(list, zip(*itertools.product(*lsts))))
 
 
-# use this one
-# cross matching 2, more useful order
-# [[1,2], [5,6,7]] ->[[1, 2, 1, 2, 1, 2], [5, 5, 6, 6, 7, 7]]
-# but longer and less elegant expression
-# performance difference is minimal since number of lists is usually small
 def match_cross2(lsts):
+    """ return cross matched lists
+    [[1,2], [5,6,7]] ->[[1, 2, 1, 2, 1, 2], [5, 5, 6, 6, 7, 7]]
+    """
     return list(reversed(list(map(list, zip(*itertools.product(*reversed(lsts)))))))
 
 
 # Shortest list decides output length [[1,2,3,4,5], [10,11]] -> [[1,2], [10, 11]]
 def match_short(lsts):
+    """return lists of equal length using the Shortest list to decides length
+    Shortest list decides output length [[1,2,3,4,5], [10,11]] -> [[1,2], [10, 11]]
+    """
     return list(map(list, zip(*zip(*lsts))))
 
 
-# extends list so len(l) == count
 def fullList(l, count):
+    """extends list l so len is at least count if needed with the
+    last element of l"""
     d = count - len(l)
     if d > 0:
         l.extend([l[-1] for a in range(d)])
@@ -151,9 +160,11 @@ def fullList(l, count):
 
 
 def sv_zip(*iterables):
-    # zip('ABCD', 'xy') --> Ax By
-    # like standard zip but list instead of tuple
+    """zip('ABCD', 'xy') --> Ax By
+    like standard zip but list instead of tuple
+    """
     iterators = [iter(it) for it in iterables]
+    sentinel = object() # use internal sentinel
     while iterators:
         result = []
         for it in iterators:
@@ -164,181 +175,17 @@ def sv_zip(*iterables):
         yield result
 
 
-###############
-# decorators!
-###############
-
-def checking_links(process):
-    '''Decorator for process method of node.
-    This decorator does stanard checks for mandatory input and output links.
-    '''
-
-    def real_process(node):
-        # check_mandatory_links() node method should return True
-        # if all mandatory inputs and outputs are linked.
-        # If it returns False then node will just skip processing.
-        if hasattr(node, "check_mandatory_links"):
-            if not node.check_mandatory_links():
-                return
-        else:
-            # If check_mandatory_links() method is not defined, then node can
-            # define list of mandatory inputs and/or outputs.
-            # Node will skip processing if any of mandatory inputs is not linked.
-            # It will also skip processing if none of mandatory outputs is linked.
-            if hasattr(node, "input_descriptors"):
-                mandatory_inputs = [descriptor.name for descriptor in node.input_descriptors if descriptor.is_mandatory]
-                if not all([node.inputs[name].is_linked for name in mandatory_inputs]):
-                    print("Node {}: skip processing: not all of mandatory inputs {} are linked.".format(node.name, mandatory_inputs))
-                    return
-            if hasattr(node, "output_descriptors"):
-                mandatory_outputs = [descriptor.name for descriptor in node.output_descriptors if descriptor.is_mandatory]
-                if not any([node.outputs[name].is_linked for name in mandatory_outputs]):
-                    print("Node {}: skip processing: none of mandatory outputs {} are linked.".format(node.name, mandatory_outputs))
-                    return
-
-        return process(node)
-
-    real_process.__name__ = process.__name__
-    real_process.__doc__ = process.__doc__
-    return real_process
-
-def iterate_process(method, matcher, *inputs, node=None):
-    '''Shortcut function for usual iteration over set of input lists.
-
-    This is shortcut for boilerplate code like
-
-        res1 = []
-        res2 = []
-        params = match_long_repeat([input1,input2])
-        for i1, i2 in zip(*params):
-            r1,r2 = self.method(i1,i2)
-            res1.append(r1)
-            res2.append(r2)
-        return res1, res2
-    '''
-
-    data = matcher(inputs)
-    if node is None:
-        results = [list(method(*d)) for d in zip(*data)]
-    else:
-        results = [list(method(node, *d)) for d in zip(*data)]
-    return list(zip(*results))
-
-class Input(object):
-    '''Node input socket metainformation descriptor.'''
-
-    def __init__(self, socktype, name, identifier=None, is_mandatory=True, default=sentinel, deepcopy=True):
-        self.socktype = socktype
-        self.name = name
-        self.identifier = identifier if identifier is not None else name
-        self.default = default
-        self.deepcopy = deepcopy
-        self.is_mandatory = is_mandatory
-
-    def __str__(self):
-        return self.name
-
-    def create(self, node):
-        return node.inputs.new(self.socktype, self.name, self.identifier)
-
-    def get(self, node):
-        return node.inputs[self.name].sv_get(default=self.default, deepcopy=self.deepcopy)
-
-class Output(object):
-    '''Node output socket metainformation descriptor.'''
-
-    def __init__(self, socktype, name, is_mandatory=True):
-        self.socktype = socktype
-        self.name = name
-        self.is_mandatory = is_mandatory
-
-    def __str__(self):
-        return self.name
-
-    def create(self, node):
-        node.outputs.new(self.socktype, self.name)
-
-    def set(self, node, value):
-        if node.outputs[self.name].is_linked:
-            node.outputs[self.name].sv_set(value)
-
-def match_inputs(matcher, inputs, outputs):
-    '''Decorator for inputs/outputs boilerplate.
-
-    Usage:
-
-    @match_inputs(match_long_repeat,
-                  inputs=[Input(...), Input(...)],
-                  outputs=[Output(...), Output(...)])
-    def process(self, i1, i2):
-        ...
-        return res1, res2
-
-    This is shortcut for code like
-
-    def process(self):
-        i1s = self.inputs['i1'].sv_get(..)
-        i2s = self.inputs['i2'].sv_get(..)
-        res1 = []
-        res2 = []
-
-        params = match_long_repeat([i1s, i2s])
-        for i1,i2 in zip(*params):
-            ...
-            res1.append(r1)
-            res2.append(r2)
-
-        if self.outputs['r1'].is_linked:
-            self.outputs['r1'].sv_set(res1)
-        if self.outputs['r2'].is_linked:
-            self.outputs['r2'].sv_set(res2)
-    '''
-
-    def decorator(process):
-        def real_process(node):
-            inputs_data = [input_descriptor.get(node) for input_descriptor in inputs]
-            results = iterate_process(process, matcher, *inputs_data, node=node)
-            for result, output_descriptor in zip(results, outputs):
-                output_descriptor.set(node, result)
-
-        real_process.__name__ = process.__name__
-        real_process.__doc__ = process.__doc__
-
-        return real_process
-
-    return decorator
-
-def std_links_processing(matcher):
-    '''Shortcut decorator for "standard" inputs/outputs sockets processing routine.
-
-    This is shortcut for combination of @checking_links and @match_inputs.
-    Inputs and outputs descriptors are taken from node.input_descriptors and
-    node.output_descriptors correspondingly.
-    '''
-
-    def decorator(process):
-        def real_process(node):
-            nonlocal process
-            process = match_inputs(matcher, node.input_descriptors, node.output_descriptors)(process)
-            process = checking_links(process)
-            return process(node)
-
-        real_process.__name__ = process.__name__
-        real_process.__doc__ = process.__doc__
-
-        return real_process
-
-    return decorator
-
 #####################################################
 ################# list levels magic #################
 #####################################################
 
 # working with nesting levels
 # define data floor
+# NOTE, these function cannot possibly work in all scenarios, use with care
 
-# data from nasting to standart: TO container( objects( lists( floats, ), ), )
 def dataCorrect(data, nominal_dept=2):
+    """data from nasting to standart: TO container( objects( lists( floats, ), ), )
+    """
     dept = levelsOflist(data)
     output = []
     if not dept: # for empty lists
@@ -350,8 +197,10 @@ def dataCorrect(data, nominal_dept=2):
         return output
 
 
-# from standart data to initial levels: to nasting lists  container( objects( lists( nasty_lists( floats, ), ), ), ) это невозможно!
 def dataSpoil(data, dept):
+    """from standart data to initial levels: to nested lists
+     container( objects( lists( nested_lists( floats, ), ), ), ) это невозможно!
+    """
     if dept:
         out = []
         for d in data:
@@ -361,8 +210,8 @@ def dataSpoil(data, dept):
     return out
 
 
-# data from nasting to standart: TO container( objects( lists( floats, ), ), )
 def dataStandart(data, dept, nominal_dept):
+    """data from nasting to standart: TO container( objects( lists( floats, ), ), )"""
     deptl = dept - 1
     output = []
     for object in data:
@@ -374,8 +223,8 @@ def dataStandart(data, dept, nominal_dept):
     return output
 
 
-# calc list nesting only in countainment level integer
 def levelsOflist(lst):
+    """calc list nesting only in countainment level integer"""
     level = 1
     for n in lst:
         if n and isinstance(n, (list, tuple)):
@@ -418,6 +267,7 @@ def Matrix_generate(prop):
 
 
 def Matrix_location(prop, list=False):
+    """return a list of locations represeting the translation of the matrices"""
     Vectors = []
     for p in prop:
         if list:
@@ -428,6 +278,7 @@ def Matrix_location(prop, list=False):
 
 
 def Matrix_scale(prop, list=False):
+    """return a Vector()/list represeting the scale factor of the matrices"""
     Vectors = []
     for p in prop:
         if list:
@@ -437,9 +288,10 @@ def Matrix_scale(prop, list=False):
     return [Vectors]
 
 
-# returns (Vector, rotation) utility function for Matrix Destructor. if list is true
-# the Vector is decomposed into tuple format.
 def Matrix_rotation(prop, list=False):
+    """return (Vector, rotation) utility function for Matrix Destructor.
+    if list is true the Vector() is decomposed into tuple format.
+    """
     Vectors = []
     for p in prop:
         q = p.to_quaternion()
@@ -452,10 +304,12 @@ def Matrix_rotation(prop, list=False):
 
 
 def Vector_generate(prop):
+    """return a list of Vector() objects from a standard Sverchok data"""
     return [[Vector(v) for v in obj] for obj in prop]
 
 
 def Vector_degenerate(prop):
+    """return a simple list of values instead of Vector() objects"""
     return [[v[0:3] for v in obj] for obj in prop]
 
 
@@ -517,6 +371,7 @@ def matrixdef(orig, loc, scale, rot, angle, vec_angle=[[]]):
 ####
 
 def enum_item(s):
+    """return a list usable in enum property from a list with one value"""
     s = [(i,i,"") for i in s]
     return s
 
@@ -527,12 +382,18 @@ def enum_item(s):
 
 
 def sverchok_debug(mode):
+    """
+    set debug mode to mode
+    """
     global DEBUG_MODE
     DEBUG_MODE = mode
     return DEBUG_MODE
 
 
 def setup_init():
+    """
+    setup variables needed for sverchok to function
+    """
     global DEBUG_MODE
     global HEAT_MAP
     global SVERCHOK_NAME
@@ -552,6 +413,9 @@ def setup_init():
 
 
 def heat_map_state(state):
+    """
+    colors the nodes based on execution time
+    """
     global HEAT_MAP
     HEAT_MAP = state
     sv_ng = [ng for ng in bpy.data.node_groups if ng.bl_idname == 'SverchCustomTreeType']
@@ -580,7 +444,6 @@ def heat_map_state(state):
 
 def updateNode(self, context):
     """
-    Old, use process_node instead
     When a node has changed state and need to call a partial update.
     For example a user exposed bpy.prop
     """
@@ -590,7 +453,7 @@ def updateNode(self, context):
 ##############################################################
 ############## changable type of socket magic ################
 ########### if you have separate socket solution #############
-#################### wellcome to provide #####################
+#################### welcome to provide #####################
 ##############################################################
 ##############################################################
 
@@ -775,7 +638,180 @@ def SvSetSocketAnyType(self, socket_name, out):
 
 
 def socket_id(socket):
+    """return an usable and semi stable hash"""
     return socket.socket_id
 
 def node_id(node):
+    """return a stable hash for the lifetime of the node
+    needs StringProperty called n_id in the node
+    """
     return node.node_id
+
+
+
+###############
+# decorators!
+###############
+# not used but kept...
+
+def checking_links(process):
+    '''Decorator for process method of node.
+    This decorator does stanard checks for mandatory input and output links.
+    '''
+
+    def real_process(node):
+        # check_mandatory_links() node method should return True
+        # if all mandatory inputs and outputs are linked.
+        # If it returns False then node will just skip processing.
+        if hasattr(node, "check_mandatory_links"):
+            if not node.check_mandatory_links():
+                return
+        else:
+            # If check_mandatory_links() method is not defined, then node can
+            # define list of mandatory inputs and/or outputs.
+            # Node will skip processing if any of mandatory inputs is not linked.
+            # It will also skip processing if none of mandatory outputs is linked.
+            if hasattr(node, "input_descriptors"):
+                mandatory_inputs = [descriptor.name for descriptor in node.input_descriptors if descriptor.is_mandatory]
+                if not all([node.inputs[name].is_linked for name in mandatory_inputs]):
+                    print("Node {}: skip processing: not all of mandatory inputs {} are linked.".format(node.name, mandatory_inputs))
+                    return
+            if hasattr(node, "output_descriptors"):
+                mandatory_outputs = [descriptor.name for descriptor in node.output_descriptors if descriptor.is_mandatory]
+                if not any([node.outputs[name].is_linked for name in mandatory_outputs]):
+                    print("Node {}: skip processing: none of mandatory outputs {} are linked.".format(node.name, mandatory_outputs))
+                    return
+
+        return process(node)
+
+    real_process.__name__ = process.__name__
+    real_process.__doc__ = process.__doc__
+    return real_process
+
+def iterate_process(method, matcher, *inputs, node=None):
+    '''Shortcut function for usual iteration over set of input lists.
+
+    This is shortcut for boilerplate code like
+
+        res1 = []
+        res2 = []
+        params = match_long_repeat([input1,input2])
+        for i1, i2 in zip(*params):
+            r1,r2 = self.method(i1,i2)
+            res1.append(r1)
+            res2.append(r2)
+        return res1, res2
+    '''
+
+    data = matcher(inputs)
+    if node is None:
+        results = [list(method(*d)) for d in zip(*data)]
+    else:
+        results = [list(method(node, *d)) for d in zip(*data)]
+    return list(zip(*results))
+
+class Input(object):
+    '''Node input socket metainformation descriptor.'''
+
+    def __init__(self, socktype, name, identifier=None, is_mandatory=True, default=sentinel, deepcopy=True):
+        self.socktype = socktype
+        self.name = name
+        self.identifier = identifier if identifier is not None else name
+        self.default = default
+        self.deepcopy = deepcopy
+        self.is_mandatory = is_mandatory
+
+    def __str__(self):
+        return self.name
+
+    def create(self, node):
+        return node.inputs.new(self.socktype, self.name, self.identifier)
+
+    def get(self, node):
+        return node.inputs[self.name].sv_get(default=self.default, deepcopy=self.deepcopy)
+
+class Output(object):
+    '''Node output socket metainformation descriptor.'''
+
+    def __init__(self, socktype, name, is_mandatory=True):
+        self.socktype = socktype
+        self.name = name
+        self.is_mandatory = is_mandatory
+
+    def __str__(self):
+        return self.name
+
+    def create(self, node):
+        node.outputs.new(self.socktype, self.name)
+
+    def set(self, node, value):
+        if node.outputs[self.name].is_linked:
+            node.outputs[self.name].sv_set(value)
+
+def match_inputs(matcher, inputs, outputs):
+    '''Decorator for inputs/outputs boilerplate.
+
+    Usage:
+
+    @match_inputs(match_long_repeat,
+                  inputs=[Input(...), Input(...)],
+                  outputs=[Output(...), Output(...)])
+    def process(self, i1, i2):
+        ...
+        return res1, res2
+
+    This is shortcut for code like
+
+    def process(self):
+        i1s = self.inputs['i1'].sv_get(..)
+        i2s = self.inputs['i2'].sv_get(..)
+        res1 = []
+        res2 = []
+
+        params = match_long_repeat([i1s, i2s])
+        for i1,i2 in zip(*params):
+            ...
+            res1.append(r1)
+            res2.append(r2)
+
+        if self.outputs['r1'].is_linked:
+            self.outputs['r1'].sv_set(res1)
+        if self.outputs['r2'].is_linked:
+            self.outputs['r2'].sv_set(res2)
+    '''
+
+    def decorator(process):
+        def real_process(node):
+            inputs_data = [input_descriptor.get(node) for input_descriptor in inputs]
+            results = iterate_process(process, matcher, *inputs_data, node=node)
+            for result, output_descriptor in zip(results, outputs):
+                output_descriptor.set(node, result)
+
+        real_process.__name__ = process.__name__
+        real_process.__doc__ = process.__doc__
+
+        return real_process
+
+    return decorator
+
+def std_links_processing(matcher):
+    '''Shortcut decorator for "standard" inputs/outputs sockets processing routine.
+
+    This is shortcut for combination of @checking_links and @match_inputs.
+    Inputs and outputs descriptors are taken from node.input_descriptors and
+    node.output_descriptors correspondingly.
+    '''
+
+    def decorator(process):
+        def real_process(node):
+            nonlocal process
+            process = match_inputs(matcher, node.input_descriptors, node.output_descriptors)(process)
+            process = checking_links(process)
+            return process(node)
+
+        real_process.__name__ = process.__name__
+        real_process.__doc__ = process.__doc__
+
+        return real_process
+
+    return decorator
