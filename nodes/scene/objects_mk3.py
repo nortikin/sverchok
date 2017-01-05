@@ -107,8 +107,8 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         self.object_names.clear()
 
         groups = bpy.data.groups
-        if self.group_name and groups[self.group_name].objects:
-            names = [obj.name for obj in groups[self.group_name].objects]
+        if self.groupname and groups[self.groupname].objects:
+            names = [obj.name for obj in groups[self.groupname].objects]
         else:
             names = [obj.name for obj in bpy.data.objects if obj.select]
 
