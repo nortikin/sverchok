@@ -21,8 +21,7 @@ from bpy.props import BoolProperty, IntProperty, StringProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (levelsOflist, multi_socket, changable_sockets,
-                            get_socket_type_full, SvSetSocket, SvGetSocketAnyType,
-                            updateNode, get_other_socket)
+                            ,updateNode, get_other_socket)
 
 from sverchok.core import update_system
 
@@ -35,30 +34,30 @@ class SvListDecomposeNode(bpy.types.Node, SverchCustomTreeNode):
     # two veriables for multi socket input
     base_name = StringProperty(default='data')
     multi_socket_type = StringProperty(default='StringsSocket')
-    
+
     def auto_count(self):
         data = self.inputs['data'].sv_get(default="not found")
         other = get_other_socket(self.inputs['data'])
         if other and data == "not found":
             update_system.process_to_node(other.node)
             data = self.inputs['data'].sv_get()
-            
+
         leve = levelsOflist(data)
         if leve+1 < self.level:
             self.level = leve+1
         result = self.beat(data, self.level)
         self.count = min(len(result), 16)
-        
+
     def set_count(self, context):
         other = get_other_socket(self.inputs[0])
         if not other:
             return
         self.multi_socket_type = other.bl_idname
         multi_socket(self, min=1, start=0, breck=True, out_count=self.count)
-        
+
     level = IntProperty(name='level',
                         default=1, min=1, update=updateNode)
-    
+
     count = IntProperty(name='Count',
                     default=1, min=1, max=16, update=set_count)
 
@@ -69,9 +68,9 @@ class SvListDecomposeNode(bpy.types.Node, SverchCustomTreeNode):
         row.prop(self, 'count')
         op = row.operator("node.sverchok_text_callback",text="Auto set")
         op.fn_name="auto_count"
-        
+
     def sv_init(self, context):
-        self.inputs.new('StringsSocket', "data")        
+        self.inputs.new('StringsSocket', "data")
         self.outputs.new('StringsSocket', "data[0]")
 
 
@@ -84,9 +83,9 @@ class SvListDecomposeNode(bpy.types.Node, SverchCustomTreeNode):
         outputsocketname = [name.name for name in self.outputs]
         changable_sockets(self, 'data', outputsocketname)
 
-       
+
     def process(self):
-        data = SvGetSocketAnyType(self, self.inputs['data'])
+        data = self.inputs['data'].sv_get()
         result = self.beat(data, self.level)
         for out, socket in zip(result, self.outputs[:30]):
             if socket.is_linked:

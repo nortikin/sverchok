@@ -21,8 +21,10 @@ from ast import literal_eval
 import bpy
 from bpy.props import BoolProperty, StringProperty
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (changable_sockets, preobrazovatel, updateNode,
+from sverchok.data_structure import (changable_sockets, updateNode,
                             SvSetSocketAnyType, SvGetSocketAnyType)
+
+from sverchok.utils.listutils import preobrazovatel                        
 
 
 class ListLevelsNode(bpy.types.Node, SverchCustomTreeNode):
@@ -52,7 +54,7 @@ class ListLevelsNode(bpy.types.Node, SverchCustomTreeNode):
             inputsocketname = 'data'
             outputsocketname = ['data', ]
             changable_sockets(self, inputsocketname, outputsocketname)
-    
+
     def process(self):
         if self.outputs['data'].is_linked:
             data = SvGetSocketAnyType(self, self.inputs['data'])
