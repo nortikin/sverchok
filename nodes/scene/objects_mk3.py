@@ -25,97 +25,21 @@ from sverchok.data_structure import updateNode
 from sverchok.utils.context_managers import hard_freeze
 
 
-# class SvObjSelectObjectInItemsInSceneMK3(bpy.types.Operator):
-#     """ Select node's Objects from object_in node at scene 3d """
-#     bl_idname = "node.sverchok_object_in_selector_mk3"
-#     bl_label = "Sv objectin selector mk3"
-#     bl_options = {'REGISTER', 'UNDO'}
+class SvOB3Callback(bpy.types.Operator):
 
-#     node_name = StringProperty(
-#         name='name node',
-#         description='it is name of node',
-#         default='')
+    bl_idname = "node.ob3_callback"
+    bl_label = "Object In mk3 callback"
 
-#     tree_name = StringProperty(
-#         name='name tree',
-#         description='it is name of tree',
-#         default='')
+    fn_name = bpy.props.StringProperty(default='')
 
-#     def execute(self, context):
-#         name_no = self.node_name
-#         name_tr = self.tree_name
-#         handle = handle_read(name_no + name_tr)
-#         if handle[0]:
-#             for o in handle[1]:
-#                 bpy.data.objects[o].select = True
-#             #bpy.context.active_object = bpy.data.objects[o]
-#         return {'FINISHED'}
+    def execute(self, context):
+        """
+        returns the operator's 'self' too to allow the code being called to
+        print from self.report.
+        """
+        getattr(context.node, self.fn_name)(self)
+        return {'FINISHED'}
 
-
-# class SvObjSelectedMK3(bpy.types.Operator):
-#     """ G E T  selected or grouped objects """
-#     bl_idname = "node.sverchok_object_insertion_mk3"
-#     bl_label = "Sverchok object selector mk3"
-#     bl_options = {'REGISTER', 'UNDO'}
-
-#     node_name = StringProperty()
-#     tree_name = StringProperty()
-
-#     def enable(self, node, handle):
-#         groups = bpy.data.groups
-        
-#         name_no = node.name
-#         name_tr = node.id_data.name
-#         group_name = node.groupname
-
-#         objects = []
-#         if group_name and groups[group_name].objects:
-#             objs = groups[group_name].objects
-#         elif bpy.context.selected_objects:
-#             objs = bpy.context.selected_objects
-#         else:
-#             self.report({'WARNING'}, 'No object selected')
-#             self.disable(node, handle)
-#             return
-
-#         for o in objs:
-#             objects.append(o.name)
-
-#         if node.sort:
-#             objects.sort()
-#         handle_write(name_no + name_tr, objects)
-
-#         if bpy.data.node_groups[name_tr]:
-#             handle = handle_read(name_no + name_tr)
-#             node.objects_local = str(handle[1])
-
-
-#     def disable(self, node, handle):
-#         node.objects_local = ''
-#         bpy.ops.node.sverchok_update_current(node_group=node.id_data.name)
-#         if not handle[0]:
-#             return
-#         handle_delete(node.name + node.id_data.name)
-
-
-#     def execute(self, context):
-
-#         if self.node_name and self.tree_name:
-#             ng = bpy.data.node_groups[self.tree_name]
-#             node = ng.nodes[self.node_name]
-#         else:
-#             node = context.node
-
-#         name_no = node.name
-#         name_tr = node.id_data.name
-
-#         handle = handle_read(name_no + name_tr)
-#         self.disable(node, handle)
-#         self.enable(node, handle)
-#         handle = handle_read(name_no + name_tr)
-#         print('end of execute', handle)
-#         print('have got {0} items from scene.'.format(handle[1]))
-#         return {'FINISHED'}
 
 
 class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
@@ -168,7 +92,7 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         new('SvObjectSocket', "Object")
 
 
-    def get_objects_from_scene(self):
+    def get_objects_from_scene(self, ops):
         """
         Collect selected objects
         """
@@ -181,11 +105,17 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         for name in names:
             self.object_names.add().name = name
 
+        if not self.objects_names:
+            ops.report({'WARNING'}, "Warning, no selected objects in the scene")
 
-    def select_objs(self):
+
+    def select_objs(self, ops):
         """select all objects referenced by node"""
         for item in self.object_names:
             bpy.data.objects[item.name].select = True
+
+        if not self.objects_names:
+            ops.report({'WARNING'}, "Warning, no object associated with the obj in Node")
          
 
     def draw_obj_names(self, layout):
@@ -204,21 +134,24 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
             layout.label('--None--')
 
     def draw_buttons(self, context, layout):
-        #row.prop(self, 'groupname', text='')
+
         col = layout.column(align=True)
         row = col.row(align=True)
         row.prop_search(self, 'groupname', bpy.data, 'groups', text='', icon='HAND')
 
         row = col.row()
-        addon = context.user_preferences.addons.get(sverchok.__name__)
-        if addon.preferences.over_sized_buttons:
-            row.scale_y = 4.0
-            op_text = "G E T"
-        else:
-            row.scale_y = 1
-            op_text = "Get selection"
+        op_text = "Get selection"  # fallback
+    
+        try:
+            addon = context.user_preferences.addons.get(sverchok.__name__)
+            if addon.preferences.over_sized_buttons:
+                row.scale_y = 4.0
+                op_text = "G E T"
+        except:
+            pass
 
-        row.operator('node.sverchok_object_insertion_mk3', text=op_text)
+        callback = 'node.ob3_callback'
+        row.operator(callback, text=op_text).fn_name = 'get_objects_from_scene'
 
         col = layout.column(align=True)
         row = col.row(align=True)
@@ -227,9 +160,7 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         row.prop(self, "vergroups", text="VeGr", toggle=True)
 
         row = col.row(align=True)
-        opera = row.operator('node.sverchok_object_in_selector_mk3', text='Select')
-        opera.node_name = self.name
-        opera.tree_name = self.id_data.name
+        row.operator(callback, text="Select Objects").fn_name = 'select_objs'
         
         self.draw_obj_names(layout)
 
@@ -326,7 +257,7 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
             Objects.sv_set(objs)
 
 
-classes = [SvObjSelectObjectInItemsInSceneMK3, SvObjSelectedMK3, SvObjectsNodeMK3]
+classes = [SvOB3Callback, SvObjectsNodeMK3]
 
 
 def register():
