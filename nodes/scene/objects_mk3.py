@@ -105,7 +105,7 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         for name in names:
             self.object_names.add().name = name
 
-        if not self.objects_names:
+        if not self.object_names:
             ops.report({'WARNING'}, "Warning, no selected objects in the scene")
 
 
@@ -114,17 +114,17 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         for item in self.object_names:
             bpy.data.objects[item.name].select = True
 
-        if not self.objects_names:
+        if not self.object_names:
             ops.report({'WARNING'}, "Warning, no object associated with the obj in Node")
          
 
     def draw_obj_names(self, layout):
         # display names currently being tracked, stop at the first 5..
-        if self.objects_names:
-            remain = len(self.objects_names) - 5
+        if self.object_names:
+            remain = len(self.object_names) - 5
 
-            for i, obj_name in enumerate(self.objects_names):
-                layout.label(obj_name)
+            for i, obj_ref in enumerate(self.object_names):
+                layout.label(obj_ref.name)
                 if i > 4 and remain > 0:
                     postfix = ('' if remain == 1 else 's')
                     more_items = '... {0} more item' + postfix
