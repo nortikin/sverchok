@@ -25,7 +25,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils import sv_panels_tools
 from sverchok.core.update_system import process_from_node, process_from_nodes
 
-
+objects_nodes_set = {'ObjectsNode', 'ObjectsNodeMK2', 'SvObjectsNodeMK3'}
 
 
 class SverchokUpdateObjectIn(bpy.types.Operator):
@@ -41,7 +41,7 @@ class SverchokUpdateObjectIn(bpy.types.Operator):
                 if ng.sv_process:
                     nodes = []
                     for n in ng.nodes:
-                        if n.bl_idname in {'ObjectsNode','ObjectsNodeMK2'}:
+                        if n.bl_idname in objects_nodes_set:
                             nodes.append(n)
                     if nodes:
                         obj_nodes.append(nodes)
@@ -79,7 +79,7 @@ class Sv3DViewObjInUpdater(bpy.types.Operator, object):
                 if ng.sv_process:
                     nodes = []
                     for n in ng.nodes:
-                        if n.bl_idname in {'ObjectsNode','ObjectsNodeMK2'}:
+                        if n.bl_idname in objects_nodes_set:
                             nodes.append(n)
                     if nodes:
                         obj_nodes.append(nodes)
@@ -201,10 +201,14 @@ class Sv3DPanel(bpy.types.Panel):
                         no = item.node_name
                         ver = item.prop_name
                         node = tree.nodes[no]
+
+                        print('-----', node.bl_idname, no)
+
                         if node.label:
                             tex = node.label
                         else:
                             tex = no
+
                         if node.bl_idname == "ObjectsNodeMK2":
                             row = col.row(align=True)
                             row.label(text=node.label if node.label else no)
@@ -215,6 +219,10 @@ class Sv3DPanel(bpy.types.Panel):
                             op.tree_name = tree.name
                             op.grup_name = node.groupname
                             op.sort = node.sort
+                        elif node.bl_idname == 'SvObjectsNodeMK3':
+                            print('should be drawing')
+                            node.draw_sv3dpanel_ob3(col, little_width)
+
                         elif node.bl_idname in {"IntegerNode", "FloatNode"}:
                             row = col.row(align=True)
                             row.prop(node, ver, text=tex)

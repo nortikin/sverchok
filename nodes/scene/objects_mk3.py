@@ -109,7 +109,7 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
             ops.report({'WARNING'}, "Warning, no selected objects in the scene")
             return
 
-        self.process()   # must process from node too.. doesn't
+        self.process_node(None)
 
 
     def select_objs(self, ops):
@@ -167,6 +167,14 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         
         self.draw_obj_names(layout)
 
+
+    def draw_sv3dpanel_ob3(self, col, little_width):
+        callback = 'node.ob3_callback'
+        row = col.row(align=True)
+        row.label(text=self.label if self.label else self.name)
+        colo = row.row(align=True)
+        colo.scale_x = little_width * 5
+        colo.operator(callback, text="Get").fn_name = 'get_objects_from_scene'
 
     def update(self):
         pass
