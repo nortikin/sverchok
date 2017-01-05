@@ -65,10 +65,6 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         elif not self.vergroups and showing_vg:
             outs.remove(outs['Vers_grouped'])
 
-    objects_local = StringProperty(
-        name='local objects in', description='objects, bound to current node',
-        default='', update=updateNode)
-
     groupname = StringProperty(
         name='groupname', description='group of objects (green outline CTRL+G)',
         default='', update=updateNode)
@@ -198,10 +194,6 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
     def update(self):
         pass
 
-    # def copy(self, node):
-    #     if self.objects_local:
-    #         name = self.name + self.id_data.name
-    #         handle_write(name, literal_eval(self.objects_local))
 
     def get_verts_and_vertgroups(self, obj_data):
         vers = []
@@ -220,7 +212,13 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
             
         scene = bpy.context.scene
 
-        objs = [o for o in bpy.data.objects if o.name in self.object_names]
+        try:
+            # objs = [o for o in bpy.data.objects if o.name in self.object_names]
+            data_objects = bpy.data.objects
+            objs = [data_objects[name] for name in self.object_names]
+        except:
+            # not ready
+            return
 
         edgs_out = []
         vers_out = []
