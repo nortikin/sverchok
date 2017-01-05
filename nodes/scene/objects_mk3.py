@@ -105,7 +105,12 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         Collect selected objects
         """
         self.object_names.clear()
-        names = [obj.name for obj in bpy.data.objects if obj.select]
+
+        groups = bpy.data.groups
+        if self.group_name and groups[self.group_name].objects:
+            names = [obj.name for obj in groups[self.group_name].objects]
+        else:
+            names = [obj.name for obj in bpy.data.objects if obj.select]
 
         if self.sort:
             names.sort()
