@@ -23,7 +23,7 @@ import bpy
 from mathutils import Vector
 
 from sverchok import data_structure
-from sverchok.data_structure import SvNoDataError
+from sverchok.core.socket_data import SvNoDataError
 import sverchok
 
 import traceback
