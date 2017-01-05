@@ -30,14 +30,22 @@ class SvOB3Callback(bpy.types.Operator):
     bl_idname = "node.ob3_callback"
     bl_label = "Object In mk3 callback"
 
-    fn_name = bpy.props.StringProperty(default='')
+    fn_name = StringProperty(default='')
+    node_name = StringProperty(default='')
+    tree_name = StringProperty(default='')
 
     def execute(self, context):
         """
         returns the operator's 'self' too to allow the code being called to
         print from self.report.
         """
-        getattr(context.node, self.fn_name)(self)
+        if self.tree_name and self.node_name:
+            ng = bpy.data.node_groups[self.tree_name]
+            node = ng.nodes[self.node_name]
+        else:
+            node = context.node
+
+        getattr(node, self.fn_name)(self)
         return {'FINISHED'}
 
 
@@ -109,6 +117,8 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
             ops.report({'WARNING'}, "Warning, no selected objects in the scene")
             return
 
+        # needs to do groupname too.
+
         self.process_node(None)
 
 
@@ -174,7 +184,11 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         row.label(text=self.label if self.label else self.name)
         colo = row.row(align=True)
         colo.scale_x = little_width * 5
-        colo.operator(callback, text="Get").fn_name = 'get_objects_from_scene'
+        op = colo.operator(callback, text="Get")
+        op.fn_name = 'get_objects_from_scene'
+        op.tree_name = self.id_data.name
+        op.node_name = self.name
+
 
     def update(self):
         pass

@@ -220,7 +220,6 @@ class Sv3DPanel(bpy.types.Panel):
                             op.grup_name = node.groupname
                             op.sort = node.sort
                         elif node.bl_idname == 'SvObjectsNodeMK3':
-                            print('should be drawing')
                             node.draw_sv3dpanel_ob3(col, little_width)
 
                         elif node.bl_idname in {"IntegerNode", "FloatNode"}:
