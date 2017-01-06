@@ -191,10 +191,6 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         op.node_name = self.name
 
 
-    def update(self):
-        pass
-
-
     def get_verts_and_vertgroups(self, obj_data):
         vers = []
         vers_grouped = []
@@ -258,32 +254,20 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
             mtrx_out.append(mtrx)
             vers_out_grouped.append(vers_grouped)
 
+        outputs = self.outputs
+        
         if vers_out and vers_out[0]:
 
-            Vertices = self.outputs['Vertices']
-            Edges = self.outputs['Edges']
-            Polygons = self.outputs['Polygons']
-            Matrixes = self.outputs['Matrixes']
-            Objects = self.outputs['Object']
+            outputs['Vertices'].sv_set(vers_out)
+            outputs['Edges'].sv_set(edgs_out)
+            outputs['Polygons'].sv_set(pols_out)
 
-            if Vertices.is_linked:
-                Vertices.sv_set(vers_out)
+            if ('Vers_grouped' in self.outputs) and self.vergroups:
+                outputs['Vers_grouped'].sv_set(vers_out_grouped)
 
-            if Edges.is_linked:
-                Edges.sv_set(edgs_out)
+        outputs['Matrixes'].sv_set(mtrx_out)
+        outputs['Object'].sv_set(objs)
 
-            if Polygons.is_linked:
-                Polygons.sv_set(pols_out)
-
-            if 'Vers_grouped' in self.outputs:
-                Vers_grouped = self.outputs['Vers_grouped']
-                if self.vergroups and Vers_grouped.is_linked:
-                    Vers_grouped.sv_set(vers_out_grouped)
-
-        if Matrixes.is_linked:
-            Matrixes.sv_set(mtrx_out)
-        if Objects.is_linked:
-            Objects.sv_set(objs)
 
 
 classes = [SvOB3Callback, SvObjectsNodeMK3]
