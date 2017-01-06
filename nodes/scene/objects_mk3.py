@@ -211,7 +211,7 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         try:
             # objs = [o for o in bpy.data.objects if o.name in self.object_names]
             data_objects = bpy.data.objects
-            objs = [data_objects[name] for name in self.object_names]
+            objs = [data_objects[o.name] for o in self.object_names]
         except:
             # not ready
             return
@@ -255,19 +255,17 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
             vers_out_grouped.append(vers_grouped)
 
         outputs = self.outputs
-        
-        if vers_out and vers_out[0]:
 
+        if vers_out and vers_out[0]:
             outputs['Vertices'].sv_set(vers_out)
             outputs['Edges'].sv_set(edgs_out)
             outputs['Polygons'].sv_set(pols_out)
 
-            if ('Vers_grouped' in self.outputs) and self.vergroups:
+            if 'Vers_grouped' in outputs and self.vergroups:
                 outputs['Vers_grouped'].sv_set(vers_out_grouped)
 
         outputs['Matrixes'].sv_set(mtrx_out)
         outputs['Object'].sv_set(objs)
-
 
 
 classes = [SvOB3Callback, SvObjectsNodeMK3]
