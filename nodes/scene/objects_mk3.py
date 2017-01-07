@@ -17,12 +17,14 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-from bpy.props import BoolProperty, StringProperty, EnumProperty
+from bpy.props import BoolProperty, StringProperty
+import bmesh
 
 import sverchok
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 from sverchok.utils.context_managers import hard_freeze
+from sverchok.utils.sv_bmesh_utils import pydata_from_bmesh
 
 
 class SvOB3Callback(bpy.types.Operator):
@@ -206,6 +208,7 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
             
         scene = bpy.context.scene
         data_objects = bpy.data.objects
+        outputs = self.outputs
         
         edgs_out = []
         vers_out = []
@@ -214,7 +217,7 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         mtrx_out = []
 
         # iterate through references
-        for obj in (data_objects[o.name] for o in self.object_names):
+        for obj in (data_objects.get(o.name) for o in self.object_names):
 
             edgs = []
             vers = []
@@ -229,13 +232,20 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
                     continue
 
                 try:
-                    obj_data = obj.to_mesh(scene, self.modifiers, 'PREVIEW')
-                    if obj_data.polygons:
-                        pols = [list(p.vertices) for p in obj_data.polygons]
-                    vers, vers_grouped = self.get_verts_and_vertgroups(obj_data)
-                    edgs = obj_data.edge_keys
-
-                    bpy.data.meshes.remove(obj_data, do_unlink=True)
+                    if obj.mode == 'EDIT' and obj.type == 'MESH':
+                        # Mesh objects do not currently return what you see
+                        # from 3dview while in edit mode when using obj.to_mesh.
+                        me = obj.data
+                        bm = bmesh.from_edit_mesh(me)
+                        vers, edgs, pols = pydata_from_bmesh(bm)
+                        del bm
+                    else:
+                        obj_data = obj.to_mesh(scene, self.modifiers, 'PREVIEW')
+                        if obj_data.polygons:
+                            pols = [list(p.vertices) for p in obj_data.polygons]
+                        vers, vers_grouped = self.get_verts_and_vertgroups(obj_data)
+                        edgs = obj_data.edge_keys
+                        bpy.data.meshes.remove(obj_data, do_unlink=True)
                 except:
                     print('failure in process between frozen area', self.name)
 
@@ -244,8 +254,6 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
             pols_out.append(pols)
             mtrx_out.append(mtrx)
             vers_out_grouped.append(vers_grouped)
-
-        outputs = self.outputs
 
         if vers_out and vers_out[0]:
             outputs['Vertices'].sv_set(vers_out)
@@ -256,7 +264,7 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
                 outputs['Vers_grouped'].sv_set(vers_out_grouped)
 
         outputs['Matrixes'].sv_set(mtrx_out)
-        outputs['Object'].sv_set([data_objects[o.name] for o in self.object_names])
+        outputs['Object'].sv_set([data_objects.get(o.name) for o in self.object_names])
 
 
 classes = [SvOB3Callback, SvObjectsNodeMK3]
