@@ -37,6 +37,7 @@ old_bl_idnames = {
     'VoronoiNode': "voronoi",
     'ViewerNode': "viewer",
     'ObjectsNode': "objects",
+    'ObjectsNodeMK2': "objects_mk2",
     'RandomVectorNode': 'random_vector',
     'ViewerNode_text': "viewer_text",
     'EvalKnievalNode': "eval_knieval",

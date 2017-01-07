@@ -185,7 +185,7 @@
     SvStethoscopeNode
 
 ## Scene
-    ObjectsNodeMK2
+    SvObjectsNodeMK3
     SvObjRemoteNodeMK2
     SvFrameInfoNode
     SvEmptyOutNode

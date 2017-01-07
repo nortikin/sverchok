@@ -303,7 +303,7 @@ class SvLayoutScanProperties(bpy.types.Operator):
                             if not no.inputs[0].links \
                                     and no.outputs[0].links and no.to3d:
                                 templist.append([no.label, no.name, 'float_'])
-                    if no.bl_idname == 'ObjectsNodeMK2':
+                    if no.bl_idname in {'ObjectsNodeMK2', 'SvObjectsNodeMK3'}:
                         print('scans for get option ', no.label, no.name)
                         if any((s.links for s in no.outputs)):
                             templist.append([no.label, no.name, ""])
