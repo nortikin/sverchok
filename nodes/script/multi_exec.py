@@ -16,10 +16,8 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-import json
-import bpy
+import json, bpy, mathutils, bmesh as bm, numpy as np
 from bpy.props import StringProperty
-import numpy as np
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 
