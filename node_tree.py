@@ -86,7 +86,7 @@ class SvSocketCommon:
     def replace(self, new_type, new_name=None):
         # self.bl_idname = new_type
         # self.name = new_name or self.name
-        replace_socket(self, new_type, new_name, new_pos=self.index)
+        replace_socket(self, new_type, new_name=new_name or self.name, new_pos=self.index)
 
 
 class MatrixSocket(NodeSocket, SvSocketCommon):
