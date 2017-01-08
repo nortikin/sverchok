@@ -16,6 +16,8 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+from sverchok import data_structure
+
 #####################################
 # socket data cache                 #
 #####################################
@@ -47,9 +49,9 @@ def SvGetSocketInfo(socket):
     ng = socket.id_data.name
 
     if socket.is_output:
-        s_id = socket_id(socket)
+        s_id = socket.socket_id
     elif socket.is_linked:
-        s_id = socket_id(socket.other)
+        s_id = socket.other.socket_id
     else:
         return ''
     if ng in socket_data_cache:
@@ -63,11 +65,12 @@ def SvGetSocketInfo(socket):
 def SvSetSocket(socket, out):
     """sets socket data for socket"""
     global socket_data_cache
-    if not socket.is_output:
-        print("Warning, {} setting input socket: {}".format(socket.node.name, socket.name))
-    if not socket.is_linked:
-        print("Warning: {} setting unconncted socket: {}".format(socket.node.name, socket.name))
-    s_id = socket_id(socket)
+    if data_structure.DEBUG_MODE:
+        if not socket.is_output:
+            print("Warning, {} setting input socket: {}".format(socket.node.name, socket.name))
+        if not socket.is_linked:
+            print("Warning: {} setting unconncted socket: {}".format(socket.node.name, socket.name))
+    s_id = socket.socket_id
     s_ng = socket.id_data.name
     if s_ng not in socket_data_cache:
         socket_data_cache[s_ng] = {}
@@ -81,7 +84,6 @@ def SvGetSocket(socket, deepcopy=True):
     set to False and increase performance substanstilly
     """
     global socket_data_cache
-    global DEBUG_MODE
     if socket.is_linked:
         other = socket.other
         s_id = other.socket_id
@@ -95,7 +97,7 @@ def SvGetSocket(socket, deepcopy=True):
             else:
                 return out
         else:
-            if DEBUG_MODE:
+            if data_structure.DEBUG_MODE:
                 print("cache miss:", socket.node.name, "->", socket.name, "from:", other.node.name, "->", other.name)
             raise SvNoDataError
     # not linked
