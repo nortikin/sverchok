@@ -97,11 +97,15 @@ class SvNoiseNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         n_t = noise_dict[self.noise_type]
         n_f = noise_f[self.out_mode]
 
-        for seed, obj in zip(seeds, verts):
+        for idx, (seed, obj) in enumerate(zip(seeds, verts)):
             if isinstance(seed, (int, float)):
                 noise.seed_set(seed)
             elif isinstance(seed, (list, tuple)) and isinstance(seed[0], (int, float)):
-                noise.seed_set(seed[0])
+                noise.seed_set(seed[idx] if idx < len(seed) else seed[0])
+
+            if len(seeds) == 1:
+                noise.seed_set(seeds[0][idx] if idx < len(seeds[0]) else seeds[0][0])
+
             out.append([n_f(v, n_t) for v in obj])
 
         if 'Noise V' in outputs:

@@ -30,6 +30,7 @@ from sverchok.data_structure import (
     SvGetSocket,
     SvSetSocket,
     updateNode,
+    replace_socket,
     SvNoDataError,
     sentinel)
 
@@ -83,8 +84,9 @@ class SvSocketCommon:
         SvSetSocket(self, data)
 
     def replace(self, new_type, new_name=None):
-        self.bl_idname = new_type
-        self.name = new_name or self.name
+        # self.bl_idname = new_type
+        # self.name = new_name or self.name
+        replace_socket(self, new_type, new_name, new_pos=self.index)
 
 
 class MatrixSocket(NodeSocket, SvSocketCommon):
