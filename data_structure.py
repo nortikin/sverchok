@@ -90,7 +90,7 @@ def repeat_last(lst):
 def match_long_repeat(lsts):
     """return matched list, using the last value to fill lists as needed
     longest list matching [[1,2,3,4,5], [10,11]] -> [[1,2,3,4,5], [10,11,11,11,11]]
-    """"
+    """
     max_l = 0
     tmp = []
     for l in lsts:
