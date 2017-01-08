@@ -25,7 +25,7 @@ from bpy.props import StringProperty, BoolProperty, FloatVectorProperty, IntProp
 from bpy.types import NodeTree, NodeSocket, NodeSocketStandard
 
 from sverchok import data_structure
-from sverchok.data_structure import updateNode
+from sverchok.data_structure import updateNode, get_other_socket, socket_id
 
 from sverchok.core.socket_data import (
     SvGetSocketInfo,
@@ -72,7 +72,7 @@ class SvSocketCommon:
 
     @property
     def socket_id(self):
-        return str(hash(socket.id_data.name + socket.node.name + socket.identifier))
+        return str(hash(self.id_data.name + self.node.name + self.identifier))
 
     @property
     def index(self):
