@@ -49,6 +49,7 @@ from sverchok.core.socket_conversions import (
 from sverchok.ui import color_def
 
 def process_from_socket(self, context):
+    """Update function of exposed properties in Sockets"""
     self.node.process_node(context)
 
 
@@ -72,10 +73,12 @@ class SvSocketCommon:
 
     @property
     def socket_id(self):
+        """Id of socket used by data_cache"""
         return str(hash(self.id_data.name + self.node.name + self.identifier))
 
     @property
     def index(self):
+        """Index of socket"""
         node = self.node
         sockets = node.outputs if self.is_output else node.inputs
         for i, s in enumerate(sockets):
@@ -83,11 +86,15 @@ class SvSocketCommon:
                  return i
 
     def sv_set(self, data):
+        """Set output data"""
         SvSetSocket(self, data)
+
+    def replace_socket(self, new_type, new_name=None):
+        """Replace a socket with a socket of new_type and keep links"""
+        replace_socket(self, new_type, new_name)
 
 class MatrixSocket(NodeSocket, SvSocketCommon):
     '''4x4 matrix Socket type'''
-    # ref: http://urchn.org/post/nodal-transform-experiment
     bl_idname = "MatrixSocket"
     bl_label = "Matrix Socket"
     prop_name = StringProperty(default='')
