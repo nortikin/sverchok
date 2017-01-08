@@ -20,7 +20,7 @@ import inspect
 import operator
 
 import bpy
-from bpy.props import EnumProperty, IntProperty
+from bpy.props import EnumProperty, IntProperty, FloatProperty
 from mathutils import noise
 
 from sverchok.node_tree import SverchCustomTreeNode
@@ -75,10 +75,12 @@ class SvNoiseNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         update=updateNode)
 
     seed = IntProperty(default=0, name='Seed', update=updateNode)
+    # mix = FloatProperty(default=1.0, name='Mix', soft_min=0.0, soft_max=1.0, update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', 'Vertices')
         self.inputs.new('StringsSocket', 'Seed').prop_name = 'seed'
+        # self.inputs.new('StringsSocket', 'Mix').prop_name = 'mix'
         self.outputs.new('VerticesSocket', 'Noise V')
 
     def draw_buttons(self, context, layout):
@@ -94,19 +96,23 @@ class SvNoiseNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         out = []
         verts = inputs['Vertices'].sv_get()
         seeds = inputs['Seed'].sv_get()
+        # mixes = inputs['Mix'].sv_get()
         n_t = noise_dict[self.noise_type]
         n_f = noise_f[self.out_mode]
 
         
         for idx, (seed, obj) in enumerate(zip(*match_long_repeat([seeds, verts]))):
+
+            # got seed? 
+            seed_val = 0
             if isinstance(seed, (int, float)):
-                noise.seed_set(seed)
+                seed_val = seed
             elif isinstance(seed, (list, tuple)) and isinstance(seed[0], (int, float)):
-                noise.seed_set(seed[idx] if idx < len(seed) else seed[0])
-
+                seed_val = seed[idx] if idx < len(seed) else seed[0]
             if len(seeds) == 1:
-                noise.seed_set(seeds[0][idx] if idx < len(seeds[0]) else seeds[0][0])
+                seed_val = seeds[0][idx] if idx < len(seeds[0]) else seeds[0][0]
 
+            noise.seed_set(seed_val)
             out.append([n_f(v, n_t) for v in obj])
 
         if 'Noise V' in outputs:
