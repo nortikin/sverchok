@@ -24,7 +24,7 @@ from bpy.props import EnumProperty, IntProperty
 from mathutils import noise
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (updateNode, Vector_degenerate)
+from sverchok.data_structure import (updateNode, Vector_degenerate, match_long_repeat)
 
 # noise nodes
 # from http://www.blender.org/documentation/blender_python_api_current/mathutils.noise.html
@@ -97,7 +97,8 @@ class SvNoiseNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         n_t = noise_dict[self.noise_type]
         n_f = noise_f[self.out_mode]
 
-        for idx, (seed, obj) in enumerate(zip(seeds, verts)):
+        
+        for idx, (seed, obj) in enumerate(zip(*match_long_repeat([seeds, verts]))):
             if isinstance(seed, (int, float)):
                 noise.seed_set(seed)
             elif isinstance(seed, (list, tuple)) and isinstance(seed[0], (int, float)):
