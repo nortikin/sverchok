@@ -60,7 +60,9 @@ class SvColors(bpy.types.PropertyGroup):
         step=1, precision=3, subtype='COLOR_GAMMA', size=3,
         update=updateNode)
 
+
 class SvSocketCommon:
+
     @property
     def other(self):
         return get_other_socket(self)
@@ -68,7 +70,6 @@ class SvSocketCommon:
     def set_default(self, value):
         if self.prop_name:
             setattr(self.node, self.prop_name, value)
-
 
     @property
     def index(self):
@@ -80,6 +81,11 @@ class SvSocketCommon:
 
     def sv_set(self, data):
         SvSetSocket(self, data)
+
+    def replace(self, new_type, new_name=None):
+        self.bl_idname = new_type
+        self.name = new_name or self.name
+
 
 class MatrixSocket(NodeSocket, SvSocketCommon):
     '''4x4 matrix Socket type'''
