@@ -16,7 +16,6 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-from functools import reduce
 from math import radians
 import itertools
 import time

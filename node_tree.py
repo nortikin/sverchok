@@ -25,7 +25,11 @@ from bpy.props import StringProperty, BoolProperty, FloatVectorProperty, IntProp
 from bpy.types import NodeTree, NodeSocket, NodeSocketStandard
 
 from sverchok import data_structure
-from sverchok.data_structure import updateNode, get_other_socket, socket_id
+from sverchok.data_structure import (
+    updateNode,
+    get_other_socket,
+    socket_id,
+    replace_socket)
 
 from sverchok.core.socket_data import (
     SvGetSocketInfo,
@@ -90,8 +94,9 @@ class SvSocketCommon:
         SvSetSocket(self, data)
 
     def replace_socket(self, new_type, new_name=None):
-        """Replace a socket with a socket of new_type and keep links"""
-        replace_socket(self, new_type, new_name)
+        """Replace a socket with a socket of new_type and keep links,
+        return the new socket, the old reference might be invalid"""
+        return replace_socket(self, new_type, new_name)
 
 class MatrixSocket(NodeSocket, SvSocketCommon):
     '''4x4 matrix Socket type'''
