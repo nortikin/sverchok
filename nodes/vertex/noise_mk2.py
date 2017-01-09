@@ -99,7 +99,13 @@ class SvNoiseNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
         
         for idx, (seed, obj) in enumerate(zip(*match_long_repeat([seeds, verts]))):
+            # multi-pass, make sure seed_val is a number and it isn't 0.
+            # 0 unsets the seed and generates unreproducable output based on system time
+            # We force the seed to a non 0 value. 
+            # See https://github.com/nortikin/sverchok/issues/1095#issuecomment-271261600
             seed_val = seed if isinstance(seed, (int, float)) else 0
+            seed_val = int(round(seed_val)) or 140230
+
             noise.seed_set(seed_val)
             out.append([noise_function(v, _noise_type) for v in obj])
 
