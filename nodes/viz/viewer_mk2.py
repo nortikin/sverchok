@@ -27,11 +27,12 @@ import sverchok
 from sverchok.node_tree import SverchCustomTreeNode
 
 from sverchok.data_structure import (
-    cache_viewer_baker, node_id, updateNode, dataCorrect,
+    node_id, updateNode, dataCorrect,
     Vector_generate, Matrix_generate)
 
 from sverchok.ui.viewer_draw_mk2 import callback_disable, callback_enable
-# from nodes.basic_view.viewer import SvObjBake
+
+cache_viewer_baker = {}
 
 sock_dict = {
     'v': 'VerticesSocket',
@@ -370,7 +371,7 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
         # new connections and processing, it could auto rewire s->s v->v m->m.
         def check_origin(to_socket, socket_type):
             origin_socket_bl_idname = inputs[to_socket].links[0].from_socket.bl_idname
-    
+
             if isinstance(socket_type, str):
                 return origin_socket_bl_idname == sock_dict.get(socket_type)
             else:

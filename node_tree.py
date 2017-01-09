@@ -26,10 +26,15 @@ from bpy.types import NodeTree, NodeSocket, NodeSocketStandard
 
 from sverchok import data_structure
 from sverchok.data_structure import (
+    updateNode,
+    get_other_socket,
+    socket_id,
+    replace_socket)
+
+from sverchok.core.socket_data import (
     SvGetSocketInfo,
     SvGetSocket,
     SvSetSocket,
-    updateNode,
     SvNoDataError,
     sentinel)
 
@@ -48,6 +53,7 @@ from sverchok.core.socket_conversions import (
 from sverchok.ui import color_def
 
 def process_from_socket(self, context):
+    """Update function of exposed properties in Sockets"""
     self.node.process_node(context)
 
 
@@ -69,9 +75,14 @@ class SvSocketCommon:
         if self.prop_name:
             setattr(self.node, self.prop_name, value)
 
+    @property
+    def socket_id(self):
+        """Id of socket used by data_cache"""
+        return str(hash(self.id_data.name + self.node.name + self.identifier))
 
     @property
     def index(self):
+        """Index of socket"""
         node = self.node
         sockets = node.outputs if self.is_output else node.inputs
         for i, s in enumerate(sockets):
@@ -79,11 +90,16 @@ class SvSocketCommon:
                  return i
 
     def sv_set(self, data):
+        """Set output data"""
         SvSetSocket(self, data)
+
+    def replace_socket(self, new_type, new_name=None):
+        """Replace a socket with a socket of new_type and keep links,
+        return the new socket, the old reference might be invalid"""
+        return replace_socket(self, new_type, new_name)
 
 class MatrixSocket(NodeSocket, SvSocketCommon):
     '''4x4 matrix Socket type'''
-    # ref: http://urchn.org/post/nodal-transform-experiment
     bl_idname = "MatrixSocket"
     bl_label = "Matrix Socket"
     prop_name = StringProperty(default='')
@@ -95,9 +111,9 @@ class MatrixSocket(NodeSocket, SvSocketCommon):
     def sv_get(self, default=sentinel, deepcopy=True):
         self.num_matrices = 0
         if self.is_linked and not self.is_output:
-            
+
             if is_vector_to_matrix(self):
-                # this means we're going to get a flat list of the incoming 
+                # this means we're going to get a flat list of the incoming
                 # locations and convert those into matrices proper.
                 out = get_matrices_from_locs(SvGetSocket(self, deepcopy=True))
                 self.num_matrices = len(out)
@@ -149,7 +165,7 @@ class VerticesSocket(NodeSocket, SvSocketCommon):
             if is_matrix_to_vector(self):
                 out = get_locs_from_matrices(SvGetSocket(self, deepcopy=True))
                 return out
-            
+
             return SvGetSocket(self, deepcopy)
 
 
@@ -382,6 +398,11 @@ class SverchCustomTreeNode:
     def poll(cls, ntree):
         return ntree.bl_idname in ['SverchCustomTreeType', 'SverchGroupTreeType']
 
+    @property
+    def node_id(self):
+        if not self.n_id:
+            self.n_id = str(hash(self) ^ hash(time.monotonic()))
+        return self.n_id
 
     def mark_error(self, err):
         """

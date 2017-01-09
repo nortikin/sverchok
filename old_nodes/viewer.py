@@ -22,8 +22,7 @@ from mathutils import Matrix
 
 from sverchok.node_tree import (SverchCustomTreeNode, SvColors,
                        StringsSocket, VerticesSocket, MatrixSocket)
-from sverchok.data_structure import (cache_viewer_baker,
-                            dataCorrect, node_id,
+from sverchok.data_structure import (dataCorrect, node_id,
                             Vector_generate, Matrix_generate,
                             updateNode, SvGetSocketAnyType)
 from sverchok.ui.viewer_draw import callback_disable, callback_enable
@@ -126,6 +125,7 @@ class SvObjBake(bpy.types.Operator):
         #print (ob.name + ' baked')
         return [ob, me]
 
+cache_viewer_baker = {}
 
 class ViewerNode(bpy.types.Node, SverchCustomTreeNode):
     ''' ViewerNode '''

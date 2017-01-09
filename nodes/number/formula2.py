@@ -31,7 +31,7 @@ from bpy.props import BoolProperty, StringProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (
-    sv_Vars, updateNode, multi_socket, changable_sockets,
+    updateNode, multi_socket, changable_sockets,
     dataSpoil, dataCorrect, levelsOflist,
     SvSetSocketAnyType, SvGetSocketAnyType
 )
@@ -72,8 +72,8 @@ class Formula2Node(bpy.types.Node, SverchCustomTreeNode):
             inputsocketname = 'X'
             outputsocketname = ['Result']
             changable_sockets(self, inputsocketname, outputsocketname)
-            
-        
+
+
     def process(self):
         if self.inputs['X'].is_linked:
             vecs = SvGetSocketAnyType(self, self.inputs['X'])
@@ -84,7 +84,7 @@ class Formula2Node(bpy.types.Node, SverchCustomTreeNode):
         # outputs
         if not self.outputs['Result'].is_linked:
             return
-        
+
         list_mult = []
         if self.inputs['n[0]'].is_linked:
             i = 0
@@ -134,6 +134,7 @@ class Formula2Node(bpy.types.Node, SverchCustomTreeNode):
         X = x
         n = []
         a = []
+        sv_Vars = {} #is dead for long time, but not sure about this
         list_vars = [w for w in sv_Vars.keys()]
         for v in list_vars:
             if v[:6] == 'sv_typ':
