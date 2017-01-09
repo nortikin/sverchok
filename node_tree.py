@@ -66,6 +66,7 @@ class SvColors(bpy.types.PropertyGroup):
         step=1, precision=3, subtype='COLOR_GAMMA', size=3,
         update=updateNode)
 
+
 class SvSocketCommon:
     @property
     def other(self):
@@ -97,6 +98,7 @@ class SvSocketCommon:
         """Replace a socket with a socket of new_type and keep links,
         return the new socket, the old reference might be invalid"""
         return replace_socket(self, new_type, new_name)
+
 
 class MatrixSocket(NodeSocket, SvSocketCommon):
     '''4x4 matrix Socket type'''

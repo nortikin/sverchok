@@ -42,6 +42,7 @@ old_bl_idnames = {
     'ViewerNode_text': "viewer_text",
     'EvalKnievalNode': "eval_knieval",
     'FormulaNode': 'formula',
+    'SvNoiseNode': 'noise',
     'SvPointOnMeshNode': 'closest_point_on_mesh',
     'SvRayCastObjectNode': 'object_raycast',
     'SvRayCastSceneNode': 'scene_raycast',

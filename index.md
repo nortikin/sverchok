@@ -150,7 +150,7 @@
     SvInterpolationNodeMK2
     SvInterpolationNodeMK3
     SvVertSortNode
-    SvNoiseNode
+    SvNoiseNodeMK2
     svAxisInputNode
     SvAxisInputNodeMK2
 
