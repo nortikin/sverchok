@@ -23,7 +23,7 @@ from bpy.props import StringProperty, EnumProperty, IntProperty, BoolProperty
 
 
 from sverchok.node_tree import SverchCustomTreeNode, SvNodeTreeCommon
-from sverchok.data_structure import replace_socket, get_other_socket
+from sverchok.data_structure import get_other_socket
 
 
 socket_types = [
@@ -156,11 +156,11 @@ class SvEditSocketOpExp(Operator, MonadOpCommon):
         node, kind, socket = self.get_data(context)
         monad = node.id_data
 
-        replace_socket(socket, self.socket_type)
+        socket.replace_socket(self.socket_type)
 
         for instance in monad.instances:
             sockets = getattr(instance, reverse_lookup[kind])
-            replace_socket(sockets[self.pos], self.socket_type)
+            sockets[self.pos].replace_socket(self.socket_type)
 
         monad.update_cls()
         return {"FINISHED"}
