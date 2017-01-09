@@ -22,8 +22,7 @@ import bpy
 from mathutils import Matrix
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (dataCorrect, Matrix_listing, SvGetSocketAnyType,
-                            SvSetSocketAnyType)
+from sverchok.data_structure import (dataCorrect, Matrix_listing)
 
 
 class SvBBoxNode(bpy.types.Node, SverchCustomTreeNode):
@@ -43,12 +42,12 @@ class SvBBoxNode(bpy.types.Node, SverchCustomTreeNode):
     def process(self):
         if not self.inputs['Vertices'].is_linked:
             return
-        if not any([s.is_linked for s in self.outputs]):
+        if not any(s.is_linked for s in self.outputs):
             return
         has_mat_out = bool(self.outputs['Center'].is_linked)
         has_mean = bool(self.outputs['Mean'].is_linked)
         has_vert_out = bool(self.outputs['Vertices'].is_linked)
-        vert = SvGetSocketAnyType(self, self.inputs['Vertices'])
+        vert = self.inputs['Vertices'].sv_get(deepcopy=False)
         vert = dataCorrect(vert, nominal_dept=2)
 
         if vert:
@@ -80,17 +79,17 @@ class SvBBoxNode(bpy.types.Node, SverchCustomTreeNode):
                     avr = [n/len(v) for n in avr]
                     mean_out.append([avr])
 
-            if self.outputs['Vertices'].is_linked:
-                SvSetSocketAnyType(self, 'Vertices', verts_out)
+            if has_vert_out:
+                self.outputs['Vertices'].sv_set(verts_out)
 
             if self.outputs['Edges'].is_linked:
-                SvSetSocketAnyType(self, 'Edges', edges_out)
+                self.outputs['Edges'].sv_set(edges_out)
 
-            if self.outputs['Mean'].is_linked:
-                SvSetSocketAnyType(self, 'Mean', mean_out)
+            if has_mean:
+                self.outputs['Mean'].sv_set(mean_out)
 
             if self.outputs['Center'].is_linked:
-                SvSetSocketAnyType(self, 'Center', Matrix_listing(mat_out))
+                self.outputs['Center'].sv_set(Matrix_listing(mat_out))
 
 
 
