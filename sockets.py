@@ -37,7 +37,9 @@ class SvSocketStandard(SvSocketCommon):
             return [[self.default_value]]
 
     def draw(self, context, layout, node, text):
-        if self.is_output or self.is_linked:
+        if self.is_linked:
+            layout.label(text + '. ' + SvGetSocketInfo(self))
+        elif self.is_output:
             layout.label(text)
         else:
             layout.prop(self, "default_value", text=text)
