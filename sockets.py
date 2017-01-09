@@ -22,7 +22,7 @@ from bpy.props import StringProperty, BoolProperty, FloatVectorProperty, IntProp
 from bpy.types import NodeTree, NodeSocket
 
 
-from sverchok.data_structure import SvGetSocket, SvGetSocketInfo
+from sverchok.core.socket_data import SvGetSocket, SvGetSocketInfo
 from sverchok.node_tree import SvSocketCommon, process_from_socket, sentinel
 
 
@@ -37,7 +37,9 @@ class SvSocketStandard(SvSocketCommon):
             return [[self.default_value]]
 
     def draw(self, context, layout, node, text):
-        if self.is_output or self.is_linked:
+        if self.is_linked:
+            layout.label(text + '. ' + SvGetSocketInfo(self))
+        elif self.is_output:
             layout.label(text)
         else:
             layout.prop(self, "default_value", text=text)
@@ -82,6 +84,8 @@ class SvObjectSocket(NodeSocket, SvSocketCommon):
             layout.prop_search(self, 'object_ref', bpy.data, 'objects', text=self.name)
         elif self.is_linked:
             layout.label(text + '. ' + SvGetSocketInfo(self))
+        else:
+            layout.label(text)
 
     def draw_color(self, context, node):
         return (0.69,  0.74,  0.73, 1.0)

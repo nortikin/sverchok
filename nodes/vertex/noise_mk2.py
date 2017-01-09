@@ -52,11 +52,11 @@ class SvNoiseNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         outputs = self.outputs
         if self.out_mode == 'SCALAR':
             if 'Noise S' not in outputs:
-                outputs[0].replace('StringsSocket', 'Noise S')
+                outputs[0].replace_socket('StringsSocket', 'Noise S')
                 return
         if self.out_mode == 'VECTOR':
             if 'Noise V' not in outputs:
-                outputs[0].replace('VerticesSocket', 'Noise V')
+                outputs[0].replace_socket('VerticesSocket', 'Noise V')
                 return
 
     out_modes = [

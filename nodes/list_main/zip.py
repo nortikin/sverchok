@@ -20,8 +20,8 @@ import bpy
 from bpy.props import BoolProperty, IntProperty, StringProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (changable_sockets, multi_socket, preobrazovatel,
-                            SvSetSocketAnyType, SvGetSocketAnyType, updateNode)
+from sverchok.data_structure import changable_sockets, multi_socket, updateNode
+from sverchok.utils.listutils import preobrazovatel
 
 
 class ZipNode(bpy.types.Node, SverchCustomTreeNode):
@@ -33,14 +33,14 @@ class ZipNode(bpy.types.Node, SverchCustomTreeNode):
     level = IntProperty(name='level', default=1, min=1, update=updateNode)
     typ = StringProperty(name='typ', default='')
     newsock = BoolProperty(name='newsock', default=False)
-    
+
     unwrap = BoolProperty(
         name='unwrap',
         description='unwrap objects?',
         default=False,
         update=updateNode
     )
-    
+
     base_name = 'data '
     multi_socket_type = 'StringsSocket'
 
@@ -68,13 +68,13 @@ class ZipNode(bpy.types.Node, SverchCustomTreeNode):
             slots = []
             for socket in self.inputs:
                 if socket.is_linked:
-                    slots.append(SvGetSocketAnyType(self, socket))
+                    slots.append(socket.sv_get())
             if len(slots) < 2:
                 return
             output = self.myZip(slots, self.level)
             if self.unwrap:
                 output = preobrazovatel(output, [2, 3])
-            SvSetSocketAnyType(self, 'data', output)
+            self.outputs[0].sv_set(output)
 
     def myZip(self, list_all, level, level2=0):
         if level == level2:

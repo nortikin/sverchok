@@ -23,7 +23,7 @@ import bpy
 from mathutils import Vector
 
 from sverchok import data_structure
-from sverchok.data_structure import SvNoDataError
+from sverchok.core.socket_data import SvNoDataError, reset_socket_cache
 import sverchok
 
 import traceback
@@ -367,7 +367,7 @@ def build_update_list(ng=None):
         out = [make_update_list(ng, s, deps) for s in node_sets]
         update_cache[ng.name] = out
         partial_update_cache[ng.name] = {}
-        data_structure.reset_socket_cache(ng)
+        reset_socket_cache(ng)
 
 
 def process_to_node(node):

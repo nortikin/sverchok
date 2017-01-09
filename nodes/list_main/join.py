@@ -19,10 +19,10 @@
 import bpy
 from bpy.props import BoolProperty, IntProperty, StringProperty
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (changable_sockets, joiner, multi_socket,
-                            myZip_2, wrapper_2, updateNode,
+from sverchok.data_structure import (changable_sockets, multi_socket, updateNode,
                             SvGetSocketAnyType, SvSetSocketAnyType)
 
+from sverchok.utils.listutils import joiner, myZip_2, wrapper_2
 
 class ListJoinNode(bpy.types.Node, SverchCustomTreeNode):
     ''' ListJoin node '''
@@ -70,7 +70,7 @@ class ListJoinNode(bpy.types.Node, SverchCustomTreeNode):
             slots = []
             for socket in self.inputs:
                 if socket.is_linked:
-                    slots.append(SvGetSocketAnyType(self, socket))
+                    slots.append(socket.sv_get())
             if len(slots) == 0:
                 return
 
@@ -88,7 +88,7 @@ class ListJoinNode(bpy.types.Node, SverchCustomTreeNode):
                     list_wrap_mix = wrapper_2(slots, list_mix, self.JoinLevel)
                     result = list_wrap_mix.copy()
 
-            SvSetSocketAnyType(self, 'data', result)
+            self.outputs[0].sv_set(result)
 
 def register():
     bpy.utils.register_class(ListJoinNode)
