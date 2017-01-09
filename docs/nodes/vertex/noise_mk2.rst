@@ -32,5 +32,16 @@ Inputs & Parameters
 |                | (Seed=0 would otherwise generate random values based on system time)    |
 +----------------+-------------------------------------------------------------------------+
 
+Examples
+--------
+
+.. image:: https://cloud.githubusercontent.com/assets/619340/21771352/502fc060-d687-11e6-8f3a-cf7526a83656.png
+
+Notes
+-----
+
+This documentation doesn't do the full world of noise any justice, feel free to send us layouts that you've made which rely on this node.
+
+
 
 .. _Noise: http://www.blender.org/documentation/blender_python_api_current/mathutils.noise.html
