@@ -28,7 +28,7 @@ from bpy.types import Node, NodeTree
 
 
 from sverchok.node_tree import SverchCustomTreeNode, SvNodeTreeCommon
-from sverchok.data_structure import replace_socket, get_other_socket, updateNode, match_long_repeat
+from sverchok.data_structure import get_other_socket, updateNode, match_long_repeat
 from sverchok.core.update_system import make_tree_from_nodes, do_update
 from sverchok.core.monad_properties import SvIntPropertySettingsGroup, SvFloatPropertySettingsGroup
 
