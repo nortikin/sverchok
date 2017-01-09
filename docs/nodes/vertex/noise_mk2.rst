@@ -12,17 +12,19 @@ Inputs & Parameters
 | Noise Function | Pick between Scalar and Vector output                                   |
 +----------------+-------------------------------------------------------------------------+
 | Noise Type     | Pick between several noise types                                        |
-|                | * Blender                                                               |
-|                | * Cell Noise                                                            |
-|                | * New Perlin                                                            |
-|                | * Standard Perlin                                                       |
-|                | * Voronoi Crackle                                                       |
-|                | * Voronoi F1                                                            |
-|                | * Voronoi F2                                                            |
-|                | * Voronoi F2F1                                                          |
-|                | * Voronoi F3                                                            |
-|                | * Voronoi F4                                                            |
-|                | See mathutils.noise docs ( _Noise )                                     |
+|                |                                                                         | 
+|                | - Blender                                                               |
+|                | - Cell Noise                                                            |
+|                | - New Perlin                                                            |
+|                | - Standard Perlin                                                       |
+|                | - Voronoi Crackle                                                       |
+|                | - Voronoi F1                                                            |
+|                | - Voronoi F2                                                            |
+|                | - Voronoi F2F1                                                          |
+|                | - Voronoi F3                                                            |
+|                | - Voronoi F4                                                            |
+|                |                                                                         |
+|                | See mathutils.noise docs ( Noise_ )                                     |
 +----------------+-------------------------------------------------------------------------+
 | Seed           | Accepts float values, they are hashed into *Integers* internally.       |
 |                | Seed values of 0 will internally be replaced with a randomly picked     |
