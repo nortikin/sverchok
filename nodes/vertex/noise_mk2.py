@@ -75,12 +75,10 @@ class SvNoiseNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         update=updateNode)
 
     seed = IntProperty(default=0, name='Seed', update=updateNode)
-    # mix = FloatProperty(default=1.0, name='Mix', soft_min=0.0, soft_max=1.0, update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', 'Vertices')
         self.inputs.new('StringsSocket', 'Seed').prop_name = 'seed'
-        # self.inputs.new('StringsSocket', 'Mix').prop_name = 'mix'
         self.outputs.new('VerticesSocket', 'Noise V')
 
     def draw_buttons(self, context, layout):
@@ -96,7 +94,6 @@ class SvNoiseNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         out = []
         verts = inputs['Vertices'].sv_get()
         seeds = inputs['Seed'].sv_get()
-        # mixes = inputs['Mix'].sv_get()
         n_t = noise_dict[self.noise_type]
         n_f = noise_f[self.out_mode]
 
