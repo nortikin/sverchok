@@ -20,7 +20,7 @@ import bpy
 from bpy.props import StringProperty, EnumProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, SvSetSocketAnyType, SvGetSocketAnyType
+from sverchok.data_structure import updateNode
 
 # Warning, changing this node without modifying the update system might break functionlaity
 # bl_idname and var_name is used by the update system
@@ -121,7 +121,7 @@ class WifiOutNode(bpy.types.Node, SverchCustomTreeNode):
                         s_type = 'StringsSocket'
                     s_name = socket.name
                     outputs.new(s_type, s_name)
-    
+
     def process(self):
         ng = self.id_data
         wifi_dict = {node.var_name: node
@@ -132,8 +132,8 @@ class WifiOutNode(bpy.types.Node, SverchCustomTreeNode):
         # transfer data
         for in_socket, out_socket in zip(node.inputs, self.outputs):
             if in_socket.is_linked and out_socket.is_linked:
-                data = SvGetSocketAnyType(node, in_socket, deepcopy=False)
-                SvSetSocketAnyType(self, out_socket.name, data)
+                data = in_socket.sv_get(deepcopy=False)
+                out_socket.name.sv_set(data)
 
 
 def register():
