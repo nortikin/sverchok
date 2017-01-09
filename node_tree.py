@@ -73,7 +73,6 @@ class SvColors(bpy.types.PropertyGroup):
 
 
 class SvSocketCommon:
-
     @property
     def other(self):
         return get_other_socket(self)
@@ -82,14 +81,11 @@ class SvSocketCommon:
         if self.prop_name:
             setattr(self.node, self.prop_name, value)
 
-<<<<<<< HEAD
-=======
     @property
     def socket_id(self):
         """Id of socket used by data_cache"""
         return str(hash(self.id_data.name + self.node.name + self.identifier))
 
->>>>>>> master
     @property
     def index(self):
         """Index of socket"""
@@ -103,18 +99,11 @@ class SvSocketCommon:
         """Set output data"""
         SvSetSocket(self, data)
 
-<<<<<<< HEAD
-    def replace(self, new_type, new_name=None):
-        # self.bl_idname = new_type
-        # self.name = new_name or self.name
-        replace_socket(self, new_type, new_name=new_name or self.name, new_pos=self.index)
-
-=======
     def replace_socket(self, new_type, new_name=None):
         """Replace a socket with a socket of new_type and keep links,
         return the new socket, the old reference might be invalid"""
         return replace_socket(self, new_type, new_name)
->>>>>>> master
+
 
 class MatrixSocket(NodeSocket, SvSocketCommon):
     '''4x4 matrix Socket type'''
