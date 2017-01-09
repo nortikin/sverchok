@@ -35,11 +35,6 @@ from sverchok.core.socket_data import (
     SvGetSocketInfo,
     SvGetSocket,
     SvSetSocket,
-<<<<<<< HEAD
-    updateNode,
-    replace_socket,
-=======
->>>>>>> master
     SvNoDataError,
     sentinel)
 
