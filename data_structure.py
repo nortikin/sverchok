@@ -489,7 +489,7 @@ def replace_socket(socket, new_type, new_name=None, new_pos=None):
     Replace a socket with a socket of new_type and keep links
     '''
     
-    socket.name = new_name or socket.name
+    socket_name = new_name or socket.name
     socket_pos = new_pos or socket.index
     ng = socket.id_data
 
@@ -500,7 +500,7 @@ def replace_socket(socket, new_type, new_name=None, new_pos=None):
         to_sockets = [l.to_socket for l in socket.links]
     
         outputs.remove(socket)
-        new_socket = outputs.new(new_type, new_name)
+        new_socket = outputs.new(new_type, socket_name)
         outputs.move(len(outputs)-1, socket_pos)
 
         for to_socket in to_sockets:
@@ -511,7 +511,7 @@ def replace_socket(socket, new_type, new_name=None, new_pos=None):
         from_socket = socket.links[0].from_socket if socket.is_linked else None
     
         inputs.remove(socket)
-        new_socket = inputs.new(new_type, new_name)
+        new_socket = inputs.new(new_type, socket_name)
         inputs.move(len(inputs)-1, socket_pos)
 
         if from_socket:
