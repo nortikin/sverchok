@@ -82,6 +82,8 @@ class SvObjectSocket(NodeSocket, SvSocketCommon):
             layout.prop_search(self, 'object_ref', bpy.data, 'objects', text=self.name)
         elif self.is_linked:
             layout.label(text + '. ' + SvGetSocketInfo(self))
+        else:
+            layout.label(text)
 
     def draw_color(self, context, node):
         return (0.69,  0.74,  0.73, 1.0)

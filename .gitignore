@@ -47,7 +47,7 @@ __MACOSX
 *.kdev4
 
 #Ignore KDE's backup files
-#thanks, i have trouobles 
+#thanks, i have trouobles
 #with this sometimes in gedit
 *~
 
@@ -62,3 +62,5 @@ nodes/generator/meta_balls.py
 # IDE
 .idea
 .DS_Store
+
+local_test.py
