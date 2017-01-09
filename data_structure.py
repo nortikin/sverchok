@@ -508,7 +508,7 @@ def replace_socket(socket, new_type, new_name=None, new_pos=None):
 
     else:
         inputs = socket.node.inputs
-        from_socket = socket.is_linked or socket.links[0].from_socket
+        from_socket = socket.links[0].from_socket if socket.is_linked else None
     
         inputs.remove(socket)
         new_socket = inputs.new(new_type, new_name)
