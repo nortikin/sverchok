@@ -74,7 +74,7 @@ class ZipNode(bpy.types.Node, SverchCustomTreeNode):
             output = self.myZip(slots, self.level)
             if self.unwrap:
                 output = preobrazovatel(output, [2, 3])
-            self.outputs[0].sv_set(data)
+            self.outputs[0].sv_set(output)
 
     def myZip(self, list_all, level, level2=0):
         if level == level2:

@@ -21,7 +21,7 @@ from bpy.props import BoolProperty, IntProperty, StringProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode, changable_sockets,
-                                     dataCorrect, sorted)
+                                     dataCorrect)
 
 class ListSortNode(bpy.types.Node, SverchCustomTreeNode):
     ''' List Sort '''
