@@ -24,6 +24,7 @@ Inputs & Parameters
 |                | - Voronoi F4                                                            |
 +----------------+-------------------------------------------------------------------------+
 | Seed           | Accepts float values, they are hashed into *Integers* internally.       |
-|                | Seed values of 0 will produce unrepeatable results, use less than 0     |
-|                | or higher than 0 if you want predictable output.                        |
+|                | Seed values of 0 will internally be replaced with a randomly picked     |
+|                | constant to allow all seed input to generate repeatable output.         |
+|                | (Seed=0 would otherwise generate random values based on system time)    |
 +----------------+-------------------------------------------------------------------------+
