@@ -94,7 +94,7 @@ class SvVectorMathNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('VerticesSocket', "Out")
 
     def update_sockets(self):
-        ident, func, info, description = func_dict.get(self.current_op)
+        _, _, info, _ = func_dict.get(self.current_op)
         t_inputs, t_outputs = info.split(' ')
 
         self.outputs[0].replace_socket(socket_type.get(t_outputs), "Out")
