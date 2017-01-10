@@ -40,7 +40,7 @@ func_dict = {
 
     "LEN":            (4,  lambda u: sqrt((u[0]*u[0])+(u[1]*u[1])+(u[2]*u[2])),     ('v s'),             "Length"),
     # "NOISE-S":        (9,  lambda u: noise(Vector(u)),                              ('v s'),       "Noise Scalar"),
-    "CELL-S":         (11, lambda u: cell(Vector(u)),                               ('v s'),  "Scalar Cell noise"),
+    # "CELL-S":         (11, lambda u: cell(Vector(u)),                               ('v s'),  "Scalar Cell noise"),
 
     "CROSS":          (0,  lambda u, v: Vector(u).cross(v)[:],                     ('vv v'),      "Cross product"),
     "ADD":            (1,  lambda u, v: (u[0]+v[0], u[1]+v[1], u[2]+v[2]),         ('vv v'),                "Add"),
@@ -56,7 +56,7 @@ func_dict = {
     "NORMALIZE":      (6,  lambda u: Vector(u).normalized()[:],                     ('v v'),          "Normalize"),
     "NEG":            (7,  lambda u: (-Vector(u))[:],                               ('v v'),             "Negate"),
     # "NOISE-V":        (8,  lambda u: noise_vector(Vector(u))[:],                    ('v v'),       "Noise Vector"),
-    "CELL-V":         (10, lambda u: cell_vector(Vector(u))[:],                     ('v v'),  "Vector Cell Noise")
+    # "CELL-V":         (10, lambda u: cell_vector(Vector(u))[:],                     ('v v'),  "Vector Cell Noise")
 }
 
 
@@ -124,14 +124,14 @@ class SvVectorMathNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         input_one = inputs[0].sv_get(deepcopy=False)
         input_two = inputs[1].sv_get(deepcopy=False) if num_inputs == 2 else None
         
-        leve = levelsOflist(input_one)
+        level = levelsOflist(input_one)
         result = [[]]
 
         try:
             if num_inputs == 1:
-                result = self.recurse_fx(input_one, func, leve - 1)
+                result = self.recurse_fx(input_one, func, level - 1)
             elif num_inputs == 2:
-                result = self.recurse_fxy(input_one, input_two, func, leve - 1)
+                result = self.recurse_fxy(input_one, input_two, func, level - 1)
         except:
             pass
 
