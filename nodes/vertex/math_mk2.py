@@ -90,11 +90,11 @@ class SvVectorMathNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', "A")
-        self.inputs.new('VerticesSocket', "B")  # will flip to StringsSocket when required
+        self.inputs.new('VerticesSocket', "B")
         self.outputs.new('VerticesSocket', "Out")
 
     def update_sockets(self):
-        _, _, socket_info, _ = func_dict.get(self.current_op)
+        socket_info = func_dict.get(self.current_op)[2]
         t_inputs, t_outputs = socket_info.split(' ')
 
         self.outputs[0].replace_socket(socket_type.get(t_outputs))
@@ -111,25 +111,51 @@ class SvVectorMathNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
 
     def process(self):
-        inputs = self.inputs
-        outputs = self.outputs
+        inputs, outputs = self.inputs, self.outputs
 
         if not outputs[0].is_linked:
             return
 
-        _, func, socket_info, _ = func_dict.get(self.current_op)
+        func, socket_info = func_dict.get(self.current_op)[1:-1]
+        t_inputs, t_outputs = socket_info.split(' ')
 
+        # get either input data, or socket default
+        input_one = inputs[0].sv_get(deepcopy=False)
+        leve = levelsOflist(u)
+
+        if t_outputs == 'v':
+
+            if len(inputs) == 1:
+                try:
+                    result = self.recurse_fx(u, func, leve - 1)
+                except:
+                    return
+
+            elif len(inputs) == 2:
+                b = self.inputs[1].sv_get(deepcopy=False)
 
                 try:
                     result = self.recurse_fxy(u, b, func, leve - 1)
                 except:
-                    print(self.name, msg, 'failed')
                     return
 
             else:
-                return  # fail!
+                return
 
+            self.outputs[0].sv_set(result)
 
+        # scalar-output
+        else:
+
+            vector2, result = [], []
+            func = scalar_out[operation][0]
+            num_inputs = len(inputs)
+
+            try:
+                if num_inputs == 1:
+                    result = self.recurse_fx(u, func, leve - 1)
+
+                elif all([num_inputs == 2, ('V' in inputs), (inputs['V'].links)]):
 
                     if isinstance(inputs['V'].links[0].from_socket, VerticesSocket):
                         vector2 = SvGetSocketAnyType(self, inputs['V'], deepcopy=False)
@@ -142,6 +168,9 @@ class SvVectorMathNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             except:
                 print('failed scalar out, {} inputs'.format(num_inputs))
                 return
+
+            if result:
+                SvSetSocketAnyType(self, 'out', result)
 
 
     '''
