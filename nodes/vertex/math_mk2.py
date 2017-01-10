@@ -54,7 +54,7 @@ func_dict = {
     "ROUND":          (18, lambda u, s: Vector(u).to_tuple(s),                     ('vs v'),     "Round s digits"),
 
     "NORMALIZE":      (6,  lambda u: Vector(u).normalized()[:],                     ('v v'),          "Normalize"),
-    "NEG":            (7,  lambda u: (-Vector(u))[:],                               ('v v'),             "Negate"),
+    "NEG":            (7,  lambda u: (-Vector(u))[:],                               ('v v'),             "Negate")
     # "NOISE-V":        (8,  lambda u: noise_vector(Vector(u))[:],                    ('v v'),       "Noise Vector"),
     # "CELL-V":         (10, lambda u: cell_vector(Vector(u))[:],                     ('v v'),  "Vector Cell Noise")
 }
