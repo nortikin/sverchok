@@ -128,18 +128,14 @@ class SvVectorMathNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         leve = levelsOflist(input_one)
         result = [[]]
 
-
-        if num_inputs == 1:
-            try:
+        try:
+            if num_inputs == 1:
                 result = self.recurse_fx(input_one, func, leve - 1)
-            except:
-                pass
-
-        elif num_inputs == 2:
-            try:
+            elif num_inputs == 2:
                 result = self.recurse_fxy(input_one, input_two, func, leve - 1)
-            except:
-                pass
+        except:
+            pass
+
 
         outputs[0].sv_set(result)
 
