@@ -28,7 +28,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (fullList, levelsOflist, updateNode)
 
 
-socket_remap = {'s': 'StringsSocket', 'v': 'VerticesSocket'}
+socket_type = {'s': 'StringsSocket', 'v': 'VerticesSocket'}
 
 
 func_dict = {
@@ -127,7 +127,7 @@ class SvVectorMathNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         if len(t_inputs) > self.inputs:
             self.inputs.new('VerticesSocket', "dummy")
         elif len(t_inputs) < self.inputs:
-            self.inputs.remove(self.inputs[1])
+            self.inputs.remove(self.inputs[-1])
 
         # with correct input count replace / donothing
         for idx, t_in in enumerate(t_inputs):
@@ -136,7 +136,12 @@ class SvVectorMathNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
 
     def process(self):
+        inputs = self.inputs
+        outputs = self.outputs
 
+        if not outputs[0].is_linked:
+            return
+                    
                 try:
                     result = self.recurse_fxy(u, b, func, leve - 1)
                 except:
