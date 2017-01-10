@@ -24,43 +24,38 @@ from bpy.props import EnumProperty, BoolProperty, StringProperty
 from mathutils import Vector
 from mathutils.noise import noise_vector, cell_vector, noise, cell
 
-from sverchok.node_tree import SverchCustomTreeNode, VerticesSocket, StringsSocket
-from sverchok.data_structure import (fullList, levelsOflist, updateNode,
-                            SvSetSocketAnyType, SvGetSocketAnyType)
-
-'''
-using slice [:] to generate 3-tuple instead of .to_tuple()
-because it tests slightly faster on larger data.
-'''
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import (fullList, levelsOflist, updateNode)
 
 
-scalar_out = {
-    "DOT":          (lambda u, v: Vector(u).dot(v), 2),
-    "DISTANCE":     (lambda u, v: (Vector(u) - Vector(v)).length, 2),
-    "ANGLE RAD":    (lambda u, v: Vector(u).angle(v, 0), 2),
-    "ANGLE DEG":    (lambda u, v: degrees(Vector(u).angle(v, 0)), 2),
+socket_remap = {'s': 'StringsSocket', 'v': 'VerticesSocket'}
 
-    "LEN":          (lambda u: sqrt((u[0] * u[0]) + (u[1] * u[1]) + (u[2] * u[2])), 1),
-    "NOISE-S":      (lambda u: noise(Vector(u)), 1),
-    "CELL-S":       (lambda u: cell(Vector(u)), 1)
-}
 
-vector_out = {
-    "CROSS":        (lambda u, v: Vector(u).cross(v)[:], 2),
-    "ADD":          (lambda u, v: (u[0]+v[0], u[1]+v[1], u[2]+v[2]), 2),
-    "SUB":          (lambda u, v: (u[0]-v[0], u[1]-v[1], u[2]-v[2]), 2),
-    "REFLECT":      (lambda u, v: Vector(u).reflect(v)[:], 2),
-    "PROJECT":      (lambda u, v: Vector(u).project(v)[:], 2),
-    "SCALAR":       (lambda u, s: (u[0]*s, u[1]*s, u[2]*s), 2),
-    "1/SCALAR":     (lambda u, s: (u[0]/s, u[1]/s, u[2]/s), 2),
-    "ROUND":        (lambda u, s: Vector(u).to_tuple(s), 2),
+func_dict = {
+    "DOT":          (lambda u, v: Vector(u).dot(v),                                    ('vv s')),
+    "DISTANCE":     (lambda u, v: (Vector(u) - Vector(v)).length,                      ('vv s')),
+    "ANGLE RAD":    (lambda u, v: Vector(u).angle(v, 0),                               ('vv s')),
+    "ANGLE DEG":    (lambda u, v: degrees(Vector(u).angle(v, 0)),                      ('vv s')),
 
-    "NORMALIZE":    (lambda u: Vector(u).normalized()[:], 1),
-    "NEG":          (lambda u: (-Vector(u))[:], 1),
-    "NOISE-V":      (lambda u: noise_vector(Vector(u))[:], 1),
-    "CELL-V":       (lambda u: cell_vector(Vector(u))[:], 1),
+    "LEN":          (lambda u: sqrt((u[0] * u[0]) + (u[1] * u[1]) + (u[2] * u[2])),    ('v s')),
+    "NOISE-S":      (lambda u: noise(Vector(u)),                                       ('v s')),
+    "CELL-S":       (lambda u: cell(Vector(u)),                                        ('v s')),
 
-    "COMPONENT-WISE":  (lambda u, v: (u[0]*v[0], u[1]*v[1], u[2]*v[2]), 2)
+    "CROSS":        (lambda u, v: Vector(u).cross(v)[:],                               ('vv v')),
+    "ADD":          (lambda u, v: (u[0]+v[0], u[1]+v[1], u[2]+v[2]),                   ('vv v')),
+    "SUB":          (lambda u, v: (u[0]-v[0], u[1]-v[1], u[2]-v[2]),                   ('vv v')),
+    "REFLECT":      (lambda u, v: Vector(u).reflect(v)[:],                             ('vv v')),
+    "PROJECT":      (lambda u, v: Vector(u).project(v)[:],                             ('vv v')),
+    "COMPONENT-WISE":  (lambda u, v: (u[0]*v[0], u[1]*v[1], u[2]*v[2]),                ('vv v')),
+
+    "SCALAR":       (lambda u, s: (u[0]*s, u[1]*s, u[2]*s),                            ('vs v')),
+    "1/SCALAR":     (lambda u, s: (u[0]/s, u[1]/s, u[2]/s),                            ('vs v')),
+    "ROUND":        (lambda u, s: Vector(u).to_tuple(s),                               ('vs v')),
+
+    "NORMALIZE":    (lambda u: Vector(u).normalized()[:],                              ('v v')),
+    "NEG":          (lambda u: (-Vector(u))[:],                                        ('v v')),
+    "NOISE-V":      (lambda u: noise_vector(Vector(u))[:],                             ('v v')),
+    "CELL-V":       (lambda u: cell_vector(Vector(u))[:],                              ('v v'))
 }
 
 # vector math functions
@@ -101,33 +96,46 @@ class SvVectorMathNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
 
     def mode_change(self, context):
+        self.update_sockets()
+        updateNode(self, context)
 
-        if not (self.items_ == self.current_op):
-            self.label = self.items_
-            self.update_outputs_and_inputs()
-            self.current_op = self.items_
-            updateNode(self, context)
-
-    items_ = EnumProperty(
+    current_op = EnumProperty(
         items=mode_items,
         name="Function",
         description="Function choice",
         default="CROSS",
         update=mode_change)
 
-    # matches default of CROSS product, defaults to False at init time.
-    scalar_output_socket = BoolProperty()
-    current_op = StringProperty(default="CROSS")
+
+    def draw_label(self):
+        return self.current_op
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "items_", "Functions:")
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', "U", "u")
-        self.inputs.new('VerticesSocket', "V", "v")
-        self.outputs.new('VerticesSocket', "W", "W")
+        self.inputs.new('VerticesSocket', "A")
+        self.inputs.new('VerticesSocket', "B")  # will flip to StringsSocket when required
+        self.outputs.new('VerticesSocket', "Out")
+
+    def update_sockets(self):
+        func, info = func_dict.get(self.current_op)
+        t_inputs, t_outputs = info.split(' ')
+
+        self.outputs[0].replace_socket(socket_type.get(t_outputs), "Out")
+
+        if len(t_inputs) > self.inputs:
+            self.inputs.new('VerticesSocket', "dummy")
+        elif len(t_inputs) < self.inputs:
+            self.inputs.remove(self.inputs[1])
+
+        # with correct input count replace / donothing
+        for idx, t_in in enumerate(t_inputs):
+            self.inputs[idx].replace_socket(socket_type.get(t_in))
+            # set prop_name ?
 
 
+    def process(self):
 
                 try:
                     result = self.recurse_fxy(u, b, func, leve - 1)
