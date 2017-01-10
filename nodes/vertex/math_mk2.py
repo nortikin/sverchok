@@ -110,13 +110,16 @@ class SvVectorMathNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     def draw_label(self):
         return self.current_op
 
-    def draw_buttons(self, context, layout):
+
+    def draw_buttons(self, ctx, layout):
         layout.prop(self, "current_op", text="Functions:")
+
 
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', "A").use_prop = True
         self.inputs.new('VerticesSocket', "B").use_prop = True
         self.outputs.new('VerticesSocket', "Out")
+
 
     def update_sockets(self):
         socket_info = func_dict.get(self.current_op)[2]
@@ -129,14 +132,12 @@ class SvVectorMathNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         elif len(t_inputs) < len(self.inputs):
             self.inputs.remove(self.inputs[-1])
 
-        # with correct input count replace / donothing
         for idx, t_in in enumerate(t_inputs):
             s = self.inputs[idx].replace_socket(socket_type.get(t_in))
             if t_in == 'v':
                 s.use_prop = True
             else:
                 s.prop_name = 'amount'
-            # set prop_name ?
 
 
     def process(self):
@@ -159,6 +160,7 @@ class SvVectorMathNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             result = recurse_fxy(input_one, input_two, func, level)
 
         outputs[0].sv_set(result)
+
 
 
 def register():
