@@ -288,6 +288,9 @@ class SvNodeTreeCommon(object):
     '''
     Common methods shared between Sverchok node trees
     '''
+
+    has_changed = BoolProperty(defaut=False)
+
     def build_update_list(self):
         build_update_list(self)
 
@@ -368,21 +371,7 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
         '''
         Rebuild and update the Sverchok node tree, used at editor changes
         '''
-        # startup safety net, a lot things will just break if this isn't
-        # stopped...
-        try:
-            l = bpy.data.node_groups[self.id_data.name]
-        except:
-            return
-        if self.is_frozen():
-            print("Skipping update of {}".format(self.name))
-            return
-
-        self.adjust_reroutes()
-
-        self.build_update_list()
-        if self.sv_process:
-            process_tree(self)
+        self.has_changed = True
 
     def update_ani(self):
         """
@@ -391,7 +380,11 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
         if self.sv_animate:
             process_tree(self)
 
-
+    def process(self):
+        if self.has_changed:
+            self.build_update_list()
+            self.has_changed = False
+        process_tree(self)
 
 
 
