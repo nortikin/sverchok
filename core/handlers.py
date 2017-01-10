@@ -9,6 +9,7 @@ from sverchok.ui import (viewer_draw, viewer_draw_mk2, index_viewer_draw,
                          nodeview_bgl_viewer_draw, color_def)
 from sverchok import old_nodes
 
+
 def sverchok_trees():
     for ng in bpy.data.node_groups:
         if ng.bl_idname == 'SverchCustomTreeType':
@@ -41,15 +42,16 @@ def sv_scene_handler(scene):
         except Exception as e:
             print('Failed to update:', ng, str(e))
 
+
 @persistent
 def sv_main_handler(scene):
     """
     Main Sverchok handler for updating node tree upon editor changes
     """
     for ng in sverchok_trees():
-        #print("Scene handler looking at tree {}".format(ng.name))
+        # print("Scene handler looking at tree {}".format(ng.name))
         if ng.has_changed:
-            #print("Edit detected in {}".format(ng.name))
+            # print("Edit detected in {}".format(ng.name))
             ng.process()
 
 
@@ -77,7 +79,6 @@ def sv_post_load(scene):
             monad.update_cls()
         else:
             upgrade_group.upgrade_group(monad)
-
 
     sv_types = {'SverchCustomTreeType', 'SverchGroupTreeType'}
     sv_trees = list(ng for ng in bpy.data.node_groups if ng.bl_idname in sv_types and ng.nodes)
