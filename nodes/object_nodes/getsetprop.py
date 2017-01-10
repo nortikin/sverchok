@@ -25,7 +25,7 @@ import mathutils
 from mathutils import Matrix, Vector, Euler, Quaternion, Color
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import Matrix_generate, updateNode, node_id, replace_socket
+from sverchok.data_structure import Matrix_generate, updateNode, node_id
 
 def parse_to_path(p):
     '''
@@ -163,7 +163,7 @@ class SvGetPropNode(bpy.types.Node, SverchCustomTreeNode):
         s_type = types.get(type(obj))
         outputs = self.outputs
         if s_type and outputs:
-            replace_socket(outputs[0], s_type)
+            outputs[0].replace_socket(s_type)
         elif s_type:
             outputs.new(s_type, "Data")
 
@@ -216,7 +216,7 @@ class SvSetPropNode(bpy.types.Node, SverchCustomTreeNode):
         p_name = {float: "float_prop",
                  int: "int_prop"}.get(type(obj),"")
         if inputs and s_type: 
-            socket = replace_socket(inputs[0], s_type)
+            socket = inputs[0].replace_socket(s_type)
             socket.prop_name = p_name
         elif s_type:
             inputs.new(s_type, "Data").prop_name = p_name
