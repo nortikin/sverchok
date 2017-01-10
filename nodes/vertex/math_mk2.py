@@ -27,6 +27,7 @@ from mathutils.noise import noise_vector, cell_vector, noise, cell
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (fullList, levelsOflist, updateNode)
 
+# pylint: disable=C0326
 
 socket_type = {'s': 'StringsSocket', 'v': 'VerticesSocket'}
 
@@ -116,12 +117,10 @@ class SvVectorMathNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         if not outputs[0].is_linked:
             return
 
-        func, socket_info = func_dict.get(self.current_op)[1:-1]
-        t_inputs, t_outputs = socket_info.split(' ')
-
-        # get either input data, or socket default
+        func = func_dict.get(self.current_op)[1]
         num_inputs = len(inputs)
 
+        # get either input data, or socket default
         input_one = inputs[0].sv_get(deepcopy=False)
         input_two = inputs[1].sv_get(deepcopy=False) if num_inputs == 2 else None
         
@@ -139,11 +138,10 @@ class SvVectorMathNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
         outputs[0].sv_set(result)
 
-
-    '''
-    apply f to all values recursively
-    - fx and fxy do full list matching by length
-    '''
+    # 
+    # apply f to all values recursively
+    # - fx and fxy do full list matching by length
+    # 
 
     # vector -> scalar | vector
     def recurse_fx(self, l, f, leve):
