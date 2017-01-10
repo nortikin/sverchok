@@ -20,7 +20,7 @@ from math import degrees, sqrt
 from itertools import zip_longest
 
 import bpy
-from bpy.props import EnumProperty, BoolProperty, StringProperty
+from bpy.props import EnumProperty, FloatProperty
 from mathutils import Vector
 from mathutils.noise import noise_vector, cell_vector, noise, cell
 
@@ -104,6 +104,8 @@ class SvVectorMathNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         default="CROSS",
         update=mode_change)
 
+    amount = FloatProperty(default=1.0, name='amount', update=updateNode)
+
 
     def draw_label(self):
         return self.current_op
@@ -112,8 +114,8 @@ class SvVectorMathNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "current_op", text="Functions:")
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', "A")
-        self.inputs.new('VerticesSocket', "B")
+        self.inputs.new('VerticesSocket', "A").use_prop = True
+        self.inputs.new('VerticesSocket', "B").use_prop = True
         self.outputs.new('VerticesSocket', "Out")
 
     def update_sockets(self):
@@ -129,7 +131,11 @@ class SvVectorMathNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
         # with correct input count replace / donothing
         for idx, t_in in enumerate(t_inputs):
-            self.inputs[idx].replace_socket(socket_type.get(t_in))
+            s = self.inputs[idx].replace_socket(socket_type.get(t_in))
+            if t_in == 'v':
+                s.use_prop = True
+            else:
+                s.prop_name = 'amount'
             # set prop_name ?
 
 
