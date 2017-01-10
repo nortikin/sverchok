@@ -38,7 +38,7 @@ func_dict = {
     "ANGLE RAD":      (17, lambda u, v: Vector(u).angle(v, 0),                     ('vv s'),      "Angle Radians"), 
 
     "LEN":            (4,  lambda u: sqrt((u[0]*u[0])+(u[1]*u[1])+(u[2]*u[2])),     ('v s'),             "Length"),
-    "NOISE-S":        (9,  lambda u: noise(Vector(u)),                              ('v s'),       "Noise Scalar"),
+    # "NOISE-S":        (9,  lambda u: noise(Vector(u)),                              ('v s'),       "Noise Scalar"),
     "CELL-S":         (11, lambda u: cell(Vector(u)),                               ('v s'),  "Scalar Cell noise"),
 
     "CROSS":          (0,  lambda u, v: Vector(u).cross(v)[:],                     ('vv v'),      "Cross product"),
@@ -54,7 +54,7 @@ func_dict = {
 
     "NORMALIZE":      (6,  lambda u: Vector(u).normalized()[:],                     ('v v'),          "Normalize"),
     "NEG":            (7,  lambda u: (-Vector(u))[:],                               ('v v'),             "Negate"),
-    "NOISE-V":        (8,  lambda u: noise_vector(Vector(u))[:],                    ('v v'),       "Noise Vector"),
+    # "NOISE-V":        (8,  lambda u: noise_vector(Vector(u))[:],                    ('v v'),       "Noise Vector"),
     "CELL-V":         (10, lambda u: cell_vector(Vector(u))[:],                     ('v v'),  "Vector Cell Noise")
 }
 
@@ -94,10 +94,10 @@ class SvVectorMathNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('VerticesSocket', "Out")
 
     def update_sockets(self):
-        _, _, info, _ = func_dict.get(self.current_op)
-        t_inputs, t_outputs = info.split(' ')
+        _, _, socket_info, _ = func_dict.get(self.current_op)
+        t_inputs, t_outputs = socket_info.split(' ')
 
-        self.outputs[0].replace_socket(socket_type.get(t_outputs), "Out")
+        self.outputs[0].replace_socket(socket_type.get(t_outputs))
 
         if len(t_inputs) > self.inputs:
             self.inputs.new('VerticesSocket', "dummy")
@@ -116,6 +116,9 @@ class SvVectorMathNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
         if not outputs[0].is_linked:
             return
+
+        _, func, socket_info, _ = func_dict.get(self.current_op)
+
 
                 try:
                     result = self.recurse_fxy(u, b, func, leve - 1)
