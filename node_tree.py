@@ -289,7 +289,7 @@ class SvNodeTreeCommon(object):
     Common methods shared between Sverchok node trees
     '''
 
-    has_changed = BoolProperty(defaut=False)
+    has_changed = BoolProperty(default=False)
 
     def build_update_list(self):
         build_update_list(self)
