@@ -87,7 +87,7 @@ class SvVectorMathNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         return self.current_op
 
     def draw_buttons(self, context, layout):
-        layout.prop(self, "items_", "Functions:")
+        layout.prop(self, "current_op", text="Functions:")
 
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', "A")
