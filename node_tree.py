@@ -368,14 +368,18 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
         '''
         self.has_changed = True
 
-    def update_ani(self):
+    def process_ani(self):
         """
-        Updates the Sverchok node tree if animation layers show true. For animation callback
+        Process the Sverchok node tree if animation layers show true.
+        For animation callback/handler
         """
         if self.sv_animate:
             process_tree(self)
 
     def process(self):
+        """
+        process the Sverchok tree upon editor changes from handler
+        """
         if self.has_changed:
             self.build_update_list()
             self.has_changed = False

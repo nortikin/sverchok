@@ -23,7 +23,7 @@ def sv_update_handler(scene):
     """
     for ng in sverchok_trees():
         try:
-            ng.update_ani()
+            ng.process_ani()
         except Exception as e:
             print('Failed to update:', name, str(e))
     scene.update()
@@ -38,7 +38,7 @@ def sv_scene_handler(scene):
     """
     for ng in sverchok_trees():
         try:
-            ng.update_ani()
+            ng.process_ani()
         except Exception as e:
             print('Failed to update:', ng, str(e))
 
