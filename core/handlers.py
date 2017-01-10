@@ -10,17 +10,22 @@ from sverchok.ui import (viewer_draw, viewer_draw_mk2, index_viewer_draw,
 from sverchok import old_nodes
 
 
+def sverchok_trees():
+    for ng in bpy.data.node_groups:
+        if ng.bl_idname == 'SverchCustomTreeType':
+            yield ng
+
+
 @persistent
 def sv_update_handler(scene):
     """
     Update sverchok node groups on frame change events.
     """
-    for name, tree in bpy.data.node_groups.items():
-        if tree.bl_idname == 'SverchCustomTreeType' and tree.nodes:
-            try:
-                tree.update_ani()
-            except Exception as e:
-                print('Failed to update:', name, str(e))
+    for ng in sverchok_trees():
+        try:
+            ng.process_ani()
+        except Exception as e:
+            print('Failed to update:', name, str(e))
     scene.update()
 
 
@@ -31,12 +36,23 @@ def sv_scene_handler(scene):
     Update sverchok node groups on scene update events.
     Not used yet.
     """
-    for name, tree in bpy.data.node_groups.items():
-        if tree.bl_idname == 'SverchCustomTreeType' and tree.nodes:
-            try:
-                tree.update_ani()
-            except Exception as e:
-                print('Failed to update:', name, str(e))
+    for ng in sverchok_trees():
+        try:
+            ng.process_ani()
+        except Exception as e:
+            print('Failed to update:', ng, str(e))
+
+
+@persistent
+def sv_main_handler(scene):
+    """
+    Main Sverchok handler for updating node tree upon editor changes
+    """
+    for ng in sverchok_trees():
+        # print("Scene handler looking at tree {}".format(ng.name))
+        if ng.has_changed:
+            # print("Edit detected in {}".format(ng.name))
+            ng.process()
 
 
 @persistent
@@ -63,7 +79,6 @@ def sv_post_load(scene):
             monad.update_cls()
         else:
             upgrade_group.upgrade_group(monad)
-
 
     sv_types = {'SverchCustomTreeType', 'SverchGroupTreeType'}
     sv_trees = list(ng for ng in bpy.data.node_groups if ng.bl_idname in sv_types and ng.nodes)
@@ -136,6 +151,7 @@ def set_frame_change(mode):
 def register():
     bpy.app.handlers.load_pre.append(sv_clean)
     bpy.app.handlers.load_post.append(sv_post_load)
+    bpy.app.handlers.scene_update_pre.append(sv_main_handler)
     data_structure.setup_init()
     addon_name = data_structure.SVERCHOK_NAME
     addon = bpy.context.user_preferences.addons.get(addon_name)
@@ -148,4 +164,5 @@ def register():
 def unregister():
     bpy.app.handlers.load_pre.remove(sv_clean)
     bpy.app.handlers.load_post.remove(sv_post_load)
+    bpy.app.handlers.scene_update_pre.remove(sv_main_handler)
     set_frame_change(None)
