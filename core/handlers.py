@@ -35,7 +35,7 @@ def sv_scene_handler(scene):
     Update sverchok node groups on scene update events.
     Not used yet.
     """
-    for ng in sverchok_trees()
+    for ng in sverchok_trees():
         try:
             ng.update_ani()
         except Exception as e:
