@@ -16,7 +16,7 @@
 #
 # END GPL LICENSE BLOCK #####
 
-from math import degrees
+from math import degrees, sqrt
 from itertools import zip_longest
 
 import bpy
@@ -40,7 +40,7 @@ scalar_out = {
     "ANGLE RAD":    (lambda u, v: Vector(u).angle(v, 0), 2),
     "ANGLE DEG":    (lambda u, v: degrees(Vector(u).angle(v, 0)), 2),
 
-    "LEN":          (lambda u: Vector(u).length, 1),
+    "LEN":          (lambda u: sqrt((u[0] * u[0]) + (u[1] * u[1]) + (u[2] * u[2])), 1),
     "NOISE-S":      (lambda u: noise(Vector(u)), 1),
     "CELL-S":       (lambda u: cell(Vector(u)), 1)
 }
@@ -51,8 +51,8 @@ vector_out = {
     "SUB":          (lambda u, v: (u[0]-v[0], u[1]-v[1], u[2]-v[2]), 2),
     "REFLECT":      (lambda u, v: Vector(u).reflect(v)[:], 2),
     "PROJECT":      (lambda u, v: Vector(u).project(v)[:], 2),
-    "SCALAR":       (lambda u, s: (Vector(u) * s)[:], 2),
-    "1/SCALAR":     (lambda u, s: (Vector(u) * (1 / s))[:], 2),
+    "SCALAR":       (lambda u, s: (u[0]*s, u[1]*s, u[2]*s), 2),
+    "1/SCALAR":     (lambda u, s: (u[0]/s, u[1]/s, u[2]/s), 2),
     "ROUND":        (lambda u, s: Vector(u).to_tuple(s), 2),
 
     "NORMALIZE":    (lambda u: Vector(u).normalized()[:], 1),
@@ -63,6 +63,34 @@ vector_out = {
     "COMPONENT-WISE":  (lambda u, v: (u[0]*v[0], u[1]*v[1], u[2]*v[2]), 2)
 }
 
+# vector math functions
+mode_items = [
+    ("CROSS",       "Cross product",        "", 0),
+    ("DOT",         "Dot product",          "", 1),
+    ("ADD",         "Add",                  "", 2),
+    ("SUB",         "Sub",                  "", 3),
+    ("LEN",         "Length",               "", 4),
+    ("DISTANCE",    "Distance",             "", 5),
+    ("NORMALIZE",   "Normalize",            "", 6),
+    ("NEG",         "Negate",               "", 7),
+
+    ("NOISE-V",     "Noise Vector",         "", 8),
+    ("NOISE-S",     "Noise Scalar",         "", 9),
+    ("CELL-V",      "Vector Cell noise",    "", 10),
+    ("CELL-S",      "Scalar Cell noise",    "", 11),
+
+    ("ANGLE DEG",   "Angle Degrees",        "", 12),
+    ("PROJECT",     "Project",              "", 13),
+    ("REFLECT",     "Reflect",              "", 14),
+    ("SCALAR",      "Multiply Scalar",      "", 15),
+    ("1/SCALAR",    "Multiply 1/Scalar",    "", 16),
+
+    ("ANGLE RAD",   "Angle Radians",        "", 17),
+    ("ROUND",       "Round s digits",       "", 18),
+
+    ("COMPONENT-WISE", "Component-wise U*V", "", 19)
+]
+
 
 class SvVectorMathNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
@@ -71,33 +99,6 @@ class SvVectorMathNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Vector Math MK2'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    # vector math functions
-    mode_items = [
-        ("CROSS",       "Cross product",        "", 0),
-        ("DOT",         "Dot product",          "", 1),
-        ("ADD",         "Add",                  "", 2),
-        ("SUB",         "Sub",                  "", 3),
-        ("LEN",         "Length",               "", 4),
-        ("DISTANCE",    "Distance",             "", 5),
-        ("NORMALIZE",   "Normalize",            "", 6),
-        ("NEG",         "Negate",               "", 7),
-
-        ("NOISE-V",     "Noise Vector",         "", 8),
-        ("NOISE-S",     "Noise Scalar",         "", 9),
-        ("CELL-V",      "Vector Cell noise",    "", 10),
-        ("CELL-S",      "Scalar Cell noise",    "", 11),
-
-        ("ANGLE DEG",   "Angle Degrees",        "", 12),
-        ("PROJECT",     "Project",              "", 13),
-        ("REFLECT",     "Reflect",              "", 14),
-        ("SCALAR",      "Multiply Scalar",      "", 15),
-        ("1/SCALAR",    "Multiply 1/Scalar",    "", 16),
-
-        ("ANGLE RAD",   "Angle Radians",        "", 17),
-        ("ROUND",       "Round s digits",       "", 18),
-
-        ("COMPONENT-WISE", "Component-wise U*V", "", 19)
-    ]
 
     def mode_change(self, context):
 
@@ -126,125 +127,7 @@ class SvVectorMathNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('VerticesSocket', "V", "v")
         self.outputs.new('VerticesSocket', "W", "W")
 
-    def update_outputs_and_inputs(self):
-        '''
-        Reaches here only if new operation is different from current op
-        '''
-        inputs = self.inputs
-        outputs = self.outputs
-        new_op = self.items_
-        current_op = self.current_op
-        scalars = ["SCALAR", "1/SCALAR", "ROUND"]
 
-        if (new_op in scalars) and (current_op in scalars):
-            return  # it's OK nothing to change
-
-        '''
-        reaches this point, means it needs to rewire
-        '''
-
-        # check and adjust outputs and input size
-        if new_op in scalar_out:
-            self.scalar_output_socket = True
-            nrInputs = scalar_out[new_op][1]
-            if 'W' in outputs:
-                outputs.remove(outputs['W'])
-                outputs.new('StringsSocket', "out", "out")
-
-        else:
-            self.scalar_output_socket = False
-            nrInputs = vector_out[new_op][1]
-            if 'out' in outputs:
-                outputs.remove(outputs['out'])
-                outputs.new('VerticesSocket', "W", "W")
-
-        '''
-        this monster removes and adds sockets depending on what kind of switch
-        between new_ops is made, some new_op changes require addition of sockets
-        others require deletion or replacement.
-        '''
-
-        add_scalar_input = lambda: inputs.new('StringsSocket', "S", "s")
-        add_vector_input = lambda: inputs.new('VerticesSocket', "V", "v")
-        remove_last_input = lambda: inputs.remove(inputs[-1])
-
-        if nrInputs < len(inputs):
-            remove_last_input()
-
-        elif nrInputs > len(inputs):
-            if (new_op in scalars):
-                add_scalar_input()
-            else:
-                add_vector_input()
-
-        else:
-            if nrInputs == 1:
-                # is only ever a vector u
-                return
-
-            if new_op in scalars:
-                remove_last_input()
-                add_scalar_input()
-            elif (current_op in scalars):
-                remove_last_input()
-                add_vector_input()
-
-    def process(self):
-        inputs = self.inputs
-        outputs = self.outputs
-        operation = self.items_
-        self.label = self.items_
-
-        if not outputs[0].is_linked:
-            return
-
-        # this input is shared over both.
-        vector1 = []
-        if inputs['U'].is_linked:
-            if isinstance(inputs['U'].links[0].from_socket, VerticesSocket):
-                vector1 = SvGetSocketAnyType(self, inputs['U'], deepcopy=False)
-
-        if not vector1:
-            return
-
-        # reaches here only if we have vector1
-        u = vector1
-        leve = levelsOflist(u)
-        scalars = ["SCALAR", "1/SCALAR", "ROUND"]
-        result = []
-
-        # vector-output
-        if 'W' in outputs and outputs['W'].is_linked:
-
-            func = vector_out[operation][0]
-            if len(inputs) == 1:
-                try:
-                    result = self.recurse_fx(u, func, leve - 1)
-                except:
-                    print('one input only, failed')
-                    return
-
-            elif len(inputs) == 2:
-
-                '''
-                get second input sockets content, depending on mode
-                '''
-                b = []
-                if operation in scalars:
-                    socket = ['S', StringsSocket]
-                    msg = "two inputs, 1 scalar, "
-                else:
-                    socket = ['V', VerticesSocket]
-                    msg = "two inputs, both vector, "
-
-                name, _type = socket
-                if name in inputs and inputs[name].links:
-                    if isinstance(inputs[name].links[0].from_socket, _type):
-                        b = SvGetSocketAnyType(self, inputs[name], deepcopy=False)
-
-                # this means one of the necessary sockets is not connected
-                if not b:
-                    return
 
                 try:
                     result = self.recurse_fxy(u, b, func, leve - 1)
@@ -255,20 +138,7 @@ class SvVectorMathNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             else:
                 return  # fail!
 
-            SvSetSocketAnyType(self, 'W', result)
 
-        # scalar-output
-        if 'out' in outputs and outputs['out'].is_linked:
-
-            vector2, result = [], []
-            func = scalar_out[operation][0]
-            num_inputs = len(inputs)
-
-            try:
-                if num_inputs == 1:
-                    result = self.recurse_fx(u, func, leve - 1)
-
-                elif all([num_inputs == 2, ('V' in inputs), (inputs['V'].links)]):
 
                     if isinstance(inputs['V'].links[0].from_socket, VerticesSocket):
                         vector2 = SvGetSocketAnyType(self, inputs['V'], deepcopy=False)
@@ -282,8 +152,6 @@ class SvVectorMathNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                 print('failed scalar out, {} inputs'.format(num_inputs))
                 return
 
-            if result:
-                SvSetSocketAnyType(self, 'out', result)
 
     '''
     apply f to all values recursively
