@@ -39,9 +39,6 @@ func_dict = {
     "ANGLE RAD":      (17, lambda u, v: Vector(u).angle(v, 0),                     ('vv s'),      "Angle Radians"), 
 
     "LEN":            (4,  lambda u: sqrt((u[0]*u[0])+(u[1]*u[1])+(u[2]*u[2])),     ('v s'),             "Length"),
-    # "NOISE-S":        (9,  lambda u: noise(Vector(u)),                              ('v s'),       "Noise Scalar"),
-    # "CELL-S":         (11, lambda u: cell(Vector(u)),                               ('v s'),  "Scalar Cell noise"),
-
     "CROSS":          (0,  lambda u, v: Vector(u).cross(v)[:],                     ('vv v'),      "Cross product"),
     "ADD":            (1,  lambda u, v: (u[0]+v[0], u[1]+v[1], u[2]+v[2]),         ('vv v'),                "Add"),
     "SUB":            (3,  lambda u, v: (u[0]-v[0], u[1]-v[1], u[2]-v[2]),         ('vv v'),                "Sub"),
@@ -55,12 +52,37 @@ func_dict = {
 
     "NORMALIZE":      (6,  lambda u: Vector(u).normalized()[:],                     ('v v'),          "Normalize"),
     "NEG":            (7,  lambda u: (-Vector(u))[:],                               ('v v'),             "Negate")
-    # "NOISE-V":        (8,  lambda u: noise_vector(Vector(u))[:],                    ('v v'),       "Noise Vector"),
-    # "CELL-V":         (10, lambda u: cell_vector(Vector(u))[:],                     ('v v'),  "Vector Cell Noise")
 }
 
 
 mode_items = [(k, descr, '', ident) for k, (ident, _, _, descr) in sorted(func_dict.items(), key=lambda k: k[1][0])]
+
+ 
+# apply f to all values recursively
+# - fx and fxy do full list matching by length
+
+def recurse_fx(l, f, level):
+    if not level:
+        return f(l)
+    else:
+        rfx = recurse_fx
+        t = [rfx(i, f, level-1) for i in l]
+    return t
+
+def recurse_fxy(l1, l2, f, level):
+    res = []
+    res_append = res.append
+    # will only be used if lists are of unequal length
+    fl = l2[-1] if len(l1) > len(l2) else l1[-1]
+    if level == 1:
+        for u, v in zip_longest(l1, l2, fillvalue=fl):
+            res_append(f(u, v))
+    else:
+        for u, v in zip_longest(l1, l2, fillvalue=fl):
+            res_append(recurse_fxy(u, v, f, level-1))
+    return res
+
+
 
 
 class SvVectorMathNodeMK2(bpy.types.Node, SverchCustomTreeNode):
@@ -123,41 +145,14 @@ class SvVectorMathNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         # get either input data, or socket default
         input_one = inputs[0].sv_get(deepcopy=False)
         
-        level = levelsOflist(input_one)
+        level = levelsOflist(input_one) - 1
         if num_inputs == 1:
-            result = self.recurse_fx(input_one, func, level - 1)
+            result = recurse_fx(input_one, func, level)
         else:
             input_two = inputs[1].sv_get(deepcopy=False)
-            result = self.recurse_fxy(input_one, input_two, func, level - 1)
+            result = recurse_fxy(input_one, input_two, func, level)
 
         outputs[0].sv_set(result)
-
-    # 
-    # apply f to all values recursively
-    # - fx and fxy do full list matching by length
-    # 
-
-    # vector -> scalar | vector
-    def recurse_fx(self, l, f, leve):
-        if not leve:
-            return f(l)
-        else:
-            rfx = self.recurse_fx
-            t = [rfx(i, f, leve-1) for i in l]
-        return t
-
-    def recurse_fxy(self, l1, l2, f, leve):
-        res = []
-        res_append = res.append
-        # will only be used if lists are of unequal length
-        fl = l2[-1] if len(l1) > len(l2) else l1[-1]
-        if leve == 1:
-            for u, v in zip_longest(l1, l2, fillvalue=fl):
-                res_append(f(u, v))
-        else:
-            for u, v in zip_longest(l1, l2, fillvalue=fl):
-                res_append(self.recurse_fxy(u, v, f, leve-1))
-        return res
 
 
 def register():
