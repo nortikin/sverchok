@@ -100,9 +100,9 @@ class SvVectorMathNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
         self.outputs[0].replace_socket(socket_type.get(t_outputs))
 
-        if len(t_inputs) > self.inputs:
+        if len(t_inputs) > len(self.inputs):
             self.inputs.new('VerticesSocket', "dummy")
-        elif len(t_inputs) < self.inputs:
+        elif len(t_inputs) < len(self.inputs):
             self.inputs.remove(self.inputs[-1])
 
         # with correct input count replace / donothing
