@@ -120,57 +120,28 @@ class SvVectorMathNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         t_inputs, t_outputs = socket_info.split(' ')
 
         # get either input data, or socket default
+        num_inputs = len(inputs)
+
         input_one = inputs[0].sv_get(deepcopy=False)
+        input_two = inputs[1].sv_get(deepcopy=False) if num_inputs == 2 else None
+        
         leve = levelsOflist(input_one)
+        result = [[]]
 
-        if t_outputs == 'v':
 
-            if len(inputs) == 1:
-                try:
-                    result = self.recurse_fx(input_one, func, leve - 1)
-                except:
-                    return
-
-            elif len(inputs) == 2:
-                input_two = self.inputs[1].sv_get(deepcopy=False)
-
-                try:
-                    result = self.recurse_fxy(input_one, input_two, func, leve - 1)
-                except:
-                    return
-
-            else:
-                return
-
-            self.outputs[0].sv_set(result)
-
-        # scalar-output
-        else:
-
-            vector2, result = [], []
-            func = scalar_out[operation][0]
-            num_inputs = len(inputs)
-
+        if num_inputs == 1:
             try:
-                if num_inputs == 1:
-                    result = self.recurse_fx(u, func, leve - 1)
-
-                elif all([num_inputs == 2, ('V' in inputs), (inputs['V'].links)]):
-
-                    if isinstance(inputs['V'].links[0].from_socket, VerticesSocket):
-                        vector2 = SvGetSocketAnyType(self, inputs['V'], deepcopy=False)
-                        result = self.recurse_fxy(u, vector2, func, leve - 1)
-                    else:
-                        print('socket connected to V is not a vertices socket')
-                else:
-                    return
-
+                result = self.recurse_fx(input_one, func, leve - 1)
             except:
-                print('failed scalar out, {} inputs'.format(num_inputs))
-                return
+                pass
 
-            if result:
-                SvSetSocketAnyType(self, 'out', result)
+        elif num_inputs == 2:
+            try:
+                result = self.recurse_fxy(input_one, input_two, func, leve - 1)
+            except:
+                pass
+
+        outputs[0].sv_set(result)
 
 
     '''
