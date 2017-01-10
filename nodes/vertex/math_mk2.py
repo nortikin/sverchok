@@ -32,59 +32,34 @@ socket_type = {'s': 'StringsSocket', 'v': 'VerticesSocket'}
 
 
 func_dict = {
-    "DOT":          (lambda u, v: Vector(u).dot(v),                                    ('vv s')),
-    "DISTANCE":     (lambda u, v: (Vector(u) - Vector(v)).length,                      ('vv s')),
-    "ANGLE RAD":    (lambda u, v: Vector(u).angle(v, 0),                               ('vv s')),
-    "ANGLE DEG":    (lambda u, v: degrees(Vector(u).angle(v, 0)),                      ('vv s')),
+    "DOT":            (1,  lambda u, v: Vector(u).dot(v),                          ('vv s'),        "Dot product"),
+    "DISTANCE":       (5,  lambda u, v: (Vector(u) - Vector(v)).length,            ('vv s'),           "Distance"),
+    "ANGLE DEG":      (12, lambda u, v: degrees(Vector(u).angle(v, 0)),            ('vv s'),      "Angle Degrees"),
+    "ANGLE RAD":      (17, lambda u, v: Vector(u).angle(v, 0),                     ('vv s'),      "Angle Radians"), 
 
-    "LEN":          (lambda u: sqrt((u[0] * u[0]) + (u[1] * u[1]) + (u[2] * u[2])),    ('v s')),
-    "NOISE-S":      (lambda u: noise(Vector(u)),                                       ('v s')),
-    "CELL-S":       (lambda u: cell(Vector(u)),                                        ('v s')),
+    "LEN":            (4,  lambda u: sqrt((u[0]*u[0])+(u[1]*u[1])+(u[2]*u[2])),     ('v s'),             "Length"),
+    "NOISE-S":        (9,  lambda u: noise(Vector(u)),                              ('v s'),       "Noise Scalar"),
+    "CELL-S":         (11, lambda u: cell(Vector(u)),                               ('v s'),  "Scalar Cell noise"),
 
-    "CROSS":        (lambda u, v: Vector(u).cross(v)[:],                               ('vv v')),
-    "ADD":          (lambda u, v: (u[0]+v[0], u[1]+v[1], u[2]+v[2]),                   ('vv v')),
-    "SUB":          (lambda u, v: (u[0]-v[0], u[1]-v[1], u[2]-v[2]),                   ('vv v')),
-    "REFLECT":      (lambda u, v: Vector(u).reflect(v)[:],                             ('vv v')),
-    "PROJECT":      (lambda u, v: Vector(u).project(v)[:],                             ('vv v')),
-    "COMPONENT-WISE":  (lambda u, v: (u[0]*v[0], u[1]*v[1], u[2]*v[2]),                ('vv v')),
+    "CROSS":          (0,  lambda u, v: Vector(u).cross(v)[:],                     ('vv v'),      "Cross product"),
+    "ADD":            (1,  lambda u, v: (u[0]+v[0], u[1]+v[1], u[2]+v[2]),         ('vv v'),                "Add"),
+    "SUB":            (3,  lambda u, v: (u[0]-v[0], u[1]-v[1], u[2]-v[2]),         ('vv v'),                "Sub"),
+    "PROJECT":        (13, lambda u, v: Vector(u).project(v)[:],                   ('vv v'),            "Project"),
+    "REFLECT":        (14, lambda u, v: Vector(u).reflect(v)[:],                   ('vv v'),            "Reflect"),
+    "COMPONENT-WISE": (19, lambda u, v: (u[0]*v[0], u[1]*v[1], u[2]*v[2]),         ('vv v'), "Component-wise U*V"),
 
-    "SCALAR":       (lambda u, s: (u[0]*s, u[1]*s, u[2]*s),                            ('vs v')),
-    "1/SCALAR":     (lambda u, s: (u[0]/s, u[1]/s, u[2]/s),                            ('vs v')),
-    "ROUND":        (lambda u, s: Vector(u).to_tuple(s),                               ('vs v')),
+    "SCALAR":         (15, lambda u, s: (u[0]*s, u[1]*s, u[2]*s),                  ('vs v'),    "Multiply Scalar"),
+    "1/SCALAR":       (16, lambda u, s: (u[0]/s, u[1]/s, u[2]/s),                  ('vs v'),  "Multiply 1/Scalar"),
+    "ROUND":          (18, lambda u, s: Vector(u).to_tuple(s),                     ('vs v'),     "Round s digits"),
 
-    "NORMALIZE":    (lambda u: Vector(u).normalized()[:],                              ('v v')),
-    "NEG":          (lambda u: (-Vector(u))[:],                                        ('v v')),
-    "NOISE-V":      (lambda u: noise_vector(Vector(u))[:],                             ('v v')),
-    "CELL-V":       (lambda u: cell_vector(Vector(u))[:],                              ('v v'))
+    "NORMALIZE":      (6,  lambda u: Vector(u).normalized()[:],                     ('v v'),          "Normalize"),
+    "NEG":            (7,  lambda u: (-Vector(u))[:],                               ('v v'),             "Negate"),
+    "NOISE-V":        (8,  lambda u: noise_vector(Vector(u))[:],                    ('v v'),       "Noise Vector"),
+    "CELL-V":         (10, lambda u: cell_vector(Vector(u))[:],                     ('v v'),  "Vector Cell Noise")
 }
 
-# vector math functions
-mode_items = [
-    ("CROSS",       "Cross product",        "", 0),
-    ("DOT",         "Dot product",          "", 1),
-    ("ADD",         "Add",                  "", 2),
-    ("SUB",         "Sub",                  "", 3),
-    ("LEN",         "Length",               "", 4),
-    ("DISTANCE",    "Distance",             "", 5),
-    ("NORMALIZE",   "Normalize",            "", 6),
-    ("NEG",         "Negate",               "", 7),
 
-    ("NOISE-V",     "Noise Vector",         "", 8),
-    ("NOISE-S",     "Noise Scalar",         "", 9),
-    ("CELL-V",      "Vector Cell noise",    "", 10),
-    ("CELL-S",      "Scalar Cell noise",    "", 11),
-
-    ("ANGLE DEG",   "Angle Degrees",        "", 12),
-    ("PROJECT",     "Project",              "", 13),
-    ("REFLECT",     "Reflect",              "", 14),
-    ("SCALAR",      "Multiply Scalar",      "", 15),
-    ("1/SCALAR",    "Multiply 1/Scalar",    "", 16),
-
-    ("ANGLE RAD",   "Angle Radians",        "", 17),
-    ("ROUND",       "Round s digits",       "", 18),
-
-    ("COMPONENT-WISE", "Component-wise U*V", "", 19)
-]
+mode_items = [(k, descr, '', ident) for k, (ident, _, _, descr) in sorted(func_dict.items(), key=lambda k: k[1][0])]
 
 
 class SvVectorMathNodeMK2(bpy.types.Node, SverchCustomTreeNode):
@@ -119,7 +94,7 @@ class SvVectorMathNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('VerticesSocket', "Out")
 
     def update_sockets(self):
-        func, info = func_dict.get(self.current_op)
+        ident, func, info, description = func_dict.get(self.current_op)
         t_inputs, t_outputs = info.split(' ')
 
         self.outputs[0].replace_socket(socket_type.get(t_outputs), "Out")
@@ -141,7 +116,7 @@ class SvVectorMathNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
         if not outputs[0].is_linked:
             return
-                    
+
                 try:
                     result = self.recurse_fxy(u, b, func, leve - 1)
                 except:
