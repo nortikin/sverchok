@@ -52,6 +52,7 @@ from sverchok.core.socket_conversions import (
 
 from sverchok.ui import color_def
 
+
 def process_from_socket(self, context):
     """Update function of exposed properties in Sockets"""
     self.node.process_node(context)
@@ -87,8 +88,8 @@ class SvSocketCommon:
         node = self.node
         sockets = node.outputs if self.is_output else node.inputs
         for i, s in enumerate(sockets):
-             if s == self:
-                 return i
+            if s == self:
+                return i
 
     def sv_set(self, data):
         """Set output data"""
@@ -156,11 +157,10 @@ class VerticesSocket(NodeSocket, SvSocketCommon):
         if self.prop_name:
             return {"prop_name": socket.prop_name}
         elif self.use_prop:
-            return {"use_prop" : True,
+            return {"use_prop": True,
                     "prop": self.prop[:]}
         else:
             return {}
-
 
     def sv_get(self, default=sentinel, deepcopy=True):
         if self.is_linked and not self.is_output:
@@ -170,7 +170,6 @@ class VerticesSocket(NodeSocket, SvSocketCommon):
 
             return SvGetSocket(self, deepcopy)
 
-
         if self.prop_name:
             return [[getattr(self.node, self.prop_name)[:]]]
         elif self.use_prop:
@@ -179,8 +178,6 @@ class VerticesSocket(NodeSocket, SvSocketCommon):
             raise SvNoDataError
         else:
             return default
-
-
 
     def draw(self, context, layout, node, text):
         if not self.is_output and not self.is_linked:
@@ -350,12 +347,11 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
     def turn_off_ng(self, context):
         process_tree(self)
 
-        #should turn off tree. for now it does by updating it whole
+        # should turn off tree. for now it does by updating it whole
         # should work something like this
         # outputs = filter(lambda n: isinstance(n,SvOutput), self.nodes)
         # for node in outputs:
         #   node.disable()
-
 
     sv_animate = BoolProperty(name="Animate", default=True, description='Animate this layout')
     sv_show = BoolProperty(name="Show", default=True, description='Show this layout',
@@ -364,12 +360,11 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
     sv_process = BoolProperty(name="Process", default=True, description='Process layout')
     sv_user_colors = StringProperty(default="")
 
-
     # get update list for debug info, tuple (fulllist,dictofpartiallists)
 
     def update(self):
         '''
-        Rebuild and update the Sverchok node tree, used at editor changes
+        Tags tree for update for handle
         '''
         self.has_changed = True
 
@@ -386,7 +381,6 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
             self.has_changed = False
         if not self.is_frozen():
             process_tree(self)
-
 
 
 class SverchCustomTreeNode:
@@ -408,7 +402,6 @@ class SverchCustomTreeNode:
         """
         ng = self.id_data
         update_error_nodes(ng, self.name, err)
-
 
     def set_color(self):
         color = color_def.get_color(self.bl_idname)
@@ -457,7 +450,7 @@ class SverchCustomTreeNode:
                 a = time.perf_counter()
                 process_from_node(self)
                 b = time.perf_counter()
-                print("Partial update from node", self.name, "in", round(b-a, 4))
+                print("Partial update from node", self.name, "in", round(b - a, 4))
             else:
                 process_from_node(self)
         elif self.id_data.bl_idname == "SverchGroupTreeType":
