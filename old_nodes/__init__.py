@@ -28,6 +28,7 @@ old_bl_idnames = {
     'CircleNode' : "circle",
     'ListItemNode' : "list_item",
     'GenRangeNode' : "range",
+    'VectorMathNode' : "math",
     'GenSeriesNode' : "series",
     'SvKDTreeEdgesNode': "kd_tree_edges",
 #    'Test1Node' : "test",
