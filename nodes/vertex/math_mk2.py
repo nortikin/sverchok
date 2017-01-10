@@ -22,10 +22,9 @@ from itertools import zip_longest
 import bpy
 from bpy.props import EnumProperty, FloatProperty
 from mathutils import Vector
-from mathutils.noise import noise_vector, cell_vector, noise, cell
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (fullList, levelsOflist, updateNode)
+from sverchok.data_structure import levelsOflist, updateNode
 
 # pylint: disable=C0326
 
