@@ -384,7 +384,7 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
         if self.has_changed:
             self.build_update_list()
             self.has_changed = False
-        if not self.is_frozen()
+        if not self.is_frozen():
             process_tree(self)
 
 
