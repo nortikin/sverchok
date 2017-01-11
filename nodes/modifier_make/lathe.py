@@ -25,9 +25,7 @@ from bmesh.ops import spin
 
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (
-    dataCorrect, updateNode, SvSetSocketAnyType, SvGetSocketAnyType
-)
+from sverchok.data_structure import dataCorrect, updateNode
 
 
 def get_lathed_geometry(node, verts, edges, cent, axis, dvec, angle, steps):
@@ -61,23 +59,22 @@ class SvLatheNode(bpy.types.Node, SverchCustomTreeNode):
     axis = FloatVectorProperty(name='axis', size=3, update=updateNode, default=(0, 0, 1))
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', 'Verts', 'Verts')
-        self.inputs.new('StringsSocket', 'Edges', 'Edges')
-        self.inputs.new('VerticesSocket', 'cent', 'cent').prop_name = 'cent'
-        self.inputs.new('VerticesSocket', 'axis', 'axis').prop_name = 'axis'
-        self.inputs.new('VerticesSocket', 'dvec', 'dvec').prop_name = 'dvec'
-        self.inputs.new('StringsSocket', 'Degrees', 'Degrees').prop_name = 'Degrees'
-        self.inputs.new('StringsSocket', 'Steps', 'Steps').prop_name = 'Steps'
+        self.inputs.new('VerticesSocket', 'Verts')
+        self.inputs.new('StringsSocket', 'Edges')
+        self.inputs.new('VerticesSocket', 'cent').prop_name = 'cent'
+        self.inputs.new('VerticesSocket', 'axis').prop_name = 'axis'
+        self.inputs.new('VerticesSocket', 'dvec').prop_name = 'dvec'
+        self.inputs.new('StringsSocket', 'Degrees').prop_name = 'Degrees'
+        self.inputs.new('StringsSocket', 'Steps').prop_name = 'Steps'
 
-        self.outputs.new('VerticesSocket', 'Verts', 'Verts')
-        self.outputs.new('StringsSocket', 'Poly', 'Poly')
+        self.outputs.new('VerticesSocket', 'Verts')
+        self.outputs.new('StringsSocket', 'Poly')
 
     def draw_buttons(self, context, layout):
         row = layout.row(align=True)
         row.prop(self, "remove_doubles", text="merge")
 
     def nothing_to_process(self):
-
         if not (self.inputs['Verts'].links and self.outputs['Verts'].links):
             return True
 
@@ -152,8 +149,8 @@ class SvLatheNode(bpy.types.Node, SverchCustomTreeNode):
             verts_out.append(v)
             faces_out.append(p)
 
-        SvSetSocketAnyType(self, 'Verts', verts_out)
-        SvSetSocketAnyType(self, 'Poly', faces_out)
+        self.outputs['Verts'].sv_set(verts_out)
+        self.outputs['Poly'].sv_set(faces_out)
 
 
 def register():
@@ -162,6 +159,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvLatheNode)
-
-if __name__ == '__main__':
-    register()
