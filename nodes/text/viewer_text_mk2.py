@@ -38,8 +38,8 @@ class SverchokViewer(bpy.types.Operator):
 
         # vertices socket
         out_verts = 'None \n'
-        if inputs['vertices'].links:
-            if type(inputs['vertices'].links[0].from_socket) == bpy.types.VerticesSocket:
+        if inputs['vertices'].is_linked:
+            if isinstance(inputs['vertices'].other, bpy.types.VerticesSocket):
                 evaverti = inputs['vertices'].sv_get()
 
                 deptl = levelsOflist(evaverti)
@@ -54,8 +54,8 @@ class SverchokViewer(bpy.types.Operator):
         # edges/faces socket
         out_edgpol = 'None \n'
         edpotype = '\n\ndata \n'
-        if inputs['edg_pol'].links:
-            if type(inputs['edg_pol'].links[0].from_socket) == bpy.types.StringsSocket:
+        if inputs['edg_pol'].is_linked:
+            if isinstance(inputs['edg_pol'].other, bpy.types.StringsSocket):
                 evaline_str = inputs['edg_pol'].sv_get()
 
                 if evaline_str:
@@ -72,8 +72,8 @@ class SverchokViewer(bpy.types.Operator):
 
         # matrix socket
         out_matrix = 'None \n'
-        if inputs['matrix'].links:
-            if type(inputs['matrix'].links[0].from_socket) == bpy.types.MatrixSocket:
+        if inputs['matrix'].is_linked:
+            if isinstance(inputs['matrix'].other, bpy.types.MatrixSocket):
                 eva = inputs['matrix'].sv_get()
 
                 deptl = levelsOflist(eva)
@@ -87,8 +87,8 @@ class SverchokViewer(bpy.types.Operator):
 
         # object socket
         out_object = 'None \n'
-        if inputs['object'].links:
-            if type(inputs['object'].links[0].from_socket) == bpy.types.SvObjectSocket:
+        if inputs['object'].is_linked:
+            if isinstance(inputs['object'].other, bpy.types.SvObjectSocket):
                 eva = inputs['object'].sv_get()
 
                 deptl = levelsOflist(eva)
@@ -109,8 +109,8 @@ class SverchokViewer(bpy.types.Operator):
         Todo - make more organized layout with button making
         lines in up and between Frame and nodes and text of user and layout name
         '''
-        labls = [n.label for n in nTree.nodes]
-        if 'Sverchok_viewer' in [n.label for n in nTree.nodes]:
+        # labls = [n.label for n in nTree.nodes]
+        if any('Sverchok_viewer' == n.label for n in nTree.nodes):
             return
         else:
             a = nTree.nodes.new('NodeFrame')
@@ -119,28 +119,23 @@ class SverchokViewer(bpy.types.Operator):
             locx = [n.location[0] for n in nTree.nodes]
             locy = [n.location[1] for n in nTree.nodes]
             mx, my = min(locx), max(locy)
-            a.location[0] = mx-a.width-10
+            a.location[0] = mx - a.width - 10
             a.location[1] = my
             a.text = bpy.data.texts['Sverchok_viewer']
             a.label = 'Sverchok_viewer'
             a.shrink = False
             a.use_custom_color = True
             # this trick allows us to negative color, so user accept it as grey!!!
-            color = [1-i for i in bpy.context.user_preferences.themes['Default'].node_editor.space.back[:]]
+            color = [1 - i for i in bpy.context.user_preferences.themes['Default'].node_editor.space.back[:]]
             a.color[:] = color
 
     def do_text(self,vertices,edgspols,matrices,edpotype,object):
-        nTree = bpy.data.node_groups[bpy.context.space_data.node_tree.name]
+        nTree = bpy.data.node_groups[self.treename]
         #this part can be than removed from node text viewer:
-        texts = bpy.data.texts.items()
-        exists = False
-        for t in texts:
-            if bpy.data.texts[t[0]].name == 'Sverchok_viewer':
-                exists = True
-                break
 
-        if not exists:
+        if not 'Sverchok_viewer' in bpy.data.texts:
             bpy.data.texts.new('Sverchok_viewer')
+
         podpis = '\n'*2 \
                 + '**************************************************' + '\n' \
                 + '                     The End                      '
@@ -230,7 +225,7 @@ class ViewerNodeTextMK2(bpy.types.Node, SverchCustomTreeNode):
         if not self.autoupdate:
             pass
         else:
-            bpy.ops.node.sverchok_viewer_button(nodename=self.name, treename=bpy.context.space_data.node_tree.name)
+            bpy.ops.node.sverchok_viewer_button(nodename=self.name, treename=self.id_data.name)
 
     def update(self):
         pass
