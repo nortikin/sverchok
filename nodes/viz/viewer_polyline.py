@@ -28,25 +28,17 @@ from bpy.props import (
 from mathutils import Matrix, Vector
 
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
-
-from sverchok.node_tree import (
-    SverchCustomTreeNode,
-    VerticesSocket,
-    MatrixSocket,
-    StringsSocket)
-
+from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (
     dataCorrect,
     fullList,
-    updateNode,
-    SvGetSocketAnyType)
+    updateNode)
 
 from sverchok.utils.sv_viewer_utils import (
     matrix_sanitizer,
     natural_plus_one,
     get_random_init,
-    greek_alphabet
-)
+    greek_alphabet)
 
 # -- POLYLINE --
 def live_curve(node, curve_name, verts, close):
@@ -302,11 +294,7 @@ class SvPolylineViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
     def remove_non_updated_objects(self, obj_index):
         objs = self.get_children()
-        # print('found', [o.name for o in objs])
-
         objs = [obj.name for obj in objs if int(obj.name.split("_")[-1]) > obj_index]
-        # print('want to remove:', objs)
-
         if not objs:
             return
 
@@ -338,7 +326,3 @@ def register():
 def unregister():
     bpy.utils.unregister_class(SvPolylineViewerNode)
     bpy.utils.unregister_class(SvPolylineViewOp)
-
-
-if __name__ == '__main__':
-    register()
