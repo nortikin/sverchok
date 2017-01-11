@@ -28,25 +28,17 @@ from bpy.props import (
 from mathutils import Matrix, Vector
 
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
-
-from sverchok.node_tree import (
-    SverchCustomTreeNode,
-    VerticesSocket,
-    MatrixSocket,
-    StringsSocket)
-
+from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (
     dataCorrect,
     fullList,
-    updateNode,
-    SvGetSocketAnyType)
+    updateNode)
 
 from sverchok.utils.sv_viewer_utils import (
     matrix_sanitizer,
     natural_plus_one,
     get_random_init,
-    greek_alphabet
-)
+    greek_alphabet)
 
 
 # -- DUPLICATES --
@@ -292,9 +284,9 @@ class SvCurveViewerNode(bpy.types.Node, SverchCustomTreeNode):
         self.basemesh_name = greek_alphabet[gai]
         bpy.context.scene.SvGreekAlphabet_index += 1
         self.use_custom_color = True
-        self.inputs.new('VerticesSocket', 'vertices', 'vertices')
-        self.inputs.new('StringsSocket', 'edges', 'edges')
-        self.inputs.new('MatrixSocket', 'matrix', 'matrix')
+        self.inputs.new('VerticesSocket', 'vertices')
+        self.inputs.new('StringsSocket', 'edges')
+        self.inputs.new('MatrixSocket', 'matrix')
 
     def draw_buttons(self, context, layout):
         view_icon = 'RESTRICT_VIEW_' + ('OFF' if self.activate else 'ON')
