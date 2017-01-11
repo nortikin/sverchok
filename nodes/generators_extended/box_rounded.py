@@ -16,18 +16,13 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-from itertools import permutations
 from math import copysign, pi, sqrt
 
 import bpy
-import bmesh
-from mathutils import Vector
-from bpy.props import IntProperty, FloatProperty
+from bpy.props import IntProperty, FloatProperty, FloatVectorProperty
 
-from sverchok.node_tree import SverchCustomTreeNode, VerticesSocket
-from sverchok.data_structure import (
-    updateNode, fullList,
-    SvSetSocketAnyType, SvGetSocketAnyType)
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import updateNode, fullList
 
 
 #
@@ -371,12 +366,14 @@ class SvBoxRoundedNode(bpy.types.Node, SverchCustomTreeNode):
         name='odd_axis_align', description='uhh',
         default=0, min=0, max=1, update=updateNode)
 
+    vector_vsize = FloatVectorProperty(size=3, default=(1,1,1), name='vector size', update=updateNode)
+
     def sv_init(self, context):
         new = self.inputs.new
         new('StringsSocket', "radius").prop_name = 'radius'
         new('StringsSocket', "arcdiv").prop_name = 'arcdiv'
         new('StringsSocket', "lindiv").prop_name = 'lindiv'
-        new('VerticesSocket', "vector_size")
+        new('VerticesSocket', "vector_size").prop_name = 'vector_vsize'
         new('StringsSocket', "div_type").prop_name = 'div_type'
         new('StringsSocket', "odd_axis_align").prop_name = 'odd_axis_align'
 
@@ -387,15 +384,9 @@ class SvBoxRoundedNode(bpy.types.Node, SverchCustomTreeNode):
         pass
 
     def process(self):
-        if not self.inputs['vector_size'].is_linked:
-            return
-    
         inputs = self.inputs
         outputs = self.outputs
-
         sizes = inputs['vector_size'].sv_get()[0]
-        if not sizes:
-            return
 
         # sizes determines FullLength
         num_boxes = len(sizes)
