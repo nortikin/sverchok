@@ -20,7 +20,7 @@ from math import degrees, sqrt
 from itertools import zip_longest
 
 import bpy
-from bpy.props import EnumProperty, FloatProperty
+from bpy.props import EnumProperty, FloatProperty, FloatVectorProperty
 from mathutils import Vector
 
 from sverchok.node_tree import SverchCustomTreeNode
@@ -85,12 +85,10 @@ def recurse_fxy(l1, l2, f, level):
 
 
 class SvVectorMathNodeMK2(bpy.types.Node, SverchCustomTreeNode):
-
     ''' VectorMath Node MK2'''
     bl_idname = 'SvVectorMathNodeMK2'
     bl_label = 'Vector Math MK2'
     bl_icon = 'OUTLINER_OB_EMPTY'
-
 
     def mode_change(self, context):
         self.update_sockets()
@@ -104,6 +102,8 @@ class SvVectorMathNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         update=mode_change)
 
     amount = FloatProperty(default=1.0, name='amount', update=updateNode)
+    v3_input_0 = FloatVectorProperty(default=(0,0,0), name='input a', update=updateNode)
+    v3_input_1 = FloatVectorProperty(default=(0,0,0), name='input b', update=updateNode)
 
 
     def draw_label(self):
@@ -115,8 +115,8 @@ class SvVectorMathNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', "A").use_prop = True
-        self.inputs.new('VerticesSocket', "B").use_prop = True
+        self.inputs.new('VerticesSocket', "A").prop_name = 'v3_input_0'
+        self.inputs.new('VerticesSocket', "B").prop_name = 'v3_input_1'
         self.outputs.new('VerticesSocket', "Out")
 
 
@@ -134,7 +134,7 @@ class SvVectorMathNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         for idx, t_in in enumerate(t_inputs):
             s = self.inputs[idx].replace_socket(socket_type.get(t_in))
             if t_in == 'v':
-                s.use_prop = True
+                s.prop_name = 'v3_input_' + str(idx)
             else:
                 s.prop_name = 'amount'
 
