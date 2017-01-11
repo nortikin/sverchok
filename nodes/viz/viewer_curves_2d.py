@@ -28,18 +28,11 @@ from bpy.props import (
 from mathutils import Matrix, Vector
 
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
-
-from sverchok.node_tree import (
-    SverchCustomTreeNode,
-    VerticesSocket,
-    MatrixSocket,
-    StringsSocket)
-
+from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (
     dataCorrect,
     fullList,
-    updateNode,
-    SvGetSocketAnyType)
+    updateNode)
 
 from sverchok.utils.sv_viewer_utils import (
     matrix_sanitizer,
