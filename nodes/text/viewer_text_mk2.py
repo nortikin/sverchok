@@ -20,7 +20,7 @@ import bpy
 from bpy.props import StringProperty, BoolProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import levelsOflist, SvGetSocketAnyType
+from sverchok.data_structure import levelsOflist
 
 
 
@@ -41,7 +41,7 @@ class SverchokViewer(bpy.types.Operator):
         if inputs['vertices'].links:
             if type(inputs['vertices'].links[0].from_socket) == bpy.types.VerticesSocket:
                 evaverti = inputs['vertices'].sv_get()
-                
+
                 deptl = levelsOflist(evaverti)
                 if deptl and deptl > 2:
                     a = self.readFORviewer_sockets_data(evaverti, deptl, len(evaverti))
@@ -106,7 +106,7 @@ class SverchokViewer(bpy.types.Operator):
     def makeframe(self, nTree,):
         '''
         Making frame to show text to user. appears in left corner
-        Todo - make more organized layout with button making 
+        Todo - make more organized layout with button making
         lines in up and between Frame and nodes and text of user and layout name
         '''
         labls = [n.label for n in nTree.nodes]
@@ -231,6 +231,7 @@ class ViewerNodeTextMK2(bpy.types.Node, SverchCustomTreeNode):
             pass
         else:
             bpy.ops.node.sverchok_viewer_button(nodename=self.name, treename=bpy.context.space_data.node_tree.name)
+
     def update(self):
         pass
 
