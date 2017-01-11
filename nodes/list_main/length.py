@@ -22,7 +22,7 @@ import bpy
 from bpy.props import IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, SvSetSocketAnyType, SvGetSocketAnyType
+from sverchok.data_structure import updateNode
 
 
 class ListLengthNode(bpy.types.Node, SverchCustomTreeNode):
@@ -46,7 +46,7 @@ class ListLengthNode(bpy.types.Node, SverchCustomTreeNode):
         # достаём два слота - вершины и полики
         if 'Length' in self.outputs and self.outputs['Length'].is_linked:
             if 'Data' in self.inputs and self.inputs['Data'].is_linked:
-                data = SvGetSocketAnyType(self, self.inputs['Data'])
+                data = self.inputs['Data'].sv_get()
 
                 if not self.level:
                     out = [[len(data)]]
@@ -55,7 +55,7 @@ class ListLengthNode(bpy.types.Node, SverchCustomTreeNode):
                 else:
                     out = self.count(data, self.level)
 
-                SvSetSocketAnyType(self, 'Length', out)
+                self.outputs['Length'].sv_set(out)
 
     def count(self, data, level):
         if isinstance(data, (float, int)):
