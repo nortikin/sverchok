@@ -24,14 +24,11 @@ from mathutils.geometry import interpolate_bezier as bezlerp
 from mathutils import Vector
 
 from sverchok.node_tree import SverchCustomTreeNode, VerticesSocket, StringsSocket
-from sverchok.data_structure import (updateNode, fullList,
-                            SvSetSocketAnyType, SvGetSocketAnyType)
+from sverchok.data_structure import updateNode, fullList
 
 
-def generate_bezier(verts=[], num_verts=20):
-
-    f = list(map(Vector, verts))
-    knot1, ctrl_1, ctrl_2, knot2 = f
+def generate_bezier(verts=None, num_verts=20):
+    knot1, ctrl_1, ctrl_2, knot2 = [Vector(v) for v in verts]
     arc_verts = bezlerp(knot1, ctrl_1, ctrl_2, knot2, max(3, num_verts))
 
     arc_verts = [v[:] for v in arc_verts]
@@ -51,10 +48,10 @@ class BasicSplineNode(bpy.types.Node, SverchCustomTreeNode):
         default=10, min=3,
         update=updateNode)
 
-    knot_1 = FloatVectorProperty(name='knot_1', description="k1", update=updateNode)
-    ctrl_1 = FloatVectorProperty(name='ctrl_1', description="ctrl1", update=updateNode)
-    ctrl_2 = FloatVectorProperty(name='ctrl_2', description="ctrl2", update=updateNode)
-    knot_2 = FloatVectorProperty(name='knot_2', description="k2", update=updateNode)
+    knot_1 = FloatVectorProperty(size=3, name='knot_1', description="k1", update=updateNode)
+    ctrl_1 = FloatVectorProperty(size=3, name='ctrl_1', description="ctrl1", update=updateNode)
+    ctrl_2 = FloatVectorProperty(size=3, name='ctrl_2', description="ctrl2", update=updateNode)
+    knot_2 = FloatVectorProperty(size=3, name='knot_2', description="k2", update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', "num_verts").prop_name = 'num_verts'
@@ -104,7 +101,7 @@ class BasicSplineNode(bpy.types.Node, SverchCustomTreeNode):
         for socket in handle_sockets:
             v = []
             if isinstance(socket.links[0].from_socket, VerticesSocket):
-                v = SvGetSocketAnyType(self, socket, deepcopy=False)[0]
+                v = socket.sv_get(deepcopy=False)[0]
             handle_data.append(v)
 
         knots_1, ctrls_1, ctrls_2, knots_2 = handle_data
@@ -116,7 +113,7 @@ class BasicSplineNode(bpy.types.Node, SverchCustomTreeNode):
         nv_links = inputs['num_verts'].links
         if nv_links:
             if isinstance(nv_links[0].from_socket, StringsSocket):
-                nv = SvGetSocketAnyType(self, inputs['num_verts'], deepcopy=False)[0]
+                nv = inputs['num_verts'].sv_get(deepcopy=False)[0]
 
             if nv and (len(nv) < len(knots_1)):
                 pad_num = len(knots_1) - len(nv)
@@ -144,16 +141,12 @@ class BasicSplineNode(bpy.types.Node, SverchCustomTreeNode):
             h_edges_out.append([(0, 1), (2, 3)])
 
         # reaches here if we got usable data.
-        SvSetSocketAnyType(self, 'Verts', verts_out)
-        if outputs['Edges'].links:
-            SvSetSocketAnyType(self, 'Edges', edges_out)
+        outputs['Verts'].sv_set(verts_out)
+        outputs['Edges'].sv_set(edges_out)
 
         # optional, show handles. this is useful for visual debug.
-        if outputs['hnd Verts'].links:
-            SvSetSocketAnyType(self, 'hnd Verts', h_verts_out)
-
-            if outputs['hnd Edges'].links:
-                SvSetSocketAnyType(self, 'hnd Edges', h_edges_out)
+        outputs['hnd Verts'].sv_set(h_verts_out)
+        outputs['hnd Edges'].sv_set(h_edges_out)
 
 
 def register():
