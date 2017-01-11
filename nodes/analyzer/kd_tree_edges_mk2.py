@@ -16,15 +16,12 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-from collections import defaultdict
-
 import bpy
 from bpy.props import IntProperty, FloatProperty
 import mathutils
-from mathutils import Vector
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, SvSetSocketAnyType, SvGetSocketAnyType
+from sverchok.data_structure import updateNode
 
 
 # documentation/blender_python_api_2_70_release/mathutils.kdtree.html
