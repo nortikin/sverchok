@@ -48,10 +48,10 @@ class BasicSplineNode(bpy.types.Node, SverchCustomTreeNode):
         default=10, min=3,
         update=updateNode)
 
-    knot_1 = FloatVectorProperty(name='knot_1', description="k1", update=updateNode)
-    ctrl_1 = FloatVectorProperty(name='ctrl_1', description="ctrl1", update=updateNode)
-    ctrl_2 = FloatVectorProperty(name='ctrl_2', description="ctrl2", update=updateNode)
-    knot_2 = FloatVectorProperty(name='knot_2', description="k2", update=updateNode)
+    knot_1 = FloatVectorProperty(size=3, name='knot_1', description="k1", update=updateNode)
+    ctrl_1 = FloatVectorProperty(size=3, name='ctrl_1', description="ctrl1", update=updateNode)
+    ctrl_2 = FloatVectorProperty(size=3, name='ctrl_2', description="ctrl2", update=updateNode)
+    knot_2 = FloatVectorProperty(size=3, name='knot_2', description="k2", update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', "num_verts").prop_name = 'num_verts'
