@@ -102,8 +102,8 @@ class SvVectorMathNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         update=mode_change)
 
     amount = FloatProperty(default=1.0, name='amount', update=updateNode)
-    v3_input_0 = FloatVectorProperty(default=(0,0,0), name='input a', update=updateNode)
-    v3_input_1 = FloatVectorProperty(default=(0,0,0), name='input b', update=updateNode)
+    v3_input_0 = FloatVectorProperty(size=3, default=(0,0,0), name='input a', update=updateNode)
+    v3_input_1 = FloatVectorProperty(size=3, default=(0,0,0), name='input b', update=updateNode)
 
 
     def draw_label(self):
