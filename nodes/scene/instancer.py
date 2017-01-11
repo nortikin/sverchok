@@ -25,7 +25,7 @@ from mathutils import Vector, Matrix
 from bpy.props import BoolProperty, FloatVectorProperty, StringProperty, EnumProperty
 
 from sverchok.node_tree import SverchCustomTreeNode, MatrixSocket
-from sverchok.data_structure import dataCorrect, updateNode, SvGetSocketAnyType
+from sverchok.data_structure import dataCorrect, updateNode
 
 
 def get_random_init():
@@ -167,8 +167,7 @@ class SvInstancerNode(bpy.types.Node, SverchCustomTreeNode):
         inputs = self.inputs
         socket = inputs[socket_name].links[0].from_socket
         if isinstance(socket, socket_type):
-            socket_in = SvGetSocketAnyType(self, inputs[socket_name])
-            return dataCorrect(socket_in)
+            return dataCorrect(inputs[socket_name].sv_get())
         else:
             return []
 
