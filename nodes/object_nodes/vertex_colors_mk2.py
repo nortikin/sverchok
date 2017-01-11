@@ -24,7 +24,7 @@ import bmesh
 from bpy.props import StringProperty, EnumProperty, BoolProperty, FloatVectorProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (updateNode, second_as_first_cycle, fullList)
+from sverchok.data_structure import (updateNode, repeat_last, fullList)
 
 
 class SvVertexColorNodeMK2(bpy.types.Node, SverchCustomTreeNode):
@@ -45,29 +45,31 @@ class SvVertexColorNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     use_active = BoolProperty(default=False, name="Use active layer",
                               description="Use active vertex layer")
 
-    def draw_buttons(self, context,   layout):
+    def draw_buttons(self, context, layout):
         layout.prop(self, 'use_active')
         layout.prop(self, 'vertex_color')
-        #layout.prop_search(self, 'vertex_color', bpy.data.objects[self.object_ref], 'vertex_colors', text='', icon='HAND')
         layout.prop(self, "mode", expand=True)
-
 
     def draw_buttons_ext(self, context, layout):
         row = layout.row(align=True)
-        row.prop(self,    "clear",   text="clear unindexed")
+        row.prop(self, "clear", text="clear unindexed")
         row.prop(self, "clear_c", text="")
-
 
     def sv_init(self, context):
         self.inputs.new('SvObjectSocket', 'Object')
         self.inputs.new('StringsSocket', "Index")
         self.inputs.new('VerticesSocket', "Color")
-        #self.outputs.new('VerticesSocket', "OutColor")
 
     def process(self):
-        #print("foreach")
-        #obj = bpy.data.objects[self.object_ref]
-        for obj in self.inputs["Object"].sv_get():
+
+        objects = self.inputs["Object"].sv_get()
+        color_socket = self.inputs["Color"]
+        index_socket = self.inputs["Index"]
+
+        color_data = color_socket.sv_get(deepcopy=False, default=[None])
+        index_data = index_socket.sv_get(deepcopy=False, default=[None])
+
+        for obj, input_colors, indices in zip(objects, repeat_last(color_data), repeat_last(index_data)):
             loops = obj.data.loops
             loop_count = len(loops)
             if obj.data.vertex_colors:
@@ -79,18 +81,6 @@ class SvVertexColorNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                         vertex_color = obj.data.vertex_colors.new(name=self.vertex_color)
             else:
                 vertex_color = obj.data.vertex_colors.new(name=self.vertex_color)
-
-
-            color_socket = self.inputs["Color"]
-            index_socket = self.inputs["Index"]
-
-            if index_socket.is_linked:
-                indices = index_socket.sv_get()[0]
-
-            if color_socket.is_linked:
-                input_colors =  color_socket.sv_get()[0] # until object socket only first object...
-            else:
-                input_colors = None
 
             colors = np.empty(loop_count * 3, dtype=np.float32)
 
@@ -106,7 +96,7 @@ class SvVertexColorNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                 colors.shape = (loop_count, 3)
 
                 if self.mode == "vertices":
-                    vertex_index = np.zeros(loop_count, dtype=int) # would be good to check exackt type
+                    vertex_index = np.zeros(loop_count, dtype=int)  # would be good to check exackt type
                     loops.foreach_get("vertex_index", vertex_index)
                     if index_socket.is_linked:
                         idx_lookup = collections.defaultdict(list)
@@ -123,8 +113,8 @@ class SvVertexColorNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
                 elif self.mode == "polygons":
                     polygon_count = len(obj.data.polygons)
-                    p_start = np.empty(polygon_count,dtype=int)
-                    p_total = np.empty(polygon_count,dtype=int)
+                    p_start = np.empty(polygon_count, dtype=int)
+                    p_total = np.empty(polygon_count, dtype=int)
                     obj.data.polygons.foreach_get("loop_start", p_start)
                     obj.data.polygons.foreach_get("loop_total", p_total)
 
@@ -132,7 +122,7 @@ class SvVertexColorNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                         for idx, color in zip(indices, input_colors):
                             start_slice = p_start[idx]
                             stop_slice = start_slice + p_total[idx]
-                            colors[start_slice : stop_slice] = color
+                            colors[start_slice:stop_slice] = color
                     else:
                         if len(input_colors) < polygon_count:
                             fullList(input_colors, polygon_count)
@@ -141,7 +131,7 @@ class SvVertexColorNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                             color = input_colors[idx]
                             start_slice = p_start[idx]
                             stop_slice = start_slice + p_total[idx]
-                            colors[start_slice : stop_slice] = color
+                            colors[start_slice:stop_slice] = color
 
                 elif self.mode == "loops":
                     if index_socket.is_linked:
@@ -157,7 +147,8 @@ class SvVertexColorNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                 colors.shape = (loop_count * 3,)
                 vertex_color.data.foreach_set("color", colors)
                 obj.data.update()
-        return #done
+        """
+        # So output is removed from this node
         # if no output, we are done
         if not self.outputs[0].is_linked:
             return
@@ -167,7 +158,7 @@ class SvVertexColorNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         colors.shape = (loop_count, 3)
         out = []
         if self.mode == "vertices":
-            vert_loopup = {l.vertex_index : idx for idx, l in enumerate(obj.data.loops)}
+            vert_loopup = {l.vertex_index: idx for idx, l in enumerate(obj.data.loops)}
 
             if index_socket.is_linked:
                 index_seq = indices
@@ -196,71 +187,7 @@ class SvVertexColorNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                 out = colors.tolist()
 
         self.outputs[0].sv_set([out])
-
-    def process_old(self):
-
-        objm = bpy.data.objects[self.object_ref].data
-        objm.update()
-        if not objm.vertex_colors:
-            objm.vertex_colors.new(name='Sv_VColor')
-        if self.vertex_color not in objm.vertex_colors:
-            return
-        ovgs = objm.vertex_colors.get(self.vertex_color)
-        Ind, Col = self.inputs
-        if Col.is_linked:
-            sm, colors = self.mode, Col.sv_get()[0]
-            idxs = Ind.sv_get()[0] if Ind.is_linked else [i.index for i in getattr(objm,sm)]
-            idxs, colors = second_as_first_cycle(idxs, colors)
-            bm = bmesh.new()
-            bm.from_mesh(objm)
-            if self.clear:
-                clear_c = self.clear_c[:]
-                for i in range(len(ovgs.data)):
-                    ovgs.data[i].color = clear_c
-            if sm == 'vertices':
-                bv = bm.verts
-                bm.verts.ensure_lookup_table()
-                for i, col in zip(idxs, colors):
-                    for l in bv[i].link_loops:
-                        ovgs.data[l.index].color = col
-            elif sm == 'polygons':
-                #bf = bm.faces[:]
-                bm.faces.ensure_lookup_table()
-                for i, i2 in zip(idxs, colors):
-                    for loop in bm.faces[i].loops:
-                        ovgs.data[loop.index].color = i2
-            elif sm == 'loops':
-                for idx, color in zip(idxs, colors):
-                    ovgs.data[idx].color = color
-            bm.free()
-        return
-        # not output
-        if self.outputs["OutColor"].is_linked:
-            out = []
-            sm= self.mode
-            bm = bmesh.new()
-            bm.from_mesh(objm)
-            if sm == 'vertices':
-                #output one color per vertex
-                for v in bm.verts[:]:
-                    c = ovgs.data[v.link_loops[0].index].color
-                    out.append(list(c))
-
-            elif sm == 'polygons':
-                #output one color per face
-                for f in bm.faces[:]:
-                    c = ovgs.data[f.loops[0].index].color
-                    out.append(list(c))
-            elif sm == 'loops':
-                for i in range(len(ovgs.data)):
-                    c = ovgs.data[i].color
-                    out.append(c[:])
-
-            self.outputs["OutColor"].sv_set([out])
-            bm.free()
-
-
-
+        """
 
 
 def register():
@@ -269,6 +196,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvVertexColorNodeMK2)
-
-if __name__ == '__main__':
-    register()
