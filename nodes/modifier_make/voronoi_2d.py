@@ -20,7 +20,7 @@ import bpy
 from bpy.props import FloatProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, SvSetSocketAnyType, SvGetSocketAnyType
+from sverchok.data_structure import updateNode
 from sverchok.utils.voronoi import Site, computeVoronoiDiagram, computeDelaunayTriangulation
 
 
@@ -30,85 +30,81 @@ class Voronoi2DNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Voronoi 2D'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    clip = FloatProperty(name='clip', description='Clipping Distance',
-                         default=1.0, min=0,
-                         options={'ANIMATABLE'}, update=updateNode)
+    clip = FloatProperty(
+        name='clip', description='Clipping Distance',
+        default=1.0, min=0,
+        options={'ANIMATABLE'}, update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', "Vertices", "Vertices")
- #       self.inputs.new('StringsSocket', "Clipping", "Clipping")
-        self.outputs.new('VerticesSocket', "Vertices", "Vertices")
-        self.outputs.new('StringsSocket', "Edges", "Edges")
-#        self.outputs.new('StringsSocket', "Polygons", "Polygons")
-# Polygon output does not work right now. Should be fixed
+        self.inputs.new('VerticesSocket', "Vertices")
+        # self.inputs.new('StringsSocket', "Clipping")
+        self.outputs.new('VerticesSocket', "Vertices")
+        self.outputs.new('StringsSocket', "Edges")
+        # Polygon output does not work right now. Should be fixed
+        # self.outputs.new('StringsSocket', "Polygons")
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "clip", text="Clipping")
 
     def process(self):
-        # inputs
-        if 'Edges' in self.outputs and self.outputs['Edges'].is_linked or \
-           'Vertices' in self.outputs and self.outputs['Vertices'].is_linked:
 
-            if 'Vertices' in self.inputs and self.inputs['Vertices'].is_linked:
-                points_in = SvGetSocketAnyType(self, self.inputs['Vertices'])
+        if not self.inputs['Vertices'].is_linked:
+            return
 
-            pts_out = []
-    #        polys_out = []
-            edges_out = []
-            for obj in points_in:
-                pt_list = []
-                x_max = obj[0][0]
-                x_min = obj[0][0]
-                y_min = obj[0][1]
-                y_max = obj[0][1]
-                # creates points in format for voronoi library, throwing away z
-                for pt in obj:
-                    x, y = pt[0], pt[1]
-                    x_max = max(x, x_max)
-                    x_min = min(x, x_min)
-                    y_max = max(y, y_max)
-                    y_min = min(x, x_min)
-                    pt_list.append(Site(pt[0], pt[1]))
+        if not self.outputs['Vertices'].is_linked:
+            return
 
-                res = computeVoronoiDiagram(pt_list)
+        points_in = self.inputs['Vertices'].sv_get()
 
-                edges = res[2]
-                delta = self.clip
-                x_max = x_max + delta
-                y_max = y_max + delta
+        pts_out = []
+        # polys_out = []
+        edges_out = []
+        for obj in points_in:
+            pt_list = []
+            x_max = obj[0][0]
+            x_min = obj[0][0]
+            y_min = obj[0][1]
+            y_max = obj[0][1]
+            # creates points in format for voronoi library, throwing away z
+            for pt in obj:
+                x, y = pt[0], pt[1]
+                x_max = max(x, x_max)
+                x_min = min(x, x_min)
+                y_max = max(y, y_max)
+                y_min = min(x, x_min)
+                pt_list.append(Site(pt[0], pt[1]))
 
-                x_min = x_min - delta
-                y_min = y_min - delta
+            res = computeVoronoiDiagram(pt_list)
 
-                # clipping box to bounding box.
-                pts_tmp = []
-                for pt in res[0]:
-                    x, y = pt[0], pt[1]
-                    if x < x_min:
-                        x = x_min
-                    if x > x_max:
-                        x = x_max
+            edges = res[2]
+            delta = self.clip
+            x_max = x_max + delta
+            y_max = y_max + delta
 
-                    if y < y_min:
-                        y = y_min
-                    if y > y_max:
-                        y = y_max
-                    pts_tmp.append((x, y, 0))
+            x_min = x_min - delta
+            y_min = y_min - delta
 
-                pts_out.append(pts_tmp)
+            # clipping box to bounding box.
+            pts_tmp = []
+            for pt in res[0]:
+                x, y = pt[0], pt[1]
+                if x < x_min:
+                    x = x_min
+                if x > x_max:
+                    x = x_max
 
-                edges_out.append([(edge[1], edge[2]) for edge in edges if -1 not in edge])
+                if y < y_min:
+                    y = y_min
+                if y > y_max:
+                    y = y_max
+                pts_tmp.append((x, y, 0))
 
-            # outputs
-            if 'Vertices' in self.outputs and self.outputs['Vertices'].links:
-                SvSetSocketAnyType(self, 'Vertices', pts_out)
+            pts_out.append(pts_tmp)
+            edges_out.append([(edge[1], edge[2]) for edge in edges if -1 not in edge])
 
-            if 'Edges' in self.outputs and self.outputs['Edges'].links:
-                SvSetSocketAnyType(self, 'Edges', edges_out)
-
-    def update_socket(self, context):
-        self.update()
+        # outputs
+        self.outputs['Vertices'].sv_set(pts_out)
+        self.outputs['Edges'].sv_set(edges_out)
 
 
 # computeDelaunayTriangulation
@@ -119,26 +115,28 @@ class DelaunayTriangulation2DNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', "Vertices", "Vertices")
- #       self.outputs.new('StringsSocket', "Edges", "Edges")
-        self.outputs.new('StringsSocket', "Polygons", "Polygons")
+        self.inputs.new('VerticesSocket', "Vertices")
+        # self.outputs.new('StringsSocket', "Edges")
+        self.outputs.new('StringsSocket', "Polygons")
 
     def process(self):
-        points_in = []
-        if not ('Polygons' in self.outputs and self.outputs['Polygons'].is_linked):
+
+        if not self.inputs['Vertices'].is_linked:
             return
-        if 'Vertices' in self.inputs and self.inputs['Vertices'].is_linked:
-            points_in = SvGetSocketAnyType(self, self.inputs['Vertices'])
+        if not self.outputs['Polygons'].is_linked:
+            return
+
         tris_out = []
+        points_in = []
+        points_in = self.inputs['Vertices'].sv_get()
 
         for obj in points_in:
-
             pt_list = [Site(pt[0], pt[1]) for pt in obj]
             res = computeDelaunayTriangulation(pt_list)
             tris_out.append([tri for tri in res if -1 not in tri])
 
-        if 'Polygons' in self.outputs and self.outputs['Polygons'].is_linked:
-            SvSetSocketAnyType(self, 'Polygons', tris_out)
+
+        self.outputs['Polygons'].sv_set(tris_out)
 
 
 def register():

@@ -22,23 +22,27 @@ import bmesh
 from bpy.props import FloatProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import Vector_generate, SvSetSocketAnyType, SvGetSocketAnyType, updateNode
+from sverchok.data_structure import updateNode
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 
 
-def join_tris(verts, faces, limit):
+def join_tris(verts, faces, self):
     if not verts:
         return False
 
     bm = bmesh_from_pydata(verts, [], faces)
 
-    bmesh.ops.join_triangles(bm, faces=bm.faces, limit=limit)
+    bmesh.ops.join_triangles(
+        bm, faces=bm.faces,
+        angle_face_threshold=self.face_threshold,
+        angle_shape_threshold=self.shape_threshold
+    )
     bm.verts.index_update()
     bm.faces.index_update()
 
     faces_out = []
     verts_out = [vert.co[:] for vert in bm.verts]
-    [faces_out.append([v.index for v in face.verts]) for face in bm.faces]
+    _ = [faces_out.append([v.index for v in face.verts]) for face in bm.faces]
 
     bm.clear()
     bm.free()
@@ -51,48 +55,49 @@ class SvJoinTrianglesNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Join Triangles'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    limit = FloatProperty(
-        min=0.0, max=5.0, step=0.01,
-        name='limit', description='not sure',
+    face_threshold = FloatProperty(
+        min=0.0, step=0.1,
+        name='angle face threshold', description='not sure',
+        update=updateNode)
+
+    shape_threshold = FloatProperty(
+        min=0.0, step=0.1,
+        name='angle shape threshold', description='not sure',
         update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', 'Vertices', 'Vertices')
-        self.inputs.new('StringsSocket', 'Polygons', 'Polygons')
+        self.inputs.new('VerticesSocket', 'Vertices')
+        self.inputs.new('StringsSocket', 'Polygons')
 
-        self.outputs.new('VerticesSocket', 'Vertices', 'Vertices')
-        self.outputs.new('StringsSocket', 'Polygons', 'Polygons')
+        self.outputs.new('VerticesSocket', 'Vertices')
+        self.outputs.new('StringsSocket', 'Polygons')
 
     def draw_buttons(self, context, layout):
         col = layout.column()
-        col.prop(self, 'limit', text='limit')
-        pass
-
+        col.prop(self, 'face_threshold', text='face')
+        col.prop(self, 'shape_threshold', text='shape')
 
     def process(self):
         if not self.outputs['Polygons'].is_linked:
             return
 
-        verts = Vector_generate(SvGetSocketAnyType(self, self.inputs['Vertices']))
+        verts = self.inputs['Vertices'].sv_get()
         faces = self.inputs['Polygons'].sv_get()
-
-        if not (len(verts) == len(faces)):
+        if not len(verts) == len(faces):
             return
 
         verts_out = []
         polys_out = []
 
         for v_obj, f_obj in zip(verts, faces):
-            res = join_tris(v_obj, f_obj, self.limit)
+            res = join_tris(v_obj, f_obj, self)
             if not res:
                 return
             verts_out.append(res[0])
             polys_out.append(res[1])
 
-        if self.outputs['Vertices'].is_linked:
-            SvSetSocketAnyType(self, 'Vertices', verts_out)
-
-        SvSetSocketAnyType(self, 'Polygons', polys_out)
+        self.outputs['Vertices'].sv_set(verts_out)
+        self.outputs['Polygons'].sv_set(polys_out)
 
 
 

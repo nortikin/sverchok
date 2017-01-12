@@ -22,9 +22,7 @@ import bpy
 from bpy.props import BoolProperty, IntProperty, StringProperty, FloatProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (updateNode, changable_sockets,
-                            dataCorrect,
-                            SvSetSocketAnyType, SvGetSocketAnyType)
+from sverchok.data_structure import updateNode
 from sverchok.data_structure import handle_read, handle_write
 
 from random import uniform
@@ -262,18 +260,16 @@ class SvNeuroElman1LNode(bpy.types.Node, SverchCustomTreeNode):
         self.Elman.k_learning = self.k_learning
 
         result = []
-        if 'result' in self.outputs and len(self.outputs['result'].links) > 0 \
-                and 'data' in self.inputs and len(self.inputs['data'].links) > 0:
+        if self.outputs['result'].is_linked and self.inputs['data'].is_linked:
 
-            if 'etalon' in self.inputs and len(self.inputs['etalon'].links) > 0:
-                etalon = SvGetSocketAnyType(self, self.inputs['etalon'])[0]
+            if self.inputs['etalon'].is_linked:
+                etalon = self.inputs['etalon'].sv_get()[0]
                 flag = True
             else:
                 flag = False
                 etalon = [[0]]
 
-            if (props['InA']!=self.lA+1) or props['InB']!=self.lB or \
-                props['InC']!=self.lC:
+            if (props['InA']!=self.lA+1) or props['InB']!=self.lB or props['InC']!=self.lC:
                 props['InA'] = self.lA+1
                 props['InB'] = self.lB
                 props['InC'] = self.lC
@@ -287,7 +283,7 @@ class SvNeuroElman1LNode(bpy.types.Node, SverchCustomTreeNode):
             props['cycles'] = self.cycles
             props['trashold'] = self.treshold
 
-            data_ = SvGetSocketAnyType(self, self.inputs['data'])[0]
+            data_ = self.inputs['data'].sv_get()[0]
             if type(etalon[0]) not in [list, tuple]: etalon = [etalon]
             if type(data_[0]) not in [list, tuple]: data_ = [data_]
             for idx, data in enumerate(data_):
@@ -301,7 +297,7 @@ class SvNeuroElman1LNode(bpy.types.Node, SverchCustomTreeNode):
             result = [[[]]]
 
         handle_write(handle_name, props)
-        SvSetSocketAnyType(self, 'result', result)
+        self.outputs['result'].sv_set(result)
 
 
 
