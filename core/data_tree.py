@@ -109,7 +109,6 @@ def recurse_reduce(f, trees, out_trees, level=0):
 
 def recurse_stateful(f, in_trees, out_trees, level=0):
     args = [list(in_tree) for in_tree in in_trees]
-    print(args)
     res = f(args)
     for r, out_tree in zip(res, out_trees):
         out_tree.data = r
@@ -121,7 +120,7 @@ def compile_node(node):
         for idx, arg in enumerate(args):
             socket = node.inputs[idx]
             if socket.is_linked:
-                print(node.name, "arg inside exec node", arg)
+                #print(node.name, "arg inside exec node", arg)
                 socket.other.sv_set([arg])
             else:
                 pass
@@ -137,10 +136,10 @@ def compile_node(node):
         for socket in node.outputs:
             if socket.is_linked:
                 d = socket.other.sv_get()
-                print(node.name, "result", socket.name, d)
+                #print(node.name, "result", socket.name, d)
                 data.append(d)
 
-        print(node.name, "total result", data)
+        #print(node.name, "total result", data)
         return data
     return f, node_database.get(node.bl_idname, recurse_generator)
 
@@ -152,14 +151,17 @@ class SvDataTree:
             self.name = socket.node.name + ": " + socket.name
         else:
             self.name = None
+
     @property
     def is_leaf(self):
         return self.data is not None
+
     def __repr__(self):
         if self.is_leaf:
             return "SvDataTree<{}>".format(self.data)
         else:
             return "SvDataTree<children={}>".format(len(self.children))
+
     def print(self, level=0):
         if self.name:
             print(self.name)
@@ -168,12 +170,28 @@ class SvDataTree:
         else:
             for child in self.children:
                 child.print(level + 1)
+
     def __iter__(self):
         if self.is_leaf:
             yield self.data
         else:
             for v in chain(map(iter, self.children)):
                 yield from v
+
+    def set_level(self, level=0):
+        self.level = level
+        if self.is_leaf:
+            return level
+        else:
+            for child in self.children:
+                child.set_level(level + 1)
+
+    def get_level(self):
+        if self.is_leaf:
+            return 1
+        else:
+            return 1 + self.children[0].get_level()
+
 
 class SvDummyTree:
     is_leaf = True
@@ -240,6 +258,12 @@ def exec_node_group(node_group):
                 out_trees.append(data_trees.get(socket))
 
         recurse(func, in_trees, out_trees)
+        for ot in out_trees:
+            ot.set_level()
+            print(ot.name, ot.get_level())
+
+    def f():
+        return [0, 0]
 
     times = collections.defaultdict(lambda : [0, 0])
     for _, name, t in timings:
