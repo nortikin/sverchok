@@ -19,9 +19,8 @@
 import bpy
 from bpy.props import IntProperty, BoolProperty, EnumProperty
 
-from sverchok.node_tree import SverchCustomTreeNode, VerticesSocket
-from sverchok.data_structure import (updateNode, fullList, multi_socket, levelsOflist,
-                            SvSetSocketAnyType, SvGetSocketAnyType)
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import (updateNode, fullList, multi_socket, levelsOflist)
 
 
 class LineConnectNodeMK2(bpy.types.Node, SverchCustomTreeNode):
@@ -84,7 +83,7 @@ class LineConnectNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
     def connect(self, vers, dirn, ciclU, ciclV, clev, polygons, slice, cupU, cupV):
         ''' doing all job to connect '''
-        
+
         def joinvers(ver):
             ''' for joinvers to one object '''
             joinvers = []
@@ -92,7 +91,7 @@ class LineConnectNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                 fullList(list(ob), lenvers)
                 joinvers.extend(ob)
             return joinvers
-        
+
         def cupends(lenobjs,lenvers,flip=False):
             if not flip:
                 out = [[j*lenvers for j in reversed(range(lenobjs))]]
@@ -101,13 +100,13 @@ class LineConnectNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                 out = [[j for j in reversed(range(lenobjs))]]
                 out.extend( [[j+lenobjs*(lenvers-1) for j in range(lenobjs)]])
             return out
-            
+
         vers_ = []
         lens = []
         edges = []
 
         for ob in vers:
-            ''' prepate standard levels (correcting for default state) 
+            ''' prepate standard levels (correcting for default state)
                 and calc everage length of each object'''
             for o in ob:
                 vers_.append(o)
@@ -117,7 +116,7 @@ class LineConnectNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         lenobjs = len(vers_)
         # lenvers == длина одного объекта
         lenvers = max(lens)
-        
+
         if dirn == 'U_dir':
             if polygons == "Pols":
 
@@ -230,7 +229,7 @@ class LineConnectNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         multi_socket(self, min=1)
 
     def process(self):
-        if self.outputs['vertices'].is_linked or self.outputs['data'].is_linked:
+        if any(s.is_linked for s in self.outputs):
             slots = []
             for socket in self.inputs:
                 if socket.is_linked:
@@ -248,15 +247,17 @@ class LineConnectNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                         result = self.connect([s], self.dir_check, self.cicl_check_U, self.cicl_check_V, lol, self.polygons, self.slice_check, self.cup_U, self.cup_V)
                         one.extend(result[0])
                         two.extend(result[1])
-                result = (one,two)
-            
+                result = (one, two)
+            else:  # give up
+                return
+
 
             if self.outputs['vertices'].is_linked:
-                SvSetSocketAnyType(self, 'vertices', result[0])
+                self.outputs['vertices'].sv_set(result[0])
             if self.outputs['data'].is_linked:
-                SvSetSocketAnyType(self, 'data', result[1])
-                
-                
+                self.outputs['data'].sv_set(result[1])
+
+
 def register():
     bpy.utils.register_class(LineConnectNodeMK2)
 
@@ -266,4 +267,3 @@ def unregister():
 
 if __name__ == '__main__':
     register()
-

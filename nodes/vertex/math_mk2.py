@@ -39,7 +39,7 @@ func_dict = {
 
     "LEN":            (4,  lambda u: sqrt((u[0]*u[0])+(u[1]*u[1])+(u[2]*u[2])),     ('v s'),             "Length"),
     "CROSS":          (0,  lambda u, v: Vector(u).cross(v)[:],                     ('vv v'),      "Cross product"),
-    "ADD":            (1,  lambda u, v: (u[0]+v[0], u[1]+v[1], u[2]+v[2]),         ('vv v'),                "Add"),
+    "ADD":            (2,  lambda u, v: (u[0]+v[0], u[1]+v[1], u[2]+v[2]),         ('vv v'),                "Add"),
     "SUB":            (3,  lambda u, v: (u[0]-v[0], u[1]-v[1], u[2]-v[2]),         ('vv v'),                "Sub"),
     "PROJECT":        (13, lambda u, v: Vector(u).project(v)[:],                   ('vv v'),            "Project"),
     "REFLECT":        (14, lambda u, v: Vector(u).reflect(v)[:],                   ('vv v'),            "Reflect"),
@@ -47,7 +47,7 @@ func_dict = {
 
     "SCALAR":         (15, lambda u, s: (u[0]*s, u[1]*s, u[2]*s),                  ('vs v'),    "Multiply Scalar"),
     "1/SCALAR":       (16, lambda u, s: (u[0]/s, u[1]/s, u[2]/s),                  ('vs v'),  "Multiply 1/Scalar"),
-    "ROUND":          (18, lambda u, s: Vector(u).to_tuple(abs(int(s))),                     ('vs v'),     "Round s digits"),
+    "ROUND":          (18, lambda u, s: Vector(u).to_tuple(abs(int(s))),           ('vs v'),     "Round s digits"),
 
     "NORMALIZE":      (6,  lambda u: Vector(u).normalized()[:],                     ('v v'),          "Normalize"),
     "NEG":            (7,  lambda u: (-Vector(u))[:],                               ('v v'),             "Negate")
@@ -131,8 +131,9 @@ class SvVectorMathNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         elif len(t_inputs) < len(self.inputs):
             self.inputs.remove(self.inputs[-1])
 
+        renames = 'AB'
         for idx, t_in in enumerate(t_inputs):
-            s = self.inputs[idx].replace_socket(socket_type.get(t_in))
+            s = self.inputs[idx].replace_socket(socket_type.get(t_in), renames[idx])
             if t_in == 'v':
                 s.prop_name = 'v3_input_' + str(idx)
             else:

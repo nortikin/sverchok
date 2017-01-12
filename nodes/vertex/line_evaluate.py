@@ -21,9 +21,7 @@ from bpy.props import FloatProperty
 from mathutils import Vector
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (fullList, updateNode, 
-                            SvSetSocketAnyType, SvGetSocketAnyType)
-
+from sverchok.data_structure import (fullList, updateNode)
 
 class EvaluateLine(bpy.types.Node, SverchCustomTreeNode):
     ''' EvaluateLine '''
@@ -41,18 +39,12 @@ class EvaluateLine(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('VerticesSocket', "Vertice B", "Vertice B")
         self.outputs.new('VerticesSocket', "EvPoint", "EvPoint")
 
-
     def process(self):
-        # inputs
         if not self.outputs['EvPoint'].is_linked:
             return
-            
         VerticesA = self.inputs['Vertice A'].sv_get()
         VerticesB = self.inputs['Vertice B'].sv_get()
         factor = self.inputs['Factor'].sv_get()
-
-
-        # outputs
 
         # match inputs using fullList, longest list matching on A and B
         # extend factor list if necessary, it should not control length of output

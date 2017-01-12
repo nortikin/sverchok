@@ -20,7 +20,6 @@ import bpy
 import bmesh
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import SvSetSocketAnyType, SvGetSocketAnyType
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 
 
@@ -36,40 +35,31 @@ class VectorNormalNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('VerticesSocket', "Normals", "Normals")
 
     def process(self):
-        # достаём два слота - вершины и полики
-        if 'Centers' in self.outputs and self.outputs['Centers'].links or self.outputs['Normals'].links:
-            if 'Polygons' in self.inputs and 'Vertices' in self.inputs and self.inputs['Polygons'].links and self.inputs['Vertices'].links:
+        vers = self.inputs['Vertices'].sv_get()
+        pols = self.inputs['Polygons'].sv_get()
 
-                #if type(self.inputs['Poligons'].links[0].from_socket) == StringsSocket:
-                pols = SvGetSocketAnyType(self, self.inputs['Polygons'])
+        normalsFORout = []
+        for i, obj in enumerate(vers):
+            """
+            mesh_temp = bpy.data.meshes.new('temp')
+            mesh_temp.from_pydata(obj, [], pols[i])
+            mesh_temp.update(calc_edges=True)
+            """
+            bm = bmesh_from_pydata(obj, [], pols[i])
 
-                #if type(self.inputs['Vertices'].links[0].from_socket) == VerticesSocket:
-                vers = SvGetSocketAnyType(self, self.inputs['Vertices'])
-                normalsFORout = []
-                for i, obj in enumerate(vers):
-                    """
-                    mesh_temp = bpy.data.meshes.new('temp')
-                    mesh_temp.from_pydata(obj, [], pols[i])
-                    mesh_temp.update(calc_edges=True)
-                    """
-                    bm = bmesh_from_pydata(obj, [], pols[i])
+            bmesh.ops.recalc_face_normals(bm, faces=bm.faces[:])
+            bm.verts.ensure_lookup_table()
+            verts = bm.verts
+            tempobj = []
 
-                    bmesh.ops.recalc_face_normals(bm, faces=bm.faces[:])
-                    bm.verts.ensure_lookup_table()
-                    verts = bm.verts
-                    tempobj = []
+            for idx in range(len(verts)):
+                tempobj.append(verts[idx].normal[:])
 
-                    for idx in range(len(verts)):
-                        tempobj.append(verts[idx].normal[:])
+            normalsFORout.append(tempobj)
+            bm.free()
 
-                    normalsFORout.append(tempobj)
-
-                    bm.free()
-                    #bpy.data.meshes.remove(mesh_temp)
-                #print (normalsFORout)
-
-                if 'Normals' in self.outputs and self.outputs['Normals'].links:
-                    SvSetSocketAnyType(self, 'Normals', normalsFORout)
+        if self.outputs['Normals'].is_linked:
+            self.outputs['Normals'].sv_set(normalsFORout)
 
 
 def register():
