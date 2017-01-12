@@ -27,7 +27,7 @@ from sverchok.data_structure import updateNode
 def hilbert(step, n):
 
     def hilbert3(n):
-        if n <= 0:
+        if (n <= 0):
             x, y, z = 0, 0, 0
         else:
             [xo, yo, zo] = hilbert3(n-1)
@@ -93,7 +93,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(Hilbert3dNode)
-
-if __name__  == '__main__':
-    register()
-
