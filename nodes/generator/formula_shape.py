@@ -21,8 +21,8 @@ import ast
 from bpy.props import IntProperty, FloatProperty, EnumProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (updateNode,
-                            SvSetSocketAnyType, SvGetSocketAnyType)
+from sverchok.data_structure import updateNode
+
 import bpy, math, cmath, mathutils
 from math import acos, acosh, asin, asinh, atan, atan2, \
                             atanh,ceil,copysign,cos,cosh,degrees,e, \
@@ -401,18 +401,19 @@ class SvFormulaShapeNode(bpy.types.Node, SverchCustomTreeNode):
                 out = self.makeverts(Count, Scale, SP1, SP2, SP3, 
                                 self.formulaX, self.formulaY, self.formulaZ, 
                                 self.X_X, self.Y_Y, self.Z_Z, self.i_override)
-                SvSetSocketAnyType(self, 'Verts', out)
+                self.outputs['Verts'].sv_set(out)
             except:
                 print('Cannot calculate, formula generator')
                 out = sv_no_ve
                 edg = sv_no_ed
-                SvSetSocketAnyType(self, 'Verts', sv_no_ve)
-                SvSetSocketAnyType(self, 'Edges', sv_no_ed)
+                self.outputs['Verts'].sv_set(sv_no_ve)
+                self.outputs['Edges'].sv_set(sv_no_ed)
                 return
 
         if self.outputs['Edges'].is_linked:
-                edg = [[[i-1, i] for i in range(1, Count)]]
-                SvSetSocketAnyType(self, 'Edges', edg)
+            edg = [[[i-1, i] for i in range(1, Count)]]
+            self.outputs['Edges'].sv_set(edg)
+
 
 def register():
     bpy.utils.register_class(SvFormulaShapeNode)
