@@ -20,8 +20,7 @@ import bpy
 from bpy.props import IntProperty, StringProperty, BoolProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (SvSetSocketAnyType, SvGetSocketAnyType,
-                            get_other_socket, updateNode)
+from sverchok.data_structure import get_other_socket, updateNode
 
 
 class SvSwitchNode(bpy.types.Node, SverchCustomTreeNode):
@@ -49,10 +48,11 @@ class SvSwitchNode(bpy.types.Node, SverchCustomTreeNode):
                 self.inputs.remove(self.inputs[n])
                 self.outputs.remove(self.outputs[-1])
         
-    switch_state = IntProperty(name="state", min=0, 
-                               max=1, default=1, update=updateNode)
-    switch_count = IntProperty(name="count", min=1, 
-                               max=10, default=1, update=change_count)
+    switch_state = IntProperty(
+        name="state", min=0, max=1, default=1, update=updateNode)
+    
+    switch_count = IntProperty(
+        name="count", min=1, max=10, default=1, update=change_count)
         
     def sv_init(self, context):
         self.inputs.new("StringsSocket", "State").prop_name = 'switch_state'
