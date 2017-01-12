@@ -15,14 +15,13 @@
 #  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 # ##### END GPL LICENSE BLOCK #####
+import numpy as np
 
 import bpy
 from bpy.props import BoolProperty, IntProperty, StringProperty
 
 from sverchok.node_tree import SverchCustomTreeNode, StringsSocket
-from sverchok.data_structure import (updateNode, changable_sockets,
-                            SvSetSocketAnyType, SvGetSocketAnyType)
-import numpy as np
+from sverchok.data_structure import (updateNode, changable_sockets)
 
 
 class ShiftNodeMK2(bpy.types.Node, SverchCustomTreeNode):
@@ -60,7 +59,7 @@ class ShiftNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     def process(self):
         if not self.outputs["data"].is_linked:
             return
-            
+
         data = self.inputs['data'].sv_get()
         number = self.inputs["shift"].sv_get()[0][0]
         # numpy case:

@@ -22,9 +22,7 @@ import bpy
 from bpy.props import BoolProperty, IntProperty, StringProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (changable_sockets, repeat_last, updateNode,
-                            SvSetSocketAnyType, SvGetSocketAnyType)
-
+from sverchok.data_structure import (changable_sockets, repeat_last, updateNode)
 
 # ListSplit
 # by Linus Yng
@@ -81,11 +79,11 @@ class SvListSplitNode(bpy.types.Node, SverchCustomTreeNode):
             inputsocketname = 'Data'
             outputsocketname = ['Split']
             changable_sockets(self, inputsocketname, outputsocketname)
-    
+
     def process(self):
         if 'Split' in self.outputs and self.outputs['Split'].is_linked:
             if 'Data' in self.inputs and self.inputs['Data'].is_linked:
-                data = SvGetSocketAnyType(self, self.inputs['Data'])
+                data = self.inputs['Data'].sv_get()
                 sizes = self.inputs['Split'].sv_get()[0]
                 if self.unwrap:
                     out = self.get(data, self.level_unwrap, sizes)
@@ -93,7 +91,7 @@ class SvListSplitNode(bpy.types.Node, SverchCustomTreeNode):
                     out = self.get(data, self.level, sizes)
                 else:
                     out = split(data, sizes[0])
-                SvSetSocketAnyType(self, 'Split', out)
+                self.outputs['Split'].sv_set(out)
 
     def get(self, data, level, size):
         if not isinstance(data, (list, tuple)):
@@ -101,7 +99,7 @@ class SvListSplitNode(bpy.types.Node, SverchCustomTreeNode):
         if not isinstance(data[0], (list, tuple)):
             return data
         if level > 1:  # find level to work on
-            return [self.get(d, level-1, size) for d in data]
+            return [self.get(d, level - 1, size) for d in data]
         elif level == 1:  # execute the chosen function
             sizes = repeat_last(size)
             if self.unwrap:

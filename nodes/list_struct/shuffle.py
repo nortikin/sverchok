@@ -22,8 +22,7 @@ import bpy
 from bpy.props import BoolProperty, IntProperty, StringProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (updateNode, changable_sockets,
-                            SvSetSocketAnyType, SvGetSocketAnyType)
+from sverchok.data_structure import updateNode, changable_sockets
 
 
 class ListShuffleNode(bpy.types.Node, SverchCustomTreeNode):
@@ -55,20 +54,19 @@ class ListShuffleNode(bpy.types.Node, SverchCustomTreeNode):
 
     def update(self):
         if 'data' in self.inputs and self.inputs['data'].links:
-            # адаптивный сокет
             inputsocketname = 'data'
             outputsocketname = ['data']
             changable_sockets(self, inputsocketname, outputsocketname)
 
     def process(self):
-        if 'data' in self.outputs and self.outputs['data'].is_linked:
+        if self.outputs['data'].is_linked:
 
             seed = self.inputs['seed'].sv_get()[0][0]
 
             random.seed(seed)
-            data = SvGetSocketAnyType(self, self.inputs['data'])
+            data = self.inputs['data'].sv_get()
             output = self.shuffle(data, self.level)
-            SvSetSocketAnyType(self, 'data', output)
+            self.outputs['data'].sv_set(output)
 
     def shuffle(self, lst, level):
         level -= 1

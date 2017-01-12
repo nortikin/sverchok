@@ -20,8 +20,8 @@ import bpy
 from bpy.props import BoolProperty, IntProperty, StringProperty, EnumProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (updateNode, changable_sockets, repeat_last,
-                            SvSetSocketAnyType, SvGetSocketAnyType, match_long_repeat)
+from sverchok.data_structure import (updateNode, changable_sockets,
+                                     repeat_last, match_long_repeat)
 
 # ListSlice
 # by Linus Yng
@@ -62,28 +62,25 @@ class ListSliceNode(bpy.types.Node, SverchCustomTreeNode):
             inputsocketname = 'Data'
             outputsocketname = ['Slice', 'Other']
             changable_sockets(self, inputsocketname, outputsocketname)
-            
+
     def process(self):
-        data = SvGetSocketAnyType(self, self.inputs['Data'])
-
+        data = self.inputs['Data'].sv_get()
         start = self.inputs['Start'].sv_get()[0]
-
         stop = self.inputs['Stop'].sv_get()[0]
-
 
         if self.outputs['Slice'].is_linked:
             if self.level:
                 out = self.get(data, start, stop, self.level, self.slice)
             else:
                 out = self.slice(data, start[0], stop[0])
-            SvSetSocketAnyType(self, 'Slice', out)
+            self.outputs['Slice'].sv_set(out)
 
         if self.outputs['Other'].is_linked:
             if self.level:
                 out = self.get(data, start, stop, self.level, self.other)
             else:
                 out = self.other(data, start[0], stop[0])
-            SvSetSocketAnyType(self, 'Other', out)
+            self.outputs['Other'].sv_set(out)
 
     def slice(self, data, start, stop):
         if isinstance(data, (tuple, list)):
@@ -93,17 +90,17 @@ class ListSliceNode(bpy.types.Node, SverchCustomTreeNode):
 
     def other(self, data, start, stop):
         if isinstance(data, (tuple, list)):
-            return data[:start]+data[stop:]
+            return data[:start] + data[stop:]
         else:
             return None
 
     def get(self, data, start, stop, level, f):
         if level > 1:  # find level to work on
-                return [ self.get(obj, start, stop, level-1, f) for obj in data ]
+                return [self.get(obj, start, stop, level - 1, f) for obj in data]
         elif level == 1:  # execute the chosen function
-            data,start,stop = match_long_repeat([data,start,stop])
+            data, start, stop = match_long_repeat([data, start, stop])
             out = []
-            for da, art, op in zip(data,start,stop):
+            for da, art, op in zip(data, start, stop):
                 out.append(f(da, art, op))
             return out
         else:  # Fail
@@ -116,5 +113,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(ListSliceNode)
-    
-    

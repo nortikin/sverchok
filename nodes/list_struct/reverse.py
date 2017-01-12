@@ -20,8 +20,7 @@ import bpy
 from bpy.props import BoolProperty, IntProperty, StringProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (updateNode, changable_sockets,
-                            SvSetSocketAnyType, SvGetSocketAnyType)
+from sverchok.data_structure import (updateNode, changable_sockets)
 
 
 class ListReverseNode(bpy.types.Node, SverchCustomTreeNode):
@@ -53,22 +52,22 @@ class ListReverseNode(bpy.types.Node, SverchCustomTreeNode):
             changable_sockets(self, inputsocketname, outputsocketname)
 
     def process(self):
-        if self.inputs['data'].is_linked and self.outputs[0].is_linked:
-            data = SvGetSocketAnyType(self, self.inputs['data'])
+        if self.outputs[0].is_linked:
+            data = self.inputs['data'].sv_get(deepcopy=False)
             output = self.revers(data, self.level)
-            SvSetSocketAnyType(self, 'data', output)
+            self.outputs[0].sv_set(output)
 
-    def revers(self, list, level):
+    def revers(self, data, level):
         level -= 1
         if level:
             out = []
-            for l in list:
+            for l in data:
                 out.append(self.revers(l, level))
             return out
-        elif type(list) in [type([])]:
-            return list[::-1]
-        elif type(list) in [type(tuple())]:
-            return list[::-1]
+        elif isinstance(data, (list, tuple)):
+            return data[::-1]
+        else:
+            return data[::-1]
 
 
 def register():
