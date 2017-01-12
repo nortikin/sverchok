@@ -22,7 +22,7 @@ import bmesh
 from bpy.props import FloatProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import Vector_generate, SvSetSocketAnyType, SvGetSocketAnyType, updateNode
+from sverchok.data_structure import updateNode
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 
 
@@ -57,26 +57,23 @@ class SvJoinTrianglesNode(bpy.types.Node, SverchCustomTreeNode):
         update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', 'Vertices', 'Vertices')
-        self.inputs.new('StringsSocket', 'Polygons', 'Polygons')
+        self.inputs.new('VerticesSocket', 'Vertices')
+        self.inputs.new('StringsSocket', 'Polygons')
 
-        self.outputs.new('VerticesSocket', 'Vertices', 'Vertices')
-        self.outputs.new('StringsSocket', 'Polygons', 'Polygons')
+        self.outputs.new('VerticesSocket', 'Vertices')
+        self.outputs.new('StringsSocket', 'Polygons')
 
     def draw_buttons(self, context, layout):
         col = layout.column()
         col.prop(self, 'limit', text='limit')
-        pass
-
 
     def process(self):
         if not self.outputs['Polygons'].is_linked:
             return
 
-        verts = Vector_generate(SvGetSocketAnyType(self, self.inputs['Vertices']))
+        verts = self.inputs['Vertices'].sv_get()
         faces = self.inputs['Polygons'].sv_get()
-
-        if not (len(verts) == len(faces)):
+        if not len(verts) == len(faces):
             return
 
         verts_out = []
@@ -89,10 +86,8 @@ class SvJoinTrianglesNode(bpy.types.Node, SverchCustomTreeNode):
             verts_out.append(res[0])
             polys_out.append(res[1])
 
-        if self.outputs['Vertices'].is_linked:
-            SvSetSocketAnyType(self, 'Vertices', verts_out)
-
-        SvSetSocketAnyType(self, 'Polygons', polys_out)
+        self.outputs['Vertices'].sv_set(verts_out)
+        self.outputs['Polygons'].sv_set(polys_out)
 
 
 
