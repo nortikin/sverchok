@@ -20,7 +20,6 @@ import bpy
 from bpy.props import FloatProperty, BoolProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import SvSetSocketAnyType, SvGetSocketAnyType
 
 
 class FloatNode(bpy.types.Node, SverchCustomTreeNode):
@@ -93,8 +92,7 @@ class FloatNode(bpy.types.Node, SverchCustomTreeNode):
         # inputs
         Float = min(max(float(self.inputs[0].sv_get()[0][0]), self.minim), self.maxim)
         # outputs
-        if self.outputs['Float'].is_linked:
-            SvSetSocketAnyType(self, 'Float', [[Float]])
+        self.outputs['Float'].sv_set([[Float]])
 
 def register():
     bpy.utils.register_class(FloatNode)
@@ -102,10 +100,6 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(FloatNode)
-
-if __name__ == '__main__':
-    register()
-
 
 
 
