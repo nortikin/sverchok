@@ -21,8 +21,7 @@ from bpy.props import IntProperty, FloatProperty
 from mathutils.noise import seed_set, random_unit_vector
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (updateNode, match_long_repeat,
-                            SvSetSocketAnyType, SvGetSocketAnyType)
+from sverchok.data_structure import updateNode, match_long_repeat
 
 
 class RandomVectorNodeMK2(bpy.types.Node, SverchCustomTreeNode):
