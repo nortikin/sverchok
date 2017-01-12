@@ -52,8 +52,8 @@ class HilbertNode(bpy.types.Node, SverchCustomTreeNode):
 
         if verts_socket.is_linked:
 
-            Integer = int(level_socket.sv_get()[0][0]) if level_socket.is_linked else self.level_
-            Step = size_socket.sv_get()[0][0] if size_socket.is_linked else self.size_
+            Integer = int(level_socket.sv_get()[0][0])
+            Step = size_socket.sv_get()[0][0]
 
             verts = self.hilbert(0.0, 0.0, Step*1.0, 0.0, 0.0, Step*1.0, Integer)
             verts_socket.sv_set([verts])
