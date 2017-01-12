@@ -18,16 +18,16 @@
 
 import bpy
 from bpy.props import FloatProperty, BoolProperty
-from sverchok.node_tree import SverchCustomTreeNode, StringsSocket
-from sverchok.data_structure import updateNode, fullList, SvGetSocketAnyType, SvSetSocketAnyType
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import updateNode, fullList
 from sverchok.utils.sv_itertools import sv_zip_longest
+
 
 class GenVectorsNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Generator vectors '''
     bl_idname = 'GenVectorsNode'
     bl_label = 'Vector in'
     bl_icon = 'OUTLINER_OB_EMPTY'
-
 
     x_ = FloatProperty(name='X', description='X',
                        default=0.0, precision=3,
@@ -45,31 +45,30 @@ class GenVectorsNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('StringsSocket', "Z").prop_name = 'z_'
         self.width = 100
         self.outputs.new('VerticesSocket', "Vectors")
-        
-    
+
     def process(self):
         if not self.outputs['Vectors'].is_linked:
             return
         inputs = self.inputs
         X_ = inputs['X'].sv_get()
         Y_ = inputs['Y'].sv_get()
-        Z_= inputs['Z'].sv_get()
+        Z_ = inputs['Z'].sv_get()
         series_vec = []
-        max_obj = max(map(len,(X_,Y_,Z_)))
+        max_obj = max(map(len, (X_, Y_, Z_)))
         fullList(X_, max_obj)
         fullList(Y_, max_obj)
         fullList(Z_, max_obj)
         for i in range(max_obj):
-                
-            max_v = max(map(len,(X_[i],Y_[i],Z_[i])))
+
+            max_v = max(map(len, (X_[i], Y_[i], Z_[i])))
             fullList(X_[i], max_v)
             fullList(Y_[i], max_v)
             fullList(Z_[i], max_v)
             series_vec.append(list(zip(X_[i], Y_[i], Z_[i])))
-        
+
         self.outputs['Vectors'].sv_set(series_vec)
-    
-    
+
+
 def register():
     bpy.utils.register_class(GenVectorsNode)
 

@@ -28,24 +28,16 @@ class VertsDelDoublesNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Vector X Doubles'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    def draw_buttons(self, context, layout):
-        # if to make button - use name of socket and name of tree
-        # will be here soon
-        pass
-
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', "vers", "vers")
         self.outputs.new('VerticesSocket', "vers", "vers")
 
     def process(self):
-
-        if 'vers' in self.outputs and len(self.outputs['vers'].links) > 0:
-            # get any type socket from input:
-            vers = SvGetSocketAnyType(self, self.inputs['vers'])
-            # Process data
-            levs = levelsOflist(vers)
-            result = self.remdou(vers, levs)
-            SvSetSocketAnyType(self, 'vers', result)
+        vers = self.inputs['vers'].sv_get()
+        # Process data
+        levs = levelsOflist(vers)
+        result = self.remdou(vers, levs)
+        self.outputs[0].sv_set(result)
 
     def remdou(self, vers, levs):
         out = []
