@@ -18,15 +18,18 @@
 
 import bpy
 from mathutils import Vector
-from bpy.props import (BoolProperty, FloatVectorProperty, StringProperty,
-                       FloatProperty, EnumProperty)
-
-from sverchok.node_tree import SverchCustomTreeNode, MatrixSocket, VerticesSocket, StringsSocket
-from sverchok.data_structure import (
-    dataCorrect, node_id, updateNode, SvGetSocketAnyType, fullList,
-    Vector_generate, Matrix_generate)
+from bpy.props import (BoolProperty, FloatVectorProperty, StringProperty, FloatProperty)
 
 from sverchok.ui import index_viewer_draw as IV
+from sverchok.node_tree import SverchCustomTreeNode, MatrixSocket, VerticesSocket, StringsSocket
+from sverchok.data_structure import (
+    dataCorrect,
+    node_id,
+    updateNode,
+    fullList,
+    Vector_generate,
+    Matrix_generate)
+
 
 
 # status colors
@@ -74,7 +77,8 @@ class SvBakeText (bpy.types.Operator):
         def get_data(name, fallback=[]):
             TypeSocket = get_socket_type(name)
             if has_good_link(name, TypeSocket):
-                d = dataCorrect(SvGetSocketAnyType(node, inputs[name]))
+                # d = dataCorrect(SvGetSocketAnyType(node, inputs[name]))
+                d = dataCorrect(inputs[name].sv_get())
                 if name == 'matrix':
                     d = Matrix_generate(d) if d else []
                 elif name == 'vertices':
@@ -406,7 +410,3 @@ def register():
 def unregister():
     bpy.utils.unregister_class(SvBakeText)
     bpy.utils.unregister_class(IndexViewerNode)
-
-
-if __name__ == '__main__':
-    register()
