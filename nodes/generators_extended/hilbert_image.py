@@ -20,7 +20,7 @@ import bpy
 from bpy.props import EnumProperty, IntProperty, FloatProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, SvSetSocketAnyType, SvGetSocketAnyType
+from sverchok.data_structure import updateNode
 
 
 class HilbertImageNode(bpy.types.Node, SverchCustomTreeNode):
@@ -29,10 +29,8 @@ class HilbertImageNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Hilbert image'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    def images(self, context):
-        return [tuple(3 * [im.name]) for im in bpy.data.images]
-
-    name_image = EnumProperty(items=images, name='images')
+    name_image = StringProperty(
+        name='image_name', description='image name', update=updateNode)
 
     level_ = IntProperty(
         name='level', description='Level', default=2, min=1, max=20,
@@ -42,7 +40,6 @@ class HilbertImageNode(bpy.types.Node, SverchCustomTreeNode):
         name='size', description='Size', default=1.0, min=0.1,
         options={'ANIMATABLE'}, update=updateNode)
 
-    #name_image = bpy.props.StringProperty(name='image_name', description='image name', default='', update=updateNode)
     sensitivity_ = FloatProperty(
         name='sensitivity', description='sensitivity', default=1, min=0.1, max=1.0,
         options={'ANIMATABLE'}, update=updateNode)
@@ -69,7 +66,7 @@ class HilbertImageNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('StringsSocket', "Edges")
 
     def draw_buttons(self, context, layout):
-        layout.prop(self, "name_image", text="image name")
+        layout.prop_search(self, "name_image", bpy.data, 'images', text="image")
         row = layout.row(align=True)
         row.scale_x = 10.0
         row.prop(self, "R", text="R")
