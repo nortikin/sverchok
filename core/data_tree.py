@@ -27,16 +27,55 @@ class DataGetter:
         return socket.data
 
 class SvDataTree:
-    children = []
+    def __init__(self, socket):
+        self.data = []
+        self.children =[]
+        self.socket = socket
 
-    def __init__(self):
-        pass
+    @property
+    def is_leaf(self):
+        return bool(self.data)
 
-    def parse(self):
+    def parse(self, node_func):
         if self.is_leaf:
-            self.execute()
+            node_func
         for child in children:
-            child.parse()
+            res = child.execute(node_func)
 
-    def execute(self):
-        self.func()
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        if self.is_leaf:
+            yield data
+        else:
+            for child in children:
+                yield child.__next__()
+
+    def set_level(self, level=0):
+        self.level = level
+        for child in children:
+            child.set_level(level + 1)
+
+
+
+
+
+
+def compile_node(node):
+    def f(*args):
+        for idx, arg in enumerate(args):
+            socket = node.inputs[idx]
+            if socket.is_linked:
+                socket.other.sv_set([[arg]])
+            else:
+                setattr(node, socket.prop_name, arg)
+        node.process()
+        data = []
+        for socket in node.outputs:
+            if socket.is_linked:
+                data.append(socket.other.sv_get()[0])
+            else:
+                data.append(None)
+        return tuple(data)
+    return f
