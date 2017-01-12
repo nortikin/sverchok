@@ -16,9 +16,29 @@
 #  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 # ##### END GPL LICENSE BLOCK #####
-from itertools import chain
+import time
+from itertools import chain, filterfalse
+import collections
 
 from sverchok.core.update_system import make_update_list
+
+# from itertools, should be somewhere else...
+def unique_everseen(iterable, key=None):
+    "List unique elements, preserving order. Remember all elements ever seen."
+    # unique_everseen('AAAABBBCCDAABBB') --> A B C D
+    # unique_everseen('ABBCcAD', str.lower) --> A B C D
+    seen = set()
+    seen_add = seen.add
+    if key is None:
+        for element in filterfalse(seen.__contains__, iterable):
+            seen_add(element)
+            yield element
+    else:
+        for element in iterable:
+            k = key(element)
+            if k not in seen:
+                seen_add(k)
+                yield element
 
 
 def recurse_generator(f, trees, out_trees, level=0):
@@ -61,6 +81,8 @@ def recurse_stateful(f, in_trees, out_trees, level=0):
     for r, out_tree in zip(res, out_trees):
         out_tree.data = r
 
+timings = []
+
 def compile_node(node):
     def f(args):
         for idx, arg in enumerate(args):
@@ -74,7 +96,10 @@ def compile_node(node):
                 not needed inside of Sverchok context
                 setattr(node, socket.prop_name, arg)
                 """
+        start = time.perf_counter()
         node.process()
+        stop = time.perf_counter()
+        timings.append((node.bl_idname, node.name, stop - start))
         data = []
         for socket in node.outputs:
             if socket.is_linked:
@@ -162,6 +187,7 @@ def DAG(node_group):
 def exec_node_group(node_group):
     print("exec tree")
     data_trees.clean(node_group)
+    timings.clear()
     for node in DAG(node_group):
         print("exec node", node.name)
         func, recurse = compile_node(node)
@@ -179,6 +205,15 @@ def exec_node_group(node_group):
 
         recurse(func, in_trees, out_trees)
     data_trees.print(node_group)
+    for t in timings:
+        print(*t)
+    times = collections.defaultdict(lambda : [0, 0])
+    for _, name, t in timings:
+        times[name][0] += t
+        times[name][1] += 1
+
+    for name in unique_everseen(name for _, name, t in timings):
+        print(name, *times[name])
 
 # this needs something more clever
 node_database = {
