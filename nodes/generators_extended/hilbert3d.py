@@ -16,11 +16,32 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+import numpy as np
+
 import bpy
 from bpy.props import IntProperty, FloatProperty
-import numpy as np
+
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, SvSetSocketAnyType, SvGetSocketAnyType
+from sverchok.data_structure import updateNode
+
+def hilbert(step, n):
+
+    def hilbert3(n):
+        if n <= 0:
+            x, y, z = 0, 0, 0
+        else:
+            [xo, yo, zo] = hilbert3(n-1)
+            x = step * .5 * np.array([.5+zo, .5+yo, -.5+yo, -.5-xo, -.5-xo, -.5-yo, .5-yo, .5+zo])
+            y = step * .5 * np.array([.5+xo, .5+zo, .5+zo, .5+yo, -.5+yo, -.5-zo, -.5-zo, -.5-xo])
+            z = step * .5 * np.array([.5+yo, -.5+xo, -.5+xo, .5-zo, .5-zo, -.5+xo, -.5+xo, .5-yo])
+        return [x, y, z]
+
+    vx, vy, vz = hilbert3(n)
+    vx = vx.flatten().tolist()
+    vy = vy.flatten().tolist()
+    vz = vz.flatten().tolist()
+    verts = [list(zip(vx, vy, vz))]
+    return verts
 
 
 class Hilbert3dNode(bpy.types.Node, SverchCustomTreeNode):
@@ -29,74 +50,41 @@ class Hilbert3dNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Hilbert3d'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    level_ = IntProperty(name='level', description='Level',
-                         default=2, min=1, max=5,
-                         options={'ANIMATABLE'}, update=updateNode)
-    size_ = FloatProperty(name='size', description='Size',
-                          default=1.0, min=0.1,
-                          options={'ANIMATABLE'}, update=updateNode)
+    level_ = IntProperty(
+        name='level', description='Level',
+        default=2, min=1, max=5,
+        options={'ANIMATABLE'}, update=updateNode)
+
+    size_ = FloatProperty(
+        name='size', description='Size',
+        default=1.0, min=0.1,
+        options={'ANIMATABLE'}, update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('StringsSocket', "Level", "Level").prop_name = 'level_'
-        self.inputs.new('StringsSocket', "Size", "Size").prop_name = 'size_'
-        self.outputs.new('VerticesSocket', "Vertices", "Vertices")
-        self.outputs.new('StringsSocket', "Edges", "Edges")
-
-    def draw_buttons(self, context, layout):
-        pass
+        self.inputs.new('StringsSocket', "Level").prop_name = 'level_'
+        self.inputs.new('StringsSocket', "Size").prop_name = 'size_'
+        self.outputs.new('VerticesSocket', "Vertices")
+        self.outputs.new('StringsSocket', "Edges")
 
     def process(self):
+        level_socket, size_socket = self.inputs
+        verts_socket, edges_socket = self.outputs
 
-        if not ('Edges' in self.outputs):
-            return
+        if verts_socket.is_linked:
+            Integer = int(level_socket.sv_get()[0][0])
+            Step = size_socket.sv_get()[0][0]
 
-        # inputs
-        if self.outputs['Edges'].is_linked or self.outputs['Vertices'].is_linked:
-            if self.inputs['Level'].is_linked:
-                Integer = int(SvGetSocketAnyType(self, self.inputs['Level'])[0][0])
-            else:
-                Integer = self.level_
+            verts = hilbert(Step, Integer)
+            verts_socket.sv_set(verts)
 
-            if self.inputs['Size'].is_linked:
-                Step = SvGetSocketAnyType(self, self.inputs['Size'])[0][0]
-            else:
-                Step = self.size_
+            if edges_socket.is_linked:
+                listEdg = []
+                r = len(verts[0])-1
+                for i in range(r):
+                    listEdg.append((i, i+1))
 
-        # outputs
-        if self.outputs['Vertices'].is_linked:
-            verts = self.hilbert(Step, Integer)
-            SvSetSocketAnyType(self, 'Vertices', verts)
-
-        if self.outputs['Edges'].is_linked:
-            listEdg = []
-            r = len(verts[0])-1
-            for i in range(r):
-                listEdg.append((i, i+1))
-
-            edg = list(listEdg)
-            SvSetSocketAnyType(self, 'Edges', [edg])
-
-    def hilbert(self, step, n):
-
-        def hilbert3(n):
-            if (n <= 0):
-                x, y, z = 0, 0, 0
-            else:
-                [xo, yo, zo] = hilbert3(n-1)
-                x = step * .5 * np.array([.5+zo, .5+yo, -.5+yo, -.5-xo, -.5-xo, -.5-yo, .5-yo, .5+zo])
-                y = step * .5 * np.array([.5+xo, .5+zo, .5+zo, .5+yo, -.5+yo, -.5-zo, -.5-zo, -.5-xo])
-                z = step * .5 * np.array([.5+yo, -.5+xo, -.5+xo, .5-zo, .5-zo, -.5+xo, -.5+xo, .5-yo])
-            return [x, y, z]
-
-        vx, vy, vz = hilbert3(n)
-        vx = vx.flatten().tolist()
-        vy = vy.flatten().tolist()
-        vz = vz.flatten().tolist()
-        verts = [list(zip(vx, vy, vz))]
-        return verts
-
-    def update_socket(self, context):
-        self.update()
+                edg = list(listEdg)
+                edges_socket.sv_set([edg])
 
 
 def register():
