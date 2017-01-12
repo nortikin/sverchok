@@ -56,9 +56,9 @@ class RandomVectorNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         random_socket = self.outputs['Random']
 
         # inputs
-        Coun = count_socket.sv_get(deepcopy=False)[0] if count_socket.is_linked else [self.count_inner]
-        Seed = seed_socket.sv_get(deepcopy=False)[0] if seed_socket.is_linked else [self.seed]
-        Scale = scale_socket.sv_get(deepcopy=False, default=[])[0] if scale_socket.is_linked else [self.scale]
+        Coun = count_socket.sv_get(deepcopy=False)[0]
+        Seed = seed_socket.sv_get(deepcopy=False)[0]
+        Scale = scale_socket.sv_get(deepcopy=False, default=[])[0]
 
         # outputs
         if random_socket.is_linked:
