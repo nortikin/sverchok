@@ -17,7 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-from bpy.props import EnumProperty, IntProperty, FloatProperty
+from bpy.props import StringProperty, IntProperty, FloatProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
@@ -54,7 +54,8 @@ class HilbertImageNode(bpy.types.Node, SverchCustomTreeNode):
         default=0.59, min=0, max=1,
         options={'ANIMATABLE'}, update=updateNode)
 
-    B = FloatProperty(name='B', description='B',
+    B = FloatProperty(
+        name='B', description='B',
         default=0.11, min=0, max=1,
         options={'ANIMATABLE'}, update=updateNode)
 
