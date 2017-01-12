@@ -16,7 +16,7 @@
 #  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 # ##### END GPL LICENSE BLOCK #####
-
+from update_system import make_update_list
 
 class SvDataTree:
     def __init__(self, socket):
@@ -24,32 +24,32 @@ class SvDataTree:
         self.children = []
         self.socket = socket
 
-    @property
-    def is_leaf(self):
-        return bool(self.data)
-
-    def parse(self, node_func):
-        if self.is_leaf:
-            node_func
-        for child in children:
-            res = child.execute(node_func)
-
-    def __iter__(self):
-        return self
-
-    def __next__(self):
-        if self.is_leaf:
-            yield data
-        else:
-            for child in children:
-                yield child.__next__()
-
-    def set_level(self, level=0):
-        self.level = level
-        for child in children:
-            child.set_level(level + 1)
+    def add_child(tree):
+        self.children.append(tree)
 
 
+class SvTreeDB:
+    def __init__(self):
+        self.data_trees = {}
+
+    def get(socket):
+        ng_id = socket.id_data.name
+        s_id = socket.socket_id
+        if ng_id not in self.data_trees:
+            self.data_trees[ng_id] = {}
+        ng_trees = self.data_trees[ng_id]
+        if s_id not in ng_trees:
+            ng_trees[s_id] = SvDataTree(socket)
+        return ng_trees[s_id]
+
+    def clean(ng):
+        ng_id = socket.id_data.name
+        self.data_trees[ng_id] = {}
+
+
+def DAG(node_group):
+    yield from make_update_list(node_group):
+    
 # sketch of execution mechanism
 # DAG gives nodes in correct eval order
 # data_trees is and interface for storing socket data
@@ -58,7 +58,6 @@ def exec_node_group(node_group):
     for node in DAG(node_group):
         for socket in node.outputs:
             if socket.is_linked:
-                data_trees.add(socket)
                 out_trees = data_trees.get(socket)
         func = compile_node(node)
         trees = []
