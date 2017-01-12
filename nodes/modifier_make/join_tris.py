@@ -26,13 +26,17 @@ from sverchok.data_structure import updateNode
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 
 
-def join_tris(verts, faces, limit):
+def join_tris(verts, faces, self):
     if not verts:
         return False
 
     bm = bmesh_from_pydata(verts, [], faces)
 
-    bmesh.ops.join_triangles(bm, faces=bm.faces, limit=limit)
+    bmesh.ops.join_triangles(
+        bm, faces=bm.faces,
+        angle_face_threshold=self.face_threshold,
+        angle_shape_threshold=self.shape_threshold
+    )
     bm.verts.index_update()
     bm.faces.index_update()
 
@@ -51,9 +55,14 @@ class SvJoinTrianglesNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Join Triangles'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    limit = FloatProperty(
-        min=0.0, max=5.0, step=0.01,
-        name='limit', description='not sure',
+    face_threshold = FloatProperty(
+        min=0.0, step=0.1,
+        name='angle face threshold', description='not sure',
+        update=updateNode)
+
+    shape_threshold = FloatProperty(
+        min=0.0, step=0.1,
+        name='angle shape threshold', description='not sure',
         update=updateNode)
 
     def sv_init(self, context):
@@ -65,7 +74,8 @@ class SvJoinTrianglesNode(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons(self, context, layout):
         col = layout.column()
-        col.prop(self, 'limit', text='limit')
+        col.prop(self, 'face_threshold', text='face')
+        col.prop(self, 'shape_threshold', text='shape')
 
     def process(self):
         if not self.outputs['Polygons'].is_linked:
@@ -80,7 +90,7 @@ class SvJoinTrianglesNode(bpy.types.Node, SverchCustomTreeNode):
         polys_out = []
 
         for v_obj, f_obj in zip(verts, faces):
-            res = join_tris(v_obj, f_obj, self.limit)
+            res = join_tris(v_obj, f_obj, self)
             if not res:
                 return
             verts_out.append(res[0])
