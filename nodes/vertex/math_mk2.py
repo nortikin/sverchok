@@ -39,7 +39,7 @@ func_dict = {
 
     "LEN":            (4,  lambda u: sqrt((u[0]*u[0])+(u[1]*u[1])+(u[2]*u[2])),     ('v s'),             "Length"),
     "CROSS":          (0,  lambda u, v: Vector(u).cross(v)[:],                     ('vv v'),      "Cross product"),
-    "ADD":            (1,  lambda u, v: (u[0]+v[0], u[1]+v[1], u[2]+v[2]),         ('vv v'),                "Add"),
+    "ADD":            (2,  lambda u, v: (u[0]+v[0], u[1]+v[1], u[2]+v[2]),         ('vv v'),                "Add"),
     "SUB":            (3,  lambda u, v: (u[0]-v[0], u[1]-v[1], u[2]-v[2]),         ('vv v'),                "Sub"),
     "PROJECT":        (13, lambda u, v: Vector(u).project(v)[:],                   ('vv v'),            "Project"),
     "REFLECT":        (14, lambda u, v: Vector(u).reflect(v)[:],                   ('vv v'),            "Reflect"),
