@@ -21,53 +21,47 @@ from bpy.props import IntProperty, FloatProperty
 from mathutils.noise import seed_set, random_unit_vector
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (updateNode, match_long_repeat,
-                            SvSetSocketAnyType, SvGetSocketAnyType)
+from sverchok.data_structure import updateNode, match_long_repeat
 
 
 class RandomVectorNodeMK2(bpy.types.Node, SverchCustomTreeNode):
-    ''' Random Vectors with len=1 MK2'''
+    ''' Random Vectors with len=1 MK2, Unit Vectors'''
     bl_idname = 'RandomVectorNodeMK2'
     bl_label = 'Random Vector MK2'
     bl_icon = 'RNDCURVE'
 
-    count_inner = IntProperty(name='Count', description='random',
-                              default=1, min=1,
-                              options={'ANIMATABLE'}, update=updateNode)
-    scale = FloatProperty(name='Scale', description='scale for vectors',
-                              default=1.0,
-                              options={'ANIMATABLE'}, update=updateNode)
-    seed = IntProperty(name='Seed', description='random seed',
-                       default=1,
-                       options={'ANIMATABLE'}, update=updateNode)
+    count_inner = IntProperty(
+        name='Count', description='random', default=1, min=1,
+        options={'ANIMATABLE'}, update=updateNode)
+
+    scale = FloatProperty(
+        name='Scale', description='scale for vectors', default=1.0,
+        options={'ANIMATABLE'}, update=updateNode)
+
+    seed = IntProperty(
+        name='Seed', description='random seed', default=1,
+        options={'ANIMATABLE'}, update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', "Count").prop_name = 'count_inner'
         self.inputs.new('StringsSocket', "Seed").prop_name = 'seed'
         self.inputs.new('StringsSocket', "Scale").prop_name = 'scale'
-
-        self.outputs.new('VerticesSocket', "Random", "Random")
+        self.outputs.new('VerticesSocket', "Random")
 
     def process(self):
-        # inputs
-        if 'Count' in self.inputs and self.inputs['Count'].links and \
-            type(self.inputs['Count'].links[0].from_socket) == bpy.types.StringsSocket:
-            Coun = SvGetSocketAnyType(self, self.inputs['Count'])[0]
-        else:
-            Coun = [self.count_inner]
 
-        if 'Seed' in self.inputs and self.inputs['Seed'].links and \
-            type(self.inputs['Seed'].links[0].from_socket) == bpy.types.StringsSocket:
-            Seed = SvGetSocketAnyType(self, self.inputs['Seed'])[0]
-        else:
-            Seed = [self.seed]
-        if 'Scale' in self.inputs and self.inputs['Scale'].links and \
-            type(self.inputs['Scale'].links[0].from_socket) == bpy.types.StringsSocket:
-            Scale = self.inputs['Scale'].sv_get(deepcopy=False, default=[])[0]
-        else:
-            Scale = [self.scale]
+        count_socket = self.inputs['Count']
+        seed_socket = self.inputs['Seed']
+        scale_socket = self.inputs['Scale']
+        random_socket = self.outputs['Random']
+
+        # inputs
+        Coun = count_socket.sv_get(deepcopy=False)[0]
+        Seed = seed_socket.sv_get(deepcopy=False)[0]
+        Scale = scale_socket.sv_get(deepcopy=False, default=[])[0]
+
         # outputs
-        if 'Random' in self.outputs and self.outputs['Random'].links:
+        if random_socket.is_linked:
             Random = []
             param = match_long_repeat([Coun, Seed, Scale])
             # set seed, protect against float input
@@ -83,7 +77,7 @@ class RandomVectorNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
                 Random.append([(random_unit_vector()*sc).to_tuple() for i in range(int(max(1, c)))])
 
-            SvSetSocketAnyType(self, 'Random', Random)
+            random_socket.sv_set(Random)
 
 
 

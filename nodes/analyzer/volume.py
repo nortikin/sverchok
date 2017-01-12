@@ -20,9 +20,7 @@ import bpy
 import bmesh
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
-from sverchok.data_structure import (dataCorrect, updateNode,
-                            SvSetSocketAnyType, SvGetSocketAnyType,
-                            Vector_generate)
+from sverchok.data_structure import dataCorrect, Vector_generate
 
 
 class SvVolumeNode(bpy.types.Node, SverchCustomTreeNode):
@@ -35,28 +33,30 @@ class SvVolumeNode(bpy.types.Node, SverchCustomTreeNode):
         pass
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', 'Vers', 'Vers')
-        self.inputs.new('StringsSocket', "Pols", "Pols")
-        self.outputs.new('StringsSocket', "Volume", "Volume")
+        self.inputs.new('VerticesSocket', 'Vers')
+        self.inputs.new('StringsSocket', "Pols")
+        self.outputs.new('StringsSocket', "Volume")
 
     def process(self):
+        verts_socket, polys_socket = self.inputs
+        vol_socket = self.outputs[0]
 
-        if self.outputs['Volume'].is_linked and self.inputs['Vers'].is_linked:
-            vertices = Vector_generate(dataCorrect(SvGetSocketAnyType(self, self.inputs['Vers'])))
-            faces = dataCorrect(SvGetSocketAnyType(self, self.inputs['Pols']))
+        if vol_socket.is_linked and verts_socket.is_linked:  # and polys_socket.is_linked ?
+
+            vertices = Vector_generate(dataCorrect(verts_socket.sv_get()))
+            faces = dataCorrect(polys_socket.sv_get())
+
             out = []
             for verts_obj, faces_obj in zip(vertices, faces):
                 # this is for one object
-                bme = bmesh_from_pydata(verts_obj, [], faces_obj)
-                geom_in = bme.verts[:]+bme.edges[:]+bme.faces[:]
-                bmesh.ops.recalc_face_normals(bme, faces=bme.faces[:])
-                # calculation itself
-                out.append(bme.calc_volume())
-                bme.clear()
-                bme.free()
-                
-            if self.outputs['Volume'].is_linked:
-                SvSetSocketAnyType(self, 'Volume', out)
+                bm = bmesh_from_pydata(verts_obj, [], faces_obj)
+                # geom_in = bm.verts[:] + bm.edges[:] + bm.faces[:]
+                bmesh.ops.recalc_face_normals(bm, faces=bm.faces[:])
+                out.append(bm.calc_volume())
+                bm.clear()
+                bm.free()
+ 
+            vol_socket.sv_set(out)
 
     '''
     solution, that blow my mind, not delete.
@@ -80,7 +80,7 @@ class SvVolumeNode(bpy.types.Node, SverchCustomTreeNode):
                 (ab[2]*ac[0]*ad[1]) - (ab[2]*ac[1]*ad[0])
             
             VOLUME += det/6
-        '''
+    '''
 
 def register():
     bpy.utils.register_class(SvVolumeNode)
@@ -88,7 +88,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvVolumeNode)
-
-if __name__ == '__main__':
-    register()
-

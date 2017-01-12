@@ -20,8 +20,7 @@ import bpy
 from bpy.props import IntProperty, FloatProperty, StringProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (updateNode, fullList,
-                            SvSetSocketAnyType, SvGetSocketAnyType)
+from sverchok.data_structure import updateNode, fullList
 
 
 class ImageNode(bpy.types.Node, SverchCustomTreeNode):
@@ -33,36 +32,42 @@ class ImageNode(bpy.types.Node, SverchCustomTreeNode):
 
     name_image = StringProperty(name='image_name', description='image name', default='', update=updateNode)
 
-    R = FloatProperty(name='R', description='R',
-                      default=0.30, min=0, max=1,
-                      options={'ANIMATABLE'}, update=updateNode)
-    G = FloatProperty(name='G', description='G',
-                      default=0.59, min=0, max=1,
-                      options={'ANIMATABLE'}, update=updateNode)
-    B = FloatProperty(name='B', description='B',
-                      default=0.11, min=0, max=1,
-                      options={'ANIMATABLE'}, update=updateNode)
-    Xvecs = IntProperty(name='Xvecs', description='Xvecs',
-                        default=10, min=2, max=100,
-                        options={'ANIMATABLE'}, update=updateNode)
-    Yvecs = IntProperty(name='Yvecs', description='Yvecs',
-                        default=10, min=2, max=100,
-                        options={'ANIMATABLE'}, update=updateNode)
-    Xstep = FloatProperty(name='Xstep', description='Xstep',
-                          default=1.0, min=0.01, max=100,
-                          options={'ANIMATABLE'}, update=updateNode)
-    Ystep = FloatProperty(name='Ystep', description='Ystep',
-                          default=1.0, min=0.01, max=100,
-                          options={'ANIMATABLE'}, update=updateNode)
+    R = FloatProperty(
+        name='R', description='R', default=0.30, min=0, max=1,
+        options={'ANIMATABLE'}, update=updateNode)
+
+    G = FloatProperty(
+        name='G', description='G', default=0.59, min=0, max=1,
+        options={'ANIMATABLE'}, update=updateNode)
+
+    B = FloatProperty(
+        name='B', description='B', default=0.11, min=0, max=1,
+        options={'ANIMATABLE'}, update=updateNode)
+
+    Xvecs = IntProperty(
+        name='Xvecs', description='Xvecs', default=10, min=2, max=100,
+        options={'ANIMATABLE'}, update=updateNode)
+
+    Yvecs = IntProperty(
+        name='Yvecs', description='Yvecs', default=10, min=2, max=100,
+        options={'ANIMATABLE'}, update=updateNode)
+
+    Xstep = FloatProperty(
+        name='Xstep', description='Xstep', default=1.0, min=0.01, max=100,
+        options={'ANIMATABLE'}, update=updateNode)
+
+    Ystep = FloatProperty(
+        name='Ystep', description='Ystep', default=1.0, min=0.01, max=100,
+        options={'ANIMATABLE'}, update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('StringsSocket', "vecs X", "vecs X").prop_name = 'Xvecs'
-        self.inputs.new('StringsSocket', "vecs Y", "vecs Y").prop_name = 'Yvecs'
-        self.inputs.new('StringsSocket', "Step X", "Step X").prop_name = 'Xstep'
-        self.inputs.new('StringsSocket', "Step Y", "Step Y").prop_name = 'Ystep'
-        self.outputs.new('VerticesSocket', "vecs", "vecs")
-        self.outputs.new('StringsSocket', "edgs", "edgs")
-        self.outputs.new('StringsSocket', "pols", "pols")
+        self.inputs.new('StringsSocket', "vecs X").prop_name = 'Xvecs'
+        self.inputs.new('StringsSocket', "vecs Y").prop_name = 'Yvecs'
+        self.inputs.new('StringsSocket', "Step X").prop_name = 'Xstep'
+        self.inputs.new('StringsSocket', "Step Y").prop_name = 'Ystep'
+        self.outputs.new('VerticesSocket', "vecs")
+        self.outputs.new('StringsSocket', "edgs")
+        self.outputs.new('StringsSocket', "pols")
 
     def draw_buttons(self, context, layout):
         layout.prop_search(self, "name_image", bpy.data, 'images', text="image")
@@ -73,43 +78,38 @@ class ImageNode(bpy.types.Node, SverchCustomTreeNode):
         row.prop(self, "B", text="B")
 
     def process(self):
+        inputs, outputs = self.inputs, self.outputs
+
         # inputs
-        if 'vecs X' in self.inputs and self.inputs['vecs X'].is_linked:
-            IntegerX = min(int(SvGetSocketAnyType(self, self.inputs['vecs X'])[0][0]), 100)
+        if inputs['vecs X'].is_linked:
+            IntegerX = min(int(inputs['vecs X'].sv_get()[0][0]), 100)
         else:
             IntegerX = int(self.Xvecs)
 
-        if 'vecs Y' in self.inputs and self.inputs['vecs Y'].is_linked:
-            IntegerY = min(int(SvGetSocketAnyType(self, self.inputs['vecs Y'])[0][0]), 100)
+        if inputs['vecs Y'].is_linked:
+            IntegerY = min(int(inputs['vecs Y'].sv_get()[0][0]), 100)
         else:
             IntegerY = int(self.Yvecs)
 
-        if 'Step X' in self.inputs and self.inputs['Step X'].is_linked:
-            StepX = SvGetSocketAnyType(self, self.inputs['Step X'])[0]
-            fullList(StepX, IntegerX)
-
-        else:
-            StepX = [self.Xstep]
-            fullList(StepX, IntegerX)
-
-        if 'Step Y' in self.inputs and self.inputs['Step Y'].is_linked:
-            StepY = SvGetSocketAnyType(self, self.inputs['Step Y'])[0]
-            fullList(StepY, IntegerY)
-
-        else:
-            StepY = [self.Ystep]
-            fullList(StepY, IntegerY)
+        step_x_linked = inputs['Step X'].is_linked
+        step_y_linked = inputs['Step Y'].is_linked
+        StepX = inputs['Step X'].sv_get()[0] if step_x_linked else [self.Xstep]
+        StepY = inputs['Step Y'].sv_get()[0] if step_y_linked else [self.Ystep]
+        fullList(StepX, IntegerX)
+        fullList(StepY, IntegerY)
 
         # outputs
-        if 'vecs' in self.outputs and self.outputs['vecs'].is_linked:
-            out = self.make_vertices(IntegerX-1, IntegerY-1, StepX, StepY, self.name_image)
-            SvSetSocketAnyType(self, 'vecs', [out])
-        else:
-            SvSetSocketAnyType(self, 'vecs', [[[]]])
+        out = [[[]]]
+        edg = [[[]]]
+        plg = [[[]]]
 
-        if 'edgs' in self.outputs and self.outputs['edgs'].is_linked:
+        if outputs['vecs'].is_linked:
+            out = [self.make_vertices(IntegerX-1, IntegerY-1, StepX, StepY, self.name_image)]
+        outputs['vecs'].sv_set(out)
 
+        if outputs['edgs'].is_linked:
             listEdg = []
+            
             for i in range(IntegerY):
                 for j in range(IntegerX-1):
                     listEdg.append((IntegerX*i+j, IntegerX*i+j+1))
@@ -117,21 +117,17 @@ class ImageNode(bpy.types.Node, SverchCustomTreeNode):
                 for j in range(IntegerY-1):
                     listEdg.append((IntegerX*j+i, IntegerX*j+i+IntegerX))
 
-            edg = list(listEdg)
-            SvSetSocketAnyType(self, 'edgs', [edg])
-        else:
-            SvSetSocketAnyType(self, 'edgs', [[[]]])
+            edg = [list(listEdg)]
+        outputs['edgs'].sv_set(edg)
 
-        if 'pols' in self.outputs and self.outputs['pols'].is_linked:
-
+        if outputs['pols'].is_linked:
             listPlg = []
             for i in range(IntegerX-1):
                 for j in range(IntegerY-1):
                     listPlg.append((IntegerX*j+i, IntegerX*j+i+1, IntegerX*j+i+IntegerX+1, IntegerX*j+i+IntegerX))
-            plg = list(listPlg)
-            SvSetSocketAnyType(self, 'pols', [plg])
-        else:
-            SvSetSocketAnyType(self, 'pols', [[[]]])
+            plg = [list(listPlg)]
+        outputs['pols'].sv_set(plg)
+        
 
     def make_vertices(self, delitelx, delitely, stepx, stepy, image_name):
         lenx = bpy.data.images[image_name].size[0]

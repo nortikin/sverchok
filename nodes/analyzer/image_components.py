@@ -23,8 +23,7 @@ from bpy.props import (
     IntProperty, FloatProperty, StringProperty, BoolProperty)
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (
-    updateNode, fullList, SvSetSocketAnyType, SvGetSocketAnyType)
+from sverchok.data_structure import updateNode, fullList
 
 '''
 by dealga mcardle sept 2014
@@ -305,7 +304,7 @@ class SvImageComponentsNode(bpy.types.Node, SverchCustomTreeNode):
         
         if not self.loaded:
             return
-        if not (outputs['xya'].is_linked and outputs['rgb'].is_linked):
+        if not outputs['xya'].is_linked:
             return
 
         # upload reload, this avoids errors - still not perfect

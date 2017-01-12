@@ -17,10 +17,10 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-from bpy.props import EnumProperty, IntProperty, FloatProperty
+from bpy.props import StringProperty, IntProperty, FloatProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, SvSetSocketAnyType, SvGetSocketAnyType
+from sverchok.data_structure import updateNode
 
 
 class HilbertImageNode(bpy.types.Node, SverchCustomTreeNode):
@@ -29,38 +29,45 @@ class HilbertImageNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Hilbert image'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    def images(self, context):
-        return [tuple(3 * [im.name]) for im in bpy.data.images]
-    name_image = EnumProperty(items=images, name='images')
-    level_ = IntProperty(name='level', description='Level',
-                         default=2, min=1, max=20,
-                         options={'ANIMATABLE'}, update=updateNode)
-    size_ = FloatProperty(name='size', description='Size',
-                          default=1.0, min=0.1,
-                          options={'ANIMATABLE'}, update=updateNode)
-    #name_image = bpy.props.StringProperty(name='image_name', description='image name', default='', update=updateNode)
-    sensitivity_ = FloatProperty(name='sensitivity', description='sensitivity',
-                                 default=1, min=0.1, max=1.0,
-                                 options={'ANIMATABLE'}, update=updateNode)
-    R = FloatProperty(name='R', description='R',
-                      default=0.30, min=0, max=1,
-                      options={'ANIMATABLE'}, update=updateNode)
-    G = FloatProperty(name='G', description='G',
-                      default=0.59, min=0, max=1,
-                      options={'ANIMATABLE'}, update=updateNode)
-    B = FloatProperty(name='B', description='B',
-                      default=0.11, min=0, max=1,
-                      options={'ANIMATABLE'}, update=updateNode)
+    name_image = StringProperty(
+        name='image_name', description='image name', update=updateNode)
+
+    level_ = IntProperty(
+        name='level', description='Level', default=2, min=1, max=20,
+        options={'ANIMATABLE'}, update=updateNode)
+
+    size_ = FloatProperty(
+        name='size', description='Size', default=1.0, min=0.1,
+        options={'ANIMATABLE'}, update=updateNode)
+
+    sensitivity_ = FloatProperty(
+        name='sensitivity', description='sensitivity', default=1, min=0.1, max=1.0,
+        options={'ANIMATABLE'}, update=updateNode)
+
+    R = FloatProperty(
+        name='R', description='R',
+        default=0.30, min=0, max=1,
+        options={'ANIMATABLE'}, update=updateNode)
+
+    G = FloatProperty(
+        name='G', description='G',
+        default=0.59, min=0, max=1,
+        options={'ANIMATABLE'}, update=updateNode)
+
+    B = FloatProperty(
+        name='B', description='B',
+        default=0.11, min=0, max=1,
+        options={'ANIMATABLE'}, update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('StringsSocket', "Level", "Level").prop_name = 'level_'
-        self.inputs.new('StringsSocket', "Size", "Size").prop_name = 'size_'
-        self.inputs.new('StringsSocket', "Sensitivity", "Sensitivity").prop_name = 'sensitivity_'
-        self.outputs.new('VerticesSocket', "Vertices", "Vertices")
-        self.outputs.new('StringsSocket', "Edges", "Edges")
+        self.inputs.new('StringsSocket', "Level").prop_name = 'level_'
+        self.inputs.new('StringsSocket', "Size").prop_name = 'size_'
+        self.inputs.new('StringsSocket', "Sensitivity").prop_name = 'sensitivity_'
+        self.outputs.new('VerticesSocket', "Vertices")
+        self.outputs.new('StringsSocket', "Edges")
 
     def draw_buttons(self, context, layout):
-        layout.prop(self, "name_image", text="image name")
+        layout.prop_search(self, "name_image", bpy.data, 'images', text="image")
         row = layout.row(align=True)
         row.scale_x = 10.0
         row.prop(self, "R", text="R")
@@ -68,47 +75,37 @@ class HilbertImageNode(bpy.types.Node, SverchCustomTreeNode):
         row.prop(self, "B", text="B")
 
     def process(self):
+        level_socket, size_socket, sensitivity_socket = self.inputs
+        verts_socket, edges_socket = self.outputs
+
         # inputs
-        if self.outputs['Edges'].links or self.outputs['Vertices'].links:
-            if 'Level' in self.inputs and self.inputs['Level'].links:
-                Integer = int(SvGetSocketAnyType(self, self.inputs['Level'])[0][0])
-            else:
-                Integer = self.level_
+        if verts_socket.is_linked and self.name_image:
+            Integer = int(level_socket.sv_get()[0][0])
+            Step = size_socket.sv_get()[0][0]
+            Sensitivity = sensitivity_socket.sv_get()[0][0]
 
-            if 'Size' in self.inputs and self.inputs['Size'].links:
-                Step = SvGetSocketAnyType(self, self.inputs['Size'])[0][0]
-            else:
-                Step = self.size_
+            # outputs
+            img = bpy.data.images.get(self.name_image)
+            if not img:
+                print('image not in images, for some reason!..')
+                return
 
-            if 'Sensitivity'in self.inputs and self.inputs['Sensitivity'].links:
-                Sensitivity = SvGetSocketAnyType(self, self.inputs['Sensitivity'])[0][0]
-            else:
-                Sensitivity = self.sensitivity_
-
-        # outputs
-        if 'Vertices' in self.outputs and self.outputs['Vertices'].links and self.name_image:
-            img = bpy.data.images[self.name_image]
-            pixels = list(img.pixels)
+            pixels = img.pixels[:]
             verts = self.hilbert(0.0, 0.0, 1.0, 0.0, 0.0, 1.0, Integer, img, pixels, Sensitivity)
             for iv, v in enumerate(verts):
-                for ip, p in enumerate(v):
+                for ip, _ in enumerate(v):
                     verts[iv][ip] *= Step
 
-            self.outputs['Vertices'].sv_set(verts)
+            verts_socket.sv_set(verts)
 
-            if 'Edges' in self.outputs and len(self.outputs['Edges'].links) > 0:
-
+            if edges_socket.is_linked:
                 listEdg = []
                 r = len(verts)-1
                 for i in range(r):
                     listEdg.append((i, i+1))
 
-                edg = list(listEdg)
-                self.outputs['Edges'].sv_set([edg])
-        else:
-            pass
-            #self.outputs['Vertices'].VerticesProperty = str([[]])
-            #self.outputs['Edges'].StringsProperty = str([[]])
+                edges_socket.sv_set([list(listEdg)])
+
 
     def hilbert(self, x0, y0, xi, xj, yi, yj, n, img, pixels, Sensitivity):
         w = img.size[0]-1
@@ -141,6 +138,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(HilbertImageNode)
-
-if __name__ == '__main__':
-    register()
