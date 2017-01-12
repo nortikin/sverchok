@@ -20,7 +20,7 @@ import bpy
 from bpy.props import BoolProperty, BoolVectorProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import multi_socket, SvGetSocketAnyType, updateNode
+from sverchok.data_structure import multi_socket, updateNode
 
 
 class SvDebugPrintNode(bpy.types.Node, SverchCustomTreeNode):
@@ -56,13 +56,13 @@ class SvDebugPrintNode(bpy.types.Node, SverchCustomTreeNode):
     def update(self):
         multi_socket(self, min=1)
 
-    def process(self):    
+    def process(self):
         if not self.print_data:
-            return        
+            return
         for i, socket in enumerate(self.inputs):
             if socket.is_linked and self.print_socket[i]:
-                print(SvGetSocketAnyType(self, socket, deepcopy=False))
-       
+                print(socket.sv_get(deepcopy=False))
+
 def register():
     bpy.utils.register_class(SvDebugPrintNode)
 
