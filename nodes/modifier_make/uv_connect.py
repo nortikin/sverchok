@@ -19,9 +19,8 @@
 import bpy
 from bpy.props import IntProperty, BoolProperty, EnumProperty
 
-from sverchok.node_tree import SverchCustomTreeNode, VerticesSocket
-from sverchok.data_structure import (updateNode, fullList, multi_socket, levelsOflist,
-                            SvSetSocketAnyType, SvGetSocketAnyType)
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import (updateNode, fullList, multi_socket, levelsOflist)
 
 
 class LineConnectNodeMK2(bpy.types.Node, SverchCustomTreeNode):
