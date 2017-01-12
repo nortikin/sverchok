@@ -53,7 +53,6 @@ def recurse_generator(f, trees, out_trees, level=0):
                 sdt = SvDataTree()
                 sdt.data = r
                 out_trees[0].children.append(sdt)
-                print(sdt.data)
         else:  # no output
             pass
     else:
@@ -66,12 +65,46 @@ def recurse_generator(f, trees, out_trees, level=0):
             recurse_generator(f, args, [out_tree.children[-1] for out_tree in out_trees], level=(level + 1))
 
 
-def recurse_level(f, in_trees, out_trees, level=0):
-    pass
+def recurse_level(f, trees, out_trees, level=0):
+    if all(tree.is_leaf for tree in trees):
+        args = [tree.data for tree in trees]
+        res = f(args)
+        if len(out_trees) > 1:
+            for out_tree, r in zip(out_trees, res):
+                out_tree.data = r
+        elif len(out_trees) == 1:
+            out_trees[0] = res[0]
+        else:  # no output
+            pass
+    else:
+        inner_trees = [[tree] if tree.is_leaf else tree.children for tree in trees]
+        for i in range(max(map(len, inner_trees))):
+            index = [i if i < len(tree) else len(tree) - 1 for tree in inner_trees]
+            args = [inner_trees[j][idx] for j, idx in enumerate(index)]
+            for out_tree in out_trees:
+                out_tree.children.append(SvDataTree())
+            recurse_generator(f, args, [out_tree.children[-1] for out_tree in out_trees], level=(level + 1))
 
+def recurse_reduce(f, trees, out_trees, level=0):
+    if all(not tree.is_leaf and tree.children[0].is_leaf for tree in trees):
+        args = [list(tree) for tree in trees]
+        res = f(args)
+        if len(out_trees) > 1:
+            for out_tree, r in zip(out_trees, res):
+                out_tree.data = r
+        elif len(out_trees) == 1:
+            out_trees[0] = res[0]
+        else:  # no output
+            pass
+    else:
+        inner_trees = [[tree] if tree.is_leaf else tree.children for tree in trees]
+        for i in range(max(map(len, inner_trees))):
+            index = [i if i < len(tree) else len(tree) - 1 for tree in inner_trees]
+            args = [inner_trees[j][idx] for j, idx in enumerate(index)]
+            for out_tree in out_trees:
+                out_tree.children.append(SvDataTree())
+            recurse_generator(f, args, [out_tree.children[-1] for out_tree in out_trees], level=(level + 1))
 
-def recurse_reduce(f, in_trees, out_trees, level=0):
-    pass
 
 
 def recurse_stateful(f, in_trees, out_trees, level=0):
@@ -145,8 +178,11 @@ class SvDataTree:
 class SvDummyTree:
     is_leaf = True
     data = None
+
     def __iter__(self):
         yield None
+
+    children = []
 
 class SvTreeDB:
     def __init__(self):
@@ -204,16 +240,14 @@ def exec_node_group(node_group):
                 out_trees.append(data_trees.get(socket))
 
         recurse(func, in_trees, out_trees)
-    data_trees.print(node_group)
-    for t in timings:
-        print(*t)
+
     times = collections.defaultdict(lambda : [0, 0])
     for _, name, t in timings:
-        times[name][0] += t
-        times[name][1] += 1
+        times[name][1] += t
+        times[name][0] += 1
 
     for name in unique_everseen(name for _, name, t in timings):
-        print(name, *times[name])
+        print(name, "called {} times in {:.3}".format(*times[name]))
 
 # this needs something more clever
 node_database = {
@@ -221,4 +255,5 @@ node_database = {
     "GenListRangeIntNode": recurse_generator,
     "LineConnectNodeMK2": recurse_reduce,
     "ViewerNode2": recurse_stateful,
+    "GenVectorsNode": recurse_level,
 }
