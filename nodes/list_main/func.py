@@ -22,7 +22,7 @@ import bpy
 from bpy.props import EnumProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, SvSetSocketAnyType, SvGetSocketAnyType
+from sverchok.data_structure import updateNode
 
 def acc(l):
     return list(accumulate(l))
@@ -67,15 +67,15 @@ class ListFuncNode(bpy.types.Node, SverchCustomTreeNode):
             }
         if 'Function' in self.outputs and self.outputs['Function'].is_linked:
             if 'Data' in self.inputs and self.inputs['Data'].is_linked:
-                data = SvGetSocketAnyType(self, self.inputs['Data'])
+                data = self.inputs['Data'].sv_get
                 func = func_dict[self.func_]
-                
+
                 if not self.level:
                     out = [func(data)]
                 else:
                     out = self.count(data, self.level, func)
 
-                SvSetSocketAnyType(self, 'Function', [out])
+                self.outputs['Function'].sv_set(out)
 
     def count(self, data, level, func):
         out = []

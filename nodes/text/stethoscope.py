@@ -17,10 +17,10 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-from bpy.props import BoolProperty, FloatVectorProperty, StringProperty, EnumProperty
+from bpy.props import BoolProperty, FloatVectorProperty, StringProperty
 
-from sverchok.node_tree import SverchCustomTreeNode, MatrixSocket, VerticesSocket, StringsSocket
-from sverchok.data_structure import dataCorrect, node_id, updateNode, SvGetSocketAnyType
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import dataCorrect, node_id, updateNode
 from sverchok.ui import nodeview_bgl_viewer_draw as nvBGL
 from mathutils import Vector
 

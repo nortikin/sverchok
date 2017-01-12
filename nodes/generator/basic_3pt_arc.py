@@ -24,10 +24,10 @@ from bpy.props import IntProperty, FloatProperty, FloatVectorProperty
 from mathutils import Vector, Euler, geometry
 
 from sverchok.node_tree import SverchCustomTreeNode, VerticesSocket, StringsSocket
-from sverchok.data_structure import updateNode, SvSetSocketAnyType, SvGetSocketAnyType
+from sverchok.data_structure import updateNode
 
 
-def generate_3PT_mode_1(pts=[], num_verts=20, make_edges=False):
+def generate_3PT_mode_1(pts=None, num_verts=20, make_edges=False):
     '''
     Arc from start - throught - Eend
     - call this function only if you have 3 pts,

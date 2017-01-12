@@ -34,12 +34,7 @@ from bpy.props import (
 
 from sverchok.utils.sv_panels_tools import sv_get_local_path
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (
-    dataCorrect,
-    updateNode,
-    SvSetSocketAnyType,
-    SvGetSocketAnyType
-)
+from sverchok.data_structure import dataCorrect, updateNode
 
 FAIL_COLOR = (0.8, 0.1, 0.1)
 READY_COLOR = (0, 0.8, 0.95)

@@ -16,18 +16,13 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-from itertools import permutations
 from math import copysign, pi, sqrt
 
 import bpy
-import bmesh
-from mathutils import Vector
-from bpy.props import IntProperty, FloatProperty
+from bpy.props import IntProperty, FloatProperty, FloatVectorProperty
 
-from sverchok.node_tree import SverchCustomTreeNode, VerticesSocket
-from sverchok.data_structure import (
-    updateNode, fullList,
-    SvSetSocketAnyType, SvGetSocketAnyType)
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import updateNode, fullList
 
 
 #
@@ -36,10 +31,7 @@ from sverchok.data_structure import (
 # / with slight modifications for Sverchok.
 #
 
-def round_cube(
-        radius=1.0,
-        arcdiv=4, lindiv=0., size=(0., 0., 0.),
-        div_type=0, odd_axis_align=0):
+def round_cube(radius=1.0, arcdiv=4, lindiv=0., size=(0., 0., 0.), div_type=0, odd_axis_align=0):
 
     odd_axis_align = bool(odd_axis_align)
 
@@ -349,7 +341,7 @@ def round_cube(
 
 
 class SvBoxRoundedNode(bpy.types.Node, SverchCustomTreeNode):
-    ''' Box '''
+    ''' Box rounded'''
     bl_idname = 'SvBoxRoundedNode'
     bl_label = 'Rounded Box'
     bl_icon = 'OUTLINER_OB_EMPTY'
@@ -374,32 +366,27 @@ class SvBoxRoundedNode(bpy.types.Node, SverchCustomTreeNode):
         name='odd_axis_align', description='uhh',
         default=0, min=0, max=1, update=updateNode)
 
+    vector_vsize = FloatVectorProperty(size=3, default=(1,1,1), name='vector size', update=updateNode)
+
     def sv_init(self, context):
         new = self.inputs.new
-        new('StringsSocket', "radius", "radius").prop_name = 'radius'
-        new('StringsSocket', "arcdiv", "arcdiv").prop_name = 'arcdiv'
-        new('StringsSocket', "lindiv", "lindiv").prop_name = 'lindiv'
-        new('VerticesSocket', "vector_size", "vector_size")
-        new('StringsSocket', "div_type", "div_type").prop_name = 'div_type'
-        new('StringsSocket', "odd_axis_align", "odd_axis_align").prop_name = 'odd_axis_align'
+        new('StringsSocket', "radius").prop_name = 'radius'
+        new('StringsSocket', "arcdiv").prop_name = 'arcdiv'
+        new('StringsSocket', "lindiv").prop_name = 'lindiv'
+        new('VerticesSocket', "vector_size").prop_name = 'vector_vsize'
+        new('StringsSocket', "div_type").prop_name = 'div_type'
+        new('StringsSocket', "odd_axis_align").prop_name = 'odd_axis_align'
 
-        self.outputs.new('VerticesSocket', "Vers", "Vers")
-        self.outputs.new('StringsSocket', "Pols", "Pols")
+        self.outputs.new('VerticesSocket', "Vers")
+        self.outputs.new('StringsSocket', "Pols")
 
     def draw_buttons(self, context, layout):
         pass
 
     def process(self):
-        if not self.inputs['vector_size'].is_linked:
-            return
-
-    
         inputs = self.inputs
         outputs = self.outputs
-
-        sizes = SvGetSocketAnyType(self, inputs['vector_size'])[0]
-        if not sizes:
-            return
+        sizes = inputs['vector_size'].sv_get()[0]
 
         # sizes determines FullLength
         num_boxes = len(sizes)
@@ -429,14 +416,8 @@ class SvBoxRoundedNode(bpy.types.Node, SverchCustomTreeNode):
             # print(multi_dict[i])
 
         out = list(zip(*[round_cube(**kwargs) for kwargs in multi_dict]))
-
-        if outputs['Vers'].is_linked:
-            SvSetSocketAnyType(self, 'Vers', out[0])
-        if outputs['Pols'].is_linked:
-            SvSetSocketAnyType(self, 'Pols', out[1])
-
-    def update_socket(self, context):
-        self.update()
+        outputs['Vers'].sv_set(out[0])
+        outputs['Pols'].sv_set(out[1])
 
 
 def register():

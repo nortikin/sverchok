@@ -19,8 +19,7 @@
 import bpy
 from bpy.props import BoolProperty, IntProperty, StringProperty
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (changable_sockets, multi_socket, updateNode,
-                            SvGetSocketAnyType, SvSetSocketAnyType)
+from sverchok.data_structure import (changable_sockets, multi_socket, updateNode)
 
 from sverchok.utils.listutils import joiner, myZip_2, wrapper_2
 

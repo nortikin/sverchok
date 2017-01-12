@@ -21,8 +21,7 @@ from bpy.props import BoolProperty, IntProperty, StringProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode, changable_sockets,
-                            SvSetSocketAnyType, SvGetSocketAnyType,
-                            levelsOflist)
+                                     levelsOflist)
 
 
 class ListFLNode(bpy.types.Node, SverchCustomTreeNode):
@@ -43,7 +42,7 @@ class ListFLNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "level", text="level")
 
     def sv_init(self, context):
-        
+
         self.inputs.new('StringsSocket', "Data", "Data")
         self.outputs.new('StringsSocket', "Middl", "Middl")
         self.outputs.new('StringsSocket', "First", "First")
@@ -55,13 +54,13 @@ class ListFLNode(bpy.types.Node, SverchCustomTreeNode):
             inputsocketname = 'Data'
             outputsocketname = ["Middl",'First', 'Last']
             changable_sockets(self, inputsocketname, outputsocketname)
-    
+
     def process(self):
         if 'First' in self.outputs and self.outputs['First'].is_linked or \
                 'Last' in self.outputs and self.outputs['Last'].is_linked or \
                 'Middl' in self.outputs and self.outputs['Middl'].is_linked:
-            data = SvGetSocketAnyType(self, self.inputs['Data'])
-            
+            data = self.inputs['Data'].sv_get(deepcopy=False)
+
             # blocking too height values of levels, reduce
             levels = levelsOflist(data)-2
             if levels >= self.level:
@@ -71,13 +70,13 @@ class ListFLNode(bpy.types.Node, SverchCustomTreeNode):
             # assign out
             if self.outputs['First'].is_linked:
                 out = self.count(data, levels, 0)
-                SvSetSocketAnyType(self, 'First', out)
+                self.outputs['First'].sv_set(out)
             if self.outputs['Middl'].is_linked:
                 out = self.count(data, levels, 1)
-                SvSetSocketAnyType(self, 'Middl', out)
+                self.outputs['Middl'].sv_set(out)
             if self.outputs['Last'].is_linked:
                 out = self.count(data, levels, 2)
-                SvSetSocketAnyType(self, 'Last', out)
+                self.ouputs['Last'].sv_set(out)
 
     def count(self, data, level, mode):
         out = []
@@ -102,4 +101,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(ListFLNode)
-

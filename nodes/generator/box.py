@@ -22,8 +22,8 @@ import bmesh
 from mathutils import Vector
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, SvSetSocketAnyType, SvGetSocketAnyType
-
+from sverchok.data_structure import updateNode
+from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 
 class SvBoxNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Box '''
@@ -31,27 +31,34 @@ class SvBoxNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Box'
     bl_icon = 'MESH_CUBE'
 
-    Divx = IntProperty(name='Divx', description='divisions x',
-                       default=1, min=1, options={'ANIMATABLE'},
-                       update=updateNode)
-    Divy = IntProperty(name='Divy', description='divisions y',
-                       default=1, min=1, options={'ANIMATABLE'},
-                       update=updateNode)
-    Divz = IntProperty(name='Divz', description='divisions z',
-                       default=1, min=1, options={'ANIMATABLE'},
-                       update=updateNode)
-    Size = FloatProperty(name='Size', description='Size',
-                         default=1.0, options={'ANIMATABLE'},
-                         update=updateNode)
+    Divx = IntProperty(
+        name='Divx', description='divisions x',
+        default=1, min=1, options={'ANIMATABLE'},
+        update=updateNode)
+
+    Divy = IntProperty(
+        name='Divy', description='divisions y',
+        default=1, min=1, options={'ANIMATABLE'},
+        update=updateNode)
+
+    Divz = IntProperty(
+        name='Divz', description='divisions z',
+        default=1, min=1, options={'ANIMATABLE'},
+        update=updateNode)
+
+    Size = FloatProperty(
+        name='Size', description='Size',
+        default=1.0, options={'ANIMATABLE'},
+        update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('StringsSocket', "Size", "Size").prop_name = 'Size'
-        self.inputs.new('StringsSocket', "Divx", "Divx").prop_name = 'Divx'
-        self.inputs.new('StringsSocket', "Divy", "Divy").prop_name = 'Divy'
-        self.inputs.new('StringsSocket', "Divz", "Divz").prop_name = 'Divz'
-        self.outputs.new('VerticesSocket', "Vers", "Vers")
-        self.outputs.new('StringsSocket', "Edgs", "Edgs")
-        self.outputs.new('StringsSocket', "Pols", "Pols")
+        self.inputs.new('StringsSocket', "Size").prop_name = 'Size'
+        self.inputs.new('StringsSocket', "Divx").prop_name = 'Divx'
+        self.inputs.new('StringsSocket', "Divy").prop_name = 'Divy'
+        self.inputs.new('StringsSocket', "Divz").prop_name = 'Divz'
+        self.outputs.new('VerticesSocket', "Vers")
+        self.outputs.new('StringsSocket', "Edgs")
+        self.outputs.new('StringsSocket', "Pols")
 
     def draw_buttons(self, context, layout):
         pass
@@ -79,17 +86,7 @@ class SvBoxNode(bpy.types.Node, SverchCustomTreeNode):
         if (divx, divy, divz) == (1, 1, 1):
             return verts, edges, faces
 
-        bm = bmesh.new()
-        [bm.verts.new(co) for co in verts]
-        bm.verts.index_update()
-
-        if hasattr(bm.verts, "ensure_lookup_table"):
-            bm.verts.ensure_lookup_table()
-
-        for face in faces:
-            bm.faces.new(tuple(bm.verts[i] for i in face))
-        bm.faces.index_update()
-
+        bm = bmesh_from_pydata(verts, [], faces)
         dist = 0.0001
         section_dict = {0: divx, 1: divy, 2: divz}
 
@@ -124,6 +121,7 @@ class SvBoxNode(bpy.types.Node, SverchCustomTreeNode):
 
     def process(self):
         inputs = self.inputs
+        outputs = self.outputs
 
         # I think this is analoge to preexisting code, please verify.
         size = inputs['Size'].sv_get()[0]
@@ -134,12 +132,9 @@ class SvBoxNode(bpy.types.Node, SverchCustomTreeNode):
         out = [a for a in (zip(*[self.makecube(s, divx, divy, divz) for s in size]))]
 
         # outputs, blindly using sv_set produces many print statements.
-        if self.outputs['Vers'].is_linked:
-            SvSetSocketAnyType(self, 'Vers', out[0])
-        if self.outputs['Edgs'].is_linked:
-            SvSetSocketAnyType(self, 'Edgs', out[1])
-        if self.outputs['Pols'].is_linked:
-            SvSetSocketAnyType(self, 'Pols', out[2])
+        outputs['Vers'].sv_set(out[0])
+        outputs['Edgs'].sv_set(out[1])
+        outputs['Pols'].sv_set(out[2])
 
 
 def register():

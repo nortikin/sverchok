@@ -21,8 +21,7 @@ from copy import copy
 import bpy
 from bpy.props import BoolProperty, IntProperty, StringProperty
 from sverchok.node_tree import SverchCustomTreeNode, StringsSocket
-from sverchok.data_structure import (updateNode, changable_sockets,
-                                     SvSetSocketAnyType, SvGetSocketAnyType)
+from sverchok.data_structure import updateNode, changable_sockets
 
 
 class MaskListNode(bpy.types.Node, SverchCustomTreeNode):
@@ -36,14 +35,14 @@ class MaskListNode(bpy.types.Node, SverchCustomTreeNode):
                         update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('StringsSocket', "data", "data")
-        self.inputs.new('StringsSocket', "mask", "mask")
+        self.inputs.new('StringsSocket', "data")
+        self.inputs.new('StringsSocket', "mask")
 
-        self.outputs.new('StringsSocket', "mask", "mask")
-        self.outputs.new('StringsSocket', "ind_true", "ind_true")
-        self.outputs.new('StringsSocket', "ind_false", "ind_false")
-        self.outputs.new('StringsSocket', 'dataTrue', 'dataTrue')
-        self.outputs.new('StringsSocket', 'dataFalse', 'dataFalse')
+        self.outputs.new('StringsSocket', "mask")
+        self.outputs.new('StringsSocket', "ind_true")
+        self.outputs.new('StringsSocket', "ind_false")
+        self.outputs.new('StringsSocket', 'dataTrue')
+        self.outputs.new('StringsSocket', 'dataFalse')
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "Level", text="Level lists")
@@ -52,11 +51,11 @@ class MaskListNode(bpy.types.Node, SverchCustomTreeNode):
         inputsocketname = 'data'
         outputsocketname = ['dataTrue', 'dataFalse']
         changable_sockets(self, inputsocketname, outputsocketname)
-        
+
     def process(self):
         inputs = self.inputs
         outputs = self.outputs
-    
+
         data = inputs['data'].sv_get()
         mask = inputs['mask'].sv_get(default=[[1, 0]])
 
@@ -94,7 +93,7 @@ class MaskListNode(bpy.types.Node, SverchCustomTreeNode):
         if level > 1:
             if isinstance(list_a, (list, tuple)):
                 for idx, l in enumerate(list_a):
-                    l2 = self.putCurrentLevelList(l, list_b, mask_l, level-1, idx)
+                    l2 = self.putCurrentLevelList(l, list_b, mask_l, level - 1, idx)
                     result_t.append(l2[0])
                     result_f.append(l2[1])
                     mask_out.append(l2[2])

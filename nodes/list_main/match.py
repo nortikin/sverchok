@@ -27,7 +27,6 @@ from sverchok.data_structure import (match_short, match_long_cycle, updateNode,
 #
 # List Match Node by Linus Yng
 #
-# could be moved to util
 
 
 class ListMatchNode(bpy.types.Node, SverchCustomTreeNode):
@@ -121,8 +120,8 @@ class ListMatchNode(bpy.types.Node, SverchCustomTreeNode):
             # get data
             for socket in self.inputs:
                 if socket.is_linked:
-                    lsts.append(SvGetSocketAnyType(self, socket))
-            
+                    lsts.append(socket.sv_get())
+
             out = self.match(lsts, self.level, func_dict[self.mode], func_dict[self.mode_final])
 
             # output into linked sockets s
@@ -130,7 +129,7 @@ class ListMatchNode(bpy.types.Node, SverchCustomTreeNode):
                 if i == len(out):  # never write to last socket
                     break
                 if socket.is_linked:
-                    SvSetSocketAnyType(self, socket.name, out[i])
+                    socket.sv_set(out[i])
 
 
 def register():

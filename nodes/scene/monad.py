@@ -23,7 +23,6 @@ import bpy
 from bpy.types import Node
 from bpy.props import StringProperty
 
-from sverchok.data_structure import replace_socket
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.core import monad as monad_def
 reverse_lookup = {'outputs': 'inputs', 'inputs': 'outputs'}
@@ -68,7 +67,7 @@ class SvSocketAquisition:
                 new_name, new_type = cls.output_template[-1]
                 prop_data = {}
 
-            new_socket = replace_socket(socket, new_type, new_name=new_name)
+            new_socket = socket.replace_socket(new_type, new_name=new_name)
             if prop_name:
                 new_socket.prop_name = prop_name
 

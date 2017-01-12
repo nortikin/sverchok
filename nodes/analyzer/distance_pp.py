@@ -22,8 +22,7 @@ from mathutils import Vector
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (
-    Matrix_generate, Matrix_location,
-    SvGetSocketAnyType, SvSetSocketAnyType, Vector_generate
+    Matrix_generate, Matrix_location, Vector_generate
 )
 
 
@@ -48,29 +47,29 @@ class DistancePPNode(bpy.types.Node, SverchCustomTreeNode):
 
     def process(self):
         if self.inputs['vertices1'].is_linked and self.inputs['vertices2'].is_linked:
-            prop1_ = SvGetSocketAnyType(self, self.inputs['vertices1'])
+            prop1_ = self.inputs['vertices1'].sv_get()
             prop1 = Vector_generate(prop1_)
-            prop2_ = SvGetSocketAnyType(self, self.inputs['vertices2'])
+            prop2_ = self.inputs['vertices2'].sv_get()
             prop2 = Vector_generate(prop2_)
 
         elif self.inputs['matrix1'].is_linked and self.inputs['matrix2'].is_linked:
-            propa = SvGetSocketAnyType(self, self.inputs['matrix1'])
+            propa = self.inputs['matrix1'].sv_get()
             prop1 = Matrix_location(Matrix_generate(propa))
-            propb = SvGetSocketAnyType(self, self.inputs['matrix2'])
+            propb = self.inputs['matrix2'].sv_get()
             prop2 = Matrix_location(Matrix_generate(propb))
         else:
             prop1, prop2 = [], []
 
         if prop1 and prop2:
             if self.outputs['distances'].is_linked:
-                #print ('distances input', str(prop1), str(prop2))
+                # print ('distances input', str(prop1), str(prop2))
                 if self.Cross_dist:
                     output = self.calcM(prop1, prop2)
                 else:
                     output = self.calcV(prop1, prop2)
-                SvSetSocketAnyType(self, 'distances', output)
+                self.outputs['distances'].sv_set(output)
 
-                #print ('distances out' , str(output))
+                # print ('distances out' , str(output))
         else:
             SvSetSocketAnyType(self, 'distances', [])
 
@@ -87,7 +86,7 @@ class DistancePPNode(bpy.types.Node, SverchCustomTreeNode):
                     continue
                 values.append(self.distance(vert1, list2[i][k]))
             dists.append(values)
-        #print(dists)
+        # print(dists)
         return dists
 
     def calcM(self, list1, list2):
@@ -108,13 +107,12 @@ class DistancePPNode(bpy.types.Node, SverchCustomTreeNode):
                         oblndis.append(self.distance(vers, verl))
                     obshdis.append(oblndis)
             dists.append(obshdis)
-        #print(dists)
+        # print(dists)
         return dists[0]
 
     def distance(self, x, y):
-        vec = Vector((x[0]-y[0], x[1]-y[1], x[2]-y[2]))
+        vec = Vector((x[0] - y[0], x[1] - y[1], x[2] - y[2]))
         return vec.length
-
 
 
 def register():

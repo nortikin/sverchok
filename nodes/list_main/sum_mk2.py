@@ -19,8 +19,7 @@
 import bpy
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import SvSetSocketAnyType, SvGetSocketAnyType, \
-                                    levelsOflist, updateNode
+from sverchok.data_structure import levelsOflist, updateNode
 from bpy.props import IntProperty
 
 
@@ -45,7 +44,7 @@ class ListSumNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         # достаём два слота - вершины и полики
         if 'Sum' in self.outputs and self.outputs['Sum'].is_linked:
             if 'Data' in self.inputs and self.inputs['Data'].is_linked:
-                data = SvGetSocketAnyType(self, self.inputs['Data'])
+                data = self.inputs['Data'].sv_get()
 
                 lol = levelsOflist(data) - 1
                 level = min(lol, self.level)
@@ -53,7 +52,7 @@ class ListSumNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
                 if self.level == 1:
                     out = [out]
-                SvSetSocketAnyType(self, 'Sum', out)
+                self.outputs['Sum'].sv_set(out)
 
     def summ(self, data, level, lol):
         out = []

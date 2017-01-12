@@ -20,8 +20,7 @@ import bpy
 from bpy.props import BoolProperty, IntProperty, StringProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (updateNode, changable_sockets,
-                            SvSetSocketAnyType, SvGetSocketAnyType)
+from sverchok.data_structure import (updateNode, changable_sockets)
 
 
 class ListRepeaterNode(bpy.types.Node, SverchCustomTreeNode):
@@ -54,23 +53,22 @@ class ListRepeaterNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('StringsSocket', "Data", "Data")
 
     def update(self):
-        # достаём два слота - вершины и полики
         if 'Data' in self.inputs and self.inputs['Data'].links:
             inputsocketname = 'Data'
             outputsocketname = ['Data', ]
             changable_sockets(self, inputsocketname, outputsocketname)
-    
+
     def process(self):
         if self.inputs['Data'].is_linked:
-            data = SvGetSocketAnyType(self, self.inputs['Data'])
+            data = self.inputs['Data'].sv_get()
 
-            if 'Number' in self.inputs and self.inputs['Number'].is_linked:
-                tmp = SvGetSocketAnyType(self, self.inputs['Number'])
+            if self.inputs['Number'].is_linked:
+                tmp = self.inputs['Number'].sv_get()
                 Number = tmp[0]
             else:
                 Number = [self.number]
 
-            if 'Data' in self.outputs and self.outputs['Data'].is_linked:
+            if self.outputs['Data'].is_linked:
                 out_ = self.count(data, self.level, Number)
                 if self.unwrap:
                     if len(out_) > 0:
@@ -80,23 +78,20 @@ class ListRepeaterNode(bpy.types.Node, SverchCustomTreeNode):
                 else:
                     out = out_
 
-                SvSetSocketAnyType(self, 'Data', out)
+                self.outputs['Data'].sv_set(out)
 
     def count(self, data, level, number, cou=0):
         if level:
             out = []
             for idx, obj in enumerate(data):
-                out.append(self.count(obj, level-1, number, idx))
+                out.append(self.count(obj, level - 1, number, idx))
 
         else:
             out = []
-            indx = min(cou, len(number)-1)
+            indx = min(cou, len(number) - 1)
             for i in range(int(number[indx])):
                 out.append(data)
         return out
-
-    def update_socket(self, context):
-        self.update()
 
 
 def register():

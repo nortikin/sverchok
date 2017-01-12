@@ -139,7 +139,7 @@
 ## Vector
     GenVectorsNode
     VectorsOutNode
-    VectorMathNode
+    SvVectorMathNodeMK2
     VectorDropNode
     VectorPolarInNode
     VectorPolarOutNode

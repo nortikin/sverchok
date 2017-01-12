@@ -33,7 +33,7 @@ from sverchok.utils.snlite_importhelper import (
 from sverchok.utils.snlite_utils import vectorize
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, replace_socket
+from sverchok.data_structure import updateNode
 
 
 FAIL_COLOR = (0.8, 0.1, 0.1)
@@ -135,7 +135,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
 
             if len(sockets) > 0 and idx in set(range(len(sockets))):
                 if not are_matched(sockets[idx], socket_description):
-                    replace_socket(sockets[idx], *socket_description[:2])
+                    sockets[idx].replace_socket(*socket_description[:2])
             else:
                 sockets.new(*socket_description[:2])
 

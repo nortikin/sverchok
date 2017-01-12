@@ -26,7 +26,7 @@ import bpy
 from bpy.props import StringProperty, EnumProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import multi_socket, node_id, replace_socket
+from sverchok.data_structure import multi_socket, node_id
 from sverchok.core.update_system import make_tree_from_nodes, do_update
 import ast
 
@@ -195,7 +195,7 @@ class SvGroupNode(bpy.types.Node, SverchCustomTreeNode, StoreSockets):
                         s_type, s_name, s_old_name = socket_data
                         curr_socket = sockets[s_old_name]
                         print(curr_socket.name)
-                        s = replace_socket(curr_socket, s_type, s_name, i)
+                        s = curr_socket.replace_socket(s_type, s_name, i)
                         print(s.name)
                     else:
                         sockets.new(*socket_data)

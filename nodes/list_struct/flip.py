@@ -20,8 +20,7 @@ import bpy
 from bpy.props import BoolProperty, IntProperty, StringProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (changable_sockets, dataCorrect, updateNode,
-                            SvSetSocketAnyType, SvGetSocketAnyType)
+from sverchok.data_structure import (changable_sockets, dataCorrect, updateNode)
 
 def flip(list, level):
     level -= 1
@@ -68,21 +67,19 @@ class ListFlipNode(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         layout.prop(self, "level", text="level")
 
-
-
     def update(self):
         # адаптивный сокет
         inputsocketname = 'data'
         outputsocketname = ['data']
         changable_sockets(self, inputsocketname, outputsocketname)
-    
+
     def process(self):
         if self.inputs['data'].is_linked and self.outputs['data'].is_linked:
-            outEval = SvGetSocketAnyType(self, self.inputs['data'])
+            outEval = self.inputs['data'].sv_get()
             #outCorr = dataCorrect(outEval)  # this is bullshit, as max 3 in levels
-            levels = self.level-1
+            levels = self.level - 1
             out = flip(outEval, levels)
-            SvSetSocketAnyType(self, 'data', out)
+            self.outputs['data'].sv_set(out)
 
 
 def register():
