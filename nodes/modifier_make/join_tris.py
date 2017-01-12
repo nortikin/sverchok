@@ -38,7 +38,7 @@ def join_tris(verts, faces, limit):
 
     faces_out = []
     verts_out = [vert.co[:] for vert in bm.verts]
-    [faces_out.append([v.index for v in face.verts]) for face in bm.faces]
+    _ = [faces_out.append([v.index for v in face.verts]) for face in bm.faces]
 
     bm.clear()
     bm.free()
