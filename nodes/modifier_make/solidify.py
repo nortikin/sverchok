@@ -26,7 +26,7 @@ from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 # by Linus Yng
 
 
-def soldify(vertices, faces, t, verlen):
+def solidify(vertices, faces, t, verlen):
 
     if not faces or not vertices:
         return False
@@ -97,7 +97,7 @@ class SvSolidifyNode(bpy.types.Node, SverchCustomTreeNode):
         fullList(thickness, len(verts))
         for v, p, t in zip(verts, polys, thickness):
             verlen = set(range(len(v)))
-            res = soldify(v, p, t, verlen)
+            res = solidify(v, p, t, verlen)
         
             if not res:
                 return
