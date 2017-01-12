@@ -51,7 +51,7 @@ class Voronoi2DNode(bpy.types.Node, SverchCustomTreeNode):
         if not self.inputs['Vertices'].is_linked:
             return
 
-        if not self.outputs['Edges'].is_linked or self.outputs['Vertices'].is_linked:
+        if not self.outputs['Vertices'].is_linked:
             return
 
         points_in = self.inputs['Vertices'].sv_get()
