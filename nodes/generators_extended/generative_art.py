@@ -20,20 +20,18 @@
     LSystem code from Philip Rideout  https://github.com/prideout/lsystem '''
 
 
-import bpy
-from bpy.props import IntProperty, StringProperty
-
-from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (SvSetSocketAnyType, SvGetSocketAnyType,
-                                     updateNode, Vector_generate,
-                                     Matrix_listing)
+import math
 import string
 import random
-import mathutils as mu
-
 from xml.etree.cElementTree import fromstring
 
-import math
+import bpy
+from bpy.props import IntProperty, StringProperty
+import mathutils as mu
+
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import updateNode, Vector_generate, Matrix_listing
+
 
 """
 ---------------------------------------------------
@@ -301,18 +299,18 @@ class SvGenerativeArtNode(bpy.types.Node, SverchCustomTreeNode):
 
     filename = StringProperty(default="", update=updateNode_filename)
 
-    rseed = IntProperty(name='rseed', description='random seed',
-                        default=21, min=0, options={'ANIMATABLE'},
-                        update=updateNode)
+    rseed = IntProperty(
+        name='rseed', description='random seed',
+        default=21, min=0, options={'ANIMATABLE'},
+        update=updateNode)
 
-    maxmats = IntProperty(name='maxmats',
-                          description='maximum nunber of matrices',
-                          default=1000, min=1, options={'ANIMATABLE'},
-                          update=updateNode)
+    maxmats = IntProperty(
+        name='maxmats', description='maximum nunber of matrices',
+        default=1000, min=1, options={'ANIMATABLE'},
+        update=updateNode)
 
     def draw_buttons(self, context, layout):
-        layout.prop_search(self, 'filename', bpy.data,
-                           'texts', text='', icon='TEXT')
+        layout.prop_search(self, 'filename', bpy.data, 'texts', text='', icon='TEXT')
         layout.prop(self, "rseed", text="r seed")
         layout.prop(self, "maxmats", text="max mats")
 
@@ -353,10 +351,8 @@ class SvGenerativeArtNode(bpy.types.Node, SverchCustomTreeNode):
 
         # add input socket values to constants dict
         for socket in self.inputs[1:]:
-            if socket.is_linked:
-                format_dict[socket.name] = SvGetSocketAnyType(self, socket)[0][0]
-            else:
-                format_dict[socket.name] = 0
+            format_dict[socket.name] = socket.sv_get()[0][0] if socket.is_linked else 0
+
         while '{' in self.xml_text:
             # using while loop
             # allows constants to be defined using other constants
@@ -416,50 +412,47 @@ class SvGenerativeArtNode(bpy.types.Node, SverchCustomTreeNode):
         if not hasattr(self, 'xml_tree'):
             return
         
-        if any(output.is_linked for output in self.outputs):
-            lsys = LSystem(self.xml_tree, self.maxmats)
-            shapes = lsys.evaluate(seed=self.rseed)
-            mat_sublist = []
+        if not any(output.is_linked for output in self.outputs):
+            return
 
-            edges_out = []
-            verts_out = []
-            faces_out = []
+        lsys = LSystem(self.xml_tree, self.maxmats)
+        shapes = lsys.evaluate(seed=self.rseed)
+        mat_sublist = []
 
-            # make last entry in shapes None
-            # to allow make tube to finish last tube
-            if shapes[-1]:
-                shapes.append(None)
-            # dictionary for matrix lists
-            shape_names = set([x.attrib.get('shape')
-                               for x in self.xml_tree.iter('instance')])
-            mat_dict = {s: [] for s in shape_names}
-            if self.inputs['Vertices'].is_linked:
-                verts = Vector_generate(SvGetSocketAnyType(self, self.inputs['Vertices']))
-            for i, shape in enumerate(shapes):
-                if shape:
-                    mat_sublist.append(shape[1])
-                    mat_dict[shape[0]].append(shape[1])
-                else:
-                    if len(mat_sublist) > 0:
-                        if self.inputs['Vertices'].is_linked:
-                            v, e, f = lsys.make_tube(mat_sublist, verts)
-                            if v:
-                                verts_out.append(v)
-                                edges_out.append(e)
-                                faces_out.append(f)
+        edges_out = []
+        verts_out = []
+        faces_out = []
 
-                    mat_sublist = []
-            if self.outputs['Vertices'].is_linked:
-                SvSetSocketAnyType(self, 'Vertices', verts_out)
-            if self.outputs['Edges'].is_linked:
-                SvSetSocketAnyType(self, 'Edges', edges_out)
-            if self.outputs['Faces'].is_linked:
-                SvSetSocketAnyType(self, 'Faces', faces_out)
+        # make last entry in shapes None
+        # to allow make tube to finish last tube
+        if shapes[-1]:
+            shapes.append(None)
+        # dictionary for matrix lists
+        shape_names = set([x.attrib.get('shape')
+                           for x in self.xml_tree.iter('instance')])
+        mat_dict = {s: [] for s in shape_names}
+        if self.inputs['Vertices'].is_linked:
+            verts = Vector_generate(self.inputs['Vertices'].sv_get())
+        for i, shape in enumerate(shapes):
+            if shape:
+                mat_sublist.append(shape[1])
+                mat_dict[shape[0]].append(shape[1])
+            else:
+                if len(mat_sublist) > 0:
+                    if self.inputs['Vertices'].is_linked:
+                        v, e, f = lsys.make_tube(mat_sublist, verts)
+                        if v:
+                            verts_out.append(v)
+                            edges_out.append(e)
+                            faces_out.append(f)
 
-            for shape in shape_names:
-                if self.outputs[shape].is_linked:
-                    SvSetSocketAnyType(self, shape,
-                                       Matrix_listing(mat_dict[shape]))
+                mat_sublist = []
+        
+        self.outputs['Vertices'].sv_set(verts_out)
+        self.outputs['Edges'].sv_set(edges_out)
+        self.outputs['Faces'].sv_set(faces_out)
+        for shape in shape_names:
+            self.outputs[shape].sv_set(Matrix_listing(mat_dict[shape]))
 
 
 def register():
@@ -468,6 +461,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvGenerativeArtNode)
-
-if __name__ == '__main__':
-    register()
