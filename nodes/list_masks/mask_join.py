@@ -22,8 +22,7 @@ import bpy
 from bpy.props import BoolProperty, IntProperty, StringProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (changable_sockets, updateNode,
-                            SvSetSocketAnyType, SvGetSocketAnyType)
+from sverchok.data_structure import changable_sockets, updateNode
 
 
 class SvMaskJoinNode(bpy.types.Node, SverchCustomTreeNode):
@@ -63,17 +62,17 @@ class SvMaskJoinNode(bpy.types.Node, SverchCustomTreeNode):
         changable_sockets(self, inputsocketname, outputsocketname)
 
     def process(self):
-        if all((s.is_linked for s in self.inputs[1:])):
+        if all(s.is_linked for s in self.inputs[1:]):
             if self.inputs['Mask'].is_linked:
-                mask = SvGetSocketAnyType(self, self.inputs['Mask'])
+                mask = self.inputs['Mask'].sv_get()
             else:  # to match MaskList
                 mask = [[1, 0]]
-            data_t = SvGetSocketAnyType(self, self.inputs['Data True'])
-            data_f = SvGetSocketAnyType(self, self.inputs['Data False'])
+            data_t = self.inputs['Data True'].sv_get()
+            data_f = self.inputs['Data False'].sv_get()
 
             data_out = self.get_level(mask, data_t, data_f, self.level-1)
 
-            SvSetSocketAnyType(self, 'Data', data_out)
+            self.outputs['Data'].sv_set(data_out)
 
     def apply_choice_mask(self, mask, data_t, data_f):
         out = []
@@ -123,9 +122,6 @@ class SvMaskJoinNode(bpy.types.Node, SverchCustomTreeNode):
             return out
         else:
             return self.apply_mask(mask[0], data_t, data_f)
-
-    def update_socket(self, context):
-        self.update()
 
 
 def register():

@@ -19,8 +19,6 @@
 import bpy
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import SvGetSocketAnyType, SvSetSocketAnyType
-
 
 class ConverterNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Converter node temporery solution '''
@@ -34,15 +32,12 @@ class ConverterNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('StringsSocket', 'data')
         self.outputs.new('MatrixSocket', 'matrix')
 
-    def draw_buttons(self, context, layout):
-        pass
-
     def process(self):
-        if "data" in self.inputs and self.inputs[0].is_linked:            
-            out = SvGetSocketAnyType(self, self.inputs[0], deepcopy=False)
+        if self.inputs[0].is_linked:
+            out = self.inputs[0].sv_get(deepcopy=False)
             for s in self.outputs:
                 if s.is_linked:
-                    SvSetSocketAnyType(self, s.name, out)
+                    s.sv_set(out)
 
 def register():
     bpy.utils.register_class(ConverterNode)
