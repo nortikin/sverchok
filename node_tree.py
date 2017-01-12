@@ -50,6 +50,8 @@ from sverchok.core.socket_conversions import (
     is_vector_to_matrix,
     is_matrix_to_vector)
 
+from sverchok.data_tree import exec_node_group
+
 from sverchok.ui import color_def
 
 
@@ -386,7 +388,7 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
         if self.is_frozen():
             return
         if self.sv_process:
-            process_tree(self)
+            exec_node_group(self)
 
 
 class SverchCustomTreeNode:
@@ -444,6 +446,9 @@ class SverchCustomTreeNode:
         update= ...
         Still this is called from updateNode
         '''
+        self.id_data.upate()
+
+        """
         if self.id_data.bl_idname == "SverchCustomTreeType":
             if self.id_data.is_frozen():
                 return
@@ -461,7 +466,7 @@ class SverchCustomTreeNode:
                 instance.process_node(context)
         else:
             pass
-
+        """
 
 def register():
     bpy.utils.register_class(SvColors)
