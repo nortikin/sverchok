@@ -36,13 +36,6 @@ def make_hull(vertices):
     bm_verts = [bm.verts.new(v) for v in vertices]
     bmesh.ops.convex_hull(bm, input=bm_verts, use_existing_faces=False)
 
-    # edges = []
-    # faces = []
-    # bm.verts.index_update()
-    # bm.faces.index_update()
-    # verts = [vert.co[:] for vert in bm.verts[:]]
-    # for face in bm.faces:
-    #     faces.append([v.index for v in face.verts[:]])
     verts, _, faces = pydata_from_bmesh(bm)
     bm.clear()
     bm.free()
