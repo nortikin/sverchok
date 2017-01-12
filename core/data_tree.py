@@ -18,18 +18,10 @@
 # ##### END GPL LICENSE BLOCK #####
 
 
-class DataGetter:
-
-    def __init__(self, socket):
-        self.socket = socket
-
-    def get(self):
-        return socket.data
-
 class SvDataTree:
     def __init__(self, socket):
-        self.data = []
-        self.children =[]
+        self.data = None
+        self.children = []
         self.socket = socket
 
     @property
@@ -58,8 +50,33 @@ class SvDataTree:
             child.set_level(level + 1)
 
 
+# sketch of execution mechanism
+# DAG gives nodes in correct eval order
+# data_trees is and interface for storing socket data
+# recurse_tree matches data and executes function, while building tree
+def exec_node_group(node_group):
+    for node in DAG(node_group):
+        for socket in node.outputs:
+            if socket.is_linked:
+                data_trees.add(socket)
+                out_trees = data_trees.get(socket)
+        func = compile_node(node)
+        trees = []
+        for socket in node.inputs:
+            if socket.is_linked:
+                tree = data_trees.get(socket.other)
+                trees.append(tree)
+        recurse_trees(func, in_trees, out_trees)
 
-
+def recurse_trees(func, trees):
+    if func.is_generator:
+        pass
+    elif func.is_reducer:
+        pass
+    elif func.is_output:
+        pass
+    else:
+        pass
 
 
 def compile_node(node):
@@ -69,13 +86,14 @@ def compile_node(node):
             if socket.is_linked:
                 socket.other.sv_set([[arg]])
             else:
-                setattr(node, socket.prop_name, arg)
+                pass
+                #setattr(node, socket.prop_name, arg)
         node.process()
-        data = []
+        data = {}
         for socket in node.outputs:
             if socket.is_linked:
-                data.append(socket.other.sv_get()[0])
+                data[socket.name] = socket.other.sv_get()[0]
             else:
-                data.append(None)
-        return tuple(data)
+                data[socket.name] = None
+        return data
     return f
