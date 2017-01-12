@@ -50,7 +50,7 @@ from sverchok.core.socket_conversions import (
     is_vector_to_matrix,
     is_matrix_to_vector)
 
-from sverchok.data_tree import exec_node_group
+from sverchok.core.data_tree import exec_node_group
 
 from sverchok.ui import color_def
 
@@ -446,7 +446,7 @@ class SverchCustomTreeNode:
         update= ...
         Still this is called from updateNode
         '''
-        self.id_data.upate()
+        self.id_data.update()
 
         """
         if self.id_data.bl_idname == "SverchCustomTreeType":

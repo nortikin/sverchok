@@ -16,23 +16,122 @@
 #  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 # ##### END GPL LICENSE BLOCK #####
-from update_system import make_update_list
+from itertools import chain
+
+from sverchok.core.update_system import make_update_list
+
+
+def recurse_generator(f, trees, out_trees, level=0):
+    if all(tree.is_leaf for tree in trees):
+        args = [tree.data for tree in trees]
+        res = f(args)
+        if len(out_trees) > 1:
+            for out_tree, r in zip(out_trees, res):
+                out_tree.data = r
+        elif len(out_trees) == 1:
+            for r in res[0]:
+                sdt = SvDataTree()
+                sdt.data = r
+                out_trees[0].children.append(sdt)
+                print(sdt.data)
+        else:  # no output
+            pass
+    else:
+        inner_trees = [[tree] if tree.is_leaf else tree.children for tree in trees]
+        for i in range(max(map(len, inner_trees))):
+            index = [i if i < len(tree) else len(tree) - 1 for tree in inner_trees]
+            args = [inner_trees[j][idx] for j, idx in enumerate(index)]
+            for out_tree in out_trees:
+                out_tree.children.append(SvDataTree())
+            recurse_generator(f, args, [out_tree.children[-1] for out_tree in out_trees], level=(level + 1))
+
+
+def recurse_level(f, in_trees, out_trees, level=0):
+    pass
+
+
+def recurse_reduce(f, in_trees, out_trees, level=0):
+    pass
+
+
+def recurse_stateful(f, in_trees, out_trees, level=0):
+    args = [list(in_tree) for in_tree in in_trees]
+    print(args)
+    res = f(args)
+    for r, out_tree in zip(res, out_trees):
+        out_tree.data = r
+
+def compile_node(node):
+    def f(args):
+        for idx, arg in enumerate(args):
+            socket = node.inputs[idx]
+            if socket.is_linked:
+                print(node.name, "arg inside exec node", arg)
+                socket.other.sv_set([arg])
+            else:
+                pass
+                """
+                not needed inside of Sverchok context
+                setattr(node, socket.prop_name, arg)
+                """
+        node.process()
+        data = []
+        for socket in node.outputs:
+            if socket.is_linked:
+                d = socket.other.sv_get()
+                print(node.name, "result", socket.name, d)
+                data.append(d)
+
+        print(node.name, "total result", data)
+        return data
+    return f, node_database.get(node.bl_idname, recurse_generator)
 
 class SvDataTree:
-    def __init__(self, socket):
+    def __init__(self, socket=None):
         self.data = None
         self.children = []
-        self.socket = socket
+        if socket:
+            self.name = socket.node.name + ": " + socket.name
+        else:
+            self.name = None
+    @property
+    def is_leaf(self):
+        return self.data is not None
+    def __repr__(self):
+        if self.is_leaf:
+            return "SvDataTree<{}>".format(self.data)
+        else:
+            return "SvDataTree<children={}>".format(len(self.children))
+    def print(self, level=0):
+        if self.name:
+            print(self.name)
+        if self.is_leaf:
+            print(level * "    ", self.data)
+        else:
+            for child in self.children:
+                child.print(level + 1)
+    def __iter__(self):
+        if self.is_leaf:
+            yield self.data
+        else:
+            for v in chain(map(iter, self.children)):
+                yield from v
 
-    def add_child(tree):
-        self.children.append(tree)
-
+class SvDummyTree:
+    is_leaf = True
+    data = None
+    def __iter__(self):
+        yield None
 
 class SvTreeDB:
     def __init__(self):
         self.data_trees = {}
 
-    def get(socket):
+    def print(self, ng):
+        for link in ng.links:
+            self.get(link.from_socket).print()
+
+    def get(self, socket):
         ng_id = socket.id_data.name
         s_id = socket.socket_id
         if ng_id not in self.data_trees:
@@ -42,57 +141,49 @@ class SvTreeDB:
             ng_trees[s_id] = SvDataTree(socket)
         return ng_trees[s_id]
 
-    def clean(ng):
-        ng_id = socket.id_data.name
+    def clean(self, ng):
+        ng_id = ng.name
         self.data_trees[ng_id] = {}
+
+data_trees = SvTreeDB()
 
 
 def DAG(node_group):
-    yield from make_update_list(node_group):
-    
-# sketch of execution mechanism
-# DAG gives nodes in correct eval order
-# data_trees is and interface for storing socket data
-# recurse_tree matches data and executes function, while building tree
+    print(make_update_list(node_group))
+    for name in make_update_list(node_group):
+        yield node_group.nodes[name]
+
+#  sketch of execution mechanism
+#  DAG gives nodes in correct eval order
+#  data_trees is and interface for storing socket data
+#  recurse_tree matches data and executes function, while building tree
+
+
 def exec_node_group(node_group):
+    print("exec tree")
+    data_trees.clean(node_group)
     for node in DAG(node_group):
-        for socket in node.outputs:
-            if socket.is_linked:
-                out_trees = data_trees.get(socket)
-        func = compile_node(node)
-        trees = []
+        print("exec node", node.name)
+        func, recurse = compile_node(node)
+        out_trees = []
+        in_trees = []
         for socket in node.inputs:
             if socket.is_linked:
                 tree = data_trees.get(socket.other)
-                trees.append(tree)
-        recurse_trees(func, in_trees, out_trees)
-
-def recurse_trees(func, trees):
-    if func.is_generator:
-        pass
-    elif func.is_reducer:
-        pass
-    elif func.is_output:
-        pass
-    else:
-        pass
-
-
-def compile_node(node):
-    def f(*args):
-        for idx, arg in enumerate(args):
-            socket = node.inputs[idx]
-            if socket.is_linked:
-                socket.other.sv_set([[arg]])
+                in_trees.append(tree)
             else:
-                pass
-                #setattr(node, socket.prop_name, arg)
-        node.process()
-        data = {}
+                in_trees.append(SvDummyTree())
         for socket in node.outputs:
             if socket.is_linked:
-                data[socket.name] = socket.other.sv_get()[0]
-            else:
-                data[socket.name] = None
-        return data
-    return f
+                out_trees.append(data_trees.get(socket))
+
+        recurse(func, in_trees, out_trees)
+    data_trees.print(node_group)
+
+# this needs something more clever
+node_database = {
+    "SvCircleNode": recurse_reduce,
+    "GenListRangeIntNode": recurse_generator,
+    "LineConnectNodeMK2": recurse_reduce,
+    "ViewerNode2": recurse_stateful,
+}
