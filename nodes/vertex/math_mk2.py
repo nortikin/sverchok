@@ -47,7 +47,7 @@ func_dict = {
 
     "SCALAR":         (15, lambda u, s: (u[0]*s, u[1]*s, u[2]*s),                  ('vs v'),    "Multiply Scalar"),
     "1/SCALAR":       (16, lambda u, s: (u[0]/s, u[1]/s, u[2]/s),                  ('vs v'),  "Multiply 1/Scalar"),
-    "ROUND":          (18, lambda u, s: Vector(u).to_tuple(abs(int(s))),                     ('vs v'),     "Round s digits"),
+    "ROUND":          (18, lambda u, s: Vector(u).to_tuple(abs(int(s))),           ('vs v'),     "Round s digits"),
 
     "NORMALIZE":      (6,  lambda u: Vector(u).normalized()[:],                     ('v v'),          "Normalize"),
     "NEG":            (7,  lambda u: (-Vector(u))[:],                               ('v v'),             "Negate")
@@ -131,8 +131,9 @@ class SvVectorMathNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         elif len(t_inputs) < len(self.inputs):
             self.inputs.remove(self.inputs[-1])
 
+        renames = 'AB'
         for idx, t_in in enumerate(t_inputs):
-            s = self.inputs[idx].replace_socket(socket_type.get(t_in))
+            s = self.inputs[idx].replace_socket(socket_type.get(t_in), renames[idx])
             if t_in == 'v':
                 s.prop_name = 'v3_input_' + str(idx)
             else:
