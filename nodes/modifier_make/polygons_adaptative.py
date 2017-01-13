@@ -21,8 +21,8 @@ from bpy.props import FloatProperty
 import bmesh
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (updateNode, Vector_generate, Vector_degenerate,
-                            SvSetSocketAnyType, SvGetSocketAnyType, match_long_repeat)
+from sverchok.data_structure import (updateNode, Vector_generate,
+                                     Vector_degenerate, match_long_repeat)
 
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 # "coauthor": "Alessandro Zomparelli (sketchesofcode)"
@@ -70,92 +70,83 @@ class AdaptivePolsNode(bpy.types.Node, SverchCustomTreeNode):
 
     def process(self):
         # достаём два слота - вершины и полики
-        if 'Vertices' in self.outputs and self.outputs['Vertices'].links:
-            if (self.inputs['PolsR'].links
-               and self.inputs['VersR'].links
-               and self.inputs['VersD'].links
-               and self.inputs['PolsD'].links):
+        if all(s.is_linked for s in self.inputs[:-1]):
+            if self.inputs['Z_Coef'].is_linked:
+                z_coef = self.inputs['Z_Coef'].sv_get()[0]
+            else:
+                z_coef = []
 
-                if self.inputs['Z_Coef'].links:
-                    z_coef = SvGetSocketAnyType(self, self.inputs['Z_Coef'])[0]
+            polsR = self.inputs['PolsR'].sv_get()[0]  # recipient one object [0]
+            versR = self.inputs['VersR'].sv_get()[0]  # recipient
+            polsD = self.inputs['PolsD'].sv_get()  # donor many objects [:]
+            versD_ = self.inputs['VersD'].sv_get()  # donor
+            versD = Vector_generate(versD_)
+            ##### it is needed for normals of vertices
+            polsR, polsD, versD = match_long_repeat([polsR, polsD, versD])
+            bm = bmesh_from_pydata(versR, [], polsR)
+
+            bmesh.ops.recalc_face_normals(bm, faces=bm.faces[:])
+            bm.verts.ensure_lookup_table()
+            new_ve = bm.verts
+
+            #new_me = bpy.data.meshes.new('recepient')
+            #new_me.from_pydata(versR, [], polsR)
+            #new_me.update(calc_edges=True)
+
+            #new_ve = new_me.vertices
+            #print (new_ve[0].normal, 'normal')
+
+            vers_out = []
+            pols_out = []
+            i = 0
+            for vD, pR in zip(versD,polsR):
+                # part of donor to make limits
+                j = i
+                pD = polsD[i]
+                n_verts = len(vD)
+                n_faces = len(pD)
+
+                xx = [x[0] for x in vD]
+                x0 = (self.width_coef) / (max(xx)-min(xx))
+                yy = [y[1] for y in vD]
+                y0 = (self.width_coef) / (max(yy)-min(yy))
+                zz = [z[2] for z in vD]
+                zzz = (max(zz)-min(zz))
+                if zzz:
+                    z0 = 1 / zzz
                 else:
-                    z_coef = []
+                    z0 = 0
+                #print (x0, y0, z0)
 
-                polsR = SvGetSocketAnyType(self, self.inputs['PolsR'])[0]  # recipient one object [0]
-                versR = SvGetSocketAnyType(self, self.inputs['VersR'])[0]  # recipient
-                polsD = SvGetSocketAnyType(self, self.inputs['PolsD'])  # donor many objects [:]
-                versD_ = SvGetSocketAnyType(self, self.inputs['VersD'])  # donor
-                versD = Vector_generate(versD_)
-                ##### it is needed for normals of vertices
-                polsR,polsD,versD = match_long_repeat([polsR,polsD,versD])
-                bm = bmesh_from_pydata(versR, [], polsR)
+                # part of recipient polygons to reciev donor
 
-                bmesh.ops.recalc_face_normals(bm, faces=bm.faces[:])
-                bm.verts.ensure_lookup_table()
-                new_ve = bm.verts
-                
-                #new_me = bpy.data.meshes.new('recepient')
-                #new_me.from_pydata(versR, [], polsR)
-                #new_me.update(calc_edges=True)
+                last = len(pR)-1
+                vs = [new_ve[v] for v in pR]  # new_ve  - temporery data
+                if z_coef:
+                    if j < len(z_coef):
+                        z1 = z0 * z_coef[j]
+                else:
+                    z1 = z0
 
-                #new_ve = new_me.vertices
-                #print (new_ve[0].normal, 'normal')
+                new_vers = []
+                new_pols = []
+                for v in vD:
+                    new_vers.append(self.lerp3(vs[0], vs[1], vs[2], vs[last], v, x0, y0, z1))
+                for p in pD:
+                    new_pols.append([id for id in p])
+                pols_out.append(new_pols)
+                vers_out.append(new_vers)
+                i += 1
+            #bpy.data.meshes.remove(new_me)  # cleaning and washing
+            bm.free()
+            #print (Vector_degenerate(vers_out))
 
-                vers_out = []
-                pols_out = []
-                i = 0
-                for vD, pR in zip(versD,polsR):
-                    # part of donor to make limits
-                    j = i
-                    pD = polsD[i]
-                    n_verts = len(vD)
-                    n_faces = len(pD)
+            output = Vector_degenerate(vers_out)
+            #print (output)
 
-                    xx = [x[0] for x in vD]
-                    x0 = (self.width_coef) / (max(xx)-min(xx))
-                    yy = [y[1] for y in vD]
-                    y0 = (self.width_coef) / (max(yy)-min(yy))
-                    zz = [z[2] for z in vD]
-                    zzz = (max(zz)-min(zz))
-                    if zzz:
-                        z0 = 1 / zzz
-                    else:
-                        z0 = 0
-                    #print (x0, y0, z0)
+            self.outputs['Vertices'].sv_set(output)
 
-                    # part of recipient polygons to reciev donor
-
-                    last = len(pR)-1
-                    vs = [new_ve[v] for v in pR]  # new_ve  - temporery data
-                    if z_coef:
-                        if j < len(z_coef):
-                            z1 = z0 * z_coef[j]
-                    else:
-                        z1 = z0
-
-                    new_vers = []
-                    new_pols = []
-                    for v in vD:
-                        new_vers.append(self.lerp3(vs[0], vs[1], vs[2], vs[last], v, x0, y0, z1))
-                    for p in pD:
-                        new_pols.append([id for id in p])
-                    pols_out.append(new_pols)
-                    vers_out.append(new_vers)
-                    i += 1
-                #bpy.data.meshes.remove(new_me)  # cleaning and washing
-                bm.free()
-                #print (Vector_degenerate(vers_out))
-
-                output = Vector_degenerate(vers_out)
-                #print (output)
-                if 'Vertices' in self.outputs and self.outputs['Vertices'].links:
-                    SvSetSocketAnyType(self, 'Vertices', output)
-
-                if 'Poligons' in self.outputs and self.outputs['Poligons'].links:
-                    SvSetSocketAnyType(self, 'Poligons', pols_out)
-
-    def update_socket(self, context):
-        self.update()
+            self.outputs['Poligons'].sv_set(pols_out)
 
 
 def register():
