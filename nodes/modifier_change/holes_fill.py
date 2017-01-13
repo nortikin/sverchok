@@ -21,8 +21,7 @@ from bpy.props import IntProperty
 import bmesh
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (updateNode, repeat_last, dataCorrect,
-                            SvSetSocketAnyType, SvGetSocketAnyType)
+from sverchok.data_structure import updateNode, repeat_last, dataCorrect
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 
 
@@ -58,47 +57,43 @@ class SvFillHolesNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Fill Holes'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    sides = IntProperty(name='Sides', description='Side to fill',
-                        default=4, min=3,
-                        update=updateNode)
+    sides = IntProperty(
+        name='Sides', description='Side to fill',
+        default=4, min=3,
+        update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', 'vertices')
         self.inputs.new('StringsSocket', 'edges')
         self.inputs.new('StringsSocket', 'Sides').prop_name = 'sides'
 
-        self.outputs.new('VerticesSocket', 'vertices', 'vertices')
-        self.outputs.new('StringsSocket', 'edges', 'edges')
-        self.outputs.new('StringsSocket', 'polygons', 'polygons')
+        self.outputs.new('VerticesSocket', 'vertices')
+        self.outputs.new('StringsSocket', 'edges')
+        self.outputs.new('StringsSocket', 'polygons')
 
     def process(self):
 
-        if 'vertices' in self.inputs and self.inputs['vertices'].is_linked and \
-           'edges' in self.inputs and self.inputs['edges'].is_linked:
+        if not (self.inputs['vertices'].is_linked and self.inputs['edges'].is_linked):
+            return
 
-            verts = dataCorrect(SvGetSocketAnyType(self, self.inputs['vertices']))
-            edges = dataCorrect(SvGetSocketAnyType(self, self.inputs['edges']))
-            sides = repeat_last(self.inputs['Sides'].sv_get()[0])
-            verts_out = []
-            edges_out = []
-            polys_out = []
+        verts = dataCorrect(self.inputs['vertices'].sv_get())
+        edges = dataCorrect(self.inputs['edges'].sv_get())
+        sides = repeat_last(self.inputs['Sides'].sv_get()[0])
+        verts_out = []
+        edges_out = []
+        polys_out = []
 
-            for v, e, s in zip(verts, edges, sides):
-                res = fill_holes(v, e, int(s))
-                if not res:
-                    return
-                verts_out.append(res[0])
-                edges_out.append(res[1])
-                polys_out.append(res[2])
+        for v, e, s in zip(verts, edges, sides):
+            res = fill_holes(v, e, int(s))
+            if not res:
+                return
+            verts_out.append(res[0])
+            edges_out.append(res[1])
+            polys_out.append(res[2])
 
-            if 'vertices' in self.outputs and self.outputs['vertices'].is_linked:
-                SvSetSocketAnyType(self, 'vertices', verts_out)
-
-            if 'edges' in self.outputs and self.outputs['edges'].is_linked:
-                SvSetSocketAnyType(self, 'edges', edges_out)
-
-            if 'polygons' in self.outputs and self.outputs['polygons'].is_linked:
-                SvSetSocketAnyType(self, 'polygons', polys_out)
+        self.outputs['vertices'].sv_set(verts_out)
+        self.outputs['edges'].sv_set(edges_out)
+        self.outputs['polygons'].sv_set(polys_out)
 
 
 

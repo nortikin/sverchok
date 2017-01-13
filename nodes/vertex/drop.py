@@ -17,12 +17,13 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-
 from mathutils import Matrix, Vector
-from sverchok.node_tree import SverchCustomTreeNode, MatrixSocket, VerticesSocket
-from sverchok.data_structure import (dataCorrect, Matrix_generate, updateNode,
-                            Vector_generate, Vector_degenerate,
-                            SvSetSocketAnyType, SvGetSocketAnyType)
+
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import (
+    dataCorrect, Matrix_generate, updateNode,
+    Vector_generate, Vector_degenerate
+)
 
 
 class VectorDropNode(bpy.types.Node, SverchCustomTreeNode):
@@ -42,14 +43,13 @@ class VectorDropNode(bpy.types.Node, SverchCustomTreeNode):
             return
                         
         vecs_ = self.inputs['Vectors'].sv_get()
-
         vecs = Vector_generate(vecs_)
         
         mats_ = dataCorrect(self.inputs['Matrixes'].sv_get())
         mats = Matrix_generate(mats_)
         
         vectors = self.vecscorrect(vecs, mats)
-        SvSetSocketAnyType(self, 'Vectors', vectors)
+        self.outputs['Vectors'].sv_set(vectors)
 
     @staticmethod
     def vecscorrect(vecs, mats):

@@ -21,8 +21,7 @@ from bpy.props import BoolProperty
 from mathutils import Vector, Matrix
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (updateNode, Vector_generate, Vector_degenerate,
-                            SvSetSocketAnyType, SvGetSocketAnyType)
+from sverchok.data_structure import updateNode, Vector_generate, Vector_degenerate
 
 
 def section(cut_me_vertices, cut_me_edges, mx, pp, pno, FILL=False, TRI=True):
@@ -190,79 +189,70 @@ class CrossSectionNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Cross Section'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    fill_check = BoolProperty(name='fill', description='to fill section',
-                              default=False,
-                              update=updateNode)
-    tri = BoolProperty(name='tri', description='triangle or polygon',
-                       default=True,
-                       update=updateNode)
+    fill_check = BoolProperty(
+        name='fill', description='to fill section',
+        default=False, update=updateNode)
+
+    tri = BoolProperty(
+        name='tri', description='triangle or polygon',
+        default=True, update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', 'vertices', 'vertices')
-        self.inputs.new('StringsSocket', 'edg_pol', 'edg_pol')
-        self.inputs.new('MatrixSocket', 'matrix', 'matrix')
-        self.inputs.new('MatrixSocket', 'cut_matrix', 'cut_matrix')
+        self.inputs.new('VerticesSocket', 'vertices')
+        self.inputs.new('StringsSocket', 'edg_pol')
+        self.inputs.new('MatrixSocket', 'matrix')
+        self.inputs.new('MatrixSocket', 'cut_matrix')
 
-        self.outputs.new('VerticesSocket', 'vertices', 'vertices')
-        self.outputs.new('StringsSocket', 'edges', 'edges')
-        #self.outputs.new('MatrixSocket', 'matrix', 'matrix')
+        self.outputs.new('VerticesSocket', 'vertices')
+        self.outputs.new('StringsSocket', 'edges')
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "fill_check", text="Fill section")
         layout.prop(self, "tri", text="alt+F / F")
 
     def process(self):
-        if 'vertices' in self.inputs and self.inputs['vertices'].links \
-           and self.inputs['edg_pol'].links \
-           and self.inputs['cut_matrix'].links:
+        mandatory_sockets = [self.inputs['vertices'], self.inputs['edg_pol'], self.inputs['cut_matrix']]
+        if not all([s.is_linked for s in mandatory_sockets]):
+            return
 
-            verts_ob = Vector_generate(SvGetSocketAnyType(self, self.inputs['vertices']))
-            edg_pols_ob = SvGetSocketAnyType(self, self.inputs['edg_pol'])
+        verts_ob = Vector_generate(self.inputs['vertices'].sv_get())
+        edg_pols_ob = self.inputs['edg_pol'].sv_get()
 
-            if self.inputs['matrix'].links:
-
-                matrixs = SvGetSocketAnyType(self, self.inputs['matrix'])
-            else:
-                matrixs = []
-                for le in verts_ob:
-                    matrixs.append(Matrix())
-            cut_mats = SvGetSocketAnyType(self, self.inputs['cut_matrix'])
-
-            verts_out = []
-            edges_out = []
-            for cut_mat in cut_mats:
-                cut_mat = Matrix(cut_mat)
-                pp = Vector((0.0, 0.0, 0.0)) * cut_mat.transposed()
-                pno = Vector((0.0, 0.0, 1.0)) * cut_mat.to_3x3().transposed()
-
-                verts_pre_out = []
-                edges_pre_out = []
-                for idx_mob, matrix in enumerate(matrixs):
-                    idx_vob = min(idx_mob, len(verts_ob)-1)
-                    idx_epob = min(idx_mob, len(edg_pols_ob)-1)
-                    matrix = Matrix(matrix)
-
-                    x_me = section(verts_ob[idx_vob], edg_pols_ob[idx_epob], matrix, pp, pno, self.fill_check, self.tri)
-                    if x_me:
-                        verts_pre_out.append(x_me['Verts'])
-                        edges_pre_out.append(x_me['Edges'])
-
-                if verts_pre_out:
-                    verts_out.extend(verts_pre_out)
-                    edges_out.extend(edges_pre_out)
-
-            if 'vertices' in self.outputs and self.outputs['vertices'].links:
-                output = Vector_degenerate(verts_out)
-                SvSetSocketAnyType(self, 'vertices', output)
-
-            if 'edges' in self.outputs and self.outputs['edges'].links:
-
-                SvSetSocketAnyType(self, 'edges', edges_out)
-
+        if self.inputs['matrix'].is_linked:
+            matrixs = self.inputs['matrix'].sv_get()
         else:
-            pass
-        #    self.outputs['vertices'].VerticesProperty = str([])
-        #    self.outputs['edges'].StringsProperty = str([])
+            matrixs = []
+            for le in verts_ob:
+                matrixs.append(Matrix())
+
+        cut_mats = self.inputs['cut_matrix'].sv_get()
+
+        verts_out = []
+        edges_out = []
+        for cut_mat in cut_mats:
+            cut_mat = Matrix(cut_mat)
+            pp = Vector((0.0, 0.0, 0.0)) * cut_mat.transposed()
+            pno = Vector((0.0, 0.0, 1.0)) * cut_mat.to_3x3().transposed()
+
+            verts_pre_out = []
+            edges_pre_out = []
+            for idx_mob, matrix in enumerate(matrixs):
+                idx_vob = min(idx_mob, len(verts_ob)-1)
+                idx_epob = min(idx_mob, len(edg_pols_ob)-1)
+                matrix = Matrix(matrix)
+
+                x_me = section(verts_ob[idx_vob], edg_pols_ob[idx_epob], matrix, pp, pno, self.fill_check, self.tri)
+                if x_me:
+                    verts_pre_out.append(x_me['Verts'])
+                    edges_pre_out.append(x_me['Edges'])
+
+            if verts_pre_out:
+                verts_out.extend(verts_pre_out)
+                edges_out.extend(edges_pre_out)
+
+        self.outputs['vertices'].sv_set(Vector_degenerate(verts_out))
+        self.outputs['edges'].sv_set(edges_out)
+
 
 
 

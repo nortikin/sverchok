@@ -32,9 +32,7 @@ from bpy.props import BoolProperty, StringProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (
     updateNode, multi_socket, changable_sockets,
-    dataSpoil, dataCorrect, levelsOflist,
-    SvSetSocketAnyType, SvGetSocketAnyType
-)
+    dataSpoil, dataCorrect, levelsOflist)
 
 
 
@@ -44,13 +42,9 @@ class Formula2Node(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Formula'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    formula = StringProperty(name='formula',
-                             default='x+n[0]',
-                             update=updateNode)
-    typ = StringProperty(name='typ',
-                         default='')
-    newsock = BoolProperty(name='newsock',
-                           default=False)
+    formula = StringProperty(name='formula', default='x+n[0]', update=updateNode)
+    newsock = BoolProperty(name='newsock', default=False)
+    typ = StringProperty(name='typ', default='')
 
     base_name = 'n'
     multi_socket_type = 'StringsSocket'
@@ -59,16 +53,15 @@ class Formula2Node(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "formula", text="")
 
     def sv_init(self, context):
-        self.inputs.new('StringsSocket', "X", "X")
-        self.inputs.new('StringsSocket', "n[0]", "n[0]")
-        self.outputs.new('StringsSocket', "Result", "Result")
+        self.inputs.new('StringsSocket', "X")
+        self.inputs.new('StringsSocket', "n[0]")
+        self.outputs.new('StringsSocket', "Result")
 
     def update(self):
         # inputs
         multi_socket(self, min=2, start=-1, breck=True)
 
         if self.inputs['X'].links:
-            # адаптивный сокет
             inputsocketname = 'X'
             outputsocketname = ['Result']
             changable_sockets(self, inputsocketname, outputsocketname)
@@ -76,10 +69,9 @@ class Formula2Node(bpy.types.Node, SverchCustomTreeNode):
 
     def process(self):
         if self.inputs['X'].is_linked:
-            vecs = SvGetSocketAnyType(self, self.inputs['X'])
+            vecs = self.inputs['X'].sv_get()
         else:
             vecs = [[0.0]]
-
 
         # outputs
         if not self.outputs['Result'].is_linked:
@@ -90,10 +82,10 @@ class Formula2Node(bpy.types.Node, SverchCustomTreeNode):
             i = 0
             for socket in self.inputs[1:]:
                 if socket.is_linked:
-                    list_mult.append(SvGetSocketAnyType(self, socket))
-            #print(list_mult)
+                    list_mult.append(socket.sv_get())
+
         code_formula = parser.expr(self.formula).compile()
-        # finding nasty levels, make equal nastyness (canonical 0,1,2,3)
+        # finding nested levels, make equal nastedness (canonical 0,1,2,3)
         levels = [levelsOflist(vecs)]
         for n in list_mult:
             levels.append(levelsOflist(n))
@@ -110,11 +102,12 @@ class Formula2Node(bpy.types.Node, SverchCustomTreeNode):
             if diflevel:
                 list_temp = dataSpoil([list_mult[i-1]], diflevel-1)
                 list_mult[i-1] = dataCorrect(list_temp, nominal_dept=2)
-        #print(list_mult)
+
         r = self.inte(vecs, code_formula, list_mult, 3)
         result = dataCorrect(r, nominal_dept=min((levels[0]-1), 2))
 
-        SvSetSocketAnyType(self, 'Result', result)
+        self.outputs['Result'].sv_set(result)
+
 
     def inte(self, list_x, formula, list_n, levels, index=0):
         ''' calc lists in formula '''
@@ -129,6 +122,7 @@ class Formula2Node(bpy.types.Node, SverchCustomTreeNode):
                 out1.append(out2)
             out.append(out1)
         return out
+
 
     def calc_item(self, x, formula, nlist, j, k, q):
         X = x
@@ -149,6 +143,7 @@ class Formula2Node(bpy.types.Node, SverchCustomTreeNode):
             n.append(nitem[j][k][q])
         N = n
         return eval(formula)
+
 
     def normalize(self, listN, listX):
         Lennox = len(listX)
@@ -174,11 +169,11 @@ class Formula2Node(bpy.types.Node, SverchCustomTreeNode):
             new_list_n.append(ne)
         return new_list_n
 
+
     def enlarge(self, lst, equal):
         ''' enlarge minor n[i] list to size of x list '''
-
         lst.extend([lst[-1] for i in range(equal)])
-        #return lst
+
 
 
 def register():
@@ -187,6 +182,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(Formula2Node)
-
-if __name__ == '__main__':
-    register()

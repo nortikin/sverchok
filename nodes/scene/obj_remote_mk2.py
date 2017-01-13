@@ -21,7 +21,7 @@ from mathutils import Matrix
 
 from sverchok.node_tree import SverchCustomTreeNode, MatrixSocket
 from sverchok.sockets import SvObjectSocket
-from sverchok.data_structure import dataCorrect, updateNode, SvGetSocketAnyType, match_long_repeat
+from sverchok.data_structure import dataCorrect, updateNode, match_long_repeat
 
 
 class SvObjRemoteNodeMK2(bpy.types.Node, SverchCustomTreeNode):
@@ -44,7 +44,7 @@ class SvObjRemoteNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
         matrices = dataCorrect(self.inputs[0].sv_get())
         objects = self.inputs[1].sv_get()
-        matrices, objects = match_long_repeat([matrices,objects])
+        matrices, objects = match_long_repeat([matrices, objects])
         for obj, mat in zip(objects, matrices):
             setattr(obj, 'matrix_world', Matrix(mat))
 
@@ -58,6 +58,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvObjRemoteNodeMK2)
-
-if __name__ == '__main__':
-    register()
