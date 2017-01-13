@@ -24,8 +24,7 @@ from bpy.props import EnumProperty, FloatProperty
 from mathutils import Matrix, Euler
 
 from sverchok.node_tree import SverchCustomTreeNode, StringsSocket
-from sverchok.data_structure import (updateNode, Matrix_listing, match_long_repeat,
-                            SvSetSocketAnyType, SvGetSocketAnyType)
+from sverchok.data_structure import (updateNode, Matrix_listing, match_long_repeat)
 
 
 class SvMatrixEulerNode(bpy.types.Node, SverchCustomTreeNode):
@@ -72,8 +71,6 @@ class SvMatrixEulerNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "order", text="Order:")
 
     def process(self):
-        if not 'Matrix' in self.outputs:
-            return
         if not self.outputs['Matrix'].is_linked:
             return
         inputs = self.inputs
@@ -83,7 +80,7 @@ class SvMatrixEulerNode(bpy.types.Node, SverchCustomTreeNode):
             a_r = [radians(x) for x in angles]
             mat = Euler(a_r, self.order).to_matrix().to_4x4()
             mats.append(mat)
-        SvSetSocketAnyType(self, 'Matrix', Matrix_listing(mats))
+        self.outputs['Matrix'].sv_set(Matrix_listing(mats))
 
 
 def register():

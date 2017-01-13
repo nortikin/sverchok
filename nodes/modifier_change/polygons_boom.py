@@ -19,8 +19,6 @@
 import bpy
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import SvSetSocketAnyType, SvGetSocketAnyType
-
 
 class PolygonBoomNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Destroy object to many object of polygons '''
@@ -34,35 +32,23 @@ class PolygonBoomNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('VerticesSocket', 'vertices', 'vertices')
         self.outputs.new('StringsSocket', 'edg_pol', 'edg_pol')
 
-    def draw_buttons(self, context, layout):
-        pass
-
     def process(self):
         # inputs
-        if 'vertices' in self.outputs and self.outputs['vertices'].is_linked or \
-                'edg_pol' in self.outputs and self.outputs['edg_pol'].is_linked:
-            if 'vertices' in self.inputs and self.inputs['vertices'].is_linked and \
-                'edg_pol' in self.inputs and self.inputs['edg_pol'].is_linked:
-                vertices = SvGetSocketAnyType(self, self.inputs['vertices'])
-                edgs_pols = SvGetSocketAnyType(self, self.inputs['edg_pol'])
-            else:
-                return
-            vert_out = []
-            edpo_out = []
-            for k, ob in enumerate(edgs_pols):
-                for ep in ob:
-                    new_vers = []
-                    new_edpo = []
-                    for i, index in enumerate(ep):
-                        new_vers.append(vertices[k][index])
-                        new_edpo.append(i)
-                    vert_out.append(new_vers)
-                    edpo_out.append([new_edpo])
-
-            if 'vertices' in self.outputs and self.outputs['vertices'].is_linked:
-                SvSetSocketAnyType(self, 'vertices', vert_out)
-            if 'edg_pol' in self.outputs and self.outputs['edg_pol'].is_linked:
-                SvSetSocketAnyType(self, 'edg_pol', edpo_out)
+        vertices = self.inputs['vertices'].sv_get()
+        edgs_pols = self.inputs['edg_pol'].sv_get()
+        vert_out = []
+        edpo_out = []
+        for k, ob in enumerate(edgs_pols):
+            for ep in ob:
+                new_vers = []
+                new_edpo = []
+                for i, index in enumerate(ep):
+                    new_vers.append(vertices[k][index])
+                    new_edpo.append(i)
+                vert_out.append(new_vers)
+                edpo_out.append([new_edpo])
+        self.outputs['vertices'].sv_set(vert_out)
+        self.outputs['edg_pol'].sv_set(edpo_out)
 
 
 def register():

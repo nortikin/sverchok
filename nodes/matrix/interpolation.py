@@ -21,8 +21,7 @@ from mathutils import Matrix
 
 from sverchok.node_tree import SverchCustomTreeNode, MatrixSocket, StringsSocket
 from sverchok.data_structure import (updateNode, fullList,
-                            Matrix_listing, Matrix_generate,
-                            SvGetSocketAnyType, SvSetSocketAnyType)
+                                     Matrix_listing, Matrix_generate)
 
 
 # Matrix are assumed to be in format
@@ -41,9 +40,6 @@ class MatrixInterpolationNode(bpy.types.Node, SverchCustomTreeNode):
     factor_ = bpy.props.FloatProperty(name='Factor', description='Interpolation',
                                       default=0.5, min=0.0, max=1.0,
                                       options={'ANIMATABLE'}, update=updateNode)
-
-    def draw_buttons(self, context, layout):
-        pass
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', "Factor", "Factor").prop_name = 'factor_'

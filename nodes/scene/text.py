@@ -33,7 +33,7 @@ from bpy.props import BoolProperty, EnumProperty, StringProperty
 
 from sverchok.node_tree import SverchCustomTreeNode, StringsSocket
 from sverchok.data_structure import (node_id, multi_socket,
-                            updateNode, SvGetSocketAnyType, SvSetSocketAnyType)
+                                     updateNode)
 
 
 #this function shouldn't be used, always use full .bl_idname in the code
@@ -174,7 +174,7 @@ class SvTextInNode(bpy.types.Node, SverchCustomTreeNode):
 
     #interesting but dangerous, TODO
     autoreload = BoolProperty(default=False, description="Reload text file on every update")
-    
+
     # to have one socket output
     one_sock = BoolProperty(name='one_sock', default=False)
 
@@ -309,11 +309,11 @@ class SvTextInNode(bpy.types.Node, SverchCustomTreeNode):
         csv_data = self.csv_data[n_id]
         if not self.one_sock:
             for name in csv_data.keys():
-                if name in self.outputs and self.outputs[name].links:
-                    SvSetSocketAnyType(self, name, [csv_data[name]])
+                if name in self.outputs and self.outputs[name].is_linked:
+                    self.outputs[name].sv_set([csv_data[name]])
         else:
             name = 'one_sock'
-            SvSetSocketAnyType(self, 'one_sock', list(csv_data.values()))
+            self.outputs['one_sock'].sv_set(list(csv_data.values()))
 
     def reload_csv(self):
         n_id = node_id(self)
@@ -465,7 +465,7 @@ class SvTextInNode(bpy.types.Node, SverchCustomTreeNode):
         # load data into selected socket
         for item in ['Vertices', 'Data', 'Matrix']:
             if item in self.outputs and self.outputs[item].links:
-                SvSetSocketAnyType(self, item, self.list_data[n_id])
+                self.outputs[item].sv_set(self.list_data[n_id])
 #
 # JSON
 #
@@ -538,9 +538,9 @@ class SvTextInNode(bpy.types.Node, SverchCustomTreeNode):
         self.color = READY_COLOR
         json_data = self.json_data[n_id]
         for item in json_data:
-            if item in self.outputs and self.outputs[item].links:
+            if item in self.outputs and self.outputs[item].is_linked:
                 out = json_data[item][1]
-                SvSetSocketAnyType(self, item, out)
+                self.outputs[item].sv_set(out)
 
 
 ###############################################################################
@@ -672,10 +672,9 @@ class SvTextOutNode(bpy.types.Node, SverchCustomTreeNode):
         if self.text_mode == 'CSV':
             data_out = []
             for socket in self.inputs:
-                if socket.links and \
-                    type(socket.links[0].from_socket) == StringsSocket:
+                if socket.is_linked:
 
-                    tmp = SvGetSocketAnyType(self, socket)
+                    tmp = socket.sv_get(deepcopy=False)
                     if tmp:
                         # flatten list
                         data_out.extend(list(itertools.chain.from_iterable([tmp])))
@@ -692,8 +691,8 @@ class SvTextOutNode(bpy.types.Node, SverchCustomTreeNode):
             name_dict = {'m': 'Matrix', 's': 'Data', 'v': 'Vertices'}
 
             for socket in self.inputs:
-                if socket.links:
-                    tmp = SvGetSocketAnyType(self, socket)
+                if socket.is_linked:
+                    tmp = socket.sv_get(deepcopy=False)
                     if tmp:
                         tmp_name = socket.links[0].from_node.name+':'+socket.links[0].from_socket.name
                         name = tmp_name
@@ -711,7 +710,7 @@ class SvTextOutNode(bpy.types.Node, SverchCustomTreeNode):
 
         elif self.text_mode == 'SV':
             if self.inputs['Data'].links:
-                data = SvGetSocketAnyType(self, self.inputs['Data'])
+                data = self.inputs['Data'].sv_get(deepcopy=False)
                 if self.sv_mode == 'pretty':
                     out = pprint.pformat(data)
                 else:  # compact
@@ -732,4 +731,3 @@ def unregister():
 
 if __name__ == '__main__':
     register()
-

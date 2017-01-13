@@ -21,7 +21,7 @@ from mathutils import Matrix
 from bpy.props import StringProperty, BoolProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import SvGetSocketAnyType, node_id, Matrix_generate
+from sverchok.data_structure import node_id, Matrix_generate
 
 
 class SvEmptyOutNode(bpy.types.Node, SverchCustomTreeNode):
@@ -90,14 +90,14 @@ class SvEmptyOutNode(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons_ext(self, context, layout):
         layout.prop(self, "auto_remove")
 
-    def process(self):    
+    def process(self):
         empty = self.find_empty()
         if not empty:
             empty = self.create_empty()
             print("created new empty")
 
         if self.inputs['Matrix'].is_linked:
-            mats = SvGetSocketAnyType(self, self.inputs['Matrix'])
+            mats = self.inputs['Matrix'].sv_get()
             mat = Matrix_generate(mats)[0]
         else:
             mat = Matrix()

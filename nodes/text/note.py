@@ -40,26 +40,26 @@ class NoteNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'NoteNode'
     bl_label = 'Note'
     bl_icon = 'OUTLINER_OB_EMPTY'
-    
+
     def update_text(self, context):
         self.format_text()
         # recursion protection, should be solved with better structure
         if not self.inputs[0].links:
             updateNode(self, context)
-        
+
     text = StringProperty(name='text',
                           default='your text here',
                           update=update_text)
     text_cache = {}
     n_id = StringProperty(default='')
-    show_text = BoolProperty(default=False, name="Show text", 
+    show_text = BoolProperty(default=False, name="Show text",
                              description="Show text box in node")
-    
+
     def format_text(self):
         n_id = node_id(self)
         tl = format_text(self.text, self.width)
         self.text_cache[n_id] = (self.width, tl)
-        
+
     def sv_init(self, context):
         n_id = node_id(self)
         self.width = 400
@@ -67,13 +67,13 @@ class NoteNode(bpy.types.Node, SverchCustomTreeNode):
         self.use_custom_color = True
         self.inputs.new('StringsSocket', "Text In", "Text In")
         self.outputs.new('StringsSocket', "Text Out", "Text Out")
-    
+
     def draw_buttons(self, context, layout):
         if self.show_text:
             row = layout.row()
             row.scale_y = 1.1
             row.prop(self, "text", text='')
-        
+
         def draw_lines(col, lines):
             skip = False
             for l in lines:
@@ -85,7 +85,7 @@ class NoteNode(bpy.types.Node, SverchCustomTreeNode):
                 else:
                     col.label(text=l)
                     skip = True
-                    
+
         col = layout.column(align=True)
         if self.n_id in self.text_cache:
             data = self.text_cache.get(self.n_id)
@@ -94,7 +94,7 @@ class NoteNode(bpy.types.Node, SverchCustomTreeNode):
                 return
         text_lines = format_text(self.text, self.width)
         draw_lines(col, text_lines)
-        
+
     def draw_buttons_ext(self, context, layout):
         layout.prop(self, "text")
         layout.prop(self, "show_text", toggle=True)
@@ -112,26 +112,26 @@ class NoteNode(bpy.types.Node, SverchCustomTreeNode):
             text = bpy.data.texts.new(sv_n_t)
         text.clear()
         text.write(self.text)
-    
+
     def from_clipboard(self):
         self.text = bpy.context.window_manager.clipboard
-        
+
     def process(self):
-        if 'Text In' in self.inputs and self.inputs['Text In'].is_linked:
-            self.text = str(SvGetSocketAnyType(self,self.inputs['Text In']))
+        if self.inputs and self.inputs['Text In'].is_linked:
+            self.text = str(self.inputs['Text In'].sv_get(deepcopy=False))
 
         n_id = node_id(self)
         if not n_id in self.text_cache:
             self.format_text()
-            
-        if 'Text Out' in self.outputs and self.outputs['Text Out'].is_linked:
-            # I'm not sure that this makes sense, but keeping it like 
+
+        if self.outputs and self.outputs['Text Out'].is_linked:
+            # I'm not sure that this makes sense, but keeping it like
             # old note right now. Would expect one value, and optional
-            # split, or split via a text processing node, 
+            # split, or split via a text processing node,
             # but keeping this for now
             text = [[a] for a in self.text.split()]
-            SvSetSocketAnyType(self, 'Text Out', [text])
-    
+            self.outputs['Text Out'].sv_set([text])
+
     def copy(self, node):
         self.n_id = ''
         node_id(self)
@@ -141,6 +141,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(NoteNode)
-
-if __name__ == '__main__':
-    register()
