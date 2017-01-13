@@ -18,6 +18,7 @@
 
 import inspect
 import operator
+from math import sqrt
 
 import bpy
 from bpy.props import EnumProperty, IntProperty, FloatProperty
@@ -32,7 +33,13 @@ from sverchok.data_structure import (updateNode, Vector_degenerate, match_long_r
 members = inspect.getmembers(noise.types)
 noise_dict = {t[0]: t[1] for t in members if isinstance(t[1], int)}
 
-noise_f = {'SCALAR': noise.noise, 'VECTOR': noise.noise_vector}
+def deepnoise(v, _noise_type):
+    u = noise.noise_vector(v, _noise_type)[:]
+    a = u[0], u[1], u[2]-1   # a = u minus (0,0,1)
+    return sqrt((a[0] * a[0]) + (a[1] * a[1]) + (a[2] * a[2])) * 0.5
+
+
+noise_f = {'SCALAR': deepnoise, 'VECTOR': noise.noise_vector}
 
 
 def avail_noise(self, context):
