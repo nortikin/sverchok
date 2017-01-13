@@ -20,7 +20,6 @@ from itertools import chain
 
 import bpy
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import SvSetSocketAnyType, SvGetSocketAnyType
 
 
 class SvDeleteLooseNode(bpy.types.Node, SverchCustomTreeNode):
@@ -38,52 +37,47 @@ class SvDeleteLooseNode(bpy.types.Node, SverchCustomTreeNode):
 
     def process(self):
 
-        if 'Vertices' in self.inputs and self.inputs['Vertices'].is_linked and \
-           'PolyEdge' in self.inputs and self.inputs['PolyEdge'].is_linked:
+        verts = self.inputs['Vertices'].sv_get()
+        poly_edge = self.inputs['PolyEdge'].sv_get()
+        verts_out = []
+        poly_edge_out = []
+        for ve, pe in zip(verts, poly_edge):
+            """
+            Okay so honestly this still upsets me, I will comment it out
+            for now. If somebody wants this to work please give it a go,
+            but dump broken codde into master with a comment,
+            like below...
 
-            verts = SvGetSocketAnyType(self, self.inputs['Vertices'])
-            poly_edge = SvGetSocketAnyType(self, self.inputs['PolyEdge'])
-            verts_out = []
-            poly_edge_out = []
-            for ve, pe in zip(verts, poly_edge):
+            # trying to remove indeces of polygons that more that length of
+            # vertices list. But it doing wrong, ideces not mutch vertices...
+            # what am i doing wrong?
+            # i guess, i didn't understood this iterations at all
 
-                # trying to remove indeces of polygons that more that length of
-                # vertices list. But it doing wrong, ideces not mutch vertices...
-                # what am i doing wrong?
-                # i guess, i didn't understood this iterations at all
+            delp = []
+            for p in pe:
+                deli = []
+                for i in p:
+                    if i >= len(ve):
+                        deli.append(i)
+                if deli and (len(p)-len(deli)) >= 2:
+                    print(deli)
+                    for k in deli:
+                        p.remove(k)
+                elif (len(p)-len(deli)) <= 1:
+                    delp.append(p)
+            if delp:
+                for d in delp:
+                    pe.remove(d)
+            """
+            indx = set(chain.from_iterable(pe))
+            verts_out.append([v for i, v in enumerate(ve) if i in indx])
+            v_index = dict([(j, i) for i, j in enumerate(sorted(indx))])
+            poly_edge_out.append([list(map(lambda n:v_index[n], p)) for p in pe])
 
-                delp = []
-                for p in pe:
-                    deli = []
-                    for i in p:
-                        if i >= len(ve):
-                            deli.append(i)
-                    if deli and (len(p)-len(deli)) >= 2:
-                        print(deli)
-                        for k in deli:
-                            p.remove(k)
-                    elif (len(p)-len(deli)) <= 1:
-                        delp.append(p)
-                if delp:
-                    for d in delp:
-                        pe.remove(d)
-
-                indx = set(chain.from_iterable(pe))
-                verts_out.append([v for i, v in enumerate(ve) if i in indx])
-                v_index = dict([(j, i) for i, j in enumerate(sorted(indx))])
-                poly_edge_out.append([list(map(lambda n:v_index[n], p)) for p in pe])
-
-            if 'Vertices' in self.outputs and self.outputs['Vertices'].is_linked:
-                SvSetSocketAnyType(self, 'Vertices', verts_out)
-
-            if 'PolyEdge' in self.outputs and self.outputs['PolyEdge'].is_linked:
-                if poly_edge_out:
-                    SvSetSocketAnyType(self, 'PolyEdge', poly_edge_out)
-                else:
-                    SvSetSocketAnyType(self, 'PolyEdge', [[[]]])
-
-    def update_socket(self, context):
-        self.update()
+        if self.outputs['Vertices'].is_linked:
+            self.outputs['Vertices'].sv_set(verts_out)
+        if poly_edge_out:
+            self.outputs['PolyEdge'].sv_set(poly_edge_out)
 
 
 def register():
