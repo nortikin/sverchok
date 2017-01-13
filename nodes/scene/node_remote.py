@@ -27,9 +27,7 @@ from bpy.props import (
 )
 
 from sverchok.node_tree import SverchCustomTreeNode, MatrixSocket
-from sverchok.data_structure import (
-    dataCorrect, updateNode, SvGetSocketAnyType
-)
+from sverchok.data_structure import dataCorrect, updateNode
 from sverchok.nodes.object_nodes.getsetprop import (
     assign_data, wrap_output_data, types
 )
@@ -76,9 +74,6 @@ class SvNodeRemoteNode(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', 'auto_convert')
-        # self.inputs.new('VerticesSocket', 'scale')
-        # self.inputs.new('VerticesSocket', 'rotation')
-        ...
 
     def draw_buttons(self, context, layout):
         col = layout.column()
