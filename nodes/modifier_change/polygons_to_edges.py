@@ -17,18 +17,23 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
+from bpy.props import BoolProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import dataCorrect, SvSetSocketAnyType, SvGetSocketAnyType
+from sverchok.data_structure import dataCorrect
 
-def pols_edges(obj):
+def pols_edges(obj, unique_edges=False):
     out = []
     for faces in obj:
-        out_edges = [] #set() #[]
+        out_edges = []
+        seen = set()
         for face in faces:
-            for edge in zip(face, list(face[1:])+list([face[0]])):
-                #out_edges.add(tuple(sorted(edge)))
-                out_edges.append(list(edge))
+            for edge in zip(face, list(face[1:]) + list([face[0]])):
+                if unique_edges and tuple(sorted(edge)) in seen:
+                    continue
+                if unique_edges:
+                    seen.add(tuple(sorted(edge)))
+                out_edges.append(edge)
         out.append(out_edges)
     return out
 
@@ -38,38 +43,24 @@ class Pols2EdgsNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Polygons to Edges'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
+    unique_edges = BoolProperty(name="Unique Edges", default=False,
+                                update=SverchCustomTreeNode.process_node)
+
+
+    def draw_buttons(self, context, layout):
+        layout.prop(self, "unique_edges")
+
     def sv_init(self, context):
         self.inputs.new('StringsSocket', "pols", "pols")
         self.outputs.new('StringsSocket', "edgs", "edgs")
 
     def process(self):
-        if 'edgs' in self.outputs and len(self.outputs['edgs'].links) > 0:
-            if 'pols' in self.inputs and len(self.inputs['pols'].links) > 0:
-                X_ = self.inputs['pols'].sv_get() #SvGetSocketAnyType(self, self.inputs['pols'])
-                X = dataCorrect(X_)
-                #print('p2e-X',str(X))
-                result = pols_edges(X)
-                #result = self.polstoedgs(X)
-                SvSetSocketAnyType(self, 'edgs', result)
-
-
-    def polstoedgs(self, pols):
-        # outdated
-        out = []
-        for obj in pols:
-            object = []
-            for pols in obj:
-                edgs = []
-                for i, ind in enumerate(pols):
-                    #print('p2e',str(i%2), str(ind))
-                    this = [ind, pols[i-1]]
-                    this.sort()
-                    if this not in edgs and this not in object:
-                        edgs.append(this)
-                object.extend(edgs)
-            out.append(object)
-        #print('p2e',str(out))
-        return out
+        if not self.outputs[0].is_linked:
+            return
+        X_ = self.inputs['pols'].sv_get()
+        X = dataCorrect(X_)
+        result = pols_edges(X, self.unique_edges)
+        self.outputs['edgs'].sv_set(result)
 
 
 def register():
@@ -81,4 +72,3 @@ def unregister():
 
 if __name__ == '__main__':
     register()
-
