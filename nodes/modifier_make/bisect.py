@@ -22,9 +22,8 @@ import bmesh
 from mathutils import Vector
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (updateNode,
-                            Matrix_generate, Vector_generate,
-                            SvSetSocketAnyType, SvGetSocketAnyType)
+from sverchok.data_structure import updateNode, Matrix_generate, Vector_generate
+
 
 # based on CrossSectionNode
 # but using python bmesh code for driving
@@ -91,13 +90,13 @@ class SvBisectNode(bpy.types.Node, SverchCustomTreeNode):
                         update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', 'vertices', 'vertices')
-        self.inputs.new('StringsSocket', 'edg_pol', 'edg_pol')
-        self.inputs.new('MatrixSocket', 'cut_matrix', 'cut_matrix')
+        self.inputs.new('VerticesSocket', 'vertices')
+        self.inputs.new('StringsSocket', 'edg_pol')
+        self.inputs.new('MatrixSocket', 'cut_matrix')
 
-        self.outputs.new('VerticesSocket', 'vertices', 'vertices')
-        self.outputs.new('StringsSocket', 'edges', 'edges')
-        self.outputs.new('StringsSocket', 'polygons', 'polygons')
+        self.outputs.new('VerticesSocket', 'vertices')
+        self.outputs.new('StringsSocket', 'edges')
+        self.outputs.new('StringsSocket', 'polygons')
 
     def draw_buttons(self, context, layout):
         layout.prop(self, 'inner', text="Clear Inner")
@@ -105,42 +104,35 @@ class SvBisectNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, 'fill', text="Fill cuts")
 
     def process(self):
-        if not ('vertices' in self.outputs and self.outputs['vertices'].links or
-                'edges' in self.outputs and self.outputs['edges'].links and
-                'polygons' in self.outputs and self.outputs['polygons'].links):
+
+        if not all([s.is_linked for s in self.inputs]):
             return
 
-        if 'vertices' in self.inputs and self.inputs['vertices'].links and \
-           'edg_pol' in self.inputs and self.inputs['edg_pol'].links and\
-           'cut_matrix' in self.inputs and self.inputs['cut_matrix'].links:
+        if not self.outputs['vertices'].is_linked:
+            return
 
-            verts_ob = Vector_generate(SvGetSocketAnyType(self, self.inputs['vertices']))
-            edg_pols = SvGetSocketAnyType(self, self.inputs['edg_pol'])
-            cut_mats_ = SvGetSocketAnyType(self, self.inputs['cut_matrix'])
-            cut_mats = Matrix_generate(cut_mats_)
-            verts_out = []
-            edges_out = []
-            polys_out = []
+        verts_ob = Vector_generate(self.inputs['vertices'].sv_get())
+        edg_pols = self.inputs['edg_pol'].sv_get()
+        cut_mats_ = self.inputs['cut_matrix'].sv_get()
+        cut_mats = Matrix_generate(cut_mats_)
+        verts_out = []
+        edges_out = []
+        polys_out = []
 
-            for cut_mat in cut_mats:
-                pp = cut_mat.to_translation()
-                pno = Vector((0.0, 0.0, 1.0)) * cut_mat.to_3x3().transposed()
-                for obj in zip(verts_ob, edg_pols):
-                    res = bisect(obj[0], obj[1], pp, pno, self.outer, self.inner, self.fill)
-                    if not res:
-                        return
-                    verts_out.append(res[0])
-                    edges_out.append(res[1])
-                    polys_out.append(res[2])
+        for cut_mat in cut_mats:
+            pp = cut_mat.to_translation()
+            pno = Vector((0.0, 0.0, 1.0)) * cut_mat.to_3x3().transposed()
+            for obj in zip(verts_ob, edg_pols):
+                res = bisect(obj[0], obj[1], pp, pno, self.outer, self.inner, self.fill)
+                if not res:
+                    return
+                verts_out.append(res[0])
+                edges_out.append(res[1])
+                polys_out.append(res[2])
 
-            if 'vertices' in self.outputs and self.outputs['vertices'].links:
-                SvSetSocketAnyType(self, 'vertices', verts_out)
-
-            if 'edges' in self.outputs and self.outputs['edges'].links:
-                SvSetSocketAnyType(self, 'edges', edges_out)
-
-            if 'polygons' in self.outputs and self.outputs['polygons'].links:
-                SvSetSocketAnyType(self, 'polygons', polys_out)
+        self.outputs['vertices'].sv_set(verts_out)
+        self.outputs['edges'].sv_set(edges_out)
+        self.outputs['polygons'].sv_set(polys_out)
 
 
 def register():
