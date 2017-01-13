@@ -19,7 +19,7 @@
 import bpy
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import levelsOflist, SvSetSocketAnyType, SvGetSocketAnyType
+from sverchok.data_structure import levelsOflist
 
 
 class VertsDelDoublesNode(bpy.types.Node, SverchCustomTreeNode):

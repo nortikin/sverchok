@@ -23,8 +23,7 @@ import bpy
 from bpy.props import EnumProperty, FloatProperty, BoolProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (updateNode, dataCorrect, repeat_last,
-                            SvSetSocketAnyType, SvGetSocketAnyType)
+from sverchok.data_structure import updateNode, dataCorrect, repeat_last
 
 # spline function modifed from
 # from looptools 4.5.2 done by Bart Crouch

@@ -77,7 +77,6 @@ class SvBakeText (bpy.types.Operator):
         def get_data(name, fallback=[]):
             TypeSocket = get_socket_type(name)
             if has_good_link(name, TypeSocket):
-                # d = dataCorrect(SvGetSocketAnyType(node, inputs[name]))
                 d = dataCorrect(inputs[name].sv_get())
                 if name == 'matrix':
                     d = Matrix_generate(d) if d else []

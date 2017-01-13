@@ -22,7 +22,7 @@ import bpy
 from bpy.props import StringProperty, IntProperty, BoolProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import SvSetSocketAnyType, updateNode, node_id, SvGetSocketAnyType
+from sverchok.data_structure import updateNode, node_id
 
 
 TEXT_WIDTH = 6

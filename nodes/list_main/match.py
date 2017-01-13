@@ -21,8 +21,7 @@ from bpy.props import IntProperty, EnumProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (match_short, match_long_cycle, updateNode,
-                            match_long_repeat, match_cross2,
-                            SvSetSocketAnyType, SvGetSocketAnyType)
+                                     match_long_repeat, match_cross2)
 
 #
 # List Match Node by Linus Yng
