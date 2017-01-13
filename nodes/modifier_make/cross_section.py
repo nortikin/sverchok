@@ -211,7 +211,8 @@ class CrossSectionNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "tri", text="alt+F / F")
 
     def process(self):
-        if not all([s.is_linked for s in self.inputs]):
+        mandatory_sockets = [self.inputs['vertices'], self.inputs['edg_pol'], self.inputs['cut_matrix']]
+        if not all([s.is_linked for s in mandatory_sockets]):
             return
 
         verts_ob = Vector_generate(self.inputs['vertices'].sv_get())
