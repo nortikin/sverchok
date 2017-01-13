@@ -26,9 +26,9 @@ from mathutils.geometry import intersect_line_line as IL2L
 from mathutils.geometry import intersect_line_plane as IL2P
 from mathutils.geometry import normal as NM
 from mathutils import kdtree as KDT
-from sverchok.data_structure import Vector_generate, Vector_degenerate, fullList, \
-                           SvSetSocketAnyType, SvGetSocketAnyType, dataCorrect, \
-                           updateNode
+from sverchok.data_structure import (Vector_generate, Vector_degenerate, fullList,
+                                     dataCorrect,
+                                     updateNode)
 from math import sin, atan, cos, degrees, radians
 from bpy.props import FloatProperty, BoolProperty, EnumProperty
 from sverchok.node_tree import SverchCustomTreeNode
@@ -58,10 +58,10 @@ class SvWafelNode(bpy.types.Node, SverchCustomTreeNode):
             self.inputs.new('VerticesSocket', 'vecContr')
         elif not self.do_contra and ('vecContr' in self.inputs):
             self.inputs.remove(self.inputs['vecContr'])
-    
+
     # now we just need to sort out the properties that creates socket
     # from the ones that should process.
-    
+
     thick = FloatProperty(name='thick', description='thickness of material',
                            default=0.01)
 
@@ -97,7 +97,7 @@ class SvWafelNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('VerticesSocket', 'vecPlane', 'vecPlane')
         self.inputs.new('StringsSocket', 'edgPlane', 'edgPlane')
         self.inputs.new('StringsSocket', 'thick').prop_name = 'thick'
-        
+
         self.outputs.new('VerticesSocket', 'vert', 'vert')
         self.outputs.new('StringsSocket', 'edge', 'edge')
         #self.outputs.new('VerticesSocket', 'vertLo', 'vertLo')
@@ -208,7 +208,7 @@ class SvWafelNode(bpy.types.Node, SverchCustomTreeNode):
 
 
     def process(self):
-            
+
         if 'vecLine' in self.inputs and \
                 'vecPlane' in self.inputs and \
                 'edgPlane' in self.inputs:
@@ -347,7 +347,7 @@ class SvWafelNode(bpy.types.Node, SverchCustomTreeNode):
                             # print(left2, right2, l2, r2, lz2, rz2)
                             # средняя точка и её смещение по толщине материала
                             three = (one-two)/2 + two
-                            
+
                             # rounded section
                             if self.rounded:
                                 '''рёбра'''
@@ -387,7 +387,7 @@ class SvWafelNode(bpy.types.Node, SverchCustomTreeNode):
                                                  three-round2+round2_, three-round1+dirx,
                                                  lz1])
                                 k += 10
-                            
+
                             # streight section
                             else:
                                 '''рёбра'''
@@ -398,14 +398,14 @@ class SvWafelNode(bpy.types.Node, SverchCustomTreeNode):
                                 newinds1.extend([[l1, lenvep+k], [lenvep+k+3, r1]])
                                 newinds2.extend([[l2, lenvep+k+3], [lenvep+k, r2]])
                                 '''Вектора'''
-                                vupperob.extend([lz2, three-dirx, 
+                                vupperob.extend([lz2, three-dirx,
                                                  three+dirx, rz2])
                                 vlowerob.extend([rz1, three+dirx,
                                                  three-dirx, lz1])
                                 k += 4
                             newinds1.extend(outeob1)
                             newinds2.extend(outeob2)
-                            
+
                             # circles to bing panels section
                             if self.bindCircle:
                                 CP = self.circl_place
@@ -434,7 +434,7 @@ class SvWafelNode(bpy.types.Node, SverchCustomTreeNode):
                                 vupperob.extend(circle_to_add_1+circle_to_add_2)
                                 vlowerob.extend(circle_to_add_1+circle_to_add_2)
                                 k += 24
-                                
+
                             # TUBE section
                             if vec_tube and not tubes_flag_bed_solution_i_know:
                                 for v in vec_tube:
@@ -470,7 +470,7 @@ class SvWafelNode(bpy.types.Node, SverchCustomTreeNode):
                                                     vupperob.append(tubevert_out)
                                                     vlowerob.append(tubevert_out)
                                                 k += tubeshift
-                                            
+
                                 tubes_flag_bed_solution_i_know = True
                         elif cop < threshold_coplanar and inside and shortedge <= thick*threshold:
                             vupperob.extend([one,two])
@@ -493,22 +493,22 @@ class SvWafelNode(bpy.types.Node, SverchCustomTreeNode):
                 vupper = Vector_degenerate(vupper)
                 vlower = Vector_degenerate(vlower)
                 centers = Vector_degenerate([centers])
-                
+
                 if 'vert' in self.outputs:
                     if self.out_up_down == 'Up':
                         out = dataCorrect(vupper)
                     else:
                         out = dataCorrect(vlower)
-                    SvSetSocketAnyType(self, 'vert', out)
+                    self.outputs['vert'].sv_set(out)
                 if 'edge' in self.outputs and self.outputs['edge'].links:
                     if self.out_up_down == 'Up':
-                        SvSetSocketAnyType(self, 'edge', outeup)
+                        self.outputs['edge'].sv_set(outeup)
                     else:
-                        SvSetSocketAnyType(self, 'edge', outelo)
+                        self.outputs['edge'].sv_set(outelo)
                 if 'centers' in self.outputs and self.outputs['centers'].links:
-                    SvSetSocketAnyType(self, 'centers', centers)
+                    self.outputs['centers'].sv_set(centers)
                 print(self.name, 'is finishing')
-        
+
 
 def register():
     bpy.utils.register_class(SvWafelNode)
@@ -520,10 +520,3 @@ def unregister():
 
 if __name__ == '__main__':
     register()
-
-
-
-
-
-
-
