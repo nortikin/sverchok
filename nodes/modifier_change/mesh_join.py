@@ -16,12 +16,9 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-import operator
-
 import bpy
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import SvSetSocketAnyType, SvGetSocketAnyType
 from sverchok.utils.sv_mesh_utils import mesh_join
 
 
@@ -32,30 +29,27 @@ class SvMeshJoinNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', 'Vertices', 'Vertices')
-        self.inputs.new('StringsSocket', 'PolyEdge', 'PolyEdge')
+        self.inputs.new('VerticesSocket', 'Vertices')
+        self.inputs.new('StringsSocket', 'PolyEdge')
 
-        self.outputs.new('VerticesSocket', 'Vertices', 'Vertices')
-        self.outputs.new('StringsSocket', 'PolyEdge', 'PolyEdge')
+        self.outputs.new('VerticesSocket', 'Vertices')
+        self.outputs.new('StringsSocket', 'PolyEdge')
 
     def process(self):
+        Vertices, PolyEdge = self.inputs
+        Vertices_out, PolyEdge_out = self.outputs
 
-        if 'Vertices' in self.inputs and self.inputs['Vertices'].is_linked and \
-           'PolyEdge' in self.inputs and self.inputs['PolyEdge'].is_linked:
+        if Vertices.is_linked:
+            verts = Vertices.sv_get()
 
-            verts = self.inputs['Vertices'].sv_get()
-            poly_edge = self.inputs['PolyEdge'].sv_get()
+            poly_edge = PolyEdge.sv_get(default=[[]])
+            verts_out, _, poly_edge_out = mesh_join(verts, [], poly_edge)
 
-            verts_out, dummy, poly_edge_out = mesh_join(verts, [], poly_edge)
+            if Vertices_out.is_linked:
+                Vertices_out.sv_set([verts_out])
 
-            if 'Vertices' in self.outputs and self.outputs['Vertices'].is_linked:
-                self.outputs['Vertices'].sv_set([verts_out])
-
-            if 'PolyEdge' in self.outputs and self.outputs['PolyEdge'].is_linked:
-                self.outputs['PolyEdge'].sv_set([poly_edge_out])
-
-    def update_socket(self, context):
-        self.update()
+            if PolyEdge_out.is_linked:
+                PolyEdge_out.sv_set([poly_edge_out])
 
 
 def register():
