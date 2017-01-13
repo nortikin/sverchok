@@ -98,37 +98,38 @@ class SvRemoveDoublesNode(bpy.types.Node, SverchCustomTreeNode):
         if not any(s.is_linked for s in self.outputs):
             return
 
-        if self.inputs['Vertices'].is_linked:
-            # @@ self.inputs['PolyEdge'].is_linked
+        if not self.inputs['Vertices'].is_linked:
+            return
 
-            verts = Vector_generate(self.inputs['Vertices'].sv_get())
-            polys = self.inputs['PolyEdge'].sv_get(default=[[]])
-            distance = self.inputs['Distance'].sv_get(default=[self.distance])[0]
-            has_double_out = self.outputs['Doubles'].is_linked
+        verts = Vector_generate(self.inputs['Vertices'].sv_get())
+        polys = self.inputs['PolyEdge'].sv_get(default=[[]])
+        distance = self.inputs['Distance'].sv_get(default=[self.distance])[0]
+        has_double_out = self.outputs['Doubles'].is_linked
 
-            verts_out = []
-            edges_out = []
-            polys_out = []
-            d_out = []
+        verts_out = []
+        edges_out = []
+        polys_out = []
+        d_out = []
 
-            for v, p, d in zip(verts, polys, repeat_last(distance)):
-                res = remove_doubles(v, p, d, has_double_out)
-                if not res:
-                    return
-                verts_out.append(res[0])
-                edges_out.append(res[1])
-                polys_out.append(res[2])
-                d_out.append(res[3])
+        for v, p, d in zip(verts, polys, repeat_last(distance)):
+            res = remove_doubles(v, p, d, has_double_out)
+            if not res:
+                return
+            verts_out.append(res[0])
+            edges_out.append(res[1])
+            polys_out.append(res[2])
+            d_out.append(res[3])
 
-            self.outputs['Vertices'].sv_set(verts_out)
+        self.outputs['Vertices'].sv_set(verts_out)
 
-            # restrict setting this output when there is no such input
-            if self.inputs['PolyEdge'].is_linked:
-                self.outputs['Edges'].sv_set(edges_out)
-                self.outputs['Polygons'].sv_set(polys_out)
+        # restrict setting this output when there is no such input
+        if self.inputs['PolyEdge'].is_linked:
+            self.outputs['Edges'].sv_set(edges_out)
+            self.outputs['Polygons'].sv_set(polys_out)
 
-            if self.outputs['Doubles'].is_linked:
-                self.outputs['Doubles'].sv_set(d_out)
+        if self.outputs['Doubles'].is_linked:
+            self.outputs['Doubles'].sv_set(d_out)
+
 
 def register():
     bpy.utils.register_class(SvRemoveDoublesNode)
