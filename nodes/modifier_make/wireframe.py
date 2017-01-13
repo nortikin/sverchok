@@ -21,12 +21,10 @@ from bpy.props import FloatProperty, BoolProperty
 import bmesh
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (updateNode, Vector_generate, repeat_last,
-                            SvSetSocketAnyType, SvGetSocketAnyType)
+from sverchok.data_structure import updateNode, Vector_generate, repeat_last
 
 
-def wireframe(vertices, faces, t, o, replace, boundary, even_offset, relative_offset):
-
+def wireframe(vertices, faces, t, self):
     if not faces or not vertices:
         return False
 
@@ -39,9 +37,15 @@ def wireframe(vertices, faces, t, o, replace, boundary, even_offset, relative_of
         bm.faces.new([bm_verts[i] for i in face])
 
     bmesh.ops.recalc_face_normals(bm, faces=bm.faces[:])
-    res = bmesh.ops.wireframe(bm, faces=bm.faces[:], thickness=t, offset=o, use_replace=replace,
-                              use_boundary=boundary, use_even_offset=even_offset,
-                              use_relative_offset=relative_offset)
+    bmesh.ops.wireframe(
+        bm, faces=bm.faces[:],
+        thickness=t,
+        offset=self.offset,
+        use_replace=self.replace,
+        use_boundary=self.boundary,
+        use_even_offset=self.even_offset,
+        use_relative_offset=self.relative_offset)
+
     #bmesh.ops.wireframe(bm, faces, thickness, offset, use_replace,
     #    use_boundary, use_even_offset, use_crease, crease_weight, thickness, use_relative_offset, material_offset)
     edges = []
@@ -65,34 +69,45 @@ class SvWireframeNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Wireframe'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    thickness = FloatProperty(name='thickness', description='thickness',
-                              default=0.01, min=0.0,
-                              update=updateNode)
-    offset = FloatProperty(name='offset', description='offset',
-                           default=0.01, min=0.0,
-                           update=updateNode)
-    replace = BoolProperty(name='replace', description='replace',
-                           default=True,
-                           update=updateNode)
-    even_offset = BoolProperty(name='even_offset', description='even_offset',
-                               default=True,
-                               update=updateNode)
-    relative_offset = BoolProperty(name='relative_offset', description='even_offset',
-                                   default=False,
-                                   update=updateNode)
-    boundary = BoolProperty(name='boundary', description='boundry',
-                            default=True,
-                            update=updateNode)
+    thickness = FloatProperty(
+        name='thickness', description='thickness',
+        default=0.01, min=0.0,
+        update=updateNode)
+
+    offset = FloatProperty(
+        name='offset', description='offset',
+        default=0.01, min=0.0,
+        update=updateNode)
+
+    replace = BoolProperty(
+        name='replace', description='replace',
+        default=True,
+        update=updateNode)
+
+    even_offset = BoolProperty(
+        name='even_offset', description='even_offset',
+        default=True,
+        update=updateNode)
+
+    relative_offset = BoolProperty(
+        name='relative_offset', description='even_offset',
+        default=False,
+        update=updateNode)
+
+    boundary = BoolProperty(
+        name='boundary', description='boundry',
+        default=True,
+        update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', 'thickness').prop_name = 'thickness'
         self.inputs.new('StringsSocket', 'Offset').prop_name = 'offset'
-        self.inputs.new('VerticesSocket', 'vertices', 'vertices')
-        self.inputs.new('StringsSocket', 'polygons', 'polygons')
+        self.inputs.new('VerticesSocket', 'vertices')
+        self.inputs.new('StringsSocket', 'polygons')
 
-        self.outputs.new('VerticesSocket', 'vertices', 'vertices')
-        self.outputs.new('StringsSocket', 'edges', 'edges')
-        self.outputs.new('StringsSocket', 'polygons', 'polygons')
+        self.outputs.new('VerticesSocket', 'vertices')
+        self.outputs.new('StringsSocket', 'edges')
+        self.outputs.new('StringsSocket', 'polygons')
 
     def draw_buttons(self, context, layout):
         layout.prop(self, 'boundary', text="Boundary")
@@ -101,44 +116,36 @@ class SvWireframeNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, 'replace', text="Replace")
 
     def process(self):
-        if not ('vertices' in self.outputs and self.outputs['vertices'].links or
-                'edges' in self.outputs and self.outputs['edges'].links or
-                'polygons' in self.outputs and self.outputs['polygons'].links):
+        inputs, outputs = self.inputs, self.outputs
+
+        if not all(s.is_linked for s in [inputs['vertices'], inputs['polygons']]):
             return
 
-        if 'vertices' in self.inputs and self.inputs['vertices'].links and \
-           'polygons' in self.inputs and self.inputs['polygons'].links:
+        poly_or_edge_linked = (outputs['edges'].is_linked or outputs['polygons'].is_linked)
+        if not (outputs['vertices'].is_linked and poly_or_edge_linked):
+            # doesn't make a lot of sense to process or even
+            # output edges/polygons without the assocated vertex locations
+            return
 
-            verts = Vector_generate(SvGetSocketAnyType(self, self.inputs['vertices']))
-            polys = SvGetSocketAnyType(self, self.inputs['polygons'])
-            if 'thickness' in self.inputs:
-                thickness = self.inputs['thickness'].sv_get()[0]
-            else:
-                thickness = [self.thickness]
-            verts_out = []
-            edges_out = []
-            polys_out = []
-            for v, p, t in zip(verts, polys, repeat_last(thickness)):
-                res = wireframe(v, p, t, self.offset,
-                                self.replace, self.boundary, self.even_offset, self.relative_offset)
+        verts = Vector_generate(inputs['vertices'].sv_get())
+        polys = inputs['polygons'].sv_get()
+        thickness = inputs['thickness'].sv_get()[0]
 
-                if not res:
-                    return
-                verts_out.append(res[0])
-                edges_out.append(res[1])
-                polys_out.append(res[2])
+        verts_out = []
+        edges_out = []
+        polys_out = []
+        for v, p, t in zip(verts, polys, repeat_last(thickness)):
+            res = wireframe(v, p, t, self)
+            if not res:
+                return
 
-            if 'vertices' in self.outputs and self.outputs['vertices'].links:
-                SvSetSocketAnyType(self, 'vertices', verts_out)
+            verts_out.append(res[0])
+            edges_out.append(res[1])
+            polys_out.append(res[2])
 
-            if 'edges' in self.outputs and self.outputs['edges'].links:
-                SvSetSocketAnyType(self, 'edges', edges_out)
-
-            if 'polygons' in self.outputs and self.outputs['polygons'].links:
-                SvSetSocketAnyType(self, 'polygons', polys_out)
-
-    def update_socket(self, context):
-        self.update()
+        outputs['vertices'].sv_set(verts_out)
+        outputs['edges'].sv_set(edges_out)
+        outputs['polygons'].sv_set(polys_out)
 
 
 def register():
