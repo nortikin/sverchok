@@ -23,8 +23,8 @@ import bpy
 from bpy.props import EnumProperty, FloatProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (updateNode, dataCorrect, repeat_last,
-                            SvSetSocketAnyType, SvGetSocketAnyType)
+from sverchok.data_structure import updateNode, dataCorrect, repeat_last
+
 
 # spline function modifed from
 # from looptools 4.5.2 done by Bart Crouch
@@ -118,17 +118,14 @@ class SvInterpolationNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('VerticesSocket', 'Vertices')
 
     def draw_buttons(self, context, layout):
-        #pass
         layout.prop(self, 'mode', expand=True)
 
     def process(self):
-        if 'Vertices' not in self.outputs:
-            return
-        if not any((s.is_linked for s in self.outputs)):
+        if not any(s.is_linked for s in self.outputs):
             return
 
         if self.inputs['Vertices'].is_linked:
-            verts = SvGetSocketAnyType(self, self.inputs['Vertices'])
+            verts = self.inputs['Vertices'].sv_get()
             verts = dataCorrect(verts)
             t_ins = self.inputs['Interval'].sv_get()
             verts_out = []
@@ -147,8 +144,7 @@ class SvInterpolationNode(bpy.types.Node, SverchCustomTreeNode):
                     out = eval_spline(spl, t, t_corr)
                     verts_out.append(out)
 
-            if 'Vertices' in self.outputs and self.outputs['Vertices'].is_linked:
-                SvSetSocketAnyType(self, 'Vertices', verts_out)
+            self.outputs['Vertices'].sv_set(verts_out)
 
 
 def register():

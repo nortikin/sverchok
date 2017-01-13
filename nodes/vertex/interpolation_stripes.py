@@ -24,7 +24,7 @@ from bpy.props import EnumProperty, FloatProperty, BoolProperty, StringProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode, dataCorrect, repeat_last,
-                            SvSetSocketAnyType, SvGetSocketAnyType, match_long_repeat)
+                                     match_long_repeat)
 from mathutils import Vector
 
 # spline function modifed from
@@ -213,9 +213,7 @@ class SvInterpolationStripesNode(bpy.types.Node, SverchCustomTreeNode):
         return vec.length
 
     def process(self):
-        if 'vStripesOut' not in self.outputs:
-            return
-        if not any((s.is_linked for s in self.outputs)):
+        if not any(s.is_linked for s in self.outputs):
             return
 
         if self.inputs['Vertices'].is_linked:
@@ -238,7 +236,7 @@ class SvInterpolationStripesNode(bpy.types.Node, SverchCustomTreeNode):
             operations = self.operations
             func = vector_out[operations]
 
-            # initial interpolation            
+            # initial interpolation
             vertsX = self.interpol(verts, t_ins_x)
             verts_T = np.swapaxes(np.array(vertsX),0,1).tolist()
             verts_int = self.interpol(verts_T, t_ins_y)
@@ -302,13 +300,13 @@ class SvInterpolationStripesNode(bpy.types.Node, SverchCustomTreeNode):
             verts_inner_out = [[M,P] for M,P in zip(vm,vp)]
 
             if self.outputs['vStripesOut'].is_linked:
-                SvSetSocketAnyType(self, 'vStripesOut', verts_out)
+                self.outputs['vStripesOut'].sv_set(verts_out)
             if self.outputs['vStripesIn'].is_linked:
-                SvSetSocketAnyType(self, 'vStripesIn', verts_inner_out)
+                self.outputs['vStripesIn'].sv_set(verts_inner_out)
             if self.outputs['vShape'].is_linked:
-                SvSetSocketAnyType(self, 'vShape', verts_int)
+                self.outputs['vShape'].sv_set(verts_int)
             if self.outputs['sCoefs'].is_linked:
-                SvSetSocketAnyType(self, 'sCoefs', dists_normalized.tolist())
+                self.outputs['sCoefs'].sv_set(dists_normalized.tolist())
 
 
 def register():

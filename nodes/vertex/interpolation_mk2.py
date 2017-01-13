@@ -144,7 +144,7 @@ class SvInterpolationNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             row = col.row(align=True)
             row.prop(self, 'direction', expand=True)
         col.prop(self, 'defgrid')
-        
+
 
     def interpol(self, verts, t_ins):
         verts_out = []
@@ -164,20 +164,18 @@ class SvInterpolationNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                 verts_out.append(out)
         return verts_out
 
-            
+
 
     def process(self):
-        if 'Vertices' not in self.outputs:
-            return
-        if not any((s.is_linked for s in self.outputs)):
+        if not any(s.is_linked for s in self.outputs):
             return
 
         if self.inputs['Vertices'].is_linked:
-            verts = SvGetSocketAnyType(self, self.inputs['Vertices'])
+            verts = self.inputs['Vertices'].sv_get()
             verts = dataCorrect(verts)
             t_ins_x = self.inputs['IntervalX'].sv_get()
             t_ins_y = self.inputs['IntervalY'].sv_get()
-            
+
             if self.regime == 'P' and self.direction == 'U':
                 self.direction = 'UV'
             if self.defgrid:
@@ -188,7 +186,7 @@ class SvInterpolationNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                 if self.direction == 'UV':
                     verts_T = np.swapaxes(np.array(vertsX),0,1).tolist()
                     verts_out = self.interpol(verts_T, t_ins_y)
-                    
+
                 else:
                     verts_out = vertsX
             else:
@@ -200,8 +198,7 @@ class SvInterpolationNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                     verts_out_.extend(vertsY)
 
                 verts_out = [[i[0] for i in verts_out_]]
-            if 'Vertices' in self.outputs and self.outputs['Vertices'].is_linked:
-                SvSetSocketAnyType(self, 'Vertices', verts_out)
+            self.outputs['Vertices'].sv_set(verts_out)
 
 
 def register():

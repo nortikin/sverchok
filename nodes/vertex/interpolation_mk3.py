@@ -175,8 +175,6 @@ class SvInterpolationNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('VerticesSocket', 'Unit Tanget')
 
     def draw_buttons(self, context, layout):
-        # pass
-
         layout.prop(self, 'mode', expand=True)
         layout.prop(self, 'is_cyclic')
 
