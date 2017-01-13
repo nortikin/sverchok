@@ -51,7 +51,7 @@ def sv_main_handler(scene):
     for ng in sverchok_trees():
         # print("Scene handler looking at tree {}".format(ng.name))
         if ng.has_changed:
-            # print("Edit detected in {}".format(ng.name))
+            print("Edit detected in {}".format(ng.name))
             ng.process()
 
 

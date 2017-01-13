@@ -388,6 +388,8 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
         if self.sv_process:
             process_tree(self)
 
+        self.has_changed = False
+
 
 class SverchCustomTreeNode:
     @classmethod
