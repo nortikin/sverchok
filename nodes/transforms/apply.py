@@ -37,7 +37,7 @@ class MatrixApplyNode(bpy.types.Node, SverchCustomTreeNode):
 
     def process(self):
         if self.outputs['Vectors'].is_linked:
-            vecs_ = self.inputs['Vectors'].sv_get(deepcopy=Falses)
+            vecs_ = self.inputs['Vectors'].sv_get(deepcopy=False)
             vecs = Vector_generate(vecs_)
 
             mats_ = self.inputs['Matrixes'].sv_get(deepcopy=False)
