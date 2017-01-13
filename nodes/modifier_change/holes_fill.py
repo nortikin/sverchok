@@ -67,9 +67,9 @@ class SvFillHolesNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('StringsSocket', 'edges')
         self.inputs.new('StringsSocket', 'Sides').prop_name = 'sides'
 
-        self.outputs.new('VerticesSocket', 'vertices', 'vertices')
-        self.outputs.new('StringsSocket', 'edges', 'edges')
-        self.outputs.new('StringsSocket', 'polygons', 'polygons')
+        self.outputs.new('VerticesSocket', 'vertices')
+        self.outputs.new('StringsSocket', 'edges')
+        self.outputs.new('StringsSocket', 'polygons')
 
     def process(self):
 
