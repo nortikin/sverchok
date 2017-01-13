@@ -24,8 +24,7 @@ import bpy
 from bpy.props import FloatProperty, EnumProperty, StringProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (SvGetSocketAnyType, SvSetSocketAnyType,
-                            updateNode, match_long_repeat)
+from sverchok.data_structure import updateNode, match_long_repeat
 
 
 def axis_rotation(vertex, center, axis, angle):
@@ -107,8 +106,8 @@ class SvRotationNode(bpy.types.Node, SverchCustomTreeNode):
     ]
 
     mode = EnumProperty(name="mode", description="mode",
-                          default='AXIS', items=modes,
-                          update=mode_change)
+                        default='AXIS', items=modes,
+                        update=mode_change)
 
     orders = [
         ('XYZ', "XYZ",        "", 0),
@@ -119,8 +118,8 @@ class SvRotationNode(bpy.types.Node, SverchCustomTreeNode):
         ('ZYX', 'ZYX',        "", 5),
     ]
     order = EnumProperty(name="Order", description="Order",
-                          default="XYZ", items=orders,
-                          update=updateNode)
+                         default="XYZ", items=orders,
+                         update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', "Vertices", "Vertices")
@@ -137,64 +136,38 @@ class SvRotationNode(bpy.types.Node, SverchCustomTreeNode):
     def process(self):
         # inputs
         if self.mode == 'AXIS':
-            if 'Vertices' in self.inputs and self.inputs['Vertices'].is_linked:
-                Vertices = SvGetSocketAnyType(self, self.inputs['Vertices'])
-            else:
-                Vertices = []
-            if 'Angle' in self.inputs and self.inputs['Angle'].is_linked:
-                Angle = SvGetSocketAnyType(self, self.inputs['Angle'])
-            else:
-                Angle = [[self.angle_]]
-            if 'Center' in self.inputs and self.inputs['Center'].is_linked:
-                Center = SvGetSocketAnyType(self, self.inputs['Center'])
-            else:
-                Center = [[[0.0, 0.0, 0.0]]]
-            if 'Axis' in self.inputs and self.inputs['Axis'].is_linked:
-                Axis = SvGetSocketAnyType(self, self.inputs['Axis'])
-            else:
-                Axis = [[[0.0, 0.0, 1.0]]]
-
+            Vertices = self.inputs['Vertices'].sv_get()
+            Angle = self.inputs['Angle'].sv_get()
+            Center = self.inputs['Center'].sv_get(default=[[[0.0, 0.0, 0.0]]])
+            Axis = self.inputs['Axis'].sv_get(default=[[[0.0, 0.0, 1.0]]])
             parameters = match_long_repeat([Vertices, Center, Axis, Angle])
 
         elif self.mode == 'EULER' or self.mode == 'QUAT':
-            if 'Vertices' in self.inputs and self.inputs['Vertices'].is_linked:
-                Vertices = SvGetSocketAnyType(self, self.inputs['Vertices'])
-            else:
-                Vertices = []
-            if 'X' in self.inputs and self.inputs['X'].is_linked:
-                X = SvGetSocketAnyType(self, self.inputs['X'])[0]
-            else:
-                X = [self.x_]
-            if 'Y' in self.inputs and self.inputs['Y'].is_linked:
-                Y = SvGetSocketAnyType(self, self.inputs['Y'])[0]
-            else:
-                Y = [self.y_]
-            if 'Z' in self.inputs and self.inputs['Z'].is_linked:
-                Z = SvGetSocketAnyType(self, self.inputs['Z'])[0]
-            else:
-                Z = [self.z_]
+            Vertices = self.inputs['Vertices'].sv_get()
+            X = self.inputs['X'].sv_get()[0]
+            Y = self.inputs['Y'].sv_get()[0]
+            Z = self.inputs['Z'].sv_get()[0]
 
             parameters = match_long_repeat([Vertices, X, Y, Z, [self.order]])
 
             if self.mode == 'QUAT':
-                if 'W' in self.inputs and self.inputs['W'].is_linked:
-                    W = SvGetSocketAnyType(self, self.inputs['W'])[0]
+                if 'W' in self.inputs:
+                    W = self.inputs['W'].sv_get()[0]
                 else:
                     W = [self.w_]
 
                 parameters = match_long_repeat([Vertices, X, Y, Z, W])
 
         # outputs
-        if 'Vertices' in self.outputs and self.outputs['Vertices'].is_linked:
-            if self.mode == 'AXIS':
-                points = [axis_rotation(v, c, d, a) for v, c, d, a in zip(*parameters)]
-                SvSetSocketAnyType(self, 'Vertices', points)
-            elif self.mode == 'EULER':
-                points = [euler_rotation(v, x, y, z, o) for v, x, y, z, o in zip(*parameters)]
-                SvSetSocketAnyType(self, 'Vertices', points)
-            elif self.mode == 'QUAT':
-                points = [quat_rotation(m, x, y, z, w) for m, x, y, z, w in zip(*parameters)]
-                SvSetSocketAnyType(self, 'Vertices', points)
+        if self.mode == 'AXIS':
+            points = [axis_rotation(v, c, d, a) for v, c, d, a in zip(*parameters)]
+            self.outputs['Vertices'].sv_set(points)
+        elif self.mode == 'EULER':
+            points = [euler_rotation(v, x, y, z, o) for v, x, y, z, o in zip(*parameters)]
+            self.outputs['Vertices'].sv_set(points)
+        elif self.mode == 'QUAT':
+            points = [quat_rotation(m, x, y, z, w) for m, x, y, z, w in zip(*parameters)]
+            self.outputs['Vertices'].sv_set(points)
 
 
 

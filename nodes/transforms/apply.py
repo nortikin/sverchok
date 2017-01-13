@@ -21,8 +21,7 @@ from mathutils import Matrix, Vector
 
 from sverchok.node_tree import SverchCustomTreeNode, VerticesSocket, MatrixSocket
 from sverchok.data_structure import (Vector_generate, Vector_degenerate,
-                            Matrix_generate, updateNode,
-                            SvGetSocketAnyType, SvSetSocketAnyType)
+                                     Matrix_generate, updateNode)
 
 
 class MatrixApplyNode(bpy.types.Node, SverchCustomTreeNode):
@@ -37,31 +36,29 @@ class MatrixApplyNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('VerticesSocket', "Vectors", "Vectors")
 
     def process(self):
-        # inputs
         if self.outputs['Vectors'].is_linked:
-            vecs_ = SvGetSocketAnyType(self, self.inputs['Vectors'])
+            vecs_ = self.inputs['Vectors'].sv_get(deepcopy=Falses)
             vecs = Vector_generate(vecs_)
 
-            mats_ = SvGetSocketAnyType(self, self.inputs['Matrixes'])
+            mats_ = self.inputs['Matrixes'].sv_get(deepcopy=False)
             mats = Matrix_generate(mats_)
 
             vectors_ = self.vecscorrect(vecs, mats)
             vectors = Vector_degenerate(vectors_)
-            SvSetSocketAnyType(self, 'Vectors', vectors)
+            self.outputs['Vectors'].sv_set(vectors)
 
     def vecscorrect(self, vecs, mats):
         out = []
-        lengthve = len(vecs)-1
+        lengthve = len(vecs) - 1
         for i, m in enumerate(mats):
             out_ = []
             k = i
             if k > lengthve:
                 k = lengthve
             for v in vecs[k]:
-                out_.append(m*v)
+                out_.append(m * v)
             out.append(out_)
         return out
-
 
 
 def register():

@@ -24,15 +24,17 @@ import bpy
 from bpy.props import StringProperty, EnumProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, SvSetSocketAnyType, SvGetSocketAnyType, match_long_repeat
+from sverchok.data_structure import updateNode, match_long_repeat
+
 
 def mirrorPoint(vertex, vert_a):
     vert = []
     a = Vector(vert_a)
     for i in vertex:
         v = Vector(i)
-        vert.append((v+2*(a-v))[:])
+        vert.append((v + 2 * (a - v))[:])
     return vert
+
 
 def mirrorAxis(vertex, vert_a, vert_b):
     vert = []
@@ -41,15 +43,16 @@ def mirrorAxis(vertex, vert_a, vert_b):
     c = b - a
     for i in vertex:
         v = Vector(i)
-        #Intersection point in vector A-B from point V
+        #  Intersection point in vector A-B from point V
         pq = v - a
         w2 = pq - ((pq.dot(c) / c.length_squared) * c)
         x = v - w2
 
-        mat = Matrix.Translation(2*(v - w2 - v))
+        mat = Matrix.Translation(2 * (v - w2 - v))
         mat_rot = Matrix.Rotation(radians(360), 4, c)
-        vert.append(((mat*mat_rot)*v)[:])
+        vert.append(((mat * mat_rot) * v)[:])
     return vert
+
 
 def mirrorPlane(vertex, matrix):
     vert = []
@@ -57,12 +60,13 @@ def mirrorPlane(vertex, matrix):
     eul = a.to_euler()
     normal = Vector((0.0, 0.0, 1.0))
     normal.rotate(eul)
-    tras = Matrix.Translation(2*a.to_translation())
+    tras = Matrix.Translation(2 * a.to_translation())
     for i in vertex:
         v = Vector(i)
         r = v.reflect(normal)
-        vert.append((tras*r)[:])
+        vert.append((tras * r)[:])
     return vert
+
 
 class SvMirrorNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Mirroring  '''
@@ -91,7 +95,7 @@ class SvMirrorNode(bpy.types.Node, SverchCustomTreeNode):
                 self.inputs.new('VerticesSocket', "Vert B", "Vert B")
             else:
                 while len(self.inputs) > n:
-                    self.inputs.remove(self.inputs[-1])                
+                    self.inputs.remove(self.inputs[-1])
                 self.inputs.new('VerticesSocket', "Vert A", "Vert A")
                 self.inputs.new('VerticesSocket', "Vert B", "Vert B")
 
@@ -123,41 +127,30 @@ class SvMirrorNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "mode", expand=True)
 
     def process(self):
-        # inputs
-        if 'Vertices' in self.inputs and self.inputs['Vertices'].is_linked:
-            Vertices = SvGetSocketAnyType(self, self.inputs['Vertices'])
-        else:
-            Vertices = []
-        if 'Vert A' in self.inputs and self.inputs['Vert A'].is_linked:
-            Vert_A = SvGetSocketAnyType(self, self.inputs['Vert A'])[0]
-        else:
-            Vert_A = [[0.0, 0.0, 0.0]]
-        if 'Vert B' in self.inputs and self.inputs['Vert B'].is_linked:
-            Vert_B = SvGetSocketAnyType(self, self.inputs['Vert B'])[0]
-        else:
-            Vert_B = [[1.0, 0.0, 0.0]]
-        if 'Plane' in self.inputs and self.inputs['Plane'].is_linked:
-            Plane = SvGetSocketAnyType(self, self.inputs['Plane'])
-        else:
-            Plane = [Matrix()]
+        if not self.outputs['Vertices'].is_linked:
+            return
+
+        Vertices = self.inputs['Vertices'].sv_get(default=[])
+        if 'Vert A' in self.inputs:
+            Vert_A = self.inputs['Vert A'].sv_get(default=[[[0.0, 0.0, 0.0]]])[0]
+        if 'Vert B' in self.inputs:
+            Vert_B = self.inputs['Vert B'].sv_get(default=[[[1.0, 0.0, 0.0]]])[0]
+        if 'Plane' in self.inputs:
+            Plane = self.inputs['Plane'].sv_get(default=[Matrix()])
 
         # outputs
-        if 'Vertices' in self.outputs and self.outputs['Vertices'].is_linked:
-            if self.mode == 'VERTEX':
-                parameters = match_long_repeat([Vertices, Vert_A])
-                points = [mirrorPoint(v, a) for v, a in zip(*parameters)]
-                SvSetSocketAnyType(self, 'Vertices', points)
-            elif self.mode == 'AXIS':
-                parameters = match_long_repeat([Vertices, Vert_A, Vert_B])
-                points = [mirrorAxis(v, a, b) for v, a, b in zip(*parameters)]
-                SvSetSocketAnyType(self, 'Vertices', points)
-            elif self.mode == 'PLANE':
-                parameters = match_long_repeat([Vertices, Plane])
-                points = [mirrorPlane(v, p) for v, p in zip(*parameters)]
-                SvSetSocketAnyType(self, 'Vertices', points)
-
-    def update_socket(self, context):
-        self.update()
+        if self.mode == 'VERTEX':
+            parameters = match_long_repeat([Vertices, Vert_A])
+            points = [mirrorPoint(v, a) for v, a in zip(*parameters)]
+            self.outputs['Vertices'].sv_set(points)
+        elif self.mode == 'AXIS':
+            parameters = match_long_repeat([Vertices, Vert_A, Vert_B])
+            points = [mirrorAxis(v, a, b) for v, a, b in zip(*parameters)]
+            self.outputs['Vertices'].sv_set(points)
+        elif self.mode == 'PLANE':
+            parameters = match_long_repeat([Vertices, Plane])
+            points = [mirrorPlane(v, p) for v, p in zip(*parameters)]
+            self.outputs['Vertices'].sv_set(points)
 
 
 def register():
