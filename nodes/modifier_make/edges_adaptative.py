@@ -23,9 +23,8 @@ from mathutils import Matrix
 
 from bpy.props import BoolProperty
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (Vector_generate,
-                            SvSetSocketAnyType, SvGetSocketAnyType,
-                            updateNode, match_long_repeat)
+from sverchok.data_structure import (Vector_generate, updateNode,
+                                     match_long_repeat)
 
 
 class SvAdaptiveEdgeNode(bpy.types.Node, SverchCustomTreeNode):
@@ -35,7 +34,7 @@ class SvAdaptiveEdgeNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     mesh_join = BoolProperty(name="Join meshes", default=True,
-                            update=updateNode)
+                             update=updateNode)
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "mesh_join")
@@ -50,9 +49,7 @@ class SvAdaptiveEdgeNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('StringsSocket', 'Edges', 'Edges')
 
     def process(self):
-        if not all((s.is_linked for s in self.inputs)):
-            return
-        if not any((s.is_linked for s in self.outputs)):
+        if not all(s.is_linked for s in self.inputs):
             return
 
         versR = Vector_generate(self.inputs['VersR'].sv_get())
@@ -62,18 +59,16 @@ class SvAdaptiveEdgeNode(bpy.types.Node, SverchCustomTreeNode):
         verts_out = []
         edges_out = []
         mesh_join = self.mesh_join
-        versD,remove,edgeD = match_long_repeat([versD,edgeR[0],edgeD])
+        versD, remove, edgeD = match_long_repeat([versD, edgeR[0], edgeD])
         versD = [[v - versD[0][0] for v in vD] for vD in versD]
-        #print(len(versR), len(edgeR), len(versD), len(edgeD))
         for vc, edg in zip(versR, edgeR):
-            #print(len(vc), len(edg), len(verD), len(edgD))
             if mesh_join:
                 v_out = []
                 v_out_app = v_out.append
             e_out = []
             e_out_app = e_out.append
 
-            for e,verD,edgD in zip(edg,versD,edgeD):
+            for e, verD, edgD in zip(edg, versD, edgeD):
                 # for every edge or for objectR???
                 d_vector = verD[-1].copy()
                 d_scale = d_vector.length
@@ -104,11 +99,11 @@ class SvAdaptiveEdgeNode(bpy.types.Node, SverchCustomTreeNode):
                 verts_out.append(v_out)
                 edges_out.append(e_out)
 
-        if 'Vertices' in self.outputs and self.outputs['Vertices'].is_linked:
+        if self.outputs['Vertices'].is_linked:
             self.outputs['Vertices'].sv_set(verts_out)
 
-        if 'Edges' in self.outputs and self.outputs['Edges'].is_linked:
-           self.outputs['Edges'].sv_set(edges_out)
+        if self.outputs['Edges'].is_linked:
+            self.outputs['Edges'].sv_set(edges_out)
 
 
 def register():
@@ -117,6 +112,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvAdaptiveEdgeNode)
-
-if __name__ == '__main__':
-    register()
