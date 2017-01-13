@@ -21,8 +21,8 @@ from bpy.props import FloatProperty
 import bmesh
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (updateNode, Vector_generate, repeat_last,
-                            SvSetSocketAnyType, SvGetSocketAnyType)
+from sverchok.data_structure import updateNode, Vector_generate, repeat_last
+
 
 #
 # Remove Doubles
@@ -47,7 +47,6 @@ def remove_doubles(vertices, faces, d, find_doubles=False):
 
     if find_doubles:
         res = bmesh.ops.find_doubles(bm, verts=bm_verts, dist=d)
-        res['targetmap']  # is this supposed to fail on purpose or is accidental?
         doubles = [vert.co[:] for vert in res['targetmap'].keys()]
     else:
         doubles = []
@@ -96,7 +95,7 @@ class SvRemoveDoublesNode(bpy.types.Node, SverchCustomTreeNode):
         pass
 
     def process(self):
-        if not any([s.is_linked for s in self.outputs]):
+        if not any(s.is_linked for s in self.outputs):
             return
 
         if self.inputs['Vertices'].is_linked:
@@ -105,9 +104,7 @@ class SvRemoveDoublesNode(bpy.types.Node, SverchCustomTreeNode):
             verts = Vector_generate(self.inputs['Vertices'].sv_get())
             polys = self.inputs['PolyEdge'].sv_get(default=[[]])
             distance = self.inputs['Distance'].sv_get(default=[self.distance])[0]
-
-            if 'Doubles' in self.outputs:
-                has_double_out = bool('Doubles' in self.outputs)
+            has_double_out = self.outputs['Doubles'].is_linked
 
             verts_out = []
             edges_out = []
@@ -123,16 +120,12 @@ class SvRemoveDoublesNode(bpy.types.Node, SverchCustomTreeNode):
                 polys_out.append(res[2])
                 d_out.append(res[3])
 
-            if self.outputs['Vertices'].is_linked:
-                self.outputs['Vertices'].sv_set(verts_out)
+            self.outputs['Vertices'].sv_set(verts_out)
 
             # restrict setting this output when there is no such input
             if self.inputs['PolyEdge'].is_linked:
-                if self.outputs['Edges'].is_linked:
-                    self.outputs['Edges'].sv_set(edges_out)
-
-                if self.outputs['Polygons'].is_linked:
-                    self.outputs['Polygons'].sv_set(polys_out)
+                self.outputs['Edges'].sv_set(edges_out)
+                self.outputs['Polygons'].sv_set(polys_out)
 
             if self.outputs['Doubles'].is_linked:
                 self.outputs['Doubles'].sv_set(d_out)
