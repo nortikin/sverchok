@@ -21,8 +21,7 @@ from itertools import cycle, islice
 import bpy
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (dataCorrect, repeat_last,
-                            SvSetSocketAnyType, SvGetSocketAnyType)
+from sverchok.data_structure import (dataCorrect, repeat_last)
 
 
 class SvVertMaskNode(bpy.types.Node, SverchCustomTreeNode):
@@ -40,17 +39,15 @@ class SvVertMaskNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('StringsSocket', 'Poly Egde', 'Poly Egde')
 
     def process(self):
-        if not any((s.is_linked for s in self.outputs)):
+        if not any(s.is_linked for s in self.outputs):
             return
         if self.inputs['Vertices'].is_linked and self.inputs['Poly Egde'].is_linked:
-            verts = SvGetSocketAnyType(self, self.inputs['Vertices'])
-            poly = SvGetSocketAnyType(self, self.inputs['Poly Egde'])
+            verts = self.inputs['Vertices'].sv_get()
+            poly = self.inputs['Poly Egde'].sv_get()
             verts = dataCorrect(verts)
             poly = dataCorrect(poly)
-            if self.inputs['Mask'].is_linked:
-                mask = SvGetSocketAnyType(self, self.inputs['Mask'])
-            else:
-                mask = [[1, 0]]
+            self.inputs['Mask'].sv_get(default=[[1, 0]])
+
             has_true_out = True
             has_false_out = False
             verts_out = []
@@ -73,12 +70,8 @@ class SvVertMaskNode(bpy.types.Node, SverchCustomTreeNode):
                     verts_out.append(ve)
                     poly_edge_out.append(pe)
 
-            if 'Vertices' in self.outputs and self.outputs['Vertices'].is_linked:
-                SvSetSocketAnyType(self, 'Vertices', verts_out)
-
-            if 'Poly Egde' in self.outputs and self.outputs['Poly Egde'].is_linked:
-                if poly_edge_out:
-                    SvSetSocketAnyType(self, 'Poly Egde', poly_edge_out)
+            self.outputs['Vertices'].sv_set(verts_out)
+            self.outputs['Poly Egde'].sv_set(poly_edge_out)
 
 
 def register():
