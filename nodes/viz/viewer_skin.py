@@ -84,7 +84,7 @@ def make_bmesh_geometry(node, context, geometry, idx):
     obj['basename'] = node.basemesh_name
     force_pydata(obj.data, verts, edges)
     obj.update_tag(refresh={'OBJECT', 'DATA'})
-    context.scene.update()
+    # context.scene.update()
 
     if node.live_updates:
         # if modifier present, remove
@@ -261,8 +261,6 @@ class SkinViewerNode(bpy.types.Node, SverchCustomTreeNode):
         radii, _ = match_long_repeat([radii, verts])
 
         print('resulting radii', radii)
-
-        return
 
         # for now don't update unless
         if len(radii) == len(verts):
