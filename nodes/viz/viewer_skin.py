@@ -224,6 +224,9 @@ class SkinViewerNode(bpy.types.Node, SverchCustomTreeNode):
         if not self.activate:
             return
 
+        if not self.live_updates:
+            return
+
         # only interested in the first
         geometry_full = self.get_geometry_from_sockets()
 
@@ -237,30 +240,18 @@ class SkinViewerNode(bpy.types.Node, SverchCustomTreeNode):
         catch_idx = 0
         for idx, (geometry) in enumerate(zip(*geometry_full)):
             catch_idx = idx
-            print(idx)
-            print('verts', geometry[0])
-            print('edges', geometry[1])
-            print('matrix', geometry[2])
-            print('raddiii', geometry[3])
             self.unit_generator(idx, geometry)
 
         # remove stail objects
         remove_non_updated_objects(self, catch_idx)
 
     def unit_generator(self, idx, geometry):
-        i = self.inputs
         obj = make_bmesh_geometry(self, bpy.context, geometry, idx)
-
-        if not self.live_updates:
-            return
-
-        verts, edges, matrices, radii = geometry
+        verts, _, _, radii = geometry
 
         # assign radii after creation
         ntimes = len(verts)
         radii, _ = match_long_repeat([radii, verts])
-
-        print('resulting radii', radii)
 
         # for now don't update unless
         if len(radii) == len(verts):
