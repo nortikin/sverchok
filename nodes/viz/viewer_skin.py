@@ -216,7 +216,7 @@ class SkinViewerNode(bpy.types.Node, SverchCustomTreeNode):
         i = self.inputs
         mverts = i['vertices'].sv_get(default=[])
         medges = i['edges'].sv_get(default=[])
-        mmtrix = i['matrix'].sv_get(default=[[]])
+        mmtrix = i['matrix'].sv_get(default=[])
         mradii = i['radii'].sv_get()
         return mverts, medges, mmtrix, mradii
 
