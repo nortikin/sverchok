@@ -32,9 +32,9 @@ from sverchok.utils.sv_viewer_utils import (
 )
 
 
-def assign_empty_mesh():
+def assign_empty_mesh(idx):
     meshes = bpy.data.meshes
-    mt_name = 'empty_skin_mesh_sv'
+    mt_name = 'empty_skin_mesh_sv.' + str("%04d" % idx)
     if mt_name in meshes:
         return meshes[mt_name]
     else:
@@ -58,7 +58,7 @@ def make_bmesh_geometry(node, context, geometry, idx):
     scene = context.scene
     meshes = bpy.data.meshes
     objects = bpy.data.objects
-    verts, edges, matrix = geometry
+    verts, edges, matrix, _ = geometry
     name = node.basemesh_name + '.' + str("%04d" % idx)
 
     # remove object
@@ -66,7 +66,7 @@ def make_bmesh_geometry(node, context, geometry, idx):
         obj = objects[name]
         # assign the object an empty mesh, this allows the current mesh
         # to be uncoupled and removed from bpy.data.meshes
-        obj.data = assign_empty_mesh()
+        obj.data = assign_empty_mesh(idx)
 
         # remove uncoupled mesh, and add it straight back.
         if name in meshes:
@@ -217,7 +217,8 @@ class SkinViewerNode(bpy.types.Node, SverchCustomTreeNode):
         mverts = i['vertices'].sv_get(default=[])
         medges = i['edges'].sv_get(default=[])
         mmtrix = i['matrix'].sv_get(default=[[]])
-        return mverts, medges, mmtrix
+        mradii = i['radii'].sv_get()
+        return mverts, medges, mmtrix, mradii
 
     def process(self):
         if not self.activate:
@@ -231,12 +232,20 @@ class SkinViewerNode(bpy.types.Node, SverchCustomTreeNode):
         fullList(geometry_full[0], maxlen)
         fullList(geometry_full[1], maxlen)
         fullList(geometry_full[2], maxlen)
+        fullList(geometry_full[3], maxlen)
 
-        for idx, geometry in enumerate(zip(*geometry_full)):
+        catch_idx = 0
+        for idx, (geometry) in enumerate(zip(*geometry_full)):
+            catch_idx = idx
+            print(idx)
+            print('verts', geometry[0])
+            print('edges', geometry[1])
+            print('matrix', geometry[2])
+            print('raddiii', geometry[3])
             self.unit_generator(idx, geometry)
 
         # remove stail objects
-        remove_non_updated_objects(self, len(geometry_full) - 1)
+        remove_non_updated_objects(self, catch_idx)
 
     def unit_generator(self, idx, geometry):
         i = self.inputs
@@ -245,18 +254,18 @@ class SkinViewerNode(bpy.types.Node, SverchCustomTreeNode):
         if not self.live_updates:
             return
 
+        verts, edges, matrices, radii = geometry
+
         # assign radii after creation
-        ntimes = len(geometry[0])
-        if i['radii'].is_linked:
-            radii = i['radii'].sv_get()[0]
-            radii, _ = match_long_repeat([radii, geometry[0]])
-            # perhaps extend to fullList if given list length doesn't match.
-            # maybe also indicate this failure somehow in the UI?
-        else:
-            radii = list(itertools.repeat(self.general_radius, ntimes))
+        ntimes = len(verts)
+        radii, _ = match_long_repeat([radii, verts])
+
+        print('resulting radii', radii)
+
+        return
 
         # for now don't update unless
-        if len(radii) == len(geometry[0]):
+        if len(radii) == len(verts):
             f_r = list(itertools.chain(*zip(radii, radii)))
             obj.data.skin_vertices[0].data.foreach_set('radius', f_r)
 
