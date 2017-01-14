@@ -66,3 +66,32 @@ def get_random_init():
     similar_names = [name for name in set_of_names_pre_underscores if n in name]
     plus_one = natural_plus_one(similar_names)
     return n + str(plus_one)
+
+
+def get_children(node):
+    objects = bpy.data.objects
+    objs = [obj for obj in objects if obj.type == 'MESH']
+    # critera, basename must be in object.keys and the value must be self.basemesh_name
+    return [o for o in objs if o.get('basename') == node.basemesh_name]
+
+
+def remove_non_updated_objects(node, obj_index):
+    objs = get_children(node)
+    objs = [obj.name for obj in objs if obj['idx'] > obj_index]
+    if not objs:
+        return
+
+    meshes = bpy.data.meshes
+    objects = bpy.data.objects
+    scene = bpy.context.scene
+
+    # remove excess objects
+    for object_name in objs:
+        obj = objects[object_name]
+        obj.hide_select = False
+        scene.objects.unlink(obj)
+        objects.remove(obj, do_unlink=True)
+
+    # delete associated meshes
+    for object_name in objs:
+        meshes.remove(meshes[object_name])        

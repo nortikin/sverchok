@@ -227,7 +227,7 @@
     SvJoinTrianglesNode
     SvCacheNode
     SvInsetSpecial
-    SkinViewerNode
+    SvSkinViewerNodeMK1
     SvCSGBooleanNode
     SvParticlesNode
     SvUVtextureNode
