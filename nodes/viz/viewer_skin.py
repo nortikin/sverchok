@@ -256,6 +256,7 @@ class SkinViewerNode(bpy.types.Node, SverchCustomTreeNode):
         # for now don't update unless
         if len(radii) == len(verts):
             f_r = list(itertools.chain(*zip(radii, radii)))
+            f_r = [abs(f) for f in f_r]
             obj.data.skin_vertices[0].data.foreach_set('radius', f_r)
 
             # set all to root
