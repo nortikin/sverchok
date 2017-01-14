@@ -171,7 +171,6 @@ class SvSkinViewerNodeMK1(bpy.types.Node, SverchCustomTreeNode):
 
     material = StringProperty(default='', update=updateNode)
 
-    # https://github.com/nortikin/sverchok/blob/master/nodes/basic_view/viewer_bmesh_mk2.py
 
     def sv_init(self, context):
         gai = bpy.context.scene.SvGreekAlphabet_index
