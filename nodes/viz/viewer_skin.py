@@ -230,7 +230,7 @@ class SkinViewerNode(bpy.types.Node, SverchCustomTreeNode):
         # only interested in the first
         geometry_full = self.get_geometry_from_sockets()
 
-        # pad all input to longest.
+        # pad all input to longest
         maxlen = max(*(map(len, geometry_full)))
         fullList(geometry_full[0], maxlen)
         fullList(geometry_full[1], maxlen)
