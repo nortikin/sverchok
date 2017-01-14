@@ -25,26 +25,11 @@ from bpy.props import BoolProperty, StringProperty, FloatProperty, IntProperty
 from mathutils import Matrix, Vector
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, match_long_repeat
+from sverchok.data_structure import updateNode, match_long_repeat, fullList
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
-from sverchok.utils.sv_viewer_utils import greek_alphabet
-
-def matrix_sanitizer(matrix):
-    #  reduces all values below threshold (+ or -) to 0.0, to avoid meaningless
-    #  wandering floats.
-    coord_strip = lambda c: 0.0 if (-1.6e-5 <= c <= 1.6e-5) else c
-    san = lambda v: Vector((coord_strip(c) for c in v[:]))
-    return Matrix([san(v) for v in matrix])
-
-
-def default_mesh(name):
-    verts = [(1, 1, -1), (1, -1, -1), (-1, -1, -1)]
-    faces = [(0, 1, 2)]
-
-    mesh_data = bpy.data.meshes.new(name)
-    mesh_data.from_pydata(verts, [], faces)
-    mesh_data.update()
-    return mesh_data
+from sverchok.utils.sv_viewer_utils import (
+    greek_alphabet, matrix_sanitizer, remove_non_updated_objects
+)
 
 
 def assign_empty_mesh():
@@ -57,6 +42,7 @@ def assign_empty_mesh():
 
 
 def force_pydata(mesh, verts, edges):
+
     mesh.vertices.add(len(verts))
     f_v = list(itertools.chain.from_iterable(verts))
     mesh.vertices.foreach_set('co', f_v)
@@ -68,12 +54,12 @@ def force_pydata(mesh, verts, edges):
     mesh.update(calc_edges=True)
 
 
-def make_bmesh_geometry(node, context, geometry):
+def make_bmesh_geometry(node, context, geometry, idx):
     scene = context.scene
     meshes = bpy.data.meshes
     objects = bpy.data.objects
     verts, edges, matrix = geometry
-    name = node.basemesh_name
+    name = node.basemesh_name + '.' + str("%04d" % idx)
 
     # remove object
     if name in objects:
@@ -94,6 +80,8 @@ def make_bmesh_geometry(node, context, geometry):
         scene.objects.link(obj)
 
     # at this point the mesh is always fresh and empty
+    obj['idx'] = idx
+    obj['basename'] = node.basemesh_name
     force_pydata(obj.data, verts, edges)
     obj.update_tag(refresh={'OBJECT', 'DATA'})
     context.scene.update()
@@ -119,6 +107,9 @@ def make_bmesh_geometry(node, context, geometry):
     else:
         obj.matrix_local = Matrix.Identity(4)
 
+    return obj
+
+
 class SvSkinmodViewOp(bpy.types.Operator):
 
     bl_idname = "node.sv_callback_skinmod_viewer"
@@ -140,8 +131,6 @@ class SvSkinmodViewOp(bpy.types.Operator):
     def execute(self, context):
         self.skin_ops(context, self.fn_name)
         return {'FINISHED'}
-
-
 
 
 class SkinViewerNode(bpy.types.Node, SverchCustomTreeNode):
@@ -225,9 +214,9 @@ class SkinViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
     def get_geometry_from_sockets(self):
         i = self.inputs
-        mverts = i['vertices'].sv_get(default=[])[0]
-        medges = i['edges'].sv_get(default=[])[0]
-        mmtrix = i['matrix'].sv_get(default=[[]])[0]
+        mverts = i['vertices'].sv_get(default=[])
+        medges = i['edges'].sv_get(default=[])
+        mmtrix = i['matrix'].sv_get(default=[[]])
         return mverts, medges, mmtrix
 
     def process(self):
@@ -235,19 +224,32 @@ class SkinViewerNode(bpy.types.Node, SverchCustomTreeNode):
             return
 
         # only interested in the first
-        geometry = self.get_geometry_from_sockets()
-        make_bmesh_geometry(self, bpy.context, geometry)
+        geometry_full = self.get_geometry_from_sockets()
+
+        # pad all input to longest.
+        maxlen = max(*(map(len, geometry_full)))
+        fullList(geometry_full[0], maxlen)
+        fullList(geometry_full[1], maxlen)
+        fullList(geometry_full[2], maxlen)
+
+        for idx, geometry in enumerate(zip(*geometry_full)):
+            self.unit_generator(idx, geometry)
+
+        # remove stail objects
+        remove_non_updated_objects(self, len(geometry_full) - 1)
+
+    def unit_generator(self, idx, geometry):
+        i = self.inputs
+        obj = make_bmesh_geometry(self, bpy.context, geometry, idx)
 
         if not self.live_updates:
             return
 
         # assign radii after creation
-        obj = bpy.data.objects[self.basemesh_name]
-        i = self.inputs
         ntimes = len(geometry[0])
         if i['radii'].is_linked:
             radii = i['radii'].sv_get()[0]
-            radii, delete = match_long_repeat([radii,geometry[0]])
+            radii, _ = match_long_repeat([radii, geometry[0]])
             # perhaps extend to fullList if given list length doesn't match.
             # maybe also indicate this failure somehow in the UI?
         else:
@@ -265,6 +267,8 @@ class SkinViewerNode(bpy.types.Node, SverchCustomTreeNode):
         # truthy if self.material is in .materials
         if bpy.data.materials.get(self.material):
             self.set_corresponding_materials([obj])
+
+
 
     def set_corresponding_materials(self, objs):
         for obj in objs:
