@@ -37,6 +37,7 @@ old_bl_idnames = {
     'SvReRouteNode': "reroute",
     'VoronoiNode': "voronoi",
     'ViewerNode': "viewer",
+    'SkinViewerNode': 'viewer_skin',
     'ObjectsNode': "objects",
     'ObjectsNodeMK2': "objects_mk2",
     'RandomVectorNode': 'random_vector',
