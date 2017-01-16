@@ -172,12 +172,6 @@ class SvSkinViewerNodeMK1b(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Skin Mesher mk1b'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    activate = BoolProperty(
-        name='Show',
-        description='When enabled this will process incoming data',
-        default=True,
-        update=updateNode)
-
     basemesh_name = StringProperty(
         default='Alpha',
         update=updateNode,
@@ -228,21 +222,15 @@ class SvSkinViewerNodeMK1b(bpy.types.Node, SverchCustomTreeNode):
 
 
     def draw_buttons(self, context, layout):
-        view_icon = 'MOD_ARMATURE' if self.activate else 'ARMATURE_DATA'
 
         r = layout.row(align=True)
-        r.prop(self, "activate", text="", toggle=True, icon=view_icon)
+        r.prop(self, "live_updates", text="Live", toggle=True)
         r.prop(self, "basemesh_name", text="", icon='OUTLINER_OB_MESH')
 
-        r2 = layout.row(align=True)
-        r2.prop(self, "live_updates", text="Live Modifier", toggle=True)
-
-        r3 = layout.row(align=True)
-        r3.label('SubDiv')
-        r3.prop(self, 'levels', text="View")
-        r3.prop(self, 'render_levels', text="Render")
-        r4 = layout.row(align=True)
-        r4.prop(self, 'distance_doubles', text='rm doubles')
+        r3 = layout.column(align=True)
+        r3.prop(self, 'levels', text="div View")
+        r3.prop(self, 'render_levels', text="div Render")
+        r3.prop(self, 'distance_doubles', text='doubles distance')
 
         sh = "node.sv_callback_skinmod_viewer_mk1b"
         r5 = layout.row(align=True)
@@ -263,9 +251,6 @@ class SvSkinViewerNodeMK1b(bpy.types.Node, SverchCustomTreeNode):
 
 
     def process(self):
-        if not self.activate:
-            return
-
         if not self.live_updates:
             return
 
