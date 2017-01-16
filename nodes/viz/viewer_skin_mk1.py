@@ -25,7 +25,7 @@ from mathutils import Matrix
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat, fullList
-from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
+from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
 from sverchok.utils.sv_viewer_utils import (
     greek_alphabet, matrix_sanitizer, remove_non_updated_objects
 )
@@ -37,12 +37,12 @@ def set_data_for_layer(bm, data, layer):
 
 
 def shrink_geometry(bm, dist, layers):
-    layers = bm.verts.layers
+    vlayers = bm.verts.layers
     made_layers = []
     for idx, layer in enumerate(layers):
         first_element = layer[0] or 0.2
         if isinstance(first_element, float):
-            data_layer = layers.float.new('float_layer' + str(idx))
+            data_layer = vlayers.float.new('float_layer' + str(idx))
 
         made_layers.append(data_layer)
         bm.verts.ensure_lookup_table()
@@ -85,7 +85,7 @@ def make_bmesh_geometry(node, context, geometry, idx, layers):
     scene = context.scene
     meshes = bpy.data.meshes
     objects = bpy.data.objects
-    verts, edges, matrix, _ = geometry
+    verts, edges, matrix, _, _ = geometry
     name = node.basemesh_name + '.' + str("%04d" % idx)
 
     # remove object
@@ -207,7 +207,7 @@ class SvSkinViewerNodeMK1b(bpy.types.Node, SverchCustomTreeNode):
     render_levels = IntProperty(min=0, default=1, max=3, update=updateNode)
 
     distance_doubles = FloatProperty(
-        default=0.0,
+        default=0.0, min=0.0,
         name='doubles distance',
         description="removes coinciding verts, also aims to remove double radii data",
         update=updateNode)
@@ -246,7 +246,7 @@ class SvSkinViewerNodeMK1b(bpy.types.Node, SverchCustomTreeNode):
         r4 = layout.row(align=True)
         r4.prop(self, 'distance_doubles', text='rm doubles')
 
-        sh = "node.sv_callback_skinmod_viewer_mk1"
+        sh = "node.sv_callback_skinmod_viewer_mk1b"
         r5 = layout.row(align=True)
         r5.prop_search(
             self, 'material', bpy.data, 'materials', text='',
