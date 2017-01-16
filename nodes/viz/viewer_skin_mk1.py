@@ -172,12 +172,6 @@ class SvSkinViewerNodeMK1b(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Skin Mesher mk1b'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    activate = BoolProperty(
-        name='Show',
-        description='When enabled this will process incoming data',
-        default=True,
-        update=updateNode)
-
     basemesh_name = StringProperty(
         default='Alpha',
         update=updateNode,
@@ -228,7 +222,6 @@ class SvSkinViewerNodeMK1b(bpy.types.Node, SverchCustomTreeNode):
 
 
     def draw_buttons(self, context, layout):
-        view_icon = 'MOD_ARMATURE' if self.activate else 'ARMATURE_DATA'
 
         r = layout.row(align=True)
         r.prop(self, "live_updates", text="Live", toggle=True)
