@@ -237,12 +237,10 @@ class SvSkinViewerNodeMK1b(bpy.types.Node, SverchCustomTreeNode):
         r2 = layout.row(align=True)
         r2.prop(self, "live_updates", text="Live Modifier", toggle=True)
 
-        layout.label('SubSurf')
         r3 = layout.row(align=True)
+        r3.label('SubDiv')
         r3.prop(self, 'levels', text="View")
         r3.prop(self, 'render_levels', text="Render")
-
-        layout.label('extras')
         r4 = layout.row(align=True)
         r4.prop(self, 'distance_doubles', text='rm doubles')
 
