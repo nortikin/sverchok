@@ -19,14 +19,44 @@
 import itertools
 
 import bpy
+import bmesh
 from bpy.props import BoolProperty, StringProperty, FloatProperty, IntProperty
 from mathutils import Matrix
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat, fullList
+from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
 from sverchok.utils.sv_viewer_utils import (
     greek_alphabet, matrix_sanitizer, remove_non_updated_objects
 )
+
+
+def set_data_for_layer(bm, data, layer):
+    for i in range(len(bm.verts)):
+        bm.verts[i][data] = layer[i] or 0.1
+
+
+def shrink_geometry(bm, dist, layers):
+    vlayers = bm.verts.layers
+    made_layers = []
+    for idx, layer in enumerate(layers):
+        first_element = layer[0] or 0.2
+        if isinstance(first_element, float):
+            data_layer = vlayers.float.new('float_layer' + str(idx))
+
+        made_layers.append(data_layer)
+        bm.verts.ensure_lookup_table()
+        set_data_for_layer(bm, data_layer, layer)
+
+    bmesh.ops.remove_doubles(bm, verts=bm.verts[:], dist=dist)
+    bm.verts.ensure_lookup_table()
+    
+    verts, edges, faces = pydata_from_bmesh(bm)
+    data_out = [verts, edges, faces]
+    for layer_name in made_layers:
+        data_out.append([bm.verts[i][layer_name] for i in range(len(bm.verts))])
+
+    return data_out
 
 
 def assign_empty_mesh(idx):
@@ -51,11 +81,11 @@ def force_pydata(mesh, verts, edges):
     mesh.update(calc_edges=True)
 
 
-def make_bmesh_geometry(node, context, geometry, idx):
+def make_bmesh_geometry(node, context, geometry, idx, layers):
     scene = context.scene
     meshes = bpy.data.meshes
     objects = bpy.data.objects
-    verts, edges, matrix, _ = geometry
+    verts, edges, matrix, _, _ = geometry
     name = node.basemesh_name + '.' + str("%04d" % idx)
 
     # remove object
@@ -79,12 +109,18 @@ def make_bmesh_geometry(node, context, geometry, idx):
     # at this point the mesh is always fresh and empty
     obj['idx'] = idx
     obj['basename'] = node.basemesh_name
+
+    data_layers = None
+    if node.distance_doubles > 0.0:
+        bm = bmesh_from_pydata(verts, edges, [])
+        verts, edges, faces, d1, d2 = shrink_geometry(bm, node.distance_doubles, layers)
+        data_layers = d1, d2
+
     force_pydata(obj.data, verts, edges)
     obj.update_tag(refresh={'OBJECT', 'DATA'})
-    # context.scene.update()
 
     if node.live_updates:
-        # if modifier present, remove
+
         if 'sv_skin' in obj.modifiers:
             sk = obj.modifiers['sv_skin']
             obj.modifiers.remove(sk)
@@ -104,13 +140,13 @@ def make_bmesh_geometry(node, context, geometry, idx):
     else:
         obj.matrix_local = Matrix.Identity(4)
 
-    return obj
+    return obj, data_layers
 
 
-class SvSkinmodViewOpMK1(bpy.types.Operator):
+class SvSkinmodViewOpMK1b(bpy.types.Operator):
 
-    bl_idname = "node.sv_callback_skinmod_viewer_mk1"
-    bl_label = "Sverchok skinmod general callback 1"
+    bl_idname = "node.sv_callback_skinmod_viewer_mk1b"
+    bl_label = "Sverchok skinmod general callback 1b"
     bl_options = {'REGISTER', 'UNDO'}
 
     fn_name = StringProperty(default='')
@@ -130,10 +166,10 @@ class SvSkinmodViewOpMK1(bpy.types.Operator):
         return {'FINISHED'}
 
 
-class SvSkinViewerNodeMK1(bpy.types.Node, SverchCustomTreeNode):
+class SvSkinViewerNodeMK1b(bpy.types.Node, SverchCustomTreeNode):
 
-    bl_idname = 'SvSkinViewerNodeMK1'
-    bl_label = 'Skin Mesher mk1'
+    bl_idname = 'SvSkinViewerNodeMK1b'
+    bl_label = 'Skin Mesher mk1b'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     activate = BoolProperty(
@@ -153,19 +189,26 @@ class SvSkinViewerNodeMK1(bpy.types.Node, SverchCustomTreeNode):
         update=updateNode,
         description="This auto updates the modifier (by removing and adding it)")
 
-    general_radius = FloatProperty(
-        name='general_radius',
+    general_radius_x = FloatProperty(
+        name='general_radius_x',
         default=0.25,
-        description='value used to uniformly set the radii of skin vertices',
+        description='value used to uniformly set the radii of skin vertices x',
+        min=0.0001, step=0.05,
+        update=updateNode)
+
+    general_radius_y = FloatProperty(
+        name='general_radius_y',
+        default=0.25,
+        description='value used to uniformly set the radii of skin vertices y',
         min=0.0001, step=0.05,
         update=updateNode)
 
     levels = IntProperty(min=0, default=1, max=3, update=updateNode)
     render_levels = IntProperty(min=0, default=1, max=3, update=updateNode)
 
-    remove_doubles = BoolProperty(
-        default=0,
-        name='remove doubles',
+    distance_doubles = FloatProperty(
+        default=0.0, min=0.0,
+        name='doubles distance',
         description="removes coinciding verts, also aims to remove double radii data",
         update=updateNode)
 
@@ -180,7 +223,8 @@ class SvSkinViewerNodeMK1(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('VerticesSocket', 'vertices')
         self.inputs.new('StringsSocket', 'edges')
         self.inputs.new('MatrixSocket', 'matrix')
-        self.inputs.new('StringsSocket', 'radii').prop_name = "general_radius"
+        self.inputs.new('StringsSocket', 'radii_x').prop_name = "general_radius_x"
+        self.inputs.new('StringsSocket', 'radii_y').prop_name = "general_radius_y"
 
 
     def draw_buttons(self, context, layout):
@@ -193,16 +237,14 @@ class SvSkinViewerNodeMK1(bpy.types.Node, SverchCustomTreeNode):
         r2 = layout.row(align=True)
         r2.prop(self, "live_updates", text="Live Modifier", toggle=True)
 
-        layout.label('SubSurf')
         r3 = layout.row(align=True)
+        r3.label('SubDiv')
         r3.prop(self, 'levels', text="View")
         r3.prop(self, 'render_levels', text="Render")
-
-        layout.label('extras')
         r4 = layout.row(align=True)
-        r4.prop(self, 'remove_doubles', text='rm doubles')
+        r4.prop(self, 'distance_doubles', text='rm doubles')
 
-        sh = "node.sv_callback_skinmod_viewer_mk1"
+        sh = "node.sv_callback_skinmod_viewer_mk1b"
         r5 = layout.row(align=True)
         r5.prop_search(
             self, 'material', bpy.data, 'materials', text='',
@@ -215,8 +257,9 @@ class SvSkinViewerNodeMK1(bpy.types.Node, SverchCustomTreeNode):
         mverts = i['vertices'].sv_get(default=[])
         medges = i['edges'].sv_get(default=[])
         mmtrix = i['matrix'].sv_get(default=[None])
-        mradii = i['radii'].sv_get()
-        return mverts, medges, mmtrix, mradii
+        mradiix = i['radii_x'].sv_get()
+        mradiiy = i['radii_y'].sv_get()
+        return mverts, medges, mmtrix, mradiix, mradiiy
 
 
     def process(self):
@@ -235,6 +278,7 @@ class SvSkinViewerNodeMK1(bpy.types.Node, SverchCustomTreeNode):
         fullList(geometry_full[1], maxlen)
         fullList(geometry_full[2], maxlen)
         fullList(geometry_full[3], maxlen)
+        fullList(geometry_full[4], maxlen)
 
         catch_idx = 0
         for idx, (geometry) in enumerate(zip(*geometry_full)):
@@ -246,16 +290,24 @@ class SvSkinViewerNodeMK1(bpy.types.Node, SverchCustomTreeNode):
 
 
     def unit_generator(self, idx, geometry):
-        obj = make_bmesh_geometry(self, bpy.context, geometry, idx)
-        verts, _, _, radii = geometry
+        verts, _, _, radiix, radiiy = geometry
+        ntimes = len(verts)
+        radiix, _ = match_long_repeat([radiix, verts])
+        radiiy, _ = match_long_repeat([radiiy, verts])
 
         # assign radii after creation
-        ntimes = len(verts)
-        radii, _ = match_long_repeat([radii, verts])
+        obj, data_layers = make_bmesh_geometry(self, bpy.context, geometry, idx, [radiix, radiiy])
 
-        # for now don't update unless
-        if len(radii) == len(verts):
-            f_r = list(itertools.chain(*zip(radii, radii)))
+        if data_layers and self.distance_doubles > 0.0:
+            # This sets the modified geometry with radius x and radius y.
+            f_r = list(itertools.chain(*zip(data_layers[0], data_layers[1])))
+            f_r = [abs(f) for f in f_r]
+            obj.data.skin_vertices[0].data.foreach_set('radius', f_r)   
+            all_yes = list(itertools.repeat(True, len(obj.data.vertices)))
+            obj.data.skin_vertices[0].data.foreach_set('use_root', all_yes)
+
+        elif len(radiix) == len(verts):
+            f_r = list(itertools.chain(*zip(radiix, radiiy)))
             f_r = [abs(f) for f in f_r]
             obj.data.skin_vertices[0].data.foreach_set('radius', f_r)
 
@@ -274,10 +326,10 @@ class SvSkinViewerNodeMK1(bpy.types.Node, SverchCustomTreeNode):
 
 
 def register():
-    bpy.utils.register_class(SvSkinmodViewOpMK1)
-    bpy.utils.register_class(SvSkinViewerNodeMK1)
+    bpy.utils.register_class(SvSkinmodViewOpMK1b)
+    bpy.utils.register_class(SvSkinViewerNodeMK1b)
 
 
 def unregister():
-    bpy.utils.unregister_class(SvSkinViewerNodeMK1)
-    bpy.utils.unregister_class(SvSkinmodViewOpMK1)
+    bpy.utils.unregister_class(SvSkinViewerNodeMK1b)
+    bpy.utils.unregister_class(SvSkinmodViewOpMK1b)
