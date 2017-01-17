@@ -30,6 +30,7 @@ def make_line(integer, step, orientation):
     integer = 2 if integer < 2 else integer
 
     if isinstance(step, list):
+        
         def get_step(step):
             co_val = 0
             yield co_val
@@ -46,7 +47,6 @@ def make_line(integer, step, orientation):
                     co_val += step[-1]
                     yield co_val
 
-
         step_gen = get_step(step)
 
         zeros0 = (0 for i in range(integer))
@@ -55,11 +55,11 @@ def make_line(integer, step, orientation):
         nonzero = (next(step_gen) for i in range(integer))
         components = [zeros0, zeros1, zeros2]
         components[orientation] = nonzero
-        verts = list(zip(*components))
+        vertices = list(zip(*components))
         edges = [(i, i+1) for i in range(integer-1)]
 
     else:
-        
+
         vertices = []
         add_vert = vertices.append
         for i in range(0, integer):
