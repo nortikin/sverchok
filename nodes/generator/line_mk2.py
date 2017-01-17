@@ -25,14 +25,41 @@ from sverchok.data_structure import updateNode, fullList, match_long_repeat
 
 def make_line(integer, step, orientation):
 
+    # clamp values
     orientation = orientation if orientation in {0, 1, 2} else orientation % 3
     integer = 2 if integer < 2 else integer
 
     if isinstance(step, list):
-        vertices = [(0.0, 0.0, 0.0)]
-        # v = Vector(vertices[i]) + Vector((step[i], 0.0, 0.0))
-        edges = []
+        def get_step(step):
+            co_val = 0
+            yield co_val
+
+            if len(step) == 0:
+                co_val += 1.0
+                yield co_val
+            else:
+                for s in step:
+                    co_val += s
+                    yield co_val
+                
+                while True:
+                    co_val += step[-1]
+                    yield co_val
+
+
+        step_gen = get_step(step)
+
+        zeros0 = (0 for i in range(integer))
+        zeros1 = (0 for i in range(integer))
+        zeros2 = (0 for i in range(integer))
+        nonzero = (next(step_gen) for i in range(integer))
+        components = [zeros0, zeros1, zeros2]
+        components[orientation] = nonzero
+        verts = list(zip(*components))
+        edges = [(i, i+1) for i in range(integer-1)]
+
     else:
+        
         vertices = []
         add_vert = vertices.append
         for i in range(0, integer):
