@@ -144,7 +144,9 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
         node_enums = find_enumerators(node)
 
         ObjectsNode = (node.bl_idname == 'ObjectsNode')
+        ObjectsNode3 = (node.bl_idname == 'SvObjectsNodeMK3')
         ObjNodeLite = (node.bl_idname == 'SvObjInLite')
+
         ScriptNodeLite = (node.bl_idname == 'SvScriptNodeLite')
         ProfileParamNode = (node.bl_idname == 'SvProfileNode')
         IsGroupNode = (node.bl_idname == 'SvGroupNode')
@@ -172,6 +174,9 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
 
             # this silences the import error when items not found.
             if ObjectsNode and (k == "objects_local"):
+                continue
+            elif ObjectsNode3 and (k == 'object_names'):
+                node_dict['object_names'] = [o.name for o in node.object_names]
                 continue
 
             if TextInput and (k == 'current_text'):
@@ -499,6 +504,12 @@ def add_node_to_tree(nodes, n, nodes_to_import, name_remap, create_texts):
     
     if bl_idname in {'SvObjInLite', 'SvExecNodeMod'}:
         node.storage_set_data(node_ref)
+
+    if bl_idname == 'SvObjectsNodeMK3':
+        print(node_ref)
+        obj_names = node_ref.get('object_names', [])
+        for n in obj_names:
+            node.object_names.add().name = n
 
     gather_remapped_names(node, n, name_remap)
     apply_core_props(node, node_ref)
@@ -828,6 +839,7 @@ class SvNodeTreeExportToGist(bpy.types.Operator):
         try:
             gist_url = sv_gist_tools.main_upload_function(gist_filename, gist_description, gist_body, show_browser=False)
             context.window_manager.clipboard = gist_url   # full destination url
+            print(gist_url)
             self.report({'WARNING'}, "Copied gistURL to clipboad")
         except:
             self.report({'ERROR'}, "Error uploading the gist, check your internet connection!")
