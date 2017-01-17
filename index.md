@@ -11,6 +11,7 @@
 
 ## Generators
     LineNode
+    SvLineNodeMK2
     PlaneNode
     SvNGonNode
     SvBoxNode
