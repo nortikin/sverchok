@@ -22,32 +22,31 @@ from bpy.props import IntProperty, FloatProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, fullList, match_long_repeat
 
-from mathutils import Vector
-
 
 def make_line(integer, step, orientation):
 
-    vertices = [(0.0, 0.0, 0.0)]
-    integer = [int(integer) if type(integer) is not list else int(integer[0])]
+    orientation = orientation if orientation in {0, 1, 2} else orientation % 3
+    integer = 2 if integer < 2 else integer
 
-    if type(step) is not list:
-        step = [step]
-    fullList(step, integer[0])
+    if isinstance(step, list):
+        vertices = [(0.0, 0.0, 0.0)]
+        # v = Vector(vertices[i]) + Vector((step[i], 0.0, 0.0))
+        edges = []
+    else:
+        vertices = []
+        add_vert = vertices.append
+        for i in range(0, integer):
+            v = [0, 0, 0]
+            v[orientation] = i*step
+            add_vert(tuple(v))
 
-    for i in range(integer[0]-1):
-        v = Vector(vertices[i]) + Vector((step[i], 0.0, 0.0))
-        vertices.append(v[:])
-
-    edges = []
-    for i in range(integer[0]-1):
-        edges.append((i, i+1))
-
+        edges = [(i, i+1) for i in range(integer-1)]
     return vertices, edges
 
 class SvLineNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     ''' Line hyper'''
     bl_idname = 'SvLineNodeMK2'
-    bl_label = 'Line'
+    bl_label = 'Line mk2'
     bl_icon = 'GRIP'
     
     int_ = IntProperty(
@@ -60,7 +59,7 @@ class SvLineNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         default=1.0, options={'ANIMATABLE'},
         update=updateNode)
 
-    orientation_ = IntProperty(min=0, max=2)  # x , y , z   (we make it a socket)
+    orientation_ = IntProperty(min=0, max=2, update=updateNode)  # x , y , z   (we make it a socket)
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', "Nº Vertices").prop_name = 'int_'
@@ -74,10 +73,10 @@ class SvLineNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         pass
 
     def process(self):
-        inputs = [s.sv_get() for s in self.inputs]
+        inputs = [s.sv_get()[0] for s in self.inputs]
 
         params = match_long_repeat(inputs)
-        outputs = zip(*[make_line(i, s) for i, s in zip(*params)])
+        outputs = zip(*[make_line(*pseq) for pseq in zip(*params)])
 
         _ = [socket.sv_set(d) for socket, d in zip(self.outputs, outputs)]
 
