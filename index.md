@@ -1,13 +1,13 @@
 > ### This file is parsed by menu.py
-> 
+>
 > The following strict rules apply to editing this file:
 >
 > - do not use tabs, anywhere
 > - indent the Node's line using 4 spaces
 > - use `>` to add a comment, place it at the start of the line.
 > - if you aren't sure, follow the existing convention
-> 
-> Failing to follow these points will break the node category parser. 
+>
+> Failing to follow these points will break the node category parser.
 
 ## Generators
     LineNode
@@ -244,3 +244,4 @@
     SvBMoutputNode
     SvBMtoElementNode
     SvExecNodeMod
+    SvSeparateMeshNodeMK2
