@@ -229,8 +229,8 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
 
                 mtrx = [list(m) for m in obj.matrix_world]
                 if obj.type == 'EMPTY':
+                    mtrx_out.append(mtrx)
                     continue
-
                 try:
                     if obj.mode == 'EDIT' and obj.type == 'MESH':
                         # Mesh objects do not currently return what you see
