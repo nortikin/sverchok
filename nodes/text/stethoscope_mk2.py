@@ -55,7 +55,7 @@ class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         default=True,
         update=updateNode)
 
-    mode_options = [(i, i, '', idx) for idx, i in enumerate(["text-based", "graphical2"])]
+    mode_options = [(i, i, '', idx) for idx, i in enumerate(["text-based", "graphical"])]
     selected_mode = bpy.props.EnumProperty(
         items=mode_options,
         description="offers....",

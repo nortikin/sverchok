@@ -138,6 +138,19 @@ def draw_text_data(data):
         blf.draw(0, line)
         ypos -= (text_height * 1.3)
 
+
+def draw_rect(x=0, y=0, w=30, h=10, color=(0.0, 0.0, 0.0, 1.0)):
+
+    # or GL_QUADS
+    bgl.glColor4f(*color)       
+    bgl.glBegin(bgl.GL_POLYGON)
+
+    for coord in [(x, y), (x+w, y), (w+x, y-h), (x, y-h)]:
+        bgl.glVertex2f(*coord)
+    bgl.glEnd()
+
+
+
 def draw_graphical_data(data):
     lines = data.get('content')
     x, y = data.get('location', (120, 120))
@@ -145,8 +158,16 @@ def draw_graphical_data(data):
     if not lines:
         return
 
-    # draw here! bgl here i come! 
+    lineheight = 20
+    for idx, line in enumerate(lines):
+        # line 
+        draw_rect(x, y - (idx*lineheight), w=30, h=10)
 
+
+def restore_opengl_defaults():
+    bgl.glLineWidth(1)
+    bgl.glDisable(bgl.GL_BLEND)
+    bgl.glColor4f(0.0, 0.0, 0.0, 1.0)        
 
 
 def draw_callback_px(n_id, data):
@@ -163,10 +184,12 @@ def draw_callback_px(n_id, data):
     if not isinstance(ng_view, node_tree.SverchCustomTree):
         return
 
-    if data.get('selected_mode', 'text-based') == 'text-based':
+    if data.get('mode', 'text-based') == 'text-based':
         draw_text_data(data)
     else:
         draw_graphical_data(data)
+        restore_opengl_defaults()        
+
         
         
 def unregister():
