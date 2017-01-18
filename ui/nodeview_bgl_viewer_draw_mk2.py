@@ -36,9 +36,13 @@ def adjust_list(in_list, x, y):
     return [[old_x + x, old_y + y] for (old_x, old_y) in in_list]
 
 
-def parse_socket(socket, rounding):
+def parse_socket(socket, rounding, element_index, view_by_element):
 
     data = socket.sv_get(deepcopy=False)
+    num_data_items = len(data)
+    if num_data_items > 0 and view_by_element:
+        element_index %= num_data_items
+        data = data[element_index]
 
     str_width = 60
 
@@ -138,7 +142,7 @@ def draw_callback_px(n_id, data):
 
     # why does the text look so jagged?
     dpi = bpy.context.user_preferences.system.dpi
-    blf.size(font_id, int(text_height/2), dpi*2)  # should check prefs.dpi
+    blf.size(font_id, int(text_height/3), dpi*4)  # should check prefs.dpi
     bgl.glColor3f(*color)
     # x = 30  # region.width
     # y = region.height - 40

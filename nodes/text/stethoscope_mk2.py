@@ -55,7 +55,9 @@ class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         default=True,
         update=updateNode)
 
-    num_items = IntProperty()
+    view_by_element = BoolProperty(update=updateNode)
+    num_elements = IntProperty(default=0)
+    element_index = IntProperty(default=0, update=updateNode)
     rounding = IntProperty(min=1, max=5, default=3, update=updateNode)
 
     def avail_nodes(self, context):
@@ -94,7 +96,10 @@ class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         row.prop(self, "text_color", text='')
         layout.prop(self, "rounding")
         # layout.prop(self, "socket_name")
-        layout.label('input has {0} items'.format(self.num_items))
+        layout.label('input has {0} elements'.format(self.num_elements))
+        layout.prop(self, 'view_by_element', toggle=True)
+        if self.num_elements > 0 and self.view_by_element:
+            layout.prop(self, 'element_index', text='get index')
 
     def process(self):
         inputs = self.inputs
@@ -106,9 +111,9 @@ class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         if self.activate and inputs[0].is_linked:
             # gather vertices from input
             data = inputs[0].sv_get(deepcopy=False)
-            self.num_items = len(data)
+            self.num_elements = len(data)
 
-            lines = nvBGL.parse_socket(inputs[0], self.rounding)
+            lines = nvBGL.parse_socket(inputs[0], self.rounding, self.element_index, self.view_by_element)
             draw_data = {
                 'tree_name': self.id_data.name[:],
                 'content': lines,
