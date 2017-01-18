@@ -76,7 +76,7 @@ class SvSolidifyNode(bpy.types.Node, SverchCustomTreeNode):
         name='Thickness', description='Shell thickness',
         default=0.1, update=updateNode)
 
-    mode_options = [(op, op, '', idx) for idx, op in enumerate(['fast accurate'])]
+    mode_options = [(op, op, '', idx) for idx, op in enumerate(['fast', 'accurate'])]
 
     selected_mode = bpy.props.EnumProperty(
         items=mode_options,
