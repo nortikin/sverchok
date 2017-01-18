@@ -23,7 +23,7 @@ import re
 import bpy
 import blf
 import bgl
-from  sverchok import node_tree
+from sverchok import node_tree
 
 from bpy.types import SpaceNodeEditor
 
@@ -120,6 +120,35 @@ def callback_disable_all():
             callback_disable(n_id)
 
 
+def draw_text_data(data):
+    lines = data.get('content', 'no data')
+    x, y = data.get('location', (120, 120))
+    color = data.get('color', (0.1, 0.1, 0.1))
+    font_id = 0
+    text_height = 13
+
+    # why does the text look so jagged?  <-- still valid question
+    dpi = bpy.context.user_preferences.system.dpi
+    blf.size(font_id, int(text_height/4), dpi*4)  # should check prefs.dpi
+    bgl.glColor3f(*color)
+    ypos = y
+
+    for line in lines:
+        blf.position(0, x, ypos, 0)
+        blf.draw(0, line)
+        ypos -= (text_height * 1.3)
+
+def draw_graphical_data(data):
+    lines = data.get('content')
+    x, y = data.get('location', (120, 120))
+
+    if not lines:
+        return
+
+    # draw here! bgl here i come! 
+
+
+
 def draw_callback_px(n_id, data):
 
     space = bpy.context.space_data
@@ -134,24 +163,10 @@ def draw_callback_px(n_id, data):
     if not isinstance(ng_view, node_tree.SverchCustomTree):
         return
 
-    lines = data.get('content', 'no data')
-    x, y = data.get('location', (120, 120))
-    color = data.get('color', (0.1, 0.1, 0.1))
-    font_id = 0
-    text_height = 13
-
-    # why does the text look so jagged?
-    dpi = bpy.context.user_preferences.system.dpi
-    blf.size(font_id, int(text_height/3), dpi*4)  # should check prefs.dpi
-    bgl.glColor3f(*color)
-    # x = 30  # region.width
-    # y = region.height - 40
-    ypos = y
-
-    for line in lines:
-        blf.position(0, x, ypos, 0)
-        blf.draw(0, line)
-        ypos -= (text_height * 1.3)
+    if data.get('selected_mode', 'text-based') == 'text-based':
+        draw_text_data(data)
+    else:
+        draw_graphical_data(data)
         
         
 def unregister():

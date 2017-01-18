@@ -55,25 +55,17 @@ class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         default=True,
         update=updateNode)
 
+    mode_options = [(i, i, '', idx) for idx, i in enumerate(["text-based", "graphical2"])]
+    selected_mode = bpy.props.EnumProperty(
+        items=mode_options,
+        description="offers....",
+        default="text-based", update=updateNode
+    )
+
     view_by_element = BoolProperty(update=updateNode)
     num_elements = IntProperty(default=0)
     element_index = IntProperty(default=0, update=updateNode)
     rounding = IntProperty(min=1, max=5, default=3, update=updateNode)
-
-    def avail_nodes(self, context):
-        ng = self.id_data
-        return [(n.name, n.name, "") for n in ng.nodes]
-
-    def avail_sockets(self, context):
-        if self.node_name:
-            node = self.id_data.nodes.get(self.node_name)
-            if node:
-                return [(s.name, s.name, "") for s in node.inputs if s.links]
-        else:
-            return [("", "", "")]
-
-    # node_name = EnumProperty(items=avail_nodes, name="Node")
-    # socket_name = EnumProperty(items=avail_sockets, name="Sockets",update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', 'Data')
@@ -93,13 +85,20 @@ class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         icon = 'RESTRICT_VIEW_OFF' if self.activate else 'RESTRICT_VIEW_ON'
         row.separator()
         row.prop(self, "activate", icon=icon, text='')
-        row.prop(self, "text_color", text='')
-        layout.prop(self, "rounding")
-        # layout.prop(self, "socket_name")
-        layout.label('input has {0} elements'.format(self.num_elements))
-        layout.prop(self, 'view_by_element', toggle=True)
-        if self.num_elements > 0 and self.view_by_element:
-            layout.prop(self, 'element_index', text='get index')
+
+        layout.prop(self, 'selected_mode', expand=True)
+        if self.selected_mode == 'text-based':
+
+            row.prop(self, "text_color", text='')
+            layout.prop(self, "rounding")
+            # layout.prop(self, "socket_name")
+            layout.label('input has {0} elements'.format(self.num_elements))
+            layout.prop(self, 'view_by_element', toggle=True)
+            if self.num_elements > 0 and self.view_by_element:
+                layout.prop(self, 'element_index', text='get index')
+
+        else:
+            pass
 
     def process(self):
         inputs = self.inputs
@@ -113,12 +112,23 @@ class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             data = inputs[0].sv_get(deepcopy=False)
             self.num_elements = len(data)
 
-            lines = nvBGL.parse_socket(inputs[0], self.rounding, self.element_index, self.view_by_element)
+            if self.selected_mode == 'text-based':
+                processed_data = nvBGL.parse_socket(
+                    inputs[0],
+                    self.rounding,
+                    self.element_index,
+                    self.view_by_element
+                )
+            else:
+                #                # implement another nvBGL parses for gfx
+                processed_data = data
+
             draw_data = {
                 'tree_name': self.id_data.name[:],
-                'content': lines,
+                'content': processed_data,
                 'location': (self.location + Vector((self.width + 20, 0)))[:],
                 'color': self.text_color[:],
+                'mode': self.selected_mode[:]
             }
             nvBGL.callback_enable(n_id, draw_data)
 
