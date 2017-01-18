@@ -141,7 +141,6 @@ def draw_text_data(data):
 
 def draw_rect(x=0, y=0, w=30, h=10, color=(0.0, 0.0, 0.0, 1.0)):
 
-    # or GL_QUADS
     bgl.glColor4f(*color)       
     bgl.glBegin(bgl.GL_POLYGON)
 
@@ -149,6 +148,14 @@ def draw_rect(x=0, y=0, w=30, h=10, color=(0.0, 0.0, 0.0, 1.0)):
         bgl.glVertex2f(*coord)
     bgl.glEnd()
 
+def draw_triangle(x=0, y=0, w=30, h=10, color=(1.0, 0.3, 0.3, 1.0)):
+
+    bgl.glColor4f(*color)       
+    bgl.glBegin(bgl.GL_TRIANGLES)
+
+    for coord in [(x, y), (x+w, y), (x + (w/2), y-h)]:
+        bgl.glVertex2f(*coord)
+    bgl.glEnd()
 
 
 def draw_graphical_data(data):
@@ -161,7 +168,24 @@ def draw_graphical_data(data):
     lineheight = 20
     for idx, line in enumerate(lines):
         # line 
-        draw_rect(x, y - (idx*lineheight), w=30, h=10)
+        y_pos = y - (idx*lineheight)
+
+        draw_rect(x, y_pos, w=30, h=10)
+
+        # a list contain n * 3 tuple/list
+        if isinstance(line, (list, tuple)):
+            # print('is list')
+            if all([isinstance(s, (list, tuple)) for s in line]):
+                # print('-- each item is itself a list')
+                if all(len(element) == 3 for element in line):
+                    # print('-- -- each sub item has len 3')
+                    if all(all(isinstance(j, (float, int)) for j in l) for l in line):
+                        # print('-- -- -- each sub item is float or int')
+                        for jdx, v in enumerate(line):
+                            draw_triangle(x + (15 * jdx), y_pos-3, w=14, h=12)
+
+
+
 
 
 def restore_opengl_defaults():
