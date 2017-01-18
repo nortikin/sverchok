@@ -26,7 +26,7 @@ from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 # by Linus Yng
 
 
-def solidify(vertices, faces, t, verlen):
+def solidify(vertices, faces, t, mode='accurate'):
 
     if not faces or not vertices:
         return False
@@ -34,10 +34,17 @@ def solidify(vertices, faces, t, verlen):
     if len(faces[0]) == 2:
         return False
 
-    bm = bmesh_from_pydata(vertices, [], faces)
-    geom_in = bm.verts[:]+bm.edges[:]+bm.faces[:]
+    verlen = set(range(len(vertices)))
 
-    bmesh.ops.recalc_face_normals(bm, faces=bm.faces[:])
+    bm = bmesh_from_pydata(vertices, [], faces)
+
+    if mode == 'accurate':
+        for f in bm.faces:
+            f.normal_update()
+    else:
+        bmesh.ops.recalc_face_normals(bm, faces=bm.faces[:])
+
+    geom_in = bm.verts[:] + bm.edges[:] + bm.faces[:]
     bmesh.ops.solidify(bm, geom=geom_in, thickness=t[0])
 
     edges = []
@@ -69,6 +76,13 @@ class SvSolidifyNode(bpy.types.Node, SverchCustomTreeNode):
         name='Thickness', description='Shell thickness',
         default=0.1, update=updateNode)
 
+    mode_options = [(op, op, '', idx) for idx, op in enumerate(['fast accurate'])]
+
+    selected_mode = bpy.props.EnumProperty(
+        items=mode_options,
+        description="offers which kind of recal is desired",
+        default="fast", update=updateNode)
+
     def sv_init(self, context):
         self.inputs.new('StringsSocket', 'thickness').prop_name = 'thickness'
         self.inputs.new('VerticesSocket', 'vertices')
@@ -78,6 +92,9 @@ class SvSolidifyNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('StringsSocket', 'edges')
         self.outputs.new('StringsSocket', 'polygons')
         self.outputs.new('StringsSocket', 'newpols')
+
+    def draw_buttons(self, context, layout):
+        layout.prop(self, 'selected_mode', expand=True)
 
     def process(self):
         if not any((s.is_linked for s in self.outputs)):
@@ -96,16 +113,15 @@ class SvSolidifyNode(bpy.types.Node, SverchCustomTreeNode):
         newpo_out = []
         fullList(thickness, len(verts))
         for v, p, t in zip(verts, polys, thickness):
-            verlen = set(range(len(v)))
-            res = solidify(v, p, t, verlen)
-        
+            res = solidify(v, p, t, mode=self.selected_mode)
+
             if not res:
                 return
             verts_out.append(res[0])
             edges_out.append(res[1])
             polys_out.append(res[2])
             newpo_out.append(res[3])
-        
+
         self.outputs['vertices'].sv_set(verts_out)
         self.outputs['edges'].sv_set(edges_out)
         self.outputs['polygons'].sv_set(polys_out)
