@@ -65,7 +65,7 @@ def parse_socket(socket, rounding):
     rounded_vals = re.compile(r"\d*\.\d+")
 
     def mround(match):
-        format_string = "{{:.{0}f}}".format(rounding)
+        format_string = "{{:.{0}g}}".format(rounding)
         return format_string.format(float(match.group()))
 
     out = []
@@ -137,7 +137,8 @@ def draw_callback_px(n_id, data):
     text_height = 13
 
     # why does the text look so jagged?
-    blf.size(font_id, text_height, 72)  # should check prefs.dpi
+    dpi = bpy.context.user_preferences.system.dpi
+    blf.size(font_id, int(text_height/2), dpi*2)  # should check prefs.dpi
     bgl.glColor3f(*color)
     # x = 30  # region.width
     # y = region.height - 40

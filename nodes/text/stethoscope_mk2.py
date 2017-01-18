@@ -55,6 +55,7 @@ class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         default=True,
         update=updateNode)
 
+    num_items = IntProperty()
     rounding = IntProperty(min=1, max=5, default=3, update=updateNode)
 
     def avail_nodes(self, context):
@@ -91,8 +92,9 @@ class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         row.separator()
         row.prop(self, "activate", icon=icon, text='')
         row.prop(self, "text_color", text='')
-        # layout.prop(self, "node_name")
+        layout.prop(self, "rounding")
         # layout.prop(self, "socket_name")
+        layout.label('input has {0} items'.format(self.num_items))
 
     def process(self):
         inputs = self.inputs
@@ -101,10 +103,11 @@ class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         # end early
         nvBGL.callback_disable(n_id)
 
-        in_links = inputs[0].is_linked
-
-        if self.activate and in_links:
+        if self.activate and inputs[0].is_linked:
             # gather vertices from input
+            data = inputs[0].sv_get(deepcopy=False)
+            self.num_items = len(data)
+
             lines = nvBGL.parse_socket(inputs[0], self.rounding)
             draw_data = {
                 'tree_name': self.id_data.name[:],
