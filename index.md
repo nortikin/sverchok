@@ -174,6 +174,7 @@
     SvBmeshViewerNodeMK2
     IndexViewerNode
     Sv3DviewPropsNode
+    SvStethoscopeNodeMK2
 
 ## Text
     ViewerNodeTextMK2
