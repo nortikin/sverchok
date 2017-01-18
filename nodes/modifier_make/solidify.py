@@ -26,7 +26,7 @@ from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 # by Linus Yng
 
 
-def solidify(vertices, faces, t, verlen):
+def solidify(self, vertices, faces, t, verlen):
 
     if not faces or not vertices:
         return False
@@ -35,9 +35,14 @@ def solidify(vertices, faces, t, verlen):
         return False
 
     bm = bmesh_from_pydata(vertices, [], faces)
-    geom_in = bm.verts[:]+bm.edges[:]+bm.faces[:]
 
-    bmesh.ops.recalc_face_normals(bm, faces=bm.faces[:])
+    if self.selected_mode == 'accurate':
+        for f in bm.faces:
+            f.normal_update() 
+    else:
+        bmesh.ops.recalc_face_normals(bm, faces=bm.faces[:])
+
+    geom_in = bm.verts[:]+bm.edges[:]+bm.faces[:]
     bmesh.ops.solidify(bm, geom=geom_in, thickness=t[0])
 
     edges = []
@@ -69,6 +74,13 @@ class SvSolidifyNode(bpy.types.Node, SverchCustomTreeNode):
         name='Thickness', description='Shell thickness',
         default=0.1, update=updateNode)
 
+    mode_options = [(op, op, '', idx) for idx, op in enumerate(['fast','accurate'])]
+    
+    selected_mode = bpy.props.EnumProperty(
+        items=mode_options,
+        description="offers which kind of recal is desired",
+        default="fast", update=updateNode)
+
     def sv_init(self, context):
         self.inputs.new('StringsSocket', 'thickness').prop_name = 'thickness'
         self.inputs.new('VerticesSocket', 'vertices')
@@ -78,6 +90,9 @@ class SvSolidifyNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('StringsSocket', 'edges')
         self.outputs.new('StringsSocket', 'polygons')
         self.outputs.new('StringsSocket', 'newpols')
+
+    def draw_buttons(self, context, layout):
+        layout.prop(self, 'selected_mode', expand=True)
 
     def process(self):
         if not any((s.is_linked for s in self.outputs)):
@@ -97,7 +112,7 @@ class SvSolidifyNode(bpy.types.Node, SverchCustomTreeNode):
         fullList(thickness, len(verts))
         for v, p, t in zip(verts, polys, thickness):
             verlen = set(range(len(v)))
-            res = solidify(v, p, t, verlen)
+            res = solidify(self, v, p, t, verlen)
         
             if not res:
                 return
