@@ -325,9 +325,8 @@ class SverchokToolsMenu(bpy.types.Panel):
             row.operator(
                 "node.sverchok_update_addon", text='Upgrade Sverchok addon')
         else:
-            layout.row().operator(
-                "node.sverchok_check_for_upgrades", text='Check for new version')
-        #       row.prop(tree, 'sv_bake',text=' ')
+            sha_update = "node.sverchok_check_for_upgrades_wsha"
+            layout.row().operator(sha_update, text='Check for updates')
 
 
 sv_tools_classes = [

@@ -181,32 +181,34 @@ class SverchokUpdateAddon(bpy.types.Operator):
     def execute(self, context):
         os.curdir = bl_addons_path
         os.chdir(os.curdir)
-        bpy.data.window_managers[0].progress_begin(0, 100)
-        bpy.data.window_managers[0].progress_update(20)
+        wm = bpy.data.window_managers[0]
+        wm.progress_begin(0, 100)
+        wm.progress_update(20)
+
         try:
             url = 'https://github.com/nortikin/sverchok/archive/master.zip'
             to_path = os.path.normpath(os.path.join(os.curdir, 'master.zip'))
             file = urllib.request.urlretrieve(url, to_path)
-            bpy.data.window_managers[0].progress_update(50)
+            wm.progress_update(50)
         except:
             self.report({'ERROR'}, "Cannot get archive from Internet")
-            bpy.data.window_managers[0].progress_end()
+            wm.progress_end()
             return {'CANCELLED'}
+        
         try:
-            #os.removedirs(os.path.normpath(os.path.join(os.curdir, 'sverchok')))
             err = 0
             ZipFile(file[0]).extractall(path=os.curdir, members=None, pwd=None)
-            bpy.data.window_managers[0].progress_update(90)
+            wm.progress_update(90)
             err = 1
             os.remove(file[0])
             err = 2
             bpy.context.scene.sv_new_version = False
-            bpy.data.window_managers[0].progress_update(100)
-            bpy.data.window_managers[0].progress_end()
+            wm.progress_update(100)
+            wm.progress_end()
             self.report({'INFO'}, "Unzipped, reload addons with F8 button")
         except:
             self.report({'ERROR'}, "Cannot extract files errno {0}".format(str(err)))
-            bpy.data.window_managers[0].progress_end()
+            wm.progress_end()
             os.remove(file[0])
             return {'CANCELLED'}
 
