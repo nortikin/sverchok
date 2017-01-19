@@ -131,47 +131,6 @@ class SverchokHome(bpy.types.Operator):
         return {'FINISHED'}
 
 
-class SverchokCheckForUpgrades(bpy.types.Operator):
-    """ Check if there new version on github """
-    bl_idname = "node.sverchok_check_for_upgrades"
-    bl_label = "Sverchok check for new version"
-    bl_options = {'REGISTER'}
-
-    def execute(self, context):
-        report = self.report
-        import sverchok
-        version_local = sverchok.bl_info["version"]
-        try:
-            # for testing
-            #url = 'https://raw.githubusercontent.com/nortikin/sverchok/toProcess/__init__.py'
-            # when it is master
-            url = 'https://raw.githubusercontent.com/nortikin/sverchok/master/__init__.py'
-            ctx = ssl.create_default_context()
-            ctx.check_hostname = False
-            ctx.verify_mode = ssl.CERT_NONE
-            lines = urllib.request.urlopen(url, context=ctx).readlines()
-            for l in map(str,lines):
-                if '"version"' in l:
-                    version = l[l.find("("):l.find(")")+1]
-                    break
-            version_url = ast.literal_eval(version)
-        except urllib.error.URLError:
-            traceback.print_exc()
-            report({'INFO'}, "Unable to contact github, or SSL not compiled.")
-            return {'CANCELLED'}
-        except Error as e:
-            traceback.print_exc()
-            report({'INFO'}, "Unable to find version info")
-            return {'CANCELLED'}
-        if version_local != version_url:
-            bpy.context.scene.sv_new_version = True
-            v_str = ".".join(map(str, version_url))
-            report({'INFO'}, "New version {0}".format(version_url))
-        else:
-            report({'INFO'}, "Your version {0} is latest.".format(sv_version_local))
-        return {'FINISHED'}
-
-
 class SverchokUpdateAddon(bpy.types.Operator):
     """ Sverchok update addon without any browsing and so on. After - press F8 to reload addons """
     bl_idname = "node.sverchok_update_addon"
@@ -205,7 +164,7 @@ class SverchokUpdateAddon(bpy.types.Operator):
             bpy.context.scene.sv_new_version = False
             wm.progress_update(100)
             wm.progress_end()
-            self.report({'INFO'}, "Unzipped, reload addons with F8 button")
+            self.report({'INFO'}, "Unzipped, reload addons with F8 button, maybe restart Blender")
         except:
             self.report({'ERROR'}, "Cannot extract files errno {0}".format(str(err)))
             wm.progress_end()
@@ -325,7 +284,6 @@ sv_tools_classes = [
     SverchokUpdateCurrent,
     SverchokUpdateAll,
     SverchokBakeAll,
-    SverchokCheckForUpgrades,
     SverchokUpdateAddon,
     SverchokPurgeCache,
     SverchokHome,
