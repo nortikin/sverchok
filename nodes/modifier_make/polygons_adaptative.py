@@ -83,9 +83,9 @@ class AdaptivePolsNode(bpy.types.Node, SverchCustomTreeNode):
             versD = Vector_generate(versD_)
             ##### it is needed for normals of vertices
             polsR, polsD, versD = match_long_repeat([polsR, polsD, versD])
-            bm = bmesh_from_pydata(versR, [], polsR)
+            bm = bmesh_from_pydata(versR, [], polsR, face_normals=True)
 
-            bmesh.ops.recalc_face_normals(bm, faces=bm.faces[:])
+            #bmesh.ops.recalc_face_normals(bm, faces=bm.faces[:])
             bm.verts.ensure_lookup_table()
             new_ve = bm.verts
 
@@ -99,7 +99,7 @@ class AdaptivePolsNode(bpy.types.Node, SverchCustomTreeNode):
             vers_out = []
             pols_out = []
             i = 0
-            for vD, pR in zip(versD,polsR):
+            for vD, pR in zip(versD, polsR):
                 # part of donor to make limits
                 j = i
                 pD = polsD[i]
