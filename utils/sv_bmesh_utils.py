@@ -39,6 +39,7 @@ def bmesh_from_pydata(verts=[], edges=[], faces=[], face_normals=False):
             f = add_face(tuple(bm.verts[i] for i in face))
             if face_normals:
                 f.normal_update()
+
         bm.faces.index_update()
 
     if edges:
