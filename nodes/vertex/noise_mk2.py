@@ -30,8 +30,19 @@ from sverchok.data_structure import (updateNode, Vector_degenerate, match_long_r
 # noise nodes
 # from http://www.blender.org/documentation/blender_python_api_current/mathutils.noise.html
 
-members = inspect.getmembers(noise.types)
-noise_dict = {t[0]: t[1] for t in members if isinstance(t[1], int)}
+
+noise_options = [
+    ('BLENDER', 0),
+    ('STDPERLIN', 1), 
+    ('NEWPERLIN', 2), 
+    ('VORONOI_F1', 3), 
+    ('VORONOI_F2', 4), 
+    ('VORONOI_F3', 5), 
+    ('VORONOI_F4', 6), 
+    ('VORONOI_F2F1', 7), 
+    ('VORONOI_CRACKLE', 8),
+    ('CELLNOISE', 14)
+]
 
 def deepnoise(v, _noise_type):
     u = noise.noise_vector(v, _noise_type)[:]
@@ -39,14 +50,10 @@ def deepnoise(v, _noise_type):
     return sqrt((a[0] * a[0]) + (a[1] * a[1]) + (a[2] * a[2])) * 0.5
 
 
+noise_dict = {t[0]: t[1] for t in noise_options}
+avail_noise = [(t[0], t[0].title(), t[0].title(), '', t[1]) for t in noise_options]
+
 noise_f = {'SCALAR': deepnoise, 'VECTOR': noise.noise_vector}
-
-
-def avail_noise(self, context):
-    n_t = [(t[0], t[0].title(), t[0].title(), '', t[1])
-           for t in inspect.getmembers(noise.types) if isinstance(t[1], int)]
-    n_t.sort(key=operator.itemgetter(0), reverse=True)
-    return n_t
 
 
 class SvNoiseNodeMK2(bpy.types.Node, SverchCustomTreeNode):
@@ -78,6 +85,7 @@ class SvNoiseNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
     noise_type = EnumProperty(
         items=avail_noise,
+        default='STDPERLIN',
         description="Noise type",
         update=updateNode)
 
