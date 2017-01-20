@@ -39,7 +39,7 @@ def solidify(vertices, faces, t, mode='accurate'):
     bm = bmesh_from_pydata(vertices, [], faces)
 
     if mode == 'accurate':
-        bm = bmesh_from_pydata(vertices, [], faces, normals=True)
+        bm = bmesh_from_pydata(vertices, [], faces, normals='f')
     else:
         bm = bmesh_from_pydata(vertices, [], faces)
         bmesh.ops.recalc_face_normals(bm, faces=bm.faces[:])
