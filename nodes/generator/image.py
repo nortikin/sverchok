@@ -82,10 +82,8 @@ class ImageNode(bpy.types.Node, SverchCustomTreeNode):
 
         IntegerX = min(int(inputs['vecs X'].sv_get()[0][0]), 100)    
         IntegerY = min(int(inputs['vecs Y'].sv_get()[0][0]), 100)
-
         StepX = inputs['Step X'].sv_get()[0]
         StepY = inputs['Step Y'].sv_get()[0]
-
         fullList(StepX, IntegerX)
         fullList(StepY, IntegerY)
 
