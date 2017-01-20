@@ -71,7 +71,7 @@ class DistancePPNode(bpy.types.Node, SverchCustomTreeNode):
 
                 # print ('distances out' , str(output))
         else:
-            SvSetSocketAnyType(self, 'distances', [])
+            self.outputs['distances'].sv_set([])
 
     def calcV(self, list1, list2):
         dists = []
