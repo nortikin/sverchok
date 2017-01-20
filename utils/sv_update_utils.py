@@ -134,6 +134,7 @@ class SverchokUpdateAddon(bpy.types.Operator):
         os.curdir = sv_get_local_path()[1]  # addons path
         os.chdir(os.curdir)
 
+        # wm = bpy.context.window_manager  should be this i think..
         wm = bpy.data.window_managers[0]
         wm.progress_begin(0, 100)
         wm.progress_update(20)
@@ -165,15 +166,49 @@ class SverchokUpdateAddon(bpy.types.Operator):
             os.remove(file[0])
             return {'CANCELLED'}
 
-        
+        # write to both sv_sha_download and sv_shafile.sv
         write_latest_sha_to_local(sha_value=latest_local_sha(), filename='sv_sha_downloaded.sv')
+        write_latest_sha_to_local(sha_value=latest_local_sha())
         return {'FINISHED'}
+
+
+class SvPrintCommits(bpy.types.Operator):
+    """ show latest commits in info panel, and terminal """
+    bl_idname = "node.sv_show_latest_commits"
+    bl_label = "Show latest commits"
+
+    def execute(self, context):
+        r = requests.get('https://api.github.com/repos/nortikin/sverchok/commits')
+        json_obj = r.json()
+        for i in range(5):
+            commit = json_obj[i]['commit']
+            comment = commit['message'].split('\n')
+
+            # display on report window
+            message_dict = {
+                'sha': os.path.basename(json_obj[i]['commit']['url'])[:7],
+                'user': commit['committer']['name'],
+                'comment': comment[0] + '...' if len(comment) else ''
+            }
+
+            self.report({'INFO'}, '{sha} : by {user}  :  {comment}'.format(**message_dict))
+
+            # display on terminal
+            print('{sha} : by {user}'.format(**message_dict))
+            for line in comment:
+                print('    ' + line)
+
+        return {'FINISHED'}
+
+
 
 
 def register():
     bpy.utils.register_class(SverchokCheckForUpgradesSHA)
     bpy.utils.register_class(SverchokUpdateAddon)
+    bpy.utils.register_class(SvPrintCommits)
 
 def unregister():
     bpy.utils.unregister_class(SverchokCheckForUpgradesSHA)
     bpy.utils.unregister_class(SverchokUpdateAddon)
+    bpy.utils.unregister_class(SvPrintCommits)
