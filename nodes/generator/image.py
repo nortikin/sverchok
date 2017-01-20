@@ -137,21 +137,32 @@ class ImageNode(bpy.types.Node, SverchCustomTreeNode):
         if delitely > leny:
             delitely = leny
         R, G, B = self.R, self.G, self.B
-        xcoef = lenx//delitelx
-        ycoef = leny//delitely
+        xcoef = lenx // max(1, delitelx)
+        ycoef = leny // max(1, delitely)
+        
         # copy images data, pixels is created on every access with [i], extreme speedup.
         # http://blender.stackexchange.com/questions/3673/why-is-accessing-image-data-so-slow
         imag = bpy.data.images[image_name].pixels[:]
+        max_element_index = len(imag)-1
+
         vertices = []
         addition = 0
         for y in range(delitely+1):
             addition = int(ycoef*y*4*lenx)
-            for x in range(delitelx+1):
-                #  каждый пиксель кодируется RGBA, и записан строкой, без разделения на строки и столбцы.
-                middle = (imag[addition]*R+imag[addition+1]*G+imag[addition+2]*B)*imag[addition+3]
-                vertex = [x*stepx[x], y*stepy[y], middle]
-                vertices.append(vertex) 
-                addition += int(xcoef*4)
+
+            if addition >= max_element_index-3:
+                addition = max_element_index-3
+
+            try:
+                for x in range(delitelx+1):
+                    middle = (imag[addition]*R+imag[addition+1]*G+imag[addition+2]*B)*imag[addition+3]
+                    vertex = [x*stepx[x], y*stepy[y], middle]
+                    vertices.append(vertex) 
+                    addition += int(xcoef*4)
+            except IndexError:
+                print(addition, 'vs', max_element_index)
+
+
         return vertices
 
 
