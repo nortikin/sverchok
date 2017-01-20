@@ -17,12 +17,6 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import webbrowser
-import os
-
-import traceback
-import collections
-import ast
-import tempfile
 
 import bpy
 from bpy.props import StringProperty, CollectionProperty, BoolProperty
