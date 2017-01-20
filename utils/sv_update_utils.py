@@ -34,6 +34,9 @@ def sv_get_local_path():
     version_local = ".".join(map(str, sverchok.bl_info["version"]))
     return script_paths, addons_path, version_local
 
+sv_script_paths, bl_addons_path, sv_version_local = sv_get_local_path()
+
+
 
 def get_sha_filepath(filename='sv_shafile.sv'):
     """ the act if calling this function should produce a file called 
@@ -48,7 +51,7 @@ def get_sha_filepath(filename='sv_shafile.sv'):
     
     # create fullpath if it doesn't exist
     if not os.path.exists(fullpath):
-        with open(fullpath, 'w') as j:
+        with open(fullpath, 'w') as _:
             pass
     
     return fullpath
@@ -114,7 +117,7 @@ class SverchokCheckForUpgradesSHA(bpy.types.Operator):
             context.scene.sv_new_version = True
 
         if context.scene.sv_new_version:
-            report({'INFO'}, "New commits available, update at own risk")
+            report({'INFO'}, "New commits available, update at own risk ({0})".format(latest_sha[:7]))
         else:
             report({'INFO'}, "No new commits to download")
         return {'FINISHED'}
