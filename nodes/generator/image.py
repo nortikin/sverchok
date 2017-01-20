@@ -80,21 +80,12 @@ class ImageNode(bpy.types.Node, SverchCustomTreeNode):
     def process(self):
         inputs, outputs = self.inputs, self.outputs
 
-        # inputs
-        if inputs['vecs X'].is_linked:
-            IntegerX = min(int(inputs['vecs X'].sv_get()[0][0]), 100)
-        else:
-            IntegerX = int(self.Xvecs)
+        IntegerX = min(int(inputs['vecs X'].sv_get()[0][0]), 100)    
+        IntegerY = min(int(inputs['vecs Y'].sv_get()[0][0]), 100)
 
-        if inputs['vecs Y'].is_linked:
-            IntegerY = min(int(inputs['vecs Y'].sv_get()[0][0]), 100)
-        else:
-            IntegerY = int(self.Yvecs)
+        StepX = inputs['Step X'].sv_get()[0]
+        StepY = inputs['Step Y'].sv_get()[0]
 
-        step_x_linked = inputs['Step X'].is_linked
-        step_y_linked = inputs['Step Y'].is_linked
-        StepX = inputs['Step X'].sv_get()[0] if step_x_linked else [self.Xstep]
-        StepY = inputs['Step Y'].sv_get()[0] if step_y_linked else [self.Ystep]
         fullList(StepX, IntegerX)
         fullList(StepY, IntegerY)
 
