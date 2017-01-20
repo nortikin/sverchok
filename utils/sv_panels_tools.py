@@ -18,10 +18,7 @@
 
 import webbrowser
 import os
-import urllib
-import urllib.request
-import ssl
-from zipfile import ZipFile
+
 import traceback
 import collections
 import ast
@@ -33,17 +30,6 @@ from bpy.props import StringProperty, CollectionProperty, BoolProperty
 from sverchok.core.update_system import process_tree, build_update_list
 from sverchok.node_tree import SverchCustomTreeNode
 import sverchok
-
-def sv_get_local_path():
-    sv_script_paths = os.path.normpath(os.path.dirname(__file__))
-    bl_addons_path = os.path.split(os.path.dirname(sv_script_paths))[0]
-    sv_version_local = ".".join(map(str, sverchok.bl_info["version"]))
-    return sv_script_paths, bl_addons_path, sv_version_local
-
-# global variables in tools
-sv_script_paths, bl_addons_path, sv_version_local = sv_get_local_path()
-
-
 
 
 class SverchokUpdateAll(bpy.types.Operator):
@@ -130,48 +116,6 @@ class SverchokHome(bpy.types.Operator):
                 self.report({'WARNING'}, "Error in opening the page %s." % (page))
         return {'FINISHED'}
 
-
-class SverchokUpdateAddon(bpy.types.Operator):
-    """ Sverchok update addon without any browsing and so on. After - press F8 to reload addons """
-    bl_idname = "node.sverchok_update_addon"
-    bl_label = "Sverchok update addon"
-    bl_options = {'REGISTER'}
-
-    def execute(self, context):
-        os.curdir = bl_addons_path
-        os.chdir(os.curdir)
-        wm = bpy.data.window_managers[0]
-        wm.progress_begin(0, 100)
-        wm.progress_update(20)
-
-        try:
-            url = 'https://github.com/nortikin/sverchok/archive/master.zip'
-            to_path = os.path.normpath(os.path.join(os.curdir, 'master.zip'))
-            file = urllib.request.urlretrieve(url, to_path)
-            wm.progress_update(50)
-        except:
-            self.report({'ERROR'}, "Cannot get archive from Internet")
-            wm.progress_end()
-            return {'CANCELLED'}
-        
-        try:
-            err = 0
-            ZipFile(file[0]).extractall(path=os.curdir, members=None, pwd=None)
-            wm.progress_update(90)
-            err = 1
-            os.remove(file[0])
-            err = 2
-            bpy.context.scene.sv_new_version = False
-            wm.progress_update(100)
-            wm.progress_end()
-            self.report({'INFO'}, "Unzipped, reload addons with F8 button, maybe restart Blender")
-        except:
-            self.report({'ERROR'}, "Cannot extract files errno {0}".format(str(err)))
-            wm.progress_end()
-            os.remove(file[0])
-            return {'CANCELLED'}
-
-        return {'FINISHED'}
 
 
 class SvSwitchToLayout (bpy.types.Operator):
@@ -284,7 +228,6 @@ sv_tools_classes = [
     SverchokUpdateCurrent,
     SverchokUpdateAll,
     SverchokBakeAll,
-    SverchokUpdateAddon,
     SverchokPurgeCache,
     SverchokHome,
     Sv3dPropItem,
