@@ -20,9 +20,9 @@ import bmesh
 from sverchok.data_structure import iterate_process
 
 
-def bmesh_from_pydata(verts=[], edges=[], faces=[], face_normals=False):
+def bmesh_from_pydata(verts=[], edges=[], faces=[], normals=False):
     ''' verts is necessary, edges/faces are optional
-        face_normals=True the normals for each face are calculated
+        if normals=True the normals for each face and vertex are calculated
     '''
 
     bm = bmesh.new()
@@ -36,11 +36,15 @@ def bmesh_from_pydata(verts=[], edges=[], faces=[], face_normals=False):
     if faces:
         add_face = bm.faces.new
         for face in faces:
-            f = add_face(tuple(bm.verts[i] for i in face))
-            if face_normals:
-                f.normal_update()
+            if normals:
+                add_face(tuple(bm.verts[i] for i in face)).normal_update()
+            else:
+                add_face(tuple(bm.verts[i] for i in face))
 
         bm.faces.index_update()
+        if normals:
+            for v in bm.verts:
+                    v.normal_update()
 
     if edges:
         add_edge = bm.edges.new
