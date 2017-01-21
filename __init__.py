@@ -45,7 +45,7 @@ bl_info = {
         "AgustinJB, Zeffii, Kosvor, "
         "Portnov, Elfnor"
     ),
-    "version": (0, 5, 9, 5),
+    "version": (0, 5, 9, 6),
     "blender": (2, 7, 8),
     "location": "Nodes > CustomNodesTree > Add user nodes",
     "description": "Parametric node-based geometry programming",
@@ -69,8 +69,7 @@ if __name__ != "sverchok":
 # to store imported modules
 imported_modules = []
 
-# ugly hack, should make respective dict in __init__ like nodes
-# or parse it
+# ugly hack, should make respective dict in __init__ like nodes or parse it
 root_modules = [
     "menu", "node_tree", "data_structure", "core",
     "utils", "ui", "nodes", "old_nodes", "sockets",
@@ -93,7 +92,7 @@ utils_modules = [
     "sv_panels_tools", "sv_gist_tools", "sv_IO_panel_tools",
     "monad", "sv_help",
     #"loadscript",
-    "debug_script"
+    "debug_script", "sv_update_utils"
 ]
 
 ui_modules = [

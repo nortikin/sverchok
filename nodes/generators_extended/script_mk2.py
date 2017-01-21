@@ -34,7 +34,7 @@ from bpy.props import (
 FAIL_COLOR = (0.8, 0.1, 0.1)
 READY_COLOR = (0, 0.8, 0.95)
 
-from sverchok.utils.sv_panels_tools import sv_get_local_path
+from sverchok.utils.sv_update_utils import sv_get_local_path
 from sverchok.utils import script_importhelper
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode , node_id
