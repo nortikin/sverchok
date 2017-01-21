@@ -146,7 +146,7 @@ class SverchokUpdateAddon(bpy.types.Operator):
 
     def execute(self, context):
 
-        os.curdir = sv_get_local_path()[1]  # addons path
+        os.curdir = bl_addons_path
         os.chdir(os.curdir)
 
         # wm = bpy.context.window_manager  should be this i think..
