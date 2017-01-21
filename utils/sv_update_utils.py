@@ -90,10 +90,14 @@ def write_latest_sha_to_local(sha_value='', filename='sv_shafile.sv'):
 
 
 def make_version_sha():
+    """ Generate a string to represent sverchok version including sha if found
+
+        returns:   0.5.9.13 (a3bcd34)   (or something like that)
+    """
     sha_postfix = ''
     sha = latest_local_sha(filename='sv_sha_downloaded.sv')
     if sha:
-        sha_postfix = ' ' + sha[:7]
+        sha_postfix = " (" + sha[:7] + ")"
 
     return sv_version_local + sha_postfix
 
