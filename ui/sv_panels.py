@@ -17,15 +17,15 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-from bpy.props import StringProperty, CollectionProperty, BoolProperty, FloatProperty
+from bpy.props import StringProperty, BoolProperty, FloatProperty
 
-# global variables in tools
+
 import sverchok
-from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.utils import sv_update_utils
-from sverchok.core.update_system import process_from_node, process_from_nodes
+from sverchok.utils.sv_update_utils import version_and_sha
+from sverchok.core.update_system import process_from_nodes
 
 objects_nodes_set = {'ObjectsNode', 'ObjectsNodeMK2', 'SvObjectsNodeMK3'}
+
 
 
 class SverchokUpdateObjectIn(bpy.types.Operator):
@@ -123,7 +123,7 @@ class Sv3DPanel(bpy.types.Panel):
 
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
-    bl_label = "Sverchok " + sv_update_utils.sv_version_local
+    bl_label = "Sverchok " + version_and_sha
     bl_options = {'DEFAULT_CLOSED'}
     bl_category = 'SV'
 
@@ -231,7 +231,7 @@ class Sv3DPanel(bpy.types.Panel):
 
 class SverchokToolsMenu(bpy.types.Panel):
     bl_idname = "Sverchok_tools_menu"
-    bl_label = "SV " + sv_update_utils.sv_version_local
+    bl_label = "SV " + version_and_sha
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
     bl_category = 'Sverchok'

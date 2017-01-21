@@ -89,6 +89,17 @@ def write_latest_sha_to_local(sha_value='', filename='sv_shafile.sv'):
         p.write(sha_value)
 
 
+def make_version_sha():
+    sha_postfix = ''
+    sha = latest_local_sha(filename='sv_sha_downloaded.sv')
+    if sha:
+        sha_postfix = ' ' + sha[:7]
+
+    return sv_version_local + sha_postfix
+
+version_and_sha = make_version_sha()
+
+
 class SverchokCheckForUpgradesSHA(bpy.types.Operator):
     """ Check if there new version on github (using sha) """
     bl_idname = "node.sverchok_check_for_upgrades_wsha"
