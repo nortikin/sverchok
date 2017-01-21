@@ -155,7 +155,7 @@ class SverchokUpdateAddon(bpy.types.Operator):
         wm.progress_update(20)
 
         try:
-            branch_name = 'master'
+            branch_name = 'svupdater'
             zipname = '{0}.zip'.format(branch_name)
             url = 'https://github.com/nortikin/sverchok/archive/' + zipname
             to_path = os.path.normpath(os.path.join(os.curdir, zipname))
