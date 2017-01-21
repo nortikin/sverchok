@@ -148,7 +148,7 @@ class SverchokUpdateAddon(bpy.types.Operator):
         os.curdir = bl_addons_path
         os.chdir(os.curdir)
 
-        # wm = bpy.context.window_manager  should be this i think..
+        # wm = bpy.context.window_manager  should be this i think....
         wm = bpy.data.window_managers[0]
         wm.progress_begin(0, 100)
         wm.progress_update(20)
