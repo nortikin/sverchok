@@ -155,8 +155,10 @@ class SverchokUpdateAddon(bpy.types.Operator):
         wm.progress_update(20)
 
         try:
-            url = 'https://github.com/nortikin/sverchok/archive/master.zip'
-            to_path = os.path.normpath(os.path.join(os.curdir, 'master.zip'))
+            branch_name = 'master'
+            zipname = '{0}.zip'.format(branch_name)
+            url = 'https://github.com/nortikin/sverchok/archive/' + zipname
+            to_path = os.path.normpath(os.path.join(os.curdir, zipname))
             file = urllib.request.urlretrieve(url, to_path)
             wm.progress_update(50)
         except:
