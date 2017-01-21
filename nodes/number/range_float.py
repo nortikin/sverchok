@@ -41,13 +41,16 @@ def frange(start, stop, step):
 
 def frange_count(start, stop, count):
     ''' Gives count total values in [start,stop] '''
-    count = max(int(count), 2)
-    step = (stop - start) / (count - 1)
-    yield start
-    for i in range(count - 2):
-        start += step
+    if count < 2:
         yield start
-    yield stop
+    else:
+        count = int(count)
+        step = (stop - start) / (count - 1)
+        yield start
+        for i in range(count - 2):
+            start += step
+            yield start
+        yield stop
 
 
 def frange_step(start, step, count):
