@@ -21,7 +21,7 @@ from bpy.props import FloatProperty, EnumProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import dataCorrect
-
+from sverchok.data_structure import updateNode
 
 mode_options = [(n, n, '', idx) for idx, n in enumerate("XYZ")]
 
@@ -43,7 +43,7 @@ class SvVectorMixIO(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', "Vectors")
-        self.outputs.new('StringsSocket', "co replace").prop_name = 'co_value'
+        self.inputs.new('StringsSocket', "co replace").prop_name = 'co_value'
         self.outputs.new('VerticesSocket', "Vectors")
 
     def draw_buttons(self, context, layout):
@@ -55,10 +55,12 @@ class SvVectorMixIO(bpy.types.Node, SverchCustomTreeNode):
 
         if not all(vectors_out.is_linked, vectors_in.is_linked):
             return
-
+        
         xyz = vectors_in.sv_get()
         co_replace = co_replace_in.sv_get()
+        index = ['XYZ'].find(self.selected_mode)
 
+        series_vec = []
         # data = dataCorrect(xyz)
         # X, Y, Z = [], [], []
         # for obj in data:
@@ -69,31 +71,25 @@ class SvVectorMixIO(bpy.types.Node, SverchCustomTreeNode):
 
         self.outputs['Vectors'].sv_set(series_vec)                    
 
-    def process2(self):
-        if not self.outputs['Vectors'].is_linked:
-            return
-        inputs = self.inputs
-        X_ = inputs['X'].sv_get()
-        Y_ = inputs['Y'].sv_get()
-        Z_ = inputs['Z'].sv_get()
-        series_vec = []
-        max_obj = max(map(len, (X_, Y_, Z_)))
-        fullList(X_, max_obj)
-        fullList(Y_, max_obj)
-        fullList(Z_, max_obj)
-        for i in range(max_obj):
+    # def process2(self):
 
-            max_v = max(map(len, (X_[i], Y_[i], Z_[i])))
-            fullList(X_[i], max_v)
-            fullList(Y_[i], max_v)
-            fullList(Z_[i], max_v)
-            series_vec.append(list(zip(X_[i], Y_[i], Z_[i])))
+    #     max_obj = max(map(len, (X_, Y_, Z_)))
+    #     fullList(X_, max_obj)
+    #     fullList(Y_, max_obj)
+    #     fullList(Z_, max_obj)
+    #     for i in range(max_obj):
+
+    #         max_v = max(map(len, (X_[i], Y_[i], Z_[i])))
+    #         fullList(X_[i], max_v)
+    #         fullList(Y_[i], max_v)
+    #         fullList(Z_[i], max_v)
+    #         series_vec.append(list(zip(X_[i], Y_[i], Z_[i])))
 
 
 
 def register():
-    bpy.utils.register_class(SvVectorsMixIO)
+    bpy.utils.register_class(SvVectorMixIO)
 
 
 def unregister():
-    bpy.utils.unregister_class(SvVectorsMixIO)
+    bpy.utils.unregister_class(SvVectorMixIO)
