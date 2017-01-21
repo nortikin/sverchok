@@ -45,7 +45,7 @@ bl_info = {
         "AgustinJB, Zeffii, Kosvor, "
         "Portnov, Elfnor"
     ),
-    "version": (0, 5, 9, 5),
+    "version": (0, 5, 9, 6),
     "blender": (2, 7, 8),
     "location": "Nodes > CustomNodesTree > Add user nodes",
     "description": "Parametric node-based geometry programming",
