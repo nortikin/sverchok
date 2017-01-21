@@ -25,7 +25,7 @@ import traceback
 import bpy
 from bpy.props import StringProperty, IntVectorProperty, FloatVectorProperty, BoolProperty
 
-from sverchok.utils.sv_panels_tools import sv_get_local_path
+from sverchok.utils.sv_update_utils import sv_get_local_path
 from sverchok.utils.snlite_importhelper import (
     UNPARSABLE, set_autocolor, parse_sockets, are_matched,
     get_rgb_curve, set_rgb_curve

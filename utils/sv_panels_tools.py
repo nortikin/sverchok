@@ -17,15 +17,6 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import webbrowser
-import os
-import urllib
-import urllib.request
-import ssl
-from zipfile import ZipFile
-import traceback
-import collections
-import ast
-import tempfile
 
 import bpy
 from bpy.props import StringProperty, CollectionProperty, BoolProperty
@@ -33,17 +24,6 @@ from bpy.props import StringProperty, CollectionProperty, BoolProperty
 from sverchok.core.update_system import process_tree, build_update_list
 from sverchok.node_tree import SverchCustomTreeNode
 import sverchok
-
-def sv_get_local_path():
-    sv_script_paths = os.path.normpath(os.path.dirname(__file__))
-    bl_addons_path = os.path.split(os.path.dirname(sv_script_paths))[0]
-    sv_version_local = ".".join(map(str, sverchok.bl_info["version"]))
-    return sv_script_paths, bl_addons_path, sv_version_local
-
-# global variables in tools
-sv_script_paths, bl_addons_path, sv_version_local = sv_get_local_path()
-
-
 
 
 class SverchokUpdateAll(bpy.types.Operator):
@@ -130,87 +110,6 @@ class SverchokHome(bpy.types.Operator):
                 self.report({'WARNING'}, "Error in opening the page %s." % (page))
         return {'FINISHED'}
 
-
-class SverchokCheckForUpgrades(bpy.types.Operator):
-    """ Check if there new version on github """
-    bl_idname = "node.sverchok_check_for_upgrades"
-    bl_label = "Sverchok check for new version"
-    bl_options = {'REGISTER'}
-
-    def execute(self, context):
-        report = self.report
-        import sverchok
-        version_local = sverchok.bl_info["version"]
-        try:
-            # for testing
-            #url = 'https://raw.githubusercontent.com/nortikin/sverchok/toProcess/__init__.py'
-            # when it is master
-            url = 'https://raw.githubusercontent.com/nortikin/sverchok/master/__init__.py'
-            ctx = ssl.create_default_context()
-            ctx.check_hostname = False
-            ctx.verify_mode = ssl.CERT_NONE
-            lines = urllib.request.urlopen(url, context=ctx).readlines()
-            for l in map(str,lines):
-                if '"version"' in l:
-                    version = l[l.find("("):l.find(")")+1]
-                    break
-            version_url = ast.literal_eval(version)
-        except urllib.error.URLError:
-            traceback.print_exc()
-            report({'INFO'}, "Unable to contact github, or SSL not compiled.")
-            return {'CANCELLED'}
-        except Error as e:
-            traceback.print_exc()
-            report({'INFO'}, "Unable to find version info")
-            return {'CANCELLED'}
-        if version_local != version_url:
-            bpy.context.scene.sv_new_version = True
-            v_str = ".".join(map(str, version_url))
-            report({'INFO'}, "New version {0}".format(version_url))
-        else:
-            report({'INFO'}, "Your version {0} is latest.".format(sv_version_local))
-        return {'FINISHED'}
-
-
-class SverchokUpdateAddon(bpy.types.Operator):
-    """ Sverchok update addon without any browsing and so on. After - press F8 to reload addons """
-    bl_idname = "node.sverchok_update_addon"
-    bl_label = "Sverchok update addon"
-    bl_options = {'REGISTER'}
-
-    def execute(self, context):
-        os.curdir = bl_addons_path
-        os.chdir(os.curdir)
-        bpy.data.window_managers[0].progress_begin(0, 100)
-        bpy.data.window_managers[0].progress_update(20)
-        try:
-            url = 'https://github.com/nortikin/sverchok/archive/master.zip'
-            to_path = os.path.normpath(os.path.join(os.curdir, 'master.zip'))
-            file = urllib.request.urlretrieve(url, to_path)
-            bpy.data.window_managers[0].progress_update(50)
-        except:
-            self.report({'ERROR'}, "Cannot get archive from Internet")
-            bpy.data.window_managers[0].progress_end()
-            return {'CANCELLED'}
-        try:
-            #os.removedirs(os.path.normpath(os.path.join(os.curdir, 'sverchok')))
-            err = 0
-            ZipFile(file[0]).extractall(path=os.curdir, members=None, pwd=None)
-            bpy.data.window_managers[0].progress_update(90)
-            err = 1
-            os.remove(file[0])
-            err = 2
-            bpy.context.scene.sv_new_version = False
-            bpy.data.window_managers[0].progress_update(100)
-            bpy.data.window_managers[0].progress_end()
-            self.report({'INFO'}, "Unzipped, reload addons with F8 button")
-        except:
-            self.report({'ERROR'}, "Cannot extract files errno {0}".format(str(err)))
-            bpy.data.window_managers[0].progress_end()
-            os.remove(file[0])
-            return {'CANCELLED'}
-
-        return {'FINISHED'}
 
 
 class SvSwitchToLayout (bpy.types.Operator):
@@ -323,8 +222,6 @@ sv_tools_classes = [
     SverchokUpdateCurrent,
     SverchokUpdateAll,
     SverchokBakeAll,
-    SverchokCheckForUpgrades,
-    SverchokUpdateAddon,
     SverchokPurgeCache,
     SverchokHome,
     Sv3dPropItem,
