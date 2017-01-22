@@ -36,12 +36,10 @@ def solidify(vertices, faces, t, mode='accurate'):
 
     verlen = set(range(len(vertices)))
 
-    bm = bmesh_from_pydata(vertices, [], faces)
-
     if mode == 'accurate':
-        for f in bm.faces:
-            f.normal_update()
+        bm = bmesh_from_pydata(vertices, [], faces, normals='f')
     else:
+        bm = bmesh_from_pydata(vertices, [], faces)
         bmesh.ops.recalc_face_normals(bm, faces=bm.faces[:])
 
     geom_in = bm.verts[:] + bm.edges[:] + bm.faces[:]
