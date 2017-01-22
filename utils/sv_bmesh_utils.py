@@ -20,7 +20,7 @@ import bmesh
 from sverchok.data_structure import iterate_process
 
 
-def bmesh_from_pydata(verts=[], edges=[], faces=[], normals=""):
+def bmesh_from_pydata(verts=None, edges=None, faces=None, normals=""):
     ''' verts is necessary, edges/faces are optional
         normals is a string of containing {'v', 'e', 'f', 'a'}
         so normals="f" will calculate face normals
@@ -51,9 +51,7 @@ def bmesh_from_pydata(verts=[], edges=[], faces=[], normals=""):
     add_vert = bm.verts.new
     [add_vert(co) for co in verts]
     bm.verts.index_update()
-
-    if hasattr(bm.verts, "ensure_lookup_table"):
-        bm.verts.ensure_lookup_table()
+    bm.verts.ensure_lookup_table()
 
     if faces:
         add_face = bm.faces.new
