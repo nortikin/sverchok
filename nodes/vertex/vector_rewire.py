@@ -66,13 +66,13 @@ class SvVectorRewire(bpy.types.Node, SverchCustomTreeNode):
         index_from = options.index(self.selected_mode_from)
         index_to = options.index(self.selected_mode_to)
         switching = (index_from, index_to)
-        sorted_tuple = tuple(sorted(switching))
 
         # for instance X->X  , return unprocessed
         if len(set(switching)) == 1:
             vectors_out.sv_set(xyz)
             return
 
+        sorted_tuple = tuple(sorted(switching))
         rewire_dict = {(0, 1): (1, 0, 2),  (0, 2): (2, 1, 0),  (1, 2): (0, 2, 1)}
         
         series_vec = []
@@ -84,6 +84,8 @@ class SvVectorRewire(bpy.types.Node, SverchCustomTreeNode):
                 coords = ([v[x], v[y], v[z]] for v in obj)
                 series_vec.append(list(coords))
                 continue
+            else:
+                if 3 in switching 
 
 
         vectors_out.sv_set(series_vec)                    
