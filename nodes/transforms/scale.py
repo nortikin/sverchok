@@ -68,7 +68,7 @@ class SvScaleNode(bpy.types.Node, SverchCustomTreeNode):
 
     def process(self):
         # inputs
-        self.inputs['Vertices'].sv_get()
+        Vertices = self.inputs['Vertices'].sv_get()
         Center = self.inputs['Center'].sv_get(default=[[[0.0, 0.0, 0.0]]])
         Factor = self.inputs['Factor'].sv_get()
 
