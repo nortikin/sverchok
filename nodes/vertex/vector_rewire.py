@@ -24,7 +24,9 @@ from sverchok.data_structure import dataCorrect
 from sverchok.data_structure import updateNode
 
 options = 'X Y Z -1 0 1'.split(' ')
+options2 = 'X Y Z'.split(' ')
 mode_options = [(n, n, '', idx) for idx, n in enumerate(options)]
+mode_options2 = [(n, n, '', idx) for idx, n in enumerate(options2)]
 
 class SvVectorRewire(bpy.types.Node, SverchCustomTreeNode):
     ''' Rewire components of a vector'''
@@ -39,7 +41,7 @@ class SvVectorRewire(bpy.types.Node, SverchCustomTreeNode):
     )
 
     selected_mode_to = EnumProperty(
-        items=mode_options,
+        items=mode_options2,
         description="offers....",
         default="Z", update=updateNode
     )    
@@ -73,7 +75,7 @@ class SvVectorRewire(bpy.types.Node, SverchCustomTreeNode):
             return
 
         sorted_tuple = tuple(sorted(switching))
-        rewire_dict = {(0, 1): (1, 0, 2),  (0, 2): (2, 1, 0),  (1, 2): (0, 2, 1)}
+        rewire_dict = {(0, 1): (1, 0, 2), (0, 2): (2, 1, 0), (1, 2): (0, 2, 1)}
         
         series_vec = []
         for obj in xyz:
@@ -84,8 +86,15 @@ class SvVectorRewire(bpy.types.Node, SverchCustomTreeNode):
                 coords = ([v[x], v[y], v[z]] for v in obj)
                 series_vec.append(list(coords))
                 continue
-            else:
-                if 3 in switching 
+            elif switching[0] in {3, 4, 5}:
+                value = {3: -1, 4: 0, 5: 1}.get(switching[0])
+                if switching[1] == 0:
+                    coords = ([value, v[1], v[2]] for v in obj)
+                elif switching[1] == 1:
+                    coords = ([v[0], value, v[2]] for v in obj)
+                else:  # 2
+                    coords = ([v[0], v[1], value] for v in obj)
+                series_vec.append(list(coords))
 
 
         vectors_out.sv_set(series_vec)                    
