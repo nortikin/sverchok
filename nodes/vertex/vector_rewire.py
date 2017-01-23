@@ -82,7 +82,7 @@ class SvVectorRewire(bpy.types.Node, SverchCustomTreeNode):
         rewire_dict = {(0, 1): (1, 0, 2), (0, 2): (2, 1, 0), (1, 2): (0, 2, 1)}
         
         series_vec = []
-        for obj in xyz:
+        for idx, obj in enumerate(xyz):
 
             if sorted_tuple in rewire_dict.keys():
                 # handles xy xz yx yz zx zy
@@ -104,8 +104,27 @@ class SvVectorRewire(bpy.types.Node, SverchCustomTreeNode):
             else switching[0] == 6:
                 # handles socket s. -> xyz
                 scalar_data = scalar_in.sv_get()
-                if isinstance(scalar_data, list) and len(scalar_data) > 0:
-                    
+                if not (isinstance(scalar_data, list) and len(scalar_data) > 0):
+                    continue
+
+                max_major_index = len(scalar_data)-1
+
+                # this will yield until no longer called
+                def next_value(idx, data):
+                    idx = -1 if idx > max_major_index else idx
+                    for d in data[idx]:
+                        yield d
+                    yield data[idx][-1]
+
+                yield_value = next_value(idx, scalar_data)
+
+                if switching[1] == 0:
+                    coords = ([next(yield_value), v[1], v[2]] for v in obj)
+                elif switching[1] == 1:
+                    coords = ([v[0], next(yield_value), v[2]] for v in obj)
+                else:  # 2
+                    coords = ([v[0], v[1], next(yield_value)] for v in obj)
+
 
 
         vectors_out.sv_set(series_vec)                    
