@@ -17,8 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-from bpy.props import EnumProperty
-
+from bpy.props import EnumProperty, FloatProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import dataCorrect
 from sverchok.data_structure import updateNode
@@ -101,20 +100,21 @@ class SvVectorRewire(bpy.types.Node, SverchCustomTreeNode):
                     coords = ([v[0], v[1], value] for v in obj)
                 series_vec.append(list(coords))
 
-            else switching[0] == 6:
+            elif switching[0] == 6:
+                print('am here')
                 # handles socket s. -> xyz
                 scalar_data = scalar_in.sv_get()
                 if not (isinstance(scalar_data, list) and len(scalar_data) > 0):
+                    print('showing here')
                     continue
-
-                max_major_index = len(scalar_data)-1
 
                 # this will yield until no longer called
                 def next_value(idx, data):
-                    idx = -1 if idx > max_major_index else idx
-                    for d in data[idx]:
+                    midx = -1 if idx > len(data)-1 else idx
+                    for d in data[midx]:
                         yield d
-                    yield data[idx][-1]
+                    while True:
+                        yield data[midx][-1]
 
                 yield_value = next_value(idx, scalar_data)
 
@@ -124,7 +124,7 @@ class SvVectorRewire(bpy.types.Node, SverchCustomTreeNode):
                     coords = ([v[0], next(yield_value), v[2]] for v in obj)
                 else:  # 2
                     coords = ([v[0], v[1], next(yield_value)] for v in obj)
-
+                series_vec.append(list(coords))
 
 
         vectors_out.sv_set(series_vec)                    
