@@ -37,7 +37,7 @@ class ListFuncNode(bpy.types.Node, SverchCustomTreeNode):
         ("MIN",         "Minimum",        "", 1),
         ("MAX",         "Maximum",        "", 2),
         ("AVR",         "Average",        "", 3),
-        ("SUM",         "Sum",            "", 4),
+        ("SUM",         "Sum",            "", 4)
         #("ACC",         "Accumulate",     "", 5),
         ]
     func_ = EnumProperty(name="Function", description="Function choice",
