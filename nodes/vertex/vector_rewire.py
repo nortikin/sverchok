@@ -90,11 +90,9 @@ class SvVectorRewire(bpy.types.Node, SverchCustomTreeNode):
                 series_vec.append(list(coords))
 
             elif switching[0] == 3:
-                print('am here')
                 # handles socket s. -> xyz
                 scalar_data = scalar_in.sv_get()
                 if not (isinstance(scalar_data, list) and len(scalar_data) > 0):
-                    print('showing here')
                     continue
 
                 # this will yield until no longer called
