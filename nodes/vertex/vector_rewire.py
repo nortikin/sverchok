@@ -84,7 +84,7 @@ class SvVectorRewire(bpy.types.Node, SverchCustomTreeNode):
         for idx, obj in enumerate(xyz):
 
             if sorted_tuple in rewire_dict.keys():
-                # handles xy xz yx yz zx zy
+                # handles xy xz yz (all xyz combos)
                 x, y, z = rewire_dict.get(sorted_tuple)
                 coords = ([v[x], v[y], v[z]] for v in obj)
                 series_vec.append(list(coords))
