@@ -22,7 +22,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import dataCorrect
 from sverchok.data_structure import updateNode
 
-options = 'X Y Z -1 0 1 Scalar'.split(' ')
+options = 'X Y Z Scalar'.split(' ')
 options2 = 'X Y Z'.split(' ')
 mode_options = [(n, n, '', idx) for idx, n in enumerate(options)]
 mode_options2 = [(n, n, '', idx) for idx, n in enumerate(options2)]
@@ -89,18 +89,7 @@ class SvVectorRewire(bpy.types.Node, SverchCustomTreeNode):
                 coords = ([v[x], v[y], v[z]] for v in obj)
                 series_vec.append(list(coords))
 
-            elif switching[0] in {3, 4, 5}:
-                # handles -1 0 1 -> xyz
-                value = {3: -1, 4: 0, 5: 1}.get(switching[0])
-                if switching[1] == 0:
-                    coords = ([value, v[1], v[2]] for v in obj)
-                elif switching[1] == 1:
-                    coords = ([v[0], value, v[2]] for v in obj)
-                else:  # 2
-                    coords = ([v[0], v[1], value] for v in obj)
-                series_vec.append(list(coords))
-
-            elif switching[0] == 6:
+            elif switching[0] == 3:
                 print('am here')
                 # handles socket s. -> xyz
                 scalar_data = scalar_in.sv_get()

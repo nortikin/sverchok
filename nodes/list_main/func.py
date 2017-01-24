@@ -62,12 +62,12 @@ class ListFuncNode(bpy.types.Node, SverchCustomTreeNode):
             "MIN": min,
             "MAX": max,
             "AVR": self.avr,
-            "SUM": sum,
-            #"ACC": acc
+            "SUM": sum 
+            #, "ACC": acc
             }
         if 'Function' in self.outputs and self.outputs['Function'].is_linked:
             if 'Data' in self.inputs and self.inputs['Data'].is_linked:
-                data = self.inputs['Data'].sv_get
+                data = self.inputs['Data'].sv_get()
                 func = func_dict[self.func_]
 
                 if not self.level:
