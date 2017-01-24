@@ -11,7 +11,8 @@ Vector
    interpolation_mk3
    line_evaluate
    math
-   noise
+   noise_mk2
+   vector_rewire
    vector_in
    vector_out
    vector_polar_in
