@@ -97,6 +97,7 @@ class SvViewHelpForNode(bpy.types.Operator):
         VALID = False
         try:
             tk = os.path.join(os.path.dirname(sverchok.__file__), 'docs', 'nodes', string_dir.replace(' ', '_'), filename + '.rst')
+            print(tk)
             VALID = exists(tk) and isfile(tk)
         except:
             pass
