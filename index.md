@@ -151,6 +151,7 @@
     SvInterpolationNodeMK3
     SvVertSortNode
     SvNoiseNodeMK2
+    SvVectorRewire
     svAxisInputNode
     SvAxisInputNodeMK2
 

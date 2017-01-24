@@ -20,22 +20,51 @@ import bmesh
 from sverchok.data_structure import iterate_process
 
 
-def bmesh_from_pydata(verts=[], edges=[], faces=[]):
-    ''' verts is necessary, edges/faces are optional '''
+def bmesh_from_pydata(verts=None, edges=None, faces=None, normals=""):
+    ''' verts is necessary, edges/faces are optional
+        normals is a string of containing {'v', 'e', 'f', 'a'}
+        so normals="f" will calculate face normals
+        'e' and 'v' implies 'f' and 'a' does them all
+    '''
+
+    normals = normals.lower()
+
+    vertex_normals = False
+    face_normals = False
+    edge_normals = False
+
+    if 'a' in normals:
+        vertex_normals = True
+        face_normals = True
+        edge_normals = True
+    else:
+        if 'f' in normals:
+            face_normals = True
+        if 'v' in normals:
+            vertex_normals = True
+            face_normals = True
+        if 'e' in normals:
+            face_normals = True
+            edge_normals = True
 
     bm = bmesh.new()
     add_vert = bm.verts.new
     [add_vert(co) for co in verts]
     bm.verts.index_update()
-
-    if hasattr(bm.verts, "ensure_lookup_table"):
-        bm.verts.ensure_lookup_table()
+    bm.verts.ensure_lookup_table()
 
     if faces:
         add_face = bm.faces.new
         for face in faces:
-            add_face(tuple(bm.verts[i] for i in face))
+            if face_normals:
+                add_face(tuple(bm.verts[i] for i in face)).normal_update()
+            else:
+                add_face(tuple(bm.verts[i] for i in face))
+
         bm.faces.index_update()
+        if vertex_normals:
+            for v in bm.verts:
+                v.normal_update()
 
     if edges:
         add_edge = bm.edges.new
@@ -48,6 +77,10 @@ def bmesh_from_pydata(verts=[], edges=[], faces=[]):
                 pass
 
         bm.edges.index_update()
+
+    if edge_normals:
+        for e in bm.edges:
+            e.normal_update()
 
     return bm
 
@@ -104,4 +137,3 @@ def with_bmesh(method):
     real_process.__name__ = method.__name__
     real_process.__doc__ = method.__doc__
     return real_process
-
