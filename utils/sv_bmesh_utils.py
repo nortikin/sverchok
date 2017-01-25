@@ -89,7 +89,6 @@ def bmesh_from_pydata(verts=None, edges=None, faces=None, normals=""):
     if fast_face_normals:
         bmesh.ops.recalc_face_normals(bm, faces=bm.faces[:])
 
-    print('...\n', vertex_normals, face_normals, edge_normals, fast_face_normals)
     return bm
 
 

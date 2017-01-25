@@ -47,7 +47,7 @@ class SvOffsetNode(bpy.types.Node, SverchCustomTreeNode):
         default=1, min=1, max=64,
         options={'ANIMATABLE'}, update=updateNode)
     radius = FloatProperty(
-        name='redius', description='radius of inset',
+        name='radius', description='radius of inset',
         default=0.04, min=0.0001,
         options={'ANIMATABLE'}, update=updateNode)
 
