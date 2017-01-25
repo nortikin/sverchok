@@ -16,19 +16,20 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-import bpy
-from bpy.props import BoolProperty, StringProperty, IntProperty, FloatProperty
+from math import tan, sin, cos, degrees, radians
 
+
+import bpy
 import bmesh
+from bpy.props import IntProperty, FloatProperty
+from mathutils import Matrix
+
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (
-    changable_sockets, multi_socket,
-    fullList, dataCorrect, updateNode, Vector_generate
+    fullList, updateNode, Vector_generate
 )
 
-from mathutils import Vector, Matrix
-from math import tan, sin, cos, degrees, radians
 
 
 class SvOffsetNode(bpy.types.Node, SverchCustomTreeNode):
@@ -50,8 +51,15 @@ class SvOffsetNode(bpy.types.Node, SverchCustomTreeNode):
         default=0.04, min=0.0001,
         options={'ANIMATABLE'}, update=updateNode)
 
+    mode_options = [(op, op, '', idx) for idx, op in enumerate(['fast', 'accurate'])]
+
+    selected_mode = bpy.props.EnumProperty(
+        items=mode_options,
+        description="offers which kind of recalc is desired",
+        default="fast", update=updateNode)
+
     def draw_buttons(self, context, layout):
-        pass
+        layout.prop(self, 'selected_mode', expand=True)
 
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', 'Vers')
@@ -74,23 +82,25 @@ class SvOffsetNode(bpy.types.Node, SverchCustomTreeNode):
         offset = self.inputs['Offset'].sv_get()[0]
         nsides = self.inputs['N sides'].sv_get()[0][0]
         radius = self.inputs['Radius'].sv_get()[0]
-        #print(radius,nsides,offset)
+
         outv = []
         oute = []
         outo = []
         outn = []
+
+        # for each object
         for verts_obj, faces_obj in zip(vertices, faces):
-            # this is for one object
             fullList(offset, len(faces_obj))
             fullList(radius, len(faces_obj))
             verlen = set(range(len(verts_obj)))
-            bme = bmesh_from_pydata(verts_obj, [], faces_obj)
-            geom_in = bme.verts[:]+bme.edges[:]+bme.faces[:]
-            bmesh.ops.recalc_face_normals(bme, faces=bme.faces[:])
-            list_0 = [f.index for f in bme.faces]
-            # calculation itself
-            result = \
-                self.Offset_pols(bme, list_0, offset, radius, nsides, verlen)
+
+            if self.selected_mode == 'accurate':
+                bm = bmesh_from_pydata(verts_obj, [], faces_obj, normals='f')
+            else:
+                bm = bmesh_from_pydata(verts_obj, [], faces_obj)
+                bmesh.ops.recalc_face_normals(bm, faces=bm.faces[:])
+            
+            result = self.Offset_pols(bm, offset, radius, nsides, verlen)
             outv.append(result[0])
             oute.append(result[1])
             outo.append(result[2])
@@ -107,7 +117,8 @@ class SvOffsetNode(bpy.types.Node, SverchCustomTreeNode):
     #   in russian is called "Круговая порука", Various artists
     # #################
 
-    def a_rot(self, ang, rp, axis, q):
+    @staticmethod
+    def a_rot(ang, rp, axis, q):
         return (Matrix.Rotation(ang, 3, axis) * (q - rp)) + rp
 
     # #################
@@ -118,17 +129,22 @@ class SvOffsetNode(bpy.types.Node, SverchCustomTreeNode):
     # kp -      keep face, not delete it.
     # #################
 
-    def Offset_pols(self, bme, list_0, offset, radius, n_, verlen):
+    def Offset_pols(self, bme, offset, radius, n_, verlen):
 
         bm_verts = bme.verts
         bm_faces = bme.faces
         bm_edges = bme.edges
 
+        list_0 = bme.faces[:]
+
         list_del = []  # to delete old shape polygons
-        for q, fi in enumerate(list_0):
+        for q, f in enumerate(list_0):
             adj1 = radius[q]
             opp = offset[q]
-            f = bm_faces[fi]
+
+            #
+            # bm_faces.ensure_lookup_table()
+
             f.select_set(0)
             list_del.append(f)
             f.normal_update()
@@ -206,12 +222,7 @@ class SvOffsetNode(bpy.types.Node, SverchCustomTreeNode):
                     list_3.reverse()
                     list_2.extend(list_3)
 
-            # if kp == True: #not solved
             new_face = bm_faces.new(list_2)
-
-            # if hasattr(bm_faces, "ensure_lookup_table"):
-            #     bm_faces.ensure_lookup_table()
-            # bm_faces[-1].select_set(1)
             new_face.select_set(1)
 
             n2_ = len(dict_0)
@@ -219,35 +230,21 @@ class SvOffsetNode(bpy.types.Node, SverchCustomTreeNode):
                 list_a = dict_0[o]
                 list_b = dict_0[(o + 1) % n2_]
                 bm_faces.new([list_a[0], list_b[0], list_b[-1], list_a[1]])
-                # bm_faces.index_update()
 
             # keeping triangulation of polygons commented
-            #if en0 == 'opt0':
             for k in dict_0:
                 if len(dict_0[k]) > 2:
                     bm_faces.new(dict_0[k])
-            #if en0 == 'opt1':
-            #    for k_ in dict_0:
-            #        q_ = dict_0[k_][0]
-            #        dict_0[k_].pop(0)
-            #        n3_ = len(dict_0[k_])
-            #        for kk in range(n3_ - 1):
-            #            bme.faces.new( [ dict_0[k_][kk], dict_0[k_][(kk + 1) % n3_], q_ ] )
-            #            bme.faces.index_update()
 
             # new indices for next iteration of loop
-            if hasattr(bm_verts, "ensure_lookup_table"):
-                bm_verts.ensure_lookup_table()
-                bm_faces.ensure_lookup_table()
+            bm_verts.ensure_lookup_table()
+            bm_faces.ensure_lookup_table()
 
-        # this is old
-        del_ = [bm_faces.remove(f) for f in list_del]
-        del del_
-        # i think, it deletes doubling faces
+        # remove old polygons
+        _ = [bm_faces.remove(f) for f in list_del]
 
         # remove doubles
         bmesh.ops.remove_doubles(bme, dist=0.0001)
-        # if radius 0 than cleaning loose
 
         # from Linus Yng solidify example
         edges = []

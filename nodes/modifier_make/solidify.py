@@ -78,7 +78,7 @@ class SvSolidifyNode(bpy.types.Node, SverchCustomTreeNode):
 
     selected_mode = bpy.props.EnumProperty(
         items=mode_options,
-        description="offers which kind of recal is desired",
+        description="offers which kind of recalc is desired",
         default="fast", update=updateNode)
 
     def sv_init(self, context):
