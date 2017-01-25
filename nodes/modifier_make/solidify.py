@@ -26,7 +26,7 @@ from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 # by Linus Yng
 
 
-def solidify(vertices, faces, t, mode='accurate'):
+def solidify(vertices, faces, t):
 
     if not faces or not vertices:
         return False
@@ -36,12 +36,7 @@ def solidify(vertices, faces, t, mode='accurate'):
 
     verlen = set(range(len(vertices)))
 
-    if mode == 'accurate':
-        bm = bmesh_from_pydata(vertices, [], faces, normals='f')
-    else:
-        bm = bmesh_from_pydata(vertices, [], faces)
-        bmesh.ops.recalc_face_normals(bm, faces=bm.faces[:])
-
+    bm = bmesh_from_pydata(vertices, [], faces, normal_update=True)
     geom_in = bm.verts[:] + bm.edges[:] + bm.faces[:]
     bmesh.ops.solidify(bm, geom=geom_in, thickness=t[0])
 
@@ -74,13 +69,6 @@ class SvSolidifyNode(bpy.types.Node, SverchCustomTreeNode):
         name='Thickness', description='Shell thickness',
         default=0.1, update=updateNode)
 
-    mode_options = [(op, op, '', idx) for idx, op in enumerate(['fast', 'accurate'])]
-
-    selected_mode = bpy.props.EnumProperty(
-        items=mode_options,
-        description="offers which kind of recal is desired",
-        default="fast", update=updateNode)
-
     def sv_init(self, context):
         self.inputs.new('StringsSocket', 'thickness').prop_name = 'thickness'
         self.inputs.new('VerticesSocket', 'vertices')
@@ -91,8 +79,6 @@ class SvSolidifyNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('StringsSocket', 'polygons')
         self.outputs.new('StringsSocket', 'newpols')
 
-    def draw_buttons(self, context, layout):
-        layout.prop(self, 'selected_mode', expand=True)
 
     def process(self):
         if not any((s.is_linked for s in self.outputs)):
@@ -111,7 +97,7 @@ class SvSolidifyNode(bpy.types.Node, SverchCustomTreeNode):
         newpo_out = []
         fullList(thickness, len(verts))
         for v, p, t in zip(verts, polys, thickness):
-            res = solidify(v, p, t, mode=self.selected_mode)
+            res = solidify(v, p, t)
 
             if not res:
                 return

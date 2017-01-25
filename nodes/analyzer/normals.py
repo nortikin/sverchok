@@ -28,8 +28,7 @@ from sverchok.data_structure import updateNode, match_long_repeat
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
 
 def calc_mesh_normals(vertices, edges, faces):
-    bm = bmesh_from_pydata(vertices, edges, faces)
-    bm.normal_update()
+    bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True)
     vertex_normals = []
     face_normals = []
     for vertex in bm.verts:
