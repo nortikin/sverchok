@@ -131,16 +131,12 @@ class SvOffsetNode(bpy.types.Node, SverchCustomTreeNode):
         bm_verts = bme.verts
         bm_faces = bme.faces
         bm_edges = bme.edges
-
         list_0 = bme.faces[:]
 
         list_del = []  # to delete old shape polygons
         for q, f in enumerate(list_0):
             adj1 = radius[q]
             opp = offset[q]
-
-            #
-            # bm_faces.ensure_lookup_table()
 
             f.select_set(0)
             list_del.append(f)
