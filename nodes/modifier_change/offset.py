@@ -94,11 +94,8 @@ class SvOffsetNode(bpy.types.Node, SverchCustomTreeNode):
             fullList(radius, len(faces_obj))
             verlen = set(range(len(verts_obj)))
 
-            if self.selected_mode == 'accurate':
-                bm = bmesh_from_pydata(verts_obj, [], faces_obj, normals='f')
-            else:
-                bm = bmesh_from_pydata(verts_obj, [], faces_obj)
-                bmesh.ops.recalc_face_normals(bm, faces=bm.faces[:])
+            settings = {'normals': 'f' if self.selected_mode == 'accurate' else 'x'}
+            bm = bmesh_from_pydata(verts_obj, [], faces_obj, **settings)
             
             result = self.Offset_pols(bm, offset, radius, nsides, verlen)
             outv.append(result[0])

@@ -22,9 +22,10 @@ from sverchok.data_structure import iterate_process
 
 def bmesh_from_pydata(verts=None, edges=None, faces=None, normals=""):
     ''' verts is necessary, edges/faces are optional
-        normals is a string of containing {'v', 'e', 'f', 'a'}
+        normals is a string of containing {'v', 'e', 'f', 'a', 'x'}
         so normals="f" will calculate face normals
         'e' and 'v' implies 'f' and 'a' does them all
+        'x' will only do a fast recalc_face_normals on bm.faces at the end
     '''
 
     normals = normals.lower()
@@ -32,11 +33,14 @@ def bmesh_from_pydata(verts=None, edges=None, faces=None, normals=""):
     vertex_normals = False
     face_normals = False
     edge_normals = False
+    fast_face_normals = False
 
     if 'a' in normals:
         vertex_normals = True
         face_normals = True
         edge_normals = True
+    elif 'x' in normals:
+        fast_face_normals = True
     else:
         if 'f' in normals:
             face_normals = True
@@ -49,7 +53,7 @@ def bmesh_from_pydata(verts=None, edges=None, faces=None, normals=""):
 
     bm = bmesh.new()
     add_vert = bm.verts.new
-    [add_vert(co) for co in verts]
+    _ = [add_vert(co) for co in verts]  # assign 2 throwaway variabe silences pylint
     bm.verts.index_update()
     bm.verts.ensure_lookup_table()
 
@@ -82,6 +86,10 @@ def bmesh_from_pydata(verts=None, edges=None, faces=None, normals=""):
         for e in bm.edges:
             e.normal_update()
 
+    if fast_face_normals:
+        bmesh.ops.recalc_face_normals(bm, faces=bm.faces[:])
+
+    print('...\n', vertex_normals, face_normals, edge_normals, fast_face_normals)
     return bm
 
 
