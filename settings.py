@@ -203,7 +203,7 @@ class SverchokPreferences(AddonPreferences):
         if context.scene.sv_new_version:
             row1.operator('node.sverchok_update_addon', text='Upgrade Sverchok addon')
         else:
-            row1.operator('node.sverchok_check_for_upgrades', text='Check for new version')
+            row1.operator('node.sverchok_check_for_upgrades_wsha', text='Check for new version')
 
 
 def register():
