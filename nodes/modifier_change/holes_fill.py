@@ -33,7 +33,8 @@ def fill_holes(vertices, edges, s):
     if len(edges[0]) != 2:
         return False
     
-    bm = bmesh_from_pydata(vertices, edges, [], normals='f')
+    bm = bmesh_from_pydata(vertices, edges, [], normal_update=True)
+
     bmesh.ops.holes_fill(bm, edges=bm.edges[:], sides=s)
     verts, edges, faces = pydata_from_bmesh(bm)
     return (verts, edges, faces)

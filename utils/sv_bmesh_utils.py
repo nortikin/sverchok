@@ -17,58 +17,28 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bmesh
-from sverchok.data_structure import iterate_process
 
 
-def bmesh_from_pydata(verts=None, edges=None, faces=None, normals=""):
+def bmesh_from_pydata(verts=None, edges=None, faces=None, normal_update=False):
     ''' verts is necessary, edges/faces are optional
-        normals is a string of containing {'v', 'e', 'f', 'a', 'x'}
-        so normals="f" will calculate face normals
-        'e' and 'v' implies 'f' and 'a' does them all
-        'x' will only do a fast recalc_face_normals on bm.faces at the end
+        normal_update, will update verts/edges/faces normals at the end
     '''
-
-    normals = normals.lower()
-
-    vertex_normals = False
-    face_normals = False
-    edge_normals = False
-    fast_face_normals = False
-
-    if 'a' in normals:
-        vertex_normals = True
-        face_normals = True
-        edge_normals = True
-    elif 'x' in normals:
-        fast_face_normals = True
-    else:
-        if 'f' in normals:
-            face_normals = True
-        if 'v' in normals:
-            vertex_normals = True
-            face_normals = True
-        if 'e' in normals:
-            face_normals = True
-            edge_normals = True
 
     bm = bmesh.new()
     add_vert = bm.verts.new
-    _ = [add_vert(co) for co in verts]  # assign 2 throwaway variabe silences pylint
+
+    for co in verts:
+        add_vert(co)
+
     bm.verts.index_update()
     bm.verts.ensure_lookup_table()
 
     if faces:
         add_face = bm.faces.new
         for face in faces:
-            if face_normals:
-                add_face(tuple(bm.verts[i] for i in face)).normal_update()
-            else:
-                add_face(tuple(bm.verts[i] for i in face))
+            add_face(tuple(bm.verts[i] for i in face))
 
         bm.faces.index_update()
-        if vertex_normals:
-            for v in bm.verts:
-                v.normal_update()
 
     if edges:
         add_edge = bm.edges.new
@@ -82,13 +52,8 @@ def bmesh_from_pydata(verts=None, edges=None, faces=None, normals=""):
 
         bm.edges.index_update()
 
-    if edge_normals:
-        for e in bm.edges:
-            e.normal_update()
-
-    if fast_face_normals:
-        bmesh.ops.recalc_face_normals(bm, faces=bm.faces[:])
-
+    if normal_update:
+        bm.normal_update()
     return bm
 
 
