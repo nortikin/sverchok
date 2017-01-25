@@ -51,16 +51,6 @@ class SvOffsetNode(bpy.types.Node, SverchCustomTreeNode):
         default=0.04, min=0.0001,
         options={'ANIMATABLE'}, update=updateNode)
 
-    mode_options = [(op, op, '', idx) for idx, op in enumerate(['fast', 'accurate'])]
-
-    selected_mode = bpy.props.EnumProperty(
-        items=mode_options,
-        description="offers which kind of recalc is desired",
-        default="fast", update=updateNode)
-
-    def draw_buttons(self, context, layout):
-        layout.prop(self, 'selected_mode', expand=True)
-
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', 'Vers')
         self.inputs.new('StringsSocket', "Pols")
@@ -94,9 +84,7 @@ class SvOffsetNode(bpy.types.Node, SverchCustomTreeNode):
             fullList(radius, len(faces_obj))
             verlen = set(range(len(verts_obj)))
 
-            settings = {'normals': 'f' if self.selected_mode == 'accurate' else 'x'}
-            bm = bmesh_from_pydata(verts_obj, [], faces_obj, **settings)
-            
+            bm = bmesh_from_pydata(verts_obj, [], faces_obj, normal_update=True)
             result = self.Offset_pols(bm, offset, radius, nsides, verlen)
             outv.append(result[0])
             oute.append(result[1])
@@ -140,7 +128,7 @@ class SvOffsetNode(bpy.types.Node, SverchCustomTreeNode):
 
             f.select_set(0)
             list_del.append(f)
-            f.normal_update()
+            # f.normal_update()
 
             list_2 = [v.index for v in f.verts]
             dict_0 = {}
@@ -258,7 +246,6 @@ class SvOffsetNode(bpy.types.Node, SverchCustomTreeNode):
             else:
                 faces.append(indexes)
 
-        bme.clear()
         bme.free()
         return (verts, edges, faces, newpols)
 
