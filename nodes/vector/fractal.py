@@ -158,9 +158,10 @@ class SvVectorFractal(bpy.types.Node, SverchCustomTreeNode):
             #out.append([noise_function(v, _noise_type) for v in obj])
             out.append([fractal_function(v, _noise_type) for v in obj])
 
-        if 'Noise V' in outputs:
-            outputs['Noise V'].sv_set(Vector_degenerate(out))
-        else:
+        #musgrave fractals outputs only float so why we need Vector?
+        #if 'Noise V' in outputs:
+        #    outputs['Noise V'].sv_set(Vector_degenerate(out))
+        #else:
             outputs['Noise S'].sv_set(out)
 
 
