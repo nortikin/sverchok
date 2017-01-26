@@ -55,9 +55,11 @@ def deepnoise(v, _noise_type):
     a = u[0], u[1], u[2]-1   # a = u minus (0,0,1)
     return sqrt((a[0] * a[0]) + (a[1] * a[1]) + (a[2] * a[2])) * 0.5
 
-def fractal():
+def fractal(v, _noise_type):
     print("This is a test but, Fbm is an awesome add!!")
-    return
+    data = 1.0
+    return data
+
 def multifractal():
     return
 def hetero():
@@ -78,7 +80,7 @@ print("................")
 print(avail_fractal)
 
 noise_f = {'SCALAR': deepnoise, 'VECTOR': noise.noise_vector}
-fractal_f = {'FRACTAL': noise.fractal, 'MULTI_FRACTAL': multifractal, 'HETERO_TERRAIN': hetero, 'RIDGED_MULTI_FRACTAL': ridged, 'HYBRID_MULTI_FRACTAL': hybrid }
+fractal_f = {'FRACTAL': fractal, 'MULTI_FRACTAL': multifractal, 'HETERO_TERRAIN': hetero, 'RIDGED_MULTI_FRACTAL': ridged, 'HYBRID_MULTI_FRACTAL': hybrid }
 
 
 class SvVectorFractal(bpy.types.Node, SverchCustomTreeNode):
@@ -89,6 +91,7 @@ class SvVectorFractal(bpy.types.Node, SverchCustomTreeNode):
 
     def changeMode(self, context):
         outputs = self.outputs
+
         if self.out_mode == 'SCALAR':
             if 'Noise S' not in outputs:
                 outputs[0].replace_socket('StringsSocket', 'Noise S')
@@ -97,7 +100,17 @@ class SvVectorFractal(bpy.types.Node, SverchCustomTreeNode):
             if 'Noise V' not in outputs:
                 outputs[0].replace_socket('VerticesSocket', 'Noise V')
                 return
+    '''
+        if self.out_mode == 'FRACTAL':
+            if 'Noise S' not in outputs:
+                outputs[0].replace_socket('VerticesSocket', 'Noise S')
+                return
 
+    out_modes = [
+        ('FRACTAL', 'Scalar', 'Scalar output', '', 1)]
+
+
+'''
     out_modes = [
         ('SCALAR', 'Scalar', 'Scalar output', '', 1),
         ('VECTOR', 'Vector', 'Vector output', '', 2)]
@@ -142,8 +155,9 @@ class SvVectorFractal(bpy.types.Node, SverchCustomTreeNode):
         verts = inputs['Vertices'].sv_get()
         seeds = inputs['Seed'].sv_get()[0]
         _noise_type = noise_dict[self.noise_type]
-        noise_function = noise_f[self.out_mode]
-        fractal_function = fractal_f[self.out_mode]
+        #noise_function = noise_f[self.out_mode]
+        #fractal_function = fractal_f[self.out_mode]
+        fractal_function = fractal_f[self.fractal_type]
 
 
         for idx, (seed, obj) in enumerate(zip(*match_long_repeat([seeds, verts]))):
