@@ -56,7 +56,10 @@ class SvVectorRewire(bpy.types.Node, SverchCustomTreeNode):
         row = layout.row(align=True)
         row.prop(self, 'selected_mode_from', text='')
         row.label(icon='ARROW_LEFTRIGHT')
+        row.separator()
         row.prop(self, 'selected_mode_to', text='')
+
+
 
     def process(self):
         vectors_in = self.inputs[0]
