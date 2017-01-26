@@ -143,6 +143,7 @@ class SvVectorFractal(bpy.types.Node, SverchCustomTreeNode):
         seeds = inputs['Seed'].sv_get()[0]
         _noise_type = noise_dict[self.noise_type]
         noise_function = noise_f[self.out_mode]
+        fractal_function = fractal_f[self.out_mode]
 
 
         for idx, (seed, obj) in enumerate(zip(*match_long_repeat([seeds, verts]))):
@@ -154,7 +155,8 @@ class SvVectorFractal(bpy.types.Node, SverchCustomTreeNode):
             seed_val = int(round(seed_val)) or 140230
 
             noise.seed_set(seed_val)
-            out.append([noise_function(v, _noise_type) for v in obj])
+            #out.append([noise_function(v, _noise_type) for v in obj])
+            out.append([fractal_function(v, _noise_type) for v in obj])
 
         if 'Noise V' in outputs:
             outputs['Noise V'].sv_set(Vector_degenerate(out))
