@@ -40,26 +40,11 @@ class VectorNormalNode(bpy.types.Node, SverchCustomTreeNode):
 
         normalsFORout = []
         for i, obj in enumerate(vers):
-            """
-            mesh_temp = bpy.data.meshes.new('temp')
-            mesh_temp.from_pydata(obj, [], pols[i])
-            mesh_temp.update(calc_edges=True)
-            """
-            bm = bmesh_from_pydata(obj, [], pols[i])
-
-            bmesh.ops.recalc_face_normals(bm, faces=bm.faces[:])
-            bm.verts.ensure_lookup_table()
-            verts = bm.verts
-            tempobj = []
-
-            for idx in range(len(verts)):
-                tempobj.append(verts[idx].normal[:])
-
-            normalsFORout.append(tempobj)
+            bm = bmesh_from_pydata(obj, [], pols[i], normal_update=True)
+            normalsFORout.append([v.normal[:] for v in bm.verts])
             bm.free()
-
-        if self.outputs['Normals'].is_linked:
-            self.outputs['Normals'].sv_set(normalsFORout)
+        
+        self.outputs['Normals'].sv_set(normalsFORout)
 
 
 def register():
