@@ -163,9 +163,11 @@ class SvVectorFractal(bpy.types.Node, SverchCustomTreeNode):
         update=updateNode)
 
     seed = IntProperty(default=0, name='Seed', update=updateNode)
+    lacunarity = FloatProperty(default=0.0, name='Lacunarity', update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', 'Vertices')
+        self.inputs.new('StringsSocket', 'Lacunarity').prop_name = 'lacunarity'
         self.inputs.new('StringsSocket', 'Seed').prop_name = 'seed'
         self.outputs.new('VerticesSocket', 'Noise V')
 
@@ -183,6 +185,7 @@ class SvVectorFractal(bpy.types.Node, SverchCustomTreeNode):
         out = []
         verts = inputs['Vertices'].sv_get()
         seeds = inputs['Seed'].sv_get()[0]
+        lacunarity = inputs['Lacunarity'].sv_get()[0]
         _noise_type = noise_dict[self.noise_type]
         #noise_function = noise_f[self.out_mode]
         #fractal_function = fractal_f[self.out_mode]
