@@ -23,7 +23,9 @@ import re
 import bpy
 import blf
 import bgl
+
 from sverchok import node_tree
+from sverchok.utils.context_managers import sv_preferences
 
 from bpy.types import SpaceNodeEditor
 
@@ -123,20 +125,27 @@ def callback_disable_all():
 def draw_text_data(data):
     lines = data.get('content', 'no data')
     x, y = data.get('location', (120, 120))
+    x, y = int(x), int(y)
     color = data.get('color', (0.1, 0.1, 0.1))
-    font_id = 0
-    text_height = 13
+    
+
+    #with sv_preferences() as prefs:
+    #    font_id = prefs.custom_font_id or 0
+    font_id = data.get('font_id', 0)
+    
+    text_height = 23
+    line_height = 14
 
     # why does the text look so jagged?  <-- still valid question
     dpi = bpy.context.user_preferences.system.dpi
-    blf.size(font_id, int(text_height/4), dpi*4)  # should check prefs.dpi
+    blf.size(font_id, int(text_height/4), dpi*5)  # should check prefs.dpi
     bgl.glColor3f(*color)
     ypos = y
 
     for line in lines:
         blf.position(0, x, ypos, 0)
         blf.draw(0, line)
-        ypos -= (text_height * 1.3)
+        ypos -= int(line_height * 1.3)
 
 
 def draw_rect(x=0, y=0, w=30, h=10, color=(0.0, 0.0, 0.0, 1.0)):
