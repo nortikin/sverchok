@@ -51,31 +51,27 @@ fractal_options = [
 ]
 
 h_factor = 0.0
-lacunarity = 1.0
+#lacunarity = 1.0
 octaves = 3
 offset = 0.0
 gain = 0.5
 
 def deepnoise(v, _noise_type):
-    u = noise.noise_vector(v,  _noise_type)[:]
+    u = noise.noise_vector(v, _noise_type)[:]
     a = u[0], u[1], u[2]-1   # a = u minus (0,0,1)
     return sqrt((a[0] * a[0]) + (a[1] * a[1]) + (a[2] * a[2])) * 0.5
 
 def fractal(v, h_factor,  lacunarity, octaves, offset, gain, _noise_type):
 
-    h_factor=1.0
-    lacunarity=1.0
-    octaves=3
+    #h_factor=1.0
+    #lacunarity=1.0
+    #octaves=3
     print("This is a test but, Fbm is an awesome add!!")
-    data = []
-    verts = []
+    #data = []
+    #verts = []
 
-    if v and v[0]:
-        for verts in v[0]:
-             out = noise.fractal(verts, h_factor, lacunarity, octaves, _noise_type)
-             data.append(out)
-    return out
-
+    return noise.fractal(verts, h_factor, lacunarity, octaves, _noise_type)
+ 
 def multifractal(v, h_factor,  lacunarity, octaves, offset, gain, _noise_type):
     out = 0.0
     print("hey, i'am a multifractal!")
@@ -139,7 +135,7 @@ class SvVectorFractal(bpy.types.Node, SverchCustomTreeNode):
         ('FRACTAL', 'Scalar', 'Scalar output', '', 1)]
 
 
-'''
+    '''
     out_modes = [
         ('SCALAR', 'Scalar', 'Scalar output', '', 1),
         ('VECTOR', 'Vector', 'Vector output', '', 2)]
