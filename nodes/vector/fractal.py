@@ -55,17 +55,30 @@ def deepnoise(v, _noise_type):
     a = u[0], u[1], u[2]-1   # a = u minus (0,0,1)
     return sqrt((a[0] * a[0]) + (a[1] * a[1]) + (a[2] * a[2])) * 0.5
 
+def fractal():
+    print("This is a test but, Fbm is an awesome add!!")
+    return
+def multifractal():
+    return
+def hetero():
+    return
+def ridged():
+    return
+def hybrid():
+    return
 
 noise_dict = {t[0]: t[1] for t in noise_options}
 avail_noise = [(t[0], t[0].title(), t[0].title(), '', t[1]) for t in noise_options]
-'''
-fractal_dict = {t[0]: t[1] for t in fractal_options}
-avail_fractal = [(t[0]), t[0].title(), t[0.title(), '', t[1]) for t in fractal_options]
 
+fractal_dict = {t[0]: t[1] for t in fractal_options}
+avail_fractal = [(t[0], t[0].title(), t[0].title(), '', t[1]) for t in fractal_options]
+
+print(fractal_dict)
+print("................")
 print(avail_fractal)
-'''
+
 noise_f = {'SCALAR': deepnoise, 'VECTOR': noise.noise_vector}
-fractal_f = {'FRACTAL': fractal, 'MULTI_FRACTAL': multifractal, 'HETERO_TERRAIN': hetero, 'RIDGED_MULTI_FRACTAL': ridged, 'HYBRID_MULTI_FRACTAL': hybrid }
+fractal_f = {'FRACTAL': noise.fractal, 'MULTI_FRACTAL': multifractal, 'HETERO_TERRAIN': hetero, 'RIDGED_MULTI_FRACTAL': ridged, 'HYBRID_MULTI_FRACTAL': hybrid }
 
 
 class SvVectorFractal(bpy.types.Node, SverchCustomTreeNode):
