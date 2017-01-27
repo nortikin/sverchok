@@ -69,11 +69,11 @@ noise_options = [
 ]
 
 fractal_options = [
-    ('FRACTAL', 0),
-    ('MULTI_FRACTAL', 1),
-    ('HETERO_TERRAIN', 2),
-    ('RIDGED_MULTI_FRACTAL', 3),
-    ('HYBRID_MULTI_FRACTAL', 4),
+    ('FRACTAL', 0, (0, 0)),
+    ('MULTI_FRACTAL', 1, (0, 0)),
+    ('HETERO_TERRAIN', 2, (1, 0)),
+    ('RIDGED_MULTI_FRACTAL', 3, (1, 1)),
+    ('HYBRID_MULTI_FRACTAL', 4, (1, 1)),
 ]
 
 
@@ -82,6 +82,7 @@ avail_noise = [(t[0], t[0].title(), t[0].title(), '', t[1]) for t in noise_optio
 
 fractal_dict = {t[0]: t[1] for t in fractal_options}
 avail_fractal = [(t[0], t[0].title(), t[0].title(), '', t[1]) for t in fractal_options]
+props_enabled = {t[0]: t[2] for t in fractal_options}
 
 
 class SvVectorFractal(bpy.types.Node, SverchCustomTreeNode):
@@ -123,6 +124,11 @@ class SvVectorFractal(bpy.types.Node, SverchCustomTreeNode):
 
     def process(self):
         inputs, outputs = self.inputs, self.outputs
+
+        # set the visual state for these props
+        enabled = props_enabled.get(self.fractal_type)
+        inputs[-2].prop_enabled = enabled[0]
+        inputs[-1].prop_enabled = enabled[1]
 
         if not outputs[0].is_linked:
             return
