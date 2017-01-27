@@ -1,4 +1,5 @@
-# context_managers.py
+import bpy
+from sverchok.data_structure import SVERCHOK_NAME as addon_name
 
 import bpy
 from sverchok.data_structure import SVERCHOK_NAME as addon_name
@@ -27,24 +28,16 @@ def hard_freeze(self):
     yield self
     self.id_data.unfreeze(hard=True)
 
-
 @contextmanager
 def sv_preferences():
     '''
     use this whenever you need set or get content of the user_preferences class
-
     usage
-
         from sverchok.utils.context_managers import sv_preferences
-
         ...
-
         with sv_preferences() as prefs:
             print(prefs.<some attr>)
-
     '''
     addon = bpy.context.user_preferences.addons.get(addon_name)
     if addon and hasattr(addon, "preferences"):
         yield addon.preferences
-
-        
