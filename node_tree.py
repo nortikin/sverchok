@@ -269,10 +269,7 @@ class StringsSocket(NodeSocket, SvSocketCommon):
 
         if not self.is_output and not self.is_linked:
             if self.prop_name and not self.prop_type:
-                
-                # row = layout.row()
-                # row.enabled = self.prop_enabled
-                # row.prop(node, self.prop_name)
+
                 layout.enabled = self.prop_enabled
                 layout.prop(node, self.prop_name)
 
