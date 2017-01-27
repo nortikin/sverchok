@@ -16,16 +16,42 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-import inspect
-import operator
-from math import sqrt
 
 import bpy
 from bpy.props import EnumProperty, IntProperty, FloatProperty
 from mathutils import noise
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (updateNode, Vector_degenerate, match_long_repeat)
+from sverchok.data_structure import updateNode
+
+
+def fractal(nbasis, verts, h_factor, lacunarity, octaves, offset, gain):
+    return [noise.fractal(v, h_factor, lacunarity, octaves, nbasis) for v in verts]
+
+def multifractal(nbasis, verts, h_factor, lacunarity, octaves, offset, gain):
+    print("hey, i'am a multifractal!")
+    return [noise.multi_fractal(v, h_factor, lacunarity, octaves, nbasis) for v in verts]
+
+def hetero(nbasis, verts, h_factor, lacunarity, octaves, offset, gain):
+    print("hetero fractal works")
+    return [noise.hetero_terrain(v, h_factor, lacunarity, octaves, offset, nbasis) for v in verts]
+
+def ridged(nbasis, verts, h_factor, lacunarity, octaves, offset, gain):
+    print("ridged fractal!")
+    return [noise.ridged_multi_fractal(v, h_factor, lacunarity, octaves, offset, gain, nbasis) for v in verts]
+
+def hybrid(nbasis, verts, h_factor, lacunarity, octaves, offset, gain):
+    print("you got a hybrid fractal!")
+    return [noise.hybrid_multi_fractal(v, h_factor, lacunarity, octaves, offset, gain, nbasis) for v in verts]
+
+
+fractal_f = {
+    'FRACTAL': fractal,
+    'MULTI_FRACTAL': multifractal,
+    'HETERO_TERRAIN': hetero,
+    'RIDGED_MULTI_FRACTAL': ridged,
+    'HYBRID_MULTI_FRACTAL': hybrid
+}
 
 # noise nodes
 # from http://www.blender.org/documentation/blender_python_api_current/mathutils.noise.html
@@ -50,47 +76,6 @@ fractal_options = [
     ('HYBRID_MULTI_FRACTAL', 4),
 ]
 
-h_factor = 0.0
-#lacunarity = 1.0
-octaves = 3
-offset = 0.0
-gain = 0.5
-
-def deepnoise(v, _noise_type):
-    u = noise.noise_vector(v, _noise_type)[:]
-    a = u[0], u[1], u[2]-1   # a = u minus (0,0,1)
-    return sqrt((a[0] * a[0]) + (a[1] * a[1]) + (a[2] * a[2])) * 0.5
-
-def fractal(v, h_factor,  lacunarity, octaves, offset, gain, _noise_type):
-
-    #h_factor=1.0
-    #lacunarity=1.0
-    #octaves=3
-    print("This is a test but, Fbm is an awesome add!!")
-    #data = []
-    #verts = []
-
-    return noise.fractal(verts, h_factor, lacunarity, octaves, _noise_type)
- 
-def multifractal(v, h_factor,  lacunarity, octaves, offset, gain, _noise_type):
-    out = 0.0
-    print("hey, i'am a multifractal!")
-    return out
-
-def hetero(v, h_factor,  lacunarity, octaves, offset, gain, _noise_type):
-    out = 0.0
-    print("hetero fractal works")
-    return out
-
-def ridged(v, h_factor,  lacunarity, octaves, offset, gain, _noise_type):
-    out = 0.0
-    print("ridged fractal!")
-    return out
-
-def hybrid(v, h_factor,  lacunarity, octaves, offset, gain, _noise_type):
-    out = 0.0
-    print("you got a hybrid fractal!")
-    return out
 
 noise_dict = {t[0]: t[1] for t in noise_options}
 avail_noise = [(t[0], t[0].title(), t[0].title(), '', t[1]) for t in noise_options]
@@ -98,53 +83,12 @@ avail_noise = [(t[0], t[0].title(), t[0].title(), '', t[1]) for t in noise_optio
 fractal_dict = {t[0]: t[1] for t in fractal_options}
 avail_fractal = [(t[0], t[0].title(), t[0].title(), '', t[1]) for t in fractal_options]
 
-print(fractal_dict)
-print("................")
-print(avail_fractal)
-
-noise_f = {'SCALAR': deepnoise, 'VECTOR': noise.noise_vector}
-fractal_f = {'FRACTAL': fractal, 'MULTI_FRACTAL': multifractal, 'HETERO_TERRAIN': hetero, 'RIDGED_MULTI_FRACTAL': ridged, 'HYBRID_MULTI_FRACTAL': hybrid }
-
 
 class SvVectorFractal(bpy.types.Node, SverchCustomTreeNode):
     '''Vector Fractal node'''
     bl_idname = 'SvVectorFractal'
     bl_label = 'Vector Fractal'
     bl_icon = 'FORCE_TURBULENCE'
-
-
-
-    def changeMode(self, context):
-        outputs = self.outputs
-
-        if self.out_mode == 'SCALAR':
-            if 'Noise S' not in outputs:
-                outputs[0].replace_socket('StringsSocket', 'Noise S')
-                return
-        if self.out_mode == 'VECTOR':
-            if 'Noise V' not in outputs:
-                outputs[0].replace_socket('VerticesSocket', 'Noise V')
-                return
-    '''
-        if self.out_mode == 'FRACTAL':
-            if 'Noise S' not in outputs:
-                outputs[0].replace_socket('VerticesSocket', 'Noise S')
-                return
-
-    out_modes = [
-        ('FRACTAL', 'Scalar', 'Scalar output', '', 1)]
-
-
-    '''
-    out_modes = [
-        ('SCALAR', 'Scalar', 'Scalar output', '', 1),
-        ('VECTOR', 'Vector', 'Vector output', '', 2)]
-
-    out_mode = EnumProperty(
-        items=out_modes,
-        default='VECTOR',
-        description='Output type',
-        update=changeMode)
 
     noise_type = EnumProperty(
         items=avail_noise,
@@ -158,17 +102,22 @@ class SvVectorFractal(bpy.types.Node, SverchCustomTreeNode):
         description="Fractal type",
         update=updateNode)
 
-    seed = IntProperty(default=0, name='Seed', update=updateNode)
-    lacunarity = FloatProperty(default=0.0, name='Lacunarity', update=updateNode)
+    h_factor = FloatProperty(default=0.5, name='H Factor', update=updateNode)
+    lacunarity = FloatProperty(default=1.0, name='Lacunarity', update=updateNode)
+    octaves = IntProperty(default=3, min=0, max=6, name='Octaves', update=updateNode)
+    offset = FloatProperty(default=0.0, name='Offset', update=updateNode)
+    gain = FloatProperty(default=0.5, name='Gain', update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', 'Vertices')
+        self.inputs.new('StringsSocket', 'H Factor').prop_name = 'h_factor'
         self.inputs.new('StringsSocket', 'Lacunarity').prop_name = 'lacunarity'
-        self.inputs.new('StringsSocket', 'Seed').prop_name = 'seed'
-        self.outputs.new('VerticesSocket', 'Noise V')
+        self.inputs.new('StringsSocket', 'Octaves').prop_name = 'octaves'
+        self.inputs.new('StringsSocket', 'Offset').prop_name = 'offset'
+        self.inputs.new('StringsSocket', 'Gain').prop_name = 'gain'
+        self.outputs.new('StringsSocket', 'Value')
 
     def draw_buttons(self, context, layout):
-        layout.prop(self, 'out_mode', expand=True)
         layout.prop(self, 'fractal_type', text="Type")
         layout.prop(self, 'noise_type', text="Type")
 
@@ -179,32 +128,25 @@ class SvVectorFractal(bpy.types.Node, SverchCustomTreeNode):
             return
 
         out = []
-        verts = inputs['Vertices'].sv_get()
-        seeds = inputs['Seed'].sv_get()[0]
-        lacunarity = inputs['Lacunarity'].sv_get()[0]
         _noise_type = noise_dict[self.noise_type]
-        #noise_function = noise_f[self.out_mode]
-        #fractal_function = fractal_f[self.out_mode]
-        fractal_function = fractal_f[self.fractal_type]
+        wrapped_fractal_function = fractal_f[self.fractal_type]
 
+        verts = inputs['Vertices'].sv_get()
 
-        for idx, (seed, obj) in enumerate(zip(*match_long_repeat([seeds, verts]))):
-            # multi-pass, make sure seed_val is a number and it isn't 0.
-            # 0 unsets the seed and generates unreproducable output based on system time
-            # We force the seed to a non 0 value.
-            # See https://github.com/nortikin/sverchok/issues/1095#issuecomment-271261600
-            seed_val = seed if isinstance(seed, (int, float)) else 0
-            seed_val = int(round(seed_val)) or 140230
+        m_h_factor = inputs['H Factor'].sv_get()[0]
+        m_lacunarity = inputs['Lacunarity'].sv_get()[0]
+        m_octaves = inputs['Octaves'].sv_get()[0]
+        m_offset = inputs['Offset'].sv_get()[0]
+        m_gain = inputs['Gain'].sv_get()[0]
 
-            noise.seed_set(seed_val)
-            #out.append([noise_function(v, _noise_type) for v in obj])
-            out.append([fractal_function(v, h_factor,  lacunarity, octaves, offset, gain, _noise_type) for v in obj])
+        param_list = [m_h_factor, m_lacunarity, m_octaves, m_offset, m_gain]
 
-        #musgrave fractals outputs only float so why we need Vector?
-        #if 'Noise V' in outputs:
-        #    outputs['Noise V'].sv_set(Vector_degenerate(out))
-        #else:
-            outputs['Noise S'].sv_set(out)
+        for idx, vlist in enumerate(verts):
+            # lazy generation of full parameters.
+            params = [(param[idx] if idx < len(param) else param[-1]) for param in param_list]
+            out.append(wrapped_fractal_function(_noise_type, vlist, *params))
+
+        outputs[0].sv_set(out)
 
 
 def register():
