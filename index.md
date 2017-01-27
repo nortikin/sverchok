@@ -218,6 +218,7 @@
     SvObjectToMeshNodeMK2
     SvObjInLite
     SvScriptNodeLite
+    SvVectorFractal
     SvRndNumGen
 
 ## Alpha Nodes
