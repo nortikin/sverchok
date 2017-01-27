@@ -102,8 +102,8 @@ class SvVectorFractal(bpy.types.Node, SverchCustomTreeNode):
         description="Fractal type",
         update=updateNode)
 
-    h_factor = FloatProperty(default=0.5, name='H Factor', update=updateNode)
-    lacunarity = FloatProperty(default=1.0, name='Lacunarity', update=updateNode)
+    h_factor = FloatProperty(default=0.05, name='H Factor', update=updateNode)
+    lacunarity = FloatProperty(default=0.5, name='Lacunarity', update=updateNode)
     octaves = IntProperty(default=3, min=0, max=6, name='Octaves', update=updateNode)
     offset = FloatProperty(default=0.0, name='Offset', update=updateNode)
     gain = FloatProperty(default=0.5, name='Gain', update=updateNode)
