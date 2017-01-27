@@ -25,28 +25,25 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 
 
-def fractal(_noise_type, v, h_factor, lacunarity, octaves, offset, gain):
-    return noise.fractal(v, h_factor, lacunarity, octaves, _noise_type)
- 
-def multifractal(_noise_type, v, h_factor, lacunarity, octaves, offset, gain):
-    out = 0.0
+def fractal(nbasis, verts, h_factor, lacunarity, octaves, offset, gain):
+    return [noise.fractal(v, h_factor, lacunarity, octaves, nbasis) for v in verts]
+
+def multifractal(nbasis, verts, h_factor, lacunarity, octaves, offset, gain):
     print("hey, i'am a multifractal!")
-    return out
+    return [noise.multi_fractal(v, h_factor, lacunarity, octaves, nbasis) for v in verts]
 
-def hetero(_noise_type, v, h_factor, lacunarity, octaves, offset, gain):
-    out = 0.0
+def hetero(nbasis, verts, h_factor, lacunarity, octaves, offset, gain):
     print("hetero fractal works")
-    return out
+    return [noise.hetero_terrain(v, h_factor, lacunarity, octaves, offset, nbasis) for v in verts]
 
-def ridged(_noise_type, v, h_factor, lacunarity, octaves, offset, gain):
-    out = 0.0
+def ridged(nbasis, verts, h_factor, lacunarity, octaves, offset, gain):
     print("ridged fractal!")
-    return out
+    return [noise.ridged_multi_fractal(v, h_factor, lacunarity, octaves, offset, gain, nbasis) for v in verts]
 
-def hybrid(_noise_type, v, h_factor, lacunarity, octaves, offset, gain):
-    out = 0.0
+def hybrid(nbasis, verts, h_factor, lacunarity, octaves, offset, gain):
     print("you got a hybrid fractal!")
-    return out
+    return [noise.hybrid_multi_fractal(v, h_factor, lacunarity, octaves, offset, gain, nbasis) for v in verts]
+
 
 fractal_f = {
     'FRACTAL': fractal, 
@@ -132,7 +129,7 @@ class SvVectorFractal(bpy.types.Node, SverchCustomTreeNode):
 
         out = []
         _noise_type = noise_dict[self.noise_type]
-        fractal_function = fractal_f[self.fractal_type]
+        wrapped_fractal_function = fractal_f[self.fractal_type]
 
         verts = inputs['Vertices'].sv_get()
 
@@ -147,7 +144,7 @@ class SvVectorFractal(bpy.types.Node, SverchCustomTreeNode):
         for idx, vlist in enumerate(verts):
             # lazy generation of full parameters.
             params = [(param[idx] if idx < len(param) else param[-1]) for param in param_list]
-            out.append([fractal_function(_noise_type, v, *params) for v in vlist])
+            out.append(wrapped_fractal_function(_noise_type, vlist, *params))
 
         outputs[0].sv_set(out)
 
