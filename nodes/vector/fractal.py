@@ -91,6 +91,16 @@ class SvVectorFractal(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Vector Fractal'
     bl_icon = 'FORCE_TURBULENCE'
 
+    def wrapped_update(self, context):
+        # set the visual state for these props
+        try:
+            enabled = props_enabled.get(self.fractal_type)
+            self.inputs[-2].prop_enabled = enabled[0]
+            self.inputs[-1].prop_enabled = enabled[1]
+            updateNode(self, context)
+        except:
+            pass
+
     noise_type = EnumProperty(
         items=avail_noise,
         default='STDPERLIN',
@@ -101,7 +111,7 @@ class SvVectorFractal(bpy.types.Node, SverchCustomTreeNode):
         items=avail_fractal,
         default="FRACTAL",
         description="Fractal type",
-        update=updateNode)
+        update=wrapped_update)
 
     h_factor = FloatProperty(default=0.05, name='H Factor', update=updateNode)
     lacunarity = FloatProperty(default=0.5, name='Lacunarity', update=updateNode)
@@ -117,6 +127,7 @@ class SvVectorFractal(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('StringsSocket', 'Offset').prop_name = 'offset'
         self.inputs.new('StringsSocket', 'Gain').prop_name = 'gain'        
         self.outputs.new('StringsSocket', 'Value')
+        self.wrapped_update(context)  # called once at initialization to grey out offset/gain
 
     def draw_buttons(self, context, layout):
         layout.prop(self, 'fractal_type', text="Type")
@@ -124,11 +135,6 @@ class SvVectorFractal(bpy.types.Node, SverchCustomTreeNode):
 
     def process(self):
         inputs, outputs = self.inputs, self.outputs
-
-        # set the visual state for these props
-        enabled = props_enabled.get(self.fractal_type)
-        inputs[-2].prop_enabled = enabled[0]
-        inputs[-1].prop_enabled = enabled[1]
 
         if not outputs[0].is_linked:
             return
