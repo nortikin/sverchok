@@ -22,7 +22,7 @@ import bmesh
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, repeat_last, dataCorrect
-from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
+from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
 
 
 def fill_holes(vertices, edges, s):
@@ -33,21 +33,10 @@ def fill_holes(vertices, edges, s):
     if len(edges[0]) != 2:
         return False
     
-    bm = bmesh_from_pydata(vertices, edges, [])
-    res = bmesh.ops.holes_fill(bm, edges=bm.edges[:], sides=s)
-    bmesh.ops.recalc_face_normals(bm, faces=bm.faces[:])
-    edges = []
-    faces = []
-    bm.verts.index_update()
-    bm.edges.index_update()
-    bm.faces.index_update()
-    for edge in bm.edges[:]:
-        edges.append([v.index for v in edge.verts[:]])
-    verts = [vert.co[:] for vert in bm.verts[:]]
-    for face in bm.faces:
-        faces.append([v.index for v in face.verts[:]])
-    bm.clear()
-    bm.free()
+    bm = bmesh_from_pydata(vertices, edges, [], normal_update=True)
+
+    bmesh.ops.holes_fill(bm, edges=bm.edges[:], sides=s)
+    verts, edges, faces = pydata_from_bmesh(bm)
     return (verts, edges, faces)
 
 

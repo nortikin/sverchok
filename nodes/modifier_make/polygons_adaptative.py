@@ -81,20 +81,11 @@ class AdaptivePolsNode(bpy.types.Node, SverchCustomTreeNode):
             polsD = self.inputs['PolsD'].sv_get()  # donor many objects [:]
             versD_ = self.inputs['VersD'].sv_get()  # donor
             versD = Vector_generate(versD_)
-            ##### it is needed for normals of vertices
             polsR, polsD, versD = match_long_repeat([polsR, polsD, versD])
-            bm = bmesh_from_pydata(versR, [], polsR, normals='vf')
 
-            #bmesh.ops.recalc_face_normals(bm, faces=bm.faces[:])
+            bm = bmesh_from_pydata(versR, [], polsR, normal_update=True)
             bm.verts.ensure_lookup_table()
             new_ve = bm.verts
-
-            #new_me = bpy.data.meshes.new('recepient')
-            #new_me.from_pydata(versR, [], polsR)
-            #new_me.update(calc_edges=True)
-
-            #new_ve = new_me.vertices
-            #print (new_ve[0].normal, 'normal')
 
             vers_out = []
             pols_out = []
@@ -103,8 +94,6 @@ class AdaptivePolsNode(bpy.types.Node, SverchCustomTreeNode):
                 # part of donor to make limits
                 j = i
                 pD = polsD[i]
-                n_verts = len(vD)
-                n_faces = len(pD)
 
                 xx = [x[0] for x in vD]
                 x0 = (self.width_coef) / (max(xx)-min(xx))
@@ -116,10 +105,8 @@ class AdaptivePolsNode(bpy.types.Node, SverchCustomTreeNode):
                     z0 = 1 / zzz
                 else:
                     z0 = 0
-                #print (x0, y0, z0)
 
                 # part of recipient polygons to reciev donor
-
                 last = len(pR)-1
                 vs = [new_ve[v] for v in pR]  # new_ve  - temporery data
                 if z_coef:
@@ -137,15 +124,11 @@ class AdaptivePolsNode(bpy.types.Node, SverchCustomTreeNode):
                 pols_out.append(new_pols)
                 vers_out.append(new_vers)
                 i += 1
-            #bpy.data.meshes.remove(new_me)  # cleaning and washing
-            bm.free()
-            #print (Vector_degenerate(vers_out))
 
+            bm.free()
             output = Vector_degenerate(vers_out)
-            #print (output)
 
             self.outputs['Vertices'].sv_set(output)
-
             self.outputs['Poligons'].sv_set(pols_out)
 
 

@@ -48,12 +48,8 @@ class SvVolumeNode(bpy.types.Node, SverchCustomTreeNode):
 
             out = []
             for verts_obj, faces_obj in zip(vertices, faces):
-                # this is for one object
-                bm = bmesh_from_pydata(verts_obj, [], faces_obj)
-                # geom_in = bm.verts[:] + bm.edges[:] + bm.faces[:]
-                bmesh.ops.recalc_face_normals(bm, faces=bm.faces[:])
+                bm = bmesh_from_pydata(verts_obj, [], faces_obj, normal_update=True)
                 out.append(bm.calc_volume())
-                bm.clear()
                 bm.free()
  
             vol_socket.sv_set(out)
