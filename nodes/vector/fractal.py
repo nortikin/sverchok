@@ -26,7 +26,7 @@ from sverchok.data_structure import updateNode
 
 
 def fractal(_noise_type, v, h_factor, lacunarity, octaves, offset, gain):
-    return noise.fractal(verts, h_factor, lacunarity, octaves, _noise_type)
+    return noise.fractal(v, h_factor, lacunarity, octaves, _noise_type)
  
 def multifractal(_noise_type, v, h_factor, lacunarity, octaves, offset, gain):
     out = 0.0
