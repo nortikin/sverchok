@@ -22,7 +22,7 @@ import bmesh
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, Vector_generate, repeat_last
-
+from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
 
 def wireframe(vertices, faces, t, self):
     if not faces or not vertices:
@@ -31,12 +31,7 @@ def wireframe(vertices, faces, t, self):
     if len(faces[0]) == 2:
         return False
 
-    bm = bmesh.new()
-    bm_verts = [bm.verts.new(v) for v in vertices]
-    for face in faces:
-        bm.faces.new([bm_verts[i] for i in face])
-
-    bmesh.ops.recalc_face_normals(bm, faces=bm.faces[:])
+    bm = bmesh_from_pydata(vertices, [], faces, normal_update=True)
     bmesh.ops.wireframe(
         bm, faces=bm.faces[:],
         thickness=t,
@@ -46,21 +41,7 @@ def wireframe(vertices, faces, t, self):
         use_even_offset=self.even_offset,
         use_relative_offset=self.relative_offset)
 
-    #bmesh.ops.wireframe(bm, faces, thickness, offset, use_replace,
-    #    use_boundary, use_even_offset, use_crease, crease_weight, thickness, use_relative_offset, material_offset)
-    edges = []
-    faces = []
-    bm.verts.index_update()
-    bm.edges.index_update()
-    bm.faces.index_update()
-    for edge in bm.edges[:]:
-        edges.append([v.index for v in edge.verts[:]])
-    verts = [vert.co[:] for vert in bm.verts[:]]
-    for face in bm.faces:
-        faces.append([v.index for v in face.verts[:]])
-    bm.clear()
-    bm.free()
-    return (verts, edges, faces)
+    return pydata_from_bmesh(bm)
 
 
 class SvWireframeNode(bpy.types.Node, SverchCustomTreeNode):
