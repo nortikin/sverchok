@@ -62,13 +62,10 @@ class SvVectorRewire(bpy.types.Node, SverchCustomTreeNode):
     def draw_label(self):
         if self.hide:
 
-            if not self.inputs[1].is_linked:
-                if self.selected_mode_from == 'Scalar':
+            val = self.selected_mode_from
+            if self.selected_mode_from == 'Scalar':
+                if not self.inputs[1].is_linked:
                     val = self.scalar
-                else:
-                    val = self.inputs[1].sv_get()[0][0]
-            else:
-                val = self.selected_mode_from
             
             if isinstance(val, (str, int)):
                 dlabel = "{0} > {1}"
