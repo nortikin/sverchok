@@ -25,6 +25,14 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 
 
+# helpers
+def dict_from(options, idx1, idx2):
+    return {t[idx1]: t[idx2] for t in options}
+
+def enum_from(options):
+    return [(t[0], t[0].title(), t[0].title(), '', t[1]) for t in options]
+
+# function wrappers
 def fractal(nbasis, verts, h_factor, lacunarity, octaves, offset, gain):
     return [noise.fractal(v, h_factor, lacunarity, octaves, nbasis) for v in verts]
 
@@ -39,15 +47,6 @@ def ridged(nbasis, verts, h_factor, lacunarity, octaves, offset, gain):
 
 def hybrid(nbasis, verts, h_factor, lacunarity, octaves, offset, gain):
     return [noise.hybrid_multi_fractal(v, h_factor, lacunarity, octaves, offset, gain, nbasis) for v in verts]
-
-
-fractal_f = {
-    'FRACTAL': fractal,
-    'MULTI_FRACTAL': multifractal,
-    'HETERO_TERRAIN': hetero,
-    'RIDGED_MULTI_FRACTAL': ridged,
-    'HYBRID_MULTI_FRACTAL': hybrid
-}
 
 # noise nodes
 # from http://www.blender.org/documentation/blender_python_api_current/mathutils.noise.html
@@ -65,20 +64,20 @@ noise_options = [
 ]
 
 fractal_options = [
-    ('FRACTAL', 0, (0, 0)),
-    ('MULTI_FRACTAL', 1, (0, 0)),
-    ('HETERO_TERRAIN', 2, (1, 0)),
-    ('RIDGED_MULTI_FRACTAL', 3, (1, 1)),
-    ('HYBRID_MULTI_FRACTAL', 4, (1, 1)),
+    ('FRACTAL', 0, (0, 0), fractal),
+    ('MULTI_FRACTAL', 1, (0, 0), multifractal),
+    ('HETERO_TERRAIN', 2, (1, 0), hetero),
+    ('RIDGED_MULTI_FRACTAL', 3, (1, 1), ridged),
+    ('HYBRID_MULTI_FRACTAL', 4, (1, 1), hybrid),
 ]
 
 
-noise_dict = {t[0]: t[1] for t in noise_options}
-avail_noise = [(t[0], t[0].title(), t[0].title(), '', t[1]) for t in noise_options]
+noise_dict = dict_from(noise_options, 0, 1)
+fractal_f = dict_from(fractal_options, 0, 3)
+props_enabled = dict_from(fractal_options, 0, 2)
 
-fractal_dict = {t[0]: t[1] for t in fractal_options}
-avail_fractal = [(t[0], t[0].title(), t[0].title(), '', t[1]) for t in fractal_options]
-props_enabled = {t[0]: t[2] for t in fractal_options}
+avail_noise = enum_from(noise_options)
+avail_fractal = enum_from(fractal_options)
 
 
 class SvVectorFractal(bpy.types.Node, SverchCustomTreeNode):
