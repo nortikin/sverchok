@@ -129,6 +129,16 @@ class SvNoiseNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         else:
             outputs['Noise S'].sv_set(out)
 
+    def draw_label(self):
+        if self.hide:
+            if not self.inputs['Seed'].is_linked:
+                seed = ' + ({0})'.format(str(int(self.seed)))
+            else:
+                seed = ' + seed(s)'
+            return self.noise_type.title() + seed
+        else:
+            return self.label or self.name
+
 
 def register():
     bpy.utils.register_class(SvNoiseNodeMK2)
