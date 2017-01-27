@@ -46,10 +46,10 @@ def hybrid(nbasis, verts, h_factor, lacunarity, octaves, offset, gain):
 
 
 fractal_f = {
-    'FRACTAL': fractal, 
-    'MULTI_FRACTAL': multifractal, 
-    'HETERO_TERRAIN': hetero, 
-    'RIDGED_MULTI_FRACTAL': ridged, 
+    'FRACTAL': fractal,
+    'MULTI_FRACTAL': multifractal,
+    'HETERO_TERRAIN': hetero,
+    'RIDGED_MULTI_FRACTAL': ridged,
     'HYBRID_MULTI_FRACTAL': hybrid
 }
 
@@ -113,11 +113,11 @@ class SvVectorFractal(bpy.types.Node, SverchCustomTreeNode):
         description="Fractal type",
         update=wrapped_update)
 
-    h_factor = FloatProperty(default=0.05, name='H Factor', update=updateNode)
-    lacunarity = FloatProperty(default=0.5, name='Lacunarity', update=updateNode)
-    octaves = IntProperty(default=3, min=0, max=6, name='Octaves', update=updateNode)
-    offset = FloatProperty(default=0.0, name='Offset', update=updateNode)
-    gain = FloatProperty(default=0.5, name='Gain', update=updateNode)
+    h_factor = FloatProperty(default=0.05, description='H factor parameter', name='H Factor', update=updateNode)
+    lacunarity = FloatProperty(default=0.5, description='Lacunarity parameter', name='Lacunarity', update=updateNode)
+    octaves = IntProperty(default=3, min=0, max=6, description='Octaves', name='Octaves', update=updateNode)
+    offset = FloatProperty(default=0.0, name='Offset',description='Offset parameter', update=updateNode)
+    gain = FloatProperty(default=0.5, description='Gain parameter', name='Gain', update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', 'Vertices')
@@ -125,7 +125,7 @@ class SvVectorFractal(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('StringsSocket', 'Lacunarity').prop_name = 'lacunarity'
         self.inputs.new('StringsSocket', 'Octaves').prop_name = 'octaves'
         self.inputs.new('StringsSocket', 'Offset').prop_name = 'offset'
-        self.inputs.new('StringsSocket', 'Gain').prop_name = 'gain'        
+        self.inputs.new('StringsSocket', 'Gain').prop_name = 'gain'
         self.outputs.new('StringsSocket', 'Value')
         self.wrapped_update(context)  # called once at initialization to grey out offset/gain
 
