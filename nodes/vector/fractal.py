@@ -29,19 +29,15 @@ def fractal(nbasis, verts, h_factor, lacunarity, octaves, offset, gain):
     return [noise.fractal(v, h_factor, lacunarity, octaves, nbasis) for v in verts]
 
 def multifractal(nbasis, verts, h_factor, lacunarity, octaves, offset, gain):
-    print("hey, i'am a multifractal!")
     return [noise.multi_fractal(v, h_factor, lacunarity, octaves, nbasis) for v in verts]
 
 def hetero(nbasis, verts, h_factor, lacunarity, octaves, offset, gain):
-    print("hetero fractal works")
     return [noise.hetero_terrain(v, h_factor, lacunarity, octaves, offset, nbasis) for v in verts]
 
 def ridged(nbasis, verts, h_factor, lacunarity, octaves, offset, gain):
-    print("ridged fractal!")
     return [noise.ridged_multi_fractal(v, h_factor, lacunarity, octaves, offset, gain, nbasis) for v in verts]
 
 def hybrid(nbasis, verts, h_factor, lacunarity, octaves, offset, gain):
-    print("you got a hybrid fractal!")
     return [noise.hybrid_multi_fractal(v, h_factor, lacunarity, octaves, offset, gain, nbasis) for v in verts]
 
 
