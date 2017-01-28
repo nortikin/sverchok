@@ -47,7 +47,7 @@ class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     n_id = StringProperty(default='')
-    font_id = IntProperty(update=updateNode)
+    font_id = IntProperty(default=0, update=updateNode)
 
     text_color = FloatVectorProperty(
         name="Color", description='Text color',
@@ -145,28 +145,7 @@ class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         nvBGL.callback_disable(node_id(self))
 
 
-# def get_custom_font():
-
-#     binary_path = os.path.dirname(bpy.app.binary_path)
-#     font_gz_filename = "droidsans.ttf.gz"  #"bmonofont-i18n.ttf.gz"
-#     sv_font_name = font_gz_filename.split('.')[0]
-#     version = '.'.join(str(i) for i in bpy.app.version[:2])
-
-#     fonts_path = os.path.join(binary_path, version, 'datafiles', 'fonts')
-#     file = os.path.join(fonts_path, font_gz_filename)
-#     font_path = os.path.join(fonts_path, 'sv_{0}.tff'.format(sv_font_name))
-#     inF = gzip.open(file, 'rb')
-#     with open(font_path, 'wb') as outF:
-#         outF.write( inF.read() )
-#         inF.close()
-#         outF.close()
-
-#     with sv_preferences() as prefs:
-#         prefs.custom_font_id = blf.load(font_path)
-#         print(prefs.custom_font_id)
-
 def register():
-    # get_custom_font()
     bpy.utils.register_class(SvStethoscopeNodeMK2)
 
 

@@ -127,18 +127,14 @@ def draw_text_data(data):
     x, y = data.get('location', (120, 120))
     x, y = int(x), int(y)
     color = data.get('color', (0.1, 0.1, 0.1))
-    
-
-    #with sv_preferences() as prefs:
-    #    font_id = prefs.custom_font_id or 0
     font_id = data.get('font_id', 0)
     
-    text_height = 23
+    text_height = 15
     line_height = 14
 
     # why does the text look so jagged?  <-- still valid question
-    dpi = bpy.context.user_preferences.system.dpi
-    blf.size(font_id, int(text_height/4), dpi*5)  # should check prefs.dpi
+    # dpi = bpy.context.user_preferences.system.dpi
+    blf.size(font_id, int(text_height), 72)
     bgl.glColor3f(*color)
     ypos = y
 
@@ -170,28 +166,40 @@ def draw_triangle(x=0, y=0, w=30, h=10, color=(1.0, 0.3, 0.3, 1.0)):
 def draw_graphical_data(data):
     lines = data.get('content')
     x, y = data.get('location', (120, 120))
+    color = data.get('color', (0.1, 0.1, 0.1))
+    font_id = data.get('font_id', 0)
+    text_height = 15
 
     if not lines:
         return
 
+    blf.size(font_id, int(text_height), 72)
+    
+    def draw_text(color, xpos, ypos, line):
+        bgl.glColor3f(*color)
+        blf.position(0, xpos, ypos, 0)
+        blf.draw(font_id, line)
+        return blf.dimensions(font_id, line)
+
     lineheight = 20
     for idx, line in enumerate(lines):
-        # line 
         y_pos = y - (idx*lineheight)
+        gfx_x = x + 30
 
-        draw_rect(x, y_pos, w=30, h=10)
+        tx, _ = draw_text(color, x, y_pos, str(type(line)))
+        draw_text(color, x + tx + 5, y_pos, "num items: " + str(len(line)))
 
-        # a list contain n * 3 tuple/list
-        if isinstance(line, (list, tuple)):
-            # print('is list')
-            if all([isinstance(s, (list, tuple)) for s in line]):
-                # print('-- each item is itself a list')
-                if all(len(element) == 3 for element in line):
-                    # print('-- -- each sub item has len 3')
-                    if all(all(isinstance(j, (float, int)) for j in l) for l in line):
-                        # print('-- -- -- each sub item is float or int')
-                        for jdx, v in enumerate(line):
-                            draw_triangle(x + (15 * jdx), y_pos-3, w=14, h=12)
+        # # a list contain n * 3 tuple/list
+        # if isinstance(line, (list, tuple)):
+        #     # print('is list')
+        #     if all([isinstance(s, (list, tuple)) for s in line]):
+        #         # print('-- each item is itself a list')
+        #         if all(len(element) == 3 for element in line):
+        #             # print('-- -- each sub item has len 3')
+        #             if all(all(isinstance(j, (float, int)) for j in l) for l in line):
+        #                 # print('-- -- -- each sub item is float or int')
+        #                 for jdx, v in enumerate(line):
+        #                     draw_triangle(gfx_x + (15 * jdx), y_pos-3, w=14, h=12)
 
 
 
