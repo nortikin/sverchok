@@ -17,7 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-from bpy.props import FloatProperty
+from bpy.props import FloatProperty, BoolProperty
 from mathutils import Vector
 
 from sverchok.node_tree import SverchCustomTreeNode
@@ -77,21 +77,20 @@ class SvVectorLerp(bpy.types.Node, SverchCustomTreeNode):
             fullList(VerticesA[i], max_l)
             fullList(VerticesB[i], max_l)
 
+            temp_points = []
+            temp_append = temp_points.append
+            temp_extend = temp_points.extend
+            
             if self.process_mode:
                 # this matches the old Evaluate Line's code
-                points_ = []
                 for j in range(max_l):
                     a = VerticesA[i][j]
                     b = VerticesB[i][j]
-                    points_.extend([interp_v3_v3v3(a, b, f) for f in factor[i]])
-                points.append(points_)
+                    temp_extend([interp_v3_v3v3(a, b, f) for f in factor[i]])
 
             else:
                 # This is Vector Lerp
                 fullList(factor[i], max_l)   # extend factor list to match vert pair.
-
-                temp_points = []
-                temp_append = temp_points.append
                 for j in range(max_l):
                     a = VerticesA[i][j]
                     b = VerticesB[i][j]
