@@ -53,7 +53,7 @@ def SvGetSocketInfo(socket):
     elif socket.is_linked:
         other = socket.other
         if other:
-            s_id = socket.other.socket_id
+            s_id = other.socket_id
         else:
             return ''
     else:
