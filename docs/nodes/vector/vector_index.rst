@@ -12,6 +12,7 @@ Vector
    line_evaluate
    math
    noise_mk2
+   fractal
    vector_rewire
    vector_in
    vector_out

@@ -232,6 +232,7 @@ class StringsSocket(NodeSocket, SvSocketCommon):
     prop_type = StringProperty(default='')
     prop_index = IntProperty()
 
+
     def get_prop_data(self):
         if self.prop_name:
             return {"prop_name": self.prop_name}
@@ -267,7 +268,9 @@ class StringsSocket(NodeSocket, SvSocketCommon):
 
         if not self.is_output and not self.is_linked:
             if self.prop_name and not self.prop_type:
+
                 layout.prop(node, self.prop_name)
+
             elif self.prop_type:
                 layout.prop(node, self.prop_type, index=self.prop_index, text=self.name)
             else:
