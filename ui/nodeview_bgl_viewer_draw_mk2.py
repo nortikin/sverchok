@@ -44,9 +44,8 @@ def parse_socket(socket, rounding, element_index, view_by_element):
     data = socket.sv_get(deepcopy=False)
     num_data_items = len(data)
     if num_data_items > 0 and view_by_element:
-        if element_index >= num_data_items:
-            return
-        data = data[element_index]
+        if element_index < num_data_items:
+            data = data[element_index]
 
     str_width = 60
 
@@ -184,6 +183,7 @@ def draw_graphical_data(data):
         return blf.dimensions(font_id, line)
 
     lineheight = 20
+    num_containers = len(lines)
     for idx, line in enumerate(lines):
         y_pos = y - (idx*lineheight)
         gfx_x = x
@@ -200,6 +200,13 @@ def draw_graphical_data(data):
 
         tx, _ = draw_text(color, gfx_x, y_pos, str(dict(content_dict)))
         gfx_x += (tx + 5)
+
+        if idx == 19 and num_containers > 20:
+            y_pos = y - ((idx+1)*lineheight)
+            text_body = "Showing the first 20 of {0} items"
+            draw_text(color, x, y_pos, text_body.format(num_containers))
+            break
+
 
         # # a list contain n * 3 tuple/list
         # if isinstance(line, (list, tuple)):
