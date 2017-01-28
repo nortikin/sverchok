@@ -24,7 +24,6 @@ from mathutils import noise
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 
-
 # helpers
 def dict_from(options, idx1, idx2):
     return {t[idx1]: t[idx2] for t in options}
@@ -87,14 +86,27 @@ class SvVectorFractal(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'FORCE_TURBULENCE'
 
     def wrapped_update(self, context):
-        # set the visual state for these props
-        try:
-            enabled = props_enabled.get(self.fractal_type)
-            self.inputs[-2].prop_enabled = enabled[0]
-            self.inputs[-1].prop_enabled = enabled[1]
-            updateNode(self, context)
-        except:
-            pass
+        num_inputs = len(self.inputs)
+        enabled = props_enabled.get(self.fractal_type)
+
+        if enabled == (0, 0):
+            if num_inputs > 4:
+                for _ in range(num_inputs - 4):
+                    self.inputs.remove(self.inputs[-1])
+
+        elif enabled == (1, 0):
+            if num_inputs == 4:
+                self.inputs.new('StringsSocket', 'Offset').prop_name = 'offset'
+            elif num_inputs == 6:
+                self.inputs.remove(self.inputs[-1])
+
+        elif enabled == (1, 1):
+            if num_inputs == 4:
+                self.inputs.new('StringsSocket', 'Offset').prop_name = 'offset'
+                self.inputs.new('StringsSocket', 'Gain').prop_name = 'gain'
+            elif num_inputs == 5:
+                self.inputs.new('StringsSocket', 'Gain').prop_name = 'gain'
+
 
     noise_type = EnumProperty(
         items=avail_noise,
@@ -111,7 +123,7 @@ class SvVectorFractal(bpy.types.Node, SverchCustomTreeNode):
     h_factor = FloatProperty(default=0.05, description='H factor parameter', name='H Factor', update=updateNode)
     lacunarity = FloatProperty(default=0.5, description='Lacunarity parameter', name='Lacunarity', update=updateNode)
     octaves = IntProperty(default=3, min=0, max=6, description='Octaves', name='Octaves', update=updateNode)
-    offset = FloatProperty(default=0.0, name='Offset',description='Offset parameter', update=updateNode)
+    offset = FloatProperty(default=0.0, name='Offset', description='Offset parameter', update=updateNode)
     gain = FloatProperty(default=0.5, description='Gain parameter', name='Gain', update=updateNode)
 
     def sv_init(self, context):
@@ -119,10 +131,8 @@ class SvVectorFractal(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('StringsSocket', 'H Factor').prop_name = 'h_factor'
         self.inputs.new('StringsSocket', 'Lacunarity').prop_name = 'lacunarity'
         self.inputs.new('StringsSocket', 'Octaves').prop_name = 'octaves'
-        self.inputs.new('StringsSocket', 'Offset').prop_name = 'offset'
-        self.inputs.new('StringsSocket', 'Gain').prop_name = 'gain'
         self.outputs.new('StringsSocket', 'Value')
-        self.wrapped_update(context)  # called once at initialization to grey out offset/gain
+
 
     def draw_buttons(self, context, layout):
         layout.prop(self, 'fractal_type', text="Type")
@@ -134,7 +144,6 @@ class SvVectorFractal(bpy.types.Node, SverchCustomTreeNode):
         if not outputs[0].is_linked:
             return
 
-        out = []
         _noise_type = noise_dict[self.noise_type]
         wrapped_fractal_function = fractal_f[self.fractal_type]
 
@@ -143,11 +152,11 @@ class SvVectorFractal(bpy.types.Node, SverchCustomTreeNode):
         m_h_factor = inputs['H Factor'].sv_get()[0]
         m_lacunarity = inputs['Lacunarity'].sv_get()[0]
         m_octaves = inputs['Octaves'].sv_get()[0]
-        m_offset = inputs['Offset'].sv_get()[0]
-        m_gain = inputs['Gain'].sv_get()[0]
-
+        m_offset = inputs['Offset'].sv_get()[0] if 'Offset' in inputs else [0.0]
+        m_gain = inputs['Gain'].sv_get()[0] if 'Gain' in inputs else [0.0]
         param_list = [m_h_factor, m_lacunarity, m_octaves, m_offset, m_gain]
 
+        out = []
         for idx, vlist in enumerate(verts):
             # lazy generation of full parameters.
             params = [(param[idx] if idx < len(param) else param[-1]) for param in param_list]
