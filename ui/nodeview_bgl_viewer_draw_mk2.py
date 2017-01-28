@@ -19,6 +19,7 @@
 # <pep8 compliant>
 import pprint
 import re
+from collections import defaultdict
 
 import bpy
 import blf
@@ -43,7 +44,8 @@ def parse_socket(socket, rounding, element_index, view_by_element):
     data = socket.sv_get(deepcopy=False)
     num_data_items = len(data)
     if num_data_items > 0 and view_by_element:
-        element_index %= num_data_items
+        if element_index >= num_data_items:
+            return
         data = data[element_index]
 
     str_width = 60
@@ -140,7 +142,7 @@ def draw_text_data(data):
 
     for line in lines:
         blf.position(0, x, ypos, 0)
-        blf.draw(0, line)
+        blf.draw(font_id, line)
         ypos -= int(line_height * 1.3)
 
 
@@ -184,10 +186,20 @@ def draw_graphical_data(data):
     lineheight = 20
     for idx, line in enumerate(lines):
         y_pos = y - (idx*lineheight)
-        gfx_x = x + 30
+        gfx_x = x
 
-        tx, _ = draw_text(color, x, y_pos, str(type(line)))
-        draw_text(color, x + tx + 5, y_pos, "num items: " + str(len(line)))
+        num_items = str(len(line))
+        kind_of_item = type(line).__name__
+
+        tx, _ = draw_text(color, gfx_x, y_pos, "{0} of {1} items".format(kind_of_item, num_items))
+        gfx_x += (tx + 5)
+        
+        content_dict = defaultdict(int)
+        for item in line:
+            content_dict[type(item).__name__] += 1
+
+        tx, _ = draw_text(color, gfx_x, y_pos, str(dict(content_dict)))
+        gfx_x += (tx + 5)
 
         # # a list contain n * 3 tuple/list
         # if isinstance(line, (list, tuple)):
