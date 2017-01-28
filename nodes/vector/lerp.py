@@ -43,11 +43,16 @@ class SvVectorLerp(bpy.types.Node, SverchCustomTreeNode):
         default=0.5, soft_min=0.0, soft_max=1.0,
         options={'ANIMATABLE'}, update=updateNode)
 
+    process_mode = BoolProperty(default=False, update=updateNode)
+
     def sv_init(self, context):
         self.inputs.new('StringsSocket', "Factor", "Factor").prop_name = 'factor_'
         self.inputs.new('VerticesSocket', "Vertice A", "Vertice A")
         self.inputs.new('VerticesSocket', "Vertice B", "Vertice B")
         self.outputs.new('VerticesSocket', "EvPoint", "EvPoint")
+
+    def draw_buttons(self, context, layout):
+        layout.prop(self, 'process_mode', text='Evaluate', expand=True)
 
     def process(self):
         if not self.outputs['EvPoint'].is_linked:
@@ -71,15 +76,28 @@ class SvVectorLerp(bpy.types.Node, SverchCustomTreeNode):
             max_l = max(len(VerticesA[i]), len(VerticesB[i]))
             fullList(VerticesA[i], max_l)
             fullList(VerticesB[i], max_l)
-            fullList(factor[i], max_l)   # extend factor list to match vert pair.
 
-            temp_points = []
-            temp_append = temp_points.append
-            for j in range(max_l):
-                a = VerticesA[i][j]
-                b = VerticesB[i][j]
-                lerp_factor = factor[i][j]
-                temp_append(interp_v3_v3v3(a, b, lerp_factor))
+            if self.process_mode:
+                # this matches the old Evaluate Line's code
+                points_ = []
+                for j in range(max_l):
+                    a = VerticesA[i][j]
+                    b = VerticesB[i][j]
+                    points_.extend([interp_v3_v3v3(a, b, f) for f in factor[i]])
+                points.append(points_)
+
+            else:
+                # This is Vector Lerp
+                fullList(factor[i], max_l)   # extend factor list to match vert pair.
+
+                temp_points = []
+                temp_append = temp_points.append
+                for j in range(max_l):
+                    a = VerticesA[i][j]
+                    b = VerticesB[i][j]
+                    lerp_factor = factor[i][j]
+                    temp_append(interp_v3_v3v3(a, b, lerp_factor))
+
             points.append(temp_points)
 
         self.outputs['EvPoint'].sv_set(points)
