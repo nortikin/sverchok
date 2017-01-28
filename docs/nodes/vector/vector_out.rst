@@ -1,5 +1,5 @@
 Vector Out
-=========
+==========
 
 Functionality
 -------------
@@ -12,7 +12,7 @@ Inputs
 **Vector** - Vertex or series of vertices
 
 Outputs
-------
+-------
 
 **x** - velue or series of values
 **y** - velue or series of values

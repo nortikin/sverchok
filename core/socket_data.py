@@ -51,7 +51,11 @@ def SvGetSocketInfo(socket):
     if socket.is_output:
         s_id = socket.socket_id
     elif socket.is_linked:
-        s_id = socket.other.socket_id
+        other = socket.other
+        if other:
+            s_id = other.socket_id
+        else:
+            return ''
     else:
         return ''
     if ng in socket_data_cache:

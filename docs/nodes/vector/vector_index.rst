@@ -5,7 +5,7 @@ Vector
 .. toctree::
    :maxdepth: 2
 
-   axis_input
+   axis_input_mk2
    drop
    interpolation_stripes
    interpolation_mk3

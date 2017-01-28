@@ -24,6 +24,7 @@ Nodes
    Viz <nodes/viz/viz_index>
    Text <nodes/text/text_index>
    Scene <nodes/scene/scene_index>
+   Object <nodes/object_nodes/object_nodes_index>
    Layout <nodes/layout/layout_index>
    Network <nodes/network/network_index>
 

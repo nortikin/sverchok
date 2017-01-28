@@ -16,7 +16,7 @@ Gtext will display whatever text is currently in the system buffer / clipboard.
 
 
 UI & Parameters
-----------
+---------------
 
 **Node UI**
 
