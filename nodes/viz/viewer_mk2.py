@@ -370,7 +370,7 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
         # an unrecoverable crash. It might even be an idea to have step in between
         # new connections and processing, it could auto rewire s->s v->v m->m.
         def check_origin(to_socket, socket_type):
-            origin_socket_bl_idname = inputs[to_socket].links[0].from_socket.bl_idname
+            origin_socket_bl_idname = inputs[to_socket].other.bl_idname
 
             if isinstance(socket_type, str):
                 return origin_socket_bl_idname == sock_dict.get(socket_type)
