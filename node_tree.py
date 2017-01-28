@@ -231,7 +231,7 @@ class StringsSocket(NodeSocket, SvSocketCommon):
 
     prop_type = StringProperty(default='')
     prop_index = IntProperty()
-    prop_enabled = BoolProperty(default=True)
+    #prop_enabled = BoolProperty(default=True)
 
 
     def get_prop_data(self):
@@ -270,7 +270,7 @@ class StringsSocket(NodeSocket, SvSocketCommon):
         if not self.is_output and not self.is_linked:
             if self.prop_name and not self.prop_type:
 
-                layout.enabled = self.prop_enabled
+                #layout.enabled = self.prop_enabled
                 layout.prop(node, self.prop_name)
 
             elif self.prop_type:
