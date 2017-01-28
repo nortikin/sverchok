@@ -1,5 +1,5 @@
 Get Property / Set Property
-===============
+===========================
 
 Functionality
 -------------
@@ -24,7 +24,7 @@ There are also convenience aliases. Instead of writing ```bpy.data.objects['Cube
 
 
 Input
-------
+-----
 
 In ``Set`` mode
 
@@ -54,7 +54,7 @@ The only parameter is the python path to the property you want to set or get. Us
 
 
 Limitations
---------
+-----------
 
 (todo?)
 

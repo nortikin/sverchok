@@ -1,5 +1,5 @@
 Vertex normal
-=====
+=============
 *Alias - vector normal*
 
 Functionality

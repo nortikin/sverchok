@@ -24,6 +24,7 @@ Sum                 sum of all the elements of the list
 Average             average of element at selected level
 Maximum             Maximum value of the list
 Minimum             Minimum value of the list
+=================== ======================================
 
 Outputs
 -------
