@@ -45,9 +45,9 @@ noise_options = [
 ]
 
 def turbulence(verts, octaves, hard, _noise_type, amp, freq):
-
-    #return noise.turbulence(verts, octaves, hard, _noise_type, amp, freq )
-    return noise.turbulence(verts, 3, 1, 0, 0.25, 0.03 )
+    #return noise.turbulence(verts, 0, hard, _noise_type, amp, freq )
+    return noise.turbulence(verts, octaves, hard, _noise_type, amp, freq )
+    #return noise.turbulence(verts, 3, 1, 0, 0.25, 0.03 )
     #return [noise.turbulence(verts,  octaves, 1, 0) for v in verts]
 
 
@@ -115,22 +115,33 @@ class SvTurbulenceNode(bpy.types.Node, SverchCustomTreeNode):
 
         out = []
         verts = inputs['Vertices'].sv_get()
+        '''
         print("verts from circle: ")
         print(verts)
         print("number of verts: ")
-        print(len(verts))
-        octaves = inputs['Octaves'].sv_get()[0]
-        hard = inputs['Hard'].sv_get()[0]
-        amp = inputs['Amplitude'].sv_get()[0]
-        freq = inputs['Frequency'].sv_get()[0]
+        print(len(verts))'''
+        m_octaves = inputs['Octaves'].sv_get()[0][0]
+        m_hard = inputs['Hard'].sv_get()[0][0]
+        m_amp = inputs['Amplitude'].sv_get()[0][0]
+        m_freq = inputs['Frequency'].sv_get()[0][0]
+        param_list = [m_octaves, m_hard, m_amp, m_freq ]
 
         _noise_type = noise_dict[self.noise_type]
         turbulence_function = turbulence_f[self.out_mode]
 
         vertices = []
         for vertices in verts[:]:
-            
-            out.append([turbulence_function(v, octaves, hard, _noise_type, amp, freq) for v in vertices])
+        #for  v in enumerate(verts):
+        #for idx, vlist in enumerate(verts):
+
+            #params = [(param[idx] if idx < len(param) else param[-1]) for param in param_list]
+
+            #out.append(turbulence_function( vlist, _noise_type, *params))
+            #out.append([turbulence_function(v, octaves, hard, _noise_type, amp, freq) for v in vertices])
+            out.append([turbulence_function(v, m_octaves, m_hard, _noise_type, m_amp, m_freq) for v in vertices])
+            #out.append([turbulence_function(v, 3, 0, 0,  0.25, 0.03) for v in vertices])
+            #out.append([turbulence_function(v, m_octaves, 0, 0,  0.25, 0.03) for v in vertices])
+
 
         if 'Noise V' in outputs:
             outputs['Noise V'].sv_set(Vector_degenerate(out))
