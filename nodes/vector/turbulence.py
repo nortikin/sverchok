@@ -60,8 +60,8 @@ def turbulence(verts, octaves, hard, _noise_type, amp, freq):
             data.append(out)
     '''
     #return out
-    return noise.turbulence(verts, 3, 1, 0 )
-    #return [noise.turbulence(Vector(v),  octaves, 1, 0) for v in verts]
+    return noise.turbulence(verts, 3, 0, 0 )
+    #return [noise.turbulence(verts,  octaves, 1, 0) for v in verts]
 
 
 noise_dict = {t[0]: t[1] for t in noise_options}
@@ -102,8 +102,7 @@ class SvTurbulenceNode(bpy.types.Node, SverchCustomTreeNode):
         default='STDPERLIN',
         description="Noise type",
         update=updateNode)
-
-    seed = IntProperty(default=0, name='Seed', update=updateNode)
+         
     octaves = IntProperty(default=3, min=0, max=6, description='Octaves', name='Octaves', update=updateNode)
     hard = IntProperty(default=0, min=0, max=1, description="Hard (sharp transitions) or soft (smooth transitions)", name="Hard", update=updateNode)
     amp = FloatProperty(default=0.5, description="The amplitude scaling factor", name="Amplitude", update=updateNode)
@@ -111,7 +110,6 @@ class SvTurbulenceNode(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', 'Vertices')
-        self.inputs.new('StringsSocket', 'Seed').prop_name = 'seed'
         self.inputs.new('StringsSocket', 'Octaves').prop_name = 'octaves'
         self.inputs.new('StringsSocket', 'Hard').prop_name = 'hard'
         self.inputs.new('StringsSocket', 'Amplitude').prop_name = 'amp'
