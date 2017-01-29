@@ -19,7 +19,7 @@ Parameters
 +------------------+---------------+-------------+-------------------------------------------------+
 | Param            | Type          | Default     | Description                                     |  
 +==================+===============+=============+=================================================+
-| Evaluate mode    | Enum          | Lerp        | - **Lerp** will linear interpolate once between |
+| mode             | Enum          | Lerp        | - **Lerp** will linear interpolate once between |
 |                  |               |             |   each corresponding Vector                     |   
 |                  |               |             |                                                 | 
 |                  |               |             | - **Evaluate** will repeatedly interpolate      |
