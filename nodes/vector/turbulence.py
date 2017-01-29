@@ -45,11 +45,7 @@ noise_options = [
 ]
 
 def turbulence(verts, octaves, hard, _noise_type, amp, freq):
-    #return noise.turbulence(verts, 0, hard, _noise_type, amp, freq )
     return noise.turbulence(verts, octaves, hard, _noise_type, amp, freq )
-    #return noise.turbulence(verts, 3, 1, 0, 0.25, 0.03 )
-    #return [noise.turbulence(verts,  octaves, 1, 0) for v in verts]
-
 
 noise_dict = {t[0]: t[1] for t in noise_options}
 avail_noise = [(t[0], t[0].title(), t[0].title(), '', t[1]) for t in noise_options]
@@ -131,18 +127,9 @@ class SvTurbulenceNode(bpy.types.Node, SverchCustomTreeNode):
 
         vertices = []
         for vertices in verts[:]:
-        #for  v in enumerate(verts):
-        #for idx, vlist in enumerate(verts):
 
-            #params = [(param[idx] if idx < len(param) else param[-1]) for param in param_list]
-
-            #out.append(turbulence_function( vlist, _noise_type, *params))
-            #out.append([turbulence_function(v, octaves, hard, _noise_type, amp, freq) for v in vertices])
             out.append([turbulence_function(v, m_octaves, m_hard, _noise_type, m_amp, m_freq) for v in vertices])
-            #out.append([turbulence_function(v, 3, 0, 0,  0.25, 0.03) for v in vertices])
-            #out.append([turbulence_function(v, m_octaves, 0, 0,  0.25, 0.03) for v in vertices])
-
-
+            
         if 'Noise V' in outputs:
             outputs['Noise V'].sv_set(Vector_degenerate(out))
         else:
