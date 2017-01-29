@@ -20,11 +20,11 @@ Parameters
 | Param            | Type          | Default     | Description                                     |  
 +==================+===============+=============+=================================================+
 | Evaluate mode    | Enum          | Lerp        | - **Lerp** will linear interpolate once between |
-|                  |               |             | each corresponding Vector                       |   
+|                  |               |             |   each corresponding Vector                     |   
 |                  |               |             |                                                 | 
 |                  |               |             | - **Evaluate** will repeatedly interpolate      |
-|                  |               |             | betweeb each member of vectors A and B for all  |
-|                  |               |             | items found in the Factor input (see example)   |
+|                  |               |             |   betweeb each member of vectors A and B for    |
+|                  |               |             |   all items in Factor input (see example)       |
 +------------------+---------------+-------------+-------------------------------------------------+
 | **Vertice A**    | Vertices      | None        | first group of vertices (Stream)                | 
 +------------------+---------------+-------------+-------------------------------------------------+
