@@ -28,7 +28,7 @@ The node will adjust to make sure the length of
 
 
 Parameters
----------
+----------
 
 The Node is vectorized in the following way. If any of the *knots* or *control points* are given in a list that doesn't match the length of the other lists, then the last value of that shorter list is repeated to match the length of the longest. 
 

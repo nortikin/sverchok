@@ -6,14 +6,13 @@ Functionality
 
 This node is used to make general mirroring over geometry. It works directly over vertices, not with matrixes. It offers 3 different types of mirror:
 
-
-======================= =============================================================
-Type of Mirror         Description
-======================= =============================================================
-Vertex Mirror            Based on one single point
-Axis Mirror              Mirror around an axis defined by two points
-Plane Mirror             Mirror over a plane given by a matrix 
-======================= =============================================================
++=======================+=============================================================+
+|Type of Mirror         |Description                                                  |
++=======================+=============================================================+
+|Vertex Mirror          | Based on one single point                                   |
+|Axis Mirror            | Mirror around an axis defined by two points                 |
+|Plane Mirror           | Mirror over a plane given by a matrix                       |
++=======================+=============================================================+
 
 
 Vertex Mirror

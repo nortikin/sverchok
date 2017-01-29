@@ -28,6 +28,3 @@ Outputs
 Example of usage
 ----------------
 
-.. image:: 
-    :alt: distances.png
-

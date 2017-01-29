@@ -13,7 +13,7 @@ Nodes
    Modifier Make <nodes/modifier_make/modifier_make_index>
 
    Number <nodes/number/number_index>
-   Vertex <nodes/vertex/vertex_index>
+   Vertex <nodes/vector/vector_index>
    Matrix <nodes/matrix/matrix_index>
    Logic <nodes/logic/logic_index>
    List Main <nodes/list_main/list_main_index>
@@ -24,6 +24,7 @@ Nodes
    Viz <nodes/viz/viz_index>
    Text <nodes/text/text_index>
    Scene <nodes/scene/scene_index>
+   Object <nodes/object_nodes/object_nodes_index>
    Layout <nodes/layout/layout_index>
    Network <nodes/network/network_index>
 

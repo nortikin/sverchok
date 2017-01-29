@@ -48,7 +48,7 @@ The only parameter is the Object selection, it needs to duplicate something
 
 
 Limitations
---------
+-----------
 
 It's worth mentioning that because the faces duplication relies on the area of the triangle to determin the scale, that the scale is a scalar, and therefor uniform (x,y,z are scaled equally).
 

@@ -145,12 +145,14 @@
     VectorPolarOutNode
     VertsDelDoublesNode
     EvaluateLineNode
+    SvVectorLerp
     SvInterpolationStripesNode
     SvInterpolationNode
     SvInterpolationNodeMK2
     SvInterpolationNodeMK3
     SvVertSortNode
-    SvNoiseNodeMK2
+    SvNoiseNodeMK
+    SvVectorFractal
     SvTurbulenceNode
     SvVectorRewire
     svAxisInputNode
