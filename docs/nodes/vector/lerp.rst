@@ -16,25 +16,29 @@ Vector Evaluate needs two Vertex stream inputs (each containing 1 or more vertic
 Parameters
 ----------
 
-+------------------+---------------+-------------+-----------------------------------------------+
-| Param            | Type          | Default     | Description                                   |  
-+==================+===============+=============+===============================================+
-| Evaluate mode    | Bool          | Off/False   |                                               |
-|                  |               |             |                                               |   
-+------------------+---------------+-------------+-----------------------------------------------+
-| **Vertice A**    | Vertices      | None        | first group of vertices (Stream)              | 
-+------------------+---------------+-------------+-----------------------------------------------+
-| **Vectice B**    | Vertices      | None        | second group of vertices (Stream)             |
-+------------------+---------------+-------------+-----------------------------------------------+
-| **Factor**       | Float         | 0.50        | distance ratio between vertices A and B.      |
-|                  |               |             | values outside of the 0.0...1.0 range are     |
-|                  |               |             | extrapolated on the infinite line A, B        |
-+------------------+---------------+-------------+-----------------------------------------------+
++------------------+---------------+-------------+-------------------------------------------------+
+| Param            | Type          | Default     | Description                                     |  
++==================+===============+=============+=================================================+
+| Evaluate mode    | Enum          | Lerp        | - **Lerp** will linear interpolate once between |
+|                  |               |             | each corresponding Vector                       |   
+|                  |               |             |                                                 | 
+|                  |               |             | - **Evaluate** will repeatedly interpolate      |
+|                  |               |             | betweeb each member of vectors A and B for all  |
+|                  |               |             | items found in the Factor input (see example)   |
++------------------+---------------+-------------+-------------------------------------------------+
+| **Vertice A**    | Vertices      | None        | first group of vertices (Stream)                | 
++------------------+---------------+-------------+-------------------------------------------------+
+| **Vectice B**    | Vertices      | None        | second group of vertices (Stream)               |
++------------------+---------------+-------------+-------------------------------------------------+
+| **Factor**       | Float         | 0.50        | distance ratio between vertices A and B.        |
+|                  |               |             | values outside of the 0.0...1.0 range are       |
+|                  |               |             | extrapolated on the infinite line A, B          |
++------------------+---------------+-------------+-------------------------------------------------+
 
 Outputs
 -------
 
-The content of **EvPoint** depends on the current mode of the node. A list of Vectors with needs Vertices A and B inputs before generating output. The output will be a new stream of vertices between groups A and B, based on the factor setting. See example below.
+The content of **EvPoint** depends on the current mode of the node, but it will always be a list (or multiple lists) of Vectors. 
 
 
 Example of usage

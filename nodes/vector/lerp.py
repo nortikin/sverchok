@@ -17,7 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-from bpy.props import FloatProperty, BoolProperty
+from bpy.props import FloatProperty
 from mathutils import Vector
 
 from sverchok.node_tree import SverchCustomTreeNode
