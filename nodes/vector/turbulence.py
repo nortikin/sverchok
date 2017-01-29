@@ -59,8 +59,10 @@ def turbulence(verts, octaves, hard, _noise_type, amp, freq):
             noise.turbulence(vertices, octaves, 1, 0 )
             data.append(out)
     '''
+    print(verts)
     #return out
-    return noise.turbulence(verts, 3, 0, 0 )
+    print(noise.turbulence(verts, 6, 1, 3, 2.0, 3.0 ))
+    return noise.turbulence(verts, 6, 1, 3, 2.0, 3.0 )
     #return [noise.turbulence(verts,  octaves, 1, 0) for v in verts]
 
 
@@ -102,7 +104,7 @@ class SvTurbulenceNode(bpy.types.Node, SverchCustomTreeNode):
         default='STDPERLIN',
         description="Noise type",
         update=updateNode)
-         
+
     octaves = IntProperty(default=3, min=0, max=6, description='Octaves', name='Octaves', update=updateNode)
     hard = IntProperty(default=0, min=0, max=1, description="Hard (sharp transitions) or soft (smooth transitions)", name="Hard", update=updateNode)
     amp = FloatProperty(default=0.5, description="The amplitude scaling factor", name="Amplitude", update=updateNode)
@@ -146,7 +148,9 @@ class SvTurbulenceNode(bpy.types.Node, SverchCustomTreeNode):
 
             #print("vertices from v: " + str(v))
             #vertices.append(v)
-            print("appended vertexes: " + str(vertices))
+            #print("appended vertexes: " + str(vertices))
+            print("output form turbulence:")
+            
             out.append([turbulence_function(v, octaves, hard, _noise_type, amp, freq) for v in vertices])
 
         if 'Noise V' in outputs:
