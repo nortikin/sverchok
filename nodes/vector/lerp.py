@@ -17,7 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-from bpy.props import FloatProperty, BoolProperty
+from bpy.props import FloatProperty
 from mathutils import Vector
 
 from sverchok.node_tree import SverchCustomTreeNode
@@ -43,7 +43,11 @@ class SvVectorLerp(bpy.types.Node, SverchCustomTreeNode):
         default=0.5, soft_min=0.0, soft_max=1.0,
         options={'ANIMATABLE'}, update=updateNode)
 
-    process_mode = BoolProperty(default=False, update=updateNode)
+    process_mode = bpy.props.EnumProperty(
+        items=[(t, t, '', idx) for idx, t in enumerate(["Lerp", "Evaluate"])],
+        description="choose LERP or Evaluate",
+        default="Lerp", update=updateNode
+    )
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', "Factor", "Factor").prop_name = 'factor_'
@@ -81,7 +85,7 @@ class SvVectorLerp(bpy.types.Node, SverchCustomTreeNode):
             temp_append = temp_points.append
             temp_extend = temp_points.extend
             
-            if self.process_mode:
+            if self.process_mode == 'Evaluate':
                 # this matches the old Evaluate Line's code
                 for j in range(max_l):
                     a = VerticesA[i][j]

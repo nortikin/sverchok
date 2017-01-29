@@ -13,6 +13,7 @@ Vector
    math
    noise_mk2
    fractal
+   lerp
    vector_rewire
    vector_in
    vector_out
