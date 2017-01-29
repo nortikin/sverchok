@@ -23,7 +23,7 @@ Parameters
 |                  |               |             |   each corresponding Vector                     |   
 |                  |               |             |                                                 | 
 |                  |               |             | - **Evaluate** will repeatedly interpolate      |
-|                  |               |             |   betweeb each member of vectors A and B for    |
+|                  |               |             |   between each member of vectors A and B for    |
 |                  |               |             |   all items in Factor input (see example)       |
 +------------------+---------------+-------------+-------------------------------------------------+
 | **Vertice A**    | Vertices      | None        | first group of vertices (Stream)                | 
@@ -45,9 +45,13 @@ Example of usage
 ----------------
 
 image 1 0.5
+
 image 2 -0.5
+
 image 3 1.5
+
 image 4 [-1, 0, 1, 2]
+
 image 5 evaluate mode vs lerp mode
 
 
