@@ -42,10 +42,7 @@ noise_options = [
     ('VORONOI_CRACKLE', 8),
     ('CELLNOISE', 14)
 ]
-'''
-def turbulence( verts, octaves, hard, _noise_type, amp, freq ):
-    return noise.turbulence( verts, octaves, hard, _noise_type, amp, freq )
-'''
+
 noise_dict = {t[0]: t[1] for t in noise_options}
 avail_noise = [(t[0], t[0].title(), t[0].title(), '', t[1]) for t in noise_options]
 
@@ -119,10 +116,10 @@ class SvTurbulenceNode(bpy.types.Node, SverchCustomTreeNode):
         _noise_type = noise_dict[self.noise_type]
         turbulence_function = turbulence_f[self.out_mode]
 
-        vertices = []
-        for vertices in verts[:]:
 
-            out.append([turbulence_function(v, m_octaves, m_hard, _noise_type, m_amp, m_freq) for v in vertices])
+        if verts and verts[0]:
+            for vertices in verts[0]:
+                out.append([turbulence_function(v, m_octaves, m_hard, _noise_type, m_amp, m_freq) for v in vertices])
 
         if 'Noise V' in outputs:
             outputs['Noise V'].sv_set(Vector_degenerate(out))
