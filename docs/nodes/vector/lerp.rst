@@ -4,7 +4,7 @@ Vector Lerp
 Functionality
 -------------
 
-This node's primary function is perform the linear interpolation between two Vectors, or streams of Vectors.
+This node's primary function is to perform the linear interpolation between two Vectors, or streams of Vectors.
 If we have two Vectors A and B, and a factor 0.5, then the output of the node will be a Vector exactly half way on the imaginary finite-line between A and B. Values beyond 1.0 or lower than 0.0 will be extrapolated to beyond the line A-B.
 
 Inputs
