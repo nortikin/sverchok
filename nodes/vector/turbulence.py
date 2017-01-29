@@ -60,8 +60,8 @@ def turbulence(verts, octaves, hard, _noise_type, amp, freq):
             data.append(out)
     '''
     #return out
-    #return noise.turbulence(verts, octaves, 1, 0 )
-    return [noise.turbulence(v,  octaves, 1, 0) for v in verts]
+    return noise.turbulence(verts, 3, 1, 0 )
+    #return [noise.turbulence(Vector(v),  octaves, 1, 0) for v in verts]
 
 
 noise_dict = {t[0]: t[1] for t in noise_options}
