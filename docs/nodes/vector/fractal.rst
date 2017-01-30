@@ -9,7 +9,7 @@ Inputs & Parameters
 +----------------+-------------------------------------------------------------------------+
 | Parameters     | Description                                                             |
 +================+=========================================================================+
-| Noise Function | Pick between Scalar and Vector output                                   |
+| Noise Function | The node output only Scalar values                                      |
 +----------------+-------------------------------------------------------------------------+
 | Noise Type     | Pick between several noise types                                        |
 |                |                                                                         |
