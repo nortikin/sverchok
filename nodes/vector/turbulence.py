@@ -120,11 +120,11 @@ class SvTurbulenceNode(bpy.types.Node, SverchCustomTreeNode):
         if verts and verts[0]:
             for vertices in verts:
                 out.append([turbulence_function(v, m_octaves, m_hard, _noise_type, m_amp, m_freq) for v in vertices])
-
+        
         if 'Noise V' in outputs:
-            outputs['Noise V'].sv_set(Vector_degenerate(out))
-        else:
-            outputs['Noise S'].sv_set(out)
+            out = Vector_degenerate(out)
+        outputs[0].sv_set(out)
+
 
 
 def register():
