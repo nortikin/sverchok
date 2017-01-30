@@ -151,7 +151,7 @@
     SvInterpolationNodeMK2
     SvInterpolationNodeMK3
     SvVertSortNode
-    SvNoiseNodeMK
+    SvNoiseNodeMK2
     SvVectorFractal
     SvTurbulenceNode
     SvVectorRewire
