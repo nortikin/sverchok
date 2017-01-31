@@ -16,9 +16,6 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-import inspect
-import operator
-
 import bpy
 from bpy.props import EnumProperty, IntProperty, FloatProperty, BoolProperty
 from mathutils import noise
