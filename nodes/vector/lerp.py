@@ -61,8 +61,8 @@ class SvVectorLerp(bpy.types.Node, SverchCustomTreeNode):
     def process(self):
         if not self.outputs['EvPoint'].is_linked:
             return
-        VerticesA = self.inputs['Vertices A'].sv_get()
-        VerticesB = self.inputs['Vertices B'].sv_get()
+        VerticesA = self.inputs[1].sv_get()
+        VerticesB = self.inputs[2].sv_get()
         factor = self.inputs['Factor'].sv_get()
 
         # match inputs using fullList, longest list matching on A and B
