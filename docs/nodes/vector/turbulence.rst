@@ -51,6 +51,10 @@ Links
 -----
 Fractals description from wikipedia: https://en.wikipedia.org/wiki/Fractal
 
+A Perlin Noise and Turbulence description by Prof. Paul Bourke: http://paulbourke.net/texture_colour/perlin/
+
+An introduction on Noise and Turbulence by Dr. Matthew O. Ward:  https://web.cs.wpi.edu/~matt/courses/cs563/talks/noise/noise.html
+
 A very interesting resource is "the book of shaders", it's about shader programming but there is a very useful fractal paragraph:
 
 http://thebookofshaders.com/13/ and on github repo: https://github.com/patriciogonzalezvivo/thebookofshaders/tree/master/13
