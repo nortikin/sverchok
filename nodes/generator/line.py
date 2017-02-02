@@ -17,7 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-from bpy.props import IntProperty, FloatProperty
+from bpy.props import IntProperty, FloatProperty, BoolProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, fullList, match_long_repeat
@@ -25,9 +25,22 @@ from sverchok.data_structure import updateNode, fullList, match_long_repeat
 from mathutils import Vector
 
 
-def make_line(integer, step):
+def make_line(integer, step, center):
     vertices = [(0.0, 0.0, 0.0)]
     integer = [int(integer) if type(integer) is not list else int(integer[0])]
+
+    # center the line: offset the starting point of the line by half its size
+    if center:
+        Nn = integer[0]-1  # number of steps based on the number of vertices
+        Ns = len(step)     # number of steps given by the step list
+
+        # line size (step list & repeated last step if any)
+        size1 = sum(step[:min(Nn, Ns)])         # step list size
+        size2 = max(0, (Nn - Ns)) * step[Ns-1]  # repeated last step size
+        size = size1 + size2                    # total size
+
+        # starting point of the line offset by half its size
+        vertices = [(-0.5*size, 0.0, 0.0)]
 
     if type(step) is not list:
         step = [step]
@@ -55,6 +68,9 @@ class LineNode(bpy.types.Node, SverchCustomTreeNode):
     step_ = FloatProperty(name='Step', description='Step length',
                           default=1.0, options={'ANIMATABLE'},
                           update=updateNode)
+    Center = BoolProperty(name='Center', description='Center the line',
+                          default=False,
+                          update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', "Nº Vertices").prop_name = 'int_'
@@ -64,6 +80,7 @@ class LineNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('StringsSocket', "Edges", "Edges")
     
     def draw_buttons(self, context, layout):
+        layout.prop(self, "Center", text="Center")
         pass
 
     def process(self):
@@ -77,7 +94,7 @@ class LineNode(bpy.types.Node, SverchCustomTreeNode):
         step = inputs["Step"].sv_get()
 
         params = match_long_repeat([integer, step])
-        out = [a for a in (zip(*[make_line(i, s) for i, s in zip(*params)]))]
+        out = [a for a in (zip(*[make_line(i, s, self.Center) for i, s in zip(*params)]))]
             
         # outputs
         if outputs['Vertices'].is_linked:

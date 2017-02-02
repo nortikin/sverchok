@@ -19,15 +19,17 @@ Both inputs will accept a single number or an array of them. It also will work a
 Parameters
 ----------
 
-All parameters can be given by the node or an external input.
+All parameters except **Center** can be given by the node or an external input.
 
 
 +-------------+---------------+-------------+-----------------------------------------------+
-| Param       | Type          | Default     | Description                                   |  
+| Param       | Type          | Default     | Description                                   |
 +=============+===============+=============+===============================================+
-| **N Verts** | Int           | 2           | number of vertices. The minimum is 2          | 
+| **N Verts** | Int           | 2           | number of vertices. The minimum is 2          |
 +-------------+---------------+-------------+-----------------------------------------------+
 | **Step**    | Float         | 1.00        | length between vertices                       |
++-------------+---------------+-------------+-----------------------------------------------+
+| **Center**  | Boolean       | False       | center line around 0                          |
 +-------------+---------------+-------------+-----------------------------------------------+
 
 Outputs
