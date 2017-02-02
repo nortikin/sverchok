@@ -31,11 +31,26 @@ def make_plane(int_x, int_y, step_x, step_y, separate, center):
     int_x = [int(int_x) if type(int_x) is not list else int(int_x[0])]
     int_y = [int(int_y) if type(int_y) is not list else int(int_y[0])]
 
-    # offset the starting point of the grid to center it
+    # center the grid: offset the starting point of the grid by half its size
     if center:
-        originX = -0.5*(int_x[0] - 1) * step_x[0]
-        originY = -0.5*(int_y[0] - 1) * step_y[0]
-        vertices = [(originX, originY, 0.0)]
+        Nnx = int_x[0]-1   # number of steps based on the number of X vertices
+        Nsx = len(step_x)  # number of steps given by the X step list
+
+        Nny = int_y[0]-1   # number of steps based on the number of Y vertices
+        Nsy = len(step_y)  # number of steps given by the Y step list
+
+        # grid size along X (step list & repeated last step if any)
+        sizeX1 = sum(step_x[:min(Nnx, Nsx)])          # step list size
+        sizeX2 = max(0, (Nnx - Nsx)) * step_x[Nsx-1]  # repeated last step size
+        sizeX = sizeX1 + sizeX2                       # total size
+
+        # grid size along Y (step list & repeated last step if any)
+        sizeY1 = sum(step_y[:min(Nny, Nsy)])          # step list size
+        sizeY2 = max(0, (Nny - Nsy)) * step_y[Nsy-1]  # repeated last step size
+        sizeY = sizeY1 + sizeY2                       # total size
+
+        # starting point of the grid offset by half its size in both directions
+        vertices = [(-0.5*sizeX, -0.5*sizeY, 0.0)]
 
     if type(step_x) is not list:
         step_x = [step_x]
