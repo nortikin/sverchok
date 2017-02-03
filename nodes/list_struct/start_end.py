@@ -76,7 +76,7 @@ class ListFLNode(bpy.types.Node, SverchCustomTreeNode):
                 self.outputs['Middl'].sv_set(out)
             if self.outputs['Last'].is_linked:
                 out = self.count(data, levels, 2)
-                self.ouputs['Last'].sv_set(out)
+                self.outputs['Last'].sv_set(out)
 
     def count(self, data, level, mode):
         out = []
