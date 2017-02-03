@@ -154,6 +154,7 @@
     SvNoiseNodeMK2
     SvVectorFractal
     SvTurbulenceNode
+    SvCellularNode
     SvVectorRewire
     svAxisInputNode
     SvAxisInputNodeMK2
