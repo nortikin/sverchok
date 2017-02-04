@@ -122,10 +122,7 @@ def make_bmesh_geometry_merged(node, idx, context, yielder_object):
     big_edges = []
     big_faces = []
 
-    while (True):
-        result = next(yielder_object)
-        if result == 'FINAL':
-            break
+    for result in yielder_object:
 
         verts, topology = result
         edges, faces, matrix = topology
@@ -140,10 +137,17 @@ def make_bmesh_geometry_merged(node, idx, context, yielder_object):
 
         vert_count += len(verts)
 
-    ''' get bmesh, write bmesh to obj, free bmesh'''
-    bm = bmesh_from_pydata(big_verts, big_edges, big_faces)
-    bm.to_mesh(sv_object.data)
-    bm.free()
+
+    if node.fixed_verts and len(sv_object.data.vertices) == len(big_verts):
+        mesh = sv_object.data
+        f_v = list(itertools.chain.from_iterable(big_verts))
+        mesh.vertices.foreach_set('co', f_v)
+        mesh.update()
+    else:
+        ''' get bmesh, write bmesh to obj, free bmesh'''
+        bm = bmesh_from_pydata(big_verts, big_edges, big_faces)
+        bm.to_mesh(sv_object.data)
+        bm.free()
 
     sv_object.hide_select = False
     sv_object.matrix_local = Matrix.Identity(4)
@@ -379,7 +383,6 @@ class SvBmeshViewerNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
                     data = get_edges_faces_matrices(idx)
                     yield (Verts, data)
-                yield 'FINAL'
 
             yielder_object = keep_yielding()
             make_bmesh_geometry_merged(self, obj_index, bpy.context, yielder_object)
