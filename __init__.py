@@ -100,7 +100,7 @@ ui_modules = [
     "sv_panels", "nodeview_space_menu", "nodeview_keymaps",
     "monad",
     # bgl modules
-    "viewer_draw", "viewer_draw_mk2", "nodeview_bgl_viewer_draw",
+    "viewer_draw", "viewer_draw_mk2", "nodeview_bgl_viewer_draw", "nodeview_bgl_viewer_draw_mk2",
     "index_viewer_draw",
     # show git info
     "development",
