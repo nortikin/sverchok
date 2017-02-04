@@ -176,7 +176,6 @@
     SvBmeshViewerNodeMK2
     IndexViewerNode
     Sv3DviewPropsNode
-    SvStethoscopeNodeMK2
 
 ## Text
     ViewerNodeTextMK2
@@ -186,6 +185,7 @@
     GTextNode
     SvDebugPrintNode
     SvStethoscopeNode
+    SvStethoscopeNodeMK2
 
 ## Scene
     SvObjectsNodeMK3
