@@ -139,6 +139,7 @@ def make_bmesh_geometry_merged(node, idx, context, yielder_object):
 
 
     if node.fixed_verts and len(sv_object.data.vertices) == len(big_verts):
+        mesh = sv_object.data
         f_v = list(itertools.chain.from_iterable(big_verts))
         mesh.vertices.foreach_set('co', f_v)
         mesh.update()
@@ -382,7 +383,7 @@ class SvBmeshViewerNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
                     data = get_edges_faces_matrices(idx)
                     yield (Verts, data)
-    
+
             yielder_object = keep_yielding()
             make_bmesh_geometry_merged(self, obj_index, bpy.context, yielder_object)
 
