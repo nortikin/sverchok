@@ -32,7 +32,6 @@
     SvGenerativeArtNode
     SvImageComponentsNode
     SvScriptNode
-    SvScriptNodeMK3
 
 ## Analyzers
     SvBBoxNode
@@ -212,7 +211,6 @@
 
 ## Beta Nodes
     SvFormulaShapeNode
-    SvScriptNodeMK2
     SvHeavyTriangulateNode
     SvPointOnMeshNodeMK2
     SvOBJRayCastNodeMK2
