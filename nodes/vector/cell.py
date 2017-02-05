@@ -27,12 +27,12 @@ from sverchok.data_structure import (updateNode, Vector_degenerate )
 # from http://www.blender.org/documentation/blender_python_api_current/mathutils.noise.html
 
 
-cellular_f = {'SCALAR': noise.cell, 'VECTOR': noise.cell_vector}
+cell_f = {'SCALAR': noise.cell, 'VECTOR': noise.cell_vector}
 
-class SvCellularNode(bpy.types.Node, SverchCustomTreeNode):
-    '''Vector Cellular node'''
-    bl_idname = 'SvCellularNode'
-    bl_label = 'Vector Cellular'
+class SvCellNode(bpy.types.Node, SverchCustomTreeNode):
+    '''Vector Cell node'''
+    bl_idname = 'SvCellNode'
+    bl_label = 'Vector Cell'
     bl_icon = 'FORCE_TURBULENCE'
 
     def changeMode(self, context):
@@ -55,11 +55,11 @@ class SvCellularNode(bpy.types.Node, SverchCustomTreeNode):
         default='VECTOR',
         description='Output type',
         update=changeMode)
-    
+
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', 'Vertices')
         self.outputs.new('VerticesSocket', 'Noise V')
-        
+
     def draw_buttons(self, context, layout):
         layout.prop(self, 'out_mode', expand=True)
 
@@ -72,13 +72,13 @@ class SvCellularNode(bpy.types.Node, SverchCustomTreeNode):
         out = []
         verts = inputs['Vertices'].sv_get()
 
-        cellular_function = cellular_f[self.out_mode]
+        cell_function = cell_f[self.out_mode]
 
 
         if verts and verts[0]:
             for vertices in verts:
-                out.append([cellular_function(v) for v in vertices])
-        
+                out.append([cell_function(v) for v in vertices])
+
         if 'Noise V' in outputs:
             out = Vector_degenerate(out)
         outputs[0].sv_set(out)
@@ -86,8 +86,8 @@ class SvCellularNode(bpy.types.Node, SverchCustomTreeNode):
 
 
 def register():
-    bpy.utils.register_class(SvCellularNode)
+    bpy.utils.register_class(SvCellNode)
 
 
 def unregister():
-    bpy.utils.unregister_class(SvCellularNode)
+    bpy.utils.unregister_class(SvCellNode)
