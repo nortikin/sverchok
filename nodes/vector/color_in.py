@@ -48,7 +48,7 @@ class SvColorsInNode(bpy.types.Node, SverchCustomTreeNode):
     r_ = fprop_generator(name='R', description='Red (0..1)')
     g_ = fprop_generator(name='G', description='Green (0..1)')
     b_ = fprop_generator(name='B', description='Blue (0..1)')
-    a_ = fprop_generator(name='A', description='Alpha (0..1) - opacity')
+    a_ = fprop_generator(name='A', description='Alpha (0..1) - opacity', default=1.0)
 
     h_ = fprop_generator(name='H', description='Hue (0..1)')
     s_ = fprop_generator(name='S', description='Saturation (0..1) - different for hsv and hsl')
