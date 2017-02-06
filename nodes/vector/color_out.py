@@ -46,7 +46,10 @@ class SvColorsOutNode(bpy.types.Node, SverchCustomTreeNode):
             self.outputs[idx].name = socket
         updateNode(self, context)
   
-    unit_color = FloatVectorProperty(default=(.3, .3, .2, 1.0), size=4, subtype='COLOR')
+    unit_color = FloatVectorProperty(
+        update=updateNode, name='', default=(.3, .3, .2, 1.0),
+        size=4, min=0.0, max=1.0, subtype='COLOR'
+    )
 
     def sv_init(self, context):
         self.width = 100
@@ -70,9 +73,13 @@ class SvColorsOutNode(bpy.types.Node, SverchCustomTreeNode):
         colorsys.hsv_to_rgb(h, s, v)
         """        
 
-        abc = self.inputs['Colors'].sv_get()
+        color_input = self.inputs['Colors']
+        if color_input.is_linked:
+            abc = self.inputs['Colors'].sv_get()
+            data = dataCorrect(abc)
+        else:
+            data = [[self.unit_color[:]]]
 
-        data = dataCorrect(abc)
         A, B, C, D = [], [], [], []
         for obj in data:
             a_, b_, c_, d_ = (list(x) for x in zip(*obj))
