@@ -22,7 +22,7 @@ from bpy.props import FloatProperty, BoolProperty, FloatVectorProperty
 from mathutils import Color
 
 from sverchok.node_tree import SverchCustomTreeNode, StringsSocket
-from sverchok.data_structure import updateNode, fullList
+from sverchok.data_structure import updateNode, fullList, dataCorrect
 from sverchok.utils.sv_itertools import sv_zip_longest
 
 nodule_color = (0.899, 0.8052, 0.0, 1.0)
@@ -45,10 +45,8 @@ class SvColorsOutNode(bpy.types.Node, SverchCustomTreeNode):
         for idx, socket in enumerate(self.selected_mode):
             self.outputs[idx].name = socket
         updateNode(self, context)
-
   
-    unit_color = FloatVectorProperty(default=(.3, .3, .2, 1.0), size=4, subtype='COLOR')
-
+    unit_color = FloatVectorProperty(default=(.3, .3, .2), size=3, subtype='COLOR')
 
     def sv_init(self, context):
         self.width = 100
@@ -60,8 +58,6 @@ class SvColorsOutNode(bpy.types.Node, SverchCustomTreeNode):
         onew('StringsSocket', "R")
         onew('StringsSocket', "G")
         onew('StringsSocket', "B")
-        onew('StringsSocket', "A")
-        
     
     def process(self):
         """
@@ -72,32 +68,19 @@ class SvColorsOutNode(bpy.types.Node, SverchCustomTreeNode):
         colorsys.rgb_to_hsv(r, g, b)
         colorsys.hsv_to_rgb(h, s, v)
         """        
-        # if not self.outputs['Colors'].is_linked:
-        #     return
-        # inputs = self.inputs
-        
-        # i0 = inputs[0].sv_get()
-        # i1 = inputs[1].sv_get()
-        # i2 = inputs[2].sv_get()
-        # i3 = inputs[3].sv_get()
 
-        # series_vec = []
-        # max_obj = max(map(len, (i0, i1, i2, i3)))
-        # fullList(i0, max_obj)
-        # fullList(i1, max_obj)
-        # fullList(i2, max_obj)
-        # fullList(i3, max_obj)
-        # for i in range(max_obj):
-                
-        #     max_v = max(map(len, (i0[i], i1[i], i2[i], i3[i])))
-        #     fullList(i0[i], max_v)
-        #     fullList(i1[i], max_v)
-        #     fullList(i2[i], max_v)
-        #     fullList(i3[i], max_v)
-        #     series_vec.append(list(zip(i0[i], i1[i], i2[i], i3[i])))
-        
-        # self.outputs['Colors'].sv_set(series_vec)
-        pass
+        abc = self.inputs['Colors'].sv_get()
+
+        data = dataCorrect(abc)
+        A, B, C = [], [], []
+        for obj in data:
+            a_, b_, c_ = (list(x) for x in zip(*obj))
+            A.append(a_)
+            B.append(b_)
+            C.append(c_)
+        for i, name in enumerate(['A', 'B', 'C']):
+            if self.outputs[name].is_linked:
+                self.outputs[name].sv_set([A, B, C][i])
     
     
 def register():

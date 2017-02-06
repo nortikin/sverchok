@@ -105,7 +105,7 @@ class SvColorsInNode(bpy.types.Node, SverchCustomTreeNode):
             fullList(i3[i], max_v)
             series_vec.append(list(zip(i0[i], i1[i], i2[i], i3[i])))
         
-        self.outputs['Colors'].sv_set({'kind': self.selected_mode, 'data': series_vec})
+        self.outputs['Colors'].sv_set(series_vec)
     
     
 def register():
