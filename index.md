@@ -155,6 +155,8 @@
     SvVectorRewire
     svAxisInputNode
     SvAxisInputNodeMK2
+    SvColorsInNode
+    SvColorsOutNode
 
 ## Matrix
     MatrixGenNode
