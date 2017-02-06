@@ -17,6 +17,7 @@
     SvCircleNode
     CylinderNode
     SphereNode
+    TorusNode
     BasicSplineNode
     svBasicArcNode
     RandomVectorNodeMK2
