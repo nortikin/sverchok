@@ -231,6 +231,7 @@ class StringsSocket(NodeSocket, SvSocketCommon):
 
     prop_type = StringProperty(default='')
     prop_index = IntProperty()
+    nodule_color = FloatVectorProperty(default=(0.6, 1.0, 0.6, 1.0), size=4)
 
 
     def get_prop_data(self):
@@ -281,7 +282,7 @@ class StringsSocket(NodeSocket, SvSocketCommon):
             layout.label(t)
 
     def draw_color(self, context, node):
-        return (0.6, 1.0, 0.6, 1.0)
+        return self.nodule_color
 
 
 class SvNodeTreeCommon(object):
