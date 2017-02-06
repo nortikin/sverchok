@@ -46,7 +46,7 @@ class SvColorsOutNode(bpy.types.Node, SverchCustomTreeNode):
             self.outputs[idx].name = socket
         updateNode(self, context)
   
-    unit_color = FloatVectorProperty(default=(.3, .3, .2), size=3, subtype='COLOR')
+    unit_color = FloatVectorProperty(default=(.3, .3, .2, 1.0), size=4, subtype='COLOR')
 
     def sv_init(self, context):
         self.width = 100
@@ -58,6 +58,7 @@ class SvColorsOutNode(bpy.types.Node, SverchCustomTreeNode):
         onew('StringsSocket', "R")
         onew('StringsSocket', "G")
         onew('StringsSocket', "B")
+        onew('StringsSocket', "A")
     
     def process(self):
         """
@@ -72,15 +73,16 @@ class SvColorsOutNode(bpy.types.Node, SverchCustomTreeNode):
         abc = self.inputs['Colors'].sv_get()
 
         data = dataCorrect(abc)
-        A, B, C = [], [], []
+        A, B, C, D = [], [], [], []
         for obj in data:
-            a_, b_, c_ = (list(x) for x in zip(*obj))
+            a_, b_, c_, d_ = (list(x) for x in zip(*obj))
             A.append(a_)
             B.append(b_)
             C.append(c_)
-        for i, name in enumerate(['A', 'B', 'C']):
-            if self.outputs[name].is_linked:
-                self.outputs[name].sv_set([A, B, C][i])
+            D.append(d_)
+        for i, socket in enumerate(self.outputs):
+            if self.outputs[socket.name].is_linked:
+                self.outputs[socket.name].sv_set([A, B, C, D][i])
     
     
 def register():
