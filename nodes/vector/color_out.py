@@ -27,6 +27,7 @@ from sverchok.utils.sv_itertools import sv_zip_longest
 
 nodule_color = (0.899, 0.8052, 0.0, 1.0)
 
+# pylint: disable=w0141
 
 def fprop_generator(**altprops):
     # min can be overwritten by passing in min=some_value into the altprops dict

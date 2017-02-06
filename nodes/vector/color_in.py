@@ -16,6 +16,7 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+import colorsys
 import bpy
 from bpy.props import FloatProperty, BoolProperty
 
@@ -25,6 +26,7 @@ from sverchok.utils.sv_itertools import sv_zip_longest
 
 nodule_color = (0.899, 0.8052, 0.0, 1.0)
 
+# pylint: disable=w0141
 
 def fprop_generator(**altprops):
     # min can be overwritten by passing in min=some_value into the altprops dict
@@ -81,6 +83,16 @@ class SvColorsInNode(bpy.types.Node, SverchCustomTreeNode):
         
     
     def process(self):
+
+        """
+        colorsys.rgb_to_yiq(r, g, b)
+        colorsys.yiq_to_rgb(y, i, q)
+        colorsys.rgb_to_hls(r, g, b)
+        colorsys.hls_to_rgb(h, l, s)
+        colorsys.rgb_to_hsv(r, g, b)
+        colorsys.hsv_to_rgb(h, s, v)
+        """        
+
         if not self.outputs['Colors'].is_linked:
             return
         inputs = self.inputs
@@ -103,7 +115,16 @@ class SvColorsInNode(bpy.types.Node, SverchCustomTreeNode):
             fullList(i1[i], max_v)
             fullList(i2[i], max_v)
             fullList(i3[i], max_v)
-            series_vec.append(list(zip(i0[i], i1[i], i2[i], i3[i])))
+            if not self.selected_mode == 'RGB':
+                
+                if self.selected_mode == 'HSV':
+                    co1, co2, co3 = colorsys.hsv_to_rgb(i0[i], i1[i], i2[i])
+                elif self.selected_mode == 'HSL':
+                    # HSL or hls ? it concerns me.. but what to do..
+                    co1, co2, co3 = colorsys.hls_to_rgb(i0[i], i1[i], i2[i])
+                series_vec.append(list(zip(co1, co2, co3, i3[i])))
+            else:
+                series_vec.append(list(zip(i0[i], i1[i], i2[i], i3[i])))
         
         self.outputs['Colors'].sv_set(series_vec)
     
