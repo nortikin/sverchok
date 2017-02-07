@@ -57,7 +57,7 @@ def Torus_Knot(R, r, p, q, u, v, h, s, rPhase, sPhase, flipP, flipQ, N, linkInde
         sPhase    : User defined SPIN phase
         flipP     : Flip REVOLUTION direction (P)
         flipQ     : Flip SPIN direction (Q)
-        N         : Number of vertices in the curve (perl link)
+        N         : Number of vertices in the curve (per link)
         linkIndex : Link index in a multiple link knot (when q & p are not co-primes)
     '''
     if DEBUG:
@@ -142,9 +142,9 @@ def Torus_Knot(R, r, p, q, u, v, h, s, rPhase, sPhase, flipP, flipQ, N, linkInde
     return listVerts, listEdges, listNorms
 
 
-class TorusKnotNode(bpy.types.Node, SverchCustomTreeNode):
+class SvTorusKnotNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Torus Knot '''
-    bl_idname = 'TorusKnotNode'
+    bl_idname = 'SvTorusKnotNode'
     bl_label = 'Torus Knot'
     bl_icon = 'MESH_TORUS'
 
@@ -418,11 +418,11 @@ class TorusKnotNode(bpy.types.Node, SverchCustomTreeNode):
 
 
 def register():
-    bpy.utils.register_class(TorusKnotNode)
+    bpy.utils.register_class(SvTorusKnotNode)
 
 
 def unregister():
-    bpy.utils.unregister_class(TorusKnotNode)
+    bpy.utils.unregister_class(SvTorusKnotNode)
 
 if __name__ == '__main__':
     register()

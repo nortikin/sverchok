@@ -22,7 +22,7 @@
     RandomVectorNodeMK2
     SvBricksNode
     ImageNode
-    TorusKnotNode
+    SvTorusKnotNode
 
 ## Generators Extended
     SvBoxRoundedNode
