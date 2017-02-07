@@ -9,7 +9,7 @@ Torus Knot generator will create a torus knot based on its radii sets, curve res
 Inputs
 ------
 
-All inputs will accept single values.
+All inputs are vectorized and they will accept single or multiple values.
 
 - **Major Radius**    [1]
 - **Minor Radius**    [1]

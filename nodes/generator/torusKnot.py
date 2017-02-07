@@ -21,8 +21,7 @@
 import bpy
 from bpy.props import IntProperty, FloatProperty, BoolProperty, EnumProperty
 
-from math import sin, cos, pi, sqrt, radians
-from mathutils import *
+from math import sin, cos, pi, sqrt, radians, gcd
 from random import random
 import time
 
@@ -33,32 +32,26 @@ DEBUG=False
 
 options_plus=True
 
-# greatest common denominator
-def gcd(a, b):
-    if b == 0:
-        return a
-    else:
-        return gcd(b, a % b)
 
 ########################################################################
 ####################### Knot Definitions ###############################
 ########################################################################
 def Torus_Knot(R, r, p, q, u, v, h, s, rPhase, sPhase, flipP, flipQ, N, linkIndex=0):
     '''
-        R         : Major radius of the torus
-        r         : Minor radius of the torus
-        p         : Number of REVOLUTIONS around the torus hole
-        q         : Number of SPINS through the torus hole
+        R         : major radius of the torus
+        r         : minor radius of the torus
+        p         : number of REVOLUTIONS around the torus hole
+        q         : number of SPINS through the torus hole
         u         : p multiplier
         v         : q multiplier
-        h         : Height (scale along Z)
-        s         : Scale (radii scale factor)
-        rPhase    : User defined REVOLUTION phase
-        sPhase    : User defined SPIN phase
-        flipP     : Flip REVOLUTION direction (P)
-        flipQ     : Flip SPIN direction (Q)
-        N         : Number of vertices in the curve (per link)
-        linkIndex : Link index in a multiple link knot (when q & p are not co-primes)
+        h         : height (scale along Z)
+        s         : scale (radii scale factor)
+        rPhase    : user defined REVOLUTION phase
+        sPhase    : user defined SPIN phase
+        flipP     : flip REVOLUTION direction (P)
+        flipQ     : flip SPIN direction (Q)
+        N         : number of vertices in the curve (per link)
+        linkIndex : link index in a multiple link knot (when q & p are not co-primes)
     '''
     if DEBUG:
         start = time.time()
@@ -355,66 +348,77 @@ class SvTorusKnotNode(bpy.types.Node, SverchCustomTreeNode):
 
     def process(self):
         # return if no outputs are connected
-        if not self.outputs['Vertices'].is_linked and \
-           not self.outputs['Edges'].is_linked and \
-           not self.outputs['Normals'].is_linked:
-           return
+        if not any(s.is_linked for s in self.outputs):
+            return
 
-        # input values
-        RR = self.inputs["R"].sv_get()[0][0]
-        rr = self.inputs["r"].sv_get()[0][0]
-        p = self.inputs["p"].sv_get()[0][0]
-        q = self.inputs["q"].sv_get()[0][0]
-        n = self.inputs["n"].sv_get()[0][0]
-        rP = self.inputs["rP"].sv_get()[0][0]
-        sP = self.inputs["sP"].sv_get()[0][0]
+        # input values lists (single or multi value)
+        input_RR = self.inputs["R"].sv_get()[0]  # list of MAJOR or EXTERIOR radii
+        input_rr = self.inputs["r"].sv_get()[0]  # list of MINOR or INTERIOR radii
+        input_p  = self.inputs["p"].sv_get()[0]  # list of REVOLUTION turns
+        input_q  = self.inputs["q"].sv_get()[0]  # list of SPIN turns
+        input_n  = self.inputs["n"].sv_get()[0]  # list of curve resolutions
+        input_rP = self.inputs["rP"].sv_get()[0] # list of REVOLUTION phases
+        input_sP = self.inputs["sP"].sv_get()[0] # list of SPIN phases
 
         # convert input radii values to MAJOR/MINOR, based on selected mode
         if self.mode == 'EXT_INT':
             # convert radii from EXTERIOR/INTERIOR to MAJOR/MINOR
-            R = (RR + rr)*0.5
-            r = (RR - rr)*0.5
+            # (extend radii lists to a matching length before conversion)
+            input_RR, input_rr = match_long_repeat([input_RR, input_rr])
+            input_R = list(map(lambda x,y: (x+y)*0.5, input_RR, input_rr))
+            input_r = list(map(lambda x,y: (x-y)*0.5, input_RR, input_rr))
         else: # values already given as MAJOR/MINOR radii
-            R = RR
-            r = rr
+            input_R = input_RR
+            input_r = input_rr
 
         # extra parameters
-        u = self.torus_u
-        v = self.torus_v
-        h = self.torus_h
-        s = self.torus_s
-        fp = self.flip_p
-        fq = self.flip_q
+        u = self.torus_u  # p multiplier
+        v = self.torus_v  # q multiplier
+        h = self.torus_h  # height (scale along Z)
+        s = self.torus_s  # scale (radii scale factor)
+        fp = self.flip_p  # flip REVOLUTION direction (P)
+        fq = self.flip_q  # flip SPIN direction (Q)
 
-        if self.adaptive_resolution:
-            # adjust curve resolution automatically based on (p,q,R,r) values
-            links = gcd(p, q)
-            # get an approximate length of the whole TK curve
-            maxTKLen = 2*pi*sqrt(p*p*(R+r)*(R+r) + q*q*r*r)  # upper bound approximation
-            minTKLen = 2*pi*sqrt(p*p*(R-r)*(R-r) + q*q*r*r)  # lower bound approximation
-            avgTKLen = (minTKLen + maxTKLen)/2  # average approximation
-            if DEBUG:
-                print("Approximate average TK length = %.2f" % avgTKLen)
-            n = int(max(3, avgTKLen/links * 8))  # x N factor = control points per unit length
+        parameters = match_long_repeat([input_R, input_r, input_p, input_q, input_n, input_rP, input_sP])
 
         torusVerts = []
         torusEdges = []
         torusNorms = []
 
-        if self.multiple_links:
-            links=gcd(p,q)
-        else:
-            links=1
+        for R, r, p, q, n, rP, sP in zip(*parameters):
 
-        for l in range(links):
-          verts, edges, norms = Torus_Knot(R,r,p,q,u,v,h,s,rP,sP,fp,fq,n,l)
-          torusVerts.append(verts)
-          torusEdges.append(edges)
-          torusNorms.append(norms)
+            if self.adaptive_resolution:
+                # adjust curve resolution automatically based on (p,q,R,r) values
+                links = gcd(p, q)
+                # get an approximate length of the whole TK curve
+                maxTKLen = 2*pi*sqrt(p*p*(R+r)*(R+r) + q*q*r*r)  # upper bound approximation
+                minTKLen = 2*pi*sqrt(p*p*(R-r)*(R-r) + q*q*r*r)  # lower bound approximation
+                avgTKLen = (minTKLen + maxTKLen)/2  # average approximation
+                if DEBUG:
+                    print("Approximate average TK length = %.2f" % avgTKLen)
+                n = int(max(3, avgTKLen/links * 8))  # x N factor = control points per unit length
 
-        SvSetSocketAnyType(self, 'Vertices', torusVerts)
-        SvSetSocketAnyType(self, 'Edges', torusEdges)
-        SvSetSocketAnyType(self, 'Normals', torusNorms)
+            if self.multiple_links:
+                links=gcd(p,q)
+            else:
+                links=1
+
+            linkVerts = []
+            linkEdges = []
+            linkNorms = []
+            for l in range(links):
+                verts, edges, norms = Torus_Knot(R,r,p,q,u,v,h,s,rP,sP,fp,fq,n,l)
+                linkVerts.append(verts)
+                linkEdges.append(edges)
+                linkNorms.append(norms)
+
+            torusVerts.append(linkVerts)
+            torusEdges.append(linkEdges)
+            torusNorms.append(linkNorms)
+
+        self.outputs['Vertices'].sv_set(torusVerts)
+        self.outputs['Edges'].sv_set(torusEdges)
+        self.outputs['Normals'].sv_set(torusNorms)
 
 
 def register():
