@@ -17,12 +17,12 @@
     SvCircleNode
     CylinderNode
     SphereNode
-    TorusNode
     BasicSplineNode
     svBasicArcNode
     RandomVectorNodeMK2
     SvBricksNode
     ImageNode
+    SvTorusNode
 
 ## Generators Extended
     SvBoxRoundedNode

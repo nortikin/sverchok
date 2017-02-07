@@ -118,9 +118,9 @@ def torus_polygons(N1, N2):
     return listPolys
 
 
-class TorusNode(bpy.types.Node, SverchCustomTreeNode):
+class SvTorusNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Torus '''
-    bl_idname = 'TorusNode'
+    bl_idname = 'SvTorusNode'
     bl_label = 'Torus'
     bl_icon = 'MESH_TORUS'
 
@@ -298,11 +298,11 @@ class TorusNode(bpy.types.Node, SverchCustomTreeNode):
 
 
 def register():
-    bpy.utils.register_class(TorusNode)
+    bpy.utils.register_class(SvTorusNode)
 
 
 def unregister():
-    bpy.utils.unregister_class(TorusNode)
+    bpy.utils.unregister_class(SvFTorusNode)
 
 if __name__ == '__main__':
     register()
