@@ -145,11 +145,8 @@ class SvTurbulenceNode(bpy.types.Node, SverchCustomTreeNode):
                 coords.append((vertex[0] + origin_x, vertex[1] + origin_y, vertex[2] + origin_z))
 
                 print('coords: {0}'.format(coords))
-                #out.append([turbulence_function(v, m_octaves, m_hard, _noise_type, m_amp, m_freq) for v in coords])
-
-        for v in coords:
-            out.append([turbulence_function(v, m_octaves, m_hard, _noise_type, m_amp, m_freq)])
-
+            out.append([turbulence_function(v, m_octaves, m_hard, _noise_type, m_amp, m_freq) for v in coords])
+        
         if 'Noise V' in outputs:
             out = Vector_degenerate(out)
         outputs[0].sv_set(out)
