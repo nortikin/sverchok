@@ -108,11 +108,11 @@ def torus_polygons(N1, N2):
     listPolys = []
     for n1 in range(N1-1):
         for n2 in range(N2-1):
-            listPolys.append([N2*n1 + n2, N2*n1 + n2+1, N2*(n1+1) + n2+1, N2*(n1+1) + n2])
-        listPolys.append([N2*n1 + N2-1, N2*n1 + 0, N2*(n1+1) + 0, N2*(n1+1) + N2-1])
+            listPolys.append([N2*n1 + n2, N2*(n1+1) + n2, N2*(n1+1) + n2+1, N2*n1 + n2+1])
+        listPolys.append([N2*n1 + N2-1, N2*(n1+1) + N2-1, N2*(n1+1) + 0, N2*n1 + 0])
     for n2 in range(N2-1):
-        listPolys.append([N2*(N1-1) + n2, N2*(N1-1) + n2+1, N2*0 + n2+1, N2*0 + n2])
-    listPolys.append([N2*(N1-1) + N2-1, N2*(N1-1) + 0, N2*0 + 0, N2*0 + N2-1])
+        listPolys.append([N2*(N1-1) + n2, N2*0 + n2, N2*0 + n2+1, N2*(N1-1) + n2+1])
+    listPolys.append([N2*(N1-1) + N2-1, N2*0 + N2-1, N2*0 + 0, N2*(N1-1) + 0])
 
     return listPolys
 
