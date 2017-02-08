@@ -18,7 +18,7 @@
 
 import bpy
 from bpy.props import EnumProperty, IntProperty, FloatProperty, BoolProperty
-from mathutils import noise
+from mathutils import noise, Vector
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode, Vector_degenerate )
@@ -82,6 +82,7 @@ class SvTurbulenceNode(bpy.types.Node, SverchCustomTreeNode):
     hard = BoolProperty(default=True, description="Hard (sharp transitions) or soft (smooth transitions)", name="Hard", update=updateNode)
     amp = FloatProperty(default=0.25, description="The amplitude scaling factor", name="Amplitude", update=updateNode)
     freq = FloatProperty(default=0.03, description="The frequency scaling factor", name="Frequency", update=updateNode)
+    rseed = IntProperty(default=0, description="Random seed",name="Random seed", update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', 'Vertices')
@@ -89,6 +90,7 @@ class SvTurbulenceNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('StringsSocket', 'Hard').prop_name = 'hard'
         self.inputs.new('StringsSocket', 'Amplitude').prop_name = 'amp'
         self.inputs.new('StringsSocket', 'Frequency').prop_name = 'freq'
+        self.inputs.new('StringsSocket', 'Random seed').prop_name = 'rseed'
         self.outputs.new('VerticesSocket', 'Noise V')
 
     def draw_buttons(self, context, layout):
@@ -108,19 +110,46 @@ class SvTurbulenceNode(bpy.types.Node, SverchCustomTreeNode):
         m_hard = inputs['Hard'].sv_get()[0][0]
         m_amp = inputs['Amplitude'].sv_get()[0][0]
         m_freq = inputs['Frequency'].sv_get()[0][0]
+        rseed = inputs['Random seed'].sv_get()[0][0]
+
 
 
         _noise_type = noise_dict[self.noise_type]
         turbulence_function = turbulence_f[self.out_mode]
 
-
         if verts and verts[0]:
-            for vertices in verts:
-                out.append([turbulence_function(v, m_octaves, m_hard, _noise_type, m_amp, m_freq) for v in vertices])
-        
+            for i,vertices in enumerate(verts[0]):
+                print('verts: {0}'.format(verts))
+                print(vertices)
+                print(vertices[0])
+                coords = []
+                print('index: {0}'.format(i))
+                # origin
+                if rseed == 0:
+                    origin = 0.0,0.0,0.0
+                    origin_x = 0.0
+                    origin_y = 0.0
+                    origin_z = 0.0
+                else:
+                # randomise origin
+                    noise.seed_set( rseed )
+                    #origin = noise.random_unit_vector(3)
+                    #print('origin is: {0}'.format(origin))
+                    #origin_x = ( 0.5 - origin[0] ) * 20.0
+                    #origin_y = ( 0.5 - origin[1] ) * 20.0
+                    #origin_z = ( 0.5 - origin[1] ) * 20.0
+                    origin_x = noise.random()  * 20.0
+                    origin_y = noise.random()  * 20.0
+                    origin_z = noise.random()  * 20.0
+
+                coords.append((vertices[0] / m_octaves + origin_x, vertices[1] / m_octaves + origin_y, vertices[2] / m_octaves + origin_z))
+                print('coords: {0}'.format(coords))
+                out.append([turbulence_function(v, m_octaves, m_hard, _noise_type, m_amp, m_freq) for v in coords])
+
         if 'Noise V' in outputs:
             out = Vector_degenerate(out)
         outputs[0].sv_set(out)
+
 
 
 
