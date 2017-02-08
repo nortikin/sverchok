@@ -9,7 +9,7 @@ Torus generator will create a torus based on its radii sets, number of sections 
 Inputs
 ------
 
-All inputs will accept single values.
+All inputs are vectorized and they will accept single or multiple values.
 
 - **Major Radius**    [1]
 - **Minor Radius**    [1]
