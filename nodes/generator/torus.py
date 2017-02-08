@@ -150,85 +150,85 @@ class SvTorusNode(bpy.types.Node, SverchCustomTreeNode):
 
     # TORUS DIMENSIONS options
     mode = EnumProperty(
-            name="Torus Dimensions",
-            items=(("MAJOR_MINOR", "Major/Minor",
-                    "Use the Major/Minor radii for torus dimensions."),
-                    ("EXT_INT", "Exterior/Interior",
-                    "Use the Exterior/Interior radii for torus dimensions.")),
-            update=update_mode)
+        name="Torus Dimensions",
+        items=(("MAJOR_MINOR", "Major/Minor",
+                "Use the Major/Minor radii for torus dimensions."),
+                ("EXT_INT", "Exterior/Interior",
+                "Use the Exterior/Interior radii for torus dimensions.")),
+        update=update_mode)
 
     torus_R = FloatProperty(
-            name="Major Radius",
-            min=0.00, max=100.0,
-            default=1.0,
-            subtype='DISTANCE',
-            unit='LENGTH',
-            description="Radius from the torus origin to the center of the cross section",
-            update=major_minor_radii_changed)
+        name="Major Radius",
+        min=0.00, max=100.0,
+        default=1.0,
+        subtype='DISTANCE',
+        unit='LENGTH',
+        description="Radius from the torus origin to the center of the cross section",
+        update=major_minor_radii_changed)
 
     torus_r = FloatProperty(
-            name="Minor Radius",
-            min=0.00, max=100.0,
-            default=.25,
-            subtype='DISTANCE',
-            unit='LENGTH',
-            description="Radius of the torus' cross section",
-            update=major_minor_radii_changed)
+        name="Minor Radius",
+        min=0.00, max=100.0,
+        default=.25,
+        subtype='DISTANCE',
+        unit='LENGTH',
+        description="Radius of the torus' cross section",
+        update=major_minor_radii_changed)
 
     torus_iR = FloatProperty(
-            name="Interior Radius",
-            min=0.00, max=100.0,
-            default=.75,
-            subtype='DISTANCE',
-            unit='LENGTH',
-            description="Interior radius of the torus (closest to the torus center)",
-            update=external_internal_radii_changed)
+        name="Interior Radius",
+        min=0.00, max=100.0,
+        default=.75,
+        subtype='DISTANCE',
+        unit='LENGTH',
+        description="Interior radius of the torus (closest to the torus center)",
+        update=external_internal_radii_changed)
 
     torus_eR = FloatProperty(
-            name="Exterior Radius",
-            min=0.00, max=100.0,
-            default=1.25,
-            subtype='DISTANCE',
-            unit='LENGTH',
-            description="Exterior radius of the torus (farthest from the torus center)",
-            update=external_internal_radii_changed)
+        name="Exterior Radius",
+        min=0.00, max=100.0,
+        default=1.25,
+        subtype='DISTANCE',
+        unit='LENGTH',
+        description="Exterior radius of the torus (farthest from the torus center)",
+        update=external_internal_radii_changed)
 
     # TORUS RESOLUTION options
     torus_n1 = IntProperty(
-            name="Revolution Sections",
-            default=32,
-            min=3, soft_min=3,
-            description="Number of sections around the torus center",
-            update=updateNode)
+        name="Revolution Sections",
+        default=32,
+        min=3, soft_min=3,
+        description="Number of sections around the torus center",
+        update=updateNode)
 
     torus_n2 = IntProperty(
-            name="Spin Sections",
-            default=16,
-            min=3, soft_min=3,
-            description="Number of sections around the torus tube",
-            update=updateNode)
+        name="Spin Sections",
+        default=16,
+        min=3, soft_min=3,
+        description="Number of sections around the torus tube",
+        update=updateNode)
 
     # TORUS Phase Options
     torus_rP = FloatProperty(
-            name="Revolution Phase",
-            default=0.0,
-            min=0.0, soft_min=0.0,
-            description="Phase the revolution sections by this radian amount",
-            update=updateNode)
+        name="Revolution Phase",
+        default=0.0,
+        min=0.0, soft_min=0.0,
+        description="Phase the revolution sections by this radian amount",
+        update=updateNode)
 
     torus_sP = FloatProperty(
-            name="Spin Phase",
-            default=0.0,
-            min=0.0, soft_min=0.0,
-            description="Phase the spin sections by this radian amount",
-            update=updateNode)
+        name="Spin Phase",
+        default=0.0,
+        min=0.0, soft_min=0.0,
+        description="Phase the spin sections by this radian amount",
+        update=updateNode)
 
     # OTHER options
     Separate = BoolProperty(
-            name='Separate',
-            description='Separate UV coords',
-            default=False,
-            update=updateNode)
+        name='Separate',
+        description='Separate UV coords',
+        default=False,
+        update=updateNode)
 
 
     def sv_init(self, context):
