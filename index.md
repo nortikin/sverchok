@@ -32,6 +32,7 @@
     SvGenerativeArtNode
     SvImageComponentsNode
     SvScriptNode
+    SvTorusKnotNode
 
 ## Analyzers
     SvBBoxNode
