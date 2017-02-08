@@ -20,7 +20,6 @@ import bpy
 from bpy.props import IntProperty, FloatProperty, BoolProperty, EnumProperty
 
 from math import sin, cos, pi, sqrt, radians
-from mathutils import *
 from random import random
 import time
 
@@ -246,30 +245,23 @@ class SvTorusNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('VerticesSocket', "Normals")
 
 
-    def draw_buttons_ext(self, context, layout):
-        pass
-
-
     def draw_buttons(self, context, layout):
         layout.prop(self, "Separate", text="Separate")
         layout.prop(self, 'mode', expand=True)
 
 
     def process(self):
-        # no need to process if no outputs are connected
-        if not self.outputs['Vertices'].is_linked and \
-           not self.outputs['Edges'].is_linked and \
-           not self.outputs['Polygons'].is_linked and \
-           not self.outputs['Normals'].is_linked:
-           return
+        # return if no outputs are connected
+        if not any(s.is_linked for s in self.outputs):
+            return
 
         # input values lists (single or multi value)
         input_RR = self.inputs["R"].sv_get()[0]  # list of MAJOR or EXTERIOR radii
         input_rr = self.inputs["r"].sv_get()[0]  # list of MINOR or INTERIOR radii
         input_n1 = self.inputs["n1"].sv_get()[0] # list of number of MAJOR sections
         input_n2 = self.inputs["n2"].sv_get()[0] # list of number of MINOR sections
-        input_rP = self.inputs["rP"].sv_get()[0] # list of REVOLUTION phase list
-        input_sP = self.inputs["sP"].sv_get()[0] # list of SPIN phase list
+        input_rP = self.inputs["rP"].sv_get()[0] # list of REVOLUTION phases
+        input_sP = self.inputs["sP"].sv_get()[0] # list of SPIN phases
 
         # bound check the list values
         input_RR = list(map(lambda x: max(0, x), input_RR))
