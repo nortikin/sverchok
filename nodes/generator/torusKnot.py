@@ -168,144 +168,144 @@ class SvTorusKnotNode(bpy.types.Node, SverchCustomTreeNode):
 
     # GENERAL options
     options_plus = BoolProperty(
-            name="Extra Options",
-            default=False,
-            description="Show more options (the plus part)",
-            update=updateNode)
+        name="Extra Options",
+        default=False,
+        description="Show more options (the plus part)",
+        update=updateNode)
 
     # TORUS KNOT Options
     torus_p = IntProperty(
-            name="p",
-            default=2,
-            min=1, soft_min=1,
-            description="Number of REVOLUTIONs around the torus hole before closing the knot",
-            update=updateNode)
+        name="p",
+        default=2,
+        min=1, soft_min=1,
+        description="Number of REVOLUTIONs around the torus hole before closing the knot",
+        update=updateNode)
 
     torus_q = IntProperty(
-            name="q",
-            default=3,
-            min=1, soft_min=1,
-            description="Number of SPINs through the torus hole before closing the knot",
-            update=updateNode)
+        name="q",
+        default=3,
+        min=1, soft_min=1,
+        description="Number of SPINs through the torus hole before closing the knot",
+        update=updateNode)
 
     flip_p = BoolProperty(
-            name="Flip p",
-            default=False,
-            description="Flip REVOLUTION direction",
-            update=updateNode)
+        name="Flip p",
+        default=False,
+        description="Flip REVOLUTION direction",
+        update=updateNode)
 
     flip_q = BoolProperty(
-            name="Flip q",
-            default=False,
-            description="Flip SPIN direction",
-            update=updateNode)
+        name="Flip q",
+        default=False,
+        description="Flip SPIN direction",
+        update=updateNode)
 
     multiple_links = BoolProperty(
-            name="Multiple Links",
-            default=True,
-            description="Generate ALL links or just ONE link when q and q are not co-primes",
-            update=updateNode)
+        name="Multiple Links",
+        default=True,
+        description="Generate ALL links or just ONE link when q and q are not co-primes",
+        update=updateNode)
 
     torus_u = IntProperty(
-            name="p multiplier",
-            default=1,
-            min=1, soft_min=1,
-            description="p multiplier",
-            update=updateNode)
+        name="p multiplier",
+        default=1,
+        min=1, soft_min=1,
+        description="p multiplier",
+        update=updateNode)
 
     torus_v = IntProperty(
-            name="q multiplier",
-            default=1,
-            min=1, soft_min=1,
-            description="q multiplier",
-            update=updateNode)
+        name="q multiplier",
+        default=1,
+        min=1, soft_min=1,
+        description="q multiplier",
+        update=updateNode)
 
     torus_rP = FloatProperty(
-            name="Revolution Phase",
-            default=0.0,
-            min=0.0, soft_min=0.0,
-            description="Phase revolutions by this radian amount",
-            update=updateNode)
+        name="Revolution Phase",
+        default=0.0,
+        min=0.0, soft_min=0.0,
+        description="Phase revolutions by this radian amount",
+        update=updateNode)
 
     torus_sP = FloatProperty(
-            name="Spin Phase",
-            default=0.0,
-            min=0.0, soft_min=0.0,
-            description="Phase spins by this radian amount",
-            update=updateNode)
+        name="Spin Phase",
+        default=0.0,
+        min=0.0, soft_min=0.0,
+        description="Phase spins by this radian amount",
+        update=updateNode)
 
     # TORUS DIMENSIONS options
     mode = EnumProperty(
-            name="Torus Dimensions",
-            items=(("MAJOR_MINOR", "Major/Minor",
-                    "Use the Major/Minor radii for torus dimensions."),
-                    ("EXT_INT", "Exterior/Interior",
-                    "Use the Exterior/Interior radii for torus dimensions.")),
-            update=update_mode)
+        name="Torus Dimensions",
+        items=(("MAJOR_MINOR", "Major/Minor",
+                "Use the Major/Minor radii for torus dimensions."),
+                ("EXT_INT", "Exterior/Interior",
+                "Use the Exterior/Interior radii for torus dimensions.")),
+        update=update_mode)
 
     torus_R = FloatProperty(
-            name="Major Radius",
-            min=0.00, max=100.0,
-            default=1.0,
-            subtype='DISTANCE',
-            unit='LENGTH',
-            description="Radius from the torus origin to the center of the cross section",
-            update=major_minor_radii_changed)
+        name="Major Radius",
+        min=0.00, max=100.0,
+        default=1.0,
+        subtype='DISTANCE',
+        unit='LENGTH',
+        description="Radius from the torus origin to the center of the cross section",
+        update=major_minor_radii_changed)
 
     torus_r = FloatProperty(
-            name="Minor Radius",
-            min=0.00, max=100.0,
-            default=.25,
-            subtype='DISTANCE',
-            unit='LENGTH',
-            description="Radius of the torus' cross section",
-            update=major_minor_radii_changed)
+        name="Minor Radius",
+        min=0.00, max=100.0,
+        default=.25,
+        subtype='DISTANCE',
+        unit='LENGTH',
+        description="Radius of the torus' cross section",
+        update=major_minor_radii_changed)
 
     torus_iR = FloatProperty(
-            name="Interior Radius",
-            min=0.00, max=100.0,
-            default=.75,
-            subtype='DISTANCE',
-            unit='LENGTH',
-            description="Interior radius of the torus (closest to the torus center)",
-            update=external_internal_radii_changed)
+        name="Interior Radius",
+        min=0.00, max=100.0,
+        default=.75,
+        subtype='DISTANCE',
+        unit='LENGTH',
+        description="Interior radius of the torus (closest to the torus center)",
+        update=external_internal_radii_changed)
 
     torus_eR = FloatProperty(
-            name="Exterior Radius",
-            min=0.00, max=100.0,
-            default=1.25,
-            subtype='DISTANCE',
-            unit='LENGTH',
-            description="Exterior radius of the torus (farthest from the torus center)",
-            update=external_internal_radii_changed)
+        name="Exterior Radius",
+        min=0.00, max=100.0,
+        default=1.25,
+        subtype='DISTANCE',
+        unit='LENGTH',
+        description="Exterior radius of the torus (farthest from the torus center)",
+        update=external_internal_radii_changed)
 
     torus_s = FloatProperty(
-            name="Scale",
-            min=0.01, max=100.0,
-            default=1.00,
-            description="Scale factor to multiply the radii",
-            update=updateNode)
+        name="Scale",
+        min=0.01, max=100.0,
+        default=1.00,
+        description="Scale factor to multiply the radii",
+        update=updateNode)
 
     torus_h = FloatProperty(
-            name="Height",
-            default=1.0,
-            min=0.0, max=100.0,
-            description="Scale along the local Z axis",
-            update=updateNode)
+        name="Height",
+        default=1.0,
+        min=0.0, max=100.0,
+        description="Scale along the local Z axis",
+        update=updateNode)
 
     # CURVE options
     torus_res = IntProperty(
-            name="Curve Resolution",
-            default=100,
-            min=3, soft_min=3,
-            description="Number of vertices in the curve (per link)",
-            update=updateNode)
+        name="Curve Resolution",
+        default=100,
+        min=3, soft_min=3,
+        description="Number of vertices in the curve (per link)",
+        update=updateNode)
 
     adaptive_resolution = BoolProperty(
-            name="Adaptive Resolution",
-            default=False,
-            description="Auto adjust curve resolution based on TK length",
-            update=updateNode)
+        name="Adaptive Resolution",
+        default=False,
+        description="Auto adjust curve resolution based on TK length",
+        update=updateNode)
 
 
     def sv_init(self, context):
