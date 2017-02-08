@@ -118,12 +118,11 @@ class SvTurbulenceNode(bpy.types.Node, SverchCustomTreeNode):
         turbulence_function = turbulence_f[self.out_mode]
 
         if verts and verts[0]:
-            for i,vertices in enumerate(verts[0]):
+            for vertex in verts[0]:
+                
                 print('verts: {0}'.format(verts))
-                print(vertices)
-                print(vertices[0])
+
                 coords = []
-                print('index: {0}'.format(i))
                 # origin
                 if rseed == 0:
                     origin = 0.0,0.0,0.0
@@ -142,9 +141,12 @@ class SvTurbulenceNode(bpy.types.Node, SverchCustomTreeNode):
                     origin_y = noise.random()  * 20.0
                     origin_z = noise.random()  * 20.0
 
-                coords.append((vertices[0] / m_octaves + origin_x, vertices[1] / m_octaves + origin_y, vertices[2] / m_octaves + origin_z))
+                coords.append((vertex[0] + origin_x, vertex[1] + origin_y, vertex[2] + origin_z))
+                #coords.append((vertex[0] , vertex[1] , vertex[2] ))
+
                 print('coords: {0}'.format(coords))
-                out.append([turbulence_function(v, m_octaves, m_hard, _noise_type, m_amp, m_freq) for v in coords])
+                #out.append([turbulence_function(v, m_octaves, m_hard, _noise_type, m_amp, m_freq) for v in coords])
+                out.append([turbulence_function(coords[0], m_octaves, m_hard, _noise_type, m_amp, m_freq)])
 
         if 'Noise V' in outputs:
             out = Vector_degenerate(out)
