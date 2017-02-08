@@ -403,18 +403,11 @@ class SvTorusKnotNode(bpy.types.Node, SverchCustomTreeNode):
             else:
                 links=1
 
-            linkVerts = []
-            linkEdges = []
-            linkNorms = []
             for l in range(links):
                 verts, edges, norms = Torus_Knot(R,r,p,q,u,v,h,s,rP,sP,fp,fq,n,l)
-                linkVerts.append(verts)
-                linkEdges.append(edges)
-                linkNorms.append(norms)
-
-            torusVerts.append(linkVerts)
-            torusEdges.append(linkEdges)
-            torusNorms.append(linkNorms)
+                torusVerts.append(verts)
+                torusEdges.append(edges)
+                torusNorms.append(norms)
 
         self.outputs['Vertices'].sv_set(torusVerts)
         self.outputs['Edges'].sv_set(torusEdges)
