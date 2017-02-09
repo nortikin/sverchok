@@ -127,9 +127,8 @@ def update_mesh(bm, d):
             ov.new(point_list[i])
             ov.new(point_list[i+1])
 
-            if hasattr(bm.verts, "ensure_lookup_table"):
-                bm.verts.ensure_lookup_table()
-                bm.edges.ensure_lookup_table()  # not sure this even exists..
+            bm.verts.ensure_lookup_table()
+            bm.edges.ensure_lookup_table()
 
             vseq = ov[vert_count], ov[vert_count+1]
             oe.new(vseq)
@@ -138,7 +137,7 @@ def update_mesh(bm, d):
             edge_count = len(oe)
 
     # offer a remove doubles pass here.
-    #
+    # bmesh.ops.remove_doubles(bm, verts=bm.verts[:], dist=node.dist)
 
 
 def unselect_nonintersecting(bm, d_edges, edge_indices):
