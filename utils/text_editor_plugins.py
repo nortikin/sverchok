@@ -327,7 +327,7 @@ class SvNodeRefreshFromTextEditor(bpy.types.Operator):
                     pass  # no nothing for profile node, just update ng, could use break...
                 elif hasattr(n, "current_text") and n.current_text == text_file_name:
                     n.reload()
-                elif hasattr(n, "text_file") and n.bl_idname == 'SvRxNodeScript' and n.text_file == text_file_name:
+                elif n.bl_idname == 'SvRxNodeScript' and n.text_file == text_file_name:
                     # handle SVRX node reload
                     n.load_text()
                 else:
