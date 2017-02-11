@@ -81,7 +81,7 @@ class SvFlipNormalsNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('VerticesSocket', "Vertices")
         self.inputs.new('StringsSocket', 'Edges')
         self.inputs.new('StringsSocket', 'Polygons')
-        # self.inputs.new('StringsSocket', 'Mask')
+        self.inputs.new('StringsSocket', 'Mask')
 
         self.outputs.new('VerticesSocket', 'Vertices')
         self.outputs.new('StringsSocket', 'Edges')
@@ -92,7 +92,7 @@ class SvFlipNormalsNode(bpy.types.Node, SverchCustomTreeNode):
         r1 = r.split(0.25)        
         r1.prop(self, 'reverse', text='reverse', toggle=True)
         r1.separator()
-        r2 = r1.split()
+        r2 = r.split()
         r2.prop(self, "selected_mode", expand=True)
 
     def process(self):
