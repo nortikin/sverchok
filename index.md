@@ -69,6 +69,7 @@
     SvFillsHoleNode
     SvLimitedDissolve
     SvIntersectEdgesNode
+    SvIntersectEdgesNodeMK2
     SvIterateNode
     SvBevelNode
     SvExtrudeEdgesNode
