@@ -140,6 +140,9 @@ class SvEasingNode(bpy.types.Node, SverchCustomTreeNode):
             float_out.sv_set([[None]])
 
         if self.activate:
+
+            palette = (None, None, None)
+
             x, y = [int(j) for j in (self.location + Vector((self.width + 20, 0)))[:]]
             
             draw_data = {
@@ -148,7 +151,7 @@ class SvEasingNode(bpy.types.Node, SverchCustomTreeNode):
                 'custom_function': simple_grid_xy,
                 'easing_func': easing_func,
                 'loc': (x, y),
-                'args': palette
+                'args': (palette)
             }
             nvBGL2.callback_enable(n_id, draw_data)
 
