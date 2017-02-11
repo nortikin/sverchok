@@ -136,6 +136,7 @@
     SvEasingNode
     SvGenFibonacci
     SvGenExponential
+    SvMixNumbersNode
 
 ## Vector
     GenVectorsNode
