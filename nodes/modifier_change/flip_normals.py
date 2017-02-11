@@ -51,10 +51,9 @@ def flip_to_match_1st(geom, reverse):
     bm.faces.ensure_lookup_table()
     Direction = bm.faces[0].normal
     for face in bm.faces:
-        poly = [i.index for i in face.verts]
         close = (face.normal - Direction).length < 0.004
-        
         flip = close if not reverse else not close
+        poly = [i.index for i in face.verts]
         b_faces.append(poly if flip else poly[::-1])
 
     bm.free()
@@ -89,10 +88,9 @@ class SvFlipNormalsNode(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons(self, context, layout):
         r = layout.row(align=True)
-        r1 = r.split(0.25)        
+        r1 = r.split(0.35)        
         r1.prop(self, 'reverse', text='reverse', toggle=True)
-        r1.separator()
-        r2 = r.split()
+        r2 = r1.split().row()
         r2.prop(self, "selected_mode", expand=True)
 
     def process(self):
@@ -104,14 +102,14 @@ class SvFlipNormalsNode(bpy.types.Node, SverchCustomTreeNode):
         edges_s = self.inputs['Edges'].sv_get(default=[[]])
         faces_s = self.inputs['Polygons'].sv_get(default=[[]])
 
-        if vertices_s == [[]] and faces_s == [[]]:
-            return
+        # if vertices_s is [[]] and faces_s is [[]]:
+        #    return
 
         geom = [[], [], []]
 
         if self.selected_mode == 'mask':
             mask_s = self.inputs['Mask'].sv_get(default=[[True]])
-            for (single_geom), mask in zip(*mlrepeat([vertices_s, edges_s, faces_s, mask_s])):
+            for *single_geom, mask in zip(*mlrepeat([vertices_s, edges_s, faces_s, mask_s])):
                 for idx, d in enumerate(flip_from_mask(mask, single_geom, self.reverse)):
                     geom[idx].append(d)
 
@@ -123,7 +121,7 @@ class SvFlipNormalsNode(bpy.types.Node, SverchCustomTreeNode):
         self.set_output(geom)
 
 
-    def set_output(self, *geom):
+    def set_output(self, geom):
         _ = [self.outputs[idx].sv_set(data) for idx, data in enumerate(geom)]
 
 
