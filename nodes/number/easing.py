@@ -36,7 +36,7 @@ for k in sorted(easing_dict.keys()):
     easing_list.append(tuple([str(k), fname, "", k]))
 
 
-def simple_grid_xy(func, x, y):
+def simple_grid_xy(func, x, y, args):
 
     print('am called')
 
