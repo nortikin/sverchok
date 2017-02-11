@@ -203,197 +203,196 @@ class SvMixNumbersNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Mix Numbers'
     bl_icon = 'ANIM'
 
-    # Animation-Nodes easing based interpolation
-    def interpolate1(self, v):
+    # AN easing based interpolator
+    def getInterpolator1(self):
         if self.interpolation == "LINEAR":
-            value = v
+            interpolate = lambda v : v
 
         elif self.interpolation == "QUADRATIC":
             if self.easing == "EASE_IN":
-                value = powerIn(v)
+                interpolate = lambda v : powerIn(v,2)
             elif self.easing == "EASE_OUT":
-                value = powerOut(v)
+                interpolate = lambda v : powerOut(v,2)
             else:
-                value = powerInOut(v)
+                interpolate = lambda v : powerInOut(v,2)
 
         elif self.interpolation == "CUBIC":
             if self.easing == "EASE_IN":
-                value = powerIn(v,3)
+                interpolate = lambda v : powerIn(v,3)
             elif self.easing == "EASE_OUT":
-                value = powerOut(v,3)
+                interpolate = lambda v : powerOut(v,3)
             else:
-                value = powerInOut(v,3)
+                interpolate = lambda v : powerInOut(v,3)
 
         elif self.interpolation == "QUARTIC":
             if self.easing == "EASE_IN":
-                value = powerIn(v,4)
+                interpolate = lambda v : powerIn(v,4)
             elif self.easing == "EASE_OUT":
-                value = powerOut(v,4)
+                interpolate = lambda v : powerOut(v,4)
             else:
-                value = powerInOut(v,4)
+                interpolate = lambda v : powerInOut(v,4)
 
         elif self.interpolation == "QUINTIC":
             if self.easing == "EASE_IN":
-                value = powerIn(v,5)
+                interpolate = lambda v : powerIn(v,5)
             elif self.easing == "EASE_OUT":
-                value = powerOut(v,5)
+                interpolate = lambda v : powerOut(v,5)
             else:
-                value = powerInOut(v,5)
+                interpolate = lambda v : powerInOut(v,5)
 
         elif self.interpolation == "CIRCULAR":
             if self.easing == "EASE_IN":
-                value = circularIn(v)
+                interpolate = circularIn
             elif self.easing == "EASE_OUT":
-                value = circularOut(v)
+                interpolate = circularOut
             else:
-                value = circularInOut(v)
+                interpolate = circularInOut
 
         elif self.interpolation == "SINUSOIDAL":
             if self.easing == "EASE_IN":
-                value = sinIn(v)
+                interpolate = sinIn
             elif self.easing == "EASE_OUT":
-                value = sinOut(v)
+                interpolate = sinOut
             else:
-                value = sinInOut(v)
+                interpolate = sinInOut
 
         elif self.interpolation == "BACK":
             if self.easing == "EASE_IN":
-                value = backIn(v, self.backScale)
+                interpolate = lambda v : backIn(v, self.backScale)
             elif self.easing == "EASE_OUT":
-                value = backOut(v, self.backScale)
+                interpolate = lambda v : backOut(v, self.backScale)
             else:
-                value = backInOut(v, self.backScale)
+                interpolate = lambda v : backInOut(v, self.backScale)
 
         elif self.interpolation == "ELASTIC":
             settings = prepareElasticSettings(self.elasticBase, self.elasticExponent, self.elasticBounces)
             if self.easing == "EASE_IN":
-                value = elasticIn(v, settings)
+                interpolate = lambda v : elasticIn(v, settings)
             elif self.easing == "EASE_OUT":
-                value = elasticOut(v, settings)
+                interpolate = lambda v : elasticOut(v, settings)
             else:
-                value = elasticInOut(v, settings)
+                interpolate = lambda v : elasticInOut(v, settings)
 
         elif self.interpolation == "EXPONENTIAL":
             settings = prepareExponentialSettings(self.exponentialBase, self.exponentialExponent)
             if self.easing == "EASE_IN":
-                value = exponentialIn(v, settings)
+                interpolate = lambda v : exponentialIn(v, settings)
             elif self.easing == "EASE_OUT":
-                value = exponentialOut(v, settings)
+                interpolate = lambda v : exponentialOut(v, settings)
             else:
-                value = exponentialInOut(v, settings)
+                interpolate = lambda v : exponentialInOut(v, settings)
 
         elif self.interpolation == "BOUNCE":
             settings = prepareBounceSettings(self.bounceBounces, self.bounceBase)
             if self.easing == "EASE_IN":
-                value = bounceIn(v, settings)
+                interpolate = lambda v : bounceIn(v, settings)
             elif self.easing == "EASE_OUT":
-                value = bounceOut(v, settings)
+                interpolate = lambda v : bounceOut(v, settings)
             else:
-                value = bounceInOut(v, settings)
+                interpolate = lambda v : bounceInOut(v, settings)
 
         else:
-            value = 0
+            interpolate = lambda v : v
 
-        return value
+        return interpolate
 
-    # SV easing based interpolation
-    def interpolate2(self, v):
+
+    # SV easing based interpolator
+    def getInterpolator2(self):
         if self.interpolation == "LINEAR":
-            value = v
+            interpolate = LinearInterpolation
 
         elif self.interpolation == "QUADRATIC":
             if self.easing == "EASE_IN":
-                value = QuadraticEaseIn(v)
+                interpolate = QuadraticEaseIn
             elif self.easing == "EASE_OUT":
-                value = QuadraticEaseOut(v)
+                interpolate = QuadraticEaseOut
             else:
-                value = QuadraticEaseInOut(v)
+                interpolate = QuadraticEaseInOut
 
         elif self.interpolation == "CUBIC":
             if self.easing == "EASE_IN":
-                value = CubicEaseIn(v)
+                interpolate = CubicEaseIn
             elif self.easing == "EASE_OUT":
-                value = CubicEaseOut(v)
+                interpolate = CubicEaseOut
             else:
-                value = CubicEaseInOut(v)
+                interpolate = CubicEaseInOut
 
         elif self.interpolation == "QUARTIC":
             if self.easing == "EASE_IN":
-                value = QuarticEaseIn(v)
+                interpolate = QuarticEaseIn
             elif self.easing == "EASE_OUT":
-                value = QuarticEaseOut(v)
+                interpolate = QuarticEaseOut
             else:
-                value = QuarticEaseInOut(v)
+                interpolate = QuarticEaseInOut
 
         elif self.interpolation == "QUINTIC":
             if self.easing == "EASE_IN":
-                value = QuinticEaseIn(v)
+                interpolate = QuinticEaseIn
             elif self.easing == "EASE_OUT":
-                value = QuinticEaseOut(v)
+                interpolate = QuinticEaseOut
             else:
-                value = QuinticEaseInOut(v)
+                interpolate = QuinticEaseInOut
 
         elif self.interpolation == "CIRCULAR":
             if self.easing == "EASE_IN":
-                value = CircularEaseIn(v)
+                interpolate = CircularEaseIn
             elif self.easing == "EASE_OUT":
-                value = CircularEaseOut(v)
+                interpolate = CircularEaseOut
             else:
-                value = CircularEaseInOut(v)
+                interpolate = CircularEaseInOut
 
         elif self.interpolation == "SINUSOIDAL":
             if self.easing == "EASE_IN":
-                value = SineEaseIn(v)
+                interpolate = SineEaseIn
             elif self.easing == "EASE_OUT":
-                value = SineEaseOut(v)
+                interpolate = SineEaseOut
             else:
-                value = SineEaseInOut(v)
+                interpolate = SineEaseInOut
 
         elif self.interpolation == "BACK":
             if self.easing == "EASE_IN":
-                value = BackEaseIn(v)
+                interpolate = BackEaseIn
             elif self.easing == "EASE_OUT":
-                value = BackEaseOut(v)
+                interpolate = BackEaseOut
             else:
-                value = BackEaseInOut(v)
+                interpolate = BackEaseInOut
 
         elif self.interpolation == "ELASTIC":
             if self.easing == "EASE_IN":
-                value = ElasticEaseIn(v)
+                interpolate = ElasticEaseIn
             elif self.easing == "EASE_OUT":
-                value = ElasticEaseOut(v)
+                interpolate = ElasticEaseOut
             else:
-                value = ElasticEaseInOut(v)
+                interpolate = ElasticEaseInOut
 
         elif self.interpolation == "EXPONENTIAL":
             if self.easing == "EASE_IN":
-                value = ExponentialEaseIn(v)
+                interpolate = ExponentialEaseIn
             elif self.easing == "EASE_OUT":
-                value = ExponentialEaseOut(v)
+                interpolate = ExponentialEaseOut
             else:
-                value = ExponentialEaseInOut(v)
+                interpolate = ExponentialEaseInOut
 
         elif self.interpolation == "BOUNCE":
             if self.easing == "EASE_IN":
-                value = BounceEaseIn(v)
+                interpolate = BounceEaseIn
             elif self.easing == "EASE_OUT":
-                value = BounceEaseOut(v)
+                interpolate = BounceEaseOut
             else:
-                value = BounceEaseInOut(v)
+                interpolate = BounceEaseInOut
 
         else:
-            value = 0
+            interpolate = LinearInterpolation
 
-        return value
+        return interpolate
 
 
     def update_interpolation(self, context):
-        # do some updates here
         updateNode(self, context)
 
 
     def update_easing(self, context):
-        # do some updates here
         updateNode(self, context)
 
 
@@ -582,9 +581,11 @@ class SvMixNumbersNode(bpy.types.Node, SverchCustomTreeNode):
 
         parameters = match_long_repeat([input_value1, input_value2, input_factor])
 
+        interpolate = self.getInterpolator2()
+
         values=[]
         for v1, v2, f in zip(*parameters):
-            t = self.interpolate2(f)
+            t = interpolate(f)
             v = v1*(1-t) + v2*t
 
             values.append(v)
