@@ -51,12 +51,39 @@ def simple_grid_xy(func, x, y):
 
 
     # draw bg fill
-    draw_rect(x=x, y=y, w=140, h=140, color=(0.0, 0.0, 0.5, 0.5))
+    draw_rect(x=x, y=y, w=140, h=140, color=(0.243299, 0.590403, 0.836084, 1.000000))
 
     # draw grid
-    # ...
+    bgl.glColor4f(0.390805, 0.754022, 1.000000, 1.000000)
+    num_divs = 10
+    offset = 140/num_divs
+    line_parts_x = []
+    line_parts_y = []
+    for i in range(num_divs+1):
+        xpos1 = x + (i*offset)
+        ypos1 = y
+        ypos2 = y - 140
+        line_parts_x.extend([[xpos1, ypos1], [xpos1, ypos2]])
+
+        ypos = y - (i*offset)
+        line_parts_y.extend([[x, ypos], [x+140, ypos]])
+
+    bgl.glBegin(bgl.GL_LINES)
+    for coord in line_parts_x + line_parts_y:
+        bgl.glVertex2f(*coord)
+    bgl.glEnd()        
+
     # draw graph-line
-    # bgl.glColor3f(*color)
+    bgl.glColor4f(*[1.000000, 0.330010, 0.107140, 1.000000])
+    bgl.glBegin(bgl.GL_LINE_STRIP)
+    num_points = 100
+    seg_diff = 1 / num_points
+    for i in range(num_points):
+        _px = x + (i * seg_diff * 140)
+        _py = y - (func(i * seg_diff) * 140)
+        bgl.glVertex2f(_px, _py)
+    bgl.glEnd()        
+
 
 
 
