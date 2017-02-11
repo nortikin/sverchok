@@ -246,9 +246,16 @@ def draw_callback_px(n_id, data):
 
     if data.get('mode', 'text-based') == 'text-based':
         draw_text_data(data)
-    else:
+    elif data.get('mode') == "graphical":
         draw_graphical_data(data)
-        restore_opengl_defaults()        
+        restore_opengl_defaults()
+    elif data.get('mode') == 'custom_function':
+        drawing_func = data.get('custom_function')
+        easing = data.get('easing_func')
+        x, y = data.get('loc', (20, 20))
+        print('going to call drawing func')
+        drawing_func(easing, x, y)
+        restore_opengl_defaults()
 
         
         
