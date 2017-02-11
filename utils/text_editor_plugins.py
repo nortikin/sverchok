@@ -296,16 +296,17 @@ class SvNodeRefreshFromTextEditor(bpy.types.Operator):
 
         edit_text = bpy.context.edit_text
         text_file_name = edit_text.name
-        is_sv_tree = lambda ng: ng.bl_idname == 'SverchCustomTreeType'
+        is_sv_tree = lambda ng: ng.bl_idname in {'SverchCustomTreeType', 'SvRxTree'}
         ngs = list(filter(is_sv_tree, ngs))
 
         if not ngs:
-            self.report({'INFO'}, "No Sverchok NodeGroups")
+            self.report({'INFO'}, "No Sverchok / svrx NodeGroups")
             return {'FINISHED'}
-        # could be extened to text in also
+
         node_types = set([
             'SvScriptNode', 'SvScriptNodeMK2', 'SvScriptNodeLite',
-            'SvProfileNode', 'SvTextInNode', 'SvGenerativeArtNode'])
+            'SvProfileNode', 'SvTextInNode', 'SvGenerativeArtNode',
+            'SvRxNodeScript'])
 
         for ng in ngs:
             nodes = [n for n in ng.nodes if n.bl_idname in node_types]
@@ -326,10 +327,15 @@ class SvNodeRefreshFromTextEditor(bpy.types.Operator):
                     pass  # no nothing for profile node, just update ng, could use break...
                 elif hasattr(n, "current_text") and n.current_text == text_file_name:
                     n.reload()
+                elif n.bl_idname == 'SvRxNodeScript' and n.text_file == text_file_name:
+                    # handle SVRX node reload
+                    n.load_text()
                 else:
                     pass
+
             # update node group with affected nodes
             ng.update()
+
 
         return {'FINISHED'}
 
