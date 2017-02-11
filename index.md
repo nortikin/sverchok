@@ -74,6 +74,7 @@
     SvExtrudeEdgesNode
     SvOffsetNode
     SvTriangulateNode
+    SvFlipNormalsNode
     SvRecalcNormalsNode
 
 ## Modifier Make

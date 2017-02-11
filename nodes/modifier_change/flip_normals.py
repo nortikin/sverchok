@@ -17,13 +17,13 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-from bpy.props import IntProperty, EnumProperty, BoolProperty, FloatProperty
-import bmesh.ops
+# from mathutils import Vector
+from bpy.props import EnumProperty, BoolProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, fullList
 from sverchok.data_structure import match_long_repeat as mlrepeat
-from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
+from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 
 
 
@@ -35,7 +35,7 @@ def flip_from_mask(mask, geom, reverse):
     fullList(mask, len(faces))
     b_faces = []
     for m, face in zip(mask, faces):
-        mask_val = bool(mask) if not reverse else not bool(mask)
+        mask_val = bool(m) if not reverse else not bool(m)
         b_faces.append(face if mask_val else face[::-1])
 
     return verts, edges, b_faces
@@ -45,7 +45,21 @@ def flip_to_match_1st(geom, reverse):
     """
     this mode expects all faces to be coplanar, else you need to manually generate a flip mask.
     """
-    ...
+    verts, edges, faces = geom
+    b_faces = []
+    bm = bmesh_from_pydata(verts, faces=faces, normal_update=True)
+    bm.faces.ensure_lookup_table()
+    Direction = bm.faces[0].normal
+    for face in bm.faces:
+        poly = [i.index for i in face.verts]
+        close = (face.normal - Direction).length < 0.004
+        
+        flip = close if not reverse else not close
+        b_faces.append(poly if flip else poly[::-1])
+
+    bm.free()
+    return verts, edges, b_faces
+
 
 
 class SvFlipNormalsNode(bpy.types.Node, SverchCustomTreeNode):
@@ -56,7 +70,7 @@ class SvFlipNormalsNode(bpy.types.Node, SverchCustomTreeNode):
 
     mode_options = [(mode, mode, '', idx) for idx, mode in enumerate(['mask', 'match'])]
         
-    selected_mode = bpy.props.EnumProperty(
+    selected_mode = EnumProperty(
         items=mode_options, description="offers flip options", default="match", update=updateNode
     )
 
@@ -74,8 +88,12 @@ class SvFlipNormalsNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('StringsSocket', 'Polygons')
 
     def draw_buttons(self, context, layout):
-        layout.prop(self, 'reverse', toggle=True)
-        layout.prop(self, "selected_mode", expand=True)
+        r = layout.row(align=True)
+        r1 = r.split(0.25)        
+        r1.prop(self, 'reverse', text='reverse', toggle=True)
+        r1.separator()
+        r2 = r1.split()
+        r2.prop(self, "selected_mode", expand=True)
 
     def process(self):
 
@@ -91,21 +109,18 @@ class SvFlipNormalsNode(bpy.types.Node, SverchCustomTreeNode):
 
         geom = [[], [], []]
 
-        if selected_mode == 'mask':
+        if self.selected_mode == 'mask':
             mask_s = self.inputs['Mask'].sv_get(default=[[True]])
             for (single_geom), mask in zip(*mlrepeat([vertices_s, edges_s, faces_s, mask_s])):
-                for idx, d in enumerate(flip_from_mask(mask, single_geom, reverse)):
+                for idx, d in enumerate(flip_from_mask(mask, single_geom, self.reverse)):
                     geom[idx].append(d)
 
-        elif selected_mode == 'match':
-                # bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True)
+        elif self.selected_mode == 'match':
+            for single_geom in zip(*mlrepeat([vertices_s, edges_s, faces_s])):
+                for idx, d in enumerate(flip_to_match_1st(single_geom, self.reverse)):
+                    geom[idx].append(d)
 
-                #for idx, d in pydata_from_bmesh(bm):
-                #    geom[idx].append(d)
-                #bm.free()
-
-
-        self.set_output(result_vertices, result_edges, result_faces)
+        self.set_output(geom)
 
 
     def set_output(self, *geom):
