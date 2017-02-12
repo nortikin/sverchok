@@ -38,6 +38,7 @@ for k in sorted(easing_dict.keys()):
 
 def simple_grid_xy(x, y, args):
     func = args[0]
+    back_color, grid_color, line_color = args[1]
 
     def draw_rect(x=0, y=0, w=30, h=10, color=(0.0, 0.0, 0.0, 1.0)):
 
@@ -50,10 +51,10 @@ def simple_grid_xy(x, y, args):
 
 
     # draw bg fill
-    draw_rect(x=x, y=y, w=140, h=140, color=(0.243299, 0.590403, 0.836084, 1.000000))
+    draw_rect(x=x, y=y, w=140, h=140, color=back_color)
 
     # draw grid
-    bgl.glColor4f(0.390805, 0.754022, 1.000000, 1.000000)
+    bgl.glColor4f(*grid_color)
     num_divs = 10
     offset = 140/num_divs
     line_parts_x = []
@@ -73,13 +74,13 @@ def simple_grid_xy(x, y, args):
     bgl.glEnd()        
 
     # draw graph-line
-    bgl.glColor4f(*[1.000000, 0.330010, 0.107140, 1.000000])
+    bgl.glColor4f(*line_color)
     bgl.glBegin(bgl.GL_LINE_STRIP)
     num_points = 100
     seg_diff = 1 / num_points
     for i in range(num_points):
-        _px = x + (i * seg_diff * 140)
-        _py = y - (func(i * seg_diff) * 140)
+        _px = x + (1 - (i * seg_diff) * 140)
+        _py = y - (1 - func(i * seg_diff) * 140)
         bgl.glVertex2f(_px, _py)
     bgl.glEnd()        
 
@@ -140,7 +141,10 @@ class SvEasingNode(bpy.types.Node, SverchCustomTreeNode):
 
         if self.activate:
 
-            palette = (None, None, None)
+            back_color = (0.243299, 0.590403, 0.836084, 1.000000)
+            grid_color = (0.390805, 0.754022, 1.000000, 1.000000)
+            line_color = (1.000000, 0.330010, 0.107140, 1.000000)
+            palette = back_color, grid_color, line_color
 
             x, y = [int(j) for j in (self.location + Vector((self.width + 20, 0)))[:]]
             
