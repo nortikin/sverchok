@@ -36,9 +36,8 @@ for k in sorted(easing_dict.keys()):
     easing_list.append(tuple([str(k), fname, "", k]))
 
 
-def simple_grid_xy(func, x, y, args):
-
-    print('am called')
+def simple_grid_xy(x, y, args):
+    func = args[0]
 
     def draw_rect(x=0, y=0, w=30, h=10, color=(0.0, 0.0, 0.0, 1.0)):
 
@@ -149,9 +148,8 @@ class SvEasingNode(bpy.types.Node, SverchCustomTreeNode):
                 'tree_name': self.id_data.name[:],
                 'mode': 'custom_function', 
                 'custom_function': simple_grid_xy,
-                'easing_func': easing_func,
                 'loc': (x, y),
-                'args': palette
+                'args': easing_func, palette
             }
             nvBGL2.callback_enable(n_id, draw_data)
 

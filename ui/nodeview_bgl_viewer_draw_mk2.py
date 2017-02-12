@@ -251,11 +251,9 @@ def draw_callback_px(n_id, data):
         restore_opengl_defaults()
     elif data.get('mode') == 'custom_function':
         drawing_func = data.get('custom_function')
-        easing = data.get('easing_func')
         x, y = data.get('loc', (20, 20))
         args = data.get('args', (None,))
-        print('going to call drawing func')
-        drawing_func(easing, x, y, args)
+        drawing_func(x, y, args)
         restore_opengl_defaults()
 
         
