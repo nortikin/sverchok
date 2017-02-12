@@ -79,8 +79,8 @@ def simple_grid_xy(x, y, args):
     num_points = 100
     seg_diff = 1 / num_points
     for i in range(num_points):
-        _px = x + (1 - (i * seg_diff) * 140)
-        _py = y - (1 - func(i * seg_diff) * 140)
+        _px = x + ((i * seg_diff) * 140)
+        _py = y - (1 - func(i * seg_diff) * 140) - 140
         bgl.glVertex2f(_px, _py)
     bgl.glEnd()        
 
