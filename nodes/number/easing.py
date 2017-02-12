@@ -36,6 +36,21 @@ for k in sorted(easing_dict.keys()):
     easing_list.append(tuple([str(k), fname, "", k]))
 
 
+palette_dict = {
+    "default": (
+        (0.243299, 0.590403, 0.836084, 1.00),  # back_color 
+        (0.390805, 0.754022, 1.000000, 1.00),  # grid_color
+        (1.000000, 0.330010, 0.107140, 1.00)   # line_color
+    ),
+    "scope": (
+        (0.274677, 0.366253, 0.386430, 1.00),  # back_color 
+        (0.423268, 0.558340, 0.584078, 1.00),  # grid_color
+        (0.304762, 1.000000, 0.062827, 1.00)   # line_color
+    )
+
+}
+
+
 def simple_grid_xy(x, y, args):
     func = args[0]
     back_color, grid_color, line_color = args[1]
@@ -75,6 +90,7 @@ def simple_grid_xy(x, y, args):
 
     # draw graph-line
     bgl.glColor4f(*line_color)
+    bgl.glLineWidth(2.0)
     bgl.glBegin(bgl.GL_LINE_STRIP)
     num_points = 100
     seg_diff = 1 / num_points
@@ -109,11 +125,19 @@ class SvEasingNode(bpy.types.Node, SverchCustomTreeNode):
         description='input to the easy function', update=updateNode
     )
 
+    theme_mode_options = [(m, m, '', idx) for idx, m in enumerate(["default", "scope"])]
+    selected_theme_mode = EnumProperty(
+        items=theme_mode_options, default="default", update=updateNode
+    )
+
     def draw_buttons(self, context, l):
         c = l.column()
         c.label(text="set easing function")
         c.prop(self, "selected_mode", text="")
         c.prop(self, 'activate')
+
+    def draw_buttons_ext(self, context, l):
+        l.prop(self, "selected_theme_mode")
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', "Float").prop_name = 'in_float'
@@ -141,11 +165,7 @@ class SvEasingNode(bpy.types.Node, SverchCustomTreeNode):
 
         if self.activate:
 
-            back_color = (0.243299, 0.590403, 0.836084, 1.000000)
-            grid_color = (0.390805, 0.754022, 1.000000, 1.000000)
-            line_color = (1.000000, 0.330010, 0.107140, 1.000000)
-            palette = back_color, grid_color, line_color
-
+            palette = palette_dict.get(self.selected_theme_mode)[:]
             x, y = [int(j) for j in (self.location + Vector((self.width + 20, 0)))[:]]
             
             draw_data = {
