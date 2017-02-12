@@ -153,7 +153,7 @@ class SvEasingNode(bpy.types.Node, SverchCustomTreeNode):
                 'mode': 'custom_function', 
                 'custom_function': simple_grid_xy,
                 'loc': (x, y),
-                'args': easing_func, palette
+                'args': (easing_func, palette)
             }
             nvBGL2.callback_enable(n_id, draw_data)
 
