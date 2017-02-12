@@ -133,7 +133,7 @@ class WifiOutNode(bpy.types.Node, SverchCustomTreeNode):
         for in_socket, out_socket in zip(node.inputs, self.outputs):
             if in_socket.is_linked and out_socket.is_linked:
                 data = in_socket.sv_get(deepcopy=False)
-                out_socket.name.sv_set(data)
+                out_socket.sv_set(data)
 
 
 def register():
