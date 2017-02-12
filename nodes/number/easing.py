@@ -70,7 +70,7 @@ def simple_grid_xy(x, y, args):
 
     # draw grid
     bgl.glColor4f(*grid_color)
-    num_divs = 10
+    num_divs = 8
     offset = 140/num_divs
     line_parts_x = []
     line_parts_y = []
@@ -83,6 +83,7 @@ def simple_grid_xy(x, y, args):
         ypos = y - (i*offset)
         line_parts_y.extend([[x, ypos], [x+140, ypos]])
 
+    bgl.glLineWidth(0.8)
     bgl.glBegin(bgl.GL_LINES)
     for coord in line_parts_x + line_parts_y:
         bgl.glVertex2f(*coord)
@@ -94,7 +95,7 @@ def simple_grid_xy(x, y, args):
     bgl.glBegin(bgl.GL_LINE_STRIP)
     num_points = 100
     seg_diff = 1 / num_points
-    for i in range(num_points):
+    for i in range(num_points+1):
         _px = x + ((i * seg_diff) * 140)
         _py = y - (1 - func(i * seg_diff) * 140) - 140
         bgl.glVertex2f(_px, _py)
