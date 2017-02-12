@@ -36,9 +36,24 @@ for k in sorted(easing_dict.keys()):
     easing_list.append(tuple([str(k), fname, "", k]))
 
 
-def simple_grid_xy(func, x, y):
+palette_dict = {
+    "default": (
+        (0.243299, 0.590403, 0.836084, 1.00),  # back_color 
+        (0.390805, 0.754022, 1.000000, 1.00),  # grid_color
+        (1.000000, 0.330010, 0.107140, 1.00)   # line_color
+    ),
+    "scope": (
+        (0.274677, 0.366253, 0.386430, 1.00),  # back_color 
+        (0.423268, 0.558340, 0.584078, 1.00),  # grid_color
+        (0.304762, 1.000000, 0.062827, 1.00)   # line_color
+    )
 
-    print('am called')
+}
+
+
+def simple_grid_xy(x, y, args):
+    func = args[0]
+    back_color, grid_color, line_color = args[1]
 
     def draw_rect(x=0, y=0, w=30, h=10, color=(0.0, 0.0, 0.0, 1.0)):
 
@@ -51,11 +66,11 @@ def simple_grid_xy(func, x, y):
 
 
     # draw bg fill
-    draw_rect(x=x, y=y, w=140, h=140, color=(0.243299, 0.590403, 0.836084, 1.000000))
+    draw_rect(x=x, y=y, w=140, h=140, color=back_color)
 
     # draw grid
-    bgl.glColor4f(0.390805, 0.754022, 1.000000, 1.000000)
-    num_divs = 10
+    bgl.glColor4f(*grid_color)
+    num_divs = 8
     offset = 140/num_divs
     line_parts_x = []
     line_parts_y = []
@@ -68,19 +83,21 @@ def simple_grid_xy(func, x, y):
         ypos = y - (i*offset)
         line_parts_y.extend([[x, ypos], [x+140, ypos]])
 
+    bgl.glLineWidth(0.8)
     bgl.glBegin(bgl.GL_LINES)
     for coord in line_parts_x + line_parts_y:
         bgl.glVertex2f(*coord)
     bgl.glEnd()        
 
     # draw graph-line
-    bgl.glColor4f(*[1.000000, 0.330010, 0.107140, 1.000000])
+    bgl.glColor4f(*line_color)
+    bgl.glLineWidth(2.0)
     bgl.glBegin(bgl.GL_LINE_STRIP)
     num_points = 100
     seg_diff = 1 / num_points
-    for i in range(num_points):
-        _px = x + (i * seg_diff * 140)
-        _py = y - (func(i * seg_diff) * 140)
+    for i in range(num_points+1):
+        _px = x + ((i * seg_diff) * 140)
+        _py = y - (1 - func(i * seg_diff) * 140) - 140
         bgl.glVertex2f(_px, _py)
     bgl.glEnd()        
 
@@ -109,11 +126,19 @@ class SvEasingNode(bpy.types.Node, SverchCustomTreeNode):
         description='input to the easy function', update=updateNode
     )
 
+    theme_mode_options = [(m, m, '', idx) for idx, m in enumerate(["default", "scope"])]
+    selected_theme_mode = EnumProperty(
+        items=theme_mode_options, default="default", update=updateNode
+    )
+
     def draw_buttons(self, context, l):
         c = l.column()
         c.label(text="set easing function")
         c.prop(self, "selected_mode", text="")
         c.prop(self, 'activate')
+
+    def draw_buttons_ext(self, context, l):
+        l.prop(self, "selected_theme_mode")
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', "Float").prop_name = 'in_float'
@@ -140,14 +165,16 @@ class SvEasingNode(bpy.types.Node, SverchCustomTreeNode):
             float_out.sv_set([[None]])
 
         if self.activate:
+
+            palette = palette_dict.get(self.selected_theme_mode)[:]
             x, y = [int(j) for j in (self.location + Vector((self.width + 20, 0)))[:]]
             
             draw_data = {
                 'tree_name': self.id_data.name[:],
                 'mode': 'custom_function', 
                 'custom_function': simple_grid_xy,
-                'easing_func': easing_func,
-                'loc': (x, y)
+                'loc': (x, y),
+                'args': (easing_func, palette)
             }
             nvBGL2.callback_enable(n_id, draw_data)
 
