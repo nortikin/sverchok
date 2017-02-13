@@ -156,69 +156,69 @@ def CircularEaseInOut(p):
 
 
 # Modeled after the exponential function y = 2^(10(x - 1))
-def ExponentialEaseIn(p):
-    return p if (p == 0.0) else pow(2, 10 * (p - 1))
+def ExponentialEaseIn(p, b=2, e=10):
+    return p if (p == 0.0) else pow(b, e * (p - 1))
 
 
 # Modeled after the exponential function y = -2^(-10x) + 1
-def ExponentialEaseOut(p):
-    return p if (p == 1.0) else 1 - pow(2, -10 * p)
+def ExponentialEaseOut(p, b=2, e=10):
+    return p if (p == 1.0) else 1 - pow(b, -e * p)
 
 
 # Modeled after the piecewise exponential
 # y = (1/2)2^(10(2x - 1))         ; [0,0.5)
 # y = -(1/2)*2^(-10(2x - 1))) + 1 ; [0.5,1]
-def ExponentialEaseInOut(p):
+def ExponentialEaseInOut(p, b=2, e=10):
     if(p == 0.0 or p == 1.0):
         return p
 
     if(p < 0.5):
-        return 0.5 * pow(2, (20 * p) - 10)
+        return 0.5 * pow(b, (2*e * p) - e)
     else:
-        return -0.5 * pow(2, (-20 * p) + 10) + 1
+        return -0.5 * pow(b, (-2*e * p) + e) + 1
 
 
 # Modeled after the damped sine wave y = sin(13pi/2*x)*pow(2, 10 * (x - 1))
-def ElasticEaseIn(p):
-    return sin(13 * M_PI_2 * p) * pow(2, 10 * (p - 1))
+def ElasticEaseIn(p, n=13, b=2, e=10):
+    return sin(n * M_PI_2 * p) * pow(b, e * (p - 1))
 
 
 # Modeled after the damped sine wave y = sin(-13pi/2*(x + 1))*pow(2, -10x) + 1
-def ElasticEaseOut(p):
-    return sin(-13 * M_PI_2 * (p + 1)) * pow(2, -10 * p) + 1
+def ElasticEaseOut(p, n=13, b=2, e=10):
+    return sin(-n * M_PI_2 * (p + 1)) * pow(b, -e * p) + 1
 
 
 # Modeled after the piecewise exponentially-damped sine wave:
 # y = (1/2)*sin(13pi/2*(2*x))*pow(2, 10 * ((2*x) - 1))      ; [0,0.5)
 # y = (1/2)*(sin(-13pi/2*((2x-1)+1))*pow(2,-10(2*x-1)) + 2) ; [0.5, 1]
-def ElasticEaseInOut(p):
+def ElasticEaseInOut(p, n=13, b=2, e=10):
     if (p < 0.5):
-        return 0.5 * sin(13 * M_PI_2 * (2 * p)) * pow(2, 10 * ((2 * p) - 1))
+        return 0.5 * sin(n * M_PI_2 * (2 * p)) * pow(b, e * ((2 * p) - 1))
     else:
-        return 0.5 * (sin(-13 * M_PI_2 * ((2 * p - 1) + 1)) * pow(2, -10 * (2 * p - 1)) + 2)
+        return 0.5 * (sin(-n * M_PI_2 * ((2 * p - 1) + 1)) * pow(b, -e * (2 * p - 1)) + 2)
 
 
 # Modeled after the overshooting cubic y = x^3-x*sin(x*pi)
-def BackEaseIn(p):
-    return p * p * p - p * sin(p * M_PI)
+def BackEaseIn(p, s=1):
+    return p * p * p - p * sin(p * M_PI) * s
 
 
 # Modeled after overshooting cubic y = 1-((1-x)^3-(1-x)*sin((1-x)*pi))
-def BackEaseOut(p):
+def BackEaseOut(p, s=1):
     f = (1 - p)
-    return 1 - (f * f * f - f * sin(f * M_PI))
+    return 1 - (f * f * f - f * sin(f * M_PI) * s)
 
 
 # Modeled after the piecewise overshooting cubic function:
 # y = (1/2)*((2x)^3-(2x)*sin(2*x*pi))           ; [0, 0.5)
 # y = (1/2)*(1-((1-x)^3-(1-x)*sin((1-x)*pi))+1) ; [0.5, 1]
-def BackEaseInOut(p):
+def BackEaseInOut(p, s=1):
     if (p < 0.5):
         f = 2 * p
-        return 0.5 * (f * f * f - f * sin(f * M_PI))
+        return 0.5 * (f * f * f - f * sin(f * M_PI) * s)
     else:
         f = (1 - (2 * p - 1))
-        return 0.5 * (1 - (f * f * f - f * sin(f * M_PI))) + 0.5
+        return 0.5 * (1 - (f * f * f - f * sin(f * M_PI) * s)) + 0.5
 
 
 def BounceEaseIn(p):
