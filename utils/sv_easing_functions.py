@@ -40,7 +40,7 @@ def QuadraticEaseIn(p):
 
 # Modeled after the parabola y = -x^2 + 2x
 def QuadraticEaseOut(p):
-    return -(p * (p - 2))
+    return p * (2 - p)
 
 
 # Modeled after the piecewise quadratic
@@ -49,7 +49,9 @@ def QuadraticEaseOut(p):
 def QuadraticEaseInOut(p):
     if (p < 0.5):
         return 2 * p * p
-    return (-2 * p * p) + (4 * p) - 1
+    else:
+        f = 1 - p
+        return 1 - 2 * f * f
 
 
 # Modeled after the cubic y = x^3
@@ -59,8 +61,8 @@ def CubicEaseIn(p):
 
 # Modeled after the cubic y = (x - 1)^3 + 1
 def CubicEaseOut(p):
-    f = (p - 1)
-    return f * f * f + 1
+    f = 1 - p
+    return 1 - f * f * f
 
 
 # Modeled after the piecewise cubic
@@ -70,8 +72,8 @@ def CubicEaseInOut(p):
     if (p < 0.5):
         return 4 * p * p * p
     else:
-        f = ((2 * p) - 2)
-        return 0.5 * f * f * f + 1
+        f = 1 - p
+        return 1 - 4 * f * f * f
 
 
 # Modeled after the quartic x^4
@@ -81,8 +83,8 @@ def QuarticEaseIn(p):
 
 # Modeled after the quartic y = 1 - (x - 1)^4
 def QuarticEaseOut(p):
-    f = (p - 1)
-    return f * f * f * (1 - p) + 1
+    f = 1 - p
+    return 1 - f * f * f * f
 
 
 # Modeled after the piecewise quartic
@@ -92,8 +94,8 @@ def QuarticEaseInOut(p):
     if (p < 0.5):
         return 8 * p * p * p * p
     else:
-        f = (p - 1)
-        return -8 * f * f * f * f + 1
+        f = 1 - p
+        return 1 - 8 * f * f * f * f
 
 
 # Modeled after the quintic y = x^5
@@ -103,8 +105,8 @@ def QuinticEaseIn(p):
 
 # Modeled after the quintic y = (x - 1)^5 + 1
 def QuinticEaseOut(p):
-    f = (p - 1)
-    return f * f * f * f * f + 1
+    f = 1 - p
+    return 1 - f * f * f * f * f
 
 
 # Modeled after the piecewise quintic
@@ -114,8 +116,8 @@ def QuinticEaseInOut(p):
     if (p < 0.5):
         return 16 * p * p * p * p * p
     else:
-        f = ((2 * p) - 2)
-        return 0.5 * f * f * f * f * f + 1
+        f = 1 - p
+        return 1 - 16 * f * f * f * f * f
 
 
 # Modeled after quarter-cycle of sine wave
