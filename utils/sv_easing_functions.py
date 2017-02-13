@@ -23,7 +23,7 @@ Copyright (c) 2011, Auerhaus Development, LLC
 http://sam.zoy.org/wtfpl/COPYING for more details.
 '''
 
-from math import sqrt, pow, sin, cos
+from math import sqrt, pow, sin, cos, floor, log
 from math import pi as M_PI
 
 # cached for performance
@@ -223,30 +223,73 @@ def BackEaseInOut(p, s=1):
         f = (1 - (2 * p - 1))
         return 0.5 * (1 - (f * f * f - f * sin(f * M_PI) * s)) + 0.5
 
+def ss(a, n):
+    return (1-pow(a,n))/(1-a)
 
-def BounceEaseIn(p):
-    return 1 - BounceEaseOut(1 - p)
+'''
+    BounceEaseIn2
+
+    Formula based on geometric progression + parabola mix:
+
+    Sum of all n bounces with attenuation a:
+    S(a,n) = (1 - a^n)/(1-a) : a < 1
+
+    Parabola function f(x):
+    f(x) = 1 - (1-2*x)^2 : for x = [0,1] => f = [0,1]
+
+    Current bounce number based on value of p, a and n:
+    nn = floor(log(1-p*(1-pow(a,n)))/log(a))
+
+    Current bounce interval based on value of p, a and n:
+    x0 = S(a,nn)    : begin of bounce interval
+    x1 = S(a,nn+1)  : end of bounce interval
+    xx = S(a,n) * p : current x value in the [0,S(a,n)] for p
+
+    Remap [x0,x1] interval to [0,1] to generate the f(x) parabola
+    x = (xx-x0)/(x1-x0)
+
+    Calculate the parabola for the current interval scaled to interval
+    f = (1 - (1-2*x)^2) * a^n  : where x1-x0 = a^n
+
+    Note: Code derived by Marius Giurgi for sverchok @ 2017 :)
+'''
+def BounceEaseIn(p, n=4, a=0.5):
+
+    # for ease in the progression should go from small to big bounces
+    p = 1 - p # invert the progression
+
+    # sn = ss(a, n)
+    sn = ss(a,n)
+
+    # remap p to start from the half of the first bounce
+    p = (1/2 + (sn - 1/2)*p)/sn
+
+    # the bounce number at the current p value
+    nn = floor(log(1 - p*(1 - pow(a,n))) / log(a))
+
+    # find current bounce interval and current x location in interval
+    x0 = ss(a, nn)
+    x1 = ss(a, nn+1)
+    xx = sn * p
+
+    # Remap bounce interval to [0,1] to generate the f(x) parabola
+    x = (xx - x0) / (x1 - x0) # x = [0,1]
+
+    xt = 1 - 2*x
+    f = (1 - xt * xt) * pow(a, nn)
+    # print("p = %.2f  nn = %d  x0 = %.2f  x1 = %.2f  xx = %.2f  x = %.2f  f = %.2f" % (p, nn, x0, x1, xx, x, f))
+    return f
 
 
-def BounceEaseOut(p):
-    if(p < 4 / 11.0):
-        return (121 * p * p) / 16.0
+def BounceEaseOut(p, n=4, a=0.5):
+    return 1 - BounceEaseIn(1-p, n, a)
 
-    elif(p < 8 / 11.0):
-        return (363 / 40.0 * p * p) - (99 / 10.0 * p) + 17 / 5.0
 
-    elif(p < 9 / 10.0):
-        return (4356 / 361.0 * p * p) - (35442 / 1805.0 * p) + 16061 / 1805.0
-
+def BounceEaseInOut(p, n=4, a=0.5):
+    if p < 0.5:
+        return 0.5 * BounceEaseIn(2*p, n, a)
     else:
-        return (54 / 5.0 * p * p) - (513 / 25.0 * p) + 268 / 25.0
-
-
-def BounceEaseInOut(p):
-    if(p < 0.5):
-        return 0.5 * BounceEaseIn(p * 2)
-    else:
-        return 0.5 * BounceEaseOut(p * 2 - 1) + 0.5
+        return 0.5 + 0.5 * BounceEaseOut(2*p-1, n, a)
 
 
 easing_dict = {
