@@ -26,6 +26,7 @@ import time
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat, SvSetSocketAnyType
+from sverchok.utils.sv_easing_functions import *
 
 DEBUG=False
 
@@ -202,8 +203,8 @@ class SvMixNumbersNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Mix Numbers'
     bl_icon = 'ANIM'
 
-
-    def interpolate(self, v):
+    # Animation-Nodes easing based interpolation
+    def interpolate1(self, v):
         if self.interpolation == "LINEAR":
             value = v
 
@@ -289,6 +290,96 @@ class SvMixNumbersNode(bpy.types.Node, SverchCustomTreeNode):
                 value = bounceOut(v, settings)
             else:
                 value = bounceInOut(v, settings)
+
+        else:
+            value = 0
+
+        return value
+
+    # SV easing based interpolation
+    def interpolate2(self, v):
+        if self.interpolation == "LINEAR":
+            value = v
+
+        elif self.interpolation == "QUADRATIC":
+            if self.easing == "EASE_IN":
+                value = QuadraticEaseIn(v)
+            elif self.easing == "EASE_OUT":
+                value = QuadraticEaseOut(v)
+            else:
+                value = QuadraticEaseInOut(v)
+
+        elif self.interpolation == "CUBIC":
+            if self.easing == "EASE_IN":
+                value = CubicEaseIn(v)
+            elif self.easing == "EASE_OUT":
+                value = CubicEaseOut(v)
+            else:
+                value = CubicEaseInOut(v)
+
+        elif self.interpolation == "QUARTIC":
+            if self.easing == "EASE_IN":
+                value = QuarticEaseIn(v)
+            elif self.easing == "EASE_OUT":
+                value = QuarticEaseOut(v)
+            else:
+                value = QuarticEaseInOut(v)
+
+        elif self.interpolation == "QUINTIC":
+            if self.easing == "EASE_IN":
+                value = QuinticEaseIn(v)
+            elif self.easing == "EASE_OUT":
+                value = QuinticEaseOut(v)
+            else:
+                value = QuinticEaseInOut(v)
+
+        elif self.interpolation == "CIRCULAR":
+            if self.easing == "EASE_IN":
+                value = CircularEaseIn(v)
+            elif self.easing == "EASE_OUT":
+                value = CircularEaseOut(v)
+            else:
+                value = CircularEaseInOut(v)
+
+        elif self.interpolation == "SINUSOIDAL":
+            if self.easing == "EASE_IN":
+                value = SineEaseIn(v)
+            elif self.easing == "EASE_OUT":
+                value = SineEaseOut(v)
+            else:
+                value = SineEaseInOut(v)
+
+        elif self.interpolation == "BACK":
+            if self.easing == "EASE_IN":
+                value = BackEaseIn(v)
+            elif self.easing == "EASE_OUT":
+                value = BackEaseOut(v)
+            else:
+                value = BackEaseInOut(v)
+
+        elif self.interpolation == "ELASTIC":
+            if self.easing == "EASE_IN":
+                value = ElasticEaseIn(v)
+            elif self.easing == "EASE_OUT":
+                value = ElasticEaseOut(v)
+            else:
+                value = ElasticEaseInOut(v)
+
+        elif self.interpolation == "EXPONENTIAL":
+            if self.easing == "EASE_IN":
+                value = ExponentialEaseIn(v)
+            elif self.easing == "EASE_OUT":
+                value = ExponentialEaseOut(v)
+            else:
+                value = ExponentialEaseInOut(v)
+
+        elif self.interpolation == "BOUNCE":
+            if self.easing == "EASE_IN":
+                value = BounceEaseIn(v)
+            elif self.easing == "EASE_OUT":
+                value = BounceEaseOut(v)
+            else:
+                value = BounceEaseInOut(v)
 
         else:
             value = 0
@@ -492,7 +583,7 @@ class SvMixNumbersNode(bpy.types.Node, SverchCustomTreeNode):
 
         values=[]
         for v1, v2, f in zip(*parameters):
-            t = self.interpolate(f)
+            t = self.interpolate2(f)
             v = v1*(1-t) + v2*t
 
             values.append(v)
