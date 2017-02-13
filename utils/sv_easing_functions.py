@@ -25,7 +25,10 @@ http://sam.zoy.org/wtfpl/COPYING for more details.
 
 from math import sqrt, pow, sin, cos
 from math import pi as M_PI
-M_PI_2 = M_PI * 2
+
+# cached for performance
+M_2_PI = M_PI * 2
+M_PI_2 = M_PI / 2
 
 
 #  Modeled after the line y = x
@@ -122,7 +125,7 @@ def QuinticEaseInOut(p):
 
 # Modeled after quarter-cycle of sine wave
 def SineEaseIn(p):
-    return sin((p - 1) * M_PI_2) + 1
+    return 1 - cos(p * M_PI_2)
 
 
 # Modeled after quarter-cycle of sine wave (different phase)
@@ -132,7 +135,7 @@ def SineEaseOut(p):
 
 # Modeled after half sine wave
 def SineEaseInOut(p):
-    return 0.5 * (1 - cos(p * M_PI))
+    return (1 - cos(p * M_PI))/2
 
 
 # Modeled after shifted quadrant IV of unit circle
@@ -157,35 +160,35 @@ def CircularEaseInOut(p):
 
 # Modeled after the exponential function y = 2^(10(x - 1))
 def ExponentialEaseIn(p, b=2, e=10):
-    return p if (p == 0.0) else pow(b, e * (p - 1))
+    m = pow(b,-e)
+    return (pow(b, e * (p - 1)) - m) / (1 - m)
 
 
 # Modeled after the exponential function y = -2^(-10x) + 1
 def ExponentialEaseOut(p, b=2, e=10):
-    return p if (p == 1.0) else 1 - pow(b, -e * p)
+    m = pow(b,-e)
+    return 1 - (pow(b, -e * p) - m) / (1 - m)
 
 
 # Modeled after the piecewise exponential
 # y = (1/2)2^(10(2x - 1))         ; [0,0.5)
 # y = -(1/2)*2^(-10(2x - 1))) + 1 ; [0.5,1]
 def ExponentialEaseInOut(p, b=2, e=10):
-    if(p == 0.0 or p == 1.0):
-        return p
-
+    m = pow(b,-e)
     if(p < 0.5):
-        return 0.5 * pow(b, (2*e * p) - e)
+        return 0.5 * (pow(b, e * (2 * p - 1)) - m) / (1 - m)
     else:
-        return -0.5 * pow(b, (-2*e * p) + e) + 1
+        return 1 - 0.5 * (pow(b, -e * (2 * p - 1)) - m) / (1 - m)
 
 
 # Modeled after the damped sine wave y = sin(13pi/2*x)*pow(2, 10 * (x - 1))
 def ElasticEaseIn(p, n=13, b=2, e=10):
-    return sin(n * M_PI_2 * p) * pow(b, e * (p - 1))
+    return sin((n * M_2_PI + M_PI_2) * p) * pow(b, e * (p - 1))
 
 
 # Modeled after the damped sine wave y = sin(-13pi/2*(x + 1))*pow(2, -10x) + 1
 def ElasticEaseOut(p, n=13, b=2, e=10):
-    return sin(-n * M_PI_2 * (p + 1)) * pow(b, -e * p) + 1
+    return 1 - sin((n * M_2_PI + M_PI_2) * (1-p)) * pow(b, -e * p)
 
 
 # Modeled after the piecewise exponentially-damped sine wave:
@@ -193,9 +196,9 @@ def ElasticEaseOut(p, n=13, b=2, e=10):
 # y = (1/2)*(sin(-13pi/2*((2x-1)+1))*pow(2,-10(2*x-1)) + 2) ; [0.5, 1]
 def ElasticEaseInOut(p, n=13, b=2, e=10):
     if (p < 0.5):
-        return 0.5 * sin(n * M_PI_2 * (2 * p)) * pow(b, e * ((2 * p) - 1))
+        return 0.5 * sin((n * M_2_PI + M_PI_2) * (2 * p)) * pow(b, e * (2 * p - 1))
     else:
-        return 0.5 * (sin(-n * M_PI_2 * ((2 * p - 1) + 1)) * pow(b, -e * (2 * p - 1)) + 2)
+        return 1 - 0.5 * sin((n * M_2_PI + M_PI_2) * (2 * p)) * pow(b, -e * (2 * p - 1))
 
 
 # Modeled after the overshooting cubic y = x^3-x*sin(x*pi)
