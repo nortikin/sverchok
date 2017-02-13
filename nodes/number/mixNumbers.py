@@ -43,6 +43,7 @@ interplationItems = [
     ("QUINTIC", "Quintic", "", "IPO_QUINT", 5),
     ("EXPONENTIAL", "Exponential", "", "IPO_EXPO", 6),
     ("CIRCULAR", "Circular", "", "IPO_CIRC", 7),
+    # DYNAMIC effects
     ("BACK", "Back", "", "IPO_BACK", 8),
     ("BOUNCE", "Bounce", "", "IPO_BOUNCE", 9),
     ("ELASTIC", "Elastic", "", "IPO_ELASTIC", 10)]
@@ -50,8 +51,7 @@ interplationItems = [
 easingItems = [
     ("EASE_IN", "Ease In", "", "IPO_EASE_IN", 0),
     ("EASE_OUT", "Ease Out", "", "IPO_EASE_OUT", 1),
-    ("EASE_IN_OUT", "Ease In Ease Out", "", "IPO_EASE_IN_OUT", 2),
-    ("AUTO", "Automatic", "", "IPO_EASE_IN_OUT", 3)]
+    ("EASE_IN_OUT", "Ease In-Out", "", "IPO_EASE_IN_OUT", 2)]
 
 # POWER interpolation : QUADTRATIC, CUBIC, QUARTIC, QUINTIC
 
@@ -424,7 +424,7 @@ class SvMixNumbersNode(bpy.types.Node, SverchCustomTreeNode):
 
     easing = EnumProperty(
         name = "Easing",
-        default = "AUTO",
+        default = "EASE_IN_OUT",
         items = easingItems,
         update = update_easing)
 
@@ -530,6 +530,7 @@ class SvMixNumbersNode(bpy.types.Node, SverchCustomTreeNode):
 
 
     def sv_init(self, context):
+        self.width = 180
         self.inputs.new('StringsSocket', "v1").prop_name = 'value_float1'
         self.inputs.new('StringsSocket', "v2").prop_name = 'value_float2'
         self.inputs.new('StringsSocket', "f").prop_name = 'factor'
@@ -587,6 +588,9 @@ class SvMixNumbersNode(bpy.types.Node, SverchCustomTreeNode):
             v = v1*(1-t) + v2*t
 
             values.append(v)
+
+        # if self.numType == "INT":
+        #     values = list(map(lambda x: int(x), values))
 
         self.outputs['Value'].sv_set([values])
 
