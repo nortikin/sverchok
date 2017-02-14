@@ -112,8 +112,6 @@ class SvTurbulenceNode(bpy.types.Node, SverchCustomTreeNode):
         m_freq = inputs['Frequency'].sv_get()[0][0]
         rseed = inputs['Random seed'].sv_get()[0][0]
 
-
-
         _noise_type = noise_dict[self.noise_type]
         turbulence_function = turbulence_f[self.out_mode]
 
@@ -121,8 +119,6 @@ class SvTurbulenceNode(bpy.types.Node, SverchCustomTreeNode):
 
         if verts and verts[0]:
             for vertex in verts[0]:
-
-                print('verts: {0}'.format(verts))
 
                 # origin
                 if rseed == 0:
@@ -133,26 +129,23 @@ class SvTurbulenceNode(bpy.types.Node, SverchCustomTreeNode):
                 else:
                 # randomise origin
                     noise.seed_set( rseed )
-                    #origin = noise.random_unit_vector(3)
+                    origin = noise.random_unit_vector(3)
                     #print('origin is: {0}'.format(origin))
-                    #origin_x = ( 0.5 - origin[0] ) * 20.0
-                    #origin_y = ( 0.5 - origin[1] ) * 20.0
-                    #origin_z = ( 0.5 - origin[1] ) * 20.0
-                    origin_x = noise.random()  * 20.0
-                    origin_y = noise.random()  * 20.0
-                    origin_z = noise.random()  * 20.0
+                    origin_x = ( 0.5 - origin[0] ) * 10.0
+                    origin_y = ( 0.5 - origin[1] ) * 10.0
+                    origin_z = ( 0.5 - origin[1] ) * 10.0
+
+                    #origin_x = noise.random()  * 10.0
+                    #origin_y = noise.random()  * 10.0
+                    #origin_z = noise.random()  * 10.0
 
                 coords.append((vertex[0] + origin_x, vertex[1] + origin_y, vertex[2] + origin_z))
-
-                print('coords: {0}'.format(coords))
+                #print('coords: {0}'.format(coords))
             out.append([turbulence_function(v, m_octaves, m_hard, _noise_type, m_amp, m_freq) for v in coords])
-        
+
         if 'Noise V' in outputs:
             out = Vector_degenerate(out)
         outputs[0].sv_set(out)
-
-
-
 
 def register():
     bpy.utils.register_class(SvTurbulenceNode)
