@@ -35,6 +35,7 @@ M_PI_2 = M_PI / 2
 def LinearInterpolation(p):
     return p
 
+# ======================= QUADRIC EASING FUNCTIONS =============================
 
 # Modeled after the parabola y = x^2
 def QuadraticEaseIn(p):
@@ -56,6 +57,7 @@ def QuadraticEaseInOut(p):
         f = 1 - p
         return 1 - 2 * f * f
 
+# ======================== CUBIC EASING FUNCTIONS ==============================
 
 # Modeled after the cubic y = x^3
 def CubicEaseIn(p):
@@ -78,6 +80,7 @@ def CubicEaseInOut(p):
         f = 1 - p
         return 1 - 4 * f * f * f
 
+# ======================= QUARTIC EASING FUNCTIONS =============================
 
 # Modeled after the quartic x^4
 def QuarticEaseIn(p):
@@ -100,6 +103,7 @@ def QuarticEaseInOut(p):
         f = 1 - p
         return 1 - 8 * f * f * f * f
 
+# ======================= QUINTIC EASING FUNCTIONS =============================
 
 # Modeled after the quintic y = x^5
 def QuinticEaseIn(p):
@@ -122,6 +126,7 @@ def QuinticEaseInOut(p):
         f = 1 - p
         return 1 - 16 * f * f * f * f * f
 
+# ===================== SINUSOIDAL EASING FUNCTIONS ============================
 
 # Modeled after quarter-cycle of sine wave
 def SineEaseIn(p):
@@ -137,10 +142,11 @@ def SineEaseOut(p):
 def SineEaseInOut(p):
     return (1 - cos(p * M_PI))/2
 
+# ====================== CIRCULAR EASING FUNCTIONS ============================
 
 # Modeled after shifted quadrant IV of unit circle
 def CircularEaseIn(p):
-    return 1 - sqrt(1 - (p * p))
+    return 1 - sqrt(1 - p * p)
 
 
 # Modeled after shifted quadrant II of unit circle
@@ -157,49 +163,68 @@ def CircularEaseInOut(p):
     else:
         return 0.5 * (sqrt(-((2 * p) - 3) * ((2 * p) - 1)) + 1)
 
+# ===================== EXPONENTIAL EASING FUNCTIONS ===========================
+
+# prepare derived settings to be used in the exponential function
+def prepareExponentialSettings(b=2, e=10):
+    b = max(b, 0.0001)
+    m = pow(b,-e)
+    m = m if m != 1.0 else 1.0001
+    s = 1/(1-m)
+    return b, e, m, s
+
+defaultExponentialSettings = prepareExponentialSettings()
 
 # Modeled after the exponential function y = 2^(10(x - 1))
-def ExponentialEaseIn(p, b=2, e=10):
-    m = pow(b,-e)
-    return (pow(b, e * (p - 1)) - m) / (1 - m)
+def ExponentialEaseIn(p, settings=defaultExponentialSettings):
+    b, e, m, s = settings
+    return (pow(b, e * (p - 1)) - m) * s
 
 
 # Modeled after the exponential function y = -2^(-10x) + 1
-def ExponentialEaseOut(p, b=2, e=10):
-    m = pow(b,-e)
-    return 1 - (pow(b, -e * p) - m) / (1 - m)
+def ExponentialEaseOut(p, settings=defaultExponentialSettings):
+    return 1 - ExponentialEaseIn(1-p, settings)
 
 
 # Modeled after the piecewise exponential
 # y = (1/2)2^(10(2x - 1))         ; [0,0.5)
 # y = -(1/2)*2^(-10(2x - 1))) + 1 ; [0.5,1]
-def ExponentialEaseInOut(p, b=2, e=10):
-    m = pow(b,-e)
+def ExponentialEaseInOut(p, settings=defaultExponentialSettings):
     if(p < 0.5):
-        return 0.5 * (pow(b, e * (2 * p - 1)) - m) / (1 - m)
+        return 0.5 * ExponentialEaseIn(2*p, settings)
     else:
-        return 1 - 0.5 * (pow(b, -e * (2 * p - 1)) - m) / (1 - m)
+        return 0.5 + 0.5 * ExponentialEaseOut(2*p-1, settings)
 
+# ======================= ELASTIC EASING FUNCTIONS =============================
+
+# prepare derived settings to be used in the elastic function
+def prepareElasticSettings(n=13, b=2, e=10):
+    alpha = n * M_2_PI + M_PI_2
+    return b, e, alpha
+
+defaultElasticSettings = prepareElasticSettings()
 
 # Modeled after the damped sine wave y = sin(13pi/2*x)*pow(2, 10 * (x - 1))
-def ElasticEaseIn(p, n=13, b=2, e=10):
-    return sin((n * M_2_PI + M_PI_2) * p) * pow(b, e * (p - 1))
+def ElasticEaseIn(p, settings=defaultElasticSettings):
+    b, e, alpha = settings
+    return sin(alpha * p) * pow(b, e * (p - 1))
 
 
 # Modeled after the damped sine wave y = sin(-13pi/2*(x + 1))*pow(2, -10x) + 1
-def ElasticEaseOut(p, n=13, b=2, e=10):
-    return 1 - sin((n * M_2_PI + M_PI_2) * (1-p)) * pow(b, -e * p)
+def ElasticEaseOut(p, settings=defaultElasticSettings):
+    return 1 - ElasticEaseIn(1-p, settings)
 
 
 # Modeled after the piecewise exponentially-damped sine wave:
 # y = (1/2)*sin(13pi/2*(2*x))*pow(2, 10 * ((2*x) - 1))      ; [0,0.5)
 # y = (1/2)*(sin(-13pi/2*((2x-1)+1))*pow(2,-10(2*x-1)) + 2) ; [0.5, 1]
-def ElasticEaseInOut(p, n=13, b=2, e=10):
+def ElasticEaseInOut(p, settings=defaultElasticSettings):
     if (p < 0.5):
-        return 0.5 * sin((n * M_2_PI + M_PI_2) * (2 * p)) * pow(b, e * (2 * p - 1))
+        return 0.5 * ElasticEaseIn(2*p, settings)
     else:
-        return 1 - 0.5 * sin((n * M_2_PI + M_PI_2) * (2 * p)) * pow(b, -e * (2 * p - 1))
+        return 0.5 + 0.5 * ElasticEaseOut(2*p-1, settings)
 
+# ========================= BACK EASING FUNCTIONS ==============================
 
 # Modeled after the overshooting cubic y = x^3-x*sin(x*pi)
 def BackEaseIn(p, s=1):
@@ -208,8 +233,7 @@ def BackEaseIn(p, s=1):
 
 # Modeled after overshooting cubic y = 1-((1-x)^3-(1-x)*sin((1-x)*pi))
 def BackEaseOut(p, s=1):
-    f = (1 - p)
-    return 1 - (f * f * f - f * sin(f * M_PI) * s)
+    return 1 - BackEaseIn(1-p, s)
 
 
 # Modeled after the piecewise overshooting cubic function:
@@ -217,17 +241,27 @@ def BackEaseOut(p, s=1):
 # y = (1/2)*(1-((1-x)^3-(1-x)*sin((1-x)*pi))+1) ; [0.5, 1]
 def BackEaseInOut(p, s=1):
     if (p < 0.5):
-        f = 2 * p
-        return 0.5 * (f * f * f - f * sin(f * M_PI) * s)
+        return 0.5 * BackEaseIn(2*p, s)
     else:
-        f = (1 - (2 * p - 1))
-        return 0.5 * (1 - (f * f * f - f * sin(f * M_PI) * s)) + 0.5
+        return 0.5 + 0.5 * BackEaseOut(2*p-1, s)
 
+# ======================= BOUNCE EASING FUNCTIONS ==============================
+
+# geometric progression sum S(a,n)
 def ss(a, n):
     return (1-pow(a,n))/(1-a)
 
+# prepare derived settings to be used in the bounce function
+def prepareBounceSettings(n=4, a=0.5):
+    powan = pow(a,n)
+    loga  = log(a)
+    ssan  = ss(a,n)
+    return n, a, powan, loga, ssan
+
+defaultBounceSettings = prepareBounceSettings()
+
 '''
-    BounceEaseIn2
+    BounceEaseIn
 
     Formula based on geometric progression + parabola mix:
 
@@ -253,19 +287,20 @@ def ss(a, n):
 
     Note: Code derived by Marius Giurgi for sverchok @ 2017 :)
 '''
-def BounceEaseIn(p, n=4, a=0.5):
+def BounceEaseIn(p, settings=defaultBounceSettings):
+    n, a, powan, loga, ssan = settings
 
     # for ease in the progression should go from small to big bounces
     p = 1 - p # invert the progression
 
     # sn = ss(a, n)
-    sn = ss(a,n)
+    sn = ssan
 
     # remap p to start from the half of the first bounce
     p = (1/2 + (sn - 1/2)*p)/sn
 
     # the bounce number at the current p value
-    nn = floor(log(1 - p*(1 - pow(a,n))) / log(a))
+    nn = floor(log(1 - p*(1 - powan)) / loga)
 
     # find current bounce interval and current x location in interval
     x0 = ss(a, nn)
@@ -281,15 +316,15 @@ def BounceEaseIn(p, n=4, a=0.5):
     return f
 
 
-def BounceEaseOut(p, n=4, a=0.5):
-    return 1 - BounceEaseIn(1-p, n, a)
+def BounceEaseOut(p, settings=defaultBounceSettings):
+    return 1 - BounceEaseIn(1-p, settings)
 
 
-def BounceEaseInOut(p, n=4, a=0.5):
+def BounceEaseInOut(p, settings=defaultBounceSettings):
     if p < 0.5:
-        return 0.5 * BounceEaseIn(2*p, n, a)
+        return 0.5 * BounceEaseIn(2*p, settings)
     else:
-        return 0.5 + 0.5 * BounceEaseOut(2*p-1, n, a)
+        return 0.5 + 0.5 * BounceEaseOut(2*p-1, settings)
 
 
 easing_dict = {

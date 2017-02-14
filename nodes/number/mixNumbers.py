@@ -20,8 +20,6 @@
 import bpy
 from bpy.props import IntProperty, FloatProperty, BoolProperty, EnumProperty
 
-from math import sin, cos, pi, sqrt, pow, radians, floor
-from random import random
 import time
 
 from sverchok.node_tree import SverchCustomTreeNode
@@ -53,149 +51,6 @@ easingItems = [
     ("EASE_OUT", "Ease Out", "", "IPO_EASE_OUT", 1),
     ("EASE_IN_OUT", "Ease In-Out", "", "IPO_EASE_IN_OUT", 2)]
 
-# POWER interpolation : QUADTRATIC, CUBIC, QUARTIC, QUINTIC
-
-def powerInOut(x, exponent = 2):
-    '''Exponent has to be a positive integer'''
-    if x <= 0.5:
-        return pow(x * 2, exponent) / 2
-    else:
-        return pow((x - 1) * 2, exponent) / (-2 if exponent % 2 == 0 else 2) + 1
-
-def powerIn(x, exponent = 2):
-    return pow(x, exponent)
-
-def powerOut(x, exponent = 2):
-    return pow(x - 1, exponent) * (-1 if exponent % 2 == 0 else 1) + 1
-
-# CIRCULAR interpolation
-
-def circularInOut(x):
-    if x <= 0.5:
-        x *= 2
-        return (1 - sqrt(1 - x * x)) / 2
-    else:
-        x = (x - 1) * 2
-        return (sqrt(1 - x * x) + 1) / 2
-
-def circularIn(x):
-    return 1 - sqrt(1 - x * x)
-
-def circularOut(x):
-    x -= 1
-    return sqrt(1 - x * x)
-
-# SINUSOIDAL interpolation
-
-def sinInOut(x):
-    return (1 - cos(x * pi)) / 2
-
-def sinIn(x):
-    return 1 - cos(x * pi / 2)
-
-def sinOut(x):
-    return sin(x * pi / 2)
-
-# BACK swing interpolation
-
-def backInOut(x, scale = 1.7):
-    if x <= 0.5:
-        x *= 2
-        return x * x * ((scale + 1) * x - scale) / 2
-    else:
-        x = (x - 1) * 2
-        return x * x * ((scale + 1) * x + scale) / 2 + 1
-
-def backIn(x, scale = 1.7):
-    return x * x * ((scale + 1) * x - scale)
-
-def backOut(x, scale = 1.7):
-    x -= 1
-    return x * x * ((scale + 1) * x + scale) + 1
-
-# ELASTIC interpolation
-
-def prepareElasticSettings(base, exponent, bounces):
-    scale = -1 if bounces % 2 == 0 else 1
-    bounces = bounces + 0.5
-    base = max(base, 0)
-    bounces = bounces * pi * (1 if bounces % 2 == 0 else -1)
-    return (base, exponent, bounces, scale)
-
-def elasticInOut(x, settings):
-    base, exponent, bounces, scale = settings
-    if x <= 0.5:
-        x *= 2
-        return pow(base, exponent * (x - 1)) * sin(x * bounces) * scale / 2
-    else:
-        x = (1 - x) * 2
-        return 1 - pow(base, exponent * (x - 1)) * sin(x * bounces) * scale / 2
-
-def elasticIn(x, settings):
-    base, exponent, bounces, scale = settings
-    return pow(base, exponent * (x - 1)) * sin(x * bounces) * scale
-
-def elasticOut(x, settings):
-    base, exponent, bounces, scale = settings
-    x = 1 - x
-    return 1 - pow(base, exponent * (x - 1)) * sin(x * bounces) * scale
-
-# EXPONENTIAL interpolation
-
-def prepareExponentialSettings(base, exponent):
-    exponent = min(max(0, int(exponent)), 70)
-    base = max(0.0001, base) if base != 1 else 1.0001
-    minValue = pow(base, -exponent)
-    scale = 1 / (1 - minValue)
-    return (base, exponent, minValue, scale)
-
-def exponentialInOut(x, settings):
-    base, exponent, minValue, scale = settings
-    if x <= 0.5:
-        return (pow(base, exponent * (x * 2 - 1)) - minValue) * scale / 2
-    else:
-        return (2 - (pow(base, -exponent * (x * 2 - 1)) - minValue) * scale) / 2
-
-def exponentialIn(x, settings):
-    base, exponent, minValue, scale = settings
-    return (pow(base, exponent * (x - 1)) - minValue) * scale
-
-def exponentialOut(x, settings):
-    base, exponent, minValue, scale = settings
-    return 1 - (pow(base, -exponent * x) - minValue) * scale
-
-# BOUNCE interpolation
-
-def prepareBounceSettings(bounces, base):
-    '''
-    sum(widths) - widths[0] / 2 = 1
-    '''
-    bounces = max(1, int(bounces))
-    a = 2 ** (bounces - 1)
-    b = (1 - 2 ** bounces) / (1 - 2) - 2 ** (bounces - 2)
-    c = a / b
-    widths = [c / 2 ** i for i in range(bounces)]
-    heights = [x * base for x in widths]
-    heights[0] = 1
-    return (widths, heights)
-
-def bounceInOut(x, settings):
-    if x <= 0.5: return (1 - bounceOut(1 - x * 2, settings)) / 2
-    else: return bounceOut(x * 2 - 1, settings) / 2 + 0.5
-
-def bounceIn(x, settings):
-    return 1 - bounceOut(1 - x, settings)
-
-def bounceOut(x, settings):
-    widths, heights = settings
-    x += widths[0] / 2
-    for width, height in zip(widths, heights):
-        if x <= width: break
-        x -= width
-    x /= width
-    z = 4 / width * height * x
-    return 1 -(z - z * x) * width
-
 
 class SvMixNumbersNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Mix Numbers '''
@@ -203,102 +58,8 @@ class SvMixNumbersNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Mix Numbers'
     bl_icon = 'ANIM'
 
-    # AN easing based interpolator
-    def getInterpolator1(self):
-        if self.interpolation == "LINEAR":
-            interpolate = lambda v : v
-
-        elif self.interpolation == "QUADRATIC":
-            if self.easing == "EASE_IN":
-                interpolate = lambda v : powerIn(v,2)
-            elif self.easing == "EASE_OUT":
-                interpolate = lambda v : powerOut(v,2)
-            else:
-                interpolate = lambda v : powerInOut(v,2)
-
-        elif self.interpolation == "CUBIC":
-            if self.easing == "EASE_IN":
-                interpolate = lambda v : powerIn(v,3)
-            elif self.easing == "EASE_OUT":
-                interpolate = lambda v : powerOut(v,3)
-            else:
-                interpolate = lambda v : powerInOut(v,3)
-
-        elif self.interpolation == "QUARTIC":
-            if self.easing == "EASE_IN":
-                interpolate = lambda v : powerIn(v,4)
-            elif self.easing == "EASE_OUT":
-                interpolate = lambda v : powerOut(v,4)
-            else:
-                interpolate = lambda v : powerInOut(v,4)
-
-        elif self.interpolation == "QUINTIC":
-            if self.easing == "EASE_IN":
-                interpolate = lambda v : powerIn(v,5)
-            elif self.easing == "EASE_OUT":
-                interpolate = lambda v : powerOut(v,5)
-            else:
-                interpolate = lambda v : powerInOut(v,5)
-
-        elif self.interpolation == "CIRCULAR":
-            if self.easing == "EASE_IN":
-                interpolate = circularIn
-            elif self.easing == "EASE_OUT":
-                interpolate = circularOut
-            else:
-                interpolate = circularInOut
-
-        elif self.interpolation == "SINUSOIDAL":
-            if self.easing == "EASE_IN":
-                interpolate = sinIn
-            elif self.easing == "EASE_OUT":
-                interpolate = sinOut
-            else:
-                interpolate = sinInOut
-
-        elif self.interpolation == "BACK":
-            if self.easing == "EASE_IN":
-                interpolate = lambda v : backIn(v, self.backScale)
-            elif self.easing == "EASE_OUT":
-                interpolate = lambda v : backOut(v, self.backScale)
-            else:
-                interpolate = lambda v : backInOut(v, self.backScale)
-
-        elif self.interpolation == "ELASTIC":
-            settings = prepareElasticSettings(self.elasticBase, self.elasticExponent, self.elasticBounces)
-            if self.easing == "EASE_IN":
-                interpolate = lambda v : elasticIn(v, settings)
-            elif self.easing == "EASE_OUT":
-                interpolate = lambda v : elasticOut(v, settings)
-            else:
-                interpolate = lambda v : elasticInOut(v, settings)
-
-        elif self.interpolation == "EXPONENTIAL":
-            settings = prepareExponentialSettings(self.exponentialBase, self.exponentialExponent)
-            if self.easing == "EASE_IN":
-                interpolate = lambda v : exponentialIn(v, settings)
-            elif self.easing == "EASE_OUT":
-                interpolate = lambda v : exponentialOut(v, settings)
-            else:
-                interpolate = lambda v : exponentialInOut(v, settings)
-
-        elif self.interpolation == "BOUNCE":
-            settings = prepareBounceSettings(self.bounceBounces, self.bounceBase)
-            if self.easing == "EASE_IN":
-                interpolate = lambda v : bounceIn(v, settings)
-            elif self.easing == "EASE_OUT":
-                interpolate = lambda v : bounceOut(v, settings)
-            else:
-                interpolate = lambda v : bounceInOut(v, settings)
-
-        else:
-            interpolate = lambda v : v
-
-        return interpolate
-
-
     # SV easing based interpolator
-    def getInterpolator2(self):
+    def getInterpolator(self):
         if self.interpolation == "LINEAR":
             interpolate = LinearInterpolation
 
@@ -363,32 +124,35 @@ class SvMixNumbersNode(bpy.types.Node, SverchCustomTreeNode):
             n = self.elasticBounces
             b = self.elasticBase
             e = self.elasticExponent
+            settings = prepareElasticSettings(n, b, e)
             if self.easing == "EASE_IN":
-                interpolate = lambda v : ElasticEaseIn(v, n, b, e)
+                interpolate = lambda v : ElasticEaseIn(v, settings)
             elif self.easing == "EASE_OUT":
-                interpolate = lambda v : ElasticEaseOut(v, n, b, e)
+                interpolate = lambda v : ElasticEaseOut(v, settings)
             else:
-                interpolate = lambda v : ElasticEaseInOut(v, n, b, e)
+                interpolate = lambda v : ElasticEaseInOut(v, settings)
 
         elif self.interpolation == "EXPONENTIAL":
             b = self.exponentialBase
             e = self.exponentialExponent
+            settings = prepareExponentialSettings(b, e)
             if self.easing == "EASE_IN":
-                interpolate = lambda v : ExponentialEaseIn(v, b, e)
+                interpolate = lambda v : ExponentialEaseIn(v, settings)
             elif self.easing == "EASE_OUT":
-                interpolate = lambda v : ExponentialEaseOut(v, b, e)
+                interpolate = lambda v : ExponentialEaseOut(v, settings)
             else:
-                interpolate = lambda v : ExponentialEaseInOut(v, b, e)
+                interpolate = lambda v : ExponentialEaseInOut(v, settings)
 
         elif self.interpolation == "BOUNCE":
             n = self.bounceBounces
             a = self.bounceAttenuation
+            settings = prepareBounceSettings(n, a)
             if self.easing == "EASE_IN":
-                interpolate = lambda v : BounceEaseIn(v, n, a)
+                interpolate = lambda v : BounceEaseIn(v, settings)
             elif self.easing == "EASE_OUT":
-                interpolate = lambda v : BounceEaseOut(v, n, a)
+                interpolate = lambda v : BounceEaseOut(v, settings)
             else:
-                interpolate = lambda v : BounceEaseInOut(v, n, a)
+                interpolate = lambda v : BounceEaseInOut(v, settings)
 
         else:
             interpolate = LinearInterpolation
@@ -424,23 +188,23 @@ class SvMixNumbersNode(bpy.types.Node, SverchCustomTreeNode):
 
     # INTERPOLATION settings
     interpolation = EnumProperty(
-        name = "Interpolation",
-        default = "LINEAR",
-        items = interplationItems,
-        update = update_interpolation)
+        name="Interpolation",
+        default="LINEAR",
+        items=interplationItems,
+        update=update_interpolation)
 
     easing = EnumProperty(
-        name = "Easing",
-        default = "EASE_IN_OUT",
-        items = easingItems,
-        update = update_easing)
+        name="Easing",
+        default="EASE_IN_OUT",
+        items=easingItems,
+        update=update_easing)
 
     # BACK interpolation settings
     backScale = FloatProperty(
         name="Scale",
-        default=1.7,
-        soft_min = 0.0,
-        soft_max = 10.0,
+        default=0.5,
+        soft_min=0.0,
+        soft_max=10.0,
         description="Back scale",
         update=updateNode)
 
@@ -448,24 +212,24 @@ class SvMixNumbersNode(bpy.types.Node, SverchCustomTreeNode):
     elasticBase = FloatProperty(
         name="Base",
         default=1.6,
-        soft_min = 0.0,
-        soft_max = 10.0,
+        soft_min=0.0,
+        soft_max=10.0,
         description="Elastic base",
         update=updateNode)
 
     elasticExponent = FloatProperty(
         name="Exponent",
         default=6.0,
-        soft_min = 0.0,
-        soft_max = 10.0,
+        soft_min=0.0,
+        soft_max=10.0,
         description="Elastic exponent",
         update=updateNode)
 
     elasticBounces = IntProperty(
         name="Bounces",
         default=6,
-        soft_min = 1,
-        soft_max = 10,
+        soft_min=1,
+        soft_max=10,
         description="Elastic bounces",
         update=updateNode)
 
@@ -473,16 +237,16 @@ class SvMixNumbersNode(bpy.types.Node, SverchCustomTreeNode):
     exponentialBase = FloatProperty(
         name="Base",
         default=2.0,
-        soft_min = 0.0,
-        soft_max = 10.0,
+        soft_min=0.0,
+        soft_max=10.0,
         description="Exponential base",
         update=updateNode)
 
     exponentialExponent = FloatProperty(
         name="Exponent",
-        default=5.0,
-        soft_min = 0.0,
-        soft_max = 10.0,
+        default=10.0,
+        soft_min=0.0,
+        soft_max=20.0,
         description="Exponential exponent",
         update=updateNode)
 
@@ -490,16 +254,16 @@ class SvMixNumbersNode(bpy.types.Node, SverchCustomTreeNode):
     bounceAttenuation = FloatProperty(
         name="Attenuation",
         default=0.5,
-        soft_min = 0.1,
-        soft_max = 0.9,
+        soft_min=0.1,
+        soft_max=0.9,
         description="Bounce attenuation",
         update=updateNode)
 
     bounceBounces = IntProperty(
         name="Bounces",
         default=4,
-        soft_min = 1,
-        soft_max = 10,
+        soft_min=1,
+        soft_max=10,
         description="Bounce bounces",
         update=updateNode)
 
@@ -589,7 +353,7 @@ class SvMixNumbersNode(bpy.types.Node, SverchCustomTreeNode):
 
         parameters = match_long_repeat([input_value1, input_value2, input_factor])
 
-        interpolate = self.getInterpolator2()
+        interpolate = self.getInterpolator()
 
         values=[]
         for v1, v2, f in zip(*parameters):
