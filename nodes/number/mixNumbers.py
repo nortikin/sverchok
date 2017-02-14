@@ -351,36 +351,44 @@ class SvMixNumbersNode(bpy.types.Node, SverchCustomTreeNode):
                 interpolate = SineEaseInOut
 
         elif self.interpolation == "BACK":
+            s = self.backScale
             if self.easing == "EASE_IN":
-                interpolate = BackEaseIn
+                interpolate = lambda v : BackEaseIn(v, s)
             elif self.easing == "EASE_OUT":
-                interpolate = BackEaseOut
+                interpolate = lambda v : BackEaseOut(v, s)
             else:
-                interpolate = BackEaseInOut
+                interpolate = lambda v : BackEaseInOut(v, s)
 
         elif self.interpolation == "ELASTIC":
+            n = self.elasticBounces
+            b = self.elasticBase
+            e = self.elasticExponent
             if self.easing == "EASE_IN":
-                interpolate = ElasticEaseIn
+                interpolate = lambda v : ElasticEaseIn(v, n, b, e)
             elif self.easing == "EASE_OUT":
-                interpolate = ElasticEaseOut
+                interpolate = lambda v : ElasticEaseOut(v, n, b, e)
             else:
-                interpolate = ElasticEaseInOut
+                interpolate = lambda v : ElasticEaseInOut(v, n, b, e)
 
         elif self.interpolation == "EXPONENTIAL":
+            b = self.exponentialBase
+            e = self.exponentialExponent
             if self.easing == "EASE_IN":
-                interpolate = ExponentialEaseIn
+                interpolate = lambda v : ExponentialEaseIn(v, b, e)
             elif self.easing == "EASE_OUT":
-                interpolate = ExponentialEaseOut
+                interpolate = lambda v : ExponentialEaseOut(v, b, e)
             else:
-                interpolate = ExponentialEaseInOut
+                interpolate = lambda v : ExponentialEaseInOut(v, b, e)
 
         elif self.interpolation == "BOUNCE":
+            n = self.bounceBounces
+            a = self.bounceAttenuation
             if self.easing == "EASE_IN":
-                interpolate = BounceEaseIn
+                interpolate = lambda v : BounceEaseIn(v, n, a)
             elif self.easing == "EASE_OUT":
-                interpolate = BounceEaseOut
+                interpolate = lambda v : BounceEaseOut(v, n, a)
             else:
-                interpolate = BounceEaseInOut
+                interpolate = lambda v : BounceEaseInOut(v, n, a)
 
         else:
             interpolate = LinearInterpolation
@@ -479,12 +487,12 @@ class SvMixNumbersNode(bpy.types.Node, SverchCustomTreeNode):
         update=updateNode)
 
     # BOUNCE interpolation settings
-    bounceBase = FloatProperty(
-        name="Base",
-        default=1.5,
-        soft_min = 0.0,
-        soft_max = 10.0,
-        description="Bounce base",
+    bounceAttenuation = FloatProperty(
+        name="Attenuation",
+        default=0.5,
+        soft_min = 0.1,
+        soft_max = 0.9,
+        description="Bounce attenuation",
         update=updateNode)
 
     bounceBounces = IntProperty(
@@ -565,7 +573,7 @@ class SvMixNumbersNode(bpy.types.Node, SverchCustomTreeNode):
         elif self.interpolation == "BOUNCE":
             layout.column().label(text="Interpolation:")
             box = layout.box()
-            box.prop(self, 'bounceBase')
+            box.prop(self, 'bounceAttenuation')
             box.prop(self, 'bounceBounces')
 
 
