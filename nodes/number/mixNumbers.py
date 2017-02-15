@@ -51,6 +51,50 @@ easingItems = [
     ("EASE_OUT", "Ease Out", "", "IPO_EASE_OUT", 1),
     ("EASE_IN_OUT", "Ease In-Out", "", "IPO_EASE_IN_OUT", 2)]
 
+easingDictionary = {
+    # LINEAR
+    0: LinearInterpolation,
+    # SINUSOIDAL
+    1: SineEaseIn,
+    2: SineEaseOut,
+    3: SineEaseInOut,
+    # QUADRATIC
+    4: QuadraticEaseIn,
+    5: QuadraticEaseOut,
+    6: QuadraticEaseInOut,
+    # CUBIC
+    7: CubicEaseIn,
+    8: CubicEaseOut,
+    9: CubicEaseInOut,
+    # QUARTIC
+    10: QuarticEaseIn,
+    11: QuarticEaseOut,
+    12: QuarticEaseInOut,
+    # QUINTIC
+    13: QuinticEaseIn,
+    14: QuinticEaseOut,
+    15: QuinticEaseInOut,
+    # EXPONENTIAL
+    16: ExponentialEaseIn,
+    17: ExponentialEaseOut,
+    18: ExponentialEaseInOut,
+    # CIRCULAR
+    19: CircularEaseIn,
+    20: CircularEaseOut,
+    21: CircularEaseInOut,
+    # BACK
+    22: BackEaseIn,
+    23: BackEaseOut,
+    24: BackEaseInOut,
+    # BOUNCE
+    25: BounceEaseIn,
+    26: BounceEaseOut,
+    27: BounceEaseInOut,
+    # ELASTIC
+    28: ElasticEaseIn,
+    29: ElasticEaseOut,
+    30: ElasticEaseInOut,
+}
 
 class SvMixNumbersNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Mix Numbers '''
@@ -64,7 +108,7 @@ class SvMixNumbersNode(bpy.types.Node, SverchCustomTreeNode):
         iID = next(x[-1] for x in interplationItems if x[0] == self.interpolation)
         eID = next(x[-1] for x in easingItems if x[0] == self.easing)
         fID = 0 if iID == 0 else 1 + 3*(iID-1) + eID
-        interpolate = easing_dict.get(fID)
+        interpolate = easingDictionary.get(fID)
 
         # setup the interpolator with prepared parameters
         if self.interpolation == "EXPONENTIAL":
