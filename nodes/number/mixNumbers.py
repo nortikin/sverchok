@@ -21,6 +21,7 @@ import bpy
 from bpy.props import IntProperty, FloatProperty, BoolProperty, EnumProperty
 
 import time
+import re
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat, SvSetSocketAnyType
@@ -51,52 +52,6 @@ easingItems = [
     ("EASE_OUT", "Ease Out", "", "IPO_EASE_OUT", 1),
     ("EASE_IN_OUT", "Ease In-Out", "", "IPO_EASE_IN_OUT", 2)]
 
-interpolatorDictionary = {
-    # LINEAR
-    "LINEAR-EASE_IN": LinearInterpolation,
-    "LINEAR-EASE_OUT": LinearInterpolation,
-    "LINEAR-EASE_IN_OUT": LinearInterpolation,
-    # SINUSOIDAL
-    "SINUSOIDAL-EASE_IN": SineEaseIn,
-    "SINUSOIDAL-EASE_OUT": SineEaseOut,
-    "SINUSOIDAL-EASE_IN_OUT": SineEaseInOut,
-    # QUADRATIC
-    "QUADRATIC-EASE_IN": QuadraticEaseIn,
-    "QUADRATIC-EASE_OUT": QuadraticEaseOut,
-    "QUADRATIC-EASE_IN_OUT": QuadraticEaseInOut,
-    # CUBIC
-    "CUBIC-EASE_IN": CubicEaseIn,
-    "CUBIC-EASE_OUT": CubicEaseOut,
-    "CUBIC-EASE_IN_OUT": CubicEaseInOut,
-    # QUARTIC
-    "QUARTIC-EASE_IN": QuarticEaseIn,
-    "QUARTIC-EASE_OUT": QuarticEaseOut,
-    "QUARTIC-EASE_IN_OUT": QuarticEaseInOut,
-    # QUINTIC
-    "QUINTIC-EASE_IN": QuinticEaseIn,
-    "QUINTIC-EASE_OUT": QuinticEaseOut,
-    "QUINTIC-EASE_IN_OUT": QuinticEaseInOut,
-    # EXPONENTIAL
-    "EXPONENTIAL-EASE_IN": ExponentialEaseIn,
-    "EXPONENTIAL-EASE_OUT": ExponentialEaseOut,
-    "EXPONENTIAL-EASE_IN_OUT": ExponentialEaseInOut,
-    # CIRCULAR
-    "CIRCULAR-EASE_IN": CircularEaseIn,
-    "CIRCULAR-EASE_OUT": CircularEaseOut,
-    "CIRCULAR-EASE_IN_OUT": CircularEaseInOut,
-    # BACK
-    "BACK-EASE_IN": BackEaseIn,
-    "BACK-EASE_OUT": BackEaseOut,
-    "BACK-EASE_IN_OUT": BackEaseInOut,
-    # BOUNCE
-    "BOUNCE-EASE_IN": BounceEaseIn,
-    "BOUNCE-EASE_OUT": BounceEaseOut,
-    "BOUNCE-EASE_IN_OUT": BounceEaseInOut,
-    # ELASTIC
-    "ELASTIC-EASE_IN": ElasticEaseIn,
-    "ELASTIC-EASE_OUT": ElasticEaseOut,
-    "ELASTIC-EASE_IN_OUT": ElasticEaseInOut,
-}
 
 class SvMixNumbersNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Mix Numbers '''
@@ -107,34 +62,40 @@ class SvMixNumbersNode(bpy.types.Node, SverchCustomTreeNode):
     # SV easing based interpolator
     def getInterpolator(self):
         # get the interpolator function based on selected interpolation and easing
-        interpolate = interpolatorDictionary.get(self.interpolation + "-" + self.easing)
-
-        # setup the interpolator with prepared parameters
-        if self.interpolation == "EXPONENTIAL":
-            b = self.exponentialBase
-            e = self.exponentialExponent
-            settings = prepareExponentialSettings(b, e)
-            return lambda v : interpolate(v, settings)
-
-        elif self.interpolation == "BACK":
-            s = self.backScale
-            return lambda v : interpolate(v, s)
-
-        elif self.interpolation == "ELASTIC":
-            n = self.elasticBounces
-            b = self.elasticBase
-            e = self.elasticExponent
-            settings = prepareElasticSettings(n, b, e)
-            return lambda v : interpolate(v, settings)
-
-        elif self.interpolation == "BOUNCE":
-            n = self.bounceBounces
-            a = self.bounceAttenuation
-            settings = prepareBounceSettings(n, a)
-            return lambda v : interpolate(v, settings)
-
+        if self.interpolation == "LINEAR":
+            return LinearInterpolation
         else:
-            return interpolate
+            ''' this maps CAPS to title case, and returns the function '''
+            interpolatorName = self.interpolation + "_" + self.easing
+            interpolatorName = re.sub('SINUSOIDAL', 'sine', interpolatorName)  # for the exception
+            interpolate = globals()[re.sub(r'[_]', '', interpolatorName.lower().title())]
+
+            # setup the interpolator with prepared parameters
+            if self.interpolation == "EXPONENTIAL":
+                b = self.exponentialBase
+                e = self.exponentialExponent
+                settings = prepareExponentialSettings(b, e)
+                return lambda v : interpolate(v, settings)
+
+            elif self.interpolation == "BACK":
+                s = self.backScale
+                return lambda v : interpolate(v, s)
+
+            elif self.interpolation == "ELASTIC":
+                n = self.elasticBounces
+                b = self.elasticBase
+                e = self.elasticExponent
+                settings = prepareElasticSettings(n, b, e)
+                return lambda v : interpolate(v, settings)
+
+            elif self.interpolation == "BOUNCE":
+                n = self.bounceBounces
+                a = self.bounceAttenuation
+                settings = prepareBounceSettings(n, a)
+                return lambda v : interpolate(v, settings)
+
+            else:
+                return interpolate
 
 
     def update_type(self, context):
