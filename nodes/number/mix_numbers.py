@@ -65,7 +65,7 @@ class SvMixNumbersNode(bpy.types.Node, SverchCustomTreeNode):
         if self.interpolation == "LINEAR":
             return LinearInterpolation
         else:
-            ''' this maps CAPS to title case, and returns the function '''
+            ''' This maps the Strings used in the Enumerator properties to the associated function'''
             interpolatorName = self.interpolation + "_" + self.easing
             interpolatorName = re.sub('SINUSOIDAL', 'sine', interpolatorName)  # for the exception
             interpolate = globals()[re.sub(r'[_]', '', interpolatorName.lower().title())]
