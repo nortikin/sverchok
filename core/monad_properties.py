@@ -31,11 +31,11 @@ from bpy.types import PropertyGroup
 class PropsBase:
     # ignored /internal names
     internal_names  = {"prop_name", "attr", "update", "bl_rna", "rna_type"}
-
     prop_name = StringProperty(description="Internal name")
 
     def get_settings(self):
-        return {k:v for k, v in self.items() if k not in self.internal_names}
+        settings = {k:v for k, v in self.items() if k not in self.internal_names}
+        return settings
 
     def set_settings(self, settings):
         for key, value in settings.items():
@@ -95,6 +95,25 @@ float_items = (('PIXEL', 'PIXEL', 'PIXEL', 0),
 
 class SvFloatPropertySettingsGroup(PropertyGroup, PropsBase):
 
+    def get_settings(self):
+        settings = super().get_settings()
+        # okay this code could perhaps be more clever
+        # but protects from gettings the index of the EnumProperty
+        # instead of the appropriate string value
+        if "subtype" in settings:
+            ref_nr = settings['subtype']
+            for item in float_items:
+                if ref_nr == item[-1]:
+                    settings['subtype'] = item[0]
+                    break
+        if "unit" in settings:
+            ref_nr = settings['unit']
+            for item in unit_items:
+                if ref_nr == item[-1]:
+                    settings['unit'] = item[0]
+                    break
+        return settings
+
     name = StringProperty(description="Show name")
     description = StringProperty()
     default = FloatProperty(default=0.0)
@@ -144,6 +163,18 @@ int_subtypes =  [('PIXEL', 'PIXEL', 'PIXEL', 0),
 
 class SvIntPropertySettingsGroup(PropertyGroup, PropsBase):
 
+    def get_settings(self):
+        # okay this code could perhaps be more clever
+        # but protects from gettings the index of the EnumProperty
+        # instead of the appropriate string value
+        settings = super().get_settings()
+        if "subtype" in settings:
+            ref_nr = settings['subtype']
+            for item in int_subtypes:
+                if ref_nr == item[-1]:
+                    settings['subtype'] = item[0]
+                    break
+        return settings
 
     name = StringProperty(description="Show name")
     description = StringProperty()
