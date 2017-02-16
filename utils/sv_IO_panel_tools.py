@@ -22,6 +22,7 @@ import re
 import zipfile
 import traceback
 from time import gmtime, strftime
+import urllib
 from urllib.request import urlopen
 
 from os.path import basename
@@ -778,9 +779,20 @@ class SvNodeTreeImportFromGist(bpy.types.Operator):
     gist_id = StringProperty()
 
     def read_n_decode(self, url):
-        content_at_url = urlopen(url)
-        found_json = content_at_url.read().decode()
-        return found_json        
+        try:
+            content_at_url = urlopen(url)
+            found_json = content_at_url.read().decode()
+            return found_json        
+        except urllib.error.HTTPError as err:
+            if err.code == 404:
+                self.report({'ERROR'}, 'url: ' + str(url) + ' doesn\'t appear to be a valid url, copy it again from your source')
+            else:
+                self.report({'ERROR'}, 'url error:' + str(err.code))
+        except:
+            self.report({'ERROR'}, 'unspecified error, check your internet connection')
+
+        return
+
 
     def obtain_json(self, gist_id):
 
@@ -793,6 +805,8 @@ class SvNodeTreeImportFromGist(bpy.types.Operator):
             gist_id = str(gist_id)
             url = 'https://api.github.com/gists/' + gist_id
             found_json = self.read_n_decode(url)
+            if not found_json:
+                return
 
             wfile = json.JSONDecoder()
             wjson = wfile.decode(found_json)
@@ -818,9 +832,11 @@ class SvNodeTreeImportFromGist(bpy.types.Operator):
             self.gist_id = context.window_manager.clipboard
 
         nodes_json = self.obtain_json(self.gist_id.strip())
-        import_tree(ng, nodes_json=nodes_json)
+        if not nodes_json:
+            return {'CANCELLED'}
 
-        # set new node tree to active
+        # import tree and set new node tree to active
+        import_tree(ng, nodes_json=nodes_json)
         context.space_data.node_tree = ng
         return {'FINISHED'}
 
