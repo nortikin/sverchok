@@ -66,6 +66,15 @@ def write_or_append_datafiles(gist_url, layout_name):
     """
     usage:
                write_or_append_datafiles("some_long_url", "some_name")
+
+    the first time this function is called 
+    - it will generate a file at YYYY_MM_gist_uploads.csv with column headings: 
+    - gist_url, layout_name, time_stamp, sha
+    - then fill out the first line
+    any following time this function is called it will append the next line.
+
+    if the YYYY_MM changes, you get a new empty file ..and the same thing will happen.
+
     """
 
     filename = strftime("%Y_%m", gmtime()) + "_gist_uploads.csv"
