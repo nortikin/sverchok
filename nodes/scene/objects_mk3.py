@@ -219,6 +219,9 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         # iterate through references
         for obj in (data_objects.get(o.name) for o in self.object_names):
 
+            if not obj:
+                continue
+
             edgs = []
             vers = []
             vers_grouped = []
