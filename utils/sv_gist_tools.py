@@ -16,7 +16,10 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+import os
+import bpy
 import json
+from time import gmtime, strftime
 from urllib.request import urlopen
 
 
@@ -56,3 +59,34 @@ def main_upload_function(gist_filename, gist_description, gist_body, show_browse
         return get_gist_url(found_json)
 
     return upload_gist()
+
+
+
+def write_or_append_datafiles(gist_url, layout_name):
+    """
+    usage:
+               write_or_append_datafiles("some_long_url", "some_name")
+
+    the first time this function is called 
+    - it will generate a file at YYYY_MM_gist_uploads.csv with column headings: 
+    - gist_url, layout_name, time_stamp, sha
+    - then fill out the first line
+    any following time this function is called it will append the next line.
+
+    if the YYYY_MM changes, you get a new empty file ..and the same thing will happen.
+
+    """
+
+    filename = strftime("%Y_%m", gmtime()) + "_gist_uploads.csv"
+
+    dirpath = os.path.join(bpy.utils.user_resource('DATAFILES', path='sverchok', create=True))
+    fullpath = os.path.join(dirpath, filename)
+    
+    # create fullpath if it doesn't exist
+    if not os.path.exists(fullpath):
+        with open(fullpath, 'w') as ofile:
+            ofile.write('gist_url, layout_name, time_stamp, sha\n')
+    
+    with open(fullpath, 'a') as ofile:
+        raw_time_stamp = strftime("%Y_%m_%d_%H_%M", gmtime())
+        ofile.write(gist_url + ', ' + layout_name + ', ' + raw_time_stamp + ', no_sha\n')

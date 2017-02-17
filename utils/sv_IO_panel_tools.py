@@ -507,10 +507,8 @@ def add_node_to_tree(nodes, n, nodes_to_import, name_remap, create_texts):
         node.storage_set_data(node_ref)
 
     if bl_idname == 'SvObjectsNodeMK3':
-        print(node_ref)
-        obj_names = node_ref.get('object_names', [])
-        for n in obj_names:
-            node.object_names.add().name = n
+        for named_object in node_ref.get('object_names', []):
+            node.object_names.add().name = named_object
 
     gather_remapped_names(node, n, name_remap)
     apply_core_props(node, node_ref)
