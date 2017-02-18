@@ -442,7 +442,12 @@ def apply_core_props(node, node_ref):
         return
     for p in params:
         val = params[p]
-        setattr(node, p, val)
+        try:
+            setattr(node, p, val)
+        except:
+            msg = 'failed to assign value to the node'
+            print(node.name, p, val)
+            
 
 
 def add_texts(node, node_ref):
