@@ -120,27 +120,18 @@ class SvTurbulenceNode(bpy.types.Node, SverchCustomTreeNode):
         if verts and verts[0]:
             for vertex in verts[0]:
 
-                # origin
+                # set the offset origin for random seed
                 if rseed == 0:
-                    origin = 0.0,0.0,0.0
-                    origin_x = 0.0
-                    origin_y = 0.0
-                    origin_z = 0.0
+                #we set offset value to 0.0
+                    offset = [0.0,0.0,0.0]
                 else:
                 # randomise origin
                     noise.seed_set( rseed )
-                    origin = noise.random_unit_vector(3)
-                    #print('origin is: {0}'.format(origin))
-                    origin_x = ( 0.5 - origin[0] ) * 10.0
-                    origin_y = ( 0.5 - origin[1] ) * 10.0
-                    origin_z = ( 0.5 - origin[1] ) * 10.0
+                    offset = noise.random_unit_vector() * 10
 
-                    #origin_x = noise.random()  * 10.0
-                    #origin_y = noise.random()  * 10.0
-                    #origin_z = noise.random()  * 10.0
+                new_vertex = [ x+y for x, y in zip(vertex, offset)]
+                coords.append(new_vertex)
 
-                coords.append((vertex[0] + origin_x, vertex[1] + origin_y, vertex[2] + origin_z))
-                #print('coords: {0}'.format(coords))
             out.append([turbulence_function(v, m_octaves, m_hard, _noise_type, m_amp, m_freq) for v in coords])
 
         if 'Noise V' in outputs:
