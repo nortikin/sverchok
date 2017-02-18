@@ -256,6 +256,8 @@ class SvBmeshViewerNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         default=False,
         description='Allows mesh.transform(matrix) operation, quite fast!')
 
+    test_deep_copy = BoolProperty(default=False)
+
     def sv_init(self, context):
         gai = bpy.context.scene.SvGreekAlphabet_index
         self.basemesh_name = greek_alphabet[gai]
@@ -269,6 +271,7 @@ class SvBmeshViewerNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('SvObjectSocket', "Objects")
 
     def draw_buttons(self, context, layout):
+        layout.prop(self, "test_deep_copy")
         view_icon = 'BLENDER' if self.activate else 'ERROR'
         sh = 'node.sv_callback_bmesh_viewer'
 
@@ -334,7 +337,11 @@ class SvBmeshViewerNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     def get_geometry_from_sockets(self):
 
         def get(socket_name):
-            data = self.inputs[socket_name].sv_get(default=[])
+            if self.test_deep_copy:
+                data = self.inputs[socket_name].sv_get(default=[], deepcopy=False)
+            else:
+                data = self.inputs[socket_name].sv_get(default=[])
+
             return dataCorrect(data)
 
         mverts = get('vertices')
