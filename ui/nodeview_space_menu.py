@@ -28,7 +28,7 @@ import bpy
 
 import sverchok
 from sverchok.menu import make_node_cats
-from sverchok.ui.sv_icons import customIcon
+from sverchok.ui.sv_icons import custom_icon
 
 node_cats = make_node_cats()
 addon_name = sverchok.__name__
@@ -50,8 +50,8 @@ def layout_draw_categories(layout, node_details):
         if not show_icons:
             return {}
         else:
-            if hasattr(node_ref, 'bl_icon2'):
-                iconID = customIcon(node_ref.bl_icon2)
+            if hasattr(node_ref, 'sv_icon'):
+                iconID = custom_icon(node_ref.sv_icon)
                 return {'icon_value': iconID} if iconID else {}
             elif hasattr(node_ref, 'bl_icon') and node_ref.bl_icon != 'OUTLINER_OB_EMPTY':
                 iconID = node_ref.bl_icon
@@ -131,17 +131,17 @@ class NODEVIEW_MT_Dynamic_Menu(bpy.types.Menu):
         layout.menu("NODEVIEW_MT_AddNumber")
         layout.menu("NODEVIEW_MT_AddVector")
         layout.menu("NODEVIEW_MT_AddMatrix")
-        layout.menu("NODEVIEW_MT_AddLogic", icon_value=customIcon("SV_LOGIC"))
+        layout.menu("NODEVIEW_MT_AddLogic", icon_value=custom_icon("SV_LOGIC"))
         layout.menu("NODEVIEW_MT_AddListOps", **icon('NLA'))
         layout.separator()
         layout.menu("NODEVIEW_MT_AddViz", **icon('RESTRICT_VIEW_OFF'))
         layout.menu("NODEVIEW_MT_AddText")
-        layout.menu("NODEVIEW_MT_AddScene", icon_value=customIcon("SV_SCENE"))
-        layout.menu("NODEVIEW_MT_AddLayout", icon_value=customIcon("SV_LAYOUT"))
+        layout.menu("NODEVIEW_MT_AddScene", icon_value=custom_icon("SV_SCENE"))
+        layout.menu("NODEVIEW_MT_AddLayout", icon_value=custom_icon("SV_LAYOUT"))
         layout.separator()
-        layout.menu("NODEVIEW_MT_AddNetwork", icon_value=customIcon("SV_NETWORK"))
-        layout.menu("NODEVIEW_MT_AddBetas", icon_value=customIcon("SV_BETA"))
-        layout.menu("NODEVIEW_MT_AddAlphas", icon_value=customIcon("SV_ALPHA"))
+        layout.menu("NODEVIEW_MT_AddNetwork", icon_value=custom_icon("SV_NETWORK"))
+        layout.menu("NODEVIEW_MT_AddBetas", icon_value=custom_icon("SV_BETA"))
+        layout.menu("NODEVIEW_MT_AddAlphas", icon_value=custom_icon("SV_ALPHA"))
 
 
 class NODEVIEW_MT_AddGenerators(bpy.types.Menu):
