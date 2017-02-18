@@ -13,11 +13,17 @@ def logDebug(message, extra=""):
 # custom icon dictionary
 _custom_icons = {}
 
+_custom_icons_loaded = False
+
 
 def custom_icon(name):
     logDebug("custom_icon called: ", name)
     global _custom_icons
-    
+    global _custom_icons_loaded
+
+    if not _custom_icons_loaded:
+        load_custom_icons()
+
     if name in _custom_icons:
         return _custom_icons[name].icon_id
     else:
@@ -27,8 +33,9 @@ def custom_icon(name):
 
 def load_custom_icons():
     logDebug("load_custom_icons called")
-	global _custom_icons
-	
+    global _custom_icons
+    global _custom_icons_loaded
+
     _custom_icons = bpy.utils.previews.new()
 
     iconsDir = os.path.join(os.path.dirname(__file__), "icons")
@@ -37,18 +44,22 @@ def load_custom_icons():
     iconFiles = [os.path.basename(x) for x in glob.glob(iconPath)]
     logDebug(iconFiles)
 
-    iconIDs = []
     for iconFile in iconFiles:
         iconName = os.path.splitext(iconFile)[0]
         iconID = iconName.upper()
-        iconIDs.append(iconID)
         logDebug(iconID)
         _custom_icons.load(iconID, os.path.join(iconsDir, iconFile), "IMAGE")
+
+    _custom_icons_loaded = True
 
 
 def remove_custom_icons():
     logDebug("remove_custom_icons called")
     global _custom_icons
+    global _custom_icons_loaded
+
+    _custom_icons_loaded = False
+
     bpy.utils.previews.remove(_custom_icons)
 
 
