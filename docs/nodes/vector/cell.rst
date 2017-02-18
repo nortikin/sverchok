@@ -11,7 +11,7 @@ Inputs & Parameters
 +================+=========================================================================+
 | Noise Function | Pick between Scalar and Vector output                                   |
 +----------------+-------------------------------------------------------------------------+
-| Seed           | Accepts float values, they are hashed into *Integers* internally.       |
+| Seed           | Accepts integers values.       |
 +----------------+-------------------------------------------------------------------------+
 
 Examples
