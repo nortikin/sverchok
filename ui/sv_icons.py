@@ -10,13 +10,14 @@ def logDebug(message, extra=""):
     if DEBUG:
         print(message, extra)
 
-# custom icon dictonary
+# custom icon dictionary
 _custom_icons = {}
 
 
 def custom_icon(name):
     logDebug("custom_icon called: ", name)
-
+    global _custom_icons
+    
     if name in _custom_icons:
         return _custom_icons[name].icon_id
     else:
@@ -26,7 +27,8 @@ def custom_icon(name):
 
 def load_custom_icons():
     logDebug("load_custom_icons called")
-
+	global _custom_icons
+	
     _custom_icons = bpy.utils.previews.new()
 
     iconsDir = os.path.join(os.path.dirname(__file__), "icons")
@@ -46,6 +48,7 @@ def load_custom_icons():
 
 def remove_custom_icons():
     logDebug("remove_custom_icons called")
+    global _custom_icons
     bpy.utils.previews.remove(_custom_icons)
 
 
