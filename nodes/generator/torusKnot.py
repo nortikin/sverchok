@@ -27,7 +27,7 @@ import time
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat, SvSetSocketAnyType
-from sverchok.ui.sv_icons import *
+from sverchok.ui.sv_icons import customIcon
 
 DEBUG=False
 

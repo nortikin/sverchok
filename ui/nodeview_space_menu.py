@@ -28,7 +28,7 @@ import bpy
 
 import sverchok
 from sverchok.menu import make_node_cats
-from sverchok.ui.sv_icons import *
+from sverchok.ui.sv_icons import customIcon
 
 node_cats = make_node_cats()
 addon_name = sverchok.__name__
