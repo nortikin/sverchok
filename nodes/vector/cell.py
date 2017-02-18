@@ -17,7 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-from bpy.props import EnumProperty
+from bpy.props import EnumProperty, IntProperty
 from mathutils import noise
 
 from sverchok.node_tree import SverchCustomTreeNode
@@ -56,8 +56,11 @@ class SvCellNode(bpy.types.Node, SverchCustomTreeNode):
         description='Output type',
         update=changeMode)
 
+    rseed = IntProperty(default=0, description="Random seed",name="Random seed", update=updateNode)
+
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', 'Vertices')
+        self.inputs.new('StringsSocket', 'Random seed').prop_name = 'rseed'
         self.outputs.new('VerticesSocket', 'Noise V')
 
     def draw_buttons(self, context, layout):
@@ -71,13 +74,26 @@ class SvCellNode(bpy.types.Node, SverchCustomTreeNode):
 
         out = []
         verts = inputs['Vertices'].sv_get()
+        rseed = inputs['Random seed'].sv_get()[0][0]
 
         cell_function = cell_f[self.out_mode]
 
+        coords = []
 
         if verts and verts[0]:
-            for vertices in verts:
-                out.append([cell_function(v) for v in vertices])
+            for vertex in verts[0]:
+                # set the offset origin for random seed
+                if rseed == 0:
+                    #we set offset value to 0.0
+                    offset = [0.0,0.0,0.0]
+                else:
+                    # randomise origin
+                    noise.seed_set( rseed )
+                    offset = noise.random_unit_vector() * 10
+
+                new_vertex = [ x+y for x, y in zip(vertex, offset)]
+                coords.append(new_vertex)
+            out.append([cell_function(v)  for v in coords])
 
         if 'Noise V' in outputs:
             out = Vector_degenerate(out)
