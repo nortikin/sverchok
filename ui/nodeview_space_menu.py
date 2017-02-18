@@ -45,19 +45,19 @@ def get_icon_switch():
 def layout_draw_categories(layout, node_details):
     show_icons = menu_prefs.get('show_icons')
 
-    def icon(display_icon):
+    def icon(node_ref):
         '''returns empty dict if show_icons is False, else the icon passed'''
-        return {'icon': display_icon for i in [1] if show_icons and display_icon}
-
-    def get_icon(node_ref):
-        # some nodes don't declare a bl_icon, but most do so try/except is fine.
-        try:
-            _icon = getattr(node_ref, 'bl_icon2') or getattr(node_ref, 'bl_icon')
-            if _icon == 'OUTLINER_OB_EMPTY':
-                _icon = None
-        except:
-            _icon = None
-        return _icon
+        if not show_icons:
+            return {}
+        else:
+            if hasattr(node_ref, 'bl_icon2'):
+                iconID = customIcon(node_ref.bl_icon2)
+                return {'icon_value': iconID} if iconID else {}
+            elif hasattr(node_ref, 'bl_icon') and node_ref.bl_icon != 'OUTLINER_OB_EMPTY':
+                iconID = node_ref.bl_icon
+                return {'icon': iconID} if iconID else {}
+            else:
+                return {}
 
     add_n_grab = 'node.add_node'
     for node_info in node_details:
@@ -69,14 +69,8 @@ def layout_draw_categories(layout, node_details):
         bl_idname = node_info[0]
         node_ref = getattr(bpy.types, bl_idname)
 
-        display_icon = get_icon(node_ref)
         if hasattr(node_ref, "bl_label"):
-
-            if hasattr(node_ref, 'bl_icon2'):
-                layout_params = dict(text=node_ref.bl_label, icon_value=customIcon(display_icon))
-            else:
-                layout_params = dict(text=node_ref.bl_label, **icon(display_icon))
-
+            layout_params = dict(text=node_ref.bl_label, **icon(node_ref))
         elif bl_idname == 'NodeReroute':
             layout_params = dict(text='Reroute')
         else:
@@ -219,7 +213,7 @@ def add_keymap():
         kmi = km.keymap_items.new('wm.call_menu', 'SPACE', 'PRESS', ctrl=True)
         kmi.properties.name = "NODEVIEW_MT_Dynamic_Menu"
         nodeview_keymaps.append((km, kmi))
-    
+
 def remove_keymap():
     for km, kmi in nodeview_keymaps:
         km.keymap_items.remove(kmi)
