@@ -444,10 +444,11 @@ def apply_core_props(node, node_ref):
         val = params[p]
         try:
             setattr(node, p, val)
-        except:
+        except Exception as e:
+            print(repr(e))
             msg = 'failed to assign value to the node'
             print(node.name, p, val)
-            
+
 
 
 def add_texts(node, node_ref):
