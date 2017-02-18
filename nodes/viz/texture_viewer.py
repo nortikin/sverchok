@@ -23,8 +23,6 @@ from bpy.props import FloatProperty, EnumProperty, StringProperty, BoolProperty
 import blf
 import bgl
 
-from mathutils import noise
-
 from sverchok.data_structure import updateNode, node_id
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.ui import nodeview_bgl_viewer_draw_mk2 as nvBGL2
@@ -62,12 +60,12 @@ def simple_screen(x, y, args):
         bgl.glBindTexture(bgl.GL_TEXTURE_2D, texname)
 
         #bgl.glColor4f(*color)
-        bgl.glBegin(bgl.GL_POLYGON)
+        bgl.glBegin(bgl.GL_QUADS)
 
+        for coord in [(x, y), (x, y+1), (x+1, y+1), (x+1, y)]:
+            bgl.glTexCoord2f(*coord)
         for coord in [(x, y), (x+w, y), (w+x, y-h), (x, y-h)]:
             bgl.glVertex2f(*coord)
-        for coord in [(x, y), (x+1, y), (1+x, y-1), (x, y-1)]:
-            bgl.glTexCoord2f(*coord)
 
         bgl.glEnd()
 
@@ -80,6 +78,7 @@ def simple_screen(x, y, args):
         #bgl.glClearColor(0.0,0.0,0.0,0.0)
         bgl.glShadeModel(bgl.GL_FLAT)
         bgl.glEnable(bgl.GL_DEPTH_TEST)
+        bgl.glEnable(bgl.GL_TEXTURE_2D)
         Buffer = bgl.Buffer(bgl.GL_FLOAT, [width,height], data)
         bgl.glPixelStorei(bgl.GL_UNPACK_ALIGNMENT,1)
 
@@ -101,12 +100,12 @@ def simple_screen(x, y, args):
 
         bgl.glTexImage2D(
                bgl.GL_TEXTURE_2D, 0, bgl.GL_LUMINANCE, width, height, 0,
-               bgl.GL_LUMINANCE, bgl.GL_BITMAP, Buffer
+               bgl.GL_LUMINANCE, bgl.GL_FLOAT, Buffer
            )
 
     init_texture(width,height,texname,data)
 
-    draw_texture(x=x, y=y, w=140, h=140, color=back_color,texname=texname)
+    draw_texture(x=x, y=y, w=64, h=64, color=back_color,texname=texname)
 
 class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvTextureViewerNode'
@@ -114,7 +113,7 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
     n_id = StringProperty(default='')
     activate = BoolProperty(
-        name='Show', description='Activate drawing',
+        name='Show', description='Activate texture drawing',
         default=True,
         update=updateNode)
 
