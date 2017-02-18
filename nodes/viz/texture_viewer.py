@@ -59,13 +59,13 @@ def simple_screen(x, y, args):
         bgl.glTexEnvf(bgl.GL_TEXTURE_ENV, bgl.GL_TEXTURE_ENV_MODE, bgl.GL_REPLACE)
         bgl.glBindTexture(bgl.GL_TEXTURE_2D, texname)
 
-        #bgl.glColor4f(*color)
         bgl.glBegin(bgl.GL_QUADS)
 
-        for coord in [(x, y), (x, y+1), (x+1, y+1), (x+1, y)]:
-            bgl.glTexCoord2f(*coord)
-        for coord in [(x, y), (x+w, y), (w+x, y-h), (x, y-h)]:
-            bgl.glVertex2f(*coord)
+        #bgl.glNormal3f(0, 0, 1)
+        bgl.glTexCoord2d(0, 0); bgl.glVertex2f( x, y )
+        bgl.glTexCoord2d(1, 0); bgl.glVertex2f( x + 64 , y )
+        bgl.glTexCoord2d(1, 1); bgl.glVertex2f( x + 64, y + 64 )
+        bgl.glTexCoord2d(0, 1); bgl.glVertex2f( x, y + 64 )
 
         bgl.glEnd()
 
@@ -76,14 +76,14 @@ def simple_screen(x, y, args):
     def init_texture(width,height,texname,data):
 
         #bgl.glClearColor(0.0,0.0,0.0,0.0)
-        bgl.glShadeModel(bgl.GL_FLAT)
+        bgl.glShadeModel(bgl.GL_SMOOTH)
         bgl.glEnable(bgl.GL_DEPTH_TEST)
-        bgl.glEnable(bgl.GL_TEXTURE_2D)
+
         Buffer = bgl.Buffer(bgl.GL_FLOAT, [width,height], data)
         bgl.glPixelStorei(bgl.GL_UNPACK_ALIGNMENT,1)
 
         bgl.glGenTextures(1,Buffer)
-        #bgl.glEnable(bgl.GL_TEXTURE_2D)
+        bgl.glEnable(bgl.GL_TEXTURE_2D)
         #glBindTexture(target, texture): texture (unsigned int) – Specifies the name of a texture.
         bgl.glBindTexture(bgl.GL_TEXTURE_2D, texname)
 
@@ -93,10 +93,6 @@ def simple_screen(x, y, args):
         bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_WRAP_T, bgl.GL_CLAMP)
         bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_MAG_FILTER, bgl.GL_LINEAR)
         bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_MIN_FILTER, bgl.GL_LINEAR)
-
-        #bgl.glEnable(bgl.GL_BLEND)
-        #bgl.glBlendFunc(bgl.GL_SRC_ALPHA, bgl.GL_ONE_MINUS_SRC_ALPHA)
-        #bgl.glShadeModel(bgl.GL_SMOOTH)
 
         bgl.glTexImage2D(
                bgl.GL_TEXTURE_2D, 0, bgl.GL_LUMINANCE, width, height, 0,
@@ -160,7 +156,8 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
             }
             nvBGL2.callback_enable(n_id, draw_data)
 
-
+    def free(self):
+        nvBGL2.callback_disable(node_id(self))
 
     # reset n_id on copy
     def copy(self, node):
