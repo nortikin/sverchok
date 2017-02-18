@@ -261,6 +261,10 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
 
         node_dict['params'] = node_items
 
+        if node.bl_idname == 'NodeFrame':
+            frame_props = 'shrink', 'use_custom_color', 'label_size'
+            node_dict['params'].update({fpv: getattr(node, fpv) for fpv in frame_props})
+
         node_dict['height'] = node.height
         node_dict['width'] = node.width
         node_dict['label'] = node.label
