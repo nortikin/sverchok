@@ -22,11 +22,11 @@ import bpy
 from bpy.props import BoolProperty, IntProperty, FloatProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (match_long_repeat, sv_zip,
+from sverchok.data_structure import (match_long_repeat, sv_zip, fullList,
                             updateNode, SvSetSocketAnyType)
 
 
-def cylinder_vertices(Subd, Vertices, Height, RadiusBot, RadiusTop, Separate):
+def cylinder_vertices(Subd, Vertices, Height, RadiusBot, RadiusTop, SliceScale, Separate):
     theta = 360/Vertices
     heightSubd = Height/(Subd+1)
     X = []
@@ -34,6 +34,7 @@ def cylinder_vertices(Subd, Vertices, Height, RadiusBot, RadiusTop, Separate):
     Z = []
     for i in range(Subd+2):
         radius = RadiusBot - ((RadiusBot-RadiusTop)/(Subd+1))*i
+        radius *= SliceScale[i]
         for j in range(Vertices):
             X.append(radius*cos(radians(theta*j)))
             Y.append(radius*sin(radians(theta*j)))
@@ -111,6 +112,11 @@ class CylinderNode(bpy.types.Node, SverchCustomTreeNode):
     cap_ = BoolProperty(name='Caps',
                         default=True,
                         options={'ANIMATABLE'}, update=updateNode)
+    sliceScale_ = FloatProperty(name='Slice Scale',
+                                description="Scale factor for each slice",
+                            default=1.0,
+                            options={'ANIMATABLE'}, update=updateNode)
+
     Separate = BoolProperty(name='Separate', description='Separate UV coords',
                             default=False,
                             update=updateNode)
@@ -121,6 +127,7 @@ class CylinderNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('StringsSocket', "Vertices").prop_name = 'vert_'
         self.inputs.new('StringsSocket', "Height").prop_name = 'height_'
         self.inputs.new('StringsSocket', "Subdivisions").prop_name = 'subd_'
+        self.inputs.new('StringsSocket', "SubScales").prop_name = 'sliceScale_'
 
         self.outputs.new('VerticesSocket', "Vertices", "Vertices")
         self.outputs.new('StringsSocket', "Edges", "Edges")
@@ -141,22 +148,26 @@ class CylinderNode(bpy.types.Node, SverchCustomTreeNode):
         Vertices = [max(int(v), 3) for v in inputs['Vertices'].sv_get()[0]]
         Height = inputs['Height'].sv_get()[0]
         Sub = [max(int(s), 0) for s in inputs['Subdivisions'].sv_get()[0]]
-        params = match_long_repeat([Sub, Vertices, Height, RadiusBot, RadiusTop])
+        SubScale = inputs['SubScales'].sv_get()[0]
+
+        fullList(SubScale, Sub[0]+2)
+
+        params = match_long_repeat([Sub, Vertices, Height, RadiusBot, RadiusTop, [SubScale]])
         # outputs
         if self.outputs['Vertices'].is_linked:
 
-            points = [cylinder_vertices(s, v, h, rb, rt, self.Separate)
-                      for s, v, h, rb, rt in zip(*params)]
+            points = [cylinder_vertices(s, v, h, rb, rt, ss, self.Separate)
+                      for s, v, h, rb, rt , ss in zip(*params)]
             SvSetSocketAnyType(self, 'Vertices', points)
 
         if self.outputs['Edges'].is_linked:
             edges = [cylinder_edges(s, v)
-                     for s, v, h, rb, rt in zip(*params)]
+                     for s, v, h, rb, rt, ss in zip(*params)]
             SvSetSocketAnyType(self, 'Edges', edges)
 
         if self.outputs['Polygons'].is_linked:
             faces = [cylinder_faces(s, v, self.cap_)
-                     for s, v, h, rb, rt in zip(*params)]
+                     for s, v, h, rb, rt, ss in zip(*params)]
             SvSetSocketAnyType(self, 'Polygons', faces)
 
     def update_socket(self, context):
