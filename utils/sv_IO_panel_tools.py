@@ -39,9 +39,10 @@ from sverchok.utils import sv_gist_tools
 
 SCRIPTED_NODES = {'SvScriptNode', 'SvScriptNodeMK2', 'SvScriptNodeLite'}
 
-_EXPORTER_REVISION_ = '0.063'
+_EXPORTER_REVISION_ = '0.064'
 
 '''
+0.064 prop_types as a property is now tracked for scalarmath and logic node, this uses boolvec.
 0.063 add support for obj_in_lite obj serialization \o/ .
 0.062 (no revision change) - fixes import of sn texts that are present already in .blend
 0.062 (no revision change) - looks in multiple places for textmode param.
@@ -440,7 +441,6 @@ def gather_remapped_names(node, n, name_remap):
 
 def apply_core_props(node, node_ref):
     params = node_ref['params']
-    # print(node.name, params)
     if 'cls_dict' in params:
         return
     for p in params:
@@ -448,9 +448,13 @@ def apply_core_props(node, node_ref):
         try:
             setattr(node, p, val)
         except Exception as e:
-            print(repr(e))
+            error_message = repr(e)  # for reasons
+            print(error_message)
             msg = 'failed to assign value to the node'
-            print(node.name, p, val)
+            print(node.name, p, val, msg)
+            if "val: expected sequence items of type boolean, not int" in error_message:
+                print("going to convert a list of ints to a list of bools and assign that instead")
+                setattr(node, p, [bool(i) for i in val])
 
 
 
