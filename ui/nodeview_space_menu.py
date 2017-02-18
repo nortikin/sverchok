@@ -142,6 +142,8 @@ class NODEVIEW_MT_Dynamic_Menu(bpy.types.Menu):
         layout.menu("NODEVIEW_MT_AddNetwork")
         layout.menu("NODEVIEW_MT_AddBetas", **icon('OUTLINER_DATA_POSE'))
         layout.menu("NODEVIEW_MT_AddAlphas", **icon('ERROR'))
+        layout.separator() 
+        layout.menu("NODE_MT_category_SVERCHOK_GROUPS", icon="RNA")
 
 
 class NODEVIEW_MT_AddGenerators(bpy.types.Menu):
