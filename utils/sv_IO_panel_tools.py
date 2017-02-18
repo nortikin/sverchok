@@ -205,6 +205,8 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
 
             if isinstance(v, (float, int, str)):
                 node_items[k] = v
+            elif node.bl_idname in {'ScalarMathNode', 'SvLogicNode'} and k == 'prop_types':
+                node_items[k] = getattr(node, k)[:]
             else:
                 node_items[k] = v[:]
 
