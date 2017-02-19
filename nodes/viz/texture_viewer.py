@@ -42,22 +42,31 @@ palette_dict = {
 }
 
 size_tex_list=[
-    ('EXTRA_SMALL','extra_small','extra small tex: 64px','',0),
-    ('SMALL','small','small tex: 128px',1),
-    ('MEDIUM','medium','medium tex: 256px',2),
-    ('LARGE','large','large tex: 512px',3),
-    ('EXTRA_LARGE','extra_large','extra large tex: 1024px',4)
+    ('EXTRA_SMALL','extra_small','extra small tex: 64px','',64),
+    ('SMALL','small','small tex: 128px','',128),
+    ('MEDIUM','medium','medium tex: 256px','',256),
+    ('LARGE','large','large tex: 512px','',512),
+    ('EXTRA_LARGE','extra_large','extra large tex: 1024px','',1024)
 ]
+
+size_tex_dict = {
+    'EXTRA_SMALL': 64,
+    'SMALL': 128,
+    'MEDIUM': 256,
+    'LARGE': 512,
+    'EXTRA_LARGE': 1024
+}
 
 def simple_screen(x, y, args):
     #func = args[0]
     back_color, grid_color, line_color = args[0]
     data = args[1]
-    #size = args[2]
+    size = args[2]
+    print('size of tex inside simple screen: {0}'.format(size))
 
     texture = 1
-    width = 64
-    height = 64
+    width = size
+    height = size
     texname = 0
 
     def draw_borders(x=0, y=0, w=30, h=10, color=(0.0, 0.0, 0.0, 1.0)):
@@ -69,11 +78,8 @@ def simple_screen(x, y, args):
             bgl.glVertex2f(*coord)
         bgl.glEnd()
 
-
-
     def draw_texture(x=0, y=0, w=30, h=10, color=(0.0, 0.0, 0.0, 1.0), texname=texname):
         #function to draw a texture
-        #bgl.glClear(bgl.GL_COLOR_BUFFER_BIT | bgl.GL_DEPTH_BUFFER_BIT)
         bgl.glEnable(bgl.GL_TEXTURE_2D)
         bgl.glTexEnvf(bgl.GL_TEXTURE_ENV, bgl.GL_TEXTURE_ENV_MODE, bgl.GL_REPLACE)
         bgl.glBindTexture(bgl.GL_TEXTURE_2D, texname)
@@ -93,7 +99,6 @@ def simple_screen(x, y, args):
 
     def init_texture(width,height,texname,data):
         #function to init the texture
-        #bgl.glClearColor(0.0,0.0,0.0,0.0)
         bgl.glShadeModel(bgl.GL_SMOOTH)
         bgl.glEnable(bgl.GL_DEPTH_TEST)
 
@@ -119,9 +124,9 @@ def simple_screen(x, y, args):
 
     init_texture(width,height,texname,data)
 
-    draw_texture(x=x, y=y, w=128, h=128, color=back_color,texname=texname)
+    draw_texture(x=x, y=y, w=width, h=height, color=back_color,texname=texname)
 
-    draw_borders(x=x, y=y, w=128, h=128, color=(0.243299, 0.590403, 0.836084, 1.00))
+    draw_borders(x=x, y=y, w=width, h=height, color=(0.243299, 0.590403, 0.836084, 1.00))
 
 class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvTextureViewerNode'
@@ -175,15 +180,19 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
             palette = palette_dict.get(self.selected_theme_mode)[:]
             x, y = [int(j) for j in (self.location + Vector((self.width + 20, 0)))[:]]
-            #size_tex = size_tex_list.get(int(self.selected_mode))[:]
+            #size_tex = size_tex_dict.get('SMALL')
+            size_tex = size_tex_dict.get(self.selected_mode)
+            #size_tex = size_tex_list[0][4]
+            print(size_tex)
+            #print(self.selected_mode[1])
 
             draw_data = {
                 'tree_name': self.id_data.name[:],
                 'mode': 'custom_function',
                 'custom_function': simple_screen,
                 'loc': (x, y),
-                #'args': (palette, _data, size_tex)
-                'args': (palette, _data)
+                'args': (palette, _data, size_tex)
+                #'args': (palette, _data)
             }
             nvBGL2.callback_enable(n_id, draw_data)
 
