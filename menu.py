@@ -33,6 +33,99 @@ class SverchNodeCategory(NodeCategory):
     def poll(cls, context):
         return context.space_data.tree_type == 'SverchCustomTreeType'
 
+    def __init__(self, *args, **kwargs):
+        if "icon" in kwargs:
+            self.icon = kwargs.pop('icon')
+        else:
+            self.icon = None
+
+        super().__init__(*args, **kwargs)
+
+class SvNodeItem(NodeItem):
+    def __init__(self, *args, **kwargs):
+        if "icon" in kwargs:
+            self.icon = kwargs.pop('icons')
+        else:
+            bl_idname = args[0]
+            cls = getattr(bpy.types, bl_idname, None)
+            try:
+                self.icon = cls.bl_icon
+                if self.icon == 'OUTLINER_OB_EMPTY':
+                    self.icon = None
+            except:
+                self.icon = None
+        super().__init__(*args, **kwargs)
+
+    @staticmethod
+    def draw(self, layout, context):
+        default_context = bpy.app.translations.contexts.default
+        if self.icon:
+            props = layout.operator("node.add_node", text=self.label, text_ctxt=default_context, icon=self.icon)
+        else:
+            props = layout.operator("node.add_node", text=self.label, text_ctxt=default_context)
+
+        props.type = self.nodetype
+        props.use_transform = True
+
+        for setting in self.settings.items():
+            ops = props.settings.add()
+            ops.name = setting[0]
+            ops.value = setting[1]
+
+
+
+# from node_items utils
+
+def register_node_categories(identifier, cat_list):
+    if identifier in nodeitems_utils._node_categories:
+        raise KeyError("Node categories list '%s' already registered" % identifier)
+        return
+
+    # works as draw function for both menus and panels
+    def draw_node_item(self, context):
+        layout = self.layout
+        col = layout.column()
+        for item in self.category.items(context):
+            item.draw(item, col, context)
+
+    menu_types = []
+    panel_types = []
+    for cat in cat_list:
+        menu_type = type("NODE_MT_category_" + cat.identifier, (bpy.types.Menu,), {
+            "bl_space_type": 'NODE_EDITOR',
+            "bl_label": cat.name,
+            "category": cat,
+            "poll": cat.poll,
+            "draw": draw_node_item,
+            })
+        panel_type = type("NODE_PT_category_" + cat.identifier, (bpy.types.Panel,), {
+            "bl_space_type": 'NODE_EDITOR',
+            "bl_region_type": 'TOOLS',
+            "bl_label": cat.name,
+            "bl_category": cat.name,
+            "category": cat,
+            "poll": cat.poll,
+            "draw": draw_node_item,
+            })
+
+        menu_types.append(menu_type)
+        panel_types.append(panel_type)
+
+        bpy.utils.register_class(menu_type)
+        bpy.utils.register_class(panel_type)
+
+    def draw_add_menu(self, context):
+        layout = self.layout
+
+        for cat in cat_list:
+            if cat.poll(context):
+                if cat.icon:
+                    layout.menu("NODE_MT_category_%s" % cat.identifier, icon=cat.icon)
+                else:
+                    layout.menu("NODE_MT_category_%s" % cat.identifier)
+
+    # stores: (categories list, menu draw function, submenu types, panel types)
+    nodeitems_utils._node_categories[identifier] = (cat_list, draw_add_menu, menu_types, panel_types)
 
 def make_node_cats():
     '''
@@ -62,7 +155,7 @@ def make_node_cats():
 
         # final append
         node_cats[category] = temp_list
-    
+
     return node_cats
 
 
@@ -156,26 +249,34 @@ def make_categories():
     original_categories = make_node_cats()
 
     node_cats = juggle_and_join(original_categories)
+    categories_icon = {
+        'Generators':'OBJECT_DATAMODE',
+    }
 
     node_categories = []
     node_count = 0
     for category, nodes in node_cats.items():
         name_big = "SVERCHOK_" + category.replace(' ', '_')
+        icon = categories_icon.get(category)
         node_categories.append(SverchNodeCategory(
             name_big, category,
-            items=[NodeItem(props[0]) for props in nodes]))
+            items=[SvNodeItem(props[0]) for props in nodes],
+            icon=icon))
         node_count += len(nodes)
     node_categories.append(SverchNodeCategory("SVERCHOK_GROUPS", "Groups", items=sv_group_items))
 
     return node_categories, node_count, original_categories
 
 
+
+
+
 def reload_menu():
     menu, node_count, original_categories = make_categories()
     if 'SVERCHOK' in nodeitems_utils._node_categories:
         nodeitems_utils.unregister_node_categories("SVERCHOK")
-    nodeitems_utils.register_node_categories("SVERCHOK", menu)
-    
+    register_node_categories("SVERCHOK", menu)
+
     build_help_remap(original_categories)
 
 
@@ -183,7 +284,7 @@ def register():
     menu, node_count, original_categories = make_categories()
     if 'SVERCHOK' in nodeitems_utils._node_categories:
         nodeitems_utils.unregister_node_categories("SVERCHOK")
-    nodeitems_utils.register_node_categories("SVERCHOK", menu)
+    register_node_categories("SVERCHOK", menu)
 
     build_help_remap(original_categories)
 

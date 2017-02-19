@@ -3,6 +3,7 @@ import traceback
 import bpy
 from bpy.app.handlers import persistent
 
+import sverchok
 from sverchok import old_nodes
 from sverchok import data_structure
 from sverchok.core import upgrade_nodes, upgrade_group
@@ -134,6 +135,8 @@ def sv_post_load(scene):
     for ng in sv_trees:
         if ng.bl_idname == 'SverchCustomTreeType' and ng.nodes:
             ng.update()
+
+    sverchok.menu.reload_menu()
 
 
 def set_frame_change(mode):
