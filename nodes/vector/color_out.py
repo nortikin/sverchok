@@ -52,6 +52,8 @@ class SvColorsOutNode(bpy.types.Node, SverchCustomTreeNode):
         size=4, min=0.0, max=1.0, subtype='COLOR'
     )
 
+    use_alpha = BoolProperty(default=False, update=updateNode)
+
     def sv_init(self, context):
         self.width = 100
         inew = self.inputs.new
