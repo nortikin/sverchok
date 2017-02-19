@@ -120,7 +120,10 @@ class SvColorsInNode(bpy.types.Node, SverchCustomTreeNode):
             fullList(i3[i], max_v)
 
             if self.selected_mode == 'RGB':
-                series_vec.append(list(zip(i0[i], i1[i], i2[i], i3[i])))
+                if self.use_alpha:
+                    series_vec.append(list(zip(i0[i], i1[i], i2[i], i3[i])))
+                else:
+                    series_vec.append(list(zip(i0[i], i1[i], i2[i])))
             else:
                 if self.selected_mode == 'HSV':
                     convert = colorsys.hsv_to_rgb
@@ -132,8 +135,11 @@ class SvColorsInNode(bpy.types.Node, SverchCustomTreeNode):
                 # colordata = [list(convert(c0, c1, c2)) + [c3] for c0, c1, c2, c3 in zip(i0[i], i1[i], i2[i], i3[i])]
                 colordata = []
                 for c0, c1, c2, c3 in zip(i0[i], i1[i], i2[i], i3[i]):
-                    colorv = list(convert(c0, c1, c2)) + [c3]
-                    colordata.append(colorv)
+                    colorv = list(convert(c0, c1, c2))
+                    if self.use_alpha:
+                        colordata.append([colorv[0], colorv[1], colorv[2], c3])
+                    else:
+                        colordata.append(colorv)
 
                 series_vec.append(colordata)
 
