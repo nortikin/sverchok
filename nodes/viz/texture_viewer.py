@@ -76,6 +76,7 @@ def simple_screen(x, y, args):
 
         for coord in [(x, y), (x+w, y), (w+x, y-h), (x, y-h)]:
             bgl.glVertex2f(*coord)
+
         bgl.glEnd()
 
     def draw_texture(x=0, y=0, w=30, h=10, color=(0.0, 0.0, 0.0, 1.0), texname=texname):
@@ -129,6 +130,7 @@ def simple_screen(x, y, args):
     draw_borders(x=x, y=y, w=width, h=height, color=(0.243299, 0.590403, 0.836084, 1.00))
 
 class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
+    '''Texture Viewer node'''
     bl_idname = 'SvTextureViewerNode'
     bl_label = 'Texture viewer'
 
