@@ -88,24 +88,35 @@ class SvColorsOutNode(bpy.types.Node, SverchCustomTreeNode):
         else:
             data = [[self.unit_color[:]]]
 
-        A, B, C, D = [], [], [], []
-        if self.use_alpha:
-            for obj in data:
-                a_, b_, c_, d_ = (list(x) for x in zip(*obj))
-                A.append(a_)
-                B.append(b_)
-                C.append(c_)
-                D.append(d_)
-            for i, socket in enumerate(self.outputs):
-                self.outputs[socket.name].sv_set([A, B, C, D][i])
-        else:
-            for obj in data:
-                a_, b_, c_ = (list(x) for x in zip(*obj))
-                A.append(a_)
-                B.append(b_)
-                C.append(c_)
-            for i, socket in enumerate(self.outputs[:3]):
-                self.outputs[socket.name].sv_set([A, B, C][i])
+        # A, B, C, D = [], [], [], []
+        # if self.use_alpha:
+        #     for obj in data:
+        #         a_, b_, c_, d_ = (list(x) for x in zip(*obj))
+        #         A.append(a_)
+        #         B.append(b_)
+        #         C.append(c_)
+        #         D.append(d_)
+        #     for i, socket in enumerate(self.outputs):
+        #         self.outputs[socket.name].sv_set([A, B, C, D][i])
+        # else:
+        #     for obj in data:
+        #         a_, b_, c_ = (list(x) for x in zip(*obj))
+        #         A.append(a_)
+        #         B.append(b_)
+        #         C.append(c_)
+        #     for i, socket in enumerate(self.outputs[:3]):
+        #         self.outputs[socket.name].sv_set([A, B, C][i])
+
+        values = [[], [], [], []]
+        for obj in data:
+            vals = (list(x) for x in zip(*obj))
+            for idx, v in enumerate(vals):
+                values[idx].append(v)
+        for i, socket in enumerate(self.outputs):
+            if (not self.use_alpha and i == 3) or len(values[3]) == 0:
+                break 
+            else:
+                socket.sv_set([values][i])
 
     
     
