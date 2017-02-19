@@ -65,6 +65,11 @@ class SvColorsOutNode(bpy.types.Node, SverchCustomTreeNode):
         onew('StringsSocket', "G")
         onew('StringsSocket', "B")
         onew('StringsSocket', "A")
+
+
+    def draw_buttons(self, context, layout):
+        layout.prop(self, 'use_alpha')
+
     
     def process(self):
         """

@@ -47,6 +47,8 @@ class SvColorsInNode(bpy.types.Node, SverchCustomTreeNode):
             self.inputs[idx].prop_name = socket.lower() + '_'
         updateNode(self, context)
 
+    use_alpha = BoolProperty(default=False, update=updateNode)
+
     r_ = fprop_generator(name='R', description='Red (0..1)')
     g_ = fprop_generator(name='G', description='Green (0..1)')
     b_ = fprop_generator(name='B', description='Blue (0..1)')
@@ -70,6 +72,7 @@ class SvColorsInNode(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons(self, context, layout):
         layout.prop(self, 'selected_mode', expand=True)
+        layout.prop(self, 'use_alpha')
 
     def sv_init(self, context):
         self.width = 100
