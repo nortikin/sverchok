@@ -41,11 +41,19 @@ palette_dict = {
 
 }
 
+size_tex_list=[
+    ('EXTRA_SMALL','extra_small','extra small tex: 64px','',0),
+    ('SMALL','small','small tex: 128px',1),
+    ('MEDIUM','medium','medium tex: 256px',2),
+    ('LARGE','large','large tex: 512px',3),
+    ('EXTRA_LARGE','extra_large','extra large tex: 1024px',4)
+]
 
 def simple_screen(x, y, args):
     #func = args[0]
     back_color, grid_color, line_color = args[0]
     data = args[1]
+    #size = args[2]
 
     texture = 1
     width = 64
@@ -125,6 +133,13 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         default=True,
         update=updateNode)
 
+    selected_mode = EnumProperty(
+        items=size_tex_list,
+        description="offers display sizing",
+        default="SMALL",
+        update=updateNode
+    )
+
     in_float = FloatProperty(
         min=0.0, max=1.0, default=0.0, name='Float Input',
         description='input for texture', update=updateNode
@@ -137,6 +152,8 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons(self, context, l):
         c = l.column()
+        c.label(text="set texture display")
+        c.prop(self, "selected_mode", text="")
         c.prop(self, 'activate')
 
     def draw_buttons_ext(self, context, l):
@@ -158,12 +175,14 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
             palette = palette_dict.get(self.selected_theme_mode)[:]
             x, y = [int(j) for j in (self.location + Vector((self.width + 20, 0)))[:]]
+            #size_tex = size_tex_list.get(int(self.selected_mode))[:]
 
             draw_data = {
                 'tree_name': self.id_data.name[:],
                 'mode': 'custom_function',
                 'custom_function': simple_screen,
                 'loc': (x, y),
+                #'args': (palette, _data, size_tex)
                 'args': (palette, _data)
             }
             nvBGL2.callback_enable(n_id, draw_data)
