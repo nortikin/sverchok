@@ -120,11 +120,14 @@ class SvColorsInNode(bpy.types.Node, SverchCustomTreeNode):
                 series_vec.append(list(zip(i0[i], i1[i], i2[i], i3[i])))
             else:
                 if self.selected_mode == 'HSV':
-                    co1, co2, co3 = colorsys.hsv_to_rgb(i0[i], i1[i], i2[i])
+                    convert = colorsys.hsv_to_rgb
                 elif self.selected_mode == 'HSL':
-                    # HSL or hls ? it concerns me.. but what to do..
-                    co1, co2, co3 = colorsys.hls_to_rgb(i0[i], i1[i], i2[i])
-                series_vec.append(list(zip(co1, co2, co3, i3[i])))
+                    convert = colorsys.hls_to_rgb
+
+                # not sure if the python hsl function is simply named wrong but accepts
+                # the params in the right order.. or they need to be supplied i0[i] i2[i] i1[i]
+                colordata = [convert(vals) for vals in zip(i0[i], i1[i], i2[i])]
+                series_vec.append(colordata)
 
         
         self.outputs['Colors'].sv_set(series_vec)
