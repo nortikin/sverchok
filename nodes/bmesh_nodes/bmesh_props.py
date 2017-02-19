@@ -34,7 +34,7 @@ class SvBMVertsNode(bpy.types.Node, SverchCustomTreeNode):
     a = ['hide','select']
     PV = a + ['is_manifold','is_wire','is_boundary','calc_shell_factor()','calc_edge_angle(-1)']
     PF = a + ['calc_area()','calc_perimeter()','material_index','smooth']
-    PE = a + ['calc_face_angle()','calc_face_angle_signed()','calc_length()','is_boundary','is_contiguous','is_convex','is_manifold','is_wire','seam']
+    PE = a + ['calc_face_angle(0)','calc_face_angle_signed(0)','calc_length()','is_boundary','is_contiguous','is_convex','is_manifold','is_wire','seam']
     verts = EnumProperty(name="Vprop", default="is_manifold", items=e(PV), update=updateNode)
     faces = EnumProperty(name="Fprop", default="select", items=e(PF), update=updateNode)
     edges = EnumProperty(name="Eprop", default="select", items=e(PE), update=updateNode)

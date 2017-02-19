@@ -142,6 +142,8 @@ class NODEVIEW_MT_Dynamic_Menu(bpy.types.Menu):
         layout.menu("NODEVIEW_MT_AddNetwork")
         layout.menu("NODEVIEW_MT_AddBetas", **icon('OUTLINER_DATA_POSE'))
         layout.menu("NODEVIEW_MT_AddAlphas", **icon('ERROR'))
+        layout.separator() 
+        layout.menu("NODE_MT_category_SVERCHOK_GROUPS", icon="RNA")
 
 
 class NODEVIEW_MT_AddGenerators(bpy.types.Menu):
@@ -213,11 +215,21 @@ def add_keymap():
         kmi = km.keymap_items.new('wm.call_menu', 'SPACE', 'PRESS', ctrl=True)
         kmi.properties.name = "NODEVIEW_MT_Dynamic_Menu"
         nodeview_keymaps.append((km, kmi))
-    
+
+
 def remove_keymap():
+
     for km, kmi in nodeview_keymaps:
-        km.keymap_items.remove(kmi)
+        try:
+            km.keymap_items.remove(kmi)
+        except Exception as e:
+            err = repr(e)
+            if "cannot be removed from 'Node Editor'" in err:
+                print('keymaps for Node Editor already removed by another add-on, sverchok will skip this step in unregister')
+                break
+
     nodeview_keymaps.clear()
+
 
 def register():
     for class_name in classes:

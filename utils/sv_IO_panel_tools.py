@@ -22,6 +22,7 @@ import re
 import zipfile
 import traceback
 from time import gmtime, strftime
+import urllib
 from urllib.request import urlopen
 
 from os.path import basename
@@ -38,9 +39,10 @@ from sverchok.utils import sv_gist_tools
 
 SCRIPTED_NODES = {'SvScriptNode', 'SvScriptNodeMK2', 'SvScriptNodeLite'}
 
-_EXPORTER_REVISION_ = '0.063'
+_EXPORTER_REVISION_ = '0.064'
 
 '''
+0.064 prop_types as a property is now tracked for scalarmath and logic node, this uses boolvec.
 0.063 add support for obj_in_lite obj serialization \o/ .
 0.062 (no revision change) - fixes import of sn texts that are present already in .blend
 0.062 (no revision change) - looks in multiple places for textmode param.
@@ -204,6 +206,9 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
 
             if isinstance(v, (float, int, str)):
                 node_items[k] = v
+            elif node.bl_idname in {'ScalarMathNode', 'SvLogicNode'} and k == 'prop_types':
+                node_items[k] = getattr(node, k)[:]
+                continue
             else:
                 node_items[k] = v[:]
 
@@ -255,6 +260,10 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
         #            node_dict['custom_socket_props'][prop] = getattr(node, prop)[:]
 
         node_dict['params'] = node_items
+
+        #if node.bl_idname == 'NodeFrame':
+        #    frame_props = 'shrink', 'use_custom_color', 'label_size'
+        #    node_dict['params'].update({fpv: getattr(node, fpv) for fpv in frame_props})
 
         node_dict['height'] = node.height
         node_dict['width'] = node.width
@@ -436,12 +445,21 @@ def gather_remapped_names(node, n, name_remap):
 
 def apply_core_props(node, node_ref):
     params = node_ref['params']
-    # print(node.name, params)
     if 'cls_dict' in params:
         return
     for p in params:
         val = params[p]
-        setattr(node, p, val)
+        try:
+            setattr(node, p, val)
+        except Exception as e:
+            error_message = repr(e)  # for reasons
+            print(error_message)
+            msg = 'failed to assign value to the node'
+            print(node.name, p, val, msg)
+            if "val: expected sequence items of type boolean, not int" in error_message:
+                print("going to convert a list of ints to a list of bools and assign that instead")
+                setattr(node, p, [bool(i) for i in val])
+
 
 
 def add_texts(node, node_ref):
@@ -506,10 +524,8 @@ def add_node_to_tree(nodes, n, nodes_to_import, name_remap, create_texts):
         node.storage_set_data(node_ref)
 
     if bl_idname == 'SvObjectsNodeMK3':
-        print(node_ref)
-        obj_names = node_ref.get('object_names', [])
-        for n in obj_names:
-            node.object_names.add().name = n
+        for named_object in node_ref.get('object_names', []):
+            node.object_names.add().name = named_object
 
     gather_remapped_names(node, n, name_remap)
     apply_core_props(node, node_ref)
@@ -778,9 +794,20 @@ class SvNodeTreeImportFromGist(bpy.types.Operator):
     gist_id = StringProperty()
 
     def read_n_decode(self, url):
-        content_at_url = urlopen(url)
-        found_json = content_at_url.read().decode()
-        return found_json        
+        try:
+            content_at_url = urlopen(url)
+            found_json = content_at_url.read().decode()
+            return found_json        
+        except urllib.error.HTTPError as err:
+            if err.code == 404:
+                self.report({'ERROR'}, 'url: ' + str(url) + ' doesn\'t appear to be a valid url, copy it again from your source')
+            else:
+                self.report({'ERROR'}, 'url error:' + str(err.code))
+        except:
+            self.report({'ERROR'}, 'unspecified error, check your internet connection')
+
+        return
+
 
     def obtain_json(self, gist_id):
 
@@ -793,6 +820,8 @@ class SvNodeTreeImportFromGist(bpy.types.Operator):
             gist_id = str(gist_id)
             url = 'https://api.github.com/gists/' + gist_id
             found_json = self.read_n_decode(url)
+            if not found_json:
+                return
 
             wfile = json.JSONDecoder()
             wjson = wfile.decode(found_json)
@@ -818,9 +847,11 @@ class SvNodeTreeImportFromGist(bpy.types.Operator):
             self.gist_id = context.window_manager.clipboard
 
         nodes_json = self.obtain_json(self.gist_id.strip())
-        import_tree(ng, nodes_json=nodes_json)
+        if not nodes_json:
+            return {'CANCELLED'}
 
-        # set new node tree to active
+        # import tree and set new node tree to active
+        import_tree(ng, nodes_json=nodes_json)
         context.space_data.node_tree = ng
         return {'FINISHED'}
 
@@ -841,6 +872,9 @@ class SvNodeTreeExportToGist(bpy.types.Operator):
             context.window_manager.clipboard = gist_url   # full destination url
             print(gist_url)
             self.report({'WARNING'}, "Copied gistURL to clipboad")
+
+            sv_gist_tools.write_or_append_datafiles(gist_url, gist_filename)
+
         except:
             self.report({'ERROR'}, "Error uploading the gist, check your internet connection!")
         finally:

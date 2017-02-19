@@ -22,6 +22,7 @@
     RandomVectorNodeMK2
     SvBricksNode
     ImageNode
+    SvTorusNode
 
 ## Generators Extended
     SvBoxRoundedNode
@@ -32,6 +33,7 @@
     SvGenerativeArtNode
     SvImageComponentsNode
     SvScriptNode
+    SvTorusKnotNode
 
 ## Analyzers
     SvBBoxNode
@@ -67,11 +69,13 @@
     SvFillsHoleNode
     SvLimitedDissolve
     SvIntersectEdgesNode
+    SvIntersectEdgesNodeMK2
     SvIterateNode
     SvBevelNode
     SvExtrudeEdgesNode
     SvOffsetNode
     SvTriangulateNode
+    SvFlipNormalsNode
     SvRecalcNormalsNode
 
 ## Modifier Make

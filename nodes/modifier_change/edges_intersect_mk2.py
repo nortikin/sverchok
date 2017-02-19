@@ -24,6 +24,7 @@ import bmesh
 from mathutils.geometry import intersect_line_line as LineIntersect
 
 from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import updateNode
 from sverchok.utils import cad_module as cm
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 
@@ -77,9 +78,9 @@ def can_skip(closest_points, vert_vectors):
 
 def get_intersection_dictionary(bm, edge_indices):
 
-    if hasattr(bm.verts, "ensure_lookup_table"):
-        bm.verts.ensure_lookup_table()
-        bm.edges.ensure_lookup_table()
+    
+    bm.verts.ensure_lookup_table()
+    bm.edges.ensure_lookup_table()
 
     permutations = get_valid_permutations(bm, edge_indices)
 
@@ -116,28 +117,13 @@ def update_mesh(bm, d):
     oe = bm.edges
     ov = bm.verts
 
-    vert_count = len(ov)
-    edge_count = len(oe)
-
     for old_edge, point_list in d.items():
-        num_points = len(point_list)
-        num_edges_to_add = num_points-1
-
+        num_edges_to_add = len(point_list)-1
         for i in range(num_edges_to_add):
-            ov.new(point_list[i])
-            ov.new(point_list[i+1])
-
-            bm.verts.ensure_lookup_table()
-            bm.edges.ensure_lookup_table()
-
-            vseq = ov[vert_count], ov[vert_count+1]
-            oe.new(vseq)
+            a = ov.new(point_list[i])
+            b = ov.new(point_list[i+1])
+            oe.new((a, b))
             bm.normal_update()
-            vert_count = len(ov)
-            edge_count = len(oe)
-
-    # offer a remove doubles pass here.
-    # bmesh.ops.remove_doubles(bm, verts=bm.verts[:], dist=node.dist)
 
 
 def unselect_nonintersecting(bm, d_edges, edge_indices):
@@ -149,11 +135,14 @@ def unselect_nonintersecting(bm, d_edges, edge_indices):
         # print("unselected {}, non intersecting edges".format(reserved_edges))
 
 
-class SvIntersectEdgesNode(bpy.types.Node, SverchCustomTreeNode):
+class SvIntersectEdgesNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
-    bl_idname = 'SvIntersectEdgesNode'
-    bl_label = 'Intersect Edges'
+    bl_idname = 'SvIntersectEdgesNodeMK2'
+    bl_label = 'Intersect Edges MK2'
     bl_icon = 'OUTLINER_OB_EMPTY'
+
+    rm_switch = bpy.props.BoolProperty(update=updateNode)
+    rm_doubles = bpy.props.FloatProperty(min=0.0, default=0.0001, update=updateNode, step=0.1)
 
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', 'Verts_in', 'Verts_in')
@@ -163,7 +152,12 @@ class SvIntersectEdgesNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('StringsSocket', 'Edges_out', 'Edges_out')
 
     def draw_buttons(self, context, layout):
-        pass
+        r = layout.row(align=True)
+        r1 = r.split(0.32)
+        r1.prop(self, 'rm_switch', text='doubles', toggle=True)
+        r2 = r1.split()
+        r2.enabled = self.rm_switch
+        r2.prop(self, 'rm_doubles', text='delta')
 
     def process(self):
         inputs = self.inputs
@@ -184,28 +178,34 @@ class SvIntersectEdgesNode(bpy.types.Node, SverchCustomTreeNode):
             edge.select = True
 
         d = get_intersection_dictionary(bm, edge_indices)
-
         unselect_nonintersecting(bm, d.keys(), edge_indices)
 
         # store non_intersecting edge sequencer
         add_back = [[i.index for i in edge.verts] for edge in bm.edges if not edge.select]
 
         update_mesh(bm, d)
-
         verts_out = [v.co.to_tuple() for v in bm.verts]
         edges_out = [[j.index for j in i.verts] for i in bm.edges]
 
         # optional correction, remove originals, add back those that are not intersecting.
         edges_out = edges_out[trim_indices:]
         edges_out.extend(add_back)
+        bm.free()
+
+        # post processing step to remove doubles
+        if self.rm_switch:
+            bm = bmesh_from_pydata(verts_out, edges=edges_out)
+            bmesh.ops.remove_doubles(bm, verts=bm.verts[:], dist=self.rm_doubles)
+            verts_out = [v.co.to_tuple() for v in bm.verts]
+            edges_out = [[j.index for j in i.verts] for i in bm.edges]
 
         outputs['Verts_out'].sv_set([verts_out])
         outputs['Edges_out'].sv_set([edges_out])
 
 
 def register():
-    bpy.utils.register_class(SvIntersectEdgesNode)
+    bpy.utils.register_class(SvIntersectEdgesNodeMK2)
 
 
 def unregister():
-    bpy.utils.unregister_class(SvIntersectEdgesNode)
+    bpy.utils.unregister_class(SvIntersectEdgesNodeMK2)
