@@ -100,11 +100,11 @@ class SvColorsOutNode(bpy.types.Node, SverchCustomTreeNode):
                 self.outputs[socket.name].sv_set([A, B, C, D][i])
         else:
             for obj in data:
-                vals = (list(x) for x in zip(*obj))
-                A.append(vals[0])
-                B.append(vals[1])
-                C.append(vals[2])
-            for i, socket in enumerate(self.outputs):
+                a_, b_, c_ = (list(x) for x in zip(*obj))
+                A.append(a_)
+                B.append(b_)
+                C.append(c_)
+            for i, socket in enumerate(self.outputs[:3]):
                 self.outputs[socket.name].sv_set([A, B, C][i])
 
     
