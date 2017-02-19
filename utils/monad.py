@@ -124,11 +124,15 @@ class SvRenameSocketOpExp(Operator, MonadOpCommon):
         else:
             new_name = self.new_name
 
+        monad.update_cls()
+
         socket.name = new_name
         # make changes to parent node's socket name in parent tree
         for instance in monad.instances:
             sockets = getattr(instance, reverse_lookup[kind])
             sockets[self.pos].name = new_name
+            if socket.prop_name:
+                sockets[self.pos].prop_name = socket.prop_name
 
         return {"FINISHED"}
 
