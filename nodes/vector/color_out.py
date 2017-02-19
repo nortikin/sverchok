@@ -113,7 +113,8 @@ class SvColorsOutNode(bpy.types.Node, SverchCustomTreeNode):
             for idx, v in enumerate(vals):
                 values[idx].append(v)
         for i, socket in enumerate(self.outputs):
-            if (not self.use_alpha and i == 3) or len(values[3]) == 0:
+
+            if len(values[3]) == 0 or (not self.use_alpha and i == 3):
                 break 
             else:
                 socket.sv_set([values][i])
