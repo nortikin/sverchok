@@ -116,7 +116,7 @@ class SvColorsInNode(bpy.types.Node, SverchCustomTreeNode):
             fullList(i2[i], max_v)
             fullList(i3[i], max_v)
 
-            if not self.selected_mode == 'RGB':
+            if self.selected_mode == 'RGB':
                 series_vec.append(list(zip(i0[i], i1[i], i2[i], i3[i])))
             else:
                 if self.selected_mode == 'HSV':
@@ -126,7 +126,12 @@ class SvColorsInNode(bpy.types.Node, SverchCustomTreeNode):
 
                 # not sure if the python hsl function is simply named wrong but accepts
                 # the params in the right order.. or they need to be supplied i0[i] i2[i] i1[i]
-                colordata = [convert(vals) for vals in zip(i0[i], i1[i], i2[i])]
+                # colordata = [list(convert(c0, c1, c2)) + [c3] for c0, c1, c2, c3 in zip(i0[i], i1[i], i2[i], i3[i])]
+                colordata = []
+                for c0, c1, c2, c3 in zip(i0[i], i1[i], i2[i], i3[i]):
+                    colorv = list(convert(c0, c1, c2)) + [c3]
+                    colordata.append(colorv)
+
                 series_vec.append(colordata)
 
         
