@@ -91,8 +91,6 @@ class SvColorsInNode(bpy.types.Node, SverchCustomTreeNode):
         colorsys.hls_to_rgb(h, l, s)
         colorsys.rgb_to_hsv(r, g, b)
         colorsys.hsv_to_rgb(h, s, v)
-
-        http://stackoverflow.com/questions/24852345/hsv-to-rgb-color-conversion
         """        
 
         if not self.outputs['Colors'].is_linked:
@@ -120,10 +118,10 @@ class SvColorsInNode(bpy.types.Node, SverchCustomTreeNode):
             if not self.selected_mode == 'RGB':
 
                 if self.selected_mode == 'HSV':
-                    co1, co2, co3 = colorsys.hsv_to_rgb(int(i0[i]*255), int(i1[i]*255), int(i2[i]*255))
+                    co1, co2, co3 = colorsys.hsv_to_rgb(i0[i], i1[i], i2[i])
                 elif self.selected_mode == 'HSL':
                     # HSL or hls ? it concerns me.. but what to do..
-                    co1, co2, co3 = colorsys.hls_to_rgb(int(i0[i]*255), int(i1[i]*255), int(i2[i]*255))
+                    co1, co2, co3 = colorsys.hls_to_rgb(i0[i], i1[i], i2[i])
                 series_vec.append(list(zip(co1, co2, co3, i3[i])))
             else:
                 series_vec.append(list(zip(i0[i], i1[i], i2[i], i3[i])))
