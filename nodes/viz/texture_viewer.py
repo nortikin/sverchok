@@ -52,8 +52,19 @@ def simple_screen(x, y, args):
     height = 64
     texname = 0
 
-    def draw_texture(x=0, y=0, w=30, h=10, color=(0.0, 0.0, 0.0, 1.0),texname=texname):
+    def draw_borders(x=0, y=0, w=30, h=10, color=(0.0, 0.0, 0.0, 1.0)):
+        #function to draw a border color around the texture
+        bgl.glColor4f(*color)
+        bgl.glBegin(bgl.GL_LINE_LOOP)
 
+        for coord in [(x, y), (x+w, y), (w+x, y-h), (x, y-h)]:
+            bgl.glVertex2f(*coord)
+        bgl.glEnd()
+
+
+
+    def draw_texture(x=0, y=0, w=30, h=10, color=(0.0, 0.0, 0.0, 1.0), texname=texname):
+        #function to draw a texture
         #bgl.glClear(bgl.GL_COLOR_BUFFER_BIT | bgl.GL_DEPTH_BUFFER_BIT)
         bgl.glEnable(bgl.GL_TEXTURE_2D)
         bgl.glTexEnvf(bgl.GL_TEXTURE_ENV, bgl.GL_TEXTURE_ENV_MODE, bgl.GL_REPLACE)
@@ -61,11 +72,10 @@ def simple_screen(x, y, args):
 
         bgl.glBegin(bgl.GL_QUADS)
 
-        #bgl.glNormal3f(0, 0, 1)
         bgl.glTexCoord2d(0, 0); bgl.glVertex2f( x, y )
-        bgl.glTexCoord2d(1, 0); bgl.glVertex2f( x + 64 , y )
-        bgl.glTexCoord2d(1, 1); bgl.glVertex2f( x + 64, y + 64 )
-        bgl.glTexCoord2d(0, 1); bgl.glVertex2f( x, y + 64 )
+        bgl.glTexCoord2d(1, 0); bgl.glVertex2f( x + w , y )
+        bgl.glTexCoord2d(1, 1); bgl.glVertex2f( x + w, y - h )
+        bgl.glTexCoord2d(0, 1); bgl.glVertex2f( x, y - h )
 
         bgl.glEnd()
 
@@ -74,7 +84,7 @@ def simple_screen(x, y, args):
         bgl.glFlush()
 
     def init_texture(width,height,texname,data):
-
+        #function to init the texture
         #bgl.glClearColor(0.0,0.0,0.0,0.0)
         bgl.glShadeModel(bgl.GL_SMOOTH)
         bgl.glEnable(bgl.GL_DEPTH_TEST)
@@ -101,7 +111,9 @@ def simple_screen(x, y, args):
 
     init_texture(width,height,texname,data)
 
-    draw_texture(x=x, y=y, w=64, h=64, color=back_color,texname=texname)
+    draw_texture(x=x, y=y, w=128, h=128, color=back_color,texname=texname)
+
+    draw_borders(x=x, y=y, w=128, h=128, color=(0.243299, 0.590403, 0.836084, 1.00))
 
 class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvTextureViewerNode'
