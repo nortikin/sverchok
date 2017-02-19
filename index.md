@@ -159,8 +159,6 @@
     SvVectorRewire
     svAxisInputNode
     SvAxisInputNodeMK2
-    SvColorsInNode
-    SvColorsOutNode
 
 ## Matrix
     MatrixGenNode
@@ -226,6 +224,8 @@
     SvObjInLite
     SvScriptNodeLite
     SvRndNumGen
+    SvColorsInNode
+    SvColorsOutNode
 
 ## Alpha Nodes
     SvCurveViewerNode
