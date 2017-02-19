@@ -48,8 +48,16 @@ def add_keymap():
 
 
 def remove_keymap():
+
     for km, kmi in nodeview_keymaps:
-        km.keymap_items.remove(kmi)
+        try:
+            km.keymap_items.remove(kmi)
+        except Exception as e:
+            err = repr(e)
+            if "cannot be removed from 'Node Editor'" in err:
+                print('keymaps for Node Editor already removed by another add-on, sverchok will skip this step in unregister')
+                break
+
     nodeview_keymaps.clear()
 
 
