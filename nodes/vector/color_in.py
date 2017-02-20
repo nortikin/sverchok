@@ -88,8 +88,6 @@ class SvColorsInNode(bpy.types.Node, SverchCustomTreeNode):
     def process(self):
 
         """
-        colorsys.rgb_to_yiq(r, g, b)
-        colorsys.yiq_to_rgb(y, i, q)
         colorsys.rgb_to_hls(r, g, b)
         colorsys.hls_to_rgb(h, l, s)
         colorsys.rgb_to_hsv(r, g, b)
@@ -132,7 +130,6 @@ class SvColorsInNode(bpy.types.Node, SverchCustomTreeNode):
 
                 # not sure if the python hsl function is simply named wrong but accepts
                 # the params in the right order.. or they need to be supplied i0[i] i2[i] i1[i]
-                # colordata = [list(convert(c0, c1, c2)) + [c3] for c0, c1, c2, c3 in zip(i0[i], i1[i], i2[i], i3[i])]
                 colordata = []
                 for c0, c1, c2, c3 in zip(i0[i], i1[i], i2[i], i3[i]):
                     colorv = list(convert(c0, c1, c2))

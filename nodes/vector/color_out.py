@@ -73,8 +73,6 @@ class SvColorsOutNode(bpy.types.Node, SverchCustomTreeNode):
     
     def process(self):
         """
-        colorsys.rgb_to_yiq(r, g, b)
-        colorsys.yiq_to_rgb(y, i, q)
         colorsys.rgb_to_hls(r, g, b)
         colorsys.hls_to_rgb(h, l, s)
         colorsys.rgb_to_hsv(r, g, b)
@@ -98,6 +96,7 @@ class SvColorsOutNode(bpy.types.Node, SverchCustomTreeNode):
 
             if i == 3 and len(values[3]) == 0 or (not self.use_alpha):
                 socket.sv_set([[]])
+                break
             else:
                 socket.sv_set(values[i])
 
