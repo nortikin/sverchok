@@ -58,7 +58,7 @@ size_tex_dict = {
 }
 
 def simple_screen(x, y, args):
-
+    #draw a simple scren display for the texture
     back_color, grid_color, line_color = args[0]
 
     texture = args[1]
