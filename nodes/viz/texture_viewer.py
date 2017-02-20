@@ -144,13 +144,12 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
     def process(self):
 
-        p = self.inputs['Float'].sv_get(deepcopy=False)
+        data = self.inputs['Float'].sv_get(deepcopy=False)[0]
         n_id = node_id(self)
 
         # end early
         nvBGL2.callback_disable(n_id)
 
-        data = p[0]
         #print(_data)
         if self.activate:
 
