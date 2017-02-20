@@ -152,9 +152,17 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         c.prop(self, 'activate')
 
     def draw_buttons_ext(self, context, l):
+        l.label(text="choose a different color for the border:")
         l.prop(self, "selected_theme_mode")
+        l.separator()
         l.label(text="save texture as bitmap image, choose a format:")
         l.prop(self, "bitmap_save")
+        row = l.row()
+        #addon = context.user_preferences.addons.get(sverchok.__name__)
+        #row.scale_y = 4.0 if addon.preferences.over_sized_buttons else 1
+        opera = row.operator('save_bitmap', text="S A V E")
+        opera.idname = self.name
+        opera.idtree = self.id_data.name
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', "Float").prop_name = 'in_float'
@@ -209,10 +217,13 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
                        bgl.GL_TEXTURE_2D, 0, bgl.GL_LUMINANCE, width, height, 0,
                        bgl.GL_LUMINANCE, bgl.GL_FLOAT, texture
                    )
+            def save_bitmap(self):
+                pass
 
             texname = 0
 
             init_texture(size_tex,size_tex,texname,texture)
+
 
             draw_data = {
                 'tree_name': self.id_data.name[:],
