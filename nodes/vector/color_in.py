@@ -92,6 +92,13 @@ class SvColorsInNode(bpy.types.Node, SverchCustomTreeNode):
         colorsys.hls_to_rgb(h, l, s)
         colorsys.rgb_to_hsv(r, g, b)
         colorsys.hsv_to_rgb(h, s, v)
+
+
+         r/h/h  --|
+         g/s/s  --|
+         b/v/l  --|------------ rgb(a)
+            (a)  -|
+
         """        
 
         if not self.outputs['Colors'].is_linked:

@@ -77,6 +77,12 @@ class SvColorsOutNode(bpy.types.Node, SverchCustomTreeNode):
         colorsys.hls_to_rgb(h, l, s)
         colorsys.rgb_to_hsv(r, g, b)
         colorsys.hsv_to_rgb(h, s, v)
+
+
+                      |--------  r
+        rgb(a)--------|--------  g
+                      |--------  b
+                      |-------- (a)
         """        
 
         color_input = self.inputs['Colors']
