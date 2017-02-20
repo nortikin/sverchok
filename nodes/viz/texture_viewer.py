@@ -57,6 +57,14 @@ size_tex_dict = {
     'EXTRA_LARGE': 1024
 }
 
+bitmap_save_list=[
+    ('PNG','png format', 'save texture in .png fromat','',0),
+    ('TGA','tga format','save texture in .tga fromat','',1),
+    ('TIFF','tiff format','save texture in .tiff format','',2),
+    ('BMP','bmp format','save texture in .tiff format','',3),
+    ('JPEG','jpeg format','save texture in .jpeg format','',4)
+]
+
 def simple_screen(x, y, args):
     #draw a simple scren display for the texture
     back_color, grid_color, line_color = args[0]
@@ -120,6 +128,13 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         update=updateNode
     )
 
+    bitmap_save = EnumProperty(
+        items=bitmap_save_list,
+        description="offers bitmap saving",
+        default="PNG",
+        update=updateNode
+    )
+
     in_float = FloatProperty(
         min=0.0, max=1.0, default=0.0, name='Float Input',
         description='input for texture', update=updateNode
@@ -138,6 +153,8 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons_ext(self, context, l):
         l.prop(self, "selected_theme_mode")
+        l.label(text="save texture as bitmap image, choose a format:")
+        l.prop(self, "bitmap_save")
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', "Float").prop_name = 'in_float'
