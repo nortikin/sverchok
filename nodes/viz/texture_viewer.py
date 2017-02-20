@@ -143,8 +143,7 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
     bitmap_save = EnumProperty(
         items=bitmap_save_list,
         description="offers bitmap saving",
-        default="PNG",
-        update=updateNode
+        default="PNG"
     )
 
     in_float = FloatProperty(
@@ -252,7 +251,7 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
     def copy(self, node):
         self.n_id = ''
 
-    def save_bitmap(self,):
+    def save_bitmap(self):
        img = bpy.data.images.new(name="depthmap", width=64,height=64,alpha=False, float_buffer=True)
        img.colorspace_settings.name = 'Linear'
        # bake() #implemented in separate function
