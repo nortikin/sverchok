@@ -79,7 +79,7 @@ def simple_screen(x, y, args):
 
         bgl.glEnd()
 
-    def draw_texture(x=0, y=0, w=30, h=10, color=(0.0, 0.0, 0.0, 1.0), texname=texname):
+    def draw_texture(x=0, y=0, w=30, h=10, texname=texname):
         #function to draw a texture
         bgl.glEnable(bgl.GL_TEXTURE_2D)
         bgl.glTexEnvf(bgl.GL_TEXTURE_ENV, bgl.GL_TEXTURE_ENV_MODE, bgl.GL_REPLACE)
@@ -98,9 +98,9 @@ def simple_screen(x, y, args):
         #bgl.glDeleteTextures( 1, Buffer )
         bgl.glFlush()
 
-    draw_texture(x=x, y=y, w=width, h=height, color=back_color,texname=texname)
+    draw_texture(x=x, y=y, w=width, h=height, texname=texname)
 
-    draw_borders(x=x, y=y, w=width, h=height, color=(0.243299, 0.590403, 0.836084, 1.00))
+    draw_borders(x=x, y=y, w=width, h=height, color=grid_color)
 
 class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
     '''Texture Viewer node'''
