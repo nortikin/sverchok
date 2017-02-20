@@ -252,8 +252,16 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
     def copy(self, node):
         self.n_id = ''
 
-def save_bitmap(self):
-    pass
+    def save_bitmap(self,):
+       img = bpy.data.images.new(name="depthmap", width=64,height=64,alpha=False, float_buffer=True)
+       img.colorspace_settings.name = 'Linear'
+       # bake() #implemented in separate function
+       img.file_format = 'PNG'
+       # need to set to 16-bit here
+       img.filepath_raw = "/tmp/my_new_bake.png"
+       img.save()
+       print('saved!')
+
 
 def register():
     bpy.utils.register_class(SvTextureViewerNode)
