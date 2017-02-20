@@ -63,12 +63,11 @@ def simple_screen(x, y, args):
 
     texture = args[1]
     size = args[2]
+    texname = args[3]
     #print('size of tex inside simple screen: {0}'.format(size))
-
     texture = 1
     width = size
     height = size
-    texname = 0
 
     def draw_borders(x=0, y=0, w=30, h=10, color=(0.0, 0.0, 0.0, 1.0)):
         #function to draw a border color around the texture
@@ -175,8 +174,6 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
                 bgl.glShadeModel(bgl.GL_SMOOTH)
                 bgl.glEnable(bgl.GL_DEPTH_TEST)
 
-                #Buffer = bgl.Buffer(bgl.GL_FLOAT, [width,height], data)
-                #Buffer = bgl.Buffer(bgl.GL_FLOAT,  width * height, data)
                 bgl.glPixelStorei(bgl.GL_UNPACK_ALIGNMENT,1)
 
                 #bgl.glGenTextures(1,Buffer)
@@ -206,7 +203,7 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
                 'mode': 'custom_function',
                 'custom_function': simple_screen,
                 'loc': (x, y),
-                'args': (palette, texture, size_tex)
+                'args': (palette, texture, size_tex, texname)
             }
 
             nvBGL2.callback_enable(n_id, draw_data)
