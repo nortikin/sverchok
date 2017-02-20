@@ -110,6 +110,18 @@ def simple_screen(x, y, args):
 
     draw_borders(x=x, y=y, w=width, h=height, color=grid_color)
 
+#class SvSaveBitmap(bpy.types.Operator):
+#    '''Save Bitmap operator'''
+#    bl_idname = 'node.save_bitmap'
+#    bl_label = "Sverchok save bitmap utility"
+#    fn_name = bpy.props.StringProperty(default='')
+#    bl_options = {'REGISTER', 'UNDO'}
+#
+#    def execute(self, context):
+#        #main(context)
+#        getattr(context.node, self.fn_name)()
+#        return {'FINISHED'}
+
 class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
     '''Texture Viewer node'''
     bl_idname = 'SvTextureViewerNode'
@@ -160,9 +172,9 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         row = l.row()
         #addon = context.user_preferences.addons.get(sverchok.__name__)
         #row.scale_y = 4.0 if addon.preferences.over_sized_buttons else 1
-        opera = row.operator('save_bitmap', text="S A V E")
-        opera.idname = self.name
-        opera.idtree = self.id_data.name
+        #opera = row.operator('node.save_bitmap', text="S A V E").fn="save_bitmap"
+        l.operator("node.scriptlite_ui_callback", text="S A V E").fn="save_bitmap"
+
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', "Float").prop_name = 'in_float'
@@ -217,8 +229,6 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
                        bgl.GL_TEXTURE_2D, 0, bgl.GL_LUMINANCE, width, height, 0,
                        bgl.GL_LUMINANCE, bgl.GL_FLOAT, texture
                    )
-            def save_bitmap(self):
-                pass
 
             texname = 0
 
@@ -242,6 +252,8 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
     def copy(self, node):
         self.n_id = ''
 
+def save_bitmap(self):
+    pass
 
 def register():
     bpy.utils.register_class(SvTextureViewerNode)
