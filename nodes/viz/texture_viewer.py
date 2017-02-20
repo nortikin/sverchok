@@ -134,6 +134,12 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         default="PNG"
     )
 
+    directory = StringProperty(
+        maxlen=1024,
+        subtype='FILE_PATH',
+        options={'HIDDEN', 'SKIP_SAVE'}
+    )
+
     in_float = FloatProperty(
         min=0.0, max=1.0, default=0.0, name='Float Input',
         description='input for texture', update=updateNode
@@ -156,13 +162,18 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         l.separator()
         l.label(text="save texture as bitmap image, choose a format:")
         l.prop(self, "bitmap_save")
+        l.operator('file.select_all_toggle', text='choose a directory')
+
         row = l.row()
         #addon = context.user_preferences.addons.get(sverchok.__name__)
         #row.scale_y = 4.0 if addon.preferences.over_sized_buttons else 1
 
         l.operator("node.scriptlite_ui_callback", text="S A V E").fn_name="save_bitmap"
 
-
+    def invoke(self, context, event):
+        wm = context.window_manager
+        wm.fileselect_add(self)
+        return {'RUNNING_MODAL'}
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', "Float").prop_name = 'in_float'
@@ -250,7 +261,7 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
     def copy(self, node):
         self.n_id = ''
 
-    def save_bitmap(self,image_name='',filepath_raw='',img_format='PNG',width=64,height=64,alpha=False):
+    def save_bitmap(self,image_name='image.png',filepath_raw='',img_format='PNG',width=64,height=64,alpha=False):
         img = bpy.data.images.new(name="bitmap", width=64,height=64,alpha=False, float_buffer=True)
         img = assign_image(image_name,width*height,self.texture)
         img.colorspace_settings.name = 'Linear'
