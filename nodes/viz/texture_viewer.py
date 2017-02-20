@@ -42,11 +42,11 @@ palette_dict = {
 }
 
 size_tex_list=[
-    ('EXTRA_SMALL','extra_small','extra small tex: 64px','',64),
-    ('SMALL','small','small tex: 128px','',128),
-    ('MEDIUM','medium','medium tex: 256px','',256),
-    ('LARGE','large','large tex: 512px','',512),
-    ('EXTRA_LARGE','extra_large','extra large tex: 1024px','',1024)
+    ('EXTRA_SMALL','extra_small 64x64px','extra small squared tex: 64px','',64),
+    ('SMALL','small 128x128px','small squared tex: 128px','',128),
+    ('MEDIUM','medium 256x256px','medium squared tex: 256px','',256),
+    ('LARGE','large 512x512px','large squared tex: 512px','',512),
+    ('EXTRA_LARGE','extra_large 1024x1024px','extra large squared tex: 1024px','',1024)
 ]
 
 size_tex_dict = {
@@ -58,7 +58,7 @@ size_tex_dict = {
 }
 
 def simple_screen(x, y, args):
-    
+
     back_color, grid_color, line_color = args[0]
 
     texture = args[1]
