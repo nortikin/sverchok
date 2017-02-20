@@ -64,6 +64,16 @@ bitmap_save_list=[
     ('BMP','bmp format','save texture in .tiff format','',3),
     ('JPEG','jpeg format','save texture in .jpeg format','',4)
 ]
+def assign_image(self,image_name, size ,buffer):
+    import numpy as np
+    image = bpy.data.images.new(image_name, size, size, alpha=False)
+    np_buff = np.empty(len(image.pixels), dtype=np.float32)
+    np_buff.shape = (-1, 4)
+    np_buff[:,:] = np.array(buffer)[:,np.newaxis]
+    np_buff[:,3] = 1
+    np_buff.shape = -1
+    image.pixels[:] = np_buff
+    return image
 
 def simple_screen(x, y, args):
     #draw a simple scren display for the texture
@@ -114,6 +124,8 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
     '''Texture Viewer node'''
     bl_idname = 'SvTextureViewerNode'
     bl_label = 'Texture viewer'
+
+    tex = []
 
     n_id = StringProperty(default='')
     activate = BoolProperty(
@@ -200,6 +212,9 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
                 data = data[:total_size]
             # and then in init texture
             texture = bgl.Buffer(bgl.GL_FLOAT, total_size, data)
+            tex = [texture.to_list()]
+            #print(tex)
+
 
             palette = palette_dict.get(self.selected_theme_mode)[:]
             x, y = [int(j) for j in (self.location + Vector((self.width + 20, 0)))[:]]
@@ -232,18 +247,7 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
             texname = 0
 
             init_texture(size_tex,size_tex,texname,texture)
-            '''
-            def assign_image(self,image_name='', size=size_tex,buffer=texture):
-                import numpy as np
-                image = bpy.data.images.new(image_name, size, size, alpha=False)
-                np_buff = np.empty(len(image.pixels), dtype=np.float32)
-                np_buff.shape = (-1, 4)
-                np_buff[:,:] = np.array(buffer)[:,np.newaxis]
-                np_buff[:,3] = 1
-                np_buff.shape = -1
-                image.pixels[:] = np_buff
-                return image
-            '''
+
             draw_data = {
                 'tree_name': self.id_data.name[:],
                 'mode': 'custom_function',
@@ -253,6 +257,7 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
             }
 
             nvBGL2.callback_enable(n_id, draw_data)
+        return tex
 
     def free(self):
         nvBGL2.callback_disable(node_id(self))
@@ -261,9 +266,10 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
     def copy(self, node):
         self.n_id = ''
 
-    def save_bitmap(self,image_name='image.png',filepath_raw='',img_format='PNG',width=64,height=64,alpha=False):
+    def save_bitmap(self,image_name='image.png',filepath_raw='',img_format='PNG',width=64,height=64,alpha=False,buf=tex):
+        #print(buf)
         img = bpy.data.images.new(name="bitmap", width=64,height=64,alpha=False, float_buffer=True)
-        img = assign_image(image_name,width*height,self.texture)
+        img = assign_image(image_name,width*height,buf)
         img.colorspace_settings.name = 'Linear'
         # bake() #implemented in separate function
         img.file_format = img_format
@@ -271,17 +277,6 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         img.filepath_raw = "/tmp/my_new_bake.png"
         img.save()
         print('saved!')
-
-    def assign_image(self,image_name, size ,buffer):
-        import numpy as np
-        image = bpy.data.images.new(image_name, size, size, alpha=False)
-        np_buff = np.empty(len(image.pixels), dtype=np.float32)
-        np_buff.shape = (-1, 4)
-        np_buff[:,:] = np.array(buffer)[:,np.newaxis]
-        np_buff[:,3] = 1
-        np_buff.shape = -1
-        image.pixels[:] = np_buff
-        return image
 
 def register():
     bpy.utils.register_class(SvTextureViewerNode)
