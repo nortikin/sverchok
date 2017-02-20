@@ -58,11 +58,12 @@ size_tex_dict = {
 }
 
 def simple_screen(x, y, args):
-    #func = args[0]
+    
     back_color, grid_color, line_color = args[0]
-    data = args[1]
+
+    texture = args[1]
     size = args[2]
-    print('size of tex inside simple screen: {0}'.format(size))
+    #print('size of tex inside simple screen: {0}'.format(size))
 
     texture = 1
     width = size
@@ -97,33 +98,6 @@ def simple_screen(x, y, args):
         bgl.glDisable(bgl.GL_TEXTURE_2D)
         #bgl.glDeleteTextures( 1, Buffer )
         bgl.glFlush()
-
-    def init_texture(width,height,texname,data):
-        #function to init the texture
-        bgl.glShadeModel(bgl.GL_SMOOTH)
-        bgl.glEnable(bgl.GL_DEPTH_TEST)
-
-        Buffer = bgl.Buffer(bgl.GL_FLOAT, [width,height], data)
-        bgl.glPixelStorei(bgl.GL_UNPACK_ALIGNMENT,1)
-
-        bgl.glGenTextures(1,Buffer)
-        bgl.glEnable(bgl.GL_TEXTURE_2D)
-        #glBindTexture(target, texture): texture (unsigned int) – Specifies the name of a texture.
-        bgl.glBindTexture(bgl.GL_TEXTURE_2D, texname)
-
-        bgl.glActiveTexture(bgl.GL_TEXTURE0)
-
-        bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_WRAP_S, bgl.GL_CLAMP)
-        bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_WRAP_T, bgl.GL_CLAMP)
-        bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_MAG_FILTER, bgl.GL_LINEAR)
-        bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_MIN_FILTER, bgl.GL_LINEAR)
-
-        bgl.glTexImage2D(
-               bgl.GL_TEXTURE_2D, 0, bgl.GL_LUMINANCE, width, height, 0,
-               bgl.GL_LUMINANCE, bgl.GL_FLOAT, Buffer
-           )
-
-    init_texture(width,height,texname,data)
 
     draw_texture(x=x, y=y, w=width, h=height, color=back_color,texname=texname)
 
@@ -170,32 +144,71 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('StringsSocket', "Float").prop_name = 'in_float'
 
     def process(self):
-        p = self.inputs['Float'].sv_get()
+
+        p = self.inputs['Float'].sv_get(deepcopy=False)
         n_id = node_id(self)
 
         # end early
         nvBGL2.callback_disable(n_id)
 
-        _data = p[0]
+        data = p[0]
         #print(_data)
         if self.activate:
 
+            size_tex = size_tex_dict.get(self.selected_mode)
+            total_size = size_tex * size_tex
+            if len(data) < total_size:
+                default_value = 0
+                new_data = [default_value for j in range(total_size)]
+                new_data[:len(data)] = data[:]
+                data = new_data
+            elif len(data) > total_size:
+                data = data[:total_size]
+            # and then in init texture
+            texture = bgl.Buffer(bgl.GL_FLOAT, total_size, data)
+
             palette = palette_dict.get(self.selected_theme_mode)[:]
             x, y = [int(j) for j in (self.location + Vector((self.width + 20, 0)))[:]]
-            #size_tex = size_tex_dict.get('SMALL')
-            size_tex = size_tex_dict.get(self.selected_mode)
-            #size_tex = size_tex_list[0][4]
-            print(size_tex)
-            #print(self.selected_mode[1])
+
+            def init_texture(width,height,texname,texture):
+                #function to init the texture
+                bgl.glShadeModel(bgl.GL_SMOOTH)
+                bgl.glEnable(bgl.GL_DEPTH_TEST)
+
+                #Buffer = bgl.Buffer(bgl.GL_FLOAT, [width,height], data)
+                #Buffer = bgl.Buffer(bgl.GL_FLOAT,  width * height, data)
+                bgl.glPixelStorei(bgl.GL_UNPACK_ALIGNMENT,1)
+
+                #bgl.glGenTextures(1,Buffer)
+                bgl.glGenTextures(1,texture)
+                bgl.glEnable(bgl.GL_TEXTURE_2D)
+                #glBindTexture(target, texture): texture (unsigned int) – Specifies the name of a texture.
+                bgl.glBindTexture(bgl.GL_TEXTURE_2D, texname)
+
+                bgl.glActiveTexture(bgl.GL_TEXTURE0)
+
+                bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_WRAP_S, bgl.GL_CLAMP)
+                bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_WRAP_T, bgl.GL_CLAMP)
+                bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_MAG_FILTER, bgl.GL_LINEAR)
+                bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_MIN_FILTER, bgl.GL_LINEAR)
+
+                bgl.glTexImage2D(
+                       bgl.GL_TEXTURE_2D, 0, bgl.GL_LUMINANCE, width, height, 0,
+                       bgl.GL_LUMINANCE, bgl.GL_FLOAT, texture
+                   )
+
+            texname = 0
+
+            init_texture(size_tex,size_tex,texname,texture)
 
             draw_data = {
                 'tree_name': self.id_data.name[:],
                 'mode': 'custom_function',
                 'custom_function': simple_screen,
                 'loc': (x, y),
-                'args': (palette, _data, size_tex)
-                #'args': (palette, _data)
+                'args': (palette, texture, size_tex)
             }
+
             nvBGL2.callback_enable(n_id, draw_data)
 
     def free(self):
