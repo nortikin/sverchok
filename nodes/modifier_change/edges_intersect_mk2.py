@@ -145,11 +145,11 @@ class SvIntersectEdgesNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     rm_doubles = bpy.props.FloatProperty(min=0.0, default=0.0001, update=updateNode, step=0.1)
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', 'Verts_in', 'Verts_in')
-        self.inputs.new('StringsSocket', 'Edges_in', 'Edges_in')
+        self.inputs.new('VerticesSocket', 'Verts_in')
+        self.inputs.new('StringsSocket', 'Edges_in')
 
-        self.outputs.new('VerticesSocket', 'Verts_out', 'Verts_out')
-        self.outputs.new('StringsSocket', 'Edges_out', 'Edges_out')
+        self.outputs.new('VerticesSocket', 'Verts_out')
+        self.outputs.new('StringsSocket', 'Edges_out')
 
     def draw_buttons(self, context, layout):
         r = layout.row(align=True)
@@ -164,8 +164,8 @@ class SvIntersectEdgesNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         outputs = self.outputs
 
         try:
-            verts_in = inputs['Verts_in'].sv_get()[0]
-            edges_in = inputs['Edges_in'].sv_get()[0]
+            verts_in = inputs['Verts_in'].sv_get(deepcopy=False)[0]
+            edges_in = inputs['Edges_in'].sv_get(deepcopy=False)[0]
             linked = outputs['Verts_out'].is_linked
         except (IndexError, KeyError) as e:
             return
