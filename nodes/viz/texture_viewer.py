@@ -64,7 +64,7 @@ bitmap_save_list=[
     ('BMP','bmp format','save texture in .tiff format','',3),
     ('JPEG','jpeg format','save texture in .jpeg format','',4)
 ]
-def assign_image(self,image_name, size ,buffer):
+def assign_image(image_name, size ,buffer):
     import numpy as np
     image = bpy.data.images.new(image_name, size, size, alpha=False)
     np_buff = np.empty(len(image.pixels), dtype=np.float32)
@@ -182,11 +182,6 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
         l.operator("node.scriptlite_ui_callback", text="S A V E").fn_name="save_bitmap"
 
-    def invoke(self, context, event):
-        wm = context.window_manager
-        wm.fileselect_add(self)
-        return {'RUNNING_MODAL'}
-
     def sv_init(self, context):
         self.inputs.new('StringsSocket', "Float").prop_name = 'in_float'
 
@@ -213,7 +208,7 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
             # and then in init texture
             texture = bgl.Buffer(bgl.GL_FLOAT, total_size, data)
             tex = [texture.to_list()]
-            #print(tex)
+            print(tex)
 
 
             palette = palette_dict.get(self.selected_theme_mode)[:]
@@ -257,7 +252,7 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
             }
 
             nvBGL2.callback_enable(n_id, draw_data)
-        return tex
+        #return tex
 
     def free(self):
         nvBGL2.callback_disable(node_id(self))
@@ -266,15 +261,16 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
     def copy(self, node):
         self.n_id = ''
 
-    def save_bitmap(self,image_name='image.png',filepath_raw='',img_format='PNG',width=64,height=64,alpha=False,buf=tex):
-        #print(buf)
-        img = bpy.data.images.new(name="bitmap", width=64,height=64,alpha=False, float_buffer=True)
+    def save_bitmap(self, image_name='image_name', filepath_raw='', alpha=False, buf=tex):
+        img_format = self.bitmap_save
+        image_name = image_name + '.' + img_format.lower()
+        dim = size_tex_dict[self.selected_mode]
+        width, height = dim, dim
+        img = bpy.data.images.new(name=image_name, width=width,height=height,alpha=alpha, float_buffer=True)
+        print("buffer is:{0}".format(buf))
         img = assign_image(image_name,width*height,buf)
         img.colorspace_settings.name = 'Linear'
-        # bake() #implemented in separate function
-        img.file_format = img_format
-        # need to set to 16-bit here
-        img.filepath_raw = "/tmp/my_new_bake.png"
+        img.filepath_raw = "/tmp/" + image_name
         img.save()
         print('saved!')
 
