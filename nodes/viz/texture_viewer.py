@@ -255,7 +255,7 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
     def copy(self, node):
         self.n_id = ''
 
-    def save_bitmap(self, image_name='image_name', filepath_raw='', alpha=False,texture=texture):
+    def save_bitmap(self, image_name='image_name', filepath_raw=directory, alpha=False, texture=texture):
         import numpy as np
         buf = self.get_buffer()
         img_format = self.bitmap_save
