@@ -334,7 +334,7 @@ class SvBmeshViewerNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     def get_geometry_from_sockets(self):
 
         def get(socket_name):
-            data = self.inputs[socket_name].sv_get(default=[])
+            data = self.inputs[socket_name].sv_get(default=[], deepcopy=False)
             return dataCorrect(data)
 
         mverts = get('vertices')
