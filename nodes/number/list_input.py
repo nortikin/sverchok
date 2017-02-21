@@ -21,7 +21,7 @@ from bpy.props import (EnumProperty, FloatVectorProperty,
                        IntProperty, IntVectorProperty)
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, SvSetSocketAnyType
+from sverchok.data_structure import updateNode
 
 
 class SvListInputNode(bpy.types.Node, SverchCustomTreeNode):
@@ -101,6 +101,7 @@ class SvListInputNode(bpy.types.Node, SverchCustomTreeNode):
                 v_l = list(self.vector_list)
                 data = [list(zip(v_l[0:c:3], v_l[1:c:3], v_l[2:c:3]))]
             self.outputs[0].sv_set(data)
+
 
 def register():
     bpy.utils.register_class(SvListInputNode)
