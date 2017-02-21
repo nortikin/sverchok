@@ -29,12 +29,6 @@ nodule_color = (0.899, 0.8052, 0.0, 1.0)
 
 # pylint: disable=w0141
 
-def fprop_generator(**altprops):
-    # min can be overwritten by passing in min=some_value into the altprops dict
-    default_dict_vals = dict(update=updateNode, precision=3, min=0.0, max=1.0)
-    default_dict_vals.update(**altprops)
-    return FloatProperty(**default_dict_vals)
-
 
 class SvColorsOutNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Generator for Color data , color separate'''
