@@ -24,8 +24,7 @@ from bpy.props import EnumProperty
 from mathutils import noise
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (updateNode, Vector_generate, Vector_degenerate,
-                            SvSetSocketAnyType, SvGetSocketAnyType)
+from sverchok.data_structure import (updateNode, Vector_generate, Vector_degenerate)
 
 # noise nodes
 # from http://www.blender.org/documentation/blender_python_api_2_70_release/mathutils.noise.html
@@ -92,7 +91,7 @@ class SvNoiseNode(bpy.types.Node, SverchCustomTreeNode):
         if not self.outputs[0].is_linked:
             return
 
-        
+
         verts = Vector_generate(self.inputs['Vertices'].sv_get())
         out = []
         n_t = self.noise_dict[self.noise_type]

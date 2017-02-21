@@ -4,14 +4,14 @@ import bpy
 from bpy.props import IntProperty, FloatProperty, BoolProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, match_long_repeat, SvSetSocketAnyType
+from sverchok.data_structure import updateNode, match_long_repeat
 
 
 def sphere_verts(U, V, Radius, Separate):
     theta = radians(360/U)
     phi = radians(180/(V-1))
     if Separate:
-        pts = [[ [0, 0, Radius] for i in range(U) ]]
+        pts = [[[0, 0, Radius] for i in range(U)]]
     else:
         pts = [[0, 0, Radius]]
     for i in range(1, V-1):
@@ -27,7 +27,7 @@ def sphere_verts(U, V, Radius, Separate):
         else:
             pts.extend(pts_u)
     if Separate:
-        points_top = [ [0, 0, -Radius] for i in range(U) ]
+        points_top = [[0, 0, -Radius] for i in range(U)]
         pts.append(points_top)
     else:
         pts.append([0, 0, -Radius])
@@ -108,16 +108,15 @@ class SphereNode(bpy.types.Node, SverchCustomTreeNode):
         # outputs
         if self.outputs['Vertices'].is_linked:
             verts = [sphere_verts(u, v, r, self.Separate) for u, v, r in zip(*params)]
-            SvSetSocketAnyType(self, 'Vertices', verts)
+            self.outputs['Vertices'].sv_set(verts)
 
         if self.outputs['Edges'].is_linked:
             edges = [sphere_edges(u, v) for u, v, r in zip(*params)]
-            SvSetSocketAnyType(self, 'Edges', edges)
+            self.outputs['Edges'].sv_set(edges)
 
         if self.outputs['Polygons'].is_linked:
             faces = [sphere_faces(u, v) for u, v, r in zip(*params)]
-            SvSetSocketAnyType(self, 'Polygons', faces)
-
+            self.outputs['Polygons'].sv_set(faces)
 
 
 def register():
@@ -126,6 +125,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SphereNode)
-
-if __name__ == '__main__':
-    register()
