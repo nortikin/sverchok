@@ -36,7 +36,7 @@ class SvFrameInfoNode(bpy.types.Node, SverchCustomTreeNode):
         # outputs
         scene = bpy.context.scene
         if self.outputs['Current Frame'].is_linked:
-            self.outputs['Current Frame'].sv.set([[scene.frame_current]])
+            self.outputs['Current Frame'].sv_set([[scene.frame_current]])
         if self.outputs['Start Frame'].is_linked:
             self.outputs['Start Frame'].sv_set([[scene.frame_start]])
         if self.outputs['End Frame'].is_linked:
