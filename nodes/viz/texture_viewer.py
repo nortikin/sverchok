@@ -64,16 +64,6 @@ bitmap_save_list=[
     ('BMP','bmp format','save texture in .tiff format','',3),
     ('JPEG','jpeg format','save texture in .jpeg format','',4)
 ]
-def assign_image(image_name, size ,buffer):
-    import numpy as np
-    image = bpy.data.images.new(image_name, size, size, alpha=False)
-    np_buff = np.empty(len(image.pixels), dtype=np.float32)
-    np_buff.shape = (-1, 4)
-    np_buff[:,:] = np.array(buffer)[:,np.newaxis]
-    np_buff[:,3] = 1
-    np_buff.shape = -1
-    image.pixels[:] = np_buff
-    return image
 
 def simple_screen(x, y, args):
     #draw a simple scren display for the texture
@@ -161,9 +151,20 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         items=theme_mode_options, default="default", update=updateNode
     )
 
-    def get_buffer(self,texture):
-        self.texture = texture
-        return self.texture
+    def get_buffer(self):
+        data = self.inputs['Float'].sv_get(deepcopy=False)[0]
+        size_tex = size_tex_dict.get(self.selected_mode)
+        total_size = size_tex * size_tex
+        if len(data) < total_size:
+            default_value = 0
+            new_data = [default_value for j in range(total_size)]
+            new_data[:len(data)] = data[:]
+            data = new_data
+        elif len(data) > total_size:
+            data = data[:total_size]
+
+        texture = bgl.Buffer(bgl.GL_FLOAT, total_size, data)
+        return texture
 
     def draw_buttons(self, context, l):
         c = l.column()
@@ -190,7 +191,7 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
     def process(self):
 
-        data = self.inputs['Float'].sv_get(deepcopy=False)[0]
+        #data = self.inputs['Float'].sv_get(deepcopy=False)[0]
         n_id = node_id(self)
 
         # end early
@@ -199,19 +200,9 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         #print(_data)
         if self.activate:
 
+            texture = self.get_buffer()
+
             size_tex = size_tex_dict.get(self.selected_mode)
-            total_size = size_tex * size_tex
-            if len(data) < total_size:
-                default_value = 0
-                new_data = [default_value for j in range(total_size)]
-                new_data[:len(data)] = data[:]
-                data = new_data
-            elif len(data) > total_size:
-                data = data[:total_size]
-            # and then in init texture
-            texture = bgl.Buffer(bgl.GL_FLOAT, total_size, data)
-            self.get_buffer(texture)
-            #print(tex)
 
             palette = palette_dict.get(self.selected_theme_mode)[:]
             x, y = [int(j) for j in (self.location + Vector((self.width + 20, 0)))[:]]
@@ -225,6 +216,7 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
                 #bgl.glGenTextures(1,Buffer)
                 bgl.glGenTextures(1,texture)
+
                 bgl.glEnable(bgl.GL_TEXTURE_2D)
                 #glBindTexture(target, texture): texture (unsigned int) – Specifies the name of a texture.
                 bgl.glBindTexture(bgl.GL_TEXTURE_2D, texname)
@@ -265,7 +257,7 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
     def save_bitmap(self, image_name='image_name', filepath_raw='', alpha=False,texture=texture):
         import numpy as np
-        buf = self.get_buffer(texture)
+        buf = self.get_buffer()
         img_format = self.bitmap_save
         image_name = image_name + '.' + img_format.lower()
         dim = size_tex_dict[self.selected_mode]
@@ -273,21 +265,16 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         img = []
         if image_name in bpy.data.images:
             img = bpy.data.images[image_name]
-            print("A")
         else:
             img = bpy.data.images.new(name=image_name,width=width,height=height,alpha=alpha, float_buffer=True)
-            print("B")
-        print(img)
-        #img = bpy.data.images.new(name=image_name, width=width,height=height,alpha=alpha, float_buffer=True)
+        #print(img)
         np_buff = np.empty(len(img.pixels), dtype=np.float32)
         np_buff.shape = (-1, 4)
         np_buff[:,:] = np.array(buf)[:,np.newaxis]
         np_buff[:,3] = 1
         np_buff.shape = -1
         img.pixels[:] = np_buff
-        print("buffer is:{0}".format(buf))
-        #img = assign_image(image_name,width*height,buf)
-        img.colorspace_settings.name = 'Linear'
+        #print("buffer is:{0}".format(buf))
         img.filepath_raw = "/tmp/" + image_name
         img.save()
         print('saved!')
