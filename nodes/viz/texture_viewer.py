@@ -124,9 +124,12 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
     '''Texture Viewer node'''
     bl_idname = 'SvTextureViewerNode'
     bl_label = 'Texture viewer'
-
-    tex = []
-
+    texture = []
+    '''
+    def __init__(self):
+        self.texture = texture
+        #texture = self.texture
+    '''
     n_id = StringProperty(default='')
     activate = BoolProperty(
         name='Show', description='Activate texture drawing',
@@ -185,6 +188,11 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
     def sv_init(self, context):
         self.inputs.new('StringsSocket', "Float").prop_name = 'in_float'
 
+
+    def init(self, context):
+        #self.texture = texture
+        texture.sv_set()
+
     def process(self):
 
         data = self.inputs['Float'].sv_get(deepcopy=False)[0]
@@ -207,8 +215,8 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
                 data = data[:total_size]
             # and then in init texture
             texture = bgl.Buffer(bgl.GL_FLOAT, total_size, data)
-            tex = [texture.to_list()]
-            print(tex)
+            #tex = [texture.to_list()]
+            #print(tex)
 
 
             palette = palette_dict.get(self.selected_theme_mode)[:]
@@ -261,14 +269,31 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
     def copy(self, node):
         self.n_id = ''
 
-    def save_bitmap(self, image_name='image_name', filepath_raw='', alpha=False, buf=tex):
+    def save_bitmap(self, image_name='image_name', filepath_raw='', alpha=False, buf=texture):
+        import numpy as np
         img_format = self.bitmap_save
         image_name = image_name + '.' + img_format.lower()
         dim = size_tex_dict[self.selected_mode]
         width, height = dim, dim
-        img = bpy.data.images.new(name=image_name, width=width,height=height,alpha=alpha, float_buffer=True)
+        img = []
+        if image_name in bpy.data.images:
+            img = bpy.data.images[image_name]
+            print("A")
+            #return img
+        else:
+            img = bpy.data.images.new(name=image_name,width=width,height=height,alpha=alpha, float_buffer=True)
+            print("B")
+
+        print(img)
+        #img = bpy.data.images.new(name=image_name, width=width,height=height,alpha=alpha, float_buffer=True)
+        np_buff = np.empty(len(img.pixels), dtype=np.float32)
+        np_buff.shape = (-1, 4)
+        np_buff[:,:] = np.array(buf)[:,np.newaxis]
+        np_buff[:,3] = 1
+        np_buff.shape = -1
+        img.pixels[:] = np_buff
         print("buffer is:{0}".format(buf))
-        img = assign_image(image_name,width*height,buf)
+        #img = assign_image(image_name,width*height,buf)
         img.colorspace_settings.name = 'Linear'
         img.filepath_raw = "/tmp/" + image_name
         img.save()
