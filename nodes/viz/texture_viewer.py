@@ -125,11 +125,7 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvTextureViewerNode'
     bl_label = 'Texture viewer'
     texture = []
-    '''
-    def __init__(self):
-        self.texture = texture
-        #texture = self.texture
-    '''
+
     n_id = StringProperty(default='')
     activate = BoolProperty(
         name='Show', description='Activate texture drawing',
@@ -165,6 +161,10 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         items=theme_mode_options, default="default", update=updateNode
     )
 
+    def get_buffer(self,texture):
+        self.texture = texture
+        return self.texture
+
     def draw_buttons(self, context, l):
         c = l.column()
         c.label(text="set texture display")
@@ -188,11 +188,6 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
     def sv_init(self, context):
         self.inputs.new('StringsSocket', "Float").prop_name = 'in_float'
 
-
-    def init(self, context):
-        #self.texture = texture
-        texture.sv_set()
-
     def process(self):
 
         data = self.inputs['Float'].sv_get(deepcopy=False)[0]
@@ -215,9 +210,8 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
                 data = data[:total_size]
             # and then in init texture
             texture = bgl.Buffer(bgl.GL_FLOAT, total_size, data)
-            #tex = [texture.to_list()]
+            self.get_buffer(texture)
             #print(tex)
-
 
             palette = palette_dict.get(self.selected_theme_mode)[:]
             x, y = [int(j) for j in (self.location + Vector((self.width + 20, 0)))[:]]
@@ -269,8 +263,9 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
     def copy(self, node):
         self.n_id = ''
 
-    def save_bitmap(self, image_name='image_name', filepath_raw='', alpha=False, buf=texture):
+    def save_bitmap(self, image_name='image_name', filepath_raw='', alpha=False,texture=texture):
         import numpy as np
+        buf = self.get_buffer(texture)
         img_format = self.bitmap_save
         image_name = image_name + '.' + img_format.lower()
         dim = size_tex_dict[self.selected_mode]
@@ -279,11 +274,9 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         if image_name in bpy.data.images:
             img = bpy.data.images[image_name]
             print("A")
-            #return img
         else:
             img = bpy.data.images.new(name=image_name,width=width,height=height,alpha=alpha, float_buffer=True)
             print("B")
-
         print(img)
         #img = bpy.data.images.new(name=image_name, width=width,height=height,alpha=alpha, float_buffer=True)
         np_buff = np.empty(len(img.pixels), dtype=np.float32)
