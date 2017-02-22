@@ -120,13 +120,13 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         description="offers bitmap saving",
         default="PNG"
     )
-
+    '''
     directory = StringProperty(
         maxlen=1024,
         subtype='FILE_PATH',
         options={'HIDDEN', 'SKIP_SAVE'}
     )
-
+    '''
     in_float = FloatProperty(
         min=0.0, max=1.0, default=0.0, name='Float Input',
         description='input for texture', update=updateNode
@@ -154,12 +154,12 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         c.prop(self, 'activate')
 
     def draw_buttons_ext(self, context, l):
-        l.label(text="choose a different color for the border:")
-        l.prop(self, "selected_theme_mode")
-        l.separator()
+        #l.label(text="choose a different color for the border:")
+        #l.prop(self, "selected_theme_mode")
+        #l.separator()
         l.label(text="save texture as bitmap image, choose a format:")
         l.prop(self, "bitmap_save")
-        l.operator('file.select_all_toggle', text='choose a directory')
+        #l.operator('file.select_all_toggle', text='choose a directory')
 
         row = l.row()
         #addon = context.user_preferences.addons.get(sverchok.__name__)
@@ -235,7 +235,7 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
     def copy(self, node):
         self.n_id = ''
 
-    def save_bitmap(self, image_name='image_name', filepath_raw=directory, alpha=False, texture=texture):
+    def save_bitmap(self, image_name='image_name', filepath_raw='', alpha=False, texture=texture):
         import numpy as np
         buf = self.get_buffer()
         img_format = self.bitmap_save
