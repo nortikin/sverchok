@@ -219,7 +219,7 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         import numpy as np
         buf = self.get_buffer()
         img_format = self.bitmap_save
-        image_name = image_name + '.' + img_format.lower()
+        image_name = image_name + '.' + img_format.lower().replace('targa', 'tga')
         dim = size_tex_dict[self.selected_mode]
         width, height = dim, dim
         img = []
