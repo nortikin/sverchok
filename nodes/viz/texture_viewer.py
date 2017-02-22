@@ -109,20 +109,20 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
     selected_mode = EnumProperty(
         items=size_tex_list,
-        description="offers display sizing",
+        description="Offers display sizing",
         default="SMALL",
         update=updateNode
     )
 
     bitmap_save = EnumProperty(
         items=bitmap_save_list,
-        description="offers bitmap saving",
+        description="Offers bitmap saving",
         default="PNG"
     )
 
     in_float = FloatProperty(
         min=0.0, max=1.0, default=0.0, name='Float Input',
-        description='input for texture', update=updateNode
+        description='Input for texture', update=updateNode
     )
 
     def get_buffer(self):
@@ -142,12 +142,12 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons(self, context, l):
         c = l.column()
-        c.label(text="set texture display")
+        c.label(text="Set texture display:")
         c.prop(self, "selected_mode", text="")
         c.prop(self, 'activate')
 
     def draw_buttons_ext(self, context, l):
-        l.label(text="save texture as a bitmap image, choose a format:")
+        l.label(text="Save texture as a bitmap image, choose a format:")
         l.separator()
         l.prop(self, "bitmap_save")
         l.separator()
