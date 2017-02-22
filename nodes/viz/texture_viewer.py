@@ -44,7 +44,7 @@ size_tex_dict = {
 
 bitmap_save_list=[
     ('PNG','png format', 'save texture in .png fromat','',0),
-    ('TGA','tga format','save texture in .tga fromat','',1),
+    ('TARGA','tga format','save texture in .tga fromat','',1),
     ('TIFF','tiff format','save texture in .tiff format','',2),
     ('BMP','bmp format','save texture in .tiff format','',3),
     ('JPEG','jpeg format','save texture in .jpeg format','',4)
@@ -235,8 +235,13 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         np_buff.shape = -1
         img.pixels[:] = np_buff
 
-        img.filepath_raw = "/tmp/" + image_name
-        img.save()
+        scene=bpy.context.scene
+        scene.render.image_settings.file_format= img_format
+
+        path = img.filepath_raw
+        path = "/tmp/" + image_name
+        img.save_render(path,scene)
+
         print('saved!')
 
 def register():
