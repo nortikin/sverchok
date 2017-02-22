@@ -164,18 +164,15 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
     def process(self):
         n_id = node_id(self)
-
         # end early
         nvBGL2.callback_disable(n_id)
 
         if self.activate:
 
             texture = self.get_buffer()
-
             size_tex = size_tex_dict.get(self.selected_mode)
-
             #x, y = [int(j) for j in (self.location + Vector((self.width + 20, 0)))[:]]
-            x, y = self.xy_offset()
+            x, y = self.xy_offset
 
             def init_texture(width,height,texname,texture):
                 #function to init the texture
@@ -235,21 +232,19 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
             img = bpy.data.images[image_name]
         else:
             img = bpy.data.images.new(name=image_name,width=width,height=height,alpha=alpha,float_buffer=True)
-
         np_buff = np.empty(len(img.pixels), dtype=np.float32)
         np_buff.shape = (-1, 4)
         np_buff[:,:] = np.array(buf)[:,np.newaxis]
         np_buff[:,3] = 1
         np_buff.shape = -1
         img.pixels[:] = np_buff
-
+        #get the scene context
         scene=bpy.context.scene
         scene.render.image_settings.file_format= img_format
-
+        #get the path for the file and save the image
         path = img.filepath_raw
         path = "/tmp/" + image_name
         img.save_render(path,scene)
-
         print('saved!')
 
 def register():
