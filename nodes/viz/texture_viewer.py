@@ -27,20 +27,6 @@ from sverchok.data_structure import updateNode, node_id
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.ui import nodeview_bgl_viewer_draw_mk2 as nvBGL2
 
-palette_dict = {
-    "default": (
-        (0.243299, 0.590403, 0.836084, 1.00),  # back_color
-        (0.390805, 0.754022, 1.000000, 1.00),  # grid_color
-        (1.000000, 0.330010, 0.107140, 1.00)   # line_color
-    ),
-    "scope": (
-        (0.274677, 0.366253, 0.386430, 1.00),  # back_color
-        (0.423268, 0.558340, 0.584078, 1.00),  # grid_color
-        (0.304762, 1.000000, 0.062827, 1.00)   # line_color
-    )
-
-}
-
 size_tex_list=[
     ('EXTRA_SMALL','extra_small 64x64px','extra small squared tex: 64px','',64),
     ('SMALL','small 128x128px','small squared tex: 128px','',128),
@@ -67,11 +53,11 @@ bitmap_save_list=[
 
 def simple_screen(x, y, args):
     #draw a simple scren display for the texture
-    back_color, grid_color, line_color = args[0]
+    border_color = (0.390805, 0.754022, 1.000000, 1.00)
 
-    texture = args[1]
-    size = args[2]
-    texname = args[3]
+    texture = args[0]
+    size = args[1]
+    texname = args[2]
     #print('size of tex inside simple screen: {0}'.format(size))
     texture = 1
     width = size
@@ -108,7 +94,7 @@ def simple_screen(x, y, args):
 
     draw_texture(x=x, y=y, w=width, h=height, texname=texname)
 
-    draw_borders(x=x, y=y, w=width, h=height, color=grid_color)
+    draw_borders(x=x, y=y, w=width, h=height, color=border_color)
 
 class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
     '''Texture Viewer node'''
@@ -144,11 +130,6 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
     in_float = FloatProperty(
         min=0.0, max=1.0, default=0.0, name='Float Input',
         description='input for texture', update=updateNode
-    )
-
-    theme_mode_options = [(m, m, '', idx) for idx, m in enumerate(["default", "scope"])]
-    selected_theme_mode = EnumProperty(
-        items=theme_mode_options, default="default", update=updateNode
     )
 
     def get_buffer(self):
@@ -204,7 +185,6 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
             size_tex = size_tex_dict.get(self.selected_mode)
 
-            palette = palette_dict.get(self.selected_theme_mode)[:]
             x, y = [int(j) for j in (self.location + Vector((self.width + 20, 0)))[:]]
 
             def init_texture(width,height,texname,texture):
@@ -242,7 +222,7 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
                 'mode': 'custom_function',
                 'custom_function': simple_screen,
                 'loc': (x, y),
-                'args': (palette, texture, size_tex, texname)
+                'args': (texture, size_tex, texname)
             }
 
             nvBGL2.callback_enable(n_id, draw_data)
@@ -266,8 +246,8 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         if image_name in bpy.data.images:
             img = bpy.data.images[image_name]
         else:
-            img = bpy.data.images.new(name=image_name,width=width,height=height,alpha=alpha, float_buffer=True)
-        #print(img)
+            img = bpy.data.images.new(name=image_name,width=width,height=height,alpha=alpha,float_buffer=True)
+
         np_buff = np.empty(len(img.pixels), dtype=np.float32)
         np_buff.shape = (-1, 4)
         np_buff[:,:] = np.array(buf)[:,np.newaxis]
