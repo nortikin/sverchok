@@ -154,17 +154,11 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         c.prop(self, 'activate')
 
     def draw_buttons_ext(self, context, l):
-        #l.label(text="choose a different color for the border:")
-        #l.prop(self, "selected_theme_mode")
-        #l.separator()
         l.label(text="save texture as bitmap image, choose a format:")
+        l.separator()
         l.prop(self, "bitmap_save")
-        #l.operator('file.select_all_toggle', text='choose a directory')
-
-        row = l.row()
-        #addon = context.user_preferences.addons.get(sverchok.__name__)
-        #row.scale_y = 4.0 if addon.preferences.over_sized_buttons else 1
-
+        l.separator()
+        l.row()
         l.operator("node.scriptlite_ui_callback", text="S A V E").fn_name="save_bitmap"
 
     def sv_init(self, context):
