@@ -22,7 +22,7 @@ import bpy
 from bpy.props import IntProperty, FloatProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, match_long_repeat, SvSetSocketAnyType
+from sverchok.data_structure import updateNode, match_long_repeat
 
 
 class RandomNode(bpy.types.Node, SverchCustomTreeNode):
@@ -47,14 +47,14 @@ class RandomNode(bpy.types.Node, SverchCustomTreeNode):
     def process(self):
         if not self.outputs[0].is_linked:
             return
-            
+
         Coun = self.inputs['Count'].sv_get()[0]
 
         Seed = self.inputs['Seed'].sv_get()[0]
 
         # outputs
 
-        
+
         Random = []
         if len(Seed) == 1:
             random.seed(Seed[0])
@@ -65,7 +65,7 @@ class RandomNode(bpy.types.Node, SverchCustomTreeNode):
             for s, c in zip(*param):
                 random.seed(s)
                 Random.append([random.random() for i in range(int(c))])
-        
+
         self.outputs[0].sv_set(Random)
 
 

@@ -20,7 +20,7 @@ import bpy
 from bpy.props import StringProperty, EnumProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, SvSetSocketAnyType
+from sverchok.data_structure import updateNode
 
 
 class SvAxisInputNodeMK2(bpy.types.Node, SverchCustomTreeNode):

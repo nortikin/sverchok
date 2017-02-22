@@ -19,7 +19,6 @@
 import bpy
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import SvSetSocketAnyType
 
 
 class SvFrameInfoNode(bpy.types.Node, SverchCustomTreeNode):
@@ -35,12 +34,14 @@ class SvFrameInfoNode(bpy.types.Node, SverchCustomTreeNode):
 
     def process(self):
         # outputs
+        scene = bpy.context.scene
         if self.outputs['Current Frame'].is_linked:
-            SvSetSocketAnyType(self, 'Current Frame', [[bpy.context.scene.frame_current]])
+            self.outputs['Current Frame'].sv_set([[scene.frame_current]])
         if self.outputs['Start Frame'].is_linked:
-            SvSetSocketAnyType(self, 'Start Frame', [[bpy.context.scene.frame_start]])
+            self.outputs['Start Frame'].sv_set([[scene.frame_start]])
         if self.outputs['End Frame'].is_linked:
-            SvSetSocketAnyType(self, 'End Frame', [[bpy.context.scene.frame_end]])
+            self.outputs['End Frame'].sv_set([[scene.frame_end]])
+
 
 def register():
     bpy.utils.register_class(SvFrameInfoNode)

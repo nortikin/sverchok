@@ -20,7 +20,7 @@ import bpy
 from bpy.props import FloatVectorProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, Matrix_listing, SvSetSocketAnyType
+from sverchok.data_structure import updateNode, Matrix_listing
 
 
 class SvMatrixValueIn(bpy.types.Node, SverchCustomTreeNode):
@@ -55,8 +55,7 @@ class SvMatrixValueIn(bpy.types.Node, SverchCustomTreeNode):
     def process(self):
         if 'Matrix' in self.outputs and self.outputs['Matrix'].is_linked:
             m_out = Matrix_listing([self.matrix])
-            SvSetSocketAnyType(self, 'Matrix', m_out)
-
+            self.outputs[0].sv_set(m_out)
 
 
 def register():
