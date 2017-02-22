@@ -10,22 +10,19 @@ def logDebug(message, extra=""):
     if DEBUG:
         print(message, extra)
 
-# custom icon dictionary
-_custom_icons = {}
-
-_custom_icons_loaded = False
+# custom icons dictionary
+_icon_collection = {}
 
 
 def custom_icon(name):
     logDebug("custom_icon called: ", name)
-    global _custom_icons
-    global _custom_icons_loaded
 
-    if not _custom_icons_loaded:
-        load_custom_icons()
+    load_custom_icons()  # load in case they custom icons not already loaded
 
-    if name in _custom_icons:
-        return _custom_icons[name].icon_id
+    custom_icons = _icon_collection["main"]
+
+    if name in custom_icons:
+        return custom_icons[name].icon_id
     else:
         logDebug("No custom icon found for name: ", name)
         return 0
@@ -33,10 +30,11 @@ def custom_icon(name):
 
 def load_custom_icons():
     logDebug("load_custom_icons called")
-    global _custom_icons
-    global _custom_icons_loaded
 
-    _custom_icons = bpy.utils.previews.new()
+    if len(_icon_collection):  # return if custom icons already loaded
+        return
+
+    custom_icons = bpy.utils.previews.new()
 
     iconsDir = os.path.join(os.path.dirname(__file__), "icons")
     iconPattern = "sv_*.png"
@@ -48,19 +46,14 @@ def load_custom_icons():
         iconName = os.path.splitext(iconFile)[0]
         iconID = iconName.upper()
         logDebug(iconID)
-        _custom_icons.load(iconID, os.path.join(iconsDir, iconFile), "IMAGE")
+        custom_icons.load(iconID, os.path.join(iconsDir, iconFile), "IMAGE")
 
-    _custom_icons_loaded = True
+    _icon_collection["main"] = custom_icons
 
 
 def remove_custom_icons():
     logDebug("remove_custom_icons called")
-    global _custom_icons
-    global _custom_icons_loaded
-
-    _custom_icons_loaded = False
-
-    bpy.utils.previews.remove(_custom_icons)
+    bpy.utils.previews.remove(custom_icons)
 
 
 def register():
