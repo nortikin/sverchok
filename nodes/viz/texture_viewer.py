@@ -162,7 +162,6 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         # end early
         nvBGL2.callback_disable(n_id)
 
-
         if self.activate:
 
             texture = self.get_buffer()
@@ -236,7 +235,7 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         np_buff[:,3] = 1
         np_buff.shape = -1
         img.pixels[:] = np_buff
-        #print("buffer is:{0}".format(buf))
+
         img.filepath_raw = "/tmp/" + image_name
         img.save()
         print('saved!')
