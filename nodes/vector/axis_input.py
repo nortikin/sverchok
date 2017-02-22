@@ -20,7 +20,7 @@ import bpy
 from bpy.props import StringProperty, EnumProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, SvSetSocketAnyType
+from sverchok.data_structure import updateNode
 
 
 class svAxisInputNode(bpy.types.Node, SverchCustomTreeNode):
@@ -78,7 +78,8 @@ class svAxisInputNode(bpy.types.Node, SverchCustomTreeNode):
                 'Z': (0, 0, 1)
             }.get(self.current_axis, None)
 
-            SvSetSocketAnyType(self, 'Vectors', [[axial_vector]])
+            self.outputs[0].sv_set([[axial_vector]])
+
 
 def register():
     bpy.utils.register_class(svAxisInputNode)
@@ -86,6 +87,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(svAxisInputNode)
-
-if __name__ == '__main__':
-    register()

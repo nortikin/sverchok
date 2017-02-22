@@ -175,10 +175,15 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
 
     def verify_props(self):
         '''
-        parse sockets and add any props as
+        parse sockets and add any props as needed
         for backwarads compablility
         '''
-        prop_names = {s.prop_name for s in chain(self.float_props, self.int_props)}
+        prop_names = [s.prop_name for s in chain(self.float_props, self.int_props)]
+        prop_from_socket = [s.prop_name for s in self.input_node.outputs if s.prop_name]
+        if len(prop_names) != len(prop_from_socket):
+            pass
+            #  here we could do something clever to create things.
+
         for socket in self.input_node.outputs:
             if socket.is_linked:
                 if socket.prop_name:

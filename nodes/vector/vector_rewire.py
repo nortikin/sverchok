@@ -85,7 +85,7 @@ class SvVectorRewire(bpy.types.Node, SverchCustomTreeNode):
         if not all([vectors_out.is_linked, vectors_in.is_linked]):
             return
         
-        xyz = vectors_in.sv_get()
+        xyz = vectors_in.sv_get(deepcopy=False)
 
         index_from = options.index(self.selected_mode_from)
         index_to = options.index(self.selected_mode_to)
@@ -110,7 +110,7 @@ class SvVectorRewire(bpy.types.Node, SverchCustomTreeNode):
 
             elif switching[0] == 3:
                 # handles socket s. -> xyz
-                scalar_data = scalar_in.sv_get()
+                scalar_data = scalar_in.sv_get(deepcopy=False)
                 if not (isinstance(scalar_data, list) and len(scalar_data) > 0):
                     continue
 

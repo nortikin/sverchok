@@ -26,7 +26,7 @@ from random import random
 import time
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, match_long_repeat, SvSetSocketAnyType
+from sverchok.data_structure import updateNode, match_long_repeat
 
 DEBUG=False
 
