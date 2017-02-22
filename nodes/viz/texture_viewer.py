@@ -17,6 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 from mathutils import Vector
+import numpy as np
 import bpy
 from bpy.props import FloatProperty, EnumProperty, StringProperty, BoolProperty
 
@@ -216,10 +217,10 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         self.n_id = ''
 
     def save_bitmap(self, image_name='image_name', filepath_raw='', alpha=False, texture=texture):
-        import numpy as np
+
         buf = self.get_buffer()
         img_format = self.bitmap_save
-        image_name = image_name + '.' + img_format.lower().replace('targa', 'tga')
+        image_name = image_name + '.' + (img_format.lower().replace('targa', 'tga'))
         dim = size_tex_dict[self.selected_mode]
         width, height = dim, dim
         img = []
