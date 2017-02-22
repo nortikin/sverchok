@@ -16,7 +16,6 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-#from mathutils import Vector
 import numpy as np
 import bpy
 from bpy.props import FloatProperty, EnumProperty, StringProperty, BoolProperty
@@ -171,22 +170,17 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
             texture = self.get_buffer()
             size_tex = size_tex_dict.get(self.selected_mode)
-            #x, y = [int(j) for j in (self.location + Vector((self.width + 20, 0)))[:]]
             x, y = self.xy_offset
 
             def init_texture(width,height,texname,texture):
                 #function to init the texture
                 bgl.glShadeModel(bgl.GL_SMOOTH)
-                bgl.glEnable(bgl.GL_DEPTH_TEST)
 
                 bgl.glPixelStorei(bgl.GL_UNPACK_ALIGNMENT,1)
 
                 bgl.glGenTextures(1,texture)
-
                 bgl.glEnable(bgl.GL_TEXTURE_2D)
-
                 bgl.glBindTexture(bgl.GL_TEXTURE_2D, texname)
-
                 bgl.glActiveTexture(bgl.GL_TEXTURE0)
 
                 bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_WRAP_S, bgl.GL_CLAMP)
@@ -239,8 +233,8 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         np_buff.shape = -1
         img.pixels[:] = np_buff
         #get the scene context
-        scene=bpy.context.scene
-        scene.render.image_settings.file_format= img_format
+        scene = bpy.context.scene
+        scene.render.image_settings.file_format = img_format
         #get the path for the file and save the image
         path = img.filepath_raw
         path = "/tmp/" + image_name
