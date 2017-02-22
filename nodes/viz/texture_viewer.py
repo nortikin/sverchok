@@ -58,8 +58,7 @@ def simple_screen(x, y, args):
     texture = args[0]
     size = args[1]
     texname = args[2]
-    #print('size of tex inside simple screen: {0}'.format(size))
-    texture = 1
+
     width = size
     height = size
 
@@ -158,14 +157,12 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('StringsSocket', "Float").prop_name = 'in_float'
 
     def process(self):
-
-        #data = self.inputs['Float'].sv_get(deepcopy=False)[0]
         n_id = node_id(self)
 
         # end early
         nvBGL2.callback_disable(n_id)
 
-        #print(_data)
+
         if self.activate:
 
             texture = self.get_buffer()
@@ -181,11 +178,10 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
                 bgl.glPixelStorei(bgl.GL_UNPACK_ALIGNMENT,1)
 
-                #bgl.glGenTextures(1,Buffer)
                 bgl.glGenTextures(1,texture)
 
                 bgl.glEnable(bgl.GL_TEXTURE_2D)
-                #glBindTexture(target, texture): texture (unsigned int) – Specifies the name of a texture.
+
                 bgl.glBindTexture(bgl.GL_TEXTURE_2D, texname)
 
                 bgl.glActiveTexture(bgl.GL_TEXTURE0)
@@ -213,7 +209,6 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
             }
 
             nvBGL2.callback_enable(n_id, draw_data)
-        #return tex
 
     def free(self):
         nvBGL2.callback_disable(node_id(self))
