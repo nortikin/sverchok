@@ -20,7 +20,6 @@ from mathutils import Vector
 import bpy
 from bpy.props import FloatProperty, EnumProperty, StringProperty, BoolProperty
 
-import blf
 import bgl
 
 from sverchok.data_structure import updateNode, node_id
