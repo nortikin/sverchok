@@ -12,7 +12,7 @@ def custom_icon(name):
 
     custom_icons = _icon_collection["main"]
 
-    default = lambda: None # for no icon with given name will return zero
+    default = lambda: None  # for no icon with given name will return zero
     default.icon_id = 0
 
     return custom_icons.get(name, default).icon_id
@@ -38,7 +38,9 @@ def load_custom_icons():
 
 
 def remove_custom_icons():
-    bpy.utils.previews.remove(custom_icons)
+    for custom_icons in _icon_collection.values():
+        bpy.utils.previews.remove(custom_icons)
+    _icon_collection.clear()
 
 
 def register():
