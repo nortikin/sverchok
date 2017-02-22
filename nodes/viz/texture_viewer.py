@@ -16,7 +16,7 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-from mathutils import Vector
+#from mathutils import Vector
 import numpy as np
 import bpy
 from bpy.props import FloatProperty, EnumProperty, StringProperty, BoolProperty
@@ -125,6 +125,12 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         description='Input for texture', update=updateNode
     )
 
+    @property
+    def xy_offset(self):
+        a = self.location[:]
+        b = int(self.width) + 20
+        return int(a[0] + b), int(a[1])
+
     def get_buffer(self):
         data = self.inputs['Float'].sv_get(deepcopy=False)[0]
         size_tex = size_tex_dict.get(self.selected_mode)
@@ -168,7 +174,8 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
             size_tex = size_tex_dict.get(self.selected_mode)
 
-            x, y = [int(j) for j in (self.location + Vector((self.width + 20, 0)))[:]]
+            #x, y = [int(j) for j in (self.location + Vector((self.width + 20, 0)))[:]]
+            x, y = self.xy_offset()
 
             def init_texture(width,height,texname,texture):
                 #function to init the texture
@@ -217,7 +224,7 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         self.n_id = ''
 
     def save_bitmap(self, image_name='image_name', filepath_raw='', alpha=False, texture=texture):
-
+        #save a texture in a bitmap image in different formats supported by blender
         buf = self.get_buffer()
         img_format = self.bitmap_save
         image_name = image_name + '.' + (img_format.lower().replace('targa', 'tga'))
