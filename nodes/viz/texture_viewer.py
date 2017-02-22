@@ -120,13 +120,7 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         description="offers bitmap saving",
         default="PNG"
     )
-    '''
-    directory = StringProperty(
-        maxlen=1024,
-        subtype='FILE_PATH',
-        options={'HIDDEN', 'SKIP_SAVE'}
-    )
-    '''
+
     in_float = FloatProperty(
         min=0.0, max=1.0, default=0.0, name='Float Input',
         description='input for texture', update=updateNode
@@ -154,11 +148,10 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         c.prop(self, 'activate')
 
     def draw_buttons_ext(self, context, l):
-        l.label(text="save texture as bitmap image, choose a format:")
+        l.label(text="save texture as a bitmap image, choose a format:")
         l.separator()
         l.prop(self, "bitmap_save")
         l.separator()
-        l.row()
         l.operator("node.scriptlite_ui_callback", text="S A V E").fn_name="save_bitmap"
 
     def sv_init(self, context):
