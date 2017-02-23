@@ -28,6 +28,7 @@ import bpy
 
 import sverchok
 from sverchok.menu import make_node_cats
+from sverchok.ui.sv_icons import custom_icon
 
 node_cats = make_node_cats()
 addon_name = sverchok.__name__
@@ -44,19 +45,19 @@ def get_icon_switch():
 def layout_draw_categories(layout, node_details):
     show_icons = menu_prefs.get('show_icons')
 
-    def icon(display_icon):
+    def icon(node_ref):
         '''returns empty dict if show_icons is False, else the icon passed'''
-        return {'icon': display_icon for i in [1] if show_icons and display_icon}
-
-    def get_icon(node_ref):
-        # some nodes don't declare a bl_icon, but most do so try/except is fine.
-        try:
-            _icon = getattr(node_ref, 'bl_icon')
-            if _icon == 'OUTLINER_OB_EMPTY':
-                _icon = None
-        except:
-            _icon = None
-        return _icon
+        if not show_icons:
+            return {}
+        else:
+            if hasattr(node_ref, 'sv_icon'):
+                iconID = custom_icon(node_ref.sv_icon)
+                return {'icon_value': iconID} if iconID else {}
+            elif hasattr(node_ref, 'bl_icon') and node_ref.bl_icon != 'OUTLINER_OB_EMPTY':
+                iconID = node_ref.bl_icon
+                return {'icon': iconID} if iconID else {}
+            else:
+                return {}
 
     add_n_grab = 'node.add_node'
     for node_info in node_details:
@@ -68,9 +69,8 @@ def layout_draw_categories(layout, node_details):
         bl_idname = node_info[0]
         node_ref = getattr(bpy.types, bl_idname)
 
-        display_icon = get_icon(node_ref)
         if hasattr(node_ref, "bl_label"):
-            layout_params = dict(text=node_ref.bl_label, **icon(display_icon))
+            layout_params = dict(text=node_ref.bl_label, **icon(node_ref))
         elif bl_idname == 'NodeReroute':
             layout_params = dict(text='Reroute')
         else:
@@ -131,17 +131,17 @@ class NODEVIEW_MT_Dynamic_Menu(bpy.types.Menu):
         layout.menu("NODEVIEW_MT_AddNumber")
         layout.menu("NODEVIEW_MT_AddVector")
         layout.menu("NODEVIEW_MT_AddMatrix")
-        layout.menu("NODEVIEW_MT_AddLogic")
+        layout.menu("NODEVIEW_MT_AddLogic", icon_value=custom_icon("SV_LOGIC"))
         layout.menu("NODEVIEW_MT_AddListOps", **icon('NLA'))
         layout.separator()
         layout.menu("NODEVIEW_MT_AddViz", **icon('RESTRICT_VIEW_OFF'))
         layout.menu("NODEVIEW_MT_AddText")
-        layout.menu("NODEVIEW_MT_AddScene")
-        layout.menu("NODEVIEW_MT_AddLayout")
+        layout.menu("NODEVIEW_MT_AddScene", icon_value=custom_icon("SV_SCENE"))
+        layout.menu("NODEVIEW_MT_AddLayout", icon_value=custom_icon("SV_LAYOUT"))
         layout.separator()
-        layout.menu("NODEVIEW_MT_AddNetwork")
-        layout.menu("NODEVIEW_MT_AddBetas", **icon('OUTLINER_DATA_POSE'))
-        layout.menu("NODEVIEW_MT_AddAlphas", **icon('ERROR'))
+        layout.menu("NODEVIEW_MT_AddNetwork", icon_value=custom_icon("SV_NETWORK"))
+        layout.menu("NODEVIEW_MT_AddBetas", icon_value=custom_icon("SV_BETA"))
+        layout.menu("NODEVIEW_MT_AddAlphas", icon_value=custom_icon("SV_ALPHA"))
         layout.separator() 
         layout.menu("NODE_MT_category_SVERCHOK_GROUPS", icon="RNA")
 
