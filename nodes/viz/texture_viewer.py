@@ -27,11 +27,13 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.ui import nodeview_bgl_viewer_draw_mk2 as nvBGL2
 
 size_tex_list = [
-    ('EXTRA_SMALL','extra_small 64x64px','extra small squared tex: 64px','',64),
-    ('SMALL','small 128x128px','small squared tex: 128px','',128),
-    ('MEDIUM','medium 256x256px','medium squared tex: 256px','',256),
-    ('LARGE','large 512x512px','large squared tex: 512px','',512),
-    ('EXTRA_LARGE','extra_large 1024x1024px','extra large squared tex: 1024px','',1024)
+    ('EXTRA_SMALL', 'extra_small 64x64px',
+     'extra small squared tex: 64px', '', 64),
+    ('SMALL', 'small 128x128px', 'small squared tex: 128px', '', 128),
+    ('MEDIUM', 'medium 256x256px', 'medium squared tex: 256px', '', 256),
+    ('LARGE', 'large 512x512px', 'large squared tex: 512px', '', 512),
+    ('EXTRA_LARGE', 'extra_large 1024x1024px',
+     'extra large squared tex: 1024px', '', 1024)
 ]
 
 size_tex_dict = {
@@ -43,15 +45,16 @@ size_tex_dict = {
 }
 
 bitmap_save_list = [
-    ('PNG','png format','save texture in .png fromat','',0),
-    ('TARGA','tga format','save texture in .tga fromat','',1),
-    ('TIFF','tiff format','save texture in .tiff format','',2),
-    ('BMP','bmp format','save texture in .tiff format','',3),
-    ('JPEG','jpeg format','save texture in .jpeg format','',4)
+    ('PNG', 'png format', 'save texture in .png fromat', '', 0),
+    ('TARGA', 'tga format', 'save texture in .tga fromat', '', 1),
+    ('TIFF', 'tiff format', 'save texture in .tiff format', '', 2),
+    ('BMP', 'bmp format', 'save texture in .tiff format', '', 3),
+    ('JPEG', 'jpeg format', 'save texture in .jpeg format', '', 4)
 ]
 
+
 def simple_screen(x, y, args):
-    #draw a simple scren display for the texture
+    # draw a simple scren display for the texture
     border_color = (0.390805, 0.754022, 1.000000, 1.00)
 
     texture = args[0]
@@ -62,7 +65,7 @@ def simple_screen(x, y, args):
     height = size
 
     def draw_borders(x=0, y=0, w=30, h=10, color=(0.0, 0.0, 0.0, 1.0)):
-        #function to draw a border color around the texture
+        # function to draw a border color around the texture
         bgl.glColor4f(*color)
         bgl.glBegin(bgl.GL_LINE_LOOP)
 
@@ -72,27 +75,34 @@ def simple_screen(x, y, args):
         bgl.glEnd()
 
     def draw_texture(x=0, y=0, w=30, h=10, texname=texname):
-        #function to draw a texture
+        # function to draw a texture
         bgl.glEnable(bgl.GL_TEXTURE_2D)
-        bgl.glTexEnvf(bgl.GL_TEXTURE_ENV, bgl.GL_TEXTURE_ENV_MODE, bgl.GL_REPLACE)
+        bgl.glTexEnvf(bgl.GL_TEXTURE_ENV,
+                      bgl.GL_TEXTURE_ENV_MODE,
+                      bgl.GL_REPLACE)
         bgl.glBindTexture(bgl.GL_TEXTURE_2D, texname)
 
         bgl.glBegin(bgl.GL_QUADS)
 
-        bgl.glTexCoord2d(0, 0); bgl.glVertex2f( x, y )
-        bgl.glTexCoord2d(1, 0); bgl.glVertex2f( x + w , y )
-        bgl.glTexCoord2d(1, 1); bgl.glVertex2f( x + w, y - h )
-        bgl.glTexCoord2d(0, 1); bgl.glVertex2f( x, y - h )
+        bgl.glTexCoord2d(0, 0)
+        bgl.glVertex2f(x, y)
+        bgl.glTexCoord2d(1, 0)
+        bgl.glVertex2f(x + w, y)
+        bgl.glTexCoord2d(1, 1)
+        bgl.glVertex2f(x + w, y - h)
+        bgl.glTexCoord2d(0, 1)
+        bgl.glVertex2f(x, y - h)
 
         bgl.glEnd()
 
         bgl.glDisable(bgl.GL_TEXTURE_2D)
-        #bgl.glDeleteTextures( 1, Buffer )
+        # bgl.glDeleteTextures( 1, Buffer )
         bgl.glFlush()
 
     draw_texture(x=x, y=y, w=width, h=height, texname=texname)
 
     draw_borders(x=x, y=y, w=width, h=height, color=border_color)
+
 
 class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
     '''Texture Viewer node'''
@@ -156,7 +166,8 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         layout.separator()
         layout.prop(self, "bitmap_save")
         layout.separator()
-        layout.operator("node.scriptlite_ui_callback", text="S A V E").fn_name="save_bitmap"
+        layout.operator("node.scriptlite_ui_callback",
+                        text="S A V E").fn_name = "save_bitmap"
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', "Float").prop_name = 'in_float'
@@ -173,29 +184,33 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
             x, y = self.xy_offset
 
             def init_texture(width, height, texname, texture):
-                #function to init the texture
+                # function to init the texture
                 bgl.glShadeModel(bgl.GL_SMOOTH)
 
-                bgl.glPixelStorei(bgl.GL_UNPACK_ALIGNMENT,1)
+                bgl.glPixelStorei(bgl.GL_UNPACK_ALIGNMENT, 1)
 
-                bgl.glGenTextures(1,texture)
+                bgl.glGenTextures(1, texture)
                 bgl.glEnable(bgl.GL_TEXTURE_2D)
                 bgl.glBindTexture(bgl.GL_TEXTURE_2D, texname)
                 bgl.glActiveTexture(bgl.GL_TEXTURE0)
 
-                bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_WRAP_S, bgl.GL_CLAMP)
-                bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_WRAP_T, bgl.GL_CLAMP)
-                bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_MAG_FILTER, bgl.GL_LINEAR)
-                bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_MIN_FILTER, bgl.GL_LINEAR)
+                bgl.glTexParameterf(bgl.GL_TEXTURE_2D,
+                                    bgl.GL_TEXTURE_WRAP_S, bgl.GL_CLAMP)
+                bgl.glTexParameterf(bgl.GL_TEXTURE_2D,
+                                    bgl.GL_TEXTURE_WRAP_T, bgl.GL_CLAMP)
+                bgl.glTexParameterf(bgl.GL_TEXTURE_2D,
+                                    bgl.GL_TEXTURE_MAG_FILTER, bgl.GL_LINEAR)
+                bgl.glTexParameterf(bgl.GL_TEXTURE_2D,
+                                    bgl.GL_TEXTURE_MIN_FILTER, bgl.GL_LINEAR)
 
                 bgl.glTexImage2D(
-                       bgl.GL_TEXTURE_2D, 0, bgl.GL_LUMINANCE, width, height, 0,
-                       bgl.GL_LUMINANCE, bgl.GL_FLOAT, texture
+                       bgl.GL_TEXTURE_2D, 0, bgl.GL_LUMINANCE, width, height,
+                       0, bgl.GL_LUMINANCE, bgl.GL_FLOAT, texture
                    )
 
             texname = 0
 
-            init_texture(size_tex,size_tex,texname,texture)
+            init_texture(size_tex, size_tex, texname, texture)
 
             draw_data = {
                 'tree_name': self.id_data.name[:],
@@ -214,32 +229,39 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
     def copy(self, node):
         self.n_id = ''
 
-    def save_bitmap(self, image_name='image_name', filepath_raw='', alpha=False, texture=texture):
-        #save a texture in a bitmap image in different formats supported by blender
+    def save_bitmap(self, image_name='image_name', filepath_raw='',
+                    alpha=False,
+                    texture=texture):
+        # save a texture in a bitmap image
+        # in different formats supported by blender
         buf = self.get_buffer()
         img_format = self.bitmap_save
-        image_name = image_name + '.' + (img_format.lower().replace('targa', 'tga'))
+        image_name = image_name + '.'
+        + (img_format.lower().replace('targa', 'tga'))
         dim = size_tex_dict[self.selected_mode]
         width, height = dim, dim
         img = []
         if image_name in bpy.data.images:
             img = bpy.data.images[image_name]
         else:
-            img = bpy.data.images.new(name=image_name, width=width, height=height, alpha=alpha, float_buffer=True)
+            img = bpy.data.images.new(name=image_name, width=width,
+                                      height=height, alpha=alpha,
+                                      float_buffer=True)
         np_buff = np.empty(len(img.pixels), dtype=np.float32)
         np_buff.shape = (-1, 4)
-        np_buff[:,:] = np.array(buf)[:,np.newaxis]
-        np_buff[:,3] = 1
+        np_buff[:, :] = np.array(buf)[:, np.newaxis]
+        np_buff[:, 3] = 1
         np_buff.shape = -1
         img.pixels[:] = np_buff
-        #get the scene context
+        # get the scene context
         scene = bpy.context.scene
         scene.render.image_settings.file_format = img_format
-        #get the path for the file and save the image
+        # get the path for the file and save the image
         path = img.filepath_raw
         path = "/tmp/" + image_name
-        img.save_render(path,scene)
+        img.save_render(path, scene)
         print('saved!')
+
 
 def register():
     bpy.utils.register_class(SvTextureViewerNode)
