@@ -26,7 +26,7 @@ from sverchok.data_structure import updateNode, node_id
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.ui import nodeview_bgl_viewer_draw_mk2 as nvBGL2
 
-size_tex_list=[
+size_tex_list = [
     ('EXTRA_SMALL','extra_small 64x64px','extra small squared tex: 64px','',64),
     ('SMALL','small 128x128px','small squared tex: 128px','',128),
     ('MEDIUM','medium 256x256px','medium squared tex: 256px','',256),
@@ -42,8 +42,8 @@ size_tex_dict = {
     'EXTRA_LARGE': 1024
 }
 
-bitmap_save_list=[
-    ('PNG','png format', 'save texture in .png fromat','',0),
+bitmap_save_list = [
+    ('PNG','png format','save texture in .png fromat','',0),
     ('TARGA','tga format','save texture in .tga fromat','',1),
     ('TIFF','tiff format','save texture in .tiff format','',2),
     ('BMP','bmp format','save texture in .tiff format','',3),
@@ -145,18 +145,18 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         texture = bgl.Buffer(bgl.GL_FLOAT, total_size, data)
         return texture
 
-    def draw_buttons(self, context, l):
-        c = l.column()
+    def draw_buttons(self, context, layout):
+        c = layout.column()
         c.label(text="Set texture display:")
         c.prop(self, "selected_mode", text="")
         c.prop(self, 'activate')
 
-    def draw_buttons_ext(self, context, l):
-        l.label(text="Save texture as a bitmap image, choose a format:")
-        l.separator()
-        l.prop(self, "bitmap_save")
-        l.separator()
-        l.operator("node.scriptlite_ui_callback", text="S A V E").fn_name="save_bitmap"
+    def draw_buttons_ext(self, context, layout):
+        layout.label(text="Save texture as a bitmap image, choose a format:")
+        layout.separator()
+        layout.prop(self, "bitmap_save")
+        layout.separator()
+        layout.operator("node.scriptlite_ui_callback", text="S A V E").fn_name="save_bitmap"
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', "Float").prop_name = 'in_float'
@@ -172,7 +172,7 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
             size_tex = size_tex_dict.get(self.selected_mode)
             x, y = self.xy_offset
 
-            def init_texture(width,height,texname,texture):
+            def init_texture(width, height, texname, texture):
                 #function to init the texture
                 bgl.glShadeModel(bgl.GL_SMOOTH)
 
@@ -225,7 +225,7 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         if image_name in bpy.data.images:
             img = bpy.data.images[image_name]
         else:
-            img = bpy.data.images.new(name=image_name,width=width,height=height,alpha=alpha,float_buffer=True)
+            img = bpy.data.images.new(name=image_name, width=width, height=height, alpha=alpha, float_buffer=True)
         np_buff = np.empty(len(img.pixels), dtype=np.float32)
         np_buff.shape = (-1, 4)
         np_buff[:,:] = np.array(buf)[:,np.newaxis]
