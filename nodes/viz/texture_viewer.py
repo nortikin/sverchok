@@ -27,13 +27,11 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.ui import nodeview_bgl_viewer_draw_mk2 as nvBGL2
 
 size_tex_list = [
-    ('EXTRA_SMALL', 'extra_small 64x64px',
-     'extra small squared tex: 64px', '', 64),
+    ('EXTRA_SMALL', 'extra_small 64x64px', 'extra small squared tex: 64px', '', 64),
     ('SMALL', 'small 128x128px', 'small squared tex: 128px', '', 128),
     ('MEDIUM', 'medium 256x256px', 'medium squared tex: 256px', '', 256),
     ('LARGE', 'large 512x512px', 'large squared tex: 512px', '', 512),
-    ('EXTRA_LARGE', 'extra_large 1024x1024px',
-     'extra large squared tex: 1024px', '', 1024)
+    ('EXTRA_LARGE', 'extra_large 1024x1024px', 'extra large squared tex: 1024px', '', 1024)
 ]
 
 size_tex_dict = {
@@ -69,7 +67,7 @@ def simple_screen(x, y, args):
         bgl.glColor4f(*color)
         bgl.glBegin(bgl.GL_LINE_LOOP)
 
-        for coord in [(x, y), (x+w, y), (w+x, y-h), (x, y-h)]:
+        for coord in [(x, y), (x + w, y), (w + x, y - h), (x, y - h)]:
             bgl.glVertex2f(*coord)
 
         bgl.glEnd()
@@ -203,10 +201,8 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
                 bgl.glTexParameterf(bgl.GL_TEXTURE_2D,
                                     bgl.GL_TEXTURE_MIN_FILTER, bgl.GL_LINEAR)
 
-                bgl.glTexImage2D(
-                       bgl.GL_TEXTURE_2D, 0, bgl.GL_LUMINANCE, width, height,
-                       0, bgl.GL_LUMINANCE, bgl.GL_FLOAT, texture
-                   )
+                bgl.glTexImage2D(bgl.GL_TEXTURE_2D, 0, bgl.GL_LUMINANCE, width,
+                                 height, 0, bgl.GL_LUMINANCE, bgl.GL_FLOAT, texture)
 
             texname = 0
 
@@ -236,8 +232,7 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         # in different formats supported by blender
         buf = self.get_buffer()
         img_format = self.bitmap_save
-        image_name = image_name + '.'
-        + (img_format.lower().replace('targa', 'tga'))
+        image_name = image_name + '.' + (img_format.lower().replace('targa', 'tga'))
         dim = size_tex_dict[self.selected_mode]
         width, height = dim, dim
         img = []
