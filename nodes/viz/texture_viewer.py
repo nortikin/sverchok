@@ -82,13 +82,13 @@ def simple_screen(x, y, args):
 
         bgl.glBegin(bgl.GL_QUADS)
 
-        bgl.glTexCoord2d(0, 0)
-        bgl.glVertex2f(x, y)
-        bgl.glTexCoord2d(1, 0)
-        bgl.glVertex2f(x + w, y)
-        bgl.glTexCoord2d(1, 1)
-        bgl.glVertex2f(x + w, y - h)
         bgl.glTexCoord2d(0, 1)
+        bgl.glVertex2f(x, y)
+        bgl.glTexCoord2d(1, 1)
+        bgl.glVertex2f(x + w, y)
+        bgl.glTexCoord2d(1, 0)
+        bgl.glVertex2f(x + w, y - h)
+        bgl.glTexCoord2d(0, 0)
         bgl.glVertex2f(x, y - h)
 
         bgl.glEnd()
