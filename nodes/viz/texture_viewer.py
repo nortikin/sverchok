@@ -16,11 +16,12 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+import os
 import numpy as np
-import bpy
-from bpy.props import FloatProperty, EnumProperty, StringProperty, BoolProperty
 
 import bgl
+import bpy
+from bpy.props import FloatProperty, EnumProperty, StringProperty, BoolProperty
 
 from sverchok.data_structure import updateNode, node_id
 from sverchok.node_tree import SverchCustomTreeNode
@@ -132,6 +133,8 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         description='Input for texture', update=updateNode
     )
 
+    base_dir = StringProperty(default='/tmp/')
+
     @property
     def xy_offset(self):
         a = self.location[:]
@@ -160,12 +163,18 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         c.prop(self, 'activate')
 
     def draw_buttons_ext(self, context, layout):
+        callback_to_self = "node.scriptlite_ui_callback"
+        directory_selector = "node.sv_generic_dir_selector"
         layout.label(text="Save texture as a bitmap image, choose a format:")
         layout.separator()
         layout.prop(self, "bitmap_save")
         layout.separator()
-        layout.operator("node.scriptlite_ui_callback",
-                        text="S A V E").fn_name = "save_bitmap"
+        row = layout.row(align=True)
+        row.operator(callback_to_self, text="S A V E").fn_name = "save_bitmap"
+        row.operator(directory_selector, text="", icon='IMASEL').fn_name = "set_dir"
+
+    def set_dir(self, operator):
+        self.base_dir = operator.path
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', "Float").prop_name = 'in_float'
@@ -178,6 +187,7 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
     def process(self):
         n_id = node_id(self)
+
         # end early
         nvBGL2.callback_disable(n_id)
         self.delete_texture()
@@ -197,17 +207,16 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
                 bgl.glBindTexture(bgl.GL_TEXTURE_2D, texname)
                 bgl.glActiveTexture(bgl.GL_TEXTURE0)
 
-                bgl.glTexParameterf(bgl.GL_TEXTURE_2D,
-                                    bgl.GL_TEXTURE_WRAP_S, bgl.GL_CLAMP)
-                bgl.glTexParameterf(bgl.GL_TEXTURE_2D,
-                                    bgl.GL_TEXTURE_WRAP_T, bgl.GL_CLAMP)
-                bgl.glTexParameterf(bgl.GL_TEXTURE_2D,
-                                    bgl.GL_TEXTURE_MAG_FILTER, bgl.GL_LINEAR)
-                bgl.glTexParameterf(bgl.GL_TEXTURE_2D,
-                                    bgl.GL_TEXTURE_MIN_FILTER, bgl.GL_LINEAR)
+                bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_WRAP_S, bgl.GL_CLAMP)
+                bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_WRAP_T, bgl.GL_CLAMP)
+                bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_MAG_FILTER, bgl.GL_LINEAR)
+                bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_MIN_FILTER, bgl.GL_LINEAR)
 
-                bgl.glTexImage2D(bgl.GL_TEXTURE_2D, 0, bgl.GL_LUMINANCE, width,
-                                 height, 0, bgl.GL_LUMINANCE, bgl.GL_FLOAT, texture)
+                bgl.glTexImage2D(
+                    bgl.GL_TEXTURE_2D,
+                    0, bgl.GL_LUMINANCE, width, height,
+                    0, bgl.GL_LUMINANCE, bgl.GL_FLOAT, texture
+                )
 
             name = bgl.Buffer(bgl.GL_INT, 1)
             bgl.glGenTextures(1, name)
@@ -260,7 +269,7 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         scene.render.image_settings.file_format = img_format
         # get the path for the file and save the image
         path = img.filepath_raw
-        path = "/tmp/" + image_name
+        path = os.path.join(self.base_dir, image_name)
         img.save_render(path, scene)
         print('saved!')
 
