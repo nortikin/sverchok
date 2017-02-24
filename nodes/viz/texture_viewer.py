@@ -291,8 +291,10 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
 
 def register():
+    bpy.utils.register_class(SvTextureViewerDirSelect)
     bpy.utils.register_class(SvTextureViewerNode)
 
 
 def unregister():
     bpy.utils.unregister_class(SvTextureViewerNode)
+    bpy.utils.unregister_class(SvTextureViewerDirSelect)
