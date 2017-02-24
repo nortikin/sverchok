@@ -74,6 +74,16 @@ bitmap_format_list = [
     # ('HDR','hdr format', 'save texture in .hdr format', '', 9),
 ]
 
+format_mapping = {
+    'IRIS': 'rgb',
+    'TARGA': 'tga',
+    'TARGA_RAW': 'tga',
+    'JPEG2000': 'jp2',
+    'OPEN_EXR_MULTILAYER': 'exr',
+    'OPEN_EXR': 'exr',
+    'IRIS': 'rgb'
+}
+
 
 def simple_screen(x, y, args):
     # draw a simple scren display for the texture
@@ -284,21 +294,10 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         buf = self.get_buffer()
         img_format = self.bitmap_format
         print(img_format)
-        if img_format == 'TARGA':
-            extension = '.' + img_format.lower().replace('targa', 'tga')
-        elif img_format == 'TARGA_RAW':
-            extension = '.' + img_format.lower().replace('targa_raw', 'tga')
-        elif img_format == 'JPEG2000':
-            extension = '.' + img_format.lower().replace('jpeg2000', 'jp2')
-        elif img_format == 'OPEN_EXR':
-            extension = '.' + img_format.lower().replace('open_exr', 'exr')
-        elif img_format == 'OPEN_EXR_MULTILAYER':
-            extension = '.' + img_format.lower().replace('open_exr_multilayer', 'exr')
-        elif img_format == 'IRIS':
-            extension = '.' + img_format.lower().replace('iris', 'rgb')
+        if img_format in format_mapping:
+            extension = '.' + format_mapping.get(img_format, img_format.lower())
         else:
             extension = '.' + img_format.lower()
-        # extension = '.' + img_format.lower().replace('targa', 'tga')
         image_name = image_name + extension
         dim = size_tex_dict[self.selected_mode]
         width, height = dim, dim
