@@ -26,6 +26,14 @@ from bpy.props import FloatProperty, EnumProperty, StringProperty, BoolProperty
 from sverchok.data_structure import updateNode, node_id
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.ui import nodeview_bgl_viewer_draw_mk2 as nvBGL2
+from sverchok.utils.sv_operator_mixins import SvGenericDirectorySelector
+
+
+class SvTextureViewerDirSelect(bpy.types.Operator, SvGenericDirectorySelector):
+    """ Pick the directory to store images in """
+    bl_idname = "node.sv_texview_dirselect"
+    bl_label = "Pick directory"
+
 
 size_tex_list = [
     ('EXTRA_SMALL', 'extra_small 64x64px', 'extra small squared tex: 64px', '', 64),
@@ -165,7 +173,7 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons_ext(self, context, layout):
         callback_to_self = "node.scriptlite_ui_callback"
-        directory_select = "node.sv_generic_dir_selector"
+        directory_select = "node.sv_texview_dirselect"
         layout.label(text="Save texture as a bitmap image, choose a format:")
         layout.separator()
         layout.prop(self, "bitmap_save")
@@ -177,7 +185,7 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
     def set_dir(self, operator):
         self.base_dir = operator.directory
-        print('new base dir:,', self.base_dir)   #####
+        print('new base dir:', self.base_dir)   #####
         return {'FINISHED'}
 
     def sv_init(self, context):
@@ -276,14 +284,10 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         # get the path for the file and save the image
         
         desired_path = os.path.join(self.base_dir, self.image_name + extension)   #####
-        
-        path = img.filepath_raw
-        path = "/tmp/" + image_name
-        img.save_render(path, scene)
 
 
-        print('desired file path', desired_path, ' not saved here yet')
-        print('saved!  ', path)
+        img.save_render(desired_path, scene)
+        print('Saved!  path is:', desired_path)
 
 
 def register():
