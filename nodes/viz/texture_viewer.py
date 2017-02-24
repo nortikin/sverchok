@@ -192,15 +192,6 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         layout.separator()
         layout.prop(self, "bitmap_format", text='format')
         layout.separator()
-<<<<<<< HEAD
-        row = layout.row(align=True)
-        leftside = row.split(0.7)
-        leftside.prop(self, 'image_name', text='')
-        rightside = leftside.split().row(align=True)
-        rightside.operator(callback_to_self, text="Save").fn_name = "save_bitmap"
-        rightside.operator(directory_select, text="", icon='IMASEL').fn_name = "set_dir"
-=======
->>>>>>> 27d6042c8e7f431dfe1554f6a47f07108fcd0da4
 
         row = layout.row(align=True)
         leftside = row.split(0.7)
@@ -274,11 +265,7 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
     def copy(self, node):
         self.n_id = ''
 
-<<<<<<< HEAD
-    def save_bitmap(self, alpha=False):
-        # if self.image_name was empty it will give a default
-        image_name = self.image_name or 'image_name'
-=======
+
     def set_dir(self, operator):
         self.base_dir = operator.directory
         print('new base dir:', self.base_dir)   #####
@@ -290,7 +277,6 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         # if self.image_name was empty it will give a default
         image_name = self.image_name or 'image_name'
 
->>>>>>> 27d6042c8e7f431dfe1554f6a47f07108fcd0da4
         # save a texture in a bitmap image
         # in different formats supported by blender
         buf = self.get_buffer()
@@ -318,20 +304,13 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         scene = bpy.context.scene
         scene.render.image_settings.file_format = img_format
         # get the path for the file and save the image
-<<<<<<< HEAD
-=======
 
         desired_path = os.path.join(self.base_dir, self.image_name + extension)   #####
->>>>>>> 27d6042c8e7f431dfe1554f6a47f07108fcd0da4
-
-        desired_path = os.path.join(self.base_dir, self.image_name + extension)
 
         img.save_render(desired_path, scene)
-<<<<<<< HEAD
-        print('Bitmap saved!  path is:', desired_path)
-=======
+
+
         print('Saved!  path is:', desired_path)
->>>>>>> 27d6042c8e7f431dfe1554f6a47f07108fcd0da4
 
 
 def register():
