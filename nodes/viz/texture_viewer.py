@@ -184,7 +184,7 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         callback_to_self = "node.sv_texview_callback"
         directory_select = "node.sv_texview_dirselect"
         
-        layout.label(text="Save texture as a bitmap image")
+        layout.label(text="Save texture as a bitmap")
         
         layout.separator()
         layout.prop(self, "bitmap_format", text='format')
