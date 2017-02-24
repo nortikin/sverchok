@@ -134,6 +134,7 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
     )
 
     base_dir = StringProperty(default='/tmp/')
+    image_name = StringProperty(default='image_name', description='name (minus filetype)')
 
     @property
     def xy_offset(self):
@@ -170,12 +171,13 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "bitmap_save")
         layout.separator()
         row = layout.row(align=True)
-        row.operator(callback_to_self, text="S A V E").fn_name = "save_bitmap"
+        row.prop(self, 'image_name', text='')
+        row.operator(callback_to_self, text="Save").fn_name = "save_bitmap"
         row.operator(directory_select, text="", icon='IMASEL').fn_name = "set_dir"
 
     def set_dir(self, operator):
-        print(dir(operator), operator.directory)
-        # self.base_dir = operator.directory
+        self.base_dir = operator.directory
+        print('new base dir:,', self.base_dir)   #####
         return {'FINISHED'}
 
     def sv_init(self, context):
@@ -250,10 +252,12 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         # in different formats supported by blender
         buf = self.get_buffer()
         img_format = self.bitmap_save
-        image_name = image_name + '.' + (img_format.lower().replace('targa', 'tga'))
+        extension = '.' + img_format.lower().replace('targa', 'tga')
+        image_name = image_name + extension
         dim = size_tex_dict[self.selected_mode]
         width, height = dim, dim
-        img = []
+
+        img = []   # doesn't reall do anything..
         if image_name in bpy.data.images:
             img = bpy.data.images[image_name]
         else:
@@ -272,12 +276,14 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         scene.render.image_settings.file_format = img_format
         # get the path for the file and save the image
         
-        # desired_path = os.path.join(self.base_dir, image_name)
+        desired_path = os.path.join(self.base_dir, self.image_name + extension)   #####
+        
         path = img.filepath_raw
         path = "/tmp/" + image_name
         img.save_render(path, scene)
 
 
+        print('desired file path', desired_path, ' not saved here yet')
         print('saved!  ', path)
 
 
