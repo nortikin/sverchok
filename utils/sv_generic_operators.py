@@ -175,7 +175,7 @@ class SvGenericDirectorySelector(bpy.types.Operator):
 
 
 
-classese = [SvGenericCallbackWithParams, SvGenericFileSelector, SvGenericDirectorySelector ]
+classes = [SvGenericCallbackWithParams, SvGenericFileSelector, SvGenericDirectorySelector]
 
 def register():
     for c in classes:
