@@ -171,9 +171,11 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "bitmap_save")
         layout.separator()
         row = layout.row(align=True)
-        row.prop(self, 'image_name', text='')
-        row.operator(callback_to_self, text="Save").fn_name = "save_bitmap"
-        row.operator(directory_select, text="", icon='IMASEL').fn_name = "set_dir"
+        leftside = row.split(0.7)
+        leftside.prop(self, 'image_name', text='')
+        rightside = leftside.split().row(align=True)
+        rightside.operator(callback_to_self, text="Save").fn_name = "save_bitmap"
+        rightside.operator(directory_select, text="", icon='IMASEL').fn_name = "set_dir"
 
     def set_dir(self, operator):
         self.base_dir = operator.directory
