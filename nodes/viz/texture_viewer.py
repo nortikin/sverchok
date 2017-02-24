@@ -60,7 +60,7 @@ size_tex_dict = {
     'EXTRA_LARGE': 1024
 }
 
-bitmap_save_list = [
+bitmap_format_list = [
     ('PNG', 'png format', 'save texture in .png fromat', '', 0),
     ('TARGA', 'tga format', 'save texture in .tga fromat', '', 1),
     ('TIFF', 'tiff format', 'save texture in .tiff format', '', 2),
@@ -139,8 +139,8 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         update=updateNode
     )
 
-    bitmap_save = EnumProperty(
-        items=bitmap_save_list,
+    bitmap_format = EnumProperty(
+        items=bitmap_format_list,
         description="Offers bitmap saving",
         default="PNG"
     )
@@ -187,7 +187,7 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         layout.label(text="Save texture as a bitmap image")
         
         layout.separator()
-        layout.prop(self, "bitmap_save", text='format')
+        layout.prop(self, "bitmap_format", text='format')
         layout.separator()
 
         row = layout.row(align=True)
@@ -196,11 +196,6 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         rightside = leftside.split().row(align=True)
         rightside.operator(callback_to_self, text="Save").fn_name = "save_bitmap"
         rightside.operator(directory_select, text="", icon='IMASEL').fn_name = "set_dir"
-
-    def set_dir(self, operator):
-        self.base_dir = operator.directory
-        print('new base dir:', self.base_dir)   #####
-        return {'FINISHED'}
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', "Float").prop_name = 'in_float'
@@ -267,14 +262,21 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
     def copy(self, node):
         self.n_id = ''
 
-    def save_bitmap(self, alpha=False):
+    def set_dir(self, operator):
+        self.base_dir = operator.directory
+        print('new base dir:', self.base_dir)   #####
+        return {'FINISHED'}
+
+    def save_bitmap(self, operator):
+        alpha = False
+
         # if self.image_name was empty it will give a default
         image_name = self.image_name or 'image_name'
 
         # save a texture in a bitmap image
         # in different formats supported by blender
         buf = self.get_buffer()
-        img_format = self.bitmap_save
+        img_format = self.bitmap_format
         extension = '.' + img_format.lower().replace('targa', 'tga')
         image_name = image_name + extension
         dim = size_tex_dict[self.selected_mode]
