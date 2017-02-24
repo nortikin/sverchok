@@ -176,7 +176,6 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
     def set_dir(self, operator):
         print(dir(operator), operator.directory)
         # self.base_dir = operator.directory
-        # print(self.base_dir, '---')
         return {'FINISHED'}
 
     def sv_init(self, context):
