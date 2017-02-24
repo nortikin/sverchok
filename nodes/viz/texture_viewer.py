@@ -106,7 +106,7 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
     '''Texture Viewer node'''
     bl_idname = 'SvTextureViewerNode'
     bl_label = 'Texture viewer'
-    texture = []
+    texture = {}
 
     n_id = StringProperty(default='')
     activate = BoolProperty(
@@ -187,7 +187,6 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
                 bgl.glPixelStorei(bgl.GL_UNPACK_ALIGNMENT, 1)
 
-                bgl.glGenTextures(1, texture)
                 bgl.glEnable(bgl.GL_TEXTURE_2D)
                 bgl.glBindTexture(bgl.GL_TEXTURE_2D, texname)
                 bgl.glActiveTexture(bgl.GL_TEXTURE0)
@@ -204,16 +203,17 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
                 bgl.glTexImage2D(bgl.GL_TEXTURE_2D, 0, bgl.GL_LUMINANCE, width,
                                  height, 0, bgl.GL_LUMINANCE, bgl.GL_FLOAT, texture)
 
-            texname = 0
-
-            init_texture(size_tex, size_tex, texname, texture)
+            name = bgl.Buffer(bgl.GL_INT, 1)
+            bgl.glGenTextures(1, name)
+            self.texture[n_id] = name[0]
+            init_texture(size_tex, size_tex, name[0], texture)
 
             draw_data = {
                 'tree_name': self.id_data.name[:],
                 'mode': 'custom_function',
                 'custom_function': simple_screen,
                 'loc': (x, y),
-                'args': (texture, size_tex, texname)
+                'args': (texture, size_tex, self.texture[n_id])
             }
 
             nvBGL2.callback_enable(n_id, draw_data)
