@@ -107,7 +107,7 @@ class SvGenericFileSelector(bpy.types.Operator):
 
     def execute(self, context):
         try:
-            f = getattr(context.node, self.fn_name)(self)
+            f = getattr(self.node, self.fn_name)(self)
             return f or {'FINISHED'}
 
         except Exception as err:
@@ -119,6 +119,7 @@ class SvGenericFileSelector(bpy.types.Operator):
 
 
     def invoke(self, context, event):
+        self.node = context.node
         wm = context.window_manager
         wm.fileselect_add(self)
         return {'RUNNING_MODAL'}
@@ -158,7 +159,7 @@ class SvGenericDirectorySelector(bpy.types.Operator):
 
     def execute(self, context):
         try:
-            f = getattr(context.node, self.fn_name)(self)
+            f = getattr(self.node, self.fn_name)(self)
             return f or {'FINISHED'}
 
         except Exception as err:
@@ -170,6 +171,7 @@ class SvGenericDirectorySelector(bpy.types.Operator):
 
 
     def invoke(self, context, event):
+        self.node = context.node
         wm = context.window_manager
         wm.fileselect_add(self)
         return {'RUNNING_MODAL'}
