@@ -21,13 +21,14 @@ from bpy.props import EnumProperty, IntProperty
 from mathutils import noise
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (updateNode, Vector_degenerate )
+from sverchok.data_structure import (updateNode, Vector_degenerate)
 
 # noise nodes
 # from http://www.blender.org/documentation/blender_python_api_current/mathutils.noise.html
 
 
 cell_f = {'SCALAR': noise.cell, 'VECTOR': noise.cell_vector}
+
 
 class SvCellNode(bpy.types.Node, SverchCustomTreeNode):
     '''Vector Cell node'''
@@ -56,7 +57,9 @@ class SvCellNode(bpy.types.Node, SverchCustomTreeNode):
         description='Output type',
         update=changeMode)
 
-    rseed = IntProperty(default=0, description="Random seed",name="Random seed", update=updateNode)
+    rseed = IntProperty(default=0,
+                        description="Random seed",
+                        name="Random seed", update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', 'Vertices')
@@ -84,21 +87,20 @@ class SvCellNode(bpy.types.Node, SverchCustomTreeNode):
             for vertex in verts[0]:
                 # set the offset origin for random seed
                 if rseed == 0:
-                    #we set offset value to 0.0
-                    offset = [0.0,0.0,0.0]
+                    # we set offset value to 0.0
+                    offset = [0.0, 0.0, 0.0]
                 else:
                     # randomise origin
-                    noise.seed_set( rseed )
+                    noise.seed_set(rseed)
                     offset = noise.random_unit_vector() * 10
 
-                new_vertex = [ x+y for x, y in zip(vertex, offset)]
+                new_vertex = [x + y for x, y in zip(vertex, offset)]
                 coords.append(new_vertex)
-            out.append([cell_function(v)  for v in coords])
+            out.append([cell_function(v) for v in coords])
 
         if 'Noise V' in outputs:
             out = Vector_degenerate(out)
         outputs[0].sv_set(out)
-
 
 
 def register():

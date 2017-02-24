@@ -21,7 +21,7 @@ from bpy.props import EnumProperty, IntProperty, FloatProperty, BoolProperty
 from mathutils import noise, Vector
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (updateNode, Vector_degenerate )
+from sverchok.data_structure import (updateNode, Vector_degenerate)
 
 # noise nodes
 # from http://www.blender.org/documentation/blender_python_api_current/mathutils.noise.html
@@ -44,6 +44,7 @@ noise_dict = {t[0]: t[1] for t in noise_options}
 avail_noise = [(t[0], t[0].title(), t[0].title(), '', t[1]) for t in noise_options]
 
 turbulence_f = {'SCALAR': noise.turbulence, 'VECTOR': noise.turbulence_vector}
+
 
 class SvTurbulenceNode(bpy.types.Node, SverchCustomTreeNode):
     '''Vector Turbulence node'''
@@ -78,11 +79,21 @@ class SvTurbulenceNode(bpy.types.Node, SverchCustomTreeNode):
         description="Noise type",
         update=updateNode)
 
-    octaves = IntProperty(default=3, min=0, max=6, description='Octaves', name='Octaves', update=updateNode)
-    hard = BoolProperty(default=True, description="Hard (sharp transitions) or soft (smooth transitions)", name="Hard", update=updateNode)
-    amp = FloatProperty(default=0.25, description="The amplitude scaling factor", name="Amplitude", update=updateNode)
-    freq = FloatProperty(default=0.03, description="The frequency scaling factor", name="Frequency", update=updateNode)
-    rseed = IntProperty(default=0, description="Random seed",name="Random seed", update=updateNode)
+    octaves = IntProperty(default=3, min=0, max=6,
+                          description='Octaves',
+                          name='Octaves', update=updateNode)
+    hard = BoolProperty(default=True,
+                          description="Hard(sharp) or soft (smooth)transitions",
+                          name="Hard", update=updateNode)
+    amp = FloatProperty(default=0.25,
+                          description="The amplitude scaling factor",
+                          name="Amplitude", update=updateNode)
+    freq = FloatProperty(default=0.03,
+                          description="The frequency scaling factor",
+                          name="Frequency", update=updateNode)
+    rseed = IntProperty(default=0,
+                          description="Random seed",
+                          name="Random seed", update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', 'Vertices')
@@ -121,21 +132,23 @@ class SvTurbulenceNode(bpy.types.Node, SverchCustomTreeNode):
             for vertex in verts[0]:
                 # set the offset origin for random seed
                 if rseed == 0:
-                    #we set offset value to 0.0
-                    offset = [0.0,0.0,0.0]
+                    # we set offset value to 0.0
+                    offset = [0.0, 0.0, 0.0]
                 else:
                     # randomise origin
-                    noise.seed_set( rseed )
+                    noise.seed_set(rseed)
                     offset = noise.random_unit_vector() * 10
 
-                new_vertex = [ x+y for x, y in zip(vertex, offset)]
+                new_vertex = [x + y for x, y in zip(vertex, offset)]
                 coords.append(new_vertex)
 
-            out.append([turbulence_function(v, m_octaves, m_hard, _noise_type, m_amp, m_freq) for v in coords])
+            out.append([turbulence_function(v, m_octaves, m_hard,
+                                            _noise_type, m_amp, m_freq) for v in coords])
 
         if 'Noise V' in outputs:
             out = Vector_degenerate(out)
         outputs[0].sv_set(out)
+
 
 def register():
     bpy.utils.register_class(SvTurbulenceNode)
