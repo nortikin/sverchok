@@ -164,17 +164,20 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons_ext(self, context, layout):
         callback_to_self = "node.scriptlite_ui_callback"
-        directory_selector = "node.sv_generic_dir_selector"
+        directory_select = "node.sv_generic_dir_selector"
         layout.label(text="Save texture as a bitmap image, choose a format:")
         layout.separator()
         layout.prop(self, "bitmap_save")
         layout.separator()
         row = layout.row(align=True)
         row.operator(callback_to_self, text="S A V E").fn_name = "save_bitmap"
-        row.operator(directory_selector, text="", icon='IMASEL').fn_name = "set_dir"
+        row.operator(directory_select, text="", icon='IMASEL').fn_name = "set_dir"
 
     def set_dir(self, operator):
+        print(dir(operator), operator.path)
         self.base_dir = operator.path
+        print(self.base_dir, '---')
+        return {'FINISHED'}
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', "Float").prop_name = 'in_float'
@@ -268,9 +271,13 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         scene = bpy.context.scene
         scene.render.image_settings.file_format = img_format
         # get the path for the file and save the image
+        
+        # desired_path = os.path.join(self.base_dir, image_name)
         path = img.filepath_raw
-        path = os.path.join(self.base_dir, image_name)
+        path = "/tmp/" + image_name
         img.save_render(path, scene)
+
+
         print('saved!  ', path)
 
 

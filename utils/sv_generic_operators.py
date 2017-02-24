@@ -146,8 +146,6 @@ class SvGenericDirectorySelector(bpy.types.Operator):
 
     '''    
 
-
-
     bl_idname = "node.sv_generic_dir_selector"
     bl_label = "sv Dir Select"
 
@@ -158,8 +156,11 @@ class SvGenericDirectorySelector(bpy.types.Operator):
         maxlen=1024, default="", subtype='DIR_PATH')
 
     def execute(self, context):
+        node = self.node   # definitely have the node here
+        print(node)
+        print('self.path', self.path)
         try:
-            f = getattr(self.node, self.fn_name)(self)
+            f = getattr(node, self.fn_name)(self)
             return f or {'FINISHED'}
 
         except Exception as err:
@@ -174,6 +175,7 @@ class SvGenericDirectorySelector(bpy.types.Operator):
         self.node = context.node
         wm = context.window_manager
         wm.fileselect_add(self)
+        print('self.path in invoke', self.path)
         return {'RUNNING_MODAL'}
 
 
