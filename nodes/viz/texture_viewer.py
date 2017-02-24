@@ -245,9 +245,8 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
     def copy(self, node):
         self.n_id = ''
 
-    def save_bitmap(self, image_name='image_name', filepath_raw='',
-                    alpha=False,
-                    texture=texture):
+    def save_bitmap(self, image_name='image_name', alpha=False):
+
         # save a texture in a bitmap image
         # in different formats supported by blender
         buf = self.get_buffer()
@@ -257,7 +256,6 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         dim = size_tex_dict[self.selected_mode]
         width, height = dim, dim
 
-        img = []   # doesn't reall do anything..
         if image_name in bpy.data.images:
             img = bpy.data.images[image_name]
         else:
@@ -271,6 +269,7 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         np_buff[:, 3] = 1
         np_buff.shape = -1
         img.pixels[:] = np_buff
+
         # get the scene context
         scene = bpy.context.scene
         scene.render.image_settings.file_format = img_format
