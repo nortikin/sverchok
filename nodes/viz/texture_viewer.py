@@ -281,7 +281,16 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         # in different formats supported by blender
         buf = self.get_buffer()
         img_format = self.bitmap_format
-        extension = '.' + img_format.lower().replace('targa', 'tga')
+        print(img_format)
+        if img_format == 'TARGA':
+            extension = '.' + img_format.lower().replace('targa', 'tga')
+        elif img_format == 'JPEG2000':
+            extension = '.' + img_format.lower().replace('jpeg2000', 'jp2')
+        elif img_format == 'OPEN_EXR':
+            extension = '.' + img_format.lower().replace('open_exr', 'exr')
+        else:
+            extension = '.' + img_format.lower()
+        # extension = '.' + img_format.lower().replace('targa', 'tga')
         image_name = image_name + extension
         dim = size_tex_dict[self.selected_mode]
         width, height = dim, dim
