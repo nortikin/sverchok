@@ -26,13 +26,22 @@ from bpy.props import FloatProperty, EnumProperty, StringProperty, BoolProperty
 from sverchok.data_structure import updateNode, node_id
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.ui import nodeview_bgl_viewer_draw_mk2 as nvBGL2
-from sverchok.utils.sv_operator_mixins import SvGenericDirectorySelector
 
+from sverchok.utils.sv_operator_mixins import (
+    SvGenericDirectorySelector, SvGenericCallbackWithParams
+)
+
+
+class SvTextureViewerOperator(bpy.types.Operator, SvGenericCallbackWithParams):
+    """ Save the image with passed settings """
+    bl_idname = "node.sv_texview_callback"
+    bl_label = "Execute a function on the calling node"
 
 class SvTextureViewerDirSelect(bpy.types.Operator, SvGenericDirectorySelector):
     """ Pick the directory to store images in """
     bl_idname = "node.sv_texview_dirselect"
     bl_label = "Pick directory"
+
 
 
 size_tex_list = [
@@ -172,16 +181,21 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         c.prop(self, 'activate')
 
     def draw_buttons_ext(self, context, layout):
-        callback_to_self = "node.scriptlite_ui_callback"
+        callback_to_self = "node.sv_texview_callback"
         directory_select = "node.sv_texview_dirselect"
+        
         layout.label(text="Save texture as a bitmap image, choose a format:")
+        
         layout.separator()
         layout.prop(self, "bitmap_save")
         layout.separator()
+
         row = layout.row(align=True)
-        row.prop(self, 'image_name', text='')
-        row.operator(callback_to_self, text="Save").fn_name = "save_bitmap"
-        row.operator(directory_select, text="", icon='IMASEL').fn_name = "set_dir"
+        leftside = row.split(0.7)
+        leftside.prop(self, 'image_name', text='')
+        rightside = leftside.split().row(align=True)
+        rightside.operator(callback_to_self, text="Save").fn_name = "save_bitmap"
+        rightside.operator(directory_select, text="", icon='IMASEL').fn_name = "set_dir"
 
     def set_dir(self, operator):
         self.base_dir = operator.directory
@@ -291,6 +305,7 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
 
 def register():
+    bpy.utils.register_class(SvTextureViewerOperator)
     bpy.utils.register_class(SvTextureViewerDirSelect)
     bpy.utils.register_class(SvTextureViewerNode)
 
@@ -298,3 +313,4 @@ def register():
 def unregister():
     bpy.utils.unregister_class(SvTextureViewerNode)
     bpy.utils.unregister_class(SvTextureViewerDirSelect)
+    bpy.utils.unregister_class(SvTextureViewerOperator)
