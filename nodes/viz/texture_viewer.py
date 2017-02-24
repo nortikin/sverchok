@@ -319,8 +319,8 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         # get the scene context
         scene = bpy.context.scene
         scene.render.image_settings.file_format = img_format
-        # get the path for the file and save the image
 
+        # get the path for the file and save the image
         desired_path = os.path.join(self.base_dir, self.image_name + extension)
 
         img.save_render(desired_path, scene)
