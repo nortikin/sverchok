@@ -309,8 +309,7 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
         img.save_render(desired_path, scene)
 
-
-        print('Saved!  path is:', desired_path)
+        print('Bitmap saved!  path is:', desired_path)
 
 
 def register():
