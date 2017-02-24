@@ -150,15 +150,13 @@ class SvGenericDirectorySelector(bpy.types.Operator):
     bl_label = "sv Dir Select"
 
     fn_name = bpy.props.StringProperty(default='')
-    path = bpy.props.StringProperty(
+    directory = bpy.props.StringProperty(
         name="Base Path",
         description="Directory selected",
         maxlen=1024, default="", subtype='DIR_PATH')
 
     def execute(self, context):
         node = self.node   # definitely have the node here
-        print(node)
-        print('self.path', self.path)
         try:
             f = getattr(node, self.fn_name)(self)
             return f or {'FINISHED'}
@@ -175,7 +173,6 @@ class SvGenericDirectorySelector(bpy.types.Operator):
         self.node = context.node
         wm = context.window_manager
         wm.fileselect_add(self)
-        print('self.path in invoke', self.path)
         return {'RUNNING_MODAL'}
 
 

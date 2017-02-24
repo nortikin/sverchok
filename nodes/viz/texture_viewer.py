@@ -174,9 +174,9 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         row.operator(directory_select, text="", icon='IMASEL').fn_name = "set_dir"
 
     def set_dir(self, operator):
-        print(dir(operator), operator.path)
-        self.base_dir = operator.path
-        print(self.base_dir, '---')
+        print(dir(operator), operator.directory)
+        # self.base_dir = operator.directory
+        # print(self.base_dir, '---')
         return {'FINISHED'}
 
     def sv_init(self, context):
