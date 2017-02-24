@@ -48,7 +48,10 @@ bitmap_save_list = [
     ('TARGA', 'tga format', 'save texture in .tga fromat', '', 1),
     ('TIFF', 'tiff format', 'save texture in .tiff format', '', 2),
     ('BMP', 'bmp format', 'save texture in .tiff format', '', 3),
-    ('JPEG', 'jpeg format', 'save texture in .jpeg format', '', 4)
+    ('JPEG', 'jpeg format', 'save texture in .jpeg format', '', 4),
+    ('JPEG2000', 'jpeg2000 format', 'save texture in .jpeg2000 format', '', 5),
+    ('OPEN_EXR', 'exr format', 'save texture in .exr format', '', 6)
+    # ('HDR','hdr format', 'save texture in .hdr format', '', 7),
 ]
 
 
@@ -249,7 +252,7 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
     def save_bitmap(self, alpha=False):
         # if self.image_name was empty it will give a default
-        image_name = self.image_name or 'image_name
+        image_name = self.image_name or 'image_name'
         # save a texture in a bitmap image
         # in different formats supported by blender
         buf = self.get_buffer()
