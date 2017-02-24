@@ -99,7 +99,7 @@ class SvGenericFileSelector(bpy.types.Operator):
     bl_idname = "node.sv_generic_file_selector"
     bl_label = "sv File Select"
 
-    filepath = StringProperty(
+    filepath = bpy.props.StringProperty(
         name="File Path",
         description="Filepath used for getting the file path",
         maxlen=1024, default="", subtype='FILE_PATH')
@@ -149,7 +149,7 @@ class SvGenericDirectorySelector(bpy.types.Operator):
     bl_idname = "node.sv_generic_dir_selector"
     bl_label = "sv Dir Select"
 
-    path = StringProperty(
+    path = bpy.props.StringProperty(
         name="Base Path",
         description="Directory selected",
         maxlen=1024, default="", subtype='DIR_PATH')
