@@ -249,6 +249,7 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
             img = bpy.data.images.new(name=image_name, width=width,
                                       height=height, alpha=alpha,
                                       float_buffer=True)
+        img.scale(width, height)
         np_buff = np.empty(len(img.pixels), dtype=np.float32)
         np_buff.shape = (-1, 4)
         np_buff[:, :] = np.array(buf)[:, np.newaxis]
