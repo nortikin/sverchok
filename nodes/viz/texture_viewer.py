@@ -61,14 +61,17 @@ size_tex_dict = {
 }
 
 bitmap_format_list = [
-    ('PNG', 'png format', 'save texture in .png fromat', '', 0),
-    ('TARGA', 'tga format', 'save texture in .tga fromat', '', 1),
-    ('TIFF', 'tiff format', 'save texture in .tiff format', '', 2),
-    ('BMP', 'bmp format', 'save texture in .tiff format', '', 3),
-    ('JPEG', 'jpeg format', 'save texture in .jpeg format', '', 4),
-    ('JPEG2000', 'jpeg2000 format', 'save texture in .jpeg2000 format', '', 5),
-    ('OPEN_EXR', 'exr format', 'save texture in .exr format', '', 6)
-    # ('HDR','hdr format', 'save texture in .hdr format', '', 7),
+    ('PNG', 'png format', 'save texture in .png format', '', 0),
+    ('TARGA', 'tga format', 'save texture in .tga format', '', 1),
+    ('TARGA_RAW', 'tga_raw format', 'save texture in .tga(raw) format', '', 2),
+    ('TIFF', 'tiff format', 'save texture in .tiff format', '', 3),
+    ('BMP', 'bmp format', 'save texture in .tiff format', '', 4),
+    ('JPEG', 'jpeg format', 'save texture in .jpeg format', '', 5),
+    ('JPEG2000', 'jpeg2000 format', 'save texture in .jpeg2000 format', '', 6),
+    ('OPEN_EXR_MULTILAYER', 'exr multilayer format', 'save texture in .exr multilayer format', '', 7),
+    ('OPEN_EXR', 'exr format', 'save texture in .exr format', '', 8),
+    ('IRIS', 'iris format', 'save texture in .rgb format', '', 9)
+    # ('HDR','hdr format', 'save texture in .hdr format', '', 9),
 ]
 
 
@@ -265,10 +268,9 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
     def copy(self, node):
         self.n_id = ''
 
-
     def set_dir(self, operator):
         self.base_dir = operator.directory
-        print('new base dir:', self.base_dir)   #####
+        print('new base dir:', self.base_dir)
         return {'FINISHED'}
 
     def save_bitmap(self, operator):
@@ -284,10 +286,16 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         print(img_format)
         if img_format == 'TARGA':
             extension = '.' + img_format.lower().replace('targa', 'tga')
+        elif img_format == 'TARGA_RAW':
+            extension = '.' + img_format.lower().replace('targa_raw', 'tga')
         elif img_format == 'JPEG2000':
             extension = '.' + img_format.lower().replace('jpeg2000', 'jp2')
         elif img_format == 'OPEN_EXR':
             extension = '.' + img_format.lower().replace('open_exr', 'exr')
+        elif img_format == 'OPEN_EXR_MULTILAYER':
+            extension = '.' + img_format.lower().replace('open_exr_multilayer', 'exr')
+        elif img_format == 'IRIS':
+            extension = '.' + img_format.lower().replace('iris', 'rgb')
         else:
             extension = '.' + img_format.lower()
         # extension = '.' + img_format.lower().replace('targa', 'tga')
@@ -314,7 +322,7 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         scene.render.image_settings.file_format = img_format
         # get the path for the file and save the image
 
-        desired_path = os.path.join(self.base_dir, self.image_name + extension)   #####
+        desired_path = os.path.join(self.base_dir, self.image_name + extension)
 
         img.save_render(desired_path, scene)
 
