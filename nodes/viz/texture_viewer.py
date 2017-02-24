@@ -271,7 +271,7 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         path = img.filepath_raw
         path = os.path.join(self.base_dir, image_name)
         img.save_render(path, scene)
-        print('saved!')
+        print('saved!  ', path)
 
 
 def register():
