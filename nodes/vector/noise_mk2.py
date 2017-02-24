@@ -33,13 +33,13 @@ from sverchok.data_structure import (updateNode, Vector_degenerate, match_long_r
 
 noise_options = [
     ('BLENDER', 0),
-    ('STDPERLIN', 1), 
-    ('NEWPERLIN', 2), 
-    ('VORONOI_F1', 3), 
-    ('VORONOI_F2', 4), 
-    ('VORONOI_F3', 5), 
-    ('VORONOI_F4', 6), 
-    ('VORONOI_F2F1', 7), 
+    ('STDPERLIN', 1),
+    ('NEWPERLIN', 2),
+    ('VORONOI_F1', 3),
+    ('VORONOI_F2', 4),
+    ('VORONOI_F3', 5),
+    ('VORONOI_F4', 6),
+    ('VORONOI_F2F1', 7),
     ('VORONOI_CRACKLE', 8),
     ('CELLNOISE', 14)
 ]
@@ -105,18 +105,18 @@ class SvNoiseNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
         if not outputs[0].is_linked:
             return
-        
+
         out = []
-        verts = inputs['Vertices'].sv_get()
+        verts = inputs['Vertices'].sv_get(deepcopy=False)
         seeds = inputs['Seed'].sv_get()[0]
         _noise_type = noise_dict[self.noise_type]
         noise_function = noise_f[self.out_mode]
 
-        
+
         for idx, (seed, obj) in enumerate(zip(*match_long_repeat([seeds, verts]))):
             # multi-pass, make sure seed_val is a number and it isn't 0.
             # 0 unsets the seed and generates unreproducable output based on system time
-            # We force the seed to a non 0 value. 
+            # We force the seed to a non 0 value.
             # See https://github.com/nortikin/sverchok/issues/1095#issuecomment-271261600
             seed_val = seed if isinstance(seed, (int, float)) else 0
             seed_val = int(round(seed_val)) or 140230

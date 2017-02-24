@@ -1,6 +1,8 @@
 import bpy
 from sverchok.data_structure import SVERCHOK_NAME as addon_name
 
+import bpy
+from sverchok.data_structure import SVERCHOK_NAME as addon_name
 from contextlib import contextmanager
 
 
@@ -25,8 +27,6 @@ def hard_freeze(self):
     self.id_data.freeze(hard=True)
     yield self
     self.id_data.unfreeze(hard=True)
-
-
 
 @contextmanager
 def sv_preferences():

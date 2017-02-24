@@ -13,7 +13,7 @@ Nodes
    Modifier Make <nodes/modifier_make/modifier_make_index>
 
    Number <nodes/number/number_index>
-   Vertex <nodes/vector/vector_index>
+   Vector <nodes/vector/vector_index>
    Matrix <nodes/matrix/matrix_index>
    Logic <nodes/logic/logic_index>
    List Main <nodes/list_main/list_main_index>

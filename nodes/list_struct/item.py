@@ -75,7 +75,7 @@ class ListItem2Node(bpy.types.Node, SverchCustomTreeNode):
                 else:
                     items = [[self.item]]
 
-                if  self.outputs['Item'].is_linked:
+                if self.outputs['Item'].is_linked:
                     if self.level-1:
                         out = self.get(data, self.level-1, items, self.get_items)
                     else:
@@ -86,7 +86,7 @@ class ListItem2Node(bpy.types.Node, SverchCustomTreeNode):
                         out = self.get(data, self.level-1, items, self.get_other)
                     else:
                         out = self.get_other(data, items[0])
-                    self.outputs['Other'].is_linked.sv_set(out)
+                    self.outputs['Other'].sv_set(out)
 
     def get_items(self, data, items):
         if type(data) in [list, tuple]:

@@ -3,11 +3,18 @@ import traceback
 import bpy
 from bpy.app.handlers import persistent
 
+from sverchok import old_nodes
 from sverchok import data_structure
 from sverchok.core import upgrade_nodes, upgrade_group
-from sverchok.ui import (viewer_draw, viewer_draw_mk2, index_viewer_draw,
-                         nodeview_bgl_viewer_draw, color_def)
-from sverchok import old_nodes
+
+from sverchok.ui import (
+    viewer_draw,
+    viewer_draw_mk2,
+    index_viewer_draw,
+    nodeview_bgl_viewer_draw,
+    nodeview_bgl_viewer_draw_mk2,
+    color_def
+)
 
 
 def sverchok_trees():
@@ -64,6 +71,7 @@ def sv_clean(scene):
     viewer_draw_mk2.callback_disable_all()
     index_viewer_draw.callback_disable_all()
     nodeview_bgl_viewer_draw.callback_disable_all()
+    nodeview_bgl_viewer_draw_mk2.callback_disable_all()
     data_structure.sv_Vars = {}
     data_structure.temp_handle = {}
 

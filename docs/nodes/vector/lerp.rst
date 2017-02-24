@@ -28,9 +28,9 @@ Parameters
 |                  |               |             |   between each member of vectors A and B for    |
 |                  |               |             |   all items in Factor input (see example)       |
 +------------------+---------------+-------------+-------------------------------------------------+
-| **Vertice A**    | Vertices      | None        | first group of vertices (Stream)                | 
+| **Vertex A**     | Vector        | None        | first group of vertices (Stream)                | 
 +------------------+---------------+-------------+-------------------------------------------------+
-| **Vectice B**    | Vertices      | None        | second group of vertices (Stream)               |
+| **Vertex B**     | Vector        | None        | second group of vertices (Stream)               |
 +------------------+---------------+-------------+-------------------------------------------------+
 | **Factor**       | Float         | 0.50        | distance ratio between vertices A and B.        |
 |                  |               |             | values outside of the 0.0...1.0 range are       |

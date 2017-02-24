@@ -51,8 +51,8 @@ class SvVectorLerp(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', "Factor", "Factor").prop_name = 'factor_'
-        self.inputs.new('VerticesSocket', "Vertice A", "Vertice A")
-        self.inputs.new('VerticesSocket', "Vertice B", "Vertice B")
+        self.inputs.new('VerticesSocket', "Vertices A")
+        self.inputs.new('VerticesSocket', "Vertices B")
         self.outputs.new('VerticesSocket', "EvPoint", "EvPoint")
 
     def draw_buttons(self, context, layout):
@@ -61,8 +61,8 @@ class SvVectorLerp(bpy.types.Node, SverchCustomTreeNode):
     def process(self):
         if not self.outputs['EvPoint'].is_linked:
             return
-        VerticesA = self.inputs['Vertice A'].sv_get()
-        VerticesB = self.inputs['Vertice B'].sv_get()
+        VerticesA = self.inputs[1].sv_get()
+        VerticesB = self.inputs[2].sv_get()
         factor = self.inputs['Factor'].sv_get()
 
         # match inputs using fullList, longest list matching on A and B

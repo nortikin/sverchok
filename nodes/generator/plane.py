@@ -25,11 +25,32 @@ from sverchok.data_structure import updateNode, fullList, match_long_repeat
 from mathutils import Vector
 
 
-def make_plane(int_x, int_y, step_x, step_y, separate):
+def make_plane(int_x, int_y, step_x, step_y, separate, center):
     vertices = [(0.0, 0.0, 0.0)]
     vertices_S = []
     int_x = [int(int_x) if type(int_x) is not list else int(int_x[0])]
     int_y = [int(int_y) if type(int_y) is not list else int(int_y[0])]
+
+    # center the grid: offset the starting point of the grid by half its size
+    if center:
+        Nnx = int_x[0]-1   # number of steps based on the number of X vertices
+        Nsx = len(step_x)  # number of steps given by the X step list
+
+        Nny = int_y[0]-1   # number of steps based on the number of Y vertices
+        Nsy = len(step_y)  # number of steps given by the Y step list
+
+        # grid size along X (step list & repeated last step if any)
+        sizeX1 = sum(step_x[:min(Nnx, Nsx)])          # step list size
+        sizeX2 = max(0, (Nnx - Nsx)) * step_x[Nsx-1]  # repeated last step size
+        sizeX = sizeX1 + sizeX2                       # total size
+
+        # grid size along Y (step list & repeated last step if any)
+        sizeY1 = sum(step_y[:min(Nny, Nsy)])          # step list size
+        sizeY2 = max(0, (Nny - Nsy)) * step_y[Nsy-1]  # repeated last step size
+        sizeY = sizeY1 + sizeY2                       # total size
+
+        # starting point of the grid offset by half its size in both directions
+        vertices = [(-0.5*sizeX, -0.5*sizeY, 0.0)]
 
     if type(step_x) is not list:
         step_x = [step_x]
@@ -103,6 +124,9 @@ class PlaneNode(bpy.types.Node, SverchCustomTreeNode):
     Separate = BoolProperty(name='Separate', description='Separate UV coords',
                             default=False,
                             update=updateNode)
+    Center = BoolProperty(name='Center', description='Center the grid',
+                          default=False,
+                          update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', "Nº Vertices X").prop_name = 'int_X'
@@ -116,6 +140,7 @@ class PlaneNode(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "Separate", text="Separate")
+        layout.prop(self, "Center", text="Center")
 
     def process(self):
         inputs = self.inputs
@@ -130,7 +155,7 @@ class PlaneNode(bpy.types.Node, SverchCustomTreeNode):
         step_y = inputs["Step Y"].sv_get()
 
         params = match_long_repeat([int_x, int_y, step_x, step_y, [self.Separate]])
-        out = [a for a in (zip(*[make_plane(i_x, i_y, s_x, s_y, s) for i_x, i_y, s_x, s_y, s in zip(*params)]))]
+        out = [a for a in (zip(*[make_plane(i_x, i_y, s_x, s_y, s, self.Center) for i_x, i_y, s_x, s_y, s in zip(*params)]))]
 
         # outputs
         if outputs['Vertices'].is_linked:

@@ -10,7 +10,7 @@ Analyzers
    distance_pp
    edge_angles
    kd_tree
-   kd_tree_edges
+   kd_tree_edges_mk2
    mesh_filter
    normal
    normals

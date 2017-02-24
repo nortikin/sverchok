@@ -23,7 +23,7 @@ from bpy.props import BoolProperty, IntProperty, FloatProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (match_long_repeat, sv_zip,
-                            updateNode, SvSetSocketAnyType)
+                                     updateNode)
 
 
 def cylinder_vertices(Subd, Vertices, Height, RadiusBot, RadiusTop, Separate):
@@ -147,20 +147,17 @@ class CylinderNode(bpy.types.Node, SverchCustomTreeNode):
 
             points = [cylinder_vertices(s, v, h, rb, rt, self.Separate)
                       for s, v, h, rb, rt in zip(*params)]
-            SvSetSocketAnyType(self, 'Vertices', points)
+            self.outputs['Vertices'].sv_set(points)
 
         if self.outputs['Edges'].is_linked:
             edges = [cylinder_edges(s, v)
                      for s, v, h, rb, rt in zip(*params)]
-            SvSetSocketAnyType(self, 'Edges', edges)
+            self.outputs['Edges'].sv_set(edges)
 
         if self.outputs['Polygons'].is_linked:
             faces = [cylinder_faces(s, v, self.cap_)
                      for s, v, h, rb, rt in zip(*params)]
-            SvSetSocketAnyType(self, 'Polygons', faces)
-
-    def update_socket(self, context):
-        self.update()
+            self.outputs['Polygons'].sv_set(faces)
 
 
 def register():
