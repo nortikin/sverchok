@@ -34,11 +34,11 @@ class SvGenericCallbackWithParams(bpy.types.Operator):
         def draw_buttons(self, context, layout):
             callback = "node.sv_generic_callback_with_params"
             my_op = layout.operator(callback, text='display_name').fn_name='some_function'
-            my_op.arg1 = 'something'
+            my_op.your_custom_param_name = 'something'
 
 
         def some_function(self, operator):
-            print(operator.str1)
+            print(operator.your_custom_param_name)
             operator.report({  ...})
             return {'FINISHED'}
 
