@@ -27,6 +27,23 @@ from sverchok.data_structure import updateNode, node_id
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.ui import nodeview_bgl_viewer_draw_mk2 as nvBGL2
 
+from sverchok.utils.sv_operator_mixins import (
+    SvGenericDirectorySelector, SvGenericCallbackWithParams
+)
+
+
+class SvTextureViewerOperator(bpy.types.Operator, SvGenericCallbackWithParams):
+    """ Save the image with passed settings """
+    bl_idname = "node.sv_texview_callback"
+    bl_label = "Execute a function on the calling node"
+
+class SvTextureViewerDirSelect(bpy.types.Operator, SvGenericDirectorySelector):
+    """ Pick the directory to store images in """
+    bl_idname = "node.sv_texview_dirselect"
+    bl_label = "Pick directory"
+
+
+
 size_tex_list = [
     ('EXTRA_SMALL', 'extra_small 64x64px', 'extra small squared tex: 64px', '', 64),
     ('SMALL', 'small 128x128px', 'small squared tex: 128px', '', 128),
@@ -43,7 +60,7 @@ size_tex_dict = {
     'EXTRA_LARGE': 1024
 }
 
-bitmap_save_list = [
+bitmap_format_list = [
     ('PNG', 'png format', 'save texture in .png fromat', '', 0),
     ('TARGA', 'tga format', 'save texture in .tga fromat', '', 1),
     ('TIFF', 'tiff format', 'save texture in .tiff format', '', 2),
@@ -125,8 +142,8 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         update=updateNode
     )
 
-    bitmap_save = EnumProperty(
-        items=bitmap_save_list,
+    bitmap_format = EnumProperty(
+        items=bitmap_format_list,
         description="Offers bitmap saving",
         default="PNG"
     )
@@ -167,23 +184,30 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         c.prop(self, 'activate')
 
     def draw_buttons_ext(self, context, layout):
-        callback_to_self = "node.scriptlite_ui_callback"
-        directory_select = "node.sv_generic_dir_selector"
-        layout.label(text="Save texture as a bitmap image, choose a format:")
+        callback_to_self = "node.sv_texview_callback"
+        directory_select = "node.sv_texview_dirselect"
+
+        layout.label(text="Save texture as a bitmap")
+
         layout.separator()
-        layout.prop(self, "bitmap_save")
+        layout.prop(self, "bitmap_format", text='format')
         layout.separator()
+<<<<<<< HEAD
         row = layout.row(align=True)
         leftside = row.split(0.7)
         leftside.prop(self, 'image_name', text='')
         rightside = leftside.split().row(align=True)
         rightside.operator(callback_to_self, text="Save").fn_name = "save_bitmap"
         rightside.operator(directory_select, text="", icon='IMASEL').fn_name = "set_dir"
+=======
+>>>>>>> 27d6042c8e7f431dfe1554f6a47f07108fcd0da4
 
-    def set_dir(self, operator):
-        self.base_dir = operator.directory
-        print('new base dir:,', self.base_dir)   #####
-        return {'FINISHED'}
+        row = layout.row(align=True)
+        leftside = row.split(0.7)
+        leftside.prop(self, 'image_name', text='')
+        rightside = leftside.split().row(align=True)
+        rightside.operator(callback_to_self, text="Save").fn_name = "save_bitmap"
+        rightside.operator(directory_select, text="", icon='IMASEL').fn_name = "set_dir"
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', "Float").prop_name = 'in_float'
@@ -250,13 +274,27 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
     def copy(self, node):
         self.n_id = ''
 
+<<<<<<< HEAD
     def save_bitmap(self, alpha=False):
         # if self.image_name was empty it will give a default
         image_name = self.image_name or 'image_name'
+=======
+    def set_dir(self, operator):
+        self.base_dir = operator.directory
+        print('new base dir:', self.base_dir)   #####
+        return {'FINISHED'}
+
+    def save_bitmap(self, operator):
+        alpha = False
+
+        # if self.image_name was empty it will give a default
+        image_name = self.image_name or 'image_name'
+
+>>>>>>> 27d6042c8e7f431dfe1554f6a47f07108fcd0da4
         # save a texture in a bitmap image
         # in different formats supported by blender
         buf = self.get_buffer()
-        img_format = self.bitmap_save
+        img_format = self.bitmap_format
         extension = '.' + img_format.lower().replace('targa', 'tga')
         image_name = image_name + extension
         dim = size_tex_dict[self.selected_mode]
@@ -280,16 +318,29 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         scene = bpy.context.scene
         scene.render.image_settings.file_format = img_format
         # get the path for the file and save the image
+<<<<<<< HEAD
+=======
+
+        desired_path = os.path.join(self.base_dir, self.image_name + extension)   #####
+>>>>>>> 27d6042c8e7f431dfe1554f6a47f07108fcd0da4
 
         desired_path = os.path.join(self.base_dir, self.image_name + extension)
 
         img.save_render(desired_path, scene)
+<<<<<<< HEAD
         print('Bitmap saved!  path is:', desired_path)
+=======
+        print('Saved!  path is:', desired_path)
+>>>>>>> 27d6042c8e7f431dfe1554f6a47f07108fcd0da4
 
 
 def register():
+    bpy.utils.register_class(SvTextureViewerOperator)
+    bpy.utils.register_class(SvTextureViewerDirSelect)
     bpy.utils.register_class(SvTextureViewerNode)
 
 
 def unregister():
     bpy.utils.unregister_class(SvTextureViewerNode)
+    bpy.utils.unregister_class(SvTextureViewerDirSelect)
+    bpy.utils.unregister_class(SvTextureViewerOperator)

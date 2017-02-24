@@ -19,10 +19,12 @@
 import bpy
 
 
-class SvGenericCallbackWithParams(bpy.types.Operator):
+class SvGenericCallbackWithParams():
+
+    bl_idname = "node.sv_generic_callback_with_params"
+    bl_label = "SvGeneric callback (with params)"
 
     '''
-
     #### using SvGenericCallbackWithParams(bpy.types.Operator) #####
 
     class SomeNode..
@@ -31,32 +33,17 @@ class SvGenericCallbackWithParams(bpy.types.Operator):
         def draw_buttons(self, context, layout):
             callback = "node.sv_generic_callback_with_params"
             my_op = layout.operator(callback, text='display_name').fn_name='some_function'
-            my_op.arg1 = 'something'
+            my_op.your_custom_param_name = 'something'
 
 
         def some_function(self, operator):
-            print(operator.str1)
+            print(operator.your_custom_param_name)
             operator.report({  ...})
             return {'FINISHED'}
 
-
-
     '''    
 
-    bl_idname = "node.sv_generic_callback_with_params"
-    bl_label = "SvGeneric callback (with params)"
-
     fn_name = bpy.props.StringProperty(default='')
-
-    str1 = bpy.props.StringProperty()
-    str2 = bpy.props.StringProperty()
-    str3 = bpy.props.StringProperty()
-    int1 = bpy.props.IntProperty()
-    int2 = bpy.props.IntProperty()
-    int3 = bpy.props.IntProperty()
-    float1 = bpy.props.FloatProperty()
-    float2 = bpy.props.FloatProperty()
-    float3 = bpy.props.FloatProperty()
 
 
     def execute(self, context):
@@ -73,7 +60,10 @@ class SvGenericCallbackWithParams(bpy.types.Operator):
 
 
 
-class SvGenericFileSelector(bpy.types.Operator):
+class SvGenericFileSelector():
+
+    bl_idname = "node.sv_generic_file_selector"
+    bl_label = "sv File Select"
 
     '''
 
@@ -93,11 +83,6 @@ class SvGenericFileSelector(bpy.types.Operator):
 
 
     '''    
-
-
-
-    bl_idname = "node.sv_generic_file_selector"
-    bl_label = "sv File Select"
 
     fn_name = bpy.props.StringProperty(default='')
     filepath = bpy.props.StringProperty(
@@ -125,7 +110,10 @@ class SvGenericFileSelector(bpy.types.Operator):
         return {'RUNNING_MODAL'}
 
 
-class SvGenericDirectorySelector(bpy.types.Operator):
+class SvGenericDirectorySelector():
+
+    bl_idname = "node.sv_generic_dir_selector"
+    bl_label = "sv Dir Select"
 
     '''
 
@@ -145,9 +133,6 @@ class SvGenericDirectorySelector(bpy.types.Operator):
 
 
     '''    
-
-    bl_idname = "node.sv_generic_dir_selector"
-    bl_label = "sv Dir Select"
 
     fn_name = bpy.props.StringProperty(default='')
     directory = bpy.props.StringProperty(
@@ -174,16 +159,3 @@ class SvGenericDirectorySelector(bpy.types.Operator):
         wm = context.window_manager
         wm.fileselect_add(self)
         return {'RUNNING_MODAL'}
-
-
-
-
-classes = [SvGenericCallbackWithParams, SvGenericFileSelector, SvGenericDirectorySelector]
-
-def register():
-    for c in classes:
-        bpy.utils.register_class(c)
-
-def unregister():
-    for c in classes:
-        bpy.utils.unregister_class(c)
