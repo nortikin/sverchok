@@ -170,13 +170,11 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
     def sv_init(self, context):
         self.inputs.new('StringsSocket', "Float").prop_name = 'in_float'
 
-
     def delete_texture(self):
         n_id = node_id(self)
         if n_id in self.texture:
-             names = bgl.Buffer(bgl.GL_INT, 1, [self.texture[n_id]])
-             bgl.glDeleteTextures(1, names)
-
+            names = bgl.Buffer(bgl.GL_INT, 1, [self.texture[n_id]])
+            bgl.glDeleteTextures(1, names)
 
     def process(self):
         n_id = node_id(self)
