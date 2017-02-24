@@ -83,13 +83,13 @@ def simple_screen(x, y, args):
 
         bgl.glBegin(bgl.GL_QUADS)
 
-        bgl.glTexCoord2d(0, 0)
-        bgl.glVertex2f(x, y)
-        bgl.glTexCoord2d(1, 0)
-        bgl.glVertex2f(x + w, y)
-        bgl.glTexCoord2d(1, 1)
-        bgl.glVertex2f(x + w, y - h)
         bgl.glTexCoord2d(0, 1)
+        bgl.glVertex2f(x, y)
+        bgl.glTexCoord2d(1, 1)
+        bgl.glVertex2f(x + w, y)
+        bgl.glTexCoord2d(1, 0)
+        bgl.glVertex2f(x + w, y - h)
+        bgl.glTexCoord2d(0, 0)
         bgl.glVertex2f(x, y - h)
 
         bgl.glEnd()
@@ -260,6 +260,7 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
             img = bpy.data.images.new(name=image_name, width=width,
                                       height=height, alpha=alpha,
                                       float_buffer=True)
+        img.scale(width, height)
         np_buff = np.empty(len(img.pixels), dtype=np.float32)
         np_buff.shape = (-1, 4)
         np_buff[:, :] = np.array(buf)[:, np.newaxis]
