@@ -37,11 +37,11 @@ class SvTextureViewerOperator(bpy.types.Operator, SvGenericCallbackWithParams):
     bl_idname = "node.sv_texview_callback"
     bl_label = "Execute a function on the calling node"
 
+
 class SvTextureViewerDirSelect(bpy.types.Operator, SvGenericDirectorySelector):
     """ Pick the directory to store images in """
     bl_idname = "node.sv_texview_dirselect"
     bl_label = "Pick directory"
-
 
 
 size_tex_list = [
@@ -61,27 +61,24 @@ size_tex_dict = {
 }
 
 bitmap_format_list = [
-    ('PNG', 'png format', 'save texture in .png format', '', 0),
-    ('TARGA', 'tga format', 'save texture in .tga format', '', 1),
-    ('TARGA_RAW', 'tga_raw format', 'save texture in .tga(raw) format', '', 2),
-    ('TIFF', 'tiff format', 'save texture in .tiff format', '', 3),
-    ('BMP', 'bmp format', 'save texture in .tiff format', '', 4),
-    ('JPEG', 'jpeg format', 'save texture in .jpeg format', '', 5),
-    ('JPEG2000', 'jpeg2000 format', 'save texture in .jpeg2000 format', '', 6),
-    ('OPEN_EXR_MULTILAYER', 'exr multilayer format', 'save texture in .exr multilayer format', '', 7),
-    ('OPEN_EXR', 'exr format', 'save texture in .exr format', '', 8),
-    ('IRIS', 'iris format', 'save texture in .rgb format', '', 9)
+    ('PNG', '.png', 'save texture in .png format', '', 0),
+    ('TARGA', '.tga', 'save texture in .tga format', '', 1),
+    ('TARGA_RAW', '.tga (raw)', 'save texture in .tga(raw) format', '', 2),
+    ('TIFF', '.tiff', 'save texture in .tiff format', '', 3),
+    ('BMP', '.bmp', 'save texture in .tiff format', '', 4),
+    ('JPEG', '.jpeg', 'save texture in .jpeg format', '', 5),
+    ('JPEG2000', '.jp2', 'save texture in .jpeg (2000) format', '', 6),
+    ('OPEN_EXR_MULTILAYER', '.exr (multilayer)', 'save texture in .exr (multilayer) format', '', 7),
+    ('OPEN_EXR', '.exr', 'save texture in .exr format', '', 8),
     # ('HDR','hdr format', 'save texture in .hdr format', '', 9),
 ]
 
 format_mapping = {
-    'IRIS': 'rgb',
     'TARGA': 'tga',
     'TARGA_RAW': 'tga',
     'JPEG2000': 'jp2',
     'OPEN_EXR_MULTILAYER': 'exr',
     'OPEN_EXR': 'exr',
-    'IRIS': 'rgb'
 }
 
 
