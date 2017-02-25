@@ -87,9 +87,15 @@ gl_color_list = [
 ]
 
 gl_color_dict = {
-    'BW': 'GL_LUMINANCE',
-    'RGB': 'GL_RGB',
-    'RGBA': 'GL_RGBA'
+    'BW': 6409,  # GL_LUMINANCE
+    'RGB': 6407,  # GL_RGB
+    'RGBA': 6408  # GL_RGBA
+}
+
+factor_buffer_dict = {
+    'BW': 1,  # GL_LUMINANCE
+    'RGB': 3,  # GL_RGB
+    'RGBA': 4  # GL_RGBA
 }
 
 
@@ -150,9 +156,6 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Texture viewer'
     texture = {}
 
-    # def changeColor(self, context):
-    #    pass
-
     n_id = StringProperty(default='')
     activate = BoolProperty(
         name='Show', description='Activate texture drawing',
@@ -175,9 +178,8 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
     color_mode = EnumProperty(
         items=gl_color_list,
         description="Offers color options",
-        default="BW"
-        # update=updateNode
-        # update=changeColor
+        default="BW",
+        update=updateNode
     )
 
     in_float = FloatProperty(
@@ -197,7 +199,9 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
     def get_buffer(self):
         data = self.inputs['Float'].sv_get(deepcopy=False)[0]
         size_tex = size_tex_dict.get(self.selected_mode)
-        total_size = size_tex * size_tex
+        # buffer need adequate size multiplying
+        factor_clr = factor_buffer_dict.get(self.color_mode)
+        total_size = size_tex * size_tex * factor_clr
         if len(data) < total_size:
             default_value = 0
             new_data = [default_value for j in range(total_size)]
@@ -258,6 +262,8 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
             def init_texture(width, height, texname, texture):
                 # function to init the texture
+                clr = gl_color_dict.get(self.color_mode)
+                # print('color mode is: {0}'.format(clr))
                 bgl.glShadeModel(bgl.GL_SMOOTH)
 
                 bgl.glPixelStorei(bgl.GL_UNPACK_ALIGNMENT, 1)
@@ -273,8 +279,8 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
                 bgl.glTexImage2D(
                     bgl.GL_TEXTURE_2D,
-                    0, bgl.GL_LUMINANCE, width, height,
-                    0, bgl.GL_LUMINANCE, bgl.GL_FLOAT, texture
+                    0, clr, width, height,
+                    0, clr, bgl.GL_FLOAT, texture
                 )
 
             name = bgl.Buffer(bgl.GL_INT, 1)
