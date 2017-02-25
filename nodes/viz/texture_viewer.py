@@ -70,7 +70,6 @@ bitmap_format_list = [
     ('JPEG2000', '.jp2', 'save texture in .jpeg (2000) format', '', 6),
     ('OPEN_EXR_MULTILAYER', '.exr (multilayer)', 'save texture in .exr (multilayer) format', '', 7),
     ('OPEN_EXR', '.exr', 'save texture in .exr format', '', 8),
-    # ('HDR','hdr format', 'save texture in .hdr format', '', 9),
 ]
 
 format_mapping = {
@@ -81,6 +80,11 @@ format_mapping = {
     'OPEN_EXR': 'exr',
 }
 
+gl_color_dict = {
+    'BW': 'GL_LUMINANCE',
+    'RGB': 'GL_RGB',
+    'RGBA': 'GL_RGBA'
+}
 
 def simple_screen(x, y, args):
     # draw a simple scren display for the texture
