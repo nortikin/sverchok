@@ -80,11 +80,18 @@ format_mapping = {
     'OPEN_EXR': 'exr',
 }
 
+gl_color_list = [
+    ('BW', 'bw', 'grayscale texture', '', 0),
+    ('RGB', 'rgb', 'rgb colored texture', '', 1),
+    ('RGBA', 'rgba', 'rgba colored texture', '', 2)
+]
+
 gl_color_dict = {
     'BW': 'GL_LUMINANCE',
     'RGB': 'GL_RGB',
     'RGBA': 'GL_RGBA'
 }
+
 
 def simple_screen(x, y, args):
     # draw a simple scren display for the texture
@@ -143,6 +150,9 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Texture viewer'
     texture = {}
 
+    # def changeColor(self, context):
+    #    pass
+
     n_id = StringProperty(default='')
     activate = BoolProperty(
         name='Show', description='Activate texture drawing',
@@ -160,6 +170,14 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         items=bitmap_format_list,
         description="Offers bitmap saving",
         default="PNG"
+    )
+
+    color_mode = EnumProperty(
+        items=gl_color_list,
+        description="Offers color options",
+        default="BW"
+        # update=updateNode
+        # update=changeColor
     )
 
     in_float = FloatProperty(
@@ -196,6 +214,9 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         c.label(text="Set texture display:")
         c.prop(self, "selected_mode", text="")
         c.prop(self, 'activate')
+        c.label(text='Set color mode')
+        row = layout.row(align=True)
+        row.prop(self, 'color_mode', expand=True)
 
     def draw_buttons_ext(self, context, layout):
         callback_to_self = "node.sv_texview_callback"
