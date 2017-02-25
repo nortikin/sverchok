@@ -318,6 +318,7 @@
     SvCombinatoricsNode
 
 ## Alpha Nodes
+    SvIconGridNode
     SvCurveViewerNode
     SvCurveViewerNodeAlt
     SvPolylineViewerNodeMK1
