@@ -122,6 +122,12 @@ def simple_screen(x, y, args):
 
     def draw_texture(x=0, y=0, w=30, h=10, texname=texname):
         # function to draw a texture
+        bgl.glEnable(bgl.GL_DEPTH_TEST)
+
+        bgl.glEnable(bgl.GL_SMOOTH)
+        bgl.glShadeModel(bgl.GL_SMOOTH)
+        bgl.glPolygonMode(bgl.GL_FRONT_AND_BACK, bgl.GL_FILL)
+
         bgl.glEnable(bgl.GL_TEXTURE_2D)
         bgl.glTexEnvf(bgl.GL_TEXTURE_ENV,
                       bgl.GL_TEXTURE_ENV_MODE,
@@ -142,7 +148,9 @@ def simple_screen(x, y, args):
         bgl.glEnd()
 
         bgl.glDisable(bgl.GL_TEXTURE_2D)
-        # bgl.glDeleteTextures( 1, Buffer )
+        bgl.glDisable(bgl.GL_DEPTH_TEST)
+        bgl.glDisable(bgl.GL_SMOOTH)
+
         bgl.glFlush()
 
     draw_texture(x=x, y=y, w=width, h=height, texname=texname)
@@ -264,7 +272,7 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
                 # function to init the texture
                 clr = gl_color_dict.get(self.color_mode)
                 # print('color mode is: {0}'.format(clr))
-                bgl.glShadeModel(bgl.GL_SMOOTH)
+                # bgl.glShadeModel(bgl.GL_SMOOTH)
 
                 bgl.glPixelStorei(bgl.GL_UNPACK_ALIGNMENT, 1)
 
