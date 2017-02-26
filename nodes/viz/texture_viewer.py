@@ -217,7 +217,7 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
             data = new_data
         elif len(data) > total_size:
             data = data[:total_size]
-
+        print('buffer  tex buff length: {0}'.format(len(data)))
         texture = bgl.Buffer(bgl.GL_FLOAT, total_size, data)
         return texture
 
@@ -337,7 +337,6 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         image_name = image_name + extension
         dim = size_tex_dict[self.selected_mode]
         width, height = dim, dim
-
         if image_name in bpy.data.images:
             img = bpy.data.images[image_name]
         else:
@@ -345,15 +344,20 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
                                       height=height, alpha=alpha,
                                       float_buffer=True)
         img.scale(width, height)
+        print('width is: {0}'.format(width))
+        print('length img pixels: {0}'.format(len(img.pixels)))
         np_buff = np.empty(len(img.pixels), dtype=np.float32)
+        print('pass to...')
         np_buff.shape = (-1, 4)
         np_buff[:, :] = np.array(buf)[:, np.newaxis]
+        print('buffer np_buff length: {0}'.format(len(buf)))
         np_buff[:, 3] = 1
         np_buff.shape = -1
         img.pixels[:] = np_buff
 
         # get the scene context
         scene = bpy.context.scene
+        scene.render.image_settings.color_mode = self.color_mode
         scene.render.image_settings.file_format = img_format
 
         # get the path for the file and save the image
