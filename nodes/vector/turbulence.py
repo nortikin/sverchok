@@ -137,7 +137,7 @@ class SvTurbulenceNode(bpy.types.Node, SverchCustomTreeNode):
                 else:
                     # randomise origin
                     noise.seed_set(rseed)
-                    offset = noise.random_unit_vector() * 10
+                    offset = noise.random_unit_vector() * 10.0
 
                 new_vertex = [x + y for x, y in zip(vertex, offset)]
                 coords.append(new_vertex)
