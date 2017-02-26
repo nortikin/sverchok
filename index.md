@@ -230,6 +230,7 @@
     SvColorsOutNode
 
 ## Alpha Nodes
+    SvHexaGridNode
     SvCurveViewerNode
     SvCurveViewerNodeAlt
     SvPolylineViewerNode
