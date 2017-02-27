@@ -248,8 +248,10 @@ class SvPolylineViewerNode(bpy.types.Node, SverchCustomTreeNode):
             return dataCorrect(data)
 
         mverts = get('vertices')
+        mradii = get('radii')
+        mtwist = get('twist')
         mmtrix = get('matrix')
-        return mverts, mmtrix
+        return mverts, mradii, mtwist, mmtrix
 
     def get_structure(self, stype, sindex):
         if not stype:
@@ -268,7 +270,7 @@ class SvPolylineViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
         # perhaps if any of mverts is [] this should already fail.
         has_matrices = self.inputs['matrix'].is_linked
-        mverts, mmatrices = self.get_geometry_from_sockets()
+        mverts, mradii, mtwist, mmatrices = self.get_geometry_from_sockets()
 
         # extend all non empty lists to longest of mverts or *mrest
         maxlen = max(len(mverts), len(mmatrices))
