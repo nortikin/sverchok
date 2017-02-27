@@ -233,6 +233,7 @@
     SvCurveViewerNode
     SvCurveViewerNodeAlt
     SvPolylineViewerNode
+    SvPolylineViewerNodeMK1
     SvTypeViewerNode
     SvJoinTrianglesNode
     SvCacheNode

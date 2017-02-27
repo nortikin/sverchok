@@ -79,6 +79,14 @@ def live_curve(node, curve_name, verts, radii, twist):
     polyline = cu.splines.new(kind)
     polyline.points.add(len(verts)-1)
     polyline.points.foreach_set('co', full_flat)
+
+    if radii:
+        fullList(radii, len(verts))
+        polyline.points.foreach_set('radius', radii)
+
+    if twist:
+        fullList(twist, len(verts))
+        polyline.points.foreach_set('tilt', twist)
         
     if node.close:
         cu.splines[0].use_cyclic_u = True
@@ -92,7 +100,7 @@ def live_curve(node, curve_name, verts, radii, twist):
 
 
 
-def make_curve_geometry(node, context, name, verts, matrix, radii, wist):
+def make_curve_geometry(node, context, name, verts, matrix, radii, twist):
     sv_object = live_curve(node, name, verts, radii, twist)
     sv_object.hide_select = False
 
@@ -104,9 +112,9 @@ def make_curve_geometry(node, context, name, verts, matrix, radii, wist):
 
 
 # could be imported from bmeshviewr directly, it's almost identical
-class SvPolylineViewOp(bpy.types.Operator):
+class SvPolylineViewOpMK1(bpy.types.Operator):
 
-    bl_idname = "node.sv_callback_polyline_viewer"
+    bl_idname = "node.sv_callback_polyline_viewer_mk1"
     bl_label = "Sverchok polyline showhide"
     bl_options = {'REGISTER', 'UNDO'}
 
@@ -141,10 +149,10 @@ class SvPolylineViewOp(bpy.types.Operator):
 
 
 # should inherit from bmeshviewer, many of these methods are largely identical.
-class SvPolylineViewerNode(bpy.types.Node, SverchCustomTreeNode):
+class SvPolylineViewerNodeMK1(bpy.types.Node, SverchCustomTreeNode):
 
-    bl_idname = 'SvPolylineViewerNode'
-    bl_label = 'Polyline Viewer'
+    bl_idname = 'SvPolylineViewerNodeMK1'
+    bl_label = 'Polyline Viewer MK1'
     bl_icon = 'MOD_CURVE'
 
     activate = BoolProperty(
@@ -182,7 +190,7 @@ class SvPolylineViewerNode(bpy.types.Node, SverchCustomTreeNode):
         self.use_custom_color = True
         self.inputs.new('VerticesSocket', 'vertices', 'vertices')
         self.inputs.new('MatrixSocket', 'matrix', 'matrix')
-        self.inputs.new('StringsSocket', 'radius').prop_name = 'radii'
+        self.inputs.new('StringsSocket', 'radii').prop_name = 'radii'
         self.inputs.new('StringsSocket', 'twist').prop_name = 'twist'
 
     def icons(self, button_type):
@@ -198,7 +206,7 @@ class SvPolylineViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons(self, context, layout):
         view_icon = 'RESTRICT_VIEW_' + ('OFF' if self.activate else 'ON')
-        sh = 'node.sv_callback_polyline_viewer'
+        sh = 'node.sv_callback_polyline_viewer_mk1'
 
         col = layout.column(align=True)
         row = col.row(align=True)
@@ -236,7 +244,7 @@ class SvPolylineViewerNode(bpy.types.Node, SverchCustomTreeNode):
         layout.separator()
 
         row = layout.row(align=True)
-        sh = 'node.sv_callback_curve_viewer'
+        sh = 'node.sv_callback_polyline_viewer_mk1'
         row.operator(sh, text='Rnd Name').fn_name = 'random_mesh_name'
         row.operator(sh, text='+Material').fn_name = 'add_material'
 
@@ -331,10 +339,10 @@ class SvPolylineViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
 
 def register():
-    bpy.utils.register_class(SvPolylineViewerNode)
-    bpy.utils.register_class(SvPolylineViewOp)
+    bpy.utils.register_class(SvPolylineViewerNodeMK1)
+    bpy.utils.register_class(SvPolylineViewOpMK1)
 
 
 def unregister():
-    bpy.utils.unregister_class(SvPolylineViewerNode)
-    bpy.utils.unregister_class(SvPolylineViewOp)
+    bpy.utils.unregister_class(SvPolylineViewerNodeMK1)
+    bpy.utils.unregister_class(SvPolylineViewOpMK1)
