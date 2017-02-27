@@ -34,6 +34,7 @@
     SvImageComponentsNode
     SvScriptNode
     SvTorusKnotNode
+    SvHexaGridNode
 
 ## Analyzers
     SvBBoxNode
@@ -230,7 +231,6 @@
     SvColorsOutNode
 
 ## Alpha Nodes
-    SvHexaGridNode
     SvCurveViewerNode
     SvCurveViewerNodeAlt
     SvPolylineViewerNode
