@@ -129,9 +129,11 @@ def simple_screen(x, y, args):
         bgl.glPolygonMode(bgl.GL_FRONT_AND_BACK, bgl.GL_FILL)
 
         bgl.glEnable(bgl.GL_TEXTURE_2D)
+
         bgl.glTexEnvf(bgl.GL_TEXTURE_ENV,
                       bgl.GL_TEXTURE_ENV_MODE,
-                      bgl.GL_REPLACE)
+                      bgl.GL_ADD)
+
         bgl.glBindTexture(bgl.GL_TEXTURE_2D, texname)
 
         bgl.glBegin(bgl.GL_QUADS)
@@ -272,7 +274,6 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
                 # function to init the texture
                 clr = gl_color_dict.get(self.color_mode)
                 # print('color mode is: {0}'.format(clr))
-                # bgl.glShadeModel(bgl.GL_SMOOTH)
 
                 bgl.glPixelStorei(bgl.GL_UNPACK_ALIGNMENT, 1)
 
@@ -329,7 +330,9 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         # in different formats supported by blender
         buf = self.get_buffer()
         img_format = self.bitmap_format
-        print(img_format)
+        col_mod = self.color_mode
+        print('col_mod is: {0}'.format(col_mod))
+        print('img_format is: {0}'.format(img_format))
         if img_format in format_mapping:
             extension = '.' + format_mapping.get(img_format, img_format.lower())
         else:
@@ -346,18 +349,35 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         img.scale(width, height)
         print('width is: {0}'.format(width))
         print('length img pixels: {0}'.format(len(img.pixels)))
-        np_buff = np.empty(len(img.pixels), dtype=np.float32)
-        print('pass to...')
-        np_buff.shape = (-1, 4)
-        np_buff[:, :] = np.array(buf)[:, np.newaxis]
-        print('buffer np_buff length: {0}'.format(len(buf)))
-        np_buff[:, 3] = 1
-        np_buff.shape = -1
-        img.pixels[:] = np_buff
+        if col_mod == 'BW':
+            np_buff = np.empty(len(img.pixels), dtype=np.float32)
+            print('pass to...')
+            np_buff.shape = (-1, 4)
+            np_buff[:, :] = np.array(buf)[:, np.newaxis]
+            if col_mod == 'RGB':
+                print("passing data from buf to pixels RGB")
+                np_buff[:, :3] = np.array(buf)
+            np_buff[:, 3] = 1
+            np_buff.shape = -1
+            img.pixels[:] = np_buff
+        elif col_mod == 'RGBA':
+            print("passing data from buf to pixels RGBA")
+            # this works for RGBA!
+            img.pixels[:] = buf
 
         # get the scene context
         scene = bpy.context.scene
-        scene.render.image_settings.color_mode = self.color_mode
+        # set the scene quality to the maximum
+        scene.render.image_settings.quality = 100
+        # set different color depth
+        if img_format == 'JPEG2000' or 'TIFF':
+            scene.render.image_settings.color_depth = '16'
+        else:
+            scene.render.image_settings.color_depth = '8'
+        # set compression level to no compression(0)
+        scene.render.image_settings.compression = 0
+        print('settings done!')
+        # scene.render.image_settings.color_mode = col_mod
         scene.render.image_settings.file_format = img_format
 
         # get the path for the file and save the image
