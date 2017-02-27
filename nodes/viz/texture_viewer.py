@@ -45,20 +45,14 @@ class SvTextureViewerDirSelect(bpy.types.Operator, SvGenericDirectorySelector):
 
 
 size_tex_list = [
-    ('EXTRA_SMALL', 'extra_small 64x64px', 'extra small squared tex: 64px', '', 64),
-    ('SMALL', 'small 128x128px', 'small squared tex: 128px', '', 128),
-    ('MEDIUM', 'medium 256x256px', 'medium squared tex: 256px', '', 256),
-    ('LARGE', 'large 512x512px', 'large squared tex: 512px', '', 512),
-    ('EXTRA_LARGE', 'extra_large 1024x1024px', 'extra large squared tex: 1024px', '', 1024)
+    ('XS', 'XS', 'extra small squared tex: 64px', '', 64),
+    ('S', 'S', 'small squared tex: 128px', '', 128),
+    ('M', 'M', 'medium squared tex: 256px', '', 256),
+    ('L', 'L', 'large squared tex: 512px', '', 512),
+    ('XL', 'XL', 'extra large squared tex: 1024px', '', 1024)
 ]
 
-size_tex_dict = {
-    'EXTRA_SMALL': 64,
-    'SMALL': 128,
-    'MEDIUM': 256,
-    'LARGE': 512,
-    'EXTRA_LARGE': 1024
-}
+size_tex_dict = {item[0]: item[4] for item in size_tex_list}
 
 bitmap_format_list = [
     ('PNG', '.png', 'save texture in .png format', '', 0),
@@ -175,7 +169,7 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
     selected_mode = EnumProperty(
         items=size_tex_list,
         description="Offers display sizing",
-        default="SMALL",
+        default="S",
         update=updateNode
     )
 
@@ -226,7 +220,8 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         c = layout.column()
         c.label(text="Set texture display:")
-        c.prop(self, "selected_mode", text="")
+        row = c.row()
+        row.prop(self, "selected_mode", expand=True)
         c.prop(self, 'activate')
         c.label(text='Set color mode')
         row = layout.row(align=True)
@@ -248,6 +243,9 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         rightside = leftside.split().row(align=True)
         rightside.operator(callback_to_self, text="Save").fn_name = "save_bitmap"
         rightside.operator(directory_select, text="", icon='IMASEL').fn_name = "set_dir"
+
+    def draw_label(self):
+        return (self.label or self.name) + ' ' + str(size_tex_dict.get(self.selected_mode)) + "^2"
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', "Float").prop_name = 'in_float'
