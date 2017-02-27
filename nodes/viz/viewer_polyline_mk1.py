@@ -41,7 +41,7 @@ from sverchok.utils.sv_viewer_utils import (
     greek_alphabet)
 
 # -- POLYLINE --
-def live_curve(node, curve_name, verts, close):
+def live_curve(node, curve_name, verts, radii, twist):
     curves = bpy.data.curves
     objects = bpy.data.objects
     scene = bpy.context.scene
@@ -80,7 +80,7 @@ def live_curve(node, curve_name, verts, close):
     polyline.points.add(len(verts)-1)
     polyline.points.foreach_set('co', full_flat)
         
-    if close:
+    if node.close:
         cu.splines[0].use_cyclic_u = True
     # for idx, v in enumerate(verts):  
     #    polyline.points[idx].co = (v[0], v[1], v[2], 1.0)
@@ -92,9 +92,8 @@ def live_curve(node, curve_name, verts, close):
 
 
 
-def make_curve_geometry(node, context, name, verts, matrix, close):
-
-    sv_object = live_curve(node, name, verts, close)
+def make_curve_geometry(node, context, name, verts, matrix, radii, wist):
+    sv_object = live_curve(node, name, verts, radii, twist)
     sv_object.hide_select = False
 
     if matrix:
@@ -277,6 +276,11 @@ class SvPolylineViewerNode(bpy.types.Node, SverchCustomTreeNode):
         if has_matrices:
             fullList(mmatrices, maxlen)
 
+        if mradii:
+            fullList(mradii, maxlen)
+        if mtwist:
+            fullList(mtwist, maxlen)
+
         for obj_index, Verts in enumerate(mverts):
             if not Verts:
                 continue
@@ -287,7 +291,7 @@ class SvPolylineViewerNode(bpy.types.Node, SverchCustomTreeNode):
             else:
                 matrix = []
 
-            make_curve_geometry(self, bpy.context, curve_name, Verts, matrix, self.close)
+            make_curve_geometry(self, bpy.context, curve_name, Verts, matrix, mradii[obj_index], mtwist[obj_index])
 
         self.remove_non_updated_objects(obj_index)
         objs = self.get_children()
