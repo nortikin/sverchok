@@ -152,8 +152,8 @@ class SvTurbulenceNode(bpy.types.Node, SverchCustomTreeNode):
             return new_verts
 
         new_verts = adjust_verts_for_seed()
-        out.append(wrapped_turb_func(verts=new_verts, octaves=m_octaves, h=m_hard, a=m_amp, f=m_freq))
-        
+        out.append(list(wrapped_turb_func(verts=new_verts, octaves=m_octaves, h=m_hard, a=m_amp, f=m_freq)))
+
         if 'Noise V' in outputs:
             out = Vector_degenerate(out)
         outputs[0].sv_set(out)
