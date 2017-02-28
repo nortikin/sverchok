@@ -85,10 +85,10 @@ class SvTurbulenceNode(bpy.types.Node, SverchCustomTreeNode):
     hard = BoolProperty(default=True,
                           description="Hard(sharp) or soft (smooth)transitions",
                           name="Hard", update=updateNode)
-    amp = FloatProperty(default=0.25,
+    amp = FloatProperty(default=0.50,
                           description="The amplitude scaling factor",
                           name="Amplitude", update=updateNode)
-    freq = FloatProperty(default=0.03,
+    freq = FloatProperty(default=2.00,
                           description="The frequency scaling factor",
                           name="Frequency", update=updateNode)
     rseed = IntProperty(default=0,
@@ -142,8 +142,7 @@ class SvTurbulenceNode(bpy.types.Node, SverchCustomTreeNode):
                 new_vertex = [x + y for x, y in zip(vertex, offset)]
                 coords.append(new_vertex)
 
-            out.append([turbulence_function(v, m_octaves, m_hard,
-                                            _noise_type, m_amp, m_freq) for v in coords])
+            out.append([turbulence_function(v, m_octaves, m_hard, _noise_type, m_amp, m_freq) for v in coords])
 
         if 'Noise V' in outputs:
             out = Vector_degenerate(out)
