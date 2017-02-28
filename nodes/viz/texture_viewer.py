@@ -21,7 +21,7 @@ import numpy as np
 
 import bgl
 import bpy
-from bpy.props import FloatProperty, EnumProperty, StringProperty, BoolProperty
+from bpy.props import FloatProperty, EnumProperty, StringProperty, BoolProperty, IntProperty
 
 from sverchok.data_structure import updateNode, node_id
 from sverchok.node_tree import SverchCustomTreeNode
@@ -186,6 +186,25 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         update=updateNode
     )
 
+    color_mode_save = EnumProperty(
+        items=gl_color_list,
+        description="Offers color options",
+        default="BW",
+        update=updateNode
+    )
+
+    compression_level = IntProperty(
+        min=0, max=100, default=0, name='compression',
+        description="set compression level",
+        update=updateNode
+    )
+
+    quality_level = IntProperty(
+        min=0, max=100, default=0, name='quality',
+        description="set quality level",
+        update=updateNode
+    )
+
     in_float = FloatProperty(
         min=0.0, max=1.0, default=0.0, name='Float Input',
         description='Input for texture', update=updateNode
@@ -201,7 +220,8 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         return int(a[0] + b), int(a[1])
 
     def get_buffer(self):
-        data = self.inputs['Float'].sv_get(deepcopy=False)[0]
+        # data = self.inputs['Float'].sv_get(deepcopy=False)[0]
+        data = np.array(self.inputs['Float'].sv_get(deepcopy=False)).flatten()
         size_tex = size_tex_dict.get(self.selected_mode)
         # buffer need adequate size multiplying
         factor_clr = factor_buffer_dict.get(self.color_mode)
@@ -228,6 +248,7 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         row.prop(self, 'color_mode', expand=True)
 
     def draw_buttons_ext(self, context, layout):
+        img_format = self.bitmap_format
         callback_to_self = "node.sv_texview_callback"
         directory_select = "node.sv_texview_dirselect"
 
@@ -236,7 +257,21 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         layout.separator()
         layout.prop(self, "bitmap_format", text='format')
         layout.separator()
-
+        row = layout.row()
+        row.prop(self, 'color_mode_save', expand=True)
+        layout.separator()
+        if img_format == 'PNG':
+            row = layout.row()
+            row.prop(self, 'compression_level', text='set compression')
+            layout.separator()
+        if img_format == 'JPEG':
+            row = layout.row()
+            row.prop(self, 'quality_level', text='set quality')
+            layout.separator()
+        if img_format == 'JPEG2000':
+            row = layout.row()
+            row.prop(self, 'quality_level', text='set quality')
+            layout.separator()
         row = layout.row(align=True)
         leftside = row.split(0.7)
         leftside.prop(self, 'image_name', text='')
@@ -318,6 +353,9 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         print('new base dir:', self.base_dir)
         return {'FINISHED'}
 
+    def set_compression(self):
+        pass
+
     def save_bitmap(self, operator):
         alpha = False
 
@@ -329,7 +367,11 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         buf = self.get_buffer()
         img_format = self.bitmap_format
         col_mod = self.color_mode
+        col_mod_s = self.color_mode_save
+        quality = self.quality_level
+        compression = self.compression_level
         print('col_mod is: {0}'.format(col_mod))
+        print('col_mod_s is: {0}'.format(col_mod_s))
         print('img_format is: {0}'.format(img_format))
         if img_format in format_mapping:
             extension = '.' + format_mapping.get(img_format, img_format.lower())
@@ -348,15 +390,19 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         print('width is: {0}'.format(width))
         print('length img pixels: {0}'.format(len(img.pixels)))
         if col_mod == 'BW':
+            print("passing data from buf to pixels BW")
             np_buff = np.empty(len(img.pixels), dtype=np.float32)
-            print('pass to...')
             np_buff.shape = (-1, 4)
             np_buff[:, :] = np.array(buf)[:, np.newaxis]
-            if col_mod == 'RGB':
-                print("passing data from buf to pixels RGB")
-                np_buff[:, :3] = np.array(buf)
             np_buff[:, 3] = 1
             np_buff.shape = -1
+            img.pixels[:] = np_buff
+        elif col_mod == 'RGB':
+            print("passing data from buf to pixels RGB")
+            np_buff = np.empty(len(img.pixels), dtype=np.float32)
+            np_buff[:, :3] = np.array(buf)
+            # np_buff[:, 3] = 1
+            # np_buff.shape = -1
             img.pixels[:] = np_buff
         elif col_mod == 'RGBA':
             print("passing data from buf to pixels RGBA")
@@ -366,18 +412,17 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         # get the scene context
         scene = bpy.context.scene
         # set the scene quality to the maximum
-        scene.render.image_settings.quality = 100
+        scene.render.image_settings.quality = quality
         # set different color depth
         if img_format == 'JPEG2000' or 'TIFF':
             scene.render.image_settings.color_depth = '16'
         else:
             scene.render.image_settings.color_depth = '8'
         # set compression level to no compression(0)
-        scene.render.image_settings.compression = 0
-        print('settings done!')
-        # scene.render.image_settings.color_mode = col_mod
+        scene.render.image_settings.compression = compression
+        scene.render.image_settings.color_mode = col_mod
         scene.render.image_settings.file_format = img_format
-
+        print('settings done!')
         # get the path for the file and save the image
         desired_path = os.path.join(self.base_dir, self.image_name + extension)
 
@@ -387,12 +432,14 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
 
 def register():
+    bpy.utils.register_class(SvTextureVieverSliderCompression)
     bpy.utils.register_class(SvTextureViewerOperator)
     bpy.utils.register_class(SvTextureViewerDirSelect)
     bpy.utils.register_class(SvTextureViewerNode)
 
 
 def unregister():
+    bpy.utils.unregister_class(SvTextureVieverSliderCompression)
     bpy.utils.unregister_class(SvTextureViewerNode)
     bpy.utils.unregister_class(SvTextureViewerDirSelect)
     bpy.utils.unregister_class(SvTextureViewerOperator)
