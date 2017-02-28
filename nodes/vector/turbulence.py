@@ -22,6 +22,7 @@ from mathutils import noise, Vector
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode, Vector_degenerate)
+from sverchok.utils.geom import vectorize
 
 # noise nodes
 # from http://www.blender.org/documentation/blender_python_api_current/mathutils.noise.html
@@ -117,33 +118,42 @@ class SvTurbulenceNode(bpy.types.Node, SverchCustomTreeNode):
         out = []
         verts = inputs['Vertices'].sv_get()
 
-        m_octaves = inputs['Octaves'].sv_get()[0][0]
-        m_hard = inputs['Hard'].sv_get()[0][0]
-        m_amp = inputs['Amplitude'].sv_get()[0][0]
-        m_freq = inputs['Frequency'].sv_get()[0][0]
-        rseed = inputs['Random seed'].sv_get()[0][0]
+        m_octaves = inputs['Octaves'].sv_get()[0]
+        m_hard = inputs['Hard'].sv_get()[0]
+        m_amp = inputs['Amplitude'].sv_get()[0]
+        m_freq = inputs['Frequency'].sv_get()[0]
+        m_seed = inputs['Random seed'].sv_get()[0]
 
-        _noise_type = noise_dict[self.noise_type]
-        turbulence_function = turbulence_f[self.out_mode]
+        @vectorize
+        def wrapped_turb_func(verts=None, octaves=None, h=None, a=None, f=None):
+            _noise_type = noise_dict[self.noise_type]
+            return [turbulence_f[self.out_mode](v, octaves, h, _noise_type, a, f) for v in verts]
 
-        coords = []
+        def get_offset(seed):
+            if seed == 0:
+                offset = [0.0, 0.0, 0.0]
+            else:
+                noise.seed_set(seed)
+                offset = noise.random_unit_vector() * 10.0
+            return offset
 
-        if verts and verts[0]:
-            for vertex in verts[0]:
-                # set the offset origin for random seed
-                if rseed == 0:
-                    # we set offset value to 0.0
-                    offset = [0.0, 0.0, 0.0]
+        def adjust_verts_for_seed():
+            new_verts = []
+            for idx, vert_list in enumerate(verts):
+                seed = m_seed[idx] if idx < len(m_seed) else m_seed[-1]
+
+                if not seed == 0.0:
+                    offset = get_offset(seed)
+                    for vertex in vert_list:
+                        new_vertex = [x + y for x, y in zip(vertex, offset)]
+                        new_verts.append(new_vertex)
                 else:
-                    # randomise origin
-                    noise.seed_set(rseed)
-                    offset = noise.random_unit_vector() * 10.0
+                    new_verts.append(vert_list)
+            return new_verts
 
-                new_vertex = [x + y for x, y in zip(vertex, offset)]
-                coords.append(new_vertex)
-
-            out.append([turbulence_function(v, m_octaves, m_hard, _noise_type, m_amp, m_freq) for v in coords])
-
+        new_verts = adjust_verts_for_seed()
+        out.append(wrapped_turb_func(verts=new_verts, octaves=m_octaves, h=m_hard, a=m_amp, f=m_freq))
+        
         if 'Noise V' in outputs:
             out = Vector_degenerate(out)
         outputs[0].sv_set(out)
