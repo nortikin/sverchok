@@ -81,17 +81,18 @@ def live_curve(node, curve_name, verts, radii, twist):
     polyline.points.foreach_set('co', full_flat)
 
     if radii:
+        print(radii)
         fullList(radii, len(verts))
+        print(radii)
         polyline.points.foreach_set('radius', radii)
 
     if twist:
+        print(twist)
         fullList(twist, len(verts))
         polyline.points.foreach_set('tilt', twist)
         
     if node.close:
         cu.splines[0].use_cyclic_u = True
-    # for idx, v in enumerate(verts):  
-    #    polyline.points[idx].co = (v[0], v[1], v[2], 1.0)
 
     if node.bspline:
         polyline.order_u = len(polyline.points)-1
@@ -250,13 +251,14 @@ class SvPolylineViewerNodeMK1(bpy.types.Node, SverchCustomTreeNode):
 
     def get_geometry_from_sockets(self):
 
+        
         def get(socket_name):
             data = self.inputs[socket_name].sv_get(default=[])
             return dataCorrect(data)
 
         mverts = get('vertices')
-        mradii = get('radii')
-        mtwist = get('twist')
+        mradii = self.inputs['radii'].sv_get(deepcopy=False)
+        mtwist = self.inputs['twist'].sv_get(deepcopy=False)
         mmtrix = get('matrix')
         return mverts, mradii, mtwist, mmtrix
 
