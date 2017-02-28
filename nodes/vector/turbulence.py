@@ -146,13 +146,15 @@ class SvTurbulenceNode(bpy.types.Node, SverchCustomTreeNode):
                     offset = get_offset(seed)
                     for vertex in vert_list:
                         new_vertex = [x + y for x, y in zip(vertex, offset)]
+                        # new_vertex = [v[0] + offset[0], v[1] + offset[1], v[2] + offset[2]]
                         new_verts.append(new_vertex)
                 else:
                     new_verts.append(vert_list)
             return new_verts
 
         new_verts = adjust_verts_for_seed()
-        out.append(list(wrapped_turb_func(verts=new_verts, octaves=m_octaves, h=m_hard, a=m_amp, f=m_freq)))
+
+        out = list(wrapped_turb_func(verts=new_verts, octaves=m_octaves, h=m_hard, a=m_amp, f=m_freq))
 
         if 'Noise V' in outputs:
             out = Vector_degenerate(out)
