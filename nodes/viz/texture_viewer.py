@@ -395,10 +395,13 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
             img.pixels[:] = np_buff
         elif col_mod == 'RGB':
             print("passing data from buf to pixels RGB")
+            #np_buff = np.empty(len(img.pixels), dtype=np.float32)
+            #np_buff[:, :3] = np.array(buf)
             np_buff = np.empty(len(img.pixels), dtype=np.float32)
+            np_buff.shape = (-1, 4)
             np_buff[:, :3] = np.array(buf)
-            # np_buff[:, 3] = 1
-            # np_buff.shape = -1
+            np_buff[:, 3] = 1
+            np_buff.shape = -1
             img.pixels[:] = np_buff
         elif col_mod == 'RGBA':
             print("passing data from buf to pixels RGBA")
@@ -428,14 +431,12 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
 
 def register():
-    bpy.utils.register_class(SvTextureVieverSliderCompression)
     bpy.utils.register_class(SvTextureViewerOperator)
     bpy.utils.register_class(SvTextureViewerDirSelect)
     bpy.utils.register_class(SvTextureViewerNode)
 
 
 def unregister():
-    bpy.utils.unregister_class(SvTextureVieverSliderCompression)
     bpy.utils.unregister_class(SvTextureViewerNode)
     bpy.utils.unregister_class(SvTextureViewerDirSelect)
     bpy.utils.unregister_class(SvTextureViewerOperator)
