@@ -264,11 +264,7 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
             row = layout.row()
             row.prop(self, 'compression_level', text='set compression')
             layout.separator()
-        if img_format == 'JPEG':
-            row = layout.row()
-            row.prop(self, 'quality_level', text='set quality')
-            layout.separator()
-        if img_format == 'JPEG2000':
+        if img_format in {'JPEG', 'JPEG2000'}:
             row = layout.row()
             row.prop(self, 'quality_level', text='set quality')
             layout.separator()
@@ -414,7 +410,7 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         # set the scene quality to the maximum
         scene.render.image_settings.quality = quality
         # set different color depth
-        if img_format == 'JPEG2000' or 'TIFF':
+        if img_format in {'JPEG', 'JPEG2000'}:
             scene.render.image_settings.color_depth = '16'
         else:
             scene.render.image_settings.color_depth = '8'
