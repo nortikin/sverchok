@@ -129,24 +129,15 @@ class SvTurbulenceNode(bpy.types.Node, SverchCustomTreeNode):
             return
 
         out = []
-        verts = inputs['Vertices'].sv_get(deepcopy=False)
-
-        m_octaves = inputs['Octaves'].sv_get()[0]
-        m_hard = inputs['Hard'].sv_get()[0]
-        m_amp = inputs['Amplitude'].sv_get()[0]
-        m_freq = inputs['Frequency'].sv_get()[0]
-        m_seed = inputs['Random seed'].sv_get()[0]
-
-        maxlen = len(verts)
-        print(maxlen)
-        fullList(m_octaves, maxlen)
-        fullList(m_hard, maxlen)
-        fullList(m_amp, maxlen)
-        fullList(m_freq, maxlen)
-        fullList(m_seed, maxlen)
-
         _noise_type = noise_dict[self.noise_type]
-        arguments = verts, m_octaves, m_hard, m_amp, m_freq, m_seed
+
+        verts = inputs['Vertices'].sv_get(deepcopy=False)
+        maxlen = len(verts)
+
+        arguments = [verts]
+        for socket in inputs[1:]:
+            arguments.append(fullList(socket.sv_get()[0], maxlen))
+
         for idx, (vert_list, octaves, hard, amp, freq, seed) in enumerate(zip(*arguments)):
             final_vert_list = seed_adjusted(vert_list, seed)
             out.append([turbulence_f[self.out_mode](v, octaves, hard, _noise_type, amp, freq) for v in final_vert_list])
@@ -154,7 +145,6 @@ class SvTurbulenceNode(bpy.types.Node, SverchCustomTreeNode):
         if 'Noise V' in outputs:
             out = Vector_degenerate(out)
         outputs[0].sv_set(out)
-
 
 def register():
     bpy.utils.register_class(SvTurbulenceNode)
