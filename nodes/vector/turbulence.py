@@ -115,7 +115,8 @@ class SvTurbulenceNode(bpy.types.Node, SverchCustomTreeNode):
             return
 
         out = []
-        verts = inputs['Vertices'].sv_get()
+        # maxlen = 0
+        verts = inputs['Vertices'].sv_get(deepcopy=False)
 
         m_octaves = inputs['Octaves'].sv_get()[0]
         m_hard = inputs['Hard'].sv_get()[0]
@@ -123,12 +124,21 @@ class SvTurbulenceNode(bpy.types.Node, SverchCustomTreeNode):
         m_freq = inputs['Frequency'].sv_get()[0]
         m_seed = inputs['Random seed'].sv_get()[0]
 
-        max_len = len(verts)
+        #if verts and verts[0]:
+
+        maxlen = len(verts[0])
+        print('maxlen', maxlen)
         fullList(m_octaves, maxlen)
         fullList(m_hard, maxlen)
         fullList(m_amp, maxlen)
         fullList(m_freq, maxlen)
         fullList(m_seed, maxlen)
+        print('m_octaves :',m_octaves)
+        print('m_hard :',m_hard)
+        print('m_amp :',m_amp)
+        print('m_freq :',m_freq)
+        print('m_seed :',m_seed)
+
 
         def get_offset(seed):
             if seed == 0:
@@ -138,16 +148,17 @@ class SvTurbulenceNode(bpy.types.Node, SverchCustomTreeNode):
                 offset = noise.random_unit_vector() * 10.0
             return offset
 
-        for idx, (args) in enumerate(verts, m_octaves, m_hard, m_amp, m_freq, m_seed):
+        for idx, (args) in enumerate([verts, m_octaves, m_hard, m_amp, m_freq, m_seed]):
+            print('from args[0]: ',args[0])
             seed = args[5]
             vert_list = args[0]
 
             if not seed == 0.0:
                 offset = get_offset(seed)
-                vert_list = [[v[0] + offset[0], v[1] + offset[1], v[2] + offset[2]] for v in vert_list]:
+                verts = [[v[0] + offset[0], v[1] + offset[1], v[2] + offset[2]] for v in vert_list]
 
             _noise_type = noise_dict[self.noise_type]
-            octaves, hard, amp, freq = args[1:5]
+            octaves, hard, amp, freq = args[1:4]
             out.append([turbulence_f[self.out_mode](v, octaves, hard, _noise_type, amp, freq) for v in verts])
 
         if 'Noise V' in outputs:
