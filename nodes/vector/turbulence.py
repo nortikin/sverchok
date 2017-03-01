@@ -123,7 +123,7 @@ class SvTurbulenceNode(bpy.types.Node, SverchCustomTreeNode):
         m_freq = inputs['Frequency'].sv_get()[0]
         m_seed = inputs['Random seed'].sv_get()[0]
 
-        maxlen = len(verts[0])
+        maxlen = len(verts)
         fullList(m_octaves, maxlen)
         fullList(m_hard, maxlen)
         fullList(m_amp, maxlen)
