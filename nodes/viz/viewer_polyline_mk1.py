@@ -87,13 +87,10 @@ def live_curve(obj_index, node, curve_name, verts, radii, twist):
     polyline.points.foreach_set('co', full_flat)
 
     if radii:
-        print(radii)
         fullList(radii, len(verts))
-        print(radii)
         polyline.points.foreach_set('radius', radii)
 
     if twist:
-        print(twist)
         fullList(twist, len(verts))
         polyline.points.foreach_set('tilt', twist)
         
