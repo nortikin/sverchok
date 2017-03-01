@@ -41,7 +41,7 @@ from sverchok.utils.sv_viewer_utils import (
     greek_alphabet)
 
 # -- POLYLINE --
-def live_curve(node, curve_name, verts, radii, twist):
+def live_curve(object_index, node, curve_name, verts, radii, twist):
     curves = bpy.data.curves
     objects = bpy.data.objects
     scene = bpy.context.scene
@@ -66,10 +66,14 @@ def live_curve(node, curve_name, verts, radii, twist):
     cu.dimensions = '3D'
     cu.fill_mode = 'FULL'
 
+    # use bevel object if provided
+    bevel_objs = self.inputs['bevel object'].get()
+    if bevel_objs:
+        obj_ref = bevel_objs[obj_index] if obj_index < len(bevel_objs) else bevel_objs[-1]
+        if found_obj.type == 'CURVE':
+            cu.bevel_object = obj_ref
+
     # and rebuild
-    # for edge in edges:
-    # v0, v1 = m * Vector(verts[edge[0]]), m * Vector(verts[edge[1]])
-    # full_flat = [v0[0], v0[1], v0[2], 0.0, v1[0], v1[1], v1[2], 0.0]
     full_flat = []
     for v in verts:
         full_flat.extend([v[0], v[1], v[2], 1.0])
@@ -101,7 +105,7 @@ def live_curve(node, curve_name, verts, radii, twist):
 
 
 
-def make_curve_geometry(node, context, name, verts, matrix, radii, twist):
+def make_curve_geometry(object_index, node, context, name, verts, matrix, radii, twist):
     sv_object = live_curve(node, name, verts, radii, twist)
     sv_object.hide_select = False
 
@@ -183,7 +187,6 @@ class SvPolylineViewerNodeMK1(bpy.types.Node, SverchCustomTreeNode):
     radii = FloatProperty(min=0, default=0.2, update=updateNode)
     twist = FloatProperty(default=0.0, update=updateNode)
 
-
     def sv_init(self, context):
         gai = bpy.context.scene.SvGreekAlphabet_index
         self.basemesh_name = greek_alphabet[gai]
@@ -193,6 +196,7 @@ class SvPolylineViewerNodeMK1(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('MatrixSocket', 'matrix', 'matrix')
         self.inputs.new('StringsSocket', 'radii').prop_name = 'radii'
         self.inputs.new('StringsSocket', 'twist').prop_name = 'twist'
+        self.inputs.new('SvObjectsSocket', 'bevel object')
 
     def icons(self, button_type):
 
@@ -301,7 +305,7 @@ class SvPolylineViewerNodeMK1(bpy.types.Node, SverchCustomTreeNode):
             else:
                 matrix = []
 
-            make_curve_geometry(self, bpy.context, curve_name, Verts, matrix, mradii[obj_index], mtwist[obj_index])
+            make_curve_geometry(obj_index, self, bpy.context, curve_name, Verts, matrix, mradii[obj_index], mtwist[obj_index])
 
         self.remove_non_updated_objects(obj_index)
         objs = self.get_children()
