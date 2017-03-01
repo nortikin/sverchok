@@ -133,14 +133,14 @@ class SvTurbulenceNode(bpy.types.Node, SverchCustomTreeNode):
 
         verts = inputs['Vertices'].sv_get(deepcopy=False)
         maxlen = len(verts)
-        print('maxlen',maxlen)
 
         arguments = [verts]
+        # append the inputs from sockets into arguments
         for socket in inputs[1:]:
             data = socket.sv_get()[0]
             fullList(data, maxlen)
             arguments.append(data)
-
+        # finally we unpcack the arguments and fill the parmaters for the turbulence function
         for idx, (vert_list, octaves, hard, amp, freq, seed) in enumerate(zip(*arguments)):
             final_vert_list = seed_adjusted(vert_list, seed)
             out.append([turbulence_f[self.out_mode](v, octaves, hard, _noise_type, amp, freq) for v in final_vert_list])
