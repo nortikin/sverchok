@@ -247,7 +247,7 @@ class SvPolylineViewerNodeMK1(bpy.types.Node, SverchCustomTreeNode):
         row = col.row(align=True)
         row.prop(self, 'bspline', text='bspline', toggle=True)
         row.prop(self, 'close', text='close', toggle=True)
-        if self.inputs['bevel object'].sv_get():
+        if self.inputs['bevel object'].sv_get(default=[]):
             row.prop(self, 'caps', text='caps', toggle=True)
 
 
