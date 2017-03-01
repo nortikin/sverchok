@@ -67,11 +67,13 @@ def live_curve(obj_index, node, curve_name, verts, radii, twist):
     cu.fill_mode = 'FULL'
 
     # use bevel object if provided
-    bevel_objs = node.inputs['bevel object'].sv_get()
+    bevel_objs = node.inputs['bevel object'].sv_get(default=[])
     if bevel_objs:
         obj_ref = bevel_objs[obj_index] if obj_index < len(bevel_objs) else bevel_objs[-1]
         if obj_ref.type == 'CURVE':
             cu.bevel_object = obj_ref
+    else:
+        cu.bevel_object = None
 
     # and rebuild
     full_flat = []
