@@ -148,7 +148,7 @@ class SvTurbulenceNode(bpy.types.Node, SverchCustomTreeNode):
                 offset = noise.random_unit_vector() * 10.0
             return offset
 
-        for idx, (args) in enumerate([verts, m_octaves, m_hard, m_amp, m_freq, m_seed]):
+        for idx, (args) in enumerate(zip(verts, m_octaves, m_hard, m_amp, m_freq, m_seed)):
             print('from args[0]: ',args[0])
             seed = args[5]
             vert_list = args[0]
@@ -158,7 +158,7 @@ class SvTurbulenceNode(bpy.types.Node, SverchCustomTreeNode):
                 verts = [[v[0] + offset[0], v[1] + offset[1], v[2] + offset[2]] for v in vert_list]
 
             _noise_type = noise_dict[self.noise_type]
-            octaves, hard, amp, freq = args[1:4]
+            octaves, hard, amp, freq = args[1:5]
             out.append([turbulence_f[self.out_mode](v, octaves, hard, _noise_type, amp, freq) for v in verts])
 
         if 'Noise V' in outputs:
