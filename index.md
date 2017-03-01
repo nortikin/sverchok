@@ -232,7 +232,6 @@
 ## Alpha Nodes
     SvCurveViewerNode
     SvCurveViewerNodeAlt
-    SvPolylineViewerNode
     SvPolylineViewerNodeMK1
     SvTypeViewerNode
     SvJoinTrianglesNode
