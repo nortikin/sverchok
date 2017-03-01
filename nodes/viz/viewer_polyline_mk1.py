@@ -72,8 +72,10 @@ def live_curve(obj_index, node, curve_name, verts, radii, twist):
         obj_ref = bevel_objs[obj_index] if obj_index < len(bevel_objs) else bevel_objs[-1]
         if obj_ref.type == 'CURVE':
             cu.bevel_object = obj_ref
+            cu.use_fill_caps = node.caps
     else:
         cu.bevel_object = None
+        cu.use_fill_caps = False
 
     # and rebuild
     full_flat = []
@@ -114,6 +116,7 @@ def make_curve_geometry(obj_index, node, context, name, verts, matrix, radii, tw
     else:
         sv_object.matrix_local = Matrix.Identity(4)
 
+    return sv_object
 
 # could be imported from bmeshviewr directly, it's almost identical
 class SvPolylineViewOpMK1(bpy.types.Operator):
@@ -185,6 +188,7 @@ class SvPolylineViewerNodeMK1(bpy.types.Node, SverchCustomTreeNode):
 
     radii = FloatProperty(min=0, default=0.2, update=updateNode)
     twist = FloatProperty(default=0.0, update=updateNode)
+    caps = BoolProperty(update=updateNode)
 
     def sv_init(self, context):
         gai = bpy.context.scene.SvGreekAlphabet_index
@@ -196,6 +200,7 @@ class SvPolylineViewerNodeMK1(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('StringsSocket', 'radii').prop_name = 'radii'
         self.inputs.new('StringsSocket', 'twist').prop_name = 'twist'
         self.inputs.new('SvObjectSocket', 'bevel object')
+        self.outputs.new('SvObjectSocket', "object")
 
     def icons(self, button_type):
 
@@ -236,11 +241,15 @@ class SvPolylineViewerNodeMK1(bpy.types.Node, SverchCustomTreeNode):
             icon='MATERIAL_DATA')
 
         col = layout.column()
-        col.prop(self, 'depth', text='depth radius')
-        col.prop(self, 'resolution', text='surface resolution')
+        r1 = col.row(align=True)
+        r1.prop(self, 'depth', text='radius')
+        r1.prop(self, 'resolution', text='subdiv')
         row = col.row(align=True)
-        row.prop(self, 'bspline', text='bspline')
-        row.prop(self, 'close', text='close')
+        row.prop(self, 'bspline', text='bspline', toggle=True)
+        row.prop(self, 'close', text='close', toggle=True)
+        if self.inputs['bevel object'].sv_get():
+            row.prop(self, 'caps', text='caps', toggle=True)
+
 
 
     def draw_buttons_ext(self, context, layout):
@@ -294,6 +303,7 @@ class SvPolylineViewerNodeMK1(bpy.types.Node, SverchCustomTreeNode):
         if mtwist:
             fullList(mtwist, maxlen)
 
+        out_objects = []
         for obj_index, Verts in enumerate(mverts):
             if not Verts:
                 continue
@@ -304,13 +314,16 @@ class SvPolylineViewerNodeMK1(bpy.types.Node, SverchCustomTreeNode):
             else:
                 matrix = []
 
-            make_curve_geometry(obj_index, self, bpy.context, curve_name, Verts, matrix, mradii[obj_index], mtwist[obj_index])
+            new_obj = make_curve_geometry(obj_index, self, bpy.context, curve_name, Verts, matrix, mradii[obj_index], mtwist[obj_index])
+            out_objects.append(new_obj)
 
         self.remove_non_updated_objects(obj_index)
         objs = self.get_children()
 
         if bpy.data.materials.get(self.material):
             self.set_corresponding_materials(objs)
+
+        self.outputs['object'].sv_set(out_objects)
 
     def get_children(self):
         objects = bpy.data.objects
