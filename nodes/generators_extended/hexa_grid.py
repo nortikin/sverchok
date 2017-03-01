@@ -19,11 +19,15 @@
 import bpy
 from bpy.props import IntProperty, FloatProperty, BoolProperty, EnumProperty
 
-from math import sqrt
+from math import sqrt, radians
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, match_long_repeat
+from sverchok.data_structure import Matrix_generate, updateNode, match_long_repeat
+from sverchok.nodes.transforms.rotation import euler_rotation
+from mathutils import Vector
 from sverchok.ui.sv_icons import custom_icon
+from sverchok.utils.geom import circle
+from sverchok.utils.sv_mesh_utils import mesh_join
 
 DEBUG = False
 
@@ -52,7 +56,7 @@ def get_hexagon_grid(r, level, center):
     for i in range(numX):
         grid_y = - (numY[i] - numY[0]) * dy / 2
         for j in range(numY[i]):
-            grid_values.append([grid_x - cx, grid_y - cy, 0])
+            grid_values.append((grid_x - cx, grid_y - cy, 0.0))
             grid_y += dy
 
         grid_x += dx
@@ -78,7 +82,7 @@ def get_diamond_grid(r, level, center):
     for i in range(numX):
         grid_y = - (numY[i] - 1) * dy / 2
         for j in range(numY[i]):
-            grid_values.append([grid_x - cx, grid_y - cy, 0])
+            grid_values.append((grid_x - cx, grid_y - cy, 0.0))
             grid_y += dy
 
         grid_x += dx
@@ -103,7 +107,7 @@ def get_triangle_grid(r, level, center):
         grid_y = -int((i + 1) / 2) * dy
         grid_y += dy / 2 if (i % 2 != 0) else 0
         for j in range(i + 1):
-            grid_values.append([grid_x - cx, grid_y - cy, 0])
+            grid_values.append((grid_x - cx, grid_y - cy, 0.0))
             grid_y += dy
 
         grid_x += dx
@@ -125,12 +129,32 @@ def get_rectangle_grid(r, numx, numy, center):
     for i in range(numx):
         grid_y = dy / 2 if (i % 2 != 0) else 0
         for j in range(numy):
-            grid_values.append([grid_x - cx, grid_y - cy, 0])
+            grid_values.append((grid_x - cx, grid_y - cy, 0.0))
             grid_y += dy
 
         grid_x += dx
 
     return grid_values
+
+
+def generate_tiles(radius, angle, join, gridList):
+    verts, edges, polys = circle(radius, radians(angle), 6, None, 'pydata')
+
+    vertList = []
+    edgeList = []
+    polyList = []
+    for grid in gridList:
+        for cx, cy, cz in grid:
+            verts2 = [(x + cx, y + cy, z + cz) for x, y, z in verts]
+            vertList.append(verts2)
+            edgeList.append(edges)
+            polyList.append(polys)
+
+    if join:
+        vertList, edgeList, polyList = mesh_join(vertList, edgeList, polyList)
+        vertList, edgeList, polyList = [vertList], [edgeList], [polyList]
+
+    return vertList, edgeList, polyList
 
 
 class SvHexaGridNode(bpy.types.Node, SverchCustomTreeNode):
@@ -184,9 +208,24 @@ class SvHexaGridNode(bpy.types.Node, SverchCustomTreeNode):
         default=1.0, min=0.0, soft_min=0.0,
         update=updateNode)
 
+    angle = FloatProperty(
+        name="Angle", description="Angle to rotate the grid and tiles",
+        default=0.0, min=0.0, soft_min=0.0,
+        update=updateNode)
+
+    scale = FloatProperty(
+        name="Scale", description="Scale of the polygon tile",
+        default=1.0, min=0.0, soft_min=0.0,
+        update=updateNode)
+
     center = BoolProperty(
         name="Center", description="Center grid around origin",
         default=True,
+        update=updateNode)
+
+    join = BoolProperty(
+        name="Join", description="Join meshes into one",
+        default=False,
         update=updateNode)
 
     def sv_init(self, context):
@@ -195,14 +234,21 @@ class SvHexaGridNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('StringsSocket', "NumX").prop_name = 'numx'
         self.inputs.new('StringsSocket', "NumY").prop_name = 'numy'
         self.inputs.new('StringsSocket', "Radius").prop_name = 'radius'
+        self.inputs.new('StringsSocket', "Scale").prop_name = 'scale'
+        self.inputs.new('StringsSocket', "Angle").prop_name = 'angle'
 
-        self.outputs.new('VerticesSocket', "Grid")
+        self.outputs.new('VerticesSocket', "Centers")
+        self.outputs.new('VerticesSocket', "Vertices")
+        self.outputs.new('StringsSocket', "Edges")
+        self.outputs.new('StringsSocket', "Polygons")
 
         self.update_type(context)
 
     def draw_buttons(self, context, layout):
         layout.prop(self, 'gridType', expand=False)
-        layout.prop(self, 'center')
+        row = layout.row(align=True)
+        row.prop(self, 'join')
+        row.prop(self, 'center')
 
     def process(self):
         # return if no outputs are connected
@@ -214,15 +260,17 @@ class SvHexaGridNode(bpy.types.Node, SverchCustomTreeNode):
         input_numx = self.inputs["NumX"].sv_get()[0]
         input_numy = self.inputs["NumY"].sv_get()[0]
         input_radius = self.inputs["Radius"].sv_get()[0]
+        input_scale = self.inputs["Scale"].sv_get()[0]
 
         # sanitize the input values
         input_level = list(map(lambda x: max(1, x), input_level))
         input_numx = list(map(lambda x: max(1, x), input_numx))
         input_numy = list(map(lambda x: max(1, x), input_numy))
         input_radius = list(map(lambda x: max(0, x), input_radius))
+        input_scale = list(map(lambda x: max(0, x), input_scale))
 
-        if self.outputs['Grid'].is_linked:
-            gridList = []
+        gridList = []
+        if any(s.is_linked for s in self.outputs):
 
             if self.gridType == "RECTANGLE":
                 parameters = match_long_repeat([input_numx, input_numy, input_radius])
@@ -248,7 +296,18 @@ class SvHexaGridNode(bpy.types.Node, SverchCustomTreeNode):
                     grid = get_hexagon_grid(r, n, self.center)
                     gridList.append(grid)
 
-            self.outputs['Grid'].sv_set(gridList)
+            self.outputs['Centers'].sv_set(gridList)
+
+        radius = self.radius * self.scale
+        verts = []
+        edges = []
+        polys = []
+        if self.outputs['Vertices'].is_linked or self.outputs['Edges'].is_linked or self.outputs['Polygons'].is_linked:
+            verts, edges, polys = generate_tiles(radius, self.angle, self.join, gridList)
+
+        self.outputs['Vertices'].sv_set(verts)
+        self.outputs['Edges'].sv_set(edges)
+        self.outputs['Polygons'].sv_set(polys)
 
 
 def register():
