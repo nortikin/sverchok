@@ -45,6 +45,20 @@ avail_noise = [(t[0], t[0].title(), t[0].title(), '', t[1]) for t in noise_optio
 
 turbulence_f = {'SCALAR': noise.turbulence, 'VECTOR': noise.turbulence_vector}
 
+def get_offset(seed):
+    if seed == 0:
+        offset = [0.0, 0.0, 0.0]
+    else:
+        noise.seed_set(seed)
+        offset = noise.random_unit_vector() * 10.0
+    return offset
+
+def seed_adjusted(vert_list, seed):
+    if seed == 0.0:
+        return vert_list
+
+    ox = get_offset(seed)
+    return [[v[0] + ox[0], v[1] + ox[1], v[2] + ox[2]] for v in vert_list]
 
 class SvTurbulenceNode(bpy.types.Node, SverchCustomTreeNode):
     '''Vector Turbulence node'''
@@ -124,26 +138,12 @@ class SvTurbulenceNode(bpy.types.Node, SverchCustomTreeNode):
         m_seed = inputs['Random seed'].sv_get()[0]
 
         maxlen = len(verts)
+        print(maxlen)
         fullList(m_octaves, maxlen)
         fullList(m_hard, maxlen)
         fullList(m_amp, maxlen)
         fullList(m_freq, maxlen)
         fullList(m_seed, maxlen)
-
-        def get_offset(seed):
-            if seed == 0:
-                offset = [0.0, 0.0, 0.0]
-            else:
-                noise.seed_set(seed)
-                offset = noise.random_unit_vector() * 10.0
-            return offset
-
-        def seed_adjusted(vert_list, seed):
-            if seed == 0.0:
-                return vert_list
-
-            ox = get_offset(seed)
-            return [[v[0] + ox[0], v[1] + ox[1], v[2] + ox[2]] for v in vert_list]
 
         _noise_type = noise_dict[self.noise_type]
         arguments = verts, m_octaves, m_hard, m_amp, m_freq, m_seed
