@@ -41,7 +41,7 @@ from sverchok.utils.sv_viewer_utils import (
     greek_alphabet)
 
 # -- POLYLINE --
-def live_curve(object_index, node, curve_name, verts, radii, twist):
+def live_curve(obj_index, node, curve_name, verts, radii, twist):
     curves = bpy.data.curves
     objects = bpy.data.objects
     scene = bpy.context.scene
@@ -67,10 +67,10 @@ def live_curve(object_index, node, curve_name, verts, radii, twist):
     cu.fill_mode = 'FULL'
 
     # use bevel object if provided
-    bevel_objs = self.inputs['bevel object'].get()
+    bevel_objs = node.inputs['bevel object'].get()
     if bevel_objs:
         obj_ref = bevel_objs[obj_index] if obj_index < len(bevel_objs) else bevel_objs[-1]
-        if found_obj.type == 'CURVE':
+        if obj_ref.type == 'CURVE':
             cu.bevel_object = obj_ref
 
     # and rebuild
@@ -196,7 +196,7 @@ class SvPolylineViewerNodeMK1(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('MatrixSocket', 'matrix', 'matrix')
         self.inputs.new('StringsSocket', 'radii').prop_name = 'radii'
         self.inputs.new('StringsSocket', 'twist').prop_name = 'twist'
-        self.inputs.new('SvObjectsSocket', 'bevel object')
+        self.inputs.new('SvObjectSocket', 'bevel object')
 
     def icons(self, button_type):
 
