@@ -105,8 +105,8 @@ def live_curve(obj_index, node, curve_name, verts, radii, twist):
 
 
 
-def make_curve_geometry(object_index, node, context, name, verts, matrix, radii, twist):
-    sv_object = live_curve(node, name, verts, radii, twist)
+def make_curve_geometry(obj_index, node, context, name, verts, matrix, radii, twist):
+    sv_object = live_curve(obj_index, node, name, verts, radii, twist)
     sv_object.hide_select = False
 
     if matrix:
