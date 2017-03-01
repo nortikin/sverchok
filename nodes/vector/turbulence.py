@@ -115,7 +115,6 @@ class SvTurbulenceNode(bpy.types.Node, SverchCustomTreeNode):
             return
 
         out = []
-        # maxlen = 0
         verts = inputs['Vertices'].sv_get(deepcopy=False)
 
         m_octaves = inputs['Octaves'].sv_get()[0]
@@ -124,21 +123,12 @@ class SvTurbulenceNode(bpy.types.Node, SverchCustomTreeNode):
         m_freq = inputs['Frequency'].sv_get()[0]
         m_seed = inputs['Random seed'].sv_get()[0]
 
-        #if verts and verts[0]:
-
         maxlen = len(verts[0])
-        print('maxlen', maxlen)
         fullList(m_octaves, maxlen)
         fullList(m_hard, maxlen)
         fullList(m_amp, maxlen)
         fullList(m_freq, maxlen)
         fullList(m_seed, maxlen)
-        print('m_octaves :',m_octaves)
-        print('m_hard :',m_hard)
-        print('m_amp :',m_amp)
-        print('m_freq :',m_freq)
-        print('m_seed :',m_seed)
-
 
         def get_offset(seed):
             if seed == 0:
@@ -148,15 +138,18 @@ class SvTurbulenceNode(bpy.types.Node, SverchCustomTreeNode):
                 offset = noise.random_unit_vector() * 10.0
             return offset
 
-            arguments = verts, m_octaves, m_hard, m_amp, m_freq, m_seed
-            for idx, (vert_list, octaves, hard, amp, freq, seed) in enumerate(zip(*arguments)):
+        def seed_adjusted(vert_list, seed):
+            if seed == 0.0:
+                return vert_list
 
-                if not seed == 0.0:
-                    offset = get_offset(seed)
-                    verts = [[v[0] + offset[0], v[1] + offset[1], v[2] + offset[2]] for v in vert_list]
+            ox = get_offset(seed)
+            return [[v[0] + ox[0], v[1] + ox[1], v[2] + ox[2]] for v in vert_list]
 
-                _noise_type = noise_dict[self.noise_type]
-                out.append([turbulence_f[self.out_mode](v, octaves, hard, _noise_type, amp, freq) for v in verts])
+        _noise_type = noise_dict[self.noise_type]
+        arguments = verts, m_octaves, m_hard, m_amp, m_freq, m_seed
+        for idx, (vert_list, octaves, hard, amp, freq, seed) in enumerate(zip(*arguments)):
+            final_vert_list = seed_adjusted(vert_list, seed)
+            out.append([turbulence_f[self.out_mode](v, octaves, hard, _noise_type, amp, freq) for v in final_vert_list])
 
         if 'Noise V' in outputs:
             out = Vector_degenerate(out)
