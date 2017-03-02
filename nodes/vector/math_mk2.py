@@ -52,9 +52,9 @@ func_dict = {
     "NORMALIZE":      (6,  lambda u: Vector(u).normalized()[:],                     ('v v'),          "Normalize"),
     "NEG":            (7,  lambda u: (-Vector(u))[:],                               ('v v'),             "Negate"),
 
-    "SCALE XY":       (30, lambda u, s: (u[0]*s, u[1]*s, u[2]),                    ('vs v'),          "Scalar XY"),
-    "SCALE XZ":       (31, lambda u, s: (u[0]*s, u[1],   u[2]*s),                  ('vs v'),          "Scalar XZ"),
-    "SCALE YZ":       (32, lambda u, s: (u[0],   u[1]*s, u[2]*s),                  ('vs v'),          "Scalar YZ")
+    "SCALE XY":       (30, lambda u, s: (u[0]*s, u[1]*s, u[2]),                    ('vs v'),          "Scale XY"),
+    "SCALE XZ":       (31, lambda u, s: (u[0]*s, u[1],   u[2]*s),                  ('vs v'),          "Scale XZ"),
+    "SCALE YZ":       (32, lambda u, s: (u[0],   u[1]*s, u[2]*s),                  ('vs v'),          "Scale YZ")
 
 }
 
