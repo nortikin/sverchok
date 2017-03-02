@@ -2,6 +2,10 @@ Turbulence
 ==========
 
 This Turbulence node takes a list of Vectors and outputs a list of equal length containing Floats in the range 0.0 to 1.0.
+May output scalars o vectors.
+For some noise types, if your output goes to the texture viewer you need to remap them, otherwise in same cases your texture
+will be supersaturated or undersaturated. See below 'range table' for a detailed description.
+
 
 Inputs & Parameters
 -------------------
@@ -38,11 +42,17 @@ Inputs & Parameters
 | Frequency      | Accepts float values. The frequency scaling factor.                     |
 +----------------+-------------------------------------------------------------------------+
 
+Range table
+-----------
+to do...soon
+
+
 Examples
 --------
 .. image:: https://cloud.githubusercontent.com/assets/1275858/22593143/744dbdae-ea1d-11e6-8945-16a8be9f597c.png
 
 Basic example with a Scalar output and Vector rewire node.
+
 
 Notes
 -----
