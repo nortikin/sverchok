@@ -302,6 +302,7 @@ class SvPolylineViewerNodeMK1(bpy.types.Node, SverchCustomTreeNode):
         # extend all non empty lists to longest of mverts or *mrest
         maxlen = max(len(mverts), len(mmatrices))
         if has_matrices:
+            fullList(mverts, maxlen)
             fullList(mmatrices, maxlen)
 
         if mradii:
