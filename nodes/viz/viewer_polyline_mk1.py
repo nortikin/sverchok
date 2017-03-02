@@ -102,6 +102,8 @@ def live_curve(obj_index, node, curve_name, verts, radii, twist):
     if node.bspline:
         polyline.order_u = len(polyline.points)-1
 
+    obj.show_wire = node.show_wire
+
     return obj
 
 
@@ -189,6 +191,7 @@ class SvPolylineViewerNodeMK1(bpy.types.Node, SverchCustomTreeNode):
     radii = FloatProperty(min=0, default=0.2, update=updateNode)
     twist = FloatProperty(default=0.0, update=updateNode)
     caps = BoolProperty(update=updateNode)
+    show_wire = BoolProperty(update=updateNode)
 
     def sv_init(self, context):
         gai = bpy.context.scene.SvGreekAlphabet_index
@@ -249,7 +252,8 @@ class SvPolylineViewerNodeMK1(bpy.types.Node, SverchCustomTreeNode):
         row.prop(self, 'close', text='close', toggle=True)
         if self.inputs['bevel object'].sv_get(default=[]):
             row.prop(self, 'caps', text='caps', toggle=True)
-
+        row = col.row()
+        row.prop(self, 'show_wire', text='show wires')
 
 
     def draw_buttons_ext(self, context, layout):
@@ -261,8 +265,8 @@ class SvPolylineViewerNodeMK1(bpy.types.Node, SverchCustomTreeNode):
         row.operator(sh, text='Rnd Name').fn_name = 'random_mesh_name'
         row.operator(sh, text='+Material').fn_name = 'add_material'
 
-    def get_geometry_from_sockets(self):
 
+    def get_geometry_from_sockets(self):
         
         def get(socket_name):
             data = self.inputs[socket_name].sv_get(default=[])
@@ -274,6 +278,7 @@ class SvPolylineViewerNodeMK1(bpy.types.Node, SverchCustomTreeNode):
         mmtrix = get('matrix')
         return mverts, mradii, mtwist, mmtrix
 
+
     def get_structure(self, stype, sindex):
         if not stype:
             return []
@@ -284,6 +289,7 @@ class SvPolylineViewerNodeMK1(bpy.types.Node, SverchCustomTreeNode):
             j = []
         finally:
             return j
+
 
     def process(self):
         if not (self.inputs['vertices'].is_linked):
@@ -325,10 +331,12 @@ class SvPolylineViewerNodeMK1(bpy.types.Node, SverchCustomTreeNode):
 
         self.outputs['object'].sv_set(out_objects)
 
+
     def get_children(self):
         objects = bpy.data.objects
         objs = [obj for obj in objects if obj.type == 'CURVE']
         return [o for o in objs if o.name.startswith(self.basemesh_name + "_")]
+
 
     def remove_non_updated_objects(self, obj_index):
         objs = self.get_children()
