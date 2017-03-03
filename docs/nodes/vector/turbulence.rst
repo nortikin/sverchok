@@ -49,7 +49,7 @@ Scalar values from turbulence node with size(n.verts)=64x64, step=0.05, octaves=
 Plug a map range node in the scalar output and map it to the desired range (min=0, max=1) as in the image below.
 
 +----------------+----------------------+---------------------+----------------------+
-|  Noise Type    |       media          |  maximum            |   minimum            |
+|  Noise Type    |       median         |  maximum            |   minimum            |
 +================+======================+=====================+======================+
 | Blender        | 0.4574402868747711   | 1.2575798034667969  | 0.0                  |
 +----------------+----------------------+---------------------+----------------------+
