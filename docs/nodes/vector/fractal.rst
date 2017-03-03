@@ -9,7 +9,7 @@ Inputs & Parameters
 +----------------+-------------------------------------------------------------------------+
 | Parameters     | Description                                                             |
 +================+=========================================================================+
-| Noise Function | Pick between Scalar and Vector output                                   |
+| Noise Function | The node output only Scalar values                                      |
 +----------------+-------------------------------------------------------------------------+
 | Noise Type     | Pick between several noise types                                        |
 |                |                                                                         |
@@ -47,7 +47,12 @@ Inputs & Parameters
 
 Examples
 --------
-to do...very soon!
+
+.. image:: https://cloud.githubusercontent.com/assets/1275858/22591683/15af2118-ea16-11e6-9851-b697926cefb8.png
+
+Basic example with a Vector rewire node.
+
+json file: https://gist.github.com/kalwalt/5ef4f6b6018724874e3c51eaa255930c
 
 Notes
 -----
