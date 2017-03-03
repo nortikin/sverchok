@@ -41,15 +41,16 @@ class SvMeshJoinNode(bpy.types.Node, SverchCustomTreeNode):
 
         if Vertices.is_linked:
             verts = Vertices.sv_get()
-
             poly_edge = PolyEdge.sv_get(default=[[]])
-            verts_out, _, poly_edge_out = mesh_join(verts, [], poly_edge)
 
-            if Vertices_out.is_linked:
-                Vertices_out.sv_set([verts_out])
-
-            if PolyEdge_out.is_linked:
+            if PolyEdge.is_linked:
+                verts_out, _, poly_edge_out = mesh_join(verts, [], poly_edge)
                 PolyEdge_out.sv_set([poly_edge_out])
+            else:
+                verts_out = []
+                _ = [verts_out.extend(vlist) for vlist in verts]
+                
+            Vertices_out.sv_set([verts_out])
 
 
 def register():
