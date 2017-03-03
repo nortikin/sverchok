@@ -182,6 +182,8 @@ class SvPolylineViewerNodeMK1(bpy.types.Node, SverchCustomTreeNode):
 
     material = StringProperty(default='', update=updateNode)
 
+    # =====
+
     hide = BoolProperty(default=True)
     hide_render = BoolProperty(default=True)
     select = BoolProperty(default=True)
