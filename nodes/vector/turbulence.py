@@ -123,31 +123,34 @@ class SvTurbulenceNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, 'noise_type', text="Type")
 
     def process(self):
-        inputs, outputs = self.inputs, self.outputs
+            inputs, outputs = self.inputs, self.outputs
 
-        if not outputs[0].is_linked:
-            return
+            if not outputs[0].is_linked:
+                return
 
-        out = []
-        _noise_type = noise_dict[self.noise_type]
+            _noise_type = noise_dict[self.noise_type]
+            tfunc = turbulence_f[self.out_mode]
 
-        verts = inputs['Vertices'].sv_get(deepcopy=False)
-        maxlen = len(verts)
+            verts = inputs['Vertices'].sv_get(deepcopy=False)
+            maxlen = len(verts)
+            arguments = [verts]
 
-        arguments = [verts]
-        # append the inputs from sockets into arguments
-        for socket in inputs[1:]:
-            data = socket.sv_get()[0]
-            fullList(data, maxlen)
-            arguments.append(data)
-        # finally we unpcack the arguments and fill the parmaters for the turbulence function
-        for idx, (vert_list, octaves, hard, amp, freq, seed) in enumerate(zip(*arguments)):
-            final_vert_list = seed_adjusted(vert_list, seed)
-            out.append([turbulence_f[self.out_mode](v, octaves, hard, _noise_type, amp, freq) for v in final_vert_list])
+            # gather socket data into arguments
+            for socket in inputs[1:]:
+                data = socket.sv_get()[0]
+                fullList(data, maxlen)
+                arguments.append(data)
 
-        if 'Noise V' in outputs:
-            out = Vector_degenerate(out)
-        outputs[0].sv_set(out)
+            # iterate over vert lists and pass arguments to the turbulence function
+            out = []
+            for idx, (vert_list, octaves, hard, amp, freq, seed) in enumerate(zip(*arguments)):
+                final_vert_list = seed_adjusted(vert_list, seed)
+                out.append([tfunc(v, octaves, hard, _noise_type, amp, freq) for v in final_vert_list])
+
+            if 'Noise V' in outputs:
+                out = Vector_degenerate(out)
+            outputs[0].sv_set(out)
+
 
 def register():
     bpy.utils.register_class(SvTurbulenceNode)
