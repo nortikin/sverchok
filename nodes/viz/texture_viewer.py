@@ -382,11 +382,13 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
             img = bpy.data.images.new(name=image_name, width=width,
                                       height=height, alpha=alpha,
                                       float_buffer=True)
-        img.scale(width, height)
+        # img.scale(width, height)
+        # print('img size: ', img.size(width, height))
         print('width is: {0}'.format(width))
         print('length img pixels: {0}'.format(len(img.pixels)))
         if col_mod == 'BW':
             print("passing data from buf to pixels BW")
+            print('img channels: ', img.channels)
             np_buff = np.empty(len(img.pixels), dtype=np.float32)
             np_buff.shape = (-1, 4)
             np_buff[:, :] = np.array(buf)[:, np.newaxis]
@@ -395,14 +397,18 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
             img.pixels[:] = np_buff
         elif col_mod == 'RGB':
             print("passing data from buf to pixels RGB")
-            #np_buff = np.empty(len(img.pixels), dtype=np.float32)
-            #np_buff[:, :3] = np.array(buf)
-            np_buff = np.empty(len(img.pixels), dtype=np.float32)
-            np_buff.shape = (-1, 4)
-            np_buff[:, :3] = np.array(buf)
-            np_buff[:, 3] = 1
-            np_buff.shape = -1
-            img.pixels[:] = np_buff
+            rgb = np.array(buf)
+            rgb_res = rgb.reshape(dim * dim, 3)
+            alpha = np.empty(len(buf), dtype=np.float32)
+            alpha.fill(1)
+            print('alpha filled')
+            alpha_res = alpha.reshape(dim * dim, 3)
+            print('concatenate rgb > alpha')
+            rgba = np.concatenate((rgb_res, alpha_res), axis=1)
+            final = rgba[:, 0:4]
+            # print(final)
+            print('filling pixels from openGl buffer')
+            img.pixels = final.flatten()
         elif col_mod == 'RGBA':
             print("passing data from buf to pixels RGBA")
             # this works for RGBA!
