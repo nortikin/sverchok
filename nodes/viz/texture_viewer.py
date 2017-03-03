@@ -18,6 +18,7 @@
 
 import os
 import numpy as np
+# import math as m
 
 import bgl
 import bpy
@@ -101,8 +102,8 @@ def simple_screen(x, y, args):
     size = args[1]
     texname = args[2]
 
-    width = size
-    height = size
+    width = args[3]
+    height = args[4]
 
     def draw_borders(x=0, y=0, w=30, h=10, color=(0.0, 0.0, 0.0, 1.0)):
         # function to draw a border color around the texture
@@ -150,8 +151,10 @@ def simple_screen(x, y, args):
         bgl.glFlush()
 
     draw_texture(x=x, y=y, w=width, h=height, texname=texname)
+    # draw_texture(x=x, y=y, w=128, h=64, texname=texname)
 
     draw_borders(x=x, y=y, w=width, h=height, color=border_color)
+    # draw_borders(x=x, y=y, w=128, h=64, color=border_color)
 
 
 class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
@@ -170,6 +173,24 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         items=size_tex_list,
         description="Offers display sizing",
         default="S",
+        update=updateNode
+    )
+
+    selected_custom_tex = BoolProperty(
+        name='Custom tex', description='Activate custom texture drawing',
+        default=False,
+        update=updateNode
+    )
+
+    width_custom_tex = IntProperty(
+        min=0, max=1024, default=206, name='Width Tex',
+        description="set the custom texture size",
+        update=updateNode
+    )
+
+    height_custom_tex = IntProperty(
+        min=0, max=1024, default=124, name='Height Tex',
+        description="set the custom texture size",
         update=updateNode
     )
 
@@ -220,12 +241,26 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         return int(a[0] + b), int(a[1])
 
     def get_buffer(self):
+        # width=0
+        # height=0
+        size_tex = 0
         # data = self.inputs['Float'].sv_get(deepcopy=False)[0]
         data = np.array(self.inputs['Float'].sv_get(deepcopy=False)).flatten()
+        #### This code below stall the machine ####
+        # if self.selected_custom_tex:
+            # width = self.inputs['Width'].sv_get(deepcopy=False)[0][0]
+            # height = self.inputs['Height'].sv_get(deepcopy=False)[0][0]
+            # width = 206
+            # height = 124
+            # size_tex = width * height
+        # else:
+            # size_tex = size_tex_dict.get(self.selected_mode)
+        ####
         size_tex = size_tex_dict.get(self.selected_mode)
         # buffer need adequate size multiplying
         factor_clr = factor_buffer_dict.get(self.color_mode)
         total_size = size_tex * size_tex * factor_clr
+        # total_size = 128 * 64 * factor_clr
         if len(data) < total_size:
             default_value = 0
             new_data = [default_value for j in range(total_size)]
@@ -246,6 +281,11 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         c.label(text='Set color mode')
         row = layout.row(align=True)
         row.prop(self, 'color_mode', expand=True)
+        layout.separator()
+        c = layout.column()
+        row = c.row()
+        c.label(text="Set custom texture display")
+        row.prop(self, "selected_custom_tex", expand=True)
 
     def draw_buttons_ext(self, context, layout):
         img_format = self.bitmap_format
@@ -280,6 +320,8 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', "Float").prop_name = 'in_float'
+        self.inputs.new('StringsSocket', "Width").prop_name = 'width_custom_tex'
+        self.inputs.new('StringsSocket', "Height").prop_name = 'height_custom_tex'
 
     def delete_texture(self):
         n_id = node_id(self)
@@ -289,14 +331,28 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
     def process(self):
         n_id = node_id(self)
-
+        size_tex = 0
+        width = 0
+        height = 0
         # end early
         nvBGL2.callback_disable(n_id)
         self.delete_texture()
+        if self.selected_custom_tex:
+            width = self.inputs['Width'].sv_get(deepcopy=False)[0][0]
+            height = self.inputs['Height'].sv_get(deepcopy=False)[0][0]
+            print('custom texture selected!')
+            print('tex size is', width, height)
         if self.activate:
 
             texture = self.get_buffer()
-            size_tex = size_tex_dict.get(self.selected_mode)
+            if self.selected_custom_tex:
+                width = self.inputs['Width'].sv_get(deepcopy=False)[0][0]
+                height = self.inputs['Height'].sv_get(deepcopy=False)[0][0]
+                size_tex = width
+            else:
+                size_tex = size_tex_dict.get(self.selected_mode)
+                width = height = size_tex
+
             x, y = self.xy_offset
 
             def init_texture(width, height, texname, texture):
@@ -324,14 +380,16 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
             name = bgl.Buffer(bgl.GL_INT, 1)
             bgl.glGenTextures(1, name)
             self.texture[n_id] = name[0]
-            init_texture(size_tex, size_tex, name[0], texture)
+            # init_texture(size_tex, size_tex, name[0], texture)
+            init_texture(width, height, name[0], texture)
+            #init_texture(128, 64, name[0], texture)
 
             draw_data = {
                 'tree_name': self.id_data.name[:],
                 'mode': 'custom_function',
                 'custom_function': simple_screen,
                 'loc': (x, y),
-                'args': (texture, size_tex, self.texture[n_id])
+                'args': (texture, size_tex, self.texture[n_id], width, height)
             }
 
             nvBGL2.callback_enable(n_id, draw_data)
