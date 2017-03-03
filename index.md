@@ -34,6 +34,7 @@
     SvImageComponentsNode
     SvScriptNode
     SvTorusKnotNode
+    SvTorus2DNode
 
 ## Analyzers
     SvBBoxNode
