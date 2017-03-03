@@ -182,6 +182,7 @@ class SvInsetSpecial(bpy.types.Node, SverchCustomTreeNode):
 
 
     def process(self):
+        print('called me')
         i = self.inputs
         o = self.outputs
 
@@ -193,10 +194,14 @@ class SvInsetSpecial(bpy.types.Node, SverchCustomTreeNode):
 
         all_inset_rates = i['inset'].sv_get()
         all_distance_vals = i['distance'].sv_get()
-        all_ignores = i['ignore'].sv_get(default=[[self.ignore]])              # these defaults preserve backward compatibility
-        all_make_inners = i['make_inner'].sv_get(default=[[self.make_inner]])  # these defaults preserve backward compatibility
-                                                                               # newly created nodes of this type wouldn't need this
-                                                                               # stated explicitly.
+
+        # silly auto ugrade.
+        if not i['ignore'].prop_name:
+            i['ignore'].prop_name = 'ignore'
+            i['make_inner'].prop_name = 'make_inner'
+
+        all_ignores = i['ignore'].sv_get()
+        all_make_inners = i['make_inner'].sv_get()
 
         data = all_verts, all_polys, all_inset_rates, all_distance_vals, all_ignores, all_make_inners
 
