@@ -182,7 +182,6 @@ class SvInsetSpecial(bpy.types.Node, SverchCustomTreeNode):
 
 
     def process(self):
-        print('called me')
         i = self.inputs
         o = self.outputs
 
