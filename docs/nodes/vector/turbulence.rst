@@ -46,7 +46,7 @@ Inputs & Parameters
 Range table
 -----------
 Scalar values from turbulence node with size(n.verts)=64x64, step=0.05, octaves=3, amplitude=0.5, frequency=2.0, random seed=0.
-
+Plug a map range node in the scalar output and map it to the desired range (min=0, max=1) as in the image below.
 
 +----------------+----------------------+---------------------+----------------------+
 |  Noise Type    |       media          |  maximum            |   minimum            |
@@ -72,7 +72,7 @@ Scalar values from turbulence node with size(n.verts)=64x64, step=0.05, octaves=
 | Cellnoise      | 0.9668738842010498   | 1.5000858306884766  | 0.1691771298646927   |
 +----------------+----------------------+---------------------+----------------------+
 
-
+.. image:: https://cloud.githubusercontent.com/assets/1275858/23551043/81474db0-0014-11e7-9a40-233c30f75ce7.png
 
 
 
