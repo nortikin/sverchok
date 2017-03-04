@@ -420,8 +420,14 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         else:
             extension = '.' + img_format.lower()
         image_name = image_name + extension
-        dim = size_tex_dict[self.selected_mode]
-        width, height = dim, dim
+        dim=0
+        if self.selected_custom_tex:
+            width = self.inputs['Width'].sv_get(deepcopy=False)[0][0]
+            height = self.inputs['Height'].sv_get(deepcopy=False)[0][0]
+        else:
+            dim = size_tex_dict[self.selected_mode]
+            width, height = dim, dim
+
         if image_name in bpy.data.images:
             img = bpy.data.images[image_name]
         else:
@@ -444,11 +450,11 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         elif col_mod == 'RGB':
             print("passing data from buf to pixels RGB")
             rgb = np.array(buf)
-            rgb_res = rgb.reshape(dim * dim, 3)
+            rgb_res = rgb.reshape(width * height, 3)
             alpha = np.empty(len(buf), dtype=np.float32)
             alpha.fill(1)
             print('alpha filled')
-            alpha_res = alpha.reshape(dim * dim, 3)
+            alpha_res = alpha.reshape(width * height, 3)
             print('concatenate rgb > alpha')
             rgba = np.concatenate((rgb_res, alpha_res), axis=1)
             final = rgba[:, 0:4]
