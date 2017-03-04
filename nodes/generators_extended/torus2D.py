@@ -32,6 +32,7 @@ def torus_verts(R, r, N1, N2, p, Separate):
         N1  : major sections - number of RADIAL sections
         N2  : minor sections - number of CIRCULAR sections
         p   : radial section phase
+        Separate : separate the radial sections into separate vertex lists
     '''
     listVerts = []
 
@@ -236,13 +237,16 @@ class SvTorus2DNode(bpy.types.Node, SverchCustomTreeNode):
             input_R = input_RR
             input_r = input_rr
 
-        parameters = match_long_repeat([input_R, input_r, input_n1, input_n2, input_rp])
+        params = match_long_repeat([input_R, input_r, input_n1, input_n2, input_rp])
 
-        V, E, P = [self.outputs[n] for n in ['Vertices', 'Edges', 'Polygons']]
+        V, E, P = self.outputs[:]
         for s, f in [(V, torus_verts), (E, torus_edges), (P, torus_polygons)]:
-            if s.is_linked:
-                s.sv_set([f(n1, n2) if s != V else f(R, r, n1, n2, p, self.Separate)
-                          for R, r, n1, n2, p in zip(*parameters)])
+            if not s.is_linked:
+                continue
+            if s == V:
+                s.sv_set([f(R, r, n1, n2, p, self.Separate) for R, r, n1, n2, p in zip(*params)])
+            else:
+                s.sv_set([f(n1, n2) for _, _, n1, n2, _ in zip(*params)])
 
 
 def register():
