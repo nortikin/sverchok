@@ -182,7 +182,13 @@ class SvPolylineViewerNodeMK1(bpy.types.Node, SverchCustomTreeNode):
 
     material = StringProperty(default='', update=updateNode)
 
-    # =====
+    mode_options = [(k, k, '', i) for i, k in enumerate(["Multi", "Single"])]
+    selected_mode = bpy.props.EnumProperty(
+        items=mode_options,
+        description="offers joined of unique curves",
+        default="Multi", update=updateNode
+    )
+
 
     hide = BoolProperty(default=True)
     hide_render = BoolProperty(default=True)
@@ -260,6 +266,7 @@ class SvPolylineViewerNodeMK1(bpy.types.Node, SverchCustomTreeNode):
             row.prop(self, 'caps', text='caps', toggle=True)
         row = col.row()
         row.prop(self, 'show_wire', text='show wires')
+        row.prop(self, 'selected_mode', expand=True)
 
 
     def draw_buttons_ext(self, context, layout):
@@ -316,6 +323,7 @@ class SvPolylineViewerNodeMK1(bpy.types.Node, SverchCustomTreeNode):
             fullList(mtwist, maxlen)
 
         out_objects = []
+
         for obj_index, Verts in enumerate(mverts):
             if not Verts:
                 continue
@@ -325,8 +333,17 @@ class SvPolylineViewerNodeMK1(bpy.types.Node, SverchCustomTreeNode):
             else:
                 matrix = []
 
-            new_obj = make_curve_geometry(obj_index, self, Verts, matrix, mradii[obj_index], mtwist[obj_index])
-            out_objects.append(new_obj)
+            if self.selected_mode == 'Multi':
+                new_obj = make_curve_geometry(obj_index, self, Verts, matrix, mradii[obj_index], mtwist[obj_index])
+                out_objects.append(new_obj)
+            else:
+                mverts = premultiply(mverts, mmatrices)
+                new_obj = make_curve_geometry(0, self, mverts, [], mradii, mtwist)
+                out_objects.append(new_obj)
+                break
+
+
+
 
         remove_non_updated_objects(self, obj_index, kind='CURVE')
         objs = get_children(self, kind='CURVE')
