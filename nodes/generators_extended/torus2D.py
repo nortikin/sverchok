@@ -36,7 +36,7 @@ def torus_verts(R, r, N1, N2, p, Separate):
     listVerts = []
 
     # angle increments (cached outside of the loop for performance)
-    da = 2*pi/N1
+    da = 2 * pi / N1
 
     for n1 in range(N1):
         theta = n1 * da + p     # radial section angle
@@ -44,9 +44,9 @@ def torus_verts(R, r, N1, N2, p, Separate):
         cos_theta = cos(theta)  # caching
 
         loopVerts = []
-        s = 2 / (N2-1)  # caching
+        s = 2 / (N2 - 1)  # caching
         for n2 in range(N2):
-            rr = R + (n2*s - 1) * r
+            rr = R + (n2 * s - 1) * r
             x = rr * cos_theta
             y = rr * sin_theta
 
@@ -70,15 +70,15 @@ def torus_edges(N1, N2):
 
     # radial EDGES
     for n1 in range(N1):
-        for n2 in range(N2-1):
-            listEdges.append([N2*n1 + n2, N2*n1 + n2+1])
+        for n2 in range(N2 - 1):
+            listEdges.append([N2 * n1 + n2, N2 * n1 + n2 + 1])
 
     # circular EDGES
-    for n1 in range(N1-1):
+    for n1 in range(N1 - 1):
         for n2 in range(N2):
-            listEdges.append([N2*n1 + n2, N2*(n1+1) + n2])
+            listEdges.append([N2 * n1 + n2, N2 * (n1 + 1) + n2])
     for n2 in range(N2):
-        listEdges.append([N2*(N1-1) + n2, N2*0 + n2])
+        listEdges.append([N2 * (N1 - 1) + n2, n2])
 
     return listEdges
 
@@ -89,14 +89,13 @@ def torus_polygons(N1, N2):
         N2 : minor sections - number of CIRCULAR sections
     '''
     listPolys = []
-    for n1 in range(N1-1):
-        for n2 in range(N2-1):
-            listPolys.append(
-                [N2*n1 + n2, N2*(n1+1) + n2, N2*(n1+1) + n2+1, N2*n1 + n2+1])
+    for n1 in range(N1 - 1):
+        for n2 in range(N2 - 1):
+            listPolys.append([N2 * n1 + n2, N2 * (n1 + 1) + n2, N2 * (n1 + 1) + n2 + 1, N2 * n1 + n2 + 1])
 
-    for n2 in range(N2-1):
-        listPolys.append([N2*(N1-1) + n2, N2*0 + n2, N2*0 + n2+1, N2*(N1-1) + n2+1])
-    listPolys.append([N2*(N1-1) + N2-1, N2*0 + N2-1, N2*0 + 0, N2*(N1-1) + 0])
+    for n2 in range(N2 - 1):
+        listPolys.append([N2 * (N1 - 1) + n2, n2, n2 + 1, N2 * (N1 - 1) + n2 + 1])
+    listPolys.append([N2 * (N1 - 1) + N2 - 1, N2 - 1, 0, N2 * (N1 - 1)])
 
     return listPolys
 
@@ -121,8 +120,8 @@ class SvTorus2DNode(bpy.types.Node, SverchCustomTreeNode):
     # keep the equivalent radii pair in sync (eR,iR) => (R,r)
     def external_internal_radii_changed(self, context):
         if self.mode == "EXT_INT":
-            self.torus_R = (self.torus_eR + self.torus_iR)*0.5
-            self.torus_r = (self.torus_eR - self.torus_iR)*0.5
+            self.torus_R = (self.torus_eR + self.torus_iR) * 0.5
+            self.torus_r = (self.torus_eR - self.torus_iR) * 0.5
             updateNode(self, context)
 
     # keep the equivalent radii pair in sync (R,r) => (eR,iR)
@@ -143,13 +142,13 @@ class SvTorus2DNode(bpy.types.Node, SverchCustomTreeNode):
 
     torus_R = FloatProperty(
         name="Major Radius",
-        description="Radius from the torus origin to the center of the cross section",
+        description="Radius from the torus center to the middle of torus band",
         default=1.0, min=0.00, max=100.0,
         update=major_minor_radii_changed)
 
     torus_r = FloatProperty(
         name="Minor Radius",
-        description="Radius of the torus' cross section",
+        description="Width of the torus band",
         default=.25, min=0.00, max=100.0,
         update=major_minor_radii_changed)
 
@@ -232,34 +231,20 @@ class SvTorus2DNode(bpy.types.Node, SverchCustomTreeNode):
             # convert radii from EXTERIOR/INTERIOR to MAJOR/MINOR
             # (extend radii lists to a matching length before conversion)
             input_RR, input_rr = match_long_repeat([input_RR, input_rr])
-            input_R = list(map(lambda x, y: (x+y)*0.5, input_RR, input_rr))
-            input_r = list(map(lambda x, y: (x-y)*0.5, input_RR, input_rr))
+            input_R = list(map(lambda x, y: (x + y) * 0.5, input_RR, input_rr))
+            input_r = list(map(lambda x, y: (x - y) * 0.5, input_RR, input_rr))
         else:  # values already given as MAJOR/MINOR radii
             input_R = input_RR
             input_r = input_rr
 
         parameters = match_long_repeat([input_R, input_r, input_n1, input_n2, input_rp])
 
-        if self.outputs['Vertices'].is_linked:
-            vertList = []
-            for R, r, n1, n2, p in zip(*parameters):
-                verts = torus_verts(R, r, n1, n2, p, self.Separate)
-                vertList.append(verts)
-            self.outputs['Vertices'].sv_set(vertList)
-
-        if self.outputs['Edges'].is_linked:
-            edgeList = []
-            for R, r, n1, n2, _ in zip(*parameters):
-                edges = torus_edges(n1, n2)
-                edgeList.append(edges)
-            self.outputs['Edges'].sv_set(edgeList)
-
-        if self.outputs['Polygons'].is_linked:
-            polyList = []
-            for R, r, n1, n2, _ in zip(*parameters):
-                polys = torus_polygons(n1, n2)
-                polyList.append(polys)
-            self.outputs['Polygons'].sv_set(polyList)
+        V, E, P = [self.outputs[n] for n in ['Vertices', 'Edges', 'Polygons']]
+        fv, fe, fp = torus_verts, torus_edges, torus_polygons
+        for s, f in [(V, fv), (E, fe), (P, fp)]:
+            if s.is_linked:
+                s.sv_set([f(n1, n2) if s != V else f(R, r, n1, n2, p, self.Separate)
+                          for R, r, n1, n2, p in zip(*parameters)])
 
 
 def register():
