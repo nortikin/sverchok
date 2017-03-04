@@ -98,12 +98,7 @@ def simple_screen(x, y, args):
     # draw a simple scren display for the texture
     border_color = (0.390805, 0.754022, 1.000000, 1.00)
 
-    texture = args[0]
-    size = args[1]
-    texname = args[2]
-
-    width = args[3]
-    height = args[4]
+    texture, texname, width, height = args
 
     def draw_borders(x=0, y=0, w=30, h=10, color=(0.0, 0.0, 0.0, 1.0)):
         # function to draw a border color around the texture
@@ -342,7 +337,7 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
                 height = self.inputs['Height'].sv_get(deepcopy=False)[0][0]
                 print('custom texture selected!')
                 print('tex size is', width, height)
-                size_tex = width
+
             else:
                 size_tex = size_tex_dict.get(self.selected_mode)
                 width = height = size_tex
@@ -382,7 +377,7 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
                 'mode': 'custom_function',
                 'custom_function': simple_screen,
                 'loc': (x, y),
-                'args': (texture, size_tex, self.texture[n_id], width, height)
+                'args': (texture, self.texture[n_id], width, height)
             }
 
             nvBGL2.callback_enable(n_id, draw_data)
