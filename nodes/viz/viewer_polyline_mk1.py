@@ -81,12 +81,9 @@ def live_curve(obj_index, node, verts, radii, twist):
         cu.bevel_object = None
         cu.use_fill_caps = False
 
-
     # each spline has a default first coordinate but we need two.
     kind = ["POLY", "NURBS"][bool(node.bspline)]
 
-
-    # ---------------
     if node.selected_mode == 'Multi':
         verts = [verts]
         radii = [radii]
@@ -188,8 +185,6 @@ class SvPolylineViewerNodeMK1(bpy.types.Node, SverchCustomTreeNode):
         update=updateNode
     )
 
-    material = StringProperty(default='', update=updateNode)
-
     mode_options = [(k, k, '', i) for i, k in enumerate(["Multi", "Single"])]
     selected_mode = bpy.props.EnumProperty(
         items=mode_options,
@@ -197,6 +192,7 @@ class SvPolylineViewerNodeMK1(bpy.types.Node, SverchCustomTreeNode):
         default="Multi", update=updateNode
     )
 
+    material = StringProperty(default='', update=updateNode)
 
     hide = BoolProperty(default=True)
     hide_render = BoolProperty(default=True)
@@ -352,8 +348,6 @@ class SvPolylineViewerNodeMK1(bpy.types.Node, SverchCustomTreeNode):
                 break
 
 
-
-
         remove_non_updated_objects(self, obj_index, kind='CURVE')
         objs = get_children(self, kind='CURVE')
 
@@ -361,33 +355,6 @@ class SvPolylineViewerNodeMK1(bpy.types.Node, SverchCustomTreeNode):
             self.set_corresponding_materials(objs)
 
         self.outputs['object'].sv_set(out_objects)
-
-
-    # def get_children(self):
-    #     objects = bpy.data.objects
-    #     objs = [obj for obj in objects if obj.type == 'CURVE']
-    #     return [o for o in objs if o.name.startswith(self.basemesh_name + "_")]
-
-
-    # def remove_non_updated_objects(self, obj_index):
-    #     objs = self.get_children()
-    #     objs = [obj.name for obj in objs if int(obj.name.split("_")[-1]) > obj_index]
-    #     if not objs:
-    #         return
-
-    #     curves = bpy.data.curves
-    #     objects = bpy.data.objects
-    #     scene = bpy.context.scene
-
-    #     # remove excess objects
-    #     for object_name in objs:
-    #         obj = objects[object_name]
-    #         obj.hide_select = False
-    #         scene.objects.unlink(obj)
-    #         objects.remove(obj)
-
-    #     for object_name in objs:
-    #         curves.remove(curves[object_name])
 
 
     def set_corresponding_materials(self, objs):
