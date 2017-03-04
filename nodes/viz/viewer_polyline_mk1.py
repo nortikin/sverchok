@@ -28,11 +28,9 @@ from bpy.props import (
 from mathutils import Matrix, Vector
 
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
+from sverchok.utils.geom import multiply_vectors
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (
-    dataCorrect,
-    fullList,
-    updateNode)
+from sverchok.data_structure import dataCorrect, fullList, updateNode
 
 from sverchok.utils.sv_viewer_utils import (
     matrix_sanitizer,
@@ -83,33 +81,43 @@ def live_curve(obj_index, node, verts, radii, twist):
         cu.bevel_object = None
         cu.use_fill_caps = False
 
-    # and rebuild
-    full_flat = []
-    for v in verts:
-        full_flat.extend([v[0], v[1], v[2], 1.0])
 
     # each spline has a default first coordinate but we need two.
     kind = ["POLY", "NURBS"][bool(node.bspline)]
-    polyline = cu.splines.new(kind)
-    polyline.points.add(len(verts)-1)
-    polyline.points.foreach_set('co', full_flat)
 
-    if radii:
-        fullList(radii, len(verts))
-        polyline.points.foreach_set('radius', radii)
 
-    if twist:
-        fullList(twist, len(verts))
-        polyline.points.foreach_set('tilt', twist)
-        
-    if node.close:
-        cu.splines[0].use_cyclic_u = True
+    # ---------------
+    if node.selected_mode == 'Multi':
+        verts = [verts]
+        radii = [radii]
+        twist = [twist]
 
-    if node.bspline:
-        polyline.order_u = len(polyline.points)-1
+    for idx, (VERTS, RADII, TWIST) in enumerate(zip(verts, radii, twist)):
+
+        full_flat = []
+        for v in VERTS:
+            full_flat.extend([v[0], v[1], v[2], 1.0])
+
+        polyline = cu.splines.new(kind)
+        polyline.points.add(len(VERTS)-1)
+        polyline.points.foreach_set('co', full_flat)
+
+        if radii:
+            fullList(RADII, len(VERTS))
+            polyline.points.foreach_set('radius', RADII)
+
+        if twist:
+            fullList(TWIST, len(VERTS))
+            polyline.points.foreach_set('tilt', TWIST)
+            
+        if node.close:
+            cu.splines[idx].use_cyclic_u = True
+
+        if node.bspline:
+            polyline.order_u = len(polyline.points)-1
+
 
     obj.show_wire = node.show_wire
-
     return obj
 
 
@@ -337,7 +345,7 @@ class SvPolylineViewerNodeMK1(bpy.types.Node, SverchCustomTreeNode):
                 new_obj = make_curve_geometry(obj_index, self, Verts, matrix, mradii[obj_index], mtwist[obj_index])
                 out_objects.append(new_obj)
             else:
-                mverts = premultiply(mverts, mmatrices)
+                mverts = [multiply_vectors(*vm) for vm in zip(mverts, mmatrices)]
                 new_obj = make_curve_geometry(0, self, mverts, [], mradii, mtwist)
                 out_objects.append(new_obj)
                 break

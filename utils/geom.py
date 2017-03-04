@@ -567,3 +567,17 @@ class LinearSpline:
         for i in range(3):
             out[i] = np.interp(t_in, tknots, ptsT[i])
         return out.T
+
+
+def multiply_vectors(M, vlist):
+    # (4*4 matrix)  X   (3*1 vector)
+
+    for i, v in enumerate(vlist):
+        # write _in place_
+        vlist[i] = (
+            M[0][0]*v[0] + M[0][1]*v[1] + M[0][2]*v[2] + M[0][3]* 1.0,
+            M[1][0]*v[0] + M[1][1]*v[1] + M[1][2]*v[2] + M[1][3]* 1.0, 
+            M[2][0]*v[0] + M[2][1]*v[1] + M[2][2]*v[2] + M[2][3]* 1.0
+        )
+
+    return vlist
