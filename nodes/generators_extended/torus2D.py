@@ -25,14 +25,14 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat
 
 
-def torus_verts(R, r, N1, N2, p, Separate):
+def torus_verts(Separate, R, r, N1, N2, p):
     '''
+        Separate : separate vertices into radial section lists
         R   : major radius
         r   : minor radius
         N1  : major sections - number of RADIAL sections
         N2  : minor sections - number of CIRCULAR sections
         p   : radial section phase
-        Separate : separate the radial sections into separate vertex lists
     '''
     listVerts = []
 
@@ -244,7 +244,7 @@ class SvTorus2DNode(bpy.types.Node, SverchCustomTreeNode):
             if not s.is_linked:
                 continue
             if s == V:
-                s.sv_set([f(R, r, n1, n2, p, self.Separate) for R, r, n1, n2, p in zip(*params)])
+                s.sv_set([f(self.Separate, *args) for args in zip(*params)])
             else:
                 s.sv_set([f(n1, n2) for _, _, n1, n2, _ in zip(*params)])
 
