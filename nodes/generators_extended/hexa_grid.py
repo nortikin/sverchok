@@ -50,8 +50,8 @@ def get_hexagon_grid(r, level, center):
     cy = num * dy / 2 if center else 0
 
     grid_values = []
-    grid_x = 0
-    grid_y = 0
+    grid_x = 0.0
+    grid_y = 0.0
 
     for i in range(numX):
         grid_y = - (numY[i] - numY[0]) * dy / 2
@@ -73,11 +73,11 @@ def get_diamond_grid(r, level, center):
     numY = list(map(lambda x: num - abs(num - x) + 1, range(numX)))
 
     cx = num * dx if center else 0
-    cy = 0
+    cy = 0.0
 
     grid_values = []
-    grid_x = 0
-    grid_y = 0
+    grid_x = 0.0
+    grid_y = 0.0
 
     for i in range(numX):
         grid_y = - (numY[i] - 1) * dy / 2
@@ -97,11 +97,11 @@ def get_triangle_grid(r, level, center):
     num = level
 
     cx = (num - 1) * r if center else 0
-    cy = 0
+    cy = 0.0
 
     grid_values = []
-    grid_x = 0
-    grid_y = 0
+    grid_x = 0.0
+    grid_y = 0.0
 
     for i in range(num):
         grid_y = -int((i + 1) / 2) * dy
@@ -123,8 +123,8 @@ def get_rectangle_grid(r, numx, numy, center):
     cy = (numy - 1.0 + 0.5 * (numx > 1)) * dy / 2 if center else 0
 
     grid_values = []
-    grid_x = 0
-    grid_y = 0
+    grid_x = 0.0
+    grid_y = 0.0
 
     for i in range(numx):
         grid_y = dy / 2 if (i % 2 != 0) else 0
@@ -140,21 +140,33 @@ def get_rectangle_grid(r, numx, numy, center):
 def generate_tiles(radius, angle, join, gridList):
     verts, edges, polys = circle(radius, radians(angle), 6, None, 'pydata')
 
-    vertList = []
-    edgeList = []
-    polyList = []
+    # print("tiles gridList:", gridList)
+    vertList2 = []
+    edgeList2 = []
+    polyList2 = []
     for grid in gridList:
-        for cx, cy, cz in grid:
-            verts2 = [(x + cx, y + cy, z + cz) for x, y, z in verts]
+        # print("next grid:", grid)
+        vertList = []
+        edgeList = []
+        polyList = []
+        for cx, cy, _ in grid:
+            # print("coords cx,cy = ", cx, cy)
+            verts2 = [(x + cx, y + cy, 0.0) for x, y, _ in verts]
             vertList.append(verts2)
             edgeList.append(edges)
             polyList.append(polys)
+        if join:
+            vertList, edgeList, polyList = mesh_join(vertList, edgeList, polyList)
+        vertList2.append(vertList)
+        edgeList2.append(edgeList)
+        polyList2.append(polyList)
+        # vertList, edgeList, polyList = [vertList], [edgeList], [polyList]
 
-    if join:
-        vertList, edgeList, polyList = mesh_join(vertList, edgeList, polyList)
-        vertList, edgeList, polyList = [vertList], [edgeList], [polyList]
+    # if join:
+    #     vertList, edgeList, polyList = mesh_join(vertList, edgeList, polyList)
+    #     vertList, edgeList, polyList = [vertList], [edgeList], [polyList]
 
-    return vertList, edgeList, polyList
+    return vertList2, edgeList2, polyList2
 
 
 class SvHexaGridNode(bpy.types.Node, SverchCustomTreeNode):
@@ -164,23 +176,7 @@ class SvHexaGridNode(bpy.types.Node, SverchCustomTreeNode):
     sv_icon = 'SV_HEXA_GRID'
 
     def update_type(self, context):
-        if self.gridType == "RECTANGLE":
-            self.inputs["Level"].hide = True
-            self.inputs["NumX"].hide = False
-            self.inputs["NumY"].hide = False
-        elif self.gridType == "TRIANGLE":
-            self.inputs["Level"].hide = False
-            self.inputs["NumX"].hide = True
-            self.inputs["NumY"].hide = True
-        elif self.gridType == "DIAMOND":
-            self.inputs["Level"].hide = False
-            self.inputs["NumX"].hide = True
-            self.inputs["NumY"].hide = True
-        elif self.gridType == "HEXAGON":
-            self.inputs["Level"].hide = False
-            self.inputs["NumX"].hide = True
-            self.inputs["NumY"].hide = True
-
+        self.update_sockets()
         updateNode(self, context)
 
     gridType = EnumProperty(
@@ -244,6 +240,25 @@ class SvHexaGridNode(bpy.types.Node, SverchCustomTreeNode):
 
         self.update_type(context)
 
+    def update_sockets(self):
+        inputs = self.inputs
+        named_sockets = ['NumX', 'NumY']
+
+        if self.gridType == "RECTANGLE":
+            if "Level" in inputs:
+                inputs.remove(inputs["Level"])
+            if not "NumX" in inputs:
+                inputs.new("StringsSocket", "NumX").prop_name = "numx"
+            if not "NumY" in inputs:
+                inputs.new("StringsSocket", "NumY").prop_name = "numy"
+
+        elif self.gridType in {"TRIANGLE", "DIAMOND", "HEXAGON"}:
+            if not "Level" in inputs:
+                inputs.new("StringsSocket", "Level").prop_name = "level"
+            for socket_name in named_sockets:
+                if socket_name in inputs:
+                    inputs.remove(inputs[socket_name])
+
     def draw_buttons(self, context, layout):
         layout.prop(self, 'gridType', expand=False)
         row = layout.row(align=True)
@@ -256,11 +271,12 @@ class SvHexaGridNode(bpy.types.Node, SverchCustomTreeNode):
             return
 
         # input values lists
-        input_level = self.inputs["Level"].sv_get()[0]
-        input_numx = self.inputs["NumX"].sv_get()[0]
-        input_numy = self.inputs["NumY"].sv_get()[0]
-        input_radius = self.inputs["Radius"].sv_get()[0]
-        input_scale = self.inputs["Scale"].sv_get()[0]
+        inputs = self.inputs
+        input_level = inputs["Level"].sv_get()[0] if "Level" in inputs else [0]
+        input_numx = inputs["NumX"].sv_get()[0] if "NumX" in inputs else [1]
+        input_numy = inputs["NumY"].sv_get()[0] if "NumY" in inputs else [1]
+        input_radius = inputs["Radius"].sv_get()[0]
+        input_scale = inputs["Scale"].sv_get()[0]
 
         # sanitize the input values
         input_level = list(map(lambda x: max(1, x), input_level))
@@ -270,40 +286,56 @@ class SvHexaGridNode(bpy.types.Node, SverchCustomTreeNode):
         input_scale = list(map(lambda x: max(0, x), input_scale))
 
         gridList = []
-        if any(s.is_linked for s in self.outputs):
 
-            if self.gridType == "RECTANGLE":
-                parameters = match_long_repeat([input_numx, input_numy, input_radius])
-                for nx, ny, r in zip(*parameters):
-                    grid = get_rectangle_grid(r, nx, ny, self.center)
-                    gridList.append(grid)
+        if self.gridType == "RECTANGLE":
+            parameters = match_long_repeat([input_numx, input_numy, input_radius])
+            for nx, ny, r in zip(*parameters):
+                grid = get_rectangle_grid(r, nx, ny, self.center)
+                gridList.append(grid)
 
-            elif self.gridType == "TRIANGLE":
-                parameters = match_long_repeat([input_level, input_radius])
-                for n, r in zip(*parameters):
-                    grid = get_triangle_grid(r, n, self.center)
-                    gridList.append(grid)
+        elif self.gridType == "TRIANGLE":
+            parameters = match_long_repeat([input_level, input_radius])
+            for n, r in zip(*parameters):
+                grid = get_triangle_grid(r, n, self.center)
+                gridList.append(grid)
 
-            if self.gridType == "DIAMOND":
-                parameters = match_long_repeat([input_level, input_radius])
-                for n, r in zip(*parameters):
-                    grid = get_diamond_grid(r, n, self.center)
-                    gridList.append(grid)
+        if self.gridType == "DIAMOND":
+            parameters = match_long_repeat([input_level, input_radius])
+            print("diamond params: ", *parameters)
+            for n, r in zip(*parameters):
+                grid = get_diamond_grid(r, n, self.center)
+                gridList.append(grid)
 
-            elif self.gridType == "HEXAGON":
-                parameters = match_long_repeat([input_level, input_radius])
-                for n, r in zip(*parameters):
-                    grid = get_hexagon_grid(r, n, self.center)
-                    gridList.append(grid)
+        elif self.gridType == "HEXAGON":
+            parameters = match_long_repeat([input_level, input_radius])
+            for n, r in zip(*parameters):
+                grid = get_hexagon_grid(r, n, self.center)
+                gridList.append(grid)
 
-            self.outputs['Centers'].sv_set(gridList)
+        self.outputs['Centers'].sv_set(gridList)
 
+        # print("Levels: ", input_level)
+        # print("gridList: ", gridList)
         radius = self.radius * self.scale
         verts = []
         edges = []
         polys = []
         if self.outputs['Vertices'].is_linked or self.outputs['Edges'].is_linked or self.outputs['Polygons'].is_linked:
-            verts, edges, polys = generate_tiles(radius, self.angle, self.join, gridList)
+            # print("grid list len ", len(gridList))
+            vertList = []
+            edgeList = []
+            polyList = []
+            param2 = match_long_repeat([input_radius, input_scale, gridList])
+            for r, s, grid in zip(*param2):
+                # print("vectorized grid: ", grid)
+                radius = r * s
+                verts, edges, polys = generate_tiles(radius, self.angle, self.join, [grid])
+                vertList.append(verts)
+                edgeList.append(edges)
+                polyList.append(polys)
+            verts = vertList
+            edges = edgeList
+            polys = polyList
 
         self.outputs['Vertices'].sv_set(verts)
         self.outputs['Edges'].sv_set(edges)
