@@ -345,7 +345,7 @@ class SvPolylineViewerNodeMK1(bpy.types.Node, SverchCustomTreeNode):
                 new_obj = make_curve_geometry(obj_index, self, Verts, matrix, mradii[obj_index], mtwist[obj_index])
                 out_objects.append(new_obj)
             else:
-                mverts = [multiply_vectors(*vm) for vm in zip(mverts, mmatrices)]
+                mverts = [multiply_vectors(*mv) for mv in zip(mmatrices, mverts)]
                 new_obj = make_curve_geometry(0, self, mverts, [], mradii, mtwist)
                 out_objects.append(new_obj)
                 break
