@@ -95,7 +95,6 @@ def torus_polygons(N1, N2):
 
     for n2 in range(N2 - 1):
         listPolys.append([N2 * (N1 - 1) + n2, n2, n2 + 1, N2 * (N1 - 1) + n2 + 1])
-    listPolys.append([N2 * (N1 - 1) + N2 - 1, N2 - 1, 0, N2 * (N1 - 1)])
 
     return listPolys
 
@@ -240,8 +239,7 @@ class SvTorus2DNode(bpy.types.Node, SverchCustomTreeNode):
         parameters = match_long_repeat([input_R, input_r, input_n1, input_n2, input_rp])
 
         V, E, P = [self.outputs[n] for n in ['Vertices', 'Edges', 'Polygons']]
-        fv, fe, fp = torus_verts, torus_edges, torus_polygons
-        for s, f in [(V, fv), (E, fe), (P, fp)]:
+        for s, f in [(V, torus_verts), (E, torus_edges), (P, torus_polygons)]:
             if s.is_linked:
                 s.sv_set([f(n1, n2) if s != V else f(R, r, n1, n2, p, self.Separate)
                           for R, r, n1, n2, p in zip(*parameters)])
