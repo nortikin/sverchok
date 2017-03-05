@@ -23,6 +23,7 @@
     SvBricksNode
     ImageNode
     SvTorusNode
+    SvMeshEvalNode
 
 ## Generators Extended
     SvBoxRoundedNode
