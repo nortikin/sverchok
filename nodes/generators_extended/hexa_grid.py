@@ -31,7 +31,7 @@ from sverchok.utils.sv_mesh_utils import mesh_join
 
 DEBUG = False
 
-gridTypeItems = [
+gridLayoutItems = [
     ("RECTANGLE", "Rectangle", "", custom_icon("SV_HEXA_GRID_RECTANGLE"), 0),
     ("TRIANGLE", "Triangle", "", custom_icon("SV_HEXA_GRID_TRIANGLE"), 1),
     ("DIAMOND", "Diamond", "", custom_icon("SV_HEXA_GRID_DIAMOND"), 2),
@@ -118,17 +118,17 @@ class SvHexaGridNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Hexa Grid'
     sv_icon = 'SV_HEXA_GRID'
 
-    def update_type(self, context):
+    def update_layout(self, context):
         self.update_sockets()
         updateNode(self, context)
 
-    gridType = EnumProperty(
-        name="Type",
-        default="RECTANGLE", items=gridTypeItems,
-        update=update_type)
+    gridLayout = EnumProperty(
+        name="Layout",
+        default="RECTANGLE", items=gridLayoutItems,
+        update=update_layout)
 
     level = IntProperty(
-        name="Level", description="Number of levels in non rectangular patterns",
+        name="Level", description="Number of levels in non rectangular layouts",
         default=3, min=1, soft_min=1,
         update=updateNode)
 
@@ -181,13 +181,13 @@ class SvHexaGridNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('StringsSocket', "Edges")
         self.outputs.new('StringsSocket', "Polygons")
 
-        self.update_type(context)
+        self.update_layout(context)
 
     def update_sockets(self):
         inputs = self.inputs
         named_sockets = ['NumX', 'NumY']
 
-        if self.gridType == "RECTANGLE":
+        if self.gridLayout == "RECTANGLE":
             if "Level" in inputs:
                 inputs.remove(inputs["Level"])
             if not "NumX" in inputs:
@@ -195,7 +195,7 @@ class SvHexaGridNode(bpy.types.Node, SverchCustomTreeNode):
             if not "NumY" in inputs:
                 inputs.new("StringsSocket", "NumY").prop_name = "numy"
 
-        elif self.gridType in {"TRIANGLE", "DIAMOND", "HEXAGON"}:
+        elif self.gridLayout in {"TRIANGLE", "DIAMOND", "HEXAGON"}:
             if not "Level" in inputs:
                 inputs.new("StringsSocket", "Level").prop_name = "level"
             for socket_name in named_sockets:
@@ -203,7 +203,7 @@ class SvHexaGridNode(bpy.types.Node, SverchCustomTreeNode):
                     inputs.remove(inputs[socket_name])
 
     def draw_buttons(self, context, layout):
-        layout.prop(self, 'gridType', expand=False)
+        layout.prop(self, 'gridLayout', expand=False)
         row = layout.row(align=True)
         row.prop(self, 'join')
         row.prop(self, 'center')
@@ -230,12 +230,12 @@ class SvHexaGridNode(bpy.types.Node, SverchCustomTreeNode):
 
         # generate the vectorized grids
         paramLists = []
-        if self.gridType == 'RECTANGLE':
+        if self.gridLayout == 'RECTANGLE':
             paramLists.extend([input_radius, input_numx, input_numy])
         else:  # TRIANGLE, DIAMOND HEXAGON layouts
             paramLists.extend([input_radius, input_level])
         params = match_long_repeat(paramLists)
-        gridList = [generate_grid(self.center, self.gridType, args) for args in zip(*params)]
+        gridList = [generate_grid(self.center, self.gridLayout, args) for args in zip(*params)]
         self.outputs['Centers'].sv_set(gridList)
 
         # generate the vectorized tiles
