@@ -16,14 +16,8 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-import itertools
-
 import bpy
-from bpy.props import (
-    BoolProperty,
-    StringProperty,
-    FloatProperty,
-    IntProperty)
+from bpy.props import (BoolProperty, StringProperty, FloatProperty, IntProperty)
 
 from mathutils import Matrix, Vector
 
@@ -33,15 +27,11 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import dataCorrect, fullList, updateNode
 
 from sverchok.utils.sv_viewer_utils import (
-    matrix_sanitizer,
-    remove_non_updated_objects,
-    get_children,
-    natural_plus_one,
-    get_random_init,
-    greek_alphabet)
+    matrix_sanitizer, remove_non_updated_objects, get_children,
+    natural_plus_one, get_random_init, greek_alphabet)
 
-# -- POLYLINE --
-def live_curve(obj_index, node, verts, radii, twist):
+
+def get_obj_curve(obj_index, node):
     curves = bpy.data.curves
     objects = bpy.data.objects
     scene = bpy.context.scene
@@ -65,11 +55,10 @@ def live_curve(obj_index, node, verts, radii, twist):
     if cu.splines:
         cu.splines.clear()
 
-    cu.bevel_depth = node.depth
-    cu.bevel_resolution = node.resolution
-    cu.dimensions = '3D'
-    cu.fill_mode = 'FULL'
+    return obj, cu
 
+
+def set_bevel_object(node, cu, obj_index):
     # use bevel object if provided
     bevel_objs = node.inputs['bevel object'].sv_get(default=[])
     if bevel_objs:
@@ -79,9 +68,21 @@ def live_curve(obj_index, node, verts, radii, twist):
             cu.use_fill_caps = node.caps
     else:
         cu.bevel_object = None
-        cu.use_fill_caps = False
+        cu.use_fill_caps = False    
 
-    # each spline has a default first coordinate but we need two.
+
+# -- POLYLINE --
+def live_curve(obj_index, node, verts, radii, twist):
+
+    obj, cu = get_obj_curve(obj_index, node)
+
+    cu.bevel_depth = node.depth
+    cu.bevel_resolution = node.resolution
+    cu.dimensions = '3D'
+    cu.fill_mode = 'FULL'
+
+    set_bevel_object(node, cu, obj_index)
+
     kind = ["POLY", "NURBS"][bool(node.bspline)]
 
     if node.selected_mode == 'Multi':
