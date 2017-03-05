@@ -283,7 +283,7 @@ class SvPolylineViewerNodeMK1(bpy.types.Node, SverchCustomTreeNode):
         row.operator(sh, text='+Material').fn_name = 'add_material'
 
 
-    def get_geometry_from_sockets(self):
+    def get_geometry_from_sockets(self, has_matrices):
         
         def get(socket_name):
             data = self.inputs[socket_name].sv_get(default=[])
@@ -295,10 +295,10 @@ class SvPolylineViewerNodeMK1(bpy.types.Node, SverchCustomTreeNode):
         mmtrix = get('matrix')
 
         # extend all non empty lists to longest of these
-        maxlen = max(len(mverts), len(mmatrices))
+        maxlen = max(len(mverts), len(mmtrix))
         if has_matrices:
             fullList(mverts, maxlen)
-            fullList(mmatrices, maxlen)
+            fullList(mmtrix, maxlen)
 
         if mradii:
             fullList(mradii, maxlen)
@@ -313,7 +313,7 @@ class SvPolylineViewerNodeMK1(bpy.types.Node, SverchCustomTreeNode):
             return
 
         has_matrices = self.inputs['matrix'].is_linked
-        mverts, mradii, mtwist, mmatrices = self.get_geometry_from_sockets()
+        mverts, mradii, mtwist, mmatrices = self.get_geometry_from_sockets(has_matrices)
 
         out_objects = []
         for obj_index, Verts in enumerate(mverts):
