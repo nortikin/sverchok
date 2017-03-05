@@ -112,38 +112,37 @@ def simple_screen(x, y, args):
 
     def draw_texture(x=0, y=0, w=30, h=10, texname=texname):
         # function to draw a texture
-        bgl.glEnable(bgl.GL_DEPTH_TEST)
+        bgl.glDisable(bgl.GL_DEPTH_TEST)
 
-        bgl.glEnable(bgl.GL_SMOOTH)
-        bgl.glShadeModel(bgl.GL_SMOOTH)
-        bgl.glPolygonMode(bgl.GL_FRONT_AND_BACK, bgl.GL_FILL)
+        act_tex = bgl.Buffer(bgl.GL_INT, 1)
+        bgl.glGetIntegerv(bgl.GL_TEXTURE_2D, act_tex)
 
         bgl.glEnable(bgl.GL_TEXTURE_2D)
+        bgl.glActiveTexture(bgl.GL_TEXTURE0)
 
         bgl.glTexEnvf(bgl.GL_TEXTURE_ENV,
                       bgl.GL_TEXTURE_ENV_MODE,
-                      bgl.GL_ADD)
+                      bgl.GL_REPLACE)
 
         bgl.glBindTexture(bgl.GL_TEXTURE_2D, texname)
 
+        texco = [(0, 1), (1, 1), (1, 0), (0, 0)]
+        verco = [(x, y), (x + w, y), (x + w, y - h), (x, y - h)]
+
+        bgl.glPolygonMode(bgl.GL_FRONT_AND_BACK, bgl.GL_FILL)
+
         bgl.glBegin(bgl.GL_QUADS)
 
-        bgl.glTexCoord2d(0, 1)
-        bgl.glVertex2f(x, y)
-        bgl.glTexCoord2d(1, 1)
-        bgl.glVertex2f(x + w, y)
-        bgl.glTexCoord2d(1, 0)
-        bgl.glVertex2f(x + w, y - h)
-        bgl.glTexCoord2d(0, 0)
-        bgl.glVertex2f(x, y - h)
+        for i in range(4):
+            bgl.glTexCoord3f(texco[i][0], texco[i][1], 0.0)
+            bgl.glVertex2f(verco[i][0], verco[i][1])
 
         bgl.glEnd()
 
-        bgl.glDisable(bgl.GL_TEXTURE_2D)
-        bgl.glDisable(bgl.GL_DEPTH_TEST)
-        bgl.glDisable(bgl.GL_SMOOTH)
+        # restoring settings
+        bgl.glBindTexture(bgl.GL_TEXTURE_2D, act_tex[0])
 
-        bgl.glFlush()
+        bgl.glDisable(bgl.GL_TEXTURE_2D)
 
     draw_texture(x=x, y=y, w=width, h=height, texname=texname)
 
