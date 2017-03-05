@@ -333,18 +333,17 @@ class SvPolylineViewerNodeMK1(bpy.types.Node, SverchCustomTreeNode):
                 out_objects.append(new_obj)
                 break
 
+        # warning: uses possibly undefined index..
         remove_non_updated_objects(self, obj_index, kind='CURVE')
-        objs = get_children(self, kind='CURVE')
-
-        if bpy.data.materials.get(self.material):
-            self.set_corresponding_materials(objs)
+        self.set_corresponding_materials()
 
         self.outputs['object'].sv_set(out_objects)
 
 
-    def set_corresponding_materials(self, objs):
-        for obj in objs:
-            obj.active_material = bpy.data.materials[self.material]
+    def set_corresponding_materials(self):
+        if bpy.data.materials.get(self.material):
+            for obj in get_children(self, kind='CURVE'):
+                obj.active_material = bpy.data.materials[self.material]
 
 
 def register():
