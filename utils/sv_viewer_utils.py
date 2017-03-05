@@ -68,20 +68,24 @@ def get_random_init():
     return n + str(plus_one)
 
 
-def get_children(node):
-    objects = bpy.data.objects
-    objs = [obj for obj in objects if obj.type == 'MESH']
+def get_children(node, kind='MESH'):
     # critera, basename must be in object.keys and the value must be self.basemesh_name
+    objects = bpy.data.objects
+    objs = [obj for obj in objects if obj.type == kind]
     return [o for o in objs if o.get('basename') == node.basemesh_name]
 
 
-def remove_non_updated_objects(node, obj_index):
-    objs = get_children(node)
+def remove_non_updated_objects(node, obj_index, kind='MESH'):
+    objs = get_children(node, kind)
     objs = [obj.name for obj in objs if obj['idx'] > obj_index]
     if not objs:
         return
 
-    meshes = bpy.data.meshes
+    if kind == 'MESH':
+        kinds = bpy.data.meshes
+    elif kind == 'CURVE':
+        kinds = bpy.data.curves
+
     objects = bpy.data.objects
     scene = bpy.context.scene
 
@@ -94,4 +98,4 @@ def remove_non_updated_objects(node, obj_index):
 
     # delete associated meshes
     for object_name in objs:
-        meshes.remove(meshes[object_name])        
+        kinds.remove(kinds[object_name])        
