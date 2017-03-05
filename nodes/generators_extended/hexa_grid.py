@@ -38,103 +38,49 @@ gridTypeItems = [
     ("HEXAGON", "Hexagon", "", custom_icon("SV_HEXA_GRID_HEXAGON"), 3)]
 
 
-def hexagon_grid(center, r, level):
+def generate_grid(center, layout, settings):
+
+    r = settings[0]
     dx = r * 3 / 2
     dy = r * sqrt(3)
 
-    num = level - 1
-    numX = 2 * num + 1
-    numY = list(map(lambda x: 2 * num - abs(num - x) + 1, range(numX)))
+    '''
+    X : column index  : index of point column
+    Y : column height : number of points in each column
+    O : column offset : offset of the points in each column
+    C : grid center   : center of the grid
+    '''
+    if layout == "TRIANGLE":
+        _, level = settings
+        X = level
+        Y = range(1, X + 1)
+        O = range(X)
+        C = [(level - 1) * 2/3, 0.0]
+    elif layout == "HEXAGON":
+        _, level = settings
+        X = 2 * level - 1
+        Y = [X - abs(level - 1 - l) for l in range(X)]
+        O = [level - 1 - abs(level - 1 - l) for l in range(X)]
+        C = [level - 1, (level - 1) / 2]
+    elif layout == "DIAMOND":
+        _, level = settings
+        X = 2 * level - 1
+        Y = [level - abs(level - 1 - l) for l in range(X)]
+        O = [level - 1 - abs(level - 1 - l) for l in range(X)]
+        C = [level - 1, 0.0]
+    elif layout == "RECTANGLE":
+        _, numx, numy = settings
+        X = numx
+        Y = [numy] * numx
+        O = [l % 2 for l in range(X)]
+        C = [(numx - 1) / 2, (numy - 1.0 + 0.5 * (numx > 1)) / 2]
 
-    cx = num * dx if center else 0
-    cy = num * dy / 2 if center else 0
+    cx = C[0] * dx if center else 0
+    cy = C[1] * dy if center else 0
 
-    grid_values = []
-    grid_x = 0.0
-    grid_y = 0.0
+    grid = [(x * dx - cx, y * dy - O[x] * dy / 2 - cy, 0.0) for x in range(X) for y in range(Y[x])]
 
-    for i in range(numX):
-        grid_y = - (numY[i] - numY[0]) * dy / 2
-        for j in range(numY[i]):
-            grid_values.append((grid_x - cx, grid_y - cy, 0.0))
-            grid_y += dy
-
-        grid_x += dx
-
-    return grid_values
-
-
-def diamond_grid(center, r, level):
-    dx = r * 3 / 2
-    dy = r * sqrt(3)
-
-    num = level - 1
-    numX = 2 * num + 1
-    numY = list(map(lambda x: num - abs(num - x) + 1, range(numX)))
-
-    cx = num * dx if center else 0
-    cy = 0.0
-
-    grid_values = []
-    grid_x = 0.0
-    grid_y = 0.0
-
-    for i in range(numX):
-        grid_y = - (numY[i] - 1) * dy / 2
-        for j in range(numY[i]):
-            grid_values.append((grid_x - cx, grid_y - cy, 0.0))
-            grid_y += dy
-
-        grid_x += dx
-
-    return grid_values
-
-
-def triangle_grid(center, r, level):
-    dx = r * 3 / 2
-    dy = r * sqrt(3)
-
-    num = level
-
-    cx = (num - 1) * r if center else 0
-    cy = 0.0
-
-    grid_values = []
-    grid_x = 0.0
-    grid_y = 0.0
-
-    for i in range(num):
-        grid_y = -int((i + 1) / 2) * dy
-        grid_y += dy / 2 if (i % 2 != 0) else 0
-        for j in range(i + 1):
-            grid_values.append((grid_x - cx, grid_y - cy, 0.0))
-            grid_y += dy
-
-        grid_x += dx
-
-    return grid_values
-
-
-def rectangle_grid(center, r, numx, numy):
-    dx = r * 3 / 2
-    dy = r * sqrt(3)
-
-    cx = (numx - 1) * dx / 2 if center else 0
-    cy = (numy - 1.0 + 0.5 * (numx > 1)) * dy / 2 if center else 0
-
-    grid_values = []
-    grid_x = 0.0
-    grid_y = 0.0
-
-    for i in range(numx):
-        grid_y = dy / 2 if (i % 2 != 0) else 0
-        for j in range(numy):
-            grid_values.append((grid_x - cx, grid_y - cy, 0.0))
-            grid_y += dy
-
-        grid_x += dx
-
-    return grid_values
+    return grid
 
 
 def generate_tiles(radius, angle, join, gridList):
@@ -203,7 +149,7 @@ class SvHexaGridNode(bpy.types.Node, SverchCustomTreeNode):
 
     angle = FloatProperty(
         name="Angle", description="Angle to rotate the grid and tiles",
-        default=0.0, min=0.0, soft_min=0.0,
+        default=30.0, min=0.0, soft_min=0.0,
         update=updateNode)
 
     scale = FloatProperty(
@@ -221,20 +167,14 @@ class SvHexaGridNode(bpy.types.Node, SverchCustomTreeNode):
         default=False,
         update=updateNode)
 
-    gridFunctions = {
-        'TRIANGLE': triangle_grid,
-        'HEXAGON': hexagon_grid,
-        'DIAMOND': diamond_grid,
-        'RECTANGLE': rectangle_grid}
-
     def sv_init(self, context):
-        self.width = 180
-        self.inputs.new('StringsSocket', "Level").prop_name = 'level'
-        self.inputs.new('StringsSocket', "NumX").prop_name = 'numx'
-        self.inputs.new('StringsSocket', "NumY").prop_name = 'numy'
+        self.width = 170
         self.inputs.new('StringsSocket', "Radius").prop_name = 'radius'
         self.inputs.new('StringsSocket', "Scale").prop_name = 'scale'
         self.inputs.new('StringsSocket', "Angle").prop_name = 'angle'
+        self.inputs.new('StringsSocket', "Level").prop_name = 'level'
+        self.inputs.new('StringsSocket', "NumX").prop_name = 'numx'
+        self.inputs.new('StringsSocket', "NumY").prop_name = 'numy'
 
         self.outputs.new('VerticesSocket', "Centers")
         self.outputs.new('VerticesSocket', "Vertices")
@@ -295,8 +235,7 @@ class SvHexaGridNode(bpy.types.Node, SverchCustomTreeNode):
         else:  # TRIANGLE, DIAMOND HEXAGON layouts
             paramLists.extend([input_radius, input_level])
         params = match_long_repeat(paramLists)
-        gridFunction = self.gridFunctions[self.gridType]
-        gridList = [gridFunction(self.center, *args) for args in zip(*params)]
+        gridList = [generate_grid(self.center, self.gridType, args) for args in zip(*params)]
         self.outputs['Centers'].sv_set(gridList)
 
         # generate the vectorized tiles
@@ -307,7 +246,7 @@ class SvHexaGridNode(bpy.types.Node, SverchCustomTreeNode):
         if any(s.is_linked for s in [V, E, P]):
             params = match_long_repeat([input_radius, input_scale, gridList])
             for r, s, grid in zip(*params):
-                verts, edges, polys = generate_tiles(r*s, self.angle, self.join, [grid])
+                verts, edges, polys = generate_tiles(r * s, self.angle, self.join, [grid])
                 vertList.extend(verts)
                 edgeList.extend(edges)
                 polyList.extend(polys)
@@ -326,3 +265,4 @@ def unregister():
 
 if __name__ == '__main__':
     register()
+
