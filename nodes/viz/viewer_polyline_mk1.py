@@ -115,6 +115,8 @@ def live_curve(obj_index, node, verts, radii, twist):
         if node.bspline:
             polyline.order_u = len(polyline.points)-1
 
+        polyline.use_smooth = node.use_smooth
+
     return obj
 
 
@@ -206,6 +208,11 @@ class SvPolylineViewerNodeMK1(bpy.types.Node, SverchCustomTreeNode):
     twist = FloatProperty(default=0.0, update=updateNode)
     caps = BoolProperty(update=updateNode)
     show_wire = BoolProperty(update=updateNode)
+    use_smooth = BoolProperty(update=updateNode)
+
+
+    def copy(self, other):
+        self.basemesh_name = get_random_init()
 
     def sv_init(self, context):
         gai = bpy.context.scene.SvGreekAlphabet_index
@@ -266,8 +273,10 @@ class SvPolylineViewerNodeMK1(bpy.types.Node, SverchCustomTreeNode):
         row.prop(self, 'close', text='close', toggle=True)
         if self.inputs['bevel object'].sv_get(default=[]):
             row.prop(self, 'caps', text='caps', toggle=True)
-        row = col.row()
-        row.prop(self, 'show_wire', text='show wires')
+        row = col.row(align=True)
+        row.prop(self, 'show_wire', text='wire', toggle=True)
+        row.prop(self, 'use_smooth', text='smooth', toggle=True)
+        row.separator()
         row.prop(self, 'selected_mode', expand=True)
 
 
