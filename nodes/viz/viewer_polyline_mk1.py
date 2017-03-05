@@ -142,9 +142,7 @@ class SvPolylineViewOpMK1(bpy.types.Operator):
 
     def dispatch(self, context, type_op):
         n = context.node
-
-        child = lambda obj: obj.type == "CURVE" and obj.get('basename') == n.basemesh_name
-        objs = list(filter(child, bpy.data.objects))
+        objs = get_children(n, kind='CURVE')
 
         # find a simpler way to do this :)
         if type_op in {'hide', 'hide_render', 'hide_select', 'select'}:
