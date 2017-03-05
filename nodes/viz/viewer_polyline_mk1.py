@@ -76,6 +76,7 @@ def live_curve(obj_index, node, verts, radii, twist):
 
     obj, cu = get_obj_curve(obj_index, node)
 
+    obj.show_wire = node.show_wire
     cu.bevel_depth = node.depth
     cu.bevel_resolution = node.resolution
     cu.dimensions = '3D'
@@ -114,8 +115,6 @@ def live_curve(obj_index, node, verts, radii, twist):
         if node.bspline:
             polyline.order_u = len(polyline.points)-1
 
-
-    obj.show_wire = node.show_wire
     return obj
 
 
