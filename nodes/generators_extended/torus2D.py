@@ -19,7 +19,7 @@
 import bpy
 from bpy.props import IntProperty, FloatProperty, BoolProperty, EnumProperty
 
-from math import sin, cos, pi
+from math import sin, cos, pi, radians
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat
@@ -177,7 +177,7 @@ class SvTorus2DNode(bpy.types.Node, SverchCustomTreeNode):
 
     # TORUS Phase Options
     torus_rP = FloatProperty(
-        name="Phase", description="Phase of the radial sections (in radians)",
+        name="Phase", description="Phase of the radial sections (in degrees)",
         default=0.0, min=0.0, soft_min=0.0,
         update=updateNode)
 
@@ -225,6 +225,7 @@ class SvTorus2DNode(bpy.types.Node, SverchCustomTreeNode):
         input_rr = list(map(lambda x: max(0, x), input_rr))
         input_n1 = list(map(lambda x: max(3, int(x)), input_n1))
         input_n2 = list(map(lambda x: max(2, int(x)), input_n2))
+        input_rp = list(map(lambda x: radians(x), input_rp))
 
         # convert input radii values to MAJOR/MINOR, based on selected mode
         if self.mode == 'EXT_INT':
