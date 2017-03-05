@@ -293,29 +293,8 @@ class SvPolylineViewerNodeMK1(bpy.types.Node, SverchCustomTreeNode):
         mradii = self.inputs['radii'].sv_get(deepcopy=False)
         mtwist = self.inputs['twist'].sv_get(deepcopy=False)
         mmtrix = get('matrix')
-        return mverts, mradii, mtwist, mmtrix
 
-
-    def get_structure(self, stype, sindex):
-        if not stype:
-            return []
-
-        try:
-            j = stype[sindex]
-        except IndexError:
-            j = []
-        finally:
-            return j
-
-
-    def process(self):
-        if not (self.inputs['vertices'].is_linked):
-            return
-
-        has_matrices = self.inputs['matrix'].is_linked
-        mverts, mradii, mtwist, mmatrices = self.get_geometry_from_sockets()
-
-        # extend all non empty lists to longest of mverts or *mrest
+        # extend all non empty lists to longest of these
         maxlen = max(len(mverts), len(mmatrices))
         if has_matrices:
             fullList(mverts, maxlen)
@@ -326,19 +305,26 @@ class SvPolylineViewerNodeMK1(bpy.types.Node, SverchCustomTreeNode):
         if mtwist:
             fullList(mtwist, maxlen)
 
-        out_objects = []
+        return mverts, mradii, mtwist, mmtrix
 
+
+    def process(self):
+        if not (self.inputs['vertices'].is_linked):
+            return
+
+        has_matrices = self.inputs['matrix'].is_linked
+        mverts, mradii, mtwist, mmatrices = self.get_geometry_from_sockets()
+
+        out_objects = []
         for obj_index, Verts in enumerate(mverts):
             if not Verts:
                 continue
 
-            if has_matrices:
-                matrix = mmatrices[obj_index]
-            else:
-                matrix = []
+            matrix = mmatrices[obj_index] if has_matrices else []
 
             if self.selected_mode == 'Multi':
-                new_obj = make_curve_geometry(obj_index, self, Verts, matrix, mradii[obj_index], mtwist[obj_index])
+                curve_args = obj_index, self, Verts, matrix, mradii[obj_index], mtwist[obj_index]
+                new_obj = make_curve_geometry(*curve_args)
                 out_objects.append(new_obj)
             else:
                 if matrix:
@@ -346,7 +332,6 @@ class SvPolylineViewerNodeMK1(bpy.types.Node, SverchCustomTreeNode):
                 new_obj = make_curve_geometry(0, self, mverts, [], mradii, mtwist)
                 out_objects.append(new_obj)
                 break
-
 
         remove_non_updated_objects(self, obj_index, kind='CURVE')
         objs = get_children(self, kind='CURVE')
