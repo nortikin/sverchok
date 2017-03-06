@@ -284,6 +284,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
 
             if hasattr(self, 'inject_params'):
                 if self.inject_params:
+                    # locals().update({'parameters': [locals().get(i.name) i in self.inputs ]})
                     parameters = eval("[" + ", ".join([i.name for i in self.inputs]) + "]")
 
             exec(self.script_str, locals(), locals())
