@@ -273,7 +273,8 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
 
 
     def process_script(self):
-        locals().update(self.make_new_locals())
+        __local__dict__ = self.make_new_locals()
+        locals().update(__local__dict__)
         locals().update({'vectorize': vectorize})
         locals().update({'bpy': bpy})
 
@@ -284,8 +285,8 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
 
             if hasattr(self, 'inject_params'):
                 if self.inject_params:
-                    # locals().update({'parameters': [locals().get(i.name) i in self.inputs ]})
-                    parameters = eval("[" + ", ".join([i.name for i in self.inputs]) + "]")
+                    locals().update({'parameters': [__local__dict__.get(s.name) for s in self.inputs]})
+
 
             exec(self.script_str, locals(), locals())
             for idx, _socket in enumerate(self.outputs):
