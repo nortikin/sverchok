@@ -121,6 +121,9 @@ def parse_sockets(node):
             if file:
                 snlite_info['includes'][filename] = file.as_string()
 
+        elif L in {'fh', 'filehandler'}:
+            snlite_info['display_file_handler'] = True
+
     return snlite_info
 
 

@@ -114,6 +114,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
     )
 
     inject_params = BoolProperty()
+    user_filename = StringProperty(update=updateNode)
 
     def draw_label(self):
         if self.script_name:
@@ -273,6 +274,10 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
     def process_script(self):
         locals().update(self.make_new_locals())
         locals().update({'vectorize': vectorize})
+        locals().update({'bpy': bpy})
+
+        for output in self.outputs:
+            locals().update({output.name: []})
 
         try:
 
@@ -309,9 +314,16 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
         if not tk or not tk.get('sockets'):
             return
 
-        socket_info = tk['sockets']
-        if socket_info:
-            f = socket_info.get('drawfunc')
+        snlite_info = tk['sockets']
+        if snlite_info:
+
+            # snlite supplied custom file handler solution
+            fh = snlite_info.get('display_file_handler')
+            if fh:
+                layout.prop_search(self, 'user_filename', bpy.data, 'texts', text='filename')
+
+            # user supplied custom draw function
+            f = snlite_info.get('drawfunc')
             if f:
                 f(self, context, layout)
 
