@@ -156,12 +156,12 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
                 if isinstance(dval, float):
                     s.prop_type = "float_list"
                     s.prop_index = idx
-                    self.float_list[idx] = dval
+                    self.float_list[idx] = self.float_list[idx] or dval  # pick up current if not zero
 
                 elif isinstance(dval, int):
                     s.prop_type = "int_list"
                     s.prop_index = idx
-                    self.int_list[idx] = dval
+                    self.int_list[idx] = self.int_list[idx] or dval
         except:
             print('some failure in the add_props_to_sockets function. ouch.')
 
@@ -203,6 +203,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
 
 
     def load(self):
+        ''' ----- '''
         if not self.script_name:
             return
 
@@ -262,7 +263,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
                 val = sock_desc[2]
                 if isinstance(val, (int, float)):
                     # extra pussyfooting for the load sequence.
-                    t = s.sv_get(default=[[val]])
+                    t = s.sv_get()
                     if t and t[0] and t[0][0]:
                         val = t[0][0]
 
@@ -272,7 +273,8 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
 
 
     def process_script(self):
-        locals().update(self.make_new_locals())
+        __local__dict__ = self.make_new_locals()
+        locals().update(__local__dict__)
         locals().update({'vectorize': vectorize})
         locals().update({'bpy': bpy})
 
@@ -283,7 +285,8 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
 
             if hasattr(self, 'inject_params'):
                 if self.inject_params:
-                    parameters = eval("[" + ", ".join([i.name for i in self.inputs]) + "]")
+                    locals().update({'parameters': [__local__dict__.get(s.name) for s in self.inputs]})
+
 
             exec(self.script_str, locals(), locals())
             for idx, _socket in enumerate(self.outputs):
