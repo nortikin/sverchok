@@ -203,6 +203,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
 
 
     def load(self):
+        ''' ----- '''
         if not self.script_name:
             return
 
