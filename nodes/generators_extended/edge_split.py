@@ -83,25 +83,33 @@ class SvEdgeSplitNode(bpy.types.Node, SverchCustomTreeNode):
             v0 = vertList[i0]
             v1 = vertList[i1]
 
-            vx = v0[0] * (1 - f) + v1[0] * f
-            vy = v0[1] * (1 - f) + v1[1] * f
-            vz = v0[2] * (1 - f) + v1[2] * f
-            va = [vx, vy, vz]
-            newVerts.append(va)
-
             if self.mirror:
+                f = f/2
+
+                vx = v0[0] * (1 - f) + v1[0] * f
+                vy = v0[1] * (1 - f) + v1[1] * f
+                vz = v0[2] * (1 - f) + v1[2] * f
+                va = [vx, vy, vz]
+                newVerts.append(va)
+
                 vx = v0[0] * f + v1[0] * (1 - f)
                 vy = v0[1] * f + v1[1] * (1 - f)
                 vz = v0[2] * f + v1[2] * (1 - f)
                 vb = [vx, vy, vz]
                 newVerts.append(vb)
 
-            if self.mirror:
                 newEdges.append([i0, offset + i])  # v0 - va
                 newEdges.append([offset + i, offset + i + 1])  # va - vb
                 newEdges.append([offset + i + 1, i1])  # vb - v1
                 i = i + 2
+
             else:
+                vx = v0[0] * (1 - f) + v1[0] * f
+                vy = v0[1] * (1 - f) + v1[1] * f
+                vz = v0[2] * (1 - f) + v1[2] * f
+                va = [vx, vy, vz]
+                newVerts.append(va)
+
                 newEdges.append([i0, offset + i])  # v0 - va
                 newEdges.append([offset + i, i1])  # va - v1
                 i = i + 1
