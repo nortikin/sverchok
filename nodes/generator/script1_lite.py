@@ -156,12 +156,12 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
                 if isinstance(dval, float):
                     s.prop_type = "float_list"
                     s.prop_index = idx
-                    self.float_list[idx] = dval
+                    self.float_list[idx] = self.float_list[idx] or dval  # pick up current if not zero
 
                 elif isinstance(dval, int):
                     s.prop_type = "int_list"
                     s.prop_index = idx
-                    self.int_list[idx] = dval
+                    self.int_list[idx] = self.int_list[idx] or dval
         except:
             print('some failure in the add_props_to_sockets function. ouch.')
 
@@ -263,7 +263,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
                 val = sock_desc[2]
                 if isinstance(val, (int, float)):
                     # extra pussyfooting for the load sequence.
-                    t = s.sv_get(default=[[val]])
+                    t = s.sv_get()
                     if t and t[0] and t[0][0]:
                         val = t[0][0]
 
