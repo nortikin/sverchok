@@ -320,7 +320,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
             # snlite supplied custom file handler solution
             fh = snlite_info.get('display_file_handler')
             if fh:
-                layout.prop_search(self, 'user_filename', bpy.data, 'texts')
+                layout.prop_search(self, 'user_filename', bpy.data, 'texts', text='filename')
 
             # user supplied custom draw function
             f = snlite_info.get('drawfunc')
