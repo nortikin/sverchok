@@ -208,7 +208,7 @@ class SvPolylineViewerNodeMK1(bpy.types.Node, SverchCustomTreeNode):
     twist = FloatProperty(default=0.0, update=updateNode)
     caps = BoolProperty(update=updateNode)
     show_wire = BoolProperty(update=updateNode)
-    use_smooth = BoolProperty(update=updateNode)
+    use_smooth = BoolProperty(default=True, update=updateNode)
 
 
     def copy(self, other):
