@@ -1,10 +1,10 @@
-Torus 2D
-========
+Ring
+====
 
 Functionality
 -------------
 
-Torus 2D generator will create a 2D torus (ring) based on its radii sets, number of sections and phase.
+Ring generator will create a 2D ring based on its radii sets, number of sections and phase.
 
 Inputs
 ------
@@ -35,17 +35,17 @@ All parameters except **Mode** and **Separate** can be given by the node or an e
 +------------------------+-----------+-----------+---------------------------------------------+
 | Param                  |  Type     |  Default  |  Description                                |
 +========================+===========+===========+=============================================+
-| **Major Radius**       |  Float    |  1.00     |  Major radius of the torus [1]              |
+| **Major Radius**       |  Float    |  1.00     |  Major radius of the ring [1]               |
 +------------------------+-----------+-----------+---------------------------------------------+
-| **Minor Radius**       |  Float    |  0.25     |  Minor radius of the torus [1]              |
+| **Minor Radius**       |  Float    |  0.25     |  Minor radius of the ring [1]               |
 +------------------------+-----------+-----------+---------------------------------------------+
-| **Exterior Radius**    |  Float    |  1.25     |  Exterior radius of the torus [2]           |
+| **Exterior Radius**    |  Float    |  1.25     |  Exterior radius of the ring [2]            |
 +------------------------+-----------+-----------+---------------------------------------------+
-| **Interior Radius**    |  Float    |  0.75     |  Interior radius of the torus [2]           |
+| **Interior Radius**    |  Float    |  0.75     |  Interior radius of the ring [2]            |
 +------------------------+-----------+-----------+---------------------------------------------+
-| **Radial Sections**    |  Int      |  32       |  Number of sections around the torus center |
+| **Radial Sections**    |  Int      |  32       |  Number of sections around the ring center  |
 +------------------------+-----------+-----------+---------------------------------------------+
-| **Circular Sections**  |  Int      |  3        |  Number of sections accross the torus band  |
+| **Circular Sections**  |  Int      |  3        |  Number of sections accross the ring band   |
 +------------------------+-----------+-----------+---------------------------------------------+
 | **Phase**              |  Float    |  0.00     |  Phase of the radial sections (in radians)  |
 +------------------------+-----------+-----------+---------------------------------------------+

@@ -25,7 +25,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat
 
 
-def torus_verts(Separate, R, r, N1, N2, p):
+def ring_verts(Separate, R, r, N1, N2, p):
     '''
         Separate : separate vertices into radial section lists
         R   : major radius
@@ -62,7 +62,7 @@ def torus_verts(Separate, R, r, N1, N2, p):
     return listVerts
 
 
-def torus_edges(N1, N2):
+def ring_edges(N1, N2):
     '''
         N1 : major sections - number of RADIAL sections
         N2 : minor sections - number of CIRCULAR sections
@@ -84,7 +84,7 @@ def torus_edges(N1, N2):
     return listEdges
 
 
-def torus_polygons(N1, N2):
+def ring_polygons(N1, N2):
     '''
         N1 : major sections - number of RADIAL sections
         N2 : minor sections - number of CIRCULAR sections
@@ -100,83 +100,83 @@ def torus_polygons(N1, N2):
     return listPolys
 
 
-class SvTorus2DNode(bpy.types.Node, SverchCustomTreeNode):
+class SvRingNode(bpy.types.Node, SverchCustomTreeNode):
 
-    ''' Torus 2D '''
-    bl_idname = 'SvTorus2DNode'
-    bl_label = 'Torus 2D'
+    ''' Ring '''
+    bl_idname = 'SvRingNode'
+    bl_label = 'Ring'
     bl_icon = 'PROP_CON'
 
     def update_mode(self, context):
         # switch radii input sockets (R,r) <=> (eR,iR)
         if self.mode == 'EXT_INT':
-            self.inputs['R'].prop_name = "torus_eR"
-            self.inputs['r'].prop_name = "torus_iR"
+            self.inputs['R'].prop_name = "ring_eR"
+            self.inputs['r'].prop_name = "ring_iR"
         else:
-            self.inputs['R'].prop_name = "torus_R"
-            self.inputs['r'].prop_name = "torus_r"
+            self.inputs['R'].prop_name = "ring_R"
+            self.inputs['r'].prop_name = "ring_r"
         updateNode(self, context)
 
     # keep the equivalent radii pair in sync (eR,iR) => (R,r)
     def external_internal_radii_changed(self, context):
         if self.mode == "EXT_INT":
-            self.torus_R = (self.torus_eR + self.torus_iR) * 0.5
-            self.torus_r = (self.torus_eR - self.torus_iR) * 0.5
+            self.ring_R = (self.ring_eR + self.ring_iR) * 0.5
+            self.ring_r = (self.ring_eR - self.ring_iR) * 0.5
             updateNode(self, context)
 
     # keep the equivalent radii pair in sync (R,r) => (eR,iR)
     def major_minor_radii_changed(self, context):
         if self.mode == "MAJOR_MINOR":
-            self.torus_eR = self.torus_R + self.torus_r
-            self.torus_iR = self.torus_R - self.torus_r
+            self.ring_eR = self.ring_R + self.ring_r
+            self.ring_iR = self.ring_R - self.ring_r
             updateNode(self, context)
 
-    # TORUS DIMENSIONS options
+    # Ring DIMENSIONS options
     mode = EnumProperty(
-        name="Torus Dimensions",
+        name="Ring Dimensions",
         items=(("MAJOR_MINOR", "Major/Minor",
-                "Use the Major/Minor radii for torus dimensions."),
+                "Use the Major/Minor radii for ring dimensions."),
                ("EXT_INT", "Exterior/Interior",
-                "Use the Exterior/Interior radii for torus dimensions.")),
+                "Use the Exterior/Interior radii for ring dimensions.")),
         update=update_mode)
 
-    torus_R = FloatProperty(
+    ring_R = FloatProperty(
         name="Major Radius",
-        description="Radius from the torus center to the middle of torus band",
+        description="Radius from the ring center to the middle of ring band",
         default=1.0, min=0.00, max=100.0,
         update=major_minor_radii_changed)
 
-    torus_r = FloatProperty(
+    ring_r = FloatProperty(
         name="Minor Radius",
-        description="Width of the torus band",
+        description="Width of the ring band",
         default=.25, min=0.00, max=100.0,
         update=major_minor_radii_changed)
 
-    torus_iR = FloatProperty(
+    ring_iR = FloatProperty(
         name="Interior Radius",
-        description="Interior radius of the torus (closest to the torus center)",
+        description="Interior radius of the ring (closest to the ring center)",
         default=.75, min=0.00, max=100.0,
         update=external_internal_radii_changed)
 
-    torus_eR = FloatProperty(
+    ring_eR = FloatProperty(
         name="Exterior Radius",
-        description="Exterior radius of the torus (farthest from the torus center)",
+        description="Exterior radius of the ring (farthest from the ring center)",
         default=1.25, min=0.00, max=100.0,
         update=external_internal_radii_changed)
 
-    # TORUS RESOLUTION options
-    torus_n1 = IntProperty(
+    # Ring RESOLUTION options
+    ring_n1 = IntProperty(
         name="Radial Sections", description="Number of radial sections",
         default=32, min=3, soft_min=3,
         update=updateNode)
 
-    torus_n2 = IntProperty(
+    ring_n2 = IntProperty(
         name="Circular Sections", description="Number of circular sections",
         default=3, min=2, soft_min=2,
         update=updateNode)
 
-    # TORUS Phase Options
-    torus_rP = FloatProperty(
+    # Ring Phase Options
+    ring_rP = FloatProperty(
         name="Phase", description="Phase of the radial sections (in degrees)",
         default=0.0, min=0.0, soft_min=0.0,
         update=updateNode)
@@ -188,12 +188,12 @@ class SvTorus2DNode(bpy.types.Node, SverchCustomTreeNode):
         update=updateNode)
 
     def sv_init(self, context):
-        self.width = 180
-        self.inputs.new('StringsSocket', "R").prop_name = 'torus_R'
-        self.inputs.new('StringsSocket', "r").prop_name = 'torus_r'
-        self.inputs.new('StringsSocket', "n1").prop_name = 'torus_n1'
-        self.inputs.new('StringsSocket', "n2").prop_name = 'torus_n2'
-        self.inputs.new('StringsSocket', "rP").prop_name = 'torus_rP'
+        self.width = 170
+        self.inputs.new('StringsSocket', "R").prop_name = 'ring_R'
+        self.inputs.new('StringsSocket', "r").prop_name = 'ring_r'
+        self.inputs.new('StringsSocket', "n1").prop_name = 'ring_n1'
+        self.inputs.new('StringsSocket', "n2").prop_name = 'ring_n2'
+        self.inputs.new('StringsSocket', "rP").prop_name = 'ring_rP'
 
         self.outputs.new('VerticesSocket', "Vertices")
         self.outputs.new('StringsSocket',  "Edges")
@@ -241,7 +241,7 @@ class SvTorus2DNode(bpy.types.Node, SverchCustomTreeNode):
         params = match_long_repeat([input_R, input_r, input_n1, input_n2, input_rp])
 
         V, E, P = self.outputs[:]
-        for s, f in [(V, torus_verts), (E, torus_edges), (P, torus_polygons)]:
+        for s, f in [(V, ring_verts), (E, ring_edges), (P, ring_polygons)]:
             if not s.is_linked:
                 continue
             if s == V:
@@ -251,11 +251,11 @@ class SvTorus2DNode(bpy.types.Node, SverchCustomTreeNode):
 
 
 def register():
-    bpy.utils.register_class(SvTorus2DNode)
+    bpy.utils.register_class(SvRingNode)
 
 
 def unregister():
-    bpy.utils.unregister_class(SvTorus2DNode)
+    bpy.utils.unregister_class(SvRingNode)
 
 if __name__ == '__main__':
     register()
