@@ -38,6 +38,23 @@ JSON format:
     In vertices list, any of numbers can be replaced by string (variable name).
 """
 
+# To be extended?
+safe_names = dict(sin=sin, cos=cos, pi=pi, sqrt=sqrt)
+
+def get_variables(string):
+    root = ast.parse(string, mode='eval')
+    result = {node.id for node in ast.walk(root) if isinstance(node, ast.Name)}
+    return result.difference(safe_names.keys())
+
+# It could be safer...
+def safe_eval(string, variables):
+    env = dict()
+    env.update(safe_names)
+    env.update(variables)
+    env["__builtins__"] = {}
+    root = ast.parse(string, mode='eval')
+    return eval(compile(root, "<expression>", 'eval'), env)
+
 def evaluate(json, variables):
     result = {}
     result['edges'] = json['edges']
@@ -47,12 +64,16 @@ def evaluate(json, variables):
     for vertex in json['vertices']:
         v = []
         for c in vertex:
-            if c in variables:
-                v.append(variables[c])
-            elif isinstance(c, str):
-                v.append(0.0)
+            if isinstance(c, str):
+                try:
+                    val = safe_eval(c, variables)
+                    print("EVAL: {} with {} => {}".format(c, variables, val))
+                except NameError as e:
+                    print(e)
+                    val = 0.0
             else:
-                v.append(c)
+                val = c
+            v.append(val)
         result['vertices'].append(v)
     return result
 
@@ -141,9 +162,10 @@ class SvMeshEvalNode(bpy.types.Node, SverchCustomTreeNode):
         for vertex in json["vertices"]:
             for c in vertex:
                 if isinstance(c, str):
-                    variables.add(c)
+                    vs = get_variables(c)
+                    variables.update(vs)
 
-        return variables
+        return list(sorted(list(variables)))
 
     def adjust_inputs(self):
         variables = self.get_variables()
@@ -178,11 +200,11 @@ class SvMeshEvalNode(bpy.types.Node, SverchCustomTreeNode):
         variables = self.get_variables()
         result = {}
         for var in variables:
-            print(var)
-            if self.inputs[var].is_linked:
+            if var in self.inputs and self.inputs[var].is_linked:
                 result[var] = self.inputs[var].sv_get()[0]
             else:
                 result[var] = [0.0]
+            print("get_input: {} => {}".format(var, result[var]))
         return result
 
     def process(self):
@@ -196,7 +218,7 @@ class SvMeshEvalNode(bpy.types.Node, SverchCustomTreeNode):
             if not var_names:
                 inputs = {'a': [0.0]}
 
-        print(inputs)
+        #print(inputs)
 
         result_vertices = []
         result_edges = []
@@ -204,12 +226,13 @@ class SvMeshEvalNode(bpy.types.Node, SverchCustomTreeNode):
 
         template = self.load_json()
 
-        parameters = match_long_repeat(inputs.values())
+        input_values = [inputs[name] for name in var_names]
+        parameters = match_long_repeat(input_values)
         for values in zip(*parameters):
             variables = dict(zip(var_names, values))
 
             json = evaluate(template, variables)
-            print(json['vertices'])
+            #print(json['vertices'])
             result_vertices.append(json['vertices'])
             result_edges.append(json['edges'])
             result_faces.append(json['faces'])
