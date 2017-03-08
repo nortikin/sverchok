@@ -148,6 +148,7 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
         ObjectsNode = (node.bl_idname == 'ObjectsNode')
         ObjectsNode3 = (node.bl_idname == 'SvObjectsNodeMK3')
         ObjNodeLite = (node.bl_idname == 'SvObjInLite')
+        MeshEvalNode = (node.bl_idname == 'SvMeshEvalNode')
 
         ScriptNodeLite = (node.bl_idname == 'SvScriptNodeLite')
         ProfileParamNode = (node.bl_idname == 'SvProfileNode')
@@ -247,7 +248,7 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
 
                     node_items[prop_name] = v
 
-        if any([ScriptNodeLite, ObjNodeLite, SvExecNodeMod]):
+        if any([ScriptNodeLite, ObjNodeLite, SvExecNodeMod, MeshEvalNode]):
             node.storage_get_data(node_dict)
 
 
@@ -520,7 +521,7 @@ def add_node_to_tree(nodes, n, nodes_to_import, name_remap, create_texts):
     if create_texts:
         add_texts(node, node_ref)
     
-    if bl_idname in {'SvObjInLite', 'SvExecNodeMod'}:
+    if bl_idname in {'SvObjInLite', 'SvExecNodeMod', 'SvMeshEvalNode'}:
         node.storage_set_data(node_ref)
 
     if bl_idname == 'SvObjectsNodeMK3':

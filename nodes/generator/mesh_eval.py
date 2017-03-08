@@ -242,6 +242,21 @@ class SvMeshEvalNode(bpy.types.Node, SverchCustomTreeNode):
         if self.outputs['Faces'].is_linked:
             self.outputs['Faces'].sv_set(result_faces)
 
+    def storage_set_data(self, storage):
+        geom = storage['geom']
+        filename = storage['params']['filename']
+
+        bpy.data.texts.new(filename)
+        bpy.data.texts[filename].clear()
+        bpy.data.texts[filename].write(json.dumps(geom))
+
+    def storage_get_data(self, storage):
+        if self.filename and self.filename in bpy.data.texts:
+            text = bpy.data.texts[self.filename].as_string()
+            storage['geom'] = json.loads(text)
+        else:
+            print("Unknown filename: {}".format(self.filename))
+
 
 def register():
     bpy.utils.register_class(SvJsonFromMesh)
