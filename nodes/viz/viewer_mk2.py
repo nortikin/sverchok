@@ -369,17 +369,17 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
         # this should catch accidental connections which otherwise will cause
         # an unrecoverable crash. It might even be an idea to have step in between
         # new connections and processing, it could auto rewire s->s v->v m->m.
-        def check_origin(to_socket, socket_type):
-            origin_socket_bl_idname = inputs[to_socket].other.bl_idname
+       # def check_origin(to_socket, socket_type):
+       #     origin_socket_bl_idname = inputs[to_socket].other.bl_idname
+       #   If will be crash with wrong data in input sockets, uncomment check_origin()
+       #     if isinstance(socket_type, str):
+       #         return origin_socket_bl_idname == sock_dict.get(socket_type)
+       #     else:
+       #         return reverse_sock_dict.get(origin_socket_bl_idname) in socket_type
 
-            if isinstance(socket_type, str):
-                return origin_socket_bl_idname == sock_dict.get(socket_type)
-            else:
-                return reverse_sock_dict.get(origin_socket_bl_idname) in socket_type
-
-        vertex_links = inputs['vertices'].is_linked and check_origin('vertices', ('v', 'm'))
-        matrix_links = inputs['matrix'].is_linked and check_origin('matrix', ('m', 'v'))
-        edgepol_links = inputs['edg_pol'].is_linked and check_origin('edg_pol', 's')
+        vertex_links = inputs['vertices'].is_linked  # and check_origin('vertices', ('v', 'm'))
+        matrix_links = inputs['matrix'].is_linked  # and check_origin('matrix', ('m', 'v'))
+        edgepol_links = inputs['edg_pol'].is_linked  # and check_origin('edg_pol', 's')
 
         if vertex_links or matrix_links:
 
