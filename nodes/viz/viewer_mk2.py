@@ -340,11 +340,13 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
     def copy(self, node):
         self.n_id = ''
 
+
     def update(self):
         if not ("matrix" in self.inputs):
             return
-        if self.inputs[0].links or self.inputs[2].links:
-            callback_disable(node_id(self))
+        if not (self.inputs[0].other or self.inputs[2].other):
+            callback_disable(node_id(self))        
+
 
     def process(self):
         if not (self.id_data.sv_show and self.activate):
