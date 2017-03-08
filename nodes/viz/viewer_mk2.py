@@ -34,17 +34,17 @@ from sverchok.ui.viewer_draw_mk2 import callback_disable, callback_enable
 
 cache_viewer_baker = {}
 
-sock_dict = {
-    'v': 'VerticesSocket',
-    's': 'StringsSocket',
-    'm': 'MatrixSocket'
-}
+#sock_dict = {
+#    'v': 'VerticesSocket',
+#    's': 'StringsSocket',
+#    'm': 'MatrixSocket'
+#}
 
-reverse_sock_dict = {
-    'VerticesSocket': 'v',
-    'StringsSocket': 's',
-    'MatrixSocket': 'm'
-}
+#reverse_sock_dict = {
+#    'VerticesSocket': 'v',
+#    'StringsSocket': 's',
+#    'MatrixSocket': 'm'
+#}
 
 
 
