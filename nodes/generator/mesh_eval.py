@@ -67,7 +67,7 @@ def evaluate(json, variables):
             if isinstance(c, str):
                 try:
                     val = safe_eval(c, variables)
-                    print("EVAL: {} with {} => {}".format(c, variables, val))
+                    #print("EVAL: {} with {} => {}".format(c, variables, val))
                 except NameError as e:
                     print(e)
                     val = 0.0
@@ -169,8 +169,8 @@ class SvMeshEvalNode(bpy.types.Node, SverchCustomTreeNode):
 
     def adjust_inputs(self):
         variables = self.get_variables()
-        print("adjust_input:" + str(variables))
-        print("inputs:" + str(self.inputs.keys()))
+        #print("adjust_input:" + str(variables))
+        #print("inputs:" + str(self.inputs.keys()))
         for key in self.inputs.keys():
             if key not in variables:
                 print("Input {} not in variables {}, remove it".format(key, str(variables)))
@@ -186,7 +186,6 @@ class SvMeshEvalNode(bpy.types.Node, SverchCustomTreeNode):
         are not met.
         '''
 
-        print("update")
         # keeping the file internal for now.
         if not (self.filename in bpy.data.texts):
             return
@@ -204,7 +203,7 @@ class SvMeshEvalNode(bpy.types.Node, SverchCustomTreeNode):
                 result[var] = self.inputs[var].sv_get()[0]
             else:
                 result[var] = [0.0]
-            print("get_input: {} => {}".format(var, result[var]))
+            #print("get_input: {} => {}".format(var, result[var]))
         return result
 
     def process(self):
@@ -218,8 +217,6 @@ class SvMeshEvalNode(bpy.types.Node, SverchCustomTreeNode):
             if not var_names:
                 inputs = {'a': [0.0]}
 
-        #print(inputs)
-
         result_vertices = []
         result_edges = []
         result_faces = []
@@ -232,7 +229,6 @@ class SvMeshEvalNode(bpy.types.Node, SverchCustomTreeNode):
             variables = dict(zip(var_names, values))
 
             json = evaluate(template, variables)
-            #print(json['vertices'])
             result_vertices.append(json['vertices'])
             result_edges.append(json['edges'])
             result_faces.append(json['faces'])
