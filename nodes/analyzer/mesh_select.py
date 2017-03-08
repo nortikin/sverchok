@@ -35,12 +35,17 @@ class SvMeshSelectNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     modes = [
-            ("BySide", "BySide", "By side", 0),
-            ("ByNormal", "ByNormal", "By normal direction", 1),
-            ("ByRange", "ByRange", "In range", 2)
+            ("BySide", "By side", "Select specified side of mesh", 0),
+            ("ByNormal", "By normal direction", "Select faces with normal in specified direction", 1),
+            ("ByRange", "By center and radius", "Select vertices within specified distance from center", 2)
         ]
 
     def update_mode(self, context):
+        self.inputs['Radius'].hide = (self.mode != 'ByRange')
+        self.inputs['Center'].hide = (self.mode != 'ByRange')
+        self.inputs['Percent'].hide = (self.mode not in ['BySide', 'ByNormal'])
+        self.inputs['Direction'].hide = (self.mode not in ['BySide', 'ByNormal'])
+
         updateNode(self, context)
 
     mode = EnumProperty(name="Mode",
@@ -55,19 +60,14 @@ class SvMeshSelectNode(bpy.types.Node, SverchCustomTreeNode):
 
     percent = FloatProperty(name="Percent", 
             default=1.0,
-            hard_min=0.0, hard_max=100.0,
+            min=0.0, max=100.0,
             update=updateNode)
 
-    radius = FloatProperty(name="Radius", default=1.0)
+    radius = FloatProperty(name="Radius", default=1.0, update=updateNode)
 
     def draw_buttons(self, context, layout):
         layout.prop(self, 'mode')
-
-    def update(self, context):
-        self.inputs['Radius'].hide = (self.mode != 'ByRange')
-        self.inputs['Center'].hide = (self.mode != 'ByRange')
-        self.inputs['Percent'].hide = (self.mode not in ['BySide', 'ByNormal'])
-        self.inputs['Direction'].hide = (self.mode not in ['BySide', 'ByNormal'])
+        layout.prop(self, 'include_partial')
 
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', "Vertices")
@@ -82,8 +82,8 @@ class SvMeshSelectNode(bpy.types.Node, SverchCustomTreeNode):
         c.use_prop = True
         c.prop = (0.0, 0.0, 0.0)
 
-        self.inputs.new('StringsSocket', 'Percent').prop_name = 'percent'
-        self.inputs.new('StringsSocket', 'Radius').prop_name = 'radius'
+        self.inputs.new('StringsSocket', 'Percent', 'Percent').prop_name = 'percent'
+        self.inputs.new('StringsSocket', 'Radius', 'Radius').prop_name = 'radius'
 
         self.outputs.new('StringsSocket', 'VerticesMask')
         self.outputs.new('StringsSocket', 'EdgesMask')
@@ -96,7 +96,7 @@ class SvMeshSelectNode(bpy.types.Node, SverchCustomTreeNode):
         minv = min(values)
         if maxv <= minv:
             return maxv
-        return minv + percent * (maxv - minv) * 0.01
+        return maxv - percent * (maxv - minv) * 0.01
 
     def select_verts_by_faces(self, faces, verts):
         return [any(v in face for face in faces) for v in range(len(verts))]
@@ -123,8 +123,8 @@ class SvMeshSelectNode(bpy.types.Node, SverchCustomTreeNode):
 
     def by_normal(self, vertices, edges, faces):
         vertex_normals, face_normals = calc_mesh_normals(vertices, edges, faces)
-        percent = self.inputs['Percent'].sv_get(default=[1.0])[0]
-        direction = self.inputs['Direction'].sv_get()[0]
+        percent = self.inputs['Percent'].sv_get(default=[1.0])[0][0]
+        direction = self.inputs['Direction'].sv_get()[0][0]
         values = [Vector(n).dot(direction) for n in face_normals]
         threshold = self.map_percent(values, percent)
 
@@ -133,11 +133,11 @@ class SvMeshSelectNode(bpy.types.Node, SverchCustomTreeNode):
         out_verts_mask = self.select_verts_by_faces(out_faces, vertices)
         out_edges_mask = self.select_edges_by_verts(out_verts_mask, edges)
 
-        return out_verts_mask, out_edges_mask, out_faces_mask
+        return out_verts_mask, out_edges_mask, out_face_mask
     
     def by_side(self, vertices, edges, faces):
-        percent = self.inputs['Percent'].sv_get(default=[1.0])[0]
-        direction = self.inputs['Direction'].sv_get()[0]
+        percent = self.inputs['Percent'].sv_get(default=[1.0])[0][0]
+        direction = self.inputs['Direction'].sv_get()[0][0]
         values = [Vector(v).dot(direction) for v in vertices]
         threshold = self.map_percent(values, percent)
 
@@ -148,8 +148,8 @@ class SvMeshSelectNode(bpy.types.Node, SverchCustomTreeNode):
         return out_verts_mask, out_edges_mask, out_faces_mask
 
     def by_range(self, vertices, edges, faces):
-        center = self.inputs['Center'].sv_get()[0]
-        radius = self.inputs['Radius'].sv_get(default=[1.0])[0]
+        center = self.inputs['Center'].sv_get()[0][0]
+        radius = self.inputs['Radius'].sv_get(default=[1.0])[0][0]
 
         out_verts_mask = [((Vector(v) - Vector(center)).length <= radius) for v in vertices]
         out_edges_mask = self.select_edges_by_verts(out_verts_mask, edges)
