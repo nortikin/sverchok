@@ -28,11 +28,18 @@ def sv_update_handler(scene):
     """
     Update sverchok node groups on frame change events.
     """
+    if not bpy.context.screen.is_animation_playing:
+        # manual scrub causes this to be triggered twice, 
+        # - once with is_animation_playing True
+        # - once with is_animation_playing False
+        return
+
     for ng in sverchok_trees():
         try:
             ng.process_ani()
         except Exception as e:
             print('Failed to update:', name, str(e))
+
     scene.update()
 
 
