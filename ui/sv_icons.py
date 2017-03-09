@@ -38,6 +38,7 @@ def load_custom_icons():
 
 
 def remove_custom_icons():
+    print('removing icons.. or not')
     for custom_icons in _icon_collection.values():
         bpy.utils.previews.remove(custom_icons)
     _icon_collection.clear()
