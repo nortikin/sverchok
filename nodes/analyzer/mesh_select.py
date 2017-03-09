@@ -37,14 +37,16 @@ class SvMeshSelectNode(bpy.types.Node, SverchCustomTreeNode):
     modes = [
             ("BySide", "By side", "Select specified side of mesh", 0),
             ("ByNormal", "By normal direction", "Select faces with normal in specified direction", 1),
-            ("ByRange", "By center and radius", "Select vertices within specified distance from center", 2)
+            ("BySphere", "By center and radius", "Select vertices within specified distance from center", 2),
+            ("ByPlane", "By plane", "Select vertices within specified distance from plane defined by point and normal vector", 3),
+            ("ByCylinder", "By cylinder", "Select vertices within specified distance from straight line defined by point and direction vector", 4)
         ]
 
     def update_mode(self, context):
-        self.inputs['Radius'].hide = (self.mode != 'ByRange')
-        self.inputs['Center'].hide = (self.mode != 'ByRange')
+        self.inputs['Radius'].hide = (self.mode not in ['BySphere', 'ByPlane', 'ByCylinder'])
+        self.inputs['Center'].hide = (self.mode not in ['BySphere', 'ByPlane', 'ByCylinder'])
         self.inputs['Percent'].hide = (self.mode not in ['BySide', 'ByNormal'])
-        self.inputs['Direction'].hide = (self.mode not in ['BySide', 'ByNormal'])
+        self.inputs['Direction'].hide = (self.mode not in ['BySide', 'ByNormal', 'ByPlane', 'ByCylinder'])
 
         updateNode(self, context)
 
@@ -63,11 +65,12 @@ class SvMeshSelectNode(bpy.types.Node, SverchCustomTreeNode):
             min=0.0, max=100.0,
             update=updateNode)
 
-    radius = FloatProperty(name="Radius", default=1.0, update=updateNode)
+    radius = FloatProperty(name="Radius", default=1.0, min=0.0, update=updateNode)
 
     def draw_buttons(self, context, layout):
         layout.prop(self, 'mode')
-        layout.prop(self, 'include_partial')
+        if self.mode != 'ByNormal':
+            layout.prop(self, 'include_partial')
 
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', "Vertices")
@@ -147,7 +150,7 @@ class SvMeshSelectNode(bpy.types.Node, SverchCustomTreeNode):
 
         return out_verts_mask, out_edges_mask, out_faces_mask
 
-    def by_range(self, vertices, edges, faces):
+    def by_sphere(self, vertices, edges, faces):
         center = self.inputs['Center'].sv_get()[0][0]
         radius = self.inputs['Radius'].sv_get(default=[1.0])[0][0]
 
@@ -156,6 +159,41 @@ class SvMeshSelectNode(bpy.types.Node, SverchCustomTreeNode):
         out_faces_mask = self.select_faces_by_verts(out_verts_mask, faces)
 
         return out_verts_mask, out_edges_mask, out_faces_mask
+
+    def by_plane(self, vertices, edges, faces):
+        center = self.inputs['Center'].sv_get()[0][0]
+        radius = self.inputs['Radius'].sv_get(default=[1.0])[0][0]
+        direction = self.inputs['Direction'].sv_get()[0][0]
+
+        d = - Vector(direction).dot(center)
+        denominator = Vector(direction).length
+
+        def rho(vertex):
+            return abs(Vector(vertex).dot(direction) + d) / denominator
+
+        out_verts_mask = [(rho(v) <= radius) for v in vertices]
+        out_edges_mask = self.select_edges_by_verts(out_verts_mask, edges)
+        out_faces_mask = self.select_faces_by_verts(out_verts_mask, faces)
+
+        return out_verts_mask, out_edges_mask, out_faces_mask
+
+    def by_cylinder(self, vertices, edges, faces):
+        center = self.inputs['Center'].sv_get()[0][0]
+        radius = self.inputs['Radius'].sv_get(default=[1.0])[0][0]
+        direction = self.inputs['Direction'].sv_get()[0][0]
+
+        denominator = Vector(direction).length
+
+        def rho(vertex):
+            numerator = (Vector(center) - Vector(vertex)).cross(direction).length
+            return numerator / denominator
+
+        out_verts_mask = [(rho(v) <= radius) for v in vertices]
+        out_edges_mask = self.select_edges_by_verts(out_verts_mask, edges)
+        out_faces_mask = self.select_faces_by_verts(out_verts_mask, faces)
+
+        return out_verts_mask, out_edges_mask, out_faces_mask
+
 
     def process(self):
 
@@ -176,8 +214,12 @@ class SvMeshSelectNode(bpy.types.Node, SverchCustomTreeNode):
                 vs, es, fs = self.by_side(vertices, edges, faces)
             elif self.mode == 'ByNormal':
                 vs, es, fs = self.by_normal(vertices, edges, faces)
-            elif self.mode == 'ByRange':
-                vs, es, fs = self.by_range(vertices, edges, faces)
+            elif self.mode == 'BySphere':
+                vs, es, fs = self.by_sphere(vertices, edges, faces)
+            elif self.mode == 'ByPlane':
+                vs, es, fs = self.by_plane(vertices, edges, faces)
+            elif self.mode == 'ByCylinder':
+                vs, es, fs = self.by_cylinder(vertices, edges, faces)
             else:
                 raise ValueError("Unknown mode: " + self.mode)
 
