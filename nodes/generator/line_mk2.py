@@ -96,47 +96,28 @@ class SvLineNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         input_num = self.inputs["Num"].sv_get()
         input_step = self.inputs["Step"].sv_get()
 
-        print("input_num: ", input_num)
-        print("input_step: ", input_step)
-
-        # convert num to a list of values
-        # convert step to a list of lists of values
-
         params = match_long_repeat([input_num, input_step])
-        print("params=", params)
 
         stepList = []
         for n, s in zip(*params):
-            print("n=", n)
-            print("s=", s)
-            # print("type n =", type(n))
-            # print("type s =", type(s))
-            num = max(2, n[0])
-             # adjust the step list based on number of verts and steps
-            steps = s[:(num - 1)] # shorten if needed
-            fullList(steps, num - 1) # extend if needed
-            print("num =", num)
-            print("steps =", steps)
+            num = max(2, n[0])  # sanitize the input
+            # adjust the step list based on number of verts and steps
+            steps = s[:(num - 1)]  # shorten if needed
+            fullList(steps, num - 1)  # extend if needed
             if self.normalize:
                 size = self.size / sum(steps)
-                steps = [ s * size for s in steps]
+                steps = [s * size for s in steps]
             stepList.append(steps)
 
-        print("stepList = ", stepList)
-
-        vertList = []
-        edgeList = []
-        for step in stepList:
-            verts, edges = make_line(step, self.center, self.direction)
-            vertList.append(verts)
-            edgeList.append(edges)
+        c, d = self.center, self.direction
+        verts, edges = [ve for ve in zip(*[make_line(s, c, d) for s in stepList])]
 
         # outputs
         if self.outputs['Vertices'].is_linked:
-            self.outputs['Vertices'].sv_set(vertList)
+            self.outputs['Vertices'].sv_set(verts)
 
         if self.outputs['Edges'].is_linked:
-            self.outputs['Edges'].sv_set(edgeList)
+            self.outputs['Edges'].sv_set(edges)
 
 
 def register():
