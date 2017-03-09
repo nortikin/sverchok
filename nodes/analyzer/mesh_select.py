@@ -31,7 +31,7 @@ from sverchok.nodes.analyzer.normals import calc_mesh_normals
 class SvMeshSelectNode(bpy.types.Node, SverchCustomTreeNode):
     '''Select vertices, edges, faces by geometric criteria'''
     bl_idname = 'SvMeshSelectNode'
-    bl_label = 'Mesh select'
+    bl_label = 'Select mesh elements by location'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     modes = [
