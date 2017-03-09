@@ -28,7 +28,8 @@ def sv_update_handler(scene):
     """
     Update sverchok node groups on frame change events.
     """
-    if not bpy.context.screen.is_animation_playing:
+    screen = bpy.context.screen
+    if screen and screen.is_animation_playing:
         # manual scrub causes this to be triggered twice, 
         # - once with is_animation_playing True
         # - once with is_animation_playing False
