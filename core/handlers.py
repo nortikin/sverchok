@@ -28,12 +28,15 @@ def sv_update_handler(scene):
     """
     Update sverchok node groups on frame change events.
     """
-    if not bpy.context.screen.is_animation_playing:
+    screen = bpy.context.screen
+    if screen and not screen.is_animation_playing:
         # manual scrub causes this to be triggered twice, 
         # - once with is_animation_playing True
         # - once with is_animation_playing False
+        # print('sv_update_handler : returns early')
         return
 
+    # print('sv_update_handler')
     for ng in sverchok_trees():
         try:
             ng.process_ani()
@@ -50,6 +53,7 @@ def sv_scene_handler(scene):
     Update sverchok node groups on scene update events.
     Not used yet.
     """
+    # print('sv_scene_handler')
     for ng in sverchok_trees():
         try:
             ng.process_ani()
@@ -65,6 +69,7 @@ def sv_main_handler(scene):
     for ng in sverchok_trees():
         # print("Scene handler looking at tree {}".format(ng.name))
         if ng.has_changed:
+            # print('sv_main_handler')
             # print("Edit detected in {}".format(ng.name))
             ng.process()
 
