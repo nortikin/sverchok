@@ -20,7 +20,7 @@ import bpy
 from bpy.props import IntProperty, FloatProperty, BoolProperty, EnumProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, fullList
+from sverchok.data_structure import updateNode, fullList, match_long_repeat
 
 directionItems = [("X", "X", ""), ("Y", "Y", ""), ("Z", "Z", "")]
 
@@ -33,7 +33,7 @@ def make_line(steps, center, direction):
     elif direction == "Z":
         v = lambda l: (0.0, 0.0, l)
 
-    ss = -sum(steps) / 2 if center else 0
+    ss = - sum(steps) / 2 if center else 0
     verts = [v(ss)]  # starting vertex
     for s in steps:
         ss = ss + s
@@ -45,6 +45,7 @@ def make_line(steps, center, direction):
 
 
 class SvLineNodeMK2(bpy.types.Node, SverchCustomTreeNode):
+
     ''' Line MK2'''
     bl_idname = 'SvLineNodeMK2'
     bl_label = 'Line MK2'
@@ -66,6 +67,14 @@ class SvLineNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                           default=False,
                           update=updateNode)
 
+    normalize = BoolProperty(name='Normalize', description='Normalize',
+                             default=False,
+                             update=updateNode)
+
+    size = FloatProperty(name='Size', description='Size of line',
+                         default=10.0, options={'ANIMATABLE'},
+                         update=updateNode)
+
     def sv_init(self, context):
         self.inputs.new('StringsSocket', "Num").prop_name = 'num'
         self.inputs.new('StringsSocket', "Step").prop_name = 'step'
@@ -76,30 +85,58 @@ class SvLineNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         layout.prop(self, "direction", expand=True)
         layout.prop(self, "center")
+        layout.prop(self, "normalize")
+        layout.prop(self, "size")
 
     def process(self):
         # return if no outputs are connected
         if not any(s.is_linked for s in self.outputs):
             return
 
-        n = self.inputs["Num"].sv_get()[0][0]
-        input_step = self.inputs["Step"].sv_get()[0]
+        input_num = self.inputs["Num"].sv_get()
+        input_step = self.inputs["Step"].sv_get()
 
-        # sanitize the inputs
-        n = max(2, n)
+        print("input_num: ", input_num)
+        print("input_step: ", input_step)
 
-        # adjust the step list based on number of verts and steps
-        input_step = input_step[:(n - 1)]
-        fullList(input_step, n - 1)
+        # convert num to a list of values
+        # convert step to a list of lists of values
 
-        verts, edges = make_line(input_step, self.center, self.direction)
+        params = match_long_repeat([input_num, input_step])
+        print("params=", params)
+
+        stepList = []
+        for n, s in zip(*params):
+            print("n=", n)
+            print("s=", s)
+            # print("type n =", type(n))
+            # print("type s =", type(s))
+            num = max(2, n[0])
+             # adjust the step list based on number of verts and steps
+            steps = s[:(num - 1)] # shorten if needed
+            fullList(steps, num - 1) # extend if needed
+            print("num =", num)
+            print("steps =", steps)
+            if self.normalize:
+                size = self.size / sum(steps)
+                steps = [ s * size for s in steps]
+            stepList.append(steps)
+
+        print("stepList = ", stepList)
+
+        vertList = []
+        edgeList = []
+        for step in stepList:
+            verts, edges = make_line(step, self.center, self.direction)
+            vertList.append(verts)
+            edgeList.append(edges)
 
         # outputs
         if self.outputs['Vertices'].is_linked:
-            self.outputs['Vertices'].sv_set([verts])
+            self.outputs['Vertices'].sv_set(vertList)
 
         if self.outputs['Edges'].is_linked:
-            self.outputs['Edges'].sv_set([edges])
+            self.outputs['Edges'].sv_set(edgeList)
 
 
 def register():
