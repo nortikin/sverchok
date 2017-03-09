@@ -115,6 +115,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
 
     inject_params = BoolProperty()
     user_filename = StringProperty(update=updateNode)
+    n_id = StringProperty(default='')
 
     def draw_label(self):
         if self.script_name:
