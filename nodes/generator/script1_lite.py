@@ -217,6 +217,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
                 print('but script loaded locally anyway.')
 
         if self.update_sockets():
+            self.injected_state = False
             self.process()
 
 
