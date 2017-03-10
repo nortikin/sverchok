@@ -202,6 +202,7 @@
     SvObjectsNodeMK3
     SvObjRemoteNodeMK2
     SvFrameInfoNode
+    SvFrameInfoNodeMK2
     SvEmptyOutNode
     SvInstancerNode
     SvDupliInstancesMK4
