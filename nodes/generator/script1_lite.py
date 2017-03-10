@@ -275,6 +275,20 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
         return local_dict
 
 
+    def do_voodoo(self):
+        tree = ast.parse(self.script_str)
+
+        for node in tree.body:
+            if isinstance(node, ast.FunctionDef) and node.name == 'setup':
+                begin_setup = node.body[0].lineno - 1
+                end_setup = node.body[-1].lineno - 1
+                code = '\n'.join(self.script_str.split('\n')[begin_setup:end_setup])
+                print('def setup():\n\n')
+                print(code)
+                print('    return locals()')
+
+
+
     def process_script(self):
         __local__dict__ = self.make_new_locals()
         locals().update(__local__dict__)
@@ -301,6 +315,10 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
 
             # inject once.
             if not self.injected_state and locals().get('setup'):
+
+                self.do_voodoo()
+
+
                 setup_locals = locals().get('setup')()
                 locals().update(setup_locals)
                 socket_info['setup_state'] = setup_locals
