@@ -87,6 +87,7 @@
     SvTriangulateNode
     SvFlipNormalsNode
     SvRecalcNormalsNode
+    SvTransformSelectNode
 
 ## Modifier Make
     LineConnectNodeMK2
