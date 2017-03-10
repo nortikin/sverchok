@@ -293,6 +293,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
                 final_setup_code = 'def setup():\n\n' + code + '\n    return locals()\n'
                 return final_setup_code
 
+
     def inject_state(self, local_variables):
         setup_result = self.get_setup_code()
         if setup_result:
@@ -301,6 +302,19 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
             local_variables.update(setup_locals)
             local_variables['socket_info']['setup_state'] = setup_locals
             self.injected_state = True
+
+
+    def inject_draw_buttons(self, local_variables):
+        tree = ast.parse(self.script_str)
+
+        for node in tree.body:
+            if isinstance(node, ast.FunctionDef) and node.name == 'ui':
+                begin_setup = node.body[0].lineno - 1
+                end_setup = node.body[-1].lineno - 1
+                code = '\n'.join(self.script_str.split('\n')[begin_setup:end_setup])
+                final_setup_code = 'def setup():\n\n' + code + '\n    return locals()\n'
+                return final_setup_code
+
 
 
     def process_script(self):
