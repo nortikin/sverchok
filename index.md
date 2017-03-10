@@ -35,6 +35,7 @@
     SvImageComponentsNode
     SvScriptNode
     SvTorusKnotNode
+    SvHexaGridNode
     SvRingNode
 
 ## Analyzers
