@@ -104,11 +104,11 @@ class SvTransformSelectNode(bpy.types.Node, SverchCustomTreeNode):
 
         # print("Vertices T: ", vertListT)
         # print("Vertices F: ", vertListF)
-        outputs['Vertices'].sv_set(vertList)
-        outputs['Vertices T'].sv_set(vertListT)
-        outputs['PolyEdge T'].sv_set(polyEdgeListT)
-        outputs['Vertices F'].sv_set(vertListF)
-        outputs['PolyEdge F'].sv_set(polyEdgeListT)
+        outputs['Vertices'].sv_set([vertList])
+        outputs['Vertices T'].sv_set([vertListT])
+        outputs['PolyEdge T'].sv_set([polyEdgeListT])
+        outputs['Vertices F'].sv_set([vertListF])
+        outputs['PolyEdge F'].sv_set([polyEdgeListT])
 
 def register():
     bpy.utils.register_class(SvTransformSelectNode)
