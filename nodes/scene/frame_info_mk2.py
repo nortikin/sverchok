@@ -28,19 +28,53 @@ class SvFrameInfoNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     def sv_init(self, context):
-        self.outputs.new('StringsSocket', "Current Frame", "Current Frame")
-        self.outputs.new('StringsSocket', "Start Frame", "Start Frame")
-        self.outputs.new('StringsSocket', "End Frame", "End Frame")
+        outputs = self.outputs
+        outputs.new('StringsSocket', "Current Frame")
+        outputs.new('StringsSocket', "Start Frame")
+        outputs.new('StringsSocket', "End Frame")
+        outputs.new('StringsSocket', "Evaluate")
+
+    def draw_buttons(self, context, layout):
+        # almost verbatim copy of space_time.py time controls.
+        scene = context.scene
+        screen = context.screen
+
+        row = layout.row(align=True)
+        if not scene.use_preview_range:
+            row.prop(scene, "frame_start", text="Start")
+            row.prop(scene, "frame_end", text="End")
+        else:
+            row.prop(scene, "frame_preview_start", text="Start")
+            row.prop(scene, "frame_preview_end", text="End")
+
+        row = layout.row(align=True)
+        row.operator("screen.frame_jump", text="", icon='REW').end = False
+        # row.operator("screen.keyframe_jump", text="", icon='PREV_KEYFRAME').next = False
+        if not screen.is_animation_playing:
+            row.operator("screen.animation_play", text="", icon='PLAY_REVERSE').reverse = True
+            row.operator("screen.animation_play", text="", icon='PLAY')
+        else:
+            sub = row.row(align=True)
+            sub.scale_x = 2.0
+            sub.operator("screen.animation_play", text="", icon='PAUSE')
+        # row.operator("screen.keyframe_jump", text="", icon='NEXT_KEYFRAME').next = True
+        row.operator("screen.frame_jump", text="", icon='FF').end = True
+        row.prop(scene, "frame_current", text="")
 
     def process(self):
-        # outputs
         scene = bpy.context.scene
-        if self.outputs['Current Frame'].is_linked:
-            self.outputs['Current Frame'].sv_set([[scene.frame_current]])
-        if self.outputs['Start Frame'].is_linked:
-            self.outputs['Start Frame'].sv_set([[scene.frame_start]])
-        if self.outputs['End Frame'].is_linked:
-            self.outputs['End Frame'].sv_set([[scene.frame_end]])
+        outputs = self.outputs
+
+        frame_current = scene.frame_current
+        frame_end = scene.frame_end
+        frame_start = scene.frame_start
+        num_frames = max(1, frame_end - frame_start)
+
+
+        outputs['Current Frame'].sv_set([[frame_current]])
+        outputs['Start Frame'].sv_set([[frame_start]])
+        outputs['End Frame'].sv_set([[frame_end]])
+        outputs['Evaluate'].sv_set([[frame_current / num_frames]])
 
 
 def register():
