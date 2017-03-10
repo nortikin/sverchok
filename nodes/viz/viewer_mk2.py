@@ -28,7 +28,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 
 from sverchok.data_structure import (
     node_id, updateNode, dataCorrect,
-    Vector_generate, Matrix_generate)
+    Matrix_generate)
 
 from sverchok.ui.viewer_draw_mk2 import callback_disable, callback_enable
 
@@ -87,7 +87,6 @@ class SvObjBakeMK2(bpy.types.Operator):
         except:
             num_keys = 0
 
-        vertices = Vector_generate(vers)
         matrixes = Matrix_generate(mats)
         edgs, pols, max_vert_index, fht = [], [], [], []
 
@@ -97,17 +96,17 @@ class SvObjBakeMK2(bpy.types.Operator):
                 fht.append(maxi)
 
         for u, f in enumerate(fht):
-            max_vert_index.append(min(len(vertices[u]), fht[u]))
+            max_vert_index.append(min(len(vers[u]), fht[u]))
 
         objects = {}
         for i, m in enumerate(matrixes):
             k = i
-            lenver = len(vertices) - 1
+            lenver = len(verts) - 1
             if i > lenver:
-                v = vertices[-1]
+                v = vers[-1]
                 k = lenver
             else:
-                v = vertices[k]
+                v = vers[k]
 
             if max_vert_index:
                 if (len(v) - 1) < max_vert_index[k]:
