@@ -243,12 +243,14 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
         # make .blend reload event work, without this the self.node_dict is empty.
         if not self.node_dict:
             # self.load()
+            self.injected_state = False
             self.update_sockets()
 
         # make inputs local, do function with inputs, return outputs if present
         ND = self.node_dict.get(hash(self))
         if not ND:
             print('hash invalidated')
+            self.injected_state = False
             self.update_sockets()
             ND = self.node_dict.get(hash(self))
             self.load()
