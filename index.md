@@ -50,6 +50,7 @@
     SvKDTreeEdgesNodeMK2
     SvMeshFilterNode
     SvEdgeAnglesNode
+    SvMeshSelectNode
 
 ## Transforms
     SvRotationNode

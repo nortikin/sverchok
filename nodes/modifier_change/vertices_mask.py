@@ -52,6 +52,12 @@ class SvVertMaskNode(bpy.types.Node, SverchCustomTreeNode):
             has_false_out = False
             verts_out = []
             poly_edge_out = []
+
+            if self.inputs['Mask'].is_linked:
+                mask = self.inputs['Mask'].sv_get()
+            else:
+                mask = [[1, 0]]
+
             for ve, pe, ma in zip(verts, poly, repeat_last(mask)):
                 current_mask = islice(cycle(ma), len(ve))
                 vert_index = [i for i, m in enumerate(current_mask) if m]

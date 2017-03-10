@@ -12,6 +12,7 @@ Analyzers
    kd_tree
    kd_tree_edges_mk2
    mesh_filter
+   mesh_select
    normal
    normals
    polygons_centers
