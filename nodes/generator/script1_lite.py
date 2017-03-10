@@ -114,7 +114,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
     )
 
     inject_params = BoolProperty()
-    inject_state = BoolProperty(default=False)
+    injected_state = BoolProperty(default=False)
     user_filename = StringProperty(update=updateNode)
     n_id = StringProperty(default='')
 
@@ -293,14 +293,17 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
             if self.inject_params:
                 locals().update({'parameters': [__local__dict__.get(s.name) for s in self.inputs]})
 
+            if socket_info.get('setup_state'):
+                locals().update(socket_info['setup_state'])
+
             exec(self.script_str, locals(), locals())
 
             # inject once.
-            if self.inject_state:
+            if not self.injected_state and locals().get('setup'):
                 setup_locals = locals().get('setup')()
                 locals().update(setup_locals)
-                self.inject_state = False
                 socket_info['setup_state'] = setup_locals
+                self.injected_state = True
 
             for idx, _socket in enumerate(self.outputs):
                 vals = locals()[_socket.name]
