@@ -275,7 +275,12 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
         return local_dict
 
 
-    def do_voodoo(self):
+    def get_setup_code(self):
+        """
+        I have no clue how the ast.parse stuff works.. but this seems to get enough info
+        for a snlite stateful setup function.
+
+        """
         tree = ast.parse(self.script_str)
 
         for node in tree.body:
@@ -283,10 +288,8 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
                 begin_setup = node.body[0].lineno - 1
                 end_setup = node.body[-1].lineno - 1
                 code = '\n'.join(self.script_str.split('\n')[begin_setup:end_setup])
-                print('def setup():\n\n')
-                print(code)
-                print('    return locals()')
-
+                final_setup_code = 'def setup():\n\n' + code + '\n    return locals()\n'
+                return final_setup_code
 
 
     def process_script(self):
@@ -299,8 +302,20 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
             locals().update({output.name: []})
 
         try:
-
             socket_info = self.node_dict[hash(self)]['sockets']
+
+            # inject once! 
+            if not self.injected_state:
+                setup_result = self.get_setup_code()
+                if setup_result:
+                    exec(setup_result, locals(), locals())
+                    setup_locals = locals().get('setup')()
+                    print(setup_locals)
+                    locals().update(setup_locals)
+                    socket_info['setup_state'] = setup_locals
+                    self.injected_state = True
+
+
             __fnamex = socket_info.get('drawfunc_name')
             if __fnamex:
                 socket_info['drawfunc'] = locals()[__fnamex]
@@ -312,17 +327,6 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
                 locals().update(socket_info['setup_state'])
 
             exec(self.script_str, locals(), locals())
-
-            # inject once.
-            if not self.injected_state and locals().get('setup'):
-
-                self.do_voodoo()
-
-
-                setup_locals = locals().get('setup')()
-                locals().update(setup_locals)
-                socket_info['setup_state'] = setup_locals
-                self.injected_state = True
 
             for idx, _socket in enumerate(self.outputs):
                 vals = locals()[_socket.name]
