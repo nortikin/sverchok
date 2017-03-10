@@ -114,6 +114,8 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
     )
 
     inject_params = BoolProperty()
+    user_filename = StringProperty(update=updateNode)
+    n_id = StringProperty(default='')
 
     def draw_label(self):
         if self.script_name:
@@ -155,12 +157,12 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
                 if isinstance(dval, float):
                     s.prop_type = "float_list"
                     s.prop_index = idx
-                    self.float_list[idx] = dval
+                    self.float_list[idx] = self.float_list[idx] or dval  # pick up current if not zero
 
                 elif isinstance(dval, int):
                     s.prop_type = "int_list"
                     s.prop_index = idx
-                    self.int_list[idx] = dval
+                    self.int_list[idx] = self.int_list[idx] or dval
         except:
             print('some failure in the add_props_to_sockets function. ouch.')
 
@@ -202,6 +204,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
 
 
     def load(self):
+        ''' ----- '''
         if not self.script_name:
             return
 
@@ -261,7 +264,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
                 val = sock_desc[2]
                 if isinstance(val, (int, float)):
                     # extra pussyfooting for the load sequence.
-                    t = s.sv_get(default=[[val]])
+                    t = s.sv_get()
                     if t and t[0] and t[0][0]:
                         val = t[0][0]
 
@@ -271,14 +274,20 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
 
 
     def process_script(self):
-        locals().update(self.make_new_locals())
+        __local__dict__ = self.make_new_locals()
+        locals().update(__local__dict__)
         locals().update({'vectorize': vectorize})
+        locals().update({'bpy': bpy})
+
+        for output in self.outputs:
+            locals().update({output.name: []})
 
         try:
 
             if hasattr(self, 'inject_params'):
                 if self.inject_params:
-                    parameters = eval("[" + ", ".join([i.name for i in self.inputs]) + "]")
+                    locals().update({'parameters': [__local__dict__.get(s.name) for s in self.inputs]})
+
 
             exec(self.script_str, locals(), locals())
             for idx, _socket in enumerate(self.outputs):
@@ -309,9 +318,16 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
         if not tk or not tk.get('sockets'):
             return
 
-        socket_info = tk['sockets']
-        if socket_info:
-            f = socket_info.get('drawfunc')
+        snlite_info = tk['sockets']
+        if snlite_info:
+
+            # snlite supplied custom file handler solution
+            fh = snlite_info.get('display_file_handler')
+            if fh:
+                layout.prop_search(self, 'user_filename', bpy.data, 'texts', text='filename')
+
+            # user supplied custom draw function
+            f = snlite_info.get('drawfunc')
             if f:
                 f(self, context, layout)
 

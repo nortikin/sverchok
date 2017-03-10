@@ -50,7 +50,12 @@ func_dict = {
     "ROUND":          (18, lambda u, s: Vector(u).to_tuple(abs(int(s))),           ('vs v'),     "Round s digits"),
 
     "NORMALIZE":      (6,  lambda u: Vector(u).normalized()[:],                     ('v v'),          "Normalize"),
-    "NEG":            (7,  lambda u: (-Vector(u))[:],                               ('v v'),             "Negate")
+    "NEG":            (7,  lambda u: (-Vector(u))[:],                               ('v v'),             "Negate"),
+
+    "SCALE XY":       (30, lambda u, s: (u[0]*s, u[1]*s, u[2]),                    ('vs v'),          "Scale XY"),
+    "SCALE XZ":       (31, lambda u, s: (u[0]*s, u[1],   u[2]*s),                  ('vs v'),          "Scale XZ"),
+    "SCALE YZ":       (32, lambda u, s: (u[0],   u[1]*s, u[2]*s),                  ('vs v'),          "Scale YZ")
+
 }
 
 

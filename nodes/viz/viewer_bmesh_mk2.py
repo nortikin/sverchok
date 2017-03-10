@@ -186,7 +186,21 @@ class SvBmeshViewOp2(bpy.types.Operator):
             mat = bpy.data.materials.new('sv_material')
             mat.use_nodes = True
             mat.use_fake_user = True  # usually handy
+
+
+            nodes = mat.node_tree.nodes
             n.material = mat.name
+            
+            if bpy.context.scene.render.engine == 'CYCLES':
+                # add attr node to the left of diffuse BSDF + connect it
+                diffuse_node = nodes['Diffuse BSDF']
+                attr_node = nodes.new('ShaderNodeAttribute')
+                attr_node.location = (-170, 300)
+                attr_node.attribute_name = 'SvCol'
+
+                links = mat.node_tree.links
+                links.new(attr_node.outputs[0], diffuse_node.inputs[0])
+
 
     def execute(self, context):
         self.hide_unhide(context, self.fn_name)

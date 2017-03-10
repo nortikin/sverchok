@@ -28,10 +28,12 @@
 #     Gorodetskiy Nikita (aka Nikitron)
 #     Linus Yng (aka Ly29)
 #     Agustin Jimenez (aka AgustinJB)
-#     Dealga McArdle (aka Zeffii)
+#     Dealga McArdle (aka zeffii)
 #     Konstantin Vorobiew (aka Kosvor)
 #     Ilya Portnov (aka portnov)
 #     Eleanor Howick (aka elfnor)
+#     Walter Perdan (aka kalwalt)
+#     DolphinDream
 #
 #  ***** END GPL LICENSE BLOCK *****
 #
@@ -43,7 +45,7 @@ bl_info = {
         "sverchok-b3d@ya.ru, "
         "Cfyzzz, Nikitron, Ly29, "
         "AgustinJB, Zeffii, Kosvor, "
-        "Portnov, Elfnor"
+        "Portnov, Elfnor, kalwalt, DolphinDream"
     ),
     "version": (0, 5, 9, 6),
     "blender": (2, 7, 8),

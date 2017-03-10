@@ -23,6 +23,7 @@
     SvBricksNode
     ImageNode
     SvTorusNode
+    SvMeshEvalNode
 
 ## Generators Extended
     SvBoxRoundedNode
@@ -35,6 +36,7 @@
     SvScriptNode
     SvTorusKnotNode
     SvHexaGridNode
+    SvRingNode
 
 ## Analyzers
     SvBBoxNode
@@ -49,6 +51,7 @@
     SvKDTreeEdgesNodeMK2
     SvMeshFilterNode
     SvEdgeAnglesNode
+    SvMeshSelectNode
 
 ## Transforms
     SvRotationNode
@@ -158,6 +161,7 @@
     SvVertSortNode
     SvNoiseNodeMK2
     SvVectorFractal
+    SvTurbulenceNode
     SvVectorRewire
     svAxisInputNode
     SvAxisInputNodeMK2
@@ -234,6 +238,7 @@
     SvCurveViewerNode
     SvCurveViewerNodeAlt
     SvPolylineViewerNode
+    SvPolylineViewerNodeMK1
     SvTypeViewerNode
     SvJoinTrianglesNode
     SvCacheNode

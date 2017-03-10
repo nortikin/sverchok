@@ -22,7 +22,7 @@ import bpy
 import mathutils
 
 from mathutils import Vector
-from bpy.props import FloatProperty, FloatVectorProperty
+from bpy.props import FloatProperty, FloatVectorProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (
@@ -158,6 +158,9 @@ class SvInsetSpecial(bpy.types.Node, SverchCustomTreeNode):
         description='Distance',
         default=0.0, update=updateNode)
 
+    ignore = IntProperty(name='Ignore', description='skip polygons', default=0, update=updateNode)
+    make_inner = IntProperty(name='Make Inner', description='Make inner polygon', default=1, update=updateNode)
+
     # axis = FloatVectorProperty(
     #   name='axis', description='axis relative to normal',
     #   default=(0,0,1), update=updateNode)
@@ -168,18 +171,14 @@ class SvInsetSpecial(bpy.types.Node, SverchCustomTreeNode):
         i.new('StringsSocket', 'distance').prop_name = 'distance'
         i.new('VerticesSocket', 'vertices')
         i.new('StringsSocket', 'polygons')
-        i.new('StringsSocket', 'ignore')
-        i.new('StringsSocket', 'make_inner')
+        i.new('StringsSocket', 'ignore').prop_name = 'ignore'
+        i.new('StringsSocket', 'make_inner').prop_name = 'make_inner'
 
         o = self.outputs
         o.new('VerticesSocket', 'vertices')
         o.new('StringsSocket', 'polygons')
         o.new('StringsSocket', 'ignored')
         o.new('StringsSocket', 'inset')
-
-
-    def get_value_for(self, param, fallback):
-        return self.inputs[param].sv_get() if self.inputs[param].links else fallback
 
 
     def process(self):
@@ -192,11 +191,16 @@ class SvInsetSpecial(bpy.types.Node, SverchCustomTreeNode):
         all_verts = Vector_generate(i['vertices'].sv_get())
         all_polys = i['polygons'].sv_get()
 
-        ''' get_value_for( param name, fallback )'''
-        all_inset_rates = self.get_value_for('inset', [[self.inset]])
-        all_distance_vals = self.get_value_for('distance', [[self.distance]])
-        all_ignores = self.get_value_for('ignore', [[False]])
-        all_make_inners = self.get_value_for('make_inner', [[True]])
+        all_inset_rates = i['inset'].sv_get()
+        all_distance_vals = i['distance'].sv_get()
+
+        # silly auto ugrade.
+        if not i['ignore'].prop_name:
+            i['ignore'].prop_name = 'ignore'
+            i['make_inner'].prop_name = 'make_inner'
+
+        all_ignores = i['ignore'].sv_get()
+        all_make_inners = i['make_inner'].sv_get()
 
         data = all_verts, all_polys, all_inset_rates, all_distance_vals, all_ignores, all_make_inners
 
@@ -232,15 +236,9 @@ class SvInsetSpecial(bpy.types.Node, SverchCustomTreeNode):
 
         # deal  with hooking up the processed data to the outputs
         o['vertices'].sv_set(verts_out)
-
-        if o['polygons'].is_linked:
-            o['polygons'].sv_set(polys_out)
-
-        if o['ignored'].is_linked:
-            o['ignored'].sv_set(ignored_out)
-
-        if o['inset'].is_linked:
-            o['inset'].sv_set(inset_out)
+        o['polygons'].sv_set(polys_out)
+        o['ignored'].sv_set(ignored_out)
+        o['inset'].sv_set(inset_out)
 
 
 
