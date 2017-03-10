@@ -318,13 +318,11 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
             # inject once! 
             if not self.injected_state:
                 self.inject_state(locals())
-
+            else:
+                locals().update(socket_info['setup_state'])
 
             if self.inject_params:
                 locals().update({'parameters': [__local__dict__.get(s.name) for s in self.inputs]})
-
-            if socket_info.get('setup_state'):
-                locals().update(socket_info['setup_state'])
 
             exec(self.script_str, locals(), locals())
 
