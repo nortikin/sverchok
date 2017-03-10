@@ -114,6 +114,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
     )
 
     inject_params = BoolProperty()
+    inject_state = BoolProperty(default=False)
     user_filename = StringProperty(update=updateNode)
     n_id = StringProperty(default='')
 
@@ -284,20 +285,27 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
 
         try:
 
-            if hasattr(self, 'inject_params'):
-                if self.inject_params:
-                    locals().update({'parameters': [__local__dict__.get(s.name) for s in self.inputs]})
-
-
-            exec(self.script_str, locals(), locals())
-            for idx, _socket in enumerate(self.outputs):
-                vals = locals()[_socket.name]
-                self.outputs[idx].sv_set(vals)
-
             socket_info = self.node_dict[hash(self)]['sockets']
             __fnamex = socket_info.get('drawfunc_name')
             if __fnamex:
                 socket_info['drawfunc'] = locals()[__fnamex]
+
+            if self.inject_params:
+                locals().update({'parameters': [__local__dict__.get(s.name) for s in self.inputs]})
+
+            exec(self.script_str, locals(), locals())
+
+            # inject once.
+            if self.inject_state:
+                setup_locals = locals().get('setup')()
+                locals().update(setup_locals)
+                self.inject_state = False
+                socket_info['setup_state'] = setup_locals
+
+            for idx, _socket in enumerate(self.outputs):
+                vals = locals()[_socket.name]
+                self.outputs[idx].sv_set(vals)
+
 
             set_autocolor(self, True, READY_COLOR)
 
