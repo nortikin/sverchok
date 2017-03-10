@@ -291,6 +291,15 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
                 final_setup_code = 'def setup():\n\n' + code + '\n    return locals()\n'
                 return final_setup_code
 
+    def inject_state(self, local_variables):
+        setup_result = self.get_setup_code()
+        if setup_result:
+            exec(setup_result, local_variables, local_variables)
+            setup_locals = local_variables.get('setup')()
+            local_variables.update(setup_locals)
+            local_variables['socket_info']['setup_state'] = setup_locals
+            self.injected_state = True
+
 
     def process_script(self):
         __local__dict__ = self.make_new_locals()
@@ -306,15 +315,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
 
             # inject once! 
             if not self.injected_state:
-                setup_result = self.get_setup_code()
-                if setup_result:
-                    exec(setup_result, locals(), locals())
-                    setup_locals = locals().get('setup')()
-                    print(setup_locals)
-                    locals().update(setup_locals)
-                    socket_info['setup_state'] = setup_locals
-                    self.injected_state = True
-
+                self.inject_state(locals())
 
             __fnamex = socket_info.get('drawfunc_name')
             if __fnamex:
