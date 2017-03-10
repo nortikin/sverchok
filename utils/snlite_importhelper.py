@@ -101,11 +101,6 @@ def parse_sockets(node):
             socket_dir = L.split(' ')[0] + 'puts'
             snlite_info[socket_dir].append(parse_socket_line(L))
 
-        elif L.startswith('draw '):
-            drawfunc_line = L.split(' ')
-            if len(drawfunc_line) == 2:
-                snlite_info['drawfunc_name'] = drawfunc_line[1]
-
         elif L.startswith('ui = '):
             ui_dict = parse_ui_line(L)
             if isinstance(ui_dict, dict):

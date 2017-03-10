@@ -294,6 +294,18 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
                 return final_setup_code
 
 
+    def get_ui_code(self):
+        tree = ast.parse(self.script_str)
+
+        for node in tree.body:
+            if isinstance(node, ast.FunctionDef) and node.name == 'ui':
+                begin_setup = node.body[0].lineno - 1
+                end_setup = node.body[-1].lineno
+                code = '\n'.join(self.script_str.split('\n')[begin_setup:end_setup])
+                final_setup_code = 'def ui(self, context, layout):\n\n' + code + '\n\n'
+                return final_setup_code
+
+
     def inject_state(self, local_variables):
         setup_result = self.get_setup_code()
         if setup_result:
@@ -305,16 +317,11 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
 
 
     def inject_draw_buttons(self, local_variables):
-        tree = ast.parse(self.script_str)
-
-        for node in tree.body:
-            if isinstance(node, ast.FunctionDef) and node.name == 'ui':
-                begin_setup = node.body[0].lineno - 1
-                end_setup = node.body[-1].lineno - 1
-                code = '\n'.join(self.script_str.split('\n')[begin_setup:end_setup])
-                final_setup_code = 'def setup():\n\n' + code + '\n    return locals()\n'
-                return final_setup_code
-
+        draw_ui_result = self.get_ui_code()
+        if draw_ui_result:
+            exec(draw_ui_result, local_variables, local_variables)
+            ui_func = local_variables.get('ui')
+            local_variables['socket_info']['drawfunc'] = ui_func
 
 
     def process_script(self):
@@ -332,6 +339,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
             # inject once! 
             if not self.injected_state:
                 self.inject_state(locals())
+                self.inject_draw_buttons(locals())
             else:
                 locals().update(socket_info['setup_state'])
 
@@ -340,15 +348,9 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
 
             exec(self.script_str, locals(), locals())
 
-            # this could be done once per refresh too elsewhere too..
-            __fnamex = socket_info.get('drawfunc_name')
-            if __fnamex:
-                socket_info['drawfunc'] = locals()[__fnamex]
-
             for idx, _socket in enumerate(self.outputs):
                 vals = locals()[_socket.name]
                 self.outputs[idx].sv_set(vals)
-
 
             set_autocolor(self, True, READY_COLOR)
 
