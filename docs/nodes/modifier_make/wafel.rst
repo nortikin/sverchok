@@ -59,7 +59,6 @@ Always make matrices rotations not orthogonal, it will not work 100%. Making som
 
 Always use Cross section nodes, not bisect, it will not work.      
 
-Great thanks to magazine "Современная светотехника" and ООО "Световая корпорация Тесла" LTD for collaboration on this node and help.      
   
 Examples  
 --------  
