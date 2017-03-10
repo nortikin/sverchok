@@ -319,9 +319,6 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
             if not self.injected_state:
                 self.inject_state(locals())
 
-            __fnamex = socket_info.get('drawfunc_name')
-            if __fnamex:
-                socket_info['drawfunc'] = locals()[__fnamex]
 
             if self.inject_params:
                 locals().update({'parameters': [__local__dict__.get(s.name) for s in self.inputs]})
@@ -330,6 +327,11 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
                 locals().update(socket_info['setup_state'])
 
             exec(self.script_str, locals(), locals())
+
+            # this could be done once per refresh too elsewhere too..
+            __fnamex = socket_info.get('drawfunc_name')
+            if __fnamex:
+                socket_info['drawfunc'] = locals()[__fnamex]
 
             for idx, _socket in enumerate(self.outputs):
                 vals = locals()[_socket.name]
