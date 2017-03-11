@@ -101,7 +101,7 @@ class SvObjBakeMK2(bpy.types.Operator):
         objects = {}
         for i, m in enumerate(matrixes):
             k = i
-            lenver = len(verts) - 1
+            lenver = len(vers) - 1
             if i > lenver:
                 v = vers[-1]
                 k = lenver
