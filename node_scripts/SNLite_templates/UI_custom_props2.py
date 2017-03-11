@@ -1,12 +1,9 @@
 """
 in objects_in o d=[[]] n=0
 out stuff     v
-draw xdraw_buttons
 """
 
-import bpy
-
-def xdraw_buttons(self, context, layout):
+def ui(self, context, layout):
     scn = context.scene
     if not hasattr(scn, 'some_scriptnode_props'):
         return

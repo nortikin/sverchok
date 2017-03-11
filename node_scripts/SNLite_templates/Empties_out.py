@@ -3,7 +3,7 @@ in draw_size        s   d=2.0    n=2
 in matrices         m   d=[[]]   n=0
 out obj_generated   o
 """
-import bpy
+
 from mathutils import Matrix
 
 scene = bpy.context.scene
