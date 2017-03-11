@@ -26,6 +26,7 @@ from sverchok.data_structure import updateNode, match_long_repeat, Matrix_genera
 
 maskTypeItems = [("VERTICES", "V", ""), ("EDGES", "E", ""), ("POLYGONS", "P", ""), ]
 
+
 class SvTransformSelectNode(bpy.types.Node, SverchCustomTreeNode):
 
     ''' Transform Select '''
@@ -49,11 +50,11 @@ class SvTransformSelectNode(bpy.types.Node, SverchCustomTreeNode):
 
         self.outputs.new('VerticesSocket', "Vertices")
         self.outputs.new('StringsSocket', "PolyEdge")
+        self.outputs.new('StringsSocket', "PolyEdge O")
         self.outputs.new('VerticesSocket', "Vertices T")
         self.outputs.new('StringsSocket', "PolyEdge T")
         self.outputs.new('VerticesSocket', "Vertices F")
         self.outputs.new('StringsSocket', "PolyEdge F")
-
 
     def process(self):
         # return if no outputs are connected
@@ -72,10 +73,14 @@ class SvTransformSelectNode(bpy.types.Node, SverchCustomTreeNode):
             input_mask = inputs['Mask'].sv_get()[0]
         else:
             n = len(input_verts)
-            input_mask = ([1,0]*(int((n+1)/2)))[:n]
+            input_mask = ([1, 0] * (int((n + 1) / 2)))[:n]
 
         matrixF = Matrix_generate(input_matrixF)
         matrixT = Matrix_generate(input_matrixT)
+
+        n = len(input_verts)
+        matrixF = matrixF[:n]
+        matrixT = matrixT[:n]
 
         # print("Mask: ", input_mask)
         # print("Vertices: ", input_verts)
@@ -85,30 +90,58 @@ class SvTransformSelectNode(bpy.types.Node, SverchCustomTreeNode):
         params = match_long_repeat([input_mask, input_verts, matrixT, matrixF])
         # print("params: ", params)
 
-        vertList = []
+        vertListA = []
         vertListT = []
         vertListF = []
+        polyEdgeListA = []
         polyEdgeListT = []
         polyEdgeListF = []
+        polyEdgeListO = []
+        vt = {}
+        vf = {}
+        vid = 0
         for i, v, mt, mf in zip(*params):
             # print('Vertex:', v, " has mask:", i)
             # print('Matrix T:', mt)
             # print('Matrix F:', mf)
-            if i == 1: # do some processing using Matrix T here
+            if i == 1:  # do some processing using Matrix T here
                 v = (mt * Vector(v))[:]
                 vertListT.append(v)
-            else: # do some processing using Matrix F here
+                vt[vid] = len(vertListT) - 1
+            else:  # do some processing using Matrix F here
                 v = (mf * Vector(v))[:]
                 vertListF.append(v)
-            vertList.append(v)
+                vf[vid] = len(vertListF) - 1
+            vertListA.append(v)
+            vid = vid + 1
+
+        # print("vt = ", vt)
+        # print("vf = ", vf)
+
+        polyEdgeListA = input_polys
+
+        for pe in input_polys:
+            i1, i2 = pe
+            # print("pe=", pe, " i1 = ", i1, " i2 = ", i2)
+            if i1 in vt and i2 in vt:
+                # print("i1 = ", i1, " i2 = ", i2, " is in vt =", vt)
+                polyEdgeListT.append([vt[i1], vt[i2]])
+            if i1 in vf and i2 in vf:
+                # print("i1 = ", i1, " i2 = ", i2, " is in vf =", vf)
+                polyEdgeListF.append([vf[i1], vf[i2]])
+            if i1 in vt and i2 in vf or i1 in vf and i2 in vt:
+                polyEdgeListO.append([i1, i2])
 
         # print("Vertices T: ", vertListT)
         # print("Vertices F: ", vertListF)
-        outputs['Vertices'].sv_set([vertList])
+        outputs['Vertices'].sv_set([vertListA])
+        outputs['PolyEdge'].sv_set([polyEdgeListA])
+        outputs['PolyEdge O'].sv_set([polyEdgeListO])
         outputs['Vertices T'].sv_set([vertListT])
         outputs['PolyEdge T'].sv_set([polyEdgeListT])
         outputs['Vertices F'].sv_set([vertListF])
-        outputs['PolyEdge F'].sv_set([polyEdgeListT])
+        outputs['PolyEdge F'].sv_set([polyEdgeListF])
+
 
 def register():
     bpy.utils.register_class(SvTransformSelectNode)
