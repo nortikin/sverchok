@@ -114,6 +114,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
     )
 
     inject_params = BoolProperty()
+    injected_state = BoolProperty(default=False)
     user_filename = StringProperty(update=updateNode)
     n_id = StringProperty(default='')
 
@@ -216,6 +217,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
                 print('but script loaded locally anyway.')
 
         if self.update_sockets():
+            self.injected_state = False
             self.process()
 
 
@@ -241,12 +243,14 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
         # make .blend reload event work, without this the self.node_dict is empty.
         if not self.node_dict:
             # self.load()
+            self.injected_state = False
             self.update_sockets()
 
         # make inputs local, do function with inputs, return outputs if present
         ND = self.node_dict.get(hash(self))
         if not ND:
             print('hash invalidated')
+            self.injected_state = False
             self.update_sockets()
             ND = self.node_dict.get(hash(self))
             self.load()
@@ -272,6 +276,52 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
 
         return local_dict
 
+    def get_node_from_function_name(self, func_name):
+        """
+        this seems to get enough info for a snlite stateful setup function.
+
+        """
+        tree = ast.parse(self.script_str)
+        for node in tree.body:
+            if isinstance(node, ast.FunctionDef) and node.name == func_name:
+                return node
+
+
+    def get_setup_code(self):
+        ast_node = self.get_node_from_function_name('setup')
+        if ast_node:
+            begin_setup = ast_node.body[0].lineno - 1
+            end_setup = ast_node.body[-1].lineno - 1
+            code = '\n'.join(self.script_str.split('\n')[begin_setup:end_setup])
+            return 'def setup():\n\n' + code + '\n    return locals()\n'
+
+
+    def get_ui_code(self):
+        ast_node = self.get_node_from_function_name('ui')
+        if ast_node:
+            begin_setup = ast_node.body[0].lineno - 1
+            end_setup = ast_node.body[-1].lineno
+            code = '\n'.join(self.script_str.split('\n')[begin_setup:end_setup])
+            return 'def ui(self, context, layout):\n\n' + code + '\n\n'
+
+
+    def inject_state(self, local_variables):
+        setup_result = self.get_setup_code()
+        if setup_result:
+            exec(setup_result, local_variables, local_variables)
+            setup_locals = local_variables.get('setup')()
+            local_variables.update(setup_locals)
+            local_variables['socket_info']['setup_state'] = setup_locals
+            self.injected_state = True
+
+
+    def inject_draw_buttons(self, local_variables):
+        draw_ui_result = self.get_ui_code()
+        if draw_ui_result:
+            exec(draw_ui_result, local_variables, local_variables)
+            ui_func = local_variables.get('ui')
+            local_variables['socket_info']['drawfunc'] = ui_func
+
 
     def process_script(self):
         __local__dict__ = self.make_new_locals()
@@ -283,21 +333,23 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
             locals().update({output.name: []})
 
         try:
+            socket_info = self.node_dict[hash(self)]['sockets']
 
-            if hasattr(self, 'inject_params'):
-                if self.inject_params:
-                    locals().update({'parameters': [__local__dict__.get(s.name) for s in self.inputs]})
+            # inject once! 
+            if not self.injected_state:
+                self.inject_state(locals())
+                self.inject_draw_buttons(locals())
+            else:
+                locals().update(socket_info['setup_state'])
 
+            if self.inject_params:
+                locals().update({'parameters': [__local__dict__.get(s.name) for s in self.inputs]})
 
             exec(self.script_str, locals(), locals())
+
             for idx, _socket in enumerate(self.outputs):
                 vals = locals()[_socket.name]
                 self.outputs[idx].sv_set(vals)
-
-            socket_info = self.node_dict[hash(self)]['sockets']
-            __fnamex = socket_info.get('drawfunc_name')
-            if __fnamex:
-                socket_info['drawfunc'] = locals()[__fnamex]
 
             set_autocolor(self, True, READY_COLOR)
 
