@@ -20,7 +20,7 @@ from mathutils import Matrix, Vector
 #from math import copysign
 
 import bpy
-from bpy.props import IntProperty, FloatProperty, BoolProperty
+from bpy.props import IntProperty, FloatProperty, BoolProperty, EnumProperty
 import bmesh.ops
 
 from sverchok.node_tree import SverchCustomTreeNode
@@ -29,6 +29,20 @@ from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
 
 def is_matrix(lst):
     return len(lst) == 4 and len(lst[0]) == 4
+
+def get_faces_center(faces):
+    result = Vector((0,0,0))
+    for face in faces:
+        result += Vector(face.calc_center_median())
+    result = (1.0/float(len(faces))) * result
+    return result
+
+def get_avg_normal(faces):
+    result = Vector((0,0,0))
+    for face in faces:
+        result += Vector(face.normal)
+    result = (1.0/float(len(faces))) * result
+    return result
 
 class SvExtrudeRegionNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Extrude region of faces '''
@@ -41,12 +55,38 @@ class SvExtrudeRegionNode(bpy.types.Node, SverchCustomTreeNode):
         default=False,
         update=updateNode)
 
+    transform_modes = [
+            ("Matrix", "By matrix", "Transform vertices by specified matrix", 0),
+            ("Normal", "Along normal", "Extrude vertices along normal", 1)
+        ]
+
+    def update_mode(self, context):
+        self.inputs['Matrices'].hide = (self.transform_mode != "Matrix")
+        self.inputs['Height'].hide = (self.transform_mode != "Normal")
+        self.inputs['Scale'].hide = (self.transform_mode != "Normal")
+        updateNode(self, context)
+
+    transform_mode = EnumProperty(name="Transformation mode",
+            description="How vertices transformation is specified",
+            default="Matrix",
+            items = transform_modes,
+            update=update_mode)
+
+    height_ = FloatProperty(name="Height", description="Extrusion amount",
+                default=0.0,
+                update=updateNode)
+    scale_ = FloatProperty(name="Scale", description="Extruded faces scale",
+                default=1.0, min=0.0,
+                update=updateNode)
+
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', "Vertices", "Vertices")
         self.inputs.new('StringsSocket', 'Edges', 'Edges')
         self.inputs.new('StringsSocket', 'Polygons', 'Polygons')
         self.inputs.new('StringsSocket', 'Mask')
         self.inputs.new('MatrixSocket', 'Matrices')
+        self.inputs.new('StringsSocket', "Height").prop_name = "height_"
+        self.inputs.new('StringsSocket', "Scale").prop_name = "scale_"
 
         self.outputs.new('VerticesSocket', 'Vertices')
         self.outputs.new('StringsSocket', 'Edges')
@@ -55,7 +95,10 @@ class SvExtrudeRegionNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('StringsSocket', 'NewEdges')
         self.outputs.new('StringsSocket', 'NewFaces')
 
+        self.update_mode(context)
+
     def draw_buttons(self, context, layout):
+        layout.prop(self, "transform_mode")
         layout.prop(self, "keep_original")
   
     def process(self):
@@ -69,11 +112,18 @@ class SvExtrudeRegionNode(bpy.types.Node, SverchCustomTreeNode):
         edges_s = self.inputs['Edges'].sv_get(default=[[]])
         faces_s = self.inputs['Polygons'].sv_get(default=[[]])
         masks_s = self.inputs['Mask'].sv_get(default=[[1]])
-        matrices_s = self.inputs['Matrices'].sv_get(default=[[]])
-        if is_matrix(matrices_s[0]):
-            matrices_s = [Matrix_generate(matrices_s)]
+        if self.transform_mode == "Matrix":
+            matrices_s = self.inputs['Matrices'].sv_get(default=[[]])
+            if is_matrix(matrices_s[0]):
+                matrices_s = [Matrix_generate(matrices_s)]
+            else:
+                matrices_s = [Matrix_generate(matrices) for matrices in matrices_s]
+            heights_s = [0.0]
+            scales_s = [1.0]
         else:
-            matrices_s = [Matrix_generate(matrices) for matrices in matrices_s]
+            matrices_s = [[]]
+            heights_s = self.inputs['Height'].sv_get()
+            scales_s  = self.inputs['Scale'].sv_get()
 
         result_vertices = []
         result_edges = []
@@ -82,14 +132,19 @@ class SvExtrudeRegionNode(bpy.types.Node, SverchCustomTreeNode):
         result_ext_edges = []
         result_ext_faces = []
 
-        meshes = match_long_repeat([vertices_s, edges_s, faces_s, masks_s, matrices_s])
+        meshes = match_long_repeat([vertices_s, edges_s, faces_s, masks_s, matrices_s, heights_s, scales_s])
 
-        for vertices, edges, faces, masks, matrices in zip(*meshes):
-            if not matrices:
-                matrices = [Matrix()]
+        for vertices, edges, faces, masks, matrices, height, scale in zip(*meshes):
+            if self.transform_mode == "Matrix":
+                if not matrices:
+                    matrices = [Matrix()]
+            else:
+                height = height[0]
+                scale = scale[0]
+
             fullList(masks,  len(faces))
 
-            bm = bmesh_from_pydata(vertices, edges, faces)
+            bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True)
 
             b_faces = []
             b_edges = set()
@@ -108,16 +163,27 @@ class SvExtrudeRegionNode(bpy.types.Node, SverchCustomTreeNode):
                             use_keep_orig=self.keep_original)['geom']
 
             extruded_verts = [v for v in new_geom if isinstance(v, bmesh.types.BMVert)]
+            extruded_faces = [f for f in new_geom if isinstance(f, bmesh.types.BMFace)]
 
-            for vertex, matrix in zip(*match_long_repeat([extruded_verts, matrices])):
-                bmesh.ops.transform(bm, verts=[vertex], matrix=matrix, space=Matrix())
+            if self.transform_mode == "Matrix":
+                for vertex, matrix in zip(*match_long_repeat([extruded_verts, matrices])):
+                    bmesh.ops.transform(bm, verts=[vertex], matrix=matrix, space=Matrix())
+            else:
+                #for face, height, scale in zip(extruded_faces, heights, scales):
+                normal = get_avg_normal(extruded_faces) 
+                dr = normal * height
+                center = get_faces_center(extruded_faces)
+                translation = Matrix.Translation(center)
+                rotation = normal.rotation_difference((0,0,1)).to_matrix().to_4x4()
+                m = translation * rotation
+                bmesh.ops.scale(bm, vec=(scale, scale, scale), space=m.inverted(), verts=extruded_verts)
+                bmesh.ops.translate(bm, verts=extruded_verts, vec=dr)
 
             extruded_verts = [tuple(v.co) for v in extruded_verts]
 
             extruded_edges = [e for e in new_geom if isinstance(e, bmesh.types.BMEdge)]
             extruded_edges = [tuple(v.index for v in edge.verts) for edge in extruded_edges]
 
-            extruded_faces = [f for f in new_geom if isinstance(f, bmesh.types.BMFace)]
             extruded_faces = [[v.index for v in edge.verts] for edge in extruded_faces]
 
             new_vertices, new_edges, new_faces = pydata_from_bmesh(bm)
