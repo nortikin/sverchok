@@ -68,6 +68,7 @@
     SvDeleteLooseNode
     SvSeparateMeshNode
     SvExtrudeSeparateNode
+    SvExtrudeRegionNode
     SvRandomizeVerticesNode
     SvVertMaskNode
     SvFillsHoleNode
