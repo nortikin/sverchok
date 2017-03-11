@@ -276,34 +276,33 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
 
         return local_dict
 
-
-    def get_setup_code(self):
+    def get_node_from_function_name(self, func_name):
         """
-        I have no clue how the ast.parse stuff works.. but this seems to get enough info
-        for a snlite stateful setup function.
+        this seems to get enough info for a snlite stateful setup function.
 
         """
         tree = ast.parse(self.script_str)
-
         for node in tree.body:
-            if isinstance(node, ast.FunctionDef) and node.name == 'setup':
-                begin_setup = node.body[0].lineno - 1
-                end_setup = node.body[-1].lineno - 1
-                code = '\n'.join(self.script_str.split('\n')[begin_setup:end_setup])
-                final_setup_code = 'def setup():\n\n' + code + '\n    return locals()\n'
-                return final_setup_code
+            if isinstance(node, ast.FunctionDef) and node.name == func_name:
+                return node
+
+
+    def get_setup_code(self):
+        ast_node = self.get_node_from_function_name('setup')
+        if ast_node:
+            begin_setup = ast_node.body[0].lineno - 1
+            end_setup = ast_node.body[-1].lineno - 1
+            code = '\n'.join(self.script_str.split('\n')[begin_setup:end_setup])
+            return 'def setup():\n\n' + code + '\n    return locals()\n'
 
 
     def get_ui_code(self):
-        tree = ast.parse(self.script_str)
-
-        for node in tree.body:
-            if isinstance(node, ast.FunctionDef) and node.name == 'ui':
-                begin_setup = node.body[0].lineno - 1
-                end_setup = node.body[-1].lineno
-                code = '\n'.join(self.script_str.split('\n')[begin_setup:end_setup])
-                final_setup_code = 'def ui(self, context, layout):\n\n' + code + '\n\n'
-                return final_setup_code
+        ast_node = self.get_node_from_function_name('ui')
+        if ast_node:
+            begin_setup = ast_node.body[0].lineno - 1
+            end_setup = ast_node.body[-1].lineno
+            code = '\n'.join(self.script_str.split('\n')[begin_setup:end_setup])
+            return 'def ui(self, context, layout):\n\n' + code + '\n\n'
 
 
     def inject_state(self, local_variables):
