@@ -33,11 +33,13 @@ def make_line(steps, center, direction):
     elif direction == "Z":
         v = lambda l: (0.0, 0.0, l)
 
-    ss = - sum(steps) / 2 if center else 0
-    verts = [v(ss)]  # starting vertex
-    for s in steps:
-        ss = ss + s
-        verts.append(v(ss))
+    c = - sum(steps) / 2 if center else 0
+    verts = []
+    addVert = verts.append
+    x = c
+    for s in [0.0] + steps:
+        x = x + s
+        addVert(v(x))
 
     edges = [[i, i + 1] for i in range(len(steps))]
 
@@ -67,7 +69,7 @@ class SvLineNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                           default=False,
                           update=updateNode)
 
-    normalize = BoolProperty(name='Normalize', description='Normalize',
+    normalize = BoolProperty(name='Normalize', description='Normalize line to size',
                              default=False,
                              update=updateNode)
 
@@ -83,10 +85,15 @@ class SvLineNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('StringsSocket', "Edges", "Edges")
 
     def draw_buttons(self, context, layout):
-        layout.prop(self, "direction", expand=True)
-        layout.prop(self, "center")
-        layout.prop(self, "normalize")
-        layout.prop(self, "size")
+        col = layout.column(align=True)
+        row = col.row(align=True)
+        row.prop(self, "direction", expand=True)
+        row = col.row(align=True)
+        row.prop(self, "center", toggle=True)
+        row.prop(self, "normalize", toggle=True)
+        if self.normalize:
+            row = col.row(align=True)
+            row.prop(self, "size")
 
     def process(self):
         # return if no outputs are connected
