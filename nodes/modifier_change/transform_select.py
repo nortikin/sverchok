@@ -94,13 +94,7 @@ class SvTransformSelectNode(bpy.types.Node, SverchCustomTreeNode):
         params = match_long_repeat([input_mask, input_verts, matrixT, matrixF])
         # print("params: ", params)
 
-        vert_indexT = [i for i, m in enumerate(input_mask) if m]
-        vert_indexF = [i for i, m in enumerate(input_mask) if not m]
-        vt = {j: i for i, j in enumerate(vert_indexT)}
-        vf = {j: i for i, j in enumerate(vert_indexF)}
-        # print("vt = ", vt)
-        # print("vf = ", vf)
-
+        # process vertices
         vertListA, vertListT, vertListF = [[], [], []]
         for ma, v, mt, mf in zip(*params):
             # print('Vertex:', v, " has mask:", ma)
@@ -114,31 +108,53 @@ class SvTransformSelectNode(bpy.types.Node, SverchCustomTreeNode):
                 vertListF.append(v)
             vertListA.append(v)
 
+        # process polyEdges
+        vert_indexT = [i for i, m in enumerate(input_mask) if m]
+        vert_indexF = [i for i, m in enumerate(input_mask) if not m]
+        vt = {j: i for i, j in enumerate(vert_indexT)}
+        vf = {j: i for i, j in enumerate(vert_indexF)}
+        # vext = set(vt.keys())
+        # vexf = set(vf.keys())
+        vext = set(vert_indexT)
+        vexf = set(vert_indexF)
+        # print("vt.k = ", vt.keys())
+        # print("vf.k = ", vf.keys())
+        # print("vert_indexT = ", vert_indexT)
+        # print("vert_indexF = ", vert_indexF)
+        # print("vext = ", vext)
+        # print("vexf = ", vexf)
+        # print("vt = ", vt)
+        # print("vf = ", vf)
+
         polyEdgeListA = input_polys
         polyEdgeListT, polyEdgeListF, polyEdgeListO = [[], [], []]
 
-        vext = set(vt.keys())
-        vexf = set(vf.keys())
-        # print("vt.k = ", vt.keys())
-        # print("vf.k = ", vf.keys())
-        # print("vext = ", vext)
-        # print("vexf = ", vexf)
+        # pelT = [[vt[i] for i in pe] for pe in input_polys if isSetT(set(pe))]
+        # pelF = [[vf[i] for i in pe] for pe in input_polys if isSetF(set(pe))]
+
+        inSetT, inSetF = vext.issuperset, vexf.issuperset
+        addPET, addPEF, addPEO = polyEdgeListT.append, polyEdgeListF.append, polyEdgeListO.append
         for pe in input_polys:
             pex = set(pe)
             # print("pex = ", pex)
 
-            if vext.issuperset(pex):
+            if inSetT(pex):
                 # print("pex ", pex, " is in vext ", vext)
-                pet = [vt[i] for i in pe]
-                polyEdgeListT.append(pet)
+                # pet = [vt[i] for i in pe]
+                # polyEdgeListT.append(pet)
+                addPET([vt[i] for i in pe])
+                # polyEdgeListT.append([vt[i] for i in pe])
 
-            elif vexf.issuperset(pex):
+            elif inSetF(pex):
                 # print("pex ", pex, " is in vexf ", vexf)
-                pef = [vf[i] for i in pe]
-                polyEdgeListF.append(pef)
+                # pef = [vf[i] for i in pe]
+                # polyEdgeListF.append(pef)
+                # polyEdgeListF.append([vf[i] for i in pe])
+                addPEF([vf[i] for i in pe])
 
             else:
-                polyEdgeListO.append(pe)
+                # polyEdgeListO.append(pe)
+                addPEO(pe)
 
         outputs['Vertices'].sv_set([vertListA])
         outputs['PolyEdge'].sv_set([polyEdgeListA])
