@@ -35,22 +35,43 @@ def make_plane2(stepsx, stepsy, center, direction):
     elif direction == "ZX":
         v = lambda l, k: (k, 0.0, l)
 
-    stepsx = [0.0] + stepsx
-    stepsy = [0.0] + stepsy
     cx = - sum(stepsx) / 2 if center else 0
     cy = - sum(stepsy) / 2 if center else 0
-    # verts = [v(cx, cy)]  # starting vertex
     verts = []
     addVert = verts.append
-    ssx = cx
-    for sx in stepsx:
-        ssx = ssx + sx
-        ssy = cy
-        for sy in stepsy:
-            ssy = ssy + sy
-            addVert(v(ssx, ssy))
+    y = cy
+    for sy in [0.0] + stepsy:
+        y = y + sy
+        x = cx
+        for sx in [0.0] + stepsx:
+            x = x + sx
+            addVert(v(x, y))
 
-    edges = [[i, i + 1] for i in range(len(stepsx))]
+    edges = []
+    addEdge = edges.append
+    nx = len(stepsx)
+    ny = len(stepsy)
+    print("nx = ", nx)
+    print("ny = ", ny)
+    for j in range(ny+1):
+        print("j=", j)
+        for i in range(nx):
+            print("i=", i)
+            i1 = i + j * (nx+1)
+            i2 = i + j * (nx+1) + 1
+            print("i1=", i1)
+            print("i2=", i2)
+            addEdge([i1, i2])
+
+    for i in range(nx+1):
+        print("i=", i)
+        for j in range(ny):
+            print("j=", j)
+            i1 = i + j * (nx+1)
+            i2 = i + (j+1) * (nx+1)
+            print("i1=", i1)
+            print("i2=", i2)
+            addEdge([i1, i2])
 
     polys = []
 
@@ -215,7 +236,7 @@ class SvPlaneNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         for nx, ny, sx, sy in zip(*params):
             numx, numy = [max(2, nx[0]), max(2, ny[0])]  # sanitize the input
             # adjust the step list based on number of verts and steps
-            stepsx, stepsy = [sx[:(numx - 1)], sy[:(numy - 1)]] # shorten if needed
+            stepsx, stepsy = [sx[:(numx - 1)], sy[:(numy - 1)]]  # shorten if needed
             fullList(stepsx, numx - 1)  # extend if needed
             fullList(stepsy, numy - 1)  # extend if needed
             if self.normalize:
