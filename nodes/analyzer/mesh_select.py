@@ -291,12 +291,9 @@ class SvMeshSelectNode(bpy.types.Node, SverchCustomTreeNode):
             out_edges.append(es)
             out_faces.append(fs)
 
-        if self.outputs['VerticesMask'].is_linked:
-            self.outputs['VerticesMask'].sv_set(out_vertices)
-        if self.outputs['EdgesMask'].is_linked:
-            self.outputs['EdgesMask'].sv_set(out_edges)
-        if self.outputs['FacesMask'].is_linked:
-            self.outputs['FacesMask'].sv_set(out_faces)
+        self.outputs['VerticesMask'].sv_set(out_vertices)
+        self.outputs['EdgesMask'].sv_set(out_edges)
+        self.outputs['FacesMask'].sv_set(out_faces)
 
 def register():
     bpy.utils.register_class(SvMeshSelectNode)
