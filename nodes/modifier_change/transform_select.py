@@ -91,28 +91,17 @@ class SvTransformSelectNode(bpy.types.Node, SverchCustomTreeNode):
         # print("Matrix F: ", matrixF)
         # print("Matrix T: ", matrixT)
 
-        # endTime = time.time()
-        # print("Computing Time: ", endTime-startTime)
-        # return
-
         params = match_long_repeat([input_mask, input_verts, matrixT, matrixF])
         # print("params: ", params)
 
         vert_indexT = [i for i, m in enumerate(input_mask) if m]
         vert_indexF = [i for i, m in enumerate(input_mask) if not m]
-        vt1 = { j:i for i, j in enumerate(vert_indexT) }
-        vf1 = { j:i for i, j in enumerate(vert_indexF) }
+        vt = {j: i for i, j in enumerate(vert_indexT)}
+        vf = {j: i for i, j in enumerate(vert_indexF)}
+        # print("vt = ", vt)
+        # print("vf = ", vf)
 
-        vertListA = []
-        vertListT = []
-        vertListF = []
-        polyEdgeListA = []
-        polyEdgeListT = []
-        polyEdgeListF = []
-        polyEdgeListO = []
-        # vt = {}
-        # vf = {}
-        # vid = 0
+        vertListA, vertListT, vertListF = [[], [], []]
         for ma, v, mt, mf in zip(*params):
             # print('Vertex:', v, " has mask:", ma)
             # print('Matrix T:', mt)
@@ -120,75 +109,37 @@ class SvTransformSelectNode(bpy.types.Node, SverchCustomTreeNode):
             if ma == 1:  # do some processing using Matrix T here
                 v = (mt * Vector(v))[:]
                 vertListT.append(v)
-                # vt[vid] = len(vertListT) - 1
             else:  # do some processing using Matrix F here
                 v = (mf * Vector(v))[:]
                 vertListF.append(v)
-                # vf[vid] = len(vertListF) - 1
             vertListA.append(v)
-            # vid = vid + 1
-
-        # print("vt = ", vt)
-        # print("vf = ", vf)
-        # print("vt1 = ", vt1)
-        # print("vf1 = ", vf1)
 
         polyEdgeListA = input_polys
+        polyEdgeListT, polyEdgeListF, polyEdgeListO = [[], [], []]
 
-        # vert_indexT = [i for i, m in enumerate(input_mask) if m]
-        # vert_indexF = [i for i, m in enumerate(input_mask) if not m]
-
-        # vert1_indexT = [vt[i] for i, m in enumerate(input_mask) if m]
-        # vert1_indexF = [vf[i] for i, m in enumerate(input_mask) if not m]
-
-        # print("vert_indexT = ", vert_indexT)
-        # print("vert_indexF = ", vert_indexF)
+        vext = set(vt.keys())
+        vexf = set(vf.keys())
         # print("vt.k = ", vt.keys())
         # print("vf.k = ", vf.keys())
-        # print("vert1_indexT = ", vert1_indexT)
-        # print("vert1_indexF = ", vert1_indexF)
-
-        vext = set(vt1.keys())
-        vexf = set(vf1.keys())
-        # vext = set(vert_indexT)
-        # vexf = set(vert_indexF)
         # print("vext = ", vext)
         # print("vexf = ", vexf)
         for pe in input_polys:
-            # i1, i2 = pe
-
             pex = set(pe)
             # print("pex = ", pex)
 
             if vext.issuperset(pex):
                 # print("pex ", pex, " is in vext ", vext)
-                pet = [vt1[i] for i in pe]
-                # pet = [vt[i] for i in pe]
+                pet = [vt[i] for i in pe]
                 polyEdgeListT.append(pet)
-                # polyEdgeListT.append([vt[i1], vt[i2]])
 
             elif vexf.issuperset(pex):
                 # print("pex ", pex, " is in vexf ", vexf)
-                pef = [vf1[i] for i in pe]
-                # pef = [vf[i] for i in pe]
+                pef = [vf[i] for i in pe]
                 polyEdgeListF.append(pef)
-                # polyEdgeListT.append([vf[i1], vf[i2]])
 
             else:
                 polyEdgeListO.append(pe)
-            # print("pe=", pe, " i1 = ", i1, " i2 = ", i2)
-            # if i1 in vt and i2 in vt:
-            #     # print("i1 = ", i1, " i2 = ", i2, " is in vt =", vt)
-            #     polyEdgeListT.append([vt[i1], vt[i2]])
-            # if i1 in vf and i2 in vf:
-            #     # print("i1 = ", i1, " i2 = ", i2, " is in vf =", vf)
-            #     polyEdgeListF.append([vf[i1], vf[i2]])
 
-            # if i1 in vt and i2 in vf or i1 in vf and i2 in vt:
-            #     polyEdgeListO.append([i1, i2])
-
-        # print("Vertices T: ", vertListT)
-        # print("Vertices F: ", vertListF)
         outputs['Vertices'].sv_set([vertListA])
         outputs['PolyEdge'].sv_set([polyEdgeListA])
         outputs['PolyEdge O'].sv_set([polyEdgeListO])
@@ -198,7 +149,8 @@ class SvTransformSelectNode(bpy.types.Node, SverchCustomTreeNode):
         outputs['PolyEdge F'].sv_set([polyEdgeListF])
 
         endTime = time.time()
-        print("Computing Time: ", endTime-startTime)
+        print("Computing Time: ", endTime - startTime)
+
 
 def register():
     bpy.utils.register_class(SvTransformSelectNode)
