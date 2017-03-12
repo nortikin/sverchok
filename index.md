@@ -37,6 +37,7 @@
     SvTorusKnotNode
     SvHexaGridNode
     SvRingNode
+    SvPlaneNodeMK2
 
 ## Analyzers
     SvBBoxNode
