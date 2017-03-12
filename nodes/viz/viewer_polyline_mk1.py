@@ -101,12 +101,18 @@ def live_curve(obj_index, node, verts, radii, twist):
         polyline.points.add(len(VERTS)-1)
         polyline.points.foreach_set('co', full_flat)
 
-        if radii:
-            fullList(RADII, len(VERTS))
+        if RADII:
+            if len(VERTS) < len(RADII):
+                RADII = RADII[:len(VERTS)]
+            elif len(VERTS) > len(RADII):
+                fullList(RADII, len(VERTS))
             polyline.points.foreach_set('radius', RADII)
 
-        if twist:
-            fullList(TWIST, len(VERTS))
+        if TWIST:
+            if len(VERTS) < len(TWIST):
+                TWIST = TWIST[:len(VERTS)]
+            elif len(VERTS) > len(TWIST):
+                fullList(TWIST, len(VERTS))
             polyline.points.foreach_set('tilt', TWIST)
             
         if node.close:
