@@ -40,13 +40,14 @@ class SvMeshSelectNode(bpy.types.Node, SverchCustomTreeNode):
             ("BySphere", "By center and radius", "Select vertices within specified distance from center", 2),
             ("ByPlane", "By plane", "Select vertices within specified distance from plane defined by point and normal vector", 3),
             ("ByCylinder", "By cylinder", "Select vertices within specified distance from straight line defined by point and direction vector", 4),
-            ("EdgeDir", "By edge direction", "Select edges that are nearly parallel to specified direction", 5)
+            ("EdgeDir", "By edge direction", "Select edges that are nearly parallel to specified direction", 5),
+            ("Outside", "Normal pointing outside", "Select faces with normals pointing outside", 6)
         ]
 
     def update_mode(self, context):
         self.inputs['Radius'].hide = (self.mode not in ['BySphere', 'ByPlane', 'ByCylinder'])
-        self.inputs['Center'].hide = (self.mode not in ['BySphere', 'ByPlane', 'ByCylinder'])
-        self.inputs['Percent'].hide = (self.mode not in ['BySide', 'ByNormal', 'EdgeDir'])
+        self.inputs['Center'].hide = (self.mode not in ['BySphere', 'ByPlane', 'ByCylinder', 'Outside'])
+        self.inputs['Percent'].hide = (self.mode not in ['BySide', 'ByNormal', 'EdgeDir', 'Outside'])
         self.inputs['Direction'].hide = (self.mode not in ['BySide', 'ByNormal', 'ByPlane', 'ByCylinder', 'EdgeDir'])
 
         updateNode(self, context)
@@ -214,13 +215,45 @@ class SvMeshSelectNode(bpy.types.Node, SverchCustomTreeNode):
                 value = 0
             values.append(value)
         threshold = self.map_percent(values, percent)
-
+    
         out_edges_mask = [(value >= threshold) for value in values]
         out_edges = [edge for (edge, mask) in zip (edges, out_edges_mask) if mask]
         out_verts_mask = self.select_verts_by_faces(out_edges, vertices)
         out_faces_mask = self.select_faces_by_verts(out_verts_mask, faces)
 
         return out_verts_mask, out_edges_mask, out_faces_mask
+
+    def by_outside(self, vertices, edges, faces):
+        vertex_normals, face_normals = calc_mesh_normals(vertices, edges, faces)
+        percent = self.inputs['Percent'].sv_get(default=[1.0])[0][0]
+        center = self.inputs['Center'].sv_get()[0][0]
+        center = Vector(center)
+
+        def get_center(face):
+            verts = [Vector(vertices[i]) for i in face]
+            result = Vector((0,0,0))
+            for v in verts:
+                result += v
+            return (1.0/float(len(verts))) * result
+
+        values = []
+        for face, normal in zip(faces, face_normals):
+            face_center = get_center(face)
+            direction = face_center - center
+            dirlength = direction.length
+            if dirlength > 0:
+                value = math.pi - direction.angle(normal)
+            else:
+                value = math.pi
+            values.append(value)
+        threshold = self.map_percent(values, percent)
+
+        out_face_mask = [(value >= threshold) for value in values]
+        out_faces = [face for (face, mask) in zip(faces, out_face_mask) if mask]
+        out_verts_mask = self.select_verts_by_faces(out_faces, vertices)
+        out_edges_mask = self.select_edges_by_verts(out_verts_mask, edges)
+
+        return out_verts_mask, out_edges_mask, out_face_mask
 
     def process(self):
 
@@ -249,6 +282,8 @@ class SvMeshSelectNode(bpy.types.Node, SverchCustomTreeNode):
                 vs, es, fs = self.by_cylinder(vertices, edges, faces)
             elif self.mode == 'EdgeDir':
                 vs, es, fs = self.by_edge_dir(vertices, edges, faces)
+            elif self.mode == 'Outside':
+                vs, es, fs = self.by_outside(vertices, edges, faces)
             else:
                 raise ValueError("Unknown mode: " + self.mode)
 
