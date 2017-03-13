@@ -103,7 +103,7 @@ ui_modules = [
     "monad", "sv_icons",
     # bgl modules
     "viewer_draw", "viewer_draw_mk2", "nodeview_bgl_viewer_draw", "nodeview_bgl_viewer_draw_mk2",
-    "index_viewer_draw",
+    "index_viewer_draw", "bgl_callback_3dview",
     # show git info
     "development",
 ]
