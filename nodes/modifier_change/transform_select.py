@@ -20,7 +20,6 @@ import bpy
 from bpy.props import IntProperty, FloatProperty, BoolProperty, EnumProperty
 
 from mathutils import Matrix, Vector
-import time
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat, Matrix_generate
@@ -58,8 +57,6 @@ class SvTransformSelectNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('StringsSocket', "PolyEdge F")
 
     def process(self):
-        startTime = time.time()
-
         # return if no outputs are connected
         if not any(s.is_linked for s in self.outputs):
             return
@@ -128,9 +125,6 @@ class SvTransformSelectNode(bpy.types.Node, SverchCustomTreeNode):
         outputs['PolyEdge T'].sv_set([polyEdgeListT])
         outputs['Vertices F'].sv_set([vertListF])
         outputs['PolyEdge F'].sv_set([polyEdgeListF])
-
-        endTime = time.time()
-        print("Computing Time: ", endTime - startTime)
 
 
 def register():
