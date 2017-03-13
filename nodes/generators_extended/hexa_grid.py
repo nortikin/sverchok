@@ -22,12 +22,10 @@ from bpy.props import IntProperty, FloatProperty, BoolProperty, EnumProperty
 from math import sqrt, sin, cos, radians
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import Matrix_generate, updateNode, match_long_repeat
+from sverchok.data_structure import updateNode, match_long_repeat
 from sverchok.ui.sv_icons import custom_icon
 from sverchok.utils.geom import circle
 from sverchok.utils.sv_mesh_utils import mesh_join
-
-DEBUG = False
 
 gridLayoutItems = [
     ("RECTANGLE", "Rectangle", "", custom_icon("SV_HEXA_GRID_RECTANGLE"), 0),
@@ -37,10 +35,11 @@ gridLayoutItems = [
 
 
 def generate_grid(center, layout, settings):
-    r = settings[0]
-    a = settings[1]
-    dx = r * 3 / 2    # distance along X between two consecutive points
-    dy = r * sqrt(3)  # distance along Y between two consecutive points
+    r = settings[0]   # radius
+    a = settings[1]   # angle
+
+    dx = r * 3 / 2    # distance between two consecutive points along X
+    dy = r * sqrt(3)  # distance between two consecutive points along Y
 
     '''
     X : number of points along X
@@ -48,19 +47,19 @@ def generate_grid(center, layout, settings):
     O : offset of the points in each column
     C : center of the grid
     '''
-    if layout == "TRIANGLE":
+    if layout == "TRIANGLE":  # pattern Y(3) : 1 2 3 4 5
         _, _, level = settings
         X = level
         Y = range(1, X + 1)
         O = range(X)
         C = [(level - 1) * 2 / 3, 0.0]
-    elif layout == "HEXAGON":
+    elif layout == "HEXAGON": # pattern Y(3) : 3 4 5 4 3
         _, _, level = settings
         X = 2 * level - 1
         Y = [X - abs(level - 1 - l) for l in range(X)]
         O = [level - 1 - abs(level - 1 - l) for l in range(X)]
         C = [level - 1, (level - 1) / 2]
-    elif layout == "DIAMOND":
+    elif layout == "DIAMOND": # pattern  Y(3) : 1 2 3 2 1
         _, _, level = settings
         X = 2 * level - 1
         Y = [level - abs(level - 1 - l) for l in range(X)]
@@ -89,20 +88,15 @@ def generate_grid(center, layout, settings):
 def generate_tiles(radius, angle, join, gridList):
     verts, edges, polys = circle(radius, radians(30-angle), 6, None, 'pydata')
 
-    vertGridList = []
-    edgeGridList = []
-    polyGridList = []
-
+    vertGridList, edgeGridList, polyGridList = [[], [], []]
     for grid in gridList:
-        vertList = []
-        edgeList = []
-        polyList = []
-
+        vertList, edgeList, polyList = [[], [], []]
+        addVert, addEdge, addPoly = [vertList.append, edgeList.append, polyList.append]
         for cx, cy, _ in grid:
             verts2 = [(x + cx, y + cy, 0.0) for x, y, _ in verts]
-            vertList.append(verts2)
-            edgeList.append(edges)
-            polyList.append(polys)
+            addVert(verts2)
+            addEdge(edges)
+            addPoly(polys)
 
         if join:
             vertList, edgeList, polyList = mesh_join(vertList, edgeList, polyList)
@@ -152,7 +146,7 @@ class SvHexaGridNode(bpy.types.Node, SverchCustomTreeNode):
 
     angle = FloatProperty(
         name="Angle", description="Angle to rotate the grid and tiles",
-        default=30.0, min=0.0, soft_min=0.0,
+        default=0.0, min=0.0, soft_min=0.0,
         update=updateNode)
 
     scale = FloatProperty(
@@ -242,18 +236,19 @@ class SvHexaGridNode(bpy.types.Node, SverchCustomTreeNode):
         gridList = [generate_grid(self.center, self.gridLayout, args) for args in zip(*params)]
         self.outputs['Centers'].sv_set(gridList)
 
-        # generate the vectorized tiles
-        vertList = []
-        edgeList = []
-        polyList = []
+        # generate the vectorized tiles only if any of VEP outputs are linked
         _, V, E, P = self.outputs[:]
-        if any(s.is_linked for s in [V, E, P]):
-            params = match_long_repeat([input_radius, input_angle, input_scale, gridList])
-            for r, a, s, grid in zip(*params):
-                verts, edges, polys = generate_tiles(r * s, a, self.join, [grid])
-                vertList.extend(verts)
-                edgeList.extend(edges)
-                polyList.extend(polys)
+        if not any(s.is_linked for s in [V, E, P]):
+            return
+
+        params = match_long_repeat([input_radius, input_angle, input_scale, gridList])
+
+        vertList, edgeList, polyList = [[], [], []]
+        for r, a, s, grid in zip(*params):
+            verts, edges, polys = generate_tiles(r * s, a, self.join, [grid])
+            vertList.extend(verts)
+            edgeList.extend(edges)
+            polyList.extend(polys)
 
         self.outputs['Vertices'].sv_set(vertList)
         self.outputs['Edges'].sv_set(edgeList)
