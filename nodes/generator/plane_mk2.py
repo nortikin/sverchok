@@ -18,7 +18,6 @@
 
 import bpy
 from bpy.props import BoolProperty, IntProperty, FloatProperty, EnumProperty
-# import time
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, fullList, match_long_repeat
@@ -29,7 +28,6 @@ directionItems = [("XY", "XY", ""), ("YZ", "YZ", ""), ("ZX", "ZX", "")]
 
 
 def make_plane(stepsx, stepsy, center, direction, separate):
-    # startTime = time.time()
     if direction == "XY":
         v = lambda l, k: (l, k, 0.0)
     elif direction == "YZ":
@@ -54,9 +52,6 @@ def make_plane(stepsx, stepsy, center, direction, separate):
         else:
             verts.extend(vertList)
 
-    # endTime1 = time.time()
-    # print("Plane MK2 make_plane vertgen: ", endTime1 - startTime)
-
     edges = []
     nx = len(stepsx) + 1
     ny = len(stepsy) + 1
@@ -69,9 +64,6 @@ def make_plane(stepsx, stepsy, center, direction, separate):
         ey = [[i + j * nx, i + (j + 1) * nx] for i in range(nx) for j in range(ny - 1)]
         edges.extend(ex)  # edges along X
         edges.extend(ey)  # edges along Y
-
-    # endTime2 = time.time()
-    # print("Plane MK2 make_plane edgegen: ", endTime2 - endTime1)
 
     if separate:
         polys = []
@@ -187,8 +179,6 @@ class SvPlaneNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         if not any(s.is_linked for s in self.outputs):
             return
 
-        # startTime = time.time()
-
         inputs = self.inputs
         outputs = self.outputs
 
@@ -198,9 +188,6 @@ class SvPlaneNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         input_stepy = inputs["Step Y"].sv_get()
 
         params = match_long_repeat([input_numx, input_numy, input_stepx, input_stepy])
-
-        # endTime1 = time.time()
-        # print("Plane MK2 paramgen: ", endTime1 - startTime)
 
         stepListx, stepListy = [[], []]
         for nx, ny, sx, sy in zip(*params):
@@ -216,15 +203,9 @@ class SvPlaneNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             stepListx.append(stepsx)
             stepListy.append(stepsy)
 
-        # endTime2 = time.time()
-        # print("Plane MK2 stepgen: ", endTime2 - endTime1)
-
         c, d, s = self.center, self.direction, self.separate
         planes = [make_plane(sx, sy, c, d, s) for sx, sy in zip(stepListx, stepListy)]
         verts, edges, polys = [vep for vep in zip(*planes)]
-
-        # endTime3 = time.time()
-        # print("Plane MK2 meshgen: ", endTime3 - endTime2)
 
         # outputs
         if outputs['Vertices'].is_linked:
@@ -235,9 +216,6 @@ class SvPlaneNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
         if outputs['Polygons'].is_linked:
             outputs['Polygons'].sv_set(polys)
-
-        # endTime = time.time()
-        # print("Plane MK2 Computing Time: ", endTime - startTime)
 
     def update_socket(self, context):
         self.update()
