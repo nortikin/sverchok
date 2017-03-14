@@ -22,8 +22,6 @@ from bpy.props import BoolProperty, IntProperty, FloatProperty, EnumProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, fullList, match_long_repeat
 
-from mathutils import Vector
-
 directionItems = [("XY", "XY", ""), ("YZ", "YZ", ""), ("ZX", "ZX", "")]
 
 
@@ -53,12 +51,10 @@ def make_plane(stepsx, stepsy, center, direction, separate):
             verts.extend(vertList)
 
     edges = []
-    nx = len(stepsx) + 1
-    ny = len(stepsy) + 1
-    if separate:
-        for j in range(ny):
-            ex = [[i, i + 1] for i in range(nx - 1)]
-            edges.append(ex)  # edges along X
+    nx = len(stepsx) + 1  # number of vertices along X
+    ny = len(stepsy) + 1  # number of vertices along Y
+    if separate:  # edges along X
+        edges = [[[i, i + 1] for i in range(nx - 1)]] * ny
     else:
         ex = [[i + j * nx, i + 1 + j * nx] for j in range(ny) for i in range(nx - 1)]
         ey = [[i + j * nx, i + (j + 1) * nx] for i in range(nx) for j in range(ny - 1)]
@@ -66,7 +62,7 @@ def make_plane(stepsx, stepsy, center, direction, separate):
         edges.extend(ey)  # edges along Y
 
     if separate:
-        polys = []
+        polys = [] # why this? can we separte polygons instead ?
     else:
         polys = [[i + j * nx, i + j * nx + 1, i + (j + 1) * nx + 1, i + (j + 1) * nx]
                  for i in range(nx - 1) for j in range(ny - 1)]
@@ -103,14 +99,13 @@ class SvPlaneNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     def update_sizey(self, context):
         self.update_size(context, "Y")
 
-    direction = EnumProperty(name="Direction",
-                             default="XY", items=directionItems,
-                             update=updateNode)
+    direction = EnumProperty(name="Direction", items=directionItems,
+                             default="XY", update=updateNode)
 
-    numx = IntProperty(name='N Vert X', description='Nº Vertices X',
+    numx = IntProperty(name='N Verts X', description='Number of vertices along X',
                        default=2, min=2, update=updateNode)
 
-    numy = IntProperty(name='N Vert Y', description='Nº Vertices Y',
+    numy = IntProperty(name='N Verts Y', description='Number of vertices along Y',
                        default=2, min=2, update=updateNode)
 
     stepx = FloatProperty(name='Step X', description='Step length X',
@@ -122,10 +117,10 @@ class SvPlaneNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     separate = BoolProperty(name='Separate', description='Separate UV coords',
                             default=False, update=updateNode)
 
-    center = BoolProperty(name='Center', description='Center the grid',
+    center = BoolProperty(name='Center', description='Center the plane around origin',
                           default=False, update=updateNode)
 
-    normalize = BoolProperty(name='Normalize', description='Normalize',
+    normalize = BoolProperty(name='Normalize', description='Normalize the plane sizes',
                              default=False, update=updateNode)
 
     sizex = FloatProperty(name='Size X', description='Plane size along X',
@@ -136,7 +131,7 @@ class SvPlaneNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
     sizeRatio = FloatProperty()
 
-    linkSizes = BoolProperty(name='Link', description='Link normalize sizes',
+    linkSizes = BoolProperty(name='Link', description='Link the normalize sizes',
                              default=False, update=update_size_link)
 
     syncing = BoolProperty(name='Syncing', description='Syncing flag', default=False)
@@ -210,9 +205,6 @@ class SvPlaneNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
         if outputs['Polygons'].is_linked:
             outputs['Polygons'].sv_set(polys)
-
-    def update_socket(self, context):
-        self.update()
 
 
 def register():
