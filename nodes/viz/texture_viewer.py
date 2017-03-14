@@ -330,7 +330,13 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         rightside.operator(directory_select, text="", icon='IMASEL').fn_name = "set_dir"
 
     def draw_label(self):
-        return (self.label or self.name) + ' ' + str(size_tex_dict.get(self.selected_mode)) + "^2"
+        if self.selected_custom_tex:
+            width = self.inputs['Width'].sv_get(deepcopy=False)[0][0]
+            height = self.inputs['Height'].sv_get(deepcopy=False)[0][0]
+            label = (self.label or self.name) + ' {0} x {1}'.format(width, height)
+        else:
+            label = (self.label or self.name) + ' ' + str(size_tex_dict.get(self.selected_mode)) + "^2"
+        return label
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', "Float").prop_name = 'in_float'
