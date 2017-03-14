@@ -81,8 +81,7 @@ class SvPlaneNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'MESH_PLANE'
 
     def update_size_link(self, context):
-        self.lastSizex = self.sizex
-        self.lastSizey = self.sizey
+        self.sizeRatio = self.sizex / self.sizey
 
     def update_size(self, context, sizeID):
         if self.syncing:
@@ -91,13 +90,9 @@ class SvPlaneNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         if self.linkSizes:
             self.syncing = True
             if sizeID == "X":  # updating X => sync Y
-                delta = self.sizex - self.lastSizex
-                self.sizey = self.sizey + delta
+                self.sizey = self.sizex / self.sizeRatio
             else:  # updating Y => sync X
-                delta = self.sizey - self.lastSizey
-                self.sizex = self.sizex + delta
-            self.lastSizex = self.sizex
-            self.lastSizey = self.sizey
+                self.sizex = self.sizey * self.sizeRatio
             self.syncing = False
 
         updateNode(self, context)
@@ -133,14 +128,13 @@ class SvPlaneNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     normalize = BoolProperty(name='Normalize', description='Normalize',
                              default=False, update=updateNode)
 
-    sizex = FloatProperty(name='Size X', description='Size of plane along X',
-                          default=10.0, update=update_sizex)
+    sizex = FloatProperty(name='Size X', description='Plane size along X',
+                          default=10.0, min=0.01, update=update_sizex)
 
-    sizey = FloatProperty(name='Size Y', description='Size of plane along Y',
-                          default=10.0, update=update_sizey)
+    sizey = FloatProperty(name='Size Y', description='Plane size along Y',
+                          default=10.0, min=0.01, update=update_sizey)
 
-    lastSizex = FloatProperty()
-    lastSizey = FloatProperty()
+    sizeRatio = FloatProperty()
 
     linkSizes = BoolProperty(name='Link', description='Link normalize sizes',
                              default=False, update=update_size_link)
