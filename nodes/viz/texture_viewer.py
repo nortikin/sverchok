@@ -103,7 +103,7 @@ def transfer_to_image(pixels, name, width, height, mode):
     else:
         image.scale(width, height)
     if mode == 'BW':
-        svIMG.assign_BW_image(image, new)
+        svIMG.assign_BW_image(image, pixels)
     elif mode == 'RGB':
         new = svIMG.array_as(pixels, (width * height * 3,))
         svIMG.assign_RGB_image(image, width, height, new)
@@ -255,21 +255,17 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         b = int(self.width) + 20
         return int(a[0] + b), int(a[1])
 
-    def get_from_c_size(self, string):
-        if string is 'Width':
-            data = self.inputs['Width'].sv_get(deepcopy=False)[0][0]
-        elif string is 'Height':
-            data = self.inputs['Height'].sv_get(deepcopy=False)[0][0]
-        else:
-            print('get_from_c_size() error: not conforming format label size')
-        return data
+    def get_from_c_size(self):
+        return [
+            self.inputs['Width'].sv_get(deepcopy=False)[0][0],
+            self.inputs['Height'].sv_get(deepcopy=False)[0][0]
+        ]
 
     def get_buffer(self):
         data = np.array(self.inputs['Float'].sv_get(deepcopy=False)).flatten()
 
         if self.selected_custom_tex:
-            width = self. get_from_c_size('Width')
-            height = self. get_from_c_size('Height')
+            width, height = self.get_from_c_size()
             print('get width and height')
             print('size_tex ok!')
         else:
@@ -340,8 +336,7 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_label(self):
         if self.selected_custom_tex:
-            width = self. get_from_c_size('Width')
-            height = self. get_from_c_size('Height')
+            width, height = self.get_from_c_size()
             label = (self.label or self.name) + ' {0} x {1}'.format(width, height)
         else:
             label = (self.label or self.name) + ' ' + str(size_tex_dict.get(self.selected_mode)) + "^2"
@@ -372,8 +367,7 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
             self.activate = False
             pixels = np.array(self.inputs['Float'].sv_get(deepcopy=False)).flatten()
             if self.selected_custom_tex:
-                width = self. get_from_c_size('Width')
-                height = self. get_from_c_size('Height')
+                width, height = self.get_from_c_size()
             else:
                 width = height = size_tex_dict.get(self.selected_mode)
 
@@ -383,8 +377,7 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
             texture = self.get_buffer()
             if self.selected_custom_tex:
-                width = self. get_from_c_size('Width')
-                height = self. get_from_c_size('Height')
+                width, height = self.get_from_c_size()
                 print('custom texture selected!')
                 print('tex size is', width, height)
 
@@ -470,10 +463,9 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         else:
             extension = '.' + img_format.lower()
         image_name = image_name + extension
-        dim=0
+        dim = 0
         if self.selected_custom_tex:
-            width = self. get_from_c_size('Width')
-            height = self. get_from_c_size('Height')
+            width, height = self.get_from_c_size()
         else:
             dim = size_tex_dict[self.selected_mode]
             width, height = dim, dim
