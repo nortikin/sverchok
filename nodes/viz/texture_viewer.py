@@ -27,6 +27,7 @@ from bpy.props import FloatProperty, EnumProperty, StringProperty, BoolProperty,
 from sverchok.data_structure import updateNode, node_id
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.ui import nodeview_bgl_viewer_draw_mk2 as nvBGL2
+from sverchok.ui import sv_image as svIMG
 
 from sverchok.utils.sv_operator_mixins import (
     SvGenericDirectorySelector, SvGenericCallbackWithParams
@@ -94,6 +95,23 @@ factor_buffer_dict = {
 }
 
 
+def transfer_to_image(pixels, name, width, height, mode):
+    image = bpy.data.images.get(name)
+    if not image:
+        image = bpy.data.images.new(name, width, height, alpha=False)
+        image.pack
+    else:
+        image.scale(width, height)
+    if mode == 'BW':
+        svIMG.assign_BW_image(image, new)
+    elif mode == 'RGB':
+        new = svIMG.array_as(pixels, (width * height * 3,))
+        svIMG.assign_RGB_image(image, width, height, new)
+    else:
+        image.pixels[:] = pixels
+    image.update_tag()
+
+
 def simple_screen(x, y, args):
     # draw a simple scren display for the texture
     border_color = (0.390805, 0.754022, 1.000000, 1.00)
@@ -156,6 +174,11 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
     texture = {}
 
     n_id = StringProperty(default='')
+    to_image_viewer = BoolProperty(
+        name='Pass', description='Transfer pixels to image viewer',
+        default=False,
+        update=updateNode)
+
     activate = BoolProperty(
         name='Show', description='Activate texture drawing',
         default=True,
@@ -268,6 +291,7 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         row = c.row()
         row.prop(self, "selected_mode", expand=True)
         c.prop(self, 'activate')
+        c.prop(self, 'to_image_viewer')
         c.label(text='Set color mode')
         row = layout.row(align=True)
         row.prop(self, 'color_mode', expand=True)
@@ -327,6 +351,18 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         # end early
         nvBGL2.callback_disable(n_id)
         self.delete_texture()
+
+        if self.to_image_viewer:
+            mode = self.color_mode
+            self.activate = False
+            pixels = np.array(self.inputs['Float'].sv_get(deepcopy=False)).flatten()
+            if self.selected_custom_tex:
+                width = self.inputs['Width'].sv_get(deepcopy=False)[0][0]
+                height = self.inputs['Height'].sv_get(deepcopy=False)[0][0]
+            else:
+                width = height = size_tex_dict.get(self.selected_mode)
+
+            transfer_to_image(pixels, 'texture', width, height, mode)
 
         if self.activate:
 
@@ -439,32 +475,13 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         print('length img pixels: {0}'.format(len(img.pixels)))
         if col_mod == 'BW':
             print("passing data from buf to pixels BW")
-            print('img channels: ', img.channels)
-            np_buff = np.empty(len(img.pixels), dtype=np.float32)
-            np_buff.shape = (-1, 4)
-            np_buff[:, :] = np.array(buf)[:, np.newaxis]
-            np_buff[:, 3] = 1
-            np_buff.shape = -1
-            img.pixels[:] = np_buff
+            svIMG.assign_BW_image(img, buf)
         elif col_mod == 'RGB':
             print("passing data from buf to pixels RGB")
-            rgb = np.array(buf)
-            rgb_res = rgb.reshape(width * height, 3)
-            alpha = np.empty(len(buf), dtype=np.float32)
-            alpha.fill(1)
-            print('alpha filled')
-            alpha_res = alpha.reshape(width * height, 3)
-            print('concatenate rgb > alpha')
-            rgba = np.concatenate((rgb_res, alpha_res), axis=1)
-            final = rgba[:, 0:4]
-            # print(final)
-            print('filling pixels from openGl buffer')
-            img.pixels = final.flatten()
+            svIMG.assign_RGB_image(img, width, height, buf)
         elif col_mod == 'RGBA':
             print("passing data from buf to pixels RGBA")
-            # this works for RGBA!
             img.pixels[:] = buf
-
         # get the scene context
         scene = bpy.context.scene
         # set the scene quality to the maximum
