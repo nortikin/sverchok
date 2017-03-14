@@ -103,15 +103,14 @@ class SvAttractorNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('StringsSocket', 'Coefficient').prop_name = 'coefficient'
 
         self.outputs.new('VerticesSocket', "Vectors")
+        self.outputs.new('VerticesSocket', "Directions")
+        self.outputs.new('StringsSocket', "Coeffs")
 
         self.update_type(context)
 
     def draw_buttons(self, context, layout):
         layout.prop(self, 'attractor_type')
         layout.prop(self, 'falloff_type')
-        #layout.prop(self, 'amplitude')
-        #if self.falloff_type in ['inverse_exp', 'gauss']:
-        #    layout.prop(self, 'coefficient')
 
     def _falloff(self, coefficient, rho):
         func = globals()[self.falloff_type]
@@ -134,9 +133,10 @@ class SvAttractorNode(bpy.types.Node, SverchCustomTreeNode):
             vector = Vector(center) - vertex
             vector = self.falloff(amplitude, coefficient, vector.length) * vector.normalized()
             vectors.append(vector)
-        return get_avg_vector(vectors)
+        result = get_avg_vector(vectors)
+        return result.length, result.normalized()
 
-    def to_line(self, vertex, centers, direction):
+    def to_line(self, amplitude, coefficient, vertex, centers, direction):
         center = Vector(centers[0])
         direction = Vector(direction)
         dirlength = direction.length
@@ -152,7 +152,7 @@ class SvAttractorNode(bpy.types.Node, SverchCustomTreeNode):
         # projection of vertex on direction
         projection = center - to_center_projection
         vector = projection - vertex
-        return self.falloff(amplitude, coefficient, vector.length) * vector.normalized()
+        return self.falloff(amplitude, coefficient, vector.length), vector.normalized()
     
     def to_plane(self, amplitude, coefficient, vertex, centers, direction):
         center = Vector(centers[0])
@@ -177,7 +177,7 @@ class SvAttractorNode(bpy.types.Node, SverchCustomTreeNode):
             direction.negate()
             vector = direction.normalized()
 
-        return self.falloff(amplitude, coefficient, rho) * vector
+        return self.falloff(amplitude, coefficient, rho), vector
 
 
     def process(self):
@@ -191,6 +191,8 @@ class SvAttractorNode(bpy.types.Node, SverchCustomTreeNode):
         coefficients_s = self.inputs['Coefficient'].sv_get(default=[0.5])
 
         out_vectors = []
+        out_units = []
+        out_lens = []
 
         meshes = match_long_repeat([vertices_s, directions_s, amplitudes_s, coefficients_s])
         for vertices, directions, amplitudes, coefficients in zip(*meshes):
@@ -208,19 +210,28 @@ class SvAttractorNode(bpy.types.Node, SverchCustomTreeNode):
             fullList(coefficients, len(vertices))
 
             vectors = []
+            units = []
+            lens = []
             for vertex, amplitude, coefficient in zip(vertices, amplitudes, coefficients):
                 if self.attractor_type == 'Point':
-                    vector = self.to_point(amplitude, coefficient, vertex, centers, direction)
+                    length, unit = self.to_point(amplitude, coefficient, vertex, centers, direction)
                 elif self.attractor_type == 'Line':
-                    vector = self.to_line(amplitude, coefficient, vertex, centers, direction)
+                    length, unit = self.to_line(amplitude, coefficient, vertex, centers, direction)
                 elif self.attractor_type == 'Plane':
-                    vector = self.to_plane(amplitude, coefficient, vertex, centers, direction)
+                    length, unit = self.to_plane(amplitude, coefficient, vertex, centers, direction)
                 else:
                     raise ValueError("Unknown attractor type: " + self.attractor_type)
+                vector = length * unit
+                units.append(unit)
+                lens.append(length)
                 vectors.append(vector)
             out_vectors.append(vectors)
+            out_units.append(units)
+            out_lens.append(lens)
 
         self.outputs['Vectors'].sv_set(out_vectors)
+        self.outputs['Directions'].sv_set(out_units)
+        self.outputs['Coeffs'].sv_set(out_lens)
 
 def register():
     bpy.utils.register_class(SvAttractorNode)
