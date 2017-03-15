@@ -179,61 +179,47 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
     n_id = StringProperty(default='')
     to_image_viewer = BoolProperty(
         name='Pass', description='Transfer pixels to image viewer',
-        default=False,
-        update=updateNode)
+        default=False, update=updateNode)
 
     activate = BoolProperty(
         name='Show', description='Activate texture drawing',
-        default=True,
-        update=updateNode)
+        default=True, update=updateNode)
 
     selected_mode = EnumProperty(
-        items=size_tex_list,
-        description="Offers display sizing",
-        default="S",
-        update=updateNode)
+        items=size_tex_list, description="Offers display sizing",
+        default="S", update=updateNode)
 
     selected_custom_tex = BoolProperty(
         name='Custom tex', description='Activate custom texture drawing',
-        default=False,
-        update=updateNode)
+        default=False, update=updateNode)
 
     width_custom_tex = IntProperty(
         min=0, max=1024, default=206, name='Width Tex',
-        description="set the custom texture size",
-        update=updateNode)
+        description="set the custom texture size", update=updateNode)
 
     height_custom_tex = IntProperty(
         min=0, max=1024, default=124, name='Height Tex',
-        description="set the custom texture size",
-        update=updateNode)
+        description="set the custom texture size", update=updateNode)
 
     bitmap_format = EnumProperty(
         items=bitmap_format_list,
-        description="Offers bitmap saving",
-        default="PNG")
+        description="Offers bitmap saving", default="PNG")
 
     color_mode = EnumProperty(
-        items=gl_color_list,
-        description="Offers color options",
-        default="BW",
-        update=updateNode)
+        items=gl_color_list, description="Offers color options",
+        default="BW", update=updateNode)
 
     color_mode_save = EnumProperty(
-        items=gl_color_list,
-        description="Offers color options",
-        default="BW",
-        update=updateNode)
+        items=gl_color_list, description="Offers color options",
+        default="BW", update=updateNode)
 
     compression_level = IntProperty(
         min=0, max=100, default=0, name='compression',
-        description="set compression level",
-        update=updateNode)
+        description="set compression level", update=updateNode)
 
     quality_level = IntProperty(
         min=0, max=100, default=0, name='quality',
-        description="set quality level",
-        update=updateNode)
+        description="set quality level", update=updateNode)
 
     in_float = FloatProperty(
         min=0.0, max=1.0, default=0.0, name='Float Input',
