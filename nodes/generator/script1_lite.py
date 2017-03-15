@@ -291,7 +291,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
         ast_node = self.get_node_from_function_name('setup')
         if ast_node:
             begin_setup = ast_node.body[0].lineno - 1
-            end_setup = ast_node.body[-1].lineno - 1
+            end_setup = ast_node.body[-1].lineno
             code = '\n'.join(self.script_str.split('\n')[begin_setup:end_setup])
             return 'def setup():\n\n' + code + '\n    return locals()\n'
 
