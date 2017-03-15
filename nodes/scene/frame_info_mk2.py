@@ -19,6 +19,14 @@
 import bpy
 
 from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import updateNode
+
+
+def get_int(self):
+    return bpy.context.scene.frame_current
+
+def set_int(self, value):
+    bpy.context.scene.frame_current = value
 
 
 class SvFrameInfoNodeMK2(bpy.types.Node, SverchCustomTreeNode):
@@ -27,7 +35,14 @@ class SvFrameInfoNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Frame infoMK2'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
+
+    def wrapUpdate(self, context):
+        updateNode(self, context)
+
+    curr_frame = bpy.props.IntProperty(get=get_int, set=set_int, update=wrapUpdate)
+
     def sv_init(self, context):
+        # self.curr_frame = context.scene.frame_current
         outputs = self.outputs
         outputs.new('StringsSocket', "Current Frame")
         outputs.new('StringsSocket', "Start Frame")
@@ -63,7 +78,7 @@ class SvFrameInfoNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             sub.operator("screen.animation_play", text="", icon='PAUSE')
         # row.operator("screen.keyframe_jump", text="", icon='NEXT_KEYFRAME').next = True
         row.operator("screen.frame_jump", text="", icon='FF').end = True
-        row.prop(scene, "frame_current", text="")
+        row.prop(self, "curr_frame", text="Current Frame")
 
     def process(self):
         scene = bpy.context.scene
