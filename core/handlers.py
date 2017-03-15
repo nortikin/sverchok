@@ -19,6 +19,12 @@ from sverchok.ui import (
 
 _stats = {'frame': None}
 
+def has_frame_changed(scene):
+    last_frame = _stats['frame']
+    _stats['frame'] = scene.frame_current
+    current_frame = scene.frame_current
+    return not last_frame == current_frame
+   
 
 def sverchok_trees():
     for ng in bpy.data.node_groups:
@@ -31,10 +37,7 @@ def sv_update_handler(scene):
     """
     Update sverchok node groups on frame change events.
     """
-    last_frame = _stats['frame']
-    _stats['frame'] = scene.frame_current
-    current_frame = scene.frame_current
-    if last_frame == current_frame:
+    if not has_frame_changed(scene):
         return
 
     screen = bpy.context.screen
