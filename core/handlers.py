@@ -18,10 +18,19 @@ from sverchok.ui import (
 )
 
 
+_state = {'frame': None}
+
 def sverchok_trees():
     for ng in bpy.data.node_groups:
         if ng.bl_idname == 'SverchCustomTreeType':
             yield ng
+
+
+def has_frame_changed(scene):
+    last_frame = _state['frame']
+    _state['frame'] = scene.frame_current
+    current_frame = scene.frame_current
+    return not last_frame == current_frame
 
 
 @persistent
@@ -29,15 +38,10 @@ def sv_update_handler(scene):
     """
     Update sverchok node groups on frame change events.
     """
-    screen = bpy.context.screen
-    if screen and not screen.is_animation_playing:
-        # manual scrub causes this to be triggered twice, 
-        # - once with is_animation_playing True
-        # - once with is_animation_playing False
-        # print('sv_update_handler : returns early')
+    if not has_frame_changed(scene):
         return
-
-    # print('sv_update_handler')
+    
+    print('sv_update_handler')
     for ng in sverchok_trees():
         try:
             ng.process_ani()
