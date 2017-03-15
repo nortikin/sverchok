@@ -22,7 +22,9 @@ import numpy as np
 
 import bgl
 import bpy
-from bpy.props import FloatProperty, EnumProperty, StringProperty, BoolProperty, IntProperty
+from bpy.props import (
+    FloatProperty, EnumProperty, StringProperty, BoolProperty, IntProperty
+)
 
 from sverchok.data_structure import updateNode, node_id
 from sverchok.node_tree import SverchCustomTreeNode
@@ -189,63 +191,53 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         items=size_tex_list,
         description="Offers display sizing",
         default="S",
-        update=updateNode
-    )
+        update=updateNode)
 
     selected_custom_tex = BoolProperty(
         name='Custom tex', description='Activate custom texture drawing',
         default=False,
-        update=updateNode
-    )
+        update=updateNode)
 
     width_custom_tex = IntProperty(
         min=0, max=1024, default=206, name='Width Tex',
         description="set the custom texture size",
-        update=updateNode
-    )
+        update=updateNode)
 
     height_custom_tex = IntProperty(
         min=0, max=1024, default=124, name='Height Tex',
         description="set the custom texture size",
-        update=updateNode
-    )
+        update=updateNode)
 
     bitmap_format = EnumProperty(
         items=bitmap_format_list,
         description="Offers bitmap saving",
-        default="PNG"
-    )
+        default="PNG")
 
     color_mode = EnumProperty(
         items=gl_color_list,
         description="Offers color options",
         default="BW",
-        update=updateNode
-    )
+        update=updateNode)
 
     color_mode_save = EnumProperty(
         items=gl_color_list,
         description="Offers color options",
         default="BW",
-        update=updateNode
-    )
+        update=updateNode)
 
     compression_level = IntProperty(
         min=0, max=100, default=0, name='compression',
         description="set compression level",
-        update=updateNode
-    )
+        update=updateNode)
 
     quality_level = IntProperty(
         min=0, max=100, default=0, name='quality',
         description="set quality level",
-        update=updateNode
-    )
+        update=updateNode)
 
     in_float = FloatProperty(
         min=0.0, max=1.0, default=0.0, name='Float Input',
-        description='Input for texture', update=updateNode
-    )
+        description='Input for texture', update=updateNode)
 
     base_dir = StringProperty(default='/tmp/')
     image_name = StringProperty(default='image_name', description='name (minus filetype)')
