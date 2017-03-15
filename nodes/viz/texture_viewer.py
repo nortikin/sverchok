@@ -248,6 +248,9 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
     base_dir = StringProperty(default='/tmp/')
     image_name = StringProperty(default='image_name', description='name (minus filetype)')
+    texture_name = StringProperty(
+        default='texture',
+        description='set name (minus filetype) for exporting to image viewer')
 
     @property
     def xy_offset(self):
@@ -316,8 +319,8 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         layout.separator()
         layout.prop(self, "bitmap_format", text='format')
         layout.separator()
-        row = layout.row()
-        row.prop(self, 'color_mode_save', expand=True)
+        # row = layout.row()
+        # row.prop(self, 'color_mode_save', expand=True)
         layout.separator()
         if img_format == 'PNG':
             row = layout.row()
@@ -333,6 +336,10 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         rightside = leftside.split().row(align=True)
         rightside.operator(callback_to_self, text="Save").fn_name = "save_bitmap"
         rightside.operator(directory_select, text="", icon='IMASEL').fn_name = "set_dir"
+        export = layout.column(align=True)
+        export.separator()
+        export.label(text="Export to image viewer")
+        export.prop(self, 'texture_name', text='', icon='EXPORT')
 
     def draw_label(self):
         if self.selected_custom_tex:
@@ -371,7 +378,7 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
             else:
                 width = height = size_tex_dict.get(self.selected_mode)
 
-            transfer_to_image(pixels, 'texture', width, height, mode)
+            transfer_to_image(pixels, self.texture_name, width, height, mode)
 
         if self.activate:
 
