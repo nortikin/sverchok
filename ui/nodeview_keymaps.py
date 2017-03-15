@@ -29,9 +29,11 @@ class SvPushCurrentframe(bpy.types.Operator):
 
     def execute(self, context):
         ntree = context.space_data.edit_tree
-        scn = context.scene
         ntree.has_changed = True
+
+        scn = context.scene
         scn.frame_current += self.direction
+        
         return {'FINISHED'}
 
 
