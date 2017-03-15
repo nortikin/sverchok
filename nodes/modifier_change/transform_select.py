@@ -28,15 +28,13 @@ maskTypeItems = [("VERTICES", "V", ""), ("EDGES", "E", ""), ("POLYGONS", "P", ""
 
 
 class SvTransformSelectNode(bpy.types.Node, SverchCustomTreeNode):
-
     ''' Transform Select '''
     bl_idname = 'SvTransformSelectNode'
     bl_label = 'Transform Select'
 
     maskType = EnumProperty(
         name="Mask Type", description="Mask various mesh components",
-        default="VERTICES", items=maskTypeItems,
-        update=updateNode)
+        default="VERTICES", items=maskTypeItems, update=updateNode)
 
     def draw_buttons(self, context, layout):
         layout.prop(self, 'maskType', expand=True)
@@ -64,24 +62,22 @@ class SvTransformSelectNode(bpy.types.Node, SverchCustomTreeNode):
         inputs = self.inputs
         outputs = self.outputs
 
+        identityMatrix = [[(1, 0, 0, 0), (0, 1, 0, 0), (0, 0, 1, 0), (0, 0, 0, 1)]]
         input_verts = inputs['Vertices'].sv_get()[0]
         input_polys = inputs['PolyEdge'].sv_get()[0]
-        input_matrixT = inputs['Matrix T'].sv_get()
-        input_matrixF = inputs['Matrix F'].sv_get()
+        input_matrixT = inputs['Matrix T'].sv_get(default=identityMatrix)
+        input_matrixF = inputs['Matrix F'].sv_get(default=identityMatrix)
 
         n = len(input_verts)
 
         if inputs['Mask'].is_linked:
-            input_mask = inputs['Mask'].sv_get()[0]
-            input_mask = input_mask[:n]
+            input_mask = inputs['Mask'].sv_get()[0][:n]
+            input_mask = list(map(lambda x: int(x) % 2, input_mask))
         else:  # if no mask input, generate a 0,1,0,1 mask
             input_mask = ([1, 0] * (int((n + 1) / 2)))[:n]
 
-        matrixF = Matrix_generate(input_matrixF)
-        matrixT = Matrix_generate(input_matrixT)
-
-        matrixF = matrixF[:n]
-        matrixT = matrixT[:n]
+        matrixF = (Matrix_generate(input_matrixF))[:n]
+        matrixT = (Matrix_generate(input_matrixT))[:n]
 
         params = match_long_repeat([input_mask, input_verts, matrixT, matrixF])
 
@@ -133,6 +129,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvTransformSelectNode)
-
-if __name__ == '__main__':
-    register()
