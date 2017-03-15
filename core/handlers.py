@@ -29,8 +29,7 @@ def sverchok_trees():
 def has_frame_changed(scene):
     last_frame = _state['frame']
     _state['frame'] = scene.frame_current
-    current_frame = scene.frame_current
-    return not last_frame == current_frame
+    return not last_frame == scene.frame_current
 
 
 @persistent
