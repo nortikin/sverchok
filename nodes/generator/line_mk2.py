@@ -47,35 +47,28 @@ def make_line(steps, center, direction):
 
 
 class SvLineNodeMK2(bpy.types.Node, SverchCustomTreeNode):
-
     ''' Line MK2'''
     bl_idname = 'SvLineNodeMK2'
     bl_label = 'Line MK2'
     bl_icon = 'GRIP'
 
-    direction = EnumProperty(name="Direction",
-                             default="X", items=directionItems,
-                             update=updateNode)
+    direction = EnumProperty(name="Direction", items=directionItems,
+                             default="X", update=updateNode)
 
     num = IntProperty(name='Num Verts', description='Number of Vertices',
-                      default=2, min=2, options={'ANIMATABLE'},
-                      update=updateNode)
+                      default=2, min=2, update=updateNode)
 
     step = FloatProperty(name='Step', description='Step length',
-                         default=1.0, options={'ANIMATABLE'},
-                         update=updateNode)
+                         default=1.0, update=updateNode)
 
     center = BoolProperty(name='Center', description='Center the line',
-                          default=False,
-                          update=updateNode)
+                          default=False, update=updateNode)
 
     normalize = BoolProperty(name='Normalize', description='Normalize line to size',
-                             default=False,
-                             update=updateNode)
+                             default=False, update=updateNode)
 
     size = FloatProperty(name='Size', description='Size of line',
-                         default=10.0, options={'ANIMATABLE'},
-                         update=updateNode)
+                         default=10.0, update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', "Num").prop_name = 'num'
