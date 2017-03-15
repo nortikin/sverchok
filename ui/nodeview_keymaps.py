@@ -31,12 +31,8 @@ class SvPushCurrentframe(bpy.types.Operator):
         ntree = context.space_data.edit_tree
         scn = context.scene
         ntree.has_changed = True
-        context.scene.frame_current += self.direction
-        # bpy.ops.node.sverchok_update_current(node_group=ntree.bl_idname)
-
+        scn.frame_current += self.direction
         return {'FINISHED'}
-
-
 
 
 nodeview_keymaps = []
