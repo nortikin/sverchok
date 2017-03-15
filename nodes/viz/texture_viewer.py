@@ -337,10 +337,10 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         rightside = leftside.split().row(align=True)
         rightside.operator(callback_to_self, text="Save").fn_name = "save_bitmap"
         rightside.operator(directory_select, text="", icon='IMASEL').fn_name = "set_dir"
-        export = layout.column(align=True)
-        export.separator()
-        export.label(text="Export to image viewer")
-        export.prop(self, 'texture_name', text='', icon='EXPORT')
+        transfer = layout.column(align=True)
+        transfer.separator()
+        transfer.label(text="Transfer to image viewer")
+        transfer.prop(self, 'texture_name', text='', icon='EXPORT')
 
     def draw_label(self):
         if self.selected_custom_tex:
