@@ -38,6 +38,7 @@
     SvHexaGridNode
     SvRingNode
     SvPlaneNodeMK2
+    SvLineNodeMK2
 
 ## Analyzers
     SvBBoxNode
