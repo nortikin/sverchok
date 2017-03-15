@@ -96,6 +96,7 @@ factor_buffer_dict = {
 
 
 def transfer_to_image(pixels, name, width, height, mode):
+    # transfer pixels(data) from Node tree to image viewer
     image = bpy.data.images.get(name)
     if not image:
         image = bpy.data.images.new(name, width, height, alpha=False)
@@ -321,7 +322,7 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         layout.separator()
         # row = layout.row()
         # row.prop(self, 'color_mode_save', expand=True)
-        layout.separator()
+        # layout.separator()
         if img_format == 'PNG':
             row = layout.row()
             row.prop(self, 'compression_level', text='set compression')
@@ -397,7 +398,6 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
             def init_texture(width, height, texname, texture):
                 # function to init the texture
                 clr = gl_color_dict.get(self.color_mode)
-                # print('color mode is: {0}'.format(clr))
 
                 bgl.glPixelStorei(bgl.GL_UNPACK_ALIGNMENT, 1)
 
@@ -419,7 +419,6 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
             name = bgl.Buffer(bgl.GL_INT, 1)
             bgl.glGenTextures(1, name)
             self.texture[n_id] = name[0]
-            # init_texture(size_tex, size_tex, name[0], texture)
             init_texture(width, height, name[0], texture)
 
             draw_data = {
@@ -459,11 +458,11 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         buf = self.get_buffer()
         img_format = self.bitmap_format
         col_mod = self.color_mode
-        col_mod_s = self.color_mode_save
+        # col_mod_s = self.color_mode_save
         quality = self.quality_level
         compression = self.compression_level
         print('col_mod is: {0}'.format(col_mod))
-        print('col_mod_s is: {0}'.format(col_mod_s))
+        # print('col_mod_s is: {0}'.format(col_mod_s))
         print('img_format is: {0}'.format(img_format))
         if img_format in format_mapping:
             extension = '.' + format_mapping.get(img_format, img_format.lower())
@@ -500,7 +499,6 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         scene = bpy.context.scene
         # set the scene quality to the maximum
         scene.render.image_settings.quality = quality
-        # set different color depth
         if img_format in {'JPEG', 'JPEG2000'}:
             scene.render.image_settings.color_depth = '16'
         else:
@@ -512,7 +510,7 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         print('settings done!')
         # get the path for the file and save the image
         desired_path = os.path.join(self.base_dir, self.image_name + extension)
-
+        # saving the image
         img.save_render(desired_path, scene)
 
         print('Bitmap saved!  path is:', desired_path)
