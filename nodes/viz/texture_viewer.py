@@ -406,9 +406,6 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         print('new base dir:', self.base_dir)
         return {'FINISHED'}
 
-    def set_compression(self):
-        pass
-
     def push_image_settings(self, scene):
         img_format = self.bitmap_format
         print('img_format is: {0}'.format(img_format))
