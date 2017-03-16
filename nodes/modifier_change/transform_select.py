@@ -62,7 +62,7 @@ class SvTransformSelectNode(bpy.types.Node, SverchCustomTreeNode):
         inputs = self.inputs
         outputs = self.outputs
 
-        identityMatrix = [[(1, 0, 0, 0), (0, 1, 0, 0), (0, 0, 1, 0), (0, 0, 0, 1)]]
+        identityMatrix = [[tuple(v) for v in Matrix()]]
         input_verts = inputs['Vertices'].sv_get()[0]
         input_polys = inputs['PolyEdge'].sv_get()[0]
         input_matrixT = inputs['Matrix T'].sv_get(default=identityMatrix)
