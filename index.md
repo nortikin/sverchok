@@ -21,6 +21,7 @@
     svBasicArcNode
     RandomVectorNodeMK2
     SvBricksNode
+    SvScriptNodeLite    
     ImageNode
     SvTorusNode
     SvMeshEvalNode
@@ -87,18 +88,18 @@
 
 ## Modifier Make
     LineConnectNodeMK2
-    AdaptivePolsNode
-    SvAdaptiveEdgeNode
-    CrossSectionNode
-    SvBisectNode
-    SvSolidifyNode
-    SvWireframeNode
+    SvConvexHullNode
     DelaunayTriangulation2DNode
     Voronoi2DNode
-    SvPipeNode
-    SvDuplicateAlongEdgeNode
     SvWafelNode
-    SvConvexHullNode
+    CrossSectionNode
+    SvBisectNode
+    SvAdaptiveEdgeNode
+    AdaptivePolsNode
+    SvDuplicateAlongEdgeNode
+    SvSolidifyNode
+    SvWireframeNode
+    SvPipeNode
     SvLatheNode
     SvMatrixTubeNode
 
@@ -136,6 +137,7 @@
     SvGenFloatRange
     SvListInputNode
     RandomNode
+    SvRndNumGen
     FloatNode
     IntegerNode
     Float2IntNode
@@ -199,13 +201,11 @@
     NoteNode
     GTextNode
     SvDebugPrintNode
-    SvStethoscopeNode
     SvStethoscopeNodeMK2
 
 ## Scene
     SvObjectsNodeMK3
     SvObjRemoteNodeMK2
-    SvFrameInfoNode
     SvFrameInfoNodeMK2
     SvEmptyOutNode
     SvInstancerNode
@@ -234,15 +234,12 @@
     SvSCNRayCastNodeMK2
     SvObjectToMeshNodeMK2
     SvObjInLite
-    SvScriptNodeLite
-    SvRndNumGen
     SvColorsInNode
     SvColorsOutNode
 
 ## Alpha Nodes
     SvCurveViewerNode
     SvCurveViewerNodeAlt
-    SvPolylineViewerNode
     SvPolylineViewerNodeMK1
     SvTypeViewerNode
     SvJoinTrianglesNode
