@@ -265,6 +265,7 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
     @property
     def texture_width_height(self):
+        #  get the width and height for the texture
         if self.selected_custom_tex:
             width, height = self.get_from_c_size()
         else:
@@ -288,19 +289,7 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         ''' buffer need adequate size multiplying '''
         width, height = self.texture_width_height
         return width * height * factor_buffer_dict.get(self.color_mode)
-    '''
-    def get_total_size(self):
-        if self.selected_custom_tex:
-            width, height = self.get_from_c_size()
-        else:
-            size_tex = size_tex_dict.get(self.selected_mode)
-        # buffer need adequate size multiplying
-        factor_clr = factor_buffer_dict.get(self.color_mode)
-        if self.selected_custom_tex:
-            self.total_size = width * height * factor_clr
-        else:
-            self.total_size = size_tex * size_tex * factor_clr
-    '''
+
     def get_buffer(self):
         data = np.array(self.inputs['Float'].sv_get(deepcopy=False)).flatten()
         self.total_size = self.calculate_total_size()
