@@ -377,25 +377,14 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
             mode = self.color_mode
             self.activate = False
             pixels = np.array(self.inputs['Float'].sv_get(deepcopy=False)).flatten()
-            if self.selected_custom_tex:
-                width, height = self.get_from_c_size()
-            else:
-                width = height = size_tex_dict.get(self.selected_mode)
+            width, height = self.texture_width_height
 
             transfer_to_image(pixels, self.texture_name, width, height, mode)
 
         if self.activate:
 
             texture = self.get_buffer()
-            if self.selected_custom_tex:
-                width, height = self.get_from_c_size()
-                print('custom texture selected!')
-                print('tex size is', width, height)
-
-            else:
-                size_tex = size_tex_dict.get(self.selected_mode)
-                width = height = size_tex
-
+            width, height = self.texture_width_height
             x, y = self.xy_offset
             gl_color_constant = gl_color_dict.get(self.color_mode)
             name = bgl.Buffer(bgl.GL_INT, 1)
@@ -451,13 +440,7 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         else:
             extension = '.' + img_format.lower()
         image_name = image_name + extension
-        dim = 0
-        if self.selected_custom_tex:
-            width, height = self.get_from_c_size()
-        else:
-            dim = size_tex_dict[self.selected_mode]
-            width, height = dim, dim
-
+        width, height = self.texture_width_height
         if image_name in bpy.data.images:
             img = bpy.data.images[image_name]
         else:
