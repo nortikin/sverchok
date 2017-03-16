@@ -414,66 +414,32 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
     def set_compression(self):
         pass
 
-    def save_bitmap(self, operator):
-        alpha = False
-
-        # if self.image_name was empty it will give a default
-        image_name = self.image_name or 'image_name'
-
-        # save a texture in a bitmap image
-        # in different formats supported by blender
-        buf = self.get_buffer()
+    def push_image_settings(self, scene):
         img_format = self.bitmap_format
-        col_mod = self.color_mode
-        # col_mod_s = self.color_mode_save
-        quality = self.quality_level
-        compression = self.compression_level
-        print('col_mod is: {0}'.format(col_mod))
-        # print('col_mod_s is: {0}'.format(col_mod_s))
         print('img_format is: {0}'.format(img_format))
-        if img_format in format_mapping:
-            extension = '.' + format_mapping.get(img_format, img_format.lower())
-        else:
-            extension = '.' + img_format.lower()
-        image_name = image_name + extension
-        width, height = self.texture_width_height
-        if image_name in bpy.data.images:
-            img = bpy.data.images[image_name]
-        else:
-            img = bpy.data.images.new(name=image_name, width=width,
-                                      height=height, alpha=alpha,
-                                      float_buffer=True)
-        # img.scale(width, height)
-        # print('img size: ', img.size(width, height))
-        print('width is: {0}'.format(width))
-        print('length img pixels: {0}'.format(len(img.pixels)))
-        if col_mod == 'BW':
-            print("passing data from buf to pixels BW")
-            svIMG.assign_BW_image(img, buf)
-        elif col_mod == 'RGB':
-            print("passing data from buf to pixels RGB")
-            svIMG.assign_RGB_image(img, width, height, buf)
-        elif col_mod == 'RGBA':
-            print("passing data from buf to pixels RGBA")
-            img.pixels[:] = buf
-        # get the scene context
-        scene = bpy.context.scene
-        # set the scene quality to the maximum
-        scene.render.image_settings.quality = quality
-        if img_format in {'JPEG', 'JPEG2000'}:
-            scene.render.image_settings.color_depth = '16'
-        else:
-            scene.render.image_settings.color_depth = '8'
-        # set compression level to no compression(0)
-        scene.render.image_settings.compression = compression
-        scene.render.image_settings.color_mode = col_mod
-        scene.render.image_settings.file_format = img_format
-        print('settings done!')
-        # get the path for the file and save the image
-        desired_path = os.path.join(self.base_dir, self.image_name + extension)
-        # saving the image
-        img.save_render(desired_path, scene)
 
+        img_settings = scene.render.image_settings
+        img_settings.quality = self.quality_level
+        img_settings.color_depth = '16' if img_format in {'JPEG', 'JPEG2000'} else '8'
+        img_settings.compression = self.compression_level
+        img_settings.color_mode = self.color_mode
+        img_settings.file_format = img_format
+        print('settings done!')
+
+    def save_bitmap(self, operator):
+        scene = bpy.context.scene
+        image_name = self.image_name or 'image_name'
+        img_format = self.bitmap_format
+        extension = svIMG.get_extension(img_format)
+
+        img = self.get_image_by_name(image_name, extension)
+        buf = self.get_buffer()
+        width, height = self.texture_width_height
+        svIMG.pass_buffer_to_image(img, buf, width, height)
+        self.push_image_settings(scene)
+
+        desired_path = os.path.join(self.base_dir, self.image_name + extension)
+        img.save_render(desired_path, scene)
         print('Bitmap saved!  path is:', desired_path)
 
 
