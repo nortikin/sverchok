@@ -274,7 +274,6 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         return width, height
 
     def reshape_data(self, data):
-        # reshaping data to a flatten list
         self.total_size = self.calculate_total_size()
         if len(data) < self.total_size:
             default_value = 0
@@ -283,7 +282,6 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
             data = new_data
         elif len(data) > self.total_size:
             data = data[:self.total_size]
-        return data
 
     def calculate_total_size(self):
         ''' buffer need adequate size multiplying '''
@@ -382,7 +380,6 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
             transfer_to_image(pixels, self.texture_name, width, height, mode)
 
         if self.activate:
-
             texture = self.get_buffer()
             width, height = self.texture_width_height
             x, y = self.xy_offset
