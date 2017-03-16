@@ -11,19 +11,8 @@ def array_as(a, shape):
     return new_a
 
 
-'''from sverchok redux
 def assign_BW_image(image, buffer):
-    np_buff = np.empty(len(image.pixels), dtype=np.float32)
-    np_buff.shape = (-1, 4)
-    np_buff[:, :] = buffer[:, np.newaxis]
-    np_buff[:, 3] = 1
-    np_buff.shape = -1
-    image.pixels[:] = np_buff
-    return image
-'''
-
-
-def assign_BW_image(image, buffer):
+    # from sverchok redux, modified version
     np_buff = np.empty(len(image.pixels), dtype=np.float32)
     np_buff.shape = (-1, 4)
     np_buff[:, :] = np.array(buffer)[:, np.newaxis]
@@ -38,11 +27,7 @@ def assign_RGB_image(image, width, height, buffer):
     rgb_res = rgb.reshape(width * height, 3)
     alpha = np.empty(len(buffer), dtype=np.float32)
     alpha.fill(1)
-    print('alpha filled')
     alpha_res = alpha.reshape(width * height, 3)
-    print('concatenate rgb > alpha')
     rgba = np.concatenate((rgb_res, alpha_res), axis=1)
     final = rgba[:, 0:4]
-    # print(final)
-    print('filling pixels from openGl buffer')
     image.pixels = final.flatten()
