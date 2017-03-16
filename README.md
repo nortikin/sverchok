@@ -65,7 +65,8 @@ Authors:
 -  Dealga McArdle,  
 -  Constantin Vorobiew, 
 -  Ilya Protnov,  
--  Eleanor Howick    
+-  Eleanor Howick,    
+-  Walter Perdan    
 
 Email: sverchok-b3d@yandex.ru  
 
@@ -136,7 +137,8 @@ Email: sverchok-b3d@yandex.ru
 -  МакАрдле Деальга;  
 -  Воробьёв Константин;  
 -  Портнов Илья;  
--  Ховик Элеонора.   
+-  Ховик Элеонора;  
+-  Вальтер Пердан.   
 
 Email: sverchok-b3d@yandex.ru  
 
