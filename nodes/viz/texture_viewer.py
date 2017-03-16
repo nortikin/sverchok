@@ -257,17 +257,17 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         b = int(self.width) + 20
         return int(a[0] + b), int(a[1])
 
-    def get_from_c_size(self):
-        return [
-            self.inputs['Width'].sv_get(deepcopy=False)[0][0],
-            self.inputs['Height'].sv_get(deepcopy=False)[0][0]
-        ]
+    @property
+    def custom_size(self):
+        sockets = self.inputs["Width"], self.inputs["Height"]
+        return [s.sv_get(deepcopy=False)[0][0] for s in sockets]
 
     @property
     def texture_width_height(self):
         #  get the width and height for the texture
         if self.selected_custom_tex:
-            width, height = self.get_from_c_size()
+            # width, height = self.get_from_c_size()
+            width, height = self.custom_size
         else:
             size_tex = size_tex_dict.get(self.selected_mode)
             width, height = size_tex, size_tex
