@@ -34,7 +34,6 @@ def assign_RGB_image(image, width, height, buffer):
 
 
 def get_extension(img_format):
-    # img_format = self.bitmap_format
     if img_format in format_mapping:
         extension = '.' + format_mapping.get(img_format, img_format.lower())
     else:
@@ -42,14 +41,13 @@ def get_extension(img_format):
     return extension
 
 
-def pass_buffer_to_image(self, img, buf, width, height):
-    # width, height = self.texture_width_height
+def pass_buffer_to_image(color_mode, img, buf, width, height):
     print('width is: {0}'.format(width))
     print('length img pixels: {0}'.format(len(img.pixels)))
     # print("passing data from buf to pixels ", self.color_mode)
-    if self.color_mode == 'BW':
+    if color_mode == 'BW':
         assign_BW_image(img, buf)
-    elif self.color_mode == 'RGB':
+    elif color_mode == 'RGB':
         assign_RGB_image(img, width, height, buf)
-    elif self.color_mode == 'RGBA':
+    elif color_mode == 'RGBA':
         img.pixels[:] = buf

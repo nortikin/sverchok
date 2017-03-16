@@ -105,13 +105,7 @@ def transfer_to_image(pixels, name, width, height, mode):
         image.pack
     else:
         image.scale(width, height)
-    if mode == 'BW':
-        svIMG.assign_BW_image(image, pixels)
-    elif mode == 'RGB':
-        new = svIMG.array_as(pixels, (width * height * 3,))
-        svIMG.assign_RGB_image(image, width, height, new)
-    else:
-        image.pixels[:] = pixels
+    svIMG.pass_buffer_to_image(mode, image, pixels, width, height)
     image.update_tag()
 
 
@@ -133,6 +127,7 @@ def init_texture(width, height, texname, texture, clr):
         0, clr, width, height,
         0, clr, bgl.GL_FLOAT, texture
     )
+
 
 def simple_screen(x, y, args):
     # draw a simple scren display for the texture
