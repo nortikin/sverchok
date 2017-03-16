@@ -33,7 +33,7 @@
 #     Ilya Portnov (aka portnov)
 #     Eleanor Howick (aka elfnor)
 #     Walter Perdan (aka kalwalt)
-#     DolphinDream
+#     (aka DolphinDream)
 #
 #  ***** END GPL LICENSE BLOCK *****
 #
