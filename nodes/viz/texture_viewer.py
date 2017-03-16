@@ -115,6 +115,25 @@ def transfer_to_image(pixels, name, width, height, mode):
     image.update_tag()
 
 
+def init_texture(width, height, texname, texture, clr):
+    # function to init the texture
+    bgl.glPixelStorei(bgl.GL_UNPACK_ALIGNMENT, 1)
+
+    bgl.glEnable(bgl.GL_TEXTURE_2D)
+    bgl.glBindTexture(bgl.GL_TEXTURE_2D, texname)
+    bgl.glActiveTexture(bgl.GL_TEXTURE0)
+
+    bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_WRAP_S, bgl.GL_CLAMP)
+    bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_WRAP_T, bgl.GL_CLAMP)
+    bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_MAG_FILTER, bgl.GL_LINEAR)
+    bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_MIN_FILTER, bgl.GL_LINEAR)
+
+    bgl.glTexImage2D(
+        bgl.GL_TEXTURE_2D,
+        0, clr, width, height,
+        0, clr, bgl.GL_FLOAT, texture
+    )
+
 def simple_screen(x, y, args):
     # draw a simple scren display for the texture
     border_color = (0.390805, 0.754022, 1.000000, 1.00)
@@ -230,6 +249,7 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
     texture_name = StringProperty(
         default='texture',
         description='set name (minus filetype) for exporting to image viewer')
+    total_size = IntProperty(default=0)
 
     @property
     def xy_offset(self):
@@ -243,33 +263,49 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
             self.inputs['Height'].sv_get(deepcopy=False)[0][0]
         ]
 
-    def get_buffer(self):
-        data = np.array(self.inputs['Float'].sv_get(deepcopy=False)).flatten()
-
+    @property
+    def texture_width_height(self):
         if self.selected_custom_tex:
             width, height = self.get_from_c_size()
-            print('get width and height')
-            print('size_tex ok!')
         else:
             size_tex = size_tex_dict.get(self.selected_mode)
+            width, height = size_tex, size_tex
+        return width, height
 
-        # buffer need adequate size multiplying
-        factor_clr = factor_buffer_dict.get(self.color_mode)
-
-        if self.selected_custom_tex:
-            total_size = width * height * factor_clr
-        else:
-            total_size = size_tex * size_tex * factor_clr
-
-        if len(data) < total_size:
+    def reshape_data(self, data):
+        # reshaping data to a flatten list
+        self.total_size = self.calculate_total_size()
+        if len(data) < self.total_size:
             default_value = 0
-            new_data = [default_value for j in range(total_size)]
+            new_data = [default_value for j in range(self.total_size)]
             new_data[:len(data)] = data[:]
             data = new_data
-        elif len(data) > total_size:
-            data = data[:total_size]
-        print('buffer  tex buff length: {0}'.format(len(data)))
-        texture = bgl.Buffer(bgl.GL_FLOAT, total_size, data)
+        elif len(data) > self.total_size:
+            data = data[:self.total_size]
+        return data
+
+    def calculate_total_size(self):
+        ''' buffer need adequate size multiplying '''
+        width, height = self.texture_width_height
+        return width * height * factor_buffer_dict.get(self.color_mode)
+    '''
+    def get_total_size(self):
+        if self.selected_custom_tex:
+            width, height = self.get_from_c_size()
+        else:
+            size_tex = size_tex_dict.get(self.selected_mode)
+        # buffer need adequate size multiplying
+        factor_clr = factor_buffer_dict.get(self.color_mode)
+        if self.selected_custom_tex:
+            self.total_size = width * height * factor_clr
+        else:
+            self.total_size = size_tex * size_tex * factor_clr
+    '''
+    def get_buffer(self):
+        data = np.array(self.inputs['Float'].sv_get(deepcopy=False)).flatten()
+        self.total_size = self.calculate_total_size()
+        self.reshape_data(data)
+        texture = bgl.Buffer(bgl.GL_FLOAT, self.total_size, data)
         return texture
 
     def draw_buttons(self, context, layout):
@@ -372,32 +408,11 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
                 width = height = size_tex
 
             x, y = self.xy_offset
-
-            def init_texture(width, height, texname, texture):
-                # function to init the texture
-                clr = gl_color_dict.get(self.color_mode)
-
-                bgl.glPixelStorei(bgl.GL_UNPACK_ALIGNMENT, 1)
-
-                bgl.glEnable(bgl.GL_TEXTURE_2D)
-                bgl.glBindTexture(bgl.GL_TEXTURE_2D, texname)
-                bgl.glActiveTexture(bgl.GL_TEXTURE0)
-
-                bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_WRAP_S, bgl.GL_CLAMP)
-                bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_WRAP_T, bgl.GL_CLAMP)
-                bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_MAG_FILTER, bgl.GL_LINEAR)
-                bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_MIN_FILTER, bgl.GL_LINEAR)
-
-                bgl.glTexImage2D(
-                    bgl.GL_TEXTURE_2D,
-                    0, clr, width, height,
-                    0, clr, bgl.GL_FLOAT, texture
-                )
-
+            gl_color_constant = gl_color_dict.get(self.color_mode)
             name = bgl.Buffer(bgl.GL_INT, 1)
             bgl.glGenTextures(1, name)
             self.texture[n_id] = name[0]
-            init_texture(width, height, name[0], texture)
+            init_texture(width, height, name[0], texture, gl_color_constant)
 
             draw_data = {
                 'tree_name': self.id_data.name[:],
