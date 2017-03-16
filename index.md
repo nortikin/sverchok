@@ -88,18 +88,18 @@
 
 ## Modifier Make
     LineConnectNodeMK2
-    AdaptivePolsNode
-    SvAdaptiveEdgeNode
-    CrossSectionNode
-    SvBisectNode
-    SvSolidifyNode
-    SvWireframeNode
+    SvConvexHullNode
     DelaunayTriangulation2DNode
     Voronoi2DNode
-    SvPipeNode
-    SvDuplicateAlongEdgeNode
     SvWafelNode
-    SvConvexHullNode
+    CrossSectionNode
+    SvBisectNode
+    SvAdaptiveEdgeNode
+    AdaptivePolsNode
+    SvDuplicateAlongEdgeNode
+    SvSolidifyNode
+    SvWireframeNode
+    SvPipeNode
     SvLatheNode
     SvMatrixTubeNode
 
@@ -240,7 +240,6 @@
 ## Alpha Nodes
     SvCurveViewerNode
     SvCurveViewerNodeAlt
-    SvPolylineViewerNode
     SvPolylineViewerNodeMK1
     SvTypeViewerNode
     SvJoinTrianglesNode
