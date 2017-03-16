@@ -40,9 +40,9 @@ def sv_update_handler(scene):
     if not has_frame_changed(scene):
         return
     
-    print('sv_update_handler')
     for ng in sverchok_trees():
         try:
+            # print('sv_update_handler')
             ng.process_ani()
         except Exception as e:
             print('Failed to update:', name, str(e))
