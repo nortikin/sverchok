@@ -266,14 +266,13 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
     def texture_width_height(self):
         #  get the width and height for the texture
         if self.selected_custom_tex:
-            # width, height = self.get_from_c_size()
             width, height = self.custom_size
         else:
             size_tex = size_tex_dict.get(self.selected_mode)
             width, height = size_tex, size_tex
         return width, height
 
-    def reshape_data(self, data):
+    def make_data_correct_length(self, data):
         self.total_size = self.calculate_total_size()
         if len(data) < self.total_size:
             default_value = 0
@@ -291,7 +290,7 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
     def get_buffer(self):
         data = np.array(self.inputs['Float'].sv_get(deepcopy=False)).flatten()
         self.total_size = self.calculate_total_size()
-        self.reshape_data(data)
+        self.make_data_correct_length(data)
         texture = bgl.Buffer(bgl.GL_FLOAT, self.total_size, data)
         return texture
 
