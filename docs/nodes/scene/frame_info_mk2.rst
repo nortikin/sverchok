@@ -4,7 +4,7 @@ Frame Info
 Functionality
 -------------
 
-Give the node grahp access to the frame information.
+Give the node grahp access to the frame information. Some transport controls have been added since these images were made.
 
 .. image:: https://cloud.githubusercontent.com/assets/6241382/4299390/e3793c12-3e35-11e4-86b7-094efda55b68.png
 
