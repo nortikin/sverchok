@@ -21,6 +21,7 @@
     svBasicArcNode
     RandomVectorNodeMK2
     SvBricksNode
+    SvScriptNodeLite    
     ImageNode
     SvTorusNode
     SvMeshEvalNode
@@ -136,6 +137,7 @@
     SvGenFloatRange
     SvListInputNode
     RandomNode
+    SvRndNumGen
     FloatNode
     IntegerNode
     Float2IntNode
@@ -199,13 +201,11 @@
     NoteNode
     GTextNode
     SvDebugPrintNode
-    SvStethoscopeNode
     SvStethoscopeNodeMK2
 
 ## Scene
     SvObjectsNodeMK3
     SvObjRemoteNodeMK2
-    SvFrameInfoNode
     SvFrameInfoNodeMK2
     SvEmptyOutNode
     SvInstancerNode
@@ -234,8 +234,6 @@
     SvSCNRayCastNodeMK2
     SvObjectToMeshNodeMK2
     SvObjInLite
-    SvScriptNodeLite
-    SvRndNumGen
     SvColorsInNode
     SvColorsOutNode
 
