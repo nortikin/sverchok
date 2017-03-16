@@ -19,6 +19,24 @@
 
 import bpy
 
+
+class SvPushCurrentframe(bpy.types.Operator):
+
+    bl_idname = "node.sv_push_current_frame"
+    bl_label = "Push current_frame"
+
+    direction = bpy.props.IntProperty(default=1)
+
+    def execute(self, context):
+        ntree = context.space_data.edit_tree
+        ntree.has_changed = True
+
+        scn = context.scene
+        scn.frame_current += self.direction
+        
+        return {'FINISHED'}
+
+
 nodeview_keymaps = []
 
 def add_keymap():
@@ -62,7 +80,9 @@ def remove_keymap():
 
 
 def register():
+    bpy.utils.register_class(SvPushCurrentframe)
     add_keymap()
 
 def unregister():
     remove_keymap()
+    bpy.utils.unregister_class(SvPushCurrentframe)
