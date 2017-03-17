@@ -60,8 +60,11 @@ class SvGetAssetProperties(bpy.types.Node, SverchCustomTreeNode):
     gp_frame_current = bpy.props.BoolProperty(default=True, update=updateNode)
     gp_frame_override = bpy.props.IntProperty(default=1, update=updateNode)
     gp_stroke_idx = bpy.props.IntProperty(update=updateNode)
-    # -- points
-    # -- color
+    # -- points  [p.co for p in points]
+    # -- color   
+    #     -- color.color (stroke_color)
+    #     -- color.fill_color
+    #     -- color.file_alpha
     # -- line_width
     # -- draw_cyclic
     #  --- / triangles (only set is useful...)
