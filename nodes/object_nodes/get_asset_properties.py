@@ -54,6 +54,8 @@ class SvGetAssetProperties(bpy.types.Node, SverchCustomTreeNode):
     object_name = bpy.props.StringProperty(update=updateNode)
     image_name = bpy.props.StringProperty(update=updateNode)
     pass_pixels = bpy.props.BoolProperty(update=updateNode)
+    gp_name = bpy.props.StringProperty(update=updateNode)
+    gp_layer
 
     def draw_buttons(self, context, layout):
         # layout.operator('node.'   ,text='refresh from scene')
@@ -73,6 +75,7 @@ class SvGetAssetProperties(bpy.types.Node, SverchCustomTreeNode):
             layout.prop_search(self, 'image_name', bpy.data, 'images', text='name')
             if self.image_name:
                 layout.prop(self, 'pass_pixels', text='pixels')
+                # size ?  new socket outputting [w/h]
 
 
     def sv_init(self, context):
@@ -106,6 +109,12 @@ class SvGetAssetProperties(bpy.types.Node, SverchCustomTreeNode):
                     output_socket.sv_set([bpy.data.images[self.image_name]])
             else:
                 output_socket.sv_set(unfiltered_data_list[:])
+
+        elif self.Mode == 'grease_pencil':
+            # bpy.data.grease_pencil[0].layers[0].
+            # bpy.data.grease_pencil['GPencil'].layers['GP_Layer'].active_frame.strokes[0].points
+            # bpy.data.grease_pencil['GPencil'].layers['GP_Layer'].active_frame.strokes[0].color
+            ...
 
         else:
             output_socket.sv_set(unfiltered_data_list[:])
