@@ -36,15 +36,17 @@ class SvGetAssetProperties(bpy.types.Node, SverchCustomTreeNode):
 
     Mode = EnumProperty(name="getmodes", default="objects", items=e(M), update=updateNode)
     Type = EnumProperty(name="getmodes", default="MESH", items=e(T), update=updateNode)
-    text_file_name = bpy.props.StringProperty(update=updateNode)
+    text_name = bpy.props.StringProperty(update=updateNode)
 
     def draw_buttons(self, context, layout):
         row = layout.row(align=True)
         layout.prop(self, "Mode", "mode")
         if self.Mode == 'objects':
+            # doesn't yet filter prop_search by type, .. will work eventually.
             layout.prop(self, "Type", "type")
+            layout.prop_search(self, 'object_name', bpy.data, 'objects', text='name')
         elif self.Mode == 'texts':
-            layout.prop_search(self, 'text_file_name', bpy.data, 'texts', text='name')
+            layout.prop_search(self, 'text_name', bpy.data, 'texts', text='name')
 
     def sv_init(self, context):
         self.outputs.new('StringsSocket', "Objects")
@@ -55,12 +57,15 @@ class SvGetAssetProperties(bpy.types.Node, SverchCustomTreeNode):
             return
 
         unfiltered_data_list = getattr(bpy.data, self.Mode)
-        if self.Mode != 'objects':
-            output_socket.sv_set(unfiltered_data_list[:])
-        elif self.Mode == 'texts' and self.text_file_name:
-            output_socket.sv_set([[bpy.data.texts[self.text_file_name]]])
-        else:
-            output_socket.sv_set([i for i in unfiltered_data_list if i.type == self.Type])
+        if self.Mode == 'objects':
+            if self.object_name:
+                output_socket.sv_set([bpy.data.objects[self.object_name]])
+            else:
+                output_socket.sv_set([i for i in unfiltered_data_list if i.type == self.Type])
+        
+        elif self.Mode == 'texts' and self.text_name:
+            output_socket.sv_set([[bpy.data.texts[self.text_name]]])
+
 
 
 def register():
