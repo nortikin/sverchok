@@ -37,6 +37,7 @@ class SvGetAssetProperties(bpy.types.Node, SverchCustomTreeNode):
     Mode = EnumProperty(name="getmodes", default="objects", items=e(M), update=updateNode)
     Type = EnumProperty(name="getmodes", default="MESH", items=e(T), update=updateNode)
     text_name = bpy.props.StringProperty(update=updateNode)
+    object_name = bpy.props.StringProperty(update=updateNode)
 
     def draw_buttons(self, context, layout):
         row = layout.row()
