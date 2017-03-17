@@ -357,6 +357,8 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
             bgl.glDeleteTextures(1, names)
 
     def process(self):
+        if not self.inputs['Float'].is_linked:
+            return
         n_id = node_id(self)
         size_tex = 0
         width = 0
