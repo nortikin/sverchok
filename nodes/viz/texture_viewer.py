@@ -22,11 +22,14 @@ import numpy as np
 
 import bgl
 import bpy
-from bpy.props import FloatProperty, EnumProperty, StringProperty, BoolProperty, IntProperty
+from bpy.props import (
+    FloatProperty, EnumProperty, StringProperty, BoolProperty, IntProperty
+)
 
 from sverchok.data_structure import updateNode, node_id
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.ui import nodeview_bgl_viewer_draw_mk2 as nvBGL2
+from sverchok.ui import sv_image as svIMG
 
 from sverchok.utils.sv_operator_mixins import (
     SvGenericDirectorySelector, SvGenericCallbackWithParams
@@ -94,6 +97,38 @@ factor_buffer_dict = {
 }
 
 
+def transfer_to_image(pixels, name, width, height, mode):
+    # transfer pixels(data) from Node tree to image viewer
+    image = bpy.data.images.get(name)
+    if not image:
+        image = bpy.data.images.new(name, width, height, alpha=False)
+        image.pack
+    else:
+        image.scale(width, height)
+    svIMG.pass_buffer_to_image(mode, image, pixels, width, height)
+    image.update_tag()
+
+
+def init_texture(width, height, texname, texture, clr):
+    # function to init the texture
+    bgl.glPixelStorei(bgl.GL_UNPACK_ALIGNMENT, 1)
+
+    bgl.glEnable(bgl.GL_TEXTURE_2D)
+    bgl.glBindTexture(bgl.GL_TEXTURE_2D, texname)
+    bgl.glActiveTexture(bgl.GL_TEXTURE0)
+
+    bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_WRAP_S, bgl.GL_CLAMP)
+    bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_WRAP_T, bgl.GL_CLAMP)
+    bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_MAG_FILTER, bgl.GL_LINEAR)
+    bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_MIN_FILTER, bgl.GL_LINEAR)
+
+    bgl.glTexImage2D(
+        bgl.GL_TEXTURE_2D,
+        0, clr, width, height,
+        0, clr, bgl.GL_FLOAT, texture
+    )
+
+
 def simple_screen(x, y, args):
     # draw a simple scren display for the texture
     border_color = (0.390805, 0.754022, 1.000000, 1.00)
@@ -156,75 +191,60 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
     texture = {}
 
     n_id = StringProperty(default='')
+    to_image_viewer = BoolProperty(
+        name='Pass', description='Transfer pixels to image viewer',
+        default=False, update=updateNode)
+
     activate = BoolProperty(
         name='Show', description='Activate texture drawing',
-        default=True,
-        update=updateNode)
+        default=True, update=updateNode)
 
     selected_mode = EnumProperty(
-        items=size_tex_list,
-        description="Offers display sizing",
-        default="S",
-        update=updateNode
-    )
+        items=size_tex_list, description="Offers display sizing",
+        default="S", update=updateNode)
 
     selected_custom_tex = BoolProperty(
         name='Custom tex', description='Activate custom texture drawing',
-        default=False,
-        update=updateNode
-    )
+        default=False, update=updateNode)
 
     width_custom_tex = IntProperty(
         min=0, max=1024, default=206, name='Width Tex',
-        description="set the custom texture size",
-        update=updateNode
-    )
+        description="set the custom texture size", update=updateNode)
 
     height_custom_tex = IntProperty(
         min=0, max=1024, default=124, name='Height Tex',
-        description="set the custom texture size",
-        update=updateNode
-    )
+        description="set the custom texture size", update=updateNode)
 
     bitmap_format = EnumProperty(
         items=bitmap_format_list,
-        description="Offers bitmap saving",
-        default="PNG"
-    )
+        description="Offers bitmap saving", default="PNG")
 
     color_mode = EnumProperty(
-        items=gl_color_list,
-        description="Offers color options",
-        default="BW",
-        update=updateNode
-    )
+        items=gl_color_list, description="Offers color options",
+        default="BW", update=updateNode)
 
     color_mode_save = EnumProperty(
-        items=gl_color_list,
-        description="Offers color options",
-        default="BW",
-        update=updateNode
-    )
+        items=gl_color_list, description="Offers color options",
+        default="BW", update=updateNode)
 
     compression_level = IntProperty(
         min=0, max=100, default=0, name='compression',
-        description="set compression level",
-        update=updateNode
-    )
+        description="set compression level", update=updateNode)
 
     quality_level = IntProperty(
         min=0, max=100, default=0, name='quality',
-        description="set quality level",
-        update=updateNode
-    )
+        description="set quality level", update=updateNode)
 
     in_float = FloatProperty(
         min=0.0, max=1.0, default=0.0, name='Float Input',
-        description='Input for texture', update=updateNode
-    )
+        description='Input for texture', update=updateNode)
 
     base_dir = StringProperty(default='/tmp/')
     image_name = StringProperty(default='image_name', description='name (minus filetype)')
+    texture_name = StringProperty(
+        default='texture',
+        description='set name (minus filetype) for exporting to image viewer')
+    total_size = IntProperty(default=0)
 
     @property
     def xy_offset(self):
@@ -232,34 +252,41 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         b = int(self.width) + 20
         return int(a[0] + b), int(a[1])
 
-    def get_buffer(self):
-        data = np.array(self.inputs['Float'].sv_get(deepcopy=False)).flatten()
+    @property
+    def custom_size(self):
+        sockets = self.inputs["Width"], self.inputs["Height"]
+        return [s.sv_get(deepcopy=False)[0][0] for s in sockets]
 
+    @property
+    def texture_width_height(self):
+        #  get the width and height for the texture
         if self.selected_custom_tex:
-            width = self.inputs['Width'].sv_get(deepcopy=False)[0][0]
-            height = self.inputs['Height'].sv_get(deepcopy=False)[0][0]
-            print('get width and height')
-            print('size_tex ok!')
+            width, height = self.custom_size
         else:
             size_tex = size_tex_dict.get(self.selected_mode)
+            width, height = size_tex, size_tex
+        return width, height
 
-        # buffer need adequate size multiplying
-        factor_clr = factor_buffer_dict.get(self.color_mode)
-
-        if self.selected_custom_tex:
-            total_size = width * height * factor_clr
-        else:
-            total_size = size_tex * size_tex * factor_clr
-
-        if len(data) < total_size:
+    def make_data_correct_length(self, data):
+        self.total_size = self.calculate_total_size()
+        if len(data) < self.total_size:
             default_value = 0
-            new_data = [default_value for j in range(total_size)]
+            new_data = [default_value for j in range(self.total_size)]
             new_data[:len(data)] = data[:]
             data = new_data
-        elif len(data) > total_size:
-            data = data[:total_size]
-        print('buffer  tex buff length: {0}'.format(len(data)))
-        texture = bgl.Buffer(bgl.GL_FLOAT, total_size, data)
+        elif len(data) > self.total_size:
+            data = data[:self.total_size]
+
+    def calculate_total_size(self):
+        ''' buffer need adequate size multiplying '''
+        width, height = self.texture_width_height
+        return width * height * factor_buffer_dict.get(self.color_mode)
+
+    def get_buffer(self):
+        data = np.array(self.inputs['Float'].sv_get(deepcopy=False)).flatten()
+        self.total_size = self.calculate_total_size()
+        self.make_data_correct_length(data)
+        texture = bgl.Buffer(bgl.GL_FLOAT, self.total_size, data)
         return texture
 
     def draw_buttons(self, context, layout):
@@ -268,6 +295,7 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         row = c.row()
         row.prop(self, "selected_mode", expand=True)
         c.prop(self, 'activate')
+        c.prop(self, 'to_image_viewer')
         c.label(text='Set color mode')
         row = layout.row(align=True)
         row.prop(self, 'color_mode', expand=True)
@@ -287,9 +315,9 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         layout.separator()
         layout.prop(self, "bitmap_format", text='format')
         layout.separator()
-        row = layout.row()
-        row.prop(self, 'color_mode_save', expand=True)
-        layout.separator()
+        # row = layout.row()
+        # row.prop(self, 'color_mode_save', expand=True)
+        # layout.separator()
         if img_format == 'PNG':
             row = layout.row()
             row.prop(self, 'compression_level', text='set compression')
@@ -304,9 +332,18 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         rightside = leftside.split().row(align=True)
         rightside.operator(callback_to_self, text="Save").fn_name = "save_bitmap"
         rightside.operator(directory_select, text="", icon='IMASEL').fn_name = "set_dir"
+        transfer = layout.column(align=True)
+        transfer.separator()
+        transfer.label(text="Transfer to image viewer")
+        transfer.prop(self, 'texture_name', text='', icon='EXPORT')
 
     def draw_label(self):
-        return (self.label or self.name) + ' ' + str(size_tex_dict.get(self.selected_mode)) + "^2"
+        if self.selected_custom_tex:
+            width, height = self.get_from_c_size()
+            label = (self.label or self.name) + ' {0} x {1}'.format(width, height)
+        else:
+            label = (self.label or self.name) + ' ' + str(size_tex_dict.get(self.selected_mode)) + "^2"
+        return label
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', "Float").prop_name = 'in_float'
@@ -320,6 +357,8 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
             bgl.glDeleteTextures(1, names)
 
     def process(self):
+        if not self.inputs['Float'].is_linked:
+            return
         n_id = node_id(self)
         size_tex = 0
         width = 0
@@ -328,48 +367,23 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         nvBGL2.callback_disable(n_id)
         self.delete_texture()
 
+        if self.to_image_viewer:
+            mode = self.color_mode
+            self.activate = False
+            pixels = np.array(self.inputs['Float'].sv_get(deepcopy=False)).flatten()
+            width, height = self.texture_width_height
+
+            transfer_to_image(pixels, self.texture_name, width, height, mode)
+
         if self.activate:
-
             texture = self.get_buffer()
-            if self.selected_custom_tex:
-                width = self.inputs['Width'].sv_get(deepcopy=False)[0][0]
-                height = self.inputs['Height'].sv_get(deepcopy=False)[0][0]
-                print('custom texture selected!')
-                print('tex size is', width, height)
-
-            else:
-                size_tex = size_tex_dict.get(self.selected_mode)
-                width = height = size_tex
-
+            width, height = self.texture_width_height
             x, y = self.xy_offset
-
-            def init_texture(width, height, texname, texture):
-                # function to init the texture
-                clr = gl_color_dict.get(self.color_mode)
-                # print('color mode is: {0}'.format(clr))
-
-                bgl.glPixelStorei(bgl.GL_UNPACK_ALIGNMENT, 1)
-
-                bgl.glEnable(bgl.GL_TEXTURE_2D)
-                bgl.glBindTexture(bgl.GL_TEXTURE_2D, texname)
-                bgl.glActiveTexture(bgl.GL_TEXTURE0)
-
-                bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_WRAP_S, bgl.GL_CLAMP)
-                bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_WRAP_T, bgl.GL_CLAMP)
-                bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_MAG_FILTER, bgl.GL_LINEAR)
-                bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_MIN_FILTER, bgl.GL_LINEAR)
-
-                bgl.glTexImage2D(
-                    bgl.GL_TEXTURE_2D,
-                    0, clr, width, height,
-                    0, clr, bgl.GL_FLOAT, texture
-                )
-
+            gl_color_constant = gl_color_dict.get(self.color_mode)
             name = bgl.Buffer(bgl.GL_INT, 1)
             bgl.glGenTextures(1, name)
             self.texture[n_id] = name[0]
-            # init_texture(size_tex, size_tex, name[0], texture)
-            init_texture(width, height, name[0], texture)
+            init_texture(width, height, name[0], texture, gl_color_constant)
 
             draw_data = {
                 'tree_name': self.id_data.name[:],
@@ -394,96 +408,32 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         print('new base dir:', self.base_dir)
         return {'FINISHED'}
 
-    def set_compression(self):
-        pass
+    def push_image_settings(self, scene):
+        img_format = self.bitmap_format
+        print('img_format is: {0}'.format(img_format))
+
+        img_settings = scene.render.image_settings
+        img_settings.quality = self.quality_level
+        img_settings.color_depth = '16' if img_format in {'JPEG', 'JPEG2000'} else '8'
+        img_settings.compression = self.compression_level
+        img_settings.color_mode = self.color_mode
+        img_settings.file_format = img_format
+        print('settings done!')
 
     def save_bitmap(self, operator):
-        alpha = False
-
-        # if self.image_name was empty it will give a default
-        image_name = self.image_name or 'image_name'
-
-        # save a texture in a bitmap image
-        # in different formats supported by blender
-        buf = self.get_buffer()
-        img_format = self.bitmap_format
-        col_mod = self.color_mode
-        col_mod_s = self.color_mode_save
-        quality = self.quality_level
-        compression = self.compression_level
-        print('col_mod is: {0}'.format(col_mod))
-        print('col_mod_s is: {0}'.format(col_mod_s))
-        print('img_format is: {0}'.format(img_format))
-        if img_format in format_mapping:
-            extension = '.' + format_mapping.get(img_format, img_format.lower())
-        else:
-            extension = '.' + img_format.lower()
-        image_name = image_name + extension
-        dim=0
-        if self.selected_custom_tex:
-            width = self.inputs['Width'].sv_get(deepcopy=False)[0][0]
-            height = self.inputs['Height'].sv_get(deepcopy=False)[0][0]
-        else:
-            dim = size_tex_dict[self.selected_mode]
-            width, height = dim, dim
-
-        if image_name in bpy.data.images:
-            img = bpy.data.images[image_name]
-        else:
-            img = bpy.data.images.new(name=image_name, width=width,
-                                      height=height, alpha=alpha,
-                                      float_buffer=True)
-        # img.scale(width, height)
-        # print('img size: ', img.size(width, height))
-        print('width is: {0}'.format(width))
-        print('length img pixels: {0}'.format(len(img.pixels)))
-        if col_mod == 'BW':
-            print("passing data from buf to pixels BW")
-            print('img channels: ', img.channels)
-            np_buff = np.empty(len(img.pixels), dtype=np.float32)
-            np_buff.shape = (-1, 4)
-            np_buff[:, :] = np.array(buf)[:, np.newaxis]
-            np_buff[:, 3] = 1
-            np_buff.shape = -1
-            img.pixels[:] = np_buff
-        elif col_mod == 'RGB':
-            print("passing data from buf to pixels RGB")
-            rgb = np.array(buf)
-            rgb_res = rgb.reshape(width * height, 3)
-            alpha = np.empty(len(buf), dtype=np.float32)
-            alpha.fill(1)
-            print('alpha filled')
-            alpha_res = alpha.reshape(width * height, 3)
-            print('concatenate rgb > alpha')
-            rgba = np.concatenate((rgb_res, alpha_res), axis=1)
-            final = rgba[:, 0:4]
-            # print(final)
-            print('filling pixels from openGl buffer')
-            img.pixels = final.flatten()
-        elif col_mod == 'RGBA':
-            print("passing data from buf to pixels RGBA")
-            # this works for RGBA!
-            img.pixels[:] = buf
-
-        # get the scene context
         scene = bpy.context.scene
-        # set the scene quality to the maximum
-        scene.render.image_settings.quality = quality
-        # set different color depth
-        if img_format in {'JPEG', 'JPEG2000'}:
-            scene.render.image_settings.color_depth = '16'
-        else:
-            scene.render.image_settings.color_depth = '8'
-        # set compression level to no compression(0)
-        scene.render.image_settings.compression = compression
-        scene.render.image_settings.color_mode = col_mod
-        scene.render.image_settings.file_format = img_format
-        print('settings done!')
-        # get the path for the file and save the image
+        image_name = self.image_name or 'image_name'
+        img_format = self.bitmap_format
+        extension = svIMG.get_extension(img_format)
+
+        img = self.get_image_by_name(image_name, extension)
+        buf = self.get_buffer()
+        width, height = self.texture_width_height
+        svIMG.pass_buffer_to_image(img, buf, width, height)
+        self.push_image_settings(scene)
+
         desired_path = os.path.join(self.base_dir, self.image_name + extension)
-
         img.save_render(desired_path, scene)
-
         print('Bitmap saved!  path is:', desired_path)
 
 
