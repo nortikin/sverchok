@@ -39,10 +39,14 @@ class SvGetAssetProperties(bpy.types.Node, SverchCustomTreeNode):
     text_name = bpy.props.StringProperty(update=updateNode)
 
     def draw_buttons(self, context, layout):
-        row = layout.row(align=True)
-        layout.prop(self, "Mode", "mode")
+        row = layout.row()
+        split = row.split(percentage=0.4)
+        split.label("bpy.data.")
+        split = split.split()
+        split.prop(self, "Mode", text="")
         if self.Mode == 'objects':
             # doesn't yet filter prop_search by type, .. will work eventually.
+            # see https://github.com/nortikin/sverchok/issues/991
             layout.prop(self, "Type", "type")
             layout.prop_search(self, 'object_name', bpy.data, 'objects', text='name')
         elif self.Mode == 'texts':

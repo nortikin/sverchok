@@ -39,7 +39,7 @@ class SvGetDataObjectNode(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons(self, context, layout):
         row = layout.row(align=True)
-        layout.prop(self, "Modes", "mode")
+        layout.prop(self, "Modes", text="mode")
         if self.Modes == 'objects':
             layout.prop(self, "Types", "type")
 
