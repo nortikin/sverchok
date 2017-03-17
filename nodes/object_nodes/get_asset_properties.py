@@ -52,6 +52,8 @@ class SvGetAssetProperties(bpy.types.Node, SverchCustomTreeNode):
     Type = EnumProperty(name="getmodes", default="MESH", items=e(T), update=pre_updateNode)
     text_name = bpy.props.StringProperty(update=updateNode)
     object_name = bpy.props.StringProperty(update=updateNode)
+    image_name = bpy.props.StringProperty(update=updateNode)
+    pass_pixels = bpy.props.BoolProperty(update=updateNode)
 
     def draw_buttons(self, context, layout):
         # layout.operator('node.'   ,text='refresh from scene')
@@ -69,6 +71,8 @@ class SvGetAssetProperties(bpy.types.Node, SverchCustomTreeNode):
             layout.prop_search(self, 'text_name', bpy.data, 'texts', text='name')
         elif self.Mode == 'images':
             layout.prop_search(self, 'image_name', bpy.data, 'images', text='name')
+            if self.image_name:
+                layout.prop(self, 'pass_pixels', text='pixels')
 
 
     def sv_init(self, context):
@@ -93,10 +97,13 @@ class SvGetAssetProperties(bpy.types.Node, SverchCustomTreeNode):
                 output_socket.sv_set([[bpy.data.texts[self.text_name].as_string()]])
             else:
                 output_socket.sv_set(unfiltered_data_list[:])
+
         elif self.Mode == 'images':
             if self.image_name:
-                output_socket.sv_set([[bpy.data.images[self.image_name].pixels[:]]])
-                # output_socket.sv_set([[bpy.data.images[self.image_name].pixels[:]]])
+                if self.pass_pixels:
+                    output_socket.sv_set([[bpy.data.images[self.image_name].pixels[:]]])
+                else:
+                    output_socket.sv_set([bpy.data.images[self.image_name]])
             else:
                 output_socket.sv_set(unfiltered_data_list[:])
 
