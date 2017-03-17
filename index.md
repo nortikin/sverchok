@@ -236,6 +236,7 @@
     SvObjInLite
     SvColorsInNode
     SvColorsOutNode
+    SvMatrixNormalNode
 
 ## Alpha Nodes
     SvCurveViewerNode
