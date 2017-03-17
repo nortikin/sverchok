@@ -54,8 +54,17 @@ class SvGetAssetProperties(bpy.types.Node, SverchCustomTreeNode):
     object_name = bpy.props.StringProperty(update=updateNode)
     image_name = bpy.props.StringProperty(update=updateNode)
     pass_pixels = bpy.props.BoolProperty(update=updateNode)
+
     gp_name = bpy.props.StringProperty(update=updateNode)
-    gp_layer
+    gp_layer = bpy.props.StringProperty(update=updateNode)
+    gp_frame_current = bpy.props.BoolProperty(default=True, update=updateNode)
+    gp_frame_override = bpy.props.IntProperty(default=1, update=updateNode)
+    gp_stroke_idx = bpy.props.IntProperty(update=updateNode)
+    # -- points
+    # -- color
+    # -- line_width
+    # -- draw_cyclic
+    #  --- / triangles (only set is useful...)
 
     def draw_buttons(self, context, layout):
         # layout.operator('node.'   ,text='refresh from scene')
