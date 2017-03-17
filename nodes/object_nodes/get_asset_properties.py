@@ -21,6 +21,8 @@ from bpy.props import EnumProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode, enum_item as e)
 
+# class SvGenericCallbackWithParams() mixin  <- refresh
+
 
 class SvGetAssetProperties(bpy.types.Node, SverchCustomTreeNode):
     ''' Get Asset Props '''
@@ -39,11 +41,12 @@ class SvGetAssetProperties(bpy.types.Node, SverchCustomTreeNode):
 
     type_collection_name = bpy.props.CollectionProperty(type=bpy.types.PropertyGroup)    
 
-    M = ['actions','brushes','filepath','grease_pencil','groups',
-         'images','libraries','linestyles','masks','materials',
-         'movieclips','node_groups','particles','scenes','screens','shape_keys',
-         'sounds','speakers','texts','textures','worlds','objects']
-    T = ['MESH','CURVE','SURFACE','META','FONT','ARMATURE','LATTICE','EMPTY','CAMERA','LAMP','SPEAKER']
+    M = ['actions', 'brushes', 'filepath', 'grease_pencil', 'groups',
+         'images', 'libraries', 'linestyles', 'masks', 'materials',
+         'movieclips', 'node_groups', 'particles', 'scenes', 'screens', 'shape_keys',
+         'sounds', 'speakers', 'texts', 'textures', 'worlds', 'objects']
+    T = ['MESH', 'CURVE', 'SURFACE', 'META', 'FONT', 'ARMATURE',
+         'LATTICE', 'EMPTY', 'CAMERA', 'LAMP', 'SPEAKER']
 
     Mode = EnumProperty(name="getmodes", default="objects", items=e(M), update=updateNode)
     Type = EnumProperty(name="getmodes", default="MESH", items=e(T), update=pre_updateNode)
@@ -51,11 +54,14 @@ class SvGetAssetProperties(bpy.types.Node, SverchCustomTreeNode):
     object_name = bpy.props.StringProperty(update=updateNode)
 
     def draw_buttons(self, context, layout):
+        # layout.operator('node.'   ,text='refresh from scene')
+
         row = layout.row()
         split = row.split(percentage=0.4)
         split.label("bpy.data.")
         split = split.split()
         split.prop(self, "Mode", text="")
+
         if self.Mode == 'objects':
             layout.prop(self, "Type", "type")
             layout.prop_search(self, 'object_name', self, 'type_collection_name', text='name', icon='OBJECT_DATA')
@@ -72,6 +78,7 @@ class SvGetAssetProperties(bpy.types.Node, SverchCustomTreeNode):
             return
 
         unfiltered_data_list = getattr(bpy.data, self.Mode)
+
         if self.Mode == 'objects':
             if self.object_name:
                 output_socket.sv_set([bpy.data.objects[self.object_name]])
