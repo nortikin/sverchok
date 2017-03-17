@@ -34,27 +34,31 @@ class SvGetAssetProperties(bpy.types.Node, SverchCustomTreeNode):
          'sounds','speakers','texts','textures','worlds','objects']
     T = ['MESH','CURVE','SURFACE','META','FONT','ARMATURE','LATTICE','EMPTY','CAMERA','LAMP','SPEAKER']
 
-    Modes = EnumProperty(name="getmodes", default="objects", items=e(M), update=updateNode)
-    Types = EnumProperty(name="getmodes", default="MESH", items=e(T), update=updateNode)
+    Mode = EnumProperty(name="getmodes", default="objects", items=e(M), update=updateNode)
+    Type = EnumProperty(name="getmodes", default="MESH", items=e(T), update=updateNode)
+    text_file_name = bpy.props.StringProperty(update=updateNode)
 
     def draw_buttons(self, context, layout):
         row = layout.row(align=True)
-        layout.prop(self, "Modes", "mode")
-        if self.Modes == 'objects':
-            layout.prop(self, "Types", "type")
+        layout.prop(self, "Mode", "mode")
+        if self.Mode == 'objects':
+            layout.prop(self, "Type", "type")
+        elif self.Mode == 'texts':
+            layout.prop_search(bpy.data, 'texts', self, 'text_file_name')
 
     def sv_init(self, context):
         self.outputs.new('StringsSocket', "Objects")
 
     def process(self):
-        sob = self.outputs['Objects']
-        if not sob.is_linked:
+        output_socket = self.outputs['Objects']
+
+        if not output_socket.is_linked:
             return
-        L = getattr(bpy.data,self.Modes)
-        if self.Modes != 'objects':
-            sob.sv_set(L[:])
+        unfiltered_data_list = getattr(bpy.data, self.Mode)
+        if self.Mode != 'objects':
+            output_socket.sv_set(unfiltered_data_list[:])
         else:
-            sob.sv_set([i for i in L if i.type == self.Types])
+            output_socket.sv_set([i for i in L if i.type == self.Type])
 
 
 def register():
