@@ -83,6 +83,8 @@ class SvGetAssetProperties(bpy.types.Node, SverchCustomTreeNode):
                 output_socket.sv_set([[bpy.data.texts[self.text_name].as_string()]])
             else:
                 output_socket.sv_set(unfiltered_data_list[:])
+        else:
+            output_socket.sv_set(unfiltered_data_list[:])
 
 
 
