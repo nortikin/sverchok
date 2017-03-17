@@ -67,6 +67,9 @@ class SvGetAssetProperties(bpy.types.Node, SverchCustomTreeNode):
             layout.prop_search(self, 'object_name', self, 'type_collection_name', text='name', icon='OBJECT_DATA')
         elif self.Mode == 'texts':
             layout.prop_search(self, 'text_name', bpy.data, 'texts', text='name')
+        elif self.Mode == 'images':
+            layout.prop_search(self, 'image_name', bpy.data, 'images', text='name')
+
 
     def sv_init(self, context):
         self.Type = 'MESH'  # helps init the custom object prop_search
@@ -90,6 +93,13 @@ class SvGetAssetProperties(bpy.types.Node, SverchCustomTreeNode):
                 output_socket.sv_set([[bpy.data.texts[self.text_name].as_string()]])
             else:
                 output_socket.sv_set(unfiltered_data_list[:])
+        elif self.Mode == 'images':
+            if self.image_name:
+                output_socket.sv_set([[bpy.data.images[self.image_name].pixels[:]]])
+                # output_socket.sv_set([[bpy.data.images[self.image_name].pixels[:]]])
+            else:
+                output_socket.sv_set(unfiltered_data_list[:])
+
         else:
             output_socket.sv_set(unfiltered_data_list[:])
 
