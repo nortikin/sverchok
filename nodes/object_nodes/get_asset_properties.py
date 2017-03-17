@@ -60,14 +60,21 @@ class SvGetAssetProperties(bpy.types.Node, SverchCustomTreeNode):
     gp_frame_current = bpy.props.BoolProperty(default=True, update=updateNode)
     gp_frame_override = bpy.props.IntProperty(default=1, update=updateNode)
     gp_stroke_idx = bpy.props.IntProperty(update=updateNode)
-    # -- points  [p.co for p in points]
-    # -- color   
-    #     -- color.color (stroke_color)
-    #     -- color.fill_color
-    #     -- color.file_alpha
-    # -- line_width
-    # -- draw_cyclic
-    #  --- / triangles (only set is useful...)
+
+    def draw_gp_options(self, context, layout):
+        # -- points  [p.co for p in points]
+        # -- color   
+        #     -- color.color (stroke_color)
+        #     -- color.fill_color
+        #     -- color.file_alpha
+        # -- line_width
+        # -- draw_cyclic
+        #  --- / triangles (only set is useful...)
+        
+        layout.prop_search(self, 'gp_name', bpy.data, 'grease_pencil')
+        if self.gp_name:
+            layout.prop_search(self, 'gp_layer', bpy.data.grease_pencil[self.gp_name], 'layers')
+
 
     def draw_buttons(self, context, layout):
         # layout.operator('node.'   ,text='refresh from scene')
@@ -88,6 +95,8 @@ class SvGetAssetProperties(bpy.types.Node, SverchCustomTreeNode):
             if self.image_name:
                 layout.prop(self, 'pass_pixels', text='pixels')
                 # size ?  new socket outputting [w/h]
+        elif self.Mode == 'grease_pencil':
+            self.draw_gp_options(context, layout)
 
 
     def sv_init(self, context):
