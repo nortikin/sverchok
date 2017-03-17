@@ -28,6 +28,17 @@ class SvGetAssetProperties(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Asset / Properties'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
+    def pre_updateNode(self, context):
+        ''' must rebuild for each update'''
+        self.type_collection_name.clear()
+        for o in bpy.data.objects:
+            if o.type == self.Type:
+                self.type_collection_name.add().name = o.name
+
+        updateNode(self, context)
+
+    type_collection_name = bpy.props.CollectionProperty(type=bpy.types.PropertyGroup)    
+
     M = ['actions','brushes','filepath','grease_pencil','groups',
          'images','libraries','linestyles','masks','materials',
          'movieclips','node_groups','particles','scenes','screens','shape_keys',
@@ -35,7 +46,7 @@ class SvGetAssetProperties(bpy.types.Node, SverchCustomTreeNode):
     T = ['MESH','CURVE','SURFACE','META','FONT','ARMATURE','LATTICE','EMPTY','CAMERA','LAMP','SPEAKER']
 
     Mode = EnumProperty(name="getmodes", default="objects", items=e(M), update=updateNode)
-    Type = EnumProperty(name="getmodes", default="MESH", items=e(T), update=updateNode)
+    Type = EnumProperty(name="getmodes", default="MESH", items=e(T), update=pre_updateNode)
     text_name = bpy.props.StringProperty(update=updateNode)
     object_name = bpy.props.StringProperty(update=updateNode)
 
@@ -46,14 +57,13 @@ class SvGetAssetProperties(bpy.types.Node, SverchCustomTreeNode):
         split = split.split()
         split.prop(self, "Mode", text="")
         if self.Mode == 'objects':
-            # doesn't yet filter prop_search by type, .. will work eventually.
-            # see https://github.com/nortikin/sverchok/issues/991
             layout.prop(self, "Type", "type")
-            layout.prop_search(self, 'object_name', bpy.data, 'objects', text='name')
+            layout.prop_search(self, 'object_name', self, 'type_collection_name', text='name', icon='OBJECT_DATA')
         elif self.Mode == 'texts':
             layout.prop_search(self, 'text_name', bpy.data, 'texts', text='name')
 
     def sv_init(self, context):
+        self.Type = 'MESH'  # helps init the custom object prop_search
         self.outputs.new('StringsSocket', "Objects")
 
     def process(self):
