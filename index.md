@@ -207,6 +207,7 @@
     SvObjectsNodeMK3
     SvObjRemoteNodeMK2
     SvFrameInfoNodeMK2
+    SvGetAssetProperties
     SvEmptyOutNode
     SvInstancerNode
     SvDupliInstancesMK4
