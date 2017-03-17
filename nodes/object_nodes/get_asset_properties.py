@@ -44,21 +44,23 @@ class SvGetAssetProperties(bpy.types.Node, SverchCustomTreeNode):
         if self.Mode == 'objects':
             layout.prop(self, "Type", "type")
         elif self.Mode == 'texts':
-            layout.prop_search(bpy.data, 'texts', self, 'text_file_name')
+            layout.prop_search(self, 'text_file_name', bpy.data, 'texts', text='name')
 
     def sv_init(self, context):
         self.outputs.new('StringsSocket', "Objects")
 
     def process(self):
         output_socket = self.outputs['Objects']
-
         if not output_socket.is_linked:
             return
+
         unfiltered_data_list = getattr(bpy.data, self.Mode)
         if self.Mode != 'objects':
             output_socket.sv_set(unfiltered_data_list[:])
+        elif self.Mode == 'texts' and self.text_file_name:
+            output_socket.sv_set([[bpy.data.texts[self.text_file_name]]])
         else:
-            output_socket.sv_set([i for i in L if i.type == self.Type])
+            output_socket.sv_set([i for i in unfiltered_data_list if i.type == self.Type])
 
 
 def register():
