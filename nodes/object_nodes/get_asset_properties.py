@@ -79,11 +79,7 @@ class SvGetAssetProperties(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         # layout.operator('node.'   ,text='refresh from scene')
 
-        row = layout.row()
-        split = row.split(percentage=0.4)
-        split.label("bpy.data.")
-        split = split.split()
-        split.prop(self, "Mode", text="")
+        layout.row().prop(self, "Mode", text="data")
 
         if self.Mode == 'objects':
             layout.prop(self, "Type", "type")
