@@ -39,7 +39,18 @@ class SvGetAssetProperties(bpy.types.Node, SverchCustomTreeNode):
 
         updateNode(self, context)
 
-    type_collection_name = bpy.props.CollectionProperty(type=bpy.types.PropertyGroup)    
+    def frame_updateNode(self, context):
+        ''' must rebuild for each update'''
+        self.frame_collection_name.clear()
+        gp_layer = bpy.data.grease_pencil[self.gp_name].layers[self.gp_layer]
+        for idx, f in enumerate(gp_layer.frames):
+            self.frame_collection_name.add().name = str(idx) + ' | ' + str(f.frame_number)
+
+        updateNode(self, context)
+
+
+    type_collection_name = bpy.props.CollectionProperty(type=bpy.types.PropertyGroup)
+    frame_collection_name = bpy.props.CollectionProperty(type=bpy.types.PropertyGroup)
 
     M = ['actions', 'brushes', 'filepath', 'grease_pencil', 'groups',
          'images', 'libraries', 'linestyles', 'masks', 'materials',
@@ -66,7 +77,7 @@ class SvGetAssetProperties(bpy.types.Node, SverchCustomTreeNode):
         items=gp_frame_mode_options, description="offers choice between current frame or available frames",
         default="pick frame", update=updateNode
     )
-    gp_frame_pick = bpy.props.StringProperty(update=updateNode)
+    gp_frame_pick = bpy.props.StringProperty(update=frame_updateNode)
 
     def draw_gp_options(self, context, layout):
         # -- points  [p.co for p in points]
@@ -93,14 +104,7 @@ class SvGetAssetProperties(bpy.types.Node, SverchCustomTreeNode):
             frame_data = gp_layer.active_frame
         else:
             # maybe display uilist with frame_index and frame_nmber.
-            layout.prop_search(self, 'gp_frame_pick', gp_layer, 'frames')
-            if self.gp_frame_pick:
-                frame_data = gp_layer.frames[self.gp_frame_pick]
-
-        if frame_data:
-            # print(frame_data)
-            ...
-
+            layout.prop_search(self, 'gp_frame_pick', self, 'frame_collection_name')
 
 
     def draw_buttons(self, context, layout):
@@ -123,6 +127,7 @@ class SvGetAssetProperties(bpy.types.Node, SverchCustomTreeNode):
 
 
     def sv_init(self, context):
+        self.width = 210
         self.Type = 'MESH'  # helps init the custom object prop_search
         self.outputs.new('StringsSocket', "Objects")
 
@@ -156,14 +161,18 @@ class SvGetAssetProperties(bpy.types.Node, SverchCustomTreeNode):
                 output_socket.sv_set(data_list[:])
 
         elif self.Mode == 'grease_pencil':
-            # bpy.data.grease_pencil[0].layers[0].
-            # bpy.data.grease_pencil['GPencil'].layers['GP_Layer'].active_frame.strokes[0].points
             # bpy.data.grease_pencil['GPencil'].layers['GP_Layer'].active_frame.strokes[0].color
             if self.gp_name and self.gp_layer:
                 GP_and_layer = data_list[self.gp_name].layers[self.gp_layer]
                 if self.gp_selected_frame_mode == 'active_frame':
                     strokes = GP_and_layer.active_frame.strokes
                     output_socket.sv_set([[p.co[:] for p in s.points] for s in strokes])
+                else:
+                    if self.gp_frame_pick:
+                        idx_from_frame_pick = int(self.gp_frame_pick.split(' | ')[0])
+                        frame_data = GP_and_layer.frames[idx_from_frame_pick]
+                        if frame_data:
+                            output_socket.sv_set([[p.co[:] for p in s.points] for s in frame_data.strokes])
 
         else:
             output_socket.sv_set(data_list[:])
