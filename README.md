@@ -1,5 +1,6 @@
-#English
-##Sverchok parametric tools
+# English
+
+## Sverchok parametric tools
 
 **addon for**: [Blender](http://blender.org)  (version *2.77* and above).  
 **current sverchok version**: Find version in addon settings or in the node Sverchok panel   
@@ -8,7 +9,7 @@
 **manual**: [In English](http://nikitron.cc.ua/sverch/html/main.html) - This is an introduction to Sverchok and contains 3 lessons, and documentation on almost all nodes. If anything isn't clear (or missing) in this document please ask about it on the [Issue Tracker](https://github.com/nortikin/sverchok/issues), we want to get these lessons right and you can help us! 
 
   
-###Description
+### Description
 Sverchok is a powerful parametric tool for architects, allowing geometry to be programmed visually with nodes. 
 Mesh and geometry programming consists of combining basic elements such as:  
 
@@ -16,7 +17,7 @@ Mesh and geometry programming consists of combining basic elements such as:
   - lists of grouped indices to represent edges and polygons.
   - matrices (user-friendly rotation-scale-location transformations)
 
-###Possibilities
+### Possibilities
 Comes with more than 150 nodes to help create and manipulate geometry. Combining these nodes will allow you to:
 
   - do parametric constructions
@@ -32,7 +33,7 @@ Comes with more than 150 nodes to help create and manipulate geometry. Combining
   - make your own neuro network
   - and much, much more!
 
-###Installation
+### Installation
 Install Sverchok as you would any blender addon.  
   
 -  _Installation from Preferences_  
@@ -45,7 +46,7 @@ Install Sverchok as you would any blender addon.
    Press `Update Sverchok` button.   
    And at the end press `F8` button to reload addons. In next blender run in panel will appear new version number.   
 
-###Troubleshooting Installation Errors
+### Troubleshooting Installation Errors
 
 If you are installing from a release zip, please be aware that if it contains a folder named `sverchok-master.x.y.z`, you will need to rename that folder to `sverchok-master` because folder names with dots are not valid python package names. But it's best to just name it `sverchok`.  
 
@@ -55,7 +56,7 @@ In case Sverchok still fails to install, we've compiled a list of reasons and kn
 
 If you update with update button in sverchok panel it can raise an error if you renamed a folder, so follow [this](https://github.com/nortikin/sverchok/issues/669) (a bootstrap script you can run from TextEditor)  
 
-###Contact and Credit
+### Contact and Credit
 Homepage: [Home](http://nikitron.cc.ua/sverchok_en.html)  
 Authors: 
 -  Alexander Nedovizin,  
@@ -72,7 +73,7 @@ Email: sverchok-b3d@yandex.ru
 
 [![Please donate](https://www.paypalobjects.com/en_US/GB/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=JZESR6GN9AKNS)
 
-#По-русски
+# По-русски
 
 **дополнение к**: [Blender](http://blender.org)  (версия *2.77* и выше).  
 **текущая версия**: Смотри настройки Сверчка или панель   
@@ -81,7 +82,7 @@ Email: sverchok-b3d@yandex.ru
 
 
   
-###Описание
+### Описание
 Сверчок - мощный инструмент для архитектора, позволяющий визуально программировать узлами. 
 Программирование сетки и геометрии состоит из "кирпичей":  
 
@@ -89,7 +90,7 @@ Email: sverchok-b3d@yandex.ru
   - списки групп индексов представляющие рёбра и грани  
   - матрицы (удобный и понятный способ изменения положения-масштаба-поворота)  
 
-###Возможности
+### Возможности
 Более 150 узлов вам помогут создать и изменять геометрию. А сочетания узлов помогут вам:
 
   - делать параметрические конструкции
@@ -108,7 +109,7 @@ Email: sverchok-b3d@yandex.ru
   - и даже больше   
 
 
-###Установка
+### Установка
 Установите как обычный адон к блендеру.  
   
 -  _Установка из пользовательских настроек_  
@@ -121,13 +122,13 @@ Email: sverchok-b3d@yandex.ru
    Нажмите кнопку `Update Sverchok` там же.  
    Нажмите потом `F8` чтобы перезагрузить дополнения блендера. Должна поменяться версия.  
 
-###Известные ошибки установки
+### Известные ошибки установки
 Не установилось? Список причин [тыц](http://nikitron.cc.ua/sverch/html/installation.html). Если вашей ошибки там нет - пишите письма.  
 Если вы устанавливаете из архива типа release, опасайтесь имени папки типа `sverchok-master.x.y.z`, в таком случае переименуйте её в `sverchok-master`, потому что имена папок с точками не читаются в именах пакетов питона.   
 При установке из пользовательских настроек, при получении ошибки - закрыть блендер и снова активировать Сверчка, всё до сохранения настроек блендера.  
 Также если вы обновляете Сверчка с кнопкой автообновления, будьте осторожны, в связи с названием папки, блендер может не подхватить её, следуйте указаниям [здесь](https://github.com/nortikin/sverchok/issues/669)   
 
-###Контакты и разработчики
+### Контакты и разработчики
 Домашняя страница: [Домой](http://nikitron.cc.ua/sverchok_ru.html)  
 Разработчики: 
 -  Недовизин Александр;  
