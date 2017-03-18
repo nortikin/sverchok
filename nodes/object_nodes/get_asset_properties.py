@@ -98,7 +98,8 @@ class SvGetAssetProperties(bpy.types.Node, SverchCustomTreeNode):
                 frame_data = gp_layer.frames[self.gp_frame_pick]
 
         if frame_data:
-            print(frame_data)
+            # print(frame_data)
+            ...
 
 
 
