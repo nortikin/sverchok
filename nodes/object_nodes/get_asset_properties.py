@@ -131,40 +131,42 @@ class SvGetAssetProperties(bpy.types.Node, SverchCustomTreeNode):
         if not output_socket.is_linked:
             return
 
-        unfiltered_data_list = getattr(bpy.data, self.Mode)
+        data_list = getattr(bpy.data, self.Mode)
 
         if self.Mode == 'objects':
             if self.object_name:
-                output_socket.sv_set([bpy.data.objects[self.object_name]])
+                output_socket.sv_set([data_list[self.object_name]])
             else:
-                output_socket.sv_set([i for i in unfiltered_data_list if i.type == self.Type])
+                output_socket.sv_set([i for i in data_list if i.type == self.Type])
         
         elif self.Mode == 'texts':
             if self.text_name:
-                output_socket.sv_set([[bpy.data.texts[self.text_name].as_string()]])
+                output_socket.sv_set([[data_list[self.text_name].as_string()]])
             else:
-                output_socket.sv_set(unfiltered_data_list[:])
+                output_socket.sv_set(data_list[:])
 
         elif self.Mode == 'images':
             if self.image_name:
+                img = data_list[self.image_name]
                 if self.pass_pixels:
-                    output_socket.sv_set([[bpy.data.images[self.image_name].pixels[:]]])
+                    output_socket.sv_set([[img.pixels[:]]])
                 else:
-                    output_socket.sv_set([bpy.data.images[self.image_name]])
+                    output_socket.sv_set([img])
             else:
-                output_socket.sv_set(unfiltered_data_list[:])
+                output_socket.sv_set(data_list[:])
 
         elif self.Mode == 'grease_pencil':
             # bpy.data.grease_pencil[0].layers[0].
             # bpy.data.grease_pencil['GPencil'].layers['GP_Layer'].active_frame.strokes[0].points
             # bpy.data.grease_pencil['GPencil'].layers['GP_Layer'].active_frame.strokes[0].color
             if self.gp_name and self.gp_layer:
+                GP_and_layer = data_list[self.gp_name].layers[self.gp_layer]
                 if self.gp_selected_frame_mode == 'active_frame':
-                    strokes = bpy.data.grease_pencil[self.gp_name].layers[self.gp_layer].active_frame.strokes
+                    strokes = GP_and_layer.active_frame.strokes
                     output_socket.sv_set([[p.co[:] for p in s.points] for s in strokes])
 
         else:
-            output_socket.sv_set(unfiltered_data_list[:])
+            output_socket.sv_set(data_list[:])
 
 
 
