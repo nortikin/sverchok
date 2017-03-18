@@ -55,11 +55,17 @@ class SvGetAssetProperties(bpy.types.Node, SverchCustomTreeNode):
     image_name = bpy.props.StringProperty(update=updateNode)
     pass_pixels = bpy.props.BoolProperty(update=updateNode)
 
+    # GP props
     gp_name = bpy.props.StringProperty(update=updateNode)
     gp_layer = bpy.props.StringProperty(update=updateNode)
     gp_frame_current = bpy.props.BoolProperty(default=True, update=updateNode)
     gp_frame_override = bpy.props.IntProperty(default=1, update=updateNode)
     gp_stroke_idx = bpy.props.IntProperty(update=updateNode)
+    gp_frame_mode_options = [(k, k, '', i) for i, k in enumerate(["pick frame", "current_frame"])]
+    gp_selected_frame_mode = bpy.props.EnumProperty(
+        items=gp_frame_mode_options, description="offers choice between current frame or available frames",
+        default="pick frame", update=updateNode
+    )
 
     def draw_gp_options(self, context, layout):
         # -- points  [p.co for p in points]
@@ -72,8 +78,21 @@ class SvGetAssetProperties(bpy.types.Node, SverchCustomTreeNode):
         #  --- / triangles (only set is useful...)
         
         layout.prop_search(self, 'gp_name', bpy.data, 'grease_pencil')
-        if self.gp_name:
-            layout.prop_search(self, 'gp_layer', bpy.data.grease_pencil[self.gp_name], 'layers')
+        if not self.gp_name:
+            continue
+        
+        layout.prop_search(self, 'gp_layer', bpy.data.grease_pencil[self.gp_name], 'layers')
+        if not self.gp_layer:
+            continue
+
+        layout.prop(self, 'gp_selected_frame_mode', expand=True)
+        if self.gp_selected_frame_mode == 'current_frame':
+            ...
+        else: 
+            ...
+
+        # if has good frame..
+
 
 
     def draw_buttons(self, context, layout):
