@@ -339,7 +339,7 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_label(self):
         if self.selected_custom_tex:
-            width, height = self.get_from_c_size()
+            width, height = self.texture_width_height
             label = (self.label or self.name) + ' {0} x {1}'.format(width, height)
         else:
             label = (self.label or self.name) + ' ' + str(size_tex_dict.get(self.selected_mode)) + "^2"
@@ -420,20 +420,32 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         img_settings.file_format = img_format
         print('settings done!')
 
+    def get_image_by_name(self, image_name, extension):
+        images = bpy.data.images
+        image_name = image_name + extension
+
+        img = images.get(image_name)
+        if not img:
+            width, height = self.texture_width_height
+            img = images.new(
+            name=image_name, width=width, height=height, alpha=False, float_buffer=True)
+        return img
+
     def save_bitmap(self, operator):
         scene = bpy.context.scene
         image_name = self.image_name or 'image_name'
         img_format = self.bitmap_format
-        extension = svIMG.get_extension(img_format)
 
-        img = self.get_image_by_name(image_name, extension)
-        buf = self.get_buffer()
+        extension = svIMG.get_extension(img_format, format_mapping)
         width, height = self.texture_width_height
-        svIMG.pass_buffer_to_image(img, buf, width, height)
-        self.push_image_settings(scene)
+        img = svIMG.get_image_by_name(image_name, extension, width, height)
+        buf = self.get_buffer()
+        svIMG.pass_buffer_to_image(self.color_mode, img, buf, width, height)
 
+        self.push_image_settings(scene)
         desired_path = os.path.join(self.base_dir, self.image_name + extension)
         img.save_render(desired_path, scene)
+
         print('Bitmap saved!  path is:', desired_path)
 
 
