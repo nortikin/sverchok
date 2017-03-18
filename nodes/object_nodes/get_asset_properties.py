@@ -80,6 +80,7 @@ class SvGetAssetProperties(bpy.types.Node, SverchCustomTreeNode):
         default="active frame", update=frame_updateNode
     )
     gp_frame_pick = bpy.props.StringProperty(update=frame_updateNode)
+    gp_pass_points = bpy.props.BoolProperty(default=True, update=updateNode)
 
     def draw_gp_options(self, context, layout):
         # -- points  [p.co for p in points]
@@ -91,11 +92,11 @@ class SvGetAssetProperties(bpy.types.Node, SverchCustomTreeNode):
         # -- draw_cyclic
         #  --- / triangles (only set is useful...)
         
-        layout.prop_search(self, 'gp_name', bpy.data, 'grease_pencil')
+        layout.prop_search(self, 'gp_name', bpy.data, 'grease_pencil', text='name')
         if not self.gp_name:
             return
         
-        layout.prop_search(self, 'gp_layer', bpy.data.grease_pencil[self.gp_name], 'layers')
+        layout.prop_search(self, 'gp_layer', bpy.data.grease_pencil[self.gp_name], 'layers', text='layer')
         if not self.gp_layer:
             return
 
@@ -107,6 +108,7 @@ class SvGetAssetProperties(bpy.types.Node, SverchCustomTreeNode):
         else:
             # maybe display uilist with frame_index and frame_nmber.
             layout.prop_search(self, 'gp_frame_pick', self, 'frame_collection_name')
+        layout.prop(self, 'gp_pass_points', text='pass points')
 
 
     def draw_buttons(self, context, layout):
@@ -168,13 +170,19 @@ class SvGetAssetProperties(bpy.types.Node, SverchCustomTreeNode):
                 GP_and_layer = data_list[self.gp_name].layers[self.gp_layer]
                 if self.gp_selected_frame_mode == 'active frame':
                     strokes = GP_and_layer.active_frame.strokes
-                    output_socket.sv_set([[p.co[:] for p in s.points] for s in strokes])
+                    if self.gp_pass_points:
+                        output_socket.sv_set([[p.co[:] for p in s.points] for s in strokes])
+                    else:
+                        output_socket.sv_set(strokes[:])
                 else:
                     if self.gp_frame_pick:
                         idx_from_frame_pick = int(self.gp_frame_pick.split(' | ')[0])
                         frame_data = GP_and_layer.frames[idx_from_frame_pick]
                         if frame_data:
-                            output_socket.sv_set([[p.co[:] for p in s.points] for s in frame_data.strokes])
+                            if self.gp_pass_points:
+                                output_socket.sv_set([[p.co[:] for p in s.points] for s in frame_data.strokes])
+                            else:
+                                output_socket.sv_set(strokes[:])
 
         else:
             output_socket.sv_set(data_list[:])
