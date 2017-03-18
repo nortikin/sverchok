@@ -38,15 +38,17 @@ class SvSculptMaskNode(bpy.types.Node, SverchCustomTreeNode):
         MW = np.clip(W.sv_get()[0], 0, 1)
         bm = bmesh.new()
         for obj in Objs.sv_get():
-            bm.from_mesh(obj.data)
+            Om = obj.data
+            bm.from_mesh(Om)
             if not bm.verts.layers.paint_mask:
                 m = bm.verts.layers.paint_mask.new()
             else:
                 m = bm.verts.layers.paint_mask[0]
             for i, i2 in zip(*safc(bm.verts, MW)):
                 i[m] = i2
-            bm.to_mesh(obj.data)
+            bm.to_mesh(Om)
             bm.clear()
+            Om.update()
 
 
 def register():
