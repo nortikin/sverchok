@@ -37,7 +37,8 @@ class SvGetAssetProperties(bpy.types.Node, SverchCustomTreeNode):
             if o.type == self.Type:
                 self.type_collection_name.add().name = o.name
 
-        updateNode(self, context)
+        # updateNode(self, context)
+        self.process()
 
     def frame_updateNode(self, context):
         ''' must rebuild for each update'''
@@ -46,7 +47,8 @@ class SvGetAssetProperties(bpy.types.Node, SverchCustomTreeNode):
         for idx, f in enumerate(gp_layer.frames):
             self.frame_collection_name.add().name = str(idx) + ' | ' + str(f.frame_number)
 
-        updateNode(self, context)
+        # updateNode(self, context)
+        self.process()
 
 
     type_collection_name = bpy.props.CollectionProperty(type=bpy.types.PropertyGroup)
@@ -72,10 +74,10 @@ class SvGetAssetProperties(bpy.types.Node, SverchCustomTreeNode):
     gp_frame_current = bpy.props.BoolProperty(default=True, update=updateNode)
     gp_frame_override = bpy.props.IntProperty(default=1, update=updateNode)
     gp_stroke_idx = bpy.props.IntProperty(update=updateNode)
-    gp_frame_mode_options = [(k, k, '', i) for i, k in enumerate(["pick frame", "active_frame"])]
+    gp_frame_mode_options = [(k, k, '', i) for i, k in enumerate(["pick frame", "active frame"])]
     gp_selected_frame_mode = bpy.props.EnumProperty(
         items=gp_frame_mode_options, description="offers choice between current frame or available frames",
-        default="pick frame", update=updateNode
+        default="active frame", update=frame_updateNode
     )
     gp_frame_pick = bpy.props.StringProperty(update=frame_updateNode)
 
@@ -100,7 +102,7 @@ class SvGetAssetProperties(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, 'gp_selected_frame_mode', expand=True)
         gp_layer = bpy.data.grease_pencil[self.gp_name].layers[self.gp_layer]
         frame_data = None
-        if self.gp_selected_frame_mode == 'active_frame':
+        if self.gp_selected_frame_mode == 'active frame':
             frame_data = gp_layer.active_frame
         else:
             # maybe display uilist with frame_index and frame_nmber.
@@ -164,7 +166,7 @@ class SvGetAssetProperties(bpy.types.Node, SverchCustomTreeNode):
             # bpy.data.grease_pencil['GPencil'].layers['GP_Layer'].active_frame.strokes[0].color
             if self.gp_name and self.gp_layer:
                 GP_and_layer = data_list[self.gp_name].layers[self.gp_layer]
-                if self.gp_selected_frame_mode == 'active_frame':
+                if self.gp_selected_frame_mode == 'active frame':
                     strokes = GP_and_layer.active_frame.strokes
                     output_socket.sv_set([[p.co[:] for p in s.points] for s in strokes])
                 else:
