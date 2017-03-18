@@ -66,7 +66,7 @@ class SvGetAssetProperties(bpy.types.Node, SverchCustomTreeNode):
         items=gp_frame_mode_options, description="offers choice between current frame or available frames",
         default="pick frame", update=updateNode
     )
-    gp_frame_pick = IntProperty(update=updateNode)
+    gp_frame_pick = bpy.props.StringProperty(update=updateNode)
 
     def draw_gp_options(self, context, layout):
         # -- points  [p.co for p in points]
@@ -98,7 +98,7 @@ class SvGetAssetProperties(bpy.types.Node, SverchCustomTreeNode):
                 frame_data = gp_layer.frames[self.gp_frame_pick]
 
         if frame_data:
-            ...
+            print(frame_data)
 
 
 
@@ -157,7 +157,10 @@ class SvGetAssetProperties(bpy.types.Node, SverchCustomTreeNode):
             # bpy.data.grease_pencil[0].layers[0].
             # bpy.data.grease_pencil['GPencil'].layers['GP_Layer'].active_frame.strokes[0].points
             # bpy.data.grease_pencil['GPencil'].layers['GP_Layer'].active_frame.strokes[0].color
-            ...
+            if self.gp_name and self.gp_layer:
+                if self.gp_selected_frame_mode == 'active_frame':
+                    strokes = bpy.data.grease_pencil[self.gp_name].layers[self.gp_layer].active_frame.strokes
+                    output_socket.sv_set([[p.co[:] for p in s.points] for s in strokes])
 
         else:
             output_socket.sv_set(unfiltered_data_list[:])
