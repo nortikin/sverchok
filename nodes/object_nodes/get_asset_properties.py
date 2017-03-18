@@ -66,6 +66,7 @@ class SvGetAssetProperties(bpy.types.Node, SverchCustomTreeNode):
         items=gp_frame_mode_options, description="offers choice between current frame or available frames",
         default="pick frame", update=updateNode
     )
+    gp_frame_pick = IntProperty(update=updateNode)
 
     def draw_gp_options(self, context, layout):
         # -- points  [p.co for p in points]
@@ -87,15 +88,16 @@ class SvGetAssetProperties(bpy.types.Node, SverchCustomTreeNode):
 
         layout.prop(self, 'gp_selected_frame_mode', expand=True)
         gp_layer = bpy.data.grease_pencil[self.gp_name].layers[self.gp_layer]
-        strokes = None
+        frame_data = None
         if self.gp_selected_frame_mode == 'active_frame':
-            strokes = gp_layer.active_frame
+            frame_data = gp_layer.active_frame
         else:
-            # pick frame
-            # bpy.data.grease_pencil['GPencil'].layers['GP_Layer'].frames[0].frame_number
-            strokes = gp_layer.frames
+            # maybe display uilist with frame_index and frame_nmber.
+            layout.prop_search(self, 'gp_frame_pick', gp_layer, 'frames')
+            if self.gp_frame_pick:
+                frame_data = gp_layer.frames[self.gp_frame_pick]
 
-        if strokes:
+        if frame_data:
             ...
 
 
