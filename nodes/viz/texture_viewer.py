@@ -420,17 +420,6 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         img_settings.file_format = img_format
         print('settings done!')
 
-    def get_image_by_name(self, image_name, extension):
-        images = bpy.data.images
-        image_name = image_name + extension
-
-        img = images.get(image_name)
-        if not img:
-            width, height = self.texture_width_height
-            img = images.new(
-            name=image_name, width=width, height=height, alpha=False, float_buffer=True)
-        return img
-
     def save_bitmap(self, operator):
         scene = bpy.context.scene
         image_name = self.image_name or 'image_name'

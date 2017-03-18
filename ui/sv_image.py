@@ -40,6 +40,7 @@ def get_extension(img_format, format_mapping):
         extension = '.' + img_format.lower()
     return extension
 
+
 def get_image_by_name(image_name, extension, width, height):
     images = bpy.data.images
     image_name = image_name + extension
@@ -49,6 +50,7 @@ def get_image_by_name(image_name, extension, width, height):
         img = images.new(
         name=image_name, width=width, height=height, alpha=False, float_buffer=True)
     return img
+
 
 def pass_buffer_to_image(color_mode, img, buf, width, height):
     print('width is: {0}'.format(width))
