@@ -61,7 +61,7 @@ class SvGetAssetProperties(bpy.types.Node, SverchCustomTreeNode):
     gp_frame_current = bpy.props.BoolProperty(default=True, update=updateNode)
     gp_frame_override = bpy.props.IntProperty(default=1, update=updateNode)
     gp_stroke_idx = bpy.props.IntProperty(update=updateNode)
-    gp_frame_mode_options = [(k, k, '', i) for i, k in enumerate(["pick frame", "current_frame"])]
+    gp_frame_mode_options = [(k, k, '', i) for i, k in enumerate(["pick frame", "active_frame"])]
     gp_selected_frame_mode = bpy.props.EnumProperty(
         items=gp_frame_mode_options, description="offers choice between current frame or available frames",
         default="pick frame", update=updateNode
@@ -79,20 +79,21 @@ class SvGetAssetProperties(bpy.types.Node, SverchCustomTreeNode):
         
         layout.prop_search(self, 'gp_name', bpy.data, 'grease_pencil')
         if not self.gp_name:
-            continue
+            return
         
         layout.prop_search(self, 'gp_layer', bpy.data.grease_pencil[self.gp_name], 'layers')
         if not self.gp_layer:
-            continue
+            return
 
         layout.prop(self, 'gp_selected_frame_mode', expand=True)
         gp_layer = bpy.data.grease_pencil[self.gp_name].layers[self.gp_layer]
         strokes = None
-        if self.gp_selected_frame_mode == 'current_frame':
-            strokes = gp_layer.current_frame
+        if self.gp_selected_frame_mode == 'active_frame':
+            strokes = gp_layer.active_frame
         else:
             # pick frame
-            strokes = gp_layer.frame
+            # bpy.data.grease_pencil['GPencil'].layers['GP_Layer'].frames[0].frame_number
+            strokes = gp_layer.frames
 
         if strokes:
             ...
