@@ -86,12 +86,16 @@ class SvGetAssetProperties(bpy.types.Node, SverchCustomTreeNode):
             continue
 
         layout.prop(self, 'gp_selected_frame_mode', expand=True)
+        gp_layer = bpy.data.grease_pencil[self.gp_name].layers[self.gp_layer]
+        strokes = None
         if self.gp_selected_frame_mode == 'current_frame':
-            ...
-        else: 
-            ...
+            strokes = gp_layer.current_frame
+        else:
+            # pick frame
+            strokes = gp_layer.frame
 
-        # if has good frame..
+        if strokes:
+            ...
 
 
 
