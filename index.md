@@ -24,7 +24,6 @@
     SvScriptNodeLite    
     ImageNode
     SvTorusNode
-    SvMeshEvalNode
 
 ## Generators Extended
     SvBoxRoundedNode
@@ -32,6 +31,7 @@
     Hilbert3dNode
     HilbertImageNode
     SvProfileNode
+    SvMeshEvalNode
     SvGenerativeArtNode
     SvImageComponentsNode
     SvScriptNode
