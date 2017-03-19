@@ -214,7 +214,7 @@ class SvMeshEvalNode(bpy.types.Node, SverchCustomTreeNode):
                 result[var] = self.inputs[var].sv_get()[0]
             else:
                 result[var] = [defaults.get(var, 1.0)]
-            print("get_input: {} => {}".format(var, result[var]))
+            #print("get_input: {} => {}".format(var, result[var]))
         return result
 
     def process(self):
@@ -224,9 +224,6 @@ class SvMeshEvalNode(bpy.types.Node, SverchCustomTreeNode):
 
         var_names = self.get_variables()
         inputs = self.get_input()
-        if not inputs:
-            if not var_names:
-                inputs = {'a': [0.0]}
 
         result_vertices = []
         result_edges = []
@@ -234,8 +231,11 @@ class SvMeshEvalNode(bpy.types.Node, SverchCustomTreeNode):
 
         template = self.load_json()
 
-        input_values = [inputs[name] for name in var_names]
-        parameters = match_long_repeat(input_values)
+        if var_names:
+            input_values = [inputs[name] for name in var_names]
+            parameters = match_long_repeat(input_values)
+        else:
+            parameters = [[[]]]
         for values in zip(*parameters):
             variables = dict(zip(var_names, values))
 
