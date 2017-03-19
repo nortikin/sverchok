@@ -33,6 +33,7 @@ This node has the following parameters:
   - **Inverse cubic**. Falloff law is 1/R^2.
   - **Inverse exponent**. Falloff law is `exp(- C * R)`, where R is distance from vertex to attractor, and C is value from **Coefficient** input.
   - **Gauss**. Falloff law is `exp(- C * R^2 / 2)`, where R is distance from vertex to attractor, and C is value from **Coefficient** input.
+- **Clamp**. Whether to restrict output vector length with distance from vertex to attractor. If not checked, then attraction vector length can be very big for vertices close to attractor, depending on selected falloff type. Default value is True.
 
 Outputs
 -------
@@ -49,6 +50,10 @@ Examples of usage
 Most obvious case, just a plane attracted by single point:
 
 .. image:: https://cloud.githubusercontent.com/assets/284644/23908413/28c3d12a-08fe-11e7-9995-58fef78910b3.png
+
+Plane attracted by single point, with Clamp unchecked:
+
+.. image:: https://cloud.githubusercontent.com/assets/284644/24082405/3b84b186-0cef-11e7-94d6-c58d4fcd62e9.png
 
 Not so obvious, plane attracted by circle (red points):
 
