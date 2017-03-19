@@ -204,11 +204,11 @@
     SvStethoscopeNodeMK2
 
 ## BPY Data
+    SvGetPropNode
+    SvSetPropNode
     SvObjRemoteNodeMK2
     SvNodeRemoteNode
     SvGetAssetProperties
-    SvSetPropNode
-    SvGetDataObjectNode
     SvSetDataObjectNodeMK2
     SvSortObjsNode
     SvFilterObjsNode
