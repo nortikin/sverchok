@@ -213,6 +213,7 @@
     SvSortObjsNode
     SvFilterObjsNode
     SvObjectToMeshNodeMK2
+    SvPointOnMeshNodeMK2
     SvOBJRayCastNodeMK2
     SvSCNRayCastNodeMK2
 
@@ -241,7 +242,6 @@
 ## Beta Nodes
     SvFormulaShapeNode
     SvHeavyTriangulateNode
-    SvPointOnMeshNodeMK2
     SvColorsInNode
     SvColorsOutNode
 
