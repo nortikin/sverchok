@@ -229,9 +229,9 @@ class SvAttractorNode(bpy.types.Node, SverchCustomTreeNode):
                 else:
                     raise ValueError("Unknown attractor type: " + self.attractor_type)
                 vector = length * unit
-                units.append(unit)
+                units.append(tuple(unit))
                 lens.append(length)
-                vectors.append(vector)
+                vectors.append(tuple(vector))
             out_vectors.append(vectors)
             out_units.append(units)
             out_lens.append(lens)
