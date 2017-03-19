@@ -138,6 +138,7 @@ class NODEVIEW_MT_Dynamic_Menu(bpy.types.Menu):
         layout.menu("NODEVIEW_MT_AddText")
         layout.menu("NODEVIEW_MT_AddScene", icon_value=custom_icon("SV_SCENE"))
         layout.menu("NODEVIEW_MT_AddLayout", icon_value=custom_icon("SV_LAYOUT"))
+        layout.menu("NODE_MT_category_SVERCHOK_BPY_Data", icon="BLENDER")
         layout.separator()
         layout.menu("NODEVIEW_MT_AddNetwork", icon_value=custom_icon("SV_NETWORK"))
         layout.menu("NODEVIEW_MT_AddBetas", icon_value=custom_icon("SV_BETA"))
