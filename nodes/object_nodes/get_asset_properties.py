@@ -27,7 +27,7 @@ from sverchok.data_structure import (updateNode, enum_item as e)
 class SvGetAssetProperties(bpy.types.Node, SverchCustomTreeNode):
     ''' Get Asset Props '''
     bl_idname = 'SvGetAssetProperties'
-    bl_label = 'Get Asset / Properties'
+    bl_label = 'Object ID Selector'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     def pre_updateNode(self, context):
