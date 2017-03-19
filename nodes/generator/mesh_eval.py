@@ -259,12 +259,12 @@ class SvMeshEvalNode(bpy.types.Node, SverchCustomTreeNode):
 
         bpy.data.texts.new(filename)
         bpy.data.texts[filename].clear()
-        bpy.data.texts[filename].write(json.dumps(geom))
+        bpy.data.texts[filename].write(geom)
 
     def storage_get_data(self, storage):
         if self.filename and self.filename in bpy.data.texts:
             text = bpy.data.texts[self.filename].as_string()
-            storage['geom'] = json.loads(text)
+            storage['geom'] = text
         else:
             print("Unknown filename: {}".format(self.filename))
 
