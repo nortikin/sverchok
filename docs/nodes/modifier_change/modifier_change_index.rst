@@ -11,6 +11,7 @@ Modifier Change
    extrude_edges
    extrude_edges_old
    extrude_separate
+   extrude_region
    holes_fill
    iterate
    mesh_join

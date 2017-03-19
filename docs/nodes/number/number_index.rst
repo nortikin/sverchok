@@ -12,6 +12,7 @@ Number
    formula2
    integer
    list_input
+   mix_numbers
    random
    range_float
    range_int
