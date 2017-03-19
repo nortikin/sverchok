@@ -148,6 +148,7 @@
     SvGenFibonacci
     SvGenExponential
     SvMixNumbersNode
+    SvProportionalEditNode
 
 ## Vector
     GenVectorsNode
