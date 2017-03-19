@@ -16,6 +16,7 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+import itertools
 import bpy
 # import mathutils
 # from mathutils import Vector
@@ -33,8 +34,8 @@ class SvGreasePencilStrokes(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('StringsSocket', 'frame')
         self.inputs.new('VerticesSocket', 'coordinates')
 
-    def draw_buttons(self, context, layout):
-        ...
+    # def draw_buttons(self, context, layout):
+    #     ...
 
     def process(self):
         frame = self.inputs[0]
@@ -58,11 +59,17 @@ class SvGreasePencilStrokes(bpy.types.Node, SverchCustomTreeNode):
                 for _ in range(diff):
                     strokes.remove(strokes[-1])
 
-            for st, co in zip(strokes, coords):
-                # st.clear()
+            # will need to introspect, to refresh the content of strokes maybe?
+            for stroke, coord_set in zip(strokes, coords):
+                sdiff = len(stroke.points) - len(coord_set)
+                if sdiff < 0:
+                    stroke.points.add(count=abs(sdiff))
+                elif sdiff > 0:
+                    for _ in range(sdiff):
+                        stroke.points.pop()
+                flat_coords = list(itertools.chain.from_iterable(coord_set))
+                stroke.points.foreach_set('co', flat_coords)
 
-                # or foreach
-                ...
 
 
 

@@ -246,6 +246,7 @@
     SvColorsOutNode
     SvMatrixNormalNode
     SvSculptMaskNode
+    SvGreasePencilStrokes
 
 ## Alpha Nodes
     SvCurveViewerNode
