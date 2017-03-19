@@ -37,11 +37,33 @@ class SvGreasePencilStrokes(bpy.types.Node, SverchCustomTreeNode):
         ...
 
     def process(self):
-        if self.inputs[0].is_linked and self.inputs[1].is_linked:
+        frame = self.inputs[0]
+        coordinates = self.inputs[1]
+        if frame.is_linked and coordinates.is_linked:
             # for each set of coordinates make a set of stroke data
             # if more pushed than exist, make more, if fewer are pushed than
             # exist, then remove.
             # use foreach_set..when possible.
+            strokes = frame.sv_get()
+            coords = coordinates.sv_get()
+            # fix length (todo)
+
+            diff = len(strokes) - len(coords)
+            if diff < 0:
+                # add new strokes
+                for _ in range(abs(diff)):
+                    strokes.new()
+            elif diff > 0:
+                # remove excess strokes
+                for _ in range(diff):
+                    strokes.remove(strokes[-1])
+
+            for st, co in zip(strokes, coords):
+                # st.clear()
+
+                # or foreach
+                ...
+
 
 
 
