@@ -12,6 +12,7 @@ Generators Extended
    hilbert_image
    image_components
    profile
+   mesh_eval
    script
    script3
    scripted_intro
