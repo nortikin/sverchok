@@ -203,15 +203,28 @@
     SvDebugPrintNode
     SvStethoscopeNodeMK2
 
+## BPY Data
+    SvGetPropNode
+    SvSetPropNode
+    SvObjRemoteNodeMK2
+    SvNodeRemoteNode
+    SvGetAssetProperties
+    SvSetDataObjectNodeMK2
+    SvSortObjsNode
+    SvFilterObjsNode
+    SvObjectToMeshNodeMK2
+    SvPointOnMeshNodeMK2
+    SvOBJRayCastNodeMK2
+    SvSCNRayCastNodeMK2
+
 ## Scene
     SvObjectsNodeMK3
-    SvObjRemoteNodeMK2
+    SvObjInLite
+    SvObjEdit
     SvFrameInfoNodeMK2
     SvEmptyOutNode
     SvInstancerNode
     SvDupliInstancesMK4
-    SvGetPropNode
-    SvSetPropNode
 
 ## Objects
     SvVertexGroupNodeMK2
@@ -229,11 +242,6 @@
 ## Beta Nodes
     SvFormulaShapeNode
     SvHeavyTriangulateNode
-    SvPointOnMeshNodeMK2
-    SvOBJRayCastNodeMK2
-    SvSCNRayCastNodeMK2
-    SvObjectToMeshNodeMK2
-    SvObjInLite
     SvColorsInNode
     SvColorsOutNode
     SvMatrixNormalNode
@@ -252,12 +260,6 @@
     SvParticlesNode
     SvUVtextureNode
     SvNumpyArrayNode
-    SvNodeRemoteNode
-    SvGetDataObjectNode
-    SvSetDataObjectNodeMK2
-    SvObjEdit
-    SvSortObjsNode
-    SvFilterObjsNode
     SvBMVertsNode
     SvBMOpsNode
     SvBMinputNode
