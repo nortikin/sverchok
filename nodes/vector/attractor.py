@@ -81,6 +81,11 @@ class SvAttractorNode(bpy.types.Node, SverchCustomTreeNode):
             default='inverse_square',
             update=update_type)
 
+    clamp = BoolProperty(name="Clamp",
+            description="Restrict coefficient with R",
+            default=True,
+            update=updateNode)
+
     amplitude = FloatProperty(name="Amplitude", 
             default=0.5, min=0.0,
             update=updateNode)
@@ -111,6 +116,7 @@ class SvAttractorNode(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         layout.prop(self, 'attractor_type')
         layout.prop(self, 'falloff_type')
+        layout.prop(self, 'clamp')
 
     def _falloff(self, coefficient, rho):
         func = globals()[self.falloff_type]
@@ -118,12 +124,13 @@ class SvAttractorNode(bpy.types.Node, SverchCustomTreeNode):
 
     def falloff(self, amplitude, coefficient, rho):
         if rho == 0:
-            return 1.0
+            return amplitude
         result = amplitude * self._falloff(coefficient, rho)
         if result <= 0:
             return 0.0
-        if result >= rho:
-            return rho
+        if self.clamp:
+            if result >= rho:
+                return rho
         return result
 
     def to_point(self, amplitude, coefficient, vertex, centers, direction):
@@ -222,9 +229,9 @@ class SvAttractorNode(bpy.types.Node, SverchCustomTreeNode):
                 else:
                     raise ValueError("Unknown attractor type: " + self.attractor_type)
                 vector = length * unit
-                units.append(unit)
+                units.append(tuple(unit))
                 lens.append(length)
-                vectors.append(vector)
+                vectors.append(tuple(vector))
             out_vectors.append(vectors)
             out_units.append(units)
             out_lens.append(lens)
