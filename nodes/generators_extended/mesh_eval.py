@@ -117,10 +117,14 @@ class SvJsonFromMesh(bpy.types.Operator):
 
 class SvMeshEvalNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvMeshEvalNode'
-    bl_label = 'MeshEvalNode'
+    bl_label = 'Mesh Expression'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    filename = StringProperty(default="", update=updateNode)
+    def on_update(self, context):
+        self.adjust_inputs()
+        updateNode(self, context)
+
+    filename = StringProperty(default="", update=on_update)
 
     def draw_buttons(self, context, layout):
         row = layout.row()
@@ -167,6 +171,15 @@ class SvMeshEvalNode(bpy.types.Node, SverchCustomTreeNode):
 
         return list(sorted(list(variables)))
 
+    def get_defaults(self):
+        result = {}
+        json = self.load_json()
+        if not json or 'defaults' not in json:
+            return result
+        if not isinstance(json['defaults'], dict):
+            return result
+        return json['defaults']
+
     def adjust_inputs(self):
         variables = self.get_variables()
         #print("adjust_input:" + str(variables))
@@ -190,19 +203,17 @@ class SvMeshEvalNode(bpy.types.Node, SverchCustomTreeNode):
         if not (self.filename in bpy.data.texts):
             return
 
-        if not ('Edges' in self.outputs):
-            return
-
         self.adjust_inputs()
 
     def get_input(self):
         variables = self.get_variables()
+        defaults = self.get_defaults()
         result = {}
         for var in variables:
             if var in self.inputs and self.inputs[var].is_linked:
                 result[var] = self.inputs[var].sv_get()[0]
             else:
-                result[var] = [0.0]
+                result[var] = [defaults.get(var, 1.0)]
             #print("get_input: {} => {}".format(var, result[var]))
         return result
 
@@ -213,9 +224,6 @@ class SvMeshEvalNode(bpy.types.Node, SverchCustomTreeNode):
 
         var_names = self.get_variables()
         inputs = self.get_input()
-        if not inputs:
-            if not var_names:
-                inputs = {'a': [0.0]}
 
         result_vertices = []
         result_edges = []
@@ -223,8 +231,11 @@ class SvMeshEvalNode(bpy.types.Node, SverchCustomTreeNode):
 
         template = self.load_json()
 
-        input_values = [inputs[name] for name in var_names]
-        parameters = match_long_repeat(input_values)
+        if var_names:
+            input_values = [inputs[name] for name in var_names]
+            parameters = match_long_repeat(input_values)
+        else:
+            parameters = [[[]]]
         for values in zip(*parameters):
             variables = dict(zip(var_names, values))
 
@@ -248,12 +259,12 @@ class SvMeshEvalNode(bpy.types.Node, SverchCustomTreeNode):
 
         bpy.data.texts.new(filename)
         bpy.data.texts[filename].clear()
-        bpy.data.texts[filename].write(json.dumps(geom))
+        bpy.data.texts[filename].write(geom)
 
     def storage_get_data(self, storage):
         if self.filename and self.filename in bpy.data.texts:
             text = bpy.data.texts[self.filename].as_string()
-            storage['geom'] = json.loads(text)
+            storage['geom'] = text
         else:
             print("Unknown filename: {}".format(self.filename))
 
