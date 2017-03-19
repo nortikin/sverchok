@@ -40,6 +40,7 @@ old_bl_idnames = {
     'ViewerNode': "viewer",
     'SvPolylineViewerNode': 'viewer_polyline',
     'SkinViewerNode': 'viewer_skin',
+    'SvGetDataObjectNode': 'get_blenddata',
     'ObjectsNode': "objects",
     'ObjectsNodeMK2': "objects_mk2",
     'RandomVectorNode': 'random_vector',
