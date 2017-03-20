@@ -55,6 +55,7 @@
     SvMeshFilterNode
     SvEdgeAnglesNode
     SvMeshSelectNode
+    SvProportionalEditNode
 
 ## Transforms
     SvRotationNode
@@ -148,7 +149,6 @@
     SvGenFibonacci
     SvGenExponential
     SvMixNumbersNode
-    SvProportionalEditNode
 
 ## Vector
     GenVectorsNode
