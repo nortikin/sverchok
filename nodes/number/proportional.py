@@ -28,10 +28,10 @@ def smooth(x):
     return 3*x*x - 2*x*x*x
 
 def sharp(x):
-    return x*x
+    return x * (2 - x)
 
 def root(x):
-    return math.sqrt(x)
+    return 1.0 - math.sqrt(1.0 - x)
 
 def linear(x):
     return x
@@ -43,7 +43,7 @@ def sphere(x):
     return 1.0 - math.sqrt(1.0 - x*x)
 
 def invsquare(x):
-    return x * (2 - x)
+    return x*x
 
 class SvProportionalEditNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvProportionalEditNode'
@@ -56,7 +56,7 @@ class SvProportionalEditNode(bpy.types.Node, SverchCustomTreeNode):
             ("root", "Root", "", 'ROOTCURVE', 2),
             ("linear", "Linear", "", 'LINCURVE', 3),
             ("sphere", "Sphere", "", 'SPHERECURVE', 4),
-            ("invsquare", "Inverse Square", "", 0, 5),
+            ("invsquare", "Inverse Square", "", 'ROOTCURVE', 5),
             ("const", "Constant", "", 'NOCURVE', 6)
         ]
 
@@ -72,18 +72,20 @@ class SvProportionalEditNode(bpy.types.Node, SverchCustomTreeNode):
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', "Vertices")
         self.inputs.new('StringsSocket', "Mask")
+        self.inputs.new('StringsSocket', "Radius").prop_name = 'radius'
 
         self.outputs.new('StringsSocket', "Coeffs")
 
     def draw_buttons(self, context, layout):
         layout.prop(self, 'falloff_type')
-        layout.prop(self, 'radius')
 
-    def falloff(self, rho):
-        if rho > self.radius:
+    def falloff(self, radius, rho):
+        if rho <= 0:
+            return 1.0
+        if rho > radius:
             return 0.0
         func = globals()[self.falloff_type]
-        return 1.0 - func(rho / self.radius)
+        return 1.0 - func(rho / radius)
 
     def process(self):
         if not any(output.is_linked for output in self.outputs):
@@ -91,11 +93,15 @@ class SvProportionalEditNode(bpy.types.Node, SverchCustomTreeNode):
 
         vertices_s = self.inputs['Vertices'].sv_get(default=[[]])
         masks_s = self.inputs['Mask'].sv_get()
+        radius_s = self.inputs['Radius'].sv_get()
 
         out_coeffs = []
-        meshes = match_long_repeat([vertices_s, masks_s])
-        for vertices, masks in zip(*meshes):
+        meshes = match_long_repeat([vertices_s, masks_s, radius_s])
+        for vertices, masks, radius in zip(*meshes):
             fullList(masks, len(vertices))
+
+            if isinstance(radius, list) and isinstance(radius[0], (int, float)):
+                radius = radius[0]
 
             # build KDTree
             base = [v for v, mask in zip(vertices, masks) if mask]
@@ -110,7 +116,7 @@ class SvProportionalEditNode(bpy.types.Node, SverchCustomTreeNode):
                     coef = 1.0
                 else:
                     _, _, rho = tree.find(vertex)
-                    coef = self.falloff(rho)
+                    coef = self.falloff(radius, rho)
                 coeffs.append(coef)
 
             out_coeffs.append(coeffs)
