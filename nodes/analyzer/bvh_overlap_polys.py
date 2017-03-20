@@ -24,10 +24,10 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode)
 
 
-class SvBvhOverlapNode(bpy.types.Node, SverchCustomTreeNode):
-    ''' BVH Tree Overlap '''
-    bl_idname = 'SvBvhOverlapNode'
-    bl_label = 'bvh_overlap'
+class SvBvhOverlapNodeNew(bpy.types.Node, SverchCustomTreeNode):
+    ''' BVH Tree Overlap New '''
+    bl_idname = 'SvBvhOverlapNodeNew'
+    bl_label = 'overlap_polygons'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     triangles = BoolProperty(name="all triangles",
@@ -72,8 +72,8 @@ class SvBvhOverlapNode(bpy.types.Node, SverchCustomTreeNode):
 
 
 def register():
-    bpy.utils.register_class(SvBvhOverlapNode)
+    bpy.utils.register_class(SvBvhOverlapNodeNew)
 
 
 def unregister():
-    bpy.utils.unregister_class(SvBvhOverlapNode)
+    bpy.utils.unregister_class(SvBvhOverlapNodeNew)
