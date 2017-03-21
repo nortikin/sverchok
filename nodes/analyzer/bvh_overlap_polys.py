@@ -43,9 +43,9 @@ class SvBvhOverlapNodeNew(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "epsilon")
 
     def sv_init(self, context):
-        self.inputs.new('StringsSocket', 'Vert(A)')
+        self.inputs.new('VerticesSocket', 'Vert(A)')
         self.inputs.new('StringsSocket', 'Poly(A)')
-        self.inputs.new('StringsSocket', 'Vert(B)')
+        self.inputs.new('VerticesSocket', 'Vert(B)')
         self.inputs.new('StringsSocket', 'Poly(B)')
         self.outputs.new('StringsSocket', 'PolyIndex(A)')
         self.outputs.new('StringsSocket', 'PolyIndex(B)')
