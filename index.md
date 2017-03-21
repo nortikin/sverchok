@@ -55,6 +55,7 @@
     SvMeshFilterNode
     SvEdgeAnglesNode
     SvMeshSelectNode
+    SvProportionalEditNode
 
 ## Transforms
     SvRotationNode
