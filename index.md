@@ -268,3 +268,4 @@
     SvBMtoElementNode
     SvExecNodeMod
     SvSeparateMeshNodeMK2
+    SvBvhOverlapNodeNew
