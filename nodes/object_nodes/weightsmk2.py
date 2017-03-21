@@ -49,7 +49,7 @@ class SvVertexGroupNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     def process(self):
         Objs, Ve, We = self.inputs
         Owe = self.outputs[0]
-        out = []
+        outobs = []
         for obj in self.inputs['Object'].sv_get():
             if not obj.vertex_groups:
                 obj.vertex_groups.new(name=self.group_name)
@@ -70,11 +70,14 @@ class SvVertexGroupNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                     ovgs.add([i], i2, "REPLACE")
             obj.data.update()
             if Owe.is_linked:
-                try:
-                    out.append([ovgs.weight(i) for i in verts])
-                except Exception:
-                    out.append([0.0 for i in verts])
-        Owe.sv_set(out)
+                out = []
+                for i in verts:
+                    try:
+                        out.append(ovgs.weight(i))
+                    except Exception:
+                        out.append(0.0)  # ovgs.weight() error if vertex not in vgroup
+                outobs.append(out)
+        Owe.sv_set(outobs)
 
 
 def register():
