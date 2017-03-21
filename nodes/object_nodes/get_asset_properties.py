@@ -165,7 +165,7 @@ class SvGetAssetProperties(bpy.types.Node, SverchCustomTreeNode):
                 output_socket.sv_set(data_list[:])
 
         elif self.Mode == 'grease_pencil':
-            # bpy.data.grease_pencil['GPencil'].layers['GP_Layer'].active_frame.strokes[0].color
+            # candidate for refactor
             if self.gp_name and self.gp_layer:
                 GP_and_layer = data_list[self.gp_name].layers[self.gp_layer]
                 if self.gp_selected_frame_mode == 'active frame':
@@ -173,7 +173,7 @@ class SvGetAssetProperties(bpy.types.Node, SverchCustomTreeNode):
                     if self.gp_pass_points:
                         output_socket.sv_set([[p.co[:] for p in s.points] for s in strokes])
                     else:
-                        output_socket.sv_set(strokes[:])
+                        output_socket.sv_set(strokes)
                 else:
                     if self.gp_frame_pick:
                         idx_from_frame_pick = int(self.gp_frame_pick.split(' | ')[0])
@@ -182,7 +182,7 @@ class SvGetAssetProperties(bpy.types.Node, SverchCustomTreeNode):
                             if self.gp_pass_points:
                                 output_socket.sv_set([[p.co[:] for p in s.points] for s in frame_data.strokes])
                             else:
-                                output_socket.sv_set(strokes[:])
+                                output_socket.sv_set(strokes)
 
         else:
             output_socket.sv_set(data_list[:])
