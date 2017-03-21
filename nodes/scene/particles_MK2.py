@@ -40,10 +40,11 @@ class SvParticlesMK2Node(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('VerticesSocket', "Location")
         self.inputs.new('StringsSocket',  "Size")
         self.outputs.new('VerticesSocket', "outLocation")
+        self.outputs.new('VerticesSocket', "outVelocity")
 
     def process(self):
-        O, V, S, L = self.inputs
-        outL = self.outputs[0]
+        O, V, L, S = self.inputs
+        outL, outV = self.outputs
         listobj = [i.particle_systems.active.particles for i in O.sv_get() if i.particle_systems]
         if V.is_linked:
             for i, i2 in zip(listobj, V.sv_get()):
@@ -59,6 +60,8 @@ class SvParticlesMK2Node(bpy.types.Node, SverchCustomTreeNode):
                 outL.sv_set([[i.location[:] for i in Plist if i.alive_state == 'ALIVE'] for Plist in listobj])
             else:
                 outL.sv_set([[i.location[:] for i in Plist] for Plist in listobj])
+        if outV.is_linked:
+            outV.sv_set([[i.velocity[:] for i in Plist] for Plist in listobj])
 
 
 def register():
