@@ -38,7 +38,7 @@ class SvBvhOverlapNodeNew(bpy.types.Node, SverchCustomTreeNode):
                             default=0.0, min=0.0, max=10.0,
                             update=updateNode)
 
-    def draw_buttons(self, context, layout):
+    def draw_buttons_ext(self, context, layout):
         layout.prop(self, "triangles")
         layout.prop(self, "epsilon")
 
