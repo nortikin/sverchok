@@ -7,6 +7,14 @@ from sverchok.core import handlers
 from sverchok.core import update_system
 from sverchok.utils import sv_panels_tools
 from sverchok.ui import color_def
+from sverchok.ui.sv_icons import custom_icon
+
+tab_items = [
+    ("THEMES", "Themes", "Update nodes theme colors", custom_icon("SV_PREFS_THEMES"), 0),
+    ("GENERAL", "General", "General settings", custom_icon("SV_PREFS_GENERAL"), 1),
+    ("DEVELOPER", "Developer", "Various developing tools", custom_icon("SV_PREFS_DEVELOPER"), 2),
+    ("OTHERS", "Other", "Other settings", custom_icon("SV_PREFS_OTHERS"), 3),
+]
 
 
 class SverchokPreferences(AddonPreferences):
@@ -26,6 +34,9 @@ class SverchokPreferences(AddonPreferences):
         color_def.rebuild_color_cache()
         if self.auto_apply_theme:
             color_def.apply_theme()
+
+    def update_tabs(self, context):
+        print("updating tabs")
 
     #  debugish...
     show_debug = BoolProperty(
@@ -64,7 +75,6 @@ class SverchokPreferences(AddonPreferences):
         default=(1, 1, 1), subtype='COLOR')
 
     #  theme settings
-
     sv_theme = EnumProperty(
         items=color_def.themes,
         name="Theme preset",
@@ -131,70 +141,117 @@ class SverchokPreferences(AddonPreferences):
         default=False,
         description="Use icons in ctrl+space menu")
 
+    enable_icon_manager = BoolProperty(
+        name="Enable Icon Manager",
+        default=False,
+        description="Enable SV icon manager node")
+
     over_sized_buttons = BoolProperty(default=False, name="Big buttons",
                                       description="Very big buttons")
 
     enable_live_objin = BoolProperty(
         description="Objects in edit mode will be updated in object-in Node")
 
+    #  bgl viewer settings
+
+    custom_font_id = IntProperty()
+
+    tabs = EnumProperty(default="THEMES", items=tab_items, update=update_tabs)
+
+    def draw_theme_tab_ui(self, tab):
+        # print("Draw the theme tab UI")
+        col = tab.column(align=True)
+
+        split = col.split(percentage=0.35, align=True)
+
+        colA = split.column()
+        colB = split.column()
+
+        colA.label(text="")
+        colA.label(text="Sverchok node theme settings")
+        box = colA.box()
+        box.prop(self, 'auto_apply_theme', text="Auto apply theme changes")
+        box.prop(self, 'apply_theme_on_open', text="Apply theme when opening file")
+        box.separator()
+        box.operator('node.sverchok_apply_theme', text="Apply theme to layouts")
+
+        colB.prop(self, 'sv_theme')
+
+        subsplit = colB.split(percentage=0.5, align=True)
+
+        colB1 = subsplit.column()
+        colB2 = subsplit.column()
+
+        colB1.label("Nodes Colors")
+        box = colB1.box()
+        for name in ['color_viz', 'color_tex', 'color_sce', 'color_lay', 'color_gen']:
+            row = box.row()
+            row.prop(self, name)
+
+        colB2.label("Error Colors")
+        box = colB2.box()
+        for name in ['exception_color', 'no_data_color']:
+            row = box.row()
+            row.prop(self, name)
+
+        colB2.prop(self, "heat_map", text="Heat Map")
+        box = colB2.box()
+        box.active = self.heat_map
+        for name in ['heat_map_hot', 'heat_map_cold']:
+            row = box.row()
+            row.prop(self, name)
+
+    def draw_general_tab_ui(self, tab):
+        # print("Draw the GENERAL tab UI")
+        col = tab.column(align=True)
+
+        split = col.split(percentage=0.5, align=True)
+        colA = split.column()
+        colB = split.column()
+
+        colA.label(text="Frame change handler:")
+        row = colA.row()
+        row.prop(self, "frame_change_mode", expand=True)
+
+        colB.prop(self, "show_icons")
+        colB.prop(self, "over_sized_buttons")
+        colB.separator()
+        colB.prop(self, "enable_live_objin", text='Enable Live Object-In')
+
+    def draw_developer_tab_ui(self, tab):
+        # print("Draw the DEVELOPER tab UI")
+        col = tab.column(align=True)
+
+        col.label(text="Debug:")
+        col.prop(self, "show_debug")
+        col.prop(self, "enable_icon_manager")
+
+    def draw_others_tab_ui(self, tab):
+        # print("Draw the OTHERS tab UI")
+        col = tab.column(align=True)
 
     def draw(self, context):
         layout = self.layout
-        # row = layout.split(percentage=0.33)
-        row = layout
 
-        col = row.column(align=True)
-        col.label(text="General:")
-        col.label(text="Frame change handler:")
-        row1 = col.row()
-        row1.prop(self, "frame_change_mode", expand=True)
-        col.prop(self, "show_icons")
-        col.prop(self, "over_sized_buttons")
-        col.prop(self, "enable_live_objin", text='Enable Live Object-In')
-        col.separator()
+        col = layout.column(align=True)
+        row = col.row(align=True)
+        row.prop(self, "tabs", expand=True)
+        row.scale_y = 2.0
+        row = col.row(align=True)
 
-        col.label(text="Sverchok node theme settings")
+        if self.tabs == "THEMES":
+            self.draw_theme_tab_ui(row)
 
-        row2 = col.row()
-        row2.prop(self, 'auto_apply_theme', text="Auto apply theme changes")
-        row2.prop(self, 'apply_theme_on_open', text="Apply theme when opening file")
+        elif self.tabs == "GENERAL":
+            self.draw_general_tab_ui(row)
 
-        row2.operator('node.sverchok_apply_theme', text="Apply theme to layouts")
+        elif self.tabs == "DEVELOPER":
+            self.draw_developer_tab_ui(row)
 
-        col1 = col.split(percentage=.5, align=True)
-        col1.prop(self, 'sv_theme')
-        col.separator()
+        else: # OTHERS
+            self.draw_others_tab_ui(row)
 
-        split = col.split(percentage=0.5, align=True)
-
-        col1 = split.column()
-
-        for name in ['color_viz', 'color_tex', 'color_sce']:
-            r = col1.row()
-            r.prop(self, name)
-        col2 = split.column()
-        for name in ['color_lay', 'color_gen']:
-            r = col2.row()
-            r.prop(self, name)
-
-        # debug
-        col = row.column(align=True)
-        col.label(text="Debug:")
-        col.prop(self, "show_debug")
-
-        col.label("Error colors")
-        row1 = col.row()
-        row1.prop(self, "exception_color")
-        row1.prop(self, "no_data_color")
-
-        col.prop(self, "heat_map")
-        row1 = col.row()
-        row1.active = self.heat_map
-
-        row1.prop(self, "heat_map_hot")
-        row1.prop(self, "heat_map_cold")
-
-        col = row.column(align=True)
+        col = layout.column(align=True)
         col.label(text="Links:")
         row1 = col.row(align=True)
         row1.scale_y = 2.0
