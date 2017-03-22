@@ -259,6 +259,7 @@
     SvSkinViewerNodeMK1b
     SvCSGBooleanNode
     SvParticlesNode
+    SvParticlesMK2Node
     SvUVtextureNode
     SvNumpyArrayNode
     SvBMVertsNode
