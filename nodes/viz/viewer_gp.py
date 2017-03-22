@@ -24,18 +24,73 @@ import bpy
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 
+
+nodule_color = (0.899, 0.8052, 0.0, 1.0)
+
+
+def set_correct_stroke_count(strokes, coords):
+    """ ensure that the number of strokes match the sets of coordinates """
+    diff = len(strokes) - len(coords)
+    if diff < 0:
+        # add new strokes
+        for _ in range(abs(diff)):
+            strokes.new()
+    elif diff > 0:
+        # remove excess strokes
+        for _ in range(diff):
+            strokes.remove(strokes[-1])
+
+
+def pass_data_to_stroke(stroke, coord_set):
+    """ adjust the number of points per stroke, to match the incoming coord_set """
+    sdiff = len(stroke.points) - len(coord_set)
+    if sdiff < 0:
+        stroke.points.add(count=abs(sdiff))
+    elif sdiff > 0:
+        for _ in range(sdiff):
+            stroke.points.pop()
+    flat_coords = list(itertools.chain.from_iterable(coord_set))
+    stroke.points.foreach_set('co', flat_coords)
+
+
 class SvGreasePencilStrokes(bpy.types.Node, SverchCustomTreeNode):
     ''' Make GreasePencil Strokes '''
     bl_idname = 'SvGreasePencilStrokes'
     bl_label = 'Grease Pencil'
     bl_icon = 'GREASEPENCIL'
 
-    def sv_init(self, context):
-        self.inputs.new('StringsSocket', 'frame')
-        self.inputs.new('VerticesSocket', 'coordinates')
+    mode_options = [(k, k, '', i) for i, k in enumerate(['3DSPACE', '2DSPACE'])]
+    
+    draw_mode = bpy.props.EnumProperty(
+        items=mode_options, description="Draw Mode",
+        default="2DSPACE", update=updateNode
+    )
 
-    # def draw_buttons(self, context, layout):
-    #     ...
+    unit_1_color = FloatVectorProperty(
+        update=updateNode, name='Stroke', default=(.3, .3, .2, 1.0),
+        size=4, min=0.0, max=1.0, subtype='COLOR'
+    )
+
+    unit_2_color = FloatVectorProperty(
+        update=updateNode, name='Fill', default=(.1, .3, .6, 1.0),
+        size=4, min=0.0, max=1.0, subtype='COLOR'
+    )
+
+    def sv_init(self, context):
+        inew = self.inputs.new
+        inew('StringsSocket', 'frame')
+        inew('VerticesSocket', 'coordinates')
+        inew('StringsSocket', 'draw cyclic')
+        inew('StringsSocket', 'pressure')
+        c1 = inew('StringsSocket', 'stroke color')
+        c1.prop_name = 'unit_1_color'
+        c1.nodule_color = nodule_color
+        c2 = inew('StringsSocket', 'fill color')
+        c2.prop_name = 'unit_2_color'
+        c2.nodule_color = nodule_color
+
+    def draw_buttons(self, context, layout):
+        layout.prop(self, 'draw_mode', expand=True)
 
     def process(self):
         frame = self.inputs[0]
@@ -44,29 +99,14 @@ class SvGreasePencilStrokes(bpy.types.Node, SverchCustomTreeNode):
 
             strokes = frame.sv_get()
             coords = coordinates.sv_get()
-            # fix length (todo)
+            set_correct_stroke_count(strokes, coords)
 
-            diff = len(strokes) - len(coords)
-            if diff < 0:
-                # add new strokes
-                for _ in range(abs(diff)):
-                    strokes.new()
-            elif diff > 0:
-                # remove excess strokes
-                for _ in range(diff):
-                    strokes.remove(strokes[-1])
-
-            # will need to introspect, to refresh the content of strokes maybe?
             for stroke, coord_set in zip(strokes, coords):
-                sdiff = len(stroke.points) - len(coord_set)
-                if sdiff < 0:
-                    stroke.points.add(count=abs(sdiff))
-                elif sdiff > 0:
-                    for _ in range(sdiff):
-                        stroke.points.pop()
-                flat_coords = list(itertools.chain.from_iterable(coord_set))
-                stroke.points.foreach_set('co', flat_coords)
+                pass_data_to_stroke(stroke, coord_set)
+                stroke.draw_mode = self.draw_mode
 
+                # color.fill_alpha
+                # color.alpha
 
 
 
