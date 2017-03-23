@@ -66,12 +66,12 @@ class SvGreasePencilStrokes(bpy.types.Node, SverchCustomTreeNode):
         default="2DSPACE", update=updateNode
     )
 
-    unit_1_color = FloatVectorProperty(
+    unit_1_color = bpy.props.FloatVectorProperty(
         update=updateNode, name='Stroke', default=(.3, .3, .2, 1.0),
         size=4, min=0.0, max=1.0, subtype='COLOR'
     )
 
-    unit_2_color = FloatVectorProperty(
+    unit_2_color = bpy.props.FloatVectorProperty(
         update=updateNode, name='Fill', default=(.1, .3, .6, 1.0),
         size=4, min=0.0, max=1.0, subtype='COLOR'
     )
