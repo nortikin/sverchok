@@ -43,7 +43,7 @@ def sv_preferences():
         yield addon.preferences
 
 @contextmanager
-def sv_new_input(node, ident, name):
+def new_input(node, ident, name):
     '''
     use this to contextualize additional props on a socket. f.ex:
 
@@ -53,7 +53,7 @@ def sv_new_input(node, ident, name):
 
         becomes
 
-        with sv_new_input('StringsSocket', 'stroke color') as c1:
+        with new_input('StringsSocket', 'stroke color') as c1:
             c1.prop_name = 'unit_1_color'
             c1.nodule_color = nodule_color        
 

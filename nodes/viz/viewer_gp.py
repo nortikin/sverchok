@@ -23,6 +23,7 @@ import bpy
 # from bpy.props import FloatProperty, BoolProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
+from sverchok.utils.context_managers import new_input
 
 
 nodule_color = (0.899, 0.8052, 0.0, 1.0)
@@ -82,12 +83,15 @@ class SvGreasePencilStrokes(bpy.types.Node, SverchCustomTreeNode):
         inew('VerticesSocket', 'coordinates')
         inew('StringsSocket', 'draw cyclic')
         inew('StringsSocket', 'pressure')
-        c1 = inew('StringsSocket', 'stroke color')
-        c1.prop_name = 'unit_1_color'
-        c1.nodule_color = nodule_color
-        c2 = inew('StringsSocket', 'fill color')
-        c2.prop_name = 'unit_2_color'
-        c2.nodule_color = nodule_color
+
+        with new_input(self, 'StringsSocket', 'stroke color') as c1:
+            c1.prop_name = 'unit_1_color'
+            c1.nodule_color = nodule_color       
+
+        with new_input(self, 'StringsSocket', 'fill color') as c2:
+            c2.prop_name = 'unit_2_color'
+            c2.nodule_color = nodule_color       
+
 
     def draw_buttons(self, context, layout):
         layout.prop(self, 'draw_mode', expand=True)
