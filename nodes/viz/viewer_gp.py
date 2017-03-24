@@ -22,7 +22,7 @@ import bpy
 # from mathutils import Vector
 # from bpy.props import FloatProperty, BoolProperty
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode
+from sverchok.data_structure import updateNode, fullList
 from sverchok.utils.context_managers import new_input
 
 
@@ -78,7 +78,7 @@ class SvGreasePencilStrokes(bpy.types.Node, SverchCustomTreeNode):
         size=4, min=0.0, max=1.0, subtype='COLOR'
     )
 
-    draw_cyclic = bpy.props.IntProperty(default=1, min=0, max=1, update=updateNode)
+    draw_cyclic = bpy.props.BoolProperty(default=True, update=updateNode)
     pressure = bpy.props.FloatProperty(default=2.0, min=0.1, max=4.0, update=updateNode)
 
     def sv_init(self, context):
@@ -112,10 +112,16 @@ class SvGreasePencilStrokes(bpy.types.Node, SverchCustomTreeNode):
             strokes = frame.sv_get()
             coords = coordinates.sv_get()
             set_correct_stroke_count(strokes, coords)
-
-            for stroke, coord_set in zip(strokes, coords):
+ 
+            num_strokes = len(coords)
+            cyclic_socket_value = self.inputs["draw cyclic"].sv_get()[0]
+            fullList(cyclic_socket_value, num_strokes)
+            
+            
+            for idx, (stroke, coord_set) in enumerate(zip(strokes, coords)):
                 pass_data_to_stroke(stroke, coord_set)
                 stroke.draw_mode = self.draw_mode
+                stroke.draw_cyclic = cyclic_socket_value[idx]
 
                 # color.fill_alpha
                 # color.alpha
