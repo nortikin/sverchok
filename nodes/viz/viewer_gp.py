@@ -67,12 +67,12 @@ class SvGreasePencilStrokes(bpy.types.Node, SverchCustomTreeNode):
         default="2DSPACE", update=updateNode
     )
 
-    unit_1_color = bpy.props.FloatVectorProperty(
+    stroke_color = bpy.props.FloatVectorProperty(
         update=updateNode, name='Stroke', default=(.3, .3, .2, 1.0),
         size=4, min=0.0, max=1.0, subtype='COLOR'
     )
 
-    unit_2_color = bpy.props.FloatVectorProperty(
+    fill_color = bpy.props.FloatVectorProperty(
         update=updateNode, name='Fill', default=(.1, .3, .6, 1.0),
         size=4, min=0.0, max=1.0, subtype='COLOR'
     )
@@ -85,12 +85,14 @@ class SvGreasePencilStrokes(bpy.types.Node, SverchCustomTreeNode):
         inew('StringsSocket', 'pressure')
 
         with new_input(self, 'StringsSocket', 'stroke color') as c1:
-            c1.prop_name = 'unit_1_color'
+            c1.prop_name = 'stroke_color'
             c1.nodule_color = nodule_color       
 
         with new_input(self, 'StringsSocket', 'fill color') as c2:
-            c2.prop_name = 'unit_2_color'
-            c2.nodule_color = nodule_color       
+            c2.prop_name = 'fill_color'
+            c2.nodule_color = nodule_color
+
+        
 
 
     def draw_buttons(self, context, layout):

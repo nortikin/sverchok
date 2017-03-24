@@ -139,7 +139,16 @@ class SverchokPreferences(AddonPreferences):
 
     #  bgl viewer settings
 
-    custom_font_id = IntProperty()
+    gpv_stroke_color = bpy.props.FloatVectorProperty(
+        name='Stroke', default=(.3, .3, .2, 1.0),
+        size=4, min=0.0, max=1.0, subtype='COLOR'
+    )
+
+    gpv_fill_color = bpy.props.FloatVectorProperty(
+        name='Fill', default=(.1, .3, .6, 1.0),
+        size=4, min=0.0, max=1.0, subtype='COLOR'
+    )
+
 
 
     def draw(self, context):
