@@ -79,7 +79,8 @@ class SvGreasePencilStrokes(bpy.types.Node, SverchCustomTreeNode):
     )
 
     draw_cyclic = bpy.props.BoolProperty(default=True, update=updateNode)
-    pressure = bpy.props.FloatProperty(default=2.0, min=0.1, max=4.0, update=updateNode)
+    pressure = bpy.props.FloatProperty(default=2.0, min=0.1, max=8.0, update=updateNode)
+    num_strokes = bpy.props.IntProperty()
 
     def sv_init(self, context):
         inew = self.inputs.new
@@ -104,6 +105,29 @@ class SvGreasePencilStrokes(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         layout.prop(self, 'draw_mode', expand=True)
 
+
+    def process_pressures(self):
+        pressures = self.inputs["pressure"].sv_get()
+        num_strokes = self.num_strokes
+
+        # the default state will always
+        if len(pressures) == 1:
+            if len(pressures[0]) == num_strokes:
+                # this scenario interprets incoming pressures as one pressure per stroke
+                pass
+            elif len(pressures[0]) < num_strokes:
+                pressures = pressures[0]
+                fullList(pressures, num_strokes)
+            elif len(pressures[0]) > num_strokes:
+                pressures = pressures[0][:num_strokes]
+            pressures = [[n] for n in pressures]
+        else:
+            fullList(pressures, self.num_strokes)
+
+        return pressures
+
+
+
     def process(self):
         frame = self.inputs[0]
         coordinates = self.inputs[1]
@@ -113,10 +137,12 @@ class SvGreasePencilStrokes(bpy.types.Node, SverchCustomTreeNode):
             coords = coordinates.sv_get()
             set_correct_stroke_count(strokes, coords)
  
-            num_strokes = len(coords)
-            cyclic_socket_value = self.inputs["draw cyclic"].sv_get()[0]
-            fullList(cyclic_socket_value, num_strokes)
+            self.num_strokes = len(coords)
             
+            cyclic_socket_value = self.inputs["draw cyclic"].sv_get()[0]
+            fullList(cyclic_socket_value, self.num_strokes)
+
+            pressures = self.process_pressures()
             
             for idx, (stroke, coord_set) in enumerate(zip(strokes, coords)):
                 pass_data_to_stroke(stroke, coord_set)
