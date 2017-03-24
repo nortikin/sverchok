@@ -55,6 +55,7 @@
     SvMeshFilterNode
     SvEdgeAnglesNode
     SvMeshSelectNode
+    SvProportionalEditNode
 
 ## Transforms
     SvRotationNode
@@ -259,6 +260,7 @@
     SvSkinViewerNodeMK1b
     SvCSGBooleanNode
     SvParticlesNode
+    SvParticlesMK2Node
     SvUVtextureNode
     SvNumpyArrayNode
     SvBMVertsNode
@@ -268,3 +270,4 @@
     SvBMtoElementNode
     SvExecNodeMod
     SvSeparateMeshNodeMK2
+    SvBvhOverlapNodeNew

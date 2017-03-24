@@ -22,6 +22,9 @@ from bpy.props import StringProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode, second_as_first_cycle as safc)
 
+# pylint: disable=w0122
+# pylint: disable=w0123
+# pylint: disable=w0613
 
 class SvSetDataObjectNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     ''' Set Object Props '''
@@ -32,17 +35,22 @@ class SvSetDataObjectNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     formula = StringProperty(name='formula', default='delta_location', update=updateNode)
 
     def draw_buttons(self, context, layout):
-        layout.prop(self,  "formula", text="")
+        layout.prop(self, "formula", text="")
 
     def sv_init(self, context):
         self.inputs.new('SvObjectSocket', 'Objects')
         self.inputs.new('StringsSocket', 'values')
         self.outputs.new('StringsSocket', 'outvalues')
+        self.outputs.new('SvObjectSocket', 'Objects')
 
     def process(self):
         O, V = self.inputs
         Ov = self.outputs[0]
         Prop = self.formula
+        Objects_out = self.outputs['Objects']
+
+        Objects_out.sv_set(self.inputs['Objects'].sv_get(default=[]))
+        
         objs = O.sv_get()
         if isinstance(objs[0], list):
             if V.is_linked:
@@ -69,6 +77,7 @@ class SvSetDataObjectNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                 Ov.sv_set(eval("[i."+Prop+" for i in objs]"))
             else:
                 exec("for i in objs:\n    i."+Prop)
+
 
 
 def register():

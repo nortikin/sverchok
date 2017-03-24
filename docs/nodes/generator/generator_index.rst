@@ -18,4 +18,6 @@ Generators
    random_vector_mk2
    script1_lite
    sphere
+   torus
+   torusKnot
    formula_shape

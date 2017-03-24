@@ -5,6 +5,7 @@ Vector
 .. toctree::
    :maxdepth: 2
 
+   attractor
    axis_input_mk2
    drop
    interpolation_stripes
@@ -21,3 +22,4 @@ Vector
    vector_polar_out
    vertices_delete_doubles
    vertices_sort
+   turbulence
