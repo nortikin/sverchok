@@ -80,6 +80,18 @@ class SvCopyIDName(bpy.types.Operator):
         return {'FINISHED'}
 
 
+class SvSaveNodeDefaults(bpy.types.Operator):
+
+    bl_idname = "node.sv_save_node_defaults"
+    bl_label = "Save as defaults"
+
+    store_bl_idname = bpy.props.StringProperty(default='')
+
+    def execute(self, context):
+        # write store_bl_idname / props
+        return {'FINISHED'}
+
+
 class SvViewHelpForNode(bpy.types.Operator):
 
     bl_idname = "node.view_node_help"
@@ -157,6 +169,9 @@ def idname_draw(self, context):
         row = box.row(align=True)
         show_name = node.bl_rna.properties[prop_name].name or prop_name
         row.label(show_name + ' ---> ' + str(prop_val))
+    row = box.row()
+    row.operator("node.sv_save_node_defaults")
+
 
 
 def register():
@@ -164,6 +179,7 @@ def register():
     if BRANCH:
         bpy.types.NODE_HT_header.append(node_show_branch)
 
+    bpy.utils.register_class(SvSaveNodeDefaults)
     bpy.utils.register_class(SvCopyIDName)
     bpy.utils.register_class(SvViewHelpForNode)
     bpy.types.NODE_PT_active_node_generic.append(idname_draw)
@@ -175,3 +191,4 @@ def unregister():
     bpy.types.NODE_PT_active_node_generic.remove(idname_draw)
     bpy.utils.unregister_class(SvCopyIDName)
     bpy.utils.unregister_class(SvViewHelpForNode)
+    bpy.utils.unregister_class(SvSaveNodeDefaults)
