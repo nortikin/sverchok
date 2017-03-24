@@ -53,6 +53,19 @@ def pass_data_to_stroke(stroke, coord_set):
     flat_coords = list(itertools.chain.from_iterable(coord_set))
     stroke.points.foreach_set('co', flat_coords)
 
+def pass_pressures_to_stroke(stroke, flat_pressures):
+    print(flat_pressures)
+    stroke.points.foreach_set('pressure', flat_pressures)
+
+
+def match_points_and_pressures(pressure_set, num_points):
+    num_pressures = len(pressure_set)
+    if num_pressures < num_points:
+        fullList(pressure_set, num_points)
+    elif num_pressures > num_points:
+        pressure_set = pressure_set[:num_points]
+    return pressure_set
+
 
 class SvGreasePencilStrokes(bpy.types.Node, SverchCustomTreeNode):
     ''' Make GreasePencil Strokes '''
@@ -106,26 +119,22 @@ class SvGreasePencilStrokes(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, 'draw_mode', expand=True)
 
 
-    def process_pressures(self):
+    def get_pressures(self):
         pressures = self.inputs["pressure"].sv_get()
         num_strokes = self.num_strokes
 
         # the default state will always
         if len(pressures) == 1:
-            if len(pressures[0]) == num_strokes:
-                # this scenario interprets incoming pressures as one pressure per stroke
-                pass
-            elif len(pressures[0]) < num_strokes:
+            if len(pressures[0]) < num_strokes:
                 pressures = pressures[0]
                 fullList(pressures, num_strokes)
             elif len(pressures[0]) > num_strokes:
                 pressures = pressures[0][:num_strokes]
             pressures = [[n] for n in pressures]
         else:
-            fullList(pressures, self.num_strokes)
+            fullList(pressures, num_strokes)
 
         return pressures
-
 
 
     def process(self):
@@ -135,19 +144,23 @@ class SvGreasePencilStrokes(bpy.types.Node, SverchCustomTreeNode):
 
             strokes = frame.sv_get()
             coords = coordinates.sv_get()
-            set_correct_stroke_count(strokes, coords)
- 
             self.num_strokes = len(coords)
-            
+            set_correct_stroke_count(strokes, coords)
+             
             cyclic_socket_value = self.inputs["draw cyclic"].sv_get()[0]
             fullList(cyclic_socket_value, self.num_strokes)
 
-            pressures = self.process_pressures()
+            pressures = self.get_pressures()
             
             for idx, (stroke, coord_set) in enumerate(zip(strokes, coords)):
-                pass_data_to_stroke(stroke, coord_set)
                 stroke.draw_mode = self.draw_mode
                 stroke.draw_cyclic = cyclic_socket_value[idx]
+
+                num_points = len(coord_set)
+                pass_data_to_stroke(stroke, coord_set)
+
+                flat_pressures = match_points_and_pressures(pressures[idx], num_points)
+                pass_pressures_to_stroke(stroke, flat_pressures)
 
                 # color.fill_alpha
                 # color.alpha
