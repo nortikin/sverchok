@@ -166,7 +166,7 @@ class SvGetAssetProperties(bpy.types.Node, SverchCustomTreeNode):
                 output_socket.sv_set(data_list[:])
 
         elif self.Mode == 'grease_pencil':
-            # bpy.data.grease_pencil['GPencil'].layers['GP_Layer'].active_frame.strokes[0].color
+            # candidate for refactor
             if self.gp_name and self.gp_layer:
                 GP_and_layer = data_list[self.gp_name].layers[self.gp_layer]
                 if self.gp_selected_frame_mode == 'active frame':

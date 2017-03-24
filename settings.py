@@ -137,10 +137,6 @@ class SverchokPreferences(AddonPreferences):
     enable_live_objin = BoolProperty(
         description="Objects in edit mode will be updated in object-in Node")
 
-    #  bgl viewer settings
-
-    custom_font_id = IntProperty()
-
 
     def draw(self, context):
         layout = self.layout
