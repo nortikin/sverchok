@@ -79,7 +79,7 @@ class SvGreasePencilStrokes(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_init(self, context):
         inew = self.inputs.new
-        inew('SvObjectSocket', 'frame')
+        inew('StringsSocket', 'frame')
         inew('VerticesSocket', 'coordinates')
         inew('StringsSocket', 'draw cyclic')
         inew('StringsSocket', 'pressure')
