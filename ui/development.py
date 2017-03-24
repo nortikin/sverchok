@@ -166,9 +166,13 @@ def idname_draw(self, context):
     row = box.row(align=True)
     row.label('props')
     for prop_name, prop_val in node.items():
+        if prop_name == 'n_id':
+            continue
         row = box.row(align=True)
         show_name = node.bl_rna.properties[prop_name].name or prop_name
-        row.label(show_name + ' ---> ' + str(prop_val))
+        row.enabled = False
+        row.label(show_name + ':')
+        row.prop(node, prop_name)
     row = box.row()
     row.operator("node.sv_save_node_defaults")
 
