@@ -47,6 +47,10 @@ class SvSetDataObjectNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         O, V = self.inputs
         Ov = self.outputs[0]
         Prop = self.formula
+        Objects_out = self.outputs['Objects']
+
+        Objects_out.sv_set(self.inputs['Objects'].sv_get(default=[]))
+        
         objs = O.sv_get()
         if isinstance(objs[0], list):
             if V.is_linked:
@@ -74,7 +78,6 @@ class SvSetDataObjectNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             else:
                 exec("for i in objs:\n    i."+Prop)
 
-        self.outputs['Objects'].sv_set(self.inputs['Objects'].sv_get())
 
 
 def register():
