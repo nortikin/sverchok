@@ -53,7 +53,7 @@ def new_input(node, ident, name):
 
         becomes
 
-        with new_input('StringsSocket', 'stroke color') as c1:
+        with new_input(self, 'StringsSocket', 'stroke color') as c1:
             c1.prop_name = 'unit_1_color'
             c1.nodule_color = nodule_color        
 
