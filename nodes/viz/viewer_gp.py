@@ -53,11 +53,9 @@ def pass_data_to_stroke(stroke, coord_set):
     flat_coords = list(itertools.chain.from_iterable(coord_set))
     stroke.points.foreach_set('co', flat_coords)
 
+
 def pass_pressures_to_stroke(stroke, flat_pressures):
-    print(flat_pressures)
-    #stroke.points.foreach_set('pressure', flat_pressures)
-    for idx, pressure in enumerate(flat_pressures):
-        stroke.points[idx].pressure = pressure
+    stroke.points.foreach_set('pressure', flat_pressures)
 
 
 def match_points_and_pressures(pressure_set, num_points):
@@ -152,7 +150,6 @@ class SvGreasePencilStrokes(bpy.types.Node, SverchCustomTreeNode):
             fullList(cyclic_socket_value, self.num_strokes)
 
             pressures = self.get_pressures()
-            print('len pressures: ', len(pressures))
             
             for idx, (stroke, coord_set) in enumerate(zip(strokes, coords)):
                 stroke.draw_mode = self.draw_mode
@@ -166,7 +163,6 @@ class SvGreasePencilStrokes(bpy.types.Node, SverchCustomTreeNode):
 
                 # color.fill_alpha
                 # color.alpha
-                print('-----')
 
             self.outputs[0].sv_set(strokes)
 
