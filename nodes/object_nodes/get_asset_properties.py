@@ -174,7 +174,7 @@ class SvGetAssetProperties(bpy.types.Node, SverchCustomTreeNode):
                     if self.gp_pass_points:
                         output_socket.sv_set([[p.co[:] for p in s.points] for s in strokes])
                     else:
-                        output_socket.sv_set(strokes[:])
+                        output_socket.sv_set(strokes)
                 else:
                     if self.gp_frame_pick:
                         idx_from_frame_pick = int(self.gp_frame_pick.split(' | ')[0])
@@ -183,7 +183,7 @@ class SvGetAssetProperties(bpy.types.Node, SverchCustomTreeNode):
                             if self.gp_pass_points:
                                 output_socket.sv_set([[p.co[:] for p in s.points] for s in frame_data.strokes])
                             else:
-                                output_socket.sv_set(strokes[:])
+                                output_socket.sv_set(strokes)
 
         else:
             output_socket.sv_set(data_list[:])
