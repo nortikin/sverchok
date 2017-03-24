@@ -60,6 +60,7 @@ class SvGreasePencilStrokes(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Grease Pencil'
     bl_icon = 'GREASEPENCIL'
 
+    # SCREEN / 3DSPACE / 2DSPACE / 2DIMAGE
     mode_options = [(k, k, '', i) for i, k in enumerate(['3DSPACE', '2DSPACE'])]
     
     draw_mode = bpy.props.EnumProperty(
