@@ -80,9 +80,9 @@ class SvGreasePencilStrokes(bpy.types.Node, SverchCustomTreeNode):
     def sv_init(self, context):
         inew = self.inputs.new
         inew('StringsSocket', 'frame')
-        inew('VerticesSocket', 'coordinates')
-        inew('StringsSocket', 'draw cyclic')
-        inew('StringsSocket', 'pressure')
+        inew('VerticesSocket', 'coordinates')  # per stroke
+        inew('StringsSocket', 'draw cyclic')   # per stroke
+        inew('StringsSocket', 'pressure')      # per point
 
         with new_input(self, 'StringsSocket', 'stroke color') as c1:
             c1.prop_name = 'stroke_color'
