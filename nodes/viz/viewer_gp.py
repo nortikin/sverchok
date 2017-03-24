@@ -92,6 +92,8 @@ class SvGreasePencilStrokes(bpy.types.Node, SverchCustomTreeNode):
             c2.prop_name = 'fill_color'
             c2.nodule_color = nodule_color
 
+        onew = self.outputs.new
+        onew('SvObjectsSocket', 'frame')
         
 
 
@@ -113,6 +115,9 @@ class SvGreasePencilStrokes(bpy.types.Node, SverchCustomTreeNode):
 
                 # color.fill_alpha
                 # color.alpha
+
+
+            self.outputs[0].sv_set(strokes)
 
 
 
