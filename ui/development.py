@@ -150,6 +150,14 @@ def idname_draw(self, context):
     row.operator('node.view_node_help', text='online').kind = 'online'
     row.operator('node.view_node_help', text='offline').kind = 'offline'
 
+    box = layout.box()
+    row = box.row(align=True)
+    row.label('props')
+    for prop_name, prop_val in node.items():
+        row = box.row(align=True)
+        show_name = node.bl_rna.properties[prop_name].name or prop_name
+        row.label(show_name + ' ---> ' + str(prop_val))
+
 
 def register():
     get_branch()
