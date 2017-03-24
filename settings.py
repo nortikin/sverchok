@@ -137,19 +137,6 @@ class SverchokPreferences(AddonPreferences):
     enable_live_objin = BoolProperty(
         description="Objects in edit mode will be updated in object-in Node")
 
-    #  bgl viewer settings
-
-    gpv_stroke_color = bpy.props.FloatVectorProperty(
-        name='Stroke', default=(.3, .3, .2, 1.0),
-        size=4, min=0.0, max=1.0, subtype='COLOR'
-    )
-
-    gpv_fill_color = bpy.props.FloatVectorProperty(
-        name='Fill', default=(.1, .3, .6, 1.0),
-        size=4, min=0.0, max=1.0, subtype='COLOR'
-    )
-
-
 
     def draw(self, context):
         layout = self.layout
