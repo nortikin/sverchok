@@ -135,6 +135,7 @@ class SvGetAssetProperties(bpy.types.Node, SverchCustomTreeNode):
         self.width = 210
         self.Type = 'MESH'  # helps init the custom object prop_search
 
+
     def process(self):
         output_socket = self.outputs['Objects']
         if not output_socket.is_linked:
