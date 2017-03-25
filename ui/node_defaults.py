@@ -19,7 +19,7 @@
 import bpy
 import os
 
-from bpy.props import CollectionProperty
+from bpy.props import CollectionProperty, BoolProperty
 
 
 # condidate for library (also defined in development.py)
@@ -69,8 +69,17 @@ def node_default_deviations_draw(self, context):
     bl_idname = node.bl_idname
 
     box = layout.box()
+    row = box.row()
+    row.prop(node.id_data, 'sv_configure_defaults', text='configure defaults')
+
+    if node.id_data.sv_configure_defaults == False:
+        return
+
     row = box.row(align=True)
-    row.label('modified props - pick to add as default')
+    row.operator("node.sv_get_node_defaults_deviations")
+
+    # this will instead display the content of  SvNodeDefaultsBooleans(PropertyGroup)
+    # soon.
     for prop_name, prop_val in node.items():
         if prop_name == 'n_id':
             continue
@@ -79,6 +88,7 @@ def node_default_deviations_draw(self, context):
         row.enabled = False
         row.label(show_name + ':')
         row.prop(node, prop_name)
+
     row = box.row()
     row.operator("node.sv_save_node_defaults")
 
@@ -88,7 +98,9 @@ def register():
     bpy.utils.register_class(SvGetNodeDefaultsDeviations)
     bpy.utils.register_class(SvNodeDefaultsBooleans)
     bpy.types.SverchCustomTreeType.SvNodeDefaultBools = CollectionProperty(type=SvNodeDefaultsBooleans)
+    bpy.types.SverchCustomTreeType.sv_configure_defaults = BoolProperty()
     bpy.types.NODE_PT_active_node_generic.append(node_default_deviations_draw)
+
 
 
 def unregister():
@@ -96,4 +108,5 @@ def unregister():
     bpy.utils.unregister_class(SvSaveNodeDefaults)
     bpy.utils.unregister_class(SvGetNodeDefaultsDeviations)
     bpy.utils.unregister_class(SvNodeDefaultsBooleans)
+    del bpy.types.SverchCustomTreeType.sv_configure_defaults
     del bpy.types.SverchCustomTreeType.SvNodeDefaultBools
