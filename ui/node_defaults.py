@@ -29,6 +29,7 @@ def displaying_sverchok_nodes(context):
 
 class SvNodeDefaultsBooleans(bpy.types.PropertyGroup):
     store = bpy.props.BoolProperty(name="store", default=False)
+    name = bpy.props.StringProperty(name="name", default="")
 
 
 
@@ -42,6 +43,19 @@ class SvSaveNodeDefaults(bpy.types.Operator):
     def execute(self, context):
         # write store_bl_idname / props
         return {'FINISHED'}
+
+
+class SvGetNodeDefaultsDeviations(bpy.types.Operator):
+
+    bl_idname = "node.sv_get_node_defaults_deviations"
+    bl_label = "Get deviations from default values"
+
+    store_bl_idname = bpy.props.StringProperty(default='')
+
+    def execute(self, context):
+        # write store_bl_idname / props
+        return {'FINISHED'}
+
 
 
 def node_default_deviations_draw(self, context):
@@ -71,6 +85,7 @@ def node_default_deviations_draw(self, context):
 
 def register():
     bpy.utils.register_class(SvSaveNodeDefaults)
+    bpy.utils.register_class(SvGetNodeDefaultsDeviations)
     bpy.utils.register_class(SvNodeDefaultsBooleans)
     bpy.types.SverchCustomTreeType.SvNodeDefaultBools = CollectionProperty(type=SvNodeDefaultsBooleans)
     bpy.types.NODE_PT_active_node_generic.append(node_default_deviations_draw)
@@ -79,5 +94,6 @@ def register():
 def unregister():
     bpy.types.NODE_PT_active_node_generic.remove(node_default_deviations_draw)
     bpy.utils.unregister_class(SvSaveNodeDefaults)
+    bpy.utils.unregister_class(SvGetNodeDefaultsDeviations)
     bpy.utils.unregister_class(SvNodeDefaultsBooleans)
     del bpy.types.SverchCustomTreeType.SvNodeDefaultBools
