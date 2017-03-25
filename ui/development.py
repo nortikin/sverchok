@@ -167,5 +167,6 @@ def unregister():
     if BRANCH:
         bpy.types.NODE_HT_header.remove(node_show_branch)
     bpy.types.NODE_PT_active_node_generic.remove(idname_draw)
+
     bpy.utils.unregister_class(SvCopyIDName)
     bpy.utils.unregister_class(SvViewHelpForNode)
