@@ -191,21 +191,20 @@ class SverchokPreferences(AddonPreferences):
         min=1.0, max=10.0, default=2.0)
 
     enable_center = BoolProperty(
-        name="Enable Center", description="Enable Center",
+        name="Centering ON", description="Set centering to ON in various nodes",
         default=False)
 
     def split_columns(self, panel, sizes):
-        # normalize sizes
         col2 = panel
         cols = []
-        print("")
-        print("sizes = ", sizes)
+        # print("")
+        # print("sizes = ", sizes)
         for n in range(len(sizes)):
             n1 = sizes[n]
             n2 = sum(sizes[n + 1:])
             p = n1 / (n1 + n2)
-            print("n = ", n, " n1 = ", n1, " n2 = ", n2)
-            print("ratio ", n, " = ", p)
+            # print("n = ", n, " n1 = ", n1, " n2 = ", n2)
+            # print("ratio ", n, " = ", p)
             split = col2.split(percentage=p, align=True)
             col1 = split.column()
             col2 = split.column()
@@ -235,7 +234,7 @@ class SverchokPreferences(AddonPreferences):
         # print("Draw the THEME tab UI")
         colA, colB = self.split_columns(tab, [1, 2])
 
-        # colA.label(text="")
+        colA.label(text="")
         colA.label(text="Theme update settings:")
         box = colA.box()
         box.prop(self, 'auto_apply_theme', text="Auto apply theme changes")
