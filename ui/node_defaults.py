@@ -42,8 +42,8 @@ class SvSaveNodeDefaults(bpy.types.Operator):
 
 class SvNodeDefaultsBooleans(bpy.types.PropertyGroup):
     store = bpy.props.BoolProperty(name="store", default=False)
-    name = bpy.props.StringProperty(name="name", default="")
-    var_name = bpy.props.StringProperty(name="name", default="")
+    show_name = bpy.props.StringProperty(name="show name", default="")
+    var_name = bpy.props.StringProperty(name="var name", default="")
 
 
 class SvGetNodeDefaultsDeviations(bpy.types.Operator):
@@ -54,10 +54,9 @@ class SvGetNodeDefaultsDeviations(bpy.types.Operator):
     store_bl_idname = bpy.props.StringProperty(default='')
 
     def execute(self, context):
-        # write store_bl_idname / props
-        self.dynamic_strings.add().line = ""
+
         node = context.active_node
-        collection = node.bl_id_data.SvNodeDefaultBools
+        collection = node.id_data.SvNodeDefaultBools
         collection.clear()   # could cache? else each press of this button will untick bools..
 
         for prop_name, prop_val in node.items():
@@ -66,7 +65,7 @@ class SvGetNodeDefaultsDeviations(bpy.types.Operator):
 
             show_name = node.bl_rna.properties[prop_name].name or prop_name
             item = collection.add()
-            item.name = show_name
+            item.show_name = show_name
             item.var_name = prop_name
             item.store = False
 
@@ -96,16 +95,15 @@ def node_default_deviations_draw(self, context):
     row = box.row(align=True)
     row.operator("node.sv_get_node_defaults_deviations")
 
-    # this will instead display the content of  SvNodeDefaultsBooleans(PropertyGroup)
-    # soon.
-    for prop_name, prop_val in node.items():
-        if prop_name == 'n_id':
-            continue
+    for item in node.id_data.SvNodeDefaultBools:
         row = box.row(align=True)
-        show_name = node.bl_rna.properties[prop_name].name or prop_name
-        row.enabled = False
-        row.label(show_name + ':')
-        row.prop(node, prop_name)
+        split = row.split()
+        r1 = split.row()
+        r1.enabled = False
+        # row.label(item.show_name + ':')
+        r1.prop(node, item.var_name)
+        r2 = split.split().row()
+        r2.prop(item, 'store')
 
     row = box.row()
     row.operator("node.sv_save_node_defaults")
