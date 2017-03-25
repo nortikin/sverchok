@@ -27,6 +27,17 @@ def displaying_sverchok_nodes(context):
     return context.space_data.tree_type in {'SverchCustomTreeType', 'SverchGroupTreeType'}
 
 
+class SvRestoreADefault(bpy.types.Operator):
+
+    bl_idname = "node.sv_restore_a_default"
+    bl_label = "Restore a default"
+
+    store_bl_idname = bpy.props.StringProperty(default='')
+
+    def execute(self, context):
+        # write store_bl_idname / props
+        return {'FINISHED'}
+
 
 class SvSaveNodeDefaults(bpy.types.Operator):
 
@@ -95,13 +106,14 @@ def node_default_deviations_draw(self, context):
 
     for item in node.id_data.SvNodeDefaultBools:
         row = box.row(align=True)
-        split = row.split()
+        split = row.split(0.7)
         r1 = split.row()
         r1.enabled = False
         # row.label(item.show_name + ':')
         r1.prop(node, item.var_name)
         r2 = split.split().row()
-        r2.prop(item, 'store')
+        r2.prop(item, 'store', text='')
+        r2.operator('node.sv_restore_a_default', text='', icon='X')
 
     row = box.row()
     row.operator("node.sv_save_node_defaults")
@@ -111,6 +123,7 @@ def node_default_deviations_draw(self, context):
 
 
 def register():
+    bpy.utils.register_class(SvRestoreADefault)
     bpy.utils.register_class(SvSaveNodeDefaults)
     bpy.utils.register_class(SvGetNodeDefaultsDeviations)
     bpy.utils.register_class(SvNodeDefaultsBooleans)
@@ -125,5 +138,6 @@ def unregister():
     bpy.utils.unregister_class(SvSaveNodeDefaults)
     bpy.utils.unregister_class(SvGetNodeDefaultsDeviations)
     bpy.utils.unregister_class(SvNodeDefaultsBooleans)
+    bpy.utils.unregister_class(SvRestoreADefault)
     del bpy.types.SverchCustomTreeType.sv_configure_defaults
     del bpy.types.SverchCustomTreeType.SvNodeDefaultBools
