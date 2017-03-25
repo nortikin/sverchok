@@ -56,6 +56,7 @@ class SvGetNodeDefaultsDeviations(bpy.types.Operator):
     def execute(self, context):
 
         node = context.active_node
+        node.id_data.sv_configure_defaults = True
         collection = node.id_data.SvNodeDefaultBools
         collection.clear()   # could cache? else each press of this button will untick bools..
 
@@ -87,13 +88,10 @@ def node_default_deviations_draw(self, context):
     box = layout.box()
     row = box.row()
     row.label(icon=["RIGHTARROW", "DOWNARROW_HLT"][show])
-    row.prop(node.id_data, 'sv_configure_defaults', text='configure defaults')
+    row.operator("node.sv_get_node_defaults_deviations")
 
     if show == False:
         return
-
-    row = box.row(align=True)
-    row.operator("node.sv_get_node_defaults_deviations")
 
     for item in node.id_data.SvNodeDefaultBools:
         row = box.row(align=True)
@@ -107,6 +105,9 @@ def node_default_deviations_draw(self, context):
 
     row = box.row()
     row.operator("node.sv_save_node_defaults")
+    if show:
+        row = box.row()
+        row.prop(node.id_data, 'sv_configure_defaults', text='close tab', toggle=True, icon='X')
 
 
 def register():
