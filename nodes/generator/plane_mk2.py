@@ -21,6 +21,7 @@ from bpy.props import BoolProperty, IntProperty, FloatProperty, EnumProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, fullList, match_long_repeat
+from sverchok.utils.context_managers import sv_preferences
 
 directionItems = [("XY", "XY", ""), ("YZ", "YZ", ""), ("ZX", "ZX", "")]
 
@@ -158,6 +159,9 @@ class SvPlaneNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('VerticesSocket', "Vertices")
         self.outputs.new('StringsSocket', "Edges")
         self.outputs.new('StringsSocket', "Polygons")
+
+        with sv_preferences() as prefs:
+            self.center = prefs.enable_center
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "separate")
