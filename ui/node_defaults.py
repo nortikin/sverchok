@@ -27,11 +27,6 @@ def displaying_sverchok_nodes(context):
     return context.space_data.tree_type in {'SverchCustomTreeType', 'SverchGroupTreeType'}
 
 
-class SvNodeDefaultsBooleans(bpy.types.PropertyGroup):
-    store = bpy.props.BoolProperty(name="store", default=False)
-    name = bpy.props.StringProperty(name="name", default="")
-
-
 
 class SvSaveNodeDefaults(bpy.types.Operator):
 
@@ -45,6 +40,12 @@ class SvSaveNodeDefaults(bpy.types.Operator):
         return {'FINISHED'}
 
 
+class SvNodeDefaultsBooleans(bpy.types.PropertyGroup):
+    store = bpy.props.BoolProperty(name="store", default=False)
+    name = bpy.props.StringProperty(name="name", default="")
+    var_name = bpy.props.StringProperty(name="name", default="")
+
+
 class SvGetNodeDefaultsDeviations(bpy.types.Operator):
 
     bl_idname = "node.sv_get_node_defaults_deviations"
@@ -54,6 +55,21 @@ class SvGetNodeDefaultsDeviations(bpy.types.Operator):
 
     def execute(self, context):
         # write store_bl_idname / props
+        self.dynamic_strings.add().line = ""
+        node = context.active_node
+        collection = node.bl_id_data.SvNodeDefaultBools
+        collection.clear()   # could cache? else each press of this button will untick bools..
+
+        for prop_name, prop_val in node.items():
+            if prop_name == 'n_id':
+                continue
+
+            show_name = node.bl_rna.properties[prop_name].name or prop_name
+            item = collection.add()
+            item.name = show_name
+            item.var_name = prop_name
+            item.store = False
+
         return {'FINISHED'}
 
 
@@ -79,7 +95,6 @@ def node_default_deviations_draw(self, context):
 
     row = box.row(align=True)
     row.operator("node.sv_get_node_defaults_deviations")
-    # RIGHTARROW / DOWNARROW_HLT
 
     # this will instead display the content of  SvNodeDefaultsBooleans(PropertyGroup)
     # soon.
