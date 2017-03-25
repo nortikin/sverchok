@@ -19,9 +19,17 @@
 import bpy
 import os
 
+from bpy.props import CollectionProperty
+
+
 # condidate for library (also defined in development.py)
 def displaying_sverchok_nodes(context):
     return context.space_data.tree_type in {'SverchCustomTreeType', 'SverchGroupTreeType'}
+
+
+class SvNodeDefaultsBooleans(bpy.types.PropertyGroup):
+    store = bpy.props.BoolProperty(name="store", default=False)
+
 
 
 class SvSaveNodeDefaults(bpy.types.Operator):
@@ -63,9 +71,13 @@ def node_default_deviations_draw(self, context):
 
 def register():
     bpy.utils.register_class(SvSaveNodeDefaults)
+    bpy.utils.register_class(SvNodeDefaultsBooleans)
+    bpy.types.SverchCustomTreeType.SvNodeDefaultBools = CollectionProperty(type=SvNodeDefaultsBooleans)
     bpy.types.NODE_PT_active_node_generic.append(node_default_deviations_draw)
 
 
 def unregister():
     bpy.types.NODE_PT_active_node_generic.remove(node_default_deviations_draw)
     bpy.utils.unregister_class(SvSaveNodeDefaults)
+    bpy.utils.unregister_class(SvNodeDefaultsBooleans)
+    del bpy.types.SverchCustomTreeType.SvNodeDefaultBools
