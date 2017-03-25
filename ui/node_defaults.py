@@ -19,7 +19,7 @@
 import bpy
 import os
 
-from bpy.props import CollectionProperty, BoolProperty
+from bpy.props import CollectionProperty, BoolProperty, StringProperty
 
 
 # condidate for library (also defined in development.py)
@@ -32,10 +32,11 @@ class SvRestoreADefault(bpy.types.Operator):
     bl_idname = "node.sv_restore_a_default"
     bl_label = "Restore a default"
 
-    store_bl_idname = bpy.props.StringProperty(default='')
+    prop_name = StringProperty()
 
     def execute(self, context):
-        # write store_bl_idname / props
+        node = context.active_node
+        node.property_unset(self.prop_name)
         return {'FINISHED'}
 
 
@@ -113,7 +114,7 @@ def node_default_deviations_draw(self, context):
         r1.prop(node, item.var_name)
         r2 = split.split().row()
         r2.prop(item, 'store', text='')
-        r2.operator('node.sv_restore_a_default', text='', icon='X')
+        r2.operator('node.sv_restore_a_default', text='', icon='X').prop_name=item.var_name
 
     row = box.row()
     row.operator("node.sv_save_node_defaults")
