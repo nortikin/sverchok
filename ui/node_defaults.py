@@ -68,15 +68,18 @@ def node_default_deviations_draw(self, context):
         return
     bl_idname = node.bl_idname
 
+    show = node.id_data.sv_configure_defaults
     box = layout.box()
     row = box.row()
+    row.label(icon=["RIGHTARROW", "DOWNARROW_HLT"][show])
     row.prop(node.id_data, 'sv_configure_defaults', text='configure defaults')
 
-    if node.id_data.sv_configure_defaults == False:
+    if show == False:
         return
 
     row = box.row(align=True)
     row.operator("node.sv_get_node_defaults_deviations")
+    # RIGHTARROW / DOWNARROW_HLT
 
     # this will instead display the content of  SvNodeDefaultsBooleans(PropertyGroup)
     # soon.
