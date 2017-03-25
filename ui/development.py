@@ -67,6 +67,7 @@ def node_show_branch(self, context):
         layout = self.layout
         layout.label("GIT: {}".format(BRANCH))
 
+
 class SvCopyIDName(bpy.types.Operator):
 
     bl_idname = "node.copy_bl_idname"
@@ -77,18 +78,6 @@ class SvCopyIDName(bpy.types.Operator):
 
     def execute(self, context):
         context.window_manager.clipboard = self.name
-        return {'FINISHED'}
-
-
-class SvSaveNodeDefaults(bpy.types.Operator):
-
-    bl_idname = "node.sv_save_node_defaults"
-    bl_label = "Save as defaults"
-
-    store_bl_idname = bpy.props.StringProperty(default='')
-
-    def execute(self, context):
-        # write store_bl_idname / props
         return {'FINISHED'}
 
 
@@ -162,20 +151,6 @@ def idname_draw(self, context):
     row.operator('node.view_node_help', text='online').kind = 'online'
     row.operator('node.view_node_help', text='offline').kind = 'offline'
 
-    box = layout.box()
-    row = box.row(align=True)
-    row.label('props')
-    for prop_name, prop_val in node.items():
-        if prop_name == 'n_id':
-            continue
-        row = box.row(align=True)
-        show_name = node.bl_rna.properties[prop_name].name or prop_name
-        row.enabled = False
-        row.label(show_name + ':')
-        row.prop(node, prop_name)
-    row = box.row()
-    row.operator("node.sv_save_node_defaults")
-
 
 
 def register():
@@ -183,7 +158,6 @@ def register():
     if BRANCH:
         bpy.types.NODE_HT_header.append(node_show_branch)
 
-    bpy.utils.register_class(SvSaveNodeDefaults)
     bpy.utils.register_class(SvCopyIDName)
     bpy.utils.register_class(SvViewHelpForNode)
     bpy.types.NODE_PT_active_node_generic.append(idname_draw)
@@ -195,4 +169,3 @@ def unregister():
     bpy.types.NODE_PT_active_node_generic.remove(idname_draw)
     bpy.utils.unregister_class(SvCopyIDName)
     bpy.utils.unregister_class(SvViewHelpForNode)
-    bpy.utils.unregister_class(SvSaveNodeDefaults)
