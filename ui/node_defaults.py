@@ -110,16 +110,8 @@ def node_default_deviations_draw(self, context):
     show = node.id_data.sv_configure_defaults
     box = layout.box()
     row = box.row()
+
     icon_to_show = ["RIGHTARROW", "DOWNARROW_HLT"][show]
-
-    # kludge 2 , show correct icon even if show is on, but it needs to be off.
-    # try:
-    #     item1 = node.id_data.SvNodeDefaultBools[0]
-    #     if not item.name == bl_idname:
-    #         icon_to_show = "RIGHTARROW"
-    # except:
-    #     icon_to_show = "RIGHTARROW"
-
     row.label(icon=icon_to_show)
     row.operator("node.sv_get_node_defaults_deviations")
 
@@ -128,6 +120,8 @@ def node_default_deviations_draw(self, context):
 
     for item in node.id_data.SvNodeDefaultBools:
         if not item.name == bl_idname:
+            # this is frowned upon.. setting from within a draw function.. but it's allowed!
+            node.id_data.sv_configure_defaults = False
             return # break
         row = box.row(align=True)
         split = row.split(0.7)
