@@ -70,7 +70,7 @@ class SvGetNodeDefaultsDeviations(bpy.types.Operator):
         node = context.active_node
         node.id_data.sv_configure_defaults = True
         collection = node.id_data.SvNodeDefaultBools
-        collection.clear()   # could cache? else each press of this button will untick bools..
+        collection.clear()   # could cache? else triggering this operator will untick user set bools..
 
         for prop_name, prop_val in node.items():
             if prop_name == 'n_id':
