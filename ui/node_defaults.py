@@ -117,6 +117,8 @@ def node_default_deviations_draw(self, context):
         return
 
     for item in node.id_data.SvNodeDefaultBools:
+        if not item.name == bl_idname:
+            return # break
         row = box.row(align=True)
         split = row.split(0.7)
         r1 = split.row()
