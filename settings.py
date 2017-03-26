@@ -9,16 +9,86 @@ from sverchok.utils import sv_panels_tools
 from sverchok.ui import color_def
 from sverchok.ui.sv_icons import custom_icon
 
+import os
+import json
+from pprint import pprint
+
 tab_items = [
     ("GENERAL", "General", "General settings", custom_icon("SV_PREFS_GENERAL"), 0),
     ("THEMES", "Themes", "Update nodes theme colors", custom_icon("SV_PREFS_THEMES"), 1),
     ("DEFAULTS", "Defaults", "Various node default values", custom_icon("SV_PREFS_DEVELOPER"), 2),
 ]
 
+def get_theme_fullpath():
+    """ create if it doesn't exist """
+
+    dirpath = os.path.join(bpy.utils.user_resource('DATAFILES', path='sverchok', create=True))
+    themepath = os.path.join(dirpath, 'themes')
+    fullpath = os.path.join(themepath, 'default.json')
+
+    # create theme path if it doesn't exist
+    if not os.path.exists(themepath):
+        os.mkdir(themepath)
+
+    if not os.path.exists(fullpath):
+        with open(fullpath, 'w', encoding='utf-8') as _:
+            pass
+
+    print("get theme fullpath: ", fullpath)
+
+    return fullpath
+
+
 
 class SverchokPreferences(AddonPreferences):
 
     bl_idname = __package__
+
+    def load_theme_values(self, themeName):
+        ''' load theme settings from file'''
+        print("Loading theme values")
+        # settings = {}
+
+        fullpath = get_theme_fullpath()
+
+        with open(fullpath, encoding='utf-8') as data_file:
+            settings = json.load(data_file)
+
+        print("sv theme", themeName)
+        if themeName == "default_theme":
+            themeName = "Default"
+        elif themeName == "nipon_blossom":
+            themeName = "Nipon Blossom"
+
+        # pprint(settings)
+        theme = settings[themeName]
+        nodeColors = theme["Node Colors"]
+        self.color_viz = nodeColors["Visualizer"]["color"]
+        self.color_tex = nodeColors["Text"]["color"]
+        self.color_lay = nodeColors["Layout"]["color"]
+        self.color_sce = nodeColors["Scene"]["color"]
+        self.color_gen = nodeColors["Generators"]["color"]
+        self.color_genx = nodeColors["Generators Extended"]["color"]
+
+        errorColors = theme["Error Colors"]
+        self.exception_color = errorColors["Error"]["color"]
+        self.no_data_color = errorColors["No Data"]["color"]
+
+        heatMapColors = theme["Heat Map Colors"]
+        self.heat_map_hot = heatMapColors["Heat Map Hot"]["color"]
+        self.heat_map_cold = heatMapColors["Heat Map Cold"]["color"]
+
+        # print(type(settings))
+
+    def add_theme_preset(self, context):
+        print("Adding theme preset")
+
+    def remove_theme_preset(self, context):
+        print("Removing theme preset")
+
+    def select_theme(self, context):
+        # color_def.color_callback(self, context)
+        self.load_theme_values(self.sv_theme)
 
     def update_debug_mode(self, context):
         data_structure.DEBUG_MODE = self.show_debug
@@ -36,6 +106,10 @@ class SverchokPreferences(AddonPreferences):
 
     def update_defaults(self, context):
         print("Update Defaults")
+        self.load_theme_values()
+
+        # nodes = settings.get("nodes")
+        # properties.color_viz = nodes("option_vertices")
 
     #  debugish...
     show_debug = BoolProperty(
@@ -78,7 +152,7 @@ class SverchokPreferences(AddonPreferences):
         items=color_def.themes,
         name="Theme preset",
         description="Select a theme preset",
-        update=color_def.color_callback,
+        update=select_theme,
         default="default_theme")
 
     auto_apply_theme = BoolProperty(
@@ -94,6 +168,16 @@ class SverchokPreferences(AddonPreferences):
         size=3, min=0.0, max=1.0,
         default=(1, 0.3, 0), subtype='COLOR',
         update=update_theme)
+
+    # colors = {}
+
+    # for f in range(10):Er
+    #     colors[f] = FloatVectorProperty(
+    #         name="Color", description='Next Color',
+    #         size=3, min=0.0, max=1.0,
+    #         default=(0.5, 0.5, 0.5), subtype='COLOR',
+    #         update=update_theme)
+    #     # print(f)
 
     color_tex = FloatVectorProperty(
         name="Text", description='',
@@ -194,6 +278,7 @@ class SverchokPreferences(AddonPreferences):
         name="Centering ON", description="Set centering to ON in various nodes",
         default=False)
 
+
     def split_columns(self, panel, sizes):
         col2 = panel
         cols = []
@@ -230,6 +315,11 @@ class SverchokPreferences(AddonPreferences):
         row = box.row()
         row.prop(self, "frame_change_mode", expand=True)
 
+        col = cols[2]
+        col.label(text="Enable:")
+        box = col.box()
+        box.prop(self, "enable_center")
+
     def draw_theme_tab_ui(self, tab):
         # print("Draw the THEME tab UI")
         colA, colB = self.split_columns(tab, [1, 2])
@@ -248,7 +338,10 @@ class SverchokPreferences(AddonPreferences):
         box.prop(self, "over_sized_buttons")
         box.prop(self, "enable_icon_manager")
 
-        colB.prop(self, 'sv_theme')
+        row = colB.row(align=True)
+        row.prop(self, 'sv_theme')
+        row.operator(text="", icon='ZOOMIN').fn_name="add_theme_preset"
+        # row.operator("remove_theme_preset", text="", icon='ZOOMOUT')
 
         colB1, colB2 = self.split_columns(colB, [1, 1])
 
@@ -271,6 +364,16 @@ class SverchokPreferences(AddonPreferences):
             row = box.row()
             row.prop(self, name)
 
+        # print("there are ", len(self.colors), " custom colors")
+        # colB2.label("Other Colors:")
+        # box = colB2.box()
+        # for color in self.colors.values():
+        #     print("color = ", color)
+        #     # name = color.name
+        #     row = box.row()
+        #     row.prop(self, "colors[1]")
+        #     # row.prop(self, name)
+
     def draw_defaults_tab_ui(self, tab):
         # print("Draw the DEFAULTS tab UI")
         cols = self.split_columns(tab, [1, 1, 1, 1])
@@ -288,11 +391,6 @@ class SverchokPreferences(AddonPreferences):
         for name in ['vert_size', 'edge_width']:
             row = box.row()
             row.prop(self, name)
-
-        col = cols[2]
-        col.label(text="Enable:")
-        box = col.box()
-        box.prop(self, "enable_center")
 
     def draw(self, context):
         layout = self.layout
