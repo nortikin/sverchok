@@ -17,9 +17,9 @@ This node has the following inputs:
 - **Edges**
 - **Faces**
 - **Direction**. Direction vector. Used in modes: **By side**, **By normal**, **By plane**, **By cylinder**. Exact meaning depends on selected mode.
-- **Center**. Center or base point. Used in modes: **By sphere**, **By plane**, **By cylinder**.
+- **Center**. Center or base point. Used in modes: **By sphere**, **By plane**, **By cylinder**, **By bounding box**.
 - **Percent**. How many vertices to select. Used in modes: **By side**, **By normal**.
-- **Radius**. Allowed distance from center, or line, or plane, to selected vertices. Used in modes: **By sphere**, **By plane**, **By cylinder**.
+- **Radius**. Allowed distance from center, or line, or plane, to selected vertices. Used in modes: **By sphere**, **By plane**, **By cylinder**, **By bounding box**.
 
 Parameters
 ----------
@@ -35,7 +35,10 @@ This node has the following parameters:
   * **By cylinder**. Selects vertices, which are within **Radius** from specified straight line. Line is specified by providing directing vector (**Direction** input) and a point, belonging to that line (**Center** input). For example, if you specify Direction = (0, 0, 1) and Center = (0, 0, 0), the line will by Z axis. More exactly, this mode selects vertex V if `Distance(V, Line) <= Radius`.
   * **By edge direction**. Selects edges, which are nearly parallel to specified **Direction** vector. Note that this mode considers edges as non-directed; as a result, you can change sign of all coordinates of **Direction** and it will not affect output. More exactly, this mode selects edge E if `Abs(Cos(Angle(E, Direction))) >= max - Percent * (max - min)`, where max and min are maximum and minimum values of that cosine.
   * **Normal pointing outside**. Selects faces, that have normal vectors pointing outside from specified **Center**. So you can select "faces looking outside". Number of faces to select is controlled by **Percent** input. More exactly, this mode selects face F if `Angle(Center(F) - Center, Normal(F)) >= max - Percent * (max - min)`, where max and min are maximum and minimum values of that angle.
+  * **By bounding box**. Selects vertices, that are within bounding box defined by points passed into **Center** input. **Radius** is interpreted as tolerance limit. For examples:
 
+    - If one point `(0, 0, 0)` is passed, and Radius = 1, then the node will select all vertices that have `-1 <= X <= 1`, `-1 <= Y <= 1`, `-1 <= Z <= 1`.
+    - If points `(0, 0, 0)`, `(1, 2, 3)` are passed, and Radius = 0.5, then the node will select all vertices that have `-0.5 <= X <= 1.5`, `-0.5 <= Y <= 2.5`, `-0.5 <= Z <= 3.5`.
 - **Include partial selection**. Not available in **By normal** mode. All other modes select vertices first. This parameter controls either we need to select edges and faces that have **any** of vertices selected (Include partial = True), or only edges and faces that have **all** vertices selected (Include partial = False).
 
 Outputs
@@ -78,4 +81,8 @@ Bevel only edges that are parallel to Z axis:
 Select faces that are looking outside:
 
 .. image:: https://cloud.githubusercontent.com/assets/284644/23831280/62e48816-0748-11e7-887f-b9223dbbf939.png
+
+Select faces by bounding box:
+
+.. image:: https://cloud.githubusercontent.com/assets/284644/24332028/248a1026-1261-11e7-8886-f7a0f88ecb60.png
 
