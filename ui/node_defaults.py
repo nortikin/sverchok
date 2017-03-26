@@ -37,6 +37,9 @@ class SvRestoreADefault(bpy.types.Operator):
     def execute(self, context):
         node = context.active_node
         node.property_unset(self.prop_name)
+
+        # simple way to trigger draw_buttons, a kludge for now
+        node.width = node.width
         return {'FINISHED'}
 
 
