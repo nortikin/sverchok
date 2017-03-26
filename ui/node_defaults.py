@@ -78,6 +78,7 @@ class SvSaveNodeDefaults(bpy.types.Operator):
             d = json.load(json_data)
             node = context.active_node
             collection = node.id_data.SvNodeDefaultBools
+            # .... yikes.
 
         return {'FINISHED'}
 
