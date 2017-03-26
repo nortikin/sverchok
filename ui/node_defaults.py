@@ -80,7 +80,7 @@ class SvGetNodeDefaultsDeviations(bpy.types.Operator):
         node.id_data.sv_configure_defaults = True
         collection = node.id_data.SvNodeDefaultBools
         cached_store_values = get_cache_dict(collection)    # doesn't yet test active node bl_idname
-        collection.clear()   # could cache? else triggering this operator will untick user set bools..
+        collection.clear()
 
         for prop_name, prop_val in node.items():
             if prop_name == 'n_id':
@@ -88,6 +88,7 @@ class SvGetNodeDefaultsDeviations(bpy.types.Operator):
 
             show_name = node.bl_rna.properties[prop_name].name or prop_name
             item = collection.add()
+            item.name = node.bl_idname
             item.show_name = show_name
             item.var_name = prop_name
             item.store = cached_store_values.get(item.var_name) or False
