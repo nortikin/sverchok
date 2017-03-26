@@ -75,7 +75,10 @@ class SvSaveNodeDefaults(bpy.types.Operator):
     def execute(self, context):
         fullpath = ensure_node_defaults_folder()
         with open(fullpath, 'w') as json_data:
-            d = json.load(json_data)
+            try:
+                d = json.load(json_data)
+            except:
+                print('start new defaults file')
             node = context.active_node
             collection = node.id_data.SvNodeDefaultBools
             # .... yikes.
