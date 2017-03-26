@@ -40,6 +40,8 @@ class SvRestoreADefault(bpy.types.Operator):
 
         # simple way to trigger draw_buttons, a kludge for now
         node.width = node.width
+
+        bpy.ops.node.sv_get_node_defaults_deviations()
         return {'FINISHED'}
 
 
@@ -48,7 +50,7 @@ class SvSaveNodeDefaults(bpy.types.Operator):
     bl_idname = "node.sv_save_node_defaults"
     bl_label = "Save as defaults"
 
-    store_bl_idname = bpy.props.StringProperty(default='')
+    # store_bl_idname = bpy.props.StringProperty(default='')
 
     def execute(self, context):
         # write store_bl_idname / props
@@ -66,7 +68,8 @@ class SvGetNodeDefaultsDeviations(bpy.types.Operator):
     bl_idname = "node.sv_get_node_defaults_deviations"
     bl_label = "Get deviations from default values"
 
-    store_bl_idname = bpy.props.StringProperty(default='')
+    node_name = bpy.props.StringProperty(default='')
+    node_tree_name = bpy.props.StringProperty(default='')
 
     def execute(self, context):
 
