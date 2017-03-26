@@ -110,7 +110,17 @@ def node_default_deviations_draw(self, context):
     show = node.id_data.sv_configure_defaults
     box = layout.box()
     row = box.row()
-    row.label(icon=["RIGHTARROW", "DOWNARROW_HLT"][show])
+    icon_to_show = ["RIGHTARROW", "DOWNARROW_HLT"][show]
+
+    # kludge 2 , show correct icon even if show is on, but it needs to be off.
+    # try:
+    #     item1 = node.id_data.SvNodeDefaultBools[0]
+    #     if not item.name == bl_idname:
+    #         icon_to_show = "RIGHTARROW"
+    # except:
+    #     icon_to_show = "RIGHTARROW"
+
+    row.label(icon=icon_to_show)
     row.operator("node.sv_get_node_defaults_deviations")
 
     if show == False:
@@ -131,9 +141,7 @@ def node_default_deviations_draw(self, context):
 
     row = box.row()
     row.operator("node.sv_save_node_defaults")
-    if show:
-        row = box.row()
-        row.prop(node.id_data, 'sv_configure_defaults', text='close tab', toggle=True, icon='X')
+    row.prop(node.id_data, 'sv_configure_defaults', text='close tab', toggle=True, icon='X')
 
 
 def register():
