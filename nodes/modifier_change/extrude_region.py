@@ -61,9 +61,9 @@ class SvExtrudeRegionNode(bpy.types.Node, SverchCustomTreeNode):
         ]
 
     def update_mode(self, context):
-        self.inputs['Matrices'].hide = (self.transform_mode != "Matrix")
-        self.inputs['Height'].hide = (self.transform_mode != "Normal")
-        self.inputs['Scale'].hide = (self.transform_mode != "Normal")
+        self.inputs['Matrices'].hide_safe = (self.transform_mode != "Matrix")
+        self.inputs['Height'].hide_safe = (self.transform_mode != "Normal")
+        self.inputs['Scale'].hide_safe = (self.transform_mode != "Normal")
 
         if self.transform_mode == "Normal":
             self.multiple = True
