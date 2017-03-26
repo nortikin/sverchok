@@ -63,6 +63,7 @@
     VectorMoveNode
     SvMirrorNode
     MatrixApplyNode
+    SvSimpleDeformNode
 
 ## Modifier Change
     PolygonBoomNode
