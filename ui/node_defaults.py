@@ -67,9 +67,9 @@ class SvNodeDefaultsBooleans(bpy.types.PropertyGroup):
 
 
 class SvGetNodeDefaultsDeviations(bpy.types.Operator):
-
+    """ Get all values that deviate from the node's factory defaults """
     bl_idname = "node.sv_get_node_defaults_deviations"
-    bl_label = "Get deviations from default values"
+    bl_label = "Get Node Snapshot"
 
     node_name = bpy.props.StringProperty(default='')
     node_tree_name = bpy.props.StringProperty(default='')
