@@ -29,6 +29,20 @@ def displaying_sverchok_nodes(context):
 def get_cache_dict(collection):
     return {item.var_name: item.store for item in collection.values()}
 
+def ensure_node_defaults_folder():
+
+    dirpath = os.path.join(bpy.utils.user_resource('DATAFILES', path='sverchok', create=True))
+    node_defaults_path = os.path.join(dirpath, 'node_defaults')
+    fullpath = os.path.join(node_defaults_path, 'deviations.json')
+    
+    # create node_defaults_path if it doesn't exist
+    if not os.path.exists(node_defaults_path):
+        os.mkdir(node_defaults_path)
+    
+    if not os.path.exists(fullpath):
+        with open(fullpath, 'w') as _:
+            pass
+
 
 class SvRestoreADefault(bpy.types.Operator):
 
