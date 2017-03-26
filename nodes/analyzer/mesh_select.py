@@ -41,14 +41,15 @@ class SvMeshSelectNode(bpy.types.Node, SverchCustomTreeNode):
             ("ByPlane", "By plane", "Select vertices within specified distance from plane defined by point and normal vector", 3),
             ("ByCylinder", "By cylinder", "Select vertices within specified distance from straight line defined by point and direction vector", 4),
             ("EdgeDir", "By edge direction", "Select edges that are nearly parallel to specified direction", 5),
-            ("Outside", "Normal pointing outside", "Select faces with normals pointing outside", 6)
+            ("Outside", "Normal pointing outside", "Select faces with normals pointing outside", 6),
+            ("BBox", "By bounding box", "Select vertices within bounding box of specified points", 7)
         ]
 
     def update_mode(self, context):
-        self.inputs['Radius'].hide = (self.mode not in ['BySphere', 'ByPlane', 'ByCylinder'])
-        self.inputs['Center'].hide = (self.mode not in ['BySphere', 'ByPlane', 'ByCylinder', 'Outside'])
-        self.inputs['Percent'].hide = (self.mode not in ['BySide', 'ByNormal', 'EdgeDir', 'Outside'])
-        self.inputs['Direction'].hide = (self.mode not in ['BySide', 'ByNormal', 'ByPlane', 'ByCylinder', 'EdgeDir'])
+        self.inputs['Radius'].hide_safe = (self.mode not in ['BySphere', 'ByPlane', 'ByCylinder', 'BBox'])
+        self.inputs['Center'].hide_safe = (self.mode not in ['BySphere', 'ByPlane', 'ByCylinder', 'Outside', 'BBox'])
+        self.inputs['Percent'].hide_safe = (self.mode not in ['BySide', 'ByNormal', 'EdgeDir', 'Outside'])
+        self.inputs['Direction'].hide_safe = (self.mode not in ['BySide', 'ByNormal', 'ByPlane', 'ByCylinder', 'EdgeDir'])
 
         updateNode(self, context)
 
@@ -255,6 +256,29 @@ class SvMeshSelectNode(bpy.types.Node, SverchCustomTreeNode):
 
         return out_verts_mask, out_edges_mask, out_face_mask
 
+    def by_bbox(self, vertices, edges, faces):
+        points = self.inputs['Center'].sv_get()[0]
+        radius = self.inputs['Radius'].sv_get(default=[1.0])[0][0]
+
+        # bounding box
+        mins = tuple(min([point[i] for point in points]) for i in range(3))
+        maxs = tuple(max([point[i] for point in points]) for i in range(3))
+
+        # plus radius
+        mins = tuple(mins[i] - radius for i in range(3))
+        maxs = tuple(maxs[i] + radius for i in range(3))
+
+        out_verts_mask = []
+        for vertex in vertices:
+            min_ok = all(mins[i] <= vertex[i] for i in range(3))
+            max_ok = all(vertex[i] <= maxs[i] for i in range(3))
+            out_verts_mask.append(min_ok and max_ok)
+
+        out_edges_mask = self.select_edges_by_verts(out_verts_mask, edges)
+        out_faces_mask = self.select_faces_by_verts(out_verts_mask, faces)
+
+        return out_verts_mask, out_edges_mask, out_faces_mask
+
     def process(self):
 
         if not any(output.is_linked for output in self.outputs):
@@ -284,6 +308,8 @@ class SvMeshSelectNode(bpy.types.Node, SverchCustomTreeNode):
                 vs, es, fs = self.by_edge_dir(vertices, edges, faces)
             elif self.mode == 'Outside':
                 vs, es, fs = self.by_outside(vertices, edges, faces)
+            elif self.mode == 'BBox':
+                vs, es, fs = self.by_bbox(vertices, edges, faces)
             else:
                 raise ValueError("Unknown mode: " + self.mode)
 
