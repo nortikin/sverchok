@@ -91,6 +91,19 @@ class SvSocketCommon:
             if s == self:
                 return i
 
+    @property
+    def hide_safe(self):
+        return self.hide
+
+    @hide_safe.setter
+    def hide_safe(self, value):
+        # handles both input and output.
+        if self.is_linked:
+            for link in self.links:
+                self.id_data.links.remove(link)
+
+        self.hide = value
+
     def sv_set(self, data):
         """Set output data"""
         SvSetSocket(self, data)

@@ -46,10 +46,10 @@ class SvMeshSelectNode(bpy.types.Node, SverchCustomTreeNode):
         ]
 
     def update_mode(self, context):
-        self.inputs['Radius'].hide = (self.mode not in ['BySphere', 'ByPlane', 'ByCylinder', 'BBox'])
-        self.inputs['Center'].hide = (self.mode not in ['BySphere', 'ByPlane', 'ByCylinder', 'Outside', 'BBox'])
-        self.inputs['Percent'].hide = (self.mode not in ['BySide', 'ByNormal', 'EdgeDir', 'Outside'])
-        self.inputs['Direction'].hide = (self.mode not in ['BySide', 'ByNormal', 'ByPlane', 'ByCylinder', 'EdgeDir'])
+        self.inputs['Radius'].hide_safe = (self.mode not in ['BySphere', 'ByPlane', 'ByCylinder', 'BBox'])
+        self.inputs['Center'].hide_safe = (self.mode not in ['BySphere', 'ByPlane', 'ByCylinder', 'Outside', 'BBox'])
+        self.inputs['Percent'].hide_safe = (self.mode not in ['BySide', 'ByNormal', 'EdgeDir', 'Outside'])
+        self.inputs['Direction'].hide_safe = (self.mode not in ['BySide', 'ByNormal', 'ByPlane', 'ByCylinder', 'EdgeDir'])
 
         updateNode(self, context)
 
