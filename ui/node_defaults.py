@@ -16,9 +16,10 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-import bpy
 import os
+import json
 
+import bpy
 from bpy.props import CollectionProperty, BoolProperty, StringProperty
 
 
@@ -42,6 +43,8 @@ def ensure_node_defaults_folder():
     if not os.path.exists(fullpath):
         with open(fullpath, 'w') as _:
             pass
+
+    return fullpath
 
 
 class SvRestoreADefault(bpy.types.Operator):
@@ -70,7 +73,12 @@ class SvSaveNodeDefaults(bpy.types.Operator):
     # store_bl_idname = bpy.props.StringProperty(default='')
 
     def execute(self, context):
-        # write store_bl_idname / props
+        fullpath = ensure_node_defaults_folder()
+        with open(fullpath, 'w') as json_data:
+            d = json.load(json_data)
+            node = context.active_node
+            collection = node.id_data.SvNodeDefaultBools
+
         return {'FINISHED'}
 
 
