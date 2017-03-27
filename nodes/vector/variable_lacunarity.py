@@ -71,7 +71,7 @@ avail_noise = [(t[0], t[0].title(), t[0].title(), '', t[1]) for t in noise_optio
 
 class SvVariableNode(bpy.types.Node, SverchCustomTreeNode):
     '''Variable lacunarity node'''
-    bl_idname = 'SvVariableNode'
+    bl_idname = 'SvLacunarityNode'
     bl_label = 'Variable lacunarity node'
     bl_icon = 'FORCE_TURBULENCE'
 
@@ -134,8 +134,8 @@ class SvVariableNode(bpy.types.Node, SverchCustomTreeNode):
 
 
 def register():
-    bpy.utils.register_class(SvVariableNode)
+    bpy.utils.register_class(SvLacunarityNode)
 
 
 def unregister():
-    bpy.utils.unregister_class(SvVariableNode)
+    bpy.utils.unregister_class(SvLacunarityNode)
