@@ -61,9 +61,12 @@ class SvExtrudeRegionNode(bpy.types.Node, SverchCustomTreeNode):
         ]
 
     def update_mode(self, context):
-        self.inputs['Matrices'].hide = (self.transform_mode != "Matrix")
-        self.inputs['Height'].hide = (self.transform_mode != "Normal")
-        self.inputs['Scale'].hide = (self.transform_mode != "Normal")
+        self.inputs['Matrices'].hide_safe = (self.transform_mode != "Matrix")
+        self.inputs['Height'].hide_safe = (self.transform_mode != "Normal")
+        self.inputs['Scale'].hide_safe = (self.transform_mode != "Normal")
+
+        if self.transform_mode == "Normal":
+            self.multiple = True
         updateNode(self, context)
 
     transform_mode = EnumProperty(name="Transformation mode",
@@ -77,6 +80,9 @@ class SvExtrudeRegionNode(bpy.types.Node, SverchCustomTreeNode):
                 update=updateNode)
     scale_ = FloatProperty(name="Scale", description="Extruded faces scale",
                 default=1.0, min=0.0,
+                update=updateNode)
+    multiple = BoolProperty(name="Multiple extrude", description="Extrude the same region several times",
+                default=False,
                 update=updateNode)
 
     def sv_init(self, context):
@@ -99,7 +105,12 @@ class SvExtrudeRegionNode(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "transform_mode")
-        layout.prop(self, "keep_original")
+        if self.transform_mode == "Matrix":
+            layout.prop(self, "multiple", toggle=True)
+  
+    def draw_buttons_ext(self, context, layout):
+        self.draw_buttons(context, layout)
+        layout.prop(self, "keep_original", toggle=True)
   
     def process(self):
         # inputs
@@ -134,13 +145,21 @@ class SvExtrudeRegionNode(bpy.types.Node, SverchCustomTreeNode):
 
         meshes = match_long_repeat([vertices_s, edges_s, faces_s, masks_s, matrices_s, heights_s, scales_s])
 
-        for vertices, edges, faces, masks, matrices, height, scale in zip(*meshes):
+        for vertices, edges, faces, masks, matrix_per_iteration, height_per_iteration, scale_per_iteration in zip(*meshes):
             if self.transform_mode == "Matrix":
-                if not matrices:
-                    matrices = [Matrix()]
+                if not matrix_per_iteration:
+                    matrix_per_iteration = [Matrix()]
+
+            if self.multiple:
+                if self.transform_mode == "Matrix":
+                    n_iterations = len(matrix_per_iteration)
+                else:
+                    n_iterations = max(len(height_per_iteration), len(scale_per_iteration))
+                    fullList(height_per_iteration, n_iterations)
+                    fullList(scale_per_iteration, n_iterations)
             else:
-                height = height[0]
-                scale = scale[0]
+                n_iterations = 1
+                matrix_per_iteration = [matrix_per_iteration]
 
             fullList(masks,  len(faces))
 
@@ -157,34 +176,53 @@ class SvExtrudeRegionNode(bpy.types.Node, SverchCustomTreeNode):
                     for vert in face.verts:
                         b_verts.add(vert)
 
-            new_geom = bmesh.ops.extrude_face_region(bm,
-                            geom=b_faces+list(b_edges)+list(b_verts),
-                            edges_exclude=set(),
-                            use_keep_orig=self.keep_original)['geom']
+            extrude_geom = b_faces+list(b_edges)+list(b_verts)
 
-            extruded_verts = [v for v in new_geom if isinstance(v, bmesh.types.BMVert)]
-            extruded_faces = [f for f in new_geom if isinstance(f, bmesh.types.BMFace)]
+            extruded_verts_last = []
+            extruded_edges_last = []
+            extruded_faces_last = []
 
-            if self.transform_mode == "Matrix":
-                for vertex, matrix in zip(*match_long_repeat([extruded_verts, matrices])):
-                    bmesh.ops.transform(bm, verts=[vertex], matrix=matrix, space=Matrix())
-            else:
-                #for face, height, scale in zip(extruded_faces, heights, scales):
-                normal = get_avg_normal(extruded_faces) 
-                dr = normal * height
-                center = get_faces_center(extruded_faces)
-                translation = Matrix.Translation(center)
-                rotation = normal.rotation_difference((0,0,1)).to_matrix().to_4x4()
-                m = translation * rotation
-                bmesh.ops.scale(bm, vec=(scale, scale, scale), space=m.inverted(), verts=extruded_verts)
-                bmesh.ops.translate(bm, verts=extruded_verts, vec=dr)
+            matrix_spaces = [Matrix()]
 
-            extruded_verts = [tuple(v.co) for v in extruded_verts]
+            for idx in range(n_iterations):
 
-            extruded_edges = [e for e in new_geom if isinstance(e, bmesh.types.BMEdge)]
-            extruded_edges = [tuple(v.index for v in edge.verts) for edge in extruded_edges]
+                new_geom = bmesh.ops.extrude_face_region(bm,
+                                geom=extrude_geom,
+                                edges_exclude=set(),
+                                use_keep_orig=self.keep_original)['geom']
 
-            extruded_faces = [[v.index for v in edge.verts] for edge in extruded_faces]
+                extruded_verts = [v for v in new_geom if isinstance(v, bmesh.types.BMVert)]
+                extruded_faces = [f for f in new_geom if isinstance(f, bmesh.types.BMFace)]
+
+                if self.transform_mode == "Matrix":
+                    matrices = matrix_per_iteration[idx]
+                    if isinstance(matrices, Matrix):
+                        matrices = [matrices]
+                    fullList(matrix_spaces, len(extruded_verts))
+                    for vertex_idx, (vertex, matrix) in enumerate(zip(*match_long_repeat([extruded_verts, matrices]))):
+                        bmesh.ops.transform(bm, verts=[vertex], matrix=matrix, space=matrix_spaces[vertex_idx])
+                        matrix_spaces[vertex_idx] = matrix.inverted() * matrix_spaces[vertex_idx]
+                else:
+                    height = height_per_iteration[idx]
+                    scale = scale_per_iteration[idx]
+                    
+                    normal = get_avg_normal(extruded_faces) 
+                    dr = normal * height
+                    center = get_faces_center(extruded_faces)
+                    translation = Matrix.Translation(center)
+                    rotation = normal.rotation_difference((0,0,1)).to_matrix().to_4x4()
+                    m = translation * rotation
+                    bmesh.ops.scale(bm, vec=(scale, scale, scale), space=m.inverted(), verts=extruded_verts)
+                    bmesh.ops.translate(bm, verts=extruded_verts, vec=dr)
+
+                extruded_verts_last = [tuple(v.co) for v in extruded_verts]
+
+                extruded_edges = [e for e in new_geom if isinstance(e, bmesh.types.BMEdge)]
+                extruded_edges_last = [tuple(v.index for v in edge.verts) for edge in extruded_edges]
+
+                extruded_faces_last = [[v.index for v in edge.verts] for edge in extruded_faces]
+
+                extrude_geom = new_geom
 
             new_vertices, new_edges, new_faces = pydata_from_bmesh(bm)
             bm.free()
@@ -192,9 +230,9 @@ class SvExtrudeRegionNode(bpy.types.Node, SverchCustomTreeNode):
             result_vertices.append(new_vertices)
             result_edges.append(new_edges)
             result_faces.append(new_faces)
-            result_ext_vertices.append(extruded_verts)
-            result_ext_edges.append(extruded_edges)
-            result_ext_faces.append(extruded_faces)
+            result_ext_vertices.append(extruded_verts_last)
+            result_ext_edges.append(extruded_edges_last)
+            result_ext_faces.append(extruded_faces_last)
 
         self.outputs['Vertices'].sv_set(result_vertices)
         self.outputs['Edges'].sv_set(result_edges)
