@@ -30,6 +30,7 @@ This node has the following parameters:
   - **Taper**
 
   These modes are similar to their namesakes in Blender's "Simple Deform" modifier.
+- **Angle mode**. Defines which units are used for **Angle** input. Available values are **Radian** and **Degree**. Default is **Radian**. Available only in **Twist**, **Bend** modes.
 - **Lock X**, **Lock Y**. If checked, then corresponding coordinates of vertices will not be changed. Note that this lock is applied to coordinates relative to **Origin**.
 
 Outputs
