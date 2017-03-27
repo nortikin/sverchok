@@ -23,6 +23,7 @@ from mathutils import noise
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
+from sverchok.utils.sv_seed_funcs import get_offset, seed_adjusted
 
 # helpers
 def dict_from(options, idx1, idx2):
@@ -125,12 +126,14 @@ class SvVectorFractal(bpy.types.Node, SverchCustomTreeNode):
     octaves = IntProperty(default=3, min=0, max=6, description='Octaves', name='Octaves', update=updateNode)
     offset = FloatProperty(default=0.0, name='Offset', description='Offset parameter', update=updateNode)
     gain = FloatProperty(default=0.5, description='Gain parameter', name='Gain', update=updateNode)
+    seed = IntProperty(default=0, name='Seed', update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', 'Vertices')
         self.inputs.new('StringsSocket', 'H Factor').prop_name = 'h_factor'
         self.inputs.new('StringsSocket', 'Lacunarity').prop_name = 'lacunarity'
         self.inputs.new('StringsSocket', 'Octaves').prop_name = 'octaves'
+        self.inputs.new('StringsSocket', 'Seed').prop_name = 'seed'
         self.outputs.new('StringsSocket', 'Value')
 
 
@@ -145,6 +148,7 @@ class SvVectorFractal(bpy.types.Node, SverchCustomTreeNode):
             return
 
         _noise_type = noise_dict[self.noise_type]
+        _seed = inputs['Seed'].sv_get()[0][0]
         wrapped_fractal_function = fractal_f[self.fractal_type]
 
         verts = inputs['Vertices'].sv_get()
@@ -155,12 +159,16 @@ class SvVectorFractal(bpy.types.Node, SverchCustomTreeNode):
         m_offset = inputs['Offset'].sv_get()[0] if 'Offset' in inputs else [0.0]
         m_gain = inputs['Gain'].sv_get()[0] if 'Gain' in inputs else [0.0]
         param_list = [m_h_factor, m_lacunarity, m_octaves, m_offset, m_gain]
+        print('verts out: ', verts)
 
         out = []
         for idx, vlist in enumerate(verts):
             # lazy generation of full parameters.
             params = [(param[idx] if idx < len(param) else param[-1]) for param in param_list]
-            out.append(wrapped_fractal_function(_noise_type, vlist, *params))
+            final_vert_list = [seed_adjusted(vlist, _seed)]
+
+        for fvlist in final_vert_list:
+            out.append(wrapped_fractal_function(_noise_type, fvlist, *params))
 
         outputs[0].sv_set(out)
 
