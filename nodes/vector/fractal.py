@@ -126,7 +126,7 @@ class SvVectorFractal(bpy.types.Node, SverchCustomTreeNode):
     octaves = IntProperty(default=3, min=0, max=6, description='Octaves', name='Octaves', update=updateNode)
     offset = FloatProperty(default=0.0, name='Offset', description='Offset parameter', update=updateNode)
     gain = FloatProperty(default=0.5, description='Gain parameter', name='Gain', update=updateNode)
-    seed = IntProperty(default=0, name='Seed', update=updateNode)
+    seed = IntProperty(default=0, name='Seed', update=wrapped_update)
 
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', 'Vertices')
