@@ -89,6 +89,7 @@ class SvVectorFractal(bpy.types.Node, SverchCustomTreeNode):
     def wrapped_update(self, context):
         num_inputs = len(self.inputs)
         enabled = props_enabled.get(self.fractal_type)
+        self.inputs.new('StringsSocket', 'Seed').prop_name = 'seed'
 
         if enabled == (0, 0):
             if num_inputs > 4:
