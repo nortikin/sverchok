@@ -89,24 +89,23 @@ class SvVectorFractal(bpy.types.Node, SverchCustomTreeNode):
     def wrapped_update(self, context):
         num_inputs = len(self.inputs)
         enabled = props_enabled.get(self.fractal_type)
-        self.inputs.new('StringsSocket', 'Seed').prop_name = 'seed'
 
         if enabled == (0, 0):
-            if num_inputs > 4:
-                for _ in range(num_inputs - 4):
+            if num_inputs > 5:
+                for _ in range(num_inputs - 5):
                     self.inputs.remove(self.inputs[-1])
 
         elif enabled == (1, 0):
-            if num_inputs == 4:
+            if num_inputs == 5:
                 self.inputs.new('StringsSocket', 'Offset').prop_name = 'offset'
-            elif num_inputs == 6:
+            elif num_inputs == 7:
                 self.inputs.remove(self.inputs[-1])
 
         elif enabled == (1, 1):
-            if num_inputs == 4:
+            if num_inputs == 5:
                 self.inputs.new('StringsSocket', 'Offset').prop_name = 'offset'
                 self.inputs.new('StringsSocket', 'Gain').prop_name = 'gain'
-            elif num_inputs == 5:
+            elif num_inputs == 6:
                 self.inputs.new('StringsSocket', 'Gain').prop_name = 'gain'
 
 
@@ -127,14 +126,14 @@ class SvVectorFractal(bpy.types.Node, SverchCustomTreeNode):
     octaves = IntProperty(default=3, min=0, max=6, description='Octaves', name='Octaves', update=updateNode)
     offset = FloatProperty(default=0.0, name='Offset', description='Offset parameter', update=updateNode)
     gain = FloatProperty(default=0.5, description='Gain parameter', name='Gain', update=updateNode)
-    seed = IntProperty(default=0, name='Seed', update=wrapped_update)
+    seed = IntProperty(default=0, name='Seed', update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', 'Vertices')
+        self.inputs.new('StringsSocket', 'Seed').prop_name = 'seed'
         self.inputs.new('StringsSocket', 'H Factor').prop_name = 'h_factor'
         self.inputs.new('StringsSocket', 'Lacunarity').prop_name = 'lacunarity'
         self.inputs.new('StringsSocket', 'Octaves').prop_name = 'octaves'
-        self.inputs.new('StringsSocket', 'Seed').prop_name = 'seed'
         self.outputs.new('StringsSocket', 'Value')
 
 
@@ -160,7 +159,6 @@ class SvVectorFractal(bpy.types.Node, SverchCustomTreeNode):
         m_offset = inputs['Offset'].sv_get()[0] if 'Offset' in inputs else [0.0]
         m_gain = inputs['Gain'].sv_get()[0] if 'Gain' in inputs else [0.0]
         param_list = [m_h_factor, m_lacunarity, m_octaves, m_offset, m_gain]
-        print('verts out: ', verts)
 
         out = []
         for idx, vlist in enumerate(verts):
