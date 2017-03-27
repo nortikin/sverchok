@@ -69,10 +69,21 @@ class SvSimpleDeformNode(bpy.types.Node, SverchCustomTreeNode):
                 default=0.785,
                 update=updateNode)
 
+    lock_x = BoolProperty(name="Lock X",
+                default=False,
+                update=updateNode)
+    lock_y = BoolProperty(name="Lock Y",
+                default=False,
+                update=updateNode)
+
     def draw_buttons(self, context, layout):
         layout.prop(self, "mode")
         if self.mode != 'Taper':
             layout.prop(self, "angles_mode", expand=True)
+        col = layout.column(align=True)
+        row = col.row(align=True)
+        row.prop(self, "lock_x", toggle=True)
+        row.prop(self, "lock_y", toggle=True)
 
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', "Vertices", "Vertices")
@@ -130,7 +141,7 @@ class SvSimpleDeformNode(bpy.types.Node, SverchCustomTreeNode):
 
             if not isinstance(origin, Matrix):
                 origin = Matrix(origin)
-            src_vertices = [origin * Vector(v) for v in vertices]
+            src_vertices = [origin.inverted() * Vector(v) for v in vertices]
             # bounding box
             mins = tuple(min([vertex[i] for vertex in src_vertices]) for i in range(3))
             maxs = tuple(max([vertex[i] for vertex in src_vertices]) for i in range(3))
@@ -143,7 +154,11 @@ class SvSimpleDeformNode(bpy.types.Node, SverchCustomTreeNode):
                     v = self.bend(mins, maxs, angle, vertex)
                 elif self.mode == 'Taper':
                     v = self.taper(mins, maxs, factor, vertex)
-                v = tuple(v * origin.inverted())
+                if self.lock_x:
+                    v[0] = vertex[0]
+                if self.lock_y:
+                    v[1] = vertex[1]
+                v = tuple(origin * v)
                 vs.append(v)
 
             out_vertices.append(vs)
