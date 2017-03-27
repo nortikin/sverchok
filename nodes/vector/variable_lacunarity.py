@@ -69,7 +69,7 @@ noise_dict = {t[0]: t[1] for t in noise_options}
 avail_noise = [(t[0], t[0].title(), t[0].title(), '', t[1]) for t in noise_options]
 
 
-class SvVariableNode(bpy.types.Node, SverchCustomTreeNode):
+class SvLacunarityNode(bpy.types.Node, SverchCustomTreeNode):
     '''Variable lacunarity node'''
     bl_idname = 'SvLacunarityNode'
     bl_label = 'Variable lacunarity node'
