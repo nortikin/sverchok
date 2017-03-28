@@ -10,3 +10,4 @@ Transforms
    move
    rotation
    scale
+   deform
