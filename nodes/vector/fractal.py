@@ -71,10 +71,12 @@ fractal_options = [
     ('HYBRID_MULTI_FRACTAL', 4, (1, 1), hybrid),
 ]
 
+socket_count_to_mode = {5: 'A', 6: 'B', 7: 'C'}
+fractal_type_to_mode = {'FRACTAL': 'A', 'MULTI_FRACTAL': 'A', 'HETERO': 'B', 'RIDGED': 'C', 'HYBRID': 'C'}
 
 noise_dict = dict_from(noise_options, 0, 1)
 fractal_f = dict_from(fractal_options, 0, 3)
-props_enabled = dict_from(fractal_options, 0, 2)
+# props_enabled = dict_from(fractal_options, 0, 2)
 
 avail_noise = enum_from(noise_options)
 avail_fractal = enum_from(fractal_options)
@@ -86,28 +88,42 @@ class SvVectorFractal(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Vector Fractal'
     bl_icon = 'FORCE_TURBULENCE'
 
+    def modify_input_sockets(self, action, *sockets):
+        modify = getattr(self.inputs, action)
+        for socket in sockets:
+            if action is 'remove':
+                modify(self.inputs[socket.title()])
+            elif action is 'new':
+                modify(socket.title()).prop_name = socket
+
     def wrapped_update(self, context):
         num_inputs = len(self.inputs)
-        enabled = props_enabled.get(self.fractal_type)
 
-        if enabled == (0, 0):
-            if num_inputs > 5:
-                for _ in range(num_inputs - 5):
-                    self.inputs.remove(self.inputs[-1])
+        current_mode = socket_count_to_mode.get(num_inputs)
+        new_mode = fractal_type_to_mode.get(self.fractal_type)
 
-        elif enabled == (1, 0):
-            if num_inputs == 5:
-                self.inputs.new('StringsSocket', 'Offset').prop_name = 'offset'
-            elif num_inputs == 7:
-                self.inputs.remove(self.inputs[-1])
-
-        elif enabled == (1, 1):
-            if num_inputs == 5:
-                self.inputs.new('StringsSocket', 'Offset').prop_name = 'offset'
-                self.inputs.new('StringsSocket', 'Gain').prop_name = 'gain'
-            elif num_inputs == 6:
-                self.inputs.new('StringsSocket', 'Gain').prop_name = 'gain'
-
+        change = (current_mode, new_mode)
+        # state switches
+        if change == ('A', 'B'):
+            # add offset
+            self.modify_input_sockets('new', 'offset')
+        if change == ('B', 'A'):
+            # remove offset
+            self.modify_input_sockets('remove', 'offset')
+        if change == ('B', 'C'):
+            # add gain
+            self.modify_input_sockets('new', 'gain')
+        if change == ('C', 'B'):
+            # remove gain
+            self.modify_input_sockets('remove', 'gain')
+        if change == ('C', 'A'):
+            # remove offset, gain
+            self.modify_input_sockets('remove', 'offset')
+            self.modify_input_sockets('remove', 'gain')
+        if change == ('A', 'C'):
+            # add offset, gain
+            self.modify_input_sockets('new', 'offset')
+            self.modify_input_sockets('new', 'gain')
 
     noise_type = EnumProperty(
         items=avail_noise,
@@ -143,6 +159,7 @@ class SvVectorFractal(bpy.types.Node, SverchCustomTreeNode):
 
     def process(self):
         inputs, outputs = self.inputs, self.outputs
+        print('fractal_type is: ', self.fractal_type)
 
         if not outputs[0].is_linked:
             return
