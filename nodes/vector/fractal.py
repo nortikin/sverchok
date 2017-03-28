@@ -94,7 +94,8 @@ class SvVectorFractal(bpy.types.Node, SverchCustomTreeNode):
 
     def mk_input_sockets(self, *sockets):
         for socket in sockets:
-            self.inputs.new(socket.title()).prop_name = socket
+            print(socket.title())
+            self.inputs.new('StringSocket', socket.title()).prop_name = socket
 
     def rm_input_sockets(self, *sockets):
         for socket in sockets:
@@ -112,23 +113,21 @@ class SvVectorFractal(bpy.types.Node, SverchCustomTreeNode):
         if change == ('A', 'B'):
             # add offset
             self.mk_input_sockets('offset')
-        if change == ('B', 'A'):
+        elif change == ('B', 'A'):
             # remove offset
             self.rm_input_sockets('offset')
-        if change == ('B', 'C'):
+        elif change == ('B', 'C'):
             # add gain
             self.mk_input_sockets('gain')
-        if change == ('C', 'B'):
+        elif change == ('C', 'B'):
             # remove gain
             self.rm_input_sockets('gain')
-        if change == ('C', 'A'):
+        elif change == ('C', 'A'):
             # remove offset, gain
-            self.rm_input_sockets('offset')
-            self.rm_input_sockets('gain')
-        if change == ('A', 'C'):
+            self.rm_input_sockets('offset', 'gain')
+        elif change == ('A', 'C'):
             # add offset, gain
-            self.rm_input_sockets('offset')
-            self.rm_input_sockets('gain')
+            self.rm_input_sockets('offset', 'gain')
 
     noise_type = EnumProperty(
         items=avail_noise,
