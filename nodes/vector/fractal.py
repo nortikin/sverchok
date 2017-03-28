@@ -109,25 +109,19 @@ class SvVectorFractal(bpy.types.Node, SverchCustomTreeNode):
         new_mode = fractal_type_to_mode.get(self.fractal_type)
 
         change = (current_mode, new_mode)
-        # state switches
-        if change == ('A', 'B'):
-            # add offset
-            self.mk_input_sockets('offset')
-        elif change == ('B', 'A'):
-            # remove offset
-            self.rm_input_sockets('offset')
-        elif change == ('B', 'C'):
-            # add gain
-            self.mk_input_sockets('gain')
-        elif change == ('C', 'B'):
-            # remove gain
-            self.rm_input_sockets('gain')
-        elif change == ('C', 'A'):
-            # remove offset, gain
-            self.rm_input_sockets('offset', 'gain')
-        elif change == ('A', 'C'):
-            # add offset, gain
-            self.mk_input_sockets('offset', 'gain')
+        add = self.mk_input_sockets
+        remove = self.rm_input_sockets
+        actionables = {
+            ('A', 'B'):  (add, ('offset',)),
+            ('B', 'A'):  (remove, ('offset',)),
+            ('B', 'C'):  (add, ('gain',)),
+            ('C', 'B'):  (remove, ('gain',)),
+            ('A', 'C'):  (add, ('offset', 'gain')),
+            ('C', 'A'):  (remove, ('offset', 'gain'))
+               }.get(change)
+        if actionables:
+            socket_func, names = actionables
+            socket_func(*names)
 
     noise_type = EnumProperty(
         items=avail_noise,
@@ -187,8 +181,8 @@ class SvVectorFractal(bpy.types.Node, SverchCustomTreeNode):
             params = [(param[idx] if idx < len(param) else param[-1]) for param in param_list]
             final_vert_list = [seed_adjusted(vlist, _seed)]
 
-        for fvlist in final_vert_list:
-            out.append(wrapped_fractal_function(_noise_type, fvlist, *params))
+            for fvlist in final_vert_list:
+                out.append(wrapped_fractal_function(_noise_type, fvlist, *params))
 
         outputs[0].sv_set(out)
 
