@@ -72,7 +72,11 @@ fractal_options = [
 ]
 
 socket_count_to_mode = {5: 'A', 6: 'B', 7: 'C'}
-fractal_type_to_mode = {'FRACTAL': 'A', 'MULTI_FRACTAL': 'A', 'HETERO': 'B', 'RIDGED': 'C', 'HYBRID': 'C'}
+fractal_type_to_mode = {'FRACTAL': 'A',
+                        'MULTI_FRACTAL': 'A',
+                        'HETERO_TERRAIN': 'B',
+                        'RIDGED_MULTI_FRACTAL': 'C',
+                        'HYBRID_MULTI_FRACTAL': 'C'}
 
 noise_dict = dict_from(noise_options, 0, 1)
 fractal_f = dict_from(fractal_options, 0, 3)
@@ -88,16 +92,17 @@ class SvVectorFractal(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Vector Fractal'
     bl_icon = 'FORCE_TURBULENCE'
 
-    def modify_input_sockets(self, action, *sockets):
-        modify = getattr(self.inputs, action)
+    def mk_input_sockets(self, *sockets):
         for socket in sockets:
-            if action is 'remove':
-                modify(self.inputs[socket.title()])
-            elif action is 'new':
-                modify(socket.title()).prop_name = socket
+            self.inputs.new(socket.title()).prop_name = socket
+
+    def rm_input_sockets(self, *sockets):
+        for socket in sockets:
+            self.inputs.remove(self.inputs[socket.title()])
 
     def wrapped_update(self, context):
         num_inputs = len(self.inputs)
+        print(self.fractal_type)
 
         current_mode = socket_count_to_mode.get(num_inputs)
         new_mode = fractal_type_to_mode.get(self.fractal_type)
@@ -106,24 +111,24 @@ class SvVectorFractal(bpy.types.Node, SverchCustomTreeNode):
         # state switches
         if change == ('A', 'B'):
             # add offset
-            self.modify_input_sockets('new', 'offset')
+            self.mk_input_sockets('offset')
         if change == ('B', 'A'):
             # remove offset
-            self.modify_input_sockets('remove', 'offset')
+            self.rm_input_sockets('offset')
         if change == ('B', 'C'):
             # add gain
-            self.modify_input_sockets('new', 'gain')
+            self.mk_input_sockets('gain')
         if change == ('C', 'B'):
             # remove gain
-            self.modify_input_sockets('remove', 'gain')
+            self.rm_input_sockets('gain')
         if change == ('C', 'A'):
             # remove offset, gain
-            self.modify_input_sockets('remove', 'offset')
-            self.modify_input_sockets('remove', 'gain')
+            self.rm_input_sockets('offset')
+            self.rm_input_sockets('gain')
         if change == ('A', 'C'):
             # add offset, gain
-            self.modify_input_sockets('new', 'offset')
-            self.modify_input_sockets('new', 'gain')
+            self.rm_input_sockets('offset')
+            self.rm_input_sockets('gain')
 
     noise_type = EnumProperty(
         items=avail_noise,
