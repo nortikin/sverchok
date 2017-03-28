@@ -50,7 +50,7 @@ from sverchok.core.socket_conversions import (
     is_vector_to_matrix,
     is_matrix_to_vector)
 
-from sverchok.ui import color_def
+from sverchok.ui import sv_themes
 
 
 def process_from_socket(self, context):
@@ -438,7 +438,7 @@ class SverchCustomTreeNode:
         update_error_nodes(ng, self.name, err)
 
     def set_color(self):
-        color = color_def.get_color(self.bl_idname)
+        color = sv_themes.get_node_color(self.bl_idname)
         if color:
             self.use_custom_color = True
             self.color = color
