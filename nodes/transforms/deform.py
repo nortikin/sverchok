@@ -167,10 +167,10 @@ class SvSimpleDeformNode(bpy.types.Node, SverchCustomTreeNode):
 
         vertices_s = self.inputs['Vertices'].sv_get(default=[[]])
         origins = self.inputs['Origin'].sv_get(default=[Matrix()])
-        angles_s = self.inputs['Angle'].sv_get(default=[[pi/4]])
-        factors_s = self.inputs['Factor'].sv_get(default=[[0.785]])
-        low_limits_s = self.inputs['LowLimit'].sv_get(default=[[0.0]])
-        hi_limts_s = self.inputs['HighLimit'].sv_get(default=[[100.0]])
+        angles_s = self.inputs['Angle'].sv_get()
+        factors_s = self.inputs['Factor'].sv_get()
+        low_limits_s = self.inputs['LowLimit'].sv_get()
+        hi_limts_s = self.inputs['HighLimit'].sv_get()
 
         out_vertices = []
 
