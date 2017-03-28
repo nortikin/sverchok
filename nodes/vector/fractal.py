@@ -103,7 +103,7 @@ class SvVectorFractal(bpy.types.Node, SverchCustomTreeNode):
 
     def wrapped_update(self, context):
         num_inputs = len(self.inputs)
-        print(self.fractal_type)
+        # print(self.fractal_type)
 
         current_mode = socket_count_to_mode.get(num_inputs)
         new_mode = fractal_type_to_mode.get(self.fractal_type)
@@ -127,7 +127,7 @@ class SvVectorFractal(bpy.types.Node, SverchCustomTreeNode):
             self.rm_input_sockets('offset', 'gain')
         elif change == ('A', 'C'):
             # add offset, gain
-            self.rm_input_sockets('offset', 'gain')
+            self.mk_input_sockets('offset', 'gain')
 
     noise_type = EnumProperty(
         items=avail_noise,
