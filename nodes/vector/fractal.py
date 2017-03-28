@@ -95,7 +95,7 @@ class SvVectorFractal(bpy.types.Node, SverchCustomTreeNode):
     def mk_input_sockets(self, *sockets):
         for socket in sockets:
             print(socket.title())
-            self.inputs.new('StringSocket', socket.title()).prop_name = socket
+            self.inputs.new('StringsSocket', socket.title()).prop_name = socket
 
     def rm_input_sockets(self, *sockets):
         for socket in sockets:
