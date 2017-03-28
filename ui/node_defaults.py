@@ -65,6 +65,22 @@ class SvRestoreADefault(bpy.types.Operator):
         return {'FINISHED'}
 
 
+def dict_from_collection(node, collection):
+    bl_idname = None
+    defaults = {}
+    for item in collection:
+        if item.store:
+            bl_idname = item.name
+
+            # this needs generic conversion for serialization
+            defaults[item.var_name] = getattr(node, item.var_name)
+
+    node_dict = {}
+    if bl_idname and defaults:
+        return {bl_idname: defaults}
+    else:
+        return
+
 class SvSaveNodeDefaults(bpy.types.Operator):
 
     bl_idname = "node.sv_save_node_defaults"
@@ -81,7 +97,10 @@ class SvSaveNodeDefaults(bpy.types.Operator):
                 print('start new defaults file')
             node = context.active_node
             collection = node.id_data.SvNodeDefaultBools
-            # .... yikes.
+            
+            node_dict = dict_from_collection(node, collection)
+            print(node_dict)
+            # perform backup first? or leap of faith.
 
         return {'FINISHED'}
 
