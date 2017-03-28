@@ -56,7 +56,7 @@ avail_noise = [(t[0], t[0].title(), t[0].title(), '', t[1]) for t in noise_optio
 class SvLacunarityNode(bpy.types.Node, SverchCustomTreeNode):
     '''Variable lacunarity node'''
     bl_idname = 'SvLacunarityNode'
-    bl_label = 'Variable lacunarity node'
+    bl_label = 'Variable Lacunarity Node'
     bl_icon = 'FORCE_TURBULENCE'
 
     noise_type1 = EnumProperty(
