@@ -18,7 +18,7 @@
 
 
 import bpy
-from bpy.props import EnumProperty, IntProperty, FloatProperty
+from bpy.props import EnumProperty, IntProperty, FloatProperty, StringProperty
 from mathutils import noise
 
 from sverchok.node_tree import SverchCustomTreeNode
@@ -80,7 +80,6 @@ fractal_type_to_mode = {'FRACTAL': 'A',
 
 noise_dict = dict_from(noise_options, 0, 1)
 fractal_f = dict_from(fractal_options, 0, 3)
-# props_enabled = dict_from(fractal_options, 0, 2)
 
 avail_noise = enum_from(noise_options)
 avail_fractal = enum_from(fractal_options)
@@ -103,7 +102,6 @@ class SvVectorFractal(bpy.types.Node, SverchCustomTreeNode):
 
     def wrapped_update(self, context):
         num_inputs = len(self.inputs)
-        # print(self.fractal_type)
 
         current_mode = socket_count_to_mode.get(num_inputs)
         new_mode = fractal_type_to_mode.get(self.fractal_type)
@@ -122,6 +120,7 @@ class SvVectorFractal(bpy.types.Node, SverchCustomTreeNode):
         if actionables:
             socket_func, names = actionables
             socket_func(*names)
+        updateNode(self, context)
 
     noise_type = EnumProperty(
         items=avail_noise,
@@ -150,14 +149,12 @@ class SvVectorFractal(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('StringsSocket', 'Octaves').prop_name = 'octaves'
         self.outputs.new('StringsSocket', 'Value')
 
-
     def draw_buttons(self, context, layout):
         layout.prop(self, 'fractal_type', text="Type")
         layout.prop(self, 'noise_type', text="Type")
 
     def process(self):
         inputs, outputs = self.inputs, self.outputs
-        print('fractal_type is: ', self.fractal_type)
 
         if not outputs[0].is_linked:
             return
@@ -181,8 +178,7 @@ class SvVectorFractal(bpy.types.Node, SverchCustomTreeNode):
             params = [(param[idx] if idx < len(param) else param[-1]) for param in param_list]
             final_vert_list = [seed_adjusted(vlist, _seed)]
 
-            for fvlist in final_vert_list:
-                out.append(wrapped_fractal_function(_noise_type, fvlist, *params))
+            out.append(wrapped_fractal_function(_noise_type, final_vert_list[0], *params))
 
         outputs[0].sv_set(out)
 
