@@ -1,7 +1,8 @@
 Variable Lacunarity
 ===================
 
-This noise node takes a list of Vectors and outputs a list of equal length containing either Floats in the range -1.0 to 1.0. The seed value permits you to apply a different noise calculation to identical inputs.
+This noise node takes a list of Vectors and outputs a list of equal length containing either Floats in the range -1.0 to 1.0.
+The seed value permits you to apply a different noise calculation to identical inputs.
 This nodes take two noise basis and modulate them by a factor(Distortion).
 
 Inputs & Parameters
@@ -10,7 +11,7 @@ Inputs & Parameters
 +----------------+-------------------------------------------------------------------------+
 | Parameters     | Description                                                             |
 +================+=========================================================================+
-| Noise Type     | Pick between several noise types                                        |
+| **Noise Type** | Pick between several noise types                                        |
 |                |                                                                         |
 |                | - Blender                                                               |
 |                | - Cell Noise                                                            |
@@ -25,9 +26,9 @@ Inputs & Parameters
 |                |                                                                         |
 |                | See mathutils.noise docs ( Noise_ )                                     |
 +----------------+-------------------------------------------------------------------------+
-| Seed           | Accepts int values.                                                     |
+| **Seed**       | Accepts int values.                                                     |
 +----------------+-------------------------------------------------------------------------+
-| Distortion     | Accepts floats values, modulate the two noise basis.        |
+| **Distortion** | Accepts floats values, modulate the two noise basis.        |
 +----------------+-------------------------------------------------------------------------+
 
 Examples
