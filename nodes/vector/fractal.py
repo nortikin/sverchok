@@ -64,22 +64,24 @@ noise_options = [
 ]
 
 fractal_options = [
-    ('FRACTAL', 0, (0, 0), fractal),
-    ('MULTI_FRACTAL', 1, (0, 0), multifractal),
-    ('HETERO_TERRAIN', 2, (1, 0), hetero),
-    ('RIDGED_MULTI_FRACTAL', 3, (1, 1), ridged),
-    ('HYBRID_MULTI_FRACTAL', 4, (1, 1), hybrid),
+    ('FRACTAL', 0, fractal),
+    ('MULTI_FRACTAL', 1, multifractal),
+    ('HETERO_TERRAIN', 2, hetero),
+    ('RIDGED_MULTI_FRACTAL', 3, ridged),
+    ('HYBRID_MULTI_FRACTAL', 4, hybrid),
 ]
 
 socket_count_to_mode = {5: 'A', 6: 'B', 7: 'C'}
-fractal_type_to_mode = {'FRACTAL': 'A',
-                        'MULTI_FRACTAL': 'A',
-                        'HETERO_TERRAIN': 'B',
-                        'RIDGED_MULTI_FRACTAL': 'C',
-                        'HYBRID_MULTI_FRACTAL': 'C'}
+fractal_type_to_mode = {
+    'FRACTAL': 'A',
+    'MULTI_FRACTAL': 'A',
+    'HETERO_TERRAIN': 'B',
+    'RIDGED_MULTI_FRACTAL': 'C',
+    'HYBRID_MULTI_FRACTAL': 'C'
+}
 
 noise_dict = dict_from(noise_options, 0, 1)
-fractal_f = dict_from(fractal_options, 0, 3)
+fractal_f = dict_from(fractal_options, 0, 2)
 
 avail_noise = enum_from(noise_options)
 avail_fractal = enum_from(fractal_options)
