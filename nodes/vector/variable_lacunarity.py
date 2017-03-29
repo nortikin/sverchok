@@ -56,7 +56,7 @@ avail_noise = [(t[0], t[0].title(), t[0].title(), '', t[1]) for t in noise_optio
 class SvLacunarityNode(bpy.types.Node, SverchCustomTreeNode):
     '''Variable lacunarity node'''
     bl_idname = 'SvLacunarityNode'
-    bl_label = 'Variable Lacunarity Node'
+    bl_label = 'Variable Lacunarity'
     bl_icon = 'FORCE_TURBULENCE'
 
     noise_type1 = EnumProperty(
@@ -80,7 +80,7 @@ class SvLacunarityNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('VerticesSocket', 'Vertices')
         self.inputs.new('StringsSocket', 'Seed').prop_name = 'seed'
         self.inputs.new('StringsSocket', 'Distrortion').prop_name = 'distortion'
-        self.outputs.new('StringsSocket', 'Noise S')
+        self.outputs.new('StringsSocket', 'Value')
 
     def draw_buttons(self, context, layout):
         layout.prop(self, 'noise_type1', text="Type")
