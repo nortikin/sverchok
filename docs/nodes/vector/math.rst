@@ -42,10 +42,6 @@ Length               u        s         distance(u, origin)
 Distance             u, v     s         distance(u, v)
 Normalize            u        w         scale vector to length 1
 Negate               u        w         reverse sign of components
-Noise Vector         u        w         [see mathutils]()
-Noise Scalar         u        s         [see mathutils]()
-Scalar Cell noise    u        s         [see mathutils]()
-Vector Cell noise    u        w         [see mathutils]()
 Project              u, v     w         u project v
 Reflect              u, v     w         u reflect v
 Multiply Scalar      u, s     w         multiply(vector, scalar)
