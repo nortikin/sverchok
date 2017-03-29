@@ -16,14 +16,12 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-import operator
-
 import bpy
 from bpy.props import EnumProperty, IntProperty, FloatProperty
 from mathutils import noise
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (updateNode, Vector_degenerate)
+from sverchok.data_structure import updateNode
 from sverchok.utils.sv_seed_funcs import get_offset, seed_adjusted
 
 # noise nodes
