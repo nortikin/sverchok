@@ -22,6 +22,7 @@ from mathutils import noise, Vector
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode, Vector_degenerate, fullList)
+from sverchok.utils.sv_seed_funcs import get_offset, seed_adjusted
 
 # noise nodes
 # from http://www.blender.org/documentation/blender_python_api_current/mathutils.noise.html
@@ -44,21 +45,6 @@ noise_dict = {t[0]: t[1] for t in noise_options}
 avail_noise = [(t[0], t[0].title(), t[0].title(), '', t[1]) for t in noise_options]
 
 turbulence_f = {'SCALAR': noise.turbulence, 'VECTOR': noise.turbulence_vector}
-
-def get_offset(seed):
-    if seed == 0:
-        offset = [0.0, 0.0, 0.0]
-    else:
-        noise.seed_set(seed)
-        offset = noise.random_unit_vector() * 10.0
-    return offset
-
-def seed_adjusted(vert_list, seed):
-    if seed == 0.0:
-        return vert_list
-
-    ox = get_offset(seed)
-    return [[v[0] + ox[0], v[1] + ox[1], v[2] + ox[2]] for v in vert_list]
 
 class SvTurbulenceNode(bpy.types.Node, SverchCustomTreeNode):
     '''Vector Turbulence node'''
