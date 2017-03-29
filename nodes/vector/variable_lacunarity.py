@@ -112,7 +112,7 @@ class SvLacunarityNode(bpy.types.Node, SverchCustomTreeNode):
                 seed = ' + ({0})'.format(str(int(self.seed)))
             else:
                 seed = ' + seed(s)'
-            return self.noise_type.title() + seed
+            return self.noise_type1.title() + ' + ' + self.noise_type2.title() + seed
         else:
             return self.label or self.name
 
