@@ -18,7 +18,7 @@
 
 
 import bpy
-from bpy.props import EnumProperty, IntProperty, FloatProperty, StringProperty
+from bpy.props import EnumProperty, IntProperty, FloatProperty
 from mathutils import noise
 
 from sverchok.node_tree import SverchCustomTreeNode
@@ -112,13 +112,13 @@ class SvVectorFractal(bpy.types.Node, SverchCustomTreeNode):
         add = self.mk_input_sockets
         remove = self.rm_input_sockets
         actionables = {
-            ('A', 'B'):  (add, ('offset',)),
-            ('B', 'A'):  (remove, ('offset',)),
-            ('B', 'C'):  (add, ('gain',)),
-            ('C', 'B'):  (remove, ('gain',)),
-            ('A', 'C'):  (add, ('offset', 'gain')),
-            ('C', 'A'):  (remove, ('offset', 'gain'))
-               }.get(change)
+            ('A', 'B'): (add, ('offset',)),
+            ('B', 'A'): (remove, ('offset',)),
+            ('B', 'C'): (add, ('gain',)),
+            ('C', 'B'): (remove, ('gain',)),
+            ('A', 'C'): (add, ('offset', 'gain')),
+            ('C', 'A'): (remove, ('offset', 'gain'))}.get(change)
+
         if actionables:
             socket_func, names = actionables
             socket_func(*names)
