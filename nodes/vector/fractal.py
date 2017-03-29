@@ -23,6 +23,7 @@ from mathutils import noise
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
+from sverchok.utils.sv_seed_funcs import get_offset, seed_adjusted
 
 # helpers
 def dict_from(options, idx1, idx2):
@@ -63,17 +64,24 @@ noise_options = [
 ]
 
 fractal_options = [
-    ('FRACTAL', 0, (0, 0), fractal),
-    ('MULTI_FRACTAL', 1, (0, 0), multifractal),
-    ('HETERO_TERRAIN', 2, (1, 0), hetero),
-    ('RIDGED_MULTI_FRACTAL', 3, (1, 1), ridged),
-    ('HYBRID_MULTI_FRACTAL', 4, (1, 1), hybrid),
+    ('FRACTAL', 0, fractal),
+    ('MULTI_FRACTAL', 1, multifractal),
+    ('HETERO_TERRAIN', 2, hetero),
+    ('RIDGED_MULTI_FRACTAL', 3, ridged),
+    ('HYBRID_MULTI_FRACTAL', 4, hybrid),
 ]
 
+socket_count_to_mode = {5: 'A', 6: 'B', 7: 'C'}
+fractal_type_to_mode = {
+    'FRACTAL': 'A',
+    'MULTI_FRACTAL': 'A',
+    'HETERO_TERRAIN': 'B',
+    'RIDGED_MULTI_FRACTAL': 'C',
+    'HYBRID_MULTI_FRACTAL': 'C'
+}
 
 noise_dict = dict_from(noise_options, 0, 1)
-fractal_f = dict_from(fractal_options, 0, 3)
-props_enabled = dict_from(fractal_options, 0, 2)
+fractal_f = dict_from(fractal_options, 0, 2)
 
 avail_noise = enum_from(noise_options)
 avail_fractal = enum_from(fractal_options)
@@ -85,28 +93,35 @@ class SvVectorFractal(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Vector Fractal'
     bl_icon = 'FORCE_TURBULENCE'
 
+    def mk_input_sockets(self, *sockets):
+        for socket in sockets:
+            print(socket.title())
+            self.inputs.new('StringsSocket', socket.title()).prop_name = socket
+
+    def rm_input_sockets(self, *sockets):
+        for socket in sockets:
+            self.inputs.remove(self.inputs[socket.title()])
+
     def wrapped_update(self, context):
-        num_inputs = len(self.inputs)
-        enabled = props_enabled.get(self.fractal_type)
+        add = self.mk_input_sockets
+        remove = self.rm_input_sockets
 
-        if enabled == (0, 0):
-            if num_inputs > 4:
-                for _ in range(num_inputs - 4):
-                    self.inputs.remove(self.inputs[-1])
+        current_mode = socket_count_to_mode.get(len(self.inputs))
+        new_mode = fractal_type_to_mode.get(self.fractal_type)
 
-        elif enabled == (1, 0):
-            if num_inputs == 4:
-                self.inputs.new('StringsSocket', 'Offset').prop_name = 'offset'
-            elif num_inputs == 6:
-                self.inputs.remove(self.inputs[-1])
+        actionables = {
+            'AB': (add, ('offset',)),
+            'BA': (remove, ('offset',)),
+            'BC': (add, ('gain',)),
+            'CB': (remove, ('gain',)),
+            'AC': (add, ('offset', 'gain')),
+            'CA': (remove, ('offset', 'gain'))
+            }.get(current_mode + new_mode)
 
-        elif enabled == (1, 1):
-            if num_inputs == 4:
-                self.inputs.new('StringsSocket', 'Offset').prop_name = 'offset'
-                self.inputs.new('StringsSocket', 'Gain').prop_name = 'gain'
-            elif num_inputs == 5:
-                self.inputs.new('StringsSocket', 'Gain').prop_name = 'gain'
-
+        if actionables:
+            socket_func, names = actionables
+            socket_func(*names)
+        updateNode(self, context)
 
     noise_type = EnumProperty(
         items=avail_noise,
@@ -125,14 +140,15 @@ class SvVectorFractal(bpy.types.Node, SverchCustomTreeNode):
     octaves = IntProperty(default=3, min=0, max=6, description='Octaves', name='Octaves', update=updateNode)
     offset = FloatProperty(default=0.0, name='Offset', description='Offset parameter', update=updateNode)
     gain = FloatProperty(default=0.5, description='Gain parameter', name='Gain', update=updateNode)
+    seed = IntProperty(default=0, name='Seed', update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', 'Vertices')
+        self.inputs.new('StringsSocket', 'Seed').prop_name = 'seed'
         self.inputs.new('StringsSocket', 'H Factor').prop_name = 'h_factor'
         self.inputs.new('StringsSocket', 'Lacunarity').prop_name = 'lacunarity'
         self.inputs.new('StringsSocket', 'Octaves').prop_name = 'octaves'
         self.outputs.new('StringsSocket', 'Value')
-
 
     def draw_buttons(self, context, layout):
         layout.prop(self, 'fractal_type', text="Type")
@@ -145,6 +161,7 @@ class SvVectorFractal(bpy.types.Node, SverchCustomTreeNode):
             return
 
         _noise_type = noise_dict[self.noise_type]
+        _seed = inputs['Seed'].sv_get()[0][0]
         wrapped_fractal_function = fractal_f[self.fractal_type]
 
         verts = inputs['Vertices'].sv_get()
@@ -160,7 +177,9 @@ class SvVectorFractal(bpy.types.Node, SverchCustomTreeNode):
         for idx, vlist in enumerate(verts):
             # lazy generation of full parameters.
             params = [(param[idx] if idx < len(param) else param[-1]) for param in param_list]
-            out.append(wrapped_fractal_function(_noise_type, vlist, *params))
+            final_vert_list = [seed_adjusted(vlist, _seed)]
+
+            out.append(wrapped_fractal_function(_noise_type, final_vert_list[0], *params))
 
         outputs[0].sv_set(out)
 

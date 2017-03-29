@@ -91,7 +91,7 @@ utils_modules = [
     # UI text editor ui
     "text_editor_submenu", "text_editor_plugins",
     # UI operators and tools
-    "sv_panels_tools", "sv_gist_tools", "sv_IO_panel_tools",
+    "sv_panels_tools", "sv_gist_tools", "sv_IO_panel_tools", "sv_load_zipped_blend",
     "monad", "sv_help",
     #"loadscript",
     "debug_script", "sv_update_utils"

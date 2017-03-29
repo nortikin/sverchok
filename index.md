@@ -63,6 +63,7 @@
     VectorMoveNode
     SvMirrorNode
     MatrixApplyNode
+    SvSimpleDeformNode
 
 ## Modifier Change
     PolygonBoomNode
@@ -168,6 +169,7 @@
     SvVertSortNode
     SvNoiseNodeMK2
     SvVectorFractal
+    SvLacunarityNode
     SvTurbulenceNode
     SvVectorRewire
     svAxisInputNode
