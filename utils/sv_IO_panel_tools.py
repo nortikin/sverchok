@@ -904,6 +904,9 @@ class SvBlendToZip(bpy.types.Operator):
         return {'FINISHED'}
 
 
+
+
+
 class SvIOPanelProperties(bpy.types.PropertyGroup):
 
     new_nodetree_name = StringProperty(
