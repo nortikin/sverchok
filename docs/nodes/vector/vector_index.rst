@@ -11,7 +11,7 @@ Vector
    interpolation_stripes
    interpolation_mk3
    line_evaluate
-   math
+   math_mk2
    noise_mk2
    fractal
    lerp
@@ -22,4 +22,5 @@ Vector
    vector_polar_out
    vertices_delete_doubles
    vertices_sort
+   variable_lacunarity
    turbulence

@@ -34,6 +34,9 @@ but in case they aren't then here is a quick overview:
 =================== ========= ========= =================================
 Tables              inputs    outputs   description
 =================== ========= ========= =================================
+Scale YZ             v, s     w         scale vector by amount
+Scale XZ             v, s     w         scale vector by amount
+Scale XY             v, s     w         scale vector by amount
 Cross product        u, v     s         u cross v
 Dot product          u, v     s         u dot v
 Add                  u, v     w         u + v
