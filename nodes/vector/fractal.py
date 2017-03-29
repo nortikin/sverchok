@@ -103,21 +103,20 @@ class SvVectorFractal(bpy.types.Node, SverchCustomTreeNode):
             self.inputs.remove(self.inputs[socket.title()])
 
     def wrapped_update(self, context):
-        num_inputs = len(self.inputs)
-
-        current_mode = socket_count_to_mode.get(num_inputs)
-        new_mode = fractal_type_to_mode.get(self.fractal_type)
-
-        change = (current_mode, new_mode)
         add = self.mk_input_sockets
         remove = self.rm_input_sockets
+
+        current_mode = socket_count_to_mode.get(len(self.inputs))
+        new_mode = fractal_type_to_mode.get(self.fractal_type)
+
         actionables = {
-            ('A', 'B'): (add, ('offset',)),
-            ('B', 'A'): (remove, ('offset',)),
-            ('B', 'C'): (add, ('gain',)),
-            ('C', 'B'): (remove, ('gain',)),
-            ('A', 'C'): (add, ('offset', 'gain')),
-            ('C', 'A'): (remove, ('offset', 'gain'))}.get(change)
+            'AB': (add, ('offset',)),
+            'BA': (remove, ('offset',)),
+            'BC': (add, ('gain',)),
+            'CB': (remove, ('gain',)),
+            'AC': (add, ('offset', 'gain')),
+            'CA': (remove, ('offset', 'gain'))
+            }.get(current_mode + new_mode)
 
         if actionables:
             socket_func, names = actionables
