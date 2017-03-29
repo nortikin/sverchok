@@ -88,9 +88,8 @@ class SvLoadZippedBlendDialog(bpy.types.Operator):
 
     def draw(self, context):
         row = self.layout.row()
-        row.enabled = False
-        row.prop(context.window_manager, "clipboard", text='clipboard')
- 
+        row.label(context.window_manager.clipboard or "No url in clipboard")
+
     def execute(self, context):
         return bpy.ops.node.sv_load_zipped_blend_url(download_url=context.window_manager.clipboard)
  
