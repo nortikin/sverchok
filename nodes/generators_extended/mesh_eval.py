@@ -257,7 +257,7 @@ class SvMeshEvalNode(bpy.types.Node, SverchCustomTreeNode):
             if key not in groups:
                 print("Output {} not in groups {}, remove it".format(key, str(groups)))
                 self.outputs.remove(self.outputs[key])
-        for name in groups:
+        for name in sorted(groups):
             if name not in self.outputs:
                 print("Group {} not in outputs {}, add it".format(name, str(self.outputs.keys())))
                 self.outputs.new('StringsSocket', name)
