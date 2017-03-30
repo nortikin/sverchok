@@ -209,11 +209,24 @@ class SvMeshEvalNode(bpy.types.Node, SverchCustomTreeNode):
         variables = self.get_variables()
         defaults = self.get_defaults()
         result = {}
+        default_results = {}
+
+        for var in defaults.keys():
+            d = defaults[var]
+            if isinstance(d, (int, float)):
+                default_results[var] = d
+
         for var in variables:
             if var in self.inputs and self.inputs[var].is_linked:
                 result[var] = self.inputs[var].sv_get()[0]
+                default_results[var] = result[var][0]
             else:
-                result[var] = [defaults.get(var, 1.0)]
+                value = defaults.get(var, 1.0)
+                if isinstance(value, str):
+                    #print("Eval: {} = {}, {}".format(var, value, default_results))
+                    value = safe_eval(value, default_results)
+                    default_results[var] = value
+                result[var] = [value]
             #print("get_input: {} => {}".format(var, result[var]))
         return result
 
