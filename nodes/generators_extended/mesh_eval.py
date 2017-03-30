@@ -60,10 +60,27 @@ def evaluate(json, variables):
     result['edges'] = json['edges']
     result['faces'] = json['faces']
     result['vertices'] = []
+
+    groups = {}
     
-    for vertex in json['vertices']:
+    for idx, vertex in enumerate(json['vertices']):
         v = []
-        for c in vertex:
+        if isinstance(vertex, (list, tuple)) and len(vertex) == 3:
+            coords = vertex
+        elif isinstance(vertex, (list, tuple)) and len(vertex) == 4 and isinstance(vertex[-1], (str, list, tuple)):
+            coords = vertex[:-1]
+            g = vertex[-1]
+            if isinstance(g, str):
+                groupnames = [g]
+            else:
+                groupnames = g
+            for groupname in groupnames:
+                if groupname in groups:
+                    groups[groupname].append(idx)
+                else:
+                    groups[groupname] = [idx]
+
+        for c in coords:
             if isinstance(c, str):
                 try:
                     val = safe_eval(c, variables)
@@ -75,7 +92,7 @@ def evaluate(json, variables):
                 val = c
             v.append(val)
         result['vertices'].append(v)
-    return result
+    return result, groups
 
 class SvJsonFromMesh(bpy.types.Operator):
     "JSON from selected mesh"
@@ -92,11 +109,26 @@ class SvJsonFromMesh(bpy.types.Operator):
             self.report({'INFO'}, 'It is not a mesh selected')
             return
 
-        object = bpy.context.selected_objects[0].data
+        object = bpy.context.selected_objects[0]
+        mesh = object.data
         result = {}
-        result['vertices'] = list([v.co[:] for v in object.vertices])
-        result['edges'] = object.edge_keys
-        result['faces'] = [list(p.vertices) for p in object.polygons]
+        verts = []
+        for v in mesh.vertices:
+            names = set()
+            for grp in v.groups:
+                name = object.vertex_groups[grp.group].name
+                names.add(name)
+            if v.select:
+                names.add('Selected')
+            if names:
+                vertex = list(v.co[:]) + [list(sorted(names))]
+            else:
+                vertex = list(v.co[:])
+            verts.append(vertex)
+
+        result['vertices'] = verts
+        result['edges'] = mesh.edge_keys
+        result['faces'] = [list(p.vertices) for p in mesh.polygons]
 
         self.write_values(self.nodename, json.dumps(result, indent=2))
         bpy.data.node_groups[self.treename].nodes[self.nodename].filename = self.nodename
@@ -121,7 +153,7 @@ class SvMeshEvalNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     def on_update(self, context):
-        self.adjust_inputs()
+        self.adjust_sockets()
         updateNode(self, context)
 
     filename = StringProperty(default="", update=on_update)
@@ -164,12 +196,37 @@ class SvMeshEvalNode(bpy.types.Node, SverchCustomTreeNode):
             return variables
 
         for vertex in json["vertices"]:
-            for c in vertex:
+            if isinstance(vertex, (list, tuple)) and len(vertex) == 3:
+                coords = vertex
+            elif isinstance(vertex, (list, tuple)) and len(vertex) == 4 and isinstance(vertex[-1], (str, list, tuple)):
+                coords = vertex[:-1]
+
+            for c in coords:
                 if isinstance(c, str):
                     vs = get_variables(c)
                     variables.update(vs)
 
         return list(sorted(list(variables)))
+    
+    def get_group_names(self):
+        groups = set()
+        json = self.load_json()
+        if not json:
+            return groups
+        
+        for vertex in json["vertices"]:
+            if isinstance(vertex, (list, tuple)) and len(vertex) == 4 and isinstance(vertex[-1], (str, list, tuple)):
+                g = vertex[-1]
+                if isinstance(g, str):
+                    names = [g]
+                else:
+                    names = g
+                for name in names:
+                    if name in ['Vertices', 'Edges', 'Faces']:
+                        raise Exception("Invalid name for vertex group. It should not be Vertices, Edges or Faces.")
+                    groups.add(name)
+
+        return list(sorted(list(groups)))
 
     def get_defaults(self):
         result = {}
@@ -180,9 +237,9 @@ class SvMeshEvalNode(bpy.types.Node, SverchCustomTreeNode):
             return result
         return json['defaults']
 
-    def adjust_inputs(self):
+    def adjust_sockets(self):
         variables = self.get_variables()
-        #print("adjust_input:" + str(variables))
+        #print("adjust_sockets:" + str(variables))
         #print("inputs:" + str(self.inputs.keys()))
         for key in self.inputs.keys():
             if key not in variables:
@@ -192,6 +249,18 @@ class SvMeshEvalNode(bpy.types.Node, SverchCustomTreeNode):
             if v not in self.inputs:
                 print("Variable {} not in inputs {}, add it".format(v, str(self.inputs.keys())))
                 self.inputs.new('StringsSocket', v)
+
+        groups = self.get_group_names()
+        for key in self.outputs.keys():
+            if key in ['Vertices', 'Edges', 'Faces']:
+                continue
+            if key not in groups:
+                print("Output {} not in groups {}, remove it".format(key, str(groups)))
+                self.outputs.remove(self.outputs[key])
+        for name in sorted(groups):
+            if name not in self.outputs:
+                print("Group {} not in outputs {}, add it".format(name, str(self.outputs.keys())))
+                self.outputs.new('StringsSocket', name)
 
     def update(self):
         '''
@@ -203,18 +272,37 @@ class SvMeshEvalNode(bpy.types.Node, SverchCustomTreeNode):
         if not (self.filename in bpy.data.texts):
             return
 
-        self.adjust_inputs()
+        self.adjust_sockets()
 
     def get_input(self):
         variables = self.get_variables()
         defaults = self.get_defaults()
         result = {}
+        default_results = {}
+
+        for var in defaults.keys():
+            d = defaults[var]
+            if isinstance(d, (int, float)):
+                default_results[var] = d
+
         for var in variables:
             if var in self.inputs and self.inputs[var].is_linked:
                 result[var] = self.inputs[var].sv_get()[0]
+                default_results[var] = result[var][0]
             else:
-                result[var] = [defaults.get(var, 1.0)]
+                value = defaults.get(var, 1.0)
+                if isinstance(value, str):
+                    #print("Eval: {} = {}, {}".format(var, value, default_results))
+                    value = safe_eval(value, default_results)
+                    default_results[var] = value
+                result[var] = [value]
             #print("get_input: {} => {}".format(var, result[var]))
+        return result
+
+    def groups_to_masks(self, groups, size):
+        result = {}
+        for name in groups:
+            result[name] = [idx in groups[name] for idx in range(size)]
         return result
 
     def process(self):
@@ -228,6 +316,7 @@ class SvMeshEvalNode(bpy.types.Node, SverchCustomTreeNode):
         result_vertices = []
         result_edges = []
         result_faces = []
+        result_masks_dict = {}
 
         template = self.load_json()
 
@@ -239,19 +328,25 @@ class SvMeshEvalNode(bpy.types.Node, SverchCustomTreeNode):
         for values in zip(*parameters):
             variables = dict(zip(var_names, values))
 
-            json = evaluate(template, variables)
-            result_vertices.append(json['vertices'])
+            json, groups = evaluate(template, variables)
+            verts = json['vertices']
+            result_vertices.append(verts)
             result_edges.append(json['edges'])
             result_faces.append(json['faces'])
 
-        if self.outputs['Vertices'].is_linked:
-            self.outputs['Vertices'].sv_set(result_vertices)
+            masks = self.groups_to_masks(groups, len(verts))
+            for name in masks.keys():
+                if name in result_masks_dict:
+                    result_masks_dict[name].add(masks[name])
+                else:
+                    result_masks_dict[name] = [masks[name]]
 
-        if self.outputs['Edges'].is_linked:
-            self.outputs['Edges'].sv_set(result_edges)
+        self.outputs['Vertices'].sv_set(result_vertices)
+        self.outputs['Edges'].sv_set(result_edges)
+        self.outputs['Faces'].sv_set(result_faces)
 
-        if self.outputs['Faces'].is_linked:
-            self.outputs['Faces'].sv_set(result_faces)
+        for name in result_masks_dict.keys():
+            self.outputs[name].sv_set(result_masks_dict[name])
 
     def storage_set_data(self, storage):
         geom = storage['geom']
