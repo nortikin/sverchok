@@ -109,11 +109,26 @@ class SvJsonFromMesh(bpy.types.Operator):
             self.report({'INFO'}, 'It is not a mesh selected')
             return
 
-        object = bpy.context.selected_objects[0].data
+        object = bpy.context.selected_objects[0]
+        mesh = object.data
         result = {}
-        result['vertices'] = list([v.co[:] for v in object.vertices])
-        result['edges'] = object.edge_keys
-        result['faces'] = [list(p.vertices) for p in object.polygons]
+        verts = []
+        for v in mesh.vertices:
+            names = set()
+            for grp in v.groups:
+                name = object.vertex_groups[grp.group].name
+                names.add(name)
+            if v.select:
+                names.add('Selected')
+            if names:
+                vertex = list(v.co[:]) + [list(sorted(names))]
+            else:
+                vertex = list(v.co[:])
+            verts.append(vertex)
+
+        result['vertices'] = verts
+        result['edges'] = mesh.edge_keys
+        result['faces'] = [list(p.vertices) for p in mesh.polygons]
 
         self.write_values(self.nodename, json.dumps(result, indent=2))
         bpy.data.node_groups[self.treename].nodes[self.nodename].filename = self.nodename
