@@ -153,7 +153,7 @@ class SvMeshEvalNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     def on_update(self, context):
-        self.adjust_inputs()
+        self.adjust_sockets()
         updateNode(self, context)
 
     filename = StringProperty(default="", update=on_update)
@@ -237,9 +237,9 @@ class SvMeshEvalNode(bpy.types.Node, SverchCustomTreeNode):
             return result
         return json['defaults']
 
-    def adjust_inputs(self):
+    def adjust_sockets(self):
         variables = self.get_variables()
-        #print("adjust_input:" + str(variables))
+        #print("adjust_sockets:" + str(variables))
         #print("inputs:" + str(self.inputs.keys()))
         for key in self.inputs.keys():
             if key not in variables:
@@ -272,7 +272,7 @@ class SvMeshEvalNode(bpy.types.Node, SverchCustomTreeNode):
         if not (self.filename in bpy.data.texts):
             return
 
-        self.adjust_inputs()
+        self.adjust_sockets()
 
     def get_input(self):
         variables = self.get_variables()
