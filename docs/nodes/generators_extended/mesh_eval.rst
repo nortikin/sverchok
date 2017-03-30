@@ -24,10 +24,23 @@ For generic description of JSON, please refer to https://en.wikipedia.org/wiki/J
 
 Mesh Expression node uses JSON, which should be a dictionary with following keys:
 
-* "vertices". This should be a list, containing 3-item lists, which are vertex coordinates. Each coordinate should be either integer or floating-point number, or a string with valid expression (see expression syntax below).
+* "vertices". This should be a list, containing 3- or 4- item lists:
+  
+  * First 3 items of each list are vertex coordinates. Each coordinate should be either integer or floating-point number, or a string with valid expression (see expression syntax below).
+  * 4th item, if present, may be either string of list of strings. These strings denote vertex groups, to which this vertex belongs.
+
+  Examples of valid vertex definition are:
+  
+  * `[0, 0, 0]` 
+  * `["X", "Y", 1.0]`
+  * `[1, 2, 3, "Selected"]`
+  * `[3, 2, 1, ["Top", "Right"]]`
 * "edges". This should be a list, containing 2-item lists of integer numbers, which are edges description in Sverchok's native format.
 * "faces". This should be a list, containint lists of integer nubmers, which are mesh faces description in Sverchok's native format.
-* "defaults". This should be a dictionary. Keys are variable names, and values are default variable values. Values can be only integer or floating-point numbers.
+* "defaults". This should be a dictionary. Keys are variable names, and values are default variable values. Values can be:
+  
+  * integer or floating-point numbers;
+  * string expressions (see expression syntax below). Note that expressions in "defaults" section are evaluated in alphabetical order of variable names. So, you can express "Y" in terms of "Y", but not vice versa.
 
 See also JSON examples below.
 
@@ -72,14 +85,20 @@ Operators
 
 This node has one button: **from selection**. This button takes currently selected Blender's mesh object and puts it's JSON description into newly created text buffer. Name of created buffer is assigned to **File name** parameter.
 
+For each vertex, if it belongs to some vertex groups in initial mesh object, these group names will be added to vertex definition.
+
+If vertex is selected in edit mode, then special group named "Selected" will be added to vertex definition.
+
 Outputs
 -------
 
-This node has the following outputs:
+This node always has the following outputs:
 
 * **Vertices**
 * **Edges**
 * **Faces**
+
+Apart from these, a separate output is created for each name of vertex group mentioned in "vertices" section of JSON definition. Each of these outputs contain a mask for **Vertices**, which selects vertices from corresponding group.
 
 Examples of usage
 -----------------
