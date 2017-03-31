@@ -40,6 +40,12 @@ def set_correct_stroke_count(strokes, coords):
         # remove excess strokes
         for _ in range(diff):
             strokes.remove(strokes[-1])
+    strokes.update()
+
+    if len(strokes) == len(coords):
+        pass  # coordsets match
+    else:
+        print('---- num strokes', len(strokes), ' num coordsets', len(coords))
 
 
 def pass_data_to_stroke(stroke, coord_set):
@@ -54,13 +60,6 @@ def pass_data_to_stroke(stroke, coord_set):
     stroke.points.foreach_set('co', flat_coords)
 
 
-def pass_pressures_to_stroke(stroke, flat_pressures):
-    if len(stroke.points) == len(flat_pressures):
-        stroke.points.foreach_set('pressure', flat_pressures)
-    else:
-        print('not enough pressures for num points')
-
-
 def match_points_and_pressures(pressure_set, num_points):
     num_pressures = len(pressure_set)
     if num_pressures < num_points:
@@ -68,6 +67,16 @@ def match_points_and_pressures(pressure_set, num_points):
     elif num_pressures > num_points:
         pressure_set = pressure_set[:num_points]
     return pressure_set
+
+
+def pass_pressures_to_stroke(stroke, idx, pressures):
+    flat_pressures = match_points_and_pressures(pressures[idx], len(stroke.points))
+
+    if len(stroke.points) == len(flat_pressures):
+        stroke.points.foreach_set('pressure', flat_pressures)
+    else:
+        print('not enough pressures for num points')
+
 
 
 class SvGreasePencilStrokes(bpy.types.Node, SverchCustomTreeNode):
@@ -147,7 +156,7 @@ class SvGreasePencilStrokes(bpy.types.Node, SverchCustomTreeNode):
             coords = coordinates.sv_get()
             self.num_strokes = len(coords)
             set_correct_stroke_count(strokes, coords)
-             
+
             cyclic_socket_value = self.inputs["draw cyclic"].sv_get()[0]
             fullList(cyclic_socket_value, self.num_strokes)
 
@@ -163,18 +172,24 @@ class SvGreasePencilStrokes(bpy.types.Node, SverchCustomTreeNode):
 
                     num_points = len(coord_set)
                     pass_data_to_stroke(stroke, coord_set)
+                    pass_pressures_to_stroke(stroke, idx, pressures)
 
-                    flat_pressures = match_points_and_pressures(pressures[idx], num_points)
-                    pass_pressures_to_stroke(stroke, flat_pressures)
+                    strokes.update()
+                    # ??
+                    # strokes.foreach_set('color.color', repeat(stroke_color, len(strokes)))
+                    # strokes.foreach_set('color.alpha', repeat(stroke_alpha, len(strokes)))
+
+                    stroke.color.color = colors.get(idx, self.stroke_color[:3])
+                    stroke.color.alpha = colors.get(idx, self.stroke_color[3])
+                    stroke.color.fill_color = colors_fill.get(idx, self.fill_color[:3])
+                    stroke.color.fill_alpha = colors_fill.get(idx, self.fill_color[3])
+
                 except Exception as err:
                     print('iteration=', idx)
                     print(repr(err))
 
-            for idx, stroke in enumerate(strokes):
-                stroke.color.color = colors.get(idx, self.stroke_color[:3])
-                stroke.color.alpha = colors.get(idx, self.stroke_color[3])
-                stroke.color.fill_color = colors_fill.get(idx, self.fill_color[:3])
-                stroke.color.fill_alpha = colors_fill.get(idx, self.fill_color[3])
+
+
 
             self.outputs[0].sv_set(strokes)
 
