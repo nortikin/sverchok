@@ -31,19 +31,14 @@ nodule_color = (0.899, 0.8052, 0.0, 1.0)
 
 def set_correct_stroke_count(strokes, coords):
     """ ensure that the number of strokes match the sets of coordinates """
-    strokes.update()
 
     diff = len(strokes) - len(coords)
     if diff < 0:
-        # add new strokes
-        for _ in range(abs(diff)):
-            strokes.new()
+        _ = [strokes.new() for _ in range(abs(diff))]
+        strokes.update()
     elif diff > 0:
-        # remove excess strokes
-        for _ in range(diff):
-            strokes.remove(strokes[-1])
-
-    strokes.update()
+        _ = [strokes.remove(strokes[-1]) for _ in range(diff)]
+        strokes.update()
 
 
 def pass_data_to_stroke(stroke, coord_set):
@@ -164,23 +159,25 @@ class SvGreasePencilStrokes(bpy.types.Node, SverchCustomTreeNode):
             
             for idx, (stroke, coord_set) in enumerate(zip(strokes, coords)):
                 try:
+
+                    num_points = len(coord_set)
+                    pass_data_to_stroke(stroke, coord_set)
+
                     stroke.draw_mode = self.draw_mode
                     stroke.draw_cyclic = cyclic_socket_value[idx]
                     stroke.line_width = 3
 
-                    num_points = len(coord_set)
-                    pass_data_to_stroke(stroke, coord_set)
+                    stroke.color.color = self.stroke_color[:3]
+                    stroke.color.alpha = self.stroke_color[3]
+                    stroke.color.fill_color = self.fill_color[:3]
+                    stroke.color.fill_alpha = self.fill_color[3]
+
                     pass_pressures_to_stroke(stroke, idx, pressures)
 
-                    strokes.update()
                     # ??
                     # strokes.foreach_set('color.color', repeat(stroke_color, len(strokes)))
                     # strokes.foreach_set('color.alpha', repeat(stroke_alpha, len(strokes)))
 
-                    # stroke.color.color = colors.get(idx, self.stroke_color[:3])
-                    # stroke.color.alpha = colors.get(idx, self.stroke_color[3])
-                    # stroke.color.fill_color = colors_fill.get(idx, self.fill_color[:3])
-                    # stroke.color.fill_alpha = colors_fill.get(idx, self.fill_color[3])
 
                 except Exception as err:
                     print('iteration=', idx)
