@@ -42,7 +42,7 @@ READY_COLOR = (0, 0.8, 0.95)
 sv_path = os.path.dirname(sv_get_local_path()[0])
 snlite_template_path = os.path.join(sv_path, 'node_scripts', 'SNLite_templates')
 
-defaults = list(range(32))
+defaults = [0] * 32
 
 
 class SvScriptNodeLitePyMenu(bpy.types.Menu):
