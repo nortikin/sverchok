@@ -123,7 +123,6 @@ class SvGreasePencilStrokes(bpy.types.Node, SverchCustomTreeNode):
         pressures = self.inputs["pressure"].sv_get()
         num_strokes = self.num_strokes
 
-        # the default state will always
         if len(pressures) == 1:
             if len(pressures[0]) < num_strokes:
                 fullList(pressures[0], num_strokes)
@@ -154,6 +153,7 @@ class SvGreasePencilStrokes(bpy.types.Node, SverchCustomTreeNode):
             for idx, (stroke, coord_set) in enumerate(zip(strokes, coords)):
                 stroke.draw_mode = self.draw_mode
                 stroke.draw_cyclic = cyclic_socket_value[idx]
+                stroke.line_width = 3
 
                 num_points = len(coord_set)
                 pass_data_to_stroke(stroke, coord_set)
