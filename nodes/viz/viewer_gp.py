@@ -31,6 +31,8 @@ nodule_color = (0.899, 0.8052, 0.0, 1.0)
 
 def set_correct_stroke_count(strokes, coords):
     """ ensure that the number of strokes match the sets of coordinates """
+    strokes.update()
+
     diff = len(strokes) - len(coords)
     if diff < 0:
         # add new strokes
@@ -40,12 +42,8 @@ def set_correct_stroke_count(strokes, coords):
         # remove excess strokes
         for _ in range(diff):
             strokes.remove(strokes[-1])
-    strokes.update()
 
-    if len(strokes) == len(coords):
-        pass  # coordsets match
-    else:
-        print('---- num strokes', len(strokes), ' num coordsets', len(coords))
+    strokes.update()
 
 
 def pass_data_to_stroke(stroke, coord_set):
@@ -179,10 +177,10 @@ class SvGreasePencilStrokes(bpy.types.Node, SverchCustomTreeNode):
                     # strokes.foreach_set('color.color', repeat(stroke_color, len(strokes)))
                     # strokes.foreach_set('color.alpha', repeat(stroke_alpha, len(strokes)))
 
-                    stroke.color.color = colors.get(idx, self.stroke_color[:3])
-                    stroke.color.alpha = colors.get(idx, self.stroke_color[3])
-                    stroke.color.fill_color = colors_fill.get(idx, self.fill_color[:3])
-                    stroke.color.fill_alpha = colors_fill.get(idx, self.fill_color[3])
+                    # stroke.color.color = colors.get(idx, self.stroke_color[:3])
+                    # stroke.color.alpha = colors.get(idx, self.stroke_color[3])
+                    # stroke.color.fill_color = colors_fill.get(idx, self.fill_color[:3])
+                    # stroke.color.fill_alpha = colors_fill.get(idx, self.fill_color[3])
 
                 except Exception as err:
                     print('iteration=', idx)
