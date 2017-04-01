@@ -30,7 +30,7 @@ This node has the following parameters:
 
   * **By side**. Selects vertices that are located at one side of mesh. The side is specified by **Direction** input. So you can select "rightmost" vertices by passing (0, 0, 1) as Direction. Number of vertices to select is controlled by **Percent** input: 1% means select only "most rightmost" vertices, 99% means select "all but most leftmost". More exactly, this mode selects vertex V if `(Direction, V) >= max - Percent * (max - min)`, where `max` and `min` are maximum and minimum values of that scalar product amongst all vertices.
   * **By normal direction**. Selects faces, that have normal vectors pointing in specified **Direction**. So you can select "faces looking to right". Number of faces to select is controlled by **Percent** input, similar to **By side** mode. More exactly, this mode selects face F if `(Direction, Normal(F)) >= max - Percent * (max - min)`, where `max` and `min` are maximum and minimum values of that scalar product amongst all vertices.
-  * **By center and radius**. Selects vertices, which are within **Radius** from specified **Center**; in other words, it selects vertices that are located inside given sphere. More exactly, this mode selects vertex V if `Distance(V, Center) <= Radius`.
+  * **By center and radius**. Selects vertices, which are within **Radius** from specified **Center**; in other words, it selects vertices that are located inside given sphere. More exactly, this mode selects vertex V if `Distance(V, Center) <= Radius`. This mode also supports passing many points to **Center** input; in this case, "Distance" is distance from vertex to the nearest "Center".
   * **By plane**. Selects vertices, which are within **Radius** from specified plane. Plane is specified by providing normal vector (**Direction** input) and a point, belonging to that plane (**Center** input). For example, if you specify Direction = (0, 0, 1) and Center = (0, 0, 0), the plane will by OXY. More exactly, this mode selects vertex V if `Distance(V, Plane) <= Radius`.
   * **By cylinder**. Selects vertices, which are within **Radius** from specified straight line. Line is specified by providing directing vector (**Direction** input) and a point, belonging to that line (**Center** input). For example, if you specify Direction = (0, 0, 1) and Center = (0, 0, 0), the line will by Z axis. More exactly, this mode selects vertex V if `Distance(V, Line) <= Radius`.
   * **By edge direction**. Selects edges, which are nearly parallel to specified **Direction** vector. Note that this mode considers edges as non-directed; as a result, you can change sign of all coordinates of **Direction** and it will not affect output. More exactly, this mode selects edge E if `Abs(Cos(Angle(E, Direction))) >= max - Percent * (max - min)`, where max and min are maximum and minimum values of that cosine.
@@ -65,6 +65,10 @@ Select faces looking to right:
 Select vertices within sphere:
 
 .. image:: https://cloud.githubusercontent.com/assets/284644/23761537/5106db9e-051d-11e7-81e8-2fca30c02b18.png
+
+Using multiple centers:
+
+.. image:: https://cloud.githubusercontent.com/assets/284644/24580675/b5206da8-172d-11e7-9aa3-2c345712c899.png
 
 Select vertices near OYZ plane:
 
