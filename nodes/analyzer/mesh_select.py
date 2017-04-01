@@ -18,7 +18,7 @@
 
 import math
 
-from mathutils import Vector, Matrix
+from mathutils import Vector, Matrix, kdtree
 
 import bpy
 from bpy.props import IntProperty, FloatProperty, BoolProperty, EnumProperty
@@ -154,10 +154,25 @@ class SvMeshSelectNode(bpy.types.Node, SverchCustomTreeNode):
         return out_verts_mask, out_edges_mask, out_faces_mask
 
     def by_sphere(self, vertices, edges, faces):
-        center = self.inputs['Center'].sv_get()[0][0]
         radius = self.inputs['Radius'].sv_get(default=[1.0])[0][0]
+        centers = self.inputs['Center'].sv_get()[0]
 
-        out_verts_mask = [((Vector(v) - Vector(center)).length <= radius) for v in vertices]
+        if len(centers) == 1:
+            center = centers[0]
+            out_verts_mask = [((Vector(v) - Vector(center)).length <= radius) for v in vertices]
+        else:
+            # build KDTree
+            tree = kdtree.KDTree(len(centers))
+            for i, v in enumerate(centers):
+                tree.insert(v, i)
+            tree.balance()
+
+            out_verts_mask = []
+            for vertex in vertices:
+                _, _, rho = tree.find(vertex)
+                mask = rho <= radius
+                out_verts_mask.append(mask)
+
         out_edges_mask = self.select_edges_by_verts(out_verts_mask, edges)
         out_faces_mask = self.select_faces_by_verts(out_verts_mask, faces)
 
