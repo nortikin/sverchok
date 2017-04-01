@@ -27,6 +27,12 @@ class SvNumberNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'A Number'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
+    def uget(self, context, origin):
+        ...
+
+    def uset(self, context, origin):
+        ...
+
     def wrapped_update(self, context):
         kind = self.selected_mode
         prop = kind + '_'
@@ -34,11 +40,17 @@ class SvNumberNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs[0].replace_socket('StringsSocket', kind)
         self.process_node(context)
 
-    int_ = IntProperty(default=0, name="Int")  # get  ...set ..
+    int_ = IntProperty(
+        default=0, name="Int",
+        get=lambda s, c: uget(s, c, 'int_'),
+        set=lambda s, c: uset(s, c, 'int_')) 
     int_min = IntProperty(default=-1024)
     int_max = IntProperty(default=1024)
 
-    float_ = FloatProperty(default=0.0, name="Float")
+    float_ = FloatProperty(
+        default=0.0, name="Float",
+        get=lambda s, c: uget(s, c, 'float_'),
+        set=lambda s, c: uset(s, c, 'float_'))
     float_min = FloatProperty(default=-500.0)
     float_max = FloatProperty(default=500.0)
 
