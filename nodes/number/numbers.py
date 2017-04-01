@@ -52,35 +52,38 @@ class SvNumberNode(bpy.types.Node, SverchCustomTreeNode):
     int_ = IntProperty(
         default=0, name="",
         get=lambda s: uget(s, 'int_'), set=lambda s, val: uset(s, val, 'int_')) 
-    int_min = IntProperty(default=-1024)
-    int_max = IntProperty(default=1024)
+    int_min = IntProperty(default=-1024, description='minimum')
+    int_max = IntProperty(default=1024, description='maximum')
 
     float_ = FloatProperty(
         default=0.0, name="",
         get=lambda s: uget(s, 'float_'), set=lambda s, val: uset(s, val, 'float_'))
-    float_min = FloatProperty(default=-500.0)
-    float_max = FloatProperty(default=500.0)
+    float_min = FloatProperty(default=-500.0, description='minimum')
+    float_max = FloatProperty(default=500.0, description='maximum')
 
     mode_options = [(k, k, '', i) for i, k in enumerate(["float", "int"])]
     
     selected_mode = bpy.props.EnumProperty(
         items=mode_options, default="float", update=wrapped_update)
 
+    show_limits = BoolProperty(default=False)
+
     def sv_init(self, context):
         self.inputs.new('StringsSocket', "Float").prop_name = 'float_'
         self.outputs.new('StringsSocket', "Float").custom_draw = 'mode_custom_draw'
 
-    # def draw_buttons_ext(self, context, layout):
-    #     # row = layout.row(align=True)
-    #     # row.prop(self, 'minim')
-    #     # row.prop(self, 'maxim')
-    #     # row = layout.row(align=True)
-    #     # row.prop(self, 'to3d')
-    #     ...
+    def draw_buttons(self, context, layout):
+        if self.show_limits:
+            r2 = layout.row(align=True)
+            kind = self.selected_mode
+            r2.prop(self, kind + '_min', text='')
+            r2.prop(self, kind + '_max', text='')
 
     def mode_custom_draw(self, context, layout):
-        r = layout.row()
+        r = layout.row(align=True)
         r.prop(self, 'selected_mode', expand=True)
+        r.prop(self, 'show_limits', icon='SETTINGS', text='')
+
 
     # def draw_label(self):
     #     # if not self.inputs[0].links:
