@@ -72,18 +72,22 @@ class SvNumberNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('StringsSocket', "Float").prop_name = 'float_'
         self.outputs.new('StringsSocket', "Float").custom_draw = 'mode_custom_draw'
 
-    def draw_buttons(self, context, layout):
-        if self.show_limits:
-            r2 = layout.row(align=True)
-            kind = self.selected_mode
-            r2.prop(self, kind + '_min', text='')
-            r2.prop(self, kind + '_max', text='')
+    # def draw_buttons(self, context, layout):
+    #     if self.show_limits:
+    #         r2 = layout.row(align=True)
+    #         kind = self.selected_mode
+    #         r2.prop(self, kind + '_min', text='')
+    #         r2.prop(self, kind + '_max', text='')
 
     def mode_custom_draw(self, context, layout):
         r = layout.row(align=True)
-        r.prop(self, 'selected_mode', expand=True)
+        if not self.show_limits:
+            r.prop(self, 'selected_mode', expand=True)
+        else:
+            kind = self.selected_mode
+            r.prop(self, kind + '_min', text='')
+            r.prop(self, kind + '_max', text='')
         r.prop(self, 'show_limits', icon='SETTINGS', text='')
-
 
     # def draw_label(self):
     #     # if not self.inputs[0].links:
