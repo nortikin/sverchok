@@ -28,12 +28,10 @@ class SvNumberNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     def wrapped_update(self, context):
-        if self.selected_mode == 'float':
-            self.inputs[0].replace_socket('StringsSocket', 'float').prop_name='float_'
-            self.outputs[0].replace_socket('StringsSocket', 'float')
-        else:
-            self.inputs[0].replace_socket('StringsSocket', 'int').prop_name='int_'
-            self.outputs[0].replace_socket('StringsSocket', 'int')
+        kind = self.selected_mode
+        prop = kind + '_'
+        self.inputs[0].replace_socket('StringsSocket', kind).prop_name = prop
+        self.outputs[0].replace_socket('StringsSocket', kind)
         self.process_node(context)
 
     int_ = IntProperty(default=0, name="Int")  # get  ...set ..
