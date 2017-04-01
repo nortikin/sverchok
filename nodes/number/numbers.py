@@ -23,12 +23,17 @@ from sverchok.node_tree import SverchCustomTreeNode
 
 
 def uget(self, origin):
-    print(dir(self))
-    return getattr(self, origin)
+    return self[origin]
 
-def uset(self, context, origin):
-    if getattr(self, origin + 'min') <= getattr(self, origin) <= getattr(self, origin + 'max'):
-        setattr(self, origin, getattr(self, origin))
+def uset(self, value, origin):
+    MAX = getattr(self, origin + 'max')
+    MIN = getattr(self, origin + 'min')
+    if MIN <= value <= MAX:
+        self[origin] = value
+    elif value > MAX:
+        self[origin] = MAX
+    else:
+        self[origin] = MIN
     return None
 
 class SvNumberNode(bpy.types.Node, SverchCustomTreeNode):
@@ -46,17 +51,13 @@ class SvNumberNode(bpy.types.Node, SverchCustomTreeNode):
 
     int_ = IntProperty(
         default=0, name="Int",
-        # get=lambda s: uget(s, 'int_'),
-        # set=lambda s, c: uset(s, c, 'int_')
-        ) 
+        get=lambda s: uget(s, 'int_'), set=lambda s, val: uset(s, val, 'int_')) 
     int_min = IntProperty(default=-1024)
     int_max = IntProperty(default=1024)
 
     float_ = FloatProperty(
         default=0.0, name="Float",
-        # get=lambda s: uget(s, 'float_'),
-        #set=lambda s, c: uset(s, c, 'float_')
-        )
+        get=lambda s: uget(s, 'float_'), set=lambda s, val: uset(s, val, 'float_'))
     float_min = FloatProperty(default=-500.0)
     float_max = FloatProperty(default=500.0)
 
