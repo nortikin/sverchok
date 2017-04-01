@@ -53,7 +53,8 @@ size_tex_list = [
     ('S', 'S', 'small squared tex: 128px', '', 128),
     ('M', 'M', 'medium squared tex: 256px', '', 256),
     ('L', 'L', 'large squared tex: 512px', '', 512),
-    ('XL', 'XL', 'extra large squared tex: 1024px', '', 1024)
+    ('XL', 'XL', 'extra large squared tex: 1024px', '', 1024),
+    ('USER', 'USER', 'extra large squared tex: 1024px', '', 0)
 ]
 
 size_tex_dict = {item[0]: item[4] for item in size_tex_list}
@@ -139,10 +140,8 @@ def simple_screen(x, y, args):
         # function to draw a border color around the texture
         bgl.glColor4f(*color)
         bgl.glBegin(bgl.GL_LINE_LOOP)
-
         for coord in [(x, y), (x + w, y), (w + x, y - h), (x, y - h)]:
             bgl.glVertex2f(*coord)
-
         bgl.glEnd()
 
     def draw_texture(x=0, y=0, w=30, h=10, texname=texname):
@@ -154,33 +153,24 @@ def simple_screen(x, y, args):
 
         bgl.glEnable(bgl.GL_TEXTURE_2D)
         bgl.glActiveTexture(bgl.GL_TEXTURE0)
-
-        bgl.glTexEnvf(bgl.GL_TEXTURE_ENV,
-                      bgl.GL_TEXTURE_ENV_MODE,
-                      bgl.GL_REPLACE)
-
+        bgl.glTexEnvf(bgl.GL_TEXTURE_ENV, bgl.GL_TEXTURE_ENV_MODE, bgl.GL_REPLACE)
         bgl.glBindTexture(bgl.GL_TEXTURE_2D, texname)
 
         texco = [(0, 1), (1, 1), (1, 0), (0, 0)]
         verco = [(x, y), (x + w, y), (x + w, y - h), (x, y - h)]
 
         bgl.glPolygonMode(bgl.GL_FRONT_AND_BACK, bgl.GL_FILL)
-
         bgl.glBegin(bgl.GL_QUADS)
-
         for i in range(4):
             bgl.glTexCoord3f(texco[i][0], texco[i][1], 0.0)
             bgl.glVertex2f(verco[i][0], verco[i][1])
-
         bgl.glEnd()
 
         # restoring settings
         bgl.glBindTexture(bgl.GL_TEXTURE_2D, act_tex[0])
-
         bgl.glDisable(bgl.GL_TEXTURE_2D)
 
     draw_texture(x=x, y=y, w=width, h=height, texname=texname)
-
     draw_borders(x=x, y=y, w=width, h=height, color=border_color)
 
 
@@ -189,6 +179,20 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvTextureViewerNode'
     bl_label = 'Texture viewer'
     texture = {}
+
+    def wrapped_update(self, context):
+        if self.selected_mode == 'USER':
+            if len(self.inputs) == 1:
+                self.inputs.new('StringsSocket', "Width").prop_name = 'width_custom_tex'
+                self.inputs.new('StringsSocket', "Height").prop_name = 'height_custom_tex'
+        else:
+
+            if len(self.inputs) == 3:
+                self.inputs.remove(self.inputs[-1])
+                self.inputs.remove(self.inputs[-1])
+
+        updateNode(self, context)
+
 
     n_id = StringProperty(default='')
     to_image_viewer = BoolProperty(
@@ -201,11 +205,7 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
     selected_mode = EnumProperty(
         items=size_tex_list, description="Offers display sizing",
-        default="S", update=updateNode)
-
-    selected_custom_tex = BoolProperty(
-        name='Custom tex', description='Activate custom texture drawing',
-        default=False, update=updateNode)
+        default="S", update=wrapped_update)
 
     width_custom_tex = IntProperty(
         min=0, max=1024, default=206, name='Width Tex',
@@ -260,7 +260,7 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
     @property
     def texture_width_height(self):
         #  get the width and height for the texture
-        if self.selected_custom_tex:
+        if self.selected_mode == 'USER':
             width, height = self.custom_size
         else:
             size_tex = size_tex_dict.get(self.selected_mode)
@@ -294,16 +294,13 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         c.label(text="Set texture display:")
         row = c.row()
         row.prop(self, "selected_mode", expand=True)
-        c.prop(self, 'activate')
-        c.prop(self, 'to_image_viewer')
-        c.label(text='Set color mode')
+        
+        nrow = c.row()
+        nrow.prop(self, 'activate')
+        nrow.prop(self, 'to_image_viewer')
         row = layout.row(align=True)
         row.prop(self, 'color_mode', expand=True)
-        layout.separator()
-        c = layout.column()
-        row = c.row()
-        c.label(text="Set custom texture display")
-        row.prop(self, "selected_custom_tex", expand=True)
+
 
     def draw_buttons_ext(self, context, layout):
         img_format = self.bitmap_format
@@ -315,9 +312,7 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         layout.separator()
         layout.prop(self, "bitmap_format", text='format')
         layout.separator()
-        # row = layout.row()
-        # row.prop(self, 'color_mode_save', expand=True)
-        # layout.separator()
+
         if img_format == 'PNG':
             row = layout.row()
             row.prop(self, 'compression_level', text='set compression')
@@ -326,6 +321,7 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
             row = layout.row()
             row.prop(self, 'quality_level', text='set quality')
             layout.separator()
+
         row = layout.row(align=True)
         leftside = row.split(0.7)
         leftside.prop(self, 'image_name', text='')
@@ -338,7 +334,7 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         transfer.prop(self, 'texture_name', text='', icon='EXPORT')
 
     def draw_label(self):
-        if self.selected_custom_tex:
+        if self.selected_mode == 'USER':
             width, height = self.texture_width_height
             label = (self.label or self.name) + ' {0} x {1}'.format(width, height)
         else:
@@ -346,9 +342,8 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         return label
 
     def sv_init(self, context):
+        self.width = 180
         self.inputs.new('StringsSocket', "Float").prop_name = 'in_float'
-        self.inputs.new('StringsSocket', "Width").prop_name = 'width_custom_tex'
-        self.inputs.new('StringsSocket', "Height").prop_name = 'height_custom_tex'
 
     def delete_texture(self):
         n_id = node_id(self)
@@ -359,13 +354,14 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
     def process(self):
         if not self.inputs['Float'].is_linked:
             return
+        
         n_id = node_id(self)
+        self.delete_texture()
+        nvBGL2.callback_disable(n_id)
+
         size_tex = 0
         width = 0
         height = 0
-        # end early
-        nvBGL2.callback_disable(n_id)
-        self.delete_texture()
 
         if self.to_image_viewer:
             mode = self.color_mode
@@ -434,7 +430,6 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         self.push_image_settings(scene)
         desired_path = os.path.join(self.base_dir, self.image_name + extension)
         img.save_render(desired_path, scene)
-
         print('Bitmap saved!  path is:', desired_path)
 
 
