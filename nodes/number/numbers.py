@@ -20,6 +20,7 @@ import bpy
 from bpy.props import FloatProperty, BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import updateNode
 
 
 def uget(self, origin):
@@ -50,13 +51,13 @@ class SvNumberNode(bpy.types.Node, SverchCustomTreeNode):
         self.process_node(context)
 
     int_ = IntProperty(
-        default=0, name="",
+        default=0, name="", update=updateNode,
         get=lambda s: uget(s, 'int_'), set=lambda s, val: uset(s, val, 'int_')) 
     int_min = IntProperty(default=-1024, description='minimum')
     int_max = IntProperty(default=1024, description='maximum')
 
     float_ = FloatProperty(
-        default=0.0, name="",
+        default=0.0, name="", update=updateNode,
         get=lambda s: uget(s, 'float_'), set=lambda s, val: uset(s, val, 'float_'))
     float_min = FloatProperty(default=-500.0, description='minimum')
     float_max = FloatProperty(default=500.0, description='maximum')
@@ -101,7 +102,8 @@ class SvNumberNode(bpy.types.Node, SverchCustomTreeNode):
         # Float = min(max(float(self.inputs[0].sv_get()[0][0]), self.minim), self.maxim)
 
         if not self.inputs[0].is_linked:
-            self.outputs[0].sv_set([[getattr(self, self.selected_mode + '_')]])
+            kind = self.selected_mode + '_'
+            self.outputs[0].sv_set([[getattr(self, kind)]])
         else:
             found_data = self.inputs[0].sv_get()
 
