@@ -22,6 +22,7 @@ import urllib.request
 from zipfile import ZipFile
 
 import bpy
+import tempfile
 
 class SvLoadZippedBlendURL(bpy.types.Operator):
 
@@ -30,7 +31,7 @@ class SvLoadZippedBlendURL(bpy.types.Operator):
 
     # "https://github.com/nortikin/sverchok/files/647412/scipy_voroi_2016_12_12_22_27.zip"
     download_url = bpy.props.StringProperty()
-    os_temp_path = r'C:\tmp'
+    os_temp_path = tempfile.gettempdir()
 
     def execute(self, context):
 
@@ -39,7 +40,12 @@ class SvLoadZippedBlendURL(bpy.types.Operator):
         wm.progress_update(20)
 
         if not self.download_url:
-            return {'CANCELLED'}
+            clipboard = context.window_manager.clipboard
+            if not clipboard:
+                self.report({'ERROR'}, "Clipboard empty")
+                return {'CANCELLED'}
+            else:
+                self.download_url = clipboard
 
         try:
             file_and_ext = os.path.basename(self.download_url)
