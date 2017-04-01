@@ -21,36 +21,42 @@ from bpy.props import FloatProperty, BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 
+
+def uget(self, origin):
+    print(dir(self))
+    return getattr(self, origin)
+
+def uset(self, context, origin):
+    if getattr(self, origin + 'min') <= getattr(self, origin) <= getattr(self, origin + 'max'):
+        setattr(self, origin, getattr(self, origin))
+    return None
+
 class SvNumberNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Float '''
     bl_idname = 'SvNumberNode'
     bl_label = 'A Number'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    def uget(self, context, origin):
-        ...
-
-    def uset(self, context, origin):
-        ...
-
     def wrapped_update(self, context):
         kind = self.selected_mode
         prop = kind + '_'
-        self.inputs[0].replace_socket('StringsSocket', kind).prop_name = prop
-        self.outputs[0].replace_socket('StringsSocket', kind)
+        self.inputs[0].replace_socket('StringsSocket', kind.title()).prop_name = prop
+        self.outputs[0].replace_socket('StringsSocket', kind.title()).custom_draw = 'mode_custom_draw'
         self.process_node(context)
 
     int_ = IntProperty(
         default=0, name="Int",
-        get=lambda s, c: uget(s, c, 'int_'),
-        set=lambda s, c: uset(s, c, 'int_')) 
+        # get=lambda s: uget(s, 'int_'),
+        # set=lambda s, c: uset(s, c, 'int_')
+        ) 
     int_min = IntProperty(default=-1024)
     int_max = IntProperty(default=1024)
 
     float_ = FloatProperty(
         default=0.0, name="Float",
-        get=lambda s, c: uget(s, c, 'float_'),
-        set=lambda s, c: uset(s, c, 'float_'))
+        # get=lambda s: uget(s, 'float_'),
+        #set=lambda s, c: uset(s, c, 'float_')
+        )
     float_min = FloatProperty(default=-500.0)
     float_max = FloatProperty(default=500.0)
 
@@ -61,32 +67,31 @@ class SvNumberNode(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', "Float").prop_name = 'float_'
-        self.outputs.new('StringsSocket', "Float")
+        self.outputs.new('StringsSocket', "Float").custom_draw = 'mode_custom_draw'
 
-    def draw_buttons_ext(self, context, layout):
-        # row = layout.row(align=True)
-        # row.prop(self, 'minim')
-        # row.prop(self, 'maxim')
-        # row = layout.row(align=True)
-        # row.prop(self, 'to3d')
-        ...
+    # def draw_buttons_ext(self, context, layout):
+    #     # row = layout.row(align=True)
+    #     # row.prop(self, 'minim')
+    #     # row.prop(self, 'maxim')
+    #     # row = layout.row(align=True)
+    #     # row.prop(self, 'to3d')
+    #     ...
 
-    def draw_buttons(self, context, layout):
+    def mode_custom_draw(self, context, layout):
         r = layout.row()
         r.prop(self, 'selected_mode', expand=True)
 
-    def draw_label(self):
-        # if not self.inputs[0].links:
-        #     return str(round(self.float_, 3))
-        # else:
-        #     return self.bl_label
-        return 'yes'
+    # def draw_label(self):
+    #     # if not self.inputs[0].links:
+    #     #     return str(round(self.float_, 3))
+    #     # else:
+    #     #     return self.bl_label
+    #     return 'yes'
             
     def process(self):
         # inputs
         # Float = min(max(float(self.inputs[0].sv_get()[0][0]), self.minim), self.maxim)
-        # # outputs
-        # self.outputs['Float'].sv_set([[Float]])
+
         if not self.inputs[0].is_linked:
             self.outputs[0].sv_set([[getattr(self, self.selected_mode + '_')]])
         else:
