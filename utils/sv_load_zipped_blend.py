@@ -30,7 +30,7 @@ class SvLoadZippedBlendURL(bpy.types.Operator):
 
     # "https://github.com/nortikin/sverchok/files/647412/scipy_voroi_2016_12_12_22_27.zip"
     download_url = bpy.props.StringProperty()
-    os_temp_path = r'C:\tmp'
+    os_temp_path = r'\tmp'
 
     def execute(self, context):
 
@@ -46,7 +46,8 @@ class SvLoadZippedBlendURL(bpy.types.Operator):
             to_path = os.path.join(self.os_temp_path, file_and_ext)
             file = urllib.request.urlretrieve(self.download_url, to_path)
             wm.progress_update(50)
-        except:
+        except Exception as fullerr:
+            print(repr(fullerr))
             self.report({'ERROR'}, "Cannot get archive from Internet")
             wm.progress_end()
             return {'CANCELLED'}
