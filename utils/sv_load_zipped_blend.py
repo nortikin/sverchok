@@ -30,7 +30,7 @@ class SvLoadZippedBlendURL(bpy.types.Operator):
 
     # "https://github.com/nortikin/sverchok/files/647412/scipy_voroi_2016_12_12_22_27.zip"
     download_url = bpy.props.StringProperty()
-    os_temp_path = r'\tmp'
+    os_temp_path = r'C:\tmp'
 
     def execute(self, context):
 
