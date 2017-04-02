@@ -75,7 +75,7 @@ class SvNumberNode(bpy.types.Node, SverchCustomTreeNode):
         items=mode_options, default="float", update=wrapped_update)
 
     show_limits = BoolProperty(default=False)
-    to3d = BoolProperty(default=False)
+    to3d = BoolProperty(default=False, update=updateNode)
 
     def sv_init(self, context):
         self['float_'] = 0.0
