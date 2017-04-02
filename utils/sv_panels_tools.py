@@ -194,14 +194,14 @@ class SvLayoutScanProperties(bpy.types.Operator):
 
             templist = []
             for node in tree.nodes:
-                node_idname = node.bl_idname
+                idname = node.bl_idname
    
-                if node_idname in {'ObjectsNodeMK2', 'SvObjectsNodeMK3'}:
+                if idname in {'ObjectsNodeMK2', 'SvObjectsNodeMK3'}:
                     print('scans for get option ', node.label, node.name)
                     if any((s.links for s in node.outputs)):
                         templist.append([node.label, node.name, ""])
                 
-                if node_idname in {'SvNumberNode', 'IntegerNode', 'FloatNode'}:
+                elif idname in {'SvNumberNode', 'IntegerNode', 'FloatNode'}:
                     if not (node.inputs and node.outputs):
                         pass
                     if node.inputs[0].is_linked:
@@ -209,9 +209,9 @@ class SvLayoutScanProperties(bpy.types.Operator):
                     if not node.outputs[0].is_linked and not node.to3d:
                         pass
 
-                    if 'Integer' in node_idname:
+                    if 'Integer' in idname:
                         templist.append([node.label, node.name, 'int_'])
-                    elif 'Float' in node_idname:
+                    elif 'Float' in idname:
                         templist.append([node.label, node.name, 'float_'])                          
                     else:
                         kind = node.selected_mode
