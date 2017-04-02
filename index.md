@@ -69,23 +69,23 @@
     SvDeleteLooseNode
     SvRemoveDoublesNode
     SvLimitedDissolve
-    ---
     SvSeparateMeshNode
     PolygonBoomNode
     Pols2EdgsNode
     SvMeshJoinNode
+    ---
+    SvBevelNode
     SvIntersectEdgesNode
     SvIntersectEdgesNodeMK2
+    SvOffsetNode
     ---
     SvFlipNormalsNode
     SvRecalcNormalsNode
     SvRandomizeVerticesNode
     SvFillsHoleNode
     SvTriangulateNode
-    SvBevelNode
     SvIterateNode
     ---
-    SvOffsetNode
     SvExtrudeEdgesNode
     SvExtrudeSeparateNode
     SvExtrudeRegionNode
