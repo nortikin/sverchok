@@ -62,6 +62,10 @@ def layout_draw_categories(layout, node_details):
     add_n_grab = 'node.add_node'
     for node_info in node_details:
 
+        if node_info[0] == 'separator':
+            layout.separator()
+            continue
+
         if not node_info:
             print(repr(node_info), 'is incomplete, or unparsable')
             continue
