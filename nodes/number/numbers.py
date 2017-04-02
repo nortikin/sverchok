@@ -85,14 +85,18 @@ class SvNumberNode(bpy.types.Node, SverchCustomTreeNode):
 
 
     def mode_custom_draw(self, context, layout):
-        r = layout.row(align=True)
+
         if not self.show_limits:
+            r = layout.row(align=True)
             r.prop(self, 'selected_mode', expand=True)
+            r.prop(self, 'show_limits', icon='SETTINGS', text='')
         else:
+            c = layout.column(align=True)
             kind = self.selected_mode
-            r.prop(self, kind + '_min', text='')
-            r.prop(self, kind + '_max', text='')
-        r.prop(self, 'show_limits', icon='SETTINGS', text='')
+            c.prop(self, kind + '_min', text='min')
+            c.prop(self, kind + '_max', text='max')
+            r = layout.row()
+            r.prop(self, 'show_limits', icon='SETTINGS', text='')
 
 
     def draw_label(self):
