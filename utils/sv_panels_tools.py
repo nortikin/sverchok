@@ -215,16 +215,16 @@ class SvLayoutScanProperties(bpy.types.Operator):
                         templist.append([node.label, node.name, 'float_'])                          
                     else:
                         kind = node.selected_mode
-                        templist.append([kind, node.name, kind + '_'])
+                        templist.append([node.label, node.name, kind + '_'])
 
             templist.sort()
             templ = [[t[1], t[2]] for t in templist]
             tree.Sv3DProps.clear()
             for name, prop in templ:
                 print(name, prop)
-                tree.Sv3DProps.add()
-                tree.Sv3DProps[-1].node_name = name
-                tree.Sv3DProps[-1].prop_name = prop
+                item = tree.Sv3DProps.add()
+                item.node_name = name
+                item.prop_name = prop
 
         return {'FINISHED'}
 
