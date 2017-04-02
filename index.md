@@ -66,13 +66,14 @@
     SvSimpleDeformNode
 
 ## Modifier Change
-    PolygonBoomNode
-    SvMeshJoinNode
-    SvLimitedDissolve
     SvDeleteLooseNode
     SvRemoveDoublesNode
+    SvLimitedDissolve
+    ---
     SvSeparateMeshNode
+    PolygonBoomNode
     Pols2EdgsNode
+    SvMeshJoinNode
     SvIntersectEdgesNode
     SvIntersectEdgesNodeMK2
     ---
