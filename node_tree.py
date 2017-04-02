@@ -69,6 +69,7 @@ class SvColors(bpy.types.PropertyGroup):
 
 
 class SvSocketCommon:
+
     @property
     def other(self):
         return get_other_socket(self)
@@ -246,6 +247,7 @@ class StringsSocket(NodeSocket, SvSocketCommon):
     prop_index = IntProperty()
     nodule_color = FloatVectorProperty(default=(0.6, 1.0, 0.6, 1.0), size=4)
 
+    custom_draw = StringProperty()
 
     def get_prop_data(self):
         if self.prop_name:
@@ -274,6 +276,13 @@ class StringsSocket(NodeSocket, SvSocketCommon):
             raise SvNoDataError
 
     def draw(self, context, layout, node, text):
+
+        # just handle custom draw..be it input or output.
+        if hasattr(self, 'custom_draw'):
+            if self.custom_draw and hasattr(node, self.custom_draw):
+                getattr(node, self.custom_draw)(context, layout)
+                return
+
         if self.prop_name:
             prop = node.rna_type.properties.get(self.prop_name, None)
             t = prop.name if prop else text

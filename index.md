@@ -141,6 +141,7 @@
     SvListInputNode
     RandomNode
     SvRndNumGen
+    SvNumberNode
     FloatNode
     IntegerNode
     Float2IntNode

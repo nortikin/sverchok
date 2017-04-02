@@ -188,32 +188,43 @@ class SvLayoutScanProperties(bpy.types.Operator):
 
     def execute(self, context):
         for tree in bpy.data.node_groups:
-            tna = tree.name
-            if tree.bl_idname == 'SverchCustomTreeType':
-                templist = []
-                for no in tree.nodes:
-                    if no.bl_idname == "IntegerNode":
-                        if no.inputs and no.outputs:
-                            if not no.inputs[0].links \
-                                    and no.outputs[0].links and no.to3d:
-                                templist.append([no. label, no.name, 'int_'])
-                    if no.bl_idname == "FloatNode":
-                        if no.inputs and no.outputs:
-                            if not no.inputs[0].links \
-                                    and no.outputs[0].links and no.to3d:
-                                templist.append([no.label, no.name, 'float_'])
-                    if no.bl_idname in {'ObjectsNodeMK2', 'SvObjectsNodeMK3'}:
-                        print('scans for get option ', no.label, no.name)
-                        if any((s.links for s in no.outputs)):
-                            templist.append([no.label, no.name, ""])
-                templist.sort()
-                templ = [[t[1], t[2]] for t in templist]
-                tree.Sv3DProps.clear()
-                for name, prop in templ:
-                    print(name,prop)
-                    tree.Sv3DProps.add()
-                    tree.Sv3DProps[-1].node_name = name
-                    tree.Sv3DProps[-1].prop_name = prop
+
+            if not tree.bl_idname == 'SverchCustomTreeType':
+                continue
+
+            templist = []
+            for node in tree.nodes:
+                idname = node.bl_idname
+   
+                if idname in {'ObjectsNodeMK2', 'SvObjectsNodeMK3'}:
+                    print('scans for get option ', node.label, node.name)
+                    if any((s.links for s in node.outputs)):
+                        templist.append([node.label, node.name, ""])
+                
+                elif idname in {'SvNumberNode', 'IntegerNode', 'FloatNode'}:
+                    if not (node.inputs and node.outputs):
+                        pass
+                    if node.inputs[0].is_linked:
+                        pass
+                    if not node.outputs[0].is_linked and not node.to3d:
+                        pass
+
+                    if 'Integer' in idname:
+                        templist.append([node.label, node.name, 'int_'])
+                    elif 'Float' in idname:
+                        templist.append([node.label, node.name, 'float_'])                          
+                    else:
+                        kind = node.selected_mode
+                        templist.append([node.label, node.name, kind + '_'])
+
+            templist.sort()
+            templ = [[t[1], t[2]] for t in templist]
+            tree.Sv3DProps.clear()
+            for name, prop in templ:
+                print(name, prop)
+                item = tree.Sv3DProps.add()
+                item.node_name = name
+                item.prop_name = prop
 
         return {'FINISHED'}
 
