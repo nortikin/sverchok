@@ -136,21 +136,23 @@
     ListFlipNode
 
 ## Number
-    GenListRangeIntNode
-    SvGenFloatRange
-    SvListInputNode
-    RandomNode
-    SvRndNumGen
     SvNumberNode
     FloatNode
     IntegerNode
     Float2IntNode
-    Formula2Node
     ScalarMathNode
+    Formula2Node
+    ---
+    GenListRangeIntNode
+    SvGenFloatRange
     SvMapRangeNode
-    SvEasingNode
+    SvListInputNode
     SvGenFibonacci
     SvGenExponential
+    ---
+    SvRndNumGen
+    RandomNode
+    SvEasingNode
     SvMixNumbersNode
 
 ## Vector
