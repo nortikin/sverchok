@@ -156,11 +156,16 @@
 ## Vector
     GenVectorsNode
     VectorsOutNode
+    svAxisInputNode
+    SvAxisInputNodeMK2
     SvVectorMathNodeMK2
+    VertsDelDoublesNode
+    SvVertSortNode
+    ---
     VectorDropNode
     VectorPolarInNode
     VectorPolarOutNode
-    VertsDelDoublesNode
+    SvAttractorNode
     ---
     EvaluateLineNode
     SvVectorLerp
@@ -169,15 +174,11 @@
     SvInterpolationNodeMK2
     SvInterpolationNodeMK3
     ---
-    SvAttractorNode
-    SvVertSortNode
     SvNoiseNodeMK2
     SvVectorFractal
     SvLacunarityNode
     SvTurbulenceNode
     SvVectorRewire
-    svAxisInputNode
-    SvAxisInputNodeMK2
 
 ## Matrix
     MatrixGenNode
