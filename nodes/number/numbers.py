@@ -31,7 +31,7 @@ def uset(self, value, origin):
     MIN = getattr(self, origin + 'min')
 
     # rudimentary min max flipping
-    # MAX, MIN = (MAX, MIN) if MAX >= MIN else (MIN, MAX)
+    MAX, MIN = (MAX, MIN) if MAX >= MIN else (MIN, MAX)
 
     if MIN <= value <= MAX:
         self[origin] = value
