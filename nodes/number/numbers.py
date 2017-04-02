@@ -29,6 +29,10 @@ def uget(self, origin):
 def uset(self, value, origin):
     MAX = getattr(self, origin + 'max')
     MIN = getattr(self, origin + 'min')
+
+    # rudimentary min max flipping
+    MAX, MIN = (MAX, MIN) if MAX >= MIN else (MIN, MAX)
+
     if MIN <= value <= MAX:
         self[origin] = value
     elif value > MAX:
@@ -36,6 +40,7 @@ def uset(self, value, origin):
     else:
         self[origin] = MIN
     return None
+
 
 class SvNumberNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Float '''
@@ -50,17 +55,19 @@ class SvNumberNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs[0].replace_socket('StringsSocket', kind.title()).custom_draw = 'mode_custom_draw'
         self.process_node(context)
 
-    int_ = IntProperty(
-        default=0, name="", update=updateNode,
-        get=lambda s: uget(s, 'int_'), set=lambda s, val: uset(s, val, 'int_')) 
     int_min = IntProperty(default=-1024, description='minimum')
     int_max = IntProperty(default=1024, description='maximum')
+    int_ = IntProperty(
+        default=0, name="", update=updateNode,
+        get=lambda s: uget(s, 'int_'),
+        set=lambda s, val: uset(s, val, 'int_')) 
 
-    float_ = FloatProperty(
-        default=0.0, name="", update=updateNode,
-        get=lambda s: uget(s, 'float_'), set=lambda s, val: uset(s, val, 'float_'))
     float_min = FloatProperty(default=-500.0, description='minimum')
     float_max = FloatProperty(default=500.0, description='maximum')
+    float_ = FloatProperty(
+        default=0.0, name="", update=updateNode,
+        get=lambda s: uget(s, 'float_'),
+        set=lambda s, val: uset(s, val, 'float_'))
 
     mode_options = [(k, k, '', i) for i, k in enumerate(["float", "int"])]
     
@@ -69,16 +76,11 @@ class SvNumberNode(bpy.types.Node, SverchCustomTreeNode):
 
     show_limits = BoolProperty(default=False)
 
+
     def sv_init(self, context):
         self.inputs.new('StringsSocket', "Float").prop_name = 'float_'
         self.outputs.new('StringsSocket', "Float").custom_draw = 'mode_custom_draw'
 
-    # def draw_buttons(self, context, layout):
-    #     if self.show_limits:
-    #         r2 = layout.row(align=True)
-    #         kind = self.selected_mode
-    #         r2.prop(self, kind + '_min', text='')
-    #         r2.prop(self, kind + '_max', text='')
 
     def mode_custom_draw(self, context, layout):
         r = layout.row(align=True)
@@ -90,28 +92,35 @@ class SvNumberNode(bpy.types.Node, SverchCustomTreeNode):
             r.prop(self, kind + '_max', text='')
         r.prop(self, 'show_limits', icon='SETTINGS', text='')
 
-    # def draw_label(self):
-    #     # if not self.inputs[0].links:
-    #     #     return str(round(self.float_, 3))
-    #     # else:
-    #     #     return self.bl_label
-    #     return 'yes'
+
+    def draw_label(self):
+        kind = self.selected_mode + '_'
+
+        if self.hidden:
+            if not self.inputs[0].links:
+                if kind == 'float_':
+                    return 'Float: ' + str(round(self.float_, 3))
+                else:
+                    return 'Int: ' + str(self.int_)
+            else:
+                return kind[:-1].title()
+
+        else:
+            return self.label or self.name
+
             
     def process(self):
-        # inputs
-        # Float = min(max(float(self.inputs[0].sv_get()[0][0]), self.minim), self.maxim)
 
         if not self.inputs[0].is_linked:
             kind = self.selected_mode + '_'
             self.outputs[0].sv_set([[getattr(self, kind)]])
         else:
-            found_data = self.inputs[0].sv_get()
+            # found_data = self.inputs[0].sv_get()
 
             # if found data contains ints, but the mode is float then auto cast..
             # same for float to int.
 
             self.outputs[0].sv_set(self.inputs[0].sv_get())
-
 
 
 
@@ -121,6 +130,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvNumberNode)
-
-
-
