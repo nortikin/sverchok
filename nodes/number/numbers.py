@@ -95,21 +95,21 @@ class SvNumberNode(bpy.types.Node, SverchCustomTreeNode):
         r.prop(self, 'show_limits', icon='SETTINGS', text='')
 
 
-    # def draw_label(self):
-    #     kind = self.selected_mode + '_'
+    def draw_label(self):
+        kind = self.selected_mode + '_'
 
-    #     if self.hide:
-    #         if not self.inputs[0].links:
-    #             value = getattr(self, kind)
-    #             if kind == 'float_':
-    #                 return 'Float: ' + str(round(value, 3))
-    #             else:
-    #                 return 'Int: ' + str(value)
-    #         else:
-    #             return kind[:-1].title()
+        if self.hide:
+            if not self.inputs[0].links:
+                value = getattr(self, kind)
+                if kind == 'float_':
+                    return 'Float: ' + str(round(value, 3))
+                else:
+                    return 'Int: ' + str(value)
+            else:
+                return kind[:-1].title()
 
-    #     else:
-    #         return self.label or self.name
+        else:
+            return self.label or self.name
 
             
     def process(self):
