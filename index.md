@@ -67,26 +67,28 @@
 
 ## Modifier Change
     PolygonBoomNode
-    Pols2EdgsNode
     SvMeshJoinNode
-    SvRemoveDoublesNode
-    SvDeleteLooseNode
-    SvSeparateMeshNode
-    SvExtrudeSeparateNode
-    SvExtrudeRegionNode
-    SvRandomizeVerticesNode
-    SvVertMaskNode
-    SvFillsHoleNode
     SvLimitedDissolve
+    SvDeleteLooseNode
+    SvRemoveDoublesNode
+    SvSeparateMeshNode
+    Pols2EdgsNode
     SvIntersectEdgesNode
     SvIntersectEdgesNodeMK2
-    SvIterateNode
-    SvBevelNode
-    SvExtrudeEdgesNode
-    SvOffsetNode
-    SvTriangulateNode
+    ---
     SvFlipNormalsNode
     SvRecalcNormalsNode
+    SvRandomizeVerticesNode
+    SvFillsHoleNode
+    SvTriangulateNode
+    SvBevelNode
+    SvIterateNode
+    ---
+    SvOffsetNode
+    SvExtrudeEdgesNode
+    SvExtrudeSeparateNode
+    SvExtrudeRegionNode
+    SvVertMaskNode
     SvTransformSelectNode
 
 ## Modifier Make

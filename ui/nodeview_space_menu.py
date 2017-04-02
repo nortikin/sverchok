@@ -140,7 +140,7 @@ class NODEVIEW_MT_Dynamic_Menu(bpy.types.Menu):
         layout.separator()
         layout.menu("NODEVIEW_MT_AddViz", **icon('RESTRICT_VIEW_OFF'))
         layout.menu("NODEVIEW_MT_AddText")
-        layout.menu("NODEVIEW_MT_AddScene", icon_value=custom_icon("SV_SCENE"))
+        layout.menu("NODEVIEW_MT_AddScene", **icon('SCENE_DATA'))
         layout.menu("NODEVIEW_MT_AddLayout", icon_value=custom_icon("SV_LAYOUT"))
         layout.menu("NODE_MT_category_SVERCHOK_BPY_Data", icon="BLENDER")
         layout.separator()
