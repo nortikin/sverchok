@@ -18,6 +18,11 @@ Outputs
 
 **Vector** - Vertex or series of vertices
 
+Operators
+---------
+
+This node has one button: **3D Cursor**. This button is available only when no of inputs are connected. When pressed, this button assigns current location of Blender's 3D Cursor to X, Y, Z parameters.
+
 Examples
 --------
 

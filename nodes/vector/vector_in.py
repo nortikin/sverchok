@@ -17,11 +17,28 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-from bpy.props import FloatProperty, BoolProperty
+from bpy.props import FloatProperty, BoolProperty, StringProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, fullList
 from sverchok.utils.sv_itertools import sv_zip_longest
 
+class SvVectorFromCursor(bpy.types.Operator):
+    "Vector from 3D Cursor"
+
+    bl_idname = "node.sverchok_vector_from_cursor"
+    bl_label = "Vector from 3D Cursor"
+    bl_options = {'REGISTER'}
+
+    nodename = StringProperty(name='nodename')
+    treename = StringProperty(name='treename')
+
+    def execute(self, context):
+        cursor = bpy.context.scene.cursor_location
+
+        node = bpy.data.node_groups[self.treename].nodes[self.nodename]
+        node.x_, node.y_, node.z_ = tuple(cursor)
+
+        return{'FINISHED'}
 
 class GenVectorsNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Generator vectors '''
@@ -45,6 +62,12 @@ class GenVectorsNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('StringsSocket', "Z").prop_name = 'z_'
         self.width = 100
         self.outputs.new('VerticesSocket', "Vectors")
+
+    def draw_buttons(self, context, layout):
+        if not any(s.is_linked for s in self.inputs):
+            get_cursor = layout.operator('node.sverchok_vector_from_cursor', text='3D Cursor')
+            get_cursor.nodename = self.name
+            get_cursor.treename = self.id_data.name
 
     def process(self):
         if not self.outputs['Vectors'].is_linked:
@@ -71,7 +94,10 @@ class GenVectorsNode(bpy.types.Node, SverchCustomTreeNode):
 
 def register():
     bpy.utils.register_class(GenVectorsNode)
+    bpy.utils.register_class(SvVectorFromCursor)
 
 
 def unregister():
     bpy.utils.unregister_class(GenVectorsNode)
+    bpy.utils.unregister_class(SvVectorFromCursor)
+
