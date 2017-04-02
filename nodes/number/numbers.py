@@ -31,7 +31,7 @@ def uset(self, value, origin):
     MIN = getattr(self, origin + 'min')
 
     # rudimentary min max flipping
-    MAX, MIN = (MAX, MIN) if MAX >= MIN else (MIN, MAX)
+    # MAX, MIN = (MAX, MIN) if MAX >= MIN else (MIN, MAX)
 
     if MIN <= value <= MAX:
         self[origin] = value
@@ -55,19 +55,19 @@ class SvNumberNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs[0].replace_socket('StringsSocket', kind.title()).custom_draw = 'mode_custom_draw'
         self.process_node(context)
 
-    int_min = IntProperty(default=-1024, description='minimum')
-    int_max = IntProperty(default=1024, description='maximum')
     int_ = IntProperty(
         default=0, name="", update=updateNode,
         get=lambda s: uget(s, 'int_'),
         set=lambda s, val: uset(s, val, 'int_')) 
+    int_min = IntProperty(default=-1024, description='minimum')
+    int_max = IntProperty(default=1024, description='maximum')
 
-    float_min = FloatProperty(default=-500.0, description='minimum')
-    float_max = FloatProperty(default=500.0, description='maximum')
     float_ = FloatProperty(
         default=0.0, name="", update=updateNode,
         get=lambda s: uget(s, 'float_'),
         set=lambda s, val: uset(s, val, 'float_'))
+    float_min = FloatProperty(default=-500.0, description='minimum')
+    float_max = FloatProperty(default=500.0, description='maximum')
 
     mode_options = [(k, k, '', i) for i, k in enumerate(["float", "int"])]
     
@@ -78,6 +78,8 @@ class SvNumberNode(bpy.types.Node, SverchCustomTreeNode):
 
 
     def sv_init(self, context):
+        self['float_'] = 0.0
+        self['int_'] = 0
         self.inputs.new('StringsSocket', "Float").prop_name = 'float_'
         self.outputs.new('StringsSocket', "Float").custom_draw = 'mode_custom_draw'
 
@@ -93,20 +95,21 @@ class SvNumberNode(bpy.types.Node, SverchCustomTreeNode):
         r.prop(self, 'show_limits', icon='SETTINGS', text='')
 
 
-    def draw_label(self):
-        kind = self.selected_mode + '_'
+    # def draw_label(self):
+    #     kind = self.selected_mode + '_'
 
-        if self.hidden:
-            if not self.inputs[0].links:
-                if kind == 'float_':
-                    return 'Float: ' + str(round(self.float_, 3))
-                else:
-                    return 'Int: ' + str(self.int_)
-            else:
-                return kind[:-1].title()
+    #     if self.hide:
+    #         if not self.inputs[0].links:
+    #             value = getattr(self, kind)
+    #             if kind == 'float_':
+    #                 return 'Float: ' + str(round(value, 3))
+    #             else:
+    #                 return 'Int: ' + str(value)
+    #         else:
+    #             return kind[:-1].title()
 
-        else:
-            return self.label or self.name
+    #     else:
+    #         return self.label or self.name
 
             
     def process(self):
