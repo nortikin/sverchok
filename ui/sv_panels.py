@@ -220,13 +220,22 @@ class Sv3DPanel(bpy.types.Panel):
                         elif node.bl_idname == 'SvObjectsNodeMK3':
                             node.draw_sv3dpanel_ob3(col, little_width)
 
-                        elif node.bl_idname in {"IntegerNode", "FloatNode"}:
+                        elif node.bl_idname in {"IntegerNode", "FloatNode", "SvNumberNode"}:
                             row = col.row(align=True)
                             row.prop(node, ver, text=tex)
                             colo = row.row(align=True)
                             colo.scale_x = little_width * 2.5
-                            colo.prop(node, 'minim', text='', slider=True, emboss=False)
-                            colo.prop(node, 'maxim', text='', slider=True, emboss=False)
+                            
+                            if node.bl_idname == 'SvNumberNode':
+                                min_name = node.selected_mode + '_min'
+                                max_name = node.selected_mode + '_max'
+                            else:
+                                min_name = 'minim'
+                                max_name = 'maxim'
+                            
+                            colo.prop(node, min_name, text='', slider=True, emboss=False)
+                            colo.prop(node, max_name, text='', slider=True, emboss=False)
+
 
 
 class SverchokToolsMenu(bpy.types.Panel):
