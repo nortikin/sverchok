@@ -45,6 +45,7 @@ old_bl_idnames = {
     'ObjectsNodeMK2': "objects_mk2",
     'RandomVectorNode': 'random_vector',
     'svAxisInputNode': 'axis_input',
+    'SvIntersectEdgesNode': 'edges_intersect',
     'ViewerNode_text': "viewer_text",
     'EvalKnievalNode': "eval_knieval",
     'SvStethoscopeNode' :'stethoscope',
