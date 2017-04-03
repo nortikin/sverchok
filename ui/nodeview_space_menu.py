@@ -160,10 +160,7 @@ class NODEVIEW_MT_AddGenerators(bpy.types.Menu):
     def draw(self, context):
         layout = self.layout
         layout_draw_categories(self.layout, node_cats[self.bl_label])
-        if menu_prefs.get('show_icons'):
-            layout.menu("NODEVIEW_MT_AddGeneratorsExt", icon='PLUGIN')
-        else:
-            layout.menu("NODEVIEW_MT_AddGeneratorsExt")
+        layout.menu("NODEVIEW_MT_AddGeneratorsExt", **icon('PLUGIN'))
 
 
 class NODEVIEW_MT_AddModifiers(bpy.types.Menu):
