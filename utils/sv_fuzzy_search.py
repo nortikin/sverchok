@@ -77,10 +77,15 @@ def draw_callback_px(self, context, start_position):
     blf.position(font_id, x, y, 0)
     blf.size(font_id, 20, 72)
     blf.draw(font_id, '>>> ' + self.current_string)
-    # draw results
-    #
-    #
-    #
+    
+    '''
+    draw results
+
+    flat_node_cats will contain bl_idnames
+    bl_label <--- getattr(bpy.types, bl_idname)
+    
+
+    '''
   
     # restore opengl defaults
     bgl.glLineWidth(1)
