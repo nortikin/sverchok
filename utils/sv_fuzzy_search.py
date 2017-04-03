@@ -64,13 +64,13 @@ def make_flat_nodecats():
 
 flat_node_cats = make_flat_nodecats()   # produces bl_idnames.
 
-search_string = {}
 
 ### ------------------------------------------------------------------------------
 
 
 def draw_callback_px(self, context, start_position):
 
+    print(start_position)
     font_id = 0
     x, y = start_position
 
@@ -78,8 +78,7 @@ def draw_callback_px(self, context, start_position):
     bgl.glColor4f(0.0, 0.0, 0.0, 1.0)
     blf.position(font_id, x, y, 0)
     blf.size(font_id, 20, 72)
-    blf.draw(font_id, search_string['content'])
-
+    blf.draw(font_id, self.current_string)
     # draw results
     #
     #
@@ -89,8 +88,6 @@ def draw_callback_px(self, context, start_position):
     bgl.glLineWidth(1)
     bgl.glDisable(bgl.GL_BLEND)
     bgl.glColor4f(0.0, 0.0, 0.0, 1.0)
-
-
 
 
 class SvFuzzySearchOne(bpy.types.Operator):
@@ -112,7 +109,6 @@ class SvFuzzySearchOne(bpy.types.Operator):
                 has_length = len(self.current_string)
                 self.current_string = self.current_string[:-1] if has_length else ''
             print(self.current_string)
-            search_string['content'] = self.current_string
 
         elif event.type in {'LEFTMOUSE', 'RET'}:
             print('completed')
@@ -129,8 +125,6 @@ class SvFuzzySearchOne(bpy.types.Operator):
         if context.area.type == 'NODE_EDITOR':
 
             start_position = 20, 20   # event.mouse_region_x, event.mouse_region_y
-            print(start_position)
-
             args = (self, context, start_position)
             self._handle = SpaceNodeEditor.draw_handler_add(draw_callback_px, args, 'WINDOW', 'POST_VIEW')
             
