@@ -17,16 +17,17 @@
     SvCircleNode
     CylinderNode
     SphereNode
+    ---
     BasicSplineNode
     svBasicArcNode
     RandomVectorNodeMK2
-    SvBricksNode
     SvScriptNodeLite    
     ImageNode
     SvTorusNode
 
 ## Generators Extended
     SvBoxRoundedNode
+    SvBricksNode
     HilbertNode
     Hilbert3dNode
     HilbertImageNode
@@ -146,6 +147,7 @@
     Float2IntNode
     ScalarMathNode
     Formula2Node
+    SvExecNodeMod
     ---
     GenListRangeIntNode
     SvGenFloatRange
@@ -280,6 +282,5 @@
     SvBMinputNode
     SvBMoutputNode
     SvBMtoElementNode
-    SvExecNodeMod
     SvSeparateMeshNodeMK2
     SvBvhOverlapNodeNew
