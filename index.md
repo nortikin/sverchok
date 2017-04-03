@@ -68,24 +68,23 @@
 ## Modifier Change
     SvDeleteLooseNode
     SvRemoveDoublesNode
-    SvLimitedDissolve
     SvSeparateMeshNode
     PolygonBoomNode
     Pols2EdgsNode
     SvMeshJoinNode
     ---
     SvBevelNode
-    SvIntersectEdgesNode
     SvIntersectEdgesNodeMK2
     SvOffsetNode
+    SvFillsHoleNode
+    SvTriangulateNode
+    SvLimitedDissolve
     ---
     SvFlipNormalsNode
     SvRecalcNormalsNode
     SvRandomizeVerticesNode
-    SvFillsHoleNode
-    SvTriangulateNode
-    SvIterateNode
     ---
+    SvIterateNode
     SvExtrudeEdgesNode
     SvExtrudeSeparateNode
     SvExtrudeRegionNode
@@ -161,7 +160,6 @@
 ## Vector
     GenVectorsNode
     VectorsOutNode
-    svAxisInputNode
     SvAxisInputNodeMK2
     SvVectorMathNodeMK2
     VertsDelDoublesNode
