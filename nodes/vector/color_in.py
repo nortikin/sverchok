@@ -39,7 +39,7 @@ class SvColorsInNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Generator for Color data , color combine'''
     bl_idname = 'SvColorsInNode'
     bl_label = 'Color in'
-    bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_COMBINE_IN'
 
     def psuedo_update(self, context):
         for idx, socket in enumerate(self.selected_mode):

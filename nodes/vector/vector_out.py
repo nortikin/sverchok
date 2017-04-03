@@ -26,7 +26,7 @@ class VectorsOutNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Vectors out '''
     bl_idname = 'VectorsOutNode'
     bl_label = 'Vector out'
-    bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_COMBINE_OUT'
 
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', "Vectors", "Vectors")
