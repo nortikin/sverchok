@@ -116,7 +116,12 @@ class SvFuzzySearchOne(bpy.types.Operator):
         if event.type in KEYBOARD and event.value == 'PRESS':
             # print(event.type)
             if event.type in CAPS or event.type in remap_nums.keys() or event.type == 'SPACE':
-                final_value = remap_nums.get(event.type, event.type.lower())
+
+                if event.type == 'SPACE':
+                    final_value = ' '
+                else:
+                    final_value = remap_nums.get(event.type, event.type.lower())
+
                 self.current_string = self.current_string + final_value
             elif event.type == 'BACK_SPACE':
                 has_length = len(self.current_string)
