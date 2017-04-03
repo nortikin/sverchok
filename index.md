@@ -93,19 +93,20 @@
 
 ## Modifier Make
     LineConnectNodeMK2
+    SvLatheNode
     SvConvexHullNode
     DelaunayTriangulation2DNode
     Voronoi2DNode
     SvWafelNode
     CrossSectionNode
     SvBisectNode
+    ---
     SvAdaptiveEdgeNode
     AdaptivePolsNode
     SvDuplicateAlongEdgeNode
     SvSolidifyNode
     SvWireframeNode
     SvPipeNode
-    SvLatheNode
     SvMatrixTubeNode
 
 ## List Masks
