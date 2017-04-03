@@ -139,7 +139,7 @@ class SvIntersectEdgesNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
     bl_idname = 'SvIntersectEdgesNodeMK2'
     bl_label = 'Intersect Edges MK2'
-    bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_XALL'
 
     rm_switch = bpy.props.BoolProperty(update=updateNode)
     rm_doubles = bpy.props.FloatProperty(min=0.0, default=0.0001, update=updateNode, step=0.1)
