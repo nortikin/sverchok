@@ -58,7 +58,7 @@ def make_flat_nodecats():
     for cat_name, cat_content in dict(node_cats).items():
         for node_ref in cat_content:
             if not node_ref[0] == 'separator':
-                flat_node_list.append(node_ref)  # maybe return lookups too
+                flat_node_list.append(node_ref[0])  # maybe return lookups too
     return flat_node_list
 
 flat_node_cats = make_flat_nodecats()   # produces bl_idnames.
@@ -75,7 +75,7 @@ def draw_callback_px(self, context, start_position):
     # draw some text
     bgl.glColor4f(0.0, 0.0, 0.0, 1.0)
     blf.position(font_id, x, y, 0)
-    blf.size(font_id, 20, 72)
+    blf.size(font_id, 30, 72)
     blf.draw(font_id, '>>> ' + self.current_string)
     
     '''
@@ -84,8 +84,18 @@ def draw_callback_px(self, context, start_position):
     flat_node_cats will contain bl_idnames
     bl_label <--- getattr(bpy.types, bl_idname)
     
-
     '''
+    if self.current_string:
+        idx = 1
+        for item in flat_node_cats:
+            if self.current_string in item.lower():
+                bl_label = getattr(bpy.types, item).bl_label
+                blf.position(font_id, x, y-(30*idx), 0)
+                blf.draw(font_id, '         |  ' + bl_label)
+                idx += 1
+            if idx > 10:
+                break
+
   
     # restore opengl defaults
     bgl.glLineWidth(1)
@@ -104,14 +114,14 @@ class SvFuzzySearchOne(bpy.types.Operator):
         context.area.tag_redraw()
         
         if event.type in KEYBOARD and event.value == 'PRESS':
-            print(event.type)
-            if event.type in CAPS or event.type in remap_nums.keys():
+            # print(event.type)
+            if event.type in CAPS or event.type in remap_nums.keys() or event.type == 'SPACE':
                 final_value = remap_nums.get(event.type, event.type.lower())
                 self.current_string = self.current_string + final_value
             elif event.type == 'BACK_SPACE':
                 has_length = len(self.current_string)
                 self.current_string = self.current_string[:-1] if has_length else ''
-            print(self.current_string)
+            # print(self.current_string)
 
         elif event.type in {'LEFTMOUSE', 'RET'}:
             print('completed')
