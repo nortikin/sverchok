@@ -94,7 +94,7 @@ utils_modules = [
     "sv_panels_tools", "sv_gist_tools", "sv_IO_panel_tools", "sv_load_zipped_blend",
     "monad", "sv_help",
     #"loadscript",
-    "debug_script", "sv_update_utils"
+    "debug_script", "sv_update_utils", "sv_fuzzy_node_search"
 ]
 
 ui_modules = [

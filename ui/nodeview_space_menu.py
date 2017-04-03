@@ -126,7 +126,8 @@ class NODEVIEW_MT_Dynamic_Menu(bpy.types.Menu):
         layout = self.layout
         layout.operator_context = 'INVOKE_REGION_WIN'
 
-        s = layout.operator("node.add_search", text="Search", icon='OUTLINER_DATA_FONT')
+        # s = layout.operator("node.add_search", text="Search", icon='OUTLINER_DATA_FONT')
+        s = layout.operator("node.sv_fuzzy_node_search", text="Search", icon='OUTLINER_DATA_FONT')
         s.use_transform = True
 
         layout.separator()
@@ -147,7 +148,7 @@ class NODEVIEW_MT_Dynamic_Menu(bpy.types.Menu):
         layout.menu("NODEVIEW_MT_AddLayout", **icon("SV_LAYOUT"))
         layout.menu("NODE_MT_category_SVERCHOK_BPY_Data", icon="BLENDER")
         layout.separator()
-        layout.menu("NODEVIEW_MT_AddNetwork", **icon("SV_NETWORK"))
+        layout.menu("NODEVIEW_MT_AddNetwork", **icon("OOPS"))
         layout.menu("NODEVIEW_MT_AddBetas", **icon("SV_BETA"))
         layout.menu("NODEVIEW_MT_AddAlphas", **icon("SV_ALPHA"))
         layout.separator() 
