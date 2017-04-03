@@ -49,11 +49,12 @@ def filter_items(self, context):
 
 class SvFuzzySearchOne(bpy.types.Operator):
     """Implementing Search fuzzyness"""
-    bl_idname = "node.sv_fuzzysearch_one"
+    bl_idname = "node.sv_fuzzy_node_search"
     bl_label = "Fuzzy Search"
     bl_property = "search_responses"
 
     search_responses = bpy.props.EnumProperty(items=filter_items)
+    use_transform = bpy.props.BoolProperty()
 
     def execute(self, context):
         self.report({'INFO'}, "Selected: %s" % self.search_responses)
