@@ -39,7 +39,8 @@ def make_flat_nodecats():
     for cat in node_cats:
         for node_ref in cat:
             if not node_ref[0] == 'separator':
-                flat_node_list.append(node_ref)
+                flat_node_list.append(node_ref)  # maybe return lookups too
+    return flat_node_list
 
 flat_node_cats = make_flat_nodecats()
 
