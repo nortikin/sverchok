@@ -165,8 +165,9 @@
     SvAxisInputNodeMK2
     SvVectorMathNodeMK2
     VertsDelDoublesNode
-    SvVertSortNode
+    SvVectorRewire
     ---
+    SvVertSortNode
     VectorDropNode
     VectorPolarInNode
     VectorPolarOutNode
@@ -183,7 +184,6 @@
     SvVectorFractal
     SvLacunarityNode
     SvTurbulenceNode
-    SvVectorRewire
 
 ## Matrix
     MatrixGenNode
