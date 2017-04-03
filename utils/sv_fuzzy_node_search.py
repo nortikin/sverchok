@@ -36,13 +36,14 @@ menu_prefs = {}
 
 def make_flat_nodecats():
     flat_node_list = []
-    for cat in node_cats:
-        for node_ref in cat:
+    for cat_name, cat_content in dict(node_cats).items():
+        for node_ref in cat_content:
             if not node_ref[0] == 'separator':
                 flat_node_list.append(node_ref)  # maybe return lookups too
     return flat_node_list
 
 flat_node_cats = make_flat_nodecats()
+
 
 def filter_items(self, context):
     return [(n[0], n[0], '', idx) for idx, n in enumerate(flat_node_cats)]
