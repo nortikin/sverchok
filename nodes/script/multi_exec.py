@@ -59,7 +59,7 @@ class SvExecNodeMod(bpy.types.Node, SverchCustomTreeNode):
     ''' Exec Node Mod'''
     bl_idname = 'SvExecNodeMod'
     bl_label = 'Exec Node Mod'
-    bl_icon = 'OUTLINER_OB_EMPTY'
+    bl_icon = 'CONSOLE'
 
     text = StringProperty(default='', update=updateNode)
     dynamic_strings = bpy.props.CollectionProperty(type=SvExecNodeDynaStringItem)

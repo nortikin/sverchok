@@ -56,6 +56,9 @@ def make_node_cats():
                     node_cats[category] = temp_list
                 category = line[2:].strip()
                 temp_list = []
+
+            elif line.strip() == '---':
+                temp_list.append(['separator'])
             else:
                 bl_idname = line.strip()
                 temp_list.append([bl_idname])
@@ -161,9 +164,11 @@ def make_categories():
     node_count = 0
     for category, nodes in node_cats.items():
         name_big = "SVERCHOK_" + category.replace(' ', '_')
-        node_categories.append(SverchNodeCategory(
-            name_big, category,
-            items=[NodeItem(props[0]) for props in nodes]))
+        node_categories.append(
+            SverchNodeCategory(
+                name_big,
+                category,
+                items=[NodeItem(props[0]) for props in nodes if not props[0] == 'separator']))
         node_count += len(nodes)
     node_categories.append(SverchNodeCategory("SVERCHOK_GROUPS", "Groups", items=sv_group_items))
 

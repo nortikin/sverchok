@@ -27,13 +27,10 @@ class SvAxisInputNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     ''' Generator for X, Y or Z axis. '''
 
     bl_idname = 'SvAxisInputNodeMK2'
-    bl_label = 'Vector X | Y | Z MK2'    # shall default to Z Axis in svint.
+    bl_label = 'Vector X | Y | Z'
     bl_icon = 'MANIPUL'
 
-    m = [
-        ("-1", "-1", "", 0), ("0", "0", "", 1), ("1", "1", "", 2)
-    ]
-
+    m = [("-1", "-1", "", 0), ("0", "0", "", 1), ("1", "1", "", 2)]
     axis_x = EnumProperty(items=m, update=updateNode, name='X', default='1')
     axis_y = EnumProperty(items=m, update=updateNode, name='Y', default='1')
     axis_z = EnumProperty(items=m, update=updateNode, name='Z', default='1')
@@ -43,7 +40,7 @@ class SvAxisInputNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('VerticesSocket', "Vector")
 
     def draw_buttons(self, context, layout):
-        row = layout.row()
+        row = layout.row(align=True)
         row.prop(self, 'axis_x', text='')
         row.prop(self, 'axis_y', text='')
         row.prop(self, 'axis_z', text='')

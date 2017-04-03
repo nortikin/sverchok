@@ -42,25 +42,40 @@ def get_icon_switch():
         return addon.preferences.show_icons
 
 
-def layout_draw_categories(layout, node_details):
-    show_icons = menu_prefs.get('show_icons')
+def icon(display_icon):
+    '''returns empty dict if show_icons is False, else the icon passed'''
+    kws = {}
+    if menu_prefs.get('show_icons'):
+        if display_icon.startswith('SV_'):
+            kws = {'icon_value': custom_icon(display_icon)}
+        else: 
+            kws = {'icon': display_icon}
+    return kws
 
-    def icon(node_ref):
-        '''returns empty dict if show_icons is False, else the icon passed'''
-        if not show_icons:
-            return {}
+
+def node_icon(node_ref):
+    '''returns empty dict if show_icons is False, else the icon passed'''
+    if not menu_prefs.get('show_icons'):
+        return {}
+    else:
+        if hasattr(node_ref, 'sv_icon'):
+            iconID = custom_icon(node_ref.sv_icon)
+            return {'icon_value': iconID} if iconID else {}
+        elif hasattr(node_ref, 'bl_icon') and node_ref.bl_icon != 'OUTLINER_OB_EMPTY':
+            iconID = node_ref.bl_icon
+            return {'icon': iconID} if iconID else {}
         else:
-            if hasattr(node_ref, 'sv_icon'):
-                iconID = custom_icon(node_ref.sv_icon)
-                return {'icon_value': iconID} if iconID else {}
-            elif hasattr(node_ref, 'bl_icon') and node_ref.bl_icon != 'OUTLINER_OB_EMPTY':
-                iconID = node_ref.bl_icon
-                return {'icon': iconID} if iconID else {}
-            else:
-                return {}
+            return {}
+
+
+def layout_draw_categories(layout, node_details):
 
     add_n_grab = 'node.add_node'
     for node_info in node_details:
+
+        if node_info[0] == 'separator':
+            layout.separator()
+            continue
 
         if not node_info:
             print(repr(node_info), 'is incomplete, or unparsable')
@@ -70,7 +85,7 @@ def layout_draw_categories(layout, node_details):
         node_ref = getattr(bpy.types, bl_idname)
 
         if hasattr(node_ref, "bl_label"):
-            layout_params = dict(text=node_ref.bl_label, **icon(node_ref))
+            layout_params = dict(text=node_ref.bl_label, **node_icon(node_ref))
         elif bl_idname == 'NodeReroute':
             layout_params = dict(text='Reroute')
         else:
@@ -111,38 +126,31 @@ class NODEVIEW_MT_Dynamic_Menu(bpy.types.Menu):
         layout = self.layout
         layout.operator_context = 'INVOKE_REGION_WIN'
 
+        #s = layout.operator("node.sv_fuzzy_node_search", text="Search", icon='OUTLINER_DATA_FONT')
         s = layout.operator("node.add_search", text="Search", icon='OUTLINER_DATA_FONT')
         s.use_transform = True
 
-        show_icons = menu_prefs.get('show_icons')
-
-        def icon(display_icon):
-            '''returns empty dict if show_icons is False, else the icon passed'''
-            return {'icon': display_icon for i in [1] if show_icons}
-
         layout.separator()
-
         layout.menu("NODEVIEW_MT_AddGenerators", **icon('OBJECT_DATAMODE'))
         layout.menu("NODEVIEW_MT_AddTransforms", **icon('MANIPUL'))
         layout.menu("NODEVIEW_MT_AddAnalyzers", **icon('VIEWZOOM'))
         layout.menu("NODEVIEW_MT_AddModifiers", **icon('MODIFIER'))
-
         layout.separator()
         layout.menu("NODEVIEW_MT_AddNumber")
         layout.menu("NODEVIEW_MT_AddVector")
         layout.menu("NODEVIEW_MT_AddMatrix")
-        layout.menu("NODEVIEW_MT_AddLogic", icon_value=custom_icon("SV_LOGIC"))
+        layout.menu("NODEVIEW_MT_AddLogic", **icon("SV_LOGIC"))
         layout.menu("NODEVIEW_MT_AddListOps", **icon('NLA'))
         layout.separator()
         layout.menu("NODEVIEW_MT_AddViz", **icon('RESTRICT_VIEW_OFF'))
         layout.menu("NODEVIEW_MT_AddText")
-        layout.menu("NODEVIEW_MT_AddScene", icon_value=custom_icon("SV_SCENE"))
-        layout.menu("NODEVIEW_MT_AddLayout", icon_value=custom_icon("SV_LAYOUT"))
+        layout.menu("NODEVIEW_MT_AddScene", **icon('SCENE_DATA'))
+        layout.menu("NODEVIEW_MT_AddLayout", **icon("SV_LAYOUT"))
         layout.menu("NODE_MT_category_SVERCHOK_BPY_Data", icon="BLENDER")
         layout.separator()
-        layout.menu("NODEVIEW_MT_AddNetwork", icon_value=custom_icon("SV_NETWORK"))
-        layout.menu("NODEVIEW_MT_AddBetas", icon_value=custom_icon("SV_BETA"))
-        layout.menu("NODEVIEW_MT_AddAlphas", icon_value=custom_icon("SV_ALPHA"))
+        layout.menu("NODEVIEW_MT_AddNetwork", **icon("OOPS"))
+        layout.menu("NODEVIEW_MT_AddBetas", **icon("SV_BETA"))
+        layout.menu("NODEVIEW_MT_AddAlphas", **icon("SV_ALPHA"))
         layout.separator() 
         layout.menu("NODE_MT_category_SVERCHOK_GROUPS", icon="RNA")
 
@@ -153,10 +161,7 @@ class NODEVIEW_MT_AddGenerators(bpy.types.Menu):
     def draw(self, context):
         layout = self.layout
         layout_draw_categories(self.layout, node_cats[self.bl_label])
-        if menu_prefs.get('show_icons'):
-            layout.menu("NODEVIEW_MT_AddGeneratorsExt", icon='PLUGIN')
-        else:
-            layout.menu("NODEVIEW_MT_AddGeneratorsExt")
+        layout.menu("NODEVIEW_MT_AddGeneratorsExt", **icon('PLUGIN'))
 
 
 class NODEVIEW_MT_AddModifiers(bpy.types.Menu):
@@ -213,7 +218,7 @@ def add_keymap():
     kc = wm.keyconfigs.addon
     if kc:
         km = kc.keymaps.new(name='Node Editor', space_type='NODE_EDITOR')
-        kmi = km.keymap_items.new('wm.call_menu', 'SPACE', 'PRESS', ctrl=True)
+        kmi = km.keymap_items.new('wm.call_menu', 'A', 'PRESS', shift=True)
         kmi.properties.name = "NODEVIEW_MT_Dynamic_Menu"
         nodeview_keymaps.append((km, kmi))
 

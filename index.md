@@ -17,16 +17,17 @@
     SvCircleNode
     CylinderNode
     SphereNode
+    SvTorusNode
+    ---
     BasicSplineNode
     svBasicArcNode
     RandomVectorNodeMK2
-    SvBricksNode
     SvScriptNodeLite    
     ImageNode
-    SvTorusNode
 
 ## Generators Extended
     SvBoxRoundedNode
+    SvBricksNode
     HilbertNode
     Hilbert3dNode
     HilbertImageNode
@@ -66,44 +67,48 @@
     SvSimpleDeformNode
 
 ## Modifier Change
+    SvDeleteLooseNode
+    SvRemoveDoublesNode
+    SvSeparateMeshNode
+    SvLimitedDissolve
+    ---
     PolygonBoomNode
     Pols2EdgsNode
     SvMeshJoinNode
-    SvRemoveDoublesNode
-    SvDeleteLooseNode
-    SvSeparateMeshNode
-    SvExtrudeSeparateNode
-    SvExtrudeRegionNode
-    SvRandomizeVerticesNode
-    SvVertMaskNode
-    SvFillsHoleNode
-    SvLimitedDissolve
-    SvIntersectEdgesNode
-    SvIntersectEdgesNodeMK2
-    SvIterateNode
+    ---
     SvBevelNode
-    SvExtrudeEdgesNode
+    SvIntersectEdgesNodeMK2
     SvOffsetNode
+    SvFillsHoleNode
     SvTriangulateNode
+    ---
     SvFlipNormalsNode
     SvRecalcNormalsNode
+    SvRandomizeVerticesNode
+    ---
+    SvIterateNode
+    SvExtrudeEdgesNode
+    SvExtrudeSeparateNode
+    SvExtrudeRegionNode
+    SvVertMaskNode
     SvTransformSelectNode
 
 ## Modifier Make
     LineConnectNodeMK2
+    SvLatheNode
     SvConvexHullNode
     DelaunayTriangulation2DNode
     Voronoi2DNode
     SvWafelNode
     CrossSectionNode
     SvBisectNode
+    ---
     SvAdaptiveEdgeNode
     AdaptivePolsNode
     SvDuplicateAlongEdgeNode
     SvSolidifyNode
     SvWireframeNode
     SvPipeNode
-    SvLatheNode
     SvMatrixTubeNode
 
 ## List Masks
@@ -136,46 +141,51 @@
     ListFlipNode
 
 ## Number
-    GenListRangeIntNode
-    SvGenFloatRange
-    SvListInputNode
-    RandomNode
-    SvRndNumGen
     SvNumberNode
     FloatNode
     IntegerNode
     Float2IntNode
-    Formula2Node
     ScalarMathNode
+    Formula2Node
+    SvExecNodeMod
+    ---
+    GenListRangeIntNode
+    SvGenFloatRange
     SvMapRangeNode
-    SvEasingNode
+    SvListInputNode
     SvGenFibonacci
     SvGenExponential
+    ---
+    SvRndNumGen
+    RandomNode
+    SvEasingNode
     SvMixNumbersNode
 
 ## Vector
     GenVectorsNode
     VectorsOutNode
+    SvAxisInputNodeMK2
     SvVectorMathNodeMK2
+    VertsDelDoublesNode
+    SvVectorRewire
+    ---
+    SvVertSortNode
     VectorDropNode
     VectorPolarInNode
     VectorPolarOutNode
-    VertsDelDoublesNode
+    SvAttractorNode
+    ---
     EvaluateLineNode
     SvVectorLerp
     SvInterpolationStripesNode
     SvInterpolationNode
     SvInterpolationNodeMK2
     SvInterpolationNodeMK3
-    SvAttractorNode
-    SvVertSortNode
+    ---
     SvNoiseNodeMK2
     SvVectorFractal
     SvLacunarityNode
     SvTurbulenceNode
-    SvVectorRewire
-    svAxisInputNode
-    SvAxisInputNodeMK2
 
 ## Matrix
     MatrixGenNode
@@ -272,6 +282,5 @@
     SvBMinputNode
     SvBMoutputNode
     SvBMtoElementNode
-    SvExecNodeMod
     SvSeparateMeshNodeMK2
     SvBvhOverlapNodeNew

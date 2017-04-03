@@ -44,7 +44,7 @@ class GenVectorsNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Generator vectors '''
     bl_idname = 'GenVectorsNode'
     bl_label = 'Vector in'
-    bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_COMBINE_IN'
 
     x_ = FloatProperty(name='X', description='X',
                        default=0.0, precision=3,
