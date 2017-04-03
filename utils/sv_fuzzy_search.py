@@ -56,7 +56,6 @@ menu_prefs = {}
 def make_flat_nodecats():
     flat_node_list = []
     for cat_name, cat_content in dict(node_cats).items():
-        print(cat_name)
         for node_ref in cat_content:
             if not node_ref[0] == 'separator':
                 flat_node_list.append(node_ref)  # maybe return lookups too
@@ -70,7 +69,6 @@ flat_node_cats = make_flat_nodecats()   # produces bl_idnames.
 
 def draw_callback_px(self, context, start_position):
 
-    print(start_position)
     font_id = 0
     x, y = start_position
 
@@ -78,7 +76,7 @@ def draw_callback_px(self, context, start_position):
     bgl.glColor4f(0.0, 0.0, 0.0, 1.0)
     blf.position(font_id, x, y, 0)
     blf.size(font_id, 20, 72)
-    blf.draw(font_id, self.current_string)
+    blf.draw(font_id, '>>> ' + self.current_string)
     # draw results
     #
     #
