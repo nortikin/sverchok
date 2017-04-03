@@ -37,9 +37,9 @@ menu_prefs = {}
 def make_flat_nodecats():
     flat_node_list = []
     for cat in node_cats:
-        for node in cat:
-            if not node[0] == 'separator':
-                flat_node_list.append(node[0])
+        for node_ref in cat:
+            if not node_ref[0] == 'separator':
+                flat_node_list.append(node_ref)
 
 flat_node_cats = make_flat_nodecats()
 
