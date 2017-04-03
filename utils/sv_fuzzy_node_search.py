@@ -45,7 +45,7 @@ def make_flat_nodecats():
 flat_node_cats = make_flat_nodecats()
 
 def filter_items(self, context):
-    return [(n[0], n[0], '', idx) for n, idx in enumerate(flat_node_cats)]
+    return [(n[0], n[0], '', idx) for idx, n in enumerate(flat_node_cats)]
 
 
 class SvFuzzySearchOne(bpy.types.Operator):
