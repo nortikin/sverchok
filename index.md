@@ -69,6 +69,8 @@
     SvDeleteLooseNode
     SvRemoveDoublesNode
     SvSeparateMeshNode
+    SvLimitedDissolve
+    ---
     PolygonBoomNode
     Pols2EdgsNode
     SvMeshJoinNode
@@ -78,7 +80,6 @@
     SvOffsetNode
     SvFillsHoleNode
     SvTriangulateNode
-    SvLimitedDissolve
     ---
     SvFlipNormalsNode
     SvRecalcNormalsNode
