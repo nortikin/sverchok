@@ -126,8 +126,8 @@ class NODEVIEW_MT_Dynamic_Menu(bpy.types.Menu):
         layout = self.layout
         layout.operator_context = 'INVOKE_REGION_WIN'
 
-        # s = layout.operator("node.add_search", text="Search", icon='OUTLINER_DATA_FONT')
-        s = layout.operator("node.sv_fuzzy_node_search", text="Search", icon='OUTLINER_DATA_FONT')
+        #s = layout.operator("node.sv_fuzzy_node_search", text="Search", icon='OUTLINER_DATA_FONT')
+        s = layout.operator("node.add_search", text="Search", icon='OUTLINER_DATA_FONT')
         s.use_transform = True
 
         layout.separator()
