@@ -23,10 +23,10 @@ import bpy
 from bpy.props import (EnumProperty, FloatProperty,
                        IntProperty, BoolVectorProperty)
 
+from sverchok.ui.sv_icons import custom_icon
 from sverchok.node_tree import SverchCustomTreeNode, StringsSocket
 from sverchok.data_structure import (updateNode, match_long_repeat)
 from sverchok.utils.sv_itertools import (recurse_fx, recurse_fxy)
-
 # pylint: disable=C0326
 
 # Rules for modification:
@@ -100,7 +100,7 @@ class SvScalarMathNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     ''' SvScalarMathNodeMK2 '''
     bl_idname = 'SvScalarMathNodeMK2'
     bl_label = 'Math MK2'
-    bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_FUNCTION'
 
 
     def mode_change(self, context):
@@ -119,7 +119,7 @@ class SvScalarMathNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
 
     def draw_buttons(self, ctx, layout):
-        layout.prop(self, "current_op", text="Functions:")
+        layout.row().prop(self, "current_op", text="", icon_value=custom_icon("SV_FUNCTION"))
 
 
     def sv_init(self, context):
