@@ -20,12 +20,11 @@ from math import *
 from itertools import zip_longest
 
 import bpy
-from bpy.props import (EnumProperty, FloatProperty,
-                       IntProperty, BoolVectorProperty)
+from bpy.props import EnumProperty, FloatProperty
 
 from sverchok.ui.sv_icons import custom_icon
-from sverchok.node_tree import SverchCustomTreeNode, StringsSocket
-from sverchok.data_structure import (updateNode, match_long_repeat)
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import updateNode
 from sverchok.utils.sv_itertools import (recurse_fx, recurse_fxy)
 # pylint: disable=C0326
 
