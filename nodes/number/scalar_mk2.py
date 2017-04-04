@@ -142,8 +142,8 @@ class SvScalarMathNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             self.outputs.remove(self.outputs[-1])
 
         if len(self.outputs) == 1:
-            if not "x" in self.outputs:
-                self.outputs[0].replace_socket("StringsSocket", "out")
+            if not "Out" in self.outputs:
+                self.outputs[0].replace_socket("StringsSocket", "Out")
         elif len(self.outputs) == 2:
             self.outputs[0].replace_socket("StringsSocket", "sin( x )")
 
