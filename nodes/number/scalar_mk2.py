@@ -138,15 +138,15 @@ class SvScalarMathNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             self.inputs.remove(self.inputs[-1])
 
         if len(t_outputs) > len(self.outputs):
-            self.outputs.new('StringsSocket', "y").prop_name = 'y_'
+            self.outputs.new('StringsSocket', "cos( x )")
         elif len(t_outputs) < len(self.outputs):
             self.outputs.remove(self.outputs[-1])
 
         if len(self.outputs) == 1:
             if not "x" in self.outputs:
-                self.outputs[0].replace_socket("StringsSocket", "x")
+                self.outputs[0].replace_socket("StringsSocket", "out")
         elif len(self.outputs) == 2:
-            self.outputs[0].replace_socket("StringsSocket", "out")
+            self.outputs[0].replace_socket("StringsSocket", "sin( x )")
 
 
     def process(self):
