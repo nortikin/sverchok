@@ -35,7 +35,7 @@ from sverchok.utils.sv_itertools import (recurse_fx, recurse_fxy)
 
 func_dict = {
     "--------------TRIG" : "#-------------------------------------------------#",
-    "SINCOS":      (0,   lambda x: (sin(x), cos(x)),      ('s ss'), "Sine"),
+    "SINCOS":      (0,   lambda x: (sin(x), cos(x)),      ('s ss'), "Sin & Cos"),
     "SINE":        (1,   sin,                              ('s s'), "Sine"),
     "COSINE":      (2,   cos,                              ('s s'), "Cosine"),
     "TANGENT":     (3,   tan,                              ('s s'), "Tangent"),
