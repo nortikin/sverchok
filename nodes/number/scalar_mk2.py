@@ -151,9 +151,8 @@ class SvScalarMathNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     def process(self):
         signature = (len(self.inputs), len(self.outputs))
 
-        if signature in {(1, 1), (1, 2)}:
-            x = self.inputs['x'].sv_get(deepcopy=False)
-        elif signature == (2, 1):
+        x = self.inputs['x'].sv_get(deepcopy=False)
+        if signature == (2, 1):
             y = self.inputs['y'].sv_get(deepcopy=False)
 
         if self.outputs[0].is_linked:
