@@ -144,7 +144,7 @@ class SvFuzzySearchOne(bpy.types.Operator):
 
             start_position = 20, 20   # event.mouse_region_x, event.mouse_region_y
             args = (self, context, start_position)
-            self._handle = SpaceNodeEditor.draw_handler_add(draw_callback_px, args, 'WINDOW', 'POST_VIEW')
+            self._handle = SpaceNodeEditor.draw_handler_add(draw_callback_px, args, 'WINDOW', 'POST_PIXEL')
             
             context.window_manager.modal_handler_add(self)
             return {'RUNNING_MODAL'}
