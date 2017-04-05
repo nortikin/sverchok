@@ -39,7 +39,7 @@ NUMS = set(verbose_nums)
 NUMS2 = set(verbose_numpads)
 
 NUMS = NUMS.union(NUMS2)
-SPECIALS = {'BACK_SPACE', 'UP', 'DOWN', 'LEFT', 'RIGHT'}
+SPECIALS = {'BACK_SPACE LEFT_ARROW DOWN_ARROW RIGHT_ARROW UP_ARROW SPACE'.split(' ')}
 KEYBOARD = CAPS.union(SPECIALS)
 KEYBOARD = KEYBOARD.union(NUMS)
 
@@ -69,11 +69,10 @@ def make_flat_nodecats():
     flat_node_list = []
     for ref in sverchok.node_list:
         for iref in ddir(ref):
-            if iref.startswith('Sv'):
-                rref = getattr(ref, iref)
-                if 'sv_init' in ddir(rref) and 'bl_idname' in ddir(rref):
-                    items = [rref.bl_idname, rref.bl_label, rref.__module__]
-                    flat_node_list.append('  |  '.join(items))
+            rref = getattr(ref, iref)
+            if 'sv_init' in ddir(rref) and 'bl_idname' in ddir(rref):
+                items = [rref.bl_idname, rref.bl_label, rref.__module__]
+                flat_node_list.append('  |  '.join(items))
     return flat_node_list
 
 flat_node_cats = {}
@@ -89,10 +88,11 @@ def draw_string(x, y, packed_strings):
     x_offset = 0
     font_id = 0
     for pstr, pcol in packed_strings:
+        pstr2 = ' ' + pstr + ' '
         bgl.glColor4f(*pcol)
-        text_width, text_height = blf.dimensions(font_id, pstr)
+        text_width, text_height = blf.dimensions(font_id, pstr2)
         blf.position(font_id, (x + x_offset), y, 0)
-        blf.draw(font_id, pstr)
+        blf.draw(font_id, pstr2)
         x_offset += text_width
 
 def removed_sv_prefix(str_in):
@@ -118,8 +118,8 @@ def draw_callback_px(self, context, start_position):
     blf.draw(font_id, '>>> ' + self.current_string)
     
     nx = 20
+    idx = 1
     if self.current_string:
-        idx = 1
         for item in flat_node_cats['results']:
             if self.current_string in removed_sv_prefix(item).lower() and not item.startswith('NodeReroute'):
 
@@ -144,6 +144,8 @@ class SvFuzzySearchOne(bpy.types.Operator):
 
     current_string = bpy.props.StringProperty()
     chosen_bl_idname = bpy.props.StringProperty()
+    current_index = bpy.props.IntProperty(default=0)
+    new_direction = bpy.props.IntProperty(default=1)
 
     def modal(self, context, event):
         context.area.tag_redraw()
@@ -161,6 +163,9 @@ class SvFuzzySearchOne(bpy.types.Operator):
             elif event.type == 'BACK_SPACE':
                 has_length = len(self.current_string)
                 self.current_string = self.current_string[:-1] if has_length else ''
+            elif event.type in {'UP_ARROW', 'DOWN_ARROW'}:
+                self.new_direction *= {'UP_ARROW': -1, 'DOWN_ARROW': 1}.get(event.type)
+
             # print(self.current_string)
 
         elif event.type in {'LEFTMOUSE', 'RET'}:
