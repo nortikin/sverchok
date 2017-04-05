@@ -64,10 +64,11 @@ Authors:
 -  Linus Yng,  
 -  Agustin Gimenez, 
 -  Dealga McArdle,  
--  Constantin Vorobiew, 
+-  Konstantin Vorobiew, 
 -  Ilya Protnov,  
 -  Eleanor Howick,    
--  Walter Perdan    
+-  Walter Perdan,    
+-  Marius Giurgi      
 
 Email: sverchok-b3d@yandex.ru  
 
@@ -139,7 +140,8 @@ Email: sverchok-b3d@yandex.ru
 -  Воробьёв Константин;  
 -  Портнов Илья;  
 -  Ховик Элеонора;  
--  Вальтер Пердан.   
+-  Вальтер Пердан;    
+-  Мариус Георгий.     
 
 Email: sverchok-b3d@yandex.ru  
 
