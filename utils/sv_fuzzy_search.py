@@ -53,41 +53,63 @@ node_cats = make_node_cats()
 addon_name = sverchok.__name__
 menu_prefs = {}
 
-def make_flat_nodecats():
-    flat_node_list = []
-    for cat_name, cat_content in dict(node_cats).items():
-        for node_ref in cat_content:
-            if not node_ref[0] == 'separator':
-                flat_node_list.append(node_ref[0])  # maybe return lookups too
-    return flat_node_list
+# def make_flat_nodecats():
+#     flat_node_list = []
+#     for cat_name, cat_content in dict(node_cats).items():
+#         for node_ref in cat_content:
+#             if not node_ref[0] == 'separator':
+#                 flat_node_list.append(node_ref[0])  # maybe return lookups too
+#     return flat_node_list
 
-flat_node_cats = make_flat_nodecats()   # produces bl_idnames.
+# flat_node_cats = make_flat_nodecats()   # produces bl_idnames.
 
-
-'''
 ddir = lambda content: [n for n in dir(content) if not n.startswith('__')]
 
-for ref in sverchok.node_list:
-    for iref in ddir(ref):
-        if iref.startswith('Sv'):
-            rref = getattr(ref, iref)
-            if 'sv_init' in ddir(rref) and 'bl_idname' in ddir(rref):
-                items = [rref.bl_idname, rref.bl_label, rref.__module__]
-                print(' | '.join(items))
-'''
+def make_flat_nodecats():
+    flat_node_list = []
+    for ref in sverchok.node_list:
+        for iref in ddir(ref):
+            if iref.startswith('Sv'):
+                rref = getattr(ref, iref)
+                if 'sv_init' in ddir(rref) and 'bl_idname' in ddir(rref):
+                    items = [rref.bl_idname, rref.bl_label, rref.__module__]
+                    flat_node_list.append('  |  '.join(items))
+    return flat_node_list
+
+flat_node_cats = {}
 
 ### ------------------------------------------------------------------------------
+
+RED = (1, 0, 0, 1)
+GREEN = (0, 1, 0, 1)
+BLUE = (0, 0, 1, 1)
+search_colors = (RED, GREEN, BLUE)
+
+def draw_string(x, y, packed_strings):
+    x_offset = 0
+    font_id = 0
+    for pstr, pcol in packed_strings:
+        bgl.glColor4f(*pcol)
+        text_width, text_height = blf.dimensions(font_id, pstr)
+        blf.position(font_id, (x + x_offset), y, 0)
+        blf.draw(font_id, pstr)
+        x_offset += text_width
+
+def removed_sv_prefix(str_in):
+    if str_in.startswith("Sv"):
+        return str_in[2:]
+    return str_in
 
 
 def draw_callback_px(self, context, start_position):
 
     header_height = context.area.regions[0].height
-    width = context.area.width
+    # width = context.area.width
     height = context.area.height - header_height
     begin_height = height-40
 
     font_id = 0
-    x, y = start_position
+    # x, y = start_position
 
     # draw some text
     bgl.glColor4f(0.0, 0.0, 0.0, 1.0)
@@ -95,21 +117,15 @@ def draw_callback_px(self, context, start_position):
     blf.size(font_id, 15, 72)
     blf.draw(font_id, '>>> ' + self.current_string)
     
-    '''
-    draw results
-
-    flat_node_cats will contain bl_idnames
-    bl_label <--- getattr(bpy.types, bl_idname)
-    
-    '''
+    nx = 20
     if self.current_string:
         idx = 1
-        for item in flat_node_cats:
-            if self.current_string in item.lower() and item != 'NodeReroute':
+        for item in flat_node_cats['results']:
+            if self.current_string in removed_sv_prefix(item).lower() and not item.startswith('NodeReroute'):
 
-                bl_label = getattr(bpy.types, item).bl_label
-                blf.position(font_id, 20, begin_height-(20*idx), 0)
-                blf.draw(font_id, '         |  ' + bl_label)
+                ny = begin_height-(20*idx)
+                search_item_result = item.split('  |  ')
+                draw_string(nx, ny, zip(search_item_result, search_colors))                
                 idx += 1
             if idx > 10:
                 break
@@ -160,7 +176,7 @@ class SvFuzzySearchOne(bpy.types.Operator):
 
     def invoke(self, context, event):
         if context.area.type == 'NODE_EDITOR':
-
+            flat_node_cats['results'] = make_flat_nodecats()
             start_position = 20, 20   # event.mouse_region_x, event.mouse_region_y
             args = (self, context, start_position)
             self._handle = SpaceNodeEditor.draw_handler_add(draw_callback_px, args, 'WINDOW', 'POST_PIXEL')
