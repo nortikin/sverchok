@@ -111,6 +111,8 @@ def draw_callback_px(self, context, start_position):
     font_id = 0
     # x, y = start_position
 
+    print([self.new_direction, self.current_index])
+
     # draw some text
     bgl.glColor4f(0.0, 0.0, 0.0, 1.0)
     blf.position(font_id, 20, height-40, 0)
@@ -164,7 +166,7 @@ class SvFuzzySearchOne(bpy.types.Operator):
                 has_length = len(self.current_string)
                 self.current_string = self.current_string[:-1] if has_length else ''
             elif event.type in {'UP_ARROW', 'DOWN_ARROW'}:
-                self.new_direction *= {'UP_ARROW': -1, 'DOWN_ARROW': 1}.get(event.type)
+                self.new_direction = {'UP_ARROW': -1, 'DOWN_ARROW': 1}.get(event.type)
 
             # print(self.current_string)
 
