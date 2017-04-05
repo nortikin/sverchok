@@ -39,7 +39,7 @@ NUMS = set(verbose_nums)
 NUMS2 = set(verbose_numpads)
 
 NUMS = NUMS.union(NUMS2)
-SPECIALS = {'BACK_SPACE LEFT_ARROW DOWN_ARROW RIGHT_ARROW UP_ARROW SPACE'.split(' ')}
+SPECIALS = set('BACK_SPACE LEFT_ARROW DOWN_ARROW RIGHT_ARROW UP_ARROW SPACE'.split(' '))
 KEYBOARD = CAPS.union(SPECIALS)
 KEYBOARD = KEYBOARD.union(NUMS)
 
@@ -71,7 +71,7 @@ def make_flat_nodecats():
         for iref in ddir(ref):
             rref = getattr(ref, iref)
             if 'sv_init' in ddir(rref) and 'bl_idname' in ddir(rref):
-                items = [rref.bl_idname, rref.bl_label, rref.__module__]
+                items = [rref.bl_idname, rref.bl_label, str(rref.__module__).replace('sverchok.nodes.', '')]
                 flat_node_list.append('  |  '.join(items))
     return flat_node_list
 
