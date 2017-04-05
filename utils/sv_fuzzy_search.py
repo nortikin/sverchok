@@ -64,6 +64,18 @@ def make_flat_nodecats():
 flat_node_cats = make_flat_nodecats()   # produces bl_idnames.
 
 
+'''
+ddir = lambda content: [n for n in dir(content) if not n.startswith('__')]
+
+for ref in sverchok.node_list:
+    for iref in ddir(ref):
+        if iref.startswith('Sv'):
+            rref = getattr(ref, iref)
+            if 'sv_init' in ddir(rref) and 'bl_idname' in ddir(rref):
+                items = [rref.bl_idname, rref.bl_label, rref.__module__]
+                print(' | '.join(items))
+'''
+
 ### ------------------------------------------------------------------------------
 
 
@@ -80,7 +92,7 @@ def draw_callback_px(self, context, start_position):
     # draw some text
     bgl.glColor4f(0.0, 0.0, 0.0, 1.0)
     blf.position(font_id, 20, height-40, 0)
-    blf.size(font_id, 17, 72)
+    blf.size(font_id, 15, 72)
     blf.draw(font_id, '>>> ' + self.current_string)
     
     '''
@@ -96,7 +108,7 @@ def draw_callback_px(self, context, start_position):
             if self.current_string in item.lower() and item != 'NodeReroute':
 
                 bl_label = getattr(bpy.types, item).bl_label
-                blf.position(font_id, 20, begin_height-(30*idx), 0)
+                blf.position(font_id, 20, begin_height-(20*idx), 0)
                 blf.draw(font_id, '         |  ' + bl_label)
                 idx += 1
             if idx > 10:
@@ -115,6 +127,7 @@ class SvFuzzySearchOne(bpy.types.Operator):
     bl_label = "Fuzzy Search"
 
     current_string = bpy.props.StringProperty()
+    chosen_bl_idname = bpy.props.StringProperty()
 
     def modal(self, context, event):
         context.area.tag_redraw()
