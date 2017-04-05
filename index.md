@@ -146,6 +146,7 @@
     IntegerNode
     Float2IntNode
     ScalarMathNode
+    SvScalarMathNodeMK2
     Formula2Node
     SvExecNodeMod
     ---
@@ -259,7 +260,6 @@
     SvHeavyTriangulateNode
     SvColorsInNode
     SvColorsOutNode
-    SvScalarMathNodeMK2
     SvMatrixNormalNode
     SvSculptMaskNode
     SvGreasePencilStrokes
