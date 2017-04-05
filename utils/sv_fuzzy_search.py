@@ -81,7 +81,7 @@ flat_node_cats = {}
 
 RED = (1, 0, 0, 1)
 GREEN = (0, 1, 0, 1)
-BLUE = (0, 0, 1, 1)
+BLUE = [0.308197, 0.904497, 1.000000, 1.000000]
 search_colors = (RED, GREEN, BLUE)
 
 def draw_string(x, y, packed_strings):
@@ -100,11 +100,20 @@ def removed_sv_prefix(str_in):
         return str_in[2:]
     return str_in
 
+def draw_rect(x=0, y=0, w=30, h=10, color=(0.0, 0.0, 0.0, 1.0)):
+
+    bgl.glColor4f(*color)       
+    bgl.glBegin(bgl.GL_POLYGON)
+
+    for coord in [(x, y), (x+w, y), (w+x, y-h), (x, y-h)]:
+        bgl.glVertex2f(*coord)
+    bgl.glEnd()
+
 
 def draw_callback_px(self, context, start_position):
 
     header_height = context.area.regions[0].height
-    # width = context.area.width
+    width = context.area.width
     height = context.area.height - header_height
     begin_height = height-40
 
@@ -118,6 +127,8 @@ def draw_callback_px(self, context, start_position):
     blf.position(font_id, 20, height-40, 0)
     blf.size(font_id, 15, 72)
     blf.draw(font_id, '>>> ' + self.current_string)
+
+    draw_rect(x=0, y=height-46, w=width, h=10*20, color=(0.0, 0.0, 0.0, 1.0))
     
     nx = 20
     idx = 1
@@ -152,6 +163,7 @@ class SvFuzzySearchOne(bpy.types.Operator):
     def modal(self, context, event):
         context.area.tag_redraw()
         
+        print(event.value)
         if event.type in KEYBOARD and event.value == 'PRESS':
             # print(event.type)
             if event.type in CAPS or event.type in remap_nums.keys() or event.type == 'SPACE':
