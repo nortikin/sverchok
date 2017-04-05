@@ -76,6 +76,7 @@ def make_flat_nodecats():
     return flat_node_list
 
 flat_node_cats = {}
+event_tracking = {'previous_event': None}
 
 ### ------------------------------------------------------------------------------
 
@@ -163,7 +164,7 @@ class SvFuzzySearchOne(bpy.types.Operator):
     def modal(self, context, event):
         context.area.tag_redraw()
         
-        print(event.value)
+        print(event.value, event.type)
         if event.type in KEYBOARD and event.value == 'PRESS':
             # print(event.type)
             if event.type in CAPS or event.type in remap_nums.keys() or event.type == 'SPACE':
@@ -178,6 +179,7 @@ class SvFuzzySearchOne(bpy.types.Operator):
                 has_length = len(self.current_string)
                 self.current_string = self.current_string[:-1] if has_length else ''
             elif event.type in {'UP_ARROW', 'DOWN_ARROW'}:
+                #if not event_tracking['previous_event'] == (event.type, event.value):
                 self.new_direction = {'UP_ARROW': -1, 'DOWN_ARROW': 1}.get(event.type)
 
             # print(self.current_string)
@@ -191,6 +193,7 @@ class SvFuzzySearchOne(bpy.types.Operator):
             SpaceNodeEditor.draw_handler_remove(self._handle, 'WINDOW')            
             return {'CANCELLED'}
 
+        #event_tracking['previous_event'] = (event.type, event.value)
         return {'RUNNING_MODAL'}
 
     def invoke(self, context, event):
