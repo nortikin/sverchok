@@ -72,6 +72,7 @@ def draw_callback_px(self, context, start_position):
     header_height = context.area.regions[0].height
     width = context.area.width
     height = context.area.height - header_height
+    begin_height = height-40
 
     font_id = 0
     x, y = start_position
@@ -95,7 +96,7 @@ def draw_callback_px(self, context, start_position):
             if self.current_string in item.lower() and item != 'NodeReroute':
 
                 bl_label = getattr(bpy.types, item).bl_label
-                blf.position(font_id, x, y-(30*idx), 0)
+                blf.position(font_id, 20, begin_height-(30*idx), 0)
                 blf.draw(font_id, '         |  ' + bl_label)
                 idx += 1
             if idx > 10:
