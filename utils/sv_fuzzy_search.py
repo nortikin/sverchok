@@ -133,9 +133,6 @@ def draw_callback_px(self, context, start_position):
     begin_height = height-40
 
     font_id = 0
-    # x, y = start_position
-
-    # print([self.new_direction, self.current_index])
 
     # draw some text
     bgl.glColor4f(0.0, 0.0, 0.0, 1.0)
@@ -144,17 +141,16 @@ def draw_callback_px(self, context, start_position):
     blf.draw(font_id, '>>> ' + self.current_string)
 
     draw_rect(x=0, y=height-46, w=width, h=10*20, color=(0.0, 0.0, 0.0, 1.0))
-
-    
     
     nx = 20
     found_results = flat_node_cats.get('list_return')
 
     if found_results:
 
-        # self.current_index %= len(found_results)
+        # // highlight
         draw_rect(x=0, y=begin_height-(20*self.current_index)-5, w=width, h=20, color=(0.2, 0.3, 0.4, 1.0))
 
+        # // draw search items
         for idx, search_item_result in enumerate(found_results, start=1):
             ny = begin_height-(20*idx)
             draw_string(nx, ny, zip(search_item_result, search_colors))                
