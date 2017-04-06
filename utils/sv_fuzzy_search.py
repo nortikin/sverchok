@@ -201,7 +201,14 @@ class SvFuzzySearchOne(bpy.types.Operator):
 
         elif event.type in {'LEFTMOUSE', 'RET'}:
             print('completed')
-            SpaceNodeEditor.draw_handler_remove(self._handle, 'WINDOW')            
+            SpaceNodeEditor.draw_handler_remove(self._handle, 'WINDOW')
+
+            found_results = flat_node_cats.get('list_return')
+            if found_results and len(found_results) > self.current_index:
+                node_bl_idname = found_results[self.current_index][1]
+                print(dir(context))
+                context.space_data.edit_tree.nodes.new(node_bl_idname)
+            
             return {'FINISHED'}
 
         elif event.type in {'RIGHTMOUSE', 'ESC'}:
