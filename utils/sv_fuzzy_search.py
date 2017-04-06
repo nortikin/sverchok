@@ -71,12 +71,26 @@ def make_flat_nodecats():
         for iref in ddir(ref):
             rref = getattr(ref, iref)
             if 'sv_init' in ddir(rref) and 'bl_idname' in ddir(rref):
-                items = [rref.bl_idname, rref.bl_label, str(rref.__module__).replace('sverchok.nodes.', '')]
+                items = [rref.bl_label, rref.bl_idname, str(rref.__module__).replace('sverchok.nodes.', '')]
                 flat_node_list.append('  |  '.join(items))
     return flat_node_list
 
 flat_node_cats = {}
 event_tracking = {'previous_event': None}
+
+def return_search_results(search_term):
+    prefilter = []
+    idx = 1
+    if self.current_string:
+        for item in flat_node_cats['results']:
+            if self.current_string in removed_sv_prefix(item).lower() and not item.startswith('NodeReroute'):
+                prefilter.append(item.split('  |  '))
+                idx += 1
+            if idx > 10:
+                break
+    return prefilter
+
+
 
 ### ------------------------------------------------------------------------------
 
@@ -132,18 +146,9 @@ def draw_callback_px(self, context, start_position):
     draw_rect(x=0, y=height-46, w=width, h=10*20, color=(0.0, 0.0, 0.0, 1.0))
     
     nx = 20
-    idx = 1
-    if self.current_string:
-        for item in flat_node_cats['results']:
-            if self.current_string in removed_sv_prefix(item).lower() and not item.startswith('NodeReroute'):
-
-                ny = begin_height-(20*idx)
-                search_item_result = item.split('  |  ')
-                draw_string(nx, ny, zip(search_item_result, search_colors))                
-                idx += 1
-            if idx > 10:
-                break
-
+    for idx, search_item_result in enumerate(flat_node_cats['list_return'], start=1):
+         ny = begin_height-(20*idx)
+         draw_string(nx, ny, zip(search_item_result, search_colors))                
   
     # restore opengl defaults
     bgl.glLineWidth(1)
@@ -182,7 +187,7 @@ class SvFuzzySearchOne(bpy.types.Operator):
                 #if not event_tracking['previous_event'] == (event.type, event.value):
                 self.new_direction = {'UP_ARROW': -1, 'DOWN_ARROW': 1}.get(event.type)
 
-            # print(self.current_string)
+            flat_node_cats['list_return'] = return_search_results(self.current_string)
 
         elif event.type in {'LEFTMOUSE', 'RET'}:
             print('completed')
