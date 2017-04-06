@@ -68,9 +68,13 @@ class MatrixGenNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             if A.links[0].from_socket.bl_idname == 'VerticesSocket':
                 rotA = Vector_generate(A.sv_get())
                 angle = [[]]
+            elif A.links[0].from_socket.bl_idname == 'StringsSocket':
+                angle = A.sv_get()
+                rotA = [[]]
         else:
             angle = A.sv_get()
             rotA = [[]]
+            
         max_l = max(len(loc[0]), len(scale[0]), len(rot[0]), len(angle[0]), len(rotA[0]))
         orig = []
         for l in range(max_l):
