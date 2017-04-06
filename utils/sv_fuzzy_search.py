@@ -135,7 +135,7 @@ def draw_callback_px(self, context, start_position):
     font_id = 0
     # x, y = start_position
 
-    print([self.new_direction, self.current_index])
+    # print([self.new_direction, self.current_index])
 
     # draw some text
     bgl.glColor4f(0.0, 0.0, 0.0, 1.0)
@@ -144,11 +144,20 @@ def draw_callback_px(self, context, start_position):
     blf.draw(font_id, '>>> ' + self.current_string)
 
     draw_rect(x=0, y=height-46, w=width, h=10*20, color=(0.0, 0.0, 0.0, 1.0))
+
+    
     
     nx = 20
-    for idx, search_item_result in enumerate(flat_node_cats.get('list_return'), start=1):
-        ny = begin_height-(20*idx)
-        draw_string(nx, ny, zip(search_item_result, search_colors))                
+    found_results = flat_node_cats.get('list_return')
+
+    if found_results:
+
+        # self.current_index %= len(found_results)
+        draw_rect(x=0, y=begin_height-(20*self.current_index)-5, w=width, h=20, color=(0.2, 0.3, 0.4, 1.0))
+
+        for idx, search_item_result in enumerate(found_results, start=1):
+            ny = begin_height-(20*idx)
+            draw_string(nx, ny, zip(search_item_result, search_colors))                
   
     # restore opengl defaults
     bgl.glLineWidth(1)
@@ -186,6 +195,7 @@ class SvFuzzySearchOne(bpy.types.Operator):
             elif event.type in {'UP_ARROW', 'DOWN_ARROW'}:
                 #if not event_tracking['previous_event'] == (event.type, event.value):
                 self.new_direction = {'UP_ARROW': -1, 'DOWN_ARROW': 1}.get(event.type)
+                self.current_index += self.new_direction
 
             flat_node_cats['list_return'] = return_search_results(self.current_string)
 
