@@ -80,9 +80,9 @@ event_tracking = {'previous_event': None}
 
 def return_search_results(search_term):
     prefilter = []
-    idx = 1
     if search_term:
-        for item in flat_node_cats['results']:
+        idx = 1
+        for item in flat_node_cats.get('results'):
             if search_term in removed_sv_prefix(item).lower() and not item.startswith('NodeReroute'):
                 prefilter.append(item.split('  |  '))
                 idx += 1
@@ -146,9 +146,9 @@ def draw_callback_px(self, context, start_position):
     draw_rect(x=0, y=height-46, w=width, h=10*20, color=(0.0, 0.0, 0.0, 1.0))
     
     nx = 20
-    for idx, search_item_result in enumerate(flat_node_cats['list_return'], start=1):
-         ny = begin_height-(20*idx)
-         draw_string(nx, ny, zip(search_item_result, search_colors))                
+    for idx, search_item_result in enumerate(flat_node_cats.get('list_return'), start=1):
+        ny = begin_height-(20*idx)
+        draw_string(nx, ny, zip(search_item_result, search_colors))                
   
     # restore opengl defaults
     bgl.glLineWidth(1)
