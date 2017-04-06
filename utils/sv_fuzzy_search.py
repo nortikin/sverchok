@@ -27,7 +27,8 @@ from bpy.types import SpaceNodeEditor
 import sverchok
 from sverchok.menu import make_node_cats
 
-
+# pylint: disable=C0326
+# pylint: disable=w0612
 
 ### ---- Key Handling ----------------------------------------------------------
 
@@ -115,14 +116,26 @@ def removed_sv_prefix(str_in):
         return str_in[2:]
     return str_in
 
-def draw_rect(x=0, y=0, w=30, h=10, color=(0.0, 0.0, 0.0, 1.0)):
+def draw_rect(x=0, y=0, w=30, h=10, color=(0.0, 0.0, 0.0, 1.0), color2=None):
 
-    bgl.glColor4f(*color)       
-    bgl.glBegin(bgl.GL_POLYGON)
+    coords = [(x, y), (x+w, y), (w+x, y-h), (x, y-h)]
 
-    for coord in [(x, y), (x+w, y), (w+x, y-h), (x, y-h)]:
-        bgl.glVertex2f(*coord)
+    
+    if not color2:
+        # FLAT
+        bgl.glBegin(bgl.GL_POLYGON)
+        bgl.glColor4f(*color)       
+        for coord in coords:
+            bgl.glVertex2f(*coord)
+    else:
+        # GRADIENT
+        bgl.glBegin(bgl.GL_QUADS)
+        for col, coord in zip((color, color, color2, color2), coords):
+            bgl.glColor4f(*col)
+            bgl.glVertex2f(*coord)
+            
     bgl.glEnd()
+
 
 
 def draw_callback_px(self, context, start_position):
@@ -137,7 +150,7 @@ def draw_callback_px(self, context, start_position):
     # draw some text
     bgl.glColor4f(0.0, 0.0, 0.0, 1.0)
     blf.position(font_id, 20, height-40, 0)
-    blf.size(font_id, 15, 72)
+    blf.size(font_id, 14, 72)
     blf.draw(font_id, '>>> ' + self.current_string)
 
     draw_rect(x=0, y=height-46, w=width, h=10*20, color=(0.0, 0.0, 0.0, 1.0))
@@ -148,7 +161,9 @@ def draw_callback_px(self, context, start_position):
     if found_results:
 
         # // highlight
-        draw_rect(x=0, y=begin_height-(20*self.current_index)-5, w=width, h=20, color=(0.2, 0.3, 0.4, 1.0))
+        highcol = (0.2, 0.3, 0.4, 1.0)
+        lowcol = (0.2, 0.2, 0.2, 1.0)
+        draw_rect(x=0, y=begin_height-(20*self.current_index)-5, w=width, h=20, color=highcol, color2=lowcol)
 
         # // draw search items
         for idx, search_item_result in enumerate(found_results, start=1):
@@ -171,12 +186,11 @@ class SvFuzzySearchOne(bpy.types.Operator):
     current_index = bpy.props.IntProperty(default=0)
     new_direction = bpy.props.IntProperty(default=1)
 
+
     def modal(self, context, event):
         context.area.tag_redraw()
-        
-        print(event.value, event.type)
+
         if event.type in KEYBOARD and event.value == 'PRESS':
-            # print(event.type)
             if event.type in CAPS or event.type in remap_nums.keys() or event.type == 'SPACE':
 
                 if event.type == 'SPACE':
@@ -189,30 +203,30 @@ class SvFuzzySearchOne(bpy.types.Operator):
                 has_length = len(self.current_string)
                 self.current_string = self.current_string[:-1] if has_length else ''
             elif event.type in {'UP_ARROW', 'DOWN_ARROW'}:
-                #if not event_tracking['previous_event'] == (event.type, event.value):
                 self.new_direction = {'UP_ARROW': -1, 'DOWN_ARROW': 1}.get(event.type)
                 self.current_index += self.new_direction
 
             flat_node_cats['list_return'] = return_search_results(self.current_string)
 
         elif event.type in {'LEFTMOUSE', 'RET'}:
-            print('completed')
+            print('pressed enter / left mouse')
             SpaceNodeEditor.draw_handler_remove(self._handle, 'WINDOW')
 
             found_results = flat_node_cats.get('list_return')
             if found_results and len(found_results) > self.current_index:
                 node_bl_idname = found_results[self.current_index][1]
-                print(dir(context))
-                context.space_data.edit_tree.nodes.new(node_bl_idname)
-            
+                new_node = context.space_data.edit_tree.nodes.new(node_bl_idname)
+                new_node.select = False
+           
+            print('completed')
             return {'FINISHED'}
 
         elif event.type in {'RIGHTMOUSE', 'ESC'}:
             SpaceNodeEditor.draw_handler_remove(self._handle, 'WINDOW')            
             return {'CANCELLED'}
 
-        #event_tracking['previous_event'] = (event.type, event.value)
         return {'RUNNING_MODAL'}
+
 
     def invoke(self, context, event):
         if context.area.type == 'NODE_EDITOR':
