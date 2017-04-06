@@ -54,17 +54,12 @@ node_cats = make_node_cats()
 addon_name = sverchok.__name__
 menu_prefs = {}
 
-# def make_flat_nodecats():
-#     flat_node_list = []
-#     for cat_name, cat_content in dict(node_cats).items():
-#         for node_ref in cat_content:
-#             if not node_ref[0] == 'separator':
-#                 flat_node_list.append(node_ref[0])  # maybe return lookups too
-#     return flat_node_list
-
-# flat_node_cats = make_flat_nodecats()   # produces bl_idnames.
-
 ddir = lambda content: [n for n in dir(content) if not n.startswith('__')]
+
+def removed_sv_prefix(str_in):
+    if str_in.startswith("Sv"):
+        return str_in[2:]
+    return str_in
 
 def make_flat_nodecats():
     flat_node_list = []
@@ -92,7 +87,6 @@ def return_search_results(search_term):
     return prefilter
 
 
-
 ### ------------------------------------------------------------------------------
 
 RED = (1, 0, 0, 1)
@@ -111,10 +105,6 @@ def draw_string(x, y, packed_strings):
         blf.draw(font_id, pstr2)
         x_offset += text_width
 
-def removed_sv_prefix(str_in):
-    if str_in.startswith("Sv"):
-        return str_in[2:]
-    return str_in
 
 def draw_rect(x=0, y=0, w=30, h=10, color=(0.0, 0.0, 0.0, 1.0), color2=None):
 
