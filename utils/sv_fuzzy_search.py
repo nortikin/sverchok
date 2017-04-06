@@ -81,9 +81,9 @@ event_tracking = {'previous_event': None}
 def return_search_results(search_term):
     prefilter = []
     idx = 1
-    if self.current_string:
+    if search_term:
         for item in flat_node_cats['results']:
-            if self.current_string in removed_sv_prefix(item).lower() and not item.startswith('NodeReroute'):
+            if search_term in removed_sv_prefix(item).lower() and not item.startswith('NodeReroute'):
                 prefilter.append(item.split('  |  '))
                 idx += 1
             if idx > 10:
