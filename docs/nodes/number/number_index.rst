@@ -17,4 +17,4 @@ Number
    range_float
    range_int
    range_map
-   scalar
+   scalar_mk2
