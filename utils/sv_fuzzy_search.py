@@ -181,10 +181,12 @@ class SvFuzzySearchOne(bpy.types.Operator):
                 new_node.select = False
            
             print('completed')
+            flat_node_cats['list_return'] = []
             return {'FINISHED'}
 
         elif event.type in {'RIGHTMOUSE', 'ESC'}:
-            SpaceNodeEditor.draw_handler_remove(self._handle, 'WINDOW')            
+            SpaceNodeEditor.draw_handler_remove(self._handle, 'WINDOW')
+            flat_node_cats['list_return'] = []
             return {'CANCELLED'}
 
         return {'RUNNING_MODAL'}
