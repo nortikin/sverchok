@@ -24,7 +24,7 @@ from sverchok.data_structure import (matrixdef, Matrix_listing,
                                     Vector_generate, updateNode)
 
 
-class MatrixGenNodeMK2(bpy.types.Node, SverchCustomTreeNode):
+class SvMatrixGenNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     ''' MatrixGeneratorMK2 '''
     bl_idname = 'MatrixGenNodeMK2'
     bl_label = 'Matrix in'
