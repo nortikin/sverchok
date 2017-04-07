@@ -96,6 +96,10 @@ def return_search_results(search_term):
 text_highest = (0.99, 0.99, 0.99, 1.0)
 text_high = (0.93, 0.93, 0.93, 1.0)
 text_low = (0.83, 0.83, 0.83, 1.0)
+highcol = [0.215861, 0.539657, 1.0, 1.0]
+lowcol = [0.215861, 0.439657, 1.0, 1.0]
+console_bg_color = [0.028426, 0.028426, 0.028426, 1.0]
+
 search_colors = (text_highest, text_high, text_low)
 
 
@@ -114,7 +118,7 @@ def draw_callback_px(self, context, start_position):
     blf.size(font_id, 12, 72)
     blf.draw(font_id, '>>> ' + self.current_string)
 
-    draw_rect(x=0, y=height-46, w=width, h=10*20, color=[0.028426, 0.028426, 0.028426, 1.000000])
+    draw_rect(x=0, y=height-46, w=width, h=10*20, color=console_bg_color)
     
     nx = 20
     found_results = flat_node_cats.get('list_return')
@@ -122,8 +126,6 @@ def draw_callback_px(self, context, start_position):
     if found_results:
 
         # // highlight
-        highcol = [0.215861, 0.539657, 1.000000, 1.000000]
-        lowcol = [0.215861, 0.439657, 1.000000, 1.000000]
         draw_rect(x=0, y=begin_height-(20*self.current_index)-7, w=width, h=18, color=highcol, color2=lowcol)
         draw_border(x=0, y=begin_height-(20*self.current_index)-7, w=width, h=18, color=(0.3, 0.3, 0.9, 1.0))
 
@@ -171,7 +173,9 @@ class SvFuzzySearchOne(bpy.types.Operator):
                 self.new_direction = {'UP_ARROW': -1, 'DOWN_ARROW': 1}.get(event.type)
                 self.current_index += self.new_direction
 
-            flat_node_cats['list_return'] = return_search_results(self.current_string)
+            flat_node_cats['list_return'] = results = return_search_results(self.current_string)
+            if results and len(results):
+                self.current_index %= len(results)
 
         elif event.type in {'LEFTMOUSE', 'RET'}:
             print('pressed enter / left mouse')
