@@ -117,7 +117,7 @@ vector_out = {
 class SvInterpolationStripesNode(bpy.types.Node, SverchCustomTreeNode):
     '''Vector Interpolate Stripes'''
     bl_idname = 'SvInterpolationStripesNode'
-    bl_label = 'Stripes Mult'
+    bl_label = 'Vector Stripes'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
 
