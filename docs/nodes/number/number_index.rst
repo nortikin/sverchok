@@ -18,3 +18,4 @@ Number
    range_int
    range_map
    scalar_mk2
+   scalar
