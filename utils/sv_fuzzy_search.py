@@ -130,6 +130,9 @@ def draw_callback_px(self, context, start_position):
         # // draw search items
         for idx, search_item_result in enumerate(found_results, start=1):
             ny = begin_height-(20*idx)
+            if '.' in search_item_result[2]:
+                search_item_result[2] = search_item_result[2].replace('.', ' / ')
+
             draw_string(nx, ny, zip(search_item_result, search_colors))                
   
     # restore opengl defaults
