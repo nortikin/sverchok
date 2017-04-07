@@ -26,6 +26,7 @@ from bpy.types import SpaceNodeEditor
 
 import sverchok
 from sverchok.menu import make_node_cats
+from sverchok.utils.sv_bgl_lib import draw_rect, draw_string, draw_border
 
 # pylint: disable=C0326
 # pylint: disable=w0612
@@ -94,39 +95,6 @@ GREEN = (0, 1, 0, 1)
 BLUE = [0.308197, 0.904497, 1.000000, 1.000000]
 search_colors = (RED, GREEN, BLUE)
 
-def draw_string(x, y, packed_strings):
-    x_offset = 0
-    font_id = 0
-    for pstr, pcol in packed_strings:
-        pstr2 = ' ' + pstr + ' '
-        bgl.glColor4f(*pcol)
-        text_width, text_height = blf.dimensions(font_id, pstr2)
-        blf.position(font_id, (x + x_offset), y, 0)
-        blf.draw(font_id, pstr2)
-        x_offset += text_width
-
-
-def draw_rect(x=0, y=0, w=30, h=10, color=(0.0, 0.0, 0.0, 1.0), color2=None):
-
-    coords = [(x, y), (x+w, y), (w+x, y-h), (x, y-h)]
-
-    
-    if not color2:
-        # FLAT
-        bgl.glBegin(bgl.GL_POLYGON)
-        bgl.glColor4f(*color)       
-        for coord in coords:
-            bgl.glVertex2f(*coord)
-    else:
-        # GRADIENT
-        bgl.glBegin(bgl.GL_QUADS)
-        for col, coord in zip((color, color, color2, color2), coords):
-            bgl.glColor4f(*col)
-            bgl.glVertex2f(*coord)
-            
-    bgl.glEnd()
-
-
 
 def draw_callback_px(self, context, start_position):
 
@@ -154,6 +122,7 @@ def draw_callback_px(self, context, start_position):
         highcol = (0.2, 0.3, 0.4, 1.0)
         lowcol = (0.2, 0.2, 0.2, 1.0)
         draw_rect(x=0, y=begin_height-(20*self.current_index)-5, w=width, h=20, color=highcol, color2=lowcol)
+        draw_border(x=0, y=begin_height-(20*self.current_index)-5, w=width, h=20, color=(0.3, 0.3, 0.3, 1.0))
 
         # // draw search items
         for idx, search_item_result in enumerate(found_results, start=1):
