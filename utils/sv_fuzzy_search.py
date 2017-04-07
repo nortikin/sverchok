@@ -90,10 +90,13 @@ def return_search_results(search_term):
 
 ### ------------------------------------------------------------------------------
 
-RED = (1, 0, 0, 1)
-GREEN = (0, 1, 0, 1)
-BLUE = [0.308197, 0.904497, 1.000000, 1.000000]
-search_colors = (RED, GREEN, BLUE)
+# BL_IDNAME_COLOR = [0.708376, 0.708376, 0.708376, 1.000000]
+# BL_CLASSNAME_COLOR = [0.708376, 0.708376, 0.708376, 1.000000]
+# BL_DISKLOCATION_COLOR = [0.708376, 0.708376, 0.708376, 1.000000]
+text_highest = (0.99, 0.99, 0.99, 1.0)
+text_high = (0.93, 0.93, 0.93, 1.0)
+text_low = (0.83, 0.83, 0.83, 1.0)
+search_colors = (text_highest, text_high, text_low)
 
 
 def draw_callback_px(self, context, start_position):
@@ -108,10 +111,10 @@ def draw_callback_px(self, context, start_position):
     # draw some text
     bgl.glColor4f(0.0, 0.0, 0.0, 1.0)
     blf.position(font_id, 20, height-40, 0)
-    blf.size(font_id, 14, 72)
+    blf.size(font_id, 12, 72)
     blf.draw(font_id, '>>> ' + self.current_string)
 
-    draw_rect(x=0, y=height-46, w=width, h=10*20, color=(0.0, 0.0, 0.0, 1.0))
+    draw_rect(x=0, y=height-46, w=width, h=10*20, color=[0.028426, 0.028426, 0.028426, 1.000000])
     
     nx = 20
     found_results = flat_node_cats.get('list_return')
@@ -119,10 +122,10 @@ def draw_callback_px(self, context, start_position):
     if found_results:
 
         # // highlight
-        highcol = (0.2, 0.3, 0.4, 1.0)
-        lowcol = (0.2, 0.2, 0.2, 1.0)
-        draw_rect(x=0, y=begin_height-(20*self.current_index)-5, w=width, h=20, color=highcol, color2=lowcol)
-        draw_border(x=0, y=begin_height-(20*self.current_index)-5, w=width, h=20, color=(0.3, 0.3, 0.3, 1.0))
+        highcol = [0.215861, 0.539657, 1.000000, 1.000000]
+        lowcol = [0.215861, 0.439657, 1.000000, 1.000000]
+        draw_rect(x=0, y=begin_height-(20*self.current_index)-7, w=width, h=18, color=highcol, color2=lowcol)
+        draw_border(x=0, y=begin_height-(20*self.current_index)-7, w=width, h=18, color=(0.3, 0.3, 0.9, 1.0))
 
         # // draw search items
         for idx, search_item_result in enumerate(found_results, start=1):
