@@ -188,7 +188,7 @@
     SvTurbulenceNode
 
 ## Matrix
-    MatrixGenNodeMK2
+    SvMatrixGenNodeMK2
     MatrixOutNode
     MatrixDeformNode
     SvMatrixValueIn
