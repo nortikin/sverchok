@@ -49,7 +49,7 @@ def gauss(c, x):
 class SvAttractorNode(bpy.types.Node, SverchCustomTreeNode):
     '''Attraction vectors calculator'''
     bl_idname = 'SvAttractorNode'
-    bl_label = 'Attraction vectors'
+    bl_label = 'Vector Attraction'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     types = [
