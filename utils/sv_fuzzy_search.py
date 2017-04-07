@@ -143,6 +143,22 @@ def draw_callback_px(self, context, start_position):
     bgl.glColor4f(0.0, 0.0, 0.0, 1.0)
 
 
+def do_string(input_string, context):
+    if input_string == 'obj vd':
+        tree = context.space_data.edit_tree
+        nodes = tree.nodes
+        obj_in_node = nodes.new('SvObjInLite')
+
+        obj_in_node.dget() # can also take explicit objname as an argument
+        vd_node = nodes.new('ViewerNode2')
+        vd_node.location = obj_in_node.location.x + 180, obj_in_node.location.y
+        
+        links = tree.links
+        links.new(obj_in_node.outputs[0], vd_node.inputs[0])
+        links.new(obj_in_node.outputs[2], vd_node.inputs[1])
+        links.new(obj_in_node.outputs[3], vd_node.inputs[2])
+
+
 class SvFuzzySearchOne(bpy.types.Operator):
     """Implementing Search fuzzyness"""
     bl_idname = "node.sv_fuzzy_node_search"
@@ -186,6 +202,8 @@ class SvFuzzySearchOne(bpy.types.Operator):
                 node_bl_idname = found_results[self.current_index][1]
                 new_node = context.space_data.edit_tree.nodes.new(node_bl_idname)
                 new_node.select = False
+            else:
+                do_string(self.current_string, context)
            
             print('completed')
             flat_node_cats['list_return'] = []
