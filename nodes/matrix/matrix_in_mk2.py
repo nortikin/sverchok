@@ -86,11 +86,11 @@ class SvMatrixGenNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
 
 def register():
-    bpy.utils.register_class(MatrixGenNodeMK2)
+    bpy.utils.register_class(SvMatrixGenNodeMK2)
 
 
 def unregister():
-    bpy.utils.unregister_class(MatrixGenNodeMK2)
+    bpy.utils.unregister_class(SvMatrixGenNodeMK2)
 
 if __name__ == '__main__':
     register()
