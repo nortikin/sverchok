@@ -169,7 +169,32 @@ class SvNodeViewConsoleOne(bpy.types.Operator):
     current_index = bpy.props.IntProperty(default=0)
     new_direction = bpy.props.IntProperty(default=1)
 
-    # poll missing
+    @classmethod
+    def poll(cls, context):
+        sv_types = {'SverchCustomTreeType', 'SverchGroupTreeType'}
+        if context.space_data.type == 'NODE_EDITOR':
+            if bpy.context.space_data.tree_type in sv_types:
+                return True
+        else:
+            return False
+
+
+    def ensure_nodetree(self, context):
+        '''
+        if no active nodetree
+        add new empty node tree, set fakeuser immediately
+        '''
+
+        if not hasattr(context.space_data.edit_tree, 'nodes'):
+            msg_one = 'going to add a new empty node tree'
+            msg_two = 'added new node tree'
+            print(msg_one)
+            self.report({"WARNING"}, msg_one)
+            ng_params = {'name': 'unnamed_tree', 'type': 'SverchCustomTreeType'}
+            ng = bpy.data.node_groups.new(**ng_params)
+            ng.fake_user = True
+            context.space_data.node_tree = ng
+            self.report({"WARNING"}, msg_two)
 
 
     def modal(self, context, event):
@@ -198,6 +223,8 @@ class SvNodeViewConsoleOne(bpy.types.Operator):
         elif event.type in {'LEFTMOUSE', 'RET'}:
             print('pressed enter / left mouse')
             SpaceNodeEditor.draw_handler_remove(self._handle, 'WINDOW')
+
+            self.ensure_nodetree(context)
 
             found_results = flat_node_cats.get('list_return')
             if found_results and len(found_results) > self.current_index:
