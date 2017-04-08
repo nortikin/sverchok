@@ -118,7 +118,6 @@ class NODEVIEW_MT_Dynamic_Menu(bpy.types.Menu):
         tree_type = context.space_data.tree_type
         if tree_type == 'SverchCustomTreeType':
             menu_prefs['show_icons'] = get_icon_switch()
-            # print('showing', menu_prefs['show_icons'])
             return True
 
     def draw(self, context):
