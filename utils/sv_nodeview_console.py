@@ -192,7 +192,7 @@ class SvNodeViewConsoleOne(bpy.types.Operator):
             self.report({"WARNING"}, msg_one)
             ng_params = {'name': 'unnamed_tree', 'type': 'SverchCustomTreeType'}
             ng = bpy.data.node_groups.new(**ng_params)
-            ng.fake_user = True
+            ng.use_fake_user = True
             context.space_data.node_tree = ng
             self.report({"WARNING"}, msg_two)
 
