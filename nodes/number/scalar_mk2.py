@@ -20,7 +20,7 @@ from math import *
 from itertools import zip_longest
 
 import bpy
-from bpy.props import EnumProperty, FloatProperty
+from bpy.props import EnumProperty, FloatProperty, IntProperty
 
 from sverchok.ui.sv_icons import custom_icon
 from sverchok.node_tree import SverchCustomTreeNode
@@ -81,7 +81,8 @@ func_dict = {
     "-1":          (131, lambda x: x - 1,                  ('s s'), "x - 1"),
     "*2":          (132, lambda x: x * 2,                  ('s s'), "x * 2"),
     "/2":          (133, lambda x: x / 2,                  ('s s'), "x / 2"),
-    "RECIP":       (135, lambda x: 1 / x,                  ('s s'), "1 / x")
+    "RECIP":       (135, lambda x: 1 / x,                  ('s s'), "1 / x"),
+    "THETA TAU":   (140, lambda x: pi * 2 * ((x-1) / x),   ('s s'), "tau * (x-1 / x)"),
 }
 
 def func_from_mode(mode):
@@ -112,6 +113,9 @@ class SvScalarMathNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
     x_ = FloatProperty(default=1.0, name='x', update=updateNode)
     y_ = FloatProperty(default=1.0, name='y', update=updateNode)
+    xi_ = IntProperty(default=1, name='x', update=updateNode)
+    yi_ = IntProperty(default=1, name='y', update=updateNode)
+
 
     def draw_label(self):
         return self.current_op
