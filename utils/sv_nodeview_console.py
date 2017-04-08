@@ -26,7 +26,7 @@ from bpy.types import SpaceNodeEditor
 
 import sverchok
 from sverchok.menu import make_node_cats
-from sverchok.utils.sv_bgl_lib import draw_rect, draw_string, draw_border
+from sverchok.utils.sv_bgl_lib import draw_rect, draw_border
 
 # pylint: disable=C0326
 # pylint: disable=w0612
@@ -101,6 +101,18 @@ lowcol = [0.215861, 0.439657, 1.0, 1.0]
 console_bg_color = [0.028426, 0.028426, 0.028426, 1.0]
 
 search_colors = (text_highest, text_high, text_low)
+
+
+def draw_string(x, y, packed_strings):
+    x_offset = 0
+    font_id = 0
+    for pstr, pcol in packed_strings:
+        pstr2 = ' ' + pstr + ' '
+        bgl.glColor4f(*pcol)
+        text_width, text_height = blf.dimensions(font_id, pstr2)
+        blf.position(font_id, (x + x_offset), y, 0)
+        blf.draw(font_id, pstr2)
+        x_offset += text_width 
 
 
 def draw_callback_px(self, context, start_position):
