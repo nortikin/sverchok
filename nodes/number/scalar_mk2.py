@@ -82,7 +82,7 @@ func_dict = {
     "*2":          (132, lambda x: x * 2,                  ('s s'), "x * 2"),
     "/2":          (133, lambda x: x / 2,                  ('s s'), "x / 2"),
     "RECIP":       (135, lambda x: 1 / x,                  ('s s'), "1 / x"),
-    "THETA TAU":   (140, lambda x: pi * 2 * ((x-1) / x),   ('s s'), "tau * (x-1 / x)"),
+    "THETA TAU":   (140, lambda x: pi * 2 * ((x-1) / x),   ('s s'), "tau * (x-1 / x)")
 }
 
 def func_from_mode(mode):
@@ -95,6 +95,15 @@ def generate_node_items():
 mode_items = generate_node_items()
 
 
+def property_change(node, context, origin):
+    if origin == 'input_mode_one':
+        node.inputs[0].prop_name = {'Float': 'x_', 'Int': 'xi_'}.get(getattr(node, origin))
+    elif origin == 'input_mode_two' and len(node.inputs) == 2:
+        node.inputs[1].prop_name = {'Float': 'y_', 'Int': 'yi_'}.get(getattr(node, origin))
+    else:
+        pass
+    updateNode(node, context)
+
 
 class SvScalarMathNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     ''' SvScalarMathNodeMK2 '''
@@ -102,10 +111,10 @@ class SvScalarMathNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Math MK2'
     sv_icon = 'SV_FUNCTION'
 
-
     def mode_change(self, context):
         self.update_sockets()
         updateNode(self, context)
+
 
     current_op = EnumProperty(
         name="Function", description="Function choice", default="MUL",
@@ -116,6 +125,16 @@ class SvScalarMathNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     xi_ = IntProperty(default=1, name='x', update=updateNode)
     yi_ = IntProperty(default=1, name='y', update=updateNode)
 
+    mode_options = [(k, k, '', i) for i, k in enumerate(["Float", "Int"])]
+    
+    input_mode_one = EnumProperty(
+        items=mode_options, description="offers int / float selection for socket 1",
+        default="Float", update=lambda s, c: property_change(s, c, 'input_mode_one'))
+
+    input_mode_two = EnumProperty(
+        items=mode_options, description="offers int / float selection for socket 2",
+        default="Float", update=lambda s, c: property_change(s, c, 'input_mode_two'))
+
 
     def draw_label(self):
         return self.current_op
@@ -123,6 +142,12 @@ class SvScalarMathNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons(self, ctx, layout):
         layout.row().prop(self, "current_op", text="", icon_value=custom_icon("SV_FUNCTION"))
+
+
+    def draw_buttons_ext(self, ctx, layout):
+        layout.row().prop(self, 'input_mode_one', text="input 1")
+        if len(self.inputs) == 2:
+            layout.row().prop(self, 'input_mode_two', text="input 2")
 
 
     def sv_init(self, context):
