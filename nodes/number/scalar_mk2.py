@@ -161,7 +161,10 @@ class SvScalarMathNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         t_inputs, t_outputs = socket_info.split(' ')
 
         if len(t_inputs) > len(self.inputs):
-            self.inputs.new('StringsSocket', "y").prop_name = 'y_'
+            new_second_input = self.inputs.new('StringsSocket', "y").prop_name = 'y_'
+            if self.inputs_mode_two == 'Int':
+                new_second_input.prop_name = 'yi_'
+            # property_change(self, context, 'inputs_mode_two')
         elif len(t_inputs) < len(self.inputs):
             self.inputs.remove(self.inputs[-1])
 
