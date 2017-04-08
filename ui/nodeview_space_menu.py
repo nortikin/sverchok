@@ -222,9 +222,6 @@ def add_keymap():
         kmi.properties.name = "NODEVIEW_MT_Dynamic_Menu"
         nodeview_keymaps.append((km, kmi))
 
-        kmi = km.keymap_items.new('node.sv_fuzzy_node_search', 'F', 'PRESS', ctrl=True)
-        nodeview_keymaps.append((km, kmi))
-
 
 def remove_keymap():
 

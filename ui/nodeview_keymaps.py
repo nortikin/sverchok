@@ -46,6 +46,10 @@ def add_keymap():
         kmi = km.keymap_items.new('node.sv_monad_expand', 'G', 'PRESS', alt=True)
         nodeview_keymaps.append((km, kmi))
 
+        # ctrl+F        ( show the nodeview console)
+        kmi = km.keymap_items.new('node.sv_nodeview_console', 'F', 'PRESS', ctrl=True)
+        nodeview_keymaps.append((km, kmi))
+
 
 def remove_keymap():
 

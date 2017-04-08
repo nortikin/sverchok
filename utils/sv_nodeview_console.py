@@ -133,7 +133,7 @@ def draw_callback_px(self, context, start_position):
         for idx, search_item_result in enumerate(found_results, start=1):
             ny = begin_height-(20*idx)
             if '.' in search_item_result[2]:
-                search_item_result[2] = search_item_result[2].replace('.', ' / ')
+                search_item_result[2] = search_item_result[2].replace('.', '/')
 
             draw_string(nx, ny, zip(search_item_result, search_colors))                
   
@@ -159,15 +159,17 @@ def do_string(input_string, context):
         links.new(obj_in_node.outputs[3], vd_node.inputs[2])
 
 
-class SvFuzzySearchOne(bpy.types.Operator):
+class SvNodeViewConsoleOne(bpy.types.Operator):
     """Implementing Search fuzzyness"""
-    bl_idname = "node.sv_fuzzy_node_search"
-    bl_label = "Fuzzy Search"
+    bl_idname = "node.sv_nodeview_console"
+    bl_label = "Nodeview Console"
 
     current_string = bpy.props.StringProperty()
     chosen_bl_idname = bpy.props.StringProperty()
     current_index = bpy.props.IntProperty(default=0)
     new_direction = bpy.props.IntProperty(default=1)
+
+    # poll missing
 
 
     def modal(self, context, event):
@@ -231,7 +233,7 @@ class SvFuzzySearchOne(bpy.types.Operator):
             return {'CANCELLED'}
 
 
-classes = [SvFuzzySearchOne,]
+classes = [SvNodeViewConsoleOne,]
 
 
 def register():
