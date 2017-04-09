@@ -78,7 +78,6 @@ def icosahedron(r):
     vertices = [from_cylindrical(rho, phi, z, 'radians') for rho, phi, z in vertices]
     return vertices, edges, faces
 
-
 class SvIcosphereNode(bpy.types.Node, SverchCustomTreeNode):
     "IcoSphere primitive"
 
@@ -86,9 +85,26 @@ class SvIcosphereNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'IcoSphere'
     bl_icon = 'MESH_ICOSPHERE'
 
+    def set_subdivisions(self, value):
+        print(value, self.subdivisions_max)
+        if value > self.subdivisions_max:
+            self['subdivisions'] = self.subdivisions_max
+        else:
+            self['subdivisions'] = value
+        return None
+
+    def get_subdivisions(self):
+        return self['subdivisions']
+
     subdivisions = IntProperty(
         name = "Subdivisions", description = "How many times to recursively subdivide the sphere",
         default=2, min=0,
+        set = set_subdivisions, get = get_subdivisions,
+        update=updateNode)
+
+    subdivisions_max = IntProperty(
+        name = "Max. Subdivisions", description = "Maximum number of subdivisions available",
+        default = 5, min=2,
         update=updateNode)
     
     radius = FloatProperty(
@@ -103,6 +119,9 @@ class SvIcosphereNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('VerticesSocket', "Vertices")
         self.outputs.new('StringsSocket',  "Edges")
         self.outputs.new('StringsSocket',  "Faces")
+
+    def draw_buttons_ext(self, context, layout):
+        layout.prop(self, "subdivisions_max")
 
     def process(self):
         # return if no outputs are connected
@@ -126,6 +145,9 @@ class SvIcosphereNode(bpy.types.Node, SverchCustomTreeNode):
                 out_edges.append(edges)
                 out_faces.append(faces)
                 continue
+
+            if subdivisions > self.subdivisions_max:
+                subdivisions = self.subdivisions_max
             
             bm = bmesh.new()
             bmesh.ops.create_icosphere(bm,
