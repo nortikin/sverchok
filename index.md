@@ -17,6 +17,7 @@
     SvCircleNode
     CylinderNode
     SphereNode
+    SvIcosphereNode
     SvTorusNode
     ---
     BasicSplineNode
