@@ -148,6 +148,7 @@
     IntegerNode
     Float2IntNode
     ScalarMathNode
+    SvScalarMathNodeMK2
     Formula2Node
     SvExecNodeMod
     ---
