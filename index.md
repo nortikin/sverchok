@@ -17,6 +17,7 @@
     SvCircleNode
     CylinderNode
     SphereNode
+    SvIcosphereNode
     SvTorusNode
     ---
     BasicSplineNode
@@ -27,7 +28,6 @@
 
 ## Generators Extended
     SvBoxRoundedNode
-    SvIcosphereNode
     SvBricksNode
     HilbertNode
     Hilbert3dNode
