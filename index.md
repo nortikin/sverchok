@@ -17,6 +17,7 @@
     SvCircleNode
     CylinderNode
     SphereNode
+    SvIcosphereNode
     SvTorusNode
     ---
     BasicSplineNode
@@ -27,6 +28,7 @@
 
 ## Generators Extended
     SvBoxRoundedNode
+    SvIcosphereNode
     SvBricksNode
     HilbertNode
     Hilbert3dNode
@@ -146,6 +148,7 @@
     IntegerNode
     Float2IntNode
     ScalarMathNode
+    SvScalarMathNodeMK2
     Formula2Node
     SvExecNodeMod
     ---
@@ -188,7 +191,7 @@
     SvTurbulenceNode
 
 ## Matrix
-    MatrixGenNode
+    SvMatrixGenNodeMK2
     MatrixOutNode
     MatrixDeformNode
     SvMatrixValueIn

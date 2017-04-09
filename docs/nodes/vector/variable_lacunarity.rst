@@ -4,7 +4,7 @@ Variable Lacunarity
 This node takes a list of Vectors and outputs a list of equal length containing Floats in the range -1.0 to 1.0.
 The seed value permits you to apply a different noise calculation to identical inputs.
 This nodes "_returns variable lacunarity noise value, a distorted variety of noise,
-from noise type 1 distorted by noise type 2 at the specified position._""
+from noise type 1 distorted by noise type 2 at the specified position_."
 
 
 Inputs & Parameters
@@ -30,7 +30,7 @@ Inputs & Parameters
 +----------------+-------------------------------------------------------------------------+
 | **Seed**       | Accepts int values.                                                     |
 +----------------+-------------------------------------------------------------------------+
-| **Distortion** | Accepts floats values, modulate the two noise basis.        |
+| **Distortion** | Accepts floats values, modulate the two noise basis.                    |
 +----------------+-------------------------------------------------------------------------+
 
 Examples

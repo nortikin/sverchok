@@ -6,6 +6,7 @@ Generators Extended
    :maxdepth: 2
 
    box_rounded
+   icosphere
    generative_art
    hilbert
    hilbert3d
