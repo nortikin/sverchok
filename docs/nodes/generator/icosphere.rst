@@ -19,7 +19,8 @@ Parameters
 
 This node has the following parameters:
   
-- **Subdivisions**. How many times to recursively subdivide the sphere. In case this parameter is 0, the node will simply produce right icosahedron. This parameter can be provided via node input.
+- **Max. Subdivisions**. Maximum value available for **Subdivisions** parameter. This affects not only parameter, but also restricts values provided via input. Default maximum is 5.
+- **Subdivisions**. How many times to recursively subdivide the sphere. In case this parameter is 0, the node will simply produce right icosahedron. Maximum value is restricted by **Max. Subdivisions** parameter. This parameter can be provided via node input.
 - **Radius**. Sphere radius. This parameter can be provided via node input.
 
 Outputs
