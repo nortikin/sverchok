@@ -21,34 +21,33 @@ import webbrowser
 
 def launch_browser_search(type_of_search, input_string):
     
-    if type_of_search == 'bpy docs':
+    search_tail = ''
+    search_term = input_string.rsplit('?', 1)[0]
 
-        try:
-            s_head = 'https://docs.blender.org/api/blender_python_api_current/'
-            s_slug = 'search.html?q='
-            s_tail = '&check_keywords=yes&area=default'
-            s_term = input_string
-            webbrowser.open(''.join([s_head, s_slug, s_term, s_tail]))
-        except Exception as err:
-            print('unable to browse docs online')
-            print(repr(err))
+    if type_of_search == 'bpy docs':
+        search_head = 'https://docs.blender.org/api/blender_python_api_current/search.html?q='
+        search_tail = '&check_keywords=yes&area=default'
 
     elif type_of_search == 'by docs':
-
-        try:
-            search_head = 'http://docs.python.org/3/search.html?q='
-            search_tail = ''  # &check_keywords=yes&area=default'
-            search_term = input_string
-            webbrowser.open(''.join([search_head, search_term, search_tail]))
-        except Exception as err:
-            print('unable to browse docs online')
-            print(repr(err))
-
+        search_head = 'http://docs.python.org/3/search.html?q='
 
     elif type_of_search == 'sv docs':
-         # http://sverchok.readthedocs.io/en/latest/search.html?q=line&check_keywords=yes&area=default
-        ...
+        search_head = "http://sverchok.readthedocs.io/en/latest/search.html?q="
+        search_tail = "&check_keywords=yes&area=default"
 
+    elif type_of_search == 'github code':
+        search_head = "https://github.com/nortikin/sverchok/search?utf8=%E2%9C%93&q="
+        search_tail = "&type="
+
+    elif type_of_search == 'github issues':
+        search_head = "https://github.com/nortikin/sverchok/issues?utf8=%E2%9C%93&q=is%3Aissue%20"
+
+    try:
+        full_url_term = ''.join([search_head, search_term, search_tail])
+        webbrowser.open(full_url_term)
+    except Exception as err:
+        print('unable to browse {0} online'.format(type_of_search))
+        print(repr(err))
 
 
 
