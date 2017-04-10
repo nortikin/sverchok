@@ -24,22 +24,22 @@ def launch_browser_search(type_of_search, input_string):
     search_tail = ''
     search_term = input_string.rsplit('?', 1)[0]
 
-    if type_of_search == 'bpy docs':
+    if type_of_search == 'bpy':
         search_head = 'https://docs.blender.org/api/blender_python_api_current/search.html?q='
         search_tail = '&check_keywords=yes&area=default'
 
-    elif type_of_search == 'by docs':
+    elif type_of_search == 'py':
         search_head = 'http://docs.python.org/3/search.html?q='
 
-    elif type_of_search == 'sv docs':
+    elif type_of_search == 'sv':
         search_head = "http://sverchok.readthedocs.io/en/latest/search.html?q="
         search_tail = "&check_keywords=yes&area=default"
 
-    elif type_of_search == 'github code':
+    elif type_of_search == 'ghc':  # github code
         search_head = "https://github.com/nortikin/sverchok/search?utf8=%E2%9C%93&q="
         search_tail = "&type="
 
-    elif type_of_search == 'github issues':
+    elif type_of_search == 'gh':  # github issues
         search_head = "https://github.com/nortikin/sverchok/issues?utf8=%E2%9C%93&q=is%3Aissue%20"
 
     try:
@@ -52,16 +52,8 @@ def launch_browser_search(type_of_search, input_string):
 
 
 def routing_table(input_string):
-    if input_string.endswith('?bpy'):
-        type_of_search = 'bpy docs'
-    elif input_string.endswith('?py'):
-        type_of_search = 'py docs'
-    elif input_string.endswith('?sv'):
-        type_of_search = 'sv docs'
-    elif input_string.endswith('?ghc'):
-        type_of_search = 'github code'
-    elif input_string.endswith('?gh'):
-        type_of_search = 'github issues'
+    if input_string.endswith(('?bpy', '?py', '?sv', '?ghc', '?gh')):
+        type_of_search = input_string.rsplit('?', 1)[1]
     else:
         return False
 
