@@ -52,15 +52,15 @@ def launch_browser_search(type_of_search, input_string):
 
 
 def routing_table(input_string):
-    if input_string.endswith(r'?bpy'):
+    if input_string.endswith('?bpy'):
         type_of_search = 'bpy docs'
-    elif input_string.endswith(r'?py'):
+    elif input_string.endswith('?py'):
         type_of_search = 'py docs'
-    elif input_string.endswith(r'?sv'):
+    elif input_string.endswith('?sv'):
         type_of_search = 'sv docs'
-    elif input_string.endswith(r'?ghc'):
+    elif input_string.endswith('?ghc'):
         type_of_search = 'github code'
-    elif input_string.endswith(r'?gh'):
+    elif input_string.endswith('?gh'):
         type_of_search = 'github issues'
     else:
         return False
