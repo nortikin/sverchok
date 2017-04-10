@@ -213,7 +213,11 @@ class SvNodeViewConsoleOne(bpy.types.Operator):
     def modal(self, context, event):
         context.area.tag_redraw()
 
-        if event.type in KEYBOARD and event.value == 'PRESS':
+        # Question mark.. i think..
+        if event.shift and event.type == 'SLASH' and event.value == 'PRESS':
+            self.current_string = self.current_string + '?'
+
+        elif event.type in KEYBOARD and event.value == 'PRESS':
             if event.type in CAPS or event.type in remap_nums.keys() or event.type == 'SPACE':
 
                 if event.type == 'SPACE':
@@ -244,6 +248,9 @@ class SvNodeViewConsoleOne(bpy.types.Operator):
                 node_bl_idname = found_results[self.current_index][1]
                 new_node = context.space_data.edit_tree.nodes.new(node_bl_idname)
                 new_node.select = False
+            elif routing_table(self.current_string):
+                pass
+
             else:
                 do_string(self.current_string, context)
            

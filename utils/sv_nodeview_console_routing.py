@@ -52,7 +52,7 @@ def launch_browser_search(type_of_search, input_string):
 
 
 def routing_table(input_string):
-    if input_string.endswith(r'?\bpy'):
+    if input_string.endswith(r'?bpy'):
         type_of_search = 'bpy docs'
     elif input_string.endswith(r'?py'):
         type_of_search = 'py docs'
