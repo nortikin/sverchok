@@ -26,6 +26,7 @@ from bpy.types import SpaceNodeEditor
 
 import sverchok
 from sverchok.menu import make_node_cats
+from sverchok.utils.sv_nodeview_console_routing import routing_table
 from sverchok.utils.sv_bgl_lib import draw_rect, draw_border
 
 # pylint: disable=C0326
