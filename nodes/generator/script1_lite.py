@@ -269,7 +269,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
                 if isinstance(val, (int, float)):
                     # extra pussyfooting for the load sequence.
                     t = s.sv_get()
-                    if t and t[0] and t[0][0]:
+                    if t and t[0] and len(t[0]) > 0:
                         val = t[0][0]
 
             local_dict[s.name] = val
