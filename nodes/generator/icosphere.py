@@ -113,6 +113,8 @@ class SvIcosphereNode(bpy.types.Node, SverchCustomTreeNode):
         update=updateNode)
 
     def sv_init(self, context):
+        self['subdivisions'] = 2
+        
         self.inputs.new('StringsSocket', 'Subdivisions').prop_name = 'subdivisions'
         self.inputs.new('StringsSocket', 'Radius').prop_name = 'radius'
 
