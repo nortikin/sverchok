@@ -57,7 +57,9 @@ old_bl_idnames = {
     'SvObjectToMeshNode': 'blenddata_to_svdata',
     'SvSetDataObjectNode': 'set_blenddata',
     'SvVertexGroupNode': 'weights',
-    'MatrixGenNode':'matrix_in'
+    'MatrixGenNode':'matrix_in',
+    'LineNode': 'line',
+    'PlaneNode': 'plane'
 }
 
 # we should add some functions to load things there
