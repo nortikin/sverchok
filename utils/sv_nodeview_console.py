@@ -241,17 +241,19 @@ class SvNodeViewConsoleOne(bpy.types.Operator):
             print('pressed enter / left mouse')
             SpaceNodeEditor.draw_handler_remove(self._handle, 'WINDOW')
 
-            self.ensure_nodetree(context)
 
             found_results = flat_node_cats.get('list_return')
             if found_results and len(found_results) > self.current_index:
+                self.ensure_nodetree(context)
                 node_bl_idname = found_results[self.current_index][1]
                 new_node = context.space_data.edit_tree.nodes.new(node_bl_idname)
                 new_node.select = False
-            elif routing_table(self.current_string):
+
+            elif routing_table(self.current_string, context):
                 pass
 
             else:
+                self.ensure_nodetree(context)
                 do_string(self.current_string, context)
            
             print('completed')

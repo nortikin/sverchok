@@ -19,7 +19,7 @@
 import webbrowser
 
 
-def launch_browser_search(type_of_search, input_string):
+def launch_browser_search(context, type_of_search, input_string):
     
     search_tail = ''
     search_term = input_string.rsplit('?', 1)[0]
@@ -51,11 +51,11 @@ def launch_browser_search(type_of_search, input_string):
 
 
 
-def routing_table(input_string):
+def routing_table(input_string, context):
     if input_string.endswith(('?bpy', '?py', '?sv', '?ghc', '?gh')):
         type_of_search = input_string.rsplit('?', 1)[1]
     else:
         return False
 
-    launch_browser_search(type_of_search, input_string)
+    launch_browser_search(context, type_of_search, input_string)
     return True
