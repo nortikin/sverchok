@@ -20,19 +20,18 @@
 
 def route_as_macro(operator, context):
 
+    operator.ensure_nodetree(context)
+    tree = context.space_data.edit_tree
+    nodes, links = tree.nodes, tree.links
+
     term = operator.current_string
 
     if term == 'obj vd':
-        operator.ensure_nodetree(context)
-        tree = context.space_data.edit_tree
-        nodes = tree.nodes
         obj_in_node = nodes.new('SvObjInLite')
-
-        obj_in_node.dget() # can also take explicit objname as an argument
+        obj_in_node.dget()
         vd_node = nodes.new('ViewerNode2')
         vd_node.location = obj_in_node.location.x + 180, obj_in_node.location.y
         
-        links = tree.links
         links.new(obj_in_node.outputs[0], vd_node.inputs[0])
         links.new(obj_in_node.outputs[2], vd_node.inputs[1])
         links.new(obj_in_node.outputs[3], vd_node.inputs[2])
