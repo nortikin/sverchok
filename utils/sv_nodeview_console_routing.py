@@ -19,7 +19,7 @@
 import webbrowser
 
 
-def launch_browser_search(context, type_of_search, input_string):
+def launch_browser_search(operator, type_of_search, input_string):
     
     search_tail = ''
     search_term = input_string.rsplit('?', 1)[0]
@@ -42,6 +42,10 @@ def launch_browser_search(context, type_of_search, input_string):
     elif type_of_search == 'gh':  # github issues
         search_head = "https://github.com/nortikin/sverchok/issues?utf8=%E2%9C%93&q=is%3Aissue%20"
 
+    elif type_of_search == 'se':  # blender stack exchange
+        search_head = "http://blender.stackexchange.com/search?q="
+
+
     try:
         full_url_term = ''.join([search_head, search_term, search_tail])
         webbrowser.open(full_url_term)
@@ -51,11 +55,12 @@ def launch_browser_search(context, type_of_search, input_string):
 
 
 
-def route_as_websearch(input_string, context):
-    if input_string.endswith(('?bpy', '?py', '?sv', '?ghc', '?gh')):
+def route_as_websearch(operator):
+    input_string = operator.current_string
+    if input_string.endswith(('?bpy', '?py', '?sv', '?ghc', '?gh', '?se')):
         type_of_search = input_string.rsplit('?', 1)[1]
     else:
         return False
 
-    launch_browser_search(context, type_of_search, input_string)
+    launch_browser_search(operator, type_of_search, input_string)
     return True

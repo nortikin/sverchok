@@ -236,14 +236,13 @@ class SvNodeViewConsoleOne(bpy.types.Operator):
                 self.current_index %= len(results)
 
         elif event.type in {'LEFTMOUSE', 'RET'}:
-            print('pressed enter / left mouse')
             SpaceNodeEditor.draw_handler_remove(self._handle, 'WINDOW')
 
             if route_as_nodelookup(self, context):
                 pass
-            elif route_as_websearch(self.current_string, context):
-                pass
             elif route_as_macro(self, context):
+                pass
+            elif route_as_websearch(self):
                 pass
            
             print('completed')
