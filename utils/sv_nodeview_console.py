@@ -156,8 +156,12 @@ def draw_callback_px(self, context, start_position):
     bgl.glColor4f(0.0, 0.0, 0.0, 1.0)
 
 
-def do_string(input_string, context):
-    if input_string == 'obj vd':
+def route_as_macro(operator, context):
+
+    term = operator.current_string
+
+    if term == 'obj vd':
+        operator.ensure_nodetree(context)
         tree = context.space_data.edit_tree
         nodes = tree.nodes
         obj_in_node = nodes.new('SvObjInLite')
@@ -170,6 +174,10 @@ def do_string(input_string, context):
         links.new(obj_in_node.outputs[0], vd_node.inputs[0])
         links.new(obj_in_node.outputs[2], vd_node.inputs[1])
         links.new(obj_in_node.outputs[3], vd_node.inputs[2])
+    else:
+        return
+
+    return True
 
 
 def search_term_hit(operator, context):
@@ -259,9 +267,8 @@ class SvNodeViewConsoleOne(bpy.types.Operator):
                 pass
             elif routing_table(self.current_string, context):
                 pass
-            else:
-                self.ensure_nodetree(context)
-                do_string(self.current_string, context)
+            elif route_as_macro(self, context):
+                pass
            
             print('completed')
             flat_node_cats['list_return'] = []
