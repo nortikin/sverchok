@@ -10,8 +10,8 @@
 > Failing to follow these points will break the node category parser.
 
 ## Generators
-    LineNode
-    PlaneNode
+    SvLineNodeMK2
+    SvPlaneNodeMK2
     SvNGonNode
     SvBoxNode
     SvCircleNode
@@ -40,8 +40,6 @@
     SvTorusKnotNode
     SvHexaGridNode
     SvRingNode
-    SvPlaneNodeMK2
-    SvLineNodeMK2
 
 ## Analyzers
     SvBBoxNode
