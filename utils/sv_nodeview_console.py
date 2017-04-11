@@ -172,6 +172,21 @@ def do_string(input_string, context):
         links.new(obj_in_node.outputs[3], vd_node.inputs[2])
 
 
+def search_term_hit(operator, context):
+
+    found_results = flat_node_cats.get('list_return')
+    if found_results and len(found_results) > operator.current_index:
+        try:
+            operator.ensure_nodetree(context)
+            node_bl_idname = found_results[operator.current_index][1]
+            new_node = context.space_data.edit_tree.nodes.new(node_bl_idname)
+            new_node.select = False
+            return True
+        except Exception as err:
+            print(repr(err))
+
+
+
 class SvNodeViewConsoleOne(bpy.types.Operator):
     """Implementing Search fuzzyness"""
     bl_idname = "node.sv_nodeview_console"
@@ -213,7 +228,6 @@ class SvNodeViewConsoleOne(bpy.types.Operator):
     def modal(self, context, event):
         context.area.tag_redraw()
 
-        # Question mark.. i think..
         if event.shift and event.type == 'SLASH' and event.value == 'PRESS':
             self.current_string = self.current_string + '?'
 
@@ -241,17 +255,10 @@ class SvNodeViewConsoleOne(bpy.types.Operator):
             print('pressed enter / left mouse')
             SpaceNodeEditor.draw_handler_remove(self._handle, 'WINDOW')
 
-
-            found_results = flat_node_cats.get('list_return')
-            if found_results and len(found_results) > self.current_index:
-                self.ensure_nodetree(context)
-                node_bl_idname = found_results[self.current_index][1]
-                new_node = context.space_data.edit_tree.nodes.new(node_bl_idname)
-                new_node.select = False
-
+            if search_term_hit(self, context):
+                pass
             elif routing_table(self.current_string, context):
                 pass
-
             else:
                 self.ensure_nodetree(context)
                 do_string(self.current_string, context)
