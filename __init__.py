@@ -93,8 +93,10 @@ utils_modules = [
     # UI operators and tools
     "sv_panels_tools", "sv_gist_tools", "sv_IO_panel_tools", "sv_load_zipped_blend",
     "monad", "sv_help",
-    #"loadscript",
-    "debug_script", "sv_update_utils", "sv_nodeview_console_routing", "sv_nodeview_console"
+    # loadscript
+    "debug_script", "sv_update_utils", 
+    # Console content
+    "sv_nodeview_macro_routing", "sv_nodeview_console_routing", "sv_nodeview_console"
 ]
 
 ui_modules = [

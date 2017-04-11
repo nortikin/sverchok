@@ -26,11 +26,14 @@ from bpy.types import SpaceNodeEditor
 
 import sverchok
 from sverchok.menu import make_node_cats
-from sverchok.utils.sv_nodeview_console_routing import routing_table
+from sverchok.utils.sv_nodeview_macro_routing import route_as_macro
+from sverchok.utils.sv_nodeview_console_routing import route_as_websearch
 from sverchok.utils.sv_bgl_lib import draw_rect, draw_border
 
 # pylint: disable=C0326
 # pylint: disable=w0612
+
+ddir = lambda content: [n for n in dir(content) if not n.startswith('__')]
 
 ### ---- Key Handling ----------------------------------------------------------
 
@@ -53,10 +56,6 @@ remap_nums.update(remap_extras)
 ### ---- Category Handling -----------------------------------------------------
 
 node_cats = make_node_cats()
-addon_name = sverchok.__name__
-menu_prefs = {}
-
-ddir = lambda content: [n for n in dir(content) if not n.startswith('__')]
 
 def removed_sv_prefix(str_in):
     if str_in.startswith("Sv"):
@@ -87,6 +86,22 @@ def return_search_results(search_term):
             if idx > 10:
                 break
     return prefilter
+
+
+def route_as_nodelookup(operator, context):
+
+    found_results = flat_node_cats.get('list_return')
+    if found_results and len(found_results) > operator.current_index:
+        try:
+            operator.ensure_nodetree(context)
+            node_bl_idname = found_results[operator.current_index][1]
+            new_node = context.space_data.edit_tree.nodes.new(node_bl_idname)
+            new_node.select = False
+            return True
+        except Exception as err:
+            print(repr(err))
+
+
 
 
 ### ------------------------------------------------------------------------------
@@ -154,45 +169,6 @@ def draw_callback_px(self, context, start_position):
     bgl.glLineWidth(1)
     bgl.glDisable(bgl.GL_BLEND)
     bgl.glColor4f(0.0, 0.0, 0.0, 1.0)
-
-
-def route_as_macro(operator, context):
-
-    term = operator.current_string
-
-    if term == 'obj vd':
-        operator.ensure_nodetree(context)
-        tree = context.space_data.edit_tree
-        nodes = tree.nodes
-        obj_in_node = nodes.new('SvObjInLite')
-
-        obj_in_node.dget() # can also take explicit objname as an argument
-        vd_node = nodes.new('ViewerNode2')
-        vd_node.location = obj_in_node.location.x + 180, obj_in_node.location.y
-        
-        links = tree.links
-        links.new(obj_in_node.outputs[0], vd_node.inputs[0])
-        links.new(obj_in_node.outputs[2], vd_node.inputs[1])
-        links.new(obj_in_node.outputs[3], vd_node.inputs[2])
-    else:
-        return
-
-    return True
-
-
-def search_term_hit(operator, context):
-
-    found_results = flat_node_cats.get('list_return')
-    if found_results and len(found_results) > operator.current_index:
-        try:
-            operator.ensure_nodetree(context)
-            node_bl_idname = found_results[operator.current_index][1]
-            new_node = context.space_data.edit_tree.nodes.new(node_bl_idname)
-            new_node.select = False
-            return True
-        except Exception as err:
-            print(repr(err))
-
 
 
 class SvNodeViewConsoleOne(bpy.types.Operator):
@@ -263,9 +239,9 @@ class SvNodeViewConsoleOne(bpy.types.Operator):
             print('pressed enter / left mouse')
             SpaceNodeEditor.draw_handler_remove(self._handle, 'WINDOW')
 
-            if search_term_hit(self, context):
+            if route_as_nodelookup(self, context):
                 pass
-            elif routing_table(self.current_string, context):
+            elif route_as_websearch(self.current_string, context):
                 pass
             elif route_as_macro(self, context):
                 pass

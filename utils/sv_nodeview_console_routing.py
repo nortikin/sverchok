@@ -51,7 +51,7 @@ def launch_browser_search(context, type_of_search, input_string):
 
 
 
-def routing_table(input_string, context):
+def route_as_websearch(input_string, context):
     if input_string.endswith(('?bpy', '?py', '?sv', '?ghc', '?gh')):
         type_of_search = input_string.rsplit('?', 1)[1]
     else:
