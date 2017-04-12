@@ -285,6 +285,3 @@ def unregister():
 
     # because we popped sverchok off the nodecat collection in register, we have to do our own class unregistration here.
     ff_unregister_node_categories()
-
-
-
