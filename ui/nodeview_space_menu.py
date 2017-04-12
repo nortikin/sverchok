@@ -31,7 +31,7 @@ from sverchok.menu import make_node_cats
 from sverchok.ui.sv_icons import custom_icon
 from nodeitems_utils import _node_categories
 
-
+sv_tree_types = {'SverchCustomTreeType', 'SverchGroupTreeType'}
 node_cats = make_node_cats()
 addon_name = sverchok.__name__
 menu_prefs = {}
@@ -119,7 +119,7 @@ class NODEVIEW_MT_Dynamic_Menu(bpy.types.Menu):
     @classmethod
     def poll(cls, context):
         tree_type = context.space_data.tree_type
-        if tree_type == 'SverchCustomTreeType':
+        if tree_type in sv_tree_types:
             menu_prefs['show_icons'] = get_icon_switch()
             # print('showing', menu_prefs['show_icons'])
             return True
@@ -128,7 +128,7 @@ class NODEVIEW_MT_Dynamic_Menu(bpy.types.Menu):
 
         # dont show up in other tree menu (needed because we bypassed poll by appending manually)
         tree_type = context.space_data.tree_type
-        if not tree_type == 'SverchCustomTreeType':
+        if not tree_type in sv_tree_types:
             return
 
         layout = self.layout
