@@ -29,11 +29,14 @@ import bpy
 import sverchok
 from sverchok.menu import make_node_cats
 from sverchok.ui.sv_icons import custom_icon
+from nodeitems_utils import _node_categories
+
 
 node_cats = make_node_cats()
 addon_name = sverchok.__name__
 menu_prefs = {}
 
+_items_to_remove = {}
 
 def get_icon_switch():
     addon = bpy.context.user_preferences.addons.get(addon_name)
@@ -126,9 +129,9 @@ class NODEVIEW_MT_Dynamic_Menu(bpy.types.Menu):
         layout = self.layout
         layout.operator_context = 'INVOKE_REGION_WIN'
 
-        #s = layout.operator("node.sv_fuzzy_node_search", text="Search", icon='OUTLINER_DATA_FONT')
-        s = layout.operator("node.add_search", text="Search", icon='OUTLINER_DATA_FONT')
-        s.use_transform = True
+        if self.bl_idname == 'NODEVIEW_MT_Dynamic_Menu':
+            s = layout.operator("node.add_search", text="Search", icon='OUTLINER_DATA_FONT')
+            s.use_transform = True
 
         layout.separator()
         layout.menu("NODEVIEW_MT_AddGenerators", **icon('OBJECT_DATAMODE'))
@@ -242,8 +245,17 @@ def register():
         bpy.utils.register_class(class_name)
     add_keymap()
 
+    # _items_to_remove['popped'] = _node_categories.pop("SVERCHOK")
+    # bpy.types.NODE_MT_add.append(bpy.types.NODEVIEW_MT_Dynamic_Menu.draw)
+
 
 def unregister():
     for class_name in classes:
         bpy.utils.unregister_class(class_name)
     remove_keymap()
+
+    # bpy.types.NODE_MT_add.remove(bpy.types.NODEVIEW_MT_Dynamic_Menu.draw)
+    # unregister nodes..
+
+
+
