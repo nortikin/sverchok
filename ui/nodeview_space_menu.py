@@ -126,6 +126,11 @@ class NODEVIEW_MT_Dynamic_Menu(bpy.types.Menu):
 
     def draw(self, context):
 
+        # dont show up in other tree menu (needed because we bypassed poll by appending manually)
+        tree_type = context.space_data.tree_type
+        if not tree_type == 'SverchCustomTreeType':
+            return
+
         layout = self.layout
         layout.operator_context = 'INVOKE_REGION_WIN'
 
