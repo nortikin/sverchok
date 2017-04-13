@@ -36,7 +36,7 @@ node_cats = make_node_cats()
 addon_name = sverchok.__name__
 menu_prefs = {}
 
-_items_to_remove = {}
+# _items_to_remove = {}
 
 def get_icon_switch():
     addon = bpy.context.user_preferences.addons.get(addon_name)
@@ -261,4 +261,4 @@ def unregister():
         bpy.utils.unregister_class(class_name)
 
     # because we popped sverchok off the nodecat collection in register, we have to do our own class unregistration here.
-    ff_unregister_node_categories()
+    # ff_unregister_node_categories()
