@@ -26,15 +26,19 @@ from nodeitems_utils import _node_categories
 from sverchok.ui.nodeview_space_menu import _items_to_remove
 
 
+
 def ff_node_items_iter(context):
     cats = _items_to_remove.get('sverchok_popped')
-    if cats:
-        for cat in cats[0]:
-            for item in cat.items(context):
+    if not cats:
+        return
+
+    for cat in cats[0]:
+        for item in cat.items(context):
+            if isinstance(item, nodeitems_utils.NodeItem):
                 yield item
 
 
-# This is heavily borrowed  (almos verabatim) from 
+# This is heavily borrowed  (almost verabatim) from 
 # - nodeitems_utils 
 # - bl_operators.node.  add_search
 
@@ -53,14 +57,9 @@ class SvNodeViewSearchNode(NodeAddOperator, Operator):
         enum_items.clear()
 
         for index, item in enumerate(ff_node_items_iter(context)):
-            if not isinstance(item, nodeitems_utils.NodeItem):
-                continue
-
             nodetype = getattr(bpy.types, item.nodetype)
-            if not nodetype:
-                continue
-
-            enum_items.append((str(index), item.label, nodetype.bl_rna.description, index))
+            if nodetype:
+                enum_items.append((str(index), item.label, nodetype.bl_rna.description, index))
         return enum_items
 
 
