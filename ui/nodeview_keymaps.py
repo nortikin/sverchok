@@ -46,6 +46,11 @@ def add_keymap():
         kmi = km.keymap_items.new('node.sv_monad_expand', 'G', 'PRESS', alt=True)
         nodeview_keymaps.append((km, kmi))
 
+        # Shift+A       | show custom menu
+        kmi = km.keymap_items.new('wm.call_menu', 'A', 'PRESS', shift=True)
+        kmi.properties.name = "NODEVIEW_MT_Dynamic_Menu"
+        nodeview_keymaps.append((km, kmi))
+
 
 def remove_keymap():
 
