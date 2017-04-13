@@ -17,6 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
+import nodeitems_utils
 from bpy.types import Operator
 from bpy.props import EnumProperty
 from bl_operators.node import NodeAddOperator
@@ -24,27 +25,13 @@ from nodeitems_utils import _node_categories
 
 from sverchok.ui.nodeview_space_menu import _items_to_remove
 
-"""
-def node_categories_iter(context):
-    for cat_type in _node_categories.values():
-        for cat in cat_type[0]:
-            if cat.poll and ((context is None) or cat.poll(context)):
-                yield cat
-
-
-def node_items_iter(context):
-    for cat in node_categories_iter(context):
-        for item in cat.items(context):
-            yield item
-
-"""
-
-
 
 def ff_node_items_iter(context):
-    for cat in _items_to_remove.get('sverchok_popped'):
-        for item in cat.items(context):
-            yield item
+    cats = _items_to_remove.get('sverchok_popped')
+    if cats:
+        for cat in cats[0]:
+            for item in cat.items(context):
+                yield item
 
 
 # This is heavily borrowed  (almos verabatim) from 
