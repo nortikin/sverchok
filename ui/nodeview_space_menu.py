@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
@@ -31,12 +30,14 @@ from sverchok.menu import make_node_cats
 from sverchok.ui.sv_icons import custom_icon
 from nodeitems_utils import _node_categories
 
+
 sv_tree_types = {'SverchCustomTreeType', 'SverchGroupTreeType'}
 node_cats = make_node_cats()
 addon_name = sverchok.__name__
 menu_prefs = {}
 
 _items_to_remove = {}
+
 
 def get_icon_switch():
     addon = bpy.context.user_preferences.addons.get(addon_name)
@@ -133,9 +134,8 @@ class NODEVIEW_MT_Dynamic_Menu(bpy.types.Menu):
         layout = self.layout
         layout.operator_context = 'INVOKE_REGION_WIN'
 
-        if self.bl_idname == 'NODEVIEW_MT_Dynamic_Menu':
-            s = layout.operator("node.add_search", text="Search", icon='OUTLINER_DATA_FONT')
-            s.use_transform = True
+        s = layout.operator("node.add_sverchok_search", text="SV Search", icon='OUTLINER_DATA_FONT')
+        s.use_transform = True
 
         layout.separator()
         layout.menu("NODEVIEW_MT_AddGenerators", **icon('OBJECT_DATAMODE'))
@@ -196,8 +196,7 @@ classes = [
     NODEVIEW_MT_AddListOps,
     NODEVIEW_MT_AddModifiers,
     NODEVIEW_MT_AddGenerators,
-    # like magic.
-    # make | NODEVIEW_MT_Add + class name , menu name
+    # make    | NODEVIEW_MT_Add + class name , menu name
     make_class('GeneratorsExt', "Generators Extended"),
     make_class('Transforms', "Transforms"),
     make_class('Analyzers', "Analyzers"),
@@ -262,4 +261,3 @@ def unregister():
 
     # because we popped sverchok off the nodecat collection in register, we have to do our own class unregistration here.
     ff_unregister_node_categories()
-
