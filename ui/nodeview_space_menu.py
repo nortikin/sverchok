@@ -29,7 +29,7 @@ import bpy
 import sverchok
 from sverchok.menu import make_node_cats
 from sverchok.ui.sv_icons import custom_icon
-from nodeitems_utils import _node_categories
+# from nodeitems_utils import _node_categories
 
 sv_tree_types = {'SverchCustomTreeType', 'SverchGroupTreeType'}
 node_cats = make_node_cats()
@@ -219,74 +219,46 @@ classes = [
     make_class('Alphas', "Alpha Nodes"),
 ]
 
-nodeview_keymaps = []
 
-def add_keymap():
-    wm = bpy.context.window_manager
-    kc = wm.keyconfigs.addon
-    if kc:
-        km = kc.keymaps.new(name='Node Editor', space_type='NODE_EDITOR')
-        kmi = km.keymap_items.new('wm.call_menu', 'A', 'PRESS', shift=True)
-        kmi.properties.name = "NODEVIEW_MT_Dynamic_Menu"
-        nodeview_keymaps.append((km, kmi))
+# def ff_unregister_node_categories():
+#     """
+#     Below (in the register function) we remove the SVERCHOK group from _node_categories collection, by doing:
 
+#         _items_to_remove['sverchok_popped'] = _node_categories.pop("SVERCHOK")
 
-def remove_keymap():
+#     this allows us to populate the NODE_MT_add menu as we want. In doing so we lose the automatic unregistration of 
+#     various menu and category classes. This function behaves as a dedicated removal of those classes (for F8 and disable add-on),
+#     """
 
-    for km, kmi in nodeview_keymaps:
-        try:
-            km.keymap_items.remove(kmi)
-        except Exception as e:
-            err = repr(e)
-            if "cannot be removed from 'Node Editor'" in err:
-                print('keymaps for Node Editor already removed by another add-on, sverchok will skip this step in unregister')
-                break
+#     def ff_unregister_node_cat_types(cats):
+#         for mt in cats[2]:
+#             bpy.utils.unregister_class(mt)
+#         for pt in cats[3]:
+#             bpy.utils.unregister_class(pt)
 
-    nodeview_keymaps.clear()
+#     cat_types = _items_to_remove['sverchok_popped']
+#     if cat_types:
+#         ff_unregister_node_cat_types(cat_types)
 
-
-
-def ff_unregister_node_categories():
-    """
-    Below (in the register function) we remove the SVERCHOK group from _node_categories collection, by doing:
-
-        _items_to_remove['sverchok_popped'] = _node_categories.pop("SVERCHOK")
-
-    this allows us to populate the NODE_MT_add menu as we want. In doing so we lose the automatic unregistration of 
-    various menu and category classes. This function behaves as a dedicated removal of those classes (for F8 and disable add-on),
-    """
-
-    def ff_unregister_node_cat_types(cats):
-        for mt in cats[2]:
-            bpy.utils.unregister_class(mt)
-        for pt in cats[3]:
-            bpy.utils.unregister_class(pt)
-
-    cat_types = _items_to_remove['sverchok_popped']
-    if cat_types:
-        ff_unregister_node_cat_types(cat_types)
-
-    del _items_to_remove['sverchok_popped']
+#     del _items_to_remove['sverchok_popped']
 
 
 
 def register():
     for class_name in classes:
         bpy.utils.register_class(class_name)
-    add_keymap()
 
     # we pop sverchok from the standard nodecat collection to avoid the menu items appearing in the default Add node menu.
-    _items_to_remove['sverchok_popped'] = _node_categories.pop("SVERCHOK")
+    # _items_to_remove['sverchok_popped'] = _node_categories.pop("SVERCHOK")
 
-    bpy.types.NODE_MT_add.append(bpy.types.NODEVIEW_MT_Dynamic_Menu.draw)
+    # bpy.types.NODE_MT_add.append(bpy.types.NODEVIEW_MT_Dynamic_Menu.draw)
 
 
 def unregister():
-    bpy.types.NODE_MT_add.remove(bpy.types.NODEVIEW_MT_Dynamic_Menu.draw)
+    # bpy.types.NODE_MT_add.remove(bpy.types.NODEVIEW_MT_Dynamic_Menu.draw)
 
     for class_name in classes:
         bpy.utils.unregister_class(class_name)
-    remove_keymap()
 
     # because we popped sverchok off the nodecat collection in register, we have to do our own class unregistration here.
     ff_unregister_node_categories()
