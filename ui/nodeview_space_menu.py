@@ -121,7 +121,6 @@ class NODEVIEW_MT_Dynamic_Menu(bpy.types.Menu):
         tree_type = context.space_data.tree_type
         if tree_type in sv_tree_types:
             menu_prefs['show_icons'] = get_icon_switch()
-            # print('showing', menu_prefs['show_icons'])
             return True
 
     def draw(self, context):
@@ -219,31 +218,6 @@ classes = [
     make_class('Alphas', "Alpha Nodes"),
 ]
 
-nodeview_keymaps = []
-
-def add_keymap():
-    wm = bpy.context.window_manager
-    kc = wm.keyconfigs.addon
-    if kc:
-        km = kc.keymaps.new(name='Node Editor', space_type='NODE_EDITOR')
-        kmi = km.keymap_items.new('wm.call_menu', 'A', 'PRESS', shift=True)
-        kmi.properties.name = "NODEVIEW_MT_Dynamic_Menu"
-        nodeview_keymaps.append((km, kmi))
-
-
-def remove_keymap():
-
-    for km, kmi in nodeview_keymaps:
-        try:
-            km.keymap_items.remove(kmi)
-        except Exception as e:
-            err = repr(e)
-            if "cannot be removed from 'Node Editor'" in err:
-                print('keymaps for Node Editor already removed by another add-on, sverchok will skip this step in unregister')
-                break
-
-    nodeview_keymaps.clear()
-
 
 
 def ff_unregister_node_categories():
@@ -273,7 +247,6 @@ def ff_unregister_node_categories():
 def register():
     for class_name in classes:
         bpy.utils.register_class(class_name)
-    add_keymap()
 
     # we pop sverchok from the standard nodecat collection to avoid the menu items appearing in the default Add node menu.
     _items_to_remove['sverchok_popped'] = _node_categories.pop("SVERCHOK")
@@ -286,7 +259,7 @@ def unregister():
 
     for class_name in classes:
         bpy.utils.unregister_class(class_name)
-    remove_keymap()
 
     # because we popped sverchok off the nodecat collection in register, we have to do our own class unregistration here.
     ff_unregister_node_categories()
+

@@ -87,14 +87,16 @@ utils_modules = [
     "cad_module", "sv_bmesh_utils", "sv_viewer_utils", "sv_curve_utils",
     "voronoi", "sv_script", "sv_itertools", "script_importhelper",
     "csg_core", "csg_geom", "geom", "sv_easing_functions",
-    "snlite_utils", "snlite_importhelper", "context_managers",
+    "snlite_utils", "snlite_importhelper", "context_managers", "sv_bgl_lib",
     # UI text editor ui
     "text_editor_submenu", "text_editor_plugins",
     # UI operators and tools
     "sv_panels_tools", "sv_gist_tools", "sv_IO_panel_tools", "sv_load_zipped_blend",
     "monad", "sv_help",
-    #"loadscript",
-    "debug_script", "sv_update_utils"
+    # loadscript
+    "debug_script", "sv_update_utils", 
+    # Console content
+    "sv_nodeview_macro_routing", "sv_nodeview_console_routing", "sv_nodeview_console"
 ]
 
 ui_modules = [

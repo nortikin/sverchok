@@ -21,6 +21,7 @@ import bpy
 
 nodeview_keymaps = []
 
+
 def add_keymap():
     wm = bpy.context.window_manager
     kc = wm.keyconfigs.addon
@@ -44,6 +45,15 @@ def add_keymap():
 
         # alt+G         | expand current monad into original state
         kmi = km.keymap_items.new('node.sv_monad_expand', 'G', 'PRESS', alt=True)
+        nodeview_keymaps.append((km, kmi))
+
+        # ctrl+F        ( show the nodeview console)
+        kmi = km.keymap_items.new('node.sv_nodeview_console', 'F', 'PRESS', ctrl=True)
+        nodeview_keymaps.append((km, kmi))
+
+        # shift+A       ( trigger the dynamic menu )
+        kmi = km.keymap_items.new('wm.call_menu', 'A', 'PRESS', shift=True)
+        kmi.properties.name = "NODEVIEW_MT_Dynamic_Menu"
         nodeview_keymaps.append((km, kmi))
 
 
