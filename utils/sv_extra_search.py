@@ -29,8 +29,10 @@ sv_tree_types = {'SverchCustomTreeType', 'SverchGroupTreeType'}
 node_cats = make_node_cats()
 addon_name = sverchok.__name__
 
+# pylint: disable=c0326
 
 macros = {
+    # trigger:  [descriptor, action route]
     "obj vd": ["active_obj into objlite + vdmk2","<file:macro> <ident:obj_in_lite_and_vd>"],
     "objs vd": ["multi obj in","<file:macro> <ident:ob3_and_vd>"]
 }
@@ -39,8 +41,8 @@ macros = {
 def gather_items():
     fx = []
     idx = 0
-    for catname, node_list in node_cats.items():
-        for index, item in enumerate(node_list):
+    for _, node_list in node_cats.items():
+        for item in node_list:
             if item[0] in {'separator', 'NodeReroute'}:
                 continue
             nodetype = getattr(bpy.types, item[0])
@@ -52,6 +54,8 @@ def gather_items():
     for k, v in macros.items():
         fx.append((k, k + " | " + v[0], '', idx))
         idx += 1
+
+    # extend(idx, fx, '/datafiles/sverchok/user_macros.fx')
 
     return fx
 
