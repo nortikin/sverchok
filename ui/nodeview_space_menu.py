@@ -80,6 +80,10 @@ def layout_draw_categories(layout, node_details):
             print(repr(node_info), 'is incomplete, or unparsable')
             continue
 
+        if len(node_info) == 2 and node_info[1] == 'hide_from_menu':
+            print(node_info)
+            continue
+
         if node_info[0] == 'separator':
             layout.separator()
             continue
@@ -87,7 +91,8 @@ def layout_draw_categories(layout, node_details):
         if node_info[0] == 'macro':
             macro_bl_idname, show_name, *props = node_info[1].split(' ')
             node_ref = getattr(bpy.types, macro_bl_idname)
-            op = layout.operator('node.sv_macro_interpretter', text=show_name, **node_icon(node_ref))
+            sanitize_name = show_name.replace('_', ' ').title()
+            op = layout.operator('node.sv_macro_interpretter', text=sanitize_name, **node_icon(node_ref))
             op.macro_bl_idname = macro_bl_idname
             op.settings = ' '.join(props)
             continue

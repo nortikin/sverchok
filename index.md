@@ -140,11 +140,11 @@
     ListFlipNode
 
 ## Number
-    SvNumberNode
+    <<< SvNumberNode
     >>> SvNumberNode Int (selected_mode="int")
     >>> SvNumberNode Float (selected_mode="float")
     Float2IntNode
-    ScalarMathNode
+    <<< ScalarMathNode
     SvScalarMathNodeMK2
     Formula2Node
     SvExecNodeMod
@@ -164,7 +164,11 @@
 ## Vector
     GenVectorsNode
     VectorsOutNode
-    SvAxisInputNodeMK2
+    <<< SvAxisInputNodeMK2
+    >>> SvAxisInputNodeMK2 Variable_Axis
+    >>> SvAxisInputNodeMK2 Axis_X (axis_x='1', axis_y='0', axis_z='0')
+    >>> SvAxisInputNodeMK2 Axis_Y (axis_x='0', axis_y='1', axis_z='0')
+    >>> SvAxisInputNodeMK2 Axis_Z (axis_x='0', axis_y='0', axis_z='1')
     SvVectorMathNodeMK2
     VertsDelDoublesNode
     SvVectorRewire
@@ -175,10 +179,10 @@
     VectorPolarOutNode
     SvAttractorNode
     ---
-    EvaluateLineNode
+    <<< EvaluateLineNode
     SvVectorLerp
     SvInterpolationStripesNode
-    SvInterpolationNode
+    <<< SvInterpolationNode
     SvInterpolationNodeMK2
     SvInterpolationNodeMK3
     ---

@@ -47,14 +47,22 @@ def make_node_cats():
         category = None
         temp_list = []
         for line in md:
-            if not line.strip():
+            stripped_line = line.strip()
+
+            if not stripped_line:
                 continue
             
-            if line.strip().startswith('>>>'):
-                temp_list.append(['macro', line.strip()[3:].strip()])
+            if stripped_line.startswith('>>>'):
+                temp_list.append(['macro', stripped_line[3:].strip()])
+                continue
+
+            if stripped_line.startswith('<<<'):
+                vroot = stripped_line[3:].strip()
+                print(vroot)
+                temp_list.append([stripped_line[3:].strip(), 'hide_from_menu'])
                 continue
             
-            if line.strip().startswith('>'):
+            if stripped_line.startswith('>'):
                 continue
             elif line.startswith('##'):
                 if category:
@@ -62,11 +70,11 @@ def make_node_cats():
                 category = line[2:].strip()
                 temp_list = []
 
-            elif line.strip() == '---':
+            elif stripped_line == '---':
                 temp_list.append(['separator'])
             else:
-                bl_idname = line.strip()
-                temp_list.append([bl_idname])
+                # get plain bl_idname
+                temp_list.append([stripped_line])
 
         # final append
         node_cats[category] = temp_list
