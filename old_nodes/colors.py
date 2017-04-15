@@ -203,7 +203,7 @@ class SvVertexColorNode(bpy.types.Node, SverchCustomTreeNode):
         if Col.is_linked:
             sm, colors = self.mode, Col.sv_get()[0]
             idxs = Ind.sv_get()[0] if Ind.is_linked else [i.index for i in getattr(objm,sm)]
-            idxs, colors = second_as_first_cycle(idxs, colors)
+            colors = second_as_first_cycle(idxs, colors)
             bm = bmesh.new()
             bm.from_mesh(objm)
             if self.clear:
