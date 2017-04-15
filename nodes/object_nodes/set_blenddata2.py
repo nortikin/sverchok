@@ -57,17 +57,17 @@ class SvSetDataObjectNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                 v = V.sv_get()
                 if "matrix" in Prop:
                     v = [Matrix(i) for i in v]
-                    objs, v = safc(objs, [v])
+                    v = safc(objs, [v])
                     for OBL, VALL in zip(objs, v):
-                        OBL, VALL = safc(OBL, VALL)
+                        VALL = safc(OBL, VALL)
                         exec("for i, i2 in zip(OBL, VALL):\n    i."+Prop+"= i2")
                 else:
                     if isinstance(v[0], list):
-                        objs, v = safc(objs, v)
+                        v = safc(objs, v)
                     else:
-                        objs, v = safc(objs, [v])
+                        v = safc(objs, [v])
                     for OBL, VALL in zip(objs, v):
-                        OBL, VALL = safc(OBL, VALL)
+                        VALL = safc(OBL, VALL)
                         exec("for i, i2 in zip(OBL, VALL):\n    i."+Prop+"= i2")
             elif Ov.is_linked:
                 Ov.sv_set(eval("[[i."+Prop+" for i in OBL] for OBL in objs]"))
@@ -78,12 +78,12 @@ class SvSetDataObjectNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                 v = V.sv_get()
                 if "matrix" in Prop:
                     v = [Matrix(i) for i in v]
-                    objs, v = safc(objs, v)
+                    v = safc(objs, v)
                     exec("for i, i2 in zip(objs, v):\n    i."+Prop+"= i2")
                 else:
                     if isinstance(v[0], list):
                         v = v[0]
-                    objs, v = safc(objs, v)
+                    v = safc(objs, v)
                     exec("for i, i2 in zip(objs, v):\n    i."+Prop+"= i2")
             elif Ov.is_linked:
                 Ov.sv_set(eval("[i."+Prop+" for i in objs]"))
