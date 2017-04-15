@@ -44,7 +44,9 @@ def gather_items():
             if item[0] in {'separator', 'NodeReroute'}:
                 continue
             nodetype = getattr(bpy.types, item[0])
-            fx.append((str(idx), nodetype.bl_label, '', idx))
+            desc = nodetype.bl_rna.description
+            show_string = nodetype.bl_label + ((' | ' + desc) if desc else '')
+            fx.append((str(idx), show_string, '', idx))
             idx += 1
 
     for k, v in macros.items():
