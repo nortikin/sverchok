@@ -51,6 +51,11 @@ def add_keymap():
         kmi.properties.name = "NODEVIEW_MT_Dynamic_Menu"
         nodeview_keymaps.append((km, kmi))
 
+        # TAB           | enter or exit monad depending on selection and edit_tree type
+        kmi = km.keymap_items.new('node.sv_extra_search', 'RIGHT_BRACKET', 'PRESS', shift=True)
+        nodeview_keymaps.append((km, kmi))
+
+
 
 def remove_keymap():
 
