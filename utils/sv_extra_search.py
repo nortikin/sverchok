@@ -30,6 +30,12 @@ node_cats = make_node_cats()
 addon_name = sverchok.__name__
 
 
+macros = {
+    "obj vd": ["active_obj into objlite + vdmk2","<file:macro> <ident:obj_in_lite_and_vd>"],
+    "objs vd": ["multi obj in","<file:macro> <ident:ob3_and_vd>"]
+}
+
+
 def gather_items():
     fx = []
     idx = 0
@@ -38,8 +44,13 @@ def gather_items():
             if item[0] in {'separator', 'NodeReroute'}:
                 continue
             nodetype = getattr(bpy.types, item[0])
-            fx.append((str(idx), nodetype.bl_label, nodetype.bl_rna.description, idx))
+            fx.append((str(idx), nodetype.bl_label, '', idx))
             idx += 1
+
+    for k, v in macros.items():
+        fx.append((k, k + " | " + v[0], '', idx))
+        idx += 1
+
     return fx
 
 loop = {}
@@ -58,7 +69,10 @@ class SvExtraSearch(bpy.types.Operator):
 
     def execute(self, context):
         self.report({'INFO'}, "Selected: %s" % self.my_enum)
-        print(loop['results'][int(self.my_enum)])
+        if self.my_enum.isnumeric():
+            print(loop['results'][int(self.my_enum)])
+        else:
+            print(self.my_enum)
         return {'FINISHED'}
 
     def invoke(self, context, event):
