@@ -141,8 +141,8 @@
 
 ## Number
     SvNumberNode
-    FloatNode
-    IntegerNode
+    >>> SvNumberNode Int (selected_mode="int")
+    >>> SvNumberNode Float (selected_mode="float")
     Float2IntNode
     ScalarMathNode
     SvScalarMathNodeMK2

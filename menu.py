@@ -49,6 +49,11 @@ def make_node_cats():
         for line in md:
             if not line.strip():
                 continue
+            
+            if line.strip().startswith('>>>'):
+                temp_list.append(['macro', line.strip()[3:].strip()])
+                continue
+            
             if line.strip().startswith('>'):
                 continue
             elif line.startswith('##'):
@@ -168,7 +173,7 @@ def make_categories():
             SverchNodeCategory(
                 name_big,
                 category,
-                items=[NodeItem(props[0]) for props in nodes if not props[0] == 'separator']))
+                items=[NodeItem(props[0]) for props in nodes if not props[0] in {'separator', 'macro'}]))
         node_count += len(nodes)
     node_categories.append(SverchNodeCategory("SVERCHOK_GROUPS", "Groups", items=sv_group_items))
 
