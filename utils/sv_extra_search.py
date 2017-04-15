@@ -1,0 +1,81 @@
+# ##### BEGIN GPL LICENSE BLOCK #####
+#
+#  This program is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU General Public License
+#  as published by the Free Software Foundation; either version 2
+#  of the License, or (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software Foundation,
+#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+# ##### END GPL LICENSE BLOCK #####
+
+
+import bpy
+
+import sverchok
+import nodeitems_utils
+from sverchok.menu import make_node_cats
+from sverchok.ui.sv_icons import custom_icon
+from nodeitems_utils import _node_categories
+
+sv_tree_types = {'SverchCustomTreeType', 'SverchGroupTreeType'}
+node_cats = make_node_cats()
+addon_name = sverchok.__name__
+
+
+def gather_items():
+    fx = []
+    idx = 0
+    for catname, node_list in node_cats.items():
+        for index, item in enumerate(node_list):
+            if item[0] in {'separator', 'NodeReroute'}:
+                continue
+            nodetype = getattr(bpy.types, item[0])
+            fx.append((str(idx), nodetype.bl_label, nodetype.bl_rna.description, idx))
+            idx += 1
+    return fx
+
+loop = {}
+
+def item_cb(self, context):
+    return loop.get('results')
+
+
+class SvExtraSearch(bpy.types.Operator):
+    """ Extra Search library """
+    bl_idname = "node.sv_extra_search"
+    bl_label = "Extra Search"
+    bl_property = "my_enum"
+
+    my_enum = bpy.props.EnumProperty(items=item_cb)
+
+    def execute(self, context):
+        self.report({'INFO'}, "Selected: %s" % self.my_enum)
+        print(loop['results'][int(self.my_enum)])
+        return {'FINISHED'}
+
+    def invoke(self, context, event):
+        loop['results'] = gather_items()
+        wm = context.window_manager
+        wm.invoke_search_popup(self)
+        return {'FINISHED'}
+
+
+classes = [SvExtraSearch,]
+
+
+def register():
+    for class_name in classes:
+        bpy.utils.register_class(class_name)
+
+
+def unregister():
+    for class_name in classes:
+        bpy.utils.unregister_class(class_name)
