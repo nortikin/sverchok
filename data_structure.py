@@ -121,9 +121,9 @@ def match_long_cycle(lsts):
 # lenght to by not less than the length of the first
 def second_as_first_cycle(F, S):
     if len(F) > len(S):
-        return list(map(list, zip(*zip(*[F, itertools.cycle(S)]))))
+        return list(map(list, zip(*zip(*[F, itertools.cycle(S)]))))[1]
     else:
-        return [F, S]
+        return S
 
 def match_cross(lsts):
     """ return cross matched lists
