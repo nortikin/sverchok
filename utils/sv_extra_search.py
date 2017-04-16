@@ -32,12 +32,6 @@ addon_name = sverchok.__name__
 
 # pylint: disable=c0326
 
-macros = {
-    # trigger:  [descriptor, action route]
-    "> obj vd": ["active_obj into objlite + vdmk2","<file:macro> <ident:obj_in_lite_and_vd>"],
-    "> objs vd": ["multi obj in","<file:macro> <ident:ob3_and_vd>"]
-}
-
 
 def gather_items():
     fx = []
@@ -51,7 +45,7 @@ def gather_items():
             if '///' in desc:
                 desc = desc.strip().split('///')[0]
             show_string = nodetype.bl_label + ((' | ' + desc) if desc else '')
-            fx.append((str(idx), show_string, '', idx))
+            fx.append((str(idx), show_string.strip(), '', idx))
             idx += 1
 
     for k, v in macros.items():
