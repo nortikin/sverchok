@@ -48,6 +48,8 @@ def gather_items():
                 continue
             nodetype = getattr(bpy.types, item[0])
             desc = nodetype.bl_rna.description
+            if '///' in desc:
+                desc = desc.strip().split('///')[0]
             show_string = nodetype.bl_label + ((' | ' + desc) if desc else '')
             fx.append((str(idx), show_string, '', idx))
             idx += 1
