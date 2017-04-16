@@ -41,9 +41,17 @@ def slice_docstring(desc):
     return desc
 
 def ensure_valid_show_string(item):
+    '''  the font is not fixed width, it makes litle sense to calculate chars'''
+    hardcoded_maxlen = 20
     nodetype = getattr(bpy.types, item[0])
     desc = slice_docstring(nodetype.bl_rna.description)
-    return nodetype.bl_label + ((' | ' + desc) if desc else '').strip()
+
+    # this needs revision
+    description = ((' | ' + desc) if desc else '').strip()
+    if len(description) > hardcoded_maxlen:
+        description = description[hardcoded_maxlen:]
+    
+    return nodetype.bl_label + description
 
 def gather_items():
     fx = []
