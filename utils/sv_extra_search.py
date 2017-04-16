@@ -32,6 +32,9 @@ addon_name = sverchok.__name__
 
 # pylint: disable=c0326
 
+def format_item(k, v):
+    return k + " | " + v['display_name']
+
 
 def gather_items():
     fx = []
@@ -49,7 +52,7 @@ def gather_items():
             idx += 1
 
     for k, v in macros.items():
-        fx.append((k, k + " | " + v[0], '', idx))
+        fx.append((k, format_item(k, v), '', idx))
         idx += 1
 
     # extend(idx, fx, '/datafiles/sverchok/user_macros.fx')
