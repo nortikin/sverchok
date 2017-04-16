@@ -59,7 +59,8 @@ old_bl_idnames = {
     'SvVertexGroupNode': 'weights',
     'MatrixGenNode':'matrix_in',
     'LineNode': 'line',
-    'PlaneNode': 'plane'
+    'PlaneNode': 'plane',
+    'SvBMOpsNode': 'BMOperators'
 }
 
 # we should add some functions to load things there

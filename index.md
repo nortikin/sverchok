@@ -278,7 +278,7 @@
     SvUVtextureNode
     SvNumpyArrayNode
     SvBMVertsNode
-    SvBMOpsNode
+    SvBMOpsNodeMK2
     SvBMinputNode
     SvBMoutputNode
     SvBMtoElementNode
