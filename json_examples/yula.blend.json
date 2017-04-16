@@ -1,7 +1,7 @@
 {
-  "export_version": "0.062",
+  "export_version": "0.064",
   "framed_nodes": {
-    "Frame info": "Frame.001",
+    "Frame info.001": "Frame.001",
     "Lathe": "Frame.001",
     "List Reverse": "Frame",
     "List Reverse.001": "Frame.001",
@@ -9,7 +9,7 @@
     "Math.001": "Frame.001",
     "Math.002": "Frame.001",
     "Mirror": "Frame",
-    "Random Vector": "Frame",
+    "Random Vector MK2": "Frame",
     "Rotation": "Frame.001",
     "UV Connection": "Frame",
     "Vector in": "Frame.001",
@@ -35,21 +35,21 @@
         60.0
       ],
       "params": {},
-      "width": 1689.4569091796875
+      "width": 1672.6600341796875
     },
-    "Frame info": {
-      "bl_idname": "SvFrameInfoNode",
+    "Frame info.001": {
+      "bl_idname": "SvFrameInfoNodeMK2",
       "color": [
-        0.904932975769043,
-        1.0,
-        0.883421003818512
+        0.0,
+        0.5,
+        0.20000000298023224
       ],
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        -620.247314453125,
-        -250.50379943847656
+        -794.2616577148438,
+        -225.05567932128906
       ],
       "params": {},
       "width": 140.0
@@ -61,7 +61,7 @@
         0.6079999804496765,
         0.6079999804496765
       ],
-      "height": 474.27838134765625,
+      "height": 506.2694091796875,
       "hide": false,
       "label": "",
       "location": [
@@ -69,7 +69,7 @@
         19.008968353271484
       ],
       "params": {},
-      "width": 1517.106689453125
+      "width": 1538.360107421875
     },
     "Lathe": {
       "bl_idname": "SvLatheNode",
@@ -82,8 +82,8 @@
       "hide": false,
       "label": "",
       "location": [
-        436.8083801269531,
-        34.25679016113281
+        284.0474548339844,
+        15.247821807861328
       ],
       "params": {
         "Degrees": 370.0,
@@ -119,7 +119,7 @@
       "label": "",
       "location": [
         -766.9852905273438,
-        239.56991577148438
+        179.56991577148438
       ],
       "params": {},
       "width": 140.0
@@ -135,8 +135,8 @@
       "hide": false,
       "label": "",
       "location": [
-        216.80838012695312,
-        -34.081809997558594
+        64.04745483398438,
+        -53.09077835083008
       ],
       "params": {
         "level": 3
@@ -155,7 +155,7 @@
       "label": "",
       "location": [
         -488.4935302734375,
-        365.2684631347656
+        305.2684631347656
       ],
       "params": {},
       "width": 140.0
@@ -171,8 +171,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -186.50100708007812,
-        -208.35693359375
+        -339.2619323730469,
+        -227.36590576171875
       ],
       "params": {
         "items_": "MUL",
@@ -191,8 +191,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -408.2643737792969,
-        -147.0565948486328
+        -561.0252685546875,
+        -166.06556701660156
       ],
       "params": {
         "items_": "DIV",
@@ -212,7 +212,7 @@
       "label": "",
       "location": [
         -748.0174560546875,
-        392.57806396484375
+        332.57806396484375
       ],
       "params": {
         "mode": "PLANE"
@@ -238,19 +238,19 @@
       },
       "width": 400.0
     },
-    "Random Vector": {
-      "bl_idname": "RandomVectorNode",
+    "Random Vector MK2": {
+      "bl_idname": "RandomVectorNodeMK2",
       "color": [
-        0.9200000166893005,
-        0.9200000166893005,
-        0.9200000166893005
+        0.0,
+        0.5,
+        0.5
       ],
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        -1516.087890625,
-        352.8890380859375
+        -1499.291015625,
+        312.16650390625
       ],
       "params": {
         "count_inner": 4,
@@ -269,8 +269,8 @@
       "hide": false,
       "label": "",
       "location": [
-        23.38824462890625,
-        -39.22859191894531
+        -129.3726806640625,
+        -58.2375602722168
       ],
       "params": {
         "mode": "EULER",
@@ -292,7 +292,7 @@
       "label": "",
       "location": [
         -273.6197509765625,
-        359.0244445800781
+        299.0244445800781
       ],
       "params": {
         "cicl_check_U": 0,
@@ -316,8 +316,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -187.88021850585938,
-        -44.694061279296875
+        -340.6411437988281,
+        -63.70302963256836
       ],
       "params": {
         "x_": 0.0,
@@ -338,7 +338,7 @@
       "label": "",
       "location": [
         -1076.087890625,
-        366.24957275390625
+        306.24957275390625
       ],
       "params": {},
       "width": 100.0
@@ -355,7 +355,7 @@
       "label": "",
       "location": [
         -1296.087890625,
-        377.9667663574219
+        317.9667663574219
       ],
       "params": {},
       "width": 140.0
@@ -371,8 +371,8 @@
       "hide": true,
       "label": "",
       "location": [
-        696.859375,
-        77.26939392089844
+        544.0984497070312,
+        58.26042556762695
       ],
       "params": {
         "autosmooth": 1,
@@ -393,7 +393,7 @@
       "label": "",
       "location": [
         -26.630996704101562,
-        385.51513671875
+        325.51513671875
       ],
       "params": {},
       "width": 140.0
@@ -401,7 +401,7 @@
   },
   "update_lists": [
     [
-      "Random Vector",
+      "Random Vector MK2",
       "Random",
       "Vector out",
       "Vectors"
@@ -450,6 +450,18 @@
     ],
     [
       "UV Connection",
+      "data",
+      "List Reverse.001",
+      "data"
+    ],
+    [
+      "Frame info.001",
+      "Current Frame",
+      "Math.001",
+      "X"
+    ],
+    [
+      "UV Connection",
       "vertices",
       "Viewer Draw",
       "vertices"
@@ -461,15 +473,9 @@
       "edg_pol"
     ],
     [
-      "Frame info",
+      "Frame info.001",
       "Current Frame",
       "Math.002",
-      "X"
-    ],
-    [
-      "Frame info",
-      "Current Frame",
-      "Math.001",
       "X"
     ],
     [
@@ -495,12 +501,6 @@
       "float",
       "Rotation",
       "Z"
-    ],
-    [
-      "UV Connection",
-      "data",
-      "List Reverse.001",
-      "data"
     ],
     [
       "UV Connection",

@@ -248,7 +248,7 @@
       "width": 140.0
     },
     "Skin Viewer Draw": {
-      "bl_idname": "SkinViewerNode",
+      "bl_idname": "SvSkinViewerNodeMK1b",
       "color": [
         0.6079999804496765,
         0.6079999804496765,

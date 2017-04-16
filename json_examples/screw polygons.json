@@ -1,5 +1,5 @@
 {
-  "export_version": "0.062",
+  "export_version": "0.064",
   "framed_nodes": {
     "Centers polygons 2": "Frame.003",
     "Formula": "Frame.003",
@@ -24,9 +24,9 @@
     "UV Connection": "Frame.002",
     "UV Connection.001": "Frame.004",
     "Vector Interpolation": "Frame.003",
-    "Viewer text.002": "Frame.002",
-    "Viewer text.003": "Frame.001",
-    "Viewer text.004": "Frame.002",
+    "Viewer text mk2": "Frame.002",
+    "Viewer text mk2.001": "Frame.002",
+    "Viewer text mk2.002": "Frame.001",
     "Wifi out": "Frame.001"
   },
   "groups": {},
@@ -42,8 +42,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -3.733692169189453,
-        -382.0669860839844
+        -17.857589721679688,
+        -78.90750122070312
       ],
       "params": {},
       "width": 140.0
@@ -154,8 +154,8 @@
       "hide": false,
       "label": "",
       "location": [
-        212.8861846923828,
-        -383.50128173828125
+        198.7622833251953,
+        -80.341796875
       ],
       "params": {
         "formula": "(x*n[1]+n[0])"
@@ -169,7 +169,7 @@
         0.6079999804496765,
         0.6079999804496765
       ],
-      "height": 434.98095703125,
+      "height": 430.897705078125,
       "hide": false,
       "label": "for rotation",
       "location": [
@@ -177,7 +177,7 @@
         90.00735473632812
       ],
       "params": {},
-      "width": 892.1707763671875
+      "width": 895.9947509765625
     },
     "Frame.002": {
       "bl_idname": "NodeFrame",
@@ -186,15 +186,15 @@
         0.6079999804496765,
         0.6079999804496765
       ],
-      "height": 613.1137084960938,
+      "height": 611.4412841796875,
       "hide": false,
       "label": "scale",
       "location": [
-        831.32958984375,
-        168.0307159423828
+        835.1973876953125,
+        196.45486450195312
       ],
       "params": {},
-      "width": 885.603271484375
+      "width": 776.3477783203125
     },
     "Frame.003": {
       "bl_idname": "NodeFrame",
@@ -203,7 +203,7 @@
         0.6079999804496765,
         0.6079999804496765
       ],
-      "height": 715.2572021484375,
+      "height": 705.416748046875,
       "hide": false,
       "label": "forscale",
       "location": [
@@ -260,8 +260,8 @@
       "hide": false,
       "label": "",
       "location": [
-        1891.3707275390625,
-        -671.181396484375
+        1999.1678466796875,
+        -761.188720703125
       ],
       "params": {
         "Sverch_LisLev": "1"
@@ -279,8 +279,8 @@
       "hide": false,
       "label": "",
       "location": [
-        192.46987915039062,
-        -260.5832824707031
+        178.34597778320312,
+        42.576202392578125
       ],
       "params": {
         "level": 1
@@ -298,8 +298,8 @@
       "hide": false,
       "label": "",
       "location": [
-        1558.9337158203125,
-        -746.18701171875
+        1666.7308349609375,
+        -836.1943359375
       ],
       "params": {
         "level": 1
@@ -317,11 +317,11 @@
       "hide": false,
       "label": "",
       "location": [
-        317.1871337890625,
-        -406.55828857421875
+        -514.1424560546875,
+        -574.5889892578125
       ],
       "params": {
-        "level": 2
+        "level": 0
       },
       "width": 140.0
     },
@@ -336,8 +336,8 @@
       "hide": false,
       "label": "",
       "location": [
-        195.38031005859375,
-        -778.7982177734375
+        181.25640869140625,
+        -475.63873291015625
       ],
       "params": {
         "level": 0
@@ -355,8 +355,8 @@
       "hide": false,
       "label": "",
       "location": [
-        1381.7469482421875,
-        -743.6124267578125
+        1489.5440673828125,
+        -833.6197509765625
       ],
       "params": {
         "level": 2
@@ -394,8 +394,8 @@
       "hide": false,
       "label": "",
       "location": [
-        404.0883483886719,
-        -549.53955078125
+        389.9644470214844,
+        -246.38006591796875
       ],
       "params": {
         "level": 1,
@@ -414,8 +414,8 @@
       "hide": false,
       "label": "",
       "location": [
-        1731.671630859375,
-        -625.2220458984375
+        1839.46875,
+        -715.2293701171875
       ],
       "params": {
         "level": 2,
@@ -435,7 +435,7 @@
       "label": "",
       "location": [
         -1291.222900390625,
-        -20.84121322631836
+        -80.84121704101562
       ],
       "params": {
         "level": 1,
@@ -455,8 +455,8 @@
       "hide": false,
       "label": "",
       "location": [
-        442.6856384277344,
-        -348.04119873046875
+        414.3797912597656,
+        -81.057861328125
       ],
       "params": {},
       "width": 140.0
@@ -489,8 +489,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -0.841217041015625,
-        -794.7457275390625
+        -14.96511459350586,
+        -491.58624267578125
       ],
       "params": {},
       "width": 140.0
@@ -528,8 +528,8 @@
       "hide": false,
       "label": "",
       "location": [
-        203.39413452148438,
-        -602.7716064453125
+        189.27023315429688,
+        -299.61212158203125
       ],
       "params": {
         "count_": 2,
@@ -550,8 +550,8 @@
       "hide": false,
       "label": "",
       "location": [
-        1392.644775390625,
-        -594.269287109375
+        1500.44189453125,
+        -684.276611328125
       ],
       "params": {
         "count_": 2,
@@ -572,8 +572,8 @@
       "hide": false,
       "label": "",
       "location": [
-        1575.363525390625,
-        -592.8917236328125
+        1683.16064453125,
+        -682.8990478515625
       ],
       "params": {
         "count_": 2,
@@ -648,7 +648,7 @@
       "label": "",
       "location": [
         -849.7806396484375,
-        -171.2347412109375
+        -231.2347412109375
       ],
       "params": {},
       "width": 16.0
@@ -665,7 +665,7 @@
       "label": "",
       "location": [
         -851.5127563476562,
-        -207.31475830078125
+        -267.31475830078125
       ],
       "params": {},
       "width": 16.0
@@ -698,8 +698,8 @@
       "hide": false,
       "label": "",
       "location": [
-        105.8818359375,
-        -424.0999755859375
+        -725.44775390625,
+        -592.1306762695312
       ],
       "params": {
         "Separate": 1
@@ -718,7 +718,7 @@
       "label": "",
       "location": [
         -1466.895751953125,
-        28.558685302734375
+        -31.441314697265625
       ],
       "params": {
         "Separate": 1,
@@ -738,8 +738,8 @@
       "hide": false,
       "label": "",
       "location": [
-        579.609619140625,
-        -273.35272216796875
+        -251.719970703125,
+        -441.3834228515625
       ],
       "params": {
         "cicl_check_U": 1,
@@ -764,7 +764,7 @@
       "label": "",
       "location": [
         -1111.032958984375,
-        23.842010498046875
+        -36.157989501953125
       ],
       "params": {
         "cicl_check_U": 0,
@@ -776,16 +776,16 @@
     "Vector Interpolation": {
       "bl_idname": "SvInterpolationNode",
       "color": [
-        0.8446998000144958,
-        0.22349900007247925,
-        0.22349900007247925
+        1.0,
+        0.30000001192092896,
+        0.0
       ],
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        644.5661010742188,
-        -400.93072509765625
+        630.4421997070312,
+        -97.771240234375
       ],
       "params": {
         "mode": "SPL"
@@ -810,29 +810,7 @@
         "activate": 1,
         "autosmooth": 0,
         "basemesh_name": "EGAL",
-        "hide": 1,
-        "lp": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0
-        ]
+        "hide": 1
       },
       "width": 140.0
     },
@@ -909,78 +887,72 @@
       },
       "width": 140.0
     },
-    "Viewer text": {
-      "bl_idname": "ViewerNode_text",
+    "Viewer text mk2": {
+      "bl_idname": "ViewerNodeTextMK2",
       "color": [
-        1.0,
-        0.8993440270423889,
-        0.9742509722709656
+        0.5,
+        0.5,
+        1.0
       ],
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        3046.4345703125,
-        266.6439514160156
+        -149.0999755859375,
+        -182.01351928710938
       ],
       "params": {},
       "width": 140.0
     },
-    "Viewer text.002": {
-      "bl_idname": "ViewerNode_text",
+    "Viewer text mk2.001": {
+      "bl_idname": "ViewerNodeTextMK2",
       "color": [
-        1.0,
-        0.8993440270423889,
-        0.9742509722709656
+        0.5,
+        0.5,
+        1.0
       ],
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        580.7996826171875,
-        -12.9169921875
+        -330.6512451171875,
+        -186.24267578125
       ],
-      "params": {
-        "autoupdate": 0
-      },
+      "params": {},
       "width": 140.0
     },
-    "Viewer text.003": {
-      "bl_idname": "ViewerNode_text",
+    "Viewer text mk2.002": {
+      "bl_idname": "ViewerNodeTextMK2",
       "color": [
-        1.0,
-        0.8993440270423889,
-        0.9742509722709656
+        0.5,
+        0.5,
+        1.0
       ],
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        2072.90625,
-        -583.0263671875
+        2184.52734375,
+        -677.109619140625
       ],
-      "params": {
-        "autoupdate": 0
-      },
+      "params": {},
       "width": 140.0
     },
-    "Viewer text.004": {
-      "bl_idname": "ViewerNode_text",
+    "Viewer text mk2.003": {
+      "bl_idname": "ViewerNodeTextMK2",
       "color": [
-        1.0,
-        0.8993440270423889,
-        0.9742509722709656
+        0.5,
+        0.5,
+        1.0
       ],
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        791.485107421875,
-        -47.108917236328125
+        2971.70849609375,
+        212.8263397216797
       ],
-      "params": {
-        "autoupdate": 0
-      },
+      "params": {},
       "width": 140.0
     },
     "Wifi in": {
@@ -1014,8 +986,8 @@
       "hide": false,
       "label": "",
       "location": [
-        1380.7354736328125,
-        -858.2183837890625
+        1488.5325927734375,
+        -948.2257080078125
       ],
       "params": {
         "var_name": "a"
@@ -1024,186 +996,6 @@
     }
   },
   "update_lists": [
-    [
-      "Sphere",
-      "Vertices",
-      "List Slice",
-      "Data"
-    ],
-    [
-      "List Slice",
-      "Slice",
-      "UV Connection.001",
-      "vertices"
-    ],
-    [
-      "UV Connection.001",
-      "data",
-      "Reroute.001",
-      "Input"
-    ],
-    [
-      "UV Connection.001",
-      "vertices",
-      "Reroute",
-      "Input"
-    ],
-    [
-      "Reroute",
-      "Output",
-      "Centers polygons 2",
-      "Vertices"
-    ],
-    [
-      "Reroute.001",
-      "Output",
-      "Centers polygons 2",
-      "Polygons"
-    ],
-    [
-      "Centers polygons 2",
-      "Normals",
-      "Formula",
-      "X"
-    ],
-    [
-      "Centers polygons 2",
-      "Origins",
-      "Formula",
-      "n[0]"
-    ],
-    [
-      "Float.003",
-      "Float",
-      "Formula",
-      "n[1]"
-    ],
-    [
-      "Float.001",
-      "Float",
-      "Range Float.003",
-      "Start"
-    ],
-    [
-      "Float.002",
-      "Float",
-      "Range Float.003",
-      "Step"
-    ],
-    [
-      "Int",
-      "Integer",
-      "Range Float.003",
-      "Stop"
-    ],
-    [
-      "Reroute",
-      "Output",
-      "Polygon Boom",
-      "vertices"
-    ],
-    [
-      "Reroute.001",
-      "Output",
-      "Polygon Boom",
-      "edg_pol"
-    ],
-    [
-      "Polygon Boom",
-      "vertices",
-      "List Length",
-      "Data"
-    ],
-    [
-      "Range Float.003",
-      "Range",
-      "List Repeater",
-      "Data"
-    ],
-    [
-      "List Length",
-      "Length",
-      "List Repeater",
-      "Number"
-    ],
-    [
-      "Formula",
-      "Result",
-      "List Zip",
-      "data"
-    ],
-    [
-      "Centers polygons 2",
-      "Origins",
-      "List Zip",
-      "data 1"
-    ],
-    [
-      "Int",
-      "Integer",
-      "Range Float.001",
-      "Stop"
-    ],
-    [
-      "List Zip",
-      "data",
-      "Vector Interpolation",
-      "Vertices"
-    ],
-    [
-      "Range Float.001",
-      "Range",
-      "Vector Interpolation",
-      "Interval"
-    ],
-    [
-      "Polygon Boom",
-      "vertices",
-      "Scale",
-      "Vertices"
-    ],
-    [
-      "Vector Interpolation",
-      "Vertices",
-      "Scale",
-      "Center"
-    ],
-    [
-      "List Repeater",
-      "Data",
-      "Scale",
-      "Factor"
-    ],
-    [
-      "Centers polygons 2",
-      "Normals",
-      "List Flip",
-      "data"
-    ],
-    [
-      "Scale",
-      "Vertices",
-      "List Flip.002",
-      "data"
-    ],
-    [
-      "List Flip.002",
-      "data",
-      "UV Connection",
-      "vertices"
-    ],
-    [
-      "UV Connection",
-      "data",
-      "List Modifier",
-      "Data1"
-    ],
-    [
-      "List Modifier",
-      "Result",
-      "Viewer text",
-      "edg_pol"
-    ],
     [
       "Float",
       "Float",
@@ -1247,6 +1039,24 @@
       "Stop"
     ],
     [
+      "Sphere",
+      "Vertices",
+      "List Slice",
+      "Data"
+    ],
+    [
+      "List Slice",
+      "Slice",
+      "UV Connection.001",
+      "vertices"
+    ],
+    [
+      "UV Connection.001",
+      "data",
+      "Reroute.001",
+      "Input"
+    ],
+    [
       "Reroute.001",
       "Output",
       "List Length.001",
@@ -1271,16 +1081,136 @@
       "Number"
     ],
     [
-      "UV Connection",
-      "data",
-      "Viewer text.004",
-      "edg_pol"
-    ],
-    [
       "List Repeater.001",
       "Data",
       "List Del Levels",
       "data"
+    ],
+    [
+      "UV Connection.001",
+      "vertices",
+      "Reroute",
+      "Input"
+    ],
+    [
+      "Reroute",
+      "Output",
+      "Polygon Boom",
+      "vertices"
+    ],
+    [
+      "Reroute.001",
+      "Output",
+      "Polygon Boom",
+      "edg_pol"
+    ],
+    [
+      "Int",
+      "Integer",
+      "Range Float.001",
+      "Stop"
+    ],
+    [
+      "Reroute",
+      "Output",
+      "Centers polygons 2",
+      "Vertices"
+    ],
+    [
+      "Reroute.001",
+      "Output",
+      "Centers polygons 2",
+      "Polygons"
+    ],
+    [
+      "Centers polygons 2",
+      "Origins",
+      "List Zip",
+      "data 1"
+    ],
+    [
+      "List Zip",
+      "data",
+      "Vector Interpolation",
+      "Vertices"
+    ],
+    [
+      "Range Float.001",
+      "Range",
+      "Vector Interpolation",
+      "Interval"
+    ],
+    [
+      "Centers polygons 2",
+      "Normals",
+      "List Flip",
+      "data"
+    ],
+    [
+      "Float.001",
+      "Float",
+      "Range Float.003",
+      "Start"
+    ],
+    [
+      "Float.002",
+      "Float",
+      "Range Float.003",
+      "Step"
+    ],
+    [
+      "Int",
+      "Integer",
+      "Range Float.003",
+      "Stop"
+    ],
+    [
+      "Polygon Boom",
+      "vertices",
+      "List Length",
+      "Data"
+    ],
+    [
+      "Range Float.003",
+      "Range",
+      "List Repeater",
+      "Data"
+    ],
+    [
+      "List Length",
+      "Length",
+      "List Repeater",
+      "Number"
+    ],
+    [
+      "Polygon Boom",
+      "vertices",
+      "Scale",
+      "Vertices"
+    ],
+    [
+      "Vector Interpolation",
+      "Vertices",
+      "Scale",
+      "Center"
+    ],
+    [
+      "List Repeater",
+      "Data",
+      "Scale",
+      "Factor"
+    ],
+    [
+      "Scale",
+      "Vertices",
+      "List Flip.002",
+      "data"
+    ],
+    [
+      "List Flip.002",
+      "data",
+      "UV Connection",
+      "vertices"
     ],
     [
       "UV Connection",
@@ -1305,12 +1235,6 @@
       "data",
       "Rotation",
       "Angle"
-    ],
-    [
-      "Rotation",
-      "Vertices",
-      "Viewer Index",
-      "vertices"
     ],
     [
       "Rotation",
@@ -1349,16 +1273,16 @@
       "PolyEdge"
     ],
     [
-      "Reroute",
-      "Output",
-      "Viewer Draw",
-      "vertices"
+      "UV Connection",
+      "data",
+      "List Modifier",
+      "Data1"
     ],
     [
-      "Reroute.001",
-      "Output",
-      "Viewer Draw",
-      "edg_pol"
+      "List Flip.002",
+      "data",
+      "Viewer text mk2.001",
+      "vertices"
     ],
     [
       "Remove Doubles.001",
@@ -1371,6 +1295,30 @@
       "Polygons",
       "Recalc normals",
       "Polygons"
+    ],
+    [
+      "List Modifier",
+      "Result",
+      "Viewer text mk2.003",
+      "edg_pol"
+    ],
+    [
+      "Rotation",
+      "Vertices",
+      "Viewer Index",
+      "vertices"
+    ],
+    [
+      "Reroute",
+      "Output",
+      "Viewer Draw",
+      "vertices"
+    ],
+    [
+      "Reroute.001",
+      "Output",
+      "Viewer Draw",
+      "edg_pol"
     ],
     [
       "Recalc normals",
@@ -1387,14 +1335,8 @@
     [
       "List Del Levels",
       "data",
-      "Viewer text.003",
+      "Viewer text mk2.002",
       "edg_pol"
-    ],
-    [
-      "List Flip.002",
-      "data",
-      "Viewer text.002",
-      "vertices"
     ],
     [
       "Rotation",
@@ -1407,6 +1349,30 @@
       "data",
       "Remove Doubles",
       "PolyEdge"
+    ],
+    [
+      "Centers polygons 2",
+      "Normals",
+      "Formula",
+      "X"
+    ],
+    [
+      "Centers polygons 2",
+      "Origins",
+      "Formula",
+      "n[0]"
+    ],
+    [
+      "Float.003",
+      "Float",
+      "Formula",
+      "n[1]"
+    ],
+    [
+      "UV Connection",
+      "data",
+      "Viewer text mk2",
+      "edg_pol"
     ]
   ]
 }

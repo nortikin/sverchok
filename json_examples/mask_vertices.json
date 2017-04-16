@@ -61,7 +61,7 @@
       "width": 140.0
     },
     "Frame Info": {
-      "bl_idname": "SvFrameInfoNode",
+      "bl_idname": "SvFrameInfoNodeMK2",
       "color": [
         0.0,
         0.5,
@@ -175,7 +175,7 @@
       "width": 140.0
     },
     "Sv Stethoscope Node": {
-      "bl_idname": "SvStethoscopeNode",
+      "bl_idname": "SvStethoscopeNodeMK2",
       "color": [
         0.5,
         0.5,

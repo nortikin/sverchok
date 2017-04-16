@@ -1,217 +1,12 @@
 {
-  "connections": {
-    "0": [
-      "Voronoi",
-      "Vertices",
-      "Viewer text",
-      "vertices"
-    ],
-    "1": [
-      "Random Vector",
-      "Random",
-      "Formula2.002",
-      "X"
-    ],
-    "2": [
-      "Formula2.002",
-      "Result",
-      "List Join",
-      "data 1"
-    ],
-    "3": [
-      "Float",
-      "Float",
-      "Formula2.002",
-      "n[0]"
-    ],
-    "4": [
-      "Formula2.002",
-      "Result",
-      "Vectors out",
-      "Vectors"
-    ],
-    "5": [
-      "Vectors in.001",
-      "Vectors",
-      "Viewer Draw2.002",
-      "vertices"
-    ],
-    "6": [
-      "Vectors out",
-      "X",
-      "Vectors in.001",
-      "X"
-    ],
-    "7": [
-      "Vectors out",
-      "Y",
-      "Vectors in.001",
-      "Y"
-    ],
-    "8": [
-      "Voronoi",
-      "Vertices",
-      "Fill Holes",
-      "vertices"
-    ],
-    "9": [
-      "Voronoi",
-      "Edges",
-      "Fill Holes",
-      "edges"
-    ],
-    "10": [
-      "Fill Holes",
-      "vertices",
-      "Viewer Draw2",
-      "vertices"
-    ],
-    "11": [
-      "Fill Holes",
-      "polygons",
-      "Viewer Draw2",
-      "edg_pol"
-    ],
-    "12": [
-      "Voronoi",
-      "Edges",
-      "Viewer Draw2.003",
-      "edg_pol"
-    ],
-    "13": [
-      "Voronoi",
-      "Vertices",
-      "Viewer Draw2.003",
-      "vertices"
-    ],
-    "14": [
-      "Matrix value input",
-      "Matrix",
-      "Viewer Draw2.003",
-      "matrix"
-    ],
-    "15": [
-      "Matrix value input",
-      "Matrix",
-      "Viewer Draw2",
-      "matrix"
-    ],
-    "16": [
-      "Matrix value input",
-      "Matrix",
-      "Viewer Draw2.001",
-      "matrix"
-    ],
-    "17": [
-      "Matrix value input",
-      "Matrix",
-      "Viewer Draw2.002",
-      "matrix"
-    ],
-    "18": [
-      "List Join",
-      "data",
-      "Voronoi",
-      "Vertices"
-    ],
-    "19": [
-      "Vectors in",
-      "Vectors",
-      "Vectors Move",
-      "vectors"
-    ],
-    "20": [
-      "Vectors Move",
-      "vertices",
-      "List Join",
-      "data"
-    ],
-    "21": [
-      "Float.001",
-      "Float",
-      "Formula2",
-      "X"
-    ],
-    "22": [
-      "Formula2",
-      "Result",
-      "Vectors in",
-      "X"
-    ],
-    "23": [
-      "Formula2",
-      "Result",
-      "Vectors in",
-      "Y"
-    ],
-    "24": [
-      "Float.001",
-      "Float",
-      "Formula2.001",
-      "X"
-    ],
-    "25": [
-      "Integer",
-      "Integer",
-      "Formula2.001",
-      "n[0]"
-    ],
-    "26": [
-      "Integer",
-      "Integer",
-      "Plane",
-      "N\u00ba Vertices X"
-    ],
-    "27": [
-      "Integer",
-      "Integer",
-      "Plane",
-      "N\u00ba Vertices Y"
-    ],
-    "28": [
-      "Formula2.001",
-      "Result",
-      "Plane",
-      "Step X"
-    ],
-    "29": [
-      "Formula2.001",
-      "Result",
-      "Plane",
-      "Step Y"
-    ],
-    "30": [
-      "Plane",
-      "Vertices",
-      "Vectors Move",
-      "vertices"
-    ],
-    "31": [
-      "Plane",
-      "Edges",
-      "Viewer Draw2.001",
-      "edg_pol"
-    ],
-    "32": [
-      "Vectors Move",
-      "vertices",
-      "Viewer Draw2.001",
-      "vertices"
-    ],
-    "33": [
-      "Float.002",
-      "Float",
-      "Random Vector",
-      "Count"
-    ]
-  },
-  "export_version": "0.043 pre alpha",
+  "export_version": "0.064",
   "framed_nodes": {
     "Vectors in.001": "Frame",
     "Vectors out": "Frame",
     "Viewer Draw2.001": "Frame",
     "Viewer Draw2.002": "Frame"
   },
+  "groups": {},
   "nodes": {
     "Fill Holes": {
       "bl_idname": "SvFillsHoleNode",
@@ -355,7 +150,7 @@
         0.6079999804496765,
         0.6079999804496765
       ],
-      "height": 460.5982360839844,
+      "height": 485.1097106933594,
       "hide": false,
       "label": "",
       "location": [
@@ -363,7 +158,7 @@
         34.488502502441406
       ],
       "params": {},
-      "width": 471.888671875
+      "width": 471.88861083984375
     },
     "Integer": {
       "bl_idname": "IntegerNode",
@@ -459,7 +254,7 @@
       "width": 320.0
     },
     "Plane": {
-      "bl_idname": "PlaneNode",
+      "bl_idname": "SvPlaneNodeMK2",
       "color": [
         0.6079999804496765,
         0.6079999804496765,
@@ -472,25 +267,26 @@
         -365.7027587890625,
         232.1835174560547
       ],
-      "params": {},
+      "params": {
+        "center": 0
+      },
       "width": 140.0
     },
-    "Random Vector": {
-      "bl_idname": "RandomVectorNode",
+    "Random Vector MK2": {
+      "bl_idname": "RandomVectorNodeMK2",
       "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
+        0.0,
+        0.5,
+        0.5
       ],
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        -273.2510986328125,
-        -161.53733825683594
+        -250.09278869628906,
+        -154.03712463378906
       ],
       "params": {
-        "count_inner": 200,
         "seed": 10
       },
       "width": 140.0
@@ -543,8 +339,8 @@
       "hide": true,
       "label": "",
       "location": [
-        364.3963928222656,
-        -499.9224548339844
+        -63.475006103515625,
+        -534.4109497070312
       ],
       "params": {},
       "width": 100.0
@@ -560,8 +356,8 @@
       "hide": true,
       "label": "",
       "location": [
-        245.10589599609375,
-        -499.92242431640625
+        -182.7655029296875,
+        -534.4109497070312
       ],
       "params": {},
       "width": 140.0
@@ -606,8 +402,8 @@
       "hide": false,
       "label": "",
       "location": [
-        516.9945068359375,
-        -162.8903045654297
+        89.12310791015625,
+        -197.37881469726562
       ],
       "params": {
         "display_edges": 1,
@@ -640,8 +436,8 @@
       "hide": false,
       "label": "",
       "location": [
-        514.489501953125,
-        -381.78155517578125
+        86.61810302734375,
+        -416.2700500488281
       ],
       "params": {
         "display_edges": 0,
@@ -697,8 +493,8 @@
       },
       "width": 140.0
     },
-    "Viewer text": {
-      "bl_idname": "ViewerNode_text",
+    "Viewer text mk2": {
+      "bl_idname": "ViewerNodeTextMK2",
       "color": [
         0.5,
         0.5,
@@ -708,8 +504,8 @@
       "hide": false,
       "label": "",
       "location": [
-        735.5700073242188,
-        444.14654541015625
+        704.0958251953125,
+        510.67791748046875
       ],
       "params": {},
       "width": 140.0
@@ -738,11 +534,11 @@
     [
       "Float.002",
       "Float",
-      "Random Vector",
+      "Random Vector MK2",
       "Count"
     ],
     [
-      "Random Vector",
+      "Random Vector MK2",
       "Random",
       "Formula2.002",
       "X"
@@ -754,40 +550,34 @@
       "n[0]"
     ],
     [
-      "Float.001",
-      "Float",
-      "Formula2.001",
+      "Formula2.002",
+      "Result",
+      "Vectors out",
+      "Vectors"
+    ],
+    [
+      "Vectors out",
+      "X",
+      "Vectors in.001",
       "X"
     ],
     [
-      "Integer",
-      "Integer",
-      "Formula2.001",
-      "n[0]"
+      "Vectors out",
+      "Y",
+      "Vectors in.001",
+      "Y"
     ],
     [
-      "Integer",
-      "Integer",
-      "Plane",
-      "N\u00ba Vertices X"
+      "Vectors in.001",
+      "Vectors",
+      "Viewer Draw2.002",
+      "vertices"
     ],
     [
-      "Integer",
-      "Integer",
-      "Plane",
-      "N\u00ba Vertices Y"
-    ],
-    [
-      "Formula2.001",
-      "Result",
-      "Plane",
-      "Step X"
-    ],
-    [
-      "Formula2.001",
-      "Result",
-      "Plane",
-      "Step Y"
+      "Matrix value input",
+      "Matrix",
+      "Viewer Draw2.002",
+      "matrix"
     ],
     [
       "Float.001",
@@ -806,6 +596,30 @@
       "Result",
       "Vectors in",
       "Y"
+    ],
+    [
+      "Float.001",
+      "Float",
+      "Formula2.001",
+      "X"
+    ],
+    [
+      "Integer",
+      "Integer",
+      "Formula2.001",
+      "n[0]"
+    ],
+    [
+      "Formula2.001",
+      "Result",
+      "Plane",
+      "Step X"
+    ],
+    [
+      "Formula2.001",
+      "Result",
+      "Plane",
+      "Step Y"
     ],
     [
       "Plane",
@@ -840,54 +654,6 @@
     [
       "Voronoi",
       "Vertices",
-      "Viewer text",
-      "vertices"
-    ],
-    [
-      "Formula2.002",
-      "Result",
-      "Vectors out",
-      "Vectors"
-    ],
-    [
-      "Vectors Move",
-      "vertices",
-      "Viewer Draw2.001",
-      "vertices"
-    ],
-    [
-      "Plane",
-      "Edges",
-      "Viewer Draw2.001",
-      "edg_pol"
-    ],
-    [
-      "Matrix value input",
-      "Matrix",
-      "Viewer Draw2.001",
-      "matrix"
-    ],
-    [
-      "Voronoi",
-      "Vertices",
-      "Viewer Draw2.003",
-      "vertices"
-    ],
-    [
-      "Voronoi",
-      "Edges",
-      "Viewer Draw2.003",
-      "edg_pol"
-    ],
-    [
-      "Matrix value input",
-      "Matrix",
-      "Viewer Draw2.003",
-      "matrix"
-    ],
-    [
-      "Voronoi",
-      "Vertices",
       "Fill Holes",
       "vertices"
     ],
@@ -916,28 +682,46 @@
       "matrix"
     ],
     [
-      "Vectors out",
-      "X",
-      "Vectors in.001",
-      "X"
-    ],
-    [
-      "Vectors out",
-      "Y",
-      "Vectors in.001",
-      "Y"
-    ],
-    [
-      "Vectors in.001",
-      "Vectors",
-      "Viewer Draw2.002",
+      "Voronoi",
+      "Vertices",
+      "Viewer Draw2.003",
       "vertices"
+    ],
+    [
+      "Voronoi",
+      "Edges",
+      "Viewer Draw2.003",
+      "edg_pol"
     ],
     [
       "Matrix value input",
       "Matrix",
-      "Viewer Draw2.002",
+      "Viewer Draw2.003",
       "matrix"
+    ],
+    [
+      "Vectors Move",
+      "vertices",
+      "Viewer Draw2.001",
+      "vertices"
+    ],
+    [
+      "Plane",
+      "Edges",
+      "Viewer Draw2.001",
+      "edg_pol"
+    ],
+    [
+      "Matrix value input",
+      "Matrix",
+      "Viewer Draw2.001",
+      "matrix"
+    ],
+    [
+      "Voronoi",
+      "Vertices",
+      "Viewer text mk2",
+      "edg_pol"
     ]
   ]
 }

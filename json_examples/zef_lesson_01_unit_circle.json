@@ -1,5 +1,5 @@
 {
-  "export_version": "0.054",
+  "export_version": "0.064",
   "framed_nodes": {},
   "groups": {},
   "nodes": {
@@ -36,40 +36,6 @@
       ],
       "params": {},
       "width": 140.0
-    },
-    "Axis Input": {
-      "bl_idname": "svAxisInputNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        -415.4708251953125,
-        -807.1593017578125
-      ],
-      "params": {},
-      "width": 100.0
-    },
-    "Axis Input.001": {
-      "bl_idname": "svAxisInputNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        -354.423583984375,
-        -1202.1668701171875
-      ],
-      "params": {},
-      "width": 100.0
     },
     "Circle": {
       "bl_idname": "SvCircleNode",
@@ -310,8 +276,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -435.7013854980469,
-        -1097.478759765625
+        -415.76959228515625,
+        -1108.5731201171875
       ],
       "params": {
         "int_": 45
@@ -319,7 +285,7 @@
       "width": 140.0
     },
     "Matrix in": {
-      "bl_idname": "MatrixGenNode",
+      "bl_idname": "SvMatrixGenNodeMK2",
       "color": [
         0.6079999804496765,
         0.6079999804496765,
@@ -329,14 +295,14 @@
       "hide": false,
       "label": "",
       "location": [
-        -52.397186279296875,
-        -417.8941650390625
+        -53.31468200683594,
+        -435.9494934082031
       ],
       "params": {},
       "width": 140.0
     },
     "Matrix in.001": {
-      "bl_idname": "MatrixGenNode",
+      "bl_idname": "SvMatrixGenNodeMK2",
       "color": [
         0.6079999804496765,
         0.6079999804496765,
@@ -346,14 +312,14 @@
       "hide": false,
       "label": "",
       "location": [
-        -240.1058807373047,
-        -822.356689453125
+        -198.20632934570312,
+        -1182.143310546875
       ],
       "params": {},
       "width": 140.0
     },
-    "Matrix in.002": {
-      "bl_idname": "MatrixGenNode",
+    "Matrix in.003": {
+      "bl_idname": "SvMatrixGenNodeMK2",
       "color": [
         0.6079999804496765,
         0.6079999804496765,
@@ -363,8 +329,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -190.7496337890625,
-        -1151.8983154296875
+        -234.1773681640625,
+        -836.7166748046875
       ],
       "params": {},
       "width": 140.0
@@ -406,6 +372,46 @@
         "text": "0.5*PI"
       },
       "width": 320.0
+    },
+    "Vector X | Y | Z": {
+      "bl_idname": "SvAxisInputNodeMK2",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -439.6123962402344,
+        -813.656005859375
+      ],
+      "params": {
+        "axis_x": "0",
+        "axis_y": "0"
+      },
+      "width": 139.792724609375
+    },
+    "Vector X | Y | Z.001": {
+      "bl_idname": "SvAxisInputNodeMK2",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -453.5474548339844,
+        -1198.265869140625
+      ],
+      "params": {
+        "axis_x": "0",
+        "axis_y": "0"
+      },
+      "width": 160.90267944335938
     },
     "Vectors in": {
       "bl_idname": "GenVectorsNode",
@@ -679,6 +685,120 @@
   },
   "update_lists": [
     [
+      "Float.001",
+      "Float",
+      "Vectors in.001",
+      "X"
+    ],
+    [
+      "Float.001",
+      "Float",
+      "Vectors in.001",
+      "Y"
+    ],
+    [
+      "Vectors in.001",
+      "Vectors",
+      "Matrix in.001",
+      "Scale"
+    ],
+    [
+      "Vector X | Y | Z.001",
+      "Vector",
+      "Matrix in.001",
+      "Rotation"
+    ],
+    [
+      "Integer",
+      "Integer",
+      "Matrix in.001",
+      "Angle"
+    ],
+    [
+      "Circle.002",
+      "Vertices",
+      "Apply matrix for vectors.001",
+      "Vectors"
+    ],
+    [
+      "Matrix in.001",
+      "Matrix",
+      "Apply matrix for vectors.001",
+      "Matrixes"
+    ],
+    [
+      "Apply matrix for vectors.001",
+      "Vectors",
+      "Index Viewer Draw",
+      "vertices"
+    ],
+    [
+      "Note",
+      "Text Out",
+      "Index Viewer Draw",
+      "text"
+    ],
+    [
+      "Vector X | Y | Z",
+      "Vector",
+      "Matrix in.003",
+      "Location"
+    ],
+    [
+      "Vectors in.001",
+      "Vectors",
+      "Matrix in.003",
+      "Scale"
+    ],
+    [
+      "Float",
+      "Float",
+      "Matrix in.003",
+      "Angle"
+    ],
+    [
+      "Circle.001",
+      "Vertices",
+      "Apply matrix for vectors",
+      "Vectors"
+    ],
+    [
+      "Matrix in.003",
+      "Matrix",
+      "Apply matrix for vectors",
+      "Matrixes"
+    ],
+    [
+      "Apply matrix for vectors",
+      "Vectors",
+      "Viewer Draw2.002",
+      "vertices"
+    ],
+    [
+      "Circle.001",
+      "Edges",
+      "Viewer Draw2.002",
+      "edg_pol"
+    ],
+    [
+      "Circle",
+      "Vertices",
+      "Viewer Draw2.001",
+      "vertices"
+    ],
+    [
+      "Circle",
+      "Edges",
+      "Viewer Draw2.001",
+      "edg_pol"
+    ],
+    [
+      "Matrix in",
+      "Matrix",
+      "Viewer Draw2.001",
+      "matrix"
+    ],
+    [
       "function.002",
       "float",
       "function.003",
@@ -717,18 +837,6 @@
     [
       "Vectors in",
       "Vectors",
-      "Viewer Draw2.004",
-      "vertices"
-    ],
-    [
-      "Formula2.002",
-      "Result",
-      "Viewer Draw2.004",
-      "edg_pol"
-    ],
-    [
-      "Vectors in",
-      "Vectors",
       "Viewer Draw2",
       "vertices"
     ],
@@ -739,99 +847,15 @@
       "edg_pol"
     ],
     [
-      "Float.001",
-      "Float",
-      "Vectors in.001",
-      "X"
-    ],
-    [
-      "Float.001",
-      "Float",
-      "Vectors in.001",
-      "Y"
-    ],
-    [
-      "Vectors in.001",
+      "Vectors in",
       "Vectors",
-      "Matrix in.002",
-      "Scale"
-    ],
-    [
-      "Axis Input.001",
-      "Vectors",
-      "Matrix in.002",
-      "Rotation"
-    ],
-    [
-      "Integer",
-      "Integer",
-      "Matrix in.002",
-      "Angle"
-    ],
-    [
-      "Circle.002",
-      "Vertices",
-      "Apply matrix for vectors.001",
-      "Vectors"
-    ],
-    [
-      "Matrix in.002",
-      "Matrix",
-      "Apply matrix for vectors.001",
-      "Matrixes"
-    ],
-    [
-      "Apply matrix for vectors.001",
-      "Vectors",
-      "Index Viewer Draw",
+      "Viewer Draw2.004",
       "vertices"
     ],
     [
-      "Note",
-      "Text Out",
-      "Index Viewer Draw",
-      "text"
-    ],
-    [
-      "Vectors in.001",
-      "Vectors",
-      "Matrix in.001",
-      "Scale"
-    ],
-    [
-      "Axis Input",
-      "Vectors",
-      "Matrix in.001",
-      "Rotation"
-    ],
-    [
-      "Float",
-      "Float",
-      "Matrix in.001",
-      "Angle"
-    ],
-    [
-      "Circle.001",
-      "Vertices",
-      "Apply matrix for vectors",
-      "Vectors"
-    ],
-    [
-      "Matrix in.001",
-      "Matrix",
-      "Apply matrix for vectors",
-      "Matrixes"
-    ],
-    [
-      "Apply matrix for vectors",
-      "Vectors",
-      "Viewer Draw2.002",
-      "vertices"
-    ],
-    [
-      "Circle.001",
-      "Edges",
-      "Viewer Draw2.002",
+      "Formula2.002",
+      "Result",
+      "Viewer Draw2.004",
       "edg_pol"
     ],
     [
@@ -851,24 +875,6 @@
       "Text Out",
       "Index Viewer Draw.001",
       "text"
-    ],
-    [
-      "Circle",
-      "Vertices",
-      "Viewer Draw2.001",
-      "vertices"
-    ],
-    [
-      "Circle",
-      "Edges",
-      "Viewer Draw2.001",
-      "edg_pol"
-    ],
-    [
-      "Matrix in",
-      "Matrix",
-      "Viewer Draw2.001",
-      "matrix"
     ]
   ]
 }

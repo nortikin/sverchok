@@ -1,5 +1,5 @@
 {
-  "export_version": "0.055",
+  "export_version": "0.064",
   "framed_nodes": {},
   "groups": {},
   "nodes": {
@@ -62,8 +62,8 @@
       },
       "width": 138.75637817382812
     },
-    "Matrix in": {
-      "bl_idname": "MatrixGenNode",
+    "Matrix in.001": {
+      "bl_idname": "SvMatrixGenNodeMK2",
       "color": [
         0.6079999804496765,
         0.6079999804496765,
@@ -73,8 +73,8 @@
       "hide": false,
       "label": "",
       "location": [
-        87.85169982910156,
-        9.73392105102539
+        89.47520446777344,
+        0.6037750244140625
       ],
       "params": {},
       "width": 140.0
@@ -114,28 +114,8 @@
         213.00709533691406
       ],
       "params": {
-        "lp": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0
-        ],
+        "basemesh_name": "Psi",
+        "hide": 1,
         "show_options": 1
       },
       "width": 140.0
@@ -204,7 +184,7 @@
     [
       "Vectors in",
       "Vectors",
-      "Matrix in",
+      "Matrix in.001",
       "Location"
     ],
     [
@@ -226,7 +206,7 @@
       "text"
     ],
     [
-      "Matrix in",
+      "Matrix in.001",
       "Matrix",
       "Type Draw",
       "matrix"

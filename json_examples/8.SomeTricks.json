@@ -1,5 +1,5 @@
 {
-  "export_version": "0.055",
+  "export_version": "0.064",
   "framed_nodes": {},
   "groups": {},
   "nodes": {
@@ -60,19 +60,19 @@
       },
       "width": 140.0
     },
-    "Random Vector": {
-      "bl_idname": "RandomVectorNode",
+    "Random Vector MK2": {
+      "bl_idname": "RandomVectorNodeMK2",
       "color": [
-        0.0,
-        0.5,
-        0.5
+        0.9200000166893005,
+        0.9200000166893005,
+        0.9200000166893005
       ],
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        -1621.0777587890625,
-        292.61962890625
+        -1584.008544921875,
+        245.7386474609375
       ],
       "params": {
         "count_inner": 214,
@@ -80,8 +80,8 @@
       },
       "width": 140.0
     },
-    "Vector Math": {
-      "bl_idname": "VectorMathNode",
+    "Vector Math.001": {
+      "bl_idname": "SvVectorMathNodeMK2",
       "color": [
         0.6079999804496765,
         0.6079999804496765,
@@ -89,15 +89,12 @@
       ],
       "height": 100.0,
       "hide": false,
-      "label": "CROSS",
+      "label": "",
       "location": [
-        -1356.569091796875,
-        169.81610107421875
+        -1341.306884765625,
+        135.7729034423828
       ],
-      "params": {
-        "items_": "CROSS",
-        "scalar_output_socket": 0
-      },
+      "params": {},
       "width": 140.0
     },
     "Vectors in": {
@@ -151,22 +148,22 @@
       "params": {},
       "width": 140.0
     },
-    "Viewer text": {
-      "bl_idname": "ViewerNode_text",
+    "Viewer text mk2": {
+      "bl_idname": "ViewerNodeTextMK2",
       "color": [
-        0.5,
-        0.5,
-        1.0
+        1.0,
+        0.8993440270423889,
+        0.9742509722709656
       ],
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        -1355.9915771484375,
-        409.2108459472656
+        -1346.7274169921875,
+        456.3681945800781
       ],
       "params": {},
-      "width": 147.91943359375
+      "width": 140.0
     },
     "Voronoi": {
       "bl_idname": "Voronoi2DNode",
@@ -208,26 +205,20 @@
       "Z"
     ],
     [
-      "Random Vector",
+      "Random Vector MK2",
       "Random",
-      "Vector Math",
-      "U"
+      "Vector Math.001",
+      "A"
     ],
     [
       "Vectors in",
       "Vectors",
-      "Vector Math",
-      "V"
+      "Vector Math.001",
+      "B"
     ],
     [
-      "Random Vector",
-      "Random",
-      "Viewer text",
-      "vertices"
-    ],
-    [
-      "Vector Math",
-      "W",
+      "Vector Math.001",
+      "Out",
       "Voronoi",
       "Vertices"
     ],
@@ -244,9 +235,15 @@
       "edg_pol"
     ],
     [
-      "Vector Math",
-      "W",
+      "Vector Math.001",
+      "Out",
       "Viewer Draw2",
+      "vertices"
+    ],
+    [
+      "Random Vector MK2",
+      "Random",
+      "Viewer text mk2",
       "vertices"
     ]
   ]
