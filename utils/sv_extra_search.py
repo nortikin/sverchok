@@ -101,6 +101,7 @@ class SvExtraSearch(bpy.types.Operator):
         return {'FINISHED'}
 
     def invoke(self, context, event):
+        # event contains mouse xy, can pass too! 
         loop['results'] = gather_items()
         wm = context.window_manager
         wm.invoke_search_popup(self)

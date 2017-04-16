@@ -1,4 +1,30 @@
+# ##### BEGIN GPL LICENSE BLOCK #####
+#
+#  This program is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU General Public License
+#  as published by the Free Software Foundation; either version 2
+#  of the License, or (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software Foundation,
+#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+# ##### END GPL LICENSE BLOCK #####
+
+import os
+import webbrowser
+
 import bpy
+
+from sverchok.utils.sv_update_utils import sv_get_local_path
+
+
+
 
 macros = {
     "> obj vd": {
@@ -8,10 +34,19 @@ macros = {
     "> objs vd": {
         'display_name': "multi obj in + vdmk2",
         'file':'macro', 
-        'ident': ['verbose_macro_handler', 'objs vd']}
+        'ident': ['verbose_macro_handler', 'objs vd']},
+    "> zen": {
+        'display_name': "zen of Sverchok",
+        'file':'macro', 
+        'ident': ['verbose_macro_handler', 'zen']},
+    "> sn petal": {
+        'display_name': "load snlite w/ petalsine",
+        'file':'macro', 
+        'ident': ['verbose_macro_handler', 'sn petal']}        
 }
 
 sv_types = {'SverchCustomTreeType', 'SverchGroupTreeType'}
+
 
 class DefaultMacros():
 
@@ -62,3 +97,17 @@ class DefaultMacros():
             links.new(obj_in_node.outputs[0], vd_node.inputs[0])
             links.new(obj_in_node.outputs[2], vd_node.inputs[1])
             links.new(obj_in_node.outputs[3], vd_node.inputs[2])            
+        elif term == 'zen':
+            full_url_term = 'https://blenderpython.tumblr.com/post/91951323209/zen-of-sverchok'
+            webbrowser.open(full_url_term)
+        elif term == 'sn petal':
+            snlite = nodes.new('SvScriptNodeLite')
+            # set location of snlite based on mouse?
+
+            sv_path = os.path.dirname(sv_get_local_path()[0])
+            snlite_template_path = os.path.join(sv_path, 'node_scripts', 'SNLite_templates')
+            fullpath = os.path.join(snlite_template_path, 'petal_sine.py')
+            
+            txt = bpy.data.texts.load(fullpath)
+            snlite.script_name = os.path.basename(txt.name)
+            snlite.load()
