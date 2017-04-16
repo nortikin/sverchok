@@ -1,151 +1,5 @@
 {
-  "connections": {
-    "0": [
-      "UV Connect",
-      "vertices",
-      "Viewer Draw2.001",
-      "vertices"
-    ],
-    "1": [
-      "UV Connect",
-      "data",
-      "Viewer Draw2.001",
-      "edg_pol"
-    ],
-    "2": [
-      "Voronoi",
-      "Vertices",
-      "Viewer text",
-      "vertices"
-    ],
-    "3": [
-      "Random Vector",
-      "Random",
-      "Formula2.002",
-      "X"
-    ],
-    "4": [
-      "List Join",
-      "data",
-      "Voronoi",
-      "Vertices"
-    ],
-    "5": [
-      "Formula2.002",
-      "Result",
-      "List Join",
-      "data 1"
-    ],
-    "6": [
-      "Float",
-      "Float",
-      "Formula2.002",
-      "n[0]"
-    ],
-    "7": [
-      "Formula2.002",
-      "Result",
-      "Vectors out",
-      "Vectors"
-    ],
-    "8": [
-      "Vectors in.001",
-      "Vectors",
-      "Viewer Draw2.002",
-      "vertices"
-    ],
-    "9": [
-      "Vectors out",
-      "X",
-      "Vectors in.001",
-      "X"
-    ],
-    "10": [
-      "Vectors out",
-      "Y",
-      "Vectors in.001",
-      "Y"
-    ],
-    "11": [
-      "Voronoi",
-      "Vertices",
-      "Fill Holes",
-      "vertices"
-    ],
-    "12": [
-      "Voronoi",
-      "Edges",
-      "Fill Holes",
-      "edges"
-    ],
-    "13": [
-      "Fill Holes",
-      "vertices",
-      "Viewer Draw2",
-      "vertices"
-    ],
-    "14": [
-      "Fill Holes",
-      "polygons",
-      "Viewer Draw2",
-      "edg_pol"
-    ],
-    "15": [
-      "Voronoi",
-      "Edges",
-      "Viewer Draw2.003",
-      "edg_pol"
-    ],
-    "16": [
-      "Voronoi",
-      "Vertices",
-      "Viewer Draw2.003",
-      "vertices"
-    ],
-    "17": [
-      "Float Series",
-      "Range",
-      "Circle",
-      "Radius"
-    ],
-    "18": [
-      "Circle",
-      "Vertices",
-      "List Join",
-      "data"
-    ],
-    "19": [
-      "Matrix value input",
-      "Matrix",
-      "Viewer Draw2",
-      "matrix"
-    ],
-    "20": [
-      "Matrix value input",
-      "Matrix",
-      "Viewer Draw2.003",
-      "matrix"
-    ],
-    "21": [
-      "Matrix value input",
-      "Matrix",
-      "Viewer Draw2.001",
-      "matrix"
-    ],
-    "22": [
-      "Matrix value input",
-      "Matrix",
-      "Viewer Draw2.002",
-      "matrix"
-    ],
-    "23": [
-      "Circle",
-      "Vertices",
-      "UV Connect",
-      "vertices"
-    ]
-  },
-  "export_version": "0.043 pre alpha",
+  "export_version": "0.064",
   "framed_nodes": {
     "UV Connect": "Frame",
     "Vectors in.001": "Frame",
@@ -153,6 +7,7 @@
     "Viewer Draw2.001": "Frame",
     "Viewer Draw2.002": "Frame"
   },
+  "groups": {},
   "nodes": {
     "Circle": {
       "bl_idname": "SvCircleNode",
@@ -170,6 +25,7 @@
       ],
       "params": {
         "degr_": 6.2831854820251465,
+        "mode_": 0,
         "vert_": 12
       },
       "width": 140.0
@@ -261,7 +117,7 @@
         0.6079999804496765,
         0.6079999804496765
       ],
-      "height": 460.2969970703125,
+      "height": 485.1097106933594,
       "hide": false,
       "label": "",
       "location": [
@@ -345,23 +201,22 @@
       },
       "width": 320.0
     },
-    "Random Vector": {
-      "bl_idname": "RandomVectorNode",
+    "Random Vector MK2": {
+      "bl_idname": "RandomVectorNodeMK2",
       "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
+        0.0,
+        0.5,
+        0.5
       ],
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        -247.28419494628906,
-        -72.6681137084961
+        -244.75230407714844,
+        -70.90066528320312
       ],
       "params": {
-        "count_inner": 100,
-        "seed": 1
+        "count_inner": 100
       },
       "width": 140.0
     },
@@ -376,11 +231,10 @@
       "hide": false,
       "label": "",
       "location": [
-        288.048828125,
-        -218.49594116210938
+        -142.6097412109375,
+        -299.6832275390625
       ],
       "params": {
-        "cicl_check": 0,
         "dir_check": "U_dir",
         "polygons": "Pols",
         "slice_check": 1
@@ -398,8 +252,8 @@
       "hide": true,
       "label": "",
       "location": [
-        364.3963928222656,
-        -499.9224548339844
+        -66.26217651367188,
+        -581.1097412109375
       ],
       "params": {},
       "width": 100.0
@@ -415,8 +269,8 @@
       "hide": true,
       "label": "",
       "location": [
-        245.10589599609375,
-        -499.92242431640625
+        -185.55267333984375,
+        -581.1097412109375
       ],
       "params": {},
       "width": 140.0
@@ -462,8 +316,8 @@
       "hide": false,
       "label": "",
       "location": [
-        516.9945068359375,
-        -162.8903045654297
+        86.3359375,
+        -244.07760620117188
       ],
       "params": {
         "activate": 1,
@@ -498,8 +352,8 @@
       "hide": false,
       "label": "",
       "location": [
-        514.489501953125,
-        -381.78155517578125
+        83.8309326171875,
+        -462.9688720703125
       ],
       "params": {
         "activate": 1,
@@ -551,8 +405,8 @@
       },
       "width": 140.0
     },
-    "Viewer text": {
-      "bl_idname": "ViewerNode_text",
+    "Viewer text mk2": {
+      "bl_idname": "ViewerNodeTextMK2",
       "color": [
         0.5,
         0.5,
@@ -562,8 +416,8 @@
       "hide": false,
       "label": "",
       "location": [
-        732.9016723632812,
-        420.2933044433594
+        722.4564819335938,
+        471.59356689453125
       ],
       "params": {},
       "width": 140.0
@@ -590,6 +444,24 @@
   },
   "update_lists": [
     [
+      "Random Vector MK2",
+      "Random",
+      "Formula2.002",
+      "X"
+    ],
+    [
+      "Float",
+      "Float",
+      "Formula2.002",
+      "n[0]"
+    ],
+    [
+      "Formula2.002",
+      "Result",
+      "Vectors out",
+      "Vectors"
+    ],
+    [
       "Float Series",
       "Range",
       "Circle",
@@ -602,16 +474,22 @@
       "vertices"
     ],
     [
-      "Random Vector",
-      "Random",
-      "Formula2.002",
-      "X"
+      "UV Connect",
+      "vertices",
+      "Viewer Draw2.001",
+      "vertices"
     ],
     [
-      "Float",
-      "Float",
-      "Formula2.002",
-      "n[0]"
+      "UV Connect",
+      "data",
+      "Viewer Draw2.001",
+      "edg_pol"
+    ],
+    [
+      "Matrix value input",
+      "Matrix",
+      "Viewer Draw2.001",
+      "matrix"
     ],
     [
       "Circle",
@@ -630,12 +508,6 @@
       "data",
       "Voronoi",
       "Vertices"
-    ],
-    [
-      "Voronoi",
-      "Vertices",
-      "Viewer text",
-      "vertices"
     ],
     [
       "Voronoi",
@@ -668,12 +540,6 @@
       "matrix"
     ],
     [
-      "Formula2.002",
-      "Result",
-      "Vectors out",
-      "Vectors"
-    ],
-    [
       "Vectors out",
       "X",
       "Vectors in.001",
@@ -686,21 +552,15 @@
       "Y"
     ],
     [
-      "UV Connect",
-      "vertices",
-      "Viewer Draw2.001",
+      "Vectors in.001",
+      "Vectors",
+      "Viewer Draw2.002",
       "vertices"
-    ],
-    [
-      "UV Connect",
-      "data",
-      "Viewer Draw2.001",
-      "edg_pol"
     ],
     [
       "Matrix value input",
       "Matrix",
-      "Viewer Draw2.001",
+      "Viewer Draw2.002",
       "matrix"
     ],
     [
@@ -722,16 +582,10 @@
       "matrix"
     ],
     [
-      "Vectors in.001",
-      "Vectors",
-      "Viewer Draw2.002",
+      "Voronoi",
+      "Vertices",
+      "Viewer text mk2",
       "vertices"
-    ],
-    [
-      "Matrix value input",
-      "Matrix",
-      "Viewer Draw2.002",
-      "matrix"
     ]
   ]
 }

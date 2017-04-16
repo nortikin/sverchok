@@ -1,6 +1,7 @@
 {
-  "export_version": "0.052 pre alpha",
+  "export_version": "0.064",
   "framed_nodes": {},
+  "groups": {},
   "nodes": {
     "Bmesh Viewer Draw": {
       "bl_idname": "SvBmeshViewerNodeMK2",
@@ -18,7 +19,8 @@
       ],
       "params": {
         "autosmooth": 1,
-        "basemesh_name": "Beta"
+        "basemesh_name": "Beta",
+        "hide": 0
       },
       "width": 140.0
     },
@@ -38,7 +40,8 @@
       ],
       "params": {
         "autosmooth": 1,
-        "basemesh_name": "Theta"
+        "basemesh_name": "Theta",
+        "hide": 0
       },
       "width": 140.0
     },
@@ -172,7 +175,7 @@
       "width": 140.0
     },
     "Matrix in": {
-      "bl_idname": "MatrixGenNode",
+      "bl_idname": "SvMatrixGenNodeMK2",
       "color": [
         0.6079999804496765,
         0.6079999804496765,
@@ -372,7 +375,6 @@
         631.9574584960938
       ],
       "params": {
-        "cicl_check": 1,
         "dir_check": "U_dir",
         "polygons": "Pols",
         "slice_check": 0
@@ -470,8 +472,8 @@
       "params": {},
       "width": 140.0
     },
-    "Viewer text": {
-      "bl_idname": "ViewerNode_text",
+    "Viewer text mk2": {
+      "bl_idname": "ViewerNodeTextMK2",
       "color": [
         0.5,
         0.5,
@@ -481,8 +483,8 @@
       "hide": false,
       "label": "",
       "location": [
-        254.13153076171875,
-        350.425048828125
+        208.2982635498047,
+        194.11724853515625
       ],
       "params": {},
       "width": 140.0
@@ -528,6 +530,12 @@
     [
       "Script Generator.001",
       "Verts",
+      "Vectors out",
+      "Vectors"
+    ],
+    [
+      "Script Generator.001",
+      "Verts",
       "Script Generator",
       "Vectors"
     ],
@@ -535,6 +543,12 @@
       "Script Generator",
       "Total length",
       "function",
+      "X"
+    ],
+    [
+      "function",
+      "float",
+      "function.001",
       "X"
     ],
     [
@@ -548,30 +562,6 @@
       "Length",
       "Circle",
       "N\u00ba Vertices"
-    ],
-    [
-      "Script Generator.001",
-      "Verts",
-      "Vectors out",
-      "Vectors"
-    ],
-    [
-      "Float",
-      "Float",
-      "Circle.001",
-      "Radius"
-    ],
-    [
-      "List Length",
-      "Length",
-      "Circle.001",
-      "N\u00ba Vertices"
-    ],
-    [
-      "function",
-      "float",
-      "function.001",
-      "X"
     ],
     [
       "Vectors out",
@@ -592,6 +582,18 @@
       "Z"
     ],
     [
+      "Float",
+      "Float",
+      "Circle.001",
+      "Radius"
+    ],
+    [
+      "List Length",
+      "Length",
+      "Circle.001",
+      "N\u00ba Vertices"
+    ],
+    [
       "Vectors in.001",
       "Vectors",
       "List Join",
@@ -608,18 +610,6 @@
       "Vertices",
       "List Join",
       "data 2"
-    ],
-    [
-      "Vectors in.002",
-      "Vectors",
-      "Matrix in",
-      "Scale"
-    ],
-    [
-      "List Length",
-      "Length",
-      "Viewer text",
-      "edg_pol"
     ],
     [
       "List Join",
@@ -658,6 +648,12 @@
       "faces"
     ],
     [
+      "Vectors in.002",
+      "Vectors",
+      "Matrix in",
+      "Scale"
+    ],
+    [
       "Float",
       "Float",
       "Sphere",
@@ -686,6 +682,12 @@
       "Matrix",
       "Bmesh Viewer Draw.001",
       "matrix"
+    ],
+    [
+      "List Length",
+      "Length",
+      "Viewer text mk2",
+      "edg_pol"
     ]
   ]
 }
