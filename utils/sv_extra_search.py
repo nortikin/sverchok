@@ -23,7 +23,7 @@ import sverchok
 import nodeitems_utils
 from sverchok.menu import make_node_cats
 from sverchok.ui.sv_icons import custom_icon
-from sverchok.utils.sv_default_macros import macros
+from sverchok.utils.sv_default_macros import macros, DefaultMacros
 from nodeitems_utils import _node_categories
 
 sv_tree_types = {'SverchCustomTreeType', 'SverchGroupTreeType'}
@@ -84,6 +84,11 @@ class SvExtraSearch(bpy.types.Operator):
             print(loop['results'][int(self.my_enum)])
         else:
             print(self.my_enum)
+            macro_reference = macros.get(self.my_enum)
+            if macro_reference:
+                handler, term = macro_reference.get('ident')
+                getattr(DefaultMacros, handler)(self, context, term)
+
         return {'FINISHED'}
 
     def invoke(self, context, event):
