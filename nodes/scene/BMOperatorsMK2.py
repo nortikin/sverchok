@@ -23,10 +23,10 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode, enum_item as e, second_as_first_cycle as safc)
 
 
-class SvBMOpsNode(bpy.types.Node, SverchCustomTreeNode):
+class SvBMOpsNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     ''' BMesh Ops '''
-    bl_idname = 'SvBMOpsNode'
-    bl_label = 'BMesh Ops'
+    bl_idname = 'SvBMOpsNodeMK2'
+    bl_label = 'BMesh Ops 2'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     PV = ['remove_doubles(bm,verts=e,dist=v[0])',
@@ -106,8 +106,8 @@ class SvBMOpsNode(bpy.types.Node, SverchCustomTreeNode):
 
 
 def register():
-    bpy.utils.register_class(SvBMOpsNode)
+    bpy.utils.register_class(SvBMOpsNodeMK2)
 
 
 def unregister():
-    bpy.utils.unregister_class(SvBMOpsNode)
+    bpy.utils.unregister_class(SvBMOpsNodeMK2)
