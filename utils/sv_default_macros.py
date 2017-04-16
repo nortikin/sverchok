@@ -24,8 +24,6 @@ import bpy
 from sverchok.utils.sv_update_utils import sv_get_local_path
 
 
-
-
 macros = {
     "> obj vd": {
         'display_name': "active_obj into objlite + vdmk2", 
@@ -65,7 +63,7 @@ class DefaultMacros():
             msg_two = 'added new node tree'
             print(msg_one)
             operator.report({"WARNING"}, msg_one)
-            ng_params = {'name': 'unnamed_tree', 'type': 'SverchCustomTreeType'}
+            ng_params = {'name': 'NodeTree', 'type': 'SverchCustomTreeType'}
             ng = bpy.data.node_groups.new(**ng_params)
             ng.use_fake_user = True
             context.space_data.node_tree = ng

@@ -30,6 +30,9 @@ sv_tree_types = {'SverchCustomTreeType', 'SverchGroupTreeType'}
 node_cats = make_node_cats()
 addon_name = sverchok.__name__
 
+loop = {}
+loop_reverse = {}
+
 # pylint: disable=c0326
 
 def format_item(k, v):
@@ -44,6 +47,7 @@ def ensure_valid_show_string(item):
     '''  the font is not fixed width, it makes litle sense to calculate chars'''
     hardcoded_maxlen = 20
     nodetype = getattr(bpy.types, item[0])
+    loop_reverse[nodetype.bl_label] = item[0]
     description = slice_docstring(nodetype.bl_rna.description).strip()
 
     # ensure it's not too long
@@ -73,7 +77,6 @@ def gather_items():
 
     return fx
 
-loop = {}
 
 def item_cb(self, context):
     return loop.get('results')
@@ -87,10 +90,24 @@ class SvExtraSearch(bpy.types.Operator):
 
     my_enum = bpy.props.EnumProperty(items=item_cb)
 
+    def bl_idname_from_bl_label(self, context):
+        macro_result = loop['results'][int(self.my_enum)]
+        """
+        if ' | ' in macro_result[1]:
+            bl_label = macro_result[1].split(' | ')[0].strip()
+        else:
+            bl_label = macro_result[1].strip()
+        """
+
+        bl_label = macro_result[1].split(' | ')[0].strip()
+        return loop_reverse[bl_label]
+
     def execute(self, context):
         self.report({'INFO'}, "Selected: %s" % self.my_enum)
         if self.my_enum.isnumeric():
-            print(loop['results'][int(self.my_enum)])
+            macro_bl_idname = self.bl_idname_from_bl_label(self)
+            DefaultMacros.ensure_nodetree(self, context)
+            bpy.ops.node.sv_macro_interpretter(macro_bl_idname=macro_bl_idname)
         else:
             print(self.my_enum)
             macro_reference = macros.get(self.my_enum)
