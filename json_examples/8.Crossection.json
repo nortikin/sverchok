@@ -100,7 +100,7 @@
       "width": 199.99996948242188
     },
     "Matrix in.001": {
-      "bl_idname": "MatrixGenNode",
+      "bl_idname": "SvMatrixGenNodeMK2",
       "color": [
         0.6079999804496765,
         0.6079999804496765,
@@ -134,7 +134,7 @@
       "width": 140.0
     },
     "Objects in": {
-      "bl_idname": "ObjectsNode",
+      "bl_idname": "SvObjectsNodeMK3",
       "color": [
         0.0,
         0.5,
@@ -151,7 +151,7 @@
       "width": 140.0
     },
     "Objects in.001": {
-      "bl_idname": "ObjectsNode",
+      "bl_idname": "SvObjectsNodeMK3",
       "color": [
         0.0,
         0.5,
