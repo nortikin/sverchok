@@ -76,6 +76,7 @@
     SvMeshJoinNode
     ---
     SvBevelNode
+    SvSubdivideNode
     SvIntersectEdgesNodeMK2
     SvOffsetNode
     SvFillsHoleNode
