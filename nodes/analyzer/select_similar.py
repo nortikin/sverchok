@@ -25,7 +25,10 @@ from sverchok.data_structure import updateNode, match_long_repeat, fullList
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
 
 class SvSelectSimilarNode(bpy.types.Node, SverchCustomTreeNode):
-    '''Select vertices, edges, faces similar to selected ones'''
+    '''
+    Select similar elements ///
+    
+    Select vertices, edges, faces similar to selected ones'''
 
     bl_idname = 'SvSelectSimilarNode'
     bl_label = 'Select similar'
