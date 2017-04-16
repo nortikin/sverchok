@@ -23,6 +23,7 @@ import sverchok
 import nodeitems_utils
 from sverchok.menu import make_node_cats
 from sverchok.ui.sv_icons import custom_icon
+from sverchok.utils.sv_default_macros import macros
 from nodeitems_utils import _node_categories
 
 sv_tree_types = {'SverchCustomTreeType', 'SverchGroupTreeType'}
@@ -33,8 +34,8 @@ addon_name = sverchok.__name__
 
 macros = {
     # trigger:  [descriptor, action route]
-    "obj vd": ["active_obj into objlite + vdmk2","<file:macro> <ident:obj_in_lite_and_vd>"],
-    "objs vd": ["multi obj in","<file:macro> <ident:ob3_and_vd>"]
+    "> obj vd": ["active_obj into objlite + vdmk2","<file:macro> <ident:obj_in_lite_and_vd>"],
+    "> objs vd": ["multi obj in","<file:macro> <ident:ob3_and_vd>"]
 }
 
 

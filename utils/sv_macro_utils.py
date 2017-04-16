@@ -27,6 +27,8 @@ import sverchok
 # pylint: disable=w0141
 # pylint: disable=w0123
 
+
+
 def convert_string_to_settings(arguments):
 
     # expects       (varname=value,....)
