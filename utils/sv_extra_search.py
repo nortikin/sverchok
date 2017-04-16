@@ -35,6 +35,15 @@ addon_name = sverchok.__name__
 def format_item(k, v):
     return k + " | " + v['display_name']
 
+def slice_docstring(desc):
+    if '///' in desc:
+        desc = desc.strip().split('///')[0]
+    return desc
+
+def ensure_valid_show_string(item):
+    nodetype = getattr(bpy.types, item[0])
+    desc = slice_docstring(nodetype.bl_rna.description)
+    return nodetype.bl_label + ((' | ' + desc) if desc else '').strip()
 
 def gather_items():
     fx = []
@@ -43,12 +52,8 @@ def gather_items():
         for item in node_list:
             if item[0] in {'separator', 'NodeReroute'}:
                 continue
-            nodetype = getattr(bpy.types, item[0])
-            desc = nodetype.bl_rna.description
-            if '///' in desc:
-                desc = desc.strip().split('///')[0]
-            show_string = nodetype.bl_label + ((' | ' + desc) if desc else '')
-            fx.append((str(idx), show_string.strip(), '', idx))
+            
+            fx.append((str(idx), ensure_valid_show_string(item), '', idx))
             idx += 1
 
     for k, v in macros.items():
