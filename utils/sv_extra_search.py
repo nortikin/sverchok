@@ -103,7 +103,7 @@ class SvExtraSearch(bpy.types.Operator):
         return loop_reverse[bl_label]
 
     def execute(self, context):
-        self.report({'INFO'}, "Selected: %s" % self.my_enum)
+        # self.report({'INFO'}, "Selected: %s" % self.my_enum)
         if self.my_enum.isnumeric():
             macro_bl_idname = self.bl_idname_from_bl_label(self)
             DefaultMacros.ensure_nodetree(self, context)
