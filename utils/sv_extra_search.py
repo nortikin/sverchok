@@ -47,8 +47,10 @@ def ensure_valid_show_string(item):
     description = slice_docstring(nodetype.bl_rna.description).strip()
 
     # ensure it's not too long
-    if description and len(description) > hardcoded_maxlen:
-        description = ' | ' + description[:hardcoded_maxlen]
+    if description:
+        if len(description) > hardcoded_maxlen:
+            description = description[:hardcoded_maxlen]
+        description = ' | ' + description
     
     return nodetype.bl_label + description
 

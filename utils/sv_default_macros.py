@@ -8,7 +8,7 @@ macros = {
     "> objs vd": {
         'display_name': "multi obj in + vdmk2",
         'file':'macro', 
-        'ident': ['verbose_macro_handler', 'ob3_and_vd']}
+        'ident': ['verbose_macro_handler', 'objs vd']}
 }
 
 sv_types = {'SverchCustomTreeType', 'SverchGroupTreeType'}
@@ -52,4 +52,13 @@ class DefaultMacros():
             
             links.new(obj_in_node.outputs[0], vd_node.inputs[0])
             links.new(obj_in_node.outputs[2], vd_node.inputs[1])
-            links.new(obj_in_node.outputs[3], vd_node.inputs[2])        
+            links.new(obj_in_node.outputs[3], vd_node.inputs[2])
+        elif term == 'objs vd':
+            obj_in_node = nodes.new('SvObjectsNodeMK3')
+            obj_in_node.get_objects_from_scene(operator)
+            vd_node = nodes.new('ViewerNode2')
+            vd_node.location = obj_in_node.location.x + 180, obj_in_node.location.y
+            
+            links.new(obj_in_node.outputs[0], vd_node.inputs[0])
+            links.new(obj_in_node.outputs[2], vd_node.inputs[1])
+            links.new(obj_in_node.outputs[3], vd_node.inputs[2])            
