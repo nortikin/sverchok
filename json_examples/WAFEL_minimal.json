@@ -1,7 +1,6 @@
 {
-  "export_version": "0.054",
+  "export_version": "0.064",
   "framed_nodes": {
-    "Axis Input.001": "Frame",
     "Convex Hull": "Frame.003",
     "Cross Section": "Frame.001",
     "Cross Section.001": "Frame.001",
@@ -14,6 +13,7 @@
     "Random Vector": "Frame.003",
     "Reroute": "Frame.003",
     "Reroute.001": "Frame.003",
+    "Vector X | Y | Z": "Frame",
     "Vectors in.004": "Frame",
     "Vectors in.005": "Frame",
     "Vectors in.006": "Frame",
@@ -25,26 +25,6 @@
   },
   "groups": {},
   "nodes": {
-    "Axis Input.001": {
-      "bl_idname": "svAxisInputNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
-      "height": 100.0,
-      "hide": true,
-      "label": "Z",
-      "location": [
-        -1248.88916015625,
-        -385.3152770996094
-      ],
-      "params": {
-        "current_axis": "Z",
-        "selected_axis": "Z"
-      },
-      "width": 100.0
-    },
     "Convex Hull": {
       "bl_idname": "SvConvexHullNode",
       "color": [
@@ -56,8 +36,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -1164.9332275390625,
-        -573.1614990234375
+        -1173.320556640625,
+        -584.4636840820312
       ],
       "params": {},
       "width": 140.0
@@ -73,8 +53,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -325.6512756347656,
-        -491.43939208984375
+        -24.922882080078125,
+        -773.923583984375
       ],
       "params": {
         "fill_check": 1,
@@ -93,8 +73,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -325.6512756347656,
-        -991.439453125
+        -24.922882080078125,
+        -1273.923583984375
       ],
       "params": {
         "fill_check": 1,
@@ -113,8 +93,8 @@
       "hide": false,
       "label": "",
       "location": [
-        3.5394287109375,
-        -756.1075439453125
+        304.267822265625,
+        -1038.5916748046875
       ],
       "params": {
         "fill_check": 0,
@@ -133,8 +113,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -1424.158203125,
-        -261.698486328125
+        -1432.5455322265625,
+        -353.6039733886719
       ],
       "params": {
         "count_": 5,
@@ -172,7 +152,7 @@
         0.6079999804496765,
         0.6079999804496765
       ],
-      "height": 387.2900390625,
+      "height": 387.29010009765625,
       "hide": false,
       "label": "Section matrices",
       "location": [
@@ -189,7 +169,7 @@
         0.3117988109588623,
         0.6079999804496765
       ],
-      "height": 768.0447387695312,
+      "height": 768.560546875,
       "hide": false,
       "label": "sections",
       "location": [
@@ -206,7 +186,7 @@
         0.9430019855499268,
         1.0
       ],
-      "height": 726.1804809570312,
+      "height": 688.76806640625,
       "hide": false,
       "label": "make wafels",
       "location": [
@@ -214,7 +194,7 @@
         277.41241455078125
       ],
       "params": {},
-      "width": 397.669677734375
+      "width": 397.669921875
     },
     "Frame.003": {
       "bl_idname": "NodeFrame",
@@ -223,7 +203,7 @@
         0.6079999804496765,
         0.6079999804496765
       ],
-      "height": 175.95703125,
+      "height": 183.60546875,
       "hide": false,
       "label": "Object_to_sect",
       "location": [
@@ -234,7 +214,7 @@
       "width": 529.6532592773438
     },
     "Matrix in.002": {
-      "bl_idname": "MatrixGenNode",
+      "bl_idname": "SvMatrixGenNodeMK2",
       "color": [
         0.6079999804496765,
         0.6079999804496765,
@@ -244,14 +224,14 @@
       "hide": false,
       "label": "",
       "location": [
-        -1085.262939453125,
-        -213.45396423339844
+        -1093.6502685546875,
+        -305.35943603515625
       ],
       "params": {},
       "width": 140.0
     },
     "Matrix in.003": {
-      "bl_idname": "MatrixGenNode",
+      "bl_idname": "SvMatrixGenNodeMK2",
       "color": [
         0.6079999804496765,
         0.6079999804496765,
@@ -261,8 +241,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -1085.262939453125,
-        -400.4596252441406
+        -1093.6502685546875,
+        -492.3651123046875
       ],
       "params": {},
       "width": 140.0
@@ -297,8 +277,8 @@
       "hide": false,
       "label": "",
       "location": [
-        3.5394287109375,
-        -591.4393920898438
+        304.267822265625,
+        -873.923583984375
       ],
       "params": {},
       "width": 140.0
@@ -314,14 +294,14 @@
       "hide": false,
       "label": "",
       "location": [
-        1.0830078125,
-        -1070.5372314453125
+        301.8114013671875,
+        -1353.0213623046875
       ],
       "params": {},
       "width": 140.0
     },
     "Random Vector": {
-      "bl_idname": "RandomVectorNode",
+      "bl_idname": "RandomVectorNodeMK2",
       "color": [
         0.0,
         0.5,
@@ -331,8 +311,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -1420.63818359375,
-        -578.5379638671875
+        -1429.0255126953125,
+        -589.8401489257812
       ],
       "params": {
         "count_inner": 300
@@ -350,8 +330,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -958.9849243164062,
-        -574.39453125
+        -967.3722534179688,
+        -585.6967163085938
       ],
       "params": {},
       "width": 16.0
@@ -367,11 +347,31 @@
       "hide": false,
       "label": "",
       "location": [
-        -966.8110961914062,
-        -674.3515625
+        -975.1984252929688,
+        -685.6537475585938
       ],
       "params": {},
       "width": 16.0
+    },
+    "Vector X | Y | Z": {
+      "bl_idname": "SvAxisInputNodeMK2",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1367.2498779296875,
+        -521.821044921875
+      ],
+      "params": {
+        "axis_x": "0",
+        "axis_y": "0"
+      },
+      "width": 100.0
     },
     "Vectors in.004": {
       "bl_idname": "GenVectorsNode",
@@ -384,8 +384,8 @@
       "hide": true,
       "label": "",
       "location": [
-        -1199.8572998046875,
-        -254.01251220703125
+        -1208.24462890625,
+        -345.9179992675781
       ],
       "params": {
         "y_": 0.0,
@@ -404,8 +404,8 @@
       "hide": true,
       "label": "",
       "location": [
-        -1208.6060791015625,
-        -439.95703125
+        -1216.993408203125,
+        -531.862548828125
       ],
       "params": {
         "x_": 0.0,
@@ -424,8 +424,8 @@
       "hide": true,
       "label": "",
       "location": [
-        -1215.4105224609375,
-        -515.7440185546875
+        -1223.7978515625,
+        -607.6495361328125
       ],
       "params": {
         "x_": 0.009999999776482582,
@@ -445,8 +445,8 @@
       "hide": true,
       "label": "",
       "location": [
-        -1204.7177734375,
-        -320.1751403808594
+        -1213.1051025390625,
+        -412.08062744140625
       ],
       "params": {
         "x_": 1.0,
@@ -466,8 +466,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -2525.468994140625,
-        -450.23187255859375
+        -5334.984375,
+        -727.644287109375
       ],
       "params": {
         "activate": 1,
@@ -495,8 +495,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -2525.468994140625,
-        -850.2318725585938
+        -5334.984375,
+        -1127.644287109375
       ],
       "params": {
         "bakebuttonshow": 1,
@@ -522,8 +522,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -2723.138671875,
-        -502.08795166015625
+        -5532.654296875,
+        -779.5003662109375
       ],
       "params": {
         "bindCircle": 0,
@@ -546,8 +546,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -2721.90966796875,
-        -854.0075073242188
+        -5531.4248046875,
+        -1131.419921875
       ],
       "params": {
         "bindCircle": 0,
@@ -568,6 +568,12 @@
       "Vertices"
     ],
     [
+      "Float Series.002",
+      "Range",
+      "Vectors in.005",
+      "Y"
+    ],
+    [
       "Convex Hull",
       "Vertices",
       "Reroute",
@@ -586,8 +592,8 @@
       "Location"
     ],
     [
-      "Axis Input.001",
-      "Vectors",
+      "Vector X | Y | Z",
+      "Vector",
       "Matrix in.002",
       "Rotation"
     ],
@@ -622,10 +628,10 @@
       "cut_matrix"
     ],
     [
-      "Float Series.002",
-      "Range",
-      "Vectors in.005",
-      "Y"
+      "Cross Section",
+      "edges",
+      "Polygons 2 Edges",
+      "pols"
     ],
     [
       "Vectors in.005",
@@ -634,8 +640,8 @@
       "Location"
     ],
     [
-      "Axis Input.001",
-      "Vectors",
+      "Vector X | Y | Z",
+      "Vector",
       "Matrix in.003",
       "Rotation"
     ],
@@ -662,12 +668,6 @@
       "Matrix",
       "Cross Section.002",
       "cut_matrix"
-    ],
-    [
-      "Cross Section",
-      "edges",
-      "Polygons 2 Edges",
-      "pols"
     ],
     [
       "Cross Section.002",
