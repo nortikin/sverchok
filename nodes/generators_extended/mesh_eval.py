@@ -121,9 +121,9 @@ class SvJsonFromMesh(bpy.types.Operator):
             if v.select:
                 names.add('Selected')
             if names:
-                vertex = list(v.co[:]) + [list(sorted(names))]
+                vertex = self.round(v) + [list(sorted(names))]
             else:
-                vertex = list(v.co[:])
+                vertex = self.round(v)
             verts.append(vertex)
 
         result['vertices'] = verts
@@ -133,6 +133,11 @@ class SvJsonFromMesh(bpy.types.Operator):
         self.write_values(self.nodename, json.dumps(result, indent=2))
         bpy.data.node_groups[self.treename].nodes[self.nodename].filename = self.nodename
         return{'FINISHED'}
+
+    def round(self, vector):
+        precision = bpy.data.node_groups[self.treename].nodes[self.nodename].precision
+        vector = [round(x, precision) for x in vector.co[:]]
+        return vector
 
     def write_values(self,text,values):
         texts = bpy.data.texts.items()
@@ -157,6 +162,10 @@ class SvMeshEvalNode(bpy.types.Node, SverchCustomTreeNode):
         updateNode(self, context)
 
     filename = StringProperty(default="", update=on_update)
+    precision = IntProperty(name = "Precision",
+                    description = "Number of decimal places used for coordinates when generating JSON from selection",
+                    min=0, max=10, default=8,
+                    update=updateNode)
 
     def draw_buttons(self, context, layout):
         row = layout.row()
@@ -166,6 +175,10 @@ class SvMeshEvalNode(bpy.types.Node, SverchCustomTreeNode):
         do_text = row.operator('node.sverchok_json_from_mesh', text='from selection')
         do_text.nodename = self.name
         do_text.treename = self.id_data.name
+
+    def draw_buttons_ext(self, context, layout):
+        self.draw_buttons(context, layout)
+        layout.prop(self, "precision")
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', "a")
