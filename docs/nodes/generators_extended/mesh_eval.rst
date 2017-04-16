@@ -40,7 +40,7 @@ Mesh Expression node uses JSON, which should be a dictionary with following keys
 * "defaults". This should be a dictionary. Keys are variable names, and values are default variable values. Values can be:
   
   * integer or floating-point numbers;
-  * string expressions (see expression syntax below). Note that expressions in "defaults" section are evaluated in alphabetical order of variable names. So, you can express "Y" in terms of "Y", but not vice versa.
+  * string expressions (see expression syntax below). Note that expressions in "defaults" section are evaluated in alphabetical order of variable names. So, you can express "Y" in terms of "X", but not vice versa.
 
 See also JSON examples below.
 
@@ -78,7 +78,12 @@ Set of inputs for this node depends on used JSON definition. Each variable used 
 Parameters
 ----------
 
-This node has one parameter: **File name**. Its value should be the name of existing Blender's text buffer.
+This node has the following parameters:
+
+- **File name**. Its value should be the name of existing Blender's text buffer.
+- **Precision**. Number of decimal places used for points coordinates when
+  generating mesh definition by **from selection** operator. Default value is
+  8. This parameter is only available in the N panel.
 
 Operators
 ---------

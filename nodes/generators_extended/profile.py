@@ -448,8 +448,13 @@ class SvPrifilizer(bpy.types.Operator):
     treename = StringProperty(name='treename')
 
     def stringadd(self, x):
-        a = str(round(x[0],8)) + ',' + str(round(x[1],8)) + ' '
+        precision = bpy.data.node_groups[self.treename].nodes[self.nodename].precision
+        a = str(round(x[0], precision)) + ',' + str(round(x[1], precision)) + ' '
         return a
+    
+    def curve_points_count(self):
+        count = bpy.data.node_groups[self.treename].nodes[self.nodename].curve_points_count
+        return str(count)
 
     def execute(self, context):
         if not bpy.context.selected_objects[0].type == 'CURVE':
@@ -483,7 +488,8 @@ class SvPrifilizer(bpy.types.Operator):
                     values += self.stringadd(hr)
                     values += self.stringadd(hl)
                     values += self.stringadd(co)
-                    values += '20 0 '
+                    values += self.curve_points_count()
+                    values += ' 0 '
                     values += '\n'
                 elif c == 'L ' and not line:
                     line = True
@@ -549,6 +555,14 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
     filename = StringProperty(default="", update=updateNode)
     posxy = FloatVectorProperty(default=(0.0, 0.0), size=2)
     extended_parsing = BoolProperty(default=False)
+    precision = IntProperty(name = "Precision",
+                    description = "Number of decimal places used for coordinates when generating profile from selection",
+                    min=0, max=10, default=8,
+                    update=updateNode)
+    curve_points_count = IntProperty(name = "Curve points count",
+                    description = "Default number of points on curve segment",
+                    min=1, max=100, default=20,
+                    update=updateNode)
 
     def draw_buttons(self, context, layout):
         col = layout.column(align=True)
@@ -565,6 +579,9 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons_ext(self, context, layout):
         row = layout.row(align=True)
         row.prop(self, "extended_parsing", text="extended parsing")
+        layout.label("Profile Generator settings")
+        layout.prop(self, "precision")
+        layout.prop(self, "curve_points_count")
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', "a", "a")
