@@ -448,7 +448,8 @@ class SvPrifilizer(bpy.types.Operator):
     treename = StringProperty(name='treename')
 
     def stringadd(self, x):
-        a = str(round(x[0],8)) + ',' + str(round(x[1],8)) + ' '
+        precision = bpy.data.node_groups[self.treename].nodes[self.nodename].precision
+        a = str(round(x[0], precision)) + ',' + str(round(x[1], precision)) + ' '
         return a
 
     def execute(self, context):
@@ -549,6 +550,10 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
     filename = StringProperty(default="", update=updateNode)
     posxy = FloatVectorProperty(default=(0.0, 0.0), size=2)
     extended_parsing = BoolProperty(default=False)
+    precision = IntProperty(name = "Precision",
+                    description = "Number of decimal places used for coordinates when generating profile from selection",
+                    min=0, max=10, default=8,
+                    update=updateNode)
 
     def draw_buttons(self, context, layout):
         col = layout.column(align=True)
@@ -565,6 +570,7 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons_ext(self, context, layout):
         row = layout.row(align=True)
         row.prop(self, "extended_parsing", text="extended parsing")
+        layout.prop(self, "precision")
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', "a", "a")
