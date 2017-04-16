@@ -67,7 +67,8 @@ class SvBMOpsNode(bpy.types.Node, SverchCustomTreeNode):
         if not self.outputs['bmesh_list'].is_linked:
             return
         bml, val, e = self.inputs
-        v = safc(bml.sv_get(), val.sv_get([[1]*12]))
+        obj = bml.sv_get()
+        v = safc(obj, val.sv_get([[1]*12]))
         outp = []
         op = "bmesh.ops."+self.oper
         if e.is_linked:
