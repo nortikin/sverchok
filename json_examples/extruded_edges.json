@@ -1,5 +1,5 @@
 {
-  "export_version": "0.062",
+  "export_version": "0.064",
   "framed_nodes": {},
   "groups": {},
   "nodes": {
@@ -158,8 +158,8 @@
       "hide": false,
       "label": "",
       "location": [
-        182.10232543945312,
-        14.002243041992188
+        205.79592895507812,
+        -36.27894592285156
       ],
       "params": {
         "formula": "x/2"
@@ -347,7 +347,7 @@
       "width": 140.0
     },
     "Vector Math": {
-      "bl_idname": "VectorMathNode",
+      "bl_idname": "SvVectorMathNodeMK2",
       "color": [
         0.6079999804496765,
         0.6079999804496765,
@@ -355,19 +355,18 @@
       ],
       "height": 100.0,
       "hide": false,
-      "label": "ADD",
+      "label": "",
       "location": [
-        384.7108154296875,
-        -97.07259368896484
+        381.02398681640625,
+        139.89303588867188
       ],
       "params": {
-        "items_": "ADD",
-        "scalar_output_socket": 0
+        "current_op": "SCALAR"
       },
       "width": 140.0
     },
-    "Vector Math.001": {
-      "bl_idname": "VectorMathNode",
+    "Vector Math.003": {
+      "bl_idname": "SvVectorMathNodeMK2",
       "color": [
         0.6079999804496765,
         0.6079999804496765,
@@ -375,19 +374,18 @@
       ],
       "height": 100.0,
       "hide": false,
-      "label": "ADD",
+      "label": "",
       "location": [
-        483.29547119140625,
-        79.04876708984375
+        397.37127685546875,
+        -49.569976806640625
       ],
       "params": {
-        "items_": "ADD",
-        "scalar_output_socket": 0
+        "current_op": "ADD"
       },
       "width": 140.0
     },
-    "Vector Math.002": {
-      "bl_idname": "VectorMathNode",
+    "Vector Math.004": {
+      "bl_idname": "SvVectorMathNodeMK2",
       "color": [
         0.6079999804496765,
         0.6079999804496765,
@@ -395,19 +393,24 @@
       ],
       "height": 100.0,
       "hide": false,
-      "label": "SCALAR",
+      "label": "",
       "location": [
-        320.21759033203125,
-        159.11148071289062
+        402.2343444824219,
+        -189.0459442138672
       ],
       "params": {
-        "items_": "SCALAR",
-        "scalar_output_socket": 0
+        "current_op": "ADD"
       },
       "width": 140.0
     }
   },
   "update_lists": [
+    [
+      "Integer",
+      "Integer",
+      "Float Series",
+      "Stop"
+    ],
     [
       "Box",
       "Vers",
@@ -423,36 +426,48 @@
     [
       "Calc Normals",
       "VertexNormals",
-      "Vector Math.002",
-      "U"
+      "Vector Math",
+      "A"
     ],
     [
       "Float.001",
       "Float",
-      "Vector Math.002",
-      "S"
+      "Vector Math",
+      "B"
     ],
     [
-      "Vector Math.002",
-      "W",
+      "Vector Math",
+      "Out",
+      "Vector Math.004",
+      "A"
+    ],
+    [
+      "Box",
+      "Vers",
+      "Vector Math.004",
+      "B"
+    ],
+    [
+      "Vector Math",
+      "Out",
       "Formula2",
       "X"
     ],
     [
       "Formula2",
       "Result",
-      "Vector Math.001",
-      "U"
+      "Vector Math.003",
+      "A"
     ],
     [
       "Box",
       "Vers",
-      "Vector Math.001",
-      "V"
+      "Vector Math.003",
+      "B"
     ],
     [
-      "Vector Math.001",
-      "W",
+      "Vector Math.003",
+      "Out",
       "Randomize Vertices",
       "Vertices"
     ],
@@ -481,20 +496,8 @@
       "Seed"
     ],
     [
-      "Vector Math.002",
-      "W",
-      "Vector Math",
-      "U"
-    ],
-    [
-      "Box",
-      "Vers",
-      "Vector Math",
-      "V"
-    ],
-    [
-      "Vector Math",
-      "W",
+      "Vector Math.004",
+      "Out",
       "List Join",
       "data"
     ],
@@ -527,12 +530,6 @@
       "Range",
       "Vector Interpolation.001",
       "Interval"
-    ],
-    [
-      "Integer",
-      "Integer",
-      "Float Series",
-      "Stop"
     ],
     [
       "Vector Interpolation.001",
