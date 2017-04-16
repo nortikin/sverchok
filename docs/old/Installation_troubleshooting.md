@@ -1,4 +1,4 @@
-###Troubleshooting Installation Errors
+### Troubleshooting Installation Errors
 
 #### NumPy
 
