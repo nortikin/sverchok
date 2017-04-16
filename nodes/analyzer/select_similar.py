@@ -26,7 +26,7 @@ from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
 
 class SvSelectSimilarNode(bpy.types.Node, SverchCustomTreeNode):
     '''
-    Select similar elements ///
+    Like Blender's Shift+G ///
     
     Select vertices, edges, faces similar to selected ones'''
 
