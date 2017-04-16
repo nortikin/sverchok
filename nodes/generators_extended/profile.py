@@ -522,9 +522,8 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
     This node expects simple input, or vectorized input.
     - sockets with no input are automatically 0, not None
     - The longest input array will be used to extend the shorter ones, using last value repeat.
-    
-
     '''
+
     bl_idname = 'SvProfileNode'
     bl_label = 'Profile Parametric'
     bl_icon = 'OUTLINER_OB_EMPTY'
