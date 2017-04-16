@@ -1,5 +1,5 @@
 {
-  "export_version": "0.055",
+  "export_version": "0.064",
   "framed_nodes": {},
   "groups": {},
   "nodes": {
@@ -273,8 +273,8 @@
       "params": {},
       "width": 140.0
     },
-    "Matrix in": {
-      "bl_idname": "MatrixGenNode",
+    "Matrix in.001": {
+      "bl_idname": "SvMatrixGenNodeMK2",
       "color": [
         0.6079999804496765,
         0.6079999804496765,
@@ -284,8 +284,8 @@
       "hide": false,
       "label": "",
       "location": [
-        303.0152587890625,
-        -829.9715576171875
+        301.59991455078125,
+        -812.436279296875
       ],
       "params": {},
       "width": 140.0
@@ -314,62 +314,32 @@
     [
       "List Range Int.003",
       "Range",
-      "Formula2.001",
+      "Formula2",
       "X"
     ],
     [
       "Float Series.001",
       "Range",
-      "Formula2.001",
+      "Formula2",
       "n[0]"
-    ],
-    [
-      "Float Series.001",
-      "Range",
-      "Formula2.001",
-      "n[1]"
-    ],
-    [
-      "List Range Int",
-      "Range",
-      "Formula2.002",
-      "X"
-    ],
-    [
-      "Float Series",
-      "Range",
-      "Formula2.002",
-      "n[0]"
-    ],
-    [
-      "List Range Int",
-      "Range",
-      "Formula2.003",
-      "X"
-    ],
-    [
-      "Float Series",
-      "Range",
-      "Formula2.003",
-      "n[0]"
-    ],
-    [
-      "Float Series",
-      "Range",
-      "Formula2.003",
-      "n[1]"
     ],
     [
       "List Range Int.003",
       "Range",
-      "Formula2",
+      "Formula2.001",
       "X"
     ],
     [
       "Float Series.001",
       "Range",
-      "Formula2",
+      "Formula2.001",
       "n[0]"
+    ],
+    [
+      "Float Series.001",
+      "Range",
+      "Formula2.001",
+      "n[1]"
     ],
     [
       "Formula2.001",
@@ -390,16 +360,22 @@
       "Z"
     ],
     [
-      "Formula2.003",
-      "Result",
-      "Gen Vectors.003",
-      "X"
+      "Gen Vectors.001",
+      "Vectors",
+      "Matrix in.001",
+      "Location"
     ],
     [
-      "Formula2.002",
-      "Result",
-      "Gen Vectors.003",
-      "Y"
+      "Gen Vectors.001",
+      "Vectors",
+      "Matrix in.001",
+      "Rotation"
+    ],
+    [
+      "Integer.001",
+      "Integer",
+      "Matrix in.001",
+      "Angle"
     ],
     [
       "List Range Int.001",
@@ -414,22 +390,46 @@
       "data 1"
     ],
     [
-      "Gen Vectors.001",
-      "Vectors",
-      "Matrix in",
-      "Location"
+      "List Range Int",
+      "Range",
+      "Formula2.003",
+      "X"
     ],
     [
-      "Gen Vectors.001",
-      "Vectors",
-      "Matrix in",
-      "Rotation"
+      "Float Series",
+      "Range",
+      "Formula2.003",
+      "n[0]"
     ],
     [
-      "Integer.001",
-      "Integer",
-      "Matrix in",
-      "Angle"
+      "Float Series",
+      "Range",
+      "Formula2.003",
+      "n[1]"
+    ],
+    [
+      "List Range Int",
+      "Range",
+      "Formula2.002",
+      "X"
+    ],
+    [
+      "Float Series",
+      "Range",
+      "Formula2.002",
+      "n[0]"
+    ],
+    [
+      "Formula2.003",
+      "Result",
+      "Gen Vectors.003",
+      "X"
+    ],
+    [
+      "Formula2.002",
+      "Result",
+      "Gen Vectors.003",
+      "Y"
     ],
     [
       "Gen Vectors.003",
@@ -444,7 +444,7 @@
       "edg_pol"
     ],
     [
-      "Matrix in",
+      "Matrix in.001",
       "Matrix",
       "Viewer Draw2",
       "matrix"
