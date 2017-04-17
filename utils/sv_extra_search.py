@@ -27,15 +27,15 @@ from sverchok.ui.sv_icons import custom_icon
 from sverchok.utils.sv_default_macros import macros, DefaultMacros
 from nodeitems_utils import _node_categories
 
+# pylint: disable=c0326
+
 sv_tree_types = {'SverchCustomTreeType', 'SverchGroupTreeType'}
 node_cats = make_node_cats()
 addon_name = sverchok.__name__
 
 loop = {}
 loop_reverse = {}
-# pylint: disable=c0326
-
-
+local_macros = {}
 ddir = lambda content: [n for n in dir(content) if not n.startswith('__')]
 
 
@@ -50,20 +50,20 @@ def slice_docstring(desc):
         desc = desc.strip().split('///')[0]
     return desc
 
-def ensure_valid_show_string(item):
-    '''  the font is not fixed width, it makes litle sense to calculate chars'''
+def ensure_short_description(description):
+    '''  the font is not fixed width, it makes litle sense to calculate chars '''
     hardcoded_maxlen = 20
-    nodetype = getattr(bpy.types, item[0])
-    loop_reverse[nodetype.bl_label] = item[0]
-    description = slice_docstring(nodetype.bl_rna.description).strip()
-
-    # ensure it's not too long
     if description:
         if len(description) > hardcoded_maxlen:
             description = description[:hardcoded_maxlen]
         description = ' | ' + description
-    
-    return nodetype.bl_label + description
+    return description
+
+def ensure_valid_show_string(item):
+    nodetype = getattr(bpy.types, item[0])
+    loop_reverse[nodetype.bl_label] = item[0]
+    description = slice_docstring(nodetype.bl_rna.description).strip()
+    return nodetype.bl_label + ensure_short_description(description)
 
 def function_iterator(module_file):
     for name in ddir(module_file):
@@ -73,10 +73,11 @@ def function_iterator(module_file):
 
 def get_main_macro_module(fullpath):
     if os.path.exists(fullpath):
+        print('--- first time getting sv_macro_module --- ')
         spec = getutil.spec_from_file_location("macro_module.name", fullpath)
         macro_module = getutil.module_from_spec(spec)
         spec.loader.exec_module(macro_module)
-        globals()['sv_macro_module'] = macro_module
+        local_macros['sv_macro_module'] = macro_module
         return macro_module
 
 def fx_extend(idx, datastorage, filepath):
@@ -84,7 +85,10 @@ def fx_extend(idx, datastorage, filepath):
     datafiles = r'C:\Users\zeffi\AppData\Roaming\Blender Foundation\Blender\2.78' 
     fullpath = os.path.join(datafiles, filepath)
 
-    macro_module = get_main_macro_module(fullpath)
+    # load from previous obtained module, else get from fullpath.
+    macro_module = local_macros.get('sv_macro_module')
+    if not macro_module:
+        macro_module = get_main_macro_module(fullpath)
     if not macro_module:
         return
 
@@ -138,6 +142,7 @@ class SvExtraSearch(bpy.types.Operator):
         return loop_reverse[bl_label]
 
     def execute(self, context):
+        # print(context.space_data.cursor_location)  (in nodeview space)
         # self.report({'INFO'}, "Selected: %s" % self.my_enum)
         if self.my_enum.isnumeric():
             macro_bl_idname = self.bl_idname_from_bl_label(self)
@@ -150,15 +155,14 @@ class SvExtraSearch(bpy.types.Operator):
                 handler, term = macro_reference.get('ident')
                 getattr(DefaultMacros, handler)(self, context, term)
 
-            elif hasattr(globals()['sv_macro_module'], self.my_enum):
-                func = getattr(globals()['sv_macro_module'], self.my_enum)
+            elif hasattr(local_macros['sv_macro_module'], self.my_enum):
+                func = getattr(local_macros['sv_macro_module'], self.my_enum)
                 func(self, context)
-
 
         return {'FINISHED'}
 
     def invoke(self, context, event):
-        # event contains mouse xy, can pass too! 
+        context.space_data.cursor_location_from_region(event.mouse_region_x, event.mouse_region_y)
         loop['results'] = gather_items()
         wm = context.window_manager
         wm.invoke_search_popup(self)
