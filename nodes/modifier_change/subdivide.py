@@ -114,7 +114,7 @@ class SvSubdivideNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('VerticesSocket', "Vertices", "Vertices")
         self.inputs.new('StringsSocket', 'Edges', 'Edges')
         self.inputs.new('StringsSocket', 'Faces', 'Faces')
-        self.inputs.new('StringsSocket', 'Mask')
+        self.inputs.new('StringsSocket', 'EdgeMask')
 
         self.inputs.new('StringsSocket', 'Cuts').prop_name = "cuts"
         self.inputs.new('StringsSocket', 'Smooth').prop_name = "smooth"
@@ -135,7 +135,7 @@ class SvSubdivideNode(bpy.types.Node, SverchCustomTreeNode):
         vertices_s = self.inputs['Vertices'].sv_get()
         edges_s = self.inputs['Edges'].sv_get(default=[[]])
         faces_s = self.inputs['Faces'].sv_get(default=[[]])
-        masks_s = self.inputs['Mask'].sv_get(default=[[1]])
+        masks_s = self.inputs['EdgeMask'].sv_get(default=[[1]])
 
         cuts_s = self.inputs['Cuts'].sv_get()[0]
         smooth_s = self.inputs['Smooth'].sv_get()[0]
