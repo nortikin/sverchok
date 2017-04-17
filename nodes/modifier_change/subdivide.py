@@ -48,16 +48,24 @@ class SvSubdivideNode(bpy.types.Node, SverchCustomTreeNode):
         ]
 
     def update_mode(self, context):
+        self.outputs['NewVertices'].hide_safe = not self.show_new
+        self.outputs['NewEdges'].hide_safe = not self.show_new
+        self.outputs['NewFaces'].hide_safe = not self.show_new
+
+        self.outputs['OldVertices'].hide_safe = not self.show_old
+        self.outputs['OldEdges'].hide_safe = not self.show_old
+        self.outputs['OldFaces'].hide_safe = not self.show_old
+
         updateNode(self, context)
 
     falloff_type = EnumProperty(name = "Falloff",
             items = falloff_types,
             default = "4",
-            update=update_mode)
+            update=updateNode)
     corner_type = EnumProperty(name = "Corner Cut Type",
             items = corner_types,
             default = "0",
-            update=update_mode)
+            update=updateNode)
 
     cuts = IntProperty(name = "Number of Cuts",
             description = "Specifies the number of cuts per edge to make",
@@ -96,19 +104,49 @@ class SvSubdivideNode(bpy.types.Node, SverchCustomTreeNode):
             default = False,
             update=updateNode)
 
+    show_new = BoolProperty(name = "Show New",
+            description = "Show outputs with new geometry",
+            default = False,
+            update=update_mode)
+    show_old = BoolProperty(name = "Show Old",
+            description = "Show outputs with old geometry",
+            default = False,
+            update=update_mode)
+    show_options = BoolProperty(name = "Show Options",
+            description = "Show options on the node",
+            default = False,
+            update=updateNode)
+
+    def draw_common(self, context, layout):
+        col = layout.column(align=True)
+        row = col.row(align=True)
+        row.prop(self, "show_old", toggle=True)
+        row.prop(self, "show_new", toggle=True)
+        col.prop(self, "show_options", toggle=True)
+
+    def draw_options(self, context, layout):
+        col = layout.column(align=True)
+        col.prop(self, "falloff_type")
+        col.prop(self, "corner_type")
+
+        row = layout.row(align=True)
+        col = row.column(align=True)
+        col.prop(self, "grid_fill", toggle=True)
+        col.prop(self, "single_edge", toggle=True)
+
+        col = row.column(align=True)
+        col.prop(self, "only_quads", toggle=True)
+        col.prop(self, "smooth_even", toggle=True)
+
     def draw_buttons(self, context, layout):
-        pass
+        self.draw_common(context, layout)
+        if self.show_options:
+            self.draw_options(context, layout)
 
     def draw_buttons_ext(self, context, layout):
-        self.draw_buttons(context, layout)
-        layout.prop(self, "falloff_type")
-        layout.prop(self, "corner_type")
+        self.draw_common(context, layout)
+        self.draw_options(context, layout)
 
-        col = layout.column()
-        col.prop(self, "grid_fill")
-        col.prop(self, "single_edge")
-        col.prop(self, "only_quads")
-        col.prop(self, "smooth_even")
 
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', "Vertices", "Vertices")
@@ -126,7 +164,26 @@ class SvSubdivideNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('StringsSocket', 'Edges')
         self.outputs.new('StringsSocket', 'Faces')
 
+        self.outputs.new('VerticesSocket', 'NewVertices')
+        self.outputs.new('StringsSocket', 'NewEdges')
+        self.outputs.new('StringsSocket', 'NewFaces')
+
+        self.outputs.new('VerticesSocket', 'OldVertices')
+        self.outputs.new('StringsSocket', 'OldEdges')
+        self.outputs.new('StringsSocket', 'OldFaces')
+
         self.update_mode(context)
+
+    def get_result_pydata(self, geom):
+        new_verts = [v for v in geom if isinstance(v, bmesh.types.BMVert)]
+        new_edges = [e for e in geom if isinstance(e, bmesh.types.BMEdge)]
+        new_faces = [f for f in geom if isinstance(f, bmesh.types.BMFace)]
+
+        new_verts = [tuple(v.co) for v in new_verts]
+        new_edges = [[v.index for v in edge.verts] for edge in new_edges]
+        new_faces = [[v.index for v in face.verts] for face in new_faces]
+
+        return new_verts, new_edges, new_faces
 
     def process(self):
         if not any(output.is_linked for output in self.outputs):
@@ -146,6 +203,14 @@ class SvSubdivideNode(bpy.types.Node, SverchCustomTreeNode):
         result_vertices = []
         result_edges = []
         result_faces = []
+
+        r_inner_vertices = []
+        r_inner_edges = []
+        r_inner_faces = []
+
+        r_split_vertices = []
+        r_split_edges = []
+        r_split_faces = []
 
         meshes = match_long_repeat([vertices_s, edges_s, faces_s, masks_s, cuts_s, smooth_s, fractal_s, along_normal_s, seed_s])
         for vertices, edges, faces, masks, cuts, smooth, fractal, along_normal, seed in zip(*meshes):
@@ -176,16 +241,36 @@ class SvSubdivideNode(bpy.types.Node, SverchCustomTreeNode):
                     use_single_edge = self.single_edge,
                     use_only_quads = self.only_quads,
                     use_smooth_even = self.smooth_even)
-            new_vertices, new_edges, new_faces = pydata_from_bmesh(bm)
+
+            new_verts, new_edges, new_faces = pydata_from_bmesh(bm)
+            inner_verts, inner_edges, inner_faces = self.get_result_pydata(geom['geom_inner'])
+            split_verts, split_edges, split_faces = self.get_result_pydata(geom['geom_split'])
+
             bm.free()
 
-            result_vertices.append(new_vertices)
+            result_vertices.append(new_verts)
             result_edges.append(new_edges)
             result_faces.append(new_faces)
+
+            r_inner_vertices.append(inner_verts)
+            r_inner_edges.append(inner_edges)
+            r_inner_faces.append(inner_faces)
+
+            r_split_vertices.append(split_verts)
+            r_split_edges.append(split_edges)
+            r_split_faces.append(split_faces)
 
         self.outputs['Vertices'].sv_set(result_vertices)
         self.outputs['Edges'].sv_set(result_edges)
         self.outputs['Faces'].sv_set(result_faces)
+
+        self.outputs['NewVertices'].sv_set(r_inner_vertices)
+        self.outputs['NewEdges'].sv_set(r_inner_edges)
+        self.outputs['NewFaces'].sv_set(r_inner_faces)
+
+        self.outputs['OldVertices'].sv_set(r_split_vertices)
+        self.outputs['OldEdges'].sv_set(r_split_edges)
+        self.outputs['OldFaces'].sv_set(r_split_faces)
 
 
 def register():
