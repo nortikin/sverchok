@@ -237,6 +237,7 @@ class SvSubdivideNode(bpy.types.Node, SverchCustomTreeNode):
                     smooth_falloff = int(self.falloff_type),
                     fractal = fractal, along_normal = along_normal,
                     cuts = cuts, seed = seed,
+                    quad_corner_type = int(self.corner_type),
                     use_grid_fill = self.grid_fill,
                     use_single_edge = self.single_edge,
                     use_only_quads = self.only_quads,
