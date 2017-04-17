@@ -66,3 +66,19 @@ This node has the following outputs:
 Examples of usage
 -----------------
 
+The simplest example, subdivide a cube:
+
+.. image:: https://cloud.githubusercontent.com/assets/284644/25096716/476682dc-23c3-11e7-8788-624be2573d3b.png
+
+Subdivide one face of a cube, with smoothing:
+
+.. image:: https://cloud.githubusercontent.com/assets/284644/25096718/47976654-23c3-11e7-8da8-87ea420d8355.png
+
+Subdivide a cube, with smooth falloff type = Smooth:
+
+.. image:: https://cloud.githubusercontent.com/assets/284644/25096717/4794fed2-23c3-11e7-8c53-28fb1d18b69d.png
+
+Subdivide a torus, with smooth falloff type = Sphere:
+
+.. image:: https://cloud.githubusercontent.com/assets/284644/25096721/479a2c72-23c3-11e7-9012-612ce3fd1039.png
+
