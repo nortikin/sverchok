@@ -84,7 +84,7 @@ class SvNumberNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('StringsSocket', "Float").custom_draw = 'mode_custom_draw'
 
 
-    def mode_custom_draw(self, context, layout):
+    def mode_custom_draw(self, socket, context, layout):
 
         if not self.show_limits:
             r = layout.row(align=True)
