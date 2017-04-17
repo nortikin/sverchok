@@ -33,7 +33,6 @@ addon_name = sverchok.__name__
 
 loop = {}
 loop_reverse = {}
-
 # pylint: disable=c0326
 
 
@@ -77,6 +76,7 @@ def get_main_macro_module(fullpath):
         spec = getutil.spec_from_file_location("macro_module.name", fullpath)
         macro_module = getutil.module_from_spec(spec)
         spec.loader.exec_module(macro_module)
+        globals()['sv_macro_module'] = macro_module
         return macro_module
 
 def fx_extend(idx, datastorage, filepath):
@@ -144,11 +144,16 @@ class SvExtraSearch(bpy.types.Operator):
             DefaultMacros.ensure_nodetree(self, context)
             bpy.ops.node.sv_macro_interpretter(macro_bl_idname=macro_bl_idname)
         else:
-            print(self.my_enum)
             macro_reference = macros.get(self.my_enum)
+
             if macro_reference:
                 handler, term = macro_reference.get('ident')
                 getattr(DefaultMacros, handler)(self, context, term)
+
+            elif hasattr(globals()['sv_macro_module'], self.my_enum):
+                func = getattr(globals()['sv_macro_module'], self.my_enum)
+                func(self, context)
+
 
         return {'FINISHED'}
 
