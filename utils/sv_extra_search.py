@@ -16,7 +16,8 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-
+import os
+import importlib.util as getutil
 import bpy
 
 import sverchok
@@ -35,8 +36,15 @@ loop_reverse = {}
 
 # pylint: disable=c0326
 
+
+ddir = lambda content: [n for n in dir(content) if not n.startswith('__')]
+
+
 def format_item(k, v):
     return k + " | " + v['display_name']
+
+def format_macro_item(k, v):
+    return '< ' + k.replace('_', ' ') + " | " + slice_docstring(v)
 
 def slice_docstring(desc):
     if '///' in desc:
@@ -58,6 +66,33 @@ def ensure_valid_show_string(item):
     
     return nodetype.bl_label + description
 
+def function_iterator(module_file):
+    for name in ddir(module_file):
+        obj = getattr(module_file, name)
+        if callable(obj):
+            yield name, obj.__doc__
+
+def get_main_macro_module(fullpath):
+    if os.path.exists(fullpath):
+        spec = getutil.spec_from_file_location("macro_module.name", fullpath)
+        macro_module = getutil.module_from_spec(spec)
+        spec.loader.exec_module(macro_module)
+        return macro_module
+
+def fx_extend(idx, datastorage, filepath):
+    # shall be dynamic
+    datafiles = r'C:\Users\zeffi\AppData\Roaming\Blender Foundation\Blender\2.78' 
+    fullpath = os.path.join(datafiles, filepath)
+
+    macro_module = get_main_macro_module(fullpath)
+    if not macro_module:
+        return
+
+    for func_name, func_descriptor in function_iterator(macro_module):
+        datastorage.append((func_name, format_macro_item(func_name, func_descriptor), '', idx))
+        idx +=1
+
+
 def gather_items():
     fx = []
     idx = 0
@@ -72,8 +107,8 @@ def gather_items():
     for k, v in macros.items():
         fx.append((k, format_item(k, v), '', idx))
         idx += 1
-
-    # extend(idx, fx, '/datafiles/sverchok/user_macros.fx')
+    
+    fx_extend(idx, fx, 'datafiles/sverchok/user_macros/macros.py')
 
     return fx
 
