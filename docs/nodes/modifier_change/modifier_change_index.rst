@@ -6,6 +6,7 @@ Modifier Change
    :maxdepth: 2
 
    bevel
+   subdivide
    delete_loose
    edges_intersect
    extrude_edges
