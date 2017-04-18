@@ -80,10 +80,9 @@ def get_main_macro_module(fullpath):
         local_macros['sv_macro_module'] = macro_module
         return macro_module
 
-def fx_extend(idx, datastorage, filepath):
-
+def fx_extend(idx, datastorage):
     datafiles = os.path.join(bpy.utils.user_resource('DATAFILES', path='sverchok', create=True))
-    fullpath = os.path.join(datafiles, filepath)
+    fullpath = os.path.join(datafiles, 'user_macros', 'macros.py')
 
     # load from previous obtained module, else get from fullpath.
     macro_module = local_macros.get('sv_macro_module')
@@ -112,7 +111,7 @@ def gather_items():
         fx.append((k, format_item(k, v), '', idx))
         idx += 1
     
-    fx_extend(idx, fx, 'user_macros/macros.py')
+    fx_extend(idx, fx)
 
     return fx
 
