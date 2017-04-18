@@ -520,6 +520,8 @@ class SvPrifilizer(bpy.types.Operator):
 
 class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
     '''
+    svg-like 2d profiles ///
+
     SvProfileNode generates one or more profiles / elevation segments using;
     assignments, variables, and a string descriptor similar to SVG.
 
@@ -527,6 +529,7 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
     - sockets with no input are automatically 0, not None
     - The longest input array will be used to extend the shorter ones, using last value repeat.
     '''
+
     bl_idname = 'SvProfileNode'
     bl_label = 'Profile Parametric'
     bl_icon = 'OUTLINER_OB_EMPTY'

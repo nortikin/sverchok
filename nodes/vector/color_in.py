@@ -36,7 +36,7 @@ def fprop_generator(**altprops):
 
 
 class SvColorsInNode(bpy.types.Node, SverchCustomTreeNode):
-    ''' Generator for Color data , color combine'''
+    ''' rgb(a) ---> color /// Generator for Color data'''
     bl_idname = 'SvColorsInNode'
     bl_label = 'Color in'
     sv_icon = 'SV_COMBINE_IN'
