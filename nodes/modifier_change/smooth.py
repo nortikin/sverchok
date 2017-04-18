@@ -150,18 +150,26 @@ class SvSmoothNode(bpy.types.Node, SverchCustomTreeNode):
             fullList(masks,  len(vertices))
 
             bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True)
+            bm.verts.ensure_lookup_table()
+            bm.edges.ensure_lookup_table()
+            bm.faces.ensure_lookup_table()
             selected_verts = [vert for mask, vert in zip(masks, bm.verts) if mask]
 
             for i in range(self.iterations):
                 if self.laplacian:
-                    #print("Factor={}, Border={}".format(factor, border_factor))
-                    bmesh.ops.smooth_laplacian_vert(bm, verts = bm.verts,
+                    print("==========")
+                    print("Factor={}, Border={}".format(factor, border_factor))
+                    for f in bm.faces:
+                        f.select = True
+                    bmesh.ops.smooth_laplacian_vert(bm, verts = list(bm.verts),
                             lambda_factor = factor,
                             lambda_border = border_factor,
                             use_x = self.use_x,
                             use_y = self.use_y,
                             use_z = self.use_z,
                             preserve_volume = self.preserve_volume)
+                    for v in bm.verts:
+                        print(v.co)
                 else:
                     bmesh.ops.smooth_vert(bm, verts = selected_verts,
                             factor = factor,
