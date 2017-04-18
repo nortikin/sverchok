@@ -81,8 +81,8 @@ def get_main_macro_module(fullpath):
         return macro_module
 
 def fx_extend(idx, datastorage, filepath):
-    # shall be dynamic
-    datafiles = r'C:\Users\zeffi\AppData\Roaming\Blender Foundation\Blender\2.78' 
+
+    datafiles = os.path.join(bpy.utils.user_resource('DATAFILES', path='sverchok', create=True))
     fullpath = os.path.join(datafiles, filepath)
 
     # load from previous obtained module, else get from fullpath.
@@ -112,7 +112,7 @@ def gather_items():
         fx.append((k, format_item(k, v), '', idx))
         idx += 1
     
-    fx_extend(idx, fx, 'datafiles/sverchok/user_macros/macros.py')
+    fx_extend(idx, fx, 'user_macros/macros.py')
 
     return fx
 
