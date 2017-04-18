@@ -131,13 +131,6 @@ class SvExtraSearch(bpy.types.Operator):
 
     def bl_idname_from_bl_label(self, context):
         macro_result = loop['results'][int(self.my_enum)]
-        """
-        if ' | ' in macro_result[1]:
-            bl_label = macro_result[1].split(' | ')[0].strip()
-        else:
-            bl_label = macro_result[1].strip()
-        """
-
         bl_label = macro_result[1].split(' | ')[0].strip()
         return loop_reverse[bl_label]
 
