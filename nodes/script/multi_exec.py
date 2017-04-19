@@ -65,6 +65,13 @@ class SvExecNodeMod(bpy.types.Node, SverchCustomTreeNode):
     dynamic_strings = bpy.props.CollectionProperty(type=SvExecNodeDynaStringItem)
 
     def draw_buttons(self, context, layout):
+        row = layout.row(align=True)
+        # add() remove() clear() move()
+        row.operator('node.callback_execnodemod', text='', icon='ZOOMIN').cmd = 'add_new_line'
+        row.operator('node.callback_execnodemod', text='', icon='ZOOMOUT').cmd = 'remove_last_line'
+        row.operator('node.callback_execnodemod', text='', icon='TRIA_UP').cmd = 'shift_up'
+        row.operator('node.callback_execnodemod', text='', icon='TRIA_DOWN').cmd = 'shift_down'
+
         if len(self.dynamic_strings) == 0:
             return
 
@@ -77,13 +84,6 @@ class SvExecNodeMod(bpy.types.Node, SverchCustomTreeNode):
             col = layout.column(align=True)
             for idx, line in enumerate(self.dynamic_strings):
                 col.prop(self.dynamic_strings[idx], "line", text="")
-
-        row = layout.row(align=True)
-        # add() remove() clear() move()
-        row.operator('node.callback_execnodemod', text='', icon='ZOOMIN').cmd = 'add_new_line'
-        row.operator('node.callback_execnodemod', text='', icon='ZOOMOUT').cmd = 'remove_last_line'
-        row.operator('node.callback_execnodemod', text='', icon='TRIA_UP').cmd = 'shift_up'
-        row.operator('node.callback_execnodemod', text='', icon='TRIA_DOWN').cmd = 'shift_down'
 
     def draw_buttons_ext(self, context, layout):
         col = layout.column(align=True)
