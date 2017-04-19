@@ -71,7 +71,8 @@ class SvExecNodeMod(bpy.types.Node, SverchCustomTreeNode):
         row.operator('node.callback_execnodemod', text='', icon='ZOOMOUT').cmd = 'remove_last_line'
         row.operator('node.callback_execnodemod', text='', icon='TRIA_UP').cmd = 'shift_up'
         row.operator('node.callback_execnodemod', text='', icon='TRIA_DOWN').cmd = 'shift_down'
-        row.operator('node.callback_execnodemod', text='', icon='PACKAGE').cmd = 'delete_blank'
+        row.operator('node.callback_execnodemod', text='', icon='SNAP_ON').cmd = 'delete_blank'
+        row.operator('node.callback_execnodemod', text='', icon='SNAP_OFF').cmd = 'insert_blank'
 
         if len(self.dynamic_strings) == 0:
             return
@@ -114,7 +115,16 @@ class SvExecNodeMod(bpy.types.Node, SverchCustomTreeNode):
         Lines = [i.line for i in sds if i.line != ""]
         sds.clear()
         for i in Lines:
-            self.dynamic_strings.add().line = i
+            sds.add().line = i
+
+    def insert_blank(self, context):
+        sds = self.dynamic_strings
+        Lines = [i.line for i in sds]
+        sds.clear()
+        for i in Lines:
+            sds.add().line = i
+            if i != "":
+                sds.add().line = ""
 
     def copy_from_text(self, context):
         for i, i2 in zip(self.dynamic_strings, bpy.data.texts[self.text].lines):
