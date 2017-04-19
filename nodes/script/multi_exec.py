@@ -71,7 +71,7 @@ class SvExecNodeMod(bpy.types.Node, SverchCustomTreeNode):
         row.operator('node.callback_execnodemod', text='', icon='ZOOMOUT').cmd = 'remove_last_line'
         row.operator('node.callback_execnodemod', text='', icon='TRIA_UP').cmd = 'shift_up'
         row.operator('node.callback_execnodemod', text='', icon='TRIA_DOWN').cmd = 'shift_down'
-        row.operator('node.callback_execnodemod', text='', icon='TRIA_DOWN').cmd = 'delete_blank'
+        row.operator('node.callback_execnodemod', text='', icon='PACKAGE').cmd = 'delete_blank'
 
         if len(self.dynamic_strings) == 0:
             return
