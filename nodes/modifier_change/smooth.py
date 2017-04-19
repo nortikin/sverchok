@@ -35,7 +35,7 @@ class SvSmoothNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs['BorderFactor'].hide_safe = not self.laplacian
         updateNode(self, context)
 
-    laplacian = BoolProperty(name = "Laplacian",
+    laplacian = BoolProperty(name = "Laplacian Smooth",
             description = "Use Laplacian smoothing",
             default = False,
             update=update_mode)
@@ -87,7 +87,7 @@ class SvSmoothNode(bpy.types.Node, SverchCustomTreeNode):
 
     preserve_volume = BoolProperty(name="Preserve volume",
             description = "Apply volume preservation after smooth",
-            default = False,
+            default = True,
             update=updateNode)
 
     def sv_init(self, context):
@@ -108,17 +108,18 @@ class SvSmoothNode(bpy.types.Node, SverchCustomTreeNode):
         self.update_mode(context)
 
     def draw_buttons(self, context, layout):
-        layout.prop(self, "laplacian")
-
-        row = layout.row(align=True)
+        col = layout.column(align=True)
+        row = col.row(align=True)
         row.prop(self, "use_x", toggle=True)
         row.prop(self, "use_y", toggle=True)
         row.prop(self, "use_z", toggle=True)
 
+        col.prop(self, "laplacian", toggle=True)
+
         if self.laplacian:
-            layout.prop(self, "preserve_volume")
+            col.prop(self, "preserve_volume", toggle=True)
         else:
-            row = layout.row(align=True)
+            row = col.row(align=True)
             row.prop(self, "mirror_clip_x", toggle=True)
             row.prop(self, "mirror_clip_y", toggle=True)
             row.prop(self, "mirror_clip_z", toggle=True)
