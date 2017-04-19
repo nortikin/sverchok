@@ -17,6 +17,7 @@ from sverchok.ui import (
     color_def
 )
 
+from sverchok.utils.context_managers import sv_preferences
 
 _state = {'frame': None}
 
@@ -31,14 +32,22 @@ def has_frame_changed(scene):
     _state['frame'] = scene.frame_current
     return not last_frame == scene.frame_current
 
+def invoke_throttling():
+    with sv_preferences() as prefs:
+        if prefs and prefs.throttle_framechange:
+            return True
+
 
 @persistent
 def sv_update_handler(scene):
     """
     Update sverchok node groups on frame change events.
     """
-    if not has_frame_changed(scene):
+    if not invoke_throttling():
+        pass
+    elif not has_frame_changed(scene):
         return
+
     
     for ng in sverchok_trees():
         try:

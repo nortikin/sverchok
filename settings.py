@@ -137,6 +137,8 @@ class SverchokPreferences(AddonPreferences):
     enable_live_objin = BoolProperty(
         description="Objects in edit mode will be updated in object-in Node")
 
+    throttle_framechange = BoolProperty(default=True)
+
 
     def draw(self, context):
         layout = self.layout
@@ -151,6 +153,7 @@ class SverchokPreferences(AddonPreferences):
         col.prop(self, "show_icons")
         col.prop(self, "over_sized_buttons")
         col.prop(self, "enable_live_objin", text='Enable Live Object-In')
+        col.prop(self, "throttle_framechange", text='throttle frame changes')
         col.separator()
 
         col.label(text="Sverchok node theme settings")
