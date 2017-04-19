@@ -46,6 +46,8 @@ def format_macro_item(k, v):
     return '< ' + k.replace('_', ' ') + " | " + slice_docstring(v)
 
 def slice_docstring(desc):
+    if not desc:
+        return ''
     if '///' in desc:
         desc = desc.strip().split('///')[0]
     return desc
@@ -68,7 +70,7 @@ def ensure_valid_show_string(item):
 def function_iterator(module_file):
     for name in ddir(module_file):
         obj = getattr(module_file, name)
-        if callable(obj):
+        if callable(obj) and obj.__doc__ and '///' in obj.__doc__:
             yield name, obj.__doc__
 
 def get_main_macro_module(fullpath):
