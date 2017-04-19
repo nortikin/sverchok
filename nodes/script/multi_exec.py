@@ -111,10 +111,10 @@ class SvExecNodeMod(bpy.types.Node, SverchCustomTreeNode):
     
     def delete_blank(self, context):
         sds = self.dynamic_strings
-        for i in range(len(sds)):
-            if sds[i].line == "":
-                sds.move(i+1, i)
-
+        Lines = [i.line for i in sds if i.line != ""]
+        sds.clear()
+        for i in Lines:
+            self.dynamic_strings.add().line = i
 
     def copy_from_text(self, context):
         for i, i2 in zip(self.dynamic_strings, bpy.data.texts[self.text].lines):
