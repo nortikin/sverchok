@@ -46,3 +46,15 @@ This node has the following outputs:
 Examples of usage
 -----------------
 
+Laplacian smooth applied to the cube, along X and Y axes only:
+
+.. image:: https://cloud.githubusercontent.com/assets/284644/25193047/6cf54980-2557-11e7-858c-a34dfb487de2.png
+
+Smoothing applied only to selected vertices:
+
+.. image:: https://cloud.githubusercontent.com/assets/284644/25193048/6d21ab4c-2557-11e7-8caa-d92cbc17a824.png
+
+Suzanne smoothed:
+
+.. image:: https://cloud.githubusercontent.com/assets/284644/25193049/6d22489a-2557-11e7-8818-4394eb39bf55.png
+
