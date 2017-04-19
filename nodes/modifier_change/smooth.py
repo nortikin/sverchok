@@ -96,6 +96,7 @@ class SvSmoothNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('StringsSocket', 'Faces')
         self.inputs.new('StringsSocket', 'VertMask')
 
+        self.inputs.new('StringsSocket', 'Iterations').prop_name = "iterations"
         self.inputs.new('StringsSocket', 'ClipDist').prop_name = "clip_dist"
         self.inputs.new('StringsSocket', 'Factor').prop_name = "factor"
         self.inputs.new('StringsSocket', 'BorderFactor').prop_name = "border_factor"
@@ -108,7 +109,6 @@ class SvSmoothNode(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "laplacian")
-        layout.prop(self, "iterations")
 
         row = layout.row(align=True)
         row.prop(self, "use_x", toggle=True)
@@ -131,6 +131,7 @@ class SvSmoothNode(bpy.types.Node, SverchCustomTreeNode):
         edges_s = self.inputs['Edges'].sv_get(default=[[]])
         faces_s = self.inputs['Faces'].sv_get(default=[[]])
         masks_s = self.inputs['VertMask'].sv_get(default=[[1]])
+        iterations_s = self.inputs['Iterations'].sv_get()[0]
         if not self.laplacian:
             clip_dist_s = self.inputs['ClipDist'].sv_get()[0]
         else:
@@ -145,8 +146,8 @@ class SvSmoothNode(bpy.types.Node, SverchCustomTreeNode):
         result_edges = []
         result_faces = []
 
-        meshes = match_long_repeat([vertices_s, edges_s, faces_s, masks_s, clip_dist_s, factor_s, border_factor_s])
-        for vertices, edges, faces, masks, clip_dist, factor, border_factor in zip(*meshes):
+        meshes = match_long_repeat([vertices_s, edges_s, faces_s, masks_s, clip_dist_s, factor_s, border_factor_s, iterations_s])
+        for vertices, edges, faces, masks, clip_dist, factor, border_factor, iterations in zip(*meshes):
             fullList(masks,  len(vertices))
 
             bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True)
@@ -155,7 +156,7 @@ class SvSmoothNode(bpy.types.Node, SverchCustomTreeNode):
             bm.faces.ensure_lookup_table()
             selected_verts = [vert for mask, vert in zip(masks, bm.verts) if mask]
 
-            for i in range(self.iterations):
+            for i in range(iterations):
                 if self.laplacian:
                     # for some reason smooth_laplacian_vert does not work properly if faces are not selected
                     for f in bm.faces:
