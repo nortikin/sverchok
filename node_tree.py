@@ -210,36 +210,36 @@ class VerticesSocket(NodeSocket, SvSocketCommon):
         else:
             return default
 
-    def draw_prop_with_expander(self, layout, obj, prop_name):
-        split = layout.split(percentage=.2, align=True)
-        c1 = split.column(align=True)
-        c2 = split.column(align=True)
-        if self.expanded:  # expand ?
-            c1.prop(self, "expanded", icon='TRIA_UP', text='')
-            c1.label(text=self.name[0])
-            c2.prop(obj, prop_name, text="", expand=True)
-        else:  # collapse
-            c1.prop(self, "expanded", icon='TRIA_DOWN', text="")
-            row = c2.row(align=True)
-            row.template_component_menu(obj, prop_name, name=self.name)
+    def draw_expander_template(self, context, layout, prop_origin, prop_name="prop"):
+
+        if self.use_expander:
+            split = layout.split(percentage=.2, align=True)
+            c1 = split.column(align=True)
+            c2 = split.column(align=True)
+            if self.expanded:
+                c1.prop(self, "expanded", icon='TRIA_UP', text='')
+                c1.label(text=self.name[0])
+                c2.prop(prop_origin, prop_name, text="", expand=True)
+            else: # collapsed
+                c1.prop(self, "expanded", icon='TRIA_DOWN', text="")
+                row = c2.row(align=True)
+                row.template_component_menu(prop_origin, prop_name, name=self.name)
+        else:
+            layout.template_component_menu(prop_origin, prop_name, name=self.name)
 
     def draw(self, context, layout, node, text):
         if not self.is_output and not self.is_linked:
-            if self.prop_name:
-                if self.use_expander:
-                    self.draw_prop_with_expander(layout, node, self.prop_name)
-                else:
-                    layout.template_component_menu(node, self.prop_name, name=self.name)
 
+            if self.prop_name:
+                self.draw_expander_template(context, layout, prop_origin=node, prop_name=self.prop_name)
             elif self.use_prop:
-                if self.use_expander:
-                    self.draw_prop_with_expander(layout, self, "prop")
-                else:
-                    layout.template_component_menu(self, "prop", name=self.name)
+                self.draw_expander_template(context, layout, prop_origin=self)
             else:
                 layout.label(text)
+
         elif self.is_linked:
             layout.label(text + '. ' + SvGetSocketInfo(self))
+
         else:
             layout.label(text)
 
