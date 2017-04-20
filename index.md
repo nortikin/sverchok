@@ -78,6 +78,7 @@
     ---
     SvBevelNode
     SvSubdivideNode
+    SvSmoothNode
     SvIntersectEdgesNodeMK2
     SvOffsetNode
     SvFillsHoleNode
