@@ -67,6 +67,7 @@ socket_colors = {
 
 identityMatrix = [[tuple(v) for v in Matrix()]]
 emptyColor = [[(0, 0, 0, 1)]]
+emptyQuaternion = [[(1, 0, 0, 0)]]
 
 
 def process_from_socket(self, context):
@@ -245,8 +246,83 @@ class VerticesSocket(NodeSocket, SvSocketCommon):
     #             c1.prop(self, "expanded", icon='TRIA_DOWN', text="")
     #             row = c2.row(align=True)
     #             row.template_component_menu(prop_origin, prop_name, name=self.name)
+    #     else:
+    #         layout.template_component_menu(prop_origin, prop_name, name=self.name)
+
+    def draw(self, context, layout, node, text):
+        if not self.is_output and not self.is_linked:
+
+            if self.prop_name:
+                self.draw_expander_template(context, layout, prop_origin=node, prop_name=self.prop_name)
+            elif self.use_prop:
+                self.draw_expander_template(context, layout, prop_origin=self)
+            else:
+                layout.label(text)
+
+        elif self.is_linked:
+            layout.label(text + '. ' + SvGetSocketInfo(self))
+
         else:
-            layout.template_component_menu(prop_origin, prop_name, name=self.name)
+            layout.label(text)
+
+    def draw_color(self, context, node):
+        return socket_colors[self.bl_idname]
+
+
+class QuaternionSocket(NodeSocket, SvSocketCommon):
+    '''For quaternion data'''
+    bl_idname = "QuaternionSocket"
+    bl_label = "Quaternion Socket"
+
+    prop = FloatVectorProperty(default=(1, 0, 0, 0), size=4, subtype='QUATERNION', update=process_from_socket)
+    prop_name = StringProperty(default='')
+    use_prop = BoolProperty(default=False)
+
+    def get_prop_data(self):
+        if self.prop_name:
+            return {"prop_name": socket.prop_name}
+        elif self.use_prop:
+            return {"use_prop": True,
+                    "prop": self.prop[:]}
+        else:
+            return {}
+
+    def sv_get(self, default=sentinel, deepcopy=True):
+        if self.is_linked and not self.is_output:
+            # if is_matrix_to_quaternion(self):
+            #     out = matrix_to_quaternion(SvGetSocket(self, deepcopy=True))
+            #     return out
+            # if is_vector_to_quaternion(self):
+            #     out = vector_to_quaternion(SvGetSocket(self, deepcopy=True))
+            #     return out
+
+            return SvGetSocket(self, deepcopy)
+
+        if self.prop_name:
+            return [[getattr(self.node, self.prop_name)[:]]]
+        elif self.use_prop:
+            return [[self.prop[:]]]
+        elif default is sentinel:
+            raise emptyQuaternion
+        else:
+            return default
+
+    # def draw_expander_template(self, context, layout, prop_origin, prop_name="prop"):
+
+    #     if self.use_expander:
+    #         split = layout.split(percentage=.2, align=True)
+    #         c1 = split.column(align=True)
+    #         c2 = split.column(align=True)
+    #         if self.expanded:
+    #             c1.prop(self, "expanded", icon='TRIA_UP', text='')
+    #             c1.label(text=self.name[0])
+    #             c2.prop(prop_origin, prop_name, text="", expand=True)
+    #         else:  # collapsed
+    #             c1.prop(self, "expanded", icon='TRIA_DOWN', text="")
+    #             row = c2.row(align=True)
+    #             row.template_component_menu(prop_origin, prop_name, name=self.name)
+    #     else:
+    #         layout.template_component_menu(prop_origin, prop_name, name=self.name)
 
     def draw(self, context, layout, node, text):
         if not self.is_output and not self.is_linked:
@@ -360,7 +436,7 @@ class SvDummySocket(NodeSocket, SvSocketCommon):
         layout.label(text)
 
     def draw_color(self, context, node):
-        return (0.8, 0.8, 0.8, 0.3)
+        return socket_colors[self.bl_idname]
 
 
 class StringsSocket(NodeSocket, SvSocketCommon):
@@ -620,7 +696,7 @@ class SverchCustomTreeNode:
 
 classes = [
     SvColors, SverchCustomTree, MatrixSocket, StringsSocket,
-    VerticesSocket, ColorSocket, SvDummySocket,
+    VerticesSocket, ColorSocket, QuaternionSocket, SvDummySocket,
 ]
 
 
