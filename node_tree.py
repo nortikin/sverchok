@@ -618,20 +618,17 @@ class SverchCustomTreeNode:
         else:
             pass
 
+classes = [
+    SvColors, SverchCustomTree, MatrixSocket, StringsSocket,
+    VerticesSocket, ColorSocket, SvDummySocket,
+]
+
 
 def register():
-    bpy.utils.register_class(SvColors)
-    bpy.utils.register_class(SverchCustomTree)
-    bpy.utils.register_class(MatrixSocket)
-    bpy.utils.register_class(StringsSocket)
-    bpy.utils.register_class(VerticesSocket)
-    bpy.utils.register_class(SvDummySocket)
+    for cls in classes:
+        bpy.utils.register_class(cls)
 
 
 def unregister():
-    bpy.utils.unregister_class(SvDummySocket)
-    bpy.utils.unregister_class(VerticesSocket)
-    bpy.utils.unregister_class(StringsSocket)
-    bpy.utils.unregister_class(MatrixSocket)
-    bpy.utils.unregister_class(SverchCustomTree)
-    bpy.utils.unregister_class(SvColors)
+    for cls in classes:
+        bpy.utils.unregister_class(cls)
