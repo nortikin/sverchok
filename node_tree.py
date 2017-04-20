@@ -24,6 +24,8 @@ import bpy
 from bpy.props import StringProperty, BoolProperty, FloatVectorProperty, IntProperty
 from bpy.types import NodeTree, NodeSocket, NodeSocketStandard
 
+from mathutils import Matrix
+
 from sverchok import data_structure
 from sverchok.data_structure import (
     updateNode,
@@ -52,6 +54,18 @@ from sverchok.core.socket_conversions import (
 
 from sverchok.ui import color_def
 
+socket_colors = {
+    "StringsSocket": (0.6, 1.0, 0.6, 1.0),
+    "VerticesSocket": (0.9, 0.6, 0.2, 1.0),
+    "QuaternionSocket": (0.9, 0.4, 0.7, 1.0),
+    "ColorSocket": (0.9, 0.8, 0.0, 1.0),
+    "MatrixSocket": (0.2, 0.8, 0.8, 1.0),
+    "DummySocket": (0.8, 0.8, 0.8, 0.3),
+    "ObjectSocket": (0.69,  0.74,  0.73, 1.0),
+    "TextSocket": (0.68,  0.85,  0.90, 1),
+}
+
+identityMatrix = [[tuple(v) for v in Matrix()]]  # identity matrix
 
 def process_from_socket(self, context):
     """Update function of exposed properties in Sockets"""
@@ -138,7 +152,7 @@ class MatrixSocket(NodeSocket, SvSocketCommon):
 
             return SvGetSocket(self, deepcopy)
         elif default is sentinel:
-            raise SvNoDataError
+            return identityMatrix
         else:
             return default
 
