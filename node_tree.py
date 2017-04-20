@@ -84,6 +84,9 @@ class SvColors(bpy.types.PropertyGroup):
 
 class SvSocketCommon:
 
+    use_expander = BoolProperty(default=True)
+    expanded = BoolProperty(default=False)
+
     @property
     def other(self):
         return get_other_socket(self)
