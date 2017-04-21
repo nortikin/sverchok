@@ -30,11 +30,11 @@ class SvIndexToMaskNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'SvIndexToMaskNode'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    ML = IntProperty(name='Mask_Len', default=10, min=2, update=updateNode)
+    ML = IntProperty(name='Mask Length', default=10, min=2, update=updateNode)
     
     def update_mode(self, context):
         self.inputs['mask size'].hide_safe = self.data_to_mask
-        self.inputs['data to mask form'].hide_safe = not self.data_to_mask
+        self.inputs['data to mask'].hide_safe = not self.data_to_mask
         updateNode(self, context)
 
     data_to_mask = BoolProperty(name = "data masking",
@@ -49,7 +49,7 @@ class SvIndexToMaskNode(bpy.types.Node, SverchCustomTreeNode):
     def sv_init(self, context):
         self.inputs.new('StringsSocket', 'Index')
         self.inputs.new('StringsSocket', 'mask size').prop_name = "ML"
-        self.inputs.new('StringsSocket', 'data to mask form').hide_safe = True
+        self.inputs.new('StringsSocket', 'data to mask').hide_safe = True
         self.outputs.new('StringsSocket', 'mask')
 
     def process(self):
