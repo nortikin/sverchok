@@ -39,7 +39,7 @@ class SvIndexToMaskNode(bpy.types.Node, SverchCustomTreeNode):
 
     data_to_mask = BoolProperty(name = "data masking",
             description = "Use data to define mask length",
-            default = True,
+            default = False,
             update=update_mode)
 
     def draw_buttons(self, context, layout):
