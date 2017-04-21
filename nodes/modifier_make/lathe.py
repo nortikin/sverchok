@@ -117,6 +117,8 @@ class SvLatheNode(bpy.types.Node, SverchCustomTreeNode):
             if medges:
                 if verts_match_edges or (idx <= len(medges) - 1):
                     final_values['edges'] = medges[idx]
+            else:
+                final_values['edges'] = [(i, i+1) for i in range(len(verts)-1)]
 
             ''' by idx, if idx present, else last. if none then default'''
             if mcent:
