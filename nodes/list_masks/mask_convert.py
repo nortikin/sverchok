@@ -22,7 +22,7 @@ from sverchok.node_tree import SverchCustomTreeNode, StringsSocket, VerticesSock
 from sverchok.data_structure import updateNode, match_long_repeat, fullList
 
 class SvMaskConvertNode(bpy.types.Node, SverchCustomTreeNode):
-    '''Mask converter: vertex -> edges and so on'''
+    '''vertex -> edges and so on'''
     bl_idname = 'SvMaskConvertNode'
     bl_label = 'Mask Converter'
     bl_icon = 'OUTLINER_OB_EMPTY'
@@ -77,7 +77,6 @@ class SvMaskConvertNode(bpy.types.Node, SverchCustomTreeNode):
 
     def by_vertex(self, verts_mask, edges, faces):
         indicies = set(i for (i, m) in enumerate(verts_mask) if m)
-        print("I: "+str(indicies))
         if self.include_partial:
             edges_mask = [any(v in indicies for v in edge) for edge in edges]
             faces_mask = [any(v in indicies for v in face) for face in faces]
