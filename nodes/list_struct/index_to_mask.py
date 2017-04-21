@@ -27,7 +27,7 @@ from sverchok.data_structure import (updateNode, second_as_first_cycle as safc)
 class SvIndexToMaskNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Create mask list from index '''
     bl_idname = 'SvIndexToMaskNode'
-    bl_label = 'SvIndexToMaskNode'
+    bl_label = 'Index To Mask'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     ML = IntProperty(name='Mask Length', default=10, min=2, update=updateNode)
