@@ -287,3 +287,4 @@
     SvBMtoElementNode
     SvSeparateMeshNodeMK2
     SvBvhOverlapNodeNew
+    SvIndexToMaskNode
