@@ -117,7 +117,6 @@ class SvLatheNode(bpy.types.Node, SverchCustomTreeNode):
 
             ''' [], or by idx, if idx present -- will treat verts as sequential if not supplied'''
             if medges:
-                print('calling')
                 if verts_match_edges or (idx <= len(medges) - 1):
                     final_values['edges'] = medges[idx]
             else:
