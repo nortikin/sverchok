@@ -28,9 +28,9 @@ class SvMaskConvertNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     modes = [
-            ('ByVertex', "From vertex mask", "Get edges and faces masks by vertex mask", 0),
-            ('ByEdge', "From edges mask", "Get vertex and faces masks by edges mask", 1),
-            ('ByFace', "From faces mask", "Get vertex and edge masks by faces mask", 2)
+            ('ByVertex', "Vertices", "Get edges and faces masks by vertex mask", 0),
+            ('ByEdge', "Edges", "Get vertex and faces masks by edges mask", 1),
+            ('ByFace', "Faces", "Get vertex and edge masks by faces mask", 2)
         ]
 
     def update_mode(self, context):
@@ -57,8 +57,11 @@ class SvMaskConvertNode(bpy.types.Node, SverchCustomTreeNode):
             update=updateNode)
 
     def draw_buttons(self, context, layout):
-        layout.prop(self, 'mode')
-        layout.prop(self, 'include_partial')
+        col = layout.column(align=True)
+        col.label("From:")
+        row = col.row(align=True)
+        row.prop(self, 'mode', expand=True)
+        col.prop(self, 'include_partial', toggle=True)
 
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', "Vertices")
