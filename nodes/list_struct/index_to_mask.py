@@ -19,7 +19,7 @@
 
 import bpy
 import numpy as np
-from bpy.props import FloatProperty
+from bpy.props import IntProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode, second_as_first_cycle as safc)
 
@@ -30,7 +30,7 @@ class SvIndexToMaskNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'SvIndexToMaskNode'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    ML = FloatProperty(name='Mask_Len', default=10, update=updateNode)
+    ML = IntProperty(name='Mask_Len', default=10, min=2, update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', 'Index')
