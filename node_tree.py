@@ -24,8 +24,6 @@ import bpy
 from bpy.props import StringProperty, BoolProperty, FloatVectorProperty, IntProperty
 from bpy.types import NodeTree, NodeSocket, NodeSocketStandard
 
-from mathutils import Matrix
-
 from sverchok import data_structure
 from sverchok.data_structure import (
     updateNode,
@@ -54,21 +52,6 @@ from sverchok.core.socket_conversions import (
 
 from sverchok.ui import color_def
 
-socket_colors = {
-    "StringsSocket": (0.6, 1.0, 0.6, 1.0),
-    "VerticesSocket": (0.9, 0.6, 0.2, 1.0),
-    "QuaternionSocket": (0.9, 0.4, 0.7, 1.0),
-    "ColorSocket": (0.9, 0.8, 0.0, 1.0),
-    "MatrixSocket": (0.2, 0.8, 0.8, 1.0),
-    "DummySocket": (0.8, 0.8, 0.8, 0.3),
-    "ObjectSocket": (0.69,  0.74,  0.73, 1.0),
-    "TextSocket": (0.68,  0.85,  0.90, 1),
-}
-
-identityMatrix = [[tuple(v) for v in Matrix()]]
-emptyColor = [[(0, 0, 0, 1)]]
-emptyQuaternion = [[(1, 0, 0, 0)]]
-
 
 def process_from_socket(self, context):
     """Update function of exposed properties in Sockets"""
@@ -86,28 +69,6 @@ class SvColors(bpy.types.PropertyGroup):
 
 
 class SvSocketCommon:
-
-    use_expander = BoolProperty(default=True)
-    expanded = BoolProperty(default=False)
-
-    def draw_expander_template(self, context, layout, prop_origin, prop_name="prop"):
-        if self.use_expander:
-            split = layout.split(percentage=.2, align=True)
-            c1 = split.column(align=True)
-            c2 = split.column(align=True)
-            if self.expanded:
-                c1.prop(self, "expanded", icon='TRIA_UP', text='')
-                c1.label(text=self.name[0])
-                c2.prop(prop_origin, prop_name, text="", expand=True)
-            else:  # collapsed
-                c1.prop(self, "expanded", icon='TRIA_DOWN', text="")
-                row = c2.row(align=True)
-                if self.bl_idname == "ColorSocket":
-                    row.prop(prop_origin, prop_name)
-                else:
-                    row.template_component_menu(prop_origin, prop_name, name=self.name)
-        else:
-            layout.template_component_menu(prop_origin, prop_name, name=self.name)
 
     @property
     def other(self):
@@ -177,7 +138,7 @@ class MatrixSocket(NodeSocket, SvSocketCommon):
 
             return SvGetSocket(self, deepcopy)
         elif default is sentinel:
-            return identityMatrix
+            raise SvNoDataError
         else:
             return default
 
@@ -194,7 +155,7 @@ class MatrixSocket(NodeSocket, SvSocketCommon):
         '''if self.is_linked:
             return(.8,.3,.75,1.0)
         else: '''
-        return socket_colors[self.bl_idname]
+        return (.2, .8, .8, 1.0)
 
 
 class VerticesSocket(NodeSocket, SvSocketCommon):
@@ -234,131 +195,19 @@ class VerticesSocket(NodeSocket, SvSocketCommon):
 
     def draw(self, context, layout, node, text):
         if not self.is_output and not self.is_linked:
-
             if self.prop_name:
-                self.draw_expander_template(context, layout, prop_origin=node, prop_name=self.prop_name)
+                layout.template_component_menu(node, self.prop_name, name=self.name)
             elif self.use_prop:
-                self.draw_expander_template(context, layout, prop_origin=self)
+                layout.template_component_menu(self, "prop", name=self.name)
             else:
                 layout.label(text)
-
         elif self.is_linked:
             layout.label(text + '. ' + SvGetSocketInfo(self))
-
         else:
             layout.label(text)
 
     def draw_color(self, context, node):
-        return socket_colors[self.bl_idname]
-
-
-class QuaternionSocket(NodeSocket, SvSocketCommon):
-    '''For quaternion data'''
-    bl_idname = "QuaternionSocket"
-    bl_label = "Quaternion Socket"
-
-    prop = FloatVectorProperty(default=(1, 0, 0, 0), size=4, subtype='QUATERNION', update=process_from_socket)
-    prop_name = StringProperty(default='')
-    use_prop = BoolProperty(default=False)
-
-    def get_prop_data(self):
-        if self.prop_name:
-            return {"prop_name": socket.prop_name}
-        elif self.use_prop:
-            return {"use_prop": True,
-                    "prop": self.prop[:]}
-        else:
-            return {}
-
-    def sv_get(self, default=sentinel, deepcopy=True):
-        if self.is_linked and not self.is_output:
-            # if is_matrix_to_quaternion(self):
-            #     out = matrix_to_quaternion(SvGetSocket(self, deepcopy=True))
-            #     return out
-            # if is_vector_to_quaternion(self):
-            #     out = vector_to_quaternion(SvGetSocket(self, deepcopy=True))
-            #     return out
-
-            return SvGetSocket(self, deepcopy)
-
-        if self.prop_name:
-            return [[getattr(self.node, self.prop_name)[:]]]
-        elif self.use_prop:
-            return [[self.prop[:]]]
-        elif default is sentinel:
-            raise emptyQuaternion
-        else:
-            return default
-
-    def draw(self, context, layout, node, text):
-        if not self.is_output and not self.is_linked:
-
-            if self.prop_name:
-                self.draw_expander_template(context, layout, prop_origin=node, prop_name=self.prop_name)
-            elif self.use_prop:
-                self.draw_expander_template(context, layout, prop_origin=self)
-            else:
-                layout.label(text)
-
-        elif self.is_linked:
-            layout.label(text + '. ' + SvGetSocketInfo(self))
-
-        else:
-            layout.label(text)
-
-    def draw_color(self, context, node):
-        return socket_colors[self.bl_idname]
-
-
-class ColorSocket(NodeSocket, SvSocketCommon):
-    '''For color data'''
-    bl_idname = "ColorSocket"
-    bl_label = "Color Socket"
-
-    prop = FloatVectorProperty(default=(0, 0, 0, 1), size=4, subtype='COLOR', min=0, max=1, update=process_from_socket)
-    prop_name = StringProperty(default='')
-    use_prop = BoolProperty(default=False)
-
-    def get_prop_data(self):
-        if self.prop_name:
-            return {"prop_name": socket.prop_name}
-        elif self.use_prop:
-            return {"use_prop": True,
-                    "prop": self.prop[:]}
-        else:
-            return {}
-
-    def sv_get(self, default=sentinel, deepcopy=True):
-        if self.is_linked and not self.is_output:
-            return SvGetSocket(self, deepcopy)
-
-        if self.prop_name:
-            return [[getattr(self.node, self.prop_name)[:]]]
-        elif self.use_prop:
-            return [[self.prop[:]]]
-        elif default is sentinel:
-            raise emptyColor
-        else:
-            return default
-
-    def draw(self, context, layout, node, text):
-        if not self.is_output and not self.is_linked:
-
-            if self.prop_name:
-                self.draw_expander_template(context, layout, prop_origin=node, prop_name=self.prop_name)
-            elif self.use_prop:
-                self.draw_expander_template(context, layout, prop_origin=self)
-            else:
-                layout.label(text)
-
-        elif self.is_linked:
-            layout.label(text + '. ' + SvGetSocketInfo(self))
-
-        else:
-            layout.label(text)
-
-    def draw_color(self, context, node):
-        return socket_colors[self.bl_idname]
+        return (0.9, 0.6, 0.2, 1.0)
 
 
 class SvDummySocket(NodeSocket, SvSocketCommon):
@@ -384,7 +233,7 @@ class SvDummySocket(NodeSocket, SvSocketCommon):
         layout.label(text)
 
     def draw_color(self, context, node):
-        return socket_colors[self.bl_idname]
+        return (0.8, 0.8, 0.8, 0.3)
 
 
 class StringsSocket(NodeSocket, SvSocketCommon):
@@ -569,7 +418,6 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
 
 
 class SverchCustomTreeNode:
-
     @classmethod
     def poll(cls, ntree):
         return ntree.bl_idname in ['SverchCustomTreeType', 'SverchGroupTreeType']
@@ -642,17 +490,20 @@ class SverchCustomTreeNode:
         else:
             pass
 
-classes = [
-    SvColors, SverchCustomTree, MatrixSocket, StringsSocket,
-    VerticesSocket, ColorSocket, QuaternionSocket, SvDummySocket,
-]
-
 
 def register():
-    for cls in classes:
-        bpy.utils.register_class(cls)
+    bpy.utils.register_class(SvColors)
+    bpy.utils.register_class(SverchCustomTree)
+    bpy.utils.register_class(MatrixSocket)
+    bpy.utils.register_class(StringsSocket)
+    bpy.utils.register_class(VerticesSocket)
+    bpy.utils.register_class(SvDummySocket)
 
 
 def unregister():
-    for cls in classes:
-        bpy.utils.unregister_class(cls)
+    bpy.utils.unregister_class(SvDummySocket)
+    bpy.utils.unregister_class(VerticesSocket)
+    bpy.utils.unregister_class(StringsSocket)
+    bpy.utils.unregister_class(MatrixSocket)
+    bpy.utils.unregister_class(SverchCustomTree)
+    bpy.utils.unregister_class(SvColors)
