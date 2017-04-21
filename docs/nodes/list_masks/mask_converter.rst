@@ -46,3 +46,11 @@ This node has the following outputs:
 Examples of usage
 -----------------
 
+Select face of cube by selecting its vertices, and extrude it:
+
+.. image:: https://cloud.githubusercontent.com/assets/284644/25284911/57c33020-26da-11e7-93c8-c1148dbd8efc.png
+
+Select faces of sphere with small area, and move corresponding vertices:
+
+.. image:: https://cloud.githubusercontent.com/assets/284644/25284914/5843a476-26da-11e7-908a-5eb9ed694ccb.png
+
