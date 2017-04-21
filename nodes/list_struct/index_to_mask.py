@@ -41,10 +41,16 @@ class SvIndexToMaskNode(bpy.types.Node, SverchCustomTreeNode):
             description = "Use data to define mask length",
             default = False,
             update=update_mode)
+    complex_data = BoolProperty(name = "vert-poly mask",
+            description = "data consists of verts or polygons\edges",
+            default = False,
+            update=update_mode)
 
     def draw_buttons(self, context, layout):
         col = layout.column(align=True)
         col.prop(self, "data_to_mask", toggle=True)
+        if self.data_to_mask:
+            col.prop(self, "complex_data", toggle=True)
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', 'Index')
@@ -65,9 +71,14 @@ class SvIndexToMaskNode(bpy.types.Node, SverchCustomTreeNode):
                     out.append(Ma.tolist())
             else:
                 Ma = np.zeros_like(Dat.sv_get())
-                for m, i in zip(Ma, safc(Ma, I)):
-                    m[i] = 1
-                    out.append(m.tolist())
+                if not self.complex_data:
+                    for m, i in zip(Ma, safc(Ma, I)):
+                        m[i] = 1
+                        out.append(m.tolist())
+                else:
+                    for m, i in zip(Ma, safc(Ma, I)):
+                        m[i] = 1
+                        out.append(m[:, 0].tolist())
             OM.sv_set(out)
 
 
