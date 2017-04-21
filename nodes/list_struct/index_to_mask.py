@@ -19,7 +19,7 @@
 
 import bpy
 import numpy as np
-from bpy.props import IntProperty
+from bpy.props import IntProperty, BoolProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode, second_as_first_cycle as safc)
 
@@ -31,22 +31,43 @@ class SvIndexToMaskNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     ML = IntProperty(name='Mask_Len', default=10, min=2, update=updateNode)
+    
+    def update_mode(self, context):
+        self.inputs['mask size'].hide_safe = self.data_to_mask
+        self.inputs['data to mask form'].hide_safe = not self.data_to_mask
+        updateNode(self, context)
+
+    data_to_mask = BoolProperty(name = "data masking",
+            description = "Use data to define mask length",
+            default = True,
+            update=update_mode)
+
+    def draw_buttons(self, context, layout):
+        col = layout.column(align=True)
+        col.prop(self, "data_to_mask", toggle=True)
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', 'Index')
         self.inputs.new('StringsSocket', 'mask size').prop_name = "ML"
+        self.inputs.new('StringsSocket', 'data to mask form').hide_safe = True
         self.outputs.new('StringsSocket', 'mask')
 
     def process(self):
-        Inds, MaSi = self.inputs
+        Inds, MaSi, Dat = self.inputs
         OM = self.outputs[0]
         if OM.is_linked:
             out = []
             I = Inds.sv_get()
-            for Ind, Size in zip(I, safc(I, MaSi.sv_get()[0])):
-                Ma = np.zeros(Size)
-                Ma[Ind] = 1
-                out.append(Ma.tolist())
+            if not self.data_to_mask:
+                for Ind, Size in zip(I, safc(I, MaSi.sv_get()[0])):
+                    Ma = np.zeros(Size)
+                    Ma[Ind] = 1
+                    out.append(Ma.tolist())
+            else:
+                Ma = np.zeros_like(Dat.sv_get())
+                for m, i in zip(Ma, safc(Ma, I)):
+                    m[i] = 1
+                    out.append(m.tolist())
             OM.sv_set(out)
 
 
