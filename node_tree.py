@@ -57,8 +57,8 @@ from sverchok.ui import color_def
 socket_colors = {
     "StringsSocket": (0.6, 1.0, 0.6, 1.0),
     "VerticesSocket": (0.9, 0.6, 0.2, 1.0),
-    "QuaternionSocket": (0.9, 0.4, 0.7, 1.0),
-    "ColorSocket": (0.9, 0.8, 0.0, 1.0),
+    "SvQuaternionSocket": (0.9, 0.4, 0.7, 1.0),
+    "SvColorSocket": (0.9, 0.8, 0.0, 1.0),
     "MatrixSocket": (0.2, 0.8, 0.8, 1.0),
     "DummySocket": (0.8, 0.8, 0.8, 0.3),
     "ObjectSocket": (0.69,  0.74,  0.73, 1.0),
@@ -254,9 +254,9 @@ class VerticesSocket(NodeSocket, SvSocketCommon):
         return socket_colors[self.bl_idname]
 
 
-class QuaternionSocket(NodeSocket, SvSocketCommon):
+class SvQuaternionSocket(NodeSocket, SvSocketCommon):
     '''For quaternion data'''
-    bl_idname = "QuaternionSocket"
+    bl_idname = "SvQuaternionSocket"
     bl_label = "Quaternion Socket"
 
     prop = FloatVectorProperty(default=(1, 0, 0, 0), size=4, subtype='QUATERNION', update=process_from_socket)
@@ -312,9 +312,9 @@ class QuaternionSocket(NodeSocket, SvSocketCommon):
         return socket_colors[self.bl_idname]
 
 
-class ColorSocket(NodeSocket, SvSocketCommon):
+class SvColorSocket(NodeSocket, SvSocketCommon):
     '''For color data'''
-    bl_idname = "ColorSocket"
+    bl_idname = "SvColorSocket"
     bl_label = "Color Socket"
 
     prop = FloatVectorProperty(default=(0, 0, 0, 1), size=4, subtype='COLOR', min=0, max=1, update=process_from_socket)
@@ -659,8 +659,9 @@ class SverchCustomTreeNode:
             pass
 
 classes = [
-    SvColors, SverchCustomTree, MatrixSocket, StringsSocket,
-    VerticesSocket, ColorSocket, QuaternionSocket, SvDummySocket,
+    SvColors, SverchCustomTree,
+    VerticesSocket, MatrixSocket, StringsSocket,
+    SvColorSocket, SvQuaternionSocket, SvDummySocket,
 ]
 
 
