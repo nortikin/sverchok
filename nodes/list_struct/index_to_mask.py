@@ -66,11 +66,11 @@ class SvIndexToMaskNode(bpy.types.Node, SverchCustomTreeNode):
             I = Inds.sv_get()
             if not self.data_to_mask:
                 for Ind, Size in zip(I, safc(I, MaSi.sv_get()[0])):
-                    Ma = np.zeros(Size)
+                    Ma = np.zeros(Size, dtype= np.bool)
                     Ma[Ind] = 1
                     out.append(Ma.tolist())
             else:
-                Ma = np.zeros_like(Dat.sv_get())
+                Ma = np.zeros_like(Dat.sv_get(), dtype= np.bool)
                 if not self.complex_data:
                     for m, i in zip(Ma, safc(Ma, I)):
                         m[i] = 1
