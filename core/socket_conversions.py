@@ -18,13 +18,16 @@
 
 from sverchok.data_structure import get_other_socket
 
+from mathutils import Matrix, Quaternion
+from sverchok.data_structure import Matrix_listing, Matrix_generate
 
-## conversion tests, to be used in sv_get! 
+
+## conversion tests, to be used in sv_get!
 
 def cross_test_socket(self, A, B):
     """ A is origin type, B is destination type """
     other = get_other_socket(self)
-    get_type = {'v': 'VerticesSocket', 'm': 'MatrixSocket'}
+    get_type = {'v': 'VerticesSocket', 'm': 'MatrixSocket', 'q': "SvQuaternionSocket"}
     return other.bl_idname == get_type[A] and self.bl_idname == get_type[B]
 
 def is_vector_to_matrix(self):
@@ -32,6 +35,12 @@ def is_vector_to_matrix(self):
 
 def is_matrix_to_vector(self):
     return cross_test_socket(self, 'm', 'v')
+
+def is_matrix_to_quaternion(self):
+    return cross_test_socket(self, 'm', 'q')
+
+def is_quaternion_to_matrix(self):
+    return cross_test_socket(self, 'q', 'm')
 
 # ---
 
@@ -50,6 +59,22 @@ def get_matrices_from_locs(data):
 
     get_all(data)
     return location_matrices
+
+
+def get_matrices_from_quaternions(data):
+    matrices = []
+    collect_matrix = matrices.append
+
+    def get_all(data):
+        for item in data:
+            if isinstance(item, (tuple, list)) and len(item) == 4 and isinstance(item[0], (float, int)):
+                mat = Quaternion(item).to_matrix().to_4x4()
+                collect_matrix(Matrix_listing([mat])[0])
+            else:
+                get_all(item)
+
+    get_all(data)
+    return matrices
 
 
 def is_matrix(mat):

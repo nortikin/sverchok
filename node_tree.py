@@ -24,6 +24,8 @@ import bpy
 from bpy.props import StringProperty, BoolProperty, FloatVectorProperty, IntProperty
 from bpy.types import NodeTree, NodeSocket, NodeSocketStandard
 
+from mathutils import Matrix
+
 from sverchok import data_structure
 from sverchok.data_structure import (
     updateNode,
@@ -47,6 +49,9 @@ from sverchok.core.update_system import (
 from sverchok.core.socket_conversions import (
     get_matrices_from_locs,
     get_locs_from_matrices,
+    get_matrices_from_quaternions,
+    is_matrix_to_quaternion,
+    is_quaternion_to_matrix,
     is_vector_to_matrix,
     is_matrix_to_vector)
 
@@ -174,6 +179,11 @@ class MatrixSocket(NodeSocket, SvSocketCommon):
                 # this means we're going to get a flat list of the incoming
                 # locations and convert those into matrices proper.
                 out = get_matrices_from_locs(SvGetSocket(self, deepcopy=True))
+                self.num_matrices = len(out)
+                return out
+
+            if is_quaternion_to_matrix(self):
+                out = get_matrices_from_quaternions(SvGetSocket(self, deepcopy=True))
                 self.num_matrices = len(out)
                 return out
 
