@@ -105,6 +105,7 @@ class NodeViewMenuTemplate(bpy.types.Menu):
 
     def draw(self, context):
         layout_draw_categories(self.layout, node_cats[self.bl_label])
+        # prop_menu_enum(data, property, text="", text_ctxt="", icon='NONE')
 
 
 # quick class factory.
