@@ -20,7 +20,7 @@ import ast
 import os
 
 import bpy
-from bpy.props import IntProperty, IntVectorProperty, StringProperty
+from bpy.props import IntProperty, IntVectorProperty, StringProperty, FloatVectorProperty
 from mathutils import Vector
 
 from sverchok.node_tree import SverchCustomTreeNode
@@ -51,6 +51,14 @@ def analyze_glyphs(fdict):
 fdict = openjson_asdict('gtext_font.dict')
 fdict_sizes = analyze_glyphs(fdict)
 
+def get_palette(tree=None, palette_name=None):
+    palettes = tree.grease_pencil.palettes
+    if not palette_name in palettes:
+        palette = palettes.new(palette_name)
+    else:
+        palette = palettes.get(palette_name)
+    return palette
+
 
 def generate_greasepencil(node, text, col, pos, fontdict):
 
@@ -75,15 +83,22 @@ def generate_greasepencil(node, text, col, pos, fontdict):
         nt.grease_pencil = bpy.data.grease_pencil[grease_pencil_name]
     gp = nt.grease_pencil
 
+    palette = get_palette(tree=nt, palette_name='sv_palette')
+    if not 'gtextcol' in palette:
+        named_color = palette.colors.new()
+        named_color.color = node.stroke_color
+        named_color.name = 'gtextcol'
+
+
     # get grease pencil layer
     if not (node_name in gp.layers):
         layer = gp.layers.new(node_name)
         layer.frames.new(1)
-        layer.line_width = 1
     else:
         layer = gp.layers[node_name]
         layer.frames[0].clear()
 
+    layer.line_change = 1.0
     for ch in text:
         if ch == "\n":
             yof -= line_height
@@ -105,7 +120,9 @@ def generate_greasepencil(node, text, col, pos, fontdict):
         minx, maxx, xwide = fdict_sizes[str(ord(ch))]
 
         for chain in v:
-            s = layer.frames[0].strokes.new()
+            s = layer.frames[0].strokes.new(colorname='gtextcol')
+
+            s.line_width = 1
             s.draw_mode = '2DSPACE'
             s.points.add(len(chain))
             for idx, p in enumerate(chain):
@@ -146,20 +163,17 @@ class GTextNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'GText'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    text = StringProperty(name='text',
-                          default='your text here')
-    locator = IntVectorProperty(name="locator", description="stores location",
-                                default=(0, 0), size=2)
-
-    text_scale = IntProperty(name="font size",
-                             default=25,
-                             update=updateNode)
+    text = StringProperty(name='text', default='your text here')
+    locator = IntVectorProperty(name="locator", description="stores location", default=(0, 0), size=2)
+    text_scale = IntProperty(name="font size", default=25, update=updateNode)
+    stroke_color = FloatVectorProperty(subtype='COLOR', size=3, min=0, max=1)
 
     def draw_buttons(self, context, layout):
         row = layout.row(align=True)
         row.operator('node.sverchok_gtext_button', text='Set').mode = 'set'
         row.operator('node.sverchok_gtext_button', text='Clear').mode = 'clear'
-        pass
+        row.prop(self, 'stroke_color', text='')
+
 
     def draw_buttons_ext(self, context, layout):
         row = layout.row(align=True)
@@ -169,8 +183,8 @@ class GTextNode(bpy.types.Node, SverchCustomTreeNode):
         if self.id_data.grease_pencil:
             gp_layer = self.id_data.grease_pencil.layers.get(self.name)
             if gp_layer:
-                layout.prop(gp_layer, 'color')
-                layout.prop(gp_layer, 'line_width')
+                # layout.prop(gp_layer, 'color')
+                # layout.prop(gp_layer, 'line_width')
                 layout.prop(self, 'text_scale')
 
     def update(self):
