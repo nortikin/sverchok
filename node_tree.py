@@ -247,6 +247,11 @@ class VerticesSocket(NodeSocket, SvSocketCommon):
             elif self.use_prop:
                 self.draw_expander_template(context, layout, prop_origin=self)
             else:
+                if not self.is_output:
+                    op = layout.operator('node.sv_link_vector_in', text="", icon="PLUGIN")
+                    op.socket_index = self.index
+                    op.origin = node.name
+
                 layout.label(text)
 
         elif self.is_linked:
@@ -485,6 +490,26 @@ class SvLinkMatrix(bpy.types.Operator):
 
         return {'FINISHED'}
 
+class SvLinkVector(bpy.types.Operator):
+
+    bl_idname = "node.sv_link_vector_in"
+    bl_label = "Add a Vector In node to the left"
+
+    socket_index = bpy.props.IntProperty()
+    origin = bpy.props.StringProperty()
+
+    def execute(self, context):
+        tree = context.space_data.edit_tree
+        nodes, links = tree.nodes, tree.links
+
+        caller_node = nodes.get(self.origin)
+        mat_node = nodes.new('GenVectorsNode')
+        mat_node.location = caller_node.location[0] - 200, caller_node.location[1]
+
+        links.new(mat_node.outputs[0], caller_node.inputs[self.socket_index])
+
+        return {'FINISHED'}
+
 class SvNodeTreeCommon(object):
     '''
     Common methods shared between Sverchok node trees
@@ -687,7 +712,7 @@ classes = [
     SvColors, SverchCustomTree,
     VerticesSocket, MatrixSocket, StringsSocket,
     SvColorSocket, SvQuaternionSocket, SvDummySocket,
-    SvLinkMatrix,
+    SvLinkMatrix, SvLinkVector,
 ]
 
 
