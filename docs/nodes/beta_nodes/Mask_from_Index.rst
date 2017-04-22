@@ -29,6 +29,6 @@ This node has the following outputs:
 Examples of usage
 -----------------
 
-.. image:: 
+.. image:: https://cloud.githubusercontent.com/assets/22656834/25303147/32c29ce8-2766-11e7-8671-7d96a0e0dcbf.png
 
-.. image:: 
+.. image:: https://cloud.githubusercontent.com/assets/22656834/25303145/2c8349cc-2766-11e7-8d98-ffbba971ca49.png
