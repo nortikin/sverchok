@@ -119,7 +119,7 @@ class SvSocketCommon:
 
     def draw_link_new_node(self, settings, idname, x_offset, y_offset):
         context, layout, node, index = settings
-        op = layout.operator('node.sv_link_new_node', text="", icon="PLUGIN")
+        op = layout.operator('node.sv_quicklink_new_node_input', text="", icon="PLUGIN")
         op.socket_index = index
         op.origin = node.name
         op.new_node_idname = idname
@@ -490,9 +490,9 @@ class StringsSocket(NodeSocket, SvSocketCommon):
         return self.nodule_color
 
 
-class SvLinkNewNode(bpy.types.Operator):
+class SvLinkNewNodeInput(bpy.types.Operator):
     ''' Spawn and link new node to the left of the caller node'''
-    bl_idname = "node.sv_link_new_node"
+    bl_idname = "node.sv_quicklink_new_node_input"
     bl_label = "Add a new node to the left"
 
     socket_index = bpy.props.IntProperty()
@@ -716,7 +716,7 @@ classes = [
     SvColors, SverchCustomTree,
     VerticesSocket, MatrixSocket, StringsSocket,
     SvColorSocket, SvQuaternionSocket, SvDummySocket,
-    SvLinkNewNode,
+    SvLinkNewNodeInput,
 ]
 
 
