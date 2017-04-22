@@ -117,6 +117,15 @@ class SvSocketCommon:
         else:
             layout.template_component_menu(prop_origin, prop_name, name=self.name)
 
+    def draw_link_new_node(self, settings, idname, x_offset, y_offset):
+        context, layout, node, index = settings
+        op = layout.operator('node.sv_link_new_node', text="", icon="PLUGIN")
+        op.socket_index = index
+        op.origin = node.name
+        op.new_node_idname = idname
+        op.new_node_offsetx = x_offset
+        op.new_node_offsety = y_offset
+
     @property
     def other(self):
         return get_other_socket(self)
@@ -202,9 +211,8 @@ class MatrixSocket(NodeSocket, SvSocketCommon):
             layout.label(draw_string)
         else:
             if not self.is_output:
-                op = layout.operator('node.sv_link_matrix_in', text="", icon="PLUGIN")
-                op.socket_index = self.index
-                op.origin = node.name
+                settings = [context, layout, node, self.index]
+                self.draw_link_new_node(settings, "SvMatrixGenNodeMK2", -200, 0)
 
             layout.label(text)
 
@@ -259,9 +267,8 @@ class VerticesSocket(NodeSocket, SvSocketCommon):
                 self.draw_expander_template(context, layout, prop_origin=self)
             else:
                 if not self.is_output:
-                    op = layout.operator('node.sv_link_vector_in', text="", icon="PLUGIN")
-                    op.socket_index = self.index
-                    op.origin = node.name
+                    settings = [context, layout, node, self.index]
+                    self.draw_link_new_node(settings, "GenVectorsNode", -200, 0)
 
                 layout.label(text)
 
@@ -299,7 +306,7 @@ class SvQuaternionSocket(NodeSocket, SvSocketCommon):
             if is_matrix_to_quaternion(self):
                 out = get_quaternions_from_matrices(SvGetSocket(self, deepcopy=True))
                 return out
-                
+
             # if is_vector_to_quaternion(self):
             #     out = vector_to_quaternion(SvGetSocket(self, deepcopy=True))
             #     return out
@@ -483,45 +490,29 @@ class StringsSocket(NodeSocket, SvSocketCommon):
         return self.nodule_color
 
 
-class SvLinkMatrix(bpy.types.Operator):
-
-    bl_idname = "node.sv_link_matrix_in"
-    bl_label = "Add a Matrix In node to the left"
+class SvLinkNewNode(bpy.types.Operator):
+    ''' Spawn and link new node to the left of the caller node'''
+    bl_idname = "node.sv_link_new_node"
+    bl_label = "Add a new node to the left"
 
     socket_index = bpy.props.IntProperty()
     origin = bpy.props.StringProperty()
+    new_node_idname = bpy.props.StringProperty()
+    new_node_offsetx = bpy.props.IntProperty(default=-200)
+    new_node_offsety = bpy.props.IntProperty(default=-100)
 
     def execute(self, context):
         tree = context.space_data.edit_tree
         nodes, links = tree.nodes, tree.links
 
         caller_node = nodes.get(self.origin)
-        mat_node = nodes.new('SvMatrixGenNodeMK2')
-        mat_node.location = caller_node.location[0] - 200, caller_node.location[1]
+        mat_node = nodes.new(self.new_node_idname)
+        mat_node.location = caller_node.location[0] + self.new_node_offsetx, caller_node.location[1] + self.new_node_offsety
 
         links.new(mat_node.outputs[0], caller_node.inputs[self.socket_index])
 
         return {'FINISHED'}
 
-class SvLinkVector(bpy.types.Operator):
-
-    bl_idname = "node.sv_link_vector_in"
-    bl_label = "Add a Vector In node to the left"
-
-    socket_index = bpy.props.IntProperty()
-    origin = bpy.props.StringProperty()
-
-    def execute(self, context):
-        tree = context.space_data.edit_tree
-        nodes, links = tree.nodes, tree.links
-
-        caller_node = nodes.get(self.origin)
-        mat_node = nodes.new('GenVectorsNode')
-        mat_node.location = caller_node.location[0] - 200, caller_node.location[1]
-
-        links.new(mat_node.outputs[0], caller_node.inputs[self.socket_index])
-
-        return {'FINISHED'}
 
 class SvNodeTreeCommon(object):
     '''
@@ -725,7 +716,7 @@ classes = [
     SvColors, SverchCustomTree,
     VerticesSocket, MatrixSocket, StringsSocket,
     SvColorSocket, SvQuaternionSocket, SvDummySocket,
-    SvLinkMatrix, SvLinkVector,
+    SvLinkNewNode,
 ]
 
 
