@@ -89,6 +89,10 @@ def generate_greasepencil(node, text, col, pos, fontdict):
         named_color = palette.colors.new()
         named_color.color = node.stroke_color
         named_color.name = node_specific_color
+    else:
+        if node.stroke_color != palette.colors[node_specific_color].color:
+            palette.colors[node_specific_color].color = node.stroke_color
+
 
 
     # get grease pencil layer
@@ -158,6 +162,7 @@ class SverchokGText(bpy.types.Operator):
         return {'FINISHED'}
 
 
+
 class GTextNode(bpy.types.Node, SverchCustomTreeNode):
 
     ''' G Notes '''
@@ -212,7 +217,7 @@ class GTextNode(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_gtext(self):
         text = self.text
-        col = []
+        col = self.stroke_color
         pos = self.location
 
         x_offset = 0
