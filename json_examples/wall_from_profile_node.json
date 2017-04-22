@@ -1,8 +1,8 @@
 {
-  "export_version": "0.061",
+  "export_version": "0.064",
   "framed_nodes": {
     "Extrude Edges": "Frame.001",
-    "Matrix in": "Frame.001",
+    "Matrix in.001": "Frame.001",
     "Matrix value input.001": "Frame.001",
     "Recalc Normals": "Frame.001",
     "Solidify": "Frame.001",
@@ -28,8 +28,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -769.9672241210938,
-        -1416.1630859375
+        -1053.1533203125,
+        -1769.9918212890625
       ],
       "params": {},
       "width": 140.0
@@ -161,7 +161,7 @@
         0.6079999804496765,
         0.6079999804496765
       ],
-      "height": 706.303955078125,
+      "height": 706.47509765625,
       "hide": false,
       "label": "\u0412\u0430\u0440\u0438\u0430\u043d\u0442 \u044d\u043a\u0441\u0442\u0440\u0443\u0434\u0430 2",
       "location": [
@@ -171,8 +171,8 @@
       "params": {},
       "width": 1697.931640625
     },
-    "Matrix in": {
-      "bl_idname": "MatrixGenNode",
+    "Matrix in.001": {
+      "bl_idname": "SvMatrixGenNodeMK2",
       "color": [
         0.6079999804496765,
         0.6079999804496765,
@@ -182,8 +182,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -827.4020385742188,
-        -1756.6011962890625
+        -1098.018798828125,
+        -2121.176513671875
       ],
       "params": {},
       "width": 140.0
@@ -199,8 +199,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -368.78961181640625,
-        -1718.1365966796875
+        -651.9757080078125,
+        -2071.96533203125
       ],
       "params": {
         "matrix": [
@@ -255,8 +255,8 @@
       "hide": true,
       "label": "",
       "location": [
-        -578.1348876953125,
-        -1431.4832763671875
+        -861.3209838867188,
+        -1785.31201171875
       ],
       "params": {},
       "width": 140.0
@@ -272,8 +272,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -444.2413330078125,
-        -1411.0577392578125
+        -727.4274291992188,
+        -1764.886474609375
       ],
       "params": {},
       "width": 140.0
@@ -289,8 +289,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -244.68328857421875,
-        -1389.03076171875
+        -527.869384765625,
+        -1742.8594970703125
       ],
       "params": {
         "thickness": 0.05000000074505806
@@ -308,8 +308,8 @@
       "hide": false,
       "label": "",
       "location": [
-        22.44171142578125,
-        -1599.8603515625
+        -260.744384765625,
+        -1953.6890869140625
       ],
       "params": {
         "thickness": -0.25
@@ -327,8 +327,8 @@
       "hide": false,
       "label": "",
       "location": [
-        278.56744384765625,
-        -1771.35595703125
+        -4.61865234375,
+        -2125.1845703125
       ],
       "params": {
         "thickness": 0.10000000149011612
@@ -365,8 +365,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -960.4492797851562,
-        -1776.1253662109375
+        -1243.6353759765625,
+        -2129.9541015625
       ],
       "params": {},
       "width": 100.0
@@ -382,8 +382,8 @@
       "hide": false,
       "label": "",
       "location": [
-        128.93804931640625,
-        -1299.5247802734375
+        -154.248046875,
+        -1653.353515625
       ],
       "params": {
         "activate": 1,
@@ -410,8 +410,8 @@
       "hide": false,
       "label": "",
       "location": [
-        333.21014404296875,
-        -1444.2733154296875
+        50.0240478515625,
+        -1798.10205078125
       ],
       "params": {
         "activate": 1,
@@ -438,8 +438,8 @@
       "hide": false,
       "label": "",
       "location": [
-        537.4822998046875,
-        -1596.8887939453125
+        254.29620361328125,
+        -1950.717529296875
       ],
       "params": {
         "activate": 1,
@@ -491,7 +491,7 @@
     [
       "Vectors in",
       "Vectors",
-      "Matrix in",
+      "Matrix in.001",
       "Location"
     ],
     [
@@ -507,7 +507,7 @@
       "Edg_Pol"
     ],
     [
-      "Matrix in",
+      "Matrix in.001",
       "Matrix",
       "Extrude Edges",
       "Matrices"
@@ -567,24 +567,6 @@
       "polygons"
     ],
     [
-      "Solidify.001",
-      "vertices",
-      "Viewer Draw2.002",
-      "vertices"
-    ],
-    [
-      "Solidify.001",
-      "polygons",
-      "Viewer Draw2.002",
-      "edg_pol"
-    ],
-    [
-      "Matrix value input.001",
-      "Matrix",
-      "Viewer Draw2.002",
-      "matrix"
-    ],
-    [
       "Float.002",
       "Float",
       "Solidify.002",
@@ -621,39 +603,57 @@
       "polygons"
     ],
     [
-      "Solidify.002",
+      "Solidify.003",
       "vertices",
-      "Viewer Draw2.003",
+      "Viewer Draw2.004",
       "vertices"
     ],
     [
-      "Solidify.002",
+      "Solidify.003",
       "polygons",
-      "Viewer Draw2.003",
+      "Viewer Draw2.004",
       "edg_pol"
     ],
     [
       "Matrix value input.001",
       "Matrix",
-      "Viewer Draw2.003",
+      "Viewer Draw2.004",
       "matrix"
     ],
     [
-      "Solidify.003",
+      "Solidify.001",
       "vertices",
-      "Viewer Draw2.004",
+      "Viewer Draw2.002",
       "vertices"
     ],
     [
-      "Solidify.003",
+      "Solidify.001",
       "polygons",
-      "Viewer Draw2.004",
+      "Viewer Draw2.002",
       "edg_pol"
     ],
     [
       "Matrix value input.001",
       "Matrix",
-      "Viewer Draw2.004",
+      "Viewer Draw2.002",
+      "matrix"
+    ],
+    [
+      "Solidify.002",
+      "vertices",
+      "Viewer Draw2.003",
+      "vertices"
+    ],
+    [
+      "Solidify.002",
+      "polygons",
+      "Viewer Draw2.003",
+      "edg_pol"
+    ],
+    [
+      "Matrix value input.001",
+      "Matrix",
+      "Viewer Draw2.003",
       "matrix"
     ]
   ]

@@ -77,7 +77,7 @@
       "width": 320.0
     },
     "Sv Stethoscope Node": {
-      "bl_idname": "SvStethoscopeNode",
+      "bl_idname": "SvStethoscopeNodeMK2",
       "color": [
         0.5,
         0.5,
@@ -100,7 +100,7 @@
       "width": 140.0
     },
     "Viewer text": {
-      "bl_idname": "ViewerNode_text",
+      "bl_idname": "ViewerNodeTextMK2",
       "color": [
         0.5,
         0.5,

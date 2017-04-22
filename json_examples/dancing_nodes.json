@@ -158,7 +158,7 @@
       "width": 146.32925415039062
     },
     "Frame Info": {
-      "bl_idname": "SvFrameInfoNode",
+      "bl_idname": "SvFrameInfoNodeMK2",
       "color": [
         0.6079999804496765,
         0.6079999804496765,
@@ -194,7 +194,7 @@
       "width": 140.0
     },
     "Matrix in": {
-      "bl_idname": "MatrixGenNode",
+      "bl_idname": "SvMatrixGenNodeMK2",
       "color": [
         0.6079999804496765,
         0.6079999804496765,

@@ -280,7 +280,7 @@ class StringsSocket(NodeSocket, SvSocketCommon):
         # just handle custom draw..be it input or output.
         if hasattr(self, 'custom_draw'):
             if self.custom_draw and hasattr(node, self.custom_draw):
-                getattr(node, self.custom_draw)(context, layout)
+                getattr(node, self.custom_draw)(self, context, layout)
                 return
 
         if self.prop_name:

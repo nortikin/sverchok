@@ -1,116 +1,7 @@
 {
-  "connections": {
-    "0": [
-      "Hilbert",
-      "Vertices",
-      "List Length",
-      "Data"
-    ],
-    "1": [
-      "Frame Info",
-      "Current Frame",
-      "Formula2",
-      "X"
-    ],
-    "2": [
-      "Frame Info",
-      "Start Frame",
-      "Formula2",
-      "n[0]"
-    ],
-    "3": [
-      "Frame Info",
-      "End Frame",
-      "Formula2",
-      "n[1]"
-    ],
-    "4": [
-      "List Length",
-      "Length",
-      "Line",
-      "N\u00ba Vertices"
-    ],
-    "5": [
-      "Formula2",
-      "Result",
-      "EvaluateLine",
-      "Factor"
-    ],
-    "6": [
-      "List Length",
-      "Length",
-      "Circle",
-      "N\u00ba Vertices"
-    ],
-    "7": [
-      "Formula2",
-      "Result",
-      "EvaluateLine.001",
-      "Factor"
-    ],
-    "8": [
-      "EvaluateLine.001",
-      "EvPoint",
-      "Viewer Draw2",
-      "vertices"
-    ],
-    "9": [
-      "Hilbert",
-      "Edges",
-      "Viewer Draw2",
-      "edg_pol"
-    ],
-    "10": [
-      "List Length",
-      "Length",
-      "Viewer text",
-      "edg_pol"
-    ],
-    "11": [
-      "Circle",
-      "Vertices",
-      "EvaluateLine.001",
-      "Vertice A"
-    ],
-    "12": [
-      "EvaluateLine",
-      "EvPoint",
-      "EvaluateLine.001",
-      "Vertice B"
-    ],
-    "13": [
-      "Hilbert",
-      "Vertices",
-      "Vectors out",
-      "Vectors"
-    ],
-    "14": [
-      "Vectors out",
-      "Y",
-      "Vectors in",
-      "Z"
-    ],
-    "15": [
-      "Vectors in",
-      "Vectors",
-      "EvaluateLine",
-      "Vertice B"
-    ],
-    "16": [
-      "Line",
-      "Vertices",
-      "EvaluateLine",
-      "Vertice A"
-    ],
-    "17": [
-      "Vectors out",
-      "X",
-      "Vectors in",
-      "Y"
-    ]
-  },
-  "export_version": "0.04 pre alpha",
+  "export_version": "0.064",
   "framed_nodes": {},
+  "groups": {},
   "nodes": {
     "Circle": {
       "bl_idname": "SvCircleNode",
@@ -185,7 +76,7 @@
       "width": 140.0
     },
     "Frame Info": {
-      "bl_idname": "SvFrameInfoNode",
+      "bl_idname": "SvFrameInfoNodeMK2",
       "color": [
         0.6079999804496765,
         0.6079999804496765,
@@ -221,7 +112,7 @@
       "width": 140.0
     },
     "Line": {
-      "bl_idname": "LineNode",
+      "bl_idname": "SvLineNodeMK2",
       "color": [
         0.6079999804496765,
         0.6079999804496765,
@@ -234,9 +125,7 @@
         82.53486633300781,
         175.7060089111328
       ],
-      "params": {
-        "step_": 0.10000000149011612
-      },
+      "params": {},
       "width": 140.0
     },
     "List Length": {
@@ -291,7 +180,7 @@
       "width": 140.0
     },
     "Viewer Draw2": {
-      "bl_idname": "ViewerNode2",
+      "bl_idname": "ViewerNodeTextMK2",
       "color": [
         1.0,
         1.0,
@@ -304,22 +193,11 @@
         1247.0794677734375,
         610.445556640625
       ],
-      "params": {
-        "bakebuttonshow": 1,
-        "display_edges": 1,
-        "display_verts": 0,
-        "edge_colors": [
-          0.7029858827590942,
-          0.7854828238487244,
-          0.8990001082420349
-        ],
-        "edge_width": 2,
-        "transparant": 0
-      },
+      "params": {},
       "width": 140.0
     },
-    "Viewer text": {
-      "bl_idname": "ViewerNode_text",
+    "Viewer text mk2": {
+      "bl_idname": "ViewerNodeTextMK2",
       "color": [
         0.5,
         0.5,
@@ -329,8 +207,8 @@
       "hide": false,
       "label": "",
       "location": [
-        56.317726135253906,
-        32.157588958740234
+        88.34475708007812,
+        -27.030254364013672
       ],
       "params": {},
       "width": 140.0
@@ -344,16 +222,16 @@
       "Vectors"
     ],
     [
-      "Vectors out",
-      "X",
-      "Vectors in",
-      "Y"
+      "Hilbert",
+      "Vertices",
+      "List Length",
+      "Data"
     ],
     [
-      "Vectors out",
-      "Y",
-      "Vectors in",
-      "Z"
+      "List Length",
+      "Length",
+      "Circle",
+      "N\u00ba Vertices"
     ],
     [
       "Frame Info",
@@ -374,22 +252,16 @@
       "n[1]"
     ],
     [
-      "Hilbert",
-      "Vertices",
-      "List Length",
-      "Data"
+      "Vectors out",
+      "X",
+      "Vectors in",
+      "Y"
     ],
     [
-      "List Length",
-      "Length",
-      "Circle",
-      "N\u00ba Vertices"
-    ],
-    [
-      "List Length",
-      "Length",
-      "Line",
-      "N\u00ba Vertices"
+      "Vectors out",
+      "Y",
+      "Vectors in",
+      "Z"
     ],
     [
       "Formula2",
@@ -442,7 +314,7 @@
     [
       "List Length",
       "Length",
-      "Viewer text",
+      "Viewer text mk2",
       "edg_pol"
     ]
   ]

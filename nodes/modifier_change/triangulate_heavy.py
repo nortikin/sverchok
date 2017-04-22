@@ -83,7 +83,7 @@ class SvHeavyTriangulateNode(bpy.types.Node, SverchCustomTreeNode):
                     for pol in tessellate([coords]):
                         new_faces.append([indices[i] for i in pol])
                 else:
-                    new_faces.append([v.index for v in f])
+                    new_faces.append([v.index for v in f.verts])
 
             result_vertices.append([v.co[:] for v in bm.verts])
             result_edges.append(new_edges)

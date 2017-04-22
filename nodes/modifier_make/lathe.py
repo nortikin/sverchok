@@ -90,13 +90,15 @@ class SvLatheNode(bpy.types.Node, SverchCustomTreeNode):
             r = dataCorrect(r)
             return r
 
-        socket_names = ['Verts', 'Edges', 'cent', 'axis', 'dvec', 'Degrees', 'Steps']
+        socket_names = ['Verts', 'cent', 'axis', 'dvec', 'Degrees', 'Steps']
         data = list(map(get_socket, socket_names))
-        mverts, medges, mcent, maxis, mdvec, mDegrees, mSteps = data
+        mverts, mcent, maxis, mdvec, mDegrees, mSteps = data
+        medges = inputs['Edges'].sv_get(default=[])
 
         verts_match_edges = medges and (len(medges) == len(mverts))
 
         verts_out, faces_out = [], []
+
         for idx, verts in enumerate(mverts):
 
             if not verts:
@@ -113,10 +115,12 @@ class SvLatheNode(bpy.types.Node, SverchCustomTreeNode):
                 'steps': self.Steps
             }
 
-            ''' [], or by idx, if idx present'''
+            ''' [], or by idx, if idx present -- will treat verts as sequential if not supplied'''
             if medges:
                 if verts_match_edges or (idx <= len(medges) - 1):
                     final_values['edges'] = medges[idx]
+            else:
+                final_values['edges'] = [(i, i+1) for i in range(len(verts)-1)]
 
             ''' by idx, if idx present, else last. if none then default'''
             if mcent:

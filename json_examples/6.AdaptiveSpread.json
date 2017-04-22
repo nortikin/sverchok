@@ -58,7 +58,7 @@
       "width": 200.0
     },
     "Objects in": {
-      "bl_idname": "ObjectsNode",
+      "bl_idname": "SvObjectsNodeMK3",
       "color": [
         0.0,
         0.5,
@@ -75,7 +75,7 @@
       "width": 140.0
     },
     "Objects in.001": {
-      "bl_idname": "ObjectsNode",
+      "bl_idname": "SvObjectsNodeMK3",
       "color": [
         0.0,
         0.5,

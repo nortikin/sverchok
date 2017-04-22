@@ -1,5 +1,5 @@
 {
-  "export_version": "0.055",
+  "export_version": "0.064",
   "framed_nodes": {},
   "groups": {},
   "nodes": {
@@ -411,8 +411,8 @@
       "params": {},
       "width": 16.0
     },
-    "Viewer text": {
-      "bl_idname": "ViewerNode_text",
+    "Viewer text mk2": {
+      "bl_idname": "ViewerNodeTextMK2",
       "color": [
         0.5,
         0.5,
@@ -422,10 +422,12 @@
       "hide": false,
       "label": "",
       "location": [
-        127.1884765625,
-        -588.2447509765625
+        87.84307861328125,
+        -572.5147705078125
       ],
-      "params": {},
+      "params": {
+        "autoupdate": 0
+      },
       "width": 140.0
     }
   },
@@ -439,32 +441,20 @@
     [
       "Reroute",
       "Output",
-      "List Match",
-      "Data 0"
-    ],
-    [
-      "Float Series.001",
-      "Range",
-      "List Match",
-      "Data 1"
-    ],
-    [
-      "Reroute",
-      "Output",
-      "List Flip Node",
-      "data"
-    ],
-    [
-      "Reroute",
-      "Output",
       "List Reverse",
       "data"
     ],
     [
       "Reroute",
       "Output",
-      "List function ",
+      "List item",
       "Data"
+    ],
+    [
+      "Integer.003",
+      "Integer",
+      "List item",
+      "Item"
     ],
     [
       "List Reverse",
@@ -475,26 +465,8 @@
     [
       "Reroute",
       "Output",
-      "List summa",
-      "Data"
-    ],
-    [
-      "Reroute",
-      "Output",
-      "List Shift",
+      "List Flip Node",
       "data"
-    ],
-    [
-      "Integer",
-      "Integer",
-      "List Shift",
-      "shift"
-    ],
-    [
-      "Reroute",
-      "Output",
-      "List First Last",
-      "Data"
     ],
     [
       "Reroute",
@@ -503,22 +475,10 @@
       "Data"
     ],
     [
-      "List Reverse",
-      "data",
-      "Viewer text",
-      "edg_pol"
-    ],
-    [
       "Reroute",
       "Output",
-      "List Join",
-      "data"
-    ],
-    [
-      "Reroute",
-      "Output",
-      "List Join",
-      "data 1"
+      "List First Last",
+      "Data"
     ],
     [
       "Reroute",
@@ -541,18 +501,6 @@
     [
       "Reroute",
       "Output",
-      "List item",
-      "Data"
-    ],
-    [
-      "Integer.003",
-      "Integer",
-      "List item",
-      "Item"
-    ],
-    [
-      "Reroute",
-      "Output",
       "MaskList",
       "data"
     ],
@@ -571,6 +519,18 @@
     [
       "Reroute",
       "Output",
+      "List Match",
+      "Data 0"
+    ],
+    [
+      "Float Series.001",
+      "Range",
+      "List Match",
+      "Data 1"
+    ],
+    [
+      "Reroute",
+      "Output",
       "List Zip",
       "data"
     ],
@@ -579,6 +539,48 @@
       "Output",
       "List Zip",
       "data 1"
+    ],
+    [
+      "Reroute",
+      "Output",
+      "List Join",
+      "data"
+    ],
+    [
+      "Reroute",
+      "Output",
+      "List Join",
+      "data 1"
+    ],
+    [
+      "Reroute",
+      "Output",
+      "List Shift",
+      "data"
+    ],
+    [
+      "Integer",
+      "Integer",
+      "List Shift",
+      "shift"
+    ],
+    [
+      "Reroute",
+      "Output",
+      "List summa",
+      "Data"
+    ],
+    [
+      "List Reverse",
+      "data",
+      "Viewer text mk2",
+      "edg_pol"
+    ],
+    [
+      "Reroute",
+      "Output",
+      "List function ",
+      "Data"
     ]
   ]
 }

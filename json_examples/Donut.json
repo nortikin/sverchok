@@ -1,5 +1,5 @@
 {
-  "export_version": "0.055",
+  "export_version": "0.064",
   "framed_nodes": {},
   "groups": {},
   "nodes": {
@@ -11,34 +11,14 @@
         0.6079999804496765
       ],
       "height": 100.0,
-      "hide": true,
+      "hide": false,
       "label": "",
       "location": [
-        209.71124267578125,
-        115.32705688476562
+        254.42062377929688,
+        128.85997009277344
       ],
       "params": {},
       "width": 140.0
-    },
-    "Axis Input": {
-      "bl_idname": "svAxisInputNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
-      "height": 100.0,
-      "hide": true,
-      "label": "X",
-      "location": [
-        -124.58305358886719,
-        47.29991912841797
-      ],
-      "params": {
-        "current_axis": "X",
-        "selected_axis": "X"
-      },
-      "width": 100.0
     },
     "Circle": {
       "bl_idname": "SvCircleNode",
@@ -175,19 +155,19 @@
       },
       "width": 140.0
     },
-    "Matrix in": {
-      "bl_idname": "MatrixGenNode",
+    "Matrix in.001": {
+      "bl_idname": "SvMatrixGenNodeMK2",
       "color": [
         0.6079999804496765,
         0.6079999804496765,
         0.6079999804496765
       ],
       "height": 100.0,
-      "hide": true,
+      "hide": false,
       "label": "",
       "location": [
-        93.94467163085938,
-        83.29912567138672
+        92.29364013671875,
+        15.59600830078125
       ],
       "params": {},
       "width": 140.0
@@ -203,8 +183,8 @@
       "hide": false,
       "label": "",
       "location": [
-        406.2325439453125,
-        162.01609802246094
+        441.33099365234375,
+        168.81814575195312
       ],
       "params": {
         "cicl_check_U": 1,
@@ -214,6 +194,27 @@
         "slice_check": 0
       },
       "width": 140.0
+    },
+    "Vector X | Y | Z": {
+      "bl_idname": "SvAxisInputNodeMK2",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": true,
+      "label": "",
+      "location": [
+        -19.036222457885742,
+        59.24535369873047
+      ],
+      "params": {
+        "axis_x": "1",
+        "axis_y": "0",
+        "axis_z": "0"
+      },
+      "width": 100.0
     },
     "Vectors Move": {
       "bl_idname": "VectorMoveNode",
@@ -226,8 +227,8 @@
       "hide": true,
       "label": "",
       "location": [
-        86.42247009277344,
-        128.59349060058594
+        74.71898651123047,
+        205.60169982910156
       ],
       "params": {},
       "width": 140.0
@@ -319,15 +320,15 @@
       "Stop"
     ],
     [
-      "Axis Input",
-      "Vectors",
-      "Matrix in",
+      "Vector X | Y | Z",
+      "Vector",
+      "Matrix in.001",
       "Rotation"
     ],
     [
       "Float Series",
       "Range",
-      "Matrix in",
+      "Matrix in.001",
       "Angle"
     ],
     [
@@ -367,7 +368,7 @@
       "Vectors"
     ],
     [
-      "Matrix in",
+      "Matrix in.001",
       "Matrix",
       "Apply matrix for vectors",
       "Matrixes"

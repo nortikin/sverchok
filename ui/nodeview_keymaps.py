@@ -42,14 +42,19 @@ def add_keymap():
         kmi = km.keymap_items.new('node.sv_monad_enter', 'TAB', 'PRESS')
         nodeview_keymaps.append((km, kmi))
 
-        # alt+G         | expand current monad into original state
+        # alt + G       | expand current monad into original state
         kmi = km.keymap_items.new('node.sv_monad_expand', 'G', 'PRESS', alt=True)
         nodeview_keymaps.append((km, kmi))
 
-        # Shift+A       | show custom menu
+        # Shift + A     | show custom menu
         kmi = km.keymap_items.new('wm.call_menu', 'A', 'PRESS', shift=True)
         kmi.properties.name = "NODEVIEW_MT_Dynamic_Menu"
         nodeview_keymaps.append((km, kmi))
+
+        # ctrl + Spacebar     | enter extra search operator
+        kmi = km.keymap_items.new('node.sv_extra_search', 'SPACE', 'PRESS', ctrl=True)
+        nodeview_keymaps.append((km, kmi))
+
 
 
 def remove_keymap():

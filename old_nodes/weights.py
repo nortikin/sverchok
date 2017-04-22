@@ -67,7 +67,7 @@ class SvVertexGroupNode(bpy.types.Node, SverchCustomTreeNode):
             if self.clear:
                 ovgs.add(Vi, self.fade_speed, "SUBTRACT")
             wei = We.sv_get()[0]
-            verts, wei = second_as_first_cycle(verts, wei)
+            wei = second_as_first_cycle(verts, wei)
             for i, i2 in zip(verts, wei):
                 ovgs.add([i], i2, "REPLACE")
         if Owe.is_linked:

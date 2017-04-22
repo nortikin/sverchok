@@ -52,7 +52,8 @@ class SvPointOnMeshNode(bpy.types.Node, SverchCustomTreeNode):
         o,p,md = self.inputs
         P,N,I = self.outputs
         Out,point,sm1,sm2 = [],p.sv_get()[0],self.mode,self.mode2
-        obj, max_dist = second_as_first_cycle(o.sv_get(), md.sv_get()[0])
+        obj = o.sv_get()
+        max_dist = second_as_first_cycle(obj, md.sv_get()[0])
         for i,i2 in zip(obj,max_dist):
             if sm1:
                 Out.append([i.closest_point_on_mesh(i.matrix_local.inverted()*Vector(p), i2) for p in point])

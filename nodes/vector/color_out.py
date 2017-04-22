@@ -31,7 +31,7 @@ nodule_color = (0.899, 0.8052, 0.0, 1.0)
 
 
 class SvColorsOutNode(bpy.types.Node, SverchCustomTreeNode):
-    ''' Generator for Color data , color separate'''
+    ''' color ---> rgb(a) /// Generator for Color data'''
     bl_idname = 'SvColorsOutNode'
     bl_label = 'Color Out'
     sv_icon = 'SV_COMBINE_OUT'
