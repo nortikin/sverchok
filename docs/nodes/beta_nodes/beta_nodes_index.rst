@@ -6,3 +6,4 @@ Beta Nodes
    :maxdepth: 2
 
    set_dataobject
+   Mask_from_Index
