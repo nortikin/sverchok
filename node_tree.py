@@ -109,7 +109,7 @@ class SvSocketCommon:
             else:  # collapsed
                 c1.prop(self, "expanded", icon='TRIA_DOWN', text="")
                 row = c2.row(align=True)
-                if self.bl_idname == "ColorSocket":
+                if self.bl_idname == "SvColorSocket":
                     row.prop(prop_origin, prop_name)
                 else:
                     row.template_component_menu(prop_origin, prop_name, name=self.name)
