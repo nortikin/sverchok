@@ -157,13 +157,18 @@ class SverchokGText(bpy.types.Operator):
         if self.mode == 'clear':
             node.erase_gtext()
         if self.mode == 'clipboard':
-            node.set_gtest()
+            node.set_gtext()
 
         return {'FINISHED'}
 
 
 
+
 class GTextNode(bpy.types.Node, SverchCustomTreeNode):
+
+    def wrapped_update(self, context):
+        self.draw_gtext()
+
 
     ''' G Notes '''
     bl_idname = 'GTextNode'
@@ -172,21 +177,19 @@ class GTextNode(bpy.types.Node, SverchCustomTreeNode):
 
     text = StringProperty(name='text', default='your text here')
     locator = IntVectorProperty(name="locator", description="stores location", default=(0, 0), size=2)
-    text_scale = IntProperty(name="font size", default=25, update=updateNode)
+    text_scale = IntProperty(name="font size", default=25, update=wrapped_update)
     stroke_color = FloatVectorProperty(subtype='COLOR', size=3, min=0, max=1)
 
     def draw_buttons(self, context, layout):
         row = layout.row(align=True)
         row.operator('node.sverchok_gtext_button', text='Set').mode = 'set'
-        row.operator('node.sverchok_gtext_button', text='Clear').mode = 'clear'
+        row.operator('node.sverchok_gtext_button', text='', icon='PASTEDOWN').mode = 'clipboard'
+        row.operator('node.sverchok_gtext_button', text='', icon='X').mode = 'clear'
         row.prop(self, 'stroke_color', text='')
 
 
     def draw_buttons_ext(self, context, layout):
         row = layout.row(align=True)
-        row.operator(
-            'node.sverchok_gtext_button', text='Get from Clipboard'
-        ).mode = 'clipboard'
         if self.id_data.grease_pencil:
             gp_layer = self.id_data.grease_pencil.layers.get(self.name)
             if gp_layer:
@@ -197,7 +200,7 @@ class GTextNode(bpy.types.Node, SverchCustomTreeNode):
     def update(self):
         pass
 
-    def set_gtest(self):
+    def set_gtext(self):
         self.text = bpy.context.window_manager.clipboard
         self.draw_gtext()
 
