@@ -84,10 +84,11 @@ def generate_greasepencil(node, text, col, pos, fontdict):
     gp = nt.grease_pencil
 
     palette = get_palette(tree=nt, palette_name='sv_palette')
-    if not 'gtextcol' in palette.colors:
+    node_specific_color = 'gt_col_' + node.name
+    if not node_specific_color in palette.colors:
         named_color = palette.colors.new()
         named_color.color = node.stroke_color
-        named_color.name = 'gtextcol'
+        named_color.name = node_specific_color
 
 
     # get grease pencil layer
@@ -119,8 +120,9 @@ def generate_greasepencil(node, text, col, pos, fontdict):
 
         minx, maxx, xwide = fdict_sizes[str(ord(ch))]
 
+        node_specific_color = 'gt_col_' + node.name
         for chain in v:
-            s = layer.frames[0].strokes.new(colorname='gtextcol')
+            s = layer.frames[0].strokes.new(colorname=node_specific_color)
 
             s.line_width = 1
             s.draw_mode = '2DSPACE'
