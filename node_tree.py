@@ -50,6 +50,7 @@ from sverchok.core.socket_conversions import (
     get_matrices_from_locs,
     get_locs_from_matrices,
     get_matrices_from_quaternions,
+    get_quaternions_from_matrices,
     is_matrix_to_quaternion,
     is_quaternion_to_matrix,
     is_vector_to_matrix,
@@ -294,9 +295,11 @@ class SvQuaternionSocket(NodeSocket, SvSocketCommon):
 
     def sv_get(self, default=sentinel, deepcopy=True):
         if self.is_linked and not self.is_output:
-            # if is_matrix_to_quaternion(self):
-            #     out = matrix_to_quaternion(SvGetSocket(self, deepcopy=True))
-            #     return out
+
+            if is_matrix_to_quaternion(self):
+                out = get_quaternions_from_matrices(SvGetSocket(self, deepcopy=True))
+                return out
+                
             # if is_vector_to_quaternion(self):
             #     out = vector_to_quaternion(SvGetSocket(self, deepcopy=True))
             #     return out

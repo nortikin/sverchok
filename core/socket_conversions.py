@@ -22,7 +22,7 @@ from mathutils import Matrix, Quaternion
 from sverchok.data_structure import Matrix_listing, Matrix_generate
 
 
-## conversion tests, to be used in sv_get!
+# conversion tests, to be used in sv_get!
 
 def cross_test_socket(self, A, B):
     """ A is origin type, B is destination type """
@@ -33,16 +33,20 @@ def cross_test_socket(self, A, B):
 def is_vector_to_matrix(self):
     return cross_test_socket(self, 'v', 'm')
 
+
 def is_matrix_to_vector(self):
     return cross_test_socket(self, 'm', 'v')
 
+
 def is_matrix_to_quaternion(self):
     return cross_test_socket(self, 'm', 'q')
+
 
 def is_quaternion_to_matrix(self):
     return cross_test_socket(self, 'q', 'm')
 
 # ---
+
 
 def get_matrices_from_locs(data):
     location_matrices = []
@@ -75,6 +79,25 @@ def get_matrices_from_quaternions(data):
 
     get_all(data)
     return matrices
+
+
+def get_quaternions_from_matrices(data):
+    quaternions = []
+    collect_quaternion = quaternions.append
+
+    def get_all(m, container):
+
+        for sublist in m:
+            if is_matrix(sublist):
+                mat = Matrix(sublist)
+                q = tuple(mat.to_quaternion())
+                collect_quaternion(q)
+            else:
+                new_sublist = []
+                get_all(sublist, new_sublist)
+
+    get_all(data, quaternions)
+    return [quaternions]
 
 
 def is_matrix(mat):
