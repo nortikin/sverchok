@@ -84,7 +84,7 @@ def generate_greasepencil(node, text, col, pos, fontdict):
     gp = nt.grease_pencil
 
     palette = get_palette(tree=nt, palette_name='sv_palette')
-    if not 'gtextcol' in palette:
+    if not 'gtextcol' in palette.colors:
         named_color = palette.colors.new()
         named_color.color = node.stroke_color
         named_color.name = 'gtextcol'
