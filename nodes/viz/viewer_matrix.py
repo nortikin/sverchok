@@ -36,7 +36,7 @@ def screen_v3dBGL(context, args):
     
     for matrix, color in args[0]:
         mdraw = MatrixDraw()
-        mdraw.draw_matrix(matrix, color)
+        mdraw.draw_matrix(matrix, color, args[1])
     
     bgl.glDisable(bgl.GL_POINT_SMOOTH)
     bgl.glDisable(bgl.GL_POINTS)
@@ -94,7 +94,7 @@ class SvMatrixViewer(bpy.types.Node, SverchCustomTreeNode):
     color_start = FloatVectorProperty(subtype='COLOR', min=0, max=1, size=3, update=updateNode)
     color_end = FloatVectorProperty(subtype='COLOR', default=(1,1,1), min=0, max=1, size=3, update=updateNode)
     node_id = IntProperty()
-    simple = BoolProperty(name='simple')
+    simple = BoolProperty(name='simple', update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('MatrixSocket', 'Matrix')
@@ -103,6 +103,7 @@ class SvMatrixViewer(bpy.types.Node, SverchCustomTreeNode):
         row = layout.row(align=True)
         row.prop(self, 'color_start', text='')
         row.prop(self, 'color_end', text='')
+        row.prop(self, 'simple')
 
     def process(self):
         self.n_id = node_id(self)
@@ -112,7 +113,7 @@ class SvMatrixViewer(bpy.types.Node, SverchCustomTreeNode):
             draw_data = {
                 'tree_name': self.id_data.name[:],
                 'custom_function': screen_v3dBGL,
-                'args': (match_color_to_matrix(self), )
+                'args': (match_color_to_matrix(self), self.simple)
             }
 
             v3dBGL.callback_enable(self.n_id, draw_data, overlay='POST_VIEW')

@@ -50,7 +50,7 @@ class MatrixDraw(object):
         self.z_n = Vector((0.0, 0.0, -0.5))
         self.bb = [Vector() for i in range(24)]
 
-    def draw_matrix(self, mat, bbcol=(1.0, 1.0, 1.0)):
+    def draw_matrix(self, mat, bbcol=(1.0, 1.0, 1.0), skip=False):
         bb = self.bb
 
         if not isinstance(mat, Matrix):
@@ -68,7 +68,9 @@ class MatrixDraw(object):
         ]
 
         glLineWidth(2.0)
-        for col, axial in axis:
+        for idx, (col, axial) in enumerate(axis):
+            if idx % 2 and skip:
+                continue
             glColor3f(*col)
             glBegin(GL_LINES)
             glVertex3f(*(zero_tx))
