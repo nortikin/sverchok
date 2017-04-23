@@ -19,32 +19,27 @@
 
 import bgl
 import bpy
-
-from sverchok.data_structure import node_id
-from sverchok.ui import bgl_callback_3dview as v3dBGL
-from sverchok.utils.sv_bgl_primitives import MatrixDraw
-
+from mathutils import Matrix, Vector, Color
 from bpy.props import FloatVectorProperty, IntProperty
-from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode
+
 from sverchok.core.socket_conversions import is_matrix
+from sverchok.utils.sv_bgl_primitives import MatrixDraw
+from sverchok.data_structure import node_id
+from sverchok.data_structure import updateNode
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.ui import bgl_callback_3dview as v3dBGL
 
 
 def screen_v3dBGL(context, args):
     region = context.region
     region3d = context.space_data.region_3d
     
-    matrices = args[0]
-    colors = args[1]
-    for m, col in zip(matrices, colors):
+    for matrix, color in args[0]:
         mdraw = MatrixDraw()
-        mdraw.draw_matrix(m, col)
+        mdraw.draw_matrix(matrix, color)
     
     bgl.glDisable(bgl.GL_POINT_SMOOTH)
     bgl.glDisable(bgl.GL_POINTS)
-
-
-    
 
 
 def match_color_to_matrix(node):
@@ -61,6 +56,7 @@ def match_color_to_matrix(node):
     if len(data) > 0:
         if is_matrix(data[0]):
             # 0. likely stores [matrix, matrix, matrix, ..]
+            theta = 1 / len(data)
             for idx, matrix in enumerate(data):
                 get_mat_color_set(element_iterated(matrix, theta, idx))
 
@@ -81,7 +77,7 @@ def match_color_to_matrix(node):
                     theta = 1 / len(matrix_list)
                     for idx, matrix in enumerate(matrix_list):
                         get_mat_color_set(element_iterated(matrix, theta, idx))
-    return zip(*data_out)
+    return data_out
 
 
 class SvMatrixViewer(bpy.types.Node, SverchCustomTreeNode):
@@ -98,8 +94,8 @@ class SvMatrixViewer(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons(self, context, layout):
         row = layout.row(align=True)
-        row.prop(self, 'color_start')
-        row.prop(self, 'color_end')
+        row.prop(self, 'color_start', text='')
+        row.prop(self, 'color_end', text='')
 
     def process(self):
         self.n_id = node_id(self)
@@ -109,18 +105,18 @@ class SvMatrixViewer(bpy.types.Node, SverchCustomTreeNode):
             draw_data = {
                 'tree_name': self.id_data.name[:],
                 'custom_function': screen_v3dBGL,
-                'args': match_color_to_matrix(self)
+                'args': (match_color_to_matrix(self), )
             }
 
             v3dBGL.callback_enable(self.n_id, draw_data, overlay='POST_VIEW')
 
 
 def register():
-    bpy.utils.register_class(option1)
+    bpy.utils.register_class(SvMatrixViewer)
 
 
 def unregister():
-    bpy.utils.unregister_class(option1)
+    bpy.utils.unregister_class(SvMatrixViewer)
 
 
 

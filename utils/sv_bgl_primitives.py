@@ -82,17 +82,18 @@ class MatrixDraw(object):
         series2 = (-0.5, 0.5)
         z = 0
 
-        for x in series1:
-            for y in series2:
-                bb[i][:] = x, y, z
-                bb[i] = mat * bb[i]
-                i += 1
+        def yield_xy():
+            for x in series1:
+                for y in series2:
+                    yield x, y
+            for y in series1:
+                for x in series2:
+                    yield x, y
 
-        for y in series1:
-            for x in series2:
-                bb[i][:] = x, y, z
-                bb[i] = mat * bb[i]
-                i += 1
+        for x, y in yield_xy():
+            bb[i][:] = x, y, z
+            bb[i] = mat * bb[i]
+            i += 1
 
         # bounding box drawing
         glLineWidth(1.0)
