@@ -67,8 +67,8 @@ socket_colors = {
     "SvColorSocket": (0.9, 0.8, 0.0, 1.0),
     "MatrixSocket": (0.2, 0.8, 0.8, 1.0),
     "DummySocket": (0.8, 0.8, 0.8, 0.3),
-    "ObjectSocket": (0.69,  0.74,  0.73, 1.0),
-    "TextSocket": (0.68,  0.85,  0.90, 1),
+    "ObjectSocket": (0.69, 0.74, 0.73, 1.0),
+    "TextSocket": (0.68, 0.85, 0.90, 1),
 }
 
 # default values returned when no input is connected to socket
@@ -96,7 +96,8 @@ class SvColors(bpy.types.PropertyGroup):
 class SvSocketCommon:
 
     use_expander = BoolProperty(default=True)
-    expanded = BoolProperty(default=False)
+    use_quicklink = BoolProperty(default=True)
+    expanded = BoolProperty(default=True)
 
     def draw_expander_template(self, context, layout, prop_origin, prop_name="prop"):
         if self.use_expander:
@@ -118,13 +119,14 @@ class SvSocketCommon:
             layout.template_component_menu(prop_origin, prop_name, name=self.name)
 
     def draw_link_new_node(self, settings, idname, x_offset, y_offset):
-        context, layout, node, index = settings
-        op = layout.operator('node.sv_quicklink_new_node_input', text="", icon="PLUGIN")
-        op.socket_index = index
-        op.origin = node.name
-        op.new_node_idname = idname
-        op.new_node_offsetx = x_offset
-        op.new_node_offsety = y_offset
+        if self.use_quicklink:
+            context, layout, node, index = settings
+            op = layout.operator('node.sv_quicklink_new_node_input', text="", icon="PLUGIN")
+            op.socket_index = index
+            op.origin = node.name
+            op.new_node_idname = idname
+            op.new_node_offsetx = x_offset
+            op.new_node_offsety = y_offset
 
     @property
     def other(self):
