@@ -152,6 +152,18 @@ class SverchokGText(bpy.types.Operator):
 
     def execute(self, context):
         node = context.node
+
+        # check valid greasepencil interface..
+        timestamp = bpy.app.build_commit_timestamp
+        # earliest_allowed_timestamp = 1487894400 # (feb 24, 2017, 2.78c)
+        #                            1487946787
+        earliest_allowed_timestamp = 1492214400 # (april 15, 2017)
+
+        if timestamp and timestamp < earliest_allowed_timestamp:
+            self.report({'ERROR'}, 'Please update to builder.blender.org latest builds, 2.78c will not work')
+            return {'CANCELLED'}
+
+
         if self.mode == 'set':
             node.draw_gtext()
         if self.mode == 'clear':
