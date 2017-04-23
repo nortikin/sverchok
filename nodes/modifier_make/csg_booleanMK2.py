@@ -67,10 +67,10 @@ def Boolean(VA, PA, VB, PB, operation):
     return [[vertices], [faces]]
 
 
-class SvCSGBooleanNode(bpy.types.Node, SverchCustomTreeNode):
-    '''CSG Boolean Node'''
-    bl_idname = 'SvCSGBooleanNode'
-    bl_label = 'CSG Boolean'
+class SvCSGBooleanNodeMK2(bpy.types.Node, SverchCustomTreeNode):
+    '''CSG Boolean Node MK2'''
+    bl_idname = 'SvCSGBooleanNodeMK2'
+    bl_label = 'CSG Boolean 2'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     mode_options = [
@@ -116,8 +116,8 @@ class SvCSGBooleanNode(bpy.types.Node, SverchCustomTreeNode):
 
 
 def register():
-    bpy.utils.register_class(SvCSGBooleanNode)
+    bpy.utils.register_class(SvCSGBooleanNodeMK2)
 
 
 def unregister():
-    bpy.utils.unregister_class(SvCSGBooleanNode)
+    bpy.utils.unregister_class(SvCSGBooleanNodeMK2)
