@@ -24,12 +24,13 @@ import re
 import os
 import json
 import glob
-from pprint import pprint
 from collections import OrderedDict
 
 import sverchok
 from sverchok.menu import make_node_cats
 from sverchok.utils.context_managers import sv_preferences
+
+DEBUG = False
 
 _category_node_list = {}
 _theme_collection = OrderedDict()
@@ -37,46 +38,94 @@ _current_theme_id = "default"
 _hardcoded_theme_ids = []
 _theme_preset_list = []
 
+# theme dictionary sections/groups
+THEME_NAME = "Name"
 NODE_COLORS = "Node Colors"
 ERROR_COLORS = "Error Colors"
 HEATMAP_COLORS = "Heat Map Colors"
 
-color_attribute_map = {
-    "Visualizer": "color_viz",
-    "Text": "color_tex",
-    "Scene": "color_sce",
-    "Layout": "color_lay",
-    "Generators": "color_gen",
-    "Generators Extended": "color_gex",
-    "Exception": "exception_color",
-    "No Data": "no_data_color",
-    "Heat Map Cold": "heat_map_cold",
-    "Heat Map Hot": "heat_map_hot",
+_theme_default = {
+    THEME_NAME: "Default",
+    NODE_COLORS: {
+        "Visualizer": [1.0, 0.3, 0.0],
+        "Text": [0.5, 0.5, 1.0],
+        "Scene": [0.0, 0.5, 0.2],
+        "Layout": [0.674, 0.242, 0.363],
+        "Generators": [0.0, 0.5, 0.5],
+        "Generators Extended": [0.4, 0.7, 0.7],
+        # "Monad": [0.830, 0.91, 0.75],
+    },
+    ERROR_COLORS: {
+        "Exception": [0.8, 0.0, 0.0],  # When node has an exception
+        "No Data": [1.0, 0.3, 0.0],  # When a node can not get data
+    },
+    HEATMAP_COLORS: {
+        "Heat Map Cold": [1.0, 1.0, 1.0],
+        "Heat Map Hot": [0.8, 0.0, 0.0],
+    }
 }
 
-DEBUG = False
+_theme_nipon_blossom = {
+    THEME_NAME: "Nipon Blossom",
+    NODE_COLORS: {
+        "Visualizer": [0.628488, 0.931008, 1.000000],
+        "Text": [1.000000, 0.899344, 0.974251],
+        "Scene": [0.904933, 1.000000, 0.883421],
+        "Layout": [0.602957, 0.674000, 0.564277],
+        "Generators": [0.92, 0.92, 0.92],
+        "Generators Extended": [0.95, 0.95, 0.95],
+    },
+    ERROR_COLORS: {
+        "Exception": [0.8, 0.0, 0.0],  # When node has an exception
+        "No Data": [1.0, 0.3, 0.0]  # When a node can not get data
+    },
+    HEATMAP_COLORS: {
+        "Heat Map Cold": [1.0, 1.0, 1.0],
+        "Heat Map Hot": [0.8, 0.0, 0.0],
+    }
+}
+
+
+_theme_color_attributes = {}  # cached values
+
+
 def debugPrint(*args):
     if DEBUG:
         print(*args)
 
 
-def get_theme_id_list():
+def theme_color_attrs():
+    """ Convert default theme template to a dict of color attributes names """
+    if not _theme_color_attributes:  # not cached ? => cache it!
+        for group in _theme_default.keys():
+            if group == THEME_NAME:  # skip the theme name section
+                continue
+            attrs = {}
+            for category in _theme_default[group]:
+                attrs[category] = theme_color_attr(category)
+            _theme_color_attributes[group] = attrs
+
+    return _theme_color_attributes
+
+
+def theme_color_attr(category):
+    attr = re.sub(r'[ ]', '_', category.lower()) + "_color"
+    return attr
+
+
+def get_theme_preset_list():
     """ Get the theme preset list (used by settings enum property) """
-    # debugPrint("get the theme preset list")
     return _theme_preset_list
 
 
-def cache_theme_id_list():
-    """ Cache the theme preset list (triggered after add/remove theme preset)"""
-    # debugPrint("cache theme preset lists")
-    # debugPrint("theme preset list = ", _theme_preset_list)
-    # debugPrint("theme collection = ", _theme_collection)
+def cache_theme_preset_list():
+    """ Cache the theme preset list (triggered after add/remove theme preset) """
     _theme_preset_list.clear()
-    for name, theme in _theme_collection.items():
-        themeName = theme["Name"]
-        debugPrint("file name = ", name)
+    for themeID, theme in _theme_collection.items():
+        themeName = theme[THEME_NAME]
+        debugPrint("file name = ", themeID)
         debugPrint("theme name = ", themeName)
-        themeItem = (name, themeName, themeName)
+        themeItem = (themeID, themeName, themeName)
         _theme_preset_list.append(themeItem)
 
 
@@ -92,16 +141,12 @@ def get_current_themeID():
 
 def cache_category_node_list():
     """ Cache the category-node mapping (used for color access) """
-    if _category_node_list:
-        return
+    if not _category_node_list:
+        node_category_list = make_node_cats()
 
-    node_category_list = make_node_cats()
-
-    for category, nodes in node_category_list.items():
-        for node in nodes:
-            _category_node_list[node[0]] = category
-
-    # debugPrint("category node list = ", _category_node_list)
+        for category, nodes in node_category_list.items():
+            for node in nodes:
+                _category_node_list[node[0]] = category
 
 
 def get_node_category(nodeID):
@@ -160,12 +205,12 @@ def load_themes(reload=False):
     for f in themeFiles:
         # debugPrint("filepath: ", filePath)
         theme = load_theme(f)
-        themeID = theme_id(theme["Name"])
+        themeID = theme_id(theme[THEME_NAME])
         debugPrint("theme ID : ", themeID)
         _theme_collection[themeID] = theme
 
     # for themeID, theme in _theme_collection.items():
-    #     debugPrint("Theme : ", themeID, " is called: ", theme["Name"])
+    #     debugPrint("Theme : ", themeID, " is called: ", theme[THEME_NAME])
 
     # debugPrint("Loaded theme collection: ", _theme_collection)
 
@@ -183,72 +228,14 @@ def save_theme(theme, fileName):
 
 def save_default_themes():
     """ Save the hardcoded default themes to disk """
-
-    # DEFAULT theme
-    theme = OrderedDict()
-    nodeColors = OrderedDict()
-    errorColors = OrderedDict()
-    heatMapColors = OrderedDict()
-
-    theme["Name"] = "Default"
-
-    nodeColors["Visualizer"] = [1.0, 0.3, 0.0]
-    nodeColors["Text"] = [0.5, 0.5, 1.0]
-    nodeColors["Scene"] = [0.0, 0.5, 0.2]
-    nodeColors["Layout"] = [0.674, 0.242, 0.363]
-    nodeColors["Generators"] = [0.0, 0.5, 0.5]
-    nodeColors["Generators Extended"] = [0.4, 0.7, 0.7]
-
-    errorColors["Exception"] = [0.8, 0.0, 0.0]
-    errorColors["No Data"] = [1.0, 0.3, 0.0]
-
-    heatMapColors["Heat Map Cold"] = [1.0, 1.0, 1.0]
-    heatMapColors["Heat Map Hot"] = [0.8, 0.0, 0.0]
-
-    theme[NODE_COLORS] = nodeColors
-    theme[ERROR_COLORS] = errorColors
-    theme[HEATMAP_COLORS] = heatMapColors
-
-    themeID = theme_id(theme["Name"])
-
-    save_theme(theme, themeID + ".json")
-
-    _hardcoded_theme_ids.append(themeID)  # keep track of the default themes IDs
-
-    # NIPON-BLOSSOM theme
-    theme = OrderedDict()
-    nodeColors = OrderedDict()
-    errorColors = OrderedDict()
-    heatMapColors = OrderedDict()
-
-    theme["Name"] = "Nipon Blossom"
-
-    nodeColors["Visualizer"] = [0.628488, 0.931008, 1.000000]
-    nodeColors["Text"] = [1.000000, 0.899344, 0.974251]
-    nodeColors["Scene"] = [0.904933, 1.000000, 0.883421]
-    nodeColors["Layout"] = [0.602957, 0.674000, 0.564277]
-    nodeColors["Generators"] = [0.92, 0.92, 0.92]
-    nodeColors["Generators Extended"] = [0.95, 0.95, 0.95]
-
-    errorColors["Exception"] = [0.8, 0.0, 0.0]
-    errorColors["No Data"] = [1.0, 0.3, 0.0]
-
-    heatMapColors["Heat Map Cold"] = [1.0, 1.0, 1.0]
-    heatMapColors["Heat Map Hot"] = [0.8, 0.0, 0.0]
-
-    theme[NODE_COLORS] = nodeColors
-    theme[ERROR_COLORS] = errorColors
-    theme[HEATMAP_COLORS] = heatMapColors
-
-    themeID = theme_id(theme["Name"])
-
-    save_theme(theme, themeID + ".json")
-
-    _hardcoded_theme_ids.append(themeID)  # keep track of the default themes IDs
+    for theme in [_theme_default, _theme_nipon_blossom]:
+        themeID = theme_id(theme[THEME_NAME])
+        save_theme(theme, themeID + ".json")
+        _hardcoded_theme_ids.append(themeID)  # keep track of the default themes IDs
 
 
 def remove_theme(themeName):
-    """ Remove theme from theme collection and disk """
+    """ Remove theme with given name from theme collection and disk """
     themeID = theme_id(themeName)
 
     if themeID in _hardcoded_theme_ids:
@@ -290,19 +277,18 @@ def theme_color(group, category):
 
 def get_node_color(nodeID):
     """ Return the theme color of a node given its node ID """
-    theme = get_current_theme()
-    debugPrint("Get node color for current theme name: ", theme["Name"])
-
     nodeCategory = get_node_category(nodeID)
     debugPrint("NodeID: ", nodeID, " is in category:", nodeCategory)
-
     nodeCategory = "Visualizer" if nodeCategory == "Viz" else nodeCategory
 
+    theme = get_current_theme()
+    debugPrint("Get node color for current theme name: ", theme[THEME_NAME])
     if nodeCategory in theme[NODE_COLORS]:
         debugPrint("Category: ", nodeCategory, " found in the theme")
         # return theme_color(NODE_COLORS, nodeCategory)
         with sv_preferences() as prefs:
-            attr = color_attribute_map[nodeCategory]
+            # print("node color category: ", nodeCategory)
+            attr = theme_color_attr(nodeCategory)
             color = getattr(prefs, attr)
             debugPrint("get node color for attribute: ", attr, " : ", color)
             return color
@@ -312,18 +298,9 @@ def get_node_color(nodeID):
 
 def update_prefs_colors():
     with sv_preferences() as prefs:
-        prefs.color_viz = theme_color(NODE_COLORS, "Visualizer")
-        prefs.color_tex = theme_color(NODE_COLORS, "Text")
-        prefs.color_sce = theme_color(NODE_COLORS, "Scene")
-        prefs.color_lay = theme_color(NODE_COLORS, "Layout")
-        prefs.color_gen = theme_color(NODE_COLORS, "Generators")
-        prefs.color_gex = theme_color(NODE_COLORS, "Generators Extended")
-
-        prefs.exception_color = theme_color(ERROR_COLORS, "Exception")
-        prefs.no_data_color = theme_color(ERROR_COLORS, "No Data")
-
-        prefs.heat_map_cold = theme_color(HEATMAP_COLORS, "Heat Map Cold")
-        prefs.heat_map_hot = theme_color(HEATMAP_COLORS, "Heat Map Hot")
+        for group, categories in theme_color_attrs().items():
+            for category, attr in categories.items():
+                setattr(prefs, attr, theme_color(group, category))
 
 
 def sverchok_trees():
@@ -344,7 +321,6 @@ def apply_theme(ng=None):
 
 
 class SvApplyTheme(bpy.types.Operator):
-
     """
     Apply Sverchok theme
     """
@@ -357,7 +333,7 @@ class SvApplyTheme(bpy.types.Operator):
     def execute(self, context):
         global _current_theme_id
         with sv_preferences() as prefs:
-            _current_theme_id = prefs.current_theme
+            _current_theme_id = prefs.theme_preset
 
         debugPrint("applying sverchok theme: ", _current_theme_id)
         if self.tree_name:
@@ -372,7 +348,6 @@ class SvApplyTheme(bpy.types.Operator):
 
 
 class SvAddTheme(bpy.types.Operator):
-
     """
     Add current settings as new theme.
     Note: it will not update the hardcoded themes.
@@ -388,47 +363,31 @@ class SvAddTheme(bpy.types.Operator):
 
         with sv_preferences() as prefs:
             theme = OrderedDict()
-            nodeColors = OrderedDict()
-            errorColors = OrderedDict()
-            heatMapColors = OrderedDict()
-
-            theme["Name"] = themeName
-
-            nodeColors["Visualizer"] = prefs.color_viz[:]
-            nodeColors["Text"] = prefs.color_tex[:]
-            nodeColors["Scene"] = prefs.color_sce[:]
-            nodeColors["Layout"] = prefs.color_lay[:]
-            nodeColors["Generators"] = prefs.color_gen[:]
-            nodeColors["Generators Extended"] = prefs.color_gex[:]
-
-            errorColors["Exception"] = prefs.exception_color[:]
-            errorColors["No Data"] = prefs.no_data_color[:]
-
-            heatMapColors["Heat Map Cold"] = prefs.heat_map_cold[:]
-            heatMapColors["Heat Map Hot"] = prefs.heat_map_hot[:]
-
-            theme[NODE_COLORS] = nodeColors
-            theme[ERROR_COLORS] = errorColors
-            theme[HEATMAP_COLORS] = heatMapColors
+            theme[THEME_NAME] = themeName
+            for group, categories in theme_color_attrs().items():
+                groupColors = OrderedDict()
+                for category, attr in categories.items():
+                    groupColors[category] = getattr(prefs, attr)[:]
+                theme[group] = groupColors
 
             debugPrint("theme: ", theme)
 
-            themeID = theme_id(theme["Name"])
+            themeID = theme_id(theme[THEME_NAME])
             save_theme(theme, themeID + ".json")
 
             load_themes(True)  # force reload themes
-            cache_theme_id_list()  # update theme ID list (for settings preset enum)
+            cache_theme_preset_list()  # update theme ID list (for settings preset enum)
 
     def execute(self, context):
         debugPrint("EXECUTE the ADD preset operator")
         themeName = self.themeName
         themeID = theme_id(themeName)
         with sv_preferences() as prefs:
-            if prefs.current_theme == themeID and not self.overwrite:
+            if prefs.theme_preset == themeID and not self.overwrite:
                 self.report({'ERROR'}, "A theme with given name already exists!")
             else:  # OK to add/update the theme
                 self.add_theme(themeName)
-                prefs.current_theme = themeID  # select the newly added theme
+                prefs.theme_preset = themeID  # select the newly added theme
 
         return {'FINISHED'}
 
@@ -436,12 +395,12 @@ class SvAddTheme(bpy.types.Operator):
         debugPrint("INVOKE the ADD preset operator")
         with sv_preferences() as prefs:
             # themeID = get_current_themeID()
-            themeID = prefs.current_theme
+            themeID = prefs.theme_preset
             if themeID in _hardcoded_theme_ids:  # populate with generic theme name
                 self.themeName = "Unamed Theme"
             else:  # populate with current theme's name (anticipating an update)
                 theme = get_current_theme()
-                self.themeName = theme["Name"]
+                self.themeName = theme[THEME_NAME]
         self.overwrite = False  # assume no overwrite by default
         return context.window_manager.invoke_props_dialog(self)
 
@@ -452,7 +411,6 @@ class SvAddTheme(bpy.types.Operator):
 
 
 class SvRemoveTheme(bpy.types.Operator):
-
     """
     Remove currently selected theme.
     Note: it doesn't work on hardcoded themes.
@@ -466,19 +424,19 @@ class SvRemoveTheme(bpy.types.Operator):
         debugPrint("remove_theme in action")
         remove_theme(themeName)
         load_themes(True)  # force reload themes
-        cache_theme_id_list()  # update theme ID list (for settings preset enum)
+        cache_theme_preset_list()  # update theme ID list (for settings preset enum)
 
     def execute(self, context):
         debugPrint("EXECUTE the REMOVE preset operator")
         with sv_preferences() as prefs:
-            themeID = prefs.current_theme
+            themeID = prefs.theme_preset
             if themeID in _hardcoded_theme_ids:
                 self.report({'ERROR'}, "Cannot remove default themes!")
             else:  # OK to remove (if confirmed)
                 if self.remove_confirm:
                     theme = get_current_theme()
-                    self.remove_theme(theme["Name"])
-                    prefs.current_theme = "default"  # select the default theme
+                    self.remove_theme(theme[THEME_NAME])
+                    prefs.theme_preset = "default"  # select the default theme
                 else:
                     self.report({'ERROR'}, "Must confirm to remove!")
 
@@ -488,7 +446,7 @@ class SvRemoveTheme(bpy.types.Operator):
         debugPrint("INVOKE the REMOVE preset operator")
         with sv_preferences() as prefs:
             # themeID = get_current_themeID()
-            themeID = prefs.current_theme
+            themeID = prefs.theme_preset
             if themeID in _hardcoded_theme_ids:
                 self.report({'ERROR'}, "Cannot remove default themes!")
                 return {'FINISHED'}
@@ -508,7 +466,7 @@ classes = [SvAddTheme, SvRemoveTheme, SvApplyTheme]
 def register():
     save_default_themes()
     load_themes()
-    cache_theme_id_list()
+    cache_theme_preset_list()
 
     for cls in classes:
         bpy.utils.register_class(cls)

@@ -25,6 +25,7 @@ from mathutils import Vector
 from sverchok import data_structure
 from sverchok.core.socket_data import SvNoDataError, reset_socket_cache
 import sverchok
+from sverchok.ui import sv_themes
 
 import traceback
 import ast
@@ -34,6 +35,7 @@ graphs = []
 no_data_color = (1, 0.3, 0)
 exception_color = (0.8, 0.0, 0)
 
+# todo : update the color access to be done via function calls to themes
 def update_error_colors(self, context):
     global no_data_color
     global exception_color
@@ -259,8 +261,12 @@ def do_update_heat_map(node_list, nodes):
     addon = bpy.context.user_preferences.addons.get(addon_name)
     if addon:
         # to use Vector.lerp
-        cold = Vector(addon.preferences.heat_map_cold)
-        hot = addon.preferences.heat_map_hot
+        coldColor = sv_themes.theme_color("Heat Map Colors", "Heat Map Cold")
+        hotColor = sv_themes.theme_color("Heat Map Colors", "Heat Map Hot")
+        cold = Vector(coldColor)
+        hot = Vector(hotColor)
+        # cold = Vector(addon.preferences.heat_map_cold)
+        # hot = addon.preferences.heat_map_hot
     else:
         print("Cannot find preferences")
         cold = Vector((1, 1, 1))
@@ -286,9 +292,11 @@ def update_error_nodes(ng, name, err=Exception):
     ng["error nodes"] = str(error_nodes)
 
     if isinstance(err, SvNoDataError):
-        node.color = no_data_color
+        node.color = sv_themes.theme_color("Error Colors", "No Data")
+        # node.color = no_data_color
     else:
-        node.color = exception_color
+        node.color = sv_themes.theme_color("Error Colors", "Exception")
+        # node.color = exception_color
     node.use_custom_color=True
 
 def reset_error_nodes(ng):
