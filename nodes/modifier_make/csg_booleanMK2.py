@@ -17,42 +17,26 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-import bmesh
-import sys
-
-from bpy.props import FloatProperty, EnumProperty
+from bpy.props import EnumProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
-from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
-
 from sverchok.utils.csg_core import CSG
 
 
 def Boolean(VA, PA, VB, PB, operation):
-    if not all([VA, PA, VB, PB]):
-        return False, False
-
     a = CSG.Obj_from_pydata(VA, PA)
     b = CSG.Obj_from_pydata(VB, PB)
 
     faces = []
     vertices = []
 
-    recursionlimit = sys.getrecursionlimit()
-    sys.setrecursionlimit(10000)
-    try:
-        if operation == 'DIFF':
-            polygons = a.subtract(b).toPolygons()
-        elif operation == 'JOIN':
-            polygons = a.union(b).toPolygons()
-        elif operation == 'ITX':
-            polygons = a.intersect(b).toPolygons()
-    except RuntimeError as e:
-        raise RuntimeError(e)
-
-    sys.setrecursionlimit(recursionlimit)
-
+    if operation == 'DIFF':
+        polygons = a.subtract(b).toPolygons()
+    elif operation == 'JOIN':
+        polygons = a.union(b).toPolygons()
+    elif operation == 'ITX':
+        polygons = a.intersect(b).toPolygons()
     for polygon in polygons:
         indices = []
         for v in polygon.vertices:
