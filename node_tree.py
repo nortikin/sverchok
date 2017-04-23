@@ -499,7 +499,7 @@ class SvLinkNewNodeInput(bpy.types.Operator):
     origin = bpy.props.StringProperty()
     new_node_idname = bpy.props.StringProperty()
     new_node_offsetx = bpy.props.IntProperty(default=-200)
-    new_node_offsety = bpy.props.IntProperty(default=-100)
+    new_node_offsety = bpy.props.IntProperty(default=0)
 
     def execute(self, context):
         tree = context.space_data.edit_tree
@@ -507,8 +507,8 @@ class SvLinkNewNodeInput(bpy.types.Operator):
 
         caller_node = nodes.get(self.origin)
         mat_node = nodes.new(self.new_node_idname)
-        mat_node.location = caller_node.location[0] + self.new_node_offsetx, caller_node.location[1] + self.new_node_offsety
-
+        mat_node.location[0] = caller_node.location[0] + self.new_node_offsetx
+        mat_node.location[1] = caller_node.location[1] + self.new_node_offsety
         links.new(mat_node.outputs[0], caller_node.inputs[self.socket_index])
 
         return {'FINISHED'}
