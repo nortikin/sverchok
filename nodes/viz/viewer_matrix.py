@@ -44,32 +44,44 @@ def screen_v3dBGL(context, args):
     bgl.glDisable(bgl.GL_POINTS)
 
 
+    
+
+
 def match_color_to_matrix(node):
+    vcol_start = Vector(node.color_start)
+    vcol_end = Vector(node.color_end)
+
+    def element_iterated(matrix, theta, index):
+        return matrix, Color(vcol_start.lerp(vcol_end, index*theta))[:]
+
     data = node.inputs['Matrix'].sv_get()
+    data_out = []
+    get_mat_color_set = data_out.append
 
     if len(data) > 0:
         if is_matrix(data[0]):
-            # this list likely stores [matrix, matrix, matrix, ..]
-            for matrix in data:
-                ...
+            # 0. likely stores [matrix, matrix, matrix, ..]
+            for idx, matrix in enumerate(data):
+                get_mat_color_set(element_iterated(matrix, theta, idx))
+
         elif is_matrix(data[0][0]):
-            # 1. this list likely stores [[matrix, matrix, matrix],[matrix, matrix, matrix],..]
-            # 2. or stores [[matrix],[matrix],..]
 
-            # 1.
-            for matrix_list in data:
-                for matrix in matrix_list:
-                    ...
-            
-            # 2.
-            # if each element in data is len 1
+            if all(isinstance(m, list) and len(m) == 1 and is_matrix(m[0]) for m in data):
+                # 1. stores [[matrix],[matrix],..]
+                theta = 1 / len(data)
+                for idx, m in enumerate(data):
+                    matrix = m[0]
+                    get_mat_color_set(element_iterated(matrix, theta, idx))
 
-            
-
-
-
-    vcol_start = Vector(node.color_start)
-    vcol_end = Vector(node.color_end)
+            else:
+                # 2. stores [[matrix, matrix, matrix],[matrix, matrix, matrix],..]
+                for matrix_list in data:
+                    if len(matrix_list) == 0:
+                        continue
+                    theta = 1 / len(matrix_list)
+                    for idx, matrix in enumerate(matrix_list):
+                        get_mat_color_set(element_iterated(matrix, theta, idx))
+    return zip(*data_out)
 
 
 class SvMatrixViewer(bpy.types.Node, SverchCustomTreeNode):
@@ -94,12 +106,10 @@ class SvMatrixViewer(bpy.types.Node, SverchCustomTreeNode):
         v3dBGL.callback_disable(self.n_id)
 
         if self.inputs['Matrix'].is_linked:
-            in_matrices, matrix_colors = match_color_to_matrix(self)
-
             draw_data = {
                 'tree_name': self.id_data.name[:],
                 'custom_function': screen_v3dBGL,
-                'args': (in_matrices, matrix_colors)
+                'args': match_color_to_matrix(self)
             }
 
             v3dBGL.callback_enable(self.n_id, draw_data, overlay='POST_VIEW')
