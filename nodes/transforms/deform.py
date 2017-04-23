@@ -129,6 +129,8 @@ class SvSimpleDeformNode(bpy.types.Node, SverchCustomTreeNode):
     def bend(self, mins, maxs, low_limit, hi_limit, angle, vertex):
         if self.angles_mode == 'degrees':
             angle = radians(angle)
+        if abs(angle) < 0.00001:
+            return vertex
         x,y,z = tuple(vertex)
         L = maxs[0] - mins[0]
         angle = 100.0 * angle / (hi_limit - low_limit)
