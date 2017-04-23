@@ -47,12 +47,27 @@ def screen_v3dBGL(context, args):
 def match_color_to_matrix(node):
     data = node.inputs['Matrix'].sv_get()
 
-    """
-    # if len(data) > 0:
+    if len(data) > 0:
+        if is_matrix(data[0]):
+            # this list likely stores [matrix, matrix, matrix, ..]
+            for matrix in data:
+                ...
+        elif is_matrix(data[0][0]):
+            # 1. this list likely stores [[matrix, matrix, matrix],[matrix, matrix, matrix],..]
+            # 2. or stores [[matrix],[matrix],..]
+
+            # 1.
+            for matrix_list in data:
+                for matrix in matrix_list:
+                    ...
+            
+            # 2.
+            # if each element in data is len 1
+
+            
 
 
 
-    """
     vcol_start = Vector(node.color_start)
     vcol_end = Vector(node.color_end)
 
