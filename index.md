@@ -210,8 +210,9 @@
     ViewerNode2
     SvBmeshViewerNodeMK2
     IndexViewerNode
-    Sv3DviewPropsNode
     SvTextureViewerNode
+    SvMatrixViewer
+    Sv3DviewPropsNode
 
 ## Text
     ViewerNodeTextMK2
