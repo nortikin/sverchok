@@ -18,19 +18,16 @@
 
 import bpy
 from bpy.props import EnumProperty
-
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode
+from sverchok.data_structure import updateNode, match_long_cycle as mlr
 from sverchok.utils.csg_core import CSG
 
 
 def Boolean(VA, PA, VB, PB, operation):
     a = CSG.Obj_from_pydata(VA, PA)
     b = CSG.Obj_from_pydata(VB, PB)
-
     faces = []
     vertices = []
-
     if operation == 'DIFF':
         polygons = a.subtract(b).toPolygons()
     elif operation == 'JOIN':
@@ -45,9 +42,7 @@ def Boolean(VA, PA, VB, PB, operation):
                 vertices.append(pos)
             index = vertices.index(pos)
             indices.append(index)
-
         faces.append(indices)
-
     return [[vertices], [faces]]
 
 
@@ -88,11 +83,7 @@ class SvCSGBooleanNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         VertA, PolA, VertB, PolB = self.inputs
         SMode = self.selected_mode
         out = []
-        VA = VertA.sv_get()
-        PA = PolA.sv_get()
-        VB = VertB.sv_get()
-        PB = PolB.sv_get()
-        for v1, p1, v2, p2 in zip(VA, PA, VB, PB):
+        for v1, p1, v2, p2 in zip(*mlr([VertA.sv_get(), PolA.sv_get(), VertB.sv_get(), PolB.sv_get()])):
             out.append(Boolean(v1, p1, v2, p2, SMode))
         OutV.sv_set([i[0] for i in out])
         if OutP.is_linked:
