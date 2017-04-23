@@ -20,7 +20,7 @@
 import bgl
 import bpy
 from mathutils import Matrix, Vector, Color
-from bpy.props import FloatVectorProperty, IntProperty
+from bpy.props import FloatVectorProperty, IntProperty, BoolProperty
 
 from sverchok.core.socket_conversions import is_matrix
 from sverchok.utils.sv_bgl_primitives import MatrixDraw
@@ -51,14 +51,14 @@ def match_color_to_matrix(node):
 
     data = node.inputs['Matrix'].sv_get()
     data_out = []
-    get_mat_color_set = data_out.append
+    get_mat_theta_idx = data_out.append
 
     if len(data) > 0:
         if is_matrix(data[0]):
             # 0. likely stores [matrix, matrix, matrix, ..]
             theta = 1 / len(data)
             for idx, matrix in enumerate(data):
-                get_mat_color_set(element_iterated(matrix, theta, idx))
+                get_mat_theta_idx([matrix, theta, idx])
 
         elif is_matrix(data[0][0]):
 
@@ -67,7 +67,7 @@ def match_color_to_matrix(node):
                 theta = 1 / len(data)
                 for idx, m in enumerate(data):
                     matrix = m[0]
-                    get_mat_color_set(element_iterated(matrix, theta, idx))
+                    get_mat_theta_idx([matrix, theta, idx])
 
             else:
                 # 2. stores [[matrix, matrix, matrix],[matrix, matrix, matrix],..]
@@ -76,7 +76,13 @@ def match_color_to_matrix(node):
                         continue
                     theta = 1 / len(matrix_list)
                     for idx, matrix in enumerate(matrix_list):
-                        get_mat_color_set(element_iterated(matrix, theta, idx))
+                        get_mat_theta_idx([matrix, theta, idx])
+
+
+    if not node.simple:
+         return [element_iterated(*values) for values in data_out]
+    else:
+         return [element_iterated(*values) for values in data_out]
     return data_out
 
 
@@ -88,6 +94,7 @@ class SvMatrixViewer(bpy.types.Node, SverchCustomTreeNode):
     color_start = FloatVectorProperty(subtype='COLOR', min=0, max=1, size=3, update=updateNode)
     color_end = FloatVectorProperty(subtype='COLOR', default=(1,1,1), min=0, max=1, size=3, update=updateNode)
     node_id = IntProperty()
+    simple = BoolProperty(name='simple')
 
     def sv_init(self, context):
         self.inputs.new('MatrixSocket', 'Matrix')
