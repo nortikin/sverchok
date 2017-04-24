@@ -17,7 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-from bpy.props import EnumProperty
+from bpy.props import EnumProperty, BoolProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_cycle as mlr
 from sverchok.utils.csg_core import CSG
@@ -64,27 +64,53 @@ class SvCSGBooleanNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         default="ITX",
         update=updateNode)
 
+    def update_mode(self, context):
+        self.inputs['Verts A'].hide_safe = self.nest_objs
+        self.inputs['Polys A'].hide_safe = self.nest_objs
+        self.inputs['Verts B'].hide_safe = self.nest_objs
+        self.inputs['Polys B'].hide_safe = self.nest_objs
+        self.inputs['Verts Nested'].hide_safe = not self.nest_objs
+        self.inputs['Polys Nested'].hide_safe = not self.nest_objs
+        updateNode(self, context)
+
+    nest_objs = BoolProperty(name="nest_objs",
+                             description="nest_objs",
+                             default=False,
+                             update=update_mode)
+
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', 'Verts A')
         self.inputs.new('StringsSocket',  'Polys A')
         self.inputs.new('VerticesSocket', 'Verts B')
         self.inputs.new('StringsSocket',  'Polys B')
+        self.inputs.new('VerticesSocket', 'Verts Nested').hide_safe = True
+        self.inputs.new('StringsSocket',  'Polys Nested').hide_safe = True
         self.outputs.new('VerticesSocket', 'Vertices', 'Vertices')
         self.outputs.new('StringsSocket', 'Polygons', 'Polygons')
 
     def draw_buttons(self, context, layout):
         row = layout.row()
         row.prop(self, 'selected_mode', expand=True)
+        col = layout.column(align=True)
+        col.prop(self, "nest_objs", toggle=True)
 
     def process(self):
         OutV, OutP = self.outputs
         if not OutV.is_linked:
             return
-        VertA, PolA, VertB, PolB = self.inputs
+        VertA, PolA, VertB, PolB, VertN, PolN = self.inputs
         SMode = self.selected_mode
         out = []
-        for v1, p1, v2, p2 in zip(*mlr([VertA.sv_get(), PolA.sv_get(), VertB.sv_get(), PolB.sv_get()])):
-            out.append(Boolean(v1, p1, v2, p2, SMode))
+        if not self.nest_objs:
+            for v1, p1, v2, p2 in zip(*mlr([VertA.sv_get(), PolA.sv_get(), VertB.sv_get(), PolB.sv_get()])):
+                out.append(Boolean(v1, p1, v2, p2, SMode))
+        else:
+            vnest, pnest = VertN.sv_get(), PolN.sv_get()
+            First = Boolean(vnest[0], pnest[0], vnest[1], pnest[1], SMode)
+            out.append(First)
+            for i in range(2, len(vnest)):
+                out.append(Boolean(First[0][0], First[1][0], vnest[i], pnest[i], SMode))
+                First = out[-1]
         OutV.sv_set([i[0] for i in out])
         if OutP.is_linked:
             OutP.sv_set([i[1] for i in out])
