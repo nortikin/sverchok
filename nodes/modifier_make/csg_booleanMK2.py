@@ -73,8 +73,8 @@ class SvCSGBooleanNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         self.inputs['Polys Nested'].hide_safe = not self.nest_objs
         updateNode(self, context)
 
-    nest_objs = BoolProperty(name="nest_objs",
-                             description="nest_objs",
+    nest_objs = BoolProperty(name="accumulate nested",
+                             description="bool first two objs, then applies rest to result one by one",
                              default=False,
                              update=update_mode)
 
