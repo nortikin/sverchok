@@ -78,6 +78,11 @@ class SvCSGBooleanNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                              default=False,
                              update=update_mode)
 
+    out_last = BoolProperty(name="only final result",
+                            description="output only last iteration result",
+                            default=True,
+                            update=update_mode)
+
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', 'Verts A')
         self.inputs.new('StringsSocket',  'Polys A')
@@ -93,6 +98,8 @@ class SvCSGBooleanNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         row.prop(self, 'selected_mode', expand=True)
         col = layout.column(align=True)
         col.prop(self, "nest_objs", toggle=True)
+        if self.nest_objs:
+            col.prop(self, "out_last", toggle=True)
 
     def process(self):
         OutV, OutP = self.outputs
@@ -107,10 +114,15 @@ class SvCSGBooleanNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         else:
             vnest, pnest = VertN.sv_get(), PolN.sv_get()
             First = Boolean(vnest[0], pnest[0], vnest[1], pnest[1], SMode)
-            out.append(First)
-            for i in range(2, len(vnest)):
-                out.append(Boolean(First[0][0], First[1][0], vnest[i], pnest[i], SMode))
-                First = out[-1]
+            if not self.out_last:
+                out.append(First)
+                for i in range(2, len(vnest)):
+                    out.append(Boolean(First[0][0], First[1][0], vnest[i], pnest[i], SMode))
+                    First = out[-1]
+            else:
+                for i in range(2, len(vnest)):
+                    First = Boolean(First[0][0], First[1][0], vnest[i], pnest[i], SMode)
+                out.append(First)
         OutV.sv_set([i[0][0] for i in out])
         if OutP.is_linked:
             OutP.sv_set([i[1][0] for i in out])
