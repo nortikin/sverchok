@@ -43,7 +43,7 @@ def Boolean(VA, PA, VB, PB, operation):
             index = vertices.index(pos)
             indices.append(index)
         faces.append(indices)
-    return [[vertices], [faces]]
+    return [vertices, faces]
 
 
 class SvCSGBooleanNodeMK2(bpy.types.Node, SverchCustomTreeNode):
@@ -117,15 +117,15 @@ class SvCSGBooleanNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             if not self.out_last:
                 out.append(First)
                 for i in range(2, len(vnest)):
-                    out.append(Boolean(First[0][0], First[1][0], vnest[i], pnest[i], SMode))
+                    out.append(Boolean(First[0], First[1], vnest[i], pnest[i], SMode))
                     First = out[-1]
             else:
                 for i in range(2, len(vnest)):
-                    First = Boolean(First[0][0], First[1][0], vnest[i], pnest[i], SMode)
+                    First = Boolean(First[0], First[1], vnest[i], pnest[i], SMode)
                 out.append(First)
-        OutV.sv_set([i[0][0] for i in out])
+        OutV.sv_set([i[0] for i in out])
         if OutP.is_linked:
-            OutP.sv_set([i[1][0] for i in out])
+            OutP.sv_set([i[1] for i in out])
 
 
 def register():
