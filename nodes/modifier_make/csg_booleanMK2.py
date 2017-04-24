@@ -111,9 +111,9 @@ class SvCSGBooleanNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             for i in range(2, len(vnest)):
                 out.append(Boolean(First[0][0], First[1][0], vnest[i], pnest[i], SMode))
                 First = out[-1]
-        OutV.sv_set([i[0] for i in out])
+        OutV.sv_set([i[0][0] for i in out])
         if OutP.is_linked:
-            OutP.sv_set([i[1] for i in out])
+            OutP.sv_set([i[1][0] for i in out])
 
 
 def register():
