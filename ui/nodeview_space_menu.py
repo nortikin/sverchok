@@ -105,6 +105,7 @@ class NodeViewMenuTemplate(bpy.types.Menu):
 
     def draw(self, context):
         layout_draw_categories(self.layout, node_cats[self.bl_label])
+        # prop_menu_enum(data, property, text="", text_ctxt="", icon='NONE')
 
 
 # quick class factory.
@@ -135,8 +136,8 @@ class NODEVIEW_MT_Dynamic_Menu(bpy.types.Menu):
         layout.operator_context = 'INVOKE_REGION_WIN'
 
         if self.bl_idname == 'NODEVIEW_MT_Dynamic_Menu':
-            s = layout.operator("node.add_search", text="Search", icon='OUTLINER_DATA_FONT')
-            s.use_transform = True
+            layout.operator("node.sv_extra_search", text="Search", icon='OUTLINER_DATA_FONT')
+
 
         layout.separator()
         layout.menu("NODEVIEW_MT_AddGenerators", **icon('OBJECT_DATAMODE'))

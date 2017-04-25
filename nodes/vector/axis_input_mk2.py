@@ -24,10 +24,10 @@ from sverchok.data_structure import updateNode
 
 
 class SvAxisInputNodeMK2(bpy.types.Node, SverchCustomTreeNode):
-    ''' Generator for X, Y or Z axis. '''
+    ''' axis input '''
 
     bl_idname = 'SvAxisInputNodeMK2'
-    bl_label = 'Vector X | Y | Z'
+    bl_label = 'Vector X/Y/Z'
     bl_icon = 'MANIPUL'
 
     m = [("-1", "-1", "", 0), ("0", "0", "", 1), ("1", "1", "", 2)]

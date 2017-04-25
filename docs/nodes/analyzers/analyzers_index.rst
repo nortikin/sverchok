@@ -13,6 +13,7 @@ Analyzers
    kd_tree_edges_mk2
    mesh_filter
    mesh_select
+   select_similar
    proportional
    normal
    normals

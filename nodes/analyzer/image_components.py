@@ -213,7 +213,7 @@ class SvImageComponentsNode(bpy.types.Node, SverchCustomTreeNode):
         update=updateNode)
 
     z_spread = FloatProperty(
-        default=0.01,
+        default=1.00,
         step=0.001,
         name='z_spread',
         update=updateNode)

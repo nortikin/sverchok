@@ -65,6 +65,15 @@ class SvExecNodeMod(bpy.types.Node, SverchCustomTreeNode):
     dynamic_strings = bpy.props.CollectionProperty(type=SvExecNodeDynaStringItem)
 
     def draw_buttons(self, context, layout):
+        row = layout.row(align=True)
+        # add() remove() clear() move()
+        row.operator('node.callback_execnodemod', text='', icon='ZOOMIN').cmd = 'add_new_line'
+        row.operator('node.callback_execnodemod', text='', icon='ZOOMOUT').cmd = 'remove_last_line'
+        row.operator('node.callback_execnodemod', text='', icon='TRIA_UP').cmd = 'shift_up'
+        row.operator('node.callback_execnodemod', text='', icon='TRIA_DOWN').cmd = 'shift_down'
+        row.operator('node.callback_execnodemod', text='', icon='SNAP_ON').cmd = 'delete_blank'
+        row.operator('node.callback_execnodemod', text='', icon='SNAP_OFF').cmd = 'insert_blank'
+
         if len(self.dynamic_strings) == 0:
             return
 
@@ -77,13 +86,6 @@ class SvExecNodeMod(bpy.types.Node, SverchCustomTreeNode):
             col = layout.column(align=True)
             for idx, line in enumerate(self.dynamic_strings):
                 col.prop(self.dynamic_strings[idx], "line", text="")
-
-        row = layout.row(align=True)
-        # add() remove() clear() move()
-        row.operator('node.callback_execnodemod', text='', icon='ZOOMIN').cmd = 'add_new_line'
-        row.operator('node.callback_execnodemod', text='', icon='ZOOMOUT').cmd = 'remove_last_line'
-        row.operator('node.callback_execnodemod', text='', icon='TRIA_UP').cmd = 'shift_up'
-        row.operator('node.callback_execnodemod', text='', icon='TRIA_DOWN').cmd = 'shift_down'
 
     def draw_buttons_ext(self, context, layout):
         col = layout.column(align=True)
@@ -107,6 +109,22 @@ class SvExecNodeMod(bpy.types.Node, SverchCustomTreeNode):
         L = len(sds)
         for i in range(L):
             sds.move(L-i, i-1)
+    
+    def delete_blank(self, context):
+        sds = self.dynamic_strings
+        Lines = [i.line for i in sds if i.line != ""]
+        sds.clear()
+        for i in Lines:
+            sds.add().line = i
+
+    def insert_blank(self, context):
+        sds = self.dynamic_strings
+        Lines = [i.line for i in sds]
+        sds.clear()
+        for i in Lines:
+            sds.add().line = i
+            if i != "":
+                sds.add().line = ""
 
     def copy_from_text(self, context):
         for i, i2 in zip(self.dynamic_strings, bpy.data.texts[self.text].lines):

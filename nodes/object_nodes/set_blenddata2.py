@@ -47,27 +47,25 @@ class SvSetDataObjectNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
     def process(self):
         O, V = self.inputs
-        Ov = self.outputs[0]
+        Ov, Oo = self.outputs
         Prop = self.formula
-        Objects_out = self.outputs['Objects']
-        Objects_out.sv_set(self.inputs['Objects'].sv_get(default=[]))
         objs = O.sv_get()
         if isinstance(objs[0], list):
             if V.is_linked:
                 v = V.sv_get()
                 if "matrix" in Prop:
                     v = [Matrix(i) for i in v]
-                    objs, v = safc(objs, [v])
+                    v = safc(objs, [v])
                     for OBL, VALL in zip(objs, v):
-                        OBL, VALL = safc(OBL, VALL)
+                        VALL = safc(OBL, VALL)
                         exec("for i, i2 in zip(OBL, VALL):\n    i."+Prop+"= i2")
                 else:
                     if isinstance(v[0], list):
-                        objs, v = safc(objs, v)
+                        v = safc(objs, v)
                     else:
-                        objs, v = safc(objs, [v])
+                        v = safc(objs, [v])
                     for OBL, VALL in zip(objs, v):
-                        OBL, VALL = safc(OBL, VALL)
+                        VALL = safc(OBL, VALL)
                         exec("for i, i2 in zip(OBL, VALL):\n    i."+Prop+"= i2")
             elif Ov.is_linked:
                 Ov.sv_set(eval("[[i."+Prop+" for i in OBL] for OBL in objs]"))
@@ -78,17 +76,19 @@ class SvSetDataObjectNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                 v = V.sv_get()
                 if "matrix" in Prop:
                     v = [Matrix(i) for i in v]
-                    objs, v = safc(objs, v)
+                    v = safc(objs, v)
                     exec("for i, i2 in zip(objs, v):\n    i."+Prop+"= i2")
                 else:
                     if isinstance(v[0], list):
                         v = v[0]
-                    objs, v = safc(objs, v)
+                    v = safc(objs, v)
                     exec("for i, i2 in zip(objs, v):\n    i."+Prop+"= i2")
             elif Ov.is_linked:
                 Ov.sv_set(eval("[i."+Prop+" for i in objs]"))
             else:
                 exec("for i in objs:\n    i."+Prop)
+        if Oo.is_linked:
+            Oo.sv_set(objs)
 
 
 def register():

@@ -55,6 +55,7 @@
     SvMeshFilterNode
     SvEdgeAnglesNode
     SvMeshSelectNode
+    SvSelectSimilarNode
     SvProportionalEditNode
 
 ## Transforms
@@ -76,6 +77,8 @@
     SvMeshJoinNode
     ---
     SvBevelNode
+    SvSubdivideNode
+    SvSmoothNode
     SvIntersectEdgesNodeMK2
     SvOffsetNode
     SvFillsHoleNode
@@ -113,6 +116,7 @@
 ## List Masks
     MaskListNode
     SvMaskJoinNode
+    SvMaskConvertNode
 
 ## List Mutators
     SvListModifierNode
@@ -272,15 +276,16 @@
     SvCacheNode
     SvInsetSpecial
     SvSkinViewerNodeMK1b
-    SvCSGBooleanNode
+    SvCSGBooleanNodeMK2
     SvParticlesNode
     SvParticlesMK2Node
     SvUVtextureNode
     SvNumpyArrayNode
     SvBMVertsNode
-    SvBMOpsNode
+    SvBMOpsNodeMK2
     SvBMinputNode
     SvBMoutputNode
     SvBMtoElementNode
     SvSeparateMeshNodeMK2
     SvBvhOverlapNodeNew
+    SvIndexToMaskNode
