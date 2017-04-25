@@ -102,11 +102,12 @@ class SvMatrixViewer(bpy.types.Node, SverchCustomTreeNode):
         row = layout.row(align=True)
         row.prop(self, 'color_start', text='')
         row.prop(self, 'color_end', text='')
-        row.prop(self, 'simple')
+        row.prop(self, 'simple', toggle=True)
 
     def process(self):
         self.n_id = node_id(self)
         v3dBGL.callback_disable(self.n_id)
+        # v3dBGL.callback_disable(self.n_id+'__2D')
 
         if self.inputs['Matrix'].is_linked:
             draw_data = {
@@ -116,9 +117,11 @@ class SvMatrixViewer(bpy.types.Node, SverchCustomTreeNode):
             }
 
             v3dBGL.callback_enable(self.n_id, draw_data, overlay='POST_VIEW')
+            # v3dBGL.callback_enable(self.n_id+'__2D', draw_data_2d, overlay='POST_PIXEL')
 
     def free(self):
         v3dBGL.callback_disable(node_id(self))
+        # v3dBGL.callback_disable(node_id(self) + '__2D')
 
     # reset n_id on copy
     def copy(self, node):
@@ -128,8 +131,8 @@ class SvMatrixViewer(bpy.types.Node, SverchCustomTreeNode):
         if not ("Matrix" in self.inputs):
             return
         if not self.inputs[0].other:
-            v3dBGL.callback_disable(node_id(self))        
-
+            # v3dBGL.callback_disable(node_id(self))
+            self.free()
 
 
 
