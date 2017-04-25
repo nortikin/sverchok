@@ -20,7 +20,7 @@
 import bgl
 import bpy
 from mathutils import Matrix, Vector, Color
-from bpy.props import FloatVectorProperty, StringProperty, BoolProperty
+from bpy.props import FloatVectorProperty, StringProperty, BoolProperty, FloatProperty
 from bpy_extras.view3d_utils import location_3d_to_region_2d as loc3d2d
 
 from sverchok.core.socket_conversions import is_matrix
@@ -46,6 +46,8 @@ def screen_v3dBGL_overlay(context, args):
 
     if not args[2]:
         return
+
+    alpha = args[3]
     
 
     region = context.region
@@ -56,7 +58,7 @@ def screen_v3dBGL_overlay(context, args):
 
     for matrix, color in args[0]:
         r, g, b = color
-        bgl.glColor4f(r, g, b, 0.2)
+        bgl.glColor4f(r, g, b, alpha)
         bgl.glBegin(bgl.GL_QUADS)
         M = Matrix(matrix)
         for x, y in [(-.5, .5), (.5 ,.5), (.5 ,-.5), (-.5 ,-.5)]:
@@ -122,25 +124,29 @@ class SvMatrixViewer(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvMatrixViewer'
     bl_label = 'Matrix View'
 
-    color_start = FloatVectorProperty(subtype='COLOR', min=0, max=1, size=3, update=updateNode)
-    color_end = FloatVectorProperty(subtype='COLOR', default=(1, 1, 1), min=0, max=1, size=3, update=updateNode)
+    color_start = FloatVectorProperty(subtype='COLOR', default=(1, 1, 1), min=0, max=1, size=3, update=updateNode)
+    color_end = FloatVectorProperty(subtype='COLOR', default=(1, 0.02, 0.02), min=0, max=1, size=3, update=updateNode)
     n_id = StringProperty()
-    
-    simple = BoolProperty(name='simple', update=updateNode)
-    grid = BoolProperty(name='grid', update=updateNode)
-    plane = BoolProperty(name='plane', update=updateNode)
+
+    simple = BoolProperty(name='simple', update=updateNode, default=True)
+    grid = BoolProperty(name='grid', update=updateNode, default=True)
+    plane = BoolProperty(name='plane', update=updateNode, default=True)
+    alpha = FloatProperty(name='alpha', update=updateNode, min=0.0, max=1.0, subtype='FACTOR', default=0.13)
 
     def sv_init(self, context):
         self.inputs.new('MatrixSocket', 'Matrix')
 
     def draw_buttons(self, context, layout):
-        row = layout.row(align=True)
+        col = layout.column(align=True)
+        row = col.row(align=True)
         row.prop(self, 'color_start', text='')
         row.prop(self, 'color_end', text='')
-        row = layout.row(align=True)
+        row = col.row(align=True)
         row.prop(self, 'simple', toggle=True)
         row.prop(self, 'grid', toggle=True)
         row.prop(self, 'plane', toggle=True)
+        row = col.row(align=True)
+        row.prop(self, 'alpha')
 
     def process(self):
         self.n_id = node_id(self)
@@ -157,7 +163,7 @@ class SvMatrixViewer(bpy.types.Node, SverchCustomTreeNode):
             draw_data_2d = {
                 'tree_name': self.id_data.name[:],
                 'custom_function': screen_v3dBGL_overlay,
-                'args': (cdat, self.simple, self.plane)
+                'args': (cdat, self.simple, self.plane, self.alpha)
             }
 
             v3dBGL.callback_enable(self.n_id, draw_data, overlay='POST_VIEW')
