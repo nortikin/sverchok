@@ -124,6 +124,13 @@ class SvMatrixViewer(bpy.types.Node, SverchCustomTreeNode):
     def copy(self, node):
         self.n_id = ''
 
+    def update(self):
+        if not ("Matrix" in self.inputs):
+            return
+        if not self.inputs[0].other:
+            v3dBGL.callback_disable(node_id(self))        
+
+
 
 
 def register():
