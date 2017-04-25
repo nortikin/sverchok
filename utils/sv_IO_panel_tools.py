@@ -408,11 +408,17 @@ def perform_svtextin_node_object(node, node_ref):
 
     elif not current_text in texts:
         new_text = texts.new(current_text)
+        text_line_entry = node_ref['text_lines']
+
         if node.textmode == 'JSON':
-            json_str = json.dumps(node_ref['text_lines']['stored_as_json'])
-            new_text.from_string(json_str)
-        else:
-            new_text.from_string(node_ref['text_lines'])
+            if isinstance(text_line_entry, str):
+                print('loading old text json content / backward compatibility mode')
+                pass
+
+            elif isinstance(text_line_entry, dict):
+                text_line_entry = json.dumps(text_line_entry['stored_as_json'])
+
+        new_text.from_string(text_line_entry)
 
     else:
         # reaches here if  (current_text) and (current_text in texts)
