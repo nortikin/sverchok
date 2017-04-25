@@ -337,8 +337,6 @@ class SverchokToolsMenu(bpy.types.Panel):
             sha_update = "node.sverchok_check_for_upgrades_wsha"
             layout.row().operator(sha_update, text='Check for updates')
 
-        layout.row().operator('node.sv_show_latest_commits')
-
 
 sv_tools_classes = [
     Sv3DViewObjInUpdater,
