@@ -41,6 +41,35 @@ def screen_v3dBGL(context, args):
     bgl.glDisable(bgl.GL_POINTS)
 
 
+def screen_v3dBGL_overlay(context, args):
+    region = context.region
+    region3d = context.space_data.region_3d
+    
+    # font_id = 0
+    # text_height = 13
+    # blf.size(font_id, text_height, 72)  # should check prefs.dpi
+
+    region_mid_width = region.width / 2.0
+    region_mid_height = region.height / 2.0
+
+    # vars for projection
+    perspective_matrix = region3d.perspective_matrix.copy()
+
+
+    vec_4d = perspective_matrix * vec.to_4d()
+    if vec_4d.w <= 0.0:
+        pass
+    else:
+        x = region_mid_width + region_mid_width * (vec_4d.x / vec_4d.w)
+        y = region_mid_height + region_mid_height * (vec_4d.y / vec_4d.w)
+
+    
+        bgl.glDisable(bgl.GL_POINT_SMOOTH)
+        bgl.glDisable(bgl.GL_POINTS)
+
+
+
+
 def match_color_to_matrix(node):
     vcol_start = Vector(node.color_start)
     vcol_end = Vector(node.color_end)
@@ -91,7 +120,7 @@ class SvMatrixViewer(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Matrix View'
 
     color_start = FloatVectorProperty(subtype='COLOR', min=0, max=1, size=3, update=updateNode)
-    color_end = FloatVectorProperty(subtype='COLOR', default=(1,1,1), min=0, max=1, size=3, update=updateNode)
+    color_end = FloatVectorProperty(subtype='COLOR', default=(1, 1, 1), min=0, max=1, size=3, update=updateNode)
     n_id = StringProperty()
     simple = BoolProperty(name='simple', update=updateNode)
 
