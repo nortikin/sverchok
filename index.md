@@ -277,7 +277,7 @@
     SvCacheNode
     SvInsetSpecial
     SvSkinViewerNodeMK1b
-    SvCSGBooleanNode
+    SvCSGBooleanNodeMK2
     SvParticlesNode
     SvParticlesMK2Node
     SvUVtextureNode
