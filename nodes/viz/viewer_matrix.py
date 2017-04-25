@@ -20,7 +20,7 @@
 import bgl
 import bpy
 from mathutils import Matrix, Vector, Color
-from bpy.props import FloatVectorProperty, IntProperty, BoolProperty
+from bpy.props import FloatVectorProperty, StringProperty, BoolProperty
 
 from sverchok.core.socket_conversions import is_matrix
 from sverchok.utils.sv_bgl_primitives import MatrixDraw
