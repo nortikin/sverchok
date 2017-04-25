@@ -21,6 +21,7 @@ import bgl
 import bpy
 from mathutils import Matrix, Vector, Color
 from bpy.props import FloatVectorProperty, StringProperty, BoolProperty
+from bpy_extras.view3d_utils import location_3d_to_region_2d as loc3d2d
 
 from sverchok.core.socket_conversions import is_matrix
 from sverchok.utils.sv_bgl_primitives import MatrixDraw
@@ -53,19 +54,19 @@ def screen_v3dBGL_overlay(context, args):
     region_mid_height = region.height / 2.0
 
     # vars for projection
-    perspective_matrix = region3d.perspective_matrix.copy()
+    # perspective_matrix = region3d.perspective_matrix.copy()
+    # vector2d = loc3d2d(region, rv3d, vector3d)
 
-
-    vec_4d = perspective_matrix * vec.to_4d()
-    if vec_4d.w <= 0.0:
-        pass
-    else:
-        x = region_mid_width + region_mid_width * (vec_4d.x / vec_4d.w)
-        y = region_mid_height + region_mid_height * (vec_4d.y / vec_4d.w)
+    # vec_4d = perspective_matrix * vec.to_4d()
+    # if vec_4d.w <= 0.0:
+    #     pass
+    # else:
+    #     x = region_mid_width + region_mid_width * (vec_4d.x / vec_4d.w)
+    #     y = region_mid_height + region_mid_height * (vec_4d.y / vec_4d.w)
 
     
-        bgl.glDisable(bgl.GL_POINT_SMOOTH)
-        bgl.glDisable(bgl.GL_POINTS)
+    #     bgl.glDisable(bgl.GL_POINT_SMOOTH)
+    #     bgl.glDisable(bgl.GL_POINTS)
 
 
 
