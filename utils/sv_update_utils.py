@@ -27,6 +27,12 @@ import sverchok
 
 # pylint: disable=w0141
 
+def sv_make_text_report(text):
+    if not 'Sverchok_viewer' in bpy.data.texts:
+        bpy.data.texts.new('Sverchok_viewer')
+    bpy.data.texts['Sverchok_viewer'].clear()
+    bpy.data.texts['Sverchok_viewer'].write(text)
+
 def sv_get_local_path():
     script_paths = os.path.normpath(os.path.dirname(__file__))
     addons_path = os.path.split(os.path.dirname(script_paths))[0]
@@ -145,6 +151,8 @@ class SverchokUpdateAddon(bpy.types.Operator):
 
     def execute(self, context):
 
+        # simulateously check for updates and show commits
+        bpy.ops.node.sv_show_latest_commits()
         os.curdir = bl_addons_path
         os.chdir(os.curdir)
 
@@ -196,10 +204,19 @@ class SvPrintCommits(bpy.types.Operator):
     def execute(self, context):
         r = requests.get('https://api.github.com/repos/nortikin/sverchok/commits')
         json_obj = r.json()
-        for i in range(5):
+        lls = latest_local_sha()
+        i = 0
+        report = 'AFTER YOUR LAST UPDATE WE HAVE CHANGED: \n \n '
+        while True:
             commit = json_obj[i]['commit']
             comment = commit['message'].split('\n')
 
+
+            if lls == os.path.basename(json_obj[i]['commit']['url']) and i == 0:
+                print('Nothing to update')
+                break
+            elif lls == os.path.basename(json_obj[i]['commit']['url']):
+                break
             # display on report window
             message_dict = {
                 'sha': os.path.basename(json_obj[i]['commit']['url'])[:7],
@@ -213,6 +230,9 @@ class SvPrintCommits(bpy.types.Operator):
             print('{sha} : by {user}'.format(**message_dict))
             for line in comment:
                 print('    ' + line)
+            i += 1
+            report += str('{sha} : by {user}  :  {comment}'.format(**message_dict))+'\n '
+        sv_make_text_report(report)
 
         return {'FINISHED'}
 
