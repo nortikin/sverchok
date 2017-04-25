@@ -134,8 +134,6 @@ class SvMatrixViewer(bpy.types.Node, SverchCustomTreeNode):
 
     def process(self):
         self.n_id = node_id(self)
-        # v3dBGL.callback_disable(self.n_id)
-        # v3dBGL.callback_disable(self.n_id+'__2D')
         self.free()
 
         if self.inputs['Matrix'].is_linked:
