@@ -36,13 +36,17 @@ def screen_v3dBGL(context, args):
     
     for matrix, color in args[0]:
         mdraw = MatrixDraw()
-        mdraw.draw_matrix(matrix, color, args[1])
+        mdraw.draw_matrix(matrix, color, args[1], args[2])
     
     bgl.glDisable(bgl.GL_POINT_SMOOTH)
     bgl.glDisable(bgl.GL_POINTS)
 
 
 def screen_v3dBGL_overlay(context, args):
+
+    if not args[2]:
+        return
+    
 
     region = context.region
     region3d = context.space_data.region_3d
@@ -121,7 +125,10 @@ class SvMatrixViewer(bpy.types.Node, SverchCustomTreeNode):
     color_start = FloatVectorProperty(subtype='COLOR', min=0, max=1, size=3, update=updateNode)
     color_end = FloatVectorProperty(subtype='COLOR', default=(1, 1, 1), min=0, max=1, size=3, update=updateNode)
     n_id = StringProperty()
+    
     simple = BoolProperty(name='simple', update=updateNode)
+    grid = BoolProperty(name='grid', update=updateNode)
+    plane = BoolProperty(name='plane', update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('MatrixSocket', 'Matrix')
@@ -130,7 +137,10 @@ class SvMatrixViewer(bpy.types.Node, SverchCustomTreeNode):
         row = layout.row(align=True)
         row.prop(self, 'color_start', text='')
         row.prop(self, 'color_end', text='')
+        row = layout.row(align=True)
         row.prop(self, 'simple', toggle=True)
+        row.prop(self, 'grid', toggle=True)
+        row.prop(self, 'plane', toggle=True)
 
     def process(self):
         self.n_id = node_id(self)
@@ -141,13 +151,13 @@ class SvMatrixViewer(bpy.types.Node, SverchCustomTreeNode):
             draw_data = {
                 'tree_name': self.id_data.name[:],
                 'custom_function': screen_v3dBGL,
-                'args': (cdat, self.simple)
+                'args': (cdat, self.simple, self.grid)
             }
 
             draw_data_2d = {
                 'tree_name': self.id_data.name[:],
                 'custom_function': screen_v3dBGL_overlay,
-                'args': (cdat, self.simple)
+                'args': (cdat, self.simple, self.plane)
             }
 
             v3dBGL.callback_enable(self.n_id, draw_data, overlay='POST_VIEW')

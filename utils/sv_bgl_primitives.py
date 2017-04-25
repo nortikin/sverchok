@@ -50,7 +50,7 @@ class MatrixDraw(object):
         self.z_n = Vector((0.0, 0.0, -0.5))
         self.bb = [Vector() for i in range(24)]
 
-    def draw_matrix(self, mat, bbcol=(1.0, 1.0, 1.0), skip=False):
+    def draw_matrix(self, mat, bbcol=(1.0, 1.0, 1.0), skip=False, grid=True):
         bb = self.bb
 
         if not isinstance(mat, Matrix):
@@ -84,6 +84,12 @@ class MatrixDraw(object):
         series2 = (-0.5, 0.5)
         z = 0
 
+        if not grid:
+            return
+
+        # bounding box drawing
+        glLineWidth(1.0)
+
         def yield_xy():
             for x in series1:
                 for y in series2:
@@ -97,8 +103,7 @@ class MatrixDraw(object):
             bb[i] = mat * bb[i]
             i += 1
 
-        # bounding box drawing
-        glLineWidth(1.0)
+
         glLineStipple(1, 0xAAAA)
         glEnable(GL_LINE_STIPPLE)
 
