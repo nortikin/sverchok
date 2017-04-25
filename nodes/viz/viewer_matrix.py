@@ -43,31 +43,29 @@ def screen_v3dBGL(context, args):
 
 
 def screen_v3dBGL_overlay(context, args):
+
     region = context.region
     region3d = context.space_data.region_3d
-    
-    # font_id = 0
-    # text_height = 13
-    # blf.size(font_id, text_height, 72)  # should check prefs.dpi
 
-    region_mid_width = region.width / 2.0
-    region_mid_height = region.height / 2.0
+    bgl.glEnable(bgl.GL_BLEND)
+    bgl.glBlendFunc(bgl.GL_SRC_ALPHA, bgl.GL_ONE_MINUS_SRC_ALPHA)
 
-    # vars for projection
-    # perspective_matrix = region3d.perspective_matrix.copy()
-    # vector2d = loc3d2d(region, rv3d, vector3d)
+    for matrix, color in args[0]:
+        r, g, b = color
+        bgl.glColor4f(r, g, b, 0.2)
+        bgl.glBegin(bgl.GL_QUADS)
+        M = Matrix(matrix)
+        for x, y in [(-.5, .5), (.5 ,.5), (.5 ,-.5), (-.5 ,-.5)]:
+            vector3d = M * Vector((x, y, 0))
+            vector2d = loc3d2d(region, region3d, vector3d)
+            bgl.glVertex2f(*vector2d)
 
-    # vec_4d = perspective_matrix * vec.to_4d()
-    # if vec_4d.w <= 0.0:
-    #     pass
-    # else:
-    #     x = region_mid_width + region_mid_width * (vec_4d.x / vec_4d.w)
-    #     y = region_mid_height + region_mid_height * (vec_4d.y / vec_4d.w)
+        bgl.glEnd()
 
-    
-    #     bgl.glDisable(bgl.GL_POINT_SMOOTH)
-    #     bgl.glDisable(bgl.GL_POINTS)
-
+    # restore opengl defaults
+    bgl.glLineWidth(1)
+    bgl.glDisable(bgl.GL_BLEND)
+    bgl.glColor4f(0.0, 0.0, 0.0, 1.0)
 
 
 
@@ -136,22 +134,30 @@ class SvMatrixViewer(bpy.types.Node, SverchCustomTreeNode):
 
     def process(self):
         self.n_id = node_id(self)
-        v3dBGL.callback_disable(self.n_id)
+        # v3dBGL.callback_disable(self.n_id)
         # v3dBGL.callback_disable(self.n_id+'__2D')
+        self.free()
 
         if self.inputs['Matrix'].is_linked:
+            cdat = match_color_to_matrix(self)
             draw_data = {
                 'tree_name': self.id_data.name[:],
                 'custom_function': screen_v3dBGL,
-                'args': (match_color_to_matrix(self), self.simple)
+                'args': (cdat, self.simple)
+            }
+
+            draw_data_2d = {
+                'tree_name': self.id_data.name[:],
+                'custom_function': screen_v3dBGL_overlay,
+                'args': (cdat, self.simple)
             }
 
             v3dBGL.callback_enable(self.n_id, draw_data, overlay='POST_VIEW')
-            # v3dBGL.callback_enable(self.n_id+'__2D', draw_data_2d, overlay='POST_PIXEL')
+            v3dBGL.callback_enable(self.n_id+'__2D', draw_data_2d, overlay='POST_PIXEL')
 
     def free(self):
         v3dBGL.callback_disable(node_id(self))
-        # v3dBGL.callback_disable(node_id(self) + '__2D')
+        v3dBGL.callback_disable(node_id(self) + '__2D')
 
     # reset n_id on copy
     def copy(self, node):
@@ -161,7 +167,6 @@ class SvMatrixViewer(bpy.types.Node, SverchCustomTreeNode):
         if not ("Matrix" in self.inputs):
             return
         if not self.inputs[0].other:
-            # v3dBGL.callback_disable(node_id(self))
             self.free()
 
 
