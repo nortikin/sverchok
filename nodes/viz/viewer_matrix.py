@@ -24,8 +24,7 @@ from bpy.props import FloatVectorProperty, IntProperty, BoolProperty
 
 from sverchok.core.socket_conversions import is_matrix
 from sverchok.utils.sv_bgl_primitives import MatrixDraw
-from sverchok.data_structure import node_id
-from sverchok.data_structure import updateNode
+from sverchok.data_structure import node_id, updateNode
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.ui import bgl_callback_3dview as v3dBGL
 
@@ -87,13 +86,13 @@ def match_color_to_matrix(node):
 
 
 class SvMatrixViewer(bpy.types.Node, SverchCustomTreeNode):
-    ''' View multi Matrices '''
+    ''' mv - View Matrices '''
     bl_idname = 'SvMatrixViewer'
     bl_label = 'Matrix View'
 
     color_start = FloatVectorProperty(subtype='COLOR', min=0, max=1, size=3, update=updateNode)
     color_end = FloatVectorProperty(subtype='COLOR', default=(1,1,1), min=0, max=1, size=3, update=updateNode)
-    node_id = IntProperty()
+    n_id = StringProperty()
     simple = BoolProperty(name='simple', update=updateNode)
 
     def sv_init(self, context):
@@ -117,6 +116,14 @@ class SvMatrixViewer(bpy.types.Node, SverchCustomTreeNode):
             }
 
             v3dBGL.callback_enable(self.n_id, draw_data, overlay='POST_VIEW')
+
+    def free(self):
+        v3dBGL.callback_disable(node_id(self))
+
+    # reset n_id on copy
+    def copy(self, node):
+        self.n_id = ''
+
 
 
 def register():
