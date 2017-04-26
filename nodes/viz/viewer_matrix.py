@@ -132,6 +132,7 @@ class SvMatrixViewer(bpy.types.Node, SverchCustomTreeNode):
     grid = BoolProperty(name='grid', update=updateNode, default=True)
     plane = BoolProperty(name='plane', update=updateNode, default=True)
     alpha = FloatProperty(name='alpha', update=updateNode, min=0.0, max=1.0, subtype='FACTOR', default=0.13)
+    show_options = BoolProperty(name='options', update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('MatrixSocket', 'Matrix')
@@ -141,12 +142,14 @@ class SvMatrixViewer(bpy.types.Node, SverchCustomTreeNode):
         row = col.row(align=True)
         row.prop(self, 'color_start', text='')
         row.prop(self, 'color_end', text='')
-        row = col.row(align=True)
-        row.prop(self, 'simple', toggle=True)
-        row.prop(self, 'grid', toggle=True)
-        row.prop(self, 'plane', toggle=True)
-        row = col.row(align=True)
-        row.prop(self, 'alpha')
+        row.prop(self, 'show_options', text='', icon='SETTINGS')
+        if self.show_options:
+            row = col.row(align=True)
+            row.prop(self, 'simple', toggle=True)
+            row.prop(self, 'grid', toggle=True)
+            row.prop(self, 'plane', toggle=True)
+            row = col.row(align=True)
+            row.prop(self, 'alpha')
 
     def process(self):
         self.n_id = node_id(self)
