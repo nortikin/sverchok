@@ -128,9 +128,9 @@ class SvTextureViewerNodeLite(bpy.types.Node, SverchCustomTreeNode):
         row.prop(self, 'activate')
         row = layout.row(align=True)
         row.prop(self, 'color_mode', expand=True)
-        row = layout.row(align=True)
-        row.prop(self, 'width_custom_tex')
-        row.prop(self, 'height_custom_tex')
+        col = layout.column(align=True)
+        col.prop(self, 'width_custom_tex')
+        col.prop(self, 'height_custom_tex')
 
     def sv_init(self, context):
         self.width = 180
