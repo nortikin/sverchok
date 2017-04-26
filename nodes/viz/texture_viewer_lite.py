@@ -160,7 +160,7 @@ class SvTextureViewerNodeLite(bpy.types.Node, SverchCustomTreeNode):
             'tree_name': self.id_data.name[:],
             'mode': 'custom_function',
             'custom_function': simple_screen,
-            'loc': (self.location[0] + 80, self.location[1]),
+            'loc': (self.location[0] + self.width + 20, self.location[1]),
             'args': (texture, self.texture[n_id], width, height)
         }
         nvBGL2.callback_enable(n_id, draw_data)
