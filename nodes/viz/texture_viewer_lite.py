@@ -119,10 +119,6 @@ class SvTextureViewerNodeLite(bpy.types.Node, SverchCustomTreeNode):
         items=gl_color_list, description="Offers color options",
         default="BW", update=updateNode)
 
-    in_float = FloatProperty(
-        min=0.0, max=1.0, default=0.0, name='Float Input',
-        description='Input for texture', update=updateNode)
-
     def draw_buttons(self, context, layout):
         row = layout.row()
         row.prop(self, 'activate')
@@ -134,7 +130,7 @@ class SvTextureViewerNodeLite(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_init(self, context):
         self.width = 180
-        self.inputs.new('StringsSocket', "Float").prop_name = 'in_float'
+        self.inputs.new('StringsSocket', "pixel value")
 
     def delete_texture(self):
         n_id = node_id(self)
