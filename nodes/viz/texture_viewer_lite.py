@@ -142,7 +142,7 @@ class SvTextureViewerNodeLite(bpy.types.Node, SverchCustomTreeNode):
         n_id = node_id(self)
         self.delete_texture()
         nvBGL2.callback_disable(n_id)
-        if not (self.inputs['Float'].is_linked and self.activate):
+        if not (self.inputs[0].is_linked and self.activate):
             return
         width, height, colm = self.width_custom_tex, self.height_custom_tex, self.color_mode
         data = np.array(self.inputs['Float'].sv_get(deepcopy=False)).flatten()
