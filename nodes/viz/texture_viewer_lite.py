@@ -149,7 +149,7 @@ class SvTextureViewerNodeLite(bpy.types.Node, SverchCustomTreeNode):
         self.texture[n_id] = name[0]
         init_texture(width, height, name[0], texture, gl_color_dict.get(colm))
         draw_data = {
-            'tree_name': self.id_data.name[:],
+            'tree_name': self.id_data.name,
             'mode': 'custom_function',
             'custom_function': simple_screen,
             'loc': (self.location[0] + self.width + 20, self.location[1]),
