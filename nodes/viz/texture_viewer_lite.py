@@ -32,12 +32,6 @@ from sverchok.utils.sv_operator_mixins import (
 )
 
 
-class SvTextureViewerOperator(bpy.types.Operator, SvGenericCallbackWithParams):
-    """ Save the image with passed settings """
-    bl_idname = "node.sv_texview_callback"
-    bl_label = "Execute a function on the calling node"
-
-
 gl_color_list = [
     ('BW', 'bw', 'grayscale texture', '', 0),
     ('RGB', 'rgb', 'rgb colored texture', '', 1),
@@ -101,10 +95,10 @@ def simple_screen(x, y, args):
     draw_texture(x=x, y=y, w=width, h=height, texname=texname)
 
 
-class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
-    '''Texture Viewer node'''
-    bl_idname = 'SvTextureViewerNode'
-    bl_label = 'Texture viewer'
+class SvTextureViewerNodeLite(bpy.types.Node, SverchCustomTreeNode):
+    '''Texture Viewer node Lite'''
+    bl_idname = 'SvTextureViewerNodeLite'
+    bl_label = 'Texture viewer lite'
     texture = {}
 
     n_id = StringProperty(default='')
@@ -181,10 +175,8 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
 
 def register():
-    bpy.utils.register_class(SvTextureViewerOperator)
-    bpy.utils.register_class(SvTextureViewerNode)
+    bpy.utils.register_class(SvTextureViewerNodeLite)
 
 
 def unregister():
-    bpy.utils.unregister_class(SvTextureViewerNode)
-    bpy.utils.unregister_class(SvTextureViewerOperator)
+    bpy.utils.unregister_class(SvTextureViewerNodeLite)
