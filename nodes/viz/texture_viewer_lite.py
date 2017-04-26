@@ -141,9 +141,8 @@ class SvTextureViewerNodeLite(bpy.types.Node, SverchCustomTreeNode):
         if not (self.inputs[0].is_linked and self.activate):
             return
         width, height, colm = self.width_custom_tex, self.height_custom_tex, self.color_mode
-        data = np.array(self.inputs[0].sv_get(deepcopy=False)).flatten()
         total_size = width * height * factor_buffer_dict.get(colm)
-        texture = bgl.Buffer(bgl.GL_FLOAT, total_size, np.resize(data, total_size))
+        texture = bgl.Buffer(bgl.GL_FLOAT, total_size, np.resize(self.inputs[0].sv_get(), total_size))
         name = bgl.Buffer(bgl.GL_INT, 1)
         bgl.glGenTextures(1, name)
         self.texture[n_id] = name[0]
