@@ -210,8 +210,8 @@
     ViewerNode2
     SvBmeshViewerNodeMK2
     IndexViewerNode
-    Sv3DviewPropsNode
     SvTextureViewerNode
+    Sv3DviewPropsNode
 
 ## Text
     ViewerNodeTextMK2
@@ -289,3 +289,4 @@
     SvSeparateMeshNodeMK2
     SvBvhOverlapNodeNew
     SvIndexToMaskNode
+    SvMatrixViewer
