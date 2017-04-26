@@ -26,10 +26,6 @@ from bpy.props import (
 from sverchok.data_structure import updateNode, node_id
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.ui import nodeview_bgl_viewer_draw_mk2 as nvBGL2
-from sverchok.ui import sv_image as svIMG
-from sverchok.utils.sv_operator_mixins import (
-    SvGenericDirectorySelector, SvGenericCallbackWithParams
-)
 
 
 gl_color_list = [
