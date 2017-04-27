@@ -17,10 +17,25 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-from mathutils import Matrix
+from mathutils import Matrix, Vector
 
 from sverchok.core.socket_conversions import is_matrix
 from sverchok.utils.modules import geom_utils
+
+
+def get_matrix(socket):
+    matrix_in_data = socket.sv_get()
+    try:
+        first_matrix = is_matrix(matrix_in_data[0])
+        if first_matrix:
+            matrix = matrix_in_data[0]
+        else:
+            matrix = matrix_in_data[0][0]
+        return matrix
+        
+    except Exception as err:
+        print(repr(err))
+
 
 def get_center(self, context):
 
@@ -37,26 +52,27 @@ def get_center(self, context):
         inputs = node.inputs 
 
         if node.bl_idname in {'ViewerNode2'}:
-            vertex_links = inputs['vertices'].is_linked
-            matrix_links = inputs['matrix'].is_linked
+            matrix_socket = inputs['matrix'] 
+            vertex_socket = inputs['vertices']
 
-            if matrix_links: # and not vertex_links:
-                matrix_in_data = inputs['matrix'].sv_get()
-                try:
-                    first_matrix = is_matrix(matrix_in_data[0])
-                    if first_matrix:
-                        matrix = matrix_in_data[0]
-                    else:
-                        matrix = matrix_in_data[0][0]
+            # from this point the function is generic.
+            vertex_links = vertex_socket.is_linked
+            matrix_links = matrix_socket.is_linked
 
+            if matrix_links and not vertex_links:
+                matrix = get_matrix(matrix_socket)
+                if matrix:
                     location = Matrix(matrix).to_translation()[:]
-                except Exception as err:
-                    print(repr(err))
 
             if vertex_links:
-                vertex_in_data = inputs['vertices'].sv_get()
+                vertex_in_data = vertex_socket.sv_get()
                 verts = vertex_in_data[0]
                 location = geom_utils.mean([verts[idx] for idx in range(0, len(verts), 3)])
+                if matrix_links:
+                    matrix = get_matrix(matrix_socket)
+                    if matrix:
+                        location = Matrix(matrix).to_translation()[:]
+                        location = (Matrix(matrix) * Vector(location))[:]
 
 
             else:
