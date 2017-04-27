@@ -55,6 +55,17 @@ def save_png(filename, buf, type, width, height, compression=5):
     elif buf:
         data = convert(buf)
 
+    _type = color_type[type]
+
+    if _type not in [0, 2, 6]:
+        raise ValueError('Color type not allowed, permitted are: BW, RGB, RGBA')
+    if width < 1:
+        raise ValueError("Width must be greater than 0")
+    if height < 1:
+        raise ValueError("Heigt must be greater than 0")
+    if not 0 <= compression < 9:
+        raise ValueError('compression level not in the range 0...9')
+
     d = bytearray([int(p)for p in data])
     final_data = write_png(d, width, height, type, compression)
     filename = filename + '.png'
