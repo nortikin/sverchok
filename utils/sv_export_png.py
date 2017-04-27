@@ -9,13 +9,13 @@ import numpy as np
 color_t = {'BW': 1, 'RGB': 3, 'RGBA': 4}
 
 
-def convert(buf, type, size):
+def convert(buf, type, width, height):
     array = np.array(buf)
     print('array', array)
     d = np.interp(array, [0, 1], [0, 255])
     print('from converter', d)
     data_uint = np.array(d, dtype=np.uint8)
-    res = np.reshape(data_uint, (size, size, color_t[type]))
+    res = np.reshape(data_uint, (width, height, color_t[type]))
     return res.flatten().tolist()
 
 
@@ -44,14 +44,14 @@ def write_png(buf, width, height):
         png_pack(b'IEND', b'')])
 
 
-def save_png(filename, buf, type, size):
+def save_png(filename, buf, type, width, height):
     if buf[0]:
-        data = convert(buf, type, size)
+        data = convert(buf, type, width, height)
         # data = bytearray([int(p * 255) for p in buf[0]])
         print(data)
         d = bytearray([int(p)for p in data])
         print(d)
-        final_data = write_png(d, size, size)
+        final_data = write_png(d, width, height)
         with open(filename, 'wb') as fd:
             fd.write(final_data)
             print('png saved')
