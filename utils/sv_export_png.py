@@ -6,7 +6,8 @@ thanks to @ideasman42 and @Evgeni Sergeev
 import numpy as np
 
 
-color_t = {'BW': 1, 'RGB': 3, 'RGBA': 4}
+color_size = {'BW': 1, 'RGB': 3, 'RGBA': 4}
+color_type = {'BW': 0, 'RGB': 2, 'RGBA': 6}
 
 
 def convert(buf, type, width, height):
@@ -15,11 +16,11 @@ def convert(buf, type, width, height):
     d = np.interp(array, [0, 1], [0, 255])
     print('from converter', d)
     data_uint = np.array(d, dtype=np.uint8)
-    res = np.reshape(data_uint, (width, height, color_t[type]))
+    res = np.reshape(data_uint, (width, height, color_size[type]))
     return res.flatten().tolist()
 
 
-def write_png(buf, width, height):
+def write_png(buf, width, height, type):
     """ buf: must be bytes or a bytearray in Python3.x,
         a regular string in Python2.x.
     """
@@ -37,21 +38,26 @@ def write_png(buf, width, height):
                 chunk_head +
                 struct.pack("!I", 0xFFFFFFFF & zlib.crc32(chunk_head)))
 
+    t = color_type[type]
+    print('color type : ', t)
+
     return b''.join([
         b'\x89PNG\r\n\x1a\n',
-        png_pack(b'IHDR', struct.pack("!2I5B", width, height, 8, 6, 0, 0, 0)),
+        png_pack(b'IHDR', struct.pack("!2I5B", width, height, 8, t, 0, 0, 0)),
         png_pack(b'IDAT', zlib.compress(raw_data, 9)),
         png_pack(b'IEND', b'')])
 
 
 def save_png(filename, buf, type, width, height):
-    if buf[0]:
+    print(buf)
+    if buf:
+        print('inside save')
         data = convert(buf, type, width, height)
         # data = bytearray([int(p * 255) for p in buf[0]])
         print(data)
         d = bytearray([int(p)for p in data])
         print(d)
-        final_data = write_png(d, width, height)
+        final_data = write_png(d, width, height, type)
         filename = filename + '.png'
         with open(filename, 'wb') as fd:
             fd.write(final_data)
