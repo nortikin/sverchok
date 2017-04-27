@@ -20,9 +20,11 @@ import bpy
 
 
 def get_center(self, context):
+
     try:
         node = context.nodes.active
-        return (0,0,0)
+        if hasattr(node, 'get_center'):
+            return node.get_center()
 
     except:
         self.report({'INFO'}, 'no active node found')

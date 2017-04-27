@@ -415,6 +415,9 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
             bake = bpy.ops.node.sverchok_mesh_baker_mk2
             bake(idname=self.name, idtree=self.id_data.name)
 
+    def get_center(self):
+        return (0, 0, 0)
+
 
 def update_light(self, context):
     is_vdmk2 = lambda n: n.bl_idname == "ViewerNode2"
