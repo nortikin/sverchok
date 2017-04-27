@@ -6,18 +6,16 @@ thanks to @ideasman42 and @Evgeni Sergeev
 import numpy as np
 
 
-color_size = {'BW': 1, 'RGB': 3, 'RGBA': 4}
 color_type = {'BW': 0, 'RGB': 2, 'RGBA': 6}
 
 
-def convert(buf, type, width, height):
+def convert(buf, width, height):
     array = np.array(buf)
     print('array', array)
     d = np.interp(array, [0, 1], [0, 255])
     print('from converter', d)
     data_uint = np.array(d, dtype=np.uint8)
-    res = np.reshape(data_uint, (width, height, color_size[type]))
-    return res.flatten().tolist()
+    return data_uint.flatten().tolist()
 
 
 def write_png(buf, width, height, type):
@@ -52,7 +50,7 @@ def save_png(filename, buf, type, width, height):
     print(buf)
     if buf:
         print('inside save')
-        data = convert(buf, type, width, height)
+        data = convert(buf, width, height)
         # data = bytearray([int(p * 255) for p in buf[0]])
         print(data)
         d = bytearray([int(p)for p in data])
