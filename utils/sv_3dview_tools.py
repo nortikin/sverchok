@@ -20,6 +20,7 @@ import bpy
 from mathutils import Matrix
 
 from sverchok.core.socket_conversions import is_matrix
+from sverchok.utils.modules import geom_utils
 
 def get_center(self, context):
 
@@ -38,7 +39,8 @@ def get_center(self, context):
         if node.bl_idname in {'ViewerNode2'}:
             vertex_links = inputs['vertices'].is_linked
             matrix_links = inputs['matrix'].is_linked
-            if matrix_links and not vertex_links:
+
+            if matrix_links: # and not vertex_links:
                 matrix_in_data = inputs['matrix'].sv_get()
                 try:
                     first_matrix = is_matrix(matrix_in_data[0])
@@ -48,8 +50,15 @@ def get_center(self, context):
                         matrix = matrix_in_data[0][0]
 
                     location = Matrix(matrix).to_translation()[:]
-                except:
-                    ...
+                except Exception as err:
+                    print(repr(err))
+
+            if vertex_links:
+                vertex_in_data = inputs['vertices'].sv_get()
+                verts = vertex_in_data[0]
+                location = geom_utils.mean([verts[idx] for idx in range(0, len(verts), 3)])
+
+
             else:
                 print('no reason!')
 
