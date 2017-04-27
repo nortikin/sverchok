@@ -11,11 +11,16 @@ color_type = {'BW': 0, 'RGB': 2, 'RGBA': 6}
 color_depth = {'BW': 1, 'RGB': 3, 'RGBA': 4}
 
 
-def convert(buf, width, height):
-    array = np.array(buf)
+def interp(array):
     d = np.interp(array, [0, 1], [0, 255])
     data_uint = np.array(d, dtype=np.uint8)
     return data_uint.flatten().tolist()
+
+
+def convert(buf):
+    array = np.array(buf)
+    d = interp(array)
+    return d
 
 
 def write_png(buf, width, height, type, compression=5):
@@ -47,10 +52,21 @@ def save_png(filename, buf, type, width, height, compression=5):
 
     if buf:
 
-        data = convert(buf, width, height)
+        data = convert(buf)
         d = bytearray([int(p)for p in data])
         final_data = write_png(d, width, height, type, compression)
         filename = filename + '.png'
         with open(filename, 'wb') as fd:
             fd.write(final_data)
             print(filename + ' image saved by sv_export_png!')
+
+
+def save_png_from_np(filename, buf, type, width, height, compression=5):
+    """ export a png file from a numpy array"""
+    data = interp(buf)
+    d = bytearray([int(p)for p in data])
+    final_data = write_png(d, width, height, type, compression)
+    filename = filename + '.png'
+    with open(filename, 'wb') as fd:
+        fd.write(final_data)
+        print(filename + ' image saved by save_png_from_np!')
