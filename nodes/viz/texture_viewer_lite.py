@@ -20,9 +20,7 @@ import os
 import numpy as np
 import bgl
 import bpy
-from bpy.props import (
-    FloatProperty, EnumProperty, StringProperty, BoolProperty, IntProperty
-)
+from bpy.props import EnumProperty, StringProperty, IntProperty
 from sverchok.data_structure import updateNode, node_id
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.ui import nodeview_bgl_viewer_draw_mk2 as nvBGL2
@@ -32,6 +30,11 @@ gl_color_list = [
     ('BW', 'bw', 'grayscale texture', '', 0),
     ('RGB', 'rgb', 'rgb colored texture', '', 1),
     ('RGBA', 'rgba', 'rgba colored texture', '', 2)
+]
+
+out_modes = [
+    ('UV\image editor', 'UV\image editor', 'insert values into image editor (only RGBA mode!)', '', 0),
+    ('bgl', 'bgl', 'create texture inside nodetree', '', 1),
 ]
 
 gl_color_dict = {
@@ -98,10 +101,7 @@ class SvTextureViewerNodeLite(bpy.types.Node, SverchCustomTreeNode):
     texture = {}
 
     n_id = StringProperty(default='')
-
-    activate = BoolProperty(
-        name='Show', description='Activate texture drawing',
-        default=True, update=updateNode)
+    image = StringProperty(default='', update=updateNode)
 
     width_custom_tex = IntProperty(
         min=0, max=1024, default=206, name='Width Tex',
@@ -115,14 +115,21 @@ class SvTextureViewerNodeLite(bpy.types.Node, SverchCustomTreeNode):
         items=gl_color_list, description="Offers color options",
         default="BW", update=updateNode)
 
+    output_mode = EnumProperty(
+        items=out_modes, description="how to output values",
+        default="bgl", update=updateNode)
+
     def draw_buttons(self, context, layout):
         row = layout.row()
-        row.prop(self, 'activate')
+        row.prop(self, 'output_mode', expand=True)
         row = layout.row(align=True)
         row.prop(self, 'color_mode', expand=True)
         col = layout.column(align=True)
-        col.prop(self, 'width_custom_tex')
-        col.prop(self, 'height_custom_tex')
+        if not self.output_mode == 'bgl':
+            col.prop_search(self, 'image', bpy.data, "images", text="")
+        else:
+            col.prop(self, 'width_custom_tex')
+            col.prop(self, 'height_custom_tex')
 
     def sv_init(self, context):
         self.width = 180
@@ -138,23 +145,25 @@ class SvTextureViewerNodeLite(bpy.types.Node, SverchCustomTreeNode):
         n_id = node_id(self)
         self.delete_texture()
         nvBGL2.callback_disable(n_id)
-        if not (self.inputs[0].is_linked and self.activate):
-            return
-        width, height, colm = self.width_custom_tex, self.height_custom_tex, self.color_mode
-        total_size = width * height * factor_buffer_dict.get(colm)
-        texture = bgl.Buffer(bgl.GL_FLOAT, total_size, np.resize(self.inputs[0].sv_get(), total_size))
-        name = bgl.Buffer(bgl.GL_INT, 1)
-        bgl.glGenTextures(1, name)
-        self.texture[n_id] = name[0]
-        init_texture(width, height, name[0], texture, gl_color_dict.get(colm))
-        draw_data = {
-            'tree_name': self.id_data.name,
-            'mode': 'custom_function',
-            'custom_function': simple_screen,
-            'loc': (self.location[0] + self.width + 20, self.location[1]),
-            'args': (texture, self.texture[n_id], width, height)
-        }
-        nvBGL2.callback_enable(n_id, draw_data)
+        if self.output_mode == 'bgl':
+            width, height, colm = self.width_custom_tex, self.height_custom_tex, self.color_mode
+            total_size = width * height * factor_buffer_dict.get(colm)
+            texture = bgl.Buffer(bgl.GL_FLOAT, total_size, np.resize(self.inputs[0].sv_get(), total_size))
+            name = bgl.Buffer(bgl.GL_INT, 1)
+            bgl.glGenTextures(1, name)
+            self.texture[n_id] = name[0]
+            init_texture(width, height, name[0], texture, gl_color_dict.get(colm))
+            draw_data = {
+                'tree_name': self.id_data.name,
+                'mode': 'custom_function',
+                'custom_function': simple_screen,
+                'loc': (self.location[0] + self.width + 20, self.location[1]),
+                'args': (texture, self.texture[n_id], width, height)
+            }
+            nvBGL2.callback_enable(n_id, draw_data)
+        else:
+            Im = bpy.data.images[self.image]
+            Im.pixels = np.resize(self.inputs[0].sv_get(), len(Im.pixels))
 
     def free(self):
         nvBGL2.callback_disable(node_id(self))
