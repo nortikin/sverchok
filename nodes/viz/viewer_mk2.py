@@ -327,8 +327,11 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
     def update(self):
         if not ("matrix" in self.inputs):
             return
-        if not (self.inputs[0].other or self.inputs[2].other):
-            callback_disable(node_id(self))        
+        try:
+            if not (self.inputs[0].other or self.inputs[2].other):
+                callback_disable(node_id(self))
+        except:
+            print('vdmk2 update holdout')
 
 
     def process(self):
