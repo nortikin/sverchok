@@ -58,6 +58,7 @@ from sverchok.core.socket_conversions import (
 
 from sverchok.core.node_defaults import set_defaults_if_defined
 
+from sverchok.utils.context_managers import sv_preferences
 from sverchok.ui import color_def
 
 socket_colors = {
@@ -82,6 +83,28 @@ def process_from_socket(self, context):
     """Update function of exposed properties in Sockets"""
     self.node.process_node(context)
 
+def get_use_expander():
+    print("Use expander")
+    with sv_preferences() as prefs:
+        if prefs:
+            print("I have prefs")
+            return prefs.use_socket_expander
+        else:
+            print("i dont have prefs")
+            return True
+    return True
+
+def get_use_quicklink():
+    print("Use quicklink")
+    with sv_preferences() as prefs:
+        return prefs.use_socket_quicklink
+    return True
+
+def get_expand_socket():
+    print("Expand socket")
+    with sv_preferences() as prefs:
+        return prefs.expand_input_sockets
+    return True
 
 # this property group is only used by the old viewer draw
 class SvColors(bpy.types.PropertyGroup):
@@ -95,9 +118,16 @@ class SvColors(bpy.types.PropertyGroup):
 
 class SvSocketCommon:
 
-    use_expander = BoolProperty(default=True)
-    use_quicklink = BoolProperty(default=True)
-    expanded = BoolProperty(default=True)
+    # use_expander = BoolProperty(default=get_use_expander())
+    use_expander = BoolProperty(default=False)
+    use_quicklink = BoolProperty(default=False)
+    expanded = BoolProperty(default=False)
+
+    def init(self):
+        print("initializing socket")
+        self.use_expander = get_use_expander()
+        self.use_quicklink = get_use_quicklink()
+        self.expanded = get_expand_socket()
 
     def draw_expander_template(self, context, layout, prop_origin, prop_name="prop"):
         if self.use_expander:

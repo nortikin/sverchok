@@ -29,6 +29,28 @@ class SverchokPreferences(AddonPreferences):
         if self.auto_apply_theme:
             color_def.apply_theme()
 
+    def update_sockets(self, context):
+        print("update sockets")
+
+    # socket settings
+    use_socket_expander = BoolProperty(
+        name="Show Socket Expander",
+        description = "Show socket expander buttons for multi row inputs",
+        default = False,
+        update=update_sockets)
+
+    use_socket_quicklink = BoolProperty(
+        name="Show Socket QuickLink",
+        description = "Show socket quicklink buttons for inputs with no prop",
+        default = False,
+        update=update_sockets)
+
+    expand_input_sockets = BoolProperty(
+        name="Expand Input Sockets",
+        description = "Expand multi row value input sockets",
+        default = False,
+        update=update_sockets)
+
     tab_modes = [(k, k, '', i) for i, k in enumerate(["General", "Node Defaults", "Theme"])]
     
     selected_tab = bpy.props.EnumProperty(
@@ -184,6 +206,10 @@ class SverchokPreferences(AddonPreferences):
             col2box.label(text="Debug:")
             col2box.prop(self, "show_debug")
             col2box.prop(self, "heat_map")
+
+            col.prop(self, "use_socket_expander")
+            col.prop(self, "use_socket_quicklink")
+            col.prop(self, "expand_input_sockets")
 
         if self.selected_tab == "Node Defaults":
 
