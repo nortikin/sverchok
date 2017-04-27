@@ -50,23 +50,14 @@ def write_png(buf, width, height, type, compression=5):
 
 def save_png(filename, buf, type, width, height, compression=5):
 
-    if buf:
-
+    if isinstance(buf, np.ndarray):
+        data = interp(buf)
+    elif buf:
         data = convert(buf)
-        d = bytearray([int(p)for p in data])
-        final_data = write_png(d, width, height, type, compression)
-        filename = filename + '.png'
-        with open(filename, 'wb') as fd:
-            fd.write(final_data)
-            print(filename + ' image saved by sv_export_png!')
 
-
-def save_png_from_np(filename, buf, type, width, height, compression=5):
-    """ export a png file from a numpy array"""
-    data = interp(buf)
     d = bytearray([int(p)for p in data])
     final_data = write_png(d, width, height, type, compression)
     filename = filename + '.png'
     with open(filename, 'wb') as fd:
         fd.write(final_data)
-        print(filename + ' image saved by save_png_from_np!')
+        print(filename + ' image saved by sv_export_png!')
