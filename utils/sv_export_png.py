@@ -17,7 +17,7 @@ def convert(buf, width, height):
     return data_uint.flatten().tolist()
 
 
-def write_png(buf, width, height, type):
+def write_png(buf, width, height, type, compression=5):
 
     import zlib, struct
 
@@ -38,17 +38,17 @@ def write_png(buf, width, height, type):
     return b''.join([
         b'\x89PNG\r\n\x1a\n',
         png_pack(b'IHDR', struct.pack("!2I5B", width, height, 8, t, 0, 0, 0)),
-        png_pack(b'IDAT', zlib.compress(raw_data, 9)),
+        png_pack(b'IDAT', zlib.compress(raw_data, compression)),
         png_pack(b'IEND', b'')])
 
 
-def save_png(filename, buf, type, width, height):
+def save_png(filename, buf, type, width, height, compression=5):
 
     if buf:
 
         data = convert(buf, width, height)
         d = bytearray([int(p)for p in data])
-        final_data = write_png(d, width, height, type)
+        final_data = write_png(d, width, height, type, compression)
         filename = filename + '.png'
         with open(filename, 'wb') as fd:
             fd.write(final_data)
