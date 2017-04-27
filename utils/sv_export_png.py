@@ -52,6 +52,7 @@ def save_png(filename, buf, type, width, height):
         d = bytearray([int(p)for p in data])
         print(d)
         final_data = write_png(d, width, height)
+        filename = filename + '.png'
         with open(filename, 'wb') as fd:
             fd.write(final_data)
             print('png saved')
