@@ -8,6 +8,7 @@ import numpy as np
 
 
 color_type = {'BW': 0, 'RGB': 2, 'RGBA': 6}
+color_depth = {'BW': 1, 'RGB': 3, 'RGBA': 4}
 
 
 def convert(buf, width, height):
@@ -22,9 +23,10 @@ def write_png(buf, width, height, type, compression=5):
     import zlib, struct
 
     # reverse the vertical line order and add null bytes at the start
-    width_byte_4 = width * 4
-    raw_data = b''.join(b'\x00' + buf[span:span + width_byte_4]
-                        for span in range((height - 1) * width_byte_4, -1, - width_byte_4))
+    width_byte = width * color_depth[type]
+
+    raw_data = b''.join(b'\x00' + buf[span:span + width_byte]
+                        for span in range((height - 1) * width_byte, -1, - width_byte))
 
     def png_pack(png_tag, data):
         chunk_head = png_tag + data
@@ -33,7 +35,6 @@ def write_png(buf, width, height, type, compression=5):
                 struct.pack("!I", 0xFFFFFFFF & zlib.crc32(chunk_head)))
 
     t = color_type[type]
-    print('color type : ', t)
 
     return b''.join([
         b'\x89PNG\r\n\x1a\n',
