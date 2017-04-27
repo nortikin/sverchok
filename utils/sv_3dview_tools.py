@@ -22,9 +22,11 @@ import bpy
 def get_center(self, context):
 
     try:
-        node = context.nodes.active
+        node = context.active_node
         if hasattr(node, 'get_center'):
             return node.get_center()
+        else:
+            self.report({'INFO'}, 'viewer has no get_center function')
 
     except:
         self.report({'INFO'}, 'no active node found')
@@ -43,6 +45,7 @@ class Sv3DviewAlign(bpy.types.Operator):
 
         vector_3d = get_center(self, context)
         if not vector_3d:
+            print(vector_3d)
             return {'CANCELLED'}
 
         context.scene.cursor_location = vector_3d
