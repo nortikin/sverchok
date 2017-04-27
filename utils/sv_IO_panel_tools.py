@@ -484,14 +484,12 @@ def apply_post_processing(node, node_ref):
     '''
     Nodes that require post processing to work properly
     '''
-    if node.bl_idname in {'SvGroupInputsNode', 'SvGroupOutputsNode'}:
+    if node.bl_idname in {'SvGroupInputsNode', 'SvGroupOutputsNode', 'SvTextInNode'}:
         node.load()
     elif node.bl_idname in {'SvGroupNode'}:
         node.load()
         group_name = node.group_name
         node.group_name = group_name_remap.get(group_name, group_name)
-    elif node.bl_idname == 'SvTextInNode':
-        node.load()
     elif node.bl_idname in {'SvGroupInputsNodeExp', 'SvGroupOutputsNodeExp'}:
         socket_kinds = node_ref.get(node.node_kind)
         node.repopulate(socket_kinds)
@@ -517,8 +515,8 @@ def add_node_to_tree(nodes, n, nodes_to_import, name_remap, create_texts):
                 cls_dict = params.get('cls_dict')
                 node.input_template = cls_dict['input_template']
                 node.output_template = cls_dict['output_template']
-                # setattr(node, 'cls_bl_idname', cls_dict['cls_bl_idname'])
-                ## setattr(monad, 'cls_bl_idname', cls_dict['cls_bl_idname'])                
+            else:
+                print('no parameters found! .json might be broken')                
 
         else:
             node = nodes.new(bl_idname)
