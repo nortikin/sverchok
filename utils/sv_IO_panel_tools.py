@@ -248,9 +248,9 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
 
                     node_items[prop_name] = v
 
+        # if hasattr(node, "storage_get_data"):
         if any([ScriptNodeLite, ObjNodeLite, SvExecNodeMod, MeshEvalNode]):
             node.storage_get_data(node_dict)
-
 
         # collect socket properties
         # inputs = node.inputs
@@ -484,14 +484,12 @@ def apply_post_processing(node, node_ref):
     '''
     Nodes that require post processing to work properly
     '''
-    if node.bl_idname in {'SvGroupInputsNode', 'SvGroupOutputsNode'}:
+    if node.bl_idname in {'SvGroupInputsNode', 'SvGroupOutputsNode', 'SvTextInNode'}:
         node.load()
     elif node.bl_idname in {'SvGroupNode'}:
         node.load()
         group_name = node.group_name
         node.group_name = group_name_remap.get(group_name, group_name)
-    elif node.bl_idname == 'SvTextInNode':
-        node.load()
     elif node.bl_idname in {'SvGroupInputsNodeExp', 'SvGroupOutputsNodeExp'}:
         socket_kinds = node_ref.get(node.node_kind)
         node.repopulate(socket_kinds)
@@ -508,10 +506,17 @@ def add_node_to_tree(nodes, n, nodes_to_import, name_remap, create_texts):
         if bl_idname == 'SvMonadGenericNode':
             params = node_ref.get('params')
             if params:
+
                 monad_name = params.get('monad')
                 monad = bpy.data.node_groups[monad_name]
                 cls_ref = monad.update_cls()
                 node = nodes.new(cls_ref.bl_idname)
+
+                cls_dict = params.get('cls_dict')
+                node.input_template = cls_dict['input_template']
+                node.output_template = cls_dict['output_template']
+            else:
+                print('no parameters found! .json might be broken')                
 
         else:
             node = nodes.new(bl_idname)
