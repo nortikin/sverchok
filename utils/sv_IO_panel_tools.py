@@ -508,10 +508,17 @@ def add_node_to_tree(nodes, n, nodes_to_import, name_remap, create_texts):
         if bl_idname == 'SvMonadGenericNode':
             params = node_ref.get('params')
             if params:
+
                 monad_name = params.get('monad')
                 monad = bpy.data.node_groups[monad_name]
                 cls_ref = monad.update_cls()
                 node = nodes.new(cls_ref.bl_idname)
+
+                cls_dict = params.get('cls_dict')
+                node.input_template = cls_dict['input_template']
+                node.output_template = cls_dict['output_template']
+                # setattr(node, 'cls_bl_idname', cls_dict['cls_bl_idname'])
+                ## setattr(monad, 'cls_bl_idname', cls_dict['cls_bl_idname'])                
 
         else:
             node = nodes.new(bl_idname)
