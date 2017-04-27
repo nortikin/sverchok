@@ -17,14 +17,43 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
+from mathutils import Matrix
 
+from sverchok.core.socket_conversions import is_matrix
 
 def get_center(self, context):
 
     try:
         node = context.active_node
-        if hasattr(node, 'get_center'):
-            return node.get_center()
+        location = (0, 0, 0)
+        inputs = node.inputs 
+
+        if node.bl_idname in {'ViewerNode2'}:
+
+            vertex_links = inputs['vertices'].is_linked
+            matrix_links = inputs['matrix'].is_linked
+
+            if matrix_links and not vertex_links:
+                matrix_in_data = inputs['matrix'].sv_get()
+
+                try:
+                    first_matrix = is_matrix(matrix_in_data[0])
+                    if first_matrix:
+                        matrix = matrix_in_data[0]
+                    else:
+                        matrix = matrix_in_data[0][0]
+
+                    location = Matrix(matrix).to_translation()[:]
+
+                except:
+                    ...
+            else:
+                print('no reason!')
+
+            return location
+
+
+
         else:
             self.report({'INFO'}, 'viewer has no get_center function')
 

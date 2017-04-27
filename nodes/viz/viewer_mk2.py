@@ -27,7 +27,7 @@ import sverchok
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import node_id, updateNode, dataCorrect, Matrix_generate
 from sverchok.ui.viewer_draw_mk2 import callback_disable, callback_enable
-from sverchok.core.socket_conversions import is_matrix
+
 
 cache_viewer_baker = {}
 
@@ -411,32 +411,6 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
         if self.activate and self.inputs['edg_pol'].is_linked:
             bake = bpy.ops.node.sverchok_mesh_baker_mk2
             bake(idname=self.name, idtree=self.id_data.name)
-
-    def get_center(self):
-
-        location = (0, 0, 0)
-        inputs = self.inputs 
-        vertex_links = inputs['vertices'].is_linked
-        matrix_links = inputs['matrix'].is_linked
-
-        if matrix_links and not vertex_links:
-            matrix_in_data = inputs['matrix'].sv_get()
-
-            try:
-                first_matrix = is_matrix(matrix_in_data[0])
-                if first_matrix:
-                    matrix = matrix_in_data[0]
-                else:
-                    matrix = matrix_in_data[0][0]
-
-                location = Matrix(matrix).to_translation()[:]
-
-            except:
-                ...
-        else:
-            print('no reason!')
-
-        return location
 
 
 def update_light(self, context):
