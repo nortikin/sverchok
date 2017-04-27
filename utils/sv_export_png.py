@@ -2,6 +2,7 @@
 code taken from:
 http://stackoverflow.com/questions/902761/saving-a-numpy-array-as-an-image/19174800#19174800
 thanks to @ideasman42 and @Evgeni Sergeev
+adapted by @kalwalt
 """
 import numpy as np
 
@@ -11,17 +12,12 @@ color_type = {'BW': 0, 'RGB': 2, 'RGBA': 6}
 
 def convert(buf, width, height):
     array = np.array(buf)
-    print('array', array)
     d = np.interp(array, [0, 1], [0, 255])
-    print('from converter', d)
     data_uint = np.array(d, dtype=np.uint8)
     return data_uint.flatten().tolist()
 
 
 def write_png(buf, width, height, type):
-    """ buf: must be bytes or a bytearray in Python3.x,
-        a regular string in Python2.x.
-    """
 
     import zlib, struct
 
@@ -47,14 +43,11 @@ def write_png(buf, width, height, type):
 
 
 def save_png(filename, buf, type, width, height):
-    print(buf)
+
     if buf:
-        print('inside save')
+
         data = convert(buf, width, height)
-        # data = bytearray([int(p * 255) for p in buf[0]])
-        print(data)
         d = bytearray([int(p)for p in data])
-        print(d)
         final_data = write_png(d, width, height, type)
         filename = filename + '.png'
         with open(filename, 'wb') as fd:
