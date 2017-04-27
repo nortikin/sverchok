@@ -248,9 +248,9 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
 
                     node_items[prop_name] = v
 
+        # if hasattr(node, "storage_get_data"):
         if any([ScriptNodeLite, ObjNodeLite, SvExecNodeMod, MeshEvalNode]):
             node.storage_get_data(node_dict)
-
 
         # collect socket properties
         # inputs = node.inputs
