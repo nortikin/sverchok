@@ -61,4 +61,4 @@ def save_png(filename, buf, type, width, height):
         filename = filename + '.png'
         with open(filename, 'wb') as fd:
             fd.write(final_data)
-            print('png saved')
+            print(filename + ' image saved by sv_export_png!')
