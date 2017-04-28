@@ -55,9 +55,7 @@ def save_png(filename, buf, type, width, height, compression=5):
     elif buf:
         data = convert(buf)
 
-    _type = color_type[type]
-
-    if _type not in [0, 2, 6]:
+    if type not in ['BW', 'RGB', 'RGBA']:
         raise ValueError('Color type not allowed, permitted are: BW, RGB, RGBA')
     if width < 1:
         raise ValueError("Width must be greater than 0")
