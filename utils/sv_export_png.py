@@ -14,7 +14,7 @@ color_depth = {'BW': 1, 'RGB': 3, 'RGBA': 4}
 def interp(array):
     d = np.interp(array, [0, 1], [0, 255])
     data_uint = np.array(d, dtype=np.uint8)
-    return data_uint.flatten().tolist()
+    return data_uint.flatten().tobytes()
 
 
 def convert(buf):
@@ -64,8 +64,7 @@ def save_png(filename, buf, type, width, height, compression=5):
     if not 0 <= compression < 9:
         raise ValueError('compression level not in the range 0...9')
 
-    d = bytearray([int(p)for p in data])
-    final_data = write_png(d, width, height, type, compression)
+    final_data = write_png(data, width, height, type, compression)
     filename = filename + '.png'
     with open(filename, 'wb') as fd:
         fd.write(final_data)
