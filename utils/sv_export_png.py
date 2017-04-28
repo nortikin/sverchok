@@ -23,12 +23,12 @@ def convert(buf):
     return d
 
 
-def write_png(buf, width, height, type, compression=5):
+def write_png(buf, width, height, mode, compression=5):
 
     import zlib, struct
 
     # reverse the vertical line order and add null bytes at the start
-    width_byte = width * color_depth[type]
+    width_byte = width * color_depth[mode]
 
     raw_data = b''.join(b'\x00' + buf[span:span + width_byte]
                         for span in range((height - 1) * width_byte, -1, - width_byte))
@@ -39,7 +39,7 @@ def write_png(buf, width, height, type, compression=5):
                 chunk_head +
                 struct.pack("!I", 0xFFFFFFFF & zlib.crc32(chunk_head)))
 
-    t = color_type[type]
+    t = color_type[mode]
 
     return b''.join([
         b'\x89PNG\r\n\x1a\n',
@@ -48,14 +48,14 @@ def write_png(buf, width, height, type, compression=5):
         png_pack(b'IEND', b'')])
 
 
-def save_png(filename, buf, type, width, height, compression=5):
+def save_png(filename, buf, mode, width, height, compression=5):
 
     if isinstance(buf, np.ndarray):
         data = interp(buf)
     elif buf:
         data = convert(buf)
 
-    if type not in ['BW', 'RGB', 'RGBA']:
+    if mode not in ['BW', 'RGB', 'RGBA']:
         raise ValueError('Color type not allowed, permitted are: BW, RGB, RGBA')
     if width < 1:
         raise ValueError("Width must be greater than 0")
@@ -64,7 +64,7 @@ def save_png(filename, buf, type, width, height, compression=5):
     if not 0 <= compression < 9:
         raise ValueError('compression level not in the range 0...9')
 
-    final_data = write_png(data, width, height, type, compression)
+    final_data = write_png(data, width, height, mode, compression)
     filename = filename + '.png'
     with open(filename, 'wb') as fd:
         fd.write(final_data)
