@@ -515,6 +515,13 @@ def add_node_to_tree(nodes, n, nodes_to_import, name_remap, create_texts):
                 cls_dict = params.get('cls_dict')
                 node.input_template = cls_dict['input_template']
                 node.output_template = cls_dict['output_template']
+
+
+                #   for idx, socket in enumerate(node.inputs):
+                #       socket.replace(socket.bl_idname, name=)  . prop_name= ---
+                #
+                #
+
             else:
                 print('no parameters found! .json might be broken')                
 
