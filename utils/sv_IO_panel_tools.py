@@ -516,15 +516,18 @@ def add_node_to_tree(nodes, n, nodes_to_import, name_remap, create_texts):
                 node.input_template = cls_dict['input_template']
                 node.output_template = cls_dict['output_template']
 
-                """
+                '''
                 for idx, socket in enumerate(node.inputs):
-                    socket.replace(socket.bl_idname, name=)  . prop_name= ---
+                    other_socket = monad.nodes['Group Inputs Exp'].outputs[idx]
+                    socket.name = other_socket.name
+                    if other_socket.prop_name:
+                        socket.prop_name = socket.prop_name
 
-                    sockets[self.pos].name = new_name
-                    if socket.prop_name:
-                        sockets[self.pos].prop_name = socket.prop_name
+                for idx, socket in enumerate(node.outputs):
+                    other_socket = monad.nodes['Group Outputs Exp'].inputs[idx]
+                    socket.name = other_socket.name
 
-                """
+                '''
 
             else:
                 print('no parameters found! .json might be broken')                
