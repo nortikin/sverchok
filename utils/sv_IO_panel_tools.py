@@ -231,14 +231,14 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
             if name not in groups_dict:
                 group_ng = bpy.data.node_groups[name]
                 group_dict = create_dict_of_tree(group_ng)
-                group_dict['bl_idname'] = group_ng.bl_idname  # uhmm..
+                group_dict['bl_idname'] = group_ng.bl_idname
                 group_dict['cls_bl_idname'] = node.bl_idname
                 group_json = json.dumps(group_dict)
                 groups_dict[name] = group_json
 
             # [['Y', 'StringsSocket', {'prop_name': 'y'}], [....
-            for socket_name, socket_type, prop_dict in node.input_template:
-                socket = node.inputs[socket_name]
+            for idx, (socket_name, socket_type, prop_dict) in enumerate(node.input_template):
+                socket = node.inputs[idx]
                 if not socket.is_linked and prop_dict:
 
                     prop_name = prop_dict['prop_name']
