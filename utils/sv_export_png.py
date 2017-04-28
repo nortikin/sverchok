@@ -1,8 +1,8 @@
 """
-code taken from:
+base code taken from:
 http://stackoverflow.com/questions/902761/saving-a-numpy-array-as-an-image/19174800#19174800
 thanks to @ideasman42 and @Evgeni Sergeev
-adapted by @kalwalt
+adapted by @kalwalt https://github.com/kalwalt
 """
 import numpy as np
 
