@@ -122,12 +122,12 @@ class SvTextureViewerNodeLite(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         row = layout.row()
         row.prop(self, 'output_mode', expand=True)
-        row = layout.row(align=True)
-        row.prop(self, 'color_mode', expand=True)
         col = layout.column(align=True)
         if not self.output_mode == 'bgl':
             col.prop_search(self, 'image', bpy.data, "images", text="")
         else:
+            row = layout.row(align=True)
+            row.prop(self, 'color_mode', expand=True)
             col.prop(self, 'width_custom_tex')
             col.prop(self, 'height_custom_tex')
 
