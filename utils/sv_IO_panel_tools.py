@@ -183,8 +183,8 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
             if has_state_switch_protection(node, k):
                 continue
 
-            # this silences the import error when items not found.
             if ObjectsNode and (k == "objects_local"):
+                # this silences the import error when items not found.
                 continue
             elif ObjectsNode3 and (k == 'object_names'):
                 node_dict['object_names'] = [o.name for o in node.object_names]
@@ -194,7 +194,7 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
                 node_dict['current_text'] = node.text
                 node_dict['textmode'] = node.textmode
                 if node.textmode == 'JSON':
-                    # let us add the json as full member to the tree :)
+                    # add the json as full member to the tree :)
                     text_str = texts[node.text].as_string()
                     json_as_dict = json.loads(text_str)
                     node_dict['text_lines'] = {}
