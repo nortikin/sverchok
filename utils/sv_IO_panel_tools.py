@@ -25,8 +25,7 @@ from time import gmtime, strftime
 import urllib
 from urllib.request import urlopen
 
-from os.path import basename
-from os.path import dirname
+from os.path import basename, dirname
 from itertools import chain
 
 import bpy
@@ -39,9 +38,10 @@ from sverchok.utils.sv_IO_monad_helpers import pack_monad, unpack_monad
 
 SCRIPTED_NODES = {'SvScriptNode', 'SvScriptNodeMK2', 'SvScriptNodeLite'}
 
-_EXPORTER_REVISION_ = '0.064'
+_EXPORTER_REVISION_ = '0.065'
 
 '''
+0.065 general refactoring to get the monad pack/unpack into one file
 0.064 prop_types as a property is now tracked for scalarmath and logic node, this uses boolvec.
 0.063 add support for obj_in_lite obj serialization \o/ .
 0.062 (no revision change) - fixes import of sn texts that are present already in .blend
