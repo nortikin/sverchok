@@ -26,6 +26,7 @@ def pack_monad(node, node_items, groups_dict, create_dict_of_tree):
     """
 
     name = node.monad.name
+    node_items['all_props'] = node.monad.get_all_props()
     node_items['monad'] = name
     node_items['cls_dict'] = {}
     node_items['cls_dict']['cls_bl_idname'] = node.bl_idname
@@ -57,6 +58,13 @@ def pack_monad(node, node_items, groups_dict, create_dict_of_tree):
 def unpack_monad(nodes, node_ref):
     params = node_ref.get('params')
     if params:
+        socket_prop_data = params.get('all_props')
+        if socket_prop_data:
+            # including this to keep bw comp for trees that don't include this info.
+            #
+            # 
+            #
+            ...
 
         monad_name = params.get('monad')
         monad = bpy.data.node_groups[monad_name]
