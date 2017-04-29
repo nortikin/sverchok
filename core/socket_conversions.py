@@ -66,7 +66,7 @@ def is_matrix(mat):
     return True
 
 
-def get_locs_from_matrices2(data):
+def get_locs_from_matrices(data):
     locations = []
     collect_vector = locations.append
 
@@ -80,5 +80,3 @@ def get_locs_from_matrices2(data):
 
     get_all(data)
     return locations
-
-
