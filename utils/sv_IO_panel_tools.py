@@ -139,7 +139,7 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
     groups_dict = {}
     texts = bpy.data.texts
     if not skip_set:
-        skip_set = {'SvImportExport', 'Sv3DviewPropsNode'}
+        skip_set = {'Sv3DviewPropsNode'}
 
     if selected:
         nodes = list(filter(lambda n: n.select, nodes))
