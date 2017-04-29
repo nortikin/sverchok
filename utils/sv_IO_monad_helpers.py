@@ -53,6 +53,7 @@ def pack_monad(node, node_items, groups_dict, create_dict_of_tree):
 
             node_items[prop_name] = v
 
+
 def unpack_monad(nodes, node_ref):
     params = node_ref.get('params')
     if params:
