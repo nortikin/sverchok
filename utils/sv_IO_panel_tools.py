@@ -221,7 +221,6 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
 
             pack_monad(node, node_items, groups_dict, create_dict_of_tree)
 
-
         # if hasattr(node, "storage_get_data"):
         if any([ScriptNodeLite, ObjNodeLite, SvExecNodeMod, MeshEvalNode]):
             node.storage_get_data(node_dict)
