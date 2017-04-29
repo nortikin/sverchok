@@ -273,21 +273,23 @@
     SvCurveViewerNodeAlt
     SvPolylineViewerNodeMK1
     SvTypeViewerNode
-    SvJoinTrianglesNode
-    SvCacheNode
-    SvInsetSpecial
     SvSkinViewerNodeMK1b
-    SvCSGBooleanNodeMK2
-    SvParticlesNode
-    SvParticlesMK2Node
-    SvUVtextureNode
-    SvNumpyArrayNode
+    SvMatrixViewer
+    ---
     SvBMVertsNode
-    SvBMOpsNodeMK2
     SvBMinputNode
     SvBMoutputNode
     SvBMtoElementNode
+    SvBMOpsNodeMK2
+    ---
+    SvInsetSpecial
+    SvCSGBooleanNodeMK2
+    SvNumpyArrayNode
+    SvParticlesNode
+    SvParticlesMK2Node
+    SvJoinTrianglesNode
+    SvCacheNode
+    SvUVtextureNode
     SvSeparateMeshNodeMK2
     SvBvhOverlapNodeNew
     SvIndexToMaskNode
-    SvMatrixViewer
