@@ -218,7 +218,6 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
                 node_items[k] = v
 
         if IsMonadInstanceNode and node.monad:
-
             pack_monad(node, node_items, groups_dict, create_dict_of_tree)
 
         # if hasattr(node, "storage_get_data"):
