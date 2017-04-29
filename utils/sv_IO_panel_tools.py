@@ -478,8 +478,8 @@ def add_node_to_tree(nodes, n, nodes_to_import, name_remap, create_texts):
         if bl_idname == 'SvMonadGenericNode':
             node = unpack_monad(nodes, node_ref)
             
-            # if not node:
-            #    raise ValueError("It seems no valid node was created for this Monad (node_ref)")
+        # if not node:
+        #    raise Exception("It seems no valid node was created for this Monad {0}".format(node_ref))
         else:
             node = nodes.new(bl_idname)
 
