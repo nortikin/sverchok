@@ -123,6 +123,15 @@ def has_state_switch_protection(node, k):
         return node.bl_idname in {'VectorMathNode'}
 
 
+def get_superficial_props(node_dict, node)
+    node_dict['height'] = node.height
+    node_dict['width'] = node.width
+    node_dict['label'] = node.label
+    node_dict['hide'] = node.hide
+    node_dict['location'] = node.location[:]
+    node_dict['color'] = node.color[:]
+
+
 def create_dict_of_tree(ng, skip_set={}, selected=False):
     nodes = ng.nodes
     layout_dict = {}
@@ -159,17 +168,16 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
 
         for k, v in node.items():
 
-            if k == 'n_id':
-                # used to store the hash of the current Node,
-                # this is created along with the Node anyway. skip.
-                continue
-
-            if k in {'typ', 'newsock'}:
-                ''' these are reserved variables for changeable socks '''
-                continue
-
-            if k == 'dynamic_strings':
-                ''' reserved by exec node '''
+            if k in {'n_id', 'typ', 'newsock','dynamic_strings'}:
+                """
+                n_id: 
+                    used to store the hash of the current Node,
+                    this is created along with the Node anyway. skip.
+                typ, newsock:
+                    reserved variables for changeable sockets
+                dynamic_strings:
+                    reserved by exec node
+                """
                 continue
 
             if has_state_switch_protection(node, k):
@@ -238,10 +246,6 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
         #    frame_props = 'shrink', 'use_custom_color', 'label_size'
         #    node_dict['params'].update({fpv: getattr(node, fpv) for fpv in frame_props})
 
-        node_dict['height'] = node.height
-        node_dict['width'] = node.width
-        node_dict['label'] = node.label
-        node_dict['hide'] = node.hide
         
         if IsMonadInstanceNode:
             node_dict['bl_idname'] = 'SvMonadGenericNode'
@@ -251,9 +255,10 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
         if node.bl_idname in {'SvGroupInputsNodeExp', 'SvGroupOutputsNodeExp'}:
             node_dict[node.node_kind] = node.stash()
 
-        node_dict['location'] = node.location[:]
-        node_dict['color'] = node.color[:]
+        get_superficial_props(node_dict, node)
         nodes_dict[node.name] = node_dict
+
+        # -------------------
 
     layout_dict['nodes'] = nodes_dict
     layout_dict['groups'] = groups_dict
