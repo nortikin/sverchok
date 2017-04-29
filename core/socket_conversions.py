@@ -85,18 +85,16 @@ def get_quaternions_from_matrices(data):
     quaternions = []
     collect_quaternion = quaternions.append
 
-    def get_all(m, container):
-
-        for sublist in m:
+    def get_all(data):
+        for sublist in data:
             if is_matrix(sublist):
                 mat = Matrix(sublist)
                 q = tuple(mat.to_quaternion())
                 collect_quaternion(q)
             else:
-                new_sublist = []
-                get_all(sublist, new_sublist)
+                get_all(sublist)
 
-    get_all(data, quaternions)
+    get_all(data)
     return [quaternions]
 
 

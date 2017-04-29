@@ -82,31 +82,9 @@ emptyQuaternion = [[(1, 0, 0, 0)]]
 def process_from_socket(self, context):
     """Update function of exposed properties in Sockets"""
     self.node.process_node(context)
-
-def get_use_expander():
-    print("Use expander")
-    with sv_preferences() as prefs:
-        if prefs:
-            print("I have prefs")
-            return prefs.use_socket_expander
-        else:
-            print("i dont have prefs")
-            return True
-    return True
-
-def get_use_quicklink():
-    print("Use quicklink")
-    with sv_preferences() as prefs:
-        return prefs.use_socket_quicklink
-    return True
-
-def get_expand_socket():
-    print("Expand socket")
-    with sv_preferences() as prefs:
-        return prefs.expand_input_sockets
-    return True
-
 # this property group is only used by the old viewer draw
+
+
 class SvColors(bpy.types.PropertyGroup):
     """ Class for colors CollectionProperty """
     color = FloatVectorProperty(
@@ -117,20 +95,36 @@ class SvColors(bpy.types.PropertyGroup):
 
 
 class SvSocketCommon:
+    use_prop = BoolProperty(default=False)
 
     # use_expander = BoolProperty(default=get_use_expander())
     use_expander = BoolProperty(default=False)
     use_quicklink = BoolProperty(default=False)
     expanded = BoolProperty(default=False)
 
-    def init(self):
-        print("initializing socket")
-        self.use_expander = get_use_expander()
-        self.use_quicklink = get_use_quicklink()
-        self.expanded = get_expand_socket()
+    @property
+    def use_socket_expander(self):
+        with sv_preferences() as prefs:
+            # print("use expander called")
+            return prefs.use_socket_expander
+        # return sv_preferences.use_socket_expander
+
+    @property
+    def use_socket_quicklink(self):
+        with sv_preferences() as prefs:
+            # print("use expander called")
+            return prefs.use_socket_quicklink
+        # return sv_preferences.use_socket_expander
+
+    @property
+    def use_expand_sockets(self):
+        with sv_preferences() as prefs:
+            # print("use expander called")
+            return prefs.expand_input_sockets
 
     def draw_expander_template(self, context, layout, prop_origin, prop_name="prop"):
-        if self.use_expander:
+        if self.use_socket_expander:
+            # if self.use_expander:
             split = layout.split(percentage=.2, align=True)
             c1 = split.column(align=True)
             c2 = split.column(align=True)
@@ -148,15 +142,46 @@ class SvSocketCommon:
         else:
             layout.template_component_menu(prop_origin, prop_name, name=self.name)
 
-    def draw_link_new_node(self, settings, idname, x_offset, y_offset):
-        if self.use_quicklink:
-            context, layout, node, index = settings
+    def draw_quick_link(self, context, layout, node):
+        if self.use_socket_quicklink:
+            if self.bl_idname == "MatrixSocket":
+                new_node_idname = "SvMatrixGenNodeMK2"
+            elif self.bl_idname == "VerticesSocket":
+                new_node_idname = "GenVectorsNode"
+            else:
+                return
+
             op = layout.operator('node.sv_quicklink_new_node_input', text="", icon="PLUGIN")
-            op.socket_index = index
+            op.socket_index = self.index
             op.origin = node.name
-            op.new_node_idname = idname
-            op.new_node_offsetx = x_offset
-            op.new_node_offsety = y_offset
+            op.new_node_idname = new_node_idname
+            op.new_node_offsetx = -200
+            op.new_node_offsety = 0
+
+    @property
+    def extra_info(self):
+        print("getting base extra info")
+        return ""
+
+    def draw(self, context, layout, node, text):
+        if self.is_linked:  # linked INPUT or OUTPUT
+            info_text = text + '. ' + SvGetSocketInfo(self)
+            info_text += self.extra_info
+            layout.label(info_text)
+
+        elif self.is_output:  # unlinked OUPUT
+            layout.label(text)
+
+        else:  # unlinked INPUT
+            if self.prop_name:  # has property
+                self.draw_expander_template(context, layout, prop_origin=node, prop_name=self.prop_name)
+
+            elif self.use_prop:  # no property but use default prop
+                self.draw_expander_template(context, layout, prop_origin=self)
+
+            else:  # no property and not use default prop
+                self.draw_quick_link(context, layout, node)
+                layout.label(text)
 
     @property
     def other(self):
@@ -210,6 +235,15 @@ class MatrixSocket(NodeSocket, SvSocketCommon):
     prop_name = StringProperty(default='')
     num_matrices = IntProperty(default=0)
 
+    @property
+    def extra_info(self):
+        print("getting matrix extra info")
+        info = ""
+        if is_vector_to_matrix(self):
+            info = (" (" + str(self.num_matrices) + ")")
+
+        return info
+
     def get_prop_data(self):
         return {}
 
@@ -235,7 +269,7 @@ class MatrixSocket(NodeSocket, SvSocketCommon):
         else:
             return default
 
-    def draw(self, context, layout, node, text):
+    def draw2(self, context, layout, node, text):
         if self.is_linked:
             draw_string = text + '. ' + SvGetSocketInfo(self)
             if is_vector_to_matrix(self):
@@ -290,7 +324,7 @@ class VerticesSocket(NodeSocket, SvSocketCommon):
         else:
             return default
 
-    def draw(self, context, layout, node, text):
+    def draw2(self, context, layout, node, text):
         if not self.is_output and not self.is_linked:
 
             if self.prop_name:
@@ -354,7 +388,7 @@ class SvQuaternionSocket(NodeSocket, SvSocketCommon):
         else:
             return default
 
-    def draw(self, context, layout, node, text):
+    def draw2(self, context, layout, node, text):
         if not self.is_output and not self.is_linked:
 
             if self.prop_name:
@@ -405,7 +439,7 @@ class SvColorSocket(NodeSocket, SvSocketCommon):
         else:
             return default
 
-    def draw(self, context, layout, node, text):
+    def draw2(self, context, layout, node, text):
         if not self.is_output and not self.is_linked:
 
             if self.prop_name:
@@ -444,7 +478,7 @@ class SvDummySocket(NodeSocket, SvSocketCommon):
     def sv_type_conversion(self, new_self):
         self = new_self
 
-    def draw(self, context, layout, node, text):
+    def draw2(self, context, layout, node, text):
         layout.label(text)
 
     def draw_color(self, context, node):
@@ -490,7 +524,7 @@ class StringsSocket(NodeSocket, SvSocketCommon):
         else:
             raise SvNoDataError
 
-    def draw(self, context, layout, node, text):
+    def draw2(self, context, layout, node, text):
 
         # just handle custom draw..be it input or output.
         if hasattr(self, 'custom_draw'):
@@ -657,6 +691,7 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
 
 
 class SverchCustomTreeNode:
+
     @classmethod
     def poll(cls, ntree):
         return ntree.bl_idname in ['SverchCustomTreeType', 'SverchGroupTreeType']
