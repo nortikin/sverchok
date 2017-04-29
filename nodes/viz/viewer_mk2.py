@@ -290,6 +290,7 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
             opera = row.operator('node.sverchok_mesh_baker_mk2', text="B A K E")
             opera.idname = self.name
             opera.idtree = self.id_data.name
+            row.separator()
             row.operator("node.view3d_align_from", text='', icon='CURSOR')
 
     def draw_buttons_ext(self, context, layout):

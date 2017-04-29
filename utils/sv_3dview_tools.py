@@ -68,14 +68,11 @@ def get_center(self, context):
                 verts = vertex_in_data[0]
                 location = geom_utils.mean([verts[idx] for idx in range(0, len(verts), 3)])
 
-            if matrix and not vertex_links:
-                location = Matrix(matrix).to_translation()[:]
-                        
-            if matrix and vertex_links:
-                location = (Matrix(matrix) * Vector(location))[:]
-
-            else:
-                print('no reason!')
+            if matrix:
+                if not vertex_links:
+                    location = Matrix(matrix).to_translation()[:]
+                else:                        
+                    location = (Matrix(matrix) * Vector(location))[:]
 
         else:
             self.report({'INFO'}, 'viewer has no get_center function')
