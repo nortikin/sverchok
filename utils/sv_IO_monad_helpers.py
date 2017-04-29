@@ -59,15 +59,13 @@ def unpack_monad(nodes, node_ref):
     params = node_ref.get('params')
     if params:
         socket_prop_data = params.get('all_props')
-        if socket_prop_data:
-            # including this to keep bw comp for trees that don't include this info.
-            #
-            # 
-            #
-            ...
 
         monad_name = params.get('monad')
         monad = bpy.data.node_groups[monad_name]
+        if socket_prop_data:
+            # including this to keep bw comp for trees that don't include this info.
+            monad.set_all_props(socket_prop_data)
+
         cls_ref = monad.update_cls()
         node = nodes.new(cls_ref.bl_idname)
 
