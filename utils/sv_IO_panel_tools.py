@@ -123,7 +123,7 @@ def has_state_switch_protection(node, k):
         return node.bl_idname in {'VectorMathNode'}
 
 
-def get_superficial_props(node_dict, node)
+def get_superficial_props(node_dict, node):
     node_dict['height'] = node.height
     node_dict['width'] = node.width
     node_dict['label'] = node.label
