@@ -73,18 +73,6 @@ def unpack_monad(nodes, node_ref):
         node.input_template = cls_dict['input_template']
         node.output_template = cls_dict['output_template']
 
-        # # this should maybe be a function of the node, 
-        # # so we could call ` node.set_corresponding_renames '
-        # for idx, socket in enumerate(node.inputs):
-        #     other_socket = monad.nodes['Group Inputs Exp'].outputs[idx]
-        #     socket.name = other_socket.name
-        #     if other_socket.prop_name:
-        #         socket.prop_name = other_socket.prop_name
-
-        # for idx, socket in enumerate(node.outputs):
-        #     other_socket = monad.nodes['Group Outputs Exp'].inputs[idx]
-        #     socket.name = other_socket.name
-
         return node
     else:
         print('no parameters found! .json might be broken')                
