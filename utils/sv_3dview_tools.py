@@ -40,6 +40,7 @@ def get_matrix(socket):
 def get_center(self, context):
 
     location = (0, 0, 0)
+    matrix = None
     
     try:
         node = None
@@ -59,21 +60,19 @@ def get_center(self, context):
             vertex_links = vertex_socket.is_linked
             matrix_links = matrix_socket.is_linked
 
-            if matrix_links and not vertex_links:
+            if matrix_links:
                 matrix = get_matrix(matrix_socket)
-                if matrix:
-                    location = Matrix(matrix).to_translation()[:]
 
             if vertex_links:
                 vertex_in_data = vertex_socket.sv_get()
                 verts = vertex_in_data[0]
                 location = geom_utils.mean([verts[idx] for idx in range(0, len(verts), 3)])
-                if matrix_links:
-                    matrix = get_matrix(matrix_socket)
-                    if matrix:
-                        location = Matrix(matrix).to_translation()[:]
-                        location = (Matrix(matrix) * Vector(location))[:]
 
+            if matrix and not vertex_links:
+                location = Matrix(matrix).to_translation()[:]
+                        
+            if matrix and vertex_links:
+                location = (Matrix(matrix) * Vector(location))[:]
 
             else:
                 print('no reason!')
