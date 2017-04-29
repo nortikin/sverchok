@@ -21,6 +21,7 @@ from mathutils import Vector
 from bpy.props import FloatProperty, BoolProperty
 from sverchok.node_tree import SverchCustomTreeNode, StringsSocket, VerticesSocket
 from sverchok.data_structure import updateNode, Vector_generate, match_long_repeat
+from sverchok.utils.sv_recursive import sv_recursive_transformations
 
 
 class SvMoveNodeMK2(bpy.types.Node, SverchCustomTreeNode):
@@ -53,51 +54,11 @@ class SvMoveNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         mult = self.inputs['multiplier'].sv_get()
 
         if self.outputs[0].is_linked:
-            parameters = match_long_repeat([vers,vecs,mult])
-            mov = [self.moved(vr, vc, mu) for vr, vc, mu in zip(*parameters)]
+            mov = sv_recursive_transformations(self.moving,vers,vecs,mult,self.separate)
             self.outputs['vertices'].sv_set(mov)
 
     def moving(self, v, c, m):
         return (Vector(v) + Vector(c)*m)[:]
-
-    def moved(self, vers, vecs, mult):
-        moved = []
-        params = match_long_repeat([vecs,mult])
-        for c, m in zip(*params):
-            moved_ = []
-            for v in vers:
-                moved_.append(self.moving(v, c, m))
-            if self.separate:
-                moved.append(moved_)
-            else:
-                moved.extend(moved_)
-        return moved
-
-
-        #old code for move.
-        #rewriting implemented with needs of unification
-        '''
-        r = len(vers) - len(vecs)
-        rm = len(vers) - len(mult)
-        moved = []
-        if r > 0:
-            vecs.extend([vecs[-1] for a in range(r)])
-        if rm > 0:
-            mult.extend([mult[-1] for a in range(rm)])
-        for i, ob in enumerate(vers):       # object
-            d = len(ob) - len(vecs[i])
-            dm = len(ob) - len(mult[i])
-            if d > 0:
-                vecs[i].extend([vecs[i][-1] for a in range(d)])
-            if dm > 0:
-                mult[i].extend([mult[i][-1] for a in range(dm)])
-            temp = []
-            for k, vr in enumerate(ob):     # vectors
-                v = ((vr + vecs[i][k]*mult[i][k]))[:]
-                temp.append(v)   # [0]*mult[0], v[1]*mult[0], v[2]*mult[0]))
-            moved.append(temp)
-        return moved
-        '''
 
 
 def register():
