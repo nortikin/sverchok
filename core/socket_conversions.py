@@ -68,17 +68,15 @@ def is_matrix(mat):
 
 def get_locs_from_matrices(data):
     locations = []
+    collect_vector = locations.append
 
-    def get_all(m, container):
+    def get_all(data):
 
-        for sublist in m:
+        for sublist in data:
             if is_matrix(sublist):
-                # matrix_to_vector
-                container.append((sublist[0][3], sublist[1][3], sublist[2][3]))
+                collect_vector((sublist[0][3], sublist[1][3], sublist[2][3]))
             else:
-                new_sublist = []
-                get_all(sublist, new_sublist)
+                get_all(sublist)
 
-    get_all(data, locations)
+    get_all(data)
     return locations
-
