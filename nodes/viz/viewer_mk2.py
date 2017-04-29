@@ -25,12 +25,9 @@ from mathutils import Matrix
 
 import sverchok
 from sverchok.node_tree import SverchCustomTreeNode
-
-from sverchok.data_structure import (
-    node_id, updateNode, dataCorrect,
-    Matrix_generate)
-
+from sverchok.data_structure import node_id, updateNode, dataCorrect, Matrix_generate
 from sverchok.ui.viewer_draw_mk2 import callback_disable, callback_enable
+
 
 cache_viewer_baker = {}
 
@@ -286,13 +283,15 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
         self.draw_main_ui_elements(context, layout)
 
         if self.bakebuttonshow:
-            row = layout.row()
+            row = layout.row(align=True)
             addon = context.user_preferences.addons.get(sverchok.__name__)
             row.scale_y = 4.0 if addon.preferences.over_sized_buttons else 1
 
             opera = row.operator('node.sverchok_mesh_baker_mk2', text="B A K E")
             opera.idname = self.name
             opera.idtree = self.id_data.name
+            row.separator()
+            row.operator("node.view3d_align_from", text='', icon='CURSOR')
 
     def draw_buttons_ext(self, context, layout):
 
@@ -329,8 +328,11 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
     def update(self):
         if not ("matrix" in self.inputs):
             return
-        if not (self.inputs[0].other or self.inputs[2].other):
-            callback_disable(node_id(self))        
+        try:
+            if not (self.inputs[0].other or self.inputs[2].other):
+                callback_disable(node_id(self))
+        except:
+            print('vdmk2 update holdout')
 
 
     def process(self):
