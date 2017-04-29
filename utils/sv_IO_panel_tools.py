@@ -30,11 +30,11 @@ from os.path import dirname
 from itertools import chain
 
 import bpy
-from bpy.types import EnumProperty
-from bpy.props import StringProperty
-from bpy.props import BoolProperty
+from bpy.props import StringProperty, BoolProperty
+
 from sverchok import old_nodes
 from sverchok.utils import sv_gist_tools
+from sverchok.utils.sv_IO_helpers import pack_monad, unpack_monad
 
 
 SCRIPTED_NODES = {'SvScriptNode', 'SvScriptNodeMK2', 'SvScriptNodeLite'}
@@ -87,7 +87,7 @@ def get_file_obj_from_zip(fullpath):
 def find_enumerators(node):
     ignored_enums = ['bl_icon', 'bl_static_type', 'type']
     node_props = node.bl_rna.properties[:]
-    f = filter(lambda p: isinstance(p, EnumProperty), node_props)
+    f = filter(lambda p: isinstance(p, bpy.types.EnumProperty), node_props)
     return [p.identifier for p in f if not (p.identifier in ignored_enums)]
 
 
@@ -217,36 +217,8 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
                 v = getattr(node, k)
                 node_items[k] = v
 
-        # we can not rely on .items() to be present for various reasons, so we must gather
-        # something to fill .params with - due to dynamic nature of node. 
         if IsMonadInstanceNode and node.monad:
-            name = node.monad.name
-            node_items['monad'] = name
-            node_items['cls_dict'] = {}
-            node_items['cls_dict']['cls_bl_idname'] = node.bl_idname
-
-            for template in ['input_template', 'output_template']:
-                node_items['cls_dict'][template] = getattr(node, template)
-
-            if name not in groups_dict:
-                group_ng = bpy.data.node_groups[name]
-                group_dict = create_dict_of_tree(group_ng)
-                group_dict['bl_idname'] = group_ng.bl_idname
-                group_dict['cls_bl_idname'] = node.bl_idname
-                group_json = json.dumps(group_dict)
-                groups_dict[name] = group_json
-
-            # [['Y', 'StringsSocket', {'prop_name': 'y'}], [....
-            for idx, (socket_name, socket_type, prop_dict) in enumerate(node.input_template):
-                socket = node.inputs[idx]
-                if not socket.is_linked and prop_dict:
-
-                    prop_name = prop_dict['prop_name']
-                    v = getattr(node, prop_name)
-                    if not isinstance(v, (float, int, str)):
-                        v = v[:]
-
-                    node_items[prop_name] = v
+            pack_monad(node, node_items, groups_dict, create_dict_of_tree)
 
         # if hasattr(node, "storage_get_data"):
         if any([ScriptNodeLite, ObjNodeLite, SvExecNodeMod, MeshEvalNode]):
@@ -504,34 +476,8 @@ def add_node_to_tree(nodes, n, nodes_to_import, name_remap, create_texts):
             old_nodes.register_old(bl_idname)
 
         if bl_idname == 'SvMonadGenericNode':
-            params = node_ref.get('params')
-            if params:
-
-                monad_name = params.get('monad')
-                monad = bpy.data.node_groups[monad_name]
-                cls_ref = monad.update_cls()
-                node = nodes.new(cls_ref.bl_idname)
-
-                cls_dict = params.get('cls_dict')
-                node.input_template = cls_dict['input_template']
-                node.output_template = cls_dict['output_template']
-
-                # this should maybe be a function of the node, 
-                # so we could call ` node.set_corresponding_renames '
-                for idx, socket in enumerate(node.inputs):
-                    other_socket = monad.nodes['Group Inputs Exp'].outputs[idx]
-                    socket.name = other_socket.name
-                    if other_socket.prop_name:
-                        socket.prop_name = other_socket.prop_name
-
-                for idx, socket in enumerate(node.outputs):
-                    other_socket = monad.nodes['Group Outputs Exp'].inputs[idx]
-                    socket.name = other_socket.name
-
-
-            else:
-                print('no parameters found! .json might be broken')                
-
+            node = unpack_monad(nodes, node_ref)
+            # raise NoNode if not node ?
         else:
             node = nodes.new(bl_idname)
 
