@@ -24,11 +24,9 @@ from collections import defaultdict
 import bpy
 import blf
 import bgl
+from bpy.types import SpaceNodeEditor
 
 from sverchok import node_tree
-from sverchok.utils.context_managers import sv_preferences
-
-from bpy.types import SpaceNodeEditor
 
 
 callback_dict = {}
@@ -129,9 +127,10 @@ def draw_text_data(data):
     x, y = int(x), int(y)
     color = data.get('color', (0.1, 0.1, 0.1))
     font_id = data.get('font_id', 0)
+    scale = data.get('scale', 1.0)
     
-    text_height = 15
-    line_height = 14
+    text_height = 15 * scale
+    line_height = 14 * scale
 
     # why does the text look so jagged?  <-- still valid question
     # dpi = bpy.context.user_preferences.system.dpi
@@ -169,7 +168,8 @@ def draw_graphical_data(data):
     x, y = data.get('location', (120, 120))
     color = data.get('color', (0.1, 0.1, 0.1))
     font_id = data.get('font_id', 0)
-    text_height = 15
+    scale = data.get('scale', 1.0)
+    text_height = 15 * scale
 
     if not lines:
         return
@@ -182,7 +182,7 @@ def draw_graphical_data(data):
         blf.draw(font_id, line)
         return blf.dimensions(font_id, line)
 
-    lineheight = 20
+    lineheight = 20 * scale
     num_containers = len(lines)
     for idx, line in enumerate(lines):
         y_pos = y - (idx*lineheight)
@@ -206,21 +206,6 @@ def draw_graphical_data(data):
             text_body = "Showing the first 20 of {0} items"
             draw_text(color, x, y_pos, text_body.format(num_containers))
             break
-
-
-        # # a list contain n * 3 tuple/list
-        # if isinstance(line, (list, tuple)):
-        #     # print('is list')
-        #     if all([isinstance(s, (list, tuple)) for s in line]):
-        #         # print('-- each item is itself a list')
-        #         if all(len(element) == 3 for element in line):
-        #             # print('-- -- each sub item has len 3')
-        #             if all(all(isinstance(j, (float, int)) for j in l) for l in line):
-        #                 # print('-- -- -- each sub item is float or int')
-        #                 for jdx, v in enumerate(line):
-        #                     draw_triangle(gfx_x + (15 * jdx), y_pos-3, w=14, h=12)
-
-
 
 
 
