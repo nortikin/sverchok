@@ -120,7 +120,10 @@ class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             # get scale
             scale = 1.0
             with sv_preferences() as prefs:
-                scale = prefs.stethoscope_view_scale
+                try:
+                    scale = prefs.stethoscope_view_scale
+                except:
+                    scale = 1.0
 
             # gather vertices from input
             data = inputs[0].sv_get(deepcopy=False)
