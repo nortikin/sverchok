@@ -116,6 +116,12 @@ class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         nvBGL.callback_disable(n_id)
 
         if self.activate and inputs[0].is_linked:
+
+            # get scale
+            scale = 1.0
+            with sv_preferences() as prefs:
+                scale = prefs.stethoscope_view_scale
+
             # gather vertices from input
             data = inputs[0].sv_get(deepcopy=False)
             self.num_elements = len(data)
@@ -136,6 +142,7 @@ class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                 'content': processed_data,
                 'location': (self.location + Vector((self.width + 20, 0)))[:],
                 'color': self.text_color[:],
+                'scale' : float(scale),
                 'mode': self.selected_mode[:],
                 'font_id': int(self.font_id)
             }
