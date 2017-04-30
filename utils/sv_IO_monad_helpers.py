@@ -69,9 +69,9 @@ def unpack_monad(nodes, node_ref):
         cls_ref = monad.update_cls()
         node = nodes.new(cls_ref.bl_idname)
 
-        cls_dict = params.get('cls_dict')
-        node.input_template = cls_dict['input_template']
-        node.output_template = cls_dict['output_template']
+        # cls_dict = params.get('cls_dict')
+        # node.input_template = cls_dict['input_template']
+        # node.output_template = cls_dict['output_template']
 
         return node
     else:
