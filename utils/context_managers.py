@@ -1,8 +1,7 @@
-import bpy
-import sverchok
-from sverchok.data_structure import SVERCHOK_NAME as addon_name
 from contextlib import contextmanager
 
+import bpy
+import sverchok
 
 @contextmanager
 def hard_freeze(self):
