@@ -50,7 +50,7 @@
     CentersPolsNodeMK3
     GetNormalsNode
     VectorNormalNode
-    SvKDTreeNode
+    SvKDTreeNodeMK2
     SvKDTreeEdgesNodeMK2
     SvMeshFilterNode
     SvEdgeAnglesNode
