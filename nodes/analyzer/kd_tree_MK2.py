@@ -70,19 +70,19 @@ class SvKDTreeNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         out = []
         Co, ind, dist = self.outputs
         if self.mode == "find_n":
-            for v, f in zip(V1,N):
+            for v, v2, f in zip(V1, V2, N):
                 kd = mathutils.kdtree.KDTree(len(v))
                 for i, i2 in enumerate(v):
                     kd.insert(i2, i)
                 kd.balance()
-                out.extend([[i for i in kd.find_n(i2, i3)] for i2,i3 in zip(v, f)])
+                out.extend([[i for i in kd.find_n(i2, i3)] for i2,i3 in zip(v2, f)])
         elif self.mode == "find_range":
-            for v, r in zip(V1,R):
+            for v, v2, r in zip(V1, V2, R):
                 kd = mathutils.kdtree.KDTree(len(v))
                 for i, i2 in enumerate(v):
                     kd.insert(i2, i)
                 kd.balance()
-                out.extend([[i for i in kd.find_range(i2, i3)] for i2,i3 in zip(v, r)])
+                out.extend([[i for i in kd.find_range(i2, i3)] for i2,i3 in zip(v2, r)])
         if Co.is_linked:
             Co.sv_set([[i[0][:] for i in i2] for i2 in out])
         if ind.is_linked:
