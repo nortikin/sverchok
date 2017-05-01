@@ -139,6 +139,8 @@ class SverchokPreferences(AddonPreferences):
 
     stethoscope_view_scale = FloatProperty(
         default=1.0, min=0.01, step=0.01, description='default stethoscope scale')
+    stethoscope_view_xy_multiplier = FloatProperty(
+        default=1.0, min=0.01, step=0.01, description='default stethoscope scale')
 
 
     def draw(self, context):
@@ -155,7 +157,12 @@ class SverchokPreferences(AddonPreferences):
         col.prop(self, "over_sized_buttons")
         col.prop(self, "enable_live_objin", text='Enable Live Object-In')
         row_sub1 = col.row().split(0.5)
-        row_sub1.prop(self, 'stethoscope_view_scale', text='stethoscope scale')
+        box_sub1 = row_sub1.box()
+        box_sub1_col = box_sub1.column(align=True)
+        box_sub1_col.label('stethoscope mk2 settings')
+        box_sub1_col.prop(self, 'stethoscope_view_scale', text='scale')
+        box_sub1_col.prop(self, 'stethoscope_view_xy_multiplier', text='xy multiplier')
+
         col.separator()
 
         col.label(text="Sverchok node theme settings")
