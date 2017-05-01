@@ -1,7 +1,5 @@
 import bpy
-from sverchok.data_structure import SVERCHOK_NAME as addon_name
-
-import bpy
+import sverchok
 from sverchok.data_structure import SVERCHOK_NAME as addon_name
 from contextlib import contextmanager
 
@@ -28,6 +26,7 @@ def hard_freeze(self):
     yield self
     self.id_data.unfreeze(hard=True)
 
+
 @contextmanager
 def sv_preferences():
     '''
@@ -38,9 +37,11 @@ def sv_preferences():
         with sv_preferences() as prefs:
             print(prefs.<some attr>)
     '''
-    addon = bpy.context.user_preferences.addons.get(addon_name)
+    # by using svercok.__name__ we increase likelyhood that the addon preferences will correspond
+    addon = bpy.context.user_preferences.addons.get(sverchok.__name__)
     if addon and hasattr(addon, "preferences"):
         yield addon.preferences
+
 
 @contextmanager
 def new_input(node, ident, name):
