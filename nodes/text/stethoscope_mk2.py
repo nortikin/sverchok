@@ -117,13 +117,12 @@ class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
         if self.activate and inputs[0].is_linked:
 
-            # get scale
-            scale = 1.0
-            with sv_preferences() as prefs:
-                try:
+            try:
+                with sv_preferences() as prefs:
                     scale = prefs.stethoscope_view_scale
-                except:
-                    scale = 1.0
+            except:
+                # print('did not find preferences - you need to save user preferences')
+                scale = 1.0
 
             # gather vertices from input
             data = inputs[0].sv_get(deepcopy=False)
