@@ -38,9 +38,10 @@ from sverchok.utils.sv_IO_monad_helpers import pack_monad, unpack_monad
 
 SCRIPTED_NODES = {'SvScriptNode', 'SvScriptNodeMK2', 'SvScriptNodeLite'}
 
-_EXPORTER_REVISION_ = '0.065'
+_EXPORTER_REVISION_ = '0.066'
 
 '''
+0.066 use indices instead of socket name for links in updatelist.
 0.065 general refactoring to get the monad pack/unpack into one file
 0.064 prop_types as a property is now tracked for scalarmath and logic node, this uses boolvec.
 0.063 add support for obj_in_lite obj serialization \o/ .
@@ -91,9 +92,9 @@ def find_enumerators(node):
     return [p.identifier for p in f if not (p.identifier in ignored_enums)]
 
 
-def compile_socket(link):
-    return (link.from_node.name, link.from_socket.name,
-            link.to_node.name, link.to_socket.name)
+# def compile_socket(link):
+#     return (link.from_node.name, link.from_socket.name,
+#             link.to_node.name, link.to_socket.name)
 
 def compile_socket_idx(link):
     return (link.from_node.name, link.from_socket.index,
@@ -301,7 +302,7 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
                     link = socket.links[0]
                     if selected and not link.from_node.select:
                         continue
-                    links_out.append(compile_socket(link))
+                    links_out.append(compile_socket_idx(link))
         layout_dict['update_lists'] = links_out
     except Exception as err:
         print(traceback.format_exc())
