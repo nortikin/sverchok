@@ -48,6 +48,10 @@ class SvFrameInfoNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             row.prop(scene, "frame_preview_end", text="End")
 
         row = layout.row(align=True)
+        row.operator('node.sv_push_current_frame', text='-1').direction=-1
+        row.operator('node.sv_push_current_frame', text='+1').direction=1
+
+        row = layout.row(align=True)
         row.operator("screen.frame_jump", text="", icon='REW').end = False
         # row.operator("screen.keyframe_jump", text="", icon='PREV_KEYFRAME').next = False
         if not screen.is_animation_playing:
