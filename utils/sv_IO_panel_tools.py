@@ -95,6 +95,10 @@ def compile_socket(link):
     return (link.from_node.name, link.from_socket.name,
             link.to_node.name, link.to_socket.name)
 
+def compile_socket_idx(link):
+    return (link.from_node.name, link.from_socket.index,
+            link.to_node.name, link.to_socket.index)
+
 
 def write_json(layout_dict, destination_path):
     m = json.dumps(layout_dict, sort_keys=True, indent=2)
