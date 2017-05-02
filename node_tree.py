@@ -307,6 +307,80 @@ class StringsSocket(NodeSocket, SvSocketCommon):
         return self.nodule_color
 
 
+class SvGenericSocket(StringsSocket):
+    bl_idname = "SvGenericSocket"
+    bl_label = "Sv Generic Socket"
+
+    """
+    Experimentation with sockets for numpy and imitations..
+    """
+
+    custom_draw = StringProperty()
+    show_tick_box = bpy.props.BoolProperty(default=False)
+    to_list = bpy.props.BoolProperty(default=False)
+    to_array = bpy.props.BoolProperty(default=False)
+    
+    faux_idname = bpy.props.StringProperty(default='SvNumpySocket')
+    default_color = (1.0, 0.3, 0.3, 1.0)
+    color = (1.0, 0.3, 0.3, 1.0)
+
+    prop_name = StringProperty(default='')
+
+    prop_type = StringProperty(default='')
+    prop_index = IntProperty()
+
+    def imitate(self, name):
+        colors = {
+            'StringsSocket' : (0.6, 1.0, 0.6, 1.0),
+            'MatrixSocket' : (.2, .8, .8, 1.0),
+            'VerticesSocket' : (0.9, 0.6, 0.2, 1.0),
+            'SvNumpySocket': (1.0, 0.3, 0.3, 1.0)
+        }
+        cl = colors.get(name)
+        if cl:      
+            self.faux_idname = name
+            self.color = cl
+        else:
+            print(name, 'is not a valid imitation socket name, use', list(colors.keys()))
+
+
+    def reset_draw_color(self):
+        self.color = self.default_color
+
+    def draw_color(self, context, node):
+        return self.color
+
+    def draw(self, context, layout, node, text):
+        if self.show_tick_box:
+            if self.is_output:
+                layout.prop(self, 'to_list', text='tolist', toggle=True)
+            else:
+                layout.prop(self, 'to_array', text='toarray')
+
+        if hasattr(self, 'custom_draw'):
+            if self.custom_draw and hasattr(node, self.custom_draw):
+                getattr(node, self.custom_draw)(context, layout)
+                return
+
+        if self.prop_name:
+            prop = node.rna_type.properties.get(self.prop_name, None)
+            t = prop.name if prop else text
+        else:
+            t = text
+
+        if not self.is_output and not self.is_linked:
+            if self.prop_name and not self.prop_type:
+                layout.prop(node, self.prop_name)
+            elif self.prop_type:
+                layout.prop(node, self.prop_type, index=self.prop_index, text=self.name)
+            else:
+                layout.label(t)
+        elif self.is_linked:
+            layout.label(t + '. ' + SvGetSocketInfo(self))
+        else:
+            layout.label(t)
+
+
 class SvNodeTreeCommon(object):
     '''
     Common methods shared between Sverchok node trees
@@ -498,9 +572,11 @@ def register():
     bpy.utils.register_class(StringsSocket)
     bpy.utils.register_class(VerticesSocket)
     bpy.utils.register_class(SvDummySocket)
+    bpy.utils.register_class(SvGenericSocket)
 
 
 def unregister():
+    bpy.utils.unregister_class(SvGenericSocket)
     bpy.utils.unregister_class(SvDummySocket)
     bpy.utils.unregister_class(VerticesSocket)
     bpy.utils.unregister_class(StringsSocket)
