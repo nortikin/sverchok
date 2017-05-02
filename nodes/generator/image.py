@@ -80,21 +80,10 @@ class ImageNode(bpy.types.Node, SverchCustomTreeNode):
     def process(self):
         inputs, outputs = self.inputs, self.outputs
 
-        # inputs
-        if inputs['vecs X'].is_linked:
-            IntegerX = min(int(inputs['vecs X'].sv_get()[0][0]), 100)
-        else:
-            IntegerX = int(self.Xvecs)
-
-        if inputs['vecs Y'].is_linked:
-            IntegerY = min(int(inputs['vecs Y'].sv_get()[0][0]), 100)
-        else:
-            IntegerY = int(self.Yvecs)
-
-        step_x_linked = inputs['Step X'].is_linked
-        step_y_linked = inputs['Step Y'].is_linked
-        StepX = inputs['Step X'].sv_get()[0] if step_x_linked else [self.Xstep]
-        StepY = inputs['Step Y'].sv_get()[0] if step_y_linked else [self.Ystep]
+        IntegerX = min(int(inputs['vecs X'].sv_get()[0][0]), 100)    
+        IntegerY = min(int(inputs['vecs Y'].sv_get()[0][0]), 100)
+        StepX = inputs['Step X'].sv_get()[0]
+        StepY = inputs['Step Y'].sv_get()[0]
         fullList(StepX, IntegerX)
         fullList(StepY, IntegerY)
 
@@ -130,28 +119,42 @@ class ImageNode(bpy.types.Node, SverchCustomTreeNode):
         
 
     def make_vertices(self, delitelx, delitely, stepx, stepy, image_name):
-        lenx = bpy.data.images[image_name].size[0]
-        leny = bpy.data.images[image_name].size[1]
+        image_ref = bpy.data.images[image_name]
+        lenx, leny = image_ref.size[:]
+        
         if delitelx > lenx:
             delitelx = lenx
         if delitely > leny:
             delitely = leny
+
         R, G, B = self.R, self.G, self.B
-        xcoef = lenx//delitelx
-        ycoef = leny//delitely
+        xcoef = lenx // max(1, delitelx)
+        ycoef = leny // max(1, delitely)
+        
         # copy images data, pixels is created on every access with [i], extreme speedup.
         # http://blender.stackexchange.com/questions/3673/why-is-accessing-image-data-so-slow
-        imag = bpy.data.images[image_name].pixels[:]
+        imag = image_ref.pixels[:]
+        max_element_index = len(imag)-1
+
         vertices = []
         addition = 0
+
         for y in range(delitely+1):
             addition = int(ycoef*y*4*lenx)
-            for x in range(delitelx+1):
-                #  каждый пиксель кодируется RGBA, и записан строкой, без разделения на строки и столбцы.
-                middle = (imag[addition]*R+imag[addition+1]*G+imag[addition+2]*B)*imag[addition+3]
-                vertex = [x*stepx[x], y*stepy[y], middle]
-                vertices.append(vertex) 
-                addition += int(xcoef*4)
+
+            if addition >= max_element_index-3:
+                break
+
+            try:
+                for x in range(delitelx+1):
+                    middle = (imag[addition]*R+imag[addition+1]*G+imag[addition+2]*B)*imag[addition+3]
+                    vertex = [x*stepx[x], y*stepy[y], middle]
+                    vertices.append(vertex) 
+                    addition += int(xcoef*4)
+            except IndexError:
+                print(addition, 'vs', max_element_index)
+
+
         return vertices
 
 
