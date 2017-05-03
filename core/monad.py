@@ -72,7 +72,18 @@ def generate_name(prop_name, cls_dict):
     else:
         return prop_name
 
+def ensure_sufficient_information(self, socket, prop_dict, proposed_variable_name):
+    node_origin = socket.other.node
 
+    # i think it's sane to enforce some kind of name here.
+    if not prop_dict.get('name'):
+        prop_dict['name'] = proposed_variable_name
+
+    # this makes sure when you connect a socket manually, the outward
+    # facing node socket on the Monad Node will get a default with the
+    # current value (this helps continuity)
+    prop_dict['attr'] = proposed_variable_name
+                
 
 
 class SverchGroupTree(NodeTree, SvNodeTreeCommon):
@@ -98,11 +109,12 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
         if other.prop_name:
             prop_name = other.prop_name
             prop_func, prop_dict = getattr(other.node.rna_type, prop_name, ("", {}))
-            print(prop_func, prop_dict)  # ensure unique name here, or sensible if none
-            # if not ['name'] <-- g
-            #     # ['name'] <=== ['attr'] + ' ' + str(socket.index)
-            # ['default'] shall correspond with current slider value
-            #
+
+            print('before:', prop_dict)
+            proposed_variable_name = generate_name(prop_name, cls_dict)
+            ensure_sufficient_information(self, socket, prop_dict, proposed_variable_name)
+            print('after:', prop_dict)
+
             if prop_func.__name__ == "FloatProperty":
                 prop_settings = self.float_props.add()
             elif prop_func.__name__ == "IntProperty":
@@ -112,10 +124,13 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
             else: # no way to handle it
                 return None
 
-            prop_settings.prop_name = generate_name(prop_name, cls_dict)
+            prop_settings.prop_name = proposed_variable_name
             prop_settings.set_settings(prop_dict)
-            socket.prop_name = prop_settings.prop_name
-            return prop_settings.prop_name
+            socket.prop_name = proposed_variable_name
+            
+            return proposed_variable_name
+
+
         elif hasattr(other, "prop_type"):
             if "float" in other.prop_type:
                 prop_settings = self.float_props.add()
@@ -127,6 +142,7 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
             print(other.name)  # ensure unique name here, or sensible if none
             prop_settings.set_settings({"name": other.name})
             socket.prop_name = prop_settings.prop_name
+            
             return prop_settings.prop_name
 
         return None
