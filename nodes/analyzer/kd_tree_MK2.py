@@ -57,7 +57,7 @@ class SvKDTreeNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', 'insert')
-        self.inputs.new('VerticesSocket', 'find')
+        self.inputs.new('VerticesSocket', 'find').use_prop = True
         self.inputs.new('StringsSocket', 'number').prop_name = "number"
         self.inputs.new('StringsSocket', 'radius').prop_name = "radius"
         self.inputs['radius'].hide_safe = True
