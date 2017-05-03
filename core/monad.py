@@ -99,6 +99,10 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
             prop_name = other.prop_name
             prop_func, prop_dict = getattr(other.node.rna_type, prop_name, ("", {}))
             print(prop_func, prop_dict)  # ensure unique name here, or sensible if none
+            # if not ['name'] <-- g
+            #     # ['name'] <=== ['attr'] + ' ' + str(socket.index)
+            # ['default'] shall correspond with current slider value
+            #
             if prop_func.__name__ == "FloatProperty":
                 prop_settings = self.float_props.add()
             elif prop_func.__name__ == "IntProperty":
