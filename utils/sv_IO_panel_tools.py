@@ -33,6 +33,7 @@ from bpy.props import StringProperty, BoolProperty
 
 from sverchok import old_nodes
 from sverchok.utils import sv_gist_tools
+from sverchok.utils.sv_IO_file_handler import get_file_obj_from_zip, write_json
 from sverchok.utils.sv_IO_monad_helpers import pack_monad, unpack_monad
 
 
@@ -61,29 +62,6 @@ revisions below this are your own problem.
 '''
 
 
-def get_file_obj_from_zip(fullpath):
-    '''
-    fullpath must point to a zip file.
-    usage:
-        nodes_json = get_file_obj_from_zip(fullpath)
-        print(nodes_json['export_version'])
-    '''
-    with zipfile.ZipFile(fullpath, "r") as jfile:
-        exported_name = ""
-        for name in jfile.namelist():
-            if name.endswith('.json'):
-                exported_name = name
-                break
-
-        if not exported_name:
-            print('zip contains no files ending with .json')
-            return
-
-        print(exported_name, '<')
-        fp = jfile.open(exported_name, 'r')
-        m = fp.read().decode()
-        return json.loads(m)
-
 
 def find_enumerators(node):
     ignored_enums = ['bl_icon', 'bl_static_type', 'type']
@@ -99,18 +77,6 @@ def find_enumerators(node):
 def compile_socket_idx(link):
     return (link.from_node.name, link.from_socket.index,
             link.to_node.name, link.to_socket.index)
-
-
-def write_json(layout_dict, destination_path):
-    m = json.dumps(layout_dict, sort_keys=True, indent=2)
-    # optional post processing step
-    post_processing = False
-    if post_processing:
-        flatten = lambda match: r' {}'.format(match.group(1), m)
-        m = re.sub(r'\s\s+(\d+)', flatten, m)
-
-    with open(destination_path, 'w') as node_tree:
-        node_tree.writelines(m)
 
 
 def has_state_switch_protection(node, k):
@@ -129,12 +95,24 @@ def has_state_switch_protection(node, k):
 
 
 def get_superficial_props(node_dict, node):
+    '''
+    copies the node's values into a dedicated sub branch of the node_dict for json.
+    '''
     node_dict['height'] = node.height
     node_dict['width'] = node.width
     node_dict['label'] = node.label
     node_dict['hide'] = node.hide
     node_dict['location'] = node.location[:]
     node_dict['color'] = node.color[:]
+
+
+def apply_superficial_props(node, node_ref):
+    '''
+    copies the stored values from the json onto the new node's corresponding values.
+    '''
+    props = ['location', 'height', 'width', 'label', 'hide', 'color']
+    for p in props:
+        setattr(node, p, node_ref[p])
 
 
 def create_dict_of_tree(ng, skip_set={}, selected=False):
@@ -408,15 +386,6 @@ def perform_svtextin_node_object(node, node_ref):
         # texts[current_text].from_string(node_ref['text_lines'])
         print(node.name, 'seems to reuse a text block loaded by another node - skipping')
 
-
-
-def apply_superficial_props(node, node_ref):
-    '''
-    copies the stored values from the json onto the new node's corresponding values.
-    '''
-    props = ['location', 'height', 'width', 'label', 'hide', 'color']
-    for p in props:
-        setattr(node, p, node_ref[p])
 
 
 def gather_remapped_names(node, n, name_remap):
