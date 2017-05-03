@@ -20,7 +20,7 @@ import bpy
 import mathutils
 from bpy.props import FloatProperty, EnumProperty, IntProperty
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (updateNode)
+from sverchok.data_structure import (updateNode, match_long_repeat as mlr)
 
 
 class SvKDTreeNodeMK2(bpy.types.Node, SverchCustomTreeNode):
@@ -70,19 +70,19 @@ class SvKDTreeNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         out = []
         Co, ind, dist = self.outputs
         if self.mode == "find_n":
-            for v, v2, f in zip(V1, V2, N):
+            for v, v2, n in zip(V1, V2, N):
                 kd = mathutils.kdtree.KDTree(len(v))
                 for i, i2 in enumerate(v):
                     kd.insert(i2, i)
                 kd.balance()
-                out.extend([[i for i in kd.find_n(i2, i3)] for i2,i3 in zip(v2, f)])
+                out.extend([kd.find_n(i2, i3) for i2,i3 in zip(*mlr([v2, n]))])
         elif self.mode == "find_range":
             for v, v2, r in zip(V1, V2, R):
                 kd = mathutils.kdtree.KDTree(len(v))
                 for i, i2 in enumerate(v):
                     kd.insert(i2, i)
                 kd.balance()
-                out.extend([[i for i in kd.find_range(i2, i3)] for i2,i3 in zip(v2, r)])
+                out.extend([kd.find_range(i2, i3) for i2,i3 in zip(*mlr([v2, r]))])
         if Co.is_linked:
             Co.sv_set([[i[0][:] for i in i2] for i2 in out])
         if ind.is_linked:
