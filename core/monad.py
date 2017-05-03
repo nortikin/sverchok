@@ -98,6 +98,7 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
         if other.prop_name:
             prop_name = other.prop_name
             prop_func, prop_dict = getattr(other.node.rna_type, prop_name, ("", {}))
+            print(prop_func, prop_dict)  # ensure unique name here, or sensible if none
             if prop_func.__name__ == "FloatProperty":
                 prop_settings = self.float_props.add()
             elif prop_func.__name__ == "IntProperty":
@@ -119,6 +120,7 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
             else:
                 return None
             prop_settings.prop_name = generate_name(make_valid_identifier(other.name), cls_dict)
+            print(other.name)  # ensure unique name here, or sensible if none
             prop_settings.set_settings({"name": other.name})
             socket.prop_name = prop_settings.prop_name
             return prop_settings.prop_name
