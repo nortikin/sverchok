@@ -82,7 +82,7 @@ def make_bmesh_geometry(node, idx, context, verts, *topology):
     else:
 
         ''' get bmesh, write bmesh to obj, free bmesh'''
-        bm = bmesh_from_pydata(verts, edges, faces)
+        bm = bmesh_from_pydata(verts, edges, faces, normal_update=node.calc_normals)
         bm.to_mesh(sv_object.data)
         bm.free()
 
@@ -145,7 +145,7 @@ def make_bmesh_geometry_merged(node, idx, context, yielder_object):
         mesh.update()
     else:
         ''' get bmesh, write bmesh to obj, free bmesh'''
-        bm = bmesh_from_pydata(big_verts, big_edges, big_faces)
+        bm = bmesh_from_pydata(big_verts, big_edges, big_faces, normal_update=node.calc_normals)
         bm.to_mesh(sv_object.data)
         bm.free()
 
@@ -239,6 +239,7 @@ class SvBmeshViewerNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     hide_select = BoolProperty(default=True)
 
     select_state_mesh = BoolProperty(default=False)
+    calc_normals = BoolProperty(default=False, update=updateNode)
 
     activate = BoolProperty(
         default=True,
@@ -343,6 +344,7 @@ class SvBmeshViewerNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             box.prop(self, "extended_matrix", text="Extended Matrix")
             box.prop(self, "fixed_verts", text="Fixed vert count")
             box.prop(self, 'autosmooth', text='smooth shade')
+            box.prop(self, 'calc_normals', text='calculate normals')
             box.prop(self, 'layer_choice', text='layer')
 
     def get_geometry_from_sockets(self):

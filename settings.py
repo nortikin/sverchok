@@ -1,6 +1,6 @@
 import bpy
 from bpy.types import AddonPreferences
-from bpy.props import BoolProperty, FloatVectorProperty, EnumProperty, IntProperty
+from bpy.props import BoolProperty, FloatVectorProperty, EnumProperty, IntProperty, FloatProperty
 
 from sverchok import data_structure
 from sverchok.core import handlers
@@ -131,11 +131,16 @@ class SverchokPreferences(AddonPreferences):
         default=False,
         description="Use icons in ctrl+space menu")
 
-    over_sized_buttons = BoolProperty(default=False, name="Big buttons",
-                                      description="Very big buttons")
+    over_sized_buttons = BoolProperty(
+        default=False, name="Big buttons", description="Very big buttons")
 
     enable_live_objin = BoolProperty(
         description="Objects in edit mode will be updated in object-in Node")
+
+    stethoscope_view_scale = FloatProperty(
+        default=1.0, min=0.01, step=0.01, description='default stethoscope scale')
+    stethoscope_view_xy_multiplier = FloatProperty(
+        default=1.0, min=0.01, step=0.01, description='default stethoscope scale')
 
 
     def draw(self, context):
@@ -151,6 +156,13 @@ class SverchokPreferences(AddonPreferences):
         col.prop(self, "show_icons")
         col.prop(self, "over_sized_buttons")
         col.prop(self, "enable_live_objin", text='Enable Live Object-In')
+        row_sub1 = col.row().split(0.5)
+        box_sub1 = row_sub1.box()
+        box_sub1_col = box_sub1.column(align=True)
+        box_sub1_col.label('stethoscope mk2 settings')
+        box_sub1_col.prop(self, 'stethoscope_view_scale', text='scale')
+        box_sub1_col.prop(self, 'stethoscope_view_xy_multiplier', text='xy multiplier')
+
         col.separator()
 
         col.label(text="Sverchok node theme settings")

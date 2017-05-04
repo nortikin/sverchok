@@ -25,7 +25,7 @@ from mathutils.geometry import intersect_line_line as LineIntersect
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
-from sverchok.utils import cad_module as cm
+from sverchok.utils.cad_module_class import CAD_ops
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 
 ''' helpers '''
@@ -40,7 +40,7 @@ def order_points(edge, point_list):
     return [v1] + point_list + [v2]
 
 
-def remove_permutations_that_share_a_vertex(bm, permutations):
+def remove_permutations_that_share_a_vertex(cm, bm, permutations):
     ''' Get useful Permutations '''
 
     final_permutations = []
@@ -55,13 +55,13 @@ def remove_permutations_that_share_a_vertex(bm, permutations):
     return final_permutations
 
 
-def get_valid_permutations(bm, edge_indices):
+def get_valid_permutations(cm, bm, edge_indices):
     raw_permutations = itertools.permutations(edge_indices, 2)
     permutations = [r for r in raw_permutations if r[0] < r[1]]
-    return remove_permutations_that_share_a_vertex(bm, permutations)
+    return remove_permutations_that_share_a_vertex(cm, bm, permutations)
 
 
-def can_skip(closest_points, vert_vectors):
+def can_skip(cm, closest_points, vert_vectors):
     '''this checks if the intersection lies on both edges, returns True
     when criteria are not met, and thus this point can be skipped'''
     if not closest_points:
@@ -73,16 +73,15 @@ def can_skip(closest_points, vert_vectors):
 
     # if this distance is larger than than VTX_PRECISION, we can skip it.
     cpa, cpb = closest_points
-    return (cpa-cpb).length > cm.CAD_prefs.VTX_PRECISION
+    return (cpa-cpb).length > cm.VTX_PRECISION
 
 
-def get_intersection_dictionary(bm, edge_indices):
-
+def get_intersection_dictionary(cm, bm, edge_indices):
     
     bm.verts.ensure_lookup_table()
     bm.edges.ensure_lookup_table()
 
-    permutations = get_valid_permutations(bm, edge_indices)
+    permutations = get_valid_permutations(cm, bm, edge_indices)
 
     k = defaultdict(list)
     d = defaultdict(list)
@@ -94,7 +93,7 @@ def get_intersection_dictionary(bm, edge_indices):
         points = LineIntersect(*vert_vectors)
 
         # some can be skipped.    (NaN, None, not on both edges)
-        if can_skip(points, vert_vectors):
+        if can_skip(cm, points, vert_vectors):
             continue
 
         # reaches this point only when an intersection happens on both edges.
@@ -142,7 +141,8 @@ class SvIntersectEdgesNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     sv_icon = 'SV_XALL'
 
     rm_switch = bpy.props.BoolProperty(update=updateNode)
-    rm_doubles = bpy.props.FloatProperty(min=0.0, default=0.0001, update=updateNode, step=0.1)
+    rm_doubles = bpy.props.FloatProperty(min=0.0, default=0.0001, step=0.1, update=updateNode)
+    epsilon = bpy.props.FloatProperty(min=1.0e-5, default=1.0e-5, step=0.02, update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', 'Verts_in')
@@ -158,6 +158,9 @@ class SvIntersectEdgesNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         r2 = r1.split()
         r2.enabled = self.rm_switch
         r2.prop(self, 'rm_doubles', text='delta')
+
+    def draw_buttons_ext(self, context, layout):
+        layout.prop(self, 'epsilon')
 
     def process(self):
         inputs = self.inputs
@@ -177,7 +180,9 @@ class SvIntersectEdgesNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         for edge in bm.edges:
             edge.select = True
 
-        d = get_intersection_dictionary(bm, edge_indices)
+        cm = CAD_ops(epsilon=self.epsilon)
+
+        d = get_intersection_dictionary(cm, bm, edge_indices)
         unselect_nonintersecting(bm, d.keys(), edge_indices)
 
         # store non_intersecting edge sequencer
