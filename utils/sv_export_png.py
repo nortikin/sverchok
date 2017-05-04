@@ -41,11 +41,23 @@ def write_png(buf, width, height, mode, compression=5):
 
     t = color_type[mode]
 
+    def png_header():
+        return b'\x89PNG\r\n\x1a\n'
+
+    def ihdr_chunk(width, height, t):
+        return png_pack(b'IHDR', struct.pack("!2I5B", width, height, 8, t, 0, 0, 0))
+
+    def idat_chunk(raw_data, compression):
+        return png_pack(b'IDAT', zlib.compress(raw_data, compression))
+
+    def end_chunk():
+        return png_pack(b'IEND', b'')
+
     return b''.join([
-        b'\x89PNG\r\n\x1a\n',
-        png_pack(b'IHDR', struct.pack("!2I5B", width, height, 8, t, 0, 0, 0)),
-        png_pack(b'IDAT', zlib.compress(raw_data, compression)),
-        png_pack(b'IEND', b'')])
+        png_header(),
+        ihdr_chunk(width, height, t),
+        idat_chunk(raw_data, compression),
+        end_chunk()])
 
 
 def save_png(filename, buf, mode, width, height, compression=5):
