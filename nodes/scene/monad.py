@@ -80,6 +80,13 @@ class SvSocketAquisition:
                 for name, value in prop_data.items():
                     setattr(new_socket, name, value)
 
+                # ready for some overkill?
+                if kind == 'outputs':
+                    lookup = {f.index: f.node_prop_name for f in monad.socket_indices}
+                    divergent_value = lookup.get(new_socket.index)
+                    if divergent_value:
+                        setattr(new_socket, 'prop_name', divergent_value)
+
             # add new dangling dummy
             socket_list.new('SvDummySocket', 'connect me')
 

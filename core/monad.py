@@ -27,7 +27,9 @@ from bpy.props import (
 from sverchok.node_tree import SverchCustomTreeNode, SvNodeTreeCommon
 from sverchok.data_structure import get_other_socket, updateNode, match_long_repeat
 from sverchok.core.update_system import make_tree_from_nodes, do_update
-from sverchok.core.monad_properties import SvIntPropertySettingsGroup, SvFloatPropertySettingsGroup
+from sverchok.core.monad_properties import (
+    SvIntPropertySettingsGroup, SvFloatPropertySettingsGroup, SvIndexPropGroup)
+
 
 MONAD_COLOR = (0.830819, 0.911391, 0.754562)
 
@@ -83,6 +85,13 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
 
     float_props = CollectionProperty(type=SvFloatPropertySettingsGroup)
     int_props = CollectionProperty(type=SvIntPropertySettingsGroup)
+    socket_indices = CollectionProperty(type=SvIndexPropGroup)
+
+    def add_socket_indices(self, idx, new_name):
+        fp = self.socket_indices.add()
+        fp.index = idx
+        fp.node_prop_name = new_name
+
 
     def add_prop_from(self, socket):
         """
@@ -104,10 +113,13 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
             else: # no way to handle it
                 return None
 
-            prop_settings.prop_name = generate_name(prop_name, cls_dict)
+            new_name = generate_name(prop_name, cls_dict)
+            prop_settings.prop_name = new_name
             prop_settings.set_settings(prop_dict)
-            socket.prop_name = prop_settings.prop_name
-            return prop_settings.prop_name
+            socket.prop_name = new_name
+            self.add_socket_indices(socket.index, new_name)
+            return new_name
+
         elif hasattr(other, "prop_type"):
             if "float" in other.prop_type:
                 prop_settings = self.float_props.add()
@@ -115,10 +127,13 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
                 prop_settings = self.int_props.add()
             else:
                 return None
-            prop_settings.prop_name = generate_name(make_valid_identifier(other.name), cls_dict)
+            
+            new_name = generate_name(make_valid_identifier(other.name), cls_dict)
+            prop_settings.prop_name = new_name 
             prop_settings.set_settings({"name": other.name})
-            socket.prop_name = prop_settings.prop_name
-            return prop_settings.prop_name
+            socket.prop_name = new_name
+            self.add_socket_indices(socket.index, new_name)
+            return new_name
 
         return None
 
@@ -187,12 +202,12 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
                     if socket.prop_name in prop_names:
                         continue
                     else:
-                        self.add_prop_from(socket)
+                        resulting_prop_name = self.add_prop_from(socket)
                         continue
 
                 if socket.other.prop_name:
                     if socket.other.prop_name not in prop_names:
-                        self.add_prop_from(socket)
+                        resulting_prop_name = self.add_prop_from(socket)
                     else:
                         socket.prop_name = socket.other.prop_name
 
@@ -353,10 +368,20 @@ class SvGroupNodeExp:
         self.use_custom_color = True
         self.color = MONAD_COLOR
 
+        lookup = {f.index: f.node_prop_name for f in self.monad.socket_indices}
+        print(lookup)
+
         for socket_name, socket_bl_idname, prop_data in self.input_template:
             s = self.inputs.new(socket_bl_idname, socket_name)
             for name, value in prop_data.items():
+                print('jaaaaa')
                 setattr(s, name, value)
+
+            # meh...set it up again
+            divergent_value = lookup.get(s.index)
+            if divergent_value:
+                print('happening')
+                setattr(s, 'prop_name', divergent_value)
 
         for socket_name, socket_bl_idname in self.output_template:
             self.outputs.new(socket_bl_idname, socket_name)
