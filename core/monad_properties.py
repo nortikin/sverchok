@@ -186,17 +186,9 @@ class SvIntPropertySettingsGroup(PropertyGroup, PropsBase):
     subtype = EnumProperty(items=float_items, name="Subtype", default='NONE')
 
 
-class SvIndexPropGroup(PropertyGroup):
-
-    index = IntProperty(default=-1)
-    node_prop_name = StringProperty(default='')
-
-
-
 classes = [
     SvFloatPropertySettingsGroup,
-    SvIntPropertySettingsGroup,
-    SvIndexPropGroup
+    SvIntPropertySettingsGroup
 ]
 
 # no register function?
