@@ -19,13 +19,9 @@
 import sys
 
 import bpy
-
-from bpy.props import (FloatProperty,
-                       FloatVectorProperty,
-                       IntProperty,
-                       StringProperty,
-                       EnumProperty)
 from bpy.types import PropertyGroup
+from bpy.props import (
+    FloatProperty, FloatVectorProperty, IntProperty, StringProperty, EnumProperty)
 
 
 class PropsBase:
@@ -69,28 +65,29 @@ bpy.props.FloatProperty(name="", description="", default=0.0,
 
 subtype (string) – Enumerator in ['PIXEL', 'UNSIGNED', 'PERCENTAGE', 'FACTOR', 'ANGLE', 'TIME', 'DISTANCE', 'NONE'].
 unit (string) – Enumerator in ['NONE', 'LENGTH', 'AREA', 'VOLUME', 'ROTATION', 'TIME', 'VELOCITY', 'ACCELERATION'].
-
 '''
 
+unit_items = (
+    ('NONE', 'NONE', 'NONE', 0),
+    ('LENGTH', 'LENGTH', 'LENGTH', 1),
+    ('AREA', 'AREA', 'AREA', 2),
+    ('VOLUME', 'VOLUME', 'VOLUME', 3),
+    ('ROTATION', 'ROTATION', 'ROTATION', 4),
+    ('TIME', 'TIME', 'TIME', 5),
+    ('VELOCITY', 'VELOCITY', 'VELOCITY', 6),
+    ('ACCELERATION', 'ACCELERATION', 'ACCELERATION', 7)
+)
 
-
-unit_items = (('NONE', 'NONE', 'NONE', 0),
-              ('LENGTH', 'LENGTH', 'LENGTH', 1),
-              ('AREA', 'AREA', 'AREA', 2),
-              ('VOLUME', 'VOLUME', 'VOLUME', 3),
-              ('ROTATION', 'ROTATION', 'ROTATION', 4),
-              ('TIME', 'TIME', 'TIME', 5),
-              ('VELOCITY', 'VELOCITY', 'VELOCITY', 6),
-              ('ACCELERATION', 'ACCELERATION', 'ACCELERATION', 7))
-
-float_items = (('PIXEL', 'PIXEL', 'PIXEL', 0),
-               ('UNSIGNED', 'UNSIGNED', 'UNSIGNED', 1),
-               ('PERCENTAGE', 'PERCENTAGE', 'PERCENTAGE', 2),
-               ('FACTOR', 'FACTOR', 'FACTOR', 3),
-               ('ANGLE', 'ANGLE', 'ANGLE', 4),
-               ('TIME', 'TIME', 'TIME', 5),
-               ('DISTANCE', 'DISTANCE', 'DISTANCE', 6),
-               ('NONE', 'NONE', 'NONE', 7))
+float_items = (
+    ('PIXEL', 'PIXEL', 'PIXEL', 0),
+    ('UNSIGNED', 'UNSIGNED', 'UNSIGNED', 1),
+    ('PERCENTAGE', 'PERCENTAGE', 'PERCENTAGE', 2),
+    ('FACTOR', 'FACTOR', 'FACTOR', 3),
+    ('ANGLE', 'ANGLE', 'ANGLE', 4),
+    ('TIME', 'TIME', 'TIME', 5),
+    ('DISTANCE', 'DISTANCE', 'DISTANCE', 6),
+    ('NONE', 'NONE', 'NONE', 7)
+)
 
 
 class SvFloatPropertySettingsGroup(PropertyGroup, PropsBase):
@@ -152,14 +149,16 @@ get (function) – Function to be called when this value is ‘read’, This fun
 set (function) – Function to be called when this value is ‘written’, This function must take 2 values (self, value) and return None.
 '''
 
-int_subtypes =  [('PIXEL', 'PIXEL', 'PIXEL', 0),
-                 ('UNSIGNED', 'UNSIGNED', 'UNSIGNED', 1),
-                 ('PERCENTAGE', 'PERCENTAGE', 'PERCENTAGE', 2),
-                 ('FACTOR', 'FACTOR', 'FACTOR', 3),
-                 ('ANGLE', 'ANGLE', 'ANGLE', 4),
-                 ('TIME', 'TIME', 'TIME', 5),
-                 ('DISTANCE', 'DISTANCE', 'DISTANCE', 6),
-                 ('NONE', 'NONE', 'NONE', 7)]
+int_subtypes =  [
+    ('PIXEL', 'PIXEL', 'PIXEL', 0),
+    ('UNSIGNED', 'UNSIGNED', 'UNSIGNED', 1),
+    ('PERCENTAGE', 'PERCENTAGE', 'PERCENTAGE', 2),
+    ('FACTOR', 'FACTOR', 'FACTOR', 3),
+    ('ANGLE', 'ANGLE', 'ANGLE', 4),
+    ('TIME', 'TIME', 'TIME', 5),
+    ('DISTANCE', 'DISTANCE', 'DISTANCE', 6),
+    ('NONE', 'NONE', 'NONE', 7)
+]
 
 class SvIntPropertySettingsGroup(PropertyGroup, PropsBase):
 
@@ -191,6 +190,8 @@ classes = [
     SvFloatPropertySettingsGroup,
     SvIntPropertySettingsGroup
 ]
+
+# no register function?
 
 for class_name in classes:
     bpy.utils.register_class(class_name)

@@ -20,12 +20,9 @@ import random
 from itertools import chain
 
 import bpy
-from bpy.props import (StringProperty, FloatProperty,
-                       IntProperty, BoolProperty,
-                       CollectionProperty)
-
 from bpy.types import Node, NodeTree
-
+from bpy.props import (
+    StringProperty, FloatProperty, IntProperty, BoolProperty, CollectionProperty)
 
 from sverchok.node_tree import SverchCustomTreeNode, SvNodeTreeCommon
 from sverchok.data_structure import get_other_socket, updateNode, match_long_repeat
@@ -242,9 +239,12 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
         cls_dict = {}
 
         if not self.cls_bl_idname:
+            
             # the monad cls_bl_idname needs to be unique and cannot change
-            cls_name = "SvGroupNode{}_{}".format(make_valid_identifier(self.name),
-                                                 id(self) ^ random.randint(0, 4294967296))
+            monad_base_name = make_valid_identifier(self.name)
+            monad_itentifier = id(self) ^ random.randint(0, 4294967296)
+
+            cls_name = "SvGroupNode{}_{}".format(monad_base_name, monad_itentifier)
             # set the unique name for the class, depending on context this might fail
             # then we cannot do the setup of the class properly so abandon
             try:
@@ -329,14 +329,13 @@ class SvGroupNodeExp:
     """
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    vectorize = BoolProperty(name="Vectorize",
-                             description="Vectorize using monad",
-                             default=False,
-                             update=updateNode)
-    split = BoolProperty(name="Split",
-                         description="Split inputs into lenght 1",
-                         default=False,
-                         update=updateNode)
+    vectorize = BoolProperty(
+        name="Vectorize", description="Vectorize using monad",
+        default=False, update=updateNode)
+
+    split = BoolProperty(
+        name="Split", description="Split inputs into lenght 1",
+        default=False, update=updateNode)
 
     # fun experiment
     #label = StringProperty(get=_get_monad_name, set=_set_monad_name)

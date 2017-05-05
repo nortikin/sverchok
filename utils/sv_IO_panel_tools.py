@@ -92,8 +92,7 @@ def find_enumerators(node):
 
 
 def compile_socket(link):
-    return (link.from_node.name, link.from_socket.name,
-            link.to_node.name, link.to_socket.name)
+    return (link.from_node.name, link.from_socket.index, link.to_node.name, link.to_socket.index)
 
 
 def write_json(layout_dict, destination_path):
