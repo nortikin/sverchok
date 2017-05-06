@@ -200,12 +200,12 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
                     if socket.prop_name in prop_names:
                         continue
                     else:
-                        resulting_prop_name = self.add_prop_from(socket)
+                        self.add_prop_from(socket)
                         continue
 
                 if socket.other.prop_name:
                     if socket.other.prop_name not in prop_names:
-                        resulting_prop_name = self.add_prop_from(socket)
+                        self.add_prop_from(socket)
                     else:
                         socket.prop_name = socket.other.prop_name
 
