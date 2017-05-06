@@ -87,6 +87,8 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
 
     def get_current_as_default(self, prop_dict, node, prop_name):
         prop_dict['default'] = getattr(node, prop_name)
+        # if not prop_dict['name']:
+        #     prop_dict['name'] = node.name + '|' + prop_name
 
 
     def add_prop_from(self, socket):
