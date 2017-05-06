@@ -83,6 +83,12 @@ class SvSocketAquisition:
                     else:
                         new_socket.prop_name = prop_name
 
+                        # if prop_name:
+                        #    # then also set the appropriate value
+                        #    destination_node = new_socket.node
+                        #    origin_value = getattr(socket.node, socket.prop_name)
+                        #    setattr(destination_node, prop_name, origin_value)
+
             # add new dangling dummy
             socket_list.new('SvDummySocket', 'connect me')
 
