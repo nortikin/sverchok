@@ -27,7 +27,7 @@ from bpy.props import (
 from sverchok.node_tree import SverchCustomTreeNode, SvNodeTreeCommon
 from sverchok.data_structure import get_other_socket, updateNode, match_long_repeat
 from sverchok.core.update_system import make_tree_from_nodes, do_update
-from sverchok.core.monad_properties import (SvIntPropertySettingsGroup, SvFloatPropertySettingsGroup)
+from sverchok.core.monad_properties import SvIntPropertySettingsGroup, SvFloatPropertySettingsGroup
 
 
 MONAD_COLOR = (0.830819, 0.911391, 0.754562)
