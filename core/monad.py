@@ -86,12 +86,6 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
     int_props = CollectionProperty(type=SvIntPropertySettingsGroup)
 
 
-    def add_socket_indices(self, idx, new_name):
-        fp = self.socket_indices.add()
-        fp.index = idx
-        fp.node_prop_name = new_name
-
-
     def add_prop_from(self, socket):
         """
         Add a property if possible
