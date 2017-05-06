@@ -85,6 +85,9 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
     float_props = CollectionProperty(type=SvFloatPropertySettingsGroup)
     int_props = CollectionProperty(type=SvIntPropertySettingsGroup)
 
+    def get_current_as_default(self, prop_dict, node, prop_name):
+        prop_dict['default'] = getattr(node, prop_name)
+
 
     def add_prop_from(self, socket):
         """
@@ -97,9 +100,13 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
         if other.prop_name:
             prop_name = other.prop_name
             prop_func, prop_dict = getattr(other.node.rna_type, prop_name, ("", {}))
+
+
             if prop_func.__name__ == "FloatProperty":
+                self.get_current_as_default(prop_dict, other.node, prop_name)
                 prop_settings = self.float_props.add()
             elif prop_func.__name__ == "IntProperty":
+                self.get_current_as_default(prop_dict, other.node, prop_name)
                 prop_settings = self.int_props.add()
             elif prop_func.__name__ == "FloatVectorProperty":
                 return None # for now etc
