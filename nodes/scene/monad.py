@@ -18,6 +18,7 @@
 
 # the concrete monad classes plus common base
 import ast
+import pprint
 
 import bpy
 from bpy.types import Node
@@ -33,6 +34,16 @@ class SvSocketAquisition:
 
     socket_map = {'outputs': 'to_socket', 'inputs': 'from_socket'}
     node_kind = StringProperty()
+
+    @property
+    def get_outputs_info(self):
+        if self.node_kind == 'outputs':
+            return [{
+                    'socket_name': s.name,
+                    'socket_identifier': s.identifier,
+                    'socket_prop_name': s.prop_name
+                    } for s in self.outputs]
+
 
     def update(self):
         kind = self.node_kind
@@ -78,6 +89,10 @@ class SvSocketAquisition:
                         setattr(new_socket, name, value)
                     else:
                         new_socket.prop_name = prop_name
+
+            # print('------')
+            # print(prop_data)
+            # pprint.pprint(self.get_outputs_info)
 
             # add new dangling dummy
             socket_list.new('SvDummySocket', 'connect me')

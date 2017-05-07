@@ -16,6 +16,7 @@
 #
 # END GPL LICENSE BLOCK #####
 
+import pprint
 import random
 from itertools import chain
 
@@ -115,6 +116,8 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
             else: # no way to handle it
                 return None
 
+            # print('dict')
+            # pprint.pprint(prop_dict)
             new_name = generate_name(prop_name, cls_dict)
             prop_settings.prop_name = new_name
             prop_settings.set_settings(prop_dict)
