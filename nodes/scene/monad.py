@@ -52,28 +52,24 @@ class SvSocketAquisition:
 
         if socket_list[-1].is_linked:
 
-            # first switch socket type
+            # gather socket data
             socket = socket_list[-1]
             if kind == "outputs":
                 prop_name = monad.add_prop_from(socket)
-            else:
-                prop_name = ""
-
-            cls = monad.update_cls()
-
-            if kind == "outputs":
+                cls = monad.update_cls()
                 new_name, new_type, prop_data = cls.input_template[-1]
             else:
-                new_name, new_type = cls.output_template[-1]
+                prop_name = ""
+                cls = monad.update_cls()
                 prop_data = {}
+                new_name, new_type = cls.output_template[-1]
 
+            # transform socket type from dummy to new type
             new_socket = socket.replace_socket(new_type, new_name=new_name)
             if prop_name:
                 new_socket.prop_name = prop_name
 
-            # if no 'linked_socket.prop_name' then use 'linked_socket.name'
-
-
+            # update all monad nodes (front facing)
             for instance in monad.instances:
                 sockets = getattr(instance, reverse_lookup[kind])
                 new_socket = sockets.new(new_type, new_name)
