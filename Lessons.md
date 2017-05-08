@@ -69,10 +69,10 @@
 <h3>Places</h3>
 <ul>
 	<li><a href="http://www.blenderartists.org/forum/showthread.php?272679">Blenderartist thread</a></li>
-	<li><a href="https://github.com/nortikin/sverchok/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc">GitHub issue tracker (for bugs and development help)</a></li>
-	<li><a href='http://vk.com/public35076122'>Vk (Russian)</a></li>
+	<li><a href="https://github.com/nortikin/sverchok/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc">GitHub issue tracker </a>(for bugs and development help)</li>
+	<li><a href='http://vk.com/public35076122'>Vk</a> (Russian)</li>
 	<li><a href='https://plus.google.com/communities/113245231013159497850'>
-	G+ (questions, ideas and results - large community)</a></li>
+	G+ </a>(questions, ideas and results - large community)</li>
 	<li><a href='http://blender.stackexchange.com'>	Blender and bpy questions
 	</a></li>
 </ul>
