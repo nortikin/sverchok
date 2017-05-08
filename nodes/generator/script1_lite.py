@@ -93,7 +93,8 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
         ND = self.node_dict.get(hash(self))
         if ND:
             enum_list = ND['sockets']['custom_enum']
-            return [(ce, ce, '', idx) for idx, ce in enumerate(enum_list)]
+            if enum_list:
+                return [(ce, ce, '', idx) for idx, ce in enumerate(enum_list)]
 
         return [("A", "A", '', 0),]
 
