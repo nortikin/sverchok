@@ -60,7 +60,8 @@ old_bl_idnames = {
     'MatrixGenNode':'matrix_in',
     'LineNode': 'line',
     'PlaneNode': 'plane',
-    'SvBMOpsNode': 'BMOperators'
+    'SvBMOpsNode': 'BMOperators',
+    'SvCSGBooleanNode': 'csg_boolean'
 }
 
 # we should add some functions to load things there

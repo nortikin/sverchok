@@ -40,6 +40,9 @@ def high_contrast_color(c):
     L = 0.2126 * (c.r**g) + 0.7152 * (c.g**g) + 0.0722 * (c.b**g)
     return [(.1, .1, .1), (.95, .95, .95)][int(L < 0.5)]
 
+def adjust_location(_x, _y, location_theta):
+    return _x * location_theta, _y * location_theta
+
 
 class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvStethoscopeNodeMK2'
@@ -116,6 +119,16 @@ class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         nvBGL.callback_disable(n_id)
 
         if self.activate and inputs[0].is_linked:
+
+            try:
+                with sv_preferences() as prefs:
+                    scale = prefs.stethoscope_view_scale
+                    location_theta = prefs.stethoscope_view_xy_multiplier
+            except:
+                # print('did not find preferences - you need to save user preferences')
+                scale = 1.0
+                location_theta = 1.0
+
             # gather vertices from input
             data = inputs[0].sv_get(deepcopy=False)
             self.num_elements = len(data)
@@ -131,11 +144,15 @@ class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                 #                # implement another nvBGL parses for gfx
                 processed_data = data
 
+            _x, _y = (self.location + Vector((self.width + 20, 0)))
+            location = adjust_location(_x, _y, location_theta)
+
             draw_data = {
                 'tree_name': self.id_data.name[:],
                 'content': processed_data,
-                'location': (self.location + Vector((self.width + 20, 0)))[:],
+                'location': location,
                 'color': self.text_color[:],
+                'scale' : float(scale),
                 'mode': self.selected_mode[:],
                 'font_id': int(self.font_id)
             }
@@ -148,9 +165,11 @@ class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     def update(self):
         if not ("Data" in self.inputs):
             return
-        if not self.inputs[0].other:
-            nvBGL.callback_disable(node_id(self))        
-
+        try:
+            if not self.inputs[0].other:
+                nvBGL.callback_disable(node_id(self))        
+        except:
+            print('stethoscope update holdout (not a problem)')
 
 
 def register():
