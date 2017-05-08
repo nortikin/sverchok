@@ -89,6 +89,15 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Scripted Node Lite'
     bl_icon = 'SCRIPTPLUGINS'
 
+    def custom_enum_func(self, context):
+        ND = self.node_dict.get(hash(self))
+        if ND:
+            enum_list = ND['sockets']['custom_enum']
+            return [(ce, ce, '', idx) for idx, ce in enumerate(enum_list)]
+
+        return [("A", "A", '', 0),]
+
+
     script_name = StringProperty()
     script_str = StringProperty()
     node_dict = {}
@@ -112,11 +121,15 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
         default="To Node",
         update=updateNode
     )
-
+    
     inject_params = BoolProperty()
     injected_state = BoolProperty(default=False)
     user_filename = StringProperty(update=updateNode)
     n_id = StringProperty(default='')
+
+    custom_enum = bpy.props.EnumProperty(
+        items=custom_enum_func, description="custom enum", update=updateNode
+    )
 
     def draw_label(self):
         if self.script_name:
