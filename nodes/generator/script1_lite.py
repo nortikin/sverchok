@@ -98,6 +98,11 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
 
         return [("A", "A", '', 0),]
 
+    # def custom_callback(self, context, operator):
+    #     ND = self.node_dict.get(hash(self))
+    #     if ND:
+    #         custom_func = ND['sockets']['custom_callback_func']
+
 
     script_name = StringProperty()
     script_str = StringProperty()
