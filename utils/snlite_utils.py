@@ -72,3 +72,12 @@ def vectorize(all_data):
         all_data[idx] = listify(d)
 
     return match_long_repeat(all_data)
+
+
+def ddir(content, filter_str=None):
+    vals = []
+    if not filter_str:
+        vals = [n for n in dir(content) if not n.startswith('__')]
+    else:
+        vals = [n for n in dir(content) if not n.startswith('__') and filter_str in n]
+    return vals
