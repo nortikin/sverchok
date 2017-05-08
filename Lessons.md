@@ -75,8 +75,6 @@
 	G+</a></li>
 	<li><a href='http://blender.stackexchange.com'>	Blender and bpy questions
 	</a></li>
-
-	<li><a href='http://doraemonarchitecture.tumblr.com/'>Doraemon's blog</a></li>
 </ul>
   
 
