@@ -30,8 +30,8 @@ from sverchok.utils.snlite_importhelper import (
     UNPARSABLE, set_autocolor, parse_sockets, are_matched,
     get_rgb_curve, set_rgb_curve
 )
-from sverchok.utils.snlite_utils import vectorize
-
+from sverchok.utils.snlite_utils import vectorize, ddir
+from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 
@@ -326,8 +326,13 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
     def process_script(self):
         __local__dict__ = self.make_new_locals()
         locals().update(__local__dict__)
-        locals().update({'vectorize': vectorize})
-        locals().update({'bpy': bpy})
+        locals().update({
+            'vectorize': vectorize,
+            'bpy': bpy,
+            'ddir': ddir, 
+            'bmesh_from_pydata': bmesh_from_pydata,
+            'pydata_from_bmesh': pydata_from_bmesh
+        })
 
         for output in self.outputs:
             locals().update({output.name: []})
