@@ -286,7 +286,7 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         data = np.array(self.inputs['Float'].sv_get(deepcopy=False)).flatten()
         self.total_size = self.calculate_total_size()
         self.make_data_correct_length(data)
-        texture = bgl.Buffer(bgl.GL_FLOAT, self.total_size, data)
+        texture = bgl.Buffer(bgl.GL_FLOAT, self.total_size, np.resize(data, self.total_size))
         return texture
 
     def draw_buttons(self, context, layout):
@@ -294,7 +294,7 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         c.label(text="Set texture display:")
         row = c.row()
         row.prop(self, "selected_mode", expand=True)
-        
+
         nrow = c.row()
         nrow.prop(self, 'activate')
         nrow.prop(self, 'to_image_viewer')
@@ -354,7 +354,7 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
     def process(self):
         if not self.inputs['Float'].is_linked:
             return
-        
+
         n_id = node_id(self)
         self.delete_texture()
         nvBGL2.callback_disable(n_id)
