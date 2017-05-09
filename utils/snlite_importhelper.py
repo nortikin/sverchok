@@ -86,7 +86,7 @@ def parse_sockets(node):
     snlite_info = {
         'inputs': [], 'outputs': [], 
         'snlite_ui': [], 'includes': {},
-        'custom_enum': []
+        'custom_enum': [], 'callbacks': {}
     }
 
     quotes = 0
@@ -122,6 +122,10 @@ def parse_sockets(node):
 
         elif L in {'fh', 'filehandler'}:
             snlite_info['display_file_handler'] = True
+
+        # elif L.startswith('cb '):
+        #     cb_name = L[3:].strip()
+        #     snlite_info['callbacks'].append(cb_name)
 
     return snlite_info
 

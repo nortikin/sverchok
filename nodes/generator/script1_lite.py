@@ -69,6 +69,17 @@ class SvScriptNodeLiteCallBack(bpy.types.Operator):
         return {'FINISHED'}
 
 
+class SvScriptNodeLiteCustomCallBack(bpy.types.Operator):
+
+    bl_idname = "node.scriptlite_custom_callback"
+    bl_label = "custom SNLite callback"
+    cb_name = bpy.props.StringProperty(default='')
+
+    def execute(self, context):
+        context.node.custom_callback(context, self)
+        return {'FINISHED'}
+
+
 class SvScriptNodeLiteTextImport(bpy.types.Operator):
 
     bl_idname = "node.scriptlite_import"
@@ -96,7 +107,13 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
             if enum_list:
                 return [(ce, ce, '', idx) for idx, ce in enumerate(enum_list)]
 
-        return [("A", "A", '', 0),]
+        return [("A", "A", '', 0), ("B", "B", '', 1)]
+
+
+    def custom_callback(self, context, operator):
+        ND = self.node_dict.get(hash(self))
+        if ND:
+            ND['sockets']['callbacks'][operator.cb_name](self, context)
 
 
     script_name = StringProperty()
@@ -482,6 +499,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
 
 
 classes = [
+    SvScriptNodeLiteCustomCallBack,
     SvScriptNodeLiteTextImport,
     SvScriptNodeLitePyMenu,
     SvScriptNodeLiteCallBack,
@@ -495,4 +513,3 @@ def register():
 
 def unregister():
     _ = [bpy.utils.unregister_class(name) for name in classes]
- 
