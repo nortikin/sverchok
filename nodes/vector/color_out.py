@@ -67,12 +67,16 @@ class SvColorsOutNode(bpy.types.Node, SverchCustomTreeNode):
     
     def process(self):
         """
-        colorsys.rgb_to_yiq(r, g, b)
-        colorsys.yiq_to_rgb(y, i, q)
         colorsys.rgb_to_hls(r, g, b)
         colorsys.hls_to_rgb(h, l, s)
         colorsys.rgb_to_hsv(r, g, b)
         colorsys.hsv_to_rgb(h, s, v)
+
+
+                      |--------  r
+        rgb(a)--------|--------  g
+                      |--------  b
+                      |-------- (a)
         """        
 
         color_input = self.inputs['Colors']
@@ -82,24 +86,19 @@ class SvColorsOutNode(bpy.types.Node, SverchCustomTreeNode):
         else:
             data = [[self.unit_color[:]]]
 
-        A, B, C, D = [], [], [], []
-        if self.use_alpha:
-            for obj in data:
-                a_, b_, c_, d_ = (list(x) for x in zip(*obj))
-                A.append(a_)
-                B.append(b_)
-                C.append(c_)
-                D.append(d_)
-            for i, socket in enumerate(self.outputs):
-                self.outputs[socket.name].sv_set([A, B, C, D][i])
-        else:
-            for obj in data:
-                a_, b_, c_ = (list(x) for x in zip(*obj))
-                A.append(a_)
-                B.append(b_)
-                C.append(c_)
-            for i, socket in enumerate(self.outputs[:3]):
-                self.outputs[socket.name].sv_set([A, B, C][i])
+
+        values = [[], [], [], []]
+        for obj in data:
+            vals = (list(x) for x in zip(*obj))
+            for idx, v in enumerate(vals):
+                values[idx].append(v)
+        for i, socket in enumerate(self.outputs):
+
+            if i == 3 and len(values[3]) == 0 or (not self.use_alpha):
+                socket.sv_set([[]])
+                break
+            else:
+                socket.sv_set(values[i])
 
     
     
