@@ -116,6 +116,20 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
             ND['sockets']['callbacks'][operator.cb_name](self, context)
 
 
+    def make_operator(self, new_func_name, force=False):
+        ND = self.node_dict.get(hash(self))               
+        if ND:                                            
+            callbacks = ND['sockets']['callbacks']        
+            if not (new_func_name in callbacks) or force:
+                # here node refers to an ast node (a syntax tree node), not a node tree node
+                ast_node = self.get_node_from_function_name(new_func_name)
+                slice_begin, slice_end = ast_node.body[0].lineno-1, ast_node.body[-1].lineno
+                code = '\n'.join(self.script_str.split('\n')[slice_begin-1:slice_end+1])
+
+                exec(code, locals(), locals())
+                callbacks[new_func_name] = locals()[new_func_name]
+
+
     script_name = StringProperty()
     script_str = StringProperty()
     node_dict = {}
