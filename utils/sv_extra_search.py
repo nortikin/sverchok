@@ -119,7 +119,7 @@ def gather_items():
 
 
 def item_cb(self, context):
-    return loop.get('results')
+    return loop.get('results') or [("A","A", '', 0),]
 
 
 class SvExtraSearch(bpy.types.Operator):
