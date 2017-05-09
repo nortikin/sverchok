@@ -208,11 +208,11 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         default="S", update=wrapped_update)
 
     width_custom_tex = IntProperty(
-        min=0, max=1024, default=206, name='Width Tex',
+        min=1, max=1024, default=206, name='Width Tex',
         description="set the custom texture size", update=updateNode)
 
     height_custom_tex = IntProperty(
-        min=0, max=1024, default=124, name='Height Tex',
+        min=1, max=1024, default=124, name='Height Tex',
         description="set the custom texture size", update=updateNode)
 
     bitmap_format = EnumProperty(
