@@ -30,7 +30,9 @@ class SvSwitchNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     def draw_buttons(self, context, layout):
-        layout.prop(self, "switch_count")
+        layout.prop(self, "selected_mode", expand=True)
+        if self.selected_mode == 'single':
+            layout.prop(self, "switch_count")
     
     def change_count(self, context):
         in_count = len(self.inputs)
@@ -53,6 +55,12 @@ class SvSwitchNode(bpy.types.Node, SverchCustomTreeNode):
     
     switch_count = IntProperty(
         name="count", min=1, max=10, default=1, update=change_count)
+
+    mode_options = [(k, k, '', i) for i, k in enumerate(["single", "multi"])]
+
+    selected_mode = bpy.props.EnumProperty(
+        description="pick a different processing mode", default="single",
+        items=mode_options, update=updateNode)
         
     def sv_init(self, context):
         self.inputs.new("StringsSocket", "State").prop_name = 'switch_state'
@@ -78,21 +86,26 @@ class SvSwitchNode(bpy.types.Node, SverchCustomTreeNode):
                 count = i
     
     def process(self):
-        state = self.inputs[0].sv_get()[0][0]
-        count = self.switch_count
-        if state:
-            sockets = self.inputs[1:count + 1]
+        if self.selected_mode == 'single':
+            # old approach
+            state = self.inputs[0].sv_get()[0][0]
+            count = self.switch_count
+            if state:
+                sockets = self.inputs[1:count + 1]
+            else:
+                sockets = self.inputs[1 + count:]
+            '''
+            dep_sockets = [get_other_socket(in_s) for in_s,out_s in zip(sockets, self.outputs) if out_s.is_linked]
+            ul = make_tree_from_nodes([s.node.name for s in dep_sockets], self.id_data, True)
+            do_update(ul, self.id_data.nodes)
+            '''
+            for in_s,out_s in zip(sockets, self.outputs):
+                if out_s.is_linked:
+                    data = in_s.sv_get(deepcopy=False)
+                    out_s.sv_set(data)
         else:
-            sockets = self.inputs[1 + count:]
-        '''
-        dep_sockets = [get_other_socket(in_s) for in_s,out_s in zip(sockets, self.outputs) if out_s.is_linked]
-        ul = make_tree_from_nodes([s.node.name for s in dep_sockets], self.id_data, True)
-        do_update(ul, self.id_data.nodes)
-        '''
-        for in_s,out_s in zip(sockets, self.outputs):
-            if out_s.is_linked:
-                data = in_s.sv_get(deepcopy=False)
-                out_s.sv_set(data)
+            # this is an entirely different approach to switching
+            ...
             
         
 def register():
